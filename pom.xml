@@ -154,7 +154,6 @@
     </contributors>
 
     <modules>
-        <module>jstore</module>
         <module>linkage</module>
         <module>population_model</module>
         <module>util</module>
