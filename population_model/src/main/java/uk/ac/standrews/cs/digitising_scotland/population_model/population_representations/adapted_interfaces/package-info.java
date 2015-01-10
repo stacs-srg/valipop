@@ -14,17 +14,9 @@
  * You should have received a copy of the GNU General Public License along with population_model. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.digitising_scotland.population_model.population_representations;
 
-import uk.ac.standrews.cs.digitising_scotland.population_model.model.IPopulation;
-import uk.ac.standrews.cs.digitising_scotland.population_model.organic.OrganicPopulation;
-
-public class UseCaseNuclearFamily {
-
-	IPopulation generateNuclearFamilyUseCase() {
-		OrganicPopulation population = new OrganicPopulation("Nuclear Family Use Case");
-		
-		return null;		
-	}
-	
-}
+/**
+ * @author Tom Dalton
+ *
+ */
+package uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.adapted_interfaces;

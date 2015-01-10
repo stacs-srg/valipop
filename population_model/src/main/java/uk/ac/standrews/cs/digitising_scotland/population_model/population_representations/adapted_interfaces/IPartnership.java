@@ -14,9 +14,11 @@
  * You should have received a copy of the GNU General Public License along with population_model. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.digitising_scotland.population_model.population_representations;
+package uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.adapted_interfaces;
 
 import java.util.Date;
+
+import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.Link;
 
 /**
  * Interface for partnership objects.
@@ -36,13 +38,13 @@ public interface IPartnership extends Comparable<IPartnership> {
      * Returns and array of Links for the female in the partnership.
      * @return the possible Links for the female
      */
-    Link[] getFemalePartnerId();
+    Link[] getFemalePotentialPartnerLinks();
 
     /**
      * Returns and array of Links for the male in the partnership.
      * @return the possible Links of the male
      */
-    Link[] getMalePartnerId();
+    Link[] getMalePotentialPartnerLinks();
 
     
     // TODO This method?
@@ -56,17 +58,17 @@ public interface IPartnership extends Comparable<IPartnership> {
 
     
     // Concentrating on birth record partnerships for the time being will intergrate marriages later.
-//    /**
-//     * Gets the date of the marriage between the partners in this partnership, or null if they are not married.
-//     * @return the date of the marriage of this partnership
-//     */
-//    Date getMarriageDate();
-//
-//    /**
-//     * Gets the place of marriage, or null if not recorded.
-//     * @return the place of marriage
-//     */
-//    String getMarriagePlace();
+    /**
+     * Gets the date of the marriage between the partners in this partnership, or null if they are not married.
+     * @return the date of the marriage of this partnership
+     */
+    Date getMarriageDate();
+
+    /**
+     * Gets the place of marriage, or null if not recorded.
+     * @return the place of marriage
+     */
+    String getMarriagePlace();
 
     
     // TODO Do we want a list of integers here or do we want to have a single child per instance. Giving the approach of 
@@ -79,5 +81,5 @@ public interface IPartnership extends Comparable<IPartnership> {
      * Gets the identifiers of this partnership object's child_id, or null if none are recorded.
      * @return the identifier of the partnership's child_id
      */
-    Link getChildId();
+    Link getChildLink();
 }
