@@ -16,14 +16,31 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.population_model.population_representations;
 
-import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.IPartnership;
+import java.util.Date;
+
+import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.adapted_interfaces.IPartnership;
+import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.adapted_interfaces.IPerson;
 
 public class LinkedPartnership implements IPartnership {
 
     private Integer id;
-    private Link[] husband;
-    private Link[] wife;    
+    private String ref;
+    private Link[] father = new Link[0];
+    private Link[] mother = new Link[0];
+    private Link child;
     
+    public LinkedPartnership(int id, String ref) {
+    	this.id = id;
+    	this.ref = ref;
+	}
+    
+    public void setChildLink(IPerson child, Evidence[] records) {
+    	this.child = new Link(child, this, records);
+    }
+    
+    public String getRef() {
+    	return ref;
+    }
 	
     @Override
     public int getId() {
@@ -31,13 +48,13 @@ public class LinkedPartnership implements IPartnership {
     }
 
     @Override
-    public Link[] getFemalePartnerId() {
-        return wife;
+    public Link[] getFemalePotentialPartnerLinks() {
+        return mother;
     }
 
     @Override
-    public Link[] getMalePartnerId() {
-        return husband;
+    public Link[] getMalePotentialPartnerLinks() {
+        return father;
     }
     
     @Override
@@ -50,7 +67,40 @@ public class LinkedPartnership implements IPartnership {
     }
 
 	@Override
-	public Link getChildId() {
+	public Link getChildLink() {
+		return child;
+	}
+
+	public void addPossibleFatherLink(IPerson father, Evidence[] evidence) {
+		Link[] temp = this.father.clone();
+		Link[] newArray = new Link[temp.length + 1];
+		int c = 0;
+		for(Link l : this.father) {
+			newArray[c++] = l;
+		}
+		newArray[c] = new Link(father, this, evidence);
+		this.father = newArray;
+	}
+	
+	public void addPossibleMotherLink(IPerson mother, Evidence[] evidence) {
+		Link[] temp = this.mother.clone();
+		Link[] newArray = new Link[temp.length + 1];
+		int c = 0;
+		for(Link l : this.mother) {
+			newArray[c++] = l;
+		}
+		newArray[c] = new Link(mother, this, evidence);
+		this.mother = newArray;
+	}
+
+	@Override
+	public Date getMarriageDate() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getMarriagePlace() {
 		// TODO Auto-generated method stub
 		return null;
 	}

@@ -14,10 +14,12 @@
  * You should have received a copy of the GNU General Public License along with population_model. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.digitising_scotland.population_model.population_representations;
+package uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.adapted_interfaces;
 
 import java.util.Date;
 import java.util.List;
+
+import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.Link;
 
 /**
  * Interface for person objects.
@@ -121,4 +123,5 @@ public interface IPerson {
      * @return the identifier of the person's parents' partnership
      */
     Link getParentsPartnership();
+    
 }

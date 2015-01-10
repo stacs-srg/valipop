@@ -16,6 +16,9 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.population_model.population_representations;
 
+import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.adapted_interfaces.IPartnership;
+import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.adapted_interfaces.IPerson;
+
 /**
  * Link class, used to show a potentional connection between a person and a partnership along with a heuristic linkage value and evidence of link.
  * @author Tom Dalton
@@ -28,6 +31,12 @@ public class Link {
 
 	private IPerson linkedPerson;
 	private IPartnership linkedPartnership;
+
+	public Link(IPerson person, IPartnership partnership, Evidence[] records) {
+		linkedPerson = person;
+		linkedPartnership = partnership;
+		provenance = records;
+	}
 
 	public Evidence[] getProvenance() {
 		return provenance;

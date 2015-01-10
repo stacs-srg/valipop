@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.adapted_interfaces.IPerson;
 import uk.ac.standrews.cs.digitising_scotland.util.DateManipulation;
 
 public class LinkedPerson implements IPerson {
