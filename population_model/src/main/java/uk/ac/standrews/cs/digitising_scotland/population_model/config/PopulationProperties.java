@@ -41,7 +41,7 @@ public class PopulationProperties {
     /**
      * The default database password.
      */
-    public static final String DEFAULT_DB_PASSWORD = "qwertyqwerty";
+    public static final String DEFAULT_DB_PASSWORD = "";
 
     /**
      * The default database name.
