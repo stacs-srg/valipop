@@ -133,7 +133,7 @@ public final class ClassifyWithExistingModels {
 
         LOGGER.info("Exact Matched Bucket Size: " + exactMatchPipeline.getSuccessfullyClassified().size());
         LOGGER.info("Machine Learned Bucket Size: " + successfullyClassifiedMachineLearning.size());
-        LOGGER.info("Not Classifed Bucket Size: " + notMachineLearned.size());
+        LOGGER.info("Not Classified Bucket Size: " + notMachineLearned.size());
 
         Bucket allClassifed = BucketUtils.getUnion(exactMatchPipeline.getSuccessfullyClassified(), successfullyClassifiedMachineLearning);
         Bucket allOutputRecords = BucketUtils.getUnion(allClassifed, notMachineLearned);
@@ -202,10 +202,10 @@ public final class ClassifyWithExistingModels {
     private boolean parseMultipleClassifications(final String[] args) {
 
         if (args.length > 3) {
-            System.err.println("usage: $" + ClassifyWithExistingModels.class.getSimpleName() + "    <goldStandardDataFile>    <trainingRatio(optional)>    <output multiple classificatiosn");
+            System.err.println("usage: $" + ClassifyWithExistingModels.class.getSimpleName() + "    <goldStandardDataFile>    <trainingRatio(optional)>    <output multiple classifications");
         }
         else {
-            if (args[2].equals("1")) { return true; }
+            if (args[2].equals(Boolean.TRUE.toString())) { return true; }
         }
         return false;
 
