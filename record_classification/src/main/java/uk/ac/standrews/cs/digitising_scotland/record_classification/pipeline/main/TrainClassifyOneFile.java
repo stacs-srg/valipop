@@ -16,13 +16,9 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.pipeline.main;
 
-import java.io.File;
-import java.io.IOException;
-
-import org.junit.Assert;
+import com.google.common.io.Files;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.lookup.ExactMatchClassifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.olr.OLRClassifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.resolver.LogLengthWeightedLossFunction;
@@ -37,18 +33,15 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructur
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.records.Record;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.vectors.CodeIndexer;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.vectors.VectorFactory;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.pipeline.BucketGenerator;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.pipeline.ClassifierPipeline;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.pipeline.ExactMatchPipeline;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.pipeline.IPipeline;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.pipeline.PipelineUtils;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.pipeline.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.writers.DataClerkingWriter;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.writers.FileComparisonWriter;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.writers.MetricsWriter;
 import uk.ac.standrews.cs.digitising_scotland.tools.Timer;
 import uk.ac.standrews.cs.digitising_scotland.tools.configuration.MachineLearningConfiguration;
 
-import com.google.common.io.Files;
+import java.io.File;
+import java.io.IOException;
 
 /**
  * This class integrates the training of machine learning models and the
@@ -160,7 +153,7 @@ public final class TrainClassifyOneFile {
 
         Bucket allClassifed = BucketUtils.getUnion(successfullyExactMatched, successfullyClassifiedMachineLearning);
         Bucket allRecords = BucketUtils.getUnion(allClassifed, notMachineLearned);
-        Assert.assertTrue(allRecords.size() == predictionBucket.size());
+        assert(allRecords.size() == predictionBucket.size());
 
         writeRecords(experimentalFolderName, allRecords);
 
