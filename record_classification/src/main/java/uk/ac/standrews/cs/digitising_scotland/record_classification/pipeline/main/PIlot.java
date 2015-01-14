@@ -16,15 +16,9 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.pipeline.main;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-
-import org.junit.Assert;
+import com.google.common.io.Files;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.lookup.ExactMatchClassifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.olr.OLRClassifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.resolver.LengthWeightedLossFunction;
@@ -39,18 +33,17 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructur
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.records.Record;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.vectors.CodeIndexer;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.vectors.VectorFactory;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.pipeline.BucketGenerator;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.pipeline.ClassifierPipeline;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.pipeline.ExactMatchPipeline;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.pipeline.IPipeline;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.pipeline.PipelineUtils;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.pipeline.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.writers.DataClerkingWriter;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.writers.FileComparisonWriter;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.writers.MetricsWriter;
 import uk.ac.standrews.cs.digitising_scotland.tools.Timer;
 import uk.ac.standrews.cs.digitising_scotland.tools.configuration.MachineLearningConfiguration;
 
-import com.google.common.io.Files;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 
 /**
  * This class integrates the training of machine learning models and the
@@ -63,7 +56,7 @@ import com.google.common.io.Files;
  * these records. The vectorFactory also manages the mapping of vectors IDs to
  * words, ie the vector dictionary. <br>
  * <br>
- * An {@link AbstractClassifier} is then created from the training bucket and
+ * An AbstractClassifier is then created from the training bucket and
  * the model(s) are trained and saved to disk. <br>
  * <br>
  * The records to be classified are held in a file with the correct format as
@@ -72,7 +65,7 @@ import com.google.common.io.Files;
  * {@link Bucket}. <br>
  * <br>
  * After the records have been created and stored in a bucket, classification
- * can begin. This is carried out by the {@link BucketClassifier} class which in
+ * can begin. This is carried out by the BucketClassifier class which in
  * turn implements the {@link ClassifierPipeline}. Please see this
  * class for implementation details. <br>
  * <br>
@@ -156,7 +149,7 @@ public final class PIlot {
 
         Bucket allClassifed = BucketUtils.getUnion(successfullyExactMatched, successfullyClassifiedMachineLearning);
         Bucket allRecords = BucketUtils.getUnion(allClassifed, notMachineLearned);
-        Assert.assertTrue(allRecords.size() == predictionBucket.size());
+        assert(allRecords.size() == predictionBucket.size());
 
         writeRecords(experimentalFolderName, allRecords);
 
