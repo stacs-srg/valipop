@@ -19,23 +19,21 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.tools.fileu
 import com.healthmarketscience.jackcess.Database;
 import com.healthmarketscience.jackcess.DatabaseBuilder;
 import com.healthmarketscience.jackcess.util.ExportUtil;
-import com.healthmarketscience.jackcess.util.SimpleExportFilter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Set;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 /**
- * The Class AccessDatabaseReader can be used to read an access database file (*.mdb) and dump it to tsv files.
- * Each table is written to it's on *.tsv file in a folder with the same name as the partent database.
+ * Allows a MS Access database to be dumped to TSV files.
  */
 public class AccessDatabaseDumper {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AccessDatabaseDumper.class);
+    private static final String TAB = "\t";
 
-    /** The database. */
+    public static final String TAB_SEPARATED_SUFFIX = "tsv";
+
     private Database database;
 
     /**
@@ -61,38 +59,25 @@ public class AccessDatabaseDumper {
     }
 
     /**
-     * Writes each table in the database to file. Each table has its own file with the table name in
-     * a folder with the same name as the parent database.
-     * @param baseDirectory Base directory in which to create database folder
+     * Writes each table in the database to a tab-separated file with the same name as the table.
+     * @param export_directory directory in which to write database table files
      *
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    public void writeTablesToFile(final String baseDirectory) throws IOException {
+    public void writeTablesToFile(final Path export_directory) throws IOException {
 
-        // TODO write more elegantly making use of modern jackcess API.
-
-        final String name = database.getFile().getName();
-        final int fileExtensionLength = 4;
-        File databaseFolder = new File(baseDirectory + "/" + name.substring(0, name.length() - fileExtensionLength));
-        if (!databaseFolder.mkdirs()) {
-            LOGGER.error("Could not create database storage folder");
-        }
-
-        Set<String> tablesNames = database.getTableNames();
-        for (String tableName : tablesNames) {
-            ExportUtil.exportFile(database, tableName, new File(databaseFolder + "/" + tableName + ".tsv"), true, "\t", '"', SimpleExportFilter.INSTANCE);
-        }
+        new ExportUtil.Builder(database).setDelimiter(TAB).setFileNameExtension(TAB_SEPARATED_SUFFIX).setHeader(true).exportAll(export_directory.toFile());
     }
 
     /**
      * The main method.
      *
-     * @param args The location of the database to read and dump. Only the first argument is read.
+     * @param args the path to the database, followed by the path to the output directory.
      * @throws IOException Signals that an I/O exception has occurred.
      */
     public static void main(final String[] args) throws IOException {
 
         AccessDatabaseDumper reader = new AccessDatabaseDumper(args[0]);
-        reader.writeTablesToFile("target/");
+        reader.writeTablesToFile(Paths.get(args[1]));
     }
 }
