@@ -23,7 +23,7 @@ import java.io.IOException;
 
 import org.junit.Test;
 
-import uk.ac.standrews.cs.digitising_scotland.tools.Utils;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.tools.Utils;
 
 /**
  * The Class UtilsTest.

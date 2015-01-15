@@ -20,7 +20,7 @@ import java.util.*;
 
 import com.google.common.collect.Multiset;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.resolver.Interfaces.LossFunction;
-import uk.ac.standrews.cs.digitising_scotland.tools.MapSorter;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.tools.MapSorter;
 
 /**
  * Helper function for applying a loss function to a collection

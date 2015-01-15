@@ -20,7 +20,7 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-import uk.ac.standrews.cs.digitising_scotland.tools.analysis.Reporter;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.tools.analysis.Reporter;
 
 /**
  * Tests the the Reporter class is working as expected.
