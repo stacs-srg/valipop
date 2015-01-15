@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import uk.ac.standrews.cs.digitising_scotland.tools.DeepCloner;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.tools.DeepCloner;
 
 /**
  * A map from keys to lists of values, iterable over keys and serializable.

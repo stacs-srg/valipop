@@ -37,9 +37,9 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructur
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.records.Record;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.tokens.TokenSet;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.InputFormatException;
-import uk.ac.standrews.cs.digitising_scotland.tools.ReaderWriterFactory;
-import uk.ac.standrews.cs.digitising_scotland.tools.Utils;
-import uk.ac.standrews.cs.digitising_scotland.tools.analysis.UniqueWordCounter;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.tools.ReaderWriterFactory;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.tools.Utils;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.tools.analysis.UniqueWordCounter;
 
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;

@@ -24,6 +24,7 @@ import uk.ac.standrews.cs.digitising_scotland.population_model.model.in_memory.A
 import uk.ac.standrews.cs.digitising_scotland.population_model.model.IPopulation;
 import uk.ac.standrews.cs.digitising_scotland.population_model.model.IPopulationWriter;
 import uk.ac.standrews.cs.digitising_scotland.population_model.model.PopulationConverter;
+import uk.ac.standrews.cs.digitising_scotland.util.FileManipulation;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -53,7 +54,7 @@ public class PopulationToGraphvizTest extends AbstractExporterTest {
             converter.convert();
         }
 
-        assertThatFilesHaveSameContent(actual_output, intended_output);
+        FileManipulation.assertThatFilesHaveSameContent(actual_output, intended_output);
     }
 
     @Before

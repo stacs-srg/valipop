@@ -16,6 +16,7 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.util;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -29,6 +30,9 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 /**
  * Created by al on 11/05/2014.
@@ -105,5 +109,21 @@ public class FileManipulation {
             throw e.getCause();
         }
         return result;
+    }
+
+    public static void assertThatFilesHaveSameContent(final Path path1, final Path path2) throws IOException {
+
+        try (
+                BufferedReader reader1 = Files.newBufferedReader(path1, FILE_CHARSET);
+                BufferedReader reader2 = Files.newBufferedReader(path2, FILE_CHARSET)) {
+
+            String line1;
+
+            while ((line1 = reader1.readLine()) != null) {
+                final String line2 = reader2.readLine();
+                assertEquals(line1, line2);
+            }
+            assertNull(reader2.readLine());
+        }
     }
 }

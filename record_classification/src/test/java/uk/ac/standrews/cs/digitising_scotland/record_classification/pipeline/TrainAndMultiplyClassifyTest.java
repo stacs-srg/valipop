@@ -21,7 +21,7 @@ import java.io.File;
 import org.junit.Assert;
 import org.junit.Test;
 
-import uk.ac.standrews.cs.digitising_scotland.tools.Utils;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.tools.Utils;
 
 public class TrainAndMultiplyClassifyTest {
 

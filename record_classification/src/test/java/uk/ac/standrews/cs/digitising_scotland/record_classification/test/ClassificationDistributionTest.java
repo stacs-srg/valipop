@@ -22,7 +22,7 @@ import java.util.Arrays;
 
 import org.junit.Test;
 
-import uk.ac.standrews.cs.digitising_scotland.tools.analysis.ClassificationDistribution;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.tools.analysis.ClassificationDistribution;
 
 /**
  * The Class ClassificationDistributionTest.

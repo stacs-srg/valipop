@@ -35,7 +35,7 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 
-import uk.ac.standrews.cs.digitising_scotland.tools.analysis.AnalysisTools;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.tools.analysis.AnalysisTools;
 
 /**
  * The Class AnalysisToolsTest.

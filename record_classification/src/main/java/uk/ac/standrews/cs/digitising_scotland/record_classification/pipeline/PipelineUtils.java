@@ -30,10 +30,10 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructur
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.bucket.Bucket;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.vectors.CodeIndexer;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.FolderCreationException;
-import uk.ac.standrews.cs.digitising_scotland.tools.ReaderWriterFactory;
-import uk.ac.standrews.cs.digitising_scotland.tools.Timer;
-import uk.ac.standrews.cs.digitising_scotland.tools.Utils;
-import uk.ac.standrews.cs.digitising_scotland.tools.configuration.MachineLearningConfiguration;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.tools.ReaderWriterFactory;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.tools.Timer;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.tools.Utils;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.tools.configuration.MachineLearningConfiguration;
 
 /**
  * Utility class containing methods to help with the creation and use of the exact match and machine learning pipelines.

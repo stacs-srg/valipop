@@ -19,24 +19,14 @@ package uk.ac.standrews.cs.digitising_scotland.population_model.model.in_memory;
 import org.junit.After;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-
-import uk.ac.standrews.cs.digitising_scotland.population_model.distributions.general.NegativeDeviationException;
-import uk.ac.standrews.cs.digitising_scotland.population_model.distributions.general.NegativeWeightException;
 import uk.ac.standrews.cs.digitising_scotland.population_model.model.IDFactory;
 import uk.ac.standrews.cs.digitising_scotland.population_model.model.IPopulation;
-import uk.ac.standrews.cs.digitising_scotland.population_model.model.in_memory.CompactPopulation;
-import uk.ac.standrews.cs.digitising_scotland.population_model.model.in_memory.CompactPopulationAdapter;
-import uk.ac.standrews.cs.digitising_scotland.util.FileManipulation;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collection;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 
 /**
  * @author Graham Kirby (graham.kirby@st-andrews.ac.uk)
@@ -96,21 +86,5 @@ public abstract class AbstractExporterTest {
     private static String makeFileNameRoot(final int population_size) {
 
         return "file" + population_size;
-    }
-
-    protected static void assertThatFilesHaveSameContent(final Path path1, final Path path2) throws IOException {
-
-        try (
-                BufferedReader reader1 = Files.newBufferedReader(path1, FileManipulation.FILE_CHARSET);
-                BufferedReader reader2 = Files.newBufferedReader(path2, FileManipulation.FILE_CHARSET)) {
-
-            String line1;
-
-            while ((line1 = reader1.readLine()) != null) {
-                final String line2 = reader2.readLine();
-                assertEquals(line1, line2);
-            }
-            assertNull(reader2.readLine());
-        }
     }
 }

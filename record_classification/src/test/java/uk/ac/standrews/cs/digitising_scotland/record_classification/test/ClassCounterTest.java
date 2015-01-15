@@ -33,7 +33,7 @@ import java.io.File;
 
 import org.junit.Test;
 
-import uk.ac.standrews.cs.digitising_scotland.tools.analysis.ClassCounter;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.tools.analysis.ClassCounter;
 
 /**
  * JUnit tests for the ClassCounter class.

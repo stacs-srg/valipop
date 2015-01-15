@@ -23,7 +23,7 @@ import java.io.IOException;
 
 import org.junit.Test;
 
-import uk.ac.standrews.cs.digitising_scotland.tools.fileutils.DSStoreRemover;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.tools.fileutils.DSStoreRemover;
 
 /**
  * Tests .DS_Store remover.

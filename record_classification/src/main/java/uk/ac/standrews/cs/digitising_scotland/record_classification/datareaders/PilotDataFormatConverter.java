@@ -28,7 +28,7 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructur
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.code.CodeDictionary;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.records.Record;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.InputFormatException;
-import uk.ac.standrews.cs.digitising_scotland.tools.ReaderWriterFactory;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.tools.ReaderWriterFactory;
 
 /**
  * The Class FormatConverter converts a comma separated text file in the format that is used by the modern cod data

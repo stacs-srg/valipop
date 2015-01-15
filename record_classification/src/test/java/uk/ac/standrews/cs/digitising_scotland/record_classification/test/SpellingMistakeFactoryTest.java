@@ -20,7 +20,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
-import uk.ac.standrews.cs.digitising_scotland.tools.SpellingMistakeFactory;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.tools.SpellingMistakeFactory;
 
 /**
  * Runs tests on the SpellingMistakeFactory class.

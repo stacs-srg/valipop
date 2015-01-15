@@ -36,11 +36,11 @@ import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import uk.ac.standrews.cs.digitising_scotland.tools.ReaderWriterFactory;
-import uk.ac.standrews.cs.digitising_scotland.tools.Timer;
-import uk.ac.standrews.cs.digitising_scotland.tools.Utils;
-import uk.ac.standrews.cs.digitising_scotland.tools.analysis.MemoryMonitor;
-import uk.ac.standrews.cs.digitising_scotland.tools.configuration.MachineLearningConfiguration;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.tools.ReaderWriterFactory;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.tools.Timer;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.tools.Utils;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.tools.analysis.MemoryMonitor;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.tools.configuration.MachineLearningConfiguration;
 import cc.mallet.pipe.CharSequence2TokenSequence;
 import cc.mallet.pipe.CharSequenceLowercase;
 import cc.mallet.pipe.Pipe;

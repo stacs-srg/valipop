@@ -33,7 +33,7 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructur
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.code.CodeNotValidException;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.tokens.TokenSet;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.InputFormatException;
-import uk.ac.standrews.cs.digitising_scotland.tools.ReaderWriterFactory;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.tools.ReaderWriterFactory;
 
 /**
  * Creates {@link Record} objects populated with data from file.

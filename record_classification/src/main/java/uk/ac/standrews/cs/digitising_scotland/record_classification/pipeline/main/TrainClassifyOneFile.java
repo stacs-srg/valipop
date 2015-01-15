@@ -37,8 +37,8 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.pipeline.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.writers.DataClerkingWriter;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.writers.FileComparisonWriter;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.writers.MetricsWriter;
-import uk.ac.standrews.cs.digitising_scotland.tools.Timer;
-import uk.ac.standrews.cs.digitising_scotland.tools.configuration.MachineLearningConfiguration;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.tools.Timer;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.tools.configuration.MachineLearningConfiguration;
 
 import java.io.File;
 import java.io.IOException;
