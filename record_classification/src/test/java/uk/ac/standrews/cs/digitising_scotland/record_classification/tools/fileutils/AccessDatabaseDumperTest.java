@@ -32,8 +32,7 @@ public class AccessDatabaseDumperTest {
     private static final String DATABASE_NAME = "testDatabase";
     private static final String TABLE_NAME = "testTable";
     private static final String EXPECTED_TABLE_FILE_NAME = "databaseDumperExpected";
-    private static final String ACCESS_SUFFIX = ".mdb";
-    private static final String TAB_SEPARATED_SUFFIX = ".tsv";
+    private static final String ACCESS_SUFFIX = "mdb";
 
     Path test_directory_path;
     Path database_file_path;
@@ -44,10 +43,10 @@ public class AccessDatabaseDumperTest {
     public void setUp() throws IOException, URISyntaxException {
 
         test_directory_path = Files.createTempDirectory(null);
-        database_file_path = test_directory_path.resolve(DATABASE_NAME + ACCESS_SUFFIX);
+        database_file_path = test_directory_path.resolve(appendSuffix(DATABASE_NAME, ACCESS_SUFFIX));
 
-        table_file_path = test_directory_path.resolve(DATABASE_NAME).resolve(TABLE_NAME + TAB_SEPARATED_SUFFIX);
-        expected_table_file_path = Paths.get(getClass().getResource(EXPECTED_TABLE_FILE_NAME + TAB_SEPARATED_SUFFIX).toURI());
+        table_file_path = test_directory_path.resolve(appendSuffix(TABLE_NAME, AccessDatabaseDumper.TAB_SEPARATED_SUFFIX));
+        expected_table_file_path = Paths.get(getClass().getResource(appendSuffix(EXPECTED_TABLE_FILE_NAME, AccessDatabaseDumper.TAB_SEPARATED_SUFFIX)).toURI());
     }
 
     @Test
@@ -77,6 +76,11 @@ public class AccessDatabaseDumperTest {
     private void dumpTableToFile(Database database) throws IOException {
 
         AccessDatabaseDumper dumper = new AccessDatabaseDumper(database);
-        dumper.writeTablesToFile(test_directory_path.toString());
+        dumper.writeTablesToFile(test_directory_path);
+    }
+
+    private String appendSuffix(String database_name, String suffix) {
+
+        return database_name + "." + suffix;
     }
 }
