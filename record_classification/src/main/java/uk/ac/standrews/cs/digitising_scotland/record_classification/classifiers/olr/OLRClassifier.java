@@ -16,23 +16,11 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.olr;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Properties;
-
 import org.apache.mahout.math.Matrix;
 import org.apache.mahout.math.NamedVector;
 import org.apache.mahout.math.Vector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.IClassifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.bucket.Bucket;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.classification.Classification;
@@ -43,14 +31,19 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructur
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.vectors.VectorFactory;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.tools.configuration.MachineLearningConfiguration;
 
+import java.io.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Properties;
+
 /**
- * OLRClassifier class that provides methods for training and classifying records.
+ * Provides methods for training and classifying records.
  * This classifier utilises the {@link OLRCrossFold} objects in order to build the best possible models.
- * More information can be found on the project algorithms page:
- *  <a href="http://digitisingscotland.cs.st-andrews.ac.uk/record_classification/algorithms-information.html"> Algorithms Page</a>
- * <p/>
+ * More information can be found on the project
+ *  <a href="http://digitisingscotland.cs.st-andrews.ac.uk/record_classification/algorithms-information.html"> Algorithms Page</a>.
+ *
  * @author frjd2, jkc25
- * 
  */
 public class OLRClassifier implements IClassifier<TokenSet, Classification>, Serializable {
 
@@ -87,9 +80,8 @@ public class OLRClassifier implements IClassifier<TokenSet, Classification>, Ser
      * Trains an OLRCrossfold model on a bucket.
      *
      * @param bucket bucket to train on
-     * @throws InterruptedException the interrupted exception
      */
-    public void train(final Bucket bucket) throws InterruptedException {
+    public void train(final Bucket bucket) {
 
         CodeIndexer index;
 
@@ -107,7 +99,6 @@ public class OLRClassifier implements IClassifier<TokenSet, Classification>, Ser
             ArrayList<NamedVector> trainingVectorList = getTrainingVectors(bucket);
             Collections.shuffle(trainingVectorList);
             model = new OLRCrossFold(trainingVectorList, properties, matrix);
-
         }
 
         model.train();
@@ -117,7 +108,7 @@ public class OLRClassifier implements IClassifier<TokenSet, Classification>, Ser
 
     private ArrayList<NamedVector> getTrainingVectors(final Bucket bucket) {
 
-        ArrayList<NamedVector> trainingVectorList = new ArrayList<NamedVector>();
+        ArrayList<NamedVector> trainingVectorList = new ArrayList<>();
 
         for (Record record : bucket) {
             final List<NamedVector> listOfVectors = vectorFactory.generateVectorsFromRecord(record);
@@ -128,9 +119,7 @@ public class OLRClassifier implements IClassifier<TokenSet, Classification>, Ser
 
     private Matrix expandModel(final int featureCountDiff, final int classCountDiff) {
 
-        Matrix oldMatrix = model.getAverageBetaMatrix();
-        final Matrix enlarge = MatrixEnlarger.enlarge(oldMatrix, featureCountDiff, classCountDiff);
-        return enlarge;
+        return MatrixEnlarger.enlarge(model.getAverageBetaMatrix(), featureCountDiff, classCountDiff);
     }
 
     private int getFeatureCountDiff(final Bucket bucket) {
@@ -138,8 +127,7 @@ public class OLRClassifier implements IClassifier<TokenSet, Classification>, Ser
         int initNoFeatures = vectorFactory.getNumberOfFeatures();
         vectorFactory.updateDictionary(bucket);
         int newNoFeatures = vectorFactory.getNumberOfFeatures();
-        int featureCountDiff = newNoFeatures - initNoFeatures;
-        return featureCountDiff;
+        return newNoFeatures - initNoFeatures;
     }
 
     private int getNumClassesAdded(final Bucket bucket) {
@@ -157,20 +145,17 @@ public class OLRClassifier implements IClassifier<TokenSet, Classification>, Ser
         }
         catch (IOException e) {
             LOGGER.error("Could not write model. IOException has occured", e.getCause());
-
         }
     }
 
     public Classification classify(final TokenSet tokenSet) {
 
-        Classification pair;
         NamedVector vector = vectorFactory.createNamedVectorFromString(tokenSet.toString(), "unknown");
         Vector classifyFull = model.classifyFull(vector);
         int classificationID = classifyFull.maxValueIndex();
         Code code = vectorFactory.getCodeIndexer().getCode(classificationID);
         double confidence = Math.exp(model.logLikelihood(classificationID, vector));
-        pair = new Classification(code, tokenSet, confidence);
-        return pair;
+        return new Classification(code, tokenSet, confidence);
     }
 
     /**
@@ -234,5 +219,4 @@ public class OLRClassifier implements IClassifier<TokenSet, Classification>, Ser
         ois.close();
         return olrClassifier;
     }
-
 }

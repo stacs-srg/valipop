@@ -16,30 +16,17 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.lookup;
 
-import java.io.BufferedInputStream;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.ObjectInput;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.Pair;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.bucket.Bucket;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.classification.Classification;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.code.Code;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.records.Record;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.tokens.TokenSet;
+
+import java.io.*;
+import java.util.*;
 
 /**
  * Uses a lookup table to return matches as classifications.
@@ -168,31 +155,18 @@ public class ExactMatchClassifier {
         write(oos);
     }
 
+    @SuppressWarnings("unchecked")
     protected ExactMatchClassifier readModel(final String fileName) throws ClassNotFoundException, IOException {
 
         //deserialize the .ser file
-        InputStream file = new FileInputStream(fileName + ".ser");
-        InputStream buffer = new BufferedInputStream(file);
-        ObjectInput input = new ObjectInputStream(buffer);
-        try {
 
-            Map<String, Set<Classification>> recoveredMap = (Map<String, Set<Classification>>) input.readObject();
-            lookupTable = recoveredMap;
+        try (ObjectInput input = new ObjectInputStream(new BufferedInputStream(new FileInputStream(fileName + ".ser")))) {
 
+            Object object = input.readObject();
+            lookupTable = (Map<String, Set<Classification>>) object;
         }
-        finally {
-            closeStreams(file, input);
 
-        }
         return this;
-    }
-
-    private void closeStreams(final InputStream file, final ObjectInput input) throws IOException {
-
-        if (input != null) {
-            input.close();
-            file.close();
-        }
     }
 
     private void write(final ObjectOutputStream oos) throws IOException {
@@ -224,21 +198,21 @@ public class ExactMatchClassifier {
      */
     public Set<Classification> classifyTokenSetToCodeTripleSet(final TokenSet tokenSet) throws IOException {
 
-        Set<Classification> result = lookupTable.get(tokenSet);
-
-        if (result != null) {
-            result = setConfidenceLevels(result, 2.0);
-            return result;
-
-        }
-        else {
+//        Set<Classification> result = lookupTable.get(tokenSet);
+//
+//        if (result != null) {
+//            result = setConfidenceLevels(result, 2.0);
+//            return result;
+//
+//        }
+//        else {
             return null;
-        }
+//        }
     }
 
     private Set<Classification> setConfidenceLevels(final Set<Classification> result, final double i) {
 
-        Set<Classification> newResults = new HashSet<Classification>();
+        Set<Classification> newResults = new HashSet<>();
         for (Classification codeTriple : result) {
             Classification newCodeT = new Classification(codeTriple.getCode(), codeTriple.getTokenSet(), i);
             newResults.add(newCodeT);
@@ -248,16 +222,16 @@ public class ExactMatchClassifier {
 
     public Pair<Code, Double> classify(final TokenSet tokenSet) throws IOException {
 
-        Set<Classification> result = lookupTable.get(tokenSet);
-
-        if (result != null) {
-            Classification current = result.iterator().next();
-            return new Pair<Code, Double>(current.getCode(), current.getConfidence());
-
-        }
-        else {
+//        Set<Classification> result = lookupTable.get(tokenSet);
+//
+//        if (result != null) {
+//            Classification current = result.iterator().next();
+//            return new Pair<Code, Double>(current.getCode(), current.getConfidence());
+//
+//        }
+//        else {
             return null;
-        }
+//        }
     }
 
     @Override
