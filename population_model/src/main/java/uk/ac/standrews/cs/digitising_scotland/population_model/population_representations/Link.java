@@ -24,7 +24,7 @@ import uk.ac.standrews.cs.digitising_scotland.population_model.population_repres
  * @author Tom Dalton
  *
  */
-public class Link {
+public class Link implements Comparable<Float> {
 
 	private Evidence[] provenance;
 	private float heuriticOfLinkValue;
@@ -32,8 +32,13 @@ public class Link {
 	private IPerson linkedPerson;
 	private IPartnership linkedPartnership;
 
-	public Link(IPerson person, IPartnership partnership, Evidence[] records) {
-		linkedPerson = person;
+	public Link(IPerson person, IPartnership partnership, Evidence[] records, float heuristic) {
+		this(person, partnership, records);
+		heuriticOfLinkValue = heuristic;
+	}
+
+	public Link(IPerson child, IPartnership partnership, Evidence[] records) {
+		linkedPerson = child;
 		linkedPartnership = partnership;
 		provenance = records;
 	}
@@ -74,6 +79,16 @@ public class Link {
 	 */
 	public void setHeuriticOfLinkValue(float heuriticOfLinkValue) {
 		this.heuriticOfLinkValue = heuriticOfLinkValue;
+	}
+
+	@Override
+	public int compareTo(Float o) {
+		if(o > heuriticOfLinkValue)
+			return -1;
+		else if (o < heuriticOfLinkValue)
+			return 1;
+		else
+			return 0;
 	}
 
 

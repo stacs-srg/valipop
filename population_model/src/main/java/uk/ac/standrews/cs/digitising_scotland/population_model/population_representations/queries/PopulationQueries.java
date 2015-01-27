@@ -16,7 +16,11 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.queries;
 
+import java.util.List;
+import java.util.PriorityQueue;
+
 import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.Link;
+import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.LinkedPerson;
 import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.LinkedPopulation;
 
 public class PopulationQueries {
@@ -29,24 +33,58 @@ public class PopulationQueries {
 
 	// Need to think about ways of paring parents into probably sets?
 	public Link[] getFatherOf(int person) {
-
-		return null;
+		LinkedPerson p = (LinkedPerson) population.findPerson(person);
+		Link[] l = p.getParentsPartnership().getLinkedPartnership().getMalePotentialPartnerLinks();
+		
+		return orderArrayOfLinksByHeuristic(l);
 	}
 
 	public Link[] getMotherOf(int person) {
-
-		return null;
+		LinkedPerson p = (LinkedPerson) population.findPerson(person);
+		Link[] l = p.getParentsPartnership().getLinkedPartnership().getFemalePotentialPartnerLinks();
+		
+		return orderArrayOfLinksByHeuristic(l);
 	}
 	
 	public Link[] getPartnerOf(int person) {
-
-		return null;
+		LinkedPerson p = (LinkedPerson) population.findPerson(person);
+		PriorityQueue<Link> partners = new PriorityQueue<Link>();
+		List<Link> possPartnership = p.getPartnerships();
+		for(Link l : possPartnership) {
+			Link[] partnerLinks = null;
+			if(p.getSex() == 'M') {
+				partnerLinks = l.getLinkedPartnership().getFemalePotentialPartnerLinks();
+			} else if(p.getSex() == 'F') {
+				partnerLinks = l.getLinkedPartnership().getMalePotentialPartnerLinks();
+			}
+			
+			for(Link lP : partnerLinks) {
+				partners.add(lP);
+			}
+		}
+		
+		return partners.toArray(new Link[partners.size()]);
 	}
 	
 	// Need to think about way of grouping children into possible sets?
 	public Link[] getChildrenOf(int person) {
-
-		return null;
+		LinkedPerson p = (LinkedPerson) population.findPerson(person);
+		PriorityQueue<Link> children = new PriorityQueue<Link>();
+		List<Link> possPartnership = p.getPartnerships();
+		for(Link l : possPartnership) {
+			children.add(l);
+		}
+		return children.toArray(new Link[children.size()]);
 	}
+	
+	private Link[] orderArrayOfLinksByHeuristic(Link[] links) {
+		PriorityQueue<Link> q = new PriorityQueue<Link>();
+		for(Link l : links) {
+			q.add(l);
+		}
+		return q.toArray(new Link[q.size()]);
+	}
+	
+	
 
 }

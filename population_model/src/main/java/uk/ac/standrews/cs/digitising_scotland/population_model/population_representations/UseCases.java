@@ -46,24 +46,24 @@ public class UseCases {
 		population.getPartnershipByRef("bet").setChildLink(population.findPersonByFirstName("beta"), new Evidence[]{records[1]});
 		population.getPartnershipByRef("gimel").setChildLink(population.findPersonByFirstName("gamma"), new Evidence[]{records[0]});
 		
-		population.getPartnershipByRef("alef").addPossibleFatherLink(population.findPersonByFirstName("delta"), new Evidence[]{records[2], records[6]});
-		population.getPartnershipByRef("alef").addPossibleFatherLink(population.findPersonByFirstName("zeta"), new Evidence[]{records[2], records[7]});
+		population.getPartnershipByRef("alef").addPossibleFatherLink(population.findPersonByFirstName("delta"), new Evidence[]{records[2], records[6]}, 0.8f);
+		population.getPartnershipByRef("alef").addPossibleFatherLink(population.findPersonByFirstName("zeta"), new Evidence[]{records[2], records[7]}, 0.6f);
 		
-		population.getPartnershipByRef("alef").addPossibleMotherLink(population.findPersonByFirstName("iota"), new Evidence[]{records[2], records[5]});
-		population.getPartnershipByRef("alef").addPossibleMotherLink(population.findPersonByFirstName("theta"), new Evidence[]{records[2], records[4]});
-		population.getPartnershipByRef("alef").addPossibleMotherLink(population.findPersonByFirstName("epsilon"), new Evidence[]{records[2], records[3]});
+		population.getPartnershipByRef("alef").addPossibleMotherLink(population.findPersonByFirstName("iota"), new Evidence[]{records[2], records[5]}, 0.3f);
+		population.getPartnershipByRef("alef").addPossibleMotherLink(population.findPersonByFirstName("theta"), new Evidence[]{records[2], records[4]}, 0.4f);
+		population.getPartnershipByRef("alef").addPossibleMotherLink(population.findPersonByFirstName("epsilon"), new Evidence[]{records[2], records[3]}, 0.9f);
 		
-		population.getPartnershipByRef("bet").addPossibleFatherLink(population.findPersonByFirstName("delta"), new Evidence[]{records[1], records[6]});
+		population.getPartnershipByRef("bet").addPossibleFatherLink(population.findPersonByFirstName("delta"), new Evidence[]{records[1], records[6]}, 0.7f);
 		
-		population.getPartnershipByRef("bet").addPossibleMotherLink(population.findPersonByFirstName("epsilon"), new Evidence[]{records[1], records[3]});
-		population.getPartnershipByRef("bet").addPossibleMotherLink(population.findPersonByFirstName("eta"), new Evidence[]{records[1], records[8]});
+		population.getPartnershipByRef("bet").addPossibleMotherLink(population.findPersonByFirstName("epsilon"), new Evidence[]{records[1], records[3]}, 0.7f);
+		population.getPartnershipByRef("bet").addPossibleMotherLink(population.findPersonByFirstName("eta"), new Evidence[]{records[1], records[8]}, 0.5f);
 		
-		population.getPartnershipByRef("gimel").addPossibleFatherLink(population.findPersonByFirstName("delta"), new Evidence[]{records[0], records[6]});
-		population.getPartnershipByRef("gimel").addPossibleFatherLink(population.findPersonByFirstName("zeta"), new Evidence[]{records[0], records[7]});
+		population.getPartnershipByRef("gimel").addPossibleFatherLink(population.findPersonByFirstName("delta"), new Evidence[]{records[0], records[6]}, 0.9f);
+		population.getPartnershipByRef("gimel").addPossibleFatherLink(population.findPersonByFirstName("zeta"), new Evidence[]{records[0], records[7]}, 0.5f);
 		
-		population.getPartnershipByRef("gimel").addPossibleMotherLink(population.findPersonByFirstName("epsilon"), new Evidence[]{records[0], records[3]});
+		population.getPartnershipByRef("gimel").addPossibleMotherLink(population.findPersonByFirstName("epsilon"), new Evidence[]{records[0], records[3]}, 0.6f);
 		
-		return population;		
+		return population;
 	}
 	
 	public static void main(String[] args) {
