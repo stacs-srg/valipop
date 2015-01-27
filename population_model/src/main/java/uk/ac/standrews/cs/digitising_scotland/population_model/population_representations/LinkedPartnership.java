@@ -71,25 +71,25 @@ public class LinkedPartnership implements IPartnership {
 		return child;
 	}
 
-	public void addPossibleFatherLink(IPerson father, Evidence[] evidence) {
+	public void addPossibleFatherLink(IPerson father, Evidence[] evidence, float linkHeuristic) {
 		Link[] temp = this.father.clone();
 		Link[] newArray = new Link[temp.length + 1];
 		int c = 0;
 		for(Link l : this.father) {
 			newArray[c++] = l;
 		}
-		newArray[c] = new Link(father, this, evidence);
+		newArray[c] = new Link(father, this, evidence, linkHeuristic);
 		this.father = newArray;
 	}
 	
-	public void addPossibleMotherLink(IPerson mother, Evidence[] evidence) {
+	public void addPossibleMotherLink(IPerson mother, Evidence[] evidence, float linkHeuristic) {
 		Link[] temp = this.mother.clone();
 		Link[] newArray = new Link[temp.length + 1];
 		int c = 0;
 		for(Link l : this.mother) {
 			newArray[c++] = l;
 		}
-		newArray[c] = new Link(mother, this, evidence);
+		newArray[c] = new Link(mother, this, evidence, linkHeuristic);
 		this.mother = newArray;
 	}
 
