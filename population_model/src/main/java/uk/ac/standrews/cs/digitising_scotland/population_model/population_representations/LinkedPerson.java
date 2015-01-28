@@ -49,6 +49,12 @@ public class LinkedPerson implements IPerson {
     	this.partnerships = partnerships;    	
     }
     
+    public void addPartnershipLink(Link partnership) {
+    	partnerships.add(partnership);    	
+    }
+    
+    
+    
     public void setParentPartnershipLink(Link parentPartnershipLink) {
     	this.parentPartnershipLink = parentPartnershipLink;
     }
