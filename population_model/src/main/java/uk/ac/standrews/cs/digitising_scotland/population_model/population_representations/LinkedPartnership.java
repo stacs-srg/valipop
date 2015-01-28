@@ -34,7 +34,7 @@ public class LinkedPartnership implements IPartnership {
     	this.ref = ref;
 	}
     
-    public void setChildLink(IPerson child, Evidence[] records) {
+    public void setChildLink(LinkedPerson child, Evidence[] records) {
     	this.child = new Link(child, this, records);
     }
     
@@ -71,7 +71,7 @@ public class LinkedPartnership implements IPartnership {
 		return child;
 	}
 
-	public void addPossibleFatherLink(IPerson father, Evidence[] evidence, float linkHeuristic) {
+	public void addPossibleFatherLink(LinkedPerson father, Evidence[] evidence, float linkHeuristic) {
 		Link[] temp = this.father.clone();
 		Link[] newArray = new Link[temp.length + 1];
 		int c = 0;
@@ -82,7 +82,7 @@ public class LinkedPartnership implements IPartnership {
 		this.father = newArray;
 	}
 	
-	public void addPossibleMotherLink(IPerson mother, Evidence[] evidence, float linkHeuristic) {
+	public void addPossibleMotherLink(LinkedPerson mother, Evidence[] evidence, float linkHeuristic) {
 		Link[] temp = this.mother.clone();
 		Link[] newArray = new Link[temp.length + 1];
 		int c = 0;

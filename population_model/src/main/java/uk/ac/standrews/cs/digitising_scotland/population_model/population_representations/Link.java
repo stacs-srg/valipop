@@ -29,18 +29,22 @@ public class Link implements Comparable<Float> {
 	private Evidence[] provenance;
 	private float heuriticOfLinkValue;
 
-	private IPerson linkedPerson;
-	private IPartnership linkedPartnership;
+	private LinkedPerson linkedPerson;
+	private LinkedPartnership linkedPartnership;
 
-	public Link(IPerson person, IPartnership partnership, Evidence[] records, float heuristic) {
-		this(person, partnership, records);
+	public Link(LinkedPerson person, LinkedPartnership partnership, Evidence[] records, float heuristic) {
+		linkedPerson = person;
+		linkedPartnership = partnership;
+		provenance = records;
+		linkedPerson.addPartnershipLink(this);
 		heuriticOfLinkValue = heuristic;
 	}
 
-	public Link(IPerson child, IPartnership partnership, Evidence[] records) {
+	public Link(LinkedPerson child, LinkedPartnership partnership, Evidence[] records) {
 		linkedPerson = child;
 		linkedPartnership = partnership;
 		provenance = records;
+		linkedPerson.setParentPartnershipLink(this);
 	}
 
 	public Evidence[] getProvenance() {
@@ -55,7 +59,7 @@ public class Link implements Comparable<Float> {
 		return linkedPerson;
 	}
 	
-	public void setLinkedPerson(IPerson linkedPerson) {
+	public void setLinkedPerson(LinkedPerson linkedPerson) {
 		this.linkedPerson = linkedPerson;
 	}
 	
@@ -63,7 +67,7 @@ public class Link implements Comparable<Float> {
 		return linkedPartnership;
 	}
 	
-	public void setLinkedPartnership(IPartnership linkedPartnership) {
+	public void setLinkedPartnership(LinkedPartnership linkedPartnership) {
 		this.linkedPartnership = linkedPartnership;
 	}
 

@@ -156,7 +156,7 @@ public class LinkedPopulation implements IPopulation {
 		partnerships.add(linkedPartnership);
 	}
 	
-    public IPerson findPersonByFirstName(final String name) {
+    public LinkedPerson findPersonByFirstName(final String name) {
 
         for (LinkedPerson person : livingPeople) {
             if (person.getFirstName().equals(name)) {
