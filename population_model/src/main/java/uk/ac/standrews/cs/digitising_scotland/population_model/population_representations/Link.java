@@ -55,7 +55,7 @@ public class Link implements Comparable<Float> {
 		this.provenance = provenance;
 	}
 	
-	public IPerson getLinkedPerson() {
+	public LinkedPerson getLinkedPerson() {
 		return linkedPerson;
 	}
 	
@@ -63,7 +63,7 @@ public class Link implements Comparable<Float> {
 		this.linkedPerson = linkedPerson;
 	}
 	
-	public IPartnership getLinkedPartnership() {
+	public LinkedPartnership getLinkedPartnership() {
 		return linkedPartnership;
 	}
 	

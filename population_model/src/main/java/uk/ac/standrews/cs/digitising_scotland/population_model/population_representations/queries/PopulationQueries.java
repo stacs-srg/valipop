@@ -16,9 +16,11 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.queries;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.PriorityQueue;
 
+import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.Evidence;
 import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.Link;
 import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.LinkedPerson;
 import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.LinkedPopulation;
@@ -75,6 +77,78 @@ public class PopulationQueries {
 			children.add(l);
 		}
 		return children.toArray(new Link[children.size()]);
+	}
+	
+	public Link[] getPotentialFatherSideSiblingsOf(int person) {
+		LinkedPerson p = (LinkedPerson) population.findPerson(person);
+		Link[] fathers = p.getParentsPartnership().getLinkedPartnership().getMalePotentialPartnerLinks();
+		ArrayList<Link> siblings = new ArrayList<Link>();
+		for(Link l : fathers) {
+			List<Link> partnerships = l.getLinkedPerson().getPartnerships();
+			for(Link pL : partnerships) {
+				Link childLink = pL.getLinkedPartnership().getChildLink();
+				Evidence[] records = new Evidence[pL.getProvenance().length + childLink.getProvenance().length];
+				int c = 0;
+				for(Evidence e : pL.getProvenance()) {
+					records[c++] = e;
+				}
+				for(Evidence e : childLink.getProvenance()) {
+					records[c++] = e;
+				}
+				siblings.add(new Link(childLink.getLinkedPerson(), pL.getLinkedPartnership(), records, pL.getHeuriticOfLinkValue()));
+			}
+		}
+		Link[] t = siblings.toArray(new Link[siblings.size()]);
+		return orderArrayOfLinksByHeuristic(t);
+	}
+	
+	public Link[] getPotentialMotherSideSiblingsOf(int person) {
+		LinkedPerson p = (LinkedPerson) population.findPerson(person);
+		Link[] fathers = p.getParentsPartnership().getLinkedPartnership().getFemalePotentialPartnerLinks();
+		ArrayList<Link> siblings = new ArrayList<Link>();
+		for(Link l : fathers) {
+			List<Link> partnerships = l.getLinkedPerson().getPartnerships();
+			for(Link pL : partnerships) {
+				Link childLink = pL.getLinkedPartnership().getChildLink();
+				Evidence[] records = new Evidence[pL.getProvenance().length + childLink.getProvenance().length];
+				int c = 0;
+				for(Evidence e : pL.getProvenance()) {
+					records[c++] = e;
+				}
+				for(Evidence e : childLink.getProvenance()) {
+					records[c++] = e;
+				}
+				siblings.add(new Link(childLink.getLinkedPerson(), pL.getLinkedPartnership(), records, pL.getHeuriticOfLinkValue()));
+			}
+		}
+		Link[] t = siblings.toArray(new Link[siblings.size()]);
+		return orderArrayOfLinksByHeuristic(t);
+	}
+	
+	public Link[] getPotentialFullSiblings(int person) {
+		Link[] fSideSibling = getPotentialFatherSideSiblingsOf(person);
+		Link[] mSideSibling = getPotentialMotherSideSiblingsOf(person);
+		ArrayList<Link> potentialFullSiblings = new ArrayList<Link>();
+		
+		for(Link f : fSideSibling) {
+			int fId = f.getLinkedPerson().getId();
+			for(Link m : mSideSibling){
+				if(fId == m.getLinkedPerson().getId()) {
+					Evidence[] records = new Evidence[f.getProvenance().length + m.getProvenance().length];
+					int c = 0;
+					for(Evidence e : f.getProvenance()) {
+						records[c++] = e;
+					}
+					for(Evidence e : m.getProvenance()) {
+						records[c++] = e;
+					}
+					potentialFullSiblings.add(new Link(m.getLinkedPerson(), m.getLinkedPerson().getParentsPartnership().getLinkedPartnership(), records, f.getHeuriticOfLinkValue() * m.getHeuriticOfLinkValue()));
+				}
+			}
+		}
+		Link[] t = potentialFullSiblings.toArray(new Link[potentialFullSiblings.size()]);
+		return orderArrayOfLinksByHeuristic(t);		
+		
 	}
 	
 	private Link[] orderArrayOfLinksByHeuristic(Link[] links) {
