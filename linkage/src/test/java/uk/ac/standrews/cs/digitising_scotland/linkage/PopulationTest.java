@@ -4,7 +4,7 @@ import org.json.JSONException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import uk.ac.standrews.cs.digitising_scotland.jstore.impl.Store;
+
 import uk.ac.standrews.cs.digitising_scotland.jstore.impl.exceptions.BucketException;
 import uk.ac.standrews.cs.digitising_scotland.jstore.impl.exceptions.IllegalKeyException;
 import uk.ac.standrews.cs.digitising_scotland.jstore.impl.exceptions.RepositoryException;
@@ -44,7 +44,10 @@ public class PopulationTest {
     @Before
     public void setUpEachTest() throws RepositoryException, IOException, StoreException {
 
-        store = new Store(store_path);
+        Path tempStore = Files.createTempDirectory(null);
+
+        StoreFactory.setStorePath(tempStore.toString());
+        store = StoreFactory.makeStore();
 
         repo = store.makeRepository("repo");
 

@@ -1,7 +1,6 @@
 package uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records;
 
 
-import uk.ac.standrews.cs.digitising_scotland.jstore.impl.Store;
 import uk.ac.standrews.cs.digitising_scotland.jstore.impl.exceptions.IllegalKeyException;
 import uk.ac.standrews.cs.digitising_scotland.jstore.types.LXPBaseType;
 import uk.ac.standrews.cs.digitising_scotland.jstore.types.LXP_SCALAR;
@@ -102,7 +101,7 @@ public class Marriage extends AbstractLXP {
 
     public Marriage(long label_id, JSONReader reader) throws PersistentObjectException, IllegalKeyException {
 
-        super(Store.getInstance().getNextFreePID(), reader);
+        super(reader);
     }
 
 }
