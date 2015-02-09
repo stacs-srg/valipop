@@ -92,9 +92,9 @@ public class AlLinker {
         linkage_repo = store.makeRepository(linkage_repo_name);
         blocked_people_repo = store.makeRepository(blocked_people_repo_name);  // a repo of Buckets of records blocked by  first name, last name, sex
 
-        types = input_repo.makeBucket(types_name, BucketKind.DIRECTORYBACKED); // generic
+        types = input_repo.makeBucket(types_name, BucketKind.DIRECTORYBACKED); // generic // TODO delete me
 
-        tf = TypeFactory.getInstance();
+        tf = TypeFactory.getInstance(); // TODO delete this too.
         initialiseTypes(types);
 
         initialiseFactories();

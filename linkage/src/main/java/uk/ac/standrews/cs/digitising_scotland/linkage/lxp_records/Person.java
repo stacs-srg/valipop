@@ -37,12 +37,12 @@ public class Person extends AbstractLXP {
     public static final String MOTHERS_SURNAME = "mothers_surname";
     @LXP_SCALAR(type = STRING)
     public static final String MOTHERS_MAIDEN_SURNAME = "mothers_maiden_surname";
-    @LXP_SCALAR(type = STRING)
-    public static final String CHANGED_SURNAME = "changed_surname";
-    @LXP_SCALAR(type = STRING)
-    public static final String CHANGED_FORENAME = "changed_forename";
-    @LXP_SCALAR(type = STRING)
-    public static final String CHANGED_MOTHERS_MAIDEN_SURNAME = "changed_mothers_maiden_surname";
+    //    @LXP_SCALAR(type = STRING)
+//    public static final String CHANGED_SURNAME = "changed_surname";
+//    @LXP_SCALAR(type = STRING)
+//    public static final String CHANGED_FORENAME = "changed_forename";
+//    @LXP_SCALAR(type = STRING)
+//    public static final String CHANGED_MOTHERS_MAIDEN_SURNAME = "changed_mothers_maiden_surname";
     @LXP_SCALAR(type = STRING)
     public static final String ORIGINAL_RECORD_ID = "original_record_id";
     @LXP_SCALAR(type = STRING)
@@ -78,7 +78,7 @@ public class Person extends AbstractLXP {
         super(reader);
     }
 
-    public Person(String surname, String forename, String sex, String fathers_forename, String fathers_surname, String fathers_occupation, String mothers_forename, String mothers_surname, String mothers_maiden_surname, String changed_surname, String changed_forename, String changed_mothers_maiden_surname, String original_record_id, String original_record_type, String role, String occupation) {
+    public Person(String surname, String forename, String sex, String fathers_forename, String fathers_surname, String fathers_occupation, String mothers_forename, String mothers_surname, String mothers_maiden_surname, String original_record_id, String original_record_type, String role, String occupation) {
 
         this();
         try {
@@ -91,9 +91,6 @@ public class Person extends AbstractLXP {
             put(MOTHERS_FORENAME, mothers_forename);
             put(MOTHERS_SURNAME, mothers_surname);
             put(MOTHERS_MAIDEN_SURNAME, mothers_maiden_surname);
-            put(CHANGED_SURNAME, changed_surname);
-            put(CHANGED_FORENAME, changed_forename);
-            put(CHANGED_MOTHERS_MAIDEN_SURNAME, changed_mothers_maiden_surname);
             put(ORIGINAL_RECORD_ID, original_record_id);
             put(ORIGINAL_RECORD_TYPE, original_record_type);
             put(ROLE, role);
@@ -125,10 +122,6 @@ public class Person extends AbstractLXP {
         }
 
         String mothers_maiden_surname = BD_record.getString(MOTHERS_MAIDEN_SURNAME);
-        String changed_surname = BD_record.getString(CHANGED_SURNAME);
-        String changed_forename = BD_record.getString(CHANGED_FORENAME);
-        String changed_mothers_maiden_surname = BD_record.getString(CHANGED_MOTHERS_MAIDEN_SURNAME);
-
         String original_record_id = Long.toString(BD_record.getId());
         String original_record_type = BD_record.getString(Types.LABEL);
         String role = "baby";
@@ -136,7 +129,7 @@ public class Person extends AbstractLXP {
 
         return new Person(surname, forename, sex, fathers_forename, fathers_surname,
                 fathers_occupation, mothers_forename, mothers_surname, mothers_maiden_surname,
-                changed_surname, changed_forename, changed_mothers_maiden_surname, original_record_id, original_record_type, role, occupation);
+                original_record_id, original_record_type, role, occupation);
     }
 
     public static Person createFatherFromChildsBirthDeath(Person child, Birth BD_record) throws KeyNotFoundException, TypeMismatchFoundException {// TODO rewrite as typed
@@ -150,15 +143,10 @@ public class Person extends AbstractLXP {
         String sex = "M"; //  this is the father
         String fathers_forename = ""; // unknown - father of father
         String fathers_surname = ""; //unknown - father of father  - could guess but no
-
         String fathers_occupation = ""; // unknown - father of father
         String mothers_forename = ""; // unknown - mother of father
         String mothers_surname = ""; //unknown - mother of father  - could guess but no
-
         String mothers_maiden_surname = ""; // unknown - mother of father
-        String changed_surname = ""; // unknown
-        String changed_forename = ""; // unknown
-        String changed_mothers_maiden_surname = ""; // unknown
 
         String original_record_id = Long.toString(BD_record.getId());
         String original_record_type = BD_record.getString(Types.LABEL);
@@ -167,7 +155,7 @@ public class Person extends AbstractLXP {
 
         return new Person(surname, forename, sex, fathers_forename, fathers_surname,
                 fathers_occupation, mothers_forename, mothers_surname, mothers_maiden_surname,
-                changed_surname, changed_forename, changed_mothers_maiden_surname, original_record_id, original_record_type, role, occupation);
+                original_record_id, original_record_type, role, occupation);
     }
 
     public static Person createMotherFromChildsBirthDeath(ILXP child, ILXP BD_record) throws KeyNotFoundException, TypeMismatchFoundException {// TODO rewrite as typed
@@ -198,7 +186,7 @@ public class Person extends AbstractLXP {
 
         return new Person(surname, forename, sex, fathers_forename, fathers_surname,
                 fathers_occupation, mothers_forename, mothers_surname, mothers_maiden_surname,
-                changed_surname, changed_forename, changed_mothers_maiden_surname, original_record_id, original_record_type, role, occupation);
+                original_record_id, original_record_type, role, occupation);
 
     }
 
@@ -227,10 +215,7 @@ public class Person extends AbstractLXP {
             mothers_surname = marriage_record.getString(SURNAME);
         }
 
-        String mothers_maiden_surname = ""; // unknown??    // TODO check these
-        String changed_surname = ""; // unknown
-        String changed_forename = ""; // unknown
-        String changed_mothers_maiden_surname = ""; // unknown
+        String mothers_maiden_surname = ""; // unknown??    // TODO check this
 
         String original_record_id = Long.toString(marriage_record.getId());
         String original_record_type = marriage_record.getString(Types.LABEL);
@@ -239,7 +224,7 @@ public class Person extends AbstractLXP {
 
         return new Person(surname, forename, sex, fathers_forename, fathers_surname,
                 fathers_occupation, mothers_forename, mothers_surname, mothers_maiden_surname,
-                changed_surname, changed_forename, changed_mothers_maiden_surname, original_record_id, original_record_type, role, occupation);
+                original_record_id, original_record_type, role, occupation);
     }
 
     /**
@@ -267,10 +252,7 @@ public class Person extends AbstractLXP {
             mothers_surname = marriage_record.getString(SURNAME);
         }
 
-        String mothers_maiden_surname = ""; // unknown??    // TODO check these
-        String changed_surname = ""; // unknown
-        String changed_forename = ""; // unknown
-        String changed_mothers_maiden_surname = ""; // unknown
+        String mothers_maiden_surname = ""; // unknown??    // TODO check this
 
         String original_record_id = Long.toString(marriage_record.getId());
         String original_record_type = marriage_record.getString(Types.LABEL);
@@ -279,7 +261,7 @@ public class Person extends AbstractLXP {
 
         return new Person(surname, forename, sex, fathers_forename, fathers_surname,
                 fathers_occupation, mothers_forename, mothers_surname, mothers_maiden_surname,
-                changed_surname, changed_forename, changed_mothers_maiden_surname, original_record_id, original_record_type, role, occupation);
+                original_record_id, original_record_type, role, occupation);
 
     }
 
@@ -295,15 +277,10 @@ public class Person extends AbstractLXP {
 
         String fathers_forename = ""; // unknown - father of bride's father
         String fathers_surname = ""; //unknown - father of bride's father
-
         String fathers_occupation = ""; // unknown - father of bride's father
         String mothers_forename = ""; // unknown - mother of bride's father
         String mothers_surname = ""; //unknown - mother of bride's father
-
         String mothers_maiden_surname = ""; // unknown - mother bride's father
-        String changed_surname = ""; // unknown
-        String changed_forename = ""; // unknown
-        String changed_mothers_maiden_surname = ""; // unknown
 
         String original_record_id = Long.toString(marriage_record.getId());
         String original_record_type = marriage_record.getString(Types.LABEL);
@@ -312,7 +289,7 @@ public class Person extends AbstractLXP {
 
         return new Person(surname, forename, sex, fathers_forename, fathers_surname,
                 fathers_occupation, mothers_forename, mothers_surname, mothers_maiden_surname,
-                changed_surname, changed_forename, changed_mothers_maiden_surname, original_record_id, original_record_type, role, occupation);
+                original_record_id, original_record_type, role, occupation);
 
     }
 
@@ -332,11 +309,8 @@ public class Person extends AbstractLXP {
         String fathers_occupation = ""; // unknown - father of bride's mother
         String mothers_forename = ""; // unknown - mother of bride's mother
         String mothers_surname = ""; //unknown - mother of bride's mother
-
         String mothers_maiden_surname = ""; // unknown - mother bride's mother
-        String changed_surname = ""; // unknown
-        String changed_forename = ""; // unknown
-        String changed_mothers_maiden_surname = ""; // unknown
+
 
         String original_record_id = Long.toString(marriage_record.getId());
         String original_record_type = marriage_record.getString(Types.LABEL);
@@ -345,7 +319,7 @@ public class Person extends AbstractLXP {
 
         return new Person(surname, forename, sex, fathers_forename, fathers_surname,
                 fathers_occupation, mothers_forename, mothers_surname, mothers_maiden_surname,
-                changed_surname, changed_forename, changed_mothers_maiden_surname, original_record_id, original_record_type, role, occupation);  // TODO Person should also have maiden name???
+                original_record_id, original_record_type, role, occupation);  // TODO Person should also have maiden name???
 
     }
 
@@ -358,18 +332,13 @@ public class Person extends AbstractLXP {
 
         String forename = marriage_record.getString(GROOM_FATHERS_FORENAME);
         String sex = "M"; //  this is the brides father
-
         String fathers_forename = ""; // unknown - father of groom's father
         String fathers_surname = ""; //unknown - father of groom's father
-
         String fathers_occupation = ""; // unknown - father of groom's father
         String mothers_forename = ""; // unknown - mother of groom's father
         String mothers_surname = ""; //unknown - mother of groom's father
-
         String mothers_maiden_surname = ""; // unknown - mother groom's father
-        String changed_surname = ""; // unknown
-        String changed_forename = ""; // unknown
-        String changed_mothers_maiden_surname = ""; // unknown
+
 
         String original_record_id = Long.toString(marriage_record.getId());
         String original_record_type = marriage_record.getString(Types.LABEL);
@@ -378,7 +347,7 @@ public class Person extends AbstractLXP {
 
         return new Person(surname, forename, sex, fathers_forename, fathers_surname,
                 fathers_occupation, mothers_forename, mothers_surname, mothers_maiden_surname,
-                changed_surname, changed_forename, changed_mothers_maiden_surname, original_record_id, original_record_type, role, occupation);
+                original_record_id, original_record_type, role, occupation);
 
 
     }
@@ -392,18 +361,12 @@ public class Person extends AbstractLXP {
 
         String forename = marriage_record.getString(GROOM_MOTHERS_FORENAME);
         String sex = "M"; //  this is the brides father
-
         String fathers_forename = ""; // unknown - father of bride's mother
         String fathers_surname = ""; //unknown - father of bride's mother
-
         String fathers_occupation = ""; // unknown - father of bride's mother
         String mothers_forename = ""; // unknown - mother of bride's mother
         String mothers_surname = ""; //unknown - mother of bride's mother
-
         String mothers_maiden_surname = ""; // unknown - mother bride's mother
-        String changed_surname = ""; // unknown
-        String changed_forename = ""; // unknown
-        String changed_mothers_maiden_surname = ""; // unknown
 
         String original_record_id = Long.toString(marriage_record.getId());
         String original_record_type = marriage_record.getString(Types.LABEL);
@@ -412,7 +375,7 @@ public class Person extends AbstractLXP {
 
         return new Person(surname, forename, sex, fathers_forename, fathers_surname,
                 fathers_occupation, mothers_forename, mothers_surname, mothers_maiden_surname,
-                changed_surname, changed_forename, changed_mothers_maiden_surname, original_record_id, original_record_type, role, occupation);  // TODO Person should also have maiden name???
+                original_record_id, original_record_type, role, occupation);  // TODO Person should also have maiden name???
 
     }
 
