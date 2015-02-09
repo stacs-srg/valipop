@@ -2,7 +2,7 @@ package uk.ac.standrews.cs.digitising_scotland.linkage.resolve;
 
 import org.json.JSONException;
 import uk.ac.standrews.cs.digitising_scotland.jstore.impl.LXP;
-import uk.ac.standrews.cs.digitising_scotland.jstore.impl.Store;
+import uk.ac.standrews.cs.digitising_scotland.jstore.impl.StoreFactory;
 import uk.ac.standrews.cs.digitising_scotland.jstore.impl.TypeFactory;
 import uk.ac.standrews.cs.digitising_scotland.jstore.impl.exceptions.*;
 import uk.ac.standrews.cs.digitising_scotland.jstore.interfaces.*;
@@ -33,7 +33,7 @@ public class AlLinker {
     private static String linkage_repo_name = "linkage_repo";                   // repository for linked records
     private static String blocked_people_repo_name = "blocked_people_repo";     // repository for blocked records
 
-    private Store store;
+    private IStore store;
     private IRepository input_repo;             // Repository containing buckets of BDM records
     private IRepository linkage_repo;
     private IRepository blocked_people_repo;
@@ -86,7 +86,10 @@ public class AlLinker {
     }
 
     private void initialise() throws StoreException, IOException, RepositoryException, RecordFormatException, JSONException {
-        store = new Store(store_path);
+
+        StoreFactory.setStorePath(store_path);
+        store = StoreFactory.makeStore();
+
 
         input_repo = store.makeRepository(input_repo_name);
         linkage_repo = store.makeRepository(linkage_repo_name);
@@ -132,7 +135,7 @@ public class AlLinker {
      * Initialises the people bucket with the people injected - one record for each person referenced in the original record
      * Initialises the known(100% certain) relationships between people and stores the relationships in the relationships bucket
      */
-    private void injestBDMRecords() throws BucketException, RecordFormatException, JSONException, IOException, KeyNotFoundException, PersistentObjectException, TypeMismatchFoundException, IllegalKeyException {
+    private void injestBDMRecords() throws BucketException, RecordFormatException, JSONException, IOException, KeyNotFoundException, PersistentObjectException, TypeMismatchFoundException, IllegalKeyException, StoreException {
 
         EventImporter.importDigitisingScotlandBirths(births, births_source_path, birthlabel);
         EventImporter.importDigitisingScotlandMarriages(marriages, marriages_source_path, deathlabel);
@@ -179,7 +182,7 @@ public class AlLinker {
      *
      * @param bucket - the bucket from which to take the inputs records
      */
-    private void createPeopleAndRelationshipsFromBirthsOrDeaths(IBucket bucket) throws BucketException, KeyNotFoundException, TypeMismatchFoundException {
+    private void createPeopleAndRelationshipsFromBirthsOrDeaths(IBucket bucket) throws BucketException, KeyNotFoundException, TypeMismatchFoundException, StoreException {
 
         IOutputStream<Person> people_stream = people.getOutputStream();
         IOutputStream<Relationship> relationships_stream = relationships.getOutputStream();
@@ -208,7 +211,7 @@ public class AlLinker {
         }
     }
 
-    private void createPeopleAndRelationshipsFromMarriages(IBucket<Marriage> bucket) throws BucketException, KeyNotFoundException, TypeMismatchFoundException {
+    private void createPeopleAndRelationshipsFromMarriages(IBucket<Marriage> bucket) throws BucketException, KeyNotFoundException, TypeMismatchFoundException, StoreException {
 
         IOutputStream<Person> people_stream = people.getOutputStream();
         IOutputStream<Relationship> relationships_stream = relationships.getOutputStream();
@@ -245,7 +248,8 @@ public class AlLinker {
     private void addRelationship(Person record1, String relationship_type, Person record2, ILXP evidence, IOutputStream output) {
 
         if (record1 != null) {
-            ILXP lxp = new LXP();
+            ILXP lxp = null;
+            lxp = new LXP();
 
             try {
                 lxp.put("person1", Long.toString(record1.getId()));

@@ -2,6 +2,7 @@ package uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records;
 
 import uk.ac.standrews.cs.digitising_scotland.jstore.impl.exceptions.IllegalKeyException;
 import uk.ac.standrews.cs.digitising_scotland.jstore.impl.exceptions.KeyNotFoundException;
+import uk.ac.standrews.cs.digitising_scotland.jstore.impl.exceptions.StoreException;
 import uk.ac.standrews.cs.digitising_scotland.jstore.impl.exceptions.TypeMismatchFoundException;
 import uk.ac.standrews.cs.digitising_scotland.jstore.interfaces.ILXP;
 import uk.ac.standrews.cs.digitising_scotland.jstore.types.LXP_SCALAR;
@@ -78,7 +79,7 @@ public class Person extends AbstractLXP {
         super(reader);
     }
 
-    public Person(String surname, String forename, String sex, String fathers_forename, String fathers_surname, String fathers_occupation, String mothers_forename, String mothers_surname, String mothers_maiden_surname, String original_record_id, String original_record_type, String role, String occupation) {
+    public Person(String surname, String forename, String sex, String fathers_forename, String fathers_surname, String fathers_occupation, String mothers_forename, String mothers_surname, String mothers_maiden_surname, String original_record_id, String original_record_type, String role, String occupation) throws StoreException {
 
         this();
         try {
@@ -101,7 +102,7 @@ public class Person extends AbstractLXP {
 
     }
 
-    public static Person createPersonFromOwnBirthDeath(ILXP BD_record) throws KeyNotFoundException, TypeMismatchFoundException {// TODO rewrite as typed
+    public static Person createPersonFromOwnBirthDeath(ILXP BD_record) throws KeyNotFoundException, TypeMismatchFoundException, StoreException {// TODO rewrite as typed
 
         String surname = BD_record.getString(SURNAME);
         String forename = BD_record.getString(FORENAME);
@@ -132,7 +133,7 @@ public class Person extends AbstractLXP {
                 original_record_id, original_record_type, role, occupation);
     }
 
-    public static Person createFatherFromChildsBirthDeath(Person child, Birth BD_record) throws KeyNotFoundException, TypeMismatchFoundException {// TODO rewrite as typed
+    public static Person createFatherFromChildsBirthDeath(Person child, Birth BD_record) throws KeyNotFoundException, TypeMismatchFoundException, StoreException {// TODO rewrite as typed
 
         if (child.getString(FATHERS_SURNAME).equals("")) {
             return null;
@@ -158,7 +159,7 @@ public class Person extends AbstractLXP {
                 original_record_id, original_record_type, role, occupation);
     }
 
-    public static Person createMotherFromChildsBirthDeath(ILXP child, ILXP BD_record) throws KeyNotFoundException, TypeMismatchFoundException {// TODO rewrite as typed
+    public static Person createMotherFromChildsBirthDeath(ILXP child, ILXP BD_record) throws KeyNotFoundException, TypeMismatchFoundException, StoreException {// TODO rewrite as typed
 
         if (child.getString(FATHERS_SURNAME).equals("")) {
             return null;
@@ -196,7 +197,7 @@ public class Person extends AbstractLXP {
      * @param marriage_record a record from which to extract person information
      * @return the LXP representing the bride
      */
-    public static Person createBrideFromMarriageRecord(ILXP marriage_record) throws KeyNotFoundException, TypeMismatchFoundException {// TODO rewrite as typed
+    public static Person createBrideFromMarriageRecord(ILXP marriage_record) throws KeyNotFoundException, TypeMismatchFoundException, StoreException {// TODO rewrite as typed
 
         String surname = marriage_record.getString(BRIDE_SURNAME);
         String forename = marriage_record.getString(BRIDE_FORENAME);
@@ -233,7 +234,7 @@ public class Person extends AbstractLXP {
      * @param marriage_record a record from which to extract person information
      * @return the LXP representing the groom
      */
-    public static Person createGroomFromMarriageRecord(ILXP marriage_record) throws KeyNotFoundException, TypeMismatchFoundException {// TODO rewrite as typed
+    public static Person createGroomFromMarriageRecord(ILXP marriage_record) throws KeyNotFoundException, TypeMismatchFoundException, StoreException {// TODO rewrite as typed
 
         String surname = marriage_record.getString(GROOM_SURNAME);
         String forename = marriage_record.getString(GROOM_FORENAME);
@@ -265,7 +266,7 @@ public class Person extends AbstractLXP {
 
     }
 
-    public static Person createBridesFatherFromMarriageRecord(ILXP bride, ILXP marriage_record) throws KeyNotFoundException, TypeMismatchFoundException {// TODO rewrite as typed
+    public static Person createBridesFatherFromMarriageRecord(ILXP bride, ILXP marriage_record) throws KeyNotFoundException, TypeMismatchFoundException, StoreException {// TODO rewrite as typed
 
         String surname = marriage_record.getString(BRIDE_FATHERS_SURNAME);
         if (surname.equals("0")) {
@@ -293,7 +294,7 @@ public class Person extends AbstractLXP {
 
     }
 
-    public static Person createBridesMotherFromMarriageRecord(ILXP bride, ILXP marriage_record) throws KeyNotFoundException, TypeMismatchFoundException { // TODO rewrite as typed
+    public static Person createBridesMotherFromMarriageRecord(ILXP bride, ILXP marriage_record) throws KeyNotFoundException, TypeMismatchFoundException, StoreException { // TODO rewrite as typed
 
         String surname = marriage_record.getString(BRIDE_MOTHERS_MAIDEN_SURNAME);  //<<<<<<<<<<<<< TODO see below
 //        if( surname.equals("0") ) {
@@ -323,7 +324,7 @@ public class Person extends AbstractLXP {
 
     }
 
-    public static Person createGroomsFatherFromMarriageRecord(ILXP groom, ILXP marriage_record) throws KeyNotFoundException, TypeMismatchFoundException {// TODO rewrite as typed
+    public static Person createGroomsFatherFromMarriageRecord(ILXP groom, ILXP marriage_record) throws KeyNotFoundException, TypeMismatchFoundException, StoreException {// TODO rewrite as typed
 
         String surname = marriage_record.getString(GROOM_FATHERS_SURNAME);
         if (surname.equals("0")) {
@@ -352,7 +353,7 @@ public class Person extends AbstractLXP {
 
     }
 
-    public static Person createGroomsMotherFromMarriageRecord(ILXP groom, ILXP marriage_record) throws KeyNotFoundException, TypeMismatchFoundException {// TODO rewrite as typed
+    public static Person createGroomsMotherFromMarriageRecord(ILXP groom, ILXP marriage_record) throws KeyNotFoundException, TypeMismatchFoundException, StoreException {// TODO rewrite as typed
 
         String surname = marriage_record.getString(GROOM_MOTHERS_MAIDEN_SURNAME);  //<<<<<<<<<<<<< TODO see below
 //        if( surname.equals("0") ) {
