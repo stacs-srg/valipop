@@ -1,11 +1,11 @@
 package uk.ac.standrews.cs.digitising_scotland.linkage.blocking;
 
 
+import uk.ac.standrews.cs.digitising_scotland.jstore.impl.TypeFactory;
 import uk.ac.standrews.cs.digitising_scotland.jstore.impl.exceptions.BucketException;
 import uk.ac.standrews.cs.digitising_scotland.jstore.impl.exceptions.KeyNotFoundException;
 import uk.ac.standrews.cs.digitising_scotland.jstore.impl.exceptions.RepositoryException;
 import uk.ac.standrews.cs.digitising_scotland.jstore.impl.exceptions.TypeMismatchFoundException;
-import uk.ac.standrews.cs.digitising_scotland.jstore.impl.factory.TypeFactory;
 import uk.ac.standrews.cs.digitising_scotland.jstore.interfaces.IBucket;
 import uk.ac.standrews.cs.digitising_scotland.jstore.interfaces.IRepository;
 import uk.ac.standrews.cs.digitising_scotland.linkage.factory.BirthFactory;
