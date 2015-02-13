@@ -19,23 +19,12 @@ package uk.ac.standrews.cs.digitising_scotland.population_model.population_repre
 import java.util.Date;
 
 import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.adapted_interfaces.IPartnership;
-import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.adapted_interfaces.IPerson;
 
-public class LinkedPartnership implements IPartnership {
+public class LinkedMarriagePartnership extends AbstractLinkedPartnership implements IPartnership {
 
-    private Integer id;
-    private String ref;
-    private Link[] father = new Link[0];
-    private Link[] mother = new Link[0];
-    private Link child;
-    
-    public LinkedPartnership(int id, String ref) {
+    public LinkedMarriagePartnership(int id, String ref) {
     	this.id = id;
     	this.ref = ref;
-	}
-    
-    public void setChildLink(LinkedPerson child, Evidence[] records) {
-    	this.child = new Link(child, this, records);
     }
     
     public String getRef() {
@@ -49,12 +38,12 @@ public class LinkedPartnership implements IPartnership {
 
     @Override
     public Link[] getFemalePotentialPartnerLinks() {
-        return mother;
+        return female;
     }
 
     @Override
     public Link[] getMalePotentialPartnerLinks() {
-        return father;
+        return male;
     }
     
     @Override
@@ -65,33 +54,6 @@ public class LinkedPartnership implements IPartnership {
             return 1;
         }
     }
-
-	@Override
-	public Link getChildLink() {
-		return child;
-	}
-
-	public void addPossibleFatherLink(LinkedPerson father, Evidence[] evidence, float linkHeuristic) {
-		Link[] temp = this.father.clone();
-		Link[] newArray = new Link[temp.length + 1];
-		int c = 0;
-		for(Link l : this.father) {
-			newArray[c++] = l;
-		}
-		newArray[c] = new Link(father, this, evidence, linkHeuristic);
-		this.father = newArray;
-	}
-	
-	public void addPossibleMotherLink(LinkedPerson mother, Evidence[] evidence, float linkHeuristic) {
-		Link[] temp = this.mother.clone();
-		Link[] newArray = new Link[temp.length + 1];
-		int c = 0;
-		for(Link l : this.mother) {
-			newArray[c++] = l;
-		}
-		newArray[c] = new Link(mother, this, evidence, linkHeuristic);
-		this.mother = newArray;
-	}
 
 	@Override
 	public Date getMarriageDate() {
@@ -105,4 +67,11 @@ public class LinkedPartnership implements IPartnership {
 		return null;
 	}
 
+	@Override
+	public Link getChildLink() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+    
+      
 }
