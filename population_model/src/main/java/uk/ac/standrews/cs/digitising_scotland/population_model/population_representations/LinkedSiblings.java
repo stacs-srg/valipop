@@ -20,9 +20,48 @@ public class LinkedSiblings {
 
 	private Integer id;
 	private String ref;
-    private Link[] sibling1 = new Link[0];
-    private Link[] sibling2 = new Link[0];
+    private IndirectLink[] sibling1 = new IndirectLink[0];
+    private IndirectLink[] sibling2 = new IndirectLink[0];
     private boolean fullSibling;
     Evidence[] provenance;
+    
+    public LinkedSiblings(int id, String ref) {
+    	this.id = id;
+    	this.ref = ref;
+	}
+    
+    public void addPossibleSibling1Link(LinkedPerson sibling1, Evidence[] evidence, float linkHeuristic) {
+		IndirectLink[] temp = this.sibling1.clone();
+		IndirectLink[] newArray = new IndirectLink[temp.length + 1];
+		int c = 0;
+		for(IndirectLink l : this.sibling1) {
+			newArray[c++] = l;
+		}
+		newArray[c] = new IndirectLink(sibling1, this, evidence, linkHeuristic);
+		this.sibling1 = newArray;
+	}
+	
+	public void addPossibleSibling2Link(LinkedPerson sibling2, Evidence[] evidence, float linkHeuristic) {
+		IndirectLink[] temp = this.sibling2.clone();
+		IndirectLink[] newArray = new IndirectLink[temp.length + 1];
+		int c = 0;
+		for(IndirectLink l : this.sibling2) {
+			newArray[c++] = l;
+		}
+		newArray[c] = new IndirectLink(sibling2, this, evidence, linkHeuristic);
+		this.sibling2 = newArray;
+	}
+	
+    public IndirectLink[] getSibling1PotentialLinks() {
+        return sibling1;
+    }
+
+    public IndirectLink[] getSibling2PotentialLinks() {
+        return sibling2;
+    }
+
+	public Object getRef() {
+		return ref;
+	}
 	
 }

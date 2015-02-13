@@ -22,36 +22,36 @@ public abstract class AbstractLinkedPartnership implements IPartnership {
 
     protected Integer id;
     protected String ref;
-    protected Link[] male = new Link[0];
-    protected Link[] female = new Link[0];
+    protected DirectLink[] male = new DirectLink[0];
+    protected DirectLink[] female = new DirectLink[0];
 	
     public void addPossibleMaleLink(LinkedPerson male, Evidence[] evidence, float linkHeuristic) {
-		Link[] temp = this.male.clone();
-		Link[] newArray = new Link[temp.length + 1];
+		DirectLink[] temp = this.male.clone();
+		DirectLink[] newArray = new DirectLink[temp.length + 1];
 		int c = 0;
-		for(Link l : this.male) {
+		for(DirectLink l : this.male) {
 			newArray[c++] = l;
 		}
-		newArray[c] = new Link(male, this, evidence, linkHeuristic);
+		newArray[c] = new DirectLink(male, this, evidence, linkHeuristic);
 		this.male = newArray;
 	}
 	
 	public void addPossibleFemaleLink(LinkedPerson female, Evidence[] evidence, float linkHeuristic) {
-		Link[] temp = this.female.clone();
-		Link[] newArray = new Link[temp.length + 1];
+		DirectLink[] temp = this.female.clone();
+		DirectLink[] newArray = new DirectLink[temp.length + 1];
 		int c = 0;
-		for(Link l : this.female) {
+		for(DirectLink l : this.female) {
 			newArray[c++] = l;
 		}
-		newArray[c] = new Link(female, this, evidence, linkHeuristic);
+		newArray[c] = new DirectLink(female, this, evidence, linkHeuristic);
 		this.female = newArray;
 	}
 	
-    public Link[] getFemalePotentialPartnerLinks() {
+    public DirectLink[] getFemalePotentialPartnerLinks() {
         return female;
     }
 
-    public Link[] getMalePotentialPartnerLinks() {
+    public DirectLink[] getMalePotentialPartnerLinks() {
         return male;
     }
 	

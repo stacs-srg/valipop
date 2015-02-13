@@ -37,12 +37,12 @@ public class LinkedMarriagePartnership extends AbstractLinkedPartnership impleme
     }
 
     @Override
-    public Link[] getFemalePotentialPartnerLinks() {
+    public DirectLink[] getFemalePotentialPartnerLinks() {
         return female;
     }
 
     @Override
-    public Link[] getMalePotentialPartnerLinks() {
+    public DirectLink[] getMalePotentialPartnerLinks() {
         return male;
     }
     
@@ -68,7 +68,7 @@ public class LinkedMarriagePartnership extends AbstractLinkedPartnership impleme
 	}
 
 	@Override
-	public Link getChildLink() {
+	public DirectLink getChildLink() {
 		// TODO Auto-generated method stub
 		return null;
 	}
