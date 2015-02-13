@@ -27,8 +27,8 @@ import uk.ac.standrews.cs.digitising_scotland.util.ArrayManipulation;
 
 public class LinkedPopulation implements IPopulation {
 	
-	private static List<LinkedPerson> livingPeople = new ArrayList<LinkedPerson>();
-    private static List<LinkedPartnership> partnerships = new ArrayList<LinkedPartnership>();
+	private List<LinkedPerson> livingPeople = new ArrayList<LinkedPerson>();
+    private List<LinkedChildbearingPartnership> partnerships = new ArrayList<LinkedChildbearingPartnership>();
     String description;
     
 	
@@ -78,7 +78,7 @@ public class LinkedPopulation implements IPopulation {
         return new Iterable<IPartnership>() {
             @Override
             public Iterator<IPartnership> iterator() {
-                final Iterator<LinkedPartnership> iterator = partnerships.iterator();
+                final Iterator<LinkedChildbearingPartnership> iterator = partnerships.iterator();
 
                 return new Iterator<IPartnership>() {
                     @Override
@@ -116,10 +116,10 @@ public class LinkedPopulation implements IPopulation {
     @Override
     public IPartnership findPartnership(final int id) {
 
-        final int index = ArrayManipulation.binarySplit(partnerships, new ArrayManipulation.SplitComparator<LinkedPartnership>() {
+        final int index = ArrayManipulation.binarySplit(partnerships, new ArrayManipulation.SplitComparator<LinkedChildbearingPartnership>() {
 
             @Override
-            public int check(final LinkedPartnership partnership) {
+            public int check(final LinkedChildbearingPartnership partnership) {
                 return id - partnership.getId();
             }
         });
@@ -152,7 +152,7 @@ public class LinkedPopulation implements IPopulation {
 		livingPeople.add(linkedPerson);		
 	}
 	
-	public void addPartnership(LinkedPartnership linkedPartnership) {
+	public void addPartnership(LinkedChildbearingPartnership linkedPartnership) {
 		partnerships.add(linkedPartnership);
 	}
 	
@@ -166,9 +166,9 @@ public class LinkedPopulation implements IPopulation {
         return null;
     }
     
-    public LinkedPartnership getPartnershipByRef(String ref) {
+    public LinkedChildbearingPartnership getPartnershipByRef(String ref) {
     	
-    	for (LinkedPartnership partnership : partnerships) {
+    	for (LinkedChildbearingPartnership partnership : partnerships) {
             if (partnership.getRef().equals(ref)) {
                 return partnership;
             }

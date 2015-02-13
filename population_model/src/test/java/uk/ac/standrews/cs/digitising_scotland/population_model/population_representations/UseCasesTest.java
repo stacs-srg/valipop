@@ -29,13 +29,48 @@ import uk.ac.standrews.cs.digitising_scotland.population_model.population_repres
 public class UseCasesTest {
 	
 	@Test
-	public void testLinksInBothDirectionsForNuclearuseCase() {
+	public void testNuclearFamilyUseCaseStructure() {
 		LinkedPopulation pop = UseCases.generateNuclearFamilyUseCase();
+		testLinksInBothDirectionsForUseCase(pop);
+	}
+	
+	@Test
+	public void tesNonCrossOverMultiGenerationUseCaseStructure() {
+		LinkedPopulation pop = UseCases.generateNonCrossOverMultiGenerationUseCase();
+		testLinksInBothDirectionsForUseCase(pop);
+	}
+	
+	@Test
+	public void testCrossOverMultiGenerationUseCaseStructure() {
+		LinkedPopulation pop = UseCases.generateCrossOverMultiGenerationUseCase();
+		testLinksInBothDirectionsForUseCase(pop);
+	}
+	
+	@Test
+	public void testSingleBestFitUseCaseStructure() {
+		LinkedPopulation pop = UseCases.generateSingleBestFitUseCase();
+		testLinksInBothDirectionsForUseCase(pop);
+	}
+	
+	@Test
+	public void testMaleLineUseCaseStructure() {
+		LinkedPopulation pop = UseCases.generateMaleLineUseCase();
+		testLinksInBothDirectionsForUseCase(pop);
+	}
+	
+	@Test
+	public void testCousinsUseCaseStructure() {
+		LinkedPopulation pop = UseCases.generateCousinsUseCase();
+		testLinksInBothDirectionsForUseCase(pop);
+	}
+	
+	public void testLinksInBothDirectionsForUseCase(LinkedPopulation pop) {
 		Iterator<IPerson> i = pop.getPeople().iterator();
 		while(i.hasNext()) {
 			LinkedPerson p = (LinkedPerson) i.next();
-			motherAndChildLinked(p);
+			
 			fatherAndChildLinked(p);
+			motherAndChildLinked(p);
 			partnersLinked(p);
 		}
 	}
@@ -56,6 +91,7 @@ public class UseCasesTest {
 			for(Link l : p) {
 				children.add((LinkedPerson) l.getLinkedPartnership().getChildLink().getLinkedPerson());
 			}
+			
 			Assert.assertTrue(children.contains(child));
 		}
 	}
@@ -117,7 +153,6 @@ public class UseCasesTest {
 		for(Link l : returnPartnerLinks) {
 			returnPartners.add((LinkedPerson) l.getLinkedPerson());
 		}
-		
 		Assert.assertTrue(returnPartners.contains(person));
 		
 	}
