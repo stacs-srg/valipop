@@ -16,37 +16,22 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.population_model.population_representations;
 
-import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.adapted_interfaces.IPartnership;
-import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.adapted_interfaces.IPerson;
-
-/**
- * Link class, used to show a potentional connection between a person and a partnership along with a heuristic linkage value and evidence of link.
- * @author Tom Dalton
- *
- */
-public class Link implements Comparable<Float> {
+public class IndirectLink implements Comparable<Float>{
 
 	private Evidence[] provenance;
 	private float heuriticOfLinkValue;
 
 	private LinkedPerson linkedPerson;
-	private AbstractLinkedPartnership linkedPartnership;
-
-	public Link(LinkedPerson person, AbstractLinkedPartnership partnership, Evidence[] records, float heuristic) {
+	private LinkedSiblings linkedSiblingsObject;
+	
+	public IndirectLink(LinkedPerson person, LinkedSiblings linkedSiblings, Evidence[] records, float heuristic) {
 		linkedPerson = person;
-		linkedPartnership = partnership;
+		linkedSiblingsObject = linkedSiblings;
 		provenance = records;
-		linkedPerson.addPartnershipLink(this);
+		linkedPerson.addSiblingLink(this);
 		heuriticOfLinkValue = heuristic;
 	}
-
-	public Link(LinkedPerson child, LinkedChildbearingPartnership partnership, Evidence[] records) {
-		linkedPerson = child;
-		linkedPartnership = partnership;
-		provenance = records;
-		linkedPerson.setParentPartnershipLink(this);
-	}
-
+	
 	public Evidence[] getProvenance() {
 		return provenance;
 	}
@@ -63,12 +48,12 @@ public class Link implements Comparable<Float> {
 		this.linkedPerson = linkedPerson;
 	}
 	
-	public AbstractLinkedPartnership getLinkedPartnership() {
-		return linkedPartnership;
+	public LinkedSiblings getLinkedSiblingObject() {
+		return linkedSiblingsObject;
 	}
 	
-	public void setLinkedPartnership(LinkedChildbearingPartnership linkedPartnership) {
-		this.linkedPartnership = linkedPartnership;
+	public void setLinkedSiblingObject(LinkedSiblings linkedPartnership) {
+		this.linkedSiblingsObject = linkedPartnership;
 	}
 
 	/**
@@ -94,6 +79,5 @@ public class Link implements Comparable<Float> {
 		else
 			return 0;
 	}
-
-
+	
 }

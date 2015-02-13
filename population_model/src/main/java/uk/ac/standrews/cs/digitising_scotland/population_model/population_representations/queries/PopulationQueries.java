@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.PriorityQueue;
 
 import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.Evidence;
-import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.Link;
+import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.DirectLink;
 import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.LinkedPerson;
 import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.LinkedPopulation;
 
@@ -34,59 +34,59 @@ public class PopulationQueries {
 	}
 
 	// Need to think about ways of paring parents into probably sets?
-	public Link[] getFatherOf(int person) {
+	public DirectLink[] getFatherOf(int person) {
 		LinkedPerson p = (LinkedPerson) population.findPerson(person);
-		Link[] l = p.getParentsPartnership().getLinkedPartnership().getMalePotentialPartnerLinks();
+		DirectLink[] l = p.getParentsPartnership().getLinkedPartnership().getMalePotentialPartnerLinks();
 		
 		return orderArrayOfLinksByHeuristic(l);
 	}
 
-	public Link[] getMotherOf(int person) {
+	public DirectLink[] getMotherOf(int person) {
 		LinkedPerson p = (LinkedPerson) population.findPerson(person);
-		Link[] l = p.getParentsPartnership().getLinkedPartnership().getFemalePotentialPartnerLinks();
+		DirectLink[] l = p.getParentsPartnership().getLinkedPartnership().getFemalePotentialPartnerLinks();
 		
 		return orderArrayOfLinksByHeuristic(l);
 	}
 	
-	public Link[] getPartnerOf(int person) {
+	public DirectLink[] getPartnerOf(int person) {
 		LinkedPerson p = (LinkedPerson) population.findPerson(person);
-		PriorityQueue<Link> partners = new PriorityQueue<Link>();
-		List<Link> possPartnership = p.getPartnerships();
-		for(Link l : possPartnership) {
-			Link[] partnerLinks = null;
+		PriorityQueue<DirectLink> partners = new PriorityQueue<DirectLink>();
+		List<DirectLink> possPartnership = p.getPartnerships();
+		for(DirectLink l : possPartnership) {
+			DirectLink[] partnerLinks = null;
 			if(p.getSex() == 'M') {
 				partnerLinks = l.getLinkedPartnership().getFemalePotentialPartnerLinks();
 			} else if(p.getSex() == 'F') {
 				partnerLinks = l.getLinkedPartnership().getMalePotentialPartnerLinks();
 			}
 			
-			for(Link lP : partnerLinks) {
+			for(DirectLink lP : partnerLinks) {
 				partners.add(lP);
 			}
 		}
 		
-		return partners.toArray(new Link[partners.size()]);
+		return partners.toArray(new DirectLink[partners.size()]);
 	}
 	
 	// Need to think about way of grouping children into possible sets?
-	public Link[] getChildrenOf(int person) {
+	public DirectLink[] getChildrenOf(int person) {
 		LinkedPerson p = (LinkedPerson) population.findPerson(person);
-		PriorityQueue<Link> children = new PriorityQueue<Link>();
-		List<Link> possPartnership = p.getPartnerships();
-		for(Link l : possPartnership) {
+		PriorityQueue<DirectLink> children = new PriorityQueue<DirectLink>();
+		List<DirectLink> possPartnership = p.getPartnerships();
+		for(DirectLink l : possPartnership) {
 			children.add(l);
 		}
-		return children.toArray(new Link[children.size()]);
+		return children.toArray(new DirectLink[children.size()]);
 	}
 	
-	public Link[] getPotentialFatherSideSiblingsOf(int person) {
+	public DirectLink[] getPotentialFatherSideSiblingsOf(int person) {
 		LinkedPerson p = (LinkedPerson) population.findPerson(person);
-		Link[] fathers = p.getParentsPartnership().getLinkedPartnership().getMalePotentialPartnerLinks();
-		ArrayList<Link> siblings = new ArrayList<Link>();
-		for(Link l : fathers) {
-			List<Link> partnerships = l.getLinkedPerson().getPartnerships();
-			for(Link pL : partnerships) {
-				Link childLink = pL.getLinkedPartnership().getChildLink();
+		DirectLink[] fathers = p.getParentsPartnership().getLinkedPartnership().getMalePotentialPartnerLinks();
+		ArrayList<DirectLink> siblings = new ArrayList<DirectLink>();
+		for(DirectLink l : fathers) {
+			List<DirectLink> partnerships = l.getLinkedPerson().getPartnerships();
+			for(DirectLink pL : partnerships) {
+				DirectLink childLink = pL.getLinkedPartnership().getChildLink();
 				Evidence[] records = new Evidence[pL.getProvenance().length + childLink.getProvenance().length];
 				int c = 0;
 				for(Evidence e : pL.getProvenance()) {
@@ -95,21 +95,21 @@ public class PopulationQueries {
 				for(Evidence e : childLink.getProvenance()) {
 					records[c++] = e;
 				}
-				siblings.add(new Link(childLink.getLinkedPerson(), pL.getLinkedPartnership(), records, pL.getHeuriticOfLinkValue()));
+				siblings.add(new DirectLink(childLink.getLinkedPerson(), pL.getLinkedPartnership(), records, pL.getHeuriticOfLinkValue()));
 			}
 		}
-		Link[] t = siblings.toArray(new Link[siblings.size()]);
+		DirectLink[] t = siblings.toArray(new DirectLink[siblings.size()]);
 		return orderArrayOfLinksByHeuristic(t);
 	}
 	
-	public Link[] getPotentialMotherSideSiblingsOf(int person) {
+	public DirectLink[] getPotentialMotherSideSiblingsOf(int person) {
 		LinkedPerson p = (LinkedPerson) population.findPerson(person);
-		Link[] fathers = p.getParentsPartnership().getLinkedPartnership().getFemalePotentialPartnerLinks();
-		ArrayList<Link> siblings = new ArrayList<Link>();
-		for(Link l : fathers) {
-			List<Link> partnerships = l.getLinkedPerson().getPartnerships();
-			for(Link pL : partnerships) {
-				Link childLink = pL.getLinkedPartnership().getChildLink();
+		DirectLink[] fathers = p.getParentsPartnership().getLinkedPartnership().getFemalePotentialPartnerLinks();
+		ArrayList<DirectLink> siblings = new ArrayList<DirectLink>();
+		for(DirectLink l : fathers) {
+			List<DirectLink> partnerships = l.getLinkedPerson().getPartnerships();
+			for(DirectLink pL : partnerships) {
+				DirectLink childLink = pL.getLinkedPartnership().getChildLink();
 				Evidence[] records = new Evidence[pL.getProvenance().length + childLink.getProvenance().length];
 				int c = 0;
 				for(Evidence e : pL.getProvenance()) {
@@ -118,21 +118,21 @@ public class PopulationQueries {
 				for(Evidence e : childLink.getProvenance()) {
 					records[c++] = e;
 				}
-				siblings.add(new Link(childLink.getLinkedPerson(), pL.getLinkedPartnership(), records, pL.getHeuriticOfLinkValue()));
+				siblings.add(new DirectLink(childLink.getLinkedPerson(), pL.getLinkedPartnership(), records, pL.getHeuriticOfLinkValue()));
 			}
 		}
-		Link[] t = siblings.toArray(new Link[siblings.size()]);
+		DirectLink[] t = siblings.toArray(new DirectLink[siblings.size()]);
 		return orderArrayOfLinksByHeuristic(t);
 	}
 	
-	public Link[] getPotentialFullSiblings(int person) {
-		Link[] fSideSibling = getPotentialFatherSideSiblingsOf(person);
-		Link[] mSideSibling = getPotentialMotherSideSiblingsOf(person);
-		ArrayList<Link> potentialFullSiblings = new ArrayList<Link>();
+	public DirectLink[] getPotentialFullSiblings(int person) {
+		DirectLink[] fSideSibling = getPotentialFatherSideSiblingsOf(person);
+		DirectLink[] mSideSibling = getPotentialMotherSideSiblingsOf(person);
+		ArrayList<DirectLink> potentialFullSiblings = new ArrayList<DirectLink>();
 		
-		for(Link f : fSideSibling) {
+		for(DirectLink f : fSideSibling) {
 			int fId = f.getLinkedPerson().getId();
-			for(Link m : mSideSibling){
+			for(DirectLink m : mSideSibling){
 				if(fId == m.getLinkedPerson().getId()) {
 					Evidence[] records = new Evidence[f.getProvenance().length + m.getProvenance().length];
 					int c = 0;
@@ -142,21 +142,21 @@ public class PopulationQueries {
 					for(Evidence e : m.getProvenance()) {
 						records[c++] = e;
 					}
-					potentialFullSiblings.add(new Link(m.getLinkedPerson(), m.getLinkedPerson().getParentsPartnership().getLinkedPartnership(), records, f.getHeuriticOfLinkValue() * m.getHeuriticOfLinkValue()));
+					potentialFullSiblings.add(new DirectLink(m.getLinkedPerson(), m.getLinkedPerson().getParentsPartnership().getLinkedPartnership(), records, f.getHeuriticOfLinkValue() * m.getHeuriticOfLinkValue()));
 				}
 			}
 		}
-		Link[] t = potentialFullSiblings.toArray(new Link[potentialFullSiblings.size()]);
+		DirectLink[] t = potentialFullSiblings.toArray(new DirectLink[potentialFullSiblings.size()]);
 		return orderArrayOfLinksByHeuristic(t);		
 		
 	}
 	
-	private Link[] orderArrayOfLinksByHeuristic(Link[] links) {
-		PriorityQueue<Link> q = new PriorityQueue<Link>();
-		for(Link l : links) {
+	private DirectLink[] orderArrayOfLinksByHeuristic(DirectLink[] links) {
+		PriorityQueue<DirectLink> q = new PriorityQueue<DirectLink>();
+		for(DirectLink l : links) {
 			q.add(l);
 		}
-		return q.toArray(new Link[q.size()]);
+		return q.toArray(new DirectLink[q.size()]);
 	}
 	
 	

@@ -31,8 +31,10 @@ public class LinkedPerson implements IPerson {
     private String occupation;
     private String causeOfDeath;
     private char sex;
-    private List<Link> partnerships = new ArrayList<Link>();
-    private Link parentPartnershipLink;
+    private List<DirectLink> childbearingPartnerships = new ArrayList<DirectLink>();
+    private List<DirectLink> marriagePartnerships = new ArrayList<DirectLink>();
+    private List<IndirectLink> siblings = new ArrayList<IndirectLink>();
+    private DirectLink parentPartnershipLink;
     
     // Days since epoch (1600)
     private int dayOfBirth;
@@ -45,17 +47,33 @@ public class LinkedPerson implements IPerson {
     	this.sex = sex;
     }
     
-    public void setPartnershipLinks(List<Link> partnerships) {
-    	this.partnerships = partnerships;    	
+    public void setPartnershipLinks(List<DirectLink> partnerships) {
+    	this.childbearingPartnerships = partnerships;    	
     }
     
-    public void addPartnershipLink(Link partnership) {
-    	partnerships.add(partnership);    	
+    public void addPartnershipLink(DirectLink partnership) {
+    	childbearingPartnerships.add(partnership);    	
+    }
+    
+    public void setMarriageLinks(List<DirectLink> partnerships) {
+    	this.marriagePartnerships = partnerships;    	
+    }
+    
+    public void addMarriageLink(DirectLink partnership) {
+    	marriagePartnerships.add(partnership);    	
+    }
+    
+    public void setSiblingLinks(List<IndirectLink> siblings) {
+    	this.siblings = siblings;    	
+    }
+    
+    public void addSiblingLink(IndirectLink partnership) {
+    	siblings.add(partnership);    	
     }
     
     
     
-    public void setParentPartnershipLink(Link parentPartnershipLink) {
+    public void setParentPartnershipLink(DirectLink parentPartnershipLink) {
     	this.parentPartnershipLink = parentPartnershipLink;
     }
     
@@ -114,15 +132,22 @@ public class LinkedPerson implements IPerson {
     }
 
 	@Override
-	public List<Link> getPartnerships() {
-		return partnerships;
+	public List<DirectLink> getPartnerships() {
+		return childbearingPartnerships;
 	}
 
 	@Override
-	public Link getParentsPartnership() {
+	public DirectLink getParentsPartnership() {
 		return parentPartnershipLink;
 	}
 
 
+	public List<DirectLink> getMarraigePartnerships() {
+		return marriagePartnerships;
+	}
+	
+	public List<IndirectLink> getSiblings() {
+		return siblings;
+	}
 
 }

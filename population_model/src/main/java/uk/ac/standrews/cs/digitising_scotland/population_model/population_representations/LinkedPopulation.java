@@ -26,154 +26,185 @@ import uk.ac.standrews.cs.digitising_scotland.population_model.population_repres
 import uk.ac.standrews.cs.digitising_scotland.util.ArrayManipulation;
 
 public class LinkedPopulation implements IPopulation {
-	
-	private List<LinkedPerson> livingPeople = new ArrayList<LinkedPerson>();
-    private List<LinkedChildbearingPartnership> partnerships = new ArrayList<LinkedChildbearingPartnership>();
-    String description;
-    
-	
 
-    public LinkedPopulation(String description) {
+	private List<LinkedPerson> livingPeople = new ArrayList<LinkedPerson>();
+	private List<LinkedChildbearingPartnership> partnerships = new ArrayList<LinkedChildbearingPartnership>();
+	private List<LinkedMarriagePartnership> marriagePartnerships = new ArrayList<LinkedMarriagePartnership>();
+	private List<LinkedSiblings> siblingsObjects = new ArrayList<LinkedSiblings>();
+
+	String description;
+
+
+
+	public LinkedPopulation(String description) {
 		this.description = description;
 	}
-    
-    
-    /*
-     * Interface methods
-     */
+
+
+	/*
+	 * Interface methods
+	 */
 
 	@Override
-    public Iterable<IPerson> getPeople() {
-        return new Iterable<IPerson>() {
-            @Override
-            public Iterator<IPerson> iterator() {
+	public Iterable<IPerson> getPeople() {
+		return new Iterable<IPerson>() {
+			@Override
+			public Iterator<IPerson> iterator() {
 
 
-                final Iterator<LinkedPerson> iterator = livingPeople.iterator();
+				final Iterator<LinkedPerson> iterator = livingPeople.iterator();
 
-                return new Iterator<IPerson>() {
+				return new Iterator<IPerson>() {
 
-                    @Override
-                    public boolean hasNext() {
-                        return iterator.hasNext();
-                    }
+					@Override
+					public boolean hasNext() {
+						return iterator.hasNext();
+					}
 
-                    @Override
-                    public IPerson next() {
-                        return (IPerson) iterator.next();
-                    }
+					@Override
+					public IPerson next() {
+						return (IPerson) iterator.next();
+					}
 
-                    @Override
-                    public void remove() {
-                        iterator.remove();
-                    }
-                };
-            }
+					@Override
+					public void remove() {
+						iterator.remove();
+					}
+				};
+			}
 
-        };
-    }
+		};
+	}
 
-    @Override
-    public Iterable<IPartnership> getPartnerships() {
-        return new Iterable<IPartnership>() {
-            @Override
-            public Iterator<IPartnership> iterator() {
-                final Iterator<LinkedChildbearingPartnership> iterator = partnerships.iterator();
+	@Override
+	public Iterable<IPartnership> getPartnerships() {
+		return new Iterable<IPartnership>() {
+			@Override
+			public Iterator<IPartnership> iterator() {
+				final Iterator<LinkedChildbearingPartnership> iterator = partnerships.iterator();
 
-                return new Iterator<IPartnership>() {
-                    @Override
-                    public boolean hasNext() {
-                        return iterator.hasNext();
-                    }
+				return new Iterator<IPartnership>() {
+					@Override
+					public boolean hasNext() {
+						return iterator.hasNext();
+					}
 
-                    @Override
-                    public IPartnership next() {
-                        return iterator.next();
-                    }
+					@Override
+					public IPartnership next() {
+						return iterator.next();
+					}
 
-                    @Override
-                    public void remove() {
-                        iterator.remove();
-                    }
-                };
-            }
-        };
-    }
+					@Override
+					public void remove() {
+						iterator.remove();
+					}
+				};
+			}
+		};
+	}
 
-    @Override
-    public IPerson findPerson(final int id) {
+	@Override
+	public IPerson findPerson(final int id) {
 
-        for (LinkedPerson person : livingPeople) {
-            if (person.getId() == id) {
-                return person;
+		for (LinkedPerson person : livingPeople) {
+			if (person.getId() == id) {
+				return person;
 
-            }
-        }
-        return null;
-    }
+			}
+		}
+		return null;
+	}
 
 
-    @Override
-    public IPartnership findPartnership(final int id) {
+	@Override
+	public IPartnership findPartnership(final int id) {
 
-        final int index = ArrayManipulation.binarySplit(partnerships, new ArrayManipulation.SplitComparator<LinkedChildbearingPartnership>() {
+		final int index = ArrayManipulation.binarySplit(partnerships, new ArrayManipulation.SplitComparator<LinkedChildbearingPartnership>() {
 
-            @Override
-            public int check(final LinkedChildbearingPartnership partnership) {
-                return id - partnership.getId();
-            }
-        });
+			@Override
+			public int check(final LinkedChildbearingPartnership partnership) {
+				return id - partnership.getId();
+			}
+		});
 
-        return index >= 0 ? partnerships.get(index) : null;
-    }
+		return index >= 0 ? partnerships.get(index) : null;
+	}
 
-    @Override
-    public int getNumberOfPeople() {
-        return livingPeople.size();
-    }
+	@Override
+	public int getNumberOfPeople() {
+		return livingPeople.size();
+	}
 
-    @Override
-    public int getNumberOfPartnerships() {
-        return partnerships.size();
-    }
+	@Override
+	public int getNumberOfPartnerships() {
+		return partnerships.size();
+	}
 
-    @Override
-    public void setDescription(final String description) {
-        this.description = description;
-    }
+	@Override
+	public void setDescription(final String description) {
+		this.description = description;
+	}
 
-    @Override
-    public void setConsistentAcrossIterations(final boolean consistent_across_iterations) {
+	@Override
+	public void setConsistentAcrossIterations(final boolean consistent_across_iterations) {
 
-    }
+	}
 
 
 	public void addPerson(LinkedPerson linkedPerson) {
 		livingPeople.add(linkedPerson);		
 	}
-	
+
 	public void addPartnership(LinkedChildbearingPartnership linkedPartnership) {
 		partnerships.add(linkedPartnership);
 	}
-	
-    public LinkedPerson findPersonByFirstName(final String name) {
 
-        for (LinkedPerson person : livingPeople) {
-            if (person.getFirstName().equals(name)) {
-                return person;
-            }
-        }
-        return null;
-    }
-    
-    public LinkedChildbearingPartnership getPartnershipByRef(String ref) {
-    	
-    	for (LinkedChildbearingPartnership partnership : partnerships) {
-            if (partnership.getRef().equals(ref)) {
-                return partnership;
-            }
-        }
-        return null;
-    }
+	public void addMarraigePartnership(LinkedMarriagePartnership linkedMarriagePartnership) {
+		marriagePartnerships.add(linkedMarriagePartnership);
+	}
+
+	public void addSiblingsObject(LinkedSiblings linkedSiblingsObject) {
+		siblingsObjects.add(linkedSiblingsObject);
+	}
+
+	public LinkedPerson findPersonByFirstName(final String name) {
+
+		for (LinkedPerson person : livingPeople) {
+			if (person.getFirstName().equals(name)) {
+				return person;
+			}
+		}
+		return null;
+	}
+
+	public LinkedChildbearingPartnership getPartnershipByRef(String ref) {
+
+		for (LinkedChildbearingPartnership partnership : partnerships) {
+			if (partnership.getRef().equals(ref)) {
+				return partnership;
+			}
+		}
+		return null;
+	}
+	
+	public LinkedMarriagePartnership getMarraigePartnershipByRef(String ref) {
+
+		for (LinkedMarriagePartnership partnership : marriagePartnerships) {
+			if (partnership.getRef().equals(ref)) {
+				return partnership;
+			}
+		}
+		return null;
+	}
+	
+	public LinkedSiblings getSiblingsObjectByRef(String ref) {
+
+		for (LinkedSiblings siblings : siblingsObjects) {
+			if (siblings.getRef().equals(ref)) {
+				return siblings;
+			}
+		}
+		return null;
+	}
 
 }

@@ -375,6 +375,44 @@ public class UseCases {
 	}
 	
 	
+	public static LinkedPopulation generateEnforcedSiblingsUseCase() {
+		
+		LinkedPopulation population = new LinkedPopulation("Enforced Siblings Use Case");
+		population.addPerson(new LinkedPerson(0, "a", "Name", 'M'));
+		population.addPerson(new LinkedPerson(1, "b", "Name", 'M'));
+		population.addPerson(new LinkedPerson(2, "c", "Name", 'M'));
+		population.addPerson(new LinkedPerson(3, "d", "Name", 'F'));
+		population.addPerson(new LinkedPerson(4, "e", "Name", 'M'));
+		population.addPerson(new LinkedPerson(5, "f", "Name", 'F'));
+		population.addPerson(new LinkedPerson(6, "g", "Name", 'F'));
+		
+		Evidence[] records = new Evidence[8];
+		for(int i = 0; i < 8; i++)
+			records[i] = new Evidence(i);
+
+		population.addPartnership(new LinkedChildbearingPartnership(0, "alpha"));
+		population.addPartnership(new LinkedChildbearingPartnership(1, "beta"));
+		
+		population.getPartnershipByRef("alpha").setChildLink(population.findPersonByFirstName("c"), new Evidence[]{records[0]});
+		population.getPartnershipByRef("beta").setChildLink(population.findPersonByFirstName("g"), new Evidence[]{records[1]});
+		
+		population.getPartnershipByRef("alpha").addPossibleMaleLink(population.findPersonByFirstName("a"), new Evidence[]{records[0], records[3]}, 0.9f);
+		population.getPartnershipByRef("alpha").addPossibleMaleLink(population.findPersonByFirstName("b"), new Evidence[]{records[0], records[2]}, 0.9f);
+		population.getPartnershipByRef("alpha").addPossibleFemaleLink(population.findPersonByFirstName("d"), new Evidence[]{records[0], records[4]}, 0.9f);
+
+		population.getPartnershipByRef("beta").addPossibleMaleLink(population.findPersonByFirstName("a"), new Evidence[]{records[1], records[3]}, 0.7f);
+		population.getPartnershipByRef("beta").addPossibleMaleLink(population.findPersonByFirstName("e"), new Evidence[]{records[1], records[5]}, 0.7f);
+		population.getPartnershipByRef("beta").addPossibleFemaleLink(population.findPersonByFirstName("d"), new Evidence[]{records[1], records[4]}, 0.9f);
+		population.getPartnershipByRef("beta").addPossibleFemaleLink(population.findPersonByFirstName("f"), new Evidence[]{records[1], records[6]}, 0.9f);
+		
+		population.addSiblingsObject(new LinkedSiblings(0, "alef"));
+		population.getSiblingsObjectByRef("alef").addPossibleSibling1Link(population.findPersonByFirstName("c"), new Evidence[]{records[0], records[7]}, 1f);
+		population.getSiblingsObjectByRef("alef").addPossibleSibling2Link(population.findPersonByFirstName("g"), new Evidence[]{records[1], records[7]}, 1f);
+		
+		return population;
+		
+	}
+	
 
 
 
