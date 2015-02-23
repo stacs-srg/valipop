@@ -50,4 +50,6 @@ The next case study considered contains multiple children of a single set of par
 
 Child, parents, sibling (Same parental sets vary between siblings)
 
-The next case study shown in figure <Struct_c> builds upon the previous structure but introduces the stipulation that 
+The next case study shown in figure <Struct_c> builds upon the previous structure but introduces the stipulation that A's set of fathers is {B, C} thus intessecting G's set of fathers which are {B, H}. This can be seen in the colourings present in <Struct_c>. However if we now remove the assumption that A and G are full siblings and that they could be half siblings or unrelated we introduce the possibility that the parental partnerships of A and G are not the equal and thus that the current structure is unable to express the desired pedigree. The only time we can make use of this structure is where we can be certain of A and G sharing the same pairing of parents, which we cannot assert without more complete knowledge of our data, which we are not able to assume. Therefore we need to further generalise the use of the structure to allow this expressibility.
+
+If we consider figure <Struct_d> we can see a more generalised way of expressing a possible sibling relationship between A and G.
