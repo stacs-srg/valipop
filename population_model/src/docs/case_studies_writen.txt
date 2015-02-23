@@ -1,0 +1,36 @@
+Aim
+
+The aim of this project was to look at ways of sturctuing and representing linked data sets where uncertainty, by the way of multiple co-existing linkage solutions, has been produced by the linkage project of multiple data sets. The domain of focus is genalogical linkage and created data structures represnts the multiple possible pedigrees that are attested to possibly reside within the linked data sets. Although the initial consideration of the construction of the data structures have been based in loose relation to birth and marriage records, especial care has been taken to remain record agnostic and to build structures that aviod making assumptions regarding the underlying records and are able to express any permissible genalogical structuring.
+
+
+Approach
+
+The approach to doing this began with an intial specification that had been laid down during previous research work. The next step was to expland on this so to allow the many possible genalogigal and uncertainty permertations to be represented, while also offering a structuring that enables restrictions to be placed within the data sructure.
+
+Start point
+
+The initial interfaces for the data consisted of person and partnership objects. In this initial implementation a person has a number of partnerships of which they are a member and a single partnership of which they are the child. A partnership has a single male and female member and also a list children. The assumptions in the use of this structure are that any children listed are known children of the given parents of which there is only one given set. The restrictions in this structure impose limitations to the expresibility of the scarios that can be modelled using the intial interfaces.
+
+It could be considered that the existing interfaces be used with a new set of assumptions to allow uncertainty to be represented, an approach to such would be to create a partnership object for each possible paring permutation that the linkage algorithm identifies and then to place the children possuibly for each permuted partnship into the list of children, however it can be easily seen that the massive number of partnership objects that this would cause to exist would be difficult to understand and to absract the possible pedigrees from. Also maintaining the current interfaces would mean that there would be nowhere in the structure to indicate the likelihood of one linkage solution over another and the provenance and reasoning behind such.
+
+From the above it can be seen that the interfaces need opening up and modifing to allow more expressibility. The approaches discussed below first focus on creating a set of interfaces which are sufficiently expressive followed by considering ways to apply constraints to these structures to restrict complexity of the created genalogical structures.
+
+Case study
+
+The reason for the adjustments that are required to be made to the interfaces and the design of the created data structures are best seen when case studies reflective of real genalogical possibilitys are considered and how the required expression can be acchieved.
+
+Child, parents case study
+
+Firstly we can consider a single child with a set of possible mothers and fathers. Biological we can be certain of the child having one father and one mother, although they may not reside within the dataset. Therefore for each possible parent there will be an amount of certainty associated with the link. There also will be an amount of consideration to be given to the linkage between each possible permutation of parental parings.
+
+Working from these basic requirements and understandings we can start to define data structures which are compatible.
+
+As can be seen in figure <Tree_a> a family tree depicts the given case study. In a sense this same diagram represents the given structure under the initial interface of a child with a parental partership whihc in turn has a male and female member. If we are then to extend this to suppose that Y represents a set of males {B, C} and X a set of females {D, E, F} the initial structure no longer is able to express this. If we now consider the structure as laid out in figure <Struct_a> we see a structure where A is the child of the partnership alpha from which two fathers are linked and three mothers. This structure allows us to maintain an idea of pairing between parents as well as a concept of parent hood, rahter than a more free form structure as seen in figure <Struct_alt_a> when links exist soley between individuals. The introduction of links into the structures means that information can be attached to these edges that denotes the provenance for the link between the two connected entities. For such reason it may make sense to add a link between the tail of the partnership alpha and the child A, both to allow for information to reside here but also to maintain consistency in the structuring, this will be further discussed in the next section.
+
+Child, parents, sibling (Same parental sets for both siblings)
+
+The next case study considered contains multiple children of a single set of parents as depicted by the family tree in figure <Tree_b>. The initial though here is to add multiple links to the bottom of partnership alpha as seen in figure <Struct_b>. This structuring allows for us to stipulate that the sets of parents of A as found in the previous case study extend to B and by the nature of the structure that which ever parental pairing is taken for A must also be taken for B. However given that we wish not to make assumptions regarding the underlying data availiable to us it is possible that the set of fathers and mothers for A and G will not be the identical given the complexities of linkage processes and thus it is likely that the sets offered will be a subset, superset or intersect of one another. If we extend this into a new case study the issue can be made more clear.
+
+Child, parents, sibling (Same parental sets vary between siblings)
+
+The next case study shown in figure <Struct_c> builds upon the previous structure but introduces the stipulation that 
