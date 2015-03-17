@@ -1,7 +1,8 @@
-package uk.ac.standrews.cs.digitising_scotland.linkage.stream_operators.sharder;
+package uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records;
 
 import org.json.JSONException;
 import org.json.JSONWriter;
+import uk.ac.standrews.cs.digitising_scotland.jstore.impl.exceptions.IllegalKeyException;
 import uk.ac.standrews.cs.digitising_scotland.jstore.impl.exceptions.KeyNotFoundException;
 import uk.ac.standrews.cs.digitising_scotland.jstore.impl.exceptions.TypeMismatchFoundException;
 import uk.ac.standrews.cs.digitising_scotland.jstore.interfaces.ILXP;
@@ -16,13 +17,17 @@ import java.util.Set;
 /**
  * Created by al on 19/06/2014.
  */
-public class Pair<T extends ILXP> implements IPair<T> { //TODO fix up this - conside typing and empty methods
+public class Pair<T extends ILXP> extends AbstractLXP implements IPair<T> { //TODO fix up this - conside typing and empty methods
     private T first;
     private T second;
 
     public Pair(T first, T second) {
         this.first = first;
         this.second = second;
+    }
+
+    public Pair(long persistent_Object_id, JSONReader reader, long required_type_labelID) throws PersistentObjectException, IllegalKeyException {
+        super(persistent_Object_id, reader);
     }
 
     public T first() {
@@ -124,9 +129,5 @@ public class Pair<T extends ILXP> implements IPair<T> { //TODO fix up this - con
         return null;
     }
 
-    @Override
-    public boolean checkConsistentWith(long label_id) throws IOException, PersistentObjectException {
-        return false;
-    }
 
 }

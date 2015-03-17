@@ -1,6 +1,5 @@
 package uk.ac.standrews.cs.digitising_scotland.linkage;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import uk.ac.standrews.cs.digitising_scotland.jstore.impl.StoreFactory;
@@ -12,12 +11,12 @@ import uk.ac.standrews.cs.digitising_scotland.jstore.interfaces.*;
 import uk.ac.standrews.cs.digitising_scotland.linkage.blocking.FNLFFMFOverBirths;
 import uk.ac.standrews.cs.digitising_scotland.linkage.factory.BirthFactory;
 import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.Birth;
-import uk.ac.standrews.cs.digitising_scotland.util.FileManipulation;
 
+import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 /**
  * Created by al on 02/05/2014.
@@ -25,29 +24,17 @@ import java.nio.file.Paths;
 public class BlockingTest {
 
     private static final String repo_path = "test_buckets";
-    private static final String source_base_path = "src/test/resources/BDMSet1";
-    private static final String births_name = "birth_records";
-    private static final String deaths_name = "death_records";
-    private static final String marriages_name = "marriage_records";
-    private static final String types_name = "types";
-    private static final String births_source_path = source_base_path + "/" + births_name + ".txt";
-    private static final String deaths_source_path = source_base_path + "/" + deaths_name + ".txt";
-    private static final String marriages_source_path = source_base_path + "/" + marriages_name + ".txt";
-
-    private static String store_path = "src/test/resources/STORE";
+    private static final String births_bucket_name = "births";
 
     private static IStore store;
     private static IBucket<Birth> births;
-    private static IBucket types;
 
     private IRepository repo;
     private IReferenceType birthlabel;
-    private IReferenceType deathlabel;
-    private IReferenceType marriagelabel;
 
 
     @Before
-    public void setUpEachTest() throws RepositoryException, StoreException, IOException {
+    public void setUpEachTest() throws RepositoryException, StoreException, IOException, URISyntaxException {
 
         Path tempStore = Files.createTempDirectory(null);
 
@@ -57,20 +44,14 @@ public class BlockingTest {
         repo = store.makeRepository(repo_path);
         TypeFactory tf = TypeFactory.getInstance();
         birthlabel = tf.createType(Birth.class, "Birth");
-        births = repo.makeBucket(births_name, BucketKind.DIRECTORYBACKED, new BirthFactory(birthlabel.getId()));
+        births = repo.makeBucket(births_bucket_name, BucketKind.DIRECTORYBACKED, new BirthFactory(birthlabel.getId()));
     }
 
-
-    @After
-    public void afterEachTest() throws IOException {
-
-        if (Files.exists(Paths.get(store_path))) {
-            FileManipulation.deleteDirectory(store_path);
-        }
-    }
 
     @Test
     public synchronized void testPFPLMFFF() throws Exception, RepositoryException, IllegalKeyException {
+
+        String births_source_path = new File(BlockingTest.class.getResource("/BDMSet1/birth_records.txt").toURI()).getAbsolutePath(); // TODO Make other tests follow this.
 
         int count = EventImporter.importDigitisingScotlandBirths(births, births_source_path, birthlabel);
         System.out.println("read in " + count + " records.");

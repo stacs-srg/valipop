@@ -52,25 +52,28 @@ public abstract class Blocker<T extends ILXP> implements IBlocker<T> {
 
         for (String bucket_name : determineBlockedBucketNamesForRecord(record)) {
 
-            IBucket bucket = names.get(bucket_name);
+            if( !bucket_name.equals( "" ) ) {
 
-            if (bucket == null) { // not seen the field before
-                // Need to create a new bucket
-                if (output_repo.bucketExists(bucket_name)) {
-                    try {
-                        output_repo.getBucket(bucket_name, factory).getOutputStream().add(record);
-                    } catch (RepositoryException e) {
-                        ErrorHandling.exceptionError(e, "RepositoryException obtaining bucket instance");
+                IBucket bucket = names.get(bucket_name);
+
+                if (bucket == null) { // not seen the field before
+                    // Need to create a new bucket
+                    if (output_repo.bucketExists(bucket_name)) {
+                        try {
+                            output_repo.getBucket(bucket_name, factory).getOutputStream().add(record);
+                        } catch (RepositoryException e) {
+                            ErrorHandling.exceptionError(e, "RepositoryException obtaining bucket instance");
+                        }
+                    } else { // need to create it
+                        try {
+                            output_repo.makeBucket(bucket_name, BucketKind.DIRECTORYBACKED, factory).getOutputStream().add(record);
+                        } catch (RepositoryException e) {
+                            e.printStackTrace();
+                        }
                     }
-                } else { // need to create it
-                    try {
-                        output_repo.makeBucket(bucket_name, BucketKind.DIRECTORYBACKED, factory).getOutputStream().add(record);
-                    } catch (RepositoryException e) {
-                        e.printStackTrace();
-                    }
+                } else { // we have seen this name before and hence have a cached bucket
+                    bucket.getOutputStream().add(record);
                 }
-            } else { // we have seen this name before and hence have a cached bucket
-                bucket.getOutputStream().add(record);
             }
         }
     }

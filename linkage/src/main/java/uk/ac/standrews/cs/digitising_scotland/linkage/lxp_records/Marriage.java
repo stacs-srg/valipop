@@ -1,6 +1,5 @@
 package uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records;
 
-
 import uk.ac.standrews.cs.digitising_scotland.jstore.impl.exceptions.IllegalKeyException;
 import uk.ac.standrews.cs.digitising_scotland.jstore.types.LXPBaseType;
 import uk.ac.standrews.cs.digitising_scotland.jstore.types.LXP_SCALAR;
@@ -13,87 +12,87 @@ import uk.ac.standrews.cs.nds.rpc.stream.JSONReader;
 public class Marriage extends AbstractLXP {
 
     @LXP_SCALAR(type = LXPBaseType.STRING)
-    String groom_mothers_maiden_surname = "groom_mothers_maiden_surname";
+    public static final String GROOM_MOTHERS_MAIDEN_SURNAME = "GROOM_MOTHERS_MAIDEN_SURNAME";
     @LXP_SCALAR(type = LXPBaseType.STRING)
-    String groom_surname = "groom_surname";
+    public static final String GROOM_SURNAME = "GROOM_SURNAME";
     @LXP_SCALAR(type = LXPBaseType.STRING)
-    String GROOM_OCCUPATION = "groom_occupation";
+    public static final String GROOM_OCCUPATION = "groom_occupation";
     @LXP_SCALAR(type = LXPBaseType.STRING)
-    String BRIDE_FATHER_OCCUPATION = "bride_father_occupation";
+    public static final String BRIDE_FATHER_OCCUPATION = "bride_father_occupation";
     @LXP_SCALAR(type = LXPBaseType.STRING)
-    String GROOM_FATHERS_FORENAME = "groom_fathers_forename";
+    public static final String GROOM_FATHERS_FORENAME = "groom_fathers_forename";
     @LXP_SCALAR(type = LXPBaseType.STRING)
-    String CHANGED_GROOM_FORENAME = "changed_groom_forename";
+    public static final String CHANGED_GROOM_FORENAME = "changed_groom_forename";
     @LXP_SCALAR(type = LXPBaseType.STRING)
-    String IMAGE_QUALITY = "image_quality";
+    public static final String IMAGE_QUALITY = "image_quality";
     @LXP_SCALAR(type = LXPBaseType.STRING)
-    String BRIDE_FATHERS_FORENAME = "bride_fathers_forename";
+    public static final String BRIDE_FATHERS_FORENAME = "bride_fathers_forename";
     @LXP_SCALAR(type = LXPBaseType.STRING)
-    String BRIDE_ADDRESS = "bride_address";
+    public static final String BRIDE_ADDRESS = "bride_address";
     @LXP_SCALAR(type = LXPBaseType.STRING)
-    String BRIDE_MOTHERS_MAIDEN_SURNAME = "bride_mothers_maiden_surname";
+    public static final String BRIDE_MOTHERS_MAIDEN_SURNAME = "bride_mothers_maiden_surname";
     @LXP_SCALAR(type = LXPBaseType.STRING)
-    String GROOM_FATHERS_OCCUPATION = "groom_fathers_occupation";
+    public static final String GROOM_FATHERS_OCCUPATION = "groom_fathers_occupation";
     @LXP_SCALAR(type = LXPBaseType.STRING)
-    String ENTRY = "ENTRY";
+    public static final String ENTRY = "ENTRY";
     @LXP_SCALAR(type = LXPBaseType.STRING)
-    String GROOM_ADDRESS = "groom_address";
+    public static final String GROOM_ADDRESS = "groom_address";
     @LXP_SCALAR(type = LXPBaseType.STRING)
-    String MARRIAGE_MONTH = "marriage_month";
+    public static final String MARRIAGE_MONTH = "marriage_month";
     @LXP_SCALAR(type = LXPBaseType.STRING)
-    String MARRIAGE_YEAR = "marriage_year";
+    public static final String MARRIAGE_YEAR = "marriage_year";
     @LXP_SCALAR(type = LXPBaseType.STRING)
-    String GROOM_DID_NOT_SIGN = "groom_did_not_sign";
+    public static final String GROOM_DID_NOT_SIGN = "groom_did_not_sign";
     @LXP_SCALAR(type = LXPBaseType.STRING)
     String BRIDE_MARITAL_STATUS = "bride_marital_status";
     @LXP_SCALAR(type = LXPBaseType.STRING)
-    String DENOMINATION = "denomination";
+    public static final String DENOMINATION = "denomination";
     @LXP_SCALAR(type = LXPBaseType.STRING)
-    String BRIDE_FATHER_DECEASED = "bride_father_deceased";
+    public static final String BRIDE_FATHER_DECEASED = "bride_father_deceased";
     @LXP_SCALAR(type = LXPBaseType.STRING)
-    String GROOM_FORENAME = "groom_forename";
+    public static final String GROOM_FORENAME = "groom_forename";
     @LXP_SCALAR(type = LXPBaseType.STRING)
-    String BRIDE_OCCUPATION = "bride_occupation";
+    public static final String BRIDE_OCCUPATION = "bride_occupation";
     @LXP_SCALAR(type = LXPBaseType.STRING)
-    String CHANGED_GROOM_SURNAME = "changed_groom_surname";
+    public static final String CHANGED_GROOM_SURNAME = "changed_groom_surname";
     @LXP_SCALAR(type = LXPBaseType.STRING)
-    String BRIDE_DID_NOT_SIGN = "bride_did_not_sign";
+    public static final String BRIDE_DID_NOT_SIGN = "bride_did_not_sign";
     @LXP_SCALAR(type = LXPBaseType.STRING)
-    String BRIDE_MOTHERS_FORENAME = "bride_mothers_forename";
+    public static final String BRIDE_MOTHERS_FORENAME = "bride_mothers_forename";
     @LXP_SCALAR(type = LXPBaseType.STRING)
-    String BRIDE_MOTHER_DECEASED = "bride_mother_deceased";
+    public static final String BRIDE_MOTHER_DECEASED = "bride_mother_deceased";
     @LXP_SCALAR(type = LXPBaseType.STRING)
-    String GROOM_MOTHERS_FORENAME = "groom_mothers_forename";
+    public static final String GROOM_MOTHERS_FORENAME = "groom_mothers_forename";
     @LXP_SCALAR(type = LXPBaseType.STRING)
     String GROOM_MOTHER_DECEASED = "groom_mother_deceased";
     @LXP_SCALAR(type = LXPBaseType.STRING)
-    String REGISTRATION_DISTRICT_NUMBER = "REGISTRATION_DISTRICT_NUMBER";
+    public static final String REGISTRATION_DISTRICT_NUMBER = "REGISTRATION_DISTRICT_NUMBER";
     @LXP_SCALAR(type = LXPBaseType.STRING)
-    String BRIDE_SURNAME = "bride_surname";
+    public static final String BRIDE_SURNAME = "bride_surname";
     @LXP_SCALAR(type = LXPBaseType.STRING)
-    String GROOM_MARITAL_STATUS = "groom_marital_status";
+    public static final String GROOM_MARITAL_STATUS = "groom_marital_status";
     @LXP_SCALAR(type = LXPBaseType.STRING)
-    String BRIDE_FATHERS_SURNAME = "bride_fathers_surname";
+    public static final String BRIDE_FATHERS_SURNAME = "bride_fathers_surname";
     @LXP_SCALAR(type = LXPBaseType.STRING)
-    String BRIDE_AGE_OR_DATE_OF_BIRTH = "bride_age_or_date_of_birth";
+    public static final String BRIDE_AGE_OR_DATE_OF_BIRTH = "bride_age_or_date_of_birth";
     @LXP_SCALAR(type = LXPBaseType.STRING)
-    String CHANGED_BRIDE_SURNAME = "changed_bride_surname";
+    public static final String CHANGED_BRIDE_SURNAME = "changed_bride_surname";
     @LXP_SCALAR(type = LXPBaseType.STRING)
-    String CORRECTED_ENTRY = "corrected_entry";
+    public static final String CORRECTED_ENTRY = "corrected_entry";
     @LXP_SCALAR(type = LXPBaseType.STRING)
-    String CHANGED_BRIDE_FORENAME = "changed_bride_forename";
+    public static final String CHANGED_BRIDE_FORENAME = "changed_bride_forename";
     @LXP_SCALAR(type = LXPBaseType.STRING)
-    String BRIDE_FORENAME = "bride_forename";
+    public static final String BRIDE_FORENAME = "bride_forename";
     @LXP_SCALAR(type = LXPBaseType.STRING)
-    String GROOM_FATHERS_SURNAME = "groom_fathers_surname";
+    public static final String GROOM_FATHERS_SURNAME = "groom_fathers_surname";
     @LXP_SCALAR(type = LXPBaseType.STRING)
-    String GROOM_FATHER_DECEASED = "groom_father_deceased";
+    public static final String GROOM_FATHER_DECEASED = "groom_father_deceased";
     @LXP_SCALAR(type = LXPBaseType.STRING)
-    String GROOM_AGE_OR_DATE_OF_BIRTH = "groom_age_or_date_of_birth";
+    public static final String GROOM_AGE_OR_DATE_OF_BIRTH = "groom_age_or_date_of_birth";
     @LXP_SCALAR(type = LXPBaseType.STRING)
-    String YEAR_OF_REGISTRATION = "YEAR_OF_REGISTRATION";
+    public static final String YEAR_OF_REGISTRATION = "YEAR_OF_REGISTRATION";
     @LXP_SCALAR(type = LXPBaseType.STRING)
-    String MARRIAGE_DAY = "marriage_day";
+    public static final String MARRIAGE_DAY = "marriage_day";
 
     public Marriage() {
         super();
@@ -107,8 +106,8 @@ public class Marriage extends AbstractLXP {
 }
 
 // When these types were encoded as JSON and read in this was the definition from the file marriageType.jsn
-//{"groom_mothers_maiden_surname":"string",
-//        "groom_surname":"string",
+//{"GROOM_MOTHERS_MAIDEN_SURNAME":"string",
+//        "GROOM_SURNAME":"string",
 //        "groom_occupation":"string",
 //        "bride_father_occupation":"string",
 //        "groom_fathers_forename":"string",

@@ -1,16 +1,14 @@
 package uk.ac.standrews.cs.digitising_scotland.linkage.resolve;
 
 
-import uk.ac.standrews.cs.digitising_scotland.jstore.impl.exceptions.KeyNotFoundException;
-import uk.ac.standrews.cs.digitising_scotland.jstore.impl.exceptions.TypeMismatchFoundException;
 import uk.ac.standrews.cs.digitising_scotland.jstore.interfaces.IInputStream;
 import uk.ac.standrews.cs.digitising_scotland.jstore.interfaces.ILXP;
 import uk.ac.standrews.cs.digitising_scotland.jstore.interfaces.IOutputStream;
 import uk.ac.standrews.cs.digitising_scotland.linkage.interfaces.IPair;
+import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.Pair;
 import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.Person;
 import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.SameAs;
 import uk.ac.standrews.cs.digitising_scotland.linkage.stream_operators.sharder.AbstractPairwiseLinker;
-import uk.ac.standrews.cs.digitising_scotland.util.ErrorHandling;
 
 /**
  * Created by al on 19/06/2014.
@@ -20,7 +18,7 @@ import uk.ac.standrews.cs.digitising_scotland.util.ErrorHandling;
  */
 public class BirthBirthLinker extends AbstractPairwiseLinker<Person> {
 
-    public BirthBirthLinker(final IInputStream<Person> input, final IOutputStream<IPair<Person>> output) {
+    public BirthBirthLinker(final IInputStream<Person> input, final IOutputStream<Pair<Person>> output) {
 
         super(input, output);
     }
@@ -28,23 +26,17 @@ public class BirthBirthLinker extends AbstractPairwiseLinker<Person> {
     @Override
     public boolean compare(final IPair<Person> pair) {
 
-        ILXP first = pair.first();
-        ILXP second = pair.second();
+        Person first = pair.first();
+        Person second = pair.second();
 
         // Return true if we have person in different roles
 
-        try {
-            if ((first.getString(Person.ROLE).equals("baby") && second.getString(Person.ROLE).equals("mother")) ||
-                    (first.getString(Person.ROLE).equals("mother") && second.getString(Person.ROLE).equals("baby")) ||
-                    (first.getString(Person.ROLE).equals("baby") && second.getString(Person.ROLE).equals("father")) ||
-                    (first.getString(Person.ROLE).equals("father") && second.getString(Person.ROLE).equals("baby"))) {
+            if ((first.get_role().equals("baby") && second.get_role().equals("mother")) ||
+                    (first.get_role().equals("mother") && second.get_role().equals("baby")) ||
+                    (first.get_role().equals("baby") && second.get_role().equals("father")) ||
+                    (first.get_role().equals("father") && second.get_role().equals("baby"))) {
                 return true;
             }
-        } catch (KeyNotFoundException e) {
-            ErrorHandling.exceptionError(e, "Key not found");
-        } catch (TypeMismatchFoundException e) {
-            ErrorHandling.exceptionError(e, "Type mismatch");
-        }
         return false;
     }
 
