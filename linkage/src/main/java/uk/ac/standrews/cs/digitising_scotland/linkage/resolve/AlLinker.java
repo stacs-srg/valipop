@@ -1,7 +1,6 @@
 package uk.ac.standrews.cs.digitising_scotland.linkage.resolve;
 
 import org.json.JSONException;
-import uk.ac.standrews.cs.digitising_scotland.jstore.impl.LXP;
 import uk.ac.standrews.cs.digitising_scotland.jstore.impl.StoreFactory;
 import uk.ac.standrews.cs.digitising_scotland.jstore.impl.TypeFactory;
 import uk.ac.standrews.cs.digitising_scotland.jstore.impl.exceptions.*;
@@ -14,12 +13,16 @@ import uk.ac.standrews.cs.digitising_scotland.linkage.factory.MarriageFactory;
 import uk.ac.standrews.cs.digitising_scotland.linkage.factory.PairPersonFactory;
 import uk.ac.standrews.cs.digitising_scotland.linkage.factory.PersonFactory;
 import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.*;
+import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.Relationship.RelationShipKind;
 import uk.ac.standrews.cs.nds.persistence.PersistentObjectException;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Iterator;
+
+import static uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.Relationship.RelationShipKind.FatherOf;
+import static uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.Relationship.RelationShipKind.MotherOf;
 
 /**
  * Attempt to create a linking framework
@@ -202,12 +205,12 @@ public class AlLinker {
             Person dad = Person.createFatherFromChildsBirthDeath(baby, birth_record.getId());
             if (dad != null) {
                 people_stream.add(dad);
-                addRelationship(dad, "FatherOf", baby, birth_record, relationships_stream);
+                addRelationship(dad, FatherOf, baby, birth_record, relationships_stream);
             }
             Person mum = Person.createMotherFromChildsBirthDeath(baby, birth_record.getId());
             if (mum != null) {
                 people_stream.add(mum);
-                addRelationship(dad, "MotherOf", baby, birth_record, relationships_stream);
+                addRelationship(dad, MotherOf, baby, birth_record, relationships_stream);
             }
 
             // Could add is_child but not now...
@@ -238,12 +241,12 @@ public class AlLinker {
             Person dad = Person.createFatherFromChildsBirthDeath(baby, death_record.getId());
             if (dad != null) {
                 people_stream.add(dad);
-                addRelationship(dad, "FatherOf", baby, death_record, relationships_stream);
+                addRelationship(dad, FatherOf, baby, death_record, relationships_stream);
             }
             Person mum = Person.createMotherFromChildsBirthDeath(baby, death_record.getId());
             if (mum != null) {
                 people_stream.add(mum);
-                addRelationship(dad, "MotherOf", baby, death_record, relationships_stream);
+                addRelationship(dad, MotherOf, baby, death_record, relationships_stream);
             }
 
             // Could add is_child but not now...
@@ -276,29 +279,20 @@ public class AlLinker {
 
             // add the relationships
 
-            addRelationship(grooms_father, "FatherOf", groom, marriage_record, relationships_stream);
-            addRelationship(grooms_mother, "MotherOf", groom, marriage_record, relationships_stream);
-            addRelationship(brides_father, "FatherOf", bride, marriage_record, relationships_stream);
-            addRelationship(brides_mother, "MotherOf", bride, marriage_record, relationships_stream);
+            addRelationship(grooms_father, FatherOf, groom, marriage_record, relationships_stream);
+            addRelationship(grooms_mother, MotherOf, groom, marriage_record, relationships_stream);
+            addRelationship(brides_father, FatherOf, bride, marriage_record, relationships_stream);
+            addRelationship(brides_mother, MotherOf, bride, marriage_record, relationships_stream);
         }
     }
 
 
-    private void addRelationship(Person record1, String relationship_type, Person record2, ILXP evidence, IOutputStream output) {
+    private void addRelationship(Person person1, RelationShipKind relationship_type, Person person2, ILXP evidence, IOutputStream<Relationship> output) {
 
-        if (record1 != null) {
-            ILXP lxp = null;
-            lxp = new LXP();
+        if (person1 != null) {
 
-            try {
-                lxp.put("person1", Long.toString(record1.getId()));
-                lxp.put("person2", Long.toString(record2.getId()));
-                lxp.put("relationship", relationship_type);
-                lxp.put("evidence", Long.toString(evidence.getId()));
-                output.add(lxp);
-            } catch (IllegalKeyException e) {
-                // cannot occur - so ignore.
-            }
+                Relationship r = new Relationship( person1, relationship_type, person2, evidence );
+                output.add(r);
         }
     }
 
