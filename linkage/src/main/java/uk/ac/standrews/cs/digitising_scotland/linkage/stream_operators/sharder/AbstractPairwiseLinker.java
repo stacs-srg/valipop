@@ -5,6 +5,7 @@ import uk.ac.standrews.cs.digitising_scotland.jstore.interfaces.ILXP;
 import uk.ac.standrews.cs.digitising_scotland.jstore.interfaces.IOutputStream;
 import uk.ac.standrews.cs.digitising_scotland.linkage.interfaces.IPair;
 import uk.ac.standrews.cs.digitising_scotland.linkage.interfaces.IPairWiseLinker;
+import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.Pair;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,9 +16,9 @@ import java.util.List;
 public abstract class AbstractPairwiseLinker<T extends ILXP> implements IPairWiseLinker<T> {
 
     private final IInputStream<T> input;
-    private final IOutputStream<IPair<T>> output;
+    private final IOutputStream<Pair<T>> output;
 
-    public AbstractPairwiseLinker(final IInputStream<T> input, final IOutputStream<IPair<T>> output) {
+    public AbstractPairwiseLinker(final IInputStream<T> input, final IOutputStream<Pair<T>> output) {
         this.input = input;
         this.output = output;
     }

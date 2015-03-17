@@ -2,15 +2,12 @@ package uk.ac.standrews.cs.digitising_scotland.linkage.blocking;
 
 
 import uk.ac.standrews.cs.digitising_scotland.jstore.impl.exceptions.BucketException;
-import uk.ac.standrews.cs.digitising_scotland.jstore.impl.exceptions.KeyNotFoundException;
 import uk.ac.standrews.cs.digitising_scotland.jstore.impl.exceptions.RepositoryException;
-import uk.ac.standrews.cs.digitising_scotland.jstore.impl.exceptions.TypeMismatchFoundException;
 import uk.ac.standrews.cs.digitising_scotland.jstore.interfaces.IBucket;
 import uk.ac.standrews.cs.digitising_scotland.jstore.interfaces.ILXPFactory;
 import uk.ac.standrews.cs.digitising_scotland.jstore.interfaces.IRepository;
 import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.Person;
 import uk.ac.standrews.cs.digitising_scotland.linkage.stream_operators.sharder.Blocker;
-import uk.ac.standrews.cs.nds.util.ErrorHandling;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -45,33 +42,25 @@ public class MultipleBlockerOverPerson extends Blocker<Person> {
 
         // Only operates over person records
 
-        try {
-            String FN = record.getString(Person.FORENAME);
-            String LN = record.getString(Person.SURNAME);
-            String FF = record.getString(Person.FATHERS_FORENAME);
-            String FL = record.getString(Person.FATHERS_SURNAME);
-            FL = (FL == null || FL.equals("0")) ? LN : FL; // TODO fix these - fathers surname coded as "0" if same as baby
-            String MF = record.getString(Person.MOTHERS_FORENAME);
-            String MM = record.getString(Person.MOTHERS_MAIDEN_SURNAME);
+        String FN = record.get_forename();
+        String LN = record.get_surname();
+        String FF = record.get_fathers_forename();
+        String FL = record.get_fathers_surname();
+        FL = (FL == null || FL.equals("0")) ? LN : FL; // TODO fix these - fathers surname coded as "0" if same as baby
+        String MF = record.get_mothers_forename();
+        String MM = record.get_mothers_maiden_surname();
 
-            String FNLN = removeNasties(FN + LN);
-            String FNLNMF = removeNasties(FNLN + MF);
-            String FNLNFF = removeNasties(FNLN + FF);
-            String FNLNMFFF = removeNasties(FNLN + MF + FF);
-            String FNMF = removeNasties(FN + MF);
-            String FNFF = removeNasties(FN + FF);
-            String FNFL = removeNasties(FN + FL);
-            String MFMMFF = removeNasties(MF + MM + FF);
+        String FNLN = removeNasties(FN + LN);
+        String FNLNMF = removeNasties(FNLN + MF);
+        String FNLNFF = removeNasties(FNLN + FF);
+        String FNLNMFFF = removeNasties(FNLN + MF + FF);
+        String FNMF = removeNasties(FN + MF);
+        String FNFF = removeNasties(FN + FF);
+        String FNFL = removeNasties(FN + FL);
+        String MFMMFF = removeNasties(MF + MM + FF);
 
-            String[] blocked_names = new String[]{FNLN, FNLNMF, FNLNFF, FNLNMFFF, FNMF, FNFF, FNFL, MFMMFF};
-            return dedup(blocked_names);
-        } catch (KeyNotFoundException e) {
-            ErrorHandling.exceptionError(e, "Key not found");
-            return new String[]{};
-        } catch (TypeMismatchFoundException e) {
-            ErrorHandling.exceptionError(e, "Type mismatch");
-            return new String[]{};
-        }
+        String[] blocked_names = new String[]{FNLN, FNLNMF, FNLNFF, FNLNMFFF, FNMF, FNFF, FNFL, MFMMFF};
+        return dedup(blocked_names);
     }
 
     private String[] dedup(String[] blocked_names) {
