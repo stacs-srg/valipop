@@ -31,10 +31,10 @@ public class LinkedPerson implements IPerson {
     private String occupation;
     private String causeOfDeath;
     private char sex;
-    private List<DirectLink> childbearingPartnerships = new ArrayList<DirectLink>();
-    private List<DirectLink> marriagePartnerships = new ArrayList<DirectLink>();
-    private List<IndirectLink> siblings = new ArrayList<IndirectLink>();
-    private DirectLink parentPartnershipLink;
+    private List<Link> childbearingPartnerships = new ArrayList<Link>();
+    private List<Link> marriagePartnerships = new ArrayList<Link>();
+    private List<Link> siblings = new ArrayList<Link>();
+    private Link parentPartnershipLink;
     
     // Days since epoch (1600)
     private int dayOfBirth;
@@ -47,33 +47,33 @@ public class LinkedPerson implements IPerson {
     	this.sex = sex;
     }
     
-    public void setPartnershipLinks(List<DirectLink> partnerships) {
+    public void setPartnershipLinks(List<Link> partnerships) {
     	this.childbearingPartnerships = partnerships;    	
     }
     
-    public void addPartnershipLink(DirectLink partnership) {
+    public void addPartnershipLink(Link partnership) {
     	childbearingPartnerships.add(partnership);    	
     }
     
-    public void setMarriageLinks(List<DirectLink> partnerships) {
+    public void setMarriageLinks(List<Link> partnerships) {
     	this.marriagePartnerships = partnerships;    	
     }
     
-    public void addMarriageLink(DirectLink partnership) {
+    public void addMarriageLink(Link partnership) {
     	marriagePartnerships.add(partnership);    	
     }
     
-    public void setSiblingLinks(List<IndirectLink> siblings) {
+    public void setSiblingLinks(List<Link> siblings) {
     	this.siblings = siblings;    	
     }
     
-    public void addSiblingLink(IndirectLink partnership) {
+    public void addSiblingLink(Link partnership) {
     	siblings.add(partnership);    	
     }
     
     
     
-    public void setParentPartnershipLink(DirectLink parentPartnershipLink) {
+    public void setParentPartnershipLink(Link parentPartnershipLink) {
     	this.parentPartnershipLink = parentPartnershipLink;
     }
     
@@ -132,21 +132,21 @@ public class LinkedPerson implements IPerson {
     }
 
 	@Override
-	public List<DirectLink> getPartnerships() {
+	public List<Link> getPartnerships() {
 		return childbearingPartnerships;
 	}
 
 	@Override
-	public DirectLink getParentsPartnership() {
+	public Link getParentsPartnership() {
 		return parentPartnershipLink;
 	}
 
 
-	public List<DirectLink> getMarraigePartnerships() {
+	public List<Link> getMarraigePartnerships() {
 		return marriagePartnerships;
 	}
 	
-	public List<IndirectLink> getSiblings() {
+	public List<Link> getSiblings() {
 		return siblings;
 	}
 

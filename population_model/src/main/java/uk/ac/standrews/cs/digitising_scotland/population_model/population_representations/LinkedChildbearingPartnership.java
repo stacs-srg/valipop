@@ -21,9 +21,9 @@ import java.util.Date;
 import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.adapted_interfaces.IPartnership;
 import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.adapted_interfaces.IPerson;
 
-public class LinkedChildbearingPartnership extends AbstractLinkedPartnership implements IPartnership {
+public class LinkedChildbearingPartnership extends IntermediaryLinkObject implements IPartnership {
 
-    private DirectLink child;
+    private Link child;
     
     public LinkedChildbearingPartnership(int id, String ref) {
     	this.id = id;
@@ -31,7 +31,7 @@ public class LinkedChildbearingPartnership extends AbstractLinkedPartnership imp
 	}
     
     public void setChildLink(LinkedPerson child, Evidence[] records) {
-    	this.child = new DirectLink(child, this, records);
+    	this.child = new Link(child, this, records);
     }
     
     public String getRef() {
@@ -54,30 +54,30 @@ public class LinkedChildbearingPartnership extends AbstractLinkedPartnership imp
     }
 
 	@Override
-	public DirectLink getChildLink() {
+	public Link getChildLink() {
 		return child;
 	}
 
-	public void addPossibleMaleLink(LinkedPerson father, Evidence[] evidence, float linkHeuristic) {
-		DirectLink[] temp = this.male.clone();
-		DirectLink[] newArray = new DirectLink[temp.length + 1];
+	public void addPossiblePerson1Link(LinkedPerson father, Evidence[] evidence, float linkHeuristic) {
+		Link[] temp = this.person1.clone();
+		Link[] newArray = new Link[temp.length + 1];
 		int c = 0;
-		for(DirectLink l : this.male) {
+		for(Link l : this.person1) {
 			newArray[c++] = l;
 		}
-		newArray[c] = new DirectLink(father, this, evidence, linkHeuristic);
-		this.male = newArray;
+		newArray[c] = new Link(father, this, evidence, linkHeuristic);
+		this.person1 = newArray;
 	}
 	
-	public void addPossibleFemaleLink(LinkedPerson mother, Evidence[] evidence, float linkHeuristic) {
-		DirectLink[] temp = this.female.clone();
-		DirectLink[] newArray = new DirectLink[temp.length + 1];
+	public void addPossiblePerson2Link(LinkedPerson mother, Evidence[] evidence, float linkHeuristic) {
+		Link[] temp = this.person2.clone();
+		Link[] newArray = new Link[temp.length + 1];
 		int c = 0;
-		for(DirectLink l : this.female) {
+		for(Link l : this.person2) {
 			newArray[c++] = l;
 		}
-		newArray[c] = new DirectLink(mother, this, evidence, linkHeuristic);
-		this.female = newArray;
+		newArray[c] = new Link(mother, this, evidence, linkHeuristic);
+		this.person2 = newArray;
 	}
 
 	@Override

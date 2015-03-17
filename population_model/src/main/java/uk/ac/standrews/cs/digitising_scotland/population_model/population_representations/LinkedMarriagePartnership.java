@@ -20,7 +20,7 @@ import java.util.Date;
 
 import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.adapted_interfaces.IPartnership;
 
-public class LinkedMarriagePartnership extends AbstractLinkedPartnership implements IPartnership {
+public class LinkedMarriagePartnership extends IntermediaryLinkObject implements IPartnership {
 
     public LinkedMarriagePartnership(int id, String ref) {
     	this.id = id;
@@ -37,13 +37,13 @@ public class LinkedMarriagePartnership extends AbstractLinkedPartnership impleme
     }
 
     @Override
-    public DirectLink[] getFemalePotentialPartnerLinks() {
-        return female;
+    public Link[] getPerson1PotentialPartnerLinks() {
+        return person2;
     }
 
     @Override
-    public DirectLink[] getMalePotentialPartnerLinks() {
-        return male;
+    public Link[] getPerson2PotentialPartnerLinks() {
+        return person1;
     }
     
     @Override
@@ -68,7 +68,7 @@ public class LinkedMarriagePartnership extends AbstractLinkedPartnership impleme
 	}
 
 	@Override
-	public DirectLink getChildLink() {
+	public Link getChildLink() {
 		// TODO Auto-generated method stub
 		return null;
 	}
