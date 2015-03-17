@@ -34,17 +34,14 @@ public class LinkedPopulation implements IPopulation {
 
 	String description;
 
-
-
 	public LinkedPopulation(String description) {
 		this.description = description;
 	}
 
-
 	/*
 	 * Interface methods
 	 */
-
+	
 	@Override
 	public Iterable<IPerson> getPeople() {
 		return new Iterable<IPerson>() {

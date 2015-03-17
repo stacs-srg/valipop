@@ -18,7 +18,7 @@ package uk.ac.standrews.cs.digitising_scotland.population_model.population_repre
 
 import uk.ac.standrews.cs.digitising_scotland.population_model.config.PopulationProperties;
 import uk.ac.standrews.cs.digitising_scotland.population_model.model.database.DBConnector;
-import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.DirectLink;
+import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.Link;
 import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.adapted_interfaces.IPartnership;
 import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.adapted_interfaces.IPerson;
 import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.adapted_interfaces.IPopulationWriter;
@@ -104,13 +104,13 @@ public class DBPopulationWriter implements IPopulationWriter {
 
         recordMarriage(partnership);
 
-        DirectLink[] fathers = partnership.getMalePotentialPartnerLinks();
-        DirectLink[] mothers = partnership.getFemalePotentialPartnerLinks();
+        Link[] fathers = partnership.getPerson2PotentialPartnerLinks();
+        Link[] mothers = partnership.getPerson1PotentialPartnerLinks();
         
-        for(DirectLink l : fathers)
+        for(Link l : fathers)
         	recordPartnerWithinPartnership(partnership_id, l.getLinkedPerson().getId());
         	
-        for(DirectLink l : mothers)
+        for(Link l : mothers)
         	recordPartnerWithinPartnership(partnership_id, l.getLinkedPerson().getId());
         
 

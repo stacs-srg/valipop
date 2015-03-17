@@ -18,7 +18,7 @@ package uk.ac.standrews.cs.digitising_scotland.population_model.population_repre
 
 import java.util.Date;
 
-import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.DirectLink;
+import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.Link;
 
 /**
  * Interface for partnership objects.
@@ -38,13 +38,13 @@ public interface IPartnership extends Comparable<IPartnership> {
      * Returns and array of Links for the female in the partnership.
      * @return the possible Links for the female
      */
-    DirectLink[] getFemalePotentialPartnerLinks();
+    Link[] getPerson1PotentialPartnerLinks();
 
     /**
      * Returns and array of Links for the male in the partnership.
      * @return the possible Links of the male
      */
-    DirectLink[] getMalePotentialPartnerLinks();
+    Link[] getPerson2PotentialPartnerLinks();
 
     
     // TODO This method?
@@ -81,5 +81,5 @@ public interface IPartnership extends Comparable<IPartnership> {
      * Gets the identifiers of this partnership object's child_id, or null if none are recorded.
      * @return the identifier of the partnership's child_id
      */
-    DirectLink getChildLink();
+    Link getChildLink();
 }

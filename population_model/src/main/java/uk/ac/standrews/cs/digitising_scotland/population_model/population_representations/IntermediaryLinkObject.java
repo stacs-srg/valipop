@@ -16,47 +16,41 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.population_model.population_representations;
 
-public class LinkedSiblings extends IntermediaryLinkObject {
+public abstract class IntermediaryLinkObject {
 
-    private boolean fullSibling;
-    
-    public LinkedSiblings(int id, String ref) {
-    	this.id = id;
-    	this.ref = ref;
-	}
-    
-    public void addPossibleSibling1Link(LinkedPerson sibling1, Evidence[] evidence, float linkHeuristic) {
+    protected Integer id;
+    protected String ref;
+    protected Link[] person1 = new Link[0];
+    protected Link[] person2 = new Link[0];
+	
+    public void addPossiblePerson1Link(LinkedPerson person1, Evidence[] evidence, float linkHeuristic) {
 		Link[] temp = this.person1.clone();
 		Link[] newArray = new Link[temp.length + 1];
 		int c = 0;
 		for(Link l : this.person1) {
 			newArray[c++] = l;
 		}
-		newArray[c] = new Link(sibling1, this, evidence, linkHeuristic);
+		newArray[c] = new Link(person1, this, evidence, linkHeuristic);
 		this.person1 = newArray;
 	}
 	
-	public void addPossibleSibling2Link(LinkedPerson sibling2, Evidence[] evidence, float linkHeuristic) {
+	public void addPossiblePerson2Link(LinkedPerson person2, Evidence[] evidence, float linkHeuristic) {
 		Link[] temp = this.person2.clone();
 		Link[] newArray = new Link[temp.length + 1];
 		int c = 0;
 		for(Link l : this.person2) {
 			newArray[c++] = l;
 		}
-		newArray[c] = new Link(sibling2, this, evidence, linkHeuristic);
+		newArray[c] = new Link(person2, this, evidence, linkHeuristic);
 		this.person2 = newArray;
 	}
 	
-    public Link[] getSibling1PotentialLinks() {
+    public Link[] getPerson1PotentialPartnerLinks() {
         return person1;
     }
 
-    public Link[] getSibling2PotentialLinks() {
+    public Link[] getPerson2PotentialPartnerLinks() {
         return person2;
     }
-
-	public Object getRef() {
-		return ref;
-	}
-
+	
 }

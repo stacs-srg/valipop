@@ -19,7 +19,7 @@ package uk.ac.standrews.cs.digitising_scotland.population_model.population_repre
 import java.util.Date;
 import java.util.List;
 
-import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.DirectLink;
+import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.Link;
 
 /**
  * Interface for person objects.
@@ -116,12 +116,12 @@ public interface IPerson {
      * Gets the Links of the person's potential partnerships, or null if none are recorded.
      * @return the Linkes to the person's potential partnerships
      */
-    List<DirectLink> getPartnerships();
+    List<Link> getPartnerships();
 
     /**
      * Gets the Link of the person's parents' partnership, or null if none are recorded.
      * @return the identifier of the person's parents' partnership
      */
-    DirectLink getParentsPartnership();
+    Link getParentsPartnership();
     
 }

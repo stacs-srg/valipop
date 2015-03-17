@@ -16,22 +16,35 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.population_model.population_representations;
 
-public class IndirectLink implements Comparable<Float>{
+
+/**
+ * Link class, used to show a potentional connection between a person and a partnership along with a heuristic linkage value and evidence of link.
+ * @author Tom Dalton
+ *
+ */
+public class Link implements Comparable<Float> {
 
 	private Evidence[] provenance;
 	private float heuriticOfLinkValue;
 
 	private LinkedPerson linkedPerson;
-	private LinkedSiblings linkedSiblingsObject;
-	
-	public IndirectLink(LinkedPerson person, LinkedSiblings linkedSiblings, Evidence[] records, float heuristic) {
+	private IntermediaryLinkObject intermediaryLinkedObject;
+
+	public Link(LinkedPerson person, IntermediaryLinkObject partnership, Evidence[] records, float heuristic) {
 		linkedPerson = person;
-		linkedSiblingsObject = linkedSiblings;
+		intermediaryLinkedObject = partnership;
 		provenance = records;
-		linkedPerson.addSiblingLink(this);
+		linkedPerson.addPartnershipLink(this);
 		heuriticOfLinkValue = heuristic;
 	}
-	
+
+	public Link(LinkedPerson child, LinkedChildbearingPartnership partnership, Evidence[] records) {
+		linkedPerson = child;
+		intermediaryLinkedObject = partnership;
+		provenance = records;
+		linkedPerson.setParentPartnershipLink(this);
+	}
+
 	public Evidence[] getProvenance() {
 		return provenance;
 	}
@@ -48,12 +61,12 @@ public class IndirectLink implements Comparable<Float>{
 		this.linkedPerson = linkedPerson;
 	}
 	
-	public LinkedSiblings getLinkedSiblingObject() {
-		return linkedSiblingsObject;
+	public IntermediaryLinkObject getLinkedPartnership() {
+		return intermediaryLinkedObject;
 	}
 	
-	public void setLinkedSiblingObject(LinkedSiblings linkedPartnership) {
-		this.linkedSiblingsObject = linkedPartnership;
+	public void setLinkedPartnership(LinkedChildbearingPartnership linkedPartnership) {
+		this.intermediaryLinkedObject = linkedPartnership;
 	}
 
 	/**
@@ -79,5 +92,6 @@ public class IndirectLink implements Comparable<Float>{
 		else
 			return 0;
 	}
-	
+
+
 }
