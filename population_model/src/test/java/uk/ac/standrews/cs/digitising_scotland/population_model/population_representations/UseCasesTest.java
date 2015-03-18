@@ -105,18 +105,7 @@ public class UseCasesTest {
 			Assert.assertTrue(children.contains(child));
 		}
 	}
-
-	private void print(LinkedPerson child) {
-		System.out.println(child.getFirstName());
-	}
-
-	private void print(List<LinkedPerson> list) {
-		for(LinkedPerson p : list) {
-			System.out.print(p.getFirstName() + " ");
-		}
-		System.out.println();
-	}
-
+	
 	public void fatherAndChildLinked(LinkedPerson child) {
 		if(child.getParentsPartnership() == null) {
 			return;
@@ -138,6 +127,8 @@ public class UseCasesTest {
 	}
 	
 	public void partnersLinked(LinkedPerson person) {
+//		Utils.print(person);
+//		System.out.println(person.getPartnerships().size());
 		if(person.getPartnerships().size() == 0)
 			return;
 		
@@ -155,7 +146,7 @@ public class UseCasesTest {
 			partners.add((LinkedPerson) l.getLinkedPerson());
 		}
 		
-		print(partners);
+//		Utils.print(partners);
 		
 		List<Link> returnPartnershipLinks = new ArrayList<Link>();
 		List<Link> returnPartnerLinks = new ArrayList<Link>();
@@ -177,8 +168,8 @@ public class UseCasesTest {
 			returnPartners.add((LinkedPerson) l.getLinkedPerson());
 		}
 		
-		print(returnPartners);
-		print(person);
+//		Utils.print(returnPartners);
+//		Utils.print(person);
 		
 		Assert.assertTrue(returnPartners.contains(person));
 		

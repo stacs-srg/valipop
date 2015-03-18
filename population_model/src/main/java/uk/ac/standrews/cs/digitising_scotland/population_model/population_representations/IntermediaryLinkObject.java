@@ -52,5 +52,9 @@ public abstract class IntermediaryLinkObject {
     public Link[] getPerson2PotentialPartnerLinks() {
         return person2;
     }
+    
+    public String getRef() {
+    	return ref;
+    }
 	
 }
