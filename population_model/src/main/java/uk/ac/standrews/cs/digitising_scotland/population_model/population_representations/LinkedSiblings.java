@@ -55,8 +55,4 @@ public class LinkedSiblings extends IntermediaryLinkObject {
         return person2;
     }
 
-	public Object getRef() {
-		return ref;
-	}
-
 }

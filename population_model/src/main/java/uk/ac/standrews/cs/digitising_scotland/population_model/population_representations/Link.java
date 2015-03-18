@@ -16,13 +16,15 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.population_model.population_representations;
 
+import java.util.Comparator;
+
 
 /**
  * Link class, used to show a potentional connection between a person and a partnership along with a heuristic linkage value and evidence of link.
  * @author Tom Dalton
  *
  */
-public class Link implements Comparable<Float> {
+public class Link implements Comparable<Link> {
 
 	private Evidence[] provenance;
 	private float heuriticOfLinkValue;
@@ -43,6 +45,7 @@ public class Link implements Comparable<Float> {
 		intermediaryLinkedObject = partnership;
 		provenance = records;
 		linkedPerson.setParentPartnershipLink(this);
+		heuriticOfLinkValue = 1;
 	}
 
 	public Evidence[] getProvenance() {
@@ -83,14 +86,27 @@ public class Link implements Comparable<Float> {
 		this.heuriticOfLinkValue = heuriticOfLinkValue;
 	}
 
+//	@Override
+//	public int compareTo(Float o) {
+//		return Float.compare(o, heuriticOfLinkValue);
+////		if(o. heuriticOfLinkValue)
+////			return -1;
+////		else if (o < heuriticOfLinkValue)
+////			return 1;
+////		else
+////			return 0;
+//	}
+
+
+
+//	@Override
+//	public int compare(Link o1, Link o2) {
+//		
+//	}
+
 	@Override
-	public int compareTo(Float o) {
-		if(o > heuriticOfLinkValue)
-			return -1;
-		else if (o < heuriticOfLinkValue)
-			return 1;
-		else
-			return 0;
+	public int compareTo(Link o) {
+		return Float.compare(o.getHeuriticOfLinkValue(), this.getHeuriticOfLinkValue());
 	}
 
 
