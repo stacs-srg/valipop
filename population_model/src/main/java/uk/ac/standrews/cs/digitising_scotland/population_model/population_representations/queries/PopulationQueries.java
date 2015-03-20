@@ -16,11 +16,10 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.queries;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.PriorityQueue;
 
-import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.Evidence;
 import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.Link;
 import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.LinkedChildbearingPartnership;
 import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.LinkedPerson;
@@ -38,19 +37,19 @@ public class PopulationQueries {
 		LinkedPopulation pop = UseCases.generateNuclearFamilyUseCase();
 		PopulationQueries pq = new PopulationQueries(pop);
 
-//		Utils.printResultSet(pq.getChildrenOf(3));
-//		Utils.printResultSet(pq.getChildrenOf(4));
-//		Utils.printResultSet(pq.getChildrenOf(5));
-//
-//		Utils.printResultSet(pq.getFatherOf(0));
-//		Utils.printResultSet(pq.getFatherOf(1));
-//		Utils.printResultSet(pq.getFatherOf(2));
-//		
-//		Utils.printResultSet(pq.getMotherOf(0));
-//		Utils.printResultSet(pq.getMotherOf(1));
-//		Utils.printResultSet(pq.getMotherOf(2));
-//		
-//		Utils.printResultSet(pq.getPartnerOf(4));
+		Utils.printResultSet(pq.getChildrenOf(3));
+		Utils.printResultSet(pq.getChildrenOf(4));
+		Utils.printResultSet(pq.getChildrenOf(5));
+
+		Utils.printResultSet(pq.getFatherOf(0));
+		Utils.printResultSet(pq.getFatherOf(1));
+		Utils.printResultSet(pq.getFatherOf(2));
+		
+		Utils.printResultSet(pq.getMotherOf(0));
+		Utils.printResultSet(pq.getMotherOf(1));
+		Utils.printResultSet(pq.getMotherOf(2));
+		
+		Utils.printResultSet(pq.getPartnerOf(4));
 
 		Utils.printResultSet(pq.getPotentialFatherSideSiblingsOf(0));
 		Utils.printResultSet(pq.getPotentialMotherSideSiblingsOf(0));
@@ -72,7 +71,7 @@ public class PopulationQueries {
 			fathers.add(new ResultObject(QueryType.FATHERS, p.getParentsPartnership(), l));
 		}
 		
-		return fathers.toArray(new ResultObject[fathers.size()]);
+		return orderResults(fathers);
 	}
 	
 	public ResultObject[] getMotherOf(int person) {
@@ -85,7 +84,7 @@ public class PopulationQueries {
 			mothers.add(new ResultObject(QueryType.MOTHERS, p.getParentsPartnership(), l));
 		}
 		
-		return mothers.toArray(new ResultObject[mothers.size()]);
+		return orderResults(mothers);
 	}
 	
 	public ResultObject[] getPartnerOf(int person) {
@@ -105,7 +104,7 @@ public class PopulationQueries {
 			}
 		}
 		
-		return partners.toArray(new ResultObject[partners.size()]);
+		return orderResults(partners);
 	}
 	
 	// Need to think about way of grouping children into possible sets?
@@ -116,7 +115,7 @@ public class PopulationQueries {
 		for(Link l : possPartnership) {
 			children.add(new ResultObject(QueryType.CHILDREN, l, ((LinkedChildbearingPartnership) l.getLinkedPartnership()).getChildLink()));
 		}
-		return children.toArray(new ResultObject[children.size()]);
+		return orderResults(children);
 	}
 	
 	public ResultObject[] getPotentialFatherSideSiblingsOf(int person) {
@@ -129,12 +128,20 @@ public class PopulationQueries {
 			for(Link pL : partnerships) {
 				Link childLink = ((LinkedChildbearingPartnership) pL.getLinkedPartnership()).getChildLink();
 				Link[] intermidiaryLinks = new Link[]{l, pL};
+
+				// Adding sibling link consideration here
+//				Link[] supportingLinks;
+//				
+//				for(Link l : p.getSiblings()) {
+//					
+//				}
+				
 				if(childLink.getLinkedPerson().getId() != p.getId()) {
 					siblings.add(new ResultObject(QueryType.FATHERS_SIDE_SIBLINGS, parentsPartnership, intermidiaryLinks, childLink));
 				}
 							}
 		}
-		return siblings.toArray(new ResultObject[siblings.size()]);
+		return orderResults(siblings);
 	}
 	
 	
@@ -153,13 +160,13 @@ public class PopulationQueries {
 				}
 			}
 		}
-		return siblings.toArray(new ResultObject[siblings.size()]);
+		return orderResults(siblings);
 	}
 		
 	public ResultObject[] getPotentialFullSiblings(int person) {
 		ResultObject[] fSideSibling = getPotentialFatherSideSiblingsOf(person);
 		ResultObject[] mSideSibling = getPotentialMotherSideSiblingsOf(person);
-		ArrayList<ResultObject> potentialFullSiblings = new ArrayList<ResultObject>();
+		PriorityQueue<ResultObject> potentialFullSiblings = new PriorityQueue<ResultObject>();
 		
 		for(ResultObject f : fSideSibling) {
 			int fId = f.getBranchLink().getLinkedPerson().getId();
@@ -168,30 +175,20 @@ public class PopulationQueries {
 					
 					potentialFullSiblings.add(new ResultObject(QueryType.FULL_SIBLINGS, f.getRootLink(), f.getIntermidiaryLinks1(), m.getIntermidiaryLinks1(), f.getBranchLink()));
 					
-//					Evidence[] records = new Evidence[f.getProvenance().length + m.getProvenance().length];
-//					int c = 0;
-//					for(Evidence e : f.getProvenance()) {
-//						records[c++] = e;
-//					}
-//					for(Evidence e : m.getProvenance()) {
-//						records[c++] = e;
-//					}
-//					potentialFullSiblings.add(new Link(m.getLinkedPerson(), m.getLinkedPerson().getParentsPartnership().getLinkedPartnership(), records, f.getHeuriticOfLinkValue() * m.getHeuriticOfLinkValue()));
 				}
 			}
 		}
-		return potentialFullSiblings.toArray(new ResultObject[potentialFullSiblings.size()]);		
+		return orderResults(potentialFullSiblings);		
 		
 	}
 	
-//	private Link[] orderArrayOfLinksByHeuristic(Link[] links) {
-//		PriorityQueue<Link> q = new PriorityQueue<Link>();
-//		for(Link l : links) {
-//			q.add(l);
-//		}
-//		return q.toArray(new Link[q.size()]);
-//	}
-	
+	public ResultObject[] orderResults(PriorityQueue<ResultObject> pq) {
+		
+		ResultObject[] temp = pq.toArray(new ResultObject[pq.size()]);
+		Arrays.sort(temp);
+		return temp;
+		
+	}
 	
 
 }

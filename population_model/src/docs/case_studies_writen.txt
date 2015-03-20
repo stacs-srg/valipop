@@ -46,7 +46,7 @@ If we introduce a sibling intermediary object as can be seen in figure <Struct_e
 
 An aside note about inferring siblings with certainty without definite knowledge from census or similar data. This is not something that would be present in the current Digitising Scotland dataset but as stated at the outset the designed structure aims to be general enough to express any logical possibility and thus not be dependent on representing linked data only arising from a certain specification of 'paper record'. An example of a real 'paper record' from which a certain sibling linkage could be inferred could be seen in family census records.
 
-Also the people linked to a sibling object cannot be asserted absolutely and thus multiple people may emerge from either end of a sibling object, this will be explored with a more complex example in the case study see in figure <FIG>. Before discussing this further though it will be useful to discuss the edges in the graph and the annotations that will be found upon them if the structure is to fulfil its requirements.
+Also the people linked to a sibling object cannot be asserted absolutely and thus multiple people may emerge from either end of a sibling object, this will be explored with a more complex example in the case study see in figure <FIG>. Before discussing this further though it will be useful to discuss the edges in the graph and the annotations that will be found upon them if the structure is to fulfill its requirements.
 
 Uncertainty
 
