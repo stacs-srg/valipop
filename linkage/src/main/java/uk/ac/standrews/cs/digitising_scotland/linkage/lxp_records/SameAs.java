@@ -22,7 +22,7 @@ public class SameAs extends AbstractLXP {
     public static final String CONFIDENCE = "confidence";
 
 
-    public SameAs(Person first, Person second, String relationship, float confidence) {
+    public SameAs(Role first, Role second, String relationship, float confidence) {
 
         super();
         try {

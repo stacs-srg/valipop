@@ -9,13 +9,14 @@ import uk.ac.standrews.cs.digitising_scotland.jstore.interfaces.IOutputStream;
  */
 public interface IPairWiseLinker<T extends ILXP> {
 
-    void pairwiseLink();
+    void pairwiseUnify();
 
-    boolean compare(IPair<T> pair);
+    float compare(T first, T second);
 
     /**
      * Adds a matched result to a result collection.
      * @param pair
+     * @param differentness
      */
-    void addToResults(final IPair<T> pair, final IOutputStream<IPair<T>> results);
+    void addToResults(final IPair pair, float differentness, final IOutputStream results);
 }

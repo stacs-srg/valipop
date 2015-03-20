@@ -57,7 +57,7 @@ import java.util.Date;
  *         1000004|HAWICK|CATHERINE|F|1855|009|00|044|||||25|7|AITH|SCOTT|0|SEAMAN|44|MARY|0|YELL||12|1841|SELIVOE||M|X||||
  *         1000005|GEORGESON|PETER|M|1855|009|00|045||ISBESTER|||17|5|SAND|GEORGE|0|SEAMAN|MARGARET|0|||11|1838|WATNESS||M|X||||
  */
-public class BirthSourceSourceSourceRecord extends IndividualSourceSourceRecord {
+public class BirthSourceRecord extends IndividualSourceRecord {
 
     private DateRecord birth_date;
     private String birth_address;
@@ -70,7 +70,7 @@ public class BirthSourceSourceSourceRecord extends IndividualSourceSourceRecord 
     private String informant_did_not_sign;
     private String adoption;
 
-    public BirthSourceSourceSourceRecord(final IPerson person, IPopulation population) {
+    public BirthSourceRecord(final IPerson person, IPopulation population) {
 
         birth_date = new DateRecord();
         parents_marriage_date = new DateRecord();

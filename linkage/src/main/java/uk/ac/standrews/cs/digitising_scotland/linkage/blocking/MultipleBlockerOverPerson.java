@@ -6,7 +6,7 @@ import uk.ac.standrews.cs.digitising_scotland.jstore.impl.exceptions.RepositoryE
 import uk.ac.standrews.cs.digitising_scotland.jstore.interfaces.IBucket;
 import uk.ac.standrews.cs.digitising_scotland.jstore.interfaces.ILXPFactory;
 import uk.ac.standrews.cs.digitising_scotland.jstore.interfaces.IRepository;
-import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.Person;
+import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.Role;
 import uk.ac.standrews.cs.digitising_scotland.linkage.stream_operators.sharder.Blocker;
 
 import java.io.IOException;
@@ -27,9 +27,9 @@ import java.util.ArrayList;
  * <p/>
  * Created by al on 01/08/2014.
  */
-public class MultipleBlockerOverPerson extends Blocker<Person> {
+public class MultipleBlockerOverPerson extends Blocker<Role> {
 
-    public MultipleBlockerOverPerson(final IBucket peopleBucket, final IRepository output_repo, ILXPFactory<Person> tFactory) throws BucketException, RepositoryException, IOException {
+    public MultipleBlockerOverPerson(final IBucket peopleBucket, final IRepository output_repo, ILXPFactory<Role> tFactory) throws BucketException, RepositoryException, IOException {
 
         super(peopleBucket.getInputStream(), output_repo, tFactory);
     }
@@ -38,7 +38,7 @@ public class MultipleBlockerOverPerson extends Blocker<Person> {
      * @param record - a Person record to be blocked
      * @return the blocking keys - one for baby and one for father
      */
-    public String[] determineBlockedBucketNamesForRecord(final Person record) {
+    public String[] determineBlockedBucketNamesForRecord(final Role record) {
 
         // Only operates over person records
 

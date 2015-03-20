@@ -62,7 +62,7 @@ import java.util.Date;
  *         6000004|MOUAT|JAMES|M|1855|010|1|18|1855|0||||82D||||||5|25|NORTH_HAMMERSLAND_TINGWALL_ZETLAND|JEREMIAH|0|FARMER||MARY|IRVINE||COSTIVENESS||||||
  *         8000001|WALTERSON|ROBINA|F|1966|010|00|0009|1966|84|||||17091881||W|ROBERT_JAM ES_WALTERSON|CROFTER|9|16|WEST_BURRAFIRTH_BRIDGE_OF_WALLS|JAMES|CH RISTIE|FISHERMAN|Y|AGNES|CHRISTIE|Y|HYPOSTATIC_PNEUMONIA|CORONARY_THR OMBOSIS|SENILITY|J._ROBERTSON_DURHAM|||
  */
-public class DeathSourceSourceSourceRecord extends IndividualSourceSourceRecord {
+public class DeathSourceRecord extends IndividualSourceRecord {
 
     public static final long FIRST_YEAR_DOB_PRESENT = 1966;
     private static final SimpleDateFormat DOB_DATE_FORMAT = new SimpleDateFormat("ddMMyyyy");
@@ -88,7 +88,7 @@ public class DeathSourceSourceSourceRecord extends IndividualSourceSourceRecord 
     private String spouses_names;
     private String spouses_occupations;
 
-    public DeathSourceSourceSourceRecord(final IPerson person, IPopulation population) {
+    public DeathSourceRecord(final IPerson person, IPopulation population) {
 
         death_date = new DateRecord();
 
@@ -278,7 +278,7 @@ public class DeathSourceSourceSourceRecord extends IndividualSourceSourceRecord 
             setDeathYear(String.valueOf(death_year));
             setDeathAge(String.valueOf(death_year - birth_year));
 
-            if (death_year >= DeathSourceSourceSourceRecord.FIRST_YEAR_DOB_PRESENT) {
+            if (death_year >= DeathSourceRecord.FIRST_YEAR_DOB_PRESENT) {
                 setBirthDate(DateManipulation.formatDate(birth_date, DOB_DATE_FORMAT));
             }
         }
