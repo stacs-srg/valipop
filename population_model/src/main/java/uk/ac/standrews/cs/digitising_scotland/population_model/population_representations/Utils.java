@@ -41,11 +41,40 @@ public class Utils {
 	public static void printResultSet(ResultObject[] array) {
 		
 		System.out.println("Possible " + array[0].getQueryType().toString() + " of " + array[0].getRootLink().getLinkedPerson().getFirstName());
-		for(ResultObject r : array) {
-			Link bL = r.getBranchLink();
-			System.out.println(bL.getLinkedPerson().getFirstName() + " @H " + r.getCombinedHeuristic() + " by " + bL.getLinkedPartnership().getRef());
+				
+		if(array[0].getQueryType() == QueryType.FATHERS_SIDE_SIBLINGS || array[0].getQueryType() == QueryType.MOTHERS_SIDE_SIBLINGS) {
+			
+			for(ResultObject r : array) {
+				Link bL = r.getBranchLink();
+				System.out.println(bL.getLinkedPerson().getFirstName() + " @H " + r.getCombinedHeuristic() + " by " + r.getIntermidiaryLinks1()[0].getLinkedPerson().getFirstName());
+			}
+			
+		} else if (array[0].getQueryType() == QueryType.FULL_SIBLINGS) {
+			
+			for(ResultObject r : array) {
+				Link bL = r.getBranchLink();
+				System.out.println(bL.getLinkedPerson().getFirstName() + " @H " + r.getCombinedHeuristic() + " by " + r.getIntermidiaryLinks1()[0].getLinkedPerson().getFirstName() + " & " + r.getIntermidiaryLinks2()[0].getLinkedPerson().getFirstName());
+			}
+			
+		} else {
+		
+			for(ResultObject r : array) {
+				Link bL = r.getBranchLink();
+				System.out.println(bL.getLinkedPerson().getFirstName() + " @H " + r.getCombinedHeuristic() + " by " + bL.getLinkedPartnership().getRef());
+			}
+				
 		}
 		System.out.println();
+	}
+
+	private static boolean isSiblingQueries(QueryType queryType) {
+		if(queryType == QueryType.FATHERS_SIDE_SIBLINGS)
+			return true;
+		if(queryType == QueryType.MOTHERS_SIDE_SIBLINGS)
+			return true;
+		if(queryType == QueryType.FULL_SIBLINGS)
+			return true;
+		return false;
 	}
 
 	

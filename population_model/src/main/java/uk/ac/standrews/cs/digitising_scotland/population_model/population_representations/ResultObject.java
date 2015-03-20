@@ -22,6 +22,7 @@ public class ResultObject implements Comparable<ResultObject> {
 	private Link[] intermidiaryLinks1 = null;
 	private Link[] intermidiaryLinks2 = null;
 	private Link branchLink;
+	private Link[] supportingLinks = null;
 	private float combinedHeuristic;
 	private QueryType queryType;
 	
@@ -82,6 +83,10 @@ public class ResultObject implements Comparable<ResultObject> {
 
 	public Link[] getIntermidiaryLinks2() {
 		return intermidiaryLinks2;
+	}
+	
+	public Link[] getSupportingLinks() {
+		return supportingLinks;
 	}
 	
 	public Link getRootLink() {
