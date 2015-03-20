@@ -15,19 +15,19 @@ import java.util.Iterator;
  */
 public class SourceRecordIterator {
 
-    public static Iterable<BirthSourceSourceSourceRecord> getBirthRecordIterator(final IPopulation population) {
+    public static Iterable<BirthSourceRecord> getBirthRecordIterator(final IPopulation population) {
 
-        return new Iterable<BirthSourceSourceSourceRecord>() {
+        return new Iterable<BirthSourceRecord>() {
 
             @Override
-            public Iterator<BirthSourceSourceSourceRecord> iterator() {
+            public Iterator<BirthSourceRecord> iterator() {
 
                 Iterator<IPerson> person_iterator = population.getPeople().iterator();
 
-                Map<IPerson, BirthSourceSourceSourceRecord> person_to_birth_record_mapper = new Map<IPerson, BirthSourceSourceSourceRecord>() {
+                Map<IPerson, BirthSourceRecord> person_to_birth_record_mapper = new Map<IPerson, BirthSourceRecord>() {
                     @Override
-                    public BirthSourceSourceSourceRecord map(IPerson person) {
-                        return new BirthSourceSourceSourceRecord(person, population);
+                    public BirthSourceRecord map(IPerson person) {
+                        return new BirthSourceRecord(person, population);
                     }
                 };
 
@@ -36,12 +36,12 @@ public class SourceRecordIterator {
         };
     }
 
-    public static Iterable<DeathSourceSourceSourceRecord> getDeathRecordIterator(final IPopulation population) {
+    public static Iterable<DeathSourceRecord> getDeathRecordIterator(final IPopulation population) {
 
-        return new Iterable<DeathSourceSourceSourceRecord>() {
+        return new Iterable<DeathSourceRecord>() {
 
             @Override
-            public Iterator<DeathSourceSourceSourceRecord> iterator() {
+            public Iterator<DeathSourceRecord> iterator() {
 
                 Condition<IPerson> check_dead = new Condition<IPerson>() {
                     @Override
@@ -52,10 +52,10 @@ public class SourceRecordIterator {
 
                 Iterator<IPerson> dead_person_iterator = new FilteredIterator<>(population.getPeople().iterator(), check_dead);
 
-                Map<IPerson, DeathSourceSourceSourceRecord> person_to_death_record_mapper = new Map<IPerson, DeathSourceSourceSourceRecord>() {
+                Map<IPerson, DeathSourceRecord> person_to_death_record_mapper = new Map<IPerson, DeathSourceRecord>() {
                     @Override
-                    public DeathSourceSourceSourceRecord map(IPerson person) {
-                        return new DeathSourceSourceSourceRecord(person, population);
+                    public DeathSourceRecord map(IPerson person) {
+                        return new DeathSourceRecord(person, population);
                     }
                 };
 
@@ -64,19 +64,19 @@ public class SourceRecordIterator {
         };
     }
 
-    public static Iterable<MarriageSourceSourceRecord> getMarriageRecordIterator(final IPopulation population) {
+    public static Iterable<MarriageSourceRecord> getMarriageRecordIterator(final IPopulation population) {
 
-        return new Iterable<MarriageSourceSourceRecord>() {
+        return new Iterable<MarriageSourceRecord>() {
 
             @Override
-            public Iterator<MarriageSourceSourceRecord> iterator() {
+            public Iterator<MarriageSourceRecord> iterator() {
 
                 Iterator<IPartnership> partnership_iterator = population.getPartnerships().iterator();
 
-                Map<IPartnership, MarriageSourceSourceRecord> person_to_marriage_record_mapper = new Map<IPartnership, MarriageSourceSourceRecord>() {
+                Map<IPartnership, MarriageSourceRecord> person_to_marriage_record_mapper = new Map<IPartnership, MarriageSourceRecord>() {
                     @Override
-                    public MarriageSourceSourceRecord map(IPartnership partnership) {
-                        return new MarriageSourceSourceRecord(partnership, population);
+                    public MarriageSourceRecord map(IPartnership partnership) {
+                        return new MarriageSourceRecord(partnership, population);
                     }
                 };
 

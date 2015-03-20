@@ -7,7 +7,7 @@ import uk.ac.standrews.cs.digitising_scotland.population_model.model.IPopulation
 /**
  * Created by graham on 13/05/2014.
  */
-public abstract class IndividualSourceSourceRecord extends SourceRecord {
+public abstract class IndividualSourceRecord extends SourceRecord {
 
     protected String surname;
     protected String surname_changed;

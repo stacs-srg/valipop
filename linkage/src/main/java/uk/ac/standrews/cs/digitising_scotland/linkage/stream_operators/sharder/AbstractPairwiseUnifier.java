@@ -13,18 +13,18 @@ import java.util.List;
 /**
  * Created by al on 21/05/2014.
  */
-public abstract class AbstractPairwiseLinker<T extends ILXP> implements IPairWiseLinker<T> {
+public abstract class AbstractPairwiseUnifier<T extends ILXP> implements IPairWiseLinker<T> {
 
     private final IInputStream<T> input;
     private final IOutputStream<Pair<T>> output;
 
-    public AbstractPairwiseLinker(final IInputStream<T> input, final IOutputStream<Pair<T>> output) {
+    public AbstractPairwiseUnifier(final IInputStream<T> input, final IOutputStream<Pair<T>> output) {
         this.input = input;
         this.output = output;
     }
 
     @Override
-    public void pairwiseLink() {
+    public void pairwiseUnify() {
 
         List<T> records = new ArrayList<T>();
 
@@ -40,9 +40,9 @@ public abstract class AbstractPairwiseLinker<T extends ILXP> implements IPairWis
     private void linkRecords(final List<T> records) {
 
         for (IPair<T> pair : allPairs(records)) {
-            if (compare(pair)) {
-                addToResults(pair, output);
-            }
+            float differentness = compare(pair.first(),pair.second());
+            if( similarEnough(differentness) )
+                addToResults(pair, differentness , output);
         }
     }
 
@@ -61,12 +61,16 @@ public abstract class AbstractPairwiseLinker<T extends ILXP> implements IPairWis
         return all;
     }
 
-    public abstract boolean compare(IPair<T> pair);
+    protected abstract boolean similarEnough(float differentness);
+
+
+    public abstract float compare(T first, T second);
 
     /**
      * Adds a matched result to a result collection.
      *
      * @param pair
+     * @param differentness
      */
-    public abstract void addToResults(IPair pair, IOutputStream results);
+    public abstract void addToResults(IPair pair, float differentness, IOutputStream results);
 }
