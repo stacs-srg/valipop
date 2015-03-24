@@ -22,7 +22,9 @@ public class ResultObject implements Comparable<ResultObject> {
 	private Link[] intermidiaryLinks1 = null;
 	private Link[] intermidiaryLinks2 = null;
 	private Link branchLink;
-	private Link[] supportingLinks = null;
+	
+	private LinkedSiblings[] supportingSiblingBridges = null;
+	
 	private float combinedHeuristic;
 	private QueryType queryType;
 	
@@ -48,7 +50,8 @@ public class ResultObject implements Comparable<ResultObject> {
 	
 	
 	/*
-	 * In case where 2 intermidiary paths exist then takes the combined heuristic of the least likely path
+	 * In case where 2 intermediary paths exist then takes the combined heuristic of the least likely path
+	 * TODO Need to consider sibling bridges and marriages in here
 	 */
 	private float calculateCombinedHeuristic() {
 		if(intermidiaryLinks1 == null) {
@@ -85,10 +88,6 @@ public class ResultObject implements Comparable<ResultObject> {
 		return intermidiaryLinks2;
 	}
 	
-	public Link[] getSupportingLinks() {
-		return supportingLinks;
-	}
-	
 	public Link getRootLink() {
 		return rootLink;
 	}
@@ -103,6 +102,15 @@ public class ResultObject implements Comparable<ResultObject> {
 	
 	public QueryType getQueryType() {
 		return queryType;
+	}
+	
+	public LinkedSiblings[] getSupportingSiblingBridges() {
+		return supportingSiblingBridges;
+	}
+
+	public void setSupportingSiblingBridges(LinkedSiblings[] siblingLinkBridges) {
+		this.supportingSiblingBridges = siblingLinkBridges;
+		combinedHeuristic = calculateCombinedHeuristic();
 	}
 	
 }

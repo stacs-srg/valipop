@@ -33,7 +33,7 @@ public class LinkedPerson implements IPerson {
     private char sex;
     private List<Link> childbearingPartnerships = new ArrayList<Link>();
     private List<Link> marriagePartnerships = new ArrayList<Link>();
-    private List<Link> siblings = new ArrayList<Link>();
+    private List<Link> siblingBridges = new ArrayList<Link>();
     private Link parentPartnershipLink;
     
     // Days since epoch (1600)
@@ -64,11 +64,11 @@ public class LinkedPerson implements IPerson {
     }
     
     public void setSiblingLinks(List<Link> siblings) {
-    	this.siblings = siblings;    	
+    	this.siblingBridges = siblings;    	
     }
     
     public void addSiblingLink(Link partnership) {
-    	siblings.add(partnership);    	
+    	siblingBridges.add(partnership);    	
     }
     
     
@@ -147,7 +147,7 @@ public class LinkedPerson implements IPerson {
 	}
 	
 	public List<Link> getSiblings() {
-		return siblings;
+		return siblingBridges;
 	}
 
 }

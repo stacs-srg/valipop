@@ -85,7 +85,7 @@ public class UseCasesTest {
 		if(child.getParentsPartnership() == null) {
 			return;
 		}
-		Link[] motherLinks = child.getParentsPartnership().getLinkedPartnership().getPerson1PotentialPartnerLinks();
+		Link[] motherLinks = child.getParentsPartnership().getLinkedIntermediaryObject().getPerson1PotentialPartnerLinks();
 		LinkedPerson[] mothers = new LinkedPerson[motherLinks.length];
 		int c = 0;
 		for(Link l : motherLinks) {
@@ -95,7 +95,7 @@ public class UseCasesTest {
 			List<Link> p = m.getPartnerships();
 			List<LinkedPerson> children = new ArrayList<LinkedPerson>();
 			for(Link l : p) {
-				children.add((LinkedPerson)((LinkedChildbearingPartnership) l.getLinkedPartnership()).getChildLink().getLinkedPerson());
+				children.add((LinkedPerson)((LinkedChildbearingPartnership) l.getLinkedIntermediaryObject()).getChildLink().getLinkedPerson());
 			}
 			
 //			print(children);
@@ -110,7 +110,7 @@ public class UseCasesTest {
 		if(child.getParentsPartnership() == null) {
 			return;
 		}
-		Link[] fatherLinks = child.getParentsPartnership().getLinkedPartnership().getPerson2PotentialPartnerLinks();
+		Link[] fatherLinks = child.getParentsPartnership().getLinkedIntermediaryObject().getPerson2PotentialPartnerLinks();
 		LinkedPerson[] fathers = new LinkedPerson[fatherLinks.length];
 		int c = 0;
 		for(Link l : fatherLinks) {
@@ -120,7 +120,7 @@ public class UseCasesTest {
 			List<Link> p = m.getPartnerships();
 			List<LinkedPerson> children = new ArrayList<LinkedPerson>();
 			for(Link l : p) {
-				children.add((LinkedPerson)((LinkedChildbearingPartnership) l.getLinkedPartnership()).getChildLink().getLinkedPerson());
+				children.add((LinkedPerson)((LinkedChildbearingPartnership) l.getLinkedIntermediaryObject()).getChildLink().getLinkedPerson());
 			}
 			Assert.assertTrue(children.contains(child));
 		}
@@ -136,9 +136,9 @@ public class UseCasesTest {
 		List<Link> partnerLinks = new ArrayList<Link>();
 		for(Link l : partnershipLinks) {
 			if(person.getSex() == 'M') {
-				partnerLinks.addAll(Arrays.asList(l.getLinkedPartnership().getPerson2PotentialPartnerLinks()));
+				partnerLinks.addAll(Arrays.asList(l.getLinkedIntermediaryObject().getPerson2PotentialPartnerLinks()));
 			} else if(person.getSex() == 'F') {
-				partnerLinks.addAll(Arrays.asList(l.getLinkedPartnership().getPerson1PotentialPartnerLinks()));
+				partnerLinks.addAll(Arrays.asList(l.getLinkedIntermediaryObject().getPerson1PotentialPartnerLinks()));
 			}
 		}
 		List<LinkedPerson> partners = new ArrayList<LinkedPerson>();
@@ -158,9 +158,9 @@ public class UseCasesTest {
 		
 		for(Link l : returnPartnershipLinks) {
 			if(person.getSex() == 'M') {
-				returnPartnerLinks.addAll(Arrays.asList(l.getLinkedPartnership().getPerson1PotentialPartnerLinks()));
+				returnPartnerLinks.addAll(Arrays.asList(l.getLinkedIntermediaryObject().getPerson1PotentialPartnerLinks()));
 			} else if(person.getSex() == 'F') {
-				returnPartnerLinks.addAll(Arrays.asList(l.getLinkedPartnership().getPerson2PotentialPartnerLinks()));
+				returnPartnerLinks.addAll(Arrays.asList(l.getLinkedIntermediaryObject().getPerson2PotentialPartnerLinks()));
 			}
 		}
 		

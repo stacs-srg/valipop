@@ -56,5 +56,23 @@ public abstract class IntermediaryLinkObject {
     public String getRef() {
     	return ref;
     }
+
+	public Link[] getOppositePersonsList(LinkedPerson person) {
+		if(arrayContainsPerson(person1, person)) {
+			return person2;
+		} else if(arrayContainsPerson(person2, person)) {
+			return person1;
+		}
+		return null;
+	}
+
+	private boolean arrayContainsPerson(Link[] array, LinkedPerson person) {
+		for(Link l : array) {
+			if(l.getLinkedPerson().getId() == person.getId()) {
+				return true;
+			}
+		}
+		return false;
+	}
 	
 }

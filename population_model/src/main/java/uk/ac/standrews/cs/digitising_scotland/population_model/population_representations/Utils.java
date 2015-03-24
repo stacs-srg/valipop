@@ -33,7 +33,7 @@ public class Utils {
 
 	public static void printPersons(Link[] array) {
 		for(Link l : array) {
-			System.out.println(l.getLinkedPerson().getFirstName() + " @H " + l.getHeuriticOfLinkValue() + " by " + l.getLinkedPartnership().getRef());
+			System.out.println(l.getLinkedPerson().getFirstName() + " @H " + l.getHeuriticOfLinkValue() + " by " + l.getLinkedIntermediaryObject().getRef());
 		}
 		System.out.println();
 	}
@@ -60,7 +60,7 @@ public class Utils {
 		
 			for(ResultObject r : array) {
 				Link bL = r.getBranchLink();
-				System.out.println(bL.getLinkedPerson().getFirstName() + " @H " + r.getCombinedHeuristic() + " by " + bL.getLinkedPartnership().getRef());
+				System.out.println(bL.getLinkedPerson().getFirstName() + " @H " + r.getCombinedHeuristic() + " by " + bL.getLinkedIntermediaryObject().getRef());
 			}
 				
 		}
