@@ -29,38 +29,68 @@ import uk.ac.standrews.cs.digitising_scotland.population_model.population_repres
 public class UseCasesTest {
 	
 	@Test
-	public void testNuclearFamilyUseCaseStructure() {
-		LinkedPopulation pop = UseCases.generateNuclearFamilyUseCase();
+	public void testNuclearFamilyUseCase1Structure() {
+		LinkedPopulation pop = UseCases.generateNuclearFamilyUseCase1();
 		testLinksInBothDirectionsForUseCase(pop);
 	}
 	
 	@Test
-	public void tesNonCrossOverMultiGenerationUseCaseStructure() {
-		LinkedPopulation pop = UseCases.generateNonCrossOverMultiGenerationUseCase();
+	public void testNuclearFamilyUseCase7Structure() {
+		LinkedPopulation pop = UseCases.generateNuclearFamilyUseCase7();
 		testLinksInBothDirectionsForUseCase(pop);
 	}
 	
 	@Test
-	public void testCrossOverMultiGenerationUseCaseStructure() {
-		LinkedPopulation pop = UseCases.generateCrossOverMultiGenerationUseCase();
+	public void testNuclearFamilyUseCase8Structure() {
+		LinkedPopulation pop = UseCases.generateNuclearFamilyUseCase8();
 		testLinksInBothDirectionsForUseCase(pop);
 	}
 	
 	@Test
-	public void testSingleBestFitUseCaseStructure() {
-		LinkedPopulation pop = UseCases.generateSingleBestFitUseCase();
+	public void tesNonCrossOverMultiGenerationUseCase2Structure() {
+		LinkedPopulation pop = UseCases.generateNonCrossOverMultiGenerationUseCase2();
 		testLinksInBothDirectionsForUseCase(pop);
 	}
 	
 	@Test
-	public void testMaleLineUseCaseStructure() {
-		LinkedPopulation pop = UseCases.generateMaleLineUseCase();
+	public void testCrossOverMultiGenerationUseCase3Structure() {
+		LinkedPopulation pop = UseCases.generateCrossOverMultiGenerationUseCase3();
+		testLinksInBothDirectionsForUseCase(pop);
+	}
+	
+	@Test
+	public void tesNonCrossOverMultiGenerationUseCase9Structure() {
+		LinkedPopulation pop = UseCases.generateNonCrossOverMultiGenerationUseCase9();
+		testLinksInBothDirectionsForUseCase(pop);
+	}
+	
+	@Test
+	public void testCrossOverMultiGenerationUseCase11Structure() {
+		LinkedPopulation pop = UseCases.generateCrossOverMultiGenerationUseCase11();
+		testLinksInBothDirectionsForUseCase(pop);
+	}
+	
+	@Test
+	public void testSingleBestFitUseCase4Structure() {
+		LinkedPopulation pop = UseCases.generateSingleBestFitUseCase4();
+		testLinksInBothDirectionsForUseCase(pop);
+	}
+	
+	@Test
+	public void testMaleLineUseCase5Structure() {
+		LinkedPopulation pop = UseCases.generateMaleLineUseCase5();
 		testLinksInBothDirectionsForUseCase(pop);
 	}
 
 	@Test
-	public void testCousinsUseCaseStructure() {
-		LinkedPopulation pop = UseCases.generateCousinsUseCase();
+	public void testCousinsUseCase6Structure() {
+		LinkedPopulation pop = UseCases.generateCousinsUseCase6();
+		testLinksInBothDirectionsForUseCase(pop);
+	}
+	
+	@Test
+	public void testCousinsUseCase10Structure() {
+		LinkedPopulation pop = UseCases.generateCousinsUseCase10();
 		testLinksInBothDirectionsForUseCase(pop);
 	}
 	
@@ -69,6 +99,8 @@ public class UseCasesTest {
 		LinkedPopulation pop = UseCases.generateEnforcedSiblingsUseCase();
 		testLinksInBothDirectionsForUseCase(pop);
 	}
+	
+	
 	
 	public void testLinksInBothDirectionsForUseCase(LinkedPopulation pop) {
 		Iterator<IPerson> i = pop.getPeople().iterator();

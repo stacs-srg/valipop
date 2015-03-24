@@ -23,6 +23,7 @@ public abstract class IntermediaryLinkObject {
     protected Link[] person1 = new Link[0];
     protected Link[] person2 = new Link[0];
 	
+    
     public void addPossiblePerson1Link(LinkedPerson person1, Evidence[] evidence, float linkHeuristic) {
 		Link[] temp = this.person1.clone();
 		Link[] newArray = new Link[temp.length + 1];
@@ -34,7 +35,7 @@ public abstract class IntermediaryLinkObject {
 		this.person1 = newArray;
 	}
 	
-	public void addPossiblePerson2Link(LinkedPerson person2, Evidence[] evidence, float linkHeuristic) {
+    public void addPossiblePerson2Link(LinkedPerson person2, Evidence[] evidence, float linkHeuristic) {
 		Link[] temp = this.person2.clone();
 		Link[] newArray = new Link[temp.length + 1];
 		int c = 0;

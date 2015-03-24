@@ -16,7 +16,9 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.population_model.population_representations;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.PriorityQueue;
 
 public class Utils {
 
@@ -75,6 +77,26 @@ public class Utils {
 		if(queryType == QueryType.FULL_SIBLINGS)
 			return true;
 		return false;
+	}
+	
+	public static ResultObject[] orderResults(PriorityQueue<ResultObject> pq) {
+
+		ResultObject[] temp = pq.toArray(new ResultObject[pq.size()]);
+		Arrays.sort(temp);
+		return temp;
+
+	}
+
+	public static Object[] joinArrays(Object[] a, Object[] b) {
+		Object[] ret = new Object[a.length + b.length];
+		int c = 0;
+		for(Object a1 : a) {
+			ret[c++] = a1;
+		}
+		for(Object b1 : b) {
+			ret[c++] = b1;
+		}
+		return ret;
 	}
 
 	
