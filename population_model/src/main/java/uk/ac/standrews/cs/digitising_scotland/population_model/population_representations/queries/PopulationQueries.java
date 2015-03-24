@@ -21,8 +21,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.PriorityQueue;
 
-import org.jaxen.util.LinkedIterator;
-
 import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.Link;
 import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.LinkedChildbearingPartnership;
 import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.LinkedPerson;
@@ -38,7 +36,7 @@ public class PopulationQueries {
 	LinkedPopulation population;
 
 	public static void main(String[] args) {
-		LinkedPopulation pop = UseCases.generateNuclearFamilyUseCase();
+		LinkedPopulation pop = UseCases.generateNuclearFamilyUseCase1();
 		PopulationQueries pq = new PopulationQueries(pop);
 
 		//		Utils.printResultSet(pq.getChildrenOf(3));
@@ -75,7 +73,7 @@ public class PopulationQueries {
 			fathers.add(new ResultObject(QueryType.FATHERS, p.getParentsPartnership(), l));
 		}
 
-		return orderResults(fathers);
+		return Utils.orderResults(fathers);
 	}
 
 	public ResultObject[] getMotherOf(int person) {
@@ -88,7 +86,7 @@ public class PopulationQueries {
 			mothers.add(new ResultObject(QueryType.MOTHERS, p.getParentsPartnership(), l));
 		}
 
-		return orderResults(mothers);
+		return Utils.orderResults(mothers);
 	}
 
 	public ResultObject[] getPartnerOf(int person) {
@@ -108,7 +106,7 @@ public class PopulationQueries {
 			}
 		}
 
-		return orderResults(partners);
+		return Utils.orderResults(partners);
 	}
 
 	// Need to think about way of grouping children into possible sets?
@@ -119,7 +117,7 @@ public class PopulationQueries {
 		for(Link l : possPartnership) {
 			children.add(new ResultObject(QueryType.CHILDREN, l, ((LinkedChildbearingPartnership) l.getLinkedIntermediaryObject()).getChildLink()));
 		}
-		return orderResults(children);
+		return Utils.orderResults(children);
 	}
 
 	/*
@@ -160,7 +158,7 @@ public class PopulationQueries {
 			}
 		}
 
-		return orderResults(siblings);
+		return Utils.orderResults(siblings);
 	}
 	
 	public ResultObject[] getPotentialFatherSideSiblingsOf(int person) {
@@ -184,7 +182,7 @@ public class PopulationQueries {
 				siblings.add(resultObject);
 			}
 		}
-		return orderResults(siblings);
+		return Utils.orderResults(siblings);
 	}
 
 	public ResultObject[] getPotentialFullSiblings(int person) {
@@ -197,35 +195,14 @@ public class PopulationQueries {
 			for(ResultObject m : mSideSibling){
 				if(fatherSideId == m.getBranchLink().getLinkedPerson().getId()) {
 					ResultObject resultObject = new ResultObject(QueryType.FULL_SIBLINGS, f.getRootLink(), f.getIntermidiaryLinks1(), m.getIntermidiaryLinks1(), f.getBranchLink());
-					resultObject.setSupportingSiblingBridges((LinkedSiblings[]) joinArrays(f.getSupportingSiblingBridges(), m.getSupportingSiblingBridges()));
+					resultObject.setSupportingSiblingBridges((LinkedSiblings[]) Utils.joinArrays(f.getSupportingSiblingBridges(), m.getSupportingSiblingBridges()));
 					potentialFullSiblings.add(resultObject);
 
 				}
 			}
 		}
-		return orderResults(potentialFullSiblings);		
+		return Utils.orderResults(potentialFullSiblings);		
 
 	}
-
-	public ResultObject[] orderResults(PriorityQueue<ResultObject> pq) {
-
-		ResultObject[] temp = pq.toArray(new ResultObject[pq.size()]);
-		Arrays.sort(temp);
-		return temp;
-
-	}
-
-	public Object[] joinArrays(Object[] a, Object[] b) {
-		Object[] ret = new Object[a.length + b.length];
-		int c = 0;
-		for(Object a1 : a) {
-			ret[c++] = a1;
-		}
-		for(Object b1 : b) {
-			ret[c++] = b1;
-		}
-		return ret;
-	}
-
 
 }

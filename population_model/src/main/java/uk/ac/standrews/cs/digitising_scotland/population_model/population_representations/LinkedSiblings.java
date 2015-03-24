@@ -17,8 +17,8 @@
 package uk.ac.standrews.cs.digitising_scotland.population_model.population_representations;
 
 public class LinkedSiblings extends IntermediaryLinkObject {
-
-    private boolean fullSibling;
+	
+    private SiblingType siblingType;
     
     public LinkedSiblings(int id, String ref) {
     	this.id = id;

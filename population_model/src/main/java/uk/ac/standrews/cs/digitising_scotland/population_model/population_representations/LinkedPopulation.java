@@ -30,7 +30,7 @@ public class LinkedPopulation implements IPopulation {
 	private List<LinkedPerson> livingPeople = new ArrayList<LinkedPerson>();
 	private List<LinkedChildbearingPartnership> partnerships = new ArrayList<LinkedChildbearingPartnership>();
 	private List<LinkedMarriagePartnership> marriagePartnerships = new ArrayList<LinkedMarriagePartnership>();
-	private List<LinkedSiblings> siblingsObjects = new ArrayList<LinkedSiblings>();
+	private List<LinkedSiblings> siblingsBridges = new ArrayList<LinkedSiblings>();
 
 	String description;
 
@@ -161,7 +161,7 @@ public class LinkedPopulation implements IPopulation {
 	}
 
 	public void addSiblingsObject(LinkedSiblings linkedSiblingsObject) {
-		siblingsObjects.add(linkedSiblingsObject);
+		siblingsBridges.add(linkedSiblingsObject);
 	}
 
 	public LinkedPerson findPersonByFirstName(final String name) {
@@ -196,7 +196,7 @@ public class LinkedPopulation implements IPopulation {
 	
 	public LinkedSiblings getSiblingsObjectByRef(String ref) {
 
-		for (LinkedSiblings siblings : siblingsObjects) {
+		for (LinkedSiblings siblings : siblingsBridges) {
 			if (siblings.getRef().equals(ref)) {
 				return siblings;
 			}

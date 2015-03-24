@@ -20,8 +20,8 @@ import uk.ac.standrews.cs.digitising_scotland.population_model.population_repres
 
 
 public class UseCases {
-
-	public static LinkedPopulation generateNuclearFamilyUseCase() {
+ 
+	public static LinkedPopulation generateNuclearFamilyUseCase1() {
 
 		LinkedPopulation population = new LinkedPopulation("Nuclear Family Use Case");
 		population.addPerson(new LinkedPerson(0, "a", "Family", 'M'));
@@ -66,7 +66,7 @@ public class UseCases {
 		return population;
 	}
 
-	public static LinkedPopulation generateNonCrossOverMultiGenerationUseCase() {
+	public static LinkedPopulation generateNonCrossOverMultiGenerationUseCase2() {
 
 		LinkedPopulation population = new LinkedPopulation("Non Cross Over Multi Generaltion Use Case");
 		population.addPerson(new LinkedPerson(0, "a", "Name", 'M'));
@@ -112,7 +112,7 @@ public class UseCases {
 
 	}
 
-	public static LinkedPopulation generateCrossOverMultiGenerationUseCase() {
+	public static LinkedPopulation generateCrossOverMultiGenerationUseCase3() {
 
 		LinkedPopulation population = new LinkedPopulation("Cross Over Multi Generaltion Use Case");
 		population.addPerson(new LinkedPerson(0, "a", "Name", 'M'));
@@ -160,7 +160,7 @@ public class UseCases {
 
 	}
 
-	public static LinkedPopulation generateSingleBestFitUseCase() {
+	public static LinkedPopulation generateSingleBestFitUseCase4() {
 
 		LinkedPopulation population = new LinkedPopulation("Single Best Fit Use Case");
 		population.addPerson(new LinkedPerson(0, "a", "Name", 'M'));
@@ -225,7 +225,7 @@ public class UseCases {
 		
 	}
 	
-	public static LinkedPopulation generateMaleLineUseCase() {
+	public static LinkedPopulation generateMaleLineUseCase5() {
 
 		LinkedPopulation population = new LinkedPopulation("Male Line Use Case");
 		population.addPerson(new LinkedPerson(0, "a", "Name", 'M'));
@@ -316,7 +316,7 @@ public class UseCases {
 		
 	}
 	
-	public static LinkedPopulation generateCousinsUseCase() {
+	public static LinkedPopulation generateCousinsUseCase6() {
 
 		LinkedPopulation population = new LinkedPopulation("Cousins Use Case");
 		population.addPerson(new LinkedPerson(0, "a", "Name", 'M'));
@@ -374,7 +374,7 @@ public class UseCases {
 		
 	}
 	
-	
+	// TODO Which one is this???
 	public static LinkedPopulation generateEnforcedSiblingsUseCase() {
 		
 		LinkedPopulation population = new LinkedPopulation("Enforced Siblings Use Case");
@@ -413,11 +413,285 @@ public class UseCases {
 		
 	}
 	
+	public static LinkedPopulation generateNuclearFamilyUseCase7() {
 
+		LinkedPopulation population = new LinkedPopulation("Nuclear Family Use Case");
+		population.addPerson(new LinkedPerson(0, "a", "Family", 'M'));
+		population.addPerson(new LinkedPerson(1, "b", "Family", 'M'));
+		population.addPerson(new LinkedPerson(2, "c", "Family", 'M'));
+		population.addPerson(new LinkedPerson(3, "d", "Family", 'M'));
+		population.addPerson(new LinkedPerson(4, "e", "Family", 'F'));
+		population.addPerson(new LinkedPerson(5, "f", "Not", 'M'));
+		population.addPerson(new LinkedPerson(6, "g", "Not", 'F'));
+		population.addPerson(new LinkedPerson(7, "h", "Not", 'F'));
+		population.addPerson(new LinkedPerson(8, "i", "Not", 'F'));
+
+		Evidence[] records = new Evidence[11];
+		for(int i = 0; i < 11; i++)
+			records[i] = new Evidence(i);
+
+		population.addPartnership(new LinkedChildbearingPartnership(0, "alpha"));
+		population.addPartnership(new LinkedChildbearingPartnership(1, "beta"));
+		population.addPartnership(new LinkedChildbearingPartnership(2, "gamma"));
+
+		population.getPartnershipByRef("alpha").setChildLink(population.findPersonByFirstName("a"), new Evidence[]{records[2]});
+		population.getPartnershipByRef("beta").setChildLink(population.findPersonByFirstName("b"), new Evidence[]{records[1]});
+		population.getPartnershipByRef("gamma").setChildLink(population.findPersonByFirstName("c"), new Evidence[]{records[0]});
+
+		population.getPartnershipByRef("alpha").addPossiblePerson1Link(population.findPersonByFirstName("d"), new Evidence[]{records[2], records[6]}, 0.8f);
+		population.getPartnershipByRef("alpha").addPossiblePerson1Link(population.findPersonByFirstName("f"), new Evidence[]{records[2], records[7]}, 0.6f);
+
+		population.getPartnershipByRef("alpha").addPossiblePerson2Link(population.findPersonByFirstName("i"), new Evidence[]{records[2], records[5]}, 0.3f);
+		population.getPartnershipByRef("alpha").addPossiblePerson2Link(population.findPersonByFirstName("h"), new Evidence[]{records[2], records[4]}, 0.4f);
+		population.getPartnershipByRef("alpha").addPossiblePerson2Link(population.findPersonByFirstName("e"), new Evidence[]{records[2], records[3]}, 0.9f);
+
+		population.getPartnershipByRef("beta").addPossiblePerson1Link(population.findPersonByFirstName("d"), new Evidence[]{records[1], records[6]}, 0.7f);
+
+		population.getPartnershipByRef("beta").addPossiblePerson2Link(population.findPersonByFirstName("e"), new Evidence[]{records[1], records[3]}, 0.7f);
+		population.getPartnershipByRef("beta").addPossiblePerson2Link(population.findPersonByFirstName("g"), new Evidence[]{records[1], records[8]}, 0.5f);
+
+		population.getPartnershipByRef("gamma").addPossiblePerson1Link(population.findPersonByFirstName("d"), new Evidence[]{records[0], records[6]}, 0.9f);
+		population.getPartnershipByRef("gamma").addPossiblePerson1Link(population.findPersonByFirstName("f"), new Evidence[]{records[0], records[7]}, 0.5f);
+
+		population.getPartnershipByRef("gamma").addPossiblePerson2Link(population.findPersonByFirstName("e"), new Evidence[]{records[0], records[3]}, 0.6f);
+
+		population.addSiblingsObject(new LinkedSiblings(0, "alef"));
+		population.addSiblingsObject(new LinkedSiblings(1, "bet"));
+		population.addSiblingsObject(new LinkedSiblings(2, "gimel"));
+		
+		population.getSiblingsObjectByRef("alef").addPossiblePerson1Link(population.findPersonByFirstName("a"), new Evidence[]{records[2], records[8]}, 0.8f);
+		population.getSiblingsObjectByRef("alef").addPossiblePerson1Link(population.findPersonByFirstName("b"), new Evidence[]{records[1], records[8]}, 0.8f);
+		
+		population.getSiblingsObjectByRef("bet").addPossiblePerson1Link(population.findPersonByFirstName("a"), new Evidence[]{records[2], records[9]}, 0.8f);
+		population.getSiblingsObjectByRef("bet").addPossiblePerson1Link(population.findPersonByFirstName("c"), new Evidence[]{records[0], records[9]}, 0.8f);
+		
+		population.getSiblingsObjectByRef("gimel").addPossiblePerson1Link(population.findPersonByFirstName("b"), new Evidence[]{records[1], records[10]}, 0.8f);
+		population.getSiblingsObjectByRef("gimel").addPossiblePerson1Link(population.findPersonByFirstName("c"), new Evidence[]{records[0], records[10]}, 0.8f);
+		
+		return population;
+	}
+	
+	public static LinkedPopulation generateNuclearFamilyUseCase8() {
+
+		LinkedPopulation population = new LinkedPopulation("Nuclear Family Use Case");
+		population.addPerson(new LinkedPerson(0, "a", "Family", 'M'));
+		population.addPerson(new LinkedPerson(1, "b", "Family", 'M'));
+		population.addPerson(new LinkedPerson(2, "c", "Family", 'M'));
+		population.addPerson(new LinkedPerson(3, "d", "Family", 'M'));
+		population.addPerson(new LinkedPerson(4, "e", "Family", 'F'));
+		population.addPerson(new LinkedPerson(5, "f", "Not", 'M'));
+		population.addPerson(new LinkedPerson(6, "g", "Not", 'F'));
+		population.addPerson(new LinkedPerson(7, "h", "Not", 'F'));
+		population.addPerson(new LinkedPerson(8, "i", "Not", 'F'));
+
+		Evidence[] records = new Evidence[9];
+		for(int i = 0; i < 9; i++)
+			records[i] = new Evidence(i);
+
+		population.addPartnership(new LinkedChildbearingPartnership(0, "alpha"));
+		population.addPartnership(new LinkedChildbearingPartnership(1, "beta"));
+		population.addPartnership(new LinkedChildbearingPartnership(2, "gamma"));
+
+		population.getPartnershipByRef("alpha").setChildLink(population.findPersonByFirstName("a"), new Evidence[]{records[2]});
+		population.getPartnershipByRef("beta").setChildLink(population.findPersonByFirstName("b"), new Evidence[]{records[1]});
+		population.getPartnershipByRef("gamma").setChildLink(population.findPersonByFirstName("c"), new Evidence[]{records[0]});
+
+		population.getPartnershipByRef("alpha").addPossiblePerson1Link(population.findPersonByFirstName("d"), new Evidence[]{records[2], records[6]}, 0.8f);
+		population.getPartnershipByRef("alpha").addPossiblePerson1Link(population.findPersonByFirstName("f"), new Evidence[]{records[2], records[7]}, 0.6f);
+
+		population.getPartnershipByRef("alpha").addPossiblePerson2Link(population.findPersonByFirstName("i"), new Evidence[]{records[2], records[5]}, 0.3f);
+		population.getPartnershipByRef("alpha").addPossiblePerson2Link(population.findPersonByFirstName("h"), new Evidence[]{records[2], records[4]}, 0.4f);
+		population.getPartnershipByRef("alpha").addPossiblePerson2Link(population.findPersonByFirstName("e"), new Evidence[]{records[2], records[3]}, 0.9f);
+
+		population.getPartnershipByRef("beta").addPossiblePerson1Link(population.findPersonByFirstName("d"), new Evidence[]{records[1], records[6]}, 0.7f);
+
+		population.getPartnershipByRef("beta").addPossiblePerson2Link(population.findPersonByFirstName("e"), new Evidence[]{records[1], records[3]}, 0.7f);
+		population.getPartnershipByRef("beta").addPossiblePerson2Link(population.findPersonByFirstName("g"), new Evidence[]{records[1], records[8]}, 0.5f);
+
+		population.getPartnershipByRef("gamma").addPossiblePerson1Link(population.findPersonByFirstName("d"), new Evidence[]{records[0], records[6]}, 0.9f);
+		population.getPartnershipByRef("gamma").addPossiblePerson1Link(population.findPersonByFirstName("f"), new Evidence[]{records[0], records[7]}, 0.5f);
+
+		population.getPartnershipByRef("gamma").addPossiblePerson2Link(population.findPersonByFirstName("e"), new Evidence[]{records[0], records[3]}, 0.6f);
+
+		population.addSiblingsObject(new LinkedSiblings(0, "alef"));
+		
+		population.getSiblingsObjectByRef("alef").addPossiblePerson1Link(population.findPersonByFirstName("a"), new Evidence[]{records[2], records[8]}, 0.8f);
+		population.getSiblingsObjectByRef("alef").addPossiblePerson1Link(population.findPersonByFirstName("c"), new Evidence[]{records[0], records[8]}, 0.8f);
+		
+		return population;
+	}
+	
+	public static LinkedPopulation generateNonCrossOverMultiGenerationUseCase9() {
+
+		LinkedPopulation population = new LinkedPopulation("Non Cross Over Multi Generaltion Use Case");
+		population.addPerson(new LinkedPerson(0, "a", "Name", 'M'));
+		population.addPerson(new LinkedPerson(1, "b", "Name", 'M'));
+		population.addPerson(new LinkedPerson(2, "c", "Name", 'F'));
+		population.addPerson(new LinkedPerson(3, "d", "Name", 'F'));
+		population.addPerson(new LinkedPerson(4, "e", "Name", 'M'));
+		population.addPerson(new LinkedPerson(5, "f", "Name", 'M'));
+		population.addPerson(new LinkedPerson(6, "g", "Name", 'F'));
+		population.addPerson(new LinkedPerson(7, "h", "Name", 'F'));
+		population.addPerson(new LinkedPerson(8, "i", "Name", 'M'));
+		population.addPerson(new LinkedPerson(9, "j", "Name", 'F'));
+
+
+		Evidence[] records = new Evidence[11];
+		for(int i = 0; i < 11; i++)
+			records[i] = new Evidence(i);
+
+		population.addPartnership(new LinkedChildbearingPartnership(0, "alpha"));
+		population.addPartnership(new LinkedChildbearingPartnership(1, "beta"));
+		population.addPartnership(new LinkedChildbearingPartnership(2, "gamma"));
+
+		population.getPartnershipByRef("alpha").setChildLink(population.findPersonByFirstName("a"), new Evidence[]{records[0]});
+		population.getPartnershipByRef("beta").setChildLink(population.findPersonByFirstName("g"), new Evidence[]{records[6]});
+		population.getPartnershipByRef("gamma").setChildLink(population.findPersonByFirstName("c"), new Evidence[]{records[2]});
+
+		population.getPartnershipByRef("alpha").addPossiblePerson1Link(population.findPersonByFirstName("b"), new Evidence[]{records[0], records[1]}, 0.8f);
+
+		population.getPartnershipByRef("alpha").addPossiblePerson2Link(population.findPersonByFirstName("c"), new Evidence[]{records[0], records[2]}, 0.6f);
+		population.getPartnershipByRef("alpha").addPossiblePerson2Link(population.findPersonByFirstName("g"), new Evidence[]{records[0], records[6]}, 0.6f);
+
+		population.getPartnershipByRef("beta").addPossiblePerson1Link(population.findPersonByFirstName("e"), new Evidence[]{records[2], records[5]}, 0.7f);
+		population.getPartnershipByRef("beta").addPossiblePerson1Link(population.findPersonByFirstName("f"), new Evidence[]{records[2], records[4]}, 0.8f);
+
+		population.getPartnershipByRef("beta").addPossiblePerson2Link(population.findPersonByFirstName("d"), new Evidence[]{records[3], records[2]}, 0.6f);
+
+		population.getPartnershipByRef("gamma").addPossiblePerson1Link(population.findPersonByFirstName("i"), new Evidence[]{records[6], records[7]}, 0.8f);
+
+		population.getPartnershipByRef("gamma").addPossiblePerson2Link(population.findPersonByFirstName("j"), new Evidence[]{records[6], records[9]}, 0.6f);
+		population.getPartnershipByRef("gamma").addPossiblePerson2Link(population.findPersonByFirstName("h"), new Evidence[]{records[6], records[8]}, 0.4f);
+
+		population.addSiblingsObject(new LinkedSiblings(0, "alef"));
+		
+		population.getSiblingsObjectByRef("alef").addPossiblePerson1Link(population.findPersonByFirstName("g"), new Evidence[]{records[6], records[10]}, 0.8f);
+		population.getSiblingsObjectByRef("alef").addPossiblePerson1Link(population.findPersonByFirstName("c"), new Evidence[]{records[2], records[10]}, 0.8f);
+		
+		
+		return population;		
+
+	}
+	
+	public static LinkedPopulation generateCrossOverMultiGenerationUseCase11() {
+
+		LinkedPopulation population = new LinkedPopulation("Cross Over Multi Generaltion Use Case");
+		population.addPerson(new LinkedPerson(0, "a", "Name", 'M'));
+		population.addPerson(new LinkedPerson(1, "b", "Name", 'M'));
+		population.addPerson(new LinkedPerson(2, "c", "Name", 'F'));
+		population.addPerson(new LinkedPerson(3, "d", "Name", 'F'));
+		population.addPerson(new LinkedPerson(4, "e", "Name", 'M'));
+		population.addPerson(new LinkedPerson(5, "f", "Name", 'M'));
+		population.addPerson(new LinkedPerson(6, "g", "Name", 'F'));
+		population.addPerson(new LinkedPerson(7, "h", "Name", 'F'));
+		population.addPerson(new LinkedPerson(8, "i", "Name", 'M'));
+		population.addPerson(new LinkedPerson(9, "j", "Name", 'F'));
+
+
+		Evidence[] records = new Evidence[11];
+		for(int i = 0; i < 11; i++)
+			records[i] = new Evidence(i);
+
+		population.addPartnership(new LinkedChildbearingPartnership(0, "alpha"));
+		population.addPartnership(new LinkedChildbearingPartnership(1, "beta"));
+		population.addPartnership(new LinkedChildbearingPartnership(2, "gamma"));
+
+		population.getPartnershipByRef("alpha").setChildLink(population.findPersonByFirstName("a"), new Evidence[]{records[0]});
+		population.getPartnershipByRef("beta").setChildLink(population.findPersonByFirstName("g"), new Evidence[]{records[6]});
+		population.getPartnershipByRef("gamma").setChildLink(population.findPersonByFirstName("c"), new Evidence[]{records[2]});
+
+		population.getPartnershipByRef("alpha").addPossiblePerson1Link(population.findPersonByFirstName("b"), new Evidence[]{records[0], records[1]}, 0.8f);
+
+		population.getPartnershipByRef("alpha").addPossiblePerson2Link(population.findPersonByFirstName("c"), new Evidence[]{records[0], records[2]}, 0.6f);
+		population.getPartnershipByRef("alpha").addPossiblePerson2Link(population.findPersonByFirstName("g"), new Evidence[]{records[0], records[6]}, 0.6f);
+
+		population.getPartnershipByRef("beta").addPossiblePerson1Link(population.findPersonByFirstName("e"), new Evidence[]{records[2], records[5]}, 0.7f);
+		population.getPartnershipByRef("beta").addPossiblePerson1Link(population.findPersonByFirstName("f"), new Evidence[]{records[2], records[4]}, 0.8f);
+
+		population.getPartnershipByRef("beta").addPossiblePerson2Link(population.findPersonByFirstName("d"), new Evidence[]{records[3], records[2]}, 0.6f);
+
+		population.getPartnershipByRef("gamma").addPossiblePerson1Link(population.findPersonByFirstName("i"), new Evidence[]{records[6], records[7]}, 0.8f);
+		population.getPartnershipByRef("gamma").addPossiblePerson1Link(population.findPersonByFirstName("e"), new Evidence[]{records[6], records[5]}, 0.9f);
+
+		population.getPartnershipByRef("gamma").addPossiblePerson2Link(population.findPersonByFirstName("j"), new Evidence[]{records[6], records[9]}, 0.6f);
+		population.getPartnershipByRef("gamma").addPossiblePerson2Link(population.findPersonByFirstName("h"), new Evidence[]{records[6], records[8]}, 0.4f);
+		population.getPartnershipByRef("gamma").addPossiblePerson2Link(population.findPersonByFirstName("d"), new Evidence[]{records[6], records[3]}, 0.8f);
+		
+		population.addSiblingsObject(new LinkedSiblings(0, "alef"));
+		
+		population.getSiblingsObjectByRef("alef").addPossiblePerson1Link(population.findPersonByFirstName("g"), new Evidence[]{records[6], records[10]}, 0.8f);
+		population.getSiblingsObjectByRef("alef").addPossiblePerson1Link(population.findPersonByFirstName("c"), new Evidence[]{records[2], records[10]}, 0.8f);
+		
+		return population;		
+
+	}
+
+	public static LinkedPopulation generateCousinsUseCase10() {
+
+		LinkedPopulation population = new LinkedPopulation("Cousins Use Case");
+		population.addPerson(new LinkedPerson(0, "a", "Name", 'M'));
+		population.addPerson(new LinkedPerson(1, "b", "Name", 'M'));
+		population.addPerson(new LinkedPerson(2, "c", "Name", 'F'));
+		population.addPerson(new LinkedPerson(3, "d", "Name", 'M'));
+		population.addPerson(new LinkedPerson(4, "e", "Name", 'F'));
+		population.addPerson(new LinkedPerson(5, "f", "Name", 'F'));
+		population.addPerson(new LinkedPerson(6, "g", "Name", 'F'));
+		population.addPerson(new LinkedPerson(7, "h", "Name", 'M'));
+		population.addPerson(new LinkedPerson(8, "i", "Name", 'F'));
+		population.addPerson(new LinkedPerson(9, "j", "Name", 'M'));
+		population.addPerson(new LinkedPerson(10, "k", "Name", 'M'));
+		population.addPerson(new LinkedPerson(11, "l", "Name", 'M'));
+		population.addPerson(new LinkedPerson(12, "m", "Name", 'M'));
+		
+		Evidence[] records = new Evidence[14];
+		for(int i = 0; i < 14; i++)
+			records[i] = new Evidence(i);
+
+		population.addPartnership(new LinkedChildbearingPartnership(0, "alpha"));
+		population.addPartnership(new LinkedChildbearingPartnership(1, "beta"));
+		population.addPartnership(new LinkedChildbearingPartnership(2, "gamma"));
+		population.addPartnership(new LinkedChildbearingPartnership(3, "delta"));
+		population.addPartnership(new LinkedChildbearingPartnership(4, "epsilon"));
+		population.addPartnership(new LinkedChildbearingPartnership(5, "zeta"));
+		
+		population.getPartnershipByRef("alpha").setChildLink(population.findPersonByFirstName("a"), new Evidence[]{records[0]});
+		population.getPartnershipByRef("beta").setChildLink(population.findPersonByFirstName("k"), new Evidence[]{records[11]});
+		population.getPartnershipByRef("gamma").setChildLink(population.findPersonByFirstName("m"), new Evidence[]{records[9]});
+		population.getPartnershipByRef("delta").setChildLink(population.findPersonByFirstName("c"), new Evidence[]{records[2]});
+		population.getPartnershipByRef("epsilon").setChildLink(population.findPersonByFirstName("g"), new Evidence[]{records[6]});
+		population.getPartnershipByRef("zeta").setChildLink(population.findPersonByFirstName("i"), new Evidence[]{records[7]});
+		
+		population.getPartnershipByRef("alpha").addPossiblePerson1Link(population.findPersonByFirstName("b"), new Evidence[]{records[0], records[1]}, 0.9f);
+		population.getPartnershipByRef("alpha").addPossiblePerson2Link(population.findPersonByFirstName("c"), new Evidence[]{records[0], records[2]}, 0.9f);
+
+		population.getPartnershipByRef("beta").addPossiblePerson1Link(population.findPersonByFirstName("j"), new Evidence[]{records[11], records[12]}, 0.7f);
+		population.getPartnershipByRef("beta").addPossiblePerson2Link(population.findPersonByFirstName("g"), new Evidence[]{records[6], records[11]}, 0.9f);
+		
+		population.getPartnershipByRef("gamma").addPossiblePerson1Link(population.findPersonByFirstName("l"), new Evidence[]{records[9], records[10]}, 0.9f);
+		population.getPartnershipByRef("gamma").addPossiblePerson2Link(population.findPersonByFirstName("i"), new Evidence[]{records[7], records[9]}, 0.9f);
+		
+		population.getPartnershipByRef("delta").addPossiblePerson1Link(population.findPersonByFirstName("d"), new Evidence[]{records[2], records[3]}, 0.9f);
+		population.getPartnershipByRef("delta").addPossiblePerson2Link(population.findPersonByFirstName("e"), new Evidence[]{records[2], records[4]}, 0.9f);
+		population.getPartnershipByRef("delta").addPossiblePerson2Link(population.findPersonByFirstName("f"), new Evidence[]{records[2], records[5]}, 0.9f);
+		
+		population.getPartnershipByRef("epsilon").addPossiblePerson1Link(population.findPersonByFirstName("d"), new Evidence[]{records[3], records[6]}, 0.9f);
+		population.getPartnershipByRef("epsilon").addPossiblePerson2Link(population.findPersonByFirstName("f"), new Evidence[]{records[5], records[6]}, 0.9f);
+
+		population.getPartnershipByRef("zeta").addPossiblePerson1Link(population.findPersonByFirstName("h"), new Evidence[]{records[7], records[8]}, 0.6f);
+		population.getPartnershipByRef("zeta").addPossiblePerson2Link(population.findPersonByFirstName("e"), new Evidence[]{records[4], records[7]}, 0.9f);
+		
+		population.addSiblingsObject(new LinkedSiblings(0, "alef"));
+		
+		population.getSiblingsObjectByRef("alef").addPossiblePerson1Link(population.findPersonByFirstName("c"), new Evidence[]{records[2], records[13]}, 0.8f);
+		population.getSiblingsObjectByRef("alef").addPossiblePerson1Link(population.findPersonByFirstName("g"), new Evidence[]{records[6], records[13]}, 0.8f);
+		
+		return population;
+		
+	}
 
 
 	public static void main(String[] args) {
-		LinkedPopulation pop = generateNuclearFamilyUseCase();
+		LinkedPopulation pop = generateNuclearFamilyUseCase1();
 		try {
 			new ExportPopulationToDB(pop);
 		} catch (Exception e) {
