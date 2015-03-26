@@ -104,8 +104,8 @@ public class DBPopulationWriter implements IPopulationWriter {
 
         recordMarriage(partnership);
 
-        Link[] fathers = partnership.getPerson2PotentialPartnerLinks();
-        Link[] mothers = partnership.getPerson1PotentialPartnerLinks();
+        Link[] fathers = partnership.getPerson2PotentialLinks();
+        Link[] mothers = partnership.getPerson1PotentialLinks();
         
         for(Link l : fathers)
         	recordPartnerWithinPartnership(partnership_id, l.getLinkedPerson().getId());

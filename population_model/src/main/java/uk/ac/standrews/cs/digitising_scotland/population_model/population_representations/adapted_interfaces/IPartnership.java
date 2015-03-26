@@ -38,13 +38,13 @@ public interface IPartnership extends Comparable<IPartnership> {
      * Returns and array of Links for the female in the partnership.
      * @return the possible Links for the female
      */
-    Link[] getPerson1PotentialPartnerLinks();
+    Link[] getPerson1PotentialLinks();
 
     /**
      * Returns and array of Links for the male in the partnership.
      * @return the possible Links of the male
      */
-    Link[] getPerson2PotentialPartnerLinks();
+    Link[] getPerson2PotentialLinks();
 
     
     // TODO This method?

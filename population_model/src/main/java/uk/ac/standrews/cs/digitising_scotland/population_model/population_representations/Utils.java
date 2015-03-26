@@ -43,20 +43,36 @@ public class Utils {
 
 	public static void printResultSet(ResultObject[] array) {
 		
+		if(array.length == 0)
+			return;
+		
+		if(array[0].getFailedTestPersonRoot() != null) {
+			System.out.println("No found results for " + array[0].getQueryType().toString() + " of " + array[0].getFailedTestPersonRoot().getFirstName());
+			return;
+		}
+		
 		System.out.println("Possible " + array[0].getQueryType().toString() + " of " + array[0].getRootLink().getLinkedPerson().getFirstName());
+		QueryType qt = array[0].getQueryType();
 				
-		if(array[0].getQueryType() == QueryType.FATHERS_SIDE_SIBLINGS || array[0].getQueryType() == QueryType.MOTHERS_SIDE_SIBLINGS) {
+		if(qt == QueryType.FATHERS_SIDE_SIBLINGS || qt == QueryType.MOTHERS_SIDE_SIBLINGS) {
 			
 			for(ResultObject r : array) {
 				Link bL = r.getBranchLink();
-				System.out.println(bL.getLinkedPerson().getFirstName() + " @H " + r.getCombinedHeuristic() + " by " + r.getIntermidiaryLinks1()[0].getLinkedPerson().getFirstName() + " with " + r.getSupportingSiblingBridges().length + " supporting sibling bridges");
+				System.out.println(bL.getLinkedPerson().getFirstName() + " @H " + r.getCombinedHeuristic() + " by " + r.getIntermidiaryLinks1()[0].getLinkedPerson().getFirstName() + " with " + r.getSupportingSiblingBridges().length + " SSB");
 			}
 			
-		} else if (array[0].getQueryType() == QueryType.FULL_SIBLINGS) {
+		} else if (qt == QueryType.FULL_SIBLINGS) {
 			
 			for(ResultObject r : array) {
 				Link bL = r.getBranchLink();
 				System.out.println(bL.getLinkedPerson().getFirstName() + " @H " + r.getCombinedHeuristic() + " by " + r.getIntermidiaryLinks1()[0].getLinkedPerson().getFirstName() + " & " + r.getIntermidiaryLinks2()[0].getLinkedPerson().getFirstName() + " with " + r.getSupportingSiblingBridges().length + " supporting sibling bridges");
+			}
+			
+		} else if(qt == QueryType.CB_PARTNERS) {
+			
+			for(ResultObject r : array) {
+				Link bL = r.getBranchLink();
+				System.out.println(bL.getLinkedPerson().getFirstName() + " @H " + r.getCombinedHeuristic() + " by " + bL.getLinkedIntermediaryObject().getRef() + " with " + r.getSupportingMarriageBridges().length + " SMB");
 			}
 			
 		} else {

@@ -46,11 +46,11 @@ public abstract class IntermediaryLinkObject {
 		this.person2 = newArray;
 	}
 	
-    public Link[] getPerson1PotentialPartnerLinks() {
+    public Link[] getPerson1PotentialLinks() {
         return person1;
     }
 
-    public Link[] getPerson2PotentialPartnerLinks() {
+    public Link[] getPerson2PotentialLinks() {
         return person2;
     }
     
@@ -75,5 +75,9 @@ public abstract class IntermediaryLinkObject {
 		}
 		return false;
 	}
+	
+    public int getId() {
+        return id;
+    }
 	
 }

@@ -34,15 +34,13 @@ public class LinkedChildbearingPartnership extends IntermediaryLinkObject implem
     	this.child = new Link(child, this, records);
     }
     
-    public String getRef() {
-    	return ref;
-    }
-	
-    @Override
-    public int getId() {
-        return id;
+    public Link[] getFatherPotentialLinks() {
+        return person1;
     }
 
+    public Link[] getMotherPotentialLinks() {
+        return person2;
+    }
     
     @Override
     public int compareTo(final IPartnership o) {
@@ -56,28 +54,6 @@ public class LinkedChildbearingPartnership extends IntermediaryLinkObject implem
 	@Override
 	public Link getChildLink() {
 		return child;
-	}
-
-	public void addPossiblePerson1Link(LinkedPerson father, Evidence[] evidence, float linkHeuristic) {
-		Link[] temp = this.person1.clone();
-		Link[] newArray = new Link[temp.length + 1];
-		int c = 0;
-		for(Link l : this.person1) {
-			newArray[c++] = l;
-		}
-		newArray[c] = new Link(father, this, evidence, linkHeuristic);
-		this.person1 = newArray;
-	}
-	
-	public void addPossiblePerson2Link(LinkedPerson mother, Evidence[] evidence, float linkHeuristic) {
-		Link[] temp = this.person2.clone();
-		Link[] newArray = new Link[temp.length + 1];
-		int c = 0;
-		for(Link l : this.person2) {
-			newArray[c++] = l;
-		}
-		newArray[c] = new Link(mother, this, evidence, linkHeuristic);
-		this.person2 = newArray;
 	}
 
 	@Override

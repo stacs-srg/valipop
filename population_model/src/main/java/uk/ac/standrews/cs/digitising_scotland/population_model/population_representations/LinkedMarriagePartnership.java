@@ -30,6 +30,14 @@ public class LinkedMarriagePartnership extends IntermediaryLinkObject implements
     public String getRef() {
     	return ref;
     }
+    
+    public void addPossibleHusbandLink(LinkedPerson husband, Evidence[] evidence, float linkHeuristic) {
+    	addPossiblePerson1Link(husband, evidence, linkHeuristic);
+    }
+    
+    public void addPossibleWifeLink(LinkedPerson wife, Evidence[] evidence, float linkHeuristic) {
+    	addPossiblePerson1Link(wife, evidence, linkHeuristic);
+    }
 	
     @Override
     public int getId() {
@@ -37,12 +45,12 @@ public class LinkedMarriagePartnership extends IntermediaryLinkObject implements
     }
 
     @Override
-    public Link[] getPerson1PotentialPartnerLinks() {
+    public Link[] getPerson1PotentialLinks() {
         return person2;
     }
 
     @Override
-    public Link[] getPerson2PotentialPartnerLinks() {
+    public Link[] getPerson2PotentialLinks() {
         return person1;
     }
     
