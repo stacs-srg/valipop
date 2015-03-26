@@ -22,9 +22,12 @@ public class ResultObject implements Comparable<ResultObject> {
 	private Link[] intermidiaryLinks1 = null;
 	private Link[] intermidiaryLinks2 = null;
 	private Link branchLink;
-	
+
 	private LinkedSiblings[] supportingSiblingBridges = new LinkedSiblings[0];
+	private LinkedMarriagePartnership[] supportingMarriageBridges = new LinkedMarriagePartnership[0];
 	
+	private LinkedPerson failedTestPersonRoot = null;
+
 	private float combinedHeuristic;
 	private QueryType queryType;
 	
@@ -49,6 +52,11 @@ public class ResultObject implements Comparable<ResultObject> {
 	}
 	
 	
+	public ResultObject(QueryType queryType, LinkedPerson person) {
+		this.queryType = queryType;
+		failedTestPersonRoot = person;
+	}
+
 	/*
 	 * In case where 2 intermediary paths exist then takes the combined heuristic of the least likely path
 	 * TODO Need to consider sibling bridges and marriages in here
@@ -111,6 +119,19 @@ public class ResultObject implements Comparable<ResultObject> {
 	public void setSupportingSiblingBridges(LinkedSiblings[] siblingLinkBridges) {
 		this.supportingSiblingBridges = siblingLinkBridges;
 		combinedHeuristic = calculateCombinedHeuristic();
+	}
+	
+	public LinkedMarriagePartnership[] getSupportingMarriageBridges() {
+		return supportingMarriageBridges;
+	}
+
+	public void setSupportingMarriageBridges(LinkedMarriagePartnership[] marriageLinkBridges) {
+		this.supportingMarriageBridges = marriageLinkBridges;
+		combinedHeuristic = calculateCombinedHeuristic();
+	}
+	
+	public LinkedPerson getFailedTestPersonRoot() {
+		return failedTestPersonRoot;
 	}
 	
 }

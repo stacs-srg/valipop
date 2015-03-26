@@ -25,28 +25,6 @@ public class LinkedSiblings extends IntermediaryLinkObject {
     	this.ref = ref;
 	}
     
-    public void addPossibleSibling1Link(LinkedPerson sibling1, Evidence[] evidence, float linkHeuristic) {
-		Link[] temp = this.person1.clone();
-		Link[] newArray = new Link[temp.length + 1];
-		int c = 0;
-		for(Link l : this.person1) {
-			newArray[c++] = l;
-		}
-		newArray[c] = new Link(sibling1, this, evidence, linkHeuristic);
-		this.person1 = newArray;
-	}
-	
-	public void addPossibleSibling2Link(LinkedPerson sibling2, Evidence[] evidence, float linkHeuristic) {
-		Link[] temp = this.person2.clone();
-		Link[] newArray = new Link[temp.length + 1];
-		int c = 0;
-		for(Link l : this.person2) {
-			newArray[c++] = l;
-		}
-		newArray[c] = new Link(sibling2, this, evidence, linkHeuristic);
-		this.person2 = newArray;
-	}
-	
     public Link[] getSibling1PotentialLinks() {
         return person1;
     }
@@ -55,8 +33,4 @@ public class LinkedSiblings extends IntermediaryLinkObject {
         return person2;
     }
     
-    public int getId() {
-        return id;
-    }
-
 }
