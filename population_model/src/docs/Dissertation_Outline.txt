@@ -1,0 +1,53 @@
+Dissertation Outline
+
+Background
+
+	Where the data we are representing is coming from
+		Linkage
+			Approaches
+			Handling Uncertainty
+
+	Where this research sits in a wider content
+		Linkage with Uncertainty
+		Digitising Scotland specifically
+			Wider links to ADRC
+
+
+	Other Respresentations and Ontologies for Genalogical datasets
+		- GEDCOM & GENTECH
+
+
+The Research
+
+	Design Consideration and Process of Stucture
+		Mostly written - case_studies_written.txt
+
+	Population Queries
+		What are provided
+		Relating to usecases and needs from such a structure
+
+	Textual Justifications
+		How handled
+		Ran from which prospective?
+			Requirements from underlying linkage - rerun or store at generation
+
+	Query Language
+		Abstraction away from the code level
+		Iterators?
+		Calls?
+
+	The implementation
+		Overview of approach
+		Detailing of data structure - identifing the overlay of concepsual on real program classes
+
+	Case studies/Evaluation
+		Justification of consepual and implementted stucture in light of real case studies
+		Consideration of scaling?
+
+Conclusions
+
+	Discoveries
+
+	Value
+
+	Further work...
