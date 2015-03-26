@@ -54,5 +54,9 @@ public class LinkedSiblings extends IntermediaryLinkObject {
     public Link[] getSibling2PotentialLinks() {
         return person2;
     }
+    
+    public int getId() {
+        return id;
+    }
 
 }

@@ -460,14 +460,14 @@ public class UseCases {
 		population.addSiblingsObject(new LinkedSiblings(2, "gimel"));
 		
 		population.getSiblingsObjectByRef("alef").addPossiblePerson1Link(population.findPersonByFirstName("a"), new Evidence[]{records[2], records[8]}, 0.8f);
-		population.getSiblingsObjectByRef("alef").addPossiblePerson1Link(population.findPersonByFirstName("b"), new Evidence[]{records[1], records[8]}, 0.8f);
+		population.getSiblingsObjectByRef("alef").addPossiblePerson2Link(population.findPersonByFirstName("b"), new Evidence[]{records[1], records[8]}, 0.8f);
 		
 		population.getSiblingsObjectByRef("bet").addPossiblePerson1Link(population.findPersonByFirstName("a"), new Evidence[]{records[2], records[9]}, 0.8f);
-		population.getSiblingsObjectByRef("bet").addPossiblePerson1Link(population.findPersonByFirstName("c"), new Evidence[]{records[0], records[9]}, 0.8f);
+		population.getSiblingsObjectByRef("bet").addPossiblePerson2Link(population.findPersonByFirstName("c"), new Evidence[]{records[0], records[9]}, 0.8f);
 		
 		population.getSiblingsObjectByRef("gimel").addPossiblePerson1Link(population.findPersonByFirstName("b"), new Evidence[]{records[1], records[10]}, 0.8f);
-		population.getSiblingsObjectByRef("gimel").addPossiblePerson1Link(population.findPersonByFirstName("c"), new Evidence[]{records[0], records[10]}, 0.8f);
-		
+		population.getSiblingsObjectByRef("gimel").addPossiblePerson2Link(population.findPersonByFirstName("c"), new Evidence[]{records[0], records[10]}, 0.8f);
+
 		return population;
 	}
 	
@@ -516,7 +516,7 @@ public class UseCases {
 		population.addSiblingsObject(new LinkedSiblings(0, "alef"));
 		
 		population.getSiblingsObjectByRef("alef").addPossiblePerson1Link(population.findPersonByFirstName("a"), new Evidence[]{records[2], records[8]}, 0.8f);
-		population.getSiblingsObjectByRef("alef").addPossiblePerson1Link(population.findPersonByFirstName("c"), new Evidence[]{records[0], records[8]}, 0.8f);
+		population.getSiblingsObjectByRef("alef").addPossiblePerson2Link(population.findPersonByFirstName("c"), new Evidence[]{records[0], records[8]}, 0.8f);
 		
 		return population;
 	}
@@ -566,7 +566,7 @@ public class UseCases {
 		population.addSiblingsObject(new LinkedSiblings(0, "alef"));
 		
 		population.getSiblingsObjectByRef("alef").addPossiblePerson1Link(population.findPersonByFirstName("g"), new Evidence[]{records[6], records[10]}, 0.8f);
-		population.getSiblingsObjectByRef("alef").addPossiblePerson1Link(population.findPersonByFirstName("c"), new Evidence[]{records[2], records[10]}, 0.8f);
+		population.getSiblingsObjectByRef("alef").addPossiblePerson2Link(population.findPersonByFirstName("c"), new Evidence[]{records[2], records[10]}, 0.8f);
 		
 		
 		return population;		
@@ -620,7 +620,7 @@ public class UseCases {
 		population.addSiblingsObject(new LinkedSiblings(0, "alef"));
 		
 		population.getSiblingsObjectByRef("alef").addPossiblePerson1Link(population.findPersonByFirstName("g"), new Evidence[]{records[6], records[10]}, 0.8f);
-		population.getSiblingsObjectByRef("alef").addPossiblePerson1Link(population.findPersonByFirstName("c"), new Evidence[]{records[2], records[10]}, 0.8f);
+		population.getSiblingsObjectByRef("alef").addPossiblePerson2Link(population.findPersonByFirstName("c"), new Evidence[]{records[2], records[10]}, 0.8f);
 		
 		return population;		
 
@@ -683,22 +683,22 @@ public class UseCases {
 		population.addSiblingsObject(new LinkedSiblings(0, "alef"));
 		
 		population.getSiblingsObjectByRef("alef").addPossiblePerson1Link(population.findPersonByFirstName("c"), new Evidence[]{records[2], records[13]}, 0.8f);
-		population.getSiblingsObjectByRef("alef").addPossiblePerson1Link(population.findPersonByFirstName("g"), new Evidence[]{records[6], records[13]}, 0.8f);
+		population.getSiblingsObjectByRef("alef").addPossiblePerson2Link(population.findPersonByFirstName("g"), new Evidence[]{records[6], records[13]}, 0.8f);
 		
 		return population;
 		
 	}
 
 
-	public static void main(String[] args) {
-		LinkedPopulation pop = generateNuclearFamilyUseCase1();
-		try {
-			new ExportPopulationToDB(pop);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-	}
+//	public static void main(String[] args) {
+//		LinkedPopulation pop = generateNuclearFamilyUseCase1();
+//		try {
+//			new ExportPopulationToDB(pop);
+//		} catch (Exception e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//
+//	}
 
 }

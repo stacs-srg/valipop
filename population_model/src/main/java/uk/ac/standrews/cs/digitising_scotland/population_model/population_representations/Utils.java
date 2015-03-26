@@ -16,6 +16,7 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.population_model.population_representations;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.PriorityQueue;
@@ -48,14 +49,14 @@ public class Utils {
 			
 			for(ResultObject r : array) {
 				Link bL = r.getBranchLink();
-				System.out.println(bL.getLinkedPerson().getFirstName() + " @H " + r.getCombinedHeuristic() + " by " + r.getIntermidiaryLinks1()[0].getLinkedPerson().getFirstName());
+				System.out.println(bL.getLinkedPerson().getFirstName() + " @H " + r.getCombinedHeuristic() + " by " + r.getIntermidiaryLinks1()[0].getLinkedPerson().getFirstName() + " with " + r.getSupportingSiblingBridges().length + " supporting sibling bridges");
 			}
 			
 		} else if (array[0].getQueryType() == QueryType.FULL_SIBLINGS) {
 			
 			for(ResultObject r : array) {
 				Link bL = r.getBranchLink();
-				System.out.println(bL.getLinkedPerson().getFirstName() + " @H " + r.getCombinedHeuristic() + " by " + r.getIntermidiaryLinks1()[0].getLinkedPerson().getFirstName() + " & " + r.getIntermidiaryLinks2()[0].getLinkedPerson().getFirstName());
+				System.out.println(bL.getLinkedPerson().getFirstName() + " @H " + r.getCombinedHeuristic() + " by " + r.getIntermidiaryLinks1()[0].getLinkedPerson().getFirstName() + " & " + r.getIntermidiaryLinks2()[0].getLinkedPerson().getFirstName() + " with " + r.getSupportingSiblingBridges().length + " supporting sibling bridges");
 			}
 			
 		} else {
@@ -69,16 +70,6 @@ public class Utils {
 		System.out.println();
 	}
 
-	private static boolean isSiblingQueries(QueryType queryType) {
-		if(queryType == QueryType.FATHERS_SIDE_SIBLINGS)
-			return true;
-		if(queryType == QueryType.MOTHERS_SIDE_SIBLINGS)
-			return true;
-		if(queryType == QueryType.FULL_SIBLINGS)
-			return true;
-		return false;
-	}
-	
 	public static ResultObject[] orderResults(PriorityQueue<ResultObject> pq) {
 
 		ResultObject[] temp = pq.toArray(new ResultObject[pq.size()]);
@@ -87,16 +78,24 @@ public class Utils {
 
 	}
 
-	public static Object[] joinArrays(Object[] a, Object[] b) {
-		Object[] ret = new Object[a.length + b.length];
+	public static LinkedSiblings[] joinArraysSkippingDuplicates(LinkedSiblings[] a, LinkedSiblings[] b) {
+		ArrayList<LinkedSiblings> ret = new ArrayList<LinkedSiblings>();
 		int c = 0;
-		for(Object a1 : a) {
-			ret[c++] = a1;
+		for(LinkedSiblings a1 : a) {
+			ret.add(a1);
 		}
-		for(Object b1 : b) {
-			ret[c++] = b1;
+		for(LinkedSiblings b1 : b) {
+			for(LinkedSiblings iA : a) {
+				if(iA.getId() == b1.getId()) {
+					break;
+				}
+				ret.add(b1);
+			}
 		}
-		return ret;
+		
+		LinkedSiblings[] temp = ret.toArray(new LinkedSiblings[ret.size()]);
+		Arrays.sort(temp);
+		return temp;
 	}
 
 	
