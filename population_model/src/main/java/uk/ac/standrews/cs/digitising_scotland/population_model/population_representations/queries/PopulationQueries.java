@@ -36,8 +36,12 @@ public class PopulationQueries {
 	LinkedPopulation population;
 
 	public static void main(String[] args) {
-		LinkedPopulation pop = UseCases.generateNuclearFamilyUseCase1();
+		LinkedPopulation pop = UseCases.generateNuclearFamilyUseCase7();
 		PopulationQueries pq = new PopulationQueries(pop);
+		
+
+		LinkedPopulation pop2 = UseCases.generateNuclearFamilyUseCase8();
+		PopulationQueries pq2 = new PopulationQueries(pop2);
 
 		//		Utils.printResultSet(pq.getChildrenOf(3));
 		//		Utils.printResultSet(pq.getChildrenOf(4));
@@ -55,7 +59,13 @@ public class PopulationQueries {
 
 		Utils.printResultSet(pq.getPotentialFatherSideSiblingsOf(0));
 		Utils.printResultSet(pq.getPotentialMotherSideSiblingsOf(0));
-		//		Utils.printResultSet(pq.getPotentialFullSiblings(0));
+		Utils.printResultSet(pq.getPotentialFullSiblings(0));
+		Utils.printResultSet(pq.getPotentialSiblingsByBridges(0));
+		
+		Utils.printResultSet(pq2.getPotentialFatherSideSiblingsOf(0));
+		Utils.printResultSet(pq2.getPotentialMotherSideSiblingsOf(0));
+		Utils.printResultSet(pq2.getPotentialFullSiblings(0));
+		Utils.printResultSet(pq2.getPotentialSiblingsByBridges(0));
 	}
 
 	public PopulationQueries(LinkedPopulation population) {
@@ -138,9 +148,9 @@ public class PopulationQueries {
 				ArrayList<LinkedSiblings> supportingSiblingBridges = new ArrayList<LinkedSiblings>();
 
 				for(Link l2 : person.getSiblings()) {
-					for(Link pSL : l2.getLinkedIntermediaryObject().getOppositePersonsList(person)) {
+					for(Link pSB : l2.getLinkedIntermediaryObject().getOppositePersonsList(person)) {
 						// TODO This is going to need a rethink - the complexity is getting concerning
-						if (pSL.getLinkedPerson().getId() == childLink.getLinkedPerson().getId()) {
+						if (pSB.getLinkedPerson().getId() == childLink.getLinkedPerson().getId()) {
 							supportingSiblingBridges.add((LinkedSiblings) l2.getLinkedIntermediaryObject());
 						}
 					}
@@ -195,7 +205,7 @@ public class PopulationQueries {
 			for(ResultObject m : mSideSibling){
 				if(fatherSideId == m.getBranchLink().getLinkedPerson().getId()) {
 					ResultObject resultObject = new ResultObject(QueryType.FULL_SIBLINGS, f.getRootLink(), f.getIntermidiaryLinks1(), m.getIntermidiaryLinks1(), f.getBranchLink());
-					resultObject.setSupportingSiblingBridges((LinkedSiblings[]) Utils.joinArrays(f.getSupportingSiblingBridges(), m.getSupportingSiblingBridges()));
+					resultObject.setSupportingSiblingBridges(Utils.joinArraysSkippingDuplicates(f.getSupportingSiblingBridges(), m.getSupportingSiblingBridges()));
 					potentialFullSiblings.add(resultObject);
 
 				}

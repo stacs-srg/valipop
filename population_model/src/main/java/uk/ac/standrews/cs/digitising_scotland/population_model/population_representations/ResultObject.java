@@ -23,7 +23,7 @@ public class ResultObject implements Comparable<ResultObject> {
 	private Link[] intermidiaryLinks2 = null;
 	private Link branchLink;
 	
-	private LinkedSiblings[] supportingSiblingBridges = null;
+	private LinkedSiblings[] supportingSiblingBridges = new LinkedSiblings[0];
 	
 	private float combinedHeuristic;
 	private QueryType queryType;
