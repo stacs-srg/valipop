@@ -132,7 +132,7 @@ public class LinkedPerson implements IPerson {
     }
 
 	@Override
-	public List<Link> getPartnerships() {
+	public List<Link> getChildBearingPartnerships() {
 		return childbearingPartnerships;
 	}
 

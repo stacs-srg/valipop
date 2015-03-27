@@ -116,7 +116,7 @@ public interface IPerson {
      * Gets the Links of the person's potential partnerships, or null if none are recorded.
      * @return the Linkes to the person's potential partnerships
      */
-    List<Link> getPartnerships();
+    List<Link> getChildBearingPartnerships();
 
     /**
      * Gets the Link of the person's parents' partnership, or null if none are recorded.

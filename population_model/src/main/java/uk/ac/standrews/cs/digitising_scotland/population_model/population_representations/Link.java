@@ -37,7 +37,10 @@ public class Link implements Comparable<Link> {
 			linkedPerson.addPartnershipLink(this);
 		} else if(partnership.getClass() == LinkedSiblings.class) {
 			linkedPerson.addSiblingLink(this);
+		} else if(partnership.getClass() == LinkedMarriagePartnership.class) {
+			linkedPerson.addMarriageLink(this);
 		}
+		
 		heuriticOfLinkValue = heuristic;
 	}
 

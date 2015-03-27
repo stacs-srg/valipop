@@ -19,8 +19,8 @@ package uk.ac.standrews.cs.digitising_scotland.population_model.population_repre
 public class ResultObject implements Comparable<ResultObject> {
 
 	private Link rootLink;
-	private Link[] intermidiaryLinks1 = null;
-	private Link[] intermidiaryLinks2 = null;
+	private Link[] intermidiaryLinks1 = new Link[0];
+	private Link[] intermidiaryLinks2 = new Link[0];
 	private Link branchLink;
 
 	private LinkedSiblings[] supportingSiblingBridges = new LinkedSiblings[0];

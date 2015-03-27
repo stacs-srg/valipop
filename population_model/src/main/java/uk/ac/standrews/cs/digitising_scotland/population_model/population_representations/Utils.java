@@ -48,6 +48,7 @@ public class Utils {
 		
 		if(array[0].getFailedTestPersonRoot() != null) {
 			System.out.println("No found results for " + array[0].getQueryType().toString() + " of " + array[0].getFailedTestPersonRoot().getFirstName());
+			System.out.println();
 			return;
 		}
 		
@@ -65,7 +66,7 @@ public class Utils {
 			
 			for(ResultObject r : array) {
 				Link bL = r.getBranchLink();
-				System.out.println(bL.getLinkedPerson().getFirstName() + " @H " + r.getCombinedHeuristic() + " by " + r.getIntermidiaryLinks1()[0].getLinkedPerson().getFirstName() + " & " + r.getIntermidiaryLinks2()[0].getLinkedPerson().getFirstName() + " with " + r.getSupportingSiblingBridges().length + " supporting sibling bridges");
+				System.out.println(bL.getLinkedPerson().getFirstName() + " @H " + r.getCombinedHeuristic() + " by " + r.getIntermidiaryLinks1()[0].getLinkedPerson().getFirstName() + " & " + r.getIntermidiaryLinks2()[0].getLinkedPerson().getFirstName() + " with " + r.getSupportingSiblingBridges().length + " SSB");
 			}
 			
 		} else if(qt == QueryType.CB_PARTNERS) {
@@ -86,8 +87,10 @@ public class Utils {
 		System.out.println();
 	}
 
-	public static ResultObject[] orderResults(PriorityQueue<ResultObject> pq) {
-
+	public static ResultObject[] orderResults(PriorityQueue<ResultObject> pq, QueryType queryType, LinkedPerson person) {
+		if(pq.size() == 0) {
+			return new ResultObject[]{new ResultObject(queryType, person)};
+		}
 		ResultObject[] temp = pq.toArray(new ResultObject[pq.size()]);
 		Arrays.sort(temp);
 		return temp;
