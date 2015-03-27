@@ -21,7 +21,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.PriorityQueue;
 
-import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.IntermediaryLinkObject;
 import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.Link;
 import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.LinkedChildbearingPartnership;
 import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.LinkedMarriagePartnership;
@@ -30,6 +29,7 @@ import uk.ac.standrews.cs.digitising_scotland.population_model.population_repres
 import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.LinkedSiblings;
 import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.QueryType;
 import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.ResultObject;
+import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.TextualResultObjectJustifier;
 import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.UseCases;
 import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.Utils;
 
@@ -42,16 +42,24 @@ public class PopulationQueries {
 		PopulationQueries pq = new PopulationQueries(pop);
 
 		for(int p = 0; p < pop.getNumberOfPeople(); p++) {
+			//		int p = 3;
 			System.out.println("------ Queries From Viewpoint of Person " + pop.findPerson(p).getFirstName() + " ------");
 
 			Utils.printResultSet(pq.getChildrenOf(p));
+			System.out.println(TextualResultObjectJustifier.stringExplanationOf(pq.getChildrenOf(p)));
+			
 			Utils.printResultSet(pq.getFatherOf(p));
 			Utils.printResultSet(pq.getMotherOf(p));
 
 			Utils.printResultSet(pq.getPotentialFatherSideSiblingsOf(p));
+			System.out.println(TextualResultObjectJustifier.stringExplanationOf(pq.getPotentialFatherSideSiblingsOf(p)));
+			
 			Utils.printResultSet(pq.getPotentialMotherSideSiblingsOf(p));
 			Utils.printResultSet(pq.getPotentialFullSiblings(p));
 			Utils.printResultSet(pq.getPotentialSiblingsByBridges(p));
+
+			Utils.printResultSet(pq.getChildbearingPartnerOf(p));
+			Utils.printResultSet(pq.getPotentialMarriageByBridges(p));
 
 			System.out.println("------ PERSON ENDS ------");
 		}
@@ -81,7 +89,7 @@ public class PopulationQueries {
 			fathers.add(new ResultObject(QueryType.FATHERS, p.getParentsPartnership(), l));
 		}
 
-		return Utils.orderResults(fathers);
+		return Utils.orderResults(fathers, QueryType.FATHERS, p);
 	}
 
 	public ResultObject[] getMotherOf(int person) {
@@ -101,14 +109,14 @@ public class PopulationQueries {
 			mothers.add(new ResultObject(QueryType.MOTHERS, p.getParentsPartnership(), l));
 		}
 
-		return Utils.orderResults(mothers);
+		return Utils.orderResults(mothers, QueryType.MOTHERS, p);
 	}
 
 	public ResultObject[] getChildbearingPartnerOf(int person) {
 		LinkedPerson p = (LinkedPerson) population.findPerson(person);
 		PriorityQueue<ResultObject> partners = new PriorityQueue<ResultObject>();
 
-		List<Link> possPartnership = p.getPartnerships();
+		List<Link> possPartnership = p.getChildBearingPartnerships();
 
 		for(Link l : possPartnership) {
 			for(Link l2 : l.getLinkedIntermediaryObject().getOppositePersonsList(p)) {
@@ -116,12 +124,15 @@ public class PopulationQueries {
 				ArrayList<LinkedMarriagePartnership> supportingMarriageBridges = new ArrayList<LinkedMarriagePartnership>();
 
 				for(Link l3 : p.getMarraigePartnerships()) {
-					for(Link pMB : l3.getLinkedIntermediaryObject().getOppositePersonsList(p)) {
-						// TODO This is going to need a rethink - the complexity is getting concerning
-						if (pMB.getLinkedPerson().getId() == l2.getLinkedPerson().getId()) {
-							supportingMarriageBridges.add((LinkedMarriagePartnership) l3.getLinkedIntermediaryObject());
+					if(l3.getLinkedIntermediaryObject().getOppositePersonsList(p).length != 0)
+
+						for(Link pMB : l3.getLinkedIntermediaryObject().getOppositePersonsList(p)) {
+							// TODO This is going to need a rethink - the complexity is getting concerning
+
+							if (pMB.getLinkedPerson().getId() == l2.getLinkedPerson().getId()) {
+								supportingMarriageBridges.add((LinkedMarriagePartnership) l3.getLinkedIntermediaryObject());
+							}
 						}
-					}
 				}
 
 				if(l2.getLinkedPerson().getId() != p.getId()) {
@@ -133,23 +144,34 @@ public class PopulationQueries {
 					}
 					partners.add(resultObject);
 				}
-
-				//				partners.add(new ResultObject(QueryType.CB_PARTNERS, l, l2));
 			}
-
 		}
-		return Utils.orderResults(partners);
+		return Utils.orderResults(partners, QueryType.CB_PARTNERS, p);
+	}
+
+	public ResultObject[] getPotentialMarriageByBridges(int person) {
+		LinkedPerson p = (LinkedPerson) population.findPerson(person);
+		PriorityQueue<ResultObject> marriagePartners = new PriorityQueue<ResultObject>();
+
+		for(Link l : p.getMarraigePartnerships()) {
+			for(Link l2 : l.getLinkedIntermediaryObject().getOppositePersonsList(p)) {
+				ResultObject resultObject = new ResultObject(QueryType.MARRIAGE_BRIDGE, l, l2);
+				resultObject.setSupportingMarriageBridges(new LinkedMarriagePartnership[]{(LinkedMarriagePartnership) l2.getLinkedIntermediaryObject()});
+				marriagePartners.add(resultObject);
+			}
+		}
+		return Utils.orderResults(marriagePartners, QueryType.MARRIAGE_BRIDGE, p);
 	}
 
 	// Need to think about way of grouping children into possible sets?
 	public ResultObject[] getChildrenOf(int person) {
 		LinkedPerson p = (LinkedPerson) population.findPerson(person);
 		PriorityQueue<ResultObject> children = new PriorityQueue<ResultObject>();
-		List<Link> possPartnership = p.getPartnerships();
+		List<Link> possPartnership = p.getChildBearingPartnerships();
 		for(Link l : possPartnership) {
 			children.add(new ResultObject(QueryType.CHILDREN, l, ((LinkedChildbearingPartnership) l.getLinkedIntermediaryObject()).getChildLink()));
 		}
-		return Utils.orderResults(children);
+		return Utils.orderResults(children, QueryType.CHILDREN, p);
 	}
 
 	/*
@@ -161,7 +183,7 @@ public class PopulationQueries {
 		Link parentsPartnership = person.getParentsPartnership();
 		PriorityQueue<ResultObject> siblings = new PriorityQueue<ResultObject>();
 		for(Link l : x) {
-			List<Link> partnerships = l.getLinkedPerson().getPartnerships();
+			List<Link> partnerships = l.getLinkedPerson().getChildBearingPartnerships();
 			for(Link pL : partnerships) {
 				Link childLink = ((LinkedChildbearingPartnership) pL.getLinkedIntermediaryObject()).getChildLink();
 				Link[] intermidiaryLinks = new Link[]{l, pL};
@@ -190,7 +212,7 @@ public class PopulationQueries {
 			}
 		}
 
-		return Utils.orderResults(siblings);
+		return Utils.orderResults(siblings, queryType, person);
 	}
 
 	public ResultObject[] getPotentialFatherSideSiblingsOf(int person) {
@@ -237,14 +259,14 @@ public class PopulationQueries {
 				siblings.add(resultObject);
 			}
 		}
-		return Utils.orderResults(siblings);
+		return Utils.orderResults(siblings, QueryType.SIBLING_BRIGE, p);
 	}
 
 	public ResultObject[] getPotentialFullSiblings(int person) {
 		ResultObject[] fSideSibling = getPotentialFatherSideSiblingsOf(person);
 		ResultObject[] mSideSibling = getPotentialMotherSideSiblingsOf(person);
 		PriorityQueue<ResultObject> potentialFullSiblings = new PriorityQueue<ResultObject>();
-		
+
 		if(fSideSibling.length == 0 || mSideSibling.length == 0 || fSideSibling[0].getFailedTestPersonRoot() != null || mSideSibling[0].getFailedTestPersonRoot() != null) {
 			ResultObject[] noResult = new ResultObject[1];
 			noResult[0] = new ResultObject(QueryType.FULL_SIBLINGS, (LinkedPerson) population.findPerson(person));
@@ -262,8 +284,10 @@ public class PopulationQueries {
 				}
 			}
 		}
-		return Utils.orderResults(potentialFullSiblings);		
+		return Utils.orderResults(potentialFullSiblings, QueryType.FULL_SIBLINGS, (LinkedPerson) population.findPerson(person));		
 
 	}
+
+
 
 }

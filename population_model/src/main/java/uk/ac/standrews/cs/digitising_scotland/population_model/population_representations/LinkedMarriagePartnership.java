@@ -36,7 +36,7 @@ public class LinkedMarriagePartnership extends IntermediaryLinkObject implements
     }
     
     public void addPossibleWifeLink(LinkedPerson wife, Evidence[] evidence, float linkHeuristic) {
-    	addPossiblePerson1Link(wife, evidence, linkHeuristic);
+    	addPossiblePerson2Link(wife, evidence, linkHeuristic);
     }
 	
     @Override

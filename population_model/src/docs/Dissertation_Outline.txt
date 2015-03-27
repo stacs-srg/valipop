@@ -1,5 +1,7 @@
 Dissertation Outline
 
+Statment of project aim
+
 Background
 
 	Where the data we are representing is coming from

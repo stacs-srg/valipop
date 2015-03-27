@@ -160,7 +160,7 @@ public class UseCasesTest {
 			mothers[c++] = (LinkedPerson) l.getLinkedPerson();
 		}
 		for(LinkedPerson m : mothers) {
-			List<Link> p = m.getPartnerships();
+			List<Link> p = m.getChildBearingPartnerships();
 			List<LinkedPerson> children = new ArrayList<LinkedPerson>();
 			for(Link l : p) {
 				children.add((LinkedPerson)((LinkedChildbearingPartnership) l.getLinkedIntermediaryObject()).getChildLink().getLinkedPerson());
@@ -185,7 +185,7 @@ public class UseCasesTest {
 			fathers[c++] = (LinkedPerson) l.getLinkedPerson();
 		}
 		for(LinkedPerson m : fathers) {
-			List<Link> p = m.getPartnerships();
+			List<Link> p = m.getChildBearingPartnerships();
 			List<LinkedPerson> children = new ArrayList<LinkedPerson>();
 			for(Link l : p) {
 				children.add((LinkedPerson)((LinkedChildbearingPartnership) l.getLinkedIntermediaryObject()).getChildLink().getLinkedPerson());
@@ -197,10 +197,10 @@ public class UseCasesTest {
 	public void partnersLinked(LinkedPerson person) {
 //		Utils.print(person);
 //		System.out.println(person.getPartnerships().size());
-		if(person.getPartnerships().size() == 0)
+		if(person.getChildBearingPartnerships().size() == 0)
 			return;
 		
-		List<Link> partnershipLinks = person.getPartnerships();
+		List<Link> partnershipLinks = person.getChildBearingPartnerships();
 		List<Link> partnerLinks = new ArrayList<Link>();
 		for(Link l : partnershipLinks) {
 			if(person.getSex() == 'M') {
@@ -221,7 +221,7 @@ public class UseCasesTest {
 		List<LinkedPerson> returnPartners = new ArrayList<LinkedPerson>();
 		
 		for(LinkedPerson partner : partners) {
-			returnPartnershipLinks.addAll(partner.getPartnerships());
+			returnPartnershipLinks.addAll(partner.getChildBearingPartnerships());
 		}
 		
 		for(Link l : returnPartnershipLinks) {
