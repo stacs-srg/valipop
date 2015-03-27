@@ -1,9 +1,9 @@
 package uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records;
 
 
-import uk.ac.standrews.cs.digitising_scotland.jstore.impl.LXP;
-import uk.ac.standrews.cs.digitising_scotland.jstore.impl.exceptions.IllegalKeyException;
-import uk.ac.standrews.cs.digitising_scotland.jstore.types.Types;
+import uk.ac.standrews.cs.jstore.impl.LXP;
+import uk.ac.standrews.cs.jstore.impl.exceptions.IllegalKeyException;
+import uk.ac.standrews.cs.jstore.types.Types;
 import uk.ac.standrews.cs.nds.persistence.PersistentObjectException;
 import uk.ac.standrews.cs.nds.rpc.stream.JSONReader;
 
@@ -12,7 +12,7 @@ import uk.ac.standrews.cs.nds.rpc.stream.JSONReader;
  */
 public abstract class AbstractLXP extends LXP {
 
-    protected long required_type_labelID;
+    public long required_type_labelID;
 
     public AbstractLXP() {
 

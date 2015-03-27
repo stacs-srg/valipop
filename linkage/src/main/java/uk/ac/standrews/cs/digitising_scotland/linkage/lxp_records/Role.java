@@ -1,19 +1,19 @@
 package uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records;
 
-import uk.ac.standrews.cs.digitising_scotland.jstore.impl.StoreFactory;
-import uk.ac.standrews.cs.digitising_scotland.jstore.impl.TypeFactory;
-import uk.ac.standrews.cs.digitising_scotland.jstore.impl.exceptions.*;
-import uk.ac.standrews.cs.digitising_scotland.jstore.interfaces.IBucket;
-import uk.ac.standrews.cs.digitising_scotland.jstore.interfaces.ILXP;
-import uk.ac.standrews.cs.digitising_scotland.jstore.interfaces.IRepository;
-import uk.ac.standrews.cs.digitising_scotland.jstore.types.LXP_REF;
-import uk.ac.standrews.cs.digitising_scotland.jstore.types.LXP_SCALAR;
+import uk.ac.standrews.cs.jstore.impl.StoreFactory;
+import uk.ac.standrews.cs.jstore.impl.TypeFactory;
+import uk.ac.standrews.cs.jstore.impl.exceptions.*;
+import uk.ac.standrews.cs.jstore.interfaces.IBucket;
+import uk.ac.standrews.cs.jstore.interfaces.ILXP;
+import uk.ac.standrews.cs.jstore.interfaces.IRepository;
+import uk.ac.standrews.cs.jstore.types.LXP_REF;
+import uk.ac.standrews.cs.jstore.types.LXP_SCALAR;
 import uk.ac.standrews.cs.digitising_scotland.util.ErrorHandling;
 import uk.ac.standrews.cs.nds.persistence.PersistentObjectException;
 import uk.ac.standrews.cs.nds.rpc.stream.JSONReader;
 
-import static uk.ac.standrews.cs.digitising_scotland.jstore.types.LXPBaseType.LONG;
-import static uk.ac.standrews.cs.digitising_scotland.jstore.types.LXPBaseType.STRING;
+import static uk.ac.standrews.cs.jstore.types.LXPBaseType.LONG;
+import static uk.ac.standrews.cs.jstore.types.LXPBaseType.STRING;
 
 /**
  * Created by al on 03/10/2014.
@@ -65,7 +65,7 @@ public class Role extends AbstractLXP {
 
     }
 
-    public static Role createPersonFromOwnBirthDeath(ILXP BD_record, long original_record_type ) throws KeyNotFoundException, TypeMismatchFoundException, StoreException {
+    public static Role createPersonFromOwnBirthDeath(ILXP BD_record, long original_record_type ) throws StoreException {
 
         String surname = BD_record.getString(Birth.SURNAME);
         String forename = BD_record.getString(Birth.FORENAME);
@@ -75,7 +75,7 @@ public class Role extends AbstractLXP {
         return new Role( surname, forename, sex, role, BD_record, original_record_type );
     }
 
-    public static Role createFatherFromChildsBirthDeath(ILXP BD_record, long original_record_type) throws KeyNotFoundException, TypeMismatchFoundException, StoreException {
+    public static Role createFatherFromChildsBirthDeath(ILXP BD_record, long original_record_type) throws StoreException {
 
         if (BD_record.getString(Birth.FATHERS_SURNAME).equals("")) {
             return null;
@@ -89,7 +89,7 @@ public class Role extends AbstractLXP {
         return new Role(surname, forename, sex, role, BD_record, original_record_type );
     }
 
-    public static Role createMotherFromChildsBirthDeath(ILXP BD_record, long original_record_type) throws KeyNotFoundException, TypeMismatchFoundException, StoreException {
+    public static Role createMotherFromChildsBirthDeath(ILXP BD_record, long original_record_type) throws StoreException {
 
         if (BD_record.getString(Birth.MOTHERS_SURNAME).equals("")) {
             return null;
@@ -110,7 +110,7 @@ public class Role extends AbstractLXP {
      * @param marriage_record a record from which to extract person information
      * @return a Person representing the bride
      */
-    public static Role createBrideFromMarriageRecord(Marriage marriage_record) throws KeyNotFoundException, TypeMismatchFoundException, StoreException {
+    public static Role createBrideFromMarriageRecord(Marriage marriage_record) throws StoreException {
 
         String surname = marriage_record.getString(Marriage.BRIDE_SURNAME);
         String forename = marriage_record.getString(Marriage.BRIDE_FORENAME);
@@ -126,7 +126,7 @@ public class Role extends AbstractLXP {
      * @param marriage_record a record from which to extract person information
      * @return the Person representing the groom
      */
-    public static Role createGroomFromMarriageRecord(Marriage marriage_record) throws KeyNotFoundException, TypeMismatchFoundException, StoreException {
+    public static Role createGroomFromMarriageRecord(Marriage marriage_record) throws StoreException {
 
         String surname = marriage_record.getString(Marriage.GROOM_SURNAME);
         String forename = marriage_record.getString(Marriage.GROOM_FORENAME);
@@ -137,7 +137,7 @@ public class Role extends AbstractLXP {
 
     }
 
-    public static Role createBridesFatherFromMarriageRecord(Marriage marriage_record) throws KeyNotFoundException, TypeMismatchFoundException, StoreException {// TODO rewrite as typed
+    public static Role createBridesFatherFromMarriageRecord(Marriage marriage_record) throws StoreException {
 
         String surname = marriage_record.getString(Marriage.BRIDE_FATHERS_SURNAME);
         if (surname.equals("0")) {
@@ -151,7 +151,7 @@ public class Role extends AbstractLXP {
 
     }
 
-    public static Role createBridesMotherFromMarriageRecord(Marriage marriage_record) throws KeyNotFoundException, TypeMismatchFoundException, StoreException { // TODO rewrite as typed
+    public static Role createBridesMotherFromMarriageRecord(Marriage marriage_record) throws StoreException {
 
         String surname = marriage_record.getString(Marriage.BRIDE_MOTHERS_MAIDEN_SURNAME);
         String forename = marriage_record.getString(Marriage.BRIDE_MOTHERS_FORENAME);
@@ -162,7 +162,7 @@ public class Role extends AbstractLXP {
 
     }
 
-    public static Role createGroomsFatherFromMarriageRecord(Marriage marriage_record) throws KeyNotFoundException, TypeMismatchFoundException, StoreException {// TODO rewrite as typed
+    public static Role createGroomsFatherFromMarriageRecord(Marriage marriage_record) throws StoreException {
 
         String surname = marriage_record.getString(Marriage.GROOM_FATHERS_SURNAME);
         if (surname.equals("0")) {
@@ -175,7 +175,7 @@ public class Role extends AbstractLXP {
         return new Role(surname, forename, sex, role, marriage_record, marriage_record.required_type_labelID );
     }
 
-    public static Role createGroomsMotherFromMarriageRecord(Marriage marriage_record) throws KeyNotFoundException, TypeMismatchFoundException, StoreException {// TODO rewrite as typed
+    public static Role createGroomsMotherFromMarriageRecord(Marriage marriage_record) throws StoreException {
 
         String surname = marriage_record.getString(Marriage.GROOM_MOTHERS_MAIDEN_SURNAME);
         String forename = marriage_record.getString(Marriage.GROOM_MOTHERS_FORENAME);
@@ -186,34 +186,6 @@ public class Role extends AbstractLXP {
     }
 
     // Getters
-
-    private String get_val( ILXP object, String key ) {
-        if( object == null ) {
-            ErrorHandling.error( "get_val passed null" );
-            return null;
-        }
-        String value = null;
-        try {
-            value = object.getString(key);
-        } catch (KeyNotFoundException e) {
-            ErrorHandling.exceptionError( e, "No key: " + key + " in Person" );
-        } catch (TypeMismatchFoundException e) {
-            ErrorHandling.exceptionError( e, "Type mismatch for key: " + key + " in Person");
-        }
-        return value;
-    }
-
-    private long get_long( String key ) {
-        long value = 0l;
-        try {
-            value = this.getLong(key);
-        } catch (KeyNotFoundException e) {
-            ErrorHandling.exceptionError( e, "No key: " + key + " in Person" );
-        } catch (TypeMismatchFoundException e) {
-            ErrorHandling.exceptionError( e, "Type mismatch for key: " + key + " in Person");
-        }
-        return value;
-    }
 
     private ILXP get_from_bucket_with_name(String bucketname, long oid) {
         try {
@@ -234,16 +206,16 @@ public class Role extends AbstractLXP {
 
     // Basic selectors operate over data stored in this role
 
-    public String get_surname() { return get_val( this,SURNAME ); }
+    public String get_surname() { return getString(SURNAME); }
 
-    public String get_forename() { return get_val( this,FORENAME ); }
+    public String get_forename() { return getString(FORENAME); }
 
-    public String get_sex() { return get_val( this,SEX ); }
+    public String get_sex() { return getString(SEX); }
 
-    public role_played get_role() { return role_played.valueOf( get_val( this,ROLE ) ); }
+    public role_played get_role() { return role_played.valueOf( getString(ROLE) ); }
 
     public ILXP get_original_record() {
-        long oid = get_long(ORIGINAL_RECORD);
+        long oid = getLong(ORIGINAL_RECORD);
         long record_type = get_original_record_type();
         if( record_type == TypeFactory.getInstance().typeWithname( "birth" ).getId() ) {
             return get_from_bucket_with_name( "births", oid );
@@ -256,20 +228,20 @@ public class Role extends AbstractLXP {
         return null; // should not reach
     }
 
-    public long get_original_record_type() { return get_long(ORIGINAL_RECORD_TYPE); }
+    public long get_original_record_type() { return getLong(ORIGINAL_RECORD_TYPE); }
 
     // Complex selectors operate over data stored in original record
 
     public String get_fathers_forename() {
         switch ( get_role() ) {
             case principal: {
-                return get_val( get_original_record(), "fathers_forename" );
+                return get_original_record().getString("fathers_forename");
             }
             case bride: {
-                return get_val( get_original_record(), "bride_fathers_forename" );
+                return get_original_record().getString("bride_fathers_forename");
             }
             case groom: {
-                return get_val( get_original_record(), "groom_fathers_forename" );
+                return get_original_record().getString("groom_fathers_forename");
             }
             case father:
             case mother:
@@ -285,13 +257,13 @@ public class Role extends AbstractLXP {
     public String get_fathers_surname() {
         switch ( get_role() ) {
             case principal: {
-                return get_val( get_original_record(), "fathers_surname" );
+                return get_original_record().getString("fathers_surname");
             }
             case bride: {
-                return get_val( get_original_record(), "bride_fathers_surname" );
+                return get_original_record().getString("bride_fathers_surname");
             }
             case groom: {
-                return get_val( get_original_record(), "groom_fathers_surname" );
+                return get_original_record().getString("groom_fathers_surname");
             }
             case father:
             case mother:
@@ -307,13 +279,13 @@ public class Role extends AbstractLXP {
     public String get_fathers_occupation() {
         switch ( get_role() ) {
             case principal: {
-                return get_val( get_original_record(), "fathers_occupation" );
+                return get_original_record().getString("fathers_occupation");
             }
             case bride: {
-                return get_val( get_original_record(), "bride_fathers_occupation" );
+                return get_original_record().getString("bride_fathers_occupation");
             }
             case groom: {
-                return get_val( get_original_record(), "groom_fathers_occupation" );
+                return get_original_record().getString("groom_fathers_occupation" );
             }
             case father:
             case mother:
@@ -329,13 +301,13 @@ public class Role extends AbstractLXP {
     public String get_mothers_forename() {
         switch ( get_role() ) {
             case principal: {
-                return get_val( get_original_record(), "mothers_forename" );
+                return get_original_record().getString("mothers_forename");
             }
             case bride: {
-                return get_val( get_original_record(), "bride_mothers_forename" );
+                return get_original_record().getString("bride_mothers_forename");
             }
             case groom: {
-                return get_val( get_original_record(), "groom_mothers_forename" );
+                return get_original_record().getString("groom_mothers_forename");
             }
             case father:
             case mother:
@@ -351,13 +323,13 @@ public class Role extends AbstractLXP {
     public String get_mothers_surname() {
         switch ( get_role() ) {
             case principal: {
-                return get_val( get_original_record(), "mothers_surname" );
+                return get_original_record().getString("mothers_surname");
             }
             case bride: {
-                return get_val( get_original_record(), "bride_mothers_surname" );
+                return get_original_record().getString("bride_mothers_surname");
             }
             case groom: {
-                return get_val( get_original_record(), "groom_mothers_surname" );
+                return get_original_record().getString("groom_mothers_surname");
             }
             case father:
             case mother:
@@ -373,13 +345,13 @@ public class Role extends AbstractLXP {
     public String get_mothers_maiden_surname() {
         switch ( get_role() ) {
             case principal: {
-                return get_val( get_original_record(), "mothers_maiden_surname" );
+                return get_original_record().getString("mothers_maiden_surname");
             }
             case bride: {
-                return get_val( get_original_record(), "bride_mothers_maiden_surname" );
+                return get_original_record().getString("bride_mothers_maiden_surname");
             }
             case groom: {
-                return get_val( get_original_record(), "groom_mothers_maiden_surname" );
+                return get_original_record().getString("groom_mothers_maiden_surname");
             }
             case father:
             case mother:
@@ -395,20 +367,20 @@ public class Role extends AbstractLXP {
     public String get_occupation() {
         switch ( get_role() ) {
             case principal: {
-                return get_val( get_original_record(), "occupation" );
+                return get_original_record().getString("occupation");
             }
             case groom:{
-                return get_val( get_original_record(), "groom_occupation" );
+                return get_original_record().getString("groom_occupation");
             }
             case grooms_father: {
-                return get_val( get_original_record(), "groom_fathers_occupation" );
+                return get_original_record().getString("groom_fathers_occupation");
             }
 
             case brides_father: {
-                return get_val( get_original_record(), "bride_fathers_occupation" );
+                return get_original_record().getString("bride_fathers_occupation");
             }
             case father: {
-                return get_val( get_original_record(), "fathers_occupation" );
+                return get_original_record().getString("fathers_occupation");
             }
             case mother:
             case bride:

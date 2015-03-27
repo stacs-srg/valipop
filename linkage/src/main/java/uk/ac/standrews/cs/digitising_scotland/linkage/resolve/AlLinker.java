@@ -1,17 +1,17 @@
 package uk.ac.standrews.cs.digitising_scotland.linkage.resolve;
 
 import org.json.JSONException;
-import uk.ac.standrews.cs.digitising_scotland.jstore.impl.StoreFactory;
-import uk.ac.standrews.cs.digitising_scotland.jstore.impl.TypeFactory;
-import uk.ac.standrews.cs.digitising_scotland.jstore.impl.exceptions.*;
-import uk.ac.standrews.cs.digitising_scotland.jstore.interfaces.*;
+import uk.ac.standrews.cs.jstore.impl.StoreFactory;
+import uk.ac.standrews.cs.jstore.impl.TypeFactory;
+import uk.ac.standrews.cs.jstore.impl.exceptions.*;
+import uk.ac.standrews.cs.jstore.interfaces.*;
 import uk.ac.standrews.cs.digitising_scotland.linkage.EventImporter;
 import uk.ac.standrews.cs.digitising_scotland.linkage.RecordFormatException;
 import uk.ac.standrews.cs.digitising_scotland.linkage.blocking.MultipleBlockerOverPerson;
 import uk.ac.standrews.cs.digitising_scotland.linkage.factory.BirthFactory;
 import uk.ac.standrews.cs.digitising_scotland.linkage.factory.MarriageFactory;
 import uk.ac.standrews.cs.digitising_scotland.linkage.factory.PairPersonFactory;
-import uk.ac.standrews.cs.digitising_scotland.linkage.factory.PersonFactory;
+import uk.ac.standrews.cs.digitising_scotland.linkage.factory.RoleFactory;
 import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.*;
 import uk.ac.standrews.cs.nds.persistence.PersistentObjectException;
 
@@ -66,7 +66,7 @@ public class AlLinker {
     private IReferenceType pairpersonType;
 
     private BirthFactory birthFactory;
-    private PersonFactory roleFactory;
+    private RoleFactory roleFactory;
     private MarriageFactory marriageFactory;
     private PairPersonFactory pairpersonFactory;
 
@@ -122,7 +122,7 @@ public class AlLinker {
     private void initialiseFactories() {
         birthFactory = new BirthFactory(birthType.getId());
         marriageFactory = new MarriageFactory(marriageType.getId());
-        roleFactory = new PersonFactory(roleType.getId());
+        roleFactory = new RoleFactory(roleType.getId());
 
         pairpersonFactory = new PairPersonFactory(pairpersonType.getId());
     }

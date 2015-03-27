@@ -1,9 +1,9 @@
 package uk.ac.standrews.cs.digitising_scotland.linkage.resolve;
 
 
-import uk.ac.standrews.cs.digitising_scotland.jstore.interfaces.IInputStream;
-import uk.ac.standrews.cs.digitising_scotland.jstore.interfaces.ILXP;
-import uk.ac.standrews.cs.digitising_scotland.jstore.interfaces.IOutputStream;
+import uk.ac.standrews.cs.jstore.interfaces.IInputStream;
+import uk.ac.standrews.cs.jstore.interfaces.ILXP;
+import uk.ac.standrews.cs.jstore.interfaces.IOutputStream;
 import uk.ac.standrews.cs.digitising_scotland.linkage.interfaces.IPair;
 import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.Pair;
 import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.Role;

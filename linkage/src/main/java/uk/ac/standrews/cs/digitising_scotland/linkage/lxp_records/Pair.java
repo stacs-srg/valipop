@@ -2,16 +2,15 @@ package uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records;
 
 import org.json.JSONException;
 import org.json.JSONWriter;
-import uk.ac.standrews.cs.digitising_scotland.jstore.impl.exceptions.IllegalKeyException;
-import uk.ac.standrews.cs.digitising_scotland.jstore.impl.exceptions.KeyNotFoundException;
-import uk.ac.standrews.cs.digitising_scotland.jstore.impl.exceptions.TypeMismatchFoundException;
-import uk.ac.standrews.cs.digitising_scotland.jstore.interfaces.ILXP;
-import uk.ac.standrews.cs.digitising_scotland.jstore.interfaces.IReferenceType;
+import uk.ac.standrews.cs.jstore.impl.exceptions.IllegalKeyException;
+import uk.ac.standrews.cs.jstore.impl.exceptions.KeyNotFoundException;
+import uk.ac.standrews.cs.jstore.impl.exceptions.TypeMismatchFoundException;
+import uk.ac.standrews.cs.jstore.interfaces.ILXP;
+import uk.ac.standrews.cs.jstore.interfaces.IReferenceType;
 import uk.ac.standrews.cs.digitising_scotland.linkage.interfaces.IPair;
 import uk.ac.standrews.cs.nds.persistence.PersistentObjectException;
 import uk.ac.standrews.cs.nds.rpc.stream.JSONReader;
 
-import java.io.IOException;
 import java.util.Set;
 
 /**

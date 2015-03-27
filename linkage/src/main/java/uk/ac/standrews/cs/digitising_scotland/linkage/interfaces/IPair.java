@@ -1,7 +1,7 @@
 package uk.ac.standrews.cs.digitising_scotland.linkage.interfaces;
 
 
-import uk.ac.standrews.cs.digitising_scotland.jstore.interfaces.ILXP;
+import uk.ac.standrews.cs.jstore.interfaces.ILXP;
 
 /**
  * Created by al on 19/06/2014.

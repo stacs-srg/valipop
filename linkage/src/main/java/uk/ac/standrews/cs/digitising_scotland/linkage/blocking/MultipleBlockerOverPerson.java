@@ -1,11 +1,11 @@
 package uk.ac.standrews.cs.digitising_scotland.linkage.blocking;
 
 
-import uk.ac.standrews.cs.digitising_scotland.jstore.impl.exceptions.BucketException;
-import uk.ac.standrews.cs.digitising_scotland.jstore.impl.exceptions.RepositoryException;
-import uk.ac.standrews.cs.digitising_scotland.jstore.interfaces.IBucket;
-import uk.ac.standrews.cs.digitising_scotland.jstore.interfaces.ILXPFactory;
-import uk.ac.standrews.cs.digitising_scotland.jstore.interfaces.IRepository;
+import uk.ac.standrews.cs.jstore.impl.exceptions.BucketException;
+import uk.ac.standrews.cs.jstore.impl.exceptions.RepositoryException;
+import uk.ac.standrews.cs.jstore.interfaces.IBucket;
+import uk.ac.standrews.cs.jstore.interfaces.ILXPFactory;
+import uk.ac.standrews.cs.jstore.interfaces.IRepository;
 import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.Role;
 import uk.ac.standrews.cs.digitising_scotland.linkage.stream_operators.sharder.Blocker;
 
