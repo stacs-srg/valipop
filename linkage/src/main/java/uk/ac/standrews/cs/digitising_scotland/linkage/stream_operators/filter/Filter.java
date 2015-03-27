@@ -1,9 +1,9 @@
 package uk.ac.standrews.cs.digitising_scotland.linkage.stream_operators.filter;
 
-import uk.ac.standrews.cs.digitising_scotland.jstore.interfaces.IFilter;
-import uk.ac.standrews.cs.digitising_scotland.jstore.interfaces.IInputStream;
-import uk.ac.standrews.cs.digitising_scotland.jstore.interfaces.ILXP;
-import uk.ac.standrews.cs.digitising_scotland.jstore.interfaces.IOutputStream;
+import uk.ac.standrews.cs.jstore.interfaces.IFilter;
+import uk.ac.standrews.cs.jstore.interfaces.IInputStream;
+import uk.ac.standrews.cs.jstore.interfaces.ILXP;
+import uk.ac.standrews.cs.jstore.interfaces.IOutputStream;
 
 /**
  * Created by al on 28/04/2014.
