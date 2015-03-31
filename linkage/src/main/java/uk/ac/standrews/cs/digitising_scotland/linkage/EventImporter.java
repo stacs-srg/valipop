@@ -121,7 +121,7 @@ public class EventImporter {
 
 
     /**
-     * Fills in a LXP record data from a file.
+     * Fills in a OID record data from a file.
      */
     private static void importDigitisingScotlandRecord(final LXP record, final BufferedReader reader, IReferenceType label) throws IOException, RecordFormatException, IllegalKeyException {
 

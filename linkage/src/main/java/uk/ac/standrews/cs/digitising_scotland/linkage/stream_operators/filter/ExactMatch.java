@@ -8,7 +8,7 @@ import uk.ac.standrews.cs.jstore.interfaces.IOutputStream;
 import uk.ac.standrews.cs.digitising_scotland.util.ErrorHandling;
 
 /**
- * Provides exact match filtering of LXP records based on a label and a value.
+ * Provides exact match filtering of OID records based on a label and a value.
  * Created by al on 29/04/2014.
  */
 public class ExactMatch<T extends ILXP> extends Filter {
