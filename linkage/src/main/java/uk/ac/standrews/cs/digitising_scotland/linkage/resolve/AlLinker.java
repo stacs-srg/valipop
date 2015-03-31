@@ -1,10 +1,6 @@
 package uk.ac.standrews.cs.digitising_scotland.linkage.resolve;
 
 import org.json.JSONException;
-import uk.ac.standrews.cs.jstore.impl.StoreFactory;
-import uk.ac.standrews.cs.jstore.impl.TypeFactory;
-import uk.ac.standrews.cs.jstore.impl.exceptions.*;
-import uk.ac.standrews.cs.jstore.interfaces.*;
 import uk.ac.standrews.cs.digitising_scotland.linkage.EventImporter;
 import uk.ac.standrews.cs.digitising_scotland.linkage.RecordFormatException;
 import uk.ac.standrews.cs.digitising_scotland.linkage.blocking.MultipleBlockerOverPerson;
@@ -13,6 +9,11 @@ import uk.ac.standrews.cs.digitising_scotland.linkage.factory.MarriageFactory;
 import uk.ac.standrews.cs.digitising_scotland.linkage.factory.PairPersonFactory;
 import uk.ac.standrews.cs.digitising_scotland.linkage.factory.RoleFactory;
 import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.*;
+import uk.ac.standrews.cs.jstore.impl.StoreFactory;
+import uk.ac.standrews.cs.jstore.impl.StoreReference;
+import uk.ac.standrews.cs.jstore.impl.TypeFactory;
+import uk.ac.standrews.cs.jstore.impl.exceptions.*;
+import uk.ac.standrews.cs.jstore.interfaces.*;
 import uk.ac.standrews.cs.nds.persistence.PersistentObjectException;
 
 import java.io.IOException;
@@ -188,13 +189,15 @@ public class AlLinker {
 
         for (Birth birth_record : stream) {
 
-            Role baby = Role.createPersonFromOwnBirthDeath(birth_record, birthType.getId() );
+            StoreReference<ILXP> birth_record_ref = new StoreReference<ILXP>(input_repo, bucket, birth_record);
+
+            Role baby = Role.createPersonFromOwnBirthDeath( birth_record_ref, birthType.getId() );
             people_stream.add(baby);
-            Role dad = Role.createFatherFromChildsBirthDeath(birth_record, birthType.getId() );
+            Role dad = Role.createFatherFromChildsBirthDeath(birth_record_ref, birthType.getId() );
             if (dad != null) {
                 people_stream.add(dad);
             }
-            Role mum = Role.createMotherFromChildsBirthDeath( birth_record, birthType.getId() );
+            Role mum = Role.createMotherFromChildsBirthDeath( birth_record_ref, birthType.getId() );
             if (mum != null) {
                 people_stream.add(mum);
             }
@@ -214,17 +217,15 @@ public class AlLinker {
 
         for (Death death_record : stream) {
 
-            // add the people
+            StoreReference<ILXP> death_record_ref = new StoreReference<ILXP>(input_repo, bucket, death_record);
 
-            //      Person baby = createBaby(new Birth(birth_record), people_stream);
-
-            Role baby = Role.createPersonFromOwnBirthDeath( death_record, deathType.getId() );
+            Role baby = Role.createPersonFromOwnBirthDeath( death_record_ref, deathType.getId() );
             people_stream.add(baby);
-            Role dad = Role.createFatherFromChildsBirthDeath( death_record, deathType.getId() );
+            Role dad = Role.createFatherFromChildsBirthDeath( death_record_ref, deathType.getId() );
             if (dad != null) {
                 people_stream.add(dad);
             }
-            Role mum = Role.createMotherFromChildsBirthDeath( death_record, deathType.getId() );
+            Role mum = Role.createMotherFromChildsBirthDeath( death_record_ref, deathType.getId() );
             if (mum != null) {
                 people_stream.add(mum);
             }
@@ -244,17 +245,19 @@ public class AlLinker {
         IInputStream<Marriage> stream = bucket.getInputStream();
         for (Marriage marriage_record : stream) {
 
-            Role bride = Role.createBrideFromMarriageRecord(marriage_record);
+            StoreReference<Marriage> marriage_record_ref = new StoreReference<Marriage>(input_repo, bucket, marriage_record);
+
+            Role bride = Role.createBrideFromMarriageRecord(marriage_record_ref);
             people_stream.add(bride);
-            Role groom = Role.createGroomFromMarriageRecord(marriage_record);
+            Role groom = Role.createGroomFromMarriageRecord(marriage_record_ref);
             people_stream.add(groom);
-            Role grooms_mother = Role.createGroomsMotherFromMarriageRecord(marriage_record);
+            Role grooms_mother = Role.createGroomsMotherFromMarriageRecord(marriage_record_ref);
             people_stream.add(grooms_mother);
-            Role grooms_father = Role.createGroomsFatherFromMarriageRecord(marriage_record);
+            Role grooms_father = Role.createGroomsFatherFromMarriageRecord(marriage_record_ref);
             people_stream.add(grooms_father);
-            Role brides_mother = Role.createBridesMotherFromMarriageRecord(marriage_record);
+            Role brides_mother = Role.createBridesMotherFromMarriageRecord(marriage_record_ref);
             people_stream.add(brides_mother);
-            Role brides_father = Role.createBridesFatherFromMarriageRecord(marriage_record);
+            Role brides_father = Role.createBridesFatherFromMarriageRecord(marriage_record_ref);
             people_stream.add(brides_father);
 
         }

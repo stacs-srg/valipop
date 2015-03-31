@@ -1,6 +1,7 @@
 package uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records;
 
 import uk.ac.standrews.cs.jstore.impl.StoreFactory;
+import uk.ac.standrews.cs.jstore.impl.StoreReference;
 import uk.ac.standrews.cs.jstore.impl.TypeFactory;
 import uk.ac.standrews.cs.jstore.impl.exceptions.*;
 import uk.ac.standrews.cs.jstore.interfaces.IBucket;
@@ -33,7 +34,7 @@ public class Role extends AbstractLXP {
     public static final String FORENAME = "forename";
     @LXP_SCALAR(type = STRING)
     public static final String SEX = "sex";
-    @LXP_REF(type = "LXP") // TODO check this
+    @LXP_REF(type = "OID")
     public static final String ORIGINAL_RECORD = "original_record";
     @LXP_SCALAR(type = LONG)
     public static final String ORIGINAL_RECORD_TYPE = "original_record_type";
@@ -49,7 +50,7 @@ public class Role extends AbstractLXP {
         super(reader);
     }
 
-    public Role( String surname, String forename, String sex, role_played role, ILXP original_record, long original_record_type ) throws StoreException {
+    public Role( String surname, String forename, String sex, role_played role, StoreReference original_record_ref, long original_record_type ) throws StoreException {
 
         this();
         try {
@@ -57,25 +58,29 @@ public class Role extends AbstractLXP {
             put(FORENAME, forename);
             put(SEX, sex);
             put(ROLE, role.name() );
-            put(ORIGINAL_RECORD, original_record.getId() );
+            put(ORIGINAL_RECORD, original_record_ref.toString() );
             put(ORIGINAL_RECORD_TYPE, original_record_type );
         } catch (IllegalKeyException e) {
-            ErrorHandling.error("Illegal key in LXP");
+            ErrorHandling.error("Illegal key in OID");
         }
 
     }
 
-    public static Role createPersonFromOwnBirthDeath(ILXP BD_record, long original_record_type ) throws StoreException {
+    public static Role createPersonFromOwnBirthDeath(StoreReference<ILXP> original_record_ref, long original_record_type ) throws StoreException, BucketException {
 
-        String surname = BD_record.getString(Birth.SURNAME);
-        String forename = BD_record.getString(Birth.FORENAME);
-        String sex = BD_record.getString(Birth.SEX);
+        ILXP original_record = original_record_ref.getReferend();
+
+        String surname = original_record.getString(Birth.SURNAME);
+        String forename = original_record.getString(Birth.FORENAME);
+        String sex = original_record.getString(Birth.SEX);
         role_played role = role_played.principal;
 
-        return new Role( surname, forename, sex, role, BD_record, original_record_type );
+        return new Role( surname, forename, sex, role, original_record_ref, original_record_type );
     }
 
-    public static Role createFatherFromChildsBirthDeath(ILXP BD_record, long original_record_type) throws StoreException {
+    public static Role createFatherFromChildsBirthDeath(StoreReference<ILXP> original_record_ref, long original_record_type) throws StoreException, BucketException {
+
+        ILXP BD_record = original_record_ref.getReferend();
 
         if (BD_record.getString(Birth.FATHERS_SURNAME).equals("")) {
             return null;
@@ -86,10 +91,12 @@ public class Role extends AbstractLXP {
         String sex = "M"; //  this is the father
         role_played role = role_played.father;
 
-        return new Role(surname, forename, sex, role, BD_record, original_record_type );
+        return new Role(surname, forename, sex, role, original_record_ref, original_record_type );
     }
 
-    public static Role createMotherFromChildsBirthDeath(ILXP BD_record, long original_record_type) throws StoreException {
+    public static Role createMotherFromChildsBirthDeath(StoreReference<ILXP>  original_record_ref, long original_record_type) throws StoreException, BucketException {
+
+        ILXP BD_record = original_record_ref.getReferend();
 
         if (BD_record.getString(Birth.MOTHERS_SURNAME).equals("")) {
             return null;
@@ -100,44 +107,56 @@ public class Role extends AbstractLXP {
         String sex = "F"; //  this is the mother
         role_played role = role_played.mother;
 
-        return new Role(surname, forename, sex, role, BD_record, original_record_type );
+        return new Role(surname, forename, sex, role, original_record_ref, original_record_type );
 
     }
 
     /**
-     * Creates a Person record for the bride for a given marriage record
+     * Creates a Role record for the bride for a given marriage record
      *
-     * @param marriage_record a record from which to extract person information
+     * @param marriage_record_ref a reference to a record from which to extract person information
      * @return a Person representing the bride
      */
-    public static Role createBrideFromMarriageRecord(Marriage marriage_record) throws StoreException {
+    public static Role createBrideFromMarriageRecord(StoreReference<Marriage> marriage_record_ref) throws StoreException, BucketException {
+
+        Marriage marriage_record = marriage_record_ref.getReferend();
 
         String surname = marriage_record.getString(Marriage.BRIDE_SURNAME);
         String forename = marriage_record.getString(Marriage.BRIDE_FORENAME);
         String sex = "F";
         role_played role = role_played.bride;
 
-        return new Role(surname, forename, sex, role, marriage_record, marriage_record.required_type_labelID );
+        return new Role(surname, forename, sex, role, marriage_record_ref, marriage_record.required_type_labelID );
     }
 
     /**
-     * Creates a Person record for the groom for a given marriage record
+     * Creates a Role record for the groom for a given marriage record
      *
-     * @param marriage_record a record from which to extract person information
+     * @param marriage_record_ref a reference to a record from which to extract person information
      * @return the Person representing the groom
      */
-    public static Role createGroomFromMarriageRecord(Marriage marriage_record) throws StoreException {
+    public static Role createGroomFromMarriageRecord(StoreReference<Marriage> marriage_record_ref) throws StoreException, BucketException {
+
+        Marriage marriage_record = marriage_record_ref.getReferend();
 
         String surname = marriage_record.getString(Marriage.GROOM_SURNAME);
         String forename = marriage_record.getString(Marriage.GROOM_FORENAME);
         String sex = "M";
         role_played role = role_played.groom;
 
-        return new Role(surname, forename, sex, role, marriage_record, marriage_record.required_type_labelID );
+        return new Role(surname, forename, sex, role, marriage_record_ref, marriage_record.required_type_labelID );
 
     }
 
-    public static Role createBridesFatherFromMarriageRecord(Marriage marriage_record) throws StoreException {
+    /**
+     * Creates a Role record for the brides father for a given marriage record
+     *
+     * @param marriage_record_ref a reference to a record from which to extract person information
+     * @return the Person representing the brides father
+     */
+    public static Role createBridesFatherFromMarriageRecord(StoreReference<Marriage> marriage_record_ref) throws StoreException, BucketException {
+
+        Marriage marriage_record = marriage_record_ref.getReferend();
 
         String surname = marriage_record.getString(Marriage.BRIDE_FATHERS_SURNAME);
         if (surname.equals("0")) {
@@ -147,22 +166,38 @@ public class Role extends AbstractLXP {
         String sex = "M";
         role_played role = role_played.brides_father;
 
-        return new Role(surname, forename, sex, role, marriage_record, marriage_record.required_type_labelID );
+        return new Role(surname, forename, sex, role, marriage_record_ref, marriage_record.required_type_labelID );
 
     }
 
-    public static Role createBridesMotherFromMarriageRecord(Marriage marriage_record) throws StoreException {
+    /**
+     * Creates a Role record for the brides mother for a given marriage record
+     *
+     * @param marriage_record_ref a reference to a record from which to extract person information
+     * @return the Person representing the brides mother
+     */
+    public static Role createBridesMotherFromMarriageRecord(StoreReference<Marriage> marriage_record_ref) throws StoreException, BucketException {
+
+        Marriage marriage_record = marriage_record_ref.getReferend();
 
         String surname = marriage_record.getString(Marriage.BRIDE_MOTHERS_MAIDEN_SURNAME);
         String forename = marriage_record.getString(Marriage.BRIDE_MOTHERS_FORENAME);
         String sex = "F";
         role_played role = role_played.brides_mother;
 
-        return new Role(surname, forename, sex, role, marriage_record, marriage_record.required_type_labelID );
+        return new Role(surname, forename, sex, role, marriage_record_ref, marriage_record.required_type_labelID );
 
     }
 
-    public static Role createGroomsFatherFromMarriageRecord(Marriage marriage_record) throws StoreException {
+    /**
+     * Creates a Role record for the grooms father for a given marriage record
+     *
+     * @param marriage_record_ref a reference to a record from which to extract person information
+     * @return the Person representing the grooms father
+     */
+    public static Role createGroomsFatherFromMarriageRecord(StoreReference<Marriage> marriage_record_ref) throws StoreException, BucketException {
+
+        Marriage marriage_record = marriage_record_ref.getReferend();
 
         String surname = marriage_record.getString(Marriage.GROOM_FATHERS_SURNAME);
         if (surname.equals("0")) {
@@ -172,17 +207,25 @@ public class Role extends AbstractLXP {
         String sex = "M";
         role_played role = role_played.grooms_father;
 
-        return new Role(surname, forename, sex, role, marriage_record, marriage_record.required_type_labelID );
+        return new Role(surname, forename, sex, role, marriage_record_ref, marriage_record.required_type_labelID );
     }
 
-    public static Role createGroomsMotherFromMarriageRecord(Marriage marriage_record) throws StoreException {
+    /**
+     * Creates a Role record for the groom's mother for a given marriage record
+     *
+     * @param marriage_record_ref a reference to a record from which to extract person information
+     * @return the Person representing the grooms mother father
+     */
+    public static Role createGroomsMotherFromMarriageRecord(StoreReference<Marriage> marriage_record_ref) throws StoreException, BucketException {
+
+        Marriage marriage_record = marriage_record_ref.getReferend();
 
         String surname = marriage_record.getString(Marriage.GROOM_MOTHERS_MAIDEN_SURNAME);
         String forename = marriage_record.getString(Marriage.GROOM_MOTHERS_FORENAME);
         String sex = "F";
         role_played role = role_played.grooms_mother;
 
-        return new Role(surname, forename, sex, role, marriage_record, marriage_record.required_type_labelID );
+        return new Role(surname, forename, sex, role, marriage_record_ref, marriage_record.required_type_labelID );
     }
 
     // Getters
@@ -285,7 +328,7 @@ public class Role extends AbstractLXP {
                 return get_original_record().getString("bride_fathers_occupation");
             }
             case groom: {
-                return get_original_record().getString("groom_fathers_occupation" );
+                return get_original_record().getString("groom_fathers_occupation");
             }
             case father:
             case mother:
