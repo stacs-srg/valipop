@@ -19,7 +19,7 @@ package uk.ac.standrews.cs.digitising_scotland.population_model.population_repre
 //import uk.ac.standrews.cs.digitising_scotland.population_model.model.IPopulation;
 //import uk.ac.standrews.cs.digitising_scotland.population_model.model.PopulationConverter;
 //import uk.ac.standrews.cs.digitising_scotland.population_model.model.database.DBPopulationWriter;
-import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.adapted_interfaces.IPopulation;
+import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.adapted_interfaces.ILinkedPopulation;
 import uk.ac.standrews.cs.digitising_scotland.util.PercentageProgressIndicator;
 import uk.ac.standrews.cs.digitising_scotland.util.ProgressIndicator;
 import uk.ac.standrews.cs.digitising_scotland.util.TimeManipulation;
@@ -42,7 +42,7 @@ public abstract class AbstractPopulationToDB {
     public static final int DEFAULT_NUMBER_OF_BATCHES = 1;
     public static final int DEFAULT_NUMBER_OF_PROGRESS_UPDATES = 10;
 
-    public abstract IPopulation getPopulation(int batch_size, ProgressIndicator indicator) throws Exception;
+    public abstract ILinkedPopulation getPopulation(int batch_size, ProgressIndicator indicator) throws Exception;
 
     protected void export(final String[] args) throws Exception {
 
@@ -76,7 +76,7 @@ public abstract class AbstractPopulationToDB {
 
         long start_time = System.currentTimeMillis();
 
-        final IPopulation population_interface = getPopulation(batch_size, new PercentageProgressIndicator(number_of_progress_updates));
+        final ILinkedPopulation population_interface = getPopulation(batch_size, new PercentageProgressIndicator(number_of_progress_updates));
         final LinkedPopulationConverter converter = new LinkedPopulationConverter(population_interface, new DBPopulationWriter(), new PercentageProgressIndicator(number_of_progress_updates));
         TimeManipulation.reportElapsedTime(start_time);
 

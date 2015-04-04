@@ -97,14 +97,14 @@ public class Utils {
 
 	}
 
-	public static LinkedSiblings[] joinArraysSkippingDuplicates(LinkedSiblings[] a, LinkedSiblings[] b) {
-		ArrayList<LinkedSiblings> ret = new ArrayList<LinkedSiblings>();
+	public static SiblingBridge[] joinArraysSkippingDuplicates(SiblingBridge[] a, SiblingBridge[] b) {
+		ArrayList<SiblingBridge> ret = new ArrayList<SiblingBridge>();
 		int c = 0;
-		for(LinkedSiblings a1 : a) {
+		for(SiblingBridge a1 : a) {
 			ret.add(a1);
 		}
-		for(LinkedSiblings b1 : b) {
-			for(LinkedSiblings iA : a) {
+		for(SiblingBridge b1 : b) {
+			for(SiblingBridge iA : a) {
 				if(iA.getId() == b1.getId()) {
 					break;
 				}
@@ -112,7 +112,7 @@ public class Utils {
 			}
 		}
 		
-		LinkedSiblings[] temp = ret.toArray(new LinkedSiblings[ret.size()]);
+		SiblingBridge[] temp = ret.toArray(new SiblingBridge[ret.size()]);
 		Arrays.sort(temp);
 		return temp;
 	}

@@ -24,7 +24,7 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
 
-import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.adapted_interfaces.IPerson;
+import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.adapted_interfaces.ILinkedPerson;
 
 public class UseCasesTest {
 	
@@ -139,7 +139,7 @@ public class UseCasesTest {
 	
 	
 	public void testLinksInBothDirectionsForUseCase(LinkedPopulation pop) {
-		Iterator<IPerson> i = pop.getPeople().iterator();
+		Iterator<ILinkedPerson> i = pop.getPeople().iterator();
 		while(i.hasNext()) {
 			LinkedPerson p = (LinkedPerson) i.next();
 			
@@ -163,7 +163,7 @@ public class UseCasesTest {
 			List<Link> p = m.getChildBearingPartnerships();
 			List<LinkedPerson> children = new ArrayList<LinkedPerson>();
 			for(Link l : p) {
-				children.add((LinkedPerson)((LinkedChildbearingPartnership) l.getLinkedIntermediaryObject()).getChildLink().getLinkedPerson());
+				children.add((LinkedPerson)((ChildbearingPartnership) l.getLinkedIntermediaryObject()).getChildLink().getLinkedPerson());
 			}
 			
 //			print(children);
@@ -188,7 +188,7 @@ public class UseCasesTest {
 			List<Link> p = m.getChildBearingPartnerships();
 			List<LinkedPerson> children = new ArrayList<LinkedPerson>();
 			for(Link l : p) {
-				children.add((LinkedPerson)((LinkedChildbearingPartnership) l.getLinkedIntermediaryObject()).getChildLink().getLinkedPerson());
+				children.add((LinkedPerson)((ChildbearingPartnership) l.getLinkedIntermediaryObject()).getChildLink().getLinkedPerson());
 			}
 			Assert.assertTrue(children.contains(child));
 		}

@@ -23,7 +23,7 @@ package uk.ac.standrews.cs.digitising_scotland.population_model.population_repre
  * @author Victor Andrei (va9@st-andrews.ac.uk)
  * @author Graham Kirby (graham.kirby@st-andrews.ac.uk)
  */
-public interface IPopulation {
+public interface ILinkedPopulation {
 
     /**
      * Allows iteration over the people in the population.
@@ -32,7 +32,7 @@ public interface IPopulation {
      *
      * @return an iterable sequence of people
      */
-    Iterable<IPerson> getPeople();
+    Iterable<ILinkedPerson> getPeople();
 
     /**
      * Allows iteration over the partnerships in the population.
@@ -40,21 +40,21 @@ public interface IPopulation {
      *
      * @return an iterable sequence of partnerships
      */
-    Iterable<IPartnership> getPartnerships();
+    Iterable<ILinkedPartnership> getPartnerships();
 
     /**
      * Retrieves a person by id.
      * @param id the id
      * @return the corresponding person
      */
-    IPerson findPerson(int id);
+    ILinkedPerson findPerson(int id);
 
     /**
      * Retrieves a partnership by id.
      * @param id the id
      * @return the corresponding partnership
      */
-    IPartnership findPartnership(int id);
+    ILinkedPartnership findPartnership(int id);
 
     /**
      * Returns the number of people in the population.

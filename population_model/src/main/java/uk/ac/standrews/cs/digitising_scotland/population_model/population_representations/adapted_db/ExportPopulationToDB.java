@@ -19,7 +19,7 @@ package uk.ac.standrews.cs.digitising_scotland.population_model.population_repre
 
 //import uk.ac.standrews.cs.digitising_scotland.population_model.model.IPopulation;
 import uk.ac.standrews.cs.digitising_scotland.population_model.model.database.DBInitialiser;
-import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.adapted_interfaces.IPopulation;
+import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.adapted_interfaces.ILinkedPopulation;
 import uk.ac.standrews.cs.digitising_scotland.util.ProgressIndicator;
 //import uk.ac.standrews.cs.digitising_scotland.population_model.tools.AbstractPopulationToDB;
 
@@ -31,13 +31,13 @@ import uk.ac.standrews.cs.digitising_scotland.util.ProgressIndicator;
  */
 public class ExportPopulationToDB extends AbstractPopulationToDB {
 
-	IPopulation population;
+	ILinkedPopulation population;
 //    public static void main(final String[] args) throws Exception {
 //    	DBInitialiser.setupDB();
 //        new ExportPopulationToDB().export(args);
 //    }
     
-    public ExportPopulationToDB(IPopulation population) throws Exception {
+    public ExportPopulationToDB(ILinkedPopulation population) throws Exception {
     	this.population = population;
     	DBInitialiser.setupDB();
     	String[] args = {"-b" + new Integer(population.getNumberOfPeople()).toString(), "-n1", "-u10"};
@@ -49,7 +49,7 @@ public class ExportPopulationToDB extends AbstractPopulationToDB {
 //		// TODO Auto-generated constructor stub
 //	}
 
-	public IPopulation getPopulation(final int batch_size, final ProgressIndicator indicator) throws Exception {
+	public ILinkedPopulation getPopulation(final int batch_size, final ProgressIndicator indicator) throws Exception {
     	return population;
     }
 }

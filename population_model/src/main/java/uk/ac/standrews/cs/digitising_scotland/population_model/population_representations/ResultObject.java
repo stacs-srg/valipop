@@ -23,8 +23,8 @@ public class ResultObject implements Comparable<ResultObject> {
 	private Link[] intermidiaryLinks2 = new Link[0];
 	private Link branchLink;
 
-	private LinkedSiblings[] supportingSiblingBridges = new LinkedSiblings[0];
-	private LinkedMarriagePartnership[] supportingMarriageBridges = new LinkedMarriagePartnership[0];
+	private SiblingBridge[] supportingSiblingBridges = new SiblingBridge[0];
+	private MarriageBridge[] supportingMarriageBridges = new MarriageBridge[0];
 	
 	private LinkedPerson failedTestPersonRoot = null;
 
@@ -112,20 +112,20 @@ public class ResultObject implements Comparable<ResultObject> {
 		return queryType;
 	}
 	
-	public LinkedSiblings[] getSupportingSiblingBridges() {
+	public SiblingBridge[] getSupportingSiblingBridges() {
 		return supportingSiblingBridges;
 	}
 
-	public void setSupportingSiblingBridges(LinkedSiblings[] siblingLinkBridges) {
+	public void setSupportingSiblingBridges(SiblingBridge[] siblingLinkBridges) {
 		this.supportingSiblingBridges = siblingLinkBridges;
 		combinedHeuristic = calculateCombinedHeuristic();
 	}
 	
-	public LinkedMarriagePartnership[] getSupportingMarriageBridges() {
+	public MarriageBridge[] getSupportingMarriageBridges() {
 		return supportingMarriageBridges;
 	}
 
-	public void setSupportingMarriageBridges(LinkedMarriagePartnership[] marriageLinkBridges) {
+	public void setSupportingMarriageBridges(MarriageBridge[] marriageLinkBridges) {
 		this.supportingMarriageBridges = marriageLinkBridges;
 		combinedHeuristic = calculateCombinedHeuristic();
 	}

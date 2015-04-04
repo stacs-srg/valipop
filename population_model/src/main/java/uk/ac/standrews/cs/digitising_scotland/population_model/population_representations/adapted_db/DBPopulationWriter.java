@@ -19,8 +19,8 @@ package uk.ac.standrews.cs.digitising_scotland.population_model.population_repre
 import uk.ac.standrews.cs.digitising_scotland.population_model.config.PopulationProperties;
 import uk.ac.standrews.cs.digitising_scotland.population_model.model.database.DBConnector;
 import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.Link;
-import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.adapted_interfaces.IPartnership;
-import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.adapted_interfaces.IPerson;
+import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.adapted_interfaces.ILinkedPartnership;
+import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.adapted_interfaces.ILinkedPerson;
 import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.adapted_interfaces.IPopulationWriter;
 //import uk.ac.standrews.cs.digitising_scotland.population_model.model.IPartnership;
 //import uk.ac.standrews.cs.digitising_scotland.population_model.model.IPerson;
@@ -78,7 +78,7 @@ public class DBPopulationWriter implements IPopulationWriter {
     }
 
     @SuppressWarnings("FeatureEnvy")
-    public void recordPerson(final IPerson person) throws SQLException {
+    public void recordPerson(final ILinkedPerson person) throws SQLException {
 
         DBManipulation.configurePreparedStatement(
                 record_person_statement,
@@ -98,7 +98,7 @@ public class DBPopulationWriter implements IPopulationWriter {
     }
 
     @SuppressWarnings("FeatureEnvy")
-    public void recordPartnership(final IPartnership partnership) throws SQLException {
+    public void recordPartnership(final ILinkedPartnership partnership) throws SQLException {
 
         final int partnership_id = partnership.getId();
 
@@ -120,7 +120,7 @@ public class DBPopulationWriter implements IPopulationWriter {
     }
 
     @SuppressWarnings("FeatureEnvy")
-    private void recordMarriage(final IPartnership partnership) throws SQLException {
+    private void recordMarriage(final ILinkedPartnership partnership) throws SQLException {
 
         final int partnership_id = partnership.getId();
         final Object marriage_date = getSQLDate(partnership.getMarriageDate());

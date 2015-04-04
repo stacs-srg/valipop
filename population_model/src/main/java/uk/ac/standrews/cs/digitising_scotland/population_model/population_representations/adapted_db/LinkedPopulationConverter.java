@@ -16,9 +16,9 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.adapted_db;
 
-import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.adapted_interfaces.IPartnership;
-import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.adapted_interfaces.IPerson;
-import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.adapted_interfaces.IPopulation;
+import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.adapted_interfaces.ILinkedPartnership;
+import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.adapted_interfaces.ILinkedPerson;
+import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.adapted_interfaces.ILinkedPopulation;
 import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.adapted_interfaces.IPopulationWriter;
 //import uk.ac.standrews.cs.digitising_scotland.population_model.model.IPopulationWriter;
 import uk.ac.standrews.cs.digitising_scotland.util.ProgressIndicator;
@@ -30,7 +30,7 @@ import uk.ac.standrews.cs.digitising_scotland.util.ProgressIndicator;
  */
 public class LinkedPopulationConverter implements AutoCloseable {
 
-    private final IPopulation population;
+    private final ILinkedPopulation population;
     private final IPopulationWriter population_writer;
 
     private ProgressIndicator progress_indicator;
@@ -41,7 +41,7 @@ public class LinkedPopulationConverter implements AutoCloseable {
      * @param population        the population to be converted
      * @param population_writer the population writer to be used to create the new representation
      */
-    public LinkedPopulationConverter(final IPopulation population, final IPopulationWriter population_writer) {
+    public LinkedPopulationConverter(final ILinkedPopulation population, final IPopulationWriter population_writer) {
 
         this.population = population;
         this.population_writer = population_writer;
@@ -56,7 +56,7 @@ public class LinkedPopulationConverter implements AutoCloseable {
      * @param progress_indicator a progress indicator
      * @throws Exception if the progress indicator cannot be initialised
      */
-    public LinkedPopulationConverter(final IPopulation population, final IPopulationWriter population_writer, final ProgressIndicator progress_indicator) throws Exception {
+    public LinkedPopulationConverter(final ILinkedPopulation population, final IPopulationWriter population_writer, final ProgressIndicator progress_indicator) throws Exception {
 
         this(population, population_writer);
 
@@ -71,13 +71,13 @@ public class LinkedPopulationConverter implements AutoCloseable {
      */
     public void convert() throws Exception {
 
-        for (final IPerson person : population.getPeople()) {
+        for (final ILinkedPerson person : population.getPeople()) {
 
             population_writer.recordPerson(person);
             progressStep();
         }
 
-        for (final IPartnership partnership : population.getPartnerships()) {
+        for (final ILinkedPartnership partnership : population.getPartnerships()) {
 
             population_writer.recordPartnership(partnership);
             progressStep();
