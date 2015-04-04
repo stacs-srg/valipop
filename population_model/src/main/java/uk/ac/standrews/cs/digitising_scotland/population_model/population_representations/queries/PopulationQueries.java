@@ -76,7 +76,7 @@ public class PopulationQueries {
 
 		PriorityQueue<ResultObject> fathers = new PriorityQueue<ResultObject>();
 
-		Link pP = p.getParentsPartnership();
+		Link pP = p.getParentsPartnershipLink();
 
 		if(pP == null) {
 			ResultObject[] noResult = new ResultObject[1];
@@ -86,7 +86,7 @@ public class PopulationQueries {
 
 		Link[] pFL = pP.getLinkedIntermediaryObject().getPerson1PotentialLinks();
 		for(Link l : pFL) {
-			fathers.add(new ResultObject(QueryType.FATHERS, p.getParentsPartnership(), l));
+			fathers.add(new ResultObject(QueryType.FATHERS, p.getParentsPartnershipLink(), l));
 		}
 
 		return Utils.orderResults(fathers, QueryType.FATHERS, p);
@@ -96,7 +96,7 @@ public class PopulationQueries {
 		LinkedPerson p = (LinkedPerson) population.findPerson(person);
 
 		PriorityQueue<ResultObject> mothers = new PriorityQueue<ResultObject>();
-		Link pP = p.getParentsPartnership();
+		Link pP = p.getParentsPartnershipLink();
 
 		if(pP == null) {
 			ResultObject[] noResult = new ResultObject[1];
@@ -106,7 +106,7 @@ public class PopulationQueries {
 
 		Link[] pFL = pP.getLinkedIntermediaryObject().getPerson2PotentialLinks();
 		for(Link l : pFL) {
-			mothers.add(new ResultObject(QueryType.MOTHERS, p.getParentsPartnership(), l));
+			mothers.add(new ResultObject(QueryType.MOTHERS, p.getParentsPartnershipLink(), l));
 		}
 
 		return Utils.orderResults(mothers, QueryType.MOTHERS, p);
@@ -194,7 +194,7 @@ public class PopulationQueries {
 	 * It makes little sense to include other sibling bridges here as it isn't possible to distinguish if they are siblings by the father or the mother only
 	 */
 	public ResultObject[] getPotentialXSideSiblingsOf(LinkedPerson person, Link[] x, QueryType queryType) {
-		Link parentsPartnership = person.getParentsPartnership();
+		Link parentsPartnership = person.getParentsPartnershipLink();
 		PriorityQueue<ResultObject> siblings = new PriorityQueue<ResultObject>();
 		for(Link l : x) {
 			List<Link> partnerships = l.getLinkedPerson().getChildBearingPartnerships();
@@ -232,7 +232,7 @@ public class PopulationQueries {
 	public ResultObject[] getPotentialFatherSideSiblingsOf(int person) {
 		LinkedPerson p = (LinkedPerson) population.findPerson(person);
 
-		Link pP = p.getParentsPartnership();
+		Link pP = p.getParentsPartnershipLink();
 
 		if(pP == null) {
 			ResultObject[] noResult = new ResultObject[1];
@@ -248,7 +248,7 @@ public class PopulationQueries {
 	public ResultObject[] getPotentialMotherSideSiblingsOf(int person) {
 		LinkedPerson p = (LinkedPerson) population.findPerson(person);
 
-		Link pP = p.getParentsPartnership();
+		Link pP = p.getParentsPartnershipLink();
 
 		if(pP == null) {
 			ResultObject[] noResult = new ResultObject[1];

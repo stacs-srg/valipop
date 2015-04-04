@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.adapted_interfaces.ILinkedPartnership;
+import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.adapted_interfaces.ILinkedChildbearingPartnership;
 import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.adapted_interfaces.ILinkedPerson;
 import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.adapted_interfaces.ILinkedPopulation;
 import uk.ac.standrews.cs.digitising_scotland.util.ArrayManipulation;
@@ -74,20 +74,20 @@ public class LinkedPopulation implements ILinkedPopulation {
 	}
 
 	@Override
-	public Iterable<ILinkedPartnership> getPartnerships() {
-		return new Iterable<ILinkedPartnership>() {
+	public Iterable<ILinkedChildbearingPartnership> getPartnerships() {
+		return new Iterable<ILinkedChildbearingPartnership>() {
 			@Override
-			public Iterator<ILinkedPartnership> iterator() {
+			public Iterator<ILinkedChildbearingPartnership> iterator() {
 				final Iterator<ChildbearingPartnership> iterator = partnerships.iterator();
 
-				return new Iterator<ILinkedPartnership>() {
+				return new Iterator<ILinkedChildbearingPartnership>() {
 					@Override
 					public boolean hasNext() {
 						return iterator.hasNext();
 					}
 
 					@Override
-					public ILinkedPartnership next() {
+					public ILinkedChildbearingPartnership next() {
 						return iterator.next();
 					}
 
@@ -114,7 +114,7 @@ public class LinkedPopulation implements ILinkedPopulation {
 
 
 	@Override
-	public ILinkedPartnership findPartnership(final int id) {
+	public ILinkedChildbearingPartnership findPartnership(final int id) {
 
 		final int index = ArrayManipulation.binarySplit(partnerships, new ArrayManipulation.SplitComparator<ChildbearingPartnership>() {
 

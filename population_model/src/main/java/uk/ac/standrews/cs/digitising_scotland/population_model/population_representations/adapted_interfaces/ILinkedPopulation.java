@@ -40,7 +40,7 @@ public interface ILinkedPopulation {
      *
      * @return an iterable sequence of partnerships
      */
-    Iterable<ILinkedPartnership> getPartnerships();
+    Iterable<ILinkedChildbearingPartnership> getPartnerships();
 
     /**
      * Retrieves a person by id.
@@ -54,7 +54,7 @@ public interface ILinkedPopulation {
      * @param id the id
      * @return the corresponding partnership
      */
-    ILinkedPartnership findPartnership(int id);
+    ILinkedChildbearingPartnership findPartnership(int id);
 
     /**
      * Returns the number of people in the population.

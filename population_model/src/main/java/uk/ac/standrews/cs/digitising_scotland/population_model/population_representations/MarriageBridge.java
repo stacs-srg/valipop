@@ -18,9 +18,10 @@ package uk.ac.standrews.cs.digitising_scotland.population_model.population_repre
 
 import java.util.Date;
 
-import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.adapted_interfaces.ILinkedPartnership;
+import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.adapted_interfaces.ILinkedMarriagePartnership;
+import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.adapted_interfaces.ILinkedChildbearingPartnership;
 
-public class MarriageBridge extends IntermediaryLinkObject implements ILinkedPartnership {
+public class MarriageBridge extends IntermediaryLinkObject implements ILinkedMarriagePartnership {
 
     public MarriageBridge(int id, String ref) {
     	this.id = id;
@@ -54,8 +55,7 @@ public class MarriageBridge extends IntermediaryLinkObject implements ILinkedPar
         return person1;
     }
     
-    @Override
-    public int compareTo(final ILinkedPartnership o) {
+    public int compareTo(final ILinkedMarriagePartnership o) {
         if (this.equals(o)) {
             return 0;
         } else {
@@ -71,12 +71,6 @@ public class MarriageBridge extends IntermediaryLinkObject implements ILinkedPar
 
 	@Override
 	public String getMarriagePlace() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Link getChildLink() {
 		// TODO Auto-generated method stub
 		return null;
 	}

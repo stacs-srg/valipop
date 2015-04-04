@@ -150,10 +150,10 @@ public class UseCasesTest {
 	}
 
 	public void motherAndChildLinked(LinkedPerson child) {
-		if(child.getParentsPartnership() == null) {
+		if(child.getParentsPartnershipLink() == null) {
 			return;
 		}
-		Link[] motherLinks = child.getParentsPartnership().getLinkedIntermediaryObject().getPerson1PotentialLinks();
+		Link[] motherLinks = child.getParentsPartnershipLink().getLinkedIntermediaryObject().getPerson1PotentialLinks();
 		LinkedPerson[] mothers = new LinkedPerson[motherLinks.length];
 		int c = 0;
 		for(Link l : motherLinks) {
@@ -175,10 +175,10 @@ public class UseCasesTest {
 	}
 	
 	public void fatherAndChildLinked(LinkedPerson child) {
-		if(child.getParentsPartnership() == null) {
+		if(child.getParentsPartnershipLink() == null) {
 			return;
 		}
-		Link[] fatherLinks = child.getParentsPartnership().getLinkedIntermediaryObject().getPerson2PotentialLinks();
+		Link[] fatherLinks = child.getParentsPartnershipLink().getLinkedIntermediaryObject().getPerson2PotentialLinks();
 		LinkedPerson[] fathers = new LinkedPerson[fatherLinks.length];
 		int c = 0;
 		for(Link l : fatherLinks) {
