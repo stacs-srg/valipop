@@ -162,6 +162,20 @@ public class PopulationQueries {
 		}
 		return Utils.orderResults(marriagePartners, QueryType.MARRIAGE_BRIDGE, p);
 	}
+	
+	public ResultObject[] getPotentialSiblingsByBridges(int person) {
+		LinkedPerson p = (LinkedPerson) population.findPerson(person);
+		PriorityQueue<ResultObject> siblings = new PriorityQueue<ResultObject>();
+
+		for(Link l : p.getSiblings()) {
+			for(Link l2 : l.getLinkedIntermediaryObject().getOppositePersonsList(p)) {
+				ResultObject resultObject = new ResultObject(QueryType.SIBLING_BRIGE, l, l2);
+				resultObject.setSupportingSiblingBridges(new SiblingBridge[]{(SiblingBridge) l2.getLinkedIntermediaryObject()});
+				siblings.add(resultObject);
+			}
+		}
+		return Utils.orderResults(siblings, QueryType.SIBLING_BRIGE, p);
+	}
 
 	// Need to think about way of grouping children into possible sets?
 	public ResultObject[] getChildrenOf(int person) {
@@ -248,19 +262,7 @@ public class PopulationQueries {
 		return getPotentialXSideSiblingsOf(p, pFL, QueryType.MOTHERS_SIDE_SIBLINGS);
 	}
 
-	public ResultObject[] getPotentialSiblingsByBridges(int person) {
-		LinkedPerson p = (LinkedPerson) population.findPerson(person);
-		PriorityQueue<ResultObject> siblings = new PriorityQueue<ResultObject>();
-
-		for(Link l : p.getSiblings()) {
-			for(Link l2 : l.getLinkedIntermediaryObject().getOppositePersonsList(p)) {
-				ResultObject resultObject = new ResultObject(QueryType.SIBLING_BRIGE, l, l2);
-				resultObject.setSupportingSiblingBridges(new SiblingBridge[]{(SiblingBridge) l2.getLinkedIntermediaryObject()});
-				siblings.add(resultObject);
-			}
-		}
-		return Utils.orderResults(siblings, QueryType.SIBLING_BRIGE, p);
-	}
+	
 
 	public ResultObject[] getPotentialFullSiblings(int person) {
 		ResultObject[] fSideSibling = getPotentialFatherSideSiblingsOf(person);
