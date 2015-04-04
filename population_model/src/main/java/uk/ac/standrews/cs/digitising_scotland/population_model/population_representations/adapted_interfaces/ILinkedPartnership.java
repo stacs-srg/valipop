@@ -26,7 +26,7 @@ import uk.ac.standrews.cs.digitising_scotland.population_model.population_repres
  * @author Graham Kirby (graham.kirby@st-andrews.ac.uk)
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public interface IPartnership extends Comparable<IPartnership> {
+public interface ILinkedPartnership extends Comparable<ILinkedPartnership> {
 
     /**
      * Gets the partnership's unique identifier.

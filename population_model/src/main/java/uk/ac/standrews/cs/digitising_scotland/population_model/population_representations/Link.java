@@ -33,18 +33,18 @@ public class Link implements Comparable<Link> {
 		linkedPerson = person;
 		intermediaryLinkedObject = partnership;
 		provenance = records;
-		if(partnership.getClass() == LinkedChildbearingPartnership.class) {
+		if(partnership.getClass() == ChildbearingPartnership.class) {
 			linkedPerson.addPartnershipLink(this);
-		} else if(partnership.getClass() == LinkedSiblings.class) {
+		} else if(partnership.getClass() == SiblingBridge.class) {
 			linkedPerson.addSiblingLink(this);
-		} else if(partnership.getClass() == LinkedMarriagePartnership.class) {
+		} else if(partnership.getClass() == MarriageBridge.class) {
 			linkedPerson.addMarriageLink(this);
 		}
 		
 		heuriticOfLinkValue = heuristic;
 	}
 
-	public Link(LinkedPerson child, LinkedChildbearingPartnership partnership, Evidence[] records) {
+	public Link(LinkedPerson child, ChildbearingPartnership partnership, Evidence[] records) {
 		linkedPerson = child;
 		intermediaryLinkedObject = partnership;
 		provenance = records;
@@ -72,7 +72,7 @@ public class Link implements Comparable<Link> {
 		return intermediaryLinkedObject;
 	}
 	
-	public void setLinkedPartnership(LinkedChildbearingPartnership linkedPartnership) {
+	public void setLinkedPartnership(ChildbearingPartnership linkedPartnership) {
 		this.intermediaryLinkedObject = linkedPartnership;
 	}
 

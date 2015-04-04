@@ -27,7 +27,7 @@ import uk.ac.standrews.cs.digitising_scotland.population_model.population_repres
  * @author Graham Kirby (graham.kirby@st-andrews.ac.uk)
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public interface IPerson {
+public interface ILinkedPerson {
 
     /**
      * Representation of female sex.

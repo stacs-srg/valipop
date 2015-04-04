@@ -16,11 +16,11 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.population_model.population_representations;
 
-public class LinkedSiblings extends IntermediaryLinkObject {
+public class SiblingBridge extends IntermediaryLinkObject {
 	
     private SiblingType siblingType;
     
-    public LinkedSiblings(int id, String ref) {
+    public SiblingBridge(int id, String ref) {
     	this.id = id;
     	this.ref = ref;
 	}

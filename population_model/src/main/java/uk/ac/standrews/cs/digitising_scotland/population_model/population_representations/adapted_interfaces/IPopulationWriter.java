@@ -30,7 +30,7 @@ public interface IPopulationWriter extends AutoCloseable {
      * @param person the person
      * @throws Exception if anything goes wrong
      */
-    void recordPerson(IPerson person) throws Exception;
+    void recordPerson(ILinkedPerson person) throws Exception;
 
     /**
      * Records a given partnership from the population.
@@ -38,5 +38,5 @@ public interface IPopulationWriter extends AutoCloseable {
      * @param partnership the person
      * @throws Exception if anything goes wrong
      */
-    void recordPartnership(IPartnership partnership) throws Exception;
+    void recordPartnership(ILinkedPartnership partnership) throws Exception;
 }

@@ -18,50 +18,43 @@ package uk.ac.standrews.cs.digitising_scotland.population_model.population_repre
 
 import java.util.Date;
 
-import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.adapted_interfaces.IPartnership;
+import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.adapted_interfaces.ILinkedPartnership;
+import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.adapted_interfaces.ILinkedPerson;
 
-public class LinkedMarriagePartnership extends IntermediaryLinkObject implements IPartnership {
+public class ChildbearingPartnership extends IntermediaryLinkObject implements ILinkedPartnership {
 
-    public LinkedMarriagePartnership(int id, String ref) {
+    private Link child;
+    
+    public ChildbearingPartnership(int id, String ref) {
     	this.id = id;
     	this.ref = ref;
+	}
+    
+    public void setChildLink(LinkedPerson child, Evidence[] records) {
+    	this.child = new Link(child, this, records);
     }
     
-    public String getRef() {
-    	return ref;
-    }
-    
-    public void addPossibleHusbandLink(LinkedPerson husband, Evidence[] evidence, float linkHeuristic) {
-    	addPossiblePerson1Link(husband, evidence, linkHeuristic);
-    }
-    
-    public void addPossibleWifeLink(LinkedPerson wife, Evidence[] evidence, float linkHeuristic) {
-    	addPossiblePerson2Link(wife, evidence, linkHeuristic);
-    }
-	
-    @Override
-    public int getId() {
-        return id;
-    }
-
-    @Override
-    public Link[] getPerson1PotentialLinks() {
-        return person2;
-    }
-
-    @Override
-    public Link[] getPerson2PotentialLinks() {
+    public Link[] getFatherPotentialLinks() {
         return person1;
     }
+
+    public Link[] getMotherPotentialLinks() {
+        return person2;
+    }
     
     @Override
-    public int compareTo(final IPartnership o) {
+    public int compareTo(final ILinkedPartnership o) {
         if (this.equals(o)) {
             return 0;
         } else {
             return 1;
         }
     }
+
+	@Override
+	public Link getChildLink() {
+		return child;
+	}
 
 	@Override
 	public Date getMarriageDate() {
@@ -75,11 +68,4 @@ public class LinkedMarriagePartnership extends IntermediaryLinkObject implements
 		return null;
 	}
 
-	@Override
-	public Link getChildLink() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-    
-      
 }

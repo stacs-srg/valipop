@@ -20,17 +20,17 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.adapted_interfaces.IPartnership;
-import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.adapted_interfaces.IPerson;
-import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.adapted_interfaces.IPopulation;
+import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.adapted_interfaces.ILinkedPartnership;
+import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.adapted_interfaces.ILinkedPerson;
+import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.adapted_interfaces.ILinkedPopulation;
 import uk.ac.standrews.cs.digitising_scotland.util.ArrayManipulation;
 
-public class LinkedPopulation implements IPopulation {
+public class LinkedPopulation implements ILinkedPopulation {
 
 	private List<LinkedPerson> livingPeople = new ArrayList<LinkedPerson>();
-	private List<LinkedChildbearingPartnership> partnerships = new ArrayList<LinkedChildbearingPartnership>();
-	private List<LinkedMarriagePartnership> marriagePartnerships = new ArrayList<LinkedMarriagePartnership>();
-	private List<LinkedSiblings> siblingsBridges = new ArrayList<LinkedSiblings>();
+	private List<ChildbearingPartnership> partnerships = new ArrayList<ChildbearingPartnership>();
+	private List<MarriageBridge> marriagePartnerships = new ArrayList<MarriageBridge>();
+	private List<SiblingBridge> siblingsBridges = new ArrayList<SiblingBridge>();
 
 	String description;
 
@@ -43,15 +43,15 @@ public class LinkedPopulation implements IPopulation {
 	 */
 	
 	@Override
-	public Iterable<IPerson> getPeople() {
-		return new Iterable<IPerson>() {
+	public Iterable<ILinkedPerson> getPeople() {
+		return new Iterable<ILinkedPerson>() {
 			@Override
-			public Iterator<IPerson> iterator() {
+			public Iterator<ILinkedPerson> iterator() {
 
 
 				final Iterator<LinkedPerson> iterator = livingPeople.iterator();
 
-				return new Iterator<IPerson>() {
+				return new Iterator<ILinkedPerson>() {
 
 					@Override
 					public boolean hasNext() {
@@ -59,8 +59,8 @@ public class LinkedPopulation implements IPopulation {
 					}
 
 					@Override
-					public IPerson next() {
-						return (IPerson) iterator.next();
+					public ILinkedPerson next() {
+						return (ILinkedPerson) iterator.next();
 					}
 
 					@Override
@@ -74,20 +74,20 @@ public class LinkedPopulation implements IPopulation {
 	}
 
 	@Override
-	public Iterable<IPartnership> getPartnerships() {
-		return new Iterable<IPartnership>() {
+	public Iterable<ILinkedPartnership> getPartnerships() {
+		return new Iterable<ILinkedPartnership>() {
 			@Override
-			public Iterator<IPartnership> iterator() {
-				final Iterator<LinkedChildbearingPartnership> iterator = partnerships.iterator();
+			public Iterator<ILinkedPartnership> iterator() {
+				final Iterator<ChildbearingPartnership> iterator = partnerships.iterator();
 
-				return new Iterator<IPartnership>() {
+				return new Iterator<ILinkedPartnership>() {
 					@Override
 					public boolean hasNext() {
 						return iterator.hasNext();
 					}
 
 					@Override
-					public IPartnership next() {
+					public ILinkedPartnership next() {
 						return iterator.next();
 					}
 
@@ -101,7 +101,7 @@ public class LinkedPopulation implements IPopulation {
 	}
 
 	@Override
-	public IPerson findPerson(final int id) {
+	public ILinkedPerson findPerson(final int id) {
 
 		for (LinkedPerson person : livingPeople) {
 			if (person.getId() == id) {
@@ -114,12 +114,12 @@ public class LinkedPopulation implements IPopulation {
 
 
 	@Override
-	public IPartnership findPartnership(final int id) {
+	public ILinkedPartnership findPartnership(final int id) {
 
-		final int index = ArrayManipulation.binarySplit(partnerships, new ArrayManipulation.SplitComparator<LinkedChildbearingPartnership>() {
+		final int index = ArrayManipulation.binarySplit(partnerships, new ArrayManipulation.SplitComparator<ChildbearingPartnership>() {
 
 			@Override
-			public int check(final LinkedChildbearingPartnership partnership) {
+			public int check(final ChildbearingPartnership partnership) {
 				return id - partnership.getId();
 			}
 		});
@@ -152,15 +152,15 @@ public class LinkedPopulation implements IPopulation {
 		livingPeople.add(linkedPerson);		
 	}
 
-	public void addPartnership(LinkedChildbearingPartnership linkedPartnership) {
+	public void addPartnership(ChildbearingPartnership linkedPartnership) {
 		partnerships.add(linkedPartnership);
 	}
 
-	public void addMarraigePartnership(LinkedMarriagePartnership linkedMarriagePartnership) {
+	public void addMarraigePartnership(MarriageBridge linkedMarriagePartnership) {
 		marriagePartnerships.add(linkedMarriagePartnership);
 	}
 
-	public void addSiblingsObject(LinkedSiblings linkedSiblingsObject) {
+	public void addSiblingsObject(SiblingBridge linkedSiblingsObject) {
 		siblingsBridges.add(linkedSiblingsObject);
 	}
 
@@ -174,9 +174,9 @@ public class LinkedPopulation implements IPopulation {
 		return null;
 	}
 
-	public LinkedChildbearingPartnership getPartnershipByRef(String ref) {
+	public ChildbearingPartnership getPartnershipByRef(String ref) {
 
-		for (LinkedChildbearingPartnership partnership : partnerships) {
+		for (ChildbearingPartnership partnership : partnerships) {
 			if (partnership.getRef().equals(ref)) {
 				return partnership;
 			}
@@ -184,9 +184,9 @@ public class LinkedPopulation implements IPopulation {
 		return null;
 	}
 	
-	public LinkedMarriagePartnership getMarraigePartnershipByRef(String ref) {
+	public MarriageBridge getMarraigePartnershipByRef(String ref) {
 
-		for (LinkedMarriagePartnership partnership : marriagePartnerships) {
+		for (MarriageBridge partnership : marriagePartnerships) {
 			if (partnership.getRef().equals(ref)) {
 				return partnership;
 			}
@@ -194,9 +194,9 @@ public class LinkedPopulation implements IPopulation {
 		return null;
 	}
 	
-	public LinkedSiblings getSiblingsObjectByRef(String ref) {
+	public SiblingBridge getSiblingsObjectByRef(String ref) {
 
-		for (LinkedSiblings siblings : siblingsBridges) {
+		for (SiblingBridge siblings : siblingsBridges) {
 			if (siblings.getRef().equals(ref)) {
 				return siblings;
 			}

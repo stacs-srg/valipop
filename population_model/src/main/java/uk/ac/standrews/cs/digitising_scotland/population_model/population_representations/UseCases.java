@@ -35,9 +35,9 @@ public class UseCases {
 		for(int i = 0; i < 9; i++)
 			records[i] = new Evidence(i);
 
-		population.addPartnership(new LinkedChildbearingPartnership(0, "alpha"));
-		population.addPartnership(new LinkedChildbearingPartnership(1, "beta"));
-		population.addPartnership(new LinkedChildbearingPartnership(2, "gamma"));
+		population.addPartnership(new ChildbearingPartnership(0, "alpha"));
+		population.addPartnership(new ChildbearingPartnership(1, "beta"));
+		population.addPartnership(new ChildbearingPartnership(2, "gamma"));
 
 		population.getPartnershipByRef("alpha").setChildLink(population.findPersonByFirstName("a"), new Evidence[]{records[2]});
 		population.getPartnershipByRef("beta").setChildLink(population.findPersonByFirstName("b"), new Evidence[]{records[1]});
@@ -82,9 +82,9 @@ public class UseCases {
 		for(int i = 0; i < 10; i++)
 			records[i] = new Evidence(i);
 
-		population.addPartnership(new LinkedChildbearingPartnership(0, "alpha"));
-		population.addPartnership(new LinkedChildbearingPartnership(1, "beta"));
-		population.addPartnership(new LinkedChildbearingPartnership(2, "gamma"));
+		population.addPartnership(new ChildbearingPartnership(0, "alpha"));
+		population.addPartnership(new ChildbearingPartnership(1, "beta"));
+		population.addPartnership(new ChildbearingPartnership(2, "gamma"));
 
 		population.getPartnershipByRef("alpha").setChildLink(population.findPersonByFirstName("a"), new Evidence[]{records[0]});
 		population.getPartnershipByRef("beta").setChildLink(population.findPersonByFirstName("g"), new Evidence[]{records[6]});
@@ -128,9 +128,9 @@ public class UseCases {
 		for(int i = 0; i < 10; i++)
 			records[i] = new Evidence(i);
 
-		population.addPartnership(new LinkedChildbearingPartnership(0, "alpha"));
-		population.addPartnership(new LinkedChildbearingPartnership(1, "beta"));
-		population.addPartnership(new LinkedChildbearingPartnership(2, "gamma"));
+		population.addPartnership(new ChildbearingPartnership(0, "alpha"));
+		population.addPartnership(new ChildbearingPartnership(1, "beta"));
+		population.addPartnership(new ChildbearingPartnership(2, "gamma"));
 
 		population.getPartnershipByRef("alpha").setChildLink(population.findPersonByFirstName("a"), new Evidence[]{records[0]});
 		population.getPartnershipByRef("beta").setChildLink(population.findPersonByFirstName("g"), new Evidence[]{records[6]});
@@ -181,13 +181,13 @@ public class UseCases {
 		for(int i = 0; i < 15; i++)
 			records[i] = new Evidence(i);
 
-		population.addPartnership(new LinkedChildbearingPartnership(0, "alpha"));
-		population.addPartnership(new LinkedChildbearingPartnership(1, "beta"));
-		population.addPartnership(new LinkedChildbearingPartnership(2, "gamma"));
-		population.addPartnership(new LinkedChildbearingPartnership(3, "delta"));
-		population.addPartnership(new LinkedChildbearingPartnership(4, "epsilon"));
-		population.addPartnership(new LinkedChildbearingPartnership(5, "zeta"));
-		population.addPartnership(new LinkedChildbearingPartnership(6, "eta"));
+		population.addPartnership(new ChildbearingPartnership(0, "alpha"));
+		population.addPartnership(new ChildbearingPartnership(1, "beta"));
+		population.addPartnership(new ChildbearingPartnership(2, "gamma"));
+		population.addPartnership(new ChildbearingPartnership(3, "delta"));
+		population.addPartnership(new ChildbearingPartnership(4, "epsilon"));
+		population.addPartnership(new ChildbearingPartnership(5, "zeta"));
+		population.addPartnership(new ChildbearingPartnership(6, "eta"));
 
 		population.getPartnershipByRef("alpha").setChildLink(population.findPersonByFirstName("a"), new Evidence[]{records[0]});
 		population.getPartnershipByRef("beta").setChildLink(population.findPersonByFirstName("b"), new Evidence[]{records[1]});
@@ -254,16 +254,16 @@ public class UseCases {
 		for(int i = 0; i < 22; i++)
 			records[i] = new Evidence(i);
 
-		population.addPartnership(new LinkedChildbearingPartnership(0, "alpha"));
-		population.addPartnership(new LinkedChildbearingPartnership(1, "beta"));
-		population.addPartnership(new LinkedChildbearingPartnership(2, "gamma"));
-		population.addPartnership(new LinkedChildbearingPartnership(3, "delta"));
-		population.addPartnership(new LinkedChildbearingPartnership(4, "epsilon"));
-		population.addPartnership(new LinkedChildbearingPartnership(5, "zeta"));
-		population.addPartnership(new LinkedChildbearingPartnership(6, "eta"));
-		population.addPartnership(new LinkedChildbearingPartnership(7, "theta"));
-		population.addPartnership(new LinkedChildbearingPartnership(8, "iota"));
-		population.addPartnership(new LinkedChildbearingPartnership(9, "kappa"));
+		population.addPartnership(new ChildbearingPartnership(0, "alpha"));
+		population.addPartnership(new ChildbearingPartnership(1, "beta"));
+		population.addPartnership(new ChildbearingPartnership(2, "gamma"));
+		population.addPartnership(new ChildbearingPartnership(3, "delta"));
+		population.addPartnership(new ChildbearingPartnership(4, "epsilon"));
+		population.addPartnership(new ChildbearingPartnership(5, "zeta"));
+		population.addPartnership(new ChildbearingPartnership(6, "eta"));
+		population.addPartnership(new ChildbearingPartnership(7, "theta"));
+		population.addPartnership(new ChildbearingPartnership(8, "iota"));
+		population.addPartnership(new ChildbearingPartnership(9, "kappa"));
 
 		population.getPartnershipByRef("alpha").setChildLink(population.findPersonByFirstName("a"), new Evidence[]{records[0]});
 		population.getPartnershipByRef("beta").setChildLink(population.findPersonByFirstName("c"), new Evidence[]{records[2]});
@@ -334,12 +334,12 @@ public class UseCases {
 		for(int i = 0; i < 13; i++)
 			records[i] = new Evidence(i);
 
-		population.addPartnership(new LinkedChildbearingPartnership(0, "alpha"));
-		population.addPartnership(new LinkedChildbearingPartnership(1, "beta"));
-		population.addPartnership(new LinkedChildbearingPartnership(2, "gamma"));
-		population.addPartnership(new LinkedChildbearingPartnership(3, "delta"));
-		population.addPartnership(new LinkedChildbearingPartnership(4, "epsilon"));
-		population.addPartnership(new LinkedChildbearingPartnership(5, "zeta"));
+		population.addPartnership(new ChildbearingPartnership(0, "alpha"));
+		population.addPartnership(new ChildbearingPartnership(1, "beta"));
+		population.addPartnership(new ChildbearingPartnership(2, "gamma"));
+		population.addPartnership(new ChildbearingPartnership(3, "delta"));
+		population.addPartnership(new ChildbearingPartnership(4, "epsilon"));
+		population.addPartnership(new ChildbearingPartnership(5, "zeta"));
 
 		population.getPartnershipByRef("alpha").setChildLink(population.findPersonByFirstName("a"), new Evidence[]{records[0]});
 		population.getPartnershipByRef("beta").setChildLink(population.findPersonByFirstName("k"), new Evidence[]{records[11]});
@@ -388,9 +388,9 @@ public class UseCases {
 		for(int i = 0; i < 11; i++)
 			records[i] = new Evidence(i);
 
-		population.addPartnership(new LinkedChildbearingPartnership(0, "alpha"));
-		population.addPartnership(new LinkedChildbearingPartnership(1, "beta"));
-		population.addPartnership(new LinkedChildbearingPartnership(2, "gamma"));
+		population.addPartnership(new ChildbearingPartnership(0, "alpha"));
+		population.addPartnership(new ChildbearingPartnership(1, "beta"));
+		population.addPartnership(new ChildbearingPartnership(2, "gamma"));
 
 		population.getPartnershipByRef("alpha").setChildLink(population.findPersonByFirstName("a"), new Evidence[]{records[2]});
 		population.getPartnershipByRef("beta").setChildLink(population.findPersonByFirstName("b"), new Evidence[]{records[1]});
@@ -413,9 +413,9 @@ public class UseCases {
 
 		population.getPartnershipByRef("gamma").addPossiblePerson2Link(population.findPersonByFirstName("e"), new Evidence[]{records[0], records[3]}, 0.6f);
 
-		population.addSiblingsObject(new LinkedSiblings(0, "alef"));
-		population.addSiblingsObject(new LinkedSiblings(1, "bet"));
-		population.addSiblingsObject(new LinkedSiblings(2, "gimel"));
+		population.addSiblingsObject(new SiblingBridge(0, "alef"));
+		population.addSiblingsObject(new SiblingBridge(1, "bet"));
+		population.addSiblingsObject(new SiblingBridge(2, "gimel"));
 
 		population.getSiblingsObjectByRef("alef").addPossiblePerson1Link(population.findPersonByFirstName("a"), new Evidence[]{records[2], records[8]}, 0.8f);
 		population.getSiblingsObjectByRef("alef").addPossiblePerson2Link(population.findPersonByFirstName("b"), new Evidence[]{records[1], records[8]}, 0.8f);
@@ -446,9 +446,9 @@ public class UseCases {
 		for(int i = 0; i < 9; i++)
 			records[i] = new Evidence(i);
 
-		population.addPartnership(new LinkedChildbearingPartnership(0, "alpha"));
-		population.addPartnership(new LinkedChildbearingPartnership(1, "beta"));
-		population.addPartnership(new LinkedChildbearingPartnership(2, "gamma"));
+		population.addPartnership(new ChildbearingPartnership(0, "alpha"));
+		population.addPartnership(new ChildbearingPartnership(1, "beta"));
+		population.addPartnership(new ChildbearingPartnership(2, "gamma"));
 
 		population.getPartnershipByRef("alpha").setChildLink(population.findPersonByFirstName("a"), new Evidence[]{records[2]});
 		population.getPartnershipByRef("beta").setChildLink(population.findPersonByFirstName("b"), new Evidence[]{records[1]});
@@ -471,7 +471,7 @@ public class UseCases {
 
 		population.getPartnershipByRef("gamma").addPossiblePerson2Link(population.findPersonByFirstName("e"), new Evidence[]{records[0], records[3]}, 0.6f);
 
-		population.addSiblingsObject(new LinkedSiblings(0, "alef"));
+		population.addSiblingsObject(new SiblingBridge(0, "alef"));
 
 		population.getSiblingsObjectByRef("alef").addPossiblePerson1Link(population.findPersonByFirstName("a"), new Evidence[]{records[2], records[8]}, 0.8f);
 		population.getSiblingsObjectByRef("alef").addPossiblePerson2Link(population.findPersonByFirstName("c"), new Evidence[]{records[0], records[8]}, 0.8f);
@@ -498,9 +498,9 @@ public class UseCases {
 		for(int i = 0; i < 11; i++)
 			records[i] = new Evidence(i);
 
-		population.addPartnership(new LinkedChildbearingPartnership(0, "alpha"));
-		population.addPartnership(new LinkedChildbearingPartnership(1, "beta"));
-		population.addPartnership(new LinkedChildbearingPartnership(2, "gamma"));
+		population.addPartnership(new ChildbearingPartnership(0, "alpha"));
+		population.addPartnership(new ChildbearingPartnership(1, "beta"));
+		population.addPartnership(new ChildbearingPartnership(2, "gamma"));
 
 		population.getPartnershipByRef("alpha").setChildLink(population.findPersonByFirstName("a"), new Evidence[]{records[0]});
 		population.getPartnershipByRef("beta").setChildLink(population.findPersonByFirstName("g"), new Evidence[]{records[6]});
@@ -521,7 +521,7 @@ public class UseCases {
 		population.getPartnershipByRef("gamma").addPossiblePerson2Link(population.findPersonByFirstName("j"), new Evidence[]{records[6], records[9]}, 0.6f);
 		population.getPartnershipByRef("gamma").addPossiblePerson2Link(population.findPersonByFirstName("h"), new Evidence[]{records[6], records[8]}, 0.4f);
 
-		population.addSiblingsObject(new LinkedSiblings(0, "alef"));
+		population.addSiblingsObject(new SiblingBridge(0, "alef"));
 
 		population.getSiblingsObjectByRef("alef").addPossiblePerson1Link(population.findPersonByFirstName("g"), new Evidence[]{records[6], records[10]}, 0.8f);
 		population.getSiblingsObjectByRef("alef").addPossiblePerson2Link(population.findPersonByFirstName("c"), new Evidence[]{records[2], records[10]}, 0.8f);
@@ -552,12 +552,12 @@ public class UseCases {
 		for(int i = 0; i < 14; i++)
 			records[i] = new Evidence(i);
 
-		population.addPartnership(new LinkedChildbearingPartnership(0, "alpha"));
-		population.addPartnership(new LinkedChildbearingPartnership(1, "beta"));
-		population.addPartnership(new LinkedChildbearingPartnership(2, "gamma"));
-		population.addPartnership(new LinkedChildbearingPartnership(3, "delta"));
-		population.addPartnership(new LinkedChildbearingPartnership(4, "epsilon"));
-		population.addPartnership(new LinkedChildbearingPartnership(5, "zeta"));
+		population.addPartnership(new ChildbearingPartnership(0, "alpha"));
+		population.addPartnership(new ChildbearingPartnership(1, "beta"));
+		population.addPartnership(new ChildbearingPartnership(2, "gamma"));
+		population.addPartnership(new ChildbearingPartnership(3, "delta"));
+		population.addPartnership(new ChildbearingPartnership(4, "epsilon"));
+		population.addPartnership(new ChildbearingPartnership(5, "zeta"));
 
 		population.getPartnershipByRef("alpha").setChildLink(population.findPersonByFirstName("a"), new Evidence[]{records[0]});
 		population.getPartnershipByRef("beta").setChildLink(population.findPersonByFirstName("k"), new Evidence[]{records[11]});
@@ -585,7 +585,7 @@ public class UseCases {
 		population.getPartnershipByRef("zeta").addPossiblePerson1Link(population.findPersonByFirstName("h"), new Evidence[]{records[7], records[8]}, 0.6f);
 		population.getPartnershipByRef("zeta").addPossiblePerson2Link(population.findPersonByFirstName("e"), new Evidence[]{records[4], records[7]}, 0.9f);
 
-		population.addSiblingsObject(new LinkedSiblings(0, "alef"));
+		population.addSiblingsObject(new SiblingBridge(0, "alef"));
 
 		population.getSiblingsObjectByRef("alef").addPossiblePerson1Link(population.findPersonByFirstName("c"), new Evidence[]{records[2], records[13]}, 0.8f);
 		population.getSiblingsObjectByRef("alef").addPossiblePerson2Link(population.findPersonByFirstName("g"), new Evidence[]{records[6], records[13]}, 0.8f);
@@ -613,9 +613,9 @@ public class UseCases {
 		for(int i = 0; i < 11; i++)
 			records[i] = new Evidence(i);
 
-		population.addPartnership(new LinkedChildbearingPartnership(0, "alpha"));
-		population.addPartnership(new LinkedChildbearingPartnership(1, "beta"));
-		population.addPartnership(new LinkedChildbearingPartnership(2, "gamma"));
+		population.addPartnership(new ChildbearingPartnership(0, "alpha"));
+		population.addPartnership(new ChildbearingPartnership(1, "beta"));
+		population.addPartnership(new ChildbearingPartnership(2, "gamma"));
 
 		population.getPartnershipByRef("alpha").setChildLink(population.findPersonByFirstName("a"), new Evidence[]{records[0]});
 		population.getPartnershipByRef("beta").setChildLink(population.findPersonByFirstName("g"), new Evidence[]{records[6]});
@@ -638,7 +638,7 @@ public class UseCases {
 		population.getPartnershipByRef("gamma").addPossiblePerson2Link(population.findPersonByFirstName("h"), new Evidence[]{records[6], records[8]}, 0.4f);
 		population.getPartnershipByRef("gamma").addPossiblePerson2Link(population.findPersonByFirstName("d"), new Evidence[]{records[6], records[3]}, 0.8f);
 
-		population.addSiblingsObject(new LinkedSiblings(0, "alef"));
+		population.addSiblingsObject(new SiblingBridge(0, "alef"));
 
 		population.getSiblingsObjectByRef("alef").addPossiblePerson1Link(population.findPersonByFirstName("g"), new Evidence[]{records[6], records[10]}, 0.8f);
 		population.getSiblingsObjectByRef("alef").addPossiblePerson2Link(population.findPersonByFirstName("c"), new Evidence[]{records[2], records[10]}, 0.8f);
@@ -662,8 +662,8 @@ public class UseCases {
 		for(int i = 0; i < 8; i++)
 			records[i] = new Evidence(i);
 
-		population.addPartnership(new LinkedChildbearingPartnership(0, "alpha"));
-		population.addPartnership(new LinkedChildbearingPartnership(1, "beta"));
+		population.addPartnership(new ChildbearingPartnership(0, "alpha"));
+		population.addPartnership(new ChildbearingPartnership(1, "beta"));
 
 		population.getPartnershipByRef("alpha").setChildLink(population.findPersonByFirstName("c"), new Evidence[]{records[0]});
 		population.getPartnershipByRef("beta").setChildLink(population.findPersonByFirstName("g"), new Evidence[]{records[1]});
@@ -677,7 +677,7 @@ public class UseCases {
 		population.getPartnershipByRef("beta").addPossiblePerson2Link(population.findPersonByFirstName("d"), new Evidence[]{records[1], records[4]}, 0.9f);
 		population.getPartnershipByRef("beta").addPossiblePerson2Link(population.findPersonByFirstName("f"), new Evidence[]{records[1], records[6]}, 0.9f);
 
-		population.addSiblingsObject(new LinkedSiblings(0, "alef"));
+		population.addSiblingsObject(new SiblingBridge(0, "alef"));
 		population.getSiblingsObjectByRef("alef").addPossiblePerson1Link(population.findPersonByFirstName("c"), new Evidence[]{records[0], records[7]}, 1f);
 		population.getSiblingsObjectByRef("alef").addPossiblePerson2Link(population.findPersonByFirstName("g"), new Evidence[]{records[1], records[7]}, 1f);
 
@@ -703,9 +703,9 @@ public class UseCases {
 		for(int i = 0; i < 13; i++)
 			records[i] = new Evidence(i);
 
-		population.addPartnership(new LinkedChildbearingPartnership(0, "alpha"));
-		population.addPartnership(new LinkedChildbearingPartnership(1, "beta"));
-		population.addPartnership(new LinkedChildbearingPartnership(2, "gamma"));
+		population.addPartnership(new ChildbearingPartnership(0, "alpha"));
+		population.addPartnership(new ChildbearingPartnership(1, "beta"));
+		population.addPartnership(new ChildbearingPartnership(2, "gamma"));
 
 		population.getPartnershipByRef("alpha").setChildLink(population.findPersonByFirstName("a"), new Evidence[]{records[2]});
 		population.getPartnershipByRef("beta").setChildLink(population.findPersonByFirstName("b"), new Evidence[]{records[1]});
@@ -728,9 +728,9 @@ public class UseCases {
 
 		population.getPartnershipByRef("gamma").addPossiblePerson2Link(population.findPersonByFirstName("e"), new Evidence[]{records[0], records[3]}, 0.6f);
 
-		population.addSiblingsObject(new LinkedSiblings(0, "alef"));
-		population.addSiblingsObject(new LinkedSiblings(1, "bet"));
-		population.addSiblingsObject(new LinkedSiblings(2, "gimel"));
+		population.addSiblingsObject(new SiblingBridge(0, "alef"));
+		population.addSiblingsObject(new SiblingBridge(1, "bet"));
+		population.addSiblingsObject(new SiblingBridge(2, "gimel"));
 
 		population.getSiblingsObjectByRef("alef").addPossiblePerson1Link(population.findPersonByFirstName("a"), new Evidence[]{records[2], records[8]}, 0.8f);
 		population.getSiblingsObjectByRef("alef").addPossiblePerson2Link(population.findPersonByFirstName("b"), new Evidence[]{records[1], records[8]}, 0.8f);
@@ -741,7 +741,7 @@ public class UseCases {
 		population.getSiblingsObjectByRef("gimel").addPossiblePerson1Link(population.findPersonByFirstName("b"), new Evidence[]{records[1], records[10]}, 0.8f);
 		population.getSiblingsObjectByRef("gimel").addPossiblePerson2Link(population.findPersonByFirstName("c"), new Evidence[]{records[0], records[10]}, 0.8f);
 
-		population.addMarraigePartnership(new LinkedMarriagePartnership(0, "ani"));
+		population.addMarraigePartnership(new MarriageBridge(0, "ani"));
 
 		population.getMarraigePartnershipByRef("ani").addPossibleHusbandLink(population.findPersonByFirstName("d"), new Evidence[]{records[6],  records[11]}, 0.7f);
 		population.getMarraigePartnershipByRef("ani").addPossibleWifeLink(population.findPersonByFirstName("e"), new Evidence[]{records[3],  records[11]}, 0.7f);
@@ -767,9 +767,9 @@ public class UseCases {
 		for(int i = 0; i < 11; i++)
 			records[i] = new Evidence(i);
 
-		population.addPartnership(new LinkedChildbearingPartnership(0, "alpha"));
-		population.addPartnership(new LinkedChildbearingPartnership(1, "beta"));
-		population.addPartnership(new LinkedChildbearingPartnership(2, "gamma"));
+		population.addPartnership(new ChildbearingPartnership(0, "alpha"));
+		population.addPartnership(new ChildbearingPartnership(1, "beta"));
+		population.addPartnership(new ChildbearingPartnership(2, "gamma"));
 
 		population.getPartnershipByRef("alpha").setChildLink(population.findPersonByFirstName("a"), new Evidence[]{records[2]});
 		population.getPartnershipByRef("beta").setChildLink(population.findPersonByFirstName("b"), new Evidence[]{records[1]});
@@ -792,13 +792,13 @@ public class UseCases {
 
 		population.getPartnershipByRef("gamma").addPossiblePerson2Link(population.findPersonByFirstName("e"), new Evidence[]{records[0], records[3]}, 0.6f);
 
-		population.addSiblingsObject(new LinkedSiblings(0, "alef"));
+		population.addSiblingsObject(new SiblingBridge(0, "alef"));
 
 		population.getSiblingsObjectByRef("alef").addPossiblePerson1Link(population.findPersonByFirstName("a"), new Evidence[]{records[2], records[8]}, 0.8f);
 		population.getSiblingsObjectByRef("alef").addPossiblePerson2Link(population.findPersonByFirstName("c"), new Evidence[]{records[0], records[8]}, 0.8f);
 
-		population.addMarraigePartnership(new LinkedMarriagePartnership(0, "ani"));
-		population.addMarraigePartnership(new LinkedMarriagePartnership(1, "bani"));
+		population.addMarraigePartnership(new MarriageBridge(0, "ani"));
+		population.addMarraigePartnership(new MarriageBridge(1, "bani"));
 
 		population.getMarraigePartnershipByRef("ani").addPossibleHusbandLink(population.findPersonByFirstName("f"), new Evidence[]{records[7],  records[9]}, 0.7f);
 		population.getMarraigePartnershipByRef("ani").addPossibleWifeLink(population.findPersonByFirstName("e"), new Evidence[]{records[3],  records[9]}, 0.7f);
@@ -828,9 +828,9 @@ public class UseCases {
 		for(int i = 0; i < 11; i++)
 			records[i] = new Evidence(i);
 
-		population.addPartnership(new LinkedChildbearingPartnership(0, "alpha"));
-		population.addPartnership(new LinkedChildbearingPartnership(1, "beta"));
-		population.addPartnership(new LinkedChildbearingPartnership(2, "gamma"));
+		population.addPartnership(new ChildbearingPartnership(0, "alpha"));
+		population.addPartnership(new ChildbearingPartnership(1, "beta"));
+		population.addPartnership(new ChildbearingPartnership(2, "gamma"));
 
 		population.getPartnershipByRef("alpha").setChildLink(population.findPersonByFirstName("a"), new Evidence[]{records[0]});
 		population.getPartnershipByRef("beta").setChildLink(population.findPersonByFirstName("g"), new Evidence[]{records[6]});
@@ -851,7 +851,7 @@ public class UseCases {
 		population.getPartnershipByRef("gamma").addPossiblePerson2Link(population.findPersonByFirstName("j"), new Evidence[]{records[6], records[9]}, 0.6f);
 		population.getPartnershipByRef("gamma").addPossiblePerson2Link(population.findPersonByFirstName("h"), new Evidence[]{records[6], records[8]}, 0.4f);
 
-		population.addMarraigePartnership(new LinkedMarriagePartnership(0, "ani"));
+		population.addMarraigePartnership(new MarriageBridge(0, "ani"));
 
 		population.getMarraigePartnershipByRef("ani").addPossibleHusbandLink(population.findPersonByFirstName("b"), new Evidence[]{records[1],  records[10]}, 0.7f);
 		population.getMarraigePartnershipByRef("ani").addPossibleWifeLink(population.findPersonByFirstName("g"), new Evidence[]{records[6],  records[10]}, 0.7f);
@@ -879,9 +879,9 @@ public class UseCases {
 		for(int i = 0; i < 12; i++)
 			records[i] = new Evidence(i);
 
-		population.addPartnership(new LinkedChildbearingPartnership(0, "alpha"));
-		population.addPartnership(new LinkedChildbearingPartnership(1, "beta"));
-		population.addPartnership(new LinkedChildbearingPartnership(2, "gamma"));
+		population.addPartnership(new ChildbearingPartnership(0, "alpha"));
+		population.addPartnership(new ChildbearingPartnership(1, "beta"));
+		population.addPartnership(new ChildbearingPartnership(2, "gamma"));
 
 		population.getPartnershipByRef("alpha").setChildLink(population.findPersonByFirstName("a"), new Evidence[]{records[0]});
 		population.getPartnershipByRef("beta").setChildLink(population.findPersonByFirstName("g"), new Evidence[]{records[6]});
@@ -904,8 +904,8 @@ public class UseCases {
 		population.getPartnershipByRef("gamma").addPossiblePerson2Link(population.findPersonByFirstName("h"), new Evidence[]{records[6], records[8]}, 0.4f);
 		population.getPartnershipByRef("gamma").addPossiblePerson2Link(population.findPersonByFirstName("d"), new Evidence[]{records[6], records[3]}, 0.8f);
 
-		population.addMarraigePartnership(new LinkedMarriagePartnership(0, "ani"));
-		population.addMarraigePartnership(new LinkedMarriagePartnership(1, "bani"));
+		population.addMarraigePartnership(new MarriageBridge(0, "ani"));
+		population.addMarraigePartnership(new MarriageBridge(1, "bani"));
 
 		population.getMarraigePartnershipByRef("ani").addPossibleHusbandLink(population.findPersonByFirstName("i"), new Evidence[]{records[7], records[10]}, 0.7f);
 		population.getMarraigePartnershipByRef("ani").addPossibleWifeLink(population.findPersonByFirstName("h"), new Evidence[]{records[8], records[10]}, 0.7f);
@@ -936,9 +936,9 @@ public class UseCases {
 		for(int i = 0; i < 13; i++)
 			records[i] = new Evidence(i);
 
-		population.addPartnership(new LinkedChildbearingPartnership(0, "alpha"));
-		population.addPartnership(new LinkedChildbearingPartnership(1, "beta"));
-		population.addPartnership(new LinkedChildbearingPartnership(2, "gamma"));
+		population.addPartnership(new ChildbearingPartnership(0, "alpha"));
+		population.addPartnership(new ChildbearingPartnership(1, "beta"));
+		population.addPartnership(new ChildbearingPartnership(2, "gamma"));
 
 		population.getPartnershipByRef("alpha").setChildLink(population.findPersonByFirstName("a"), new Evidence[]{records[0]});
 		population.getPartnershipByRef("beta").setChildLink(population.findPersonByFirstName("g"), new Evidence[]{records[6]});
@@ -961,13 +961,13 @@ public class UseCases {
 		population.getPartnershipByRef("gamma").addPossiblePerson2Link(population.findPersonByFirstName("h"), new Evidence[]{records[6], records[8]}, 0.4f);
 		population.getPartnershipByRef("gamma").addPossiblePerson2Link(population.findPersonByFirstName("d"), new Evidence[]{records[6], records[3]}, 0.8f);
 
-		population.addSiblingsObject(new LinkedSiblings(0, "alef"));
+		population.addSiblingsObject(new SiblingBridge(0, "alef"));
 
 		population.getSiblingsObjectByRef("alef").addPossiblePerson1Link(population.findPersonByFirstName("g"), new Evidence[]{records[6], records[10]}, 0.8f);
 		population.getSiblingsObjectByRef("alef").addPossiblePerson2Link(population.findPersonByFirstName("c"), new Evidence[]{records[2], records[10]}, 0.8f);
 
-		population.addMarraigePartnership(new LinkedMarriagePartnership(0, "ani"));
-		population.addMarraigePartnership(new LinkedMarriagePartnership(1, "bani"));
+		population.addMarraigePartnership(new MarriageBridge(0, "ani"));
+		population.addMarraigePartnership(new MarriageBridge(1, "bani"));
 
 		population.getMarraigePartnershipByRef("ani").addPossibleHusbandLink(population.findPersonByFirstName("e"), new Evidence[]{records[5], records[11]}, 0.7f);
 		population.getMarraigePartnershipByRef("ani").addPossibleWifeLink(population.findPersonByFirstName("d"), new Evidence[]{records[3], records[11]}, 0.7f);
@@ -1000,12 +1000,12 @@ public class UseCases {
 		for(int i = 0; i < 19; i++)
 			records[i] = new Evidence(i);
 
-		population.addPartnership(new LinkedChildbearingPartnership(0, "alpha"));
-		population.addPartnership(new LinkedChildbearingPartnership(1, "beta"));
-		population.addPartnership(new LinkedChildbearingPartnership(2, "gamma"));
-		population.addPartnership(new LinkedChildbearingPartnership(3, "delta"));
-		population.addPartnership(new LinkedChildbearingPartnership(4, "epsilon"));
-		population.addPartnership(new LinkedChildbearingPartnership(5, "zeta"));
+		population.addPartnership(new ChildbearingPartnership(0, "alpha"));
+		population.addPartnership(new ChildbearingPartnership(1, "beta"));
+		population.addPartnership(new ChildbearingPartnership(2, "gamma"));
+		population.addPartnership(new ChildbearingPartnership(3, "delta"));
+		population.addPartnership(new ChildbearingPartnership(4, "epsilon"));
+		population.addPartnership(new ChildbearingPartnership(5, "zeta"));
 
 		population.getPartnershipByRef("alpha").setChildLink(population.findPersonByFirstName("a"), new Evidence[]{records[0]});
 		population.getPartnershipByRef("beta").setChildLink(population.findPersonByFirstName("k"), new Evidence[]{records[11]});
@@ -1033,16 +1033,16 @@ public class UseCases {
 		population.getPartnershipByRef("zeta").addPossiblePerson1Link(population.findPersonByFirstName("h"), new Evidence[]{records[7], records[8]}, 0.6f);
 		population.getPartnershipByRef("zeta").addPossiblePerson2Link(population.findPersonByFirstName("e"), new Evidence[]{records[4], records[7]}, 0.9f);
 
-		population.addSiblingsObject(new LinkedSiblings(0, "alef"));
+		population.addSiblingsObject(new SiblingBridge(0, "alef"));
 
 		population.getSiblingsObjectByRef("alef").addPossiblePerson1Link(population.findPersonByFirstName("c"), new Evidence[]{records[2], records[13]}, 0.8f);
 		population.getSiblingsObjectByRef("alef").addPossiblePerson2Link(population.findPersonByFirstName("g"), new Evidence[]{records[6], records[13]}, 0.8f);
 
-		population.addMarraigePartnership(new LinkedMarriagePartnership(0, "ani"));
-		population.addMarraigePartnership(new LinkedMarriagePartnership(1, "bani"));
-		population.addMarraigePartnership(new LinkedMarriagePartnership(2, "gani"));
-		population.addMarraigePartnership(new LinkedMarriagePartnership(3, "doni"));
-		population.addMarraigePartnership(new LinkedMarriagePartnership(4, "eni"));
+		population.addMarraigePartnership(new MarriageBridge(0, "ani"));
+		population.addMarraigePartnership(new MarriageBridge(1, "bani"));
+		population.addMarraigePartnership(new MarriageBridge(2, "gani"));
+		population.addMarraigePartnership(new MarriageBridge(3, "doni"));
+		population.addMarraigePartnership(new MarriageBridge(4, "eni"));
 
 		population.getMarraigePartnershipByRef("ani").addPossibleHusbandLink(population.findPersonByFirstName("d"), new Evidence[]{records[3],  records[14]}, 0.7f);
 		population.getMarraigePartnershipByRef("ani").addPossibleWifeLink(population.findPersonByFirstName("f"), new Evidence[]{records[5],  records[14]}, 0.7f);

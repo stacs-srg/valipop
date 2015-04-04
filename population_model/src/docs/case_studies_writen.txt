@@ -82,6 +82,4 @@ Is a pairing given on a marraiage record flattenable upon the birth record givin
 
 	// Possible permetations queries based on a root individual
 
-// Wider setting
 
-	//
