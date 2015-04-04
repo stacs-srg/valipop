@@ -16,7 +16,7 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.adapted_db;
 
-import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.adapted_interfaces.ILinkedPartnership;
+import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.adapted_interfaces.ILinkedChildbearingPartnership;
 import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.adapted_interfaces.ILinkedPerson;
 import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.adapted_interfaces.ILinkedPopulation;
 import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.adapted_interfaces.IPopulationWriter;
@@ -77,7 +77,7 @@ public class LinkedPopulationConverter implements AutoCloseable {
             progressStep();
         }
 
-        for (final ILinkedPartnership partnership : population.getPartnerships()) {
+        for (final ILinkedChildbearingPartnership partnership : population.getPartnerships()) {
 
             population_writer.recordPartnership(partnership);
             progressStep();

@@ -16,27 +16,37 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.adapted_interfaces;
 
+import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.Link;
+
 /**
- * Interface to be implemented by classes that process information from a population.
+ * Interface for partnership objects.
  *
  * @author Graham Kirby (graham.kirby@st-andrews.ac.uk)
- * @see PopulationConverter
+ * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public interface IPopulationWriter extends AutoCloseable {
+public interface ILinkedChildbearingPartnership extends Comparable<ILinkedChildbearingPartnership> {
 
     /**
-     * Records a given person from the population.
-     *
-     * @param person the person
-     * @throws Exception if anything goes wrong
+     * Gets the partnership's unique identifier.
+     * @return the partnership's unique identifier
      */
-    void recordPerson(ILinkedPerson person) throws Exception;
+    int getId();
 
     /**
-     * Records a given partnership from the population.
-     *
-     * @param partnership the person
-     * @throws Exception if anything goes wrong
+     * Returns and array of Links for the female in the partnership.
+     * @return the possible Links for the female
      */
-    void recordPartnership(ILinkedPartnership partnership) throws Exception;
+    Link[] getPerson1PotentialLinks();
+
+    /**
+     * Returns and array of Links for the male in the partnership.
+     * @return the possible Links of the male
+     */
+    Link[] getPerson2PotentialLinks();
+    
+     /**
+     * Gets the identifiers of this partnership object's child_id, or null if none are recorded.
+     * @return the identifier of the partnership's child_id
+     */
+    Link getChildLink();
 }

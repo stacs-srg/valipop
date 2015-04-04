@@ -19,6 +19,7 @@ package uk.ac.standrews.cs.digitising_scotland.population_model.population_repre
 import java.util.Date;
 import java.util.List;
 
+import uk.ac.standrews.cs.digitising_scotland.population_model.model.IPerson;
 import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.Link;
 
 /**
@@ -76,13 +77,6 @@ public interface ILinkedPerson {
      */
     String getBirthPlace();
 
-    
-    /*
-     * TODO Do we have multiple possible death records for an individual?
-     * If so the the date place and cause will all arrise from the same record.
-     * These need to be constrainted somehow.
-     */
-    
     /**
      * Gets the person's date of death, or null if they are living.
      * @return the person's date of death
@@ -122,6 +116,6 @@ public interface ILinkedPerson {
      * Gets the Link of the person's parents' partnership, or null if none are recorded.
      * @return the identifier of the person's parents' partnership
      */
-    Link getParentsPartnership();
+    Link getParentsPartnershipLink();
     
 }

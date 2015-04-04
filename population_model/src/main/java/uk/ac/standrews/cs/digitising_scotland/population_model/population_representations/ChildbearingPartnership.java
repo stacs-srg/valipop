@@ -16,12 +16,9 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.population_model.population_representations;
 
-import java.util.Date;
+import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.adapted_interfaces.ILinkedChildbearingPartnership;
 
-import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.adapted_interfaces.ILinkedPartnership;
-import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.adapted_interfaces.ILinkedPerson;
-
-public class ChildbearingPartnership extends IntermediaryLinkObject implements ILinkedPartnership {
+public class ChildbearingPartnership extends IntermediaryLinkObject implements ILinkedChildbearingPartnership {
 
     private Link child;
     
@@ -43,7 +40,7 @@ public class ChildbearingPartnership extends IntermediaryLinkObject implements I
     }
     
     @Override
-    public int compareTo(final ILinkedPartnership o) {
+    public int compareTo(final ILinkedChildbearingPartnership o) {
         if (this.equals(o)) {
             return 0;
         } else {
@@ -54,18 +51,6 @@ public class ChildbearingPartnership extends IntermediaryLinkObject implements I
 	@Override
 	public Link getChildLink() {
 		return child;
-	}
-
-	@Override
-	public Date getMarriageDate() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public String getMarriagePlace() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 }

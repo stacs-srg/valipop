@@ -19,7 +19,8 @@ package uk.ac.standrews.cs.digitising_scotland.population_model.population_repre
 import uk.ac.standrews.cs.digitising_scotland.population_model.config.PopulationProperties;
 import uk.ac.standrews.cs.digitising_scotland.population_model.model.database.DBConnector;
 import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.Link;
-import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.adapted_interfaces.ILinkedPartnership;
+import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.adapted_interfaces.ILinkedMarriagePartnership;
+import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.adapted_interfaces.ILinkedChildbearingPartnership;
 import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.adapted_interfaces.ILinkedPerson;
 import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.adapted_interfaces.IPopulationWriter;
 //import uk.ac.standrews.cs.digitising_scotland.population_model.model.IPartnership;
@@ -98,7 +99,7 @@ public class DBPopulationWriter implements IPopulationWriter {
     }
 
     @SuppressWarnings("FeatureEnvy")
-    public void recordPartnership(final ILinkedPartnership partnership) throws SQLException {
+    public void recordPartnership(final ILinkedChildbearingPartnership partnership) throws SQLException {
 
         final int partnership_id = partnership.getId();
 
@@ -120,13 +121,13 @@ public class DBPopulationWriter implements IPopulationWriter {
     }
 
     @SuppressWarnings("FeatureEnvy")
-    private void recordMarriage(final ILinkedPartnership partnership) throws SQLException {
+    private void recordMarriage(final ILinkedChildbearingPartnership partnership) throws SQLException {
 
         final int partnership_id = partnership.getId();
-        final Object marriage_date = getSQLDate(partnership.getMarriageDate());
-        final String marriage_place = partnership.getMarriagePlace();
+//        final Object marriage_date = getSQLDate(partnership.getMarriageDate());
+//        final String marriage_place = partnership.getMarriagePlace();
 
-        DBManipulation.configurePreparedStatement(record_partnership_statement, partnership_id, marriage_date, marriage_place);
+        DBManipulation.configurePreparedStatement(record_partnership_statement, partnership_id);
         record_partnership_statement.executeUpdate();
     }
 
@@ -162,4 +163,5 @@ public class DBPopulationWriter implements IPopulationWriter {
 
         return date != null ? DateManipulation.dateToSQLDate(date) : DBManipulation.NULL_DATE;
     }
+
 }
