@@ -36,7 +36,7 @@ public class Utils {
 
 	public static void printPersons(Link[] array) {
 		for(Link l : array) {
-			System.out.println(l.getLinkedPerson().getFirstName() + " @H " + l.getHeuriticOfLinkValue() + " by " + l.getLinkedIntermediaryObject().getRef());
+			System.out.println(l.getLinkedPerson().getFirstName() + " @H " + l.getCertaintyEstimateOfLink() + " by " + l.getLinkedIntermediaryObject().getRef());
 		}
 		System.out.println();
 	}
@@ -59,28 +59,28 @@ public class Utils {
 			
 			for(ResultObject r : array) {
 				Link bL = r.getBranchLink();
-				System.out.println(bL.getLinkedPerson().getFirstName() + " @H " + r.getCombinedHeuristic() + " by " + r.getIntermidiaryLinks1()[0].getLinkedPerson().getFirstName() + " with " + r.getSupportingSiblingBridges().length + " SSB");
+				System.out.println(bL.getLinkedPerson().getFirstName() + " @H " + r.getCombinedCertatintyEstimate() + " by " + r.getIntermidiaryLinks1()[0].getLinkedPerson().getFirstName() + " with " + r.getSupportingSiblingBridges().length + " SSB");
 			}
 			
 		} else if (qt == QueryType.FULL_SIBLINGS) {
 			
 			for(ResultObject r : array) {
 				Link bL = r.getBranchLink();
-				System.out.println(bL.getLinkedPerson().getFirstName() + " @H " + r.getCombinedHeuristic() + " by " + r.getIntermidiaryLinks1()[0].getLinkedPerson().getFirstName() + " & " + r.getIntermidiaryLinks2()[0].getLinkedPerson().getFirstName() + " with " + r.getSupportingSiblingBridges().length + " SSB");
+				System.out.println(bL.getLinkedPerson().getFirstName() + " @H " + r.getCombinedCertatintyEstimate() + " by " + r.getIntermidiaryLinks1()[0].getLinkedPerson().getFirstName() + " & " + r.getIntermidiaryLinks2()[0].getLinkedPerson().getFirstName() + " with " + r.getSupportingSiblingBridges().length + " SSB");
 			}
 			
 		} else if(qt == QueryType.CB_PARTNERS) {
 			
 			for(ResultObject r : array) {
 				Link bL = r.getBranchLink();
-				System.out.println(bL.getLinkedPerson().getFirstName() + " @H " + r.getCombinedHeuristic() + " by " + bL.getLinkedIntermediaryObject().getRef() + " with " + r.getSupportingMarriageBridges().length + " SMB");
+				System.out.println(bL.getLinkedPerson().getFirstName() + " @H " + r.getCombinedCertatintyEstimate() + " by " + bL.getLinkedIntermediaryObject().getRef() + " with " + r.getSupportingMarriageBridges().length + " SMB");
 			}
 			
 		} else {
 		
 			for(ResultObject r : array) {
 				Link bL = r.getBranchLink();
-				System.out.println(bL.getLinkedPerson().getFirstName() + " @H " + r.getCombinedHeuristic() + " by " + bL.getLinkedIntermediaryObject().getRef());
+				System.out.println(bL.getLinkedPerson().getFirstName() + " @H " + r.getCombinedCertatintyEstimate() + " by " + bL.getLinkedIntermediaryObject().getRef());
 			}
 				
 		}

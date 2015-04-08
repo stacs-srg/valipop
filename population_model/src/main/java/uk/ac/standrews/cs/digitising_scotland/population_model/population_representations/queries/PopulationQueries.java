@@ -42,25 +42,35 @@ public class PopulationQueries {
 		PopulationQueries pq = new PopulationQueries(pop);
 
 		for(int p = 0; p < pop.getNumberOfPeople(); p++) {
-			//		int p = 3;
 			System.out.println("------ Queries From Viewpoint of Person " + pop.findPerson(p).getFirstName() + " ------");
 
-//			Utils.printResultSet(pq.getChildrenOf(p));
-//			System.out.println(TextualResultObjectJustifier.stringExplanationOf(pq.getChildrenOf(p)));
-//			
-//			Utils.printResultSet(pq.getFatherOf(p));
-//			Utils.printResultSet(pq.getMotherOf(p));
-
+			Utils.printResultSet(pq.getChildrenOf(p));
+			System.out.println(TextualResultObjectJustifier.stringExplanationOf(pq.getChildrenOf(p)));
+			
+			Utils.printResultSet(pq.getFatherOf(p));
+			System.out.println(TextualResultObjectJustifier.stringExplanationOf(pq.getFatherOf(p)));
+			
+			Utils.printResultSet(pq.getMotherOf(p));
+			System.out.println(TextualResultObjectJustifier.stringExplanationOf(pq.getMotherOf(p)));
+			
 			Utils.printResultSet(pq.getPotentialFatherSideSiblingsOf(p));
 			System.out.println(TextualResultObjectJustifier.stringExplanationOf(pq.getPotentialFatherSideSiblingsOf(p)));
 			
-//			Utils.printResultSet(pq.getPotentialMotherSideSiblingsOf(p));
-//			Utils.printResultSet(pq.getPotentialFullSiblings(p));
-//			Utils.printResultSet(pq.getPotentialSiblingsByBridges(p));
-//
-//			Utils.printResultSet(pq.getChildbearingPartnerOf(p));
-//			Utils.printResultSet(pq.getPotentialMarriageByBridges(p));
-
+			Utils.printResultSet(pq.getPotentialMotherSideSiblingsOf(p));
+			System.out.println(TextualResultObjectJustifier.stringExplanationOf(pq.getPotentialMotherSideSiblingsOf(p)));
+			
+			Utils.printResultSet(pq.getPotentialFullSiblings(p));
+			System.out.println(TextualResultObjectJustifier.stringExplanationOf(pq.getPotentialFullSiblings(p)));
+			
+			Utils.printResultSet(pq.getPotentialSiblingsByBridges(p));
+			System.out.println(TextualResultObjectJustifier.stringExplanationOf(pq.getPotentialSiblingsByBridges(p)));
+			
+			Utils.printResultSet(pq.getChildbearingPartnerOf(p));
+			System.out.println(TextualResultObjectJustifier.stringExplanationOf(pq.getChildbearingPartnerOf(p)));
+			
+			Utils.printResultSet(pq.getPotentialMarriageByBridges(p));
+			System.out.println(TextualResultObjectJustifier.stringExplanationOf(pq.getPotentialMarriageByBridges(p)));
+			
 			System.out.println("------ PERSON ENDS ------");
 		}
 
@@ -169,12 +179,12 @@ public class PopulationQueries {
 
 		for(Link l : p.getSiblings()) {
 			for(Link l2 : l.getLinkedIntermediaryObject().getOppositePersonsList(p)) {
-				ResultObject resultObject = new ResultObject(QueryType.SIBLING_BRIGE, l, l2);
+				ResultObject resultObject = new ResultObject(QueryType.SIBLING_BRIDGE, l, l2);
 				resultObject.setSupportingSiblingBridges(new SiblingBridge[]{(SiblingBridge) l2.getLinkedIntermediaryObject()});
 				siblings.add(resultObject);
 			}
 		}
-		return Utils.orderResults(siblings, QueryType.SIBLING_BRIGE, p);
+		return Utils.orderResults(siblings, QueryType.SIBLING_BRIDGE, p);
 	}
 
 	// Need to think about way of grouping children into possible sets?
@@ -256,7 +266,7 @@ public class PopulationQueries {
 			return noResult;
 		}
 
-		Link[] pFL = pP.getLinkedIntermediaryObject().getPerson1PotentialLinks();
+		Link[] pFL = pP.getLinkedIntermediaryObject().getPerson2PotentialLinks();
 
 
 		return getPotentialXSideSiblingsOf(p, pFL, QueryType.MOTHERS_SIDE_SIBLINGS);
