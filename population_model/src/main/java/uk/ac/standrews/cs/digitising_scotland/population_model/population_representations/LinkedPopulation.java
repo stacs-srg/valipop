@@ -147,7 +147,10 @@ public class LinkedPopulation implements ILinkedPopulation {
 
 	}
 
-
+	public int getNumberOfMarriagePartnerships() {
+		return marriagePartnerships.size();
+	}
+	
 	public void addPerson(LinkedPerson linkedPerson) {
 		livingPeople.add(linkedPerson);		
 	}
