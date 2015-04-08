@@ -36,6 +36,15 @@ import uk.ac.standrews.cs.digitising_scotland.population_model.population_repres
 public class PopulationQueries {
 
 	LinkedPopulation population;
+	
+	// Fm
+	double fmScalingFactor = 0.1;
+	double fmMeasuredRateOfOccurance;
+	double fmExpectedRateOfOccurance = 0.6;
+	double fmSignificanceInCulture = 0.9;
+	public static double fm;
+	
+	
 
 	public static void main(String[] args) {
 		LinkedPopulation pop = UseCases.generateNuclearFamilyUseCase13();
@@ -77,7 +86,14 @@ public class PopulationQueries {
 	}
 
 	public PopulationQueries(LinkedPopulation population) {
-		this.population = population;		
+		this.population = population;
+		
+		initFm();
+	}
+
+	private void initFm() {
+		fmMeasuredRateOfOccurance = population.getNumberOfMarriagePartnerships() / (population.getNumberOfPeople() / 2.0f);
+		fm = fmScalingFactor * (fmMeasuredRateOfOccurance / fmExpectedRateOfOccurance) * fmSignificanceInCulture;
 	}
 
 	// Need to think about ways of paring parents into probably sets?
