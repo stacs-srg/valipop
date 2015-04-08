@@ -28,27 +28,27 @@ public class ResultObject implements Comparable<ResultObject> {
 	
 	private LinkedPerson failedTestPersonRoot = null;
 
-	private float combinedHeuristic;
+	private float combinedCertaintyEstimate;
 	private QueryType queryType;
 	
 	public ResultObject(QueryType queryType, Link rootLink, Link branchLink) {
 		this.queryType = queryType;
 		this.rootLink = rootLink;
 		this.branchLink = branchLink;
-		combinedHeuristic = calculateCombinedHeuristic();
+		combinedCertaintyEstimate = calculateCombinedCertaintyEstimate();
 	}
 	
 	public ResultObject(QueryType queryType, Link rootLink, Link[] intermidiaryLinks, Link branchLink) {
 		this(queryType, rootLink, branchLink);
 		this.intermidiaryLinks1 = intermidiaryLinks;
-		combinedHeuristic = calculateCombinedHeuristic();
+		combinedCertaintyEstimate = calculateCombinedCertaintyEstimate();
 	}
 	
 	public ResultObject(QueryType queryType, Link rootLink, Link[] intermidiaryLinks1, Link[] intermidiaryLinks2, Link branchLink) {
 		this(queryType, rootLink, branchLink);
 		this.intermidiaryLinks1 = intermidiaryLinks1;
 		this.intermidiaryLinks2 = intermidiaryLinks2;
-		combinedHeuristic = calculateCombinedHeuristic();
+		combinedCertaintyEstimate = calculateCombinedCertaintyEstimate();
 	}
 	
 	
@@ -61,19 +61,19 @@ public class ResultObject implements Comparable<ResultObject> {
 	 * In case where 2 intermediary paths exist then takes the combined heuristic of the least likely path
 	 * TODO Need to consider sibling bridges and marriages in here
 	 */
-	private float calculateCombinedHeuristic() {
+	private float calculateCombinedCertaintyEstimate() {
 		if(intermidiaryLinks1 == null) {
-			return this.rootLink.getHeuriticOfLinkValue() * this.branchLink.getHeuriticOfLinkValue();
+			return this.rootLink.getCertaintyEstimateOfLink() * this.branchLink.getCertaintyEstimateOfLink();
 		} else {
-			float temp = this.rootLink.getHeuriticOfLinkValue() * this.branchLink.getHeuriticOfLinkValue();
+			float temp = this.rootLink.getCertaintyEstimateOfLink() * this.branchLink.getCertaintyEstimateOfLink();
 			for(Link l : intermidiaryLinks1) {
-				temp = temp * l.getHeuriticOfLinkValue();
+				temp = temp * l.getCertaintyEstimateOfLink();
 			}
 			
 			if(intermidiaryLinks2 != null) {
-				float temp2 = this.rootLink.getHeuriticOfLinkValue() * this.branchLink.getHeuriticOfLinkValue();
+				float temp2 = this.rootLink.getCertaintyEstimateOfLink() * this.branchLink.getCertaintyEstimateOfLink();
 				for(Link l : intermidiaryLinks2) {
-					temp2 = temp2 * l.getHeuriticOfLinkValue();
+					temp2 = temp2 * l.getCertaintyEstimateOfLink();
 				}
 				if(temp2 < temp) {
 					return temp2;
@@ -85,7 +85,7 @@ public class ResultObject implements Comparable<ResultObject> {
 
 	@Override
 	public int compareTo(ResultObject o) {
-		return Float.compare(o.getCombinedHeuristic(), this.getCombinedHeuristic());
+		return Float.compare(o.getCombinedCertatintyEstimate(), this.getCombinedCertatintyEstimate());
 	}
 	
 	public Link[] getIntermidiaryLinks1() {
@@ -104,8 +104,8 @@ public class ResultObject implements Comparable<ResultObject> {
 		return branchLink;
 	}
 
-	public float getCombinedHeuristic() {
-		return combinedHeuristic;
+	public float getCombinedCertatintyEstimate() {
+		return combinedCertaintyEstimate;
 	}
 	
 	public QueryType getQueryType() {
@@ -118,7 +118,7 @@ public class ResultObject implements Comparable<ResultObject> {
 
 	public void setSupportingSiblingBridges(SiblingBridge[] siblingLinkBridges) {
 		this.supportingSiblingBridges = siblingLinkBridges;
-		combinedHeuristic = calculateCombinedHeuristic();
+		combinedCertaintyEstimate = calculateCombinedCertaintyEstimate();
 	}
 	
 	public MarriageBridge[] getSupportingMarriageBridges() {
@@ -127,7 +127,7 @@ public class ResultObject implements Comparable<ResultObject> {
 
 	public void setSupportingMarriageBridges(MarriageBridge[] marriageLinkBridges) {
 		this.supportingMarriageBridges = marriageLinkBridges;
-		combinedHeuristic = calculateCombinedHeuristic();
+		combinedCertaintyEstimate = calculateCombinedCertaintyEstimate();
 	}
 	
 	public LinkedPerson getFailedTestPersonRoot() {

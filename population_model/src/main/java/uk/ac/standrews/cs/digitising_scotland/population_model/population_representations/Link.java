@@ -24,12 +24,12 @@ package uk.ac.standrews.cs.digitising_scotland.population_model.population_repre
 public class Link implements Comparable<Link> {
 
 	private Evidence[] provenance;
-	private float heuriticOfLinkValue;
+	private float certaintyEstimateOfLink;
 
 	private LinkedPerson linkedPerson;
 	private IntermediaryLinkObject intermediaryLinkedObject;
 
-	public Link(LinkedPerson person, IntermediaryLinkObject partnership, Evidence[] records, float heuristic) {
+	public Link(LinkedPerson person, IntermediaryLinkObject partnership, Evidence[] records, float certaintyEstimate) {
 		linkedPerson = person;
 		intermediaryLinkedObject = partnership;
 		provenance = records;
@@ -41,7 +41,7 @@ public class Link implements Comparable<Link> {
 			linkedPerson.addMarriageLink(this);
 		}
 		
-		heuriticOfLinkValue = heuristic;
+		certaintyEstimateOfLink = certaintyEstimate;
 	}
 
 	public Link(LinkedPerson child, ChildbearingPartnership partnership, Evidence[] records) {
@@ -49,7 +49,7 @@ public class Link implements Comparable<Link> {
 		intermediaryLinkedObject = partnership;
 		provenance = records;
 		linkedPerson.setParentPartnershipLink(this);
-		heuriticOfLinkValue = 1;
+		certaintyEstimateOfLink = 1;
 	}
 
 	public Evidence[] getProvenance() {
@@ -79,20 +79,20 @@ public class Link implements Comparable<Link> {
 	/**
 	 * @return the heuriticOfLinkValue
 	 */
-	public float getHeuriticOfLinkValue() {
-		return heuriticOfLinkValue;
+	public float getCertaintyEstimateOfLink() {
+		return certaintyEstimateOfLink;
 	}
 
 	/**
-	 * @param heuriticOfLinkValue the heuriticOfLinkValue to set
+	 * @param certaintyEstimateOfLink the heuriticOfLinkValue to set
 	 */
-	public void setHeuriticOfLinkValue(float heuriticOfLinkValue) {
-		this.heuriticOfLinkValue = heuriticOfLinkValue;
+	public void setCertaintyEstimateOfLink(float certaintyEstimateOfLink) {
+		this.certaintyEstimateOfLink = certaintyEstimateOfLink;
 	}
 
 	@Override
 	public int compareTo(Link o) {
-		return Float.compare(o.getHeuriticOfLinkValue(), this.getHeuriticOfLinkValue());
+		return Float.compare(o.getCertaintyEstimateOfLink(), this.getCertaintyEstimateOfLink());
 	}
 
 
