@@ -18,12 +18,14 @@ package uk.ac.standrews.cs.digitising_scotland.population_model.population_repre
 
 import java.util.ArrayList;
 
+import org.apache.bcel.generic.NEWARRAY;
+
 import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.queries.PopulationQueries;
 
 public class ResultObject implements Comparable<ResultObject> {
 
 	private Link rootLink;
-	private Link[] intermidiaryLinks1 = new Link[0];
+	private Link[] intermediaryLinks1 = new Link[0];
 	private Link[] intermidiaryLinks2 = new Link[0];
 	private Link branchLink;
 
@@ -44,14 +46,14 @@ public class ResultObject implements Comparable<ResultObject> {
 
 	public ResultObject(QueryType queryType, Link rootLink, Link[] intermidiaryLinks, Link branchLink) {
 		this(queryType, rootLink, branchLink);
-		this.intermidiaryLinks1 = intermidiaryLinks;
+		this.intermediaryLinks1 = intermidiaryLinks;
 		calculateCombinedCertaintyEstimate();
 	}
 
-	public ResultObject(QueryType queryType, Link rootLink, Link[] intermidiaryLinks1, Link[] intermidiaryLinks2, Link branchLink) {
+	public ResultObject(QueryType queryType, Link rootLink, Link[] intermediaryLinks1, Link[] intermediaryLinks2, Link branchLink) {
 		this(queryType, rootLink, branchLink);
-		this.intermidiaryLinks1 = intermidiaryLinks1;
-		this.intermidiaryLinks2 = intermidiaryLinks2;
+		this.intermediaryLinks1 = intermediaryLinks1;
+		this.intermidiaryLinks2 = intermediaryLinks2;
 		calculateCombinedCertaintyEstimate();
 	}
 
@@ -86,6 +88,7 @@ public class ResultObject implements Comparable<ResultObject> {
 		case MOTHERS_SIDE_SIBLINGS:
 			break;
 		case SIBLING_BRIDGE:
+			calculateSiblingBridgeQueryCertaintyEstimate();
 			break;
 		default:
 			break;
@@ -116,6 +119,115 @@ public class ResultObject implements Comparable<ResultObject> {
 		//			return temp;
 		//		}
 
+	}
+
+	private void calculateSiblingBridgeQueryCertaintyEstimate() {
+		float totalEstimate = 0;
+
+		if(supportingSiblingBridges.length == 0) {
+			combinedCertaintyEstimate = totalEstimate;
+			return;
+		}
+		
+		ArrayList<Float> p1E = new ArrayList<Float>();
+		ArrayList<Float> p2E = new ArrayList<Float>();
+		
+		Link aL = null, bL = null, gL, hL;
+		
+		for(Link a : supportingSiblingBridges[0].getSibling1PotentialLinks()) {
+			if(a.getLinkedPerson().getId() == rootLink.getLinkedPerson().getId()) {
+				aL = a;
+				for(Link b : supportingSiblingBridges[0].getSibling2PotentialLinks()) {
+					if(b.getLinkedPerson().getId() == branchLink.getLinkedPerson().getId()) {
+						bL = b;
+					}
+				}
+			} else if(a.getLinkedPerson().getId() == branchLink.getLinkedPerson().getId()) {
+				bL = a;
+				for(Link actualA : supportingSiblingBridges[0].getSibling2PotentialLinks()) {
+					if(actualA.getLinkedPerson().getId() == rootLink.getLinkedPerson().getId()) {
+						aL = actualA;
+					}
+				}
+			}
+		}
+		
+		if(aL == null || bL == null) {
+			
+			totalEstimate = 0;
+			return;
+		}
+		
+		totalEstimate = aL.getCertaintyEstimateOfLink() * bL.getCertaintyEstimateOfLink();
+		
+		gL = aL.getLinkedPerson().getParentsPartnershipLink();
+		hL = bL.getLinkedPerson().getParentsPartnershipLink();
+		
+		// null checks
+		
+		for(Link c : gL.getLinkedIntermediaryObject().getPerson1PotentialLinks()) {
+			for(Link d : c.getLinkedPerson().getChildBearingPartnerships()) {
+				if(d.getLinkedIntermediaryObject().getId() == branchLink.getLinkedIntermediaryObject().getId()) {
+					Link cL = c;
+					Link dL = d;
+					if(supportingSiblingBridges[0].getSiblingType() == SiblingType.HALF_SIBLINGS) {
+						p1E.add(cL.getCertaintyEstimateOfLink() * dL.getCertaintyEstimateOfLink() * hL.getCertaintyEstimateOfLink() * gL.getCertaintyEstimateOfLink());
+					} else {
+						totalEstimate += PopulationQueries.fs * (cL.getCertaintyEstimateOfLink() * dL.getCertaintyEstimateOfLink() * hL.getCertaintyEstimateOfLink() * gL.getCertaintyEstimateOfLink());
+						for(Link i : cL.getLinkedPerson().getMarraigePartnerships()) {
+							for(Link k : i.getLinkedIntermediaryObject().getOppositePersonsList(cL.getLinkedPerson())) {
+								for(Link f : k.getLinkedPerson().getChildBearingPartnerships()) {
+									if(f.getLinkedIntermediaryObject().getId() == branchLink.getLinkedIntermediaryObject().getId()) {
+										totalEstimate += 0.5f * PopulationQueries.fm * i.getCertaintyEstimateOfLink() * k.getCertaintyEstimateOfLink();
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		// null checks
+		
+		for(Link e : gL.getLinkedIntermediaryObject().getPerson2PotentialLinks()) {
+			for(Link f : e.getLinkedPerson().getChildBearingPartnerships()) {
+				if(f.getLinkedIntermediaryObject().getId() == branchLink.getLinkedIntermediaryObject().getId()) {
+					Link eL = e;
+					Link fL = f;
+					if(supportingSiblingBridges[0].getSiblingType() == SiblingType.HALF_SIBLINGS) {
+						p2E.add(eL.getCertaintyEstimateOfLink() * fL.getCertaintyEstimateOfLink() * hL.getCertaintyEstimateOfLink() * gL.getCertaintyEstimateOfLink());
+					} else {
+						totalEstimate += PopulationQueries.fs * (eL.getCertaintyEstimateOfLink() * fL.getCertaintyEstimateOfLink() * hL.getCertaintyEstimateOfLink() * gL.getCertaintyEstimateOfLink());
+						for(Link k : fL.getLinkedPerson().getMarraigePartnerships()) {
+							for(Link i : k.getLinkedIntermediaryObject().getOppositePersonsList(fL.getLinkedPerson())) {
+								for(Link f2 : i.getLinkedPerson().getChildBearingPartnerships()) {
+									if(f2.getLinkedIntermediaryObject().getId() == branchLink.getLinkedIntermediaryObject().getId()) {
+										totalEstimate += 0.5f * PopulationQueries.fm * i.getCertaintyEstimateOfLink() * k.getCertaintyEstimateOfLink();
+									}
+								}
+							}
+						}					
+					}
+				}
+			}
+		}
+		
+		// assume al paired up
+		
+		if(supportingSiblingBridges[0].getSiblingType() == SiblingType.HALF_SIBLINGS) {
+			int y = 0;
+			for(Float x : p1E) {
+				if(x > p2E.get(y++)) {
+					totalEstimate += PopulationQueries.fs * x;
+				} else {
+					totalEstimate += PopulationQueries.fs * p2E.get(y-1);	
+				}		
+			}
+		}
+		
+		combinedCertaintyEstimate = totalEstimate;
+		
 	}
 
 	private void calculateParentQueryCertaintyEstimate() {
@@ -163,7 +275,7 @@ public class ResultObject implements Comparable<ResultObject> {
 	}
 
 	public Link[] getIntermidiaryLinks1() {
-		return intermidiaryLinks1;
+		return intermediaryLinks1;
 	}
 
 	public Link[] getIntermidiaryLinks2() {

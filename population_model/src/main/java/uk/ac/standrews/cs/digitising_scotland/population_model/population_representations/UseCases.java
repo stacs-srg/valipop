@@ -732,7 +732,7 @@ public class UseCases {
 		population.addSiblingsObject(new SiblingBridge(1, "bet"));
 		population.addSiblingsObject(new SiblingBridge(2, "gimel"));
 
-		population.getSiblingsObjectByRef("alef").addPossiblePerson1Link(population.findPersonByFirstName("a"), new Evidence[]{records[2], records[8]}, 0.8f);
+		population.getSiblingsObjectByRef("alef").addPossiblePerson1Link(population.findPersonByFirstName("a"), new Evidence[]{records[2], records[8]}, 0.2f);
 		population.getSiblingsObjectByRef("alef").addPossiblePerson2Link(population.findPersonByFirstName("b"), new Evidence[]{records[1], records[8]}, 0.8f);
 
 		population.getSiblingsObjectByRef("bet").addPossiblePerson1Link(population.findPersonByFirstName("a"), new Evidence[]{records[2], records[9]}, 0.8f);
