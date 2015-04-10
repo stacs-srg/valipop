@@ -21,40 +21,40 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.PriorityQueue;
 
-import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.Link;
-import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.ChildbearingPartnership;
-import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.MarriageBridge;
-import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.LinkedPerson;
 import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.LinkedPopulation;
-import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.SiblingBridge;
-import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.QueryType;
-import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.ResultObject;
-import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.TextualResultObjectJustifier;
 import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.UseCases;
 import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.Utils;
+import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.data_structure.ChildbearingPartnership;
+import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.data_structure.Link;
+import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.data_structure.LinkedPerson;
+import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.data_structure.MarriageBridge;
+import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.data_structure.SiblingBridge;
+import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.results.ResultObject;
+import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.results.TextualResultObjectJustifier;
+import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.types.QueryType;
 
+/**
+ * 
+ * @author Tom Dalton (tsd4@st-andrews.ac.uk)
+ *
+ */
 public class PopulationQueries {
 
 	LinkedPopulation population;
-	
+
 	double fmScalingFactor = 0.1;
 	double fmMeasuredRateOfOccurance;
 	double fmExpectedRateOfOccurance = 0.6;
 	double fmSignificanceInCulture = 0.9;
 	public static double fm;
-	
+
 	double fsScalingFactor = 0.1;
 	double fsAvgNumChildrenExpectedInPopulation = 2.5;
 	public static double fs = 0.7;
-	
+
 	double fcScalingFactor = 0.1;
 	double fcExpectedRateOfOccurance = 0.6;
 	public static double fc = 0.7;
-	
-	
-	
-	
-	
 
 	public static void main(String[] args) {
 		LinkedPopulation pop = UseCases.generateNuclearFamilyUseCase13();
@@ -65,31 +65,31 @@ public class PopulationQueries {
 
 			Utils.printResultSet(pq.getChildrenOf(p));
 			System.out.println(TextualResultObjectJustifier.stringExplanationOf(pq.getChildrenOf(p)));
-			
+
 			Utils.printResultSet(pq.getFatherOf(p));
 			System.out.println(TextualResultObjectJustifier.stringExplanationOf(pq.getFatherOf(p)));
-			
+
 			Utils.printResultSet(pq.getMotherOf(p));
 			System.out.println(TextualResultObjectJustifier.stringExplanationOf(pq.getMotherOf(p)));
-			
+
 			Utils.printResultSet(pq.getPotentialFatherSideSiblingsOf(p));
 			System.out.println(TextualResultObjectJustifier.stringExplanationOf(pq.getPotentialFatherSideSiblingsOf(p)));
-			
+
 			Utils.printResultSet(pq.getPotentialMotherSideSiblingsOf(p));
 			System.out.println(TextualResultObjectJustifier.stringExplanationOf(pq.getPotentialMotherSideSiblingsOf(p)));
-			
+
 			Utils.printResultSet(pq.getPotentialFullSiblings(p));
 			System.out.println(TextualResultObjectJustifier.stringExplanationOf(pq.getPotentialFullSiblings(p)));
-			
+
 			Utils.printResultSet(pq.getPotentialSiblingsByBridges(p));
 			System.out.println(TextualResultObjectJustifier.stringExplanationOf(pq.getPotentialSiblingsByBridges(p)));
-			
+
 			Utils.printResultSet(pq.getChildbearingPartnerOf(p));
 			System.out.println(TextualResultObjectJustifier.stringExplanationOf(pq.getChildbearingPartnerOf(p)));
-			
+
 			Utils.printResultSet(pq.getPotentialMarriageByBridges(p));
 			System.out.println(TextualResultObjectJustifier.stringExplanationOf(pq.getPotentialMarriageByBridges(p)));
-			
+
 			System.out.println("------ PERSON ENDS ------");
 		}
 
@@ -97,11 +97,11 @@ public class PopulationQueries {
 
 	public PopulationQueries(LinkedPopulation population) {
 		this.population = population;
-		
+
 		initFm();
 		initFs();
 		initFc();
-		
+
 	}
 
 	private void initFc() {
@@ -118,7 +118,7 @@ public class PopulationQueries {
 			double expectNumSiblingBridges = top / (2 * (avg + 1));
 			fs = (population.getNumberOfSiblingBridges() * fsScalingFactor) / expectNumSiblingBridges;
 		}
-		
+
 	}
 
 	private void initFm() {
@@ -218,7 +218,7 @@ public class PopulationQueries {
 		}
 		return Utils.orderResults(marriagePartners, QueryType.MARRIAGE_BRIDGE, p);
 	}
-	
+
 	public ResultObject[] getPotentialSiblingsByBridges(int person) {
 		LinkedPerson p = (LinkedPerson) population.findPerson(person);
 		PriorityQueue<ResultObject> siblings = new PriorityQueue<ResultObject>();
@@ -227,7 +227,7 @@ public class PopulationQueries {
 			for(Link l2 : l.getLinkedIntermediaryObject().getOppositePersonsList(p)) {
 				ResultObject resultObject = new ResultObject(QueryType.SIBLING_BRIDGE, l, l2);
 				resultObject.setSupportingSiblingBridges(new SiblingBridge[]{(SiblingBridge) l2.getLinkedIntermediaryObject()});
-				
+
 				siblings.add(resultObject);
 			}
 		}
@@ -318,7 +318,7 @@ public class PopulationQueries {
 		return getPotentialXSideSiblingsOf(p, pFL, QueryType.MOTHERS_SIDE_SIBLINGS);
 	}
 
-	
+
 
 	public ResultObject[] getPotentialFullSiblings(int person) {
 		ResultObject[] fSideSibling = getPotentialFatherSideSiblingsOf(person);

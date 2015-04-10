@@ -18,6 +18,6 @@
  * The set of classes contained within look at ways of 'Providing explanations for 
  * linkage with representations of datasets containing uncertain and multiple linkage.'
  * 
- * @author Tom Dalton
+ * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 package uk.ac.standrews.cs.digitising_scotland.population_model.population_representations;

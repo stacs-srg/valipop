@@ -25,87 +25,91 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.adapted_interfaces.ILinkedPerson;
+import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.data_structure.ChildbearingPartnership;
+import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.data_structure.Link;
+import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.data_structure.LinkedPerson;
+import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.types.QueryType;
 
 public class UseCasesTest {
-	
+
 	@Test
 	public void testNuclearFamilyUseCase1Structure() {
 		LinkedPopulation pop = UseCases.generateNuclearFamilyUseCase1();
 		testLinksInBothDirectionsForUseCase(pop);
 	}
-	
+
 	@Test
 	public void testNuclearFamilyUseCase7Structure() {
 		LinkedPopulation pop = UseCases.generateNuclearFamilyUseCase7();
 		testLinksInBothDirectionsForUseCase(pop);
 	}
-	
+
 	@Test
 	public void testNuclearFamilyUseCase8Structure() {
 		LinkedPopulation pop = UseCases.generateNuclearFamilyUseCase8();
 		testLinksInBothDirectionsForUseCase(pop);
 	}
-	
+
 	@Test
 	public void testNuclearFamilyUseCase13Structure() {
 		LinkedPopulation pop = UseCases.generateNuclearFamilyUseCase13();
 		testLinksInBothDirectionsForUseCase(pop);
 	}
-	
+
 	@Test
 	public void testNuclearFamilyUseCase14Structure() {
 		LinkedPopulation pop = UseCases.generateNuclearFamilyUseCase14();
 		testLinksInBothDirectionsForUseCase(pop);
 	}
-	
+
 	@Test
 	public void testNonCrossOverMultiGenerationUseCase2Structure() {
 		LinkedPopulation pop = UseCases.generateNonCrossOverMultiGenerationUseCase2();
 		testLinksInBothDirectionsForUseCase(pop);
 	}
-	
+
 	@Test
 	public void testNonCrossOverMultiGenerationUseCase15Structure() {
 		LinkedPopulation pop = UseCases.generateNonCrossOverMultiGenerationUseCase15();
 		testLinksInBothDirectionsForUseCase(pop);
 	}
-	
+
 	@Test
 	public void testNonCrossOverMultiGenerationUseCase16Structure() {
 		LinkedPopulation pop = UseCases.generateCrossOverMultiGenerationUseCase16();
 		testLinksInBothDirectionsForUseCase(pop);
 	}
-	
+
 	@Test
 	public void testCrossOverMultiGenerationUseCase3Structure() {
 		LinkedPopulation pop = UseCases.generateCrossOverMultiGenerationUseCase3();
 		testLinksInBothDirectionsForUseCase(pop);
 	}
-	
+
 	@Test
 	public void tesNonCrossOverMultiGenerationUseCase9Structure() {
 		LinkedPopulation pop = UseCases.generateNonCrossOverMultiGenerationUseCase9();
 		testLinksInBothDirectionsForUseCase(pop);
 	}
-	
+
 	@Test
 	public void testCrossOverMultiGenerationUseCase11Structure() {
 		LinkedPopulation pop = UseCases.generateCrossOverMultiGenerationUseCase11();
 		testLinksInBothDirectionsForUseCase(pop);
 	}
-	
+
 	@Test
 	public void testCrossOverMultiGenerationUseCase17Structure() {
 		LinkedPopulation pop = UseCases.generateCrossOverMultiGenerationUseCase17();
 		testLinksInBothDirectionsForUseCase(pop);
 	}
-	
+
 	@Test
 	public void testSingleBestFitUseCase4Structure() {
 		LinkedPopulation pop = UseCases.generateSingleBestFitUseCase4();
 		testLinksInBothDirectionsForUseCase(pop);
 	}
-	
+
 	@Test
 	public void testMaleLineUseCase5Structure() {
 		LinkedPopulation pop = UseCases.generateMaleLineUseCase5();
@@ -117,32 +121,32 @@ public class UseCasesTest {
 		LinkedPopulation pop = UseCases.generateCousinsUseCase6();
 		testLinksInBothDirectionsForUseCase(pop);
 	}
-	
+
 	@Test
 	public void testCousinsUseCase10Structure() {
 		LinkedPopulation pop = UseCases.generateCousinsUseCase10();
 		testLinksInBothDirectionsForUseCase(pop);
 	}
-	
+
 	@Test
 	public void testCousinsUseCase18Structure() {
 		LinkedPopulation pop = UseCases.generateCousinsUseCase18();
 		testLinksInBothDirectionsForUseCase(pop);
 	}
-	
+
 	@Test
 	public void testEnforcedSiblingsUseCase12Structure() {
 		LinkedPopulation pop = UseCases.generateEnforcedSiblingsUseCase12();
 		testLinksInBothDirectionsForUseCase(pop);
 	}
-	
-	
-	
+
+
+
 	public void testLinksInBothDirectionsForUseCase(LinkedPopulation pop) {
 		Iterator<ILinkedPerson> i = pop.getPeople().iterator();
 		while(i.hasNext()) {
 			LinkedPerson p = (LinkedPerson) i.next();
-			
+
 			fatherAndChildLinked(p);
 			motherAndChildLinked(p);
 			partnersLinked(p, QueryType.CB_PARTNERS);
@@ -167,15 +171,15 @@ public class UseCasesTest {
 			for(Link l : p) {
 				children.add((LinkedPerson)((ChildbearingPartnership) l.getLinkedIntermediaryObject()).getChildLink().getLinkedPerson());
 			}
-			
-//			print(children);
-//			print(child);
-			
-			
+
+			//			print(children);
+			//			print(child);
+
+
 			Assert.assertTrue(children.contains(child));
 		}
 	}
-	
+
 	public void fatherAndChildLinked(LinkedPerson child) {
 		if(child.getParentsPartnershipLink() == null) {
 			return;
@@ -195,67 +199,67 @@ public class UseCasesTest {
 			Assert.assertTrue(children.contains(child));
 		}
 	}
-	
-//	public void partnersLinked(LinkedPerson person) {
-//		System.out.println(person.getFirstName());
-////		Utils.print(person);
-////		System.out.println(person.getPartnerships().size());
-//		if(person.getChildBearingPartnerships().size() == 0)
-//			return;
-//		
-//		List<Link> partnershipLinks = person.getChildBearingPartnerships();
-//		List<Link> partnerLinks = new ArrayList<Link>();
-//		for(Link l : partnershipLinks) {
-//				partnerLinks.addAll(Arrays.asList(l.getLinkedIntermediaryObject().getOppositePersonsList(person)));
-////			if(person.getSex() == 'M') {
-////				partnerLinks.addAll(Arrays.asList(l.getLinkedIntermediaryObject().getPerson2PotentialLinks()));
-////			} else if(person.getSex() == 'F') {
-////				partnerLinks.addAll(Arrays.asList(l.getLinkedIntermediaryObject().getPerson1PotentialLinks()));
-////			}
-//		}
-//		List<LinkedPerson> partners = new ArrayList<LinkedPerson>();
-//		for(Link l : partnerLinks) {
-//			partners.add((LinkedPerson) l.getLinkedPerson());
-//		}
-//		
-////		Utils.print(partners);
-//		
-//		List<Link> returnPartnershipLinks = new ArrayList<Link>();
-//		List<Link> returnPartnerLinks = new ArrayList<Link>();
-//		List<LinkedPerson> returnPartners = new ArrayList<LinkedPerson>();
-//		
-//		for(LinkedPerson partner : partners) {
-//			returnPartnershipLinks.addAll(partner.getChildBearingPartnerships());
-//		}
-//		
-//		for(Link l : returnPartnershipLinks) {
-//			returnPartnerLinks.addAll(Arrays.asList(l.getLinkedIntermediaryObject().getOppositePersonsList(l.getLinkedPerson())));
-//			System.out.println(partnerLinks.size());
-////			if(person.getSex() == 'M') {
-////				returnPartnerLinks.addAll(Arrays.asList(l.getLinkedIntermediaryObject().getPerson1PotentialLinks()));
-////			} else if(person.getSex() == 'F') {
-////				returnPartnerLinks.addAll(Arrays.asList(l.getLinkedIntermediaryObject().getPerson2PotentialLinks()));
-////			}
-//		}
-//		
-//		for(Link l : returnPartnerLinks) {
-//			System.out.println(l.getLinkedPerson().getFirstName());
-//			returnPartners.add((LinkedPerson) l.getLinkedPerson());
-//		}
-//		
-////		Utils.print(returnPartners);
-////		Utils.print(person);
-//		
-//		Assert.assertTrue(returnPartners.contains(person));
-//		
-//	}
+
+	//	public void partnersLinked(LinkedPerson person) {
+	//		System.out.println(person.getFirstName());
+	////		Utils.print(person);
+	////		System.out.println(person.getPartnerships().size());
+	//		if(person.getChildBearingPartnerships().size() == 0)
+	//			return;
+	//		
+	//		List<Link> partnershipLinks = person.getChildBearingPartnerships();
+	//		List<Link> partnerLinks = new ArrayList<Link>();
+	//		for(Link l : partnershipLinks) {
+	//				partnerLinks.addAll(Arrays.asList(l.getLinkedIntermediaryObject().getOppositePersonsList(person)));
+	////			if(person.getSex() == 'M') {
+	////				partnerLinks.addAll(Arrays.asList(l.getLinkedIntermediaryObject().getPerson2PotentialLinks()));
+	////			} else if(person.getSex() == 'F') {
+	////				partnerLinks.addAll(Arrays.asList(l.getLinkedIntermediaryObject().getPerson1PotentialLinks()));
+	////			}
+	//		}
+	//		List<LinkedPerson> partners = new ArrayList<LinkedPerson>();
+	//		for(Link l : partnerLinks) {
+	//			partners.add((LinkedPerson) l.getLinkedPerson());
+	//		}
+	//		
+	////		Utils.print(partners);
+	//		
+	//		List<Link> returnPartnershipLinks = new ArrayList<Link>();
+	//		List<Link> returnPartnerLinks = new ArrayList<Link>();
+	//		List<LinkedPerson> returnPartners = new ArrayList<LinkedPerson>();
+	//		
+	//		for(LinkedPerson partner : partners) {
+	//			returnPartnershipLinks.addAll(partner.getChildBearingPartnerships());
+	//		}
+	//		
+	//		for(Link l : returnPartnershipLinks) {
+	//			returnPartnerLinks.addAll(Arrays.asList(l.getLinkedIntermediaryObject().getOppositePersonsList(l.getLinkedPerson())));
+	//			System.out.println(partnerLinks.size());
+	////			if(person.getSex() == 'M') {
+	////				returnPartnerLinks.addAll(Arrays.asList(l.getLinkedIntermediaryObject().getPerson1PotentialLinks()));
+	////			} else if(person.getSex() == 'F') {
+	////				returnPartnerLinks.addAll(Arrays.asList(l.getLinkedIntermediaryObject().getPerson2PotentialLinks()));
+	////			}
+	//		}
+	//		
+	//		for(Link l : returnPartnerLinks) {
+	//			System.out.println(l.getLinkedPerson().getFirstName());
+	//			returnPartners.add((LinkedPerson) l.getLinkedPerson());
+	//		}
+	//		
+	////		Utils.print(returnPartners);
+	////		Utils.print(person);
+	//		
+	//		Assert.assertTrue(returnPartners.contains(person));
+	//		
+	//	}
 
 	public void partnersLinked(LinkedPerson person, QueryType partnershipType) {
-//		Utils.print(person);
-//		System.out.println(person.getPartnerships().size());
-		
+		//		Utils.print(person);
+		//		System.out.println(person.getPartnerships().size());
+
 		List<Link> partnershipLinks = null;
-		
+
 		switch (partnershipType) {
 		case CB_PARTNERS:
 			partnershipLinks = person.getChildBearingPartnerships();
@@ -269,31 +273,31 @@ public class UseCasesTest {
 		default:
 			return;
 		}
-		
-		
+
+
 		if(partnershipLinks.size() == 0)
 			return;
-		
+
 		List<Link> partnerLinks = new ArrayList<Link>();
 		for(Link l : partnershipLinks) {
 			partnerLinks.addAll(Arrays.asList(l.getLinkedIntermediaryObject().getOppositePersonsList(person)));
-//			if(person.getSex() == 'M') {
-//				partnerLinks.addAll(Arrays.asList(l.getLinkedIntermediaryObject().getPerson2PotentialLinks()));
-//			} else if(person.getSex() == 'F') {
-//				partnerLinks.addAll(Arrays.asList(l.getLinkedIntermediaryObject().getPerson1PotentialLinks()));
-//			}
+			//			if(person.getSex() == 'M') {
+			//				partnerLinks.addAll(Arrays.asList(l.getLinkedIntermediaryObject().getPerson2PotentialLinks()));
+			//			} else if(person.getSex() == 'F') {
+			//				partnerLinks.addAll(Arrays.asList(l.getLinkedIntermediaryObject().getPerson1PotentialLinks()));
+			//			}
 		}
 		List<LinkedPerson> partners = new ArrayList<LinkedPerson>();
 		for(Link l : partnerLinks) {
 			partners.add((LinkedPerson) l.getLinkedPerson());
 		}
-		
-//		Utils.print(partners);
-		
+
+		//		Utils.print(partners);
+
 		List<Link> returnPartnershipLinks = new ArrayList<Link>();
 		List<Link> returnPartnerLinks = new ArrayList<Link>();
 		List<LinkedPerson> returnPartners = new ArrayList<LinkedPerson>();
-		
+
 		for(LinkedPerson partner : partners) {
 			switch (partnershipType) {
 			case CB_PARTNERS:
@@ -309,26 +313,26 @@ public class UseCasesTest {
 				return;
 			}
 		}
-		
+
 		for(Link l : returnPartnershipLinks) {
 
 			returnPartnerLinks.addAll(Arrays.asList(l.getLinkedIntermediaryObject().getOppositePersonsList(l.getLinkedPerson())));
-//			if(person.getSex() == 'M') {
-//				returnPartnerLinks.addAll(Arrays.asList(l.getLinkedIntermediaryObject().getPerson1PotentialLinks()));
-//			} else if(person.getSex() == 'F') {
-//				returnPartnerLinks.addAll(Arrays.asList(l.getLinkedIntermediaryObject().getPerson2PotentialLinks()));
-//			}
+			//			if(person.getSex() == 'M') {
+			//				returnPartnerLinks.addAll(Arrays.asList(l.getLinkedIntermediaryObject().getPerson1PotentialLinks()));
+			//			} else if(person.getSex() == 'F') {
+			//				returnPartnerLinks.addAll(Arrays.asList(l.getLinkedIntermediaryObject().getPerson2PotentialLinks()));
+			//			}
 		}
-		
+
 		for(Link l : returnPartnerLinks) {
 			returnPartners.add((LinkedPerson) l.getLinkedPerson());
 		}
-		
-//		Utils.print(returnPartners);
-//		Utils.print(person);
-		
+
+		//		Utils.print(returnPartners);
+		//		Utils.print(person);
+
 		Assert.assertTrue(returnPartners.contains(person));
-		
+
 	}
 
 }

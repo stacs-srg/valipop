@@ -14,11 +14,8 @@
  * You should have received a copy of the GNU General Public License along with population_model. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.digitising_scotland.population_model.population_representations;
-
-public enum SiblingType {
-
-	HALF_SIBLINGS,
-	FULL_SIBLINGS
-
-}
+/**
+ * @author Tom Dalton
+ *
+ */
+package uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.results;

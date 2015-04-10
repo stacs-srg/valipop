@@ -18,11 +18,11 @@ package uk.ac.standrews.cs.digitising_scotland.population_model.population_repre
 
 import uk.ac.standrews.cs.digitising_scotland.population_model.config.PopulationProperties;
 import uk.ac.standrews.cs.digitising_scotland.population_model.model.database.DBConnector;
-import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.Link;
 import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.adapted_interfaces.ILinkedMarriagePartnership;
 import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.adapted_interfaces.ILinkedChildbearingPartnership;
 import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.adapted_interfaces.ILinkedPerson;
 import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.adapted_interfaces.IPopulationWriter;
+import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.data_structure.Link;
 //import uk.ac.standrews.cs.digitising_scotland.population_model.model.IPartnership;
 //import uk.ac.standrews.cs.digitising_scotland.population_model.model.IPerson;
 //import uk.ac.standrews.cs.digitising_scotland.population_model.model.IPopulationWriter;
@@ -39,129 +39,129 @@ import java.sql.SQLException;
  *
  * @author Graham Kirby (graham.kirby@st-andrews.ac.uk)
  * @author Alan Dearle (alan.dearle@st-andrews.ac.uk)
- * @author Tom Dalton
+ * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class DBPopulationWriter implements IPopulationWriter {
 
-    private static final String RECORD_PERSON_STATEMENT = makeInsertStatement(PopulationProperties.PERSON_TABLE_NAME, 10);
-    private static final String RECORD_PARTNERSHIP_STATEMENT = makeInsertStatement(PopulationProperties.PARTNERSHIP_TABLE_NAME, 3);
-    private static final String RECORD_PARTNER_WITHIN_PARTNERSHIP_STATEMENT = makeInsertStatement(PopulationProperties.PARTNERSHIP_PARTNER_TABLE_NAME, 2);
-    private static final String RECORD_CHILD_WITHIN_PARTNERSHIP_STATEMENT = makeInsertStatement(PopulationProperties.PARTNERSHIP_CHILD_TABLE_NAME, 2);
+	private static final String RECORD_PERSON_STATEMENT = makeInsertStatement(PopulationProperties.PERSON_TABLE_NAME, 10);
+	private static final String RECORD_PARTNERSHIP_STATEMENT = makeInsertStatement(PopulationProperties.PARTNERSHIP_TABLE_NAME, 3);
+	private static final String RECORD_PARTNER_WITHIN_PARTNERSHIP_STATEMENT = makeInsertStatement(PopulationProperties.PARTNERSHIP_PARTNER_TABLE_NAME, 2);
+	private static final String RECORD_CHILD_WITHIN_PARTNERSHIP_STATEMENT = makeInsertStatement(PopulationProperties.PARTNERSHIP_CHILD_TABLE_NAME, 2);
 
-    private final Connection connection;
-    private final PreparedStatement record_person_statement;
-    private final PreparedStatement record_partnership_statement;
-    private final PreparedStatement record_partner_within_partnership_statement;
-    private final PreparedStatement record_child_within_partnership_statement;
+	private final Connection connection;
+	private final PreparedStatement record_person_statement;
+	private final PreparedStatement record_partnership_statement;
+	private final PreparedStatement record_partner_within_partnership_statement;
+	private final PreparedStatement record_child_within_partnership_statement;
 
-    /**
-     * Initialises a writer using the standard database as specified in {@link uk.ac.standrews.cs.digitising_scotland.population_model.config.PopulationProperties}.
-     *
-     * @throws IOException if the database name cannot be loaded
-     * @throws SQLException if the database cannot be accessed
-     */
-    public DBPopulationWriter() throws IOException, SQLException {
+	/**
+	 * Initialises a writer using the standard database as specified in {@link uk.ac.standrews.cs.digitising_scotland.population_model.config.PopulationProperties}.
+	 *
+	 * @throws IOException if the database name cannot be loaded
+	 * @throws SQLException if the database cannot be accessed
+	 */
+	public DBPopulationWriter() throws IOException, SQLException {
 
-        connection = new DBConnector(PopulationProperties.getDatabaseName()).createConnection();
+		connection = new DBConnector(PopulationProperties.getDatabaseName()).createConnection();
 
-        record_person_statement = connection.prepareStatement(RECORD_PERSON_STATEMENT);
-        record_partnership_statement = connection.prepareStatement(RECORD_PARTNERSHIP_STATEMENT);
-        record_partner_within_partnership_statement = connection.prepareStatement(RECORD_PARTNER_WITHIN_PARTNERSHIP_STATEMENT);
-        record_child_within_partnership_statement = connection.prepareStatement(RECORD_CHILD_WITHIN_PARTNERSHIP_STATEMENT);
-    }
+		record_person_statement = connection.prepareStatement(RECORD_PERSON_STATEMENT);
+		record_partnership_statement = connection.prepareStatement(RECORD_PARTNERSHIP_STATEMENT);
+		record_partner_within_partnership_statement = connection.prepareStatement(RECORD_PARTNER_WITHIN_PARTNERSHIP_STATEMENT);
+		record_child_within_partnership_statement = connection.prepareStatement(RECORD_CHILD_WITHIN_PARTNERSHIP_STATEMENT);
+	}
 
-    public void close() throws SQLException {
+	public void close() throws SQLException {
 
-        record_person_statement.close();
-        record_partnership_statement.close();
+		record_person_statement.close();
+		record_partnership_statement.close();
 
-        connection.close();
-    }
+		connection.close();
+	}
 
-    @SuppressWarnings("FeatureEnvy")
-    public void recordPerson(final ILinkedPerson person) throws SQLException {
+	@SuppressWarnings("FeatureEnvy")
+	public void recordPerson(final ILinkedPerson person) throws SQLException {
 
-        DBManipulation.configurePreparedStatement(
-                record_person_statement,
-                person.getId(),
-                String.valueOf(person.getSex()),
-                person.getFirstName(),
-                person.getSurname(),
-                getSQLDate(person.getBirthDate()),
-                person.getBirthPlace(),
-                getSQLDate(person.getDeathDate()),
-                person.getDeathPlace(),
-                person.getDeathCause(),
-                person.getOccupation()
-        );
+		DBManipulation.configurePreparedStatement(
+				record_person_statement,
+				person.getId(),
+				String.valueOf(person.getSex()),
+				person.getFirstName(),
+				person.getSurname(),
+				getSQLDate(person.getBirthDate()),
+				person.getBirthPlace(),
+				getSQLDate(person.getDeathDate()),
+				person.getDeathPlace(),
+				person.getDeathCause(),
+				person.getOccupation()
+				);
 
-        record_person_statement.executeUpdate();
-    }
+		record_person_statement.executeUpdate();
+	}
 
-    @SuppressWarnings("FeatureEnvy")
-    public void recordPartnership(final ILinkedChildbearingPartnership partnership) throws SQLException {
+	@SuppressWarnings("FeatureEnvy")
+	public void recordPartnership(final ILinkedChildbearingPartnership partnership) throws SQLException {
 
-        final int partnership_id = partnership.getId();
+		final int partnership_id = partnership.getId();
 
-        recordMarriage(partnership);
+		recordMarriage(partnership);
 
-        Link[] fathers = partnership.getPerson2PotentialLinks();
-        Link[] mothers = partnership.getPerson1PotentialLinks();
-        
-        for(Link l : fathers)
-        	recordPartnerWithinPartnership(partnership_id, l.getLinkedPerson().getId());
-        	
-        for(Link l : mothers)
-        	recordPartnerWithinPartnership(partnership_id, l.getLinkedPerson().getId());
-        
+		Link[] fathers = partnership.getPerson2PotentialLinks();
+		Link[] mothers = partnership.getPerson1PotentialLinks();
 
-//        for (final Integer child_id : partnership.getChildIds()) {
-        recordChildWithinPartnership(partnership_id, partnership.getChildLink().getLinkedPerson().getId());
-//        }
-    }
+		for(Link l : fathers)
+			recordPartnerWithinPartnership(partnership_id, l.getLinkedPerson().getId());
 
-    @SuppressWarnings("FeatureEnvy")
-    private void recordMarriage(final ILinkedChildbearingPartnership partnership) throws SQLException {
+		for(Link l : mothers)
+			recordPartnerWithinPartnership(partnership_id, l.getLinkedPerson().getId());
 
-        final int partnership_id = partnership.getId();
-//        final Object marriage_date = getSQLDate(partnership.getMarriageDate());
-//        final String marriage_place = partnership.getMarriagePlace();
 
-        DBManipulation.configurePreparedStatement(record_partnership_statement, partnership_id);
-        record_partnership_statement.executeUpdate();
-    }
+		//        for (final Integer child_id : partnership.getChildIds()) {
+		recordChildWithinPartnership(partnership_id, partnership.getChildLink().getLinkedPerson().getId());
+		//        }
+	}
 
-    private void recordPartnerWithinPartnership(final int partnership_id, final int partner_id) throws SQLException {
+	@SuppressWarnings("FeatureEnvy")
+	private void recordMarriage(final ILinkedChildbearingPartnership partnership) throws SQLException {
 
-        DBManipulation.configurePreparedStatement(record_partner_within_partnership_statement, partner_id, partnership_id);
-        record_partner_within_partnership_statement.executeUpdate();
-    }
+		final int partnership_id = partnership.getId();
+		//        final Object marriage_date = getSQLDate(partnership.getMarriageDate());
+		//        final String marriage_place = partnership.getMarriagePlace();
 
-    private void recordChildWithinPartnership(final int partnership_id, final Integer child_id) throws SQLException {
+		DBManipulation.configurePreparedStatement(record_partnership_statement, partnership_id);
+		record_partnership_statement.executeUpdate();
+	}
 
-        DBManipulation.configurePreparedStatement(record_child_within_partnership_statement, child_id, partnership_id);
-        record_child_within_partnership_statement.executeUpdate();
-    }
+	private void recordPartnerWithinPartnership(final int partnership_id, final int partner_id) throws SQLException {
 
-    private static String makeInsertStatement(final String table_name, final int number_of_values) {
+		DBManipulation.configurePreparedStatement(record_partner_within_partnership_statement, partner_id, partnership_id);
+		record_partner_within_partnership_statement.executeUpdate();
+	}
 
-        final StringBuilder builder = new StringBuilder();
-        builder.append("INSERT INTO ");
-        builder.append(table_name);
-        builder.append(" VALUES(");
-        for (int i = 0; i < number_of_values; i++) {
-            if (i > 0) {
-                builder.append(',');
-            }
-            builder.append('?');
-        }
-        builder.append(");");
-        return builder.toString();
-    }
+	private void recordChildWithinPartnership(final int partnership_id, final Integer child_id) throws SQLException {
 
-    protected static Object getSQLDate(final java.util.Date date) {
+		DBManipulation.configurePreparedStatement(record_child_within_partnership_statement, child_id, partnership_id);
+		record_child_within_partnership_statement.executeUpdate();
+	}
 
-        return date != null ? DateManipulation.dateToSQLDate(date) : DBManipulation.NULL_DATE;
-    }
+	private static String makeInsertStatement(final String table_name, final int number_of_values) {
+
+		final StringBuilder builder = new StringBuilder();
+		builder.append("INSERT INTO ");
+		builder.append(table_name);
+		builder.append(" VALUES(");
+		for (int i = 0; i < number_of_values; i++) {
+			if (i > 0) {
+				builder.append(',');
+			}
+			builder.append('?');
+		}
+		builder.append(");");
+		return builder.toString();
+	}
+
+	protected static Object getSQLDate(final java.util.Date date) {
+
+		return date != null ? DateManipulation.dateToSQLDate(date) : DBManipulation.NULL_DATE;
+	}
 
 }

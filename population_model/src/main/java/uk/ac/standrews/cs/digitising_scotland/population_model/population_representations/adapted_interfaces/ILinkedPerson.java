@@ -20,7 +20,7 @@ import java.util.Date;
 import java.util.List;
 
 import uk.ac.standrews.cs.digitising_scotland.population_model.model.IPerson;
-import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.Link;
+import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.data_structure.Link;
 
 /**
  * Interface for person objects.
@@ -30,92 +30,92 @@ import uk.ac.standrews.cs.digitising_scotland.population_model.population_repres
  */
 public interface ILinkedPerson {
 
-    /**
-     * Representation of female sex.
-     */
-    char FEMALE = 'F';
+	/**
+	 * Representation of female sex.
+	 */
+	char FEMALE = 'F';
 
-    /**
-     * Representation of male sex.
-     */
-    char MALE = 'M';
+	/**
+	 * Representation of male sex.
+	 */
+	char MALE = 'M';
 
-    /**
-     * Gets the person's unique identifier. It can be assumed that identifiers are allocated in temporal
-     * order, so an older person's identifier is always less than that of a younger person.
-     * @return the person's unique identifier
-     */
-    int getId();
+	/**
+	 * Gets the person's unique identifier. It can be assumed that identifiers are allocated in temporal
+	 * order, so an older person's identifier is always less than that of a younger person.
+	 * @return the person's unique identifier
+	 */
+	int getId();
 
-    /**
-     * Gets the person's first name.
-     * @return the person's first name
-     */
-    String getFirstName();
+	/**
+	 * Gets the person's first name.
+	 * @return the person's first name
+	 */
+	String getFirstName();
 
-    /**
-     * Gets the person's surname (family name).
-     * @return the person's surname
-     */
-    String getSurname();
+	/**
+	 * Gets the person's surname (family name).
+	 * @return the person's surname
+	 */
+	String getSurname();
 
-    /**
-     * Gets the person's sex, either {@link #FEMALE} or {@link #MALE}.
-     * @return the person's sex
-     */
-    char getSex();
+	/**
+	 * Gets the person's sex, either {@link #FEMALE} or {@link #MALE}.
+	 * @return the person's sex
+	 */
+	char getSex();
 
-    /**
-     * Gets the person's date of birth.
-     * @return the person's date of birth
-     */
-    Date getBirthDate();
+	/**
+	 * Gets the person's date of birth.
+	 * @return the person's date of birth
+	 */
+	Date getBirthDate();
 
-    /**
-     * Gets the person's place of birth, or null if not recorded.
-     * @return the person's place of birth
-     */
-    String getBirthPlace();
+	/**
+	 * Gets the person's place of birth, or null if not recorded.
+	 * @return the person's place of birth
+	 */
+	String getBirthPlace();
 
-    /**
-     * Gets the person's date of death, or null if they are living.
-     * @return the person's date of death
-     */
-    Date getDeathDate();
+	/**
+	 * Gets the person's date of death, or null if they are living.
+	 * @return the person's date of death
+	 */
+	Date getDeathDate();
 
-    /**
-     * Gets the person's place of death, or null if not recorded.
-     * @return the person's place of death
-     */
-    String getDeathPlace();
-    
-    /**
-     * Gets the cause of the person's death, or null if not recorded.
-     * @return the cause of the person's death
-     */
-    String getDeathCause();
+	/**
+	 * Gets the person's place of death, or null if not recorded.
+	 * @return the person's place of death
+	 */
+	String getDeathPlace();
 
-    /*
-     * End of above comment's condisderation
-     */
-    
-    /**
-     * Gets the person's occupation, or null if not recorded.
-     * @return the person's occupation
-     */
-    String getOccupation();
+	/**
+	 * Gets the cause of the person's death, or null if not recorded.
+	 * @return the cause of the person's death
+	 */
+	String getDeathCause();
 
-    
-    /**
-     * Gets the Links of the person's potential partnerships, or null if none are recorded.
-     * @return the Linkes to the person's potential partnerships
-     */
-    List<Link> getChildBearingPartnerships();
+	/*
+	 * End of above comment's condisderation
+	 */
 
-    /**
-     * Gets the Link of the person's parents' partnership, or null if none are recorded.
-     * @return the identifier of the person's parents' partnership
-     */
-    Link getParentsPartnershipLink();
-    
+	/**
+	 * Gets the person's occupation, or null if not recorded.
+	 * @return the person's occupation
+	 */
+	String getOccupation();
+
+
+	/**
+	 * Gets the Links of the person's potential partnerships, or null if none are recorded.
+	 * @return the Linkes to the person's potential partnerships
+	 */
+	List<Link> getChildBearingPartnerships();
+
+	/**
+	 * Gets the Link of the person's parents' partnership, or null if none are recorded.
+	 * @return the identifier of the person's parents' partnership
+	 */
+	Link getParentsPartnershipLink();
+
 }

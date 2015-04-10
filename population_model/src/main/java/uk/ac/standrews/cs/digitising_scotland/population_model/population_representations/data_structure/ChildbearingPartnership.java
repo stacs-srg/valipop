@@ -14,39 +14,44 @@
  * You should have received a copy of the GNU General Public License along with population_model. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.digitising_scotland.population_model.population_representations;
+package uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.data_structure;
 
 import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.adapted_interfaces.ILinkedChildbearingPartnership;
 
+/**
+ * 
+ * @author Tom Dalton (tsd4@st-andrews.ac.uk)
+ *
+ */
 public class ChildbearingPartnership extends IntermediaryLinkObject implements ILinkedChildbearingPartnership {
 
-    private Link child;
-    
-    public ChildbearingPartnership(int id, String ref) {
-    	this.id = id;
-    	this.ref = ref;
-	}
-    
-    public void setChildLink(LinkedPerson child, Evidence[] records) {
-    	this.child = new Link(child, this, records);
-    }
-    
-    public Link[] getFatherPotentialLinks() {
-        return person1;
-    }
+	private Link child;
 
-    public Link[] getMotherPotentialLinks() {
-        return person2;
-    }
-    
-    @Override
-    public int compareTo(final ILinkedChildbearingPartnership o) {
-        if (this.equals(o)) {
-            return 0;
-        } else {
-            return 1;
-        }
-    }
+	public ChildbearingPartnership(int id, String ref) {
+		this.id = id;
+		this.ref = ref;
+	}
+
+	public void setChildLink(LinkedPerson child, Evidence[] records) {
+		this.child = new Link(child, this, records);
+	}
+
+	public Link[] getFatherPotentialLinks() {
+		return person1;
+	}
+
+	public Link[] getMotherPotentialLinks() {
+		return person2;
+	}
+
+	@Override
+	public int compareTo(final ILinkedChildbearingPartnership o) {
+		if (this.equals(o)) {
+			return 0;
+		} else {
+			return 1;
+		}
+	}
 
 	@Override
 	public Link getChildLink() {

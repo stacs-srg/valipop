@@ -14,9 +14,35 @@
  * You should have received a copy of the GNU General Public License along with population_model. If not, see
  * <http://www.gnu.org/licenses/>.
  */
+package uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.data_structure;
+
+import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.types.SiblingType;
 
 /**
+ * 
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  *
  */
-package uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.adapted_interfaces;
+public class SiblingBridge extends IntermediaryLinkObject {
+
+	private SiblingType siblingType;
+
+	public SiblingBridge(int id, String ref) {
+		this.id = id;
+		this.ref = ref;
+		siblingType = SiblingType.FULL_SIBLINGS;
+	}
+
+	public Link[] getSibling1PotentialLinks() {
+		return person1;
+	}
+
+	public Link[] getSibling2PotentialLinks() {
+		return person2;
+	}
+
+	public SiblingType getSiblingType() {
+		return siblingType;
+	}
+
+}

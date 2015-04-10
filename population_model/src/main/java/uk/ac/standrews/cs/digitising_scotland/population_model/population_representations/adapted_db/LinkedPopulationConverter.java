@@ -30,77 +30,77 @@ import uk.ac.standrews.cs.digitising_scotland.util.ProgressIndicator;
  */
 public class LinkedPopulationConverter implements AutoCloseable {
 
-    private final ILinkedPopulation population;
-    private final IPopulationWriter population_writer;
+	private final ILinkedPopulation population;
+	private final IPopulationWriter population_writer;
 
-    private ProgressIndicator progress_indicator;
+	private ProgressIndicator progress_indicator;
 
-    /**
-     * Initialises the population converter.
-     *
-     * @param population        the population to be converted
-     * @param population_writer the population writer to be used to create the new representation
-     */
-    public LinkedPopulationConverter(final ILinkedPopulation population, final IPopulationWriter population_writer) {
+	/**
+	 * Initialises the population converter.
+	 *
+	 * @param population        the population to be converted
+	 * @param population_writer the population writer to be used to create the new representation
+	 */
+	public LinkedPopulationConverter(final ILinkedPopulation population, final IPopulationWriter population_writer) {
 
-        this.population = population;
-        this.population_writer = population_writer;
-        progress_indicator = null;
-    }
+		this.population = population;
+		this.population_writer = population_writer;
+		progress_indicator = null;
+	}
 
-    /**
-     * Initialises the population converter.
-     *
-     * @param population         the population to be converted
-     * @param population_writer  the population writer to be used to create the new representation
-     * @param progress_indicator a progress indicator
-     * @throws Exception if the progress indicator cannot be initialised
-     */
-    public LinkedPopulationConverter(final ILinkedPopulation population, final IPopulationWriter population_writer, final ProgressIndicator progress_indicator) throws Exception {
+	/**
+	 * Initialises the population converter.
+	 *
+	 * @param population         the population to be converted
+	 * @param population_writer  the population writer to be used to create the new representation
+	 * @param progress_indicator a progress indicator
+	 * @throws Exception if the progress indicator cannot be initialised
+	 */
+	public LinkedPopulationConverter(final ILinkedPopulation population, final IPopulationWriter population_writer, final ProgressIndicator progress_indicator) throws Exception {
 
-        this(population, population_writer);
+		this(population, population_writer);
 
-        this.progress_indicator = progress_indicator;
-        initialiseProgressIndicator();
-    }
+		this.progress_indicator = progress_indicator;
+		initialiseProgressIndicator();
+	}
 
-    /**
-     * Creates a new population representation by passing each person and partnership in the population to the population writer.
-     *
-     * @throws Exception if a person or partnership cannot be converted
-     */
-    public void convert() throws Exception {
+	/**
+	 * Creates a new population representation by passing each person and partnership in the population to the population writer.
+	 *
+	 * @throws Exception if a person or partnership cannot be converted
+	 */
+	public void convert() throws Exception {
 
-        for (final ILinkedPerson person : population.getPeople()) {
+		for (final ILinkedPerson person : population.getPeople()) {
 
-            population_writer.recordPerson(person);
-            progressStep();
-        }
+			population_writer.recordPerson(person);
+			progressStep();
+		}
 
-        for (final ILinkedChildbearingPartnership partnership : population.getPartnerships()) {
+		for (final ILinkedChildbearingPartnership partnership : population.getPartnerships()) {
 
-            population_writer.recordPartnership(partnership);
-            progressStep();
-        }
-    }
+			population_writer.recordPartnership(partnership);
+			progressStep();
+		}
+	}
 
-    @Override
-    public void close() throws Exception {
+	@Override
+	public void close() throws Exception {
 
-        population_writer.close();
-    }
+		population_writer.close();
+	}
 
-    private void initialiseProgressIndicator() throws Exception {
+	private void initialiseProgressIndicator() throws Exception {
 
-        if (progress_indicator != null) {
-            progress_indicator.setTotalSteps(population.getNumberOfPeople() + population.getNumberOfPartnerships());
-        }
-    }
+		if (progress_indicator != null) {
+			progress_indicator.setTotalSteps(population.getNumberOfPeople() + population.getNumberOfPartnerships());
+		}
+	}
 
-    private void progressStep() {
+	private void progressStep() {
 
-        if (progress_indicator != null) {
-            progress_indicator.progressStep();
-        }
-    }
+		if (progress_indicator != null) {
+			progress_indicator.progressStep();
+		}
+	}
 }

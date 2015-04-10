@@ -26,86 +26,86 @@ import java.util.List;
  */
 public interface IPerson {
 
-    /**
-     * Representation of female sex.
-     */
-    char FEMALE = 'F';
+	/**
+	 * Representation of female sex.
+	 */
+	char FEMALE = 'F';
 
-    /**
-     * Representation of male sex.
-     */
-    char MALE = 'M';
+	/**
+	 * Representation of male sex.
+	 */
+	char MALE = 'M';
 
-    /**
-     * Gets the person's unique identifier. It can be assumed that identifiers are allocated in temporal
-     * order, so an older person's identifier is always less than that of a younger person.
-     * @return the person's unique identifier
-     */
-    int getId();
+	/**
+	 * Gets the person's unique identifier. It can be assumed that identifiers are allocated in temporal
+	 * order, so an older person's identifier is always less than that of a younger person.
+	 * @return the person's unique identifier
+	 */
+	int getId();
 
-    /**
-     * Gets the person's first name.
-     * @return the person's first name
-     */
-    String getFirstName();
+	/**
+	 * Gets the person's first name.
+	 * @return the person's first name
+	 */
+	String getFirstName();
 
-    /**
-     * Gets the person's surname (family name).
-     * @return the person's surname
-     */
-    String getSurname();
+	/**
+	 * Gets the person's surname (family name).
+	 * @return the person's surname
+	 */
+	String getSurname();
 
-    /**
-     * Gets the person's sex, either {@link #FEMALE} or {@link #MALE}.
-     * @return the person's sex
-     */
-    char getSex();
+	/**
+	 * Gets the person's sex, either {@link #FEMALE} or {@link #MALE}.
+	 * @return the person's sex
+	 */
+	char getSex();
 
-    /**
-     * Gets the person's date of birth.
-     * @return the person's date of birth
-     */
-    Date getBirthDate();
+	/**
+	 * Gets the person's date of birth.
+	 * @return the person's date of birth
+	 */
+	Date getBirthDate();
 
-    /**
-     * Gets the person's place of birth, or null if not recorded.
-     * @return the person's place of birth
-     */
-    String getBirthPlace();
+	/**
+	 * Gets the person's place of birth, or null if not recorded.
+	 * @return the person's place of birth
+	 */
+	String getBirthPlace();
 
-    /**
-     * Gets the person's date of death, or null if they are living.
-     * @return the person's date of death
-     */
-    Date getDeathDate();
+	/**
+	 * Gets the person's date of death, or null if they are living.
+	 * @return the person's date of death
+	 */
+	Date getDeathDate();
 
-    /**
-     * Gets the person's place of death, or null if not recorded.
-     * @return the person's place of death
-     */
-    String getDeathPlace();
+	/**
+	 * Gets the person's place of death, or null if not recorded.
+	 * @return the person's place of death
+	 */
+	String getDeathPlace();
 
-    /**
-     * Gets the person's occupation, or null if not recorded.
-     * @return the person's occupation
-     */
-    String getOccupation();
+	/**
+	 * Gets the person's occupation, or null if not recorded.
+	 * @return the person's occupation
+	 */
+	String getOccupation();
 
-    /**
-     * Gets the cause of the person's death, or null if not recorded.
-     * @return the cause of the person's death
-     */
-    String getDeathCause();
+	/**
+	 * Gets the cause of the person's death, or null if not recorded.
+	 * @return the cause of the person's death
+	 */
+	String getDeathCause();
 
-    /**
-     * Gets the identifiers of the person's partnerships, or null if none are recorded.
-     * @return the identifiers of the person's partnerships
-     */
-    List<Integer> getPartnerships();
+	/**
+	 * Gets the identifiers of the person's partnerships, or null if none are recorded.
+	 * @return the identifiers of the person's partnerships
+	 */
+	List<Integer> getPartnerships();
 
-    /**
-     * Gets the identifier of the person's parents' partnership, or -1 if none are recorded.
-     * @return the identifier of the person's parents' partnership
-     */
-    int getParentsPartnership();
+	/**
+	 * Gets the identifier of the person's parents' partnership, or -1 if none are recorded.
+	 * @return the identifier of the person's parents' partnership
+	 */
+	int getParentsPartnership();
 }

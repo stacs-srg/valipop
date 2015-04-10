@@ -16,6 +16,17 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.population_model.population_representations;
 
+import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.data_structure.ChildbearingPartnership;
+import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.data_structure.Evidence;
+import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.data_structure.LinkedPerson;
+import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.data_structure.MarriageBridge;
+import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.data_structure.SiblingBridge;
+
+/**
+ * 
+ * @author Tom Dalton (tsd4@st-andrews.ac.uk)
+ *
+ */
 public class UseCases {
 
 	public static LinkedPopulation generateNuclearFamilyUseCase1() {

@@ -32,24 +32,24 @@ import uk.ac.standrews.cs.digitising_scotland.util.ProgressIndicator;
 public class ExportPopulationToDB extends AbstractPopulationToDB {
 
 	ILinkedPopulation population;
-//    public static void main(final String[] args) throws Exception {
-//    	DBInitialiser.setupDB();
-//        new ExportPopulationToDB().export(args);
-//    }
-    
-    public ExportPopulationToDB(ILinkedPopulation population) throws Exception {
-    	this.population = population;
-    	DBInitialiser.setupDB();
-    	String[] args = {"-b" + new Integer(population.getNumberOfPeople()).toString(), "-n1", "-u10"};
-    	this.export(args);
-    }
-//    -b250 -n1 -u100
+	//    public static void main(final String[] args) throws Exception {
+	//    	DBInitialiser.setupDB();
+	//        new ExportPopulationToDB().export(args);
+	//    }
 
-//    public ExportPopulationToDB(LinkedPopulation pop) {
-//		// TODO Auto-generated constructor stub
-//	}
+	public ExportPopulationToDB(ILinkedPopulation population) throws Exception {
+		this.population = population;
+		DBInitialiser.setupDB();
+		String[] args = {"-b" + new Integer(population.getNumberOfPeople()).toString(), "-n1", "-u10"};
+		this.export(args);
+	}
+	//    -b250 -n1 -u100
+
+	//    public ExportPopulationToDB(LinkedPopulation pop) {
+	//		// TODO Auto-generated constructor stub
+	//	}
 
 	public ILinkedPopulation getPopulation(final int batch_size, final ProgressIndicator indicator) throws Exception {
-    	return population;
-    }
+		return population;
+	}
 }
