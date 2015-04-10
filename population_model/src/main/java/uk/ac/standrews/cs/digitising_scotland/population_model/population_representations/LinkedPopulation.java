@@ -206,5 +206,9 @@ public class LinkedPopulation implements ILinkedPopulation {
 		}
 		return null;
 	}
+	
+	public int getNumberOfSiblingBridges() {
+		return siblingsBridges.size();
+	}
 
 }

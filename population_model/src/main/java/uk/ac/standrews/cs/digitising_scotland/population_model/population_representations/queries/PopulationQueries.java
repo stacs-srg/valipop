@@ -37,15 +37,19 @@ public class PopulationQueries {
 
 	LinkedPopulation population;
 	
-	// Fm
 	double fmScalingFactor = 0.1;
 	double fmMeasuredRateOfOccurance;
 	double fmExpectedRateOfOccurance = 0.6;
 	double fmSignificanceInCulture = 0.9;
 	public static double fm;
 	
+	double fsScalingFactor = 0.1;
+	double fsAvgNumChildrenExpectedInPopulation = 2.5;
+	public static double fs = 0.7;
 	
-	public static double fs;
+	double fcScalingFactor = 0.1;
+	double fcExpectedRateOfOccurance = 0.6;
+	public static double fc = 0.7;
 	
 	
 	
@@ -95,6 +99,26 @@ public class PopulationQueries {
 		this.population = population;
 		
 		initFm();
+		initFs();
+		initFc();
+		
+	}
+
+	private void initFc() {
+		fc = (fcScalingFactor * 2 * population.getNumberOfMarriagePartnerships()) / (population.getNumberOfPeople() * fcExpectedRateOfOccurance);
+	}
+
+	private void initFs() {
+
+		if(fsAvgNumChildrenExpectedInPopulation < 2) {
+			fs = 1;
+		} else {
+			double avg = fsAvgNumChildrenExpectedInPopulation;
+			double top = (population.getNumberOfPeople() - 1) * ((avg - 2) * (avg - 2) + avg + 2.0);
+			double expectNumSiblingBridges = top / (2 * (avg + 1));
+			fs = (population.getNumberOfSiblingBridges() * fsScalingFactor) / expectNumSiblingBridges;
+		}
+		
 	}
 
 	private void initFm() {

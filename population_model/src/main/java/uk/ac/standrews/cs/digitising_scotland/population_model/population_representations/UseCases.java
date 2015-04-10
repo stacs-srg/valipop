@@ -735,11 +735,11 @@ public class UseCases {
 		population.getSiblingsObjectByRef("alef").addPossiblePerson1Link(population.findPersonByFirstName("a"), new Evidence[]{records[2], records[8]}, 0.2f);
 		population.getSiblingsObjectByRef("alef").addPossiblePerson2Link(population.findPersonByFirstName("b"), new Evidence[]{records[1], records[8]}, 0.8f);
 
-		population.getSiblingsObjectByRef("bet").addPossiblePerson1Link(population.findPersonByFirstName("a"), new Evidence[]{records[2], records[9]}, 0.8f);
-		population.getSiblingsObjectByRef("bet").addPossiblePerson2Link(population.findPersonByFirstName("c"), new Evidence[]{records[0], records[9]}, 0.8f);
+		population.getSiblingsObjectByRef("bet").addPossiblePerson1Link(population.findPersonByFirstName("a"), new Evidence[]{records[2], records[9]}, 0.5f);
+		population.getSiblingsObjectByRef("bet").addPossiblePerson2Link(population.findPersonByFirstName("c"), new Evidence[]{records[0], records[9]}, 0.6f);
 
 		population.getSiblingsObjectByRef("gimel").addPossiblePerson1Link(population.findPersonByFirstName("b"), new Evidence[]{records[1], records[10]}, 0.8f);
-		population.getSiblingsObjectByRef("gimel").addPossiblePerson2Link(population.findPersonByFirstName("c"), new Evidence[]{records[0], records[10]}, 0.8f);
+		population.getSiblingsObjectByRef("gimel").addPossiblePerson2Link(population.findPersonByFirstName("c"), new Evidence[]{records[0], records[10]}, 0.4f);
 
 		population.addMarraigePartnership(new MarriageBridge(0, "ani"));
 
