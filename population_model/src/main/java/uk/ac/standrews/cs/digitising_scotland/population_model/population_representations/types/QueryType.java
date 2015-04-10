@@ -14,8 +14,14 @@
  * You should have received a copy of the GNU General Public License along with population_model. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.digitising_scotland.population_model.population_representations;
+package uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.types;
 
+
+/**
+ * 
+ * @author Tom Dalton (tsd4@st-andrews.ac.uk)
+ *
+ */
 public enum QueryType {
 	CHILDREN,
 	FATHERS,

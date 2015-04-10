@@ -14,54 +14,59 @@
  * You should have received a copy of the GNU General Public License along with population_model. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.digitising_scotland.population_model.population_representations;
+package uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.data_structure;
 
 import java.util.Date;
 
 import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.adapted_interfaces.ILinkedMarriagePartnership;
 import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.adapted_interfaces.ILinkedChildbearingPartnership;
 
+/**
+ * 
+ * @author Tom Dalton (tsd4@st-andrews.ac.uk)
+ *
+ */
 public class MarriageBridge extends IntermediaryLinkObject implements ILinkedMarriagePartnership {
 
-    public MarriageBridge(int id, String ref) {
-    	this.id = id;
-    	this.ref = ref;
-    }
-    
-    public String getRef() {
-    	return ref;
-    }
-    
-    public void addPossibleHusbandLink(LinkedPerson husband, Evidence[] evidence, float linkHeuristic) {
-    	addPossiblePerson1Link(husband, evidence, linkHeuristic);
-    }
-    
-    public void addPossibleWifeLink(LinkedPerson wife, Evidence[] evidence, float linkHeuristic) {
-    	addPossiblePerson2Link(wife, evidence, linkHeuristic);
-    }
-	
-    @Override
-    public int getId() {
-        return id;
-    }
+	public MarriageBridge(int id, String ref) {
+		this.id = id;
+		this.ref = ref;
+	}
 
-    @Override
-    public Link[] getPerson1PotentialLinks() {
-        return person2;
-    }
+	public String getRef() {
+		return ref;
+	}
 
-    @Override
-    public Link[] getPerson2PotentialLinks() {
-        return person1;
-    }
-    
-    public int compareTo(final ILinkedMarriagePartnership o) {
-        if (this.equals(o)) {
-            return 0;
-        } else {
-            return 1;
-        }
-    }
+	public void addPossibleHusbandLink(LinkedPerson husband, Evidence[] evidence, float linkHeuristic) {
+		addPossiblePerson1Link(husband, evidence, linkHeuristic);
+	}
+
+	public void addPossibleWifeLink(LinkedPerson wife, Evidence[] evidence, float linkHeuristic) {
+		addPossiblePerson2Link(wife, evidence, linkHeuristic);
+	}
+
+	@Override
+	public int getId() {
+		return id;
+	}
+
+	@Override
+	public Link[] getPerson1PotentialLinks() {
+		return person2;
+	}
+
+	@Override
+	public Link[] getPerson2PotentialLinks() {
+		return person1;
+	}
+
+	public int compareTo(final ILinkedMarriagePartnership o) {
+		if (this.equals(o)) {
+			return 0;
+		} else {
+			return 1;
+		}
+	}
 
 	@Override
 	public Date getMarriageDate() {
@@ -74,6 +79,6 @@ public class MarriageBridge extends IntermediaryLinkObject implements ILinkedMar
 		// TODO Auto-generated method stub
 		return null;
 	}
-    
-      
+
+
 }

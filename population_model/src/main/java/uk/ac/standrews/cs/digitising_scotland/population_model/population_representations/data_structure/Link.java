@@ -14,11 +14,11 @@
  * You should have received a copy of the GNU General Public License along with population_model. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.digitising_scotland.population_model.population_representations;
+package uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.data_structure;
 
 /**
  * Link class, used to show a potentional connection between a person and a partnership along with a heuristic linkage value and evidence of link.
- * @author Tom Dalton
+ * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  *
  */
 public class Link implements Comparable<Link> {
@@ -40,7 +40,7 @@ public class Link implements Comparable<Link> {
 		} else if(partnership.getClass() == MarriageBridge.class) {
 			linkedPerson.addMarriageLink(this);
 		}
-		
+
 		certaintyEstimateOfLink = certaintyEstimate;
 	}
 
@@ -59,19 +59,19 @@ public class Link implements Comparable<Link> {
 	public void setProvenance(Evidence[] provenance) {
 		this.provenance = provenance;
 	}
-	
+
 	public LinkedPerson getLinkedPerson() {
 		return linkedPerson;
 	}
-	
+
 	public void setLinkedPerson(LinkedPerson linkedPerson) {
 		this.linkedPerson = linkedPerson;
 	}
-	
+
 	public IntermediaryLinkObject getLinkedIntermediaryObject() {
 		return intermediaryLinkedObject;
 	}
-	
+
 	public void setLinkedPartnership(ChildbearingPartnership linkedPartnership) {
 		this.intermediaryLinkedObject = linkedPartnership;
 	}

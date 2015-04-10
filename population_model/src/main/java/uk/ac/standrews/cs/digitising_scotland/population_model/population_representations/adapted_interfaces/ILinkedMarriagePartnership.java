@@ -18,38 +18,43 @@ package uk.ac.standrews.cs.digitising_scotland.population_model.population_repre
 
 import java.util.Date;
 
-import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.Link;
+import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.data_structure.Link;
 
+/**
+ * 
+ * @author Tom Dalton (tsd4@st-andrews.ac.uk)
+ *
+ */
 public interface ILinkedMarriagePartnership {
 
 	/**
-     * Gets the partnership's unique identifier.
-     * @return the partnership's unique identifier
-     */
-    int getId();
+	 * Gets the partnership's unique identifier.
+	 * @return the partnership's unique identifier
+	 */
+	int getId();
 
-    /**
-     * Returns and array of Links for the female in the partnership.
-     * @return the possible Links for the female
-     */
-    Link[] getPerson1PotentialLinks();
-
-    /**
-     * Returns and array of Links for the male in the partnership.
-     * @return the possible Links of the male
-     */
-    Link[] getPerson2PotentialLinks();
-	
 	/**
-     * Gets the date of the marriage between the partners in this partnership, or null if they are not married.
-     * @return the date of the marriage of this partnership
-     */
-    Date getMarriageDate();
+	 * Returns and array of Links for the female in the partnership.
+	 * @return the possible Links for the female
+	 */
+	Link[] getPerson1PotentialLinks();
 
-    /**
-     * Gets the place of marriage, or null if not recorded.
-     * @return the place of marriage
-     */
-    String getMarriagePlace();
-	
+	/**
+	 * Returns and array of Links for the male in the partnership.
+	 * @return the possible Links of the male
+	 */
+	Link[] getPerson2PotentialLinks();
+
+	/**
+	 * Gets the date of the marriage between the partners in this partnership, or null if they are not married.
+	 * @return the date of the marriage of this partnership
+	 */
+	Date getMarriageDate();
+
+	/**
+	 * Gets the place of marriage, or null if not recorded.
+	 * @return the place of marriage
+	 */
+	String getMarriagePlace();
+
 }

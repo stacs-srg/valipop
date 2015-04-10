@@ -16,7 +16,7 @@
  */
 
 /**
- * @author Tom Dalton
+ * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  *
  */
 package uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.adapted_db;

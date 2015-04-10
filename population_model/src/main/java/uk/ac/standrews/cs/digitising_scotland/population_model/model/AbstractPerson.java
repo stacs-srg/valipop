@@ -26,94 +26,94 @@ import java.util.List;
  */
 public abstract class AbstractPerson implements IPerson {
 
-    protected int id;
-    protected String first_name;
-    protected String surname;
-    protected char sex;
-    protected Date birth_date;
-    protected String birth_place;
-    protected Date death_date;
-    protected String death_place;
-    protected String death_cause;
-    protected String occupation;
-    protected String string_rep;
-    protected List<Integer> partnerships;
-    protected int parents_partnership_id;
+	protected int id;
+	protected String first_name;
+	protected String surname;
+	protected char sex;
+	protected Date birth_date;
+	protected String birth_place;
+	protected Date death_date;
+	protected String death_place;
+	protected String death_cause;
+	protected String occupation;
+	protected String string_rep;
+	protected List<Integer> partnerships;
+	protected int parents_partnership_id;
 
-    @Override
-    public int getId() {
-        return id;
-    }
+	@Override
+	public int getId() {
+		return id;
+	}
 
-    @Override
-    public String getFirstName() {
-        return first_name;
-    }
+	@Override
+	public String getFirstName() {
+		return first_name;
+	}
 
-    @Override
-    public String getSurname() {
-        return surname;
-    }
+	@Override
+	public String getSurname() {
+		return surname;
+	}
 
-    @Override
-    public char getSex() {
-        return sex;
-    }
+	@Override
+	public char getSex() {
+		return sex;
+	}
 
-    @Override
-    public Date getBirthDate() {
-        return (Date) birth_date.clone();
-    }
+	@Override
+	public Date getBirthDate() {
+		return (Date) birth_date.clone();
+	}
 
-    @Override
-    public String getBirthPlace() {
-        return birth_place;
-    }
+	@Override
+	public String getBirthPlace() {
+		return birth_place;
+	}
 
-    @Override
-    public Date getDeathDate() {
-        return death_date == null ? null : (Date) death_date.clone();
-    }
+	@Override
+	public Date getDeathDate() {
+		return death_date == null ? null : (Date) death_date.clone();
+	}
 
-    @Override
-    public String getDeathPlace() {
-        return death_place;
-    }
+	@Override
+	public String getDeathPlace() {
+		return death_place;
+	}
 
-    @Override
-    public String getDeathCause() {
-        return death_cause;
-    }
+	@Override
+	public String getDeathCause() {
+		return death_cause;
+	}
 
-    @Override
-    public String getOccupation() {
-        return occupation;
-    }
+	@Override
+	public String getOccupation() {
+		return occupation;
+	}
 
-    @Override
-    public List<Integer> getPartnerships() {
-        return partnerships;
-    }
+	@Override
+	public List<Integer> getPartnerships() {
+		return partnerships;
+	}
 
-    @Override
-    public int getParentsPartnership() {
-        return parents_partnership_id;
-    }
+	@Override
+	public int getParentsPartnership() {
+		return parents_partnership_id;
+	}
 
-    @SuppressWarnings("NonFinalFieldReferenceInEquals")
-    @Override
-    public boolean equals(final Object other) {
-        return other instanceof IPerson && ((IPerson) other).getId() == id;
-    }
+	@SuppressWarnings("NonFinalFieldReferenceInEquals")
+	@Override
+	public boolean equals(final Object other) {
+		return other instanceof IPerson && ((IPerson) other).getId() == id;
+	}
 
-    @SuppressWarnings("NonFinalFieldReferencedInHashCode")
-    @Override
-    public int hashCode() {
-        return id;
-    }
+	@SuppressWarnings("NonFinalFieldReferencedInHashCode")
+	@Override
+	public int hashCode() {
+		return id;
+	}
 
-    @Override
-    public String toString() {
-        return string_rep;
-    }
+	@Override
+	public String toString() {
+		return string_rep;
+	}
 }

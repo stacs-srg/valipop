@@ -14,10 +14,21 @@
  * You should have received a copy of the GNU General Public License along with population_model. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.digitising_scotland.population_model.population_representations;
+package uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.results;
 
 import java.util.ArrayList;
 
+import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.data_structure.Evidence;
+import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.data_structure.Link;
+import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.data_structure.MarriageBridge;
+import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.data_structure.SiblingBridge;
+import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.types.QueryType;
+
+/**
+ * 
+ * @author Tom Dalton (tsd4@st-andrews.ac.uk)
+ *
+ */
 public class TextualResultObjectJustifier {
 
 	public static String stringExplanationOf(ResultObject[] resultObject) {
@@ -66,7 +77,7 @@ public class TextualResultObjectJustifier {
 
 			for(ResultObject r : resultObject) {
 				Link bL = r.getBranchLink();
-				
+
 				if(first) {
 					first = false;
 					explanation += "The most likely " + queryTypeS(qt) + " with a certainty estimation of " + combinedCertaintyEstimateS(r) + " is person " + personFNS(bL) + " ";
@@ -81,7 +92,7 @@ public class TextualResultObjectJustifier {
 
 				explanation += addEvidenceToString(r);
 				explanation += addSiblingBridgesToString(r) + nL();
-				
+
 				//				explanation += bL.getLinkedPerson().getFirstName() + " @H " + resultObject.getCombinedHeuristic() + " by " + resultObject.getIntermidiaryLinks1()[0].getLinkedPerson().getFirstName() + " & " + resultObject.getIntermidiaryLinks2()[0].getLinkedPerson().getFirstName() + " with " + resultObject.getSupportingSiblingBridges().length + " SSB" + "\n";
 			}
 
@@ -89,7 +100,7 @@ public class TextualResultObjectJustifier {
 
 			for(ResultObject r : resultObject) {
 				Link bL = r.getBranchLink();
-				
+
 				if(first) {
 					first = false;
 					explanation += "The most likely " + queryTypeS(qt) + " with a certainty estimation of " + combinedCertaintyEstimateS(r) + " is person " + personFNS(bL) + " ";
@@ -102,15 +113,15 @@ public class TextualResultObjectJustifier {
 
 				explanation += addEvidenceToString(r);
 				explanation += addMarriageBridgesToString(r) + nL();
-				
+
 				//				explanation += bL.getLinkedPerson().getFirstName() + " @H " + resultObject.getCombinedHeuristic() + " by " + bL.getLinkedIntermediaryObject().getRef() + " with " + resultObject.getSupportingMarriageBridges().length + " SMB" + "\n";
 			}
 
 		} else if(qt == QueryType.SIBLING_BRIDGE) {
-			
+
 			for(ResultObject r : resultObject) {
 				Link bL = r.getBranchLink();
-				
+
 				if(first) {
 					first = false;
 					explanation += "The most likely sibling with a certainty estimation of " + combinedCertaintyEstimateS(r) + " is person " + personFNS(bL) + " ";
@@ -122,14 +133,14 @@ public class TextualResultObjectJustifier {
 				}
 
 				explanation += addEvidenceToString(r) + nL();
-				
+
 			}
-		
+
 		} else if(qt == QueryType.MARRIAGE_BRIDGE) {
-			
+
 			for(ResultObject r : resultObject) {
 				Link bL = r.getBranchLink();
-				
+
 				if(first) {
 					first = false;
 					explanation += "The most likely spouse with a certainty estimation of " + combinedCertaintyEstimateS(r) + " is person " + personFNS(bL) + " ";
@@ -141,14 +152,14 @@ public class TextualResultObjectJustifier {
 				}
 
 				explanation += addEvidenceToString(r) + nL();
-				
+
 			}
-		
+
 		} else {
 
 			for(ResultObject r : resultObject) {
 				Link bL = r.getBranchLink();
-				
+
 				if(first) {
 					first = false;
 					explanation += "The most likely " + queryTypeS(qt) + " with a certainty estimation of " + combinedCertaintyEstimateS(r) + " is person " + personFNS(bL) + " ";
@@ -160,18 +171,18 @@ public class TextualResultObjectJustifier {
 				}
 
 				explanation += addEvidenceToString(r);
-				
+
 			}
-			
-//			for(ResultObject r : resultObject) {
-//				Link bL = r.getBranchLink();
-////								explanation += bL.getLinkedPerson().getFirstName() + " @H " + resultObject.getCombinedHeuristic() + " by " + bL.getLinkedIntermediaryObject().getRef() + "\n";
-//			}
+
+			//			for(ResultObject r : resultObject) {
+			//				Link bL = r.getBranchLink();
+			////								explanation += bL.getLinkedPerson().getFirstName() + " @H " + resultObject.getCombinedHeuristic() + " by " + bL.getLinkedIntermediaryObject().getRef() + "\n";
+			//			}
 
 		}
 
 		explanation += "\n";
-		
+
 		return explanation;
 	}
 
@@ -180,7 +191,7 @@ public class TextualResultObjectJustifier {
 	private static String siblingBridgeIDS(ResultObject r) {
 		return "(ID: " + r.getSupportingSiblingBridges()[0].getId() + ")";
 	}
-	
+
 	private static String marriageBridgeIDS(ResultObject r) {
 		return "(ID: " + r.getSupportingMarriageBridges()[0].getId() + ")";
 	}
@@ -196,15 +207,15 @@ public class TextualResultObjectJustifier {
 	private static String interL1PersonFNS(ResultObject r, int i) {
 		return personFNS(r.getIntermidiaryLinks1()[i]);
 	}
-	
+
 	private static String interL2PersonFNS(ResultObject r, int i) {
 		return personFNS(r.getIntermidiaryLinks2()[i]);
 	}
-	
+
 	private static String interL1PersonIDS(ResultObject r, int i) {
 		return personIDS(r.getIntermidiaryLinks1()[i]);
 	}
-	
+
 	private static String interL2PersonIDS(ResultObject r, int i) {
 		return personIDS(r.getIntermidiaryLinks2()[i]);
 	}
@@ -239,9 +250,9 @@ public class TextualResultObjectJustifier {
 			return "sibling bridges";
 		default:
 			break;
-	}
+		}
 
-	return " object ";
+		return " object ";
 	}
 
 	private static String sNL() {
@@ -255,9 +266,9 @@ public class TextualResultObjectJustifier {
 	private static String queryTypeS(ResultObject resultObject) {
 		QueryType qt = resultObject.getQueryType();
 		return queryTypeS(qt);
-		
+
 	}
-	
+
 	private static String addMarriageBridgesToString(ResultObject r) {
 		boolean marFirst = true;
 		String explanation = "";
@@ -312,23 +323,23 @@ public class TextualResultObjectJustifier {
 		return explanation;
 	}
 
-//	private static String addEvidenceToString(ResultObject r) {
-//		String explanation = "";
-//		Evidence[] evidence = getRecords(r);
-//		int c = 0;
-//		for(Evidence e : evidence) {
-//			explanation += e.getId();
-//			if(c == evidence.length - 1) {
-//				explanation += ". ";
-//			} else if(c == evidence.length - 2) {
-//				explanation += " and ";
-//			} else {
-//				explanation += ", ";
-//			}
-//			c++;
-//		}
-//		return explanation;
-//	}
+	//	private static String addEvidenceToString(ResultObject r) {
+	//		String explanation = "";
+	//		Evidence[] evidence = getRecords(r);
+	//		int c = 0;
+	//		for(Evidence e : evidence) {
+	//			explanation += e.getId();
+	//			if(c == evidence.length - 1) {
+	//				explanation += ". ";
+	//			} else if(c == evidence.length - 2) {
+	//				explanation += " and ";
+	//			} else {
+	//				explanation += ", ";
+	//			}
+	//			c++;
+	//		}
+	//		return explanation;
+	//	}
 
 	private static String addEvidenceToString(ResultObject r) {
 		String explanation = "";
@@ -338,9 +349,9 @@ public class TextualResultObjectJustifier {
 			if(!temp.contains(e))
 				temp.add(e);
 		}
-		
+
 		Evidence[] evidence = temp.toArray(new Evidence[temp.size()]);
-		
+
 		int c = 0;
 		for(Evidence e : evidence) {
 			explanation += e.getId();
@@ -356,7 +367,7 @@ public class TextualResultObjectJustifier {
 		return explanation;
 	}
 
-	
+
 	private static Evidence[] getRecords(ResultObject r) {
 
 		ArrayList<Evidence> records = new ArrayList<Evidence>();

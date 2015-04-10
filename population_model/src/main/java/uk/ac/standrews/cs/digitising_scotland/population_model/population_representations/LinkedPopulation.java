@@ -23,8 +23,17 @@ import java.util.List;
 import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.adapted_interfaces.ILinkedChildbearingPartnership;
 import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.adapted_interfaces.ILinkedPerson;
 import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.adapted_interfaces.ILinkedPopulation;
+import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.data_structure.ChildbearingPartnership;
+import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.data_structure.LinkedPerson;
+import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.data_structure.MarriageBridge;
+import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.data_structure.SiblingBridge;
 import uk.ac.standrews.cs.digitising_scotland.util.ArrayManipulation;
 
+/**
+ * 
+ * @author Tom Dalton (tsd4@st-andrews.ac.uk)
+ *
+ */
 public class LinkedPopulation implements ILinkedPopulation {
 
 	private List<LinkedPerson> livingPeople = new ArrayList<LinkedPerson>();
@@ -41,7 +50,7 @@ public class LinkedPopulation implements ILinkedPopulation {
 	/*
 	 * Interface methods
 	 */
-	
+
 	@Override
 	public Iterable<ILinkedPerson> getPeople() {
 		return new Iterable<ILinkedPerson>() {
@@ -150,7 +159,7 @@ public class LinkedPopulation implements ILinkedPopulation {
 	public int getNumberOfMarriagePartnerships() {
 		return marriagePartnerships.size();
 	}
-	
+
 	public void addPerson(LinkedPerson linkedPerson) {
 		livingPeople.add(linkedPerson);		
 	}
@@ -186,7 +195,7 @@ public class LinkedPopulation implements ILinkedPopulation {
 		}
 		return null;
 	}
-	
+
 	public MarriageBridge getMarraigePartnershipByRef(String ref) {
 
 		for (MarriageBridge partnership : marriagePartnerships) {
@@ -196,7 +205,7 @@ public class LinkedPopulation implements ILinkedPopulation {
 		}
 		return null;
 	}
-	
+
 	public SiblingBridge getSiblingsObjectByRef(String ref) {
 
 		for (SiblingBridge siblings : siblingsBridges) {
@@ -206,7 +215,7 @@ public class LinkedPopulation implements ILinkedPopulation {
 		}
 		return null;
 	}
-	
+
 	public int getNumberOfSiblingBridges() {
 		return siblingsBridges.size();
 	}

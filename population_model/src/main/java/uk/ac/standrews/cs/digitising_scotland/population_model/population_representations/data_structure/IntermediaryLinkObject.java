@@ -14,17 +14,22 @@
  * You should have received a copy of the GNU General Public License along with population_model. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.digitising_scotland.population_model.population_representations;
+package uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.data_structure;
 
+/**
+ * 
+ * @author Tom Dalton (tsd4@st-andrews.ac.uk)
+ *
+ */
 public abstract class IntermediaryLinkObject {
 
-    protected Integer id;
-    protected String ref;
-    protected Link[] person1 = new Link[0];
-    protected Link[] person2 = new Link[0];
-	
-    
-    public void addPossiblePerson1Link(LinkedPerson person1, Evidence[] evidence, float linkHeuristic) {
+	protected Integer id;
+	protected String ref;
+	protected Link[] person1 = new Link[0];
+	protected Link[] person2 = new Link[0];
+
+
+	public void addPossiblePerson1Link(LinkedPerson person1, Evidence[] evidence, float linkHeuristic) {
 		Link[] temp = this.person1.clone();
 		Link[] newArray = new Link[temp.length + 1];
 		int c = 0;
@@ -34,8 +39,8 @@ public abstract class IntermediaryLinkObject {
 		newArray[c] = new Link(person1, this, evidence, linkHeuristic);
 		this.person1 = newArray;
 	}
-	
-    public void addPossiblePerson2Link(LinkedPerson person2, Evidence[] evidence, float linkHeuristic) {
+
+	public void addPossiblePerson2Link(LinkedPerson person2, Evidence[] evidence, float linkHeuristic) {
 		Link[] temp = this.person2.clone();
 		Link[] newArray = new Link[temp.length + 1];
 		int c = 0;
@@ -45,18 +50,18 @@ public abstract class IntermediaryLinkObject {
 		newArray[c] = new Link(person2, this, evidence, linkHeuristic);
 		this.person2 = newArray;
 	}
-	
-    public Link[] getPerson1PotentialLinks() {
-        return person1;
-    }
 
-    public Link[] getPerson2PotentialLinks() {
-        return person2;
-    }
-    
-    public String getRef() {
-    	return ref;
-    }
+	public Link[] getPerson1PotentialLinks() {
+		return person1;
+	}
+
+	public Link[] getPerson2PotentialLinks() {
+		return person2;
+	}
+
+	public String getRef() {
+		return ref;
+	}
 
 	public Link[] getOppositePersonsList(LinkedPerson person) {
 		if(arrayContainsPerson(person1, person)) {
@@ -75,9 +80,9 @@ public abstract class IntermediaryLinkObject {
 		}
 		return false;
 	}
-	
-    public int getId() {
-        return id;
-    }
-	
+
+	public int getId() {
+		return id;
+	}
+
 }

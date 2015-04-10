@@ -14,15 +14,27 @@
  * You should have received a copy of the GNU General Public License along with population_model. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.digitising_scotland.population_model.population_representations;
+package uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.results;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.bcel.generic.NEWARRAY;
 
+import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.data_structure.ChildbearingPartnership;
+import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.data_structure.Link;
+import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.data_structure.LinkedPerson;
+import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.data_structure.MarriageBridge;
+import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.data_structure.SiblingBridge;
 import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.queries.PopulationQueries;
+import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.types.QueryType;
+import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.types.SiblingType;
 
+/**
+ * 
+ * @author Tom Dalton (tsd4@st-andrews.ac.uk)
+ *
+ */
 public class ResultObject implements Comparable<ResultObject> {
 
 	private Link rootLink;
@@ -110,7 +122,7 @@ public class ResultObject implements Comparable<ResultObject> {
 		Link b = branchLink;
 
 		totalEstimate = cE(a) * cE(b);
-		
+
 		List<Link> ds = a.getLinkedPerson().getChildBearingPartnerships();
 		for(Link d : ds) {
 			Link[] cs = d.getLinkedIntermediaryObject().getOppositePersonsList(a.getLinkedPerson());
@@ -120,9 +132,9 @@ public class ResultObject implements Comparable<ResultObject> {
 				}
 			}
 		}
-		
+
 		combinedCertaintyEstimate = totalEstimate;
-		
+
 	}
 
 	private void calculateFullSiblingQueryCertaintyEstimate() {
@@ -262,7 +274,7 @@ public class ResultObject implements Comparable<ResultObject> {
 				}
 			}
 		}
-		
+
 		if(supportingSiblingBridges[0].getSiblingType() == SiblingType.HALF_SIBLINGS) {
 			int y = 0;
 			for(Float x : p1E) {

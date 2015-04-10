@@ -16,7 +16,7 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.adapted_interfaces;
 
-import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.Link;
+import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.data_structure.Link;
 
 /**
  * Interface for partnership objects.
@@ -26,27 +26,27 @@ import uk.ac.standrews.cs.digitising_scotland.population_model.population_repres
  */
 public interface ILinkedChildbearingPartnership extends Comparable<ILinkedChildbearingPartnership> {
 
-    /**
-     * Gets the partnership's unique identifier.
-     * @return the partnership's unique identifier
-     */
-    int getId();
+	/**
+	 * Gets the partnership's unique identifier.
+	 * @return the partnership's unique identifier
+	 */
+	int getId();
 
-    /**
-     * Returns and array of Links for the female in the partnership.
-     * @return the possible Links for the female
-     */
-    Link[] getPerson1PotentialLinks();
+	/**
+	 * Returns and array of Links for the female in the partnership.
+	 * @return the possible Links for the female
+	 */
+	Link[] getPerson1PotentialLinks();
 
-    /**
-     * Returns and array of Links for the male in the partnership.
-     * @return the possible Links of the male
-     */
-    Link[] getPerson2PotentialLinks();
-    
-     /**
-     * Gets the identifiers of this partnership object's child_id, or null if none are recorded.
-     * @return the identifier of the partnership's child_id
-     */
-    Link getChildLink();
+	/**
+	 * Returns and array of Links for the male in the partnership.
+	 * @return the possible Links of the male
+	 */
+	Link[] getPerson2PotentialLinks();
+
+	/**
+	 * Gets the identifiers of this partnership object's child_id, or null if none are recorded.
+	 * @return the identifier of the partnership's child_id
+	 */
+	Link getChildLink();
 }
