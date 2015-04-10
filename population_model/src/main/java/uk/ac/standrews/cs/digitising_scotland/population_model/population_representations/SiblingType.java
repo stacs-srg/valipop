@@ -18,14 +18,7 @@ package uk.ac.standrews.cs.digitising_scotland.population_model.population_repre
 
 public enum SiblingType {
 
-	// A bridge identifying a pairing with ONLY one parent in common confirmed, 
-	// implying also that the other parent is NOT common between the two individuals in the pairing
-	CONFIRMED_HALF_SIBLINGS,
-	// A bridge identifying a pairing with BOTH parents in common confirmed
-	CONFIRMED_FULL_SIBLINGS,
-	// A bridge identifiying a pairing with one parent in common confirmed 
-	// but where the second parent is unknown - thus possibly being the same 
-	// giving the possibility that the identified pairing could be full sublings
-	CONFIRMED_HALF_POSSIBLE_FULL_SIBLINGS
-	
+	HALF_SIBLINGS,
+	FULL_SIBLINGS
+
 }

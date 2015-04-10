@@ -23,6 +23,7 @@ public class SiblingBridge extends IntermediaryLinkObject {
     public SiblingBridge(int id, String ref) {
     	this.id = id;
     	this.ref = ref;
+    	siblingType = SiblingType.FULL_SIBLINGS;
 	}
     
     public Link[] getSibling1PotentialLinks() {
@@ -31,6 +32,10 @@ public class SiblingBridge extends IntermediaryLinkObject {
 
     public Link[] getSibling2PotentialLinks() {
         return person2;
+    }
+    
+    public SiblingType getSiblingType() {
+    	return siblingType;
     }
     
 }

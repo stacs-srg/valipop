@@ -45,6 +45,12 @@ public class PopulationQueries {
 	public static double fm;
 	
 	
+	public static double fs;
+	
+	
+	
+	
+	
 
 	public static void main(String[] args) {
 		LinkedPopulation pop = UseCases.generateNuclearFamilyUseCase13();
@@ -197,13 +203,13 @@ public class PopulationQueries {
 			for(Link l2 : l.getLinkedIntermediaryObject().getOppositePersonsList(p)) {
 				ResultObject resultObject = new ResultObject(QueryType.SIBLING_BRIDGE, l, l2);
 				resultObject.setSupportingSiblingBridges(new SiblingBridge[]{(SiblingBridge) l2.getLinkedIntermediaryObject()});
+				
 				siblings.add(resultObject);
 			}
 		}
 		return Utils.orderResults(siblings, QueryType.SIBLING_BRIDGE, p);
 	}
 
-	// Need to think about way of grouping children into possible sets?
 	public ResultObject[] getChildrenOf(int person) {
 		LinkedPerson p = (LinkedPerson) population.findPerson(person);
 		PriorityQueue<ResultObject> children = new PriorityQueue<ResultObject>();

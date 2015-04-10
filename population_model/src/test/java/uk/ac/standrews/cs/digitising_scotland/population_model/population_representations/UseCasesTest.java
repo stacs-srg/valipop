@@ -145,7 +145,9 @@ public class UseCasesTest {
 			
 			fatherAndChildLinked(p);
 			motherAndChildLinked(p);
-			partnersLinked(p);
+			partnersLinked(p, QueryType.CB_PARTNERS);
+			partnersLinked(p, QueryType.SIBLING_BRIDGE);
+			partnersLinked(p, QueryType.MARRIAGE_BRIDGE);
 		}
 	}
 
@@ -194,20 +196,92 @@ public class UseCasesTest {
 		}
 	}
 	
-	public void partnersLinked(LinkedPerson person) {
+//	public void partnersLinked(LinkedPerson person) {
+//		System.out.println(person.getFirstName());
+////		Utils.print(person);
+////		System.out.println(person.getPartnerships().size());
+//		if(person.getChildBearingPartnerships().size() == 0)
+//			return;
+//		
+//		List<Link> partnershipLinks = person.getChildBearingPartnerships();
+//		List<Link> partnerLinks = new ArrayList<Link>();
+//		for(Link l : partnershipLinks) {
+//				partnerLinks.addAll(Arrays.asList(l.getLinkedIntermediaryObject().getOppositePersonsList(person)));
+////			if(person.getSex() == 'M') {
+////				partnerLinks.addAll(Arrays.asList(l.getLinkedIntermediaryObject().getPerson2PotentialLinks()));
+////			} else if(person.getSex() == 'F') {
+////				partnerLinks.addAll(Arrays.asList(l.getLinkedIntermediaryObject().getPerson1PotentialLinks()));
+////			}
+//		}
+//		List<LinkedPerson> partners = new ArrayList<LinkedPerson>();
+//		for(Link l : partnerLinks) {
+//			partners.add((LinkedPerson) l.getLinkedPerson());
+//		}
+//		
+////		Utils.print(partners);
+//		
+//		List<Link> returnPartnershipLinks = new ArrayList<Link>();
+//		List<Link> returnPartnerLinks = new ArrayList<Link>();
+//		List<LinkedPerson> returnPartners = new ArrayList<LinkedPerson>();
+//		
+//		for(LinkedPerson partner : partners) {
+//			returnPartnershipLinks.addAll(partner.getChildBearingPartnerships());
+//		}
+//		
+//		for(Link l : returnPartnershipLinks) {
+//			returnPartnerLinks.addAll(Arrays.asList(l.getLinkedIntermediaryObject().getOppositePersonsList(l.getLinkedPerson())));
+//			System.out.println(partnerLinks.size());
+////			if(person.getSex() == 'M') {
+////				returnPartnerLinks.addAll(Arrays.asList(l.getLinkedIntermediaryObject().getPerson1PotentialLinks()));
+////			} else if(person.getSex() == 'F') {
+////				returnPartnerLinks.addAll(Arrays.asList(l.getLinkedIntermediaryObject().getPerson2PotentialLinks()));
+////			}
+//		}
+//		
+//		for(Link l : returnPartnerLinks) {
+//			System.out.println(l.getLinkedPerson().getFirstName());
+//			returnPartners.add((LinkedPerson) l.getLinkedPerson());
+//		}
+//		
+////		Utils.print(returnPartners);
+////		Utils.print(person);
+//		
+//		Assert.assertTrue(returnPartners.contains(person));
+//		
+//	}
+
+	public void partnersLinked(LinkedPerson person, QueryType partnershipType) {
 //		Utils.print(person);
 //		System.out.println(person.getPartnerships().size());
-		if(person.getChildBearingPartnerships().size() == 0)
+		
+		List<Link> partnershipLinks = null;
+		
+		switch (partnershipType) {
+		case CB_PARTNERS:
+			partnershipLinks = person.getChildBearingPartnerships();
+			break;
+		case SIBLING_BRIDGE:
+			partnershipLinks = person.getSiblings();
+			break;
+		case MARRIAGE_BRIDGE:
+			partnershipLinks = person.getMarraigePartnerships();
+			break;
+		default:
+			return;
+		}
+		
+		
+		if(partnershipLinks.size() == 0)
 			return;
 		
-		List<Link> partnershipLinks = person.getChildBearingPartnerships();
 		List<Link> partnerLinks = new ArrayList<Link>();
 		for(Link l : partnershipLinks) {
-			if(person.getSex() == 'M') {
-				partnerLinks.addAll(Arrays.asList(l.getLinkedIntermediaryObject().getPerson2PotentialLinks()));
-			} else if(person.getSex() == 'F') {
-				partnerLinks.addAll(Arrays.asList(l.getLinkedIntermediaryObject().getPerson1PotentialLinks()));
-			}
+			partnerLinks.addAll(Arrays.asList(l.getLinkedIntermediaryObject().getOppositePersonsList(person)));
+//			if(person.getSex() == 'M') {
+//				partnerLinks.addAll(Arrays.asList(l.getLinkedIntermediaryObject().getPerson2PotentialLinks()));
+//			} else if(person.getSex() == 'F') {
+//				partnerLinks.addAll(Arrays.asList(l.getLinkedIntermediaryObject().getPerson1PotentialLinks()));
+//			}
 		}
 		List<LinkedPerson> partners = new ArrayList<LinkedPerson>();
 		for(Link l : partnerLinks) {
@@ -221,15 +295,29 @@ public class UseCasesTest {
 		List<LinkedPerson> returnPartners = new ArrayList<LinkedPerson>();
 		
 		for(LinkedPerson partner : partners) {
-			returnPartnershipLinks.addAll(partner.getChildBearingPartnerships());
+			switch (partnershipType) {
+			case CB_PARTNERS:
+				returnPartnershipLinks.addAll(partner.getChildBearingPartnerships());
+				break;
+			case SIBLING_BRIDGE:
+				returnPartnershipLinks.addAll(partner.getSiblings());
+				break;
+			case MARRIAGE_BRIDGE:
+				returnPartnershipLinks.addAll(partner.getMarraigePartnerships());
+				break;
+			default:
+				return;
+			}
 		}
 		
 		for(Link l : returnPartnershipLinks) {
-			if(person.getSex() == 'M') {
-				returnPartnerLinks.addAll(Arrays.asList(l.getLinkedIntermediaryObject().getPerson1PotentialLinks()));
-			} else if(person.getSex() == 'F') {
-				returnPartnerLinks.addAll(Arrays.asList(l.getLinkedIntermediaryObject().getPerson2PotentialLinks()));
-			}
+
+			returnPartnerLinks.addAll(Arrays.asList(l.getLinkedIntermediaryObject().getOppositePersonsList(l.getLinkedPerson())));
+//			if(person.getSex() == 'M') {
+//				returnPartnerLinks.addAll(Arrays.asList(l.getLinkedIntermediaryObject().getPerson1PotentialLinks()));
+//			} else if(person.getSex() == 'F') {
+//				returnPartnerLinks.addAll(Arrays.asList(l.getLinkedIntermediaryObject().getPerson2PotentialLinks()));
+//			}
 		}
 		
 		for(Link l : returnPartnerLinks) {
@@ -242,4 +330,5 @@ public class UseCasesTest {
 		Assert.assertTrue(returnPartners.contains(person));
 		
 	}
+
 }
