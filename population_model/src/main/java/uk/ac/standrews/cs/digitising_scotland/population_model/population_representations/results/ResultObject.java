@@ -145,9 +145,6 @@ public class ResultObject implements Comparable<ResultObject> {
 			return;
 		}
 
-		ArrayList<Float> p1E = new ArrayList<Float>();
-		ArrayList<Float> p2E = new ArrayList<Float>();
-
 		Link gL = null, hL = null, aL, bL;
 
 		aL = rootLink.getLinkedPerson().getParentsPartnershipLink();
