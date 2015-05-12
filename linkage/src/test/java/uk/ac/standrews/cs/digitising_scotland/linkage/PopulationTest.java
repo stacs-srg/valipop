@@ -46,7 +46,7 @@ public class PopulationTest {
 
         Path tempStore = Files.createTempDirectory(null);
 
-        StoreFactory.setStorePath(tempStore.toString());
+        StoreFactory.setStorePath(tempStore);
         store = StoreFactory.makeStore();
 
         repo = store.makeRepository("repo");
