@@ -16,21 +16,21 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.pipeline;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-
 import com.google.common.collect.Multiset;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.IClassifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.cachedclassifier.CachedClassifier;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.resolver.RecordClassificationResolverPipeline;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.resolver.Interfaces.LossFunction;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.resolver.RecordClassificationResolverPipeline;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.bucket.Bucket;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.classification.Classification;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.records.Record;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.tokens.TokenSet;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.tokens.TokenToClassificationMapGenerator;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * This class is produces a set of {@link Classification}s that represent the
@@ -83,7 +83,7 @@ public class ClassifierPipeline implements IPipeline {
      * @return bucket this is the bucket of records for further processing
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    public Bucket classify(final Bucket bucket) throws Exception {
+    public Bucket classify(final Bucket bucket) throws IOException, ClassNotFoundException {
 
         for (Record record : bucket) {
             putRecordIntoAppropriateBucket(classifyRecord(record));
@@ -102,7 +102,7 @@ public class ClassifierPipeline implements IPipeline {
 
     }
 
-    private Record classifyRecord(final Record record) throws Exception {
+    private Record classifyRecord(final Record record) throws IOException, ClassNotFoundException {
 
         for (String description : record.getDescription()) {
             if (!record.descriptionIsClassified(description)) {
@@ -113,7 +113,7 @@ public class ClassifierPipeline implements IPipeline {
         return record;
     }
 
-    private Set<Classification> classifyDescription(final String description) throws Exception {
+    private Set<Classification> classifyDescription(final String description) throws IOException, ClassNotFoundException {
 
         Set<Classification> result;
         if (recordCache.containsKey(description)) {

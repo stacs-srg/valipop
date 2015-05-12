@@ -16,12 +16,13 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.resolver.generic;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.resolver.Interfaces.ValidityAssessor;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Utility class for function which gets a List of all valid Sets of values from a MultiValueMap
@@ -45,11 +46,9 @@ public class ValidCombinationGetter<K, V, ValidityCriterion, P_ValidityAssessor 
      * @param validityCriterion a validity criterion for assessing the validity of a combination given a condition
      * @return a list of all valid sets of values from the MultiValueMap
      */
-    public List<Multiset<V>> getValidSets(final MultiValueMap<K, V> map, final ValidityCriterion validityCriterion) throws Exception {
+    public List<Multiset<V>> getValidSets(final MultiValueMap<K, V> map, final ValidityCriterion validityCriterion) {
 
-        List<Multiset<V>> validSets;
-        validSets = calculateValidSets(map, validityCriterion);
-        return validSets;
+        return calculateValidSets(map, validityCriterion);
     }
 
     /**
