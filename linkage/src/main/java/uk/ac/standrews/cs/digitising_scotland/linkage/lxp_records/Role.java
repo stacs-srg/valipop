@@ -1,20 +1,21 @@
 package uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records;
 
+import uk.ac.standrews.cs.digitising_scotland.util.ErrorHandling;
 import uk.ac.standrews.cs.jstore.impl.StoreFactory;
 import uk.ac.standrews.cs.jstore.impl.StoreReference;
-import uk.ac.standrews.cs.jstore.impl.TypeFactory;
-import uk.ac.standrews.cs.jstore.impl.exceptions.*;
+import uk.ac.standrews.cs.jstore.impl.exceptions.BucketException;
+import uk.ac.standrews.cs.jstore.impl.exceptions.IllegalKeyException;
+import uk.ac.standrews.cs.jstore.impl.exceptions.RepositoryException;
+import uk.ac.standrews.cs.jstore.impl.exceptions.StoreException;
 import uk.ac.standrews.cs.jstore.interfaces.IBucket;
 import uk.ac.standrews.cs.jstore.interfaces.ILXP;
 import uk.ac.standrews.cs.jstore.interfaces.IRepository;
 import uk.ac.standrews.cs.jstore.types.LXP_REF;
 import uk.ac.standrews.cs.jstore.types.LXP_SCALAR;
-import uk.ac.standrews.cs.digitising_scotland.util.ErrorHandling;
 import uk.ac.standrews.cs.nds.persistence.PersistentObjectException;
 import uk.ac.standrews.cs.nds.rpc.stream.JSONReader;
 
-import static uk.ac.standrews.cs.jstore.types.LXPBaseType.LONG;
-import static uk.ac.standrews.cs.jstore.types.LXPBaseType.STRING;
+import static uk.ac.standrews.cs.jstore.types.LXPBaseType.*;
 
 /**
  * Created by al on 03/10/2014.
@@ -22,9 +23,6 @@ import static uk.ac.standrews.cs.jstore.types.LXPBaseType.STRING;
 public class Role extends AbstractLXP {
 
     public enum role_played { principal, father, mother, bride, groom, grooms_father, grooms_mother, brides_father, brides_mother }
-
-    // TODO need to add SPOUSE in HERE
-
 
     // Person labels
 
@@ -34,7 +32,7 @@ public class Role extends AbstractLXP {
     public static final String FORENAME = "forename";
     @LXP_SCALAR(type = STRING)
     public static final String SEX = "sex";
-    @LXP_REF(type = "OID")
+    @LXP_REF(type = "lxp")
     public static final String ORIGINAL_RECORD = "original_record";
     @LXP_SCALAR(type = LONG)
     public static final String ORIGINAL_RECORD_TYPE = "original_record_type";
@@ -66,9 +64,9 @@ public class Role extends AbstractLXP {
 
     }
 
-    public static Role createPersonFromOwnBirthDeath(StoreReference<ILXP> original_record_ref, long original_record_type ) throws StoreException, BucketException {
+    public static Role createPersonFromOwnBirth(StoreReference<Birth> original_record_ref, long original_record_type ) throws StoreException, BucketException {
 
-        ILXP original_record = original_record_ref.getReferend();
+        Birth original_record = original_record_ref.getReferend();
 
         String surname = original_record.getString(Birth.SURNAME);
         String forename = original_record.getString(Birth.FORENAME);
@@ -78,7 +76,19 @@ public class Role extends AbstractLXP {
         return new Role( surname, forename, sex, role, original_record_ref, original_record_type );
     }
 
-    public static Role createFatherFromChildsBirthDeath(StoreReference<ILXP> original_record_ref, long original_record_type) throws StoreException, BucketException {
+    public static Role createPersonFromOwnDeath(StoreReference<Death> original_record_ref, long original_record_type ) throws StoreException, BucketException {
+
+        Death original_record = original_record_ref.getReferend();
+
+        String surname = original_record.getString(Death.SURNAME);
+        String forename = original_record.getString(Death.FORENAME);
+        String sex = original_record.getString(Death.SEX);
+        role_played role = role_played.principal;
+
+        return new Role( surname, forename, sex, role, original_record_ref, original_record_type );
+    }
+
+    public static Role createFatherFromChildsBirth(StoreReference<Birth> original_record_ref, long original_record_type) throws StoreException, BucketException {
 
         ILXP BD_record = original_record_ref.getReferend();
 
@@ -94,7 +104,23 @@ public class Role extends AbstractLXP {
         return new Role(surname, forename, sex, role, original_record_ref, original_record_type );
     }
 
-    public static Role createMotherFromChildsBirthDeath(StoreReference<ILXP>  original_record_ref, long original_record_type) throws StoreException, BucketException {
+    public static Role createFatherFromChildsDeath(StoreReference<Death> original_record_ref, long original_record_type) throws StoreException, BucketException {
+
+        ILXP BD_record = original_record_ref.getReferend();
+
+        if (BD_record.getString(Birth.FATHERS_SURNAME).equals("")) {
+            return null;
+        }
+
+        String surname = BD_record.getString(Death.FATHERS_SURNAME);
+        String forename = BD_record.getString(Death.FATHERS_FORENAME);
+        String sex = "M"; //  this is the father
+        role_played role = role_played.father;
+
+        return new Role(surname, forename, sex, role, original_record_ref, original_record_type );
+    }
+
+    public static Role createMotherFromChildsBirth(StoreReference<Birth>  original_record_ref, long original_record_type) throws StoreException, BucketException {
 
         ILXP BD_record = original_record_ref.getReferend();
 
@@ -104,6 +130,23 @@ public class Role extends AbstractLXP {
 
         String surname = BD_record.getString(Birth.MOTHERS_SURNAME);
         String forename = BD_record.getString(Birth.MOTHERS_FORENAME);
+        String sex = "F"; //  this is the mother
+        role_played role = role_played.mother;
+
+        return new Role(surname, forename, sex, role, original_record_ref, original_record_type );
+
+    }
+
+    public static Role createMotherFromChildsDeath(StoreReference<Death>  original_record_ref, long original_record_type) throws StoreException, BucketException {
+
+        ILXP BD_record = original_record_ref.getReferend();
+
+        if (BD_record.getString(Birth.MOTHERS_SURNAME).equals("")) {
+            return null;
+        }
+
+        String surname = BD_record.getString(Death.MOTHERS_SURNAME);
+        String forename = BD_record.getString(Death.MOTHERS_FORENAME);
         String sex = "F"; //  this is the mother
         role_played role = role_played.mother;
 
@@ -258,17 +301,15 @@ public class Role extends AbstractLXP {
     public role_played get_role() { return role_played.valueOf( getString(ROLE) ); }
 
     public ILXP get_original_record() {
-        long oid = getLong(ORIGINAL_RECORD);
-        long record_type = get_original_record_type();
-        if( record_type == TypeFactory.getInstance().typeWithname( "birth" ).getId() ) {
-            return get_from_bucket_with_name( "births", oid );
-        } else if( record_type == TypeFactory.getInstance().typeWithname( "death" ).getId() ) {
-            return get_from_bucket_with_name( "deaths", oid );
-        } else if( record_type == TypeFactory.getInstance().typeWithname( "marriage" ).getId() ) {
-            return get_from_bucket_with_name( "marriages", oid );
-        }
 
-        return null; // should not reach
+        String serialised = getString(ORIGINAL_RECORD);
+        StoreReference ref = new StoreReference( serialised );
+        try {
+            return ref.getReferend();
+        } catch (BucketException e) {
+            ErrorHandling.error( "Cannot deference: " + serialised );
+            return null; // should not reach
+        }
     }
 
     public long get_original_record_type() { return getLong(ORIGINAL_RECORD_TYPE); }

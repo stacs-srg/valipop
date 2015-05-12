@@ -1,22 +1,22 @@
 package uk.ac.standrews.cs.digitising_scotland.linkage;
 
+import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.Birth;
+import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.Death;
+import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.Marriage;
+import uk.ac.standrews.cs.digitising_scotland.linkage.tools.DSFields;
+import uk.ac.standrews.cs.digitising_scotland.util.FileManipulation;
 import uk.ac.standrews.cs.jstore.impl.LXP;
 import uk.ac.standrews.cs.jstore.impl.exceptions.BucketException;
 import uk.ac.standrews.cs.jstore.impl.exceptions.IllegalKeyException;
 import uk.ac.standrews.cs.jstore.interfaces.IBucket;
 import uk.ac.standrews.cs.jstore.interfaces.IReferenceType;
 import uk.ac.standrews.cs.jstore.types.Types;
-import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.Birth;
-import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.Death;
-import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.Marriage;
-import uk.ac.standrews.cs.digitising_scotland.util.FileManipulation;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -50,7 +50,7 @@ public class EventImporter {
             try {
                 while (true) {
                     Death d = new Death();
-                    importDigitisingScotlandRecord(d, reader, referencetype);
+                    importDigitisingScotlandRecord(d, reader, referencetype, DSFields.DEATH_FIELD_NAMES);
                     deaths.makePersistent(d);
                     count++;
                 }
@@ -79,7 +79,7 @@ public class EventImporter {
             try {
                 while (true) {
                     Marriage m = new Marriage();
-                    importDigitisingScotlandRecord(m, reader, referencetype);
+                    importDigitisingScotlandRecord(m, reader, referencetype, DSFields.MARRIAGE_FIELD_NAMES);
                     marriages.makePersistent(m);
                     count++;
                 }
@@ -108,7 +108,7 @@ public class EventImporter {
             try {
                 while (true) {
                     Birth b = new Birth();
-                    importDigitisingScotlandRecord(b, reader, referencetype);
+                    importDigitisingScotlandRecord(b, reader, referencetype, DSFields.BIRTH_FIELD_NAMES );
                     births.makePersistent(b);
                     count++;
                 }
@@ -123,10 +123,9 @@ public class EventImporter {
     /**
      * Fills in a OID record data from a file.
      */
-    private static void importDigitisingScotlandRecord(final LXP record, final BufferedReader reader, IReferenceType label) throws IOException, RecordFormatException, IllegalKeyException {
+    private static void importDigitisingScotlandRecord(final LXP record, final BufferedReader reader, IReferenceType lxp_type, Iterable<String> field_names) throws IOException, RecordFormatException, IllegalKeyException {
 
-        Collection<String> field_names = label.getLabels();
-        long record_type = label.getId();
+        long record_type = lxp_type.getId();
         String line = reader.readLine();
         if (line == null) {
             throw new IOException("read in empty line"); // expected in the way this is called

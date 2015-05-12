@@ -12,9 +12,11 @@ import uk.ac.standrews.cs.nds.rpc.stream.JSONReader;
 public class Marriage extends AbstractLXP {
 
     @LXP_SCALAR(type = LXPBaseType.STRING)
-    public static final String GROOM_MOTHERS_MAIDEN_SURNAME = "GROOM_MOTHERS_MAIDEN_SURNAME";
+    public static final String ORIGINAL_ID = "ORIGINAL_ID";
     @LXP_SCALAR(type = LXPBaseType.STRING)
-    public static final String GROOM_SURNAME = "GROOM_SURNAME";
+    public static final String GROOM_MOTHERS_MAIDEN_SURNAME = "groom_mothers_maiden_surname";
+    @LXP_SCALAR(type = LXPBaseType.STRING)
+    public static final String GROOM_SURNAME = "groom_surname";
     @LXP_SCALAR(type = LXPBaseType.STRING)
     public static final String GROOM_OCCUPATION = "groom_occupation";
     @LXP_SCALAR(type = LXPBaseType.STRING)
@@ -44,7 +46,7 @@ public class Marriage extends AbstractLXP {
     @LXP_SCALAR(type = LXPBaseType.STRING)
     public static final String GROOM_DID_NOT_SIGN = "groom_did_not_sign";
     @LXP_SCALAR(type = LXPBaseType.STRING)
-    String BRIDE_MARITAL_STATUS = "bride_marital_status";
+    public static final String BRIDE_MARITAL_STATUS = "bride_marital_status";
     @LXP_SCALAR(type = LXPBaseType.STRING)
     public static final String DENOMINATION = "denomination";
     @LXP_SCALAR(type = LXPBaseType.STRING)
@@ -64,7 +66,7 @@ public class Marriage extends AbstractLXP {
     @LXP_SCALAR(type = LXPBaseType.STRING)
     public static final String GROOM_MOTHERS_FORENAME = "groom_mothers_forename";
     @LXP_SCALAR(type = LXPBaseType.STRING)
-    String GROOM_MOTHER_DECEASED = "groom_mother_deceased";
+    public static final String GROOM_MOTHER_DECEASED = "groom_mother_deceased";
     @LXP_SCALAR(type = LXPBaseType.STRING)
     public static final String REGISTRATION_DISTRICT_NUMBER = "REGISTRATION_DISTRICT_NUMBER";
     @LXP_SCALAR(type = LXPBaseType.STRING)

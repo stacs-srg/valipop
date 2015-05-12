@@ -29,9 +29,9 @@ import java.util.ArrayList;
  */
 public class MultipleBlockerOverPerson extends Blocker<Role> {
 
-    public MultipleBlockerOverPerson(final IBucket peopleBucket, final IRepository output_repo, ILXPFactory<Role> tFactory) throws BucketException, RepositoryException, IOException {
+    public MultipleBlockerOverPerson(final IBucket<Role> roleBucket, final IRepository output_repo, ILXPFactory<Role> tFactory) throws BucketException, RepositoryException, IOException {
 
-        super(peopleBucket.getInputStream(), output_repo, tFactory);
+        super(roleBucket.getInputStream(), output_repo, tFactory);
     }
 
     /**
@@ -40,7 +40,7 @@ public class MultipleBlockerOverPerson extends Blocker<Role> {
      */
     public String[] determineBlockedBucketNamesForRecord(final Role record) {
 
-        // Only operates over person records
+        // Only operates over role records
 
         String FN = record.get_forename();
         String LN = record.get_surname();

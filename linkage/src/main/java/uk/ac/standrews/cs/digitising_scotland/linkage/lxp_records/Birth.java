@@ -9,7 +9,64 @@ import uk.ac.standrews.cs.nds.rpc.stream.JSONReader;
 /**
  * Created by al on 03/10/2014.
  */
-public class Birth extends BirthDeath {
+public class Birth extends AbstractLXP {
+
+    @LXP_SCALAR(type = LXPBaseType.STRING)
+    public static final String ORIGINAL_ID = "ORIGINAL_ID";
+
+    @LXP_SCALAR(type = LXPBaseType.STRING)
+    public static final String FORENAME = "forename";
+
+    @LXP_SCALAR(type = LXPBaseType.STRING)
+    public static final String CHANGED_FORENAME = "changed_forename";
+
+    @LXP_SCALAR(type = LXPBaseType.STRING)
+    public static final String SURNAME = "surname";
+
+    @LXP_SCALAR(type = LXPBaseType.STRING)
+    public static final String CHANGED_SURNAME = "changed_surname";
+
+    @LXP_SCALAR(type = LXPBaseType.STRING)
+    public static final String SEX = "sex";
+
+    @LXP_SCALAR(type = LXPBaseType.STRING)
+    public static final String FATHERS_FORENAME = "fathers_forename";
+
+    @LXP_SCALAR(type = LXPBaseType.STRING)
+    public static final String FATHERS_SURNAME = "fathers_surname";
+
+    @LXP_SCALAR(type = LXPBaseType.STRING)
+    public static final String MOTHERS_FORENAME = "mothers_forename";
+
+    @LXP_SCALAR(type = LXPBaseType.STRING)
+    public static final String MOTHERS_SURNAME = "mothers_surname";
+
+    @LXP_SCALAR(type = LXPBaseType.STRING)
+    public static final String MOTHERS_MAIDEN_SURNAME = "mothers_maiden_surname";
+
+    @LXP_SCALAR(type = LXPBaseType.STRING)
+    public static final String CHANGED_MOTHERS_MAIDEN_SURNAME = "changed_mothers_maiden_surname";
+
+    @LXP_SCALAR(type = LXPBaseType.STRING)
+    public static final String FATHERS_OCCUPATION = "fathers_occupation";
+
+    @LXP_SCALAR(type = LXPBaseType.STRING)
+    public static final String YEAR_OF_REGISTRATION = "YEAR_OF_REGISTRATION";
+
+    @LXP_SCALAR(type = LXPBaseType.STRING)
+    public static final String ENTRY = "ENTRY";
+
+    @LXP_SCALAR(type = LXPBaseType.STRING)
+    public static final String REGISTRATION_DISTRICT_SUFFIX = "REGISTRATION_DISTRICT_SUFFIX";
+
+    @LXP_SCALAR(type = LXPBaseType.STRING)
+    public static final String REGISTRATION_DISTRICT_NUMBER = "REGISTRATION_DISTRICT_NUMBER";
+
+    @LXP_SCALAR(type = LXPBaseType.STRING)
+    public static final String CORRECTED_ENTRY = "corrected_entry";
+
+    @LXP_SCALAR(type = LXPBaseType.STRING)
+    public static final String IMAGE_QUALITY = "image_quality";
 
     @LXP_SCALAR(type = LXPBaseType.STRING)
     public static final String BIRTH_DAY = "birth_day";
