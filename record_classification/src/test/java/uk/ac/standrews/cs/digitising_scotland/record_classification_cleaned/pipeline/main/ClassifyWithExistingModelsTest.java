@@ -37,17 +37,22 @@ import static org.junit.Assert.assertTrue;
 
 public class ClassifyWithExistingModelsTest {
 
-    private ClassifyWithExistingModels classifier;
     private final String expectedModelLocation = "/Models";
+    Bucket allRecords;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() throws Exception, CodeNotValidException {
 
         String codeDictionaryLocation = getClass().getResource("ICD_code_dictionary.txt").getFile();
         MachineLearningConfiguration.getDefaultProperties().setProperty("codeDictionaryFile", codeDictionaryLocation);
         copyFilesToExpectedLocation();
 
-        classifier = new ClassifyWithExistingModels();
+        String test_data_file_path = getResourceFilePath("classify_with_existing_models_test_data.tsv");
+        String model_directory_path = getResourceFilePath(expectedModelLocation);
+
+        String[] args = {test_data_file_path, model_directory_path, "true"};
+
+        allRecords = new ClassifyWithExistingModels().run(args);
     }
 
     private void copyFilesToExpectedLocation() throws IOException {
@@ -67,18 +72,9 @@ public class ClassifyWithExistingModelsTest {
     }
 
     @Test
-    public void test() throws Exception, CodeNotValidException {
+    public void test() {
 
-        String test_data_file_path = getResourceFilePath("classify_with_existing_models_test_data.tsv");
-        String model_directory_path = getResourceFilePath(expectedModelLocation);
-        final String multipleClassifications = Boolean.TRUE.toString();
-
-        String[] args = {test_data_file_path, model_directory_path, multipleClassifications};
-
-        Bucket allRecords = classifier.run(args);
-
-        final int numberOfRecords = 8;
-        assertEquals(numberOfRecords, allRecords.size());
+        assertEquals(8, allRecords.size());
 
         Set<Classification> classifications = allRecords.getRecord(46999).getClassifications();
         System.out.println(classifications);
@@ -88,60 +84,82 @@ public class ClassifyWithExistingModelsTest {
         assertTrue(codes_in_map.contains("I340"));
         assertTrue(codes_in_map.contains("I48"));
         assertTrue(codes_in_map.contains("I515"));
+    }
+
+    @Test
+    public void test2() {
 
         final Set<Classification> sterosisSet = allRecords.getRecord(46999).getListOfClassifications().get("mitral sterosis");
         assertTrue(sterosisSet.size() == 1);
         assertTrue(sterosisSet.iterator().next().getConfidence() < 1);
         final Set<Classification> myocardialSet = allRecords.getRecord(46999).getListOfClassifications().get("myocardial degeneration");
         assertTrue(myocardialSet.size() == 1);
+    }
 
-        // Confidence is 1.0 here. Don't know why test is for > 1.
-        // assertTrue(myocardialSet.iterator().next().getConfidence() > 1);
+    @Test
+    public void test3() {
 
-        classifications = allRecords.getRecord(72408).getClassifications();
+        Set<Classification> classifications = allRecords.getRecord(72408).getClassifications();
         System.out.println(classifications);
         assertEquals(1, classifications.size());
-        codes_in_map = getCodesInMap(classifications.iterator());
+        Set<String> codes_in_map = getCodesInMap(classifications.iterator());
         assertTrue(codes_in_map.contains("I340"));
+    }
 
-        classifications = allRecords.getRecord(6804).getClassifications();
+    @Test
+    public void test4() {
+
+        Set<Classification> classifications = allRecords.getRecord(6804).getClassifications();
         System.out.println(classifications);
         assertEquals(2, classifications.size());
-        codes_in_map = getCodesInMap(classifications.iterator());
+        Set<String> codes_in_map = getCodesInMap(classifications.iterator());
         assertTrue(codes_in_map.contains("I219") || codes_in_map.contains("I639"));
         assertTrue(codes_in_map.contains("I515"));
+    }
 
-        classifications = allRecords.getRecord(43454).getClassifications();
+    @Test
+    public void test5() {
+
+        Set<Classification> classifications = allRecords.getRecord(43454).getClassifications();
         System.out.println(classifications);
         assertEquals(1, classifications.size());
-        codes_in_map = getCodesInMap(classifications.iterator());
+        Set<String> codes_in_map = getCodesInMap(classifications.iterator());
         assertTrue(codes_in_map.contains("I219") || codes_in_map.contains("I639"));
+    }
 
-        classifications = allRecords.getRecord(6809).getClassifications();
+    @Test
+    public void test6() {
+
+        Set<Classification> classifications = allRecords.getRecord(6809).getClassifications();
         System.out.println(classifications);
         assertEquals(2, classifications.size());
-        codes_in_map = getCodesInMap(classifications.iterator());
+        Set<String> codes_in_map = getCodesInMap(classifications.iterator());
         assertTrue(codes_in_map.contains("I219") || codes_in_map.contains("I639"));
         assertTrue(codes_in_map.contains("I515"));
+    }
 
-        classifications = allRecords.getRecord(9999).getClassifications();
+    @Test
+    public void test7() {
+
+        Set<Classification> classifications = allRecords.getRecord(9999).getClassifications();
         System.out.println(classifications);
         assertEquals(0, classifications.size());
-        codes_in_map = getCodesInMap(classifications.iterator());
+        Set<String> codes_in_map = getCodesInMap(classifications.iterator());
         assertTrue(codes_in_map.isEmpty());
+    }
 
-        classifications = allRecords.getRecord(1234).getClassifications();
+    @Test
+    public void test8() {
+
+        Set<Classification> classifications = allRecords.getRecord(1234).getClassifications();
         System.out.println(classifications);
         assertEquals(3, classifications.size());
-        codes_in_map = getCodesInMap(classifications.iterator());
+        Set<String> codes_in_map = getCodesInMap(classifications.iterator());
         assertTrue(codes_in_map.contains("I501"));
         assertTrue(codes_in_map.contains("I340"));
         assertTrue(codes_in_map.contains("I38"));
         final Set<Classification> failureSet = allRecords.getRecord(1234).getListOfClassifications().get("failure of the right ventricular");
         assertEquals(1, failureSet.size());
-
-        // Confidence is 1.0 here. Don't know why test is for > 1.
-        // assertTrue(failureSet.iterator().next().getConfidence() > 1);
     }
 
     private String getResourceFilePath(String resource_file_name) {
