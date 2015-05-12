@@ -21,6 +21,7 @@ public class SameAs extends AbstractLXP {
     @LXP_SCALAR(type = LXPBaseType.DOUBLE)
     public static final String CONFIDENCE = "confidence";
 
+    //TODO implement methods from LXP - not sure which ones!
 
     public SameAs(Role first, Role second, String relationship, float confidence) {
 
@@ -40,7 +41,6 @@ public class SameAs extends AbstractLXP {
         super(persistent_Object_id, reader);
     }
 
-    //TODO write methods.
 
 }
 

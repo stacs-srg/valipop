@@ -5,6 +5,7 @@ import uk.ac.standrews.cs.digitising_scotland.linkage.EventImporter;
 import uk.ac.standrews.cs.digitising_scotland.linkage.RecordFormatException;
 import uk.ac.standrews.cs.digitising_scotland.linkage.blocking.MultipleBlockerOverPerson;
 import uk.ac.standrews.cs.digitising_scotland.linkage.factory.BirthFactory;
+import uk.ac.standrews.cs.digitising_scotland.linkage.factory.DeathFactory;
 import uk.ac.standrews.cs.digitising_scotland.linkage.factory.MarriageFactory;
 import uk.ac.standrews.cs.digitising_scotland.linkage.factory.PairPersonFactory;
 import uk.ac.standrews.cs.digitising_scotland.linkage.factory.RoleFactory;
@@ -45,7 +46,7 @@ public class AlLinker {
     private IBucket<Marriage> marriages;               // Bucket containing marriage records (inputs).
     private IBucket<Death> deaths;                     // Bucket containing death records (inputs).
 
-    private IBucket<Role> people;                     // Bucket containing roles extracted from BDM records
+    private IBucket<Role> roles;                      // Bucket containing roles extracted from BDM records
     private IBucket<Pair<Role>> lineage;              // Bucket containing pairs of potentially linked toles
 
     // Paths to sources
@@ -67,17 +68,22 @@ public class AlLinker {
     private IReferenceType pairpersonType;
 
     private BirthFactory birthFactory;
-    private RoleFactory roleFactory;
+    private DeathFactory deathFactory;
     private MarriageFactory marriageFactory;
+    private RoleFactory roleFactory;
     private PairPersonFactory pairpersonFactory;
 
 
     public AlLinker(String births_source_path, String deaths_source_path, String marriages_source_path) throws BucketException, RepositoryException, RecordFormatException, JSONException, IOException, PersistentObjectException, StoreException, KeyNotFoundException, TypeMismatchFoundException, IllegalKeyException {
 
+        System.out.println( "Initialising" );
         initialise();
-        injestBDMRecords(births_source_path, deaths_source_path, marriages_source_path );
-        block();
-        link();
+        System.out.println("Injesting");
+        injestBDMRecords(births_source_path, deaths_source_path, marriages_source_path);
+//        System.out.println("Blocking");
+//        block();
+//        System.out.println("Linking");
+//        link();
         System.out.println( "Linkage completed" );
 
     }
@@ -98,11 +104,10 @@ public class AlLinker {
         initialiseTypes();
         initialiseFactories();
 
-        births = input_repo.makeBucket(births_name, BucketKind.DIRECTORYBACKED);   // TODO make these type specific
-        deaths = input_repo.makeBucket(deaths_name, BucketKind.DIRECTORYBACKED);   // TODO look for all occurances and change them to typed or generic
-        marriages = input_repo.makeBucket(marriages_name, BucketKind.DIRECTORYBACKED);
-
-        people = linkage_repo.makeBucket(role_name, BucketKind.DIRECTORYBACKED);
+        births = input_repo.makeBucket(births_name, BucketKind.DIRECTORYBACKED, birthFactory );
+        deaths = input_repo.makeBucket(deaths_name, BucketKind.DIRECTORYBACKED, deathFactory);
+        marriages = input_repo.makeBucket(marriages_name, BucketKind.DIRECTORYBACKED,marriageFactory);
+        roles = linkage_repo.makeBucket(role_name, BucketKind.DIRECTORYBACKED, roleFactory);
         lineage = linkage_repo.makeBucket(lineage_name, BucketKind.INDEXED, pairpersonFactory );
     }
 
@@ -113,25 +118,23 @@ public class AlLinker {
         birthType = tf.createType(Birth.class, "birth");
         deathType = tf.createType(Death.class, "death");
         marriageType = tf.createType(Marriage.class, "marriage");
-
         roleType = tf.createType(Role.class, "role");
-
         pairpersonType = tf.createType( Pair.class,"pairperson" ); // TODO this is wrong?
 
     }
 
     private void initialiseFactories() {
         birthFactory = new BirthFactory(birthType.getId());
+        deathFactory = new DeathFactory(deathType.getId());
         marriageFactory = new MarriageFactory(marriageType.getId());
         roleFactory = new RoleFactory(roleType.getId());
-
         pairpersonFactory = new PairPersonFactory(pairpersonType.getId());
     }
 
     /**
      * Import the birth,death, marriage records
-     * Initialises the people bucket with the people injected - one record for each person referenced in the original record
-     * Initialises the known(100% certain) relationships between people and stores the relationships in the relationships bucket
+     * Initialises the roles bucket with the roles injected - one record for each person referenced in the original record
+     * Initialises the known(100% certain) relationships between roles and stores the relationships in the relationships bucket
      * @param births_source_path
      * @param deaths_source_path
      * @param marriages_source_path
@@ -143,13 +146,13 @@ public class AlLinker {
         EventImporter.importDigitisingScotlandMarriages(marriages, marriages_source_path, marriageType);
 
         createRolesFromBirths(births);
-        createRolesFromDeaths(deaths);       // TODO can we add spouse?
+        createRolesFromDeaths(deaths);
         createRolesFromMarriages(marriages);
     }
 
     private void block() {
         try {
-            IBlocker blocker = new MultipleBlockerOverPerson(people, blocked_people_repo, roleFactory);
+            IBlocker blocker = new MultipleBlockerOverPerson(roles, blocked_people_repo, roleFactory);
             blocker.apply();
         } catch (RepositoryException e) {
             e.printStackTrace();
@@ -168,7 +171,7 @@ public class AlLinker {
         while (blocked_people_iterator.hasNext()) {
             IBucket<Role> blocked_records = blocked_people_iterator.next();
 
-            // Iterating over buckets of people with same first and last name and the same sex.
+            // Iterating over buckets of roles with same first and last name and the same sex.
 
             PeopleUnifier pl = new PeopleUnifier(blocked_records.getInputStream(), lineage.getOutputStream());
             pl.pairwiseUnify();
@@ -184,20 +187,20 @@ public class AlLinker {
      */
     private void createRolesFromBirths(IBucket bucket) throws BucketException, KeyNotFoundException, TypeMismatchFoundException, StoreException {
 
-        IOutputStream<Role> people_stream = people.getOutputStream();
+        IOutputStream<Role> people_stream = roles.getOutputStream();
         IInputStream<Birth> stream = bucket.getInputStream();
 
         for (Birth birth_record : stream) {
 
-            StoreReference<ILXP> birth_record_ref = new StoreReference<ILXP>(input_repo, bucket, birth_record);
+            StoreReference<Birth> birth_record_ref = new StoreReference<Birth>(input_repo, bucket, birth_record);
 
-            Role baby = Role.createPersonFromOwnBirthDeath( birth_record_ref, birthType.getId() );
+            Role baby = Role.createPersonFromOwnBirth(birth_record_ref, birthType.getId());
             people_stream.add(baby);
-            Role dad = Role.createFatherFromChildsBirthDeath(birth_record_ref, birthType.getId() );
+            Role dad = Role.createFatherFromChildsBirth(birth_record_ref, birthType.getId());
             if (dad != null) {
                 people_stream.add(dad);
             }
-            Role mum = Role.createMotherFromChildsBirthDeath( birth_record_ref, birthType.getId() );
+            Role mum = Role.createMotherFromChildsBirth(birth_record_ref, birthType.getId());
             if (mum != null) {
                 people_stream.add(mum);
             }
@@ -212,20 +215,20 @@ public class AlLinker {
      */
     private void createRolesFromDeaths(IBucket bucket) throws BucketException, KeyNotFoundException, TypeMismatchFoundException, StoreException {
 
-        IOutputStream<Role> people_stream = people.getOutputStream();
+        IOutputStream<Role> people_stream = roles.getOutputStream();
         IInputStream<Death> stream = bucket.getInputStream();
 
         for (Death death_record : stream) {
 
-            StoreReference<ILXP> death_record_ref = new StoreReference<ILXP>(input_repo, bucket, death_record);
+            StoreReference<Death> death_record_ref = new StoreReference<Death>(input_repo, bucket, death_record);
 
-            Role baby = Role.createPersonFromOwnBirthDeath( death_record_ref, deathType.getId() );
+            Role baby = Role.createPersonFromOwnDeath(death_record_ref, deathType.getId());
             people_stream.add(baby);
-            Role dad = Role.createFatherFromChildsBirthDeath( death_record_ref, deathType.getId() );
+            Role dad = Role.createFatherFromChildsDeath(death_record_ref, deathType.getId());
             if (dad != null) {
                 people_stream.add(dad);
             }
-            Role mum = Role.createMotherFromChildsBirthDeath( death_record_ref, deathType.getId() );
+            Role mum = Role.createMotherFromChildsDeath(death_record_ref, deathType.getId());
             if (mum != null) {
                 people_stream.add(mum);
             }
@@ -240,7 +243,7 @@ public class AlLinker {
      */
     private void createRolesFromMarriages(IBucket<Marriage> bucket) throws BucketException, KeyNotFoundException, TypeMismatchFoundException, StoreException {
 
-        IOutputStream<Role> people_stream = people.getOutputStream();
+        IOutputStream<Role> people_stream = roles.getOutputStream();
 
         IInputStream<Marriage> stream = bucket.getInputStream();
         for (Marriage marriage_record : stream) {

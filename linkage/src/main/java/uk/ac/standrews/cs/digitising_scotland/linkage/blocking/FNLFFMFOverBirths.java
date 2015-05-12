@@ -35,7 +35,7 @@ public class FNLFFMFOverBirths extends Blocker<Birth> {
         StringBuilder builder = new StringBuilder();
 
         try {
-            builder.append(record.getString(Birth.FORENAME));            // TODO this is still not good enough
+            builder.append(record.getString(Birth.FORENAME));
             builder.append(record.getString(Birth.SURNAME));
             builder.append(record.getString(Birth.FATHERS_FORENAME));
             builder.append(record.getString(Birth.MOTHERS_FORENAME));
