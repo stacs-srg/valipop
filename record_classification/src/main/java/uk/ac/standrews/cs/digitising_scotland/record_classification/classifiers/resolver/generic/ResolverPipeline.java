@@ -16,21 +16,12 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.resolver.generic;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
-
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.IClassifier;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.resolver.Interfaces.AbstractClassification;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.resolver.Interfaces.AncestorAble;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.resolver.Interfaces.LossFunction;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.resolver.Interfaces.SubsetEnumerator;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.resolver.Interfaces.ValidityAssessor;
-
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.IClassifier;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.resolver.Interfaces.*;
+
+import java.util.*;
 
 /**
  * Resolver Pipeline Classifier. Splits FeatureSet into subsets, classifies the subsets,
@@ -44,8 +35,9 @@ import com.google.common.collect.Multiset;
  * maximises the loss function.
  * Created by fraserdunlop on 08/10/2014 at 09:50.
  */
-public class ResolverPipeline<Threshold, Code extends AncestorAble<Code>, Classification extends AbstractClassification<Code, Threshold>, PComparator extends Comparator<Classification>, FeatureSet, PValidityAssessor extends ValidityAssessor<Multiset<Classification>, FeatureSet>, LossMetric extends Comparable<LossMetric>, PLossFunction extends LossFunction<Multiset<Classification>, LossMetric>>
-                implements IClassifier<FeatureSet, Set<Classification>> {
+public class ResolverPipeline<Threshold, Code
+        extends AncestorAble<Code>, Classification extends AbstractClassification<Code, Threshold>, PComparator extends Comparator<Classification>, FeatureSet, PValidityAssessor extends ValidityAssessor<Multiset<Classification>, FeatureSet>, LossMetric extends Comparable<LossMetric>, PLossFunction extends LossFunction<Multiset<Classification>, LossMetric>>
+        implements IClassifier<FeatureSet, Set<Classification>> {
 
     private final boolean multipleClassifications;
     private final boolean resolveHierarchies;
@@ -59,7 +51,7 @@ public class ResolverPipeline<Threshold, Code extends AncestorAble<Code>, Classi
     private SubsetEnumerator<FeatureSet> subsetEnumerator;
 
     public ResolverPipeline(final IClassifier<FeatureSet, Classification> classifier, final boolean multipleClassifications, final PComparator classificationComparator, final PValidityAssessor classificationSetValidityAssessor, final PLossFunction lengthWeightedLossFunction,
-                    final SubsetEnumerator<FeatureSet> subsetEnumerator, final Threshold threshold, final boolean resolveHierarchies) {
+                            final SubsetEnumerator<FeatureSet> subsetEnumerator, final Threshold threshold, final boolean resolveHierarchies) {
 
         this.classifier = classifier;
         this.multipleClassifications = multipleClassifications;
@@ -75,6 +67,7 @@ public class ResolverPipeline<Threshold, Code extends AncestorAble<Code>, Classi
 
     /**
      * The IClassifier interface, classifies FeatureSets to sets of Classifications.
+     *
      * @param featureSet set of features to classify
      * @return set of classifications
      * @throws Exception
@@ -94,15 +87,13 @@ public class ResolverPipeline<Threshold, Code extends AncestorAble<Code>, Classi
         if (!multiValueMap.isEmpty()) {
             if (multipleClassifications && resolveHierarchies) {
                 multiValueMap = hierarchyResolver.moveAncestorsToDescendantKeys(multiValueMap);
-            }
-            else {
+            } else {
                 multiValueMap = flattener.moveAllIntoKey(multiValueMap, multiValueMap.iterator().next());
             }
             multiValueMap = mapPruner.pruneUntilComplexityWithinBound(multiValueMap);
             if (multipleClassifications) {
                 validSets = validCombinationGetter.getValidSets(multiValueMap, featureSet);
-            }
-            else {
+            } else {
                 validSets = addAllFromMultiValueMap(multiValueMap);
             }
         }

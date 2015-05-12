@@ -14,10 +14,16 @@
  * You should have received a copy of the GNU General Public License along with record_classification. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-/**
- * Classes for reading in data from file and converting to Records.
- * @author jkc25
- *
- */
-package uk.ac.standrews.cs.digitising_scotland.record_classification.datareaders;
+package uk.ac.standrews.cs.digitising_scotland.record_classification.data_cleaning;
 
+import org.junit.Test;
+
+public class LevenshteinCleanerTest {
+
+    @Test
+    public void testCleaning() {
+
+        //TODO
+    }
+
+}

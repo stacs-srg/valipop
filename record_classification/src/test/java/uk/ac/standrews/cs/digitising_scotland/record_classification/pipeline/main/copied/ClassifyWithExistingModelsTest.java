@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License along with record_classification. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.digitising_scotland.record_classification.pipeline.main;
+package uk.ac.standrews.cs.digitising_scotland.record_classification.pipeline.main.copied;
 
 import com.google.common.io.Files;
 import org.junit.Before;
@@ -22,6 +22,8 @@ import org.junit.Test;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.bucket.Bucket;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.classification.Classification;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.code.CodeNotValidException;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.pipeline.main.ClassifyWithExistingModels;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.pipeline.main.PIlot;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.tools.configuration.MachineLearningConfiguration;
 
 import java.io.File;

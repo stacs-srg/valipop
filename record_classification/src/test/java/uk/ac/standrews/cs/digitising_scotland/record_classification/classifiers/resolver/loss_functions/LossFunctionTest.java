@@ -16,9 +16,6 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.resolver.loss_functions;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
 import org.junit.Assert;

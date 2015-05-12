@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License along with record_classification. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.digitising_scotland.record_classification.datacleaning;
+package uk.ac.standrews.cs.digitising_scotland.record_classification.data_cleaning;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -28,8 +28,8 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import uk.ac.standrews.cs.digitising_scotland.record_classification.datareaders.AbstractFormatConverter;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.datareaders.LongFormatConverter;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.data_readers.AbstractFormatConverter;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.data_readers.LongFormatConverter;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.bucket.Bucket;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.classification.Classification;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.code.CodeDictionary;

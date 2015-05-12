@@ -14,16 +14,10 @@
  * You should have received a copy of the GNU General Public License along with record_classification. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.digitising_scotland.record_classification.datacleaning;
+/**
+ * Classes that can can perform data cleaning such as spelling correction of feature selection.
+ * @author jkc25, frjd2
+ *
+ */
+package uk.ac.standrews.cs.digitising_scotland.record_classification.data_cleaning;
 
-import org.junit.Test;
-
-public class LevenshteinCleanerTest {
-
-    @Test
-    public void testCleaning() {
-
-        //TODO
-    }
-
-}

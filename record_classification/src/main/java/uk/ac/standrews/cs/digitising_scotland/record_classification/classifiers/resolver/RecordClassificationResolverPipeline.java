@@ -16,8 +16,6 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.resolver;
 
-import java.util.Set;
-
 import com.google.common.collect.Multiset;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.IClassifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.lookup.NGramSubstrings;

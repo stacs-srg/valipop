@@ -25,7 +25,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.vectors.CodeIndexer;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.datareaders.LongFormatConverter;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.data_readers.LongFormatConverter;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.bucket.Bucket;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.records.Record;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.InputFormatException;
