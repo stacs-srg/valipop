@@ -16,17 +16,16 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.pipeline;
 
-import java.io.IOException;
-import java.util.Set;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.lookup.ExactMatchClassifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.bucket.Bucket;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.classification.Classification;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.records.Record;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.tokens.TokenSet;
+
+import java.io.IOException;
+import java.util.Set;
 
 /**
  * The Class ExactMatchPipeline us a holder class for an {@link ExactMatchClassifier}.
@@ -76,10 +75,9 @@ public class ExactMatchPipeline implements IPipeline {
             else {
                 partialClassified.addRecordToBucket(record);
             }
-
         }
 
-        LOGGER.info("Size of fully classified bucket = " + fullyClassified.size());
+//        LOGGER.info("Size of fully classified bucket = " + fullyClassified.size());
 
         return partialClassified;
     }

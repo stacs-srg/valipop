@@ -213,10 +213,9 @@ public class OLRClassifier implements IClassifier<TokenSet, Classification>, Ser
      */
     public OLRClassifier deSerializeModel(final String filename) throws IOException, ClassNotFoundException {
 
-        FileInputStream fis = new FileInputStream(filename);
-        ObjectInputStream ois = new ObjectInputStream(fis);
-        OLRClassifier olrClassifier = (OLRClassifier) ois.readObject();
-        ois.close();
-        return olrClassifier;
+        try (ObjectInputStream input_stream = new ObjectInputStream(new FileInputStream(filename))) {
+
+            return (OLRClassifier) input_stream.readObject();
+        }
     }
 }

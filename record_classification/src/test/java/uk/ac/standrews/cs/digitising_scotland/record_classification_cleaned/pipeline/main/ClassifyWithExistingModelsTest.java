@@ -16,59 +16,51 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification_cleaned.pipeline.main;
 
-import com.google.common.io.Files;
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.bucket.Bucket;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.classification.Classification;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.code.CodeNotValidException;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.pipeline.main.ClassifyWithExistingModels;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.tools.configuration.MachineLearningConfiguration;
+import uk.ac.standrews.cs.digitising_scotland.record_classification_cleaned.pipeline.ClassifyWithExistingModels;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-
 public class ClassifyWithExistingModelsTest {
 
-    private final String expectedModelLocation = "/Models";
+    private static final String expectedModelLocation = "/Models";
     Bucket allRecords;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ClassifyWithExistingModelsTest.class);
+
 
     @Before
     public void setUp() throws IOException, CodeNotValidException, ClassNotFoundException {
 
-        String codeDictionaryLocation = getClass().getResource("ICD_code_dictionary.txt").getFile();
-        MachineLearningConfiguration.getDefaultProperties().setProperty("codeDictionaryFile", codeDictionaryLocation);
-        copyFilesToExpectedLocation();
-
+        // TODO code dictionary doesn't appear to affect test results - used only for training?
+        String code_dictionary_file_path = getResourceFilePath("ICD_code_dictionary.txt");
         String test_data_file_path = getResourceFilePath("classify_with_existing_models_test_data.tsv");
+
+        // TODO resolve problem with incompatible serialised class versions, then tidy model location
         String model_directory_path = getResourceFilePath(expectedModelLocation);
+
+        MachineLearningConfiguration.getDefaultProperties().setProperty("codeDictionaryFile", code_dictionary_file_path);
 
         String[] args = {test_data_file_path, model_directory_path, "true"};
 
         allRecords = new ClassifyWithExistingModels().run(args);
     }
 
-    private void copyFilesToExpectedLocation() throws IOException {
+    private String getResourceFilePath(String resource_file_name) {
 
-        File lookupTable1 = getResourceFile("/codModels/lookupTable.ser");
-        File olrModel1 = getResourceFile("/codModels/olrModel");
-        File lookupTable2 = getResourceFile(expectedModelLocation + "/lookupTable.ser");
-        File olrModel2 = getResourceFile(expectedModelLocation + "/olrModel");
-
-        Files.copy(lookupTable1, lookupTable2);
-        Files.copy(olrModel1, olrModel2);
-    }
-
-    private File getResourceFile(String resource_file_name) {
-
-        return new File(getResourceFilePath(resource_file_name));
+        return getClass().getResource(resource_file_name).getFile();
     }
 
     @Test
@@ -77,10 +69,10 @@ public class ClassifyWithExistingModelsTest {
         assertEquals(8, allRecords.size());
 
         Set<Classification> classifications = allRecords.getRecord(46999).getClassifications();
-        System.out.println(classifications);
         assertEquals(3, classifications.size());
 
-        Set<String> codes_in_map = getCodesInMap(classifications.iterator());
+        Set<String> codes_in_map = getCodeStrings(classifications);
+
         assertTrue(codes_in_map.contains("I340"));
         assertTrue(codes_in_map.contains("I48"));
         assertTrue(codes_in_map.contains("I515"));
@@ -90,19 +82,20 @@ public class ClassifyWithExistingModelsTest {
     public void test2() {
 
         final Set<Classification> sterosisSet = allRecords.getRecord(46999).getListOfClassifications().get("mitral sterosis");
-        assertTrue(sterosisSet.size() == 1);
+        assertEquals(1, sterosisSet.size());
         assertTrue(sterosisSet.iterator().next().getConfidence() < 1);
+
         final Set<Classification> myocardialSet = allRecords.getRecord(46999).getListOfClassifications().get("myocardial degeneration");
-        assertTrue(myocardialSet.size() == 1);
+        assertEquals(1, myocardialSet.size());
     }
 
     @Test
     public void test3() {
 
         Set<Classification> classifications = allRecords.getRecord(72408).getClassifications();
-        System.out.println(classifications);
         assertEquals(1, classifications.size());
-        Set<String> codes_in_map = getCodesInMap(classifications.iterator());
+
+        Set<String> codes_in_map = getCodeStrings(classifications);
         assertTrue(codes_in_map.contains("I340"));
     }
 
@@ -110,9 +103,9 @@ public class ClassifyWithExistingModelsTest {
     public void test4() {
 
         Set<Classification> classifications = allRecords.getRecord(6804).getClassifications();
-        System.out.println(classifications);
         assertEquals(2, classifications.size());
-        Set<String> codes_in_map = getCodesInMap(classifications.iterator());
+
+        Set<String> codes_in_map = getCodeStrings(classifications);
         assertTrue(codes_in_map.contains("I219") || codes_in_map.contains("I639"));
         assertTrue(codes_in_map.contains("I515"));
     }
@@ -121,9 +114,9 @@ public class ClassifyWithExistingModelsTest {
     public void test5() {
 
         Set<Classification> classifications = allRecords.getRecord(43454).getClassifications();
-        System.out.println(classifications);
         assertEquals(1, classifications.size());
-        Set<String> codes_in_map = getCodesInMap(classifications.iterator());
+
+        Set<String> codes_in_map = getCodeStrings(classifications);
         assertTrue(codes_in_map.contains("I219") || codes_in_map.contains("I639"));
     }
 
@@ -131,9 +124,9 @@ public class ClassifyWithExistingModelsTest {
     public void test6() {
 
         Set<Classification> classifications = allRecords.getRecord(6809).getClassifications();
-        System.out.println(classifications);
         assertEquals(2, classifications.size());
-        Set<String> codes_in_map = getCodesInMap(classifications.iterator());
+
+        Set<String> codes_in_map = getCodeStrings(classifications);
         assertTrue(codes_in_map.contains("I219") || codes_in_map.contains("I639"));
         assertTrue(codes_in_map.contains("I515"));
     }
@@ -142,9 +135,9 @@ public class ClassifyWithExistingModelsTest {
     public void test7() {
 
         Set<Classification> classifications = allRecords.getRecord(9999).getClassifications();
-        System.out.println(classifications);
         assertEquals(0, classifications.size());
-        Set<String> codes_in_map = getCodesInMap(classifications.iterator());
+
+        Set<String> codes_in_map = getCodeStrings(classifications);
         assertTrue(codes_in_map.isEmpty());
     }
 
@@ -152,28 +145,24 @@ public class ClassifyWithExistingModelsTest {
     public void test8() {
 
         Set<Classification> classifications = allRecords.getRecord(1234).getClassifications();
-        System.out.println(classifications);
         assertEquals(3, classifications.size());
-        Set<String> codes_in_map = getCodesInMap(classifications.iterator());
+
+        Set<String> codes_in_map = getCodeStrings(classifications);
         assertTrue(codes_in_map.contains("I501"));
         assertTrue(codes_in_map.contains("I340"));
         assertTrue(codes_in_map.contains("I38"));
+
         final Set<Classification> failureSet = allRecords.getRecord(1234).getListOfClassifications().get("failure of the right ventricular");
         assertEquals(1, failureSet.size());
     }
 
-    private String getResourceFilePath(String resource_file_name) {
-        return getClass().getResource(resource_file_name).getFile();
-    }
+    private Set<String> getCodeStrings(Set<Classification> classifications) {
 
-    private Set<String> getCodesInMap(Iterator<Classification> it) {
+        Set<String> code_strings = new HashSet<>();
 
-        Set<String> codesinmap = new HashSet<>();
-
-        while (it.hasNext()) {
-            Classification classification = it.next();
-            codesinmap.add(classification.getCode().getCodeAsString());
+        for (Classification classification : classifications) {
+            code_strings.add(classification.getCode().getCodeAsString());
         }
-        return codesinmap;
+        return code_strings;
     }
 }
