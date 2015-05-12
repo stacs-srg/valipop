@@ -92,7 +92,7 @@ public class AlLinker {
 
         Path store_path = Files.createTempDirectory(null);
 
-        StoreFactory.setStorePath(store_path.toString()); // TODO sort out PATH and String and File
+        StoreFactory.setStorePath(store_path); // TODO sort out PATH and String and File
         store = StoreFactory.makeStore();
 
         System.out.println( "Store path = " + store_path );
