@@ -100,10 +100,6 @@ public final class ClassifyWithExistingModels {
 
     }
 
-    public ClassifyWithExistingModels() {
-
-    }
-
     public Bucket run(final String[] args) throws Exception, CodeNotValidException {
 
         Timer timer = PipelineUtils.initAndStartTimer();
