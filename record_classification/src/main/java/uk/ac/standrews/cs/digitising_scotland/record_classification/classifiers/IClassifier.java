@@ -16,9 +16,9 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers;
 
-//TODO document!
+import java.io.IOException;
+
 public interface IClassifier<K, V> {
 
-     V classify(K k) throws Exception;
-
+     V classify(K k) throws IOException, ClassNotFoundException;
 }

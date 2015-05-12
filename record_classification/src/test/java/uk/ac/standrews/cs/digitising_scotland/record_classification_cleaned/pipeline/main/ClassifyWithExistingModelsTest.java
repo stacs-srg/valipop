@@ -41,7 +41,7 @@ public class ClassifyWithExistingModelsTest {
     Bucket allRecords;
 
     @Before
-    public void setUp() throws Exception, CodeNotValidException {
+    public void setUp() throws IOException, CodeNotValidException, ClassNotFoundException {
 
         String codeDictionaryLocation = getClass().getResource("ICD_code_dictionary.txt").getFile();
         MachineLearningConfiguration.getDefaultProperties().setProperty("codeDictionaryFile", codeDictionaryLocation);

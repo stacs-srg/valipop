@@ -84,23 +84,12 @@ public final class ClassifyWithExistingModels {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ClassifyWithExistingModels.class);
 
-    /**
-     * Entry method for training and classifying a batch of records into
-     * multiple codes.
-     * 
-     * @param args
-     *            <file1> training file <file2> file to classify
-     * @throws Exception
-     *             If exception occurs
-     */
     public static void main(final String[] args) throws Exception, CodeNotValidException {
 
-        ClassifyWithExistingModels instance = new ClassifyWithExistingModels();
-        instance.run(args);
-
+        new ClassifyWithExistingModels().run(args);
     }
 
-    public Bucket run(final String[] args) throws Exception, CodeNotValidException {
+    public Bucket run(final String[] args) throws IOException, CodeNotValidException, ClassNotFoundException {
 
         Timer timer = PipelineUtils.initAndStartTimer();
 

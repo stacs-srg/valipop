@@ -16,14 +16,11 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.cachedclassifier;
 
-import java.util.Map;
-
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.IClassifier;
 
-/**
- * TODO test! - fraser 8/Oct
- * TODO document!
- */
+import java.io.IOException;
+import java.util.Map;
+
 public class CachedClassifier<K, V> implements IClassifier<K, V> {
 
     private Map<K, V> cache;
@@ -36,7 +33,7 @@ public class CachedClassifier<K, V> implements IClassifier<K, V> {
     }
 
     @Override
-    public V classify(final K k) throws Exception {
+    public V classify(final K k) throws IOException, ClassNotFoundException {
 
         V v = cache.get(k);
         if (v == null) {

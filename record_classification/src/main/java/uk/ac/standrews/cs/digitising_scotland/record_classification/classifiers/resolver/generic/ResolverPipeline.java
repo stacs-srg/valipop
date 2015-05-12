@@ -21,6 +21,7 @@ import com.google.common.collect.Multiset;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.IClassifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.resolver.Interfaces.*;
 
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -73,13 +74,13 @@ public class ResolverPipeline<Threshold, Code
      * @throws Exception
      */
     @Override
-    public Set<Classification> classify(final FeatureSet featureSet) throws Exception {
+    public Set<Classification> classify(final FeatureSet featureSet) throws IOException, ClassNotFoundException {
 
         MultiValueMap<Code, Classification> multiValueMap = classifySubsets(featureSet);
         return resolverPipeline(multiValueMap, featureSet);
     }
 
-    private Set<Classification> resolverPipeline(MultiValueMap<Code, Classification> multiValueMap, final FeatureSet featureSet) throws Exception {
+    private Set<Classification> resolverPipeline(MultiValueMap<Code, Classification> multiValueMap, final FeatureSet featureSet) throws IOException, ClassNotFoundException {
 
         List<Multiset<Classification>> validSets = new ArrayList<>();
 
@@ -117,7 +118,7 @@ public class ResolverPipeline<Threshold, Code
         return list;
     }
 
-    private MultiValueMap<Code, Classification> classifySubsets(final FeatureSet tokenSet) throws Exception {
+    private MultiValueMap<Code, Classification> classifySubsets(final FeatureSet tokenSet) throws IOException, ClassNotFoundException {
 
         MultiValueMap<Code, Classification> multiValueMap = new MultiValueMap<>(new HashMap<Code, List<Classification>>());
         Multiset<FeatureSet> subsets = subsetEnumerator.enumerate(tokenSet);
