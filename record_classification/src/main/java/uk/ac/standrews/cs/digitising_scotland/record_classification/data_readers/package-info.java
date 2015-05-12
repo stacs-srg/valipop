@@ -15,9 +15,9 @@
  * <http://www.gnu.org/licenses/>.
  */
 /**
- * Classes that can can perform data cleaning such as spelling correction of feature selection.
- * @author jkc25, frjd2
+ * Classes for reading in data from file and converting to Records.
+ * @author jkc25
  *
  */
-package uk.ac.standrews.cs.digitising_scotland.record_classification.datacleaning;
+package uk.ac.standrews.cs.digitising_scotland.record_classification.data_readers;
 
