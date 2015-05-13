@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 @Ignore
 public class ExactMatchPipelineTest {
@@ -95,19 +96,19 @@ public class ExactMatchPipelineTest {
     @Test
     public void testPipelineFirstDescriptionLookup() throws IOException, CodeNotValidException {
 
-        Assert.assertTrue(pipeline.classify("Massive Pulmonary Embolism").iterator().next().getCode().equals(codeDictionary.getCode("I26")));
+        assertTrue(exactMatchClassifier.classify(new TokenSet("Massive Pulmonary Embolism")).iterator().next().getCode().equals(codeDictionary.getCode("I26")));
     }
 
     @Test
     public void testPipelineSecondDescriptionLookup() throws IOException, CodeNotValidException {
 
-        Assert.assertTrue(pipeline.classify("old age").iterator().next().getCode().equals(codeDictionary.getCode("R54")));
+        assertTrue(exactMatchClassifier.classify(new TokenSet("old age")).iterator().next().getCode().equals(codeDictionary.getCode("R54")));
     }
 
     @Test
     public void testPipelineNoLookupLookup() throws IOException, CodeNotValidException {
 
-        assertEquals(null, pipeline.classify("foobar"));
+        assertEquals(null, exactMatchClassifier.classify(new TokenSet("foobar")));
     }
 
     @Test
@@ -116,11 +117,12 @@ public class ExactMatchPipelineTest {
         Record record = buildRecord(0, "description");
 
         String description = "new description";
-        Set<Classification> result = pipeline.classify("old age");
+
+        Set<Classification> result = exactMatchClassifier.classify(new TokenSet("old age"));
         record.addClassificationsToDescription(description, result);
         final HashMultimap<String, Classification> listOfClassifications = record.getListOfClassifications();
-        Assert.assertTrue(listOfClassifications.containsKey(description));
-        Assert.assertTrue(listOfClassifications.get(description).iterator().next().getCode().equals(codeDictionary.getCode("R54")));
+        assertTrue(listOfClassifications.containsKey(description));
+        assertTrue(listOfClassifications.get(description).iterator().next().getCode().equals(codeDictionary.getCode("R54")));
 
     }
 
@@ -130,17 +132,16 @@ public class ExactMatchPipelineTest {
         Record record = buildRecord(0, "decription");
 
         String description = "new description";
-        Set<Classification> result1 = pipeline.classify("old age");
-        Set<Classification> result2 = pipeline.classify("Massive Pulmonary Embolism");
+        Set<Classification> result1 = exactMatchClassifier.classify(new TokenSet("old age"));
+        Set<Classification> result2 = exactMatchClassifier.classify(new TokenSet("Massive Pulmonary Embolism"));
         result1.add(result2.iterator().next());
 
         record.addClassificationsToDescription(description, result1);
         final HashMultimap<String, Classification> listOfClassifications = record.getListOfClassifications();
-        Assert.assertTrue(listOfClassifications.containsKey(description));
+        assertTrue(listOfClassifications.containsKey(description));
         final Iterator<Classification> iterator = listOfClassifications.get(description).iterator();
-        Assert.assertTrue(iterator.next().getCode().equals(codeDictionary.getCode("R54")));
-        Assert.assertTrue(iterator.next().getCode().equals(codeDictionary.getCode("I26")));
-
+        assertTrue(iterator.next().getCode().equals(codeDictionary.getCode("R54")));
+        assertTrue(iterator.next().getCode().equals(codeDictionary.getCode("I26")));
     }
 
     @Test
@@ -157,16 +158,12 @@ public class ExactMatchPipelineTest {
         assertEquals(codeDictionary.getCode("R54"), classified.getRecord(0).getListOfClassifications().get("old age").iterator().next().getCode());
         assertEquals(codeDictionary.getCode("I26"), classified.getRecord(1).getListOfClassifications().get("Massive Pulmonary Embolism").iterator().next().getCode());
         Assert.assertNull(classified.getRecord(2));
-        Assert.assertTrue(notClassified.size() == 1);
+        assertTrue(notClassified.size() == 1);
 
     }
 
     private Record buildRecord(int i, String description) throws InputFormatException {
 
-        List<String> descriptionList = new ArrayList<>();
-        descriptionList.add(description);
-        OriginalData originalData = new OriginalData(descriptionList, 2014, 1, "filename");
-        Record record = new Record(i, originalData);
-        return record;
+        return new Record(i, new OriginalData(description, 2014, 1, "filename"));
     }
 }

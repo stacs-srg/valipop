@@ -47,13 +47,19 @@ import static org.junit.Assert.assertEquals;
 //FIXME
 public class OLRClassifierTest {
 
-    /** The os. */
+    /**
+     * The os.
+     */
     private OutputStream os;
 
-    /** The original out. */
+    /**
+     * The original out.
+     */
     private PrintStream originalOut;
 
-    /** The helper. */
+    /**
+     * The helper.
+     */
     private ClassifierTestingHelper helper = new ClassifierTestingHelper();
 
     private Properties properties = MachineLearningConfiguration.getDefaultProperties();
@@ -111,7 +117,6 @@ public class OLRClassifierTest {
         Iterable<Record> records = createNewRecords();
         bucketA.addCollectionOfRecords(records);
         olrClassifier2.train(bucketA);
-
     }
 
     private Iterable<Record> createNewRecords() throws InputFormatException, CodeNotValidException {
@@ -122,9 +127,8 @@ public class OLRClassifierTest {
         List<Record> records = new ArrayList<Record>();
 
         for (int i = 0; i < 100; i++) {
-            ArrayList<String> d = new ArrayList<>();
-            d.add(description[i % 5]);
-            final OriginalData originalData = new OriginalData(d, 2010 + i, 1, "fileName.txt");
+
+            final OriginalData originalData = new OriginalData(description[i % 5], 2010 + i, 1, "fileName.txt");
             Set<Classification> goldStandardClassification = new HashSet<>();
             Code code = getRandomCode();
             goldStandardClassification.add(new Classification(code, new TokenSet(tokenSetArry[i % 10]), 1.0));
@@ -141,14 +145,16 @@ public class OLRClassifierTest {
         double rnd = Math.random();
         if (rnd < 0.33) {
             return codeDictionary.getCode("95240");
+        } else if (rnd > 0.3 && rnd < 0.66) {
+            return codeDictionary.getCode("9500");
         }
-        else if (rnd > 0.3 && rnd < 0.66) { return codeDictionary.getCode("9500"); }
         return codeDictionary.getCode("952");
     }
 
     /**
      * Test classify with de serialized model.
-     * @throws Exception 
+     *
+     * @throws Exception
      */
     @Test
     public void testClassifyWithDeSerializedModel() throws Exception, CodeNotValidException {
@@ -163,11 +169,10 @@ public class OLRClassifierTest {
         olrClassifier2 = olrClassifier2.deSerializeModel("target/olrClassifierWriteTest");
 
         for (Record record : bucketA) {
-            for (String s : record.getDescription()) {
-                Classification c1 = AbstractClassifier.getSingleClassification(olrClassifier1.classify(new TokenSet(s)));
-                Classification c2 = AbstractClassifier.getSingleClassification(olrClassifier2.classify(new TokenSet(s)));
-                assertEquals(c1, c2);
-            }
+            String s = record.getDescription();
+            Classification c1 = AbstractClassifier.getSingleClassification(olrClassifier1.classify(new TokenSet(s)));
+            Classification c2 = AbstractClassifier.getSingleClassification(olrClassifier2.classify(new TokenSet(s)));
+            assertEquals(c1, c2);
         }
     }
 

@@ -35,17 +35,20 @@ import java.util.Set;
 /**
  * This class is produces a set of {@link Classification}s that represent the
  * classification for a {@link Record}.
- * 
+ *
  * @author jkc25, frjd2
- * 
  */
 public class ClassifierPipeline implements IPipeline {
 
-    /** The Constant CONFIDENCE_CHOP_LEVEL. */
+    /**
+     * The Constant CONFIDENCE_CHOP_LEVEL.
+     */
     private static final double CONFIDENCE_CHOP_LEVEL = 0.3;
     private final RecordClassificationResolverPipeline resolverPipeline;
 
-    /** The record cache. */
+    /**
+     * The record cache.
+     */
     private Map<String, Set<Classification>> recordCache;
 
     private Bucket successfullyClassified;
@@ -55,7 +58,7 @@ public class ClassifierPipeline implements IPipeline {
      * Constructs a new {@link ClassifierPipeline} with the specified
      * {@link Classifier} used to perform the classification duties.
      *
-     * @param classifier    {@link Classifier} used for machine learning classification
+     * @param classifier            {@link Classifier} used for machine learning classification
      * @param cachePopulationBucket the training bucket
      */
     public ClassifierPipeline(final Classifier classifier, final Bucket cachePopulationBucket, final LossFunction<Multiset<Classification>, Double> lossFunction, final boolean multipleClassifications, final boolean resolveHierarchies) {
@@ -95,21 +98,19 @@ public class ClassifierPipeline implements IPipeline {
 
         if (record.isFullyClassified()) {
             successfullyClassified.addRecordToBucket(record);
-        }
-        else {
+        } else {
             forFurtherProcessing.addRecordToBucket(record);
         }
-
     }
 
     private Record classifyRecord(final Record record) throws IOException, ClassNotFoundException {
 
-        for (String description : record.getDescription()) {
-            if (!record.descriptionIsClassified(description)) {
-                Set<Classification> result = classifyDescription(description);
-                record.addClassificationsToDescription(description, result);
-            }
+        String description = record.getDescription();
+        if (!record.descriptionIsClassified(description)) {
+            Set<Classification> result = classifyDescription(description);
+            record.addClassificationsToDescription(description, result);
         }
+
         return record;
     }
 
@@ -118,8 +119,7 @@ public class ClassifierPipeline implements IPipeline {
         Set<Classification> result;
         if (recordCache.containsKey(description)) {
             result = recordCache.get(description);
-        }
-        else {
+        } else {
             TokenSet tokenSet = new TokenSet(description);
             result = resolverPipeline.classify(tokenSet);
             recordCache.put(description, result);

@@ -16,15 +16,6 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.tools.analysis;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.text.Normalizer;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.OriginalData;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.analysis_metrics.AbstractConfusionMatrix;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.analysis_metrics.CodeMetrics;
@@ -39,6 +30,13 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructur
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.InputFormatException;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.tools.ReaderWriterFactory;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.tools.Utils;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.text.Normalizer;
+import java.util.HashSet;
+import java.util.Set;
 
 public class BucketFromHistoricResults {
 
@@ -113,11 +111,8 @@ public class BucketFromHistoricResults {
 
     private Record[] getRecords(final String[] lineSplit, final int count) throws InputFormatException, CodeNotValidException {
 
-        List<String> description = new ArrayList<>();
-        description.add(lineSplit[0]);
-        OriginalData originalData = new OriginalData(description, 2004, 1, fileName);
-        int id = count;
-        Record record = new Record(id, originalData);
+        OriginalData originalData = new OriginalData(lineSplit[0], 2004, 1, fileName);
+        Record record = new Record(count, originalData);
         record = createGoldStandardRecord(lineSplit, record);
 
         Record nbRecord = addClassification(lineSplit, record.copyOfOriginalRecord(record), 2);

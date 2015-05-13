@@ -88,8 +88,6 @@ public class ExactMatchClassificationProcess implements ClassificationProcess {
 
         randomlyAssignToTrainingAndEvaluation(all_records, training_bucket, evaluation_bucket, training_ratio);
 
-        LOGGER.info("********** Training Classifiers **********");
-
         ExactMatchClassifier exactMatchClassifier = new ExactMatchClassifier();
         exactMatchClassifier.setModelFileName(experimentalFolderName + "/Models/lookupTable");
         exactMatchClassifier.train(training_bucket);
@@ -105,14 +103,13 @@ public class ExactMatchClassificationProcess implements ClassificationProcess {
 
         Bucket allRecords = BucketUtils.getUnion(successfullyExactMatched, notExactMatched);
 
-        writeRecords(experimentalFolderName, allRecords);
+//        writeRecords(experimentalFolderName, allRecords);
+//
+//        writeComparisonFile(experimentalFolderName, allRecords);
 
-        writeComparisonFile(experimentalFolderName, allRecords);
-
-        LOGGER.info("********** Output Stats **********");
 
         CodeIndexer code_indexer = new CodeIndexer(all_records);
-        printAllStats(experimentalFolderName, code_indexer, allRecords, "allRecords");
+//        printAllStats(experimentalFolderName, code_indexer, allRecords, "allRecords");
         printAllStats(experimentalFolderName, code_indexer, successfullyExactMatched, "exactMatched");
 
         return allRecords;

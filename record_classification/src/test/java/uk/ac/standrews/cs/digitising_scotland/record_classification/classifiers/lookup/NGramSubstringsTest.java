@@ -16,17 +16,16 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.lookup;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.OriginalData;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.bucket.Bucket;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.records.Record;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.tokens.TokenSet;
+
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * Tests the NGramSubstring class that grams are being produced correctly.
@@ -55,14 +54,12 @@ public class NGramSubstringsTest {
         nGramSubstrings = new NGramSubstrings("A test String");
         nGramSubstrings2 = new NGramSubstrings("A test String");
         int id = (int) Math.rint(Math.random() * 1000);
-        ArrayList<String> descList = new ArrayList<>();
-        final String desc = "A test Description";
-        descList.add(desc);
-        OriginalData originalData = new OriginalData(descList, 2014, 1, "testFileName");
+
+        OriginalData originalData = new OriginalData("A test Description", 2014, 1, "testFileName");
         Record record = new Record(id, originalData);
         Bucket bucketToClean = new Bucket();
         bucketToClean.addRecordToBucket(record);
-        nGramSubstringsRecord = new NGramSubstrings(record.getDescription().get(0));
+        nGramSubstringsRecord = new NGramSubstrings(record.getDescription());
     }
 
     /**
@@ -72,7 +69,7 @@ public class NGramSubstringsTest {
     public void testGetGrams() {
 
         List<TokenSet> grams = nGramSubstrings.getGrams();
-        Assert.assertEquals(6, grams.size());
+        assertEquals(6, grams.size());
     }
 
     /**
@@ -82,7 +79,7 @@ public class NGramSubstringsTest {
     public void testGetGramsForRecord() {
 
         List<TokenSet> grams = nGramSubstringsRecord.getGrams();
-        Assert.assertEquals(6, grams.size());
+        assertEquals(6, grams.size());
     }
 
     /**
@@ -93,8 +90,8 @@ public class NGramSubstringsTest {
 
         List<TokenSet> grams = nGramSubstrings.getGrams();
         List<TokenSet> grams2 = nGramSubstrings2.getGrams();
-        Assert.assertEquals(nGramSubstrings, nGramSubstrings2);
+        assertEquals(nGramSubstrings, nGramSubstrings2);
 
-        Assert.assertEquals(grams, grams2);
+        assertEquals(grams, grams2);
     }
 }

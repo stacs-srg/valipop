@@ -21,7 +21,6 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructur
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.classification.Classification;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 public class Record {
@@ -42,14 +41,11 @@ public class Record {
         this.id = id;
         this.originalData = originalData;
         listOfClassifications = HashMultimap.create();
-
     }
 
     public boolean isFullyClassified() {
 
-        for (String description : originalData.getDescription())
-            if (!descriptionIsClassified(description)) { return false; }
-        return true;
+        return descriptionIsClassified(originalData.getDescription());
     }
 
     public boolean descriptionIsClassified(final String description) {
@@ -88,27 +84,9 @@ public class Record {
      *
      * @return the cleaned description
      */
-    public List<String> getDescription() {
+    public String getDescription() {
 
         return originalData.getDescription();
-    }
-
-    /**
-     * Updates a specific line of the description to a new value.
-     * @param oldDescription line to update
-     * @param newDescription new value
-     * @return true if replacement successful
-     */
-    public boolean updateDescription(final String oldDescription, final String newDescription) {
-
-        int index = originalData.getDescription().indexOf(oldDescription);
-        if (index != -1) {
-            originalData.getDescription().set(index, newDescription);
-            return true;
-        }
-        else {
-            return false;
-        }
     }
 
     /**

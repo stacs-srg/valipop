@@ -16,17 +16,9 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.data_readers;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.CODOrignalData;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.CODOriginalData;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.classification.Classification;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.code.Code;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.code.CodeDictionary;
@@ -36,6 +28,13 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructur
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.InputFormatException;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.tools.ReaderWriterFactory;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.tools.Utils;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 
 /**
  * The Class FormatConverter converts a comma separated text file in the format that is used by the modern cod data
@@ -94,10 +93,10 @@ public final class LongFormatConverter extends AbstractFormatConverter {
             int imageQuality = 1;
             int ageGroup = convertAgeGroup(removeQuotes(lineSplit[AGE_POSITION]));
             int sex = convertSex(removeQuotes(lineSplit[SEX_POSITION]));
-            List<String> description = formDescription(lineSplit, DESC_START, DESC_END);
+            String description = formDescription(lineSplit, DESC_START, DESC_END);
             int year = Integer.parseInt(removeQuotes(lineSplit[YEAR_POSITION]));
 
-            CODOrignalData originalData = new CODOrignalData(description, year, ageGroup, sex, imageQuality, inputFile.getName());
+            CODOriginalData originalData = new CODOriginalData(description, year, ageGroup, sex, imageQuality, inputFile.getName());
             HashSet<Classification> goldStandard = new HashSet<>();
             populateGoldStandardSet(codeDictionary, lineSplit, goldStandard);
 
@@ -142,27 +141,4 @@ public final class LongFormatConverter extends AbstractFormatConverter {
             }
         }
     }
-
-    /**
-     * Concatenates strings  between the start and end points of an array with a ',' delimiter.
-     *
-     * @param stringArray the String array with consecutive strings to concatenate
-     * @param startPosition the first index to concatenate
-     * @param endPosition the last index to concatenate
-     * @return the concatenated string, comma separated
-     */
-    private static List<String> formDescription(final String[] stringArray, final int startPosition, final int endPosition) {
-
-        List<String> description = new ArrayList<>();
-
-        for (int currentPosition = startPosition; currentPosition <= endPosition; currentPosition++) {
-            if (stringArray[currentPosition].length() != 0) {
-                description.add(stringArray[currentPosition].toLowerCase());
-            }
-        }
-
-        return description;
-
-    }
-
 }

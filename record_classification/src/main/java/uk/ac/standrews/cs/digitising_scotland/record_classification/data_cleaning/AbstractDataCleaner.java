@@ -16,18 +16,10 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.data_cleaning;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.Writer;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
+import com.google.common.collect.HashMultiset;
+import com.google.common.collect.Multiset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import uk.ac.standrews.cs.digitising_scotland.record_classification.data_readers.AbstractFormatConverter;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.data_readers.LongFormatConverter;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.bucket.Bucket;
@@ -41,8 +33,14 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.tools.Reader
 import uk.ac.standrews.cs.digitising_scotland.record_classification.tools.Utils;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.tools.analysis.UniqueWordCounter;
 
-import com.google.common.collect.HashMultiset;
-import com.google.common.collect.Multiset;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.Writer;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Base class for all data cleaners. Subclasses must implement a correct method which maps incorrect
@@ -65,12 +63,15 @@ public abstract class AbstractDataCleaner {
      */
     private static Multiset<String> wordMultiset;
 
-    /** The correction map. */
+    /**
+     * The correction map.
+     */
     private static Map<String, String> correctionMap;
 
     /**
      * Should perform a correction if applicable to the given token.
      * Exact behaviour is implemented by extending classes.
+     *
      * @param token String to clean
      * @return String corrected token
      */
@@ -78,10 +79,11 @@ public abstract class AbstractDataCleaner {
 
     /**
      * Perform the data cleaning step on the file supplied in the arguments.
+     *
      * @param args 1 is the input file path, 2 is the output file path, 3 (optional) sets TOKENLIMIT which
      *             states the frequency of occurrence below which we start correcting tokens.
-     * @throws IOException Indicates an IO Error
-     * @throws InputFormatException Indicates an error with the input file format
+     * @throws IOException           Indicates an IO Error
+     * @throws InputFormatException  Indicates an error with the input file format
      * @throws CodeNotValidException
      */
     public void runOnFile(final String... args) throws IOException, InputFormatException, CodeNotValidException {
@@ -107,11 +109,9 @@ public abstract class AbstractDataCleaner {
 
         correctionMap = new HashMap<>();
         for (Record record : bucket) {
-            for (String description : record.getDescription()) {
-                TokenSet tokenSet = new TokenSet(description);
-                addToCorrectionMap(tokenSet);
-            }
-
+            String description = record.getDescription();
+            TokenSet tokenSet = new TokenSet(description);
+            addToCorrectionMap(tokenSet);
         }
     }
 
@@ -151,7 +151,7 @@ public abstract class AbstractDataCleaner {
     /**
      * Correct tokens in file.
      *
-     * @param file the file
+     * @param file          the file
      * @param correctedFile the corrected file
      * @throws IOException Signals that an I/O exception has occurred.
      */
@@ -200,8 +200,7 @@ public abstract class AbstractDataCleaner {
             String correctedToken = correctionMap.get(token);
             if (correctedToken != null) {
                 sb.append(correctedToken).append(" ");
-            }
-            else {
+            } else {
                 sb.append(token).append(" ");
             }
         }
@@ -218,8 +217,7 @@ public abstract class AbstractDataCleaner {
         try {
             tokenLimit = Integer.parseInt(args[2]);
             LOGGER.info("TOKENLIMIT set to " + tokenLimit);
-        }
-        catch (ArrayIndexOutOfBoundsException e) {
+        } catch (ArrayIndexOutOfBoundsException e) {
             LOGGER.error("No TOKENLIMIT argument. Default is " + tokenLimit);
             LOGGER.error(e.toString());
         }
@@ -227,6 +225,7 @@ public abstract class AbstractDataCleaner {
 
     /**
      * Overrides the default tokenLimit and sets it to the supplied value.
+     *
      * @param tokenLimit new tokenLimit
      */
     public static void setTokenLimit(final int tokenLimit) {
@@ -238,7 +237,8 @@ public abstract class AbstractDataCleaner {
 
     /**
      * Gets the word Multiset contains the word counts.
-     * @return  Multiset<String> word multiset
+     *
+     * @return Multiset<String> word multiset
      */
     public static Multiset<String> getWordMultiset() {
 
