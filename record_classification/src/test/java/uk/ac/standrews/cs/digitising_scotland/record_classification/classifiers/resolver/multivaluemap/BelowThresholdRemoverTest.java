@@ -16,17 +16,16 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.resolver.multivaluemap;
 
-import java.io.IOException;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.resolver.generic.BelowThresholdRemover;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.resolver.generic.MultiValueMap;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.classification.Classification;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.code.Code;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.code.CodeNotValidException;
+
+import java.io.IOException;
 
 /**
  * Testing BelowThresholdRemover with Codes and Classifications.
@@ -34,7 +33,7 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructur
  */
 public class BelowThresholdRemoverTest {
 
-    private BelowThresholdRemover<Code, Classification, Double> belowThresholdRemover = new BelowThresholdRemover<>(0.7);
+    private BelowThresholdRemover belowThresholdRemover = new BelowThresholdRemover(0.7);
     private MultiValueMapTestHelper mvmHelper;
 
     @Before

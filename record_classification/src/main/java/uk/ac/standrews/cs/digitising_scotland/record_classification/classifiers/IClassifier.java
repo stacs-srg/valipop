@@ -16,9 +16,12 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers;
 
+import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.classification.Classification;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.tokens.TokenSet;
+
 import java.io.IOException;
 
-public interface IClassifier<K, V> {
+public interface IClassifier {
 
-     V classify(K k) throws IOException, ClassNotFoundException;
+     Classification classify(TokenSet token_set) throws IOException, ClassNotFoundException;
 }

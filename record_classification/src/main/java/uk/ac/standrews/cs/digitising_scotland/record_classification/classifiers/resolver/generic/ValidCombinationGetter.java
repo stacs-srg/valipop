@@ -19,6 +19,9 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.resolver.Interfaces.ValidityAssessor;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.classification.Classification;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.code.Code;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.tokens.TokenSet;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -29,11 +32,11 @@ import java.util.List;
  * given a ValidityCriterion. Values associated with the same key are not considered allowable combinations.
  * Created by fraserdunlop on 06/10/2014 at 09:45.
  */
-public class ValidCombinationGetter<K, V, ValidityCriterion, P_ValidityAssessor extends ValidityAssessor<Multiset<V>, ValidityCriterion>> {
+public class ValidCombinationGetter {
 
-    private final P_ValidityAssessor validityAssessor;
+    private final ValidityAssessor<Multiset<Classification>, TokenSet> validityAssessor;
 
-    public ValidCombinationGetter(final P_ValidityAssessor validityAssessor) {
+    public ValidCombinationGetter(final ValidityAssessor<Multiset<Classification>, TokenSet> validityAssessor) {
 
         this.validityAssessor = validityAssessor;
     }
@@ -46,7 +49,7 @@ public class ValidCombinationGetter<K, V, ValidityCriterion, P_ValidityAssessor 
      * @param validityCriterion a validity criterion for assessing the validity of a combination given a condition
      * @return a list of all valid sets of values from the MultiValueMap
      */
-    public List<Multiset<V>> getValidSets(final MultiValueMap<K, V> map, final ValidityCriterion validityCriterion) {
+    public List<Multiset<Classification>> getValidSets(final MultiValueMap<Code, Classification> map, final TokenSet validityCriterion) {
 
         return calculateValidSets(map, validityCriterion);
     }
@@ -57,9 +60,9 @@ public class ValidCombinationGetter<K, V, ValidityCriterion, P_ValidityAssessor 
      * @param validityCriterion a validity criterion for assessing the validity of a combination given a condition
      * @return a list of all valid sets of values from the MultiValueMap
      */
-    private List<Multiset<V>> calculateValidSets(final MultiValueMap<K, V> map, final ValidityCriterion validityCriterion) {
+    private List<Multiset<Classification>> calculateValidSets(final MultiValueMap<Code, Classification> map, final TokenSet validityCriterion) {
 
-        List<Multiset<V>> validSets = new ArrayList<>();
+        List<Multiset<Classification>> validSets = new ArrayList<>();
         validSets.add(null);
         validSets = recursiveMerge(validSets, map, map.iterator(), validityCriterion);
         validSets.remove(null);
@@ -74,10 +77,10 @@ public class ValidCombinationGetter<K, V, ValidityCriterion, P_ValidityAssessor 
      * @param validityCriterion a validity criterion for assessing the validity of a combination given a condition
      * @return a list of all valid sets of values from the MultiValueMap
      */
-    private List<Multiset<V>> recursiveMerge(final List<Multiset<V>> validSets, final MultiValueMap<K, V> map, final Iterator<K> iterator, final ValidityCriterion validityCriterion) {
+    private List<Multiset<Classification>> recursiveMerge(final List<Multiset<Classification>> validSets, final MultiValueMap<Code, Classification> map, final Iterator<Code> iterator, final TokenSet validityCriterion) {
 
         if (iterator.hasNext()) {
-            K k = iterator.next();
+            Code k = iterator.next();
             mergeStep(validSets, map, validityCriterion, k);
             recursiveMerge(validSets, map, iterator, validityCriterion);
         }
@@ -93,13 +96,13 @@ public class ValidCombinationGetter<K, V, ValidityCriterion, P_ValidityAssessor 
      * @param validityCriterion a validity criterion for assessing the validity of a combination given a condition
      * @param k the key whose values are being 'merged' into the sets of validSets
      */
-    private void mergeStep(final List<Multiset<V>> validSets, final MultiValueMap<K, V> map, final ValidityCriterion validityCriterion, final K k) {
+    private void mergeStep(final List<Multiset<Classification>> validSets, final MultiValueMap<Code, Classification> map, final TokenSet validityCriterion, final Code k) {
 
-        List<V> kValues = map.get(k);
-        List<Multiset<V>> tempList = new ArrayList<>();
-        for (Multiset<V> set : validSets) {
-            for (V kValue : kValues) {
-                Multiset<V> tempSet = copyOfUnion(set, kValue);
+        List<Classification> kValues = map.get(k);
+        List<Multiset<Classification>> tempList = new ArrayList<>();
+        for (Multiset<Classification> set : validSets) {
+            for (Classification kValue : kValues) {
+                Multiset<Classification> tempSet = copyOfUnion(set, kValue);
                 if (tempSetIsValid(validityCriterion, tempSet)) {
                     tempList.add(tempSet);
                 }
@@ -111,7 +114,7 @@ public class ValidCombinationGetter<K, V, ValidityCriterion, P_ValidityAssessor 
     /**
      * Purely for readability of mergeStep method.
      */
-    private boolean tempSetIsValid(final ValidityCriterion validityCriterion, final Multiset<V> tempSet) {
+    private boolean tempSetIsValid(final TokenSet validityCriterion, final Multiset<Classification> tempSet) {
 
         return validityAssessor.assess(tempSet, validityCriterion);
     }
@@ -122,14 +125,13 @@ public class ValidCombinationGetter<K, V, ValidityCriterion, P_ValidityAssessor 
      * @param v value
      * @return new set - union of set and v
      */
-    private Multiset<V> copyOfUnion(final Multiset<V> set, final V v) {
+    private Multiset<Classification> copyOfUnion(final Multiset<Classification> set, final Classification v) {
 
-        Multiset<V> tempSet = HashMultiset.create();
+        Multiset<Classification> tempSet = HashMultiset.create();
         if (set != null) {
             tempSet.addAll(set);
         }
         tempSet.add(v);
         return tempSet;
     }
-
 }
