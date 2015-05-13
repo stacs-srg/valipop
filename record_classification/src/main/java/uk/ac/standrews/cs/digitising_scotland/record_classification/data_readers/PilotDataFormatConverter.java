@@ -16,19 +16,19 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.data_readers;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.CODOrignalData;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.classification.Classification;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.code.CodeDictionary;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.records.Record;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.InputFormatException;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.tools.ReaderWriterFactory;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 
 /**
  * The Class FormatConverter converts a comma separated text file in the format that is used by the modern cod data
@@ -39,25 +39,18 @@ public final class PilotDataFormatConverter extends AbstractFormatConverter {
 
     private static final String CHARSET_NAME = "UTF8";
 
-    /** The Constant CODLINELENGTH. */
     static final int CODLINELENGTH = 8;
 
-    /** The Constant idPosition. */
     private static final int ID_POSITION = 1;
 
-    /** The Constant agePosition. */
     private static final int AGE_POSITION = 3;
 
-    /** The Constant sexPosition. */
     private static final int SEX_POSITION = 2;
 
-    /** The Constant descriptionStart. */
     private static final int DESC_START = 4;
 
-    /** The Constant descriptionEnd. */
     private static final int DESC_END = 6;
 
-    /** The Constant yearPosition. */
     private static final int YEAR_POSITION = 0;
 
     private static final int IMAGE_QUALITY_POS = 7;

@@ -16,15 +16,6 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.legacy.naivebayes;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
@@ -43,18 +34,21 @@ import org.apache.mahout.math.VectorWritable;
 import org.apache.mahout.vectorizer.encoders.Dictionary;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.Pair;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.bucket.Bucket;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.classification.Classification;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.code.Code;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.vectors.CodeIndexer;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.records.Record;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.tokens.TokenSet;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.vectors.CodeIndexer;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.vectors.CustomVectorWriter;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.vectors.VectorFactory;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.tools.Utils;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.tools.configuration.MachineLearningConfiguration;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
 
 /**
  * Class has methods for training and classifying using the Mahout Naive Bayes
@@ -87,10 +81,6 @@ public class NaiveBayesClassifier {
 
     /**
      * Create Naive Bayes classifier with default properties.
-     * 
-     * @param vectorFactory
-     *            This is the vector factory used when creating vectors for each
-     *            record.
      */
     public NaiveBayesClassifier() {
 
@@ -110,9 +100,6 @@ public class NaiveBayesClassifier {
      * 
      * @param customProperties
      *            Customised properties file.
-     * @param vectorFactory
-     *            This is the vector factory used when creating vectors for each
-     *            record.
      */
     public NaiveBayesClassifier(final String customProperties) {
 

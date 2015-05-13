@@ -14,14 +14,12 @@
  * You should have received a copy of the GNU General Public License along with record_classification. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.digitising_scotland.record_classification.pipeline.main;
+package uk.ac.standrews.cs.digitising_scotland.record_classification_cleaned.pipeline;
 
 import com.google.common.io.Files;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.lookup.ExactMatchClassifier;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.olr.OLRClassifier;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.resolver.LogLengthWeightedLossFunction;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.analysis_metrics.CodeMetrics;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.analysis_metrics.ListAccuracyMetrics;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.analysis_metrics.StrictConfusionMatrix;
@@ -32,8 +30,10 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructur
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.code.CodeNotValidException;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.records.Record;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.vectors.CodeIndexer;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.pipeline.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.tools.Timer;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.pipeline.BucketGenerator;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.pipeline.ExactMatchPipeline;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.pipeline.IPipeline;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.pipeline.PipelineUtils;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.tools.configuration.MachineLearningConfiguration;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.writers.DataClerkingWriter;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.writers.FileComparisonWriter;
@@ -42,44 +42,33 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.writers.Metr
 import java.io.File;
 import java.io.IOException;
 
-public class TrainClassifyOneFile {
+public class TrainAndEvaluateExactMatchClassifier {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(TrainClassifyOneFile.class);
-    private static final double DEFAULT_TRAINING_RATIO = 0.8;
-    private static final String usageHelp = "usage: $" + TrainClassifyOneFile.class.getSimpleName() + "    <goldStandardDataFile>  <propertiesFile>  <trainingRatio(optional)>    <output multiple classificatiosn";
+    private static final Logger LOGGER = LoggerFactory.getLogger(TrainAndEvaluateExactMatchClassifier.class);
+    private static double DEFAULT_TRAINING_RATIO = 0.8;
+    private static final String usageHelp = "usage: $" + TrainAndEvaluateExactMatchClassifier.class.getSimpleName() + "    <goldStandardDataFile>  <propertiesFile>  <trainingRatio(optional)>    <output multiple classifications";
 
     /**
      * Entry method for training and classifying a batch of records into
      * multiple codes.
-     * 
-     * @param args
-     *            <file1> training file <file2> file to classify
-     * @throws Exception
-     *             If exception occurs
+     *
+     * @param args <file1> training file <file2> file to classify
+     * @throws Exception If exception occurs
      */
     public static void main(final String[] args) throws Exception, CodeNotValidException {
 
-        TrainClassifyOneFile instance = new TrainClassifyOneFile();
-        instance.run(args);
+        new TrainAndEvaluateExactMatchClassifier().run(args);
     }
 
     public Bucket run(final String[] args) throws Exception, CodeNotValidException {
 
         printArgs(args);
 
-        String experimentalFolderName;
-        File goldStandard;
-        Bucket trainingBucket;
-        Bucket predictionBucket;
+        String experimentalFolderName = PipelineUtils.setupExperimentalFolders("ExactMatchClassifierDevelopment");
 
-        Timer timer = PipelineUtils.initAndStartTimer();
-
-        experimentalFolderName = PipelineUtils.setupExperimentalFolders("TestExperiments");
-
-        goldStandard = parseGoldStandFile(args);
+        File goldStandard = parseGoldStandFile(args);
         parseProperties(args);
         double trainingRatio = parseTrainingRatio(args);
-        boolean multipleClassifications = parseMultipleClassifications(args);
 
         File codeDictionaryFile = new File(MachineLearningConfiguration.getDefaultProperties().getProperty("codeDictionaryFile"));
         CodeDictionary codeDictionary = new CodeDictionary(codeDictionaryFile);
@@ -87,9 +76,9 @@ public class TrainClassifyOneFile {
         BucketGenerator generator = new BucketGenerator(codeDictionary);
         Bucket allInputRecords = generator.generateTrainingBucket(goldStandard);
 
-        Bucket[] trainingPredicition = randomlyAssignToTrainingAndPrediction(allInputRecords, trainingRatio);
-        trainingBucket = trainingPredicition[0];
-        predictionBucket = trainingPredicition[1];
+        Bucket training_bucket = new Bucket();
+        Bucket evaluation_bucket = new Bucket();
+        randomlyAssignToTrainingAndEvaluation(allInputRecords, training_bucket, evaluation_bucket, trainingRatio);
 
         LOGGER.info("********** Training Classifiers **********");
 
@@ -97,33 +86,19 @@ public class TrainClassifyOneFile {
 
         ExactMatchClassifier exactMatchClassifier = new ExactMatchClassifier();
         exactMatchClassifier.setModelFileName(experimentalFolderName + "/Models/lookupTable");
-        exactMatchClassifier.train(trainingBucket);
-
-        OLRClassifier.setModelPath(experimentalFolderName + "/Models/olrModel");
-        OLRClassifier olrClassifier = new OLRClassifier();
-        olrClassifier.train(trainingBucket);
+        exactMatchClassifier.train(training_bucket);
 
         IPipeline exactMatchPipeline = new ExactMatchPipeline(exactMatchClassifier);
-        IPipeline machineLearningClassifier = new ClassifierPipeline(olrClassifier, trainingBucket, new LogLengthWeightedLossFunction(), multipleClassifications, true);
 
-        Bucket notExactMatched = exactMatchPipeline.classify(predictionBucket);
-        Bucket notMachineLearned = machineLearningClassifier.classify(notExactMatched);
-        Bucket successfullyClassifiedMachineLearning = machineLearningClassifier.getSuccessfullyClassified();
+        Bucket notExactMatched = exactMatchPipeline.classify(evaluation_bucket);
         Bucket successfullyExactMatched = exactMatchPipeline.getSuccessfullyClassified();
         Bucket uniqueRecordsExactMatched = BucketFilter.uniqueRecordsOnly(successfullyExactMatched);
-        Bucket uniqueRecordsMachineLearned = BucketFilter.uniqueRecordsOnly(successfullyClassifiedMachineLearning);
-        Bucket uniqueRecordsNotMatched = BucketFilter.uniqueRecordsOnly(notMachineLearned);
 
         LOGGER.info("Exact Matched Bucket Size: " + successfullyExactMatched.size());
-        LOGGER.info("Machine Learned Bucket Size: " + successfullyClassifiedMachineLearning.size());
-        LOGGER.info("Not Classifed Bucket Size: " + notMachineLearned.size());
         LOGGER.info("Unique Exact Matched Bucket Size: " + uniqueRecordsExactMatched.size());
-        LOGGER.info("UniqueMachine Learned Bucket Size: " + uniqueRecordsMachineLearned.size());
-        LOGGER.info("Unique Not Classifed Bucket Size: " + uniqueRecordsNotMatched.size());
 
-        Bucket allClassifed = BucketUtils.getUnion(successfullyExactMatched, successfullyClassifiedMachineLearning);
-        Bucket allRecords = BucketUtils.getUnion(allClassifed, notMachineLearned);
-        assert(allRecords.size() == predictionBucket.size());
+        Bucket allRecords = BucketUtils.getUnion(successfullyExactMatched, notExactMatched);
+        assert (allRecords.size() == evaluation_bucket.size());
 
         writeRecords(experimentalFolderName, allRecords);
 
@@ -133,9 +108,6 @@ public class TrainClassifyOneFile {
 
         printAllStats(experimentalFolderName, codeIndex, allRecords, "allRecords");
         printAllStats(experimentalFolderName, codeIndex, successfullyExactMatched, "exactMatched");
-        printAllStats(experimentalFolderName, codeIndex, successfullyClassifiedMachineLearning, "machineLearned");
-
-        timer.stop();
 
         return allRecords;
     }
@@ -202,8 +174,7 @@ public class TrainClassifyOneFile {
         File goldStandard = null;
         if (args.length > 5) {
             System.err.println(usageHelp);
-        }
-        else {
+        } else {
             goldStandard = new File(args[0]);
             PipelineUtils.exitIfDoesNotExist(goldStandard);
 
@@ -216,29 +187,15 @@ public class TrainClassifyOneFile {
         File properties = null;
         if (args.length > 5) {
             System.err.println(usageHelp);
-        }
-        else {
+        } else {
             properties = new File(args[1]);
             if (properties.exists()) {
                 MachineLearningConfiguration.loadProperties(properties);
-            }
-            else {
+            } else {
                 LOGGER.error("Supplied properties file does not exsists. Using system defaults.");
             }
         }
         return properties;
-    }
-
-    private boolean parseMultipleClassifications(final String[] args) {
-
-        if (args.length > 5) {
-            System.err.println(usageHelp);
-        }
-        else {
-            if (args[3].equals("1")) { return true; }
-        }
-        return false;
-
     }
 
     private static double parseTrainingRatio(final String[] args) {
@@ -248,8 +205,7 @@ public class TrainClassifyOneFile {
             double userRatio = Double.valueOf(args[2]);
             if (userRatio > 0 && userRatio < 1) {
                 trainingRatio = userRatio;
-            }
-            else {
+            } else {
                 System.err.println("trainingRatio must be between 0 and 1. Exiting.");
                 System.exit(1);
             }
@@ -257,28 +213,15 @@ public class TrainClassifyOneFile {
         return trainingRatio;
     }
 
-    private Bucket[] randomlyAssignToTrainingAndPrediction(final Bucket bucket, final double trainingRatio) {
-
-        Bucket[] buckets = initBuckets();
+    private void randomlyAssignToTrainingAndEvaluation(final Bucket bucket, Bucket training_bucket, Bucket evaluation_bucket, final double trainingRatio) {
 
         for (Record record : bucket) {
             if (Math.random() < trainingRatio) {
-                buckets[0].addRecordToBucket(record);
-            }
-            else {
-                buckets[1].addRecordToBucket(record);
+                training_bucket.addRecordToBucket(record);
+            } else {
+                evaluation_bucket.addRecordToBucket(record);
             }
         }
-        return buckets;
-    }
-
-    private Bucket[] initBuckets() {
-
-        Bucket[] buckets = new Bucket[2];
-        for (int i = 0; i < buckets.length; i++) {
-            buckets[i] = new Bucket();
-        }
-        return buckets;
     }
 
 }
