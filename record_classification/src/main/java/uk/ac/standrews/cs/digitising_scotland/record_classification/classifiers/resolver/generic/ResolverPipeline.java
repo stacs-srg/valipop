@@ -120,7 +120,7 @@ public class ResolverPipeline {
         for (TokenSet set : subsets) {
 
             for (Classification classification : classifier.classify(set)) {
-                multiValueMap.add(classification.getProperty(), classification);
+                multiValueMap.add(classification.getCode(), classification);
             }
         }
         return multiValueMap;

@@ -193,7 +193,7 @@ public class OutputDataFormatter {
      *
      * @param delimiter the new delimiter
      */
-    public void setDelimier(final String delimiter) {
+    public void setDelimiter(final String delimiter) {
 
         this.delimiter = delimiter;
     }
