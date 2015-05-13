@@ -20,8 +20,10 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructur
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.tokens.TokenSet;
 
 import java.io.IOException;
+import java.util.Set;
 
-public interface IClassifier {
+public interface Classifier {
 
-     Classification classify(TokenSet token_set) throws IOException, ClassNotFoundException;
+     // TODO change parameter to string?
+     Set<Classification> classify(TokenSet token_set) throws IOException, ClassNotFoundException;
 }

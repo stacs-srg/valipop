@@ -16,16 +16,9 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.data_cleaning;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Set;
-
+import com.google.common.collect.Multiset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import uk.ac.shef.wit.simmetrics.similaritymetrics.AbstractStringMetric;
 import uk.ac.shef.wit.simmetrics.similaritymetrics.Levenshtein;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.Pair;
@@ -34,7 +27,8 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructur
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.records.Record;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.InputFormatException;
 
-import com.google.common.collect.Multiset;
+import java.io.IOException;
+import java.util.*;
 
 /**
  * Reads a {@link Bucket} and performs data cleaning such as spelling correction and feature selection on the descriptions in each {@link Record}.
@@ -150,7 +144,8 @@ public class LevenshteinCleaner extends AbstractDataCleaner {
 
         String bestMatch;
         if (!possibleMatches.isEmpty()) {
-            bestMatch = possibleMatches.get(possibleMatches.size() - 1).getLeft();
+            Pair<String, Float> stringFloatPair = possibleMatches.get(possibleMatches.size() - 1);
+            bestMatch = stringFloatPair.getLeft();
         }
         else {
             bestMatch = token;

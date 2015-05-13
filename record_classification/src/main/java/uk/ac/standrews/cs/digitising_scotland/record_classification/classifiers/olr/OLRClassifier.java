@@ -21,7 +21,7 @@ import org.apache.mahout.math.NamedVector;
 import org.apache.mahout.math.Vector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.IClassifier;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.Classifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.bucket.Bucket;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.classification.Classification;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.code.Code;
@@ -30,12 +30,10 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructur
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.vectors.CodeIndexer;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.vectors.VectorFactory;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.tools.configuration.MachineLearningConfiguration;
+import uk.ac.standrews.cs.digitising_scotland.record_classification_cleaned.AbstractClassifier;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 
 /**
  * Provides methods for training and classifying records.
@@ -45,7 +43,7 @@ import java.util.Properties;
  *
  * @author frjd2, jkc25
  */
-public class OLRClassifier implements IClassifier, Serializable {
+public class OLRClassifier extends AbstractClassifier implements Classifier, Serializable {
 
     private static final long serialVersionUID = -2561454096763303789L;
     private static final Logger LOGGER = LoggerFactory.getLogger(OLRClassifier.class);
@@ -148,14 +146,15 @@ public class OLRClassifier implements IClassifier, Serializable {
         }
     }
 
-    public Classification classify(final TokenSet tokenSet) {
+    public Set<Classification> classify(final TokenSet tokenSet) {
 
         NamedVector vector = vectorFactory.createNamedVectorFromString(tokenSet.toString(), "unknown");
         Vector classifyFull = model.classifyFull(vector);
         int classificationID = classifyFull.maxValueIndex();
         Code code = vectorFactory.getCodeIndexer().getCode(classificationID);
         double confidence = Math.exp(model.logLikelihood(classificationID, vector));
-        return new Classification(code, tokenSet, confidence);
+
+        return makeClassificationSet( new Classification(code, tokenSet, confidence));
     }
 
     /**

@@ -16,18 +16,11 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.pipeline;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-
+import com.google.common.collect.HashMultimap;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.lookup.ExactMatchClassifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.OriginalData;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.bucket.Bucket;
@@ -38,7 +31,14 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructur
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.tokens.TokenSet;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.InputFormatException;
 
-import com.google.common.collect.HashMultimap;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
+import static org.junit.Assert.assertEquals;
 
 @Ignore
 public class ExactMatchPipelineTest {
@@ -52,7 +52,8 @@ public class ExactMatchPipelineTest {
 
         File trainingFile = new File(getClass().getResource("/TrainingDataModernCODFormatTest.txt").getFile());
         Bucket trainingBucket = createTrainingBucket(trainingFile);
-        exactMatchClassifier = new ExactMatchClassifier(trainingBucket);
+        exactMatchClassifier = new ExactMatchClassifier();
+        exactMatchClassifier.train(trainingBucket);
         pipeline = new ExactMatchPipeline(exactMatchClassifier);
     }
 
@@ -68,19 +69,27 @@ public class ExactMatchPipelineTest {
     @Test
     public void testFirstDescriptionLookup() throws IOException, CodeNotValidException {
 
-        Assert.assertEquals(codeDictionary.getCode("I26"), exactMatchClassifier.classify(new TokenSet("Massive Pulmonary Embolism")).getLeft());
+        Set<Classification> classifications = exactMatchClassifier.classify(new TokenSet("Massive Pulmonary Embolism"));
+        for (Classification classification : classifications) {
+
+            assertEquals(codeDictionary.getCode("I26"), classification.getCode());
+        }
     }
 
     @Test
     public void testSecondDescriptionLookup() throws IOException, CodeNotValidException {
 
-        Assert.assertEquals(codeDictionary.getCode("R54"), exactMatchClassifier.classify(new TokenSet("old age")).getLeft());
+        Set<Classification> classifications = exactMatchClassifier.classify(new TokenSet("old age"));
+        for (Classification classification : classifications) {
+
+            assertEquals(codeDictionary.getCode("R54"), classification.getCode());
+        }
     }
 
     @Test
     public void testNoLookupLookup() throws IOException, CodeNotValidException {
 
-        Assert.assertEquals(null, exactMatchClassifier.classify(new TokenSet("foobar")));
+        assertEquals(null, exactMatchClassifier.classify(new TokenSet("foobar")));
     }
 
     @Test
@@ -98,7 +107,7 @@ public class ExactMatchPipelineTest {
     @Test
     public void testPipelineNoLookupLookup() throws IOException, CodeNotValidException {
 
-        Assert.assertEquals(null, pipeline.classify("foobar"));
+        assertEquals(null, pipeline.classify("foobar"));
     }
 
     @Test
@@ -145,8 +154,8 @@ public class ExactMatchPipelineTest {
         Bucket notClassified = pipeline.classify(bucket);
         Bucket classified = pipeline.getSuccessfullyClassified();
 
-        Assert.assertEquals(codeDictionary.getCode("R54"), classified.getRecord(0).getListOfClassifications().get("old age").iterator().next().getCode());
-        Assert.assertEquals(codeDictionary.getCode("I26"), classified.getRecord(1).getListOfClassifications().get("Massive Pulmonary Embolism").iterator().next().getCode());
+        assertEquals(codeDictionary.getCode("R54"), classified.getRecord(0).getListOfClassifications().get("old age").iterator().next().getCode());
+        assertEquals(codeDictionary.getCode("I26"), classified.getRecord(1).getListOfClassifications().get("Massive Pulmonary Embolism").iterator().next().getCode());
         Assert.assertNull(classified.getRecord(2));
         Assert.assertTrue(notClassified.size() == 1);
 

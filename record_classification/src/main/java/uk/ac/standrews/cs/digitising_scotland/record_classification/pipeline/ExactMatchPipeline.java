@@ -105,7 +105,7 @@ public class ExactMatchPipeline implements IPipeline {
      */
     protected Set<Classification> classify(final String description) throws IOException {
 
-        return classifier.classifyTokenSetToCodeTripleSet(new TokenSet(description));
+        return classifier.classify(new TokenSet(description));
 
     }
 

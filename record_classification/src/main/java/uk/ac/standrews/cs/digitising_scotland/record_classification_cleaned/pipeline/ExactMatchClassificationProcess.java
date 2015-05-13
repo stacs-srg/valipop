@@ -40,14 +40,19 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.writers.Metr
 import java.io.File;
 import java.io.IOException;
 
-public class TrainAndEvaluateExactMatchClassifier {
+public class ExactMatchClassificationProcess implements ClassificationProcess {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(TrainAndEvaluateExactMatchClassifier.class);
-    private static final String USAGE_TEXT = "usage: $" + TrainAndEvaluateExactMatchClassifier.class.getSimpleName() + "    <trainingDataFile>  <propertiesFile>  <trainingRatio>";
+    private static final Logger LOGGER = LoggerFactory.getLogger(ExactMatchClassificationProcess.class);
+    private static final String USAGE_TEXT = "usage: $" + ExactMatchClassificationProcess.class.getSimpleName() + "    <trainingDataFile>  <propertiesFile>  <trainingRatio>";
 
     private static final int TRAINING_DATA_FILE_ARG_POS = 0;
     private static final int PROPERTIES_FILE_ARG_POS = 1;
     private static final int TRAINING_RATIO_ARG_POS = 2;
+
+    String experimentalFolderName;
+    File training_data_file;
+    double training_ratio;
+    CodeDictionary code_dictionary;
 
     /**
      * Entry method for training and classifying a batch of records into
@@ -58,20 +63,23 @@ public class TrainAndEvaluateExactMatchClassifier {
      */
     public static void main(final String[] args) throws Exception {
 
-        new TrainAndEvaluateExactMatchClassifier().run(args);
+        new ExactMatchClassificationProcess(args).performClassification();
     }
 
-    public Bucket run(final String[] args) throws Exception {
+    public ExactMatchClassificationProcess(String[] args) throws IOException, InvalidArgException {
 
         LOGGER.info("Running with args: {}", (Object) args);
 
-        String experimentalFolderName = PipelineUtils.setupExperimentalFolders("ExactMatchClassifierDevelopment");
+         experimentalFolderName = PipelineUtils.setupExperimentalFolders("ExactMatchClassifierDevelopment");
 
-        File training_data_file = getTrainingDataFileFromArgs(args);
-        double training_ratio = parseTrainingRatio(args);
+         training_data_file = getTrainingDataFileFromArgs(args);
+         training_ratio = parseTrainingRatio(args);
 
         File code_dictionary_file = new File(MachineLearningConfiguration.getDefaultProperties().getProperty("codeDictionaryFile"));
-        CodeDictionary code_dictionary = new CodeDictionary(code_dictionary_file);
+         code_dictionary = new CodeDictionary(code_dictionary_file);
+    }
+
+    public Bucket performClassification() throws Exception {
 
         Bucket all_records = new Bucket(training_data_file, code_dictionary);
 
@@ -81,8 +89,6 @@ public class TrainAndEvaluateExactMatchClassifier {
         randomlyAssignToTrainingAndEvaluation(all_records, training_bucket, evaluation_bucket, training_ratio);
 
         LOGGER.info("********** Training Classifiers **********");
-
-        CodeIndexer codeIndex = new CodeIndexer(all_records);
 
         ExactMatchClassifier exactMatchClassifier = new ExactMatchClassifier();
         exactMatchClassifier.setModelFileName(experimentalFolderName + "/Models/lookupTable");
@@ -106,8 +112,9 @@ public class TrainAndEvaluateExactMatchClassifier {
 
         LOGGER.info("********** Output Stats **********");
 
-        printAllStats(experimentalFolderName, codeIndex, allRecords, "allRecords");
-        printAllStats(experimentalFolderName, codeIndex, successfullyExactMatched, "exactMatched");
+        CodeIndexer code_indexer = new CodeIndexer(all_records);
+        printAllStats(experimentalFolderName, code_indexer, allRecords, "allRecords");
+        printAllStats(experimentalFolderName, code_indexer, successfullyExactMatched, "exactMatched");
 
         return allRecords;
     }

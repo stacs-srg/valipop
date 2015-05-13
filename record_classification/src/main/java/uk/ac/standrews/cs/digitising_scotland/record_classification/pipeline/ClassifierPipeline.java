@@ -17,7 +17,7 @@
 package uk.ac.standrews.cs.digitising_scotland.record_classification.pipeline;
 
 import com.google.common.collect.Multiset;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.IClassifier;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.Classifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.cachedclassifier.CachedClassifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.resolver.Interfaces.LossFunction;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.resolver.RecordClassificationResolverPipeline;
@@ -53,12 +53,12 @@ public class ClassifierPipeline implements IPipeline {
 
     /**
      * Constructs a new {@link ClassifierPipeline} with the specified
-     * {@link uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.IClassifier} used to perform the classification duties.
+     * {@link Classifier} used to perform the classification duties.
      *
-     * @param classifier    {@link uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.IClassifier} used for machine learning classification
+     * @param classifier    {@link Classifier} used for machine learning classification
      * @param cachePopulationBucket the training bucket
      */
-    public ClassifierPipeline(final IClassifier classifier, final Bucket cachePopulationBucket, final LossFunction<Multiset<Classification>, Double> lossFunction, final boolean multipleClassifications, final boolean resolveHierarchies) {
+    public ClassifierPipeline(final Classifier classifier, final Bucket cachePopulationBucket, final LossFunction<Multiset<Classification>, Double> lossFunction, final boolean multipleClassifications, final boolean resolveHierarchies) {
 
         /* The cache. */
         TokenToClassificationMapGenerator populator = new TokenToClassificationMapGenerator(cachePopulationBucket);

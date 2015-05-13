@@ -83,7 +83,8 @@ public final class PipelineUtils {
 
         ExactMatchClassifier exactMatchClassifier = new ExactMatchClassifier();
         exactMatchClassifier.setModelFileName(modelLocations + "/lookupTable");
-        return exactMatchClassifier.getModelFromDefaultLocation();
+        exactMatchClassifier.loadModelFromDefaultLocation();
+        return exactMatchClassifier;
     }
 
     public static void printStatusUpdate() {
