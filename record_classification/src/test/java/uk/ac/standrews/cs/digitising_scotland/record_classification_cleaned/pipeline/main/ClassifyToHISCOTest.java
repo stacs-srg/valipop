@@ -19,7 +19,6 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification_cleaned.pip
 import org.junit.Assert;
 import org.junit.Test;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.bucket.Bucket;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.code.CodeNotValidException;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.pipeline.main.TrainClassifyOneFile;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.tools.configuration.MachineLearningConfiguration;
 import uk.ac.standrews.cs.digitising_scotland.record_classification_cleaned.pipeline.TrainAndEvaluateExactMatchClassifier;
@@ -31,7 +30,7 @@ public class ClassifyToHISCOTest extends AbstractTest {
     public static final String CODE_DICTIONARY_PROPERTY_NAME = "codeDictionaryFile";
 
     @Test
-    public void testExactMatchHisco() throws Exception, CodeNotValidException {
+    public void testExactMatchHisco() throws Exception {
 
         String code_dictionary_path = getResourceFilePath(getClass(), CODE_DICTIONARY_FILE_NAME);
         String occupation_data_path = getResourceFilePath(getClass(), OCCUPATION_DATA_FILE_NAME);
@@ -46,7 +45,7 @@ public class ClassifyToHISCOTest extends AbstractTest {
     }
 
     @Test
-    public void testPipelineHisco() throws Exception, CodeNotValidException {
+    public void testPipelineHisco() throws Exception {
 
         String code_dictionary_path = getResourceFilePath(getClass(), CODE_DICTIONARY_FILE_NAME);
         MachineLearningConfiguration.getDefaultProperties().setProperty(CODE_DICTIONARY_PROPERTY_NAME, code_dictionary_path);
