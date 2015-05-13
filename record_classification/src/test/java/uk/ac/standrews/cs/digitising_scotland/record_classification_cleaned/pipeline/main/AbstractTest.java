@@ -12,7 +12,7 @@ public class AbstractTest {
     @Before
     public void setup() {
         Logger logger = (Logger) LoggerFactory.getLogger(PACKAGE_ROOT);
-        logger.setLevel(Level.ERROR);
+        logger.setLevel(Level.INFO);
     }
 
     protected static String getResourceFilePath(Class the_class, String resource_file_name) {

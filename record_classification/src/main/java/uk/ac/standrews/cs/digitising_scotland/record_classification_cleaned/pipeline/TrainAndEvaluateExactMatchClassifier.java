@@ -27,7 +27,6 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructur
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.bucket.BucketFilter;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.bucket.BucketUtils;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.code.CodeDictionary;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.code.CodeNotValidException;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.records.Record;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.vectors.CodeIndexer;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.pipeline.BucketGenerator;
@@ -45,8 +44,11 @@ import java.io.IOException;
 public class TrainAndEvaluateExactMatchClassifier {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TrainAndEvaluateExactMatchClassifier.class);
-    private static double DEFAULT_TRAINING_RATIO = 0.8;
-    private static final String usageHelp = "usage: $" + TrainAndEvaluateExactMatchClassifier.class.getSimpleName() + "    <goldStandardDataFile>  <propertiesFile>  <trainingRatio(optional)>    <output multiple classifications";
+    private static final String USAGE_TEXT = "usage: $" + TrainAndEvaluateExactMatchClassifier.class.getSimpleName() + "    <trainingDataFile>  <propertiesFile>  <trainingRatio>";
+
+    private static final int TRAINING_DATA_FILE_ARG_POS = 0;
+    private static final int PROPERTIES_FILE_ARG_POS = 1;
+    private static final int TRAINING_RATIO_ARG_POS = 2;
 
     /**
      * Entry method for training and classifying a batch of records into
@@ -55,19 +57,19 @@ public class TrainAndEvaluateExactMatchClassifier {
      * @param args <file1> training file <file2> file to classify
      * @throws Exception If exception occurs
      */
-    public static void main(final String[] args) throws Exception, CodeNotValidException {
+    public static void main(final String[] args) throws Exception {
 
         new TrainAndEvaluateExactMatchClassifier().run(args);
     }
 
-    public Bucket run(final String[] args) throws Exception, CodeNotValidException {
+    public Bucket run(final String[] args) throws Exception {
 
         printArgs(args);
 
         String experimentalFolderName = PipelineUtils.setupExperimentalFolders("ExactMatchClassifierDevelopment");
 
         File goldStandard = parseGoldStandFile(args);
-        parseProperties(args);
+        loadProperties(args);
         double trainingRatio = parseTrainingRatio(args);
 
         File codeDictionaryFile = new File(MachineLearningConfiguration.getDefaultProperties().getProperty("codeDictionaryFile"));
@@ -114,11 +116,7 @@ public class TrainAndEvaluateExactMatchClassifier {
 
     private void printArgs(final String[] args) {
 
-        StringBuilder sb = new StringBuilder();
-        for (String string : args) {
-            sb.append(string + " ");
-        }
-        LOGGER.info("Running with args: " + sb.toString().trim());
+        LOGGER.info("Running with args: {}", (Object) args);
     }
 
     private void printAllStats(final String experimentalFolderName, final CodeIndexer codeIndex, final Bucket bucket, final String identifier) throws IOException {
@@ -173,7 +171,7 @@ public class TrainAndEvaluateExactMatchClassifier {
 
         File goldStandard = null;
         if (args.length > 5) {
-            System.err.println(usageHelp);
+            System.err.println(USAGE_TEXT);
         } else {
             goldStandard = new File(args[0]);
             PipelineUtils.exitIfDoesNotExist(goldStandard);
@@ -182,35 +180,40 @@ public class TrainAndEvaluateExactMatchClassifier {
         return goldStandard;
     }
 
-    public File parseProperties(String[] args) {
+    private void loadProperties(String[] args) {
 
-        File properties = null;
         if (args.length > 5) {
-            System.err.println(usageHelp);
+            System.err.println(USAGE_TEXT);
         } else {
-            properties = new File(args[1]);
+            File properties = new File(args[1]);
             if (properties.exists()) {
                 MachineLearningConfiguration.loadProperties(properties);
             } else {
-                LOGGER.error("Supplied properties file does not exsists. Using system defaults.");
+                LOGGER.error("Supplied properties file does not exist. Using system defaults.");
             }
         }
-        return properties;
     }
 
-    private static double parseTrainingRatio(final String[] args) {
+    private static double parseTrainingRatio(final String[] args) throws InvalidArgException {
 
-        double trainingRatio = DEFAULT_TRAINING_RATIO;
-        if (args.length > 1) {
-            double userRatio = Double.valueOf(args[2]);
-            if (userRatio > 0 && userRatio < 1) {
-                trainingRatio = userRatio;
-            } else {
-                System.err.println("trainingRatio must be between 0 and 1. Exiting.");
-                System.exit(1);
-            }
+        // TODO rewrite args handling using Apache Commons CLI2
+
+        if (args.length <= TRAINING_RATIO_ARG_POS) {
+            throw new InvalidArgException("training ratio argument missing");
         }
-        return trainingRatio;
+
+        String training_ratio_arg = args[TRAINING_RATIO_ARG_POS];
+
+        try {
+            double training_ratio = Double.valueOf(training_ratio_arg);
+            if (training_ratio > 0 && training_ratio < 1) {
+                return training_ratio;
+            }
+            throw new InvalidArgException("invalid training ratio: " +training_ratio);
+
+        } catch (NumberFormatException e) {
+            throw new InvalidArgException("invalid training ratio: " +training_ratio_arg);
+        }
     }
 
     private void randomlyAssignToTrainingAndEvaluation(final Bucket bucket, Bucket training_bucket, Bucket evaluation_bucket, final double trainingRatio) {
