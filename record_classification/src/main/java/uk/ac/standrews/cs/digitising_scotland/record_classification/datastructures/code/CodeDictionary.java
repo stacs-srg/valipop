@@ -16,6 +16,10 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.code;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.tools.ReaderWriterFactory;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -24,22 +28,20 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import uk.ac.standrews.cs.digitising_scotland.record_classification.tools.ReaderWriterFactory;
-
-// TODO: Auto-generated Javadoc
 /**
  * This class contains a collection of all of the possible valid codes that can be used in training or classification.
  * If a code is not in this class then it is assumed that the code is not correct, ie a possible typo or mistaken entry.
- * @author jkc25, frjd2
  *
+ * @author jkc25, frjd2
  */
 public class CodeDictionary {
 
-    /** The Constant LOGGER. */
+    /**
+     * The Constant LOGGER.
+     */
     private static final Logger LOGGER = LoggerFactory.getLogger(CodeDictionary.class);
+
+    // TODO replace with Map<String, String> or Set<Code>?
 
     /**
      * Map of codes strings to code descriptions.
@@ -54,26 +56,14 @@ public class CodeDictionary {
      */
     public CodeDictionary(final File codeDictionaryFile) throws IOException {
 
-        validCodes = initMap(codeDictionaryFile);
-    }
-
-    /**
-     * Inits the map.
-     *
-     * @param correctCodes the correct codes
-     * @return the map
-     * @throws IOException Signals that an I/O exception has occurred.
-     */
-    private Map<String, Code> initMap(final File correctCodes) throws IOException {
-
         validCodes = new HashMap<>();
-        BufferedReader br = ReaderWriterFactory.createBufferedReader(correctCodes);
-        String line;
-        while ((line = br.readLine()) != null) {
-            parseLineAndAddToMap(line);
+
+        try (BufferedReader br = ReaderWriterFactory.createBufferedReader(codeDictionaryFile)) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                parseLineAndAddToMap(line);
+            }
         }
-        br.close();
-        return validCodes;
     }
 
     /**
@@ -88,8 +78,7 @@ public class CodeDictionary {
             String codeFromFile = splitLine[0].trim();
             String descriptionFromFile = splitLine[1].trim();
             createCodeAndAddToMap(codeFromFile, descriptionFromFile);
-        }
-        else if (splitLine.length == 1) {
+        } else if (splitLine.length == 1) {
             String codeFromFile = splitLine[0].trim();
             String descriptionFromFile = "No Description";
             createCodeAndAddToMap(codeFromFile, descriptionFromFile);
@@ -99,7 +88,7 @@ public class CodeDictionary {
     /**
      * Creates the code and add to map.
      *
-     * @param codeFromFile the code from file
+     * @param codeFromFile        the code from file
      * @param descriptionFromFile the description from file
      */
     private void createCodeAndAddToMap(final String codeFromFile, final String descriptionFromFile) {
@@ -138,6 +127,7 @@ public class CodeDictionary {
 
     /**
      * Returns an iterator over the validCode map.
+     *
      * @return A set of String, Code entries
      */
     public Iterator<Entry<String, Code>> getIterator() {

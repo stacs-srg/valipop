@@ -16,26 +16,28 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.tools.configuration;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
- * Machine learning parameters are held in this class.
- * The default machine learning properties file is held in target/classes/machineLearning.default.properties
  * @author jkc25
- *
  */
 public class MachineLearningConfiguration {
+
+    // TODO tidy up - should be options to load from single read-only default properties set, or other specified file, or combination of both
+
+    private static final String DEFAULT_PROPERTIES_FILE_NAME = "machineLearning.default.properties";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MachineLearningConfiguration.class);
 
     private static Properties defaultProperties = populateDefaults();
+    private static String default_properties_path;
 
     /**
      * Returns the {@link Properties} containing the default machine learning configuration data.
@@ -44,6 +46,11 @@ public class MachineLearningConfiguration {
     public static Properties getDefaultProperties() {
 
         return defaultProperties;
+    }
+
+    public static String getDefaultPropertiesPath() {
+
+        return default_properties_path;
     }
 
     /**
@@ -75,11 +82,13 @@ public class MachineLearningConfiguration {
     private static Properties populateDefaults() {
 
         Properties defaultProperties = new Properties();
-        String machineLearningDefault = "machineLearning.default.properties";
 
         try {
+
             ClassLoader classLoader = MachineLearningConfiguration.class.getClassLoader();
-            InputStream resourceAsStream = classLoader.getResourceAsStream(machineLearningDefault);
+            default_properties_path = classLoader.getResource(DEFAULT_PROPERTIES_FILE_NAME).getFile();
+            InputStream resourceAsStream = classLoader.getResourceAsStream(DEFAULT_PROPERTIES_FILE_NAME);
+
             defaultProperties.load(resourceAsStream);
         }
         catch (IOException e) {
@@ -97,9 +106,6 @@ public class MachineLearningConfiguration {
         Properties newProperties = new Properties();
 
         try {
-            ClassLoader classLoader = MachineLearningConfiguration.class.getClassLoader();
-            final String absolutePath = pathToProperties.getAbsolutePath();
-            System.out.println(absolutePath);
             InputStream resourceAsStream = new FileInputStream(pathToProperties);
             newProperties.load(resourceAsStream);
             defaultProperties = newProperties;
@@ -109,5 +115,4 @@ public class MachineLearningConfiguration {
         }
         return newProperties;
     }
-
 }

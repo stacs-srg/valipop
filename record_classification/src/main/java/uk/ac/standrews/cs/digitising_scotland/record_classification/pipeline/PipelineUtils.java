@@ -16,13 +16,8 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.pipeline;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.lookup.ExactMatchClassifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.olr.OLRClassifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.analysis_metrics.CodeMetrics;
@@ -34,6 +29,10 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.tools.Reader
 import uk.ac.standrews.cs.digitising_scotland.record_classification.tools.Timer;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.tools.Utils;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.tools.configuration.MachineLearningConfiguration;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
 
 /**
  * Utility class containing methods to help with the creation and use of the exact match and machine learning pipelines.
@@ -124,7 +123,5 @@ public final class PipelineUtils {
             LOGGER.error(file.getAbsolutePath() + " does not exist. Exiting");
             throw new RuntimeException();
         }
-
     }
-
 }

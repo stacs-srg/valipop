@@ -29,7 +29,6 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructur
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.code.CodeDictionary;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.records.Record;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.vectors.CodeIndexer;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.pipeline.BucketGenerator;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.pipeline.ExactMatchPipeline;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.pipeline.IPipeline;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.pipeline.PipelineUtils;
@@ -64,27 +63,26 @@ public class TrainAndEvaluateExactMatchClassifier {
 
     public Bucket run(final String[] args) throws Exception {
 
-        printArgs(args);
+        LOGGER.info("Running with args: {}", (Object) args);
 
         String experimentalFolderName = PipelineUtils.setupExperimentalFolders("ExactMatchClassifierDevelopment");
 
-        File goldStandard = parseGoldStandFile(args);
-        loadProperties(args);
-        double trainingRatio = parseTrainingRatio(args);
+        File training_data_file = getTrainingDataFileFromArgs(args);
+        double training_ratio = parseTrainingRatio(args);
 
-        File codeDictionaryFile = new File(MachineLearningConfiguration.getDefaultProperties().getProperty("codeDictionaryFile"));
-        CodeDictionary codeDictionary = new CodeDictionary(codeDictionaryFile);
+        File code_dictionary_file = new File(MachineLearningConfiguration.getDefaultProperties().getProperty("codeDictionaryFile"));
+        CodeDictionary code_dictionary = new CodeDictionary(code_dictionary_file);
 
-        BucketGenerator generator = new BucketGenerator(codeDictionary);
-        Bucket allInputRecords = generator.generateTrainingBucket(goldStandard);
+        Bucket all_records = new Bucket(training_data_file, code_dictionary);
 
         Bucket training_bucket = new Bucket();
         Bucket evaluation_bucket = new Bucket();
-        randomlyAssignToTrainingAndEvaluation(allInputRecords, training_bucket, evaluation_bucket, trainingRatio);
+
+        randomlyAssignToTrainingAndEvaluation(all_records, training_bucket, evaluation_bucket, training_ratio);
 
         LOGGER.info("********** Training Classifiers **********");
 
-        CodeIndexer codeIndex = new CodeIndexer(allInputRecords);
+        CodeIndexer codeIndex = new CodeIndexer(all_records);
 
         ExactMatchClassifier exactMatchClassifier = new ExactMatchClassifier();
         exactMatchClassifier.setModelFileName(experimentalFolderName + "/Models/lookupTable");
@@ -112,11 +110,6 @@ public class TrainAndEvaluateExactMatchClassifier {
         printAllStats(experimentalFolderName, codeIndex, successfullyExactMatched, "exactMatched");
 
         return allRecords;
-    }
-
-    private void printArgs(final String[] args) {
-
-        LOGGER.info("Running with args: {}", (Object) args);
     }
 
     private void printAllStats(final String experimentalFolderName, final CodeIndexer codeIndex, final Bucket bucket, final String identifier) throws IOException {
@@ -167,30 +160,33 @@ public class TrainAndEvaluateExactMatchClassifier {
         writer.close();
     }
 
-    private static File parseGoldStandFile(final String[] args) {
+    private static File getTrainingDataFileFromArgs(final String[] args) throws InvalidArgException {
 
-        File goldStandard = null;
-        if (args.length > 5) {
-            System.err.println(USAGE_TEXT);
-        } else {
-            goldStandard = new File(args[0]);
-            PipelineUtils.exitIfDoesNotExist(goldStandard);
-
+        if (args.length <= TRAINING_DATA_FILE_ARG_POS) {
+            throw new InvalidArgException("training data file argument missing");
         }
-        return goldStandard;
+
+        File training_data_file = new File(args[TRAINING_DATA_FILE_ARG_POS]);
+
+        if (!training_data_file.exists()) {
+            throw new InvalidArgException(training_data_file.getAbsolutePath() + " does not exist");
+        }
+
+        return training_data_file;
     }
 
-    private void loadProperties(String[] args) {
+    private void loadMachineLearningPropertiesFromArgs(String[] args) throws InvalidArgException {
 
-        if (args.length > 5) {
-            System.err.println(USAGE_TEXT);
+        if (args.length <= PROPERTIES_FILE_ARG_POS) {
+            throw new InvalidArgException("properties file argument missing");
+        }
+
+        File properties_file = new File(args[PROPERTIES_FILE_ARG_POS]);
+
+        if (properties_file.exists()) {
+            MachineLearningConfiguration.loadProperties(properties_file);
         } else {
-            File properties = new File(args[1]);
-            if (properties.exists()) {
-                MachineLearningConfiguration.loadProperties(properties);
-            } else {
-                LOGGER.error("Supplied properties file does not exist. Using system defaults.");
-            }
+            LOGGER.info("supplied properties file does not exist, using default properties: " + MachineLearningConfiguration.getDefaultPropertiesPath());
         }
     }
 
@@ -209,10 +205,10 @@ public class TrainAndEvaluateExactMatchClassifier {
             if (training_ratio > 0 && training_ratio < 1) {
                 return training_ratio;
             }
-            throw new InvalidArgException("invalid training ratio: " +training_ratio);
+            throw new InvalidArgException("invalid training ratio: " + training_ratio);
 
         } catch (NumberFormatException e) {
-            throw new InvalidArgException("invalid training ratio: " +training_ratio_arg);
+            throw new InvalidArgException("invalid training ratio: " + training_ratio_arg);
         }
     }
 

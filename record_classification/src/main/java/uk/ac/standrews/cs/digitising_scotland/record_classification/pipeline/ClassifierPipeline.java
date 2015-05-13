@@ -43,7 +43,7 @@ public class ClassifierPipeline implements IPipeline {
 
     /** The Constant CONFIDENCE_CHOP_LEVEL. */
     private static final double CONFIDENCE_CHOP_LEVEL = 0.3;
-    private final RecordClassificationResolverPipeline<? extends LossFunction<Multiset<Classification>, Double>> resolverPipeline;
+    private final RecordClassificationResolverPipeline resolverPipeline;
 
     /** The record cache. */
     private Map<String, Set<Classification>> recordCache;
@@ -58,14 +58,14 @@ public class ClassifierPipeline implements IPipeline {
      * @param classifier    {@link uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.IClassifier} used for machine learning classification
      * @param cachePopulationBucket the training bucket
      */
-    public ClassifierPipeline(final IClassifier<TokenSet, Classification> classifier, final Bucket cachePopulationBucket, final LossFunction<Multiset<Classification>, Double> lossFunction, final boolean multipleClassifications, final boolean resolveHierarchies) {
+    public ClassifierPipeline(final IClassifier classifier, final Bucket cachePopulationBucket, final LossFunction<Multiset<Classification>, Double> lossFunction, final boolean multipleClassifications, final boolean resolveHierarchies) {
 
         /* The cache. */
         TokenToClassificationMapGenerator populator = new TokenToClassificationMapGenerator(cachePopulationBucket);
         recordCache = new HashMap<>();
-        CachedClassifier<TokenSet, Classification> cache = new CachedClassifier<>(classifier, populator.getMap());
+        CachedClassifier cache = new CachedClassifier(classifier, populator.getMap());
 
-        this.resolverPipeline = new RecordClassificationResolverPipeline<>(cache, lossFunction, CONFIDENCE_CHOP_LEVEL, multipleClassifications, resolveHierarchies);
+        this.resolverPipeline = new RecordClassificationResolverPipeline(cache, lossFunction, CONFIDENCE_CHOP_LEVEL, multipleClassifications, resolveHierarchies);
         this.successfullyClassified = new Bucket();
         this.forFurtherProcessing = new Bucket();
     }

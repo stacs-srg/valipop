@@ -45,7 +45,7 @@ import java.util.Properties;
  *
  * @author frjd2, jkc25
  */
-public class OLRClassifier implements IClassifier<TokenSet, Classification>, Serializable {
+public class OLRClassifier implements IClassifier, Serializable {
 
     private static final long serialVersionUID = -2561454096763303789L;
     private static final Logger LOGGER = LoggerFactory.getLogger(OLRClassifier.class);

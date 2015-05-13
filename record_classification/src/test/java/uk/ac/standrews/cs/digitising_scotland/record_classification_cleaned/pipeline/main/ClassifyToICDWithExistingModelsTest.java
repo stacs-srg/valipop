@@ -21,6 +21,7 @@ import org.junit.Test;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.bucket.Bucket;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.classification.Classification;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.code.CodeNotValidException;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.InputFormatException;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.tools.configuration.MachineLearningConfiguration;
 import uk.ac.standrews.cs.digitising_scotland.record_classification_cleaned.pipeline.ClassifyWithExistingModels;
 
@@ -37,7 +38,7 @@ public class ClassifyToICDWithExistingModelsTest extends AbstractTest {
     Bucket allRecords;
 
     @Before
-    public void setUp() throws IOException, CodeNotValidException, ClassNotFoundException {
+    public void setUp() throws IOException, CodeNotValidException, ClassNotFoundException, InputFormatException {
 
         // TODO code dictionary doesn't appear to affect test results - used only for training?
         String code_dictionary_file_path = getResourceFilePath(getClass(), "ICD_code_dictionary.txt");
