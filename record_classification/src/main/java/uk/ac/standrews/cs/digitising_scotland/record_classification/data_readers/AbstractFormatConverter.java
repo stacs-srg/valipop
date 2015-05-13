@@ -16,14 +16,14 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.data_readers;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.code.CodeDictionary;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.code.CodeNotValidException;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.records.Record;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.InputFormatException;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
 
 public abstract class AbstractFormatConverter {
 
@@ -81,5 +81,26 @@ public abstract class AbstractFormatConverter {
         String noQuotes = string.replaceAll("\"", "").trim();
 
         return noQuotes;
+    }
+
+    /**
+     * Concatenates strings  between the start and end points of an array with a ',' delimiter.
+     *
+     * @param stringArray   the String array with consecutive strings to concatenate
+     * @param startPosition the first index to concatenate
+     * @param endPosition   the last index to concatenate
+     * @return the concatenated string, comma separated
+     */
+    protected static String formDescription(final String[] stringArray, final int startPosition, final int endPosition) {
+
+        String description = "";
+
+        for (int currentPosition = startPosition; currentPosition <= endPosition; currentPosition++) {
+            if (stringArray[currentPosition].length() != 0 && !stringArray[currentPosition].equalsIgnoreCase("null")) {
+                description += stringArray[currentPosition].toLowerCase() + ",";
+            }
+        }
+
+        return description;
     }
 }

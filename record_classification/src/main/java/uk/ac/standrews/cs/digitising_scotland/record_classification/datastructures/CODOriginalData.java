@@ -16,8 +16,6 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures;
 
-import java.util.List;
-
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.InputFormatException;
 
 /**
@@ -25,7 +23,7 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.I
  * @author jkc25
  *
  */
-public class CODOrignalData extends OriginalData {
+public class CODOriginalData extends OriginalData {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 148704864605209743L;
@@ -46,14 +44,13 @@ public class CODOrignalData extends OriginalData {
      * @param fileName name of file containing this original data
      * @throws InputFormatException if one or more of the inputs are null
      */
-    public CODOrignalData(final List<String> description, final int year, final int ageGroup, final int sex, final int imageQuality, final String fileName) throws InputFormatException {
+    public CODOriginalData(final String description, final int year, final int ageGroup, final int sex, final int imageQuality, final String fileName) throws InputFormatException {
 
         super(description, year, imageQuality, fileName);
         if (ageGroup < 0 || ageGroup > 5) { throw new NumberFormatException("age group must be between 0 and 5"); }
         this.ageGroup = ageGroup;
         if (sex < 0 || sex > 1) { throw new NumberFormatException(sex + " read for sex.\nsex must be 1 or 0. 1 is male, 0 is female"); }
         this.sex = sex;
-
     }
 
     /**
@@ -97,7 +94,7 @@ public class CODOrignalData extends OriginalData {
         if (this == obj) { return true; }
         if (!super.equals(obj)) { return false; }
         if (getClass() != obj.getClass()) { return false; }
-        CODOrignalData other = (CODOrignalData) obj;
+        CODOriginalData other = (CODOriginalData) obj;
         if (ageGroup != other.ageGroup) { return false; }
         if (sex != other.sex) { return false; }
         return true;

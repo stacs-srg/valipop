@@ -16,19 +16,18 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.bucket;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.OriginalData;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.records.Record;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.records.RecordFactory;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.InputFormatException;
+
+import java.io.File;
+import java.util.Iterator;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * This Class, BucketTest, tests the construction of {@link Bucket} objects.
@@ -62,7 +61,7 @@ public class BucketTest {
     public void testEmptyConstructor() {
 
         bucketA = new Bucket();
-        Assert.assertEquals(0, bucketA.size());
+        assertEquals(0, bucketA.size());
     }
 
     /**
@@ -73,14 +72,13 @@ public class BucketTest {
 
         bucketA = new Bucket(listOfRecords);
 
-        Assert.assertEquals(listOfRecords.size(), bucketA.size());
+        assertEquals(listOfRecords.size(), bucketA.size());
 
         Iterator<Record> originalList = listOfRecords.iterator();
 
         for (Record record : bucketA) {
-            Assert.assertEquals(originalList.next(), record);
+            assertEquals(originalList.next(), record);
         }
-
     }
 
     /**
@@ -92,20 +90,18 @@ public class BucketTest {
     public void testAddSingleRecord() throws InputFormatException {
 
         bucketA = new Bucket();
-        int id = (int) Math.rint(Math.random() * 1000);
-        ArrayList<String> desc = new ArrayList<>();
-        desc.add("description");
-        OriginalData originalData = new OriginalData(desc, 1995, 1, "testFileName");
+        int id = (int) Math.rint(Math.random() * 1000); // TODO WTF?
+
+        OriginalData originalData = new OriginalData("description", 1995, 1, "testFileName");
         Record recordToInsert = new Record(id, originalData);
 
-        Assert.assertEquals(0, bucketA.size());
+        assertEquals(0, bucketA.size());
 
         bucketA.addRecordToBucket(recordToInsert);
 
-        Assert.assertEquals(1, bucketA.size());
+        assertEquals(1, bucketA.size());
 
-        Assert.assertEquals(recordToInsert, bucketA.iterator().next());
-
+        assertEquals(recordToInsert, bucketA.iterator().next());
     }
 
     /**
@@ -117,12 +113,12 @@ public class BucketTest {
         bucketA = new Bucket();
         bucketA.addCollectionOfRecords(listOfRecords);
 
-        Assert.assertEquals(listOfRecords.size(), bucketA.size());
+        assertEquals(listOfRecords.size(), bucketA.size());
 
         Iterator<Record> originalList = listOfRecords.iterator();
 
         for (Record record : bucketA) {
-            Assert.assertEquals(originalList.next(), record);
+            assertEquals(originalList.next(), record);
         }
 
     }
@@ -136,7 +132,7 @@ public class BucketTest {
         bucketA = new Bucket(listOfRecords);
         for (Record record : listOfRecords) {
             int uid = record.getid();
-            Assert.assertEquals(record, bucketA.getRecord(uid));
+            assertEquals(record, bucketA.getRecord(uid));
         }
 
     }

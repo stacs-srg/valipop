@@ -84,7 +84,7 @@ public class Bucket implements Iterable<Record> {
         if (training_file_is_in_long_format) {
             addCollectionOfRecords(new LongFormatConverter().convert(trainingFile, codeDictionary));
         } else {
-            addCollectionOfRecords(RecordFactory.makeCodedCodRecordsFromFile(trainingFile, codeDictionary));
+            addCollectionOfRecords(RecordFactory.getRecordsFromFile(trainingFile, codeDictionary));
         }
     }
 

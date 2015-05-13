@@ -16,7 +16,7 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.data_readers;
 
-import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.CODOrignalData;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.CODOriginalData;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.classification.Classification;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.code.CodeDictionary;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.records.Record;
@@ -33,6 +33,7 @@ import java.util.List;
 /**
  * The Class FormatConverter converts a comma separated text file in the format that is used by the modern cod data
  * to a list of Record objects.
+ *
  * @author jkc25
  */
 public final class PilotDataFormatConverter extends AbstractFormatConverter {
@@ -60,7 +61,7 @@ public final class PilotDataFormatConverter extends AbstractFormatConverter {
      *
      * @param inputFile the input file to be read
      * @return the list of records
-     * @throws IOException Signals that an I/O exception has occurred.
+     * @throws IOException          Signals that an I/O exception has occurred.
      * @throws InputFormatException the input format exception
      */
     public List<Record> convert(final File inputFile, final CodeDictionary codeDictionary) throws IOException, InputFormatException {
@@ -79,17 +80,16 @@ public final class PilotDataFormatConverter extends AbstractFormatConverter {
             int imageQuality = parseImageQuality(lineSplit);
             int ageGroup = convertAgeGroup(removeQuotes(lineSplit[AGE_POSITION]));
             int sex = convertSex(removeQuotes(lineSplit[SEX_POSITION]));
-            List<String> description = formDescription(lineSplit, DESC_START, DESC_END);
+            String description = formDescription(lineSplit, DESC_START, DESC_END);
             int year = Integer.parseInt(removeQuotes(lineSplit[YEAR_POSITION]));
 
-            CODOrignalData originalData = new CODOrignalData(description, year, ageGroup, sex, imageQuality, inputFile.getName());
+            CODOriginalData originalData = new CODOriginalData(description, year, ageGroup, sex, imageQuality, inputFile.getName());
             HashSet<Classification> goldStandard = new HashSet<>();
 
             Record r = new Record(id, originalData);
             r.getOriginalData().setGoldStandardClassification(goldStandard);
 
             recordList.add(r);
-
         }
 
         br.close();
@@ -100,32 +100,10 @@ public final class PilotDataFormatConverter extends AbstractFormatConverter {
 
         if (lineSplit[IMAGE_QUALITY_POS].equalsIgnoreCase("null")) {
             return 0;
-        }
-        else {
+        } else {
             return Integer.parseInt(lineSplit[IMAGE_QUALITY_POS]);
         }
     }
 
-    /**
-    * Concatenates strings  between the start and end points of an array with a ',' delimiter.
-    *
-    * @param stringArray the String array with consecutive strings to concatenate
-    * @param startPosition the first index to concatenate
-    * @param endPosition the last index to concatenate
-    * @return the concatenated string, comma separated
-    */
-    private static List<String> formDescription(final String[] stringArray, final int startPosition, final int endPosition) {
 
-        List<String> descriptionList = new ArrayList<>();
-
-        for (int currentPosition = startPosition; currentPosition <= endPosition; currentPosition++) {
-            if (stringArray[currentPosition].length() != 0 && !stringArray[currentPosition].equalsIgnoreCase("null")) {
-                descriptionList.add(stringArray[currentPosition].toLowerCase());
-
-            }
-        }
-
-        return descriptionList;
-
-    }
 }

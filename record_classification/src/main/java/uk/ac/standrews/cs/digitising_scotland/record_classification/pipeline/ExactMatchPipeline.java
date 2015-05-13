@@ -62,43 +62,21 @@ public class ExactMatchPipeline implements IPipeline {
 
         for (Record record : bucket) {
 
-            classifyRecord(record);
+            String description = record.getDescription();
+
+            final Set<Classification> result = classifier.classify(new TokenSet(description));
+            if (result != null) {
+                record.addClassificationsToDescription(description, result);
+            }
 
             if (record.isFullyClassified()) {
                 fullyClassified.addRecordToBucket(record);
-            }
-            else {
+            } else {
                 partialClassified.addRecordToBucket(record);
             }
         }
 
         return partialClassified;
-    }
-
-    protected void classifyRecord(final Record record) throws IOException {
-
-        for (String description : record.getDescription()) {
-            classifyDescription(record, description);
-        }
-    }
-
-    private void classifyDescription(final Record record, final String description) throws IOException {
-
-        final Set<Classification> result = classify(description);
-        if (result != null) {
-            record.addClassificationsToDescription(description, result);
-        }
-    }
-
-    /**
-     * Classifies a String, which should correspond to a description, to a set of {@link Classification} objects.
-     * @param description String to classify
-     * @return A set of {@link Classification}s that contain the code, confidence and tokens used to produce classification.
-     * @throws IOException I/O Exception
-     */
-    protected Set<Classification> classify(final String description) throws IOException {
-
-        return classifier.classify(new TokenSet(description));
     }
 
     @Override
