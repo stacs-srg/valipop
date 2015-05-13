@@ -48,7 +48,7 @@ public class HumanReadableWriter extends OutputDataFormatter implements Closeabl
     public HumanReadableWriter(final File outputPath, final String delimiter) throws FileNotFoundException, UnsupportedEncodingException {
 
         writer = (BufferedWriter) ReaderWriterFactory.createBufferedWriter(outputPath);
-        setDelimier(delimiter);
+        setDelimiter(delimiter);
     }
 
     /**

@@ -130,7 +130,7 @@ public class ClassifierTrainer {
 
         exactMatchClassifier = new ExactMatchClassifier();
         exactMatchClassifier.setModelFileName(modelLocations + "/lookupTable");
-        exactMatchClassifier.loadModelFromDefaultLocation();
+        exactMatchClassifier.loadModelFromFile();
         olrClassifier = new OLRClassifier();
         OLRClassifier.setModelPath(modelLocations + "/olrModel");
         olrClassifier = olrClassifier.getModelFromDefaultLocation();

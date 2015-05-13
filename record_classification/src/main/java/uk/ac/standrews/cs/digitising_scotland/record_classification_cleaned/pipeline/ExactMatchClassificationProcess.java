@@ -104,7 +104,6 @@ public class ExactMatchClassificationProcess implements ClassificationProcess {
         LOGGER.info("Unique Exact Matched Bucket Size: " + uniqueRecordsExactMatched.size());
 
         Bucket allRecords = BucketUtils.getUnion(successfullyExactMatched, notExactMatched);
-        assert (allRecords.size() == evaluation_bucket.size());
 
         writeRecords(experimentalFolderName, allRecords);
 

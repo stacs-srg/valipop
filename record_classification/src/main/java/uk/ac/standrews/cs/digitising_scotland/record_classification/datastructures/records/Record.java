@@ -16,24 +16,17 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.records;
 
+import com.google.common.collect.HashMultimap;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.OriginalData;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.classification.Classification;
+
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.OriginalData;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.classification.Classification;
-
-import com.google.common.collect.HashMultimap;
-
-/**
- * The Class Record. Represents a Record and all associated data, including that which is supplied by NRS.
- */
 public class Record {
 
-    /** The u id. */
     private final int id;
-
-    /** The original data. */
     private OriginalData originalData;
 
     /** The code triples. */
@@ -75,10 +68,9 @@ public class Record {
      * Copy the current records original attributes.
      * @param source
      */
-    public Record copyOfOriginalRecord(final Record source) {
+    public static Record copyOfOriginalRecord(final Record source) {
 
         return new Record(source.id, source.originalData);
-
     }
 
     /**
