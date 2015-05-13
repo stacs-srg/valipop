@@ -49,7 +49,5 @@ public class SimilarityMetricFromSimmetricFactory {
 
             this.stringMetric = stringMetric;
         }
-
     }
-
 }

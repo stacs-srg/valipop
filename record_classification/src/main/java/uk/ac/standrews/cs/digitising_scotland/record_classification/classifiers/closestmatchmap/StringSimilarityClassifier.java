@@ -16,11 +16,13 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.closestmatchmap;
 
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.IClassifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.classification.Classification;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.tokens.TokenSet;
+import uk.ac.standrews.cs.digitising_scotland.record_classification_cleaned.AbstractClassifier;
 
-public class StringSimilarityClassifier implements IClassifier {
+import java.util.Set;
+
+public class StringSimilarityClassifier extends AbstractClassifier {
 
     ClosestMatchMap<String, Classification> map;
 
@@ -30,15 +32,17 @@ public class StringSimilarityClassifier implements IClassifier {
     }
 
     @Override
-    public Classification classify(final TokenSet tokenSet) {
+    public Set<Classification> classify(final TokenSet tokenSet) {
 
         final Classification classification = map.get(tokenSet.toString());
-        if (classification == null) {
+        if (classification != null) {
+            return makeClassificationSet(classification);
+        }
+        else {
             String s = map.getClosestKey(tokenSet.toString());
             double similarity = map.getSimilarity(tokenSet.toString(), s);
             Classification mostSimilar = map.getClosestMatch(s);
-            return new Classification(mostSimilar.getCode(), mostSimilar.getTokenSet(), similarity);
+            return makeClassificationSet(new Classification(mostSimilar.getCode(), mostSimilar.getTokenSet(), similarity));
         }
-        return classification;
     }
 }

@@ -16,32 +16,34 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.cachedclassifier;
 
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.IClassifier;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.Classifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.classification.Classification;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.tokens.TokenSet;
+import uk.ac.standrews.cs.digitising_scotland.record_classification_cleaned.AbstractClassifier;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.Set;
 
-public class CachedClassifier implements IClassifier {
+public class CachedClassifier extends AbstractClassifier {
 
     private Map<TokenSet, Classification> cache;
-    private IClassifier classifier;
+    private Classifier classifier;
 
-    public CachedClassifier(final IClassifier classifier, final Map<TokenSet, Classification> map) {
+    public CachedClassifier(final Classifier classifier, final Map<TokenSet, Classification> map) {
 
         this.classifier = classifier;
         this.cache = map;
     }
 
     @Override
-    public Classification classify(final TokenSet k) throws IOException, ClassNotFoundException {
+    public Set<Classification> classify(final TokenSet k) throws IOException, ClassNotFoundException {
 
         Classification v = cache.get(k);
         if (v == null) {
-            v = classifier.classify(k);
+            v = getSingleClassification(classifier.classify(k));
             cache.put(k, v);
         }
-        return v;
+        return makeClassificationSet(v);
     }
 }

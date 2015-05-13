@@ -17,7 +17,7 @@
 package uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.resolver;
 
 import com.google.common.collect.Multiset;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.IClassifier;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.Classifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.lookup.NGramSubstrings;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.resolver.Interfaces.LossFunction;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.resolver.generic.ResolverPipeline;
@@ -27,7 +27,7 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructur
 
 public class RecordClassificationResolverPipeline extends ResolverPipeline {
 
-    public RecordClassificationResolverPipeline(final IClassifier classifier, final LossFunction<Multiset<Classification>, Double> lengthWeightedLossFunction, final Double confidenceThreshold, final boolean multipleClassifications, final boolean resolveHierarchies) {
+    public RecordClassificationResolverPipeline(final Classifier classifier, final LossFunction<Multiset<Classification>, Double> lengthWeightedLossFunction, final Double confidenceThreshold, final boolean multipleClassifications, final boolean resolveHierarchies) {
 
         super(classifier, multipleClassifications, new ClassificationComparator(), new ClassificationSetValidityAssessor(), lengthWeightedLossFunction, new NGramSubstrings(), confidenceThreshold, resolveHierarchies);
     }

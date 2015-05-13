@@ -133,5 +133,4 @@ public class Code implements java.io.Serializable, AncestorAble<Code> {
         else if (!code.equals(other.code)) { return false; }
         return true;
     }
-
 }

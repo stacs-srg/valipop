@@ -18,7 +18,7 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers
 
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.IClassifier;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.Classifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.resolver.Interfaces.LossFunction;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.resolver.Interfaces.SubsetEnumerator;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.resolver.Interfaces.ValidityAssessor;
@@ -45,7 +45,7 @@ public class ResolverPipeline {
 
     private final boolean multipleClassifications;
     private final boolean resolveHierarchies;
-    private IClassifier classifier;
+    private Classifier classifier;
     private BelowThresholdRemover belowThresholdRemover;
     private HierarchyResolver hierarchyResolver;
     private Flattener flattener;
@@ -54,7 +54,7 @@ public class ResolverPipeline {
     private LossFunctionApplier lossFunctionApplier;
     private SubsetEnumerator<TokenSet> subsetEnumerator;
 
-    public ResolverPipeline(final IClassifier classifier, final boolean multipleClassifications, final Comparator<Classification> classificationComparator, final ValidityAssessor<Multiset<Classification>, TokenSet> classificationSetValidityAssessor, final LossFunction<Multiset<Classification>, Double> lengthWeightedLossFunction,
+    public ResolverPipeline(final Classifier classifier, final boolean multipleClassifications, final Comparator<Classification> classificationComparator, final ValidityAssessor<Multiset<Classification>, TokenSet> classificationSetValidityAssessor, final LossFunction<Multiset<Classification>, Double> lengthWeightedLossFunction,
                             final SubsetEnumerator<TokenSet> subsetEnumerator, final double threshold, final boolean resolveHierarchies) {
 
         this.classifier = classifier;
@@ -118,8 +118,10 @@ public class ResolverPipeline {
         MultiValueMap<Code, Classification> multiValueMap = new MultiValueMap<>(new HashMap<Code, List<Classification>>());
         Multiset<TokenSet> subsets = subsetEnumerator.enumerate(tokenSet);
         for (TokenSet set : subsets) {
-            Classification classification = classifier.classify(set);
-            multiValueMap.add(classification.getProperty(), classification);
+
+            for (Classification classification : classifier.classify(set)) {
+                multiValueMap.add(classification.getProperty(), classification);
+            }
         }
         return multiValueMap;
     }

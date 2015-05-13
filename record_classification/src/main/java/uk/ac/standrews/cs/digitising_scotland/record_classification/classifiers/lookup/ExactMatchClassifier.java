@@ -18,10 +18,9 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.Pair;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.Classifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.bucket.Bucket;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.classification.Classification;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.code.Code;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.records.Record;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.tokens.TokenSet;
 
@@ -33,11 +32,25 @@ import java.util.*;
  * @author frjd2, jkc25
  *
  */
-public class ExactMatchClassifier {
+public class ExactMatchClassifier implements Classifier {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ExactMatchClassifier.class);
     private Map<String, Set<Classification>> lookupTable;
     private String modelFileName = "target/lookupTable";
+
+     /**
+     * Creates a new {@link ExactMatchClassifier} and creates an empty lookup table.
+     */
+    public ExactMatchClassifier() {
+
+        this.lookupTable = new HashMap<>();
+    }
+
+    public void train(final Bucket bucket) throws Exception {
+
+        fillLookupTable(bucket);
+        writeModel(modelFileName);
+    }
 
     /**
      * Can be used to overwrite the default file path for model writing.
@@ -46,36 +59,6 @@ public class ExactMatchClassifier {
     public void setModelFileName(final String modelFileName) {
 
         this.modelFileName = modelFileName;
-    }
-
-    /**
-     * Creates a new {@link ExactMatchClassifier} and creates an empty lookup table.
-     */
-    public ExactMatchClassifier() {
-
-        this.lookupTable = new HashMap<>();
-
-    }
-
-    /**
-     * Creates a new {@link ExactMatchClassifier} and creates and fills the lookup table with the contents of the bucket.
-     * Equivalent to call @train().
-     * @param bucket Bucket containing records to put in the lookup table.
-     * @throws IOException IO error if location to write model cannot be accessed
-     */
-    public ExactMatchClassifier(final Bucket bucket) throws IOException {
-
-        this();
-        fillLookupTable(bucket);
-        writeModel(modelFileName);
-
-    }
-
-    public void train(final Bucket bucket) throws Exception {
-
-        fillLookupTable(bucket);
-        writeModel(modelFileName);
-
     }
 
     /**
@@ -155,8 +138,8 @@ public class ExactMatchClassifier {
         write(oos);
     }
 
-    @SuppressWarnings("unchecked")
-    protected ExactMatchClassifier readModel(final String fileName) throws ClassNotFoundException, IOException {
+//    @SuppressWarnings("unchecked")
+    protected void readModel(final String fileName) throws ClassNotFoundException, IOException {
 
         //deserialize the .ser file
 
@@ -165,8 +148,6 @@ public class ExactMatchClassifier {
             Object object = input.readObject();
             lookupTable = (Map<String, Set<Classification>>) object;
         }
-
-        return this;
     }
 
     private void write(final ObjectOutputStream oos) throws IOException {
@@ -175,11 +156,10 @@ public class ExactMatchClassifier {
         oos.close();
     }
 
-    public ExactMatchClassifier getModelFromDefaultLocation() {
+    public void loadModelFromDefaultLocation() {
 
-        ExactMatchClassifier classifier = null;
         try {
-            classifier = readModel(modelFileName);
+            readModel(modelFileName);
         }
         catch (ClassNotFoundException e) {
             LOGGER.error("Could not get model from default location. Class not found exception.", e.getException());
@@ -187,7 +167,6 @@ public class ExactMatchClassifier {
         catch (IOException e) {
             LOGGER.error("Could not get model from default location. IOException.", e.getCause());
         }
-        return classifier;
     }
 
     /**
@@ -196,18 +175,9 @@ public class ExactMatchClassifier {
      * @return Set<CodeTripe> code triples from lookup table
      * @throws IOException Indicates an I/O error
      */
-    public Set<Classification> classifyTokenSetToCodeTripleSet(final TokenSet tokenSet) throws IOException {
+    public Set<Classification> classify(final TokenSet tokenSet) throws IOException {
 
-//        Set<Classification> result = lookupTable.get(tokenSet);
-//
-//        if (result != null) {
-//            result = setConfidenceLevels(result, 2.0);
-//            return result;
-//
-//        }
-//        else {
-            return null;
-//        }
+        return lookupTable.get(tokenSet);
     }
 
     private Set<Classification> setConfidenceLevels(final Set<Classification> result, final double i) {
@@ -218,20 +188,6 @@ public class ExactMatchClassifier {
             newResults.add(newCodeT);
         }
         return newResults;
-    }
-
-    public Pair<Code, Double> classify(final TokenSet tokenSet) throws IOException {
-
-//        Set<Classification> result = lookupTable.get(tokenSet);
-//
-//        if (result != null) {
-//            Classification current = result.iterator().next();
-//            return new Pair<Code, Double>(current.getCode(), current.getConfidence());
-//
-//        }
-//        else {
-            return null;
-//        }
     }
 
     @Override
@@ -256,5 +212,4 @@ public class ExactMatchClassifier {
         else if (!lookupTable.equals(other.lookupTable)) { return false; }
         return true;
     }
-
 }
