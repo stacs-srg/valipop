@@ -16,21 +16,19 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.pipeline;
 
-import java.io.File;
-import java.io.IOException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import uk.ac.standrews.cs.digitising_scotland.record_classification.data_readers.AbstractFormatConverter;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.data_readers.LongFormatConverter;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.data_readers.PilotDataFormatConverter;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.bucket.Bucket;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.code.CodeDictionary;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.code.CodeNotValidException;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.records.Record;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.records.RecordFactory;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.InputFormatException;
+
+import java.io.File;
+import java.io.IOException;
 
 /**
  * The Class TrainingBucketGenerator.
@@ -67,36 +65,15 @@ public class BucketGenerator {
 
         LOGGER.info("********** Generating Training Bucket **********");
 
-        return createTrainingBucket(trainingFile);
-
-    }
-
-    /**
-     * Creates the bucket of records.
-     * 
-     * This method checks the file format of the input file and calls the correct method to parse the file into records objects.
-     * These records are then added to the bucket that is returned from the method.
-     *
-     * @param training the training file
-     * @return the bucket to be populated
-     * @throws IOException Signals that an I/O exception has occurred.
-     * @throws InputFormatException the input format exception
-     * @throws CodeNotValidException
-     */
-    private Bucket createTrainingBucket(final File training) throws IOException, InputFormatException, CodeNotValidException {
-
         Bucket bucket = new Bucket();
-        Iterable<Record> records;
-        boolean longFormat = PipelineUtils.checkFileType(training);
+        boolean training_file_is_in_long_format = PipelineUtils.checkFileType(trainingFile);
 
-        if (longFormat) {
-            records = formatConverter.convert(training, codeDictionary);
+        if (training_file_is_in_long_format) {
+            bucket.addCollectionOfRecords(formatConverter.convert(trainingFile, codeDictionary));
         }
         else {
-            records = RecordFactory.makeCodedCodRecordsFromFile(training, codeDictionary);
+            bucket.addCollectionOfRecords(RecordFactory.makeCodedCodRecordsFromFile(trainingFile, codeDictionary));
         }
-
-        bucket.addCollectionOfRecords(records);
 
         return bucket;
     }

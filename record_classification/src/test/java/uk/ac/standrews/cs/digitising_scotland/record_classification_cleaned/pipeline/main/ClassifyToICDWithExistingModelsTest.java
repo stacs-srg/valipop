@@ -18,8 +18,6 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification_cleaned.pip
 
 import org.junit.Before;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.bucket.Bucket;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.classification.Classification;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.code.CodeNotValidException;
@@ -33,34 +31,26 @@ import java.util.Set;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class ClassifyWithExistingModelsTest {
+public class ClassifyToICDWithExistingModelsTest extends AbstractTest {
 
     private static final String expectedModelLocation = "/Models";
     Bucket allRecords;
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(ClassifyWithExistingModelsTest.class);
-
 
     @Before
     public void setUp() throws IOException, CodeNotValidException, ClassNotFoundException {
 
         // TODO code dictionary doesn't appear to affect test results - used only for training?
-        String code_dictionary_file_path = getResourceFilePath("ICD_code_dictionary.txt");
-        String test_data_file_path = getResourceFilePath("classify_with_existing_models_test_data.tsv");
+        String code_dictionary_file_path = getResourceFilePath(getClass(), "ICD_code_dictionary.txt");
+        String test_data_file_path = getResourceFilePath(getClass(), "classify_with_existing_models_test_data.tsv");
 
         // TODO resolve problem with incompatible serialised class versions, then tidy model location
-        String model_directory_path = getResourceFilePath(expectedModelLocation);
+        String model_directory_path = getResourceFilePath(getClass(), expectedModelLocation);
 
         MachineLearningConfiguration.getDefaultProperties().setProperty("codeDictionaryFile", code_dictionary_file_path);
 
         String[] args = {test_data_file_path, model_directory_path, "true"};
 
         allRecords = new ClassifyWithExistingModels().run(args);
-    }
-
-    private String getResourceFilePath(String resource_file_name) {
-
-        return getClass().getResource(resource_file_name).getFile();
     }
 
     @Test
@@ -156,7 +146,7 @@ public class ClassifyWithExistingModelsTest {
         assertEquals(1, failureSet.size());
     }
 
-    private Set<String> getCodeStrings(Set<Classification> classifications) {
+    private static Set<String> getCodeStrings(Set<Classification> classifications) {
 
         Set<String> code_strings = new HashSet<>();
 

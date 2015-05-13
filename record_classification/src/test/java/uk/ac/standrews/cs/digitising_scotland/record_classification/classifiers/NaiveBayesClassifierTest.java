@@ -16,28 +16,23 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-
 import org.apache.commons.io.FileUtils;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
-
-import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.code.CodeNotValidException;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.legacy.naivebayes.NaiveBayesClassifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.Pair;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.bucket.Bucket;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.code.Code;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.code.CodeNotValidException;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.records.Record;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.records.RecordFactory;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.tokens.TokenSet;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.legacy.naivebayes.NaiveBayesClassifier;
 
-/**
- * The Class NaiveBayesClassifierTest.
- */
-//FIXME
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+
 public class NaiveBayesClassifierTest {
 
     /** The bucket a. */
@@ -51,11 +46,6 @@ public class NaiveBayesClassifierTest {
 
     private ClassifierTestingHelper helper = new ClassifierTestingHelper();
 
-    /**
-     * Setup. Run before each test.
-     *
-     * @throws Exception the exception
-     */
     @Before
     public void setUp() throws Exception, CodeNotValidException {
 
@@ -64,14 +54,8 @@ public class NaiveBayesClassifierTest {
         if (tempFiles.exists()) {
             FileUtils.deleteDirectory(tempFiles);
         }
-
     }
 
-    /**
-     * Tear down.
-     *
-     * @throws IOException Signals that an I/O exception has occurred.
-     */
     @AfterClass
     public static void tearDown() throws IOException {
 
@@ -82,27 +66,15 @@ public class NaiveBayesClassifierTest {
             FileUtils.deleteDirectory(tempFiles);
             FileUtils.deleteDirectory(naiveBayesModelPath);
             FileUtils.deleteQuietly(labelIndex);
-
         }
     }
 
-    /**
-     * Test train.
-     *
-     * @throws Exception the exception
-     */
     @Test
     public void testTrain() throws Exception {
 
         train();
     }
 
-    /**
-     * Trains and returns a {@link uk.ac.standrews.cs.digitising_scotland.record_classification.legacy.naivebayes.NaiveBayesClassifier}.
-     *
-     * @return the naive bayes classifier
-     * @throws Exception the exception
-     */
     private NaiveBayesClassifier train() throws Exception {
 
         NaiveBayesClassifier nbc = new NaiveBayesClassifier();
@@ -125,11 +97,6 @@ public class NaiveBayesClassifierTest {
         return bucketB;
     }
 
-    /**
-     * Test classify.
-     *
-     * @throws Exception the exception
-     */
     @Test
     public void testClassify() throws Exception {
 
@@ -142,14 +109,8 @@ public class NaiveBayesClassifierTest {
         bucketA.addCollectionOfRecords(listOfRecords);
 
         //        LevenShteinCleaner.cleanData(bucketA);
-
     }
 
-    /**
-     * Test classify.
-     *
-     * @throws Exception the exception
-     */
     @Test
     public void testClassifyTokenSet() throws Exception {
 
@@ -165,6 +126,5 @@ public class NaiveBayesClassifierTest {
             TokenSet tokenSet = new TokenSet(r.getOriginalData().getDescription());
             Pair<Code, Double> result = nbc.classify(new TokenSet(r.getOriginalData().getDescription()));
         }
-
     }
 }
