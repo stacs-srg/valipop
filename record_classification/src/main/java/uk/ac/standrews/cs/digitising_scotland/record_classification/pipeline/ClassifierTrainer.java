@@ -30,6 +30,7 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructur
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.vectors.CodeIndexer;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.vectors.VectorFactory;
 
+import java.io.IOException;
 import java.util.Map;
 
 /**
@@ -126,7 +127,7 @@ public class ClassifierTrainer {
      * @param modelLocations Path to parent directory of pre-built models.
      * @return the existings models
      */
-    public void getExistingModels(final String modelLocations) {
+    public void getExistingModels(final String modelLocations) throws IOException {
 
         exactMatchClassifier = new ExactMatchClassifier();
         exactMatchClassifier.setModelFileName(modelLocations + "/lookupTable");

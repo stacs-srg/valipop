@@ -141,16 +141,13 @@ public class ExactMatchClassifier implements Classifier {
 
     protected void readModel(final String fileName) throws IOException {
 
-        lookupTable = mapper.readValue(new File(fileName + ".json"), new TypeReference<Map<String, Set<Classification>>>(){});
+        lookupTable = mapper.readValue(new File(fileName + ".json"), new TypeReference<Map<String, Set<Classification>>>() {
+        });
     }
 
-    public void loadModelFromFile() {
+    public void loadModelFromFile() throws IOException {
 
-        try {
-            readModel(modelFileName);
-        } catch (IOException e) {
-            LOGGER.error("Could not load classifier model", e.getCause());
-        }
+        readModel(modelFileName);
     }
 
     /**
