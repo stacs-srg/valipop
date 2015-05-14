@@ -79,7 +79,7 @@ public final class PipelineUtils {
         return olrClassifier;
     }
 
-    public static ExactMatchClassifier getExistingExactMatchClassifier(final String modelLocations) {
+    public static ExactMatchClassifier getExistingExactMatchClassifier(final String modelLocations) throws IOException {
 
         ExactMatchClassifier exactMatchClassifier = new ExactMatchClassifier();
         exactMatchClassifier.setModelFileName(modelLocations + "/lookupTable");

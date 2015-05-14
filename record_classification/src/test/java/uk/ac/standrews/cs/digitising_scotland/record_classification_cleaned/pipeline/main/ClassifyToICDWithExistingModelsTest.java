@@ -17,6 +17,7 @@
 package uk.ac.standrews.cs.digitising_scotland.record_classification_cleaned.pipeline.main;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.bucket.Bucket;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.classification.Classification;
@@ -32,6 +33,7 @@ import java.util.Set;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+@Ignore
 public class ClassifyToICDWithExistingModelsTest extends AbstractTest {
 
     private static final String expectedModelLocation = "/Models";
