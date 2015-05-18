@@ -18,7 +18,7 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.writers;
 
 import java.util.Set;
 
-import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.CODOrignalData;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.CODOriginalData;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.code.Code;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.classification.Classification;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.records.Record;
@@ -133,7 +133,7 @@ public class OutputDataFormatter {
     public String getAgeGroup(final Record record) {
 
         if (!record.isCoDRecord()) { return ""; }
-        CODOrignalData originalData = (CODOrignalData) record.getOriginalData();
+        CODOriginalData originalData = (CODOriginalData) record.getOriginalData();
         int ageGroup = originalData.getAgeGroup();
 
         String ageGroupString;
@@ -169,7 +169,7 @@ public class OutputDataFormatter {
     public String getSex(final Record record) {
 
         if (!record.isCoDRecord()) { return ""; }
-        CODOrignalData originalData = (CODOrignalData) record.getOriginalData();
+        CODOriginalData originalData = (CODOriginalData) record.getOriginalData();
         int sex = originalData.getSex();
         if (sex == 0) { return "F" + delimiter; }
         return "M" + delimiter;
@@ -193,7 +193,7 @@ public class OutputDataFormatter {
      *
      * @param delimiter the new delimiter
      */
-    public void setDelimier(final String delimiter) {
+    public void setDelimiter(final String delimiter) {
 
         this.delimiter = delimiter;
     }

@@ -16,22 +16,14 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.bucket;
 
+import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.records.Record;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.records.Record;
-
-/**
- * The Class BucketFilter is a utility class that reads a bucket and
- * returns an equivalent bucket with records removed according to the filer applied.
- */
 public final class BucketFilter {
-
-    private BucketFilter() {
-
-    }
 
     /**
      * Returns a bucket containing only the unique records from the original bucket.
@@ -41,7 +33,7 @@ public final class BucketFilter {
      */
     public static Bucket uniqueRecordsOnly(final Bucket bucket) {
 
-        Map<List<String>, Record> map = new HashMap<>();
+        Map<String, Record> map = new HashMap<>();
 
         for (Record record : bucket) {
             if (!map.containsKey(record.getDescription())) {
@@ -56,6 +48,5 @@ public final class BucketFilter {
         }
 
         return new Bucket(recordList);
-
     }
 }

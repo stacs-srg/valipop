@@ -16,24 +16,11 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.olr;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Properties;
-import java.util.Set;
-
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.ClassifierTestingHelper;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.OriginalData;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.bucket.Bucket;
@@ -47,6 +34,12 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructur
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.InputFormatException;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.tools.Timer;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.tools.configuration.MachineLearningConfiguration;
+import uk.ac.standrews.cs.digitising_scotland.record_classification_cleaned.AbstractClassifier;
+
+import java.io.*;
+import java.util.*;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * The Class OLRClassifierTest.
@@ -54,13 +47,19 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.tools.config
 //FIXME
 public class OLRClassifierTest {
 
-    /** The os. */
+    /**
+     * The os.
+     */
     private OutputStream os;
 
-    /** The original out. */
+    /**
+     * The original out.
+     */
     private PrintStream originalOut;
 
-    /** The helper. */
+    /**
+     * The helper.
+     */
     private ClassifierTestingHelper helper = new ClassifierTestingHelper();
 
     private Properties properties = MachineLearningConfiguration.getDefaultProperties();
@@ -118,7 +117,6 @@ public class OLRClassifierTest {
         Iterable<Record> records = createNewRecords();
         bucketA.addCollectionOfRecords(records);
         olrClassifier2.train(bucketA);
-
     }
 
     private Iterable<Record> createNewRecords() throws InputFormatException, CodeNotValidException {
@@ -129,9 +127,8 @@ public class OLRClassifierTest {
         List<Record> records = new ArrayList<Record>();
 
         for (int i = 0; i < 100; i++) {
-            ArrayList<String> d = new ArrayList<>();
-            d.add(description[i % 5]);
-            final OriginalData originalData = new OriginalData(d, 2010 + i, 1, "fileName.txt");
+
+            final OriginalData originalData = new OriginalData(description[i % 5], 2010 + i, 1, "fileName.txt");
             Set<Classification> goldStandardClassification = new HashSet<>();
             Code code = getRandomCode();
             goldStandardClassification.add(new Classification(code, new TokenSet(tokenSetArry[i % 10]), 1.0));
@@ -148,14 +145,16 @@ public class OLRClassifierTest {
         double rnd = Math.random();
         if (rnd < 0.33) {
             return codeDictionary.getCode("95240");
+        } else if (rnd > 0.3 && rnd < 0.66) {
+            return codeDictionary.getCode("9500");
         }
-        else if (rnd > 0.3 && rnd < 0.66) { return codeDictionary.getCode("9500"); }
         return codeDictionary.getCode("952");
     }
 
     /**
      * Test classify with de serialized model.
-     * @throws Exception 
+     *
+     * @throws Exception
      */
     @Test
     public void testClassifyWithDeSerializedModel() throws Exception, CodeNotValidException {
@@ -170,14 +169,11 @@ public class OLRClassifierTest {
         olrClassifier2 = olrClassifier2.deSerializeModel("target/olrClassifierWriteTest");
 
         for (Record record : bucketA) {
-            for (String s : record.getDescription()) {
-                Classification c1 = olrClassifier1.classify(new TokenSet(s));
-                Classification c2 = olrClassifier2.classify(new TokenSet(s));
-                Assert.assertEquals(c1, c2);
-
-            }
+            String s = record.getDescription();
+            Classification c1 = AbstractClassifier.getSingleClassification(olrClassifier1.classify(new TokenSet(s)));
+            Classification c2 = AbstractClassifier.getSingleClassification(olrClassifier2.classify(new TokenSet(s)));
+            assertEquals(c1, c2);
         }
-
     }
 
     /**

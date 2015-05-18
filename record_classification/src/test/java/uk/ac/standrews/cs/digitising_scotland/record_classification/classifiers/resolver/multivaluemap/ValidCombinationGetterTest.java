@@ -16,25 +16,23 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.resolver.multivaluemap;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
 import com.google.common.collect.Multiset;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.resolver.Interfaces.LossFunction;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.resolver.LengthWeightedLossFunction;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.resolver.generic.LossFunctionApplier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.resolver.generic.ValidCombinationGetter;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.classification.Classification;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.classification.ClassificationSetValidityAssessor;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.resolver.LengthWeightedLossFunction;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.code.Code;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.code.CodeNotValidException;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.tokens.TokenSet;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 /**
  *
@@ -42,10 +40,10 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructur
  */
 public class ValidCombinationGetterTest {
 
-    private ValidCombinationGetter<Code, Classification, TokenSet, ClassificationSetValidityAssessor> vCG = new ValidCombinationGetter<>(new ClassificationSetValidityAssessor());
+    private ValidCombinationGetter vCG = new ValidCombinationGetter(new ClassificationSetValidityAssessor());
     private MultiValueMapTestHelper mvmHelper;
     private LossFunction<Multiset<Classification>, Double> lengthWeighted = new LengthWeightedLossFunction();
-    private LossFunctionApplier<Classification, Double, LengthWeightedLossFunction> lossFunctionApplier = new LossFunctionApplier<>(new LengthWeightedLossFunction());
+    private LossFunctionApplier lossFunctionApplier = new LossFunctionApplier(new LengthWeightedLossFunction());
 
     @Before
     public void setup() throws IOException, CodeNotValidException {

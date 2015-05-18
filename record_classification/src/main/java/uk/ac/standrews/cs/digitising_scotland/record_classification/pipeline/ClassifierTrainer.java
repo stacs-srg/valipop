@@ -16,11 +16,8 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.pipeline;
 
-import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import uk.ac.shef.wit.simmetrics.similaritymetrics.AbstractStringMetric;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.closestmatchmap.ClosestMatchMap;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.closestmatchmap.SimilarityMetric;
@@ -32,6 +29,9 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructur
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.classification.Classification;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.vectors.CodeIndexer;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.vectors.VectorFactory;
+
+import java.io.IOException;
+import java.util.Map;
 
 /**
  * The Class ClassifierTrainer contains methods for training both {@link OLRClassifier} and {@link ExactMatchClassifier} objects.
@@ -127,11 +127,11 @@ public class ClassifierTrainer {
      * @param modelLocations Path to parent directory of pre-built models.
      * @return the existings models
      */
-    public void getExistingsModels(final String modelLocations) {
+    public void getExistingModels(final String modelLocations) throws IOException {
 
         exactMatchClassifier = new ExactMatchClassifier();
         exactMatchClassifier.setModelFileName(modelLocations + "/lookupTable");
-        exactMatchClassifier.getModelFromDefaultLocation();
+        exactMatchClassifier.loadModelFromFile();
         olrClassifier = new OLRClassifier();
         OLRClassifier.setModelPath(modelLocations + "/olrModel");
         olrClassifier = olrClassifier.getModelFromDefaultLocation();

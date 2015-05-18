@@ -31,7 +31,7 @@ import java.io.IOException;
  */
 public class HierarchyResolverTest {
 
-    private HierarchyResolver<Code, Classification> resolver = new HierarchyResolver<>();
+    private HierarchyResolver resolver = new HierarchyResolver();
     private MultiValueMapTestHelper mvmHelper;
 
     @Before

@@ -16,37 +16,22 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.tools;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.nio.charset.Charset;
-import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
-
+import com.google.common.io.Files;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.apache.commons.io.output.FileWriterWithEncoding;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.classification.Classification;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.code.Code;
 import uk.ac.standrews.cs.digitising_scotland.util.FileManipulation;
 
-import com.google.common.io.Files;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import java.io.*;
+import java.nio.charset.Charset;
+import java.nio.file.Paths;
+import java.util.*;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 
 /**
  * Utility classes related to writing to files and other often used methods.
@@ -499,7 +484,7 @@ public final class Utils {
             }
 
             if (exitVal != 0) {
-                LOGGER.error("ExitValue: " + exitVal);
+                LOGGER.debug("ExitValue: " + exitVal);
             }
         }
         catch (Exception e) {

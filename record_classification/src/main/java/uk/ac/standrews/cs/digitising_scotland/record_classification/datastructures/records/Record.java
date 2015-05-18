@@ -16,24 +16,16 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.records;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
+import com.google.common.collect.HashMultimap;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.OriginalData;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.classification.Classification;
 
-import com.google.common.collect.HashMultimap;
+import java.util.HashSet;
+import java.util.Set;
 
-/**
- * The Class Record. Represents a Record and all associated data, including that which is supplied by NRS.
- */
 public class Record {
 
-    /** The u id. */
     private final int id;
-
-    /** The original data. */
     private OriginalData originalData;
 
     /** The code triples. */
@@ -49,14 +41,11 @@ public class Record {
         this.id = id;
         this.originalData = originalData;
         listOfClassifications = HashMultimap.create();
-
     }
 
     public boolean isFullyClassified() {
 
-        for (String description : originalData.getDescription())
-            if (!descriptionIsClassified(description)) { return false; }
-        return true;
+        return descriptionIsClassified(originalData.getDescription());
     }
 
     public boolean descriptionIsClassified(final String description) {
@@ -75,10 +64,9 @@ public class Record {
      * Copy the current records original attributes.
      * @param source
      */
-    public Record copyOfOriginalRecord(final Record source) {
+    public static Record copyOfOriginalRecord(final Record source) {
 
         return new Record(source.id, source.originalData);
-
     }
 
     /**
@@ -96,27 +84,9 @@ public class Record {
      *
      * @return the cleaned description
      */
-    public List<String> getDescription() {
+    public String getDescription() {
 
         return originalData.getDescription();
-    }
-
-    /**
-     * Updates a specific line of the description to a new value.
-     * @param oldDescription line to update
-     * @param newDescription new value
-     * @return true if replacement successful
-     */
-    public boolean updateDescription(final String oldDescription, final String newDescription) {
-
-        int index = originalData.getDescription().indexOf(oldDescription);
-        if (index != -1) {
-            originalData.getDescription().set(index, newDescription);
-            return true;
-        }
-        else {
-            return false;
-        }
     }
 
     /**

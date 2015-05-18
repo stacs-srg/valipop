@@ -16,19 +16,14 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.writers;
 
-import java.io.BufferedWriter;
-import java.io.Closeable;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.util.Set;
-
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.classification.Classification;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.code.Code;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.records.Record;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.tools.ReaderWriterFactory;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.tools.Utils;
+
+import java.io.*;
+import java.util.Set;
 
 /**
  * The Class FileComparisonWriter is used to write a human readable copy of a record to a file using a chosen delimiter.
@@ -50,7 +45,7 @@ public class FileComparisonWriter extends OutputDataFormatter implements Closeab
     public FileComparisonWriter(final File outputPath, final String delimiter) throws FileNotFoundException, UnsupportedEncodingException {
 
         writer = (BufferedWriter) ReaderWriterFactory.createBufferedWriter(outputPath);
-        setDelimier(delimiter);
+        setDelimiter(delimiter);
     }
 
     /**
@@ -99,7 +94,6 @@ public class FileComparisonWriter extends OutputDataFormatter implements Closeab
 
             if (Utils.contains(goldCode, classifications)) {
                 sb.append("[correct]" + dlim + Utils.getCodeTripleWithCode(goldCode, classifications).getTokenSet() + dlim + goldCode.getDescription() + dlim + Utils.getCodeTripleWithCode(goldCode, classifications).getConfidence() + dlim);
-
             }
             else {
                 sb.append("[missing]" + dlim + goldCodeTriple.getTokenSet() + dlim + goldCode.getDescription() + dlim + "GoldStandard" + dlim);
@@ -117,13 +111,9 @@ public class FileComparisonWriter extends OutputDataFormatter implements Closeab
         return sb.toString();
     }
 
-    /* (non-Javadoc)
-     * @see java.io.Closeable#close()
-     */
     @Override
     public void close() throws IOException {
 
         writer.close();
-
     }
 }

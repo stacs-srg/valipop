@@ -56,13 +56,13 @@ public final class BucketUtils {
      */
     public static Bucket getIntersection(final Bucket bucketA, final Bucket bucketB) {
 
-        Bucket interesection = new Bucket();
+        Bucket intersection = new Bucket();
         for (Record record : bucketA) {
             if (bucketB.contains(record)) {
-                interesection.addRecordToBucket(record);
+                intersection.addRecordToBucket(record);
             }
         }
-        return interesection;
+        return intersection;
     }
 
     /**

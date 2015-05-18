@@ -16,26 +16,18 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.resolver;
 
-import java.util.Set;
-
 import com.google.common.collect.Multiset;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.IClassifier;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.Classifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.lookup.NGramSubstrings;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.resolver.Interfaces.LossFunction;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.resolver.generic.ResolverPipeline;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.classification.Classification;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.classification.ClassificationComparator;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.classification.ClassificationSetValidityAssessor;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.code.Code;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.tokens.TokenSet;
 
-/**
- *
- * Created by fraserdunlop on 09/10/2014 at 12:14.
- */
-public class RecordClassificationResolverPipeline<P_LossFunction extends LossFunction<Multiset<Classification>, Double>> extends ResolverPipeline<Double, Code, Classification, ClassificationComparator, TokenSet, ClassificationSetValidityAssessor, Double, P_LossFunction> {
+public class RecordClassificationResolverPipeline extends ResolverPipeline {
 
-    public RecordClassificationResolverPipeline(final IClassifier<TokenSet, Classification> classifier, final P_LossFunction lengthWeightedLossFunction, final Double confidenceThreshold, final boolean multipleClassifications, final boolean resolveHierarchies) {
+    public RecordClassificationResolverPipeline(final Classifier classifier, final LossFunction<Multiset<Classification>, Double> lengthWeightedLossFunction, final Double confidenceThreshold, final boolean multipleClassifications, final boolean resolveHierarchies) {
 
         super(classifier, multipleClassifications, new ClassificationComparator(), new ClassificationSetValidityAssessor(), lengthWeightedLossFunction, new NGramSubstrings(), confidenceThreshold, resolveHierarchies);
     }
