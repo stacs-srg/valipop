@@ -16,16 +16,18 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.resolver.generic;
 
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.resolver.Interfaces.AncestorAble;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.classification.Classification;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.code.Code;
+
 import java.io.IOException;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Resolves hierarchies in the keys of a MultiValueMap. Moves ancestor key contents
- * into decendent key lists. Keys must implement Ancestorable<K> interface.
- * Created by fraserdunlop on 06/10/2014 at 10:00.
+ * into decendent key lists.
  */
-public class HierarchyResolver<K extends AncestorAble<K>, V> {
+public class HierarchyResolver {
 
     /**
      * Moves ancestor key contents to decendent key lists.
@@ -34,9 +36,9 @@ public class HierarchyResolver<K extends AncestorAble<K>, V> {
      * @throws IOException
      * @throws ClassNotFoundException
      */
-    public  MultiValueMap<K, V> moveAncestorsToDescendantKeys(final MultiValueMap<K, V> map) throws IOException, ClassNotFoundException {
-        MultiValueMap<K, V> clone = map.deepClone();
-        for (K key : map)
+    public  MultiValueMap<Code, Classification> moveAncestorsToDescendantKeys(final MultiValueMap<Code, Classification> map) throws IOException, ClassNotFoundException {
+        MultiValueMap<Code, Classification> clone = map.deepClone();
+        for (Code key : map)
             moveAncestorsIntoKey(map, clone, key);
         return clone;
     }
@@ -47,11 +49,11 @@ public class HierarchyResolver<K extends AncestorAble<K>, V> {
      * the ancestor keys removed (from clone).
      * @param map original MultiValueMap
      * @param clone clone of map which is edited
-     * @param decendentKey the decendent key
+     * @param descendantKey the decendent key
      */
-    private void moveAncestorsIntoKey(MultiValueMap<K, V> map, MultiValueMap<K, V> clone, K decendentKey) {
-        for(K ancestor : getAncestors(decendentKey, clone.keySet())) {
-                clone.get(decendentKey).addAll(map.get(ancestor));
+    private void moveAncestorsIntoKey(MultiValueMap<Code, Classification> map, MultiValueMap<Code, Classification> clone, Code descendantKey) {
+        for(Code ancestor : getAncestors(descendantKey, clone.keySet())) {
+                clone.get(descendantKey).addAll(map.get(ancestor));
                 clone.remove(ancestor);
         }
     }
@@ -62,9 +64,9 @@ public class HierarchyResolver<K extends AncestorAble<K>, V> {
      * @param keys the keys
      * @return the ancestors of k.
      */
-    private Set<K> getAncestors(final K k, final Set<K> keys) {
-        Set<K> ancestors = new HashSet<>();
-        for (K key : keys) {
+    private Set<Code> getAncestors(final Code k, final Set<Code> keys) {
+        Set<Code> ancestors = new HashSet<>();
+        for (Code key : keys) {
             if (k.isAncestor(key)) { ancestors.add(key); }
         }
         return ancestors;

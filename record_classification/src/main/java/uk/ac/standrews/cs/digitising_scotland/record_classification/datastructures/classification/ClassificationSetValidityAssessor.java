@@ -16,9 +16,6 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.classification;
 
-import java.util.ArrayList;
-import java.util.Set;
-
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.resolver.Interfaces.ValidityAssessor;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.tokens.TokenSet;
 

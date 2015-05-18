@@ -16,6 +16,9 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.resolver.generic;
 
+import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.classification.Classification;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.code.Code;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,13 +33,13 @@ import java.util.Comparator;
  * which overrides the list length calculated from the Complexity_Upper_Limit.
  * Created by fraserdunlop on 06/10/2014 at 10:38.
  */
-public class MultiValueMapPruner<K, V, C extends Comparator<V>> {
+public class MultiValueMapPruner {
 
     private int LOWER_BOUND = 1;
     private int COMPLEXITY_UPPER_LIMIT = 2000;
-    private final C comparator;
+    private final Comparator<Classification> comparator;
 
-    public MultiValueMapPruner(final C comparator) {
+    public MultiValueMapPruner(final Comparator<Classification> comparator) {
 
         this.comparator = comparator;
     }
@@ -47,18 +50,18 @@ public class MultiValueMapPruner<K, V, C extends Comparator<V>> {
      * @param map the MultiValueMap to prune
      * @return a new pruned MultiValueMap
      */
-    public MultiValueMap<K, V> pruneUntilComplexityWithinBound(final MultiValueMap<K, V> map) throws IOException, ClassNotFoundException {
+    public MultiValueMap<Code, Classification> pruneUntilComplexityWithinBound(final MultiValueMap<Code, Classification> map) throws IOException, ClassNotFoundException {
 
-        MultiValueMap<K, V> clone = map.deepClone();
+        MultiValueMap<Code, Classification> clone = map.deepClone();
         int[] sizes = new int[map.size()];
-        ArrayList<K> keyList = new ArrayList<>(map.keySet());
+        ArrayList<Code> keyList = new ArrayList<>(map.keySet());
         int i = 0;
-        for (K key : keyList) {
+        for (Code key : keyList) {
             sizes[i++] = map.get(key).size();
         }
         int[] prunedListSizes = calculatePrunedListSizes(sizes);
         i = 0;
-        for (K k : keyList) {
+        for (Code k : keyList) {
             int maxLength = Math.max(LOWER_BOUND, prunedListSizes[i++]);
             Collections.sort(clone.get(k), comparator);
             clone.put(k, map.get(k).subList(0, Math.min(map.get(k).size(), maxLength)));

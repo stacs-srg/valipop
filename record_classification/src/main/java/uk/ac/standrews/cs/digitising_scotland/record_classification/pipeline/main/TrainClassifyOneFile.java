@@ -32,50 +32,20 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructur
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.code.CodeNotValidException;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.records.Record;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.vectors.CodeIndexer;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.vectors.VectorFactory;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.pipeline.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.tools.Timer;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.tools.configuration.MachineLearningConfiguration;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.writers.DataClerkingWriter;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.writers.FileComparisonWriter;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.writers.MetricsWriter;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.tools.Timer;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.tools.configuration.MachineLearningConfiguration;
 
 import java.io.File;
 import java.io.IOException;
 
-/**
- * This class integrates the training of machine learning models and the
- * classification of records using those models. The classification process is
- * as follows: <br>
- * <br>
- * The gold standard training file is read in from the command line and a
- * {@link Bucket} of {@link Record}s are created from this file. A
- * {@link VectorFactory} is then created to manage the creation of vectors for
- * these records. The vectorFactory also manages the mapping of vectors IDs to
- * words, ie the vector dictionary. <br>
- * <br>
- * An IClassifier is then created from the training bucket and
- * the model(s) are trained and saved to disk. <br>
- * <br>
- * The records to be classified are held in a file with the correct format as
- * specified by NRS. One record per line. This class initiates the reading of
- * these records. These are stored as {@link Record} objects inside a
- * {@link Bucket}. <br>
- * <br>
- * After the records have been created and stored in a bucket, classification
- * can begin. This is carried out by the BucketClassifier class which in
- * turn implements the {@link ClassifierPipeline}. Please see this
- * class for implementation details. <br>
- * <br>
- * Some initial metrics are then printed to the console and classified records
- * are written to file (target/NRSData.txt).
- * 
- * @author jkc25, frjd2
- */
-public final class TrainClassifyOneFile {
+public class TrainClassifyOneFile {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TrainClassifyOneFile.class);
-    private static double DEFAULT_TRAINING_RATIO = 0.8;
+    private static final double DEFAULT_TRAINING_RATIO = 0.8;
     private static final String usageHelp = "usage: $" + TrainClassifyOneFile.class.getSimpleName() + "    <goldStandardDataFile>  <propertiesFile>  <trainingRatio(optional)>    <output multiple classificatiosn";
 
     /**

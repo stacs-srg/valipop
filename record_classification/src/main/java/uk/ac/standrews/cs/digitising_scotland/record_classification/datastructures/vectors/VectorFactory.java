@@ -16,6 +16,17 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.vectors;
 
+import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
+import org.apache.lucene.util.Version;
+import org.apache.mahout.math.NamedVector;
+import org.apache.mahout.math.RandomAccessSparseVector;
+import org.apache.mahout.math.Vector;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.bucket.Bucket;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.classification.Classification;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.records.Record;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.machinelearning.tokenizing.StandardTokenizerIterable;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.tools.configuration.MachineLearningConfiguration;
+
 import java.io.Serializable;
 import java.io.StringReader;
 import java.util.ArrayList;
@@ -23,31 +34,25 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
-import org.apache.lucene.util.Version;
-import org.apache.mahout.math.NamedVector;
-import org.apache.mahout.math.RandomAccessSparseVector;
-import org.apache.mahout.math.Vector;
-
-import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.bucket.Bucket;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.classification.Classification;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.records.Record;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.machinelearning.tokenizing.StandardTokenizerIterable;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.tools.configuration.MachineLearningConfiguration;
-
 /**
  * Factory that allows us to create vectors from strings.
  * Created by fraserdunlop on 23/04/2014 at 19:34.
  */
 public class VectorFactory implements Serializable {
 
-    /** The Constant serialVersionUID. */
+    /**
+     * The Constant serialVersionUID.
+     */
     private static final long serialVersionUID = 5369887941319861994L;
 
-    /** The index. */
+    /**
+     * The index.
+     */
     private CodeIndexer index;
 
-    /** The vector encoder. */
+    /**
+     * The vector encoder.
+     */
     private SimpleVectorEncoder vectorEncoder;
 
     /**
@@ -63,7 +68,7 @@ public class VectorFactory implements Serializable {
      * Constructs a new {@link VectorFactory} from the specified {@link Bucket}.
      *
      * @param bucket bucket
-     * @param index the index
+     * @param index  the index
      */
     public VectorFactory(final Bucket bucket, final CodeIndexer index) {
 
@@ -102,6 +107,7 @@ public class VectorFactory implements Serializable {
      * If a gold standard coding exists this will be used for the name of the vector.
      * If no gold standard then "noGoldStandard" will be used.
      * A List<NamedVector> is returned as the record may have more than one line in the original description.
+     *
      * @param record Record to generate vector for.
      * @return List<NamedVector> List of {@link NamedVector} for this record
      */
@@ -112,9 +118,8 @@ public class VectorFactory implements Serializable {
 
         if (!goldStandardClassificationSet.isEmpty()) {
             vectors.addAll(createNamedVectorsWithGoldStandardCodes(record));
-        }
-        else {
-            vectors.addAll(createUnNamedVectorsFromDescriptopn(record.getDescription()));
+        } else {
+            vectors.addAll(createUnNamedVectorsFromDescription(record.getDescription()));
         }
         return vectors;
     }
@@ -125,14 +130,12 @@ public class VectorFactory implements Serializable {
      * @param description the description
      * @return the collection<? extends named vector>
      */
-    private Collection<? extends NamedVector> createUnNamedVectorsFromDescriptopn(final List<String> description) {
+    private Collection<? extends NamedVector> createUnNamedVectorsFromDescription(final String description) {
 
         List<NamedVector> vectorList = new ArrayList<>();
 
-        for (String string : description) {
-            Vector v = createVectorFromString(string);
-            vectorList.add(new NamedVector(v, "noGoldStandard"));
-        }
+        Vector v = createVectorFromString(description);
+        vectorList.add(new NamedVector(v, "noGoldStandard"));
 
         return vectorList;
     }
@@ -189,7 +192,7 @@ public class VectorFactory implements Serializable {
     /**
      * Adds the features to vector.
      *
-     * @param vector the vector
+     * @param vector      the vector
      * @param description the description
      */
     private void addFeaturesToVector(final Vector vector, final String description) {
@@ -202,6 +205,7 @@ public class VectorFactory implements Serializable {
 
     /**
      * Adds all the tokens in the specified string to this {@link VectorFactory}'s dictionary.
+     *
      * @param description String to add
      */
     public void updateDictionary(final String description) {

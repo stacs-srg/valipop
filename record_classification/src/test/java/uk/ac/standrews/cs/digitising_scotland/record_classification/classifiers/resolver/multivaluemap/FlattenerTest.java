@@ -16,17 +16,16 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.resolver.multivaluemap;
 
-import java.io.IOException;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.resolver.generic.Flattener;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.resolver.generic.MultiValueMap;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.classification.Classification;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.code.Code;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.code.CodeNotValidException;
+
+import java.io.IOException;
 
 /**
  *
@@ -34,7 +33,7 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructur
  */
 public class FlattenerTest {
 
-    private Flattener<Code, Classification> flattener = new Flattener<>();
+    private Flattener flattener = new Flattener();
     private MultiValueMapTestHelper mvmHelper;
 
     @Before

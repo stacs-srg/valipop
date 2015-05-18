@@ -38,6 +38,7 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructur
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.vectors.CodeIndexer;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.records.Record;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.vectors.VectorFactory;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.InputFormatException;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.pipeline.BucketGenerator;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.pipeline.ClassifierPipeline;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.pipeline.ExactMatchPipeline;
@@ -84,27 +85,12 @@ public final class ClassifyWithExistingModels {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ClassifyWithExistingModels.class);
 
-    /**
-     * Entry method for training and classifying a batch of records into
-     * multiple codes.
-     * 
-     * @param args
-     *            <file1> training file <file2> file to classify
-     * @throws Exception
-     *             If exception occurs
-     */
-    public static void main(final String[] args) throws Exception, CodeNotValidException {
+    public static void main(final String[] args) throws Exception {
 
-        ClassifyWithExistingModels instance = new ClassifyWithExistingModels();
-        instance.run(args);
-
+        new ClassifyWithExistingModels().run(args);
     }
 
-    public ClassifyWithExistingModels() {
-
-    }
-
-    public Bucket run(final String[] args) throws Exception, CodeNotValidException {
+    public Bucket run(final String[] args) throws IOException, CodeNotValidException, ClassNotFoundException, InputFormatException {
 
         Timer timer = PipelineUtils.initAndStartTimer();
 

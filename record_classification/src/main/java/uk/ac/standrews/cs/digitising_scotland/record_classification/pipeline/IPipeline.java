@@ -18,10 +18,11 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.pipeline;
 
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.bucket.Bucket;
 
+import java.io.IOException;
+
 public interface IPipeline {
 
-    public Bucket classify(final Bucket bucket) throws Exception;
+    Bucket classify(final Bucket bucket) throws IOException, ClassNotFoundException;
 
-    public Bucket getSuccessfullyClassified();
-
+    Bucket getSuccessfullyClassified();
 }

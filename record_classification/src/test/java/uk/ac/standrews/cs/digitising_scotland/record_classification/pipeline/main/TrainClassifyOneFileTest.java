@@ -43,7 +43,6 @@ public class TrainClassifyOneFileTest {
         String[] args = {training, propertiesFileLocation, "0.8", "0"};
         Bucket classified = trainer.run(args);
         Assert.assertEquals(20, classified.size(), 10);
-
     }
 
     @Test
@@ -57,7 +56,6 @@ public class TrainClassifyOneFileTest {
         String[] args = {training, propertiesFileLocation, "0.8", "1"};
         Bucket classified = trainer.run(args);
         Assert.assertEquals(20, classified.size(), 10);
-
     }
 
     @Test
@@ -67,7 +65,6 @@ public class TrainClassifyOneFileTest {
         expectedEx.expect(RuntimeException.class);
         String[] args = {"testFile", "modelLoc"};
         trainer.run(args);
-
     }
 
     @Test
@@ -78,7 +75,5 @@ public class TrainClassifyOneFileTest {
         expectedEx.expect(RuntimeException.class);
         String[] args = {goldStandardFile, "nonExistantModelLocation"};
         trainer.run(args);
-
     }
-
 }

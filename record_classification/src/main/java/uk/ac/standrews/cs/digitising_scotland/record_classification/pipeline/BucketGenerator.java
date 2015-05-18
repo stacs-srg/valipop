@@ -16,28 +16,22 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.pipeline;
 
-import java.io.File;
-import java.io.IOException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import uk.ac.standrews.cs.digitising_scotland.record_classification.datareaders.AbstractFormatConverter;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.datareaders.LongFormatConverter;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.datareaders.PilotDataFormatConverter;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.data_readers.AbstractFormatConverter;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.data_readers.LongFormatConverter;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.data_readers.PilotDataFormatConverter;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.bucket.Bucket;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.code.CodeDictionary;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.code.CodeNotValidException;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.records.Record;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.records.RecordFactory;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.InputFormatException;
 
-/**
- * The Class TrainingBucketGenerator.
- */
+import java.io.File;
+import java.io.IOException;
+
+
 public class BucketGenerator {
 
-    /** The Constant LOGGER. */
     private static final Logger LOGGER = LoggerFactory.getLogger(BucketGenerator.class);
 
     /** The Abstract Format converter. This is set to be an instance of {@link LongFormatConverter} by default.
@@ -65,40 +59,7 @@ public class BucketGenerator {
      */
     public Bucket generateTrainingBucket(final File trainingFile) throws IOException, InputFormatException, CodeNotValidException {
 
-        LOGGER.info("********** Generating Training Bucket **********");
-
-        return createTrainingBucket(trainingFile);
-
-    }
-
-    /**
-     * Creates the bucket of records.
-     * 
-     * This method checks the file format of the input file and calls the correct method to parse the file into records objects.
-     * These records are then added to the bucket that is returned from the method.
-     *
-     * @param training the training file
-     * @return the bucket to be populated
-     * @throws IOException Signals that an I/O exception has occurred.
-     * @throws InputFormatException the input format exception
-     * @throws CodeNotValidException
-     */
-    private Bucket createTrainingBucket(final File training) throws IOException, InputFormatException, CodeNotValidException {
-
-        Bucket bucket = new Bucket();
-        Iterable<Record> records;
-        boolean longFormat = PipelineUtils.checkFileType(training);
-
-        if (longFormat) {
-            records = formatConverter.convert(training, codeDictionary);
-        }
-        else {
-            records = RecordFactory.makeCodedCodRecordsFromFile(training, codeDictionary);
-        }
-
-        bucket.addCollectionOfRecords(records);
-
-        return bucket;
+        return new Bucket(trainingFile, codeDictionary);
     }
 
     /**
@@ -108,19 +69,9 @@ public class BucketGenerator {
      * @param prediction file containing the records to be classified, one per line.
      * @return the bucket containing records to be classified
      */
-    public Bucket createPredictionBucket(final File prediction) throws CodeNotValidException {
+    public Bucket createPredictionBucket(final File prediction) throws CodeNotValidException, IOException, InputFormatException {
 
-        Bucket toClassify = null;
-        AbstractFormatConverter formatConverter = new PilotDataFormatConverter();
-
-        try {
-            toClassify = new Bucket(formatConverter.convert(prediction, codeDictionary));
-        }
-        catch (Exception e) {
-            LOGGER.error(e.getMessage(), e.getCause());
-        }
-
-        return toClassify;
+        return createPredictionBucket(prediction, new PilotDataFormatConverter());
     }
 
     /**
@@ -131,18 +82,8 @@ public class BucketGenerator {
      * @param formatConverter the format converter to create records with
      * @return the bucket
      */
-    public Bucket createPredictionBucket(final File prediction, final AbstractFormatConverter formatConverter) throws CodeNotValidException {
+    public Bucket createPredictionBucket(final File prediction, final AbstractFormatConverter formatConverter) throws CodeNotValidException, IOException, InputFormatException {
 
-        Bucket toClassify = null;
-
-        try {
-            toClassify = new Bucket(formatConverter.convert(prediction, codeDictionary));
-        }
-        catch (Exception e) {
-            LOGGER.error(e.getMessage(), e.getCause());
-        }
-
-        return toClassify;
+        return new Bucket(formatConverter.convert(prediction, codeDictionary));
     }
-
 }

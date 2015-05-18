@@ -16,13 +16,6 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.bucket.Bucket;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.classification.Classification;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.code.Code;
@@ -31,6 +24,13 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructur
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.records.Record;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.records.RecordFactory;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.tokens.TokenSet;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * The Class ClassifierTestingHelper.
@@ -196,7 +196,7 @@ public class ClassifierTestingHelper {
         Classification c = new Classification(code, new TokenSet(record.getOriginalData().getDescription()), 1.0);
         Set<Classification> set = new HashSet<>();
         set.add(c);
-        record.addClassification(record.getOriginalData().getDescription().get(0), c);
+        record.addClassification(record.getOriginalData().getDescription(), c);
         return record;
     }
 

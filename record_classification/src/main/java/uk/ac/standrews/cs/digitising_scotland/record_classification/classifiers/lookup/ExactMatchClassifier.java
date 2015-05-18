@@ -16,31 +16,53 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.lookup;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.Pair;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.Classifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.bucket.Bucket;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.classification.Classification;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.code.Code;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.records.Record;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.tokens.TokenSet;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
 
 /**
  * Uses a lookup table to return matches as classifications.
- * @author frjd2, jkc25
  *
+ * @author frjd2, jkc25
  */
-public class ExactMatchClassifier {
+public class ExactMatchClassifier implements Classifier {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ExactMatchClassifier.class);
     private Map<String, Set<Classification>> lookupTable;
     private String modelFileName = "target/lookupTable";
+    ObjectMapper mapper;
+
+    /**
+     * Creates a new {@link ExactMatchClassifier} and creates an empty lookup table.
+     */
+    public ExactMatchClassifier() {
+
+        this.lookupTable = new HashMap<>();
+        mapper = new ObjectMapper();
+    }
+
+    public void train(final Bucket bucket) throws Exception {
+
+        for (Record record : bucket) {
+            addRecordToLookupTable(record);
+        }
+
+        writeModel(modelFileName);
+    }
 
     /**
      * Can be used to overwrite the default file path for model writing.
+     *
      * @param modelFileName new model path
      */
     public void setModelFileName(final String modelFileName) {
@@ -49,56 +71,28 @@ public class ExactMatchClassifier {
     }
 
     /**
-     * Creates a new {@link ExactMatchClassifier} and creates an empty lookup table.
-     */
-    public ExactMatchClassifier() {
-
-        this.lookupTable = new HashMap<>();
-
-    }
-
-    /**
-     * Creates a new {@link ExactMatchClassifier} and creates and fills the lookup table with the contents of the bucket.
-     * Equivalent to call @train().
-     * @param bucket Bucket containing records to put in the lookup table.
-     * @throws IOException IO error if location to write model cannot be accessed
-     */
-    public ExactMatchClassifier(final Bucket bucket) throws IOException {
-
-        this();
-        fillLookupTable(bucket);
-        writeModel(modelFileName);
-
-    }
-
-    public void train(final Bucket bucket) throws Exception {
-
-        fillLookupTable(bucket);
-        writeModel(modelFileName);
-
-    }
-
-    /**
      * Adds each gold standard {@link Classification} in the records to the lookupTable.
+     *
      * @param record to add
      */
-    private void addRecordToLookupTable(final Record record, final Map<String, Set<Classification>> lookup) {
+    private void addRecordToLookupTable(final Record record) {
 
         final Set<Classification> goldStandardCodes = record.getOriginalData().getGoldStandardClassifications();
         String concatDescription = getConcatenatedDescription(goldStandardCodes);
         List<String> blacklist = new ArrayList<>();
-        addToLookup(lookup, goldStandardCodes, concatDescription, blacklist);
+        addToLookup(lookupTable, goldStandardCodes, concatDescription, blacklist);
     }
 
     protected void addToLookup(final Map<String, Set<Classification>> lookup, final Set<Classification> goldStandardCodes, final String concatDescription, final List<String> blacklist) {
+
+        // Not clear what blacklist is for. Can't see how it works with passed in list always being empty.
 
         if (!blacklist.contains(concatDescription)) {
             if (!lookup.containsKey(concatDescription)) {
 
                 Set<Classification> editClassification = changeConfidences(goldStandardCodes);
                 lookup.put(concatDescription, editClassification);
-            }
-            else if (!goldStandardCodes.equals(lookup.get(concatDescription))) {
+            } else if (!goldStandardCodes.equals(lookup.get(concatDescription))) {
                 blacklist.add(concatDescription);
                 lookup.remove(concatDescription);
                 LOGGER.info(concatDescription + " removed");
@@ -126,8 +120,7 @@ public class ExactMatchClassifier {
             if (isFirst) {
                 concat += classification.getTokenSet().toString();
                 isFirst = false;
-            }
-            else {
+            } else {
                 concat += ", " + classification.getTokenSet().toString();
             }
         }
@@ -135,79 +128,38 @@ public class ExactMatchClassifier {
         return concat;
     }
 
-    private void fillLookupTable(final Bucket bucket) {
-
-        for (Record record : bucket) {
-            addRecordToLookupTable(record, lookupTable);
-        }
-    }
-
     /**
      * Writes model to file. File name is fileName.ser
      *
      * @param fileName name of file to write model to
      * @throws IOException if model location cannot be read
-     * */
+     */
     public void writeModel(final String fileName) throws IOException {
 
-        FileOutputStream fos = new FileOutputStream(fileName + ".ser");
-        ObjectOutputStream oos = new ObjectOutputStream(fos);
-        write(oos);
+        mapper.writeValue(new File(fileName + ".json"), lookupTable);
     }
 
-    @SuppressWarnings("unchecked")
-    protected ExactMatchClassifier readModel(final String fileName) throws ClassNotFoundException, IOException {
+    protected void readModel(final String fileName) throws IOException {
 
-        //deserialize the .ser file
-
-        try (ObjectInput input = new ObjectInputStream(new BufferedInputStream(new FileInputStream(fileName + ".ser")))) {
-
-            Object object = input.readObject();
-            lookupTable = (Map<String, Set<Classification>>) object;
-        }
-
-        return this;
+        lookupTable = mapper.readValue(new File(fileName + ".json"), new TypeReference<Map<String, Set<Classification>>>() {
+        });
     }
 
-    private void write(final ObjectOutputStream oos) throws IOException {
+    public void loadModelFromFile() throws IOException {
 
-        oos.writeObject(lookupTable);
-        oos.close();
-    }
-
-    public ExactMatchClassifier getModelFromDefaultLocation() {
-
-        ExactMatchClassifier classifier = null;
-        try {
-            classifier = readModel(modelFileName);
-        }
-        catch (ClassNotFoundException e) {
-            LOGGER.error("Could not get model from default location. Class not found exception.", e.getException());
-        }
-        catch (IOException e) {
-            LOGGER.error("Could not get model from default location. IOException.", e.getCause());
-        }
-        return classifier;
+        readModel(modelFileName);
     }
 
     /**
      * Classifies a {@link TokenSet} to a set of {@link Classification}s using the classifiers lookup table.
+     *
      * @param tokenSet to classify
      * @return Set<CodeTripe> code triples from lookup table
      * @throws IOException Indicates an I/O error
      */
-    public Set<Classification> classifyTokenSetToCodeTripleSet(final TokenSet tokenSet) throws IOException {
+    public Set<Classification> classify(final TokenSet tokenSet) throws IOException {
 
-//        Set<Classification> result = lookupTable.get(tokenSet);
-//
-//        if (result != null) {
-//            result = setConfidenceLevels(result, 2.0);
-//            return result;
-//
-//        }
-//        else {
-            return null;
-//        }
+        return lookupTable.get(tokenSet);
     }
 
     private Set<Classification> setConfidenceLevels(final Set<Classification> result, final double i) {
@@ -218,20 +170,6 @@ public class ExactMatchClassifier {
             newResults.add(newCodeT);
         }
         return newResults;
-    }
-
-    public Pair<Code, Double> classify(final TokenSet tokenSet) throws IOException {
-
-//        Set<Classification> result = lookupTable.get(tokenSet);
-//
-//        if (result != null) {
-//            Classification current = result.iterator().next();
-//            return new Pair<Code, Double>(current.getCode(), current.getConfidence());
-//
-//        }
-//        else {
-            return null;
-//        }
     }
 
     @Override
@@ -246,15 +184,23 @@ public class ExactMatchClassifier {
     @Override
     public boolean equals(final Object obj) {
 
-        if (this == obj) { return true; }
-        if (obj == null) { return false; }
-        if (getClass() != obj.getClass()) { return false; }
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
         ExactMatchClassifier other = (ExactMatchClassifier) obj;
         if (lookupTable == null) {
-            if (other.lookupTable != null) { return false; }
+            if (other.lookupTable != null) {
+                return false;
+            }
+        } else if (!lookupTable.equals(other.lookupTable)) {
+            return false;
         }
-        else if (!lookupTable.equals(other.lookupTable)) { return false; }
         return true;
     }
-
 }

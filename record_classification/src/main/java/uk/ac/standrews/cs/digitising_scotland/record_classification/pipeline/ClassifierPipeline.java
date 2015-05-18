@@ -16,36 +16,39 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.pipeline;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-
 import com.google.common.collect.Multiset;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.IClassifier;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.Classifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.cachedclassifier.CachedClassifier;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.resolver.RecordClassificationResolverPipeline;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.resolver.Interfaces.LossFunction;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.resolver.RecordClassificationResolverPipeline;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.bucket.Bucket;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.classification.Classification;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.records.Record;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.tokens.TokenSet;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.tokens.TokenToClassificationMapGenerator;
 
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
 /**
  * This class is produces a set of {@link Classification}s that represent the
  * classification for a {@link Record}.
- * 
+ *
  * @author jkc25, frjd2
- * 
  */
 public class ClassifierPipeline implements IPipeline {
 
-    /** The Constant CONFIDENCE_CHOP_LEVEL. */
+    /**
+     * The Constant CONFIDENCE_CHOP_LEVEL.
+     */
     private static final double CONFIDENCE_CHOP_LEVEL = 0.3;
-    private final RecordClassificationResolverPipeline<? extends LossFunction<Multiset<Classification>, Double>> resolverPipeline;
+    private final RecordClassificationResolverPipeline resolverPipeline;
 
-    /** The record cache. */
+    /**
+     * The record cache.
+     */
     private Map<String, Set<Classification>> recordCache;
 
     private Bucket successfullyClassified;
@@ -53,19 +56,19 @@ public class ClassifierPipeline implements IPipeline {
 
     /**
      * Constructs a new {@link ClassifierPipeline} with the specified
-     * {@link uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.IClassifier} used to perform the classification duties.
+     * {@link Classifier} used to perform the classification duties.
      *
-     * @param classifier    {@link uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.IClassifier} used for machine learning classification
+     * @param classifier            {@link Classifier} used for machine learning classification
      * @param cachePopulationBucket the training bucket
      */
-    public ClassifierPipeline(final IClassifier<TokenSet, Classification> classifier, final Bucket cachePopulationBucket, final LossFunction<Multiset<Classification>, Double> lossFunction, final boolean multipleClassifications, final boolean resolveHierarchies) {
+    public ClassifierPipeline(final Classifier classifier, final Bucket cachePopulationBucket, final LossFunction<Multiset<Classification>, Double> lossFunction, final boolean multipleClassifications, final boolean resolveHierarchies) {
 
         /* The cache. */
         TokenToClassificationMapGenerator populator = new TokenToClassificationMapGenerator(cachePopulationBucket);
         recordCache = new HashMap<>();
-        CachedClassifier<TokenSet, Classification> cache = new CachedClassifier<>(classifier, populator.getMap());
+        CachedClassifier cache = new CachedClassifier(classifier, populator.getMap());
 
-        this.resolverPipeline = new RecordClassificationResolverPipeline<>(cache, lossFunction, CONFIDENCE_CHOP_LEVEL, multipleClassifications, resolveHierarchies);
+        this.resolverPipeline = new RecordClassificationResolverPipeline(cache, lossFunction, CONFIDENCE_CHOP_LEVEL, multipleClassifications, resolveHierarchies);
         this.successfullyClassified = new Bucket();
         this.forFurtherProcessing = new Bucket();
     }
@@ -83,7 +86,7 @@ public class ClassifierPipeline implements IPipeline {
      * @return bucket this is the bucket of records for further processing
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    public Bucket classify(final Bucket bucket) throws Exception {
+    public Bucket classify(final Bucket bucket) throws IOException, ClassNotFoundException {
 
         for (Record record : bucket) {
             putRecordIntoAppropriateBucket(classifyRecord(record));
@@ -95,31 +98,28 @@ public class ClassifierPipeline implements IPipeline {
 
         if (record.isFullyClassified()) {
             successfullyClassified.addRecordToBucket(record);
-        }
-        else {
+        } else {
             forFurtherProcessing.addRecordToBucket(record);
         }
-
     }
 
-    private Record classifyRecord(final Record record) throws Exception {
+    private Record classifyRecord(final Record record) throws IOException, ClassNotFoundException {
 
-        for (String description : record.getDescription()) {
-            if (!record.descriptionIsClassified(description)) {
-                Set<Classification> result = classifyDescription(description);
-                record.addClassificationsToDescription(description, result);
-            }
+        String description = record.getDescription();
+        if (!record.descriptionIsClassified(description)) {
+            Set<Classification> result = classifyDescription(description);
+            record.addClassificationsToDescription(description, result);
         }
+
         return record;
     }
 
-    private Set<Classification> classifyDescription(final String description) throws Exception {
+    private Set<Classification> classifyDescription(final String description) throws IOException, ClassNotFoundException {
 
         Set<Classification> result;
         if (recordCache.containsKey(description)) {
             result = recordCache.get(description);
-        }
-        else {
+        } else {
             TokenSet tokenSet = new TokenSet(description);
             result = resolverPipeline.classify(tokenSet);
             recordCache.put(description, result);

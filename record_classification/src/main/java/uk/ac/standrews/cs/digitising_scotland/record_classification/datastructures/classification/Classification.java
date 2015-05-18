@@ -16,19 +16,20 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.classification;
 
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.resolver.Interfaces.AbstractClassification;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.code.Code;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.tokens.TokenSet;
 
+import java.io.Serializable;
+
 /**
  * This class represents a classification, either gold standard or from a classifier.
- * A classification consists of the foloowing:
+ * A classification consists of the following:
  * The class contains 3 variables, the {@link uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.code.Code}, the {@link TokenSet} that relates to the code and finally
  * the confidence of that code.
  * <br><br>
  * @author jkc25, frjd2
  */
-public class Classification extends AbstractClassification<Code, Double> {
+public class Classification implements Comparable<Classification>, Serializable {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 7683621012309471383L;
@@ -86,9 +87,6 @@ public class Classification extends AbstractClassification<Code, Double> {
         return confidence;
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#hashCode()
-     */
     @Override
     public int hashCode() {
 
@@ -100,9 +98,6 @@ public class Classification extends AbstractClassification<Code, Double> {
         return result;
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
     @Override
     public boolean equals(final Object obj) {
 
@@ -125,9 +120,6 @@ public class Classification extends AbstractClassification<Code, Double> {
         return true;
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
     @Override
     public String toString() {
 
@@ -135,18 +127,12 @@ public class Classification extends AbstractClassification<Code, Double> {
     }
 
     @Override
-    public int compareTo(Double o) {
+    public int compareTo(Classification o) {
 
         Double c = Math.abs(confidence);
-        if (c > o) return 1;
-        if (c.equals(o))
+        if (c > o.confidence) return 1;
+        if (c.equals(o.confidence))
             return 0;
         else return -1;
-    }
-
-    @Override
-    public Code getProperty() {
-
-        return getCode();
     }
 }

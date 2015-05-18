@@ -16,16 +16,11 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.resolver.generic;
 
+import uk.ac.standrews.cs.digitising_scotland.record_classification.tools.DeepCloner;
+
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import uk.ac.standrews.cs.digitising_scotland.record_classification.tools.DeepCloner;
+import java.util.*;
 
 /**
  * A map from keys to lists of values, iterable over keys and serializable.
@@ -35,7 +30,6 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.tools.DeepCl
  */
 public class MultiValueMap<K, V> implements Iterable<K>, Serializable, Map<K, List<V>> {
 
-    //TODO test directly!
     DeepCloner deepCloner = new DeepCloner();
     private final Map<K, List<V>> map;
 

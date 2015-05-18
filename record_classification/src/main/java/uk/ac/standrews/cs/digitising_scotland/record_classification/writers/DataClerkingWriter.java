@@ -16,13 +16,13 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.writers;
 
+import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.records.Record;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.tools.ReaderWriterFactory;
+
 import java.io.BufferedWriter;
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
-
-import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.records.Record;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.tools.ReaderWriterFactory;
 
 /**
  * Contains methods for writing {@link Record}s to file in the format specified by NRS.
@@ -76,13 +76,12 @@ public class DataClerkingWriter extends OutputDataFormatter implements Closeable
 
         StringBuilder sb = new StringBuilder();
         char fieldID = 'a';
-        for (String description : record.getDescription()) {
-            int id = record.getid();
-            String year = getYear(record);
-            String codes = getCodes(record, description);
-            sb.append(year + id + "|" + fieldID + "|" + description + "|" + codes + "\n");
-            fieldID++;
-        }
+        String description = record.getDescription();
+        int id = record.getid();
+        String year = getYear(record);
+        String codes = getCodes(record, description);
+        sb.append(year + id + "|" + fieldID + "|" + description + "|" + codes + "\n");
+        fieldID++;
 
         return sb.toString();
     }

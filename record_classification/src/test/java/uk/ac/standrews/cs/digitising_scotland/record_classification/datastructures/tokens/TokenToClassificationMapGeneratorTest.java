@@ -16,24 +16,12 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.tokens;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
-
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.OriginalData;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.bucket.Bucket;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.classification.Classification;
@@ -41,6 +29,10 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructur
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.code.CodeNotValidException;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.records.Record;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.InputFormatException;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
 
 /**
  *
@@ -86,8 +78,7 @@ public class TokenToClassificationMapGeneratorTest {
 
     private Record buildRecord(final String[] descriptions) throws InputFormatException, CodeNotValidException {
 
-        List<String> description = new ArrayList<>();
-        OriginalData originalData = new OriginalData(description, 0, 1, "file");
+        OriginalData originalData = new OriginalData("", 0, 1, "file");
         Set<Classification> classifications = buildClassifications(descriptions);
         originalData.setGoldStandardClassification(classifications);
         return new Record(1, originalData);

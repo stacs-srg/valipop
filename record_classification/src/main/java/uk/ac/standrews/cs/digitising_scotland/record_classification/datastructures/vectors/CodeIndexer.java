@@ -16,21 +16,21 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.vectors;
 
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Map.Entry;
-
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.classification.Classification;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.code.Code;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.code.CodeDictionary;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.records.Record;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.tools.configuration.MachineLearningConfiguration;
 
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
+
 /**
  * This class represents all the outputs codes that are being used in the OLR models.
- * As the size of the OLR models depend on the number of output classes it was deemed undesirable to consturct models
+ * As the size of the OLR models depend on the number of output classes it was deemed undesirable to construct models
  * that contained codes that are never seen in the training data. To avoid this, this class should hold all the output classes
  * that are actually used.
  *

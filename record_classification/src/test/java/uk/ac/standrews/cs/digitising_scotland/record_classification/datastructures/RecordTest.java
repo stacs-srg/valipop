@@ -16,16 +16,10 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
-
+import com.google.common.collect.HashMultimap;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.classification.Classification;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.code.Code;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.code.CodeDictionary;
@@ -34,7 +28,13 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructur
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.tokens.TokenSet;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.InputFormatException;
 
-import com.google.common.collect.HashMultimap;
+import java.io.File;
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * The Class RecordTest tests the creation of Records and their subclasses, parameters etc.
@@ -49,21 +49,12 @@ public class RecordTest {
     /** The original data. */
     private OriginalData originalData;
 
-    /**
-     * Sets up the originalData being used in theses tests. Run before each Test.
-     *
-     * @throws Exception the exception
-     */
     @Before
     public void setUp() throws Exception {
 
-        ArrayList<String> descList = new ArrayList<>();
-        final String desc = "A test Description";
-        descList.add(desc);
-
         int id = (int) Math.rint(Math.random() * 1000);
 
-        originalData = new OriginalData(descList, 2014, 1, "testFileName");
+        originalData = new OriginalData("A test Description", 2014, 1, "testFileName");
         record = new Record(id, originalData);
     }
 
@@ -75,7 +66,7 @@ public class RecordTest {
     @Test
     public void testConstructor() throws InputFormatException {
 
-        Assert.assertEquals("A test Description", record.getOriginalData().getDescription().get(0));
+        assertEquals("A test Description", record.getOriginalData().getDescription());
     }
 
     /**
@@ -98,10 +89,9 @@ public class RecordTest {
 
         HashMultimap<String, Classification> classificationsFromRecord = record.getListOfClassifications();
 
-        Classification clssfication = classificationsFromRecord.entries().iterator().next().getValue();
-        Assert.assertEquals("2100", clssfication.getCode().getCodeAsString());
-        Assert.assertEquals("test string", clssfication.getTokenSet().toString());
-
+         classification = classificationsFromRecord.entries().iterator().next().getValue();
+        assertEquals("2100", classification.getCode().getCodeAsString());
+        assertEquals("test string", classification.getTokenSet().toString());
     }
 
     /**
@@ -112,18 +102,14 @@ public class RecordTest {
     @Test
     public void testIsCodMethod() throws InputFormatException {
 
-        ArrayList<String> descList = new ArrayList();
-        final String desc = "A test Description";
-        descList.add(desc);
         int id = (int) Math.rint(Math.random() * 1000);
 
         Record c = new Record(id, originalData);
         Assert.assertFalse(c.isCoDRecord());
-        OriginalData codOriginalData = new CODOrignalData(descList, 2014, 1, 0, 0, "testFileName");
+        OriginalData codOriginalData = new CODOriginalData("A test Description", 2014, 1, 0, 0, "testFileName");
         c = new Record(id, codOriginalData);
 
-        Assert.assertTrue(c.isCoDRecord());
-
+        assertTrue(c.isCoDRecord());
     }
 
     /**
@@ -173,8 +159,8 @@ public class RecordTest {
      */
     private void assertDifferent(final Record x, final Record y) {
 
-        Assert.assertTrue(!x.equals(y) && !y.equals(x));
-        Assert.assertTrue(x.hashCode() != y.hashCode());
+        assertTrue(!x.equals(y) && !y.equals(x));
+        assertTrue(x.hashCode() != y.hashCode());
     }
 
     /**
@@ -185,7 +171,7 @@ public class RecordTest {
      */
     private void assertTheSame(final Record x, final Record y) {
 
-        Assert.assertTrue(x.equals(y) && y.equals(x));
-        Assert.assertTrue(x.hashCode() == y.hashCode());
+        assertTrue(x.equals(y) && y.equals(x));
+        assertTrue(x.hashCode() == y.hashCode());
     }
 }

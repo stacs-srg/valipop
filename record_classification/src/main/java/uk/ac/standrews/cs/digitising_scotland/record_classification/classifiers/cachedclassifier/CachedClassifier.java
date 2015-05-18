@@ -16,33 +16,34 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.cachedclassifier;
 
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.Classifier;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.classification.Classification;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.tokens.TokenSet;
+import uk.ac.standrews.cs.digitising_scotland.record_classification_cleaned.AbstractClassifier;
+
+import java.io.IOException;
 import java.util.Map;
+import java.util.Set;
 
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.IClassifier;
+public class CachedClassifier extends AbstractClassifier {
 
-/**
- * TODO test! - fraser 8/Oct
- * TODO document!
- */
-public class CachedClassifier<K, V> implements IClassifier<K, V> {
+    private Map<TokenSet, Classification> cache;
+    private Classifier classifier;
 
-    private Map<K, V> cache;
-    private IClassifier<K, V> classifier;
-
-    public CachedClassifier(final IClassifier<K, V> classifier, final Map<K, V> map) {
+    public CachedClassifier(final Classifier classifier, final Map<TokenSet, Classification> map) {
 
         this.classifier = classifier;
         this.cache = map;
     }
 
     @Override
-    public V classify(final K k) throws Exception {
+    public Set<Classification> classify(final TokenSet k) throws IOException, ClassNotFoundException {
 
-        V v = cache.get(k);
+        Classification v = cache.get(k);
         if (v == null) {
-            v = classifier.classify(k);
+            v = getSingleClassification(classifier.classify(k));
             cache.put(k, v);
         }
-        return v;
+        return makeClassificationSet(v);
     }
 }
