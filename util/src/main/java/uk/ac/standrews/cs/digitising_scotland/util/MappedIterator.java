@@ -24,9 +24,9 @@ import java.util.Iterator;
 public class MappedIterator<T1, T2> implements Iterator<T2> {
 
     private final Iterator<T1> iterator;
-    private final Map<T1, T2> mapper;
+    private final Map2<T1, T2> mapper;
 
-    public MappedIterator(final Iterator<T1> iterator, final Map<T1, T2> mapper) {
+    public MappedIterator(final Iterator<T1> iterator, final Map2<T1, T2> mapper) {
 
         this.iterator = iterator;
         this.mapper = mapper;

@@ -16,6 +16,7 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.data_readers;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.bucket.Bucket;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.code.CodeDictionary;
@@ -29,6 +30,7 @@ import static org.junit.Assert.assertEquals;
 
 public class PilotDataFormatConverterTest {
 
+    @Ignore
     @Test
     public void test() throws IOException, InputFormatException {
 

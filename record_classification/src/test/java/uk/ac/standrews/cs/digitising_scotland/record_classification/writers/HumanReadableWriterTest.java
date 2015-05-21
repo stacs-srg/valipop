@@ -16,21 +16,17 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.writers;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.nio.file.Files;
-
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
+import org.junit.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.ClassifierTestingHelper;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.bucket.Bucket;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.code.CodeNotValidException;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.records.Record;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.records.RecordFactory;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
 
 public class HumanReadableWriterTest {
 
@@ -83,6 +79,7 @@ public class HumanReadableWriterTest {
      *
      * @throws Exception the exception
      */
+    @Ignore
     @Test
     public void testWriteOcc() throws Exception, CodeNotValidException {
 
@@ -97,6 +94,7 @@ public class HumanReadableWriterTest {
      *
      * @throws Exception the exception
      */
+    @Ignore
     @Test
     public void testWriteCOD() throws Exception {
 
@@ -110,6 +108,7 @@ public class HumanReadableWriterTest {
      *
      * @throws Exception the exception
      */
+    @Ignore
     @Test
     public void testWriteHICOD() throws Exception {
 
@@ -123,6 +122,7 @@ public class HumanReadableWriterTest {
      *
      * @throws Exception the exception
      */
+    @Ignore
     @Test
     public void testWriteMultipleCOD() throws Exception {
 

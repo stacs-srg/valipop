@@ -16,43 +16,24 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification_cleaned.pipeline;
 
-import com.google.common.io.Files;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.lookup.ExactMatchClassifier;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.analysis_metrics.CodeMetrics;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.analysis_metrics.ListAccuracyMetrics;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.analysis_metrics.StrictConfusionMatrix;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.bucket.Bucket;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.bucket.BucketFilter;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.bucket.BucketUtils;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.code.CodeDictionary;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.records.Record;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.vectors.CodeIndexer;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.pipeline.ExactMatchPipeline;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.pipeline.IPipeline;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.pipeline.PipelineUtils;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.tools.configuration.MachineLearningConfiguration;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.writers.DataClerkingWriter;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.writers.FileComparisonWriter;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.writers.MetricsWriter;
+import uk.ac.standrews.cs.digitising_scotland.record_classification_cleaned.Bucket2;
+import uk.ac.standrews.cs.digitising_scotland.record_classification_cleaned.ExactMatchClassifier2;
+import uk.ac.standrews.cs.digitising_scotland.record_classification_cleaned.Record2;
 
 import java.io.File;
 import java.io.IOException;
 
-public class ExactMatchClassificationProcess implements ClassificationProcess {
+public class ExactMatchClassificationProcess {//implements ClassificationProcess {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ExactMatchClassificationProcess.class);
-    private static final String USAGE_TEXT = "usage: $" + ExactMatchClassificationProcess.class.getSimpleName() + "    <trainingDataFile>  <propertiesFile>  <trainingRatio>";
 
     private static final int TRAINING_DATA_FILE_ARG_POS = 0;
-    private static final int PROPERTIES_FILE_ARG_POS = 1;
     private static final int TRAINING_RATIO_ARG_POS = 2;
 
-    String experimentalFolderName;
     File training_data_file;
     double training_ratio;
-    CodeDictionary code_dictionary;
 
     /**
      * Entry method for training and classifying a batch of records into
@@ -70,97 +51,24 @@ public class ExactMatchClassificationProcess implements ClassificationProcess {
 
         LOGGER.info("Running with args: {}", (Object) args);
 
-         experimentalFolderName = PipelineUtils.setupExperimentalFolders("ExactMatchClassifierDevelopment");
-
-         training_data_file = getTrainingDataFileFromArgs(args);
-         training_ratio = parseTrainingRatio(args);
-
-        File code_dictionary_file = new File(MachineLearningConfiguration.getDefaultProperties().getProperty("codeDictionaryFile"));
-         code_dictionary = new CodeDictionary(code_dictionary_file);
+        training_data_file = getTrainingDataFileFromArgs(args);
+        training_ratio = getTrainingRatioFromArgs(args);
     }
 
-    public Bucket performClassification() throws Exception {
+    public void performClassification() throws Exception {
 
-        Bucket all_records = new Bucket(training_data_file, code_dictionary);
+        Bucket2 all_records = new Bucket2(training_data_file);
+        Bucket2 training_records = extractRandomSubset(all_records, training_ratio);
+        Bucket2 evaluation_records = discardClassifications(difference(all_records, training_records));
 
-        Bucket training_bucket = new Bucket();
-        Bucket evaluation_bucket = new Bucket();
+        ExactMatchClassifier2 exact_match_classifier = new ExactMatchClassifier2();
+        exact_match_classifier.train(training_records);
 
-        randomlyAssignToTrainingAndEvaluation(all_records, training_bucket, evaluation_bucket, training_ratio);
+        Bucket2 classified_evaluation_records = exact_match_classifier.classify(evaluation_records);
 
-        ExactMatchClassifier exactMatchClassifier = new ExactMatchClassifier();
-        exactMatchClassifier.setModelFileName(experimentalFolderName + "/Models/lookupTable");
-        exactMatchClassifier.train(training_bucket);
+        ClassificationMetrics metrics = new ClassificationMetrics(classified_evaluation_records, all_records);
 
-        IPipeline exactMatchPipeline = new ExactMatchPipeline(exactMatchClassifier);
-
-        Bucket notExactMatched = exactMatchPipeline.classify(evaluation_bucket);
-        Bucket successfullyExactMatched = exactMatchPipeline.getSuccessfullyClassified();
-        Bucket uniqueRecordsExactMatched = BucketFilter.uniqueRecordsOnly(successfullyExactMatched);
-
-        LOGGER.info("Exact Matched Bucket Size: " + successfullyExactMatched.size());
-        LOGGER.info("Unique Exact Matched Bucket Size: " + uniqueRecordsExactMatched.size());
-
-        Bucket allRecords = BucketUtils.getUnion(successfullyExactMatched, notExactMatched);
-
-//        writeRecords(experimentalFolderName, allRecords);
-//
-//        writeComparisonFile(experimentalFolderName, allRecords);
-
-
-        CodeIndexer code_indexer = new CodeIndexer(all_records);
-//        printAllStats(experimentalFolderName, code_indexer, allRecords, "allRecords");
-        printAllStats(experimentalFolderName, code_indexer, successfullyExactMatched, "exactMatched");
-
-        return allRecords;
-    }
-
-    private void printAllStats(final String experimentalFolderName, final CodeIndexer codeIndex, final Bucket bucket, final String identifier) throws IOException {
-
-        final Bucket uniqueRecordsOnly = BucketFilter.uniqueRecordsOnly(bucket);
-
-        LOGGER.info("All Records");
-        LOGGER.info("All Records Bucket Size: " + bucket.size());
-        CodeMetrics codeMetrics = new CodeMetrics(new StrictConfusionMatrix(bucket, codeIndex), codeIndex);
-        ListAccuracyMetrics accuracyMetrics = new ListAccuracyMetrics(bucket, codeMetrics);
-        MetricsWriter metricsWriter = new MetricsWriter(accuracyMetrics, experimentalFolderName, codeIndex);
-        metricsWriter.write(identifier, "nonUniqueRecords");
-        accuracyMetrics.prettyPrint("AllRecords");
-
-        LOGGER.info("Unique Only");
-        LOGGER.info("Unique Only  Bucket Size: " + uniqueRecordsOnly.size());
-
-        CodeMetrics codeMetrics1 = new CodeMetrics(new StrictConfusionMatrix(uniqueRecordsOnly, codeIndex), codeIndex);
-        accuracyMetrics = new ListAccuracyMetrics(uniqueRecordsOnly, codeMetrics1);
-        accuracyMetrics.prettyPrint("Unique Only");
-        metricsWriter = new MetricsWriter(accuracyMetrics, experimentalFolderName, codeIndex);
-        metricsWriter.write(identifier, "uniqueRecords");
-        accuracyMetrics.prettyPrint("UniqueRecords");
-    }
-
-    private void writeComparisonFile(final String experimentalFolderName, final Bucket allClassifed) throws IOException {
-
-        final String comparisonReportPath = "/Data/" + "MachineLearning" + "/comaprison.txt";
-        final File outputPath2 = new File(experimentalFolderName + comparisonReportPath);
-        Files.createParentDirs(outputPath2);
-
-        final FileComparisonWriter comparisonWriter = new FileComparisonWriter(outputPath2, "\t");
-        for (final Record record : allClassifed) {
-            comparisonWriter.write(record);
-        }
-        comparisonWriter.close();
-    }
-
-    private void writeRecords(final String experimentalFolderName, final Bucket allClassifed) throws IOException {
-
-        final String nrsReportPath = "/Data/" + "MachineLearning" + "/NRSData.txt";
-        final File outputPath = new File(experimentalFolderName + nrsReportPath);
-        Files.createParentDirs(outputPath);
-        final DataClerkingWriter writer = new DataClerkingWriter(outputPath);
-        for (final Record record : allClassifed) {
-            writer.write(record);
-        }
-        writer.close();
+        metrics.printMetrics();
     }
 
     private static File getTrainingDataFileFromArgs(final String[] args) throws InvalidArgException {
@@ -178,22 +86,7 @@ public class ExactMatchClassificationProcess implements ClassificationProcess {
         return training_data_file;
     }
 
-    private void loadMachineLearningPropertiesFromArgs(String[] args) throws InvalidArgException {
-
-        if (args.length <= PROPERTIES_FILE_ARG_POS) {
-            throw new InvalidArgException("properties file argument missing");
-        }
-
-        File properties_file = new File(args[PROPERTIES_FILE_ARG_POS]);
-
-        if (properties_file.exists()) {
-            MachineLearningConfiguration.loadProperties(properties_file);
-        } else {
-            LOGGER.info("supplied properties file does not exist, using default properties: " + MachineLearningConfiguration.getDefaultPropertiesPath());
-        }
-    }
-
-    private static double parseTrainingRatio(final String[] args) throws InvalidArgException {
+    private static double getTrainingRatioFromArgs(final String[] args) throws InvalidArgException {
 
         // TODO rewrite args handling using Apache Commons CLI2
 
@@ -215,15 +108,40 @@ public class ExactMatchClassificationProcess implements ClassificationProcess {
         }
     }
 
-    private void randomlyAssignToTrainingAndEvaluation(final Bucket bucket, Bucket training_bucket, Bucket evaluation_bucket, final double trainingRatio) {
+    private Bucket2 extractRandomSubset(final Bucket2 bucket, final double training_ratio) {
 
-        for (Record record : bucket) {
-            if (Math.random() < trainingRatio) {
-                training_bucket.addRecordToBucket(record);
-            } else {
-                evaluation_bucket.addRecordToBucket(record);
+        Bucket2 subset_bucket = new Bucket2();
+
+        for (Record2 record : bucket) {
+            if (Math.random() < training_ratio) {
+                subset_bucket.add(record);
             }
         }
+
+        return subset_bucket;
     }
 
+    private Bucket2 difference(final Bucket2 larger_bucket, final Bucket2 smaller_bucket) {
+
+        Bucket2 difference_bucket = new Bucket2();
+
+        for (Record2 record : larger_bucket) {
+            if (!smaller_bucket.contains(record)) {
+                difference_bucket.add(record);
+            }
+        }
+
+        return difference_bucket;
+    }
+
+    private Bucket2 discardClassifications(final Bucket2 bucket) {
+
+        Bucket2 unclassified_bucket = new Bucket2();
+
+        for (Record2 record : bucket) {
+            unclassified_bucket.add(new Record2(record.getId(), record.getData(), null));
+        }
+
+        return unclassified_bucket;
+    }
 }

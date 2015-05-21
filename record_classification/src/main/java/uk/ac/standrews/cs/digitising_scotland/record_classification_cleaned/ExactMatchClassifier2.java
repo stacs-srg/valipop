@@ -16,49 +16,48 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification_cleaned;
 
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.Classifier;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.bucket.Bucket;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.classification.Classification;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.records.Record;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.tokens.TokenSet;
-
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
-/**
- * Uses a lookup table to return matches as classifications.
- *
- * @author frjd2, jkc25
- */
-public class ExactMatchClassifier2  implements Classifier {
+public class ExactMatchClassifier2  implements Classifier2 {
 
-    private Map<TokenSet, Set<Classification>> known_classifications;
+    private Map<String, Classification2> known_classifications;
 
     public ExactMatchClassifier2() {
 
         known_classifications = new HashMap<>();
     }
 
-    public void train(final Bucket bucket) throws Exception {
+    public void train(final Bucket2 bucket) throws Exception {
 
-        for (Record record : bucket) {
+        for (Record2 record : bucket) {
             loadRecord(record);
         }
     }
 
-    private void loadRecord(final Record record) {
+    public Classification2 classify(final String data) {
 
-        String description = record.getDescription();
-
-        final Set<Classification> classifications = record.getOriginalData().getGoldStandardClassifications();
-
-        known_classifications.put(new TokenSet(description), classifications);
+        return known_classifications.get(data);
     }
 
-    public Set<Classification> classify(final TokenSet tokenSet) throws IOException {
+    public Bucket2 classify(final Bucket2 bucket) throws IOException {
 
-        return known_classifications.get(tokenSet);
+        Bucket2 classified = new Bucket2();
+
+        for (Record2 record : bucket) {
+
+            final String data = record.getData();
+            final Classification2 result = classify(data);
+
+            classified.add(new Record2(record.getId(), data, result));
+        }
+
+        return classified;
+    }
+
+    private void loadRecord(final Record2 record) {
+
+        known_classifications.put(record.getData(), record.getClassification());
     }
 }

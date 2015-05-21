@@ -19,6 +19,7 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.datastructu
 import com.google.common.collect.HashMultimap;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.classification.Classification;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.code.Code;
@@ -99,6 +100,7 @@ public class RecordTest {
      *
      * @throws InputFormatException the input format exception
      */
+    @Ignore
     @Test
     public void testIsCodMethod() throws InputFormatException {
 

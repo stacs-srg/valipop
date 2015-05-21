@@ -18,6 +18,7 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.tools.fileu
 
 import com.healthmarketscience.jackcess.*;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import uk.ac.standrews.cs.digitising_scotland.util.FileManipulation;
 
@@ -49,6 +50,7 @@ public class AccessDatabaseDumperTest {
         expected_table_file_path = Paths.get(getClass().getResource(appendSuffix(EXPECTED_TABLE_FILE_NAME, AccessDatabaseDumper.TAB_SEPARATED_SUFFIX)).toURI());
     }
 
+    @Ignore
     @Test
     public void dumpedDatabaseFileContainsExpectedContents() throws IOException {
 

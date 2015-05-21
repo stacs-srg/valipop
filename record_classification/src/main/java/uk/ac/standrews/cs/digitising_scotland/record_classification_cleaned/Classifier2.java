@@ -14,10 +14,9 @@
  * You should have received a copy of the GNU General Public License along with record_classification. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-/**
- * Classes relating to post processing of Records.
- * @author jkc25
- *
- */
-package uk.ac.standrews.cs.digitising_scotland.record_classification.postrocessor;
+package uk.ac.standrews.cs.digitising_scotland.record_classification_cleaned;
 
+public interface Classifier2 {
+
+     Classification2 classify(String data);
+}

@@ -19,7 +19,7 @@ package uk.ac.standrews.cs.digitising_scotland.util;
 /**
  * Created by graham on 02/05/2014.
  */
-public interface Map<T1, T2> {
+public interface Map2<T1, T2> {
 
     T2 map(T1 t);
 }
