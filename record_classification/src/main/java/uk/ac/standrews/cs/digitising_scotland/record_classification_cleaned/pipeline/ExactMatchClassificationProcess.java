@@ -18,9 +18,7 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification_cleaned.pip
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import uk.ac.standrews.cs.digitising_scotland.record_classification_cleaned.Bucket2;
-import uk.ac.standrews.cs.digitising_scotland.record_classification_cleaned.ExactMatchClassifier2;
-import uk.ac.standrews.cs.digitising_scotland.record_classification_cleaned.Record2;
+import uk.ac.standrews.cs.digitising_scotland.record_classification_cleaned.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -66,7 +64,12 @@ public class ExactMatchClassificationProcess {//implements ClassificationProcess
 
         Bucket2 classified_evaluation_records = exact_match_classifier.classify(evaluation_records);
 
-        ClassificationMetrics metrics = new ClassificationMetrics(classified_evaluation_records, all_records);
+        ConfusionMatrix matrix = new StrictConfusionMatrix2(classified_evaluation_records, all_records);
+
+        ClassificationMetrics metrics = new ClassificationMetrics(matrix);
+
+        System.out.println("number of classified records: " + classified_evaluation_records.size());
+        System.out.println("number of gold standard records: " + all_records.size());
 
         metrics.printMetrics();
     }
