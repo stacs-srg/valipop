@@ -21,19 +21,35 @@ import org.junit.Test;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.tokens.TokenSet;
 import uk.ac.standrews.cs.digitising_scotland.record_classification_cleaned.*;
 
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 
 public class ConfusionMatrixTest {
 
-    private static final Record2 test_record_1 = new Record2(3, "haddock", new Classification2("fish", new TokenSet(), 1.0));
-    private static final Record2 test_record_2 = new Record2(3, "haddock", new Classification2("mammal", new TokenSet(), 1.0));
-    private static final Record2 test_record_3 = new Record2(3, "osprey", new Classification2("mammal", new TokenSet(), 1.0));
+    private static final Record2 haddock_correct = new Record2(3, "haddock", new Classification2("fish", new TokenSet(), 1.0));
+    private static final Record2 haddock_incorrect = new Record2(3, "haddock", new Classification2("mammal", new TokenSet(), 1.0));
+    private static final Record2 osprey_incorrect = new Record2(3, "osprey", new Classification2("mammal", new TokenSet(), 1.0));
+    private static final Record2 sparrow_correct = new Record2(3, "sparrow", new Classification2("bird", new TokenSet(), 1.0));
+    private static final Record2 eagle_correct = new Record2(3, "eagle", new Classification2("bird", new TokenSet(), 1.0));
+    private static final Record2 elephant_correct = new Record2(3, "elephant", new Classification2("mammal", new TokenSet(), 1.0));
+    private static final Record2 unicorn_unclassified = new Record2(3, "unicorn", null);
+    private static final Record2 horse_incorrect = new Record2(3, "horse", new Classification2("fish", new TokenSet(), 1.0));
 
-    private static final Record2 gold_standard_record_1 = new Record2(3, "haddock", new Classification2("fish", new TokenSet(), 1.0));
-    private static final Record2 gold_standard_record_2 = new Record2(3, "cow", new Classification2("mammal", new TokenSet(), 1.0));
-    private static final Record2 gold_standard_record_3 = new Record2(3, "osprey", new Classification2("bird", new TokenSet(), 1.0));
+    private static final Record2[] test_classified_records = new Record2[]{haddock_correct, osprey_incorrect, sparrow_correct, eagle_correct, elephant_correct, unicorn_unclassified, horse_incorrect};
+
+    private static final Record2 haddock_gold_standard = new Record2(3, "haddock", new Classification2("fish", new TokenSet(), 1.0));
+    private static final Record2 cow_gold_standard = new Record2(3, "cow", new Classification2("mammal", new TokenSet(), 1.0));
+    private static final Record2 osprey_gold_standard = new Record2(3, "osprey", new Classification2("bird", new TokenSet(), 1.0));
+    private static final Record2 sparrow_gold_standard = new Record2(3, "sparrow", new Classification2("bird", new TokenSet(), 1.0));
+    private static final Record2 eagle_gold_standard = new Record2(3, "eagle", new Classification2("bird", new TokenSet(), 1.0));
+    private static final Record2 elephant_gold_standard = new Record2(3, "elephant", new Classification2("mammal", new TokenSet(), 1.0));
+    private static final Record2 horse_gold_standard = new Record2(3, "horse", new Classification2("mammal", new TokenSet(), 1.0));
+    private static final Record2 unicorn_gold_standard = new Record2(3, "unicorn", new Classification2("mythical", new TokenSet(), 1.0));
+
+    private static final Record2[] test_gold_standard_records = new Record2[]{haddock_gold_standard, cow_gold_standard, osprey_gold_standard, sparrow_gold_standard, eagle_gold_standard, elephant_gold_standard, horse_gold_standard, unicorn_gold_standard};
 
     private Bucket2 classified_records;
     private Bucket2 gold_standard_records;
@@ -47,7 +63,7 @@ public class ConfusionMatrixTest {
     }
 
     @Test
-    public void emptyBucketsYieldNoClassifications() throws InvalidCodeException, InconsistentCodingException, UnknownDataException {
+    public void emptyBucketsYieldNoClassifications() throws InvalidCodeException, InconsistentCodingException, UnknownDataException, UnclassifiedGoldStandardRecordException {
 
         initMatrix();
 
@@ -55,27 +71,35 @@ public class ConfusionMatrixTest {
     }
 
     @Test(expected = UnknownDataException.class)
-    public void classificationWithNoGoldStandardThrowsException() throws InvalidCodeException, InconsistentCodingException, UnknownDataException {
+    public void classificationWithNoGoldStandardThrowsException() throws InvalidCodeException, InconsistentCodingException, UnknownDataException, UnclassifiedGoldStandardRecordException {
 
-        classified_records.add(test_record_1);
+        classified_records.add(haddock_correct);
+
+        initMatrix();
+    }
+
+    @Test(expected = UnclassifiedGoldStandardRecordException.class)
+    public void unclassifiedGoldStandardRecordThrowsException() throws InvalidCodeException, InconsistentCodingException, UnknownDataException, UnclassifiedGoldStandardRecordException {
+
+        gold_standard_records.add(unicorn_unclassified);
 
         initMatrix();
     }
 
     @Test(expected = InvalidCodeException.class)
-    public void classificationToCodeNotInGoldStandardThrowsException() throws InvalidCodeException, InconsistentCodingException, UnknownDataException {
+    public void classificationToCodeNotInGoldStandardThrowsException() throws InvalidCodeException, InconsistentCodingException, UnknownDataException, UnclassifiedGoldStandardRecordException {
 
-        classified_records.add(test_record_2);
-        gold_standard_records.add(gold_standard_record_1);
+        classified_records.add(haddock_incorrect);
+        gold_standard_records.add(haddock_gold_standard);
 
         initMatrix();
     }
 
     @Test
-    public void singleClassificationCountedCorrectly() throws InvalidCodeException, InconsistentCodingException, UnknownDataException {
+    public void singleClassificationCountedCorrectly() throws InvalidCodeException, InconsistentCodingException, UnknownDataException, UnclassifiedGoldStandardRecordException {
 
-        classified_records.add(test_record_1);
-        gold_standard_records.add(gold_standard_record_1);
+        classified_records.add(haddock_correct);
+        gold_standard_records.add(haddock_gold_standard);
 
         initMatrix();
 
@@ -83,40 +107,122 @@ public class ConfusionMatrixTest {
     }
 
     @Test(expected = InconsistentCodingException.class)
-    public void inconsistentCodingThrowsException() throws InconsistentCodingException, InvalidCodeException, UnknownDataException {
+    public void inconsistentCodingThrowsException() throws InconsistentCodingException, InvalidCodeException, UnknownDataException, UnclassifiedGoldStandardRecordException {
 
-        classified_records.add(test_record_1, test_record_2);
-        gold_standard_records.add(gold_standard_record_1, gold_standard_record_2);
+        classified_records.add(haddock_correct, haddock_incorrect);
+        gold_standard_records.add(haddock_gold_standard, cow_gold_standard);
 
         initMatrix();
     }
 
     @Test(expected = UnknownDataException.class)
-    public void unknownClassificationThrowsException() throws UnknownDataException, InvalidCodeException, InconsistentCodingException {
+    public void unknownClassificationThrowsException() throws UnknownDataException, InvalidCodeException, InconsistentCodingException, UnclassifiedGoldStandardRecordException {
 
-        classified_records.add(test_record_1, test_record_3);
-        gold_standard_records.add(gold_standard_record_1, gold_standard_record_2);
+        classified_records.add(haddock_correct, osprey_incorrect);
+        gold_standard_records.add(haddock_gold_standard, cow_gold_standard);
 
         initMatrix();
     }
 
     @Test
-    public void perCodeClassificationsCountedCorrectly() throws InvalidCodeException, InconsistentCodingException, UnknownDataException {
+    public void perCodeClassificationsCountedCorrectly() throws InvalidCodeException, InconsistentCodingException, UnknownDataException, UnclassifiedGoldStandardRecordException {
 
-        classified_records.add(test_record_1, test_record_3);
-        gold_standard_records.add(gold_standard_record_1, gold_standard_record_2, gold_standard_record_3);
-
+        initFullRecords();
         initMatrix();
 
         Map<String, Integer> classification_counts = matrix.getClassificationCounts();
-        assertEquals(3, classification_counts.size());
-        assertEquals(1, (int) classification_counts.get("fish"));
-        assertEquals(1, (int) classification_counts.get("mammal"));
-        assertEquals(0, (int) classification_counts.get("bird"));
+
+        assertEquals(getNumberOfCodes(), classification_counts.size());
+
+        assertEquals(2, (int) classification_counts.get("fish"));
+        assertEquals(2, (int) classification_counts.get("mammal"));
+        assertEquals(2, (int) classification_counts.get("bird"));
+        assertEquals(0, (int) classification_counts.get("mythical"));
     }
 
-    private void initMatrix() throws InvalidCodeException, InconsistentCodingException, UnknownDataException {
+    @Test
+    public void truePositivesCountedCorrectly() throws InvalidCodeException, InconsistentCodingException, UnknownDataException, UnclassifiedGoldStandardRecordException {
+
+        initFullRecords();
+        initMatrix();
+
+        Map<String, Integer> true_positive_counts = matrix.getTruePositiveCounts();
+
+        assertEquals(getNumberOfCodes(), true_positive_counts.size());
+
+        assertEquals(1, (int) true_positive_counts.get("fish"));
+        assertEquals(1, (int) true_positive_counts.get("mammal"));
+        assertEquals(2, (int) true_positive_counts.get("bird"));
+        assertEquals(0, (int) true_positive_counts.get("mythical"));
+    }
+
+    @Test
+    public void trueNegativesCountedCorrectly() throws InvalidCodeException, InconsistentCodingException, UnknownDataException, UnclassifiedGoldStandardRecordException {
+
+        initFullRecords();
+        initMatrix();
+
+        Map<String, Integer> true_negative_counts = matrix.getTrueNegativeCounts();
+
+        assertEquals(getNumberOfCodes(), true_negative_counts.size());
+
+        assertEquals(4, (int) true_negative_counts.get("fish"));
+        assertEquals(3, (int) true_negative_counts.get("mammal"));
+        assertEquals(3, (int) true_negative_counts.get("bird"));
+        assertEquals(6, (int) true_negative_counts.get("mythical"));
+    }
+
+    @Test
+    public void falsePositivesCountedCorrectly() throws InvalidCodeException, InconsistentCodingException, UnknownDataException, UnclassifiedGoldStandardRecordException {
+
+        initFullRecords();
+        initMatrix();
+
+        Map<String, Integer> false_positive_counts = matrix.getFalsePositiveCounts();
+
+        assertEquals(getNumberOfCodes(), false_positive_counts.size());
+
+        assertEquals(1, (int) false_positive_counts.get("fish"));
+        assertEquals(1, (int) false_positive_counts.get("mammal"));
+        assertEquals(0, (int) false_positive_counts.get("bird"));
+        assertEquals(0, (int) false_positive_counts.get("mythical"));
+    }
+
+    @Test
+    public void falseNegativesCountedCorrectly() throws InvalidCodeException, InconsistentCodingException, UnknownDataException, UnclassifiedGoldStandardRecordException {
+
+        initFullRecords();
+        initMatrix();
+
+        Map<String, Integer> false_negative_counts = matrix.getFalseNegativeCounts();
+
+        assertEquals(getNumberOfCodes(), false_negative_counts.size());
+
+        assertEquals(0, (int) false_negative_counts.get("fish"));
+        assertEquals(1, (int) false_negative_counts.get("mammal"));
+        assertEquals(1, (int) false_negative_counts.get("bird"));
+        assertEquals(0, (int) false_negative_counts.get("mythical"));
+    }
+
+    private void initMatrix() throws InvalidCodeException, InconsistentCodingException, UnknownDataException, UnclassifiedGoldStandardRecordException {
 
         matrix = new StrictConfusionMatrix2(classified_records, gold_standard_records);
+    }
+
+    private void initFullRecords() {
+
+        classified_records.add(test_classified_records);
+        gold_standard_records.add(test_gold_standard_records);
+    }
+
+    private int getNumberOfCodes() {
+
+        Set<String> valid_codes = new HashSet<>();
+
+        for (Record2 record : gold_standard_records) {
+
+            valid_codes.add(record.getClassification().getCode());
+        }
+        return valid_codes.size();
     }
 }
