@@ -16,21 +16,5 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification_cleaned;
 
-/**
- * Confusion matrix using exact matching on codes.
- *
- * @author Fraser Dunlop
- * @author Graham Kirby
- */
-public class StrictConfusionMatrix2 extends AbstractConfusionMatrix2 {
-
-    public StrictConfusionMatrix2(final Bucket2 classified_records, final Bucket2 gold_standard_records) throws InvalidCodeException, InconsistentCodingException, UnknownDataException, UnclassifiedGoldStandardRecordException {
-
-        super(classified_records, gold_standard_records);
-    }
-
-    @Override
-    protected boolean classificationsMatch(String asserted_code, String real_code) {
-        return asserted_code.equals(real_code);
-    }
+public class UnclassifiedGoldStandardRecordException extends Exception {
 }

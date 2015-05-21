@@ -33,7 +33,7 @@ public class ClassificationMetrics {
         this.gold_standard_records = gold_standard_records;
     }
 
-    public void printMetrics() throws InvalidCodeException, InconsistentCodingException, UnknownDataException {
+    public void printMetrics() throws InvalidCodeException, InconsistentCodingException, UnknownDataException, UnclassifiedGoldStandardRecordException {
 
         System.out.println("number of classified records: " + classified_evaluation_records.size());
         System.out.println("number of gold standard records: " + gold_standard_records.size());
