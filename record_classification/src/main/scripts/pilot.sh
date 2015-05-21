@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# Copyright 2014 Digitising Scotland project:
+# Copyright 2015 Digitising Scotland project:
 # <http://digitisingscotland.cs.st-andrews.ac.uk/>
 #
 # This file is part of the module record_classification.
