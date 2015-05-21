@@ -31,6 +31,7 @@ import java.nio.file.Files;
 /**
  * The Class DataClerkingWriterTest.
  */
+@Ignore
 public class DataClerkingWriterTest {
 
     /** The helper. */
