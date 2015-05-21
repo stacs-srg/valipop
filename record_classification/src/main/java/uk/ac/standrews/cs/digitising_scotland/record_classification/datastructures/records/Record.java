@@ -26,10 +26,9 @@ import java.util.Set;
 public class Record {
 
     private final int id;
-    private OriginalData originalData;
+    private final OriginalData originalData;
 
-    /** The code triples. */
-    private HashMultimap<String, Classification> listOfClassifications;
+    private final HashMultimap<String, Classification> listOfClassifications;
 
     /**
      * Instantiates a new record.
@@ -157,11 +156,6 @@ public class Record {
     public HashMultimap<String, Classification> getListOfClassifications() {
 
         return listOfClassifications;
-    }
-
-    public void setListOfClassifications(final HashMultimap<String, Classification> listOfClassifications) {
-
-        this.listOfClassifications = listOfClassifications;
     }
 
     @Override

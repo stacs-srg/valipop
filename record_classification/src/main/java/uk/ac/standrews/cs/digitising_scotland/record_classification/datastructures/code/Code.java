@@ -30,6 +30,7 @@ public class Code implements java.io.Serializable, AncestorAble<Code> {
     // TODO tidy distinction between Code object and the code string
 
     private static final long serialVersionUID = 2214478914861326040L;
+
     private String code;
     private String description;
 

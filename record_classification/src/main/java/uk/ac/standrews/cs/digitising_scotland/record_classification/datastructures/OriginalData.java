@@ -29,17 +29,13 @@ import java.util.Set;
  */
 public class OriginalData implements java.io.Serializable {
 
-    /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -1453338613207961366L;
 
-    /** The description. */
-    private String description;
+    private final String description;
 
-    /** The year. */
-    private int year;
+    private final int year;
 
-    /** The image quality. */
-    private int imageQuality;
+    private final int imageQuality;
 
     /** The file name. */
     private String fileName;

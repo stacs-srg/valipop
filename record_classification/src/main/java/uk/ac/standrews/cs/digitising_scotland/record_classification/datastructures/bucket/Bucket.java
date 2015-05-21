@@ -27,7 +27,10 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.pipeline.Pip
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * A Bucket is an iterable collection of {@link Record} objects. Buckets can be manipulated using the {@link BucketUtils}
@@ -37,9 +40,7 @@ import java.util.*;
  */
 public class Bucket implements Iterable<Record> {
 
-    /**
-     * The records.
-     */
+    // TODO replace with List<Record>?
     private Map<Integer, Record> records;
 
     /**
@@ -100,9 +101,6 @@ public class Bucket implements Iterable<Record> {
 
     /**
      * Adds each {@link Record} to the Bucket's collection of records.
-     * Bucket is iterable over {@link Record}s so can be used as an argument to this method.
-     *
-     * @param records {@link Collection} of {@link Record}s to add.
      */
     public void addCollectionOfRecords(final Iterable<Record> records) {
 

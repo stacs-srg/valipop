@@ -16,21 +16,8 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.classifiers.lookup;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.apache.commons.io.FileUtils;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
+import org.junit.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.bucket.Bucket;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.classification.Classification;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.code.Code;
@@ -38,6 +25,10 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructur
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.records.Record;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.records.RecordFactory;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.tokens.TokenSet;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
 
 /**
  * Test class to test {@link ExactMatchClassifier}.
@@ -140,6 +131,7 @@ public class ExactMatchClassifierTest {
      *
      * @throws Exception the exception
      */
+    @Ignore
     @Test
     public void serializationWriteTest() throws Exception {
 
@@ -153,6 +145,7 @@ public class ExactMatchClassifierTest {
      *
      * @throws Exception the exception
      */
+    @Ignore
     @Test
     public void serializationReadTest() throws Exception {
 

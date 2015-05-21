@@ -21,7 +21,6 @@ import org.junit.Test;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.bucket.Bucket;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.pipeline.main.TrainClassifyOneFile;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.tools.configuration.MachineLearningConfiguration;
-import uk.ac.standrews.cs.digitising_scotland.record_classification_cleaned.pipeline.ClassificationProcess;
 import uk.ac.standrews.cs.digitising_scotland.record_classification_cleaned.pipeline.ExactMatchClassificationProcess;
 
 public class ClassifyToHISCOTest extends AbstractTest {
@@ -33,17 +32,13 @@ public class ClassifyToHISCOTest extends AbstractTest {
     @Test
     public void testExactMatchHisco() throws Exception {
 
-        String code_dictionary_path = getResourceFilePath(getClass(), CODE_DICTIONARY_FILE_NAME);
         String occupation_data_path = getResourceFilePath(getClass(), OCCUPATION_DATA_FILE_NAME);
-
-        MachineLearningConfiguration.getDefaultProperties().setProperty(CODE_DICTIONARY_PROPERTY_NAME, code_dictionary_path);
 
         String[] args = {occupation_data_path, "", "0.8", "0"};
 
-        ClassificationProcess classification_process = new ExactMatchClassificationProcess(args);
+        ExactMatchClassificationProcess classification_process = new ExactMatchClassificationProcess(args);
 
-        Bucket classified = classification_process.performClassification();
-//        classified.dumpState();
+        classification_process.performClassification();
     }
 
     @Test

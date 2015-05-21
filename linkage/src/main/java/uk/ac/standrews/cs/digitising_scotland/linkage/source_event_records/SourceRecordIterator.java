@@ -5,7 +5,7 @@ import uk.ac.standrews.cs.digitising_scotland.population_model.model.IPerson;
 import uk.ac.standrews.cs.digitising_scotland.population_model.model.IPopulation;
 import uk.ac.standrews.cs.digitising_scotland.util.Condition;
 import uk.ac.standrews.cs.digitising_scotland.util.FilteredIterator;
-import uk.ac.standrews.cs.digitising_scotland.util.Map;
+import uk.ac.standrews.cs.digitising_scotland.util.Map2;
 import uk.ac.standrews.cs.digitising_scotland.util.MappedIterator;
 
 import java.util.Iterator;
@@ -24,7 +24,7 @@ public class SourceRecordIterator {
 
                 Iterator<IPerson> person_iterator = population.getPeople().iterator();
 
-                Map<IPerson, BirthSourceRecord> person_to_birth_record_mapper = new Map<IPerson, BirthSourceRecord>() {
+                Map2<IPerson, BirthSourceRecord> person_to_birth_record_mapper = new Map2<IPerson, BirthSourceRecord>() {
                     @Override
                     public BirthSourceRecord map(IPerson person) {
                         return new BirthSourceRecord(person, population);
@@ -52,7 +52,7 @@ public class SourceRecordIterator {
 
                 Iterator<IPerson> dead_person_iterator = new FilteredIterator<>(population.getPeople().iterator(), check_dead);
 
-                Map<IPerson, DeathSourceRecord> person_to_death_record_mapper = new Map<IPerson, DeathSourceRecord>() {
+                Map2<IPerson, DeathSourceRecord> person_to_death_record_mapper = new Map2<IPerson, DeathSourceRecord>() {
                     @Override
                     public DeathSourceRecord map(IPerson person) {
                         return new DeathSourceRecord(person, population);
@@ -73,7 +73,7 @@ public class SourceRecordIterator {
 
                 Iterator<IPartnership> partnership_iterator = population.getPartnerships().iterator();
 
-                Map<IPartnership, MarriageSourceRecord> person_to_marriage_record_mapper = new Map<IPartnership, MarriageSourceRecord>() {
+                Map2<IPartnership, MarriageSourceRecord> person_to_marriage_record_mapper = new Map2<IPartnership, MarriageSourceRecord>() {
                     @Override
                     public MarriageSourceRecord map(IPartnership partnership) {
                         return new MarriageSourceRecord(partnership, population);

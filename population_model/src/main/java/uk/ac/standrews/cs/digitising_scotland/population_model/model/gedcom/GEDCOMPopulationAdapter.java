@@ -23,7 +23,7 @@ import org.gedcom4j.parser.GedcomParserException;
 import uk.ac.standrews.cs.digitising_scotland.population_model.model.IPartnership;
 import uk.ac.standrews.cs.digitising_scotland.population_model.model.IPerson;
 import uk.ac.standrews.cs.digitising_scotland.population_model.model.IPopulation;
-import uk.ac.standrews.cs.digitising_scotland.util.Map;
+import uk.ac.standrews.cs.digitising_scotland.util.Map2;
 import uk.ac.standrews.cs.digitising_scotland.util.MappedIterator;
 
 import java.io.IOException;
@@ -62,7 +62,7 @@ public class GEDCOMPopulationAdapter implements IPopulation {
 
         return new Iterable<IPerson>() {
 
-            private final Map<Individual, IPerson> mapper = new Map<Individual, IPerson>() {
+            private final Map2<Individual, IPerson> mapper = new Map2<Individual, IPerson>() {
 
                 @Override
                 public IPerson map(final Individual individual) {
@@ -89,7 +89,7 @@ public class GEDCOMPopulationAdapter implements IPopulation {
 
         return new Iterable<IPartnership>() {
 
-            private final Map<Family, IPartnership> mapper = new Map<Family, IPartnership>() {
+            private final Map2<Family, IPartnership> mapper = new Map2<Family, IPartnership>() {
 
                 @Override
                 public IPartnership map(final Family family) {

@@ -16,20 +16,20 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.pipeline.main.copied;
 
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
-
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
-
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.bucket.Bucket;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.classification.Classification;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.code.CodeNotValidException;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.records.Record;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.pipeline.main.PIlot;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.tools.configuration.MachineLearningConfiguration;
+
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 /**
  * Test class for the {@link PIlot} class. Exact matches and trains an OLR with known input and output.
@@ -50,6 +50,7 @@ public class PIlotTest {
         pilot = new PIlot();
     }
 
+    @Ignore
     @Test
     public void pilotTest() throws Exception, CodeNotValidException {
 

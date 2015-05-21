@@ -18,6 +18,7 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.pipeline.ma
 
 import com.google.common.io.Files;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.bucket.Bucket;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.classification.Classification;
@@ -73,6 +74,7 @@ public class ClassifyWithExistingModelsTest {
         return new File(getResourceFilePath(resource_file_name));
     }
 
+    @Ignore
     @Test
     public void test() throws Exception, CodeNotValidException {
 
