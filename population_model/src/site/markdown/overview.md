@@ -1,5 +1,5 @@
 # Overview
-The population is used to generate to generate populations of individuals conforming to the IPerson interface.
+The population is used to generate populations of individuals conforming to the IPerson interface.
 
 The organic approach to the population model is event driven. For everything that occurs within the simulation an event is created on a given day and then placed into a global event queue.
 
@@ -11,16 +11,18 @@ The way in which the simulation progresses is defined by the types of events whi
 ##Running the model
 
 The model can be run by making a call to the method runPopulationModel() in the class OrganicPopulation, the simulation is run using the given parameters and output to various files, these being:
-     * Output file: output_{time in ns}.txt in the directory src/main/resources/output/
-     * Memory log file: memory_usage{time in ns}.dat in directory src/main/resources/output/
-     * GnuPlot script file: log_output_script.p in directory src/main/resources/output/gnu/
-     * GnuPlot dat files: in directory src/main/resources/output/gnu/
+
+* Output file: output_{time in ns}.txt in the directory src/main/resources/output/
+* Memory log file: memory_usage{time in ns}.dat in directory src/main/resources/output/
+* GnuPlot script file: log_output_script.p in directory src/main/resources/output/gnu/
+* GnuPlot dat files: in directory src/main/resources/output/gnu/
      
 The arguments for the method are:
-     * seedSize: The size of the initial seed population.
-     * print: If the program should print results to file.
-     * memoryMonitor: If the program should record memory footprint.
-     * logging: If the program should log population statistics - note: Must be enabled to use either print or memory monitoring options.
+
+* seedSize: The size of the initial seed population.
+* print: If the program should print results to file.
+* memoryMonitor: If the program should record memory footprint.
+* logging: If the program should log population statistics - note: Must be enabled to use either print or memory monitoring options.
 
 
 ---
@@ -32,7 +34,7 @@ __BORN__ - Marks the point in time when this individual is to be born into the p
 
 * __SINGLE__ - Never to have a marriage or cohabitation partnership.
 * __COHABITATION__ - First partnership to be purely cohabitation.
-* __COHABITATION\_THEN\_MARRIAGE__ - First partnership to be begin with cohabitation but lead to marriage.
+* __COHABITATION\_THEN\_MARRIAGE__ - First partnership to begin with cohabitation but lead to marriage.
 * __MARRIAGE__ - First partnership to be marriage with no period of prior cohabitation.
 
 An age at which the person will become eligible to begin the specified partnership will also be assigned and an associated event added to the person's time line and to the global event queue. The created events are typed as shown below:
