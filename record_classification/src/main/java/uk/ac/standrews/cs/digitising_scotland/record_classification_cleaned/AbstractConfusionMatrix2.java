@@ -89,7 +89,7 @@ public abstract class AbstractConfusionMatrix2 implements ConfusionMatrix {
     }
 
     @Override
-    public int getNumberOfClassifications() {
+    public int getTotalNumberOfClassifications() {
 
         int total = 0;
         for (Record2 record : classified_records) {
