@@ -20,6 +20,7 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification_cleaned.*;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class ClassificationMetrics {
 
@@ -27,49 +28,26 @@ public class ClassificationMetrics {
 
     private ConfusionMatrix confusion_matrix;
 
-    private final Map<String, Double> precision;
-    private final Map<String, Double> recall;
-    private final Map<String, Double> accuracy;
-    private final Map<String, Double> f1;
-
     public ClassificationMetrics(ConfusionMatrix confusion_matrix) {
 
         this.confusion_matrix = confusion_matrix;
-
-        precision = new HashMap<>();
-        recall = new HashMap<>();
-        accuracy = new HashMap<>();
-        f1 = new HashMap<>();
-
-        calculateMetrics();
-    }
-
-    public Map<String, Double> getPerClassPrecision() {
-
-        return precision;
-    }
-
-    public Map<String, Double> getPerClassRecall() {
-
-        return recall;
-    }
-
-    public Map<String, Double> getPerClassAccuracy() {
-
-        return accuracy;
-    }
-
-    public Map<String, Double> getPerClassF1() {
-
-        return f1;
     }
 
     public void printMetrics() throws InvalidCodeException, InconsistentCodingException, UnknownDataException, UnclassifiedGoldStandardRecordException {
 
-        printMetrics("precision", precision);
-        printMetrics("recall", recall);
-        printMetrics("accuracy", accuracy);
-        printMetrics("F1", f1);
+        printMetrics("precision", getPerClassPrecision());
+        printMetrics("recall", getPerClassRecall());
+        printMetrics("accuracy", getPerClassAccuracy());
+        printMetrics("F1", getPerClassF1());
+
+        printMetric("macro-average precision", getMacroAveragePrecision());
+        printMetric("micro-average precision", getMicroAveragePrecision());
+        printMetric("macro-average recall", getMacroAverageRecall());
+        printMetric("micro-average recall", getMicroAverageRecall());
+        printMetric("macro-average accuracy", getMacroAverageAccuracy());
+        printMetric("micro-average accuracy", getMicroAverageAccuracy());
+        printMetric("macro-average F1", getMacroAverageF1());
+        printMetric("micro-average F1", getMicroAverageF1());
     }
 
     private void printMetrics(String label, Map<String, Double> metrics) {
@@ -77,66 +55,184 @@ public class ClassificationMetrics {
         System.out.println(label + ":");
 
         for (Map.Entry<String, Double> entry : metrics.entrySet()) {
-            System.out.println("code: " + entry.getKey() + " value: " + entry.getValue());
+            printMetric("code: " + entry.getKey(), entry.getValue());
         }
     }
 
-    private void calculateMetrics() {
+    private void printMetric(String label, double metric) {
 
-        calculatePrecision();
-        calculateRecall();
-        calculateAccuracy();
-        calculateF1();
+        System.out.println(label + " value: " + metric);
     }
 
-    private void calculatePrecision() {
+    public Map<String, Double> getPerClassPrecision() {
+
+        final Map<String, Double> precision_map = new HashMap<>();
 
         Map<String, Integer> true_positive_counts = confusion_matrix.getTruePositiveCounts();
         Map<String, Integer> false_positive_counts = confusion_matrix.getFalsePositiveCounts();
 
-        for (String code : confusion_matrix.getClassificationCounts().keySet()) {
+        for (String code : getCodes()) {
 
-            precision.put(code, calculatePrecision(true_positive_counts.get(code), false_positive_counts.get(code)));
+            precision_map.put(code, calculatePrecision(true_positive_counts.get(code), false_positive_counts.get(code)));
         }
+
+        return precision_map;
     }
 
-    private void calculateRecall() {
+    public Map<String, Double> getPerClassRecall() {
+
+        final Map<String, Double> recall_map = new HashMap<>();
 
         Map<String, Integer> true_positive_counts = confusion_matrix.getTruePositiveCounts();
         Map<String, Integer> false_negative_counts = confusion_matrix.getFalseNegativeCounts();
 
-        for (String code : confusion_matrix.getClassificationCounts().keySet()) {
+        for (String code : getCodes()) {
 
-            recall.put(code, calculateRecall(true_positive_counts.get(code), false_negative_counts.get(code)));
+            recall_map.put(code, calculateRecall(true_positive_counts.get(code), false_negative_counts.get(code)));
         }
+
+        return recall_map;
     }
 
-    private void calculateAccuracy() {
+    public Map<String, Double> getPerClassAccuracy() {
+
+        final Map<String, Double> accuracy_map = new HashMap<>();
 
         Map<String, Integer> true_positive_counts = confusion_matrix.getTruePositiveCounts();
         Map<String, Integer> true_negative_counts = confusion_matrix.getTrueNegativeCounts();
-        Map<String, Integer> total_counts = confusion_matrix.getClassificationCounts();
+        Map<String, Integer> false_positive_counts = confusion_matrix.getFalsePositiveCounts();
+        Map<String, Integer> false_negative_counts = confusion_matrix.getFalseNegativeCounts();
 
-        for (String code : confusion_matrix.getClassificationCounts().keySet()) {
+        for (String code : getCodes()) {
 
-            accuracy.put(code, calculateAccuracy(true_positive_counts.get(code), true_negative_counts.get(code), confusion_matrix.getNumberOfClassifications()));
+            accuracy_map.put(code, calculateAccuracy(true_positive_counts.get(code), true_negative_counts.get(code), false_positive_counts.get(code), false_negative_counts.get(code)));
         }
+
+        return accuracy_map;
     }
 
-    private void calculateF1() {
+    public Map<String, Double> getPerClassF1() {
+
+        final Map<String, Double> f1_map = new HashMap<>();
 
         Map<String, Integer> true_positive_counts = confusion_matrix.getTruePositiveCounts();
         Map<String, Integer> false_positive_counts = confusion_matrix.getFalsePositiveCounts();
         Map<String, Integer> false_negative_counts = confusion_matrix.getFalseNegativeCounts();
 
-        for (String code : confusion_matrix.getClassificationCounts().keySet()) {
+        for (String code : getCodes()) {
 
-            f1.put(code, calculateF1(true_positive_counts.get(code), false_positive_counts.get(code), false_negative_counts.get(code)));
+            f1_map.put(code, calculateF1(true_positive_counts.get(code), false_positive_counts.get(code), false_negative_counts.get(code)));
         }
+
+        return f1_map;
+    }
+
+    public double getMacroAveragePrecision() {
+
+        return getMacroAverage(getPerClassPrecision());
+    }
+
+    public double getMacroAverageRecall() {
+
+        return getMacroAverage(getPerClassRecall());
+    }
+
+    public double getMacroAverageAccuracy() {
+
+        return getMacroAverage(getPerClassAccuracy());
+    }
+
+    public double getMacroAverageF1() {
+
+        return getMacroAverage(getPerClassF1());
+    }
+
+    public double getMicroAveragePrecision() {
+
+        // Micro average is total TP / (total TP + total FP).
+        int total_true_positives = getSumOfTruePositives();
+        int total_false_positives = getSumOfFalsePositives();
+
+        return calculatePrecision(total_true_positives, total_false_positives);
+    }
+
+    public double getMicroAverageRecall() {
+
+        // Micro average is total TP / (total TP + total FN).
+        int total_true_positives = getSumOfTruePositives();
+        int total_false_negatives = getSumOfFalseNegatives();
+
+        return calculateRecall(total_true_positives, total_false_negatives);
+    }
+
+    public double getMicroAverageAccuracy() {
+
+        // Micro average is (total TP + total TN) / (total TP + total TN + total FP + total FN).
+        int total_true_positives = getSumOfTruePositives();
+        int total_true_negatives = getSumOfTrueNegatives();
+        int total_false_positives = getSumOfFalsePositives();
+        int total_false_negatives = getSumOfFalseNegatives();
+
+        return calculateAccuracy(total_true_positives, total_true_negatives, total_false_positives, total_false_negatives);
+    }
+
+    public double getMicroAverageF1() {
+
+        // Micro average is (2 * total TP) / (2 * total TP + total FP + total FN).
+        int total_true_positives = getSumOfTruePositives();
+        int total_false_positives = getSumOfFalsePositives();
+        int total_false_negatives = getSumOfFalseNegatives();
+
+        return calculateF1(total_true_positives, total_false_positives, total_false_negatives);
+    }
+
+    private double getMacroAverage(Map<String, Double> values) {
+
+        // Macro average is mean of the individual per-class values.
+        double total = 0;
+
+        for (double value : values.values()) {
+            total += value;
+        }
+
+        return total / values.size();
+    }
+
+    private int getSumOfTruePositives() {
+
+        return sum(confusion_matrix.getTruePositiveCounts());
+    }
+
+    private int getSumOfTrueNegatives() {
+
+        return sum(confusion_matrix.getTrueNegativeCounts());
+    }
+
+    private int getSumOfFalsePositives() {
+
+        return sum(confusion_matrix.getFalsePositiveCounts());
+    }
+
+    private int getSumOfFalseNegatives() {
+
+        return sum(confusion_matrix.getFalseNegativeCounts());
+    }
+
+    private int sum(Map<String, Integer> counts) {
+
+        int total = 0;
+        for (int count : counts.values()) total += count;
+        return total;
+    }
+
+    private Set<String> getCodes() {
+
+        return confusion_matrix.getClassificationCounts().keySet();
     }
 
     private double calculatePrecision(int true_positives, int false_positives) {
 
+        // Precision is TP / (TP + FP).
         // Interpret precision as 1 if there are no positives.
 
         int total_positives = true_positives + false_positives;
@@ -147,13 +243,14 @@ public class ClassificationMetrics {
 
         // Interpret recall as 1 if there are no cases.
 
-        int total_cases = true_positives + false_negatives;
-        return total_cases > 0 ? (double) true_positives / total_cases : 1.0;
+        int total_cases_of_this_class = true_positives + false_negatives;
+        return total_cases_of_this_class > 0 ? (double) true_positives / total_cases_of_this_class : 1.0;
     }
 
-    private double calculateAccuracy(int true_positives, int true_negatives, int total) {
+    private double calculateAccuracy(int true_positives, int true_negatives, int false_positives, int false_negatives) {
 
-        return (double) (true_positives + true_negatives) / total;
+        int total_cases = true_positives + true_negatives + false_positives + false_negatives;
+        return (double) (true_positives + true_negatives) / total_cases;
     }
 
     private double calculateF1(int true_positives, int false_positives, int false_negatives) {

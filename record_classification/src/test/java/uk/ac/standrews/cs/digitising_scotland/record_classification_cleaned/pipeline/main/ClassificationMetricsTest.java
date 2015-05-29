@@ -31,19 +31,49 @@ public class ClassificationMetricsTest extends AbstractMetricsTest {
 
     private static final double DELTA = 0.001;
 
-    public void checkMetricValues(MetricChoice choice, ExpectedMetricValue... values) throws UnclassifiedGoldStandardRecordException, UnknownDataException, InvalidCodeException, InconsistentCodingException {
+    private final ExpectedMetricValue EXPECTED_PRECISION_CLASS_FISH = new ExpectedMetricValue(0.5, "fish");          // TP 1, FP 1
+    private final ExpectedMetricValue EXPECTED_PRECISION_CLASS_MAMMAL = new ExpectedMetricValue(0.5, "mammal");      // TP 1, FP 1
+    private final ExpectedMetricValue EXPECTED_PRECISION_CLASS_BIRD = new ExpectedMetricValue(1.0, "bird");          // TP 2, FP 0
+    private final ExpectedMetricValue EXPECTED_PRECISION_CLASS_MYTHICAL = new ExpectedMetricValue(1.0, "mythical");  // TP 0, FP 0
 
-        initFullRecords();
-        initMatrix();
+    private final ExpectedMetricValue EXPECTED_RECALL_CLASS_FISH = new ExpectedMetricValue(1.0, "fish");             // TP 1, FN 0
+    private final ExpectedMetricValue EXPECTED_RECALL_CLASS_MAMMAL = new ExpectedMetricValue(0.5, "mammal");         // TP 1, FN 1
+    private final ExpectedMetricValue EXPECTED_RECALL_CLASS_BIRD = new ExpectedMetricValue(2.0 / 3.0, "bird");       // TP 2, FN 1
+    private final ExpectedMetricValue EXPECTED_RECALL_CLASS_MYTHICAL = new ExpectedMetricValue(1.0, "mythical");     // TP 0, FN 0
 
-        Map<String, Double> metric = choice.getMetric(new ClassificationMetrics(matrix));
+    private final ExpectedMetricValue EXPECTED_ACCURACY_CLASS_FISH = new ExpectedMetricValue(5.0 / 6.0, "fish");     // TP 1, TN 4, Total 6
+    private final ExpectedMetricValue EXPECTED_ACCURACY_CLASS_MAMMAL = new ExpectedMetricValue(4.0 / 6.0, "mammal"); // TP 1, TN 3, Total 6
+    private final ExpectedMetricValue EXPECTED_ACCURACY_CLASS_BIRD = new ExpectedMetricValue(5.0 / 6.0, "bird");     // TP 2, TN 3, Total 6
+    private final ExpectedMetricValue EXPECTED_ACCURACY_CLASS_MYTHICAL = new ExpectedMetricValue(1.0, "mythical");   // TP 0, TN 6, Total 6
 
-        assertEquals(getNumberOfCodes(), metric.size());
+    private final ExpectedMetricValue EXPECTED_F1_CLASS_FISH = new ExpectedMetricValue(2.0 / 3.0, "fish");           // TP 1, FP 1, FN 0
+    private final ExpectedMetricValue EXPECTED_F1_CLASS_MAMMAL = new ExpectedMetricValue(2.0 / 4.0, "mammal");       // TP 1, FP 1, FN 1
+    private final ExpectedMetricValue EXPECTED_F1_CLASS_BIRD = new ExpectedMetricValue(4.0 / 5.0, "bird");           // TP 2, FP 0, FN 1
+    private final ExpectedMetricValue EXPECTED_F1_CLASS_MYTHICAL = new ExpectedMetricValue(1.0, "mythical");         // TP 0, FP 0, FN 0
 
-        for (ExpectedMetricValue value : values) {
-            assertEquals(value.value, metric.get(value.code), DELTA);
-        }
-    }
+    private final ExpectedMetricValue[] expected_per_class_precision_values = new ExpectedMetricValue[]{
+            EXPECTED_PRECISION_CLASS_FISH,
+            EXPECTED_PRECISION_CLASS_MAMMAL,
+            EXPECTED_PRECISION_CLASS_BIRD,
+            EXPECTED_PRECISION_CLASS_MYTHICAL};
+
+    private final ExpectedMetricValue[] expected_per_class_recall_values = new ExpectedMetricValue[]{
+            EXPECTED_RECALL_CLASS_FISH,
+            EXPECTED_RECALL_CLASS_MAMMAL,
+            EXPECTED_RECALL_CLASS_BIRD,
+            EXPECTED_RECALL_CLASS_MYTHICAL};
+
+    private final ExpectedMetricValue[] expected_per_class_accuracy_values = new ExpectedMetricValue[]{
+            EXPECTED_ACCURACY_CLASS_FISH,
+            EXPECTED_ACCURACY_CLASS_MAMMAL,
+            EXPECTED_ACCURACY_CLASS_BIRD,
+            EXPECTED_ACCURACY_CLASS_MYTHICAL};
+
+    private final ExpectedMetricValue[] expected_per_class_f1_values = new ExpectedMetricValue[]{
+            EXPECTED_F1_CLASS_FISH,
+            EXPECTED_F1_CLASS_MAMMAL,
+            EXPECTED_F1_CLASS_BIRD,
+            EXPECTED_F1_CLASS_MYTHICAL};
 
     @Test
     public void perClassPrecisionCalculatedCorrectly() throws InvalidCodeException, InconsistentCodingException, UnknownDataException, UnclassifiedGoldStandardRecordException {
@@ -54,10 +84,7 @@ public class ClassificationMetricsTest extends AbstractMetricsTest {
                                   return metrics.getPerClassPrecision();
                               }
                           },
-                new ExpectedMetricValue(0.5, "fish"),      // TP 1, FP 1
-                new ExpectedMetricValue(0.5, "mammal"),    // TP 1, FP 1
-                new ExpectedMetricValue(1.0, "bird"),      // TP 2, FP 0
-                new ExpectedMetricValue(1.0, "mythical")); // TP 0, FP 0
+                expected_per_class_precision_values);
     }
 
     @Test
@@ -69,10 +96,7 @@ public class ClassificationMetricsTest extends AbstractMetricsTest {
                                   return metrics.getPerClassRecall();
                               }
                           },
-                new ExpectedMetricValue(1.0, "fish"),        // TP 1, FN 0
-                new ExpectedMetricValue(0.5, "mammal"),      // TP 1, FN 1
-                new ExpectedMetricValue(2.0 / 3.0, "bird"),  // TP 2, FN 1
-                new ExpectedMetricValue(1.0, "mythical"));   // TP 0, FN 0
+                expected_per_class_recall_values);
     }
 
     @Test
@@ -84,10 +108,7 @@ public class ClassificationMetricsTest extends AbstractMetricsTest {
                                   return metrics.getPerClassAccuracy();
                               }
                           },
-                new ExpectedMetricValue(5.0 / 6.0, "fish"),     // TP 1, TN 4, Total 6
-                new ExpectedMetricValue(4.0 / 6.0, "mammal"),   // TP 1, TN 3, Total 6
-                new ExpectedMetricValue(5.0 / 6.0, "bird"),     // TP 2, TN 3, Total 6
-                new ExpectedMetricValue(1.0, "mythical"));      // TP 0, TN 6, Total 6
+                expected_per_class_accuracy_values);
     }
 
     @Test
@@ -99,10 +120,119 @@ public class ClassificationMetricsTest extends AbstractMetricsTest {
                                   return metrics.getPerClassF1();
                               }
                           },
-                new ExpectedMetricValue(2.0 / 3.0, "fish"),     // TP 1, FP 1, FN 0
-                new ExpectedMetricValue(2.0 / 4.0, "mammal"),   // TP 1, FP 1, FN 1
-                new ExpectedMetricValue(4.0 / 5.0, "bird"),     // TP 2, FP 0, FN 1
-                new ExpectedMetricValue(1.0, "mythical"));      // TP 0, FP 0, FN 0
+                expected_per_class_f1_values);
+    }
+
+    @Test
+    public void macroAveragePrecisionCalculatedCorrectly() throws InvalidCodeException, InconsistentCodingException, UnknownDataException, UnclassifiedGoldStandardRecordException {
+
+        ClassificationMetrics metrics = getClassificationMetrics();
+
+        // Macro average is mean of the individual per-class values.
+
+        assertEquals(average(expected_per_class_precision_values), metrics.getMacroAveragePrecision(), DELTA);
+    }
+
+    @Test
+    public void microAveragePrecisionCalculatedCorrectly() throws InvalidCodeException, InconsistentCodingException, UnknownDataException, UnclassifiedGoldStandardRecordException {
+
+        ClassificationMetrics metrics = getClassificationMetrics();
+
+        // Micro average is total TP / (total TP + total FP).
+
+        assertEquals((4.0 / (4.0 + 2.0)), metrics.getMicroAveragePrecision(), DELTA);
+    }
+
+    @Test
+    public void macroAverageRecallCalculatedCorrectly() throws InvalidCodeException, InconsistentCodingException, UnknownDataException, UnclassifiedGoldStandardRecordException {
+
+        ClassificationMetrics metrics = getClassificationMetrics();
+
+        // Macro average is mean of the individual per-class values.
+
+        assertEquals(average(expected_per_class_recall_values), metrics.getMacroAverageRecall(), DELTA);
+    }
+
+    @Test
+    public void microAverageRecallCalculatedCorrectly() throws InvalidCodeException, InconsistentCodingException, UnknownDataException, UnclassifiedGoldStandardRecordException {
+
+        ClassificationMetrics metrics = getClassificationMetrics();
+
+        // Micro average is total TP / (total TP + total FN).
+
+        assertEquals((4.0 / (4.0 + 2.0)), metrics.getMicroAverageRecall(), DELTA);
+    }
+
+    @Test
+    public void macroAverageAccuracyCalculatedCorrectly() throws InvalidCodeException, InconsistentCodingException, UnknownDataException, UnclassifiedGoldStandardRecordException {
+
+        ClassificationMetrics metrics = getClassificationMetrics();
+
+        // Macro average is mean of the individual per-class values.
+
+        assertEquals(average(expected_per_class_accuracy_values), metrics.getMacroAverageAccuracy(), DELTA);
+    }
+
+    @Test
+    public void microAverageAccuracyCalculatedCorrectly() throws InvalidCodeException, InconsistentCodingException, UnknownDataException, UnclassifiedGoldStandardRecordException {
+
+        ClassificationMetrics metrics = getClassificationMetrics();
+
+        // Micro average is (total TP + total TN) / (total TP + total TN + total FP + total FN).
+
+        assertEquals(((4.0 + 16.0) / (4.0 + 16.0 + 2.0 + 2.0)), metrics.getMicroAverageAccuracy(), DELTA);
+    }
+
+    @Test
+    public void macroAverageF1CalculatedCorrectly() throws InvalidCodeException, InconsistentCodingException, UnknownDataException, UnclassifiedGoldStandardRecordException {
+
+        ClassificationMetrics metrics = getClassificationMetrics();
+
+        // Macro average is mean of the individual per-class values.
+
+        assertEquals(average(expected_per_class_f1_values), metrics.getMacroAverageF1(), DELTA);
+    }
+
+    @Test
+    public void microAverageF1CalculatedCorrectly() throws InvalidCodeException, InconsistentCodingException, UnknownDataException, UnclassifiedGoldStandardRecordException {
+
+        ClassificationMetrics metrics = getClassificationMetrics();
+
+        // Micro average is (2 * total TP) / (2 * total TP + total FP + total FN).
+
+        assertEquals(((2 * 4.0) / (2 * 4.0 + 2.0 + 2.0)), metrics.getMicroAverageF1(), DELTA);
+    }
+
+    private double average(ExpectedMetricValue[] expected_per_class_precision_values) {
+
+        double total = 0;
+        for (ExpectedMetricValue expected_value : expected_per_class_precision_values) {
+            total += expected_value.value;
+        }
+
+        return total / expected_per_class_precision_values.length;
+    }
+
+    private ClassificationMetrics getClassificationMetrics() throws InvalidCodeException, InconsistentCodingException, UnknownDataException, UnclassifiedGoldStandardRecordException {
+
+        initFullRecords();
+        initMatrix();
+
+        return new ClassificationMetrics(matrix);
+    }
+
+    private void checkMetricValues(MetricChoice choice, ExpectedMetricValue... values) throws UnclassifiedGoldStandardRecordException, UnknownDataException, InvalidCodeException, InconsistentCodingException {
+
+        initFullRecords();
+        initMatrix();
+
+        Map<String, Double> metric = choice.getMetric(new ClassificationMetrics(matrix));
+
+        assertEquals(getNumberOfCodes(), metric.size());
+
+        for (ExpectedMetricValue value : values) {
+            assertEquals(value.value, metric.get(value.code), DELTA);
+        }
     }
 
     interface MetricChoice {

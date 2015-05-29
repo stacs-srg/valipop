@@ -30,5 +30,5 @@ public interface ConfusionMatrix {
 
     Map<String, Integer> getFalseNegativeCounts();
 
-    int getNumberOfClassifications();
+    int getTotalNumberOfClassifications();
 }
