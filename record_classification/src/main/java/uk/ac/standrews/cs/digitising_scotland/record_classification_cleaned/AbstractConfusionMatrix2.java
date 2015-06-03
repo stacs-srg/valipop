@@ -123,7 +123,8 @@ public abstract class AbstractConfusionMatrix2 implements ConfusionMatrix {
 
         for (Record2 record : classified_records) {
 
-            if (!known_data.contains(record.getData())) throw new UnknownDataException();
+            String data = record.getData();
+            if (!known_data.contains(data)) throw new UnknownDataException("data: " + data + " is not in the gold standard data");
         }
     }
 
@@ -235,7 +236,7 @@ public abstract class AbstractConfusionMatrix2 implements ConfusionMatrix {
             }
         }
 
-        throw new UnknownDataException();
+        throw new UnknownDataException("couldn't find gold standard code for data: " + data);
     }
 
     private boolean truePositive(String this_code, String asserted_code, String real_code) {
