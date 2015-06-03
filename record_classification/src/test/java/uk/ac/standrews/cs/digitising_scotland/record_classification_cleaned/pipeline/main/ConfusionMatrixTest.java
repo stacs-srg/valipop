@@ -17,10 +17,7 @@
 package uk.ac.standrews.cs.digitising_scotland.record_classification_cleaned.pipeline.main;
 
 import org.junit.Test;
-import uk.ac.standrews.cs.digitising_scotland.record_classification_cleaned.InconsistentCodingException;
-import uk.ac.standrews.cs.digitising_scotland.record_classification_cleaned.InvalidCodeException;
-import uk.ac.standrews.cs.digitising_scotland.record_classification_cleaned.UnclassifiedGoldStandardRecordException;
-import uk.ac.standrews.cs.digitising_scotland.record_classification_cleaned.UnknownDataException;
+import uk.ac.standrews.cs.digitising_scotland.record_classification_cleaned.*;
 
 import java.util.Map;
 
@@ -91,7 +88,7 @@ public class ConfusionMatrixTest extends AbstractMetricsTest {
     }
 
     @Test
-    public void perCodeClassificationsCountedCorrectly() throws InvalidCodeException, InconsistentCodingException, UnknownDataException, UnclassifiedGoldStandardRecordException {
+    public void perCodeClassificationsCountedCorrectly() throws InvalidCodeException, InconsistentCodingException, UnknownDataException, UnclassifiedGoldStandardRecordException, InputFileFormatException {
 
         initFullRecords();
         initMatrix();
@@ -107,7 +104,7 @@ public class ConfusionMatrixTest extends AbstractMetricsTest {
     }
 
     @Test
-    public void truePositivesCountedCorrectly() throws InvalidCodeException, InconsistentCodingException, UnknownDataException, UnclassifiedGoldStandardRecordException {
+    public void truePositivesCountedCorrectly() throws InvalidCodeException, InconsistentCodingException, UnknownDataException, UnclassifiedGoldStandardRecordException, InputFileFormatException {
 
         initFullRecords();
         initMatrix();
@@ -123,7 +120,7 @@ public class ConfusionMatrixTest extends AbstractMetricsTest {
     }
 
     @Test
-    public void trueNegativesCountedCorrectly() throws InvalidCodeException, InconsistentCodingException, UnknownDataException, UnclassifiedGoldStandardRecordException {
+    public void trueNegativesCountedCorrectly() throws InvalidCodeException, InconsistentCodingException, UnknownDataException, UnclassifiedGoldStandardRecordException, InputFileFormatException {
 
         initFullRecords();
         initMatrix();
@@ -139,7 +136,7 @@ public class ConfusionMatrixTest extends AbstractMetricsTest {
     }
 
     @Test
-    public void falsePositivesCountedCorrectly() throws InvalidCodeException, InconsistentCodingException, UnknownDataException, UnclassifiedGoldStandardRecordException {
+    public void falsePositivesCountedCorrectly() throws InvalidCodeException, InconsistentCodingException, UnknownDataException, UnclassifiedGoldStandardRecordException, InputFileFormatException {
 
         initFullRecords();
         initMatrix();
@@ -155,7 +152,7 @@ public class ConfusionMatrixTest extends AbstractMetricsTest {
     }
 
     @Test
-    public void falseNegativesCountedCorrectly() throws InvalidCodeException, InconsistentCodingException, UnknownDataException, UnclassifiedGoldStandardRecordException {
+    public void falseNegativesCountedCorrectly() throws InvalidCodeException, InconsistentCodingException, UnknownDataException, UnclassifiedGoldStandardRecordException, InputFileFormatException {
 
         initFullRecords();
         initMatrix();

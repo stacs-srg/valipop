@@ -23,6 +23,7 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructur
 import uk.ac.standrews.cs.digitising_scotland.record_classification.datastructures.tokens.TokenSet;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.InputFormatException;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.tools.ReaderWriterFactory;
+import uk.ac.standrews.cs.util.csv.CSV;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -67,6 +68,24 @@ public class Bucket2 implements Iterable<Record2> {
         this(makeOccupationRecordsFromFile(trainingFile));
     }
 
+    public Bucket2(CSV records_csv) throws InputFileFormatException {
+
+        this();
+
+        for (List<String> record : records_csv.getRecords()) {
+
+            if (record.size() != 3) throw new InputFileFormatException("record should contain 3 values");
+
+            int id = Integer.parseInt(record.get(0));
+            String data = record.get(1);
+            String code = record.get(2);
+
+            Classification2 classification = "".equals(code) ? null : new Classification2(code, new TokenSet(data), 1.0);
+
+            records.add(new Record2(id, data, classification));
+        }
+    }
+
     private static List<Record2> makeOccupationRecordsFromFile(final File inputFile) throws IOException, InputFormatException {
 
         final String delimiter = "\\|";
@@ -80,6 +99,8 @@ public class Bucket2 implements Iterable<Record2> {
 
         try (BufferedReader br = ReaderWriterFactory.createBufferedReader(inputFile)) {
             while ((line = br.readLine()) != null) {
+
+                System.out.println("line: " + line);
 
                 String[] lineSplit = line.split(delimiter);
 

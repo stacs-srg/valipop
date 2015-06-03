@@ -47,6 +47,6 @@ public class Record2 {
     @Override
     public String toString() {
 
-        return "Record [id=" + id + ", data=" + data + "]";
+        return "Record [id=" + id + ", data=" + data + ", classification=" + classification + "]";
     }
 }

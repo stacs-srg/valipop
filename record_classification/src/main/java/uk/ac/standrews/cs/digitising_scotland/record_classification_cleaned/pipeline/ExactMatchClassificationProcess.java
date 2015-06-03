@@ -59,6 +59,12 @@ public class ExactMatchClassificationProcess {//implements ClassificationProcess
         Bucket2 training_records = extractRandomSubset(all_records, training_ratio);
         Bucket2 evaluation_records = discardClassifications(difference(all_records, training_records));
 
+        System.out.println("Training records:");
+        System.out.println(training_records);
+
+        System.out.println("Evaluation records:");
+        System.out.println(evaluation_records);
+
         ExactMatchClassifier2 exact_match_classifier = new ExactMatchClassifier2();
         exact_match_classifier.train(training_records);
 

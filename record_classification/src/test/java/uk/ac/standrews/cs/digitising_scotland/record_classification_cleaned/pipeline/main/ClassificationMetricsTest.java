@@ -17,10 +17,7 @@
 package uk.ac.standrews.cs.digitising_scotland.record_classification_cleaned.pipeline.main;
 
 import org.junit.Test;
-import uk.ac.standrews.cs.digitising_scotland.record_classification_cleaned.InconsistentCodingException;
-import uk.ac.standrews.cs.digitising_scotland.record_classification_cleaned.InvalidCodeException;
-import uk.ac.standrews.cs.digitising_scotland.record_classification_cleaned.UnclassifiedGoldStandardRecordException;
-import uk.ac.standrews.cs.digitising_scotland.record_classification_cleaned.UnknownDataException;
+import uk.ac.standrews.cs.digitising_scotland.record_classification_cleaned.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification_cleaned.pipeline.ClassificationMetrics;
 
 import java.util.Map;
@@ -76,7 +73,7 @@ public class ClassificationMetricsTest extends AbstractMetricsTest {
             EXPECTED_F1_CLASS_MYTHICAL};
 
     @Test
-    public void perClassPrecisionCalculatedCorrectly() throws InvalidCodeException, InconsistentCodingException, UnknownDataException, UnclassifiedGoldStandardRecordException {
+    public void perClassPrecisionCalculatedCorrectly() throws InvalidCodeException, InconsistentCodingException, UnknownDataException, UnclassifiedGoldStandardRecordException, InputFileFormatException {
 
         checkMetricValues(new MetricChoice() {
                               @Override
@@ -88,7 +85,7 @@ public class ClassificationMetricsTest extends AbstractMetricsTest {
     }
 
     @Test
-    public void perClassRecallCalculatedCorrectly() throws InvalidCodeException, InconsistentCodingException, UnknownDataException, UnclassifiedGoldStandardRecordException {
+    public void perClassRecallCalculatedCorrectly() throws InvalidCodeException, InconsistentCodingException, UnknownDataException, UnclassifiedGoldStandardRecordException, InputFileFormatException {
 
         checkMetricValues(new MetricChoice() {
                               @Override
@@ -100,7 +97,7 @@ public class ClassificationMetricsTest extends AbstractMetricsTest {
     }
 
     @Test
-    public void perClassAccuracyCalculatedCorrectly() throws InvalidCodeException, InconsistentCodingException, UnknownDataException, UnclassifiedGoldStandardRecordException {
+    public void perClassAccuracyCalculatedCorrectly() throws InvalidCodeException, InconsistentCodingException, UnknownDataException, UnclassifiedGoldStandardRecordException, InputFileFormatException {
 
         checkMetricValues(new MetricChoice() {
                               @Override
@@ -112,7 +109,7 @@ public class ClassificationMetricsTest extends AbstractMetricsTest {
     }
 
     @Test
-    public void perClassF1CalculatedCorrectly() throws InvalidCodeException, InconsistentCodingException, UnknownDataException, UnclassifiedGoldStandardRecordException {
+    public void perClassF1CalculatedCorrectly() throws InvalidCodeException, InconsistentCodingException, UnknownDataException, UnclassifiedGoldStandardRecordException, InputFileFormatException {
 
         checkMetricValues(new MetricChoice() {
                               @Override
@@ -124,7 +121,7 @@ public class ClassificationMetricsTest extends AbstractMetricsTest {
     }
 
     @Test
-    public void macroAveragePrecisionCalculatedCorrectly() throws InvalidCodeException, InconsistentCodingException, UnknownDataException, UnclassifiedGoldStandardRecordException {
+    public void macroAveragePrecisionCalculatedCorrectly() throws InvalidCodeException, InconsistentCodingException, UnknownDataException, UnclassifiedGoldStandardRecordException, InputFileFormatException {
 
         ClassificationMetrics metrics = getClassificationMetrics();
 
@@ -134,7 +131,7 @@ public class ClassificationMetricsTest extends AbstractMetricsTest {
     }
 
     @Test
-    public void microAveragePrecisionCalculatedCorrectly() throws InvalidCodeException, InconsistentCodingException, UnknownDataException, UnclassifiedGoldStandardRecordException {
+    public void microAveragePrecisionCalculatedCorrectly() throws InvalidCodeException, InconsistentCodingException, UnknownDataException, UnclassifiedGoldStandardRecordException, InputFileFormatException {
 
         ClassificationMetrics metrics = getClassificationMetrics();
 
@@ -144,7 +141,7 @@ public class ClassificationMetricsTest extends AbstractMetricsTest {
     }
 
     @Test
-    public void macroAverageRecallCalculatedCorrectly() throws InvalidCodeException, InconsistentCodingException, UnknownDataException, UnclassifiedGoldStandardRecordException {
+    public void macroAverageRecallCalculatedCorrectly() throws InvalidCodeException, InconsistentCodingException, UnknownDataException, UnclassifiedGoldStandardRecordException, InputFileFormatException {
 
         ClassificationMetrics metrics = getClassificationMetrics();
 
@@ -154,7 +151,7 @@ public class ClassificationMetricsTest extends AbstractMetricsTest {
     }
 
     @Test
-    public void microAverageRecallCalculatedCorrectly() throws InvalidCodeException, InconsistentCodingException, UnknownDataException, UnclassifiedGoldStandardRecordException {
+    public void microAverageRecallCalculatedCorrectly() throws InvalidCodeException, InconsistentCodingException, UnknownDataException, UnclassifiedGoldStandardRecordException, InputFileFormatException {
 
         ClassificationMetrics metrics = getClassificationMetrics();
 
@@ -164,7 +161,7 @@ public class ClassificationMetricsTest extends AbstractMetricsTest {
     }
 
     @Test
-    public void macroAverageAccuracyCalculatedCorrectly() throws InvalidCodeException, InconsistentCodingException, UnknownDataException, UnclassifiedGoldStandardRecordException {
+    public void macroAverageAccuracyCalculatedCorrectly() throws InvalidCodeException, InconsistentCodingException, UnknownDataException, UnclassifiedGoldStandardRecordException, InputFileFormatException {
 
         ClassificationMetrics metrics = getClassificationMetrics();
 
@@ -174,7 +171,7 @@ public class ClassificationMetricsTest extends AbstractMetricsTest {
     }
 
     @Test
-    public void microAverageAccuracyCalculatedCorrectly() throws InvalidCodeException, InconsistentCodingException, UnknownDataException, UnclassifiedGoldStandardRecordException {
+    public void microAverageAccuracyCalculatedCorrectly() throws InvalidCodeException, InconsistentCodingException, UnknownDataException, UnclassifiedGoldStandardRecordException, InputFileFormatException {
 
         ClassificationMetrics metrics = getClassificationMetrics();
 
@@ -184,7 +181,7 @@ public class ClassificationMetricsTest extends AbstractMetricsTest {
     }
 
     @Test
-    public void macroAverageF1CalculatedCorrectly() throws InvalidCodeException, InconsistentCodingException, UnknownDataException, UnclassifiedGoldStandardRecordException {
+    public void macroAverageF1CalculatedCorrectly() throws InvalidCodeException, InconsistentCodingException, UnknownDataException, UnclassifiedGoldStandardRecordException, InputFileFormatException {
 
         ClassificationMetrics metrics = getClassificationMetrics();
 
@@ -194,7 +191,7 @@ public class ClassificationMetricsTest extends AbstractMetricsTest {
     }
 
     @Test
-    public void microAverageF1CalculatedCorrectly() throws InvalidCodeException, InconsistentCodingException, UnknownDataException, UnclassifiedGoldStandardRecordException {
+    public void microAverageF1CalculatedCorrectly() throws InvalidCodeException, InconsistentCodingException, UnknownDataException, UnclassifiedGoldStandardRecordException, InputFileFormatException {
 
         ClassificationMetrics metrics = getClassificationMetrics();
 
@@ -213,7 +210,7 @@ public class ClassificationMetricsTest extends AbstractMetricsTest {
         return total / expected_per_class_precision_values.length;
     }
 
-    private ClassificationMetrics getClassificationMetrics() throws InvalidCodeException, InconsistentCodingException, UnknownDataException, UnclassifiedGoldStandardRecordException {
+    private ClassificationMetrics getClassificationMetrics() throws InvalidCodeException, InconsistentCodingException, UnknownDataException, UnclassifiedGoldStandardRecordException, InputFileFormatException {
 
         initFullRecords();
         initMatrix();
@@ -221,7 +218,7 @@ public class ClassificationMetricsTest extends AbstractMetricsTest {
         return new ClassificationMetrics(matrix);
     }
 
-    private void checkMetricValues(MetricChoice choice, ExpectedMetricValue... values) throws UnclassifiedGoldStandardRecordException, UnknownDataException, InvalidCodeException, InconsistentCodingException {
+    private void checkMetricValues(MetricChoice choice, ExpectedMetricValue... values) throws UnclassifiedGoldStandardRecordException, UnknownDataException, InvalidCodeException, InconsistentCodingException, InputFileFormatException {
 
         initFullRecords();
         initMatrix();
