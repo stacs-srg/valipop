@@ -42,8 +42,8 @@ public class AbstractMetricsTest {
     // This is done to make sure that the name of the resource directory containing the data files is kept in sync with the class name.
     private static final String CLASS_NAME = AbstractMetricsTest.class.getSimpleName();
 
-    private static final String CLASSIFIED_FILE_NAME = CLASS_NAME + "/classified.csv";
-    private static final String GOLD_STANDARD_FILE_NAME = CLASS_NAME + "/gold_standard.csv";
+    private static final String CLASSIFIED_FILE_NAME =  "classified.csv";
+    private static final String GOLD_STANDARD_FILE_NAME = "gold_standard.csv";
 
     CSV classified_records_csv;
     CSV gold_standard_records_csv;
@@ -54,14 +54,19 @@ public class AbstractMetricsTest {
         classified_records = new Bucket2();
         gold_standard_records = new Bucket2();
 
-        try (InputStreamReader reader = new InputStreamReader(getClass().getResourceAsStream(CLASSIFIED_FILE_NAME))) {
+        try (InputStreamReader reader = getInputStreamReaderForResource(CLASSIFIED_FILE_NAME)) {
 
             classified_records_csv = new CSV(reader);
         }
-        try (InputStreamReader reader = new InputStreamReader(getClass().getResourceAsStream(GOLD_STANDARD_FILE_NAME))) {
+        try (InputStreamReader reader = getInputStreamReaderForResource(GOLD_STANDARD_FILE_NAME)) {
 
             gold_standard_records_csv = new CSV(reader);
         }
+    }
+
+    protected InputStreamReader getInputStreamReaderForResource(String resource_name) {
+
+        return new InputStreamReader(getClass().getResourceAsStream(CLASS_NAME + "/" + resource_name));
     }
 
     protected void initMatrix() throws InvalidCodeException, InconsistentCodingException, UnknownDataException, UnclassifiedGoldStandardRecordException {
