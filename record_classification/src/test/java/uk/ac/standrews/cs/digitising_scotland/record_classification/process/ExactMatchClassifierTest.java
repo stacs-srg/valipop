@@ -33,6 +33,6 @@ public class ExactMatchClassifierTest extends AbstractClassificationTest {
 
         ClassificationProcess classification_process = new ExactMatchClassificationProcess(occupation_data_path, 0.8);
         classification_process.setInfoLevel(InfoLevel.NONE);
-        classification_process.repeatedlyTrainClassifyAndEvaluate();
+        classification_process.trainClassifyAndEvaluate(3);
     }
 }

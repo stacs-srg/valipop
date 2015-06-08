@@ -17,7 +17,6 @@
 package uk.ac.standrews.cs.digitising_scotland.record_classification.analysis;
 
 import org.junit.Test;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.AbstractMetricsTest;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.*;
 
 import java.util.Map;
@@ -74,7 +73,7 @@ public class ConfusionMatrixTest extends AbstractMetricsTest {
     public void inconsistentCodingThrowsException() throws InconsistentCodingException, InvalidCodeException, UnknownDataException, UnclassifiedGoldStandardRecordException {
 
         classified_records.add(haddock_correct, haddock_incorrect);
-        gold_standard_records.add(haddock_gold_standard, cow_gold_standard);
+        gold_standard_records.add(haddock_correct, haddock_incorrect);
 
         initMatrix();
     }

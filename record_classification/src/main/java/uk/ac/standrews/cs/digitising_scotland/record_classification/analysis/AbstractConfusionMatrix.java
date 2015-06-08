@@ -61,8 +61,7 @@ public abstract class AbstractConfusionMatrix implements ConfusionMatrix {
         checkClassifiedToValidCodes();
 
         if (check_classification_consistency) {
-            checkConsistentClassification(classified_records);
-            checkConsistentClassification(gold_standard_records);
+            checkConsistentClassificationOfGoldStandardRecords();
         }
 
         calculateCounts();
@@ -166,11 +165,11 @@ public abstract class AbstractConfusionMatrix implements ConfusionMatrix {
     /**
      * To be valid, any string appearing in multiple records must be classified the same in each.
      */
-    private void checkConsistentClassification(Bucket records) throws InconsistentCodingException {
+    private void checkConsistentClassificationOfGoldStandardRecords() throws InconsistentCodingException {
 
         Map<String, String> classifications = new HashMap<>();
 
-        for (Record record : records) {
+        for (Record record : gold_standard_records) {
 
             String data = record.getData();
             Classification classification = record.getClassification();
@@ -199,8 +198,6 @@ public abstract class AbstractConfusionMatrix implements ConfusionMatrix {
     }
 
     private void initCounts() {
-
-//        initCounts(Classification2.UNCLASSIFIED.getCode());
 
         for (Record record : gold_standard_records) {
             initCounts(record.getClassification().getCode());

@@ -16,31 +16,33 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.analysis;
 
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.InfoLevel;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.InconsistentCodingException;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.InvalidCodeException;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.UnclassifiedGoldStandardRecordException;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.UnknownDataException;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.interfaces.ClassificationMetrics;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.interfaces.ConfusionMatrix;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.InfoLevel;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-public class ClassificationMetrics {
+public class ConcreteClassificationMetrics implements ClassificationMetrics {
 
     // http://nlp.stanford.edu/IR-book/html/htmledition/evaluation-of-text-classification-1.html#17469
 
     private ConfusionMatrix confusion_matrix;
 
-    public ClassificationMetrics(ConfusionMatrix confusion_matrix) {
+    public ConcreteClassificationMetrics(ConfusionMatrix confusion_matrix) {
 
         this.confusion_matrix = confusion_matrix;
     }
 
-    public void printMetrics(InfoLevel verbose) throws InvalidCodeException, InconsistentCodingException, UnknownDataException, UnclassifiedGoldStandardRecordException {
+    @Override
+    public void printMetrics(InfoLevel info_level)  {
 
-        if (verbose == InfoLevel.VERBOSE) {
+        if (info_level == InfoLevel.VERBOSE) {
             printMetrics("precision", getPerClassPrecision());
             printMetrics("recall", getPerClassRecall());
             printMetrics("accuracy", getPerClassAccuracy());
@@ -48,7 +50,7 @@ public class ClassificationMetrics {
             System.out.println();
         }
 
-        if (verbose != InfoLevel.NONE) {
+        if (info_level != InfoLevel.NONE) {
             printMetric("macro-average precision", getMacroAveragePrecision());
             printMetric("micro-average precision", getMicroAveragePrecision());
             printMetric("macro-average recall", getMacroAverageRecall());
@@ -60,7 +62,8 @@ public class ClassificationMetrics {
         }
     }
 
-    public void printMetrics() throws InvalidCodeException, InconsistentCodingException, UnknownDataException, UnclassifiedGoldStandardRecordException {
+    @Override
+    public void printMetrics() {
 
         printMetrics(InfoLevel.SUMMARY);
     }
@@ -79,6 +82,7 @@ public class ClassificationMetrics {
         System.out.println(label + " value: " + String.format("%.2f", metric));
     }
 
+    @Override
     public Map<String, Double> getPerClassPrecision() {
 
         final Map<String, Double> precision_map = new HashMap<>();
@@ -94,6 +98,7 @@ public class ClassificationMetrics {
         return precision_map;
     }
 
+    @Override
     public Map<String, Double> getPerClassRecall() {
 
         final Map<String, Double> recall_map = new HashMap<>();
@@ -109,6 +114,7 @@ public class ClassificationMetrics {
         return recall_map;
     }
 
+    @Override
     public Map<String, Double> getPerClassAccuracy() {
 
         final Map<String, Double> accuracy_map = new HashMap<>();
@@ -126,6 +132,7 @@ public class ClassificationMetrics {
         return accuracy_map;
     }
 
+    @Override
     public Map<String, Double> getPerClassF1() {
 
         final Map<String, Double> f1_map = new HashMap<>();
@@ -142,26 +149,31 @@ public class ClassificationMetrics {
         return f1_map;
     }
 
+    @Override
     public double getMacroAveragePrecision() {
 
         return getMacroAverage(getPerClassPrecision());
     }
 
+    @Override
     public double getMacroAverageRecall() {
 
         return getMacroAverage(getPerClassRecall());
     }
 
+    @Override
     public double getMacroAverageAccuracy() {
 
         return getMacroAverage(getPerClassAccuracy());
     }
 
+    @Override
     public double getMacroAverageF1() {
 
         return getMacroAverage(getPerClassF1());
     }
 
+    @Override
     public double getMicroAveragePrecision() {
 
         // Micro average is total TP / (total TP + total FP).
@@ -171,6 +183,7 @@ public class ClassificationMetrics {
         return calculatePrecision(total_true_positives, total_false_positives);
     }
 
+    @Override
     public double getMicroAverageRecall() {
 
         // Micro average is total TP / (total TP + total FN).
@@ -180,6 +193,7 @@ public class ClassificationMetrics {
         return calculateRecall(total_true_positives, total_false_negatives);
     }
 
+    @Override
     public double getMicroAverageAccuracy() {
 
         // Micro average is (total TP + total TN) / (total TP + total TN + total FP + total FN).
@@ -191,6 +205,7 @@ public class ClassificationMetrics {
         return calculateAccuracy(total_true_positives, total_true_negatives, total_false_positives, total_false_negatives);
     }
 
+    @Override
     public double getMicroAverageF1() {
 
         // Micro average is (2 * total TP) / (2 * total TP + total FP + total FN).

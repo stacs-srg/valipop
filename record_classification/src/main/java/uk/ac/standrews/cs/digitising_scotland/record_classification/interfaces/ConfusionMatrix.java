@@ -18,17 +18,50 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.interfaces;
 
 import java.util.Map;
 
+/**
+ * Confusion matrix representing the effectiveness of a classification process.
+ *
+ * @author Graham Kirby
+ */
 public interface ConfusionMatrix {
 
+    /**
+     * Returns the total number of classifications.
+     * @return the total number
+     */
+    int getTotalNumberOfClassifications();
+
+    /**
+     * Returns a map from classification class to the number of records classified as that class.
+     * @return the map
+     */
     Map<String, Integer> getClassificationCounts();
 
+    /**
+     * Returns a map from classification class to the number of true positives for that class.
+     * That is, the number of records that were classified as that class, and really were of that class.
+     * @return the map
+     */
     Map<String, Integer> getTruePositiveCounts();
 
+    /**
+     * Returns a map from classification class to the number of false positives for that class.
+     * That is, the number of records that were classified as that class, but were not of that class.
+     * @return the map
+     */
     Map<String, Integer> getFalsePositiveCounts();
 
+    /**
+     * Returns a map from classification class to the number of true negatives for that class.
+     * That is, the number of records that were not classified as that class, and really were not of that class.
+     * @return the map
+     */
     Map<String, Integer> getTrueNegativeCounts();
 
+    /**
+     * Returns a map from classification class to the number of false negatives for that class.
+     * That is, the number of records that were not classified as that class, but actually were of that class.
+     * @return the map
+     */
     Map<String, Integer> getFalseNegativeCounts();
-
-    int getTotalNumberOfClassifications();
 }

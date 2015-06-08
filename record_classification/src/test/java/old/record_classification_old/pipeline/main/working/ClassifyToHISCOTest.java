@@ -16,15 +16,13 @@
  */
 package old.record_classification_old.pipeline.main.working;
 
+import old.record_classification_old.datastructures.bucket.Bucket;
+import old.record_classification_old.pipeline.main.TrainClassifyOneFile;
+import old.record_classification_old.tools.configuration.MachineLearningConfiguration;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.AbstractClassificationTest;
-import old.record_classification_old.datastructures.bucket.Bucket;
-import old.record_classification_old.pipeline.main.TrainClassifyOneFile;
-import old.record_classification_old.tools.configuration.MachineLearningConfiguration;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.AbstractClassificationProcess;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.ExactMatchClassificationProcess;
 
 @Ignore
 public class ClassifyToHISCOTest extends AbstractClassificationTest {
@@ -32,20 +30,6 @@ public class ClassifyToHISCOTest extends AbstractClassificationTest {
     public static final String CODE_DICTIONARY_FILE_NAME = "/HiscoTitles.txt";
     public static final String OCCUPATION_DATA_FILE_NAME = "/occupationTrainingTest.txt";
     public static final String CODE_DICTIONARY_PROPERTY_NAME = "codeDictionaryFile";
-
-    @Test
-    public void testExactMatchHisco() throws Exception {
-
-        String occupation_data_path = getResourceFilePath2(AbstractClassificationTest.class, GOLD_STANDARD_DATA_FILE_NAME);
-
-        String[] args = {occupation_data_path, "0.8"};
-
-        AbstractClassificationProcess classification_process = new ExactMatchClassificationProcess(args);
-
-        classification_process.repeatedlyTrainClassifyAndEvaluate();
-
-        classification_process.performClassification();
-    }
 
     @Test
     public void testPipelineHisco() throws Exception {

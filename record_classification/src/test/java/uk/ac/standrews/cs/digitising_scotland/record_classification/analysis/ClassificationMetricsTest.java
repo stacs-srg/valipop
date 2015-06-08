@@ -18,6 +18,7 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.analysis;
 
 import org.junit.Test;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.interfaces.ClassificationMetrics;
 
 import java.util.Map;
 
@@ -214,7 +215,7 @@ public class ClassificationMetricsTest extends AbstractMetricsTest {
         initFullRecords();
         initMatrix();
 
-        return new ClassificationMetrics(matrix);
+        return new ConcreteClassificationMetrics(matrix);
     }
 
     private void checkMetricValues(MetricChoice choice, ExpectedMetricValue... values) throws UnclassifiedGoldStandardRecordException, UnknownDataException, InvalidCodeException, InconsistentCodingException, InputFileFormatException {
@@ -222,7 +223,7 @@ public class ClassificationMetricsTest extends AbstractMetricsTest {
         initFullRecords();
         initMatrix();
 
-        Map<String, Double> metric = choice.getMetric(new ClassificationMetrics(matrix));
+        Map<String, Double> metric = choice.getMetric(new ConcreteClassificationMetrics(matrix));
 
         assertEquals(getNumberOfCodes(), metric.size());
 
