@@ -14,43 +14,16 @@
  * You should have received a copy of the GNU General Public License along with record_classification. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.digitising_scotland.record_classification.model;
+package old.record_classification_old.classifiers;
 
+import old.record_classification_old.datastructures.classification.Classification;
 import old.record_classification_old.datastructures.tokens.TokenSet;
 
-public class Classification {
+import java.io.IOException;
+import java.util.Set;
 
-    public static final Classification UNCLASSIFIED = new Classification("UNCLASSIFIED", new TokenSet(), 0.0);
+public interface Classifier {
 
-    private final String code;
-    private final TokenSet tokenSet;
-    private final Double confidence;
-
-    public Classification(final String code, final TokenSet tokenSet, final Double confidence) {
-
-        this.code = code;
-        this.tokenSet = tokenSet;
-        this.confidence = confidence;
-    }
-
-    public String getCode() {
-
-        return code;
-    }
-
-    public TokenSet getTokenSet() {
-
-        return tokenSet;
-    }
-
-    public Double getConfidence() {
-
-        return confidence;
-    }
-
-    @Override
-    public String toString() {
-
-        return "Classification [code=" + code + ", tokenSet=" + tokenSet + ", confidence=" + confidence + "]";
-    }
+     // TODO change parameter to string?
+     Set<Classification> classify(TokenSet token_set) throws IOException, ClassNotFoundException;
 }

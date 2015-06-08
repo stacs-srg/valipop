@@ -14,43 +14,20 @@
  * You should have received a copy of the GNU General Public License along with record_classification. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.digitising_scotland.record_classification.model;
+package old.record_classification_old.classifiers.lookup;
 
+import old.record_classification_old.classifiers.closestmatchmap.SimilarityMetric;
 import old.record_classification_old.datastructures.tokens.TokenSet;
 
-public class Classification {
+/**
+ * TODO
+ * Created by fraserdunlop on 01/10/2014 at 15:42.
+ */
+public class LevenshteinTokenSetSimilarityMetric implements SimilarityMetric<TokenSet> {
 
-    public static final Classification UNCLASSIFIED = new Classification("UNCLASSIFIED", new TokenSet(), 0.0);
-
-    private final String code;
-    private final TokenSet tokenSet;
-    private final Double confidence;
-
-    public Classification(final String code, final TokenSet tokenSet, final Double confidence) {
-
-        this.code = code;
-        this.tokenSet = tokenSet;
-        this.confidence = confidence;
-    }
-
-    public String getCode() {
-
-        return code;
-    }
-
-    public TokenSet getTokenSet() {
-
-        return tokenSet;
-    }
-
-    public Double getConfidence() {
-
-        return confidence;
-    }
 
     @Override
-    public String toString() {
-
-        return "Classification [code=" + code + ", tokenSet=" + tokenSet + ", confidence=" + confidence + "]";
+    public double getSimilarity(TokenSet o1, TokenSet o2) {
+        return 0;
     }
 }
