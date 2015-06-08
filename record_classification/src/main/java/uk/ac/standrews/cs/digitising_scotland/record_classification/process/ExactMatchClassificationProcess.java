@@ -26,6 +26,8 @@ import java.io.InputStreamReader;
 
 public class ExactMatchClassificationProcess extends AbstractClassificationProcess {
 
+    public static final int NUMBER_OF_REPETITIONS = 5;
+
     public ExactMatchClassificationProcess() {
 
         super();
@@ -47,7 +49,7 @@ public class ExactMatchClassificationProcess extends AbstractClassificationProce
             ExactMatchClassificationProcess classification_process = new ExactMatchClassificationProcess(args);
 
             classification_process.setInfoLevel(InfoLevel.SUMMARY);
-            classification_process.repeatedlyTrainClassifyAndEvaluate();
+            classification_process.trainClassifyAndEvaluate(NUMBER_OF_REPETITIONS);
         }
         catch (Exception e) {
             System.out.println("problem in classification process: " + e.getMessage());

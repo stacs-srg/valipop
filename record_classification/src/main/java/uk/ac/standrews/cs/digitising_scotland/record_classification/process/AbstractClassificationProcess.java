@@ -16,9 +16,10 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.process;
 
-import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.ClassificationMetrics;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.ConcreteClassificationMetrics;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.StrictConfusionMatrix;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.interfaces.ClassificationMetrics;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.interfaces.ClassificationProcess;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.interfaces.Classifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.interfaces.ConfusionMatrix;
@@ -110,7 +111,7 @@ public abstract class AbstractClassificationProcess implements ClassificationPro
 
         ConfusionMatrix matrix = new StrictConfusionMatrix(classified_evaluation_records, all_records, false);
 
-        ClassificationMetrics metrics = new ClassificationMetrics(matrix);
+        ClassificationMetrics metrics = new ConcreteClassificationMetrics(matrix);
 
         if (info_level == InfoLevel.VERBOSE) {
 
@@ -125,12 +126,7 @@ public abstract class AbstractClassificationProcess implements ClassificationPro
         return metrics;
     }
 
-    public void repeatedlyTrainClassifyAndEvaluate() throws IOException, InputFileFormatException, UnclassifiedGoldStandardRecordException, UnknownDataException, InvalidCodeException, InconsistentCodingException {
-
-        repeatedlyTrainClassifyAndEvaluate(3);
-    }
-
-    public void repeatedlyTrainClassifyAndEvaluate(int number_of_repetitions) throws IOException, InputFileFormatException, UnclassifiedGoldStandardRecordException, UnknownDataException, InvalidCodeException, InconsistentCodingException {
+    public void trainClassifyAndEvaluate(int number_of_repetitions) throws IOException, InputFileFormatException, UnclassifiedGoldStandardRecordException, UnknownDataException, InvalidCodeException, InconsistentCodingException {
 
         readInGoldStandardRecords();
 
@@ -240,7 +236,7 @@ public abstract class AbstractClassificationProcess implements ClassificationPro
         return unclassified_bucket;
     }
 
-    private ClassificationMetrics trainClassifyAndEvaluate() throws InvalidCodeException, InconsistentCodingException, UnknownDataException, UnclassifiedGoldStandardRecordException {
+    private uk.ac.standrews.cs.digitising_scotland.record_classification.interfaces.ClassificationMetrics trainClassifyAndEvaluate() throws InvalidCodeException, InconsistentCodingException, UnknownDataException, UnclassifiedGoldStandardRecordException {
 
         splitTrainingAndEvaluationRecords();
         performTraining();
@@ -249,7 +245,7 @@ public abstract class AbstractClassificationProcess implements ClassificationPro
         return evaluateClassification();
     }
 
-    private void summariseResults(List<ClassificationMetrics> results) throws IOException {
+    private void summariseResults(List<uk.ac.standrews.cs.digitising_scotland.record_classification.interfaces.ClassificationMetrics> results) throws IOException {
 
         // Need to wrap the list to make it mutable so that the first-column label can be added.
         DataSet data_set = new DataSet(new ArrayList<>(Arrays.asList("macro-precision", "macro-recall", "macro-accuracy", "macro-F1", "micro-precision", "micro-recall", "micro-accuracy", "micro-F1")));

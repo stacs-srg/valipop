@@ -19,11 +19,33 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.interfaces;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Classification;
 
+/**
+ * Basic classifier interface.
+ *
+ * @author Graham Kirby
+ */
 public interface Classifier {
 
+    /**
+     * Trains the classifier on the given gold standard records.
+     *
+     * @param bucket the training data
+     */
+    void train(final Bucket bucket);
+
+    /**
+     * Classifies a single data item.
+     *
+     * @param data the data to be classified
+     * @return the resulting classification
+     */
     Classification classify(String data);
 
+    /**
+     * Classifies a bucket of data items.
+     *
+     * @param bucket the data to be classified
+     * @return a new bucket containing the classified data
+     */
     Bucket classify(final Bucket bucket);
-
-    void train(final Bucket bucket);
 }
