@@ -29,8 +29,11 @@ import uk.ac.standrews.cs.util.csv.DataSet;
 import uk.ac.standrews.cs.util.tables.TableGenerator;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -52,8 +55,6 @@ public abstract class AbstractClassificationProcess implements ClassificationPro
     private Bucket evaluation_records;
     private Bucket classified_evaluation_records;
 
-    public abstract Classifier getClassifier();
-
     public AbstractClassificationProcess() {
 
         classifier = getClassifier();
@@ -72,10 +73,7 @@ public abstract class AbstractClassificationProcess implements ClassificationPro
         this(getTrainingDataFileFromArgs(args), getTrainingRatioFromArgs(args));
     }
 
-    public void setGoldStandardData(InputStreamReader gold_standard_data_reader) {
-
-        this.gold_standard_data_reader = gold_standard_data_reader;
-    }
+    public abstract Classifier getClassifier();
 
     public void setTrainingRatio(double training_ratio) {
 
@@ -85,6 +83,11 @@ public abstract class AbstractClassificationProcess implements ClassificationPro
     public void setInfoLevel(InfoLevel info_level) {
 
         this.info_level = info_level;
+    }
+
+    public void setGoldStandardData(InputStreamReader gold_standard_data_reader) {
+
+        this.gold_standard_data_reader = gold_standard_data_reader;
     }
 
     public void configureRecords() throws IOException, InputFileFormatException {
@@ -139,44 +142,6 @@ public abstract class AbstractClassificationProcess implements ClassificationPro
         summariseResults(results);
     }
 
-    private ClassificationMetrics trainClassifyAndEvaluate() throws InvalidCodeException, InconsistentCodingException, UnknownDataException, UnclassifiedGoldStandardRecordException {
-
-        splitTrainingAndEvaluationRecords();
-        performTraining();
-        performClassification();
-
-        return evaluateClassification();
-    }
-
-    private void summariseResults(List<ClassificationMetrics> results) throws IOException {
-
-        // Need to wrap the list to make it mutable so that the first-column label can be added.
-        DataSet summary = new DataSet(new ArrayList<>(Arrays.asList("macro-precision", "macro-recall", "macro-accuracy", "macro-F1", "micro-precision", "micro-recall", "micro-accuracy", "micro-F1")));
-
-        for (ClassificationMetrics metrics : results) {
-            summary.addRow(Arrays.asList(
-                    String.valueOf(metrics.getMacroAveragePrecision()),
-                    String.valueOf(metrics.getMacroAverageRecall()),
-                    String.valueOf(metrics.getMacroAverageAccuracy()),
-                    String.valueOf(metrics.getMacroAverageF1()),
-                    String.valueOf(metrics.getMicroAveragePrecision()),
-                    String.valueOf(metrics.getMicroAverageRecall()),
-                    String.valueOf(metrics.getMicroAverageAccuracy()),
-                    String.valueOf(metrics.getMicroAverageF1())
-            ));
-        }
-
-        String table_caption = "Aggregate classifier performance (" + results.size() + " repetition" + (results.size() > 1 ? "s" : "") + ")";
-        String first_column_heading = "classifier";
-
-        TableGenerator table_generator = new TableGenerator(Collections.singletonList("exact-match"), Collections.singletonList(summary), System.out, table_caption, first_column_heading, true, '\t');
-
-        if (info_level != InfoLevel.NONE) {
-
-            table_generator.printTable();
-        }
-    }
-
     private void readInGoldStandardRecords() throws InputFileFormatException, IOException {
 
         all_records = new Bucket(gold_standard_data_reader);
@@ -205,7 +170,15 @@ public abstract class AbstractClassificationProcess implements ClassificationPro
             throw new InvalidArgException("training data file argument missing");
         }
 
-        return new InputStreamReader(Files.newInputStream(Paths.get(args[TRAINING_DATA_FILE_ARG_POS])));
+        Path path = Paths.get(args[TRAINING_DATA_FILE_ARG_POS]);
+
+        try {
+            InputStream input_stream = Files.newInputStream(path);
+            return new InputStreamReader(input_stream);
+
+        } catch (NoSuchFileException e) {
+            throw new IOException("cannot open training file: " + path);
+        }
     }
 
     private static double getTrainingRatioFromArgs(final String[] args) throws InvalidArgException {
@@ -265,5 +238,43 @@ public abstract class AbstractClassificationProcess implements ClassificationPro
         }
 
         return unclassified_bucket;
+    }
+
+    private ClassificationMetrics trainClassifyAndEvaluate() throws InvalidCodeException, InconsistentCodingException, UnknownDataException, UnclassifiedGoldStandardRecordException {
+
+        splitTrainingAndEvaluationRecords();
+        performTraining();
+        performClassification();
+
+        return evaluateClassification();
+    }
+
+    private void summariseResults(List<ClassificationMetrics> results) throws IOException {
+
+        // Need to wrap the list to make it mutable so that the first-column label can be added.
+        DataSet data_set = new DataSet(new ArrayList<>(Arrays.asList("macro-precision", "macro-recall", "macro-accuracy", "macro-F1", "micro-precision", "micro-recall", "micro-accuracy", "micro-F1")));
+
+        for (ClassificationMetrics metrics : results) {
+            data_set.addRow(Arrays.asList(
+                    String.valueOf(metrics.getMacroAveragePrecision()),
+                    String.valueOf(metrics.getMacroAverageRecall()),
+                    String.valueOf(metrics.getMacroAverageAccuracy()),
+                    String.valueOf(metrics.getMacroAverageF1()),
+                    String.valueOf(metrics.getMicroAveragePrecision()),
+                    String.valueOf(metrics.getMicroAverageRecall()),
+                    String.valueOf(metrics.getMicroAverageAccuracy()),
+                    String.valueOf(metrics.getMicroAverageF1())
+            ));
+        }
+
+        String table_caption = "Aggregate classifier performance (" + results.size() + " repetition" + (results.size() > 1 ? "s" : "") + ")";
+        String first_column_heading = "classifier";
+
+        TableGenerator table_generator = new TableGenerator(Collections.singletonList("exact-match"), Collections.singletonList(data_set), System.out, table_caption, first_column_heading, true, '\t');
+
+        if (info_level != InfoLevel.NONE) {
+
+            table_generator.printTable();
+        }
     }
 }
