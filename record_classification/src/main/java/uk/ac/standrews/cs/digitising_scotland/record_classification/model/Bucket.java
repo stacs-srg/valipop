@@ -16,12 +16,12 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.model;
 
-import uk.ac.standrews.cs.digitising_scotland.record_classification_old.data_readers.AbstractFormatConverter;
-import uk.ac.standrews.cs.digitising_scotland.record_classification_old.data_readers.LongFormatConverter;
-import uk.ac.standrews.cs.digitising_scotland.record_classification_old.datastructures.code.CodeNotValidException;
-import uk.ac.standrews.cs.digitising_scotland.record_classification_old.datastructures.tokens.TokenSet;
-import uk.ac.standrews.cs.digitising_scotland.record_classification_old.exceptions.InputFormatException;
-import uk.ac.standrews.cs.digitising_scotland.record_classification_old.tools.ReaderWriterFactory;
+import old.record_classification_old.data_readers.AbstractFormatConverter;
+import old.record_classification_old.data_readers.LongFormatConverter;
+import old.record_classification_old.datastructures.code.CodeNotValidException;
+import old.record_classification_old.datastructures.tokens.TokenSet;
+import old.record_classification_old.exceptions.InputFormatException;
+import old.record_classification_old.tools.ReaderWriterFactory;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.InputFileFormatException;
 import uk.ac.standrews.cs.util.csv.DataSet;
 
@@ -142,7 +142,7 @@ public class Bucket implements Iterable<Record> {
 
 
     /**
-     * Returns the number of {@link uk.ac.standrews.cs.digitising_scotland.record_classification_old.datastructures.records.Record}s in the bucket.
+     * Returns the number of {@link old.record_classification_old.datastructures.records.Record}s in the bucket.
      *
      * @return the number of records in the bucket
      */
@@ -162,7 +162,7 @@ public class Bucket implements Iterable<Record> {
     }
 
     /**
-     * Iterator A {@link uk.ac.standrews.cs.digitising_scotland.record_classification_old.datastructures.records.Record} itereator that allows iteration though all the records in
+     * Iterator A {@link old.record_classification_old.datastructures.records.Record} itereator that allows iteration though all the records in
      * the bucket.
      *
      * @return iterator of type Iterator<Record>.

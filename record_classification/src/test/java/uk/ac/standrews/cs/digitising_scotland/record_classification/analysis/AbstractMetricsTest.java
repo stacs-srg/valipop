@@ -20,7 +20,7 @@ import org.junit.Before;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Classification;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Record;
-import uk.ac.standrews.cs.digitising_scotland.record_classification_old.datastructures.tokens.TokenSet;
+import old.record_classification_old.datastructures.tokens.TokenSet;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.*;
 import uk.ac.standrews.cs.util.csv.DataSet;
 
