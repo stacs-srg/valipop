@@ -17,7 +17,7 @@
 package uk.ac.standrews.cs.digitising_scotland.record_classification.process;
 
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.ExactMatchClassifier;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.InvalidArgException;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.interfaces.Classifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.InfoLevel;
 
@@ -41,12 +41,17 @@ public class ExactMatchClassificationProcess extends AbstractClassificationProce
         super(gold_standard_data_reader, training_ratio);
     }
 
-    public static void main(final String[] args) throws Exception {
+    public static void main(final String[] args)  {
 
-        ExactMatchClassificationProcess classification_process = new ExactMatchClassificationProcess(args);
+        try {
+            ExactMatchClassificationProcess classification_process = new ExactMatchClassificationProcess(args);
 
-        classification_process.setInfoLevel(InfoLevel.SUMMARY);
-        classification_process.repeatedlyTrainClassifyAndEvaluate();
+            classification_process.setInfoLevel(InfoLevel.SUMMARY);
+            classification_process.repeatedlyTrainClassifyAndEvaluate();
+        }
+        catch (Exception e) {
+            System.out.println("problem in classification process: " + e.getMessage());
+        }
     }
 
     @Override

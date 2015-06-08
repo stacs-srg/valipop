@@ -25,7 +25,8 @@ import java.io.InputStreamReader;
 
 public interface ClassificationProcess {
 
-    void performClassification() ;
+
+    void setInfoLevel(InfoLevel verbose);
 
     void setGoldStandardData(InputStreamReader gold_standard_data_reader);
 
@@ -35,9 +36,9 @@ public interface ClassificationProcess {
 
     void performTraining();
 
+    void performClassification() ;
+
     ClassificationMetrics evaluateClassification() throws InvalidCodeException, InconsistentCodingException, UnknownDataException, UnclassifiedGoldStandardRecordException;
 
     void repeatedlyTrainClassifyAndEvaluate() throws IOException, InputFileFormatException, UnclassifiedGoldStandardRecordException, UnknownDataException, InvalidCodeException, InconsistentCodingException;
-
-    void setInfoLevel(InfoLevel verbose);
 }
