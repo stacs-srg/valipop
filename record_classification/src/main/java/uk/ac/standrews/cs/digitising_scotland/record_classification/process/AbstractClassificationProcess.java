@@ -236,7 +236,7 @@ public abstract class AbstractClassificationProcess implements ClassificationPro
         return unclassified_bucket;
     }
 
-    private uk.ac.standrews.cs.digitising_scotland.record_classification.interfaces.ClassificationMetrics trainClassifyAndEvaluate() throws InvalidCodeException, InconsistentCodingException, UnknownDataException, UnclassifiedGoldStandardRecordException {
+    private ClassificationMetrics trainClassifyAndEvaluate() throws InvalidCodeException, InconsistentCodingException, UnknownDataException, UnclassifiedGoldStandardRecordException {
 
         splitTrainingAndEvaluationRecords();
         performTraining();
@@ -245,7 +245,7 @@ public abstract class AbstractClassificationProcess implements ClassificationPro
         return evaluateClassification();
     }
 
-    private void summariseResults(List<uk.ac.standrews.cs.digitising_scotland.record_classification.interfaces.ClassificationMetrics> results) throws IOException {
+    private void summariseResults(List<ClassificationMetrics> results) throws IOException {
 
         // Need to wrap the list to make it mutable so that the first-column label can be added.
         DataSet data_set = new DataSet(new ArrayList<>(Arrays.asList("macro-precision", "macro-recall", "macro-accuracy", "macro-F1", "micro-precision", "micro-recall", "micro-accuracy", "micro-F1")));
