@@ -31,6 +31,9 @@ import java.util.Map;
 import java.util.Set;
 
 /**
+ * General implementation of confusion matrix representing the effectiveness of a classification process.
+ * The details of whether a classification result is considered to be correct is devolved to subclasses.
+ *
  * @author Fraser Dunlop
  * @author Graham Kirby
  */
@@ -45,7 +48,19 @@ public abstract class AbstractConfusionMatrix implements ConfusionMatrix {
     protected final Bucket classified_records;
     protected final Bucket gold_standard_records;
 
-    public AbstractConfusionMatrix(final Bucket classified_records, final Bucket gold_standard_records, boolean check_classification_consistency) throws InvalidCodeException, InconsistentCodingException, UnknownDataException, UnclassifiedGoldStandardRecordException {
+    /**
+     * Creates a confusion matrix representing the effectiveness of a classification process.
+     *
+     * @param classified_records the records that have been classified
+     * @param gold_standard_records the gold standard records against which the classified records should be checked
+     * @param check_classification_consistency true if an exception should be thrown if there exist multiple gold standard records containing the same data and different classifications
+     *
+     * @throws InvalidCodeException                    if a code in the classified records does not appear in the gold standard records
+     * @throws UnknownDataException                    if a record in the classified records contains data that does not appear in the gold standard records
+     * @throws InconsistentCodingException             if there exist multiple gold standard records containing the same data and different classifications
+     * @throws UnclassifiedGoldStandardRecordException if a record in the gold standard records is not classified
+     */
+    public AbstractConfusionMatrix(final Bucket classified_records, final Bucket gold_standard_records, boolean check_classification_consistency) throws InvalidCodeException, UnknownDataException, InconsistentCodingException, UnclassifiedGoldStandardRecordException {
 
         this.classified_records = classified_records;
         this.gold_standard_records = gold_standard_records;
@@ -67,6 +82,13 @@ public abstract class AbstractConfusionMatrix implements ConfusionMatrix {
         calculateCounts();
     }
 
+    /**
+     * Checks whether a classification result is considered to be correct.
+     *
+     * @param asserted_code the code asserted by the classifier
+     * @param real_code the real code as defined in the gold standard records
+     * @return true if the asserted code is considered to be correct
+     */
     protected abstract boolean classificationsMatch(String asserted_code, String real_code);
 
     @Override
@@ -111,17 +133,19 @@ public abstract class AbstractConfusionMatrix implements ConfusionMatrix {
     }
 
     /**
-     * To be valid, all records in the gold standard records must be classified.
+     * Checks whether all records in the gold standard records are classified.
+     * @throws UnclassifiedGoldStandardRecordException if they are not
      */
     private void checkGoldStandardDataIsClassified() throws UnclassifiedGoldStandardRecordException {
 
         for (Record record : gold_standard_records) {
-            if (record.getClassification() == Classification.UNCLASSIFIED) throw new UnclassifiedGoldStandardRecordException();
+            if (record.getClassification().equals(Classification.UNCLASSIFIED)) throw new UnclassifiedGoldStandardRecordException();
         }
     }
 
     /**
-     * To be valid, all data in the classified records must appear in the gold standard records.
+     * Checks whether all data in the classified records appears in the gold standard records.
+     * @throws UnknownDataException if it does not
      */
     private void checkClassifiedDataIsInGoldStandard() throws UnknownDataException {
 
@@ -140,7 +164,8 @@ public abstract class AbstractConfusionMatrix implements ConfusionMatrix {
     }
 
     /**
-     * To be valid, all codes in the classified records must appear in the gold standard records.
+     * Checks whether all codes in the classified records appears in the gold standard records.
+     * @throws InvalidCodeException if they do not
      */
     private void checkClassifiedToValidCodes() throws InvalidCodeException {
 
@@ -163,7 +188,8 @@ public abstract class AbstractConfusionMatrix implements ConfusionMatrix {
     }
 
     /**
-     * To be valid, any string appearing in multiple records must be classified the same in each.
+     * Checks whether all data appearing in multiple records is classified the same in each.
+     * @throws InconsistentCodingException if it is not
      */
     private void checkConsistentClassificationOfGoldStandardRecords() throws InconsistentCodingException {
 
