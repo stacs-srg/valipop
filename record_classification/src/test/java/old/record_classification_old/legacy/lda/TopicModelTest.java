@@ -16,13 +16,15 @@
  */
 package old.record_classification_old.legacy.lda;
 
-import java.io.File;
-
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
+import java.io.File;
+
+@Ignore
 public class TopicModelTest {
 
     @After

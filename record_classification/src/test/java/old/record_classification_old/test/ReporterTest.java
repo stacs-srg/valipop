@@ -16,17 +16,18 @@
  */
 package old.record_classification_old.test;
 
-import static org.junit.Assert.assertEquals;
-
+import old.record_classification_old.tools.analysis.Reporter;
+import org.junit.Ignore;
 import org.junit.Test;
 
-import old.record_classification_old.tools.analysis.Reporter;
+import static org.junit.Assert.assertEquals;
 
 /**
  * Tests the the Reporter class is working as expected.
  * @author jkc25
  *
  */
+@Ignore
 public class ReporterTest {
 
     /**

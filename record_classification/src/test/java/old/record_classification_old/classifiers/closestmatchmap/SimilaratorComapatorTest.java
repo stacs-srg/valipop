@@ -16,17 +16,18 @@
  */
 package old.record_classification_old.classifiers.closestmatchmap;
 
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
+import uk.ac.shef.wit.simmetrics.similaritymetrics.JaccardSimilarity;
+import uk.ac.shef.wit.simmetrics.similaritymetrics.Levenshtein;
+
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
-import uk.ac.shef.wit.simmetrics.similaritymetrics.JaccardSimilarity;
-import uk.ac.shef.wit.simmetrics.similaritymetrics.Levenshtein;
-
+@Ignore
 public class SimilaratorComapatorTest {
 
     Similaritor<String> s;

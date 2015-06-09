@@ -18,6 +18,7 @@ package old.record_classification_old.classifiers.resolver.multivaluemap;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import old.record_classification_old.classifiers.resolver.generic.MultiValueMap;
 import old.record_classification_old.classifiers.resolver.generic.MultiValueMapPruner;
@@ -32,6 +33,7 @@ import java.io.IOException;
  *
  * Created by fraserdunlop on 07/10/2014 at 12:40.
  */
+@Ignore
 public class MultiValueMapPrunerTest {
 
     private MultiValueMapPruner pruner = new MultiValueMapPruner(new ClassificationComparator());

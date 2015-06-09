@@ -27,19 +27,20 @@
  */
 package old.record_classification_old.test;
 
-import static org.junit.Assert.assertEquals;
+import old.record_classification_old.tools.analysis.ClassCounter;
+import org.junit.Ignore;
+import org.junit.Test;
 
 import java.io.File;
 
-import org.junit.Test;
-
-import old.record_classification_old.tools.analysis.ClassCounter;
+import static org.junit.Assert.assertEquals;
 
 /**
  * JUnit tests for the ClassCounter class.
  * 
  * @author jkc25
  */
+@Ignore
 public class ClassCounterTest {
 
     /**

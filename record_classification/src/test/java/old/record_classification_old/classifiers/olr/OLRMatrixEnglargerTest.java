@@ -16,15 +16,16 @@
  */
 package old.record_classification_old.classifiers.olr;
 
-import java.util.Properties;
-
+import old.record_classification_old.tools.configuration.MachineLearningConfiguration;
 import org.apache.mahout.math.DenseMatrix;
 import org.apache.mahout.math.Matrix;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
-import old.record_classification_old.tools.configuration.MachineLearningConfiguration;
+import java.util.Properties;
 
+@Ignore
 public class OLRMatrixEnglargerTest {
 
     @Test

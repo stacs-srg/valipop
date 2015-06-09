@@ -16,13 +16,14 @@
  */
 package old.record_classification_old.pipeline;
 
-import java.io.File;
-
+import old.record_classification_old.tools.Utils;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
-import old.record_classification_old.tools.Utils;
+import java.io.File;
 
+@Ignore
 public class TrainAndMultiplyClassifyTest {
 
     @Test

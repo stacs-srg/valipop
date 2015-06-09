@@ -27,19 +27,20 @@
  */
 package old.record_classification_old.test;
 
-import static org.junit.Assert.assertEquals;
+import old.record_classification_old.tools.analysis.AnalysisTools;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
 
 import java.io.File;
 import java.util.Map;
 
-import org.junit.Before;
-import org.junit.Test;
-
-import old.record_classification_old.tools.analysis.AnalysisTools;
+import static org.junit.Assert.assertEquals;
 
 /**
  * The Class AnalysisToolsTest.
  */
+@Ignore
 public class AnalysisToolsTest {
 
     /** The Constant PRECISION. */

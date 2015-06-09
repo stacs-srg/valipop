@@ -16,20 +16,21 @@
  */
 package old.record_classification_old.datastructures.code;
 
+import old.record_classification_old.data_readers.LongFormatConverter;
+import old.record_classification_old.datastructures.bucket.Bucket;
+import old.record_classification_old.datastructures.records.Record;
+import old.record_classification_old.datastructures.vectors.CodeIndexer;
+import old.record_classification_old.exceptions.InputFormatException;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
-import old.record_classification_old.datastructures.vectors.CodeIndexer;
-import old.record_classification_old.data_readers.LongFormatConverter;
-import old.record_classification_old.datastructures.bucket.Bucket;
-import old.record_classification_old.datastructures.records.Record;
-import old.record_classification_old.exceptions.InputFormatException;
-
+@Ignore
 public class CodeIndexerTest {
 
     private CodeIndexer index;

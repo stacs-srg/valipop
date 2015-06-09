@@ -16,34 +16,23 @@
  */
 package old.record_classification_old.classifiers.olr;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.util.ArrayList;
-import java.util.Properties;
-
-import org.apache.mahout.math.NamedVector;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
 import old.record_classification_old.datastructures.code.CodeDictionary;
 import old.record_classification_old.datastructures.code.CodeNotValidException;
 import old.record_classification_old.datastructures.vectors.CodeIndexer;
 import old.record_classification_old.datastructures.vectors.VectorFactory;
 import old.record_classification_old.tools.configuration.MachineLearningConfiguration;
+import org.apache.mahout.math.NamedVector;
+import org.junit.*;
+
+import java.io.*;
+import java.util.ArrayList;
+import java.util.Properties;
 
 /**
  *
  * Created by fraserdunlop on 06/05/2014 at 11:37.
  */
+@Ignore
 public class OLRCrossFoldTest {
 
     /**

@@ -16,14 +16,15 @@
  */
 package old.record_classification_old.classifiers.resolver.multivaluemap;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
 import old.record_classification_old.classifiers.resolver.generic.BelowThresholdRemover;
 import old.record_classification_old.classifiers.resolver.generic.MultiValueMap;
 import old.record_classification_old.datastructures.classification.Classification;
 import old.record_classification_old.datastructures.code.Code;
 import old.record_classification_old.datastructures.code.CodeNotValidException;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
 
 import java.io.IOException;
 
@@ -31,6 +32,7 @@ import java.io.IOException;
  * Testing BelowThresholdRemover with Codes and Classifications.
  * Created by fraserdunlop on 07/10/2014 at 11:53.
  */
+@Ignore
 public class BelowThresholdRemoverTest {
 
     private BelowThresholdRemover belowThresholdRemover = new BelowThresholdRemover(0.7);

@@ -19,6 +19,7 @@ package old.record_classification_old.classifiers.resolver.multivaluemap;
 import com.google.common.collect.Multiset;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import old.record_classification_old.classifiers.resolver.Interfaces.LossFunction;
 import old.record_classification_old.classifiers.resolver.LengthWeightedLossFunction;
@@ -38,6 +39,7 @@ import java.util.Set;
  *
  * Created by fraserdunlop on 07/10/2014 at 15:34.
  */
+@Ignore
 public class ValidCombinationGetterTest {
 
     private ValidCombinationGetter vCG = new ValidCombinationGetter(new ClassificationSetValidityAssessor());

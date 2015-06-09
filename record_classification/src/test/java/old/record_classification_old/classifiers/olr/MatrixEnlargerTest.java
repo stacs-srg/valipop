@@ -16,18 +16,20 @@
  */
 package old.record_classification_old.classifiers.olr;
 
-import static org.junit.Assert.assertEquals;
-
 import org.apache.mahout.math.DenseMatrix;
 import org.apache.mahout.math.Matrix;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  *
  * Created by fraserdunlop on 07/08/2014 at 15:11.
  */
+@Ignore
 public class MatrixEnlargerTest {
 
     private Matrix matrix;

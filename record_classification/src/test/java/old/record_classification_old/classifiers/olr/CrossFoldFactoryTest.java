@@ -16,14 +16,16 @@
  */
 package old.record_classification_old.classifiers.olr;
 
-import java.util.ArrayList;
-
 import org.apache.commons.math3.exception.NumberIsTooSmallException;
 import org.apache.mahout.math.NamedVector;
 import org.apache.mahout.math.RandomAccessSparseVector;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
+import java.util.ArrayList;
+
+@Ignore
 public class CrossFoldFactoryTest {
 
     @Test(expected = NumberIsTooSmallException.class)

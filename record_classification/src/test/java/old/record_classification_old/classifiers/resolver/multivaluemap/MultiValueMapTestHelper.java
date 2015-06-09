@@ -16,22 +16,24 @@
  */
 package old.record_classification_old.classifiers.resolver.multivaluemap;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-
 import old.record_classification_old.classifiers.resolver.generic.MultiValueMap;
 import old.record_classification_old.datastructures.classification.Classification;
 import old.record_classification_old.datastructures.code.Code;
 import old.record_classification_old.datastructures.code.CodeDictionary;
 import old.record_classification_old.datastructures.code.CodeNotValidException;
 import old.record_classification_old.datastructures.tokens.TokenSet;
+import org.junit.Ignore;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * Holds a MultiValueMap and CodeDictionary. Allows mock entries to be added to map using CodeDictionary.
  * Created by fraserdunlop on 07/10/2014 at 12:03.
  */
+@Ignore
 public class MultiValueMapTestHelper {
 
     private final CodeDictionary codeDictionary;

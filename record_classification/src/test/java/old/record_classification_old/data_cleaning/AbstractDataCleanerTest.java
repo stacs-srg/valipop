@@ -16,7 +16,14 @@
  */
 package old.record_classification_old.data_cleaning;
 
-import static org.junit.Assert.assertEquals;
+import old.record_classification_old.datastructures.code.CodeNotValidException;
+import old.record_classification_old.datastructures.tokens.TokenSet;
+import old.record_classification_old.exceptions.InputFormatException;
+import old.record_classification_old.tools.Utils;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -26,19 +33,13 @@ import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
-import old.record_classification_old.datastructures.code.CodeNotValidException;
-import old.record_classification_old.datastructures.tokens.TokenSet;
-import old.record_classification_old.exceptions.InputFormatException;
-import old.record_classification_old.tools.Utils;
+import static org.junit.Assert.assertEquals;
 
 /**
  * Testing the superclass that does all of the grunt work of file handling etc in the data cleaning steps.
  * Created by fraserdunlop on 17/07/2014 at 10:55.
  */
+@Ignore
 public class AbstractDataCleanerTest {
 
     private final String incorrectFilePath = this.getClass().getResource("/AbstractDataCleaningTestIncorrectFile.txt").getPath();

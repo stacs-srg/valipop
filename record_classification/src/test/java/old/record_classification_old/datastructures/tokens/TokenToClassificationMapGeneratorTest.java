@@ -18,6 +18,7 @@ package old.record_classification_old.datastructures.tokens;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -39,6 +40,7 @@ import java.util.*;
  * Created by fraserdunlop on 09/10/2014 at 14:37.
  */
 @RunWith(Parameterized.class)
+@Ignore
 public class TokenToClassificationMapGeneratorTest {
 
     CodeDictionary codeDictionary;

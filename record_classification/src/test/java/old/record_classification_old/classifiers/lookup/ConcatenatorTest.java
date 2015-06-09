@@ -16,20 +16,22 @@
  */
 package old.record_classification_old.classifiers.lookup;
 
-import java.io.StringReader;
-
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.standard.StandardTokenizer;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.lucene.util.Version;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
+
+import java.io.StringReader;
 
 /**
  * Tests the {@link Concatenator} class.
  * @author jkc25
  *TODO Write more tests
  */
+@Ignore
 public class ConcatenatorTest {
 
     /**

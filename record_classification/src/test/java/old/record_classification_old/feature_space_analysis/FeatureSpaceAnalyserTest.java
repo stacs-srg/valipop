@@ -16,6 +16,7 @@
  */
 package old.record_classification_old.feature_space_analysis;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import old.record_classification_old.datastructures.bucket.Bucket;
 import old.record_classification_old.datastructures.code.CodeDictionary;
@@ -34,6 +35,7 @@ import java.util.HashMap;
  *
  * Created by fraserdunlop on 13/10/2014 at 15:52.
  */
+@Ignore
 public class FeatureSpaceAnalyserTest {
 
     @Test

@@ -16,16 +16,18 @@
  */
 package old.record_classification_old.tools.configuration;
 
-import java.util.Properties;
-
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
+
+import java.util.Properties;
 
 /**
  * This Class, MachineLearningConfigurationTest, aims to test the creation and use of properties files
  * that are used to confiure the behaviour of the learners.
  */
+@Ignore
 public class MachineLearningConfigurationTest {
 
     private Properties properties = MachineLearningConfiguration.getDefaultProperties();

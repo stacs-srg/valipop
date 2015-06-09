@@ -17,12 +17,14 @@
 package old.record_classification_old.preprocessor;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import old.record_classification_old.data_cleaning.LevenshteinDistance;
 
 /**
  * The Class LevenshteinDistanceTest tests the calculation of Levenshtein distances with various strings.
  */
+@Ignore
 public class LevenshteinDistanceTest {
 
     /**

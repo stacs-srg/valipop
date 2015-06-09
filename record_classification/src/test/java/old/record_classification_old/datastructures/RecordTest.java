@@ -42,6 +42,7 @@ import static org.junit.Assert.assertTrue;
  * 
  */
 //
+@Ignore
 public class RecordTest {
 
     /** The record. */

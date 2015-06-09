@@ -18,6 +18,7 @@ package old.record_classification_old.classifiers.resolver.multivaluemap;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import old.record_classification_old.datastructures.classification.Classification;
 import old.record_classification_old.datastructures.code.Code;
@@ -29,6 +30,7 @@ import java.io.IOException;
  *
  * Created by fraserdunlop on 07/10/2014 at 12:33.
  */
+@Ignore
 public class HierarchyResolverTest {
 
     private HierarchyResolver resolver = new HierarchyResolver();

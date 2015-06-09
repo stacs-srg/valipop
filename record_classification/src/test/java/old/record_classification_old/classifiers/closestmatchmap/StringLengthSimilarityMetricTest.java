@@ -16,20 +16,22 @@
  */
 package old.record_classification_old.classifiers.closestmatchmap;
 
-import java.util.Arrays;
-import java.util.Collection;
-
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
+
+import java.util.Arrays;
+import java.util.Collection;
 
 /**
  * Testing the basic string similarity metric.
  * Created by fraserdunlop on 02/10/2014 at 10:09.
  */
 @RunWith(Parameterized.class)
+@Ignore
 public class StringLengthSimilarityMetricTest {
 
     private final String o1;

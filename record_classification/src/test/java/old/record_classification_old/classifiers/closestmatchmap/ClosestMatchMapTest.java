@@ -16,14 +16,15 @@
  */
 package old.record_classification_old.classifiers.closestmatchmap;
 
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
-
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
 
 /**
  * Testing Closest Match Map with the simple String Length Similarity Metric.
@@ -32,6 +33,7 @@ import org.junit.Test;
  * elements of the key set with greater similarity than the one chosen by ClosestMatchMap.
  * Created by fraserdunlop on 01/10/2014 at 15:31.
  */
+@Ignore
 public class ClosestMatchMapTest {
 
     Map<String, String> map;

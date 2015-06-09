@@ -18,6 +18,7 @@ package old.record_classification_old.classifiers.olr;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -25,6 +26,7 @@ import org.junit.Test;
  * @author jkc25
  *
  */
+@Ignore
 public class ModelDoublePairTest {
 
     private ModelDoublePair pair1;
