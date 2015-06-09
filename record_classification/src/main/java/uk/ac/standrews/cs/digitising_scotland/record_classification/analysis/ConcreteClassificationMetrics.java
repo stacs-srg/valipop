@@ -16,10 +16,6 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.analysis;
 
-import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.InconsistentCodingException;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.InvalidCodeException;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.UnclassifiedGoldStandardRecordException;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.UnknownDataException;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.interfaces.ClassificationMetrics;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.interfaces.ConfusionMatrix;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.InfoLevel;
@@ -40,7 +36,7 @@ public class ConcreteClassificationMetrics implements ClassificationMetrics {
     }
 
     @Override
-    public void printMetrics(InfoLevel info_level)  {
+    public void printMetrics(InfoLevel info_level) {
 
         if (info_level == InfoLevel.VERBOSE) {
             printMetrics("precision", getPerClassPrecision());
