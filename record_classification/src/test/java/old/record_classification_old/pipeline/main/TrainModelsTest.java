@@ -17,11 +17,13 @@
 package old.record_classification_old.pipeline.main;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import old.record_classification_old.datastructures.code.CodeNotValidException;
 
+@Ignore
 public class TrainModelsTest {
 
     private TrainClassifyOneFile trainer;

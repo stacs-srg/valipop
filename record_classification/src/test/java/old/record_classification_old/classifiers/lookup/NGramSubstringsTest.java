@@ -17,6 +17,7 @@
 package old.record_classification_old.classifiers.lookup;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import old.record_classification_old.datastructures.OriginalData;
 import old.record_classification_old.datastructures.bucket.Bucket;
@@ -32,6 +33,7 @@ import static org.junit.Assert.assertEquals;
  * @author jkc25
  *
  */
+@Ignore
 public class NGramSubstringsTest {
 
     /** The n gram substrings. */

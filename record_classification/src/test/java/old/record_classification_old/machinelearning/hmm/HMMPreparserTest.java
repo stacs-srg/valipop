@@ -16,14 +16,16 @@
  */
 package old.record_classification_old.machinelearning.hmm;
 
-import java.util.ArrayList;
-
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
+
+import java.util.ArrayList;
 
 /**
  * The Class HMMPreparserTests tests the basic functionality of the {@link HMMPreparser} class.
  */
+@Ignore
 public class HMMPreparserTest {
 
     /**

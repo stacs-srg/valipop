@@ -16,20 +16,21 @@
  */
 package old.record_classification_old.test;
 
-import static org.junit.Assert.assertEquals;
+import old.record_classification_old.tools.Utils;
+import org.junit.Ignore;
+import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
 
-import org.junit.Test;
-
-import old.record_classification_old.tools.Utils;
+import static org.junit.Assert.assertEquals;
 
 /**
  * The Class UtilsTest.
  *
  * @author jkc25
  */
+@Ignore
 public class UtilsTest {
 
     /**

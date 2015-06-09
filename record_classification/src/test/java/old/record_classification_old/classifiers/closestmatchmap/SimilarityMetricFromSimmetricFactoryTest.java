@@ -18,10 +18,12 @@ package old.record_classification_old.classifiers.closestmatchmap;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import uk.ac.shef.wit.simmetrics.similaritymetrics.JaccardSimilarity;
 
+@Ignore
 public class SimilarityMetricFromSimmetricFactoryTest {
 
     SimilarityMetricFromSimmetricFactory factory;

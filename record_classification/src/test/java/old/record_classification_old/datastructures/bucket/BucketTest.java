@@ -17,6 +17,7 @@
 package old.record_classification_old.datastructures.bucket;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import old.record_classification_old.datastructures.OriginalData;
 import old.record_classification_old.datastructures.records.Record;
@@ -32,6 +33,7 @@ import static org.junit.Assert.assertEquals;
 /**
  * This Class, BucketTest, tests the construction of {@link Bucket} objects.
  */
+@Ignore
 public class BucketTest {
 
     /** The bucket a. */

@@ -16,17 +16,18 @@
  */
 package old.record_classification_old.machinelearning.hmm;
 
+import cc.mallet.types.Alphabet;
+import org.apache.commons.io.FileUtils;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Ignore;
+import org.junit.Test;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 
-import org.apache.commons.io.FileUtils;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Test;
-
-import cc.mallet.types.Alphabet;
-
+@Ignore
 public class HiddenMarkovModelTest {
 
     private static final String outputFilePath = "target/hmmOutput.txt";

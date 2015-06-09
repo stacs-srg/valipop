@@ -16,26 +16,16 @@
  */
 package old.record_classification_old.classifiers.closestmatchmap;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
-import java.util.Set;
-
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
+import uk.ac.shef.wit.simmetrics.similaritymetrics.*;
 
-import uk.ac.shef.wit.simmetrics.similaritymetrics.AbstractStringMetric;
-import uk.ac.shef.wit.simmetrics.similaritymetrics.BlockDistance;
-import uk.ac.shef.wit.simmetrics.similaritymetrics.ChapmanLengthDeviation;
-import uk.ac.shef.wit.simmetrics.similaritymetrics.DiceSimilarity;
-import uk.ac.shef.wit.simmetrics.similaritymetrics.JaccardSimilarity;
-import uk.ac.shef.wit.simmetrics.similaritymetrics.JaroWinkler;
+import java.util.*;
 
 /** 
  *  Testing Closest Match Map with the simple String Length Similarity Metric.
@@ -45,6 +35,7 @@ import uk.ac.shef.wit.simmetrics.similaritymetrics.JaroWinkler;
  * Created by fraserdunlop on 01/10/2014 at 15:31.
  */
 @RunWith(Parameterized.class)
+@Ignore
 public class ParameterisedSimmetricsClosestMatchTest {
 
     private Map<String, String> map;

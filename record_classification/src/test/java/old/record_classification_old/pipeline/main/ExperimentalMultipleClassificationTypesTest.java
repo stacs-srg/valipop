@@ -16,10 +16,12 @@
  */
 package old.record_classification_old.pipeline.main;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import old.record_classification_old.datastructures.code.CodeNotValidException;
 import old.record_classification_old.tools.configuration.MachineLearningConfiguration;
 
+@Ignore
 public class ExperimentalMultipleClassificationTypesTest {
 
     @Test

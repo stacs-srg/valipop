@@ -17,6 +17,7 @@
 package old.record_classification_old.pipeline.main;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -25,6 +26,7 @@ import old.record_classification_old.datastructures.bucket.Bucket;
 import old.record_classification_old.datastructures.code.CodeNotValidException;
 import old.record_classification_old.tools.configuration.MachineLearningConfiguration;
 
+@Ignore
 public class TrainClassifyOneFileTest {
 
     private TrainClassifyOneFile trainer;

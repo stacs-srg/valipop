@@ -16,19 +16,20 @@
  */
 package old.record_classification_old.datastructures.bucket;
 
-import java.io.File;
-import java.io.IOException;
-
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
 import old.record_classification_old.datastructures.records.RecordFactory;
 import old.record_classification_old.exceptions.InputFormatException;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
+
+import java.io.File;
+import java.io.IOException;
 
 /**
  * The Class BucketUtilsTest.
  */
+@Ignore
 public class BucketUtilsTest {
 
     /** The bucket a. */

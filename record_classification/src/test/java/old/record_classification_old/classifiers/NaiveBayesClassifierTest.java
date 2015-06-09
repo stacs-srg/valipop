@@ -16,10 +16,6 @@
  */
 package old.record_classification_old.classifiers;
 
-import org.apache.commons.io.FileUtils;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.Test;
 import old.record_classification_old.datastructures.Pair;
 import old.record_classification_old.datastructures.bucket.Bucket;
 import old.record_classification_old.datastructures.code.Code;
@@ -28,11 +24,17 @@ import old.record_classification_old.datastructures.records.Record;
 import old.record_classification_old.datastructures.records.RecordFactory;
 import old.record_classification_old.datastructures.tokens.TokenSet;
 import old.record_classification_old.legacy.naivebayes.NaiveBayesClassifier;
+import org.apache.commons.io.FileUtils;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+@Ignore
 public class NaiveBayesClassifierTest {
 
     /** The bucket a. */

@@ -16,17 +16,18 @@
  */
 package old.record_classification_old.test;
 
-import static org.junit.Assert.assertEquals;
+import old.record_classification_old.tools.analysis.ClassificationDistribution;
+import org.junit.Ignore;
+import org.junit.Test;
 
 import java.util.Arrays;
 
-import org.junit.Test;
-
-import old.record_classification_old.tools.analysis.ClassificationDistribution;
+import static org.junit.Assert.assertEquals;
 
 /**
  * The Class ClassificationDistributionTest.
  */
+@Ignore
 public class ClassificationDistributionTest {
 
     /**

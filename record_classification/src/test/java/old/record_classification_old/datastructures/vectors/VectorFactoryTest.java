@@ -18,12 +18,14 @@ package old.record_classification_old.datastructures.vectors;
 
 import org.apache.mahout.math.Vector;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
  * Simple tests that check that the toString values of the vectors created are what we would expect.
  * Created by fraserdunlop on 28/04/2014 at 10:52.
  */
+@Ignore
 public class VectorFactoryTest {
 
     /**

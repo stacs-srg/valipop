@@ -28,6 +28,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+@Ignore
 public class AccessDatabaseDumperTest {
 
     private static final String DATABASE_NAME = "testDatabase";

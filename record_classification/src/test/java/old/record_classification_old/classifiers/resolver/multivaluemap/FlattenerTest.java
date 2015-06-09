@@ -18,6 +18,7 @@ package old.record_classification_old.classifiers.resolver.multivaluemap;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import old.record_classification_old.classifiers.resolver.generic.Flattener;
 import old.record_classification_old.classifiers.resolver.generic.MultiValueMap;
@@ -31,6 +32,7 @@ import java.io.IOException;
  *
  * Created by fraserdunlop on 07/10/2014 at 12:22.
  */
+@Ignore
 public class FlattenerTest {
 
     private Flattener flattener = new Flattener();

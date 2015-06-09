@@ -16,26 +16,23 @@
  */
 package old.record_classification_old.classifiers.olr.serializabledensematrix;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.util.Arrays;
-import java.util.Collection;
-
+import old.record_classification_old.classifiers.olr.SerializableDenseMatrix;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
-import old.record_classification_old.classifiers.olr.SerializableDenseMatrix;
+import java.io.*;
+import java.util.Arrays;
+import java.util.Collection;
 
 /**
  *
  * Created by fraserdunlop on 10/10/2014 at 13:33.
  */
 @RunWith(Parameterized.class)
+@Ignore
 public class SerializableDenseMatrixTest {
 
     private int numRows;

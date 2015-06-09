@@ -18,6 +18,7 @@ package old.record_classification_old.machinelearning.Tokenizing;
 
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -28,6 +29,7 @@ import old.record_classification_old.machinelearning.tokenizing.TokenStreamItera
 /**
  * The Class TokenStreamIteratorFactoryTest unit tests the {@link TokenStreamIterator}.
  */
+@Ignore
 public class TokenStreamIteratorFactoryTest {
 
     /** The expected exception. */

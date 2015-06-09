@@ -20,6 +20,7 @@ import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import old.record_classification_old.classifiers.resolver.Interfaces.LossFunction;
@@ -35,6 +36,7 @@ import old.record_classification_old.datastructures.tokens.TokenSet;
  * @author jkc25
  *
  */
+@Ignore
 public class LossFunctionTest {
 
     private LossFunction<Multiset<Classification>, Double> sumLoss;

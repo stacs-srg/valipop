@@ -35,6 +35,7 @@ import java.util.*;
  * @author jkc25
  *
  */
+@Ignore
 public class ExactMatchClassifierTest {
 
     /** The training bucket. */

@@ -16,31 +16,28 @@
  */
 package old.record_classification_old.classifiers.olr;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import old.record_classification_old.datastructures.vectors.VectorFactory;
+import old.record_classification_old.tools.configuration.MachineLearningConfiguration;
+import org.apache.mahout.math.NamedVector;
+import org.apache.mahout.math.Vector;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
 
-import org.apache.mahout.math.NamedVector;
-import org.apache.mahout.math.Vector;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-
-import old.record_classification_old.datastructures.vectors.VectorFactory;
-import old.record_classification_old.tools.configuration.MachineLearningConfiguration;
-
 /**
  * The Class OLRTest.
  */
 @RunWith(Parameterized.class)
+@Ignore
 public class OLRTest {
 
     /** The properties. */

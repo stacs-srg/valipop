@@ -16,21 +16,22 @@
  */
 package old.record_classification_old.datastructures;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
 import old.record_classification_old.classifiers.ClassifierTestingHelper;
 import old.record_classification_old.datastructures.analysis_metrics.ListAccuracyMetrics;
 import old.record_classification_old.datastructures.bucket.Bucket;
 import old.record_classification_old.datastructures.bucket.BucketFilter;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
+
+import java.io.IOException;
+import java.net.URISyntaxException;
 
 /**
  * The Class ListAccuracyMetricsTest.
  */
+@Ignore
 public class ListAccuracyMetricsTest {
 
     private Bucket trainingBucket;

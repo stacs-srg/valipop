@@ -16,17 +16,18 @@
  */
 package old.record_classification_old.test;
 
-import static org.junit.Assert.assertTrue;
-
+import old.record_classification_old.tools.SpellingMistakeFactory;
+import org.junit.Ignore;
 import org.junit.Test;
 
-import old.record_classification_old.tools.SpellingMistakeFactory;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Runs tests on the SpellingMistakeFactory class.
  * @author jkc25
  *
  */
+@Ignore
 public class SpellingMistakeFactoryTest {
 
     /**
