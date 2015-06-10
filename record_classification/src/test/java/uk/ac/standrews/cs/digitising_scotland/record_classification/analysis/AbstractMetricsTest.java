@@ -22,7 +22,7 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Classi
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Record;
 import old.record_classification_old.datastructures.tokens.TokenSet;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.*;
-import uk.ac.standrews.cs.util.csv.DataSet;
+import uk.ac.standrews.cs.util.dataset.DataSet;
 
 import java.io.InputStreamReader;
 import java.util.HashSet;

@@ -39,14 +39,14 @@ import java.util.Set;
  */
 public abstract class AbstractConfusionMatrix implements ConfusionMatrix {
 
-    protected final Map<String, Integer> classification_counts;
-    protected final Map<String, Integer> true_positive_counts;
-    protected final Map<String, Integer> false_positive_counts;
-    protected final Map<String, Integer> true_negative_counts;
-    protected final Map<String, Integer> false_negative_counts;
+    private final Map<String, Integer> classification_counts;
+    private final Map<String, Integer> true_positive_counts;
+    private final Map<String, Integer> false_positive_counts;
+    private final Map<String, Integer> true_negative_counts;
+    private final Map<String, Integer> false_negative_counts;
 
-    protected final Bucket classified_records;
-    protected final Bucket gold_standard_records;
+    private final Bucket classified_records;
+    private final Bucket gold_standard_records;
 
     /**
      * Creates a confusion matrix representing the effectiveness of a classification process.
@@ -60,7 +60,7 @@ public abstract class AbstractConfusionMatrix implements ConfusionMatrix {
      * @throws InconsistentCodingException             if there exist multiple gold standard records containing the same data and different classifications
      * @throws UnclassifiedGoldStandardRecordException if a record in the gold standard records is not classified
      */
-    public AbstractConfusionMatrix(final Bucket classified_records, final Bucket gold_standard_records, boolean check_classification_consistency) throws InvalidCodeException, UnknownDataException, InconsistentCodingException, UnclassifiedGoldStandardRecordException {
+    AbstractConfusionMatrix(final Bucket classified_records, final Bucket gold_standard_records, boolean check_classification_consistency) throws InvalidCodeException, UnknownDataException, InconsistentCodingException, UnclassifiedGoldStandardRecordException {
 
         this.classified_records = classified_records;
         this.gold_standard_records = gold_standard_records;
@@ -217,7 +217,7 @@ public abstract class AbstractConfusionMatrix implements ConfusionMatrix {
     /**
      * Calculates the true/false positive/negative counts for the bucket.
      */
-    private void calculateCounts() throws UnclassifiedGoldStandardRecordException, UnknownDataException {
+    private void calculateCounts() throws UnknownDataException {
 
         initCounts();
         updateCounts();

@@ -18,7 +18,7 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.model;
 
 import old.record_classification_old.datastructures.tokens.TokenSet;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.InputFileFormatException;
-import uk.ac.standrews.cs.util.csv.DataSet;
+import uk.ac.standrews.cs.util.dataset.DataSet;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -29,7 +29,7 @@ import java.util.List;
 
 public class Bucket implements Iterable<Record> {
 
-    private List<Record> records;
+    private final List<Record> records;
 
     /**
      * Instantiates a new empty bucket.

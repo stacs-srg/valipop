@@ -16,9 +16,7 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.util;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.file.DirectoryIteratorException;
 import java.nio.file.DirectoryStream;
@@ -34,12 +32,21 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
-/**
- * Created by al on 11/05/2014.
- */
 public class FileManipulation {
 
     public static final Charset FILE_CHARSET = Charset.forName("UTF-8");
+
+    public static InputStreamReader getInputStreamReader(Path path) throws IOException {
+
+        InputStream input_stream = Files.newInputStream(path);
+        return new InputStreamReader(input_stream, FILE_CHARSET);
+    }
+
+    public static OutputStreamWriter getOutputStreamWriter(Path path) throws IOException {
+
+        OutputStream output_stream = Files.newOutputStream(path);
+        return new OutputStreamWriter(output_stream, FILE_CHARSET);
+    }
 
     public static void deleteDirectory(final String directory_path) throws IOException {
 

@@ -14,10 +14,26 @@
  * You should have received a copy of the GNU General Public License along with record_classification. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions;
+package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier;
 
-public class InputFileFormatException extends Exception {
-    public InputFileFormatException(String message) {
-        super(message);
+import old.record_classification_old.datastructures.tokens.TokenSet;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Classification;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Record;
+
+public class DummyClassifier extends AbstractClassifier {
+
+    private String a_code;
+
+    public void train(final Bucket bucket) {
+
+        for (Record record : bucket) {
+            a_code = record.getClassification().getCode();
+        }
+    }
+
+    public Classification classify(final String data) {
+
+        return new Classification(a_code, new TokenSet(), 0.0);
     }
 }
