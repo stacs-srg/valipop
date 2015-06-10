@@ -14,10 +14,11 @@
  * You should have received a copy of the GNU General Public License along with record_classification. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.digitising_scotland.record_classification.process;
+package uk.ac.standrews.cs.digitising_scotland.record_classification.process.multiple_classifier;
 
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.InvalidArgException;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.interfaces.ClassificationProcess;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.single_classifier.ExactMatchClassificationProcess;
 
 import java.io.IOException;
 import java.util.Arrays;

@@ -14,17 +14,17 @@
  * You should have received a copy of the GNU General Public License along with record_classification. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.digitising_scotland.record_classification.process;
+package uk.ac.standrews.cs.digitising_scotland.record_classification.process.multiple_classifier;
 
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.interfaces.ClassificationProcess;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.InfoLevel;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.single_classifier.AbstractClassificationProcess;
 import uk.ac.standrews.cs.util.dataset.DataSet;
 import uk.ac.standrews.cs.util.tables.TableGenerator;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public abstract class AbstractMultipleClassificationProcess {
@@ -35,24 +35,27 @@ public abstract class AbstractMultipleClassificationProcess {
 
         List<ClassificationProcess> processes = getClassificationProcesses(args);
 
+        List<String> row_labels = new ArrayList<>();
         List<DataSet> result_sets = new ArrayList<>();
 
         for (ClassificationProcess process : processes) {
+
+            row_labels.add(process.getClassifierDescription());
             result_sets.add(process.trainClassifyAndEvaluate(AbstractClassificationProcess.NUMBER_OF_REPETITIONS));
         }
 
-        summariseResults(result_sets);
+        summariseResults(row_labels, result_sets);
     }
 
     abstract protected List<ClassificationProcess> getClassificationProcesses(String[] args) throws IOException, InvalidArgException;
 
-    private void summariseResults(List<DataSet> data_sets) throws IOException {
+    private void summariseResults(List<String> row_labels, List<DataSet> data_sets) throws IOException {
 
         int size = data_sets.get(0).getRecords().size();
         String table_caption = "Aggregate classifier performance (" + size + " repetition" + (size > 1 ? "s" : "") + ")";
         String first_column_heading = "classifier";
 
-        TableGenerator table_generator = new TableGenerator(Arrays.asList("exact-match", "dummy"), data_sets, System.out, table_caption, first_column_heading, true, '\t');
+        TableGenerator table_generator = new TableGenerator(row_labels, data_sets, System.out, table_caption, first_column_heading, true, '\t');
 
         if (info_level != InfoLevel.NONE) {
 
