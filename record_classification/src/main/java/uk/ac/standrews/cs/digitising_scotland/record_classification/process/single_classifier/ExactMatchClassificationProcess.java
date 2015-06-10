@@ -14,24 +14,38 @@
  * You should have received a copy of the GNU General Public License along with record_classification. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.digitising_scotland.record_classification.process;
+package uk.ac.standrews.cs.digitising_scotland.record_classification.process.single_classifier;
 
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.DummyClassifier;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.ExactMatchClassifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.InvalidArgException;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.interfaces.Classifier;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.single_classifier.AbstractClassificationProcess;
 
 import java.io.IOException;
+import java.io.InputStreamReader;
 
-public class DummyClassificationProcess extends AbstractClassificationProcess {
+public class ExactMatchClassificationProcess extends AbstractClassificationProcess {
 
-    public DummyClassificationProcess(String[] args) throws IOException, InvalidArgException {
+    @SuppressWarnings("WeakerAccess")
+    public ExactMatchClassificationProcess(String[] args) throws IOException, InvalidArgException {
 
         super(args);
+    }
+
+    public ExactMatchClassificationProcess(InputStreamReader gold_standard_data_reader, double training_ratio) {
+
+        super(gold_standard_data_reader, training_ratio);
     }
 
     @Override
     public Classifier getClassifier() {
 
-        return new DummyClassifier();
+        return new ExactMatchClassifier();
+    }
+
+    @Override
+    public String getClassifierDescription() {
+
+        return "exact-match";
     }
 }

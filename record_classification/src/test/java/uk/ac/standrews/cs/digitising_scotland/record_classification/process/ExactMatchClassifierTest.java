@@ -19,6 +19,7 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.process;
 import org.junit.Test;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.interfaces.ClassificationProcess;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.InfoLevel;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.single_classifier.ExactMatchClassificationProcess;
 
 import java.io.InputStreamReader;
 

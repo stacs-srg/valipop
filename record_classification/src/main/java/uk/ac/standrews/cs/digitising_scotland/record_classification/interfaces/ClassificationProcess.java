@@ -52,6 +52,12 @@ public interface ClassificationProcess {
     void setTrainingRatio(double training_ratio);
 
     /**
+     * Returns a description of the classifier used in the classification process.
+     * @return the classifier description
+     */
+    String getClassifierDescription();
+
+    /**
      * Trains the classifier using the gold standard data.
      */
     void performTraining();
