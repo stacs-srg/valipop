@@ -16,29 +16,22 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.process;
 
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.ExactMatchClassifier;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.DummyClassifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.InvalidArgException;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.interfaces.Classifier;
 
 import java.io.IOException;
-import java.io.InputStreamReader;
 
-public class ExactMatchClassificationProcess extends AbstractClassificationProcess {
+public class DummyClassificationProcess extends AbstractClassificationProcess {
 
-    @SuppressWarnings("WeakerAccess")
-    public ExactMatchClassificationProcess(String[] args) throws IOException, InvalidArgException {
+    public DummyClassificationProcess(String[] args) throws IOException, InvalidArgException {
 
         super(args);
-    }
-
-    public ExactMatchClassificationProcess(InputStreamReader gold_standard_data_reader, double training_ratio) {
-
-        super(gold_standard_data_reader, training_ratio);
     }
 
     @Override
     public Classifier getClassifier() {
 
-        return new ExactMatchClassifier();
+        return new DummyClassifier();
     }
 }

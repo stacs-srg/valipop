@@ -28,7 +28,7 @@ public class ConcreteClassificationMetrics implements ClassificationMetrics {
 
     // http://nlp.stanford.edu/IR-book/html/htmledition/evaluation-of-text-classification-1.html#17469
 
-    private ConfusionMatrix confusion_matrix;
+    private final ConfusionMatrix confusion_matrix;
 
     public ConcreteClassificationMetrics(ConfusionMatrix confusion_matrix) {
 

@@ -16,29 +16,31 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.process;
 
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.ExactMatchClassifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.InvalidArgException;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.interfaces.Classifier;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.interfaces.ClassificationProcess;
 
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.util.Arrays;
+import java.util.List;
 
-public class ExactMatchClassificationProcess extends AbstractClassificationProcess {
+public class ExactMatchOnlyClassificationProcess extends AbstractMultipleClassificationProcess {
 
-    @SuppressWarnings("WeakerAccess")
-    public ExactMatchClassificationProcess(String[] args) throws IOException, InvalidArgException {
+    public static void main(final String[] args)  {
 
-        super(args);
+        try {
+            ExactMatchOnlyClassificationProcess classification_process = new ExactMatchOnlyClassificationProcess();
+
+            classification_process.process(args);
+        }
+        catch (Exception e) {
+            System.out.println("problem in classification process: " + e.getMessage());
+        }
     }
 
-    public ExactMatchClassificationProcess(InputStreamReader gold_standard_data_reader, double training_ratio) {
+    protected List<ClassificationProcess> getClassificationProcesses(String[] args) throws IOException, InvalidArgException {
 
-        super(gold_standard_data_reader, training_ratio);
-    }
+        ClassificationProcess process1 = new ExactMatchClassificationProcess(args);
 
-    @Override
-    public Classifier getClassifier() {
-
-        return new ExactMatchClassifier();
+        return Arrays.asList(process1);
     }
 }

@@ -18,6 +18,7 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.interfaces;
 
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.InfoLevel;
+import uk.ac.standrews.cs.util.dataset.DataSet;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -81,5 +82,5 @@ public interface ClassificationProcess {
      * @throws InconsistentCodingException             if there exist multiple gold standard records containing the same data and different classifications
      * @throws UnclassifiedGoldStandardRecordException if a record in the gold standard records is not classified
      */
-    void trainClassifyAndEvaluate(int number_of_repetitions) throws IOException, InvalidCodeException, UnknownDataException, InconsistentCodingException, UnclassifiedGoldStandardRecordException, InputFileFormatException;
+    DataSet trainClassifyAndEvaluate(int number_of_repetitions) throws IOException, InvalidCodeException, UnknownDataException, InconsistentCodingException, UnclassifiedGoldStandardRecordException, InputFileFormatException;
 }

@@ -26,19 +26,16 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.interfaces.C
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.InfoLevel;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Record;
-import uk.ac.standrews.cs.util.csv.DataSet;
-import uk.ac.standrews.cs.util.tables.TableGenerator;
+import uk.ac.standrews.cs.digitising_scotland.util.FileManipulation;
+import uk.ac.standrews.cs.util.dataset.DataSet;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 public abstract class AbstractClassificationProcess implements ClassificationProcess {
@@ -46,22 +43,25 @@ public abstract class AbstractClassificationProcess implements ClassificationPro
     private static final int TRAINING_DATA_FILE_ARG_POS = 0;
     private static final int TRAINING_RATIO_ARG_POS = 1;
 
+    @SuppressWarnings("WeakerAccess")
+    public static final int NUMBER_OF_REPETITIONS = 5;
+
     private InputStreamReader gold_standard_data_reader;
     private double training_ratio;
     private InfoLevel info_level = InfoLevel.NONE;
-    private Classifier classifier;
+    private final Classifier classifier;
 
     private Bucket all_records;
     private Bucket training_records;
     private Bucket evaluation_records;
     private Bucket classified_evaluation_records;
 
-    public AbstractClassificationProcess() {
+    AbstractClassificationProcess() {
 
         classifier = getClassifier();
     }
 
-    public AbstractClassificationProcess(InputStreamReader gold_standard_data_reader, double training_ratio) {
+    AbstractClassificationProcess(InputStreamReader gold_standard_data_reader, double training_ratio) {
 
         this();
 
@@ -69,12 +69,12 @@ public abstract class AbstractClassificationProcess implements ClassificationPro
         setTrainingRatio(training_ratio);
     }
 
-    public AbstractClassificationProcess(String[] args) throws IOException, InvalidArgException {
+    AbstractClassificationProcess(String[] args) throws IOException, InvalidArgException {
 
         this(getTrainingDataFileFromArgs(args), getTrainingRatioFromArgs(args));
     }
 
-    public abstract Classifier getClassifier();
+    protected abstract Classifier getClassifier();
 
     public void setTrainingRatio(double training_ratio) {
 
@@ -126,7 +126,7 @@ public abstract class AbstractClassificationProcess implements ClassificationPro
         return metrics;
     }
 
-    public void trainClassifyAndEvaluate(int number_of_repetitions) throws IOException, InputFileFormatException, UnclassifiedGoldStandardRecordException, UnknownDataException, InvalidCodeException, InconsistentCodingException {
+    public DataSet trainClassifyAndEvaluate(int number_of_repetitions) throws IOException, InputFileFormatException, UnclassifiedGoldStandardRecordException, UnknownDataException, InvalidCodeException, InconsistentCodingException {
 
         readInGoldStandardRecords();
 
@@ -135,7 +135,16 @@ public abstract class AbstractClassificationProcess implements ClassificationPro
             results.add(trainClassifyAndEvaluate());
         }
 
-        summariseResults(results);
+        return getResultsAsDataSet(results);
+    }
+
+    private ClassificationMetrics trainClassifyAndEvaluate() throws InvalidCodeException, InconsistentCodingException, UnknownDataException, UnclassifiedGoldStandardRecordException {
+
+        splitTrainingAndEvaluationRecords();
+        performTraining();
+        performClassification();
+
+        return evaluateClassification();
     }
 
     private void readInGoldStandardRecords() throws InputFileFormatException, IOException {
@@ -169,8 +178,7 @@ public abstract class AbstractClassificationProcess implements ClassificationPro
         Path path = Paths.get(args[TRAINING_DATA_FILE_ARG_POS]);
 
         try {
-            InputStream input_stream = Files.newInputStream(path);
-            return new InputStreamReader(input_stream);
+            return FileManipulation.getInputStreamReader(path);
 
         } catch (NoSuchFileException e) {
             throw new IOException("cannot open training file: " + path);
@@ -236,16 +244,7 @@ public abstract class AbstractClassificationProcess implements ClassificationPro
         return unclassified_bucket;
     }
 
-    private ClassificationMetrics trainClassifyAndEvaluate() throws InvalidCodeException, InconsistentCodingException, UnknownDataException, UnclassifiedGoldStandardRecordException {
-
-        splitTrainingAndEvaluationRecords();
-        performTraining();
-        performClassification();
-
-        return evaluateClassification();
-    }
-
-    private void summariseResults(List<ClassificationMetrics> results) throws IOException {
+    private DataSet getResultsAsDataSet(List<ClassificationMetrics> results) {
 
         // Need to wrap the list to make it mutable so that the first-column label can be added.
         DataSet data_set = new DataSet(new ArrayList<>(Arrays.asList("macro-precision", "macro-recall", "macro-accuracy", "macro-F1", "micro-precision", "micro-recall", "micro-accuracy", "micro-F1")));
@@ -262,15 +261,6 @@ public abstract class AbstractClassificationProcess implements ClassificationPro
                     String.valueOf(metrics.getMicroAverageF1())
             ));
         }
-
-        String table_caption = "Aggregate classifier performance (" + results.size() + " repetition" + (results.size() > 1 ? "s" : "") + ")";
-        String first_column_heading = "classifier";
-
-        TableGenerator table_generator = new TableGenerator(Collections.singletonList("exact-match"), Collections.singletonList(data_set), System.out, table_caption, first_column_heading, true, '\t');
-
-        if (info_level != InfoLevel.NONE) {
-
-            table_generator.printTable();
-        }
+        return data_set;
     }
 }

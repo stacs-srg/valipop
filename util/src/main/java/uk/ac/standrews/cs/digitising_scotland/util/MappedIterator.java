@@ -18,9 +18,6 @@ package uk.ac.standrews.cs.digitising_scotland.util;
 
 import java.util.Iterator;
 
-/**
- * Created by graham on 02/05/2014.
- */
 public class MappedIterator<T1, T2> implements Iterator<T2> {
 
     private final Iterator<T1> iterator;
