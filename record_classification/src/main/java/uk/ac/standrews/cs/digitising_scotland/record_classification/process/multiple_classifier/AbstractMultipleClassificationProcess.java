@@ -27,7 +27,7 @@ import java.util.List;
 
 public abstract class AbstractMultipleClassificationProcess {
 
-    public static InfoLevel info_level = InfoLevel.SUMMARY;
+    public static final InfoLevel INFO_LEVEL = InfoLevel.SUMMARY;
 
     abstract protected List<ClassificationProcess> getClassificationProcesses(String[] args) throws Exception;
 
@@ -55,7 +55,7 @@ public abstract class AbstractMultipleClassificationProcess {
 
         TableGenerator table_generator = new TableGenerator(row_labels, data_sets, System.out, table_caption, first_column_heading, true, '\t');
 
-        if (info_level != InfoLevel.NONE) {
+        if (INFO_LEVEL != InfoLevel.NONE) {
 
             table_generator.printTable();
         }

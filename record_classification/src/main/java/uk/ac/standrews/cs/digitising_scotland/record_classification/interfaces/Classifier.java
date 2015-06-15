@@ -23,6 +23,7 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Classi
  * Basic classifier interface.
  *
  * @author Graham Kirby
+ * @author Masih Hajiarabderkani
  */
 public interface Classifier {
 
@@ -34,10 +35,10 @@ public interface Classifier {
     void train(final Bucket bucket);
 
     /**
-     * Classifies a single data item or {@code null} if record cannot be classified.
+     * Classifies a single data item.
      *
      * @param data the data to be classified
-     * @return the resulting classification
+     * @return the resulting classification or {@code null} if the data cannot be classified
      */
     Classification classify(String data);
 

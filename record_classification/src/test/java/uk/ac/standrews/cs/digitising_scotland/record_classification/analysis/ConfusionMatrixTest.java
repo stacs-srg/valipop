@@ -30,7 +30,7 @@ public class ConfusionMatrixTest extends AbstractMetricsTest {
 
         initMatrix();
 
-        assertEquals(0, matrix.getTotalNumberOfClassifications());
+        assertEquals(0, matrix.getNumberOfClassifications());
     }
 
     @Test(expected = UnknownDataException.class)
@@ -66,7 +66,7 @@ public class ConfusionMatrixTest extends AbstractMetricsTest {
 
         initMatrix();
 
-        assertEquals(1, matrix.getTotalNumberOfClassifications());
+        assertEquals(1, matrix.getNumberOfClassifications());
     }
 
     @Test(expected = InconsistentCodingException.class)

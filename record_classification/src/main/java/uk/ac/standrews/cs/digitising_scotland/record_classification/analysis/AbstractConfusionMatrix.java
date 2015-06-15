@@ -24,7 +24,6 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.U
 import uk.ac.standrews.cs.digitising_scotland.record_classification.interfaces.ConfusionMatrix;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Classification;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Cleaner;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Record;
 
 import java.util.HashMap;
@@ -80,23 +79,7 @@ public abstract class AbstractConfusionMatrix implements ConfusionMatrix {
 
         consistent_coding_checker.clean(gold_standard_records);
 
-//        if (check_classification_consistency) {
-//            checkConsistentClassificationOfGoldStandardRecords();
-//        }
-
         calculateCounts();
-
-//        System.out.println("TPs:");
-//        System.out.println(true_positive_counts);
-//        System.out.println("TNs:");
-//        System.out.println(true_negative_counts);
-//
-//        System.out.println("FPs:");
-//        System.out.println(false_positive_counts);
-//        System.out.println("FNs:");
-//        System.out.println(false_negative_counts);
-
-
     }
 
     /**
@@ -139,7 +122,7 @@ public abstract class AbstractConfusionMatrix implements ConfusionMatrix {
     }
 
     @Override
-    public int getTotalNumberOfClassifications() {
+    public int getNumberOfClassifications() {
 
         int total = 0;
         for (Record record : classified_records) {
@@ -151,29 +134,28 @@ public abstract class AbstractConfusionMatrix implements ConfusionMatrix {
 
 
     @Override
-    public int getTruePositives() {
+    public int getNumberOfTruePositives() {
 
         return sum(true_positive_counts);
     }
 
     @Override
-    public int getFalsePositives() {
+    public int getNumberOfFalsePositives() {
 
         return sum(false_positive_counts);
     }
 
     @Override
-    public int getTrueNegatives() {
+    public int getNumberOfTrueNegatives() {
 
         return sum(true_negative_counts);
     }
 
     @Override
-    public int getFalseNegatives() {
+    public int getNumberOfFalseNegatives() {
 
         return sum(false_negative_counts);
     }
-
 
     @Override
     public int getNumberOfClasses() {
@@ -245,38 +227,6 @@ public abstract class AbstractConfusionMatrix implements ConfusionMatrix {
                 throw new InvalidCodeException();
             }
         }
-    }
-
-    Cleaner consistent_coding_cleaner = ConsistentCodingCleaner.CHECK;
-
-    /**
-     * Checks whether all data appearing in multiple records is classified the same in each.
-     *
-     * @throws InconsistentCodingException if it is not
-     */
-    private void checkConsistentClassificationOfGoldStandardRecords() throws Exception {
-
-        consistent_coding_cleaner.clean(gold_standard_records);
-
-//        Map<String, String> classifications = new HashMap<>();
-//
-//        for (Record record : gold_standard_records) {
-//
-//            String data = record.getData();
-//            Classification classification = record.getClassification();
-//
-//            if (classification != null) {
-//                String code = classification.getCode();
-//
-//                if (classifications.containsKey(data)) {
-//                    if (!code.equals(classifications.get(data))) {
-//                        throw new InconsistentCodingException("data: " + data + " classified as both " + code + " and " + classifications.get(data));
-//                    }
-//                } else {
-//                    classifications.put(data, code);
-//                }
-//            }
-//        }
     }
 
     /**
