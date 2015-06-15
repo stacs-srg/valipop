@@ -26,13 +26,8 @@ import java.util.Map;
 public interface ConfusionMatrix {
 
     /**
-     * Returns the total number of classifications.
-     * @return the total number
-     */
-    int getTotalNumberOfClassifications();
-
-    /**
      * Returns a map from classification class to the number of records classified as that class.
+     *
      * @return the map
      */
     Map<String, Integer> getClassificationCounts();
@@ -40,6 +35,7 @@ public interface ConfusionMatrix {
     /**
      * Returns a map from classification class to the number of true positives for that class.
      * That is, the number of records that were classified as that class, and really were of that class.
+     *
      * @return the map
      */
     Map<String, Integer> getTruePositiveCounts();
@@ -47,6 +43,7 @@ public interface ConfusionMatrix {
     /**
      * Returns a map from classification class to the number of false positives for that class.
      * That is, the number of records that were classified as that class, but were not of that class.
+     *
      * @return the map
      */
     Map<String, Integer> getFalsePositiveCounts();
@@ -54,6 +51,7 @@ public interface ConfusionMatrix {
     /**
      * Returns a map from classification class to the number of true negatives for that class.
      * That is, the number of records that were not classified as that class, and really were not of that class.
+     *
      * @return the map
      */
     Map<String, Integer> getTrueNegativeCounts();
@@ -61,17 +59,50 @@ public interface ConfusionMatrix {
     /**
      * Returns a map from classification class to the number of false negatives for that class.
      * That is, the number of records that were not classified as that class, but actually were of that class.
+     *
      * @return the map
      */
     Map<String, Integer> getFalseNegativeCounts();
 
-    int getTruePositives();
+    /**
+     * Returns the total number of classifications.
+     *
+     * @return the number of classifications
+     */
+    int getNumberOfClassifications();
 
-    int getFalsePositives();
-
-    int getTrueNegatives();
-
-    int getFalseNegatives();
-
+    /**
+     * Returns the total number of classes present in the classified data.
+     *
+     * @return the number of classifications
+     */
     int getNumberOfClasses();
+
+    /**
+     * Returns the total number of true positives.
+     *
+     * @return the number of true positives
+     */
+    int getNumberOfTruePositives();
+
+    /**
+     * Returns the total number of false positives.
+     *
+     * @return the number of false positives
+     */
+    int getNumberOfFalsePositives();
+
+    /**
+     * Returns the total number of true negatives.
+     *
+     * @return the number of true negatives
+     */
+    int getNumberOfTrueNegatives();
+
+    /**
+     * Returns the total number of false negatives.
+     *
+     * @return the number of false negatives
+     */
+    int getNumberOfFalseNegatives();
 }

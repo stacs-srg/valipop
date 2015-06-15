@@ -24,7 +24,10 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.interfaces.C
 import uk.ac.standrews.cs.digitising_scotland.record_classification.interfaces.ClassificationProcess;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.interfaces.Classifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.interfaces.ConfusionMatrix;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Cleaner;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.InfoLevel;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Record;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.multiple_classifier.AbstractMultipleClassificationProcess;
 import uk.ac.standrews.cs.digitising_scotland.util.FileManipulation;
 import uk.ac.standrews.cs.util.dataset.DataSet;
@@ -37,51 +40,47 @@ import java.nio.file.Paths;
 import java.text.NumberFormat;
 import java.util.*;
 
+/**
+ * Defines the classifier-independent parts of a process using a single classifier.
+ *
+ * @author Graham Kirby
+ */
 public abstract class AbstractClassificationProcess implements ClassificationProcess {
 
     private static final int TRAINING_DATA_FILE_ARG_POS = 0;
     private static final int TRAINING_RATIO_ARG_POS = 1;
     private static final int NUMBER_OF_REPETITIONS_ARG_POS = 2;
 
-    private double training_ratio;
-    private Cleaner cleaner;
+    private final double training_ratio;
+    private final Cleaner cleaner;
+    private final Bucket all_records;
+    private final List<ClassificationProcessState> classification_process_states;
 
     private int classification_run_counter = 1;
-    private InfoLevel info_level = AbstractMultipleClassificationProcess.info_level;
+    private InfoLevel info_level = AbstractMultipleClassificationProcess.INFO_LEVEL;
 
-    private final Bucket all_records;
-
-    private List<ClassificationProcessState> classification_process_states;
-
-    AbstractClassificationProcess(InputStreamReader gold_standard_data_reader, double training_ratio, int number_of_repetitions) throws Exception {
-
-        cleaner = getCleaner();
-
-        all_records = readInGoldStandardRecords(gold_standard_data_reader);
+    AbstractClassificationProcess(final InputStreamReader gold_standard_data_reader, final double training_ratio, final int number_of_repetitions) throws Exception {
 
         this.training_ratio = training_ratio;
 
-        classification_process_states = new ArrayList<>();
-
-        for (int i = 0; i < number_of_repetitions; i++) {
-            classification_process_states.add(new ClassificationProcessState());
-        }
+        cleaner = getCleaner();
+        all_records = readInGoldStandardRecords(gold_standard_data_reader);
+        classification_process_states = initClassificationProcessStates(number_of_repetitions);
     }
 
-    AbstractClassificationProcess(String[] args) throws Exception {
+    AbstractClassificationProcess(final String[] args) throws Exception {
 
         this(getTrainingDataFileFromArgs(args), getTrainingRatioFromArgs(args), getNumberOfRepetitionsFromArgs(args));
     }
 
     protected abstract Classifier getClassifier();
+
     protected abstract Cleaner getCleaner();
 
-    public void setInfoLevel(InfoLevel info_level) {
+    public void setInfoLevel(final InfoLevel info_level) {
 
         this.info_level = info_level;
     }
-
-    // Methods dealing with the overall process involving repeated runs.
 
     public DataSet trainClassifyAndEvaluate() throws Exception {
 
@@ -96,21 +95,7 @@ public abstract class AbstractClassificationProcess implements ClassificationPro
         return getResultsAsDataSet(results);
     }
 
-    // Methods dealing with a particular classification run.
-
-    public void performTraining(ClassificationProcessState state) {
-
-        state.classifier = getClassifier();
-
-        state.classifier.train(state.training_records);
-    }
-
-    public void performClassification(ClassificationProcessState state) {
-
-        state.classified_evaluation_records = state.classifier.classify(state.evaluation_records);
-    }
-
-    public List<ConfusionMatrix> getConfusionMatrices() throws Exception {
+    public List<ConfusionMatrix> getConfusionMatrices() {
 
         List<ConfusionMatrix> matrices = new ArrayList<>();
 
@@ -121,7 +106,7 @@ public abstract class AbstractClassificationProcess implements ClassificationPro
         return matrices;
     }
 
-    public List<ClassificationMetrics> getClassificationMetrics() throws Exception {
+    public List<ClassificationMetrics> getClassificationMetrics() {
 
         List<ClassificationMetrics> metrics = new ArrayList<>();
 
@@ -132,23 +117,7 @@ public abstract class AbstractClassificationProcess implements ClassificationPro
         return metrics;
     }
 
-    private void calculateClassificationMetrics(ClassificationProcessState state) throws Exception {
-
-        state.metrics = new ConcreteClassificationMetrics(state.confusion_matrix);
-    }
-
-    private void calculateConfusionMatrix(ClassificationProcessState state) throws Exception {
-
-        state.confusion_matrix = new StrictConfusionMatrix(state.classified_evaluation_records, all_records, ConsistentCodingCleaner.CHECK);
-    }
-
-    private Bucket readInGoldStandardRecords(InputStreamReader gold_standard_data_reader) throws Exception {
-
-        Bucket records = new Bucket(gold_standard_data_reader);
-        return cleaner.clean(records);
-    }
-
-    private void trainClassifyAndEvaluate(ClassificationProcessState state) throws Exception {
+    private void trainClassifyAndEvaluate(final ClassificationProcessState state) throws Exception {
 
         splitTrainingAndEvaluationRecords(state);
         performTraining(state);
@@ -160,7 +129,7 @@ public abstract class AbstractClassificationProcess implements ClassificationPro
         printInfo(state, info_level);
     }
 
-    private void splitTrainingAndEvaluationRecords(ClassificationProcessState state) {
+    private void splitTrainingAndEvaluationRecords(final ClassificationProcessState state) {
 
         state.training_records = extractRandomSubset(all_records, training_ratio);
 
@@ -170,7 +139,33 @@ public abstract class AbstractClassificationProcess implements ClassificationPro
         state.evaluation_records = getUnique(state.stripped_records);
     }
 
-    private static Set<String> extractStrings(Bucket bucket) {
+    private void performTraining(final ClassificationProcessState state) {
+
+        state.classifier = getClassifier();
+        state.classifier.train(state.training_records);
+    }
+
+    private void performClassification(final ClassificationProcessState state) {
+
+        state.classified_evaluation_records = state.classifier.classify(state.evaluation_records);
+    }
+
+    private void calculateConfusionMatrix(final ClassificationProcessState state) throws Exception {
+
+        state.confusion_matrix = new StrictConfusionMatrix(state.classified_evaluation_records, all_records, ConsistentCodingCleaner.CHECK);
+    }
+
+    private void calculateClassificationMetrics(final ClassificationProcessState state) throws Exception {
+
+        state.metrics = new ConcreteClassificationMetrics(state.confusion_matrix);
+    }
+
+    private Bucket readInGoldStandardRecords(final InputStreamReader gold_standard_data_reader) throws Exception {
+
+        return cleaner.clean(new Bucket(gold_standard_data_reader));
+    }
+
+    private static Set<String> extractStrings(final Bucket bucket) {
 
         Set<String> strings = new HashSet<>();
         for (Record record : bucket) {
@@ -228,7 +223,7 @@ public abstract class AbstractClassificationProcess implements ClassificationPro
         String number_of_repetitions_arg = args[NUMBER_OF_REPETITIONS_ARG_POS];
 
         try {
-            int number_of_repetitions = Integer.valueOf(number_of_repetitions_arg);
+            int number_of_repetitions = Integer.parseInt(number_of_repetitions_arg);
             if (number_of_repetitions > 0) {
                 return number_of_repetitions;
             }
@@ -237,6 +232,16 @@ public abstract class AbstractClassificationProcess implements ClassificationPro
         } catch (NumberFormatException e) {
             throw new InvalidArgException("invalid number of repetitions: " + number_of_repetitions_arg);
         }
+    }
+
+    private static List<ClassificationProcessState> initClassificationProcessStates(final int number_of_repetitions) {
+
+        List<ClassificationProcessState> states = new ArrayList<>();
+
+        for (int i = 0; i < number_of_repetitions; i++) {
+            states.add(new ClassificationProcessState());
+        }
+        return states;
     }
 
     private static Bucket extractRandomSubset(final Bucket bucket, final double selection_probability) {
@@ -276,7 +281,7 @@ public abstract class AbstractClassificationProcess implements ClassificationPro
         return unclassified_bucket;
     }
 
-    private static Bucket getUnique(Bucket bucket) {
+    private static Bucket getUnique(final Bucket bucket) {
 
         Map<String, Record> unique_records = new HashMap<>();
 
@@ -293,7 +298,7 @@ public abstract class AbstractClassificationProcess implements ClassificationPro
         return unique_bucket;
     }
 
-    private static DataSet getResultsAsDataSet(List<ClassificationMetrics> results) {
+    private static DataSet getResultsAsDataSet(final List<ClassificationMetrics> results) {
 
         // Need to wrap the list to make it mutable so that the first-column label can be added.
         DataSet data_set = new DataSet(new ArrayList<>(Arrays.asList("macro-precision", "macro-recall", "macro-accuracy", "macro-F1", "micro-precision", "micro-recall", "micro-accuracy", "micro-F1")));
@@ -313,26 +318,27 @@ public abstract class AbstractClassificationProcess implements ClassificationPro
         return data_set;
     }
 
-    private void printInfo(ClassificationProcessState state, InfoLevel info_level) {
+    private void printInfo(final ClassificationProcessState state, final InfoLevel info_level) {
 
         if (info_level != InfoLevel.NONE) {
 
             Set<String> unique_training = extractStrings(getUnique(state.training_records));
             Set<String> unique_evaluation = extractStrings(state.evaluation_records);
 
-            int count = 0;
-            for (String evaluation_string : unique_evaluation) {
-                if (!unique_training.contains(evaluation_string)) count++;
-            }
+            final int count = countEvaluationStringsNotInTrainingSet(unique_training, unique_evaluation);
 
             System.out.println("\n-----------------------------");
 
-            System.out.println("classification run " + classification_run_counter++ + "\n");
+            System.out.format("classification run %s%n%n", classification_run_counter++);
 
+            System.out.format("total records              : %s%n", format(all_records.size()));
 
-            System.out.println("total records              : " + format(all_records.size()));
-            System.out.println("records used for training  : " + format(state.training_records.size()) + " (" + format(unique_training.size()) + " unique)");
-            System.out.println("records used for evaluation: " + format(state.stripped_records.size()) + " (" + format(unique_evaluation.size()) + " unique, " + format(count) + " not in training set)");
+            System.out.format("records used for training  : %s (%s unique)%n",
+                    format(state.training_records.size()), format(unique_training.size()));
+
+            System.out.format("records used for evaluation: %s (%s unique, %s not in training set)%n",
+                    format(state.stripped_records.size()), format(unique_evaluation.size()), format(count));
+
             System.out.println();
 
             state.metrics.printMetrics(info_level);
@@ -341,12 +347,21 @@ public abstract class AbstractClassificationProcess implements ClassificationPro
         }
     }
 
-    private String format(int i) {
+    private static int countEvaluationStringsNotInTrainingSet(final Set<String> unique_training, final Set<String> unique_evaluation) {
+
+        int count = 0;
+        for (String evaluation_string : unique_evaluation) {
+            if (!unique_training.contains(evaluation_string)) count++;
+        }
+        return count;
+    }
+
+    private static String format(final int i) {
 
         return NumberFormat.getIntegerInstance().format(i);
     }
 
-    private class ClassificationProcessState {
+    private static class ClassificationProcessState {
 
         Bucket stripped_records;
         Bucket training_records;

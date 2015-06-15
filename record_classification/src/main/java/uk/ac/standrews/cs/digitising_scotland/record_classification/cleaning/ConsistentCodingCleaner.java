@@ -22,7 +22,10 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Classi
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Cleaner;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Record;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 public enum ConsistentCodingCleaner implements Cleaner {
 
@@ -118,11 +121,12 @@ public enum ConsistentCodingCleaner implements Cleaner {
         String most_popular = "";
         int highest_count = 0;
 
-        for (String code : details.keySet()) {
-            int count = details.get(code);
+        for (Map.Entry<String,Integer> entry : details.entrySet()) {
+
+            int count = entry.getValue();
             if (count > highest_count) {
                 highest_count = count;
-                most_popular = code;
+                most_popular = entry.getKey();
             }
         }
 

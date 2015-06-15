@@ -62,7 +62,7 @@ public class ExactMatchClassifierTest extends AbstractClassificationTest {
 
         // Exact match never makes an incorrect classification decision.
         for (ConfusionMatrix matrix : matrices) {
-            assertEquals(0, matrix.getFalsePositives());
+            assertEquals(0, matrix.getNumberOfFalsePositives());
         }
     }
 
@@ -71,7 +71,7 @@ public class ExactMatchClassifierTest extends AbstractClassificationTest {
 
         // Every class but one accumulates a true negative on each classification.
         for (ConfusionMatrix matrix : matrices) {
-            assertEquals((matrix.getNumberOfClasses() - 1) * matrix.getTotalNumberOfClassifications(), matrix.getTrueNegatives());
+            assertEquals((matrix.getNumberOfClasses() - 1) * matrix.getNumberOfClassifications(), matrix.getNumberOfTrueNegatives());
         }
     }
 
@@ -80,7 +80,7 @@ public class ExactMatchClassifierTest extends AbstractClassificationTest {
 
         // Every decision by exact match must be correct (true positive) or absent (false negative).
         for (ConfusionMatrix matrix : matrices) {
-            assertEquals(matrix.getTotalNumberOfClassifications(), matrix.getTruePositives() + matrix.getFalseNegatives());
+            assertEquals(matrix.getNumberOfClassifications(), matrix.getNumberOfTruePositives() + matrix.getNumberOfFalseNegatives());
         }
     }
 }
