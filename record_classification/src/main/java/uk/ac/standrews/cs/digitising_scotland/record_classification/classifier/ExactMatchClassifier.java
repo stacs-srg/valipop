@@ -25,7 +25,7 @@ import java.util.Map;
 
 public class ExactMatchClassifier extends AbstractClassifier {
 
-    private final Map<String, Classification> known_classifications;
+    protected final Map<String, Classification> known_classifications;
 
     public ExactMatchClassifier() {
 
