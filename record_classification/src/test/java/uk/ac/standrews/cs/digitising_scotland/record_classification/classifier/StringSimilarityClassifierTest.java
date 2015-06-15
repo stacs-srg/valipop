@@ -19,16 +19,19 @@ import static org.junit.Assert.*;
 public class StringSimilarityClassifierTest {
 
 
-    StringSimilarityClassifier classifier = new StringSimilarityClassifier(new CarsonSimilarity<>());
-    public static final String RECORD_DATA = "record";
-    public static final String SIMILAR_RECORD_DATA = "recrod";
-    public static final String DISSIMILAR_RECORD_DATA = "fish";
-    public static final Record RECORD = new Record(1, RECORD_DATA, new Classification("media", new TokenSet(), 1.0));
-    public static final Bucket TRAINING_RECORDS = new Bucket();
+    private static final String RECORD_DATA = "record";
+    private static final String SIMILAR_RECORD_DATA = "recrod";
+    private static final String DISSIMILAR_RECORD_DATA = "fish";
+    private static final Record TRAINING_RECORD = new Record(1, RECORD_DATA, new Classification("media", new TokenSet(), 1.0));
+    
+    private Bucket training_records;
+    private StringSimilarityClassifier classifier;
 
     @Before
     public void setUp() throws Exception {
-        TRAINING_RECORDS.add(RECORD);
+        classifier = new StringSimilarityClassifier(new CarsonSimilarity<>());
+        training_records = new Bucket();
+        training_records.add(TRAINING_RECORD);
     }
 
     @After
@@ -45,7 +48,7 @@ public class StringSimilarityClassifierTest {
     public void testTrain() throws Exception {
 
         assertNull(classifier.classify(RECORD_DATA));
-        classifier.train(TRAINING_RECORDS);
+        classifier.train(training_records);
         assertNotNull(classifier.classify(RECORD_DATA));
     }
 
@@ -53,7 +56,7 @@ public class StringSimilarityClassifierTest {
     public void testClassify() throws Exception {
         assertNull(classifier.classify(RECORD_DATA));
         assertNull(classifier.classify(SIMILAR_RECORD_DATA));
-        classifier.train(TRAINING_RECORDS);
+        classifier.train(training_records);
         assertNotNull(classifier.classify(SIMILAR_RECORD_DATA));
         assertNull(classifier.classify(DISSIMILAR_RECORD_DATA));
         
