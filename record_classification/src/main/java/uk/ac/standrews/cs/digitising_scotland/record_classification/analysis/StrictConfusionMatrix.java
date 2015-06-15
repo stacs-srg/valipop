@@ -17,10 +17,7 @@
 package uk.ac.standrews.cs.digitising_scotland.record_classification.analysis;
 
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.InconsistentCodingException;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.InvalidCodeException;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.UnclassifiedGoldStandardRecordException;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.UnknownDataException;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.ConsistentCodingCleaner;
 
 /**
  * Confusion matrix using exact matching on codes.
@@ -30,9 +27,9 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.U
  */
 public class StrictConfusionMatrix extends AbstractConfusionMatrix {
 
-    public StrictConfusionMatrix(final Bucket classified_records, final Bucket gold_standard_records, boolean check_classification_consistency) throws InvalidCodeException, InconsistentCodingException, UnknownDataException, UnclassifiedGoldStandardRecordException {
+    public StrictConfusionMatrix(final Bucket classified_records, final Bucket gold_standard_records, ConsistentCodingCleaner consistent_coding_checker) throws Exception {
 
-        super(classified_records, gold_standard_records, check_classification_consistency);
+        super(classified_records, gold_standard_records, consistent_coding_checker);
     }
 
     @Override

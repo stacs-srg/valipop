@@ -38,6 +38,12 @@ public class ConcreteClassificationMetrics implements ClassificationMetrics {
     @Override
     public void printMetrics(InfoLevel info_level) {
 
+        printMetric("total TPs", getSumOfTruePositives());
+        printMetric("total FPs", getSumOfFalsePositives());
+        printMetric("total TNs", getSumOfTrueNegatives());
+        printMetric("total FNs", getSumOfFalseNegatives());
+
+
         if (info_level == InfoLevel.VERBOSE) {
             printMetrics("precision", getPerClassPrecision());
             printMetrics("recall", getPerClassRecall());

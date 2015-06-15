@@ -26,7 +26,7 @@ import static org.junit.Assert.assertEquals;
 public class ConfusionMatrixTest extends AbstractMetricsTest {
 
     @Test
-    public void emptyBucketsYieldNoClassifications() throws InvalidCodeException, InconsistentCodingException, UnknownDataException, UnclassifiedGoldStandardRecordException {
+    public void emptyBucketsYieldNoClassifications() throws Exception {
 
         initMatrix();
 
@@ -34,7 +34,7 @@ public class ConfusionMatrixTest extends AbstractMetricsTest {
     }
 
     @Test(expected = UnknownDataException.class)
-    public void classificationWithNoGoldStandardThrowsException() throws InvalidCodeException, InconsistentCodingException, UnknownDataException, UnclassifiedGoldStandardRecordException {
+    public void classificationWithNoGoldStandardThrowsException() throws Exception {
 
         classified_records.add(haddock_correct);
 
@@ -42,7 +42,7 @@ public class ConfusionMatrixTest extends AbstractMetricsTest {
     }
 
     @Test(expected = UnclassifiedGoldStandardRecordException.class)
-    public void unclassifiedGoldStandardRecordThrowsException() throws InvalidCodeException, InconsistentCodingException, UnknownDataException, UnclassifiedGoldStandardRecordException {
+    public void unclassifiedGoldStandardRecordThrowsException() throws Exception {
 
         gold_standard_records.add(unicorn_unclassified);
 
@@ -50,7 +50,7 @@ public class ConfusionMatrixTest extends AbstractMetricsTest {
     }
 
     @Test(expected = InvalidCodeException.class)
-    public void classificationToCodeNotInGoldStandardThrowsException() throws InvalidCodeException, InconsistentCodingException, UnknownDataException, UnclassifiedGoldStandardRecordException {
+    public void classificationToCodeNotInGoldStandardThrowsException() throws Exception {
 
         classified_records.add(haddock_incorrect);
         gold_standard_records.add(haddock_gold_standard);
@@ -59,7 +59,7 @@ public class ConfusionMatrixTest extends AbstractMetricsTest {
     }
 
     @Test
-    public void singleClassificationCountedCorrectly() throws InvalidCodeException, InconsistentCodingException, UnknownDataException, UnclassifiedGoldStandardRecordException {
+    public void singleClassificationCountedCorrectly() throws Exception {
 
         classified_records.add(haddock_correct);
         gold_standard_records.add(haddock_gold_standard);
@@ -70,7 +70,7 @@ public class ConfusionMatrixTest extends AbstractMetricsTest {
     }
 
     @Test(expected = InconsistentCodingException.class)
-    public void inconsistentCodingThrowsException() throws InconsistentCodingException, InvalidCodeException, UnknownDataException, UnclassifiedGoldStandardRecordException {
+    public void inconsistentCodingThrowsException() throws Exception {
 
         classified_records.add(haddock_correct, haddock_incorrect);
         gold_standard_records.add(haddock_correct, haddock_incorrect);
@@ -79,7 +79,7 @@ public class ConfusionMatrixTest extends AbstractMetricsTest {
     }
 
     @Test(expected = UnknownDataException.class)
-    public void unknownClassificationThrowsException() throws UnknownDataException, InvalidCodeException, InconsistentCodingException, UnclassifiedGoldStandardRecordException {
+    public void unknownClassificationThrowsException() throws Exception {
 
         classified_records.add(haddock_correct, osprey_incorrect);
         gold_standard_records.add(haddock_gold_standard, cow_gold_standard);
@@ -88,7 +88,7 @@ public class ConfusionMatrixTest extends AbstractMetricsTest {
     }
 
     @Test
-    public void perCodeClassificationsCountedCorrectly() throws InvalidCodeException, InconsistentCodingException, UnknownDataException, UnclassifiedGoldStandardRecordException, InputFileFormatException {
+    public void perCodeClassificationsCountedCorrectly() throws Exception {
 
         initFullRecords();
         initMatrix();
@@ -104,7 +104,7 @@ public class ConfusionMatrixTest extends AbstractMetricsTest {
     }
 
     @Test
-    public void truePositivesCountedCorrectly() throws InvalidCodeException, InconsistentCodingException, UnknownDataException, UnclassifiedGoldStandardRecordException, InputFileFormatException {
+    public void truePositivesCountedCorrectly() throws Exception {
 
         initFullRecords();
         initMatrix();
@@ -120,7 +120,7 @@ public class ConfusionMatrixTest extends AbstractMetricsTest {
     }
 
     @Test
-    public void trueNegativesCountedCorrectly() throws InvalidCodeException, InconsistentCodingException, UnknownDataException, UnclassifiedGoldStandardRecordException, InputFileFormatException {
+    public void trueNegativesCountedCorrectly() throws Exception {
 
         initFullRecords();
         initMatrix();
@@ -129,14 +129,14 @@ public class ConfusionMatrixTest extends AbstractMetricsTest {
 
         assertEquals(getNumberOfCodes(), true_negative_counts.size());
 
-        assertEquals(4, (int) true_negative_counts.get("fish"));
-        assertEquals(3, (int) true_negative_counts.get("mammal"));
-        assertEquals(3, (int) true_negative_counts.get("bird"));
+        assertEquals(5, (int) true_negative_counts.get("fish"));
+        assertEquals(4, (int) true_negative_counts.get("mammal"));
+        assertEquals(4, (int) true_negative_counts.get("bird"));
         assertEquals(6, (int) true_negative_counts.get("mythical"));
     }
 
     @Test
-    public void falsePositivesCountedCorrectly() throws InvalidCodeException, InconsistentCodingException, UnknownDataException, UnclassifiedGoldStandardRecordException, InputFileFormatException {
+    public void falsePositivesCountedCorrectly() throws Exception {
 
         initFullRecords();
         initMatrix();
@@ -152,7 +152,7 @@ public class ConfusionMatrixTest extends AbstractMetricsTest {
     }
 
     @Test
-    public void falseNegativesCountedCorrectly() throws InvalidCodeException, InconsistentCodingException, UnknownDataException, UnclassifiedGoldStandardRecordException, InputFileFormatException {
+    public void falseNegativesCountedCorrectly() throws Exception {
 
         initFullRecords();
         initMatrix();
@@ -164,6 +164,6 @@ public class ConfusionMatrixTest extends AbstractMetricsTest {
         assertEquals(0, (int) false_negative_counts.get("fish"));
         assertEquals(1, (int) false_negative_counts.get("mammal"));
         assertEquals(1, (int) false_negative_counts.get("bird"));
-        assertEquals(0, (int) false_negative_counts.get("mythical"));
+        assertEquals(1, (int) false_negative_counts.get("mythical"));
     }
 }

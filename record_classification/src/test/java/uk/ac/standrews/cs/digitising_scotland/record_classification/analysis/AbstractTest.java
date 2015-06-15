@@ -30,7 +30,7 @@ public class AbstractTest {
     public static final String PACKAGE_ROOT = "uk.ac.standrews.cs.digitising_scotland";
 
     @Before
-    public void setup() {
+    public void setup() throws Exception {
         Logger logger = (Logger) LoggerFactory.getLogger(PACKAGE_ROOT);
         logger.setLevel(Level.INFO);
     }

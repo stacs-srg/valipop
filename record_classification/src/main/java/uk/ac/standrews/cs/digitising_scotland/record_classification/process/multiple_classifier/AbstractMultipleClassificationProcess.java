@@ -16,10 +16,8 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.process.multiple_classifier;
 
-import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.interfaces.ClassificationProcess;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.InfoLevel;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.single_classifier.AbstractClassificationProcess;
 import uk.ac.standrews.cs.util.dataset.DataSet;
 import uk.ac.standrews.cs.util.tables.TableGenerator;
 
@@ -31,7 +29,7 @@ public abstract class AbstractMultipleClassificationProcess {
 
     private InfoLevel info_level = InfoLevel.SUMMARY;
 
-    protected void process(String[] args) throws IOException, InvalidArgException, UnclassifiedGoldStandardRecordException, InputFileFormatException, UnknownDataException, InvalidCodeException, InconsistentCodingException {
+    protected void process(String[] args) throws Exception {
 
         List<ClassificationProcess> processes = getClassificationProcesses(args);
 
@@ -41,13 +39,13 @@ public abstract class AbstractMultipleClassificationProcess {
         for (ClassificationProcess process : processes) {
 
             row_labels.add(process.getClassifierDescription());
-            result_sets.add(process.trainClassifyAndEvaluate(AbstractClassificationProcess.NUMBER_OF_REPETITIONS));
+            result_sets.add(process.trainClassifyAndEvaluate());
         }
 
         summariseResults(row_labels, result_sets);
     }
 
-    abstract protected List<ClassificationProcess> getClassificationProcesses(String[] args) throws IOException, InvalidArgException;
+    abstract protected List<ClassificationProcess> getClassificationProcesses(String[] args) throws Exception;
 
     private void summariseResults(List<String> row_labels, List<DataSet> data_sets) throws IOException {
 

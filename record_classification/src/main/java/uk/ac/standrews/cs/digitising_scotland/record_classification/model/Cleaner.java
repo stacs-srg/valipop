@@ -14,13 +14,11 @@
  * You should have received a copy of the GNU General Public License along with record_classification. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.digitising_scotland.record_classification.process;
+package uk.ac.standrews.cs.digitising_scotland.record_classification.model;
 
+public interface Cleaner {
 
-import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.AbstractMetricsTest;
+    // TODO probably nicer to split into Cleaner and Checker interfaces, where the first changes stuff and the second just checks.
 
-public class AbstractClassificationTest extends AbstractMetricsTest {
-
-    public static final String GOLD_STANDARD_DATA_FILE_NAME = "gold_standard_small.csv";
-
+    Bucket clean(Bucket bucket) throws Exception;
 }

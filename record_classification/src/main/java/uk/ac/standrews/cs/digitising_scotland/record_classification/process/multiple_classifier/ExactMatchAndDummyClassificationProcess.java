@@ -16,12 +16,10 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.process.multiple_classifier;
 
-import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.InvalidArgException;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.interfaces.ClassificationProcess;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.single_classifier.ExactMatchClassificationProcess;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.single_classifier.DummyClassificationProcess;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.single_classifier.ExactMatchClassificationProcess;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -39,7 +37,7 @@ public class ExactMatchAndDummyClassificationProcess extends AbstractMultipleCla
         }
     }
 
-    protected List<ClassificationProcess> getClassificationProcesses(String[] args) throws IOException, InvalidArgException {
+    protected List<ClassificationProcess> getClassificationProcesses(String[] args) throws Exception {
 
         ClassificationProcess process1 = new ExactMatchClassificationProcess(args);
         ClassificationProcess process2 = new DummyClassificationProcess(args);

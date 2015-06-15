@@ -17,15 +17,13 @@
 package uk.ac.standrews.cs.digitising_scotland.record_classification.process.single_classifier;
 
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.DummyClassifier;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.InvalidArgException;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.ConsistentCodingCleaner;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.interfaces.Classifier;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.single_classifier.AbstractClassificationProcess;
-
-import java.io.IOException;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Cleaner;
 
 public class DummyClassificationProcess extends AbstractClassificationProcess {
 
-    public DummyClassificationProcess(String[] args) throws IOException, InvalidArgException {
+    public DummyClassificationProcess(String[] args) throws Exception {
 
         super(args);
     }
@@ -40,5 +38,11 @@ public class DummyClassificationProcess extends AbstractClassificationProcess {
     public String getClassifierDescription() {
 
         return "dummy";
+    }
+
+    @Override
+    public Cleaner getCleaner() {
+
+        return ConsistentCodingCleaner.NONE;
     }
 }
