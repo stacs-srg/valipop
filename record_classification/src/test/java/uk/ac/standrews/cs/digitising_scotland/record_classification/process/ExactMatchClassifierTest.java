@@ -21,6 +21,7 @@ import org.junit.Test;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.interfaces.ClassificationMetrics;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.interfaces.ClassificationProcess;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.interfaces.ConfusionMatrix;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.InfoLevel;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.single_classifier.ExactMatchClassificationProcess;
 
 import java.io.InputStreamReader;
@@ -39,6 +40,7 @@ public class ExactMatchClassifierTest extends AbstractClassificationTest {
         InputStreamReader occupation_data_path = getInputStreamReaderForResource(AbstractClassificationTest.class, GOLD_STANDARD_DATA_FILE_NAME);
 
         ClassificationProcess classification_process = new ExactMatchClassificationProcess(occupation_data_path, 0.8, 1);
+        classification_process.setInfoLevel(InfoLevel.NONE);
         classification_process.trainClassifyAndEvaluate();
 
         metrics = classification_process.getClassificationMetrics();

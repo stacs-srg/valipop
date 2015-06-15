@@ -22,7 +22,10 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.I
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.UnclassifiedGoldStandardRecordException;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.UnknownDataException;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.interfaces.ConfusionMatrix;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Classification;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Cleaner;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Record;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -50,10 +53,9 @@ public abstract class AbstractConfusionMatrix implements ConfusionMatrix {
     /**
      * Creates a confusion matrix representing the effectiveness of a classification process.
      *
-     * @param classified_records the records that have been classified
-     * @param gold_standard_records the gold standard records against which the classified records should be checked
+     * @param classified_records        the records that have been classified
+     * @param gold_standard_records     the gold standard records against which the classified records should be checked
      * @param consistent_coding_checker checker for consistent coding
-     *
      * @throws InvalidCodeException                    if a code in the classified records does not appear in the gold standard records
      * @throws UnknownDataException                    if a record in the classified records contains data that does not appear in the gold standard records
      * @throws InconsistentCodingException             if there exist multiple gold standard records containing the same data and different classifications
@@ -95,14 +97,13 @@ public abstract class AbstractConfusionMatrix implements ConfusionMatrix {
 //        System.out.println(false_negative_counts);
 
 
-
     }
 
     /**
      * Checks whether a classification result is considered to be correct.
      *
      * @param asserted_code the code asserted by the classifier
-     * @param real_code the real code as defined in the gold standard records
+     * @param real_code     the real code as defined in the gold standard records
      * @return true if the asserted code is considered to be correct
      */
     protected abstract boolean classificationsMatch(String asserted_code, String real_code);
@@ -174,7 +175,6 @@ public abstract class AbstractConfusionMatrix implements ConfusionMatrix {
     }
 
 
-
     @Override
     public int getNumberOfClasses() {
         return getClassificationCounts().size();
@@ -182,24 +182,27 @@ public abstract class AbstractConfusionMatrix implements ConfusionMatrix {
 
     private int sum(Map<String, Integer> counts) {
 
-        int sum =0;
-        for (int i : counts.values()) sum+= i;
+        int sum = 0;
+        for (int i : counts.values()) sum += i;
         return sum;
     }
 
     /**
      * Checks whether all records in the gold standard records are classified.
+     *
      * @throws UnclassifiedGoldStandardRecordException if they are not
      */
     private void checkGoldStandardDataIsClassified() throws UnclassifiedGoldStandardRecordException {
 
         for (Record record : gold_standard_records) {
-            if (record.getClassification().equals(Classification.UNCLASSIFIED)) throw new UnclassifiedGoldStandardRecordException();
+            if (record.getClassification().equals(Classification.UNCLASSIFIED))
+                throw new UnclassifiedGoldStandardRecordException();
         }
     }
 
     /**
      * Checks whether all data in the classified records appears in the gold standard records.
+     *
      * @throws UnknownDataException if it does not
      */
     private void checkClassifiedDataIsInGoldStandard() throws UnknownDataException {
@@ -214,12 +217,14 @@ public abstract class AbstractConfusionMatrix implements ConfusionMatrix {
         for (Record record : classified_records) {
 
             String data = record.getData();
-            if (!known_data.contains(data)) throw new UnknownDataException("data: " + data + " is not in the gold standard data");
+            if (!known_data.contains(data))
+                throw new UnknownDataException("data: " + data + " is not in the gold standard data");
         }
     }
 
     /**
      * Checks whether all codes in the classified records appears in the gold standard records.
+     *
      * @throws InvalidCodeException if they do not
      */
     private void checkClassifiedToValidCodes() throws InvalidCodeException {
@@ -246,6 +251,7 @@ public abstract class AbstractConfusionMatrix implements ConfusionMatrix {
 
     /**
      * Checks whether all data appearing in multiple records is classified the same in each.
+     *
      * @throws InconsistentCodingException if it is not
      */
     private void checkConsistentClassificationOfGoldStandardRecords() throws Exception {
@@ -309,34 +315,29 @@ public abstract class AbstractConfusionMatrix implements ConfusionMatrix {
 
         Classification classification = record.getClassification();
 
-//        if (classification != Classification.UNCLASSIFIED) {
-
-            String asserted_code = classification.getCode();
-            String real_code = findGoldStandardCode(record.getData());
+        String asserted_code = classification.getCode();
+        String real_code = findGoldStandardCode(record.getData());
 
         if (classification != Classification.UNCLASSIFIED) incrementCount(asserted_code, classification_counts);
 
-            for (String this_code : classification_counts.keySet()) {
+        for (String this_code : classification_counts.keySet()) {
 
-                if (truePositive(this_code, asserted_code, real_code)) {
-//                    System.out.println("TP for " + record.getData() + ": " + this_code + ", " + real_code + ", " + asserted_code);
-                    incrementCount(this_code, true_positive_counts);
-                }
-
-                if (trueNegative(this_code, asserted_code, real_code)) {
-                    incrementCount(this_code, true_negative_counts);
-                }
-
-                if (falsePositive(this_code, asserted_code, real_code)) {
-                    System.out.println("FP for " + record.getData() + ": " + this_code + ", " + real_code + ", " + asserted_code);
-                    incrementCount(this_code, false_positive_counts);
-                }
-
-                if (falseNegative(this_code, asserted_code, real_code)) {
-                    incrementCount(this_code, false_negative_counts);
-                }
+            if (truePositive(this_code, asserted_code, real_code)) {
+                incrementCount(this_code, true_positive_counts);
             }
-//        }
+
+            if (trueNegative(this_code, asserted_code, real_code)) {
+                incrementCount(this_code, true_negative_counts);
+            }
+
+            if (falsePositive(this_code, asserted_code, real_code)) {
+                incrementCount(this_code, false_positive_counts);
+            }
+
+            if (falseNegative(this_code, asserted_code, real_code)) {
+                incrementCount(this_code, false_negative_counts);
+            }
+        }
     }
 
     private String findGoldStandardCode(String data) throws UnknownDataException {

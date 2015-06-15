@@ -104,9 +104,4 @@ public interface ClassificationMetrics {
      * @param info_level the detail level
      */
     void printMetrics(InfoLevel info_level);
-
-    /**
-     * Prints out the metrics at summary level of detail.
-     */
-    void printMetrics();
 }

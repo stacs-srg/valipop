@@ -20,6 +20,7 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.interfaces.C
 import uk.ac.standrews.cs.digitising_scotland.record_classification.interfaces.ConfusionMatrix;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.InfoLevel;
 
+import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -38,13 +39,14 @@ public class ConcreteClassificationMetrics implements ClassificationMetrics {
     @Override
     public void printMetrics(InfoLevel info_level) {
 
-        printMetric("total TPs", getSumOfTruePositives());
-        printMetric("total FPs", getSumOfFalsePositives());
-        printMetric("total TNs", getSumOfTrueNegatives());
-        printMetric("total FNs", getSumOfFalseNegatives());
-
-
         if (info_level == InfoLevel.VERBOSE) {
+
+            printMetric("total TPs", getSumOfTruePositives());
+            printMetric("total FPs", getSumOfFalsePositives());
+            printMetric("total TNs", getSumOfTrueNegatives());
+            printMetric("total FNs", getSumOfFalseNegatives());
+            System.out.println();
+
             printMetrics("precision", getPerClassPrecision());
             printMetrics("recall", getPerClassRecall());
             printMetrics("accuracy", getPerClassAccuracy());
@@ -53,21 +55,16 @@ public class ConcreteClassificationMetrics implements ClassificationMetrics {
         }
 
         if (info_level != InfoLevel.NONE) {
+
             printMetric("macro-average precision", getMacroAveragePrecision());
             printMetric("micro-average precision", getMicroAveragePrecision());
-            printMetric("macro-average recall", getMacroAverageRecall());
-            printMetric("micro-average recall", getMicroAverageRecall());
-            printMetric("macro-average accuracy", getMacroAverageAccuracy());
-            printMetric("micro-average accuracy", getMicroAverageAccuracy());
-            printMetric("macro-average F1", getMacroAverageF1());
-            printMetric("micro-average F1", getMicroAverageF1());
+            printMetric("macro-average recall   ", getMacroAverageRecall());
+            printMetric("micro-average recall   ", getMicroAverageRecall());
+            printMetric("macro-average accuracy ", getMacroAverageAccuracy());
+            printMetric("micro-average accuracy ", getMicroAverageAccuracy());
+            printMetric("macro-average F1       ", getMacroAverageF1());
+            printMetric("micro-average F1       ", getMicroAverageF1());
         }
-    }
-
-    @Override
-    public void printMetrics() {
-
-        printMetrics(InfoLevel.SUMMARY);
     }
 
     private void printMetrics(String label, Map<String, Double> metrics) {
@@ -75,13 +72,18 @@ public class ConcreteClassificationMetrics implements ClassificationMetrics {
         System.out.println("\n" + label + ":");
 
         for (Map.Entry<String, Double> entry : metrics.entrySet()) {
-            printMetric("code: " + entry.getKey(), entry.getValue());
+            printMetric(entry.getKey(), entry.getValue());
         }
     }
 
     private void printMetric(String label, double metric) {
 
-        System.out.println(label + " value: " + String.format("%.2f", metric));
+        System.out.println(label + ": " + String.format("%.2f", metric));
+    }
+
+    private void printMetric(String label, int metric) {
+
+        System.out.println(label + ": " + NumberFormat.getNumberInstance().format(metric));
     }
 
     @Override

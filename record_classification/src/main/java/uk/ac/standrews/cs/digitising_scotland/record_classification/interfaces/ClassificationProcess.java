@@ -34,28 +34,12 @@ import java.util.List;
 public interface ClassificationProcess {
 
     /**
-     * Sets the level of detail to be output.
-     *
-     * @param verbose the level of detail
-     */
-    void setInfoLevel(InfoLevel verbose);
-
-    /**
      * Returns a description of the classifier used in the classification process.
      * @return the classifier description
      */
     String getClassifierDescription();
 
-//    /**
-//     * Trains the classifier using the gold standard data.
-//     */
-//    void performTraining();
-//
-//    /**
-//     * Classifies the non-training portion of the gold standard data.
-//     */
-//    void performClassification();
-
+    void setInfoLevel(InfoLevel info_level);
 
     /**
      * Trains the classifier, runs it with the non-training data, and evaluates the quality of the results over a number of repetitions.
