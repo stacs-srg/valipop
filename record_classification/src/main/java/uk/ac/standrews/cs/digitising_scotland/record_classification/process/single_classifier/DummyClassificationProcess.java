@@ -43,6 +43,6 @@ public class DummyClassificationProcess extends AbstractClassificationProcess {
     @Override
     public Cleaner getCleaner() {
 
-        return ConsistentCodingCleaner.NONE;
+        return ConsistentCodingCleaner.CORRECT;
     }
 }

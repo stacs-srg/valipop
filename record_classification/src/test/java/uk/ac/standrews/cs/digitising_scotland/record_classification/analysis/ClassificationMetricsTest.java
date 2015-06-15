@@ -40,14 +40,6 @@ public class ClassificationMetricsTest extends AbstractMetricsTest {
     private final ExpectedMetricValue EXPECTED_ACCURACY_CLASS_BIRD = new ExpectedMetricValue(6.0 / 7.0, "bird");          // TP 2, TN 4, FP 0, FN 1
     private final ExpectedMetricValue EXPECTED_ACCURACY_CLASS_MYTHICAL = new ExpectedMetricValue(6.0 / 7.0, "mythical");  // TP 0, TN 6, FP 0, FN 1
 
-
-    private double calculateAccuracy(int true_positives, int true_negatives, int false_positives, int false_negatives) {
-
-        int total_cases = true_positives + true_negatives + false_positives + false_negatives;
-        return (double) (true_positives + true_negatives) / total_cases;
-    }
-
-
     private final ExpectedMetricValue EXPECTED_F1_CLASS_FISH = new ExpectedMetricValue(2.0 / 3.0, "fish");                // TP 1, FP 1, FN 0
     private final ExpectedMetricValue EXPECTED_F1_CLASS_MAMMAL = new ExpectedMetricValue(2.0 / 4.0, "mammal");            // TP 1, FP 1, FN 1
     private final ExpectedMetricValue EXPECTED_F1_CLASS_BIRD = new ExpectedMetricValue(4.0 / 5.0, "bird");                // TP 2, FP 0, FN 1
@@ -233,7 +225,6 @@ public class ClassificationMetricsTest extends AbstractMetricsTest {
         assertEquals(getNumberOfCodes(), metric.size());
 
         for (ExpectedMetricValue value : values) {
-//            System.out.println("checking for: " + value.code);
             assertEquals(value.value, metric.get(value.code), DELTA);
         }
     }

@@ -27,7 +27,9 @@ import java.util.List;
 
 public abstract class AbstractMultipleClassificationProcess {
 
-    private InfoLevel info_level = InfoLevel.SUMMARY;
+    public static InfoLevel info_level = InfoLevel.SUMMARY;
+
+    abstract protected List<ClassificationProcess> getClassificationProcesses(String[] args) throws Exception;
 
     protected void process(String[] args) throws Exception {
 
@@ -45,12 +47,10 @@ public abstract class AbstractMultipleClassificationProcess {
         summariseResults(row_labels, result_sets);
     }
 
-    abstract protected List<ClassificationProcess> getClassificationProcesses(String[] args) throws Exception;
-
     private void summariseResults(List<String> row_labels, List<DataSet> data_sets) throws IOException {
 
         int size = data_sets.get(0).getRecords().size();
-        String table_caption = "Aggregate classifier performance (" + size + " repetition" + (size > 1 ? "s" : "") + ")";
+        String table_caption = "\naggregate classifier performance (" + size + " repetition" + (size > 1 ? "s" : "") + "):\n";
         String first_column_heading = "classifier";
 
         TableGenerator table_generator = new TableGenerator(row_labels, data_sets, System.out, table_caption, first_column_heading, true, '\t');
