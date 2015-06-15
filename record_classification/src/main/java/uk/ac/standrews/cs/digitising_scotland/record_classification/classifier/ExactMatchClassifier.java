@@ -41,6 +41,7 @@ public class ExactMatchClassifier extends AbstractClassifier {
 
     public Classification classify(final String data) {
 
+//        System.out.println (known_classifications.containsKey(data) ? "matched" : "not matched");
         return known_classifications.get(data);
     }
 

@@ -16,14 +16,13 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.analysis;
 
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Classification;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Record;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.ConsistentCodingCleaner;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.InconsistentCodingException;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.InvalidCodeException;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.UnclassifiedGoldStandardRecordException;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.UnknownDataException;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.interfaces.ConfusionMatrix;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -53,14 +52,16 @@ public abstract class AbstractConfusionMatrix implements ConfusionMatrix {
      *
      * @param classified_records the records that have been classified
      * @param gold_standard_records the gold standard records against which the classified records should be checked
-     * @param check_classification_consistency true if an exception should be thrown if there exist multiple gold standard records containing the same data and different classifications
+     * @param consistent_coding_checker checker for consistent coding
      *
      * @throws InvalidCodeException                    if a code in the classified records does not appear in the gold standard records
      * @throws UnknownDataException                    if a record in the classified records contains data that does not appear in the gold standard records
      * @throws InconsistentCodingException             if there exist multiple gold standard records containing the same data and different classifications
      * @throws UnclassifiedGoldStandardRecordException if a record in the gold standard records is not classified
      */
-    AbstractConfusionMatrix(final Bucket classified_records, final Bucket gold_standard_records, boolean check_classification_consistency) throws InvalidCodeException, UnknownDataException, InconsistentCodingException, UnclassifiedGoldStandardRecordException {
+    AbstractConfusionMatrix(final Bucket classified_records, final Bucket gold_standard_records, ConsistentCodingCleaner consistent_coding_checker) throws Exception {
+
+        // TODO name ConsistentCodingCleaner isn't quite right when used as checker rather than cleaner
 
         this.classified_records = classified_records;
         this.gold_standard_records = gold_standard_records;
@@ -75,11 +76,26 @@ public abstract class AbstractConfusionMatrix implements ConfusionMatrix {
         checkClassifiedDataIsInGoldStandard();
         checkClassifiedToValidCodes();
 
-        if (check_classification_consistency) {
-            checkConsistentClassificationOfGoldStandardRecords();
-        }
+        consistent_coding_checker.clean(gold_standard_records);
+
+//        if (check_classification_consistency) {
+//            checkConsistentClassificationOfGoldStandardRecords();
+//        }
 
         calculateCounts();
+
+//        System.out.println("TPs:");
+//        System.out.println(true_positive_counts);
+//        System.out.println("TNs:");
+//        System.out.println(true_negative_counts);
+//
+//        System.out.println("FPs:");
+//        System.out.println(false_positive_counts);
+//        System.out.println("FNs:");
+//        System.out.println(false_negative_counts);
+
+
+
     }
 
     /**
@@ -130,6 +146,45 @@ public abstract class AbstractConfusionMatrix implements ConfusionMatrix {
             if (record.getClassification() != null) total++;
         }
         return total;
+    }
+
+
+    @Override
+    public int getTruePositives() {
+
+        return sum(true_positive_counts);
+    }
+
+    @Override
+    public int getFalsePositives() {
+
+        return sum(false_positive_counts);
+    }
+
+    @Override
+    public int getTrueNegatives() {
+
+        return sum(true_negative_counts);
+    }
+
+    @Override
+    public int getFalseNegatives() {
+
+        return sum(false_negative_counts);
+    }
+
+
+
+    @Override
+    public int getNumberOfClasses() {
+        return getClassificationCounts().size();
+    }
+
+    private int sum(Map<String, Integer> counts) {
+
+        int sum =0;
+        for (int i : counts.values()) sum+= i;
+        return sum;
     }
 
     /**
@@ -187,31 +242,35 @@ public abstract class AbstractConfusionMatrix implements ConfusionMatrix {
         }
     }
 
+    Cleaner consistent_coding_cleaner = ConsistentCodingCleaner.CHECK;
+
     /**
      * Checks whether all data appearing in multiple records is classified the same in each.
      * @throws InconsistentCodingException if it is not
      */
-    private void checkConsistentClassificationOfGoldStandardRecords() throws InconsistentCodingException {
+    private void checkConsistentClassificationOfGoldStandardRecords() throws Exception {
 
-        Map<String, String> classifications = new HashMap<>();
+        consistent_coding_cleaner.clean(gold_standard_records);
 
-        for (Record record : gold_standard_records) {
-
-            String data = record.getData();
-            Classification classification = record.getClassification();
-
-            if (classification != null) {
-                String code = classification.getCode();
-
-                if (classifications.containsKey(data)) {
-                    if (!code.equals(classifications.get(data))) {
-                        throw new InconsistentCodingException("data: " + data + " classified as both " + code + " and " + classifications.get(data));
-                    }
-                } else {
-                    classifications.put(data, code);
-                }
-            }
-        }
+//        Map<String, String> classifications = new HashMap<>();
+//
+//        for (Record record : gold_standard_records) {
+//
+//            String data = record.getData();
+//            Classification classification = record.getClassification();
+//
+//            if (classification != null) {
+//                String code = classification.getCode();
+//
+//                if (classifications.containsKey(data)) {
+//                    if (!code.equals(classifications.get(data))) {
+//                        throw new InconsistentCodingException("data: " + data + " classified as both " + code + " and " + classifications.get(data));
+//                    }
+//                } else {
+//                    classifications.put(data, code);
+//                }
+//            }
+//        }
     }
 
     /**
@@ -250,16 +309,17 @@ public abstract class AbstractConfusionMatrix implements ConfusionMatrix {
 
         Classification classification = record.getClassification();
 
-        if (classification != Classification.UNCLASSIFIED) {
+//        if (classification != Classification.UNCLASSIFIED) {
 
             String asserted_code = classification.getCode();
             String real_code = findGoldStandardCode(record.getData());
 
-            incrementCount(asserted_code, classification_counts);
+        if (classification != Classification.UNCLASSIFIED) incrementCount(asserted_code, classification_counts);
 
             for (String this_code : classification_counts.keySet()) {
 
                 if (truePositive(this_code, asserted_code, real_code)) {
+//                    System.out.println("TP for " + record.getData() + ": " + this_code + ", " + real_code + ", " + asserted_code);
                     incrementCount(this_code, true_positive_counts);
                 }
 
@@ -268,6 +328,7 @@ public abstract class AbstractConfusionMatrix implements ConfusionMatrix {
                 }
 
                 if (falsePositive(this_code, asserted_code, real_code)) {
+                    System.out.println("FP for " + record.getData() + ": " + this_code + ", " + real_code + ", " + asserted_code);
                     incrementCount(this_code, false_positive_counts);
                 }
 
@@ -275,7 +336,7 @@ public abstract class AbstractConfusionMatrix implements ConfusionMatrix {
                     incrementCount(this_code, false_negative_counts);
                 }
             }
-        }
+//        }
     }
 
     private String findGoldStandardCode(String data) throws UnknownDataException {
@@ -309,6 +370,9 @@ public abstract class AbstractConfusionMatrix implements ConfusionMatrix {
     }
 
     private boolean falseNegative(String this_code, String asserted_code, String real_code) {
+
+//        System.out.println("\nchecking false negative for: " + this_code + ", " + real_code + ", " + asserted_code);
+//        System.out.println("result: " + (classificationsMatch(real_code, this_code) && !classificationsMatch(asserted_code, this_code)));
 
         // False negative for this code if the record should have been classified as this, but it wasn't.
         return classificationsMatch(real_code, this_code) && !classificationsMatch(asserted_code, this_code);

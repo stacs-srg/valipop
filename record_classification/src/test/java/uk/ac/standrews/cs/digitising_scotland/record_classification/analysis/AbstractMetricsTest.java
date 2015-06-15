@@ -19,6 +19,7 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.analysis;
 import org.junit.Before;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Classification;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.ConsistentCodingCleaner;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Record;
 import old.record_classification_old.datastructures.tokens.TokenSet;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.*;
@@ -29,6 +30,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class AbstractMetricsTest extends AbstractTest {
+
+    protected static final double DELTA = 0.001;
 
     protected static final Record haddock_correct = new Record(3, "haddock", new Classification("fish", new TokenSet(), 1.0));
     protected static final Record haddock_incorrect = new Record(3, "haddock", new Classification("mammal", new TokenSet(), 1.0));
@@ -64,9 +67,9 @@ public class AbstractMetricsTest extends AbstractTest {
         }
     }
 
-    protected void initMatrix() throws InvalidCodeException, InconsistentCodingException, UnknownDataException, UnclassifiedGoldStandardRecordException {
+    protected void initMatrix() throws Exception {
 
-        matrix = new StrictConfusionMatrix(classified_records, gold_standard_records, true);
+        matrix = new StrictConfusionMatrix(classified_records, gold_standard_records, ConsistentCodingCleaner.CHECK);
     }
 
     protected void initFullRecords() throws InputFileFormatException {

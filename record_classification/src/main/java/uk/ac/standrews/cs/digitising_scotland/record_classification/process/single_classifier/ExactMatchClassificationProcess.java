@@ -17,24 +17,23 @@
 package uk.ac.standrews.cs.digitising_scotland.record_classification.process.single_classifier;
 
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.ExactMatchClassifier;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.InvalidArgException;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.ConsistentCodingCleaner;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.interfaces.Classifier;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.single_classifier.AbstractClassificationProcess;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Cleaner;
 
-import java.io.IOException;
 import java.io.InputStreamReader;
 
 public class ExactMatchClassificationProcess extends AbstractClassificationProcess {
 
     @SuppressWarnings("WeakerAccess")
-    public ExactMatchClassificationProcess(String[] args) throws IOException, InvalidArgException {
+    public ExactMatchClassificationProcess(String[] args) throws Exception {
 
         super(args);
     }
 
-    public ExactMatchClassificationProcess(InputStreamReader gold_standard_data_reader, double training_ratio) {
+    public ExactMatchClassificationProcess(InputStreamReader gold_standard_data_reader, double training_ratio, int number_of_repetitions) throws Exception {
 
-        super(gold_standard_data_reader, training_ratio);
+        super(gold_standard_data_reader, training_ratio, number_of_repetitions);
     }
 
     @Override
@@ -47,5 +46,11 @@ public class ExactMatchClassificationProcess extends AbstractClassificationProce
     public String getClassifierDescription() {
 
         return "exact-match";
+    }
+
+    @Override
+    public Cleaner getCleaner() {
+
+        return ConsistentCodingCleaner.CORRECT;
     }
 }

@@ -16,12 +16,10 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.process.multiple_classifier;
 
-import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.InvalidArgException;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.interfaces.ClassificationProcess;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.single_classifier.ExactMatchClassificationProcess;
 
-import java.io.IOException;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class ExactMatchOnlyClassificationProcess extends AbstractMultipleClassificationProcess {
@@ -38,10 +36,10 @@ public class ExactMatchOnlyClassificationProcess extends AbstractMultipleClassif
         }
     }
 
-    protected List<ClassificationProcess> getClassificationProcesses(String[] args) throws IOException, InvalidArgException {
+    protected List<ClassificationProcess> getClassificationProcesses(String[] args) throws Exception {
 
-        ClassificationProcess process1 = new ExactMatchClassificationProcess(args);
+        ClassificationProcess process = new ExactMatchClassificationProcess(args);
 
-        return Arrays.asList(process1);
+        return Collections.singletonList(process);
     }
 }

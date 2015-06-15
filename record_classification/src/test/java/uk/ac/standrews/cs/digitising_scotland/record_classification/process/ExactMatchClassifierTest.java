@@ -16,24 +16,69 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.process;
 
+import org.junit.Before;
 import org.junit.Test;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.interfaces.ClassificationMetrics;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.interfaces.ClassificationProcess;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.InfoLevel;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.interfaces.ConfusionMatrix;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.single_classifier.ExactMatchClassificationProcess;
 
 import java.io.InputStreamReader;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
 
 public class ExactMatchClassifierTest extends AbstractClassificationTest {
 
-    @Test
-    public void classifyUsingExactMatch() throws Exception {
+    private List<ConfusionMatrix> matrices;
+    private List<ClassificationMetrics> metrics;
 
-        // This just tests that the classification process runs without error.
+    @Before
+    public void setup() throws Exception {
 
         InputStreamReader occupation_data_path = getInputStreamReaderForResource(AbstractClassificationTest.class, GOLD_STANDARD_DATA_FILE_NAME);
 
-        ClassificationProcess classification_process = new ExactMatchClassificationProcess(occupation_data_path, 0.8);
-        classification_process.setInfoLevel(InfoLevel.NONE);
-        classification_process.trainClassifyAndEvaluate(3);
+        ClassificationProcess classification_process = new ExactMatchClassificationProcess(occupation_data_path, 0.8, 1);
+        classification_process.trainClassifyAndEvaluate();
+
+        metrics = classification_process.getClassificationMetrics();
+        matrices = classification_process.getConfusionMatrices();
+    }
+
+    @Test
+    public void checkPrecision() throws Exception {
+
+        // Precision must be 100% since every decision must be correct.
+        ClassificationMetrics metrics_from_first_run = metrics.get(0);
+
+        assertEquals(1.0, metrics_from_first_run.getMacroAveragePrecision(), DELTA);
+        assertEquals(1.0, metrics_from_first_run.getMicroAveragePrecision(), DELTA);
+    }
+
+    @Test
+    public void checkFalsePositives() throws Exception {
+
+        // Exact match never makes an incorrect classification decision.
+        for (ConfusionMatrix matrix : matrices) {
+            assertEquals(0, matrix.getFalsePositives());
+        }
+    }
+
+    @Test
+    public void checkTrueNegatives() throws Exception {
+
+        // Every class but one accumulates a true negative on each classification.
+        for (ConfusionMatrix matrix : matrices) {
+            assertEquals((matrix.getNumberOfClasses() - 1) * matrix.getTotalNumberOfClassifications(), matrix.getTrueNegatives());
+        }
+    }
+
+    @Test
+    public void checkTruePositivesAndFalseNegatives() throws Exception {
+
+        // Every decision by exact match must be correct (true positive) or absent (false negative).
+        for (ConfusionMatrix matrix : matrices) {
+            assertEquals(matrix.getTotalNumberOfClassifications(), matrix.getTruePositives() + matrix.getFalseNegatives());
+        }
     }
 }

@@ -16,12 +16,15 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.interfaces;
 
-import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.InconsistentCodingException;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.InvalidCodeException;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.UnclassifiedGoldStandardRecordException;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.UnknownDataException;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.InfoLevel;
 import uk.ac.standrews.cs.util.dataset.DataSet;
 
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.util.List;
 
 /**
  * Classification process using a single classifier.
@@ -38,55 +41,48 @@ public interface ClassificationProcess {
     void setInfoLevel(InfoLevel verbose);
 
     /**
-     * Sets the gold standard data to be used.
-     *
-     * @param gold_standard_data_reader a reader for the gold standard data
-     */
-    void setGoldStandardData(InputStreamReader gold_standard_data_reader);
-
-    /**
-     * Sets the training ratio to be used.
-     *
-     * @param training_ratio the approximate proportion of the gold standard data that should be used for training
-     */
-    void setTrainingRatio(double training_ratio);
-
-    /**
      * Returns a description of the classifier used in the classification process.
      * @return the classifier description
      */
     String getClassifierDescription();
 
-    /**
-     * Trains the classifier using the gold standard data.
-     */
-    void performTraining();
+//    /**
+//     * Trains the classifier using the gold standard data.
+//     */
+//    void performTraining();
+//
+//    /**
+//     * Classifies the non-training portion of the gold standard data.
+//     */
+//    void performClassification();
 
-    /**
-     * Classifies the non-training portion of the gold standard data.
-     */
-    void performClassification();
-
-    /**
-     * Evaluates the quality of the classification with respect to the original gold standard classification.
-     *
-     * @return the classification quality metrics
-     * @throws InvalidCodeException                    if a code in the classified records does not appear in the gold standard records
-     * @throws UnknownDataException                    if a record in the classified records contains data that does not appear in the gold standard records
-     * @throws InconsistentCodingException             if there exist multiple gold standard records containing the same data and different classifications
-     * @throws UnclassifiedGoldStandardRecordException if a record in the gold standard records is not classified
-     */
-    ClassificationMetrics evaluateClassification() throws InvalidCodeException, UnknownDataException, InconsistentCodingException, UnclassifiedGoldStandardRecordException;
 
     /**
      * Trains the classifier, runs it with the non-training data, and evaluates the quality of the results over a number of repetitions.
      *
-     * @param number_of_repetitions the number of times to repeat the process
      * @throws IOException                             if the file containing the gold standard or classified records cannot be read.
      * @throws InvalidCodeException                    if a code in the classified records does not appear in the gold standard records
      * @throws UnknownDataException                    if a record in the classified records contains data that does not appear in the gold standard records
      * @throws InconsistentCodingException             if there exist multiple gold standard records containing the same data and different classifications
      * @throws UnclassifiedGoldStandardRecordException if a record in the gold standard records is not classified
      */
-    DataSet trainClassifyAndEvaluate(int number_of_repetitions) throws IOException, InvalidCodeException, UnknownDataException, InconsistentCodingException, UnclassifiedGoldStandardRecordException, InputFileFormatException;
+    DataSet trainClassifyAndEvaluate() throws Exception;
+
+    /**
+     * Evaluates the quality of the classification on each run with respect to the original gold standard classification.
+     *
+     * @return the classification quality metrics for each run
+     * @throws InvalidCodeException                    if a code in the classified records does not appear in the gold standard records
+     * @throws UnknownDataException                    if a record in the classified records contains data that does not appear in the gold standard records
+     * @throws InconsistentCodingException             if there exist multiple gold standard records containing the same data and different classifications
+     * @throws UnclassifiedGoldStandardRecordException if a record in the gold standard records is not classified
+     */
+    List<ClassificationMetrics> getClassificationMetrics() throws Exception;
+
+    /**
+     * Calculates the confusion matrix for each run.
+     * @return the confusion matrices for each run
+     * @throws Exception
+     */
+    List<ConfusionMatrix> getConfusionMatrices() throws Exception;
 }

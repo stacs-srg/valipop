@@ -64,4 +64,14 @@ public interface ConfusionMatrix {
      * @return the map
      */
     Map<String, Integer> getFalseNegativeCounts();
+
+    int getTruePositives();
+
+    int getFalsePositives();
+
+    int getTrueNegatives();
+
+    int getFalseNegatives();
+
+    int getNumberOfClasses();
 }
