@@ -34,7 +34,7 @@ public interface Classifier {
     void train(final Bucket bucket);
 
     /**
-     * Classifies a single data item.
+     * Classifies a single data item or {@code null} if record cannot be classified.
      *
      * @param data the data to be classified
      * @return the resulting classification
