@@ -18,20 +18,24 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier;
 
 import old.record_classification_old.classifiers.closestmatchmap.CarsonSimilarity;
 import old.record_classification_old.datastructures.tokens.TokenSet;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import uk.ac.shef.wit.simmetrics.similaritymetrics.CosineSimilarity;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.interfaces.Classifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Classification;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Record;
 
-import static org.junit.Assert.*;
+import java.util.*;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 /**
- * Tests {@link StringSimilarityClassifier}.
- *
- * @author Masih Hajiarab Derkani
+ * @author masih
  */
-public class StringSimilarityClassifierTest {
+public class EnsembleClassifierTest {
 
     private static final String RECORD_DATA = "record";
     private static final String SIMILAR_RECORD_DATA = "recrod";
@@ -39,29 +43,64 @@ public class StringSimilarityClassifierTest {
     private static final Record TRAINING_RECORD = new Record(1, RECORD_DATA, new Classification("media", new TokenSet(), 1.0));
 
     private Bucket training_records;
-    private StringSimilarityClassifier classifier;
+
+    private EnsembleClassifier classifier;
+    private Classifier exact_match_classifier;
+    private Classifier string_similarity_classifier;
+    private EnsembleClassifier.ResolutionStrategy resolution_strategy;
 
     @Before public void setUp() throws Exception {
 
-        classifier = new StringSimilarityClassifier(new CarsonSimilarity<>());
+        exact_match_classifier = new ExactMatchClassifier();
+        string_similarity_classifier = new StringSimilarityClassifier(new CarsonSimilarity());
+        final Set<Classifier> classifiers = new HashSet<>();
+        classifiers.add(exact_match_classifier);
+        classifiers.add(string_similarity_classifier);
+
+        resolution_strategy = new EnsembleClassifier.ResolutionStrategy() {
+
+            @Override public Classification resolve(Map<Classifier, Classification> candidate_classifications) {
+
+                for (Classification classification : candidate_classifications.values()) {
+                    if (!classification.equals(Classification.UNCLASSIFIED)) {
+                        System.out.println(classification);
+                        return classification;
+                    }
+                }
+
+                return Classification.UNCLASSIFIED;
+            }
+        };
+
+        classifier = new EnsembleClassifier(classifiers, resolution_strategy);
         training_records = new Bucket();
         training_records.add(TRAINING_RECORD);
+
     }
 
     @Test public void testTrain() throws Exception {
 
-        assertEquals(Classification.UNCLASSIFIED, classifier.classify(RECORD_DATA));
+        assertEquals(Classification.UNCLASSIFIED, exact_match_classifier.classify(RECORD_DATA));
+        assertEquals(Classification.UNCLASSIFIED, string_similarity_classifier.classify(RECORD_DATA));
+        assertEquals(Classification.UNCLASSIFIED, string_similarity_classifier.classify(SIMILAR_RECORD_DATA));
+        assertEquals(Classification.UNCLASSIFIED, string_similarity_classifier.classify(DISSIMILAR_RECORD_DATA));
         classifier.train(training_records);
-        assertNotEquals(Classification.UNCLASSIFIED, classifier.classify(RECORD_DATA));
+        assertNotEquals(Classification.UNCLASSIFIED, exact_match_classifier.classify(RECORD_DATA));
+        assertNotEquals(Classification.UNCLASSIFIED, string_similarity_classifier.classify(RECORD_DATA));
+        assertNotEquals(Classification.UNCLASSIFIED, string_similarity_classifier.classify(SIMILAR_RECORD_DATA));
+        assertEquals(Classification.UNCLASSIFIED, string_similarity_classifier.classify(DISSIMILAR_RECORD_DATA));
+
     }
 
     @Test public void testClassify() throws Exception {
 
         assertEquals(Classification.UNCLASSIFIED, classifier.classify(RECORD_DATA));
         assertEquals(Classification.UNCLASSIFIED, classifier.classify(SIMILAR_RECORD_DATA));
+        assertEquals(Classification.UNCLASSIFIED, classifier.classify(DISSIMILAR_RECORD_DATA));
         classifier.train(training_records);
         assertNotEquals(Classification.UNCLASSIFIED, classifier.classify(RECORD_DATA));
         assertNotEquals(Classification.UNCLASSIFIED, classifier.classify(SIMILAR_RECORD_DATA));
         assertEquals(Classification.UNCLASSIFIED, classifier.classify(DISSIMILAR_RECORD_DATA));
+
     }
 }

@@ -21,6 +21,8 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Classification;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Record;
 
+import java.io.Externalizable;
+
 public abstract class AbstractClassifier implements Classifier {
 
     public Bucket classify(final Bucket bucket) {
@@ -31,7 +33,7 @@ public abstract class AbstractClassifier implements Classifier {
 
             final String data = record.getData();
             Classification classification = classify(data);
-            
+
             assert classification != null;
 
             classified.add(new Record(record.getId(), data, classification));

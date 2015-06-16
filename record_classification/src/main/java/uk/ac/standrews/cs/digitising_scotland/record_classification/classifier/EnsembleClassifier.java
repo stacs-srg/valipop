@@ -54,7 +54,7 @@ public class EnsembleClassifier extends AbstractClassifier {
     @Override
     public Classification classify(String data) {
 
-        Map<Classifier, Classification> candidate_classifications = new HashMap<>();
+        final Map<Classifier, Classification> candidate_classifications = new HashMap<>();
 
         for (Classifier classifier : classifiers) {
             candidate_classifications.put(classifier, classifier.classify(data));
