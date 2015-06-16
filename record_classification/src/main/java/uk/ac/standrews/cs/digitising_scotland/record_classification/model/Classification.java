@@ -25,6 +25,7 @@ public class Classification {
     public static final Classification UNCLASSIFIED = new Classification("UNCLASSIFIED", new TokenSet(), 0.0);
 
     //FIXME The name code might be domain specific; maybe subclass HISCOT classifications?
+    // No HISCO is just one classification scheme. We don't want the code to be specific to that.
     private final String code;
     private final TokenSet tokenSet;
     private final Double confidence;
