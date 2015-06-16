@@ -26,7 +26,7 @@ import java.util.Objects;
  * Classifies records based on the {@link InterfaceStringMetric similarity} of the training data to unseen data.
  * This class is not thread-safe.
  *
- * @author masih
+ * @author Masih Hajiarab Derkani
  */
 public class StringSimilarityClassifier extends ExactMatchClassifier {
 

@@ -20,6 +20,8 @@ import old.record_classification_old.datastructures.tokens.TokenSet;
 
 public class Classification {
 
+    //FIXME The token set in #UNCLASSIFIED is modifiable; need unmodifiable token set.
+    //TODO Introduce confidence type.
     public static final Classification UNCLASSIFIED = new Classification("UNCLASSIFIED", new TokenSet(), 0.0);
 
     private final String code;
