@@ -41,7 +41,8 @@ public class ExactMatchClassifier extends AbstractClassifier {
 
     public Classification classify(final String data) {
 
-        return known_classifications.get(data);
+        final Classification exact_classification = known_classifications.get(data);
+        return exact_classification != null ? exact_classification : Classification.UNCLASSIFIED;
     }
 
     private void loadRecord(final Record record) {

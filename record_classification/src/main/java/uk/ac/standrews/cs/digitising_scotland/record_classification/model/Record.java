@@ -16,19 +16,53 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.model;
 
+import java.util.Objects;
+
+/**
+ * A data record.
+ *
+ * @author Graham Kirby
+ * @author Masih Hajiarab Derkani
+ */
 public class Record {
 
     private final int id;
     private final String data;
     private final Classification classification;  // TODO restore support for multiple classifications
 
+    /**
+     * Instantiates an {@link Classification#UNCLASSIFIED unclassified} record.
+     *
+     * @param id   the unique record identifier
+     * @param data the record data
+     */
+    public Record(final int id, final String data) {
+
+        this(id, data, Classification.UNCLASSIFIED);
+    }
+
+    /**
+     * Instantiates a record classified by the given classification.
+     *
+     * @param id             the unique record identifier
+     * @param data           the record data
+     * @param classification the classification of this record
+     * @throws NullPointerException if the given classification is {@code null} 
+     */
     public Record(final int id, final String data, final Classification classification) {
+
+        Objects.requireNonNull(classification, "record classification cannot be null");
 
         this.id = id;
         this.data = data;
         this.classification = classification;
     }
 
+    /**
+     * Gets the data of this record.
+     *
+     * @return the data of this record
+     */
     public String getData() {
 
         return data;
@@ -39,6 +73,11 @@ public class Record {
         return id;
     }
 
+    /**
+     * Gets the classification of this record.
+     * 
+     * @return the classification of this record.
+     */
     public Classification getClassification() {
 
         return classification;
@@ -48,5 +87,20 @@ public class Record {
     public String toString() {
 
         return "Record [id=" + id + ", data=" + data + ", classification=" + classification + "]";
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (this == other) return true;
+        if (other == null || getClass() != other.getClass()) return false;
+        Record other_record = (Record) other;
+        return Objects.equals(id, other_record.id) &&
+                Objects.equals(data, other_record.data) &&
+                Objects.equals(classification, other_record.classification);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, data, classification);
     }
 }
