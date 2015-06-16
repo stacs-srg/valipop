@@ -24,6 +24,7 @@ public class Classification {
     //TODO Introduce confidence type.
     public static final Classification UNCLASSIFIED = new Classification("UNCLASSIFIED", new TokenSet(), 0.0);
 
+    //FIXME The name code might be domain specific; maybe subclass HISCOT classifications?
     private final String code;
     private final TokenSet tokenSet;
     private final Double confidence;

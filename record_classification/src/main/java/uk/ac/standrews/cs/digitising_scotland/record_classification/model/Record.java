@@ -84,12 +84,6 @@ public class Record {
     }
 
     @Override
-    public String toString() {
-
-        return "Record [id=" + id + ", data=" + data + ", classification=" + classification + "]";
-    }
-
-    @Override
     public boolean equals(Object other) {
         if (this == other) return true;
         if (other == null || getClass() != other.getClass()) return false;
@@ -102,5 +96,11 @@ public class Record {
     @Override
     public int hashCode() {
         return Objects.hash(id, data, classification);
+    }
+
+    @Override
+    public String toString() {
+
+        return "Record [id=" + id + ", data=" + data + ", classification=" + classification + "]";
     }
 }
