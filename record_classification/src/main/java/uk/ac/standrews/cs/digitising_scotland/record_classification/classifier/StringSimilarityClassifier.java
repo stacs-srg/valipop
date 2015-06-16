@@ -46,7 +46,13 @@ public class StringSimilarityClassifier extends ExactMatchClassifier {
 
     @Override
     public Classification classify(final String data) {
-        
+
+        final Classification exact_classification = super.classify(data);
+        return exact_classification == null ? classifyBySimilarity(data) : exact_classification;
+    }
+
+    private Classification classifyBySimilarity(String data) {
+
         float highest_similarity_found = 0;
         Classification classification = null;
 
@@ -58,7 +64,6 @@ public class StringSimilarityClassifier extends ExactMatchClassifier {
                 highest_similarity_found = known_to_data_similarity;
             }
         }
-
         return classification;
     }
 }
