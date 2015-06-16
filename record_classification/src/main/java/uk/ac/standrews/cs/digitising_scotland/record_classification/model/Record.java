@@ -44,8 +44,8 @@ public class Record {
     /**
      * Instantiates a record classified by the given classification.
      *
-     * @param id the unique record identifier
-     * @param data the record data
+     * @param id             the unique record identifier
+     * @param data           the record data
      * @param classification the classification of this record
      * @throws NullPointerException if the given classification is {@code null}
      */
@@ -83,7 +83,8 @@ public class Record {
         return classification;
     }
 
-    @Override public boolean equals(Object other) {
+    @Override
+    public boolean equals(Object other) {
 
         if (this == other)
             return true;
@@ -91,16 +92,18 @@ public class Record {
             return false;
         Record other_record = (Record) other;
         return Objects.equals(id, other_record.id) &&
-                        Objects.equals(data, other_record.data) &&
-                        Objects.equals(classification, other_record.classification);
+                Objects.equals(data, other_record.data) &&
+                Objects.equals(classification, other_record.classification);
     }
 
-    @Override public int hashCode() {
+    @Override
+    public int hashCode() {
 
         return Objects.hash(id, data, classification);
     }
 
-    @Override public String toString() {
+    @Override
+    public String toString() {
 
         return "Record [id=" + id + ", data=" + data + ", classification=" + classification + "]";
     }
