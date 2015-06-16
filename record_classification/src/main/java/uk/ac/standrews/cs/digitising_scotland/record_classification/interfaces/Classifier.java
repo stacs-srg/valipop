@@ -23,7 +23,7 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Classi
  * Basic classifier interface.
  *
  * @author Graham Kirby
- * @author Masih Hajiarabderkani
+ * @author Masih Hajiarab Derkani
  */
 public interface Classifier {
 

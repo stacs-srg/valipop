@@ -30,7 +30,7 @@ import static org.junit.Assert.assertNull;
 /**
  * Tests {@link StringSimilarityClassifier}.
  *
- * @author masih
+ * @author Masih Hajiarab Derkani
  */
 public class StringSimilarityClassifierTest {
 
