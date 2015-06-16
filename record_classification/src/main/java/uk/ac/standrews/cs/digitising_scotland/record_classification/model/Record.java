@@ -44,10 +44,10 @@ public class Record {
     /**
      * Instantiates a record classified by the given classification.
      *
-     * @param id             the unique record identifier
-     * @param data           the record data
+     * @param id the unique record identifier
+     * @param data the record data
      * @param classification the classification of this record
-     * @throws NullPointerException if the given classification is {@code null} 
+     * @throws NullPointerException if the given classification is {@code null}
      */
     public Record(final int id, final String data, final Classification classification) {
 
@@ -75,7 +75,7 @@ public class Record {
 
     /**
      * Gets the classification of this record.
-     * 
+     *
      * @return the classification of this record.
      */
     public Classification getClassification() {
@@ -83,23 +83,24 @@ public class Record {
         return classification;
     }
 
-    @Override
-    public boolean equals(Object other) {
-        if (this == other) return true;
-        if (other == null || getClass() != other.getClass()) return false;
+    @Override public boolean equals(Object other) {
+
+        if (this == other)
+            return true;
+        if (other == null || getClass() != other.getClass())
+            return false;
         Record other_record = (Record) other;
         return Objects.equals(id, other_record.id) &&
-                Objects.equals(data, other_record.data) &&
-                Objects.equals(classification, other_record.classification);
+                        Objects.equals(data, other_record.data) &&
+                        Objects.equals(classification, other_record.classification);
     }
 
-    @Override
-    public int hashCode() {
+    @Override public int hashCode() {
+
         return Objects.hash(id, data, classification);
     }
 
-    @Override
-    public String toString() {
+    @Override public String toString() {
 
         return "Record [id=" + id + ", data=" + data + ", classification=" + classification + "]";
     }

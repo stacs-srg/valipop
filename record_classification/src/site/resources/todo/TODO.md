@@ -22,8 +22,8 @@
 
 # Queries and Comments
 
-- [ ] Why bother checking for null in constructor of StringSimilarityClassifier? We don't check parameters in most situations.
-- [ ] Not clear that conceptually StringSimilarityClassifier should extend ExactMatchClassifier - it's a different thing, not a particular kind of exact match. Also not sure about the similarity classifier first checking for exact match. Might be cleaner for the individual classifiers just to do one thing, and leave that issue to the ensembles.
+- [x] Why bother checking for null in constructor of StringSimilarityClassifier? We don't check parameters in most situations.
+- [x] Not clear that conceptually StringSimilarityClassifier should extend ExactMatchClassifier - it's a different thing, not a particular kind of exact match. Also not sure about the similarity classifier first checking for exact match. Might be cleaner for the individual classifiers just to do one thing, and leave that issue to the ensembles.
 
 # Medium/Long-Term Tasks
 

@@ -17,8 +17,11 @@
 package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier;
 
 import uk.ac.shef.wit.simmetrics.similaritymetrics.InterfaceStringMetric;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Classification;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Record;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -28,30 +31,30 @@ import java.util.Objects;
  *
  * @author Masih Hajiarab Derkani
  */
-public class StringSimilarityClassifier extends ExactMatchClassifier {
+public class StringSimilarityClassifier extends AbstractClassifier {
 
     private final InterfaceStringMetric similarity_metric;
+    private final Map<String, Classification> known_classifications;
 
     /**
      * Constructs a new instance of String similarity classifier.
      *
      * @param similarity_metric the metric by which to calculate similarity between training and unseen data
-     * @throws NullPointerException if the given similarity metric is {@code null}.
      */
     public StringSimilarityClassifier(InterfaceStringMetric similarity_metric) {
 
-        Objects.requireNonNull(similarity_metric);
         this.similarity_metric = similarity_metric;
+        known_classifications = new HashMap<>();
     }
 
-    @Override
-    public Classification classify(final String data) {
+    @Override public void train(Bucket bucket) {
 
-        final Classification exact_classification = super.classify(data);
-        return Classification.UNCLASSIFIED.equals(exact_classification) ? classifyBySimilarity(data) : exact_classification;
+        for (Record record : bucket) {
+            known_classifications.put(record.getData(), record.getClassification());
+        }
     }
 
-    private Classification classifyBySimilarity(String data) {
+    @Override public Classification classify(final String data) {
 
         float highest_similarity_found = 0;
         Classification classification = Classification.UNCLASSIFIED;
