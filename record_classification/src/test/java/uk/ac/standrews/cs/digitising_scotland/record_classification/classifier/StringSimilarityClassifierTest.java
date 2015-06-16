@@ -50,6 +50,8 @@ public class StringSimilarityClassifierTest {
 
     @Test public void testTrain() throws Exception {
 
+        // TODO what property is this testing?
+
         assertEquals(Classification.UNCLASSIFIED, classifier.classify(RECORD_DATA));
         classifier.train(training_records);
         assertNotEquals(Classification.UNCLASSIFIED, classifier.classify(RECORD_DATA));

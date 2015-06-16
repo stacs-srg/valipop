@@ -34,10 +34,12 @@ public class ClassifyToHISCOTest extends AbstractClassificationTest {
     @Test
     public void testPipelineHisco() throws Exception {
 
-        String code_dictionary_path = getResourceFilePath(getClass(), CODE_DICTIONARY_FILE_NAME);
+//        String code_dictionary_path = getResourceFilePath(getClass(), CODE_DICTIONARY_FILE_NAME);
+        String code_dictionary_path = "/Users/graham/Documents/Code/IntelliJ/digitising_scotland/record_classification/src/test/resources/old/HiscoTitles.txt";
         MachineLearningConfiguration.getDefaultProperties().setProperty(CODE_DICTIONARY_PROPERTY_NAME, code_dictionary_path);
         TrainClassifyOneFile trainer = new TrainClassifyOneFile();
-        String training = getResourceFilePath(getClass(), OCCUPATION_DATA_FILE_NAME);
+//        String training = getResourceFilePath(getClass(), OCCUPATION_DATA_FILE_NAME);
+        String training = "/Users/graham/Documents/Code/IntelliJ/digitising_scotland/record_classification/src/test/resources/old/occupationTrainingTest.txt";
 
         String[] args = {training, "", "0.8", "0"};
         Bucket classified = trainer.run(args);
