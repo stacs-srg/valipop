@@ -31,10 +31,9 @@ public abstract class AbstractClassifier implements Classifier {
 
             final String data = record.getData();
             Classification classification = classify(data);
+            
+            assert classification != null;
 
-            if (classification == null) {
-                classification = Classification.UNCLASSIFIED;
-            }
             classified.add(new Record(record.getId(), data, classification));
         }
 

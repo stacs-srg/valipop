@@ -275,7 +275,7 @@ public abstract class AbstractClassificationProcess implements ClassificationPro
         Bucket unclassified_bucket = new Bucket();
 
         for (Record record : bucket) {
-            unclassified_bucket.add(new Record(record.getId(), record.getData(), null));
+            unclassified_bucket.add(new Record(record.getId(), record.getData()));
         }
 
         return unclassified_bucket;

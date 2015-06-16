@@ -38,12 +38,13 @@ public interface Classifier {
      * Classifies a single data item.
      *
      * @param data the data to be classified
-     * @return the resulting classification or {@code null} if the data cannot be classified
+     * @return the resulting classification, or {@link Classification#UNCLASSIFIED} if the data cannot be classified
      */
     Classification classify(String data);
 
     /**
      * Classifies a bucket of data items.
+     * If a record in the given bucket cannot be classified, its classification is set to {@link Classification#UNCLASSIFIED}. 
      *
      * @param bucket the data to be classified
      * @return a new bucket containing the classified data

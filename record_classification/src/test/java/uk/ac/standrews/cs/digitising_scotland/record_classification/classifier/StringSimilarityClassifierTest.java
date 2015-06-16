@@ -24,8 +24,7 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Classification;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Record;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 
 /**
  * Tests {@link StringSimilarityClassifier}.
@@ -57,18 +56,18 @@ public class StringSimilarityClassifierTest {
 
     @Test
     public void testTrain() throws Exception {
-        assertNull(classifier.classify(RECORD_DATA));
+        assertEquals(Classification.UNCLASSIFIED, classifier.classify(RECORD_DATA));
         classifier.train(training_records);
-        assertNotNull(classifier.classify(RECORD_DATA));
+        assertNotEquals(Classification.UNCLASSIFIED, classifier.classify(RECORD_DATA));
     }
 
     @Test
     public void testClassify() throws Exception {
-        assertNull(classifier.classify(RECORD_DATA));
-        assertNull(classifier.classify(SIMILAR_RECORD_DATA));
+        assertEquals(Classification.UNCLASSIFIED, classifier.classify(RECORD_DATA));
+        assertEquals(Classification.UNCLASSIFIED, classifier.classify(SIMILAR_RECORD_DATA));
         classifier.train(training_records);
-        assertNotNull(classifier.classify(RECORD_DATA));
-        assertNotNull(classifier.classify(SIMILAR_RECORD_DATA));
-        assertNull(classifier.classify(DISSIMILAR_RECORD_DATA));
+        assertNotEquals(Classification.UNCLASSIFIED, classifier.classify(RECORD_DATA));
+        assertNotEquals(Classification.UNCLASSIFIED, classifier.classify(SIMILAR_RECORD_DATA));
+        assertEquals(Classification.UNCLASSIFIED, classifier.classify(DISSIMILAR_RECORD_DATA));
     }
 }

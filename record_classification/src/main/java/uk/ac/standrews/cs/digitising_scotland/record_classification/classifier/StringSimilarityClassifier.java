@@ -48,13 +48,13 @@ public class StringSimilarityClassifier extends ExactMatchClassifier {
     public Classification classify(final String data) {
 
         final Classification exact_classification = super.classify(data);
-        return exact_classification == null ? classifyBySimilarity(data) : exact_classification;
+        return Classification.UNCLASSIFIED.equals(exact_classification) ? classifyBySimilarity(data) : exact_classification;
     }
 
     private Classification classifyBySimilarity(String data) {
 
         float highest_similarity_found = 0;
-        Classification classification = null;
+        Classification classification = Classification.UNCLASSIFIED;
 
         for (Map.Entry<String, Classification> known_entry : known_classifications.entrySet()) {
 
