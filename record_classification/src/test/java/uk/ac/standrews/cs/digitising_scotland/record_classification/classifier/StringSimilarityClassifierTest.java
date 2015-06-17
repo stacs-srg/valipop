@@ -24,7 +24,8 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Classification;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Record;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 /**
  * Tests {@link StringSimilarityClassifier}.
@@ -41,23 +42,16 @@ public class StringSimilarityClassifierTest {
     private Bucket training_records;
     private StringSimilarityClassifier classifier;
 
-    @Before public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
 
         classifier = new StringSimilarityClassifier(new CarsonSimilarity<>());
         training_records = new Bucket();
         training_records.add(TRAINING_RECORD);
     }
 
-    @Test public void testTrain() throws Exception {
-
-        // TODO what property is this testing?
-
-        assertEquals(Classification.UNCLASSIFIED, classifier.classify(RECORD_DATA));
-        classifier.train(training_records);
-        assertNotEquals(Classification.UNCLASSIFIED, classifier.classify(RECORD_DATA));
-    }
-
-    @Test public void testClassify() throws Exception {
+    @Test
+    public void testTrainAndClassify() throws Exception {
 
         assertEquals(Classification.UNCLASSIFIED, classifier.classify(RECORD_DATA));
         assertEquals(Classification.UNCLASSIFIED, classifier.classify(SIMILAR_RECORD_DATA));

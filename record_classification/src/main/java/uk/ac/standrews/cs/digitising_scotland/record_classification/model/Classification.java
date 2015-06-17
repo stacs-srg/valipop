@@ -24,7 +24,7 @@ public class Classification {
     //TODO Introduce confidence type.
     public static final Classification UNCLASSIFIED = new Classification("UNCLASSIFIED", new TokenSet(), 0.0);
 
-    //FIXME The name code might be domain specific; maybe subclass HISCOT classifications?
+    //FIXME The name code might be domain specific; maybe subclass HISCO classifications?
     // No HISCO is just one classification scheme. We don't want the code to be specific to that.
     private final String code;
     private final TokenSet tokenSet;

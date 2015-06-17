@@ -72,8 +72,8 @@ public class Bucket implements Iterable<Record> {
      *
      * @param trainingFile the training file to generate the records and train the models from
      * @return the bucket that will be populated
-     * @throws IOException           Signals that an I/O exception has occurred.
-     * @throws InputFormatException  the input format exception
+     * @throws IOException Signals that an I/O exception has occurred.
+     * @throws InputFormatException the input format exception
      * @throws CodeNotValidException
      */
     public Bucket(final File trainingFile, final CodeDictionary codeDictionary) throws IOException, InputFormatException, CodeNotValidException {
@@ -84,7 +84,8 @@ public class Bucket implements Iterable<Record> {
 
         if (training_file_is_in_long_format) {
             addCollectionOfRecords(new LongFormatConverter().convert(trainingFile, codeDictionary));
-        } else {
+        }
+        else {
             addCollectionOfRecords(RecordFactory.getRecordsFromFile(trainingFile, codeDictionary));
         }
     }

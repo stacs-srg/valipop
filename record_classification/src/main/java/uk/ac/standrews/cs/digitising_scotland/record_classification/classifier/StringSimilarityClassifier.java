@@ -23,7 +23,6 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Record
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * Classifies records based on the {@link InterfaceStringMetric similarity} of the training data to unseen data.
