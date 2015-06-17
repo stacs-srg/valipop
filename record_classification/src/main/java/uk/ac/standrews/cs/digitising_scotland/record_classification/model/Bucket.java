@@ -50,7 +50,8 @@ public class Bucket implements Iterable<Record> {
 
         for (List<String> record : records_csv.getRecords()) {
 
-            if (record.size() != 3) throw new InputFileFormatException("record should contain 3 values");
+            if (record.size() != 3)
+                throw new InputFileFormatException("record should contain 3 values");
 
             int id = Integer.parseInt(record.get(0));
             String data = record.get(1);
@@ -88,15 +89,13 @@ public class Bucket implements Iterable<Record> {
         return records.size();
     }
 
-    @Override
-    public Iterator<Record> iterator() {
+    @Override public Iterator<Record> iterator() {
 
         return records.iterator();
     }
 
-    @Override
-    public String toString() {
+    @Override public String toString() {
 
-        return "Bucket [records=" + records + "]";
+        return "Bucket [records=" + records + ", size=" + size() + "]";
     }
 }

@@ -18,16 +18,16 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier;
 
 import old.record_classification_old.classifiers.closestmatchmap.CarsonSimilarity;
 import old.record_classification_old.datastructures.tokens.TokenSet;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import uk.ac.shef.wit.simmetrics.similaritymetrics.CosineSimilarity;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.interfaces.Classifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Classification;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Record;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
@@ -49,7 +49,8 @@ public class EnsembleClassifierTest {
     private Classifier string_similarity_classifier;
     private EnsembleClassifier.ResolutionStrategy resolution_strategy;
 
-    @Before public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
 
         exact_match_classifier = new ExactMatchClassifier();
         string_similarity_classifier = new StringSimilarityClassifier(new CarsonSimilarity());
@@ -59,11 +60,11 @@ public class EnsembleClassifierTest {
 
         resolution_strategy = new EnsembleClassifier.ResolutionStrategy() {
 
-            @Override public Classification resolve(Map<Classifier, Classification> candidate_classifications) {
+            @Override
+            public Classification resolve(Map<Classifier, Classification> candidate_classifications) {
 
                 for (Classification classification : candidate_classifications.values()) {
                     if (!classification.equals(Classification.UNCLASSIFIED)) {
-                        System.out.println(classification);
                         return classification;
                     }
                 }
@@ -75,10 +76,10 @@ public class EnsembleClassifierTest {
         classifier = new EnsembleClassifier(classifiers, resolution_strategy);
         training_records = new Bucket();
         training_records.add(TRAINING_RECORD);
-
     }
 
-    @Test public void testTrain() throws Exception {
+    @Test
+    public void testTrain() throws Exception {
 
         assertEquals(Classification.UNCLASSIFIED, exact_match_classifier.classify(RECORD_DATA));
         assertEquals(Classification.UNCLASSIFIED, string_similarity_classifier.classify(RECORD_DATA));
@@ -92,7 +93,8 @@ public class EnsembleClassifierTest {
 
     }
 
-    @Test public void testClassify() throws Exception {
+    @Test
+    public void testClassify() throws Exception {
 
         assertEquals(Classification.UNCLASSIFIED, classifier.classify(RECORD_DATA));
         assertEquals(Classification.UNCLASSIFIED, classifier.classify(SIMILAR_RECORD_DATA));
