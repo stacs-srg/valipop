@@ -56,6 +56,8 @@ public class OrganicPopulation implements IPopulation {
         } else if (args.length == 1) {
             runPopulationModel(Integer.valueOf(args[0]), true, true, true);
         }
+        System.out.println("--------MAIN END---------");
+
     }
 
     /*
@@ -431,24 +433,37 @@ public class OrganicPopulation implements IPopulation {
         OrganicPopulation.logging = logging;
         if (memoryMonitor) {
             mm = new MemoryMonitor();
+            System.out.println("MEMORY MONITOR INITIALIZED");        
         }
-
+        
         long startTime = System.nanoTime();
         OrganicPopulation op = new OrganicPopulation("Test Population");
         OrganicPartnership.setupTemporalDistributionsInOrganicPartnershipClass(op);
         OrganicPerson.initializeDistributions(op);
+        
+        System.out.println("DISTRIBUTIONS INITIALIZED");        
+        
         AffairWaitingQueueMember.initialiseAffairWithMarrieadOrSingleDistribution(op, "affair_with_single_or_married_distributions_data_filename", random);
 
         if (logging) {
             LoggingControl.setUpLogger();
         }
         
+        System.out.println("LOGGING CONTROL INITIALIZED");        
+        
+        
         if (livingPeople.size() == 0) {
             op.makeSeed(seedSize);
             op.setCurrentDay(op.getEarliestDate() - 1);
         }
+        
+        System.out.println("POPULATION SEEDED");        
+        
 
         if (print) {
+        	
+            System.out.println("OUTPUT PRINTER INITIALIZED");        
+            
             try {
                 writer = new PrintWriter("src/main/resources/output/output_" + System.nanoTime() + ".txt", "UTF-8");
             } catch (FileNotFoundException | UnsupportedEncodingException e) {
@@ -458,8 +473,13 @@ public class OrganicPopulation implements IPopulation {
 
             writer.println(op.getDescription());
         }
+        
+        System.out.println("EVENT HANDLING BEGINS");        
+        
+        
         op.newEventIteration(print, memoryMonitor);
         long timeTaken = System.nanoTime() - startTime;
+        System.out.println("Number of people generated in population in x ms");
         System.out.print(livingPeople.size() + "    ");
         System.out.println(timeTaken / 1000000);
 
@@ -469,6 +489,7 @@ public class OrganicPopulation implements IPopulation {
             writer.println("Run time " + timeTaken / 1000000 + "ms");
             writer.println();
             if (logging) {
+                System.out.println("CREATING GNU PLOT FILES");        
                 LoggingControl.createGnuPlotOutputFilesAndScript();
             }
             writer.close();
