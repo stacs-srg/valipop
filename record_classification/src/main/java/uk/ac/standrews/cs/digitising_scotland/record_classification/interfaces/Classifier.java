@@ -16,8 +16,9 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.interfaces;
 
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Classification;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
+
+import java.io.*;
 
 /**
  * Basic classifier interface.
@@ -25,7 +26,7 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Classi
  * @author Graham Kirby
  * @author Masih Hajiarab Derkani
  */
-public interface Classifier {
+public interface Classifier extends Serializable {
 
     /**
      * Trains the classifier on the given gold standard records.
