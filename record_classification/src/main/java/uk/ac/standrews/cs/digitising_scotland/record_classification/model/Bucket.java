@@ -23,8 +23,10 @@ import uk.ac.standrews.cs.util.dataset.*;
 import java.io.*;
 import java.util.*;
 
-public class Bucket implements Iterable<Record> {
+public class Bucket implements Iterable<Record>, Serializable {
 
+    private static final long serialVersionUID = 7216381249689825103L;
+    
     private final List<Record> records;
 
     /**
@@ -53,7 +55,7 @@ public class Bucket implements Iterable<Record> {
             String data = record.get(1);
             String code = record.get(2);
 
-            Classification classification = "".equals(code) ? Classification.UNCLASSIFIED : new Classification(code, new TokenSet(data), 1.0);
+            Classification classification = code.isEmpty() ? Classification.UNCLASSIFIED : new Classification(code, new TokenSet(data), 1.0);
 
             records.add(new Record(id, data, classification));
         }

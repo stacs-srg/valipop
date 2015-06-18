@@ -16,21 +16,23 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.model;
 
-import old.record_classification_old.datastructures.tokens.TokenSet;
+import old.record_classification_old.datastructures.tokens.*;
 
-public class Classification {
+import java.io.*;
+import java.util.*;
+
+public class Classification implements Serializable {
 
     //FIXME The token set in #UNCLASSIFIED is modifiable; need unmodifiable token set.
-    //TODO Introduce confidence type.
     public static final Classification UNCLASSIFIED = new Classification("UNCLASSIFIED", new TokenSet(), 0.0);
 
-    //FIXME The name code might be domain specific; maybe subclass HISCO classifications?
-    // No HISCO is just one classification scheme. We don't want the code to be specific to that.
-    private final String code;
-    private final TokenSet tokenSet;
-    private final Double confidence;
+    private static final long serialVersionUID = 7074436345885045033L;
 
-    public Classification(final String code, final TokenSet tokenSet, final Double confidence) {
+    private final String code; // TODO find a better name for this field; too domain-specific, maybe id?
+    private final TokenSet tokenSet;
+    private final double confidence; //TODO Introduce confidence type.
+
+    public Classification(final String code, final TokenSet tokenSet, final double confidence) {
 
         this.code = code;
         this.tokenSet = tokenSet;
@@ -47,9 +49,28 @@ public class Classification {
         return tokenSet;
     }
 
-    public Double getConfidence() {
+    public double getConfidence() {
 
         return confidence;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+        final Classification that = (Classification) o;
+        return Objects.equals(code, that.code) &&
+                        Objects.equals(tokenSet, that.tokenSet) &&
+                        Objects.equals(confidence, that.confidence);
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(code, tokenSet, confidence);
     }
 
     @Override

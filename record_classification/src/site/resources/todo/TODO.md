@@ -8,14 +8,10 @@
 - [ ] Implement OLR classifier (GK).
 - [x] Implement ensemble classifier.
 - [x] Make this todo page.
-- [ ] Implement classifier serialisation/de-serialisation.
+- [x] Implement classifier serialisation/de-serialisation.
 - [ ] Add multiple user entry points to the project.
-   - [ ] Train classifier on specified gold standard data and persist state.
-      - [ ] to specified location
-      - [ ] to default location? within resource tree?
-   - [ ] Load classifier from persistent state, classify specified unseen data, save results.
-      - [ ] from/to specified locations
-      - [ ] from/to default locations?
+   - [ ] Train classifier on specified gold standard data and persist state to specified location
+   - [ ] Load classifier from persistent state, classify specified unseen data, save results from/to specified locations
 - [ ] Automate Windows executable generation.
 - [ ] Implement stemming and removal of stop words.
 - [ ] Add text from HISCO definitions to training set.

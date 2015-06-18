@@ -16,7 +16,8 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.model;
 
-import java.util.Objects;
+import java.io.*;
+import java.util.*;
 
 /**
  * A data record.
@@ -24,8 +25,10 @@ import java.util.Objects;
  * @author Graham Kirby
  * @author Masih Hajiarab Derkani
  */
-public class Record {
+public class Record implements Serializable {
 
+    private static final long serialVersionUID = 5810954671977163993L;
+    
     private final int id;
     private final String data;
     private final Classification classification;  // TODO restore support for multiple classifications
