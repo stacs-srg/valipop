@@ -26,7 +26,7 @@ import java.util.*;
 public class Bucket implements Iterable<Record>, Serializable {
 
     private static final long serialVersionUID = 7216381249689825103L;
-    
+
     private final List<Record> records;
 
     /**

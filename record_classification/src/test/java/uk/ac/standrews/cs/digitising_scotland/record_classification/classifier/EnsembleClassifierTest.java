@@ -17,6 +17,7 @@
 package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier;
 
 import old.record_classification_old.datastructures.tokens.*;
+import org.apache.commons.lang3.*;
 import org.junit.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.interfaces.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
@@ -35,9 +36,9 @@ public class EnsembleClassifierTest {
     private static final String SIMILAR_RECORD_DATA = "recrod";
     private static final String DISSIMILAR_RECORD_DATA = "fish";
     private static final Record TRAINING_RECORD = new Record(1, RECORD_DATA, new Classification("media", new TokenSet(), 1.0));
+    private static final EnsembleClassifier.ResolutionStrategy DUMMY_RESOLUTION_STRATEGY = new DummyResolutionStrategy();
 
     private Bucket training_records;
-
     private EnsembleClassifier classifier;
     private Classifier exact_match_classifier;
     private Classifier string_similarity_classifier;
@@ -47,26 +48,11 @@ public class EnsembleClassifierTest {
 
         exact_match_classifier = new ExactMatchClassifier();
         string_similarity_classifier = new StringSimilarityClassifier(StringSimilarityMetric.JARO_WINKLER);
-        final Set<Classifier> classifiers = new HashSet<>();
+        final HashSet<Classifier> classifiers = new HashSet<>();
         classifiers.add(exact_match_classifier);
         classifiers.add(string_similarity_classifier);
 
-        final EnsembleClassifier.ResolutionStrategy resolution_strategy = new EnsembleClassifier.ResolutionStrategy() {
-
-            @Override
-            public Classification resolve(Map<Classifier, Classification> candidate_classifications) {
-
-                for (Classification classification : candidate_classifications.values()) {
-                    if (!classification.equals(Classification.UNCLASSIFIED)) {
-                        return classification;
-                    }
-                }
-
-                return Classification.UNCLASSIFIED;
-            }
-        };
-
-        classifier = new EnsembleClassifier(classifiers, resolution_strategy);
+        classifier = new EnsembleClassifier(classifiers, DUMMY_RESOLUTION_STRATEGY);
         training_records = new Bucket();
         training_records.add(TRAINING_RECORD);
     }
@@ -97,5 +83,42 @@ public class EnsembleClassifierTest {
         assertNotEquals(Classification.UNCLASSIFIED, classifier.classify(SIMILAR_RECORD_DATA));
         assertEquals(Classification.UNCLASSIFIED, classifier.classify(DISSIMILAR_RECORD_DATA));
 
+    }
+
+    @Test
+    public void testSerialization() {
+
+        assertEquals(classifier, SerializationUtils.deserialize(SerializationUtils.serialize(classifier)));
+        classifier.train(training_records);
+        assertEquals(classifier, SerializationUtils.deserialize(SerializationUtils.serialize(classifier)));
+    }
+}
+
+class DummyResolutionStrategy implements EnsembleClassifier.ResolutionStrategy {
+
+    private static final long serialVersionUID = 8868271992781552957L;
+
+    @Override
+    public Classification resolve(Map<Classifier, Classification> candidate_classifications) {
+
+        for (Classification classification : candidate_classifications.values()) {
+            if (!classification.equals(Classification.UNCLASSIFIED)) {
+                return classification;
+            }
+        }
+
+        return Classification.UNCLASSIFIED;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+
+        return this == o || !(o == null || getClass() != o.getClass());
+    }
+
+    @Override
+    public int hashCode() {
+
+        return 23;
     }
 }

@@ -17,6 +17,7 @@
 package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier;
 
 import old.record_classification_old.datastructures.tokens.*;
+import org.apache.commons.lang3.*;
 import org.junit.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.util.*;
@@ -55,5 +56,17 @@ public class StringSimilarityClassifierTest {
         assertNotEquals(Classification.UNCLASSIFIED, classifier.classify(RECORD_DATA));
         assertNotEquals(Classification.UNCLASSIFIED, classifier.classify(SIMILAR_RECORD_DATA));
         assertEquals(Classification.UNCLASSIFIED, classifier.classify(DISSIMILAR_RECORD_DATA));
+    }
+
+    @Test
+    public void testSerialization() {
+
+        for (StringSimilarityMetric metric : StringSimilarityMetric.values()) {
+
+            final StringSimilarityClassifier classifier = new StringSimilarityClassifier(metric);
+            assertEquals(classifier, SerializationUtils.deserialize(SerializationUtils.serialize(classifier)));
+            classifier.train(training_records);
+            assertEquals(classifier, SerializationUtils.deserialize(SerializationUtils.serialize(classifier)));
+        }
     }
 }

@@ -45,7 +45,7 @@ public interface Classifier extends Serializable {
 
     /**
      * Classifies a bucket of data items.
-     * If a record in the given bucket cannot be classified, its classification is set to {@link Classification#UNCLASSIFIED}. 
+     * If a record in the given bucket cannot be classified, its classification is set to {@link Classification#UNCLASSIFIED}.
      *
      * @param bucket the data to be classified
      * @return a new bucket containing the classified data
