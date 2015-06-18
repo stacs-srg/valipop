@@ -70,4 +70,21 @@ public class StringSimilarityClassifier extends AbstractClassifier {
         }
         return classification;
     }
+
+    @Override
+    public boolean equals(final Object o) {
+
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+        final StringSimilarityClassifier that = (StringSimilarityClassifier) o;
+        return Objects.equals(similarity_metric, that.similarity_metric) && Objects.equals(known_classifications, that.known_classifications);
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(similarity_metric, known_classifications);
+    }
 }

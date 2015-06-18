@@ -23,14 +23,14 @@ import java.io.*;
 import java.util.*;
 
 /**
- * Classifies data with the aid of a group of classifiers and chooses between classifications using a given {@link ResolutionStrategy}.
+ * Classifies data with the aid of a collection of classifiers and chooses between classifications using a given {@link ResolutionStrategy}.
  *
  * @author Masih Hajiarab Derkani
  */
 public class EnsembleClassifier extends AbstractClassifier {
 
     private static final long serialVersionUID = 6432371860423757296L;
-    private final Set<Classifier> classifiers;
+    private final ArrayList<Classifier> classifiers;
     private final ResolutionStrategy resolution_strategy;
 
     /**
@@ -39,9 +39,9 @@ public class EnsembleClassifier extends AbstractClassifier {
      * @param classifiers the classifiers
      * @param resolution_strategy the strategy by which to decide a single classification between multiple classifications
      */
-    public EnsembleClassifier(Set<Classifier> classifiers, ResolutionStrategy resolution_strategy) {
+    public EnsembleClassifier(Collection<Classifier> classifiers, ResolutionStrategy resolution_strategy) {
 
-        this.classifiers = classifiers;
+        this.classifiers = new ArrayList<>(classifiers);
         this.resolution_strategy = resolution_strategy;
     }
 
@@ -59,10 +59,28 @@ public class EnsembleClassifier extends AbstractClassifier {
         final Map<Classifier, Classification> candidate_classifications = new HashMap<>();
 
         for (Classifier classifier : classifiers) {
-            candidate_classifications.put(classifier, classifier.classify(data));
+            final Classification classification = classifier.classify(data);
+            candidate_classifications.put(classifier, classification);
         }
 
         return resolution_strategy.resolve(candidate_classifications);
+    }
+
+    @Override
+    public boolean equals(final Object other) {
+
+        if (this == other)
+            return true;
+        if (other == null || getClass() != other.getClass())
+            return false;
+        final EnsembleClassifier that = (EnsembleClassifier) other;
+        return Objects.equals(classifiers, that.classifiers) && Objects.equals(resolution_strategy, that.resolution_strategy);
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(classifiers, resolution_strategy);
     }
 
     /**
@@ -77,6 +95,5 @@ public class EnsembleClassifier extends AbstractClassifier {
          * @return a single classification.
          */
         Classification resolve(Map<Classifier, Classification> candidate_classifications);
-
     }
 }

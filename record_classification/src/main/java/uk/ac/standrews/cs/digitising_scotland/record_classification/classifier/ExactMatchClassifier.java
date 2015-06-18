@@ -23,6 +23,7 @@ import java.util.*;
 public class ExactMatchClassifier extends AbstractClassifier {
 
     private static final long serialVersionUID = 7439350806549465200L;
+
     private final HashMap<String, Classification> known_classifications;
 
     public ExactMatchClassifier() {
@@ -46,5 +47,22 @@ public class ExactMatchClassifier extends AbstractClassifier {
     private void loadRecord(final Record record) {
 
         known_classifications.put(record.getData(), record.getClassification());
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+        final ExactMatchClassifier that = (ExactMatchClassifier) o;
+        return Objects.equals(known_classifications, that.known_classifications);
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(known_classifications);
     }
 }
