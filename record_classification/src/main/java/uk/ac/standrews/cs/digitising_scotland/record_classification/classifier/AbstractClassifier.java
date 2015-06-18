@@ -16,14 +16,12 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier;
 
-import uk.ac.standrews.cs.digitising_scotland.record_classification.interfaces.Classifier;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Classification;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Record;
-
-import java.io.Externalizable;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.interfaces.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 
 public abstract class AbstractClassifier implements Classifier {
+
+    private static final long serialVersionUID = -4322016472465051488L;
 
     public Bucket classify(final Bucket bucket) {
 

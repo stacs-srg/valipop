@@ -16,13 +16,11 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier;
 
-import uk.ac.standrews.cs.digitising_scotland.record_classification.interfaces.Classifier;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Classification;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.interfaces.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.io.*;
+import java.util.*;
 
 /**
  * Classifies data with the aid of a group of classifiers and chooses between classifications using a given {@link ResolutionStrategy}.
@@ -31,6 +29,7 @@ import java.util.Set;
  */
 public class EnsembleClassifier extends AbstractClassifier {
 
+    private static final long serialVersionUID = 6432371860423757296L;
     private final Set<Classifier> classifiers;
     private final ResolutionStrategy resolution_strategy;
 
@@ -66,11 +65,10 @@ public class EnsembleClassifier extends AbstractClassifier {
         return resolution_strategy.resolve(candidate_classifications);
     }
 
-    
     /**
      * Captures the strategy by which to resolve a single classification from multiple classifications.
      */
-    interface ResolutionStrategy {
+    public interface ResolutionStrategy extends Serializable {
 
         /**
          * Resolves a single classification from classifications produced by different classifiers.

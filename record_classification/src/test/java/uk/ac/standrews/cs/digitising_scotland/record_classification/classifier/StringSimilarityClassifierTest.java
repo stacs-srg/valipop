@@ -16,16 +16,12 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier;
 
-import old.record_classification_old.classifiers.closestmatchmap.CarsonSimilarity;
-import old.record_classification_old.datastructures.tokens.TokenSet;
-import org.junit.Before;
-import org.junit.Test;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Classification;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Record;
+import old.record_classification_old.datastructures.tokens.*;
+import org.junit.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.util.*;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.*;
 
 /**
  * Tests {@link StringSimilarityClassifier}.
@@ -45,7 +41,7 @@ public class StringSimilarityClassifierTest {
     @Before
     public void setUp() throws Exception {
 
-        classifier = new StringSimilarityClassifier(new CarsonSimilarity<>());
+        classifier = new StringSimilarityClassifier(StringSimilarityMetric.JARO_WINKLER);
         training_records = new Bucket();
         training_records.add(TRAINING_RECORD);
     }

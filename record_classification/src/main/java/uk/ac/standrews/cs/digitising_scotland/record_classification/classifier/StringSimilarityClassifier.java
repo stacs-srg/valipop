@@ -16,13 +16,11 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier;
 
-import uk.ac.shef.wit.simmetrics.similaritymetrics.InterfaceStringMetric;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Classification;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Record;
+import uk.ac.shef.wit.simmetrics.similaritymetrics.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.util.*;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Classifies records based on the {@link InterfaceStringMetric similarity} of the training data to unseen data.
@@ -32,28 +30,32 @@ import java.util.Map;
  */
 public class StringSimilarityClassifier extends AbstractClassifier {
 
-    private final InterfaceStringMetric similarity_metric;
-    private final Map<String, Classification> known_classifications;
+    private static final long serialVersionUID = -6159276459112698341L;
+
+    private final StringSimilarityMetric similarity_metric;
+    private final HashMap<String, Classification> known_classifications;
 
     /**
      * Constructs a new instance of String similarity classifier.
      *
      * @param similarity_metric the metric by which to calculate similarity between training and unseen data
      */
-    public StringSimilarityClassifier(InterfaceStringMetric similarity_metric) {
+    public StringSimilarityClassifier(StringSimilarityMetric similarity_metric) {
 
         this.similarity_metric = similarity_metric;
         known_classifications = new HashMap<>();
     }
 
-    @Override public void train(Bucket bucket) {
+    @Override
+    public void train(Bucket bucket) {
 
         for (Record record : bucket) {
             known_classifications.put(record.getData(), record.getClassification());
         }
     }
 
-    @Override public Classification classify(final String data) {
+    @Override
+    public Classification classify(final String data) {
 
         float highest_similarity_found = 0;
         Classification classification = Classification.UNCLASSIFIED;

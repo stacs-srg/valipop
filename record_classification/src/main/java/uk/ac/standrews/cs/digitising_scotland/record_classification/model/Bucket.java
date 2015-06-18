@@ -16,16 +16,12 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.model;
 
-import old.record_classification_old.datastructures.tokens.TokenSet;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.InputFileFormatException;
-import uk.ac.standrews.cs.util.dataset.DataSet;
+import old.record_classification_old.datastructures.tokens.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.*;
+import uk.ac.standrews.cs.util.dataset.*;
 
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
+import java.io.*;
+import java.util.*;
 
 public class Bucket implements Iterable<Record> {
 
@@ -89,12 +85,14 @@ public class Bucket implements Iterable<Record> {
         return records.size();
     }
 
-    @Override public Iterator<Record> iterator() {
+    @Override
+    public Iterator<Record> iterator() {
 
         return records.iterator();
     }
 
-    @Override public String toString() {
+    @Override
+    public String toString() {
 
         return "Bucket [records=" + records + ", size=" + size() + "]";
     }

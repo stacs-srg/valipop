@@ -16,16 +16,14 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier;
 
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Classification;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Record;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class ExactMatchClassifier extends AbstractClassifier {
 
-    protected final Map<String, Classification> known_classifications;
+    private static final long serialVersionUID = 7439350806549465200L;
+    private final HashMap<String, Classification> known_classifications;
 
     public ExactMatchClassifier() {
 

@@ -16,17 +16,12 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier;
 
-import old.record_classification_old.datastructures.tokens.TokenSet;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Classification;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Record;
-
-import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
+import old.record_classification_old.datastructures.tokens.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 
 public class DummyClassifier extends AbstractClassifier {
 
+    private static final long serialVersionUID = -687342270805724715L;
     private String a_code;
 
     public void train(final Bucket bucket) {

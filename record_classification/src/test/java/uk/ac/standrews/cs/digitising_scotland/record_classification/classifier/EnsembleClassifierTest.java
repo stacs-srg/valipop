@@ -16,21 +16,15 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier;
 
-import old.record_classification_old.classifiers.closestmatchmap.CarsonSimilarity;
-import old.record_classification_old.datastructures.tokens.TokenSet;
-import org.junit.Before;
-import org.junit.Test;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.interfaces.Classifier;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Classification;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Record;
+import old.record_classification_old.datastructures.tokens.*;
+import org.junit.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.interfaces.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.util.*;
 
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.*;
 
 /**
  * @author masih
@@ -47,18 +41,17 @@ public class EnsembleClassifierTest {
     private EnsembleClassifier classifier;
     private Classifier exact_match_classifier;
     private Classifier string_similarity_classifier;
-    private EnsembleClassifier.ResolutionStrategy resolution_strategy;
 
     @Before
     public void setUp() throws Exception {
 
         exact_match_classifier = new ExactMatchClassifier();
-        string_similarity_classifier = new StringSimilarityClassifier(new CarsonSimilarity());
+        string_similarity_classifier = new StringSimilarityClassifier(StringSimilarityMetric.JARO_WINKLER);
         final Set<Classifier> classifiers = new HashSet<>();
         classifiers.add(exact_match_classifier);
         classifiers.add(string_similarity_classifier);
 
-        resolution_strategy = new EnsembleClassifier.ResolutionStrategy() {
+        final EnsembleClassifier.ResolutionStrategy resolution_strategy = new EnsembleClassifier.ResolutionStrategy() {
 
             @Override
             public Classification resolve(Map<Classifier, Classification> candidate_classifications) {
