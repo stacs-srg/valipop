@@ -37,7 +37,7 @@ public class Bucket implements Iterable<Record>, Serializable {
         records = new ArrayList<>();
     }
 
-    public Bucket(InputStreamReader reader) throws InputFileFormatException, IOException {
+    public Bucket(Reader reader) throws InputFileFormatException, IOException {
 
         this(new DataSet(reader));
     }

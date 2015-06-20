@@ -16,18 +16,15 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.process;
 
-import org.junit.Before;
-import org.junit.Test;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.interfaces.ClassificationMetrics;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.interfaces.ClassificationProcess;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.interfaces.ConfusionMatrix;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.InfoLevel;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.single_classifier.ExactMatchClassificationProcess;
+import org.junit.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.interfaces.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.single_classifier.*;
 
-import java.io.InputStreamReader;
-import java.util.List;
+import java.io.*;
+import java.util.*;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 public class ExactMatchClassifierTest extends AbstractClassificationTest {
 
@@ -45,6 +42,7 @@ public class ExactMatchClassifierTest extends AbstractClassificationTest {
 
         metrics = classification_process.getClassificationMetrics();
         matrices = classification_process.getConfusionMatrices();
+
     }
 
     @Test

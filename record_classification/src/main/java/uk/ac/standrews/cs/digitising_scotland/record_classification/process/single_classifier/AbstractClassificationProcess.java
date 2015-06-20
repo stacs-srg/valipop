@@ -16,28 +16,18 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.process.single_classifier;
 
-import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.ConcreteClassificationMetrics;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.StrictConfusionMatrix;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.ConsistentCodingCleaner;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.InvalidArgException;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.interfaces.ClassificationMetrics;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.interfaces.ClassificationProcess;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.interfaces.Classifier;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.interfaces.ConfusionMatrix;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Cleaner;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.InfoLevel;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Record;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.multiple_classifier.AbstractMultipleClassificationProcess;
-import uk.ac.standrews.cs.digitising_scotland.util.FileManipulation;
-import uk.ac.standrews.cs.util.dataset.DataSet;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.interfaces.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.multiple_classifier.*;
+import uk.ac.standrews.cs.digitising_scotland.util.*;
+import uk.ac.standrews.cs.util.dataset.*;
 
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.nio.file.NoSuchFileException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.text.NumberFormat;
+import java.io.*;
+import java.nio.file.*;
+import java.text.*;
 import java.util.*;
 
 /**
@@ -185,7 +175,8 @@ public abstract class AbstractClassificationProcess implements ClassificationPro
         try {
             return FileManipulation.getInputStreamReader(path);
 
-        } catch (NoSuchFileException e) {
+        }
+        catch (NoSuchFileException e) {
             throw new IOException("cannot open training file: " + path);
         }
     }
@@ -207,7 +198,8 @@ public abstract class AbstractClassificationProcess implements ClassificationPro
             }
             throw new InvalidArgException("invalid training ratio: " + training_ratio);
 
-        } catch (NumberFormatException e) {
+        }
+        catch (NumberFormatException e) {
             throw new InvalidArgException("invalid training ratio: " + training_ratio_arg);
         }
     }
@@ -229,7 +221,8 @@ public abstract class AbstractClassificationProcess implements ClassificationPro
             }
             throw new InvalidArgException("invalid number of repetitions: " + number_of_repetitions);
 
-        } catch (NumberFormatException e) {
+        }
+        catch (NumberFormatException e) {
             throw new InvalidArgException("invalid number of repetitions: " + number_of_repetitions_arg);
         }
     }
@@ -304,16 +297,8 @@ public abstract class AbstractClassificationProcess implements ClassificationPro
         DataSet data_set = new DataSet(new ArrayList<>(Arrays.asList("macro-precision", "macro-recall", "macro-accuracy", "macro-F1", "micro-precision", "micro-recall", "micro-accuracy", "micro-F1")));
 
         for (ClassificationMetrics metrics : results) {
-            data_set.addRow(Arrays.asList(
-                    String.valueOf(metrics.getMacroAveragePrecision()),
-                    String.valueOf(metrics.getMacroAverageRecall()),
-                    String.valueOf(metrics.getMacroAverageAccuracy()),
-                    String.valueOf(metrics.getMacroAverageF1()),
-                    String.valueOf(metrics.getMicroAveragePrecision()),
-                    String.valueOf(metrics.getMicroAverageRecall()),
-                    String.valueOf(metrics.getMicroAverageAccuracy()),
-                    String.valueOf(metrics.getMicroAverageF1())
-            ));
+            data_set.addRow(Arrays.asList(String.valueOf(metrics.getMacroAveragePrecision()), String.valueOf(metrics.getMacroAverageRecall()), String.valueOf(metrics.getMacroAverageAccuracy()), String.valueOf(metrics.getMacroAverageF1()), String.valueOf(metrics.getMicroAveragePrecision()),
+                            String.valueOf(metrics.getMicroAverageRecall()), String.valueOf(metrics.getMicroAverageAccuracy()), String.valueOf(metrics.getMicroAverageF1())));
         }
         return data_set;
     }
@@ -333,11 +318,9 @@ public abstract class AbstractClassificationProcess implements ClassificationPro
 
             System.out.format("total records              : %s%n", format(all_records.size()));
 
-            System.out.format("records used for training  : %s (%s unique)%n",
-                    format(state.training_records.size()), format(unique_training.size()));
+            System.out.format("records used for training  : %s (%s unique)%n", format(state.training_records.size()), format(unique_training.size()));
 
-            System.out.format("records used for evaluation: %s (%s unique, %s not in training set)%n",
-                    format(state.stripped_records.size()), format(unique_evaluation.size()), format(count));
+            System.out.format("records used for evaluation: %s (%s unique, %s not in training set)%n", format(state.stripped_records.size()), format(unique_evaluation.size()), format(count));
 
             System.out.println();
 
@@ -351,7 +334,8 @@ public abstract class AbstractClassificationProcess implements ClassificationPro
 
         int count = 0;
         for (String evaluation_string : unique_evaluation) {
-            if (!unique_training.contains(evaluation_string)) count++;
+            if (!unique_training.contains(evaluation_string))
+                count++;
         }
         return count;
     }

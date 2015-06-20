@@ -16,14 +16,15 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.interfaces;
 
-import java.util.Map;
+import java.io.*;
+import java.util.*;
 
 /**
  * Confusion matrix representing the effectiveness of a classification process.
  *
  * @author Graham Kirby
  */
-public interface ConfusionMatrix {
+public interface ConfusionMatrix extends Serializable {
 
     /**
      * Returns a map from classification class to the number of records classified as that class.

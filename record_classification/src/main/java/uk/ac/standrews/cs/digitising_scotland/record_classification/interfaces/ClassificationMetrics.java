@@ -16,16 +16,17 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.interfaces;
 
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.InfoLevel;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 
-import java.util.Map;
+import java.io.*;
+import java.util.*;
 
 /**
  * Collection of metrics measuring the effectiveness of classification.
  *
  * @author Graham Kirby
  */
-public interface ClassificationMetrics {
+public interface ClassificationMetrics extends Serializable {
 
     /**
      * Returns a map from classification class to precision.

@@ -16,22 +16,20 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.analysis;
 
-import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.*;
 import ch.qos.logback.classic.Logger;
-import org.junit.Before;
-import org.slf4j.LoggerFactory;
+import org.junit.*;
+import org.slf4j.*;
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.URL;
+import java.io.*;
+import java.net.*;
 
 public class AbstractTest {
 
-    public static final String PACKAGE_ROOT = "uk.ac.standrews.cs.digitising_scotland";
-
     @Before
     public void setup() throws Exception {
-        Logger logger = (Logger) LoggerFactory.getLogger(PACKAGE_ROOT);
+
+        Logger logger = (Logger) LoggerFactory.getLogger(getClass().getPackage().getName());
         logger.setLevel(Level.INFO);
     }
 
