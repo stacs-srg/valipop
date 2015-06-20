@@ -16,9 +16,23 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.model;
 
-public interface Cleaner {
+import java.io.*;
+
+/**
+ * Cleans a {@link Bucket bucket}.
+ *
+ * @author Graham Kirby
+ */
+public interface Cleaner extends Serializable {
 
     // TODO probably nicer to split into Cleaner and Checker interfaces, where the first changes stuff and the second just checks.
 
+    /**
+     * Performs the cleaning of the give bucket.
+     *
+     * @param bucket the bucket to clean
+     * @return the cleaned bucket
+     * @throws Exception if an error occurs during cleaning.
+     */
     Bucket clean(Bucket bucket) throws Exception;
 }

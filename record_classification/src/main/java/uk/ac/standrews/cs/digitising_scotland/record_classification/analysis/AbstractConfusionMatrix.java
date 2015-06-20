@@ -16,20 +16,12 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.analysis;
 
-import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.ConsistentCodingCleaner;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.InconsistentCodingException;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.InvalidCodeException;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.UnclassifiedGoldStandardRecordException;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.UnknownDataException;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.interfaces.ConfusionMatrix;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Classification;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Record;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.interfaces.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * General implementation of confusion matrix representing the effectiveness of a classification process.
@@ -40,6 +32,7 @@ import java.util.Set;
  */
 public abstract class AbstractConfusionMatrix implements ConfusionMatrix {
 
+    private static final long serialVersionUID = -818147039422422286L;
     private final Map<String, Integer> classification_counts;
     private final Map<String, Integer> true_positive_counts;
     private final Map<String, Integer> false_positive_counts;
@@ -52,12 +45,12 @@ public abstract class AbstractConfusionMatrix implements ConfusionMatrix {
     /**
      * Creates a confusion matrix representing the effectiveness of a classification process.
      *
-     * @param classified_records        the records that have been classified
-     * @param gold_standard_records     the gold standard records against which the classified records should be checked
+     * @param classified_records the records that have been classified
+     * @param gold_standard_records the gold standard records against which the classified records should be checked
      * @param consistent_coding_checker checker for consistent coding
-     * @throws InvalidCodeException                    if a code in the classified records does not appear in the gold standard records
-     * @throws UnknownDataException                    if a record in the classified records contains data that does not appear in the gold standard records
-     * @throws InconsistentCodingException             if there exist multiple gold standard records containing the same data and different classifications
+     * @throws InvalidCodeException if a code in the classified records does not appear in the gold standard records
+     * @throws UnknownDataException if a record in the classified records contains data that does not appear in the gold standard records
+     * @throws InconsistentCodingException if there exist multiple gold standard records containing the same data and different classifications
      * @throws UnclassifiedGoldStandardRecordException if a record in the gold standard records is not classified
      */
     AbstractConfusionMatrix(final Bucket classified_records, final Bucket gold_standard_records, ConsistentCodingCleaner consistent_coding_checker) throws Exception {
@@ -86,7 +79,7 @@ public abstract class AbstractConfusionMatrix implements ConfusionMatrix {
      * Checks whether a classification result is considered to be correct.
      *
      * @param asserted_code the code asserted by the classifier
-     * @param real_code     the real code as defined in the gold standard records
+     * @param real_code the real code as defined in the gold standard records
      * @return true if the asserted code is considered to be correct
      */
     protected abstract boolean classificationsMatch(String asserted_code, String real_code);
@@ -127,11 +120,11 @@ public abstract class AbstractConfusionMatrix implements ConfusionMatrix {
         int total = 0;
         for (Record record : classified_records) {
 
-            if (record.getClassification() != null) total++;
+            if (record.getClassification() != null)
+                total++;
         }
         return total;
     }
-
 
     @Override
     public int getNumberOfTruePositives() {
@@ -159,13 +152,15 @@ public abstract class AbstractConfusionMatrix implements ConfusionMatrix {
 
     @Override
     public int getNumberOfClasses() {
+
         return getClassificationCounts().size();
     }
 
     private int sum(Map<String, Integer> counts) {
 
         int sum = 0;
-        for (int i : counts.values()) sum += i;
+        for (int i : counts.values())
+            sum += i;
         return sum;
     }
 
@@ -268,7 +263,8 @@ public abstract class AbstractConfusionMatrix implements ConfusionMatrix {
         String asserted_code = classification.getCode();
         String real_code = findGoldStandardCode(record.getData());
 
-        if (classification != Classification.UNCLASSIFIED) incrementCount(asserted_code, classification_counts);
+        if (classification != Classification.UNCLASSIFIED)
+            incrementCount(asserted_code, classification_counts);
 
         for (String this_code : classification_counts.keySet()) {
 
@@ -322,8 +318,8 @@ public abstract class AbstractConfusionMatrix implements ConfusionMatrix {
 
     private boolean falseNegative(String this_code, String asserted_code, String real_code) {
 
-//        System.out.println("\nchecking false negative for: " + this_code + ", " + real_code + ", " + asserted_code);
-//        System.out.println("result: " + (classificationsMatch(real_code, this_code) && !classificationsMatch(asserted_code, this_code)));
+        //        System.out.println("\nchecking false negative for: " + this_code + ", " + real_code + ", " + asserted_code);
+        //        System.out.println("result: " + (classificationsMatch(real_code, this_code) && !classificationsMatch(asserted_code, this_code)));
 
         // False negative for this code if the record should have been classified as this, but it wasn't.
         return classificationsMatch(real_code, this_code) && !classificationsMatch(asserted_code, this_code);

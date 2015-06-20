@@ -16,8 +16,8 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.analysis;
 
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.ConsistentCodingCleaner;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 
 /**
  * Confusion matrix using exact matching on codes.
@@ -27,6 +27,8 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.Con
  */
 public class StrictConfusionMatrix extends AbstractConfusionMatrix {
 
+    private static final long serialVersionUID = 1869329418086836323L;
+
     public StrictConfusionMatrix(final Bucket classified_records, final Bucket gold_standard_records, ConsistentCodingCleaner consistent_coding_checker) throws Exception {
 
         super(classified_records, gold_standard_records, consistent_coding_checker);
@@ -34,6 +36,7 @@ public class StrictConfusionMatrix extends AbstractConfusionMatrix {
 
     @Override
     protected boolean classificationsMatch(String asserted_code, String real_code) {
+
         return asserted_code.equals(real_code);
     }
 }

@@ -16,16 +16,15 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.analysis;
 
-import uk.ac.standrews.cs.digitising_scotland.record_classification.interfaces.ClassificationMetrics;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.interfaces.ConfusionMatrix;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.InfoLevel;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.interfaces.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 
-import java.text.NumberFormat;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.text.*;
+import java.util.*;
 
 public class ConcreteClassificationMetrics implements ClassificationMetrics {
+
+    private static final long serialVersionUID = -214187549269797059L;
 
     // http://nlp.stanford.edu/IR-book/html/htmledition/evaluation-of-text-classification-1.html#17469
 
@@ -255,7 +254,8 @@ public class ConcreteClassificationMetrics implements ClassificationMetrics {
     private int sum(Map<String, Integer> counts) {
 
         int total = 0;
-        for (int count : counts.values()) total += count;
+        for (int count : counts.values())
+            total += count;
         return total;
     }
 
