@@ -19,7 +19,7 @@ public class CheckInconsistentClassification implements Step {
     @Override
     public void perform(final Context context) throws Exception {
 
-        final Bucket classified_records = context.getClassifiedRecords();
+        final Bucket classified_records = context.getClassifiedUnseenRecords();
 
         if (classified_records != null) {
 

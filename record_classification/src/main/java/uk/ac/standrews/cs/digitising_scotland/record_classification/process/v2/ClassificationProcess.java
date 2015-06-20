@@ -62,7 +62,7 @@ public class ClassificationProcess implements Callable<Bucket>, Serializable {
             step.perform(context);
         }
 
-        return context.getClassifiedRecords();
+        return context.getClassifiedUnseenRecords();
     }
 
     /**
