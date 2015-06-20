@@ -16,12 +16,12 @@ import java.util.*;
 public class Context implements Serializable {
 
     private static final long serialVersionUID = -6389479358148790573L;
+
     private final Random random;
     private Classifier classifier;
     private Bucket gold_standard;
     private Bucket training_records;
     private Bucket classified_unseen_records;
-
     private ConfusionMatrix confusion_matrix;
     private ClassificationMetrics classification_metrics;
 
@@ -65,6 +65,16 @@ public class Context implements Serializable {
     }
 
     /**
+     * Sets the gold standard records of this context.
+     *
+     * @param gold_standard the gold standards to set
+     */
+    public void setGoldStandard(final Bucket gold_standard) {
+
+        this.gold_standard = gold_standard;
+    }
+
+    /**
      * Gets classifier in this context.
      *
      * @return the classifier in this context
@@ -89,19 +99,9 @@ public class Context implements Serializable {
      *
      * @return the records that are classified by the classifier, or {@code null} if no records have been classified.
      */
-    public Bucket getClassifiedRecords() {
+    public Bucket getClassifiedUnseenRecords() {
 
         return classified_unseen_records;
-    }
-
-    /**
-     * Sets the gold standard records of this context.
-     *
-     * @param gold_standard the gold standards to set
-     */
-    public void setGoldStandard(final Bucket gold_standard) {
-
-        this.gold_standard = gold_standard;
     }
 
     /**
@@ -114,14 +114,14 @@ public class Context implements Serializable {
         this.classified_unseen_records = classified_unseen_records;
     }
 
-    public void setClassificationMetrics(final ConcreteClassificationMetrics classification_metrics) {
-
-        this.classification_metrics = classification_metrics;
-    }
-
     public ClassificationMetrics getClassificationMetrics() {
 
         return classification_metrics;
+    }
+
+    public void setClassificationMetrics(final ConcreteClassificationMetrics classification_metrics) {
+
+        this.classification_metrics = classification_metrics;
     }
 
     public Bucket getTrainingRecords() {
