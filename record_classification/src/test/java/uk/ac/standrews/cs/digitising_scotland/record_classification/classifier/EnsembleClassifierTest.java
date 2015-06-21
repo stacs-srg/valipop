@@ -28,7 +28,9 @@ import java.util.*;
 import static org.junit.Assert.*;
 
 /**
- * @author masih
+ * Tests {@link EnsembleClassifier}.
+ *
+ * @author Masih Hajiarab Derkani
  */
 public class EnsembleClassifierTest {
 
@@ -94,31 +96,3 @@ public class EnsembleClassifierTest {
     }
 }
 
-class DummyResolutionStrategy implements EnsembleClassifier.ResolutionStrategy {
-
-    private static final long serialVersionUID = 8868271992781552957L;
-
-    @Override
-    public Classification resolve(Map<Classifier, Classification> candidate_classifications) {
-
-        for (Classification classification : candidate_classifications.values()) {
-            if (!classification.equals(Classification.UNCLASSIFIED)) {
-                return classification;
-            }
-        }
-
-        return Classification.UNCLASSIFIED;
-    }
-
-    @Override
-    public boolean equals(final Object o) {
-
-        return this == o || !(o == null || getClass() != o.getClass());
-    }
-
-    @Override
-    public int hashCode() {
-
-        return 23;
-    }
-}
