@@ -29,14 +29,6 @@ public class Bucket implements Iterable<Record>, Serializable {
 
     private final List<Record> records;
 
-    /**
-     * Instantiates a new empty bucket.
-     */
-    public Bucket() {
-
-        records = new ArrayList<>();
-    }
-
     public Bucket(Reader reader) throws InputFileFormatException, IOException {
 
         this(new DataSet(reader));
@@ -61,6 +53,14 @@ public class Bucket implements Iterable<Record>, Serializable {
         }
     }
 
+    /**
+     * Instantiates a new empty bucket.
+     */
+    public Bucket() {
+
+        records = new ArrayList<>();
+    }
+
     public void add(final Record... records) {
 
         Collections.addAll(this.records, records);
@@ -77,6 +77,35 @@ public class Bucket implements Iterable<Record>, Serializable {
         return records.contains(record);
     }
 
+    @Override
+    public Iterator<Record> iterator() {
+
+        return records.iterator();
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(records);
+    }
+
+    @Override
+    public boolean equals(final Object other) {
+
+        if (this == other)
+            return true;
+        if (other == null || getClass() != other.getClass())
+            return false;
+        final Bucket that = (Bucket) other;
+        return Objects.equals(records, that.records);
+    }
+
+    @Override
+    public String toString() {
+
+        return "Bucket [records=" + records + ", size=" + size() + "]";
+    }
+
     /**
      * Returns the number of records in the bucket.
      *
@@ -85,17 +114,5 @@ public class Bucket implements Iterable<Record>, Serializable {
     public int size() {
 
         return records.size();
-    }
-
-    @Override
-    public Iterator<Record> iterator() {
-
-        return records.iterator();
-    }
-
-    @Override
-    public String toString() {
-
-        return "Bucket [records=" + records + ", size=" + size() + "]";
     }
 }
