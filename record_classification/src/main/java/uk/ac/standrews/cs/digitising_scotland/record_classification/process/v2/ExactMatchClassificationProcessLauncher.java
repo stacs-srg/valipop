@@ -26,11 +26,11 @@ import java.io.*;
 import java.nio.charset.*;
 
 /**
- * User Entry point to perform exact match classification.
+ * Launches an exact match classification process.
  *
  * @author Masih Hajiarab Derkani
  */
-public class ExactMatchClassificationProcess {
+public class ExactMatchClassificationProcessLauncher {
 
     @Parameter(required = true, names = {"-g", "--goldStandard"}, description = "Path to a CSV file containing the gold standard.", converter = FileConverter.class)
     private File gold_standard_csv;
@@ -46,7 +46,7 @@ public class ExactMatchClassificationProcess {
 
     public static void main(String[] args) throws Exception {
 
-        final ExactMatchClassificationProcess process = new ExactMatchClassificationProcess();
+        final ExactMatchClassificationProcessLauncher process = new ExactMatchClassificationProcessLauncher();
         final JCommander commander = new JCommander(process);
 
         try {
