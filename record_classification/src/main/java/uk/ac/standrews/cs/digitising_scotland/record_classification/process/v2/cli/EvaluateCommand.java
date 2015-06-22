@@ -17,20 +17,23 @@
 package uk.ac.standrews.cs.digitising_scotland.record_classification.process.v2.cli;
 
 import com.beust.jcommander.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.util.*;
+import com.beust.jcommander.converters.*;
 
 import java.io.*;
 
 /**
  * @author Masih Hajiarab Derkani
  */
-@Parameters(commandDescription = "Evaluate classifier", separators = "=")
+@Parameters(commandNames = EvaluateCommand.NAME, commandDescription = "Evaluate classifier", separators = "=")
 public class EvaluateCommand {
 
-    @Parameter(required = true, names = {"-d", "--destination"}, description = "Path to the place to persist the evaluation results.", converter = CommandLineUtils.FileConverter.class)
+    /** The name of this command */
+    public static final String NAME = "evaluate";
+
+    @Parameter(required = true, names = {"-d", "--destination"}, description = "Path to the place to persist the evaluation results.", converter = FileConverter.class)
     private File destination;
 
-    @Parameter(names = {"-d", "--destination"}, description = "The number of repetitions.")
+    @Parameter(names = {"-r", "--repetitonCount"}, description = "The number of repetitions.")
     private int repetition_count = 1;
 
     public File getDestination() {

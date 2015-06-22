@@ -41,15 +41,6 @@ public final class CommandLineUtils {
         }
     }
 
-    public static class FileConverter implements IStringConverter<File> {
-
-        @Override
-        public File convert(final String value) {
-
-            return new File(value);
-        }
-    }
-
     public static class ClassifierConverter implements IStringConverter<Classifier> {
 
         /** Names of classifiers supported by this converter. **/

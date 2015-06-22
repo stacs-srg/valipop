@@ -17,7 +17,7 @@
 package uk.ac.standrews.cs.digitising_scotland.record_classification.process.v2.cli;
 
 import com.beust.jcommander.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.util.CommandLineUtils.*;
+import com.beust.jcommander.converters.*;
 
 import java.io.*;
 
@@ -26,8 +26,11 @@ import java.io.*;
  *
  * @author Masih Hajiarab Derkani
  */
-@Parameters(commandDescription = "Classify unseen data", separators = "=")
+@Parameters(commandNames = ClassifyCommand.NAME, commandDescription = "Classify unseen data", separators = "=")
 public class ClassifyCommand {
+
+    /** The name of this command */
+    public static final String NAME = "classify";
 
     @Parameter(required = true, description = "Path to the unseen data to classify", converter = FileConverter.class)
     private File unseen_data;
