@@ -46,8 +46,8 @@ public class EnglishStopWordCleaner extends TokenFilterCleaner {
     }
 
     @Override
-    protected TokenFilter getTokenFilter(final TokenStream tokenizer_stream) {
+    protected TokenFilter getTokenFilter(final TokenStream stream) {
 
-        return new StopFilter(Version.LUCENE_36, tokenizer_stream, STOP_WORDS);
+        return new StopFilter(Version.LUCENE_36, stream, STOP_WORDS);
     }
 }
