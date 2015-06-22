@@ -29,7 +29,7 @@ import static org.junit.Assert.*;
  *
  * @author Masih Hajiarab Derkani
  */
-abstract class TokenFilterCleanerTest {
+public abstract class TokenFilterCleanerTest {
 
     private final TokenFilterCleaner cleaner;
     private final Map<String, String> input_expected_map;
