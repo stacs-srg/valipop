@@ -16,26 +16,21 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning;
 
-import java.util.*;
+import org.apache.lucene.analysis.*;
+import org.apache.lucene.analysis.en.PorterStemFilter;
 
 /**
- * Tests {@link EnglishStopWordCleaner}.
+ * Stemming cleaner that uses {@link PorterStemFilter}.
  *
  * @author Masih Hajiarab Derkani
  */
-public class EnglishStopWordCleanerTest extends TokenFilterCleanerTest {
+public class PorterStemCleaner extends TokenFilterCleaner {
 
-    public EnglishStopWordCleanerTest() {
+    private static final long serialVersionUID = -4878258237026508723L;
 
-        super(new EnglishStopWordCleaner(), new HashMap<String, String>() {
+    @Override
+    protected TokenFilter getTokenFilter(final TokenStream stream) {
 
-            {
-                put("this and that and the", "");
-                put("this and the fish", "fish");
-                put("a fish and the tank", "fish tank");
-                put("stop the words", "stop words");
-            }
-        });
+        return new PorterStemFilter(stream);
     }
-
 }

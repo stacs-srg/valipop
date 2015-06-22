@@ -19,23 +19,23 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning;
 import java.util.*;
 
 /**
- * Tests {@link EnglishStopWordCleaner}.
+ * Tests {@link PorterStemCleaner}.
  *
  * @author Masih Hajiarab Derkani
  */
-public class EnglishStopWordCleanerTest extends TokenFilterCleanerTest {
+public class PorterStemCleanerTest extends TokenFilterCleanerTest {
 
-    public EnglishStopWordCleanerTest() {
+    public PorterStemCleanerTest() {
 
-        super(new EnglishStopWordCleaner(), new HashMap<String, String>() {
+        super(new PorterStemCleaner(), new HashMap<String, String>() {
 
             {
-                put("this and that and the", "");
-                put("this and the fish", "fish");
-                put("a fish and the tank", "fish tank");
-                put("stop the words", "stop words");
+                put("driving", "drive");
+                put("cats driving cars at the pub", "cat drive car at the pub");
+                put("classification", "classif");
+                put("this", "thi");
+                put("this and that and the other stuffing shoots the shingles off the roofs", "thi and that and the other stuf shoot the shingl off the roof");
             }
         });
     }
-
 }

@@ -13,7 +13,7 @@
    - [ ] Train classifier on specified gold standard data and persist state to specified location
    - [ ] Load classifier from persistent state, classify specified unseen data, save results from/to specified locations
 - [ ] Automate Windows executable generation.
-- [ ] Implement stemming.
+- [x] Implement stemming.
 - [x] Implement removal of stop words.
 - [ ] Add text from HISCO definitions to training set.
 

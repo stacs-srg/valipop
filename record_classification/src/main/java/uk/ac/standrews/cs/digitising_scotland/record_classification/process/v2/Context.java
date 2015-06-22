@@ -130,31 +130,61 @@ public class Context implements Serializable {
         this.classified_unseen_records = classified_unseen_records;
     }
 
+    /**
+     * Gets the classification metrics of this context.
+     *
+     * @return the classification metrics of this context, or {@code null}
+     */
     public ClassificationMetrics getClassificationMetrics() {
 
         return classification_metrics;
     }
 
+    /**
+     * Sets the classification metrics of this context.
+     *
+     * @param classification_metrics the classification metrics to set
+     */
     public void setClassificationMetrics(final ConcreteClassificationMetrics classification_metrics) {
 
         this.classification_metrics = classification_metrics;
     }
 
+    /**
+     * Gets the records that are used to train the classifier of this context.
+     *
+     * @return the records that are used to train the classifier of this context, or {@code null} if the records are not set.
+     */
     public Bucket getTrainingRecords() {
 
         return training_records;
     }
 
+    /**
+     * Sets the records that are used to train the classifier of this context.
+     *
+     * @param training_records the records to be used for training the classifier of this context
+     */
     public void setTrainingRecords(Bucket training_records) {
 
         this.training_records = training_records;
     }
 
+    /**
+     * Gets the confusion matrix of this context.
+     *
+     * @return the confusion matrix of this context, or {@code null} if no confusion matrix is set
+     */
     public ConfusionMatrix getConfusionMatrix() {
 
         return confusion_matrix;
     }
 
+    /**
+     * Sets the confusion matrix of this context.
+     *
+     * @param confusion_matrix the confusion matrix to set
+     */
     public void setConfusionMatrix(ConfusionMatrix confusion_matrix) {
 
         this.confusion_matrix = confusion_matrix;
