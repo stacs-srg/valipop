@@ -16,6 +16,7 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.process.v2;
 
+import org.apache.commons.lang3.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 
 import java.io.*;
@@ -79,6 +80,36 @@ public class ClassificationProcess implements Callable<Bucket>, Serializable {
         }
 
         return context.getClassifiedUnseenRecords();
+    }
+
+    /**
+     * Performs this classification process {@code n} times where {@code n} is the given number of repetitions.
+     * The classification process is performed on this process and {@code n-1} of its closes.
+     * The cloning of this process is done by serialization/deserialization of this process.
+     *
+     * @param repetitions the number of times to repeat this classification process.
+     * @return the list of performed classification processes
+     * @throws IllegalArgumentException if the given number of repetitions is less than {@code 1}
+     * @throws Exception if an error occurs during execution of the classification process
+     */
+    public List<ClassificationProcess> repeat(int repetitions) throws Exception {
+
+        if (repetitions < 1) {
+            throw new IllegalArgumentException("the number of repetitions must be at least one");
+        }
+
+        final List<ClassificationProcess> performed_processes = new ArrayList<>();
+        call();
+        performed_processes.add(this);
+
+        final byte[] serialized_process = SerializationUtils.serialize(this);
+        for (int i = 0; i < repetitions - 1; i++) {
+            final ClassificationProcess process_clone = (ClassificationProcess) SerializationUtils.deserialize(serialized_process);
+            process_clone.call();
+            performed_processes.add(process_clone);
+        }
+
+        return Collections.unmodifiableList(performed_processes);
     }
 
     /**
