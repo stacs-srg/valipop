@@ -25,10 +25,13 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.util.*;
  *
  * @author Masih Hajiarab Derkani
  */
-@Parameters(commandDescription = "Initialise a new classification process", separators = "=")
+@Parameters(commandNames = InitCommand.NAME, commandDescription = "Initialise a new classification process", separators = "=")
 public class InitCommand {
 
-    @Parameter(required = true, description = "The name of the classification process.")
+    /** The name of this command */
+    public static final String NAME = "init";
+
+    @Parameter(required = true, names = {"-n", "--name"}, description = "The name of the classification process.")
     private String name;
 
     @Parameter(required = true, names = {"-c", "--classifier"}, description = "The classifier to use for classification process.", converter = CommandLineUtils.ClassifierConverter.class)
@@ -39,7 +42,7 @@ public class InitCommand {
      *
      * @return the name of initialised classification process
      */
-    public String getName() {
+    public String getClassificationProcessName() {
 
         return name;
     }

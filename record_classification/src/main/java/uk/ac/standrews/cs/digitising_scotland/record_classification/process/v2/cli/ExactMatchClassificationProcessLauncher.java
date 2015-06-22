@@ -17,6 +17,7 @@
 package uk.ac.standrews.cs.digitising_scotland.record_classification.process.v2.cli;
 
 import com.beust.jcommander.*;
+import com.beust.jcommander.converters.*;
 import org.apache.commons.lang3.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.*;

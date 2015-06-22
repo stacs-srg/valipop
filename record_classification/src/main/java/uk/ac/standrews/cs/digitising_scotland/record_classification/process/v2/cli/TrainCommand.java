@@ -17,6 +17,7 @@
 package uk.ac.standrews.cs.digitising_scotland.record_classification.process.v2.cli;
 
 import com.beust.jcommander.*;
+import com.beust.jcommander.converters.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.util.*;
 
@@ -25,12 +26,16 @@ import java.io.*;
 /**
  * @author Masih Hajiarab Derkani
  */
-@Parameters(commandDescription = "Train classifier", separators = "=")
+@Parameters(commandNames = TrainCommand.NAME, commandDescription = "Train classifier", separators = "=")
 public class TrainCommand {
 
-    @Parameter(required = true, names = {"-g", "--goldStandard"}, description = "Path to a CSV file containing the gold standard.", converter = CommandLineUtils.FileConverter.class)
+    /** The name of this command */
+    public static final String NAME = "train";
+
+    @Parameter(required = true, names = {"-g", "--goldStandard"}, description = "Path to a CSV file containing the gold standard.", converter = FileConverter.class)
     private File gold_standard;
 
+    //TODO add support for more cleaners
     @Parameter(names = {"-c", "--cleanGoldStandard"}, description = "The name of the gold_standard_cleaner by which to clean the gold standard data prior to training/evaluation. May be one of: [NONE, CHECK, REMOVE, CORRECT]", converter = CommandLineUtils.CleanerConverter.class)
     private ConsistentCodingCleaner gold_standard_cleaner = ConsistentCodingCleaner.CORRECT;
 
