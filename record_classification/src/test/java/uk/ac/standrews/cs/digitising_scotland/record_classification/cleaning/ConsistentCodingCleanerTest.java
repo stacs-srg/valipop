@@ -16,19 +16,15 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning;
 
-import old.record_classification_old.datastructures.tokens.TokenSet;
-import org.junit.Before;
-import org.junit.Test;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.AbstractMetricsTest;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.InconsistentCodingException;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Classification;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Record;
+import old.record_classification_old.datastructures.tokens.*;
+import org.junit.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
-public class CleaningTest extends AbstractMetricsTest {
+public class ConsistentCodingCleanerTest extends AbstractMetricsTest {
 
     private Bucket bucket;
 
