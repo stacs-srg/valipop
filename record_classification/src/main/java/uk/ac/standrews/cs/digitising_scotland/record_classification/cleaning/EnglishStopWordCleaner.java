@@ -19,7 +19,6 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning;
 import org.apache.lucene.analysis.*;
 import org.apache.lucene.analysis.en.*;
 import org.apache.lucene.util.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 
 import java.util.*;
 
@@ -32,18 +31,6 @@ public class EnglishStopWordCleaner extends TokenFilterCleaner {
 
     private static final long serialVersionUID = 3018841867887670242L;
     private static final Set<?> STOP_WORDS = EnglishAnalyzer.getDefaultStopSet();
-
-    @Override
-    public Bucket clean(final Bucket bucket) throws Exception {
-
-        final Bucket cleaned_bucket = new Bucket();
-        for (Record record : bucket) {
-
-            final Record cleaned_record = cleanRecord(record);
-            cleaned_bucket.add(cleaned_record);
-        }
-        return cleaned_bucket;
-    }
 
     @Override
     protected TokenFilter getTokenFilter(final TokenStream stream) {
