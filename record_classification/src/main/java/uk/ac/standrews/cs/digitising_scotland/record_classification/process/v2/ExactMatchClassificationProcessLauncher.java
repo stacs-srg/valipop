@@ -17,6 +17,7 @@
 package uk.ac.standrews.cs.digitising_scotland.record_classification.process.v2;
 
 import com.beust.jcommander.*;
+import org.apache.commons.lang3.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.v2.steps.*;
@@ -24,6 +25,7 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.util.Command
 
 import java.io.*;
 import java.nio.charset.*;
+import java.nio.file.*;
 
 /**
  * Launches an exact match classification process.
@@ -37,6 +39,9 @@ public class ExactMatchClassificationProcessLauncher {
 
     @Parameter(required = true, names = {"-r", "--trainingRecordRatio"}, description = "The ratio of gold standard records to be used for training. The value must be between 0.0 to 1.0 (inclusive).")
     private Double training_ratio;
+
+    @Parameter(required = true, names = {"-d", "--destination"}, description = "Path to save the classification process.", converter = FileConverter.class)
+    private File persistence_destination;
 
     @Parameter(names = {"-c", "--cleanGoldStandard"}, description = "The name of the gold_standard_cleaner by which to clean the gold standard data prior to training/evaluation. May be one of: [NONE, CHECK, REMOVE, CORRECT]", converter = CleanerConverter.class)
     private ConsistentCodingCleaner gold_standard_cleaner = ConsistentCodingCleaner.CORRECT;
@@ -77,5 +82,12 @@ public class ExactMatchClassificationProcessLauncher {
         }
 
         classification_process.call();
+
+        if (persistence_destination.exists()) {
+            throw new ParameterException("destination already exists.");
+        }
+
+        final byte[] serialized_process = SerializationUtils.serialize(classification_process);
+        Files.write(persistence_destination.toPath(), serialized_process);
     }
 }

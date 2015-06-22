@@ -10,7 +10,7 @@
 - [x] Make this todo page.
 - [x] Implement classifier serialisation/de-serialisation.
 - [ ] Add multiple user entry points to the project.
-   - [ ] Train classifier on specified gold standard data and persist state to specified location
+   - [x] Train classifier on specified gold standard data and persist state to specified location
    - [ ] Load classifier from persistent state, classify specified unseen data, save results from/to specified locations
 - [ ] Automate Windows executable generation.
 - [x] Implement stemming.
