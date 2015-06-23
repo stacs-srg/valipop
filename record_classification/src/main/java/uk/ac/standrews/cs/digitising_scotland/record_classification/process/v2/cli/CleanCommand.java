@@ -21,11 +21,9 @@ import com.beust.jcommander.converters.*;
 import org.apache.commons.csv.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.v2.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.util.*;
 import uk.ac.standrews.cs.util.dataset.*;
 
 import java.io.*;
-import java.nio.file.*;
 import java.util.*;
 
 /**
@@ -34,7 +32,7 @@ import java.util.*;
  * @author Masih Hajiarab Derkani
  */
 @Parameters(commandNames = CleanCommand.NAME, commandDescription = "Cleans data records", separators = "=")
-public class CleanCommand implements Step {
+class CleanCommand extends Command {
 
     /** The name of this command */
     public static final String NAME = "clean";
@@ -52,26 +50,6 @@ public class CleanCommand implements Step {
     @Parameter(names = {"-d", "--delimiter"}, description = "The delimiter character of three column source data.")
     private char delimiter = '|';
 
-    /**
-     * Gets the data file to be cleaned.
-     *
-     * @return the data to be cleaned
-     */
-    public File getSource() {
-
-        return source;
-    }
-
-    Cleaners getCleaner() {
-
-        return cleaner;
-    }
-
-    public File getDestination() {
-
-        return destination;
-    }
-
     @Override
     public void perform(final Context context) throws Exception {
 
@@ -79,12 +57,9 @@ public class CleanCommand implements Step {
         final DataSet source_dataset = new DataSet(new FileReader(source), input_format);
         final List<String> input_column_labels = source_dataset.getColumnLabels();
         final Bucket source_data = new Bucket(source_dataset);
-        
+
         final Bucket cleaned_data = cleaner.clean(source_data);
         final DataSet cleaned_dataset = cleaned_data.toDataSet(input_column_labels, input_format);
-
-        try (final BufferedWriter writer = Files.newBufferedWriter(destination.toPath())) {
-            cleaned_dataset.print(writer);
-        }
+        persistDataSet(destination.toPath(), cleaned_dataset);
     }
 }

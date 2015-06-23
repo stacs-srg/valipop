@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License along with record_classification. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.digitising_scotland.record_classification.util;
+package uk.ac.standrews.cs.digitising_scotland.record_classification.process.v2.cli;
 
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
@@ -22,11 +22,11 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 /**
  * @author Masih Hajiarab Derkani
  */
-public enum Cleaners implements Cleaner {
+enum Cleaners implements Cleaner {
 
     STOP_WORDS(new EnglishStopWordCleaner(), "Removes English stop words"),
     PORTER_STEM(new PorterStemCleaner(), "Performs stemming using Porter algorithm"),
-    CONSISTENT_CODING_CLEANER_NONE(ConsistentCodingCleaner.NONE, ""),
+    CONSISTENT_CODING_CLEANER_NONE(ConsistentCodingCleaner.NONE, ""), //TODO need Javadoc for these that explain what they do in order to update description
     CONSISTENT_CODING_CLEANER_CORRECT(ConsistentCodingCleaner.CORRECT, ""),
     CONSISTENT_CODING_CLEANER_CHECK(ConsistentCodingCleaner.CHECK, ""),
     CONSISTENT_CODING_CLEANER_REMOVE(ConsistentCodingCleaner.REMOVE, "");

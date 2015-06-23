@@ -25,6 +25,7 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.process.v2.s
 import uk.ac.standrews.cs.util.dataset.*;
 
 import java.io.*;
+import java.util.*;
 
 /**
  * Classification command of the classification process.
@@ -32,7 +33,7 @@ import java.io.*;
  * @author Masih Hajiarab Derkani
  */
 @Parameters(commandNames = ClassifyCommand.NAME, commandDescription = "Classify unseen data")
-public class ClassifyCommand implements Step {
+class ClassifyCommand extends Command {
 
     /** The name of this command */
     public static final String NAME = "classify";
@@ -42,24 +43,22 @@ public class ClassifyCommand implements Step {
     @Parameter(required = true, description = "Path to the unseen data to classify,", converter = FileConverter.class)
     private File unseen_data;
 
+    @Parameter(required = true, names = {"-o", "--output"}, description = "Path to the place to persist the classified records.", converter = FileConverter.class)
+    private File destination;
+
     @Parameter(names = {"-d", "--delimiter"}, description = "The delimiter character of three column unseen data.")
     private char delimiter = '|';
-
-    /**
-     * Gets the unseen data file to be classified.
-     *
-     * @return the unseen data file
-     */
-    public File getUnseenData() {
-
-        return unseen_data;
-    }
 
     @Override
     public void perform(final Context context) throws Exception {
 
-        final DataSet unseen_dataset = new DataSet(new FileReader(unseen_data), CSVFormat.newFormat(delimiter));
+        final CSVFormat input_format = CSVFormat.newFormat(delimiter);
+        final DataSet unseen_dataset = new DataSet(new FileReader(unseen_data), input_format);
+        final List<String> labels = unseen_dataset.getColumnLabels();
         final Bucket unseen_data = new Bucket(unseen_dataset);
         new ClassifyUnseenRecords(unseen_data).perform(context);
+
+        final DataSet classified_dataset = context.getClassifiedUnseenRecords().toDataSet(labels, input_format);
+        persistDataSet(destination.toPath(), classified_dataset);
     }
 }

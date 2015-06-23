@@ -17,30 +17,26 @@
 package uk.ac.standrews.cs.digitising_scotland.record_classification.process.v2.cli;
 
 import com.beust.jcommander.*;
-import org.apache.commons.lang3.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.v2.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.v2.steps.*;
-
-import java.io.*;
-import java.nio.file.*;
 
 /**
+ * Launches the command line interface for a classification process.
+ *
  * @author Masih Hajiarab Derkani
  */
 public class Launcher {
 
-    private static final String PROGRAM_NAME = "classy";
-
-    @Parameter(names = {"-h", "--help"}, description = "Shows usage.", help = true)
-    private boolean help;
-
+    /** Name of this executable. */
+    public static final String PROGRAM_NAME = "classy";
+    private static final String SERIALIZED_PROCESS_FILE_NAME = "process";
     private final InitCommand init_command = new InitCommand();
     private final CleanCommand clean_command = new CleanCommand();
     private final TrainCommand train_command = new TrainCommand();
     private final EvaluateCommand evaluate_command = new EvaluateCommand();
     private final ClassifyCommand classify_command = new ClassifyCommand();
     private final JCommander commander;
+
+    @Parameter(names = {"-h", "--help"}, description = "Shows usage.", help = true)
+    private boolean help;
 
     private Launcher() {
 
@@ -53,7 +49,7 @@ public class Launcher {
         addCommand(classify_command);
     }
 
-    void addCommand(Step command) {
+    void addCommand(Command command) {
 
         commander.addCommand(command);
     }
@@ -63,9 +59,7 @@ public class Launcher {
         final Launcher launcher = new Launcher();
 
         try {
-            //            launcher.parse("clean -c AAA,BAAA".split(" "));
-            launcher.parse(new String[]{"clean", "-c", "STOP_WORDS", "-i", "sss", "-o", "sssss"});
-            //            launcher.parse(args);
+            launcher.parse(args);
         }
         catch (ParameterException e) {
             e.printStackTrace();
@@ -82,56 +76,14 @@ public class Launcher {
 
     private void handle() throws Exception {
 
-        final String command = commander.getParsedCommand();
+        final String command_name = commander.getParsedCommand();
 
-        validateCommand(command);
+        validateCommand(command_name);
 
-        final JCommander commander = this.commander.getCommands().get(command);
-        final Step step = (Step) commander.getObjects().get(0);
+        final JCommander commander = this.commander.getCommands().get(command_name);
+        final Command command = (Command) commander.getObjects().get(0);
 
-        switch (command) {
-            case InitCommand.NAME: {
-                final ClassificationProcess process = new ClassificationProcess();
-                final Path working_directory = Files.createDirectory(Paths.get(init_command.getClassificationProcessName()));
-                final Context context = process.getContext();
-                init_command.perform(context);
-                persist(process, working_directory);
-            }
-            break;
-            case CleanCommand.NAME: {
-                final ClassificationProcess process = loadClassificationProcess();
-                final Context context = process.getContext();
-                clean_command.perform(context);
-                persist(process);
-            }
-            break;
-            case TrainCommand.NAME: {
-
-                final ClassificationProcess process = loadClassificationProcess();
-                final Context context = process.getContext();
-                train_command.perform(context);
-                persist(process);
-            }
-            break;
-            case EvaluateCommand.NAME: {
-                final ClassificationProcess process = loadClassificationProcess();
-                final Context context = process.getContext();
-                final File destination = evaluate_command.getDestination();
-                new EvaluateClassifier().perform(context);
-                //FIXME implement repetition; where to save the repetition results?
-                //FIXME implement persistence of evaluation results                
-                persist(process);
-            }
-
-            break;
-            case ClassifyCommand.NAME: {
-                final ClassificationProcess process = loadClassificationProcess();
-                classify_command.perform(process.getContext());
-                persist(process);
-            }
-            default:
-                throw new IllegalStateException();
-        }
+        command.call();
     }
 
     private void validateCommand(final String command) {
@@ -148,29 +100,4 @@ public class Launcher {
         System.exit(1);
     }
 
-    private static void persist(final ClassificationProcess process, final Path working_directory) throws IOException {
-
-        Files.write(working_directory.resolve("process"), SerializationUtils.serialize(process), StandardOpenOption.CREATE);
-    }
-
-    private static void persist(final ClassificationProcess process) throws IOException {
-
-        Files.write(Paths.get("process"), SerializationUtils.serialize(process), StandardOpenOption.CREATE);
-    }
-
-    private static ClassificationProcess loadClassificationProcess() throws IOException {
-
-        final byte[] process_bytes = Files.readAllBytes(Paths.get("process"));
-        return (ClassificationProcess) SerializationUtils.deserialize(process_bytes);
-    }
-
-    private static Bucket readGoldStandard(File gold_standard_file) {
-        //FIXME implement bar separated id, string, classification
-        return null;
-    }
-
-    private static Bucket readUnseenData(File unseen_data_file) {
-        //FIXME implement bar separated id, string, classification
-        return null;
-    }
 }
