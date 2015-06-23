@@ -59,8 +59,8 @@ public class OLRPool implements Runnable, Serializable {
      * Constructor.
      *
      * @param internalTrainingVectorList internal training vector list
-     * @param testingVectorList          internal testing vector list
-     * @param properties                 properties
+     * @param testingVectorList internal testing vector list
+     * @param properties properties
      */
     public OLRPool(final Properties properties, final List<NamedVector> internalTrainingVectorList, final List<NamedVector> testingVectorList) {
 
@@ -109,6 +109,7 @@ public class OLRPool implements Runnable, Serializable {
 
     /**
      * Gets the average running log likelihood totals. Sums across each of the models and divides by pool size to get the average.
+     *
      * @return double the running loglikelihood average across all models
      */
     public double getAverageRunningLogLikelihood() {
@@ -157,6 +158,7 @@ public class OLRPool implements Runnable, Serializable {
 
     /**
      * Get the survivors from the model pool.
+     *
      * @return List of {@link old.record_classification_old.classifiers.olr.OLRShuffled} models
      */
     public List<OLRShuffled> getSurvivors() {
@@ -186,6 +188,7 @@ public class OLRPool implements Runnable, Serializable {
 
     /**
      * Gets the average log likelihood of the surviving models.
+     *
      * @param actual actual classification
      * @param instance instance vector
      * @return log likelihood
@@ -239,6 +242,7 @@ public class OLRPool implements Runnable, Serializable {
 
     /**
      * Gets the number of records used for training so far across all the models in the pool.
+     *
      * @return int the number of training records used so far
      */
     public long getNumTrained() {
