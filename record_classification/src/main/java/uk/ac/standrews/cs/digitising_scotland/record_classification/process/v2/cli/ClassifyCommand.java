@@ -18,6 +18,11 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.process.v2.
 
 import com.beust.jcommander.*;
 import com.beust.jcommander.converters.*;
+import org.apache.commons.csv.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.v2.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.v2.steps.*;
+import uk.ac.standrews.cs.util.dataset.*;
 
 import java.io.*;
 
@@ -26,14 +31,19 @@ import java.io.*;
  *
  * @author Masih Hajiarab Derkani
  */
-@Parameters(commandNames = ClassifyCommand.NAME, commandDescription = "Classify unseen data", separators = "=")
-public class ClassifyCommand {
+@Parameters(commandNames = ClassifyCommand.NAME, commandDescription = "Classify unseen data")
+public class ClassifyCommand implements Step {
 
     /** The name of this command */
     public static final String NAME = "classify";
 
-    @Parameter(required = true, description = "Path to the unseen data to classify", converter = FileConverter.class)
+    private static final long serialVersionUID = -5931407069557436051L;
+
+    @Parameter(required = true, description = "Path to the unseen data to classify,", converter = FileConverter.class)
     private File unseen_data;
+
+    @Parameter(names = {"-d", "--delimiter"}, description = "The delimiter character of three column unseen data.")
+    private char delimiter = '|';
 
     /**
      * Gets the unseen data file to be classified.
@@ -43,5 +53,13 @@ public class ClassifyCommand {
     public File getUnseenData() {
 
         return unseen_data;
+    }
+
+    @Override
+    public void perform(final Context context) throws Exception {
+
+        final DataSet unseen_dataset = new DataSet(new FileReader(unseen_data), CSVFormat.newFormat(delimiter));
+        final Bucket unseen_data = new Bucket(unseen_dataset);
+        new ClassifyUnseenRecords(unseen_data).perform(context);
     }
 }

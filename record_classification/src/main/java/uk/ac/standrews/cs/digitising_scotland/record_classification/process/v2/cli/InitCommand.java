@@ -18,6 +18,7 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.process.v2.
 
 import com.beust.jcommander.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.interfaces.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.v2.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.util.*;
 
 /**
@@ -26,7 +27,7 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.util.*;
  * @author Masih Hajiarab Derkani
  */
 @Parameters(commandNames = InitCommand.NAME, commandDescription = "Initialise a new classification process", separators = "=")
-public class InitCommand {
+public class InitCommand implements Step {
 
     /** The name of this command */
     public static final String NAME = "init";
@@ -34,8 +35,8 @@ public class InitCommand {
     @Parameter(required = true, names = {"-n", "--name"}, description = "The name of the classification process.")
     private String name;
 
-    @Parameter(required = true, names = {"-c", "--classifier"}, description = "The classifier to use for classification process.", converter = CommandLineUtils.ClassifierConverter.class)
-    private Classifier classifier;
+    @Parameter(required = true, names = {"-c", "--classifier"}, description = "The classifier to use for classification process.")
+    private Classifiers classifier;
 
     /**
      * Gets the name of initialised classification process
@@ -55,5 +56,11 @@ public class InitCommand {
     public Classifier getClassifier() {
 
         return classifier;
+    }
+
+    @Override
+    public void perform(final Context context) throws Exception {
+
+        context.setClassifier(getClassifier());
     }
 }

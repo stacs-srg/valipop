@@ -18,26 +18,29 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.process.v2.
 
 import com.beust.jcommander.*;
 import com.beust.jcommander.converters.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.util.*;
+import org.apache.commons.csv.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.v2.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.v2.steps.*;
+import uk.ac.standrews.cs.util.dataset.*;
 
 import java.io.*;
 
 /**
  * @author Masih Hajiarab Derkani
  */
-@Parameters(commandNames = TrainCommand.NAME, commandDescription = "Train classifier", separators = "=")
-public class TrainCommand {
+@Parameters(commandNames = TrainCommand.NAME, commandDescription = "Train classifier")
+public class TrainCommand implements Step {
 
     /** The name of this command */
     public static final String NAME = "train";
+    private static final long serialVersionUID = 8026292848547343006L;
 
     @Parameter(required = true, names = {"-g", "--goldStandard"}, description = "Path to a CSV file containing the gold standard.", converter = FileConverter.class)
     private File gold_standard;
 
-    //TODO add support for more cleaners
-    @Parameter(names = {"-c", "--cleanGoldStandard"}, description = "The name of the gold_standard_cleaner by which to clean the gold standard data prior to training/evaluation. May be one of: [NONE, CHECK, REMOVE, CORRECT]", converter = CommandLineUtils.CleanerConverter.class)
-    private ConsistentCodingCleaner gold_standard_cleaner = ConsistentCodingCleaner.CORRECT;
+    @Parameter(names = {"-d", "--delimiter"}, description = "The delimiter character of three column gold standard data.")
+    private char delimiter = '|';
 
     @Parameter(required = true, names = {"-r", "--trainingRecordRatio"}, description = "The ratio of gold standard records to be used for training. The value must be between 0.0 to 1.0 (inclusive).")
     private Double training_ratio;
@@ -47,13 +50,19 @@ public class TrainCommand {
         return gold_standard;
     }
 
-    public ConsistentCodingCleaner getGoldStandardCleaner() {
-
-        return gold_standard_cleaner;
-    }
-
     public Double getTrainingRatio() {
 
         return training_ratio;
+    }
+
+    @Override
+    public void perform(final Context context) throws Exception {
+
+        final DataSet gold_standard_dataset = new DataSet(new FileReader(getGoldStandard()), CSVFormat.newFormat(delimiter));
+        final Bucket gold_standard = new Bucket(gold_standard_dataset);
+        context.setGoldStandard(gold_standard);
+
+        new SetTrainingRecordsByRatio(getTrainingRatio()).perform(context);
+        new TrainClassifier().perform(context);
     }
 }

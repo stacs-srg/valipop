@@ -17,6 +17,7 @@
 package uk.ac.standrews.cs.digitising_scotland.record_classification.model;
 
 import old.record_classification_old.datastructures.tokens.*;
+import org.apache.commons.csv.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.*;
 import uk.ac.standrews.cs.util.dataset.*;
 
@@ -51,6 +52,20 @@ public class Bucket implements Iterable<Record>, Serializable {
 
             records.add(new Record(id, data, classification));
         }
+    }
+
+    public DataSet toDataSet(List<String> column_labels, CSVFormat format) {
+
+        final DataSet dataset = new DataSet(column_labels);
+        dataset.setOutputFormat(format);
+        for (Record record : records) {
+            final String column_0 = String.valueOf(record.getId());
+            final String column_1 = record.getData();
+            final String column_2 = record.getClassification().getCode();
+            final List<String> row = Arrays.asList(column_0, column_1, column_2);
+            dataset.addRow(row);
+        }
+        return dataset;
     }
 
     /**
