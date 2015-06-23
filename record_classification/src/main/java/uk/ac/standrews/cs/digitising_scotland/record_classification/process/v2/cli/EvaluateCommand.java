@@ -18,6 +18,8 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.process.v2.
 
 import com.beust.jcommander.*;
 import com.beust.jcommander.converters.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.v2.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.v2.steps.*;
 
 import java.io.*;
 
@@ -25,7 +27,7 @@ import java.io.*;
  * @author Masih Hajiarab Derkani
  */
 @Parameters(commandNames = EvaluateCommand.NAME, commandDescription = "Evaluate classifier", separators = "=")
-public class EvaluateCommand {
+public class EvaluateCommand implements Step {
 
     /** The name of this command */
     public static final String NAME = "evaluate";
@@ -44,5 +46,16 @@ public class EvaluateCommand {
     public int getRepetitionCount() {
 
         return repetition_count;
+    }
+
+    @Override
+    public void perform(final Context context) throws Exception {
+
+        final File destination = getDestination();
+        new EvaluateClassifier().perform(context);
+        
+        //FIXME implement repetition; where to save the repetition results?
+        //FIXME implement persistence of evaluation results
+        
     }
 }

@@ -20,10 +20,9 @@ import com.beust.jcommander.*;
 import com.beust.jcommander.converters.*;
 import org.apache.commons.lang3.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.v2.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.v2.steps.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.util.CommandLineUtils.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.util.*;
 
 import java.io.*;
 import java.nio.charset.*;
@@ -45,10 +44,10 @@ public class ExactMatchClassificationProcessLauncher {
     @Parameter(required = true, names = {"-d", "--destination"}, description = "Path to save the classification process.", converter = FileConverter.class)
     private File persistence_destination;
 
-    @Parameter(names = {"-c", "--cleanGoldStandard"}, description = "The name of the gold_standard_cleaner by which to clean the gold standard data prior to training/evaluation. May be one of: [NONE, CHECK, REMOVE, CORRECT]", converter = CleanerConverter.class)
-    private ConsistentCodingCleaner gold_standard_cleaner = ConsistentCodingCleaner.CORRECT;
+    @Parameter(names = {"-c", "--cleanGoldStandard"}, description = "The name of the gold_standard_cleaner by which to clean the gold standard data prior to training/evaluation.")
+    private Cleaners gold_standard_cleaner = Cleaners.CONSISTENT_CODING_CLEANER_CORRECT;
 
-    @Parameter(names = {"-e", "--evaluate"}, description = "weather to evaluate the classifier after training with gold standard")
+    @Parameter(names = {"-e", "--evaluate"}, description = "weather to evaluate the classifier after training with gold standard.")
     private boolean evaluate = false;
 
     public static void main(String[] args) throws Exception {
