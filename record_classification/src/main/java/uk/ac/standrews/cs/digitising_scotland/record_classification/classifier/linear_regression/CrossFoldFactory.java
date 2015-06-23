@@ -24,12 +24,14 @@ import java.util.List;
 
 /**
  * Abstract class for the creation of cross folded data structures.
+ *
  * @author frjd2
  */
 public abstract class CrossFoldFactory {
 
     /**
      * Creates a cross folded data structure.
+     *
      * @param trainingVectorList training vector list
      * @param folds number of folds
      * @return ArrayList<NamedVector>[][]

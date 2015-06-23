@@ -16,7 +16,6 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.linear_regression;
 
-
 /**
  * The Class ModelDoublePair.
  * Generally used to track which models in the {@link OLRCrossFold} are performing well, and which are not.
@@ -54,6 +53,7 @@ public class ModelDoublePair implements Comparable<ModelDoublePair> {
 
     /**
      * Gets the model.
+     *
      * @return the model
      */
     public OLRShuffled getModel() {
