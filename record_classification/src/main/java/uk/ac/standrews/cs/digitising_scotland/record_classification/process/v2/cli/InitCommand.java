@@ -17,9 +17,9 @@
 package uk.ac.standrews.cs.digitising_scotland.record_classification.process.v2.cli;
 
 import com.beust.jcommander.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.interfaces.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.v2.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.util.*;
+
+import java.nio.file.*;
 
 /**
  * Initialisation command of the classification process.
@@ -27,10 +27,11 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.util.*;
  * @author Masih Hajiarab Derkani
  */
 @Parameters(commandNames = InitCommand.NAME, commandDescription = "Initialise a new classification process", separators = "=")
-public class InitCommand implements Step {
+class InitCommand extends Command {
 
     /** The name of this command */
     public static final String NAME = "init";
+    private static final long serialVersionUID = 5738604903474935932L;
 
     @Parameter(required = true, names = {"-n", "--name"}, description = "The name of the classification process.")
     private String name;
@@ -38,29 +39,23 @@ public class InitCommand implements Step {
     @Parameter(required = true, names = {"-c", "--classifier"}, description = "The classifier to use for classification process.")
     private Classifiers classifier;
 
-    /**
-     * Gets the name of initialised classification process
-     *
-     * @return the name of initialised classification process
-     */
-    public String getClassificationProcessName() {
+    @Override
+    public Void call() throws Exception {
 
-        return name;
-    }
+        final ClassificationProcess process = new ClassificationProcess();
+        final Context context = process.getContext();
+        perform(context);
 
-    /**
-     * Gets the classifier.
-     *
-     * @return the classifier
-     */
-    public Classifier getClassifier() {
+        final Path process_working_directory = Paths.get(name);
+        Files.createDirectory(process_working_directory);
+        persistClassificationProcess(process, process_working_directory.resolve(SERIALIZED_CLASSIFICATION_PROCESS_PATH));
 
-        return classifier;
+        return null; // void task
     }
 
     @Override
     public void perform(final Context context) throws Exception {
 
-        context.setClassifier(getClassifier());
+        context.setClassifier(classifier);
     }
 }

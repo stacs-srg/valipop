@@ -27,10 +27,12 @@ import uk.ac.standrews.cs.util.dataset.*;
 import java.io.*;
 
 /**
+ * The train command of classification process command line interface.
+ *
  * @author Masih Hajiarab Derkani
  */
 @Parameters(commandNames = TrainCommand.NAME, commandDescription = "Train classifier")
-public class TrainCommand implements Step {
+class TrainCommand extends Command {
 
     /** The name of this command */
     public static final String NAME = "train";
@@ -45,24 +47,14 @@ public class TrainCommand implements Step {
     @Parameter(required = true, names = {"-r", "--trainingRecordRatio"}, description = "The ratio of gold standard records to be used for training. The value must be between 0.0 to 1.0 (inclusive).")
     private Double training_ratio;
 
-    public File getGoldStandard() {
-
-        return gold_standard;
-    }
-
-    public Double getTrainingRatio() {
-
-        return training_ratio;
-    }
-
     @Override
     public void perform(final Context context) throws Exception {
 
-        final DataSet gold_standard_dataset = new DataSet(new FileReader(getGoldStandard()), CSVFormat.newFormat(delimiter));
+        final DataSet gold_standard_dataset = new DataSet(new FileReader(gold_standard), CSVFormat.newFormat(delimiter));
         final Bucket gold_standard = new Bucket(gold_standard_dataset);
         context.setGoldStandard(gold_standard);
 
-        new SetTrainingRecordsByRatio(getTrainingRatio()).perform(context);
+        new SetTrainingRecordsByRatio(training_ratio).perform(context);
         new TrainClassifier().perform(context);
     }
 }
