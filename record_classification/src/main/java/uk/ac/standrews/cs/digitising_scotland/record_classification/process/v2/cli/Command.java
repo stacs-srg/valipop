@@ -21,6 +21,7 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.process.v2.*
 import uk.ac.standrews.cs.util.dataset.*;
 
 import java.io.*;
+import java.nio.charset.*;
 import java.nio.file.*;
 import java.util.concurrent.*;
 
@@ -66,7 +67,7 @@ abstract class Command implements Callable<Void>, Step {
 
     protected void persistDataSet(Path destination, final DataSet dataset) throws IOException {
 
-        try (final BufferedWriter out = Files.newBufferedWriter(destination)) {
+        try (final BufferedWriter out = Files.newBufferedWriter(destination, Charset.defaultCharset())) {
             dataset.print(out);
         }
     }
