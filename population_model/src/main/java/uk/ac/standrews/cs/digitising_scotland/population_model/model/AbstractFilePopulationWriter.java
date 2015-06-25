@@ -16,7 +16,6 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.population_model.model;
 
-
 import uk.ac.standrews.cs.util.tools.FileManipulation;
 
 import java.io.IOException;
@@ -57,7 +56,6 @@ public abstract class AbstractFilePopulationWriter implements IPopulationWriter 
      * @throws IOException if the file does not exist and cannot be created
      */
     public AbstractFilePopulationWriter(final Path path) throws IOException {
-
 
         FileManipulation.createParentDirectoryIfDoesNotExist(path);
 

@@ -20,7 +20,6 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-
 /**
  * Utility classes for importing records in digitising scotland format
  * Created by al on 25/04/2014.
