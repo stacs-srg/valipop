@@ -15,7 +15,7 @@
 - [ ] Automate Windows executable generation.
 - [x] Implement stemming.
 - [x] Implement removal of stop words.
-- [ ] Convert HISCO definitions to three column gold standard data format.
+- [x] Convert HISCO definitions to three column gold standard data format.
 
 # Queries and Comments
 
