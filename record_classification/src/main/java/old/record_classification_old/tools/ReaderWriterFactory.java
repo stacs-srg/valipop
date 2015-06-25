@@ -29,7 +29,7 @@ import java.io.Writer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import uk.ac.standrews.cs.digitising_scotland.util.FileManipulation;
+import uk.ac.standrews.cs.util.tools.FileManipulation;
 
 /**
  * Factory for creating buffered readers and writers from Files.
@@ -40,7 +40,7 @@ public class ReaderWriterFactory {
     private static final Logger LOGGER = LoggerFactory.getLogger(ReaderWriterFactory.class);
 
     /**
-     * Constructs a {@link java.io.BufferedReader} with the default File_Charset specified in {@link uk.ac.standrews.cs.digitising_scotland.util.FileManipulation}.
+     * Constructs a {@link java.io.BufferedReader} with the default File_Charset specified in {@link FileManipulation}.
      * @param inputFile the file to create the reader for
      * @return BufferedReader for the specified file
      */
@@ -59,7 +59,7 @@ public class ReaderWriterFactory {
     }
 
     /**
-     * Constructs a {@link java.io.BufferedWriter} with the default File_Charset specified in {@link uk.ac.standrews.cs.digitising_scotland.util.FileManipulation}.
+     * Constructs a {@link java.io.BufferedWriter} with the default File_Charset specified in {@link FileManipulation}.
      * @param outputFile the file to create the writer for.
      * @return a BufferedWriter for the specified file
      */

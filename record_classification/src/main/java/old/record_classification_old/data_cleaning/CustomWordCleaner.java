@@ -22,7 +22,7 @@ import old.record_classification_old.datastructures.bucket.Bucket;
 import old.record_classification_old.datastructures.code.CodeNotValidException;
 import old.record_classification_old.datastructures.records.Record;
 import old.record_classification_old.exceptions.InputFormatException;
-import uk.ac.standrews.cs.digitising_scotland.util.FileManipulation;
+import uk.ac.standrews.cs.util.tools.FileManipulation;
 
 import java.io.*;
 import java.util.ArrayList;

@@ -17,25 +17,15 @@
 package uk.ac.standrews.cs.digitising_scotland.population_model.distributions.temporal;
 
 import uk.ac.standrews.cs.digitising_scotland.population_model.config.PopulationProperties;
-import uk.ac.standrews.cs.digitising_scotland.population_model.distributions.general.NoPermissableValueException;
-import uk.ac.standrews.cs.digitising_scotland.population_model.distributions.general.NotSetUpAtClassInitilisationException;
-import uk.ac.standrews.cs.digitising_scotland.population_model.distributions.general.RestrictedDistribution;
-import uk.ac.standrews.cs.digitising_scotland.population_model.distributions.general.NegativeDeviationException;
-import uk.ac.standrews.cs.digitising_scotland.population_model.distributions.general.NegativeWeightException;
-import uk.ac.standrews.cs.digitising_scotland.population_model.distributions.general.NormalDistribution;
-import uk.ac.standrews.cs.digitising_scotland.population_model.distributions.general.WeightedIntegerDistribution;
+import uk.ac.standrews.cs.digitising_scotland.population_model.distributions.general.*;
 import uk.ac.standrews.cs.digitising_scotland.population_model.organic.OrganicPopulation;
-import uk.ac.standrews.cs.digitising_scotland.util.FileManipulation;
 import uk.ac.standrews.cs.nds.util.ErrorHandling;
+import uk.ac.standrews.cs.util.tools.FileManipulation;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Creates a weighted distribution with weights that change over time.

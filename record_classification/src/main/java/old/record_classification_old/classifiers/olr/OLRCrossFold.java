@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
 
 import old.record_classification_old.tools.Utils;
 import old.record_classification_old.tools.configuration.MachineLearningConfiguration;
-import uk.ac.standrews.cs.digitising_scotland.util.FileManipulation;
+import uk.ac.standrews.cs.util.tools.FileManipulation;
 
 /**
  * Distributes training vectors across {@link OLRPool}s in a cross fold manner. Allows concurrent training

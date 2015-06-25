@@ -4,6 +4,9 @@ import org.json.JSONException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import uk.ac.standrews.cs.digitising_scotland.linkage.factory.BirthFactory;
+import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.Birth;
+import uk.ac.standrews.cs.digitising_scotland.linkage.stream_operators.filter.ExactMatch;
 import uk.ac.standrews.cs.jstore.impl.StoreFactory;
 import uk.ac.standrews.cs.jstore.impl.TypeFactory;
 import uk.ac.standrews.cs.jstore.impl.exceptions.BucketException;
@@ -11,11 +14,8 @@ import uk.ac.standrews.cs.jstore.impl.exceptions.IllegalKeyException;
 import uk.ac.standrews.cs.jstore.impl.exceptions.RepositoryException;
 import uk.ac.standrews.cs.jstore.impl.exceptions.StoreException;
 import uk.ac.standrews.cs.jstore.interfaces.*;
-import uk.ac.standrews.cs.digitising_scotland.linkage.factory.BirthFactory;
-import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.Birth;
-import uk.ac.standrews.cs.digitising_scotland.linkage.stream_operators.filter.ExactMatch;
-import uk.ac.standrews.cs.digitising_scotland.util.FileManipulation;
 import uk.ac.standrews.cs.nds.persistence.PersistentObjectException;
+import uk.ac.standrews.cs.util.tools.FileManipulation;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -68,7 +68,6 @@ public class MatchingTest {
         deleteStore();
     }
 
-
     public void deleteStore() throws IOException {
 
         Path sp = Paths.get(store_path);
@@ -76,10 +75,8 @@ public class MatchingTest {
         if (Files.exists(sp)) {
 
             FileManipulation.deleteDirectory(store_path);
-
         }
     }
-
 
     @Test
     public synchronized void testSimpleMatchPopulationRecords() throws RepositoryException, RecordFormatException, JSONException, IOException, BucketException, PersistentObjectException, IllegalKeyException {
@@ -93,6 +90,5 @@ public class MatchingTest {
         ExactMatch filter = new ExactMatch(b.getInputStream(), b2.getOutputStream(), "surname", "GONTHWICK");
         filter.apply();
     }
-
 }
 

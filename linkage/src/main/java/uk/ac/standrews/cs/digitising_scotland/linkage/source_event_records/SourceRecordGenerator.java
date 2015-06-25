@@ -1,12 +1,12 @@
 package uk.ac.standrews.cs.digitising_scotland.linkage.source_event_records;
 
 import uk.ac.standrews.cs.digitising_scotland.population_model.model.IPopulation;
-import uk.ac.standrews.cs.digitising_scotland.util.FileManipulation;
 import uk.ac.standrews.cs.digitising_scotland.util.PercentageProgressIndicator;
 import uk.ac.standrews.cs.digitising_scotland.util.ProgressIndicator;
 import uk.ac.standrews.cs.digitising_scotland.util.TimeManipulation;
 import uk.ac.standrews.cs.nds.util.CommandLineArgs;
 import uk.ac.standrews.cs.nds.util.Diagnostic;
+import uk.ac.standrews.cs.util.tools.FileManipulation;
 
 import java.io.IOException;
 import java.io.PrintWriter;

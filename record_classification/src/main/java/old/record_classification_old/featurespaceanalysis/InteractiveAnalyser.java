@@ -23,7 +23,7 @@ import old.record_classification_old.datastructures.code.CodeDictionary;
 import old.record_classification_old.datastructures.code.CodeNotValidException;
 import old.record_classification_old.exceptions.InputFormatException;
 import old.record_classification_old.pipeline.BucketGenerator;
-import uk.ac.standrews.cs.digitising_scotland.util.FileManipulation;
+import uk.ac.standrews.cs.util.tools.FileManipulation;
 
 import java.io.BufferedReader;
 import java.io.File;
