@@ -23,7 +23,7 @@ import org.apache.mahout.math.NamedVector;
 import org.apache.mahout.math.Vector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import uk.ac.standrews.cs.digitising_scotland.util.FileManipulation;
+import uk.ac.standrews.cs.util.tools.FileManipulation;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;

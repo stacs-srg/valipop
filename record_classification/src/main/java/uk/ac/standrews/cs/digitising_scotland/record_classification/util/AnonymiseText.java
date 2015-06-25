@@ -16,7 +16,7 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.util;
 
-import uk.ac.standrews.cs.digitising_scotland.util.FileManipulation;
+import uk.ac.standrews.cs.util.tools.FileManipulation;
 import uk.ac.standrews.cs.util.dataset.DataSet;
 
 import java.io.IOException;

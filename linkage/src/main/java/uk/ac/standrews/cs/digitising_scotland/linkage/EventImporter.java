@@ -4,13 +4,13 @@ import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.Birth;
 import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.Death;
 import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.Marriage;
 import uk.ac.standrews.cs.digitising_scotland.linkage.tools.DSFields;
-import uk.ac.standrews.cs.digitising_scotland.util.FileManipulation;
 import uk.ac.standrews.cs.jstore.impl.LXP;
 import uk.ac.standrews.cs.jstore.impl.exceptions.BucketException;
 import uk.ac.standrews.cs.jstore.impl.exceptions.IllegalKeyException;
 import uk.ac.standrews.cs.jstore.interfaces.IBucket;
 import uk.ac.standrews.cs.jstore.interfaces.IReferenceType;
 import uk.ac.standrews.cs.jstore.types.Types;
+import uk.ac.standrews.cs.util.tools.FileManipulation;
 
 import java.io.BufferedReader;
 import java.io.IOException;

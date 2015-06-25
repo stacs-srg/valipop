@@ -22,8 +22,8 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.*
 import uk.ac.standrews.cs.digitising_scotland.record_classification.interfaces.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.multiple_classifier.*;
-import uk.ac.standrews.cs.digitising_scotland.util.*;
 import uk.ac.standrews.cs.util.dataset.*;
+import uk.ac.standrews.cs.util.tools.FileManipulation;
 
 import java.io.*;
 import java.nio.file.*;

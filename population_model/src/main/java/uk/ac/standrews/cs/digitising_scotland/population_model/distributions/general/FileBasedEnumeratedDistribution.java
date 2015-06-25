@@ -17,8 +17,8 @@
 package uk.ac.standrews.cs.digitising_scotland.population_model.distributions.general;
 
 import uk.ac.standrews.cs.digitising_scotland.population_model.distributions.util.FileDistributionGenerator;
-import uk.ac.standrews.cs.digitising_scotland.util.FileManipulation;
 import uk.ac.standrews.cs.nds.util.ErrorHandling;
+import uk.ac.standrews.cs.util.tools.FileManipulation;
 
 import java.io.BufferedReader;
 import java.io.IOException;
