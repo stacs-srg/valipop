@@ -27,7 +27,7 @@ import old.record_classification_old.datastructures.classification.Classificatio
 import old.record_classification_old.datastructures.code.CodeDictionary;
 import old.record_classification_old.datastructures.code.CodeNotValidException;
 import old.record_classification_old.datastructures.records.Record;
-import old.record_classification_old.datastructures.tokens.TokenSet;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.TokenSet;
 import old.record_classification_old.exceptions.InputFormatException;
 import old.record_classification_old.tools.ReaderWriterFactory;
 import old.record_classification_old.tools.Utils;
@@ -116,7 +116,7 @@ public abstract class AbstractDataCleaner {
     }
 
     /**
-     * Performs cleaning on a {@link old.record_classification_old.datastructures.tokens.TokenSet}.
+     * Performs cleaning on a {@link TokenSet}.
      *
      * @param tokenSet the tokenSet to clean.
      */

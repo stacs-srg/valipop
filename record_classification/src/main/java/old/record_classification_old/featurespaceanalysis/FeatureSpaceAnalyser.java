@@ -18,7 +18,7 @@ package old.record_classification_old.featurespaceanalysis;
 import old.record_classification_old.datastructures.classification.Classification;
 import old.record_classification_old.datastructures.code.Code;
 import old.record_classification_old.datastructures.records.Record;
-import old.record_classification_old.datastructures.tokens.TokenSet;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.TokenSet;
 
 import java.util.HashMap;
 import java.util.Set;

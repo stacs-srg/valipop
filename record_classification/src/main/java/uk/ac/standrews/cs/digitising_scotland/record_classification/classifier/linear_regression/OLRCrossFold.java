@@ -23,10 +23,7 @@ import org.apache.mahout.math.NamedVector;
 import org.apache.mahout.math.Vector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import uk.ac.standrews.cs.util.tools.FileManipulation;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.util.*;
 import java.util.concurrent.*;
@@ -53,10 +50,7 @@ public class OLRCrossFold implements Serializable {
     /** The classifier. */
     private OLR classifier;
 
-    /**
-     * Instantiates a new OLR crossfold model.
-     */
-    protected OLRCrossFold() {
+    public OLRCrossFold() {
 
     }
 
@@ -73,7 +67,6 @@ public class OLRCrossFold implements Serializable {
             OLRPool model = new OLRPool(properties, trainingVectors[i][0], trainingVectors[i][1]);
             models.add(model);
         }
-
     }
 
     /**
@@ -171,11 +164,9 @@ public class OLRCrossFold implements Serializable {
      */
     private void trainAllModels() throws InterruptedException, ExecutionException {
 
-        StopListener stopListener = new StopListener();
         ExecutorService stopService = Executors.newFixedThreadPool(1);
         ExecutorService executorService = Executors.newFixedThreadPool(folds);
         Collection<Future<?>> futures = new LinkedList<>();
-        stopService.submit(stopListener);
 
         for (OLRPool model : models) {
             futures.add(executorService.submit(model));
@@ -185,8 +176,7 @@ public class OLRCrossFold implements Serializable {
         executorService.shutdown();
         final int timeout = 365;
         executorService.awaitTermination(timeout, TimeUnit.DAYS);
-        stopListener.terminateProcess();
-        stopService.shutdown();
+
         prepareClassifier();
     }
 
@@ -264,154 +254,5 @@ public class OLRCrossFold implements Serializable {
     public double logLikelihood(final int actual, final Vector instance) {
 
         return classifier.logLikelihood(actual, instance);
-    }
-
-    /**
-     * The listener interface for receiving stop events.
-     * The class that is interested in processing a stop
-     * event implements this interface, and the object created
-     * with that class is registered with a component using the
-     * component's <code>addStopListener<code> method. When
-     * the stop event occurs, that object's appropriate
-     * method is invoked.
-     *
-     */
-
-    public class StopListener implements Runnable {
-
-        /** The process terminated. */
-        private boolean processTerminated;
-
-        private static final String COUNT_COMMAND = "count";
-        private static final String STOP_COMMAND = "stop";
-        private static final String GET_LOG_LIK_COMMAND = "getloglik";
-        private static final String RESET_LOG_LIK_COMMAND = "resetloglik";
-        private static final String COUNT_MESSAGE = "\nNumber of record used in training so far (across all models): ";
-        private static final String LOG_LIK_MESSAGE = "\nLog likelihood is: ";
-        private static final String STOP_MESSAGE = "\nStop call detected. Stopping training...";
-        private static final String RESET_MESSAGE = "\nResetting log likelihood.";
-        private static final String INSTRUCTION_MESSAGE = "\n#######################--OLRCrossFold Commands--#################################" + "\n# \"" + STOP_COMMAND + "\" will halt the training process and skip straight to classification.\t#" + "\n# \"" + GET_LOG_LIK_COMMAND
-                        + "\" will return the current running average log likelihood estimate.\t#" + "\n# \"" + RESET_LOG_LIK_COMMAND + "\" will reset the running average log likelihood statistic.\t#" + "\n# \"" + COUNT_COMMAND + "\" will return the number of records used in training so far.\t\t#"
-                        + "\n#################################################################################";
-
-        /**
-         * Terminates the process. Sets the processTerminated flat to true and handles the thread shutdown.
-         */
-        public void terminateProcess() {
-
-            stop();
-            processTerminated = true;
-        }
-
-        /**
-         * Initiates the command line stopListener. This waits for input from the command line and processes the input.
-         */
-        public void commandLineStopListener() {
-
-            LOGGER.info(instructions());
-            processTerminated = false;
-            try (BufferedReader in = new BufferedReader(new InputStreamReader(System.in, FileManipulation.FILE_CHARSET))) {
-                String line;
-                while (true) {
-                    line = in.readLine();
-                    if (line != null && processInput(line)) {
-                        break;
-                    }
-                }
-                in.close();
-            }
-            catch (Exception e) {
-                LOGGER.error(e.getMessage(), e);
-            }
-        }
-
-        /**
-         * Processes the input from the command line. Calls the correct Logger reaction on input and
-         * returns true if a message is printed.
-         *
-         * @param line the line to process
-         * @return true, if successful output is printed.
-         * @throws InterruptedException the interrupted exception
-         */
-        private boolean processInput(final String line) throws InterruptedException {
-
-            switch (line.toLowerCase()) {
-                case STOP_COMMAND:
-                    LOGGER.info(stopCalled());
-                    break;
-                case GET_LOG_LIK_COMMAND:
-                    LOGGER.info(getLogLik());
-                    break;
-                case RESET_LOG_LIK_COMMAND:
-                    LOGGER.info(resetLogLik());
-                    break;
-                case COUNT_COMMAND:
-                    LOGGER.info(countCalled());
-                    break;
-                default:
-                    LOGGER.info(instructions());
-            }
-            return line.equalsIgnoreCase(STOP_COMMAND) || processTerminated;
-        }
-
-        private String countCalled() {
-
-            return COUNT_MESSAGE + Long.toString(getNumTrained());
-        }
-
-        /**
-         * Calls the Stop method and returns the stop message.
-         *
-         * @return the string
-         */
-        private String stopCalled() {
-
-            stop();
-            return STOP_MESSAGE;
-        }
-
-        /**
-         * Gets the log likelihood.
-         *
-         * @return the log likelihood
-         */
-        private String getLogLik() {
-
-            return LOG_LIK_MESSAGE + Double.toString(getAverageRunningLogLikelihood());
-        }
-
-        /**
-         * Reset log likelihood.
-         *
-         * @return the string
-         * @throws InterruptedException the interrupted exception
-         */
-        private String resetLogLik() throws InterruptedException {
-
-            final int threadSleepMillis = 10;
-            String message = getLogLik() + RESET_MESSAGE;
-            resetRunningLogLikelihoods();
-            Thread.sleep(threadSleepMillis);
-            return message + getLogLik();
-        }
-
-        /**
-         * Returns the instructions.
-         *
-         * @return the string
-         */
-        private String instructions() {
-
-            return INSTRUCTION_MESSAGE;
-        }
-
-        /* (non-Javadoc)
-         * @see java.lang.Runnable#run()
-         */
-        @Override
-        public void run() {
-
-            commandLineStopListener();
-        }
     }
 }

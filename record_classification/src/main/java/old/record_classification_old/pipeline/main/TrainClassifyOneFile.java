@@ -110,32 +110,32 @@ public class TrainClassifyOneFile {
         Bucket notMachineLearned = machineLearningClassifier.classify(notExactMatched);
         Bucket successfullyClassifiedMachineLearning = machineLearningClassifier.getSuccessfullyClassified();
         Bucket successfullyExactMatched = exactMatchPipeline.getSuccessfullyClassified();
-        Bucket uniqueRecordsExactMatched = BucketFilter.uniqueRecordsOnly(successfullyExactMatched);
-        Bucket uniqueRecordsMachineLearned = BucketFilter.uniqueRecordsOnly(successfullyClassifiedMachineLearning);
-        Bucket uniqueRecordsNotMatched = BucketFilter.uniqueRecordsOnly(notMachineLearned);
+//        Bucket uniqueRecordsExactMatched = BucketFilter.uniqueRecordsOnly(successfullyExactMatched);
+//        Bucket uniqueRecordsMachineLearned = BucketFilter.uniqueRecordsOnly(successfullyClassifiedMachineLearning);
+//        Bucket uniqueRecordsNotMatched = BucketFilter.uniqueRecordsOnly(notMachineLearned);
 
-        LOGGER.info("Exact Matched Bucket Size: " + successfullyExactMatched.size());
-        LOGGER.info("Machine Learned Bucket Size: " + successfullyClassifiedMachineLearning.size());
-        LOGGER.info("Not Classifed Bucket Size: " + notMachineLearned.size());
-        LOGGER.info("Unique Exact Matched Bucket Size: " + uniqueRecordsExactMatched.size());
-        LOGGER.info("UniqueMachine Learned Bucket Size: " + uniqueRecordsMachineLearned.size());
-        LOGGER.info("Unique Not Classifed Bucket Size: " + uniqueRecordsNotMatched.size());
+//        LOGGER.info("Exact Matched Bucket Size: " + successfullyExactMatched.size());
+//        LOGGER.info("Machine Learned Bucket Size: " + successfullyClassifiedMachineLearning.size());
+//        LOGGER.info("Not Classifed Bucket Size: " + notMachineLearned.size());
+//        LOGGER.info("Unique Exact Matched Bucket Size: " + uniqueRecordsExactMatched.size());
+//        LOGGER.info("UniqueMachine Learned Bucket Size: " + uniqueRecordsMachineLearned.size());
+//        LOGGER.info("Unique Not Classifed Bucket Size: " + uniqueRecordsNotMatched.size());
 
         Bucket allClassifed = BucketUtils.getUnion(successfullyExactMatched, successfullyClassifiedMachineLearning);
         Bucket allRecords = BucketUtils.getUnion(allClassifed, notMachineLearned);
         assert(allRecords.size() == predictionBucket.size());
 
-        writeRecords(experimentalFolderName, allRecords);
+//        writeRecords(experimentalFolderName, allRecords);
+//
+//        writeComparisonFile(experimentalFolderName, allRecords);
 
-        writeComparisonFile(experimentalFolderName, allRecords);
-
-        LOGGER.info("********** Output Stats **********");
-
-        printAllStats(experimentalFolderName, codeIndex, allRecords, "allRecords");
-        printAllStats(experimentalFolderName, codeIndex, successfullyExactMatched, "exactMatched");
-        printAllStats(experimentalFolderName, codeIndex, successfullyClassifiedMachineLearning, "machineLearned");
-
-        timer.stop();
+//        LOGGER.info("********** Output Stats **********");
+//
+//        printAllStats(experimentalFolderName, codeIndex, allRecords, "allRecords");
+//        printAllStats(experimentalFolderName, codeIndex, successfullyExactMatched, "exactMatched");
+//        printAllStats(experimentalFolderName, codeIndex, successfullyClassifiedMachineLearning, "machineLearned");
+//
+//        timer.stop();
 
         return allRecords;
     }

@@ -17,7 +17,7 @@
 package old.record_classification_old.classifiers.lookup;
 
 import old.record_classification_old.classifiers.closestmatchmap.SimilarityMetric;
-import old.record_classification_old.datastructures.tokens.TokenSet;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.TokenSet;
 
 /**
  * TODO

@@ -24,7 +24,7 @@ import old.record_classification_old.classifiers.resolver.RecordClassificationRe
 import old.record_classification_old.datastructures.bucket.Bucket;
 import old.record_classification_old.datastructures.classification.Classification;
 import old.record_classification_old.datastructures.records.Record;
-import old.record_classification_old.datastructures.tokens.TokenSet;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.TokenSet;
 import old.record_classification_old.datastructures.tokens.TokenToClassificationMapGenerator;
 
 import java.io.IOException;

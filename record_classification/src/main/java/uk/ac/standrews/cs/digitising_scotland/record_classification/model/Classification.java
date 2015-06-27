@@ -16,10 +16,8 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.model;
 
-import old.record_classification_old.datastructures.tokens.*;
-
-import java.io.*;
-import java.util.*;
+import java.io.Serializable;
+import java.util.Objects;
 
 public class Classification implements Serializable {
 
