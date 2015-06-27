@@ -26,7 +26,7 @@ import old.record_classification_old.datastructures.code.CodeDictionary;
 import old.record_classification_old.datastructures.code.CodeNotValidException;
 import old.record_classification_old.datastructures.records.Record;
 import old.record_classification_old.datastructures.records.RecordFactory;
-import old.record_classification_old.datastructures.tokens.TokenSet;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.TokenSet;
 import old.record_classification_old.exceptions.InputFormatException;
 import old.record_classification_old.tools.Timer;
 import old.record_classification_old.tools.configuration.MachineLearningConfiguration;

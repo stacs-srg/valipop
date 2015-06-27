@@ -26,7 +26,7 @@ import old.record_classification_old.datastructures.bucket.Bucket;
 import old.record_classification_old.datastructures.classification.Classification;
 import old.record_classification_old.datastructures.code.Code;
 import old.record_classification_old.datastructures.records.Record;
-import old.record_classification_old.datastructures.tokens.TokenSet;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.TokenSet;
 import old.record_classification_old.datastructures.vectors.CodeIndexer;
 import old.record_classification_old.datastructures.vectors.VectorFactory;
 import old.record_classification_old.tools.configuration.MachineLearningConfiguration;

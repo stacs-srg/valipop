@@ -27,9 +27,14 @@ import java.util.List;
 
 public abstract class AbstractMultipleClassificationProcess {
 
-    public static final InfoLevel INFO_LEVEL = InfoLevel.SUMMARY;
+    public static final InfoLevel DEFAULT_INFO_LEVEL = InfoLevel.SHORT_SUMMARY;
 
-    abstract protected List<ClassificationProcess> getClassificationProcesses(String[] args) throws Exception;
+    protected abstract List<ClassificationProcess> getClassificationProcesses(String[] args) throws Exception;
+
+    public InfoLevel getInfoLevel() {
+
+        return DEFAULT_INFO_LEVEL;
+    }
 
     protected void process(String[] args) throws Exception {
 
@@ -39,6 +44,8 @@ public abstract class AbstractMultipleClassificationProcess {
         List<DataSet> result_sets = new ArrayList<>();
 
         for (ClassificationProcess process : processes) {
+
+            process.setInfoLevel(getInfoLevel());
 
             row_labels.add(process.getClassifierDescription());
             result_sets.add(process.trainClassifyAndEvaluate());
@@ -55,7 +62,7 @@ public abstract class AbstractMultipleClassificationProcess {
 
         TableGenerator table_generator = new TableGenerator(row_labels, data_sets, System.out, table_caption, first_column_heading, true, '\t');
 
-        if (INFO_LEVEL != InfoLevel.NONE) {
+        if (getInfoLevel() != InfoLevel.NONE) {
 
             table_generator.printTable();
         }

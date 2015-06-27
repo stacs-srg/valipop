@@ -29,7 +29,7 @@ import old.record_classification_old.classifiers.resolver.LogLengthWeightedLossF
 import old.record_classification_old.datastructures.classification.Classification;
 import old.record_classification_old.classifiers.resolver.LengthWeightedLossFunction;
 import old.record_classification_old.classifiers.resolver.SumLossFunction;
-import old.record_classification_old.datastructures.tokens.TokenSet;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.TokenSet;
 
 /**
  * Tests that the calculate methods for each class that extends AbstractLossFunction works as expected.

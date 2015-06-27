@@ -23,7 +23,7 @@ import java.io.IOException;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.util.Version;
 
-import old.record_classification_old.datastructures.tokens.TokenSet;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.TokenSet;
 import old.record_classification_old.tools.ReaderWriterFactory;
 import old.record_classification_old.tools.Utils;
 

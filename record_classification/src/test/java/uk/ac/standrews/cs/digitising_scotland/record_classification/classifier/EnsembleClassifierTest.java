@@ -16,7 +16,6 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier;
 
-import old.record_classification_old.datastructures.tokens.*;
 import org.apache.commons.lang3.*;
 import org.junit.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.interfaces.*;

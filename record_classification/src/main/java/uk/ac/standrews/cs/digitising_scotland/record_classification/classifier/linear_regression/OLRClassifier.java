@@ -16,21 +16,17 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.linear_regression;
 
+import old.record_classification_old.tools.configuration.MachineLearningConfiguration;
 import org.apache.mahout.math.Matrix;
 import org.apache.mahout.math.NamedVector;
 import org.apache.mahout.math.Vector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import old.record_classification_old.classifiers.Classifier;
-import old.record_classification_old.datastructures.bucket.Bucket;
-import old.record_classification_old.datastructures.classification.Classification;
-import old.record_classification_old.datastructures.code.Code;
-import old.record_classification_old.datastructures.records.Record;
-import old.record_classification_old.datastructures.tokens.TokenSet;
-import old.record_classification_old.datastructures.vectors.CodeIndexer;
-import old.record_classification_old.datastructures.vectors.VectorFactory;
-import old.record_classification_old.tools.configuration.MachineLearningConfiguration;
-import old.record_classification_old.classifiers.AbstractClassifier;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.AbstractClassifier;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Classification;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Record;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.TokenSet;
 
 import java.io.*;
 import java.util.*;
@@ -39,7 +35,7 @@ import java.util.*;
  *
  * @author frjd2, jkc25
  */
-public class OLRClassifier extends AbstractClassifier implements Classifier, Serializable {
+public class OLRClassifier extends AbstractClassifier {
 
     private static final long serialVersionUID = -2561454096763303789L;
     private static final Logger LOGGER = LoggerFactory.getLogger(OLRClassifier.class);
@@ -77,10 +73,8 @@ public class OLRClassifier extends AbstractClassifier implements Classifier, Ser
      */
     public void train(final Bucket bucket) {
 
-        CodeIndexer index;
-
         if (vectorFactory == null) {
-            index = new CodeIndexer(bucket);
+            CodeIndexer index = new CodeIndexer(bucket);
             vectorFactory = new VectorFactory(bucket, index);
             ArrayList<NamedVector> trainingVectorList = getTrainingVectors(bucket);
             Collections.shuffle(trainingVectorList);
@@ -142,12 +136,25 @@ public class OLRClassifier extends AbstractClassifier implements Classifier, Ser
         }
     }
 
+    @Override
+    public Classification classify(String data) {
+
+        TokenSet tokenSet = new TokenSet(data);
+        NamedVector vector = vectorFactory.createNamedVectorFromString(tokenSet.toString(), "unknown");
+        Vector classifyFull = model.classifyFull(vector);
+        int classificationID = classifyFull.maxValueIndex();
+        String code = vectorFactory.getCodeIndexer().getCode(classificationID);
+        double confidence = Math.exp(model.logLikelihood(classificationID, vector));
+
+        return new Classification(code, tokenSet, confidence);
+    }
+
     public Set<Classification> classify(final TokenSet tokenSet) {
 
         NamedVector vector = vectorFactory.createNamedVectorFromString(tokenSet.toString(), "unknown");
         Vector classifyFull = model.classifyFull(vector);
         int classificationID = classifyFull.maxValueIndex();
-        Code code = vectorFactory.getCodeIndexer().getCode(classificationID);
+        String code = vectorFactory.getCodeIndexer().getCode(classificationID);
         double confidence = Math.exp(model.logLikelihood(classificationID, vector));
 
         return makeClassificationSet( new Classification(code, tokenSet, confidence));

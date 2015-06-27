@@ -17,7 +17,7 @@
 package old.record_classification_old.data_cleaning;
 
 import old.record_classification_old.datastructures.code.CodeNotValidException;
-import old.record_classification_old.datastructures.tokens.TokenSet;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.TokenSet;
 import old.record_classification_old.exceptions.InputFormatException;
 import old.record_classification_old.tools.Utils;
 import org.junit.After;

@@ -51,10 +51,6 @@ public class OLRPool implements Runnable, Serializable {
     private transient List<NamedVector> testingVectorList = Lists.newArrayList();
     private List<OLRShuffled> survivors;
 
-    protected OLRPool() {
-
-    }
-
     /**
      * Constructor.
      *
@@ -163,9 +159,7 @@ public class OLRPool implements Runnable, Serializable {
      */
     public List<OLRShuffled> getSurvivors() {
 
-        LOGGER.info("Calling testAndPackageModels");
         ArrayList<ModelDoublePair> modelPairs = testAndPackageModels();
-        LOGGER.info("Calling getSurvivors");
         survivors = getSurvivors(modelPairs);
         return survivors;
     }
@@ -253,5 +247,4 @@ public class OLRPool implements Runnable, Serializable {
         }
         return numTrained;
     }
-
 }

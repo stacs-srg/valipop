@@ -22,7 +22,7 @@ import org.junit.Test;
 import old.record_classification_old.datastructures.OriginalData;
 import old.record_classification_old.datastructures.bucket.Bucket;
 import old.record_classification_old.datastructures.records.Record;
-import old.record_classification_old.datastructures.tokens.TokenSet;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.TokenSet;
 
 import java.util.List;
 

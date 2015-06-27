@@ -21,7 +21,7 @@ import com.google.common.collect.Multiset;
 import old.record_classification_old.classifiers.resolver.Interfaces.ValidityAssessor;
 import old.record_classification_old.datastructures.classification.Classification;
 import old.record_classification_old.datastructures.code.Code;
-import old.record_classification_old.datastructures.tokens.TokenSet;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.TokenSet;
 
 import java.util.ArrayList;
 import java.util.Iterator;

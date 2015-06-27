@@ -25,6 +25,7 @@ import java.util.Set;
 import old.record_classification_old.datastructures.bucket.Bucket;
 import old.record_classification_old.datastructures.classification.Classification;
 import old.record_classification_old.datastructures.records.Record;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.TokenSet;
 
 /**
  * Generates a mapping between token sets and classification by

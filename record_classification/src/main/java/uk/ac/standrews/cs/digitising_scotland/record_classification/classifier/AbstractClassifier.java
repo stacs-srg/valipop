@@ -16,8 +16,13 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier;
 
-import uk.ac.standrews.cs.digitising_scotland.record_classification.interfaces.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.interfaces.Classifier;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Classification;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Record;
+
+import java.util.HashSet;
+import java.util.Set;
 
 public abstract class AbstractClassifier implements Classifier {
 
@@ -38,5 +43,20 @@ public abstract class AbstractClassifier implements Classifier {
         }
 
         return classified;
+    }
+
+    public static Set<Classification> makeClassificationSet(Classification classification) {
+
+        Set<Classification> result = new HashSet<>();
+        result.add(classification);
+        return result;
+    }
+
+    public static Classification getSingleClassification(Set<Classification> classifications) {
+
+        for (Classification classification : classifications) {
+            return classification;
+        }
+        return null;
     }
 }

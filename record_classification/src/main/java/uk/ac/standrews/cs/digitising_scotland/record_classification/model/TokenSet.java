@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License along with record_classification. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package old.record_classification_old.datastructures.tokens;
+package uk.ac.standrews.cs.digitising_scotland.record_classification.model;
 
 import java.io.Serializable;
 import java.util.Collection;

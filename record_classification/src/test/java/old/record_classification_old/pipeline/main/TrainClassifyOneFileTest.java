@@ -37,10 +37,10 @@ public class TrainClassifyOneFileTest {
     @Test
     public void testPipelineHisco() throws Exception, CodeNotValidException {
 
-        String codeDictionary = getClass().getResource("/HiscoTitles.txt").getFile();
+        String codeDictionary = getClass().getResource("/old/HiscoTitles.txt").getFile();
         MachineLearningConfiguration.getDefaultProperties().setProperty("codeDictionaryFile", codeDictionary);
         trainer = new TrainClassifyOneFile();
-        String training = getClass().getResource("/occupationTrainingTest.txt").getFile();
+        String training = getClass().getResource("/old/occupationTrainingTest.txt").getFile();
         String propertiesFileLocation = "";
         String[] args = {training, propertiesFileLocation, "0.8", "0"};
         Bucket classified = trainer.run(args);

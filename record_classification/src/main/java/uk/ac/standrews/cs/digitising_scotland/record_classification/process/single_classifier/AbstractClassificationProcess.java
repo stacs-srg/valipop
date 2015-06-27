@@ -31,7 +31,7 @@ import java.text.*;
 import java.util.*;
 
 /**
- * Defines the classifier-independent parts of a process using a single classifier.
+ * Defines the classifier-independent parts of a process that uses a single classifier.
  *
  * @author Graham Kirby
  */
@@ -47,7 +47,7 @@ public abstract class AbstractClassificationProcess implements ClassificationPro
     private final List<ClassificationProcessState> classification_process_states;
 
     private int classification_run_counter = 1;
-    private InfoLevel info_level = AbstractMultipleClassificationProcess.INFO_LEVEL;
+    private InfoLevel info_level = AbstractMultipleClassificationProcess.DEFAULT_INFO_LEVEL;
 
     AbstractClassificationProcess(final InputStreamReader gold_standard_data_reader, final double training_ratio, final int number_of_repetitions) throws Exception {
 
@@ -305,7 +305,7 @@ public abstract class AbstractClassificationProcess implements ClassificationPro
 
     private void printInfo(final ClassificationProcessState state, final InfoLevel info_level) {
 
-        if (info_level != InfoLevel.NONE) {
+        if (info_level.compareTo(InfoLevel.LONG_SUMMARY) >= 0) {
 
             Set<String> unique_training = extractStrings(getUnique(state.training_records));
             Set<String> unique_evaluation = extractStrings(state.evaluation_records);

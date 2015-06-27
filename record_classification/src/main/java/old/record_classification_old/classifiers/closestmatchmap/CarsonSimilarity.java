@@ -16,15 +16,11 @@
  */
 package old.record_classification_old.classifiers.closestmatchmap;
 
-import java.util.Comparator;
-import java.util.Map;
-import java.util.SortedSet;
-import java.util.TreeMap;
-import java.util.TreeSet;
-
 import uk.ac.shef.wit.simmetrics.similaritymetrics.AbstractStringMetric;
 import uk.ac.shef.wit.simmetrics.similaritymetrics.Levenshtein;
-import old.record_classification_old.datastructures.tokens.TokenSet;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.TokenSet;
+
+import java.util.*;
 
 public class CarsonSimilarity<K> extends AbstractStringMetric {
 
