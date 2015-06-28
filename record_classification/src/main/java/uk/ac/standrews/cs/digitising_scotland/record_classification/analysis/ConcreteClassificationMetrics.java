@@ -55,14 +55,14 @@ public class ConcreteClassificationMetrics implements ClassificationMetrics {
 
         if (info_level != InfoLevel.NONE) {
 
-            printMetric("macro-average precision", getMacroAveragePrecision());
-            printMetric("micro-average precision", getMicroAveragePrecision());
-            printMetric("macro-average recall   ", getMacroAverageRecall());
-            printMetric("micro-average recall   ", getMicroAverageRecall());
-            printMetric("macro-average accuracy ", getMacroAverageAccuracy());
-            printMetric("micro-average accuracy ", getMicroAverageAccuracy());
-            printMetric("macro-average F1       ", getMacroAverageF1());
-            printMetric("micro-average F1       ", getMicroAverageF1());
+            printMetric("macro-average precision    ", getMacroAveragePrecision());
+            printMetric("micro-average precision    ", getMicroAveragePrecision());
+            printMetric("macro-average recall       ", getMacroAverageRecall());
+            printMetric("micro-average recall       ", getMicroAverageRecall());
+            printMetric("macro-average accuracy     ", getMacroAverageAccuracy());
+            printMetric("micro-average accuracy     ", getMicroAverageAccuracy());
+            printMetric("macro-average F1           ", getMacroAverageF1());
+            printMetric("micro-average F1           ", getMicroAverageF1());
         }
     }
 

@@ -33,13 +33,13 @@ public class AbstractMetricsTest extends AbstractTest {
 
     protected static final double DELTA = 0.001;
 
-    protected static final Record haddock_correct = new Record(3, "haddock", new Classification("fish", new TokenSet(), 1.0));
-    protected static final Record haddock_incorrect = new Record(3, "haddock", new Classification("mammal", new TokenSet(), 1.0));
+    protected static final Record haddock_correct = new Record(1, "haddock", new Classification("fish", new TokenSet(), 1.0));
+    protected static final Record haddock_incorrect = new Record(2, "haddock", new Classification("mammal", new TokenSet(), 1.0));
     protected static final Record osprey_incorrect = new Record(3, "osprey", new Classification("mammal", new TokenSet(), 1.0));
-    protected static final Record unicorn_unclassified = new Record(3, "unicorn", Classification.UNCLASSIFIED);
+    protected static final Record unicorn_unclassified = new Record(4, "unicorn", Classification.UNCLASSIFIED);
 
-    protected static final Record haddock_gold_standard = new Record(3, "haddock", new Classification("fish", new TokenSet(), 1.0));
-    protected static final Record cow_gold_standard = new Record(3, "cow", new Classification("mammal", new TokenSet(), 1.0));
+    protected static final Record haddock_gold_standard = new Record(5, "haddock", new Classification("fish", new TokenSet(), 1.0));
+    protected static final Record cow_gold_standard = new Record(6, "cow", new Classification("mammal", new TokenSet(), 1.0));
 
     protected Bucket classified_records;
     protected Bucket gold_standard_records;

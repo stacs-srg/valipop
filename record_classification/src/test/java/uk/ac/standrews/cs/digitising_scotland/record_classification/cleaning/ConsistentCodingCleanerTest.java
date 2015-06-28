@@ -54,7 +54,7 @@ public class ConsistentCodingCleanerTest extends AbstractMetricsTest {
 
         // In this case there are two classifications of haddock as mammal and only one as fish, so the latter should be corrected to mammal.
 
-        bucket.add(new Record(3, "haddock", new Classification("mammal", new TokenSet(), 1.0)));
+        bucket.add(new Record(7, "haddock", new Classification("mammal", new TokenSet(), 1.0)));
 
         Bucket cleaned = ConsistentCodingCleaner.CORRECT.clean(bucket);
 
