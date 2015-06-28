@@ -47,6 +47,6 @@ public class OLROnlyClassificationProcess extends AbstractMultipleClassification
     @Override
     public InfoLevel getInfoLevel() {
 
-        return InfoLevel.SHORT_SUMMARY;
+        return InfoLevel.LONG_SUMMARY;
     }
 }

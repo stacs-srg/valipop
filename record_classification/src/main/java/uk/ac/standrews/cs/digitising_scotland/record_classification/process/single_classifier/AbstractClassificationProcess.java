@@ -30,6 +30,8 @@ import java.nio.file.*;
 import java.text.*;
 import java.util.*;
 
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+
 /**
  * Defines the classifier-independent parts of a process that uses a single classifier.
  *
@@ -74,15 +76,30 @@ public abstract class AbstractClassificationProcess implements ClassificationPro
 
     public DataSet trainClassifyAndEvaluate() throws Exception {
 
-        List<ClassificationMetrics> results = new ArrayList<>();
+        // Need to wrap the list to make it mutable so that the first-column label can be added.
+        DataSet data_set = new DataSet(new ArrayList<>(Arrays.asList("macro-precision", "macro-recall", "macro-accuracy", "macro-F1", "micro-precision", "micro-recall", "micro-accuracy", "micro-F1", "training time (m)", "classification time (m)")));
 
         for (ClassificationProcessState state : classification_process_states) {
 
             trainClassifyAndEvaluate(state);
-            results.add(state.metrics);
+            data_set.addRow(getDataSetRow(state));
         }
+        return data_set;
+    }
 
-        return getResultsAsDataSet(results);
+    private List<String> getDataSetRow(ClassificationProcessState state) {
+
+        return Arrays.asList(
+                String.valueOf(state.metrics.getMacroAveragePrecision()),
+                String.valueOf(state.metrics.getMacroAverageRecall()),
+                String.valueOf(state.metrics.getMacroAverageAccuracy()),
+                String.valueOf(state.metrics.getMacroAverageF1()),
+                String.valueOf(state.metrics.getMicroAveragePrecision()),
+                String.valueOf(state.metrics.getMicroAverageRecall()),
+                String.valueOf(state.metrics.getMicroAverageAccuracy()),
+                String.valueOf(state.metrics.getMicroAverageF1()),
+                Double.toString(getTrainingTimeInMinutes(state)),
+                Double.toString(getClassificationTimeInMinutes(state)));
     }
 
     public List<ConfusionMatrix> getConfusionMatrices() {
@@ -110,13 +127,31 @@ public abstract class AbstractClassificationProcess implements ClassificationPro
     private void trainClassifyAndEvaluate(final ClassificationProcessState state) throws Exception {
 
         splitTrainingAndEvaluationRecords(state);
+        recordStartTime(state);
         performTraining(state);
+        recordTrainingTime(state);
         performClassification(state);
+        recordClassificationTime(state);
 
         calculateConfusionMatrix(state);
         calculateClassificationMetrics(state);
 
         printInfo(state, info_level);
+    }
+
+    private void recordStartTime(ClassificationProcessState state) {
+
+        state.start_time = System.currentTimeMillis();
+    }
+
+    private void recordTrainingTime(ClassificationProcessState state) {
+
+        state.training_end_time = System.currentTimeMillis();
+    }
+
+    private void recordClassificationTime(ClassificationProcessState state) {
+
+        state.classification_end_time = System.currentTimeMillis();
     }
 
     private void splitTrainingAndEvaluationRecords(final ClassificationProcessState state) {
@@ -175,8 +210,7 @@ public abstract class AbstractClassificationProcess implements ClassificationPro
         try {
             return FileManipulation.getInputStreamReader(path);
 
-        }
-        catch (NoSuchFileException e) {
+        } catch (NoSuchFileException e) {
             throw new IOException("cannot open training file: " + path);
         }
     }
@@ -198,8 +232,7 @@ public abstract class AbstractClassificationProcess implements ClassificationPro
             }
             throw new InvalidArgException("invalid training ratio: " + training_ratio);
 
-        }
-        catch (NumberFormatException e) {
+        } catch (NumberFormatException e) {
             throw new InvalidArgException("invalid training ratio: " + training_ratio_arg);
         }
     }
@@ -221,8 +254,7 @@ public abstract class AbstractClassificationProcess implements ClassificationPro
             }
             throw new InvalidArgException("invalid number of repetitions: " + number_of_repetitions);
 
-        }
-        catch (NumberFormatException e) {
+        } catch (NumberFormatException e) {
             throw new InvalidArgException("invalid number of repetitions: " + number_of_repetitions_arg);
         }
     }
@@ -291,18 +323,6 @@ public abstract class AbstractClassificationProcess implements ClassificationPro
         return unique_bucket;
     }
 
-    private static DataSet getResultsAsDataSet(final List<ClassificationMetrics> results) {
-
-        // Need to wrap the list to make it mutable so that the first-column label can be added.
-        DataSet data_set = new DataSet(new ArrayList<>(Arrays.asList("macro-precision", "macro-recall", "macro-accuracy", "macro-F1", "micro-precision", "micro-recall", "micro-accuracy", "micro-F1")));
-
-        for (ClassificationMetrics metrics : results) {
-            data_set.addRow(Arrays.asList(String.valueOf(metrics.getMacroAveragePrecision()), String.valueOf(metrics.getMacroAverageRecall()), String.valueOf(metrics.getMacroAverageAccuracy()), String.valueOf(metrics.getMacroAverageF1()), String.valueOf(metrics.getMicroAveragePrecision()),
-                            String.valueOf(metrics.getMicroAverageRecall()), String.valueOf(metrics.getMicroAverageAccuracy()), String.valueOf(metrics.getMicroAverageF1())));
-        }
-        return data_set;
-    }
-
     private void printInfo(final ClassificationProcessState state, final InfoLevel info_level) {
 
         if (info_level.compareTo(InfoLevel.LONG_SUMMARY) >= 0) {
@@ -312,7 +332,7 @@ public abstract class AbstractClassificationProcess implements ClassificationPro
 
             final int count = countEvaluationStringsNotInTrainingSet(unique_training, unique_evaluation);
 
-            System.out.println("\n-----------------------------");
+            System.out.println("\n----------------------------------");
 
             System.out.format("classification run %s%n%n", classification_run_counter++);
 
@@ -326,8 +346,28 @@ public abstract class AbstractClassificationProcess implements ClassificationPro
 
             state.metrics.printMetrics(info_level);
 
-            System.out.println("-----------------------------");
+            System.out.println();
+
+            System.out.format("training time              : %s min%n", getTrainingTimeInMinutes(state));
+            System.out.format("classification time        : %s min%n", getClassificationTimeInMinutes(state));
+
+            System.out.println("----------------------------------");
         }
+    }
+
+    private double getElapsedTimeInMinutes(long start_in_ms, long finish_in_ms) {
+
+        return MILLISECONDS.toSeconds(finish_in_ms - start_in_ms) / 60.0;
+    }
+
+    private double getTrainingTimeInMinutes(ClassificationProcessState state) {
+
+        return getElapsedTimeInMinutes(state.start_time, state.training_end_time);
+    }
+
+    private double getClassificationTimeInMinutes(ClassificationProcessState state) {
+
+        return getElapsedTimeInMinutes(state.training_end_time, state.classification_end_time);
     }
 
     private static int countEvaluationStringsNotInTrainingSet(final Set<String> unique_training, final Set<String> unique_evaluation) {
@@ -355,5 +395,9 @@ public abstract class AbstractClassificationProcess implements ClassificationPro
         Classifier classifier;
         ConfusionMatrix confusion_matrix;
         ClassificationMetrics metrics;
+
+        long start_time;
+        long training_end_time;
+        long classification_end_time;
     }
 }

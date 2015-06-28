@@ -25,13 +25,15 @@ import java.util.*;
  * @author Graham Kirby
  * @author Masih Hajiarab Derkani
  */
-public class Record implements Serializable {
+public class Record implements Comparable<Record>, Serializable {
 
     private static final long serialVersionUID = 5810954671977163993L;
     
     private final int id;
     private final String data;
     private final Classification classification;  // TODO restore support for multiple classifications
+
+    private final int hash_code;
 
     /**
      * Instantiates an {@link Classification#UNCLASSIFIED unclassified} record.
@@ -59,6 +61,8 @@ public class Record implements Serializable {
         this.id = id;
         this.data = data;
         this.classification = classification;
+
+        hash_code = Objects.hash(id, data, classification);
     }
 
     /**
@@ -89,25 +93,24 @@ public class Record implements Serializable {
     @Override
     public boolean equals(Object other) {
 
-        if (this == other)
-            return true;
-        if (other == null || getClass() != other.getClass())
-            return false;
-        Record other_record = (Record) other;
-        return Objects.equals(id, other_record.id) &&
-                Objects.equals(data, other_record.data) &&
-                Objects.equals(classification, other_record.classification);
+        return other instanceof Record && hash_code == ((Record)other).hash_code;
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(id, data, classification);
+        return hash_code;
     }
 
     @Override
     public String toString() {
 
         return "Record [id=" + id + ", data=" + data + ", classification=" + classification + "]";
+    }
+
+    @Override
+    public int compareTo(Record other) {
+
+        return hash_code - other.hash_code;
     }
 }

@@ -27,7 +27,7 @@ public class Bucket implements Iterable<Record>, Serializable {
 
     private static final long serialVersionUID = 7216381249689825103L;
 
-    private final List<Record> records;
+    private final Collection<Record> records;
 
     public Bucket(Reader reader) throws InputFileFormatException, IOException {
 
@@ -57,10 +57,13 @@ public class Bucket implements Iterable<Record>, Serializable {
 
         final DataSet dataset = new DataSet(column_labels);
         dataset.setOutputFormat(format);
+
         for (Record record : records) {
+
             final String column_0 = String.valueOf(record.getId());
             final String column_1 = record.getData();
             final String column_2 = record.getClassification().getCode();
+
             final List<String> row = Arrays.asList(column_0, column_1, column_2);
             dataset.addRow(row);
         }
@@ -72,7 +75,8 @@ public class Bucket implements Iterable<Record>, Serializable {
      */
     public Bucket() {
 
-        records = new ArrayList<>();
+//        records = new ArrayList<>();
+        records = new TreeSet<>();
     }
 
     public void add(final Record... records) {
@@ -106,12 +110,7 @@ public class Bucket implements Iterable<Record>, Serializable {
     @Override
     public boolean equals(final Object other) {
 
-        if (this == other)
-            return true;
-        if (other == null || getClass() != other.getClass())
-            return false;
-        final Bucket that = (Bucket) other;
-        return Objects.equals(records, that.records);
+        return this == other || other instanceof Bucket && Objects.equals(records, ((Bucket) other).records);
     }
 
     @Override

@@ -50,7 +50,7 @@ public final class CommandLineUtils {
         static {
             NAMED_CLASSIFIERS.put("dummy", new DummyClassifier());
             NAMED_CLASSIFIERS.put("exact-match", new ExactMatchClassifier());
-            NAMED_CLASSIFIERS.put("string-similarity-jarowinker", new StringSimilarityClassifier(StringSimilarityMetric.JARO_WINKLER));
+            NAMED_CLASSIFIERS.put("string-similarity-jarowinkler", new StringSimilarityClassifier(StringSimilarityMetric.JARO_WINKLER));
 
             NAMES = NAMED_CLASSIFIERS.keySet();
         }

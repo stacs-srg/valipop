@@ -17,6 +17,7 @@
 package uk.ac.standrews.cs.digitising_scotland.record_classification.process.multiple_classifier;
 
 import uk.ac.standrews.cs.digitising_scotland.record_classification.interfaces.ClassificationProcess;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.InfoLevel;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.single_classifier.ExactMatchClassificationProcess;
 
 import java.util.Collections;
@@ -41,5 +42,11 @@ public class ExactMatchOnlyClassificationProcess extends AbstractMultipleClassif
         ClassificationProcess process = new ExactMatchClassificationProcess(args);
 
         return Collections.singletonList(process);
+    }
+
+    @Override
+    public InfoLevel getInfoLevel() {
+
+        return InfoLevel.LONG_SUMMARY;
     }
 }
