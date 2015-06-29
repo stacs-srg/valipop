@@ -28,7 +28,7 @@ enum Classifiers implements Classifier {
 
     DUMMY(new DummyClassifier(), "A dummy classifier; for testing purposes"),
     EXACT_MATCH(new ExactMatchClassifier(), "Classifies based on exact match with training data"),
-    STRING_SIMILARITY_JARO_WINKLER(new StringSimilarityClassifier(StringSimilarityMetric.JARO_WINKLER), "Classifies based on similarity of the string to the training data; uses Jaro Winkler algorithm ot clacuate similarity");
+    STRING_SIMILARITY_JARO_WINKLER(new StringSimilarityClassifier(StringSimilarityMetric.JARO_WINKLER), "Classifies based on similarity of the string to the training data; uses Jaro Winkler algorithm to calculate similarity");
 
     private final Classifier classifier;
     private final String description;
