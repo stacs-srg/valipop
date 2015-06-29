@@ -24,6 +24,7 @@ import java.util.*;
 /**
  * Sets the training records in the context of a classification process by randomly selecting a ratio of records in {@link Context#getGoldStandard() gold standard records}.
  *
+ * @author Graham Kirby
  * @author Masih Hajiarab Derkani
  */
 public class SetTrainingRecordsByRatio implements Step {

@@ -75,13 +75,18 @@ public class Bucket implements Iterable<Record>, Serializable {
      */
     public Bucket() {
 
-//        records = new ArrayList<>();
+        //        records = new ArrayList<>();
         records = new TreeSet<>();
     }
 
     public void add(final Record... records) {
 
         Collections.addAll(this.records, records);
+    }
+
+    public void add(final Collection<Record> records) {
+
+        this.records.addAll(records);
     }
 
     /**

@@ -41,7 +41,7 @@ public class EvaluateClassifier implements Step {
         final Classifier classifier = context.getClassifier();
         final Bucket gold_standard = context.getGoldStandard();
         final Bucket training_records = context.getTrainingRecords();
-        
+
         final Bucket records_not_in_training = difference(gold_standard, training_records);
         final Bucket stripped_records = stripClassifications(records_not_in_training);
         final Bucket evaluation_records = getUnique(stripped_records);
@@ -54,6 +54,8 @@ public class EvaluateClassifier implements Step {
         context.setClassificationMetrics(classification_metrics);
     }
 
+    
+    //TODO wrap all these into BucketUitls or static methods of Bucket?
     private static Bucket difference(final Bucket larger_bucket, final Bucket smaller_bucket) {
 
         Bucket difference_bucket = new Bucket();
@@ -87,10 +89,7 @@ public class EvaluateClassifier implements Step {
         }
 
         final Bucket unique_bucket = new Bucket();
-
-        for (Record record : unique_records.values()) {
-            unique_bucket.add(record);
-        }
+        unique_bucket.add(unique_records.values());
 
         return unique_bucket;
     }

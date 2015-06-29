@@ -19,6 +19,8 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.process.v2.
 import com.beust.jcommander.*;
 
 /**
+ * Utility class used to validate command-line parameters.
+ *
  * @author Masih Hajiarab Derkani
  */
 public final class Validators {

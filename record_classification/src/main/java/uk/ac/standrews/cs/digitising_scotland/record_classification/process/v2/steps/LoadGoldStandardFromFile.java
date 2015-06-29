@@ -24,22 +24,22 @@ import java.nio.charset.*;
 import java.nio.file.*;
 
 /**
- * Loads gold standard records from a CSV file into a classification process {@link Context context}.
+ * Loads gold standard records from a file into a classification process {@link Context context}.
  *
  * @author Masih Hajiarab Derkani
  */
-public class LoadGoldStandardFromCSVFile implements Step {
+public class LoadGoldStandardFromFile implements Step {
 
     private static final long serialVersionUID = 7742825393693404041L;
-    private final File csv;
+    private final File file;
     private transient Charset charset;
 
     /**
      * Instantiates a new step which loads a gold standard CSV file into a classification process {@link Context context} with {@link StandardCharsets#UTF_8 UTF8} charset.
      *
-     * @param string_path the csv to the CSV file
+     * @param string_path the file to the CSV file
      */
-    public LoadGoldStandardFromCSVFile(String string_path) {
+    public LoadGoldStandardFromFile(String string_path) {
 
         this(new File(string_path), StandardCharsets.UTF_8);
     }
@@ -47,10 +47,10 @@ public class LoadGoldStandardFromCSVFile implements Step {
     /**
      * Instantiates a new step which loads a gold standard CSV file into a classification process {@link Context context}.
      *
-     * @param string_path the csv to the CSV file
+     * @param string_path the file to the CSV file
      * @param charset the charset of the CSV file
      */
-    public LoadGoldStandardFromCSVFile(String string_path, Charset charset) {
+    public LoadGoldStandardFromFile(String string_path, Charset charset) {
 
         this(new File(string_path), charset);
     }
@@ -58,19 +58,19 @@ public class LoadGoldStandardFromCSVFile implements Step {
     /**
      * Instantiates a new step which loads a gold standard CSV file into a classification process {@link Context context}.
      *
-     * @param csv the csv to the CSV file
+     * @param file the file to the CSV file
      * @param charset the charset of the CSV file
      */
-    public LoadGoldStandardFromCSVFile(final File csv, Charset charset) {
+    public LoadGoldStandardFromFile(final File file, Charset charset) {
 
-        this.csv = csv;
+        this.file = file;
         this.charset = charset;
     }
 
     @Override
     public void perform(final Context context) throws Exception {
 
-        try (final BufferedReader reader = Files.newBufferedReader(csv.toPath(), charset)) {
+        try (final BufferedReader reader = Files.newBufferedReader(file.toPath(), charset)) {
             final Bucket gold_standard = new Bucket(reader);
             context.setGoldStandard(gold_standard);
         }

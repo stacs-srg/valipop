@@ -17,18 +17,22 @@
 package uk.ac.standrews.cs.digitising_scotland.record_classification.process.v2.cli;
 
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.linear_regression.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.interfaces.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.util.*;
 
 /**
- * @author masih
+ * Classifiers that are accessible via the command-line interface.
+ *
+ * @author Masih Hajiarab Derkani
  */
 enum Classifiers implements Classifier {
 
     DUMMY(new DummyClassifier(), "A dummy classifier; for testing purposes"),
     EXACT_MATCH(new ExactMatchClassifier(), "Classifies based on exact match with training data"),
-    STRING_SIMILARITY_JARO_WINKLER(new StringSimilarityClassifier(StringSimilarityMetric.JARO_WINKLER), "Classifies based on similarity of the string to the training data; uses Jaro Winkler algorithm to calculate similarity");
+    STRING_SIMILARITY_JARO_WINKLER(new StringSimilarityClassifier(StringSimilarityMetric.JARO_WINKLER), "Classifies based on similarity of the string to the training data; uses Jaro Winkler algorithm to calculate similarity"),
+    OLR(new OLRClassifier(), "Classifies using online logistic regression"); //TODO improve description
 
     private final Classifier classifier;
     private final String description;
