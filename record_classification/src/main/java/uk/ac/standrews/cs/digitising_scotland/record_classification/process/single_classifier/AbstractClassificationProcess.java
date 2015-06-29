@@ -77,7 +77,8 @@ public abstract class AbstractClassificationProcess implements ClassificationPro
     public DataSet trainClassifyAndEvaluate() throws Exception {
 
         // Need to wrap the list to make it mutable so that the first-column label can be added.
-        DataSet data_set = new DataSet(new ArrayList<>(Arrays.asList("macro-precision", "macro-recall", "macro-accuracy", "macro-F1", "micro-precision", "micro-recall", "micro-accuracy", "micro-F1", "training time (m)", "classification time (m)")));
+//        DataSet data_set = new DataSet(new ArrayList<>(Arrays.asList("macro-precision", "macro-recall", "macro-accuracy", "macro-F1", "micro-precision", "micro-recall", "micro-accuracy", "micro-F1", "training time (m)", "classification time (m)")));
+        DataSet data_set = new DataSet(new ArrayList<>(Arrays.asList("training time (m)")));
 
         for (ClassificationProcessState state : classification_process_states) {
 
@@ -90,16 +91,17 @@ public abstract class AbstractClassificationProcess implements ClassificationPro
     private List<String> getDataSetRow(ClassificationProcessState state) {
 
         return Arrays.asList(
-                String.valueOf(state.metrics.getMacroAveragePrecision()),
-                String.valueOf(state.metrics.getMacroAverageRecall()),
-                String.valueOf(state.metrics.getMacroAverageAccuracy()),
-                String.valueOf(state.metrics.getMacroAverageF1()),
-                String.valueOf(state.metrics.getMicroAveragePrecision()),
-                String.valueOf(state.metrics.getMicroAverageRecall()),
-                String.valueOf(state.metrics.getMicroAverageAccuracy()),
-                String.valueOf(state.metrics.getMicroAverageF1()),
-                Double.toString(getTrainingTimeInMinutes(state)),
-                Double.toString(getClassificationTimeInMinutes(state)));
+//                String.valueOf(state.metrics.getMacroAveragePrecision()),
+//                String.valueOf(state.metrics.getMacroAverageRecall()),
+//                String.valueOf(state.metrics.getMacroAverageAccuracy()),
+//                String.valueOf(state.metrics.getMacroAverageF1()),
+//                String.valueOf(state.metrics.getMicroAveragePrecision()),
+//                String.valueOf(state.metrics.getMicroAverageRecall()),
+//                String.valueOf(state.metrics.getMicroAverageAccuracy()),
+//                String.valueOf(state.metrics.getMicroAverageF1()),
+//                Double.toString(getTrainingTimeInMinutes(state)),
+                Double.toString(getTrainingTimeInMinutes(state)));
+//                Double.toString(getClassificationTimeInMinutes(state)));
     }
 
     public List<ConfusionMatrix> getConfusionMatrices() {
