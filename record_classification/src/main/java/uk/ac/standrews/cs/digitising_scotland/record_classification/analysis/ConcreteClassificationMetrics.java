@@ -16,11 +16,15 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.analysis;
 
-import uk.ac.standrews.cs.digitising_scotland.record_classification.interfaces.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.interfaces.ClassificationMetrics;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.interfaces.ConfusionMatrix;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.InfoLevel;
 
-import java.text.*;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
+import static uk.ac.standrews.cs.util.tools.Formatting.printMetric;
 
 public class ConcreteClassificationMetrics implements ClassificationMetrics {
 
@@ -73,16 +77,6 @@ public class ConcreteClassificationMetrics implements ClassificationMetrics {
         for (Map.Entry<String, Double> entry : metrics.entrySet()) {
             printMetric(entry.getKey(), entry.getValue());
         }
-    }
-
-    private void printMetric(String label, double metric) {
-
-        System.out.println(label + ": " + String.format("%.2f", metric));
-    }
-
-    private void printMetric(String label, int metric) {
-
-        System.out.println(label + ": " + NumberFormat.getNumberInstance().format(metric));
     }
 
     @Override
