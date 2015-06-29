@@ -188,4 +188,24 @@ public class Bucket implements Iterable<Record>, Serializable {
 
         return unique_bucket;
     }
+
+    /**
+     * Constructs a new bucket containing a randomly selected subset of records.
+     *
+     * @param random the random number generator
+     * @param selection_probability the probability of a record being selected expressed within inclusive range of {@code 0.0}  to {@code 1.0}
+     * @return a new bucket containing a randomly selected subset of records
+     */
+    public Bucket randomSubset(final Random random, double selection_probability) {
+
+        final Bucket subset = new Bucket();
+
+        for (Record record : this) {
+            if (random.nextDouble() < selection_probability) {
+                subset.add(record);
+            }
+        }
+
+        return subset;
+    }
 }
