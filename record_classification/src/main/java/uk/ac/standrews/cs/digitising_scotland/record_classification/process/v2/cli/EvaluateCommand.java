@@ -31,7 +31,7 @@ import java.util.*;
  * @author Graham Kirby
  * @author Masih Hajiarab Derkani
  */
-@Parameters(commandNames = EvaluateCommand.NAME, commandDescription = "Evaluate classifier", separators = "=")
+@Parameters(commandNames = EvaluateCommand.NAME, commandDescription = "Evaluate classifier")
 class EvaluateCommand extends Command {
 
     /** The name of this command */
@@ -42,7 +42,7 @@ class EvaluateCommand extends Command {
     @Parameter(required = true, names = {"-o", "--output"}, description = "Path to the place to persist the evaluation results.", converter = FileConverter.class)
     private File destination;
 
-    @Parameter(names = {"-r", "--repetitonCount"}, description = "The number of repetitions.", validateValueWith = Validators.AtLeastOne.class)
+    @Parameter(names = {"-r", "--repetitionCount"}, description = "The number of repetitions.", validateValueWith = Validators.AtLeastOne.class)
     private int repetition_count = 1;
 
     @Parameter(names = {"-d", "--delimiter"}, description = "The delimiter character of the output results.")
@@ -68,6 +68,7 @@ class EvaluateCommand extends Command {
         dataset.setOutputFormat(CSVFormat.newFormat(delimiter));
 
         for (ClassificationMetrics metrics : results) {
+
             final String macro_precision = String.valueOf(metrics.getMacroAveragePrecision());
             final String macro_recall = String.valueOf(metrics.getMacroAverageRecall());
             final String macro_accuracy = String.valueOf(metrics.getMacroAverageAccuracy());
