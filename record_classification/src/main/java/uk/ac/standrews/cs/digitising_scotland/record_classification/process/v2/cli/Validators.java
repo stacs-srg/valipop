@@ -21,11 +21,11 @@ import com.beust.jcommander.*;
 /**
  * @author Masih Hajiarab Derkani
  */
-final class Validators {
+public final class Validators {
 
     private Validators() { throw new UnsupportedOperationException(); }
 
-    static class AtLeastOne implements IValueValidator<Integer> {
+    public static class AtLeastOne implements IValueValidator<Integer> {
 
         @Override
         public void validate(final String name, final Integer value) throws ParameterException {

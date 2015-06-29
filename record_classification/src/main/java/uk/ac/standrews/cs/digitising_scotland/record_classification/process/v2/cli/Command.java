@@ -34,6 +34,7 @@ abstract class Command implements Callable<Void>, Step {
 
     static final String SERIALIZED_CLASSIFICATION_PROCESS_NAME = "process." + Launcher.PROGRAM_NAME;
     static final Path SERIALIZED_CLASSIFICATION_PROCESS_PATH = Paths.get(SERIALIZED_CLASSIFICATION_PROCESS_NAME);
+    private static final long serialVersionUID = -2176702491500665712L;
 
     @Override
     public Void call() throws Exception {
@@ -54,7 +55,7 @@ abstract class Command implements Callable<Void>, Step {
         throw new IOException("No suitable classification process file found; expected a file named " + SERIALIZED_CLASSIFICATION_PROCESS_NAME + " at the current working directory.");
     }
 
-    protected  void persistClassificationProcess(ClassificationProcess process) throws IOException {
+    protected void persistClassificationProcess(ClassificationProcess process) throws IOException {
 
         persistClassificationProcess(process, SERIALIZED_CLASSIFICATION_PROCESS_PATH);
     }

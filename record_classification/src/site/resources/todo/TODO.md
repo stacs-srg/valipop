@@ -11,11 +11,14 @@
 - [x] Implement classifier serialisation/de-serialisation.
 - [ ] Add multiple user entry points to the project.
    - [x] Train classifier on specified gold standard data and persist state to specified location
-   - [ ] Load classifier from persistent state, classify specified unseen data, save results from/to specified locations
+   - [x] Load classifier from persistent state, classify specified unseen data, save results from/to specified locations
 - [ ] Automate Windows executable generation.
 - [x] Implement stemming.
 - [x] Implement removal of stop words.
 - [x] Convert HISCO definitions to three column gold standard data format.
+- [ ] Merge duplicate classification process functionality in process package
+- [ ] Enable reproducible training data selection when comparing multiple classifiers.
+- [ ] Optimise training of classifiers in repetitions. 
 
 # Queries and Comments
 
