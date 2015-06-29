@@ -24,7 +24,7 @@ import java.util.*;
 import java.util.concurrent.*;
 
 /**
- * Presents a classification process that consists of a list of steps and produces a bucket of classified records.
+ * Represents a classification process that consists of a list of steps and produces a {@link Bucket bucket}  of classified records.
  *
  * @author Masih Hajiarab Derkani
  */
@@ -84,13 +84,13 @@ public class ClassificationProcess implements Callable<Bucket>, Serializable {
 
     /**
      * Performs this classification process {@code n} times where {@code n} is the given number of repetitions.
-     * The classification process is performed on this process and {@code n-1} of its closes.
-     * The cloning of this process is done by serialization/deserialization of this process.
+     * The classification process is performed on this process and {@code n-1} of its copies.
+     * The copying of this process is done by serialization/deserialization of this process.
      *
      * @param repetitions the number of times to repeat this classification process.
      * @return the list of performed classification processes
      * @throws IllegalArgumentException if the given number of repetitions is less than {@code 1}
-     * @throws Exception if an error occurs during execution of the classification process
+     * @throws Exception if an error occurs during the execution of the classification processes
      */
     public List<ClassificationProcess> repeat(int repetitions) throws Exception {
 
@@ -104,9 +104,9 @@ public class ClassificationProcess implements Callable<Bucket>, Serializable {
 
         final byte[] serialized_process = SerializationUtils.serialize(this);
         for (int i = 0; i < repetitions - 1; i++) {
-            final ClassificationProcess process_clone = (ClassificationProcess) SerializationUtils.deserialize(serialized_process);
-            process_clone.call();
-            performed_processes.add(process_clone);
+            final ClassificationProcess process_copy = (ClassificationProcess) SerializationUtils.deserialize(serialized_process);
+            process_copy.call();
+            performed_processes.add(process_copy);
         }
 
         return Collections.unmodifiableList(performed_processes);

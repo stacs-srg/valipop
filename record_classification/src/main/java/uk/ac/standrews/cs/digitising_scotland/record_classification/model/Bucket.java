@@ -53,6 +53,15 @@ public class Bucket implements Iterable<Record>, Serializable {
         }
     }
 
+    /**
+     * Instantiates a new empty bucket.
+     */
+    public Bucket() {
+
+        //        records = new ArrayList<>();
+        records = new TreeSet<>();
+    }
+
     public DataSet toDataSet(List<String> column_labels, CSVFormat format) {
 
         final DataSet dataset = new DataSet(column_labels);
@@ -68,36 +77,6 @@ public class Bucket implements Iterable<Record>, Serializable {
             dataset.addRow(row);
         }
         return dataset;
-    }
-
-    /**
-     * Instantiates a new empty bucket.
-     */
-    public Bucket() {
-
-        //        records = new ArrayList<>();
-        records = new TreeSet<>();
-    }
-
-    public void add(final Record... records) {
-
-        Collections.addAll(this.records, records);
-    }
-
-    public void add(final Collection<Record> records) {
-
-        this.records.addAll(records);
-    }
-
-    /**
-     * Checks whether the specified record is in this bucket.
-     *
-     * @param record the record to check.
-     * @return true if the record is a member of this bucket
-     */
-    public boolean contains(final Record record) {
-
-        return records.contains(record);
     }
 
     @Override
@@ -132,5 +111,81 @@ public class Bucket implements Iterable<Record>, Serializable {
     public int size() {
 
         return records.size();
+    }
+
+    /**
+     * Constructs a new bucket containing this bucket's records that do not exist in the give bucket.
+     *
+     * @param other the other bucket
+     * @return a new bucket containing this records that are present in this bucket and not present in the other bucket
+     */
+    public Bucket difference(final Bucket other) {
+
+        final Bucket difference = new Bucket();
+
+        for (Record record : this) {
+            if (!other.contains(record)) {
+                difference.add(record);
+            }
+        }
+
+        return difference;
+    }
+
+    /**
+     * Adds the given records to this bucket.
+     *
+     * @param records the records to add
+     */
+    public void add(final Record... records) {
+
+        Collections.addAll(this.records, records);
+    }
+
+    /**
+     * Checks whether the specified record is in this bucket.
+     *
+     * @param record the record to check.
+     * @return true if the record is a member of this bucket
+     */
+    public boolean contains(final Record record) {
+
+        return records.contains(record);
+    }
+
+    /**
+     * Constructs a new bucket containing records of this bucket without classification.
+     *
+     * @return a new bucket containing records of this bucket without classification
+     * @see Record#Record(int, String)
+     */
+    public Bucket stripRecordClassifications() {
+
+        Bucket unclassified_bucket = new Bucket();
+
+        for (Record record : this) {
+            unclassified_bucket.add(new Record(record.getId(), record.getData()));
+        }
+
+        return unclassified_bucket;
+    }
+
+    /**
+     * Constructs a new bucket containing the records with unique data in this bucket.
+     *
+     * @return a new bucket containing the records with unique data in this bucket
+     */
+    public Bucket uniqueDataRecords() {
+
+        Map<String, Record> unique_data_records = new HashMap<>();
+
+        for (Record record : this) {
+            unique_data_records.put(record.getData(), record);
+        }
+
+        final Bucket unique_bucket = new Bucket();
+        unique_bucket.records.addAll(unique_data_records.values());
+
+        return unique_bucket;
     }
 }

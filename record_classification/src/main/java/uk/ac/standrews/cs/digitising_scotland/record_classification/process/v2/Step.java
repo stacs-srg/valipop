@@ -19,7 +19,7 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.process.v2;
 import java.io.*;
 
 /**
- * Presents a step in a {@link ClassificationProcess classification process}.
+ * Represents a step in a {@link ClassificationProcess classification process}.
  *
  * @author Masih Hajiarab Derkani
  */
