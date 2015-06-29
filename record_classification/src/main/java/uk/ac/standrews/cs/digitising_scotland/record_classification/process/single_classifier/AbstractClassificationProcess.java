@@ -16,21 +16,31 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.process.single_classifier;
 
-import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.interfaces.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.multiple_classifier.*;
-import uk.ac.standrews.cs.util.dataset.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.ConcreteClassificationMetrics;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.StrictConfusionMatrix;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.ConsistentCodingCleaner;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.InvalidArgException;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.interfaces.ClassificationMetrics;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.interfaces.ClassificationProcess;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.interfaces.Classifier;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.interfaces.ConfusionMatrix;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Cleaner;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.InfoLevel;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Record;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.multiple_classifier.AbstractMultipleClassificationProcess;
+import uk.ac.standrews.cs.util.dataset.DataSet;
 import uk.ac.standrews.cs.util.tools.FileManipulation;
 
-import java.io.*;
-import java.nio.file.*;
-import java.text.*;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.file.NoSuchFileException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static uk.ac.standrews.cs.util.tools.Formatting.format;
 
 /**
  * Defines the classifier-independent parts of a process that uses a single classifier.
@@ -42,6 +52,10 @@ public abstract class AbstractClassificationProcess implements ClassificationPro
     private static final int TRAINING_DATA_FILE_ARG_POS = 0;
     private static final int TRAINING_RATIO_ARG_POS = 1;
     private static final int NUMBER_OF_REPETITIONS_ARG_POS = 2;
+    private static final double SECONDS_PER_MINUTE = 60.0;
+
+    public static final List<String> TABLE_COLUMN_HEADINGS = Arrays.asList("macro-precision", "macro-recall", "macro-accuracy", "macro-F1", "micro-precision", "micro-recall", "micro-accuracy", "micro-F1", "training time (m)", "classification time (m)");
+    public static final List<Boolean> COLUMNS_AS_PERCENTAGES = Arrays.asList(true, true, true, true, true, true, true, true, false, false);
 
     private final double training_ratio;
     private final Cleaner cleaner;
@@ -77,8 +91,7 @@ public abstract class AbstractClassificationProcess implements ClassificationPro
     public DataSet trainClassifyAndEvaluate() throws Exception {
 
         // Need to wrap the list to make it mutable so that the first-column label can be added.
-//        DataSet data_set = new DataSet(new ArrayList<>(Arrays.asList("macro-precision", "macro-recall", "macro-accuracy", "macro-F1", "micro-precision", "micro-recall", "micro-accuracy", "micro-F1", "training time (m)", "classification time (m)")));
-        DataSet data_set = new DataSet(new ArrayList<>(Arrays.asList("training time (m)")));
+        DataSet data_set = new DataSet(new ArrayList<>(TABLE_COLUMN_HEADINGS));
 
         for (ClassificationProcessState state : classification_process_states) {
 
@@ -91,17 +104,16 @@ public abstract class AbstractClassificationProcess implements ClassificationPro
     private List<String> getDataSetRow(ClassificationProcessState state) {
 
         return Arrays.asList(
-//                String.valueOf(state.metrics.getMacroAveragePrecision()),
-//                String.valueOf(state.metrics.getMacroAverageRecall()),
-//                String.valueOf(state.metrics.getMacroAverageAccuracy()),
-//                String.valueOf(state.metrics.getMacroAverageF1()),
-//                String.valueOf(state.metrics.getMicroAveragePrecision()),
-//                String.valueOf(state.metrics.getMicroAverageRecall()),
-//                String.valueOf(state.metrics.getMicroAverageAccuracy()),
-//                String.valueOf(state.metrics.getMicroAverageF1()),
-//                Double.toString(getTrainingTimeInMinutes(state)),
-                Double.toString(getTrainingTimeInMinutes(state)));
-//                Double.toString(getClassificationTimeInMinutes(state)));
+                String.valueOf(state.metrics.getMacroAveragePrecision()),
+                String.valueOf(state.metrics.getMacroAverageRecall()),
+                String.valueOf(state.metrics.getMacroAverageAccuracy()),
+                String.valueOf(state.metrics.getMacroAverageF1()),
+                String.valueOf(state.metrics.getMicroAveragePrecision()),
+                String.valueOf(state.metrics.getMicroAverageRecall()),
+                String.valueOf(state.metrics.getMicroAverageAccuracy()),
+                String.valueOf(state.metrics.getMicroAverageF1()),
+                Double.toString(getTrainingTimeInMinutes(state)),
+                Double.toString(getClassificationTimeInMinutes(state)));
     }
 
     public List<ConfusionMatrix> getConfusionMatrices() {
@@ -350,8 +362,8 @@ public abstract class AbstractClassificationProcess implements ClassificationPro
 
             System.out.println();
 
-            System.out.format("training time              : %s min%n", getTrainingTimeInMinutes(state));
-            System.out.format("classification time        : %s min%n", getClassificationTimeInMinutes(state));
+            System.out.format("training time              : %s min%n", format(getTrainingTimeInMinutes(state), 1));
+            System.out.format("classification time        : %s min%n", format(getClassificationTimeInMinutes(state), 1));
 
             System.out.println("----------------------------------");
         }
@@ -359,7 +371,7 @@ public abstract class AbstractClassificationProcess implements ClassificationPro
 
     private double getElapsedTimeInMinutes(long start_in_ms, long finish_in_ms) {
 
-        return MILLISECONDS.toSeconds(finish_in_ms - start_in_ms) / 60.0;
+        return MILLISECONDS.toSeconds(finish_in_ms - start_in_ms) / SECONDS_PER_MINUTE;
     }
 
     private double getTrainingTimeInMinutes(ClassificationProcessState state) {
@@ -380,11 +392,6 @@ public abstract class AbstractClassificationProcess implements ClassificationPro
                 count++;
         }
         return count;
-    }
-
-    private static String format(final int i) {
-
-        return NumberFormat.getIntegerInstance().format(i);
     }
 
     private static class ClassificationProcessState {

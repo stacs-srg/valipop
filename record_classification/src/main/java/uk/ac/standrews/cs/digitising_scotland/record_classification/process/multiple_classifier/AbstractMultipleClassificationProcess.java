@@ -18,6 +18,7 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.process.mul
 
 import uk.ac.standrews.cs.digitising_scotland.record_classification.interfaces.ClassificationProcess;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.InfoLevel;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.single_classifier.AbstractClassificationProcess;
 import uk.ac.standrews.cs.util.dataset.DataSet;
 import uk.ac.standrews.cs.util.tables.TableGenerator;
 
@@ -60,7 +61,7 @@ public abstract class AbstractMultipleClassificationProcess {
         String table_caption = "\naggregate classifier performance (" + size + " repetition" + (size > 1 ? "s" : "") + "):\n";
         String first_column_heading = "classifier";
 
-        TableGenerator table_generator = new TableGenerator(row_labels, data_sets, System.out, table_caption, first_column_heading, true, '\t');
+        TableGenerator table_generator = new TableGenerator(row_labels, data_sets, System.out, table_caption, first_column_heading, AbstractClassificationProcess.COLUMNS_AS_PERCENTAGES, '\t');
 
         if (getInfoLevel() != InfoLevel.NONE) {
 
