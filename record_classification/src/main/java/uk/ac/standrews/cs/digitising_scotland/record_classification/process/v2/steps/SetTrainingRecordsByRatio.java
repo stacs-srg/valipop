@@ -19,8 +19,6 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.process.v2.
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.v2.*;
 
-import java.util.*;
-
 /**
  * Sets the training records in the context of a classification process by randomly selecting a ratio of records in {@link Context#getGoldStandard() gold standard records}.
  *
@@ -55,21 +53,8 @@ public class SetTrainingRecordsByRatio implements Step {
     public void perform(final Context context) throws Exception {
 
         final Bucket gold_standard = context.getGoldStandard();
-        final Bucket training_records = getRandomTrainingSubset(gold_standard, context.getRandom());
+        final Bucket training_records = gold_standard.randomSubset(context.getRandom(), training_ratio);
 
         context.setTrainingRecords(training_records);
-    }
-
-    private Bucket getRandomTrainingSubset(final Bucket bucket, final Random random) {
-
-        Bucket subset_bucket = new Bucket();
-
-        for (Record record : bucket) {
-            if (random.nextDouble() < training_ratio) {
-                subset_bucket.add(record);
-            }
-        }
-
-        return subset_bucket;
     }
 }
