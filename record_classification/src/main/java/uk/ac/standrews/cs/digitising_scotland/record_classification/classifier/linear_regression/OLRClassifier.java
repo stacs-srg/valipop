@@ -149,17 +149,6 @@ public class OLRClassifier extends AbstractClassifier {
         return new Classification(code, tokenSet, confidence);
     }
 
-    public Set<Classification> classify(final TokenSet tokenSet) {
-
-        NamedVector vector = vectorFactory.createNamedVectorFromString(tokenSet.toString(), "unknown");
-        Vector classifyFull = model.classifyFull(vector);
-        int classificationID = classifyFull.maxValueIndex();
-        String code = vectorFactory.getCodeIndexer().getCode(classificationID);
-        double confidence = Math.exp(model.logLikelihood(classificationID, vector));
-
-        return makeClassificationSet( new Classification(code, tokenSet, confidence));
-    }
-
     /**
      * Overrides the default path and sets to the path provided.
      * @param modelPath New path to write model to

@@ -16,21 +16,19 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.analysis;
 
-import ch.qos.logback.classic.*;
-import ch.qos.logback.classic.Logger;
-import org.junit.*;
-import org.slf4j.*;
+import org.junit.Before;
 
-import java.io.*;
-import java.net.*;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URL;
 
 public class AbstractTest {
 
     @Before
     public void setup() throws Exception {
 
-        Logger logger = (Logger) LoggerFactory.getLogger(getClass().getPackage().getName());
-        logger.setLevel(Level.INFO);
+//        Logger logger = (Logger) LoggerFactory.getLogger(getClass().getPackage().getName());
+//        logger.setLevel(Level.INFO);
     }
 
     protected static String getResourceFilePath(Class the_class, String resource_name) {

@@ -41,7 +41,7 @@ public class CodeDictionary implements Iterable<String> {
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(CodeDictionary.class);
 
-    // TODO replace with Map<String, String> or Set<Code>?
+    // TODO review whether this class is necessary.
 
     /**
      * Map of codes strings to code descriptions.

@@ -28,7 +28,7 @@ import java.util.*;
 public class Record implements Comparable<Record>, Serializable {
 
     private static final long serialVersionUID = 5810954671977163993L;
-    
+
     private final int id;
     private final String data;
     private final Classification classification;  // TODO restore support for multiple classifications
@@ -62,7 +62,9 @@ public class Record implements Comparable<Record>, Serializable {
         this.data = data;
         this.classification = classification;
 
-        hash_code = Objects.hash(id, data, classification);
+        // Previously used Objects.hash(id, data, classification) but that gave clashes.
+        // Need to check for duplicate IDs when populating bucket.
+        hash_code = id;
     }
 
     /**
@@ -93,7 +95,7 @@ public class Record implements Comparable<Record>, Serializable {
     @Override
     public boolean equals(Object other) {
 
-        return other instanceof Record && hash_code == ((Record)other).hash_code;
+        return other instanceof Record && hash_code == ((Record) other).hash_code;
     }
 
     @Override
