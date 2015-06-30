@@ -33,6 +33,8 @@ import java.util.Map;
  */
 public final class CodeIndexer implements Serializable {
 
+    // TODO review whether this class is necessary.
+
     private static final long serialVersionUID = 3073583599428985116L;
 
     /**

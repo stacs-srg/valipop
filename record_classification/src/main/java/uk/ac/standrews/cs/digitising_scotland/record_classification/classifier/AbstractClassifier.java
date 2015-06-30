@@ -51,12 +51,4 @@ public abstract class AbstractClassifier implements Classifier {
         result.add(classification);
         return result;
     }
-
-    public static Classification getSingleClassification(Set<Classification> classifications) {
-
-        for (Classification classification : classifications) {
-            return classification;
-        }
-        return null;
-    }
 }
