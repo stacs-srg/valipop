@@ -66,4 +66,9 @@ public enum StringSimilarityMetric {
 
         return metric.getSimilarity(one, other);
     }
+
+    public String getDescription() {
+
+        return metric.getShortDescriptionString();
+    }
 }

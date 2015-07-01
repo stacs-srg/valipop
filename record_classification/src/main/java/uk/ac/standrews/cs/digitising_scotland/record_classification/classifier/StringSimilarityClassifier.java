@@ -87,4 +87,16 @@ public class StringSimilarityClassifier implements Classifier {
 
         return Objects.hash(similarity_metric, known_classifications);
     }
+
+    @Override
+    public String getName() {
+
+        return getClass().getSimpleName() + "[" + similarity_metric.name() + "]";
+    }
+
+    @Override
+    public String getDescription() {
+
+        return "Classifies based on similarity of the string to the training data, using " + similarity_metric.getDescription() + " similarity metric";
+    }
 }

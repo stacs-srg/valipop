@@ -138,6 +138,16 @@ public class NaiveBayesClassifier implements Classifier {
         return new Classification(code, tokenSet, STATIC_CONFIDENCE);
     }
 
+    @Override
+    public String getName() {
+        return null;
+    }
+
+    @Override
+    public String getDescription() {
+        return null;
+    }
+
     /**
      * Gets the classification.
      *

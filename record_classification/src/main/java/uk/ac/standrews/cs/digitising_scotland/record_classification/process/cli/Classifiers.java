@@ -25,21 +25,33 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.util.*;
  * Classifiers that are accessible via the command-line interface.
  *
  * @author Masih Hajiarab Derkani
+ * @author Graham Kirby
  */
-enum Classifiers implements Classifier {
+public enum Classifiers implements Classifier {
 
-    DUMMY(new DummyClassifier(), "A dummy classifier; for testing purposes"),
-    EXACT_MATCH(new ExactMatchClassifier(), "Classifies based on exact match with training data"),
-    STRING_SIMILARITY_JARO_WINKLER(new StringSimilarityClassifier(StringSimilarityMetric.JARO_WINKLER), "Classifies based on similarity of the string to the training data; uses Jaro Winkler algorithm to calculate similarity"),
-    OLR(new OLRClassifier(), "Classifies using online logistic regression"); //TODO improve description
+    DUMMY(new DummyClassifier()),
+    EXACT_MATCH(new ExactMatchClassifier()),
+
+    STRING_SIMILARITY_LEVENSHTEIN(new StringSimilarityClassifier(StringSimilarityMetric.LEVENSHTEIN)),
+    STRING_SIMILARITY_JARO_WINKLER(new StringSimilarityClassifier(StringSimilarityMetric.JARO_WINKLER)),
+    STRING_SIMILARITY_JACCARD(new StringSimilarityClassifier(StringSimilarityMetric.JACCARD)),
+    STRING_SIMILARITY_CHAPMAN_LENGTH_DEVIATION(new StringSimilarityClassifier(StringSimilarityMetric.CHAPMAN_LENGTH_DEVIATION)),
+    STRING_SIMILARITY_DICE(new StringSimilarityClassifier(StringSimilarityMetric.DICE)),
+
+    OLR(new OLRClassifier()),
+
+    EXACT_MATCH_PLUS_STRING_SIMILARITY_LEVENSHTEIN(new ClassifierPlusExactMatchClassifier(new StringSimilarityClassifier(StringSimilarityMetric.LEVENSHTEIN))),
+    EXACT_MATCH_PLUS_STRING_SIMILARITY_JARO_WINKLER(new ClassifierPlusExactMatchClassifier(new StringSimilarityClassifier(StringSimilarityMetric.JARO_WINKLER))),
+    EXACT_MATCH_PLUS_STRING_SIMILARITY_JACCARD(new ClassifierPlusExactMatchClassifier(new StringSimilarityClassifier(StringSimilarityMetric.JACCARD))),
+    EXACT_MATCH_PLUS_STRING_SIMILARITY_CHAPMAN_LENGTH_DEVIATION(new ClassifierPlusExactMatchClassifier(new StringSimilarityClassifier(StringSimilarityMetric.CHAPMAN_LENGTH_DEVIATION))),
+    EXACT_MATCH_PLUS_STRING_SIMILARITY_DICE(new ClassifierPlusExactMatchClassifier(new StringSimilarityClassifier(StringSimilarityMetric.DICE))),
+    EXACT_MATCH_PLUS_OLR(new ClassifierPlusExactMatchClassifier(new OLRClassifier()));
 
     private final Classifier classifier;
-    private final String description;
 
-    Classifiers(Classifier classifier, final String description) {
+    Classifiers(Classifier classifier) {
 
         this.classifier = classifier;
-        this.description = description;
     }
 
     @Override
@@ -60,8 +72,14 @@ enum Classifiers implements Classifier {
         return classifier.classify(bucket);
     }
 
-    String getDescription() {
+    @Override
+    public String getName() {
+        return classifier.getName();
+    }
 
-        return description;
+    @Override
+    public String getDescription() {
+
+        return classifier.getDescription();
     }
 }

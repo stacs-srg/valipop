@@ -51,4 +51,16 @@ public class ClassifierPlusExactMatchClassifier implements Classifier {
             return classifier.classify(data);
         }
     }
+
+    @Override
+    public String getName() {
+
+        return getClass().getSimpleName() + "[" + classifier.getName() + "]";
+    }
+
+    @Override
+    public String getDescription() {
+
+        return "Classifies using exact match first, then if no match using " + classifier.getName() + " classifier";
+    }
 }

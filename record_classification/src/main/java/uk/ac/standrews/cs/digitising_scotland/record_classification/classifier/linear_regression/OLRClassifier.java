@@ -144,6 +144,18 @@ public class OLRClassifier implements Classifier {
         return new Classification(code, tokenSet, confidence);
     }
 
+    @Override
+    public String getName() {
+
+        return getClass().getSimpleName();
+    }
+
+    @Override
+    public String getDescription() {
+
+        return "Classifies using online logistic regression";
+    }
+
     /**
      * Overrides the default path and sets to the path provided.
      * @param modelPath New path to write model to

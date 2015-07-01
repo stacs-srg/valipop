@@ -34,4 +34,16 @@ public class DummyClassifier implements Classifier {
 
         return new Classification(a_code, new TokenSet(), 0.0);
     }
+
+    @Override
+    public String getName() {
+
+        return getClass().getSimpleName();
+    }
+
+    @Override
+    public String getDescription() {
+
+        return "A dummy classifier; for testing purposes";
+    }
 }

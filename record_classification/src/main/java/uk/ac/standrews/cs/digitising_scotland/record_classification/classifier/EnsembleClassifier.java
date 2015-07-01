@@ -16,10 +16,10 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier;
 
-import old.record_classification_old.classifiers.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Classification;
 
-import java.io.*;
+import java.io.Serializable;
 import java.util.*;
 
 /**
@@ -30,7 +30,7 @@ import java.util.*;
 public class EnsembleClassifier implements Classifier {
 
     private static final long serialVersionUID = 6432371860423757296L;
-    private final ArrayList<Classifier> classifiers;
+    private final List<Classifier> classifiers;
     private final ResolutionStrategy resolution_strategy;
 
     /**
@@ -64,6 +64,27 @@ public class EnsembleClassifier implements Classifier {
         }
 
         return resolution_strategy.resolve(candidate_classifications);
+    }
+
+    @Override
+    public String getName() {
+        return getClass().getSimpleName() + "[" + concatenateClassifierNames(classifiers) + "]";
+    }
+
+    private String concatenateClassifierNames(List<Classifier> classifiers) {
+
+        String result = "";
+        for (Classifier classifier : classifiers) {
+            if (result.length() > 0) result += ",";
+            result += classifier.getName();
+        }
+        return result;
+    }
+
+    @Override
+    public String getDescription() {
+
+        return "Classifies using a set of classifiers";
     }
 
     @Override
