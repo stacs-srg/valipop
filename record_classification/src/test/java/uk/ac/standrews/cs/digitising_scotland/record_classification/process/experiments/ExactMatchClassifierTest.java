@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License along with record_classification. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.digitising_scotland.record_classification.process;
+package uk.ac.standrews.cs.digitising_scotland.record_classification.process.experiments;
 
 import org.junit.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.*;
@@ -22,6 +22,8 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.*
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.interfaces.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.ClassificationProcess;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.Context;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.*;
 
 import java.io.*;

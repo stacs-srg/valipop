@@ -20,7 +20,7 @@ import old.record_classification_old.datastructures.bucket.Bucket;
 import old.record_classification_old.tools.configuration.MachineLearningConfiguration;
 import org.junit.Ignore;
 import org.junit.Test;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.AbstractClassificationTest;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.experiments.AbstractClassificationTest;
 
 @Ignore
 public class OLRTest extends AbstractClassificationTest {

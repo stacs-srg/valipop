@@ -22,7 +22,7 @@ import old.record_classification_old.tools.configuration.MachineLearningConfigur
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.AbstractClassificationTest;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.experiments.AbstractClassificationTest;
 
 @Ignore
 public class ClassifyToHISCOTest extends AbstractClassificationTest {

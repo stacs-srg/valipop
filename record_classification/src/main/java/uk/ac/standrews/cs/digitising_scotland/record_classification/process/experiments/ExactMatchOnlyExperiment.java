@@ -23,13 +23,14 @@ import java.util.*;
 
 public class ExactMatchOnlyExperiment extends Experiment {
 
+
     protected ExactMatchOnlyExperiment(final String[] args) {
 
         super(args);
     }
 
     public static void main(String[] args) throws Exception {
-        args = new String[]{"-g", "src/test/resources/uk/ac/standrews/cs/digitising_scotland/record_classification/process/AbstractClassificationTest/gold_standard_small.csv", "-t", "0.8", "-r", "2"};
+
         final ExactMatchOnlyExperiment experiment = new ExactMatchOnlyExperiment(args);
         experiment.call();
     }
