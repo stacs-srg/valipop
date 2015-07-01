@@ -27,32 +27,34 @@ import uk.ac.shef.wit.simmetrics.similaritymetrics.*;
 public enum StringSimilarityMetric {
 
     /** @see {@link JaccardSimilarity}. **/
-    JACCARD(new JaccardSimilarity()),
+    JACCARD(new JaccardSimilarity(), Constants.STATIC_CONFIDENCE_JACCARD),
 
     /** @see {@link BlockDistance}. **/
-    BLOCK_DISTANCE(new BlockDistance()),
+    BLOCK_DISTANCE(new BlockDistance(), Constants.STATIC_CONFIDENCE_BLOCK_DISTANCE),
 
     /** @see {@link Levenshtein}. **/
-    LEVENSHTEIN(new Levenshtein()),
+    LEVENSHTEIN(new Levenshtein(), Constants.STATIC_CONFIDENCE_LEVENSHTEIN),
 
     /** @see {@link JaroWinkler} **/
-    JARO_WINKLER(new JaroWinkler()),
+    JARO_WINKLER(new JaroWinkler(), Constants.STATIC_CONFIDENCE_JARO_WINKLER),
 
     /** @see {@link ChapmanLengthDeviation}. **/
-    CHAPMAN_LENGTH_DEVIATION(new ChapmanLengthDeviation()),
+    CHAPMAN_LENGTH_DEVIATION(new ChapmanLengthDeviation(), Constants.STATIC_CONFIDENCE_CHAPMAN_LENGTH_DEVIATION),
 
     /** @see {@link DiceSimilarity}. **/
-    DICE(new DiceSimilarity());
-    
+    DICE(new DiceSimilarity(), Constants.STATIC_CONFIDENCE_DICE);
+
     // The annotation is to suppress warnings in intellij; the IDE wrongly warns of non-serializable field in enums:
     // http://docs.oracle.com/javase/8/docs/platform/serialization/spec/serial-arch.html#a6469
     // The issue is reported to JetBrains. The annontation is to be removed once the issue is rectified.
     @SuppressWarnings("NonSerializableFieldInSerializableClass")
     private final InterfaceStringMetric metric;
+    private final double static_confidence;
 
-    StringSimilarityMetric(final InterfaceStringMetric metric) {
+    StringSimilarityMetric(final InterfaceStringMetric metric, double static_confidence) {
 
         this.metric = metric;
+        this.static_confidence = static_confidence;
     }
 
     /**
@@ -70,5 +72,20 @@ public enum StringSimilarityMetric {
     public String getDescription() {
 
         return metric.getShortDescriptionString();
+    }
+
+    public double getStaticConfidence() {
+
+        return static_confidence;
+    }
+
+    private static class Constants {
+
+        public static final double STATIC_CONFIDENCE_JACCARD = 0.0;
+        public static final double STATIC_CONFIDENCE_BLOCK_DISTANCE = 0.0;
+        public static final double STATIC_CONFIDENCE_LEVENSHTEIN = 0.0;
+        public static final double STATIC_CONFIDENCE_JARO_WINKLER = 0.0;
+        public static final double STATIC_CONFIDENCE_CHAPMAN_LENGTH_DEVIATION = 0.0;
+        public static final double STATIC_CONFIDENCE_DICE = 0.0;
     }
 }

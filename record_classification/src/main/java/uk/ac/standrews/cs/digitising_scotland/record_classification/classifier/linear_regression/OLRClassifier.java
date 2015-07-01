@@ -34,6 +34,7 @@ public class OLRClassifier implements Classifier {
 
     private static final long serialVersionUID = -2561454096763303789L;
     private static final Logger LOGGER = LoggerFactory.getLogger(OLRClassifier.class);
+    private static final double STATIC_CONFIDENCE = 0.0;
     private OLRCrossFold model = null;
     private final Properties properties;
     private VectorFactory vectorFactory;
@@ -71,7 +72,7 @@ public class OLRClassifier implements Classifier {
         if (vectorFactory == null) {
             CodeIndexer index = new CodeIndexer(bucket);
             vectorFactory = new VectorFactory(bucket, index);
-            ArrayList<NamedVector> trainingVectorList = getTrainingVectors(bucket);
+            List<NamedVector> trainingVectorList = getTrainingVectors(bucket);
             Collections.shuffle(trainingVectorList);
             model = new OLRCrossFold(trainingVectorList, properties);
         }
@@ -79,7 +80,7 @@ public class OLRClassifier implements Classifier {
             int classCountDiff = getNumClassesAdded(bucket);
             int featureCountDiff = getFeatureCountDiff(bucket);
             Matrix matrix = expandModel(featureCountDiff, classCountDiff);
-            ArrayList<NamedVector> trainingVectorList = getTrainingVectors(bucket);
+            List<NamedVector> trainingVectorList = getTrainingVectors(bucket);
             Collections.shuffle(trainingVectorList);
             model = new OLRCrossFold(trainingVectorList, properties, matrix);
         }
@@ -141,7 +142,7 @@ public class OLRClassifier implements Classifier {
         String code = vectorFactory.getCodeIndexer().getCode(classificationID);
         double confidence = Math.exp(model.logLikelihood(classificationID, vector));
 
-        return new Classification(code, tokenSet, confidence);
+        return new Classification(code, tokenSet, STATIC_CONFIDENCE);
     }
 
     @Override
