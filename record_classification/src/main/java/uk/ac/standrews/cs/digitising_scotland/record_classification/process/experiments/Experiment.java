@@ -38,6 +38,7 @@ import java.util.concurrent.*;
 public abstract class Experiment implements Callable<Void> {
 
     protected static final int SEED = 1413;
+    protected static final List<Boolean> COLUMNS_AS_PERCENTAGES = Arrays.asList(true, true, true, true, true, true, true, true, false, false);
     private final JCommander commander;
     @Parameter(names = {"-v", "--verbosity"}, description = "The level of output verbosity.")
     protected InfoLevel verbosity = InfoLevel.LONG_SUMMARY;
@@ -116,7 +117,7 @@ public abstract class Experiment implements Callable<Void> {
         String table_caption = "\naggregate classifier performance (" + repetitions + " repetition(s)" + "):\n";
         String first_column_heading = "classifier";
 
-        TableGenerator table_generator = new TableGenerator(row_labels, result_sets, System.out, table_caption, first_column_heading, AbstractClassificationProcess.COLUMNS_AS_PERCENTAGES, '\t');
+        TableGenerator table_generator = new TableGenerator(row_labels, result_sets, System.out, table_caption, first_column_heading, COLUMNS_AS_PERCENTAGES, '\t');
 
         if (verbosity != InfoLevel.NONE) {
 

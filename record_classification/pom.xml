@@ -32,6 +32,12 @@
     <name>record_classification</name>
     <description>Automatic record attribute classification.</description>
 
+    <properties>
+        <jdk.version>1.8</jdk.version>
+        <maven.compiler.source>${jdk.version}</maven.compiler.source>
+        <maven.compiler.target>${jdk.version}</maven.compiler.target>
+    </properties>
+
     <build>
         <plugins>
 
