@@ -40,21 +40,19 @@ public abstract class Experiment implements Callable<Void> {
     protected static final int SEED = 1413;
     protected static final List<Boolean> COLUMNS_AS_PERCENTAGES = Arrays.asList(true, true, true, true, true, true, true, true, false, false);
 
-    protected static final String[] DEFAULT_ARGS = new String[]{"-g", "src/test/resources/uk/ac/standrews/cs/digitising_scotland/record_classification/process/experiments/AbstractClassificationTest/gold_standard_small.csv", "-t", "0.8", "-r", "2", "-v", "SHORT_SUMMARY"};
-
     private final JCommander commander;
 
     @Parameter(names = {"-v", "--verbosity"}, description = "The level of output verbosity.")
-    protected InfoLevel verbosity = InfoLevel.LONG_SUMMARY;
+    protected InfoLevel verbosity = InfoLevel.SHORT_SUMMARY;
 
     @Parameter(names = {"-r", "--repetitionCount"}, description = "The number of repetitions.")
-    protected int repetitions = 1;
+    protected int repetitions = 2;
 
-    @Parameter(required = true, names = {"-g", "--goldStandard"}, description = "Path to a file containing the three column gold standard.", converter = FileConverter.class)
-    protected File gold_standard;
+    @Parameter(names = {"-g", "--goldStandard"}, description = "Path to a file containing the three column gold standard.", converter = FileConverter.class)
+    protected File gold_standard = new File("src/test/resources/uk/ac/standrews/cs/digitising_scotland/record_classification/process/experiments/AbstractClassificationTest/gold_standard_small.csv");
 
-    @Parameter(required = true, names = {"-t", "--trainingRecordRatio"}, description = "The ratio of gold standard records to be used for training. The value must be between 0.0 to 1.0 (inclusive).")
-    protected Double training_ratio;
+    @Parameter(names = {"-t", "--trainingRecordRatio"}, description = "The ratio of gold standard records to be used for training. The value must be between 0.0 to 1.0 (inclusive).")
+    protected Double training_ratio = 0.8;
 
     @Parameter(names = {"-d", "--delimiter"}, description = "The delimiter character of three column gold standard data.")
     protected char delimiter = '|';
@@ -63,7 +61,7 @@ public abstract class Experiment implements Callable<Void> {
 
         commander = new JCommander(this);
         try {
-            commander.parse(args.length > 0 ? args : DEFAULT_ARGS);
+            commander.parse(args);
         }
         catch (ParameterException e) {
             exitWithErrorMessage(e.getMessage());
