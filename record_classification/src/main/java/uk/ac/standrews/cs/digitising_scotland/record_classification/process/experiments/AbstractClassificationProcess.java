@@ -167,13 +167,13 @@ public abstract class AbstractClassificationProcess {
         state.evaluation_records = getUnique(state.stripped_records);
     }
 
-    private void performTraining(final ClassificationProcessState state) {
+    private void performTraining(final ClassificationProcessState state) throws Exception {
 
         state.classifier = getClassifier();
         state.classifier.train(state.training_records);
     }
 
-    private void performClassification(final ClassificationProcessState state) {
+    private void performClassification(final ClassificationProcessState state) throws Exception {
 
         state.classified_evaluation_records = state.classifier.classify(state.evaluation_records);
     }

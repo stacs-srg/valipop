@@ -41,7 +41,7 @@ public class ClassifyUnseenRecords implements Step {
     }
 
     @Override
-    public void perform(final Context context) {
+    public void perform(final Context context) throws Exception {
 
         final Classifier classifier = context.getClassifier();
         final Bucket classified_unseen_records = classifier.classify(unseen_records);

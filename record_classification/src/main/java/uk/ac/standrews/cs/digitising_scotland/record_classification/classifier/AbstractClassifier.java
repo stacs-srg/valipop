@@ -28,7 +28,7 @@ public abstract class AbstractClassifier implements Classifier {
 
     private static final long serialVersionUID = -4322016472465051488L;
 
-    public Bucket classify(final Bucket bucket) {
+    public Bucket classify(final Bucket bucket) throws Exception {
 
         Bucket classified = new Bucket();
 

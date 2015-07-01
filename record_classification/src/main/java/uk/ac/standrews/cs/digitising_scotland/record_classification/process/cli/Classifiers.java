@@ -44,19 +44,19 @@ enum Classifiers implements Classifier {
     }
 
     @Override
-    public void train(final Bucket bucket) {
+    public void train(final Bucket bucket) throws Exception {
 
         classifier.train(bucket);
     }
 
     @Override
-    public Classification classify(final String data) {
+    public Classification classify(final String data) throws Exception {
 
         return classifier.classify(data);
     }
 
     @Override
-    public Bucket classify(final Bucket bucket) {
+    public Bucket classify(final Bucket bucket) throws Exception {
 
         return classifier.classify(bucket);
     }
