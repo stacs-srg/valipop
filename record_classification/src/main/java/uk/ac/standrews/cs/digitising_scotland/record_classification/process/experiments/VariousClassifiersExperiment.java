@@ -16,8 +16,8 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.process.experiments;
 
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.ClassifierPlusExactMatchClassifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.ExactMatchClassifier;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.OLRWithExactMatchClassifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.StringSimilarityClassifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.linear_regression.OLRClassifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.ClassificationProcess;
@@ -45,7 +45,15 @@ public class VariousClassifiersExperiment extends Experiment {
                 new ExactMatchClassifier(),
                 new StringSimilarityClassifier(StringSimilarityMetric.LEVENSHTEIN),
                 new StringSimilarityClassifier(StringSimilarityMetric.JARO_WINKLER),
+                new StringSimilarityClassifier(StringSimilarityMetric.JACCARD),
+                new StringSimilarityClassifier(StringSimilarityMetric.CHAPMAN_LENGTH_DEVIATION),
+                new StringSimilarityClassifier(StringSimilarityMetric.DICE),
                 new OLRClassifier(),
-                new OLRWithExactMatchClassifier());
+                new ClassifierPlusExactMatchClassifier(new StringSimilarityClassifier(StringSimilarityMetric.LEVENSHTEIN)),
+                new ClassifierPlusExactMatchClassifier(new StringSimilarityClassifier(StringSimilarityMetric.JARO_WINKLER)),
+                new ClassifierPlusExactMatchClassifier(new StringSimilarityClassifier(StringSimilarityMetric.JACCARD)),
+                new ClassifierPlusExactMatchClassifier(new StringSimilarityClassifier(StringSimilarityMetric.CHAPMAN_LENGTH_DEVIATION)),
+                new ClassifierPlusExactMatchClassifier(new StringSimilarityClassifier(StringSimilarityMetric.DICE)),
+                new ClassifierPlusExactMatchClassifier(new OLRClassifier()));
     }
 }
