@@ -16,41 +16,32 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier;
 
-import old.record_classification_old.datastructures.vectors.CustomVectorWriter;
-import old.record_classification_old.tools.Utils;
-import old.record_classification_old.tools.configuration.MachineLearningConfiguration;
-import org.apache.hadoop.conf.Configuration;
+import old.record_classification_old.datastructures.vectors.*;
+import old.record_classification_old.tools.*;
+import old.record_classification_old.tools.configuration.*;
+import org.apache.hadoop.conf.*;
 import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.fs.*;
 import org.apache.hadoop.io.SequenceFile.Writer;
-import org.apache.hadoop.io.Text;
-import org.apache.mahout.classifier.ClassifierResult;
-import org.apache.mahout.classifier.naivebayes.AbstractNaiveBayesClassifier;
-import org.apache.mahout.classifier.naivebayes.BayesUtils;
-import org.apache.mahout.classifier.naivebayes.NaiveBayesModel;
-import org.apache.mahout.classifier.naivebayes.StandardNaiveBayesClassifier;
-import org.apache.mahout.classifier.naivebayes.training.TrainNaiveBayesJob;
-import org.apache.mahout.math.NamedVector;
+import org.apache.hadoop.io.*;
+import org.apache.mahout.classifier.*;
+import org.apache.mahout.classifier.naivebayes.*;
+import org.apache.mahout.classifier.naivebayes.training.*;
+import org.apache.mahout.math.*;
 import org.apache.mahout.math.Vector;
-import org.apache.mahout.math.VectorWritable;
 import org.apache.mahout.vectorizer.encoders.Dictionary;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.linear_regression.CodeIndexer;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.linear_regression.VectorFactory;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Classification;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Record;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.TokenSet;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 
 /**
  * @author jkc25
  */
-public class NaiveBayesClassifier extends AbstractClassifier {
+public class NaiveBayesClassifier implements Classifier {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(NaiveBayesClassifier.class);
 

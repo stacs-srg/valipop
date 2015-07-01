@@ -20,7 +20,7 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 
 import java.util.*;
 
-public class ExactMatchClassifier extends AbstractClassifier {
+public class ExactMatchClassifier implements Classifier {
 
     private static final long serialVersionUID = 7439350806549465200L;
 

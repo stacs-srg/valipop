@@ -16,9 +16,10 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier;
 
+import old.record_classification_old.classifiers.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 
-public class DummyClassifier extends AbstractClassifier {
+public class DummyClassifier implements Classifier {
 
     private static final long serialVersionUID = -687342270805724715L;
     private String a_code;

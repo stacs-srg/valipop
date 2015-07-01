@@ -17,6 +17,7 @@
 package uk.ac.standrews.cs.digitising_scotland.record_classification.process;
 
 import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.interfaces.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 
