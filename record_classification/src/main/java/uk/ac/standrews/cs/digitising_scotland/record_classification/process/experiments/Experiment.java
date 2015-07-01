@@ -1,0 +1,151 @@
+/*
+ * Copyright 2015 Digitising Scotland project:
+ * <http://digitisingscotland.cs.st-andrews.ac.uk/>
+ *
+ * This file is part of the module record_classification.
+ *
+ * record_classification is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ *
+ * record_classification is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with record_classification. If not, see
+ * <http://www.gnu.org/licenses/>.
+ */
+package uk.ac.standrews.cs.digitising_scotland.record_classification.process.experiments;
+
+import com.beust.jcommander.*;
+import com.beust.jcommander.converters.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.interfaces.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.*;
+import uk.ac.standrews.cs.util.dataset.*;
+import uk.ac.standrews.cs.util.tables.*;
+
+import java.io.*;
+import java.util.*;
+import java.util.concurrent.*;
+
+/**
+ * @author Graham Kirby
+ * @author Masih Hajiarab Derkani
+ */
+public abstract class Experiment implements Callable<Void> {
+
+    protected static final int SEED = 1413;
+    private final JCommander commander;
+    @Parameter(names = {"-v", "--verbosity"}, description = "The level of output verbosity.")
+    protected InfoLevel verbosity = InfoLevel.LONG_SUMMARY;
+
+    @Parameter(names = {"-r", "--repetitionCount"}, description = "The number of repetitions.")
+    protected int repetitions = 1;
+
+    @Parameter(required = true, names = {"-g", "--goldStandard"}, description = "Path to a file containing the three column gold standard.", converter = FileConverter.class)
+    protected File gold_standard;
+
+    @Parameter(required = true, names = {"-t", "--trainingRecordRatio"}, description = "The ratio of gold standard records to be used for training. The value must be between 0.0 to 1.0 (inclusive).")
+    protected Double training_ratio;
+
+    @Parameter(names = {"-d", "--delimiter"}, description = "The delimiter character of three column gold standard data.")
+    protected char delimiter = '|';
+
+    protected Experiment(String[] args) {
+
+        commander = new JCommander(this);
+        try {
+            commander.parse(args);
+        }
+        catch (ParameterException e) {
+            exitWithErrorMessage(e.getMessage());
+        }
+    }
+
+    private void exitWithErrorMessage(final String error_message) {
+
+        System.err.println(error_message);
+        commander.usage();
+        System.exit(1);
+    }
+
+    @Override
+    public Void call() throws Exception {
+
+        final List<String> row_labels = new ArrayList<>();
+        final List<DataSet> result_sets = new ArrayList<>();
+        final List<ClassificationProcess> processes = getClassificationProcesses();
+
+        for (ClassificationProcess process : processes) {
+
+            final String name = getProcessName(process);
+            row_labels.add(name);
+
+            final List<ClassificationProcess> repeated_processes = process.repeat(repetitions);
+            final List<ClassificationMetrics> metricses = getClassificationMetricses(repeated_processes);
+            final DataSet result_set = ClassificationMetrics.toDataSet(metricses);
+            result_sets.add(result_set);
+        }
+
+        printSummarisedResults(row_labels, result_sets);
+
+        return null; //void callable
+    }
+
+    private String getProcessName(final ClassificationProcess process) {
+
+        return process.getContext().getClassifier().getClass().getSimpleName();
+    }
+
+    protected abstract List<ClassificationProcess> getClassificationProcesses();
+
+    private List<ClassificationMetrics> getClassificationMetricses(final List<ClassificationProcess> repeated_processes) {
+
+        final List<ClassificationMetrics> metricses = new ArrayList<>();
+        for (ClassificationProcess repeated_process : repeated_processes) {
+            metricses.add(repeated_process.getContext().getClassificationMetrics());
+        }
+        return metricses;
+    }
+
+    private void printSummarisedResults(final List<String> row_labels, final List<DataSet> result_sets) throws IOException {
+
+        String table_caption = "\naggregate classifier performance (" + repetitions + " repetition(s)" + "):\n";
+        String first_column_heading = "classifier";
+
+        TableGenerator table_generator = new TableGenerator(row_labels, result_sets, System.out, table_caption, first_column_heading, AbstractClassificationProcess.COLUMNS_AS_PERCENTAGES, '\t');
+
+        if (verbosity != InfoLevel.NONE) {
+
+            table_generator.printTable();
+        }
+    }
+
+    protected List<ClassificationProcess> initClassificationProcesses(Classifier... classifiers) {
+
+        final List<ClassificationProcess> processes = new ArrayList<>();
+        for (Classifier classifier : classifiers) {
+            processes.add(initClassificationProcess(classifier));
+        }
+
+        return processes;
+    }
+
+    protected ClassificationProcess initClassificationProcess(Classifier classifier) {
+
+        final Context context = new Context(new Random(SEED));
+        context.setClassifier(classifier);
+
+        final ClassificationProcess process = new ClassificationProcess(context);
+        process.addStep(new LoadGoldStandardFromFile(gold_standard));
+        process.addStep(new CleanGoldStandardRecords(ConsistentCodingCleaner.CORRECT));
+        process.addStep(new SetTrainingRecordsByRatio(training_ratio));
+        process.addStep(new TrainClassifier());
+        process.addStep(new EvaluateClassifier(verbosity));
+
+        return process;
+    }
+}
