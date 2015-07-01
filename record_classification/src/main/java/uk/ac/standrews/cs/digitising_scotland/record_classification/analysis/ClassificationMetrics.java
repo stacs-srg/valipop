@@ -19,10 +19,14 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.analysis;
 import org.apache.commons.csv.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.interfaces.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.*;
 import uk.ac.standrews.cs.util.dataset.*;
 
 import java.io.*;
+import java.time.*;
+import java.time.temporal.*;
 import java.util.*;
+import java.util.concurrent.*;
 
 import static uk.ac.standrews.cs.util.tools.Formatting.*;
 
@@ -36,11 +40,14 @@ import static uk.ac.standrews.cs.util.tools.Formatting.*;
 public class ClassificationMetrics implements Serializable {
 
     /** Labels used in conversion of metrics to {@link DataSet dataset}. */
-    public static final List<String> DATASET_LABELS = Arrays.asList("macro-precision", "macro-recall", "macro-accuracy", "macro-F1", "micro-precision", "micro-recall", "micro-accuracy", "micro-F1");
+    public static final List<String> DATASET_LABELS = Arrays.asList("macro-precision", "macro-recall", "macro-accuracy", "macro-F1", "micro-precision", "micro-recall", "micro-accuracy", "micro-F1", "training time (m)", "evaluation classification time (m)");
 
     private static final long serialVersionUID = -214187549269797059L;
+    public static final double ONE_MINUTE_IN_SECONDS = 60.0;
 
     private final ConfusionMatrix confusion_matrix;
+    private final Duration training_time;
+    private final Duration evaluation_classification_time;
 
     /**
      * instantiates a new classification metrics from the given confusion matrix.
@@ -49,7 +56,19 @@ public class ClassificationMetrics implements Serializable {
      */
     public ClassificationMetrics(ConfusionMatrix confusion_matrix) {
 
+        this(confusion_matrix, null, null);
+    }
+
+    /**
+     * instantiates a new classification metrics from the given confusion matrix.
+     *
+     * @param confusion_matrix the matrix from which to instantiate a new classification metrics
+     */
+    public ClassificationMetrics(ConfusionMatrix confusion_matrix, final Duration training_time, final Duration evaluation_classification_time) {
+
         this.confusion_matrix = confusion_matrix;
+        this.training_time = training_time;
+        this.evaluation_classification_time = evaluation_classification_time;
     }
 
     /**
@@ -84,8 +103,10 @@ public class ClassificationMetrics implements Serializable {
         final String micro_recall = String.valueOf(metrics.getMicroAverageRecall());
         final String micro_accuracy = String.valueOf(metrics.getMicroAverageAccuracy());
         final String micro_f1 = String.valueOf(metrics.getMicroAverageF1());
+        final String training_time = String.valueOf(metrics.getTrainingTime().getSeconds() / ONE_MINUTE_IN_SECONDS);
+        final String evaluation_classification_time = String.valueOf(metrics.getEvaluationClassificationTime().getSeconds() / ONE_MINUTE_IN_SECONDS);
 
-        return Arrays.asList(macro_precision, macro_recall, macro_accuracy, macro_f1, micro_precision, micro_recall, micro_accuracy, micro_f1);
+        return Arrays.asList(macro_precision, macro_recall, macro_accuracy, macro_f1, micro_precision, micro_recall, micro_accuracy, micro_f1, training_time, evaluation_classification_time);
     }
 
     /**
@@ -292,6 +313,26 @@ public class ClassificationMetrics implements Serializable {
         int total_false_negatives = getSumOfFalseNegatives();
 
         return calculateF1(total_true_positives, total_false_positives, total_false_negatives);
+    }
+
+    /**
+     * Gets the time it took to train the classifier.
+     *
+     * @return the time it took to train the classifier, or {@code null} if the classifier is not specified
+     */
+    public Duration getTrainingTime() {
+
+        return training_time;
+    }
+
+    /**
+     * Gets the time it took to classify the evaluation records by the classifier.
+     *
+     * @return the time it took to classify the evaluation records by the classifier, or {@code null} if the classifier is not specified
+     */
+    public Duration getEvaluationClassificationTime() {
+
+        return evaluation_classification_time;
     }
 
     /**
