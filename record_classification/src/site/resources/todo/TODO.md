@@ -16,8 +16,8 @@
 - [x] Implement stemming.
 - [x] Implement removal of stop words.
 - [x] Convert HISCO definitions to three column gold standard data format.
-- [ ] Merge duplicate classification process functionality in process package
-- [ ] Enable reproducible training data selection when comparing multiple classifiers.
+- [x] Merge duplicate classification process functionality in process package
+- [x] Enable reproducible training data selection when comparing multiple classifiers.
 - [ ] Optimise training of classifiers in repetitions. 
 
 # Queries and Comments
