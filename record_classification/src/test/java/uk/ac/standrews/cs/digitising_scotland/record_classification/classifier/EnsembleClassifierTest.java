@@ -87,7 +87,7 @@ public class EnsembleClassifierTest {
     }
 
     @Test
-    public void testSerialization() {
+    public void testSerialization() throws Exception {
 
         assertEquals(classifier, SerializationUtils.deserialize(SerializationUtils.serialize(classifier)));
         classifier.train(training_records);

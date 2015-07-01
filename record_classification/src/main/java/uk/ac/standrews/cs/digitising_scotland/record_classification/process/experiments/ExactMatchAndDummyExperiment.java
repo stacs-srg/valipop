@@ -30,6 +30,9 @@ public class ExactMatchAndDummyExperiment extends Experiment {
 
     public static void main(String[] args) throws Exception {
 
+        args = new String[]{"-g", "/Users/graham/Documents/Code/IntelliJ/digitising_scotland/record_classification/src/test/resources/uk/ac/standrews/cs/digitising_scotland/record_classification/process/AbstractClassificationTest/gold_standard_small.csv",
+                "-r", "2", "-t", "0.8"
+        };
         final ExactMatchAndDummyExperiment experiment = new ExactMatchAndDummyExperiment(args);
         experiment.call();
 

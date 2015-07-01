@@ -46,7 +46,7 @@ public class EnsembleClassifier extends AbstractClassifier {
     }
 
     @Override
-    public void train(final Bucket bucket) {
+    public void train(final Bucket bucket) throws Exception {
 
         for (Classifier classifier : classifiers) {
             classifier.train(bucket);
@@ -54,7 +54,7 @@ public class EnsembleClassifier extends AbstractClassifier {
     }
 
     @Override
-    public Classification classify(String data) {
+    public Classification classify(String data) throws Exception {
 
         final Map<Classifier, Classification> candidate_classifications = new HashMap<>();
 
