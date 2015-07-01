@@ -190,11 +190,11 @@ public class Bucket implements Iterable<Record>, Serializable {
     }
 
     /**
-     * Constructs a new bucket containing a randomly selected subset of records.
+     * Constructs a new bucket containing a randomly selected subset of records present in this bucket based on a given selection probability.
      *
      * @param random the random number generator
      * @param selection_probability the probability of a record being selected expressed within inclusive range of {@code 0.0}  to {@code 1.0}
-     * @return a new bucket containing a randomly selected subset of records
+     * @return a new bucket containing a randomly selected subset of this bucket's records
      */
     public Bucket randomSubset(final Random random, double selection_probability) {
 

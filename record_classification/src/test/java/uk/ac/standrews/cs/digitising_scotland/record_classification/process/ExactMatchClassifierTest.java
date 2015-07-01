@@ -17,9 +17,12 @@
 package uk.ac.standrews.cs.digitising_scotland.record_classification.process;
 
 import org.junit.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.interfaces.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.single_classifier.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.*;
 
 import java.io.*;
 import java.util.*;
@@ -34,15 +37,26 @@ public class ExactMatchClassifierTest extends AbstractClassificationTest {
     @Before
     public void setup() throws Exception {
 
-        InputStreamReader occupation_data_path = getInputStreamReaderForResource(AbstractClassificationTest.class, GOLD_STANDARD_DATA_FILE_NAME);
+        final InputStreamReader occupation_data_path = getInputStreamReaderForResource(AbstractClassificationTest.class, GOLD_STANDARD_DATA_FILE_NAME);
 
-        ClassificationProcess classification_process = new ExactMatchClassificationProcess(occupation_data_path, 0.8, 1);
-        classification_process.setInfoLevel(InfoLevel.NONE);
-        classification_process.trainClassifyAndEvaluate();
+        final Context context = new Context();
+        context.setClassifier(new ExactMatchClassifier());
+        context.setGoldStandard(new Bucket(occupation_data_path));
 
-        metrics = classification_process.getClassificationMetrics();
-        matrices = classification_process.getConfusionMatrices();
+        final ClassificationProcess process = new ClassificationProcess(context);
+        process.addStep(new CleanGoldStandardRecords(ConsistentCodingCleaner.CORRECT));
+        process.addStep(new SetTrainingRecordsByRatio(0.8));
+        process.addStep(new TrainClassifier());
+        process.addStep(new EvaluateClassifier(InfoLevel.NONE));
 
+        final List<ClassificationProcess> repeat = process.repeat(1);
+
+        metrics = new ArrayList<>();
+        matrices = new ArrayList<>();
+        for (ClassificationProcess classificationProcess : repeat) {
+            metrics.add(classificationProcess.getContext().getClassificationMetrics());
+            matrices.add(classificationProcess.getContext().getConfusionMatrix());
+        }
     }
 
     @Test

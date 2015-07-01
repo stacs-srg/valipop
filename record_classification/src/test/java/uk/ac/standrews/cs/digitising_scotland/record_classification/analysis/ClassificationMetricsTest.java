@@ -16,12 +16,11 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.analysis;
 
-import org.junit.Test;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.interfaces.ClassificationMetrics;
+import org.junit.*;
 
-import java.util.Map;
+import java.util.*;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 public class ClassificationMetricsTest extends AbstractMetricsTest {
 
@@ -212,7 +211,7 @@ public class ClassificationMetricsTest extends AbstractMetricsTest {
         initFullRecords();
         initMatrix();
 
-        return new ConcreteClassificationMetrics(matrix);
+        return new ClassificationMetrics(matrix);
     }
 
     private void checkMetricValues(MetricChoice choice, ExpectedMetricValue... values) throws Exception {
@@ -220,7 +219,7 @@ public class ClassificationMetricsTest extends AbstractMetricsTest {
         initFullRecords();
         initMatrix();
 
-        Map<String, Double> metric = choice.getMetric(new ConcreteClassificationMetrics(matrix));
+        Map<String, Double> metric = choice.getMetric(new ClassificationMetrics(matrix));
 
         assertEquals(getNumberOfCodes(), metric.size());
 
