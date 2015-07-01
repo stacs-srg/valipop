@@ -66,7 +66,7 @@ public class EvaluateClassifier implements Step {
         final StrictConfusionMatrix confusion_matrix = new StrictConfusionMatrix(classified_evaluation_records, gold_standard, ConsistentCodingCleaner.CHECK);
         context.setConfusionMatrix(confusion_matrix);
 
-        final ClassificationMetrics classification_metrics = new ClassificationMetrics(confusion_matrix);
+        final ClassificationMetrics classification_metrics = new ClassificationMetrics(confusion_matrix, context.getTrainingTime(), evaluation_classification_time);
         context.setClassificationMetrics(classification_metrics);
 
         if (verbosity.compareTo(InfoLevel.LONG_SUMMARY) >= 0) {
