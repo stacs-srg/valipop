@@ -17,16 +17,12 @@
 package uk.ac.standrews.cs.digitising_scotland.record_classification.analysis;
 
 import org.apache.commons.csv.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.interfaces.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.*;
 import uk.ac.standrews.cs.util.dataset.*;
 
 import java.io.*;
 import java.time.*;
-import java.time.temporal.*;
 import java.util.*;
-import java.util.concurrent.*;
 
 import static uk.ac.standrews.cs.util.tools.Formatting.*;
 
