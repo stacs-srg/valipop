@@ -30,10 +30,6 @@ public class NaiveBayesOnlyExperiment extends Experiment {
 
     public static void main(final String[] args) throws Exception {
 
-        //            Logger logger = (Logger) LoggerFactory.getLogger(Configuration.class.getName());
-        //            LogFactory.getLog(Configuration.class);
-        //            logger.setLevel(Level.OFF);
-
         final NaiveBayesOnlyExperiment experiment = new NaiveBayesOnlyExperiment(args);
         experiment.call();
     }
