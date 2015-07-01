@@ -28,7 +28,7 @@ import java.util.*;
  *
  * @author Masih Hajiarab Derkani
  */
-public class StringSimilarityClassifier extends AbstractClassifier {
+public class StringSimilarityClassifier implements Classifier {
 
     private static final long serialVersionUID = -6159276459112698341L;
 

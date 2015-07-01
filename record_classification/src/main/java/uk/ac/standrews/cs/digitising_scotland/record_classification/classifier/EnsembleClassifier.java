@@ -16,7 +16,7 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier;
 
-import uk.ac.standrews.cs.digitising_scotland.record_classification.interfaces.*;
+import old.record_classification_old.classifiers.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 
 import java.io.*;
@@ -27,7 +27,7 @@ import java.util.*;
  *
  * @author Masih Hajiarab Derkani
  */
-public class EnsembleClassifier extends AbstractClassifier {
+public class EnsembleClassifier implements Classifier {
 
     private static final long serialVersionUID = 6432371860423757296L;
     private final ArrayList<Classifier> classifiers;

@@ -16,17 +16,12 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.linear_regression;
 
-import old.record_classification_old.tools.configuration.MachineLearningConfiguration;
-import org.apache.mahout.math.Matrix;
-import org.apache.mahout.math.NamedVector;
+import old.record_classification_old.tools.configuration.*;
+import org.apache.mahout.math.*;
 import org.apache.mahout.math.Vector;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.AbstractClassifier;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Classification;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Record;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.TokenSet;
+import org.slf4j.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 
 import java.io.*;
 import java.util.*;
@@ -35,7 +30,7 @@ import java.util.*;
  *
  * @author frjd2, jkc25
  */
-public class OLRClassifier extends AbstractClassifier {
+public class OLRClassifier implements Classifier {
 
     private static final long serialVersionUID = -2561454096763303789L;
     private static final Logger LOGGER = LoggerFactory.getLogger(OLRClassifier.class);

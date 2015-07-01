@@ -16,15 +16,13 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.nb2;
 
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.AbstractClassifier;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Classification;
-import weka.classifiers.bayes.NaiveBayes;
-import weka.core.Instance;
-import weka.core.Instances;
-import weka.gui.beans.AbstractDataSource;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.Classifier;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
+import weka.classifiers.bayes.*;
+import weka.core.*;
+import weka.gui.beans.*;
 
-public class NaiveBayesClassifier2 extends AbstractClassifier {
+public class NaiveBayesClassifier2 implements Classifier {
 
     NaiveBayes naive_bayes;
 

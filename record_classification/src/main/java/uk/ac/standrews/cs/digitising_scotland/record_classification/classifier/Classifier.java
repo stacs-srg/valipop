@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License along with record_classification. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.digitising_scotland.record_classification.interfaces;
+package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier;
 
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 
@@ -50,5 +50,20 @@ public interface Classifier extends Serializable {
      * @param bucket the data to be classified
      * @return a new bucket containing the classified data
      */
-    Bucket classify(final Bucket bucket) throws Exception;
+    default Bucket classify(final Bucket bucket) throws Exception {
+
+        Bucket classified = new Bucket();
+
+        for (Record record : bucket) {
+
+            final String data = record.getData();
+            Classification classification = classify(data);
+
+            assert classification != null;
+
+            classified.add(new Record(record.getId(), data, classification));
+        }
+
+        return classified;
+    }
 }
