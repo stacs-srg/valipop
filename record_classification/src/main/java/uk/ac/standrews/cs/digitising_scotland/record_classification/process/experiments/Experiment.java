@@ -39,7 +39,11 @@ public abstract class Experiment implements Callable<Void> {
 
     protected static final int SEED = 1413;
     protected static final List<Boolean> COLUMNS_AS_PERCENTAGES = Arrays.asList(true, true, true, true, true, true, true, true, false, false);
+
+    protected static final String[] DEFAULT_ARGS = new String[]{"-g", "src/test/resources/uk/ac/standrews/cs/digitising_scotland/record_classification/process/experiments/AbstractClassificationTest/gold_standard_small.csv", "-t", "0.8", "-r", "2", "-v", "SHORT_SUMMARY"};
+
     private final JCommander commander;
+
     @Parameter(names = {"-v", "--verbosity"}, description = "The level of output verbosity.")
     protected InfoLevel verbosity = InfoLevel.LONG_SUMMARY;
 
@@ -59,7 +63,7 @@ public abstract class Experiment implements Callable<Void> {
 
         commander = new JCommander(this);
         try {
-            commander.parse(args);
+            commander.parse(args.length > 0 ? args : DEFAULT_ARGS);
         }
         catch (ParameterException e) {
             exitWithErrorMessage(e.getMessage());
