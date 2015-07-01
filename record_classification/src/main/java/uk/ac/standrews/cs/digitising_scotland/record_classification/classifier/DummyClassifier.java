@@ -16,7 +16,6 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier;
 
-import old.record_classification_old.classifiers.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 
 public class DummyClassifier implements Classifier {

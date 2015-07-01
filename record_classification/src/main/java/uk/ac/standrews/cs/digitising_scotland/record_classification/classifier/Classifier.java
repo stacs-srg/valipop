@@ -52,7 +52,7 @@ public interface Classifier extends Serializable {
      */
     default Bucket classify(final Bucket bucket) throws Exception {
 
-        Bucket classified = new Bucket();
+        final Bucket classified = new Bucket();
 
         for (Record record : bucket) {
 
