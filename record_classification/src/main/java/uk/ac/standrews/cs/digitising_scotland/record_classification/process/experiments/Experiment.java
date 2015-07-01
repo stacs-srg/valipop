@@ -70,13 +70,6 @@ public abstract class Experiment implements Callable<Void> {
         }
     }
 
-    private void exitWithErrorMessage(final String error_message) {
-
-        System.err.println(error_message);
-        commander.usage();
-        System.exit(1);
-    }
-
     @Override
     public Void call() throws Exception {
 
@@ -90,8 +83,8 @@ public abstract class Experiment implements Callable<Void> {
             row_labels.add(name);
 
             final List<ClassificationProcess> repeated_processes = process.repeat(repetitions);
-            final List<ClassificationMetrics> metricses = getClassificationMetricses(repeated_processes);
-            final DataSet result_set = ClassificationMetrics.toDataSet(metricses);
+            final List<ClassificationMetrics> metrics = getClassificationMetrics(repeated_processes);
+            final DataSet result_set = ClassificationMetrics.toDataSet(metrics);
             result_sets.add(result_set);
         }
 
@@ -100,34 +93,7 @@ public abstract class Experiment implements Callable<Void> {
         return null; //void callable
     }
 
-    private String getProcessName(final ClassificationProcess process) {
-
-        return process.getContext().getClassifier().getClass().getSimpleName();
-    }
-
     protected abstract List<ClassificationProcess> getClassificationProcesses();
-
-    private List<ClassificationMetrics> getClassificationMetricses(final List<ClassificationProcess> repeated_processes) {
-
-        final List<ClassificationMetrics> metricses = new ArrayList<>();
-        for (ClassificationProcess repeated_process : repeated_processes) {
-            metricses.add(repeated_process.getContext().getClassificationMetrics());
-        }
-        return metricses;
-    }
-
-    private void printSummarisedResults(final List<String> row_labels, final List<DataSet> result_sets) throws IOException {
-
-        String table_caption = "\naggregate classifier performance (" + repetitions + " repetition(s)" + "):\n";
-        String first_column_heading = "classifier";
-
-        TableGenerator table_generator = new TableGenerator(row_labels, result_sets, System.out, table_caption, first_column_heading, COLUMNS_AS_PERCENTAGES, '\t');
-
-        if (verbosity != InfoLevel.NONE) {
-
-            table_generator.printTable();
-        }
-    }
 
     protected List<ClassificationProcess> initClassificationProcesses(Classifier... classifiers) {
 
@@ -139,7 +105,7 @@ public abstract class Experiment implements Callable<Void> {
         return processes;
     }
 
-    protected ClassificationProcess initClassificationProcess(Classifier classifier) {
+    private ClassificationProcess initClassificationProcess(Classifier classifier) {
 
         final Context context = new Context(new Random(SEED));
         context.setClassifier(classifier);
@@ -152,5 +118,45 @@ public abstract class Experiment implements Callable<Void> {
         process.addStep(new EvaluateClassifier(verbosity));
 
         return process;
+    }
+
+    private void exitWithErrorMessage(final String error_message) {
+
+        System.err.println(error_message);
+        commander.usage();
+        System.exit(1);
+    }
+
+    private String getProcessName(final ClassificationProcess process) {
+
+        return process.getContext().getClassifier().getClass().getSimpleName();
+    }
+
+    private List<ClassificationMetrics> getClassificationMetrics(final List<ClassificationProcess> repeated_processes) {
+
+        final List<ClassificationMetrics> metrics = new ArrayList<>();
+        for (ClassificationProcess repeated_process : repeated_processes) {
+            metrics.add(repeated_process.getContext().getClassificationMetrics());
+        }
+        return metrics;
+    }
+
+    private void printSummarisedResults(final List<String> row_labels, final List<DataSet> result_sets) throws IOException {
+
+        String table_caption = "\naggregate classifier performance (" + repetitions + " repetition" + (repetitions > 1 ? "s" : "") + "):\n";
+        String first_column_heading = "classifier";
+
+        TableGenerator table_generator = new TableGenerator(row_labels, result_sets, System.out, table_caption, first_column_heading, COLUMNS_AS_PERCENTAGES, '\t');
+
+        if (verbosity != InfoLevel.NONE) {
+
+            printDateStamp();
+            table_generator.printTable();
+        }
+    }
+
+    private void printDateStamp() {
+
+        System.out.println("experiment run at: " + new Date());
     }
 }
