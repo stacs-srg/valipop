@@ -46,6 +46,16 @@ public class NaiveBayesClassifier2 implements Classifier {
         return getClassification(probabilities);
     }
 
+    @Override
+    public String getName() {
+        return null;
+    }
+
+    @Override
+    public String getDescription() {
+        return null;
+    }
+
     private Classification getClassification(double[] probabilities) {
         return null;
     }

@@ -66,4 +66,8 @@ public interface Classifier extends Serializable {
 
         return classified;
     }
+
+    String getName();
+
+    String getDescription();
 }

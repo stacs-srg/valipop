@@ -127,7 +127,7 @@ public abstract class Experiment implements Callable<Void> {
 
     private String getProcessName(final ClassificationProcess process) {
 
-        return process.getContext().getClassifier().getClass().getSimpleName();
+        return process.getContext().getClassifier().getName();
     }
 
     private List<ClassificationMetrics> getClassificationMetrics(final List<ClassificationProcess> repeated_processes) {

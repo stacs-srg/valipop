@@ -44,6 +44,18 @@ public class ExactMatchClassifier implements Classifier {
         return exact_classification != null ? exact_classification : Classification.UNCLASSIFIED;
     }
 
+    @Override
+    public String getName() {
+
+        return getClass().getSimpleName();
+    }
+
+    @Override
+    public String getDescription() {
+
+        return "Classifies based on exact match with training data";
+    }
+
     private void loadRecord(final Record record) {
 
         known_classifications.put(record.getData(), record.getClassification());

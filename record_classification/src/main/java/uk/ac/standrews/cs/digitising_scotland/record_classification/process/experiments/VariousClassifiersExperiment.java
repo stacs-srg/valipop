@@ -16,12 +16,8 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.process.experiments;
 
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.ClassifierPlusExactMatchClassifier;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.ExactMatchClassifier;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.StringSimilarityClassifier;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.linear_regression.OLRClassifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.ClassificationProcess;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.util.StringSimilarityMetric;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.Classifiers;
 
 import java.util.List;
 
@@ -42,18 +38,18 @@ public class VariousClassifiersExperiment extends Experiment {
     protected List<ClassificationProcess> getClassificationProcesses() {
 
         return initClassificationProcesses(
-                new ExactMatchClassifier(),
-                new StringSimilarityClassifier(StringSimilarityMetric.LEVENSHTEIN),
-                new StringSimilarityClassifier(StringSimilarityMetric.JARO_WINKLER),
-                new StringSimilarityClassifier(StringSimilarityMetric.JACCARD),
-                new StringSimilarityClassifier(StringSimilarityMetric.CHAPMAN_LENGTH_DEVIATION),
-                new StringSimilarityClassifier(StringSimilarityMetric.DICE),
-                new OLRClassifier(),
-                new ClassifierPlusExactMatchClassifier(new StringSimilarityClassifier(StringSimilarityMetric.LEVENSHTEIN)),
-                new ClassifierPlusExactMatchClassifier(new StringSimilarityClassifier(StringSimilarityMetric.JARO_WINKLER)),
-                new ClassifierPlusExactMatchClassifier(new StringSimilarityClassifier(StringSimilarityMetric.JACCARD)),
-                new ClassifierPlusExactMatchClassifier(new StringSimilarityClassifier(StringSimilarityMetric.CHAPMAN_LENGTH_DEVIATION)),
-                new ClassifierPlusExactMatchClassifier(new StringSimilarityClassifier(StringSimilarityMetric.DICE)),
-                new ClassifierPlusExactMatchClassifier(new OLRClassifier()));
+                Classifiers.EXACT_MATCH,
+                Classifiers.STRING_SIMILARITY_LEVENSHTEIN,
+                Classifiers.STRING_SIMILARITY_JARO_WINKLER,
+                Classifiers.STRING_SIMILARITY_JACCARD,
+                Classifiers.STRING_SIMILARITY_CHAPMAN_LENGTH_DEVIATION,
+                Classifiers.STRING_SIMILARITY_DICE,
+                Classifiers.OLR,
+                Classifiers.EXACT_MATCH_PLUS_STRING_SIMILARITY_LEVENSHTEIN,
+                Classifiers.EXACT_MATCH_PLUS_STRING_SIMILARITY_JARO_WINKLER,
+                Classifiers.EXACT_MATCH_PLUS_STRING_SIMILARITY_JACCARD,
+                Classifiers.EXACT_MATCH_PLUS_STRING_SIMILARITY_CHAPMAN_LENGTH_DEVIATION,
+                Classifiers.EXACT_MATCH_PLUS_STRING_SIMILARITY_DICE,
+                Classifiers.EXACT_MATCH_PLUS_OLR);
     }
 }
