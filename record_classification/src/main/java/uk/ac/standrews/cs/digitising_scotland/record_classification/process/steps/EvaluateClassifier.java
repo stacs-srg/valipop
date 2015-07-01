@@ -85,8 +85,8 @@ public class EvaluateClassifier implements Step {
             context.getClassificationMetrics().printMetrics(verbosity);
 
             System.out.println();
-            System.out.format("training time              : %s min%n", context.getTrainingTime().toMinutes());
-            System.out.format("classification time        : %s min%n", context.getEvaluationClassificationTime().toMinutes());
+            System.out.format("training time              : %s%n", context.getTrainingTime());
+            System.out.format("classification time        : %s%n", context.getEvaluationClassificationTime());
 
             System.out.println("----------------------------------");
         }
