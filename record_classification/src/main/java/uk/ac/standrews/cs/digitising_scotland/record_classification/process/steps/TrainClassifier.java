@@ -39,6 +39,7 @@ public class TrainClassifier implements Step {
         final Instant start = Instant.now();
 
         classifier.train(training_records);
+
         final Duration training_time = Duration.between(start, Instant.now());
         context.setTrainingTime(training_time);
     }
