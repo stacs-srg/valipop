@@ -69,7 +69,7 @@ public class StringSimilarityClassifier implements Classifier {
                 highest_similarity_found = known_to_data_similarity;
             }
         }
-        return classification;
+        return new Classification(classification.getCode(), new TokenSet(data), classification.getConfidence());
     }
 
     @Override

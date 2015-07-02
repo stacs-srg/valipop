@@ -16,11 +16,14 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.process.experiments;
 
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.EnsembleVotingClassifier;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.StringSimilarityClassifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.InputFileFormatException;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.ClassificationProcess;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.Classifiers;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.util.StringSimilarityMetric;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
 public class EnsembleOnlyExperiment extends Experiment {
@@ -39,6 +42,6 @@ public class EnsembleOnlyExperiment extends Experiment {
     @Override
     protected List<ClassificationProcess> getClassificationProcesses() throws IOException, InputFileFormatException {
 
-        return initClassificationProcesses(Classifiers.VOTING_ENSEMBLE);
+        return initClassificationProcesses(new EnsembleVotingClassifier(Arrays.asList(new StringSimilarityClassifier(StringSimilarityMetric.LEVENSHTEIN), new StringSimilarityClassifier(StringSimilarityMetric.JARO_WINKLER))));
     }
 }
