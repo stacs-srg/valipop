@@ -35,9 +35,10 @@ public class Context implements Serializable {
     private static final long serialVersionUID = -6389479358148790573L;
 
     private final Random random;
-    private Classifier classifier;
     private Bucket gold_standard;
+    private Bucket evaluation_records;
     private Bucket training_records;
+    private Classifier classifier;
     private Bucket classified_unseen_records;
     private ConfusionMatrix confusion_matrix;
     private ClassificationMetrics classification_metrics;
@@ -60,6 +61,10 @@ public class Context implements Serializable {
     public Context(Random random) {
 
         this.random = random;
+
+        gold_standard = new Bucket();
+        evaluation_records = new Bucket();
+        training_records = new Bucket();
     }
 
     /**
@@ -73,24 +78,28 @@ public class Context implements Serializable {
     }
 
     /**
-     * Gets the gold standard data in this context.
+     * Gets the evaluation records in this context.
      *
-     * @return the gold standard records, or {@code null} if not set
+     * @return the evaluation records, or {@code null} if not set
      */
-    public Bucket getGoldStandard() {
+    public Bucket getEvaluationRecords() {
 
-        return gold_standard;
-
+        return evaluation_records;
     }
 
     /**
-     * Sets the gold standard records of this context.
+     * Adds the given records to the bucket of records that are used to evaluate the classifier of this context.
      *
-     * @param gold_standard the gold standards to set
+     * @param evaluation_records the records to be added
      */
-    public void setGoldStandard(final Bucket gold_standard) {
+    public void addEvaluationRecords(final Bucket evaluation_records) {
 
-        this.gold_standard = gold_standard;
+        evaluation_records.forEach(this.evaluation_records::add);
+    }
+
+    public void setEvaluationRecords(final Bucket evaluation_records) {
+
+        this.evaluation_records = evaluation_records;
     }
 
     /**
@@ -164,11 +173,16 @@ public class Context implements Serializable {
     }
 
     /**
-     * Sets the records that are used to train the classifier of this context.
+     * Adds the given records to the bucket of records that are used to train the classifier of this context.
      *
-     * @param training_records the records to be used for training the classifier of this context
+     * @param training_records the records to be added
      */
-    public void setTrainingRecords(Bucket training_records) {
+    public void addTrainingRecords(Bucket training_records) {
+
+        training_records.forEach(this.training_records::add);
+    }
+
+    public void setTrainingRecords(final Bucket training_records) {
 
         this.training_records = training_records;
     }
@@ -231,5 +245,20 @@ public class Context implements Serializable {
     public void setEvaluationClassificationTime(Duration evaluation_classification_time) {
 
         this.evaluation_classification_time = evaluation_classification_time;
+    }
+
+    public Bucket getGoldStandard() {
+
+        return gold_standard;
+    }
+
+    public void setGoldStandard(Bucket gold_standard) {
+
+        this.gold_standard = gold_standard;
+    }
+
+    public void addGoldStandard(Bucket gold_standard) {
+
+        gold_standard.forEach(this.gold_standard::add);
     }
 }

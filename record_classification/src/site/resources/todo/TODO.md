@@ -19,6 +19,7 @@
 - [x] Merge duplicate classification process functionality in process package
 - [x] Enable reproducible training data selection when comparing multiple classifiers.
 - [ ] Optimise training of classifiers in repetitions. 
+- [ ] Implement String record level cleaning.
 
 # Queries and Comments
 
