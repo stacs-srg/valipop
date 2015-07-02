@@ -49,8 +49,8 @@ public abstract class Experiment implements Callable<Void> {
     @Parameter(names = {"-r", "--repetitionCount"}, description = "The number of repetitions.")
     protected int repetitions = 2;
 
-    @Parameter(names = {"-g", "--goldStandard"}, description = "Path to a file containing the three column gold standard.", converter = FileConverter.class)
-    protected File gold_standard_file = new File("src/test/resources/uk/ac/standrews/cs/digitising_scotland/record_classification/process/experiments/AbstractClassificationTest/gold_standard_small.csv");
+    @Parameter(names = {"-g", "--goldStandard"}, description = "Path to a file containing the three column gold standard.", listConverter = FileConverter.class)
+    protected List<File> gold_standard_files = Arrays.asList(new File("src/test/resources/uk/ac/standrews/cs/digitising_scotland/record_classification/process/experiments/AbstractClassificationTest/gold_standard_small.csv"));
 
     @Parameter(names = {"-t", "--trainingRecordRatio"}, description = "The ratio of gold standard records to be used for training. The value must be between 0.0 to 1.0 (inclusive).")
     protected Double training_ratio = 0.8;
@@ -110,8 +110,12 @@ public abstract class Experiment implements Callable<Void> {
         context.setClassifier(classifier);
 
         final ClassificationProcess process = new ClassificationProcess(context);
-        final Bucket gold_standard = new Bucket(gold_standard_file);
-        process.addStep(new AddTrainingAndEvaluationRecordsByRatio(gold_standard, training_ratio, new EnglishStopWordCleaner(), new PorterStemCleaner(), ConsistentCodingCleaner.CORRECT));
+
+        for (File gold_standard_file : gold_standard_files) {
+            final Bucket gold_standard = new Bucket(gold_standard_file);
+            process.addStep(new AddTrainingAndEvaluationRecordsByRatio(gold_standard, training_ratio, new EnglishStopWordCleaner(), new PorterStemCleaner(), ConsistentCodingCleaner.CORRECT));
+        }
+
         process.addStep(new TrainClassifier());
         process.addStep(new EvaluateClassifier(verbosity));
 
