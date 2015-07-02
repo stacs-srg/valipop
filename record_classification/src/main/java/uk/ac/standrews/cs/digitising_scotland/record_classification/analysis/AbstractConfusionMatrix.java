@@ -218,7 +218,7 @@ public abstract class AbstractConfusionMatrix implements ConfusionMatrix {
             Classification classification = record.getClassification();
 
             if (!valid_codes.contains(classification.getCode())) {
-                throw new InvalidCodeException();
+                throw new InvalidCodeException("unknown code: " + classification.getCode());
             }
         }
     }
