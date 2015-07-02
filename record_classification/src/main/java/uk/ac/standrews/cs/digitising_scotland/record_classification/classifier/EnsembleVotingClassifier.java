@@ -42,59 +42,76 @@ public class EnsembleVotingClassifier extends EnsembleClassifier {
         @Override
         public Classification resolve(Map<Classifier, Classification> candidate_classifications) {
 
-            Map<Classification, Integer> classification_counts = countOccurrencesOfClassifications(candidate_classifications);
+            Set< Set<Classification>> classifications_with_same_codes = partitionClassificationsWithSameCodes(candidate_classifications);
 
-            return getMostPopularClassification(classification_counts);
+            Set<Classification> classifications_with_most_popular_code = getClassificationsWithMostPopularCode(classifications_with_same_codes);
+
+            return classificationWithHighestConfidence(classifications_with_most_popular_code);
         }
 
-        private Map<Classification, Integer> countOccurrencesOfClassifications(Map<Classifier, Classification> candidate_classifications) {
+        private Set<Set<Classification>> partitionClassificationsWithSameCodes(Map<Classifier, Classification> candidate_classifications) {
 
-            Map<Classification, Integer> classification_counts = new HashMap<>();
+            Set<Set<Classification>> classification_sets = new HashSet<>();
 
             for (Classification classification : candidate_classifications.values()) {
 
-                if (!classification_counts.containsKey(classification)) {
-                    classification_counts.put(classification, 0);
+                Set<Classification> other_classifications_with_this_code = findOtherClassificationsWithThisCode(classification_sets, classification.getCode());
+
+                if (other_classifications_with_this_code == null) {
+                    other_classifications_with_this_code = new HashSet<>();
+                    classification_sets.add(other_classifications_with_this_code);
                 }
 
-                classification_counts.put(classification, classification_counts.get(classification) + 1);
+                other_classifications_with_this_code.add(classification);
             }
 
-            return classification_counts;
+            return classification_sets;
         }
 
-        private Classification getMostPopularClassification(Map<Classification, Integer> classification_counts) {
+        private Set<Classification> findOtherClassificationsWithThisCode(Set<Set<Classification>> classification_sets, String code) {
 
-            Classification result = null;
-            double max_confidence = 0.0;
+            for (Set<Classification> other_classifications : classification_sets) {
 
-            int occurrences_of_most_popular_classification = getMostPopularCount(classification_counts);
+                for (Classification classification : other_classifications) {
 
-            for (Classification classification : classification_counts.keySet()) {
-                if (classification_counts.get(classification) == occurrences_of_most_popular_classification) {
-                    double confidence = classification.getConfidence();
-                    if (confidence > max_confidence) {
-                        result = classification;
-                        max_confidence = confidence;
+                    if (classification.getCode().equals(code)) {
+                        return other_classifications;
                     }
                 }
             }
-
-            return result;
+            return null;
         }
 
-        private int getMostPopularCount(Map<Classification, Integer> classification_counts) {
+        private Set<Classification> getClassificationsWithMostPopularCode(Set<Set<Classification>> classifications_with_same_codes) {
 
-            int max_count = 0;
+            int max_size = 0;
+            Set<Classification> classifications_with_popular_code = null;
 
-            for (Classification classification : classification_counts.keySet()) {
-                int classification_count = classification_counts.get(classification);
-                if (classification_count > max_count) {
-                    max_count = classification_count;
+            for (Set<Classification> classifications : classifications_with_same_codes) {
+
+                if (classifications.size() > max_size) {
+                    max_size = classifications.size();
+                    classifications_with_popular_code = classifications;
                 }
             }
 
-            return max_count;
+            return classifications_with_popular_code;
+        }
+
+        private Classification classificationWithHighestConfidence(Set<Classification> classifications_with_most_popular_code) {
+
+            double max_confidence = 0.0;
+            Classification most_confident_classification = null;
+
+            for (Classification classification : classifications_with_most_popular_code) {
+
+                if (classification.getConfidence() > max_confidence) {
+                    max_confidence = classification.getConfidence();
+                    most_confident_classification = classification;
+                }
+            }
+
+            return most_confident_classification;
         }
     }
 }
