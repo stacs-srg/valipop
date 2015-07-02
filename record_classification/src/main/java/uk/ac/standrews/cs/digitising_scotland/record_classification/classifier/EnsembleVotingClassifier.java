@@ -42,11 +42,54 @@ public class EnsembleVotingClassifier extends EnsembleClassifier {
         @Override
         public Classification resolve(Map<Classifier, Classification> candidate_classifications) {
 
-            Set< Set<Classification>> classifications_with_same_codes = partitionClassificationsWithSameCodes(candidate_classifications);
+            Set<Set<Classification>> classifications_with_same_codes = partitionClassificationsWithSameCodes(candidate_classifications);
 
-            Set<Classification> classifications_with_most_popular_code = getClassificationsWithMostPopularCode(classifications_with_same_codes);
+            Set<Set<Classification>> classifications_with_most_popular_code = getClassificationsWithMostPopularCode(classifications_with_same_codes);
 
-            return classificationWithHighestConfidence(classifications_with_most_popular_code);
+            Map<Set<Classification>, Double> confidence_averages = getConfidenceAverages(classifications_with_most_popular_code);
+
+            return classificationWithHighestConfidenceAverage(confidence_averages);
+        }
+
+        private Classification classificationWithHighestConfidenceAverage(Map<Set<Classification>, Double> confidence_averages) {
+
+            double highest_confidence = 0.0;
+            Set<Classification> classifications = null;
+
+            for (Map.Entry<Set<Classification>, Double> entry : confidence_averages.entrySet()) {
+
+                if (entry.getValue() > highest_confidence) {
+                    highest_confidence = entry.getValue();
+                    classifications = entry.getKey();
+                }
+            }
+
+            Classification classification=null;
+            for (Classification c :  classifications) {
+                classification = c;
+            }
+
+            return new Classification(classification.getCode(), classification.getTokenSet(), averageConfidence(classifications));
+        }
+
+        private Map<Set<Classification>, Double> getConfidenceAverages(Set<Set<Classification>> classifications_with_most_popular_code) {
+
+            Map<Set<Classification>, Double> confidence_averages = new HashMap<>();
+
+            for (Set<Classification> classifications : classifications_with_most_popular_code) {
+                confidence_averages.put(classifications, averageConfidence(classifications));
+            }
+
+            return confidence_averages;
+        }
+
+        private Double averageConfidence(Set<Classification> classifications) {
+
+            double sum = 0.0;
+            for (Classification classification : classifications) {
+                sum += classification.getConfidence();
+            }
+            return sum / classifications.size();
         }
 
         private Set<Set<Classification>> partitionClassificationsWithSameCodes(Map<Classifier, Classification> candidate_classifications) {
@@ -82,36 +125,27 @@ public class EnsembleVotingClassifier extends EnsembleClassifier {
             return null;
         }
 
-        private Set<Classification> getClassificationsWithMostPopularCode(Set<Set<Classification>> classifications_with_same_codes) {
+        private Set<Set<Classification>> getClassificationsWithMostPopularCode(Set<Set<Classification>> classifications_with_same_codes) {
 
             int max_size = 0;
-            Set<Classification> classifications_with_popular_code = null;
 
             for (Set<Classification> classifications : classifications_with_same_codes) {
 
                 if (classifications.size() > max_size) {
                     max_size = classifications.size();
-                    classifications_with_popular_code = classifications;
+                }
+            }
+
+            Set<Set<Classification>> classifications_with_popular_code = new HashSet<>();
+
+            for (Set<Classification> classifications : classifications_with_same_codes) {
+
+                if (classifications.size() == max_size) {
+                    classifications_with_popular_code.add(classifications);
                 }
             }
 
             return classifications_with_popular_code;
-        }
-
-        private Classification classificationWithHighestConfidence(Set<Classification> classifications_with_most_popular_code) {
-
-            double max_confidence = 0.0;
-            Classification most_confident_classification = null;
-
-            for (Classification classification : classifications_with_most_popular_code) {
-
-                if (classification.getConfidence() > max_confidence) {
-                    max_confidence = classification.getConfidence();
-                    most_confident_classification = classification;
-                }
-            }
-
-            return most_confident_classification;
         }
     }
 }
