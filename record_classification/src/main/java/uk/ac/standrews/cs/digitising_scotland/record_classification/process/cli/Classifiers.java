@@ -21,6 +21,8 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.l
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.util.*;
 
+import java.util.Arrays;
+
 /**
  * Classifiers that are accessible via the command-line interface.
  *
@@ -45,7 +47,8 @@ public enum Classifiers implements Classifier {
     EXACT_MATCH_PLUS_STRING_SIMILARITY_JACCARD(new ClassifierPlusExactMatchClassifier(new StringSimilarityClassifier(StringSimilarityMetric.JACCARD))),
     EXACT_MATCH_PLUS_STRING_SIMILARITY_CHAPMAN_LENGTH_DEVIATION(new ClassifierPlusExactMatchClassifier(new StringSimilarityClassifier(StringSimilarityMetric.CHAPMAN_LENGTH_DEVIATION))),
     EXACT_MATCH_PLUS_STRING_SIMILARITY_DICE(new ClassifierPlusExactMatchClassifier(new StringSimilarityClassifier(StringSimilarityMetric.DICE))),
-    EXACT_MATCH_PLUS_OLR(new ClassifierPlusExactMatchClassifier(new OLRClassifier()));
+    EXACT_MATCH_PLUS_OLR(new ClassifierPlusExactMatchClassifier(new OLRClassifier())),
+    VOTING_ENSEMBLE(new EnsembleVotingClassifier(Arrays.asList(STRING_SIMILARITY_LEVENSHTEIN, STRING_SIMILARITY_DICE, STRING_SIMILARITY_JACCARD, STRING_SIMILARITY_JARO_WINKLER, OLR)));
 
     private final Classifier classifier;
 
