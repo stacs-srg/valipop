@@ -123,7 +123,7 @@ public abstract class Experiment implements Callable<Void> {
         for (int i = 0; i < gold_standard_files.size(); i++) {
 
             final File gold_standard_file = gold_standard_files.get(i);
-            final Double training_ratio = this.training_ratios.get(i);
+            final Double training_ratio = training_ratios.get(i);
             final Bucket gold_standard = new Bucket(gold_standard_file);
             process.addStep(new AddTrainingAndEvaluationRecordsByRatio(gold_standard, training_ratio, new EnglishStopWordCleaner(), new PorterStemCleaner(), ConsistentCodingCleaner.CORRECT));
         }
