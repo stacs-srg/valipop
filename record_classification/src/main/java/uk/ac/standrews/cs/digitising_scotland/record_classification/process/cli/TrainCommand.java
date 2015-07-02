@@ -52,9 +52,8 @@ class TrainCommand extends Command {
 
         final DataSet gold_standard_dataset = new DataSet(new FileReader(gold_standard), CSVFormat.newFormat(delimiter));
         final Bucket gold_standard = new Bucket(gold_standard_dataset);
-        context.setGoldStandard(gold_standard);
 
-        new SetTrainingRecordsByRatio(training_ratio).perform(context);
+        new AddTrainingAndEvaluationRecordsByRatio(gold_standard, training_ratio).perform(context);
         new TrainClassifier().perform(context);
     }
 }

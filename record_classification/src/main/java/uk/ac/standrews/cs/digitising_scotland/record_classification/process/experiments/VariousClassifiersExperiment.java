@@ -16,9 +16,11 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.process.experiments;
 
+import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.ClassificationProcess;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.Classifiers;
 
+import java.io.*;
 import java.util.List;
 
 public class VariousClassifiersExperiment extends Experiment {
@@ -35,7 +37,7 @@ public class VariousClassifiersExperiment extends Experiment {
     }
 
     @Override
-    protected List<ClassificationProcess> getClassificationProcesses() {
+    protected List<ClassificationProcess> getClassificationProcesses() throws IOException, InputFileFormatException {
 
         return initClassificationProcesses(
                 Classifiers.EXACT_MATCH,

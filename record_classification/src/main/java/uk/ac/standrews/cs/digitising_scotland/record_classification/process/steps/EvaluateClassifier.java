@@ -52,19 +52,15 @@ public class EvaluateClassifier implements Step {
     public void perform(final Context context) throws Exception {
 
         final Classifier classifier = context.getClassifier();
-        final Bucket gold_standard = context.getGoldStandard();
-        final Bucket training_records = context.getTrainingRecords();
-
-        final Bucket records_not_in_training = gold_standard.difference(training_records);
-        final Bucket stripped_records = records_not_in_training.stripRecordClassifications();
-        final Bucket evaluation_records = stripped_records.uniqueDataRecords();
+        final Bucket evaluation_records = context.getEvaluationRecords();
+        final Bucket stripped_records = evaluation_records.stripRecordClassifications();
 
         final Instant start = Instant.now();
-        final Bucket classified_evaluation_records = classifier.classify(evaluation_records);
+        final Bucket classified_evaluation_records = classifier.classify(stripped_records);
         final Duration evaluation_classification_time = Duration.between(start, Instant.now());
         context.setEvaluationClassificationTime(evaluation_classification_time);
 
-        final StrictConfusionMatrix confusion_matrix = new StrictConfusionMatrix(classified_evaluation_records, gold_standard, ConsistentCodingCleaner.CHECK);
+        final StrictConfusionMatrix confusion_matrix = new StrictConfusionMatrix(classified_evaluation_records, evaluation_records, ConsistentCodingCleaner.CHECK);
         context.setConfusionMatrix(confusion_matrix);
 
         final ClassificationMetrics classification_metrics = new ClassificationMetrics(confusion_matrix, context.getTrainingTime(), evaluation_classification_time);
@@ -76,20 +72,21 @@ public class EvaluateClassifier implements Step {
             final Set<String> unique_evaluation = extractStrings(evaluation_records);
 
             final int count = countEvaluationStringsNotInTrainingSet(unique_training, unique_evaluation);
+            final int training_records_size = context.getTrainingRecords().size();
 
             System.out.println("\n----------------------------------\n");
             System.out.println("classifier: " + classifier.getName());
             System.out.println();
-            System.out.format("total records              : %s%n", Formatting.format(gold_standard.size()));
-            System.out.format("records used for training  : %s (%s unique)%n", Formatting.format(training_records.size()), Formatting.format(unique_training.size()));
+            System.out.format("total records              : %s%n", Formatting.format(training_records_size + evaluation_records.size()));
+            System.out.format("records used for training  : %s (%s unique)%n", Formatting.format(training_records_size), Formatting.format(unique_training.size()));
             System.out.format("records used for evaluation: %s (%s unique, %s not in training set)%n", Formatting.format(stripped_records.size()), Formatting.format(unique_evaluation.size()), Formatting.format(count));
             System.out.println();
 
             context.getClassificationMetrics().printMetrics(verbosity);
 
             System.out.println();
-            System.out.format("training time              : %s%n", Formatting.format(context.getTrainingTime()));
-            System.out.format("classification time        : %s%n", Formatting.format(context.getEvaluationClassificationTime()));
+            System.out.format("training time              : %s%n", Formatting.format(context.getTrainingTime().getSeconds() / 60.0, 2));
+            System.out.format("classification time        : %s%n", Formatting.format(context.getEvaluationClassificationTime().getSeconds() / 60.0, 2));
 
             System.out.println("----------------------------------");
         }

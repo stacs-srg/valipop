@@ -17,8 +17,10 @@
 package uk.ac.standrews.cs.digitising_scotland.record_classification.process.experiments;
 
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.OLRWithExactMatchClassifier;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.ClassificationProcess;
 
+import java.io.*;
 import java.util.List;
 
 public class OLRWithExactMatchOnlyExperiment extends Experiment {
@@ -35,7 +37,7 @@ public class OLRWithExactMatchOnlyExperiment extends Experiment {
     }
 
     @Override
-    protected List<ClassificationProcess> getClassificationProcesses() {
+    protected List<ClassificationProcess> getClassificationProcesses() throws IOException, InputFileFormatException {
 
         return initClassificationProcesses(new OLRWithExactMatchClassifier());
     }

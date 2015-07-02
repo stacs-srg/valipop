@@ -39,14 +39,13 @@ public class ExactMatchClassifierTest extends AbstractClassificationTest {
     public void setup() throws Exception {
 
         final InputStreamReader occupation_data_path = getInputStreamReaderForResource(AbstractClassificationTest.class, GOLD_STANDARD_DATA_FILE_NAME);
+        final Bucket gold_standard = new Bucket(occupation_data_path);
 
         final Context context = new Context();
         context.setClassifier(new ExactMatchClassifier());
-        context.setGoldStandard(new Bucket(occupation_data_path));
 
         final ClassificationProcess process = new ClassificationProcess(context);
-        process.addStep(new CleanGoldStandardRecords(ConsistentCodingCleaner.CORRECT));
-        process.addStep(new SetTrainingRecordsByRatio(0.8));
+        process.addStep(new AddTrainingAndEvaluationRecordsByRatio(gold_standard, 0.8, ConsistentCodingCleaner.CORRECT));
         process.addStep(new TrainClassifier());
         process.addStep(new EvaluateClassifier(InfoLevel.NONE));
 

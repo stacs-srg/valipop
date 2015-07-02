@@ -18,8 +18,10 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.process.exp
 
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.linear_regression.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.*;
 
+import java.io.*;
 import java.util.*;
 
 public class ExactMatchAndOLRExperiment extends Experiment {
@@ -36,7 +38,7 @@ public class ExactMatchAndOLRExperiment extends Experiment {
     }
 
     @Override
-    protected List<ClassificationProcess> getClassificationProcesses() {
+    protected List<ClassificationProcess> getClassificationProcesses() throws IOException, InputFileFormatException {
 
         return initClassificationProcesses(new ExactMatchClassifier(), new OLRClassifier());
     }

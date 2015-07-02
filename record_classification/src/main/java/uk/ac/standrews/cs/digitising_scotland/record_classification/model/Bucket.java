@@ -21,6 +21,8 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.*
 import uk.ac.standrews.cs.util.dataset.*;
 
 import java.io.*;
+import java.nio.charset.*;
+import java.nio.file.*;
 import java.util.*;
 
 public class Bucket implements Iterable<Record>, Serializable {
@@ -28,6 +30,16 @@ public class Bucket implements Iterable<Record>, Serializable {
     private static final long serialVersionUID = 7216381249689825103L;
 
     private final Collection<Record> records;
+
+    public Bucket(File records) throws InputFileFormatException, IOException {
+
+        this(Files.newBufferedReader(records.toPath(), Charset.defaultCharset()));
+    }
+
+    public Bucket(File records, Charset charset) throws InputFileFormatException, IOException {
+
+        this(Files.newBufferedReader(records.toPath(), charset));
+    }
 
     public Bucket(Reader reader) throws InputFileFormatException, IOException {
 
