@@ -77,7 +77,9 @@ public class EvaluateClassifier implements Step {
 
             final int count = countEvaluationStringsNotInTrainingSet(unique_training, unique_evaluation);
 
-            System.out.println("\n----------------------------------\n\n");
+            System.out.println("\n----------------------------------\n");
+            System.out.println("classifier: " + classifier.getName());
+            System.out.println();
             System.out.format("total records              : %s%n", Formatting.format(gold_standard.size()));
             System.out.format("records used for training  : %s (%s unique)%n", Formatting.format(training_records.size()), Formatting.format(unique_training.size()));
             System.out.format("records used for evaluation: %s (%s unique, %s not in training set)%n", Formatting.format(stripped_records.size()), Formatting.format(unique_evaluation.size()), Formatting.format(count));

@@ -34,7 +34,7 @@ public class OLRClassifier implements Classifier {
 
     private static final long serialVersionUID = -2561454096763303789L;
     private static final Logger LOGGER = LoggerFactory.getLogger(OLRClassifier.class);
-    private static final double STATIC_CONFIDENCE = 0.0;
+    private static final double STATIC_CONFIDENCE = 0.89;
     private OLRCrossFold model = null;
     private final Properties properties;
     private VectorFactory vectorFactory;

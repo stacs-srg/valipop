@@ -81,11 +81,11 @@ public enum StringSimilarityMetric {
 
     private static class Constants {
 
-        public static final double STATIC_CONFIDENCE_JACCARD = 0.0;
+        public static final double STATIC_CONFIDENCE_JACCARD = 0.92;
         public static final double STATIC_CONFIDENCE_BLOCK_DISTANCE = 0.0;
-        public static final double STATIC_CONFIDENCE_LEVENSHTEIN = 0.0;
-        public static final double STATIC_CONFIDENCE_JARO_WINKLER = 0.0;
-        public static final double STATIC_CONFIDENCE_CHAPMAN_LENGTH_DEVIATION = 0.0;
-        public static final double STATIC_CONFIDENCE_DICE = 0.0;
+        public static final double STATIC_CONFIDENCE_LEVENSHTEIN = 0.91;
+        public static final double STATIC_CONFIDENCE_JARO_WINKLER = 0.92;
+        public static final double STATIC_CONFIDENCE_CHAPMAN_LENGTH_DEVIATION = 0.02;
+        public static final double STATIC_CONFIDENCE_DICE = 0.92;
     }
 }
