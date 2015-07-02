@@ -53,7 +53,7 @@ public abstract class Experiment implements Callable<Void> {
     protected List<File> gold_standard_files = Arrays.asList(new File("src/test/resources/uk/ac/standrews/cs/digitising_scotland/record_classification/process/experiments/AbstractClassificationTest/gold_standard_small.csv"));
 
     @Parameter(names = {"-t", "--trainingRecordRatio"}, description = "The ratio of gold standard records to be used for training. The value must be between 0.0 to 1.0 (inclusive).")
-    protected Double training_ratio = 0.8;
+    protected List<Double> training_ratios = Arrays.asList(0.8);
 
     @Parameter(names = {"-d", "--delimiter"}, description = "The delimiter character of three column gold standard data.")
     protected char delimiter = '|';
@@ -62,10 +62,19 @@ public abstract class Experiment implements Callable<Void> {
 
         commander = new JCommander(this);
         try {
-            commander.parse(args);
+            parse(args);
         }
         catch (ParameterException e) {
             exitWithErrorMessage(e.getMessage());
+        }
+    }
+
+    private void parse(final String[] args) {
+
+        commander.parse(args);
+
+        if (gold_standard_files.size() != training_ratios.size()) {
+            throw new ParameterException("the number of gold standard files must be equal to the number of training ratios");
         }
     }
 
@@ -111,7 +120,10 @@ public abstract class Experiment implements Callable<Void> {
 
         final ClassificationProcess process = new ClassificationProcess(context);
 
-        for (File gold_standard_file : gold_standard_files) {
+        for (int i = 0; i < gold_standard_files.size(); i++) {
+
+            final File gold_standard_file = gold_standard_files.get(i);
+            final Double training_ratio = this.training_ratios.get(i);
             final Bucket gold_standard = new Bucket(gold_standard_file);
             process.addStep(new AddTrainingAndEvaluationRecordsByRatio(gold_standard, training_ratio, new EnglishStopWordCleaner(), new PorterStemCleaner(), ConsistentCodingCleaner.CORRECT));
         }
