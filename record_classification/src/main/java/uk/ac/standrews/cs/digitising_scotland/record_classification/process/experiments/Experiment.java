@@ -110,7 +110,7 @@ public abstract class Experiment implements Callable<Void> {
 
         final ClassificationProcess process = new ClassificationProcess(context);
         process.addStep(new LoadGoldStandardFromFile(gold_standard));
-        process.addStep(new CleanGoldStandardRecords(ConsistentCodingCleaner.CORRECT, new EnglishStopWordCleaner(), new PorterStemCleaner()));
+        process.addStep(new CleanGoldStandardRecords(new EnglishStopWordCleaner(), new PorterStemCleaner(), ConsistentCodingCleaner.CORRECT));
         process.addStep(new SetTrainingRecordsByRatio(training_ratio));
         process.addStep(new TrainClassifier());
         process.addStep(new EvaluateClassifier(verbosity));
