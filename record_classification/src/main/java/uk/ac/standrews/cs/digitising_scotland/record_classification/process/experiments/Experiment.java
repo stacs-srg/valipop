@@ -43,7 +43,7 @@ public abstract class Experiment implements Callable<Void> {
     private final JCommander commander;
 
     @Parameter(names = {"-v", "--verbosity"}, description = "The level of output verbosity.")
-    protected InfoLevel verbosity = InfoLevel.SHORT_SUMMARY;
+    protected InfoLevel verbosity = InfoLevel.LONG_SUMMARY;
 
     @Parameter(names = {"-r", "--repetitionCount"}, description = "The number of repetitions.")
     protected int repetitions = 2;

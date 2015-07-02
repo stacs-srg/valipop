@@ -21,6 +21,7 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.*
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.*;
+import uk.ac.standrews.cs.util.tools.Formatting;
 
 import java.time.*;
 import java.util.*;
@@ -77,16 +78,16 @@ public class EvaluateClassifier implements Step {
             final int count = countEvaluationStringsNotInTrainingSet(unique_training, unique_evaluation);
 
             System.out.println("\n----------------------------------\n\n");
-            System.out.format("total records              : %s%n", gold_standard.size());
-            System.out.format("records used for training  : %s (%s unique)%n", training_records.size(), unique_training.size());
-            System.out.format("records used for evaluation: %s (%s unique, %s not in training set)%n", stripped_records.size(), unique_evaluation.size(), count);
+            System.out.format("total records              : %s%n", Formatting.format(gold_standard.size()));
+            System.out.format("records used for training  : %s (%s unique)%n", Formatting.format(training_records.size()), Formatting.format(unique_training.size()));
+            System.out.format("records used for evaluation: %s (%s unique, %s not in training set)%n", Formatting.format(stripped_records.size()), Formatting.format(unique_evaluation.size()), Formatting.format(count));
             System.out.println();
 
             context.getClassificationMetrics().printMetrics(verbosity);
 
             System.out.println();
-            System.out.format("training time              : %s%n", context.getTrainingTime());
-            System.out.format("classification time        : %s%n", context.getEvaluationClassificationTime());
+            System.out.format("training time              : %s%n", Formatting.format(context.getTrainingTime()));
+            System.out.format("classification time        : %s%n", Formatting.format(context.getEvaluationClassificationTime()));
 
             System.out.println("----------------------------------");
         }
