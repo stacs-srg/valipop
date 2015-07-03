@@ -33,8 +33,7 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.util.StringS
 
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class StringSimilarityClassifierTest extends AbstractClassificationTest {
 
@@ -44,8 +43,8 @@ public class StringSimilarityClassifierTest extends AbstractClassificationTest {
     @Before
     public void setup() throws Exception {
 
-//        final InputStreamReader occupation_data_path = getInputStreamReaderForResource(AbstractClassificationTest.class, GOLD_STANDARD_DATA_FILE_NAME);
-        final InputStreamReader occupation_data_path = new InputStreamReader( new FileInputStream("/Users/graham/Desktop/cambridge.csv"));
+        final InputStreamReader occupation_data_path = getInputStreamReaderForResource(AbstractClassificationTest.class, GOLD_STANDARD_DATA_FILE_NAME);
+        //        final InputStreamReader occupation_data_path = new InputStreamReader( new FileInputStream("/Users/graham/Desktop/cambridge.csv"));
         final Bucket gold_standard = new Bucket(occupation_data_path);
 
         final Context context = new Context();
@@ -55,8 +54,9 @@ public class StringSimilarityClassifierTest extends AbstractClassificationTest {
         process.addStep(new AddTrainingAndEvaluationRecordsByRatio(gold_standard, 0.8, ConsistentCodingCleaner.CORRECT));
         process.addStep(new TrainClassifier());
         process.addStep(new EvaluateClassifier(InfoLevel.NONE));
+        process.call();
 
-        final List<ClassificationProcess> repeat = process.repeat(1);
+        final List<ClassificationProcess> repeat = Collections.singletonList(process);
 
         metrics = new ArrayList<>();
         matrices = new ArrayList<>();

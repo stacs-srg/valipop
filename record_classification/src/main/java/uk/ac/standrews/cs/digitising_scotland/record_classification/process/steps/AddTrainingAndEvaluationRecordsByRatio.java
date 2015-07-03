@@ -65,6 +65,8 @@ public class AddTrainingAndEvaluationRecordsByRatio implements Step {
         final Bucket evaluation_records;
         final Bucket cleaned_gold_standard = cleanGoldStandard();
 
+        context.addGoldStandard(cleaned_gold_standard);
+
         if (training_ratio == MIN_RATIO) {
             training_records = new Bucket();
             evaluation_records = cleaned_gold_standard;

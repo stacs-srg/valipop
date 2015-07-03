@@ -38,8 +38,8 @@ public class ExactMatchAndDummyExperiment extends Experiment {
     }
 
     @Override
-    protected List<ClassificationProcess> getClassificationProcesses() throws IOException, InputFileFormatException {
+    protected List<ClassificationProcess> initClassificationProcesses() throws IOException, InputFileFormatException {
 
-        return initClassificationProcesses(new ExactMatchClassifier(), new DummyClassifier());
+        return initClassificationProcessesFromClassifiers(new ExactMatchClassifier(), new DummyClassifier());
     }
 }

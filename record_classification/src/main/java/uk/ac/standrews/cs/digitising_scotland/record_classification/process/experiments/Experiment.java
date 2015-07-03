@@ -42,6 +42,7 @@ public abstract class Experiment implements Callable<Void> {
     protected static final List<Boolean> COLUMNS_AS_PERCENTAGES = Arrays.asList(true, true, true, true, true, true, true, true, false, false);
 
     private final JCommander commander;
+    private final Random random;
 
     @Parameter(names = {"-v", "--verbosity"}, description = "The level of output verbosity.")
     protected InfoLevel verbosity = InfoLevel.LONG_SUMMARY;
@@ -57,6 +58,7 @@ public abstract class Experiment implements Callable<Void> {
 
     @Parameter(names = {"-d", "--delimiter"}, description = "The delimiter character of three column gold standard data.")
     protected char delimiter = '|';
+    public static final String FIRST_COLUMN_HEADING = "classifier";
 
     protected Experiment(String[] args) {
 
@@ -67,6 +69,7 @@ public abstract class Experiment implements Callable<Void> {
         catch (ParameterException e) {
             exitWithErrorMessage(e.getMessage());
         }
+        random = new Random(SEED);
     }
 
     private void parse(final String[] args) {
@@ -81,41 +84,57 @@ public abstract class Experiment implements Callable<Void> {
     @Override
     public Void call() throws Exception {
 
-        final List<String> row_labels = new ArrayList<>();
-        final List<DataSet> result_sets = new ArrayList<>();
-        final List<ClassificationProcess> processes = getClassificationProcesses();
+        final Map<String, DataSet> results = new HashMap<>();
 
-        for (ClassificationProcess process : processes) {
+        for (int i = 0; i < repetitions; i++) {
 
-            final String name = getProcessName(process);
-            row_labels.add(name);
+            final List<ClassificationProcess> processes = initClassificationProcesses();
 
-            final List<ClassificationProcess> repeated_processes = process.repeat(repetitions);
-            final List<ClassificationMetrics> metrics = getClassificationMetrics(repeated_processes);
-            final DataSet result_set = ClassificationMetrics.toDataSet(metrics);
-            result_sets.add(result_set);
+            for (ClassificationProcess process : processes) {
+
+                process.call();
+
+                final String name = getProcessName(process);
+                final ClassificationMetrics metrics = process.getContext().getClassificationMetrics();
+                final DataSet metrics_dataSet = metrics.toDataSet();
+
+                if (results.containsKey(name)) {
+                    final DataSet result_dataset = results.get(name);
+                    metrics_dataSet.getRecords().forEach(result_dataset::addRow);
+                }
+                else {
+                    results.put(name, metrics_dataSet);
+                }
+            }
         }
 
-        printSummarisedResults(row_labels, result_sets);
+        printSummarisedResults(results);
 
         return null; //void callable
     }
 
-    protected abstract List<ClassificationProcess> getClassificationProcesses() throws IOException, InputFileFormatException;
+    /**
+     * Initialises a fresh list of classification process for each repetition.
+     *
+     * @return the list of classification processes to be run for a single repetition.
+     * @throws IOException if an error occurs while reading the input data
+     * @throws InputFileFormatException if the input data files are in an unsupported format
+     */
+    protected abstract List<ClassificationProcess> initClassificationProcesses() throws IOException, InputFileFormatException;
 
-    protected List<ClassificationProcess> initClassificationProcesses(Classifier... classifiers) throws IOException, InputFileFormatException {
+    protected List<ClassificationProcess> initClassificationProcessesFromClassifiers(Classifier... classifiers) throws IOException, InputFileFormatException {
 
         final List<ClassificationProcess> processes = new ArrayList<>();
         for (Classifier classifier : classifiers) {
-            processes.add(initClassificationProcess(classifier));
+            processes.add(initClassificationProcessFromClassifier(classifier));
         }
 
         return processes;
     }
 
-    private ClassificationProcess initClassificationProcess(Classifier classifier) throws IOException, InputFileFormatException {
+    private ClassificationProcess initClassificationProcessFromClassifier(Classifier classifier) throws IOException, InputFileFormatException {
 
-        final Context context = new Context(new Random(SEED));
+        final Context context = new Context(random);
         context.setClassifier(classifier);
 
         final ClassificationProcess process = new ClassificationProcess(context);
@@ -146,21 +165,12 @@ public abstract class Experiment implements Callable<Void> {
         return process.getContext().getClassifier().getName();
     }
 
-    private List<ClassificationMetrics> getClassificationMetrics(final List<ClassificationProcess> repeated_processes) {
+    private void printSummarisedResults(final Map<String, DataSet> results) throws IOException {
 
-        final List<ClassificationMetrics> metrics = new ArrayList<>();
-        for (ClassificationProcess repeated_process : repeated_processes) {
-            metrics.add(repeated_process.getContext().getClassificationMetrics());
-        }
-        return metrics;
-    }
-
-    private void printSummarisedResults(final List<String> row_labels, final List<DataSet> result_sets) throws IOException {
-
-        String table_caption = "\naggregate classifier performance (" + repetitions + " repetition" + (repetitions > 1 ? "s" : "") + "):\n";
-        String first_column_heading = "classifier";
-
-        TableGenerator table_generator = new TableGenerator(row_labels, result_sets, System.out, table_caption, first_column_heading, COLUMNS_AS_PERCENTAGES, '\t');
+        final String table_caption = String.format("\naggregate classifier performance (%d repetition%s):\n", repetitions, repetitions > 1 ? "s" : "");
+        final List<String> row_labels = new ArrayList<>(results.keySet());
+        final List<DataSet> result_sets = new ArrayList<>(results.values());
+        final TableGenerator table_generator = new TableGenerator(row_labels, result_sets, System.out, table_caption, FIRST_COLUMN_HEADING, COLUMNS_AS_PERCENTAGES, '\t');
 
         if (verbosity != InfoLevel.NONE) {
 

@@ -60,7 +60,8 @@ public class EvaluateClassifier implements Step {
         final Duration evaluation_classification_time = Duration.between(start, Instant.now());
         context.setEvaluationClassificationTime(evaluation_classification_time);
 
-        final StrictConfusionMatrix confusion_matrix = new StrictConfusionMatrix(classified_evaluation_records, evaluation_records, ConsistentCodingCleaner.CHECK);
+        final Bucket gold_standard = context.getGoldStandard();
+        final StrictConfusionMatrix confusion_matrix = new StrictConfusionMatrix(classified_evaluation_records, gold_standard, ConsistentCodingCleaner.CHECK);
         context.setConfusionMatrix(confusion_matrix);
 
         final ClassificationMetrics classification_metrics = new ClassificationMetrics(confusion_matrix, context.getTrainingTime(), evaluation_classification_time);
