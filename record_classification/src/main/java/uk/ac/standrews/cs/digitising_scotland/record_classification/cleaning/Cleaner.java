@@ -27,8 +27,6 @@ import java.io.*;
  */
 public interface Cleaner extends Serializable {
 
-    // TODO probably nicer to split into Cleaner and Checker interfaces, where the first changes stuff and the second just checks.
-
     /**
      * Performs the cleaning of the give bucket.
      *

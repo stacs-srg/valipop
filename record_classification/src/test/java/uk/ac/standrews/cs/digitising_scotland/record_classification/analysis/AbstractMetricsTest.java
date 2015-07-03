@@ -17,9 +17,9 @@
 package uk.ac.standrews.cs.digitising_scotland.record_classification.analysis;
 
 import org.junit.Before;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Classification;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.ConsistentCodingCleaner;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Record;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.TokenSet;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.*;
@@ -69,7 +69,7 @@ public class AbstractMetricsTest extends AbstractTest {
 
     protected void initMatrix() throws Exception {
 
-        matrix = new StrictConfusionMatrix(classified_records, gold_standard_records, ConsistentCodingCleaner.CHECK);
+        matrix = new StrictConfusionMatrix(classified_records, gold_standard_records, new InconsistentCodingChecker());
     }
 
     protected void initFullRecords() throws InputFileFormatException {

@@ -34,11 +34,6 @@ public class ConsistentCodingCleanerTest extends AbstractMetricsTest {
         bucket.add(haddock_correct, haddock_incorrect, osprey_incorrect);
     }
 
-    @Test(expected = InconsistentCodingException.class)
-    public void check() throws Exception {
-
-        ConsistentCodingCleaner.CHECK.clean(bucket);
-    }
 
     @Test
     public void remove() throws Exception {

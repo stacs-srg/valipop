@@ -14,29 +14,24 @@
  * You should have received a copy of the GNU General Public License along with record_classification. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.digitising_scotland.record_classification.analysis;
+package uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning;
 
-import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 
+import java.io.*;
+
 /**
- * Confusion matrix using exact matching on codes.
+ * Checks a {@link Bucket bucket}.
  *
- * @author Fraser Dunlop
- * @author Graham Kirby
+ * @author Masih Hajiarab Derkani
  */
-public class StrictConfusionMatrix extends AbstractConfusionMatrix {
+public interface Checker extends Serializable {
 
-    private static final long serialVersionUID = 1869329418086836323L;
-
-    public StrictConfusionMatrix(final Bucket classified_records, final Bucket gold_standard_records, Checker checker) throws Exception {
-
-        super(classified_records, gold_standard_records, checker);
-    }
-
-    @Override
-    protected boolean classificationsMatch(String asserted_code, String real_code) {
-
-        return asserted_code.equals(real_code);
-    }
+    /**
+     * Checks the bucket.
+     *
+     * @param bucket the bucket of records to check
+     * @throws Exception if the bucket does not pass the check
+     */
+    void check(Bucket bucket) throws Exception;
 }

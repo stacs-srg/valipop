@@ -28,7 +28,6 @@ enum Cleaners implements Cleaner {
     PORTER_STEM(new PorterStemCleaner(), "Performs stemming using Porter algorithm"),
     CONSISTENT_CODING_CLEANER_NONE(ConsistentCodingCleaner.NONE, ""), //TODO need Javadoc for these that explain what they do in order to update description
     CONSISTENT_CODING_CLEANER_CORRECT(ConsistentCodingCleaner.CORRECT, ""),
-    CONSISTENT_CODING_CLEANER_CHECK(ConsistentCodingCleaner.CHECK, ""),
     CONSISTENT_CODING_CLEANER_REMOVE(ConsistentCodingCleaner.REMOVE, "");
 
     private final Cleaner cleaner;

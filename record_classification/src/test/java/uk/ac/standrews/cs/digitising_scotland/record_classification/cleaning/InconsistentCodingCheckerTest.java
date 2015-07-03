@@ -14,29 +14,29 @@
  * You should have received a copy of the GNU General Public License along with record_classification. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.digitising_scotland.record_classification.analysis;
+package uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning;
 
-import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.*;
+import org.junit.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 
-/**
- * Confusion matrix using exact matching on codes.
- *
- * @author Fraser Dunlop
- * @author Graham Kirby
- */
-public class StrictConfusionMatrix extends AbstractConfusionMatrix {
+import static org.junit.Assert.*;
 
-    private static final long serialVersionUID = 1869329418086836323L;
+public class InconsistentCodingCheckerTest extends AbstractMetricsTest {
 
-    public StrictConfusionMatrix(final Bucket classified_records, final Bucket gold_standard_records, Checker checker) throws Exception {
+    private Bucket bucket;
 
-        super(classified_records, gold_standard_records, checker);
+    @Before
+    public void setup() {
+
+        bucket = new Bucket();
+        bucket.add(haddock_correct, haddock_incorrect, osprey_incorrect);
     }
 
-    @Override
-    protected boolean classificationsMatch(String asserted_code, String real_code) {
+    @Test(expected = InconsistentCodingException.class)
+    public void testCheck() throws Exception {
 
-        return asserted_code.equals(real_code);
+        new InconsistentCodingChecker().check(bucket);
     }
 }

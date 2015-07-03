@@ -46,13 +46,13 @@ public abstract class AbstractConfusionMatrix implements ConfusionMatrix {
      *
      * @param classified_records the records that have been classified
      * @param gold_standard_records the gold standard records against which the classified records should be checked
-     * @param consistent_coding_checker checker for consistent coding
+     * @param checker checker for consistent coding
      * @throws InvalidCodeException if a code in the classified records does not appear in the gold standard records
      * @throws UnknownDataException if a record in the classified records contains data that does not appear in the gold standard records
      * @throws InconsistentCodingException if there exist multiple gold standard records containing the same data and different classifications
      * @throws UnclassifiedGoldStandardRecordException if a record in the gold standard records is not classified
      */
-    AbstractConfusionMatrix(final Bucket classified_records, final Bucket gold_standard_records, ConsistentCodingCleaner consistent_coding_checker) throws Exception {
+    AbstractConfusionMatrix(final Bucket classified_records, final Bucket gold_standard_records, Checker checker) throws Exception {
 
         // TODO name ConsistentCodingCleaner isn't quite right when used as checker rather than cleaner
 
@@ -69,7 +69,7 @@ public abstract class AbstractConfusionMatrix implements ConfusionMatrix {
         checkClassifiedDataIsInGoldStandard();
         checkClassifiedToValidCodes();
 
-        consistent_coding_checker.clean(gold_standard_records);
+        checker.check(gold_standard_records);
 
         calculateCounts();
     }
