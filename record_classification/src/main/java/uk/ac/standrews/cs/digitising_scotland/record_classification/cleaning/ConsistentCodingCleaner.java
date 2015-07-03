@@ -31,33 +31,6 @@ public enum ConsistentCodingCleaner implements Cleaner {
     NONE {
         @Override
         public Bucket clean(Bucket bucket) {
-            return bucket;
-        }
-    },
-
-    CHECK {
-        @Override
-        public Bucket clean(Bucket bucket) throws InconsistentCodingException {
-
-            Map<String, String> classifications = new HashMap<>();
-
-            for (Record record : bucket) {
-
-                String data = record.getData();
-                Classification classification = record.getClassification();
-
-                if (classification != null) {
-                    String code = classification.getCode();
-
-                    if (classifications.containsKey(data)) {
-                        if (!code.equals(classifications.get(data))) {
-                            throw new InconsistentCodingException("data: " + data + " classified as both " + code + " and " + classifications.get(data));
-                        }
-                    } else {
-                        classifications.put(data, code);
-                    }
-                }
-            }
 
             return bucket;
         }
@@ -65,7 +38,7 @@ public enum ConsistentCodingCleaner implements Cleaner {
 
     REMOVE {
         @Override
-        public Bucket clean(Bucket bucket) throws Exception {
+        public Bucket clean(Bucket bucket) {
 
             Set<String> inconsistently_coded_data = getInconsistentlyCodedStrings(bucket);
 
@@ -86,7 +59,7 @@ public enum ConsistentCodingCleaner implements Cleaner {
 
     CORRECT {
         @Override
-        public Bucket clean(Bucket bucket) throws Exception {
+        public Bucket clean(Bucket bucket) {
 
             Map<String, Map<String, Integer>> classification_details = getClassifications(bucket);
 
@@ -94,7 +67,7 @@ public enum ConsistentCodingCleaner implements Cleaner {
 
             for (Record record : bucket) {
 
-                Map<String ,Integer> details = classification_details.get(record.getData());
+                Map<String, Integer> details = classification_details.get(record.getData());
                 String most_popular_code = getMostPopular(details);
 
                 if (record.getClassification().getCode().equals(most_popular_code)) {
@@ -120,7 +93,7 @@ public enum ConsistentCodingCleaner implements Cleaner {
         String most_popular = "";
         int highest_count = 0;
 
-        for (Map.Entry<String,Integer> entry : details.entrySet()) {
+        for (Map.Entry<String, Integer> entry : details.entrySet()) {
 
             int count = entry.getValue();
             if (count > highest_count) {
@@ -161,7 +134,6 @@ public enum ConsistentCodingCleaner implements Cleaner {
         Set<String> inconsistently_coded_data = new HashSet<>();
         Map<String, String> classifications = new HashMap<>();
 
-
         for (Record record : bucket) {
 
             String data = record.getData();
@@ -174,7 +146,8 @@ public enum ConsistentCodingCleaner implements Cleaner {
                     if (!code.equals(classifications.get(data))) {
                         inconsistently_coded_data.add(data);
                     }
-                } else {
+                }
+                else {
                     classifications.put(data, code);
                 }
             }

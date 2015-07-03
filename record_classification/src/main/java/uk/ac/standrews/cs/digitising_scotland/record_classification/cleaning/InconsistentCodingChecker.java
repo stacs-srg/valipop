@@ -14,38 +14,31 @@
  * You should have received a copy of the GNU General Public License along with record_classification. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps;
+package uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning;
 
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.*;
 
 import java.util.*;
 
 /**
- * Checks whether identical data has been classified under multiple classifications.
- *
  * @author Graham Kirby
- * @author Masih Hajiarab Derkani
  */
-public class CheckInconsistentClassification implements Step {
+public class InconsistentCodingChecker implements Checker {
 
-    private static final long serialVersionUID = -1169844023653663515L;
+    //TODO Javadoc
 
     @Override
-    public void perform(final Context context) throws Exception {
+    public void check(final Bucket bucket) throws InconsistentCodingException {
 
-        final Bucket classified_records = context.getClassifiedUnseenRecords();
+        final Map<String, String> classifications = new HashMap<>();
 
-        if (classified_records != null) {
+        for (final Record record : bucket) {
 
-            final Map<String, String> classifications = new HashMap<>();
+            final String data = record.getData();
+            final Classification classification = record.getClassification();
 
-            for (Record record : classified_records) {
-
-                final String data = record.getData();
-                final Classification classification = record.getClassification();
-
+            if (classification != null) {
                 String code = classification.getCode();
 
                 if (classifications.containsKey(data)) {
@@ -57,9 +50,6 @@ public class CheckInconsistentClassification implements Step {
                     classifications.put(data, code);
                 }
             }
-        }
-        else {
-            //TODO warn of skipped step
         }
     }
 }

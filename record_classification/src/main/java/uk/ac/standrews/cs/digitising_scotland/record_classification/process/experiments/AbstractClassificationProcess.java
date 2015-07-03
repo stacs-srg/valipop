@@ -180,7 +180,7 @@ public abstract class AbstractClassificationProcess {
 
     private void calculateConfusionMatrix(final ClassificationProcessState state) throws Exception {
 
-        state.confusion_matrix = new StrictConfusionMatrix(state.classified_evaluation_records, all_records, ConsistentCodingCleaner.CHECK);
+        state.confusion_matrix = new StrictConfusionMatrix(state.classified_evaluation_records, all_records, new InconsistentCodingChecker());
     }
 
     private void calculateClassificationMetrics(final ClassificationProcessState state) throws Exception {

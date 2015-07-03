@@ -14,29 +14,43 @@
  * You should have received a copy of the GNU General Public License along with record_classification. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.digitising_scotland.record_classification.analysis;
+package uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps;
 
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.*;
+
+import java.util.*;
 
 /**
- * Confusion matrix using exact matching on codes.
+ * Checks the {@link Context#getClassifiedUnseenRecords() classified unseen records} in the context of a classification process using a given {@link Checker}.
  *
- * @author Fraser Dunlop
  * @author Graham Kirby
+ * @author Masih Hajiarab Derkani
  */
-public class StrictConfusionMatrix extends AbstractConfusionMatrix {
+public class CheckClassifiedUnseenRecords implements Step {
 
-    private static final long serialVersionUID = 1869329418086836323L;
+    private static final long serialVersionUID = -1169844023653663515L;
+    private final Checker checker;
 
-    public StrictConfusionMatrix(final Bucket classified_records, final Bucket gold_standard_records, Checker checker) throws Exception {
+    public CheckClassifiedUnseenRecords(Checker checker) {
 
-        super(classified_records, gold_standard_records, checker);
+        this.checker = checker;
     }
 
     @Override
-    protected boolean classificationsMatch(String asserted_code, String real_code) {
+    public void perform(final Context context) throws Exception {
 
-        return asserted_code.equals(real_code);
+        final Bucket classified_records = context.getClassifiedUnseenRecords();
+
+        if (classified_records != null) {
+
+            checker.check(classified_records);
+
+        }
+        else {
+            //TODO warn of skipped step
+        }
     }
 }
