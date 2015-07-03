@@ -67,6 +67,15 @@ public class ClassificationMetrics implements Serializable {
         this.evaluation_classification_time = evaluation_classification_time;
     }
 
+    public DataSet toDataSet() {
+
+        final DataSet dataset = new DataSet(DATASET_LABELS);
+        final List<String> row = toDataSetRow(this);
+        dataset.addRow(row);
+        
+        return dataset;
+    }
+
     /**
      * Converts a collection of metrics into {@link DataSet dataset} with labels set to {@link #DATASET_LABELS}.
      *

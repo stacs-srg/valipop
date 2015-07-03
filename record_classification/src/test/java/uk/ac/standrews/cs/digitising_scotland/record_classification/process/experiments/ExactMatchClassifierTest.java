@@ -48,8 +48,9 @@ public class ExactMatchClassifierTest extends AbstractClassificationTest {
         process.addStep(new AddTrainingAndEvaluationRecordsByRatio(gold_standard, 0.8, ConsistentCodingCleaner.CORRECT));
         process.addStep(new TrainClassifier());
         process.addStep(new EvaluateClassifier(InfoLevel.NONE));
+        process.call();
 
-        final List<ClassificationProcess> repeat = process.repeat(1);
+        final List<ClassificationProcess> repeat = Collections.singletonList(process);
 
         metrics = new ArrayList<>();
         matrices = new ArrayList<>();
