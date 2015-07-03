@@ -14,7 +14,9 @@
  * You should have received a copy of the GNU General Public License along with record_classification. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.digitising_scotland.record_classification.model;
+package uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning;
+
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 
 import java.io.*;
 
