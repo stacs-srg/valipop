@@ -17,10 +17,16 @@
 package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.nb2;
 
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.Classifier;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
-import weka.classifiers.bayes.*;
-import weka.core.*;
-import weka.gui.beans.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Classification;
+import weka.classifiers.bayes.NaiveBayes;
+import weka.core.Instance;
+import weka.core.Instances;
+import weka.core.converters.CSVLoader;
+import weka.gui.beans.AbstractDataSource;
+
+import java.io.File;
+import java.io.IOException;
 
 public class NaiveBayesClassifier2 implements Classifier {
 
@@ -36,8 +42,13 @@ public class NaiveBayesClassifier2 implements Classifier {
         naive_bayes.buildClassifier(getInstances(bucket));
     }
 
-    private Instances getInstances(Bucket bucket) {
-        return null;
+    private Instances getInstances(Bucket bucket) throws IOException {
+
+
+        CSVLoader loader = new CSVLoader();
+        loader.setSource(new File("data.csv"));
+        return loader.getDataSet();
+
     }
 
     public Classification classify(final String data) throws Exception {

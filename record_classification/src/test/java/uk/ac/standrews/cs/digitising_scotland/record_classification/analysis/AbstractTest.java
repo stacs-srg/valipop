@@ -18,6 +18,8 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.analysis;
 
 import org.junit.Before;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
@@ -51,5 +53,10 @@ public class AbstractTest {
         String resource_name_prefixed_with_class = the_class.getSimpleName() + "/" + resource_name;
         InputStream resourceAsStream = the_class.getResourceAsStream(resource_name_prefixed_with_class);
         return new InputStreamReader(resourceAsStream);
+    }
+
+    protected InputStreamReader getInputStreamReader(String resource_name) throws FileNotFoundException {
+
+        return new InputStreamReader(new FileInputStream(resource_name));
     }
 }
