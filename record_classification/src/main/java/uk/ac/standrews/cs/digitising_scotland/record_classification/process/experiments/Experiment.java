@@ -29,6 +29,8 @@ import uk.ac.standrews.cs.util.dataset.*;
 import uk.ac.standrews.cs.util.tables.*;
 
 import java.io.*;
+import java.nio.charset.*;
+import java.security.*;
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -38,11 +40,13 @@ import java.util.concurrent.*;
  */
 public abstract class Experiment implements Callable<Void> {
 
-    protected static final int SEED = 1413;
+    protected static final byte[] SEED = "1413".getBytes(StandardCharsets.UTF_8);
     protected static final List<Boolean> COLUMNS_AS_PERCENTAGES = Arrays.asList(true, true, true, true, true, true, true, true, false, false);
+    protected static final String FIRST_COLUMN_HEADING = "classifier";
+    protected static final char TAB = '\t';
 
     private final JCommander commander;
-    private final Random random;
+    protected final Random random;
 
     @Parameter(names = {"-v", "--verbosity"}, description = "The level of output verbosity.")
     protected InfoLevel verbosity = InfoLevel.LONG_SUMMARY;
@@ -58,7 +62,6 @@ public abstract class Experiment implements Callable<Void> {
 
     @Parameter(names = {"-d", "--delimiter"}, description = "The delimiter character of three column gold standard data.")
     protected char delimiter = '|';
-    public static final String FIRST_COLUMN_HEADING = "classifier";
 
     protected Experiment(String[] args) {
 
@@ -69,7 +72,7 @@ public abstract class Experiment implements Callable<Void> {
         catch (ParameterException e) {
             exitWithErrorMessage(e.getMessage());
         }
-        random = new Random(SEED);
+        random = new SecureRandom(SEED);
     }
 
     private void parse(final String[] args) {
@@ -170,7 +173,7 @@ public abstract class Experiment implements Callable<Void> {
         final String table_caption = String.format("\naggregate classifier performance (%d repetition%s):\n", repetitions, repetitions > 1 ? "s" : "");
         final List<String> row_labels = new ArrayList<>(results.keySet());
         final List<DataSet> result_sets = new ArrayList<>(results.values());
-        final TableGenerator table_generator = new TableGenerator(row_labels, result_sets, System.out, table_caption, FIRST_COLUMN_HEADING, COLUMNS_AS_PERCENTAGES, '\t');
+        final TableGenerator table_generator = new TableGenerator(row_labels, result_sets, System.out, table_caption, FIRST_COLUMN_HEADING, COLUMNS_AS_PERCENTAGES, TAB);
 
         if (verbosity != InfoLevel.NONE) {
 
