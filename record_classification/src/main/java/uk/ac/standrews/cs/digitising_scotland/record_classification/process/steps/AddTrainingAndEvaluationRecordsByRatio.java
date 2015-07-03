@@ -16,10 +16,9 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps;
 
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.*;
-
-import java.io.*;
 
 /**
  * Adds a randomly selected ratio of records from a gold standard to the training records, and adds the remaining to the evaluation records of a given {@link Context context}.
