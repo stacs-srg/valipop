@@ -19,7 +19,6 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.InconsistentCodingException;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Classification;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Cleaner;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Record;
 
 import java.util.HashMap;
