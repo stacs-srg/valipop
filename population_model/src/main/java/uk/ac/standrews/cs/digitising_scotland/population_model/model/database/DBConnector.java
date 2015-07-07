@@ -91,7 +91,7 @@ public class DBConnector {
      * @throws SQLException if a database access error occurs
      */
     public Connection createConnection() throws SQLException {
-    	System.out.println(connection_string);
+
         return DriverManager.getConnection(connection_string, username, password);
     }
 }
