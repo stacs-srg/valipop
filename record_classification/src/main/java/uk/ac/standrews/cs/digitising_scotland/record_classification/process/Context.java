@@ -16,14 +16,14 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.process;
 
-import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.ClassificationMetrics;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.ConfusionMatrix;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.Classifier;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
 
-import java.io.*;
-import java.security.*;
-import java.time.*;
-import java.util.*;
+import java.io.Serializable;
+import java.time.Duration;
+import java.util.Random;
 
 /**
  * Captures the shared knowledge among the {@link Step steps} of a {@link uk.ac.standrews.cs.digitising_scotland.record_classification.process.ClassificationProcess classification process}.
@@ -46,20 +46,13 @@ public class Context implements Serializable {
     private Duration evaluation_classification_time;
 
     /**
-     * Instantiates a new classification context with a non-deterministic random number generator.
-     */
-    public Context() {
-
-        this(new SecureRandom());
-    }
-
-    /**
      * Instantiates a new classification context.
      *
      * @param random the random number generator
      */
-    public Context(Random random) {
+    public Context(Classifier classifier, Random random) {
 
+        this.classifier = classifier;
         this.random = random;
 
         gold_standard = new Bucket();
@@ -110,16 +103,6 @@ public class Context implements Serializable {
     public Classifier getClassifier() {
 
         return classifier;
-    }
-
-    /**
-     * Sets the classifier of this context.
-     *
-     * @param classifier the classifier to set
-     */
-    public void setClassifier(final Classifier classifier) {
-
-        this.classifier = classifier;
     }
 
     /**

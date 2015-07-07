@@ -16,23 +16,30 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.process.experiments;
 
-import com.beust.jcommander.*;
-import com.beust.jcommander.converters.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.*;
-import uk.ac.standrews.cs.util.dataset.*;
-import uk.ac.standrews.cs.util.tables.*;
+import com.beust.jcommander.JCommander;
+import com.beust.jcommander.Parameter;
+import com.beust.jcommander.ParameterException;
+import com.beust.jcommander.converters.FileConverter;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.ClassificationMetrics;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.Classifier;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.ConsistentCodingCleaner;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.EnglishStopWordCleaner;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.PorterStemCleaner;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.InputFileFormatException;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.InfoLevel;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.ClassificationProcess;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.Step;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.AddTrainingAndEvaluationRecordsByRatio;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.EvaluateClassifier;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.TrainClassifier;
+import uk.ac.standrews.cs.util.dataset.DataSet;
+import uk.ac.standrews.cs.util.tables.TableGenerator;
 
-import java.io.*;
-import java.nio.charset.*;
-import java.security.*;
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
-import java.util.concurrent.*;
+import java.util.concurrent.Callable;
 
 /**
  * @author Graham Kirby
@@ -40,28 +47,36 @@ import java.util.concurrent.*;
  */
 public abstract class Experiment implements Callable<Void> {
 
-    protected static final byte[] SEED = "1413".getBytes(StandardCharsets.UTF_8);
-    protected static final List<Boolean> COLUMNS_AS_PERCENTAGES = Arrays.asList(true, true, true, true, true, true, true, true, false, false);
-    protected static final String FIRST_COLUMN_HEADING = "classifier";
-    protected static final char TAB = '\t';
+    private static final long SEED = 32498723497239578L;
+    private static final List<Boolean> COLUMNS_AS_PERCENTAGES = Arrays.asList(true, true, true, true, true, true, true, true, false, false);
+    private static final String FIRST_COLUMN_HEADING = "classifier";
+    private static final char TAB = '\t';
+
+    private static final String DEFAULT_GOLD_STANDARD_PATH = "src/test/resources/uk/ac/standrews/cs/digitising_scotland/record_classification/process/experiments/AbstractClassificationProcessTest/coded_data_1K.csv";
+
+    private static final String DESCRIPTION_GOLD_STANDARD = "Path to a file containing the three column gold standard.";
+    private static final String DESCRIPTION_REPETITION = "The number of repetitions.";
+    private static final String DESCRIPTION_VERBOSITY = "The level of output verbosity.";
+    private static final String DESCRIPTION_RATIO = "The ratio of gold standard records to be used for training. The value must be between 0.0 to 1.0 (inclusive).";
+    private static final String DESCRIPTION_DELIMITER = "The delimiter character of three column gold standard data.";
 
     private final JCommander commander;
-    protected final Random random;
+    private final Random random;
 
-    @Parameter(names = {"-v", "--verbosity"}, description = "The level of output verbosity.")
-    protected InfoLevel verbosity = InfoLevel.LONG_SUMMARY;
+    @Parameter(names = {"-v", "--verbosity"}, description = DESCRIPTION_VERBOSITY)
+    private InfoLevel verbosity = InfoLevel.LONG_SUMMARY;
 
-    @Parameter(names = {"-r", "--repetitionCount"}, description = "The number of repetitions.")
-    protected int repetitions = 2;
+    @Parameter(names = {"-r", "--repetitionCount"}, description = DESCRIPTION_REPETITION)
+    private int repetitions = 2;
 
-    @Parameter(names = {"-g", "--goldStandard"}, description = "Path to a file containing the three column gold standard.", listConverter = FileConverter.class)
-    protected List<File> gold_standard_files = Arrays.asList(new File("src/test/resources/uk/ac/standrews/cs/digitising_scotland/record_classification/process/experiments/AbstractClassificationTest/gold_standard_small.csv"));
+    @Parameter(names = {"-g", "--goldStandard"}, description = DESCRIPTION_GOLD_STANDARD, listConverter = FileConverter.class)
+    private List<File> gold_standard_files = Arrays.asList(new File(DEFAULT_GOLD_STANDARD_PATH));
 
-    @Parameter(names = {"-t", "--trainingRecordRatio"}, description = "The ratio of gold standard records to be used for training. The value must be between 0.0 to 1.0 (inclusive).")
-    protected List<Double> training_ratios = Arrays.asList(0.8);
+    @Parameter(names = {"-t", "--trainingRecordRatio"}, description = DESCRIPTION_RATIO)
+    private List<Double> training_ratios = Arrays.asList(0.8);
 
-    @Parameter(names = {"-d", "--delimiter"}, description = "The delimiter character of three column gold standard data.")
-    protected char delimiter = '|';
+    @Parameter(names = {"-d", "--delimiter"}, description = DESCRIPTION_DELIMITER)
+    private char delimiter = '|';
 
     protected Experiment(String[] args) {
 
@@ -72,20 +87,20 @@ public abstract class Experiment implements Callable<Void> {
         catch (ParameterException e) {
             exitWithErrorMessage(e.getMessage());
         }
-        random = new SecureRandom(SEED);
-    }
-
-    private void parse(final String[] args) {
-
-        commander.parse(args);
-
-        if (gold_standard_files.size() != training_ratios.size()) {
-            throw new ParameterException("the number of gold standard files must be equal to the number of training ratios");
-        }
+        random = new Random(SEED);
     }
 
     @Override
     public Void call() throws Exception {
+
+        final Map<String, DataSet> results = getExperimentResults();
+
+        printSummarisedResults(results);
+
+        return null; //void callable
+    }
+
+    private Map<String, DataSet> getExperimentResults() throws Exception {
 
         final Map<String, DataSet> results = new HashMap<>();
 
@@ -110,10 +125,7 @@ public abstract class Experiment implements Callable<Void> {
                 }
             }
         }
-
-        printSummarisedResults(results);
-
-        return null; //void callable
+        return results;
     }
 
     /**
@@ -125,35 +137,47 @@ public abstract class Experiment implements Callable<Void> {
      */
     protected abstract List<ClassificationProcess> initClassificationProcesses() throws IOException, InputFileFormatException;
 
-    protected List<ClassificationProcess> initClassificationProcessesFromClassifiers(Classifier... classifiers) throws IOException, InputFileFormatException {
+    protected List<ClassificationProcess> initClassificationProcesses(Classifier... classifiers) throws IOException, InputFileFormatException {
 
         final List<ClassificationProcess> processes = new ArrayList<>();
         for (Classifier classifier : classifiers) {
-            processes.add(initClassificationProcessFromClassifier(classifier));
+            processes.add(initClassificationProcess(classifier));
         }
 
         return processes;
     }
 
-    private ClassificationProcess initClassificationProcessFromClassifier(Classifier classifier) throws IOException, InputFileFormatException {
+    private ClassificationProcess initClassificationProcess(Classifier classifier) throws IOException, InputFileFormatException {
 
-        final Context context = new Context(random);
-        context.setClassifier(classifier);
-
-        final ClassificationProcess process = new ClassificationProcess(context);
+        final ClassificationProcess process = new ClassificationProcess(classifier, random);
 
         for (int i = 0; i < gold_standard_files.size(); i++) {
-
-            final File gold_standard_file = gold_standard_files.get(i);
-            final Double training_ratio = training_ratios.get(i);
-            final Bucket gold_standard = new Bucket(gold_standard_file);
-            process.addStep(new AddTrainingAndEvaluationRecordsByRatio(gold_standard, training_ratio, new EnglishStopWordCleaner(), new PorterStemCleaner(), ConsistentCodingCleaner.CORRECT));
+            process.addStep(makeAddRecordsStep(i));
         }
 
         process.addStep(new TrainClassifier());
         process.addStep(new EvaluateClassifier(verbosity));
 
         return process;
+    }
+
+    private void parse(final String[] args) {
+
+        commander.parse(args);
+
+        if (gold_standard_files.size() != training_ratios.size()) {
+            throw new ParameterException("the number of gold standard files must be equal to the number of training ratios");
+        }
+    }
+
+    private Step makeAddRecordsStep(int gold_standard_file_number) throws IOException, InputFileFormatException {
+
+        final File gold_standard_file = gold_standard_files.get(gold_standard_file_number);
+        final Bucket gold_standard = new Bucket(gold_standard_file);
+
+        final Double training_ratio = training_ratios.get(gold_standard_file_number);
+
+        return new AddTrainingAndEvaluationRecordsByRatio(gold_standard, training_ratio, new EnglishStopWordCleaner(), new PorterStemCleaner(), ConsistentCodingCleaner.CORRECT);
     }
 
     private void exitWithErrorMessage(final String error_message) {

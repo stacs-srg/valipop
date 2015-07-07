@@ -16,10 +16,15 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli;
 
-import com.beust.jcommander.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.*;
+import com.beust.jcommander.Parameter;
+import com.beust.jcommander.Parameters;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.ClassificationProcess;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.Context;
 
-import java.nio.file.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Random;
 
 /**
  * Initialisation command of the classification process.
@@ -31,6 +36,9 @@ class InitCommand extends Command {
 
     /** The name of this command */
     public static final String NAME = "init";
+
+    public static final long SEED = 34234234234L;
+
     private static final long serialVersionUID = 5738604903474935932L;
 
     @Parameter(required = true, names = {"-n", "--name"}, description = "The name of the classification process.")
@@ -42,7 +50,7 @@ class InitCommand extends Command {
     @Override
     public Void call() throws Exception {
 
-        final ClassificationProcess process = new ClassificationProcess();
+        final ClassificationProcess process =new ClassificationProcess(classifier, new Random(SEED));
         final Context context = process.getContext();
         perform(context);
 
@@ -56,6 +64,5 @@ class InitCommand extends Command {
     @Override
     public void perform(final Context context) throws Exception {
 
-        context.setClassifier(classifier);
     }
 }

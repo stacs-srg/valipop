@@ -39,6 +39,6 @@ public class OLROnlyExperiment extends Experiment {
     @Override
     protected List<ClassificationProcess> initClassificationProcesses() throws IOException, InputFileFormatException {
 
-        return initClassificationProcessesFromClassifiers(new OLRClassifier());
+        return initClassificationProcesses(new OLRClassifier());
     }
 }

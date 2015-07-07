@@ -26,7 +26,7 @@ public class Classification implements Serializable {
 
     private static final long serialVersionUID = 7074436345885045033L;
 
-    private final String code; // TODO find a better name for this field; too domain-specific, maybe id?
+    private final String code;
     private final TokenSet tokenSet;
     private final double confidence; //TODO Introduce confidence type.
 

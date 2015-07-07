@@ -27,7 +27,7 @@ public class ClassificationMetricsTest extends AbstractMetricsTest {
     private final ExpectedMetricValue EXPECTED_PRECISION_CLASS_FISH = new ExpectedMetricValue(0.5, "fish");               // TP 1, FP 1
     private final ExpectedMetricValue EXPECTED_PRECISION_CLASS_MAMMAL = new ExpectedMetricValue(0.5, "mammal");           // TP 1, FP 1
     private final ExpectedMetricValue EXPECTED_PRECISION_CLASS_BIRD = new ExpectedMetricValue(1.0, "bird");               // TP 2, FP 0
-    private final ExpectedMetricValue EXPECTED_PRECISION_CLASS_MYTHICAL = new ExpectedMetricValue(1.0, "mythical");       // TP 0, FP 0
+    private final ExpectedMetricValue EXPECTED_PRECISION_CLASS_MYTHICAL = new ExpectedMetricValue(0.0 / 0.0, "mythical"); // TP 0, FP 0
 
     private final ExpectedMetricValue EXPECTED_RECALL_CLASS_FISH = new ExpectedMetricValue(1.0, "fish");                  // TP 1, FN 0
     private final ExpectedMetricValue EXPECTED_RECALL_CLASS_MAMMAL = new ExpectedMetricValue(0.5, "mammal");              // TP 1, FN 1
@@ -132,8 +132,9 @@ public class ClassificationMetricsTest extends AbstractMetricsTest {
         ClassificationMetrics metrics = getClassificationMetrics();
 
         // Micro average is total TP / (total TP + total FP).
+        // Include additional FP for unclassified decision.
 
-        assertEquals((4.0 / (4.0 + 2.0)), metrics.getMicroAveragePrecision(), DELTA);
+        assertEquals((4.0 / (4.0 + 3.0)), metrics.getMicroAveragePrecision(), DELTA);
     }
 
     @Test
@@ -173,7 +174,7 @@ public class ClassificationMetricsTest extends AbstractMetricsTest {
 
         // Micro average is (total TP + total TN) / (total TP + total TN + total FP + total FN).
 
-        assertEquals(((4.0 + 19.0) / (4.0 + 19.0 + 2.0 + 3.0)), metrics.getMicroAverageAccuracy(), DELTA);
+        assertEquals(((4.0 + 19.0) / (4.0 + 19.0 + 3.0 + 3.0)), metrics.getMicroAverageAccuracy(), DELTA);
     }
 
     @Test
@@ -193,17 +194,22 @@ public class ClassificationMetricsTest extends AbstractMetricsTest {
 
         // Micro average is (2 * total TP) / (2 * total TP + total FP + total FN).
 
-        assertEquals(((2 * 4.0) / (2 * 4.0 + 2.0 + 3.0)), metrics.getMicroAverageF1(), DELTA);
+        assertEquals(((2 * 4.0) / (2 * 4.0 + 3.0 + 3.0)), metrics.getMicroAverageF1(), DELTA);
     }
 
     private double average(ExpectedMetricValue[] expected_per_class_precision_values) {
 
         double total = 0;
+        int count = 0;
+
         for (ExpectedMetricValue expected_value : expected_per_class_precision_values) {
-            total += expected_value.value;
+            if (!expected_value.value.isNaN()) {
+                total += expected_value.value;
+                count++;
+            }
         }
 
-        return total / expected_per_class_precision_values.length;
+        return total / count;
     }
 
     private ClassificationMetrics getClassificationMetrics() throws Exception {
@@ -233,7 +239,7 @@ public class ClassificationMetricsTest extends AbstractMetricsTest {
     }
 
     class ExpectedMetricValue {
-        double value;
+        Double value;
         String code;
 
         public ExpectedMetricValue(double value, String code) {
