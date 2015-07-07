@@ -16,18 +16,11 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.population_model.model;
 
-import org.junit.Ignore;
 import org.junit.Test;
-
 import uk.ac.standrews.cs.digitising_scotland.population_model.organic.OrganicPerson;
 import uk.ac.standrews.cs.digitising_scotland.util.DateManipulation;
 
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Set;
+import java.util.*;
 
 import static org.junit.Assert.*;
 
@@ -273,10 +266,7 @@ public abstract class GeneralPopulationStructureTests {
                 // TODO why is this logic necessary anyway - why would children be seed people?
 
                 final IPerson child = population.findPerson(child_id);
-//                System.out.println(child.getClass().getName());
-                if (child == null) {
-                    System.out.println("...");
-                }
+
                 if (child.getClass().getName() == OrganicPerson.class.getName()) {
                     if (((OrganicPerson) child).isSeedPerson()) {
                         assertEquals(child.getParentsPartnership(), -1);
@@ -408,12 +398,7 @@ public abstract class GeneralPopulationStructureTests {
                     final IPartnership partnership = population.findPartnership(partnership_id);
                     final Date marriage_date = partnership.getMarriageDate();
                     if (marriage_date != null) {
-                        int difference = DateManipulation.differenceInYears(birth_date, marriage_date);
-                        if (difference < 0) {
-                            System.out.println("birth: " + birth_date);
-                            System.out.println("marriage: " + marriage_date);
-                        }
-                        assertTrue(difference >= 0);
+                        assertTrue(DateManipulation.differenceInYears(birth_date, marriage_date) >= 0);
                     }
                 }
             }
