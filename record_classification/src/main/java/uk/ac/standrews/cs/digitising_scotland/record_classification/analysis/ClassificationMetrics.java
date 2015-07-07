@@ -35,7 +35,9 @@ import static uk.ac.standrews.cs.util.tools.Formatting.*;
  */
 public class ClassificationMetrics implements Serializable {
 
-    /** Labels used in conversion of metrics to {@link DataSet dataset}. */
+    /**
+     * Labels used in conversion of metrics to {@link DataSet dataset}.
+     */
     public static final List<String> DATASET_LABELS = Arrays.asList("macro-precision", "macro-recall", "macro-accuracy", "macro-F1", "micro-precision", "micro-recall", "micro-accuracy", "micro-F1", "training time (m)", "evaluation classification time (m)");
 
     private static final long serialVersionUID = -214187549269797059L;
@@ -72,7 +74,7 @@ public class ClassificationMetrics implements Serializable {
         final DataSet dataset = new DataSet(DATASET_LABELS);
         final List<String> row = toDataSetRow(this);
         dataset.addRow(row);
-        
+
         return dataset;
     }
 
@@ -118,7 +120,7 @@ public class ClassificationMetrics implements Serializable {
      * Converts a collection of metrics into {@link DataSet dataset} with labels set to {@link #DATASET_LABELS}.
      *
      * @param metricses the collection of metrics to convert to dataset
-     * @param format the format of the dataset
+     * @param format    the format of the dataset
      * @return the metrics as dataset.
      */
     public static DataSet toDataSet(final Collection<ClassificationMetrics> metricses, CSVFormat format) {
@@ -269,8 +271,8 @@ public class ClassificationMetrics implements Serializable {
     public double getMicroAveragePrecision() {
 
         // Micro average is total TP / (total TP + total FP).
-        int total_true_positives = getSumOfTruePositives();
-        int total_false_positives = getSumOfFalsePositives();
+        int total_true_positives = confusion_matrix.getNumberOfTruePositives();
+        int total_false_positives = confusion_matrix.getNumberOfFalsePositives();
 
         return calculatePrecision(total_true_positives, total_false_positives);
     }
@@ -283,8 +285,8 @@ public class ClassificationMetrics implements Serializable {
     public double getMicroAverageRecall() {
 
         // Micro average is total TP / (total TP + total FN).
-        int total_true_positives = getSumOfTruePositives();
-        int total_false_negatives = getSumOfFalseNegatives();
+        int total_true_positives = confusion_matrix.getNumberOfTruePositives();
+        int total_false_negatives = confusion_matrix.getNumberOfFalseNegatives();
 
         return calculateRecall(total_true_positives, total_false_negatives);
     }
@@ -297,10 +299,10 @@ public class ClassificationMetrics implements Serializable {
     public double getMicroAverageAccuracy() {
 
         // Micro average is (total TP + total TN) / (total TP + total TN + total FP + total FN).
-        int total_true_positives = getSumOfTruePositives();
-        int total_true_negatives = getSumOfTrueNegatives();
-        int total_false_positives = getSumOfFalsePositives();
-        int total_false_negatives = getSumOfFalseNegatives();
+        int total_true_positives = confusion_matrix.getNumberOfTruePositives();
+        int total_true_negatives = confusion_matrix.getNumberOfTrueNegatives();
+        int total_false_positives = confusion_matrix.getNumberOfFalsePositives();
+        int total_false_negatives = confusion_matrix.getNumberOfFalseNegatives();
 
         return calculateAccuracy(total_true_positives, total_true_negatives, total_false_positives, total_false_negatives);
     }
@@ -313,9 +315,9 @@ public class ClassificationMetrics implements Serializable {
     public double getMicroAverageF1() {
 
         // Micro average is (2 * total TP) / (2 * total TP + total FP + total FN).
-        int total_true_positives = getSumOfTruePositives();
-        int total_false_positives = getSumOfFalsePositives();
-        int total_false_negatives = getSumOfFalseNegatives();
+        int total_true_positives = confusion_matrix.getNumberOfTruePositives();
+        int total_false_positives = confusion_matrix.getNumberOfFalsePositives();
+        int total_false_negatives = confusion_matrix.getNumberOfFalseNegatives();
 
         return calculateF1(total_true_positives, total_false_positives, total_false_negatives);
     }
@@ -349,10 +351,10 @@ public class ClassificationMetrics implements Serializable {
 
         if (info_level == InfoLevel.VERBOSE) {
 
-            printMetric("total TPs", getSumOfTruePositives());
-            printMetric("total FPs", getSumOfFalsePositives());
-            printMetric("total TNs", getSumOfTrueNegatives());
-            printMetric("total FNs", getSumOfFalseNegatives());
+            printMetric("total TPs", confusion_matrix.getNumberOfTruePositives());
+            printMetric("total FPs", confusion_matrix.getNumberOfFalsePositives());
+            printMetric("total TNs", confusion_matrix.getNumberOfTrueNegatives());
+            printMetric("total FNs", confusion_matrix.getNumberOfFalseNegatives());
             System.out.println();
 
             printMetrics("precision", getPerClassPrecision());
@@ -379,40 +381,20 @@ public class ClassificationMetrics implements Serializable {
 
         // Macro average is mean of the individual per-class values.
         double total = 0;
+        int count = 0;
 
-        for (double value : values.values()) {
-            total += value;
+        for (Map.Entry<String, Double> entry : values.entrySet()) {
+
+            String code = entry.getKey();
+            Double value = entry.getValue();
+
+            if (!value.isNaN() && !code.equals(Classification.UNCLASSIFIED.getCode())) {
+                total += value;
+                count++;
+            }
         }
 
-        return total / values.size();
-    }
-
-    private int getSumOfTruePositives() {
-
-        return sum(confusion_matrix.getTruePositiveCounts());
-    }
-
-    private int getSumOfTrueNegatives() {
-
-        return sum(confusion_matrix.getTrueNegativeCounts());
-    }
-
-    private int getSumOfFalsePositives() {
-
-        return sum(confusion_matrix.getFalsePositiveCounts());
-    }
-
-    private int getSumOfFalseNegatives() {
-
-        return sum(confusion_matrix.getFalseNegativeCounts());
-    }
-
-    private int sum(Map<String, Integer> counts) {
-
-        int total = 0;
-        for (int count : counts.values())
-            total += count;
-        return total;
+        return total / count;
     }
 
     private Set<String> getCodes() {
@@ -423,18 +405,15 @@ public class ClassificationMetrics implements Serializable {
     private double calculatePrecision(int true_positives, int false_positives) {
 
         // Precision is TP / (TP + FP).
-        // Interpret precision as 1 if there are no positives.
 
-        int total_positives = true_positives + false_positives;
-        return total_positives > 0 ? (double) true_positives / total_positives : 1.0;
+        return (double) true_positives / (true_positives + false_positives);
     }
 
     private double calculateRecall(int true_positives, int false_negatives) {
 
         // Interpret recall as 1 if there are no cases.
 
-        int total_cases_of_this_class = true_positives + false_negatives;
-        return total_cases_of_this_class > 0 ? (double) true_positives / total_cases_of_this_class : 1.0;
+        return (double) true_positives / (true_positives + false_negatives);
     }
 
     private double calculateAccuracy(int true_positives, int true_negatives, int false_positives, int false_negatives) {
@@ -445,9 +424,6 @@ public class ClassificationMetrics implements Serializable {
 
     private double calculateF1(int true_positives, int false_positives, int false_negatives) {
 
-        // Interpret F1 as 1 if there are no cases.
-
-        int denominator = true_positives * 2 + false_positives + false_negatives;
-        return denominator > 0 ? (double) (true_positives * 2) / denominator : 1.0;
+        return (double) (true_positives * 2) / (true_positives * 2 + false_positives + false_negatives);
     }
 }

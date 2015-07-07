@@ -40,6 +40,6 @@ public class ExactMatchAndOLRExperiment extends Experiment {
     @Override
     protected List<ClassificationProcess> initClassificationProcesses() throws IOException, InputFileFormatException {
 
-        return initClassificationProcessesFromClassifiers(new ExactMatchClassifier(), new OLRClassifier());
+        return initClassificationProcesses(new ExactMatchClassifier(), new OLRClassifier());
     }
 }

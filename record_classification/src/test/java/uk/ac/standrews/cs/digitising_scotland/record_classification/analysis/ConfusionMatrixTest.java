@@ -18,6 +18,7 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.analysis;
 
 import org.junit.Test;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Classification;
 
 import java.util.Map;
 
@@ -149,6 +150,7 @@ public class ConfusionMatrixTest extends AbstractMetricsTest {
         assertEquals(1, (int) false_positive_counts.get("mammal"));
         assertEquals(0, (int) false_positive_counts.get("bird"));
         assertEquals(0, (int) false_positive_counts.get("mythical"));
+        assertEquals(1, (int) false_positive_counts.get(Classification.UNCLASSIFIED.getCode()));
     }
 
     @Test

@@ -24,12 +24,13 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Record
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.TokenSet;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.*;
 import uk.ac.standrews.cs.util.dataset.DataSet;
+import uk.ac.standrews.cs.util.tools.FileManipulation;
 
 import java.io.InputStreamReader;
 import java.util.HashSet;
 import java.util.Set;
 
-public class AbstractMetricsTest extends AbstractTest {
+public class AbstractMetricsTest {
 
     protected static final double DELTA = 0.001;
 
@@ -45,8 +46,8 @@ public class AbstractMetricsTest extends AbstractTest {
     protected Bucket gold_standard_records;
     protected StrictConfusionMatrix matrix;
 
-    private static final String CLASSIFIED_FILE_NAME =  "classified.csv";
-    private static final String GOLD_STANDARD_FILE_NAME = "gold_standard.csv";
+    private static final String CLASSIFIED_FILE_NAME =  "example_classified.csv";
+    private static final String GOLD_STANDARD_FILE_NAME = "example_gold_standard.csv";
 
     DataSet classified_records_csv;
     DataSet gold_standard_records_csv;
@@ -57,11 +58,11 @@ public class AbstractMetricsTest extends AbstractTest {
         classified_records = new Bucket();
         gold_standard_records = new Bucket();
 
-        try (InputStreamReader reader = getInputStreamReaderForResource(AbstractMetricsTest.class, CLASSIFIED_FILE_NAME)) {
+        try (InputStreamReader reader = FileManipulation.getInputStreamReaderForResource(AbstractMetricsTest.class, CLASSIFIED_FILE_NAME)) {
 
             classified_records_csv = new DataSet(reader);
         }
-        try (InputStreamReader reader = getInputStreamReaderForResource(AbstractMetricsTest.class, GOLD_STANDARD_FILE_NAME)) {
+        try (InputStreamReader reader = FileManipulation.getInputStreamReaderForResource(AbstractMetricsTest.class, GOLD_STANDARD_FILE_NAME)) {
 
             gold_standard_records_csv = new DataSet(reader);
         }
@@ -86,7 +87,7 @@ public class AbstractMetricsTest extends AbstractTest {
 
             valid_codes.add(record.getClassification().getCode());
         }
-        valid_codes.remove(Classification.UNCLASSIFIED.getCode());
+        valid_codes.add(Classification.UNCLASSIFIED.getCode());
         return valid_codes.size();
     }
 }

@@ -16,12 +16,16 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.process;
 
-import org.apache.commons.lang3.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.ClassificationMetrics;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.ConfusionMatrix;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.Classifier;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
 
-import java.io.*;
-import java.util.*;
-import java.util.concurrent.*;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+import java.util.concurrent.Callable;
 
 /**
  * Represents a classification process that consists of a list of steps and produces a {@link Bucket bucket}  of classified records.
@@ -36,21 +40,13 @@ public class ClassificationProcess implements Callable<Bucket>, Serializable {
     private final List<Step> steps;
 
     /**
-     * Instantiates a new classification process with an empty context.
-     */
-    public ClassificationProcess() {
-
-        this(new Context());
-    }
-
-    /**
      * Instantiates a new classification process.
      *
-     * @param context the context in which to classify
+     * @param random the random number generator
      */
-    public ClassificationProcess(final Context context) {
+    public ClassificationProcess(final Classifier classifier, final Random random) {
 
-        this.context = context;
+        context = new Context(classifier, random);
         steps = new ArrayList<>();
     }
 
@@ -60,10 +56,9 @@ public class ClassificationProcess implements Callable<Bucket>, Serializable {
      * @param step the step to be performed in the classification process.
      * @return this classification process to accommodate chaining of step additions.
      */
-    public ClassificationProcess addStep(Step step) {
+    public void addStep(Step step) {
 
         steps.add(step);
-        return this;
     }
 
     /**
@@ -82,19 +77,6 @@ public class ClassificationProcess implements Callable<Bucket>, Serializable {
         return context.getClassifiedUnseenRecords();
     }
 
-    public static List<ClassificationProcess> call(ClassificationProcess... processes) throws Exception {
-
-        final List<ClassificationProcess> called_processes = new ArrayList<>();
-
-        for (ClassificationProcess process : processes) {
-
-            process.call();
-            called_processes.add(process);
-        }
-
-        return called_processes;
-    }
-
     /**
      * Gets the context of this classification process.
      *
@@ -103,5 +85,15 @@ public class ClassificationProcess implements Callable<Bucket>, Serializable {
     public Context getContext() {
 
         return context;
+    }
+
+    public ClassificationMetrics getClassificationMetrics() {
+
+        return context.getClassificationMetrics();
+    }
+
+    public ConfusionMatrix getConfusionMatrix() {
+
+        return context.getConfusionMatrix();
     }
 }

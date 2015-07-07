@@ -100,4 +100,9 @@ public class StringSimilarityClassifier implements Classifier {
 
         return "Classifies based on similarity of the string to the training data, using " + similarity_metric.getDescription() + " similarity metric";
     }
+
+    public String toString() {
+
+        return getName();
+    }
 }

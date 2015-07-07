@@ -40,6 +40,6 @@ public class ExactMatchAndDummyExperiment extends Experiment {
     @Override
     protected List<ClassificationProcess> initClassificationProcesses() throws IOException, InputFileFormatException {
 
-        return initClassificationProcessesFromClassifiers(new ExactMatchClassifier(), new DummyClassifier());
+        return initClassificationProcesses(new ExactMatchClassifier(), new DummyClassifier());
     }
 }
