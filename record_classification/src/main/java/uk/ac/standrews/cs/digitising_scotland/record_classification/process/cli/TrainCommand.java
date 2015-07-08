@@ -48,7 +48,7 @@ class TrainCommand extends Command {
     private Double training_ratio;
 
     @Override
-    public void perform(final Context context) throws Exception {
+    public void perform(final ClassificationContext context) throws Exception {
 
         final DataSet gold_standard_dataset = new DataSet(new FileReader(gold_standard), CSVFormat.newFormat(delimiter));
         final Bucket gold_standard = new Bucket(gold_standard_dataset);

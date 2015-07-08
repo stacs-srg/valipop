@@ -29,6 +29,7 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.I
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.InfoLevel;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.ClassificationProcess;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.ClassificationContext;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.Step;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.AddTrainingAndEvaluationRecordsByRatio;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.EvaluateClassifier;
@@ -40,6 +41,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.Callable;
+import java.util.stream.Collectors;
 
 /**
  * @author Graham Kirby
@@ -61,7 +63,6 @@ public abstract class Experiment implements Callable<Void> {
     private static final String DESCRIPTION_DELIMITER = "The delimiter character of three column gold standard data.";
 
     private final JCommander commander;
-    private final Random random;
 
     @Parameter(names = {"-v", "--verbosity"}, description = DESCRIPTION_VERBOSITY)
     private InfoLevel verbosity = InfoLevel.LONG_SUMMARY;
@@ -78,78 +79,143 @@ public abstract class Experiment implements Callable<Void> {
     @Parameter(names = {"-d", "--delimiter"}, description = DESCRIPTION_DELIMITER)
     private char delimiter = '|';
 
-    protected Experiment(String[] args) {
+    protected Experiment() {
 
         commander = new JCommander(this);
+    }
+
+    protected Experiment(String[] args) {
+
+        this();
+
         try {
             parse(args);
-        }
-        catch (ParameterException e) {
+
+        } catch (ParameterException e) {
             exitWithErrorMessage(e.getMessage());
         }
-        random = new Random(SEED);
     }
 
     @Override
     public Void call() throws Exception {
 
-        final Map<String, DataSet> results = getExperimentResults();
+        final List<ExperimentResult> results = getExperimentResults();
 
         printSummarisedResults(results);
 
         return null; //void callable
     }
 
-    private Map<String, DataSet> getExperimentResults() throws Exception {
+    public void setVerbosity(InfoLevel verbosity) {
 
-        final Map<String, DataSet> results = new HashMap<>();
+        this.verbosity = verbosity;
+    }
+
+    public void setRepetitions(int repetitions) {
+
+        this.repetitions = repetitions;
+    }
+
+    public void setGoldStandardFiles(List<File> gold_standard_files) {
+
+        this.gold_standard_files = gold_standard_files;
+    }
+
+    public void setTrainingRatios(List<Double> training_ratios) {
+
+        this.training_ratios = training_ratios;
+    }
+
+    public List<ExperimentResult> getExperimentResults() throws Exception {
+
+        final List<ClassificationProcess> processes = getClassificationProcesses();
+        final List<ExperimentResult> results = new ArrayList<>();
+
+        for (ClassificationProcess process : processes) {
+
+            results.add(new ExperimentResult(getProcessName(process), new DataSet(ClassificationMetrics.DATASET_LABELS)));
+        }
 
         for (int i = 0; i < repetitions; i++) {
 
-            final List<ClassificationProcess> processes = initClassificationProcesses();
-
             for (ClassificationProcess process : processes) {
 
-                process.call();
+                final Classifier classifier = process.getClassifier();
+                final ClassificationContext context = new ClassificationContext(classifier, process.getRandom());
 
-                final String name = getProcessName(process);
-                final ClassificationMetrics metrics = process.getContext().getClassificationMetrics();
-                final DataSet metrics_dataSet = metrics.toDataSet();
+                process.call(context);
 
-                if (results.containsKey(name)) {
-                    final DataSet result_dataset = results.get(name);
-                    metrics_dataSet.getRecords().forEach(result_dataset::addRow);
-                }
-                else {
-                    results.put(name, metrics_dataSet);
-                }
+                final ClassificationMetrics metrics = context.getClassificationMetrics();
+
+                final ExperimentResult result = getExperimentResult(classifier.getName(), results);
+
+                result.data_set.addRow(metrics.getValues());
+                result.repetition_contexts.add(context);
             }
         }
         return results;
     }
 
+    private ExperimentResult getExperimentResult(String name, List<ExperimentResult> results) {
+
+        for (ExperimentResult result : results) {
+            if (result.name.equals(name)) {
+                return result;
+            }
+        }
+        return null;
+    }
+
+    class ExperimentResult {
+
+        public String name;
+        public DataSet data_set;
+        public List<ClassificationContext> repetition_contexts;
+
+        public ExperimentResult(String name, DataSet data_set) {
+
+            this.name = name;
+            this.data_set = data_set;
+            repetition_contexts = new ArrayList<>();
+        }
+    }
+//
+//    protected void addResults(Map<String, DataSet> results, ClassificationProcess process) {
+//
+//        final String name = getProcessName(process);
+//        final ClassificationMetrics metrics = process.getContext().getClassificationMetrics();
+//        final DataSet metrics_data_set = metrics.toDataSet();
+//
+//        if (results.containsKey(name)) {
+//            final DataSet result_data_set = results.get(name);
+//            metrics_data_set.getRecords().forEach(result_data_set::addRow);
+//        } else {
+//            results.put(name, metrics_data_set);
+//        }
+//    }
+
     /**
      * Initialises a fresh list of classification process for each repetition.
      *
      * @return the list of classification processes to be run for a single repetition.
-     * @throws IOException if an error occurs while reading the input data
+     * @throws IOException              if an error occurs while reading the input data
      * @throws InputFileFormatException if the input data files are in an unsupported format
      */
-    protected abstract List<ClassificationProcess> initClassificationProcesses() throws IOException, InputFileFormatException;
+    protected abstract List<ClassificationProcess> getClassificationProcesses() throws IOException, InputFileFormatException;
 
-    protected List<ClassificationProcess> initClassificationProcesses(Classifier... classifiers) throws IOException, InputFileFormatException {
+    protected List<ClassificationProcess> getClassificationProcesses(Classifier... classifiers) throws IOException, InputFileFormatException {
 
         final List<ClassificationProcess> processes = new ArrayList<>();
         for (Classifier classifier : classifiers) {
-            processes.add(initClassificationProcess(classifier));
+            processes.add(getClassificationProcess(classifier));
         }
 
         return processes;
     }
 
-    private ClassificationProcess initClassificationProcess(Classifier classifier) throws IOException, InputFileFormatException {
+    private ClassificationProcess getClassificationProcess(Classifier classifier) throws IOException, InputFileFormatException {
 
-        final ClassificationProcess process = new ClassificationProcess(classifier, random);
+        final ClassificationProcess process = new ClassificationProcess(classifier, new Random(SEED));
 
         for (int i = 0; i < gold_standard_files.size(); i++) {
             process.addStep(makeAddRecordsStep(i));
@@ -189,14 +255,14 @@ public abstract class Experiment implements Callable<Void> {
 
     private String getProcessName(final ClassificationProcess process) {
 
-        return process.getContext().getClassifier().getName();
+        return process.getClassifier().getName();
     }
 
-    private void printSummarisedResults(final Map<String, DataSet> results) throws IOException {
+    private void printSummarisedResults(final List<ExperimentResult> results) throws IOException {
 
         final String table_caption = String.format("\naggregate classifier performance (%d repetition%s):\n", repetitions, repetitions > 1 ? "s" : "");
-        final List<String> row_labels = new ArrayList<>(results.keySet());
-        final List<DataSet> result_sets = new ArrayList<>(results.values());
+        final List<String> row_labels = getNames(results);
+        final List<DataSet> result_sets = getDataSets(results);
         final TableGenerator table_generator = new TableGenerator(row_labels, result_sets, System.out, table_caption, FIRST_COLUMN_HEADING, COLUMNS_AS_PERCENTAGES, TAB);
 
         if (verbosity != InfoLevel.NONE) {
@@ -204,6 +270,16 @@ public abstract class Experiment implements Callable<Void> {
             printDateStamp();
             table_generator.printTable();
         }
+    }
+
+    private List<String> getNames(List<ExperimentResult> results) {
+
+        return results.stream().map(result -> result.name).collect(Collectors.toList());
+    }
+
+    private List<DataSet> getDataSets(List<ExperimentResult> results) {
+
+        return results.stream().map(result -> result.data_set).collect(Collectors.toList());
     }
 
     private void printDateStamp() {

@@ -37,9 +37,9 @@ public class VariousClassifiersExperiment extends Experiment {
     }
 
     @Override
-    protected List<ClassificationProcess> initClassificationProcesses() throws IOException, InputFileFormatException {
+    protected List<ClassificationProcess> getClassificationProcesses() throws IOException, InputFileFormatException {
 
-        return initClassificationProcesses(Classifiers.EXACT_MATCH, Classifiers.STRING_SIMILARITY_LEVENSHTEIN, Classifiers.STRING_SIMILARITY_JARO_WINKLER, Classifiers.STRING_SIMILARITY_JACCARD, Classifiers.STRING_SIMILARITY_CHAPMAN_LENGTH_DEVIATION, Classifiers.STRING_SIMILARITY_DICE,
+        return getClassificationProcesses(Classifiers.EXACT_MATCH, Classifiers.STRING_SIMILARITY_LEVENSHTEIN, Classifiers.STRING_SIMILARITY_JARO_WINKLER, Classifiers.STRING_SIMILARITY_JACCARD, Classifiers.STRING_SIMILARITY_CHAPMAN_LENGTH_DEVIATION, Classifiers.STRING_SIMILARITY_DICE,
                 Classifiers.OLR, Classifiers.EXACT_MATCH_PLUS_STRING_SIMILARITY_LEVENSHTEIN, Classifiers.EXACT_MATCH_PLUS_STRING_SIMILARITY_JARO_WINKLER, Classifiers.EXACT_MATCH_PLUS_STRING_SIMILARITY_JACCARD, Classifiers.EXACT_MATCH_PLUS_STRING_SIMILARITY_CHAPMAN_LENGTH_DEVIATION,
                 Classifiers.EXACT_MATCH_PLUS_STRING_SIMILARITY_DICE, Classifiers.EXACT_MATCH_PLUS_OLR, Classifiers.VOTING_ENSEMBLE);
     }

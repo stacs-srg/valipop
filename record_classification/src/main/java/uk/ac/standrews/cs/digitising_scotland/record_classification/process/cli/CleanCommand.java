@@ -51,7 +51,7 @@ class CleanCommand extends Command {
     private char delimiter = '|';
 
     @Override
-    public void perform(final Context context) throws Exception {
+    public void perform(final ClassificationContext context) throws Exception {
 
         final CSVFormat input_format = CSVFormat.newFormat(delimiter);
         final DataSet source_dataset = new DataSet(new FileReader(source), input_format);

@@ -47,7 +47,7 @@ class EvaluateCommand extends Command {
     private char delimiter = '|';
 
     @Override
-    public void perform(final Context context) throws Exception {
+    public void perform(final ClassificationContext context) throws Exception {
 
         List<ClassificationMetrics> results = new ArrayList<>();
         for (int i = 0; i < repetition_count; i++) {

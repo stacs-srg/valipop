@@ -30,5 +30,5 @@ public interface Step extends Serializable {
      *
      * @param context the context in which to perform this step
      */
-    void perform(Context context) throws Exception;
+    void perform(ClassificationContext context) throws Exception;
 }

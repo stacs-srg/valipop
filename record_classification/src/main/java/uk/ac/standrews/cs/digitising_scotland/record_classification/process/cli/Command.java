@@ -39,17 +39,17 @@ abstract class Command implements Callable<Void>, Step {
     @Override
     public Void call() throws Exception {
 
-        final ClassificationProcess process = loadClassificationProcess();
+        final ClassificationProcessWithContext process = loadClassificationProcess();
         perform(process.getContext());
         persistClassificationProcess(process);
         return null;
     }
 
-    protected ClassificationProcess loadClassificationProcess() throws IOException {
+    protected ClassificationProcessWithContext loadClassificationProcess() throws IOException {
 
         if (Files.isRegularFile(SERIALIZED_CLASSIFICATION_PROCESS_PATH)) {
             final byte[] process_bytes = Files.readAllBytes(SERIALIZED_CLASSIFICATION_PROCESS_PATH);
-            return (ClassificationProcess) SerializationUtils.deserialize(process_bytes);
+            return (ClassificationProcessWithContext) SerializationUtils.deserialize(process_bytes);
         }
 
         throw new IOException("No suitable classification process file found; expected a file named " + SERIALIZED_CLASSIFICATION_PROCESS_NAME + " at the current working directory.");
@@ -68,7 +68,7 @@ abstract class Command implements Callable<Void>, Step {
 
     protected void persistDataSet(Path destination, final DataSet dataset) throws IOException {
 
-        try (final BufferedWriter out = Files.newBufferedWriter(destination, Charset.defaultCharset())) {
+        try (final BufferedWriter out = Files.newBufferedWriter(destination, StandardCharsets.UTF_8)) {
             dataset.print(out);
         }
     }

@@ -17,14 +17,11 @@
 package uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps;
 
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.*;
 
-import java.util.*;
-
 /**
- * Checks the {@link Context#getClassifiedUnseenRecords() classified unseen records} in the context of a classification process using a given {@link Checker}.
+ * Checks the {@link ClassificationContext#getClassifiedUnseenRecords() classified unseen records} in the context of a classification process using a given {@link Checker}.
  *
  * @author Graham Kirby
  * @author Masih Hajiarab Derkani
@@ -40,7 +37,7 @@ public class CheckClassifiedUnseenRecords implements Step {
     }
 
     @Override
-    public void perform(final Context context) throws Exception {
+    public void perform(final ClassificationContext context) throws Exception {
 
         final Bucket classified_records = context.getClassifiedUnseenRecords();
 

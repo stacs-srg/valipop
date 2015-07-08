@@ -37,8 +37,8 @@ public class NaiveBayesOnlyExperiment extends Experiment {
     }
 
     @Override
-    protected List<ClassificationProcess> initClassificationProcesses() throws IOException, InputFileFormatException {
+    protected List<ClassificationProcess> getClassificationProcesses() throws IOException, InputFileFormatException {
 
-        return initClassificationProcesses(new NaiveBayesClassifier());
+        return getClassificationProcesses(new NaiveBayesClassifier());
     }
 }

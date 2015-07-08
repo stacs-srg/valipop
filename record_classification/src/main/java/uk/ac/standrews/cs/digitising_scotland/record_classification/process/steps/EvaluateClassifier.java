@@ -28,7 +28,7 @@ import java.util.*;
 
 /**
  * Evaluates a classifier in the context of a classification process.
- * Stores the result of evaluation by setting the {@link Context#getConfusionMatrix() confusion matrix} and {@link Context#getClassificationMetrics() classification metrix} of the context.
+ * Stores the result of evaluation by setting the {@link ClassificationContext#getConfusionMatrix() confusion matrix} and {@link ClassificationContext#getClassificationMetrics() classification metrix} of the context.
  *
  * @author Graham Kirby
  * @author Masih Hajiarab Derkani
@@ -49,9 +49,9 @@ public class EvaluateClassifier implements Step {
     }
 
     @Override
-    public void perform(final Context context) throws Exception {
+    public void perform(final ClassificationContext context) throws Exception {
 
-        final Bucket gold_standard_records = context.getGoldStandard();
+        final Bucket gold_standard_records = context.getGoldStandardRecords();
         final Bucket evaluation_records = context.getEvaluationRecords();
         final Bucket stripped_records = evaluation_records.stripRecordClassifications();
 
@@ -70,7 +70,7 @@ public class EvaluateClassifier implements Step {
         }
     }
 
-    private void printClassificationDetails(Context context) {
+    private void printClassificationDetails(ClassificationContext context) {
 
         final Classifier classifier = context.getClassifier();
         final Bucket evaluation_records = context.getEvaluationRecords();

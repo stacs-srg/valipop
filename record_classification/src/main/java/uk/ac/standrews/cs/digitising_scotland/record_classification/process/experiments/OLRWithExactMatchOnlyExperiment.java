@@ -37,8 +37,8 @@ public class OLRWithExactMatchOnlyExperiment extends Experiment {
     }
 
     @Override
-    protected List<ClassificationProcess> initClassificationProcesses() throws IOException, InputFileFormatException {
+    protected List<ClassificationProcess> getClassificationProcesses() throws IOException, InputFileFormatException {
 
-        return initClassificationProcesses(new OLRWithExactMatchClassifier());
+        return getClassificationProcesses(new OLRWithExactMatchClassifier());
     }
 }

@@ -21,7 +21,7 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.*;
 
 /**
- * Adds a randomly selected ratio of records from a gold standard to the training records, and adds the remaining to the evaluation records of a given {@link Context context}.
+ * Adds a randomly selected ratio of records from a gold standard to the training records, and adds the remaining to the evaluation records of a given {@link ClassificationContext context}.
  *
  * @author Graham Kirby
  * @author Masih Hajiarab Derkani
@@ -36,7 +36,7 @@ public class AddTrainingAndEvaluationRecordsByRatio implements Step {
     private final Cleaner[] cleaners;
 
     /**
-     * Instantiates a new step which randomly selects a ratio of records from the gold standard as the training records, and the remaining as the evaluation records in the {@link Context context} of a classification process.
+     * Instantiates a new step which randomly selects a ratio of records from the gold standard as the training records, and the remaining as the evaluation records in the {@link ClassificationContext context} of a classification process.
      *
      * @param gold_standard the gold standard data from which to select training and evaluation records
      * @param training_ratio the ratio of gold standard records to be used for training
@@ -59,7 +59,7 @@ public class AddTrainingAndEvaluationRecordsByRatio implements Step {
     }
 
     @Override
-    public void perform(final Context context) throws Exception {
+    public void perform(final ClassificationContext context) throws Exception {
 
         final Bucket training_records;
         final Bucket evaluation_records;

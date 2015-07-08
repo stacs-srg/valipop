@@ -50,7 +50,7 @@ class ClassifyCommand extends Command {
     private char delimiter = '|';
 
     @Override
-    public void perform(final Context context) throws Exception {
+    public void perform(final ClassificationContext context) throws Exception {
 
         final CSVFormat input_format = CSVFormat.newFormat(delimiter);
         final DataSet unseen_dataset = new DataSet(new FileReader(unseen_data), input_format);

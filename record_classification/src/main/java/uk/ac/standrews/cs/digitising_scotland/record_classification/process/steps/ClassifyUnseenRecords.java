@@ -21,7 +21,7 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.*;
 
 /**
- * Classifies unseen records and stores the results in a classification process {@link Context context}.
+ * Classifies unseen records and stores the results in a classification process {@link ClassificationContext context}.
  *
  * @author Masih Hajiarab Derkani
  */
@@ -41,7 +41,7 @@ public class ClassifyUnseenRecords implements Step {
     }
 
     @Override
-    public void perform(final Context context) throws Exception {
+    public void perform(final ClassificationContext context) throws Exception {
 
         final Classifier classifier = context.getClassifier();
         final Bucket classified_unseen_records = classifier.classify(unseen_records);

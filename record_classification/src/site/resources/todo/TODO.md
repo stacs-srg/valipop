@@ -5,7 +5,7 @@
 - [x] Implement string similarity classifier.
 - [ ] Implement second string similarity classifier (GK).
 - [ ] Implement Naive Bayes classifier (GK).
-- [ ] Implement OLR classifier (GK).
+- [x] Implement OLR classifier (GK).
 - [x] Implement ensemble classifier.
 - [x] Make this todo page.
 - [x] Implement classifier serialisation/de-serialisation.
@@ -20,6 +20,12 @@
 - [x] Enable reproducible training data selection when comparing multiple classifiers.
 - [ ] Optimise training of classifiers in repetitions. 
 - [ ] Implement String record level cleaning.
+- [ ] Tests.
+   - [ ] End to end test for separate training and testing.
+   - [ ] Test on Jeff's data.
+   - [ ] Test for variation between repetitions.
+   - [ ] Test for voting classifier.
+- [ ] Train using multiple files e.g. HISCO dictionary.
 
 # Queries and Comments
 
@@ -31,4 +37,5 @@
 
 - [ ] Implement ensemble using confidence measures.
 - [ ] Implement ensemble using ranked lists of possible classifications.
-- [ ] Implement ensemble using accuracy metrics from training.
+- [ ] Implement ensemble using accuracy metrics from training - feedback per-class quality as proxy for confidence.
+- [ ] Control over whether persisted models include sensitive training data.

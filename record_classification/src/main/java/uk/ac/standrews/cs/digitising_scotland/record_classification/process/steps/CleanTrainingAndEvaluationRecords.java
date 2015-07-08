@@ -53,13 +53,13 @@ public class CleanTrainingAndEvaluationRecords implements Step {
     }
 
     @Override
-    public void perform(final Context context) throws Exception {
+    public void perform(final ClassificationContext context) throws Exception {
 
         cleanTrainingRecords(context);
         cleanEvaluationRecords(context);
     }
 
-    private void cleanEvaluationRecords(final Context context) throws Exception {
+    private void cleanEvaluationRecords(final ClassificationContext context) throws Exception {
 
         final Bucket evaluation_records = context.getEvaluationRecords();
 
@@ -70,7 +70,7 @@ public class CleanTrainingAndEvaluationRecords implements Step {
         }
     }
 
-    private void cleanTrainingRecords(final Context context) throws Exception {
+    private void cleanTrainingRecords(final ClassificationContext context) throws Exception {
 
         final Bucket training_records = context.getTrainingRecords();
 
