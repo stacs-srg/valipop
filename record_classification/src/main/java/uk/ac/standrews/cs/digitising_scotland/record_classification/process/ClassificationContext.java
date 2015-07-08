@@ -222,7 +222,7 @@ public class ClassificationContext implements Serializable {
      *
      * @return the time it took to classify the evaluation records by the classifier in this context, or {@code null} if the classifier is not evaluated
      */
-    public Duration getEvaluationClassificationTime() {
+    public Duration getClassificationTime() {
 
         return evaluation_classification_time;
     }

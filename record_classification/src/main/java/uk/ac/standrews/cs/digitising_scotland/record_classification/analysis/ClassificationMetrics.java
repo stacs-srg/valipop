@@ -16,15 +16,15 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.analysis;
 
-import org.apache.commons.csv.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
-import uk.ac.standrews.cs.util.dataset.*;
+import org.apache.commons.csv.CSVFormat;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Classification;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.InfoLevel;
+import uk.ac.standrews.cs.util.dataset.DataSet;
 
-import java.io.*;
-import java.time.*;
+import java.io.Serializable;
 import java.util.*;
 
-import static uk.ac.standrews.cs.util.tools.Formatting.*;
+import static uk.ac.standrews.cs.util.tools.Formatting.printMetric;
 
 /**
  * Collection of metrics measuring the effectiveness of classification.
@@ -36,114 +36,35 @@ import static uk.ac.standrews.cs.util.tools.Formatting.*;
 public class ClassificationMetrics implements Serializable {
 
     /**
-     * Labels used in conversion of metrics to {@link DataSet dataset}.
+     * Labels for values exported by #getValues().
      */
-    public static final List<String> DATASET_LABELS = Arrays.asList("macro-precision", "macro-recall", "macro-accuracy", "macro-F1", "micro-precision", "micro-recall", "micro-accuracy", "micro-F1", "training time (m)", "evaluation classification time (m)");
-    public static final List<Boolean> COLUMNS_AS_PERCENTAGES = Arrays.asList(true, true, true, true, true, true, true, true, false, false);
+    public static final List<String> DATASET_LABELS = Arrays.asList("macro-precision", "macro-recall", "macro-accuracy", "macro-F1", "micro-precision/recall", "micro-accuracy");
 
     private static final long serialVersionUID = -214187549269797059L;
-    public static final double ONE_MINUTE_IN_SECONDS = 60.0;
 
     private final ConfusionMatrix confusion_matrix;
-    private final Duration training_time;
-    private final Duration evaluation_classification_time;
 
     /**
-     * instantiates a new classification metrics from the given confusion matrix.
+     * Instantiates a new classification metrics from the given confusion matrix.
      *
      * @param confusion_matrix the matrix from which to instantiate a new classification metrics
      */
     public ClassificationMetrics(ConfusionMatrix confusion_matrix) {
 
-        this(confusion_matrix, null, null);
-    }
-
-    /**
-     * instantiates a new classification metrics from the given confusion matrix.
-     *
-     * @param confusion_matrix the matrix from which to instantiate a new classification metrics
-     */
-    public ClassificationMetrics(ConfusionMatrix confusion_matrix, final Duration training_time, final Duration evaluation_classification_time) {
-
         this.confusion_matrix = confusion_matrix;
-        this.training_time = training_time;
-        this.evaluation_classification_time = evaluation_classification_time;
-    }
-
-    public DataSet toDataSet() {
-
-        final DataSet dataset = new DataSet(DATASET_LABELS);
-        final List<String> row = toDataSetRow(this);
-        dataset.addRow(row);
-
-        return dataset;
     }
 
     public List<String> getValues() {
 
-        return toDataSetRow(this);
-    }
+        final String macro_precision = String.valueOf(getMacroAveragePrecision());
+        final String macro_recall = String.valueOf(getMacroAverageRecall());
+        final String macro_accuracy = String.valueOf(getMacroAverageAccuracy());
+        final String macro_f1 = String.valueOf(getMacroAverageF1());
+        final String micro_precision = String.valueOf(getMicroAveragePrecision());
+        final String micro_accuracy = String.valueOf(getMicroAverageAccuracy());
 
-    /**
-     * Converts a collection of metrics into {@link DataSet dataset} with labels set to {@link #DATASET_LABELS}.
-     *
-     * @param metricses the collection of metrics to convert to dataset
-     * @return the metrics as dataset.
-     */
-    public static DataSet toDataSet(final Collection<ClassificationMetrics> metricses) {
-
-        final DataSet dataset = new DataSet(DATASET_LABELS);
-        populateDataSet(metricses, dataset);
-        return dataset;
-    }
-
-    private static void populateDataSet(final Collection<ClassificationMetrics> metricses, final DataSet dataset) {
-
-        for (ClassificationMetrics metrics : metricses) {
-
-            final List<String> row = toDataSetRow(metrics);
-            dataset.addRow(row);
-        }
-    }
-
-    private static List<String> toDataSetRow(final ClassificationMetrics metrics) {
-
-        final String macro_precision = String.valueOf(metrics.getMacroAveragePrecision());
-        final String macro_recall = String.valueOf(metrics.getMacroAverageRecall());
-        final String macro_accuracy = String.valueOf(metrics.getMacroAverageAccuracy());
-        final String macro_f1 = String.valueOf(metrics.getMacroAverageF1());
-        final String micro_precision = String.valueOf(metrics.getMicroAveragePrecision());
-        final String micro_recall = String.valueOf(metrics.getMicroAverageRecall());
-        final String micro_accuracy = String.valueOf(metrics.getMicroAverageAccuracy());
-        final String micro_f1 = String.valueOf(metrics.getMicroAverageF1());
-        final String training_time = String.valueOf(metrics.getTrainingTime().getSeconds() / ONE_MINUTE_IN_SECONDS);
-        final String evaluation_classification_time = String.valueOf(metrics.getEvaluationClassificationTime().getSeconds() / ONE_MINUTE_IN_SECONDS);
-
-        return Arrays.asList(macro_precision, macro_recall, macro_accuracy, macro_f1, micro_precision, micro_recall, micro_accuracy, micro_f1, training_time, evaluation_classification_time);
-    }
-
-    /**
-     * Converts a collection of metrics into {@link DataSet dataset} with labels set to {@link #DATASET_LABELS}.
-     *
-     * @param metricses the collection of metrics to convert to dataset
-     * @param format    the format of the dataset
-     * @return the metrics as dataset.
-     */
-    public static DataSet toDataSet(final Collection<ClassificationMetrics> metricses, CSVFormat format) {
-
-        final DataSet dataset = new DataSet(DATASET_LABELS);
-        dataset.setOutputFormat(format);
-        populateDataSet(metricses, dataset);
-        return dataset;
-    }
-
-    private void printMetrics(String label, Map<String, Double> metrics) {
-
-        System.out.println("\n" + label + ":");
-
-        for (Map.Entry<String, Double> entry : metrics.entrySet()) {
-            printMetric(entry.getKey(), entry.getValue());
-        }
+        // Wrapped for mutability.
+        return new ArrayList<>(Arrays.asList(macro_precision, macro_recall, macro_accuracy, macro_f1, micro_precision, micro_accuracy));
     }
 
     /**
@@ -329,26 +250,6 @@ public class ClassificationMetrics implements Serializable {
     }
 
     /**
-     * Gets the time it took to train the classifier.
-     *
-     * @return the time it took to train the classifier, or {@code null} if the classifier is not specified
-     */
-    public Duration getTrainingTime() {
-
-        return training_time;
-    }
-
-    /**
-     * Gets the time it took to classify the evaluation records by the classifier.
-     *
-     * @return the time it took to classify the evaluation records by the classifier, or {@code null} if the classifier is not specified
-     */
-    public Duration getEvaluationClassificationTime() {
-
-        return evaluation_classification_time;
-    }
-
-    /**
      * Prints out the metrics at a specified level of detail.
      *
      * @param info_level the detail level
@@ -372,15 +273,31 @@ public class ClassificationMetrics implements Serializable {
 
         if (info_level != InfoLevel.NONE) {
 
-            printMetric("macro-average precision    ", getMacroAveragePrecision());
-            printMetric("micro-average precision    ", getMicroAveragePrecision());
-            printMetric("macro-average recall       ", getMacroAverageRecall());
-            printMetric("micro-average recall       ", getMicroAverageRecall());
-            printMetric("macro-average accuracy     ", getMacroAverageAccuracy());
-            printMetric("micro-average accuracy     ", getMicroAverageAccuracy());
-            printMetric("macro-average F1           ", getMacroAverageF1());
-            printMetric("micro-average F1           ", getMicroAverageF1());
+            printMetric("macro-average precision        ", getMacroAveragePrecision());
+            printMetric("macro-average recall           ", getMacroAverageRecall());
+            printMetric("macro-average accuracy         ", getMacroAverageAccuracy());
+            printMetric("macro-average F1               ", getMacroAverageF1());
+            printMetric("micro-average precision/recall ", getMicroAveragePrecision());
+            printMetric("micro-average accuracy         ", getMicroAverageAccuracy());
         }
+    }
+
+    /**
+     * Converts a collection of metrics into {@link DataSet dataset} with labels set to {@link #DATASET_LABELS}.
+     *
+     * @param metrics_collection the collection of metrics to convert to dataset
+     * @param format    the format of the dataset
+     * @return the metrics as dataset.
+     */
+    public static DataSet toDataSet(final Collection<ClassificationMetrics> metrics_collection, CSVFormat format) {
+
+        final DataSet data_set = new DataSet(DATASET_LABELS);
+        data_set.setOutputFormat(format);
+
+        for (ClassificationMetrics metrics : metrics_collection) {
+            data_set.addRow(metrics.getValues());
+        }
+        return data_set;
     }
 
     private double getMacroAverage(Map<String, Double> values) {
@@ -431,5 +348,14 @@ public class ClassificationMetrics implements Serializable {
     private double calculateF1(int true_positives, int false_positives, int false_negatives) {
 
         return (double) (true_positives * 2) / (true_positives * 2 + false_positives + false_negatives);
+    }
+
+    private void printMetrics(String label, Map<String, Double> metrics) {
+
+        System.out.println("\n" + label + ":");
+
+        for (Map.Entry<String, Double> entry : metrics.entrySet()) {
+            printMetric(entry.getKey(), entry.getValue());
+        }
     }
 }

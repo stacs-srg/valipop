@@ -60,7 +60,7 @@ public class EvaluateClassifier implements Step {
         context.setEvaluationClassificationTime(Duration.between(start, Instant.now()));
 
         final StrictConfusionMatrix confusion_matrix = new StrictConfusionMatrix(classified_records, gold_standard_records, new InconsistentCodingChecker());
-        final ClassificationMetrics classification_metrics = new ClassificationMetrics(confusion_matrix, context.getTrainingTime(), context.getEvaluationClassificationTime());
+        final ClassificationMetrics classification_metrics = new ClassificationMetrics(confusion_matrix);
 
         context.setConfusionMatrix(confusion_matrix);
         context.setClassificationMetrics(classification_metrics);
@@ -94,17 +94,19 @@ public class EvaluateClassifier implements Step {
 
         System.out.println();
         System.out.format("training time              : %s%n", Formatting.format(context.getTrainingTime()));
-        System.out.format("classification time        : %s%n", Formatting.format(context.getEvaluationClassificationTime()));
+        System.out.format("classification time        : %s%n", Formatting.format(context.getClassificationTime()));
 
         System.out.println("----------------------------------");
     }
 
     private static Set<String> extractStrings(final Bucket bucket) {
 
-        Set<String> strings = new HashSet<>();
+        final Set<String> strings = new HashSet<>();
+
         for (Record record : bucket) {
             strings.add(record.getData());
         }
+
         return strings;
     }
 

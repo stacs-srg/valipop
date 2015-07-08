@@ -42,6 +42,7 @@ public class Launcher {
 
         commander = new JCommander(this);
         commander.setProgramName(PROGRAM_NAME);
+
         addCommand(init_command);
         addCommand(clean_command);
         addCommand(train_command);
@@ -98,5 +99,4 @@ public class Launcher {
         commander.usage();
         System.exit(1);
     }
-
 }
