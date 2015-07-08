@@ -27,7 +27,7 @@ public class Launcher {
 
     /** Name of this executable. */
     public static final String PROGRAM_NAME = "classy";
-    private static final String SERIALIZED_PROCESS_FILE_NAME = "process";
+
     private final InitCommand init_command = new InitCommand();
     private final CleanCommand clean_command = new CleanCommand();
     private final TrainCommand train_command = new TrainCommand();

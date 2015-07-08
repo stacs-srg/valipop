@@ -62,11 +62,6 @@ public class ClassificationContext implements Serializable {
         training_records = new Bucket();
     }
 
-    public ClassificationContext(ClassificationProcess process) {
-
-        this(process.getClassifier(), process.getRandom());
-    }
-
     /**
      * Gets the random number generator.
      *

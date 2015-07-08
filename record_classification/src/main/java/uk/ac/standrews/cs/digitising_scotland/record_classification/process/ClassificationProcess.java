@@ -16,7 +16,6 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.process;
 
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.Classifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
 
 import java.io.Serializable;
@@ -28,6 +27,7 @@ import java.util.Random;
  * Represents a classification process that consists of a list of steps and produces a {@link Bucket bucket}  of classified records.
  *
  * @author Masih Hajiarab Derkani
+ * @author Graham Kirby
  */
 public class ClassificationProcess implements Serializable {
 
@@ -35,18 +35,20 @@ public class ClassificationProcess implements Serializable {
 
     private final List<Step> steps;
     private final Random random;
-    private final Classifier classifier;
+    private final ClassifierFactory factory;
+    private final String name;
 
     /**
      * Instantiates a new classification process.
      *
      * @param random the random number generator
      */
-    public ClassificationProcess(final Classifier classifier, final Random random) {
+    public ClassificationProcess(final ClassifierFactory factory, final Random random) {
 
         steps = new ArrayList<>();
-        this.classifier = classifier;
+        name = factory.getClassifier().getName();
         this.random = random;
+        this.factory = factory;
     }
 
     public Random getRandom() {
@@ -54,9 +56,14 @@ public class ClassificationProcess implements Serializable {
         return random;
     }
 
-    public Classifier getClassifier() {
+    public ClassifierFactory getClassifierFactory() {
 
-        return classifier;
+        return factory;
+    }
+
+    public String getName() {
+
+        return name;
     }
 
     /**

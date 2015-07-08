@@ -14,24 +14,26 @@
  * You should have received a copy of the GNU General Public License along with record_classification. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.digitising_scotland.record_classification.process.experiments;
+package uk.ac.standrews.cs.digitising_scotland.record_classification.process.experiments.specific;
 
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.ExactMatchClassifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.StringSimilarityClassifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.InputFileFormatException;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.ClassificationProcess;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.ClassifierFactory;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.experiments.generic.Experiment;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.util.StringSimilarityMetric;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
 public class ExactMatchAndStringSimilarityExperiment extends Experiment {
 
-    public ExactMatchAndStringSimilarityExperiment() {
+    public ExactMatchAndStringSimilarityExperiment() throws IOException, InputFileFormatException {
 
     }
 
-    public ExactMatchAndStringSimilarityExperiment(final String[] args) {
+    public ExactMatchAndStringSimilarityExperiment(final String[] args) throws IOException, InputFileFormatException {
 
         super(args);
     }
@@ -43,8 +45,8 @@ public class ExactMatchAndStringSimilarityExperiment extends Experiment {
     }
 
     @Override
-    protected List<ClassificationProcess> getClassificationProcesses() throws IOException, InputFileFormatException {
+    protected List<ClassifierFactory> getClassifierFactories() throws IOException, InputFileFormatException {
 
-        return getClassificationProcesses(new ExactMatchClassifier(), new StringSimilarityClassifier(StringSimilarityMetric.JARO_WINKLER));
+        return Arrays.asList(() -> new ExactMatchClassifier(), () -> new StringSimilarityClassifier(StringSimilarityMetric.JARO_WINKLER));
     }
 }

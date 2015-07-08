@@ -14,18 +14,23 @@
  * You should have received a copy of the GNU General Public License along with record_classification. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.digitising_scotland.record_classification.process.experiments;
+package uk.ac.standrews.cs.digitising_scotland.record_classification.process.experiments.specific;
 
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.Classifier;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.EnsembleVotingClassifier;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.StringSimilarityClassifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.linear_regression.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.experiments.generic.Experiment;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.util.StringSimilarityMetric;
 
 import java.io.*;
 import java.util.*;
 
 public class OLROnlyExperiment extends Experiment {
 
-    protected OLROnlyExperiment(final String[] args) {
+    protected OLROnlyExperiment(final String[] args) throws IOException, InputFileFormatException {
 
         super(args);
     }
@@ -37,8 +42,8 @@ public class OLROnlyExperiment extends Experiment {
     }
 
     @Override
-    protected List<ClassificationProcess> getClassificationProcesses() throws IOException, InputFileFormatException {
+    protected List<ClassifierFactory> getClassifierFactories() throws IOException, InputFileFormatException {
 
-        return getClassificationProcesses(new OLRClassifier());
+        return Arrays.asList(() -> new OLRClassifier());
     }
 }

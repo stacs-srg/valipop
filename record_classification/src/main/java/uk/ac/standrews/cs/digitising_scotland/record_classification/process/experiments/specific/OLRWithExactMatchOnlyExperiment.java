@@ -14,18 +14,20 @@
  * You should have received a copy of the GNU General Public License along with record_classification. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.digitising_scotland.record_classification.process.experiments;
+package uk.ac.standrews.cs.digitising_scotland.record_classification.process.experiments.specific;
 
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.OLRWithExactMatchClassifier;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.ClassificationProcess;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.InputFileFormatException;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.ClassifierFactory;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.experiments.generic.Experiment;
 
-import java.io.*;
+import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
 public class OLRWithExactMatchOnlyExperiment extends Experiment {
 
-    protected OLRWithExactMatchOnlyExperiment(final String[] args) {
+    protected OLRWithExactMatchOnlyExperiment(final String[] args) throws IOException, InputFileFormatException {
 
         super(args);
     }
@@ -37,8 +39,8 @@ public class OLRWithExactMatchOnlyExperiment extends Experiment {
     }
 
     @Override
-    protected List<ClassificationProcess> getClassificationProcesses() throws IOException, InputFileFormatException {
+    protected List<ClassifierFactory> getClassifierFactories() throws IOException, InputFileFormatException {
 
-        return getClassificationProcesses(new OLRWithExactMatchClassifier());
+        return Arrays.asList(() -> new OLRWithExactMatchClassifier());
     }
 }
