@@ -59,13 +59,19 @@ public abstract class Experiment implements Callable<Void> {
     private static final int DEFAULT_REPETITIONS = 2;
     private static final InfoLevel DEFAULT_VERBOSITY = InfoLevel.LONG_SUMMARY;
 
+    private static final List<Boolean> COLUMNS_AS_PERCENTAGES = Arrays.asList(true, true, true, true, true, true, false, false);
+    private static final double ONE_MINUTE_IN_SECONDS = 60.0;
+
     private static final String DESCRIPTION_GOLD_STANDARD = "Path to a file containing the three column gold standard.";
     private static final String DESCRIPTION_REPETITION = "The number of repetitions.";
     private static final String DESCRIPTION_VERBOSITY = "The level of output verbosity.";
     private static final String DESCRIPTION_RATIO = "The ratio of gold standard records to be used for training. The value must be between 0.0 to 1.0 (inclusive).";
     private static final String DESCRIPTION_DELIMITER = "The delimiter character of three column gold standard data.";
-    public static final String INCONSISTENT_PARAM_NUMBERS_ERROR_MESSAGE = "the number of gold standard files must be equal to the number of training ratios";
-    public static final String TABLE_CAPTION_STRING = "\naggregate classifier performance (%d repetition%s):\n";
+
+    private static final String INCONSISTENT_PARAM_NUMBERS_ERROR_MESSAGE = "the number of gold standard files must be equal to the number of training ratios";
+    private static final String TABLE_CAPTION_STRING = "\naggregate classifier performance (%d repetition%s):\n";
+    private static final String TRAINING_TIME_HEADER = "training time (m)";
+    private static final String EVALUATION_TIME_HEADER = "evaluation time (m)";
 
     private final JCommander commander;
 
@@ -136,11 +142,7 @@ public abstract class Experiment implements Callable<Void> {
     public List<RepetitionResult> getExperimentResults() throws Exception {
 
         final List<ClassificationProcess> processes = getClassificationProcesses();
-        final Map<ClassificationProcess, RepetitionResult> results = new HashMap<>();
-
-        for (final ClassificationProcess process : processes) {
-            results.put(process, makeRepetitionResult(process));
-        }
+        final Map<ClassificationProcess, RepetitionResult> results = makeResultsMap(processes);
 
         // Loop nesting is this way round to avoid performing all repetitions of a given process consecutively, given
         // that timing information is being recorded.
@@ -165,6 +167,7 @@ public abstract class Experiment implements Callable<Void> {
     protected List<ClassificationProcess> getClassificationProcesses(final Classifier... classifiers) throws IOException, InputFileFormatException {
 
         final List<ClassificationProcess> processes = new ArrayList<>();
+
         for (final Classifier classifier : classifiers) {
             processes.add(getClassificationProcess(classifier));
         }
@@ -179,13 +182,42 @@ public abstract class Experiment implements Callable<Void> {
 
         process.call(context);
 
-        result.data_set.addRow(context.getClassificationMetrics().getValues());
+        result.data_set.addRow(getResultValues(context));
         result.contexts.add(context);
+    }
+
+    private List<String> getResultValues(final ClassificationContext context) {
+
+        final List<String> values = context.getClassificationMetrics().getValues();
+
+        values.add(String.valueOf(context.getTrainingTime().getSeconds() / ONE_MINUTE_IN_SECONDS));
+        values.add(String.valueOf(context.getClassificationTime().getSeconds() / ONE_MINUTE_IN_SECONDS));
+
+        return values;
+    }
+
+    private Map<ClassificationProcess, RepetitionResult> makeResultsMap(final List<ClassificationProcess> processes) {
+
+        final Map<ClassificationProcess, RepetitionResult> results = new HashMap<>();
+
+        for (final ClassificationProcess process : processes) {
+            results.put(process, makeRepetitionResult(process));
+        }
+
+        return results;
     }
 
     private RepetitionResult makeRepetitionResult(final ClassificationProcess process) {
 
-        return new RepetitionResult(process.getClassifier().getName(), new DataSet(ClassificationMetrics.DATASET_LABELS));
+        return new RepetitionResult(process.getClassifier().getName(), new DataSet(getDataSetLabelsWithTimingColumns()));
+    }
+
+    private List<String> getDataSetLabelsWithTimingColumns() {
+
+        final List<String> labels = new ArrayList<>(ClassificationMetrics.DATASET_LABELS);
+        labels.add(TRAINING_TIME_HEADER);
+        labels.add(EVALUATION_TIME_HEADER);
+        return labels;
     }
 
     private ClassificationProcess getClassificationProcess(final Classifier classifier) throws IOException, InputFileFormatException {
@@ -229,7 +261,7 @@ public abstract class Experiment implements Callable<Void> {
     private void printSummarisedResults(final List<RepetitionResult> results) throws IOException {
 
         final String table_caption = String.format(TABLE_CAPTION_STRING, repetitions, getPluralitySuffix(repetitions));
-        final TableGenerator table_generator = new TableGenerator(getNames(results), getDataSets(results), System.out, table_caption, FIRST_COLUMN_HEADING, ClassificationMetrics.COLUMNS_AS_PERCENTAGES, TAB);
+        final TableGenerator table_generator = new TableGenerator(getNames(results), getDataSets(results), System.out, table_caption, FIRST_COLUMN_HEADING, COLUMNS_AS_PERCENTAGES, TAB);
 
         printDateStamp();
         table_generator.printTable();

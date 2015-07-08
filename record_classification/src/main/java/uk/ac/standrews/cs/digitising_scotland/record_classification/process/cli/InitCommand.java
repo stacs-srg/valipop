@@ -53,8 +53,7 @@ class InitCommand extends Command {
     public Void call() throws Exception {
 
         final ClassificationProcessWithContext process = new ClassificationProcessWithContext(classifier, new Random(SEED));
-        final ClassificationContext context = process.getContext();
-        perform(context);
+        perform(process.getContext());
 
         final Path process_working_directory = Paths.get(name);
         Files.createDirectory(process_working_directory);
