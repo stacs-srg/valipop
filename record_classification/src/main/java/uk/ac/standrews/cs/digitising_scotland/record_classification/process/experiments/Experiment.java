@@ -22,14 +22,15 @@ import com.beust.jcommander.ParameterException;
 import com.beust.jcommander.converters.FileConverter;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.ClassificationMetrics;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.Classifier;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.Cleaner;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.ConsistentCodingCleaner;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.EnglishStopWordCleaner;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.PorterStemCleaner;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.InputFileFormatException;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.InfoLevel;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.ClassificationProcess;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.ClassificationContext;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.ClassificationProcess;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.Step;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.AddTrainingAndEvaluationRecordsByRatio;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.EvaluateClassifier;
@@ -50,41 +51,47 @@ import java.util.stream.Collectors;
 public abstract class Experiment implements Callable<Void> {
 
     private static final long SEED = 32498723497239578L;
-    private static final List<Boolean> COLUMNS_AS_PERCENTAGES = Arrays.asList(true, true, true, true, true, true, true, true, false, false);
-    private static final String FIRST_COLUMN_HEADING = "classifier";
     private static final char TAB = '\t';
+    private static final String FIRST_COLUMN_HEADING = "classifier";
 
     private static final String DEFAULT_GOLD_STANDARD_PATH = "src/test/resources/uk/ac/standrews/cs/digitising_scotland/record_classification/process/experiments/AbstractClassificationProcessTest/coded_data_1K.csv";
+    private static final double DEFAULT_TRAINING_RATIO = 0.8;
+    private static final int DEFAULT_REPETITIONS = 2;
+    private static final InfoLevel DEFAULT_VERBOSITY = InfoLevel.LONG_SUMMARY;
 
     private static final String DESCRIPTION_GOLD_STANDARD = "Path to a file containing the three column gold standard.";
     private static final String DESCRIPTION_REPETITION = "The number of repetitions.";
     private static final String DESCRIPTION_VERBOSITY = "The level of output verbosity.";
     private static final String DESCRIPTION_RATIO = "The ratio of gold standard records to be used for training. The value must be between 0.0 to 1.0 (inclusive).";
     private static final String DESCRIPTION_DELIMITER = "The delimiter character of three column gold standard data.";
+    public static final String INCONSISTENT_PARAM_NUMBERS_ERROR_MESSAGE = "the number of gold standard files must be equal to the number of training ratios";
+    public static final String TABLE_CAPTION_STRING = "\naggregate classifier performance (%d repetition%s):\n";
 
     private final JCommander commander;
 
     @Parameter(names = {"-v", "--verbosity"}, description = DESCRIPTION_VERBOSITY)
-    private InfoLevel verbosity = InfoLevel.LONG_SUMMARY;
+    private InfoLevel verbosity = DEFAULT_VERBOSITY;
 
     @Parameter(names = {"-r", "--repetitionCount"}, description = DESCRIPTION_REPETITION)
-    private int repetitions = 2;
+    private int repetitions = DEFAULT_REPETITIONS;
 
     @Parameter(names = {"-g", "--goldStandard"}, description = DESCRIPTION_GOLD_STANDARD, listConverter = FileConverter.class)
     private List<File> gold_standard_files = Arrays.asList(new File(DEFAULT_GOLD_STANDARD_PATH));
 
     @Parameter(names = {"-t", "--trainingRecordRatio"}, description = DESCRIPTION_RATIO)
-    private List<Double> training_ratios = Arrays.asList(0.8);
+    private List<Double> training_ratios = Arrays.asList(DEFAULT_TRAINING_RATIO);
 
     @Parameter(names = {"-d", "--delimiter"}, description = DESCRIPTION_DELIMITER)
     private char delimiter = '|';
+
+    public static final Cleaner[] CLEANERS = new Cleaner[]{new EnglishStopWordCleaner(), new PorterStemCleaner(), ConsistentCodingCleaner.CORRECT};
 
     protected Experiment() {
 
         commander = new JCommander(this);
     }
 
-    protected Experiment(String[] args) {
+    protected Experiment(final String[] args) {
 
         this();
 
@@ -99,100 +106,52 @@ public abstract class Experiment implements Callable<Void> {
     @Override
     public Void call() throws Exception {
 
-        final List<ExperimentResult> results = getExperimentResults();
-
-        printSummarisedResults(results);
+        if (verbosity != InfoLevel.NONE) {
+            printSummarisedResults(getExperimentResults());
+        }
 
         return null; //void callable
     }
 
-    public void setVerbosity(InfoLevel verbosity) {
+    public void setVerbosity(final InfoLevel verbosity) {
 
         this.verbosity = verbosity;
     }
 
-    public void setRepetitions(int repetitions) {
+    public void setRepetitions(final int repetitions) {
 
         this.repetitions = repetitions;
     }
 
-    public void setGoldStandardFiles(List<File> gold_standard_files) {
+    public void setGoldStandardFiles(final List<File> gold_standard_files) {
 
         this.gold_standard_files = gold_standard_files;
     }
 
-    public void setTrainingRatios(List<Double> training_ratios) {
+    public void setTrainingRatios(final List<Double> training_ratios) {
 
         this.training_ratios = training_ratios;
     }
 
-    public List<ExperimentResult> getExperimentResults() throws Exception {
+    public List<RepetitionResult> getExperimentResults() throws Exception {
 
         final List<ClassificationProcess> processes = getClassificationProcesses();
-        final List<ExperimentResult> results = new ArrayList<>();
+        final Map<ClassificationProcess, RepetitionResult> results = new HashMap<>();
 
-        for (ClassificationProcess process : processes) {
-
-            results.add(new ExperimentResult(getProcessName(process), new DataSet(ClassificationMetrics.DATASET_LABELS)));
+        for (final ClassificationProcess process : processes) {
+            results.put(process, makeRepetitionResult(process));
         }
 
+        // Loop nesting is this way round to avoid performing all repetitions of a given process consecutively, given
+        // that timing information is being recorded.
         for (int i = 0; i < repetitions; i++) {
 
-            for (ClassificationProcess process : processes) {
-
-                final Classifier classifier = process.getClassifier();
-                final ClassificationContext context = new ClassificationContext(classifier, process.getRandom());
-
-                process.call(context);
-
-                final ClassificationMetrics metrics = context.getClassificationMetrics();
-
-                final ExperimentResult result = getExperimentResult(classifier.getName(), results);
-
-                result.data_set.addRow(metrics.getValues());
-                result.repetition_contexts.add(context);
+            for (final ClassificationProcess process : processes) {
+                callProcess(process, results);
             }
         }
-        return results;
+        return new ArrayList<>(results.values());
     }
-
-    private ExperimentResult getExperimentResult(String name, List<ExperimentResult> results) {
-
-        for (ExperimentResult result : results) {
-            if (result.name.equals(name)) {
-                return result;
-            }
-        }
-        return null;
-    }
-
-    class ExperimentResult {
-
-        public String name;
-        public DataSet data_set;
-        public List<ClassificationContext> repetition_contexts;
-
-        public ExperimentResult(String name, DataSet data_set) {
-
-            this.name = name;
-            this.data_set = data_set;
-            repetition_contexts = new ArrayList<>();
-        }
-    }
-//
-//    protected void addResults(Map<String, DataSet> results, ClassificationProcess process) {
-//
-//        final String name = getProcessName(process);
-//        final ClassificationMetrics metrics = process.getContext().getClassificationMetrics();
-//        final DataSet metrics_data_set = metrics.toDataSet();
-//
-//        if (results.containsKey(name)) {
-//            final DataSet result_data_set = results.get(name);
-//            metrics_data_set.getRecords().forEach(result_data_set::addRow);
-//        } else {
-//            results.put(name, metrics_data_set);
-//        }
-//    }
 
     /**
      * Initialises a fresh list of classification process for each repetition.
@@ -203,17 +162,33 @@ public abstract class Experiment implements Callable<Void> {
      */
     protected abstract List<ClassificationProcess> getClassificationProcesses() throws IOException, InputFileFormatException;
 
-    protected List<ClassificationProcess> getClassificationProcesses(Classifier... classifiers) throws IOException, InputFileFormatException {
+    protected List<ClassificationProcess> getClassificationProcesses(final Classifier... classifiers) throws IOException, InputFileFormatException {
 
         final List<ClassificationProcess> processes = new ArrayList<>();
-        for (Classifier classifier : classifiers) {
+        for (final Classifier classifier : classifiers) {
             processes.add(getClassificationProcess(classifier));
         }
 
         return processes;
     }
 
-    private ClassificationProcess getClassificationProcess(Classifier classifier) throws IOException, InputFileFormatException {
+    private void callProcess(final ClassificationProcess process, final Map<ClassificationProcess, RepetitionResult> results) throws Exception {
+
+        final RepetitionResult result = results.get(process);
+        final ClassificationContext context = new ClassificationContext(process);
+
+        process.call(context);
+
+        result.data_set.addRow(context.getClassificationMetrics().getValues());
+        result.contexts.add(context);
+    }
+
+    private RepetitionResult makeRepetitionResult(final ClassificationProcess process) {
+
+        return new RepetitionResult(process.getClassifier().getName(), new DataSet(ClassificationMetrics.DATASET_LABELS));
+    }
+
+    private ClassificationProcess getClassificationProcess(final Classifier classifier) throws IOException, InputFileFormatException {
 
         final ClassificationProcess process = new ClassificationProcess(classifier, new Random(SEED));
 
@@ -232,18 +207,16 @@ public abstract class Experiment implements Callable<Void> {
         commander.parse(args);
 
         if (gold_standard_files.size() != training_ratios.size()) {
-            throw new ParameterException("the number of gold standard files must be equal to the number of training ratios");
+            throw new ParameterException(INCONSISTENT_PARAM_NUMBERS_ERROR_MESSAGE);
         }
     }
 
-    private Step makeAddRecordsStep(int gold_standard_file_number) throws IOException, InputFileFormatException {
+    private Step makeAddRecordsStep(final int gold_standard_file_number) throws IOException, InputFileFormatException {
 
         final File gold_standard_file = gold_standard_files.get(gold_standard_file_number);
-        final Bucket gold_standard = new Bucket(gold_standard_file);
-
         final Double training_ratio = training_ratios.get(gold_standard_file_number);
 
-        return new AddTrainingAndEvaluationRecordsByRatio(gold_standard, training_ratio, new EnglishStopWordCleaner(), new PorterStemCleaner(), ConsistentCodingCleaner.CORRECT);
+        return new AddTrainingAndEvaluationRecordsByRatio(new Bucket(gold_standard_file), training_ratio, CLEANERS);
     }
 
     private void exitWithErrorMessage(final String error_message) {
@@ -253,31 +226,26 @@ public abstract class Experiment implements Callable<Void> {
         System.exit(1);
     }
 
-    private String getProcessName(final ClassificationProcess process) {
+    private void printSummarisedResults(final List<RepetitionResult> results) throws IOException {
 
-        return process.getClassifier().getName();
+        final String table_caption = String.format(TABLE_CAPTION_STRING, repetitions, getPluralitySuffix(repetitions));
+        final TableGenerator table_generator = new TableGenerator(getNames(results), getDataSets(results), System.out, table_caption, FIRST_COLUMN_HEADING, ClassificationMetrics.COLUMNS_AS_PERCENTAGES, TAB);
+
+        printDateStamp();
+        table_generator.printTable();
     }
 
-    private void printSummarisedResults(final List<ExperimentResult> results) throws IOException {
+    private static String getPluralitySuffix(final int repetitions) {
 
-        final String table_caption = String.format("\naggregate classifier performance (%d repetition%s):\n", repetitions, repetitions > 1 ? "s" : "");
-        final List<String> row_labels = getNames(results);
-        final List<DataSet> result_sets = getDataSets(results);
-        final TableGenerator table_generator = new TableGenerator(row_labels, result_sets, System.out, table_caption, FIRST_COLUMN_HEADING, COLUMNS_AS_PERCENTAGES, TAB);
-
-        if (verbosity != InfoLevel.NONE) {
-
-            printDateStamp();
-            table_generator.printTable();
-        }
+        return repetitions > 1 ? "s" : "";
     }
 
-    private List<String> getNames(List<ExperimentResult> results) {
+    private List<String> getNames(final List<RepetitionResult> results) {
 
         return results.stream().map(result -> result.name).collect(Collectors.toList());
     }
 
-    private List<DataSet> getDataSets(List<ExperimentResult> results) {
+    private List<DataSet> getDataSets(final List<RepetitionResult> results) {
 
         return results.stream().map(result -> result.data_set).collect(Collectors.toList());
     }
@@ -285,5 +253,19 @@ public abstract class Experiment implements Callable<Void> {
     private void printDateStamp() {
 
         System.out.println("experiment run at: " + new Date());
+    }
+
+    class RepetitionResult {
+
+        final String name;
+        final DataSet data_set;
+        final List<ClassificationContext> contexts;
+
+        public RepetitionResult(String name, DataSet data_set) {
+
+            this.name = name;
+            this.data_set = data_set;
+            contexts = new ArrayList<>();
+        }
     }
 }

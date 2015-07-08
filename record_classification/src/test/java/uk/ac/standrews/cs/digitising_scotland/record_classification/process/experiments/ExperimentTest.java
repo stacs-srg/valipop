@@ -1,3 +1,19 @@
+/*
+ * Copyright 2015 Digitising Scotland project:
+ * <http://digitisingscotland.cs.st-andrews.ac.uk/>
+ *
+ * This file is part of the module record_classification.
+ *
+ * record_classification is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ *
+ * record_classification is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with record_classification. If not, see
+ * <http://www.gnu.org/licenses/>.
+ */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.process.experiments;
 
 import org.junit.Before;
@@ -18,7 +34,7 @@ public class ExperimentTest {
     public static final String CODED_DATA_1K_FILE_NAME = "coded_data_1K.csv";
     public static final int NUMBER_OF_REPETITIONS = 5;
 
-    private List<Experiment.ExperimentResult> experiment_results;
+    private List<Experiment.RepetitionResult> experiment_results;
 
     @Before
     public void setup() throws Exception {
@@ -45,9 +61,9 @@ public class ExperimentTest {
 
         List<Integer> overall_bucket_sizes_across_repetitions = new ArrayList<>();
 
-        for (Experiment.ExperimentResult result : experiment_results) {
+        for (Experiment.RepetitionResult result : experiment_results) {
 
-            for (ClassificationContext context : result.repetition_contexts) {
+            for (ClassificationContext context : result.contexts) {
 
                 final int training_records_size = context.getTrainingRecords().size();
                 final int overall_records_size = context.getEvaluationRecords().size() + training_records_size;
@@ -62,11 +78,11 @@ public class ExperimentTest {
     @Test
     public void numberOfTrainingRecordsVariesAcrossRepetitionsOfEachExperiment() throws Exception {
 
-        for (Experiment.ExperimentResult result : experiment_results) {
+        for (Experiment.RepetitionResult result : experiment_results) {
 
             List<Integer> training_bucket_sizes_across_repetitions = new ArrayList<>();
 
-            for (ClassificationContext context : result.repetition_contexts) {
+            for (ClassificationContext context : result.contexts) {
 
                 training_bucket_sizes_across_repetitions.add(context.getTrainingRecords().size());
             }
@@ -84,10 +100,10 @@ public class ExperimentTest {
             training_bucket_sizes.add(new ArrayList<>());
         }
 
-        for (Experiment.ExperimentResult result : experiment_results) {
+        for (Experiment.RepetitionResult result : experiment_results) {
 
             int repetition_number = 0;
-            for (ClassificationContext context : result.repetition_contexts) {
+            for (ClassificationContext context : result.contexts) {
 
                 training_bucket_sizes.get(repetition_number++).add(context.getTrainingRecords().size());
             }

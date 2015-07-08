@@ -39,6 +39,7 @@ public class ClassificationMetrics implements Serializable {
      * Labels used in conversion of metrics to {@link DataSet dataset}.
      */
     public static final List<String> DATASET_LABELS = Arrays.asList("macro-precision", "macro-recall", "macro-accuracy", "macro-F1", "micro-precision", "micro-recall", "micro-accuracy", "micro-F1", "training time (m)", "evaluation classification time (m)");
+    public static final List<Boolean> COLUMNS_AS_PERCENTAGES = Arrays.asList(true, true, true, true, true, true, true, true, false, false);
 
     private static final long serialVersionUID = -214187549269797059L;
     public static final double ONE_MINUTE_IN_SECONDS = 60.0;
