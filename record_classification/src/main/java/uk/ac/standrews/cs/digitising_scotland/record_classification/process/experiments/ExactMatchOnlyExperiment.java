@@ -25,7 +25,11 @@ import java.util.*;
 
 public class ExactMatchOnlyExperiment extends Experiment {
 
-    protected ExactMatchOnlyExperiment(final String[] args) {
+    public ExactMatchOnlyExperiment() {
+
+    }
+
+    public ExactMatchOnlyExperiment(final String[] args) {
 
         super(args);
     }
@@ -37,8 +41,8 @@ public class ExactMatchOnlyExperiment extends Experiment {
     }
 
     @Override
-    protected List<ClassificationProcess> initClassificationProcesses() throws IOException, InputFileFormatException {
+    protected List<ClassificationProcess> getClassificationProcesses() throws IOException, InputFileFormatException {
 
-        return initClassificationProcesses(new ExactMatchClassifier());
+        return getClassificationProcesses(new ExactMatchClassifier());
     }
 }

@@ -16,12 +16,11 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.process;
 
+import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.ClassificationMetrics;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.ConfusionMatrix;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.Classifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 /**
@@ -29,45 +28,21 @@ import java.util.Random;
  *
  * @author Masih Hajiarab Derkani
  */
-public class ClassificationProcess implements Serializable {
+public class ClassificationProcessWithContext extends ClassificationProcess {
 
-    private static final long serialVersionUID = -3086230162106640193L;
+    private static final long serialVersionUID = -456456546456L;
 
-    private final List<Step> steps;
-    private final Random random;
-    private final Classifier classifier;
+    private final ClassificationContext context;
 
     /**
      * Instantiates a new classification process.
      *
      * @param random the random number generator
      */
-    public ClassificationProcess(final Classifier classifier, final Random random) {
+    public ClassificationProcessWithContext(final Classifier classifier, final Random random) {
 
-        steps = new ArrayList<>();
-        this.classifier = classifier;
-        this.random = random;
-    }
-
-    public Random getRandom() {
-
-        return random;
-    }
-
-    public Classifier getClassifier() {
-
-        return classifier;
-    }
-
-    /**
-     * Adds a step to the steps to be performed by this process.
-     *
-     * @param step the step to be performed in the classification process.
-     * @return this classification process to accommodate chaining of step additions.
-     */
-    public void addStep(Step step) {
-
-        steps.add(step);
+        super(classifier, random);
+        context = new ClassificationContext(classifier, random);
     }
 
     /**
@@ -76,12 +51,28 @@ public class ClassificationProcess implements Serializable {
      * @return the classified records, or {@code null} if no records were classified
      * @throws Exception if an error while performing the process steps
      */
-    public Bucket call(ClassificationContext context) throws Exception {
+    public Bucket call() throws Exception {
 
-        for (Step step : steps) {
-            step.perform(context);
-        }
+        return super.call(context);
+    }
 
-        return context.getClassifiedUnseenRecords();
+    /**
+     * Gets the context of this classification process.
+     *
+     * @return the context of this classification process
+     */
+    public ClassificationContext getContext() {
+
+        return context;
+    }
+
+    public ClassificationMetrics getClassificationMetrics() {
+
+        return context.getClassificationMetrics();
+    }
+
+    public ConfusionMatrix getConfusionMatrix() {
+
+        return context.getConfusionMatrix();
     }
 }

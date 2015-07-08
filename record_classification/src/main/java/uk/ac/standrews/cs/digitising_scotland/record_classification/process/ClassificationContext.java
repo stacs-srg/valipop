@@ -30,16 +30,18 @@ import java.util.Random;
  *
  * @author Masih Hajiarab Derkani
  */
-public class Context implements Serializable {
+public class ClassificationContext implements Serializable {
 
     private static final long serialVersionUID = -6389479358148790573L;
 
     private final Random random;
-    private Bucket gold_standard;
+
+    private Bucket gold_standard_records;
     private Bucket evaluation_records;
     private Bucket training_records;
-    private Classifier classifier;
     private Bucket classified_unseen_records;
+
+    private Classifier classifier;
     private ConfusionMatrix confusion_matrix;
     private ClassificationMetrics classification_metrics;
     private Duration training_time;
@@ -50,12 +52,12 @@ public class Context implements Serializable {
      *
      * @param random the random number generator
      */
-    public Context(Classifier classifier, Random random) {
+    public ClassificationContext(Classifier classifier, Random random) {
 
         this.classifier = classifier;
         this.random = random;
 
-        gold_standard = new Bucket();
+        gold_standard_records = new Bucket();
         evaluation_records = new Bucket();
         training_records = new Bucket();
     }
@@ -230,18 +232,18 @@ public class Context implements Serializable {
         this.evaluation_classification_time = evaluation_classification_time;
     }
 
-    public Bucket getGoldStandard() {
+    public Bucket getGoldStandardRecords() {
 
-        return gold_standard;
+        return gold_standard_records;
     }
 
-    public void setGoldStandard(Bucket gold_standard) {
+    public void setGoldStandardRecords(Bucket gold_standard) {
 
-        this.gold_standard = gold_standard;
+        this.gold_standard_records = gold_standard;
     }
 
     public void addGoldStandard(Bucket gold_standard) {
 
-        gold_standard.forEach(this.gold_standard::add);
+        gold_standard.forEach(this.gold_standard_records::add);
     }
 }

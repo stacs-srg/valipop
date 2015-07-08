@@ -26,12 +26,13 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.C
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.ConsistentCodingCleaner;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.InfoLevel;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.ClassificationProcess;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.ClassificationProcessWithContext;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.AddTrainingAndEvaluationRecordsByRatio;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.EvaluateClassifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.TrainClassifier;
 import uk.ac.standrews.cs.util.tools.FileManipulation;
 
+import java.io.InputStreamReader;
 import java.util.Map;
 import java.util.Random;
 
@@ -51,9 +52,10 @@ public abstract class AbstractClassificationProcessTest extends AbstractMetricsT
     @Before
     public void setup() throws Exception {
 
-        final Bucket gold_standard = new Bucket(FileManipulation.getInputStreamReaderForResource(AbstractClassificationProcessTest.class, CODED_DATA_1K_FILE_NAME));
+        InputStreamReader inputStreamReaderForResource = FileManipulation.getInputStreamReaderForResource(AbstractClassificationProcessTest.class, CODED_DATA_1K_FILE_NAME);
+        final Bucket gold_standard = new Bucket(inputStreamReaderForResource);
 
-        final ClassificationProcess process = new ClassificationProcess(getClassifier(), new Random(SEED));
+        final ClassificationProcessWithContext process = new ClassificationProcessWithContext(getClassifier(), new Random(SEED));
 
         process.addStep(new AddTrainingAndEvaluationRecordsByRatio(gold_standard, 0.8, ConsistentCodingCleaner.CORRECT));
         process.addStep(new TrainClassifier());

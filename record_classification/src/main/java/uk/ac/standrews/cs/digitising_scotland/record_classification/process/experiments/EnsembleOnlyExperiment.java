@@ -40,8 +40,8 @@ public class EnsembleOnlyExperiment extends Experiment {
     }
 
     @Override
-    protected List<ClassificationProcess> initClassificationProcesses() throws IOException, InputFileFormatException {
+    protected List<ClassificationProcess> getClassificationProcesses() throws IOException, InputFileFormatException {
 
-        return initClassificationProcesses(new EnsembleVotingClassifier(Arrays.asList(new StringSimilarityClassifier(StringSimilarityMetric.LEVENSHTEIN), new StringSimilarityClassifier(StringSimilarityMetric.JARO_WINKLER))));
+        return getClassificationProcesses(new EnsembleVotingClassifier(Arrays.asList(new StringSimilarityClassifier(StringSimilarityMetric.LEVENSHTEIN), new StringSimilarityClassifier(StringSimilarityMetric.JARO_WINKLER))));
     }
 }

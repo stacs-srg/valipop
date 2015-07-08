@@ -18,8 +18,8 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.ClassificationProcess;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.Context;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.ClassificationContext;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.ClassificationProcessWithContext;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -34,7 +34,9 @@ import java.util.Random;
 @Parameters(commandNames = InitCommand.NAME, commandDescription = "Initialise a new classification process", separators = "=")
 class InitCommand extends Command {
 
-    /** The name of this command */
+    /**
+     * The name of this command
+     */
     public static final String NAME = "init";
 
     public static final long SEED = 34234234234L;
@@ -50,8 +52,8 @@ class InitCommand extends Command {
     @Override
     public Void call() throws Exception {
 
-        final ClassificationProcess process =new ClassificationProcess(classifier, new Random(SEED));
-        final Context context = process.getContext();
+        final ClassificationProcessWithContext process = new ClassificationProcessWithContext(classifier, new Random(SEED));
+        final ClassificationContext context = process.getContext();
         perform(context);
 
         final Path process_working_directory = Paths.get(name);
@@ -62,7 +64,7 @@ class InitCommand extends Command {
     }
 
     @Override
-    public void perform(final Context context) throws Exception {
+    public void perform(final ClassificationContext context) throws Exception {
 
     }
 }

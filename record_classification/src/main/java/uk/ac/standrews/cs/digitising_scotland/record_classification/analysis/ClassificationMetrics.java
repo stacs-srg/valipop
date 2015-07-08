@@ -78,6 +78,11 @@ public class ClassificationMetrics implements Serializable {
         return dataset;
     }
 
+    public List<String> getValues() {
+
+        return toDataSetRow(this);
+    }
+
     /**
      * Converts a collection of metrics into {@link DataSet dataset} with labels set to {@link #DATASET_LABELS}.
      *
