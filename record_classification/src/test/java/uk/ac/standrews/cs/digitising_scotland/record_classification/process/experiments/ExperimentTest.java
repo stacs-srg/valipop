@@ -20,26 +20,27 @@ import org.junit.Before;
 import org.junit.Test;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.InfoLevel;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.ClassificationContext;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.experiments.generic.Experiment;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.experiments.specific.ExactMatchAndStringSimilarityExperiment;
 import uk.ac.standrews.cs.util.tools.FileManipulation;
 
 import java.io.File;
 import java.util.*;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 public class ExperimentTest {
 
     public static final String CODED_DATA_1K_FILE_NAME = "coded_data_1K.csv";
     public static final int NUMBER_OF_REPETITIONS = 5;
 
+    private Experiment experiment;
     private List<Experiment.RepetitionResult> experiment_results;
 
     @Before
     public void setup() throws Exception {
 
-        Experiment experiment = new ExactMatchAndStringSimilarityExperiment();
+        experiment = new ExactMatchAndStringSimilarityExperiment();
 
         File resourceFile = FileManipulation.getResourceFile(AbstractClassificationProcessTest.class, CODED_DATA_1K_FILE_NAME);
 
@@ -53,7 +54,7 @@ public class ExperimentTest {
     @Test
     public void resultsContainDataForTwoClassifiers() throws Exception {
 
-        assertEquals(experiment_results.size(), 2);
+        assertEquals(experiment_results.size(), experiment.getProcesses().size());
     }
 
     @Test
@@ -63,7 +64,7 @@ public class ExperimentTest {
 
         for (Experiment.RepetitionResult result : experiment_results) {
 
-            for (ClassificationContext context : result.contexts) {
+            for (ClassificationContext context : result.getContexts()) {
 
                 final int training_records_size = context.getTrainingRecords().size();
                 final int overall_records_size = context.getEvaluationRecords().size() + training_records_size;
@@ -82,7 +83,7 @@ public class ExperimentTest {
 
             List<Integer> training_bucket_sizes_across_repetitions = new ArrayList<>();
 
-            for (ClassificationContext context : result.contexts) {
+            for (ClassificationContext context : result.getContexts()) {
 
                 training_bucket_sizes_across_repetitions.add(context.getTrainingRecords().size());
             }
@@ -103,7 +104,7 @@ public class ExperimentTest {
         for (Experiment.RepetitionResult result : experiment_results) {
 
             int repetition_number = 0;
-            for (ClassificationContext context : result.contexts) {
+            for (ClassificationContext context : result.getContexts()) {
 
                 training_bucket_sizes.get(repetition_number++).add(context.getTrainingRecords().size());
             }

@@ -39,10 +39,15 @@ public class ClassificationProcessWithContext extends ClassificationProcess {
      *
      * @param random the random number generator
      */
+    public ClassificationProcessWithContext(final ClassifierFactory factory, final Random random) {
+
+        super(factory, random);
+        context = new ClassificationContext(factory.getClassifier(), random);
+    }
+
     public ClassificationProcessWithContext(final Classifier classifier, final Random random) {
 
-        super(classifier, random);
-        context = new ClassificationContext(classifier, random);
+        this(() -> classifier, random);
     }
 
     /**

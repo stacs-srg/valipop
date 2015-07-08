@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License along with record_classification. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.digitising_scotland.record_classification.process.experiments;
+package uk.ac.standrews.cs.digitising_scotland.record_classification.process.experiments.generic;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
@@ -31,6 +31,7 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.InfoLevel;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.ClassificationContext;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.ClassificationProcess;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.ClassifierFactory;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.Step;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.AddTrainingAndEvaluationRecordsByRatio;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.EvaluateClassifier;
@@ -74,6 +75,7 @@ public abstract class Experiment implements Callable<Void> {
     private static final String EVALUATION_TIME_HEADER = "evaluation time (m)";
 
     private final JCommander commander;
+    private final List<ClassificationProcess> processes;
 
     @Parameter(names = {"-v", "--verbosity"}, description = DESCRIPTION_VERBOSITY)
     private InfoLevel verbosity = DEFAULT_VERBOSITY;
@@ -92,12 +94,13 @@ public abstract class Experiment implements Callable<Void> {
 
     public static final Cleaner[] CLEANERS = new Cleaner[]{new EnglishStopWordCleaner(), new PorterStemCleaner(), ConsistentCodingCleaner.CORRECT};
 
-    protected Experiment() {
+    protected Experiment() throws IOException, InputFileFormatException {
 
         commander = new JCommander(this);
+        processes = getClassificationProcesses();
     }
 
-    protected Experiment(final String[] args) {
+    protected Experiment(final String[] args) throws IOException, InputFileFormatException {
 
         this();
 
@@ -141,7 +144,6 @@ public abstract class Experiment implements Callable<Void> {
 
     public List<RepetitionResult> getExperimentResults() throws Exception {
 
-        final List<ClassificationProcess> processes = getClassificationProcesses();
         final Map<ClassificationProcess, RepetitionResult> results = makeResultsMap(processes);
 
         // Loop nesting is this way round to avoid performing all repetitions of a given process consecutively, given
@@ -155,30 +157,50 @@ public abstract class Experiment implements Callable<Void> {
         return new ArrayList<>(results.values());
     }
 
+    public List<ClassificationProcess> getProcesses() {
+
+        return processes;
+    }
+
     /**
      * Initialises a fresh list of classification process for each repetition.
+     * New classifier instances need to be created each repetition.
      *
      * @return the list of classification processes to be run for a single repetition.
      * @throws IOException              if an error occurs while reading the input data
      * @throws InputFileFormatException if the input data files are in an unsupported format
      */
-    protected abstract List<ClassificationProcess> getClassificationProcesses() throws IOException, InputFileFormatException;
+    protected abstract List<ClassifierFactory> getClassifierFactories() throws IOException, InputFileFormatException;
 
-    protected List<ClassificationProcess> getClassificationProcesses(final Classifier... classifiers) throws IOException, InputFileFormatException {
+    protected List<ClassificationProcess> getClassificationProcesses() throws IOException, InputFileFormatException {
 
         final List<ClassificationProcess> processes = new ArrayList<>();
 
-        for (final Classifier classifier : classifiers) {
-            processes.add(getClassificationProcess(classifier));
+        for (final ClassifierFactory factory : getClassifierFactories()) {
+            processes.add(getClassificationProcess(factory));
         }
 
         return processes;
     }
 
+    private ClassificationProcess getClassificationProcess(ClassifierFactory factory) throws IOException, InputFileFormatException {
+
+        final ClassificationProcess process = new ClassificationProcess(factory, new Random(SEED));
+
+        for (int i = 0; i < gold_standard_files.size(); i++) {
+            process.addStep(makeAddRecordsStep(i));
+        }
+
+        process.addStep(new TrainClassifier());
+        process.addStep(new EvaluateClassifier(verbosity));
+
+        return process;
+    }
+
     private void callProcess(final ClassificationProcess process, final Map<ClassificationProcess, RepetitionResult> results) throws Exception {
 
         final RepetitionResult result = results.get(process);
-        final ClassificationContext context = new ClassificationContext(process);
+        final ClassificationContext context = new ClassificationContext(process.getClassifierFactory().getClassifier(), process.getRandom());
 
         process.call(context);
 
@@ -209,7 +231,7 @@ public abstract class Experiment implements Callable<Void> {
 
     private RepetitionResult makeRepetitionResult(final ClassificationProcess process) {
 
-        return new RepetitionResult(process.getClassifier().getName(), new DataSet(getDataSetLabelsWithTimingColumns()));
+        return new RepetitionResult(process.getName(), new DataSet(getDataSetLabelsWithTimingColumns()));
     }
 
     private List<String> getDataSetLabelsWithTimingColumns() {
@@ -218,20 +240,6 @@ public abstract class Experiment implements Callable<Void> {
         labels.add(TRAINING_TIME_HEADER);
         labels.add(EVALUATION_TIME_HEADER);
         return labels;
-    }
-
-    private ClassificationProcess getClassificationProcess(final Classifier classifier) throws IOException, InputFileFormatException {
-
-        final ClassificationProcess process = new ClassificationProcess(classifier, new Random(SEED));
-
-        for (int i = 0; i < gold_standard_files.size(); i++) {
-            process.addStep(makeAddRecordsStep(i));
-        }
-
-        process.addStep(new TrainClassifier());
-        process.addStep(new EvaluateClassifier(verbosity));
-
-        return process;
     }
 
     private void parse(final String[] args) {
@@ -287,7 +295,7 @@ public abstract class Experiment implements Callable<Void> {
         System.out.println("experiment run at: " + new Date());
     }
 
-    class RepetitionResult {
+    public class RepetitionResult {
 
         final String name;
         final DataSet data_set;
@@ -298,6 +306,11 @@ public abstract class Experiment implements Callable<Void> {
             this.name = name;
             this.data_set = data_set;
             contexts = new ArrayList<>();
+        }
+
+        public List<ClassificationContext> getContexts() {
+
+            return contexts;
         }
     }
 }

@@ -14,32 +14,38 @@
  * You should have received a copy of the GNU General Public License along with record_classification. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.digitising_scotland.record_classification.process.experiments;
+package uk.ac.standrews.cs.digitising_scotland.record_classification.process.experiments.specific;
 
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.linear_regression.OLRClassifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.experiments.generic.Experiment;
 
 import java.io.*;
 import java.util.*;
 
-public class ExactMatchAndDummyExperiment extends Experiment {
+public class ExactMatchOnlyExperiment extends Experiment {
 
-    protected ExactMatchAndDummyExperiment(final String[] args) {
+    public ExactMatchOnlyExperiment() throws IOException, InputFileFormatException {
+
+    }
+
+    public ExactMatchOnlyExperiment(final String[] args) throws IOException, InputFileFormatException {
 
         super(args);
     }
 
-    public static void main(final String[] args) throws Exception {
+    public static void main(String[] args) throws Exception {
 
-        final ExactMatchAndDummyExperiment experiment = new ExactMatchAndDummyExperiment(args);
+        final ExactMatchOnlyExperiment experiment = new ExactMatchOnlyExperiment(args);
         experiment.call();
-
     }
 
     @Override
-    protected List<ClassificationProcess> getClassificationProcesses() throws IOException, InputFileFormatException {
+    protected List<ClassifierFactory> getClassifierFactories() throws IOException, InputFileFormatException {
 
-        return getClassificationProcesses(new ExactMatchClassifier(), new DummyClassifier());
+        return Arrays.asList(() -> new ExactMatchClassifier());
+
     }
 }

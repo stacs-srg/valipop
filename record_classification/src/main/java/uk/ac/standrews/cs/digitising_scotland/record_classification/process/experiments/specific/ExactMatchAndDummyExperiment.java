@@ -19,30 +19,28 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.process.exp
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.experiments.generic.Experiment;
 
 import java.io.*;
 import java.util.*;
 
-public class ExactMatchOnlyExperiment extends Experiment {
+public class ExactMatchAndDummyExperiment extends Experiment {
 
-    public ExactMatchOnlyExperiment() {
-
-    }
-
-    public ExactMatchOnlyExperiment(final String[] args) {
+    protected ExactMatchAndDummyExperiment(final String[] args) throws IOException, InputFileFormatException {
 
         super(args);
     }
 
-    public static void main(String[] args) throws Exception {
+    public static void main(final String[] args) throws Exception {
 
-        final ExactMatchOnlyExperiment experiment = new ExactMatchOnlyExperiment(args);
+        final ExactMatchAndDummyExperiment experiment = new ExactMatchAndDummyExperiment(args);
         experiment.call();
+
     }
 
     @Override
-    protected List<ClassificationProcess> getClassificationProcesses() throws IOException, InputFileFormatException {
+    protected List<ClassifierFactory> getClassifierFactories() throws IOException, InputFileFormatException {
 
-        return getClassificationProcesses(new ExactMatchClassifier());
+        return Arrays.asList(() -> new ExactMatchClassifier(), () -> new DummyClassifier());
     }
 }
