@@ -17,7 +17,6 @@
 package old.record_classification_old.tools;
 
 import com.google.common.io.Files;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.apache.commons.io.output.FileWriterWithEncoding;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -314,7 +313,6 @@ public final class Utils {
      * @return number of lines.
      * @throws IOException Will throw is we can't din the file.
      */
-    @SuppressFBWarnings(value = "RV_DONT_JUST_NULL_CHECK_READLINE")
     public static int getNumberOfLines(final File file) throws IOException {
 
         try (BufferedReader reader = java.nio.file.Files.newBufferedReader(Paths.get(file.getAbsolutePath()), FileManipulation.FILE_CHARSET)) {

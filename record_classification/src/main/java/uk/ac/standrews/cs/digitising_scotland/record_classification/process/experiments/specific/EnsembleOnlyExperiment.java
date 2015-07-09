@@ -16,12 +16,12 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.process.experiments.specific;
 
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.EnsembleVotingClassifier;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.StringSimilarityClassifier;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.ensemble.EnsembleVotingClassifier;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.string_similarity.StringSimilarityClassifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.InputFileFormatException;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.ClassifierFactory;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.experiments.generic.Experiment;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.util.StringSimilarityMetric;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.string_similarity.StringSimilarityMetric;
 
 import java.io.IOException;
 import java.util.Arrays;

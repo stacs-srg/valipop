@@ -18,8 +18,9 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier;
 
 import org.apache.commons.lang3.*;
 import org.junit.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.string_similarity.StringSimilarityClassifier;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.string_similarity.StringSimilarityMetric;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.util.*;
 
 import static org.junit.Assert.*;
 

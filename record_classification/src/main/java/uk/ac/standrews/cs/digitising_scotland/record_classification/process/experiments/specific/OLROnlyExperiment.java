@@ -16,14 +16,10 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.process.experiments.specific;
 
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.Classifier;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.EnsembleVotingClassifier;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.StringSimilarityClassifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.linear_regression.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.experiments.generic.Experiment;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.util.StringSimilarityMetric;
 
 import java.io.*;
 import java.util.*;

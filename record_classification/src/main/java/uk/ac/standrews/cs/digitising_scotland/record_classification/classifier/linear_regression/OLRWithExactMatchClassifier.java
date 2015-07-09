@@ -14,8 +14,9 @@
  * You should have received a copy of the GNU General Public License along with record_classification. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier;
+package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.linear_regression;
 
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.ClassifierPlusExactMatchClassifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.linear_regression.OLRClassifier;
 
 public class OLRWithExactMatchClassifier extends ClassifierPlusExactMatchClassifier {

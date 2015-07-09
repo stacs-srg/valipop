@@ -21,7 +21,6 @@ import com.beust.jcommander.Parameter;
 import com.beust.jcommander.ParameterException;
 import com.beust.jcommander.converters.FileConverter;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.ClassificationMetrics;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.Classifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.Cleaner;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.ConsistentCodingCleaner;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.EnglishStopWordCleaner;
@@ -75,7 +74,7 @@ public abstract class Experiment implements Callable<Void> {
     private static final String EVALUATION_TIME_HEADER = "evaluation time (m)";
 
     private final JCommander commander;
-    private final List<ClassificationProcess> processes;
+    private List<ClassificationProcess> processes;
 
     @Parameter(names = {"-v", "--verbosity"}, description = DESCRIPTION_VERBOSITY)
     private InfoLevel verbosity = DEFAULT_VERBOSITY;
@@ -97,7 +96,6 @@ public abstract class Experiment implements Callable<Void> {
     protected Experiment() throws IOException, InputFileFormatException {
 
         commander = new JCommander(this);
-        processes = getClassificationProcesses();
     }
 
     protected Experiment(final String[] args) throws IOException, InputFileFormatException {
@@ -114,6 +112,7 @@ public abstract class Experiment implements Callable<Void> {
 
     @Override
     public Void call() throws Exception {
+
 
         if (verbosity != InfoLevel.NONE) {
             printSummarisedResults(getExperimentResults());
@@ -144,6 +143,8 @@ public abstract class Experiment implements Callable<Void> {
 
     public List<RepetitionResult> getExperimentResults() throws Exception {
 
+        processes = getClassificationProcesses();
+
         final Map<ClassificationProcess, RepetitionResult> results = makeResultsMap(processes);
 
         // Loop nesting is this way round to avoid performing all repetitions of a given process consecutively, given
@@ -151,7 +152,7 @@ public abstract class Experiment implements Callable<Void> {
         for (int i = 0; i < repetitions; i++) {
 
             for (final ClassificationProcess process : processes) {
-                callProcess(process, results);
+                performClassificationProcess(process, results);
             }
         }
         return new ArrayList<>(results.values());
@@ -197,18 +198,18 @@ public abstract class Experiment implements Callable<Void> {
         return process;
     }
 
-    private void callProcess(final ClassificationProcess process, final Map<ClassificationProcess, RepetitionResult> results) throws Exception {
+    private void performClassificationProcess(final ClassificationProcess process, final Map<ClassificationProcess, RepetitionResult> results) throws Exception {
 
-        final RepetitionResult result = results.get(process);
         final ClassificationContext context = new ClassificationContext(process.getClassifierFactory().getClassifier(), process.getRandom());
 
         process.call(context);
 
-        result.data_set.addRow(getResultValues(context));
+        final RepetitionResult result = results.get(process);
+        result.data_set.addRow(getResultValuesWithTimings(context));
         result.contexts.add(context);
     }
 
-    private List<String> getResultValues(final ClassificationContext context) {
+    private List<String> getResultValuesWithTimings(final ClassificationContext context) {
 
         final List<String> values = context.getClassificationMetrics().getValues();
 

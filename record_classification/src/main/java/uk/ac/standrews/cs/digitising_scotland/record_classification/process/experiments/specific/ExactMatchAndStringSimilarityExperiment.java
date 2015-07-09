@@ -17,11 +17,11 @@
 package uk.ac.standrews.cs.digitising_scotland.record_classification.process.experiments.specific;
 
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.ExactMatchClassifier;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.StringSimilarityClassifier;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.string_similarity.StringSimilarityClassifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.InputFileFormatException;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.ClassifierFactory;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.experiments.generic.Experiment;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.util.StringSimilarityMetric;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.string_similarity.StringSimilarityMetric;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -31,6 +31,7 @@ public class ExactMatchAndStringSimilarityExperiment extends Experiment {
 
     public ExactMatchAndStringSimilarityExperiment() throws IOException, InputFileFormatException {
 
+        super();
     }
 
     public ExactMatchAndStringSimilarityExperiment(final String[] args) throws IOException, InputFileFormatException {
