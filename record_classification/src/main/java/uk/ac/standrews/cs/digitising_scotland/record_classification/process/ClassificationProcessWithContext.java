@@ -43,18 +43,12 @@ public class ClassificationProcessWithContext extends ClassificationProcess impl
     public ClassificationProcessWithContext(final ClassifierFactory factory, final Random random) {
 
         super(factory, random);
-        context = new ClassificationContext(factory.getClassifier(), random);
+        context = new ClassificationContext(factory.get(), random);
     }
 
     public ClassificationProcessWithContext(final Classifier classifier, final Random random) {
 
-        this(
-                new AbstractClassifierFactory() {
-                    @Override
-                    public Classifier getClassifier() {
-                        return classifier;
-                    }
-                }, random);
+        this(() -> classifier, random);
     }
 
     /**
