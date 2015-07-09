@@ -41,24 +41,24 @@ class ClassifyCommand extends Command {
     private static final long serialVersionUID = -5931407069557436051L;
 
     @Parameter(required = true, description = "Path to the unseen data to classify,", converter = FileConverter.class)
-    private File unseen_data;
+    private List<File> unseen_data;
 
     @Parameter(required = true, names = {"-o", "--output"}, description = "Path to the place to persist the classified records.", converter = FileConverter.class)
     private File destination;
 
-    @Parameter(names = {"-d", "--delimiter"}, description = "The delimiter character of three column unseen data.")
-    private char delimiter = '|';
+    @Parameter(names = {"-d", "--delimiter"}, description = DELIMITER_DESCRIPTION)
+    private char delimiter = DEFAULT_DELIMITER;
 
     @Override
     public void perform(final ClassificationContext context) throws Exception {
 
-        final CSVFormat input_format = CSVFormat.newFormat(delimiter);
-        final DataSet unseen_dataset = new DataSet(new FileReader(unseen_data), input_format);
-        final List<String> labels = unseen_dataset.getColumnLabels();
-        final Bucket unseen_data = new Bucket(unseen_dataset);
+        final CSVFormat input_format = getDataFormat(delimiter);
+        final DataSet unseen_data_set = new DataSet(new FileReader(unseen_data.get(0)), input_format);
+        final List<String> labels = unseen_data_set.getColumnLabels();
+        final Bucket unseen_data = new Bucket(unseen_data_set);
         new ClassifyUnseenRecords(unseen_data).perform(context);
 
-        final DataSet classified_dataset = context.getClassifiedUnseenRecords().toDataSet(labels, input_format);
-        persistDataSet(destination.toPath(), classified_dataset);
+        final DataSet classified_data_set = context.getClassifiedUnseenRecords().toDataSet(labels, input_format);
+        persistDataSet(destination.toPath(), classified_data_set);
     }
 }

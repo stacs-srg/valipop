@@ -16,25 +16,41 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli;
 
-import org.apache.commons.lang3.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.*;
-import uk.ac.standrews.cs.util.dataset.*;
+import com.beust.jcommander.Parameter;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.lang3.SerializationUtils;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.ClassificationProcess;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.ClassificationProcessWithContext;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.Step;
+import uk.ac.standrews.cs.util.dataset.DataSet;
 
-import java.io.*;
-import java.nio.charset.*;
-import java.nio.file.*;
-import java.util.concurrent.*;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.concurrent.Callable;
 
 /**
  * Captures the common functionality among the command-line interface commands.
  *
- * @author masih
+ * @author Masih Hajiarab Derkani
+ * @author Graham Kirby
  */
 abstract class Command implements Callable<Void>, Step {
 
-    static final String SERIALIZED_CLASSIFICATION_PROCESS_NAME = "process." + Launcher.PROGRAM_NAME;
-    static final Path SERIALIZED_CLASSIFICATION_PROCESS_PATH = Paths.get(SERIALIZED_CLASSIFICATION_PROCESS_NAME);
+    private static final String SERIALIZED_CLASSIFICATION_PROCESS_NAME = "process." + Launcher.PROGRAM_NAME;
+    private static final Path SERIALIZED_CLASSIFICATION_PROCESS_PATH = Paths.get(SERIALIZED_CLASSIFICATION_PROCESS_NAME);
+
     private static final long serialVersionUID = -2176702491500665712L;
+
+    public static final String DEFAULT_PROCESS_NAME = "classification_process";
+    protected static final char DEFAULT_DELIMITER = ',';
+    protected static final String DELIMITER_DESCRIPTION = "The data file delimiter character (default " + DEFAULT_DELIMITER + ").";
+
+    @Parameter(names = {"-n", "--name"}, description = "The name of the classification process.")
+    protected String name = DEFAULT_PROCESS_NAME;
 
     @Override
     public Void call() throws Exception {
@@ -45,22 +61,30 @@ abstract class Command implements Callable<Void>, Step {
         return null;
     }
 
-    protected ClassificationProcessWithContext loadClassificationProcess() throws IOException {
-
-        if (Files.isRegularFile(SERIALIZED_CLASSIFICATION_PROCESS_PATH)) {
-            final byte[] process_bytes = Files.readAllBytes(SERIALIZED_CLASSIFICATION_PROCESS_PATH);
-            return (ClassificationProcessWithContext) SerializationUtils.deserialize(process_bytes);
-        }
-
-        throw new IOException("No suitable classification process file found; expected a file named " + SERIALIZED_CLASSIFICATION_PROCESS_NAME + " at the current working directory.");
-    }
-
     protected void persistClassificationProcess(ClassificationProcess process) throws IOException {
 
-        persistClassificationProcess(process, SERIALIZED_CLASSIFICATION_PROCESS_PATH);
+        persistClassificationProcess(process, getSerializedClassificationProcessPath());
     }
 
-    protected void persistClassificationProcess(ClassificationProcess process, Path destination) throws IOException {
+    protected CSVFormat getDataFormat(char delimiter) {
+
+        return DataSet.DEFAULT_CSV_FORMAT.withDelimiter(delimiter);
+    }
+
+    private ClassificationProcessWithContext loadClassificationProcess() throws IOException {
+
+        Path serialized_classification_process_path = getSerializedClassificationProcessPath();
+
+        if (!Files.isRegularFile(serialized_classification_process_path)) {
+
+            throw new IOException("No suitable classification process file found; expected a file named " + serialized_classification_process_path + " at the current working directory.");
+        }
+
+        final byte[] process_bytes = Files.readAllBytes(serialized_classification_process_path);
+        return (ClassificationProcessWithContext) SerializationUtils.deserialize(process_bytes);
+    }
+
+    private void persistClassificationProcess(ClassificationProcess process, Path destination) throws IOException {
 
         final byte[] process_bytes = SerializationUtils.serialize(process);
         Files.write(destination, process_bytes);
@@ -71,5 +95,10 @@ abstract class Command implements Callable<Void>, Step {
         try (final BufferedWriter out = Files.newBufferedWriter(destination, StandardCharsets.UTF_8)) {
             dataset.print(out);
         }
+    }
+
+    protected Path getSerializedClassificationProcessPath() {
+
+        return Paths.get(name).resolve(SERIALIZED_CLASSIFICATION_PROCESS_PATH);
     }
 }

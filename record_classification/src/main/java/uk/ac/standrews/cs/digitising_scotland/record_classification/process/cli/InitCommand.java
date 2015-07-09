@@ -43,21 +43,18 @@ class InitCommand extends Command {
 
     private static final long serialVersionUID = 5738604903474935932L;
 
-    @Parameter(required = true, names = {"-n", "--name"}, description = "The name of the classification process.")
-    private String name;
-
     @Parameter(required = true, names = {"-c", "--classifier"}, description = "The classifier to use for classification process.")
     private Classifiers classifier;
+
 
     @Override
     public Void call() throws Exception {
 
         final ClassificationProcessWithContext process = new ClassificationProcessWithContext(classifier, new Random(SEED));
-        perform(process.getContext());
 
-        final Path process_working_directory = Paths.get(name);
+        Path process_working_directory = Paths.get(name);
         Files.createDirectory(process_working_directory);
-        persistClassificationProcess(process, process_working_directory.resolve(SERIALIZED_CLASSIFICATION_PROCESS_PATH));
+        persistClassificationProcess(process);
 
         return null; // void task
     }

@@ -16,15 +16,17 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli;
 
-import com.beust.jcommander.*;
-import com.beust.jcommander.converters.*;
-import org.apache.commons.csv.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.*;
-import uk.ac.standrews.cs.util.dataset.*;
+import com.beust.jcommander.Parameter;
+import com.beust.jcommander.Parameters;
+import com.beust.jcommander.converters.FileConverter;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.ClassificationContext;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.AddTrainingAndEvaluationRecordsByRatio;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.TrainClassifier;
+import uk.ac.standrews.cs.util.dataset.DataSet;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileReader;
 
 /**
  * The train command of classification process command line interface.
@@ -41,19 +43,18 @@ class TrainCommand extends Command {
     @Parameter(required = true, names = {"-g", "--goldStandard"}, description = "Path to a CSV file containing the gold standard.", converter = FileConverter.class)
     private File gold_standard;
 
-    @Parameter(names = {"-d", "--delimiter"}, description = "The delimiter character of three column gold standard data.")
-    private char delimiter = '|';
-
     @Parameter(required = true, names = {"-r", "--trainingRecordRatio"}, description = "The ratio of gold standard records to be used for training. The value must be between 0.0 to 1.0 (inclusive).")
     private Double training_ratio;
+
+    @Parameter(names = {"-d", "--delimiter"}, description = DELIMITER_DESCRIPTION)
+    private char delimiter = DEFAULT_DELIMITER;
 
     @Override
     public void perform(final ClassificationContext context) throws Exception {
 
-        final DataSet gold_standard_dataset = new DataSet(new FileReader(gold_standard), CSVFormat.newFormat(delimiter));
-        final Bucket gold_standard = new Bucket(gold_standard_dataset);
+        final Bucket gold_standard_records = new Bucket(new DataSet(new FileReader(gold_standard), getDataFormat(delimiter)));
 
-        new AddTrainingAndEvaluationRecordsByRatio(gold_standard, training_ratio).perform(context);
+        new AddTrainingAndEvaluationRecordsByRatio(gold_standard_records, training_ratio).perform(context);
         new TrainClassifier().perform(context);
     }
 }

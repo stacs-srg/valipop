@@ -16,15 +16,16 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli;
 
-import com.beust.jcommander.*;
-import com.beust.jcommander.converters.*;
-import org.apache.commons.csv.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.*;
-import uk.ac.standrews.cs.util.dataset.*;
+import com.beust.jcommander.Parameter;
+import com.beust.jcommander.Parameters;
+import com.beust.jcommander.converters.FileConverter;
+import org.apache.commons.csv.CSVFormat;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.ClassificationContext;
+import uk.ac.standrews.cs.util.dataset.DataSet;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.FileReader;
 
 /**
  * Clean command of the classification process.
@@ -47,19 +48,20 @@ class CleanCommand extends Command {
     @Parameter(required = true, names = {"-o", "--output"}, description = "Path to store the cleaned data.", converter = FileConverter.class)
     private File destination;
 
-    @Parameter(names = {"-d", "--delimiter"}, description = "The delimiter character of three column source data.")
-    private char delimiter = '|';
+    @Parameter(names = {"-d", "--delimiter"}, description = DELIMITER_DESCRIPTION)
+    private char delimiter = DEFAULT_DELIMITER;
 
     @Override
     public void perform(final ClassificationContext context) throws Exception {
 
-        final CSVFormat input_format = CSVFormat.newFormat(delimiter);
-        final DataSet source_dataset = new DataSet(new FileReader(source), input_format);
-        final List<String> input_column_labels = source_dataset.getColumnLabels();
-        final Bucket source_data = new Bucket(source_dataset);
+        final CSVFormat csv_format = getDataFormat(delimiter);
+        final DataSet source_data_set = new DataSet(new FileReader(source), csv_format);
 
+        final Bucket source_data = new Bucket(source_data_set);
         final Bucket cleaned_data = cleaner.clean(source_data);
-        final DataSet cleaned_dataset = cleaned_data.toDataSet(input_column_labels, input_format);
-        persistDataSet(destination.toPath(), cleaned_dataset);
+
+        final DataSet cleaned_data_set = cleaned_data.toDataSet(source_data_set.getColumnLabels(), csv_format);
+
+        persistDataSet(destination.toPath(), cleaned_data_set);
     }
 }
