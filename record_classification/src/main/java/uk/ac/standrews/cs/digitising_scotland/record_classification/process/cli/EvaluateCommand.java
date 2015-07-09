@@ -44,8 +44,8 @@ class EvaluateCommand extends Command {
     @Parameter(required = true, names = {"-o", "--output"}, description = "Path to the place to persist the evaluation results.", converter = FileConverter.class)
     private File destination;
 
-    @Parameter(names = {"-d", "--delimiter"}, description = "The delimiter character of the output results.")
-    private char delimiter = '|';
+    @Parameter(names = {"-d", "--delimiter"}, description = DELIMITER_DESCRIPTION)
+    private char delimiter = DEFAULT_DELIMITER;
 
     @Override
     public void perform(final ClassificationContext context) throws Exception {
@@ -55,8 +55,8 @@ class EvaluateCommand extends Command {
         new EvaluateClassifier().perform(context);
         results.add(context.getClassificationMetrics());
 
-        final CSVFormat format = CSVFormat.newFormat(delimiter);
-        final DataSet dataset = ClassificationMetrics.toDataSet(results, format);
-        persistDataSet(destination.toPath(), dataset);
+        final CSVFormat format = getDataFormat(delimiter);
+        final DataSet data_set = ClassificationMetrics.toDataSet(results, format);
+        persistDataSet(destination.toPath(), data_set);
     }
 }

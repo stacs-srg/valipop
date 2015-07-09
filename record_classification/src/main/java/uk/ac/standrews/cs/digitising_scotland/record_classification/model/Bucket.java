@@ -52,8 +52,9 @@ public class Bucket implements Iterable<Record>, Serializable {
 
         for (List<String> record : records_csv.getRecords()) {
 
-            if (record.size() != 3)
+            if (record.size() != 3) {
                 throw new InputFileFormatException("record should contain 3 values");
+            }
 
             int id = Integer.parseInt(record.get(0));
             String data = record.get(1);
@@ -70,7 +71,6 @@ public class Bucket implements Iterable<Record>, Serializable {
      */
     public Bucket() {
 
-        //        records = new ArrayList<>();
         records = new TreeSet<>();
     }
 

@@ -21,6 +21,7 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.Con
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.Classifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
 
+import java.io.Serializable;
 import java.util.Random;
 
 /**
@@ -28,7 +29,7 @@ import java.util.Random;
  *
  * @author Masih Hajiarab Derkani
  */
-public class ClassificationProcessWithContext extends ClassificationProcess {
+public class ClassificationProcessWithContext extends ClassificationProcess implements Serializable {
 
     private static final long serialVersionUID = -456456546456L;
 
@@ -47,7 +48,13 @@ public class ClassificationProcessWithContext extends ClassificationProcess {
 
     public ClassificationProcessWithContext(final Classifier classifier, final Random random) {
 
-        this(() -> classifier, random);
+        this(
+                new AbstractClassifierFactory() {
+                    @Override
+                    public Classifier getClassifier() {
+                        return classifier;
+                    }
+                }, random);
     }
 
     /**
