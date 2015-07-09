@@ -14,36 +14,29 @@
  * You should have received a copy of the GNU General Public License along with record_classification. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier;
+package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.string_similarity;
 
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
+import org.simmetrics.SetMetric;
+import org.simmetrics.StringMetric;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.TokenSet;
 
-public class DummyClassifier implements Classifier {
+import java.util.Set;
 
-    private static final long serialVersionUID = -687342270805724715L;
-    private String a_code;
+public class SetMetricAdapter implements StringMetric {
 
-    public void train(final Bucket bucket) {
+    SetMetric<String> set_metric;
 
-        for (Record record : bucket) {
-            a_code = record.getClassification().getCode();
-        }
-    }
+    public SetMetricAdapter(SetMetric<String> set_metric) {
 
-    public Classification classify(final String data) {
-
-        return new Classification(a_code, new TokenSet(), 0.0);
+        this.set_metric = set_metric;
     }
 
     @Override
-    public String getName() {
+    public float compare(String s1, String s2) {
 
-        return getClass().getSimpleName();
-    }
+        Set<String> set1 = new TokenSet(s1);
+        Set<String> set2 = new TokenSet(s2);
 
-    @Override
-    public String getDescription() {
-
-        return "A dummy classifier; for testing purposes";
+        return set_metric.compare(set1, set2);
     }
 }

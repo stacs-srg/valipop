@@ -16,7 +16,7 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.process.experiments.specific;
 
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.OLRWithExactMatchClassifier;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.linear_regression.OLRWithExactMatchClassifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.InputFileFormatException;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.ClassifierFactory;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.experiments.generic.Experiment;

@@ -16,6 +16,7 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier;
 
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.ensemble.EnsembleClassifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 
 import java.util.*;

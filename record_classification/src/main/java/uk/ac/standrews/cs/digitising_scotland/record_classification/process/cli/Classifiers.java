@@ -17,9 +17,12 @@
 package uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli;
 
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.linear_regression.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.util.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.ensemble.EnsembleVotingClassifier;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.linear_regression.OLRClassifier;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.string_similarity.StringSimilarityClassifier;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.string_similarity.StringSimilarityMetric;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Classification;
 
 import java.util.Arrays;
 
@@ -31,13 +34,11 @@ import java.util.Arrays;
  */
 public enum Classifiers implements Classifier {
 
-    DUMMY(new DummyClassifier()),
     EXACT_MATCH(new ExactMatchClassifier()),
 
     STRING_SIMILARITY_LEVENSHTEIN(new StringSimilarityClassifier(StringSimilarityMetric.LEVENSHTEIN)),
     STRING_SIMILARITY_JARO_WINKLER(new StringSimilarityClassifier(StringSimilarityMetric.JARO_WINKLER)),
     STRING_SIMILARITY_JACCARD(new StringSimilarityClassifier(StringSimilarityMetric.JACCARD)),
-    STRING_SIMILARITY_CHAPMAN_LENGTH_DEVIATION(new StringSimilarityClassifier(StringSimilarityMetric.CHAPMAN_LENGTH_DEVIATION)),
     STRING_SIMILARITY_DICE(new StringSimilarityClassifier(StringSimilarityMetric.DICE)),
 
     OLR(new OLRClassifier()),
@@ -45,7 +46,6 @@ public enum Classifiers implements Classifier {
     EXACT_MATCH_PLUS_STRING_SIMILARITY_LEVENSHTEIN(new ClassifierPlusExactMatchClassifier(new StringSimilarityClassifier(StringSimilarityMetric.LEVENSHTEIN))),
     EXACT_MATCH_PLUS_STRING_SIMILARITY_JARO_WINKLER(new ClassifierPlusExactMatchClassifier(new StringSimilarityClassifier(StringSimilarityMetric.JARO_WINKLER))),
     EXACT_MATCH_PLUS_STRING_SIMILARITY_JACCARD(new ClassifierPlusExactMatchClassifier(new StringSimilarityClassifier(StringSimilarityMetric.JACCARD))),
-    EXACT_MATCH_PLUS_STRING_SIMILARITY_CHAPMAN_LENGTH_DEVIATION(new ClassifierPlusExactMatchClassifier(new StringSimilarityClassifier(StringSimilarityMetric.CHAPMAN_LENGTH_DEVIATION))),
     EXACT_MATCH_PLUS_STRING_SIMILARITY_DICE(new ClassifierPlusExactMatchClassifier(new StringSimilarityClassifier(StringSimilarityMetric.DICE))),
     EXACT_MATCH_PLUS_OLR(new ClassifierPlusExactMatchClassifier(new OLRClassifier())),
     VOTING_ENSEMBLE(new EnsembleVotingClassifier(Arrays.asList(STRING_SIMILARITY_LEVENSHTEIN, STRING_SIMILARITY_DICE, STRING_SIMILARITY_JACCARD, STRING_SIMILARITY_JARO_WINKLER, OLR)));

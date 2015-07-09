@@ -14,23 +14,20 @@
  * You should have received a copy of the GNU General Public License along with record_classification. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.digitising_scotland.record_classification.util;
+package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.string_similarity;
 
-import uk.ac.shef.wit.simmetrics.similaritymetrics.*;
+import org.simmetrics.StringMetric;
+import org.simmetrics.metrics.*;
 
 /**
  * The metrics by which to measure similarity between a pair of strings.
- * This enumeration exists to accommodate serialisation of {@link InterfaceStringMetric}.
  *
  * @author Masih Hajiarab Derkani
  */
 public enum StringSimilarityMetric {
 
     /** @see {@link JaccardSimilarity}. **/
-    JACCARD(new JaccardSimilarity(), Constants.STATIC_CONFIDENCE_JACCARD),
-
-    /** @see {@link BlockDistance}. **/
-    BLOCK_DISTANCE(new BlockDistance(), Constants.STATIC_CONFIDENCE_BLOCK_DISTANCE),
+    JACCARD(new SetMetricAdapter(new JaccardSimilarity()), Constants.STATIC_CONFIDENCE_JACCARD),
 
     /** @see {@link Levenshtein}. **/
     LEVENSHTEIN(new Levenshtein(), Constants.STATIC_CONFIDENCE_LEVENSHTEIN),
@@ -38,20 +35,17 @@ public enum StringSimilarityMetric {
     /** @see {@link JaroWinkler} **/
     JARO_WINKLER(new JaroWinkler(), Constants.STATIC_CONFIDENCE_JARO_WINKLER),
 
-    /** @see {@link ChapmanLengthDeviation}. **/
-    CHAPMAN_LENGTH_DEVIATION(new ChapmanLengthDeviation(), Constants.STATIC_CONFIDENCE_CHAPMAN_LENGTH_DEVIATION),
-
     /** @see {@link DiceSimilarity}. **/
-    DICE(new DiceSimilarity(), Constants.STATIC_CONFIDENCE_DICE);
+    DICE(new SetMetricAdapter(new DiceSimilarity()), Constants.STATIC_CONFIDENCE_DICE);
 
     // The annotation is to suppress warnings in intellij; the IDE wrongly warns of non-serializable field in enums:
     // http://docs.oracle.com/javase/8/docs/platform/serialization/spec/serial-arch.html#a6469
     // The issue is reported to JetBrains. The annontation is to be removed once the issue is rectified.
     @SuppressWarnings("NonSerializableFieldInSerializableClass")
-    private final InterfaceStringMetric metric;
+    private final StringMetric metric;
     private final double static_confidence;
 
-    StringSimilarityMetric(final InterfaceStringMetric metric, double static_confidence) {
+    StringSimilarityMetric(final StringMetric metric, double static_confidence) {
 
         this.metric = metric;
         this.static_confidence = static_confidence;
@@ -66,12 +60,12 @@ public enum StringSimilarityMetric {
      */
     public float getSimilarity(String one, String other) {
 
-        return metric.getSimilarity(one, other);
+        return metric.compare(one, other);
     }
 
     public String getDescription() {
 
-        return metric.getShortDescriptionString();
+        return metric.toString();
     }
 
     public double getStaticConfidence() {
@@ -82,10 +76,8 @@ public enum StringSimilarityMetric {
     private static class Constants {
 
         public static final double STATIC_CONFIDENCE_JACCARD = 0.92;
-        public static final double STATIC_CONFIDENCE_BLOCK_DISTANCE = 0.0;
         public static final double STATIC_CONFIDENCE_LEVENSHTEIN = 0.91;
         public static final double STATIC_CONFIDENCE_JARO_WINKLER = 0.92;
-        public static final double STATIC_CONFIDENCE_CHAPMAN_LENGTH_DEVIATION = 0.02;
         public static final double STATIC_CONFIDENCE_DICE = 0.92;
     }
 }

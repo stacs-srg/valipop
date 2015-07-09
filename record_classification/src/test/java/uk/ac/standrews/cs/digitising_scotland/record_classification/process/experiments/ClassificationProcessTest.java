@@ -36,7 +36,6 @@ public class ClassificationProcessTest extends AbstractClassificationProcessTest
 
         List<Object[]> result = new ArrayList<>();
 
-        result.add(new Object[]{Classifiers.STRING_SIMILARITY_CHAPMAN_LENGTH_DEVIATION});
         result.add(new Object[]{Classifiers.STRING_SIMILARITY_DICE});
         result.add(new Object[]{Classifiers.STRING_SIMILARITY_JACCARD});
         result.add(new Object[]{Classifiers.EXACT_MATCH_PLUS_STRING_SIMILARITY_JARO_WINKLER});
