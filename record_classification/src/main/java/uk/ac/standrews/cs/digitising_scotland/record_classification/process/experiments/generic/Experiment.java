@@ -200,7 +200,7 @@ public abstract class Experiment implements Callable<Void> {
 
     private void performClassificationProcess(final ClassificationProcess process, final Map<ClassificationProcess, RepetitionResult> results) throws Exception {
 
-        final ClassificationContext context = new ClassificationContext(process.getClassifierFactory().getClassifier(), process.getRandom());
+        final ClassificationContext context = new ClassificationContext(process.getClassifierFactory().get(), process.getRandom());
 
         process.call(context);
 

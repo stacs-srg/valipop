@@ -18,7 +18,9 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.process;
 
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.Classifier;
 
-public interface ClassifierFactory {
+import java.io.Serializable;
+import java.util.function.Supplier;
 
-    Classifier getClassifier();
+public interface ClassifierFactory extends Supplier<Classifier>, Serializable {
+
 }

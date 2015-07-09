@@ -46,7 +46,7 @@ public class ClassificationProcess implements Serializable {
     public ClassificationProcess(final ClassifierFactory factory, final Random random) {
 
         steps = new ArrayList<>();
-        name = factory.getClassifier().getName();
+        name = factory.get().getName();
         this.random = random;
         this.factory = factory;
     }
