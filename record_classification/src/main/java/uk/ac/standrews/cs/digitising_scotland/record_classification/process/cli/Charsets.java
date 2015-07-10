@@ -14,21 +14,34 @@
  * You should have received a copy of the GNU General Public License along with record_classification. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic;
+package uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli;
 
-import java.io.Serializable;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.util.function.Supplier;
 
 /**
- * Represents a step in a {@link ClassificationProcess classification process}.
- *
- * @author Masih Hajiarab Derkani
+ * @author Graham Kirby
  */
-public interface Step extends Serializable {
+public enum Charsets implements Supplier<Charset> {
 
-    /**
-     * Performs this step in the given context.
-     *
-     * @param context the context in which to perform this step
-     */
-    void perform(ClassificationContext context);
+    US_ASCII(StandardCharsets.US_ASCII),
+    ISO_8859_1(StandardCharsets.ISO_8859_1),
+    UTF_8(StandardCharsets.UTF_8),
+    UTF_16BE(StandardCharsets.UTF_16BE),
+    UTF_16LE(StandardCharsets.UTF_16LE),
+    UTF_16(StandardCharsets.UTF_16);
+
+    private final Charset charset;
+
+    Charsets(Charset charset) {
+
+        this.charset = charset;
+    }
+
+    @Override
+    public Charset get() {
+
+        return charset;
+    }
 }

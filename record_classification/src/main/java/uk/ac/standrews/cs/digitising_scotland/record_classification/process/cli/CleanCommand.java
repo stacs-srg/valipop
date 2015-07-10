@@ -49,8 +49,6 @@ class CleanCommand extends Command {
     @Parameter(required = true, names = {"-o", "--output"}, description = "Path to store the cleaned data.", converter = FileConverter.class)
     private File destination;
 
-    @Parameter(names = {"-d", "--delimiter"}, description = DELIMITER_DESCRIPTION)
-    private char delimiter = DEFAULT_DELIMITER;
 
     @Override
     public void perform(final ClassificationContext context)  {

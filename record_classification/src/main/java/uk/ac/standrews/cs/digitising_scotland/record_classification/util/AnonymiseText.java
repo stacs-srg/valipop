@@ -43,7 +43,7 @@ public class AnonymiseText {
                 InputStreamReader inputStreamReader = FileManipulation.getInputStreamReader(Paths.get(args[0]));
                 OutputStreamWriter out = FileManipulation.getOutputStreamWriter(Paths.get(args[1]))) {
 
-            DataSet source_data = new DataSet(inputStreamReader);
+            DataSet source_data = new DataSet(inputStreamReader, ',');
             DataSet anonymised_data = new DataSet(Arrays.asList("id", "data", "code"));
 
             for (List<String> record : source_data.getRecords()) {

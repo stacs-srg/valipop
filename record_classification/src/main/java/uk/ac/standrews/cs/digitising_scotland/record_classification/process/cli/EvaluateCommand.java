@@ -45,9 +45,6 @@ class EvaluateCommand extends Command {
     @Parameter(required = true, names = {"-o", "--output"}, description = "Path to the place to persist the evaluation results.", converter = FileConverter.class)
     private File destination;
 
-    @Parameter(names = {"-d", "--delimiter"}, description = DELIMITER_DESCRIPTION)
-    private char delimiter = DEFAULT_DELIMITER;
-
     @Override
     public void perform(final ClassificationContext context) {
 
