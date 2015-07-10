@@ -16,8 +16,11 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli;
 
-import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.Cleaner;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.ConsistentCodingCleaner;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.EnglishStopWordCleaner;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.PorterStemCleaner;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
 
 /**
  * @author Masih Hajiarab Derkani
@@ -45,8 +48,8 @@ enum Cleaners implements Cleaner {
     }
 
     @Override
-    public Bucket clean(final Bucket bucket) throws Exception {
+    public Bucket apply(final Bucket bucket) {
 
-        return cleaner.clean(bucket);
+        return cleaner.apply(bucket);
     }
 }

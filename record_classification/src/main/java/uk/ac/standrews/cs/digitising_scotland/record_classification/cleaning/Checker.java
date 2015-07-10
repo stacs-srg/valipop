@@ -16,22 +16,16 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning;
 
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
 
-import java.io.*;
+import java.io.Serializable;
+import java.util.function.Predicate;
 
 /**
  * Checks a {@link Bucket bucket}.
  *
  * @author Masih Hajiarab Derkani
  */
-public interface Checker extends Serializable {
+public interface Checker extends Predicate<Bucket>, Serializable {
 
-    /**
-     * Checks the bucket.
-     *
-     * @param bucket the bucket of records to check
-     * @throws Exception if the bucket does not pass the check
-     */
-    void check(Bucket bucket) throws Exception;
 }

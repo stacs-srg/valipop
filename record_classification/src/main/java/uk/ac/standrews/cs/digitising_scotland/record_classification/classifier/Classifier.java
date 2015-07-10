@@ -33,7 +33,7 @@ public interface Classifier extends Serializable {
      *
      * @param bucket the training data
      */
-    void train(final Bucket bucket) throws Exception;
+    void train(final Bucket bucket);
 
     /**
      * Classifies a single data item.
@@ -41,7 +41,7 @@ public interface Classifier extends Serializable {
      * @param data the data to be classified
      * @return the resulting classification, or {@link Classification#UNCLASSIFIED} if the data cannot be classified
      */
-    Classification classify(String data) throws Exception;
+    Classification classify(String data);
 
     /**
      * Classifies a bucket of data items.
@@ -50,18 +50,15 @@ public interface Classifier extends Serializable {
      * @param bucket the data to be classified
      * @return a new bucket containing the classified data
      */
-    default Bucket classify(final Bucket bucket) throws Exception {
+    default Bucket classify(final Bucket bucket) {
 
         final Bucket classified = new Bucket();
 
         for (Record record : bucket) {
 
             final String data = record.getData();
-            Classification classification = classify(data);
 
-            assert classification != null;
-
-            classified.add(new Record(record.getId(), data, classification));
+            classified.add(new Record(record.getId(), data, classify(data)));
         }
 
         return classified;

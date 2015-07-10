@@ -19,9 +19,9 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli
 import com.beust.jcommander.Parameter;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.lang3.SerializationUtils;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.ClassificationProcess;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.ClassificationProcessWithContext;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.Step;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassificationProcess;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassificationProcessWithContext;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.Step;
 import uk.ac.standrews.cs.util.dataset.DataSet;
 
 import java.io.BufferedWriter;

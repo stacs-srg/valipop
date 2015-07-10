@@ -16,23 +16,16 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning;
 
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
 
-import java.io.*;
+import java.io.Serializable;
+import java.util.function.Function;
 
 /**
  * Cleans a {@link Bucket bucket}.
  *
  * @author Graham Kirby
  */
-public interface Cleaner extends Serializable {
+public interface Cleaner extends Function<Bucket, Bucket>, Serializable {
 
-    /**
-     * Performs the cleaning of the give bucket.
-     *
-     * @param bucket the bucket to clean
-     * @return the cleaned bucket
-     * @throws Exception if an error occurs during cleaning.
-     */
-    Bucket clean(Bucket bucket) throws Exception;
 }

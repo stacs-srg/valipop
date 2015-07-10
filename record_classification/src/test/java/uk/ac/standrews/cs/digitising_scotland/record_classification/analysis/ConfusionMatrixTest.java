@@ -70,7 +70,7 @@ public class ConfusionMatrixTest extends AbstractMetricsTest {
         assertEquals(1, matrix.getNumberOfClassifications());
     }
 
-    @Test(expected = InconsistentCodingException.class)
+    @Test(expected = RuntimeException.class)
     public void inconsistentCodingThrowsException() throws Exception {
 
         classified_records.add(haddock_correct, haddock_incorrect);

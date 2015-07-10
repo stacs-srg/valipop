@@ -14,33 +14,37 @@
  * You should have received a copy of the GNU General Public License along with record_classification. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.digitising_scotland.record_classification.process.experiments.specific;
+package uk.ac.standrews.cs.digitising_scotland.record_classification.experiments.specific;
 
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.linear_regression.OLRWithExactMatchClassifier;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.InputFileFormatException;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.ClassifierFactory;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.experiments.generic.Experiment;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.experiments.generic.Experiment;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassifierFactory;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
+import java.io.*;
+import java.util.*;
 
-public class OLRWithExactMatchOnlyExperiment extends Experiment {
+public class ExactMatchOnlyExperiment extends Experiment {
 
-    protected OLRWithExactMatchOnlyExperiment(final String[] args) throws IOException, InputFileFormatException {
+    public ExactMatchOnlyExperiment() throws IOException, InputFileFormatException {
+
+    }
+
+    public ExactMatchOnlyExperiment(final String[] args) throws IOException, InputFileFormatException {
 
         super(args);
     }
 
-    public static void main(final String[] args) throws Exception {
+    public static void main(String[] args) throws Exception {
 
-        final OLRWithExactMatchOnlyExperiment experiment = new OLRWithExactMatchOnlyExperiment(args);
+        final ExactMatchOnlyExperiment experiment = new ExactMatchOnlyExperiment(args);
         experiment.call();
     }
 
     @Override
     protected List<ClassifierFactory> getClassifierFactories() throws IOException, InputFileFormatException {
 
-        return Arrays.asList(() -> new OLRWithExactMatchClassifier());
+        return Arrays.asList(() -> new ExactMatchClassifier());
+
     }
 }

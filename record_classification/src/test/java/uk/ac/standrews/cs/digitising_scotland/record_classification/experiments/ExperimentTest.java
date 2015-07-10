@@ -14,17 +14,17 @@
  * You should have received a copy of the GNU General Public License along with record_classification. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.digitising_scotland.record_classification.process.experiments;
+package uk.ac.standrews.cs.digitising_scotland.record_classification.experiments;
 
 import org.junit.Before;
 import org.junit.Test;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.experiments.generic.Experiment;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.experiments.specific.ExactMatchAndStringSimilarityExperiment;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.InfoLevel;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.ClassificationContext;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.experiments.generic.Experiment;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.experiments.specific.ExactMatchAndStringSimilarityExperiment;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassificationContext;
 import uk.ac.standrews.cs.util.tools.FileManipulation;
 
-import java.io.File;
+import java.nio.file.Path;
 import java.util.*;
 
 import static org.junit.Assert.*;
@@ -42,9 +42,9 @@ public class ExperimentTest {
 
         experiment = new ExactMatchAndStringSimilarityExperiment();
 
-        File resourceFile = FileManipulation.getResourceFile(AbstractClassificationProcessTest.class, CODED_DATA_1K_FILE_NAME);
+        Path path = FileManipulation.getResourcePath(AbstractClassificationProcessTest.class, CODED_DATA_1K_FILE_NAME);
 
-        experiment.setGoldStandardFiles(Arrays.asList(resourceFile));
+        experiment.setGoldStandardFiles(Arrays.asList(path));
         experiment.setRepetitions(NUMBER_OF_REPETITIONS);
         experiment.setVerbosity(InfoLevel.NONE);
 

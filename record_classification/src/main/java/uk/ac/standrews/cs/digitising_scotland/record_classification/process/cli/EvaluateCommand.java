@@ -21,11 +21,12 @@ import com.beust.jcommander.Parameters;
 import com.beust.jcommander.converters.FileConverter;
 import org.apache.commons.csv.CSVFormat;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.ClassificationMetrics;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.ClassificationContext;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.EvaluateClassifier;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassificationContext;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.EvaluateClassifierStep;
 import uk.ac.standrews.cs.util.dataset.DataSet;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,15 +49,20 @@ class EvaluateCommand extends Command {
     private char delimiter = DEFAULT_DELIMITER;
 
     @Override
-    public void perform(final ClassificationContext context) throws Exception {
+    public void perform(final ClassificationContext context) {
 
-        List<ClassificationMetrics> results = new ArrayList<>();
+        try {
+            List<ClassificationMetrics> results = new ArrayList<>();
 
-        new EvaluateClassifier().perform(context);
-        results.add(context.getClassificationMetrics());
+            new EvaluateClassifierStep().perform(context);
+            results.add(context.getClassificationMetrics());
 
-        final CSVFormat format = getDataFormat(delimiter);
-        final DataSet data_set = ClassificationMetrics.toDataSet(results, format);
-        persistDataSet(destination.toPath(), data_set);
+            final CSVFormat format = getDataFormat(delimiter);
+            final DataSet data_set = ClassificationMetrics.toDataSet(results, format);
+            persistDataSet(destination.toPath(), data_set);
+        }
+        catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

@@ -16,5 +16,5 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions;
 
-public class UnclassifiedGoldStandardRecordException extends Exception {
+public class UnclassifiedGoldStandardRecordException extends RuntimeException {
 }

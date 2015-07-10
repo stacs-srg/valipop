@@ -16,7 +16,8 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions;
 
-public class InputFileFormatException extends Exception {
+public class InputFileFormatException extends RuntimeException {
+
     public InputFileFormatException(String message) {
         super(message);
     }

@@ -16,7 +16,6 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning;
 
-import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.InconsistentCodingException;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Classification;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Record;
@@ -30,7 +29,7 @@ public enum ConsistentCodingCleaner implements Cleaner {
 
     NONE {
         @Override
-        public Bucket clean(Bucket bucket) {
+        public Bucket apply(Bucket bucket) {
 
             return bucket;
         }
@@ -38,7 +37,7 @@ public enum ConsistentCodingCleaner implements Cleaner {
 
     REMOVE {
         @Override
-        public Bucket clean(Bucket bucket) {
+        public Bucket apply(Bucket bucket) {
 
             Set<String> inconsistently_coded_data = getInconsistentlyCodedStrings(bucket);
 
@@ -59,7 +58,7 @@ public enum ConsistentCodingCleaner implements Cleaner {
 
     CORRECT {
         @Override
-        public Bucket clean(Bucket bucket) {
+        public Bucket apply(Bucket bucket) {
 
             Map<String, Map<String, Integer>> classification_details = getClassifications(bucket);
 

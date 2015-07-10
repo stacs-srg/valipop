@@ -14,25 +14,27 @@
  * You should have received a copy of the GNU General Public License along with record_classification. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.digitising_scotland.record_classification.process;
+package uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic;
 
 import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.ClassificationMetrics;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.ConfusionMatrix;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.Classifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.InfoLevel;
 
 import java.io.Serializable;
 import java.time.Duration;
 import java.util.Random;
 
 /**
- * Captures the shared knowledge among the {@link Step steps} of a {@link uk.ac.standrews.cs.digitising_scotland.record_classification.process.ClassificationProcess classification process}.
+ * Captures the shared knowledge among the {@link Step steps} of a {@link ClassificationProcess classification process}.
  *
  * @author Masih Hajiarab Derkani
  */
 public class ClassificationContext implements Serializable {
 
     private static final long serialVersionUID = -6389479358148790573L;
+    private static final InfoLevel DEFAULT_VERBOSITY = InfoLevel.SHORT_SUMMARY;
 
     private final Random random;
 
@@ -45,7 +47,8 @@ public class ClassificationContext implements Serializable {
     private ConfusionMatrix confusion_matrix;
     private ClassificationMetrics classification_metrics;
     private Duration training_time;
-    private Duration evaluation_classification_time;
+    private Duration classification_time;
+    private InfoLevel verbosity;
 
     /**
      * Instantiates a new classification context.
@@ -60,6 +63,8 @@ public class ClassificationContext implements Serializable {
         gold_standard_records = new Bucket();
         evaluation_records = new Bucket();
         training_records = new Bucket();
+
+        verbosity = DEFAULT_VERBOSITY;
     }
 
     /**
@@ -219,7 +224,7 @@ public class ClassificationContext implements Serializable {
      */
     public Duration getClassificationTime() {
 
-        return evaluation_classification_time;
+        return classification_time;
     }
 
     /**
@@ -229,7 +234,7 @@ public class ClassificationContext implements Serializable {
      */
     public void setEvaluationClassificationTime(Duration evaluation_classification_time) {
 
-        this.evaluation_classification_time = evaluation_classification_time;
+        this.classification_time = evaluation_classification_time;
     }
 
     public Bucket getGoldStandardRecords() {
@@ -242,8 +247,13 @@ public class ClassificationContext implements Serializable {
         this.gold_standard_records = gold_standard;
     }
 
-    public void addGoldStandard(Bucket gold_standard) {
+    public InfoLevel getVerbosity() {
 
-        gold_standard.forEach(this.gold_standard_records::add);
+        return verbosity;
+    }
+
+    public void setVerbosity(InfoLevel verbosity) {
+
+        this.verbosity = verbosity;
     }
 }

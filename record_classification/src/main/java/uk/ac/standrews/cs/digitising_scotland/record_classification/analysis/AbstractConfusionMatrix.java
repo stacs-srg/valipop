@@ -52,9 +52,7 @@ public abstract class AbstractConfusionMatrix implements ConfusionMatrix {
      * @throws InconsistentCodingException             if there exist multiple gold standard records containing the same data and different classifications
      * @throws UnclassifiedGoldStandardRecordException if a record in the gold standard records is not classified
      */
-    AbstractConfusionMatrix(final Bucket classified_records, final Bucket gold_standard_records, Checker checker) throws Exception {
-
-        // TODO name ConsistentCodingCleaner isn't quite right when used as checker rather than cleaner
+    AbstractConfusionMatrix(final Bucket classified_records, final Bucket gold_standard_records, Checker checker)  {
 
         this.classified_records = classified_records;
         this.gold_standard_records = gold_standard_records;
@@ -69,7 +67,9 @@ public abstract class AbstractConfusionMatrix implements ConfusionMatrix {
         checkClassifiedDataIsInGoldStandard();
         checkClassifiedToValidCodes();
 
-        checker.check(gold_standard_records);
+        if (!checker.test(gold_standard_records)) {
+            throw new RuntimeException("check failed");
+        }
 
         calculateCounts();
     }
@@ -171,7 +171,7 @@ public abstract class AbstractConfusionMatrix implements ConfusionMatrix {
      *
      * @throws UnclassifiedGoldStandardRecordException if they are not
      */
-    private void checkGoldStandardDataIsClassified() throws UnclassifiedGoldStandardRecordException {
+    private void checkGoldStandardDataIsClassified() {
 
         for (Record record : gold_standard_records) {
             if (record.getClassification().equals(Classification.UNCLASSIFIED))
@@ -184,7 +184,7 @@ public abstract class AbstractConfusionMatrix implements ConfusionMatrix {
      *
      * @throws UnknownDataException if it does not
      */
-    private void checkClassifiedDataIsInGoldStandard() throws UnknownDataException {
+    private void checkClassifiedDataIsInGoldStandard() {
 
         Set<String> known_data = new HashSet<>();
 
@@ -206,7 +206,7 @@ public abstract class AbstractConfusionMatrix implements ConfusionMatrix {
      *
      * @throws InvalidCodeException if they do not
      */
-    private void checkClassifiedToValidCodes() throws InvalidCodeException {
+    private void checkClassifiedToValidCodes()  {
 
         Set<String> valid_codes = new HashSet<>();
         valid_codes.add(Classification.UNCLASSIFIED.getCode());

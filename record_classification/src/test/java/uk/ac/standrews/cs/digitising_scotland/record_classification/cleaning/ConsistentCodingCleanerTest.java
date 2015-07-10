@@ -16,12 +16,16 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning;
 
-import org.junit.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
+import org.junit.Before;
+import org.junit.Test;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.AbstractMetricsTest;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Classification;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Record;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.TokenSet;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class ConsistentCodingCleanerTest extends AbstractMetricsTest {
 
@@ -38,7 +42,7 @@ public class ConsistentCodingCleanerTest extends AbstractMetricsTest {
     @Test
     public void remove() throws Exception {
 
-        Bucket cleaned = ConsistentCodingCleaner.REMOVE.clean(bucket);
+        Bucket cleaned = ConsistentCodingCleaner.REMOVE.apply(bucket);
 
         assertEquals(1, cleaned.size());
         assertTrue(cleaned.contains(osprey_incorrect));
@@ -51,7 +55,7 @@ public class ConsistentCodingCleanerTest extends AbstractMetricsTest {
 
         bucket.add(new Record(7, "haddock", new Classification("mammal", new TokenSet(), 1.0)));
 
-        Bucket cleaned = ConsistentCodingCleaner.CORRECT.clean(bucket);
+        Bucket cleaned = ConsistentCodingCleaner.CORRECT.apply(bucket);
 
         assertEquals(4, cleaned.size());
 

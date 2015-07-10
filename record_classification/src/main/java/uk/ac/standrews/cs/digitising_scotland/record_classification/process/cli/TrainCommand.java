@@ -19,14 +19,11 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.beust.jcommander.converters.FileConverter;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.ClassificationContext;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.AddTrainingAndEvaluationRecordsByRatio;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.TrainClassifier;
-import uk.ac.standrews.cs.util.dataset.DataSet;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassificationContext;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.AddTrainingAndEvaluationRecordsByRatioStep;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.TrainClassifierStep;
 
 import java.io.File;
-import java.io.FileReader;
 
 /**
  * The train command of classification process command line interface.
@@ -50,11 +47,9 @@ class TrainCommand extends Command {
     private char delimiter = DEFAULT_DELIMITER;
 
     @Override
-    public void perform(final ClassificationContext context) throws Exception {
+    public void perform(final ClassificationContext context)  {
 
-        final Bucket gold_standard_records = new Bucket(new DataSet(new FileReader(gold_standard), getDataFormat(delimiter)));
-
-        new AddTrainingAndEvaluationRecordsByRatio(gold_standard_records, training_ratio).perform(context);
-        new TrainClassifier().perform(context);
+        new AddTrainingAndEvaluationRecordsByRatioStep(training_ratio).perform(context);
+        new TrainClassifierStep().perform(context);
     }
 }

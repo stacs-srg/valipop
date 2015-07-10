@@ -16,7 +16,7 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions;
 
-public class UnknownDataException extends Exception {
+public class UnknownDataException extends RuntimeException {
     public UnknownDataException(String message) {
         super(message);
     }

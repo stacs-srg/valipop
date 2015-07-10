@@ -14,34 +14,32 @@
  * You should have received a copy of the GNU General Public License along with record_classification. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.digitising_scotland.record_classification.process.experiments.generic;
+package uk.ac.standrews.cs.digitising_scotland.record_classification.experiments.generic;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.ParameterException;
-import com.beust.jcommander.converters.FileConverter;
+import com.beust.jcommander.converters.PathConverter;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.ClassificationMetrics;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.Cleaner;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.ConsistentCodingCleaner;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.EnglishStopWordCleaner;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.PorterStemCleaner;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.InputFileFormatException;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.InfoLevel;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.ClassificationContext;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.ClassificationProcess;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.ClassifierFactory;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.Step;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.AddTrainingAndEvaluationRecordsByRatio;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.EvaluateClassifier;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.TrainClassifier;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassificationContext;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassificationProcess;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassifierFactory;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.specific.EvaluationExperimentProcess;
 import uk.ac.standrews.cs.util.dataset.DataSet;
 import uk.ac.standrews.cs.util.tables.TableGenerator;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.Callable;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -54,7 +52,7 @@ public abstract class Experiment implements Callable<Void> {
     private static final char TAB = '\t';
     private static final String FIRST_COLUMN_HEADING = "classifier";
 
-    private static final String DEFAULT_GOLD_STANDARD_PATH = "src/test/resources/uk/ac/standrews/cs/digitising_scotland/record_classification/process/experiments/AbstractClassificationProcessTest/coded_data_1K.csv";
+    private static final String DEFAULT_GOLD_STANDARD_PATH = "src/test/resources/uk/ac/standrews/cs/digitising_scotland/record_classification/experiments/AbstractClassificationProcessTest/coded_data_1K.csv";
     private static final double DEFAULT_TRAINING_RATIO = 0.8;
     private static final int DEFAULT_REPETITIONS = 2;
     private static final InfoLevel DEFAULT_VERBOSITY = InfoLevel.LONG_SUMMARY;
@@ -82,8 +80,8 @@ public abstract class Experiment implements Callable<Void> {
     @Parameter(names = {"-r", "--repetitionCount"}, description = DESCRIPTION_REPETITION)
     private int repetitions = DEFAULT_REPETITIONS;
 
-    @Parameter(names = {"-g", "--goldStandard"}, description = DESCRIPTION_GOLD_STANDARD, listConverter = FileConverter.class)
-    private List<File> gold_standard_files = Arrays.asList(new File(DEFAULT_GOLD_STANDARD_PATH));
+    @Parameter(names = {"-g", "--goldStandard"}, description = DESCRIPTION_GOLD_STANDARD, listConverter = PathConverter.class)
+    private List<Path> gold_standard_files = Arrays.asList(Paths.get(DEFAULT_GOLD_STANDARD_PATH));
 
     @Parameter(names = {"-t", "--trainingRecordRatio"}, description = DESCRIPTION_RATIO)
     private List<Double> training_ratios = Arrays.asList(DEFAULT_TRAINING_RATIO);
@@ -91,7 +89,7 @@ public abstract class Experiment implements Callable<Void> {
     @Parameter(names = {"-d", "--delimiter"}, description = DESCRIPTION_DELIMITER)
     private char delimiter = '|';
 
-    public static final Cleaner[] CLEANERS = new Cleaner[]{new EnglishStopWordCleaner(), new PorterStemCleaner(), ConsistentCodingCleaner.CORRECT};
+    public static final List<Cleaner> CLEANERS = Arrays.asList(new EnglishStopWordCleaner(), new PorterStemCleaner(), ConsistentCodingCleaner.CORRECT);
 
     protected Experiment() throws IOException, InputFileFormatException {
 
@@ -113,7 +111,6 @@ public abstract class Experiment implements Callable<Void> {
     @Override
     public Void call() throws Exception {
 
-
         if (verbosity != InfoLevel.NONE) {
             printSummarisedResults(getExperimentResults());
         }
@@ -131,7 +128,7 @@ public abstract class Experiment implements Callable<Void> {
         this.repetitions = repetitions;
     }
 
-    public void setGoldStandardFiles(final List<File> gold_standard_files) {
+    public void setGoldStandardFiles(final List<Path> gold_standard_files) {
 
         this.gold_standard_files = gold_standard_files;
     }
@@ -175,25 +172,18 @@ public abstract class Experiment implements Callable<Void> {
 
     protected List<ClassificationProcess> getClassificationProcesses() throws IOException, InputFileFormatException {
 
-        final List<ClassificationProcess> processes = new ArrayList<>();
-
-        for (final ClassifierFactory factory : getClassifierFactories()) {
-            processes.add(getClassificationProcess(factory));
-        }
-
-        return processes;
+        return getClassifierFactories().stream().map(this::getClassificationProcess).collect(Collectors.toList());
     }
 
-    private ClassificationProcess getClassificationProcess(ClassifierFactory factory) throws IOException, InputFileFormatException {
+    private ClassificationProcess getClassificationProcess(ClassifierFactory factory){
 
-        final ClassificationProcess process = new ClassificationProcess(factory, new Random(SEED));
+        final EvaluationExperimentProcess process = new EvaluationExperimentProcess(factory, new Random(SEED));
 
-        for (int i = 0; i < gold_standard_files.size(); i++) {
-            process.addStep(makeAddRecordsStep(i));
-        }
+        process.setGoldStandardFiles(gold_standard_files);
+        process.setTrainingRatios(training_ratios);
+        process.setCleaners(CLEANERS);
 
-        process.addStep(new TrainClassifier());
-        process.addStep(new EvaluateClassifier(verbosity));
+        process.configureSteps();
 
         return process;
     }
@@ -201,6 +191,7 @@ public abstract class Experiment implements Callable<Void> {
     private void performClassificationProcess(final ClassificationProcess process, final Map<ClassificationProcess, RepetitionResult> results) throws Exception {
 
         final ClassificationContext context = new ClassificationContext(process.getClassifierFactory().get(), process.getRandom());
+        context.setVerbosity(verbosity);
 
         process.call(context);
 
@@ -211,7 +202,8 @@ public abstract class Experiment implements Callable<Void> {
 
     private List<String> getResultValuesWithTimings(final ClassificationContext context) {
 
-        final List<String> values = context.getClassificationMetrics().getValues();
+        final ClassificationMetrics classificationMetrics = context.getClassificationMetrics();
+        final List<String> values = classificationMetrics.getValues();
 
         values.add(String.valueOf(context.getTrainingTime().getSeconds() / ONE_MINUTE_IN_SECONDS));
         values.add(String.valueOf(context.getClassificationTime().getSeconds() / ONE_MINUTE_IN_SECONDS));
@@ -221,13 +213,7 @@ public abstract class Experiment implements Callable<Void> {
 
     private Map<ClassificationProcess, RepetitionResult> makeResultsMap(final List<ClassificationProcess> processes) {
 
-        final Map<ClassificationProcess, RepetitionResult> results = new HashMap<>();
-
-        for (final ClassificationProcess process : processes) {
-            results.put(process, makeRepetitionResult(process));
-        }
-
-        return results;
+        return processes.stream().collect(Collectors.toMap(Function.identity(), this::makeRepetitionResult));
     }
 
     private RepetitionResult makeRepetitionResult(final ClassificationProcess process) {
@@ -250,14 +236,6 @@ public abstract class Experiment implements Callable<Void> {
         if (gold_standard_files.size() != training_ratios.size()) {
             throw new ParameterException(INCONSISTENT_PARAM_NUMBERS_ERROR_MESSAGE);
         }
-    }
-
-    private Step makeAddRecordsStep(final int gold_standard_file_number) throws IOException, InputFileFormatException {
-
-        final File gold_standard_file = gold_standard_files.get(gold_standard_file_number);
-        final Double training_ratio = training_ratios.get(gold_standard_file_number);
-
-        return new AddTrainingAndEvaluationRecordsByRatio(new Bucket(gold_standard_file), training_ratio, CLEANERS);
     }
 
     private void exitWithErrorMessage(final String error_message) {

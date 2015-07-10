@@ -18,14 +18,15 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.process.ste
 
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassificationContext;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.Step;
 
 /**
  * Classifies unseen records and stores the results in a classification process {@link ClassificationContext context}.
  *
  * @author Masih Hajiarab Derkani
  */
-public class ClassifyUnseenRecords implements Step {
+public class ClassifyUnseenRecordsStep implements Step {
 
     private static final long serialVersionUID = 292143932733171808L;
     private final Bucket unseen_records;
@@ -35,13 +36,13 @@ public class ClassifyUnseenRecords implements Step {
      *
      * @param unseen_records the unseen records to classify
      */
-    public ClassifyUnseenRecords(Bucket unseen_records) {
+    public ClassifyUnseenRecordsStep(Bucket unseen_records) {
 
         this.unseen_records = unseen_records;
     }
 
     @Override
-    public void perform(final ClassificationContext context) throws Exception {
+    public void perform(final ClassificationContext context) {
 
         final Classifier classifier = context.getClassifier();
         final Bucket classified_unseen_records = classifier.classify(unseen_records);

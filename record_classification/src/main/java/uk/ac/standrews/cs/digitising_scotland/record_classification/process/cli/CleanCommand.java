@@ -21,11 +21,12 @@ import com.beust.jcommander.Parameters;
 import com.beust.jcommander.converters.FileConverter;
 import org.apache.commons.csv.CSVFormat;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.ClassificationContext;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassificationContext;
 import uk.ac.standrews.cs.util.dataset.DataSet;
 
 import java.io.File;
 import java.io.FileReader;
+import java.io.IOException;
 
 /**
  * Clean command of the classification process.
@@ -52,16 +53,21 @@ class CleanCommand extends Command {
     private char delimiter = DEFAULT_DELIMITER;
 
     @Override
-    public void perform(final ClassificationContext context) throws Exception {
+    public void perform(final ClassificationContext context)  {
 
-        final CSVFormat csv_format = getDataFormat(delimiter);
-        final DataSet source_data_set = new DataSet(new FileReader(source), csv_format);
+        try {
+            final CSVFormat csv_format = getDataFormat(delimiter);
+            final DataSet source_data_set = new DataSet(new FileReader(source), csv_format);
 
-        final Bucket source_data = new Bucket(source_data_set);
-        final Bucket cleaned_data = cleaner.clean(source_data);
+            final Bucket source_data = new Bucket(source_data_set);
+            final Bucket cleaned_data = cleaner.apply(source_data);
 
-        final DataSet cleaned_data_set = cleaned_data.toDataSet(source_data_set.getColumnLabels(), csv_format);
+            final DataSet cleaned_data_set = cleaned_data.toDataSet(source_data_set.getColumnLabels(), csv_format);
 
-        persistDataSet(destination.toPath(), cleaned_data_set);
+            persistDataSet(destination.toPath(), cleaned_data_set);
+        }
+        catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

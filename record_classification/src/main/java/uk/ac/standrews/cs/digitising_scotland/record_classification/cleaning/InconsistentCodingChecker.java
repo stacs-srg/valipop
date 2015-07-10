@@ -16,20 +16,20 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning;
 
-import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Classification;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Record;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Graham Kirby
  */
 public class InconsistentCodingChecker implements Checker {
 
-    //TODO Javadoc
-
     @Override
-    public void check(final Bucket bucket) throws InconsistentCodingException {
+    public boolean test(final Bucket bucket)  {
 
         final Map<String, String> classifications = new HashMap<>();
 
@@ -43,7 +43,7 @@ public class InconsistentCodingChecker implements Checker {
 
                 if (classifications.containsKey(data)) {
                     if (!code.equals(classifications.get(data))) {
-                        throw new InconsistentCodingException("data: " + data + " classified as both " + code + " and " + classifications.get(data));
+                        return false;
                     }
                 }
                 else {
@@ -51,5 +51,7 @@ public class InconsistentCodingChecker implements Checker {
                 }
             }
         }
+
+        return true;
     }
 }
