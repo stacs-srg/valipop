@@ -16,16 +16,21 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli;
 
-import com.beust.jcommander.*;
-import com.beust.jcommander.converters.*;
-import org.apache.commons.csv.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
+import com.beust.jcommander.Parameter;
+import com.beust.jcommander.Parameters;
+import com.beust.jcommander.converters.FileConverter;
+import com.beust.jcommander.converters.PathConverter;
+import org.apache.commons.csv.CSVFormat;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassificationContext;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.*;
-import uk.ac.standrews.cs.util.dataset.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.ClassifyUnseenRecordsStep;
+import uk.ac.standrews.cs.util.dataset.DataSet;
+import uk.ac.standrews.cs.util.tools.FileManipulation;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.List;
 
 /**
  * Classification command of the classification process.
@@ -40,21 +45,18 @@ class ClassifyCommand extends Command {
 
     private static final long serialVersionUID = -5931407069557436051L;
 
-    @Parameter(required = true, description = "Path to the unseen data to classify,", converter = FileConverter.class)
-    private List<File> unseen_data;
+    @Parameter(required = true, description = "Path to the unseen data to classify,", converter = PathConverter.class)
+    private List<Path> unseen_data;
 
     @Parameter(required = true, names = {"-o", "--output"}, description = "Path to the place to persist the classified records.", converter = FileConverter.class)
     private File destination;
-
-    @Parameter(names = {"-d", "--delimiter"}, description = DELIMITER_DESCRIPTION)
-    private char delimiter = DEFAULT_DELIMITER;
 
     @Override
     public void perform(final ClassificationContext context) {
 
         try {
             final CSVFormat input_format = getDataFormat(delimiter);
-            final DataSet unseen_data_set = new DataSet(new FileReader(unseen_data.get(0)), input_format);
+            final DataSet unseen_data_set = new DataSet(FileManipulation.getInputStreamReader(unseen_data.get(0)), input_format);
             final List<String> labels = unseen_data_set.getColumnLabels();
             final Bucket unseen_data = new Bucket(unseen_data_set);
             new ClassifyUnseenRecordsStep(unseen_data).perform(context);

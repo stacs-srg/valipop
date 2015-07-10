@@ -17,10 +17,12 @@
 package uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps;
 
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.Charsets;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassificationContext;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.Step;
 
 import java.io.*;
+import java.nio.charset.Charset;
 import java.nio.file.*;
 
 /**
@@ -31,7 +33,17 @@ import java.nio.file.*;
 public class LoadGoldStandardFromFileStep implements Step {
 
     private static final long serialVersionUID = 7742825393693404041L;
+
     private final Path path;
+    private final Charset charset;
+    private final char delimiter;
+
+    public static final Charsets DEFAULT_CHARSET = Charsets.UTF_8;
+    public static final String CHARSET_DESCRIPTION = "The data file charset";
+
+    public static final char DEFAULT_DELIMITER = ',';
+    public static final String DELIMITER_DESCRIPTION = "The data file delimiter character";
+
 
     /**
      * Instantiates a new step which loads a gold standard CSV file into a classification process {@link ClassificationContext context}.
@@ -40,28 +52,25 @@ public class LoadGoldStandardFromFileStep implements Step {
      */
     public LoadGoldStandardFromFileStep(Path path) {
 
+        this(path, DEFAULT_CHARSET.get(), DEFAULT_DELIMITER);
+    }
+
+    public LoadGoldStandardFromFileStep(Path path, Charset charset, char delimiter) {
+
         this.path = path;
+        this.charset = charset;
+        this.delimiter = delimiter;
     }
 
     @Override
     public void perform(final ClassificationContext context)  {
 
-        try (final BufferedReader reader = Files.newBufferedReader(path, Step.DEFAULT_CHARSET)) {
+        try (final BufferedReader reader = Files.newBufferedReader(path, charset)) {
 
-            context.getGoldStandardRecords().add(new Bucket(reader));
+            context.getGoldStandardRecords().add(new Bucket(reader, delimiter));
 
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
-
-//    private void writeObject(ObjectOutputStream out) throws IOException {
-//
-//        out.defaultWriteObject();
-//    }
-//
-//    private void readObject(ObjectInputStream in) throws ClassNotFoundException, IOException {
-//
-//        in.defaultReadObject();
-//    }
 }

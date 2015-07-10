@@ -18,13 +18,13 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.model;
 
 import org.apache.commons.csv.CSVFormat;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.InputFileFormatException;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.Step;
 import uk.ac.standrews.cs.util.dataset.DataSet;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Serializable;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.*;
 
@@ -42,14 +42,14 @@ public class Bucket implements Iterable<Record>, Serializable {
         records = new TreeSet<>();
     }
 
-    public Bucket(File records) throws IOException {
+    public Bucket(File records, Charset charset, char delimiter) throws IOException {
 
-        this(Files.newBufferedReader(records.toPath(), Step.DEFAULT_CHARSET));
+        this(Files.newBufferedReader(records.toPath(), charset), delimiter);
     }
 
-    public Bucket(Reader reader) {
+    public Bucket(Reader reader, char delimiter) {
 
-        this(new DataSet(reader));
+        this(new DataSet(reader, delimiter));
     }
 
     public Bucket(DataSet records_csv) {

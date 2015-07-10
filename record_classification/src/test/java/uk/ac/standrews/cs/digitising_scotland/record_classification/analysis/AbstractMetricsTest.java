@@ -60,11 +60,11 @@ public class AbstractMetricsTest {
 
         try (InputStreamReader reader = FileManipulation.getInputStreamReaderForResource(AbstractMetricsTest.class, CLASSIFIED_FILE_NAME)) {
 
-            classified_records_csv = new DataSet(reader);
+            classified_records_csv = new DataSet(reader, ',');
         }
         try (InputStreamReader reader = FileManipulation.getInputStreamReaderForResource(AbstractMetricsTest.class, GOLD_STANDARD_FILE_NAME)) {
 
-            gold_standard_records_csv = new DataSet(reader);
+            gold_standard_records_csv = new DataSet(reader, ',');
         }
     }
 

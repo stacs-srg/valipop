@@ -22,6 +22,7 @@ import org.apache.commons.lang3.SerializationUtils;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassificationProcess;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassificationProcessWithContext;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.Step;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.LoadGoldStandardFromFileStep;
 import uk.ac.standrews.cs.util.dataset.DataSet;
 
 import java.io.BufferedWriter;
@@ -46,11 +47,15 @@ abstract class Command implements Callable<Void>, Step {
     private static final long serialVersionUID = -2176702491500665712L;
 
     public static final String DEFAULT_PROCESS_NAME = "classification_process";
-    protected static final char DEFAULT_DELIMITER = ',';
-    protected static final String DELIMITER_DESCRIPTION = "The data file delimiter character (default " + DEFAULT_DELIMITER + ").";
 
     @Parameter(names = {"-n", "--name"}, description = "The name of the classification process.")
     protected String name = DEFAULT_PROCESS_NAME;
+
+    @Parameter(names = {"-ch", "--charset"}, description = LoadGoldStandardFromFileStep.CHARSET_DESCRIPTION)
+    protected Charsets charset = LoadGoldStandardFromFileStep.DEFAULT_CHARSET;
+
+    @Parameter(names = {"-d", "--delimiter"}, description = LoadGoldStandardFromFileStep.DELIMITER_DESCRIPTION)
+    protected char delimiter = LoadGoldStandardFromFileStep.DEFAULT_DELIMITER;
 
     @Override
     public Void call() throws Exception {
