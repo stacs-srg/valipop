@@ -20,7 +20,7 @@ import com.beust.jcommander.*;
 import com.beust.jcommander.converters.*;
 import org.apache.commons.csv.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassificationContext;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.*;
 import uk.ac.standrews.cs.util.dataset.*;
 
@@ -50,15 +50,20 @@ class ClassifyCommand extends Command {
     private char delimiter = DEFAULT_DELIMITER;
 
     @Override
-    public void perform(final ClassificationContext context) throws Exception {
+    public void perform(final ClassificationContext context) {
 
-        final CSVFormat input_format = getDataFormat(delimiter);
-        final DataSet unseen_data_set = new DataSet(new FileReader(unseen_data.get(0)), input_format);
-        final List<String> labels = unseen_data_set.getColumnLabels();
-        final Bucket unseen_data = new Bucket(unseen_data_set);
-        new ClassifyUnseenRecords(unseen_data).perform(context);
+        try {
+            final CSVFormat input_format = getDataFormat(delimiter);
+            final DataSet unseen_data_set = new DataSet(new FileReader(unseen_data.get(0)), input_format);
+            final List<String> labels = unseen_data_set.getColumnLabels();
+            final Bucket unseen_data = new Bucket(unseen_data_set);
+            new ClassifyUnseenRecordsStep(unseen_data).perform(context);
 
-        final DataSet classified_data_set = context.getClassifiedUnseenRecords().toDataSet(labels, input_format);
-        persistDataSet(destination.toPath(), classified_data_set);
+            final DataSet classified_data_set = context.getClassifiedUnseenRecords().toDataSet(labels, input_format);
+            persistDataSet(destination.toPath(), classified_data_set);
+        }
+        catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

@@ -14,12 +14,12 @@
  * You should have received a copy of the GNU General Public License along with record_classification. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.digitising_scotland.record_classification.process.experiments.specific;
+package uk.ac.standrews.cs.digitising_scotland.record_classification.experiments.specific;
 
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.InputFileFormatException;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.ClassifierFactory;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassifierFactory;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.Classifiers;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.experiments.generic.Experiment;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.experiments.generic.Experiment;
 
 import java.io.IOException;
 import java.util.Arrays;

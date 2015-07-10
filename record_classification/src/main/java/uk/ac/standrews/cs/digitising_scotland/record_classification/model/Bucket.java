@@ -16,13 +16,16 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.model;
 
-import org.apache.commons.csv.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.*;
-import uk.ac.standrews.cs.util.dataset.*;
+import org.apache.commons.csv.CSVFormat;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.InputFileFormatException;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.Step;
+import uk.ac.standrews.cs.util.dataset.DataSet;
 
-import java.io.*;
-import java.nio.charset.*;
-import java.nio.file.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.Reader;
+import java.io.Serializable;
+import java.nio.file.Files;
 import java.util.*;
 
 public class Bucket implements Iterable<Record>, Serializable {
@@ -31,22 +34,25 @@ public class Bucket implements Iterable<Record>, Serializable {
 
     private final Collection<Record> records;
 
-    public Bucket(File records) throws InputFileFormatException, IOException {
+    /**
+     * Instantiates a new empty bucket.
+     */
+    public Bucket() {
 
-        this(Files.newBufferedReader(records.toPath(), Charset.defaultCharset()));
+        records = new TreeSet<>();
     }
 
-    public Bucket(File records, Charset charset) throws InputFileFormatException, IOException {
+    public Bucket(File records) throws IOException {
 
-        this(Files.newBufferedReader(records.toPath(), charset));
+        this(Files.newBufferedReader(records.toPath(), Step.DEFAULT_CHARSET));
     }
 
-    public Bucket(Reader reader) throws InputFileFormatException, IOException {
+    public Bucket(Reader reader) {
 
         this(new DataSet(reader));
     }
 
-    public Bucket(DataSet records_csv) throws InputFileFormatException {
+    public Bucket(DataSet records_csv) {
 
         this();
 
@@ -64,14 +70,6 @@ public class Bucket implements Iterable<Record>, Serializable {
 
             records.add(new Record(id, data, classification));
         }
-    }
-
-    /**
-     * Instantiates a new empty bucket.
-     */
-    public Bucket() {
-
-        records = new TreeSet<>();
     }
 
     public DataSet toDataSet(List<String> column_labels, CSVFormat format) {
@@ -154,6 +152,13 @@ public class Bucket implements Iterable<Record>, Serializable {
         Collections.addAll(this.records, records);
     }
 
+    public void add(final Bucket bucket) {
+
+        for (Record record : bucket) {
+            add(record);
+        }
+    }
+
     /**
      * Checks whether the specified record is in this bucket.
      *
@@ -204,7 +209,7 @@ public class Bucket implements Iterable<Record>, Serializable {
     /**
      * Constructs a new bucket containing a randomly selected subset of records present in this bucket based on a given selection probability.
      *
-     * @param random the random number generator
+     * @param random                the random number generator
      * @param selection_probability the probability of a record being selected expressed within inclusive range of {@code 0.0}  to {@code 1.0}
      * @return a new bucket containing a randomly selected subset of this bucket's records
      */

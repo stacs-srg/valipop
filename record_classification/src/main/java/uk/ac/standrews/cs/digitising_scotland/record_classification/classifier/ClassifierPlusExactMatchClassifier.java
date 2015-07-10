@@ -33,14 +33,14 @@ public class ClassifierPlusExactMatchClassifier implements Classifier {
     }
 
     @Override
-    public void train(final Bucket bucket) throws Exception {
+    public void train(final Bucket bucket)  {
 
         classifier.train(bucket);
         exact_match_classifier.train(bucket);
     }
 
     @Override
-    public Classification classify(String data) throws Exception {
+    public Classification classify(String data)  {
 
         Classification result = exact_match_classifier.classify(data);
 

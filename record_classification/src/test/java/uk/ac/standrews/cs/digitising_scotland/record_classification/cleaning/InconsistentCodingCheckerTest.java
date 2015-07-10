@@ -16,12 +16,12 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning;
 
-import org.junit.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
+import org.junit.Before;
+import org.junit.Test;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.AbstractMetricsTest;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
 
 public class InconsistentCodingCheckerTest extends AbstractMetricsTest {
 
@@ -34,9 +34,9 @@ public class InconsistentCodingCheckerTest extends AbstractMetricsTest {
         bucket.add(haddock_correct, haddock_incorrect, osprey_incorrect);
     }
 
-    @Test(expected = InconsistentCodingException.class)
+    @Test
     public void testCheck() throws Exception {
 
-        new InconsistentCodingChecker().check(bucket);
+        assertFalse(new InconsistentCodingChecker().test(bucket));
     }
 }

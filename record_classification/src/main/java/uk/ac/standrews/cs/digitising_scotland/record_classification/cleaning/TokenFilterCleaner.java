@@ -35,18 +35,17 @@ public abstract class TokenFilterCleaner implements Cleaner {
     private static final char SPACE = ' ';
 
     @Override
-    public Bucket clean(final Bucket bucket) throws Exception {
+    public Bucket apply(final Bucket bucket) {
 
         final Bucket cleaned_bucket = new Bucket();
         for (Record record : bucket) {
 
-            final Record cleaned_record = cleanRecord(record);
-            cleaned_bucket.add(cleaned_record);
+            cleaned_bucket.add(cleanRecord(record));
         }
         return cleaned_bucket;
     }
 
-    protected Record cleanRecord(final Record record) throws Exception {
+    protected Record cleanRecord(final Record record) {
 
         final int id = record.getId();
         final String data = record.getData();
@@ -65,7 +64,7 @@ public abstract class TokenFilterCleaner implements Cleaner {
         }
         else {
             final String code = old_classification.getCode();
-            final TokenSet tokens = new TokenSet(cleaned_data); //TODO Not sure if token set cleaning is correct; discuss with Graham
+            final TokenSet tokens = new TokenSet(cleaned_data);
             final double confidence = old_classification.getConfidence();
 
             cleaned_classification = new Classification(code, tokens, confidence);
@@ -73,22 +72,27 @@ public abstract class TokenFilterCleaner implements Cleaner {
         return cleaned_classification;
     }
 
-    protected String cleanData(final String data) throws IOException {
+    protected String cleanData(final String data) {
 
-        final TokenStream tokenizer_stream = getTokenizer(data);
-        final TokenStream filter = getTokenFilter(tokenizer_stream);
+        try {
 
-        final StringBuilder cleaned_data = new StringBuilder();
-        final CharTermAttribute charTermAttribute = filter.addAttribute(CharTermAttribute.class);
+            final TokenStream tokenizer_stream = getTokenizer(data);
+            final TokenStream filter = getTokenFilter(tokenizer_stream);
 
-        filter.reset();
+            final StringBuilder cleaned_data = new StringBuilder();
+            final CharTermAttribute charTermAttribute = filter.addAttribute(CharTermAttribute.class);
 
-        while (filter.incrementToken()) {
-            String term = charTermAttribute.toString();
-            cleaned_data.append(term).append(SPACE);
+            filter.reset();
+
+            while (filter.incrementToken()) {
+                cleaned_data.append(charTermAttribute.toString()).append(SPACE);
+            }
+
+            return cleaned_data.toString().trim();
         }
-
-        return cleaned_data.toString().trim();
+        catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     protected StandardTokenizer getTokenizer(final String data) {

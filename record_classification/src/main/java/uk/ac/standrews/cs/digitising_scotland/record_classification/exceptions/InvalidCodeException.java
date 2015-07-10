@@ -16,7 +16,7 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions;
 
-public class InvalidCodeException extends Exception {
+public class InvalidCodeException extends RuntimeException {
     public InvalidCodeException(String message) {
         super(message);
     }

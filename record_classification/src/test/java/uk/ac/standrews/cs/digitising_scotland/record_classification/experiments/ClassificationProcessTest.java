@@ -14,13 +14,14 @@
  * You should have received a copy of the GNU General Public License along with record_classification. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.digitising_scotland.record_classification.process.experiments;
+package uk.ac.standrews.cs.digitising_scotland.record_classification.experiments;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.Classifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.Classifiers;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassifierFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -50,13 +51,14 @@ public class ClassificationProcessTest extends AbstractClassificationProcessTest
         this.classifier = classifier;
     }
 
-    protected Classifier getClassifier() {
+    protected ClassifierFactory getClassifierFactory() {
 
-        return classifier;
+        return () -> classifier;
     }
 
     /**
      * This just checks that the process of classification and evaluation runs without errors.
+     *
      * @throws Exception
      */
     @Test

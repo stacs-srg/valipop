@@ -14,40 +14,34 @@
  * You should have received a copy of the GNU General Public License along with record_classification. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.digitising_scotland.record_classification.process.experiments.specific;
+package uk.ac.standrews.cs.digitising_scotland.record_classification.experiments.specific;
 
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.ExactMatchClassifier;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.string_similarity.StringSimilarityClassifier;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.linear_regression.OLRClassifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.InputFileFormatException;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.ClassifierFactory;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.experiments.generic.Experiment;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.string_similarity.StringSimilarityMetric;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassifierFactory;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.experiments.generic.Experiment;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
-public class ExactMatchAndStringSimilarityExperiment extends Experiment {
+public class ExactMatchAndOLRExperiment extends Experiment {
 
-    public ExactMatchAndStringSimilarityExperiment() throws IOException, InputFileFormatException {
-
-        super();
-    }
-
-    public ExactMatchAndStringSimilarityExperiment(final String[] args) throws IOException, InputFileFormatException {
+    protected ExactMatchAndOLRExperiment(final String[] args) throws IOException, InputFileFormatException {
 
         super(args);
     }
 
     public static void main(final String[] args) throws Exception {
 
-        final ExactMatchAndStringSimilarityExperiment experiment = new ExactMatchAndStringSimilarityExperiment(args);
+        final ExactMatchAndOLRExperiment experiment = new ExactMatchAndOLRExperiment(args);
         experiment.call();
     }
 
     @Override
     protected List<ClassifierFactory> getClassifierFactories() throws IOException, InputFileFormatException {
 
-        return Arrays.asList(() -> new ExactMatchClassifier(), () -> new StringSimilarityClassifier(StringSimilarityMetric.JARO_WINKLER));
+        return Arrays.asList(() -> new ExactMatchClassifier(), () -> new OLRClassifier());
     }
 }

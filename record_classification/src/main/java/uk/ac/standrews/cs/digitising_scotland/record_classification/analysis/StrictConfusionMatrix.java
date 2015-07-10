@@ -29,7 +29,7 @@ public class StrictConfusionMatrix extends AbstractConfusionMatrix {
 
     private static final long serialVersionUID = 1869329418086836323L;
 
-    public StrictConfusionMatrix(final Bucket classified_records, final Bucket gold_standard_records, Checker checker) throws Exception {
+    public StrictConfusionMatrix(final Bucket classified_records, final Bucket gold_standard_records, Checker checker) {
 
         super(classified_records, gold_standard_records, checker);
     }

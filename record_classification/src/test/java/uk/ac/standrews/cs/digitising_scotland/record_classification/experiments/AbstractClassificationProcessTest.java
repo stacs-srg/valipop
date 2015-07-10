@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License along with record_classification. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.digitising_scotland.record_classification.process.experiments;
+package uk.ac.standrews.cs.digitising_scotland.record_classification.experiments;
 
 
 import org.junit.Before;
@@ -22,17 +22,16 @@ import org.junit.Test;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.AbstractMetricsTest;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.ClassificationMetrics;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.ConfusionMatrix;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.Classifier;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.Cleaner;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.ConsistentCodingCleaner;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.InfoLevel;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.ClassificationProcessWithContext;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.AddTrainingAndEvaluationRecordsByRatio;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.EvaluateClassifier;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.TrainClassifier;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassifierFactory;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.specific.EvaluationExperimentProcess;
 import uk.ac.standrews.cs.util.tools.FileManipulation;
 
-import java.io.InputStreamReader;
+import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
@@ -44,7 +43,7 @@ public abstract class AbstractClassificationProcessTest extends AbstractMetricsT
     public static final String CODED_DATA_1K_FILE_NAME = "coded_data_1K.csv";
     public static final long SEED = 34234234234L;
 
-    protected abstract Classifier getClassifier();
+    protected abstract ClassifierFactory getClassifierFactory();
 
     protected ConfusionMatrix matrix;
     protected ClassificationMetrics metrics;
@@ -52,14 +51,19 @@ public abstract class AbstractClassificationProcessTest extends AbstractMetricsT
     @Before
     public void setup() throws Exception {
 
-        InputStreamReader inputStreamReaderForResource = FileManipulation.getInputStreamReaderForResource(AbstractClassificationProcessTest.class, CODED_DATA_1K_FILE_NAME);
-        final Bucket gold_standard = new Bucket(inputStreamReaderForResource);
+        List<Path> gold_standard_files = Arrays.asList(FileManipulation.getResourcePath(AbstractClassificationProcessTest.class, CODED_DATA_1K_FILE_NAME));
+        List<Double> training_ratios = Arrays.asList(0.8);
+        List<Cleaner> cleaners = Arrays.asList(ConsistentCodingCleaner.CORRECT);
 
-        final ClassificationProcessWithContext process = new ClassificationProcessWithContext(getClassifier(), new Random(SEED));
+        final EvaluationExperimentProcess process = new EvaluationExperimentProcess(getClassifierFactory(), new Random(SEED));
 
-        process.addStep(new AddTrainingAndEvaluationRecordsByRatio(gold_standard, 0.8, ConsistentCodingCleaner.CORRECT));
-        process.addStep(new TrainClassifier());
-        process.addStep(new EvaluateClassifier(InfoLevel.NONE));
+        process.setGoldStandardFiles(gold_standard_files);
+        process.setTrainingRatios(training_ratios);
+        process.setCleaners(cleaners);
+
+        process.configureSteps();
+
+        process.getContext().setVerbosity(InfoLevel.NONE);
         process.call();
 
         metrics = process.getClassificationMetrics();

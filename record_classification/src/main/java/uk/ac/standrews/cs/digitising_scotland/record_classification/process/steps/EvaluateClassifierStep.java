@@ -20,7 +20,8 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassificationContext;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.Step;
 import uk.ac.standrews.cs.util.tools.Formatting;
 
 import java.time.*;
@@ -33,23 +34,15 @@ import java.util.*;
  * @author Graham Kirby
  * @author Masih Hajiarab Derkani
  */
-public class EvaluateClassifier implements Step {
+public class EvaluateClassifierStep implements Step {
 
     private static final long serialVersionUID = -2181763269734136008L;
-    private final InfoLevel verbosity;
 
-    public EvaluateClassifier() {
-
-        this(InfoLevel.NONE);
-    }
-
-    public EvaluateClassifier(InfoLevel verbosity) {
-
-        this.verbosity = verbosity;
+    public EvaluateClassifierStep() {
     }
 
     @Override
-    public void perform(final ClassificationContext context) throws Exception {
+    public void perform(final ClassificationContext context)  {
 
         final Bucket gold_standard_records = context.getGoldStandardRecords();
         final Bucket evaluation_records = context.getEvaluationRecords();
@@ -65,7 +58,7 @@ public class EvaluateClassifier implements Step {
         context.setConfusionMatrix(confusion_matrix);
         context.setClassificationMetrics(classification_metrics);
 
-        if (verbosity.compareTo(InfoLevel.LONG_SUMMARY) >= 0) {
+        if (context.getVerbosity().compareTo(InfoLevel.LONG_SUMMARY) >= 0) {
             printClassificationDetails(context);
         }
     }
@@ -90,7 +83,7 @@ public class EvaluateClassifier implements Step {
         System.out.format("records used for evaluation: %s (%s unique, %s not in training set)%n", Formatting.format(stripped_records.size()), Formatting.format(unique_evaluation.size()), Formatting.format(count));
         System.out.println();
 
-        context.getClassificationMetrics().printMetrics(verbosity);
+        context.getClassificationMetrics().printMetrics(context.getVerbosity());
 
         System.out.println();
         System.out.format("training time              : %s%n", Formatting.format(context.getTrainingTime()));

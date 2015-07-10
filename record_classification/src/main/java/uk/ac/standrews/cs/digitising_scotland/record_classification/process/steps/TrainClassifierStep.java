@@ -16,23 +16,25 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps;
 
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.Classifier;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassificationContext;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.Step;
 
-import java.time.*;
+import java.time.Duration;
+import java.time.Instant;
 
 /**
  * Trains a classifier in the context of a classification process using the {@link ClassificationContext#getTrainingRecords() training records} in the context .
  *
  * @author Masih Hajiarab Derkani
  */
-public class TrainClassifier implements Step {
+public class TrainClassifierStep implements Step {
 
     private static final long serialVersionUID = 5825366701064269040L;
 
     @Override
-    public void perform(final ClassificationContext context) throws Exception {
+    public void perform(final ClassificationContext context) {
 
         final Classifier classifier = context.getClassifier();
         final Bucket training_records = context.getTrainingRecords();

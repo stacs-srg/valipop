@@ -37,9 +37,9 @@ public class NaiveBayesClassifier2 implements Classifier {
         naive_bayes = new NaiveBayes();
     }
 
-    public void train(final Bucket bucket) throws Exception {
+    public void train(final Bucket bucket)  {
 
-        naive_bayes.buildClassifier(getInstances(bucket));
+//        naive_bayes.buildClassifier(getInstances(bucket));
     }
 
     private Instances getInstances(Bucket bucket) throws IOException {
@@ -51,10 +51,11 @@ public class NaiveBayesClassifier2 implements Classifier {
 
     }
 
-    public Classification classify(final String data) throws Exception {
+    public Classification classify(final String data)  {
 
-        double[] probabilities = naive_bayes.distributionForInstance(makeInstance(data));
-        return getClassification(probabilities);
+//        double[] probabilities = naive_bayes.distributionForInstance(makeInstance(data));
+//        return getClassification(probabilities);
+        return null;
     }
 
     @Override

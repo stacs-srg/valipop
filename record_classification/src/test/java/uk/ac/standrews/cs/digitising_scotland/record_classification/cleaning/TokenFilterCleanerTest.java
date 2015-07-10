@@ -49,7 +49,7 @@ public abstract class TokenFilterCleanerTest {
             unclean.add(new Record(1, entry.getKey()));
         }
 
-        final Bucket actual = cleaner.clean(unclean);
+        final Bucket actual = cleaner.apply(unclean);
         assertEquals(expected, actual);
     }
 

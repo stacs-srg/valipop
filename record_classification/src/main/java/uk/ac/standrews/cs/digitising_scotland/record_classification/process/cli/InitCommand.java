@@ -18,8 +18,8 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.ClassificationContext;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.ClassificationProcessWithContext;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassificationContext;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassificationProcessWithContext;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -60,7 +60,7 @@ class InitCommand extends Command {
     }
 
     @Override
-    public void perform(final ClassificationContext context) throws Exception {
+    public void perform(final ClassificationContext context) {
 
     }
 }
