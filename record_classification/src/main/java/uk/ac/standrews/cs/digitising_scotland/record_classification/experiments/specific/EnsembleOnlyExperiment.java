@@ -18,10 +18,10 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.experiments
 
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.ensemble.EnsembleVotingClassifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.string_similarity.StringSimilarityClassifier;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.string_similarity.StringSimilarityMetrics;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.InputFileFormatException;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassifierFactory;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.experiments.generic.Experiment;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.string_similarity.StringSimilarityMetric;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassifierFactory;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -45,7 +45,7 @@ public class EnsembleOnlyExperiment extends Experiment {
 
         return Arrays.asList(() -> new EnsembleVotingClassifier(
                 Arrays.asList(
-                        new StringSimilarityClassifier(StringSimilarityMetric.LEVENSHTEIN),
-                        new StringSimilarityClassifier(StringSimilarityMetric.JARO_WINKLER))));
+                        new StringSimilarityClassifier(StringSimilarityMetrics.LEVENSHTEIN.get()),
+                        new StringSimilarityClassifier(StringSimilarityMetrics.JARO_WINKLER.get()))));
     }
 }

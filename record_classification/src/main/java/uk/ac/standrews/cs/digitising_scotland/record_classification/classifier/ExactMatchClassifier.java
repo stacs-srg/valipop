@@ -77,4 +77,9 @@ public class ExactMatchClassifier implements Classifier {
 
         return Objects.hash(known_classifications);
     }
+
+    public String toString() {
+
+        return getName();
+    }
 }

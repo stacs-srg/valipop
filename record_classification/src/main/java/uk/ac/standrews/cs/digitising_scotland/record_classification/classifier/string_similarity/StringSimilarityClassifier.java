@@ -17,32 +17,41 @@
 package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.string_similarity;
 
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.Classifier;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Classification;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Record;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.TokenSet;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
- * Classifies records based on the {@link InterfaceStringMetric similarity} of the training data to unseen data.
+ * Classifies records based on the string similarity of the training data to unseen data.
  * This class is not thread-safe.
  *
  * @author Masih Hajiarab Derkani
+ * @author Graham Kirby
  */
 public class StringSimilarityClassifier implements Classifier {
 
     private static final long serialVersionUID = -6159276459112698341L;
 
-    private final StringSimilarityMetric similarity_metric;
-    private final HashMap<String, Classification> known_classifications;
+    private SimilarityMetric similarity_metric;
+    private  HashMap<String, Classification> known_classifications;
 
     /**
-     * Constructs a new instance of String similarity classifier.
-     *
      * @param similarity_metric the metric by which to calculate similarity between training and unseen data
      */
-    public StringSimilarityClassifier(StringSimilarityMetric similarity_metric) {
+    public StringSimilarityClassifier(SimilarityMetric similarity_metric) {
 
         this.similarity_metric = similarity_metric;
         known_classifications = new HashMap<>();
+    }
+
+    /**
+     * Needed for JSON deserialization.
+     */
+    public StringSimilarityClassifier() {
     }
 
     @Override
@@ -72,26 +81,9 @@ public class StringSimilarityClassifier implements Classifier {
     }
 
     @Override
-    public boolean equals(final Object o) {
-
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
-        final StringSimilarityClassifier that = (StringSimilarityClassifier) o;
-        return Objects.equals(similarity_metric, that.similarity_metric) && Objects.equals(known_classifications, that.known_classifications);
-    }
-
-    @Override
-    public int hashCode() {
-
-        return Objects.hash(similarity_metric, known_classifications);
-    }
-
-    @Override
     public String getName() {
 
-        return getClass().getSimpleName() + "[" + similarity_metric.name() + "]";
+        return getClass().getSimpleName() + "[" + similarity_metric.getName() + "]";
     }
 
     @Override

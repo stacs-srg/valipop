@@ -17,55 +17,63 @@
 package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.string_similarity;
 
 import org.simmetrics.StringMetric;
-import org.simmetrics.metrics.*;
+
+import java.io.Serializable;
 
 /**
  * The metrics by which to measure similarity between a pair of strings.
  *
  * @author Masih Hajiarab Derkani
+ * @author Graham Kirby
  */
-public enum StringSimilarityMetric {
+public class StringSimilarityMetricWrapper implements SimilarityMetric, Serializable {
 
-    /** @see {@link JaccardSimilarity}. **/
-    JACCARD(new SetMetricAdapter(new JaccardSimilarity()), Constants.STATIC_CONFIDENCE_JACCARD),
+    // This is transient to help with JSON serialization.
+    private transient StringMetric metric;
+    private double static_confidence;
+    private String name;
 
-    /** @see {@link Levenshtein}. **/
-    LEVENSHTEIN(new Levenshtein(), Constants.STATIC_CONFIDENCE_LEVENSHTEIN),
+    /**
+     * Needed for JSON deserialization.
+     */
+    StringSimilarityMetricWrapper() {
+    }
 
-    /** @see {@link JaroWinkler} **/
-    JARO_WINKLER(new JaroWinkler(), Constants.STATIC_CONFIDENCE_JARO_WINKLER),
+    StringSimilarityMetricWrapper(final String name, double static_confidence) {
 
-    /** @see {@link DiceSimilarity}. **/
-    DICE(new SetMetricAdapter(new DiceSimilarity()), Constants.STATIC_CONFIDENCE_DICE);
-
-    // The annotation is to suppress warnings in intellij; the IDE wrongly warns of non-serializable field in enums:
-    // http://docs.oracle.com/javase/8/docs/platform/serialization/spec/serial-arch.html#a6469
-    // The issue is reported to JetBrains. The annontation is to be removed once the issue is rectified.
-    @SuppressWarnings("NonSerializableFieldInSerializableClass")
-    private final StringMetric metric;
-    private final double static_confidence;
-
-    StringSimilarityMetric(final StringMetric metric, double static_confidence) {
-
-        this.metric = metric;
+        this.name = name;
         this.static_confidence = static_confidence;
     }
 
     /**
      * Calculates the similarity between a given pair of strings.
      *
-     * @param one the first string
+     * @param one   the first string
      * @param other the second string
      * @return the similarity between the inclusive range of {@code 0} (no similarity) and {@code 1} (exact match)
      */
     public float getSimilarity(String one, String other) {
 
+        loadMetricIfNecessary();
         return metric.compare(one, other);
+    }
+
+    private void loadMetricIfNecessary() {
+
+        if (metric == null) {
+            metric = StringSimilarityMetrics.valueOf(name).getStringMetric();
+        }
     }
 
     public String getDescription() {
 
+        loadMetricIfNecessary();
         return metric.toString();
+    }
+
+    public String getName() {
+
+        return name;
     }
 
     public double getStaticConfidence() {
@@ -73,11 +81,13 @@ public enum StringSimilarityMetric {
         return static_confidence;
     }
 
-    private static class Constants {
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof StringSimilarityMetricWrapper && ((StringSimilarityMetricWrapper)obj).getName().equals(name);
+    }
 
-        public static final double STATIC_CONFIDENCE_JACCARD = 0.92;
-        public static final double STATIC_CONFIDENCE_LEVENSHTEIN = 0.91;
-        public static final double STATIC_CONFIDENCE_JARO_WINKLER = 0.92;
-        public static final double STATIC_CONFIDENCE_DICE = 0.92;
+    public String toString() {
+
+        return getName();
     }
 }

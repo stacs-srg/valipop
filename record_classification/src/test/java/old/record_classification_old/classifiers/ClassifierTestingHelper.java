@@ -43,7 +43,7 @@ public class ClassifierTestingHelper {
     private CodeDictionary codeDictionary;
 
     /**
-     * Instantiates a new classifier testing helper.
+     * Instantiates a new factory testing helper.
      */
     public ClassifierTestingHelper() {
 

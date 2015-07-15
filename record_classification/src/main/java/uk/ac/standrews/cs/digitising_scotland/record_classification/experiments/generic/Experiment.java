@@ -72,7 +72,7 @@ public abstract class Experiment implements Callable<Void> {
     private static final String EVALUATION_TIME_HEADER = "evaluation time (m)";
 
     private final JCommander commander;
-    private List<ClassificationProcess> processes;
+    private Collection<ClassificationProcess> processes;
 
     @Parameter(names = {"-v", "--verbosity"}, description = DESCRIPTION_VERBOSITY)
     private InfoLevel verbosity = DEFAULT_VERBOSITY;
@@ -138,46 +138,49 @@ public abstract class Experiment implements Callable<Void> {
         this.training_ratios = training_ratios;
     }
 
-    public List<RepetitionResult> getExperimentResults() throws Exception {
+    public List<ClassifierResults> getExperimentResults() throws Exception {
 
-        processes = getClassificationProcesses();
+        final List<ClassifierFactory> classifier_factories = getClassifierFactories();
 
-        final Map<ClassificationProcess, RepetitionResult> results = makeResultsMap(processes);
+        final Map<ClassifierFactory, ClassificationProcess> process_map = makeProcessMap(classifier_factories);
+        final Map<ClassifierFactory, ClassifierResults> result_map = makeResultsMap(classifier_factories);
+        final Map<ClassifierFactory, Random> random_map = makeRandomMap(classifier_factories);
 
         // Loop nesting is this way round to avoid performing all repetitions of a given process consecutively, given
         // that timing information is being recorded.
         for (int i = 0; i < repetitions; i++) {
 
-            for (final ClassificationProcess process : processes) {
-                performClassificationProcess(process, results);
+            for (ClassifierFactory factory : classifier_factories) {
+
+                final ClassificationProcess process = process_map.get(factory);
+                final ClassifierResults result = result_map.get(factory);
+                final Random random = random_map.get(factory);
+
+                final ClassificationContext context = new ClassificationContext(factory.get(), random);
+                context.setVerbosity(verbosity);
+
+                process.call(context);
+
+                result.data_set.addRow(getResultValuesWithTimings(context));
+                result.contexts.add(context);
             }
         }
-        return new ArrayList<>(results.values());
+
+        processes = process_map.values();
+
+        return new ArrayList<>(result_map.values());
     }
 
-    public List<ClassificationProcess> getProcesses() {
+    public Collection<ClassificationProcess> getProcesses() {
 
         return processes;
     }
 
-    /**
-     * Initialises a fresh list of classification process for each repetition.
-     * New classifier instances need to be created each repetition.
-     *
-     * @return the list of classification processes to be run for a single repetition.
-     * @throws IOException              if an error occurs while reading the input data
-     * @throws InputFileFormatException if the input data files are in an unsupported format
-     */
     protected abstract List<ClassifierFactory> getClassifierFactories() throws IOException, InputFileFormatException;
 
-    protected List<ClassificationProcess> getClassificationProcesses() throws IOException, InputFileFormatException {
+    private ClassificationProcess makeClassificationProcess(final ClassifierFactory factory) {
 
-        return getClassifierFactories().stream().map(this::getClassificationProcess).collect(Collectors.toList());
-    }
-
-    private ClassificationProcess getClassificationProcess(ClassifierFactory factory){
-
-        final EvaluationExperimentProcess process = new EvaluationExperimentProcess(factory, new Random(SEED));
+        final EvaluationExperimentProcess process = new EvaluationExperimentProcess();
 
         process.setGoldStandardFiles(gold_standard_files);
         process.setTrainingRatios(training_ratios);
@@ -186,18 +189,6 @@ public abstract class Experiment implements Callable<Void> {
         process.configureSteps();
 
         return process;
-    }
-
-    private void performClassificationProcess(final ClassificationProcess process, final Map<ClassificationProcess, RepetitionResult> results) throws Exception {
-
-        final ClassificationContext context = new ClassificationContext(process.getClassifierFactory().get(), process.getRandom());
-        context.setVerbosity(verbosity);
-
-        process.call(context);
-
-        final RepetitionResult result = results.get(process);
-        result.data_set.addRow(getResultValuesWithTimings(context));
-        result.contexts.add(context);
     }
 
     private List<String> getResultValuesWithTimings(final ClassificationContext context) {
@@ -211,14 +202,29 @@ public abstract class Experiment implements Callable<Void> {
         return values;
     }
 
-    private Map<ClassificationProcess, RepetitionResult> makeResultsMap(final List<ClassificationProcess> processes) {
+    private Map<ClassifierFactory, Random> makeRandomMap(final List<ClassifierFactory> factories) {
 
-        return processes.stream().collect(Collectors.toMap(Function.identity(), this::makeRepetitionResult));
+        return factories.stream().collect(Collectors.toMap(Function.identity(), this::makeRandom));
     }
 
-    private RepetitionResult makeRepetitionResult(final ClassificationProcess process) {
+    private Map<ClassifierFactory, ClassifierResults> makeResultsMap(final List<ClassifierFactory> factories) {
 
-        return new RepetitionResult(process.getName(), new DataSet(getDataSetLabelsWithTimingColumns()));
+        return factories.stream().collect(Collectors.toMap(Function.identity(), this::makeClassifierResults));
+    }
+
+    private Map<ClassifierFactory, ClassificationProcess> makeProcessMap(final List<ClassifierFactory> factories) {
+
+        return factories.stream().collect(Collectors.toMap(Function.identity(), this::makeClassificationProcess));
+    }
+
+    private Random makeRandom(final ClassifierFactory factory) {
+
+        return new Random(SEED);
+    }
+
+    private ClassifierResults makeClassifierResults(final ClassifierFactory factory) {
+
+        return new ClassifierResults(factory.get().getName(), new DataSet(getDataSetLabelsWithTimingColumns()));
     }
 
     private List<String> getDataSetLabelsWithTimingColumns() {
@@ -245,7 +251,7 @@ public abstract class Experiment implements Callable<Void> {
         System.exit(1);
     }
 
-    private void printSummarisedResults(final List<RepetitionResult> results) throws IOException {
+    private void printSummarisedResults(final List<ClassifierResults> results) throws IOException {
 
         final String table_caption = String.format(TABLE_CAPTION_STRING, repetitions, getPluralitySuffix(repetitions));
         final TableGenerator table_generator = new TableGenerator(getNames(results), getDataSets(results), System.out, table_caption, FIRST_COLUMN_HEADING, COLUMNS_AS_PERCENTAGES, TAB);
@@ -259,12 +265,12 @@ public abstract class Experiment implements Callable<Void> {
         return repetitions > 1 ? "s" : "";
     }
 
-    private List<String> getNames(final List<RepetitionResult> results) {
+    private List<String> getNames(final List<ClassifierResults> results) {
 
         return results.stream().map(result -> result.name).collect(Collectors.toList());
     }
 
-    private List<DataSet> getDataSets(final List<RepetitionResult> results) {
+    private List<DataSet> getDataSets(final List<ClassifierResults> results) {
 
         return results.stream().map(result -> result.data_set).collect(Collectors.toList());
     }
@@ -274,13 +280,13 @@ public abstract class Experiment implements Callable<Void> {
         System.out.println("experiment run at: " + new Date());
     }
 
-    public class RepetitionResult {
+    public class ClassifierResults {
 
         final String name;
         final DataSet data_set;
         final List<ClassificationContext> contexts;
 
-        public RepetitionResult(String name, DataSet data_set) {
+        public ClassifierResults(String name, DataSet data_set) {
 
             this.name = name;
             this.data_set = data_set;

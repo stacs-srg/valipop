@@ -29,11 +29,15 @@ public class Record implements Comparable<Record>, Serializable {
 
     private static final long serialVersionUID = 5810954671977163993L;
 
-    private final int id;
-    private final String data;
-    private final Classification classification;  // TODO restore support for multiple classifications
+    private int id;
+    private String data;
+    private Classification classification;  // TODO restore support for multiple classifications
 
-    private final int hash_code;
+    private int hash_code;
+
+    public Record() {
+
+    }
 
     /**
      * Instantiates an {@link Classification#UNCLASSIFIED unclassified} record.

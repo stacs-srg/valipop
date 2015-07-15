@@ -16,16 +16,20 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier;
 
-import org.apache.commons.lang3.*;
-import org.junit.*;
+import org.junit.Before;
+import org.junit.Test;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.ensemble.EnsembleClassifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.string_similarity.StringSimilarityClassifier;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.string_similarity.StringSimilarityMetric;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.string_similarity.StringSimilarityMetrics;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Classification;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Record;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.TokenSet;
 
-import java.util.*;
+import java.util.HashSet;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 /**
  * Tests {@link EnsembleClassifier}.
@@ -49,7 +53,7 @@ public class EnsembleClassifierTest {
     public void setUp() throws Exception {
 
         exact_match_classifier = new ExactMatchClassifier();
-        string_similarity_classifier = new StringSimilarityClassifier(StringSimilarityMetric.JARO_WINKLER);
+        string_similarity_classifier = new StringSimilarityClassifier(StringSimilarityMetrics.JARO_WINKLER.get());
         final HashSet<Classifier> classifiers = new HashSet<>();
         classifiers.add(exact_match_classifier);
         classifiers.add(string_similarity_classifier);
@@ -85,14 +89,6 @@ public class EnsembleClassifierTest {
         assertNotEquals(Classification.UNCLASSIFIED, classifier.classify(SIMILAR_RECORD_DATA));
         assertEquals(Classification.UNCLASSIFIED, classifier.classify(DISSIMILAR_RECORD_DATA));
 
-    }
-
-    @Test
-    public void testSerialization() throws Exception {
-
-        assertEquals(classifier, SerializationUtils.deserialize(SerializationUtils.serialize(classifier)));
-        classifier.train(training_records);
-        assertEquals(classifier, SerializationUtils.deserialize(SerializationUtils.serialize(classifier)));
     }
 }
 

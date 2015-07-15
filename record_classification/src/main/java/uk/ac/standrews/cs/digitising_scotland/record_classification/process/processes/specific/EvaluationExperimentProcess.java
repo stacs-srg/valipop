@@ -17,24 +17,17 @@
 package uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.specific;
 
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.Cleaner;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassificationProcessWithContext;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassifierFactory;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassificationProcess;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.*;
 
 import java.nio.file.Path;
 import java.util.List;
-import java.util.Random;
 
-public class EvaluationExperimentProcess extends ClassificationProcessWithContext {
+public class EvaluationExperimentProcess extends ClassificationProcess {
 
     private List<Path> gold_standard_files;
     private List<Double> training_ratios;
     private List<Cleaner> cleaners;
-
-    public EvaluationExperimentProcess(ClassifierFactory factory, Random random) {
-
-        super(factory, random);
-    }
 
     public EvaluationExperimentProcess setGoldStandardFiles(List<Path> gold_standard_files){
 

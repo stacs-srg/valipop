@@ -35,7 +35,7 @@ public class ExperimentTest {
     public static final int NUMBER_OF_REPETITIONS = 5;
 
     private Experiment experiment;
-    private List<Experiment.RepetitionResult> experiment_results;
+    private List<Experiment.ClassifierResults> experiment_results;
 
     @Before
     public void setup() throws Exception {
@@ -62,7 +62,7 @@ public class ExperimentTest {
 
         List<Integer> overall_bucket_sizes_across_repetitions = new ArrayList<>();
 
-        for (Experiment.RepetitionResult result : experiment_results) {
+        for (Experiment.ClassifierResults result : experiment_results) {
 
             for (ClassificationContext context : result.getContexts()) {
 
@@ -79,7 +79,7 @@ public class ExperimentTest {
     @Test
     public void numberOfTrainingRecordsVariesAcrossRepetitionsOfEachExperiment() throws Exception {
 
-        for (Experiment.RepetitionResult result : experiment_results) {
+        for (Experiment.ClassifierResults result : experiment_results) {
 
             List<Integer> training_bucket_sizes_across_repetitions = new ArrayList<>();
 
@@ -101,7 +101,7 @@ public class ExperimentTest {
             training_bucket_sizes.add(new ArrayList<>());
         }
 
-        for (Experiment.RepetitionResult result : experiment_results) {
+        for (Experiment.ClassifierResults result : experiment_results) {
 
             int repetition_number = 0;
             for (ClassificationContext context : result.getContexts()) {

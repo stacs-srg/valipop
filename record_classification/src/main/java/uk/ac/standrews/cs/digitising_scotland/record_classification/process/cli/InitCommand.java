@@ -18,8 +18,8 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.Classifiers;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassificationContext;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassificationProcessWithContext;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -30,6 +30,7 @@ import java.util.Random;
  * Initialisation command of the classification process.
  *
  * @author Masih Hajiarab Derkani
+ * @author Graham Kirby
  */
 @Parameters(commandNames = InitCommand.NAME, commandDescription = "Initialise a new classification process", separators = "=")
 class InitCommand extends Command {
@@ -44,23 +45,21 @@ class InitCommand extends Command {
     private static final long serialVersionUID = 5738604903474935932L;
 
     @Parameter(required = true, names = {"-c", "--classifier"}, description = "The classifier to use for classification process.")
-    private Classifiers classifier;
-
+    private Classifiers classifier_supplier;
 
     @Override
     public Void call() throws Exception {
 
-        final ClassificationProcessWithContext process = new ClassificationProcessWithContext(classifier, new Random(SEED));
+        ClassificationContext context  = new ClassificationContext(classifier_supplier.get(), new Random(SEED));
 
         Path process_working_directory = Paths.get(name);
         Files.createDirectory(process_working_directory);
-        persistClassificationProcess(process);
+        persistContext(context);
 
         return null; // void task
     }
 
     @Override
     public void perform(final ClassificationContext context) {
-
     }
 }

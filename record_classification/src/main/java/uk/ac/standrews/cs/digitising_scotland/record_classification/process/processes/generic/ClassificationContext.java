@@ -30,13 +30,14 @@ import java.util.Random;
  * Captures the shared knowledge among the {@link Step steps} of a {@link ClassificationProcess classification process}.
  *
  * @author Masih Hajiarab Derkani
+ * @author Graham Kirby
  */
 public class ClassificationContext implements Serializable {
 
     private static final long serialVersionUID = -6389479358148790573L;
     private static final InfoLevel DEFAULT_VERBOSITY = InfoLevel.SHORT_SUMMARY;
 
-    private final Random random;
+    private Random random;
 
     private Bucket gold_standard_records;
     private Bucket evaluation_records;
@@ -46,9 +47,14 @@ public class ClassificationContext implements Serializable {
     private Classifier classifier;
     private ConfusionMatrix confusion_matrix;
     private ClassificationMetrics classification_metrics;
+
     private Duration training_time;
     private Duration classification_time;
     private InfoLevel verbosity;
+
+    // Needed for JSON deserialization.
+    public ClassificationContext() {
+    }
 
     /**
      * Instantiates a new classification context.
@@ -232,7 +238,7 @@ public class ClassificationContext implements Serializable {
      *
      * @param evaluation_classification_time the time it took to classify the evaluation records by the classifier in this context
      */
-    public void setEvaluationClassificationTime(Duration evaluation_classification_time) {
+    public void setClassificationTime(Duration evaluation_classification_time) {
 
         this.classification_time = evaluation_classification_time;
     }
