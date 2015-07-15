@@ -16,13 +16,13 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions;
 
-public class DuplicateRecordIdException extends RuntimeException {
+public class DuplicateRecordIdExceptionTemp extends RuntimeException {
 
-    public DuplicateRecordIdException() {
+    public DuplicateRecordIdExceptionTemp() {
         super();
     }
 
-    public DuplicateRecordIdException(String message) {
+    public DuplicateRecordIdExceptionTemp(String message) {
         super(message);
     }
 }

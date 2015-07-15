@@ -17,7 +17,7 @@
 package uk.ac.standrews.cs.digitising_scotland.record_classification.model;
 
 import org.apache.commons.csv.CSVFormat;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.DuplicateRecordIdException;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.DuplicateRecordIdExceptionTemp;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.InputFileFormatException;
 import uk.ac.standrews.cs.util.dataset.DataSet;
 
@@ -171,7 +171,7 @@ public class Bucket implements Iterable<Record>, Serializable {
         int final_size = this.records.size();
 
         if (final_size != original_size + records.size()) {
-            throw new DuplicateRecordIdException();
+            throw new DuplicateRecordIdExceptionTemp();
         }
     }
 
