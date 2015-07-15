@@ -14,11 +14,12 @@
  * You should have received a copy of the GNU General Public License along with record_classification. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions;
+package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.string_similarity;
 
-public class InconsistentCodingException extends Exception {
+public interface SimilarityMetric {
 
-    public InconsistentCodingException(String message) {
-        super(message);
-    }
+    float getSimilarity(String one, String other);
+    double getStaticConfidence();
+    String getDescription();
+    String getName();
 }

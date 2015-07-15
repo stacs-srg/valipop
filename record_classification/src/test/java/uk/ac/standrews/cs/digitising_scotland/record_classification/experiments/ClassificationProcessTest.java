@@ -20,7 +20,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.Classifier;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.Classifiers;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.Classifiers;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassifierFactory;
 
 import java.util.ArrayList;
@@ -37,16 +37,16 @@ public class ClassificationProcessTest extends AbstractClassificationProcessTest
 
         List<Object[]> result = new ArrayList<>();
 
-        result.add(new Object[]{Classifiers.STRING_SIMILARITY_DICE});
-        result.add(new Object[]{Classifiers.STRING_SIMILARITY_JACCARD});
-        result.add(new Object[]{Classifiers.EXACT_MATCH_PLUS_STRING_SIMILARITY_JARO_WINKLER});
-        result.add(new Object[]{Classifiers.EXACT_MATCH_PLUS_STRING_SIMILARITY_LEVENSHTEIN});
-        result.add(new Object[]{Classifiers.OLR});
+        result.add(new Object[]{Classifiers.STRING_SIMILARITY_DICE.get()});
+        result.add(new Object[]{Classifiers.STRING_SIMILARITY_JACCARD.get()});
+        result.add(new Object[]{Classifiers.EXACT_MATCH_PLUS_STRING_SIMILARITY_JARO_WINKLER.get()});
+        result.add(new Object[]{Classifiers.EXACT_MATCH_PLUS_STRING_SIMILARITY_LEVENSHTEIN.get()});
+        result.add(new Object[]{Classifiers.OLR.get()});
 
         return result;
     }
 
-    public ClassificationProcessTest(Classifier classifier) {
+    ClassificationProcessTest(Classifier classifier) {
 
         this.classifier = classifier;
     }

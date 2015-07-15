@@ -63,4 +63,9 @@ public class ClassifierPlusExactMatchClassifier implements Classifier {
 
         return "Classifies using exact match first, then if no match using " + classifier.getName() + " classifier";
     }
+
+    public String toString() {
+
+        return getName();
+    }
 }

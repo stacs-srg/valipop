@@ -16,67 +16,65 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.linear_regression;
 
-import old.record_classification_old.tools.configuration.*;
-import org.apache.mahout.math.*;
+import old.record_classification_old.tools.configuration.MachineLearningConfiguration;
+import org.apache.mahout.math.Matrix;
+import org.apache.mahout.math.NamedVector;
 import org.apache.mahout.math.Vector;
-import org.slf4j.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.Classifier;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Classification;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Record;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.TokenSet;
 
-import java.io.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Properties;
 
 /**
- *
  * @author frjd2, jkc25
  */
 public class OLRClassifier implements Classifier {
 
     private static final long serialVersionUID = -2561454096763303789L;
-    private static final Logger LOGGER = LoggerFactory.getLogger(OLRClassifier.class);
     private static final double STATIC_CONFIDENCE = 0.89;
+
     private OLRCrossFold model = null;
-    private final Properties properties;
-    private VectorFactory vectorFactory;
+    private Properties properties;
+    private VectorFactory vector_factory;
 
-    /** The Constant MODELPATH. Default is target/olrModelPath, but can be overwritten. */
-    private static String modelPath = "target/olrModelPath";
+    public void setModel(OLRCrossFold model) {
+        this.model = model;
+    }
 
-    /**
-     * Constructor.
-     */
+    public void setProperties(Properties properties) {
+        this.properties = properties;
+    }
+
+    public OLRCrossFold getModel() {
+        return model;
+    }
+
+    public Properties getProperties() {
+        return properties;
+    }
+
     public OLRClassifier() {
 
         model = new OLRCrossFold();
         properties = MachineLearningConfiguration.getDefaultProperties();
     }
 
-    /**
-     * Constructor.
-     *
-     * @param customProperties custom properties file
-     */
-    public OLRClassifier(final String customProperties) {
-
-        MachineLearningConfiguration mlc = new MachineLearningConfiguration();
-        properties = mlc.extendDefaultProperties(customProperties);
-    }
-
-    /**
-     * Trains an OLRCrossfold model on a bucket.
-     *
-     * @param bucket bucket to train on
-     */
     public void train(final Bucket bucket) {
 
-        if (vectorFactory == null) {
+        if (vector_factory == null) {
             CodeIndexer index = new CodeIndexer(bucket);
-            vectorFactory = new VectorFactory(bucket, index);
+            vector_factory = new VectorFactory(bucket, index);
             List<NamedVector> trainingVectorList = getTrainingVectors(bucket);
             Collections.shuffle(trainingVectorList);
             model = new OLRCrossFold(trainingVectorList, properties);
-        }
-        else {
+
+        } else {
             int classCountDiff = getNumClassesAdded(bucket);
             int featureCountDiff = getFeatureCountDiff(bucket);
             Matrix matrix = expandModel(featureCountDiff, classCountDiff);
@@ -86,63 +84,23 @@ public class OLRClassifier implements Classifier {
         }
 
         model.train();
-
-        writeModel();
-    }
-
-    private ArrayList<NamedVector> getTrainingVectors(final Bucket bucket) {
-
-        ArrayList<NamedVector> trainingVectorList = new ArrayList<>();
-
-        for (Record record : bucket) {
-            final List<NamedVector> listOfVectors = vectorFactory.generateVectorsFromRecord(record);
-            trainingVectorList.addAll(listOfVectors);
-        }
-        return trainingVectorList;
-    }
-
-    private Matrix expandModel(final int featureCountDiff, final int classCountDiff) {
-
-        return MatrixEnlarger.enlarge(model.getAverageBetaMatrix(), featureCountDiff, classCountDiff);
-    }
-
-    private int getFeatureCountDiff(final Bucket bucket) {
-
-        int initNoFeatures = vectorFactory.getNumberOfFeatures();
-        vectorFactory.updateDictionary(bucket);
-        int newNoFeatures = vectorFactory.getNumberOfFeatures();
-        return newNoFeatures - initNoFeatures;
-    }
-
-    private int getNumClassesAdded(final Bucket bucket) {
-
-        int initNoClasses = vectorFactory.getCodeIndexer().getNumberOfOutputClasses();
-        vectorFactory.getCodeIndexer().addGoldStandardCodes(bucket);
-        int newNoClasses = vectorFactory.getCodeIndexer().getNumberOfOutputClasses();
-        return newNoClasses - initNoClasses;
-    }
-
-    private void writeModel() {
-
-        try {
-            serializeModel(modelPath);
-        }
-        catch (IOException e) {
-            LOGGER.error("Could not write model. IOException has occured", e.getCause());
-        }
     }
 
     @Override
     public Classification classify(String data) {
 
-        TokenSet tokenSet = new TokenSet(data);
-        NamedVector vector = vectorFactory.createNamedVectorFromString(tokenSet.toString(), "unknown");
-        Vector classifyFull = model.classifyFull(vector);
-        int classificationID = classifyFull.maxValueIndex();
-        String code = vectorFactory.getCodeIndexer().getCode(classificationID);
-        double confidence = Math.exp(model.logLikelihood(classificationID, vector));
+        if (vector_factory == null) {
+            return Classification.UNCLASSIFIED;
+        } else {
+            TokenSet tokenSet = new TokenSet(data);
+            final String description = tokenSet.toString();
+            NamedVector vector = vector_factory.createNamedVectorFromString(description, "unknown");
+            Vector classifyFull = model.classifyFull(vector);
+            int classificationID = classifyFull.maxValueIndex();
+            String code = vector_factory.getCodeIndexer().getCode(classificationID);
 
-        return new Classification(code, tokenSet, STATIC_CONFIDENCE);
+            return new Classification(code, tokenSet, STATIC_CONFIDENCE);
+        }
     }
 
     @Override
@@ -157,64 +115,41 @@ public class OLRClassifier implements Classifier {
         return "Classifies using online logistic regression";
     }
 
-    /**
-     * Overrides the default path and sets to the path provided.
-     * @param modelPath New path to write model to
-     */
-    public static void setModelPath(final String modelPath) {
+    @Override
+    public String toString() {
 
-        OLRClassifier.modelPath = modelPath;
+        return getName();
     }
 
-    /**
-     * Returns the {@link VectorFactory} used when training this classifier.
-     * @return vectorFactory  the {@link VectorFactory} used when training this classifier.
-     */
-    public VectorFactory getVectorFactory() {
+    private ArrayList<NamedVector> getTrainingVectors(final Bucket bucket) {
 
-        return vectorFactory;
-    }
+        ArrayList<NamedVector> trainingVectorList = new ArrayList<>();
 
-    public OLRClassifier getModelFromDefaultLocation() {
-
-        OLRClassifier olr = null;
-        try {
-            olr = deSerializeModel(modelPath);
-            model = olr.model;
-            vectorFactory = olr.vectorFactory;
+        for (Record record : bucket) {
+            final List<NamedVector> listOfVectors = vector_factory.generateVectorsFromRecord(record);
+            trainingVectorList.addAll(listOfVectors);
         }
-        catch (Exception e) {
-            LOGGER.error("Could not get model from default location (" + modelPath + "). IOEception has occured.", e);
-        }
-        return olr;
+        return trainingVectorList;
     }
 
-    /**
-     * Allows serialization of the model to file.
-     *
-     * @param filename name of file to serialize model to
-     * @throws IOException Signals that an I/O exception has occurred.
-     */
-    public void serializeModel(final String filename) throws IOException {
+    private Matrix expandModel(final int featureCountDiff, final int classCountDiff) {
 
-        ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(filename));
-        out.writeObject(this);
-        out.close();
+        return MatrixEnlarger.enlarge(model.getAverageBetaMatrix(), featureCountDiff, classCountDiff);
     }
 
-    /**
-     * Allows de-serialization of a model from a file. The de-serialized model is not trainable.
-     *
-     * @param filename name of file to de-serialize
-     * @return {@link old.record_classification_old.classifiers.olr.OLRClassifier} that has been read from disk. Does not contain all training vectors so can
-     * only be used for classification
-     * @throws IOException Signals that an I/O exception has occurred.
-     */
-    public OLRClassifier deSerializeModel(final String filename) throws IOException, ClassNotFoundException {
+    private int getFeatureCountDiff(final Bucket bucket) {
 
-        try (ObjectInputStream input_stream = new ObjectInputStream(new FileInputStream(filename))) {
+        int initNoFeatures = vector_factory.getNumberOfFeatures();
+        vector_factory.updateDictionary(bucket);
+        int newNoFeatures = vector_factory.getNumberOfFeatures();
+        return newNoFeatures - initNoFeatures;
+    }
 
-            return (OLRClassifier) input_stream.readObject();
-        }
+    private int getNumClassesAdded(final Bucket bucket) {
+
+        int initNoClasses = vector_factory.getCodeIndexer().getNumberOfOutputClasses();
+        vector_factory.getCodeIndexer().addGoldStandardCodes(bucket);
+        int newNoClasses = vector_factory.getCodeIndexer().getNumberOfOutputClasses();
+        return newNoClasses - initNoClasses;
     }
 }

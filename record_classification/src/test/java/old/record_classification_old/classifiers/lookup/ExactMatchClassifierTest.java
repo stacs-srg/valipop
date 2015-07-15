@@ -44,7 +44,7 @@ public class ExactMatchClassifierTest {
     /** The testing bucket. */
     private Bucket testingBucket;
 
-    /** The exact match classifier. */
+    /** The exact match factory. */
     private ExactMatchClassifier exactMatchClassifier;
 
     /**
@@ -85,7 +85,7 @@ public class ExactMatchClassifierTest {
     /**
      * Train.
      *
-     * @return the exact match classifier
+     * @return the exact match factory
      * @throws Exception the exception
      */
     private ExactMatchClassifier train() throws Exception {

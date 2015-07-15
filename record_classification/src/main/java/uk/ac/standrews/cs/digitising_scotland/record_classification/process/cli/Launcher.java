@@ -28,11 +28,6 @@ public class Launcher {
     /** Name of this executable. */
     public static final String PROGRAM_NAME = "classy";
 
-    private final InitCommand init_command = new InitCommand();
-    private final CleanCommand clean_command = new CleanCommand();
-    private final TrainCommand train_command = new TrainCommand();
-    private final EvaluateCommand evaluate_command = new EvaluateCommand();
-    private final ClassifyCommand classify_command = new ClassifyCommand();
     private final JCommander commander;
 
     @Parameter(names = {"-h", "--help"}, description = "Shows usage.", help = true)
@@ -43,11 +38,12 @@ public class Launcher {
         commander = new JCommander(this);
         commander.setProgramName(PROGRAM_NAME);
 
-        addCommand(init_command);
-        addCommand(clean_command);
-        addCommand(train_command);
-        addCommand(evaluate_command);
-        addCommand(classify_command);
+        addCommand(new InitCommand());
+        addCommand(new LoadCommand());
+        addCommand(new CleanCommand());
+        addCommand(new TrainCommand());
+        addCommand(new EvaluateCommand());
+        addCommand(new ClassifyCommand());
     }
 
     void addCommand(Command command) {

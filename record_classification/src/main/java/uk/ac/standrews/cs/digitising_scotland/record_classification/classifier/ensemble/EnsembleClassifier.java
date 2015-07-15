@@ -72,6 +72,11 @@ public class EnsembleClassifier implements Classifier {
         return getClass().getSimpleName() + "[" + concatenateClassifierNames(classifiers) + "]";
     }
 
+    public String toString() {
+
+        return getName();
+    }
+
     private String concatenateClassifierNames(List<Classifier> classifiers) {
 
         String result = "";

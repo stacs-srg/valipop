@@ -44,9 +44,13 @@ public abstract class TokenFilterCleanerTest {
 
         final Bucket expected = new Bucket();
         final Bucket unclean = new Bucket();
+
+        int record_id = 1;
+
         for (Map.Entry<String, String> entry : input_expected_map.entrySet()) {
-            expected.add(new Record(1, entry.getValue()));
-            unclean.add(new Record(1, entry.getKey()));
+            expected.add(new Record(record_id, entry.getValue()));
+            unclean.add(new Record(record_id, entry.getKey()));
+            record_id++;
         }
 
         final Bucket actual = cleaner.apply(unclean);

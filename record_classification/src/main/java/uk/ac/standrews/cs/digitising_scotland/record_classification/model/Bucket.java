@@ -17,6 +17,7 @@
 package uk.ac.standrews.cs.digitising_scotland.record_classification.model;
 
 import org.apache.commons.csv.CSVFormat;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.DuplicateRecordIdException;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.InputFileFormatException;
 import uk.ac.standrews.cs.util.dataset.DataSet;
 
@@ -52,11 +53,11 @@ public class Bucket implements Iterable<Record>, Serializable {
         this(new DataSet(reader, delimiter));
     }
 
-    public Bucket(DataSet records_csv) {
+    public Bucket(DataSet data_set) {
 
         this();
 
-        for (List<String> record : records_csv.getRecords()) {
+        for (List<String> record : data_set.getRecords()) {
 
             if (record.size() != 3) {
                 throw new InputFileFormatException("record should contain 3 values");
@@ -68,8 +69,19 @@ public class Bucket implements Iterable<Record>, Serializable {
 
             Classification classification = code.isEmpty() ? Classification.UNCLASSIFIED : new Classification(code, new TokenSet(data), 1.0);
 
-            records.add(new Record(id, data, classification));
+            add(new Record(id, data, classification));
         }
+    }
+
+    public Bucket(Collection<Record> records) {
+
+        this();
+        add(records);
+    }
+
+    public Bucket(Record... records) {
+
+        this(Arrays.asList(records));
     }
 
     public DataSet toDataSet(List<String> column_labels, CSVFormat format) {
@@ -149,14 +161,23 @@ public class Bucket implements Iterable<Record>, Serializable {
      */
     public void add(final Record... records) {
 
-        Collections.addAll(this.records, records);
+        add(Arrays.asList(records));
+    }
+
+    public void add(final Collection<Record> records) {
+
+        int original_size = this.records.size();
+        this.records.addAll(records);
+        int final_size = this.records.size();
+
+        if (final_size != original_size + records.size()) {
+            throw new DuplicateRecordIdException();
+        }
     }
 
     public void add(final Bucket bucket) {
 
-        for (Record record : bucket) {
-            add(record);
-        }
+        add(bucket.records);
     }
 
     /**

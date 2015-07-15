@@ -25,6 +25,7 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.Con
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.Cleaner;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.ConsistentCodingCleaner;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.InfoLevel;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassificationContext;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassifierFactory;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.specific.EvaluationExperimentProcess;
 import uk.ac.standrews.cs.util.tools.FileManipulation;
@@ -55,7 +56,7 @@ public abstract class AbstractClassificationProcessTest extends AbstractMetricsT
         List<Double> training_ratios = Arrays.asList(0.8);
         List<Cleaner> cleaners = Arrays.asList(ConsistentCodingCleaner.CORRECT);
 
-        final EvaluationExperimentProcess process = new EvaluationExperimentProcess(getClassifierFactory(), new Random(SEED));
+        final EvaluationExperimentProcess process = new EvaluationExperimentProcess();
 
         process.setGoldStandardFiles(gold_standard_files);
         process.setTrainingRatios(training_ratios);
@@ -63,11 +64,13 @@ public abstract class AbstractClassificationProcessTest extends AbstractMetricsT
 
         process.configureSteps();
 
-        process.getContext().setVerbosity(InfoLevel.NONE);
-        process.call();
+        final ClassificationContext context = new ClassificationContext(getClassifierFactory().get(), new Random(SEED));
 
-        metrics = process.getClassificationMetrics();
-        matrix = process.getConfusionMatrix();
+        context.setVerbosity(InfoLevel.NONE);
+        process.call(context);
+
+        metrics = context.getClassificationMetrics();
+        matrix = context.getConfusionMatrix();
     }
 
     @Test

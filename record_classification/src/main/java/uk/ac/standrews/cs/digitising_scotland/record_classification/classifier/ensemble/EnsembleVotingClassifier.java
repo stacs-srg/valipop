@@ -65,12 +65,13 @@ public class EnsembleVotingClassifier extends EnsembleClassifier {
                 }
             }
 
-            Classification classification=null;
-            for (Classification c :  classifications) {
-                classification = c;
+            if (classifications != null) {
+                //noinspection LoopStatementThatDoesntLoop
+                for (Classification classification : classifications) {
+                    return new Classification(classification.getCode(), classification.getTokenSet(), averageConfidence(classifications));
+                }
             }
-
-            return new Classification(classification.getCode(), classification.getTokenSet(), averageConfidence(classifications));
+            return Classification.UNCLASSIFIED;
         }
 
         private Map<Set<Classification>, Double> getConfidenceAverages(Set<Set<Classification>> classifications_with_most_popular_code) {

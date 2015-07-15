@@ -16,9 +16,13 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions;
 
-public class InconsistentCodingException extends Exception {
+public class DuplicateRecordIdException extends RuntimeException {
 
-    public InconsistentCodingException(String message) {
+    public DuplicateRecordIdException() {
+        super();
+    }
+
+    public DuplicateRecordIdException(String message) {
         super(message);
     }
 }

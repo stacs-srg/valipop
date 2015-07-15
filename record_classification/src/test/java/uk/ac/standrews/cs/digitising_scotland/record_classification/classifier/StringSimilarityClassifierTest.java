@@ -16,57 +16,119 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier;
 
-import org.apache.commons.lang3.*;
-import org.junit.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.string_similarity.StringSimilarityClassifier;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.string_similarity.StringSimilarityMetric;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Classification;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Record;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.TokenSet;
 
-import static org.junit.Assert.*;
+import java.util.*;
+import java.util.function.Supplier;
 
-/**
- * Tests {@link StringSimilarityClassifier}.
- *
+import static org.junit.Assert.assertEquals;
+
+/***
  * @author Masih Hajiarab Derkani
+ * @author Graham Kirby
  */
-public class StringSimilarityClassifierTest {
+@RunWith(Parameterized.class)
+public class StringSimilarityClassifierTest extends ClassifierTest {
 
-    private static final String RECORD_DATA = "record";
-    private static final String SIMILAR_RECORD_DATA = "recrod";
-    private static final String DISSIMILAR_RECORD_DATA = "fish";
-    private static final Record TRAINING_RECORD = new Record(1, RECORD_DATA, new Classification("media", new TokenSet(), 1.0));
+    private static final Record[] TRAINING_RECORDS = new Record[]{
+            new Record(1, "trail", new Classification("class1", new TokenSet("trail"), 1.0)),
+            new Record(2, "mouse", new Classification("class2", new TokenSet("mouse"), 1.0)),
+            new Record(3, "through", new Classification("class3", new TokenSet("through"), 1.0)),
+            new Record(4, "quick brown fox", new Classification("class4", new TokenSet("quick brown fox"), 1.0)),
+            new Record(5, "lazy dog", new Classification("class4", new TokenSet("lazy dog"), 1.0))
+    };
 
-    private Bucket training_records;
-    private StringSimilarityClassifier classifier;
+    private static final Record[] TEST_RECORDS = new Record[]{
+            new Record(1, TEST_VALUES[0]),
+            new Record(2, TEST_VALUES[1]),
+            new Record(3, TEST_VALUES[2]),
+            new Record(4, TEST_VALUES[3]),
+            new Record(5, TEST_VALUES[4])
+    };
 
-    @Before
-    public void setUp() throws Exception {
+    private static final Map<String, String> SIMILARITY_MAP = new HashMap<>();
 
-        classifier = new StringSimilarityClassifier(StringSimilarityMetric.JARO_WINKLER);
-        training_records = new Bucket();
-        training_records.add(TRAINING_RECORD);
+    static {
+        SIMILARITY_MAP.put("trial", "trail");
+        SIMILARITY_MAP.put("house", "mouse");
+        SIMILARITY_MAP.put("thought", "through");
+        SIMILARITY_MAP.put("quick brown fish", "quick brown fox");
+        SIMILARITY_MAP.put("lazy dogs", "lazy dog");
     }
 
-    @Test
-    public void testTrainAndClassify() throws Exception {
+    private Bucket training_bucket;
+    private Bucket test_bucket;
 
-        assertEquals(Classification.UNCLASSIFIED, classifier.classify(RECORD_DATA));
-        assertEquals(Classification.UNCLASSIFIED, classifier.classify(SIMILAR_RECORD_DATA));
-        classifier.train(training_records);
-        assertNotEquals(Classification.UNCLASSIFIED, classifier.classify(RECORD_DATA));
-        assertNotEquals(Classification.UNCLASSIFIED, classifier.classify(SIMILAR_RECORD_DATA));
-        assertEquals(Classification.UNCLASSIFIED, classifier.classify(DISSIMILAR_RECORD_DATA));
-    }
+    @Parameterized.Parameters(name = "{0}")
+    public static Collection<Object[]> generateData() {
 
-    @Test
-    public void testSerialization() {
+        List<Object[]> result = new ArrayList<>();
 
-        for (StringSimilarityMetric metric : StringSimilarityMetric.values()) {
-
-            final StringSimilarityClassifier classifier = new StringSimilarityClassifier(metric);
-            assertEquals(classifier, SerializationUtils.deserialize(SerializationUtils.serialize(classifier)));
-            classifier.train(training_records);
-            assertEquals(classifier, SerializationUtils.deserialize(SerializationUtils.serialize(classifier)));
+        for (Supplier<Classifier> factory : Classifiers.getStringSimilarityClassifiers()) {
+            result.add(new Object[]{factory});
         }
+
+        return result;
+    }
+
+    public StringSimilarityClassifierTest(Supplier<Classifier> factory) {
+
+        super(factory);
+
+        training_bucket = new Bucket(TRAINING_RECORDS);
+        test_bucket = new Bucket(TEST_RECORDS);
+    }
+
+    @Test
+    public void trainedClassifierReturnsCodeOfSimilarValueForIndividualRecord() {
+
+        Classifier classifier = factory.get();
+
+        classifier.train(training_bucket);
+
+        for (String value : TEST_VALUES) {
+
+            assertClassifiedSimilarly(value, classifier.classify(value));
+        }
+    }
+
+    @Test
+    public void trainedClassifierReturnsCodeOfSimilarValueForBucket() {
+
+        Classifier classifier = factory.get();
+
+        classifier.train(training_bucket);
+
+        final Bucket classified_bucket = classifier.classify(test_bucket);
+
+        for (String value : TEST_VALUES) {
+
+            assertClassifiedSimilarly(value, getClassificationFromBucket(value, classified_bucket));
+        }
+    }
+
+    protected void assertClassifiedSimilarly(String test_value, Classification test_classification) {
+
+        final String most_similar_data_in_training_set = SIMILARITY_MAP.get(test_value);
+        final Classification classification_in_training_set = getClassificationFromBucket(most_similar_data_in_training_set, training_bucket);
+
+        //noinspection ConstantConditions
+        assertEquals(classification_in_training_set.getCode(), test_classification.getCode());
+    }
+
+    private Classification getClassificationFromBucket(String value, Bucket bucket) {
+
+        for (Record record : bucket) {
+            if (record.getData().equals(value)) {
+                return record.getClassification();
+            }
+        }
+        return null;
     }
 }

@@ -20,6 +20,7 @@ import org.simmetrics.SetMetric;
 import org.simmetrics.StringMetric;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.TokenSet;
 
+import java.util.HashSet;
 import java.util.Set;
 
 public class SetMetricAdapter implements StringMetric {
@@ -34,9 +35,32 @@ public class SetMetricAdapter implements StringMetric {
     @Override
     public float compare(String s1, String s2) {
 
-        Set<String> set1 = new TokenSet(s1);
-        Set<String> set2 = new TokenSet(s2);
+        Set<String> set1 = getBigrams(s1);
+        Set<String> set2 = getBigrams(s2);
 
         return set_metric.compare(set1, set2);
+    }
+
+    public static Set<String> getBigrams(String s) {
+
+        return getBigrams(new TokenSet(s));
+    }
+
+    private static Set<String> getBigrams(Set<String> strings) {
+
+        Set<String> result = new HashSet<>();
+        for (String s : strings) {
+            result.addAll(getBigramsFromWord(s));
+        }
+        return result;
+    }
+
+    private static Set<String> getBigramsFromWord(String s) {
+
+        Set<String> result = new HashSet<>();
+        for (int i = 0; i < s.length() - 1; i++) {
+            result.add(s.substring(i, i + 2));
+        }
+        return result;
     }
 }

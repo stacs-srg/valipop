@@ -57,7 +57,6 @@ public interface Classifier extends Serializable {
         for (Record record : bucket) {
 
             final String data = record.getData();
-
             classified.add(new Record(record.getId(), data, classify(data)));
         }
 

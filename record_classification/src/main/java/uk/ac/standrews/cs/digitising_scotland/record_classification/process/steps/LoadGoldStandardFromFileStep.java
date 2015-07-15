@@ -39,10 +39,8 @@ public class LoadGoldStandardFromFileStep implements Step {
     private final char delimiter;
 
     public static final Charsets DEFAULT_CHARSET = Charsets.UTF_8;
-    public static final String CHARSET_DESCRIPTION = "The data file charset";
 
     public static final char DEFAULT_DELIMITER = ',';
-    public static final String DELIMITER_DESCRIPTION = "The data file delimiter character";
 
 
     /**
