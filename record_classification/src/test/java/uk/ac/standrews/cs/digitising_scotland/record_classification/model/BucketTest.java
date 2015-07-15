@@ -17,7 +17,7 @@
 package uk.ac.standrews.cs.digitising_scotland.record_classification.model;
 
 import org.junit.Test;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.DuplicateRecordIdException;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.DuplicateRecordIdExceptionTemp;
 
 public class BucketTest {
 
@@ -29,7 +29,7 @@ public class BucketTest {
             new Record(4, "efg", new Classification("class5", new TokenSet("efg"), 1.0))
     };
 
-    @Test(expected= DuplicateRecordIdException.class)
+    @Test(expected= DuplicateRecordIdExceptionTemp.class)
     public void duplicateRecordIdsDetected() {
 
         new Bucket(RECORDS_WITH_DUPLICATE_IDS);

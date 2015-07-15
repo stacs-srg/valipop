@@ -46,7 +46,7 @@ public class ClassificationProcessTest extends AbstractClassificationProcessTest
         return result;
     }
 
-    ClassificationProcessTest(Classifier classifier) {
+    public ClassificationProcessTest(Classifier classifier) {
 
         this.classifier = classifier;
     }
