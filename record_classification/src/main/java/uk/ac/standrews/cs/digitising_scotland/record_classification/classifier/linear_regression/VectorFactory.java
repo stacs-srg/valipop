@@ -16,7 +16,6 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.linear_regression;
 
-import old.record_classification_old.machinelearning.tokenizing.StandardTokenizerIterable;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.lucene.util.Version;
 import org.apache.mahout.math.NamedVector;

@@ -16,10 +16,9 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.linear_regression;
 
-import old.record_classification_old.datastructures.code.CodeNotValidException;
-import old.record_classification_old.tools.ReaderWriterFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.InvalidCodeException;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -101,13 +100,11 @@ public class CodeDictionary implements Iterable<String> {
      *
      * @param codeAsString the code as string
      * @return the code object
-     * @throws CodeNotValidException the code not valid exception
      */
-    public String getCode(final String codeAsString) throws CodeNotValidException {
+    public String getCode(final String codeAsString) throws InvalidCodeException {
 
         if (!validCodes.contains(codeAsString)) {
-            LOGGER.error(codeAsString + " is not a valid code", new CodeNotValidException(codeAsString + " is not a valid code"));
-            throw new CodeNotValidException(codeAsString + " is not a valid code");
+            throw new InvalidCodeException(codeAsString + " is not a valid code");
 
         }
         return codeAsString;
