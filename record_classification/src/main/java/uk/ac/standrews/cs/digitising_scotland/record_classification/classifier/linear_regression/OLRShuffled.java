@@ -16,7 +16,6 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.linear_regression;
 
-import old.record_classification_old.classifiers.olr.OLR;
 import org.apache.mahout.math.Matrix;
 import org.apache.mahout.math.NamedVector;
 import org.apache.mahout.math.Vector;
@@ -42,7 +41,6 @@ public class OLRShuffled implements Runnable, Serializable {
     private transient List<NamedVector> trainingVectorList = new ArrayList<>();
     private boolean stopped = false;
 
-    //----constructors---
     /**
      * Constructor.
      *
@@ -83,8 +81,6 @@ public class OLRShuffled implements Runnable, Serializable {
     public OLRShuffled() {
 
     }
-
-    //----------------
 
     /**
      * Gets the running log likelihood.

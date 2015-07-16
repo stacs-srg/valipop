@@ -118,14 +118,14 @@ public class OLR implements Serializable {
         initialiseModel(beta.clone());
     }
 
-//    /**
-//     * Gets the number of records that have been used for training across all models so far.
-//     * @return int number of training records used
-//     */
-//    public long getNumTrained() {
-//
-//        return numTrained.get();
-//    }
+    /**
+     * Gets the number of records that have been used for training across all models so far.
+     * @return int number of training records used
+     */
+    public long getNumTrained() {
+
+        return numTrained.get();
+    }
 
     /**
      * Gets the step.
@@ -176,15 +176,15 @@ public class OLR implements Serializable {
         return r;
     }
 
-//    /**
-//     * Gets the running log likelihood.
-//     *
-//     * @return the running log likelihood
-//     */
-//    public double getRunningLogLikelihood() {
-//
-//        return runningLogLikelihood / numLogLikelihoodSumUpdates.get();
-//    }
+    /**
+     * Gets the running log likelihood.
+     *
+     * @return the running log likelihood
+     */
+    public double getRunningLogLikelihood() {
+
+        return runningLogLikelihood / numLogLikelihoodSumUpdates.get();
+    }
 
     /**
      * Reset running log likelihood.

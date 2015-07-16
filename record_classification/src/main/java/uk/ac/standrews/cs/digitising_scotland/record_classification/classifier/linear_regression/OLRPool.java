@@ -18,7 +18,6 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.
 
 import com.google.common.collect.Lists;
 
-import old.record_classification_old.tools.Utils;
 import org.apache.mahout.math.DenseVector;
 import org.apache.mahout.math.Matrix;
 import org.apache.mahout.math.NamedVector;
