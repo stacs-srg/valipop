@@ -25,7 +25,7 @@ import old.record_classification_old.datastructures.classification.Classificatio
 import old.record_classification_old.datastructures.code.CodeNotValidException;
 import old.record_classification_old.pipeline.main.ClassifyWithExistingModels;
 import old.record_classification_old.pipeline.main.PIlot;
-import old.record_classification_old.tools.configuration.MachineLearningConfiguration;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.linear_regression.MachineLearningConfiguration;
 
 import java.io.File;
 import java.io.IOException;

@@ -28,7 +28,7 @@ import old.record_classification_old.exceptions.FolderCreationException;
 import old.record_classification_old.tools.ReaderWriterFactory;
 import old.record_classification_old.tools.Timer;
 import old.record_classification_old.tools.Utils;
-import old.record_classification_old.tools.configuration.MachineLearningConfiguration;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.linear_regression.MachineLearningConfiguration;
 
 import java.io.BufferedReader;
 import java.io.File;

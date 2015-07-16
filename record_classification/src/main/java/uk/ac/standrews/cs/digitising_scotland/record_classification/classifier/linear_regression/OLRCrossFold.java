@@ -17,7 +17,6 @@
 package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.linear_regression;
 
 import old.record_classification_old.tools.Utils;
-import old.record_classification_old.tools.configuration.MachineLearningConfiguration;
 import org.apache.mahout.math.Matrix;
 import org.apache.mahout.math.NamedVector;
 import org.apache.mahout.math.Vector;

@@ -24,7 +24,7 @@ import org.junit.rules.ExpectedException;
 
 import old.record_classification_old.datastructures.bucket.Bucket;
 import old.record_classification_old.datastructures.code.CodeNotValidException;
-import old.record_classification_old.tools.configuration.MachineLearningConfiguration;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.linear_regression.MachineLearningConfiguration;
 
 @Ignore
 public class TrainClassifyOneFileTest {

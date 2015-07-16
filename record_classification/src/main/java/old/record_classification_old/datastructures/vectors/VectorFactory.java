@@ -25,7 +25,7 @@ import old.record_classification_old.datastructures.bucket.Bucket;
 import old.record_classification_old.datastructures.classification.Classification;
 import old.record_classification_old.datastructures.records.Record;
 import old.record_classification_old.machinelearning.tokenizing.StandardTokenizerIterable;
-import old.record_classification_old.tools.configuration.MachineLearningConfiguration;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.linear_regression.MachineLearningConfiguration;
 
 import java.io.Serializable;
 import java.io.StringReader;

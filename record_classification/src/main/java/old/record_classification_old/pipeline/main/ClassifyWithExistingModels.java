@@ -48,7 +48,7 @@ import old.record_classification_old.writers.DataClerkingWriter;
 import old.record_classification_old.writers.FileComparisonWriter;
 import old.record_classification_old.writers.MetricsWriter;
 import old.record_classification_old.tools.Timer;
-import old.record_classification_old.tools.configuration.MachineLearningConfiguration;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.linear_regression.MachineLearningConfiguration;
 
 import com.google.common.io.Files;
 

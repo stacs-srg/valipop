@@ -17,7 +17,7 @@
 package old.record_classification_old.classifiers.olr;
 
 import old.record_classification_old.datastructures.vectors.VectorFactory;
-import old.record_classification_old.tools.configuration.MachineLearningConfiguration;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.linear_regression.MachineLearningConfiguration;
 import org.apache.mahout.math.NamedVector;
 import org.apache.mahout.math.Vector;
 import org.junit.Assert;
