@@ -40,7 +40,7 @@ import old.record_classification_old.tools.ReaderWriterFactory;
 import old.record_classification_old.tools.Timer;
 import old.record_classification_old.tools.Utils;
 import old.record_classification_old.tools.analysis.MemoryMonitor;
-import old.record_classification_old.tools.configuration.MachineLearningConfiguration;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.linear_regression.MachineLearningConfiguration;
 import cc.mallet.pipe.CharSequence2TokenSequence;
 import cc.mallet.pipe.CharSequenceLowercase;
 import cc.mallet.pipe.Pipe;

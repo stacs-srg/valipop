@@ -26,7 +26,7 @@ import old.record_classification_old.datastructures.code.CodeNotValidException;
 import old.record_classification_old.pipeline.BucketGenerator;
 import old.record_classification_old.pipeline.PipelineUtils;
 import old.record_classification_old.tools.Timer;
-import old.record_classification_old.tools.configuration.MachineLearningConfiguration;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.linear_regression.MachineLearningConfiguration;
 
 /**
  * Trains a model and a lookup table from the supplied gold standard data file.

@@ -44,7 +44,7 @@ import old.record_classification_old.datastructures.vectors.CodeIndexer;
 import old.record_classification_old.datastructures.vectors.CustomVectorWriter;
 import old.record_classification_old.datastructures.vectors.VectorFactory;
 import old.record_classification_old.tools.Utils;
-import old.record_classification_old.tools.configuration.MachineLearningConfiguration;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.linear_regression.MachineLearningConfiguration;
 
 import java.io.File;
 import java.io.IOException;

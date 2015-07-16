@@ -16,7 +16,6 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.linear_regression;
 
-import old.record_classification_old.tools.configuration.MachineLearningConfiguration;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Record;
 
 import java.io.Serializable;

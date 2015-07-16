@@ -18,7 +18,6 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier;
 
 import old.record_classification_old.datastructures.vectors.*;
 import old.record_classification_old.tools.*;
-import old.record_classification_old.tools.configuration.*;
 import org.apache.hadoop.conf.*;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.*;
@@ -32,6 +31,7 @@ import org.apache.mahout.math.Vector;
 import org.apache.mahout.vectorizer.encoders.Dictionary;
 import org.slf4j.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.linear_regression.CodeIndexer;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.linear_regression.MachineLearningConfiguration;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.linear_regression.VectorFactory;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 

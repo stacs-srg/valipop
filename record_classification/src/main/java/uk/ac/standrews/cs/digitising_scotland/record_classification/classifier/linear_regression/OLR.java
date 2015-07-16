@@ -16,8 +16,6 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.linear_regression;
 
-import old.record_classification_old.classifiers.olr.SerializableDenseMatrix;
-import old.record_classification_old.tools.configuration.MachineLearningConfiguration;
 import org.apache.mahout.classifier.sgd.L1;
 import org.apache.mahout.math.DenseVector;
 import org.apache.mahout.math.Matrix;

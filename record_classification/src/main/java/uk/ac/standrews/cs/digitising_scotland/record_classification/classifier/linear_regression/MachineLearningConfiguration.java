@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License along with record_classification. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package old.record_classification_old.tools.configuration;
+package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.linear_regression;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
