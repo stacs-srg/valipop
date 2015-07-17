@@ -21,23 +21,21 @@ import java.util.Objects;
 
 public class Classification implements Serializable {
 
-    //FIXME The token set in #UNCLASSIFIED is modifiable; need unmodifiable token set.
-    public static final Classification UNCLASSIFIED = new Classification("UNCLASSIFIED", new TokenSet(), 0.0);
+    public static final Classification UNCLASSIFIED = new Classification("UNCLASSIFIED", TokenList.UNMODIFIABLE_TOKEN_SET, 0.0);
 
     private static final long serialVersionUID = 7074436345885045033L;
 
     private String code;
-    private TokenSet tokenSet;
+    private TokenList token_set;
     private double confidence; //TODO Introduce confidence type.
 
     public Classification() {
-
     }
 
-    public Classification(final String code, final TokenSet tokenSet, final double confidence) {
+    public Classification(final String code, final TokenList token_set, final double confidence) {
 
         this.code = code;
-        this.tokenSet = tokenSet;
+        this.token_set = token_set;
         this.confidence = confidence;
     }
 
@@ -46,9 +44,9 @@ public class Classification implements Serializable {
         return code;
     }
 
-    public TokenSet getTokenSet() {
+    public TokenList getTokenSet() {
 
-        return tokenSet;
+        return token_set;
     }
 
     public double getConfidence() {
@@ -65,19 +63,19 @@ public class Classification implements Serializable {
             return false;
         final Classification that = (Classification) o;
         return Objects.equals(code, that.code) &&
-                        Objects.equals(tokenSet, that.tokenSet) &&
-                        Objects.equals(confidence, that.confidence);
+                Objects.equals(token_set, that.token_set) &&
+                Objects.equals(confidence, that.confidence);
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(code, tokenSet, confidence);
+        return Objects.hash(code, token_set, confidence);
     }
 
     @Override
     public String toString() {
 
-        return "Classification [code=" + code + ", tokenSet=" + tokenSet + ", confidence=" + confidence + "]";
+        return "Classification [code=" + code + ", token_set=" + token_set + ", confidence=" + confidence + "]";
     }
 }

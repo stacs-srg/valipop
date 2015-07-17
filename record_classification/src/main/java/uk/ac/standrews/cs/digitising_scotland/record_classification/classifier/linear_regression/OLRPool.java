@@ -17,13 +17,9 @@
 package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.linear_regression;
 
 import com.google.common.collect.Lists;
-
-import org.apache.mahout.math.DenseVector;
 import org.apache.mahout.math.Matrix;
 import org.apache.mahout.math.NamedVector;
 import org.apache.mahout.math.Vector;
-import org.apache.mahout.math.function.DoubleDoubleFunction;
-import org.apache.mahout.math.function.Functions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,47 +34,47 @@ import java.util.concurrent.TimeUnit;
  * Trains a number of models on the training vectors provided. These models are then used to make predictions
  * on the testing vectors and ranked from best to worst. Only the best models are kept and used for prediction.
  *
- * @author fraserdunlop
+ * @author Fraser Dunlop
  */
 public class OLRPool implements Runnable, Serializable {
 
     private static final long serialVersionUID = -7098039612837520093L;
     private static transient final Logger LOGGER = LoggerFactory.getLogger(OLRPool.class);
     private List<OLRShuffled> models = Lists.newArrayList();
-    private int poolSize;
-    private int numSurvivors;
+    private int poolSize=4;
+    private int numSurvivors=2;
     private transient List<NamedVector> testingVectorList = Lists.newArrayList();
     private List<OLRShuffled> survivors;
+
+    /**
+     * Needed for JSON deserialization.
+     */
+    public OLRPool() {}
 
     /**
      * Constructor.
      *
      * @param internalTrainingVectorList internal training vector list
      * @param testingVectorList internal testing vector list
-     * @param properties properties
      */
-    public OLRPool(final Properties properties, final List<NamedVector> internalTrainingVectorList, final List<NamedVector> testingVectorList) {
+    public OLRPool(final List<NamedVector> internalTrainingVectorList, final List<NamedVector> testingVectorList) {
 
         this.testingVectorList = testingVectorList;
-        poolSize = Integer.parseInt(properties.getProperty("OLRPoolSize"));
-        numSurvivors = Integer.parseInt(properties.getProperty("OLRPoolNumSurvivors"));
 
         for (int i = 0; i < poolSize; i++) {
             final List<NamedVector> trainingVectorList = new ArrayList<>(internalTrainingVectorList);
-            OLRShuffled model = new OLRShuffled(properties, trainingVectorList);
+            OLRShuffled model = new OLRShuffled(trainingVectorList);
             models.add(model);
         }
     }
 
-    public OLRPool(final Properties properties, final Matrix betaMatrix, final ArrayList<NamedVector> internalTrainingVectorList, final ArrayList<NamedVector> testingVectorList) {
+    public OLRPool(final Matrix betaMatrix, final ArrayList<NamedVector> internalTrainingVectorList, final ArrayList<NamedVector> testingVectorList) {
 
         this.testingVectorList = testingVectorList;
-        poolSize = Integer.parseInt(properties.getProperty("OLRPoolSize"));
-        numSurvivors = Integer.parseInt(properties.getProperty("OLRPoolNumSurvivors"));
 
         for (int i = 0; i < poolSize; i++) {
             final List<NamedVector> trainingVectorList = new ArrayList<>(internalTrainingVectorList);
-            OLRShuffled model = new OLRShuffled(properties, betaMatrix, trainingVectorList);
+            OLRShuffled model = new OLRShuffled(betaMatrix, trainingVectorList);
             models.add(model);
         }
     }
@@ -90,41 +86,6 @@ public class OLRPool implements Runnable, Serializable {
     public void run() {
 
         trainIfPossible();
-    }
-
-    /**
-     * Stops the current pool of models from training.
-     */
-    public void stop() {
-
-        for (OLRShuffled model : models) {
-            model.stop();
-        }
-    }
-
-    /**
-     * Gets the average running log likelihood totals. Sums across each of the models and divides by pool size to get the average.
-     *
-     * @return double the running loglikelihood average across all models
-     */
-    public double getAverageRunningLogLikelihood() {
-
-        double ll = 0.;
-        for (OLRShuffled model : models) {
-            ll += model.getRunningLogLikelihood();
-        }
-        ll /= models.size();
-        return ll;
-    }
-
-    /**
-     * Rests the running log likelihood count in each of the {@link old.record_classification_old.classifiers.olr.OLRShuffled} models.
-     */
-    public void resetRunningLogLikelihoods() {
-
-        for (OLRShuffled model : models) {
-            model.resetRunningLogLikelihood();
-        }
     }
 
     private void trainIfPossible() {
@@ -154,45 +115,12 @@ public class OLRPool implements Runnable, Serializable {
     /**
      * Get the survivors from the model pool.
      *
-     * @return List of {@link old.record_classification_old.classifiers.olr.OLRShuffled} models
      */
     public List<OLRShuffled> getSurvivors() {
 
         ArrayList<ModelDoublePair> modelPairs = testAndPackageModels();
         survivors = getSurvivors(modelPairs);
         return survivors;
-    }
-
-    /**
-     * Takes a vote from the surviving models.
-     *
-     * @param instance vector to classify
-     * @return vector encoding probability distribution over output classes
-     */
-    public Vector classifyFull(final Vector instance) {
-
-        Vector r = new DenseVector(numCategories());
-        DoubleDoubleFunction scale = Functions.plusMult(1.0 / survivors.size());
-        for (OLRShuffled model : survivors) {
-            r.assign(model.classifyFull(instance), scale);
-        }
-        return r;
-    }
-
-    /**
-     * Gets the average log likelihood of the surviving models.
-     *
-     * @param actual actual classification
-     * @param instance instance vector
-     * @return log likelihood
-     */
-    public double logLikelihood(final int actual, final Vector instance) {
-
-        double logLikelihood = 0;
-        for (OLRShuffled model : survivors) {
-            logLikelihood += model.logLikelihood(actual, instance) / survivors.size();
-        }
-        return logLikelihood;
     }
 
     private double getProportionTestingVectorsCorrectlyClassified(final OLRShuffled model) {
@@ -218,11 +146,6 @@ public class OLRPool implements Runnable, Serializable {
         return modelPairs;
     }
 
-    protected int numCategories() {
-
-        return survivors.get(0).numCategories();
-    }
-
     private List<OLRShuffled> getSurvivors(final List<ModelDoublePair> modelPairs) {
 
         ArrayList<OLRShuffled> survivors = new ArrayList<>();
@@ -231,19 +154,5 @@ public class OLRPool implements Runnable, Serializable {
             survivors.add(modelPairs.get(i).getModel());
         }
         return survivors;
-    }
-
-    /**
-     * Gets the number of records used for training so far across all the models in the pool.
-     *
-     * @return int the number of training records used so far
-     */
-    public long getNumTrained() {
-
-        long numTrained = 0;
-        for (OLRShuffled model : models) {
-            numTrained += model.getNumTrained();
-        }
-        return numTrained;
     }
 }

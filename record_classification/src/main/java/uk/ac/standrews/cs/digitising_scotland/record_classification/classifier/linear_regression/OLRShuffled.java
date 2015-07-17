@@ -23,7 +23,6 @@ import org.apache.mahout.math.Vector;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
 /**
  * Training involves shuffling the training vectors and training the model. This process is repeated for the desired
@@ -34,48 +33,35 @@ import java.util.Properties;
 public class OLRShuffled implements Runnable, Serializable {
 
     private static final long serialVersionUID = -4877057661440167819L;
-    //prevents training of models that have been read from disk as these do not have vectors to train on
+
     private OLR model;
-    //set in config
-    private int reps;
+    private static final int NUMBER_OF_REPETITIONS = 10;
     private transient List<NamedVector> trainingVectorList = new ArrayList<>();
     private boolean stopped = false;
 
     /**
      * Constructor.
      *
-     * @param properties         the properties object that specifies among other things the number of training repetitions
      * @param trainingVectorList2 the training vector list
      */
-    public OLRShuffled(final Properties properties, final List<NamedVector> trainingVectorList2) {
+    public OLRShuffled(final List<NamedVector> trainingVectorList2) {
 
-        reps = Integer.parseInt(properties.getProperty("OLRShuffledReps"));
         this.trainingVectorList = trainingVectorList2;
-        this.model = new OLR(properties);
+        model = new OLR();
+        model.init();
     }
 
     /**
      * Constructor.
      *
-     * @param properties the properties object that specifies among other things the number of training repetitions
-     * @param betaMatrix the new beta matrix which is used as a starting point for model training
+     * @param betaMatrix         the new beta matrix which is used as a starting point for model training
      * @param trainingVectorList the training vector list
      */
-    public OLRShuffled(final Properties properties, final Matrix betaMatrix, final List<NamedVector> trainingVectorList) {
+    public OLRShuffled(final Matrix betaMatrix, final List<NamedVector> trainingVectorList) {
 
-        reps = Integer.parseInt(properties.getProperty("OLRShuffledReps"));
         this.trainingVectorList = trainingVectorList;
-        this.model = new OLR(properties, betaMatrix);
-    }
-
-    /**
-     * Constructor.
-     *
-     * @param trainingVectorList the training vector list
-     */
-    public OLRShuffled(final ArrayList<NamedVector> trainingVectorList) {
-
-        this(MachineLearningConfiguration.getDefaultProperties(), trainingVectorList);
+        this.model = new OLR();
+        model.init(betaMatrix);
     }
 
     public OLRShuffled() {
@@ -111,12 +97,11 @@ public class OLRShuffled implements Runnable, Serializable {
 
     /**
      * This method performs the training of the model.
-     * Shuffles the training files, trains on all files and repeats this process
-     * for the number of repetitions specified in the config file.
+     * Shuffles the training files, trains on all files and repeats this process.
      */
     private void train() {
 
-        for (int rep = 0; rep < reps; rep++) {
+        for (int rep = 0; rep < NUMBER_OF_REPETITIONS; rep++) {
             if (stopped()) {
                 break;
             }
@@ -132,8 +117,7 @@ public class OLRShuffled implements Runnable, Serializable {
      */
     public Vector classifyFull(final Vector instance) {
 
-        Vector classifyFull = model.classifyFull(instance);
-        return classifyFull;
+        return model.classifyFull(instance);
     }
 
     /**
@@ -156,7 +140,7 @@ public class OLRShuffled implements Runnable, Serializable {
     //     */
     //    private void getConfigOptions() {
     //
-    //        reps = Integer.parseInt(properties.getProperty("OLRShuffledReps"));
+    //        NUMBER_OF_REPETITIONS = Integer.parseInt(properties.getProperty("OLRShuffledReps"));
     //    }
 
     /**
@@ -199,33 +183,34 @@ public class OLRShuffled implements Runnable, Serializable {
         return stopped;
     }
 
-    /**
-     * Gets the number of output categories.
-     *
-     * @return int the number of categories.
-     */
-    protected int numCategories() {
-
-        return model.getNumCategories();
-    }
+//    /**
+//     * Gets the number of output categories.
+//     *
+//     * @return int the number of categories.
+//     */
+//    protected int default_number_of_categories() {
+//
+//        return model.getNumCategories();
+//    }
 
     /**
      * Gets the beta matrix.
      *
      * @return the beta maxtrix
      */
-    protected Matrix getBeta() {
+    protected Matrix beta() {
 
-        return model.getBeta();
+        return model.getBeta().getMatrix();
     }
 
-    /**
-     * Gets the number of records used for training so far across all the models in the pool.
-     * @return int the number of training records used so far
-     */
-    public long getNumTrained() {
-
-        return model.getNumTrained();
-    }
+//    /**
+//     * Gets the number of records used for training so far across all the models in the pool.
+//     *
+//     * @return int the number of training records used so far
+//     */
+//    public long numTrained() {
+//
+//        return model.getNumTrained();
+//    }
 
 }

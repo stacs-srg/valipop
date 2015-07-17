@@ -16,6 +16,7 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.linear_regression;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.apache.mahout.math.Matrix;
 import org.apache.mahout.math.NamedVector;
 import org.apache.mahout.math.Vector;
@@ -23,55 +24,60 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.C
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Classification;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Record;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.TokenSet;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.TokenList;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Properties;
 
 /**
- * @author frjd2, jkc25
+ * @author Fraser Dunlop
+ * @author Jamie Carson
+ * @author Graham Kirby
  */
+@JsonIgnoreProperties({"properties"})     // Don't want properties object to be deserialized.
 public class OLRClassifier implements Classifier {
 
     private static final long serialVersionUID = -2561454096763303789L;
     private static final double STATIC_CONFIDENCE = 0.89;
 
+
+
     private OLRCrossFold model = null;
-    private Properties properties;
+
+//    private transient Properties properties;
     private VectorFactory vector_factory;
 
     public void setModel(OLRCrossFold model) {
         this.model = model;
     }
 
-    public void setProperties(Properties properties) {
-        this.properties = properties;
-    }
+//    public void setProperties(Properties properties) {
+//
+//        this.properties = properties;
+//    }
 
     public OLRCrossFold getModel() {
         return model;
     }
 
-    public Properties getProperties() {
-        return properties;
-    }
+//    public Properties getProperties() {
+//        return properties;
+//    }
 
     public OLRClassifier() {
 
         model = new OLRCrossFold();
-        properties = MachineLearningConfiguration.getDefaultProperties();
+//        properties = MachineLearningConfiguration.getDefaultProperties();
     }
 
     public void train(final Bucket bucket) {
 
         if (vector_factory == null) {
-            CodeIndexer index = new CodeIndexer(bucket);
-            vector_factory = new VectorFactory(bucket, index);
+            vector_factory = new VectorFactory(bucket);
             List<NamedVector> trainingVectorList = getTrainingVectors(bucket);
             Collections.shuffle(trainingVectorList);
-            model = new OLRCrossFold(trainingVectorList, properties);
+            model = new OLRCrossFold(trainingVectorList);
 
         } else {
             int classCountDiff = getNumClassesAdded(bucket);
@@ -79,7 +85,7 @@ public class OLRClassifier implements Classifier {
             Matrix matrix = expandModel(featureCountDiff, classCountDiff);
             List<NamedVector> trainingVectorList = getTrainingVectors(bucket);
             Collections.shuffle(trainingVectorList);
-            model = new OLRCrossFold(trainingVectorList, properties, matrix);
+            model = new OLRCrossFold(trainingVectorList, matrix);
         }
 
         model.train();
@@ -91,14 +97,13 @@ public class OLRClassifier implements Classifier {
         if (vector_factory == null) {
             return Classification.UNCLASSIFIED;
         } else {
-            TokenSet tokenSet = new TokenSet(data);
-            final String description = tokenSet.toString();
-            NamedVector vector = vector_factory.createNamedVectorFromString(description, "unknown");
+            TokenList token_list = new TokenList(data);
+            NamedVector vector = vector_factory.createNamedVectorFromString(token_list, "unknown");
             Vector classifyFull = model.classifyFull(vector);
             int classificationID = classifyFull.maxValueIndex();
             String code = vector_factory.getCodeIndexer().getCode(classificationID);
 
-            return new Classification(code, tokenSet, STATIC_CONFIDENCE);
+            return new Classification(code, token_list, STATIC_CONFIDENCE);
         }
     }
 
@@ -133,22 +138,21 @@ public class OLRClassifier implements Classifier {
 
     private Matrix expandModel(final int featureCountDiff, final int classCountDiff) {
 
-        return MatrixEnlarger.enlarge(model.getAverageBetaMatrix(), featureCountDiff, classCountDiff);
+        return MatrixEnlarger.enlarge(model.averageBetaMatrix(), featureCountDiff, classCountDiff);
     }
 
     private int getFeatureCountDiff(final Bucket bucket) {
 
         int initNoFeatures = vector_factory.getNumberOfFeatures();
+
         vector_factory.updateDictionary(bucket);
-        int newNoFeatures = vector_factory.getNumberOfFeatures();
-        return newNoFeatures - initNoFeatures;
+        return vector_factory.getNumberOfFeatures() - initNoFeatures;
     }
 
     private int getNumClassesAdded(final Bucket bucket) {
 
         int initNoClasses = vector_factory.getCodeIndexer().getNumberOfOutputClasses();
         vector_factory.getCodeIndexer().addGoldStandardCodes(bucket);
-        int newNoClasses = vector_factory.getCodeIndexer().getNumberOfOutputClasses();
-        return newNoClasses - initNoClasses;
+        return vector_factory.getCodeIndexer().getNumberOfOutputClasses() - initNoClasses;
     }
 }

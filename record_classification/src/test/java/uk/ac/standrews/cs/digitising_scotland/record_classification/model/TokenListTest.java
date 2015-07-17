@@ -18,31 +18,30 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.model;
 
 import org.junit.Test;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
-public class TokenSetTest {
+public class TokenListTest {
 
     @Test
     public void tokenisation() {
 
-        checkTokenisation("the quick brown fox jumps", new HashSet<>(Arrays.asList("the", "quick", "brown", "fox", "jumps")));
-        checkTokenisation(" the   quick brown fox jumps   ", new HashSet<>(Arrays.asList("the", "quick", "brown", "fox", "jumps")));
-        checkTokenisation(" the. quick. brown. fox. jumps!   .", new HashSet<>(Arrays.asList("the", "quick", "brown", "fox", "jumps")));
+        checkTokenisation("the quick brown fox jumps", "the", "quick", "brown", "fox", "jumps");
+        checkTokenisation(" the   quick brown fox jumps   ", "the", "quick", "brown", "fox", "jumps");
+        checkTokenisation(" the. quick. brown. fox. jumps!   .", "the", "quick", "brown", "fox", "jumps");
+        checkTokenisation(" the-quick-brown.- fox.-jumps!   .", "the", "quick", "brown", "fox", "jumps");
+        checkTokenisation(" quick.  fox. jumps! brown. the.  .", "quick", "fox", "jumps", "brown", "the");
+        checkTokenisation("string_283", "string_283");
+        checkTokenisation("string-283", "string", "283");
     }
 
-    private void checkTokenisation(String s, Set<String> tokens) {
+    private void checkTokenisation(String s, String... expected_tokens) {
 
-        TokenSet token_set = new TokenSet(s);
+        TokenList token_list = new TokenList(s);
 
-        assertEquals(token_set.size(), tokens.size());
+        assertEquals(token_list.size(), expected_tokens.length);
 
-        for (String token : token_set) {
-            assertTrue(tokens.contains(token));
+        for (int i = 0; i < token_list.size(); i++) {
+            assertEquals(token_list.get(i), expected_tokens[i]);
         }
     }
 }

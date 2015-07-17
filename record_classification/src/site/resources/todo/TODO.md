@@ -26,7 +26,7 @@
    - [ ] Test for variation between repetitions.
    - [ ] Test for voting classifier.
 - [ ] Train using multiple files e.g. HISCO dictionary.
-- [ ] Spell checking cleaner.
+- [ ] Spell checking cleaner, general and specific e.g. HISCO text.
 
 # Queries and Comments
 

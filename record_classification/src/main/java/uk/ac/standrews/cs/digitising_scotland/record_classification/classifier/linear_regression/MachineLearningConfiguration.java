@@ -19,25 +19,24 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
 /**
- * @author jkc25
+ * @author Jamie Carson
+ * @author Graham Kirby
  */
 public class MachineLearningConfiguration {
 
-    // TODO tidy up - should be options to load from single read-only default properties set, or other specified file, or combination of both
+
+
 
     private static final String DEFAULT_PROPERTIES_FILE_NAME = "machineLearning.default.properties";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MachineLearningConfiguration.class);
 
     private static Properties defaultProperties = populateDefaults();
-    private static String default_properties_path;
 
     /**
      * Returns the {@link Properties} containing the default machine learning configuration data.
@@ -46,33 +45,6 @@ public class MachineLearningConfiguration {
     public static Properties getDefaultProperties() {
 
         return defaultProperties;
-    }
-
-    public static String getDefaultPropertiesPath() {
-
-        return default_properties_path;
-    }
-
-    /**
-     * Extends the default properties with a custom properties file.
-     * 
-     * @param customPropertiesFile String location of custom properties file
-     * @return {@link Properties} file with custom settings backed by the default properties
-     */
-    public Properties extendDefaultProperties(final String customPropertiesFile) {
-
-        Properties machineLearningProperties = new Properties(defaultProperties);
-
-        try {
-            ClassLoader classLoader = MachineLearningConfiguration.class.getClassLoader();
-            InputStream resourceAsStream = classLoader.getResourceAsStream(customPropertiesFile);
-            machineLearningProperties.load(resourceAsStream);
-        }
-        catch (IOException e) {
-            LOGGER.error(e.getMessage(), e);
-        }
-
-        return machineLearningProperties;
     }
 
     /**
@@ -84,9 +56,7 @@ public class MachineLearningConfiguration {
         Properties defaultProperties = new Properties();
 
         try {
-
             ClassLoader classLoader = MachineLearningConfiguration.class.getClassLoader();
-            default_properties_path = classLoader.getResource(DEFAULT_PROPERTIES_FILE_NAME).getFile();
             InputStream resourceAsStream = classLoader.getResourceAsStream(DEFAULT_PROPERTIES_FILE_NAME);
 
             defaultProperties.load(resourceAsStream);
@@ -95,24 +65,5 @@ public class MachineLearningConfiguration {
             LOGGER.error(e.getMessage(), e);
         }
         return defaultProperties;
-    }
-
-    /**
-     * Reads the default properties file.
-     * @return default properties
-     */
-    public static Properties loadProperties(File pathToProperties) {
-
-        Properties newProperties = new Properties();
-
-        try {
-            InputStream resourceAsStream = new FileInputStream(pathToProperties);
-            newProperties.load(resourceAsStream);
-            defaultProperties = newProperties;
-        }
-        catch (IOException e) {
-            LOGGER.error(e.getMessage(), e);
-        }
-        return newProperties;
     }
 }

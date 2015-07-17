@@ -37,10 +37,10 @@ public class ClassificationProcessTest extends AbstractClassificationProcessTest
 
         List<Object[]> result = new ArrayList<>();
 
-        result.add(new Object[]{Classifiers.STRING_SIMILARITY_DICE.get()});
-        result.add(new Object[]{Classifiers.STRING_SIMILARITY_JACCARD.get()});
-        result.add(new Object[]{Classifiers.EXACT_MATCH_PLUS_STRING_SIMILARITY_JARO_WINKLER.get()});
-        result.add(new Object[]{Classifiers.EXACT_MATCH_PLUS_STRING_SIMILARITY_LEVENSHTEIN.get()});
+//        result.add(new Object[]{Classifiers.STRING_SIMILARITY_DICE.get()});
+//        result.add(new Object[]{Classifiers.STRING_SIMILARITY_JACCARD.get()});
+//        result.add(new Object[]{Classifiers.EXACT_MATCH_PLUS_STRING_SIMILARITY_JARO_WINKLER.get()});
+//        result.add(new Object[]{Classifiers.EXACT_MATCH_PLUS_STRING_SIMILARITY_LEVENSHTEIN.get()});
         result.add(new Object[]{Classifiers.OLR.get()});
 
         return result;

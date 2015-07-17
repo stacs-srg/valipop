@@ -24,7 +24,7 @@ import org.apache.lucene.analysis.en.PorterStemFilter;
  *
  * @author Masih Hajiarab Derkani
  */
-public class PorterStemCleaner extends TokenFilterCleaner {
+public class StemmingCleaner extends TokenFilterCleaner {
 
     private static final long serialVersionUID = -4878258237026508723L;
 
