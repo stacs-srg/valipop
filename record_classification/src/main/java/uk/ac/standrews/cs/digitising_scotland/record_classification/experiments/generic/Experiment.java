@@ -24,7 +24,7 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.Cla
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.Cleaner;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.ConsistentCodingCleaner;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.EnglishStopWordCleaner;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.PorterStemCleaner;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.StemmingCleaner;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.InputFileFormatException;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.InfoLevel;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassificationContext;
@@ -57,7 +57,7 @@ public abstract class Experiment implements Callable<Void> {
     private static final int DEFAULT_REPETITIONS = 2;
     private static final InfoLevel DEFAULT_VERBOSITY = InfoLevel.LONG_SUMMARY;
 
-    private static final List<Boolean> COLUMNS_AS_PERCENTAGES = Arrays.asList(true, true, true, true, true, true, false, false);
+    private static final List<Boolean> COLUMNS_AS_PERCENTAGES = Arrays.asList(true, true, true, true, false, false);
     private static final double ONE_MINUTE_IN_SECONDS = 60.0;
 
     private static final String DESCRIPTION_GOLD_STANDARD = "Path to a file containing the three column gold standard.";
@@ -89,7 +89,7 @@ public abstract class Experiment implements Callable<Void> {
     @Parameter(names = {"-d", "--delimiter"}, description = DESCRIPTION_DELIMITER)
     private char delimiter = '|';
 
-    public static final List<Cleaner> CLEANERS = Arrays.asList(new EnglishStopWordCleaner(), new PorterStemCleaner(), ConsistentCodingCleaner.CORRECT);
+    public static final List<Cleaner> CLEANERS = Arrays.asList(new EnglishStopWordCleaner(), new StemmingCleaner(), ConsistentCodingCleaner.CORRECT);
 
     protected Experiment() throws IOException, InputFileFormatException {
 

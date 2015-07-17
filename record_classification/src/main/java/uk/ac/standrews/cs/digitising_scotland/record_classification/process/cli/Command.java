@@ -17,17 +17,13 @@
 package uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli;
 
 import com.beust.jcommander.Parameter;
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.PropertyAccessor;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.*;
-import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.lang3.SerializationUtils;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassificationContext;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.Step;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.serialization.json.ProcessObjectMapper;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.LoadGoldStandardFromFileStep;
 import uk.ac.standrews.cs.util.dataset.DataSet;
 
@@ -39,8 +35,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.Duration;
-import java.time.format.DateTimeParseException;
 import java.util.concurrent.Callable;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
@@ -62,7 +56,8 @@ abstract class Command implements Callable<Void>, Step {
     private static final long serialVersionUID = -2176702491500665712L;
 
     private static final String DEFAULT_PROCESS_NAME = "classification_process";
-    private static final String JSON_SUFFIX = "json.gz";
+    private static final String JSON_SUFFIX = "json";
+    private static final String JSON_COMPRESSED_SUFFIX = "json.gz";
     private static final String SERIALIZED_SUFFIX = "serialized";
 
     @Parameter(names = {"-n", "--name"}, description = "The name of the classification process.")
@@ -75,31 +70,13 @@ abstract class Command implements Callable<Void>, Step {
     protected char delimiter = LoadGoldStandardFromFileStep.DEFAULT_DELIMITER;
 
     @Parameter(names = {"-f", "--format"}, description = SERIALIZATION_FORMAT_DESCRIPTION)
-    protected SerializationFormat serialization_format = SerializationFormat.COMPRESSED_JSON;
+    protected SerializationFormat serialization_format = SerializationFormat.JAVA_SERIALIZATION;
 
-    private ObjectMapper json_mapper;
-
-    protected Command() {
-
-        json_mapper = new ObjectMapper();
-
-        // Needed for classes with private fields without setters e.g. Bucket.
-        json_mapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
-
-        // Needed for fields typed as interfaces or abstract classes e.g. 'classifier' in ClassificationContext.
-        json_mapper.enableDefaultTyping();
-
-        // To make serialized data easier to read.
-        json_mapper.enable(SerializationFeature.INDENT_OUTPUT);
-
-        // Needed for getter methods that don't correspond to fields e.g. 'getDescription' in StringSimilarityMetricWrapper.
-        json_mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-
-        // Needed for non-camel-case field names e.g. in ClassificationContext.
-        json_mapper.setPropertyNamingStrategy(PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES);
-
-        json_mapper.registerModule(configureJSONDurationSerialization());
+    private enum SerializationFormat {
+        JAVA_SERIALIZATION, JSON, COMPRESSED_JSON
     }
+
+    private ObjectMapper json_mapper = new ProcessObjectMapper();
 
     @Override
     public Void call() throws Exception {
@@ -184,35 +161,13 @@ abstract class Command implements Callable<Void>, Step {
 
     private String getSerializedContextSuffix() {
 
-        return serialization_format == SerializationFormat.JAVA_SERIALIZATION ? SERIALIZED_SUFFIX : JSON_SUFFIX;
-    }
-
-    private SimpleModule configureJSONDurationSerialization() {
-
-        SimpleModule module = new SimpleModule();
-
-        module.addSerializer(Duration.class, new JsonSerializer<Duration>() {
-            @Override
-            public void serialize(Duration duration, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
-
-                jsonGenerator.writeString(duration.toString());
-            }
-        });
-        module.addDeserializer(Duration.class, new JsonDeserializer<Duration>() {
-            @Override
-            public Duration deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException {
-
-                try {
-                    return Duration.parse(jsonParser.getText());
-                } catch (DateTimeParseException e) {
-                    return null;
-                }
-            }
-        });
-        return module;
-    }
-
-    private enum SerializationFormat {
-        JAVA_SERIALIZATION, JSON, COMPRESSED_JSON
+        switch (serialization_format) {
+            case JAVA_SERIALIZATION:
+                return SERIALIZED_SUFFIX;
+            case JSON:
+                return JSON_SUFFIX;
+            default:
+                return JSON_COMPRESSED_SUFFIX;
+        }
     }
 }

@@ -19,15 +19,15 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning;
 import java.util.*;
 
 /**
- * Tests {@link PorterStemCleaner}.
+ * Tests {@link StemmingCleaner}.
  *
  * @author Masih Hajiarab Derkani
  */
-public class PorterStemCleanerTest extends TokenFilterCleanerTest {
+public class StemmingCleanerTest extends TokenFilterCleanerTest {
 
-    public PorterStemCleanerTest() {
+    public StemmingCleanerTest() {
 
-        super(new PorterStemCleaner(), new HashMap<String, String>() {
+        super(new StemmingCleaner(), new HashMap<String, String>() {
 
             {
                 put("driving", "drive");

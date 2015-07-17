@@ -18,9 +18,10 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.
 
 import org.simmetrics.SetMetric;
 import org.simmetrics.StringMetric;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.TokenSet;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.TokenList;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class SetMetricAdapter implements StringMetric {
@@ -43,10 +44,10 @@ public class SetMetricAdapter implements StringMetric {
 
     public static Set<String> getBigrams(String s) {
 
-        return getBigrams(new TokenSet(s));
+        return getBigrams(new TokenList(s));
     }
 
-    private static Set<String> getBigrams(Set<String> strings) {
+    private static Set<String> getBigrams(List<String> strings) {
 
         Set<String> result = new HashSet<>();
         for (String s : strings) {

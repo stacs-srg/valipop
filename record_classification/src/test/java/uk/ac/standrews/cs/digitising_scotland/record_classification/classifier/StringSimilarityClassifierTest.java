@@ -22,7 +22,7 @@ import org.junit.runners.Parameterized;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Classification;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Record;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.TokenSet;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.TokenList;
 
 import java.util.*;
 import java.util.function.Supplier;
@@ -37,11 +37,11 @@ import static org.junit.Assert.assertEquals;
 public class StringSimilarityClassifierTest extends ClassifierTest {
 
     private static final Record[] TRAINING_RECORDS = new Record[]{
-            new Record(1, "trail", new Classification("class1", new TokenSet("trail"), 1.0)),
-            new Record(2, "mouse", new Classification("class2", new TokenSet("mouse"), 1.0)),
-            new Record(3, "through", new Classification("class3", new TokenSet("through"), 1.0)),
-            new Record(4, "quick brown fox", new Classification("class4", new TokenSet("quick brown fox"), 1.0)),
-            new Record(5, "lazy dog", new Classification("class4", new TokenSet("lazy dog"), 1.0))
+            new Record(1, "trail", new Classification("class1", new TokenList("trail"), 1.0)),
+            new Record(2, "mouse", new Classification("class2", new TokenList("mouse"), 1.0)),
+            new Record(3, "through", new Classification("class3", new TokenList("through"), 1.0)),
+            new Record(4, "quick brown fox", new Classification("class4", new TokenList("quick brown fox"), 1.0)),
+            new Record(5, "lazy dog", new Classification("class4", new TokenList("lazy dog"), 1.0))
     };
 
     private static final Record[] TEST_RECORDS = new Record[]{

@@ -26,8 +26,7 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
 /**
- *
- * Created by fraserdunlop on 10/10/2014 at 13:00.
+ * @author Fraser Dunlop
  */
 public class SerializableDenseMatrix implements Serializable {
 
@@ -35,10 +34,10 @@ public class SerializableDenseMatrix implements Serializable {
 
     private DenseMatrix matrix;
 
-    public SerializableDenseMatrix(final double[][] values) {
-
-        this.matrix = new DenseMatrix(values);
-    }
+    /**
+     * Needed for JSON deserialization.
+     */
+    public SerializableDenseMatrix(){}
 
     public SerializableDenseMatrix(final Matrix matrix) {
 
@@ -55,10 +54,14 @@ public class SerializableDenseMatrix implements Serializable {
         return matrix;
     }
 
+    public void setMatrix(DenseMatrix matrix) {
+
+        this.matrix= matrix;
+    }
+
     private void readObject(final ObjectInputStream inputStream) throws ClassNotFoundException, IOException {
 
-        double[][] asArray = (double[][]) inputStream.readObject();
-        matrix = new DenseMatrix(asArray);
+        matrix = new DenseMatrix((double[][]) inputStream.readObject());
     }
 
     private void writeObject(final ObjectOutputStream outputStream) throws IOException {
@@ -66,8 +69,7 @@ public class SerializableDenseMatrix implements Serializable {
         outputStream.writeObject(asArray(matrix));
     }
 
-    //TODO put this helper method in a sensible place - it's own class perhaps?
-    public double[][] asArray(final Matrix matrix) {
+    public static double[][] asArray(final Matrix matrix) {
 
         double[][] array = new double[matrix.numRows()][matrix.numCols()];
         for (int i = 0; i < matrix.numRows(); i++) {
@@ -75,16 +77,6 @@ public class SerializableDenseMatrix implements Serializable {
                 array[i][j] = matrix.get(i, j);
         }
         return array;
-    }
-
-    public int numCols() {
-
-        return matrix.numCols();
-    }
-
-    public int numRows() {
-
-        return matrix.numRows();
     }
 
     public double get(final int i, final int j) {

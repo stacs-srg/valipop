@@ -17,12 +17,12 @@
 package uk.ac.standrews.cs.digitising_scotland.record_classification.analysis;
 
 import org.junit.Before;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.InconsistentCodingChecker;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.InputFileFormatException;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Classification;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Record;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.TokenSet;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.TokenList;
 import uk.ac.standrews.cs.util.dataset.DataSet;
 import uk.ac.standrews.cs.util.tools.FileManipulation;
 
@@ -34,19 +34,20 @@ public class AbstractMetricsTest {
 
     protected static final double DELTA = 0.001;
 
-    protected static final Record haddock_correct = new Record(1, "haddock", new Classification("fish", new TokenSet(), 1.0));
-    protected static final Record haddock_incorrect = new Record(2, "haddock", new Classification("mammal", new TokenSet(), 1.0));
-    protected static final Record osprey_incorrect = new Record(3, "osprey", new Classification("mammal", new TokenSet(), 1.0));
-    protected static final Record unicorn_unclassified = new Record(4, "unicorn", Classification.UNCLASSIFIED);
+    private static int next_record_id = 1;
 
-    protected static final Record haddock_gold_standard = new Record(5, "haddock", new Classification("fish", new TokenSet(), 1.0));
-    protected static final Record cow_gold_standard = new Record(6, "cow", new Classification("mammal", new TokenSet(), 1.0));
+    protected static final Record haddock_correct = makeRecord("haddock", "fish");
+    protected static final Record haddock_incorrect = makeRecord("haddock", "mammal");
+    protected static final Record osprey_incorrect = makeRecord("osprey", "mammal");
+    protected static final Record unicorn_unclassified = makeRecord("unicorn");
+    protected static final Record haddock_gold_standard = makeRecord("haddock", "fish");
+    protected static final Record cow_gold_standard = makeRecord("cow", "mammal");
 
     protected Bucket classified_records;
     protected Bucket gold_standard_records;
     protected StrictConfusionMatrix matrix;
 
-    private static final String CLASSIFIED_FILE_NAME =  "example_classified.csv";
+    private static final String CLASSIFIED_FILE_NAME = "example_classified.csv";
     private static final String GOLD_STANDARD_FILE_NAME = "example_gold_standard.csv";
 
     DataSet classified_records_csv;
@@ -89,5 +90,20 @@ public class AbstractMetricsTest {
         }
         valid_codes.add(Classification.UNCLASSIFIED.getCode());
         return valid_codes.size();
+    }
+
+    protected static Record makeRecord(String data, Classification classification) {
+
+        return new Record(next_record_id++, data, classification);
+    }
+
+    protected static Record makeRecord(String data, String code) {
+
+        return makeRecord(data, new Classification(code, new TokenList(data), 1.0));
+    }
+
+    protected static Record makeRecord(String data) {
+
+        return makeRecord(data, Classification.UNCLASSIFIED);
     }
 }

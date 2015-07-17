@@ -16,60 +16,43 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.linear_regression;
 
-import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
-import org.apache.lucene.util.Version;
 import org.apache.mahout.math.NamedVector;
 import org.apache.mahout.math.RandomAccessSparseVector;
 import org.apache.mahout.math.Vector;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Classification;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Record;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.TokenList;
 
 import java.io.Serializable;
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 /**
- * Factory that allows us to create vectors from strings.
- * Created by fraserdunlop on 23/04/2014 at 19:34.
+ * @author Fraser Dunlop
  */
 public class VectorFactory implements Serializable {
 
-    /**
-     * The Constant serialVersionUID.
-     */
     private static final long serialVersionUID = 5369887941319861994L;
 
-    /**
-     * The index.
-     */
     private CodeIndexer index;
 
-    /**
-     * The vector encoder.
-     */
     private SimpleVectorEncoder vectorEncoder;
 
     /**
-     * Constructs an empty {@link VectorFactory} with number of features set to 0 and a new vectorEncoder.
+     * Needed for JSON deserialization.
      */
-    public VectorFactory() {
-
-        index = new CodeIndexer();
-        vectorEncoder = new SimpleVectorEncoder();
-    }
+    public VectorFactory() {}
 
     /**
      * Constructs a new {@link VectorFactory} from the specified {@link Bucket}.
      *
      * @param bucket bucket
-     * @param index  the index
      */
-    public VectorFactory(final Bucket bucket, final CodeIndexer index) {
+    public VectorFactory(final Bucket bucket) {
 
-        this.index = index;
+        index = new CodeIndexer(bucket);
         vectorEncoder = new SimpleVectorEncoder();
         updateDictionary(bucket);
     }
@@ -82,18 +65,20 @@ public class VectorFactory implements Serializable {
     public void updateDictionary(final Bucket bucket) {
 
         for (Record record : bucket) {
-                updateDictionary(record.getClassification().getTokenSet().toString());
+
+            // TODO replace with lower case cleaner.
+
+            for (String token : record.getClassification().getTokenSet()) {
+
+                String descriptionLower = token.toLowerCase();
+                vectorEncoder.updateDictionary(descriptionLower);
+            }
         }
-        setNumFeatures();
-    }
 
-    /**
-     * Sets the num features.
-     */
-    private void setNumFeatures() {
+        OLR.default_number_of_features = vectorEncoder.getDictionarySize();
 
-        int numFeatures = vectorEncoder.getDictionarySize();
-        MachineLearningConfiguration.getDefaultProperties().setProperty("numFeatures", String.valueOf(numFeatures));
+//        final Properties defaultProperties = MachineLearningConfiguration.getDefaultProperties();
+//        defaultProperties.setProperty("numFeatures", String.valueOf(vectorEncoder.getDictionarySize()));
     }
 
     /**
@@ -112,8 +97,7 @@ public class VectorFactory implements Serializable {
         if (record.getClassification() != Classification.UNCLASSIFIED) {
             vectors.addAll(createNamedVectorsWithGoldStandardCodes(record));
         } else {
-            // TODO not sure correct - used to be record.getDescription()
-            vectors.addAll(createUnNamedVectorsFromDescription(record.getData()));
+            vectors.addAll(createUnNamedVectorsFromDescription(new TokenList(record.getData())));
         }
         return vectors;
     }
@@ -124,7 +108,7 @@ public class VectorFactory implements Serializable {
      * @param description the description
      * @return the collection<? extends named vector>
      */
-    private Collection<? extends NamedVector> createUnNamedVectorsFromDescription(final String description) {
+    private Collection<? extends NamedVector> createUnNamedVectorsFromDescription(final TokenList description) {
 
         List<NamedVector> vectorList = new ArrayList<>();
 
@@ -145,9 +129,8 @@ public class VectorFactory implements Serializable {
         List<NamedVector> vectors = new ArrayList<>();
 
         Classification codeTriple = record.getClassification();
-            Integer id = index.getID(codeTriple.getCode());
-            vectors.add(createNamedVectorFromString(codeTriple.getTokenSet().toString(), id.toString()));
-
+        Integer id = index.getID(codeTriple.getCode());
+        vectors.add(createNamedVectorFromString(codeTriple.getTokenSet(), id.toString()));
 
         return vectors;
     }
@@ -160,7 +143,7 @@ public class VectorFactory implements Serializable {
      * @param description the string to vectorize
      * @return a vector encoding of the string
      */
-    public Vector createVectorFromString(final String description) {
+    public Vector createVectorFromString(final TokenList description) {
 
         Vector vector = new RandomAccessSparseVector(getNumberOfFeatures());
         addFeaturesToVector(vector, description);
@@ -172,43 +155,27 @@ public class VectorFactory implements Serializable {
      * to encode the tokens and {StandardTokenizerIterable} to
      * tokenize the string.
      *
-     * @param description the string to vectorize
-     * @param name        name
+     * @param token_list the string to vectorize
+     * @param name       name
      * @return a vector encoding of the string
      */
-    public NamedVector createNamedVectorFromString(final String description, final String name) {
+    public NamedVector createNamedVectorFromString(final TokenList token_list, final String name) {
 
-        Vector vector = createVectorFromString(description);
+        Vector vector = createVectorFromString(token_list);
         return new NamedVector(vector, name);
     }
 
     /**
      * Adds the features to vector.
      *
-     * @param vector      the vector
-     * @param description the description
+     * @param vector     the vector
+     * @param token_list the description
      */
-    private void addFeaturesToVector(final Vector vector, final String description) {
+    private void addFeaturesToVector(final Vector vector, final TokenList token_list) {
 
-        StandardTokenizerIterable tokenStream = new StandardTokenizerIterable(Version.LUCENE_36, new StringReader(description));
-        for (CharTermAttribute attribute : tokenStream) {
-            vectorEncoder.addToVector(attribute.toString(), vector);
+        for (String token : token_list) {
+            vectorEncoder.addToVector(token, vector);
         }
-    }
-
-    /**
-     * Adds all the tokens in the specified string to this {@link VectorFactory}'s dictionary.
-     *
-     * @param description String to add
-     */
-    public void updateDictionary(final String description) {
-
-        String descriptionLower = description.toLowerCase();
-        StandardTokenizerIterable tokenStream = new StandardTokenizerIterable(Version.LUCENE_36, new StringReader(descriptionLower));
-        for (CharTermAttribute attribute : tokenStream) {
-            vectorEncoder.updateDictionary(attribute.toString());
-        }
-        setNumFeatures();
     }
 
     /**

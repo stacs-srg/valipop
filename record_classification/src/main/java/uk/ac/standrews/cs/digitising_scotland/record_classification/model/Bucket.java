@@ -67,7 +67,7 @@ public class Bucket implements Iterable<Record>, Serializable {
             String data = record.get(1);
             String code = record.get(2);
 
-            Classification classification = code.isEmpty() ? Classification.UNCLASSIFIED : new Classification(code, new TokenSet(data), 1.0);
+            Classification classification = code.isEmpty() ? Classification.UNCLASSIFIED : new Classification(code, new TokenList(data), 1.0);
 
             add(new Record(id, data, classification));
         }

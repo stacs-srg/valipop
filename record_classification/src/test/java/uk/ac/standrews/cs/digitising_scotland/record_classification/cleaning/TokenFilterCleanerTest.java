@@ -16,12 +16,16 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning;
 
-import org.junit.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
+import org.junit.Test;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Classification;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Record;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.TokenList;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 /**
  * Utility class used to test cleaners based on {@link TokenFilterCleaner}.
@@ -31,65 +35,54 @@ import static org.junit.Assert.*;
 public abstract class TokenFilterCleanerTest {
 
     private final TokenFilterCleaner cleaner;
-    private final Map<String, String> input_expected_map;
+    private final Map<String, String> test_values;
 
-    public TokenFilterCleanerTest(final TokenFilterCleaner cleaner, Map<String, String> input_expected_map) {
+    public TokenFilterCleanerTest(final TokenFilterCleaner cleaner, Map<String, String> test_values) {
 
         this.cleaner = cleaner;
-        this.input_expected_map = input_expected_map;
+        this.test_values = test_values;
     }
 
     @Test
-    public void testClean() throws Exception {
+    public void cleanBucket() throws Exception {
 
-        final Bucket expected = new Bucket();
-        final Bucket unclean = new Bucket();
+        final Bucket test_bucket = getTestBucket();
+        final Bucket expected_cleaned_bucket = getExpectedCleanedBucket();
 
-        int record_id = 1;
+        final Bucket actual_cleaned_bucket = cleaner.apply(test_bucket);
 
-        for (Map.Entry<String, String> entry : input_expected_map.entrySet()) {
-            expected.add(new Record(record_id, entry.getValue()));
-            unclean.add(new Record(record_id, entry.getKey()));
-            record_id++;
-        }
-
-        final Bucket actual = cleaner.apply(unclean);
-        assertEquals(expected, actual);
+        assertEquals(expected_cleaned_bucket, actual_cleaned_bucket);
     }
 
     @Test
-    public void testCleanRecord() throws Exception {
-
-        for (Map.Entry<String, String> entry : input_expected_map.entrySet()) {
-
-            final Record expected = new Record(1, entry.getValue());
-            final Record actual = cleaner.cleanRecord(new Record(1, entry.getKey()));
-            assertEquals(expected, actual);
-        }
-    }
-
-    @Test
-    public void testCleanClassification() throws Exception {
-
-        for (Map.Entry<String, String> entry : input_expected_map.entrySet()) {
-
-            final Classification expected = new Classification("code", new TokenSet(entry.getValue()), 0.1);
-            final Classification unclean_classification = new Classification("code", new TokenSet(entry.getKey()), 0.1);
-            final Classification actual = cleaner.cleanClassification(entry.getValue(), unclean_classification);
-            assertEquals(expected, actual);
-        }
+    public void cleanClassification() throws Exception {
 
         assertEquals(Classification.UNCLASSIFIED, cleaner.cleanClassification("", Classification.UNCLASSIFIED));
     }
 
-    @Test
-    public void testCleanData() throws Exception {
+    private Classification makeClassification(String data) {
 
-        for (Map.Entry<String, String> entry : input_expected_map.entrySet()) {
+        return new Classification("code", new TokenList(data), 0.1);
+    }
 
-            final String expected = entry.getValue();
-            final String actual = cleaner.cleanData(entry.getKey());
-            assertEquals(expected, actual);
+    private Bucket getTestBucket() {
+
+        return getBucket(test_values.keySet());
+    }
+
+    private Bucket getExpectedCleanedBucket() {
+
+        return getBucket(test_values.values());
+    }
+
+    private Bucket getBucket(Collection<String> data) {
+
+        final Bucket expected_cleaned_bucket = new Bucket();
+
+        int record_id = 1;
+        for (String s : data) {
+            expected_cleaned_bucket.add(new Record(record_id++, s, makeClassification(s)));
         }
+        return expected_cleaned_bucket;
     }
 }

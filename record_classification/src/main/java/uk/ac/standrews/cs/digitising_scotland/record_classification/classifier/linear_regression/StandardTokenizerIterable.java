@@ -20,6 +20,7 @@ import org.apache.lucene.analysis.standard.StandardTokenizer;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.lucene.util.Version;
 
+import java.io.IOException;
 import java.io.Reader;
 import java.util.Iterator;
 
@@ -39,7 +40,12 @@ public class StandardTokenizerIterable implements Iterable<CharTermAttribute> {
      */
     public StandardTokenizerIterable(final Version matchVersion, final Reader input) {
 
-        this.tokenizer = new StandardTokenizer(matchVersion, input);
+        tokenizer = new StandardTokenizer();
+        try {
+            tokenizer.setReader(input);
+        } catch (IOException e) {
+            throw new RuntimeException("IO exception reading token data: " + e.getMessage());
+        }
     }
 
     @Override

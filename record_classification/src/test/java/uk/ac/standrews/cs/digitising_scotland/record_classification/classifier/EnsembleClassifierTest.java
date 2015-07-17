@@ -24,7 +24,7 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.s
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Classification;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Record;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.TokenSet;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.TokenList;
 
 import java.util.HashSet;
 
@@ -41,7 +41,7 @@ public class EnsembleClassifierTest {
     private static final String RECORD_DATA = "record";
     private static final String SIMILAR_RECORD_DATA = "recrod";
     private static final String DISSIMILAR_RECORD_DATA = "fish";
-    private static final Record TRAINING_RECORD = new Record(1, RECORD_DATA, new Classification("media", new TokenSet(), 1.0));
+    private static final Record TRAINING_RECORD = new Record(1, RECORD_DATA, new Classification("media", new TokenList(RECORD_DATA), 1.0));
     private static final EnsembleClassifier.ResolutionStrategy DUMMY_RESOLUTION_STRATEGY = new DummyResolutionStrategy();
 
     private Bucket training_records;

@@ -16,18 +16,19 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning;
 
-import org.apache.lucene.analysis.*;
-import org.apache.lucene.analysis.standard.*;
-import org.apache.lucene.analysis.tokenattributes.*;
-import org.apache.lucene.util.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 
-import java.io.*;
+import org.apache.lucene.analysis.TokenFilter;
+import org.apache.lucene.analysis.TokenStream;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Classification;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Record;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.TokenList;
 
 /**
  * An abstract cleaner that uses {@link TokenFilter} to clean records.
  *
  * @author Masih Hajiarab Derkani
+ * @author Graham Kirby
  */
 public abstract class TokenFilterCleaner implements Cleaner {
 
@@ -49,8 +50,9 @@ public abstract class TokenFilterCleaner implements Cleaner {
 
         final int id = record.getId();
         final String data = record.getData();
-        final String cleaned_data = cleanData(data);
         final Classification classification = record.getClassification();
+
+        final String cleaned_data = cleanData(data);
         final Classification cleaned_classification = cleanClassification(cleaned_data, classification);
 
         return new Record(id, cleaned_data, cleaned_classification);
@@ -61,10 +63,9 @@ public abstract class TokenFilterCleaner implements Cleaner {
         final Classification cleaned_classification;
         if (old_classification.equals(Classification.UNCLASSIFIED)) {
             cleaned_classification = old_classification;
-        }
-        else {
+        } else {
             final String code = old_classification.getCode();
-            final TokenSet tokens = new TokenSet(cleaned_data);
+            final TokenList tokens = new TokenList(cleaned_data);
             final double confidence = old_classification.getConfidence();
 
             cleaned_classification = new Classification(code, tokens, confidence);
@@ -74,30 +75,15 @@ public abstract class TokenFilterCleaner implements Cleaner {
 
     protected String cleanData(final String data) {
 
-        try {
+        final StringBuilder cleaned_data = new StringBuilder();
 
-            final TokenStream tokenizer_stream = getTokenizer(data);
-            final TokenStream filter = getTokenFilter(tokenizer_stream);
+        for (String token : new TokenList(data, this::getTokenFilter)) {
 
-            final StringBuilder cleaned_data = new StringBuilder();
-            final CharTermAttribute charTermAttribute = filter.addAttribute(CharTermAttribute.class);
-
-            filter.reset();
-
-            while (filter.incrementToken()) {
-                cleaned_data.append(charTermAttribute.toString()).append(SPACE);
-            }
-
-            return cleaned_data.toString().trim();
+            if (cleaned_data.length() > 0) cleaned_data.append(SPACE);
+            cleaned_data.append(token);
         }
-        catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
-    protected StandardTokenizer getTokenizer(final String data) {
-
-        return new StandardTokenizer(Version.LUCENE_36, new StringReader(data.trim()));
+        return cleaned_data.toString();
     }
 
     protected abstract TokenFilter getTokenFilter(final TokenStream stream);

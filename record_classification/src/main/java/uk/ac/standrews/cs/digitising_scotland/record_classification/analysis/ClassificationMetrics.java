@@ -38,7 +38,7 @@ public class ClassificationMetrics implements Serializable {
     /**
      * Labels for values exported by #getValues().
      */
-    public static final List<String> DATASET_LABELS = Arrays.asList("macro-precision", "macro-recall", "macro-accuracy", "macro-F1", "micro-precision/recall", "micro-accuracy");
+    public static final List<String> DATASET_LABELS = Arrays.asList("macro-precision", "macro-recall", "macro-F1", "micro-precision/recall");
 
     private static final long serialVersionUID = -214187549269797059L;
 
@@ -56,15 +56,15 @@ public class ClassificationMetrics implements Serializable {
 
     public List<String> getValues() {
 
+        // Ignore accuracy since it's misleading in this domain: always high due to many true negatives.
+
         final String macro_precision = String.valueOf(getMacroAveragePrecision());
         final String macro_recall = String.valueOf(getMacroAverageRecall());
-        final String macro_accuracy = String.valueOf(getMacroAverageAccuracy());
         final String macro_f1 = String.valueOf(getMacroAverageF1());
         final String micro_precision = String.valueOf(getMicroAveragePrecision());
-        final String micro_accuracy = String.valueOf(getMicroAverageAccuracy());
 
         // Wrapped for mutability.
-        return new ArrayList<>(Arrays.asList(macro_precision, macro_recall, macro_accuracy, macro_f1, micro_precision, micro_accuracy));
+        return new ArrayList<>(Arrays.asList(macro_precision, macro_recall, macro_f1, micro_precision));
     }
 
     /**

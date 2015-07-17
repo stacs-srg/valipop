@@ -20,9 +20,7 @@ import org.junit.Before;
 import org.junit.Test;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.AbstractMetricsTest;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Classification;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Record;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.TokenSet;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -38,7 +36,6 @@ public class ConsistentCodingCleanerTest extends AbstractMetricsTest {
         bucket.add(haddock_correct, haddock_incorrect, osprey_incorrect);
     }
 
-
     @Test
     public void remove() throws Exception {
 
@@ -53,7 +50,7 @@ public class ConsistentCodingCleanerTest extends AbstractMetricsTest {
 
         // In this case there are two classifications of haddock as mammal and only one as fish, so the latter should be corrected to mammal.
 
-        bucket.add(new Record(7, "haddock", new Classification("mammal", new TokenSet(), 1.0)));
+        bucket.add(makeRecord("haddock", "mammal"));
 
         Bucket cleaned = ConsistentCodingCleaner.CORRECT.apply(bucket);
 

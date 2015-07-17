@@ -16,11 +16,11 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning;
 
-import org.apache.lucene.analysis.*;
-import org.apache.lucene.analysis.en.*;
-import org.apache.lucene.util.*;
-
-import java.util.*;
+import org.apache.lucene.analysis.TokenFilter;
+import org.apache.lucene.analysis.TokenStream;
+import org.apache.lucene.analysis.core.StopFilter;
+import org.apache.lucene.analysis.en.EnglishAnalyzer;
+import org.apache.lucene.analysis.util.CharArraySet;
 
 /**
  * Removes english stop words from records.
@@ -30,11 +30,11 @@ import java.util.*;
 public class EnglishStopWordCleaner extends TokenFilterCleaner {
 
     private static final long serialVersionUID = 3018841867887670242L;
-    private static final Set<?> STOP_WORDS = EnglishAnalyzer.getDefaultStopSet();
+    private static final CharArraySet STOP_WORDS = EnglishAnalyzer.getDefaultStopSet();
 
     @Override
     protected TokenFilter getTokenFilter(final TokenStream stream) {
 
-        return new StopFilter(Version.LUCENE_36, stream, STOP_WORDS);
+        return new StopFilter(stream, STOP_WORDS);
     }
 }

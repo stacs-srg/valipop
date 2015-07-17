@@ -54,12 +54,17 @@ public final class CodeIndexer implements Serializable {
     private final String numCategoriesId = "numCategories";
 
     /**
-     * Instantiates a new CodeIndexer.
+     * Required for JSON deserialization.
      */
-    public CodeIndexer() {
+    public CodeIndexer() {}
 
-        MachineLearningConfiguration.getDefaultProperties().setProperty(numCategoriesId, String.valueOf(idToCodeMap.size()));
-    }
+//    /**
+//     * Instantiates a new CodeIndexer.
+//     */
+//    public CodeIndexer() {
+//
+//        MachineLearningConfiguration.getDefaultProperties().setProperty(numCategoriesId, String.valueOf(idToCodeMap.size()));
+//    }
 
     /**
      * Instantiates a new CodeIndexer with all the codes from the supplied bucket added to the index.
@@ -71,30 +76,30 @@ public final class CodeIndexer implements Serializable {
         addGoldStandardCodes(records);
     }
 
-    /**
-     * Instantiates a new CodeIndexer with all the codes from the {@link CodeDictionary} in the index.
-     *
-     * @param dictionary The dictionary to add the codes from
-     */
-    public CodeIndexer(final CodeDictionary dictionary) {
+//    /**
+//     * Instantiates a new CodeIndexer with all the codes from the {@link CodeDictionary} in the index.
+//     *
+//     * @param dictionary The dictionary to add the codes from
+//     */
+//    public CodeIndexer(final CodeDictionary dictionary) {
+//
+//        addGoldStandardCodes(dictionary);
+//    }
 
-        addGoldStandardCodes(dictionary);
-    }
-
-    /**
-     * Adds gold standard codes from each record to the {@link CodeIndexer}.
-     *
-     * @param dictionary CodeDictionary with codes to be added
-     */
-    public void addGoldStandardCodes(final CodeDictionary dictionary) {
-
-        for (String code : dictionary) {
-            putCodeInMap(code);
-        }
-
-        MachineLearningConfiguration.getDefaultProperties().setProperty(numCategoriesId, String.valueOf(idToCodeMap.size()));
-
-    }
+//    /**
+//     * Adds gold standard codes from each record to the {@link CodeIndexer}.
+//     *
+//     * @param dictionary CodeDictionary with codes to be added
+//     */
+//    public void addGoldStandardCodes(final CodeDictionary dictionary) {
+//
+//        for (String code : dictionary) {
+//            putCodeInMap(code);
+//        }
+//
+//        MachineLearningConfiguration.getDefaultProperties().setProperty(numCategoriesId, String.valueOf(idToCodeMap.size()));
+//
+//    }
 
     /**
      * Adds gold standard codes from each record to the {@link CodeIndexer}.
@@ -106,7 +111,10 @@ public final class CodeIndexer implements Serializable {
         for (Record record : records) {
             putCodeInMap(record.getClassification().getCode());
         }
-        MachineLearningConfiguration.getDefaultProperties().setProperty(numCategoriesId, String.valueOf(idToCodeMap.size()));
+
+        OLR.default_number_of_categories = idToCodeMap.size();
+
+//        MachineLearningConfiguration.getDefaultProperties().setProperty(numCategoriesId, String.valueOf(idToCodeMap.size()));
 
     }
 
@@ -146,7 +154,6 @@ public final class CodeIndexer implements Serializable {
      * Puts a code in the map after checking that it's valid by using the {@link CodeDictionary}.
      *
      * @param code the code to add to the map
-     * @throws old.record_classification_old.datastructures.code.CodeNotValidException the code not valid exception, thrown if a code is not in the {@link CodeDictionary}
      */
     private void putCodeInMap(final String code) {
 

@@ -29,6 +29,7 @@ public class Record implements Comparable<Record>, Serializable {
 
     private static final long serialVersionUID = 5810954671977163993L;
 
+    // TODO record original data as well as cleaned.
     private int id;
     private String data;
     private Classification classification;  // TODO restore support for multiple classifications

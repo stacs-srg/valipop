@@ -20,7 +20,7 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.C
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Classification;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Record;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.TokenSet;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.TokenList;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -77,7 +77,7 @@ public class StringSimilarityClassifier implements Classifier {
                 highest_similarity_found = known_to_data_similarity;
             }
         }
-        return classification == Classification.UNCLASSIFIED ? classification : new Classification(classification.getCode(), new TokenSet(data), classification.getConfidence());
+        return classification == Classification.UNCLASSIFIED ? classification : new Classification(classification.getCode(), new TokenList(data), classification.getConfidence());
     }
 
     @Override

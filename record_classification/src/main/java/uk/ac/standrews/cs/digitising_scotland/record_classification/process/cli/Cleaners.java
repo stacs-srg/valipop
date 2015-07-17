@@ -19,7 +19,7 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.Cleaner;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.ConsistentCodingCleaner;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.EnglishStopWordCleaner;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.PorterStemCleaner;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.StemmingCleaner;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
 
 /**
@@ -28,7 +28,7 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket
 enum Cleaners implements Cleaner {
 
     STOP_WORDS(new EnglishStopWordCleaner(), "Removes English stop words"),
-    PORTER_STEM(new PorterStemCleaner(), "Performs stemming using Porter algorithm"),
+    PORTER_STEM(new StemmingCleaner(), "Performs stemming using Porter algorithm"),
     CONSISTENT_CODING_CLEANER_NONE(ConsistentCodingCleaner.NONE, ""), //TODO need Javadoc for these that explain what they do in order to update description
     CONSISTENT_CODING_CLEANER_CORRECT(ConsistentCodingCleaner.CORRECT, ""),
     CONSISTENT_CODING_CLEANER_REMOVE(ConsistentCodingCleaner.REMOVE, "");
