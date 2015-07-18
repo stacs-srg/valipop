@@ -30,38 +30,48 @@ import java.util.concurrent.*;
  * Distributes training vectors across {@link OLRPool}s in a cross fold manner. Allows concurrent training
  * of the {@link OLRPool}s and provides a classify method that averages the classifications given by each pool.
  *
- * @author fraserdunlop, jkc25
+ * @author Fraser Dunlop
+ * @author Jamie Carson
  */
 public class OLRCrossFold implements Serializable {
 
     private static final long serialVersionUID = -749333540672669562L;
 
-    /** The Logger. */
+    /**
+     * The Logger.
+     */
     private static transient final Logger LOGGER = LoggerFactory.getLogger(OLRCrossFold.class);
 
-    /** The OLRPool models. */
+    /**
+     * The OLRPool models.
+     */
     private List<OLRPool> models = new ArrayList<>();
 
-    /** The number of cross folds. */
-    private int folds=4;
+    /**
+     * The number of cross folds.
+     */
+    private int folds = 4;
 
-    /** The classifier. */
+    /**
+     * The classifier.
+     */
     private OLR classifier;
 
-    public OLRCrossFold() {
-
-    }
+    /**
+     * Needed for JSON deserialization.
+     */
+    public OLRCrossFold() {}
 
     /**
      * Constructs an OLRCrossFold object with the given trainingVectors.
      *
      * @param trainingVectorList training vectors to use when training/validating each fold.
      */
-    public OLRCrossFold(final List<NamedVector> trainingVectorList) {
+    public OLRCrossFold(final List<NamedVector> trainingVectorList, int dictionary_size, int code_map_size) {
 
         ArrayList<NamedVector>[][] trainingVectors = init(trainingVectorList);
         for (int i = 0; i < this.folds + 1; i++) {
-            OLRPool model = new OLRPool(trainingVectors[i][0], trainingVectors[i][1]);
+            OLRPool model = new OLRPool(trainingVectors[i][0], trainingVectors[i][1], dictionary_size, code_map_size);
             models.add(model);
         }
     }
@@ -70,7 +80,7 @@ public class OLRCrossFold implements Serializable {
      * Constructs an OLRCrossFold object with the given trainingVectors.
      *
      * @param trainingVectorList training vectors to use when training/validating each fold.
-     * @param betaMatrix        betaMatrix this matrix contains the betas and will be propagated down to the lowest OLR object.
+     * @param betaMatrix         betaMatrix this matrix contains the betas and will be propagated down to the lowest OLR object.
      */
     public OLRCrossFold(final List<NamedVector> trainingVectorList, final Matrix betaMatrix) {
 
@@ -84,54 +94,6 @@ public class OLRCrossFold implements Serializable {
     private ArrayList<NamedVector>[][] init(final List<NamedVector> trainingVectorList) {
         return CrossFoldFactory.make(trainingVectorList, folds);
     }
-//
-//    /**
-//     * Gets the average running log likelihood.
-//     *
-//     * @return the average running log likelihood
-//     */
-//    public double getAverageRunningLogLikelihood() {
-//
-//        double ll = 0.;
-//        for (OLRPool model : models) {
-//            ll += model.getAverageRunningLogLikelihood();
-//        }
-//        ll /= models.size();
-//        return ll;
-//    }
-
-//    /**
-//     * Gets the number of records used for training so far across all the models in the pool.
-//     * @return int the number of training records used so far
-//     */
-//    public long getNumTrained() {
-//
-//        long numTrained = 0;
-//        for (OLRPool model : models) {
-//            numTrained += model.getNumTrained();
-//        }
-//        return numTrained;
-//    }
-//
-//    /**
-//     * Resets running log likelihoods.
-//     */
-//    public void resetRunningLogLikelihoods() {
-//
-//        for (OLRPool model : models) {
-//            model.resetRunningLogLikelihoods();
-//        }
-//    }
-//
-//    /**
-//     * Stops training on all models in the {@link OLRPool}.
-//     */
-//    public void stop() {
-//
-//        for (OLRPool model : models) {
-//            model.stop();
-//        }
-//    }
 
     /**
      * Trains all the OLR models contained in this OLRCrossfold.
@@ -139,35 +101,23 @@ public class OLRCrossFold implements Serializable {
     public void train() {
 
         try {
-            this.trainAllModels();
-        }
-        catch (InterruptedException | ExecutionException e) {
+            ExecutorService executorService = Executors.newFixedThreadPool(folds);
+            Collection<Future<?>> futures = new LinkedList<>();
+
+            for (OLRPool model : models) {
+                futures.add(executorService.submit(model));
+            }
+
+            Utils.handlePotentialErrors(futures);
+            executorService.shutdown();
+            final int timeout = 365;
+            executorService.awaitTermination(timeout, TimeUnit.DAYS);
+
+            prepareClassifier();
+
+        } catch (InterruptedException e) {
             LOGGER.error(e.getMessage(), e);
         }
-    }
-
-    /**
-     * Train all models.
-     *
-     * @throws InterruptedException the interrupted exception
-     * @throws ExecutionException
-     */
-    private void trainAllModels() throws InterruptedException, ExecutionException {
-
-        ExecutorService stopService = Executors.newFixedThreadPool(1);
-        ExecutorService executorService = Executors.newFixedThreadPool(folds);
-        Collection<Future<?>> futures = new LinkedList<>();
-
-        for (OLRPool model : models) {
-            futures.add(executorService.submit(model));
-        }
-
-        Utils.handlePotentialErrors(futures);
-        executorService.shutdown();
-        final int timeout = 365;
-        executorService.awaitTermination(timeout, TimeUnit.DAYS);
-
-        prepareClassifier();
     }
 
     /**
@@ -200,7 +150,7 @@ public class OLRCrossFold implements Serializable {
 
         List<OLRShuffled> survivors = new ArrayList<>();
         for (OLRPool model : models) {
-            survivors.addAll(model.getSurvivors());
+            survivors.addAll(model.survivors());
         }
         return survivors;
     }
@@ -235,15 +185,4 @@ public class OLRCrossFold implements Serializable {
 
         return classifier.classifyFull(instance);
     }
-//
-//    /**
-//     * Gets the log likelihood averaged over the models in the pool.
-//     * @param actual the actual classification
-//     * @param instance the instance vector
-//     * @return log likelihood
-//     */
-//    public double logLikelihood(final int actual, final Vector instance) {
-//
-//        return classifier.logLikelihood(actual, instance);
-//    }
 }

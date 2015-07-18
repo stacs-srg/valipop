@@ -36,7 +36,6 @@ public class ClassificationProcess implements Serializable {
 
     /**
      * Instantiates a new classification process.
-     *
      */
     public ClassificationProcess() {
 

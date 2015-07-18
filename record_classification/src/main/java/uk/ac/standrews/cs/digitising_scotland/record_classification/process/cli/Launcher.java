@@ -16,7 +16,12 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli;
 
-import com.beust.jcommander.*;
+import com.beust.jcommander.JCommander;
+import com.beust.jcommander.Parameter;
+import com.beust.jcommander.ParameterException;
+
+import java.nio.file.FileAlreadyExistsException;
+import java.nio.file.NoSuchFileException;
 
 /**
  * Launches the command line interface for a classification process.
@@ -44,6 +49,7 @@ public class Launcher {
         addCommand(new TrainCommand());
         addCommand(new EvaluateCommand());
         addCommand(new ClassifyCommand());
+        addCommand(new InitLoadTrainCommand());
     }
 
     void addCommand(Command command) {
@@ -57,12 +63,20 @@ public class Launcher {
 
         try {
             launcher.parse(args);
+            launcher.handle();
         }
         catch (ParameterException e) {
-            launcher.exitWithErrorMessage(e.getMessage());
+            launcher.reportParameterError(e.getMessage());
         }
-
-        launcher.handle();
+        catch (FileAlreadyExistsException e) {
+            launcher.reportError("process directory '" + e.getFile() + "' already exists.");
+        }
+        catch (NoSuchFileException e) {
+            launcher.reportError("expected context file '" + e.getFile() + "' not found.");
+        }
+        catch (Exception e) {
+            launcher.reportError(e.getMessage());
+        }
     }
 
     private void parse(final String... args) throws ParameterException {
@@ -85,14 +99,20 @@ public class Launcher {
     private void validateCommand(final String command) {
 
         if (command == null) {
-            exitWithErrorMessage(help ? "" : "Please specify a command");
+            reportParameterError(help ? "" : "Please specify a command");
         }
     }
 
-    private void exitWithErrorMessage(final String error_message) {
+    private void reportParameterError(final String error_message) {
 
         System.err.println(error_message);
         commander.usage();
-        System.exit(1);
+        System.exit(-1);
+    }
+
+    private void reportError(final String error_message) {
+
+        System.err.println("Process failed: " + error_message);
+        System.exit(-1);
     }
 }

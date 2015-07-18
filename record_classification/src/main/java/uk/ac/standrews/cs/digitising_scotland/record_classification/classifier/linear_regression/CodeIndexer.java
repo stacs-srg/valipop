@@ -32,8 +32,6 @@ import java.util.Map;
  */
 public final class CodeIndexer implements Serializable {
 
-    // TODO review whether this class is necessary.
-
     private static final long serialVersionUID = 3073583599428985116L;
 
     /**
@@ -51,20 +49,11 @@ public final class CodeIndexer implements Serializable {
      */
     private int currentMaxID;
 
-    private final String numCategoriesId = "numCategories";
 
     /**
      * Required for JSON deserialization.
      */
     public CodeIndexer() {}
-
-//    /**
-//     * Instantiates a new CodeIndexer.
-//     */
-//    public CodeIndexer() {
-//
-//        MachineLearningConfiguration.getDefaultProperties().setProperty(numCategoriesId, String.valueOf(idToCodeMap.size()));
-//    }
 
     /**
      * Instantiates a new CodeIndexer with all the codes from the supplied bucket added to the index.
@@ -76,31 +65,6 @@ public final class CodeIndexer implements Serializable {
         addGoldStandardCodes(records);
     }
 
-//    /**
-//     * Instantiates a new CodeIndexer with all the codes from the {@link CodeDictionary} in the index.
-//     *
-//     * @param dictionary The dictionary to add the codes from
-//     */
-//    public CodeIndexer(final CodeDictionary dictionary) {
-//
-//        addGoldStandardCodes(dictionary);
-//    }
-
-//    /**
-//     * Adds gold standard codes from each record to the {@link CodeIndexer}.
-//     *
-//     * @param dictionary CodeDictionary with codes to be added
-//     */
-//    public void addGoldStandardCodes(final CodeDictionary dictionary) {
-//
-//        for (String code : dictionary) {
-//            putCodeInMap(code);
-//        }
-//
-//        MachineLearningConfiguration.getDefaultProperties().setProperty(numCategoriesId, String.valueOf(idToCodeMap.size()));
-//
-//    }
-
     /**
      * Adds gold standard codes from each record to the {@link CodeIndexer}.
      *
@@ -111,11 +75,11 @@ public final class CodeIndexer implements Serializable {
         for (Record record : records) {
             putCodeInMap(record.getClassification().getCode());
         }
+    }
 
-        OLR.default_number_of_categories = idToCodeMap.size();
+    protected int codeMapSize() {
 
-//        MachineLearningConfiguration.getDefaultProperties().setProperty(numCategoriesId, String.valueOf(idToCodeMap.size()));
-
+        return idToCodeMap.size();
     }
 
     /**

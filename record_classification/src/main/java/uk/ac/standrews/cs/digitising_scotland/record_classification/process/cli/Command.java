@@ -70,7 +70,7 @@ abstract class Command implements Callable<Void>, Step {
     protected char delimiter = LoadGoldStandardFromFileStep.DEFAULT_DELIMITER;
 
     @Parameter(names = {"-f", "--format"}, description = SERIALIZATION_FORMAT_DESCRIPTION)
-    protected SerializationFormat serialization_format = SerializationFormat.JAVA_SERIALIZATION;
+    protected SerializationFormat serialization_format = SerializationFormat.JSON;
 
     private enum SerializationFormat {
         JAVA_SERIALIZATION, JSON, COMPRESSED_JSON

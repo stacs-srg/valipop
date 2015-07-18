@@ -39,12 +39,13 @@ class InitCommand extends Command {
      * The name of this command
      */
     public static final String NAME = "init";
+    public static final String DESCRIPTION = "The classifier to use for classification process.";
 
     public static final long SEED = 34234234234L;
 
     private static final long serialVersionUID = 5738604903474935932L;
 
-    @Parameter(required = true, names = {"-c", "--classifier"}, description = "The classifier to use for classification process.")
+    @Parameter(required = true, names = {"-c", "--classifier"}, description = DESCRIPTION)
     private Classifiers classifier_supplier;
 
     @Override
@@ -60,6 +61,5 @@ class InitCommand extends Command {
     }
 
     @Override
-    public void perform(final ClassificationContext context) {
-    }
+    public void perform(final ClassificationContext context) {}
 }

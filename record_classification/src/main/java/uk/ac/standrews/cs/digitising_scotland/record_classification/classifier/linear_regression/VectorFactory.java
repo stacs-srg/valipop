@@ -45,11 +45,6 @@ public class VectorFactory implements Serializable {
      */
     public VectorFactory() {}
 
-    /**
-     * Constructs a new {@link VectorFactory} from the specified {@link Bucket}.
-     *
-     * @param bucket bucket
-     */
     public VectorFactory(final Bucket bucket) {
 
         index = new CodeIndexer(bucket);
@@ -75,10 +70,17 @@ public class VectorFactory implements Serializable {
             }
         }
 
-        OLR.default_number_of_features = vectorEncoder.getDictionarySize();
+//        OLR.setDefaultNumberOfFeatures(vectorEncoder.getDictionarySize());
+    }
 
-//        final Properties defaultProperties = MachineLearningConfiguration.getDefaultProperties();
-//        defaultProperties.setProperty("numFeatures", String.valueOf(vectorEncoder.getDictionarySize()));
+    protected int dictionarySize() {
+
+        return vectorEncoder.getDictionarySize();
+    }
+
+    protected int codeMapSize() {
+
+        return index.codeMapSize();
     }
 
     /**
@@ -112,8 +114,7 @@ public class VectorFactory implements Serializable {
 
         List<NamedVector> vectorList = new ArrayList<>();
 
-        Vector v = createVectorFromString(description);
-        vectorList.add(new NamedVector(v, "noGoldStandard"));
+        vectorList.add(new NamedVector(createVectorFromString(description), "noGoldStandard"));
 
         return vectorList;
     }
