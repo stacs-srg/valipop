@@ -34,11 +34,14 @@ class LoadCommand extends Command {
 
     /** The name of this command */
     public static final String NAME = "load";
-    public static final String DESCRIPTION = "Path to a CSV file containing the gold standard.";
 
     private static final long serialVersionUID = 8026292848547343006L;
 
-    @Parameter(required = true, names = {"-g", "--goldStandard"}, description = DESCRIPTION, converter = PathConverter.class)
+    protected static final String GOLD_STANDARD_DESCRIPTION = "Path to a CSV file containing the gold standard.";
+    protected static final String GOLD_STANDARD_FLAG_SHORT = "-g";
+    protected static final String GOLD_STANDARD_FLAG_LONG = "--goldStandard";
+
+    @Parameter(required = true, names = {GOLD_STANDARD_FLAG_SHORT, GOLD_STANDARD_FLAG_LONG}, description = GOLD_STANDARD_DESCRIPTION, converter = PathConverter.class)
     private Path gold_standard;
 
     @Override

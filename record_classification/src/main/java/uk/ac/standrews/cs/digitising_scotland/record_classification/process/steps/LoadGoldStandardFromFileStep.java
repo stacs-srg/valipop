@@ -42,7 +42,6 @@ public class LoadGoldStandardFromFileStep implements Step {
 
     public static final char DEFAULT_DELIMITER = ',';
 
-
     /**
      * Instantiates a new step which loads a gold standard CSV file into a classification process {@link ClassificationContext context}.
      *
@@ -65,7 +64,9 @@ public class LoadGoldStandardFromFileStep implements Step {
 
         try (final BufferedReader reader = Files.newBufferedReader(path, charset)) {
 
-            context.getGoldStandardRecords().add(new Bucket(reader, delimiter));
+            final Bucket bucket = new Bucket(reader, delimiter);
+            context.getGoldStandardRecords().add(bucket);
+
 
         } catch (IOException e) {
             throw new RuntimeException(e);

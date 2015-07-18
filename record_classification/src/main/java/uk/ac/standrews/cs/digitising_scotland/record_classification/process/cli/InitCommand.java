@@ -23,7 +23,6 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.process.proc
 
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Random;
 
 /**
@@ -39,21 +38,24 @@ class InitCommand extends Command {
      * The name of this command
      */
     public static final String NAME = "init";
-    public static final String DESCRIPTION = "The classifier to use for classification process.";
 
-    public static final long SEED = 34234234234L;
+    private static final long SEED = 34234234234L;
 
     private static final long serialVersionUID = 5738604903474935932L;
 
-    @Parameter(required = true, names = {"-c", "--classifier"}, description = DESCRIPTION)
+    protected static final String CLASSIFIER_DESCRIPTION = "The classifier to use for the classification process.";
+    protected static final String CLASSIFIER_FLAG_SHORT = "-c";
+    protected static final String CLASSIFIER_FLAG_LONG = "--classifier";
+
+    @Parameter(required = true, names = {CLASSIFIER_FLAG_SHORT, CLASSIFIER_FLAG_LONG}, description = CLASSIFIER_DESCRIPTION)
     private Classifiers classifier_supplier;
 
     @Override
     public Void call() throws Exception {
 
-        ClassificationContext context  = new ClassificationContext(classifier_supplier.get(), new Random(SEED));
+        ClassificationContext context = new ClassificationContext(classifier_supplier.get(), new Random(SEED));
 
-        Path process_working_directory = Paths.get(name);
+        Path process_working_directory = getProcessWorkingDirectory(process_directory, name);
         Files.createDirectory(process_working_directory);
         persistContext(context);
 
@@ -61,5 +63,6 @@ class InitCommand extends Command {
     }
 
     @Override
-    public void perform(final ClassificationContext context) {}
+    public void perform(final ClassificationContext context) {
+    }
 }

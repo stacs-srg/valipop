@@ -59,15 +59,9 @@ public class Bucket implements Iterable<Record>, Serializable {
 
         for (List<String> record : data_set.getRecords()) {
 
-            if (record.size() != 3) {
-                throw new InputFileFormatException("record should contain 3 values");
-            }
-
-            int id = Integer.parseInt(record.get(0));
-            String data = record.get(1);
-            String code = record.get(2);
-
-            Classification classification = code.isEmpty() ? Classification.UNCLASSIFIED : new Classification(code, new TokenList(data), 1.0);
+            int id = extractId(record);
+            String data = extractData(record);
+            Classification classification = extractClassification(record, data);
 
             add(new Record(id, data, classification));
         }
@@ -245,5 +239,40 @@ public class Bucket implements Iterable<Record>, Serializable {
         }
 
         return subset;
+    }
+
+    private int extractId(List<String> record) {
+
+        if (record.size() < 1) {
+            throw new InputFileFormatException("record should contain id, data and optional code");
+        }
+
+        final String id_string = record.get(0);
+        try {
+            return Integer.parseInt(id_string);
+
+        } catch (NumberFormatException e) {
+            throw new InputFileFormatException("invalid numerical id: " + id_string);
+        }
+    }
+
+    private String extractData(List<String> record) {
+
+        if (record.size() < 2) {
+            throw new InputFileFormatException("record should contain id, data and optional code");
+        }
+
+        return record.get(1);
+    }
+
+    private Classification extractClassification(List<String> record, String data) {
+
+        if (record.size() < 3) {
+            return Classification.UNCLASSIFIED;
+        }
+
+        String code = record.get(2);
+
+        return code.isEmpty() ? Classification.UNCLASSIFIED : new Classification(code, new TokenList(data), 1.0);
     }
 }

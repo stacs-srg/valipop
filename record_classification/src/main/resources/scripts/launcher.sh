@@ -1,11 +1,11 @@
 #!/bin/sh
 
-# Copyright 2014 Digitising Scotland project:
+# Copyright 2015 Digitising Scotland project:
 # <http://digitisingscotland.cs.st-andrews.ac.uk/>
 #
 # This file is part of the module record_classification.
 #
-# population_model is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+# record_classification is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
 # License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
 # version.
 #
@@ -15,7 +15,6 @@
 # You should have received a copy of the GNU General Public License along with population_model. If not, see
 # <http://www.gnu.org/licenses/>.
 
-# Documentation: http://digitisingscotland.cs.st-andrews.ac.uk/record_classification/scripts/analyse_unique_records.html
 
 if [ -n "$1" ];
 then
@@ -23,4 +22,4 @@ then
     echo Setting heap size: $1GB
 fi
 
-mvn exec:java -q -Dexec.cleanupDaemonThreads=false -Dexec.mainClass="uk.ac.standrews.cs.digitising_scotland.record_classification.tools.AnalyseUniqueRecords" -e -Dexec.args="$2 $3 $4 $5 $6 $7"
+mvn exec:java -q -Dexec.cleanupDaemonThreads=false -Dexec.mainClass="uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.Launcher" -e -Dexec.args="$2 $3 $4 $5 $6 $7 $8 $9 $10 $11 $12"
