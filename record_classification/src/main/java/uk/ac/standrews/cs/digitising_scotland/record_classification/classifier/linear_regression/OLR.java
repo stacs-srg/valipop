@@ -28,8 +28,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
- * An online logistic regression model that allows standard SGD or per term annealing with the option of
- * pseudo Bayesian L1 prior regularisation.
+ * An online logistic regression model.
  */
 public class OLR implements Serializable {
 
@@ -50,18 +49,11 @@ public class OLR implements Serializable {
      */
     private static final double ANNEALING_RATE = 0.999;
 
-    private static int default_number_of_features;
-    private static int default_number_of_categories;
-
-    private int numFeatures;
-
     private int number_of_categories;
 
     private SerializableDenseMatrix beta;
 
     private int[] updateCounts;
-
-    private int step;
 
     private volatile double runningLogLikelihood;
 
@@ -72,67 +64,14 @@ public class OLR implements Serializable {
     public OLR() {
     }
 
-    public void init(int dictionary_size, int code_map_size) {
+    public OLR(int dictionary_size, int code_map_size) {
 
-        default_number_of_features = dictionary_size;
-        default_number_of_categories = code_map_size;
-
-        init2();
-        initBeta();
-        init3();
+        init(new SerializableDenseMatrix(code_map_size - 1, dictionary_size), dictionary_size, code_map_size);
     }
 
-    /**
-     * Instantiates a new olr.
-     *
-     * @param beta the beta
-     */
-    public void init(final Matrix beta) {
+    public OLR(final Matrix matrix) {
 
-        init2();
-        initBeta(beta.clone());
-        init3();
-    }
-
-    private void init2() {
-
-        numFeatures = default_number_of_features;
-        number_of_categories = default_number_of_categories;
-
-        resetRunningLogLikelihood();
-    }
-
-    private void initBeta() {
-
-        beta = new SerializableDenseMatrix(number_of_categories - 1, numFeatures);
-    }
-
-    /**
-     * Initialise model with new beta matrix. Sets the number of rows and cols to size of beta.
-     *
-     * @param beta the beta
-     */
-    private void initBeta(final Matrix beta) {
-
-        this.beta = new SerializableDenseMatrix(beta);
-
-        numFeatures = beta.numCols();
-        number_of_categories = beta.numRows() + 1;
-    }
-
-    private void init3() {
-
-        updateCounts = new int[numFeatures];
-    }
-
-    /**
-     * Gets the step.
-     *
-     * @return the step
-     */
-    public int getStep() {
-
-        return step;
+        init(new SerializableDenseMatrix(matrix.clone()), matrix.numCols(), matrix.numRows() + 1);
     }
 
     /**
@@ -140,7 +79,7 @@ public class OLR implements Serializable {
      *
      * @return the beta
      */
-    public SerializableDenseMatrix getBeta() {
+    protected SerializableDenseMatrix getBeta() {
 
         return beta;
     }
@@ -151,7 +90,7 @@ public class OLR implements Serializable {
      * @param instance the instance vector to classify
      * @return the result vector
      */
-    public Vector classifyFull(final Vector instance) {
+    protected Vector classifyFull(final Vector instance) {
 
         Vector r = new DenseVector(number_of_categories);
         r.viewPart(1, number_of_categories - 1).assign(classify(instance));
@@ -160,21 +99,30 @@ public class OLR implements Serializable {
     }
 
     /**
-     * Reset running log likelihood.
+     * Trains an OLR model on a instance vector with a known 'actual' output class.
+     *
+     * @param instance feature vector
      */
-    public void resetRunningLogLikelihood() {
+    protected void train(final NamedVector instance) {
+
+        numTrained.getAndIncrement();
+        updateModelParameters(instance);
+        updateCounts(instance);
+    }
+
+    private void init(SerializableDenseMatrix beta, int number_of_features, int number_of_categories) {
+
+        this.beta = beta;
 
         runningLogLikelihood = 0.;
         numLogLikelihoodSumUpdates = new AtomicInteger(1);
         numTrained = new AtomicLong(0);
+
+        this.number_of_categories = number_of_categories;
+
+        updateCounts = new int[number_of_features];
     }
 
-    /**
-     * Update log likelihood sum.
-     *
-     * @param actual         the actual
-     * @param classification the classification
-     */
     private void updateLogLikelihoodSum(final int actual, final Vector classification) {
 
         double thisloglik;
@@ -196,32 +144,6 @@ public class OLR implements Serializable {
         numLogLikelihoodSumUpdates.getAndIncrement();
     }
 
-    /**
-     * Trains an OLR model on a instance vector with a known 'actual' output class.
-     *
-     * @param instance feature vector
-     */
-    public void train(final NamedVector instance) {
-
-        numTrained.getAndIncrement();
-        updateModelParameters(instance);
-        updateCounts(instance);
-        nextStep();
-    }
-
-    /**
-     * Next step.
-     */
-    private void nextStep() {
-
-        step++;
-    }
-
-    /**
-     * Update model parameters.
-     *
-     * @param instance the instance
-     */
     private void updateModelParameters(final NamedVector instance) {
 
         Vector gradient = calcGradient(instance);
@@ -247,13 +169,6 @@ public class OLR implements Serializable {
         return r;
     }
 
-    /**
-     * Update beta category.
-     *
-     * @param instance the instance
-     * @param gradient the gradient
-     * @param category the category
-     */
     private void updateBetaCategory(final Vector instance, final Vector gradient, final int category) {
 
         double gradientBase = gradient.get(category);
@@ -263,13 +178,6 @@ public class OLR implements Serializable {
         }
     }
 
-    /**
-     * Update category at non zero feature.
-     *
-     * @param category       the category
-     * @param gradientBase   the gradient base
-     * @param featureElement the feature element
-     */
     private void updateCategoryAtNonZeroFeature(final int category, final double gradientBase, final Element featureElement) {
 
         final double aSmallNumber = 0.000001;
@@ -280,29 +188,15 @@ public class OLR implements Serializable {
         }
     }
 
-    /**
-     * Update coefficient.
-     *
-     * @param category       the category
-     * @param feature        the feature
-     * @param featureElement the feature element
-     * @param gradientBase   the gradient base
-     */
     private void updateCoefficient(final int category, final int feature, final Element featureElement, final double gradientBase) {
 
         double newValue = beta.getQuick(category, feature) + gradientBase * getLearningRate(feature) * featureElement.get();
         beta.setQuick(category, feature, newValue);
     }
 
-    /**
-     * Gets the learning rate.
-     *
-     * @param feature the feature
-     * @return the learning rate
-     */
     private double getLearningRate(final int feature) {
 
-        return perTermLearningRate(feature);
+        return LEARNING_RATE * Math.pow(ANNEALING_RATE, updateCounts[feature]);
     }
 
     /**
@@ -312,18 +206,12 @@ public class OLR implements Serializable {
      * @param instance A vector of features to be classified.
      * @return A vector of probabilities, one for each of the first n-1 categories.
      */
-    public Vector classify(final Vector instance) {
+    private Vector classify(final Vector instance) {
 
-        return link(classifyNoLink(instance));
+        return link(beta.times(instance));
     }
 
-    /**
-     * Link.
-     *
-     * @param v the v
-     * @return the vector
-     */
-    public Vector link(final Vector v) {
+    private Vector link(final Vector v) {
 
         double max = v.maxValue();
         if (max >= 40) {
@@ -337,33 +225,6 @@ public class OLR implements Serializable {
         }
     }
 
-    /**
-     * Classify no link.
-     *
-     * @param instance the instance
-     * @return the vector
-     */
-    public Vector classifyNoLink(final Vector instance) {
-
-        return beta.times(instance);
-    }
-
-    /**
-     * Per term learning rate.
-     *
-     * @param j the j
-     * @return the double
-     */
-    public double perTermLearningRate(final int j) {
-
-        return LEARNING_RATE * Math.pow(ANNEALING_RATE, updateCounts[j]);
-    }
-
-    /**
-     * Update counts and steps.
-     *
-     * @param instance the instance
-     */
     private void updateCounts(final Vector instance) {
 
         Iterable<Element> instanceFeatures = instance.nonZeroes();

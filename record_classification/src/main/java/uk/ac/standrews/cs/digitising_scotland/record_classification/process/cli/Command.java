@@ -70,7 +70,7 @@ abstract class Command implements Callable<Void>, Step {
     protected char delimiter = LoadGoldStandardFromFileStep.DEFAULT_DELIMITER;
 
     @Parameter(names = {"-f", "--format"}, description = SERIALIZATION_FORMAT_DESCRIPTION)
-    protected SerializationFormat serialization_format = SerializationFormat.JSON;
+    protected SerializationFormat serialization_format = SerializationFormat.JAVA_SERIALIZATION;
 
     private enum SerializationFormat {
         JAVA_SERIALIZATION, JSON, COMPRESSED_JSON
@@ -88,11 +88,6 @@ abstract class Command implements Callable<Void>, Step {
         return null;
     }
 
-    protected ClassificationContext loadContext() throws IOException {
-
-        return serialization_format == SerializationFormat.JAVA_SERIALIZATION ? loadContextFromSerializedFile() : loadContextFromJSONFile();
-    }
-
     protected void persistContext(ClassificationContext context) throws IOException {
 
         if (serialization_format == SerializationFormat.JAVA_SERIALIZATION) {
@@ -105,6 +100,18 @@ abstract class Command implements Callable<Void>, Step {
     protected CSVFormat getDataFormat(char delimiter) {
 
         return DataSet.DEFAULT_CSV_FORMAT.withDelimiter(delimiter);
+    }
+
+    protected void persistDataSet(Path destination, final DataSet dataset) throws IOException {
+
+        try (final BufferedWriter out = Files.newBufferedWriter(destination, StandardCharsets.UTF_8)) {
+            dataset.print(out);
+        }
+    }
+
+    private ClassificationContext loadContext() throws IOException {
+
+        return serialization_format == SerializationFormat.JAVA_SERIALIZATION ? loadContextFromSerializedFile() : loadContextFromJSONFile();
     }
 
     private ClassificationContext loadContextFromJSONFile() throws IOException {
@@ -147,14 +154,7 @@ abstract class Command implements Callable<Void>, Step {
         Files.write(getSerializedContextPath(), process_bytes);
     }
 
-    protected void persistDataSet(Path destination, final DataSet dataset) throws IOException {
-
-        try (final BufferedWriter out = Files.newBufferedWriter(destination, StandardCharsets.UTF_8)) {
-            dataset.print(out);
-        }
-    }
-
-    protected Path getSerializedContextPath() {
+    private Path getSerializedContextPath() {
 
         return Paths.get(name).resolve(SERIALIZED_CONTEXT_NAME + "." + getSerializedContextSuffix());
     }
