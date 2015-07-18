@@ -28,6 +28,7 @@ import java.nio.file.Path;
  * The train command of classification process command line interface.
  *
  * @author Masih Hajiarab Derkani
+ * @author Graham Kirby
  */
 @Parameters(commandNames = InitLoadTrainCommand.NAME, commandDescription = "Initialise process, load training data, and train classifier")
 class InitLoadTrainCommand extends Command {
@@ -38,32 +39,36 @@ class InitLoadTrainCommand extends Command {
     public static final String NAME = "init_load_train";
     private static final long serialVersionUID = 8026292848547343006L;
 
-    @Parameter(required = true, names = {"-c", "--classifier"}, description = InitCommand.DESCRIPTION)
+    @Parameter(required = true, names = {InitCommand.CLASSIFIER_FLAG_SHORT, InitCommand.CLASSIFIER_FLAG_LONG}, description = InitCommand.CLASSIFIER_DESCRIPTION)
     private Classifiers classifier_supplier;
 
-    @Parameter(required = true, names = {"-g", "--goldStandard"}, description = LoadCommand.DESCRIPTION, converter = PathConverter.class)
+    @Parameter(required = true, names = {LoadCommand.GOLD_STANDARD_FLAG_SHORT, LoadCommand.GOLD_STANDARD_FLAG_LONG}, description = LoadCommand.GOLD_STANDARD_DESCRIPTION, converter = PathConverter.class)
     private Path gold_standard;
 
-    @Parameter(required = true, names = {"-r", "--trainingRecordRatio"}, description = TrainCommand.DESCRIPTION)
+    @Parameter(required = true, names = {TrainCommand.TRAINING_RATIO_FLAG_SHORT, TrainCommand.TRAINING_RATIO_FLAG_LONG}, description = TrainCommand.TRAINING_RATIO_DESCRIPTION)
     private Double training_ratio;
 
     @Override
     public Void call() throws Exception {
 
-        initLoadTrain(classifier_supplier, gold_standard, training_ratio);
+        initLoadTrain(classifier_supplier, gold_standard, training_ratio, serialization_format, name, process_directory);
 
         return null;
     }
 
-    public static void initLoadTrain(Classifiers classifier_supplier, Path gold_standard, Double training_ratio) throws Exception {
+    public static void initLoadTrain(Classifiers classifier_supplier, Path gold_standard, Double training_ratio, SerializationFormat serialization_format, String process_name, Path process_directory) throws Exception {
 
-        Launcher.main(new String[]{InitCommand.NAME, "-c", classifier_supplier.toString()});
+        Launcher.main(addArgs(
+                new String[]{InitCommand.NAME, InitCommand.CLASSIFIER_FLAG_SHORT, classifier_supplier.toString()}, serialization_format, process_name, process_directory));
 
-        Launcher.main(new String[]{LoadCommand.NAME, "-g", gold_standard.toString()});
+        Launcher.main(addArgs(
+                new String[]{LoadCommand.NAME, LoadCommand.GOLD_STANDARD_FLAG_SHORT, gold_standard.toString()}, serialization_format, process_name, process_directory));
 
-        Launcher.main(new String[]{TrainCommand.NAME, "-r", String.valueOf(training_ratio)});
+        Launcher.main(addArgs(
+                new String[]{TrainCommand.NAME, TrainCommand.TRAINING_RATIO_FLAG_SHORT, String.valueOf(training_ratio)}, serialization_format, process_name, process_directory));
     }
 
     @Override
-    public void perform(ClassificationContext context) {}
+    public void perform(ClassificationContext context) {
+    }
 }

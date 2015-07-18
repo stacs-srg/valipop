@@ -18,7 +18,6 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
-import com.beust.jcommander.converters.FileConverter;
 import com.beust.jcommander.converters.PathConverter;
 import org.apache.commons.csv.CSVFormat;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
@@ -27,7 +26,6 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.process.step
 import uk.ac.standrews.cs.util.dataset.DataSet;
 import uk.ac.standrews.cs.util.tools.FileManipulation;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
@@ -45,11 +43,17 @@ class ClassifyCommand extends Command {
 
     private static final long serialVersionUID = -5931407069557436051L;
 
-    @Parameter(required = true, description = "Path to the unseen data to classify,", converter = PathConverter.class)
-    private List<Path> unseen_data;
+    public static final String UNSEEN_DATA_DESCRIPTION = "Path to the unseen data to classify,";
 
-    @Parameter(required = true, names = {"-o", "--output"}, description = "Path to the place to persist the classified records.", converter = FileConverter.class)
-    private File destination;
+    public static final String DESTINATION_DESCRIPTION = "Path to the place to persist the classified records.";
+    public static final String DESTINATION_FLAG_SHORT = "-o";
+    public static final String DESTINATION_FLAG_LONG = "--output";
+
+    @Parameter(required = true, description = UNSEEN_DATA_DESCRIPTION, converter = PathConverter.class)
+    private List<Path> unseen_data;    // A list because required by JCommander.
+
+    @Parameter(required = true, names = {DESTINATION_FLAG_SHORT, DESTINATION_FLAG_LONG}, description = DESTINATION_DESCRIPTION, converter = PathConverter.class)
+    private Path destination;
 
     @Override
     public void perform(final ClassificationContext context) {
@@ -62,10 +66,17 @@ class ClassifyCommand extends Command {
             new ClassifyUnseenRecordsStep(unseen_data).perform(context);
 
             final DataSet classified_data_set = context.getClassifiedUnseenRecords().toDataSet(labels, input_format);
-            persistDataSet(destination.toPath(), classified_data_set);
+            persistDataSet(destination, classified_data_set);
         }
         catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static void classify(Path unseen_data, Path destination, SerializationFormat serialization_format, String process_name, Path process_directory) throws Exception {
+
+        Launcher.main(addArgs(
+                new String[]{NAME, unseen_data.toString(), DESTINATION_FLAG_SHORT, destination.toString()}, serialization_format, process_name, process_directory));
+
     }
 }
