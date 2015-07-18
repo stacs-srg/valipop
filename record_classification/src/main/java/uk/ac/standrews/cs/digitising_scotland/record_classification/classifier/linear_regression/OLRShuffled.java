@@ -41,7 +41,8 @@ public class OLRShuffled implements Runnable, Serializable {
     /**
      * Needed for JSON deserialization.
      */
-    public OLRShuffled() {}
+    public OLRShuffled() {
+    }
 
     /**
      * Constructor.
@@ -51,8 +52,7 @@ public class OLRShuffled implements Runnable, Serializable {
     public OLRShuffled(final List<NamedVector> trainingVectorList, int dictionary_size, int code_map_size) {
 
         this.trainingVectorList = trainingVectorList;
-        model = new OLR();
-        model.init(dictionary_size, code_map_size);
+        model = new OLR(dictionary_size, code_map_size);
     }
 
     /**
@@ -64,18 +64,15 @@ public class OLRShuffled implements Runnable, Serializable {
     public OLRShuffled(final Matrix betaMatrix, final List<NamedVector> trainingVectorList) {
 
         this.trainingVectorList = trainingVectorList;
-        this.model = new OLR();
-        model.init(betaMatrix);
+        this.model = new OLR(betaMatrix);
     }
 
-    /**
-     * Allows train() to be run in its own thread.
-     */
     @Override
     public void run() {
 
         for (int rep = 0; rep < NUMBER_OF_REPETITIONS; rep++) {
-            shuffleAndTrainOnAllVectors();
+
+            trainingVectorList.forEach(model::train);
         }
     }
 
@@ -85,17 +82,9 @@ public class OLRShuffled implements Runnable, Serializable {
      * @param instance vector to classify
      * @return vector encoding probability distribution over output classes
      */
-    public Vector classifyFull(final Vector instance) {
+    protected Vector classifyFull(final Vector instance) {
 
         return model.classifyFull(instance);
-    }
-
-    /**
-     * Shuffle and train on all vectors.
-     */
-    private void shuffleAndTrainOnAllVectors() {
-
-        trainingVectorList.forEach(model::train);
     }
 
     /**
@@ -107,4 +96,5 @@ public class OLRShuffled implements Runnable, Serializable {
 
         return model.getBeta().getMatrix();
     }
+
 }

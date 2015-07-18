@@ -50,7 +50,7 @@ public class OLRCrossFold implements Serializable {
     /**
      * The number of cross folds.
      */
-    private int folds = 4;
+    private static final int FOLDS = 4;
 
     /**
      * The classifier.
@@ -70,7 +70,7 @@ public class OLRCrossFold implements Serializable {
     public OLRCrossFold(final List<NamedVector> trainingVectorList, int dictionary_size, int code_map_size) {
 
         ArrayList<NamedVector>[][] trainingVectors = init(trainingVectorList);
-        for (int i = 0; i < this.folds + 1; i++) {
+        for (int i = 0; i < FOLDS + 1; i++) {
             OLRPool model = new OLRPool(trainingVectors[i][0], trainingVectors[i][1], dictionary_size, code_map_size);
             models.add(model);
         }
@@ -85,23 +85,23 @@ public class OLRCrossFold implements Serializable {
     public OLRCrossFold(final List<NamedVector> trainingVectorList, final Matrix betaMatrix) {
 
         ArrayList<NamedVector>[][] trainingVectors = init(trainingVectorList);
-        for (int i = 0; i < folds + 1; i++) {
+        for (int i = 0; i < FOLDS + 1; i++) {
             OLRPool model = new OLRPool(betaMatrix, trainingVectors[i][0], trainingVectors[i][1]);
             models.add(model);
         }
     }
 
     private ArrayList<NamedVector>[][] init(final List<NamedVector> trainingVectorList) {
-        return CrossFoldFactory.make(trainingVectorList, folds);
+        return CrossFoldFactory.make(trainingVectorList, FOLDS);
     }
 
     /**
      * Trains all the OLR models contained in this OLRCrossfold.
      */
-    public void train() {
+    protected void train() {
 
         try {
-            ExecutorService executorService = Executors.newFixedThreadPool(folds);
+            ExecutorService executorService = Executors.newFixedThreadPool(FOLDS);
             Collection<Future<?>> futures = new LinkedList<>();
 
             for (OLRPool model : models) {
@@ -121,24 +121,34 @@ public class OLRCrossFold implements Serializable {
     }
 
     /**
+     * Returns the averaged beta matrix for this OLRCrossfold. If the OLRCrossfold has not been trained than an empty matrix will be returned.
+     *
+     * @return the averaged beta matrix for this OLRCrossfold, or an empty matrix if no training has been done.
+     */
+    protected Matrix averageBetaMatrix() {
+
+        return classifier.getBeta().getMatrix();
+    }
+
+    /**
+     * Classifies a vector.
+     *
+     * @param instance vector
+     * @return vector encoding probability distribution over output classes
+     */
+    protected Vector classifyFull(final Vector instance) {
+
+        return classifier.classifyFull(instance);
+    }
+
+    /**
      * Prepares the averaged OLR classifier for use by finding the top performing models and averaging their beta matrices.
      */
     private void prepareClassifier() {
 
         List<OLRShuffled> survivors = getSurvivors();
         Matrix classifierMatrix = getClassifierMatrix(survivors);
-        classifier = new OLR();
-        classifier.init(classifierMatrix);
-    }
-
-    /**
-     * Returns the averaged beta matrix for this OLRCrossfold. If the OLRCrossfold has not been trained than an empty matrix will be returned.
-     *
-     * @return the averaged beta matrix for this OLRCrossfold, or an empty matrix if no training has been done.
-     */
-    public Matrix averageBetaMatrix() {
-
-        return classifier.getBeta().getMatrix();
+        classifier = new OLR(classifierMatrix);
     }
 
     /**
@@ -173,16 +183,5 @@ public class OLRCrossFold implements Serializable {
         }
         classifierMatrix = classifierMatrix.divide(survivors.size());
         return classifierMatrix;
-    }
-
-    /**
-     * Classifies a vector.
-     *
-     * @param instance vector
-     * @return vector encoding probability distribution over output classes
-     */
-    public Vector classifyFull(final Vector instance) {
-
-        return classifier.classifyFull(instance);
     }
 }

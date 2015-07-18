@@ -43,7 +43,8 @@ public class VectorFactory implements Serializable {
     /**
      * Needed for JSON deserialization.
      */
-    public VectorFactory() {}
+    public VectorFactory() {
+    }
 
     public VectorFactory(final Bucket bucket) {
 
@@ -57,7 +58,7 @@ public class VectorFactory implements Serializable {
      *
      * @param bucket the bucket
      */
-    public void updateDictionary(final Bucket bucket) {
+    protected void updateDictionary(final Bucket bucket) {
 
         for (Record record : bucket) {
 
@@ -69,8 +70,6 @@ public class VectorFactory implements Serializable {
                 vectorEncoder.updateDictionary(descriptionLower);
             }
         }
-
-//        OLR.setDefaultNumberOfFeatures(vectorEncoder.getDictionarySize());
     }
 
     protected int dictionarySize() {
@@ -92,7 +91,7 @@ public class VectorFactory implements Serializable {
      * @param record Record to generate vector for.
      * @return List<NamedVector> List of {@link NamedVector} for this record
      */
-    public List<NamedVector> generateVectorsFromRecord(final Record record) {
+    protected List<NamedVector> generateVectorsFromRecord(final Record record) {
 
         List<NamedVector> vectors = new ArrayList<>();
 
@@ -104,12 +103,22 @@ public class VectorFactory implements Serializable {
         return vectors;
     }
 
-    /**
-     * Creates a new Vector object.
-     *
-     * @param description the description
-     * @return the collection<? extends named vector>
-     */
+    protected NamedVector createNamedVectorFromString(final TokenList token_list, final String name) {
+
+        Vector vector = createVectorFromString(token_list);
+        return new NamedVector(vector, name);
+    }
+
+    protected CodeIndexer getCodeIndexer() {
+
+        return index;
+    }
+
+    protected int getNumberOfFeatures() {
+
+        return vectorEncoder.getDictionarySize();
+    }
+
     private Collection<? extends NamedVector> createUnNamedVectorsFromDescription(final TokenList description) {
 
         List<NamedVector> vectorList = new ArrayList<>();
@@ -119,12 +128,6 @@ public class VectorFactory implements Serializable {
         return vectorList;
     }
 
-    /**
-     * Creates a new Vector object.
-     *
-     * @param record the record
-     * @return the list< named vector>
-     */
     private List<NamedVector> createNamedVectorsWithGoldStandardCodes(final Record record) {
 
         List<NamedVector> vectors = new ArrayList<>();
@@ -136,66 +139,17 @@ public class VectorFactory implements Serializable {
         return vectors;
     }
 
-    /**
-     * Creates a vector from a string using {@link SimpleVectorEncoder}
-     * to encode the tokens and StandardTokenizerIterable to
-     * tokenize the string.
-     *
-     * @param description the string to vectorize
-     * @return a vector encoding of the string
-     */
-    public Vector createVectorFromString(final TokenList description) {
+    private Vector createVectorFromString(final TokenList description) {
 
         Vector vector = new RandomAccessSparseVector(getNumberOfFeatures());
         addFeaturesToVector(vector, description);
         return vector;
     }
 
-    /**
-     * Creates a named vector from a string using {@link SimpleVectorEncoder}
-     * to encode the tokens and {StandardTokenizerIterable} to
-     * tokenize the string.
-     *
-     * @param token_list the string to vectorize
-     * @param name       name
-     * @return a vector encoding of the string
-     */
-    public NamedVector createNamedVectorFromString(final TokenList token_list, final String name) {
-
-        Vector vector = createVectorFromString(token_list);
-        return new NamedVector(vector, name);
-    }
-
-    /**
-     * Adds the features to vector.
-     *
-     * @param vector     the vector
-     * @param token_list the description
-     */
     private void addFeaturesToVector(final Vector vector, final TokenList token_list) {
 
         for (String token : token_list) {
             vectorEncoder.addToVector(token, vector);
         }
-    }
-
-    /**
-     * Gets the code indexer that was used to construct this vector factory.
-     *
-     * @return the code indexer
-     */
-    public CodeIndexer getCodeIndexer() {
-
-        return index;
-    }
-
-    /**
-     * Gets the number of features.
-     *
-     * @return the number of features
-     */
-    public int getNumberOfFeatures() {
-
-        return vectorEncoder.getDictionarySize();
     }
 }

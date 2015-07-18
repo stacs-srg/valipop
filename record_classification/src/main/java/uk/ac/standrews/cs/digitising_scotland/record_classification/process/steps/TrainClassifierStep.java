@@ -25,7 +25,7 @@ import java.time.Duration;
 import java.time.Instant;
 
 /**
- * Trains a classifier in the context of a classification process using the {@link ClassificationContext#getTrainingRecords() training records} in the context .
+ * Trains a classifier in the context of a classification process.
  *
  * @author Masih Hajiarab Derkani
  */

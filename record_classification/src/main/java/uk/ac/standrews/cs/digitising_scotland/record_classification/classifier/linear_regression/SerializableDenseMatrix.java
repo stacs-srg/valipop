@@ -59,16 +59,6 @@ public class SerializableDenseMatrix implements Serializable {
         this.matrix= matrix;
     }
 
-    private void readObject(final ObjectInputStream inputStream) throws ClassNotFoundException, IOException {
-
-        matrix = new DenseMatrix((double[][]) inputStream.readObject());
-    }
-
-    private void writeObject(final ObjectOutputStream outputStream) throws IOException {
-
-        outputStream.writeObject(asArray(matrix));
-    }
-
     public static double[][] asArray(final Matrix matrix) {
 
         double[][] array = new double[matrix.numRows()][matrix.numCols()];
@@ -102,5 +92,16 @@ public class SerializableDenseMatrix implements Serializable {
     public void set(final int category, final int feature, final double newValue) {
 
         matrix.set(category, feature, newValue);
+    }
+
+    // Next two methods needed for Java serialization.
+    private void readObject(final ObjectInputStream inputStream) throws ClassNotFoundException, IOException {
+
+        matrix = new DenseMatrix((double[][]) inputStream.readObject());
+    }
+
+    private void writeObject(final ObjectOutputStream outputStream) throws IOException {
+
+        outputStream.writeObject(asArray(matrix));
     }
 }
