@@ -32,9 +32,11 @@ class TrainCommand extends Command {
 
     /** The name of this command */
     public static final String NAME = "train";
+    public static final String DESCRIPTION = "The ratio of gold standard records to be used for training. The value must be between 0.0 to 1.0 (inclusive).";
+
     private static final long serialVersionUID = 8026292848547343006L;
 
-    @Parameter(required = true, names = {"-r", "--trainingRecordRatio"}, description = "The ratio of gold standard records to be used for training. The value must be between 0.0 to 1.0 (inclusive).")
+    @Parameter(required = true, names = {"-r", "--trainingRecordRatio"}, description = DESCRIPTION)
     private Double training_ratio;
 
     @Override

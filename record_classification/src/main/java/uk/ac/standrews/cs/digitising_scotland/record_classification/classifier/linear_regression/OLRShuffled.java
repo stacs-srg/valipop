@@ -28,7 +28,7 @@ import java.util.List;
  * Training involves shuffling the training vectors and training the model. This process is repeated for the desired
  * number of repetitions.
  *
- * @author fraserdunlop
+ * @author Fraser Dunlop
  */
 public class OLRShuffled implements Runnable, Serializable {
 
@@ -37,18 +37,22 @@ public class OLRShuffled implements Runnable, Serializable {
     private OLR model;
     private static final int NUMBER_OF_REPETITIONS = 10;
     private transient List<NamedVector> trainingVectorList = new ArrayList<>();
-    private boolean stopped = false;
+
+    /**
+     * Needed for JSON deserialization.
+     */
+    public OLRShuffled() {}
 
     /**
      * Constructor.
      *
-     * @param trainingVectorList2 the training vector list
+     * @param trainingVectorList the training vector list
      */
-    public OLRShuffled(final List<NamedVector> trainingVectorList2) {
+    public OLRShuffled(final List<NamedVector> trainingVectorList, int dictionary_size, int code_map_size) {
 
-        this.trainingVectorList = trainingVectorList2;
+        this.trainingVectorList = trainingVectorList;
         model = new OLR();
-        model.init();
+        model.init(dictionary_size, code_map_size);
     }
 
     /**
@@ -64,47 +68,13 @@ public class OLRShuffled implements Runnable, Serializable {
         model.init(betaMatrix);
     }
 
-    public OLRShuffled() {
-
-    }
-
-    /**
-     * Gets the running log likelihood.
-     *
-     * @return the running log likelihood
-     */
-    public double getRunningLogLikelihood() {
-
-        return model.getRunningLogLikelihood();
-    }
-
-    /**
-     * Reset running log likelihood.
-     */
-    public void resetRunningLogLikelihood() {
-
-        model.resetRunningLogLikelihood();
-    }
-
     /**
      * Allows train() to be run in its own thread.
      */
     @Override
     public void run() {
 
-        trainIfPossible();
-    }
-
-    /**
-     * This method performs the training of the model.
-     * Shuffles the training files, trains on all files and repeats this process.
-     */
-    private void train() {
-
         for (int rep = 0; rep < NUMBER_OF_REPETITIONS; rep++) {
-            if (stopped()) {
-                break;
-            }
             shuffleAndTrainOnAllVectors();
         }
     }
@@ -121,77 +91,12 @@ public class OLRShuffled implements Runnable, Serializable {
     }
 
     /**
-     * Gets the log likelihood.
-     *
-     * @param actual   actual classification
-     * @param instance instance vector
-     * @return log likelihood
-     */
-    public double logLikelihood(final int actual, final Vector instance) {
-
-        return model.logLikelihood(actual, instance);
-    }
-
-    //
-    //    /**
-    //     * Gets the configuration options.
-    //     *
-    //     * @return the configuration options
-    //     */
-    //    private void getConfigOptions() {
-    //
-    //        NUMBER_OF_REPETITIONS = Integer.parseInt(properties.getProperty("OLRShuffledReps"));
-    //    }
-
-    /**
-     * Checks if the models are trainable and trains the models if possible.
-     */
-    private void trainIfPossible() {
-
-        this.train();
-    }
-
-    /**
      * Shuffle and train on all vectors.
      */
     private void shuffleAndTrainOnAllVectors() {
 
-        for (NamedVector vector : trainingVectorList) {
-            if (stopped()) {
-                break;
-            }
-            this.model.train(vector);
-        }
-
+        trainingVectorList.forEach(model::train);
     }
-
-    /**
-     * Sets the 'stopped' flag to true.
-     */
-    public void stop() {
-
-        stopped = true;
-    }
-
-    /**
-     * Returns the value of the stopped flag.
-     *
-     * @return true, if stopped
-     */
-    private boolean stopped() {
-
-        return stopped;
-    }
-
-//    /**
-//     * Gets the number of output categories.
-//     *
-//     * @return int the number of categories.
-//     */
-//    protected int default_number_of_categories() {
-//
-//        return model.getNumCategories();
-//    }
 
     /**
      * Gets the beta matrix.
@@ -202,15 +107,4 @@ public class OLRShuffled implements Runnable, Serializable {
 
         return model.getBeta().getMatrix();
     }
-
-//    /**
-//     * Gets the number of records used for training so far across all the models in the pool.
-//     *
-//     * @return int the number of training records used so far
-//     */
-//    public long numTrained() {
-//
-//        return model.getNumTrained();
-//    }
-
 }

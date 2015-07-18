@@ -16,7 +16,7 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.linear_regression;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.apache.mahout.math.DenseMatrix;
 import org.apache.mahout.math.Matrix;
 import org.apache.mahout.math.NamedVector;
 import org.apache.mahout.math.Vector;
@@ -35,57 +35,45 @@ import java.util.List;
  * @author Jamie Carson
  * @author Graham Kirby
  */
-@JsonIgnoreProperties({"properties"})     // Don't want properties object to be deserialized.
 public class OLRClassifier implements Classifier {
 
     private static final long serialVersionUID = -2561454096763303789L;
     private static final double STATIC_CONFIDENCE = 0.89;
 
-
-
     private OLRCrossFold model = null;
 
-//    private transient Properties properties;
     private VectorFactory vector_factory;
 
     public void setModel(OLRCrossFold model) {
         this.model = model;
     }
 
-//    public void setProperties(Properties properties) {
-//
-//        this.properties = properties;
-//    }
-
     public OLRCrossFold getModel() {
         return model;
     }
 
-//    public Properties getProperties() {
-//        return properties;
-//    }
-
     public OLRClassifier() {
 
         model = new OLRCrossFold();
-//        properties = MachineLearningConfiguration.getDefaultProperties();
     }
 
     public void train(final Bucket bucket) {
 
         if (vector_factory == null) {
+
             vector_factory = new VectorFactory(bucket);
-            List<NamedVector> trainingVectorList = getTrainingVectors(bucket);
-            Collections.shuffle(trainingVectorList);
-            model = new OLRCrossFold(trainingVectorList);
+            int dictionary_size = vector_factory.dictionarySize();
+            int code_map_size = vector_factory.codeMapSize();
+            model = new OLRCrossFold(getTrainingVectors(bucket), dictionary_size, code_map_size);
 
         } else {
-            int classCountDiff = getNumClassesAdded(bucket);
-            int featureCountDiff = getFeatureCountDiff(bucket);
-            Matrix matrix = expandModel(featureCountDiff, classCountDiff);
-            List<NamedVector> trainingVectorList = getTrainingVectors(bucket);
-            Collections.shuffle(trainingVectorList);
-            model = new OLRCrossFold(trainingVectorList, matrix);
+
+            int class_count_difference = updateIndexer(bucket);
+            int feature_count_difference = updateDictionary(bucket);
+
+            Matrix matrix = enlarge(model.averageBetaMatrix(), feature_count_difference, class_count_difference);
+
+            model = new OLRCrossFold(getTrainingVectors(bucket), matrix);
         }
 
         model.train();
@@ -96,6 +84,7 @@ public class OLRClassifier implements Classifier {
 
         if (vector_factory == null) {
             return Classification.UNCLASSIFIED;
+
         } else {
             TokenList token_list = new TokenList(data);
             NamedVector vector = vector_factory.createNamedVectorFromString(token_list, "unknown");
@@ -133,26 +122,50 @@ public class OLRClassifier implements Classifier {
             final List<NamedVector> listOfVectors = vector_factory.generateVectorsFromRecord(record);
             trainingVectorList.addAll(listOfVectors);
         }
+        Collections.shuffle(trainingVectorList);
         return trainingVectorList;
     }
 
-    private Matrix expandModel(final int featureCountDiff, final int classCountDiff) {
+    private int updateDictionary(final Bucket bucket) {
 
-        return MatrixEnlarger.enlarge(model.averageBetaMatrix(), featureCountDiff, classCountDiff);
-    }
-
-    private int getFeatureCountDiff(final Bucket bucket) {
-
-        int initNoFeatures = vector_factory.getNumberOfFeatures();
+        int initial_number_of_features = vector_factory.getNumberOfFeatures();
 
         vector_factory.updateDictionary(bucket);
-        return vector_factory.getNumberOfFeatures() - initNoFeatures;
+        return vector_factory.getNumberOfFeatures() - initial_number_of_features;
     }
 
-    private int getNumClassesAdded(final Bucket bucket) {
+    private int updateIndexer(final Bucket bucket) {
 
-        int initNoClasses = vector_factory.getCodeIndexer().getNumberOfOutputClasses();
-        vector_factory.getCodeIndexer().addGoldStandardCodes(bucket);
-        return vector_factory.getCodeIndexer().getNumberOfOutputClasses() - initNoClasses;
+        final CodeIndexer indexer = vector_factory.getCodeIndexer();
+
+        int initial_number_of_classes = indexer.getNumberOfOutputClasses();
+        indexer.addGoldStandardCodes(bucket);
+        return indexer.getNumberOfOutputClasses() - initial_number_of_classes;
+    }
+
+    /**
+     * Makes an existing matrix bigger by the amount of units specified in additionalColds and additionalRows parameters.
+     * All of the content of the original matrix is preserved.
+     * Rows and columns are appended on the right and bottom of the existing matrix.
+     *
+     * @param matrix         The {@link Matrix} to enlarge
+     * @param additionalCols amount to expand the number of columns by
+     * @param additionalRows amount to expand the number of rows by
+     * @return the new expanded matrix
+     */
+    private static Matrix enlarge(final Matrix matrix, final int additionalCols, final int additionalRows) {
+
+        Matrix largerMatrix = new DenseMatrix(matrix.numRows() + additionalRows, matrix.numCols() + additionalCols);
+        return copyInto(matrix, largerMatrix);
+    }
+
+    private static Matrix copyInto(final Matrix matrix, final Matrix largerMatrix) {
+
+        for (int i = 0; i < matrix.numRows(); i++) {
+            for (int j = 0; j < matrix.numCols(); j++) {
+                largerMatrix.set(i, j, matrix.get(i, j));
+            }
+        }
+        return largerMatrix;
     }
 }

@@ -20,8 +20,6 @@ import com.google.common.collect.Lists;
 import org.apache.mahout.math.Matrix;
 import org.apache.mahout.math.NamedVector;
 import org.apache.mahout.math.Vector;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.util.*;
@@ -39,31 +37,32 @@ import java.util.concurrent.TimeUnit;
 public class OLRPool implements Runnable, Serializable {
 
     private static final long serialVersionUID = -7098039612837520093L;
-    private static transient final Logger LOGGER = LoggerFactory.getLogger(OLRPool.class);
+
+    private static final int POOL_SIZE = 4;
+    private static final int NUMBER_OF_SURVIVORS = 2;
+
     private List<OLRShuffled> models = Lists.newArrayList();
-    private int poolSize=4;
-    private int numSurvivors=2;
     private transient List<NamedVector> testingVectorList = Lists.newArrayList();
-    private List<OLRShuffled> survivors;
 
     /**
      * Needed for JSON deserialization.
      */
-    public OLRPool() {}
+    public OLRPool() {
+    }
 
     /**
      * Constructor.
      *
      * @param internalTrainingVectorList internal training vector list
-     * @param testingVectorList internal testing vector list
+     * @param testingVectorList          internal testing vector list
      */
-    public OLRPool(final List<NamedVector> internalTrainingVectorList, final List<NamedVector> testingVectorList) {
+    public OLRPool(final List<NamedVector> internalTrainingVectorList, final List<NamedVector> testingVectorList, int dictionary_size, int code_map_size) {
 
         this.testingVectorList = testingVectorList;
 
-        for (int i = 0; i < poolSize; i++) {
+        for (int i = 0; i < POOL_SIZE; i++) {
             final List<NamedVector> trainingVectorList = new ArrayList<>(internalTrainingVectorList);
-            OLRShuffled model = new OLRShuffled(trainingVectorList);
+            OLRShuffled model = new OLRShuffled(trainingVectorList, dictionary_size, code_map_size);
             models.add(model);
         }
     }
@@ -72,7 +71,7 @@ public class OLRPool implements Runnable, Serializable {
 
         this.testingVectorList = testingVectorList;
 
-        for (int i = 0; i < poolSize; i++) {
+        for (int i = 0; i < POOL_SIZE; i++) {
             final List<NamedVector> trainingVectorList = new ArrayList<>(internalTrainingVectorList);
             OLRShuffled model = new OLRShuffled(betaMatrix, trainingVectorList);
             models.add(model);
@@ -85,42 +84,29 @@ public class OLRPool implements Runnable, Serializable {
     @Override
     public void run() {
 
-        trainIfPossible();
-    }
-
-    private void trainIfPossible() {
-
         try {
-            this.trainAllModels();
+
+            ExecutorService executorService = Executors.newFixedThreadPool(POOL_SIZE);
+            Collection<Future<?>> futures = new LinkedList<>();
+
+            for (OLRShuffled model : models) {
+                futures.add(executorService.submit(model));
+            }
+
+            Utils.handlePotentialErrors(futures);
+            executorService.shutdown();
+            executorService.awaitTermination(365, TimeUnit.DAYS);
+
+        } catch (InterruptedException ignored) {
         }
-        catch (InterruptedException e) {
-            LOGGER.error(e.getMessage(), e);
-        }
-    }
-
-    private void trainAllModels() throws InterruptedException {
-
-        ExecutorService executorService = Executors.newFixedThreadPool(poolSize);
-        Collection<Future<?>> futures = new LinkedList<>();
-
-        for (OLRShuffled model : models) {
-            futures.add(executorService.submit(model));
-        }
-
-        Utils.handlePotentialErrors(futures);
-        executorService.shutdown();
-        executorService.awaitTermination(365, TimeUnit.DAYS);
     }
 
     /**
      * Get the survivors from the model pool.
-     *
      */
-    public List<OLRShuffled> getSurvivors() {
+    public List<OLRShuffled> survivors() {
 
-        ArrayList<ModelDoublePair> modelPairs = testAndPackageModels();
-        survivors = getSurvivors(modelPairs);
-        return survivors;
+        return survivors(testAndPackageModels());
     }
 
     private double getProportionTestingVectorsCorrectlyClassified(final OLRShuffled model) {
@@ -146,11 +132,11 @@ public class OLRPool implements Runnable, Serializable {
         return modelPairs;
     }
 
-    private List<OLRShuffled> getSurvivors(final List<ModelDoublePair> modelPairs) {
+    private List<OLRShuffled> survivors(final List<ModelDoublePair> modelPairs) {
 
         ArrayList<OLRShuffled> survivors = new ArrayList<>();
         Collections.sort(modelPairs);
-        for (int i = modelPairs.size() - 1; i >= modelPairs.size() - numSurvivors; i--) {
+        for (int i = modelPairs.size() - 1; i >= modelPairs.size() - NUMBER_OF_SURVIVORS; i--) {
             survivors.add(modelPairs.get(i).getModel());
         }
         return survivors;

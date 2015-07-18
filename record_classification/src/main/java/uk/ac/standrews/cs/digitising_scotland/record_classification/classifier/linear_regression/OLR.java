@@ -16,7 +16,6 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.linear_regression;
 
-import org.apache.mahout.classifier.sgd.L1;
 import org.apache.mahout.math.DenseVector;
 import org.apache.mahout.math.Matrix;
 import org.apache.mahout.math.NamedVector;
@@ -39,93 +38,48 @@ public class OLR implements Serializable {
     /**
      * The minimum permitted value for the log likelihood.
      */
-    private final double LOGLIK_MINIMUM = -100.0;
+    private static final double LOGLIK_MINIMUM = -100.0;
 
     /**
-     * The model parameters.
+     * The learning rate.
      */
-    private SerializableDenseMatrix beta;
-
-    /**
-     * The initial learning rate.
-     */
-    private double mu0 = 100;
-
-    /**
-     * The prior function (controls regularization of model parameters).
-     */
-    private transient L1 prior;
-
-    /**
-     * The rate of decay in jump size (stochastic gradient descent parameter).
-     */
-    private double decayFactor = 0.99999;
+    private static final double LEARNING_RATE = 100;
 
     /**
      * The decay rates for per term annealing - allows each feature its own learning.
      */
-    private double perTermAnnealingRate = 0.999;
+    private static final double ANNEALING_RATE = 0.999;
 
-    /**
-     * Are we per term annealing.
-     */
-    private boolean weArePerTermAnnealing = true;
+    private static int default_number_of_features;
+    private static int default_number_of_categories;
 
-    /**
-     * Are we regularizing.
-     */
-    private boolean weAreRegularizing = false;
+    private int numFeatures;
 
-    protected static int default_number_of_features = 90;
-    /**
-     * The number of features.
-     */
-    private int numFeatures = default_number_of_features;
+    private int number_of_categories;
 
-    /**
-     * The number of output categories.
-     */
-    protected static int default_number_of_categories = 2000;
+    private SerializableDenseMatrix beta;
 
-    private int number_of_categories = default_number_of_categories;
-
-    /**
-     * The update steps.
-     */
-    private int[] updateSteps;
-
-    /**
-     * The update counts.
-     */
     private int[] updateCounts;
 
-    /**
-     * The step.
-     */
     private int step;
 
-    /**
-     * The running log likelihood.
-     */
     private volatile double runningLogLikelihood;
 
-    /**
-     * The number log likelihood sum updates.
-     */
     private volatile AtomicInteger numLogLikelihoodSumUpdates;
 
     private volatile AtomicLong numTrained;
 
     public OLR() {
-
     }
 
+    public void init(int dictionary_size, int code_map_size) {
 
-    public void init() {
+        default_number_of_features = dictionary_size;
+        default_number_of_categories = code_map_size;
 
         init2();
         initBeta();
-        initStepsAndCounts();
+        init3();
     }
 
     /**
@@ -137,13 +91,15 @@ public class OLR implements Serializable {
 
         init2();
         initBeta(beta.clone());
-        initStepsAndCounts();
+        init3();
     }
 
     private void init2() {
 
+        numFeatures = default_number_of_features;
+        number_of_categories = default_number_of_categories;
+
         resetRunningLogLikelihood();
-        prior = new L1();
     }
 
     private void initBeta() {
@@ -159,24 +115,14 @@ public class OLR implements Serializable {
     private void initBeta(final Matrix beta) {
 
         this.beta = new SerializableDenseMatrix(beta);
+
         numFeatures = beta.numCols();
         number_of_categories = beta.numRows() + 1;
     }
 
-    private void initStepsAndCounts() {
+    private void init3() {
 
-        updateSteps = new int[numFeatures];
         updateCounts = new int[numFeatures];
-    }
-
-    /**
-     * Gets the number of records that have been used for training across all models so far.
-     *
-     * @return int number of training records used
-     */
-    public long getNumTrained() {
-
-        return numTrained.get();
     }
 
     /**
@@ -214,16 +160,6 @@ public class OLR implements Serializable {
     }
 
     /**
-     * Gets the running log likelihood.
-     *
-     * @return the running log likelihood
-     */
-    public double getRunningLogLikelihood() {
-
-        return runningLogLikelihood / numLogLikelihoodSumUpdates.get();
-    }
-
-    /**
      * Reset running log likelihood.
      */
     public void resetRunningLogLikelihood() {
@@ -231,23 +167,6 @@ public class OLR implements Serializable {
         runningLogLikelihood = 0.;
         numLogLikelihoodSumUpdates = new AtomicInteger(1);
         numTrained = new AtomicLong(0);
-    }
-
-    /**
-     * Calculates the log likelihood.
-     *
-     * @param actual   the actual output category ID
-     * @param instance the instance vector
-     * @return the double log likelihood
-     */
-    public double logLikelihood(final int actual, final Vector instance) {
-
-        Vector p = classify(instance);
-        if (actual > 0) {
-            return Math.max(LOGLIK_MINIMUM, Math.log(p.get(actual - 1)));
-        } else {
-            return Math.max(LOGLIK_MINIMUM, Math.log1p(-p.zSum()));
-        }
     }
 
     /**
@@ -277,16 +196,6 @@ public class OLR implements Serializable {
         numLogLikelihoodSumUpdates.getAndIncrement();
     }
 
-//    /**
-//     * Gets the num categories.
-//     *
-//     * @return the num categories
-//     */
-//    public int getNumCategories() {
-//
-//        return default_number_of_categories;
-//    }
-
     /**
      * Trains an OLR model on a instance vector with a known 'actual' output class.
      *
@@ -296,7 +205,7 @@ public class OLR implements Serializable {
 
         numTrained.getAndIncrement();
         updateModelParameters(instance);
-        updateCountsAndSteps(instance);
+        updateCounts(instance);
         nextStep();
     }
 
@@ -366,9 +275,6 @@ public class OLR implements Serializable {
         final double aSmallNumber = 0.000001;
         int feature = featureElement.index();
 
-        if (weAreRegularizing) {
-            regularize(category, feature);
-        }
         if (gradientBase > aSmallNumber || gradientBase < -aSmallNumber) {
             updateCoefficient(category, feature, featureElement, gradientBase);
         }
@@ -389,35 +295,6 @@ public class OLR implements Serializable {
     }
 
     /**
-     * Regularize.
-     *
-     * @param category the category
-     * @param feature  the feature
-     */
-    private void regularize(final int category, final int feature) {
-
-        double lastUpdated = updateSteps[feature];
-        double missingUpdates = getStep() - lastUpdated;
-        if (missingUpdates > 0) {
-            regularizeInProportionToMissingUpdates(category, feature, missingUpdates);
-        }
-    }
-
-    /**
-     * Regularize in proportion to missing updates.
-     *
-     * @param category       the category
-     * @param feature        the feature
-     * @param missingUpdates the missing updates
-     */
-    private void regularizeInProportionToMissingUpdates(final int category, final int feature, final double missingUpdates) {
-
-        double rate = getLearningRate(feature);
-        double newValue = prior.age(beta.get(category, feature), missingUpdates, rate);
-        beta.set(category, feature, newValue);
-    }
-
-    /**
      * Gets the learning rate.
      *
      * @param feature the feature
@@ -425,11 +302,7 @@ public class OLR implements Serializable {
      */
     private double getLearningRate(final int feature) {
 
-        if (weArePerTermAnnealing) {
-            return perTermLearningRate(feature);
-        } else {
-            return currentLearningRate();
-        }
+        return perTermLearningRate(feature);
     }
 
     /**
@@ -476,16 +349,6 @@ public class OLR implements Serializable {
     }
 
     /**
-     * Current learning rate.
-     *
-     * @return the double
-     */
-    public double currentLearningRate() {
-
-        return mu0 * Math.pow(decayFactor, getStep());
-    }
-
-    /**
      * Per term learning rate.
      *
      * @param j the j
@@ -493,7 +356,7 @@ public class OLR implements Serializable {
      */
     public double perTermLearningRate(final int j) {
 
-        return mu0 * Math.pow(perTermAnnealingRate, updateCounts[j]);
+        return LEARNING_RATE * Math.pow(ANNEALING_RATE, updateCounts[j]);
     }
 
     /**
@@ -501,47 +364,12 @@ public class OLR implements Serializable {
      *
      * @param instance the instance
      */
-    private void updateCountsAndSteps(final Vector instance) {
+    private void updateCounts(final Vector instance) {
 
         Iterable<Element> instanceFeatures = instance.nonZeroes();
 
         for (Element feature : instanceFeatures) {
-            updateCountsAndStepsAtIndex(feature.index());
+            updateCounts[feature.index()]++;
         }
-    }
-
-    /**
-     * Update counts and steps at index.
-     *
-     * @param j the j
-     */
-    private void updateCountsAndStepsAtIndex(final int j) {
-
-        if (weAreRegularizing) {
-            updateSteps(j);
-        }
-        if (weArePerTermAnnealing) {
-            updateCounts(j);
-        }
-    }
-
-    /**
-     * Update counts.
-     *
-     * @param j the j
-     */
-    private void updateCounts(final int j) {
-
-        updateCounts[j]++;
-    }
-
-    /**
-     * Update steps.
-     *
-     * @param j the j
-     */
-    private void updateSteps(final int j) {
-
-        updateSteps[j] = getStep();
     }
 }
