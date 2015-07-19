@@ -79,10 +79,10 @@ public class Launcher {
             launcher.reportError("process directory '" + e.getFile() + "' already exists.");
         }
         catch (NoSuchFileException e) {
+            e.printStackTrace();
             launcher.reportError("expected context file '" + e.getFile() + "' not found.");
         }
         catch (Exception e) {
-            e.printStackTrace();
             launcher.reportError(e.getMessage());
         }
     }

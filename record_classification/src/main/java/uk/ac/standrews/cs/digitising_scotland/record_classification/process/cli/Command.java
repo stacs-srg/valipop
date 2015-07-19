@@ -46,7 +46,7 @@ public abstract class Command implements Callable<Void>, Step {
 
     protected static final String PROCESS_NAME = "classification_process";
 
-    private static final String NAME_DESCRIPTION = "The name of the classification process.";
+    private static final String NAME_DESCRIPTION = "The name of the classification process";
     private static final String NAME_FLAG_SHORT = "-n";
     private static final String NAME_FLAG_LONG = "--name";
 
@@ -58,7 +58,7 @@ public abstract class Command implements Callable<Void>, Step {
     private static final String DELIMITER_FLAG_SHORT = "-dl";
     private static final String DELIMITER_FLAG_LONG = "--delimiter";
 
-    public static final String CLEAN_DESCRIPTION = "Name of the cleaner by which to clean the source data.";
+    public static final String CLEAN_DESCRIPTION = "A cleaner with which to clean the data";
     public static final String CLEAN_FLAG_SHORT = "-cl";
     public static final String CLEAN_FLAG_LONG = "--cleaner";
 
@@ -66,7 +66,7 @@ public abstract class Command implements Callable<Void>, Step {
     protected static final String SERIALIZATION_FORMAT_FLAG_SHORT = "-f";
     protected static final String SERIALIZATION_FORMAT_FLAG_LONG = "--format";
 
-    public static final String PROCESS_DIRECTORY_DESCRIPTION = "A directory to be used by the process.";
+    public static final String PROCESS_DIRECTORY_DESCRIPTION = "A directory to be used by the process";
     public static final String PROCESS_DIRECTORY_FLAG_SHORT = "-p";
     public static final String PROCESS_DIRECTORY_FLAG_LONG = "--process-directory";
 

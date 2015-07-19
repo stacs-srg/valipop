@@ -31,6 +31,27 @@ import java.util.List;
 /**
  * Composite command that loads data, cleans and classifies.
  *
+ * Example command line invocation:
+ *
+ * <code>
+ *   java uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.Launcher
+ *   load_clean_classify
+ *   -d
+ *   /Users/graham/Desktop/unseen_data.csv
+ *   -o
+ *   /Users/graham/Desktop/classified_data.csv
+ *   -p
+ *   /Users/graham/Desktop/process_state
+ *   -f
+ *   JSON
+ *   -cl
+ *   STOP_WORDS
+ *   -cl
+ *   PORTER_STEM
+ *   -cl
+ *   CONSISTENT_CLASSIFICATION_CLEANER_CORRECT
+ * </code>
+ *
  * @author Masih Hajiarab Derkani
  * @author Graham Kirby
  */
@@ -45,9 +66,6 @@ public class LoadCleanClassifyCommand extends Command {
 
     @Parameter(required = true, names = {LoadDataCommand.DATA_FLAG_SHORT, LoadDataCommand.DATA_FLAG_LONG}, description = LoadDataCommand.DATA_DESCRIPTION, converter = PathConverter.class)
     private Path unseen_data;
-
-    @Parameter(required = true, names = {TrainCommand.TRAINING_RATIO_FLAG_SHORT, TrainCommand.TRAINING_RATIO_FLAG_LONG}, description = TrainCommand.TRAINING_RATIO_DESCRIPTION)
-    private Double training_ratio;
 
     @Parameter(required = true, names = {CleanGoldStandardCommand.CLEAN_FLAG_SHORT, CleanGoldStandardCommand.CLEAN_FLAG_LONG}, description = CleanGoldStandardCommand.CLEAN_DESCRIPTION)
     private List<Cleaners> cleaners;
