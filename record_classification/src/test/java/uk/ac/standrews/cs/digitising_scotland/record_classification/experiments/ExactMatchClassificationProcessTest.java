@@ -17,7 +17,7 @@
 package uk.ac.standrews.cs.digitising_scotland.record_classification.experiments;
 
 import org.junit.Test;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.ExactMatchClassifier;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.exact_match.ExactMatchClassifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassifierFactory;
 
 import static org.junit.Assert.assertEquals;

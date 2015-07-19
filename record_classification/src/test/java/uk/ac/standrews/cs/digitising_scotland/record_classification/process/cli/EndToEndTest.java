@@ -18,29 +18,36 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.Classifiers;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.ConsistentCodingChecker;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Classification;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.serialization.SerializationFormat;
 import uk.ac.standrews.cs.util.dataset.DataSet;
 import uk.ac.standrews.cs.util.tools.FileManipulation;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import static org.junit.Assert.*;
 
+@RunWith(Parameterized.class)
 public class EndToEndTest {
 
     private static final String CLASSIFIED_FILE_NAME = "classified.csv";
     private static final String GOLD_STANDARD_FILE_NAME = "test_training_data.csv";
     private static final String EVALUATION_FILE_NAME = "test_evaluation_data.csv";
 
-    Command.SerializationFormat serialization_format;
+    SerializationFormat serialization_format;
     String process_name;
-    Classifiers supplier;
+    Classifiers classifier_supplier;
     double training_ratio;
 
     Path temp_process_directory;
@@ -53,9 +60,7 @@ public class EndToEndTest {
     @Before
     public void setup() throws IOException {
 
-        serialization_format = Command.SerializationFormat.JSON;
         process_name = Command.PROCESS_NAME;
-        supplier = Classifiers.OLR;
         training_ratio = 0.8;
 
         temp_process_directory = Files.createTempDirectory(process_name + "_");
@@ -66,11 +71,39 @@ public class EndToEndTest {
         output_classified_file = Command.getProcessWorkingDirectory(temp_process_directory, process_name).resolve(CLASSIFIED_FILE_NAME);
     }
 
+    @Parameterized.Parameters(name = "{0}, {1}")
+    public static Collection<Object[]> generateData() {
+
+        List<Classifiers> classifiers = Arrays.asList(Classifiers.EXACT_MATCH, Classifiers.EXACT_MATCH.OLR);
+        List<SerializationFormat> serialization_formats = Arrays.asList(SerializationFormat.JSON, SerializationFormat.COMPRESSED_JSON, SerializationFormat.JAVA_SERIALIZATION);
+
+        return allCombinations(classifiers, serialization_formats);
+    }
+
+    public EndToEndTest(Classifiers classifier_supplier, SerializationFormat serialization_format) {
+
+        this.classifier_supplier = classifier_supplier;
+        this.serialization_format = serialization_format;
+    }
+
     @Test
     public void endToEndOLRProcess() throws Exception {
 
         checkInitialisationLoadingAndTraining();
         checkClassification();
+    }
+
+    private static Collection<Object[]> allCombinations(List<Classifiers> classifier_suppliers, List<SerializationFormat> serialization_formats) {
+
+        List<Object[]> result = new ArrayList<>();
+
+        for (Classifiers classifier_supplier : classifier_suppliers) {
+            for (SerializationFormat serialization_format : serialization_formats) {
+                result.add(new Object[]{classifier_supplier, serialization_format});
+            }
+        }
+
+        return result;
     }
 
     private void checkInitialisationLoadingAndTraining() throws Exception {
@@ -81,7 +114,7 @@ public class EndToEndTest {
 
     private void initLoadTrain() throws Exception {
 
-        InitLoadTrainCommand.initLoadTrain(supplier, input_gold_standard_file, training_ratio, serialization_format, process_name, temp_process_directory);
+        InitLoadTrainCommand.initLoadTrain(classifier_supplier, input_gold_standard_file, training_ratio, serialization_format, process_name, temp_process_directory);
     }
 
     private void assertTrainedModelFileExists() {
@@ -125,7 +158,11 @@ public class EndToEndTest {
         for (List<String> record : data_set.getRecords()) {
 
             assertFirstElementIsNumber(record);
-            assertRecordIsClassified(record);
+
+            // Exact match classifier doesn't classify unknown data.
+            if (classifier_supplier != Classifiers.EXACT_MATCH) {
+                assertRecordIsClassified(record);
+            }
         }
     }
 

@@ -16,8 +16,7 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.linear_regression;
 
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.ClassifierPlusExactMatchClassifier;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.linear_regression.OLRClassifier;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.composite.ClassifierPlusExactMatchClassifier;
 
 public class OLRWithExactMatchClassifier extends ClassifierPlusExactMatchClassifier {
 

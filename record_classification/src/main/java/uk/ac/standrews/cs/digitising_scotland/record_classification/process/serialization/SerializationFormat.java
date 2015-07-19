@@ -14,27 +14,9 @@
  * You should have received a copy of the GNU General Public License along with record_classification. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.ensemble;
+package uk.ac.standrews.cs.digitising_scotland.record_classification.process.serialization;
 
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.Classifier;
+public enum SerializationFormat {
 
-import java.util.*;
-
-/**
- * @author Graham Kirby
- */
-public class EnsembleVotingClassifier extends EnsembleClassifier {
-
-    private static final long serialVersionUID = 6432371860467757296L;
-
-    /**
-     * Instantiates a new ensemble classifier.
-     *
-     * @param classifiers the classifiers
-     */
-    public EnsembleVotingClassifier(Collection<Classifier> classifiers) {
-
-        super(classifiers, new VotingResolutionStrategy());
-    }
-
+    JAVA_SERIALIZATION, JSON, COMPRESSED_JSON
 }
