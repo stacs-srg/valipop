@@ -28,6 +28,11 @@ public class EnsembleVotingClassifier extends EnsembleClassifier {
     private static final long serialVersionUID = 6432371860467757296L;
 
     /**
+     * Needed for JSON deserialization.
+     */
+    public EnsembleVotingClassifier() {
+    }
+    /**
      * Instantiates a new ensemble classifier.
      *
      * @param classifiers the classifiers
@@ -36,5 +41,4 @@ public class EnsembleVotingClassifier extends EnsembleClassifier {
 
         super(classifiers, new VotingResolutionStrategy());
     }
-
 }

@@ -67,15 +67,22 @@ public class EndToEndTest {
         input_gold_standard_file = FileManipulation.getResourcePath(EndToEndTest.class, GOLD_STANDARD_FILE_NAME);
         output_trained_model_file = Command.getSerializedContextPath(temp_process_directory, process_name, serialization_format);
 
-        input_unseen_data_file = FileManipulation.getResourcePath(EndToEndTest.class, EVALUATION_FILE_NAME);;
+        input_unseen_data_file = FileManipulation.getResourcePath(EndToEndTest.class, EVALUATION_FILE_NAME);
         output_classified_file = Command.getProcessWorkingDirectory(temp_process_directory, process_name).resolve(CLASSIFIED_FILE_NAME);
     }
 
     @Parameterized.Parameters(name = "{0}, {1}")
     public static Collection<Object[]> generateData() {
 
-        List<Classifiers> classifiers = Arrays.asList(Classifiers.EXACT_MATCH, Classifiers.EXACT_MATCH.OLR);
-        List<SerializationFormat> serialization_formats = Arrays.asList(SerializationFormat.JSON, SerializationFormat.COMPRESSED_JSON, SerializationFormat.JAVA_SERIALIZATION);
+        List<Classifiers> classifiers = Arrays.asList(
+                Classifiers.EXACT_MATCH,
+                Classifiers.OLR,
+                Classifiers.EXACT_MATCH_PLUS_VOTING_ENSEMBLE);
+
+        List<SerializationFormat> serialization_formats = Arrays.asList(
+                SerializationFormat.JSON,
+                SerializationFormat.COMPRESSED_JSON,
+                SerializationFormat.JAVA_SERIALIZATION);
 
         return allCombinations(classifiers, serialization_formats);
     }

@@ -19,12 +19,19 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.Classifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Classification;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-class VotingResolutionStrategy implements EnsembleClassifier.ResolutionStrategy {
+public class VotingResolutionStrategy implements EnsembleClassifier.ResolutionStrategy, Serializable {
+
+    /**
+     * Needed for JSON deserialization.
+     */
+    public VotingResolutionStrategy() {
+    }
 
     @Override
     public Classification resolve(Map<Classifier, Classification> candidate_classifications) {

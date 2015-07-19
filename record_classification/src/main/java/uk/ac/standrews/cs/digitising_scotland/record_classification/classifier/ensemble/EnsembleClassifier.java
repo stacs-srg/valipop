@@ -31,13 +31,20 @@ import java.util.*;
 public class EnsembleClassifier implements Classifier {
 
     private static final long serialVersionUID = 6432371860423757296L;
-    private final List<Classifier> classifiers;
-    private final ResolutionStrategy resolution_strategy;
+
+    private List<Classifier> classifiers;
+    private ResolutionStrategy resolution_strategy;
+
+    /**
+     * Needed for JSON deserialization.
+     */
+    public EnsembleClassifier() {
+    }
 
     /**
      * Instantiates a new ensemble classifier.
      *
-     * @param classifiers the classifiers
+     * @param classifiers         the classifiers
      * @param resolution_strategy the strategy by which to decide a single classification between multiple classifications
      */
     public EnsembleClassifier(Collection<Classifier> classifiers, ResolutionStrategy resolution_strategy) {
