@@ -19,6 +19,8 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli
 import org.junit.Before;
 import org.junit.Test;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.Classifiers;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.ConsistentCodingChecker;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Classification;
 import uk.ac.standrews.cs.util.dataset.DataSet;
 import uk.ac.standrews.cs.util.tools.FileManipulation;
@@ -94,6 +96,7 @@ public class EndToEndTest {
         assertFileExists(classified_file);
         assertSameNumberOfRecords(classified_file, input_gold_standard_file);
         assertRecordsContainExpectedContent(classified_file);
+        assertRecordsConsistentlyClassified(classified_file);
     }
 
     private Path classify() throws Exception {
@@ -124,6 +127,13 @@ public class EndToEndTest {
             assertFirstElementIsNumber(record);
             assertRecordIsClassified(record);
         }
+    }
+
+    private void assertRecordsConsistentlyClassified(Path classified_csv_file) throws IOException {
+
+        final Bucket bucket = new Bucket(new DataSet(classified_csv_file));
+
+        assertTrue(new ConsistentCodingChecker().test(bucket));
     }
 
     private void assertRecordIsClassified(List<String> record) {

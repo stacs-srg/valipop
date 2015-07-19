@@ -59,7 +59,7 @@ public class StringSimilarityClassifier implements Classifier {
 
         for (Record record : bucket) {
             Classification classification = record.getClassification();
-            known_classifications.put(record.getData(), new Classification(classification.getCode(), classification.getTokenSet(), similarity_metric.getStaticConfidence()));
+            known_classifications.put(record.getData(), new Classification(classification.getCode(), classification.getTokenList(), similarity_metric.getStaticConfidence()));
         }
     }
 

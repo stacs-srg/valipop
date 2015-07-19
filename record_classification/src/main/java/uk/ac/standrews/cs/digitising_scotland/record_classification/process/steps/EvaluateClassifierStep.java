@@ -52,7 +52,7 @@ public class EvaluateClassifierStep implements Step {
         final Bucket classified_records = context.getClassifier().classify(stripped_records);
         context.setClassificationTime(Duration.between(start, Instant.now()));
 
-        final StrictConfusionMatrix confusion_matrix = new StrictConfusionMatrix(classified_records, gold_standard_records, new InconsistentCodingChecker());
+        final StrictConfusionMatrix confusion_matrix = new StrictConfusionMatrix(classified_records, gold_standard_records, new ConsistentCodingChecker());
         final ClassificationMetrics classification_metrics = new ClassificationMetrics(confusion_matrix);
 
         context.setConfusionMatrix(confusion_matrix);
