@@ -16,9 +16,13 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier;
 
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Classification;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Record;
 
-import java.io.*;
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Basic classifier interface.
@@ -53,11 +57,21 @@ public interface Classifier extends Serializable {
     default Bucket classify(final Bucket bucket) {
 
         final Bucket classified = new Bucket();
+        final Map<String, Classification> cache = new HashMap<>();
 
         for (Record record : bucket) {
 
             final String data = record.getData();
-            classified.add(new Record(record.getId(), data, classify(data)));
+
+            if (cache.containsKey(data)) {
+
+                classified.add(new Record(record.getId(), data, cache.get(data).makeClone()));
+
+            } else {
+                final Classification classification = classify(data);
+                classified.add(new Record(record.getId(), data, classification));
+                cache.put(data, classification);
+            }
         }
 
         return classified;

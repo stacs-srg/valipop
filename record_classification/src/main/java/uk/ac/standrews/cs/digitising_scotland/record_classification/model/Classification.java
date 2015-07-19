@@ -26,16 +26,16 @@ public class Classification implements Serializable {
     private static final long serialVersionUID = 7074436345885045033L;
 
     private String code;
-    private TokenList token_set;
-    private double confidence; //TODO Introduce confidence type.
+    private TokenList token_list;
+    private double confidence;
 
     public Classification() {
     }
 
-    public Classification(final String code, final TokenList token_set, final double confidence) {
+    public Classification(final String code, final TokenList token_list, final double confidence) {
 
         this.code = code;
-        this.token_set = token_set;
+        this.token_list = token_list;
         this.confidence = confidence;
     }
 
@@ -44,9 +44,9 @@ public class Classification implements Serializable {
         return code;
     }
 
-    public TokenList getTokenSet() {
+    public TokenList getTokenList() {
 
-        return token_set;
+        return token_list;
     }
 
     public double getConfidence() {
@@ -63,19 +63,24 @@ public class Classification implements Serializable {
             return false;
         final Classification that = (Classification) o;
         return Objects.equals(code, that.code) &&
-                Objects.equals(token_set, that.token_set) &&
+                Objects.equals(token_list, that.token_list) &&
                 Objects.equals(confidence, that.confidence);
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(code, token_set, confidence);
+        return Objects.hash(code, token_list, confidence);
     }
 
     @Override
     public String toString() {
 
-        return "Classification [code=" + code + ", token_set=" + token_set + ", confidence=" + confidence + "]";
+        return "Classification [code=" + code + ", token_list=" + token_list + ", confidence=" + confidence + "]";
+    }
+
+    public Classification makeClone() {
+
+         return new Classification(code, new TokenList(token_list.toString()), confidence);
     }
 }

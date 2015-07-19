@@ -14,10 +14,10 @@
  * You should have received a copy of the GNU General Public License along with record_classification. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli;
+package uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning;
 
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.Cleaner;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.ConsistentCodingCleaner;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.ConsistentClassificationCleaner;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.EnglishStopWordCleaner;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.StemmingCleaner;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
@@ -25,13 +25,12 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket
 /**
  * @author Masih Hajiarab Derkani
  */
-enum Cleaners implements Cleaner {
+public enum Cleaners implements Cleaner {
 
     STOP_WORDS(new EnglishStopWordCleaner(), "Removes English stop words"),
     PORTER_STEM(new StemmingCleaner(), "Performs stemming using Porter algorithm"),
-    CONSISTENT_CODING_CLEANER_NONE(ConsistentCodingCleaner.NONE, ""), //TODO need Javadoc for these that explain what they do in order to update description
-    CONSISTENT_CODING_CLEANER_CORRECT(ConsistentCodingCleaner.CORRECT, ""),
-    CONSISTENT_CODING_CLEANER_REMOVE(ConsistentCodingCleaner.REMOVE, "");
+    CONSISTENT_CLASSIFICATION_CLEANER_CORRECT(ConsistentClassificationCleaner.CORRECT, "Corrects the classification of any inconsistently classified records to the most popular"),
+    CONSISTENT_CLASSIFICATION_CLEANER_REMOVE(ConsistentClassificationCleaner.REMOVE, "Removes any inconsistently classified records");
 
     private final Cleaner cleaner;
     private final String description;

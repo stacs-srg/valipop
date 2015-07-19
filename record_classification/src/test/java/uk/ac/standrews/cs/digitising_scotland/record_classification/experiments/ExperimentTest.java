@@ -52,7 +52,7 @@ public class ExperimentTest {
     }
 
     @Test
-    public void resultsContainDataForTwoClassifiers() throws Exception {
+    public void resultsContainDataForCorrectNumberOfClassifiers() throws Exception {
 
         assertEquals(experiment_results.size(), experiment.getProcesses().size());
     }

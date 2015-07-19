@@ -64,7 +64,7 @@ public class VectorFactory implements Serializable {
 
             // TODO replace with lower case cleaner.
 
-            for (String token : record.getClassification().getTokenSet()) {
+            for (String token : record.getClassification().getTokenList()) {
 
                 String descriptionLower = token.toLowerCase();
                 vectorEncoder.updateDictionary(descriptionLower);
@@ -134,7 +134,7 @@ public class VectorFactory implements Serializable {
 
         Classification codeTriple = record.getClassification();
         Integer id = index.getID(codeTriple.getCode());
-        vectors.add(createNamedVectorFromString(codeTriple.getTokenSet(), id.toString()));
+        vectors.add(createNamedVectorFromString(codeTriple.getTokenList(), id.toString()));
 
         return vectors;
     }

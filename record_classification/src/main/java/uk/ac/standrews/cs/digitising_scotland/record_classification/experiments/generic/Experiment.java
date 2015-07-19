@@ -22,7 +22,7 @@ import com.beust.jcommander.ParameterException;
 import com.beust.jcommander.converters.PathConverter;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.ClassificationMetrics;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.Cleaner;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.ConsistentCodingCleaner;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.ConsistentClassificationCleaner;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.EnglishStopWordCleaner;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.StemmingCleaner;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.InputFileFormatException;
@@ -89,7 +89,7 @@ public abstract class Experiment implements Callable<Void> {
     @Parameter(names = {"-d", "--delimiter"}, description = DESCRIPTION_DELIMITER)
     private char delimiter = '|';
 
-    public static final List<Cleaner> CLEANERS = Arrays.asList(new EnglishStopWordCleaner(), new StemmingCleaner(), ConsistentCodingCleaner.CORRECT);
+    public static final List<Cleaner> CLEANERS = Arrays.asList(new EnglishStopWordCleaner(), new StemmingCleaner(), ConsistentClassificationCleaner.CORRECT);
 
     protected Experiment() throws IOException, InputFileFormatException {
 

@@ -23,7 +23,7 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.Abs
 import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.ClassificationMetrics;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.ConfusionMatrix;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.Cleaner;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.ConsistentCodingCleaner;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.ConsistentClassificationCleaner;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.InfoLevel;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassificationContext;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassifierFactory;
@@ -54,7 +54,7 @@ public abstract class AbstractClassificationProcessTest extends AbstractMetricsT
 
         List<Path> gold_standard_files = Arrays.asList(FileManipulation.getResourcePath(AbstractClassificationProcessTest.class, CODED_DATA_1K_FILE_NAME));
         List<Double> training_ratios = Arrays.asList(0.8);
-        List<Cleaner> cleaners = Arrays.asList(ConsistentCodingCleaner.CORRECT);
+        List<Cleaner> cleaners = Arrays.asList(ConsistentClassificationCleaner.CORRECT);
 
         final EvaluationExperimentProcess process = new EvaluationExperimentProcess();
 

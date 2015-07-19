@@ -32,10 +32,8 @@ import java.util.function.Function;
  */
 public class TokenList extends ArrayList<String> implements Serializable {
 
-    /**
-     * The Constant serialVersionUID.
-     */
     private static final long serialVersionUID = 4771078200991926082L;
+    private static final String SPACE = " ";
 
     public static final TokenList UNMODIFIABLE_TOKEN_SET = new TokenList() {
 
@@ -55,7 +53,8 @@ public class TokenList extends ArrayList<String> implements Serializable {
         }
     };
 
-    private TokenList() {}
+    private TokenList() {
+    }
 
     /**
      * Instantiates a new token set.
@@ -85,6 +84,16 @@ public class TokenList extends ArrayList<String> implements Serializable {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public String toString() {
+
+        StringBuilder builder = new StringBuilder();
+        for (String token : this) {
+            if (!(builder.length() == 0)) builder.append(SPACE);
+            builder.append(token);
+        }
+        return builder.toString();
     }
 
     private StandardTokenizer getTokenizer(final String data) throws IOException {

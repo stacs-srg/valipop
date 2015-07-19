@@ -16,27 +16,21 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning;
 
-import org.junit.Before;
-import org.junit.Test;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.AbstractMetricsTest;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Classification;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Record;
 
-import static org.junit.Assert.assertFalse;
+import java.util.HashMap;
+import java.util.Map;
 
-public class InconsistentCodingCheckerTest extends AbstractMetricsTest {
+/**
+ * @author Graham Kirby
+ */
+public class ConsistentCodingChecker implements Checker {
 
-    private Bucket bucket;
+    @Override
+    public boolean test(final Bucket bucket)  {
 
-    @Before
-    public void setup() {
-
-        bucket = new Bucket();
-        bucket.add(haddock_correct, haddock_incorrect, osprey_incorrect);
-    }
-
-    @Test
-    public void testCheck() throws Exception {
-
-        assertFalse(new InconsistentCodingChecker().test(bucket));
+        return ConsistentClassificationCleaner.getInconsistentlyClassifiedData(bucket).isEmpty();
     }
 }

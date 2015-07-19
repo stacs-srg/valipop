@@ -68,7 +68,7 @@ public class EnsembleVotingClassifier extends EnsembleClassifier {
             if (classifications != null) {
                 //noinspection LoopStatementThatDoesntLoop
                 for (Classification classification : classifications) {
-                    return new Classification(classification.getCode(), classification.getTokenSet(), averageConfidence(classifications));
+                    return new Classification(classification.getCode(), classification.getTokenList(), averageConfidence(classifications));
                 }
             }
             return Classification.UNCLASSIFIED;
