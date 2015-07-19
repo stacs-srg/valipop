@@ -30,6 +30,7 @@ public class ClassifierPlusExactMatchClassifier implements Classifier {
     /**
      * Needed for JSON deserialization.
      */
+    @SuppressWarnings("unused")
     public ClassifierPlusExactMatchClassifier() {
     }
 

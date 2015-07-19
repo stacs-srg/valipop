@@ -161,6 +161,6 @@ public enum ConsistentClassificationCleaner implements Cleaner {
         final String data = record.getData();
         final Classification classification = record.getClassification();
 
-        return new Record(record.getId(), data, new Classification(most_popular_code, new TokenList(data), classification.getConfidence()));
+        return new Record(record.getId(), data, record.getOriginalData(),new Classification(most_popular_code, new TokenList(data), classification.getConfidence()));
     }
 }

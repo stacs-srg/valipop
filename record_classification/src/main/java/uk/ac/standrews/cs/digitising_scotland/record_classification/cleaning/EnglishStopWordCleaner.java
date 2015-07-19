@@ -30,7 +30,8 @@ import org.apache.lucene.analysis.util.CharArraySet;
 public class EnglishStopWordCleaner extends TokenFilterCleaner {
 
     private static final long serialVersionUID = 3018841867887670242L;
-    private static final CharArraySet STOP_WORDS = EnglishAnalyzer.getDefaultStopSet();
+
+    public static final CharArraySet STOP_WORDS = EnglishAnalyzer.getDefaultStopSet();
 
     @Override
     protected TokenFilter getTokenFilter(final TokenStream stream) {

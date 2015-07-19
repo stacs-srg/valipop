@@ -50,12 +50,13 @@ public abstract class TokenFilterCleaner implements Cleaner {
 
         final int id = record.getId();
         final String data = record.getData();
+        final String original_data = record.getOriginalData();
         final Classification classification = record.getClassification();
 
         final String cleaned_data = cleanData(data);
         final Classification cleaned_classification = cleanClassification(cleaned_data, classification);
 
-        return new Record(id, cleaned_data, cleaned_classification);
+        return new Record(id, cleaned_data, original_data, cleaned_classification);
     }
 
     protected Classification cleanClassification(final String cleaned_data, final Classification old_classification) {

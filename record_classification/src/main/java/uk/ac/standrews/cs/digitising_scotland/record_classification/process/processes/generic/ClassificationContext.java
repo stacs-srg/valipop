@@ -40,8 +40,9 @@ public class ClassificationContext implements Serializable {
     private Random random;
 
     private Bucket gold_standard_records;
-    private Bucket evaluation_records;
     private Bucket training_records;
+    private Bucket evaluation_records;
+    private Bucket unseen_records;
     private Bucket classified_unseen_records;
 
     private Classifier classifier;
@@ -69,6 +70,8 @@ public class ClassificationContext implements Serializable {
         gold_standard_records = new Bucket();
         evaluation_records = new Bucket();
         training_records = new Bucket();
+        unseen_records = new Bucket();
+        classified_unseen_records = new Bucket();
 
         verbosity = DEFAULT_VERBOSITY;
     }
@@ -83,79 +86,19 @@ public class ClassificationContext implements Serializable {
         return random;
     }
 
-    /**
-     * Gets the evaluation records in this context.
-     *
-     * @return the evaluation records, or {@code null} if not set
-     */
-    public Bucket getEvaluationRecords() {
+    public Bucket getGoldStandardRecords() {
 
-        return evaluation_records;
+        return gold_standard_records;
     }
 
     /**
-     * Adds the given records to the bucket of records that are used to evaluate the classifier of this context.
+     * Adds the given records to the bucket of records that are used to train the classifier of this context.
      *
-     * @param evaluation_records the records to be added
+     * @param gold_standard_records the records to be added
      */
-    public void addEvaluationRecords(final Bucket evaluation_records) {
+    public void setGoldStandardRecords(Bucket gold_standard_records) {
 
-        evaluation_records.forEach(this.evaluation_records::add);
-    }
-
-    public void setEvaluationRecords(final Bucket evaluation_records) {
-
-        this.evaluation_records = evaluation_records;
-    }
-
-    /**
-     * Gets classifier in this context.
-     *
-     * @return the classifier in this context
-     */
-    public Classifier getClassifier() {
-
-        return classifier;
-    }
-
-    /**
-     * Gets the records that are classified by the classifier.
-     *
-     * @return the records that are classified by the classifier, or {@code null} if no records have been classified.
-     */
-    public Bucket getClassifiedUnseenRecords() {
-
-        return classified_unseen_records;
-    }
-
-    /**
-     * Sets the classified unseen records of this context.
-     *
-     * @param classified_unseen_records the classified unseen records to set
-     */
-    public void setClassifiedUnseenRecords(final Bucket classified_unseen_records) {
-
-        this.classified_unseen_records = classified_unseen_records;
-    }
-
-    /**
-     * Gets the classification metrics of this context.
-     *
-     * @return the classification metrics of this context, or {@code null}
-     */
-    public ClassificationMetrics getClassificationMetrics() {
-
-        return classification_metrics;
-    }
-
-    /**
-     * Sets the classification metrics of this context.
-     *
-     * @param classification_metrics the classification metrics to set
-     */
-    public void setClassificationMetrics(final ClassificationMetrics classification_metrics) {
-
-        this.classification_metrics = classification_metrics;
+        this.gold_standard_records = gold_standard_records;
     }
 
     /**
@@ -178,10 +121,117 @@ public class ClassificationContext implements Serializable {
         training_records.forEach(this.training_records::add);
     }
 
-    public void setTrainingRecords(final Bucket training_records) {
+    /**
+     * Gets the evaluation records in this context.
+     *
+     * @return the evaluation records, or {@code null} if not set
+     */
+    public Bucket getEvaluationRecords() {
 
-        this.training_records = training_records;
+        return evaluation_records;
     }
+
+    /**
+     * Adds the given records to the bucket of records that are used to evaluate the classifier of this context.
+     *
+     * @param evaluation_records the records to be added
+     */
+    public void addEvaluationRecords(final Bucket evaluation_records) {
+
+        evaluation_records.forEach(this.evaluation_records::add);
+    }
+
+    /**
+     * Gets the records that are to be classified.
+     *
+     * @return the records that are to be classified.
+     */
+    public Bucket getUnseenRecords() {
+
+        return unseen_records;
+    }
+
+    /**
+     * Adds the given records to the bucket of records that are to be classified.
+     *
+     * @param unseen_records the records to be added
+     */
+    public void setUnseenRecords(final Bucket unseen_records) {
+
+
+        this.unseen_records = unseen_records;
+    }
+
+    /**
+     * Gets the records that are classified by the classifier.
+     *
+     * @return the records that are classified by the classifier.
+     */
+    public Bucket getClassifiedUnseenRecords() {
+
+        return classified_unseen_records;
+    }
+
+    /**
+     * Adds the given records to the bucket of records that have been classified.
+     *
+     * @param classified_unseen_records the records to be added
+     */
+    public void addClassifiedUnseenRecords(final Bucket classified_unseen_records) {
+
+        classified_unseen_records.forEach(this.classified_unseen_records::add);
+    }
+
+//    public void setEvaluationRecords(final Bucket evaluation_records) {
+//
+//        this.evaluation_records = evaluation_records;
+//    }
+
+    /**
+     * Gets classifier in this context.
+     *
+     * @return the classifier in this context
+     */
+    public Classifier getClassifier() {
+
+        return classifier;
+    }
+
+//    /**
+//     * Sets the classified unseen records of this context.
+//     *
+//     * @param classified_unseen_records the classified unseen records to set
+//     */
+//    public void setClassifiedUnseenRecords(final Bucket classified_unseen_records) {
+//
+//        this.classified_unseen_records = classified_unseen_records;
+//    }
+
+    /**
+     * Gets the classification metrics of this context.
+     *
+     * @return the classification metrics of this context, or {@code null}
+     */
+    public ClassificationMetrics getClassificationMetrics() {
+
+        return classification_metrics;
+    }
+
+    /**
+     * Sets the classification metrics of this context.
+     *
+     * @param classification_metrics the classification metrics to set
+     */
+    public void setClassificationMetrics(final ClassificationMetrics classification_metrics) {
+
+        this.classification_metrics = classification_metrics;
+    }
+
+
+//    public void setTrainingRecords(final Bucket training_records) {
+//
+//        this.training_records = training_records;
+//    }
 
     /**
      * Gets the confusion matrix of this context.
@@ -243,15 +293,10 @@ public class ClassificationContext implements Serializable {
         this.classification_time = evaluation_classification_time;
     }
 
-    public Bucket getGoldStandardRecords() {
-
-        return gold_standard_records;
-    }
-
-    public void setGoldStandardRecords(Bucket gold_standard) {
-
-        this.gold_standard_records = gold_standard;
-    }
+//    public void setGoldStandardRecords(Bucket gold_standard) {
+//
+//        this.gold_standard_records = gold_standard;
+//    }
 
     public InfoLevel getVerbosity() {
 

@@ -16,8 +16,7 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.model;
 
-import java.io.*;
-import java.util.*;
+import java.io.Serializable;
 
 /**
  * A data record.
@@ -29,15 +28,17 @@ public class Record implements Comparable<Record>, Serializable {
 
     private static final long serialVersionUID = 5810954671977163993L;
 
-    // TODO record original data as well as cleaned.
     private int id;
     private String data;
+    private String original_data;
     private Classification classification;  // TODO restore support for multiple classifications
 
     private int hash_code;
 
+    /**
+     * Required for JSON deserialization.
+     */
     public Record() {
-
     }
 
     /**
@@ -61,15 +62,23 @@ public class Record implements Comparable<Record>, Serializable {
      */
     public Record(final int id, final String data, final Classification classification) {
 
-        Objects.requireNonNull(classification, "record classification cannot be null");
+        this(id, data, data, classification);
+    }
+
+    public Record(final int id, final String data, final String original_data ,final Classification classification) {
 
         this.id = id;
         this.data = data;
+        this.original_data = original_data;
         this.classification = classification;
 
         // Previously used Objects.hash(id, data, classification) but that gave clashes.
-        // Need to check for duplicate IDs when populating bucket.
         hash_code = id;
+    }
+
+    public int getId() {
+
+        return id;
     }
 
     /**
@@ -82,9 +91,9 @@ public class Record implements Comparable<Record>, Serializable {
         return data;
     }
 
-    public int getId() {
+    public String getOriginalData() {
 
-        return id;
+        return original_data;
     }
 
     /**
@@ -112,7 +121,7 @@ public class Record implements Comparable<Record>, Serializable {
     @Override
     public String toString() {
 
-        return "Record [id=" + id + ", data=" + data + ", classification=" + classification + "]";
+        return "Record [id=" + id + ", data=" + data + ", orig_data=" + original_data + ", classification=" + classification + "]";
     }
 
     @Override

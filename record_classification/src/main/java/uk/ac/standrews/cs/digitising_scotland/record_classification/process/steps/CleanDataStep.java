@@ -16,37 +16,24 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps;
 
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.Cleaner;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassificationContext;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.Step;
 
-/**
- * Classifies unseen records and stores the results in a classification process {@link ClassificationContext context}.
- *
- * @author Masih Hajiarab Derkani
- */
-public class ClassifyUnseenRecordsStep implements Step {
+public class CleanDataStep implements Step {
 
-    private static final long serialVersionUID = 292143932733171808L;
-//    private final Bucket unseen_records;
+    private final Cleaner cleaner;
 
-    /**
-     * Instantiates a new unseen record classification step.
-     *
-//     * @param unseen_records the unseen records to classify
-     */
-    public ClassifyUnseenRecordsStep() {
+    public CleanDataStep(Cleaner cleaner) {
 
-//        this.unseen_records = unseen_records;
+        this.cleaner = cleaner;
     }
 
     @Override
-    public void perform(final ClassificationContext context) {
+    public void perform(ClassificationContext context) {
 
-        final Classifier classifier = context.getClassifier();
-        final Bucket classified_unseen_records = classifier.classify(context.getUnseenRecords());
-
-        context.addClassifiedUnseenRecords(classified_unseen_records);
+        final Bucket cleaned_records = cleaner.apply(context.getUnseenRecords());
+        context.setUnseenRecords(cleaned_records);
     }
 }

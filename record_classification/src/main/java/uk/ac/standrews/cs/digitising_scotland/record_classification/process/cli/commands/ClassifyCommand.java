@@ -14,13 +14,15 @@
  * You should have received a copy of the GNU General Public License along with record_classification. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli;
+package uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.commands;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.beust.jcommander.converters.PathConverter;
 import org.apache.commons.csv.CSVFormat;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.Command;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.Launcher;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassificationContext;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.serialization.SerializationFormat;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.ClassifyUnseenRecordsStep;
@@ -29,6 +31,7 @@ import uk.ac.standrews.cs.util.tools.FileManipulation;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -37,7 +40,7 @@ import java.util.List;
  * @author Masih Hajiarab Derkani
  */
 @Parameters(commandNames = ClassifyCommand.NAME, commandDescription = "Classify unseen data")
-class ClassifyCommand extends Command {
+public class ClassifyCommand extends Command {
 
     /** The name of this command */
     public static final String NAME = "classify";
@@ -61,12 +64,14 @@ class ClassifyCommand extends Command {
 
         try {
             final CSVFormat input_format = getDataFormat(delimiter);
-            final DataSet unseen_data_set = new DataSet(FileManipulation.getInputStreamReader(unseen_data.get(0)), input_format);
-            final List<String> labels = unseen_data_set.getColumnLabels();
-            final Bucket unseen_data = new Bucket(unseen_data_set);
-            new ClassifyUnseenRecordsStep(unseen_data).perform(context);
+//            final DataSet unseen_data_set = new DataSet(FileManipulation.getInputStreamReader(unseen_data.get(0)), input_format);
+//            final List<String> labels = unseen_data_set.getColumnLabels();
+//            final Bucket unseen_data = new Bucket(unseen_data_set);
+            new ClassifyUnseenRecordsStep().perform(context);
 
-            final DataSet classified_data_set = context.getClassifiedUnseenRecords().toDataSet(labels, input_format);
+            // TODO split into separate steps for classifying and exporting results.
+
+            final DataSet classified_data_set = context.getClassifiedUnseenRecords().toDataSet(Arrays.asList("id", "data", "code"), input_format);
             persistDataSet(destination, classified_data_set);
         }
         catch (IOException e) {
@@ -78,6 +83,5 @@ class ClassifyCommand extends Command {
 
         Launcher.main(addArgs(
                 new String[]{NAME, unseen_data.toString(), DESTINATION_FLAG_SHORT, destination.toString()}, serialization_format, process_name, process_directory));
-
     }
 }

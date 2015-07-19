@@ -16,60 +16,38 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps;
 
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.Charsets;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassificationContext;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.Step;
 
-import java.io.*;
 import java.nio.charset.Charset;
-import java.nio.file.*;
+import java.nio.file.Path;
 
 /**
  * Loads gold standard records from a file into a classification process {@link ClassificationContext context}.
  *
  * @author Masih Hajiarab Derkani
  */
-public class LoadGoldStandardFromFileStep implements Step {
+public class LoadGoldStandardStep extends LoadStep {
 
     private static final long serialVersionUID = 7742825393693404041L;
-
-    private final Path path;
-    private final Charset charset;
-    private final char delimiter;
-
-    public static final Charsets DEFAULT_CHARSET = Charsets.UTF_8;
-
-    public static final char DEFAULT_DELIMITER = ',';
 
     /**
      * Instantiates a new step which loads a gold standard CSV file into a classification process {@link ClassificationContext context}.
      *
      * @param path the file to the CSV file
      */
-    public LoadGoldStandardFromFileStep(Path path) {
+    public LoadGoldStandardStep(Path path) {
 
-        this(path, DEFAULT_CHARSET.get(), DEFAULT_DELIMITER);
+        super(path);
     }
 
-    public LoadGoldStandardFromFileStep(Path path, Charset charset, char delimiter) {
+    public LoadGoldStandardStep(Path path, Charset charset, char delimiter) {
 
-        this.path = path;
-        this.charset = charset;
-        this.delimiter = delimiter;
+        super(path, charset, delimiter);
     }
 
-    @Override
-    public void perform(final ClassificationContext context)  {
+    protected Bucket getRecords(ClassificationContext context) {
 
-        try (final BufferedReader reader = Files.newBufferedReader(path, charset)) {
-
-            final Bucket bucket = new Bucket(reader, delimiter);
-            context.getGoldStandardRecords().add(bucket);
-
-
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        return context.getGoldStandardRecords();
     }
 }
