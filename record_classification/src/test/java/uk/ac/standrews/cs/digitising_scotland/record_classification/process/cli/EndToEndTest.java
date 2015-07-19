@@ -16,7 +16,6 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -39,37 +38,8 @@ import java.util.List;
 import static org.junit.Assert.*;
 
 @RunWith(Parameterized.class)
-public class EndToEndTest {
+public class EndToEndTest extends EndToEndCommon {
 
-    private static final String CLASSIFIED_FILE_NAME = "classified.csv";
-    private static final String GOLD_STANDARD_FILE_NAME = "test_training_data.csv";
-    private static final String EVALUATION_FILE_NAME = "test_evaluation_data.csv";
-
-    SerializationFormat serialization_format;
-    String process_name;
-    Classifiers classifier_supplier;
-    double training_ratio;
-
-    Path temp_process_directory;
-    Path input_gold_standard_file;
-    Path output_trained_model_file;
-
-    Path input_unseen_data_file;
-    Path output_classified_file;
-
-    @Before
-    public void setup() throws IOException {
-
-        process_name = Command.PROCESS_NAME;
-        training_ratio = 0.8;
-
-        temp_process_directory = Files.createTempDirectory(process_name + "_");
-        input_gold_standard_file = FileManipulation.getResourcePath(EndToEndTest.class, GOLD_STANDARD_FILE_NAME);
-        output_trained_model_file = Command.getSerializedContextPath(temp_process_directory, process_name, serialization_format);
-
-        input_unseen_data_file = FileManipulation.getResourcePath(EndToEndTest.class, EVALUATION_FILE_NAME);
-        output_classified_file = Command.getProcessWorkingDirectory(temp_process_directory, process_name).resolve(CLASSIFIED_FILE_NAME);
-    }
 
     @Parameterized.Parameters(name = "{0}, {1}")
     public static Collection<Object[]> generateData() {
@@ -91,6 +61,10 @@ public class EndToEndTest {
 
         this.classifier_supplier = classifier_supplier;
         this.serialization_format = serialization_format;
+
+        input_gold_standard_file = FileManipulation.getResourcePath(EndToEndTest.class, GOLD_STANDARD_FILE_NAME);
+
+        input_unseen_data_file = FileManipulation.getResourcePath(EndToEndTest.class, EVALUATION_FILE_NAME);
     }
 
     @Test
@@ -119,11 +93,6 @@ public class EndToEndTest {
         assertTrainedModelFileExists();
     }
 
-    private void initLoadTrain() throws Exception {
-
-        InitLoadTrainCommand.initLoadTrain(classifier_supplier, input_gold_standard_file, training_ratio, serialization_format, process_name, temp_process_directory);
-    }
-
     private void assertTrainedModelFileExists() {
 
         assertFileExists(output_trained_model_file);
@@ -131,18 +100,12 @@ public class EndToEndTest {
 
     private void checkClassification() throws Exception {
 
-        final Path classified_file = classify();
+        final Path classified_file = loadCleanClassify();
 
         assertFileExists(classified_file);
         assertSameNumberOfRecords(classified_file, input_gold_standard_file);
         assertRecordsContainExpectedContent(classified_file);
         assertRecordsConsistentlyClassified(classified_file);
-    }
-
-    private Path classify() throws Exception {
-
-        ClassifyCommand.classify(input_unseen_data_file, output_classified_file, serialization_format, process_name, temp_process_directory);
-        return output_classified_file;
     }
 
     private void assertFileExists(Path path) {

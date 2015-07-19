@@ -50,7 +50,7 @@ public class EvaluationExperimentProcess extends ClassificationProcess {
     public void configureSteps() {
 
         for (Path gold_standard_file : gold_standard_files) {
-            addStep(new LoadGoldStandardFromFileStep(gold_standard_file));
+            addStep(new LoadGoldStandardStep(gold_standard_file));
         }
 
         for (Cleaner cleaner : cleaners) {

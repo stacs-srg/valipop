@@ -19,6 +19,9 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.ParameterException;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.commands.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.composite.InitLoadCleanTrainCommand;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.composite.LoadCleanClassifyCommand;
 
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.NoSuchFileException;
@@ -43,13 +46,17 @@ public class Launcher {
         commander = new JCommander(this);
         commander.setProgramName(PROGRAM_NAME);
 
-        addCommand(new InitCommand());
-        addCommand(new LoadCommand());
-        addCommand(new CleanCommand());
-        addCommand(new TrainCommand());
-        addCommand(new EvaluateCommand());
         addCommand(new ClassifyCommand());
-        addCommand(new InitLoadTrainCommand());
+        addCommand(new CleanDataCommand());
+        addCommand(new CleanGoldStandardCommand());
+        addCommand(new EvaluateCommand());
+        addCommand(new InitCommand());
+        addCommand(new LoadDataCommand());
+        addCommand(new LoadGoldStandardCommand());
+        addCommand(new TrainCommand());
+
+        addCommand(new InitLoadCleanTrainCommand());
+        addCommand(new LoadCleanClassifyCommand());
     }
 
     void addCommand(Command command) {
@@ -75,6 +82,7 @@ public class Launcher {
             launcher.reportError("expected context file '" + e.getFile() + "' not found.");
         }
         catch (Exception e) {
+            e.printStackTrace();
             launcher.reportError(e.getMessage());
         }
     }

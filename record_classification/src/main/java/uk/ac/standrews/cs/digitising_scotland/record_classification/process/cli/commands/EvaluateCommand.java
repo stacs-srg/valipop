@@ -14,13 +14,14 @@
  * You should have received a copy of the GNU General Public License along with record_classification. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli;
+package uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.commands;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.beust.jcommander.converters.FileConverter;
 import org.apache.commons.csv.CSVFormat;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.ClassificationMetrics;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.Command;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassificationContext;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.EvaluateClassifierStep;
 import uk.ac.standrews.cs.util.dataset.DataSet;
@@ -34,7 +35,7 @@ import java.util.List;
  * @author Masih Hajiarab Derkani
  */
 @Parameters(commandNames = EvaluateCommand.NAME, commandDescription = "Evaluate classifier")
-class EvaluateCommand extends Command {
+public class EvaluateCommand extends Command {
 
     /**
      * The name of this command

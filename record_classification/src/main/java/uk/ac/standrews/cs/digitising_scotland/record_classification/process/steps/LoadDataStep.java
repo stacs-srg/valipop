@@ -16,37 +16,38 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps;
 
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassificationContext;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.Step;
+
+import java.nio.charset.Charset;
+import java.nio.file.Path;
 
 /**
- * Classifies unseen records and stores the results in a classification process {@link ClassificationContext context}.
+ * Loads gold standard records from a file into a classification process {@link ClassificationContext context}.
  *
  * @author Masih Hajiarab Derkani
  */
-public class ClassifyUnseenRecordsStep implements Step {
+public class LoadDataStep extends LoadStep {
 
-    private static final long serialVersionUID = 292143932733171808L;
-//    private final Bucket unseen_records;
+    private static final long serialVersionUID = 7742825393693404041L;
 
     /**
-     * Instantiates a new unseen record classification step.
+     * Instantiates a new step which loads a gold standard CSV file into a classification process {@link ClassificationContext context}.
      *
-//     * @param unseen_records the unseen records to classify
+     * @param path the file to the CSV file
      */
-    public ClassifyUnseenRecordsStep() {
+    public LoadDataStep(Path path) {
 
-//        this.unseen_records = unseen_records;
+        super(path);
     }
 
-    @Override
-    public void perform(final ClassificationContext context) {
+    public LoadDataStep(Path path, Charset charset, char delimiter) {
 
-        final Classifier classifier = context.getClassifier();
-        final Bucket classified_unseen_records = classifier.classify(context.getUnseenRecords());
+        super(path, charset, delimiter);
+    }
 
-        context.addClassifiedUnseenRecords(classified_unseen_records);
+    protected Bucket getRecords(ClassificationContext context) {
+
+        return context.getUnseenRecords();
     }
 }

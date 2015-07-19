@@ -14,13 +14,16 @@
  * You should have received a copy of the GNU General Public License along with record_classification. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli;
+package uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.commands;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.beust.jcommander.converters.PathConverter;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.Command;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.Launcher;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassificationContext;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.LoadGoldStandardFromFileStep;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.serialization.SerializationFormat;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.LoadGoldStandardStep;
 
 import java.nio.file.Path;
 
@@ -29,17 +32,17 @@ import java.nio.file.Path;
  *
  * @author Masih Hajiarab Derkani
  */
-@Parameters(commandNames = LoadCommand.NAME, commandDescription = "Train classifier")
-class LoadCommand extends Command {
+@Parameters(commandNames = LoadGoldStandardCommand.NAME, commandDescription = "Train classifier")
+public class LoadGoldStandardCommand extends Command {
 
     /** The name of this command */
-    public static final String NAME = "load";
+    public static final String NAME = "load_gold_standard";
 
     private static final long serialVersionUID = 8026292848547343006L;
 
-    protected static final String GOLD_STANDARD_DESCRIPTION = "Path to a CSV file containing the gold standard.";
-    protected static final String GOLD_STANDARD_FLAG_SHORT = "-g";
-    protected static final String GOLD_STANDARD_FLAG_LONG = "--goldStandard";
+    public static final String GOLD_STANDARD_DESCRIPTION = "Path to a CSV file containing the gold standard.";
+    public static final String GOLD_STANDARD_FLAG_SHORT = "-g";
+    public static final String GOLD_STANDARD_FLAG_LONG = "--goldStandard";
 
     @Parameter(required = true, names = {GOLD_STANDARD_FLAG_SHORT, GOLD_STANDARD_FLAG_LONG}, description = GOLD_STANDARD_DESCRIPTION, converter = PathConverter.class)
     private Path gold_standard;
@@ -47,6 +50,12 @@ class LoadCommand extends Command {
     @Override
     public void perform(final ClassificationContext context)  {
 
-        new LoadGoldStandardFromFileStep(gold_standard, charset.get(), delimiter).perform(context);
+        new LoadGoldStandardStep(gold_standard, charset.get(), delimiter).perform(context);
+    }
+
+    public static void loadGoldStandard(Path gold_standard, SerializationFormat serialization_format, String process_name, Path process_directory) throws Exception {
+
+        Launcher.main(addArgs(
+                new String[]{NAME, GOLD_STANDARD_FLAG_SHORT, gold_standard.toString()}, serialization_format, process_name, process_directory));
     }
 }

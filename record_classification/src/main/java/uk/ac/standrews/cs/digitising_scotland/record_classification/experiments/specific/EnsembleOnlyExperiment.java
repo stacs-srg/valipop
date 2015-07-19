@@ -43,6 +43,7 @@ public class EnsembleOnlyExperiment extends Experiment {
     @Override
     protected List<ClassifierFactory> getClassifierFactories() throws IOException, InputFileFormatException {
 
+        //noinspection ArraysAsListWithZeroOrOneArgument
         return Arrays.asList(() -> new EnsembleVotingClassifier(
                 Arrays.asList(
                         new StringSimilarityClassifier(StringSimilarityMetrics.LEVENSHTEIN.get()),

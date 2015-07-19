@@ -14,13 +14,18 @@
  * You should have received a copy of the GNU General Public License along with record_classification. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli;
+package uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.commands;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.Command;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.Launcher;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassificationContext;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.serialization.SerializationFormat;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.AddTrainingAndEvaluationRecordsByRatioStep;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.TrainClassifierStep;
+
+import java.nio.file.Path;
 
 /**
  * The train command of classification process command line interface.
@@ -28,16 +33,16 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.process.step
  * @author Masih Hajiarab Derkani
  */
 @Parameters(commandNames = TrainCommand.NAME, commandDescription = "Train classifier")
-class TrainCommand extends Command {
+public class TrainCommand extends Command {
 
     /** The name of this command */
     public static final String NAME = "train";
 
     private static final long serialVersionUID = 8026292848547343006L;
 
-    protected static final String TRAINING_RATIO_DESCRIPTION = "The ratio of gold standard records to be used for training. The value must be between 0.0 to 1.0 (inclusive).";
-    protected static final String TRAINING_RATIO_FLAG_SHORT = "-r";
-    protected static final String TRAINING_RATIO_FLAG_LONG = "--trainingRecordRatio";
+    public static final String TRAINING_RATIO_DESCRIPTION = "The ratio of gold standard records to be used for training. The value must be between 0.0 to 1.0 (inclusive).";
+    public static final String TRAINING_RATIO_FLAG_SHORT = "-r";
+    public static final String TRAINING_RATIO_FLAG_LONG = "--trainingRecordRatio";
 
     @Parameter(required = true, names = {TRAINING_RATIO_FLAG_SHORT, TRAINING_RATIO_FLAG_LONG}, description = TRAINING_RATIO_DESCRIPTION)
     private Double training_ratio;
@@ -47,5 +52,11 @@ class TrainCommand extends Command {
 
         new AddTrainingAndEvaluationRecordsByRatioStep(training_ratio).perform(context);
         new TrainClassifierStep().perform(context);
+    }
+
+    public static void train(double training_ratio, SerializationFormat serialization_format, String process_name, Path process_directory) throws Exception {
+
+        Launcher.main(addArgs(
+                new String[]{NAME, TRAINING_RATIO_FLAG_SHORT, String.valueOf(training_ratio)}, serialization_format, process_name, process_directory));
     }
 }

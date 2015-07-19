@@ -76,6 +76,7 @@ public class VotingResolutionStrategyTest {
 
         Classification classification_1 = new Classification("abc", new TokenList("abc"), 0.5);
 
+        //noinspection ArraysAsListWithZeroOrOneArgument
         return new Object[]{"single", Arrays.asList(classification_1), classification_1};
     }
 

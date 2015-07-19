@@ -14,12 +14,16 @@
  * You should have received a copy of the GNU General Public License along with record_classification. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli;
+package uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.commands;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.Classifiers;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.Command;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.Launcher;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassificationContext;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.serialization.Serialization;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.serialization.SerializationFormat;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -32,7 +36,7 @@ import java.util.Random;
  * @author Graham Kirby
  */
 @Parameters(commandNames = InitCommand.NAME, commandDescription = "Initialise a new classification process", separators = "=")
-class InitCommand extends Command {
+public class InitCommand extends Command {
 
     /**
      * The name of this command
@@ -43,9 +47,9 @@ class InitCommand extends Command {
 
     private static final long serialVersionUID = 5738604903474935932L;
 
-    protected static final String CLASSIFIER_DESCRIPTION = "The classifier to use for the classification process.";
-    protected static final String CLASSIFIER_FLAG_SHORT = "-c";
-    protected static final String CLASSIFIER_FLAG_LONG = "--classifier";
+    public static final String CLASSIFIER_DESCRIPTION = "The classifier to use for the classification process.";
+    public static final String CLASSIFIER_FLAG_SHORT = "-c";
+    public static final String CLASSIFIER_FLAG_LONG = "--classifier";
 
     @Parameter(required = true, names = {CLASSIFIER_FLAG_SHORT, CLASSIFIER_FLAG_LONG}, description = CLASSIFIER_DESCRIPTION)
     private Classifiers classifier_supplier;
@@ -55,7 +59,7 @@ class InitCommand extends Command {
 
         ClassificationContext context = new ClassificationContext(classifier_supplier.get(), new Random(SEED));
 
-        Path process_working_directory = getProcessWorkingDirectory(process_directory, name);
+        Path process_working_directory = Serialization.getProcessWorkingDirectory(process_directory, name);
         Files.createDirectory(process_working_directory);
         persistContext(context);
 
@@ -64,5 +68,11 @@ class InitCommand extends Command {
 
     @Override
     public void perform(final ClassificationContext context) {
+    }
+
+    public static void init(Classifiers classifier_supplier, SerializationFormat serialization_format, String process_name, Path process_directory) throws Exception {
+
+        Launcher.main(addArgs(
+                new String[]{NAME, CLASSIFIER_FLAG_SHORT, classifier_supplier.toString()}, serialization_format, process_name, process_directory));
     }
 }
