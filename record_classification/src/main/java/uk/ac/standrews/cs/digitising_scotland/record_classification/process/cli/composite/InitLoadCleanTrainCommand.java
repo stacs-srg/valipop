@@ -35,16 +35,29 @@ import java.util.List;
 /**
  * Composite command that initialises, loads gold standard, cleans and trains.
  *
+ * Example command line invocation:
+ *
+ * <code>
+ *   java uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.Launcher
+ *   init_load_clean_train
+ *   -g /Users/graham/Desktop/gold_standard.csv
+ *   -p /Users/graham/Desktop/process_state
+ *   -c EXACT_MATCH_PLUS_VOTING_ENSEMBLE
+ *   -r 0.8
+ *   -f JSON
+ *   -cl STOP_WORDS -cl PORTER_STEM -cl CONSISTENT_CLASSIFICATION_CLEANER_CORRECT
+ * </code>
+ *
  * @author Masih Hajiarab Derkani
  * @author Graham Kirby
  */
-@Parameters(commandNames = InitLoadCleanTrainCommand.NAME, commandDescription = "Initialise process, load training data, and train classifier")
+@Parameters(commandNames = InitLoadCleanTrainCommand.NAME, commandDescription = "Initialise process, load and clean training data, train classifier")
 public class InitLoadCleanTrainCommand extends Command {
 
     /**
      * The name of this command
      */
-    public static final String NAME = "init_load_train";
+    public static final String NAME = "init_load_clean_train";
     private static final long serialVersionUID = 8026292848547343006L;
 
     @Parameter(required = true, names = {InitCommand.CLASSIFIER_FLAG_SHORT, InitCommand.CLASSIFIER_FLAG_LONG}, description = InitCommand.CLASSIFIER_DESCRIPTION)

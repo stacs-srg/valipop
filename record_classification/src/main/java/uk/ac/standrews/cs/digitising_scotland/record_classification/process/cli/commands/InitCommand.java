@@ -60,7 +60,7 @@ public class InitCommand extends Command {
         ClassificationContext context = new ClassificationContext(classifier_supplier.get(), new Random(SEED));
 
         Path process_working_directory = Serialization.getProcessWorkingDirectory(process_directory, name);
-        Files.createDirectory(process_working_directory);
+        Files.createDirectories(process_working_directory);
         persistContext(context);
 
         return null; // void task
