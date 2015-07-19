@@ -23,6 +23,7 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.lang3.SerializationUtils;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassificationContext;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.Step;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.serialization.SerializationFormat;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.serialization.json.ProcessObjectMapper;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.LoadGoldStandardFromFileStep;
 import uk.ac.standrews.cs.util.dataset.DataSet;
@@ -92,10 +93,6 @@ abstract class Command implements Callable<Void>, Step {
 
     @Parameter(names = {PROCESS_DIRECTORY_FLAG_SHORT, PROCESS_DIRECTORY_FLAG_LONG}, description = PROCESS_DIRECTORY_DESCRIPTION)
     protected Path process_directory;
-
-    protected enum SerializationFormat {
-        JAVA_SERIALIZATION, JSON, COMPRESSED_JSON
-    }
 
     private ObjectMapper json_mapper = new ProcessObjectMapper();
 
