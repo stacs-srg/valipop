@@ -24,9 +24,14 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Classi
 
 public class ClassifierPlusExactMatchClassifier implements Classifier {
 
-    private final Classifier classifier;
-    private final ExactMatchClassifier exact_match_classifier;
+    private Classifier classifier;
+    private ExactMatchClassifier exact_match_classifier;
 
+    /**
+     * Needed for JSON deserialization.
+     */
+    public ClassifierPlusExactMatchClassifier() {
+    }
 
     public ClassifierPlusExactMatchClassifier(Classifier classifier) {
 
@@ -35,21 +40,20 @@ public class ClassifierPlusExactMatchClassifier implements Classifier {
     }
 
     @Override
-    public void train(final Bucket bucket)  {
+    public void train(final Bucket bucket) {
 
         classifier.train(bucket);
         exact_match_classifier.train(bucket);
     }
 
     @Override
-    public Classification classify(String data)  {
+    public Classification classify(String data) {
 
         Classification result = exact_match_classifier.classify(data);
 
         if (result != Classification.UNCLASSIFIED) {
             return result;
-        }
-        else {
+        } else {
             return classifier.classify(data);
         }
     }

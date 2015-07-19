@@ -44,6 +44,9 @@ public class ProcessObjectMapper extends ObjectMapper {
         // Needed for non-camel-case field names e.g. in ClassificationContext.
         setPropertyNamingStrategy(PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES);
 
+        // Needed for .
+        disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
+
         // To make serialized data easier to read.
         enable(SerializationFeature.INDENT_OUTPUT);
 

@@ -37,25 +37,21 @@ public enum Classifiers implements Supplier<Classifier> {
 
     EXACT_MATCH(ExactMatchClassifier::new),
 
-    STRING_SIMILARITY_LEVENSHTEIN(() -> new StringSimilarityClassifier(StringSimilarityMetrics.LEVENSHTEIN.get())),
-    STRING_SIMILARITY_JARO_WINKLER(() -> new StringSimilarityClassifier(StringSimilarityMetrics.JARO_WINKLER.get())),
-    STRING_SIMILARITY_JACCARD(() -> new StringSimilarityClassifier(StringSimilarityMetrics.JACCARD.get())),
-    STRING_SIMILARITY_DICE(() -> new StringSimilarityClassifier(StringSimilarityMetrics.DICE.get())),
+    STRING_SIMILARITY_LEVENSHTEIN(Classifiers::makeLevenshteinClassifier),
+    STRING_SIMILARITY_JARO_WINKLER(Classifiers::makeJaroWinklerClassifier),
+    STRING_SIMILARITY_JACCARD(Classifiers::makeJaccardClassifier),
+    STRING_SIMILARITY_DICE(Classifiers::makeDiceClassifier),
 
     OLR(OLRClassifier::new),
 
-    EXACT_MATCH_PLUS_STRING_SIMILARITY_LEVENSHTEIN(
-            () -> new ClassifierPlusExactMatchClassifier(new StringSimilarityClassifier(StringSimilarityMetrics.LEVENSHTEIN.get()))),
-    EXACT_MATCH_PLUS_STRING_SIMILARITY_JARO_WINKLER(
-            () -> new ClassifierPlusExactMatchClassifier(new StringSimilarityClassifier(StringSimilarityMetrics.JARO_WINKLER.get()))),
-    EXACT_MATCH_PLUS_STRING_SIMILARITY_JACCARD(
-            () -> new ClassifierPlusExactMatchClassifier(new StringSimilarityClassifier(StringSimilarityMetrics.JACCARD.get()))),
-    EXACT_MATCH_PLUS_STRING_SIMILARITY_DICE(
-            () -> new ClassifierPlusExactMatchClassifier(new StringSimilarityClassifier(StringSimilarityMetrics.DICE.get()))),
-    EXACT_MATCH_PLUS_OLR(
-            () -> new ClassifierPlusExactMatchClassifier(new OLRClassifier())),
-    VOTING_ENSEMBLE(
-            () -> new EnsembleVotingClassifier(Arrays.asList(STRING_SIMILARITY_LEVENSHTEIN.get(), STRING_SIMILARITY_DICE.get(), STRING_SIMILARITY_JACCARD.get(), STRING_SIMILARITY_JARO_WINKLER.get(), OLR.get())));
+    VOTING_ENSEMBLE(Classifiers::makeVotingEnsembleClassifier),
+
+    EXACT_MATCH_PLUS_STRING_SIMILARITY_LEVENSHTEIN(Classifiers::makeExactMatchPlusLevenshteinClassifier),
+    EXACT_MATCH_PLUS_STRING_SIMILARITY_JARO_WINKLER(Classifiers::makeExactMatchPlusJaroWinklerClassifier),
+    EXACT_MATCH_PLUS_STRING_SIMILARITY_JACCARD(Classifiers::makeExactMatchPlusJaccardClassifier),
+    EXACT_MATCH_PLUS_STRING_SIMILARITY_DICE(Classifiers::makeExactMatchPlusDiceClassifier),
+    EXACT_MATCH_PLUS_OLR(Classifiers::makeExactMatchPlusOLRClassifier),
+    EXACT_MATCH_PLUS_VOTING_ENSEMBLE(Classifiers::makeExactMatchPlusVotingEnsembleClassifier);
 
     private Supplier<Classifier> supplier;
 
@@ -73,5 +69,56 @@ public enum Classifiers implements Supplier<Classifier> {
 
         return Arrays.asList(STRING_SIMILARITY_DICE, STRING_SIMILARITY_JACCARD,
                 STRING_SIMILARITY_JARO_WINKLER, STRING_SIMILARITY_LEVENSHTEIN);
+    }
+
+    private static StringSimilarityClassifier makeDiceClassifier() {
+        return new StringSimilarityClassifier(StringSimilarityMetrics.DICE.get());
+    }
+
+    private static StringSimilarityClassifier makeJaccardClassifier() {
+        return new StringSimilarityClassifier(StringSimilarityMetrics.JACCARD.get());
+    }
+
+    private static StringSimilarityClassifier makeJaroWinklerClassifier() {
+        return new StringSimilarityClassifier(StringSimilarityMetrics.JARO_WINKLER.get());
+    }
+
+    private static StringSimilarityClassifier makeLevenshteinClassifier() {
+
+        return new StringSimilarityClassifier(StringSimilarityMetrics.LEVENSHTEIN.get());
+    }
+
+    private static EnsembleVotingClassifier makeVotingEnsembleClassifier() {
+
+        return new EnsembleVotingClassifier(Arrays.asList(
+                STRING_SIMILARITY_LEVENSHTEIN.get(),
+                STRING_SIMILARITY_DICE.get(),
+                STRING_SIMILARITY_JACCARD.get(),
+                STRING_SIMILARITY_JARO_WINKLER.get(),
+                OLR.get()));
+    }
+
+    private static ClassifierPlusExactMatchClassifier makeExactMatchPlusVotingEnsembleClassifier() {
+        return new ClassifierPlusExactMatchClassifier(makeVotingEnsembleClassifier());
+    }
+
+    private static ClassifierPlusExactMatchClassifier makeExactMatchPlusOLRClassifier() {
+        return new ClassifierPlusExactMatchClassifier(new OLRClassifier());
+    }
+
+    private static ClassifierPlusExactMatchClassifier makeExactMatchPlusDiceClassifier() {
+        return new ClassifierPlusExactMatchClassifier(makeDiceClassifier());
+    }
+
+    private static ClassifierPlusExactMatchClassifier makeExactMatchPlusJaccardClassifier() {
+        return new ClassifierPlusExactMatchClassifier(makeJaccardClassifier());
+    }
+
+    private static ClassifierPlusExactMatchClassifier makeExactMatchPlusJaroWinklerClassifier() {
+        return new ClassifierPlusExactMatchClassifier(makeJaroWinklerClassifier());
+    }
+
+    private static ClassifierPlusExactMatchClassifier makeExactMatchPlusLevenshteinClassifier() {
+        return new ClassifierPlusExactMatchClassifier(makeLevenshteinClassifier());
     }
 }
