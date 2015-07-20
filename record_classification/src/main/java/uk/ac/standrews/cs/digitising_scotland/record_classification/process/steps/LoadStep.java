@@ -36,9 +36,9 @@ public abstract class LoadStep implements Step {
 
     private static final long serialVersionUID = 774282123424314041L;
 
-    private final Path path;
-    private final Charset charset;
-    private final char delimiter;
+    protected final Path path;
+    protected final Charset charset;
+    protected final char delimiter;
 
     public static final Charsets DEFAULT_CHARSET = Charsets.UTF_8;
 

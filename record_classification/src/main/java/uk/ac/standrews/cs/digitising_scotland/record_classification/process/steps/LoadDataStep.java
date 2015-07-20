@@ -19,7 +19,10 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.process.ste
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassificationContext;
 
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 /**
@@ -44,6 +47,19 @@ public class LoadDataStep extends LoadStep {
     public LoadDataStep(Path path, Charset charset, String delimiter) {
 
         super(path, charset, delimiter);
+    }
+
+    @Override
+    public void perform(final ClassificationContext context)  {
+
+        try (final BufferedReader reader = Files.newBufferedReader(path, charset)) {
+
+            context.clearUnseenRecords();
+            context.getUnseenRecords().add(new Bucket(reader, delimiter));
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     protected Bucket getRecords(ClassificationContext context) {
