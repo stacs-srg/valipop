@@ -139,7 +139,7 @@ public class Bucket implements Iterable<Record>, Serializable {
         for (Record record : records) {
 
             final String column_0 = String.valueOf(record.getId());
-            final String column_1 = record.getData();
+            final String column_1 = record.getOriginalData();
             final String column_2 = record.getClassification().getCode();
 
             final List<String> row = Arrays.asList(column_0, column_1, column_2);

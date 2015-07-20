@@ -170,7 +170,7 @@ public class EndToEndTest extends EndToEndCommon {
                 SerializationFormat.JSON_COMPRESSED,
                 SerializationFormat.JAVA_SERIALIZATION);
 
-        List<TestInfo> cases = Arrays.asList(makeCase1(), makeCase2(), makeCase3(), makeCase4());
+        List<TestInfo> cases = Arrays.asList(makeCase1(), makeCase2(), makeCase3(), makeCase4(), makeCase5());
 
         return allCombinations(classifiers, serialization_formats, cases);
     }
@@ -178,14 +178,14 @@ public class EndToEndTest extends EndToEndCommon {
     private static TestInfo makeCase1() {
 
         return new TestInfo("case1",
-                Arrays.asList("test_training_data.csv"), "test_evaluation_data.csv",
+                Arrays.asList("test_training_data.csv"), "test_evaluation_UTF8_unix.csv",
                 Arrays.asList(Charsets.UTF_8), Charsets.UTF_8, Arrays.asList(","), ",");
     }
 
     private static TestInfo makeCase2() {
 
         return new TestInfo("case2",
-                Arrays.asList("test_training_data.csv"), "test_evaluation_data.txt",
+                Arrays.asList("test_training_UTF8_unix.csv"), "test_evaluation_UTF8_windows.txt",
                 Arrays.asList(Charsets.UTF_8), Charsets.UTF_8, Arrays.asList(","), "|");
     }
 
@@ -201,6 +201,13 @@ public class EndToEndTest extends EndToEndCommon {
         return new TestInfo("case4",
                 Arrays.asList("gold_standard1.csv", "gold_standard2.csv"), "unseen_data.csv",
                 null, null, null, null);
+    }
+
+    private static TestInfo makeCase5() {
+
+        return new TestInfo("case5",
+                Arrays.asList("test_training_ascii_unix.csv", "test_training_iso_latin1_unix.csv", "test_training_UTF16_unix.csv", "test_training_windows_windows.csv"), "test_evaluation_ascii_windows.csv",
+        Arrays.asList(Charsets.US_ASCII, Charsets.ISO_8859_1, Charsets.UTF_16, Charsets.UTF_8), Charsets.UTF_8, Arrays.asList(",", ",", ",", ",", ","), ",");
     }
 
     private List<Path> getGoldStandardFiles(TestInfo test_info) {

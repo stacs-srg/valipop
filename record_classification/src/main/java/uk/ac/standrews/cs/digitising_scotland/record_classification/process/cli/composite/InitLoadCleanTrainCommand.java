@@ -40,14 +40,21 @@ import java.util.List;
  * <code>
  *   java uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.Launcher
  *   init_load_clean_train
- *   -g /Users/graham/Desktop/cambridge.csv
- *   -g /Users/graham/Desktop/hisco.csv
- *   -p /Users/graham/Desktop/trained_hisco_classifier
+ *   -g cambridge.csv
+ *   -g hisco.csv
+ *   -p trained_hisco_classifier
  *   -c EXACT_MATCH_PLUS_VOTING_ENSEMBLE
  *   -r 1.0
  *   -f JSON_COMPRESSED
  *   -cl COMBINED
  * </code>
+ *
+ * Or via Maven:
+ *
+ *   mvn exec:java -q -Dexec.cleanupDaemonThreads=false
+ *   -Dexec.mainClass="uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.Launcher" -e
+ *   -Dexec.args="init_load_clean_train -g cambridge.csv -g hisco.csv -p trained_hisco_classifier
+ *   -c EXACT_MATCH_PLUS_VOTING_ENSEMBLE -r 1.0 -f JSON_COMPRESSED -cl COMBINED"
  *
  * @author Masih Hajiarab Derkani
  * @author Graham Kirby

@@ -39,7 +39,7 @@ public class EndToEndCommon {
     private static final String CLASSIFIED_FILE_NAME = "classified.csv";
 
     // Set to false if there's a need to inspect the serialized context or classified output after the test.
-    private static final boolean CLEAN_UP = true;
+    private static final boolean CLEAN_UP = false;
 
     List<Charsets> gold_standard_charsets;
     Charsets unseen_data_charsets;
