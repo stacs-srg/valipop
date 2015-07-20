@@ -59,11 +59,17 @@ public class Bucket implements Iterable<Record>, Serializable {
 
         for (List<String> record : data_set.getRecords()) {
 
-            int id = extractId(record);
-            String data = extractData(record);
-            Classification classification = extractClassification(record, data);
+            try {
+                int id = extractId(record);
+                String data = extractData(record);
+                Classification classification = extractClassification(record, data);
 
-            add(new Record(id, data, classification));
+                add(new Record(id, data, classification));
+            } catch (InputFileFormatException e) {
+
+                // If this is the first row, assume it's a header row and ignore exception.
+                if (records.size() > 0) throw e;
+            }
         }
     }
 

@@ -17,6 +17,7 @@
 package uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli;
 
 import com.beust.jcommander.Parameter;
+import com.beust.jcommander.converters.PathConverter;
 import org.apache.commons.csv.CSVFormat;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.commands.InitCommand;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassificationContext;
@@ -50,13 +51,13 @@ public abstract class Command implements Callable<Void>, Step {
     private static final String NAME_FLAG_SHORT = "-n";
     private static final String NAME_FLAG_LONG = "--name";
 
-    private static final String CHARSET_DESCRIPTION = "The data file charset";
-    private static final String CHARSET_FLAG_SHORT = "-ch";
-    private static final String CHARSET_FLAG_LONG = "--charset";
+    protected static final String CHARSET_DESCRIPTION = "The data file charset";
+    protected static final String CHARSET_FLAG_SHORT = "-ch";
+    protected static final String CHARSET_FLAG_LONG = "--charset";
 
-    private static final String DELIMITER_DESCRIPTION = "The data file delimiter character";
-    private static final String DELIMITER_FLAG_SHORT = "-dl";
-    private static final String DELIMITER_FLAG_LONG = "--delimiter";
+    protected static final String DELIMITER_DESCRIPTION = "The data file delimiter character";
+    protected static final String DELIMITER_FLAG_SHORT = "-dl";
+    protected static final String DELIMITER_FLAG_LONG = "--delimiter";
 
     public static final String CLEAN_DESCRIPTION = "A cleaner with which to clean the data";
     public static final String CLEAN_FLAG_SHORT = "-cl";
@@ -77,12 +78,12 @@ public abstract class Command implements Callable<Void>, Step {
     protected Charsets charset = LoadGoldStandardStep.DEFAULT_CHARSET;
 
     @Parameter(names = {DELIMITER_FLAG_SHORT, DELIMITER_FLAG_LONG}, description = DELIMITER_DESCRIPTION)
-    protected char delimiter = LoadGoldStandardStep.DEFAULT_DELIMITER;
+    protected String delimiter = LoadGoldStandardStep.DEFAULT_DELIMITER;
 
     @Parameter(names = {SERIALIZATION_FORMAT_FLAG_SHORT, SERIALIZATION_FORMAT_FLAG_LONG}, description = SERIALIZATION_FORMAT_DESCRIPTION)
     protected SerializationFormat serialization_format = SerializationFormat.JAVA_SERIALIZATION;
 
-    @Parameter(names = {PROCESS_DIRECTORY_FLAG_SHORT, PROCESS_DIRECTORY_FLAG_LONG}, description = PROCESS_DIRECTORY_DESCRIPTION)
+    @Parameter(names = {PROCESS_DIRECTORY_FLAG_SHORT, PROCESS_DIRECTORY_FLAG_LONG}, description = PROCESS_DIRECTORY_DESCRIPTION, converter = PathConverter.class)
     protected Path process_directory;
 
 
@@ -106,9 +107,9 @@ public abstract class Command implements Callable<Void>, Step {
         Serialization.persistContext(context, getSerializedContextPath(), serialization_format);
     }
 
-    protected CSVFormat getDataFormat(char delimiter) {
+    protected CSVFormat getDataFormat(String delimiter) {
 
-        return DataSet.DEFAULT_CSV_FORMAT.withDelimiter(delimiter);
+        return DataSet.DEFAULT_CSV_FORMAT.withDelimiter(delimiter.charAt(0));
     }
 
     protected void persistDataSet(Path destination, final DataSet dataset) throws IOException {

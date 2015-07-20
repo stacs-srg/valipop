@@ -33,8 +33,11 @@ import java.util.List;
 public class EndToEndCommon {
 
     static final String CLASSIFIED_FILE_NAME = "classified.csv";
-    static final String GOLD_STANDARD_FILE_NAME = "test_training_data.csv";
-    static final String EVALUATION_FILE_NAME = "test_evaluation_data.csv";
+
+    Charsets gold_standard_charsets;
+    Charsets unseen_data_charsets;
+    String gold_standard_delimiter;
+    String unseen_data_delimiter;
 
     SerializationFormat serialization_format;
     String process_name;
@@ -65,12 +68,12 @@ public class EndToEndCommon {
 
     protected void initLoadTrain() throws Exception {
 
-        InitLoadCleanTrainCommand.initLoadCleanTrain(classifier_supplier, input_gold_standard_file, training_ratio, serialization_format, process_name, temp_process_directory, cleaners);
+        InitLoadCleanTrainCommand.initLoadCleanTrain(classifier_supplier, input_gold_standard_file, gold_standard_charsets, gold_standard_delimiter, training_ratio, serialization_format, process_name, temp_process_directory, cleaners);
     }
 
     protected Path loadCleanClassify() throws Exception {
 
-        LoadCleanClassifyCommand.loadCleanClassify(input_unseen_data_file, output_classified_file, serialization_format, process_name, temp_process_directory, cleaners);
+        LoadCleanClassifyCommand.loadCleanClassify(input_unseen_data_file, unseen_data_charsets, unseen_data_delimiter, output_classified_file, serialization_format, process_name, temp_process_directory, cleaners);
 
         return output_classified_file;
     }

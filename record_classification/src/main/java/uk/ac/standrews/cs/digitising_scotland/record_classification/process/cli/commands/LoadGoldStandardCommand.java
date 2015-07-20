@@ -19,6 +19,7 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.beust.jcommander.converters.PathConverter;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.Charsets;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.Command;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.Launcher;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassificationContext;
@@ -53,9 +54,9 @@ public class LoadGoldStandardCommand extends Command {
         new LoadGoldStandardStep(gold_standard, charset.get(), delimiter).perform(context);
     }
 
-    public static void loadGoldStandard(Path gold_standard, SerializationFormat serialization_format, String process_name, Path process_directory) throws Exception {
+    public static void loadGoldStandard(Path gold_standard, Charsets charset, String delimiter, SerializationFormat serialization_format, String process_name, Path process_directory) throws Exception {
 
         Launcher.main(addArgs(
-                new String[]{NAME, GOLD_STANDARD_FLAG_SHORT, gold_standard.toString()}, serialization_format, process_name, process_directory));
+                new String[]{NAME, GOLD_STANDARD_FLAG_SHORT, gold_standard.toString(), CHARSET_FLAG_SHORT, charset.name(), DELIMITER_FLAG_SHORT, delimiter}, serialization_format, process_name, process_directory));
     }
 }

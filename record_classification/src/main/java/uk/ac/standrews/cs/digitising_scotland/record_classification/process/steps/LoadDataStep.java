@@ -41,7 +41,7 @@ public class LoadDataStep extends LoadStep {
         super(path);
     }
 
-    public LoadDataStep(Path path, Charset charset, char delimiter) {
+    public LoadDataStep(Path path, Charset charset, String delimiter) {
 
         super(path, charset, delimiter);
     }

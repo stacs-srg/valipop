@@ -85,7 +85,7 @@ public class SimpleVectorEncoder extends AbstractVectorEncoder<String> implement
 
     protected void updateDictionary(final String token) {
 
-        if (dictionary.get(token) == null) {
+        if (!dictionary.containsKey(token)) {
             dictionary.put(token, currentMaxTokenIndexValue++);
         }
     }

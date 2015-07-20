@@ -91,10 +91,6 @@ public class OLRCrossFold implements Serializable {
         }
     }
 
-    private ArrayList<NamedVector>[][] init(final List<NamedVector> trainingVectorList) {
-        return CrossFoldFactory.make(trainingVectorList, FOLDS);
-    }
-
     /**
      * Trains all the OLR models contained in this OLRCrossfold.
      */
@@ -183,5 +179,10 @@ public class OLRCrossFold implements Serializable {
         }
         classifierMatrix = classifierMatrix.divide(survivors.size());
         return classifierMatrix;
+    }
+
+    private ArrayList<NamedVector>[][] init(final List<NamedVector> trainingVectorList) {
+
+        return CrossFoldFactory.make(trainingVectorList, FOLDS);
     }
 }
