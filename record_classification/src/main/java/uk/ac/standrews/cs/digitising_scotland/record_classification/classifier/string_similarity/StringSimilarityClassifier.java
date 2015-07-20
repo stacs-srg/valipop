@@ -37,7 +37,7 @@ public class StringSimilarityClassifier implements Classifier {
     private static final long serialVersionUID = -6159276459112698341L;
 
     private SimilarityMetric similarity_metric;
-    private HashMap<String, Classification> known_classifications;
+    private Map<String, Classification> known_classifications;
 
     /**
      * @param similarity_metric the metric by which to calculate similarity between training and unseen data
@@ -95,5 +95,15 @@ public class StringSimilarityClassifier implements Classifier {
     public String toString() {
 
         return getName();
+    }
+
+    public Map<String, Classification> readState() {
+
+        return known_classifications;
+    }
+
+    public void writeState(Map<String, Classification> known_classifications) {
+
+        this.known_classifications = known_classifications;
     }
 }
