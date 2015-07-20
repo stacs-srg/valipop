@@ -41,6 +41,8 @@ public class EndToEndCleaningTest extends EndToEndCommon {
     static final String EVALUATION_FILE_NAME = "test_evaluation_data.csv";
 
     private static final List<String> SUFFIXES = Arrays.asList("ing", "s");
+    private static final List<String> PUNCTUATION_CHARACTERS =
+            Arrays.asList(".", ",","'","\"","!", "-", "+", "@", "|","<",">","%","&","*","(",")","/","\\");
 
     public EndToEndCleaningTest() {
 
@@ -91,9 +93,18 @@ public class EndToEndCleaningTest extends EndToEndCommon {
 
     private void assertClean(String s) {
 
+        assertNoPunctuation(s);
+
         for (String token : new TokenList(s)) {
             assertNotInStopWords(token);
             assertNoSuffix(token);
+        }
+    }
+
+    private void assertNoPunctuation(String s) {
+
+        for (String punctuation_character : PUNCTUATION_CHARACTERS) {
+            assertFalse(s.contains(punctuation_character));
         }
     }
 

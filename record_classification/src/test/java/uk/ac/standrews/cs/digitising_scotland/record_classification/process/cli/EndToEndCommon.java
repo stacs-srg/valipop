@@ -58,7 +58,7 @@ public class EndToEndCommon {
         process_name = Command.PROCESS_NAME;
         training_ratio = 0.8;
 
-        cleaners = Arrays.asList(Cleaners.STOP_WORDS, Cleaners.PORTER_STEM, Cleaners.CONSISTENT_CLASSIFICATION_CLEANER_CORRECT);
+        cleaners = Arrays.asList(Cleaners.COMBINED);
 
         temp_process_directory = Files.createTempDirectory(process_name + "_");
         output_trained_model_file = Serialization.getSerializedContextPath(temp_process_directory, process_name, serialization_format);

@@ -62,13 +62,7 @@ public class VectorFactory implements Serializable {
 
         for (Record record : bucket) {
 
-            // TODO replace with lower case cleaner.
-
-            for (String token : record.getClassification().getTokenList()) {
-
-                String descriptionLower = token.toLowerCase();
-                vectorEncoder.updateDictionary(descriptionLower);
-            }
+            record.getClassification().getTokenList().forEach(vectorEncoder::updateDictionary);
         }
     }
 
