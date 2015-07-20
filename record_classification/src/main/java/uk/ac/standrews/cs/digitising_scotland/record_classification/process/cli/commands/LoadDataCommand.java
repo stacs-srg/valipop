@@ -60,6 +60,8 @@ public class LoadDataCommand extends Command {
         // If delimiters are specified, use the last one for the unseen data file.
         String delimiter = getDelimiter();
 
+        System.out.println("loading data...");
+
         new LoadDataStep(data, charset, delimiter).perform(context);
     }
 
