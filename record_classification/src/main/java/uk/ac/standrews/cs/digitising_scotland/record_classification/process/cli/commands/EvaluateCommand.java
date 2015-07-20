@@ -43,11 +43,15 @@ public class EvaluateCommand extends Command {
     public static final String NAME = "evaluate";
     private static final long serialVersionUID = 4285779171774505978L;
 
+    private static final String OUTPUT_DELIMITER = ",";
+
     @Parameter(required = true, names = {"-o", "--output"}, description = "Path to the place to persist the evaluation results.", converter = FileConverter.class)
     private File destination;
 
     @Override
     public void perform(final ClassificationContext context) {
+
+        // TODO split into multiple commands to classify and to output metrics.
 
         try {
             List<ClassificationMetrics> results = new ArrayList<>();
@@ -55,8 +59,8 @@ public class EvaluateCommand extends Command {
             new EvaluateClassifierStep().perform(context);
             results.add(context.getClassificationMetrics());
 
-            final CSVFormat format = getDataFormat(delimiter);
-            final DataSet data_set = ClassificationMetrics.toDataSet(results, format);
+            final CSVFormat output_format = getDataFormat(OUTPUT_DELIMITER);
+            final DataSet data_set = ClassificationMetrics.toDataSet(results, output_format);
             persistDataSet(destination.toPath(), data_set);
         }
         catch (IOException e) {

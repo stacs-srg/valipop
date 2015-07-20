@@ -38,7 +38,9 @@ import java.util.List;
 @Parameters(commandNames = CleanGoldStandardCommand.NAME, commandDescription = "Cleans gold standard records", separators = "=")
 public class CleanGoldStandardCommand extends Command {
 
-    /** The name of this command */
+    /**
+     * The name of this command
+     */
     public static final String NAME = "clean_gold_standard";
     private static final long serialVersionUID = -5151083040631916098L;
 
@@ -46,7 +48,7 @@ public class CleanGoldStandardCommand extends Command {
     private List<Cleaners> cleaners;
 
     @Override
-    public void perform(final ClassificationContext context)  {
+    public void perform(final ClassificationContext context) {
 
         for (Cleaner cleaner : cleaners) {
             new CleanGoldStandardStep(cleaner).perform(context);
@@ -59,13 +61,13 @@ public class CleanGoldStandardCommand extends Command {
                 makeCleaningArgs(cleaners), serialization_format, process_name, process_directory));
     }
 
-     private static String[] makeCleaningArgs(List<Cleaners> cleaners) {
+    private static String[] makeCleaningArgs(List<Cleaners> cleaners) {
 
         String[] args = new String[cleaners.size() * 2 + 1];
 
         args[0] = NAME;
         int index = 1;
-        for (Cleaners cleaner : cleaners){
+        for (Cleaners cleaner : cleaners) {
             args[index++] = CLEAN_FLAG_SHORT;
             args[index++] = cleaner.name();
         }

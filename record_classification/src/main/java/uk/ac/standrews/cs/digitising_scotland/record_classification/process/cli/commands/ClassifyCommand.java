@@ -20,14 +20,12 @@ import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.beust.jcommander.converters.PathConverter;
 import org.apache.commons.csv.CSVFormat;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.Command;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.Launcher;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassificationContext;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.serialization.SerializationFormat;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.ClassifyUnseenRecordsStep;
 import uk.ac.standrews.cs.util.dataset.DataSet;
-import uk.ac.standrews.cs.util.tools.FileManipulation;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -38,6 +36,7 @@ import java.util.List;
  * Classification command of the classification process.
  *
  * @author Masih Hajiarab Derkani
+ * @author Graham Kirby
  */
 @Parameters(commandNames = ClassifyCommand.NAME, commandDescription = "Classify unseen data")
 public class ClassifyCommand extends Command {
@@ -53,6 +52,8 @@ public class ClassifyCommand extends Command {
     public static final String DESTINATION_FLAG_SHORT = "-o";
     public static final String DESTINATION_FLAG_LONG = "--output";
 
+    private static final String OUTPUT_DELIMITER = ",";
+
     @Parameter(required = true, description = UNSEEN_DATA_DESCRIPTION, converter = PathConverter.class)
     private List<Path> unseen_data;    // A list because required by JCommander.
 
@@ -63,15 +64,12 @@ public class ClassifyCommand extends Command {
     public void perform(final ClassificationContext context) {
 
         try {
-            final CSVFormat input_format = getDataFormat(delimiter);
-//            final DataSet unseen_data_set = new DataSet(FileManipulation.getInputStreamReader(unseen_data.get(0)), input_format);
-//            final List<String> labels = unseen_data_set.getColumnLabels();
-//            final Bucket unseen_data = new Bucket(unseen_data_set);
             new ClassifyUnseenRecordsStep().perform(context);
 
             // TODO split into separate steps for classifying and exporting results.
 
-            final DataSet classified_data_set = context.getClassifiedUnseenRecords().toDataSet(Arrays.asList("id", "data", "code"), input_format);
+            final CSVFormat output_format = getDataFormat(OUTPUT_DELIMITER);
+            final DataSet classified_data_set = context.getClassifiedUnseenRecords().toDataSet(Arrays.asList("id", "data", "code"), output_format);
             persistDataSet(destination, classified_data_set);
         }
         catch (IOException e) {

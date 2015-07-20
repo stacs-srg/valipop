@@ -64,7 +64,7 @@ public class InitLoadCleanTrainCommand extends Command {
     private Classifiers classifier_supplier;
 
     @Parameter(required = true, names = {LoadGoldStandardCommand.GOLD_STANDARD_FLAG_SHORT, LoadGoldStandardCommand.GOLD_STANDARD_FLAG_LONG}, description = LoadGoldStandardCommand.GOLD_STANDARD_DESCRIPTION, converter = PathConverter.class)
-    private Path gold_standard;
+    private List<Path> gold_standards;
 
     @Parameter(required = true, names = {TrainCommand.TRAINING_RATIO_FLAG_SHORT, TrainCommand.TRAINING_RATIO_FLAG_LONG}, description = TrainCommand.TRAINING_RATIO_DESCRIPTION)
     private Double training_ratio;
@@ -75,16 +75,16 @@ public class InitLoadCleanTrainCommand extends Command {
     @Override
     public Void call() throws Exception {
 
-        initLoadCleanTrain(classifier_supplier, gold_standard, charset, delimiter, training_ratio, serialization_format, name, process_directory, cleaners);
+        initLoadCleanTrain(classifier_supplier, gold_standards, charsets, delimiters, training_ratio, serialization_format, name, process_directory, cleaners);
 
         return null;
     }
 
-    public static void initLoadCleanTrain(Classifiers classifier_supplier, Path gold_standard, Charsets charset, String delimiter, Double training_ratio, SerializationFormat serialization_format, String process_name, Path process_directory, List<Cleaners> cleaners) throws Exception {
+    public static void initLoadCleanTrain(Classifiers classifier_supplier, List<Path> gold_standard, List<Charsets> charsets, List<String> delimiters, Double training_ratio, SerializationFormat serialization_format, String process_name, Path process_directory, List<Cleaners> cleaners) throws Exception {
 
         InitCommand.init(classifier_supplier, serialization_format, process_name, process_directory);
 
-        LoadGoldStandardCommand.loadGoldStandard(gold_standard, charset, delimiter, serialization_format, process_name, process_directory);
+        LoadGoldStandardCommand.loadGoldStandard(gold_standard, charsets, delimiters, serialization_format, process_name, process_directory);
 
         CleanGoldStandardCommand.cleanGoldStandard(serialization_format, process_name, process_directory, cleaners);
 

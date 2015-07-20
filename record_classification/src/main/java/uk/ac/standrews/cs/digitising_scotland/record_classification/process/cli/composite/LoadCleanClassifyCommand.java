@@ -20,10 +20,15 @@ import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.beust.jcommander.converters.PathConverter;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.Cleaners;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.commands.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.Charsets;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.Command;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.commands.ClassifyCommand;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.commands.CleanDataCommand;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.commands.CleanGoldStandardCommand;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.commands.LoadDataCommand;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassificationContext;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.serialization.SerializationFormat;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.LoadDataStep;
 
 import java.nio.file.Path;
 import java.util.List;
@@ -75,6 +80,12 @@ public class LoadCleanClassifyCommand extends Command {
 
     @Override
     public Void call() throws Exception {
+
+        // If charsets are specified, use the last one for the unseen data file.
+        Charsets charset = charsets == null ? LoadDataStep.DEFAULT_CHARSET : charsets.get(charsets.size()-1);
+
+        // If delimiters are specified, use the last one for the unseen data file.
+        String delimiter = delimiters == null ? LoadDataStep.DEFAULT_DELIMITER : delimiters.get(delimiters.size()-1);
 
         loadCleanClassify(unseen_data, charset, delimiter, destination, serialization_format, name, process_directory, cleaners);
 

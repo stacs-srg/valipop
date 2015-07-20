@@ -26,17 +26,22 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.process.proc
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.serialization.SerializationFormat;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.LoadGoldStandardStep;
 
+import java.nio.charset.Charset;
 import java.nio.file.Path;
+import java.util.List;
 
 /**
- * The train command of classification process command line interface.
+ * Command to load gold standard data from one or more files.
  *
  * @author Masih Hajiarab Derkani
+ * @author Graham Kirby
  */
-@Parameters(commandNames = LoadGoldStandardCommand.NAME, commandDescription = "Train classifier")
+@Parameters(commandNames = LoadGoldStandardCommand.NAME, commandDescription = "Load gold standard data")
 public class LoadGoldStandardCommand extends Command {
 
-    /** The name of this command */
+    /**
+     * The name of this command
+     */
     public static final String NAME = "load_gold_standard";
 
     private static final long serialVersionUID = 8026292848547343006L;
@@ -46,17 +51,61 @@ public class LoadGoldStandardCommand extends Command {
     public static final String GOLD_STANDARD_FLAG_LONG = "--goldStandard";
 
     @Parameter(required = true, names = {GOLD_STANDARD_FLAG_SHORT, GOLD_STANDARD_FLAG_LONG}, description = GOLD_STANDARD_DESCRIPTION, converter = PathConverter.class)
-    private Path gold_standard;
+    private List<Path> gold_standards;
 
     @Override
-    public void perform(final ClassificationContext context)  {
+    public void perform(final ClassificationContext context) {
 
-        new LoadGoldStandardStep(gold_standard, charset.get(), delimiter).perform(context);
+        for (int i = 0; i < gold_standards.size(); i++) {
+
+            Path gold_standard = gold_standards.get(i);
+            Charset charset = getCharset(i);
+            String delimiter = getDelimiter(i);
+
+            new LoadGoldStandardStep(gold_standard, charset, delimiter).perform(context);
+        }
     }
 
-    public static void loadGoldStandard(Path gold_standard, Charsets charset, String delimiter, SerializationFormat serialization_format, String process_name, Path process_directory) throws Exception {
+    private Charset getCharset(int i) {
+
+        return charsets != null && charsets.size() > i ? charsets.get(i).get() : LoadGoldStandardStep.DEFAULT_CHARSET.get();
+    }
+
+    private String getDelimiter(int i) {
+
+        return delimiters != null && delimiters.size() > i ? delimiters.get(i) : LoadGoldStandardStep.DEFAULT_DELIMITER;
+    }
+
+    public static void loadGoldStandard(List<Path> gold_standards, List<Charsets> charsets, List<String> delimiters, SerializationFormat serialization_format, String process_name, Path process_directory) throws Exception {
 
         Launcher.main(addArgs(
-                new String[]{NAME, GOLD_STANDARD_FLAG_SHORT, gold_standard.toString(), CHARSET_FLAG_SHORT, charset.name(), DELIMITER_FLAG_SHORT, delimiter}, serialization_format, process_name, process_directory));
+                makeGoldStandardArgs(gold_standards, charsets, delimiters), serialization_format, process_name, process_directory));
+    }
+
+    private static String[] makeGoldStandardArgs(List<Path> gold_standards, List<Charsets> charsets, List<String> delimiters) {
+
+        // Assume that 'charsets' and 'delimiters' will both be null or both set.
+        int number_of_args_per_gold_standard_file = charsets == null ? 2 : 6;
+
+        String[] args = new String[gold_standards.size() * number_of_args_per_gold_standard_file + 1];
+
+        args[0] = NAME;
+
+        for (int i = 0; i < gold_standards.size(); i++) {
+
+            args[i * number_of_args_per_gold_standard_file + 1] = GOLD_STANDARD_FLAG_SHORT;
+            args[i * number_of_args_per_gold_standard_file + 2] = gold_standards.get(i).toString();
+
+            if (charsets != null) {
+
+                args[i * number_of_args_per_gold_standard_file + 3] = CHARSET_FLAG_SHORT;
+                args[i * number_of_args_per_gold_standard_file + 4] = charsets.get(i).name();
+
+                args[i * number_of_args_per_gold_standard_file + 5] = DELIMITER_FLAG_SHORT;
+                args[i * number_of_args_per_gold_standard_file + 6] = delimiters.get(i);
+            }
+        }
+
+        return args;
     }
 }

@@ -28,19 +28,28 @@ import java.io.Serializable;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Bucket implements Iterable<Record>, Serializable {
 
     private static final long serialVersionUID = 7216381249689825103L;
 
     private final Collection<Record> records;
+    private boolean auto_allocate_ids;
+    private int next_id = 1;
 
     /**
      * Instantiates a new empty bucket.
      */
     public Bucket() {
 
+        this(false);
+    }
+
+    public Bucket(boolean auto_allocate_ids) {
+
         records = new TreeSet<>();
+        this.auto_allocate_ids = auto_allocate_ids;
     }
 
     public Bucket(File records, Charset charset, char delimiter) throws IOException {
@@ -82,6 +91,44 @@ public class Bucket implements Iterable<Record>, Serializable {
     public Bucket(Record... records) {
 
         this(Arrays.asList(records));
+    }
+
+    /**
+     * Adds the given records to this bucket.
+     *
+     * @param records the records to add
+     */
+    public void add(final Record... records) {
+
+        add(Arrays.asList(records));
+    }
+
+    public void add(final Bucket bucket) {
+
+        add(bucket.records);
+    }
+
+    public void add(final Collection<Record> records) {
+
+        int original_size = this.records.size();
+
+        if (auto_allocate_ids) {
+            this.records.addAll(reallocateIds(records));
+        } else {
+            this.records.addAll(records);
+        }
+
+        int final_size = this.records.size();
+
+        if (final_size != original_size + records.size()) {
+            throw new DuplicateRecordIdException();
+        }
+    }
+
+    private Collection<Record> reallocateIds(Collection<Record> records) {
+
+        return records.stream().map(
+                record -> new Record(next_id++, record.getData(), record.getOriginalData(), record.getClassification())).collect(Collectors.toList());
     }
 
     public DataSet toDataSet(List<String> column_labels, CSVFormat format) {
@@ -152,32 +199,6 @@ public class Bucket implements Iterable<Record>, Serializable {
         }
 
         return difference;
-    }
-
-    /**
-     * Adds the given records to this bucket.
-     *
-     * @param records the records to add
-     */
-    public void add(final Record... records) {
-
-        add(Arrays.asList(records));
-    }
-
-    public void add(final Collection<Record> records) {
-
-        int original_size = this.records.size();
-        this.records.addAll(records);
-        int final_size = this.records.size();
-
-        if (final_size != original_size + records.size()) {
-            throw new DuplicateRecordIdException();
-        }
-    }
-
-    public void add(final Bucket bucket) {
-
-        add(bucket.records);
     }
 
     /**
