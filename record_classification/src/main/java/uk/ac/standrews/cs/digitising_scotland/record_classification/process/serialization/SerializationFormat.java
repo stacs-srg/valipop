@@ -18,5 +18,5 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.process.ser
 
 public enum SerializationFormat {
 
-    JAVA_SERIALIZATION, JSON, COMPRESSED_JSON
+    JAVA_SERIALIZATION, JSON, JSON_COMPRESSED
 }

@@ -167,7 +167,7 @@ public class EndToEndTest extends EndToEndCommon {
 
         List<SerializationFormat> serialization_formats = Arrays.asList(
                 SerializationFormat.JSON,
-                SerializationFormat.COMPRESSED_JSON,
+                SerializationFormat.JSON_COMPRESSED,
                 SerializationFormat.JAVA_SERIALIZATION);
 
         List<TestInfo> cases = Arrays.asList(makeCase1(), makeCase2(), makeCase3(), makeCase4());

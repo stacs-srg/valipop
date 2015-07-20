@@ -82,7 +82,7 @@ public class Serialization {
     private static void persistContextToJSONFile(final ClassificationContext context, Path serialized_context_path, SerializationFormat serialization_format) throws IOException {
 
         OutputStream output_stream = Files.newOutputStream(serialized_context_path);
-        if (serialization_format == SerializationFormat.COMPRESSED_JSON) {
+        if (serialization_format == SerializationFormat.JSON_COMPRESSED) {
             output_stream = new GZIPOutputStream(output_stream);
         }
 
@@ -103,7 +103,7 @@ public class Serialization {
     private static ClassificationContext loadContextFromJSONFile(Path serialized_context_path, SerializationFormat serialization_format) throws IOException {
 
         InputStream input_stream = Files.newInputStream(serialized_context_path);
-        if (serialization_format == SerializationFormat.COMPRESSED_JSON) {
+        if (serialization_format == SerializationFormat.JSON_COMPRESSED) {
             input_stream = new GZIPInputStream(input_stream);
         }
 
