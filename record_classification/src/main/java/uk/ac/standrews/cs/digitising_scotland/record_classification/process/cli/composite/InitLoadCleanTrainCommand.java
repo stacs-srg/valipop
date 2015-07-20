@@ -40,12 +40,13 @@ import java.util.List;
  * <code>
  *   java uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.Launcher
  *   init_load_clean_train
- *   -g /Users/graham/Desktop/gold_standard.csv
- *   -p /Users/graham/Desktop/process_state
+ *   -g /Users/graham/Desktop/cambridge.csv
+ *   -g /Users/graham/Desktop/hisco.csv
+ *   -p /Users/graham/Desktop/trained_hisco_classifier
  *   -c EXACT_MATCH_PLUS_VOTING_ENSEMBLE
- *   -r 0.8
- *   -f JSON
- *   -cl STOP_WORDS -cl PORTER_STEM -cl CONSISTENT_CLASSIFICATION_CLEANER_CORRECT
+ *   -r 1.0
+ *   -f JSON_COMPRESSED
+ *   -cl COMBINED
  * </code>
  *
  * @author Masih Hajiarab Derkani
