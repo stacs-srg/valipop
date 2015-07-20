@@ -91,9 +91,15 @@ public class LoadCleanClassifyCommand extends Command {
 
     public static void loadCleanClassify(Path unseen_data, Charsets unseen_data_charsets, String unseen_data_delimiter, Path destination, SerializationFormat serialization_format, String process_name, Path process_directory, List<Cleaners> cleaners) throws Exception {
 
+        System.out.println("loading model and data...");
+
         LoadDataCommand.loadData(unseen_data, unseen_data_charsets, unseen_data_delimiter, serialization_format, process_name, process_directory);
 
+        System.out.println("cleaning data...");
+
         CleanDataCommand.cleanData(serialization_format, process_name, process_directory, cleaners);
+
+        System.out.println("classifying data...");
 
         ClassifyCommand.classify(unseen_data, destination, serialization_format, process_name, process_directory);
     }
