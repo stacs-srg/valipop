@@ -64,9 +64,13 @@ public class ClassifyCommand extends Command {
     public void perform(final ClassificationContext context) {
 
         try {
+            System.out.println("classifying data...");
+
             new ClassifyUnseenRecordsStep().perform(context);
 
             // TODO split into separate steps for classifying and exporting results.
+
+            System.out.println("saving results...");
 
             final CSVFormat output_format = getDataFormat(OUTPUT_DELIMITER);
             final DataSet classified_data_set = context.getClassifiedUnseenRecords().toDataSet(Arrays.asList("id", "data", "code"), output_format);

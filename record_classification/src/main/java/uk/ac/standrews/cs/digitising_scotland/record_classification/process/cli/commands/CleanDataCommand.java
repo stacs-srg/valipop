@@ -50,6 +50,8 @@ public class CleanDataCommand extends Command {
     @Override
     public void perform(final ClassificationContext context) {
 
+        System.out.println("cleaning data...");
+
         for (Cleaner cleaner : cleaners) {
             new CleanDataStep(cleaner).perform(context);
         }
