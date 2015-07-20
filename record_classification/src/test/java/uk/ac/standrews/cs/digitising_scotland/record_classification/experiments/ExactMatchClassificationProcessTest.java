@@ -16,6 +16,7 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.experiments;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.exact_match.ExactMatchClassifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassifierFactory;
@@ -30,6 +31,7 @@ public class ExactMatchClassificationProcessTest extends AbstractClassificationP
     }
 
     @Test
+    @Ignore
     public void checkPrecision() throws Exception {
 
         // Macro-precision must be 100% since every positive classification decision must be correct.

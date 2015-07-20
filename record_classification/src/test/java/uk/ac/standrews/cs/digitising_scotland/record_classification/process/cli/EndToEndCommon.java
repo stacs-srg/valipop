@@ -71,10 +71,15 @@ public class EndToEndCommon {
         output_trained_model_file = Serialization.getSerializedContextPath(temp_process_directory, process_name, serialization_format);
 
         output_classified_file = Serialization.getProcessWorkingDirectory(temp_process_directory, process_name).resolve(CLASSIFIED_FILE_NAME);
+
+//        // TODO fix horrible hack
+//        TrainClassifierStep.MINIMISE_CONTEXT = true;
     }
 
     @After
     public void cleanUp() {
+
+//        TrainClassifierStep.MINIMISE_CONTEXT = false;
 
         if (CLEAN_UP) {
 
