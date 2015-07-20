@@ -26,7 +26,6 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Calendar;
 
 /**
  * Loads gold standard records from a file into a classification process {@link ClassificationContext context}.
@@ -43,7 +42,7 @@ public abstract class LoadStep implements Step {
 
     public static final Charsets DEFAULT_CHARSET = Charsets.UTF_8;
 
-    public static final char DEFAULT_DELIMITER = ',';
+    public static final String DEFAULT_DELIMITER = ",";
 
     /**
      * Instantiates a new step which loads a gold standard CSV file into a classification process {@link ClassificationContext context}.
@@ -55,11 +54,11 @@ public abstract class LoadStep implements Step {
         this(path, DEFAULT_CHARSET.get(), DEFAULT_DELIMITER);
     }
 
-    public LoadStep(Path path, Charset charset, char delimiter) {
+    public LoadStep(Path path, Charset charset, String delimiter) {
 
         this.path = path;
         this.charset = charset;
-        this.delimiter = delimiter;
+        this.delimiter = delimiter.charAt(0);
     }
 
     @Override

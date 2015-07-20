@@ -41,7 +41,7 @@ public class LoadGoldStandardStep extends LoadStep {
         super(path);
     }
 
-    public LoadGoldStandardStep(Path path, Charset charset, char delimiter) {
+    public LoadGoldStandardStep(Path path, Charset charset, String delimiter) {
 
         super(path, charset, delimiter);
     }

@@ -75,16 +75,16 @@ public class InitLoadCleanTrainCommand extends Command {
     @Override
     public Void call() throws Exception {
 
-        initLoadCleanTrain(classifier_supplier, gold_standard, training_ratio, serialization_format, name, process_directory, cleaners);
+        initLoadCleanTrain(classifier_supplier, gold_standard, charset, delimiter, training_ratio, serialization_format, name, process_directory, cleaners);
 
         return null;
     }
 
-    public static void initLoadCleanTrain(Classifiers classifier_supplier, Path gold_standard, Double training_ratio, SerializationFormat serialization_format, String process_name, Path process_directory, List<Cleaners> cleaners) throws Exception {
+    public static void initLoadCleanTrain(Classifiers classifier_supplier, Path gold_standard, Charsets charset, String delimiter, Double training_ratio, SerializationFormat serialization_format, String process_name, Path process_directory, List<Cleaners> cleaners) throws Exception {
 
         InitCommand.init(classifier_supplier, serialization_format, process_name, process_directory);
 
-        LoadGoldStandardCommand.loadGoldStandard(gold_standard, serialization_format, process_name, process_directory);
+        LoadGoldStandardCommand.loadGoldStandard(gold_standard, charset, delimiter, serialization_format, process_name, process_directory);
 
         CleanGoldStandardCommand.cleanGoldStandard(serialization_format, process_name, process_directory, cleaners);
 

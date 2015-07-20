@@ -72,12 +72,12 @@ public class VectorFactory implements Serializable {
         }
     }
 
-    protected int dictionarySize() {
+    protected int numberOfDistinctTokens() {
 
         return vectorEncoder.getDictionarySize();
     }
 
-    protected int codeMapSize() {
+    protected int numberOfDistinctClassifications() {
 
         return index.codeMapSize();
     }
@@ -114,11 +114,6 @@ public class VectorFactory implements Serializable {
         return index;
     }
 
-    protected int getNumberOfFeatures() {
-
-        return vectorEncoder.getDictionarySize();
-    }
-
     private Collection<? extends NamedVector> createUnNamedVectorsFromDescription(final TokenList description) {
 
         List<NamedVector> vectorList = new ArrayList<>();
@@ -141,7 +136,7 @@ public class VectorFactory implements Serializable {
 
     private Vector createVectorFromString(final TokenList description) {
 
-        Vector vector = new RandomAccessSparseVector(getNumberOfFeatures());
+        Vector vector = new RandomAccessSparseVector(numberOfDistinctTokens());
         addFeaturesToVector(vector, description);
         return vector;
     }

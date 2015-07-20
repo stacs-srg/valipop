@@ -76,14 +76,14 @@ public class LoadCleanClassifyCommand extends Command {
     @Override
     public Void call() throws Exception {
 
-        loadCleanClassify(unseen_data, destination, serialization_format, name, process_directory, cleaners);
+        loadCleanClassify(unseen_data, charset, delimiter, destination, serialization_format, name, process_directory, cleaners);
 
         return null;
     }
 
-    public static void loadCleanClassify(Path unseen_data, Path destination, SerializationFormat serialization_format, String process_name, Path process_directory, List<Cleaners> cleaners) throws Exception {
+    public static void loadCleanClassify(Path unseen_data, Charsets unseen_data_charsets, String unseen_data_delimiter, Path destination, SerializationFormat serialization_format, String process_name, Path process_directory, List<Cleaners> cleaners) throws Exception {
 
-        LoadDataCommand.loadData(unseen_data, serialization_format, process_name, process_directory);
+        LoadDataCommand.loadData(unseen_data, unseen_data_charsets, unseen_data_delimiter, serialization_format, process_name, process_directory);
 
         CleanDataCommand.cleanData(serialization_format, process_name, process_directory, cleaners);
 

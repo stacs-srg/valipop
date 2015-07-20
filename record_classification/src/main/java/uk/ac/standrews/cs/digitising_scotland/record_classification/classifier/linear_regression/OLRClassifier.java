@@ -19,7 +19,6 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.
 import org.apache.mahout.math.DenseMatrix;
 import org.apache.mahout.math.Matrix;
 import org.apache.mahout.math.NamedVector;
-import org.apache.mahout.math.Vector;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.Classifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Classification;
@@ -57,14 +56,25 @@ public class OLRClassifier implements Classifier {
         model = new OLRCrossFold();
     }
 
+    private String single_code = null;
+
     public void train(final Bucket bucket) {
 
         if (vector_factory == null) {
 
             vector_factory = new VectorFactory(bucket);
-            int dictionary_size = vector_factory.dictionarySize();
-            int code_map_size = vector_factory.codeMapSize();
-            model = new OLRCrossFold(getTrainingVectors(bucket), dictionary_size, code_map_size);
+            int number_of_distinct_tokens = vector_factory.numberOfDistinctTokens();
+            int number_of_distinct_classifications = vector_factory.numberOfDistinctClassifications();
+
+            if (number_of_distinct_classifications == 1) {
+
+                // Need to treat this differently as the OLR algorithm doesn't work with a single output class.
+
+                single_code = vector_factory.getCodeIndexer().getCode(0);
+                return;
+            }
+
+            model = new OLRCrossFold(getTrainingVectors(bucket), number_of_distinct_tokens, number_of_distinct_classifications);
 
         } else {
 
@@ -84,16 +94,19 @@ public class OLRClassifier implements Classifier {
 
         if (vector_factory == null) {
             return Classification.UNCLASSIFIED;
-
-        } else {
-            TokenList token_list = new TokenList(data);
-            NamedVector vector = vector_factory.createNamedVectorFromString(token_list, "unknown");
-            Vector classifyFull = model.classifyFull(vector);
-            int classificationID = classifyFull.maxValueIndex();
-            String code = vector_factory.getCodeIndexer().getCode(classificationID);
-
-            return new Classification(code, token_list, STATIC_CONFIDENCE);
         }
+
+        TokenList token_list = new TokenList(data);
+
+        if (single_code != null) {
+            return new Classification(single_code, token_list, STATIC_CONFIDENCE);
+        }
+
+        NamedVector vector = vector_factory.createNamedVectorFromString(token_list, "unknown");
+        int classificationID = model.classifyFull(vector).maxValueIndex();
+        String code = vector_factory.getCodeIndexer().getCode(classificationID);
+
+        return new Classification(code, token_list, STATIC_CONFIDENCE);
     }
 
     @Override
@@ -128,10 +141,10 @@ public class OLRClassifier implements Classifier {
 
     private int updateDictionary(final Bucket bucket) {
 
-        int initial_number_of_features = vector_factory.getNumberOfFeatures();
+        int initial_number_of_tokens = vector_factory.numberOfDistinctTokens();
 
         vector_factory.updateDictionary(bucket);
-        return vector_factory.getNumberOfFeatures() - initial_number_of_features;
+        return vector_factory.numberOfDistinctTokens() - initial_number_of_tokens;
     }
 
     private int updateIndexer(final Bucket bucket) {
