@@ -33,7 +33,7 @@ public class TrainClassifierStep implements Step {
 
     private static final long serialVersionUID = 5825366701064269040L;
 
-    private static final boolean MINIMISE_CONTEXT = false;
+    public static boolean MINIMISE_CONTEXT = true;
 
     @Override
     public void perform(final ClassificationContext context) {
@@ -46,7 +46,6 @@ public class TrainClassifierStep implements Step {
 
         final Duration training_time = Duration.between(start, Instant.now());
         context.setTrainingTime(training_time);
-
 
         if (MINIMISE_CONTEXT) {
 
