@@ -115,12 +115,12 @@ public abstract class Command implements Callable<Void>, Step {
         Serialization.persistContext(context, getSerializedContextPath(), serialization_format);
     }
 
-    protected CSVFormat getDataFormat(String delimiter) {
+    protected static CSVFormat getDataFormat(String delimiter) {
 
         return DataSet.DEFAULT_CSV_FORMAT.withDelimiter(delimiter.charAt(0));
     }
 
-    protected void persistDataSet(Path destination, final DataSet dataset) throws IOException {
+    protected static void persistDataSet(Path destination, final DataSet dataset) throws IOException {
 
         try (final BufferedWriter out = Files.newBufferedWriter(destination, StandardCharsets.UTF_8)) {
             dataset.print(out);
