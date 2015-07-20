@@ -41,20 +41,11 @@ import java.util.List;
  * <code>
  *   java uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.Launcher
  *   load_clean_classify
- *   -d
- *   /Users/graham/Desktop/unseen_data.csv
- *   -o
- *   /Users/graham/Desktop/classified_data.csv
- *   -p
- *   /Users/graham/Desktop/process_state
- *   -f
- *   JSON
- *   -cl
- *   STOP_WORDS
- *   -cl
- *   PORTER_STEM
- *   -cl
- *   CONSISTENT_CLASSIFICATION_CLEANER_CORRECT
+ *   -p /Users/graham/Desktop/trained_hisco_classifier
+ *   -d /Users/graham/Desktop/unseen_data.csv
+ *   -o /Users/graham/Desktop/classified_data.csv
+ *   -f JSON_COMPRESSED
+ *   -cl COMBINED
  * </code>
  *
  * @author Masih Hajiarab Derkani
