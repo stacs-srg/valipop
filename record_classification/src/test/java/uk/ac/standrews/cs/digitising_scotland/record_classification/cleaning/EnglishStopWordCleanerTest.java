@@ -23,7 +23,7 @@ import java.util.*;
  *
  * @author Masih Hajiarab Derkani
  */
-public class EnglishStopWordCleanerTest extends TokenFilterCleanerTest {
+public class EnglishStopWordCleanerTest extends TextCleanerTest {
 
     public EnglishStopWordCleanerTest() {
 

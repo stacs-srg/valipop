@@ -32,12 +32,12 @@ import static org.junit.Assert.assertEquals;
  *
  * @author Masih Hajiarab Derkani
  */
-public abstract class TokenFilterCleanerTest {
+public abstract class TextCleanerTest {
 
-    private final TokenFilterCleaner cleaner;
+    private final TextCleaner cleaner;
     private final Map<String, String> test_values;
 
-    public TokenFilterCleanerTest(final TokenFilterCleaner cleaner, Map<String, String> test_values) {
+    public TextCleanerTest(final TextCleaner cleaner, Map<String, String> test_values) {
 
         this.cleaner = cleaner;
         this.test_values = test_values;

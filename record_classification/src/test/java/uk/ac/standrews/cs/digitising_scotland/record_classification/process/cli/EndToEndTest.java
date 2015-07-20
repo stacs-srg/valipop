@@ -101,7 +101,7 @@ public class EndToEndTest extends EndToEndCommon {
     }
 
     @Test
-    public void endToEndOLRProcess() throws Exception {
+    public void endToEndProcess() throws Exception {
 
         checkInitialisationLoadingAndTraining();
         checkClassification();

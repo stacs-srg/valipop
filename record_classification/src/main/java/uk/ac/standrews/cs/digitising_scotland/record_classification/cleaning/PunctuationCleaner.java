@@ -16,28 +16,35 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning;
 
-import java.util.*;
-
 /**
- * Tests {@link StemmingCleaner}.
+ * Removes punctuation characters from text.
  *
- * @author Masih Hajiarab Derkani
+ * @author Graham Kirby
  */
-public class StemmingCleanerTest extends TextCleanerTest {
+public class PunctuationCleaner implements TextCleaner {
 
-    public StemmingCleanerTest() {
+    private static final long serialVersionUID = 345345435L;
 
-        super(new StemmingCleaner(), new HashMap<String, String>() {
+    private static final char SPACE = ' ';
+    private static final char UNDERSCORE = '_';
 
-            {
-                put("driving", "drive");
-                put("cats driving cars at the pub", "cat drive car at the pub");
-                put("classification", "classif");
-                put("this", "thi");
-                put("this and that and the other stuffing shoots the shingles off the roofs", "thi and that and the other stuf shoot the shingl off the roof");
-                put("john's car", "john car");
-                put("ASSISTANT - BAKER'S SHOP", "ASSISTANT BAKER SHOP");
+    @Override
+    public String cleanData(String data) {
+
+        final StringBuilder builder = new StringBuilder();
+
+        for (char c : data.toCharArray()) {
+
+            if (Character.isLetterOrDigit(c) || isAllowablePunctuation(c)) {
+                builder.append(c);
             }
-        });
+        }
+
+        return builder.toString();
+    }
+
+    private boolean isAllowablePunctuation(char c) {
+
+        return c == SPACE || c == UNDERSCORE;
     }
 }

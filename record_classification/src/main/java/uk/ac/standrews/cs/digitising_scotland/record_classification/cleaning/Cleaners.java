@@ -16,21 +16,25 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning;
 
-import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.Cleaner;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.ConsistentClassificationCleaner;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.EnglishStopWordCleaner;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.StemmingCleaner;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
+
+import java.util.Arrays;
 
 /**
  * @author Masih Hajiarab Derkani
+ * @author Graham Kirby
  */
 public enum Cleaners implements Cleaner {
 
+    PUNCTUATION(new PunctuationCleaner(), "Removes punctuation characters"),
+    LOWER_CASE(new LowerCaseCleaner(), "Converts text to lower case"),
     STOP_WORDS(new EnglishStopWordCleaner(), "Removes English stop words"),
     PORTER_STEM(new StemmingCleaner(), "Performs stemming using Porter algorithm"),
+
     CONSISTENT_CLASSIFICATION_CLEANER_CORRECT(ConsistentClassificationCleaner.CORRECT, "Corrects the classification of any inconsistently classified records to the most popular"),
-    CONSISTENT_CLASSIFICATION_CLEANER_REMOVE(ConsistentClassificationCleaner.REMOVE, "Removes any inconsistently classified records");
+    CONSISTENT_CLASSIFICATION_CLEANER_REMOVE(ConsistentClassificationCleaner.REMOVE, "Removes any inconsistently classified records"),
+
+    COMBINED(new CompositeCleaner(Arrays.asList(PUNCTUATION, LOWER_CASE, STOP_WORDS, PORTER_STEM, CONSISTENT_CLASSIFICATION_CLEANER_CORRECT)), "Applies all available text cleaners and corrects inconsistent classifications");
 
     private final Cleaner cleaner;
     private final String description;
