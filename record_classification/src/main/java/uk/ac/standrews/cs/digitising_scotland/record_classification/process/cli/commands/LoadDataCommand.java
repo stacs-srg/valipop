@@ -26,6 +26,7 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.process.proc
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.serialization.SerializationFormat;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.LoadDataStep;
 
+import java.nio.charset.Charset;
 import java.nio.file.Path;
 
 /**
@@ -53,12 +54,50 @@ public class LoadDataCommand extends Command {
     @Override
     public void perform(final ClassificationContext context) {
 
-        new LoadDataStep(data, charset.get(), delimiter).perform(context);
+        // If charsets are specified, use the last one for the unseen data file.
+        Charset charset = getCharset();
+
+        // If delimiters are specified, use the last one for the unseen data file.
+        String delimiter = getDelimiter();
+
+        new LoadDataStep(data, charset, delimiter).perform(context);
+    }
+
+    private Charset getCharset() {
+
+        return charsets != null && charsets.size() > 0 ? charsets.get(charsets.size() - 1).get() : LoadDataStep.DEFAULT_CHARSET.get();
+    }
+
+    private String getDelimiter() {
+
+        return delimiters != null && delimiters.size() > 0 ? delimiters.get(delimiters.size() - 1) : LoadDataStep.DEFAULT_DELIMITER;
     }
 
     public static void loadData(Path unseen_data, Charsets charset, String delimiter, SerializationFormat serialization_format, String process_name, Path process_directory) throws Exception {
 
         Launcher.main(addArgs(
-                new String[]{NAME, DATA_FLAG_SHORT, unseen_data.toString(), CHARSET_FLAG_SHORT, charset.name(), DELIMITER_FLAG_SHORT, delimiter}, serialization_format, process_name, process_directory));
+                makeDataArgs(unseen_data, charset, delimiter), serialization_format, process_name, process_directory));
+    }
+
+    private static String[] makeDataArgs(Path unseen_data, Charsets charset, String delimiter) {
+
+        // Assume that 'charset' and 'delimiter' will both be null or both set.
+
+        String[] args = new String[charset == null ? 3 : 7];
+
+        args[0] = NAME;
+        args[1] = DATA_FLAG_SHORT;
+        args[2] = unseen_data.toString();
+
+        if (charset != null) {
+
+            args[3] = CHARSET_FLAG_SHORT;
+            args[4] = charset.name();
+
+            args[5] = DELIMITER_FLAG_SHORT;
+            args[6] = delimiter;
+        }
+
+        return args;
     }
 }

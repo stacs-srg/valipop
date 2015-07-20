@@ -24,7 +24,6 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.process.proc
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.Step;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.serialization.Serialization;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.serialization.SerializationFormat;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.LoadGoldStandardStep;
 import uk.ac.standrews.cs.util.dataset.DataSet;
 
 import java.io.BufferedWriter;
@@ -33,6 +32,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.Callable;
 
 /**
@@ -75,10 +75,10 @@ public abstract class Command implements Callable<Void>, Step {
     protected String name = PROCESS_NAME;
 
     @Parameter(names = {CHARSET_FLAG_SHORT, CHARSET_FLAG_LONG}, description = CHARSET_DESCRIPTION)
-    protected Charsets charset = LoadGoldStandardStep.DEFAULT_CHARSET;
+    protected List<Charsets> charsets;
 
     @Parameter(names = {DELIMITER_FLAG_SHORT, DELIMITER_FLAG_LONG}, description = DELIMITER_DESCRIPTION)
-    protected String delimiter = LoadGoldStandardStep.DEFAULT_DELIMITER;
+    protected List<String> delimiters;
 
     @Parameter(names = {SERIALIZATION_FORMAT_FLAG_SHORT, SERIALIZATION_FORMAT_FLAG_LONG}, description = SERIALIZATION_FORMAT_DESCRIPTION)
     protected SerializationFormat serialization_format = SerializationFormat.JAVA_SERIALIZATION;

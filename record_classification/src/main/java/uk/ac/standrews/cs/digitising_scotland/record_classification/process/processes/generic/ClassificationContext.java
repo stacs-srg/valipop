@@ -67,7 +67,8 @@ public class ClassificationContext implements Serializable {
         this.classifier = classifier;
         this.random = random;
 
-        gold_standard_records = new Bucket();
+        // Allow multiple data sets with potentially clashing ids to be added to gold standard.
+        gold_standard_records = new Bucket(true);
         evaluation_records = new Bucket();
         training_records = new Bucket();
         unseen_records = new Bucket();

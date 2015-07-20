@@ -49,12 +49,7 @@ public class EndToEndCleaningTest extends EndToEndCommon {
         classifier_supplier = Classifiers.STRING_SIMILARITY_DICE;
         serialization_format = SerializationFormat.JSON;
 
-        gold_standard_charsets = Charsets.UTF_8;
-        unseen_data_charsets = Charsets.UTF_8;
-        gold_standard_delimiter = ",";
-        unseen_data_delimiter = ",";
-
-        input_gold_standard_file = FileManipulation.getResourcePath(EndToEndCleaningTest.class, GOLD_STANDARD_FILE_NAME);
+        input_gold_standard_files = Arrays.asList(FileManipulation.getResourcePath(EndToEndCleaningTest.class, GOLD_STANDARD_FILE_NAME));
         input_unseen_data_file = FileManipulation.getResourcePath(EndToEndCleaningTest.class, EVALUATION_FILE_NAME);
     }
 

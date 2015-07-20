@@ -16,6 +16,7 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli;
 
+import org.junit.After;
 import org.junit.Before;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.Classifiers;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.Cleaners;
@@ -23,6 +24,7 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.composite.LoadCleanClassifyCommand;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.serialization.Serialization;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.serialization.SerializationFormat;
+import uk.ac.standrews.cs.util.tools.FileManipulation;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -30,13 +32,18 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.junit.Assert.fail;
+
 public class EndToEndCommon {
 
-    static final String CLASSIFIED_FILE_NAME = "classified.csv";
+    private static final String CLASSIFIED_FILE_NAME = "classified.csv";
 
-    Charsets gold_standard_charsets;
+    // Set to false if there's a need to inspect the serialized context or classified output after the test.
+    private static final boolean CLEAN_UP = true;
+
+    List<Charsets> gold_standard_charsets;
     Charsets unseen_data_charsets;
-    String gold_standard_delimiter;
+    List<String> gold_standard_delimiters;
     String unseen_data_delimiter;
 
     SerializationFormat serialization_format;
@@ -46,7 +53,7 @@ public class EndToEndCommon {
     List<Cleaners> cleaners;
 
     Path temp_process_directory;
-    Path input_gold_standard_file;
+    List<Path> input_gold_standard_files;
     Path output_trained_model_file;
 
     Path input_unseen_data_file;
@@ -56,7 +63,7 @@ public class EndToEndCommon {
     public void setup() throws IOException {
 
         process_name = Command.PROCESS_NAME;
-        training_ratio = 0.8;
+        training_ratio = 1.0;
 
         cleaners = Arrays.asList(Cleaners.COMBINED);
 
@@ -66,9 +73,23 @@ public class EndToEndCommon {
         output_classified_file = Serialization.getProcessWorkingDirectory(temp_process_directory, process_name).resolve(CLASSIFIED_FILE_NAME);
     }
 
+    @After
+    public void cleanUp() {
+
+        if (CLEAN_UP) {
+
+            try {
+                FileManipulation.deleteDirectory(temp_process_directory);
+
+            } catch (IOException e) {
+                fail("could not delete temp directory");
+            }
+        }
+    }
+
     protected void initLoadTrain() throws Exception {
 
-        InitLoadCleanTrainCommand.initLoadCleanTrain(classifier_supplier, input_gold_standard_file, gold_standard_charsets, gold_standard_delimiter, training_ratio, serialization_format, process_name, temp_process_directory, cleaners);
+        InitLoadCleanTrainCommand.initLoadCleanTrain(classifier_supplier, input_gold_standard_files, gold_standard_charsets, gold_standard_delimiters, training_ratio, serialization_format, process_name, temp_process_directory, cleaners);
     }
 
     protected Path loadCleanClassify() throws Exception {
