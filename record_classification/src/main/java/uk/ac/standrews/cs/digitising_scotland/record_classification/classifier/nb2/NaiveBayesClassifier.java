@@ -28,11 +28,11 @@ import weka.gui.beans.AbstractDataSource;
 import java.io.File;
 import java.io.IOException;
 
-public class NaiveBayesClassifier2 implements Classifier {
+public class NaiveBayesClassifier implements Classifier {
 
     NaiveBayes naive_bayes;
 
-    public NaiveBayesClassifier2() {
+    public NaiveBayesClassifier() {
 
         naive_bayes = new NaiveBayes();
     }
