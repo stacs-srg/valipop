@@ -43,6 +43,7 @@ public class ClassificationProcessTest extends AbstractClassificationProcessTest
         result.add(new Object[]{Classifiers.EXACT_MATCH_PLUS_STRING_SIMILARITY_LEVENSHTEIN.get()});
         result.add(new Object[]{Classifiers.OLR.get()});
         result.add(new Object[]{Classifiers.VOTING_ENSEMBLE.get()});
+        result.add(new Object[]{Classifiers.VOTING_SIMILARITY_ENSEMBLE.get()});
 
         return result;
     }

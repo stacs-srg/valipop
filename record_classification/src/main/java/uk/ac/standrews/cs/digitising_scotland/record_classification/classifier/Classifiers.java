@@ -46,13 +46,15 @@ public enum Classifiers implements Supplier<Classifier> {
     OLR(OLRClassifier::new),
 
     VOTING_ENSEMBLE(Classifiers::makeVotingEnsembleClassifier),
+    VOTING_SIMILARITY_ENSEMBLE(Classifiers::makeVotingSimilarityEnsembleClassifier),
 
     EXACT_MATCH_PLUS_STRING_SIMILARITY_LEVENSHTEIN(Classifiers::makeExactMatchPlusLevenshteinClassifier),
     EXACT_MATCH_PLUS_STRING_SIMILARITY_JARO_WINKLER(Classifiers::makeExactMatchPlusJaroWinklerClassifier),
     EXACT_MATCH_PLUS_STRING_SIMILARITY_JACCARD(Classifiers::makeExactMatchPlusJaccardClassifier),
     EXACT_MATCH_PLUS_STRING_SIMILARITY_DICE(Classifiers::makeExactMatchPlusDiceClassifier),
     EXACT_MATCH_PLUS_OLR(Classifiers::makeExactMatchPlusOLRClassifier),
-    EXACT_MATCH_PLUS_VOTING_ENSEMBLE(Classifiers::makeExactMatchPlusVotingEnsembleClassifier);
+    EXACT_MATCH_PLUS_VOTING_ENSEMBLE(Classifiers::makeExactMatchPlusVotingEnsembleClassifier),
+    EXACT_MATCH_PLUS_VOTING_SIMILARITY_ENSEMBLE(Classifiers::makeExactMatchPlusVotingSimilarityEnsembleClassifier);
 
     private Supplier<Classifier> supplier;
 
@@ -100,8 +102,23 @@ public enum Classifiers implements Supplier<Classifier> {
                 )));
     }
 
+    private static EnsembleVotingClassifier makeVotingSimilarityEnsembleClassifier() {
+
+        return new EnsembleVotingClassifier(Arrays.asList(),
+                new StringSimilarityGroupWithSharedState(Arrays.asList(
+                        makeDiceClassifier(),
+                        makeJaccardClassifier(),
+                        makeJaroWinklerClassifier(),
+                        makeLevenshteinClassifier()
+                )));
+    }
+
     private static ClassifierPlusExactMatchClassifier makeExactMatchPlusVotingEnsembleClassifier() {
         return new ClassifierPlusExactMatchClassifier(makeVotingEnsembleClassifier());
+    }
+
+    private static ClassifierPlusExactMatchClassifier makeExactMatchPlusVotingSimilarityEnsembleClassifier() {
+        return new ClassifierPlusExactMatchClassifier(makeVotingSimilarityEnsembleClassifier());
     }
 
     private static ClassifierPlusExactMatchClassifier makeExactMatchPlusOLRClassifier() {
