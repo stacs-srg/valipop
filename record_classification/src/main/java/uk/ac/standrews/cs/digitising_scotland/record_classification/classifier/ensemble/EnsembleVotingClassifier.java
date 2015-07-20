@@ -17,6 +17,7 @@
 package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.ensemble;
 
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.Classifier;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.composite.StringSimilarityGroupWithSharedState;
 
 import java.util.*;
 
@@ -32,6 +33,7 @@ public class EnsembleVotingClassifier extends EnsembleClassifier {
      */
     public EnsembleVotingClassifier() {
     }
+
     /**
      * Instantiates a new ensemble classifier.
      *
@@ -41,4 +43,10 @@ public class EnsembleVotingClassifier extends EnsembleClassifier {
 
         super(classifiers, new VotingResolutionStrategy());
     }
+
+    public EnsembleVotingClassifier(Collection<Classifier> classifiers, StringSimilarityGroupWithSharedState group) {
+
+        super(classifiers, group, new VotingResolutionStrategy());
+    }
+
 }

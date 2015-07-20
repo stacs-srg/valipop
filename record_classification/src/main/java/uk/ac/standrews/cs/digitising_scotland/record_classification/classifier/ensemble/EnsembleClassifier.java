@@ -17,22 +17,26 @@
 package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.ensemble;
 
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.Classifier;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.composite.StringSimilarityGroupWithSharedState;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Classification;
 
 import java.io.Serializable;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Classifies data with the aid of a collection of classifiers and chooses between classifications using a given {@link ResolutionStrategy}.
  *
  * @author Masih Hajiarab Derkani
+ * @author Graham Kirby
  */
 public class EnsembleClassifier implements Classifier {
 
     private static final long serialVersionUID = 6432371860423757296L;
 
     private List<Classifier> classifiers;
+    private StringSimilarityGroupWithSharedState group;
     private ResolutionStrategy resolution_strategy;
 
     /**
@@ -49,7 +53,13 @@ public class EnsembleClassifier implements Classifier {
      */
     public EnsembleClassifier(Collection<Classifier> classifiers, ResolutionStrategy resolution_strategy) {
 
+        this(classifiers, null, resolution_strategy);
+    }
+
+    public EnsembleClassifier(Collection<Classifier> classifiers, StringSimilarityGroupWithSharedState group, ResolutionStrategy resolution_strategy) {
+
         this.classifiers = new ArrayList<>(classifiers);
+        this.group = group;
         this.resolution_strategy = resolution_strategy;
     }
 
@@ -59,14 +69,38 @@ public class EnsembleClassifier implements Classifier {
         for (Classifier classifier : classifiers) {
             classifier.train(bucket);
         }
+
+        if (group != null) {
+            group.trainAll(bucket);
+        }
+    }
+
+    public void prepareForSerialization() {
+
+        if (group != null) {
+            group.prepareForSerialization();
+        }
+    }
+
+    public void recoverFromDeserialization() {
+
+        if (group != null) {
+            group.recoverFromSerialization();
+        }
     }
 
     @Override
     public Classification classify(String data) {
 
+        final Collection<Classifier> all_classifiers = classifiers.stream().collect(Collectors.toList());
+
+        if (group != null) {
+            all_classifiers.addAll(group.getClassifiers().stream().collect(Collectors.toList()));
+        }
+
         final Map<Classifier, Classification> candidate_classifications = new HashMap<>();
 
-        for (Classifier classifier : classifiers) {
+        for (Classifier classifier : all_classifiers) {
             final Classification classification = classifier.classify(data);
             candidate_classifications.put(classifier, classification);
         }

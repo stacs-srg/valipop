@@ -17,6 +17,7 @@
 package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier;
 
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.composite.ClassifierPlusExactMatchClassifier;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.composite.StringSimilarityGroupWithSharedState;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.ensemble.EnsembleVotingClassifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.exact_match.ExactMatchClassifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.linear_regression.OLRClassifier;
@@ -90,12 +91,13 @@ public enum Classifiers implements Supplier<Classifier> {
 
     private static EnsembleVotingClassifier makeVotingEnsembleClassifier() {
 
-        return new EnsembleVotingClassifier(Arrays.asList(
-                STRING_SIMILARITY_LEVENSHTEIN.get(),
-                STRING_SIMILARITY_DICE.get(),
-                STRING_SIMILARITY_JACCARD.get(),
-                STRING_SIMILARITY_JARO_WINKLER.get(),
-                OLR.get()));
+        return new EnsembleVotingClassifier(Arrays.asList(OLR.get()),
+                new StringSimilarityGroupWithSharedState(Arrays.asList(
+                        makeDiceClassifier(),
+                        makeJaccardClassifier(),
+                        makeJaroWinklerClassifier(),
+                        makeLevenshteinClassifier()
+                )));
     }
 
     private static ClassifierPlusExactMatchClassifier makeExactMatchPlusVotingEnsembleClassifier() {

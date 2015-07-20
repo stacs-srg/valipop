@@ -65,16 +65,22 @@ public interface Classifier extends Serializable {
 
             if (cache.containsKey(data)) {
 
-                classified.add(new Record(record.getId(), data, record.getOriginalData(),cache.get(data).makeClone()));
+                classified.add(new Record(record.getId(), data, record.getOriginalData(), cache.get(data).makeClone()));
 
             } else {
                 final Classification classification = classify(data);
-                classified.add(new Record(record.getId(), data, record.getOriginalData(),classification));
+                classified.add(new Record(record.getId(), data, record.getOriginalData(), classification));
                 cache.put(data, classification);
             }
         }
 
         return classified;
+    }
+
+    default void prepareForSerialization() {
+    }
+
+    default void recoverFromDeserialization() {
     }
 
     String getName();
