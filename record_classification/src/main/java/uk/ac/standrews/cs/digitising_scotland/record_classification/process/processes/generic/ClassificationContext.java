@@ -70,8 +70,8 @@ public class ClassificationContext implements Serializable {
         clearGoldStandardRecords();
         clearTrainingRecords();
         clearEvaluationRecords();
-        unseen_records = new Bucket();
-        classified_unseen_records = new Bucket();
+        clearUnseenRecords();
+        clearClassifiedUnseenRecords();
 
         verbosity = DEFAULT_VERBOSITY;
     }
@@ -90,6 +90,16 @@ public class ClassificationContext implements Serializable {
     public void clearEvaluationRecords() {
 
         evaluation_records = new Bucket();
+    }
+
+    public void clearUnseenRecords() {
+
+        unseen_records = new Bucket();
+    }
+
+    public void clearClassifiedUnseenRecords() {
+
+        classified_unseen_records = new Bucket();
     }
 
     /**

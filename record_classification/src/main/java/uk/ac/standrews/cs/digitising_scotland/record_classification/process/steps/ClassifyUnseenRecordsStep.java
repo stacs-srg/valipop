@@ -29,16 +29,11 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.process.proc
 public class ClassifyUnseenRecordsStep implements Step {
 
     private static final long serialVersionUID = 292143932733171808L;
-//    private final Bucket unseen_records;
 
     /**
      * Instantiates a new unseen record classification step.
-     *
-//     * @param unseen_records the unseen records to classify
      */
     public ClassifyUnseenRecordsStep() {
-
-//        this.unseen_records = unseen_records;
     }
 
     @Override
@@ -47,6 +42,7 @@ public class ClassifyUnseenRecordsStep implements Step {
         final Classifier classifier = context.getClassifier();
         final Bucket classified_unseen_records = classifier.classify(context.getUnseenRecords());
 
+        context.clearClassifiedUnseenRecords();
         context.addClassifiedUnseenRecords(classified_unseen_records);
     }
 }
