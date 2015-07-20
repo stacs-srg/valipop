@@ -19,18 +19,24 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.beust.jcommander.converters.PathConverter;
+import org.apache.commons.csv.CSVFormat;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.Cleaner;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.Cleaners;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.Charsets;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.Command;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.commands.ClassifyCommand;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.commands.CleanDataCommand;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.commands.CleanGoldStandardCommand;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.commands.LoadDataCommand;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassificationContext;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.serialization.Serialization;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.serialization.SerializationFormat;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.ClassifyUnseenRecordsStep;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.CleanDataStep;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.LoadDataStep;
+import uk.ac.standrews.cs.util.dataset.DataSet;
 
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -93,11 +99,41 @@ public class LoadCleanClassifyCommand extends Command {
 
         System.out.println("loading model...");
 
-        LoadDataCommand.loadData(unseen_data, unseen_data_charsets, unseen_data_delimiter, serialization_format, process_name, process_directory);
+//        LoadDataCommand.loadData(unseen_data, unseen_data_charsets, unseen_data_delimiter, serialization_format, process_name, process_directory);
+//
+//        CleanDataCommand.cleanData(serialization_format, process_name, process_directory, cleaners);
+//
+//        ClassifyCommand.classify(unseen_data, destination, serialization_format, process_name, process_directory);
 
-        CleanDataCommand.cleanData(serialization_format, process_name, process_directory, cleaners);
 
-        ClassifyCommand.classify(unseen_data, destination, serialization_format, process_name, process_directory);
+        Path serialized_context_path = Serialization.getSerializedContextPath(process_directory,process_name,serialization_format);
+        ClassificationContext context = Serialization.loadContext(serialized_context_path, serialization_format);
+        context.getClassifier().recoverFromDeserialization();
+
+        System.out.println("loading data...");
+
+        new LoadDataStep(unseen_data, unseen_data_charsets == null ? Charsets.UTF_8.get() : unseen_data_charsets.get(), unseen_data_delimiter == null ? "," : unseen_data_delimiter).perform(context);
+
+        System.out.println("cleaning data...");
+
+        for (Cleaner cleaner : cleaners) {
+            new CleanDataStep(cleaner).perform(context);
+        }
+
+        System.out.println("classifying data...");
+
+        new ClassifyUnseenRecordsStep().perform(context);
+
+        System.out.println("saving results...");
+
+        final CSVFormat output_format = getDataFormat(",");
+        final DataSet classified_data_set = context.getClassifiedUnseenRecords().toDataSet(Arrays.asList("id", "data", "code"), output_format);
+        persistDataSet(destination, classified_data_set);
+
+        System.out.println("saving context...");
+
+        context.getClassifier().prepareForSerialization();
+        Serialization.persistContext(context, serialized_context_path, serialization_format);
     }
 
     @Override
