@@ -90,11 +90,17 @@ public abstract class Command implements Callable<Void>, Step {
     @Override
     public Void call() throws Exception {
 
+        System.out.println("loading context...");
         final ClassificationContext context = loadContext();
         context.getClassifier().recoverFromDeserialization();
+        System.out.println("done");
+
         perform(context);
+
+        System.out.println("saving context...");
         context.getClassifier().prepareForSerialization();
         persistContext(context);
+        System.out.println("done");
 
         return null;
     }
