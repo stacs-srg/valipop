@@ -16,22 +16,22 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.experiments;
 
-import org.junit.Ignore;
 import org.junit.Test;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.exact_match.ExactMatchClassifier;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassifierFactory;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.Classifier;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.ClassifierSupplier;
+
+import java.util.function.Supplier;
 
 import static org.junit.Assert.assertEquals;
 
 public class ExactMatchClassificationProcessTest extends AbstractClassificationProcessTest {
 
-    protected ClassifierFactory getClassifierFactory() {
+    protected Supplier<Classifier> getClassifierSupplier() {
 
-        return () -> new ExactMatchClassifier();
+        return ClassifierSupplier.EXACT_MATCH;
     }
 
     @Test
-    @Ignore
     public void checkPrecision() throws Exception {
 
         // Macro-precision must be 100% since every positive classification decision must be correct.

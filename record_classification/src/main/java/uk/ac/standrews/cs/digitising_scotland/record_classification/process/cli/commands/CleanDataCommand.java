@@ -19,15 +19,18 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.Cleaner;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.Cleaners;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.CleanerSupplier;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.InfoLevel;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.Command;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.Launcher;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.logging.Logging;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassificationContext;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.serialization.SerializationFormat;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.CleanDataStep;
 
 import java.nio.file.Path;
 import java.util.List;
+import java.util.function.Supplier;
 
 /**
  * Cleans the unseen data.
@@ -45,31 +48,31 @@ public class CleanDataCommand extends Command {
     private static final long serialVersionUID = -5151083040631916098L;
 
     @Parameter(required = true, names = {CLEAN_FLAG_SHORT, CLEAN_FLAG_LONG}, description = CLEAN_DESCRIPTION)
-    private List<Cleaners> cleaners;
+    private List<CleanerSupplier> cleaner_suppliers;
 
     @Override
     public void perform(final ClassificationContext context) {
 
-        System.out.println("cleaning data...");
+        Logging.output("cleaning data...", InfoLevel.VERBOSE);
 
-        for (Cleaner cleaner : cleaners) {
-            new CleanDataStep(cleaner).perform(context);
+        for (Supplier<Cleaner> supplier : cleaner_suppliers) {
+            new CleanDataStep(supplier.get()).perform(context);
         }
     }
 
-    public static void cleanData(SerializationFormat serialization_format, String process_name, Path process_directory, List<Cleaners> cleaners) throws Exception {
+    public static void cleanData(SerializationFormat serialization_format, String process_name, Path process_directory, List<CleanerSupplier> cleaners) throws Exception {
 
         Launcher.main(addArgs(
                 makeCleaningArgs(cleaners), serialization_format, process_name, process_directory));
     }
 
-    private static String[] makeCleaningArgs(List<Cleaners> cleaners) {
+    private static String[] makeCleaningArgs(List<CleanerSupplier> cleaners) {
 
         String[] args = new String[cleaners.size() * 2 + 1];
 
         args[0] = NAME;
         int index = 1;
-        for (Cleaners cleaner : cleaners) {
+        for (CleanerSupplier cleaner : cleaners) {
             args[index++] = CLEAN_FLAG_SHORT;
             args[index++] = cleaner.name();
         }

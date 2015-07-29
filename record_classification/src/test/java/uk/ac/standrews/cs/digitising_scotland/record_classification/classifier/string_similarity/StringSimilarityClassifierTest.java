@@ -21,7 +21,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.Classifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.ClassifierTest;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.Classifiers;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.ClassifierSupplier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Classification;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Record;
@@ -73,7 +73,7 @@ public class StringSimilarityClassifierTest extends ClassifierTest {
 
         List<Object[]> result = new ArrayList<>();
 
-        for (Supplier<Classifier> factory : Classifiers.getStringSimilarityClassifiers()) {
+        for (Supplier<Classifier> factory : ClassifierSupplier.getStringSimilarityClassifiers()) {
             result.add(new Object[]{factory});
         }
 

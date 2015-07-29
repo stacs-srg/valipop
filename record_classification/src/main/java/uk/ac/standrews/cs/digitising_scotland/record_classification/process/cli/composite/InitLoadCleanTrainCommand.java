@@ -19,8 +19,8 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.beust.jcommander.converters.PathConverter;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.Classifiers;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.Cleaners;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.ClassifierSupplier;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.CleanerSupplier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.commands.CleanGoldStandardCommand;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.commands.InitCommand;
@@ -69,7 +69,7 @@ public class InitLoadCleanTrainCommand extends Command {
     private static final long serialVersionUID = 8026292848547343006L;
 
     @Parameter(required = true, names = {InitCommand.CLASSIFIER_FLAG_SHORT, InitCommand.CLASSIFIER_FLAG_LONG}, description = InitCommand.CLASSIFIER_DESCRIPTION)
-    private Classifiers classifier_supplier;
+    private ClassifierSupplier classifier_supplier;
 
     @Parameter(required = true, names = {LoadGoldStandardCommand.GOLD_STANDARD_FLAG_SHORT, LoadGoldStandardCommand.GOLD_STANDARD_FLAG_LONG}, description = LoadGoldStandardCommand.GOLD_STANDARD_DESCRIPTION, converter = PathConverter.class)
     private List<Path> gold_standards;
@@ -78,7 +78,7 @@ public class InitLoadCleanTrainCommand extends Command {
     private Double training_ratio;
 
     @Parameter(required = true, names = {CleanGoldStandardCommand.CLEAN_FLAG_SHORT, CleanGoldStandardCommand.CLEAN_FLAG_LONG}, description = CleanGoldStandardCommand.CLEAN_DESCRIPTION)
-    private List<Cleaners> cleaners;
+    private List<CleanerSupplier> cleaners;
 
     @Override
     public Void call() throws Exception {
@@ -88,7 +88,7 @@ public class InitLoadCleanTrainCommand extends Command {
         return null;
     }
 
-    public static void initLoadCleanTrain(Classifiers classifier_supplier, List<Path> gold_standard, List<Charsets> charsets, List<String> delimiters, Double training_ratio, SerializationFormat serialization_format, String process_name, Path process_directory, List<Cleaners> cleaners) throws Exception {
+    public static void initLoadCleanTrain(ClassifierSupplier classifier_supplier, List<Path> gold_standard, List<CharsetSupplier> charsets, List<String> delimiters, Double training_ratio, SerializationFormat serialization_format, String process_name, Path process_directory, List<CleanerSupplier> cleaners) throws Exception {
 
         InitCommand.init(classifier_supplier, serialization_format, process_name, process_directory);
 

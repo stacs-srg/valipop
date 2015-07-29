@@ -21,12 +21,14 @@ import com.beust.jcommander.Parameters;
 import com.beust.jcommander.converters.PathConverter;
 import org.apache.commons.csv.CSVFormat;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.Cleaner;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.Cleaners;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.Charsets;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.CleanerSupplier;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.InfoLevel;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.CharsetSupplier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.Command;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.commands.ClassifyCommand;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.commands.CleanGoldStandardCommand;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.commands.LoadDataCommand;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.logging.Logging;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassificationContext;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.serialization.Serialization;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.serialization.SerializationFormat;
@@ -38,6 +40,7 @@ import uk.ac.standrews.cs.util.dataset.DataSet;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Supplier;
 
 /**
  * Composite command that loads data, cleans and classifies.
@@ -76,7 +79,7 @@ public class LoadCleanClassifyCommand extends Command {
     private Path unseen_data;
 
     @Parameter(required = true, names = {CleanGoldStandardCommand.CLEAN_FLAG_SHORT, CleanGoldStandardCommand.CLEAN_FLAG_LONG}, description = CleanGoldStandardCommand.CLEAN_DESCRIPTION)
-    private List<Cleaners> cleaners;
+    private List<CleanerSupplier> cleaners;
 
     @Parameter(required = true, names = {ClassifyCommand.DESTINATION_FLAG_SHORT, ClassifyCommand.DESTINATION_FLAG_LONG}, description = ClassifyCommand.DESTINATION_DESCRIPTION, converter = PathConverter.class)
     private Path destination;
@@ -85,7 +88,7 @@ public class LoadCleanClassifyCommand extends Command {
     public Void call() throws Exception {
 
         // If charsets are specified, use the last one for the unseen data file.
-        Charsets charset = charsets == null ? LoadDataStep.DEFAULT_CHARSET : charsets.get(charsets.size()-1);
+        CharsetSupplier charset = charsets == null ? LoadDataStep.DEFAULT_CHARSET : charsets.get(charsets.size()-1);
 
         // If delimiters are specified, use the last one for the unseen data file.
         String delimiter = delimiters == null ? LoadDataStep.DEFAULT_DELIMITER : delimiters.get(delimiters.size()-1);
@@ -95,45 +98,40 @@ public class LoadCleanClassifyCommand extends Command {
         return null;
     }
 
-    public static void loadCleanClassify(Path unseen_data, Charsets unseen_data_charsets, String unseen_data_delimiter, Path destination, SerializationFormat serialization_format, String process_name, Path process_directory, List<Cleaners> cleaners) throws Exception {
+    public static void loadCleanClassify(Path unseen_data, CharsetSupplier unseen_data_charsets, String unseen_data_delimiter, Path destination, SerializationFormat serialization_format, String process_name, Path process_directory, List<CleanerSupplier> cleaner_suppliers) throws Exception {
 
-        System.out.println("loading model...");
+        output("loading model...");
 
-//        LoadDataCommand.loadData(unseen_data, unseen_data_charsets, unseen_data_delimiter, serialization_format, process_name, process_directory);
-//
-//        CleanDataCommand.cleanData(serialization_format, process_name, process_directory, cleaners);
-//
-//        ClassifyCommand.classify(unseen_data, destination, serialization_format, process_name, process_directory);
+        ClassificationContext context = Serialization.loadContext(process_directory, process_name, serialization_format);
 
+        output("loading data...");
 
-        Path serialized_context_path = Serialization.getSerializedContextPath(process_directory,process_name,serialization_format);
-        ClassificationContext context = Serialization.loadContext(serialized_context_path, serialization_format);
-        context.getClassifier().recoverFromDeserialization();
+        new LoadDataStep(unseen_data, unseen_data_charsets == null ? CharsetSupplier.UTF_8.get() : unseen_data_charsets.get(), unseen_data_delimiter == null ? "," : unseen_data_delimiter).perform(context);
 
-        System.out.println("loading data...");
+        output("cleaning data...");
 
-        new LoadDataStep(unseen_data, unseen_data_charsets == null ? Charsets.UTF_8.get() : unseen_data_charsets.get(), unseen_data_delimiter == null ? "," : unseen_data_delimiter).perform(context);
-
-        System.out.println("cleaning data...");
-
-        for (Cleaner cleaner : cleaners) {
-            new CleanDataStep(cleaner).perform(context);
+        for (Supplier<Cleaner> supplier : cleaner_suppliers) {
+            new CleanDataStep(supplier.get()).perform(context);
         }
 
-        System.out.println("classifying data...");
+        output("classifying data...");
 
         new ClassifyUnseenRecordsStep().perform(context);
 
-        System.out.println("saving results...");
+        output("saving results...");
 
         final CSVFormat output_format = getDataFormat(",");
         final DataSet classified_data_set = context.getClassifiedUnseenRecords().toDataSet(Arrays.asList("id", "data", "code"), output_format);
         persistDataSet(destination, classified_data_set);
 
-        System.out.println("saving context...");
+        output("saving context...");
 
-        context.getClassifier().prepareForSerialization();
-        Serialization.persistContext(context, serialized_context_path, serialization_format);
+        Serialization.persistContext(context, process_directory,process_name,serialization_format);
+    }
+
+    public static void output(String message) {
+
+        Logging.output(message, InfoLevel.VERBOSE);
     }
 
     @Override

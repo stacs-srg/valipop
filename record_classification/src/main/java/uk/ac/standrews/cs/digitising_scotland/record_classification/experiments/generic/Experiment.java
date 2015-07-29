@@ -21,6 +21,7 @@ import com.beust.jcommander.Parameter;
 import com.beust.jcommander.ParameterException;
 import com.beust.jcommander.converters.PathConverter;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.ClassificationMetrics;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.Classifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.Cleaner;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.ConsistentClassificationCleaner;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.EnglishStopWordCleaner;
@@ -29,7 +30,6 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.I
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.InfoLevel;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassificationContext;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassificationProcess;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassifierFactory;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.specific.EvaluationExperimentProcess;
 import uk.ac.standrews.cs.util.dataset.DataSet;
 import uk.ac.standrews.cs.util.tables.TableGenerator;
@@ -40,6 +40,7 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 /**
@@ -112,7 +113,7 @@ public abstract class Experiment implements Callable<Void> {
     public Void call() throws Exception {
 
         if (verbosity != InfoLevel.NONE) {
-            printSummarisedResults(getExperimentResults());
+            printSummarisedResults(runExperiment());
         }
 
         return null; //void callable
@@ -138,19 +139,19 @@ public abstract class Experiment implements Callable<Void> {
         this.training_ratios = training_ratios;
     }
 
-    public List<ClassifierResults> getExperimentResults() throws Exception {
+    public List<ClassifierResults> runExperiment() throws Exception {
 
-        final List<ClassifierFactory> classifier_factories = getClassifierFactories();
+        final List<Supplier<Classifier>> classifier_factories = getClassifierFactories();
 
-        final Map<ClassifierFactory, ClassificationProcess> process_map = makeProcessMap(classifier_factories);
-        final Map<ClassifierFactory, ClassifierResults> result_map = makeResultsMap(classifier_factories);
-        final Map<ClassifierFactory, Random> random_map = makeRandomMap(classifier_factories);
+        final Map<Supplier<Classifier>, ClassificationProcess> process_map = makeProcessMap(classifier_factories);
+        final Map<Supplier<Classifier>, ClassifierResults> result_map = makeResultsMap(classifier_factories);
+        final Map<Supplier<Classifier>, Random> random_map = makeRandomMap(classifier_factories);
 
         // Loop nesting is this way round to avoid performing all repetitions of a given process consecutively, given
         // that timing information is being recorded.
         for (int i = 0; i < repetitions; i++) {
 
-            for (ClassifierFactory factory : classifier_factories) {
+            for (Supplier<Classifier> factory : classifier_factories) {
 
                 final ClassificationProcess process = process_map.get(factory);
                 final ClassifierResults result = result_map.get(factory);
@@ -176,9 +177,9 @@ public abstract class Experiment implements Callable<Void> {
         return processes;
     }
 
-    protected abstract List<ClassifierFactory> getClassifierFactories() throws IOException, InputFileFormatException;
+    protected abstract List<Supplier<Classifier>> getClassifierFactories() throws IOException, InputFileFormatException;
 
-    private ClassificationProcess makeClassificationProcess(final ClassifierFactory factory) {
+    private ClassificationProcess makeClassificationProcess(final Supplier<Classifier> factory) {
 
         final EvaluationExperimentProcess process = new EvaluationExperimentProcess();
 
@@ -202,27 +203,27 @@ public abstract class Experiment implements Callable<Void> {
         return values;
     }
 
-    private Map<ClassifierFactory, Random> makeRandomMap(final List<ClassifierFactory> factories) {
+    private Map<Supplier<Classifier>, Random> makeRandomMap(final List<Supplier<Classifier>> factories) {
 
         return factories.stream().collect(Collectors.toMap(Function.identity(), this::makeRandom));
     }
 
-    private Map<ClassifierFactory, ClassifierResults> makeResultsMap(final List<ClassifierFactory> factories) {
+    private Map<Supplier<Classifier>, ClassifierResults> makeResultsMap(final List<Supplier<Classifier>> factories) {
 
         return factories.stream().collect(Collectors.toMap(Function.identity(), this::makeClassifierResults));
     }
 
-    private Map<ClassifierFactory, ClassificationProcess> makeProcessMap(final List<ClassifierFactory> factories) {
+    private Map<Supplier<Classifier>, ClassificationProcess> makeProcessMap(final List<Supplier<Classifier>> factories) {
 
         return factories.stream().collect(Collectors.toMap(Function.identity(), this::makeClassificationProcess));
     }
 
-    private Random makeRandom(final ClassifierFactory factory) {
+    private Random makeRandom(final Supplier<Classifier> factory) {
 
         return new Random(SEED);
     }
 
-    private ClassifierResults makeClassifierResults(final ClassifierFactory factory) {
+    private ClassifierResults makeClassifierResults(final Supplier<Classifier> factory) {
 
         return new ClassifierResults(factory.get().getName(), new DataSet(getDataSetLabelsWithTimingColumns()));
     }

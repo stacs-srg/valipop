@@ -53,7 +53,9 @@ public class Serialization {
         return process_directory == null ? Paths.get(process_name) : process_directory.resolve(process_name);
     }
 
-    public static void persistContext(ClassificationContext context, Path serialized_context_path, SerializationFormat serialization_format) throws IOException {
+    public static void persistContext(ClassificationContext context, Path process_directory, String process_name, SerializationFormat serialization_format) throws IOException {
+
+        Path serialized_context_path = getSerializedContextPath(process_directory, process_name, serialization_format);
 
         if (serialization_format == SerializationFormat.JAVA_SERIALIZATION) {
 
@@ -63,7 +65,9 @@ public class Serialization {
         }
     }
 
-    public static ClassificationContext loadContext(Path serialized_context_path, SerializationFormat serialization_format) throws IOException {
+    public static ClassificationContext loadContext(Path process_directory, String process_name, SerializationFormat serialization_format) throws IOException {
+
+        Path serialized_context_path = getSerializedContextPath(process_directory, process_name, serialization_format);
 
         if (serialization_format == SerializationFormat.JAVA_SERIALIZATION) {
 

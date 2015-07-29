@@ -59,16 +59,6 @@ public class ClassifierPlusExactMatchClassifier implements Classifier {
         }
     }
 
-    public void prepareForSerialization() {
-
-        classifier.prepareForSerialization();
-    }
-
-    public void recoverFromDeserialization() {
-
-        classifier.recoverFromDeserialization();
-    }
-
     @Override
     public String getName() {
 

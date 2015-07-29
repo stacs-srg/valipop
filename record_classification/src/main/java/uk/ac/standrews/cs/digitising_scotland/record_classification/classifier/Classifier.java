@@ -19,8 +19,7 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Classification;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Record;
-import uk.ac.standrews.cs.digitising_scotland.util.PercentageProgressIndicator;
-import uk.ac.standrews.cs.digitising_scotland.util.ProgressIndicator;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.logging.Logging;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -58,9 +57,7 @@ public interface Classifier extends Serializable {
      */
     default Bucket classify(final Bucket bucket) {
 
-
-        ProgressIndicator progress_indicator = new PercentageProgressIndicator(20);
-        progress_indicator.setTotalSteps(bucket.size());
+        Logging.setProgressIndicatorSteps(bucket.size());
 
         final Bucket classified = new Bucket();
         final Map<String, Classification> cache = new HashMap<>();
@@ -79,17 +76,17 @@ public interface Classifier extends Serializable {
                 cache.put(data, classification);
             }
 
-            progress_indicator.progressStep();
+            Logging.progressStep();
         }
 
         return classified;
     }
 
-    default void prepareForSerialization() {
-    }
-
-    default void recoverFromDeserialization() {
-    }
+//    default void prepareForSerialization() {
+//    }
+//
+//    default void recoverFromDeserialization() {
+//    }
 
     String getName();
 

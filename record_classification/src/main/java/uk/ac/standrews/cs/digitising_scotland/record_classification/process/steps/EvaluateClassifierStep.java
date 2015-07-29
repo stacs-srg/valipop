@@ -59,15 +59,14 @@ public class EvaluateClassifierStep implements Step {
         context.setClassificationMetrics(classification_metrics);
 
         if (context.getVerbosity().compareTo(InfoLevel.LONG_SUMMARY) >= 0) {
-            printClassificationDetails(context);
+            printClassificationDetails(context, stripped_records.size());
         }
     }
 
-    private void printClassificationDetails(ClassificationContext context) {
+    private void printClassificationDetails(ClassificationContext context, int number_of_evaluation_records) {
 
         final Classifier classifier = context.getClassifier();
         final Bucket evaluation_records = context.getEvaluationRecords();
-        final Bucket stripped_records = evaluation_records.stripRecordClassifications();
 
         final Set<String> unique_training = extractStrings(context.getTrainingRecords().uniqueDataRecords());
         final Set<String> unique_evaluation = extractStrings(evaluation_records);
@@ -80,7 +79,7 @@ public class EvaluateClassifierStep implements Step {
         System.out.println();
         System.out.format("total records              : %s%n", Formatting.format(training_records_size + evaluation_records.size()));
         System.out.format("records used for training  : %s (%s unique)%n", Formatting.format(training_records_size), Formatting.format(unique_training.size()));
-        System.out.format("records used for evaluation: %s (%s unique, %s not in training set)%n", Formatting.format(stripped_records.size()), Formatting.format(unique_evaluation.size()), Formatting.format(count));
+        System.out.format("records used for evaluation: %s (%s unique, %s not in training set)%n", Formatting.format(number_of_evaluation_records), Formatting.format(unique_evaluation.size()), Formatting.format(count));
         System.out.println();
 
         context.getClassificationMetrics().printMetrics(context.getVerbosity());

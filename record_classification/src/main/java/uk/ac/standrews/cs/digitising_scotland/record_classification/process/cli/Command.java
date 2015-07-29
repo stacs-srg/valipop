@@ -19,7 +19,9 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.converters.PathConverter;
 import org.apache.commons.csv.CSVFormat;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.InfoLevel;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.commands.InitCommand;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.logging.Logging;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassificationContext;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.Step;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.serialization.Serialization;
@@ -75,7 +77,7 @@ public abstract class Command implements Callable<Void>, Step {
     protected String name = PROCESS_NAME;
 
     @Parameter(names = {CHARSET_FLAG_SHORT, CHARSET_FLAG_LONG}, description = CHARSET_DESCRIPTION)
-    protected List<Charsets> charsets;
+    protected List<CharsetSupplier> charsets;
 
     @Parameter(names = {DELIMITER_FLAG_SHORT, DELIMITER_FLAG_LONG}, description = DELIMITER_DESCRIPTION)
     protected List<String> delimiters;
@@ -90,29 +92,31 @@ public abstract class Command implements Callable<Void>, Step {
     @Override
     public Void call() throws Exception {
 
-        System.out.println("loading context...");
+        Logging.output("loading context...", InfoLevel.VERBOSE);
+
         final ClassificationContext context = loadContext();
-        context.getClassifier().recoverFromDeserialization();
-        System.out.println("done");
+
+        Logging.output("done", InfoLevel.VERBOSE);
 
         perform(context);
 
-        System.out.println("saving context...");
-        context.getClassifier().prepareForSerialization();
+        Logging.output("saving context...", InfoLevel.VERBOSE);
+
         persistContext(context);
-        System.out.println("done");
+
+        Logging.output("done", InfoLevel.VERBOSE);
 
         return null;
     }
 
     private ClassificationContext loadContext() throws IOException {
 
-        return Serialization.loadContext(getSerializedContextPath(), serialization_format);
+        return Serialization.loadContext(process_directory, name, serialization_format);
     }
 
     protected void persistContext(ClassificationContext context) throws IOException {
 
-        Serialization.persistContext(context, getSerializedContextPath(), serialization_format);
+        Serialization.persistContext(context,process_directory, name, serialization_format);
     }
 
     protected static CSVFormat getDataFormat(String delimiter) {
@@ -125,11 +129,6 @@ public abstract class Command implements Callable<Void>, Step {
         try (final BufferedWriter out = Files.newBufferedWriter(destination, StandardCharsets.UTF_8)) {
             dataset.print(out);
         }
-    }
-
-    private Path getSerializedContextPath() {
-
-        return Serialization.getSerializedContextPath(process_directory, name, serialization_format);
     }
 
     protected static String[] addArgs(String[] args, SerializationFormat serialization_format, String process_name, Path process_directory) {

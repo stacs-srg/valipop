@@ -17,7 +17,6 @@
 package uk.ac.standrews.cs.digitising_scotland.record_classification.experiments;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.experiments.generic.Experiment;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.experiments.specific.ExactMatchAndStringSimilarityExperiment;
@@ -49,7 +48,7 @@ public class ExperimentTest {
         experiment.setRepetitions(NUMBER_OF_REPETITIONS);
         experiment.setVerbosity(InfoLevel.NONE);
 
-        experiment_results = experiment.getExperimentResults();
+        experiment_results = experiment.runExperiment();
     }
 
     @Test
@@ -78,7 +77,6 @@ public class ExperimentTest {
     }
 
     @Test
-    @Ignore
     public void numberOfTrainingRecordsVariesAcrossRepetitionsOfEachExperiment() throws Exception {
 
         for (Experiment.ClassifierResults result : experiment_results) {

@@ -208,10 +208,10 @@ public class ClassificationContext implements Serializable {
         classified_unseen_records.forEach(this.classified_unseen_records::add);
     }
 
-//    public void setEvaluationRecords(final Bucket evaluation_records) {
-//
-//        this.evaluation_records = evaluation_records;
-//    }
+    public void setEvaluationRecords(final Bucket evaluation_records) {
+
+        this.evaluation_records = evaluation_records;
+    }
 
     /**
      * Gets classifier in this context.
@@ -222,16 +222,6 @@ public class ClassificationContext implements Serializable {
 
         return classifier;
     }
-
-//    /**
-//     * Sets the classified unseen records of this context.
-//     *
-//     * @param classified_unseen_records the classified unseen records to set
-//     */
-//    public void setClassifiedUnseenRecords(final Bucket classified_unseen_records) {
-//
-//        this.classified_unseen_records = classified_unseen_records;
-//    }
 
     /**
      * Gets the classification metrics of this context.
@@ -252,12 +242,6 @@ public class ClassificationContext implements Serializable {
 
         this.classification_metrics = classification_metrics;
     }
-
-
-//    public void setTrainingRecords(final Bucket training_records) {
-//
-//        this.training_records = training_records;
-//    }
 
     /**
      * Gets the confusion matrix of this context.
@@ -318,11 +302,6 @@ public class ClassificationContext implements Serializable {
 
         this.classification_time = evaluation_classification_time;
     }
-
-//    public void setGoldStandardRecords(Bucket gold_standard) {
-//
-//        this.gold_standard_records = gold_standard;
-//    }
 
     public InfoLevel getVerbosity() {
 
