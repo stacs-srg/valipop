@@ -16,16 +16,15 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.experiments.specific;
 
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.exact_match.ExactMatchClassifier;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.string_similarity.StringSimilarityClassifier;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.string_similarity.StringSimilarityMetrics;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.Classifier;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.ClassifierSupplier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.InputFileFormatException;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.experiments.generic.Experiment;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassifierFactory;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Supplier;
 
 public class ExactMatchAndStringSimilarityExperiment extends Experiment {
 
@@ -46,8 +45,8 @@ public class ExactMatchAndStringSimilarityExperiment extends Experiment {
     }
 
     @Override
-    protected List<ClassifierFactory> getClassifierFactories() throws IOException, InputFileFormatException {
+    protected List<Supplier<Classifier>> getClassifierFactories() throws IOException, InputFileFormatException {
 
-        return Arrays.asList(ExactMatchClassifier::new, () -> new StringSimilarityClassifier(StringSimilarityMetrics.JARO_WINKLER.get()));
+        return Arrays.asList(ClassifierSupplier.EXACT_MATCH,ClassifierSupplier.STRING_SIMILARITY_JARO_WINKLER);
     }
 }

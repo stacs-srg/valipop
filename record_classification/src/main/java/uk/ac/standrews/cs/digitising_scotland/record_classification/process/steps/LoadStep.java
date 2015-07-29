@@ -17,7 +17,7 @@
 package uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps;
 
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.Charsets;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.CharsetSupplier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassificationContext;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.Step;
 
@@ -40,7 +40,7 @@ public abstract class LoadStep implements Step {
     protected final Charset charset;
     protected final char delimiter;
 
-    public static final Charsets DEFAULT_CHARSET = Charsets.UTF_8;
+    public static final CharsetSupplier DEFAULT_CHARSET = CharsetSupplier.UTF_8;
 
     public static final String DEFAULT_DELIMITER = ",";
 

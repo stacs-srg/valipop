@@ -14,13 +14,34 @@
  * You should have received a copy of the GNU General Public License along with record_classification. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic;
+package uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli;
 
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.Classifier;
-
-import java.io.Serializable;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.function.Supplier;
 
-public interface ClassifierFactory extends Supplier<Classifier>, Serializable {
+/**
+ * @author Graham Kirby
+ */
+public enum CharsetSupplier implements Supplier<Charset> {
 
+    US_ASCII(StandardCharsets.US_ASCII),
+    ISO_8859_1(StandardCharsets.ISO_8859_1),
+    UTF_8(StandardCharsets.UTF_8),
+    UTF_16BE(StandardCharsets.UTF_16BE),
+    UTF_16LE(StandardCharsets.UTF_16LE),
+    UTF_16(StandardCharsets.UTF_16);
+
+    private final Charset charset;
+
+    CharsetSupplier(Charset charset) {
+
+        this.charset = charset;
+    }
+
+    @Override
+    public Charset get() {
+
+        return charset;
+    }
 }

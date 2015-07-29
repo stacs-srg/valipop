@@ -19,7 +19,7 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.beust.jcommander.converters.PathConverter;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.Charsets;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.CharsetSupplier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.Command;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.Launcher;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassificationContext;
@@ -75,13 +75,13 @@ public class LoadDataCommand extends Command {
         return delimiters != null && delimiters.size() > 0 ? delimiters.get(delimiters.size() - 1) : LoadDataStep.DEFAULT_DELIMITER;
     }
 
-    public static void loadData(Path unseen_data, Charsets charset, String delimiter, SerializationFormat serialization_format, String process_name, Path process_directory) throws Exception {
+    public static void loadData(Path unseen_data, CharsetSupplier charset, String delimiter, SerializationFormat serialization_format, String process_name, Path process_directory) throws Exception {
 
         Launcher.main(addArgs(
                 makeDataArgs(unseen_data, charset, delimiter), serialization_format, process_name, process_directory));
     }
 
-    private static String[] makeDataArgs(Path unseen_data, Charsets charset, String delimiter) {
+    private static String[] makeDataArgs(Path unseen_data, CharsetSupplier charset, String delimiter) {
 
         // Assume that 'charset' and 'delimiter' will both be null or both set.
 

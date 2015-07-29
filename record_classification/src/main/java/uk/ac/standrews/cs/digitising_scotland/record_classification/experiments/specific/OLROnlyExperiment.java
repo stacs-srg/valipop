@@ -16,13 +16,15 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.experiments.specific;
 
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.linear_regression.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.Classifier;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.linear_regression.OLRClassifier;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.InputFileFormatException;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.experiments.generic.Experiment;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassifierFactory;
 
-import java.io.*;
-import java.util.*;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.function.Supplier;
 
 public class OLROnlyExperiment extends Experiment {
 
@@ -38,7 +40,7 @@ public class OLROnlyExperiment extends Experiment {
     }
 
     @Override
-    protected List<ClassifierFactory> getClassifierFactories() throws IOException, InputFileFormatException {
+    protected List<Supplier<Classifier>> getClassifierFactories() throws IOException, InputFileFormatException {
 
         return Arrays.asList(() -> new OLRClassifier());
     }

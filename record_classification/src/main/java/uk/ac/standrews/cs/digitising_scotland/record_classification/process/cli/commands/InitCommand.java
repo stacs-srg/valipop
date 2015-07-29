@@ -18,7 +18,7 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.Classifiers;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.ClassifierSupplier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.Command;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.Launcher;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassificationContext;
@@ -52,7 +52,7 @@ public class InitCommand extends Command {
     public static final String CLASSIFIER_FLAG_LONG = "--classifier";
 
     @Parameter(required = true, names = {CLASSIFIER_FLAG_SHORT, CLASSIFIER_FLAG_LONG}, description = CLASSIFIER_DESCRIPTION)
-    private Classifiers classifier_supplier;
+    private ClassifierSupplier classifier_supplier;
 
     @Override
     public Void call() throws Exception {
@@ -70,7 +70,7 @@ public class InitCommand extends Command {
     public void perform(final ClassificationContext context) {
     }
 
-    public static void init(Classifiers classifier_supplier, SerializationFormat serialization_format, String process_name, Path process_directory) throws Exception {
+    public static void init(ClassifierSupplier classifier_supplier, SerializationFormat serialization_format, String process_name, Path process_directory) throws Exception {
 
         Launcher.main(addArgs(
                 new String[]{NAME, CLASSIFIER_FLAG_SHORT, classifier_supplier.toString()}, serialization_format, process_name, process_directory));

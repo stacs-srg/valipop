@@ -44,7 +44,7 @@ public class ClassifierTest {
 
         List<Object[]> result = new ArrayList<>();
 
-        for (Supplier<Classifier> factory : Classifiers.values()) {
+        for (Supplier<Classifier> factory : ClassifierSupplier.values()) {
             result.add(new Object[]{factory});
         }
 

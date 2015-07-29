@@ -17,7 +17,7 @@
 package uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli;
 
 import org.junit.Test;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.Classifiers;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.ClassifierSupplier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.EnglishStopWordCleaner;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Record;
@@ -28,7 +28,6 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.process.seri
 import uk.ac.standrews.cs.util.tools.FileManipulation;
 
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 
@@ -46,7 +45,7 @@ public class EndToEndCleaningTest extends EndToEndCommon {
 
     public EndToEndCleaningTest() {
 
-        classifier_supplier = Classifiers.STRING_SIMILARITY_DICE;
+        classifier_supplier = ClassifierSupplier.STRING_SIMILARITY_DICE;
         serialization_format = SerializationFormat.JSON;
 
         input_gold_standard_files = Arrays.asList(FileManipulation.getResourcePath(EndToEndCleaningTest.class, GOLD_STANDARD_FILE_NAME));
@@ -122,7 +121,6 @@ public class EndToEndCleaningTest extends EndToEndCommon {
 
     private ClassificationContext loadContext() throws IOException {
 
-        Path context_path = Serialization.getSerializedContextPath(temp_process_directory, process_name, serialization_format);
-        return Serialization.loadContext(context_path, serialization_format);
+        return Serialization.loadContext(temp_process_directory, process_name, serialization_format);
     }
 }

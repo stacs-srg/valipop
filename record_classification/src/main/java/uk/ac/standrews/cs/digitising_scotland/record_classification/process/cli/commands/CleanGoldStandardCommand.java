@@ -19,7 +19,7 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.Cleaner;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.Cleaners;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.CleanerSupplier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.Command;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.Launcher;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassificationContext;
@@ -28,6 +28,7 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.process.step
 
 import java.nio.file.Path;
 import java.util.List;
+import java.util.function.Supplier;
 
 /**
  * Cleans the gold standard data.
@@ -45,29 +46,29 @@ public class CleanGoldStandardCommand extends Command {
     private static final long serialVersionUID = -5151083040631916098L;
 
     @Parameter(required = true, names = {CLEAN_FLAG_SHORT, CLEAN_FLAG_LONG}, description = CLEAN_DESCRIPTION)
-    private List<Cleaners> cleaners;
+    private List<CleanerSupplier> cleaner_suppliers;
 
     @Override
     public void perform(final ClassificationContext context) {
 
-        for (Cleaner cleaner : cleaners) {
-            new CleanGoldStandardStep(cleaner).perform(context);
+        for (Supplier<Cleaner> supplier : cleaner_suppliers) {
+            new CleanGoldStandardStep(supplier.get()).perform(context);
         }
     }
 
-    public static void cleanGoldStandard(SerializationFormat serialization_format, String process_name, Path process_directory, List<Cleaners> cleaners) throws Exception {
+    public static void cleanGoldStandard(SerializationFormat serialization_format, String process_name, Path process_directory, List<CleanerSupplier> cleaners) throws Exception {
 
         Launcher.main(addArgs(
                 makeCleaningArgs(cleaners), serialization_format, process_name, process_directory));
     }
 
-    private static String[] makeCleaningArgs(List<Cleaners> cleaners) {
+    private static String[] makeCleaningArgs(List<CleanerSupplier> cleaners) {
 
         String[] args = new String[cleaners.size() * 2 + 1];
 
         args[0] = NAME;
         int index = 1;
-        for (Cleaners cleaner : cleaners) {
+        for (CleanerSupplier cleaner : cleaners) {
             args[index++] = CLEAN_FLAG_SHORT;
             args[index++] = cleaner.name();
         }

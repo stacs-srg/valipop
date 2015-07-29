@@ -19,7 +19,7 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.beust.jcommander.converters.PathConverter;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.Charsets;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.CharsetSupplier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.Command;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.Launcher;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassificationContext;
@@ -76,13 +76,13 @@ public class LoadGoldStandardCommand extends Command {
         return delimiters != null && delimiters.size() > i ? delimiters.get(i) : LoadGoldStandardStep.DEFAULT_DELIMITER;
     }
 
-    public static void loadGoldStandard(List<Path> gold_standards, List<Charsets> charsets, List<String> delimiters, SerializationFormat serialization_format, String process_name, Path process_directory) throws Exception {
+    public static void loadGoldStandard(List<Path> gold_standards, List<CharsetSupplier> charsets, List<String> delimiters, SerializationFormat serialization_format, String process_name, Path process_directory) throws Exception {
 
         Launcher.main(addArgs(
                 makeGoldStandardArgs(gold_standards, charsets, delimiters), serialization_format, process_name, process_directory));
     }
 
-    private static String[] makeGoldStandardArgs(List<Path> gold_standards, List<Charsets> charsets, List<String> delimiters) {
+    private static String[] makeGoldStandardArgs(List<Path> gold_standards, List<CharsetSupplier> charsets, List<String> delimiters) {
 
         // Assume that 'charsets' and 'delimiters' will both be null or both set.
         int number_of_args_per_gold_standard_file = charsets == null ? 2 : 6;

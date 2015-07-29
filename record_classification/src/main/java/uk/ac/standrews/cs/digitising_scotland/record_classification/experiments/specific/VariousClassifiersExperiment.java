@@ -16,14 +16,15 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.experiments.specific;
 
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.Classifier;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.ClassifierSupplier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.InputFileFormatException;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassifierFactory;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.Classifiers;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.experiments.generic.Experiment;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Supplier;
 
 public class VariousClassifiersExperiment extends Experiment {
 
@@ -39,22 +40,21 @@ public class VariousClassifiersExperiment extends Experiment {
     }
 
     @Override
-    protected List<ClassifierFactory> getClassifierFactories() throws IOException, InputFileFormatException {
-
-        return Arrays.asList(
-                () -> Classifiers.EXACT_MATCH.get(),
-                () -> Classifiers.STRING_SIMILARITY_LEVENSHTEIN.get(),
-                () -> Classifiers.STRING_SIMILARITY_JARO_WINKLER.get(),
-//                () -> Classifiers.STRING_SIMILARITY_JACCARD,
-//                () -> Classifiers.STRING_SIMILARITY_CHAPMAN_LENGTH_DEVIATION,
-//                () -> Classifiers.STRING_SIMILARITY_DICE,
-                () -> Classifiers.OLR.get(),
-                () -> Classifiers.EXACT_MATCH_PLUS_STRING_SIMILARITY_LEVENSHTEIN.get(),
-                () -> Classifiers.EXACT_MATCH_PLUS_STRING_SIMILARITY_JARO_WINKLER.get(),
+    protected List<Supplier<Classifier>> getClassifierFactories() throws IOException, InputFileFormatException {
+        
+        return Arrays.asList(ClassifierSupplier.values());
+//                ClassifierSupplier.EXACT_MATCH,
+//                ClassifierSupplier.STRING_SIMILARITY_LEVENSHTEIN,
+//                ClassifierSupplier.STRING_SIMILARITY_JARO_WINKLER,
+//                ClassifierSupplier.STRING_SIMILARITY_JACCARD,
+//                ClassifierSupplier.STRING_SIMILARITY_DICE,
+//                ClassifierSupplier.OLR,
+//                ClassifierSupplier.EXACT_MATCH_PLUS_STRING_SIMILARITY_LEVENSHTEIN,
+//                ClassifierSupplier.EXACT_MATCH_PLUS_STRING_SIMILARITY_JARO_WINKLER,
 //                () -> Classifiers.EXACT_MATCH_PLUS_STRING_SIMILARITY_JACCARD,
 //                () -> Classifiers.EXACT_MATCH_PLUS_STRING_SIMILARITY_CHAPMAN_LENGTH_DEVIATION,
 //                () -> Classifiers.EXACT_MATCH_PLUS_STRING_SIMILARITY_DICE,
-                () -> Classifiers.EXACT_MATCH_PLUS_OLR.get());
+//                () -> ClassifierSupplier.EXACT_MATCH_PLUS_OLR.get())
 //                () -> Classifiers.VOTING_ENSEMBLE);
     }
 }

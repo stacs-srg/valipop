@@ -22,11 +22,11 @@ import org.junit.Test;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.AbstractMetricsTest;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.ClassificationMetrics;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.ConfusionMatrix;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.Classifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.Cleaner;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.ConsistentClassificationCleaner;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.CleanerSupplier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.InfoLevel;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassificationContext;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassifierFactory;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.specific.EvaluationExperimentProcess;
 import uk.ac.standrews.cs.util.tools.FileManipulation;
 
@@ -35,6 +35,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.function.Supplier;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -44,7 +45,7 @@ public abstract class AbstractClassificationProcessTest extends AbstractMetricsT
     public static final String CODED_DATA_1K_FILE_NAME = "coded_data_1K.csv";
     public static final long SEED = 34234234234L;
 
-    protected abstract ClassifierFactory getClassifierFactory();
+    protected abstract Supplier<Classifier> getClassifierSupplier();
 
     protected ConfusionMatrix matrix;
     protected ClassificationMetrics metrics;
@@ -54,7 +55,7 @@ public abstract class AbstractClassificationProcessTest extends AbstractMetricsT
 
         List<Path> gold_standard_files = Arrays.asList(FileManipulation.getResourcePath(AbstractClassificationProcessTest.class, CODED_DATA_1K_FILE_NAME));
         List<Double> training_ratios = Arrays.asList(0.8);
-        List<Cleaner> cleaners = Arrays.asList(ConsistentClassificationCleaner.CORRECT);
+        List<Cleaner> cleaners = Arrays.asList(CleanerSupplier.COMBINED.get());
 
         final EvaluationExperimentProcess process = new EvaluationExperimentProcess();
 
@@ -64,7 +65,7 @@ public abstract class AbstractClassificationProcessTest extends AbstractMetricsT
 
         process.configureSteps();
 
-        final ClassificationContext context = new ClassificationContext(getClassifierFactory().get(), new Random(SEED));
+        final ClassificationContext context = new ClassificationContext(getClassifierSupplier().get(), new Random(SEED));
 
         context.setVerbosity(InfoLevel.NONE);
         process.call(context);

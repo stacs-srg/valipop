@@ -18,8 +18,8 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli
 
 import org.junit.After;
 import org.junit.Before;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.Classifiers;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.Cleaners;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.ClassifierSupplier;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.CleanerSupplier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.composite.InitLoadCleanTrainCommand;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.composite.LoadCleanClassifyCommand;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.serialization.Serialization;
@@ -41,16 +41,16 @@ public class EndToEndCommon {
     // Set to false if there's a need to inspect the serialized context or classified output after the test.
     private static final boolean CLEAN_UP = false;
 
-    List<Charsets> gold_standard_charsets;
-    Charsets unseen_data_charsets;
+    List<CharsetSupplier> gold_standard_charsets;
+    CharsetSupplier unseen_data_charsets;
     List<String> gold_standard_delimiters;
     String unseen_data_delimiter;
 
     SerializationFormat serialization_format;
     String process_name;
-    Classifiers classifier_supplier;
+    ClassifierSupplier classifier_supplier;
     double training_ratio;
-    List<Cleaners> cleaners;
+    List<CleanerSupplier> cleaners;
 
     Path temp_process_directory;
     List<Path> input_gold_standard_files;
@@ -65,7 +65,7 @@ public class EndToEndCommon {
         process_name = Command.PROCESS_NAME;
         training_ratio = 1.0;
 
-        cleaners = Arrays.asList(Cleaners.COMBINED);
+        cleaners = Arrays.asList(CleanerSupplier.COMBINED);
 
         temp_process_directory = Files.createTempDirectory(process_name + "_");
         output_trained_model_file = Serialization.getSerializedContextPath(temp_process_directory, process_name, serialization_format);

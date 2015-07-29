@@ -34,31 +34,31 @@ import java.util.function.Supplier;
  * @author Masih Hajiarab Derkani
  * @author Graham Kirby
  */
-public enum Classifiers implements Supplier<Classifier> {
+public enum ClassifierSupplier implements Supplier<Classifier> {
 
     EXACT_MATCH(ExactMatchClassifier::new),
 
-    STRING_SIMILARITY_LEVENSHTEIN(Classifiers::makeLevenshteinClassifier),
-    STRING_SIMILARITY_JARO_WINKLER(Classifiers::makeJaroWinklerClassifier),
-    STRING_SIMILARITY_JACCARD(Classifiers::makeJaccardClassifier),
-    STRING_SIMILARITY_DICE(Classifiers::makeDiceClassifier),
+    STRING_SIMILARITY_LEVENSHTEIN(ClassifierSupplier::makeLevenshteinClassifier),
+    STRING_SIMILARITY_JARO_WINKLER(ClassifierSupplier::makeJaroWinklerClassifier),
+    STRING_SIMILARITY_JACCARD(ClassifierSupplier::makeJaccardClassifier),
+    STRING_SIMILARITY_DICE(ClassifierSupplier::makeDiceClassifier),
 
     OLR(OLRClassifier::new),
 
-    VOTING_ENSEMBLE(Classifiers::makeVotingEnsembleClassifier),
-    VOTING_SIMILARITY_ENSEMBLE(Classifiers::makeVotingSimilarityEnsembleClassifier),
+    VOTING_ENSEMBLE(ClassifierSupplier::makeVotingEnsembleClassifier),
+    VOTING_SIMILARITY_ENSEMBLE(ClassifierSupplier::makeVotingSimilarityEnsembleClassifier),
 
-    EXACT_MATCH_PLUS_STRING_SIMILARITY_LEVENSHTEIN(Classifiers::makeExactMatchPlusLevenshteinClassifier),
-    EXACT_MATCH_PLUS_STRING_SIMILARITY_JARO_WINKLER(Classifiers::makeExactMatchPlusJaroWinklerClassifier),
-    EXACT_MATCH_PLUS_STRING_SIMILARITY_JACCARD(Classifiers::makeExactMatchPlusJaccardClassifier),
-    EXACT_MATCH_PLUS_STRING_SIMILARITY_DICE(Classifiers::makeExactMatchPlusDiceClassifier),
-    EXACT_MATCH_PLUS_OLR(Classifiers::makeExactMatchPlusOLRClassifier),
-    EXACT_MATCH_PLUS_VOTING_ENSEMBLE(Classifiers::makeExactMatchPlusVotingEnsembleClassifier),
-    EXACT_MATCH_PLUS_VOTING_SIMILARITY_ENSEMBLE(Classifiers::makeExactMatchPlusVotingSimilarityEnsembleClassifier);
+    EXACT_MATCH_PLUS_STRING_SIMILARITY_LEVENSHTEIN(ClassifierSupplier::makeExactMatchPlusLevenshteinClassifier),
+    EXACT_MATCH_PLUS_STRING_SIMILARITY_JARO_WINKLER(ClassifierSupplier::makeExactMatchPlusJaroWinklerClassifier),
+    EXACT_MATCH_PLUS_STRING_SIMILARITY_JACCARD(ClassifierSupplier::makeExactMatchPlusJaccardClassifier),
+    EXACT_MATCH_PLUS_STRING_SIMILARITY_DICE(ClassifierSupplier::makeExactMatchPlusDiceClassifier),
+    EXACT_MATCH_PLUS_OLR(ClassifierSupplier::makeExactMatchPlusOLRClassifier),
+    EXACT_MATCH_PLUS_VOTING_ENSEMBLE(ClassifierSupplier::makeExactMatchPlusVotingEnsembleClassifier),
+    EXACT_MATCH_PLUS_VOTING_SIMILARITY_ENSEMBLE(ClassifierSupplier::makeExactMatchPlusVotingSimilarityEnsembleClassifier);
 
     private Supplier<Classifier> supplier;
 
-    Classifiers(Supplier<Classifier> supplier) {
+    ClassifierSupplier(Supplier<Classifier> supplier) {
 
         this.supplier = supplier;
     }
