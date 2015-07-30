@@ -23,7 +23,7 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.Cle
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.InfoLevel;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.Command;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.Launcher;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.logging.Logging;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.config.Logging;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassificationContext;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.serialization.SerializationFormat;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.CleanDataStep;
@@ -53,6 +53,11 @@ public class CleanDataCommand extends Command {
     @Override
     public void perform(final ClassificationContext context) {
 
+        perform(context, cleaner_suppliers);
+    }
+
+    public static void perform(final ClassificationContext context, List<CleanerSupplier> cleaner_suppliers) {
+
         Logging.output("cleaning data...", InfoLevel.VERBOSE);
 
         for (Supplier<Cleaner> supplier : cleaner_suppliers) {
@@ -60,22 +65,9 @@ public class CleanDataCommand extends Command {
         }
     }
 
-    public static void cleanData(SerializationFormat serialization_format, String process_name, Path process_directory, List<CleanerSupplier> cleaners) throws Exception {
+    public static void perform(SerializationFormat serialization_format, String process_name, Path process_directory, List<CleanerSupplier> cleaners) throws Exception {
 
         Launcher.main(addArgs(
-                makeCleaningArgs(cleaners), serialization_format, process_name, process_directory));
-    }
-
-    private static String[] makeCleaningArgs(List<CleanerSupplier> cleaners) {
-
-        String[] args = new String[cleaners.size() * 2 + 1];
-
-        args[0] = NAME;
-        int index = 1;
-        for (CleanerSupplier cleaner : cleaners) {
-            args[index++] = CLEAN_FLAG_SHORT;
-            args[index++] = cleaner.name();
-        }
-        return args;
+                serialization_format, process_name, process_directory, makeCleaningArgs(NAME, cleaners)));
     }
 }

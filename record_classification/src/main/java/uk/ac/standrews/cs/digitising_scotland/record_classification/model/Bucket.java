@@ -16,7 +16,6 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.model;
 
-import org.apache.commons.csv.CSVFormat;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.DuplicateRecordIdException;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.InputFileFormatException;
 import uk.ac.standrews.cs.util.dataset.DataSet;
@@ -131,10 +130,9 @@ public class Bucket implements Iterable<Record>, Serializable {
                 record -> new Record(next_id++, record.getData(), record.getOriginalData(), record.getClassification())).collect(Collectors.toList());
     }
 
-    public DataSet toDataSet(List<String> column_labels, CSVFormat format) {
+    public DataSet toDataSet(List<String> column_labels) {
 
         final DataSet dataset = new DataSet(column_labels);
-        dataset.setOutputFormat(format);
 
         for (Record record : records) {
 

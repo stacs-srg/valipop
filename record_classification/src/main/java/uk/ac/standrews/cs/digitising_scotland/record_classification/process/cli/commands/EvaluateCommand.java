@@ -18,18 +18,15 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
-import com.beust.jcommander.converters.FileConverter;
-import org.apache.commons.csv.CSVFormat;
+import com.beust.jcommander.converters.PathConverter;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.ClassificationMetrics;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.Command;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassificationContext;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.EvaluateClassifierStep;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.SaveDataStep;
 import uk.ac.standrews.cs.util.dataset.DataSet;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.nio.file.Path;
 
 /**
  * @author Masih Hajiarab Derkani
@@ -45,26 +42,17 @@ public class EvaluateCommand extends Command {
 
     private static final String OUTPUT_DELIMITER = ",";
 
-    @Parameter(required = true, names = {"-o", "--output"}, description = "Path to the place to persist the evaluation results.", converter = FileConverter.class)
-    private File destination;
+    @Parameter(required = true, names = {"-o", "--output"}, description = "Path to the place to persist the evaluation results.", converter = PathConverter.class)
+    private Path destination;
 
     @Override
     public void perform(final ClassificationContext context) {
 
-        // TODO split into multiple commands to classify and to output metrics.
+        new EvaluateClassifierStep().perform(context);
 
-        try {
-            List<ClassificationMetrics> results = new ArrayList<>();
+        final DataSet data_set = new DataSet(ClassificationMetrics.DATASET_LABELS);
+        data_set.addRow(context.getClassificationMetrics().getValues());
 
-            new EvaluateClassifierStep().perform(context);
-            results.add(context.getClassificationMetrics());
-
-            final CSVFormat output_format = getDataFormat(OUTPUT_DELIMITER);
-            final DataSet data_set = ClassificationMetrics.toDataSet(results, output_format);
-            persistDataSet(destination.toPath(), data_set);
-        }
-        catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        new SaveDataStep(data_set, destination).perform(context);
     }
 }

@@ -16,10 +16,8 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.analysis;
 
-import org.apache.commons.csv.CSVFormat;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Classification;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.InfoLevel;
-import uk.ac.standrews.cs.util.dataset.DataSet;
 
 import java.io.Serializable;
 import java.util.*;
@@ -280,24 +278,6 @@ public class ClassificationMetrics implements Serializable {
             printMetric("micro-average precision/recall ", getMicroAveragePrecision());
             printMetric("micro-average accuracy         ", getMicroAverageAccuracy());
         }
-    }
-
-    /**
-     * Converts a collection of metrics into {@link DataSet dataset} with labels set to {@link #DATASET_LABELS}.
-     *
-     * @param metrics_collection the collection of metrics to convert to dataset
-     * @param format    the format of the dataset
-     * @return the metrics as dataset.
-     */
-    public static DataSet toDataSet(final Collection<ClassificationMetrics> metrics_collection, CSVFormat format) {
-
-        final DataSet data_set = new DataSet(DATASET_LABELS);
-        data_set.setOutputFormat(format);
-
-        for (ClassificationMetrics metrics : metrics_collection) {
-            data_set.addRow(metrics.getValues());
-        }
-        return data_set;
     }
 
     private double getMacroAverage(Map<String, Double> values) {

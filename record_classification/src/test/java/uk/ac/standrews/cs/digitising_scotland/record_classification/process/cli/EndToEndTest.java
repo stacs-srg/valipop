@@ -40,12 +40,13 @@ import static org.junit.Assert.*;
 @RunWith(Parameterized.class)
 public class EndToEndTest extends EndToEndCommon {
 
-    public EndToEndTest(ClassifierSupplier classifier_supplier, SerializationFormat serialization_format, TestInfo test_info) {
+    public EndToEndTest(ClassifierSupplier classifier_supplier, SerializationFormat serialization_format, boolean use_cli, TestInfo test_info) {
 
         this.classifier_supplier = classifier_supplier;
         this.serialization_format = serialization_format;
-        this.gold_standard_charsets = test_info.gold_standard_charsets;
-        this.unseen_data_charsets = test_info.unseen_data_charsets;
+        this.use_cli = use_cli;
+        this.gold_standard_charset_suppliers = test_info.gold_standard_charsets;
+        this.unseen_data_charset_supplier = test_info.unseen_data_charsets;
         this.gold_standard_delimiters = test_info.gold_standard_delimiters;
         this.unseen_data_delimiter = test_info.unseen_data_delimiter;
 
@@ -157,7 +158,7 @@ public class EndToEndTest extends EndToEndCommon {
         }
     }
 
-    @Parameterized.Parameters(name = "{0}, {1}, {2}")
+    @Parameterized.Parameters(name = "{0}, {1}, {2}, {3}")
     public static Collection<Object[]> generateData() {
 
         List<ClassifierSupplier> classifiers = Arrays.asList(
@@ -170,9 +171,11 @@ public class EndToEndTest extends EndToEndCommon {
                 SerializationFormat.JSON_COMPRESSED,
                 SerializationFormat.JAVA_SERIALIZATION);
 
+        List<Boolean> use_cli_options = Arrays.asList(true, false);
+
         List<TestInfo> cases = Arrays.asList(makeCase1(), makeCase2(), makeCase3(), makeCase4(), makeCase5());
 
-        return allCombinations(classifiers, serialization_formats, cases);
+        return allCombinations(classifiers, serialization_formats, use_cli_options, cases);
     }
 
     private static TestInfo makeCase1() {
@@ -207,7 +210,7 @@ public class EndToEndTest extends EndToEndCommon {
 
         return new TestInfo("case5",
                 Arrays.asList("test_training_ascii_unix.csv", "test_training_iso_latin1_unix.csv", "test_training_UTF16_unix.csv", "test_training_windows_windows.csv"), "test_evaluation_ascii_windows.csv",
-        Arrays.asList(CharsetSupplier.US_ASCII, CharsetSupplier.ISO_8859_1, CharsetSupplier.UTF_16, CharsetSupplier.UTF_8), CharsetSupplier.UTF_8, Arrays.asList(",", ",", ",", ",", ","), ",");
+                Arrays.asList(CharsetSupplier.US_ASCII, CharsetSupplier.ISO_8859_1, CharsetSupplier.UTF_16, CharsetSupplier.UTF_8), CharsetSupplier.UTF_8, Arrays.asList(",", ",", ",", ",", ","), ",");
     }
 
     private List<Path> getGoldStandardFiles(TestInfo test_info) {
@@ -222,14 +225,16 @@ public class EndToEndTest extends EndToEndCommon {
         return paths;
     }
 
-    private static Collection<Object[]> allCombinations(List<ClassifierSupplier> classifier_suppliers, List<SerializationFormat> serialization_formats, List<TestInfo> cases) {
+    private static Collection<Object[]> allCombinations(List<ClassifierSupplier> classifier_suppliers, List<SerializationFormat> serialization_formats, List<Boolean> use_cli_options, List<TestInfo> cases) {
 
         List<Object[]> result = new ArrayList<>();
 
         for (ClassifierSupplier classifier_supplier : classifier_suppliers) {
             for (SerializationFormat serialization_format : serialization_formats) {
-                for (TestInfo test_case : cases) {
-                    result.add(new Object[]{classifier_supplier, serialization_format, test_case});
+                for (boolean use_cli : use_cli_options) {
+                    for (TestInfo test_case : cases) {
+                        result.add(new Object[]{classifier_supplier, serialization_format, use_cli, test_case});
+                    }
                 }
             }
         }

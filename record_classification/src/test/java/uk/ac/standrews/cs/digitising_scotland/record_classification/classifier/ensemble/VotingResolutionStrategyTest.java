@@ -127,7 +127,6 @@ public class VotingResolutionStrategyTest {
 
             @Override
             public void train(Bucket bucket) {
-
             }
 
             @Override

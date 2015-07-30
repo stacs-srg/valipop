@@ -56,53 +56,37 @@ public class LoadGoldStandardCommand extends Command {
     @Override
     public void perform(final ClassificationContext context) {
 
+        perform(context, gold_standards, charsets, delimiters);
+    }
+
+    public static void perform(final ClassificationContext context, List<Path> gold_standards, List<CharsetSupplier> charsets, List<String> delimiters) {
+
         for (int i = 0; i < gold_standards.size(); i++) {
 
             Path gold_standard = gold_standards.get(i);
-            Charset charset = getCharset(i);
-            String delimiter = getDelimiter(i);
+            Charset charset = getCharset(charsets, i);
+            String delimiter = getDelimiter(delimiters, i);
 
             new LoadGoldStandardStep(gold_standard, charset, delimiter).perform(context);
         }
     }
 
-    private Charset getCharset(int i) {
+    public static void perform(SerializationFormat serialization_format, String process_name, Path process_directory, List<Path> gold_standards, List<CharsetSupplier> charsets, List<String> delimiters) throws Exception {
 
-        return charsets != null && charsets.size() > i ? charsets.get(i).get() : LoadGoldStandardStep.DEFAULT_CHARSET.get();
-    }
-
-    private String getDelimiter(int i) {
-
-        return delimiters != null && delimiters.size() > i ? delimiters.get(i) : LoadGoldStandardStep.DEFAULT_DELIMITER;
-    }
-
-    public static void loadGoldStandard(List<Path> gold_standards, List<CharsetSupplier> charsets, List<String> delimiters, SerializationFormat serialization_format, String process_name, Path process_directory) throws Exception {
-
-        Launcher.main(addArgs(
-                makeGoldStandardArgs(gold_standards, charsets, delimiters), serialization_format, process_name, process_directory));
+        Launcher.main(addArgs(serialization_format, process_name, process_directory, makeGoldStandardArgs(gold_standards, charsets, delimiters)));
     }
 
     private static String[] makeGoldStandardArgs(List<Path> gold_standards, List<CharsetSupplier> charsets, List<String> delimiters) {
 
-        // Assume that 'charsets' and 'delimiters' will both be null or both set.
-        int number_of_args_per_gold_standard_file = charsets == null ? 2 : 6;
-
-        String[] args = new String[gold_standards.size() * number_of_args_per_gold_standard_file + 1];
-
-        args[0] = NAME;
+        String[] args = {NAME};
 
         for (int i = 0; i < gold_standards.size(); i++) {
 
-            args[i * number_of_args_per_gold_standard_file + 1] = GOLD_STANDARD_FLAG_SHORT;
-            args[i * number_of_args_per_gold_standard_file + 2] = gold_standards.get(i).toString();
+            args = extendArgs(args, GOLD_STANDARD_FLAG_SHORT, gold_standards.get(i).toString());
 
+            // Assume that 'charsets' and 'delimiters' will both be null or both set.
             if (charsets != null) {
-
-                args[i * number_of_args_per_gold_standard_file + 3] = CHARSET_FLAG_SHORT;
-                args[i * number_of_args_per_gold_standard_file + 4] = charsets.get(i).name();
-
-                args[i * number_of_args_per_gold_standard_file + 5] = DELIMITER_FLAG_SHORT;
-                args[i * number_of_args_per_gold_standard_file + 6] = delimiters.get(i);
+                args = extendArgs(args, CHARSET_FLAG_SHORT, charsets.get(i).name(), DELIMITER_FLAG_SHORT, delimiters.get(i));
             }
         }
 
