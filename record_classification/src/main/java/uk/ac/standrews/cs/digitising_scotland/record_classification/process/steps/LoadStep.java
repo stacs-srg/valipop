@@ -40,7 +40,7 @@ public abstract class LoadStep implements Step {
     protected final Charset charset;
     protected final char delimiter;
 
-    public static final CharsetSupplier DEFAULT_CHARSET = CharsetSupplier.UTF_8;
+    public static final CharsetSupplier DEFAULT_CHARSET_SUPPLIER = CharsetSupplier.UTF_8;
 
     public static final String DEFAULT_DELIMITER = ",";
 
@@ -51,7 +51,7 @@ public abstract class LoadStep implements Step {
      */
     public LoadStep(Path path) {
 
-        this(path, DEFAULT_CHARSET.get(), DEFAULT_DELIMITER);
+        this(path, DEFAULT_CHARSET_SUPPLIER.get(), DEFAULT_DELIMITER);
     }
 
     public LoadStep(Path path, Charset charset, String delimiter) {

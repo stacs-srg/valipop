@@ -35,7 +35,9 @@ import java.nio.file.Path;
 @Parameters(commandNames = TrainCommand.NAME, commandDescription = "Train classifier")
 public class TrainCommand extends Command {
 
-    /** The name of this command */
+    /**
+     * The name of this command
+     */
     public static final String NAME = "train";
 
     private static final long serialVersionUID = 8026292848547343006L;
@@ -48,15 +50,20 @@ public class TrainCommand extends Command {
     private Double training_ratio;
 
     @Override
-    public void perform(final ClassificationContext context)  {
+    public void perform(final ClassificationContext context) {
+
+        perform(context, training_ratio);
+    }
+
+    public static void perform(final ClassificationContext context, double training_ratio) {
 
         new AddTrainingAndEvaluationRecordsByRatioStep(training_ratio).perform(context);
         new TrainClassifierStep().perform(context);
     }
 
-    public static void train(double training_ratio, SerializationFormat serialization_format, String process_name, Path process_directory) throws Exception {
+    public static void perform(SerializationFormat serialization_format, String process_name, Path process_directory, double training_ratio) throws Exception {
 
         Launcher.main(addArgs(
-                new String[]{NAME, TRAINING_RATIO_FLAG_SHORT, String.valueOf(training_ratio)}, serialization_format, process_name, process_directory));
+                serialization_format, process_name, process_directory, NAME, TRAINING_RATIO_FLAG_SHORT, String.valueOf(training_ratio)));
     }
 }

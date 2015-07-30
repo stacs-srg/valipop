@@ -19,17 +19,15 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.beust.jcommander.converters.PathConverter;
-import org.apache.commons.csv.CSVFormat;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.Command;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.Launcher;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassificationContext;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.serialization.SerializationFormat;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.ClassifyUnseenRecordsStep;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.SaveDataStep;
 import uk.ac.standrews.cs.util.dataset.DataSet;
 
-import java.io.IOException;
 import java.nio.file.Path;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -41,7 +39,9 @@ import java.util.List;
 @Parameters(commandNames = ClassifyCommand.NAME, commandDescription = "Classify unseen data")
 public class ClassifyCommand extends Command {
 
-    /** The name of this command */
+    /**
+     * The name of this command
+     */
     public static final String NAME = "classify";
 
     private static final long serialVersionUID = -5931407069557436051L;
@@ -63,27 +63,26 @@ public class ClassifyCommand extends Command {
     @Override
     public void perform(final ClassificationContext context) {
 
-        try {
-            System.out.println("classifying data...");
-
-            new ClassifyUnseenRecordsStep().perform(context);
-
-            // TODO split into separate steps for classifying and exporting results.
-
-            System.out.println("saving results...");
-
-            final CSVFormat output_format = getDataFormat(OUTPUT_DELIMITER);
-            final DataSet classified_data_set = context.getClassifiedUnseenRecords().toDataSet(Arrays.asList("id", "data", "code"), output_format);
-            persistDataSet(destination, classified_data_set);
-        }
-        catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        perform(context, destination);
     }
 
-    public static void classify(Path unseen_data, Path destination, SerializationFormat serialization_format, String process_name, Path process_directory) throws Exception {
+    public static void perform(final ClassificationContext context, Path destination) {
+
+        output("classifying data...");
+
+        new ClassifyUnseenRecordsStep().perform(context);
+
+        output("saving results...");
+
+        final DataSet classified_data_set = context.getClassifiedUnseenRecords().toDataSet(DATA_SET_COLUMN_LABELS);
+        new SaveDataStep(classified_data_set, destination).perform(context);
+    }
+
+    public static void perform(SerializationFormat serialization_format, String process_name, Path process_directory, Path unseen_data, Path destination) throws Exception {
 
         Launcher.main(addArgs(
-                new String[]{NAME, unseen_data.toString(), DESTINATION_FLAG_SHORT, destination.toString()}, serialization_format, process_name, process_directory));
+                serialization_format, process_name, process_directory,
+                NAME, unseen_data.toString(),
+                DESTINATION_FLAG_SHORT, destination.toString()));
     }
 }

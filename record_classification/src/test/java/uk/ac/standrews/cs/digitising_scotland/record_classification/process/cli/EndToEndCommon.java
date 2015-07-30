@@ -22,6 +22,7 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.C
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.CleanerSupplier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.composite.InitLoadCleanTrainCommand;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.composite.LoadCleanClassifyCommand;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.config.Config;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.serialization.Serialization;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.serialization.SerializationFormat;
 import uk.ac.standrews.cs.util.tools.FileManipulation;
@@ -38,11 +39,8 @@ public class EndToEndCommon {
 
     private static final String CLASSIFIED_FILE_NAME = "classified.csv";
 
-    // Set to false if there's a need to inspect the serialized context or classified output after the test.
-    private static final boolean CLEAN_UP = false;
-
-    List<CharsetSupplier> gold_standard_charsets;
-    CharsetSupplier unseen_data_charsets;
+    List<CharsetSupplier> gold_standard_charset_suppliers;
+    CharsetSupplier unseen_data_charset_supplier;
     List<String> gold_standard_delimiters;
     String unseen_data_delimiter;
 
@@ -51,6 +49,7 @@ public class EndToEndCommon {
     ClassifierSupplier classifier_supplier;
     double training_ratio;
     List<CleanerSupplier> cleaners;
+    boolean use_cli;
 
     Path temp_process_directory;
     List<Path> input_gold_standard_files;
@@ -71,17 +70,12 @@ public class EndToEndCommon {
         output_trained_model_file = Serialization.getSerializedContextPath(temp_process_directory, process_name, serialization_format);
 
         output_classified_file = Serialization.getProcessWorkingDirectory(temp_process_directory, process_name).resolve(CLASSIFIED_FILE_NAME);
-
-//        // TODO fix horrible hack
-//        TrainClassifierStep.MINIMISE_CONTEXT = true;
     }
 
     @After
     public void cleanUp() {
 
-//        TrainClassifierStep.MINIMISE_CONTEXT = false;
-
-        if (CLEAN_UP) {
+        if (Config.cleanUpFilesAfterTests()) {
 
             try {
                 FileManipulation.deleteDirectory(temp_process_directory);
@@ -94,12 +88,12 @@ public class EndToEndCommon {
 
     protected void initLoadTrain() throws Exception {
 
-        InitLoadCleanTrainCommand.initLoadCleanTrain(classifier_supplier, input_gold_standard_files, gold_standard_charsets, gold_standard_delimiters, training_ratio, serialization_format, process_name, temp_process_directory, cleaners);
+        InitLoadCleanTrainCommand.initLoadCleanTrain(classifier_supplier, input_gold_standard_files, gold_standard_charset_suppliers, gold_standard_delimiters, training_ratio, serialization_format, process_name, temp_process_directory, cleaners, use_cli);
     }
 
     protected Path loadCleanClassify() throws Exception {
 
-        LoadCleanClassifyCommand.loadCleanClassify(input_unseen_data_file, unseen_data_charsets, unseen_data_delimiter, output_classified_file, serialization_format, process_name, temp_process_directory, cleaners);
+        LoadCleanClassifyCommand.loadCleanClassify(input_unseen_data_file, unseen_data_charset_supplier, unseen_data_delimiter, output_classified_file, temp_process_directory, process_name, serialization_format, cleaners, use_cli);
 
         return output_classified_file;
     }

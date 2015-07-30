@@ -21,12 +21,14 @@ import com.beust.jcommander.Parameters;
 import com.beust.jcommander.converters.PathConverter;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.ClassifierSupplier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.CleanerSupplier;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.CharsetSupplier;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.Command;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.commands.CleanGoldStandardCommand;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.commands.InitCommand;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.commands.LoadGoldStandardCommand;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.commands.TrainCommand;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassificationContext;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.serialization.Serialization;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.serialization.SerializationFormat;
 
 import java.nio.file.Path;
@@ -34,27 +36,27 @@ import java.util.List;
 
 /**
  * Composite command that initialises, loads gold standard, cleans and trains.
- *
+ * <p/>
  * Example command line invocation:
- *
+ * <p/>
  * <code>
- *   java uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.Launcher
- *   init_load_clean_train
- *   -g cambridge.csv
- *   -g hisco.csv
- *   -p trained_hisco_classifier
- *   -c EXACT_MATCH_PLUS_VOTING_ENSEMBLE
- *   -r 1.0
- *   -f JSON_COMPRESSED
- *   -cl COMBINED
+ * java uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.Launcher
+ * init_load_clean_train
+ * -g cambridge.csv
+ * -g hisco.csv
+ * -p trained_hisco_classifier
+ * -c EXACT_MATCH_PLUS_VOTING_ENSEMBLE
+ * -r 1.0
+ * -f JSON_COMPRESSED
+ * -cl COMBINED
  * </code>
- *
+ * <p/>
  * Or via Maven:
- *
- *   mvn exec:java -q -Dexec.cleanupDaemonThreads=false
- *   -Dexec.mainClass="uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.Launcher" -e
- *   -Dexec.args="init_load_clean_train -g cambridge.csv -g hisco.csv -p trained_hisco_classifier
- *   -c EXACT_MATCH_PLUS_VOTING_ENSEMBLE -r 1.0 -f JSON_COMPRESSED -cl COMBINED"
+ * <p/>
+ * mvn exec:java -q -Dexec.cleanupDaemonThreads=false
+ * -Dexec.mainClass="uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.Launcher" -e
+ * -Dexec.args="init_load_clean_train -g cambridge.csv -g hisco.csv -p trained_hisco_classifier
+ * -c EXACT_MATCH_PLUS_VOTING_ENSEMBLE -r 1.0 -f JSON_COMPRESSED -cl COMBINED"
  *
  * @author Masih Hajiarab Derkani
  * @author Graham Kirby
@@ -83,24 +85,40 @@ public class InitLoadCleanTrainCommand extends Command {
     @Override
     public Void call() throws Exception {
 
-        initLoadCleanTrain(classifier_supplier, gold_standards, charsets, delimiters, training_ratio, serialization_format, name, process_directory, cleaners);
+        initLoadCleanTrainUsingAPI(classifier_supplier, gold_standards, charsets, delimiters, training_ratio, serialization_format, name, process_directory, cleaners);
 
         return null;
     }
 
-    public static void initLoadCleanTrain(ClassifierSupplier classifier_supplier, List<Path> gold_standard, List<CharsetSupplier> charsets, List<String> delimiters, Double training_ratio, SerializationFormat serialization_format, String process_name, Path process_directory, List<CleanerSupplier> cleaners) throws Exception {
+    public static void initLoadCleanTrain(ClassifierSupplier classifier_supplier, List<Path> gold_standard, List<CharsetSupplier> charsets, List<String> delimiters, Double training_ratio, SerializationFormat serialization_format, String process_name, Path process_directory, List<CleanerSupplier> cleaners, boolean use_cli) throws Exception {
 
-        InitCommand.init(classifier_supplier, serialization_format, process_name, process_directory);
+        if (use_cli) {
+            initLoadCleanTrainUsingCLI(classifier_supplier, gold_standard, charsets, delimiters, training_ratio, serialization_format, process_name, process_directory, cleaners);
+        } else {
+            initLoadCleanTrainUsingAPI(classifier_supplier, gold_standard, charsets, delimiters, training_ratio, serialization_format, process_name, process_directory, cleaners);
+        }
+    }
 
-        LoadGoldStandardCommand.loadGoldStandard(gold_standard, charsets, delimiters, serialization_format, process_name, process_directory);
+    public static void initLoadCleanTrainUsingAPI(ClassifierSupplier classifier_supplier, List<Path> gold_standards, List<CharsetSupplier> charsets, List<String> delimiters, Double training_ratio, SerializationFormat serialization_format, String process_name, Path process_directory, List<CleanerSupplier> cleaners) throws Exception {
 
-        CleanGoldStandardCommand.cleanGoldStandard(serialization_format, process_name, process_directory, cleaners);
+        ClassificationContext context = InitCommand.perform(classifier_supplier, process_directory, process_name);
 
-        TrainCommand.train(training_ratio, serialization_format, process_name, process_directory);
+        LoadGoldStandardCommand.perform(context, gold_standards, charsets, delimiters);
+        CleanGoldStandardCommand.perform(context, cleaners);
+        TrainCommand.perform(context, training_ratio);
+
+        Serialization.persistContext(context, process_directory, process_name, serialization_format);
+    }
+
+    public static void initLoadCleanTrainUsingCLI(ClassifierSupplier classifier_supplier, List<Path> gold_standard, List<CharsetSupplier> charsets, List<String> delimiters, Double training_ratio, SerializationFormat serialization_format, String process_name, Path process_directory, List<CleanerSupplier> cleaners) throws Exception {
+
+        InitCommand.perform(serialization_format, process_name, process_directory, classifier_supplier);
+        LoadGoldStandardCommand.perform(serialization_format, process_name, process_directory, gold_standard, charsets, delimiters);
+        CleanGoldStandardCommand.perform(serialization_format, process_name, process_directory, cleaners);
+        TrainCommand.perform(serialization_format, process_name, process_directory, training_ratio);
     }
 
     @Override
     public void perform(ClassificationContext context) {
     }
-
- }
+}

@@ -19,7 +19,7 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Classification;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Record;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.logging.Logging;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.config.Logging;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -81,12 +81,6 @@ public interface Classifier extends Serializable {
 
         return classified;
     }
-
-//    default void prepareForSerialization() {
-//    }
-//
-//    default void recoverFromDeserialization() {
-//    }
 
     String getName();
 

@@ -28,6 +28,7 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.process.step
 
 import java.nio.charset.Charset;
 import java.nio.file.Path;
+import java.util.List;
 
 /**
  * The train command of classification process command line interface.
@@ -54,50 +55,35 @@ public class LoadDataCommand extends Command {
     @Override
     public void perform(final ClassificationContext context) {
 
+        perform(context, charsets, delimiters, data);
+    }
+
+    public static void perform(final ClassificationContext context, List<CharsetSupplier> charsets, List<String> delimiters, Path data) {
+
         // If charsets are specified, use the last one for the unseen data file.
-        Charset charset = getCharset();
+        Charset charset = getLastCharset(charsets);
 
         // If delimiters are specified, use the last one for the unseen data file.
-        String delimiter = getDelimiter();
+        String delimiter = getLastDelimiter(delimiters);
 
-        System.out.println("loading data...");
+        output("loading data...");
 
         new LoadDataStep(data, charset, delimiter).perform(context);
     }
 
-    private Charset getCharset() {
-
-        return charsets != null && charsets.size() > 0 ? charsets.get(charsets.size() - 1).get() : LoadDataStep.DEFAULT_CHARSET.get();
-    }
-
-    private String getDelimiter() {
-
-        return delimiters != null && delimiters.size() > 0 ? delimiters.get(delimiters.size() - 1) : LoadDataStep.DEFAULT_DELIMITER;
-    }
-
-    public static void loadData(Path unseen_data, CharsetSupplier charset, String delimiter, SerializationFormat serialization_format, String process_name, Path process_directory) throws Exception {
+    public static void perform(SerializationFormat serialization_format, String process_name, Path process_directory,Path unseen_data, CharsetSupplier charset_supplier, String delimiter) throws Exception {
 
         Launcher.main(addArgs(
-                makeDataArgs(unseen_data, charset, delimiter), serialization_format, process_name, process_directory));
+                serialization_format, process_name, process_directory, makeDataArgs(unseen_data, charset_supplier, delimiter)));
     }
 
     private static String[] makeDataArgs(Path unseen_data, CharsetSupplier charset, String delimiter) {
 
+        String[] args = {NAME, DATA_FLAG_SHORT, unseen_data.toString()};
+
         // Assume that 'charset' and 'delimiter' will both be null or both set.
-
-        String[] args = new String[charset == null ? 3 : 7];
-
-        args[0] = NAME;
-        args[1] = DATA_FLAG_SHORT;
-        args[2] = unseen_data.toString();
-
         if (charset != null) {
-
-            args[3] = CHARSET_FLAG_SHORT;
-            args[4] = charset.name();
-
-            args[5] = DELIMITER_FLAG_SHORT;
-            args[6] = delimiter;
+            args = extendArgs(args, CHARSET_FLAG_SHORT, charset.name(), DELIMITER_FLAG_SHORT, delimiter);
         }
 
         return args;

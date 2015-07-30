@@ -19,49 +19,41 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.beust.jcommander.converters.PathConverter;
-import org.apache.commons.csv.CSVFormat;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.Cleaner;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.CleanerSupplier;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.InfoLevel;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.CharsetSupplier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.Command;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.commands.ClassifyCommand;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.commands.CleanDataCommand;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.commands.CleanGoldStandardCommand;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.commands.LoadDataCommand;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.logging.Logging;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassificationContext;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.serialization.Serialization;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.serialization.SerializationFormat;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.ClassifyUnseenRecordsStep;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.CleanDataStep;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.LoadDataStep;
-import uk.ac.standrews.cs.util.dataset.DataSet;
 
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.Supplier;
 
 /**
  * Composite command that loads data, cleans and classifies.
- *
+ * <p/>
  * Example command line invocation:
- *
+ * <p/>
  * <code>
- *   java uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.Launcher
- *   load_clean_classify
- *   -p trained_hisco_classifier
- *   -d unseen_data.csv
- *   -o classified_data.csv
- *   -f JSON_COMPRESSED
- *   -cl COMBINED
+ * java uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.Launcher
+ * load_clean_classify
+ * -p trained_hisco_classifier
+ * -d unseen_data.csv
+ * -o classified_data.csv
+ * -f JSON_COMPRESSED
+ * -cl COMBINED
  * </code>
- *
+ * <p/>
  * Or via Maven:
- *
- *   mvn exec:java -q -Dexec.cleanupDaemonThreads=false
- *   -Dexec.mainClass="uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.Launcher" -e
- *   -Dexec.args="load_clean_classify -p trained_hisco_classifier -d unseen_data.csv -o classified_data.csv -f JSON_COMPRESSED -cl COMBINED"
+ * <p/>
+ * mvn exec:java -q -Dexec.cleanupDaemonThreads=false
+ * -Dexec.mainClass="uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.Launcher" -e
+ * -Dexec.args="load_clean_classify -p trained_hisco_classifier -d unseen_data.csv -o classified_data.csv -f JSON_COMPRESSED -cl COMBINED"
  *
  * @author Masih Hajiarab Derkani
  * @author Graham Kirby
@@ -88,50 +80,50 @@ public class LoadCleanClassifyCommand extends Command {
     public Void call() throws Exception {
 
         // If charsets are specified, use the last one for the unseen data file.
-        CharsetSupplier charset = charsets == null ? LoadDataStep.DEFAULT_CHARSET : charsets.get(charsets.size()-1);
+        CharsetSupplier charset_supplier = getLastCharsetSupplier(charsets);
 
         // If delimiters are specified, use the last one for the unseen data file.
-        String delimiter = delimiters == null ? LoadDataStep.DEFAULT_DELIMITER : delimiters.get(delimiters.size()-1);
+        String delimiter = getLastDelimiter(delimiters);
 
-        loadCleanClassify(unseen_data, charset, delimiter, destination, serialization_format, name, process_directory, cleaners);
+        loadCleanClassifyUsingAPI(unseen_data, charset_supplier, delimiter, destination, process_directory, name, serialization_format, cleaners);
 
         return null;
     }
 
-    public static void loadCleanClassify(Path unseen_data, CharsetSupplier unseen_data_charsets, String unseen_data_delimiter, Path destination, SerializationFormat serialization_format, String process_name, Path process_directory, List<CleanerSupplier> cleaner_suppliers) throws Exception {
+    public static void loadCleanClassify(Path unseen_data, CharsetSupplier charset_supplier, String delimiter, Path destination, Path process_directory, String process_name, SerializationFormat serialization_format, List<CleanerSupplier> cleaner_suppliers, boolean use_cli) throws Exception {
+
+        if (use_cli) {
+            loadCleanClassifyUsingCLI(unseen_data, charset_supplier, delimiter, destination, process_directory, process_name, serialization_format, cleaner_suppliers);
+        }
+        else {
+            loadCleanClassifyUsingAPI(unseen_data, charset_supplier, delimiter, destination, process_directory, process_name, serialization_format, cleaner_suppliers);
+        }
+    }
+
+    private static void loadCleanClassifyUsingAPI(Path unseen_data, CharsetSupplier charset_supplier, String delimiter, Path destination, Path process_directory, String process_name, SerializationFormat serialization_format, List<CleanerSupplier> cleaner_suppliers) throws Exception {
 
         output("loading model...");
 
         ClassificationContext context = Serialization.loadContext(process_directory, process_name, serialization_format);
 
-        output("loading data...");
+        LoadDataCommand.perform(context, Arrays.asList(charset_supplier), Arrays.asList(delimiter), unseen_data);
 
-        new LoadDataStep(unseen_data, unseen_data_charsets == null ? CharsetSupplier.UTF_8.get() : unseen_data_charsets.get(), unseen_data_delimiter == null ? "," : unseen_data_delimiter).perform(context);
+        CleanDataCommand.perform(context, cleaner_suppliers);
 
-        output("cleaning data...");
-
-        for (Supplier<Cleaner> supplier : cleaner_suppliers) {
-            new CleanDataStep(supplier.get()).perform(context);
-        }
-
-        output("classifying data...");
-
-        new ClassifyUnseenRecordsStep().perform(context);
-
-        output("saving results...");
-
-        final CSVFormat output_format = getDataFormat(",");
-        final DataSet classified_data_set = context.getClassifiedUnseenRecords().toDataSet(Arrays.asList("id", "data", "code"), output_format);
-        persistDataSet(destination, classified_data_set);
+        ClassifyCommand.perform(context, destination);
 
         output("saving context...");
 
-        Serialization.persistContext(context, process_directory,process_name,serialization_format);
+        Serialization.persistContext(context, process_directory, process_name, serialization_format);
     }
 
-    public static void output(String message) {
+    private static void loadCleanClassifyUsingCLI(Path unseen_data, CharsetSupplier charset_supplier, String delimiter, Path destination, Path process_directory, String process_name, SerializationFormat serialization_format, List<CleanerSupplier> cleaner_suppliers) throws Exception {
 
-        Logging.output(message, InfoLevel.VERBOSE);
+        LoadDataCommand.perform(serialization_format, process_name, process_directory,unseen_data, charset_supplier, delimiter);
+
+        CleanDataCommand.perform(serialization_format, process_name, process_directory, cleaner_suppliers);
+
+        ClassifyCommand.perform(serialization_format, process_name, process_directory,unseen_data, destination );
     }
 
     @Override

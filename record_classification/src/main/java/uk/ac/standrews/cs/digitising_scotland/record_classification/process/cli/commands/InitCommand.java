@@ -25,6 +25,7 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.process.proc
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.serialization.Serialization;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.serialization.SerializationFormat;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Random;
@@ -57,11 +58,9 @@ public class InitCommand extends Command {
     @Override
     public Void call() throws Exception {
 
-        ClassificationContext context = new ClassificationContext(classifier_supplier.get(), new Random(SEED));
+        ClassificationContext context = perform(classifier_supplier, process_directory, name);
 
-        Path process_working_directory = Serialization.getProcessWorkingDirectory(process_directory, name);
-        Files.createDirectories(process_working_directory);
-        persistContext(context);
+        Serialization.persistContext(context, process_directory, name, serialization_format);
 
         return null; // void task
     }
@@ -70,9 +69,17 @@ public class InitCommand extends Command {
     public void perform(final ClassificationContext context) {
     }
 
-    public static void init(ClassifierSupplier classifier_supplier, SerializationFormat serialization_format, String process_name, Path process_directory) throws Exception {
+    public static ClassificationContext perform(ClassifierSupplier classifier_supplier, Path process_directory, String name) throws IOException {
+
+        Path process_working_directory = Serialization.getProcessWorkingDirectory(process_directory, name);
+        Files.createDirectories(process_working_directory);
+
+        return new ClassificationContext(classifier_supplier.get(), new Random(SEED));
+    }
+
+    public static void perform(SerializationFormat serialization_format, String process_name, Path process_directory, ClassifierSupplier classifier_supplier) throws Exception {
 
         Launcher.main(addArgs(
-                new String[]{NAME, CLASSIFIER_FLAG_SHORT, classifier_supplier.toString()}, serialization_format, process_name, process_directory));
+                serialization_format, process_name, process_directory, NAME, CLASSIFIER_FLAG_SHORT, classifier_supplier.toString()));
     }
 }

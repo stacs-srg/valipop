@@ -16,33 +16,50 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps;
 
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.Classifier;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
+import org.apache.commons.csv.CSVFormat;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.FileWriteException;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassificationContext;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.Step;
+import uk.ac.standrews.cs.util.dataset.DataSet;
 
-import java.time.Duration;
-import java.time.Instant;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 /**
- * Trains a classifier in the context of a classification process.
+ * Loads gold standard records from a file into a classification process {@link ClassificationContext context}.
  *
  * @author Masih Hajiarab Derkani
  */
-public class TrainClassifierStep implements Step {
+public class SaveDataStep implements Step {
 
-    private static final long serialVersionUID = 5825366701064269040L;
+    private static final long serialVersionUID = 7742825393693404041L;
+
+
+    private final DataSet data_set;
+    private final Path destination;
+
+    public SaveDataStep(DataSet data_set, Path destination) {
+
+        this.data_set = data_set;
+        this.destination = destination;
+    }
 
     @Override
     public void perform(final ClassificationContext context) {
 
-        final Classifier classifier = context.getClassifier();
-        final Bucket training_records = context.getTrainingRecords();
-        final Instant start = Instant.now();
+        try (final BufferedWriter out = Files.newBufferedWriter(destination, StandardCharsets.UTF_8)) {
+            data_set.print(out);
 
-        classifier.train(training_records);
+        } catch (IOException e) {
+            throw new FileWriteException(e.getMessage());
+        }
+    }
 
-        final Duration training_time = Duration.between(start, Instant.now());
-        context.setTrainingTime(training_time);
+    private static CSVFormat getDataFormat(String delimiter) {
+
+        return DataSet.DEFAULT_CSV_FORMAT.withDelimiter(delimiter.charAt(0));
     }
 }

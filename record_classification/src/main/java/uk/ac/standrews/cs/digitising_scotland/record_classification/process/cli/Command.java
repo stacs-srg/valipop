@@ -18,20 +18,17 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.converters.PathConverter;
-import org.apache.commons.csv.CSVFormat;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.CleanerSupplier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.InfoLevel;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.commands.InitCommand;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.logging.Logging;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.config.Logging;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassificationContext;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.Step;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.serialization.Serialization;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.serialization.SerializationFormat;
-import uk.ac.standrews.cs.util.dataset.DataSet;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.LoadStep;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
+import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
@@ -73,6 +70,11 @@ public abstract class Command implements Callable<Void>, Step {
     public static final String PROCESS_DIRECTORY_FLAG_SHORT = "-p";
     public static final String PROCESS_DIRECTORY_FLAG_LONG = "--process-directory";
 
+    protected static final List<String> DATA_SET_COLUMN_LABELS = Arrays.asList("id", "data", "code");
+
+    private static final Charset DEFAULT_CHARSET = LoadStep.DEFAULT_CHARSET_SUPPLIER.get();
+    public static final String DEFAULT_DELIMITER = LoadStep.DEFAULT_DELIMITER;
+
     @Parameter(names = {NAME_FLAG_SHORT, NAME_FLAG_LONG}, description = NAME_DESCRIPTION)
     protected String name = PROCESS_NAME;
 
@@ -88,65 +90,88 @@ public abstract class Command implements Callable<Void>, Step {
     @Parameter(names = {PROCESS_DIRECTORY_FLAG_SHORT, PROCESS_DIRECTORY_FLAG_LONG}, description = PROCESS_DIRECTORY_DESCRIPTION, converter = PathConverter.class)
     protected Path process_directory;
 
-
     @Override
     public Void call() throws Exception {
 
-        Logging.output("loading context...", InfoLevel.VERBOSE);
+        output("loading context...");
 
-        final ClassificationContext context = loadContext();
+        final ClassificationContext context = Serialization.loadContext(process_directory, name, serialization_format);
 
-        Logging.output("done", InfoLevel.VERBOSE);
+        output("done");
 
         perform(context);
 
-        Logging.output("saving context...", InfoLevel.VERBOSE);
+        output("saving context...");
 
-        persistContext(context);
+        Serialization.persistContext(context, process_directory, name, serialization_format);
 
-        Logging.output("done", InfoLevel.VERBOSE);
+        output("done");
 
         return null;
     }
 
-    private ClassificationContext loadContext() throws IOException {
+    protected static void output(String message) {
 
-        return Serialization.loadContext(process_directory, name, serialization_format);
+        Logging.output(message, InfoLevel.VERBOSE);
     }
 
-    protected void persistContext(ClassificationContext context) throws IOException {
+    protected static String[] makeCleaningArgs(String command_name, List<CleanerSupplier> cleaners) {
 
-        Serialization.persistContext(context,process_directory, name, serialization_format);
-    }
+        String[] args = {command_name};
 
-    protected static CSVFormat getDataFormat(String delimiter) {
-
-        return DataSet.DEFAULT_CSV_FORMAT.withDelimiter(delimiter.charAt(0));
-    }
-
-    protected static void persistDataSet(Path destination, final DataSet dataset) throws IOException {
-
-        try (final BufferedWriter out = Files.newBufferedWriter(destination, StandardCharsets.UTF_8)) {
-            dataset.print(out);
+        for (CleanerSupplier cleaner : cleaners) {
+            args = extendArgs(args, CLEAN_FLAG_SHORT, cleaner.name());
         }
+        return args;
     }
 
-    protected static String[] addArgs(String[] args, SerializationFormat serialization_format, String process_name, Path process_directory) {
+    protected static String[] addArgs(SerializationFormat serialization_format, String process_name, Path process_directory, String... args) {
 
-        int number_of_additional_args = process_directory == null ? 4 : 6;
-
-        String[] result = Arrays.copyOf(args, args.length + number_of_additional_args);
-
-        result[args.length] = SERIALIZATION_FORMAT_FLAG_SHORT;
-        result[args.length + 1] = serialization_format.name();
-
-        result[args.length + 2] = NAME_FLAG_SHORT;
-        result[args.length + 3] = process_name;
+        String[] result = extendArgs(args, SERIALIZATION_FORMAT_FLAG_SHORT, serialization_format.name(), NAME_FLAG_SHORT, process_name);
 
         if (process_directory != null) {
-            result[args.length + 4] = InitCommand.PROCESS_DIRECTORY_FLAG_SHORT;
-            result[args.length + 5] = process_directory.toString();
+            result = extendArgs(result, InitCommand.PROCESS_DIRECTORY_FLAG_SHORT, process_directory.toString());
         }
+
         return result;
+    }
+
+    protected static String[] extendArgs(String[] args, String... additional_args) {
+
+        String[] result = Arrays.copyOf(args, args.length + additional_args.length);
+
+        System.arraycopy(additional_args, 0, result, args.length, additional_args.length);
+
+        return result;
+    }
+
+    protected static Charset getCharset(List<CharsetSupplier> charset_suppliers, int i) {
+
+        return (charset_suppliers == null || charset_suppliers.size() <= i || charset_suppliers.get(i) == null) ?
+                DEFAULT_CHARSET :
+                charset_suppliers.get(i).get();
+    }
+
+    protected static Charset getLastCharset(List<CharsetSupplier> charset_suppliers) {
+
+        return getLastCharsetSupplier(charset_suppliers).get();
+    }
+
+    protected static CharsetSupplier getLastCharsetSupplier(List<CharsetSupplier> charset_suppliers) {
+
+        if (charset_suppliers == null || charset_suppliers.size() == 0) return LoadStep.DEFAULT_CHARSET_SUPPLIER;
+
+        final CharsetSupplier last = charset_suppliers.get(charset_suppliers.size() - 1);
+        return (last == null ? LoadStep.DEFAULT_CHARSET_SUPPLIER : last);
+    }
+
+    protected static String getDelimiter(List<String> delimiters, int i) {
+
+        return (delimiters == null || i < 0 || i >= delimiters.size() || delimiters.get(i) == null) ? DEFAULT_DELIMITER : delimiters.get(i);
+    }
+
+    protected static String getLastDelimiter(List<String> delimiters) {
+
+        return (delimiters == null) ? DEFAULT_DELIMITER : getDelimiter(delimiters, delimiters.size() - 1);
     }
 }
