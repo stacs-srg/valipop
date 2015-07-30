@@ -32,6 +32,7 @@ import java.util.stream.Collectors;
 public class Bucket implements Iterable<Record>, Serializable {
 
     private static final long serialVersionUID = 7216381249689825103L;
+    public static final String FORMAT_ERROR_MESSAGE = "record should contain id, data and optional code and confidence";
 
     private final Collection<Record> records;
     private boolean auto_allocate_ids;
@@ -73,6 +74,7 @@ public class Bucket implements Iterable<Record>, Serializable {
                 Classification classification = extractClassification(record, data);
 
                 add(new Record(id, data, classification));
+
             } catch (InputFileFormatException e) {
 
                 // If this is the first row, assume it's a header row and ignore exception.
@@ -139,8 +141,9 @@ public class Bucket implements Iterable<Record>, Serializable {
             final String column_0 = String.valueOf(record.getId());
             final String column_1 = record.getOriginalData();
             final String column_2 = record.getClassification().getCode();
+            final String column_3 = String.valueOf(record.getClassification().getConfidence());
 
-            final List<String> row = Arrays.asList(column_0, column_1, column_2);
+            final List<String> row = Arrays.asList(column_0, column_1, column_2, column_3);
             dataset.addRow(row);
         }
         return dataset;
@@ -269,7 +272,7 @@ public class Bucket implements Iterable<Record>, Serializable {
     private int extractId(List<String> record) {
 
         if (record.size() < 1) {
-            throw new InputFileFormatException("record should contain id, data and optional code");
+            throw new InputFileFormatException(FORMAT_ERROR_MESSAGE);
         }
 
         final String id_string = record.get(0);
@@ -284,7 +287,7 @@ public class Bucket implements Iterable<Record>, Serializable {
     private String extractData(List<String> record) {
 
         if (record.size() < 2) {
-            throw new InputFileFormatException("record should contain id, data and optional code");
+            throw new InputFileFormatException(FORMAT_ERROR_MESSAGE);
         }
 
         return record.get(1);
@@ -297,7 +300,22 @@ public class Bucket implements Iterable<Record>, Serializable {
         }
 
         String code = record.get(2);
+        double confidence = extractConfidence(record);
 
-        return code.isEmpty() ? Classification.UNCLASSIFIED : new Classification(code, new TokenList(data), 1.0);
+        return code.isEmpty() ? Classification.UNCLASSIFIED : new Classification(code, new TokenList(data), confidence);
     }
+
+    private double extractConfidence(List<String> record) {
+
+        if (record.size() < 4) {
+            return 0.0;
+        }
+
+        final String confidence_string = record.get(3);
+        try {
+            return Double.parseDouble(confidence_string);
+
+        } catch (NumberFormatException e) {
+            throw new InputFileFormatException("invalid numerical confidence: " + confidence_string);
+        }    }
 }

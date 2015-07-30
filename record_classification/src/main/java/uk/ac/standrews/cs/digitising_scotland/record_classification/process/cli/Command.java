@@ -70,7 +70,7 @@ public abstract class Command implements Callable<Void>, Step {
     public static final String PROCESS_DIRECTORY_FLAG_SHORT = "-p";
     public static final String PROCESS_DIRECTORY_FLAG_LONG = "--process-directory";
 
-    protected static final List<String> DATA_SET_COLUMN_LABELS = Arrays.asList("id", "data", "code");
+    protected static final List<String> DATA_SET_COLUMN_LABELS = Arrays.asList("id", "data", "code", "confidence");
 
     private static final Charset DEFAULT_CHARSET = LoadStep.DEFAULT_CHARSET_SUPPLIER.get();
     public static final String DEFAULT_DELIMITER = LoadStep.DEFAULT_DELIMITER;

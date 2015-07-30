@@ -101,11 +101,13 @@ public class EndToEndTest extends EndToEndCommon {
 
         for (List<String> record : data_set.getRecords()) {
 
-            assertFirstElementIsNumber(record);
+            assertRecordContainsId(record);
 
             // Exact match classifier doesn't classify unknown data.
             if (classifier_supplier != ClassifierSupplier.EXACT_MATCH) {
-                assertRecordIsClassified(record);
+
+                assertRecordContainsClassification(record);
+                assertRecordContainsConfidence(record);
             }
         }
     }
@@ -117,19 +119,42 @@ public class EndToEndTest extends EndToEndCommon {
         assertTrue(new ConsistentCodingChecker().test(bucket));
     }
 
-    private void assertRecordIsClassified(List<String> record) {
+    private void assertRecordContainsId(List<String> record) {
 
-        String classification = record.get(2);
+        //noinspection ResultOfMethodCallIgnored
+        Integer.parseInt(getId(record));
+    }
+
+    private void assertRecordContainsClassification(List<String> record) {
+
+        String classification = getClassification(record);
         assertNotNull(classification);
         assertNotEquals("", classification);
         assertNotEquals("null", classification);
         assertNotEquals(Classification.UNCLASSIFIED.getCode(), classification);
     }
 
-    private void assertFirstElementIsNumber(List<String> record) {
+    private void assertRecordContainsConfidence(List<String> record) {
 
-        //noinspection ResultOfMethodCallIgnored
-        Integer.parseInt(record.get(0));
+        assertBetween(Double.parseDouble(getConfidence(record)), 0.0, 1.0);
+    }
+
+    private void assertBetween(double value, double lower, double higher) {
+
+        assertTrue(value >= lower);
+        assertTrue(value <= higher);
+    }
+
+    private String getId(List<String> record) {
+        return record.get(0);
+    }
+
+    private String getClassification(List<String> record) {
+        return record.get(2);
+    }
+
+    private String getConfidence(List<String> record) {
+        return record.get(3);
     }
 
     static class TestInfo {
