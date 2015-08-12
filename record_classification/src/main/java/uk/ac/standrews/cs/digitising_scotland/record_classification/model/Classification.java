@@ -21,38 +21,43 @@ import java.util.Objects;
 
 public class Classification implements Serializable {
 
-    public static final Classification UNCLASSIFIED = new Classification("UNCLASSIFIED", TokenList.UNMODIFIABLE_TOKEN_SET, 0.0);
+    public static final Classification UNCLASSIFIED = new Classification("UNCLASSIFIED", TokenList.UNMODIFIABLE_TOKEN_SET, 0.0, null);
 
     private static final long serialVersionUID = 7074436345885045033L;
 
     private String code;
     private TokenList token_list;
     private double confidence;
+    private String detail;
 
     public Classification() {
     }
 
-    public Classification(final String code, final TokenList token_list, final double confidence) {
+    public Classification(final String code, final TokenList token_list, final double confidence, final String detail) {
 
         this.code = code;
         this.token_list = token_list;
         this.confidence = confidence;
+        this.detail = detail;
     }
 
     public String getCode() {
-
         return code;
     }
 
     public TokenList getTokenList() {
-
         return token_list;
     }
 
     public double getConfidence() {
-
         return confidence;
     }
+
+    public String getDetail() {
+        return detail;
+    }
+
+    // TODO check whether equals() and hashCode() needed
 
     @Override
     public boolean equals(final Object o) {
@@ -76,11 +81,11 @@ public class Classification implements Serializable {
     @Override
     public String toString() {
 
-        return "Classification [code=" + code + ", token_list=" + token_list + ", confidence=" + confidence + "]";
+        return "Classification [code=" + code + ", token_list=" + token_list + ", confidence=" + confidence + (detail != null ? ", detail=" + detail : "") + "]";
     }
 
     public Classification makeClone() {
 
-         return new Classification(code, new TokenList(token_list.toString()), confidence);
+        return new Classification(code, new TokenList(token_list.toString()), confidence, detail);
     }
 }

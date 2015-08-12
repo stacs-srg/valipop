@@ -42,49 +42,9 @@ public class VotingResolutionStrategy implements EnsembleClassifier.ResolutionSt
 
         Map<Set<Classification>, Double> confidence_averages = getConfidenceAverages(classifications_with_most_popular_code);
 
-        return classificationWithHighestConfidenceAverage(confidence_averages);
-    }
+        String detail = constructDetailString(candidate_classifications);
 
-    private Classification classificationWithHighestConfidenceAverage(Map<Set<Classification>, Double> confidence_averages) {
-
-        double highest_confidence = 0.0;
-        Set<Classification> classifications = null;
-
-        for (Map.Entry<Set<Classification>, Double> entry : confidence_averages.entrySet()) {
-
-            if (entry.getValue() > highest_confidence) {
-                highest_confidence = entry.getValue();
-                classifications = entry.getKey();
-            }
-        }
-
-        if (classifications != null) {
-            //noinspection LoopStatementThatDoesntLoop
-            for (Classification classification : classifications) {
-                return new Classification(classification.getCode(), classification.getTokenList(), averageConfidence(classifications));
-            }
-        }
-        return Classification.UNCLASSIFIED;
-    }
-
-    private Map<Set<Classification>, Double> getConfidenceAverages(Set<Set<Classification>> classifications_with_most_popular_code) {
-
-        Map<Set<Classification>, Double> confidence_averages = new HashMap<>();
-
-        for (Set<Classification> classifications : classifications_with_most_popular_code) {
-            confidence_averages.put(classifications, averageConfidence(classifications));
-        }
-
-        return confidence_averages;
-    }
-
-    private Double averageConfidence(Set<Classification> classifications) {
-
-        double sum = 0.0;
-        for (Classification classification : classifications) {
-            sum += classification.getConfidence();
-        }
-        return sum / classifications.size();
+        return classificationWithHighestConfidenceAverage(confidence_averages, detail);
     }
 
     private Set<Set<Classification>> partitionClassificationsWithSameCodes(Map<Classifier, Classification> candidate_classifications) {
@@ -141,5 +101,54 @@ public class VotingResolutionStrategy implements EnsembleClassifier.ResolutionSt
         }
 
         return classifications_with_popular_code;
+    }
+
+    private Map<Set<Classification>, Double> getConfidenceAverages(Set<Set<Classification>> classifications_with_most_popular_code) {
+
+        Map<Set<Classification>, Double> confidence_averages = new HashMap<>();
+
+        for (Set<Classification> classifications : classifications_with_most_popular_code) {
+            confidence_averages.put(classifications, averageConfidence(classifications));
+        }
+
+        return confidence_averages;
+    }
+
+    private Double averageConfidence(Set<Classification> classifications) {
+
+        double sum = 0.0;
+        for (Classification classification : classifications) {
+            sum += classification.getConfidence();
+        }
+        return sum / classifications.size();
+    }
+
+    private String constructDetailString(Map<Classifier, Classification> candidate_classifications) {
+
+//        if (Config.cleanUpFilesAfterTests()) {return null;}
+
+        return "no detail";
+    }
+
+    private Classification classificationWithHighestConfidenceAverage(Map<Set<Classification>, Double> confidence_averages, String detail) {
+
+        double highest_confidence = 0.0;
+        Set<Classification> classifications = null;
+
+        for (Map.Entry<Set<Classification>, Double> entry : confidence_averages.entrySet()) {
+
+            if (entry.getValue() > highest_confidence) {
+                highest_confidence = entry.getValue();
+                classifications = entry.getKey();
+            }
+        }
+
+        if (classifications != null) {
+            //noinspection LoopStatementThatDoesntLoop
+            for (Classification classification : classifications) {
+                return new Classification(classification.getCode(), classification.getTokenList(), averageConfidence(classifications), detail);
+            }
+        }
+        return Classification.UNCLASSIFIED;
     }
 }

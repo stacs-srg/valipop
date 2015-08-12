@@ -99,7 +99,7 @@ public class AbstractMetricsTest {
 
     protected static Record makeRecord(String data, String code) {
 
-        return makeRecord(data, new Classification(code, new TokenList(data), 1.0));
+        return makeRecord(data, new Classification(code, new TokenList(data), 1.0, null));
     }
 
     protected static Record makeRecord(String data) {

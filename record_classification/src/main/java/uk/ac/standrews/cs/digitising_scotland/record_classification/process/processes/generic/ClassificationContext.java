@@ -208,10 +208,10 @@ public class ClassificationContext implements Serializable {
         classified_unseen_records.forEach(this.classified_unseen_records::add);
     }
 
-    public void setEvaluationRecords(final Bucket evaluation_records) {
-
-        this.evaluation_records = evaluation_records;
-    }
+//    public void setEvaluationRecords(final Bucket evaluation_records) {
+//
+//        this.evaluation_records = evaluation_records;
+//    }
 
     /**
      * Gets classifier in this context.

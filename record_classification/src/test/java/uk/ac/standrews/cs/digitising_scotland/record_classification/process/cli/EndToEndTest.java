@@ -31,20 +31,22 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static org.junit.Assert.*;
 
 @RunWith(Parameterized.class)
 public class EndToEndTest extends EndToEndCommon {
 
-    public EndToEndTest(ClassifierSupplier classifier_supplier, SerializationFormat serialization_format, boolean use_cli, TestInfo test_info) {
+    public EndToEndTest(ClassifierSupplier classifier_supplier, SerializationFormat serialization_format, boolean use_cli, boolean include_ensemble_detail, TestInfo test_info) {
 
         this.classifier_supplier = classifier_supplier;
         this.serialization_format = serialization_format;
         this.use_cli = use_cli;
+        this.include_ensemble_detail = include_ensemble_detail;
         this.gold_standard_charset_suppliers = test_info.gold_standard_charsets;
         this.unseen_data_charset_supplier = test_info.unseen_data_charsets;
         this.gold_standard_delimiters = test_info.gold_standard_delimiters;
@@ -97,18 +99,23 @@ public class EndToEndTest extends EndToEndCommon {
 
     private void assertRecordsContainExpectedContent(Path classified_csv_file) throws IOException {
 
-        final DataSet data_set = new DataSet(classified_csv_file);
+        new DataSet(classified_csv_file).getRecords().forEach(this::assertRecordContainsExpectedContent);
+    }
 
-        for (List<String> record : data_set.getRecords()) {
+    private void assertRecordContainsExpectedContent(List<String> record) {
 
-            assertRecordContainsId(record);
+        assertRecordContainsId(record);
 
-            // Exact match classifier doesn't classify unknown data.
-            if (classifier_supplier != ClassifierSupplier.EXACT_MATCH) {
+        // Exact match classifier doesn't classify unknown data.
+        if (!classifier_supplier.isExactMatch()) {
 
-                assertRecordContainsClassification(record);
-                assertRecordContainsConfidence(record);
-            }
+            assertRecordContainsClassification(record);
+            assertRecordContainsConfidence(record);
+        }
+
+        if (include_ensemble_detail && classifier_supplier.isEnsemble()) {
+
+            assertRecordContainsEnsembleDetail(record);
         }
     }
 
@@ -128,15 +135,25 @@ public class EndToEndTest extends EndToEndCommon {
     private void assertRecordContainsClassification(List<String> record) {
 
         String classification = getClassification(record);
-        assertNotNull(classification);
-        assertNotEquals("", classification);
-        assertNotEquals("null", classification);
+        assertPresent(classification);
         assertNotEquals(Classification.UNCLASSIFIED.getCode(), classification);
+    }
+
+    private void assertPresent(String value) {
+
+        assertNotNull(value);
+        assertNotEquals("", value);
+        assertNotEquals("null", value);
     }
 
     private void assertRecordContainsConfidence(List<String> record) {
 
         assertBetween(Double.parseDouble(getConfidence(record)), 0.0, 1.0);
+    }
+
+    private void assertRecordContainsEnsembleDetail(List<String> record) {
+
+        assertPresent(getEnsembleDetail(record));
     }
 
     private void assertBetween(double value, double lower, double higher) {
@@ -154,7 +171,11 @@ public class EndToEndTest extends EndToEndCommon {
     }
 
     private String getConfidence(List<String> record) {
-        return record.get(3);
+        return record.size() > 3 ? record.get(3) : null;
+    }
+
+    private String getEnsembleDetail(List<String> record) {
+        return record.size() > 4 ? record.get(4) : null;
     }
 
     static class TestInfo {
@@ -183,59 +204,62 @@ public class EndToEndTest extends EndToEndCommon {
         }
     }
 
-    @Parameterized.Parameters(name = "{0}, {1}, {2}, {3}")
+    @Parameterized.Parameters(name = "{0}, {1}, {2}, {3}, {4}")
     public static Collection<Object[]> generateData() {
 
-        List<ClassifierSupplier> classifiers = Arrays.asList(
+        List<ClassifierSupplier> classifiers = asList(
                 ClassifierSupplier.EXACT_MATCH,
+                ClassifierSupplier.STRING_SIMILARITY_JARO_WINKLER,
                 ClassifierSupplier.OLR,
-                ClassifierSupplier.EXACT_MATCH_PLUS_VOTING_ENSEMBLE);
+                ClassifierSupplier.EXACT_MATCH_PLUS_STRING_SIMILARITY_LEVENSHTEIN,
+                ClassifierSupplier.VOTING_ENSEMBLE_WITH_OLR_AND_STRING_SIMILARITY);
 
-        List<SerializationFormat> serialization_formats = Arrays.asList(
+        List<SerializationFormat> serialization_formats = asList(
                 SerializationFormat.JSON,
                 SerializationFormat.JSON_COMPRESSED,
                 SerializationFormat.JAVA_SERIALIZATION);
 
-        List<Boolean> use_cli_options = Arrays.asList(true, false);
+        List<Boolean> use_cli_options = asList(true, false);
+        List<Boolean> include_ensemble_detail_options = asList(true, false);
 
-        List<TestInfo> cases = Arrays.asList(makeCase1(), makeCase2(), makeCase3(), makeCase4(), makeCase5());
+        List<TestInfo> cases = asList(makeCase1(), makeCase2(), makeCase3(), makeCase4(), makeCase5());
 
-        return allCombinations(classifiers, serialization_formats, use_cli_options, cases);
+        return allCombinations(classifiers, serialization_formats, use_cli_options, include_ensemble_detail_options, cases);
     }
 
     private static TestInfo makeCase1() {
 
         return new TestInfo("case1",
-                Arrays.asList("test_training_data.csv"), "test_evaluation_UTF8_unix.csv",
-                Arrays.asList(CharsetSupplier.UTF_8), CharsetSupplier.UTF_8, Arrays.asList(","), ",");
+                singletonList("test_training_data.csv"), "test_evaluation_UTF8_unix.csv",
+                singletonList(CharsetSupplier.UTF_8), CharsetSupplier.UTF_8, singletonList(","), ",");
     }
 
     private static TestInfo makeCase2() {
 
         return new TestInfo("case2",
-                Arrays.asList("test_training_UTF8_unix.csv"), "test_evaluation_UTF8_windows.txt",
-                Arrays.asList(CharsetSupplier.UTF_8), CharsetSupplier.UTF_8, Arrays.asList(","), "|");
+                singletonList("test_training_UTF8_unix.csv"), "test_evaluation_UTF8_windows.txt",
+                singletonList(CharsetSupplier.UTF_8), CharsetSupplier.UTF_8, singletonList(","), "|");
     }
 
     private static TestInfo makeCase3() {
 
         return new TestInfo("case3",
-                Arrays.asList("gold_standard1.csv", "gold_standard2.csv"), "unseen_data.csv",
-                Arrays.asList(CharsetSupplier.UTF_8, CharsetSupplier.UTF_8), CharsetSupplier.UTF_8, Arrays.asList(",", ","), ",");
+                asList("gold_standard1.csv", "gold_standard2.csv"), "unseen_data.csv",
+                asList(CharsetSupplier.UTF_8, CharsetSupplier.UTF_8), CharsetSupplier.UTF_8, asList(",", ","), ",");
     }
 
     private static TestInfo makeCase4() {
 
         return new TestInfo("case4",
-                Arrays.asList("gold_standard1.csv", "gold_standard2.csv"), "unseen_data.csv",
+                asList("gold_standard1.csv", "gold_standard2.csv"), "unseen_data.csv",
                 null, null, null, null);
     }
 
     private static TestInfo makeCase5() {
 
         return new TestInfo("case5",
-                Arrays.asList("test_training_ascii_unix.csv", "test_training_iso_latin1_unix.csv", "test_training_UTF16_unix.csv", "test_training_windows_windows.csv"), "test_evaluation_ascii_windows.csv",
-                Arrays.asList(CharsetSupplier.US_ASCII, CharsetSupplier.ISO_8859_1, CharsetSupplier.UTF_16, CharsetSupplier.UTF_8), CharsetSupplier.UTF_8, Arrays.asList(",", ",", ",", ",", ","), ",");
+                asList("test_training_ascii_unix.csv", "test_training_iso_latin1_unix.csv", "test_training_UTF16_unix.csv", "test_training_windows_windows.csv"), "test_evaluation_ascii_windows.csv",
+                asList(CharsetSupplier.US_ASCII, CharsetSupplier.ISO_8859_1, CharsetSupplier.UTF_16, CharsetSupplier.UTF_8), CharsetSupplier.UTF_8, asList(",", ",", ",", ",", ","), ",");
     }
 
     private List<Path> getGoldStandardFiles(TestInfo test_info) {
@@ -250,15 +274,17 @@ public class EndToEndTest extends EndToEndCommon {
         return paths;
     }
 
-    private static Collection<Object[]> allCombinations(List<ClassifierSupplier> classifier_suppliers, List<SerializationFormat> serialization_formats, List<Boolean> use_cli_options, List<TestInfo> cases) {
+    private static Collection<Object[]> allCombinations(List<ClassifierSupplier> classifier_suppliers, List<SerializationFormat> serialization_formats, List<Boolean> use_cli_options, List<Boolean> include_ensemble_detail_options, List<TestInfo> cases) {
 
         List<Object[]> result = new ArrayList<>();
 
         for (ClassifierSupplier classifier_supplier : classifier_suppliers) {
             for (SerializationFormat serialization_format : serialization_formats) {
                 for (boolean use_cli : use_cli_options) {
-                    for (TestInfo test_case : cases) {
-                        result.add(new Object[]{classifier_supplier, serialization_format, use_cli, test_case});
+                    for (boolean include_ensemble_detail : include_ensemble_detail_options) {
+                        for (TestInfo test_case : cases) {
+                            result.add(new Object[]{classifier_supplier, serialization_format, use_cli, include_ensemble_detail, test_case});
+                        }
                     }
                 }
             }

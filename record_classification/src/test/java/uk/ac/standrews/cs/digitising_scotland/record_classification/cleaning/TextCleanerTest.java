@@ -62,7 +62,7 @@ public abstract class TextCleanerTest {
 
     private Classification makeClassification(String data) {
 
-        return new Classification("code", new TokenList(data), 0.1);
+        return new Classification("code", new TokenList(data), 0.1, null);
     }
 
     private Bucket getTestBucket() {

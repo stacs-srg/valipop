@@ -74,7 +74,7 @@ public class VotingResolutionStrategyTest {
 
     private static Object[] single() {
 
-        Classification classification_1 = new Classification("abc", new TokenList("abc"), 0.5);
+        Classification classification_1 = new Classification("abc", new TokenList("abc"), 0.5, null);
 
         //noinspection ArraysAsListWithZeroOrOneArgument
         return new Object[]{"single", Arrays.asList(classification_1), classification_1};
@@ -82,32 +82,32 @@ public class VotingResolutionStrategyTest {
 
     private static Object[] twoWithDifferentConfidence() {
 
-        Classification classification_1 = new Classification("abc", new TokenList("abc"), 0.5);
-        Classification classification_2 = new Classification("def", new TokenList("def"), 0.6);
+        Classification classification_1 = new Classification("abc", new TokenList("abc"), 0.5, null);
+        Classification classification_2 = new Classification("def", new TokenList("def"), 0.6, null);
 
         return new Object[]{"twoWithDifferentConfidence", Arrays.asList(classification_1, classification_2), classification_2};
     }
 
     private static Object[] three() {
 
-        Classification classification_1 = new Classification("abc", new TokenList("abc"), 0.5);
-        Classification classification_2 = new Classification("def", new TokenList("def"), 0.2);
-        Classification classification_3 = new Classification("def", new TokenList("def"), 0.1);
+        Classification classification_1 = new Classification("abc", new TokenList("abc"), 0.5, null);
+        Classification classification_2 = new Classification("def", new TokenList("def"), 0.2, null);
+        Classification classification_3 = new Classification("def", new TokenList("def"), 0.1, null);
 
-        Classification expected = new Classification("def", new TokenList("def"), 0.15);
+        Classification expected = new Classification("def", new TokenList("def"), 0.15, null);
 
         return new Object[]{"three", Arrays.asList(classification_1, classification_2, classification_3), expected};
     }
 
     private static Object[] five() {
 
-        Classification classification_1 = new Classification("abc", new TokenList("abc"), 0.5);
-        Classification classification_2 = new Classification("def", new TokenList("def"), 0.4);
-        Classification classification_3 = new Classification("def", new TokenList("def"), 0.1);
-        Classification classification_4 = new Classification("ghi", new TokenList("ghi"), 0.3);
-        Classification classification_5 = new Classification("ghi", new TokenList("ghi"), 0.3);
+        Classification classification_1 = new Classification("abc", new TokenList("abc"), 0.5, null);
+        Classification classification_2 = new Classification("def", new TokenList("def"), 0.4, null);
+        Classification classification_3 = new Classification("def", new TokenList("def"), 0.1, null);
+        Classification classification_4 = new Classification("ghi", new TokenList("ghi"), 0.3, null);
+        Classification classification_5 = new Classification("ghi", new TokenList("ghi"), 0.3, null);
 
-        Classification expected = new Classification("def", new TokenList("def"), 0.25);
+        Classification expected = new Classification("def", new TokenList("def"), 0.25, null);
 
         return new Object[]{"five", Arrays.asList(classification_1, classification_2, classification_3, classification_4, classification_5), expected};
     }
