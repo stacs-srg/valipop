@@ -44,6 +44,6 @@ public class VariousClassifiersExperiment extends Experiment {
         return Arrays.asList(
                 ClassifierSupplier.EXACT_MATCH,
                 ClassifierSupplier.OLR,
-                ClassifierSupplier.VOTING_ENSEMBLE_WITH_OLR_AND_STRING_SIMILARITY);
+                ClassifierSupplier.EXACT_MATCH_PLUS_VOTING_ENSEMBLE);
     }
 }
