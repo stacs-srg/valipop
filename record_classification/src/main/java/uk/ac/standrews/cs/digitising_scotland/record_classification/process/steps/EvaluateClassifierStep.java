@@ -74,7 +74,7 @@ public class EvaluateClassifierStep implements Step {
             System.out.println();
             System.out.format("total records              : %s%n", Formatting.format(training_records_size + evaluation_records.size()));
             System.out.format("records used for training  : %s (%s unique)%n", Formatting.format(training_records_size), Formatting.format(unique_training.size()));
-            System.out.format("records used for evaluation: %s (%s unique, %s not in training set)%n", Formatting.format(stripped_unique_evaluation_records.size()), Formatting.format(unique_evaluation.size()), Formatting.format(number_of_evaluation_strings_not_in_training_set));
+            System.out.format("records used for evaluation: %s (%s unique, %s not in training set)%n", Formatting.format(evaluation_records.size()), Formatting.format(unique_evaluation.size()), Formatting.format(number_of_evaluation_strings_not_in_training_set));
             System.out.println();
 
             context.getClassificationMetrics().printMetrics(context.getVerbosity());
