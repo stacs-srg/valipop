@@ -99,17 +99,17 @@ public class Bucket implements Iterable<Record>, Serializable {
      *
      * @param records the records to add
      */
-    public void add(final Record... records) {
+    public final void add(final Record... records) {
 
         add(Arrays.asList(records));
     }
 
-    public void add(final Bucket bucket) {
+    public final void add(final Bucket bucket) {
 
         add(bucket.records);
     }
 
-    public void add(final Collection<Record> records) {
+    public final void add(final Collection<Record> records) {
 
         int original_size = this.records.size();
 
@@ -126,12 +126,6 @@ public class Bucket implements Iterable<Record>, Serializable {
         }
     }
 
-    private Collection<Record> reallocateIds(Collection<Record> records) {
-
-        return records.stream().map(
-                record -> new Record(next_id++, record.getData(), record.getOriginalData(), record.getClassification())).collect(Collectors.toList());
-    }
-
     public DataSet toDataSet(List<String> column_labels) {
 
         final DataSet dataset = new DataSet(column_labels);
@@ -142,9 +136,9 @@ public class Bucket implements Iterable<Record>, Serializable {
             final String column_1 = record.getOriginalData();
             final String column_2 = record.getClassification().getCode();
             final String column_3 = String.valueOf(record.getClassification().getConfidence());
+            final String column_4 = record.getClassification().getDetail();
 
-            final List<String> row = Arrays.asList(column_0, column_1, column_2, column_3);
-            dataset.addRow(row);
+            dataset.addRow(column_0, column_1, column_2, column_3, column_4);
         }
         return dataset;
     }
@@ -301,8 +295,9 @@ public class Bucket implements Iterable<Record>, Serializable {
 
         String code = record.get(2);
         double confidence = extractConfidence(record);
+        String detail = extractDetail(record);
 
-        return code.isEmpty() ? Classification.UNCLASSIFIED : new Classification(code, new TokenList(data), confidence);
+        return code.isEmpty() ? Classification.UNCLASSIFIED : new Classification(code, new TokenList(data), confidence, detail);
     }
 
     private double extractConfidence(List<String> record) {
@@ -317,5 +312,17 @@ public class Bucket implements Iterable<Record>, Serializable {
 
         } catch (NumberFormatException e) {
             throw new InputFileFormatException("invalid numerical confidence: " + confidence_string);
-        }    }
+        }
+    }
+
+    private String extractDetail(List<String> record) {
+
+        return record.size() < 5 ? null : record.get(4);
+    }
+
+    private Collection<Record> reallocateIds(Collection<Record> records) {
+
+        return records.stream().map(
+                record -> new Record(next_id++, record.getData(), record.getOriginalData(), record.getClassification())).collect(Collectors.toList());
+    }
 }

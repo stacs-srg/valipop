@@ -58,12 +58,14 @@ public interface TextCleaner extends Cleaner {
         final Classification cleaned_classification;
         if (old_classification.equals(Classification.UNCLASSIFIED)) {
             cleaned_classification = old_classification;
+
         } else {
             final String code = old_classification.getCode();
             final TokenList tokens = new TokenList(cleaned_data);
             final double confidence = old_classification.getConfidence();
+            final String detail = old_classification.getDetail();
 
-            cleaned_classification = new Classification(code, tokens, confidence);
+            cleaned_classification = new Classification(code, tokens, confidence, detail);
         }
         return cleaned_classification;
     }

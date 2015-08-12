@@ -50,6 +50,7 @@ public class EndToEndCommon {
     double training_ratio;
     List<CleanerSupplier> cleaners;
     boolean use_cli;
+    boolean include_ensemble_detail;
 
     Path temp_process_directory;
     List<Path> input_gold_standard_files;

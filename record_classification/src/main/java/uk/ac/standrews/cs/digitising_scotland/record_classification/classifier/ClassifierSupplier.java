@@ -26,6 +26,7 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.s
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.function.Supplier;
 
 /**
@@ -45,8 +46,8 @@ public enum ClassifierSupplier implements Supplier<Classifier> {
 
     OLR(OLRClassifier::new),
 
-    VOTING_ENSEMBLE(ClassifierSupplier::makeVotingEnsembleClassifier),
-    VOTING_SIMILARITY_ENSEMBLE(ClassifierSupplier::makeVotingSimilarityEnsembleClassifier),
+    VOTING_ENSEMBLE_WITH_OLR_AND_STRING_SIMILARITY(ClassifierSupplier::makeVotingEnsembleClassifierWithOLRAndStringSimilarity),
+    VOTING_SIMILARITY_ENSEMBLE_WITH_STRING_SIMILARITY(ClassifierSupplier::makeVotingEnsembleClassifierWithStringSimilarity),
 
     EXACT_MATCH_PLUS_STRING_SIMILARITY_LEVENSHTEIN(ClassifierSupplier::makeExactMatchPlusLevenshteinClassifier),
     EXACT_MATCH_PLUS_STRING_SIMILARITY_JARO_WINKLER(ClassifierSupplier::makeExactMatchPlusJaroWinklerClassifier),
@@ -66,6 +67,16 @@ public enum ClassifierSupplier implements Supplier<Classifier> {
     public Classifier get() {
 
         return supplier.get();
+    }
+
+    public boolean isExactMatch() {
+
+        return this == EXACT_MATCH;
+    }
+
+    public boolean isEnsemble() {
+
+        return this == VOTING_ENSEMBLE_WITH_OLR_AND_STRING_SIMILARITY || this == VOTING_SIMILARITY_ENSEMBLE_WITH_STRING_SIMILARITY;
     }
 
     public static Collection<Supplier<Classifier>> getStringSimilarityClassifiers() {
@@ -91,9 +102,9 @@ public enum ClassifierSupplier implements Supplier<Classifier> {
         return new StringSimilarityClassifier(StringSimilarityMetrics.LEVENSHTEIN.get());
     }
 
-    private static EnsembleVotingClassifier makeVotingEnsembleClassifier() {
+    private static EnsembleVotingClassifier makeVotingEnsembleClassifierWithOLRAndStringSimilarity() {
 
-        return new EnsembleVotingClassifier(Arrays.asList(OLR.get()),
+        return new EnsembleVotingClassifier(Collections.singletonList(OLR.get()),
                 new StringSimilarityGroupWithSharedState(Arrays.asList(
                         makeDiceClassifier(),
                         makeJaccardClassifier(),
@@ -102,9 +113,9 @@ public enum ClassifierSupplier implements Supplier<Classifier> {
                 )));
     }
 
-    private static EnsembleVotingClassifier makeVotingSimilarityEnsembleClassifier() {
+    private static EnsembleVotingClassifier makeVotingEnsembleClassifierWithStringSimilarity() {
 
-        return new EnsembleVotingClassifier(Arrays.asList(),
+        return new EnsembleVotingClassifier(Collections.emptyList(),
                 new StringSimilarityGroupWithSharedState(Arrays.asList(
                         makeDiceClassifier(),
                         makeJaccardClassifier(),
@@ -114,11 +125,11 @@ public enum ClassifierSupplier implements Supplier<Classifier> {
     }
 
     private static ClassifierPlusExactMatchClassifier makeExactMatchPlusVotingEnsembleClassifier() {
-        return new ClassifierPlusExactMatchClassifier(makeVotingEnsembleClassifier());
+        return new ClassifierPlusExactMatchClassifier(makeVotingEnsembleClassifierWithOLRAndStringSimilarity());
     }
 
     private static ClassifierPlusExactMatchClassifier makeExactMatchPlusVotingSimilarityEnsembleClassifier() {
-        return new ClassifierPlusExactMatchClassifier(makeVotingSimilarityEnsembleClassifier());
+        return new ClassifierPlusExactMatchClassifier(makeVotingEnsembleClassifierWithStringSimilarity());
     }
 
     private static ClassifierPlusExactMatchClassifier makeExactMatchPlusOLRClassifier() {

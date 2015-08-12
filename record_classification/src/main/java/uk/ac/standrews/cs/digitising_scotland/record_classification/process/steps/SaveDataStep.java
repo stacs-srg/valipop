@@ -16,7 +16,6 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps;
 
-import org.apache.commons.csv.CSVFormat;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.FileWriteException;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassificationContext;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.Step;
@@ -58,8 +57,8 @@ public class SaveDataStep implements Step {
         }
     }
 
-    private static CSVFormat getDataFormat(String delimiter) {
-
-        return DataSet.DEFAULT_CSV_FORMAT.withDelimiter(delimiter.charAt(0));
-    }
+//    private static CSVFormat getDataFormat(String delimiter) {
+//
+//        return DataSet.DEFAULT_CSV_FORMAT.withDelimiter(delimiter.charAt(0));
+//    }
 }

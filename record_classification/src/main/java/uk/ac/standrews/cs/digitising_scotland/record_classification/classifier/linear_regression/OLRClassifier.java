@@ -99,14 +99,14 @@ public class OLRClassifier implements Classifier {
         TokenList token_list = new TokenList(data);
 
         if (single_code != null) {
-            return new Classification(single_code, token_list, STATIC_CONFIDENCE);
+            return new Classification(single_code, token_list, STATIC_CONFIDENCE, null);
         }
 
         NamedVector vector = vector_factory.createNamedVectorFromString(token_list, "unknown");
         int classificationID = model.classifyFull(vector).maxValueIndex();
         String code = vector_factory.getCodeIndexer().getCode(classificationID);
 
-        return new Classification(code, token_list, STATIC_CONFIDENCE);
+        return new Classification(code, token_list, STATIC_CONFIDENCE, null);
     }
 
     @Override

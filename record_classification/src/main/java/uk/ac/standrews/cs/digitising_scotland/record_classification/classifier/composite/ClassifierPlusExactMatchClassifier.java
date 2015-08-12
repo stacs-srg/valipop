@@ -52,7 +52,7 @@ public class ClassifierPlusExactMatchClassifier implements Classifier {
 
         Classification result = exact_match_classifier.classify(data);
 
-        if (result != Classification.UNCLASSIFIED) {
+        if (!result.equals(Classification.UNCLASSIFIED)) {
             return result;
         } else {
             return classifier.classify(data);

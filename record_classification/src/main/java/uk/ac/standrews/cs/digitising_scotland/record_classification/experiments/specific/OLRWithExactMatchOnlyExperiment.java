@@ -42,6 +42,6 @@ public class OLRWithExactMatchOnlyExperiment extends Experiment {
     @Override
     protected List<Supplier<Classifier>> getClassifierFactories() throws IOException, InputFileFormatException {
 
-        return Arrays.asList(() -> new OLRWithExactMatchClassifier());
+        return Arrays.asList(OLRWithExactMatchClassifier::new);
     }
 }

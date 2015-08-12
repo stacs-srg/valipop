@@ -42,8 +42,8 @@ public class ClassificationProcessTest extends AbstractClassificationProcessTest
         result.add(new Object[]{ClassifierSupplier.EXACT_MATCH_PLUS_STRING_SIMILARITY_JARO_WINKLER});
         result.add(new Object[]{ClassifierSupplier.EXACT_MATCH_PLUS_STRING_SIMILARITY_LEVENSHTEIN});
         result.add(new Object[]{ClassifierSupplier.OLR});
-        result.add(new Object[]{ClassifierSupplier.VOTING_ENSEMBLE});
-        result.add(new Object[]{ClassifierSupplier.VOTING_SIMILARITY_ENSEMBLE});
+        result.add(new Object[]{ClassifierSupplier.VOTING_ENSEMBLE_WITH_OLR_AND_STRING_SIMILARITY});
+        result.add(new Object[]{ClassifierSupplier.VOTING_SIMILARITY_ENSEMBLE_WITH_STRING_SIMILARITY});
 
         return result;
     }

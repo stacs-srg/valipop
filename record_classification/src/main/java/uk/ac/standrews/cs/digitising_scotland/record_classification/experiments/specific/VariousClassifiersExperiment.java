@@ -35,26 +35,15 @@ public class VariousClassifiersExperiment extends Experiment {
 
     public static void main(final String[] args) throws Exception {
 
-        final VariousClassifiersExperiment experiment = new VariousClassifiersExperiment(args);
-        experiment.call();
+        new VariousClassifiersExperiment(args).call();
     }
 
     @Override
     protected List<Supplier<Classifier>> getClassifierFactories() throws IOException, InputFileFormatException {
-        
-        return Arrays.asList(ClassifierSupplier.values());
-//                ClassifierSupplier.EXACT_MATCH,
-//                ClassifierSupplier.STRING_SIMILARITY_LEVENSHTEIN,
-//                ClassifierSupplier.STRING_SIMILARITY_JARO_WINKLER,
-//                ClassifierSupplier.STRING_SIMILARITY_JACCARD,
-//                ClassifierSupplier.STRING_SIMILARITY_DICE,
-//                ClassifierSupplier.OLR,
-//                ClassifierSupplier.EXACT_MATCH_PLUS_STRING_SIMILARITY_LEVENSHTEIN,
-//                ClassifierSupplier.EXACT_MATCH_PLUS_STRING_SIMILARITY_JARO_WINKLER,
-//                () -> Classifiers.EXACT_MATCH_PLUS_STRING_SIMILARITY_JACCARD,
-//                () -> Classifiers.EXACT_MATCH_PLUS_STRING_SIMILARITY_CHAPMAN_LENGTH_DEVIATION,
-//                () -> Classifiers.EXACT_MATCH_PLUS_STRING_SIMILARITY_DICE,
-//                () -> ClassifierSupplier.EXACT_MATCH_PLUS_OLR.get())
-//                () -> Classifiers.VOTING_ENSEMBLE);
+
+        return Arrays.asList(
+                ClassifierSupplier.EXACT_MATCH,
+                ClassifierSupplier.OLR,
+                ClassifierSupplier.VOTING_ENSEMBLE_WITH_OLR_AND_STRING_SIMILARITY);
     }
 }

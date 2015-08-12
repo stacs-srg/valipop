@@ -59,15 +59,15 @@ public class StringSimilarityClassifier implements Classifier {
 
         for (Record record : bucket) {
             Classification classification = record.getClassification();
-            known_classifications.put(record.getData(), new Classification(classification.getCode(), classification.getTokenList(), similarity_metric.getStaticConfidence()));
+            known_classifications.put(record.getData(), new Classification(classification.getCode(), classification.getTokenList(), similarity_metric.getStaticConfidence(), classification.getDetail()));
         }
     }
 
     @Override
     public Classification classify(final String data) {
 
-        float highest_similarity_found = 0;
-        Classification classification = Classification.UNCLASSIFIED;
+        float highest_similarity_found = -1;
+        Classification classification = null;
 
         for (Map.Entry<String, Classification> known_entry : known_classifications.entrySet()) {
 
@@ -77,7 +77,7 @@ public class StringSimilarityClassifier implements Classifier {
                 highest_similarity_found = known_to_data_similarity;
             }
         }
-        return classification == Classification.UNCLASSIFIED ? classification : new Classification(classification.getCode(), new TokenList(data), classification.getConfidence());
+        return classification == null ? Classification.UNCLASSIFIED : new Classification(classification.getCode(), new TokenList(data), classification.getConfidence(), classification.getDetail());
     }
 
     @Override

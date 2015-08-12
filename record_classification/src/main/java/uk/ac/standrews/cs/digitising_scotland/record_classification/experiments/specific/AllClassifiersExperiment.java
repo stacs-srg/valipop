@@ -17,8 +17,7 @@
 package uk.ac.standrews.cs.digitising_scotland.record_classification.experiments.specific;
 
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.Classifier;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.exact_match.ExactMatchClassifier;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.linear_regression.OLRClassifier;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.ClassifierSupplier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.InputFileFormatException;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.experiments.generic.Experiment;
 
@@ -27,22 +26,21 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Supplier;
 
-public class ExactMatchAndOLRExperiment extends Experiment {
+public class AllClassifiersExperiment extends Experiment {
 
-    protected ExactMatchAndOLRExperiment(final String[] args) throws IOException, InputFileFormatException {
+    protected AllClassifiersExperiment(final String[] args) throws IOException, InputFileFormatException {
 
         super(args);
     }
 
     public static void main(final String[] args) throws Exception {
 
-        final ExactMatchAndOLRExperiment experiment = new ExactMatchAndOLRExperiment(args);
-        experiment.call();
+        new AllClassifiersExperiment(args).call();
     }
 
     @Override
     protected List<Supplier<Classifier>> getClassifierFactories() throws IOException, InputFileFormatException {
-
-        return Arrays.asList(ExactMatchClassifier::new, OLRClassifier::new);
-    }
+        
+        return Arrays.asList(ClassifierSupplier.values());
+     }
 }

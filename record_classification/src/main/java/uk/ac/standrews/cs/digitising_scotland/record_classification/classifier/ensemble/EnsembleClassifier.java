@@ -75,20 +75,6 @@ public class EnsembleClassifier implements Classifier {
         }
     }
 
-    public void prepareForSerialization() {
-
-        if (group != null) {
-            group.prepareForSerialization();
-        }
-    }
-
-    public void recoverFromDeserialization() {
-
-        if (group != null) {
-            group.recoverFromSerialization();
-        }
-    }
-
     @Override
     public Classification classify(String data) {
 
