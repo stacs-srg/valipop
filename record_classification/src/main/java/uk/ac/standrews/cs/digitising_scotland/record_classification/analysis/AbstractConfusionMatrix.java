@@ -49,7 +49,6 @@ public abstract class AbstractConfusionMatrix implements ConfusionMatrix {
      * @param checker               checker for consistent coding
      * @throws InvalidCodeException                    if a code in the classified records does not appear in the gold standard records
      * @throws UnknownDataException                    if a record in the classified records contains data that does not appear in the gold standard records
-     * @throws InconsistentCodingException             if there exist multiple gold standard records containing the same data and different classifications
      * @throws UnclassifiedGoldStandardRecordException if a record in the gold standard records is not classified
      */
     AbstractConfusionMatrix(final Bucket classified_records, final Bucket gold_standard_records, Checker checker)  {
@@ -116,12 +115,6 @@ public abstract class AbstractConfusionMatrix implements ConfusionMatrix {
     @Override
     public int getNumberOfClassifications() {
 
-//        int total = 0;
-//        for (Record record : classified_records) {
-//
-//            if (record.getClassification() != null)
-//                total++;
-//        }
         return classified_records.size();
     }
 
@@ -265,6 +258,9 @@ public abstract class AbstractConfusionMatrix implements ConfusionMatrix {
 
         String asserted_code = classification.getCode();
         String real_code = findGoldStandardCode(record.getData());
+
+        // TODO control with global verbosity flag.
+//        System.out.println(record.getOriginalData()+ "\t" + asserted_code + "\t" + real_code);
 
         incrementCount(asserted_code, classification_counts);
 

@@ -52,6 +52,11 @@ public class Record implements Comparable<Record>, Serializable {
         this(id, data, Classification.UNCLASSIFIED);
     }
 
+    public Record(final int id, final String data, final String original_data) {
+
+        this(id, data, original_data, Classification.UNCLASSIFIED);
+    }
+
     /**
      * Instantiates a record classified by the given classification.
      *
@@ -65,7 +70,7 @@ public class Record implements Comparable<Record>, Serializable {
         this(id, data, data, classification);
     }
 
-    public Record(final int id, final String data, final String original_data ,final Classification classification) {
+    public Record(final int id, final String data, final String original_data, final Classification classification) {
 
         this.id = id;
         this.data = data;
