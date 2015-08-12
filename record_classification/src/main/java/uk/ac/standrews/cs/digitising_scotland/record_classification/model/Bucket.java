@@ -213,12 +213,12 @@ public class Bucket implements Iterable<Record>, Serializable {
      * @return a new bucket containing records of this bucket without classification
      * @see Record#Record(int, String)
      */
-    public Bucket stripRecordClassifications() {
+    public Bucket getStrippedRecords() {
 
         Bucket unclassified_bucket = new Bucket();
 
         for (Record record : this) {
-            unclassified_bucket.add(new Record(record.getId(), record.getData()));
+            unclassified_bucket.add(new Record(record.getId(), record.getData(), record.getOriginalData()));
         }
 
         return unclassified_bucket;
@@ -229,12 +229,12 @@ public class Bucket implements Iterable<Record>, Serializable {
      *
      * @return a new bucket containing the records with unique data in this bucket
      */
-    public Bucket uniqueDataRecords() {
+    public Bucket getUniqueDataRecords() {
 
         Map<String, Record> unique_data_records = new HashMap<>();
 
         for (Record record : this) {
-            unique_data_records.put(record.getData(), record);
+            unique_data_records.put(record.getOriginalData(), record);
         }
 
         final Bucket unique_bucket = new Bucket();

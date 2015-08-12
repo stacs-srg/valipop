@@ -96,7 +96,7 @@ public class EnsembleClassifier implements Classifier {
 
     @Override
     public String getName() {
-        return getClass().getSimpleName() + "[" + concatenateClassifierNames(classifiers) + "]";
+        return getClass().getSimpleName() + "[" + concatenateClassifierNames() + "]";
     }
 
     public String toString() {
@@ -104,10 +104,14 @@ public class EnsembleClassifier implements Classifier {
         return getName();
     }
 
-    private String concatenateClassifierNames(List<Classifier> classifiers) {
+    private String concatenateClassifierNames() {
 
         String result = "";
         for (Classifier classifier : classifiers) {
+            if (result.length() > 0) result += ",";
+            result += classifier.getName();
+        }
+        for (Classifier classifier : group.getClassifiers()) {
             if (result.length() > 0) result += ",";
             result += classifier.getName();
         }

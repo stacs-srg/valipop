@@ -48,5 +48,4 @@ public class EnsembleVotingClassifier extends EnsembleClassifier {
 
         super(classifiers, group, new VotingResolutionStrategy());
     }
-
 }
