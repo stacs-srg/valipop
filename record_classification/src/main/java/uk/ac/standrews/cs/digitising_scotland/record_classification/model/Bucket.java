@@ -213,7 +213,7 @@ public class Bucket implements Iterable<Record>, Serializable {
      * @return a new bucket containing records of this bucket without classification
      * @see Record#Record(int, String)
      */
-    public Bucket getStrippedRecords() {
+    public Bucket makeStrippedRecords() {
 
         Bucket unclassified_bucket = new Bucket();
 
@@ -229,7 +229,7 @@ public class Bucket implements Iterable<Record>, Serializable {
      *
      * @return a new bucket containing the records with unique data in this bucket
      */
-    public Bucket getUniqueDataRecords() {
+    public Bucket makeUniqueDataRecords() {
 
         Map<String, Record> unique_data_records = new HashMap<>();
 

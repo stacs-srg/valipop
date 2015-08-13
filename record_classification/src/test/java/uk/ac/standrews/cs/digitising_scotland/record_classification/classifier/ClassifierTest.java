@@ -19,7 +19,10 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Classification;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Record;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.TokenList;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -35,9 +38,28 @@ import static org.junit.Assert.assertEquals;
 @RunWith(Parameterized.class)
 public class ClassifierTest {
 
+    private static final double DELTA = 0.999;
+
     protected static final String[] TEST_VALUES = new String[]{"trial", "house", "thought", "quick brown fish", "lazy dogs"};
 
+    protected static final Record[] TRAINING_RECORDS = new Record[]{
+            new Record(1, "trail", new Classification("class1", new TokenList("trail"), 1.0, null)),
+            new Record(2, "mouse", new Classification("class2", new TokenList("mouse"), 1.0, null)),
+            new Record(3, "through", new Classification("class3", new TokenList("through"), 1.0, null)),
+            new Record(4, "quick brown fox", new Classification("class4", new TokenList("quick brown fox"), 1.0, null)),
+            new Record(5, "lazy dog", new Classification("class4", new TokenList("lazy dog"), 1.0, null))
+    };
+
+    protected static final Record[] TEST_RECORDS = new Record[]{
+            new Record(1, TEST_VALUES[0]),
+            new Record(2, TEST_VALUES[1]),
+            new Record(3, TEST_VALUES[2]),
+            new Record(4, TEST_VALUES[3]),
+            new Record(5, TEST_VALUES[4])
+    };
+
     protected Supplier<Classifier> factory;
+    protected Bucket training_bucket;
 
     @Parameterized.Parameters(name = "{0}")
     public static Collection<Object[]> generateData() {
@@ -54,6 +76,7 @@ public class ClassifierTest {
     public ClassifierTest(Supplier<Classifier> factory) {
 
         this.factory = factory;
+        training_bucket = new Bucket(TRAINING_RECORDS);
     }
 
     @Test
@@ -63,6 +86,20 @@ public class ClassifierTest {
 
         for (String value : TEST_VALUES) {
             assertEquals(Classification.UNCLASSIFIED, classifier.classify(value));
+        }
+    }
+
+    @Test
+    public void exactMatchClassificationHasConfidenceOfOne() {
+
+        if (factory == ClassifierSupplier.EXACT_MATCH) {
+
+            Classifier classifier = factory.get();
+
+            classifier.train(training_bucket);
+
+            assertEquals(1.0, classifier.classify("trail").getConfidence(), DELTA);
+            assertEquals(1.0, classifier.classify("through").getConfidence(), DELTA);
         }
     }
 }

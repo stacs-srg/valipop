@@ -86,6 +86,11 @@ public class Classification implements Serializable {
 
     public Classification makeClone() {
 
+        return makeClone(confidence);
+    }
+
+    public Classification makeClone(double confidence) {
+
         return new Classification(code, new TokenList(token_list.toString()), confidence, detail);
     }
 }

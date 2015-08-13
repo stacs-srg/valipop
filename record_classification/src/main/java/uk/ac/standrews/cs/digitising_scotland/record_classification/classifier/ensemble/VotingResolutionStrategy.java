@@ -108,26 +108,43 @@ public class VotingResolutionStrategy implements EnsembleClassifier.ResolutionSt
         Map<Set<Classification>, Double> confidence_averages = new HashMap<>();
 
         for (Set<Classification> classifications : classifications_with_most_popular_code) {
-            confidence_averages.put(classifications, averageConfidence(classifications));
+            confidence_averages.put(classifications, combinedConfidence(classifications));
         }
 
         return confidence_averages;
     }
 
-    private Double averageConfidence(Set<Classification> classifications) {
+    private Double combinedConfidence(Set<Classification> classifications) {
+
+        // If any of the individual confidence values is 1.0, then return 1.0 overall.
+        // Assume that this will only occur with exact match classifier.
 
         double sum = 0.0;
         for (Classification classification : classifications) {
-            sum += classification.getConfidence();
+
+            final double confidence = classification.getConfidence();
+            if (confidence > 0.999) return 1.0;
+            sum += confidence;
         }
         return sum / classifications.size();
     }
 
     private String constructDetailString(Map<Classifier, Classification> candidate_classifications) {
 
-//        if (Config.cleanUpFilesAfterTests()) {return null;}
+        StringBuilder result = new StringBuilder();
 
-        return "no detail";
+        for (Map.Entry<Classifier, Classification> entry : candidate_classifications.entrySet()) {
+
+            if (result.length() > 0) result.append("\t");
+
+            result.append(entry.getKey().getName());
+            result.append("\t");
+            result.append(entry.getValue().getCode());
+            result.append("\t");
+            result.append(entry.getValue().getConfidence());
+        }
+
+        return result.toString();
     }
 
     private Classification classificationWithHighestConfidenceAverage(Map<Set<Classification>, Double> confidence_averages, String detail) {
@@ -146,7 +163,7 @@ public class VotingResolutionStrategy implements EnsembleClassifier.ResolutionSt
         if (classifications != null) {
             //noinspection LoopStatementThatDoesntLoop
             for (Classification classification : classifications) {
-                return new Classification(classification.getCode(), classification.getTokenList(), averageConfidence(classifications), detail);
+                return new Classification(classification.getCode(), classification.getTokenList(), combinedConfidence(classifications), detail);
             }
         }
         return Classification.UNCLASSIFIED;

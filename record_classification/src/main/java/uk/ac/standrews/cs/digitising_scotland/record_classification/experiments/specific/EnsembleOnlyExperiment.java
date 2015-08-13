@@ -17,14 +17,14 @@
 package uk.ac.standrews.cs.digitising_scotland.record_classification.experiments.specific;
 
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.Classifier;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.ClassifierSupplier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.ensemble.EnsembleVotingClassifier;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.string_similarity.StringSimilarityClassifier;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.string_similarity.StringSimilarityMetrics;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.InputFileFormatException;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.experiments.generic.Experiment;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -44,10 +44,10 @@ public class EnsembleOnlyExperiment extends Experiment {
     @Override
     protected List<Supplier<Classifier>> getClassifierFactories() throws IOException, InputFileFormatException {
 
-        //noinspection ArraysAsListWithZeroOrOneArgument
-        return Arrays.asList(() -> new EnsembleVotingClassifier(
+        return Collections.singletonList(() -> new EnsembleVotingClassifier(
                 Arrays.asList(
-                        new StringSimilarityClassifier(StringSimilarityMetrics.LEVENSHTEIN.get()),
-                        new StringSimilarityClassifier(StringSimilarityMetrics.JARO_WINKLER.get()))));
+                        ClassifierSupplier.EXACT_MATCH.get(),
+                        ClassifierSupplier.STRING_SIMILARITY_LEVENSHTEIN.get(),
+                        ClassifierSupplier.STRING_SIMILARITY_JARO_WINKLER.get())));
     }
 }

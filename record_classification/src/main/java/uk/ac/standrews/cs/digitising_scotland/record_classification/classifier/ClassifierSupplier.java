@@ -46,8 +46,8 @@ public enum ClassifierSupplier implements Supplier<Classifier> {
 
     OLR(OLRClassifier::new),
 
-    VOTING_ENSEMBLE_WITH_OLR_AND_STRING_SIMILARITY(ClassifierSupplier::makeVotingEnsembleClassifierWithOLRAndStringSimilarity),
-    VOTING_SIMILARITY_ENSEMBLE_WITH_STRING_SIMILARITY(ClassifierSupplier::makeVotingEnsembleClassifierWithStringSimilarity),
+    VOTING_ENSEMBLE_EXACT_OLR_SIMILARITY(ClassifierSupplier::makeVotingEnsembleClassifierWithOLRAndStringSimilarity),
+    VOTING_ENSEMBLE_EXACT_SIMILARITY(ClassifierSupplier::makeVotingEnsembleClassifierWithStringSimilarity),
 
     EXACT_MATCH_PLUS_STRING_SIMILARITY_LEVENSHTEIN(ClassifierSupplier::makeExactMatchPlusLevenshteinClassifier),
     EXACT_MATCH_PLUS_STRING_SIMILARITY_JARO_WINKLER(ClassifierSupplier::makeExactMatchPlusJaroWinklerClassifier),
@@ -76,7 +76,7 @@ public enum ClassifierSupplier implements Supplier<Classifier> {
 
     public boolean isEnsemble() {
 
-        return this == VOTING_ENSEMBLE_WITH_OLR_AND_STRING_SIMILARITY || this == VOTING_SIMILARITY_ENSEMBLE_WITH_STRING_SIMILARITY;
+        return this == VOTING_ENSEMBLE_EXACT_OLR_SIMILARITY || this == VOTING_ENSEMBLE_EXACT_SIMILARITY;
     }
 
     public static Collection<Supplier<Classifier>> getStringSimilarityClassifiers() {
@@ -104,7 +104,7 @@ public enum ClassifierSupplier implements Supplier<Classifier> {
 
     private static EnsembleVotingClassifier makeVotingEnsembleClassifierWithOLRAndStringSimilarity() {
 
-        return new EnsembleVotingClassifier(Collections.singletonList(OLR.get()),
+        return new EnsembleVotingClassifier(Arrays.asList(EXACT_MATCH.get(), OLR.get()),
                 new StringSimilarityGroupWithSharedState(Arrays.asList(
                         makeDiceClassifier(),
                         makeJaccardClassifier(),
@@ -115,7 +115,7 @@ public enum ClassifierSupplier implements Supplier<Classifier> {
 
     private static EnsembleVotingClassifier makeVotingEnsembleClassifierWithStringSimilarity() {
 
-        return new EnsembleVotingClassifier(Collections.emptyList(),
+        return new EnsembleVotingClassifier(Collections.singletonList(EXACT_MATCH.get()),
                 new StringSimilarityGroupWithSharedState(Arrays.asList(
                         makeDiceClassifier(),
                         makeJaccardClassifier(),

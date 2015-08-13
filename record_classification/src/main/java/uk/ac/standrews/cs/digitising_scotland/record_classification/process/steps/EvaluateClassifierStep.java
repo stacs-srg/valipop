@@ -46,8 +46,8 @@ public class EvaluateClassifierStep implements Step {
 
         final Bucket gold_standard_records = context.getGoldStandardRecords();
         final Bucket evaluation_records = context.getEvaluationRecords();
-        final Bucket unique_evaluation_records = evaluation_records.getUniqueDataRecords();
-        final Bucket stripped_unique_evaluation_records = unique_evaluation_records.getStrippedRecords();
+        final Bucket unique_evaluation_records = evaluation_records.makeUniqueDataRecords();
+        final Bucket stripped_unique_evaluation_records = unique_evaluation_records.makeStrippedRecords();
 
         final Instant start = Instant.now();
         final Bucket classified_records = context.getClassifier().classify(stripped_unique_evaluation_records);
@@ -63,7 +63,7 @@ public class EvaluateClassifierStep implements Step {
 
             final Classifier classifier = context.getClassifier();
 
-            final Set<String> unique_training = extractStrings(context.getTrainingRecords().getUniqueDataRecords());
+            final Set<String> unique_training = extractStrings(context.getTrainingRecords().makeUniqueDataRecords());
             final Set<String> unique_evaluation = extractStrings(stripped_unique_evaluation_records);
 
             final int training_records_size = context.getTrainingRecords().size();
