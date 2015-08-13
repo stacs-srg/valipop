@@ -16,11 +16,20 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.analysis;
 
-import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.Checker;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.InvalidCodeException;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.UnclassifiedGoldStandardRecordException;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.UnknownDataException;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Classification;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.InfoLevel;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Record;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.config.Logging;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * General implementation of confusion matrix representing the effectiveness of a classification process.
@@ -51,7 +60,7 @@ public abstract class AbstractConfusionMatrix implements ConfusionMatrix {
      * @throws UnknownDataException                    if a record in the classified records contains data that does not appear in the gold standard records
      * @throws UnclassifiedGoldStandardRecordException if a record in the gold standard records is not classified
      */
-    AbstractConfusionMatrix(final Bucket classified_records, final Bucket gold_standard_records, Checker checker)  {
+    AbstractConfusionMatrix(final Bucket classified_records, final Bucket gold_standard_records, Checker checker) {
 
         this.classified_records = classified_records;
         this.gold_standard_records = gold_standard_records;
@@ -199,7 +208,7 @@ public abstract class AbstractConfusionMatrix implements ConfusionMatrix {
      *
      * @throws InvalidCodeException if they do not
      */
-    private void checkClassifiedToValidCodes()  {
+    private void checkClassifiedToValidCodes() {
 
         Set<String> valid_codes = new HashSet<>();
         valid_codes.add(Classification.UNCLASSIFIED.getCode());
@@ -259,8 +268,7 @@ public abstract class AbstractConfusionMatrix implements ConfusionMatrix {
         String asserted_code = classification.getCode();
         String real_code = findGoldStandardCode(record.getData());
 
-        // TODO control with global verbosity flag.
-//        System.out.println(record.getOriginalData()+ "\t" + asserted_code + "\t" + real_code);
+        Logging.output(record.getOriginalData() + "\t" + real_code + "\t" + classification.getCode() + "\t" + classification.getConfidence() + "\t" + classification.getDetail(), InfoLevel.VERBOSE);
 
         incrementCount(asserted_code, classification_counts);
 

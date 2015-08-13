@@ -111,9 +111,11 @@ public class EnsembleClassifier implements Classifier {
             if (result.length() > 0) result += ",";
             result += classifier.getName();
         }
-        for (Classifier classifier : group.getClassifiers()) {
-            if (result.length() > 0) result += ",";
-            result += classifier.getName();
+        if (group != null) {
+            for (Classifier classifier : group.getClassifiers()) {
+                if (result.length() > 0) result += ",";
+                result += classifier.getName();
+            }
         }
         return result;
     }

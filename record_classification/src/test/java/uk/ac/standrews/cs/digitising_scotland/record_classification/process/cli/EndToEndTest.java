@@ -212,7 +212,7 @@ public class EndToEndTest extends EndToEndCommon {
                 ClassifierSupplier.STRING_SIMILARITY_JARO_WINKLER,
                 ClassifierSupplier.OLR,
                 ClassifierSupplier.EXACT_MATCH_PLUS_STRING_SIMILARITY_LEVENSHTEIN,
-                ClassifierSupplier.VOTING_ENSEMBLE_WITH_OLR_AND_STRING_SIMILARITY);
+                ClassifierSupplier.VOTING_ENSEMBLE_EXACT_OLR_SIMILARITY);
 
         List<SerializationFormat> serialization_formats = asList(
                 SerializationFormat.JSON,

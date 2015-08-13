@@ -42,7 +42,7 @@ public class ExactMatchClassifier implements Classifier {
     public Classification classify(final String data) {
 
         final Classification exact_classification = known_classifications.get(data);
-        return exact_classification != null ? exact_classification : Classification.UNCLASSIFIED;
+        return exact_classification != null ? exact_classification.makeClone(1.0) : Classification.UNCLASSIFIED;
     }
 
     @Override
