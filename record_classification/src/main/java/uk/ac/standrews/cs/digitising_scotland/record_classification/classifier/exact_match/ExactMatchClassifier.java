@@ -17,11 +17,14 @@
 package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.exact_match;
 
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.Classifier;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Classification;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Record;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Objects;
 
-public class ExactMatchClassifier implements Classifier {
+public class ExactMatchClassifier extends Classifier {
 
     private static final long serialVersionUID = 7439350806549465200L;
 
@@ -32,6 +35,7 @@ public class ExactMatchClassifier implements Classifier {
         known_classifications = new HashMap<>();
     }
 
+    @Override
     public void train(final Bucket bucket) {
 
         for (Record record : bucket) {
@@ -39,10 +43,11 @@ public class ExactMatchClassifier implements Classifier {
         }
     }
 
+    @Override
     public Classification classify(final String data) {
 
         final Classification exact_classification = known_classifications.get(data);
-        return exact_classification != null ? exact_classification.makeClone(1.0) : Classification.UNCLASSIFIED;
+        return exact_classification != null ? exact_classification : Classification.UNCLASSIFIED;
     }
 
     @Override
@@ -55,11 +60,6 @@ public class ExactMatchClassifier implements Classifier {
     public String getDescription() {
 
         return "Classifies based on exact match with training data";
-    }
-
-    private void loadRecord(final Record record) {
-
-        known_classifications.put(record.getData(), record.getClassification());
     }
 
     @Override
@@ -79,8 +79,20 @@ public class ExactMatchClassifier implements Classifier {
         return Objects.hash(known_classifications);
     }
 
+    @Override
     public String toString() {
 
         return getName();
+    }
+
+    @Override
+    protected double getConfidence(final String code) {
+
+        return code.equals(Classification.UNCLASSIFIED.getCode()) ? 0.0 : 1.0;
+    }
+
+    private void loadRecord(final Record record) {
+
+        known_classifications.put(record.getData(), record.getClassification());
     }
 }

@@ -48,7 +48,7 @@ public class ClassificationProcessTest extends AbstractClassificationProcessTest
         return result;
     }
 
-    public ClassificationProcessTest(Supplier<Classifier>classifier_supplier) {
+    public ClassificationProcessTest(Supplier<Classifier> classifier_supplier) {
 
         this.classifier_supplier = classifier_supplier;
     }
@@ -64,5 +64,6 @@ public class ClassificationProcessTest extends AbstractClassificationProcessTest
      * @throws Exception
      */
     @Test
-    public void checkProcessRunsWithoutErrors() throws Exception {}
+    public void checkProcessRunsWithoutErrors() throws Exception {
+    }
 }

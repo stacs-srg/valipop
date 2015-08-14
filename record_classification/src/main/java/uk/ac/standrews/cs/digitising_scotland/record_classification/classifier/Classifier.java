@@ -16,6 +16,9 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier;
 
+import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.ClassificationMetrics;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.StrictConfusionMatrix;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.ConsistentCodingChecker;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Classification;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Record;
@@ -24,21 +27,24 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.process.conf
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 /**
- * Basic classifier interface.
+ * Basic classifier implementation.
  *
  * @author Graham Kirby
  * @author Masih Hajiarab Derkani
  */
-public interface Classifier extends Serializable {
+public abstract class Classifier implements Serializable {
 
-    /**
-     * Trains the classifier on the given gold standard records.
-     *
-     * @param bucket the training data
-     */
-    void train(final Bucket bucket);
+    private Map<String, Double> confidence_map = new HashMap<>();
+
+    public Classification newClassify(String data) {
+
+        Classification classification = classify(data);
+        classification.setConfidence(getConfidence(classification.getCode()));
+        return classification;
+    }
 
     /**
      * Classifies a single data item.
@@ -46,7 +52,33 @@ public interface Classifier extends Serializable {
      * @param data the data to be classified
      * @return the resulting classification, or {@link Classification#UNCLASSIFIED} if the data cannot be classified
      */
-    Classification classify(String data);
+    protected abstract Classification classify(String data);
+
+    public abstract String getName();
+
+    public abstract String getDescription();
+
+    /**
+     * Trains the classifier on the given gold standard records.
+     *
+     * @param bucket the training data
+     */
+    public void trainAndEvaluate(final Bucket bucket, final Random random) {
+
+        Bucket real_training_records = bucket.randomSubset(random, 0.8);
+        Bucket internal_evaluation_records = bucket.difference(real_training_records);
+
+        train(real_training_records);
+
+        final Bucket classified_records = classify(internal_evaluation_records);
+
+        final StrictConfusionMatrix confusion_matrix = new StrictConfusionMatrix(classified_records, bucket, new ConsistentCodingChecker());
+        final ClassificationMetrics classification_metrics = new ClassificationMetrics(confusion_matrix);
+
+        confidence_map = classification_metrics.getPerClassF1();
+    }
+
+    public abstract void train(final Bucket bucket);
 
     /**
      * Classifies a bucket of data items.
@@ -55,7 +87,7 @@ public interface Classifier extends Serializable {
      * @param bucket the data to be classified
      * @return a new bucket containing the classified data
      */
-    default Bucket classify(final Bucket bucket) {
+    public Bucket classify(final Bucket bucket) {
 
         Logging.setProgressIndicatorSteps(bucket.size());
 
@@ -82,7 +114,8 @@ public interface Classifier extends Serializable {
         return classified;
     }
 
-    String getName();
+    protected double getConfidence(String code) {
 
-    String getDescription();
+        return confidence_map.containsKey(code) ? confidence_map.get(code) : 0.0;
+    }
 }

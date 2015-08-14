@@ -43,14 +43,7 @@ public class VotingResolutionStrategyTest {
     @Parameterized.Parameters(name = "{0}")
     public static Collection<Object[]> generateData() {
 
-        List<Object[]> result = new ArrayList<>();
-
-        result.add(single());
-        result.add(twoWithDifferentConfidence());
-        result.add(three());
-        result.add(five());
-
-        return result;
+        return Arrays.asList(single(), twoWithDifferentConfidence(), unclassified1(), unclassified2(), multipleIdenticalClassifications(), three(), five());
     }
 
     public VotingResolutionStrategyTest(String test_description,
@@ -68,8 +61,8 @@ public class VotingResolutionStrategyTest {
         final Map<Classifier, Classification> candidate_classifications = makeClassificationMap(alternative_classifications);
 
         final Classification actual_classification = new VotingResolutionStrategy().resolve(candidate_classifications);
-        assertEquals(actual_classification.getCode(), expected_classification.getCode());
-        assertEquals(actual_classification.getConfidence(), expected_classification.getConfidence(), DELTA);
+        assertEquals(expected_classification.getCode(), actual_classification.getCode());
+        assertEquals(expected_classification.getConfidence(), actual_classification.getConfidence(), DELTA);
     }
 
     private static Object[] single() {
@@ -86,6 +79,29 @@ public class VotingResolutionStrategyTest {
         Classification classification_2 = new Classification("def", new TokenList("def"), 0.6, null);
 
         return new Object[]{"twoWithDifferentConfidence", Arrays.asList(classification_1, classification_2), classification_2};
+    }
+
+    private static Object[] unclassified1() {
+
+        Classification classification_1 = new Classification("abc", new TokenList("abc"), 0.0, null);
+
+        return new Object[]{"unclassified1", Arrays.asList(Classification.UNCLASSIFIED, classification_1), classification_1};
+    }
+
+    private static Object[] unclassified2() {
+
+        Classification classification_1 = new Classification("abc", new TokenList("abc"), 0.0, null);
+
+        return new Object[]{"unclassified2", Arrays.asList(classification_1, Classification.UNCLASSIFIED), classification_1};
+    }
+
+    private static Object[] multipleIdenticalClassifications() {
+
+        Classification classification_1 = new Classification("abc", new TokenList("abc"), 0.6, null);
+        Classification classification_2 = new Classification("def", new TokenList("def"), 0.0, null);
+        Classification classification_3 = new Classification("def", new TokenList("def"), 0.0, null);
+
+        return new Object[]{"multipleIdenticalClassifications", Arrays.asList(classification_1, classification_2, classification_3), classification_2};
     }
 
     private static Object[] three() {
@@ -107,7 +123,7 @@ public class VotingResolutionStrategyTest {
         Classification classification_4 = new Classification("ghi", new TokenList("ghi"), 0.3, null);
         Classification classification_5 = new Classification("ghi", new TokenList("ghi"), 0.3, null);
 
-        Classification expected = new Classification("def", new TokenList("def"), 0.25, null);
+        Classification expected = new Classification("ghi", new TokenList("ghi"), 0.3, null);
 
         return new Object[]{"five", Arrays.asList(classification_1, classification_2, classification_3, classification_4, classification_5), expected};
     }

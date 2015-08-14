@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
  * @author Masih Hajiarab Derkani
  * @author Graham Kirby
  */
-public class EnsembleClassifier implements Classifier {
+public class EnsembleClassifier extends Classifier {
 
     private static final long serialVersionUID = 6432371860423757296L;
 
@@ -87,11 +87,16 @@ public class EnsembleClassifier implements Classifier {
         final Map<Classifier, Classification> candidate_classifications = new HashMap<>();
 
         for (Classifier classifier : all_classifiers) {
-            final Classification classification = classifier.classify(data);
+            final Classification classification = classifier.newClassify(data);
             candidate_classifications.put(classifier, classification);
         }
 
-        return resolution_strategy.resolve(candidate_classifications);
+        Classification resolve = resolution_strategy.resolve(candidate_classifications);
+
+        if (resolve == Classification.UNCLASSIFIED) {
+            int z = 5;
+        }
+        return resolve;
     }
 
     @Override

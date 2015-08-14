@@ -52,6 +52,7 @@ public class StringSimilarityGroupWithSharedState implements Serializable {
         setOtherClassifierStatesToFirst();
     }
 
+    // TODO check whether needed.
     public void recoverFromSerialization() {
 
         setOtherClassifierStatesToFirst();
