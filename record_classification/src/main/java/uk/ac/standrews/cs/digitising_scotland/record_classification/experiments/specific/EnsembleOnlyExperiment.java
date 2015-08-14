@@ -37,8 +37,7 @@ public class EnsembleOnlyExperiment extends Experiment {
 
     public static void main(final String[] args) throws Exception {
 
-        final EnsembleOnlyExperiment experiment = new EnsembleOnlyExperiment(args);
-        experiment.call();
+        new EnsembleOnlyExperiment(args).call();
     }
 
     @Override

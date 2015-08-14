@@ -40,7 +40,7 @@ public class TrainClassifierStep implements Step {
         final Bucket training_records = context.getTrainingRecords();
         final Instant start = Instant.now();
 
-        classifier.train(training_records);
+        classifier.trainAndEvaluate(training_records, context.getRandom());
 
         final Duration training_time = Duration.between(start, Instant.now());
         context.setTrainingTime(training_time);

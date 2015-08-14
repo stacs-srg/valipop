@@ -34,7 +34,7 @@ import java.util.List;
  * @author Jamie Carson
  * @author Graham Kirby
  */
-public class OLRClassifier implements Classifier {
+public class OLRClassifier extends Classifier {
 
     private static final long serialVersionUID = -2561454096763303789L;
     private static final double STATIC_CONFIDENCE = 0.89;

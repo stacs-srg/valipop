@@ -85,7 +85,7 @@ public class ClassifierTest {
         Classifier classifier = factory.get();
 
         for (String value : TEST_VALUES) {
-            assertEquals(Classification.UNCLASSIFIED, classifier.classify(value));
+            assertEquals(Classification.UNCLASSIFIED, classifier.newClassify(value));
         }
     }
 
@@ -98,8 +98,21 @@ public class ClassifierTest {
 
             classifier.train(training_bucket);
 
-            assertEquals(1.0, classifier.classify("trail").getConfidence(), DELTA);
-            assertEquals(1.0, classifier.classify("through").getConfidence(), DELTA);
+            assertEquals(1.0, classifier.newClassify("trail").getConfidence(), DELTA);
+            assertEquals(1.0, classifier.newClassify("through").getConfidence(), DELTA);
+        }
+    }
+
+    @Test
+    public void exactMatchUnclassifiedHasConfidenceOfZero() {
+
+        if (factory == ClassifierSupplier.EXACT_MATCH) {
+
+            Classifier classifier = factory.get();
+
+            classifier.train(training_bucket);
+
+            assertEquals(0.0, classifier.newClassify("sdifjsjdf").getConfidence(), DELTA);
         }
     }
 }

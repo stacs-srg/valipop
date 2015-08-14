@@ -52,6 +52,7 @@ public class ClassificationContext implements Serializable {
     private Duration training_time;
     private Duration classification_time;
     private InfoLevel verbosity;
+    private int number_of_evaluation_records_including_duplicates;
 
     // Needed for JSON deserialization.
     public ClassificationContext() {
@@ -158,13 +159,19 @@ public class ClassificationContext implements Serializable {
     }
 
     /**
-     * Adds the given records to the bucket of records that are used to evaluate the classifier of this context.
+     * Adds the given records to the bucket for evaluating the classifier.
+     * Duplicates are discarded, and existing classifications stripped.
      *
      * @param evaluation_records the records to be added
      */
     public void addEvaluationRecords(final Bucket evaluation_records) {
 
-        evaluation_records.forEach(this.evaluation_records::add);
+        number_of_evaluation_records_including_duplicates = evaluation_records.size();
+
+        final Bucket unique_evaluation_records = evaluation_records.makeUniqueDataRecords();
+        final Bucket stripped_unique_evaluation_records = unique_evaluation_records.makeStrippedRecords();
+
+        stripped_unique_evaluation_records.forEach(this.evaluation_records::add);
     }
 
     /**
@@ -207,11 +214,6 @@ public class ClassificationContext implements Serializable {
 
         classified_unseen_records.forEach(this.classified_unseen_records::add);
     }
-
-//    public void setEvaluationRecords(final Bucket evaluation_records) {
-//
-//        this.evaluation_records = evaluation_records;
-//    }
 
     /**
      * Gets classifier in this context.
@@ -311,5 +313,10 @@ public class ClassificationContext implements Serializable {
     public void setVerbosity(InfoLevel verbosity) {
 
         this.verbosity = verbosity;
+    }
+
+    public int getNumberOfEvaluationRecordsIncludingDuplicates() {
+
+        return number_of_evaluation_records_including_duplicates;
     }
 }

@@ -58,25 +58,6 @@ public class ExperimentTest {
     }
 
     @Test
-    public void numberOfRecordsIsSameAcrossAllRepetitionsOfAllExperiments() throws Exception {
-
-        List<Integer> overall_bucket_sizes_across_repetitions = new ArrayList<>();
-
-        for (Experiment.ClassifierResults result : experiment_results) {
-
-            for (ClassificationContext context : result.getContexts()) {
-
-                final int training_records_size = context.getTrainingRecords().size();
-                final int overall_records_size = context.getEvaluationRecords().size() + training_records_size;
-
-                overall_bucket_sizes_across_repetitions.add(overall_records_size);
-            }
-        }
-
-        assertAllSame(overall_bucket_sizes_across_repetitions);
-    }
-
-    @Test
     public void numberOfTrainingRecordsVariesAcrossRepetitionsOfEachExperiment() throws Exception {
 
         for (Experiment.ClassifierResults result : experiment_results) {

@@ -32,7 +32,7 @@ import java.util.Map;
  * @author Masih Hajiarab Derkani
  * @author Graham Kirby
  */
-public class StringSimilarityClassifier implements Classifier {
+public class StringSimilarityClassifier extends Classifier {
 
     private static final long serialVersionUID = -6159276459112698341L;
 

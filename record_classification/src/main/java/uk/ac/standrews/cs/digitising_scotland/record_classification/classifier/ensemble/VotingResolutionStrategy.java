@@ -53,14 +53,17 @@ public class VotingResolutionStrategy implements EnsembleClassifier.ResolutionSt
 
         for (Classification classification : candidate_classifications.values()) {
 
-            Set<Classification> other_classifications_with_this_code = findOtherClassificationsWithThisCode(classification_sets, classification.getCode());
+            if (!classification.equals(Classification.UNCLASSIFIED)) {
 
-            if (other_classifications_with_this_code == null) {
-                other_classifications_with_this_code = new HashSet<>();
-                classification_sets.add(other_classifications_with_this_code);
+                Set<Classification> other_classifications_with_this_code = findOtherClassificationsWithThisCode(classification_sets, classification.getCode());
+
+                if (other_classifications_with_this_code == null) {
+                    other_classifications_with_this_code = new HashSet<>();
+                    classification_sets.add(other_classifications_with_this_code);
+                }
+
+                other_classifications_with_this_code.add(classification);
             }
-
-            other_classifications_with_this_code.add(classification);
         }
 
         return classification_sets;
@@ -154,7 +157,7 @@ public class VotingResolutionStrategy implements EnsembleClassifier.ResolutionSt
 
         for (Map.Entry<Set<Classification>, Double> entry : confidence_averages.entrySet()) {
 
-            if (entry.getValue() > highest_confidence) {
+            if (entry.getValue() >= highest_confidence) {
                 highest_confidence = entry.getValue();
                 classifications = entry.getKey();
             }
@@ -163,7 +166,7 @@ public class VotingResolutionStrategy implements EnsembleClassifier.ResolutionSt
         if (classifications != null) {
             //noinspection LoopStatementThatDoesntLoop
             for (Classification classification : classifications) {
-                return new Classification(classification.getCode(), classification.getTokenList(), combinedConfidence(classifications), detail);
+                return classification.makeClone(combinedConfidence(classifications), detail);
             }
         }
         return Classification.UNCLASSIFIED;

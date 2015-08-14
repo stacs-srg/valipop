@@ -25,6 +25,7 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.Con
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.Classifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.Cleaner;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.CleanerSupplier;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.InfoLevel;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassificationContext;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.specific.EvaluationExperimentProcess;
@@ -47,6 +48,7 @@ public abstract class AbstractClassificationProcessTest extends AbstractMetricsT
 
     protected abstract Supplier<Classifier> getClassifierSupplier();
 
+    protected ClassificationContext context;
     protected ConfusionMatrix matrix;
     protected ClassificationMetrics metrics;
 
@@ -65,13 +67,19 @@ public abstract class AbstractClassificationProcessTest extends AbstractMetricsT
 
         process.configureSteps();
 
-        final ClassificationContext context = new ClassificationContext(getClassifierSupplier().get(), new Random(SEED));
+        context = new ClassificationContext(getClassifierSupplier().get(), new Random(SEED));
 
         context.setVerbosity(InfoLevel.NONE);
         process.call(context);
 
         metrics = context.getClassificationMetrics();
         matrix = context.getConfusionMatrix();
+    }
+
+    @Test
+    public void evaluationRecordsAreUnique() {
+
+        assertRecordsAreUnique(context.getEvaluationRecords());
     }
 
     @Test
@@ -86,6 +94,11 @@ public abstract class AbstractClassificationProcessTest extends AbstractMetricsT
 
         assertEquals(metrics.getMicroAveragePrecision(), metrics.getMicroAverageRecall(), DELTA);
         assertEquals(metrics.getMicroAveragePrecision(), metrics.getMicroAverageF1(), DELTA);
+    }
+
+    private void assertRecordsAreUnique(Bucket records) {
+
+        assertEquals(records.makeUniqueDataRecords().size(), records.size());
     }
 
     private void checkMicroF1BetweenPrecisionAndRecall() {

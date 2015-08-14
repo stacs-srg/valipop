@@ -136,6 +136,10 @@ public class EndToEndTest extends EndToEndCommon {
 
         String classification = getClassification(record);
         assertPresent(classification);
+        if (classification.equals(Classification.UNCLASSIFIED.getCode())) {
+            int x = 3;
+            String y = Classification.UNCLASSIFIED.getCode();
+        }
         assertNotEquals(Classification.UNCLASSIFIED.getCode(), classification);
     }
 

@@ -17,7 +17,6 @@
 package uk.ac.standrews.cs.digitising_scotland.record_classification.model;
 
 import java.io.Serializable;
-import java.util.Objects;
 
 public class Classification implements Serializable {
 
@@ -53,29 +52,13 @@ public class Classification implements Serializable {
         return confidence;
     }
 
+    public void setConfidence(double confidence) {
+
+        this.confidence = confidence;
+    }
+
     public String getDetail() {
         return detail;
-    }
-
-    // TODO check whether equals() and hashCode() needed
-
-    @Override
-    public boolean equals(final Object o) {
-
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
-        final Classification that = (Classification) o;
-        return Objects.equals(code, that.code) &&
-                Objects.equals(token_list, that.token_list) &&
-                Objects.equals(confidence, that.confidence);
-    }
-
-    @Override
-    public int hashCode() {
-
-        return Objects.hash(code, token_list, confidence);
     }
 
     @Override
@@ -91,6 +74,13 @@ public class Classification implements Serializable {
 
     public Classification makeClone(double confidence) {
 
-        return new Classification(code, new TokenList(token_list.toString()), confidence, detail);
+        return makeClone(confidence, detail);
+    }
+
+    public Classification makeClone(double confidence, String detail) {
+
+        return equals(UNCLASSIFIED) ?
+                UNCLASSIFIED :
+                new Classification(code, new TokenList(token_list.toString()), confidence, detail);
     }
 }

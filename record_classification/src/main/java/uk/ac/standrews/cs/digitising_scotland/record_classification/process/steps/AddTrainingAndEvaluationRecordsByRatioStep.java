@@ -44,13 +44,6 @@ public class AddTrainingAndEvaluationRecordsByRatioStep implements Step {
         this.training_ratio = training_ratio;
     }
 
-    private void validateRatio(final double ratio) {
-
-        if (ratio < MIN_RATIO || ratio > MAX_RATIO) {
-            throw new IllegalArgumentException("ratio must be within inclusive range of 0.0 to 1.0");
-        }
-    }
-
     @Override
     public void perform(final ClassificationContext context) {
 
@@ -67,6 +60,13 @@ public class AddTrainingAndEvaluationRecordsByRatioStep implements Step {
         else {
             context.addTrainingRecords(gold_standard_records.randomSubset(context.getRandom(), training_ratio));
             context.addEvaluationRecords(gold_standard_records.difference(context.getTrainingRecords()));
+        }
+    }
+
+    private void validateRatio(final double ratio) {
+
+        if (ratio < MIN_RATIO || ratio > MAX_RATIO) {
+            throw new IllegalArgumentException("ratio must be within inclusive range of 0.0 to 1.0");
         }
     }
 }

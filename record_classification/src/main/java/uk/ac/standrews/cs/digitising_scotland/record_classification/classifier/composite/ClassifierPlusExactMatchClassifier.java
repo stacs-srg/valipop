@@ -22,7 +22,8 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.e
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Classification;
 
-public class ClassifierPlusExactMatchClassifier implements Classifier {
+// TODO maybe not needed.
+public class ClassifierPlusExactMatchClassifier extends Classifier {
 
     private Classifier classifier;
     private ExactMatchClassifier exact_match_classifier;
@@ -55,7 +56,7 @@ public class ClassifierPlusExactMatchClassifier implements Classifier {
         if (!result.equals(Classification.UNCLASSIFIED)) {
             return result;
         } else {
-            return classifier.classify(data);
+            return classifier.newClassify(data);
         }
     }
 

@@ -78,7 +78,7 @@ public class StringSimilarityClassifierTest extends ClassifierTest {
 
         for (String value : TEST_VALUES) {
 
-            assertClassifiedSimilarly(value, classifier.classify(value));
+            assertClassifiedSimilarly(value, classifier.newClassify(value));
         }
     }
 
