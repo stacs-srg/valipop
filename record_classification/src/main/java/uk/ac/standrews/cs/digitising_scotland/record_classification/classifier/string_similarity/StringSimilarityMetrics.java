@@ -35,22 +35,22 @@ public enum StringSimilarityMetrics implements Supplier<SimilarityMetric> {
     /**
      * @see {@link JaccardSimilarity}.
      **/
-    JACCARD(() -> new StringSimilarityMetricWrapper("JACCARD", Constants.STATIC_CONFIDENCE_JACCARD), new SetMetricAdapter(new JaccardSimilarity<>())),
+    JACCARD(() -> new StringSimilarityMetricWrapper("JACCARD"), new SetMetricAdapter(new JaccardSimilarity<>())),
 
     /**
      * @see {@link Levenshtein}.
      **/
-    LEVENSHTEIN(() -> new StringSimilarityMetricWrapper("LEVENSHTEIN", Constants.STATIC_CONFIDENCE_LEVENSHTEIN), new Levenshtein()),
+    LEVENSHTEIN(() -> new StringSimilarityMetricWrapper("LEVENSHTEIN"), new Levenshtein()),
 
     /**
      * @see {@link JaroWinkler}
      **/
-    JARO_WINKLER(() -> new StringSimilarityMetricWrapper("JARO_WINKLER", Constants.STATIC_CONFIDENCE_JARO_WINKLER), new JaroWinkler()),
+    JARO_WINKLER(() -> new StringSimilarityMetricWrapper("JARO_WINKLER"), new JaroWinkler()),
 
     /**
      * @see {@link DiceSimilarity}.
      **/
-    DICE(() -> new StringSimilarityMetricWrapper("DICE",  Constants.STATIC_CONFIDENCE_DICE), new SetMetricAdapter(new DiceSimilarity<>()));
+    DICE(() -> new StringSimilarityMetricWrapper("DICE"), new SetMetricAdapter(new DiceSimilarity<>()));
 
     private Supplier<SimilarityMetric> supplier;
     private StringMetric metric;
@@ -68,13 +68,5 @@ public enum StringSimilarityMetrics implements Supplier<SimilarityMetric> {
     StringMetric getStringMetric() {
 
         return metric;
-    }
-
-    private static class Constants {
-
-        public static final double STATIC_CONFIDENCE_JACCARD = 0.92;
-        public static final double STATIC_CONFIDENCE_LEVENSHTEIN = 0.91;
-        public static final double STATIC_CONFIDENCE_JARO_WINKLER = 0.92;
-        public static final double STATIC_CONFIDENCE_DICE = 0.92;
     }
 }

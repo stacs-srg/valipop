@@ -47,7 +47,7 @@ public class StringSimilarityGroupWithSharedState implements Serializable {
     public void trainAll(Bucket bucket) {
 
         final StringSimilarityClassifier first_classifier = classifiers.get(0);
-        first_classifier.train(bucket);
+        first_classifier.trainModel(bucket);
 
         setOtherClassifierStatesToFirst();
     }

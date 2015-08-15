@@ -16,7 +16,7 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.nb2;
 
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.Classifier;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.SingleClassifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Classification;
 import weka.classifiers.bayes.NaiveBayes;
@@ -28,7 +28,7 @@ import weka.gui.beans.AbstractDataSource;
 import java.io.File;
 import java.io.IOException;
 
-public class NaiveBayesClassifier extends Classifier {
+public class NaiveBayesClassifier extends SingleClassifier {
 
     NaiveBayes naive_bayes;
 
@@ -37,7 +37,7 @@ public class NaiveBayesClassifier extends Classifier {
         naive_bayes = new NaiveBayes();
     }
 
-    public void train(final Bucket bucket)  {
+    public void trainModel(final Bucket bucket)  {
 
 //        naive_bayes.buildClassifier(getInstances(bucket));
     }
@@ -51,7 +51,8 @@ public class NaiveBayesClassifier extends Classifier {
 
     }
 
-    public Classification classify(final String data)  {
+    @Override
+    public Classification doClassify(final String data)  {
 
 //        double[] probabilities = naive_bayes.distributionForInstance(makeInstance(data));
 //        return getClassification(probabilities);

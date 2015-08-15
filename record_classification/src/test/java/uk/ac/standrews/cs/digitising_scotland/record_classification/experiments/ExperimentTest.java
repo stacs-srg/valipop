@@ -20,9 +20,10 @@ import org.junit.Before;
 import org.junit.Test;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.experiments.generic.Experiment;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.experiments.specific.ExactMatchAndStringSimilarityExperiment;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.InfoLevel;
+import uk.ac.standrews.cs.util.tools.InfoLevel;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassificationContext;
 import uk.ac.standrews.cs.util.tools.FileManipulation;
+import uk.ac.standrews.cs.util.tools.Logging;
 
 import java.nio.file.Path;
 import java.util.*;
@@ -40,13 +41,14 @@ public class ExperimentTest {
     @Before
     public void setup() throws Exception {
 
+        Logging.setInfoLevel(InfoLevel.NONE);
+
         experiment = new ExactMatchAndStringSimilarityExperiment();
 
         Path path = FileManipulation.getResourcePath(AbstractClassificationProcessTest.class, CODED_DATA_1K_FILE_NAME);
 
         experiment.setGoldStandardFiles(Arrays.asList(path));
         experiment.setRepetitions(NUMBER_OF_REPETITIONS);
-        experiment.setVerbosity(InfoLevel.NONE);
 
         experiment_results = experiment.runExperiment();
     }

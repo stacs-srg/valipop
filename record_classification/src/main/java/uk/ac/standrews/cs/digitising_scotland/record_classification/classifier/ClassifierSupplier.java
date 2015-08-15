@@ -16,7 +16,6 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier;
 
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.composite.ClassifierPlusExactMatchClassifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.composite.StringSimilarityGroupWithSharedState;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.ensemble.EnsembleVotingClassifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.exact_match.ExactMatchClassifier;
@@ -47,15 +46,7 @@ public enum ClassifierSupplier implements Supplier<Classifier> {
     OLR(OLRClassifier::new),
 
     VOTING_ENSEMBLE_EXACT_OLR_SIMILARITY(ClassifierSupplier::makeVotingEnsembleClassifierWithOLRAndStringSimilarity),
-    VOTING_ENSEMBLE_EXACT_SIMILARITY(ClassifierSupplier::makeVotingEnsembleClassifierWithStringSimilarity),
-
-    EXACT_MATCH_PLUS_STRING_SIMILARITY_LEVENSHTEIN(ClassifierSupplier::makeExactMatchPlusLevenshteinClassifier),
-    EXACT_MATCH_PLUS_STRING_SIMILARITY_JARO_WINKLER(ClassifierSupplier::makeExactMatchPlusJaroWinklerClassifier),
-    EXACT_MATCH_PLUS_STRING_SIMILARITY_JACCARD(ClassifierSupplier::makeExactMatchPlusJaccardClassifier),
-    EXACT_MATCH_PLUS_STRING_SIMILARITY_DICE(ClassifierSupplier::makeExactMatchPlusDiceClassifier),
-    EXACT_MATCH_PLUS_OLR(ClassifierSupplier::makeExactMatchPlusOLRClassifier),
-    EXACT_MATCH_PLUS_VOTING_ENSEMBLE(ClassifierSupplier::makeExactMatchPlusVotingEnsembleClassifier),
-    EXACT_MATCH_PLUS_VOTING_SIMILARITY_ENSEMBLE(ClassifierSupplier::makeExactMatchPlusVotingSimilarityEnsembleClassifier);
+    VOTING_ENSEMBLE_EXACT_SIMILARITY(ClassifierSupplier::makeVotingEnsembleClassifierWithStringSimilarity);
 
     private Supplier<Classifier> supplier;
 
@@ -104,7 +95,7 @@ public enum ClassifierSupplier implements Supplier<Classifier> {
 
     private static EnsembleVotingClassifier makeVotingEnsembleClassifierWithOLRAndStringSimilarity() {
 
-        return new EnsembleVotingClassifier(Arrays.asList(EXACT_MATCH.get(), OLR.get()),
+        return new EnsembleVotingClassifier(Arrays.asList((SingleClassifier) EXACT_MATCH.get(), (SingleClassifier) OLR.get()),
                 new StringSimilarityGroupWithSharedState(Arrays.asList(
                         makeDiceClassifier(),
                         makeJaccardClassifier(),
@@ -115,40 +106,12 @@ public enum ClassifierSupplier implements Supplier<Classifier> {
 
     private static EnsembleVotingClassifier makeVotingEnsembleClassifierWithStringSimilarity() {
 
-        return new EnsembleVotingClassifier(Collections.singletonList(EXACT_MATCH.get()),
+        return new EnsembleVotingClassifier(Collections.singletonList((SingleClassifier) EXACT_MATCH.get()),
                 new StringSimilarityGroupWithSharedState(Arrays.asList(
                         makeDiceClassifier(),
                         makeJaccardClassifier(),
                         makeJaroWinklerClassifier(),
                         makeLevenshteinClassifier()
                 )));
-    }
-
-    private static ClassifierPlusExactMatchClassifier makeExactMatchPlusVotingEnsembleClassifier() {
-        return new ClassifierPlusExactMatchClassifier(makeVotingEnsembleClassifierWithOLRAndStringSimilarity());
-    }
-
-    private static ClassifierPlusExactMatchClassifier makeExactMatchPlusVotingSimilarityEnsembleClassifier() {
-        return new ClassifierPlusExactMatchClassifier(makeVotingEnsembleClassifierWithStringSimilarity());
-    }
-
-    private static ClassifierPlusExactMatchClassifier makeExactMatchPlusOLRClassifier() {
-        return new ClassifierPlusExactMatchClassifier(new OLRClassifier());
-    }
-
-    private static ClassifierPlusExactMatchClassifier makeExactMatchPlusDiceClassifier() {
-        return new ClassifierPlusExactMatchClassifier(makeDiceClassifier());
-    }
-
-    private static ClassifierPlusExactMatchClassifier makeExactMatchPlusJaccardClassifier() {
-        return new ClassifierPlusExactMatchClassifier(makeJaccardClassifier());
-    }
-
-    private static ClassifierPlusExactMatchClassifier makeExactMatchPlusJaroWinklerClassifier() {
-        return new ClassifierPlusExactMatchClassifier(makeJaroWinklerClassifier());
-    }
-
-    private static ClassifierPlusExactMatchClassifier makeExactMatchPlusLevenshteinClassifier() {
-        return new ClassifierPlusExactMatchClassifier(makeLevenshteinClassifier());
     }
 }

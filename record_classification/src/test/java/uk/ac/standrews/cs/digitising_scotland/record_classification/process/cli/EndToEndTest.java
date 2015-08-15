@@ -136,10 +136,6 @@ public class EndToEndTest extends EndToEndCommon {
 
         String classification = getClassification(record);
         assertPresent(classification);
-        if (classification.equals(Classification.UNCLASSIFIED.getCode())) {
-            int x = 3;
-            String y = Classification.UNCLASSIFIED.getCode();
-        }
         assertNotEquals(Classification.UNCLASSIFIED.getCode(), classification);
     }
 
@@ -215,7 +211,6 @@ public class EndToEndTest extends EndToEndCommon {
                 ClassifierSupplier.EXACT_MATCH,
                 ClassifierSupplier.STRING_SIMILARITY_JARO_WINKLER,
                 ClassifierSupplier.OLR,
-                ClassifierSupplier.EXACT_MATCH_PLUS_STRING_SIMILARITY_LEVENSHTEIN,
                 ClassifierSupplier.VOTING_ENSEMBLE_EXACT_OLR_SIMILARITY);
 
         List<SerializationFormat> serialization_formats = asList(

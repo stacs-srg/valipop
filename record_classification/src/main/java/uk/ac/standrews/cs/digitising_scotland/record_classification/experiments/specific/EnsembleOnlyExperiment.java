@@ -18,6 +18,7 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.experiments
 
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.Classifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.ClassifierSupplier;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.SingleClassifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.ensemble.EnsembleVotingClassifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.InputFileFormatException;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.experiments.generic.Experiment;
@@ -45,8 +46,8 @@ public class EnsembleOnlyExperiment extends Experiment {
 
         return Collections.singletonList(() -> new EnsembleVotingClassifier(
                 Arrays.asList(
-                        ClassifierSupplier.EXACT_MATCH.get(),
-                        ClassifierSupplier.STRING_SIMILARITY_LEVENSHTEIN.get(),
-                        ClassifierSupplier.STRING_SIMILARITY_JARO_WINKLER.get())));
+                        (SingleClassifier) ClassifierSupplier.EXACT_MATCH.get(),
+                        (SingleClassifier) ClassifierSupplier.STRING_SIMILARITY_LEVENSHTEIN.get(),
+                        (SingleClassifier) ClassifierSupplier.STRING_SIMILARITY_JARO_WINKLER.get())));
     }
 }

@@ -16,7 +16,7 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.exact_match;
 
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.Classifier;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.SingleClassifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Classification;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Record;
@@ -24,7 +24,7 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Record
 import java.util.HashMap;
 import java.util.Objects;
 
-public class ExactMatchClassifier extends Classifier {
+public class ExactMatchClassifier extends SingleClassifier {
 
     private static final long serialVersionUID = 7439350806549465200L;
 
@@ -36,7 +36,7 @@ public class ExactMatchClassifier extends Classifier {
     }
 
     @Override
-    public void train(final Bucket bucket) {
+    public void trainModel(final Bucket bucket) {
 
         for (Record record : bucket) {
             loadRecord(record);
@@ -44,7 +44,7 @@ public class ExactMatchClassifier extends Classifier {
     }
 
     @Override
-    public Classification classify(final String data) {
+    public Classification doClassify(final String data) {
 
         final Classification exact_classification = known_classifications.get(data);
         return exact_classification != null ? exact_classification : Classification.UNCLASSIFIED;

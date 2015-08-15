@@ -16,10 +16,10 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.ensemble;
 
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.Classifier;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.SingleClassifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.composite.StringSimilarityGroupWithSharedState;
 
-import java.util.*;
+import java.util.Collection;
 
 /**
  * @author Graham Kirby
@@ -39,12 +39,12 @@ public class EnsembleVotingClassifier extends EnsembleClassifier {
      *
      * @param classifiers the classifiers
      */
-    public EnsembleVotingClassifier(Collection<Classifier> classifiers) {
+    public EnsembleVotingClassifier(Collection<SingleClassifier> classifiers) {
 
         super(classifiers, new VotingResolutionStrategy());
     }
 
-    public EnsembleVotingClassifier(Collection<Classifier> classifiers, StringSimilarityGroupWithSharedState group) {
+    public EnsembleVotingClassifier(Collection<SingleClassifier> classifiers, StringSimilarityGroupWithSharedState group) {
 
         super(classifiers, group, new VotingResolutionStrategy());
     }

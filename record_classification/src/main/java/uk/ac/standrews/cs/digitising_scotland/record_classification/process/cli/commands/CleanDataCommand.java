@@ -20,10 +20,10 @@ import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.Cleaner;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.CleanerSupplier;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.InfoLevel;
+import uk.ac.standrews.cs.util.tools.InfoLevel;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.Command;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.Launcher;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.config.Logging;
+import uk.ac.standrews.cs.util.tools.Logging;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassificationContext;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.serialization.SerializationFormat;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.CleanDataStep;
@@ -58,7 +58,7 @@ public class CleanDataCommand extends Command {
 
     public static void perform(final ClassificationContext context, List<CleanerSupplier> cleaner_suppliers) {
 
-        Logging.output("cleaning data...", InfoLevel.VERBOSE);
+        Logging.output(InfoLevel.VERBOSE, "cleaning data...");
 
         for (Supplier<Cleaner> supplier : cleaner_suppliers) {
             new CleanDataStep(supplier.get()).perform(context);

@@ -19,9 +19,9 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.converters.PathConverter;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.CleanerSupplier;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.InfoLevel;
+import uk.ac.standrews.cs.util.tools.InfoLevel;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.commands.InitCommand;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.config.Logging;
+import uk.ac.standrews.cs.util.tools.Logging;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassificationContext;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.Step;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.serialization.Serialization;
@@ -112,7 +112,7 @@ public abstract class Command implements Callable<Void>, Step {
 
     protected static void output(String message) {
 
-        Logging.output(message, InfoLevel.VERBOSE);
+        Logging.output(InfoLevel.VERBOSE, message);
     }
 
     protected static String[] makeCleaningArgs(String command_name, List<CleanerSupplier> cleaners) {

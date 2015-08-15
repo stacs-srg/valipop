@@ -22,9 +22,10 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.U
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.UnknownDataException;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Classification;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.InfoLevel;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Record;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.config.Logging;
+import uk.ac.standrews.cs.util.tools.Formatting;
+import uk.ac.standrews.cs.util.tools.InfoLevel;
+import uk.ac.standrews.cs.util.tools.Logging;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -268,7 +269,7 @@ public abstract class AbstractConfusionMatrix implements ConfusionMatrix {
         String asserted_code = classification.getCode();
         String real_code = findGoldStandardCode(record.getData());
 
-        Logging.output(record.getOriginalData() + "\t" + real_code + "\t" + classification.getCode() + "\t" + classification.getConfidence() + "\t" + classification.getDetail(), InfoLevel.VERBOSE);
+        Logging.output(InfoLevel.VERBOSE, record.getOriginalData() + "\t" + real_code + "\t" + classification.getCode() + "\t" + Formatting.format(classification.getConfidence(), 2) + "\t" + classification.getDetail());
 
         incrementCount(asserted_code, classification_counts);
 

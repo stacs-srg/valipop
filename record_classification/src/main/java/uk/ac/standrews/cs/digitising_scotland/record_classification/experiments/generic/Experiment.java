@@ -27,12 +27,13 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.Con
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.EnglishStopWordCleaner;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.StemmingCleaner;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.InputFileFormatException;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.InfoLevel;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassificationContext;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassificationProcess;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.specific.EvaluationExperimentProcess;
 import uk.ac.standrews.cs.util.dataset.DataSet;
 import uk.ac.standrews.cs.util.tables.TableGenerator;
+import uk.ac.standrews.cs.util.tools.InfoLevel;
+import uk.ac.standrews.cs.util.tools.Logging;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -112,16 +113,11 @@ public abstract class Experiment implements Callable<Void> {
     @Override
     public Void call() throws Exception {
 
-        if (verbosity != InfoLevel.NONE) {
-            printSummarisedResults(runExperiment());
-        }
+        Logging.setInfoLevel(verbosity);
+
+        printSummarisedResults(runExperiment());
 
         return null; //void callable
-    }
-
-    public void setVerbosity(final InfoLevel verbosity) {
-
-        this.verbosity = verbosity;
     }
 
     public void setRepetitions(final int repetitions) {
@@ -158,7 +154,6 @@ public abstract class Experiment implements Callable<Void> {
                 final Random random = random_map.get(factory);
 
                 final ClassificationContext context = new ClassificationContext(factory.get(), random);
-                context.setVerbosity(verbosity);
 
                 process.call(context);
 
