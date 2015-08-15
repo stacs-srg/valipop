@@ -19,7 +19,7 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.
 import org.apache.mahout.math.DenseMatrix;
 import org.apache.mahout.math.Matrix;
 import org.apache.mahout.math.NamedVector;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.Classifier;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.SingleClassifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Classification;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Record;
@@ -34,7 +34,7 @@ import java.util.List;
  * @author Jamie Carson
  * @author Graham Kirby
  */
-public class OLRClassifier extends Classifier {
+public class OLRClassifier extends SingleClassifier {
 
     private static final long serialVersionUID = -2561454096763303789L;
     private static final double STATIC_CONFIDENCE = 0.89;
@@ -58,7 +58,7 @@ public class OLRClassifier extends Classifier {
 
     private String single_code = null;
 
-    public void train(final Bucket bucket) {
+    public void trainModel(final Bucket bucket) {
 
         if (vector_factory == null) {
 
@@ -90,7 +90,7 @@ public class OLRClassifier extends Classifier {
     }
 
     @Override
-    public Classification classify(String data) {
+    public Classification doClassify(String data) {
 
         if (vector_factory == null) {
             return Classification.UNCLASSIFIED;

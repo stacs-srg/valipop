@@ -19,7 +19,7 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.Classifier;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.SingleClassifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Classification;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.TokenList;
@@ -58,7 +58,7 @@ public class VotingResolutionStrategyTest {
     @Test
     public void checkResults() {
 
-        final Map<Classifier, Classification> candidate_classifications = makeClassificationMap(alternative_classifications);
+        final Map<SingleClassifier, Classification> candidate_classifications = makeClassificationMap(alternative_classifications);
 
         final Classification actual_classification = new VotingResolutionStrategy().resolve(candidate_classifications);
         assertEquals(expected_classification.getCode(), actual_classification.getCode());
@@ -128,25 +128,29 @@ public class VotingResolutionStrategyTest {
         return new Object[]{"five", Arrays.asList(classification_1, classification_2, classification_3, classification_4, classification_5), expected};
     }
 
-    private Map<Classifier, Classification> makeClassificationMap(List<Classification> classifications) {
+    private Map<SingleClassifier, Classification> makeClassificationMap(List<Classification> classifications) {
 
-        Map<Classifier, Classification> result = new HashMap<>();
+        Map<SingleClassifier, Classification> result = new HashMap<>();
         for (Classification classification : classifications) {
             result.put(makeDummyClassifier(), classification);
         }
         return result;
     }
 
-    private Classifier makeDummyClassifier() {
+    private SingleClassifier makeDummyClassifier() {
 
-        return new Classifier() {
+        return new SingleClassifier() {
 
             @Override
-            public void train(Bucket bucket) {
+            public void trainAndEvaluate(Bucket bucket, Random random) {
             }
 
             @Override
-            public Classification classify(String data) {
+            public void trainModel(Bucket bucket) {
+            }
+
+            @Override
+            public Classification doClassify(String data) {
                 return null;
             }
 

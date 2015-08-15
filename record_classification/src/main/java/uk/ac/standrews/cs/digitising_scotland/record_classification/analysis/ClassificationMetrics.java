@@ -17,12 +17,14 @@
 package uk.ac.standrews.cs.digitising_scotland.record_classification.analysis;
 
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Classification;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.InfoLevel;
+import uk.ac.standrews.cs.util.tools.InfoLevel;
+import uk.ac.standrews.cs.util.tools.Logging;
 
 import java.io.Serializable;
 import java.util.*;
 
 import static uk.ac.standrews.cs.util.tools.Formatting.printMetric;
+import static uk.ac.standrews.cs.util.tools.Logging.output;
 
 /**
  * Collection of metrics measuring the effectiveness of classification.
@@ -248,36 +250,26 @@ public class ClassificationMetrics implements Serializable {
     }
 
     /**
-     * Prints out the metrics at a specified level of detail.
-     *
-     * @param info_level the detail level
+     * Prints out the metrics.
      */
-    public void printMetrics(InfoLevel info_level) {
+    public void printMetrics() {
 
-        if (info_level == InfoLevel.VERBOSE) {
+        printMetric(InfoLevel.VERBOSE, "total TPs", confusion_matrix.getNumberOfTruePositives());
+        printMetric(InfoLevel.VERBOSE, "total FPs", confusion_matrix.getNumberOfFalsePositives());
+        printMetric(InfoLevel.VERBOSE, "total TNs", confusion_matrix.getNumberOfTrueNegatives());
+        printMetric(InfoLevel.VERBOSE, "total FNs", confusion_matrix.getNumberOfFalseNegatives());
+        output(InfoLevel.VERBOSE, "");
 
-            printMetric("total TPs", confusion_matrix.getNumberOfTruePositives());
-            printMetric("total FPs", confusion_matrix.getNumberOfFalsePositives());
-            printMetric("total TNs", confusion_matrix.getNumberOfTrueNegatives());
-            printMetric("total FNs", confusion_matrix.getNumberOfFalseNegatives());
-            System.out.println();
+        printMetrics(InfoLevel.VERBOSE, "precision", getPerClassPrecision());
+        printMetrics(InfoLevel.VERBOSE, "recall", getPerClassRecall());
+        printMetrics(InfoLevel.VERBOSE, "accuracy", getPerClassAccuracy());
+        printMetrics(InfoLevel.VERBOSE, "F1", getPerClassF1());
+        output(InfoLevel.VERBOSE, "");
 
-            printMetrics("precision", getPerClassPrecision());
-            printMetrics("recall", getPerClassRecall());
-            printMetrics("accuracy", getPerClassAccuracy());
-            printMetrics("F1", getPerClassF1());
-            System.out.println();
-        }
-
-        if (info_level != InfoLevel.NONE) {
-
-            printMetric("macro-average precision        ", getMacroAveragePrecision());
-            printMetric("macro-average recall           ", getMacroAverageRecall());
-            printMetric("macro-average accuracy         ", getMacroAverageAccuracy());
-            printMetric("macro-average F1               ", getMacroAverageF1());
-            printMetric("micro-average precision/recall ", getMicroAveragePrecision());
-            printMetric("micro-average accuracy         ", getMicroAverageAccuracy());
-        }
+        printMetric(InfoLevel.SHORT_SUMMARY, "macro-average precision        ", getMacroAveragePrecision());
+        printMetric(InfoLevel.SHORT_SUMMARY, "macro-average recall           ", getMacroAverageRecall());
+        printMetric(InfoLevel.SHORT_SUMMARY, "macro-average F1               ", getMacroAverageF1());
+        printMetric(InfoLevel.SHORT_SUMMARY, "micro-average precision/recall ", getMicroAveragePrecision());
     }
 
     private double getMacroAverage(Map<String, Double> values) {
@@ -314,8 +306,6 @@ public class ClassificationMetrics implements Serializable {
 
     private double calculateRecall(int true_positives, int false_negatives) {
 
-        // Interpret recall as 1 if there are no cases.
-
         return (double) true_positives / (true_positives + false_negatives);
     }
 
@@ -330,12 +320,12 @@ public class ClassificationMetrics implements Serializable {
         return (double) (true_positives * 2) / (true_positives * 2 + false_positives + false_negatives);
     }
 
-    private void printMetrics(String label, Map<String, Double> metrics) {
+    private void printMetrics(InfoLevel info_level, String label, Map<String, Double> metrics) {
 
-        System.out.println("\n" + label + ":");
+        Logging.output(info_level, "\n" + label + ":");
 
         for (Map.Entry<String, Double> entry : metrics.entrySet()) {
-            printMetric(entry.getKey(), entry.getValue());
+            printMetric(info_level, entry.getKey(), entry.getValue());
         }
     }
 }

@@ -22,6 +22,7 @@ import org.junit.runners.Parameterized;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.Classifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.ClassifierSupplier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.ClassifierTest;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.SingleClassifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Classification;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Record;
@@ -72,22 +73,22 @@ public class StringSimilarityClassifierTest extends ClassifierTest {
     @Test
     public void trainedClassifierReturnsCodeOfSimilarValueForIndividualRecord() {
 
-        Classifier classifier = factory.get();
+        SingleClassifier classifier = (SingleClassifier) factory.get();
 
-        classifier.train(training_bucket);
+        classifier.trainModel(training_bucket);
 
         for (String value : TEST_VALUES) {
 
-            assertClassifiedSimilarly(value, classifier.newClassify(value));
+            assertClassifiedSimilarly(value, classifier.classify(value));
         }
     }
 
     @Test
     public void trainedClassifierReturnsCodeOfSimilarValueForBucket() {
 
-        Classifier classifier = factory.get();
+        SingleClassifier classifier = (SingleClassifier) factory.get();
 
-        classifier.train(training_bucket);
+        classifier.trainModel(training_bucket);
 
         final Bucket classified_bucket = classifier.classify(test_bucket);
 

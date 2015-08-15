@@ -26,16 +26,14 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.C
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.Cleaner;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.CleanerSupplier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.InfoLevel;
+import uk.ac.standrews.cs.util.tools.InfoLevel;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassificationContext;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.specific.EvaluationExperimentProcess;
 import uk.ac.standrews.cs.util.tools.FileManipulation;
+import uk.ac.standrews.cs.util.tools.Logging;
 
 import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 import java.util.function.Supplier;
 
 import static org.junit.Assert.assertEquals;
@@ -48,16 +46,18 @@ public abstract class AbstractClassificationProcessTest extends AbstractMetricsT
 
     protected abstract Supplier<Classifier> getClassifierSupplier();
 
-    protected ClassificationContext context;
+    private ClassificationContext context;
     protected ConfusionMatrix matrix;
     protected ClassificationMetrics metrics;
 
     @Before
     public void setup() throws Exception {
 
-        List<Path> gold_standard_files = Arrays.asList(FileManipulation.getResourcePath(AbstractClassificationProcessTest.class, CODED_DATA_1K_FILE_NAME));
-        List<Double> training_ratios = Arrays.asList(0.8);
-        List<Cleaner> cleaners = Arrays.asList(CleanerSupplier.COMBINED.get());
+        Logging.setInfoLevel(InfoLevel.NONE);
+
+        List<Path> gold_standard_files = Collections.singletonList(FileManipulation.getResourcePath(AbstractClassificationProcessTest.class, CODED_DATA_1K_FILE_NAME));
+        List<Double> training_ratios = Collections.singletonList(0.8);
+        List<Cleaner> cleaners = Collections.singletonList(CleanerSupplier.COMBINED.get());
 
         final EvaluationExperimentProcess process = new EvaluationExperimentProcess();
 
@@ -69,7 +69,6 @@ public abstract class AbstractClassificationProcessTest extends AbstractMetricsT
 
         context = new ClassificationContext(getClassifierSupplier().get(), new Random(SEED));
 
-        context.setVerbosity(InfoLevel.NONE);
         process.call(context);
 
         metrics = context.getClassificationMetrics();

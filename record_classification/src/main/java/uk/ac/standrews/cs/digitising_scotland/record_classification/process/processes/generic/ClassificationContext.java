@@ -20,7 +20,7 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.Cla
 import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.ConfusionMatrix;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.Classifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.InfoLevel;
+import uk.ac.standrews.cs.util.tools.InfoLevel;
 
 import java.io.Serializable;
 import java.time.Duration;
@@ -51,7 +51,7 @@ public class ClassificationContext implements Serializable {
 
     private Duration training_time;
     private Duration classification_time;
-    private InfoLevel verbosity;
+//    private InfoLevel verbosity;
     private int number_of_evaluation_records_including_duplicates;
 
     // Needed for JSON deserialization.
@@ -74,7 +74,7 @@ public class ClassificationContext implements Serializable {
         clearUnseenRecords();
         clearClassifiedUnseenRecords();
 
-        verbosity = DEFAULT_VERBOSITY;
+//        verbosity = DEFAULT_VERBOSITY;
     }
 
     public void clearGoldStandardRecords() {
@@ -305,15 +305,15 @@ public class ClassificationContext implements Serializable {
         this.classification_time = evaluation_classification_time;
     }
 
-    public InfoLevel getVerbosity() {
-
-        return verbosity;
-    }
-
-    public void setVerbosity(InfoLevel verbosity) {
-
-        this.verbosity = verbosity;
-    }
+//    public InfoLevel getVerbosity() {
+//
+//        return verbosity;
+//    }
+//
+//    public void setVerbosity(InfoLevel verbosity) {
+//
+//        this.verbosity = verbosity;
+//    }
 
     public int getNumberOfEvaluationRecordsIncludingDuplicates() {
 

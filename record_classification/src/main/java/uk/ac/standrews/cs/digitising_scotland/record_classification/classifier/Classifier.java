@@ -16,17 +16,13 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier;
 
-import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.ClassificationMetrics;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.StrictConfusionMatrix;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.ConsistentCodingChecker;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Classification;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Record;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.config.Logging;
+import uk.ac.standrews.cs.util.tools.InfoLevel;
+import uk.ac.standrews.cs.util.tools.Logging;
 
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Random;
 
 /**
@@ -37,14 +33,7 @@ import java.util.Random;
  */
 public abstract class Classifier implements Serializable {
 
-    private Map<String, Double> confidence_map = new HashMap<>();
-
-    public Classification newClassify(String data) {
-
-        Classification classification = classify(data);
-        classification.setConfidence(getConfidence(classification.getCode()));
-        return classification;
-    }
+    public abstract void trainAndEvaluate(final Bucket bucket, final Random random);
 
     /**
      * Classifies a single data item.
@@ -52,33 +41,7 @@ public abstract class Classifier implements Serializable {
      * @param data the data to be classified
      * @return the resulting classification, or {@link Classification#UNCLASSIFIED} if the data cannot be classified
      */
-    protected abstract Classification classify(String data);
-
-    public abstract String getName();
-
-    public abstract String getDescription();
-
-    /**
-     * Trains the classifier on the given gold standard records.
-     *
-     * @param bucket the training data
-     */
-    public void trainAndEvaluate(final Bucket bucket, final Random random) {
-
-        Bucket real_training_records = bucket.randomSubset(random, 0.8);
-        Bucket internal_evaluation_records = bucket.difference(real_training_records);
-
-        train(real_training_records);
-
-        final Bucket classified_records = classify(internal_evaluation_records);
-
-        final StrictConfusionMatrix confusion_matrix = new StrictConfusionMatrix(classified_records, bucket, new ConsistentCodingChecker());
-        final ClassificationMetrics classification_metrics = new ClassificationMetrics(confusion_matrix);
-
-        confidence_map = classification_metrics.getPerClassF1();
-    }
-
-    public abstract void train(final Bucket bucket);
+    public abstract Classification classify(String data);
 
     /**
      * Classifies a bucket of data items.
@@ -87,26 +50,20 @@ public abstract class Classifier implements Serializable {
      * @param bucket the data to be classified
      * @return a new bucket containing the classified data
      */
+
     public Bucket classify(final Bucket bucket) {
 
         Logging.setProgressIndicatorSteps(bucket.size());
+        Logging.output(InfoLevel.VERBOSE, "Classifying...");
 
         final Bucket classified = new Bucket();
-        final Map<String, Classification> cache = new HashMap<>();
 
         for (Record record : bucket) {
 
             final String data = record.getData();
 
-            if (cache.containsKey(data)) {
-
-                classified.add(new Record(record.getId(), data, record.getOriginalData(), cache.get(data).makeClone()));
-
-            } else {
-                final Classification classification = classify(data);
-                classified.add(new Record(record.getId(), data, record.getOriginalData(), classification));
-                cache.put(data, classification);
-            }
+            final Classification classification = classify(data);
+            classified.add(new Record(record.getId(), data, record.getOriginalData(), classification));
 
             Logging.progressStep();
         }
@@ -114,8 +71,7 @@ public abstract class Classifier implements Serializable {
         return classified;
     }
 
-    protected double getConfidence(String code) {
+    public abstract String getName();
 
-        return confidence_map.containsKey(code) ? confidence_map.get(code) : 0.0;
-    }
+    public abstract String getDescription();
 }

@@ -19,7 +19,6 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.
 public interface SimilarityMetric {
 
     float getSimilarity(String one, String other);
-    double getStaticConfidence();
     String getDescription();
     String getName();
 }

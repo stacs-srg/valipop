@@ -16,16 +16,22 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps;
 
-import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.ClassificationMetrics;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.StrictConfusionMatrix;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.ConsistentCodingChecker;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Record;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassificationContext;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.Step;
 import uk.ac.standrews.cs.util.tools.Formatting;
 
-import java.time.*;
-import java.util.*;
+import java.time.Duration;
+import java.time.Instant;
+import java.util.HashSet;
+import java.util.Set;
+
+import static uk.ac.standrews.cs.util.tools.InfoLevel.LONG_SUMMARY;
+import static uk.ac.standrews.cs.util.tools.Logging.output;
 
 /**
  * Evaluates a classifier in the context of a classification process.
@@ -42,12 +48,10 @@ public class EvaluateClassifierStep implements Step {
     }
 
     @Override
-    public void perform(final ClassificationContext context)  {
+    public void perform(final ClassificationContext context) {
 
         final Bucket gold_standard_records = context.getGoldStandardRecords();
         final Bucket evaluation_records = context.getEvaluationRecords();
-//        final Bucket unique_evaluation_records = evaluation_records.makeUniqueDataRecords();
-//        final Bucket stripped_unique_evaluation_records = unique_evaluation_records.makeStrippedRecords();
 
         final Instant start = Instant.now();
         final Bucket classified_records = context.getClassifier().classify(evaluation_records);
@@ -59,32 +63,27 @@ public class EvaluateClassifierStep implements Step {
         context.setConfusionMatrix(confusion_matrix);
         context.setClassificationMetrics(classification_metrics);
 
-        if (context.getVerbosity().compareTo(InfoLevel.LONG_SUMMARY) >= 0) {
+        final Set<String> unique_training_strings = extractStrings(context.getTrainingRecords().makeUniqueDataRecords());
+        final Set<String> unique_evaluation_strings = extractStrings(evaluation_records);
 
-            final Classifier classifier = context.getClassifier();
+        final int training_records_size = context.getTrainingRecords().size();
+        final int number_of_evaluation_strings_not_in_training_set = countEvaluationStringsNotInTrainingSet(unique_training_strings, unique_evaluation_strings);
 
-            final Set<String> unique_training_strings = extractStrings(context.getTrainingRecords().makeUniqueDataRecords());
-            final Set<String> unique_evaluation_strings = extractStrings(evaluation_records);
+        output(LONG_SUMMARY, "\n----------------------------------\n");
+        output(LONG_SUMMARY, "classifier: " + context.getClassifier().getName());
+        output(LONG_SUMMARY, "");
+        output(LONG_SUMMARY, "total records              : %s%n", Formatting.format(training_records_size + evaluation_records.size()));
+        output(LONG_SUMMARY, "records used for training  : %s (%s unique)%n", Formatting.format(training_records_size), Formatting.format(unique_training_strings.size()));
+        output(LONG_SUMMARY, "records used for evaluation: %s (%s unique, %s not in training set)%n", Formatting.format(context.getNumberOfEvaluationRecordsIncludingDuplicates()), Formatting.format(evaluation_records.size()), Formatting.format(number_of_evaluation_strings_not_in_training_set));
+        output(LONG_SUMMARY, "");
 
-            final int training_records_size = context.getTrainingRecords().size();
-            final int number_of_evaluation_strings_not_in_training_set = countEvaluationStringsNotInTrainingSet(unique_training_strings, unique_evaluation_strings);
+        context.getClassificationMetrics().printMetrics();
 
-            System.out.println("\n----------------------------------\n");
-            System.out.println("classifier: " + classifier.getName());
-            System.out.println();
-            System.out.format("total records              : %s%n", Formatting.format(training_records_size + evaluation_records.size()));
-            System.out.format("records used for training  : %s (%s unique)%n", Formatting.format(training_records_size), Formatting.format(unique_training_strings.size()));
-            System.out.format("records used for evaluation: %s (%s unique, %s not in training set)%n", Formatting.format(context.getNumberOfEvaluationRecordsIncludingDuplicates()), Formatting.format(evaluation_records.size()), Formatting.format(number_of_evaluation_strings_not_in_training_set));
-            System.out.println();
+        output(LONG_SUMMARY, "");
+        output(LONG_SUMMARY, "training time              : %s%n", Formatting.format(context.getTrainingTime()));
+        output(LONG_SUMMARY, "classification time        : %s%n", Formatting.format(context.getClassificationTime()));
 
-            context.getClassificationMetrics().printMetrics(context.getVerbosity());
-
-            System.out.println();
-            System.out.format("training time              : %s%n", Formatting.format(context.getTrainingTime()));
-            System.out.format("classification time        : %s%n", Formatting.format(context.getClassificationTime()));
-
-            System.out.println("----------------------------------");
-        }
+        output(LONG_SUMMARY, "----------------------------------");
     }
 
     private static Set<String> extractStrings(final Bucket bucket) {

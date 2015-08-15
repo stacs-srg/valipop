@@ -16,8 +16,9 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.ensemble;
 
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.Classifier;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.SingleClassifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Classification;
+import uk.ac.standrews.cs.util.tools.Formatting;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -34,7 +35,7 @@ public class VotingResolutionStrategy implements EnsembleClassifier.ResolutionSt
     }
 
     @Override
-    public Classification resolve(Map<Classifier, Classification> candidate_classifications) {
+    public Classification resolve(Map<SingleClassifier, Classification> candidate_classifications) {
 
         Set<Set<Classification>> classifications_with_same_codes = partitionClassificationsWithSameCodes(candidate_classifications);
 
@@ -47,7 +48,7 @@ public class VotingResolutionStrategy implements EnsembleClassifier.ResolutionSt
         return classificationWithHighestConfidenceAverage(confidence_averages, detail);
     }
 
-    private Set<Set<Classification>> partitionClassificationsWithSameCodes(Map<Classifier, Classification> candidate_classifications) {
+    private Set<Set<Classification>> partitionClassificationsWithSameCodes(Map<SingleClassifier, Classification> candidate_classifications) {
 
         Set<Set<Classification>> classification_sets = new HashSet<>();
 
@@ -132,11 +133,11 @@ public class VotingResolutionStrategy implements EnsembleClassifier.ResolutionSt
         return sum / classifications.size();
     }
 
-    private String constructDetailString(Map<Classifier, Classification> candidate_classifications) {
+    private String constructDetailString(Map<SingleClassifier, Classification> candidate_classifications) {
 
         StringBuilder result = new StringBuilder();
 
-        for (Map.Entry<Classifier, Classification> entry : candidate_classifications.entrySet()) {
+        for (Map.Entry<SingleClassifier, Classification> entry : candidate_classifications.entrySet()) {
 
             if (result.length() > 0) result.append("\t");
 
@@ -144,7 +145,7 @@ public class VotingResolutionStrategy implements EnsembleClassifier.ResolutionSt
             result.append("\t");
             result.append(entry.getValue().getCode());
             result.append("\t");
-            result.append(entry.getValue().getConfidence());
+            result.append(Formatting.format(entry.getValue().getConfidence(),2));
         }
 
         return result.toString();

@@ -16,7 +16,7 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.string_similarity;
 
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.Classifier;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.SingleClassifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Classification;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Record;
@@ -32,7 +32,7 @@ import java.util.Map;
  * @author Masih Hajiarab Derkani
  * @author Graham Kirby
  */
-public class StringSimilarityClassifier extends Classifier {
+public class StringSimilarityClassifier extends SingleClassifier {
 
     private static final long serialVersionUID = -6159276459112698341L;
 
@@ -55,16 +55,16 @@ public class StringSimilarityClassifier extends Classifier {
     }
 
     @Override
-    public void train(Bucket bucket) {
+    public void trainModel(Bucket bucket) {
 
         for (Record record : bucket) {
             Classification classification = record.getClassification();
-            known_classifications.put(record.getData(), new Classification(classification.getCode(), classification.getTokenList(), similarity_metric.getStaticConfidence(), classification.getDetail()));
+            known_classifications.put(record.getData(), new Classification(classification.getCode(), classification.getTokenList(), 0.0, classification.getDetail()));
         }
     }
 
     @Override
-    public Classification classify(final String data) {
+    public Classification doClassify(final String data) {
 
         float highest_similarity_found = -1;
         Classification classification = null;

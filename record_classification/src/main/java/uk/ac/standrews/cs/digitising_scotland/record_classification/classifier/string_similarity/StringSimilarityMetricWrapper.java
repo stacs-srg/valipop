@@ -30,7 +30,6 @@ public class StringSimilarityMetricWrapper implements SimilarityMetric, Serializ
 
     // This is transient to help with JSON serialization.
     private transient StringMetric metric;
-    private double static_confidence;
     private String name;
 
     /**
@@ -39,10 +38,9 @@ public class StringSimilarityMetricWrapper implements SimilarityMetric, Serializ
     StringSimilarityMetricWrapper() {
     }
 
-    StringSimilarityMetricWrapper(final String name, double static_confidence) {
+    StringSimilarityMetricWrapper(final String name) {
 
         this.name = name;
-        this.static_confidence = static_confidence;
     }
 
     /**
@@ -74,11 +72,6 @@ public class StringSimilarityMetricWrapper implements SimilarityMetric, Serializ
     public String getName() {
 
         return name;
-    }
-
-    public double getStaticConfidence() {
-
-        return static_confidence;
     }
 
     @Override
