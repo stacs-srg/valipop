@@ -66,6 +66,7 @@ public abstract class LoadStep implements Step {
 
         try (final BufferedReader reader = Files.newBufferedReader(path, charset)) {
 
+            clearRecords(context);
             getRecords(context).add(new Bucket(reader, delimiter));
 
         } catch (IOException e) {
@@ -74,4 +75,6 @@ public abstract class LoadStep implements Step {
     }
 
     protected abstract Bucket getRecords(ClassificationContext context);
+
+    protected abstract void clearRecords(ClassificationContext context);
 }

@@ -75,6 +75,8 @@ public abstract class AbstractClassificationProcessTest extends AbstractMetricsT
         matrix = context.getConfusionMatrix();
     }
 
+
+
     @Test
     public void evaluationRecordsAreUnique() {
 

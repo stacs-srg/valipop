@@ -34,7 +34,7 @@ public class Bucket implements Iterable<Record>, Serializable {
     private static final long serialVersionUID = 7216381249689825103L;
     public static final String FORMAT_ERROR_MESSAGE = "record should contain id, data and optional code and confidence";
 
-    private final Collection<Record> records;
+    private final TreeSet<Record> records;
     private boolean auto_allocate_ids;
     private int next_id = 1;
 
@@ -253,14 +253,44 @@ public class Bucket implements Iterable<Record>, Serializable {
     public Bucket randomSubset(final Random random, double selection_probability) {
 
         final Bucket subset = new Bucket();
+        final Bucket not_selected = new Bucket();
+
+        int subset_size = (int) (size() * selection_probability);
 
         for (Record record : this) {
-            if (random.nextDouble() < selection_probability) {
+            if (subset.size() < subset_size && random.nextDouble() < selection_probability) {
+                subset.add(record);
+            }
+            else {
+                not_selected.add(record);
+            }
+        }
+
+        // Add further records as necessary to make up to required size.
+        for (Record record : not_selected) {
+            if (subset.size() < subset_size) {
                 subset.add(record);
             }
         }
 
         return subset;
+    }
+
+    private int[] permuteIndices(Random random) {
+
+        int[] permuted_indices = new int[size()];
+
+        for (int i = 0; i < permuted_indices.length; i++) {
+            permuted_indices[i] = i;
+        }
+
+        for (int i = 0; i < permuted_indices.length; i++) {
+            int swap_index = random.nextInt(permuted_indices.length);
+            int temp = permuted_indices[swap_index];
+            permuted_indices[swap_index] = permuted_indices[i];
+            permuted_indices[i] = temp;
+        }
+        return permuted_indices;
     }
 
     private int extractId(List<String> record) {

@@ -51,7 +51,6 @@ public class ClassificationContext implements Serializable {
 
     private Duration training_time;
     private Duration classification_time;
-//    private InfoLevel verbosity;
     private int number_of_evaluation_records_including_duplicates;
 
     // Needed for JSON deserialization.
@@ -73,8 +72,6 @@ public class ClassificationContext implements Serializable {
         clearEvaluationRecords();
         clearUnseenRecords();
         clearClassifiedUnseenRecords();
-
-//        verbosity = DEFAULT_VERBOSITY;
     }
 
     public void clearGoldStandardRecords() {
@@ -85,12 +82,14 @@ public class ClassificationContext implements Serializable {
 
     public void clearTrainingRecords() {
 
-        training_records = new Bucket();
+        // Allow multiple data sets with potentially clashing ids to be added to training records.
+        training_records = new Bucket(true);
     }
 
     public void clearEvaluationRecords() {
 
-        evaluation_records = new Bucket();
+        // Allow multiple data sets with potentially clashing ids to be added to evaluation records.
+        evaluation_records = new Bucket(true);
     }
 
     public void clearUnseenRecords() {
@@ -190,7 +189,6 @@ public class ClassificationContext implements Serializable {
      * @param unseen_records the records to be added
      */
     public void setUnseenRecords(final Bucket unseen_records) {
-
 
         this.unseen_records = unseen_records;
     }

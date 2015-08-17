@@ -46,8 +46,15 @@ public class LoadGoldStandardStep extends LoadStep {
         super(path, charset, delimiter);
     }
 
+    @Override
     protected Bucket getRecords(ClassificationContext context) {
 
         return context.getGoldStandardRecords();
+    }
+
+    @Override
+    protected void clearRecords(ClassificationContext context) {
+
+        context.clearGoldStandardRecords();
     }
 }

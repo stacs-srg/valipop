@@ -58,8 +58,11 @@ public class AddTrainingAndEvaluationRecordsByRatioStep implements Step {
             context.addTrainingRecords(gold_standard_records);
         }
         else {
-            context.addTrainingRecords(gold_standard_records.randomSubset(context.getRandom(), training_ratio));
-            context.addEvaluationRecords(gold_standard_records.difference(context.getTrainingRecords()));
+            Bucket new_training_records = gold_standard_records.randomSubset(context.getRandom(), training_ratio);
+            context.addTrainingRecords(new_training_records);
+            Bucket trainingRecords = context.getTrainingRecords();
+            Bucket difference = gold_standard_records.difference(new_training_records);
+            context.addEvaluationRecords(difference);
         }
     }
 
