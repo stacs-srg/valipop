@@ -29,19 +29,19 @@ public class EvaluationExperimentProcess extends ClassificationProcess {
     private List<Double> training_ratios;
     private List<Cleaner> cleaners;
 
-    public EvaluationExperimentProcess setGoldStandardFiles(List<Path> gold_standard_files){
+    public EvaluationExperimentProcess setGoldStandardFiles(List<Path> gold_standard_files) {
 
         this.gold_standard_files = gold_standard_files;
         return this;
     }
 
-    public EvaluationExperimentProcess setTrainingRatios(List<Double> training_ratios){
+    public EvaluationExperimentProcess setTrainingRatios(List<Double> training_ratios) {
 
         this.training_ratios = training_ratios;
         return this;
     }
 
-    public EvaluationExperimentProcess setCleaners(List<Cleaner> cleaners){
+    public EvaluationExperimentProcess setCleaners(List<Cleaner> cleaners) {
 
         this.cleaners = cleaners;
         return this;
@@ -49,15 +49,18 @@ public class EvaluationExperimentProcess extends ClassificationProcess {
 
     public void configureSteps() {
 
-        for (Path gold_standard_file : gold_standard_files) {
+        for (int gold_standard_file_number = 0; gold_standard_file_number < gold_standard_files.size(); gold_standard_file_number++) {
+
+            Path gold_standard_file = gold_standard_files.get(gold_standard_file_number);
             addStep(new LoadGoldStandardStep(gold_standard_file));
-        }
 
-        for (Cleaner cleaner : cleaners) {
-            addStep(new CleanGoldStandardStep(cleaner));
-        }
+            if (cleaners != null) {
+                for (Cleaner cleaner : cleaners) {
+                    addStep(new CleanGoldStandardStep(cleaner));
+                }
+            }
 
-        for (double training_ratio : training_ratios) {
+            double training_ratio = training_ratios.get(gold_standard_file_number);
             addStep(new AddTrainingAndEvaluationRecordsByRatioStep(training_ratio));
         }
 

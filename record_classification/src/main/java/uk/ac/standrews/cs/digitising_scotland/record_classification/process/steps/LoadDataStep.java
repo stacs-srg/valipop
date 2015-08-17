@@ -19,14 +19,11 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.process.ste
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassificationContext;
 
-import java.io.BufferedReader;
-import java.io.IOException;
 import java.nio.charset.Charset;
-import java.nio.file.Files;
 import java.nio.file.Path;
 
 /**
- * Loads gold standard records from a file into a classification process {@link ClassificationContext context}.
+ * Loads unseen data records from a file into a classification process {@link ClassificationContext context}.
  *
  * @author Masih Hajiarab Derkani
  */
@@ -35,35 +32,24 @@ public class LoadDataStep extends LoadStep {
     private static final long serialVersionUID = 7742825393693404041L;
 
     /**
-     * Instantiates a new step which loads a gold standard CSV file into a classification process {@link ClassificationContext context}.
+     * Instantiates a new step which loads unseen data records into a classification process {@link ClassificationContext context}.
      *
      * @param path the file to the CSV file
      */
-    public LoadDataStep(Path path) {
-
-        super(path);
-    }
-
     public LoadDataStep(Path path, Charset charset, String delimiter) {
 
         super(path, charset, delimiter);
     }
 
     @Override
-    public void perform(final ClassificationContext context)  {
-
-        try (final BufferedReader reader = Files.newBufferedReader(path, charset)) {
-
-            context.clearUnseenRecords();
-            context.getUnseenRecords().add(new Bucket(reader, delimiter));
-
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     protected Bucket getRecords(ClassificationContext context) {
 
         return context.getUnseenRecords();
+    }
+
+    @Override
+    protected void clearRecords(ClassificationContext context) {
+
+        context.clearUnseenRecords();
     }
 }

@@ -20,15 +20,19 @@ import org.junit.Before;
 import org.junit.Test;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.experiments.generic.Experiment;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.experiments.specific.ExactMatchAndStringSimilarityExperiment;
-import uk.ac.standrews.cs.util.tools.InfoLevel;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassificationContext;
 import uk.ac.standrews.cs.util.tools.FileManipulation;
+import uk.ac.standrews.cs.util.tools.InfoLevel;
 import uk.ac.standrews.cs.util.tools.Logging;
 
 import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 public class ExperimentTest {
 
@@ -60,22 +64,6 @@ public class ExperimentTest {
     }
 
     @Test
-    public void numberOfTrainingRecordsVariesAcrossRepetitionsOfEachExperiment() throws Exception {
-
-        for (Experiment.ClassifierResults result : experiment_results) {
-
-            List<Integer> training_bucket_sizes_across_repetitions = new ArrayList<>();
-
-            for (ClassificationContext context : result.getContexts()) {
-
-                training_bucket_sizes_across_repetitions.add(context.getTrainingRecords().size());
-            }
-
-            assertNotAllSame(training_bucket_sizes_across_repetitions);
-        }
-    }
-
-    @Test
     public void numbersOfTrainingRecordsInEachRepetitionAreSameAcrossExperiments() throws Exception {
 
         List<List<Integer>> training_bucket_sizes = new ArrayList<>();
@@ -93,27 +81,12 @@ public class ExperimentTest {
             }
         }
 
-        for (List<Integer> training_records_sizes_for_repetition : training_bucket_sizes) {
-            assertAllSame(training_records_sizes_for_repetition);
-        }
+        training_bucket_sizes.forEach(this::assertAllSame);
     }
 
     private void assertAllSame(List<Integer> numbers) {
 
-        for (int i : numbers) {
-            if (i != numbers.get(0)) {
-                fail();
-            }
-        }
-    }
-
-    private void assertNotAllSame(List<Integer> numbers) {
-
-        Set<Integer> unique_numbers = new HashSet<>();
-        for (int i : numbers) {
-
-            unique_numbers.add(i);
-        }
-        if (numbers.size() > 1) assertTrue(unique_numbers.size() > 1);
+        Integer first = numbers.get(0);
+        numbers.stream().filter(i -> !Objects.equals(i, first)).forEach(i -> fail());
     }
 }
