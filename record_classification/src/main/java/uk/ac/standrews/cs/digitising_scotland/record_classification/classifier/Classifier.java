@@ -54,7 +54,7 @@ public abstract class Classifier implements Serializable {
     public Bucket classify(final Bucket bucket) {
 
         Logging.setProgressIndicatorSteps(bucket.size());
-        Logging.output(InfoLevel.VERBOSE, "Classifying...");
+        Logging.output(InfoLevel.SHORT_SUMMARY, "Classifying...");
 
         final Bucket classified = new Bucket();
 

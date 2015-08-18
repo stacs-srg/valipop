@@ -21,6 +21,9 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Classi
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Record;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.TokenList;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Cleans a {@link Bucket bucket}.
  *
@@ -30,14 +33,20 @@ public interface TextCleaner extends Cleaner {
 
     String cleanData(final String data);
 
-    default Bucket apply(final Bucket bucket) {
+    default List<Bucket> apply(final List<Bucket> buckets) {
 
-        final Bucket cleaned_bucket = new Bucket();
-        for (Record record : bucket) {
+        final List<Bucket> cleaned_buckets = new ArrayList<>();
 
-            cleaned_bucket.add(cleanRecord(record));
+        for (Bucket bucket : buckets) {
+
+            final Bucket cleaned_bucket = new Bucket();
+            for (Record record : bucket) {
+
+                cleaned_bucket.add(cleanRecord(record));
+            }
+            cleaned_buckets.add(cleaned_bucket);
         }
-        return cleaned_bucket;
+        return cleaned_buckets;
     }
 
     default Record cleanRecord(final Record record) {

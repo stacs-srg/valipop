@@ -22,6 +22,7 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.S
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.ensemble.EnsembleVotingClassifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.InputFileFormatException;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.experiments.generic.Experiment;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.config.Config;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -38,6 +39,7 @@ public class EnsembleOnlyExperiment extends Experiment {
 
     public static void main(final String[] args) throws Exception {
 
+        Config.setCleanUpFilesAfterTests(false);
         new EnsembleOnlyExperiment(args).call();
     }
 

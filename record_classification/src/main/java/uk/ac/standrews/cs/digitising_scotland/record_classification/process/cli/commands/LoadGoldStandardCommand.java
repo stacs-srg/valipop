@@ -24,7 +24,7 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.Launcher;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassificationContext;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.serialization.SerializationFormat;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.LoadGoldStandardStep;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.LoadTrainingAndEvaluationRecordsByRatioStep;
 
 import java.nio.charset.Charset;
 import java.nio.file.Path;
@@ -53,36 +53,46 @@ public class LoadGoldStandardCommand extends Command {
     @Parameter(required = true, names = {GOLD_STANDARD_FLAG_SHORT, GOLD_STANDARD_FLAG_LONG}, description = GOLD_STANDARD_DESCRIPTION, converter = PathConverter.class)
     private List<Path> gold_standards;
 
+    public static final String TRAINING_RATIO_DESCRIPTION = "The ratio of gold standard records to be used for training. The value must be between 0.0 to 1.0 (inclusive).";
+    public static final String TRAINING_RATIO_FLAG_SHORT = "-r";
+    public static final String TRAINING_RATIO_FLAG_LONG = "--trainingRecordRatio";
+
+    @Parameter(required = true, names = {TRAINING_RATIO_FLAG_SHORT, TRAINING_RATIO_FLAG_LONG}, description = TRAINING_RATIO_DESCRIPTION)
+    private List<Double> training_ratios;
+
     @Override
     public void perform(final ClassificationContext context) {
 
-        perform(context, gold_standards, charsets, delimiters);
+        perform(context, gold_standards, training_ratios, charsets, delimiters);
     }
 
-    public static void perform(final ClassificationContext context, List<Path> gold_standards, List<CharsetSupplier> charsets, List<String> delimiters) {
+    public static void perform(final ClassificationContext context, List<Path> gold_standards, List<Double> training_ratios, List<CharsetSupplier> charsets, List<String> delimiters) {
 
         for (int i = 0; i < gold_standards.size(); i++) {
 
             Path gold_standard = gold_standards.get(i);
+            double training_ratio = training_ratios.get(i);
             Charset charset = getCharset(charsets, i);
             String delimiter = getDelimiter(delimiters, i);
 
-            new LoadGoldStandardStep(gold_standard, charset, delimiter).perform(context);
+            new LoadTrainingAndEvaluationRecordsByRatioStep(gold_standard, training_ratio, charset, delimiter).perform(context);
         }
     }
 
-    public static void perform(SerializationFormat serialization_format, String process_name, Path process_directory, List<Path> gold_standards, List<CharsetSupplier> charsets, List<String> delimiters) throws Exception {
+    public static void perform(SerializationFormat serialization_format, String process_name, Path process_directory, List<Path> gold_standards, List<Double> training_ratios, List<CharsetSupplier> charsets, List<String> delimiters) throws Exception {
 
-        Launcher.main(addArgs(serialization_format, process_name, process_directory, makeGoldStandardArgs(gold_standards, charsets, delimiters)));
+        Launcher.main(addArgs(serialization_format, process_name, process_directory, makeGoldStandardArgs(gold_standards, training_ratios, charsets, delimiters)));
     }
 
-    private static String[] makeGoldStandardArgs(List<Path> gold_standards, List<CharsetSupplier> charsets, List<String> delimiters) {
+    private static String[] makeGoldStandardArgs(List<Path> gold_standards, List<Double> training_ratios, List<CharsetSupplier> charsets, List<String> delimiters) {
 
         String[] args = {NAME};
 
         for (int i = 0; i < gold_standards.size(); i++) {
 
             args = extendArgs(args, GOLD_STANDARD_FLAG_SHORT, gold_standards.get(i).toString());
+
+            args = extendArgs(args, TRAINING_RATIO_FLAG_SHORT, String.valueOf(training_ratios.get(i).toString()));
 
             // Assume that 'charsets' and 'delimiters' will both be null or both set.
             if (charsets != null) {

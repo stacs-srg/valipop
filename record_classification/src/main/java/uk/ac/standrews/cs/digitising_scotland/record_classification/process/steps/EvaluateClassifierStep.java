@@ -50,11 +50,12 @@ public class EvaluateClassifierStep implements Step {
     @Override
     public void perform(final ClassificationContext context) {
 
-        final Bucket gold_standard_records = context.getGoldStandardRecords();
+        final Bucket training_records = context.getTrainingRecords();
         final Bucket evaluation_records = context.getEvaluationRecords();
+        final Bucket gold_standard_records = training_records.union(evaluation_records);
 
         final Instant start = Instant.now();
-        final Bucket classified_records = context.getClassifier().classify(evaluation_records);
+        final Bucket classified_records = context.getClassifier().classify(evaluation_records.makeStrippedRecords());
         context.setClassificationTime(Duration.between(start, Instant.now()));
 
         final StrictConfusionMatrix confusion_matrix = new StrictConfusionMatrix(classified_records, gold_standard_records, new ConsistentCodingChecker());

@@ -49,6 +49,8 @@ public class EndToEndCleaningTest extends EndToEndCommon {
         serialization_format = SerializationFormat.JSON;
 
         input_gold_standard_files = Arrays.asList(FileManipulation.getResourcePath(EndToEndCleaningTest.class, GOLD_STANDARD_FILE_NAME));
+        training_ratios = Arrays.asList(1.0);
+
         input_unseen_data_file = FileManipulation.getResourcePath(EndToEndCleaningTest.class, EVALUATION_FILE_NAME);
     }
 
@@ -57,7 +59,8 @@ public class EndToEndCleaningTest extends EndToEndCommon {
 
         initLoadTrain();
 
-        assertRecordsAreCleaned(loadContext().getGoldStandardRecords());
+        assertRecordsAreCleaned(loadContext().getTrainingRecords());
+        assertRecordsAreCleaned(loadContext().getEvaluationRecords());
     }
 
     @Test

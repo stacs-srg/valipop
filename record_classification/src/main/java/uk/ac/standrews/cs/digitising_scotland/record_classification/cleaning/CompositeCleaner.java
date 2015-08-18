@@ -30,9 +30,9 @@ public class CompositeCleaner implements Cleaner {
     }
 
     @Override
-    public Bucket apply(Bucket records) {
+    public List<Bucket> apply(List<Bucket> buckets) {
 
-        Bucket result = records;
+        List<Bucket> result = buckets;
 
         for (Cleaner cleaner : cleaners) {
             result = cleaner.apply(result);

@@ -17,11 +17,8 @@
 package uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning;
 
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Classification;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Record;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
 /**
  * @author Graham Kirby
@@ -29,8 +26,8 @@ import java.util.Map;
 public class ConsistentCodingChecker implements Checker {
 
     @Override
-    public boolean test(final Bucket bucket)  {
+    public boolean test(final List<Bucket> buckets) {
 
-        return ConsistentClassificationCleaner.getInconsistentlyClassifiedData(bucket).isEmpty();
+        return ConsistentClassificationCleaner.getInconsistentlyClassifiedData(buckets).isEmpty();
     }
 }

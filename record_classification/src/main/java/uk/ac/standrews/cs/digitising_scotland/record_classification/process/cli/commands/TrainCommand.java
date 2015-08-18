@@ -16,13 +16,11 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.commands;
 
-import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.Command;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.Launcher;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassificationContext;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.serialization.SerializationFormat;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.AddTrainingAndEvaluationRecordsByRatioStep;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.TrainClassifierStep;
 
 import java.nio.file.Path;
@@ -42,28 +40,20 @@ public class TrainCommand extends Command {
 
     private static final long serialVersionUID = 8026292848547343006L;
 
-    public static final String TRAINING_RATIO_DESCRIPTION = "The ratio of gold standard records to be used for training. The value must be between 0.0 to 1.0 (inclusive).";
-    public static final String TRAINING_RATIO_FLAG_SHORT = "-r";
-    public static final String TRAINING_RATIO_FLAG_LONG = "--trainingRecordRatio";
-
-    @Parameter(required = true, names = {TRAINING_RATIO_FLAG_SHORT, TRAINING_RATIO_FLAG_LONG}, description = TRAINING_RATIO_DESCRIPTION)
-    private Double training_ratio;
-
     @Override
     public void perform(final ClassificationContext context) {
 
-        perform(context, training_ratio);
+        performCommand(context);
     }
 
-    public static void perform(final ClassificationContext context, double training_ratio) {
+    public static void performCommand(final ClassificationContext context) {
 
-        new AddTrainingAndEvaluationRecordsByRatioStep(training_ratio).perform(context);
         new TrainClassifierStep().perform(context);
     }
 
-    public static void perform(SerializationFormat serialization_format, String process_name, Path process_directory, double training_ratio) throws Exception {
+    public static void perform(SerializationFormat serialization_format, String process_name, Path process_directory) throws Exception {
 
         Launcher.main(addArgs(
-                serialization_format, process_name, process_directory, NAME, TRAINING_RATIO_FLAG_SHORT, String.valueOf(training_ratio)));
+                serialization_format, process_name, process_directory, NAME));
     }
 }

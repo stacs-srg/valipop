@@ -27,10 +27,7 @@ import uk.ac.standrews.cs.util.tools.Formatting;
 import uk.ac.standrews.cs.util.tools.InfoLevel;
 import uk.ac.standrews.cs.util.tools.Logging;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * General implementation of confusion matrix representing the effectiveness of a classification process.
@@ -76,7 +73,7 @@ public abstract class AbstractConfusionMatrix implements ConfusionMatrix {
         checkClassifiedDataIsInGoldStandard();
         checkClassifiedToValidCodes();
 
-        if (!checker.test(gold_standard_records)) {
+        if (checker != null && !checker.test(Arrays.asList(gold_standard_records))) {
             throw new RuntimeException("check failed");
         }
 
@@ -177,8 +174,9 @@ public abstract class AbstractConfusionMatrix implements ConfusionMatrix {
     private void checkGoldStandardDataIsClassified() {
 
         for (Record record : gold_standard_records) {
-            if (record.getClassification().equals(Classification.UNCLASSIFIED))
+            if (record.getClassification().equals(Classification.UNCLASSIFIED)) {
                 throw new UnclassifiedGoldStandardRecordException();
+            }
         }
     }
 

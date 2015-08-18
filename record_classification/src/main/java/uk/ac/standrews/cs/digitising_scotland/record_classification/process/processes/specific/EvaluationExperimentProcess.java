@@ -18,7 +18,10 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.process.pro
 
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.Cleaner;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassificationProcess;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.CleanGoldStandardStep;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.EvaluateClassifierStep;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.LoadTrainingAndEvaluationRecordsByRatioStep;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.TrainClassifierStep;
 
 import java.nio.file.Path;
 import java.util.List;
@@ -52,16 +55,16 @@ public class EvaluationExperimentProcess extends ClassificationProcess {
         for (int gold_standard_file_number = 0; gold_standard_file_number < gold_standard_files.size(); gold_standard_file_number++) {
 
             Path gold_standard_file = gold_standard_files.get(gold_standard_file_number);
-            addStep(new LoadGoldStandardStep(gold_standard_file));
-
-            if (cleaners != null) {
-                for (Cleaner cleaner : cleaners) {
-                    addStep(new CleanGoldStandardStep(cleaner));
-                }
-            }
+//            addStep(new LoadGoldStandardStep(gold_standard_file));
 
             double training_ratio = training_ratios.get(gold_standard_file_number);
-            addStep(new AddTrainingAndEvaluationRecordsByRatioStep(training_ratio));
+            addStep(new LoadTrainingAndEvaluationRecordsByRatioStep(gold_standard_file, training_ratio));
+        }
+
+        if (cleaners != null) {
+            for (Cleaner cleaner : cleaners) {
+                addStep(new CleanGoldStandardStep(cleaner));
+            }
         }
 
         addStep(new TrainClassifierStep());

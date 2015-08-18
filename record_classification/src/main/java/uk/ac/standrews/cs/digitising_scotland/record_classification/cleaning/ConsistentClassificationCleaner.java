@@ -21,10 +21,7 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Classi
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Record;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.TokenList;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Provides cleaners that deal with inconsistent classification within a bucket.
@@ -39,21 +36,26 @@ public enum ConsistentClassificationCleaner implements Cleaner {
      */
     REMOVE {
         @Override
-        public Bucket apply(Bucket bucket) {
+        public List<Bucket> apply(List<Bucket> buckets) {
 
-            Set<String> inconsistently_classified_data = getInconsistentlyClassifiedData(bucket);
+            Set<String> inconsistently_classified_data = getInconsistentlyClassifiedData(buckets);
 
-            Bucket cleaned_bucket = new Bucket();
-            for (Record record : bucket) {
+            List<Bucket> cleaned_buckets = new ArrayList<>();
 
-                String data = record.getData();
+            for (Bucket bucket : buckets) {
+                Bucket cleaned_bucket = new Bucket();
+                for (Record record : bucket) {
 
-                if (!inconsistently_classified_data.contains(data)) {
-                    cleaned_bucket.add(record);
+                    String data = record.getData();
+
+                    if (!inconsistently_classified_data.contains(data)) {
+                        cleaned_bucket.add(record);
+                    }
                 }
+                cleaned_buckets.add(cleaned_bucket);
             }
 
-            return cleaned_bucket;
+            return cleaned_buckets;
         }
     },
 
@@ -64,79 +66,86 @@ public enum ConsistentClassificationCleaner implements Cleaner {
      */
     CORRECT {
         @Override
-        public Bucket apply(Bucket bucket) {
+        public List<Bucket> apply(List<Bucket> buckets) {
 
             // A map from data string to a map containing all the different classifications for that
             // data, and their frequencies.
-            Map<String, Map<String, Integer>> alternative_classifications_for_bucket = getAlternativeClassificationsForDataStrings(bucket);
+            Map<String, Map<String, Integer>> alternative_classifications = getAlternativeClassificationsForDataStrings(buckets);
 
-            Bucket cleaned_bucket = new Bucket();
+            List<Bucket> cleaned_buckets = new ArrayList<>();
+            for (Bucket bucket : buckets) {
+                Bucket cleaned_bucket = new Bucket();
 
-            for (Record record : bucket) {
+                for (Record record : bucket) {
 
-                Map<String, Integer> alternative_classifications_for_record = alternative_classifications_for_bucket.get(record.getData());
-                String most_popular_classification = getMostPopularClassification(alternative_classifications_for_record);
+                    Map<String, Integer> alternative_classifications_for_record = alternative_classifications.get(record.getData());
+                    String most_popular_classification = getMostPopularClassification(alternative_classifications_for_record);
 
-                if (record.getClassification().getCode().equals(most_popular_classification)) {
-                    cleaned_bucket.add(record);
+                    if (record.getClassification().getCode().equals(most_popular_classification)) {
+                        cleaned_bucket.add(record);
+                    } else {
+                        cleaned_bucket.add(makeCorrectedRecord(record, most_popular_classification));
+                    }
                 }
-                else {
-                    cleaned_bucket.add(makeCorrectedRecord(record, most_popular_classification));
-                }
+                cleaned_buckets.add(cleaned_bucket);
             }
 
-            return cleaned_bucket;
+            return cleaned_buckets;
         }
     };
 
-    protected static Set<String> getInconsistentlyClassifiedData(Bucket bucket) {
+    protected static Set<String> getInconsistentlyClassifiedData(List<Bucket> buckets) {
 
         Set<String> inconsistently_coded_data = new HashSet<>();
         Map<String, String> classifications_encountered = new HashMap<>();
 
-        for (Record record : bucket) {
+        for (Bucket bucket : buckets) {
 
-            String data = record.getData();
-            Classification classification = record.getClassification();
+            for (Record record : bucket) {
 
-            if (classification != null) {
-                String code = classification.getCode();
+                String data = record.getData();
+                Classification classification = record.getClassification();
 
-                if (classifications_encountered.containsKey(data)) {
-                    if (!code.equals(classifications_encountered.get(data))) {
-                        inconsistently_coded_data.add(data);
+                if (classification != null) {
+                    String code = classification.getCode();
+
+                    if (classifications_encountered.containsKey(data)) {
+                        if (!code.equals(classifications_encountered.get(data))) {
+                            inconsistently_coded_data.add(data);
+                        }
+                    } else {
+                        classifications_encountered.put(data, code);
                     }
-                }
-                else {
-                    classifications_encountered.put(data, code);
                 }
             }
         }
         return inconsistently_coded_data;
     }
 
-    private static Map<String, Map<String, Integer>> getAlternativeClassificationsForDataStrings(Bucket bucket) {
+    private static Map<String, Map<String, Integer>> getAlternativeClassificationsForDataStrings(List<Bucket> buckets) {
 
-        final Map<String, Map<String, Integer>> alternative_classifications_for_bucket = new HashMap<>();
+        final Map<String, Map<String, Integer>> alternative_classifications = new HashMap<>();
 
-        for (Record record : bucket) {
+        for (Bucket bucket : buckets) {
+            for (Record record : bucket) {
 
-            final String data = record.getData();
-            if (!alternative_classifications_for_bucket.containsKey(data)) {
-                alternative_classifications_for_bucket.put(data, new HashMap<>());
+                final String data = record.getData();
+                if (!alternative_classifications.containsKey(data)) {
+                    alternative_classifications.put(data, new HashMap<>());
+                }
+
+                final Map<String, Integer> classifications_for_this_data = alternative_classifications.get(data);
+
+                String code = record.getClassification().getCode();
+                if (!classifications_for_this_data.containsKey(code)) {
+                    classifications_for_this_data.put(code, 0);
+                }
+
+                classifications_for_this_data.put(code, classifications_for_this_data.get(code) + 1);
             }
-
-            final Map<String, Integer> classifications_for_this_data = alternative_classifications_for_bucket.get(data);
-
-            String code = record.getClassification().getCode();
-            if (!classifications_for_this_data.containsKey(code)) {
-                classifications_for_this_data.put(code, 0);
-            }
-
-            classifications_for_this_data.put(code, classifications_for_this_data.get(code) + 1);
         }
 
-        return alternative_classifications_for_bucket;
+        return alternative_classifications;
     }
 
     private static String getMostPopularClassification(Map<String, Integer> alternative_classifications) {
@@ -161,6 +170,6 @@ public enum ConsistentClassificationCleaner implements Cleaner {
         final String data = record.getData();
         final Classification classification = record.getClassification();
 
-        return new Record(record.getId(), data, record.getOriginalData(),new Classification(most_popular_code, new TokenList(data), classification.getConfidence(), classification.getDetail()));
+        return new Record(record.getId(), data, record.getOriginalData(), new Classification(most_popular_code, new TokenList(data), classification.getConfidence(), classification.getDetail()));
     }
 }
