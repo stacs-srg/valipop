@@ -21,6 +21,9 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassificationContext;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.Step;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class CleanGoldStandardStep implements Step {
 
     private final Cleaner cleaner;
@@ -33,7 +36,8 @@ public class CleanGoldStandardStep implements Step {
     @Override
     public void perform(ClassificationContext context) {
 
-        final Bucket cleaned_records = cleaner.apply(context.getGoldStandardRecords());
-        context.setGoldStandardRecords(cleaned_records);
+        final List<Bucket> cleaned_records = cleaner.apply(Arrays.asList(context.getTrainingRecords(), context.getEvaluationRecords()));
+        context.setTrainingRecords(cleaned_records.get(0));
+        context.setEvaluationRecords(cleaned_records.get(1));
     }
 }

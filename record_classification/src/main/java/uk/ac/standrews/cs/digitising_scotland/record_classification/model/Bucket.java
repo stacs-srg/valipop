@@ -177,8 +177,18 @@ public class Bucket implements Iterable<Record>, Serializable {
         return records.size();
     }
 
+    public Bucket union(final Bucket other) {
+
+        final Bucket combined = new Bucket(true);
+
+        combined.add(this);
+        combined.add(other);
+
+        return combined;
+    }
+
     /**
-     * Constructs a new bucket containing this bucket's records that do not exist in the give bucket.
+     * Constructs a new bucket containing this bucket's records that do not exist in the given bucket.
      *
      * @param other the other bucket
      * @return a new bucket containing this records that are present in this bucket and not present in the other bucket
@@ -205,6 +215,15 @@ public class Bucket implements Iterable<Record>, Serializable {
     public boolean contains(final Record record) {
 
         return records.contains(record);
+    }
+
+    public boolean containsData(final String data) {
+
+        for (Record record : this) {
+            if (record.getData().equals(data)) return true;
+        }
+
+        return false;
     }
 
     /**
@@ -260,8 +279,7 @@ public class Bucket implements Iterable<Record>, Serializable {
         for (Record record : this) {
             if (subset.size() < subset_size && random.nextDouble() < selection_probability) {
                 subset.add(record);
-            }
-            else {
+            } else {
                 not_selected.add(record);
             }
         }
@@ -274,23 +292,6 @@ public class Bucket implements Iterable<Record>, Serializable {
         }
 
         return subset;
-    }
-
-    private int[] permuteIndices(Random random) {
-
-        int[] permuted_indices = new int[size()];
-
-        for (int i = 0; i < permuted_indices.length; i++) {
-            permuted_indices[i] = i;
-        }
-
-        for (int i = 0; i < permuted_indices.length; i++) {
-            int swap_index = random.nextInt(permuted_indices.length);
-            int temp = permuted_indices[swap_index];
-            permuted_indices[swap_index] = permuted_indices[i];
-            permuted_indices[i] = temp;
-        }
-        return permuted_indices;
     }
 
     private int extractId(List<String> record) {

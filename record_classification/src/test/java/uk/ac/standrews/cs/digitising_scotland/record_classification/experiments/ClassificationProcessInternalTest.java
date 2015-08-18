@@ -21,11 +21,15 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.ClassifierSupplier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.UnknownDataException;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Record;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassificationContext;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.specific.EvaluationExperimentProcess;
 import uk.ac.standrews.cs.util.tools.FileManipulation;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 
@@ -39,6 +43,7 @@ public class ClassificationProcessInternalTest {
     public static final String TRAINING_DATA_3_FILE_NAME = "training_set3.csv";
 
     public static final long SEED = 234252345;
+    private static final double DELTA = 0.001;
 
     private List<Path> gold_standard_files;
     List<Double> training_ratios;
@@ -90,6 +95,33 @@ public class ClassificationProcessInternalTest {
 
         assertEquals(totalGoldStandardRecordsSize(), training_records_size + evaluation_records_size);
         assertEquals(totalEvaluationRecordsSize(), evaluation_records_size);
+
+        for (int i = 0; i < gold_standard_files.size(); i++) {
+
+            Path path = gold_standard_files.get(i);
+            Double ratio = training_ratios.get(i);
+
+            assertEquals(ratio, proportionOfRecordsInBucket(path, context.getTrainingRecords()), DELTA);
+            double actual = proportionOfRecordsInBucket(path, context.getEvaluationRecords());
+            assertEquals(1.0 - ratio, actual, DELTA);
+        }
+    }
+
+    private double proportionOfRecordsInBucket(Path gold_standard_path, Bucket bucket) throws IOException {
+
+        double number_of_records = 0.0;
+        double number_of_records_in_training_bucket = 0.0;
+
+        try (BufferedReader reader = Files.newBufferedReader(gold_standard_path, FileManipulation.FILE_CHARSET)) {
+
+            for (Record r : new Bucket(reader, ',')) {
+
+                number_of_records++;
+                if (bucket.containsData(r.getData())) number_of_records_in_training_bucket++;
+            }
+        }
+
+        return number_of_records_in_training_bucket / number_of_records;
     }
 
     private int totalGoldStandardRecordsSize() throws IOException {

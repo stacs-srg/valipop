@@ -19,13 +19,15 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.function.Function;
 
 /**
- * Cleans a {@link Bucket bucket}.
+ * Cleans a list of {@link Bucket bucket}s.
+ * This operates on a list because some cleaning may need to consider multiple buckets, e.g. correcting all
+ * training and evaluation records to use consistent classification.
  *
  * @author Graham Kirby
  */
-public interface Cleaner extends Function<Bucket, Bucket>, Serializable {
-
+public interface Cleaner extends Function<List<Bucket>, List<Bucket>>, Serializable {
 }

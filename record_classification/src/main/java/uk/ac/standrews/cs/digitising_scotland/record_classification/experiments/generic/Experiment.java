@@ -83,10 +83,10 @@ public abstract class Experiment implements Callable<Void> {
     private int repetitions = DEFAULT_REPETITIONS;
 
     @Parameter(names = {"-g", "--goldStandard"}, description = DESCRIPTION_GOLD_STANDARD, listConverter = PathConverter.class)
-    private List<Path> gold_standard_files = Arrays.asList(Paths.get(DEFAULT_GOLD_STANDARD_PATH));
+    private List<Path> gold_standard_files = Collections.singletonList(Paths.get(DEFAULT_GOLD_STANDARD_PATH));
 
     @Parameter(names = {"-t", "--trainingRecordRatio"}, description = DESCRIPTION_RATIO)
-    private List<Double> training_ratios = Arrays.asList(DEFAULT_TRAINING_RATIO);
+    private List<Double> training_ratios = Collections.singletonList(DEFAULT_TRAINING_RATIO);
 
     @Parameter(names = {"-d", "--delimiter"}, description = DESCRIPTION_DELIMITER)
     private char delimiter = '|';

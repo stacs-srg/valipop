@@ -47,13 +47,13 @@ public class EndToEndCommon {
     SerializationFormat serialization_format;
     String process_name;
     ClassifierSupplier classifier_supplier;
-    double training_ratio;
     List<CleanerSupplier> cleaners;
     boolean use_cli;
     boolean include_ensemble_detail;
 
     Path temp_process_directory;
     List<Path> input_gold_standard_files;
+    List<Double> training_ratios;
     Path output_trained_model_file;
 
     Path input_unseen_data_file;
@@ -63,7 +63,6 @@ public class EndToEndCommon {
     public void setup() throws IOException {
 
         process_name = Command.PROCESS_NAME;
-        training_ratio = 1.0;
 
         cleaners = Arrays.asList(CleanerSupplier.COMBINED);
 
@@ -89,7 +88,7 @@ public class EndToEndCommon {
 
     protected void initLoadTrain() throws Exception {
 
-        InitLoadCleanTrainCommand.initLoadCleanTrain(classifier_supplier, input_gold_standard_files, gold_standard_charset_suppliers, gold_standard_delimiters, training_ratio, serialization_format, process_name, temp_process_directory, cleaners, use_cli);
+        InitLoadCleanTrainCommand.initLoadCleanTrain(classifier_supplier, input_gold_standard_files, gold_standard_charset_suppliers, gold_standard_delimiters, training_ratios, serialization_format, process_name, temp_process_directory, cleaners, use_cli);
     }
 
     protected Path loadCleanClassify() throws Exception {

@@ -20,7 +20,6 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.Cla
 import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.ConfusionMatrix;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.Classifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
-import uk.ac.standrews.cs.util.tools.InfoLevel;
 
 import java.io.Serializable;
 import java.time.Duration;
@@ -35,11 +34,9 @@ import java.util.Random;
 public class ClassificationContext implements Serializable {
 
     private static final long serialVersionUID = -6389479358148790573L;
-    private static final InfoLevel DEFAULT_VERBOSITY = InfoLevel.SHORT_SUMMARY;
 
     private Random random;
 
-    private Bucket gold_standard_records;
     private Bucket training_records;
     private Bucket evaluation_records;
     private Bucket unseen_records;
@@ -67,28 +64,21 @@ public class ClassificationContext implements Serializable {
         this.classifier = classifier;
         this.random = random;
 
-        clearGoldStandardRecords();
         clearTrainingRecords();
         clearEvaluationRecords();
         clearUnseenRecords();
         clearClassifiedUnseenRecords();
     }
 
-    public void clearGoldStandardRecords() {
-
-        // Allow multiple data sets with potentially clashing ids to be added to gold standard.
-        gold_standard_records = new Bucket(true);
-    }
-
     public void clearTrainingRecords() {
 
-        // Allow multiple data sets with potentially clashing ids to be added to training records.
+        // Do allow multiple data sets with potentially clashing ids to be added to training records.
         training_records = new Bucket(true);
     }
 
     public void clearEvaluationRecords() {
 
-        // Allow multiple data sets with potentially clashing ids to be added to evaluation records.
+        // Do allow multiple data sets with potentially clashing ids to be added to evaluation records.
         evaluation_records = new Bucket(true);
     }
 
@@ -112,21 +102,6 @@ public class ClassificationContext implements Serializable {
         return random;
     }
 
-    public Bucket getGoldStandardRecords() {
-
-        return gold_standard_records;
-    }
-
-    /**
-     * Adds the given records to the bucket of records that are used to train the classifier of this context.
-     *
-     * @param gold_standard_records the records to be added
-     */
-    public void setGoldStandardRecords(Bucket gold_standard_records) {
-
-        this.gold_standard_records = gold_standard_records;
-    }
-
     /**
      * Gets the records that are used to train the classifier of this context.
      *
@@ -135,6 +110,16 @@ public class ClassificationContext implements Serializable {
     public Bucket getTrainingRecords() {
 
         return training_records;
+    }
+
+    public void setTrainingRecords(Bucket training_records) {
+
+        this.training_records = training_records;
+    }
+
+    public void setEvaluationRecords(Bucket evaluation_records) {
+
+        this.evaluation_records = evaluation_records;
     }
 
     /**
@@ -159,7 +144,7 @@ public class ClassificationContext implements Serializable {
 
     /**
      * Adds the given records to the bucket for evaluating the classifier.
-     * Duplicates are discarded, and existing classifications stripped.
+     * Duplicates are discarded.
      *
      * @param evaluation_records the records to be added
      */
@@ -168,9 +153,8 @@ public class ClassificationContext implements Serializable {
         number_of_evaluation_records_including_duplicates = evaluation_records.size();
 
         final Bucket unique_evaluation_records = evaluation_records.makeUniqueDataRecords();
-        final Bucket stripped_unique_evaluation_records = unique_evaluation_records.makeStrippedRecords();
 
-        stripped_unique_evaluation_records.forEach(this.evaluation_records::add);
+        unique_evaluation_records.forEach(this.evaluation_records::add);
     }
 
     /**
@@ -302,16 +286,6 @@ public class ClassificationContext implements Serializable {
 
         this.classification_time = evaluation_classification_time;
     }
-
-//    public InfoLevel getVerbosity() {
-//
-//        return verbosity;
-//    }
-//
-//    public void setVerbosity(InfoLevel verbosity) {
-//
-//        this.verbosity = verbosity;
-//    }
 
     public int getNumberOfEvaluationRecordsIncludingDuplicates() {
 

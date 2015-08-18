@@ -21,6 +21,9 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassificationContext;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.Step;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class CleanDataStep implements Step {
 
     private final Cleaner cleaner;
@@ -33,7 +36,7 @@ public class CleanDataStep implements Step {
     @Override
     public void perform(ClassificationContext context) {
 
-        final Bucket cleaned_records = cleaner.apply(context.getUnseenRecords());
-        context.setUnseenRecords(cleaned_records);
+        final List<Bucket> cleaned_buckets = cleaner.apply(Arrays.asList(context.getUnseenRecords()));
+        context.setUnseenRecords(cleaned_buckets.get(0));
     }
 }

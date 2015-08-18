@@ -22,9 +22,9 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.Abs
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Record;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import java.util.Arrays;
+
+import static org.junit.Assert.*;
 
 public class ConsistentClassificationTest extends AbstractMetricsTest {
 
@@ -44,7 +44,7 @@ public class ConsistentClassificationTest extends AbstractMetricsTest {
     @Test
     public void removalCleanerWithConsistentBucket() {
 
-        Bucket cleaned_bucket = ConsistentClassificationCleaner.REMOVE.apply(consistent_bucket);
+        Bucket cleaned_bucket = ConsistentClassificationCleaner.REMOVE.apply(Arrays.asList(consistent_bucket)).get(0);
 
         // The result should be the same as the input bucket.
 
@@ -57,7 +57,7 @@ public class ConsistentClassificationTest extends AbstractMetricsTest {
         // There are two records containing 'haddock', one classified as 'fish' and
         // one as 'mammal', and one record containing 'osprey'.
 
-        Bucket cleaned_bucket = ConsistentClassificationCleaner.REMOVE.apply(inconsistent_bucket);
+        Bucket cleaned_bucket = ConsistentClassificationCleaner.REMOVE.apply(Arrays.asList(inconsistent_bucket)).get(0);
 
         // The result should be that the two 'haddock' records are removed, and the
         // 'osprey' record remains.
@@ -69,7 +69,7 @@ public class ConsistentClassificationTest extends AbstractMetricsTest {
     @Test
     public void consistentCleanerWithConsistentBucket() {
 
-        Bucket cleaned_bucket = ConsistentClassificationCleaner.CORRECT.apply(consistent_bucket);
+        Bucket cleaned_bucket = ConsistentClassificationCleaner.CORRECT.apply(Arrays.asList(consistent_bucket)).get(0);
 
         // The result should be the same as the input bucket.
 
@@ -84,7 +84,7 @@ public class ConsistentClassificationTest extends AbstractMetricsTest {
         // There are now three records for 'haddock', one classified as 'fish' and two
         // as 'mammal'.
 
-        Bucket cleaned = ConsistentClassificationCleaner.CORRECT.apply(inconsistent_bucket);
+        Bucket cleaned = ConsistentClassificationCleaner.CORRECT.apply(Arrays.asList(inconsistent_bucket)).get(0);
 
         // The number of records should remain the same.
 
@@ -104,7 +104,7 @@ public class ConsistentClassificationTest extends AbstractMetricsTest {
     @Test
     public void checker() throws Exception {
 
-        assertTrue(new ConsistentCodingChecker().test(consistent_bucket));
-        assertFalse(new ConsistentCodingChecker().test(inconsistent_bucket));
+        assertTrue(new ConsistentCodingChecker().test(Arrays.asList(consistent_bucket)));
+        assertFalse(new ConsistentCodingChecker().test(Arrays.asList(inconsistent_bucket)));
     }
 }

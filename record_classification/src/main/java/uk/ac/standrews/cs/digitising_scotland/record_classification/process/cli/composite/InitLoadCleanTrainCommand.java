@@ -76,8 +76,8 @@ public class InitLoadCleanTrainCommand extends Command {
     @Parameter(required = true, names = {LoadGoldStandardCommand.GOLD_STANDARD_FLAG_SHORT, LoadGoldStandardCommand.GOLD_STANDARD_FLAG_LONG}, description = LoadGoldStandardCommand.GOLD_STANDARD_DESCRIPTION, converter = PathConverter.class)
     private List<Path> gold_standards;
 
-    @Parameter(required = true, names = {TrainCommand.TRAINING_RATIO_FLAG_SHORT, TrainCommand.TRAINING_RATIO_FLAG_LONG}, description = TrainCommand.TRAINING_RATIO_DESCRIPTION)
-    private Double training_ratio;
+    @Parameter(required = true, names = {LoadGoldStandardCommand.TRAINING_RATIO_FLAG_SHORT, LoadGoldStandardCommand.TRAINING_RATIO_FLAG_LONG}, description = LoadGoldStandardCommand.TRAINING_RATIO_DESCRIPTION)
+    private List<Double> training_ratios;
 
     @Parameter(required = true, names = {CleanGoldStandardCommand.CLEAN_FLAG_SHORT, CleanGoldStandardCommand.CLEAN_FLAG_LONG}, description = CleanGoldStandardCommand.CLEAN_DESCRIPTION)
     private List<CleanerSupplier> cleaners;
@@ -85,37 +85,37 @@ public class InitLoadCleanTrainCommand extends Command {
     @Override
     public Void call() throws Exception {
 
-        initLoadCleanTrainUsingAPI(classifier_supplier, gold_standards, charsets, delimiters, training_ratio, serialization_format, name, process_directory, cleaners);
+        initLoadCleanTrainUsingAPI(classifier_supplier, gold_standards, charsets, delimiters, training_ratios, serialization_format, name, process_directory, cleaners);
 
         return null;
     }
 
-    public static void initLoadCleanTrain(ClassifierSupplier classifier_supplier, List<Path> gold_standard, List<CharsetSupplier> charsets, List<String> delimiters, Double training_ratio, SerializationFormat serialization_format, String process_name, Path process_directory, List<CleanerSupplier> cleaners, boolean use_cli) throws Exception {
+    public static void initLoadCleanTrain(ClassifierSupplier classifier_supplier, List<Path> gold_standard, List<CharsetSupplier> charsets, List<String> delimiters, List<Double> training_ratios, SerializationFormat serialization_format, String process_name, Path process_directory, List<CleanerSupplier> cleaners, boolean use_cli) throws Exception {
 
         if (use_cli) {
-            initLoadCleanTrainUsingCLI(classifier_supplier, gold_standard, charsets, delimiters, training_ratio, serialization_format, process_name, process_directory, cleaners);
+            initLoadCleanTrainUsingCLI(classifier_supplier, gold_standard, charsets, delimiters, training_ratios, serialization_format, process_name, process_directory, cleaners);
         } else {
-            initLoadCleanTrainUsingAPI(classifier_supplier, gold_standard, charsets, delimiters, training_ratio, serialization_format, process_name, process_directory, cleaners);
+            initLoadCleanTrainUsingAPI(classifier_supplier, gold_standard, charsets, delimiters, training_ratios, serialization_format, process_name, process_directory, cleaners);
         }
     }
 
-    public static void initLoadCleanTrainUsingAPI(ClassifierSupplier classifier_supplier, List<Path> gold_standards, List<CharsetSupplier> charsets, List<String> delimiters, Double training_ratio, SerializationFormat serialization_format, String process_name, Path process_directory, List<CleanerSupplier> cleaners) throws Exception {
+    public static void initLoadCleanTrainUsingAPI(ClassifierSupplier classifier_supplier, List<Path> gold_standards, List<CharsetSupplier> charsets, List<String> delimiters, List<Double> training_ratios, SerializationFormat serialization_format, String process_name, Path process_directory, List<CleanerSupplier> cleaners) throws Exception {
 
         ClassificationContext context = InitCommand.perform(classifier_supplier, process_directory, process_name);
 
-        LoadGoldStandardCommand.perform(context, gold_standards, charsets, delimiters);
+        LoadGoldStandardCommand.perform(context, gold_standards, training_ratios, charsets, delimiters);
         CleanGoldStandardCommand.perform(context, cleaners);
-        TrainCommand.perform(context, training_ratio);
+        TrainCommand.performCommand(context);
 
         Serialization.persistContext(context, process_directory, process_name, serialization_format);
     }
 
-    public static void initLoadCleanTrainUsingCLI(ClassifierSupplier classifier_supplier, List<Path> gold_standard, List<CharsetSupplier> charsets, List<String> delimiters, Double training_ratio, SerializationFormat serialization_format, String process_name, Path process_directory, List<CleanerSupplier> cleaners) throws Exception {
+    public static void initLoadCleanTrainUsingCLI(ClassifierSupplier classifier_supplier, List<Path> gold_standard, List<CharsetSupplier> charsets, List<String> delimiters, List<Double> training_ratios, SerializationFormat serialization_format, String process_name, Path process_directory, List<CleanerSupplier> cleaners) throws Exception {
 
         InitCommand.perform(serialization_format, process_name, process_directory, classifier_supplier);
-        LoadGoldStandardCommand.perform(serialization_format, process_name, process_directory, gold_standard, charsets, delimiters);
+        LoadGoldStandardCommand.perform(serialization_format, process_name, process_directory, gold_standard, training_ratios, charsets, delimiters);
         CleanGoldStandardCommand.perform(serialization_format, process_name, process_directory, cleaners);
-        TrainCommand.perform(serialization_format, process_name, process_directory, training_ratio);
+        TrainCommand.perform(serialization_format, process_name, process_directory);
     }
 
     @Override

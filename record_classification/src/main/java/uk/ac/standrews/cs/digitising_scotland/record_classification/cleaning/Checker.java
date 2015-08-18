@@ -19,13 +19,16 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.function.Predicate;
 
 /**
- * Checks a {@link Bucket bucket}.
+ * Checks a list of {@link Bucket bucket}s.
+ * This operates on a list because some checking may need to consider multiple buckets, e.g. checking that all
+ * training and evaluation records use consistent classification.
  *
  * @author Masih Hajiarab Derkani
+ * @author Graham Kirby
  */
-public interface Checker extends Predicate<Bucket>, Serializable {
-
+public interface Checker extends Predicate<List<Bucket>>, Serializable {
 }

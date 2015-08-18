@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -53,6 +54,8 @@ public class EndToEndTest extends EndToEndCommon {
         this.unseen_data_delimiter = test_info.unseen_data_delimiter;
 
         input_gold_standard_files = getGoldStandardFiles(test_info);
+        training_ratios = getTrainingRatios(test_info);
+
         input_unseen_data_file = FileManipulation.getResourcePath(EndToEndTest.class, test_info.case_name + "/" + test_info.unseen_data_file_name);
     }
 
@@ -123,7 +126,7 @@ public class EndToEndTest extends EndToEndCommon {
 
         final Bucket bucket = new Bucket(new DataSet(classified_csv_file));
 
-        assertTrue(new ConsistentCodingChecker().test(bucket));
+        assertTrue(new ConsistentCodingChecker().test(Arrays.asList(bucket)));
     }
 
     private void assertRecordContainsId(List<String> record) {
@@ -182,16 +185,18 @@ public class EndToEndTest extends EndToEndCommon {
 
         String case_name;
         List<String> gold_standard_file_names;
+        List<Double> training_ratios;
         String unseen_data_file_name;
         List<CharsetSupplier> gold_standard_charsets;
         CharsetSupplier unseen_data_charsets;
         List<String> gold_standard_delimiters;
         String unseen_data_delimiter;
 
-        public TestInfo(String case_name, List<String> gold_standard_file_name, String unseen_data_file_name, List<CharsetSupplier> gold_standard_charsets, CharsetSupplier unseen_data_charsets, List<String> gold_standard_delimiter, String unseen_data_delimiter) {
+        public TestInfo(String case_name, List<String> gold_standard_file_names, List<Double> training_ratios, String unseen_data_file_name, List<CharsetSupplier> gold_standard_charsets, CharsetSupplier unseen_data_charsets, List<String> gold_standard_delimiter, String unseen_data_delimiter) {
 
             this.case_name = case_name;
-            this.gold_standard_file_names = gold_standard_file_name;
+            this.gold_standard_file_names = gold_standard_file_names;
+            this.training_ratios = training_ratios;
             this.unseen_data_file_name = unseen_data_file_name;
             this.gold_standard_charsets = gold_standard_charsets;
             this.unseen_data_charsets = unseen_data_charsets;
@@ -229,35 +234,35 @@ public class EndToEndTest extends EndToEndCommon {
     private static TestInfo makeCase1() {
 
         return new TestInfo("case1",
-                singletonList("test_training_data.csv"), "test_evaluation_UTF8_unix.csv",
+                singletonList("test_training_data.csv"), singletonList(1.0), "test_evaluation_UTF8_unix.csv",
                 singletonList(CharsetSupplier.UTF_8), CharsetSupplier.UTF_8, singletonList(","), ",");
     }
 
     private static TestInfo makeCase2() {
 
         return new TestInfo("case2",
-                singletonList("test_training_UTF8_unix.csv"), "test_evaluation_UTF8_windows.txt",
+                singletonList("test_training_UTF8_unix.csv"), singletonList(1.0), "test_evaluation_UTF8_windows.txt",
                 singletonList(CharsetSupplier.UTF_8), CharsetSupplier.UTF_8, singletonList(","), "|");
     }
 
     private static TestInfo makeCase3() {
 
         return new TestInfo("case3",
-                asList("gold_standard1.csv", "gold_standard2.csv"), "unseen_data.csv",
+                asList("gold_standard1.csv", "gold_standard2.csv"), asList(1.0, 1.0), "unseen_data.csv",
                 asList(CharsetSupplier.UTF_8, CharsetSupplier.UTF_8), CharsetSupplier.UTF_8, asList(",", ","), ",");
     }
 
     private static TestInfo makeCase4() {
 
         return new TestInfo("case4",
-                asList("gold_standard1.csv", "gold_standard2.csv"), "unseen_data.csv",
+                asList("gold_standard1.csv", "gold_standard2.csv"), asList(1.0, 1.0), "unseen_data.csv",
                 null, null, null, null);
     }
 
     private static TestInfo makeCase5() {
 
         return new TestInfo("case5",
-                asList("test_training_ascii_unix.csv", "test_training_iso_latin1_unix.csv", "test_training_UTF16_unix.csv", "test_training_windows_windows.csv"), "test_evaluation_ascii_windows.csv",
+                asList("test_training_ascii_unix.csv", "test_training_iso_latin1_unix.csv", "test_training_UTF16_unix.csv", "test_training_windows_windows.csv"), asList(1.0, 1.0, 1.0, 1.0), "test_evaluation_ascii_windows.csv",
                 asList(CharsetSupplier.US_ASCII, CharsetSupplier.ISO_8859_1, CharsetSupplier.UTF_16, CharsetSupplier.UTF_8), CharsetSupplier.UTF_8, asList(",", ",", ",", ",", ","), ",");
     }
 
@@ -271,6 +276,11 @@ public class EndToEndTest extends EndToEndCommon {
         }
 
         return paths;
+    }
+
+    private List<Double> getTrainingRatios(TestInfo test_info) {
+
+        return test_info.training_ratios;
     }
 
     private static Collection<Object[]> allCombinations(List<ClassifierSupplier> classifier_suppliers, List<SerializationFormat> serialization_formats, List<Boolean> use_cli_options, List<Boolean> include_ensemble_detail_options, List<TestInfo> cases) {
