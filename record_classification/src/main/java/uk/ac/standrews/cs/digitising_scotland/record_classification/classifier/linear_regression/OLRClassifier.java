@@ -39,8 +39,8 @@ public class OLRClassifier extends SingleClassifier {
     private static final long serialVersionUID = -2561454096763303789L;
     private static final double STATIC_CONFIDENCE = 0.89;
 
-    private OLRCrossFold model = null;
-
+    private OLRCrossFold model;
+    private String single_code;
     private VectorFactory vector_factory;
 
     public void setModel(OLRCrossFold model) {
@@ -53,10 +53,15 @@ public class OLRClassifier extends SingleClassifier {
 
     public OLRClassifier() {
 
-        model = new OLRCrossFold();
+        clearModel();
     }
 
-    private String single_code = null;
+    public void clearModel() {
+
+        model = new OLRCrossFold();
+        vector_factory = null;
+        single_code = null;
+    }
 
     public void trainModel(final Bucket bucket) {
 
