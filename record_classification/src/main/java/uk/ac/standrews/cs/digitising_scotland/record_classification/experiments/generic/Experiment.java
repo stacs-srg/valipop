@@ -27,6 +27,8 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.Con
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.EnglishStopWordCleaner;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.StemmingCleaner;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.InputFileFormatException;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.Validators;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.commands.TrainCommand;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassificationContext;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassificationProcess;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.specific.EvaluationExperimentProcess;
@@ -76,6 +78,8 @@ public abstract class Experiment implements Callable<Void> {
     private final JCommander commander;
     private Collection<ClassificationProcess> processes;
 
+    // TODO collect all JCommander flag definitions into one class and rationalise.
+
     @Parameter(names = {"-v", "--verbosity"}, description = DESCRIPTION_VERBOSITY)
     private InfoLevel verbosity = DEFAULT_VERBOSITY;
 
@@ -87,6 +91,9 @@ public abstract class Experiment implements Callable<Void> {
 
     @Parameter(names = {"-t", "--trainingRecordRatio"}, description = DESCRIPTION_RATIO)
     private List<Double> training_ratios = Collections.singletonList(DEFAULT_TRAINING_RATIO);
+
+    @Parameter(names = {TrainCommand.INTERNAL_TRAINING_RATIO_FLAG_SHORT, TrainCommand.INTERNAL_TRAINING_RATIO_FLAG_LONG}, description = TrainCommand.INTERNAL_TRAINING_RATIO_DESCRIPTION, validateValueWith = Validators.BetweenZeroAndOne.class)
+    private double internal_training_ratio = TrainCommand.DEFAULT_INTERNAL_TRAINING_RATIO;
 
     @Parameter(names = {"-d", "--delimiter"}, description = DESCRIPTION_DELIMITER)
     private char delimiter = '|';
@@ -181,6 +188,7 @@ public abstract class Experiment implements Callable<Void> {
         process.setGoldStandardFiles(gold_standard_files);
         process.setTrainingRatios(training_ratios);
         process.setCleaners(CLEANERS);
+        process.setInternalTrainingRatio(internal_training_ratio);
 
         process.configureSteps();
 
@@ -280,6 +288,7 @@ public abstract class Experiment implements Callable<Void> {
 
     private void printExperimentInputs() {
 
+        System.out.println("internal training ratio: " + internal_training_ratio);
         System.out.println("gold standard files (training ratios): ");
         System.out.println();
 

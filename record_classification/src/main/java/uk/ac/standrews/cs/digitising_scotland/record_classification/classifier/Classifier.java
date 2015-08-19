@@ -33,7 +33,14 @@ import java.util.Random;
  */
 public abstract class Classifier implements Serializable {
 
-    public abstract void trainAndEvaluate(final Bucket bucket, final Random random);
+    /**
+     * Trains the classifier on the given gold standard records, and performs internal evaluation.
+     *
+     * @param bucket                  the training data
+     * @param internal_training_ratio the ratio of gold standard records to be used for training as opposed to internal evaluation
+     * @param random                  a random number generator to use in selecting the records to use for internal evaluation
+     */
+    public abstract void trainAndEvaluate(final Bucket bucket, final double internal_training_ratio, final Random random);
 
     /**
      * Classifies a single data item.
@@ -50,7 +57,6 @@ public abstract class Classifier implements Serializable {
      * @param bucket the data to be classified
      * @return a new bucket containing the classified data
      */
-
     public Bucket classify(final Bucket bucket) {
 
         return classify(bucket, false);

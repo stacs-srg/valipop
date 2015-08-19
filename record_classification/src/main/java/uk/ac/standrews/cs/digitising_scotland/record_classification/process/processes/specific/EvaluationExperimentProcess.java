@@ -17,6 +17,7 @@
 package uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.specific;
 
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.Cleaner;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.commands.TrainCommand;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassificationProcess;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.CleanGoldStandardStep;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.EvaluateClassifierStep;
@@ -31,6 +32,7 @@ public class EvaluationExperimentProcess extends ClassificationProcess {
     private List<Path> gold_standard_files;
     private List<Double> training_ratios;
     private List<Cleaner> cleaners;
+    private double internal_training_ratio = TrainCommand.DEFAULT_INTERNAL_TRAINING_RATIO;
 
     public EvaluationExperimentProcess setGoldStandardFiles(List<Path> gold_standard_files) {
 
@@ -50,12 +52,17 @@ public class EvaluationExperimentProcess extends ClassificationProcess {
         return this;
     }
 
+    public EvaluationExperimentProcess setInternalTrainingRatio(double internal_training_ratio) {
+
+        this.internal_training_ratio = internal_training_ratio;
+        return this;
+    }
+
     public void configureSteps() {
 
         for (int gold_standard_file_number = 0; gold_standard_file_number < gold_standard_files.size(); gold_standard_file_number++) {
 
             Path gold_standard_file = gold_standard_files.get(gold_standard_file_number);
-//            addStep(new LoadGoldStandardStep(gold_standard_file));
 
             double training_ratio = training_ratios.get(gold_standard_file_number);
             addStep(new LoadTrainingAndEvaluationRecordsByRatioStep(gold_standard_file, training_ratio));
@@ -67,7 +74,7 @@ public class EvaluationExperimentProcess extends ClassificationProcess {
             }
         }
 
-        addStep(new TrainClassifierStep());
+        addStep(new TrainClassifierStep(internal_training_ratio));
         addStep(new EvaluateClassifierStep());
     }
 }

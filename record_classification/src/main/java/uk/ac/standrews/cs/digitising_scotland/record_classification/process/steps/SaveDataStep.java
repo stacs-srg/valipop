@@ -36,7 +36,6 @@ public class SaveDataStep implements Step {
 
     private static final long serialVersionUID = 7742825393693404041L;
 
-
     private final DataSet data_set;
     private final Path destination;
 
@@ -56,9 +55,4 @@ public class SaveDataStep implements Step {
             throw new FileWriteException(e.getMessage());
         }
     }
-
-//    private static CSVFormat getDataFormat(String delimiter) {
-//
-//        return DataSet.DEFAULT_CSV_FORMAT.withDelimiter(delimiter.charAt(0));
-//    }
 }

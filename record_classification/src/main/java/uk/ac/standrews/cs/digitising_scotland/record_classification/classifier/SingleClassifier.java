@@ -34,14 +34,9 @@ public abstract class SingleClassifier extends Classifier {
 
     protected abstract Classification doClassify(String data);
 
-    /**
-     * Trains the classifier on the given gold standard records.
-     *
-     * @param bucket the training data
-     */
-    public void trainAndEvaluate(final Bucket bucket, final Random random) {
+    public final void trainAndEvaluate(final Bucket bucket, final double internal_training_ratio, final Random random) {
 
-        Bucket real_training_records = bucket.randomSubset(random, 0.8);
+        Bucket real_training_records = bucket.randomSubset(random, internal_training_ratio);
         Bucket internal_evaluation_records = bucket.difference(real_training_records);
 
         trainModel(real_training_records);
@@ -61,13 +56,6 @@ public abstract class SingleClassifier extends Classifier {
         return classification;
     }
 
-    /**
-     * Classifies a bucket of data items.
-     * If a record in the given bucket cannot be classified, its classification is set to {@link Classification#UNCLASSIFIED}.
-     *
-     * @param bucket the data to be classified
-     * @return a new bucket containing the classified data
-     */
     public Bucket classify(final Bucket bucket) {
 
         return classify(bucket, true);

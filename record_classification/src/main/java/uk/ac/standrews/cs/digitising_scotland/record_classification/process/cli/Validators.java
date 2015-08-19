@@ -16,7 +16,8 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli;
 
-import com.beust.jcommander.*;
+import com.beust.jcommander.IValueValidator;
+import com.beust.jcommander.ParameterException;
 
 /**
  * Utility class used to validate command-line parameters.
@@ -25,7 +26,11 @@ import com.beust.jcommander.*;
  */
 public final class Validators {
 
-    private Validators() { throw new UnsupportedOperationException(); }
+    public static final double DELTA = 0.001;
+
+    private Validators() {
+        throw new UnsupportedOperationException();
+    }
 
     public static class AtLeastOne implements IValueValidator<Integer> {
 
@@ -36,5 +41,22 @@ public final class Validators {
                 throw new ParameterException("The value  of parameter " + name + " must be at least 1");
             }
         }
+    }
+
+    public static class BetweenZeroAndOne implements IValueValidator<Double> {
+
+        @Override
+        public void validate(final String name, final Double value) throws ParameterException {
+
+            if (!betweenZeroAndOne(value)) {
+                throw new ParameterException("The value  of parameter " + name + " must be between 0.0 and 1.0 inclusive");
+            }
+        }
+    }
+
+    public static boolean betweenZeroAndOne(double value) {
+
+        // Use DELTA to avoid rounding-error-prone exact comparison of doubles.
+        return value > -DELTA && value < 1.0 + DELTA;
     }
 }
