@@ -45,13 +45,19 @@ public class StringSimilarityClassifier extends SingleClassifier {
     public StringSimilarityClassifier(SimilarityMetric similarity_metric) {
 
         this.similarity_metric = similarity_metric;
-        known_classifications = new HashMap<>();
+        clearModel();
     }
 
     /**
      * Needed for JSON deserialization.
      */
     public StringSimilarityClassifier() {
+    }
+
+    @Override
+    public void clearModel() {
+
+        known_classifications = new HashMap<>();
     }
 
     @Override

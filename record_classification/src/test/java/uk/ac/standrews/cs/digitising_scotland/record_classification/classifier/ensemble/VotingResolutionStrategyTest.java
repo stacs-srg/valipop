@@ -152,8 +152,11 @@ public class VotingResolutionStrategyTest {
             }
 
             @Override
-            public void trainModel(Bucket bucket) {
+            public void clearModel() {
+            }
 
+            @Override
+            public void trainModel(Bucket bucket) {
             }
 
             @Override

@@ -21,14 +21,16 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.Str
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.ConsistentCodingChecker;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Classification;
+import uk.ac.standrews.cs.util.tables.ConfidenceIntervals;
+import uk.ac.standrews.cs.util.tables.Means;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 public abstract class SingleClassifier extends Classifier {
 
     private Map<String, Double> confidence_map = new HashMap<>();
+
+    private static final int INTERNAL_EVALUATION_REPETITIONS = 3;
 
     public abstract void trainModel(final Bucket bucket);
 
@@ -36,9 +38,59 @@ public abstract class SingleClassifier extends Classifier {
 
     public final void trainAndEvaluate(final Bucket bucket, final double internal_training_ratio, final Random random) {
 
+        List<Map<String, Double>> confidence_maps = new ArrayList<>();
+
+        for (int i = 0; i < INTERNAL_EVALUATION_REPETITIONS; i++) {
+
+            // On the last iteration, this leaves the model trained.
+            confidence_maps.add(singleTrainAndEvaluate(bucket, internal_training_ratio, random));
+        }
+
+        confidence_map = lowerConfidenceIntervalBoundaries(confidence_maps);
+    }
+
+    private Map<String, Double> lowerConfidenceIntervalBoundaries(List<Map<String, Double>> confidence_maps) {
+
+        // NB two distinct uses of 'confidence' here...
+
+        Map<String, Double> confidence_map = new HashMap<>();
+        Set<String> all_classes = new HashSet<>();
+
+        for (Map<String, Double> map : confidence_maps) {
+            all_classes.addAll(map.keySet());
+        }
+
+        for (String class_name : all_classes) {
+
+            List<Double> confidence_values_for_class = findConfidenceValuesForClass(class_name, confidence_maps);
+            confidence_map.put(class_name, calculateLowerConfidenceIntervalBoundary(confidence_values_for_class));
+        }
+
+        return confidence_map;
+    }
+
+    private List<Double> findConfidenceValuesForClass(String class_name, List<Map<String, Double>> confidence_maps) {
+
+        List<Double> values = new ArrayList<>();
+
+        for (Map<String, Double> map : confidence_maps) {
+            values.add(map.containsKey(class_name) ? map.get(class_name) : 0.0);
+        }
+
+        return values;
+    }
+
+    private Double calculateLowerConfidenceIntervalBoundary(List<Double> values) {
+
+        return Math.max(0.0, Means.calculateMean(values) - ConfidenceIntervals.calculateConfidenceInterval(values));
+    }
+
+    private Map<String, Double> singleTrainAndEvaluate(Bucket bucket, double internal_training_ratio, Random random) {
+
         Bucket real_training_records = bucket.randomSubset(random, internal_training_ratio);
         Bucket internal_evaluation_records = bucket.difference(real_training_records);
 
+        clearModel();
         trainModel(real_training_records);
 
         final Bucket classified_records = classify(internal_evaluation_records, false);
@@ -46,7 +98,7 @@ public abstract class SingleClassifier extends Classifier {
         final StrictConfusionMatrix confusion_matrix = new StrictConfusionMatrix(classified_records, bucket, new ConsistentCodingChecker());
         final ClassificationMetrics classification_metrics = new ClassificationMetrics(confusion_matrix);
 
-        confidence_map = classification_metrics.getPerClassF1();
+        return classification_metrics.getPerClassF1();
     }
 
     public final Classification classify(String data) {
@@ -77,4 +129,6 @@ public abstract class SingleClassifier extends Classifier {
             return 0.0;
         }
     }
+
+    protected abstract void clearModel();
 }

@@ -28,9 +28,15 @@ public class ExactMatchClassifier extends SingleClassifier {
 
     private static final long serialVersionUID = 7439350806549465200L;
 
-    private final HashMap<String, Classification> known_classifications;
+    private HashMap<String, Classification> known_classifications;
 
     public ExactMatchClassifier() {
+
+        clearModel();
+    }
+
+    @Override
+    public void clearModel() {
 
         known_classifications = new HashMap<>();
     }

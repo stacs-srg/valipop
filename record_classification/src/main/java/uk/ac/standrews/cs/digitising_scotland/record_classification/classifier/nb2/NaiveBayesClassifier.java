@@ -37,6 +37,10 @@ public class NaiveBayesClassifier extends SingleClassifier {
         naive_bayes = new NaiveBayes();
     }
 
+    public void clearModel() {
+
+    }
+
     public void trainModel(final Bucket bucket)  {
 
 //        naive_bayes.buildClassifier(getInstances(bucket));
