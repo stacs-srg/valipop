@@ -20,6 +20,7 @@ import org.junit.After;
 import org.junit.Before;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.ClassifierSupplier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.CleanerSupplier;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.commands.TrainCommand;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.composite.InitLoadCleanTrainCommand;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.composite.LoadCleanClassifyCommand;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.config.Config;
@@ -48,6 +49,7 @@ public class EndToEndCommon {
     String process_name;
     ClassifierSupplier classifier_supplier;
     List<CleanerSupplier> cleaners;
+    double internal_training_ratio;
     boolean use_cli;
     boolean include_ensemble_detail;
 
@@ -65,6 +67,7 @@ public class EndToEndCommon {
         process_name = Command.PROCESS_NAME;
 
         cleaners = Arrays.asList(CleanerSupplier.COMBINED);
+        internal_training_ratio = TrainCommand.DEFAULT_INTERNAL_TRAINING_RATIO;
 
         temp_process_directory = Files.createTempDirectory(process_name + "_");
         output_trained_model_file = Serialization.getSerializedContextPath(temp_process_directory, process_name, serialization_format);
@@ -88,7 +91,7 @@ public class EndToEndCommon {
 
     protected void initLoadTrain() throws Exception {
 
-        InitLoadCleanTrainCommand.initLoadCleanTrain(classifier_supplier, input_gold_standard_files, gold_standard_charset_suppliers, gold_standard_delimiters, training_ratios, serialization_format, process_name, temp_process_directory, cleaners, use_cli);
+        InitLoadCleanTrainCommand.initLoadCleanTrain(classifier_supplier, input_gold_standard_files, gold_standard_charset_suppliers, gold_standard_delimiters, training_ratios, serialization_format, process_name, temp_process_directory, cleaners, internal_training_ratio, use_cli);
     }
 
     protected Path loadCleanClassify() throws Exception {

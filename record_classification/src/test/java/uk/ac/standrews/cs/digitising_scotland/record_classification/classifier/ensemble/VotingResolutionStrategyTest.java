@@ -142,25 +142,22 @@ public class VotingResolutionStrategyTest {
         return new SingleClassifier() {
 
             @Override
-            public void trainAndEvaluate(Bucket bucket, Random random) {
-            }
-
-            @Override
-            public void trainModel(Bucket bucket) {
-            }
-
-            @Override
-            public Classification doClassify(String data) {
-                return null;
-            }
-
-            @Override
             public String getName() {
                 return null;
             }
 
             @Override
             public String getDescription() {
+                return null;
+            }
+
+            @Override
+            public void trainModel(Bucket bucket) {
+
+            }
+
+            @Override
+            protected Classification doClassify(String data) {
                 return null;
             }
         };

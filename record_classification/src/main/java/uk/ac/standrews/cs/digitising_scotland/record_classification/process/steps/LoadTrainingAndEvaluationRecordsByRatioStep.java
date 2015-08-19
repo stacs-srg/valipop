@@ -17,6 +17,7 @@
 package uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps;
 
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.Validators;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassificationContext;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.Step;
 
@@ -37,7 +38,6 @@ public class LoadTrainingAndEvaluationRecordsByRatioStep implements Step {
     private static final long serialVersionUID = 6192497012225048336L;
     private static final double MIN_RATIO = 0.0;
     private static final double MAX_RATIO = 1.0;
-    private static final double DELTA = 0.001;
     private static final double MAX_RATIO_DELTA = 0.999;
 
     private final Path path;
@@ -78,13 +78,16 @@ public class LoadTrainingAndEvaluationRecordsByRatioStep implements Step {
             throw new RuntimeException(e);
         }
 
-        if (training_ratio < MIN_RATIO + DELTA) {
+        if (training_ratio < Validators.DELTA) {
 
             context.addEvaluationRecords(gold_standard_records);
-        } else if (training_ratio > MAX_RATIO - DELTA) {
+
+        } else if (training_ratio > 1.0 - Validators.DELTA) {
 
             context.addTrainingRecords(gold_standard_records);
+
         } else {
+
             Bucket new_training_records = gold_standard_records.randomSubset(context.getRandom(), training_ratio);
             context.addTrainingRecords(new_training_records);
 
@@ -95,7 +98,7 @@ public class LoadTrainingAndEvaluationRecordsByRatioStep implements Step {
 
     private void validateRatio(final double ratio) {
 
-        if (ratio < MIN_RATIO - DELTA || ratio > MAX_RATIO + DELTA) {
+        if (!Validators.betweenZeroAndOne(ratio)) {
             throw new IllegalArgumentException("ratio must be within inclusive range of 0.0 to 1.0");
         }
     }

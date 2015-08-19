@@ -33,6 +33,13 @@ public class TrainClassifierStep implements Step {
 
     private static final long serialVersionUID = 5825366701064269040L;
 
+    private double internal_training_ratio;
+
+    public TrainClassifierStep(double internal_training_ratio) {
+
+        this.internal_training_ratio = internal_training_ratio;
+    }
+
     @Override
     public void perform(final ClassificationContext context) {
 
@@ -40,7 +47,7 @@ public class TrainClassifierStep implements Step {
         final Bucket training_records = context.getTrainingRecords();
         final Instant start = Instant.now();
 
-        classifier.trainAndEvaluate(training_records, context.getRandom());
+        classifier.trainAndEvaluate(training_records, internal_training_ratio, context.getRandom());
 
         final Duration training_time = Duration.between(start, Instant.now());
         context.setTrainingTime(training_time);

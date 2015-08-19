@@ -65,10 +65,10 @@ public class EnsembleClassifier extends Classifier {
     }
 
     @Override
-    public void trainAndEvaluate(final Bucket bucket, final Random random) {
+    public void trainAndEvaluate(final Bucket bucket, double internal_training_ratio, final Random random) {
 
         for (SingleClassifier classifier : classifiers) {
-            classifier.trainAndEvaluate(bucket, random);
+            classifier.trainAndEvaluate(bucket, internal_training_ratio, random);
         }
 
         if (group != null) {

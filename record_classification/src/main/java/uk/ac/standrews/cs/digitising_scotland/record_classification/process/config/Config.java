@@ -16,13 +16,12 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.process.config;
 
-import uk.ac.standrews.cs.digitising_scotland.util.ProgressIndicator;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.commands.TrainCommand;
 
 public class Config {
 
     private static boolean clean_up_files_after_tests = true;
-    private static boolean include_ensemble_detail_in_classification_output = false;
-    private static ProgressIndicator progress_indicator;
+    private static double internal_training_ratio = TrainCommand.DEFAULT_INTERNAL_TRAINING_RATIO;
 
     public static boolean cleanUpFilesAfterTests() {
 
@@ -36,5 +35,15 @@ public class Config {
     public static void setCleanUpFilesAfterTests(boolean clean_up_files_after_tests) {
 
         Config.clean_up_files_after_tests = clean_up_files_after_tests;
+    }
+
+    public static double getInternalTrainingRatio() {
+
+        return internal_training_ratio;
+    }
+
+    public static void setInternalTrainingRatio(double internal_training_ratio) {
+
+        Config.internal_training_ratio = internal_training_ratio;
     }
 }
