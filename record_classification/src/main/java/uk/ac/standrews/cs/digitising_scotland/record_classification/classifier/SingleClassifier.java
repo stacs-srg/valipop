@@ -21,9 +21,6 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.Str
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.ConsistentCodingChecker;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Classification;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Record;
-import uk.ac.standrews.cs.util.tools.InfoLevel;
-import uk.ac.standrews.cs.util.tools.Logging;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -60,7 +57,7 @@ public abstract class SingleClassifier extends Classifier {
     public final Classification classify(String data) {
 
         Classification classification = doClassify(data);
-        classification.setConfidence(getConfidence(classification.getCode()));
+        setConfidence(classification, true);
         return classification;
     }
 
@@ -76,32 +73,18 @@ public abstract class SingleClassifier extends Classifier {
         return classify(bucket, true);
     }
 
-    private Bucket classify(final Bucket bucket, boolean set_confidence) {
+    protected void setConfidence(Classification classification, boolean set_confidence) {
 
-        Logging.setProgressIndicatorSteps(bucket.size());
-        Logging.output(InfoLevel.VERBOSE, "Classifying...");
-
-        final Bucket classified = new Bucket();
-
-        for (Record record : bucket) {
-
-            final String data = record.getData();
-
-            Classification classification = classify(data);
-            if (set_confidence) classification.setConfidence(getConfidence(classification.getCode()));
-            classified.add(new Record(record.getId(), data, record.getOriginalData(), classification));
-
-            Logging.progressStep();
-        }
-
-        return classified;
+        if (set_confidence) classification.setConfidence(getConfidence(classification.getCode()));
     }
 
     protected double getConfidence(String code) {
 
         if (confidence_map.containsKey(code)) {
+
             double confidence = confidence_map.get(code);
             return (Double.isNaN(confidence)) ? 0.0 : confidence;
+
         } else {
             return 0.0;
         }

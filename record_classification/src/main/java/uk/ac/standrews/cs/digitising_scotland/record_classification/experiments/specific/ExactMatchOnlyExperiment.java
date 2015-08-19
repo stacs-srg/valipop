@@ -22,7 +22,7 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.I
 import uk.ac.standrews.cs.digitising_scotland.record_classification.experiments.generic.Experiment;
 
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -39,13 +39,12 @@ public class ExactMatchOnlyExperiment extends Experiment {
 
     public static void main(String[] args) throws Exception {
 
-        final ExactMatchOnlyExperiment experiment = new ExactMatchOnlyExperiment(args);
-        experiment.call();
+        new ExactMatchOnlyExperiment(args).call();
     }
 
     @Override
     protected List<Supplier<Classifier>> getClassifierFactories() throws IOException, InputFileFormatException {
 
-        return Arrays.asList(ClassifierSupplier.EXACT_MATCH);
+        return Collections.singletonList(ClassifierSupplier.EXACT_MATCH);
     }
 }

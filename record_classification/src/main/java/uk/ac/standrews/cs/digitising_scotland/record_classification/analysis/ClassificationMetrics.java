@@ -266,10 +266,10 @@ public class ClassificationMetrics implements Serializable {
         printMetrics(InfoLevel.VERBOSE, "F1", getPerClassF1());
         output(InfoLevel.VERBOSE, "");
 
-        printMetric(InfoLevel.SHORT_SUMMARY, "macro-average precision        ", getMacroAveragePrecision());
-        printMetric(InfoLevel.SHORT_SUMMARY, "macro-average recall           ", getMacroAverageRecall());
-        printMetric(InfoLevel.SHORT_SUMMARY, "macro-average F1               ", getMacroAverageF1());
-        printMetric(InfoLevel.SHORT_SUMMARY, "micro-average precision/recall ", getMicroAveragePrecision());
+        printMetric(InfoLevel.LONG_SUMMARY, "macro-average precision        ", getMacroAveragePrecision());
+        printMetric(InfoLevel.LONG_SUMMARY, "macro-average recall           ", getMacroAverageRecall());
+        printMetric(InfoLevel.LONG_SUMMARY, "macro-average F1               ", getMacroAverageF1());
+        printMetric(InfoLevel.LONG_SUMMARY, "micro-average precision/recall ", getMicroAveragePrecision());
     }
 
     private double getMacroAverage(Map<String, Double> values) {

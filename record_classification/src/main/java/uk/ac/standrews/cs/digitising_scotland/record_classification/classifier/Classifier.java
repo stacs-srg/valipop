@@ -53,8 +53,13 @@ public abstract class Classifier implements Serializable {
 
     public Bucket classify(final Bucket bucket) {
 
+        return classify(bucket, false);
+    }
+
+    protected Bucket classify(final Bucket bucket, boolean set_confidence) {
+
         Logging.setProgressIndicatorSteps(bucket.size());
-        Logging.output(InfoLevel.SHORT_SUMMARY, "Classifying...");
+        Logging.output(InfoLevel.LONG_SUMMARY, "\nClassifying...");
 
         final Bucket classified = new Bucket();
 
@@ -62,13 +67,18 @@ public abstract class Classifier implements Serializable {
 
             final String data = record.getData();
 
-            final Classification classification = classify(data);
+            Classification classification = classify(data);
+            setConfidence(classification, set_confidence);
             classified.add(new Record(record.getId(), data, record.getOriginalData(), classification));
 
-            Logging.progressStep();
+            Logging.progressStep(InfoLevel.LONG_SUMMARY);
         }
+        Logging.output(InfoLevel.LONG_SUMMARY, "Done...\n");
 
         return classified;
+    }
+
+    protected void setConfidence(Classification classification, boolean set_confidence) {
     }
 
     public abstract String getName();

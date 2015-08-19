@@ -253,6 +253,7 @@ public abstract class Experiment implements Callable<Void> {
         final TableGenerator table_generator = new TableGenerator(getNames(results), getDataSets(results), System.out, table_caption, FIRST_COLUMN_HEADING, COLUMNS_AS_PERCENTAGES, TAB);
 
         printDateStamp();
+        printExperimentInputs();
         table_generator.printTable();
     }
 
@@ -274,6 +275,18 @@ public abstract class Experiment implements Callable<Void> {
     private void printDateStamp() {
 
         System.out.println("experiment run at: " + new Date());
+        System.out.println();
+    }
+
+    private void printExperimentInputs() {
+
+        System.out.println("gold standard files (training ratios): ");
+        System.out.println();
+
+        for (int i = 0; i < gold_standard_files.size(); i++) {
+
+            System.out.println(gold_standard_files.get(i).getFileName() + " (" + training_ratios.get(i) + ")");
+        }
     }
 
     public class ClassifierResults {
