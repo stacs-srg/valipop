@@ -54,7 +54,7 @@ public class VotingResolutionStrategy implements EnsembleClassifier.ResolutionSt
 
         for (Classification classification : candidate_classifications.values()) {
 
-            if (!classification.equals(Classification.UNCLASSIFIED)) {
+            if (!classification.isUnclassified()) {
 
                 Set<Classification> other_classifications_with_this_code = findOtherClassificationsWithThisCode(classification_sets, classification.getCode());
 

@@ -174,7 +174,7 @@ public abstract class AbstractConfusionMatrix implements ConfusionMatrix {
     private void checkGoldStandardDataIsClassified() {
 
         for (Record record : gold_standard_records) {
-            if (record.getClassification().equals(Classification.UNCLASSIFIED)) {
+            if (record.getClassification().isUnclassified()) {
                 throw new UnclassifiedGoldStandardRecordException();
             }
         }
