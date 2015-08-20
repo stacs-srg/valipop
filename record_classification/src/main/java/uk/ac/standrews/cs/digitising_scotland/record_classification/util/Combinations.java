@@ -1,7 +1,5 @@
 package uk.ac.standrews.cs.digitising_scotland.record_classification.util;
 
-import com.google.common.collect.*;
-
 import java.util.*;
 
 /**
