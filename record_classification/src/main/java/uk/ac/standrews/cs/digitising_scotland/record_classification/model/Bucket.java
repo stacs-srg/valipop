@@ -143,6 +143,21 @@ public class Bucket implements Iterable<Record>, Serializable {
         return dataset;
     }
 
+    public DataSet toDataSet2(List<String> column_labels) {
+
+        final DataSet dataset = new DataSet(column_labels);
+
+        for (Record record : records) {
+
+            final String column_0 = String.valueOf(record.getId());
+            final String column_1 = record.getOriginalData();
+            final String column_2 = record.getClassification().getCode();
+
+            dataset.addRow(column_0, column_1, column_2);
+        }
+        return dataset;
+    }
+
     @Override
     public Iterator<Record> iterator() {
 
