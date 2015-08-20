@@ -23,10 +23,13 @@ import weka.classifiers.bayes.NaiveBayes;
 import weka.core.Instance;
 import weka.core.Instances;
 import weka.core.converters.CSVLoader;
-import weka.gui.beans.AbstractDataSource;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.nio.file.Files;
+import java.util.Arrays;
 
 public class NaiveBayesClassifier extends SingleClassifier {
 
@@ -34,33 +37,53 @@ public class NaiveBayesClassifier extends SingleClassifier {
 
     public NaiveBayesClassifier() {
 
-        naive_bayes = new NaiveBayes();
+        clearModel();
     }
 
     public void clearModel() {
 
+        naive_bayes = new NaiveBayes();
     }
 
-    public void trainModel(final Bucket bucket)  {
+    public void trainModel(final Bucket bucket) {
 
-//        naive_bayes.buildClassifier(getInstances(bucket));
+        try {
+            Instances instances = getInstances(bucket);
+            naive_bayes.buildClassifier(instances);
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    private Instances getInstances(Bucket bucket) throws IOException {
+    private Instances getInstances(Bucket bucket) {
 
+        try {
+            File f = Files.createTempFile("naive_bayes_bucket", ".csv").toFile();
+            OutputStreamWriter out = new FileWriter(f);
+            bucket.toDataSet2(Arrays.asList("id", "data", "code")).print(out);
+            out.flush();
 
-        CSVLoader loader = new CSVLoader();
-        loader.setSource(new File("data.csv"));
-        return loader.getDataSet();
+            CSVLoader loader = new CSVLoader();
+            loader.setSource(f);
 
+            return loader.getDataSet();
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
-    public Classification doClassify(final String data)  {
+    public Classification doClassify(final String data) {
 
-//        double[] probabilities = naive_bayes.distributionForInstance(makeInstance(data));
-//        return getClassification(probabilities);
-        return null;
+        try {
+            double[] probabilities = naive_bayes.distributionForInstance(makeInstance(data));
+            return getClassification(probabilities);
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -80,9 +103,4 @@ public class NaiveBayesClassifier extends SingleClassifier {
     private Instance makeInstance(String data) {
         return null;
     }
-
-    class DataSource2 extends AbstractDataSource {
-
-    }
-
 }
