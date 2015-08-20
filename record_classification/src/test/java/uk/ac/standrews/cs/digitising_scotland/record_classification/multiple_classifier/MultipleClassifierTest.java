@@ -1,0 +1,59 @@
+package uk.ac.standrews.cs.digitising_scotland.record_classification.multiple_classifier;
+
+import org.junit.*;
+import org.junit.runners.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.exact_match.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
+
+import java.util.*;
+
+import static org.junit.Assert.*;
+
+/**
+ * @author masih
+ */
+public class MultipleClassifierTest {
+
+    //TODO improve multiple classification test
+    @Test
+    public void testClassify() throws Exception {
+
+        final ExactMatchClassifier core_classifier = new ExactMatchClassifier();
+        final MultipleClassifier multipleClassifier = new MultipleClassifier(core_classifier, 1);
+
+        final Bucket training_bucket = new Bucket();
+
+        final Classification sweet = new Classification("sweet", new TokenList("sweet"), 1, "sweet mother of toast");
+        final Classification savory = new Classification("savory", new TokenList("savory"), 1, "savory mother of mustard");
+        final Classification salty = new Classification("salty", new TokenList("salty"), 1, "salty mother of sea");
+
+        training_bucket.add(new Record(1, "strawberry jam", sweet));
+        training_bucket.add(new Record(2, "fig jam", sweet));
+        training_bucket.add(new Record(3, "beef steak", savory));
+        training_bucket.add(new Record(4, "pork belly", savory));
+        training_bucket.add(new Record(6, "beef", savory));
+        training_bucket.add(new Record(7, "jerky", salty));
+        training_bucket.add(new Record(8, "sea", salty));
+        training_bucket.add(new Record(9, "placid", sweet));
+        training_bucket.add(new Record(10, "fiery", savory));
+        training_bucket.add(new Record(11, "turquoise", sweet));
+
+        core_classifier.trainModel(training_bucket);
+
+        final List<Classification> sweet_savory = Arrays.asList(savory, sweet);
+        final List<Classification> sweet_salty = Arrays.asList(salty, sweet);
+        final List<Classification> all_classifications = Arrays.asList(savory, sweet, salty);
+
+        assertTrue(sweet_savory.containsAll(multipleClassifier.classify("beef jam steak fig")));
+        assertTrue(sweet_savory.containsAll(multipleClassifier.classify("belly jam pork fig")));
+        assertTrue(sweet_savory.containsAll(multipleClassifier.classify("strawberry belly jam pork fig jam")));
+        assertTrue(sweet_savory.containsAll(multipleClassifier.classify("beef strawberry steak belly jam pork fig jam")));
+        assertTrue(sweet_salty.containsAll(multipleClassifier.classify("jam jerky fig")));
+        assertTrue(sweet_salty.containsAll(multipleClassifier.classify("strawberry jerky jam")));
+        assertTrue(sweet_salty.containsAll(multipleClassifier.classify("jam strawberry fig jerky jam")));
+        assertTrue(all_classifications.containsAll(multipleClassifier.classify("beef strawberry steak belly jam pork fig jerky jam beef")));
+        assertTrue(all_classifications.containsAll(multipleClassifier.classify("pork put the fig in the jam and poured it all into the belly of the sea monster.")));
+        assertTrue(all_classifications.containsAll(multipleClassifier.classify("sea, the fluid turquoise, soul captive of its beauty; so placid; so fiery.")));
+    }
+}

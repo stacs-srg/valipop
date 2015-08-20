@@ -31,7 +31,7 @@ public class Record implements Comparable<Record>, Serializable {
     private int id;
     private String data;
     private String original_data;
-    private Classification classification;  // TODO restore support for multiple classifications
+    private Classification classification;
 
     private int hash_code;
 

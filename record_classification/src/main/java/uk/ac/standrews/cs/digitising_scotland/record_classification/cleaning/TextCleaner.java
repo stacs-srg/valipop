@@ -65,7 +65,7 @@ public interface TextCleaner extends Cleaner {
     default Classification cleanClassification(final String cleaned_data, final Classification old_classification) {
 
         final Classification cleaned_classification;
-        if (old_classification.equals(Classification.UNCLASSIFIED)) {
+        if (old_classification.isUnclassified()) {
             cleaned_classification = old_classification;
 
         } else {

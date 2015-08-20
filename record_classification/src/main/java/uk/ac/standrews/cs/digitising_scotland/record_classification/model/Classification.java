@@ -30,6 +30,7 @@ public class Classification implements Serializable {
     private String detail;
 
     public Classification() {
+
     }
 
     public Classification(final String code, final TokenList token_list, final double confidence, final String detail) {
@@ -41,14 +42,17 @@ public class Classification implements Serializable {
     }
 
     public String getCode() {
+
         return code;
     }
 
     public TokenList getTokenList() {
+
         return token_list;
     }
 
     public double getConfidence() {
+
         return confidence;
     }
 
@@ -58,6 +62,7 @@ public class Classification implements Serializable {
     }
 
     public String getDetail() {
+
         return detail;
     }
 
@@ -79,8 +84,11 @@ public class Classification implements Serializable {
 
     public Classification makeClone(double confidence, String detail) {
 
-        return equals(UNCLASSIFIED) ?
-                UNCLASSIFIED :
-                new Classification(code, new TokenList(token_list.toString()), confidence, detail);
+        return isUnclassified() ? UNCLASSIFIED : new Classification(code, new TokenList(token_list.toString()), confidence, detail);
+    }
+
+    public boolean isUnclassified() {
+
+        return equals(UNCLASSIFIED);
     }
 }
