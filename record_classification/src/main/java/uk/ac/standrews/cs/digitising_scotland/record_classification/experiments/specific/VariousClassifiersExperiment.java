@@ -44,6 +44,7 @@ public class VariousClassifiersExperiment extends Experiment {
         return Arrays.asList(
                 ClassifierSupplier.EXACT_MATCH,
                 ClassifierSupplier.OLR,
-                ClassifierSupplier.VOTING_ENSEMBLE_EXACT_OLR_SIMILARITY);
+                ClassifierSupplier.NAIVE_BAYES,
+                ClassifierSupplier.VOTING_ENSEMBLE_EXACT_ML_SIMILARITY);
     }
 }

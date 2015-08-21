@@ -47,7 +47,7 @@ public enum ClassifierSupplier implements Supplier<Classifier> {
     OLR(OLRClassifier::new),
     NAIVE_BAYES(NaiveBayesClassifier::new),
 
-    VOTING_ENSEMBLE_EXACT_OLR_SIMILARITY(ClassifierSupplier::makeVotingEnsembleClassifierWithOLRAndStringSimilarity),
+    VOTING_ENSEMBLE_EXACT_ML_SIMILARITY(ClassifierSupplier::makeVotingEnsembleClassifierWithMLAndStringSimilarity),
     VOTING_ENSEMBLE_EXACT_SIMILARITY(ClassifierSupplier::makeVotingEnsembleClassifierWithStringSimilarity);
 
     private Supplier<Classifier> supplier;
@@ -69,7 +69,7 @@ public enum ClassifierSupplier implements Supplier<Classifier> {
 
     public boolean isEnsemble() {
 
-        return this == VOTING_ENSEMBLE_EXACT_OLR_SIMILARITY || this == VOTING_ENSEMBLE_EXACT_SIMILARITY;
+        return this == VOTING_ENSEMBLE_EXACT_ML_SIMILARITY || this == VOTING_ENSEMBLE_EXACT_SIMILARITY;
     }
 
     public static Collection<Supplier<Classifier>> getStringSimilarityClassifiers() {
@@ -95,9 +95,9 @@ public enum ClassifierSupplier implements Supplier<Classifier> {
         return new StringSimilarityClassifier(StringSimilarityMetrics.LEVENSHTEIN.get());
     }
 
-    private static EnsembleVotingClassifier makeVotingEnsembleClassifierWithOLRAndStringSimilarity() {
+    private static EnsembleVotingClassifier makeVotingEnsembleClassifierWithMLAndStringSimilarity() {
 
-        return new EnsembleVotingClassifier(Arrays.asList((SingleClassifier) EXACT_MATCH.get(), (SingleClassifier) OLR.get()),
+        return new EnsembleVotingClassifier(Arrays.asList((SingleClassifier) EXACT_MATCH.get(), (SingleClassifier) OLR.get(), (SingleClassifier) NAIVE_BAYES.get()),
                 new StringSimilarityGroupWithSharedState(Arrays.asList(
                         makeDiceClassifier(),
                         makeJaccardClassifier(),
