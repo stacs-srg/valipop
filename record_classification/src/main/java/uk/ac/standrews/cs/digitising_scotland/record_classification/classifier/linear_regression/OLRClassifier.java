@@ -115,21 +115,9 @@ public class OLRClassifier extends SingleClassifier {
     }
 
     @Override
-    public String getName() {
-
-        return getClass().getSimpleName();
-    }
-
-    @Override
     public String getDescription() {
 
         return "Classifies using online logistic regression";
-    }
-
-    @Override
-    public String toString() {
-
-        return getName();
     }
 
     private ArrayList<NamedVector> getTrainingVectors(final Bucket bucket) {

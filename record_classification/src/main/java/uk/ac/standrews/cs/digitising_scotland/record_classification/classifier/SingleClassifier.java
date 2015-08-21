@@ -34,6 +34,7 @@ public abstract class SingleClassifier extends Classifier {
 
     public abstract void trainModel(final Bucket bucket);
 
+    protected abstract void clearModel();
     protected abstract Classification doClassify(String data);
 
     public final void trainAndEvaluate(final Bucket bucket, final double internal_training_ratio, final Random random) {
@@ -47,6 +48,47 @@ public abstract class SingleClassifier extends Classifier {
         }
 
         confidence_map = lowerConfidenceIntervalBoundaries(confidence_maps);
+    }
+
+    @Override
+    public String getName() {
+
+        return getClass().getSimpleName();
+    }
+
+    @Override
+    public String toString() {
+
+        return getName();
+    }
+
+    public final Classification classify(String data) {
+
+        Classification classification = doClassify(data);
+        setConfidence(classification, true);
+        return classification;
+    }
+
+    public Bucket classify(final Bucket bucket) {
+
+        return classify(bucket, true);
+    }
+
+    protected void setConfidence(Classification classification, boolean set_confidence) {
+
+        if (set_confidence) classification.setConfidence(getConfidence(classification.getCode()));
+    }
+
+    protected double getConfidence(String code) {
+
+        if (confidence_map.containsKey(code)) {
+
+            double confidence = confidence_map.get(code);
+            return (Double.isNaN(confidence)) ? 0.0 : confidence;
+
+        } else {
+            return 0.0;
+        }
     }
 
     private Map<String, Double> lowerConfidenceIntervalBoundaries(List<Map<String, Double>> confidence_maps) {
@@ -100,35 +142,4 @@ public abstract class SingleClassifier extends Classifier {
 
         return classification_metrics.getPerClassF1();
     }
-
-    public final Classification classify(String data) {
-
-        Classification classification = doClassify(data);
-        setConfidence(classification, true);
-        return classification;
-    }
-
-    public Bucket classify(final Bucket bucket) {
-
-        return classify(bucket, true);
-    }
-
-    protected void setConfidence(Classification classification, boolean set_confidence) {
-
-        if (set_confidence) classification.setConfidence(getConfidence(classification.getCode()));
-    }
-
-    protected double getConfidence(String code) {
-
-        if (confidence_map.containsKey(code)) {
-
-            double confidence = confidence_map.get(code);
-            return (Double.isNaN(confidence)) ? 0.0 : confidence;
-
-        } else {
-            return 0.0;
-        }
-    }
-
-    protected abstract void clearModel();
 }

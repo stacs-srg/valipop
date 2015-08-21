@@ -17,10 +17,15 @@
 package uk.ac.standrews.cs.digitising_scotland.record_classification.process.serialization.json;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import weka.core.Attribute;
 
-public abstract class Mixin {
+import java.util.ArrayList;
 
-    // This is used to give the same effect as adding the @JsonProperty attribute
-    // to the constructor of DenseMatrix, which can't be done as it's a 3rd party class.
-    public Mixin(@JsonProperty("values") double[][] values) {}
+public abstract class InstancesMixin {
+
+    // This is used to give the same effect as adding the @JsonIgnore attribute
+    // to methods of Instance, which can't be done as it's a 3rd party class.
+
+    public InstancesMixin(@JsonProperty("m_RelationName") String name, @JsonProperty("m_RelationName") ArrayList<Attribute> m_Attributes, int capacity) {
+    }
 }

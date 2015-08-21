@@ -216,6 +216,7 @@ public class EndToEndTest extends EndToEndCommon {
                 ClassifierSupplier.EXACT_MATCH,
                 ClassifierSupplier.STRING_SIMILARITY_JARO_WINKLER,
                 ClassifierSupplier.OLR,
+                ClassifierSupplier.NAIVE_BAYES,
                 ClassifierSupplier.VOTING_ENSEMBLE_EXACT_OLR_SIMILARITY);
 
         List<SerializationFormat> serialization_formats = asList(

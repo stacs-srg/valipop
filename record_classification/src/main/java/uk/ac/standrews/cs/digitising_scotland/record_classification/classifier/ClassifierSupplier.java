@@ -20,6 +20,7 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.c
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.ensemble.EnsembleVotingClassifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.exact_match.ExactMatchClassifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.linear_regression.OLRClassifier;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.naive_bayes.NaiveBayesClassifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.string_similarity.StringSimilarityClassifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.string_similarity.StringSimilarityMetrics;
 
@@ -44,7 +45,7 @@ public enum ClassifierSupplier implements Supplier<Classifier> {
     STRING_SIMILARITY_DICE(ClassifierSupplier::makeDiceClassifier),
 
     OLR(OLRClassifier::new),
-//    NAIVE_BAYES(NaiveBayesClassifier::new),
+    NAIVE_BAYES(NaiveBayesClassifier::new),
 
     VOTING_ENSEMBLE_EXACT_OLR_SIMILARITY(ClassifierSupplier::makeVotingEnsembleClassifierWithOLRAndStringSimilarity),
     VOTING_ENSEMBLE_EXACT_SIMILARITY(ClassifierSupplier::makeVotingEnsembleClassifierWithStringSimilarity);

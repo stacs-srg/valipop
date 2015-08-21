@@ -66,6 +66,7 @@ public class Bucket implements Iterable<Record>, Serializable {
 
         this();
 
+        boolean first = true;
         for (List<String> record : data_set.getRecords()) {
 
             try {
@@ -78,7 +79,11 @@ public class Bucket implements Iterable<Record>, Serializable {
             } catch (InputFileFormatException e) {
 
                 // If this is the first row, assume it's a header row and ignore exception.
-                if (records.size() > 0) throw e;
+                if (!first) {
+                    throw e;
+                }
+            } finally {
+                first = false;
             }
         }
     }
