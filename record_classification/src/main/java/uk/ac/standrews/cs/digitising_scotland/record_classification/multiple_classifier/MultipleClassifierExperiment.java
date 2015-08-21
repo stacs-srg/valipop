@@ -26,18 +26,28 @@ import uk.ac.standrews.cs.util.dataset.*;
 import java.io.*;
 import java.nio.charset.*;
 import java.nio.file.*;
+import java.time.*;
 import java.util.*;
-import java.util.stream.*;
+import java.util.function.*;
+import java.util.logging.*;
+import java.util.logging.Formatter;
 
 /**
- * T
- * 
  * @author Masih Hajiarab Derkani
  */
 public class MultipleClassifierExperiment implements Runnable {
 
-    private static final TextCleaner DEFAULT_CLEANER = new EnglishStopWordCleaner().andThen(new PunctuationCleaner()).andThen(new LowerCaseCleaner());
+    private static final Logger LOGGER = Logger.getLogger(MultipleClassifierExperiment.class.getName());
+
+    static {
+        final ConsoleHandler handler = new ConsoleHandler();
+        handler.setFormatter(new ExperimentLogFormatter());
+        LOGGER.addHandler(handler);
+        LOGGER.setUseParentHandlers(false);
+    }
+
     private static final long DEFAULT_RANDOM_SEED = 1413;
+    private static final Charset DEFAULT_DESTINATION_CHARSET = StandardCharsets.UTF_8;
     private static final int ID_COLUMN_INDEX = 0;
     private static final int DATA_COLUMN_INDEX = 1;
 
@@ -49,20 +59,20 @@ public class MultipleClassifierExperiment implements Runnable {
     private final JCommander commander;
     private final Classifier core_classifier;
 
-    @Parameter(names = "-t", description = "The Dataset to be used for traning the core classifier", required = true, converter = FileConverter.class)
+    @Parameter(names = "-t", description = "The data set to be used for training the core classifier", required = true, converter = FileConverter.class)
     private File training_file;
 
-    @Parameter(names = "-e", description = "The Dataset containing the ground truth about multiple classifications", required = true, converter = FileConverter.class)
+    @Parameter(names = "-g", description = "The data set containing the ground truth about multiple classifications", required = true, converter = FileConverter.class)
     private File gold_standard_file;
 
     @Parameter(names = "-c", description = "The core classifier to use as part of multiple classification", required = true)
     private ClassifierSupplier core_classifier_supplier;
 
-    @Parameter(names = "-t", description = "The classification confidence threshold", required = true)
+    @Parameter(names = "-tr", description = "The classification confidence threshold", required = true)
     private double classification_confidence_threshold;
 
-    @Parameter(names = "-p", description = "The cleaner to use for cleaning data prior to classification")
-    private TextCleaner text_cleaner = DEFAULT_CLEANER;
+    @Parameter(names = "-p", description = "The cleaner to use for cleaning data prior to classification", required = true)
+    private TextCleanerSupplier text_cleaner_supplier;
 
     @Parameter(names = "-s", description = "Random seed")
     private long random_seed = DEFAULT_RANDOM_SEED;
@@ -80,7 +90,7 @@ public class MultipleClassifierExperiment implements Runnable {
         gold_standard = new DataSet(gold_standard_file.toPath());
         result = new DataSet(gold_standard.getColumnLabels());
         core_classifier = core_classifier_supplier.get();
-        multiple_classifier = new MultipleClassifier(core_classifier, classification_confidence_threshold, text_cleaner);
+        multiple_classifier = new MultipleClassifier(core_classifier, classification_confidence_threshold, text_cleaner_supplier.get());
     }
 
     public static void main(String... args) throws IOException {
@@ -92,26 +102,40 @@ public class MultipleClassifierExperiment implements Runnable {
     @Override
     public void run() {
 
+        logParameters();
         trainCoreClassifier();
         classify();
-        persistClassificationResult();
+        persistClassificationResults();
 
         // generate confusion matrix using gold_standard and result datasets
         // print confusion matrix analysis
     }
 
-    private void persistClassificationResult() {
+    private void logParameters() {
 
-        try (final BufferedWriter out = Files.newBufferedWriter(destination.toPath(), StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)) {
+        LOGGER.info(String.format("Core classifier: %s", core_classifier.getName()));
+        LOGGER.info(String.format("Classification confidenece threshold: %f", classification_confidence_threshold));
+        LOGGER.info(String.format("Pre-classification data cleaner: %s", String.valueOf(text_cleaner_supplier)));
+        LOGGER.info(String.format("Training dataset: %s", String.valueOf(training_file)));
+        LOGGER.info(String.format("Gold standard dataset: %s", String.valueOf(gold_standard_file)));
+    }
+
+    private void persistClassificationResults() {
+
+        LOGGER.info(String.format("Persisting classified records at %s", String.valueOf(destination)));
+        try (final BufferedWriter out = Files.newBufferedWriter(destination.toPath(), DEFAULT_DESTINATION_CHARSET, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)) {
             result.print(out);
+            LOGGER.info("Done persisting classified records.");
         }
         catch (IOException e) {
-            throw new RuntimeException("unable to persist classification result", e);
+            throw new RuntimeException("unable to persist classification results", e);
         }
     }
 
     private void classify() {
 
+        LOGGER.info(String.format("Classifying %d records...", gold_standard.getRecords().size()));
+        final Instant start = Instant.now();
         for (List<String> cells : gold_standard.getRecords()) {
 
             final String id = cells.get(ID_COLUMN_INDEX);
@@ -120,18 +144,55 @@ public class MultipleClassifierExperiment implements Runnable {
             final List<String> result_row = toDataSetRow(id, data, classifications);
             result.addRow(result_row);
         }
+        LOGGER.info("Done classifying records in " + Duration.between(start, Instant.now()));
     }
 
     private List<String> toDataSetRow(final String id, final String data, final List<Classification> classifications) {
 
-        final List<String> classification_codes = classifications.stream().map(Classification::getCode).collect(Collectors.toList());
-
-        List<String> result_row = new ArrayList<>();
-        result_row.add(id);
-        result_row.add(data);
-        result_row.addAll(classification_codes);
-        return result_row;
+        final List<String> row = new ArrayList<>();
+        row.add(id);
+        row.add(data);
+        classifications.stream().map(Classification::getCode).forEach(row::add);
+        return row;
     }
 
-    private void trainCoreClassifier() {core_classifier.trainAndEvaluate(new Bucket(training), 1.0, random);}
+    private void trainCoreClassifier() {
+
+        LOGGER.info(String.format("Training core classifier with %d records...", training.getRecords().size()));
+        final Instant start = Instant.now();
+        core_classifier.trainAndEvaluate(new Bucket(training), 1.0, random);
+        LOGGER.info("Done training core classifier in " + Duration.between(start, Instant.now()));
+    }
+
+    private static class ExperimentLogFormatter extends Formatter {
+
+        @Override
+        public String format(final LogRecord record) {
+
+            return String.format("%s %s: %s%n", Instant.ofEpochMilli(record.getMillis()).toString(), record.getLevel(), record.getMessage());
+        }
+    }
+}
+
+enum TextCleanerSupplier implements Supplier<TextCleaner> {
+
+    STOP_WORD(EnglishStopWordCleaner::new),
+    PUNCTUATION(PunctuationCleaner::new),
+    LOWER_CASE(LowerCaseCleaner::new),
+    STEMMING(StemmingCleaner::new),
+    ALL_BUT_STEMMING(() -> new EnglishStopWordCleaner().andThen(new PunctuationCleaner()).andThen(new LowerCaseCleaner())),
+    ALL(() -> new EnglishStopWordCleaner().andThen(new PunctuationCleaner()).andThen(new LowerCaseCleaner()).andThen(new StemmingCleaner()));
+
+    private final Supplier<TextCleaner> supplier;
+
+    TextCleanerSupplier(final Supplier<TextCleaner> supplier) {
+
+        this.supplier = supplier;
+    }
+
+    @Override
+    public TextCleaner get() {
+
+        return supplier.get();
+    }
 }
