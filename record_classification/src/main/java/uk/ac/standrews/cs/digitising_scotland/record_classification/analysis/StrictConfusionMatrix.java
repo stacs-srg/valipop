@@ -26,7 +26,7 @@ import uk.ac.standrews.cs.util.dataset.DataSet;
  * @author Fraser Dunlop
  * @author Graham Kirby
  */
-public class StrictConfusionMatrix extends AbstractConfusionMatrix {
+public class StrictConfusionMatrix extends ConfusionMatrix {
 
     private static final long serialVersionUID = 1869329418086836323L;
 

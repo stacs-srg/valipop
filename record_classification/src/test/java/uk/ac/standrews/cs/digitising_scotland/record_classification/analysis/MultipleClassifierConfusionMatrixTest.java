@@ -53,17 +53,12 @@ public class MultipleClassifierConfusionMatrixTest {
 
             gold_standard_records_csv = new DataSet(reader, ',');
         }
-    }
-
-    protected void initMatrix() throws Exception {
 
         matrix = new StrictConfusionMatrix(classified_records_csv, gold_standard_records_csv, null);
     }
 
     @Test
-    public void perCodeClassificationsCountedCorrectly() throws Exception {
-
-        initMatrix();
+    public void perCodeClassificationsCountedCorrectly() {
 
         Map<String, Integer> classification_counts = matrix.getClassificationCounts();
 
@@ -80,9 +75,7 @@ public class MultipleClassifierConfusionMatrixTest {
     }
 
     @Test
-    public void truePositivesCountedCorrectly() throws Exception {
-
-        initMatrix();
+    public void truePositivesCountedCorrectly() {
 
         Map<String, Integer> true_positive_counts = matrix.getTruePositiveCounts();
 
@@ -99,9 +92,7 @@ public class MultipleClassifierConfusionMatrixTest {
     }
 
     @Test
-    public void trueNegativesCountedCorrectly() throws Exception {
-
-        initMatrix();
+    public void trueNegativesCountedCorrectly() {
 
         Map<String, Integer> true_negative_counts = matrix.getTrueNegativeCounts();
 
@@ -118,9 +109,7 @@ public class MultipleClassifierConfusionMatrixTest {
     }
 
     @Test
-    public void falsePositivesCountedCorrectly() throws Exception {
-
-        initMatrix();
+    public void falsePositivesCountedCorrectly() {
 
         Map<String, Integer> false_positive_counts = matrix.getFalsePositiveCounts();
 
@@ -139,9 +128,7 @@ public class MultipleClassifierConfusionMatrixTest {
     }
 
     @Test
-    public void falseNegativesCountedCorrectly() throws Exception {
-
-        initMatrix();
+    public void falseNegativesCountedCorrectly() {
 
         Map<String, Integer> false_negative_counts = matrix.getFalseNegativeCounts();
 
@@ -157,21 +144,19 @@ public class MultipleClassifierConfusionMatrixTest {
         assertCount(0, "predator", false_negative_counts);
     }
 
+    @Test
+    public void otherStatsCalculatedCorrectly() {
+
+        assertEquals(average(3, 1, 2, 2, 2, 2, 0), matrix.averageClassificationsPerRecord(), DELTA);
+        assertEquals(average(2, 2, 2, 2, 3, 2, 2, 1), matrix.actualAverageClassificationsPerRecord(), DELTA);
+        assertEquals(3.0 / 7.0, matrix.proportionOfRecordsWithCorrectNumberOfClassifications(), DELTA);
+    }
+
     private void assertCount(int count, String code, Map<String, Integer> counts) {
 
         if (counts.containsKey(code)) {
             assertEquals(count, (int) counts.get(code));
         }
-    }
-
-    @Test
-    public void otherStatsCalculatedCorrectly() throws Exception {
-
-        initMatrix();
-
-        assertEquals(average(3, 1, 2, 2, 2, 2, 0), matrix.averageClassificationsPerRecord(), DELTA);
-        assertEquals(average(2, 2, 2, 2, 3, 2, 2, 1), matrix.actualAverageClassificationsPerRecord(), DELTA);
-        assertEquals(3.0 / 7.0, matrix.proportionOfRecordsWithCorrectNumberOfClassifications(), DELTA);
     }
 
     private double average(double... numbers) {
@@ -183,7 +168,7 @@ public class MultipleClassifierConfusionMatrixTest {
         return sum / numbers.length;
     }
 
-    protected int getNumberOfCodesFromClassifier() {
+    private int getNumberOfCodesFromClassifier() {
 
         Set<String> codes = new HashSet<>();
 
