@@ -148,7 +148,7 @@ public class MultipleClassifierExperiment implements Runnable {
 
             final String id = cells.get(ID_COLUMN_INDEX);
             final String data = cells.get(DATA_COLUMN_INDEX);
-            final List<Classification> classifications = multiple_classifier.classify(data.split("[ ]")[0]);
+            final List<Classification> classifications = multiple_classifier.classify(data);
             final List<String> result_row = toDataSetRow(id, data, classifications);
             result.addRow(result_row);
         }
