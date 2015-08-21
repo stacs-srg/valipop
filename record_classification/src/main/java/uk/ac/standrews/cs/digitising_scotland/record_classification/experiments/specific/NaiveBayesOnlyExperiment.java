@@ -17,10 +17,12 @@
 package uk.ac.standrews.cs.digitising_scotland.record_classification.experiments.specific;
 
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.Classifier;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.ClassifierSupplier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.InputFileFormatException;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.experiments.generic.Experiment;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -39,7 +41,7 @@ public class NaiveBayesOnlyExperiment extends Experiment {
 
     @Override
     protected List<Supplier<Classifier>> getClassifierFactories() throws IOException, InputFileFormatException {
-        return null;
-//        return Collections.singletonList(ClassifierSupplier.NAIVE_BAYES);
+//        return null;
+        return Collections.singletonList(ClassifierSupplier.NAIVE_BAYES);
     }
 }

@@ -20,13 +20,18 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.apache.mahout.math.DenseMatrix;
+import weka.classifiers.bayes.NaiveBayesMultinomialText;
+import weka.core.*;
 
 import java.io.IOException;
 import java.time.Duration;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class ProcessObjectMapper extends ObjectMapper {
 
@@ -47,18 +52,20 @@ public class ProcessObjectMapper extends ObjectMapper {
         // Needed for .
         disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
 
+        enable(DeserializationFeature.USE_JAVA_ARRAY_FOR_JSON_ARRAY);
+
         // To make serialized data easier to read.
         enable(SerializationFeature.INDENT_OUTPUT);
 
         SimpleModule module = new SimpleModule();
 
-        configureForDuration(module);
-        configureForDenseMatrix(module);
+        configureSerializers(module);
+        configureMixins(module);
 
         registerModule(module);
     }
 
-    private void configureForDuration(SimpleModule module) {
+    private void configureSerializers(SimpleModule module) {
 
         module.addSerializer(Duration.class, new JsonSerializer<Duration>() {
             @Override
@@ -78,10 +85,100 @@ public class ProcessObjectMapper extends ObjectMapper {
                 }
             }
         });
+
+
+        module.addSerializer(Instances.class, new JsonSerializer<Instances>() {
+            @Override
+            public void serialize(Instances instances, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
+
+                jsonGenerator.writeStartArray();
+                for (int i = 0; i < instances.numAttributes(); i++) {
+                    Attribute attribute = instances.attribute(i);
+                    jsonGenerator.writeObject(attribute);
+                }
+                jsonGenerator.writeEndArray();
+            }
+        });
+        module.addDeserializer(Instances.class, new JsonDeserializer<Instances>() {
+            @Override
+            public Instances deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException {
+
+                ArrayList<Attribute> attributes = new ArrayList<>();
+
+                JsonToken token = jsonParser.nextToken(); // START_OBJECT
+
+                while (token.isStructStart()) {
+
+                    token = jsonParser.nextToken(); // FIELD_NAME
+                    String name = jsonParser.nextTextValue();
+
+                    token = jsonParser.nextToken(); // FIELD_NAME
+                    int type = jsonParser.nextIntValue(0);
+
+                    token = jsonParser.nextToken(); // FIELD_NAME
+                    token = jsonParser.nextToken(); // START_ARRAY
+                    String c = jsonParser.nextTextValue(); // class name
+                    token = jsonParser.nextToken(); // START_OBJECT
+                    token = jsonParser.nextToken(); // FIELD_NAME
+                    token = jsonParser.nextToken(); // START_ARRAY
+
+                    String[] values = jsonParser.readValueAs(String[].class);
+
+                    token = jsonParser.nextToken(); // END_OBJECT
+                    token = jsonParser.nextToken(); // END_ARRAY
+                    token = jsonParser.nextToken(); // FIELD_NAME
+
+                    int index = jsonParser.nextIntValue(0);
+
+                    token = jsonParser.nextToken(); // FIELD_NAME
+                    token = jsonParser.nextToken();
+                    double weight = jsonParser.readValueAs(Double.class);
+
+                    token = jsonParser.nextToken();
+                    token = jsonParser.nextToken();
+                    token = jsonParser.nextToken();
+                    token = jsonParser.nextToken();
+                    token = jsonParser.nextToken();
+                    token = jsonParser.nextToken();
+                    token = jsonParser.nextToken();
+                    token = jsonParser.nextToken();
+                    token = jsonParser.nextToken();
+                    token = jsonParser.nextToken();
+                    token = jsonParser.nextToken();
+                    token = jsonParser.nextToken();
+                    token = jsonParser.nextToken();
+                    token = jsonParser.nextToken();
+                    token = jsonParser.nextToken();
+                    token = jsonParser.nextToken();
+
+                    if (type == 1) {
+
+                        Attribute attribute = new Attribute(name, Arrays.asList(values), index);
+                        attributes.add(attribute);
+                    } else {
+
+                        Attribute attribute = new Attribute(name, (ArrayList<String>) null, index);
+                        for (String value : values) {
+                            attribute.addStringValue(value);
+                        }
+                        attributes.add(attribute);
+                    }
+                }
+
+                return new Instances("bucket", attributes, 0);
+            }
+        });
+
     }
 
-    private void configureForDenseMatrix(SimpleModule module) {
+    private void configureMixins(SimpleModule module) {
 
-        module.setMixInAnnotation(DenseMatrix.class, Mixin.class);
+        module.setMixInAnnotation(DenseMatrix.class, DenseMatrixMixin.class);
+        module.setMixInAnnotation(NaiveBayesMultinomialText.class, JsonIdentityInfoMixin.class);
+        module.setMixInAnnotation(Capabilities.class, JsonIdentityInfoMixin.class);
+        module.setMixInAnnotation(Capabilities.class, CapabilitiesMixin.class);
+        module.setMixInAnnotation(Instance.class, InstanceMixin.class);
+        module.setMixInAnnotation(Attribute.class, AttributeMixin.class);
+        module.setMixInAnnotation(NominalAttributeInfo.class, NominalAttributeInfoMixin.class);
     }
 }

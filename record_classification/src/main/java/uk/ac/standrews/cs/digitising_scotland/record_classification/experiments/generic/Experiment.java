@@ -23,9 +23,7 @@ import com.beust.jcommander.converters.PathConverter;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.ClassificationMetrics;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.Classifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.Cleaner;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.ConsistentClassificationCleaner;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.EnglishStopWordCleaner;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.StemmingCleaner;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.CleanerSupplier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.InputFileFormatException;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.Validators;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.commands.TrainCommand;
@@ -52,7 +50,7 @@ import java.util.stream.Collectors;
  */
 public abstract class Experiment implements Callable<Void> {
 
-    private static final long SEED = 32498723497239578L;
+    private static final long SEED = 3249870987977239578L;
     private static final char TAB = '\t';
     private static final String FIRST_COLUMN_HEADING = "classifier";
 
@@ -98,7 +96,7 @@ public abstract class Experiment implements Callable<Void> {
     @Parameter(names = {"-d", "--delimiter"}, description = DESCRIPTION_DELIMITER)
     private char delimiter = '|';
 
-    public static final List<Cleaner> CLEANERS = Arrays.asList(new EnglishStopWordCleaner(), new StemmingCleaner(), ConsistentClassificationCleaner.CORRECT);
+    public static final List<Cleaner> CLEANERS = Arrays.asList(CleanerSupplier.COMBINED.get());
 
     protected Experiment() throws IOException, InputFileFormatException {
 
