@@ -163,6 +163,14 @@ public class Bucket implements Iterable<Record>, Serializable {
         return dataset;
     }
 
+    public Record getFirstRecord() {
+
+        for (Record record : records) {
+            return record;
+        }
+        return null;
+    }
+
     @Override
     public Iterator<Record> iterator() {
 

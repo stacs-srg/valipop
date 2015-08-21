@@ -38,91 +38,46 @@ import java.util.Set;
 
 public class NaiveBayesClassifier extends SingleClassifier {
 
+    // With JSON serialisation, don't serialise NB object itself; its state is reconstructed from the instances.
     @JsonIgnore
     private NaiveBayesMultinomialText naive_bayes;
-    private Instances structure;
-
-    // TODO check whether necessary
-    public Instances getStructure() {
-        return structure;
-    }
-
-    public void setStructure(Instances structure) {
-        this.structure = structure;
-    }
-
-    public NaiveBayesClassifier() {
-    }
+    private Instances instances;
+    private String single_class;
 
     @Override
     public void clearModel() {
 
         naive_bayes = null;
-        structure = null;
-    }
-
-    public static void main(String[] args) {
-
-        try {
-
-            File f = new File("/Users/graham/Desktop/cambridge_short.arff");
-
-            ArffLoader loader = new ArffLoader();
-            loader.setFile(f);
-
-            Instances structure = loader.getStructure();
-            structure.setClassIndex(structure.numAttributes() - 1);
-
-
-            NaiveBayesMultinomialText naive_bayes = new NaiveBayesMultinomialText();
-            naive_bayes.buildClassifier(structure);
-            Instance current;
-            while ((current = loader.getNextInstance(structure)) != null) {
-                naive_bayes.updateClassifier(current);
-            }
-
-            Instance test_instance = new DenseInstance(2);
-            test_instance.setDataset(structure);
-            test_instance.setValue(0, "gentleman");
-            test_instance.setClassValue(naive_bayes.classifyInstance(test_instance));
-            System.out.println(test_instance.stringValue(1));
-
-            test_instance = new DenseInstance(2);
-            test_instance.setDataset(structure);
-            test_instance.setValue(0, "fish");
-            test_instance.setClassValue(naive_bayes.classifyInstance(test_instance));
-            System.out.println(test_instance.stringValue(1));
-
-            test_instance = new DenseInstance(2);
-            test_instance.setDataset(structure);
-            test_instance.setValue(0, "chemist");
-            test_instance.setClassValue(naive_bayes.classifyInstance(test_instance));
-            System.out.println(test_instance.stringValue(1));
-
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        instances = null;
+        single_class = null;
     }
 
     @Override
     public void trainModel(final Bucket bucket) {
 
-        // TODO need special case to deal with only having one class in the training set - falls over.
+        // Naive Bayes implementation doesn't work if there's only one class.
+        if (countClasses(bucket) == 1) {
 
-        try {
-            ArffLoader loader = makeArffLoader(bucket);
+            single_class = bucket.getFirstRecord().getClassification().getCode();
 
-            structure = loader.getStructure();
+        } else {
 
-            constructClassifierIfNecessary();
+            try {
+                // Get training data into form required by Weka by writing it out to an ARFF format file, and loading it in again.
+                ArffLoader loader = makeArffLoader(bucket);
 
-            Instance current;
-            while ((current = loader.getNextInstance(structure)) != null) {
-                naive_bayes.updateClassifier(current);
+                // Load the model structure.
+                instances = loader.getStructure();
+
+                // Create the classifier instance.
+                constructClassifierIfNecessary();
+
+                // Update the classifier state with the training data.
+                updateClassifier(loader);
+
+            } catch (Exception e) {
+                throw new RuntimeException(e);
             }
-
-        } catch (Exception e) {
-            throw new RuntimeException(e);
         }
     }
 
@@ -131,15 +86,18 @@ public class NaiveBayesClassifier extends SingleClassifier {
 
         if (modelIsUntrained()) return Classification.UNCLASSIFIED;
 
+        if (onlyOneClass()) return new Classification(single_class, new TokenList(data), 1.0, null);
+
         try {
 
+            // The classifier instance may not exist if this object has recently been deserialized from JSON representation.
             constructClassifierIfNecessary();
 
             // Create instance with attributes for data and class (latter to be filled in by classifier).
             Instance instance = new DenseInstance(2);
 
             // Instance needs to know about the attribute structure.
-            instance.setDataset(structure);
+            instance.setDataset(instances);
 
             // Fill in the data attribute.
             instance.setValue(0, data);
@@ -166,26 +124,31 @@ public class NaiveBayesClassifier extends SingleClassifier {
 
     private void constructClassifierIfNecessary() throws Exception {
 
-        structure.setClassIndex(structure.numAttributes() - 1);
+        instances.setClassIndex(instances.numAttributes() - 1);
 
         if (naive_bayes == null) {
+
             naive_bayes = new NaiveBayesMultinomialText();
-            naive_bayes.buildClassifier(structure);
+            naive_bayes.buildClassifier(instances);
+        }
+    }
+
+    private void updateClassifier(ArffLoader loader) throws Exception {
+
+        Instance current;
+        while ((current = loader.getNextInstance(instances)) != null) {
+            naive_bayes.updateClassifier(current);
         }
     }
 
     private ArffLoader makeArffLoader(Bucket bucket) throws IOException {
 
-        ArffLoader loader = new ArffLoader();
-        loader.setFile(makeArffFile(bucket));
-        return loader;
-    }
-
-    private File makeArffFile(Bucket bucket) throws IOException {
-
         File f = Files.createTempFile("naive_bayes_", ".arff").toFile();
+
+        ArffLoader loader = new ArffLoader();
         writeBucketToArffFile(bucket, f);
-        return f;
+        loader.setFile(f);
+        return loader;
     }
 
     private void writeBucketToArffFile(Bucket bucket, File f) throws IOException {
@@ -200,9 +163,9 @@ public class NaiveBayesClassifier extends SingleClassifier {
                 class_names.add(record.getClassification().getCode());
             }
 
-            print_stream.println("@attribute att1 string");
+            print_stream.println("@attribute data string");
 
-            print_stream.print("@attribute att2 {");
+            print_stream.print("@attribute class {");
             boolean first = true;
             for (String class_name : class_names) {
                 if (!first) {
@@ -224,8 +187,24 @@ public class NaiveBayesClassifier extends SingleClassifier {
         }
     }
 
+    private int countClasses(Bucket bucket) {
+
+        Set<String> classes = new HashSet<>();
+
+        for (Record record : bucket) {
+            classes.add(record.getClassification().getCode());
+        }
+
+        return classes.size();
+    }
+
     private boolean modelIsUntrained() {
 
-        return structure == null;
+        return instances == null && single_class == null;
+    }
+
+    private boolean onlyOneClass() {
+
+        return single_class != null;
     }
 }
