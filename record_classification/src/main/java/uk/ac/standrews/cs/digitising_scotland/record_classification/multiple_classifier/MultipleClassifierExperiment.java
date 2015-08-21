@@ -18,6 +18,7 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.multiple_cl
 
 import com.beust.jcommander.*;
 import com.beust.jcommander.converters.*;
+import org.apache.commons.lang.time.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
@@ -27,7 +28,9 @@ import java.io.*;
 import java.nio.charset.*;
 import java.nio.file.*;
 import java.time.*;
+import java.time.temporal.*;
 import java.util.*;
+import java.util.concurrent.*;
 import java.util.function.*;
 import java.util.logging.*;
 import java.util.logging.Formatter;
@@ -58,6 +61,7 @@ public class MultipleClassifierExperiment implements Runnable {
     private final DataSet gold_standard;
     private final JCommander commander;
     private final Classifier core_classifier;
+    private final TextCleaner text_cleaner;
 
     @Parameter(names = "-t", description = "The data set to be used for training the core classifier", required = true, converter = FileConverter.class)
     private File training_file;
@@ -90,7 +94,8 @@ public class MultipleClassifierExperiment implements Runnable {
         gold_standard = new DataSet(gold_standard_file.toPath());
         result = new DataSet(gold_standard.getColumnLabels());
         core_classifier = core_classifier_supplier.get();
-        multiple_classifier = new MultipleClassifier(core_classifier, classification_confidence_threshold, text_cleaner_supplier.get());
+        text_cleaner = text_cleaner_supplier.get();
+        multiple_classifier = new MultipleClassifier(core_classifier, classification_confidence_threshold, text_cleaner);
     }
 
     public static void main(String... args) throws IOException {
@@ -134,16 +139,20 @@ public class MultipleClassifierExperiment implements Runnable {
 
     private void classify() {
 
-        LOGGER.info(String.format("Classifying %d records...", gold_standard.getRecords().size()));
+        final int gold_standard_size = gold_standard.getRecords().size();
+
+        LOGGER.info(String.format("Classifying %d records...", gold_standard_size));
+
         final Instant start = Instant.now();
         for (List<String> cells : gold_standard.getRecords()) {
 
             final String id = cells.get(ID_COLUMN_INDEX);
             final String data = cells.get(DATA_COLUMN_INDEX);
-            final List<Classification> classifications = multiple_classifier.classify(data);
+            final List<Classification> classifications = multiple_classifier.classify(data.split("[ ]")[0]);
             final List<String> result_row = toDataSetRow(id, data, classifications);
             result.addRow(result_row);
         }
+
         LOGGER.info("Done classifying records in " + Duration.between(start, Instant.now()));
     }
 
@@ -158,10 +167,27 @@ public class MultipleClassifierExperiment implements Runnable {
 
     private void trainCoreClassifier() {
 
-        LOGGER.info(String.format("Training core classifier with %d records...", training.getRecords().size()));
+        final Bucket consistent_cleaned_bucket = getTrainingBucket();
+        LOGGER.info(String.format("Training core classifier with %d records...", consistent_cleaned_bucket.size()));
         final Instant start = Instant.now();
-        core_classifier.trainAndEvaluate(new Bucket(training), 1.0, random);
+        core_classifier.trainAndEvaluate(consistent_cleaned_bucket, 1.0, random);
         LOGGER.info("Done training core classifier in " + Duration.between(start, Instant.now()));
+    }
+
+    private Bucket getTrainingBucket() {
+
+        // TODO tidy up cleaning before training; horrid.
+        LOGGER.info(String.format("Cleaning %d records prior to training core classifier...", training.getRecords().size()));
+        final Instant start = Instant.now();
+
+        final Bucket training_bucket = new Bucket(training);
+        final Bucket cleaned_bucket = new Bucket();
+        training_bucket.forEach(record -> cleaned_bucket.add(text_cleaner.cleanRecord(record)));
+        final Bucket consistent_cleaned_training_bucket = ConsistentClassificationCleaner.CORRECT.apply(Collections.singletonList(cleaned_bucket)).get(0);
+
+        LOGGER.info("Done cleaning training records in " + Duration.between(start, Instant.now()));
+
+        return consistent_cleaned_training_bucket;
     }
 
     private static class ExperimentLogFormatter extends Formatter {
@@ -169,7 +195,7 @@ public class MultipleClassifierExperiment implements Runnable {
         @Override
         public String format(final LogRecord record) {
 
-            return String.format("%s %s: %s%n", Instant.ofEpochMilli(record.getMillis()).toString(), record.getLevel(), record.getMessage());
+            return String.format("%s %s: %s%n", new Date(record.getMillis()).toString(), record.getLevel(), record.getMessage());
         }
     }
 }
@@ -180,7 +206,6 @@ enum TextCleanerSupplier implements Supplier<TextCleaner> {
     PUNCTUATION(PunctuationCleaner::new),
     LOWER_CASE(LowerCaseCleaner::new),
     STEMMING(StemmingCleaner::new),
-    ALL_BUT_STEMMING(() -> new EnglishStopWordCleaner().andThen(new PunctuationCleaner()).andThen(new LowerCaseCleaner())),
     ALL(() -> new EnglishStopWordCleaner().andThen(new PunctuationCleaner()).andThen(new LowerCaseCleaner()).andThen(new StemmingCleaner()));
 
     private final Supplier<TextCleaner> supplier;
