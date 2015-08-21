@@ -153,8 +153,11 @@ public class ProcessObjectMapper extends ObjectMapper {
 
                     if (type == 1) {
 
+                        // TODO may need to check for duplicate values -
+                        // Exception: Unable to determine structure as arff (Reason: java.lang.IllegalArgumentException: A nominal attribute (att2) cannot have duplicate labels (72740).).
                         Attribute attribute = new Attribute(name, Arrays.asList(values), index);
                         attributes.add(attribute);
+
                     } else {
 
                         Attribute attribute = new Attribute(name, (ArrayList<String>) null, index);
@@ -168,7 +171,6 @@ public class ProcessObjectMapper extends ObjectMapper {
                 return new Instances("bucket", attributes, 0);
             }
         });
-
     }
 
     private void configureMixins(SimpleModule module) {

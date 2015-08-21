@@ -18,14 +18,11 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.experiments
 
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.Classifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.ClassifierSupplier;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.SingleClassifier;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.ensemble.EnsembleVotingClassifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.InputFileFormatException;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.experiments.generic.Experiment;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.config.Config;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Supplier;
@@ -46,10 +43,6 @@ public class EnsembleOnlyExperiment extends Experiment {
     @Override
     protected List<Supplier<Classifier>> getClassifierFactories() throws IOException, InputFileFormatException {
 
-        return Collections.singletonList(() -> new EnsembleVotingClassifier(
-                Arrays.asList(
-                        (SingleClassifier) ClassifierSupplier.EXACT_MATCH.get(),
-                        (SingleClassifier) ClassifierSupplier.STRING_SIMILARITY_LEVENSHTEIN.get(),
-                        (SingleClassifier) ClassifierSupplier.STRING_SIMILARITY_JARO_WINKLER.get())));
+        return Collections.singletonList(ClassifierSupplier.VOTING_ENSEMBLE_EXACT_ML_SIMILARITY);
     }
 }

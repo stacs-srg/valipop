@@ -16,8 +16,9 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.analysis;
 
-import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.Checker;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
+import uk.ac.standrews.cs.util.dataset.DataSet;
 
 /**
  * Confusion matrix using exact matching on codes.
@@ -30,6 +31,11 @@ public class StrictConfusionMatrix extends AbstractConfusionMatrix {
     private static final long serialVersionUID = 1869329418086836323L;
 
     public StrictConfusionMatrix(final Bucket classified_records, final Bucket gold_standard_records, Checker checker) {
+
+        super(classified_records, gold_standard_records, checker);
+    }
+
+    public StrictConfusionMatrix(DataSet classified_records, DataSet gold_standard_records, Checker checker) {
 
         super(classified_records, gold_standard_records, checker);
     }

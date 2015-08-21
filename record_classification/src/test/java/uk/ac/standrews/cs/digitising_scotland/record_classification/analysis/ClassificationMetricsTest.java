@@ -16,11 +16,11 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.analysis;
 
-import org.junit.*;
+import org.junit.Test;
 
-import java.util.*;
+import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class ClassificationMetricsTest extends AbstractMetricsTest {
 
@@ -71,49 +71,25 @@ public class ClassificationMetricsTest extends AbstractMetricsTest {
     @Test
     public void perClassPrecisionCalculatedCorrectly() throws Exception {
 
-        checkMetricValues(new MetricChoice() {
-                              @Override
-                              public Map<String, Double> getMetric(ClassificationMetrics metrics) {
-                                  return metrics.getPerClassPrecision();
-                              }
-                          },
-                expected_per_class_precision_values);
+        checkMetricValues(ClassificationMetrics::getPerClassPrecision, expected_per_class_precision_values);
     }
 
     @Test
     public void perClassRecallCalculatedCorrectly() throws Exception {
 
-        checkMetricValues(new MetricChoice() {
-                              @Override
-                              public Map<String, Double> getMetric(ClassificationMetrics metrics) {
-                                  return metrics.getPerClassRecall();
-                              }
-                          },
-                expected_per_class_recall_values);
+        checkMetricValues(ClassificationMetrics::getPerClassRecall, expected_per_class_recall_values);
     }
 
     @Test
     public void perClassAccuracyCalculatedCorrectly() throws Exception {
 
-        checkMetricValues(new MetricChoice() {
-                              @Override
-                              public Map<String, Double> getMetric(ClassificationMetrics metrics) {
-                                  return metrics.getPerClassAccuracy();
-                              }
-                          },
-                expected_per_class_accuracy_values);
+        checkMetricValues(ClassificationMetrics::getPerClassAccuracy, expected_per_class_accuracy_values);
     }
 
     @Test
     public void perClassF1CalculatedCorrectly() throws Exception {
 
-        checkMetricValues(new MetricChoice() {
-                              @Override
-                              public Map<String, Double> getMetric(ClassificationMetrics metrics) {
-                                  return metrics.getPerClassF1();
-                              }
-                          },
-                expected_per_class_f1_values);
+        checkMetricValues(ClassificationMetrics::getPerClassF1, expected_per_class_f1_values);
     }
 
     @Test

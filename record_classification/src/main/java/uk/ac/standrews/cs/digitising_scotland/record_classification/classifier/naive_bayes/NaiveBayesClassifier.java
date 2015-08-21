@@ -42,6 +42,7 @@ public class NaiveBayesClassifier extends SingleClassifier {
     private NaiveBayesMultinomialText naive_bayes;
     private Instances structure;
 
+    // TODO check whether necessary
     public Instances getStructure() {
         return structure;
     }
@@ -51,8 +52,6 @@ public class NaiveBayesClassifier extends SingleClassifier {
     }
 
     public NaiveBayesClassifier() {
-
-//        naive_bayes = new NaiveBayesMultinomialText();
     }
 
     @Override
@@ -115,9 +114,7 @@ public class NaiveBayesClassifier extends SingleClassifier {
 
             structure = loader.getStructure();
 
-
             constructClassifierIfNecessary();
-
 
             Instance current;
             while ((current = loader.getNextInstance(structure)) != null) {
@@ -131,7 +128,6 @@ public class NaiveBayesClassifier extends SingleClassifier {
 
     @Override
     public Classification doClassify(final String data) {
-
 
         if (modelIsUntrained()) return Classification.UNCLASSIFIED;
 
@@ -162,6 +158,12 @@ public class NaiveBayesClassifier extends SingleClassifier {
         }
     }
 
+    @Override
+    public String getDescription() {
+
+        return "Classifies using Naive Bayes";
+    }
+
     private void constructClassifierIfNecessary() throws Exception {
 
         structure.setClassIndex(structure.numAttributes() - 1);
@@ -170,12 +172,6 @@ public class NaiveBayesClassifier extends SingleClassifier {
             naive_bayes = new NaiveBayesMultinomialText();
             naive_bayes.buildClassifier(structure);
         }
-    }
-
-    @Override
-    public String getDescription() {
-
-        return "Classifies using Naive Bayes";
     }
 
     private ArffLoader makeArffLoader(Bucket bucket) throws IOException {
