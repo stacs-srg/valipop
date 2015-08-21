@@ -16,13 +16,17 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.multiple_classifier;
 
+import com.google.common.base.*;
 import org.junit.*;
 import org.junit.runners.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.exact_match.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 
 import java.util.*;
+import java.util.function.*;
+import java.util.function.Function;
 
 import static org.junit.Assert.*;
 
@@ -36,7 +40,7 @@ public class MultipleClassifierTest {
     public void testClassify() throws Exception {
 
         final ExactMatchClassifier core_classifier = new ExactMatchClassifier();
-        final MultipleClassifier multipleClassifier = new MultipleClassifier(core_classifier, 1);
+        final MultipleClassifier multipleClassifier = new MultipleClassifier(core_classifier, 1, new EnglishStopWordCleaner().andThen(new PunctuationCleaner()).andThen(new LowerCaseCleaner()));
 
         final Bucket training_bucket = new Bucket();
 
@@ -61,15 +65,22 @@ public class MultipleClassifierTest {
         final List<Classification> sweet_salty = Arrays.asList(salty, sweet);
         final List<Classification> all_classifications = Arrays.asList(savory, sweet, salty);
 
-        assertTrue(sweet_savory.containsAll(multipleClassifier.classify("beef jam steak fig")));
-        assertTrue(sweet_savory.containsAll(multipleClassifier.classify("belly jam pork fig")));
-        assertTrue(sweet_savory.containsAll(multipleClassifier.classify("strawberry belly jam pork fig jam")));
-        assertTrue(sweet_savory.containsAll(multipleClassifier.classify("beef strawberry steak belly jam pork fig jam")));
-        assertTrue(sweet_salty.containsAll(multipleClassifier.classify("jam jerky fig")));
-        assertTrue(sweet_salty.containsAll(multipleClassifier.classify("strawberry jerky jam")));
-        assertTrue(sweet_salty.containsAll(multipleClassifier.classify("jam strawberry fig jerky jam")));
-        assertTrue(all_classifications.containsAll(multipleClassifier.classify("beef strawberry steak belly jam pork fig jerky jam beef")));
-        assertTrue(all_classifications.containsAll(multipleClassifier.classify("pork put the fig in the jam and poured it all into the belly of the sea monster.")));
-        assertTrue(all_classifications.containsAll(multipleClassifier.classify("sea, the fluid turquoise, soul captive of its beauty; so placid; so fiery.")));
+        assertFullyJoint(sweet_savory, multipleClassifier.classify("beef jam steak fig"));
+        assertFullyJoint(sweet_savory, multipleClassifier.classify("belly jam pork fig"));
+        assertFullyJoint(sweet_savory, multipleClassifier.classify("strawberry belly jam pork fig jam"));
+        assertFullyJoint(sweet_savory, multipleClassifier.classify("beef strawberry steak belly jam pork fig jam"));
+        assertFullyJoint(sweet_salty, multipleClassifier.classify("jam jerky fig"));
+        assertFullyJoint(sweet_salty, multipleClassifier.classify("strawberry jerky jam"));
+        assertFullyJoint(sweet_salty, multipleClassifier.classify("jam strawberry fig jerky jam"));
+        assertFullyJoint(all_classifications, multipleClassifier.classify("beef strawberry steak jam fig jerky jam beef"));
+        assertFullyJoint(all_classifications, multipleClassifier.classify("pork the fig in the jam at the sea belly"));
+
+        //TODO Takes too long; to be added to slow running tests with additional memory for JVM
+        // assertFullyJoint(all_classifications, multipleClassifier.classify("sea, the fluid turquoise, soul captive of its beauty; so placid; so fiery."));
+    }
+
+    private <T> void assertFullyJoint(final List<T> expected, List<T> actual) {
+
+        assertTrue(expected.size() == actual.size() && expected.containsAll(actual) && actual.containsAll(expected));
     }
 }

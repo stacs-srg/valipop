@@ -17,10 +17,12 @@
 package uk.ac.standrews.cs.digitising_scotland.record_classification.multiple_classifier;
 
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.util.*;
 
 import java.util.*;
+import java.util.function.*;
 import java.util.stream.*;
 
 /**
@@ -33,10 +35,20 @@ public class MultipleClassifier {
     private static final List<Classification> UNCLASSIFIED_CLASSIFICATION_LIST = Collections.singletonList(Classification.UNCLASSIFIED);
     private static final CandidateClassificationListFitnessComparator CANDIDATE_CLASSIFICATION_LIST_FITNESS_COMPARATOR = new CandidateClassificationListFitnessComparator();
     private static final CharSequence TOKEN_JOIN_DELIMITER = " ";
+    private static final TextCleaner AS_IS = data -> data;
     private final Classifier core_classifier;
     private final double classification_confidence_threshold;
+    private final TextCleaner pre_classification_data_cleaner;
 
     public MultipleClassifier(Classifier core_classifier, double classification_confidence_threshold) {
+
+        this(core_classifier, classification_confidence_threshold, AS_IS);
+
+    }
+
+    public MultipleClassifier(Classifier core_classifier, double classification_confidence_threshold, TextCleaner pre_classification_data_cleaner) {
+
+        this.pre_classification_data_cleaner = pre_classification_data_cleaner;
 
         if (classification_confidence_threshold < 0 || classification_confidence_threshold > 1) {
             throw new IllegalArgumentException("confidence threshold must be within inclusive range of 0.0 to 1.0");
@@ -48,26 +60,23 @@ public class MultipleClassifier {
 
     public List<Classification> classify(String data) {
 
-        final List<List<String>> token_combinations = generateCombinations(new TokenList(data));
+        final String cleaned_data = cleanData(data);
+        final List<List<String>> token_combinations = Combinations.all(new TokenList(cleaned_data));
         final List<CandidateClassification> candidate_classifications = generateCandidateClassifications(token_combinations);
-        final List<List<CandidateClassification>> candidate_combinations = generateCombinations(candidate_classifications);
+        final List<List<CandidateClassification>> candidate_combinations = Combinations.powerset(candidate_classifications);
         final List<List<CandidateClassification>> valid_candidate_combinations = removeInvalidCombinations(candidate_combinations);
         final Optional<List<CandidateClassification>> fittest_combination = fittest(valid_candidate_combinations);
 
         return fittest_combination.isPresent() ? toClassificationList(fittest_combination.get()) : UNCLASSIFIED_CLASSIFICATION_LIST;
     }
 
-    private <T> List<List<T>> generateCombinations(Collection<T> input) {
-        //TODO parameterise strategy to generate combinations?
-        //        return Combinations.powerset(input);
-        return Combinations.all(input);
-    }
+    private String cleanData(final String data) {return pre_classification_data_cleaner.cleanData(data);}
 
     private List<CandidateClassification> generateCandidateClassifications(final List<List<String>> token_combinations) {
 
         final List<CandidateClassification> candidate_classifications = new ArrayList<>();
 
-        for (List<String> token_combination : token_combinations) {
+        for (final List<String> token_combination : token_combinations) {
 
             final String data_element = String.join(TOKEN_JOIN_DELIMITER, token_combination);
             final Classification classification = core_classifier.classify(data_element);
@@ -76,6 +85,7 @@ public class MultipleClassifier {
                 candidate_classifications.add(new CandidateClassification(token_combination, classification));
             }
         }
+
         return candidate_classifications;
     }
 
@@ -184,7 +194,7 @@ public class MultipleClassifier {
          *
          * @return the goodness measure of this candidate, where higher is better.
          */
-        double fitness() {
+        private double fitness() {
 
             return tokens.size() * classification.getConfidence();
         }

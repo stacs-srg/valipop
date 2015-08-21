@@ -21,8 +21,7 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Classi
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Record;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.TokenList;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Cleans a {@link Bucket bucket}.
@@ -68,7 +67,8 @@ public interface TextCleaner extends Cleaner {
         if (old_classification.isUnclassified()) {
             cleaned_classification = old_classification;
 
-        } else {
+        }
+        else {
             final String code = old_classification.getCode();
             final TokenList tokens = new TokenList(cleaned_data);
             final double confidence = old_classification.getConfidence();
@@ -77,5 +77,10 @@ public interface TextCleaner extends Cleaner {
             cleaned_classification = new Classification(code, tokens, confidence, detail);
         }
         return cleaned_classification;
+    }
+
+    default TextCleaner andThen(TextCleaner after) {
+
+        return data -> after.cleanData(cleanData(data));
     }
 }
