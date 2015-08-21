@@ -45,19 +45,4 @@ public abstract class AttributeMixin {
 
     @JsonIgnore
     public abstract String getDateFormat();
-
-//    @JsonIgnore
-//    public abstract boolean isNominal();
-//
-//    @JsonIgnore
-//    public abstract boolean isNumeric();
-//
-//    @JsonIgnore
-//    public abstract boolean isRelationValued();
-//
-//    @JsonIgnore
-//    public abstract boolean isString();
-//
-//    @JsonIgnore
-//    public abstract boolean isDate();
 }

@@ -23,6 +23,7 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.U
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Classification;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Record;
+import uk.ac.standrews.cs.util.dataset.DataSet;
 import uk.ac.standrews.cs.util.tools.Formatting;
 import uk.ac.standrews.cs.util.tools.InfoLevel;
 import uk.ac.standrews.cs.util.tools.Logging;
@@ -45,8 +46,8 @@ public abstract class AbstractConfusionMatrix implements ConfusionMatrix {
     private final Map<String, Integer> true_negative_counts;
     private final Map<String, Integer> false_negative_counts;
 
-    private final Bucket classified_records;
-    private final Bucket gold_standard_records;
+    private Bucket classified_records;
+    private Bucket gold_standard_records;
 
     /**
      * Creates a confusion matrix representing the effectiveness of a classification process.
@@ -78,6 +79,29 @@ public abstract class AbstractConfusionMatrix implements ConfusionMatrix {
         }
 
         calculateCounts();
+    }
+
+
+    /**
+     * Creates a confusion matrix representing the effectiveness of a classification process.
+     * This version considers multiple classifications.
+     *
+     * @param classified_records    the records that have been classified
+     * @param gold_standard_records the gold standard records against which the classified records should be checked
+     * @param checker               checker for consistent coding
+     * @throws InvalidCodeException                    if a code in the classified records does not appear in the gold standard records
+     * @throws UnknownDataException                    if a record in the classified records contains data that does not appear in the gold standard records
+     * @throws UnclassifiedGoldStandardRecordException if a record in the gold standard records is not classified
+     */
+    public AbstractConfusionMatrix(DataSet classified_records, DataSet gold_standard_records, Checker checker) {
+
+        classification_counts = new HashMap<>();
+        true_positive_counts = new HashMap<>();
+        true_negative_counts = new HashMap<>();
+        false_positive_counts = new HashMap<>();
+        false_negative_counts = new HashMap<>();
+
+        calculateCounts(classified_records, gold_standard_records);
     }
 
     /**
@@ -236,6 +260,23 @@ public abstract class AbstractConfusionMatrix implements ConfusionMatrix {
         updateCounts();
     }
 
+    int number_of_records;
+
+    private void calculateCounts(DataSet classified_records, DataSet gold_standard_records) {
+
+        for (List<String> record : gold_standard_records.getRecords()) {
+            initCounts(record);
+        }
+        initCounts(Classification.UNCLASSIFIED.getCode());
+
+        for (List<String> record : classified_records.getRecords()) {
+
+            updateCountsForRecord(record, gold_standard_records);
+        }
+
+        number_of_records = classified_records.getRecords().size();
+    }
+
     private void initCounts() {
 
         for (Record record : gold_standard_records) {
@@ -253,21 +294,106 @@ public abstract class AbstractConfusionMatrix implements ConfusionMatrix {
         initCount(code, false_negative_counts);
     }
 
-    private void updateCounts() throws UnknownDataException {
+    private void initCounts(List<String> record) {
 
-        for (Record record : classified_records) {
-            updateCountsForRecord(record);
+        for (int i = 2; i < record.size(); i++) {
+            String code = record.get(i);
+            if (code.length() > 0) {
+                initCounts(code);
+            }
         }
     }
 
-    private void updateCountsForRecord(Record record) throws UnknownDataException {
+    private void updateCounts() throws UnknownDataException {
 
-        Classification classification = record.getClassification();
+        for (Record record : classified_records) {
 
-        String asserted_code = classification.getCode();
-        String real_code = findGoldStandardCode(record.getData());
+            Classification classification = record.getClassification();
 
-        Logging.output(InfoLevel.VERBOSE, record.getOriginalData() + "\t" + real_code + "\t" + classification.getCode() + "\t" + Formatting.format(classification.getConfidence(), 2) + "\t" + classification.getDetail());
+            String asserted_code = classification.getCode();
+            String real_code = findGoldStandardCode(record.getData());
+
+            updateCountsForRecord(asserted_code, real_code);
+
+            Logging.output(InfoLevel.VERBOSE, record.getOriginalData() + "\t" + real_code + "\t" + classification.getCode() + "\t" + Formatting.format(classification.getConfidence(), 2) + "\t" + classification.getDetail());
+        }
+    }
+
+    private int total_number_of_classifications = 0;
+    private int total_number_of_gold_standard_classifications = 0;
+    private int total_number_of_records_with_correct_number_of_classifications = 0;
+
+    private void updateCountsForRecord(List<String> classified_record, DataSet gold_standard_records) {
+
+        List<String> classifier_codes = extractCodes(classified_record);
+        List<String> gold_standard_codes = findGoldStandardCodes(classified_record, gold_standard_records);
+
+        for (String possible_code : classification_counts.keySet()) {
+
+            if (classifier_codes.contains(possible_code)) {
+
+                incrementCount(possible_code, classification_counts);
+
+                if (gold_standard_codes.contains(possible_code)) {
+
+                    incrementCount(possible_code, true_positive_counts);
+
+                } else {
+
+                    incrementCount(possible_code, false_positive_counts);
+
+                }
+            } else {
+
+                if (gold_standard_codes.contains(possible_code)) {
+
+                    incrementCount(possible_code, false_negative_counts);
+
+                } else {
+
+                    incrementCount(possible_code, true_negative_counts);
+                }
+            }
+        }
+
+        int number_of_classifications = classifier_codes.size();
+        if (classifier_codes.contains(Classification.UNCLASSIFIED.getCode())) {
+            number_of_classifications--;
+        }
+
+        total_number_of_classifications += number_of_classifications;
+
+        total_number_of_gold_standard_classifications += gold_standard_codes.size();
+
+        if (number_of_classifications == gold_standard_codes.size()) {
+            total_number_of_records_with_correct_number_of_classifications++;
+        }
+    }
+
+    private List<String> findGoldStandardCodes(List<String> classified_record, DataSet gold_standard_records) {
+
+        String data = classified_record.get(1);
+        for (List<String> gold_standard_record : gold_standard_records.getRecords()) {
+            if (gold_standard_record.get(1).equals(data)) return extractCodes(gold_standard_record);
+        }
+        return new ArrayList<>();
+    }
+
+    private List<String> extractCodes(List<String> classified_record) {
+
+        List<String> codes = new ArrayList<>();
+        boolean found_code = false;
+        for (String code : classified_record.subList(2, classified_record.size())) {
+            if (code.length() > 0) {
+                codes.add(code);
+                found_code = true;
+            }
+        }
+        if (!found_code) codes.add(Classification.UNCLASSIFIED.getCode());
+        return codes;
+    }
+
+    private void updateCountsForRecord(String asserted_code, String real_code) throws UnknownDataException {
 
         incrementCount(asserted_code, classification_counts);
 
@@ -337,5 +463,20 @@ public abstract class AbstractConfusionMatrix implements ConfusionMatrix {
     private void incrementCount(String code, Map<String, Integer> counts) {
 
         counts.put(code, counts.get(code) + 1);
+    }
+
+    public double averageClassificationsPerRecord() {
+
+        return ((double) total_number_of_classifications) / number_of_records;
+    }
+
+    public double actualAverageClassificationsPerRecord() {
+
+        return ((double) total_number_of_gold_standard_classifications) / number_of_records;
+    }
+
+    public double proportionOfRecordsWithCorrectNumberOfClassifications() {
+
+        return ((double) total_number_of_records_with_correct_number_of_classifications) / number_of_records;
     }
 }
