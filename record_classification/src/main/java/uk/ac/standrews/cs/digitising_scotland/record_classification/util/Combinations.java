@@ -16,7 +16,10 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.util;
 
+import org.apache.commons.collections4.iterators.*;
+
 import java.util.*;
+import java.util.stream.*;
 
 /**
  * @author masih
@@ -35,11 +38,7 @@ public final class Combinations {
         List<List<T>> permutations = new ArrayList<>();
 
         if (start == input.size()) {
-            List<T> combination = new ArrayList<>();
-            for (int i = 0; i < input.size(); i++) {
-                combination.add(input.get(i));
-            }
-            permutations.add(combination);
+            permutations.add(input);
         }
         else {
             for (int i = start; i < input.size(); i++) {
@@ -80,19 +79,71 @@ public final class Combinations {
         return powerset;
     }
 
+    public static <T> Stream<List<T>> powersetStream(Collection<T> input) {
+
+        final Iterable<List<T>> lists = new PowerSet<>(input);
+        return StreamSupport.stream(lists.spliterator(), false);
+    }
+
+    public static <T> Stream<List<T>> permutationsStream(Collection<T> input) {
+
+        final PermutationIterator<T> permuatations = new PermutationIterator<>(input);
+        return toStream(permuatations);
+    }
+
     public static <T> List<List<T>> all(Collection<T> input) {
 
-        // TODO horrible code; implement properly
-        final List<List<T>> powerset = powerset(input);
-        final Set<List<T>> all = new HashSet<>(powerset);
+        return allStream(input).collect(Collectors.toList());
+    }
 
-        for (List<T> powerset_element : powerset) {
+    public static <T> Stream<List<T>> allStream(Collection<T> input) {
 
-            if (powerset_element.size() > 1) {
-                all.addAll(permutations(powerset_element));
+        final Iterator<List<T>> powerset = new PowerSet<>(input);
+
+        final Iterator<List<T>> all = new Iterator<List<T>>() {
+
+            PermutationIterator<T> permuations;
+
+            @Override
+            public boolean hasNext() {
+
+                return permuationsHasNext() || powerset.hasNext();
             }
-        }
 
-        return new ArrayList<>(all);
+            private boolean permuationsHasNext() {return permuations != null && permuations.hasNext();}
+
+            @Override
+            public List<T> next() {
+
+                final List<T> next;
+
+                if (permuationsHasNext()) {
+                    next = permuations.next();
+                }
+                else {
+
+                    final List<T> powerset_next = powerset.next();
+                    if (powerset_next.size() > 1) {
+                        permuations = new PermutationIterator<>(powerset_next);
+                        next = permuations.next();
+                    }
+                    else {
+                        next = powerset_next;
+                    }
+                }
+
+                return next;
+            }
+        };
+
+        final Iterable<List<T>> iterable = () -> all;
+        return StreamSupport.stream(iterable.spliterator(), false);
+
+    }
+
+    private static <T> Stream<T> toStream(Iterator<T> iterator) {
+
+        Iterable<T> iterable = () -> iterator;
+        return StreamSupport.stream(iterable.spliterator(), false);
     }
 }

@@ -40,7 +40,7 @@ public class MultipleClassifierTest {
     public void testClassify() throws Exception {
 
         final ExactMatchClassifier core_classifier = new ExactMatchClassifier();
-        final MultipleClassifier multipleClassifier = new MultipleClassifier(core_classifier, 1, new EnglishStopWordCleaner().andThen(new PunctuationCleaner()).andThen(new LowerCaseCleaner()));
+        final MultipleClassifier multipleClassifier = new MultipleClassifier(core_classifier, 1, new EnglishStopWordCleaner().andThen(new PunctuationCleaner()).andThen(new LowerCaseCleaner()), (one, another) -> true);
 
         final Bucket training_bucket = new Bucket();
 
