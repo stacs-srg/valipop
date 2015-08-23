@@ -18,36 +18,25 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.multiple_cl
 
 import com.beust.jcommander.*;
 import com.beust.jcommander.converters.*;
-import org.apache.commons.lang.time.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 import uk.ac.standrews.cs.util.dataset.*;
+import uk.ac.standrews.cs.util.tools.*;
+import uk.ac.standrews.cs.util.tools.InfoLevel;
 
 import java.io.*;
 import java.nio.charset.*;
 import java.nio.file.*;
 import java.time.*;
-import java.time.temporal.*;
 import java.util.*;
-import java.util.concurrent.*;
 import java.util.function.*;
-import java.util.logging.*;
-import java.util.logging.Formatter;
 
 /**
  * @author Masih Hajiarab Derkani
  */
 public class MultipleClassifierExperiment implements Runnable {
-
-    private static final Logger LOGGER = Logger.getLogger(MultipleClassifierExperiment.class.getName());
-
-    static {
-        final ConsoleHandler handler = new ConsoleHandler();
-        handler.setFormatter(new ExperimentLogFormatter());
-        LOGGER.addHandler(handler);
-        LOGGER.setUseParentHandlers(false);
-    }
 
     private static final long DEFAULT_RANDOM_SEED = 1413;
     private static final Charset DEFAULT_DESTINATION_CHARSET = StandardCharsets.UTF_8;
@@ -56,26 +45,26 @@ public class MultipleClassifierExperiment implements Runnable {
 
     private final MultipleClassifier multiple_classifier;
     private final Random random;
-    private final DataSet result;
+    private final DataSet classified_records;
     private final DataSet training;
     private final DataSet gold_standard;
     private final JCommander commander;
     private final Classifier core_classifier;
     private final TextCleaner text_cleaner;
 
-    @Parameter(names = "-t", description = "The data set to be used for training the core classifier", required = true, converter = FileConverter.class)
+    @Parameter(names = "-t", description = "The data set to be used for training the core classifier.", required = true, converter = FileConverter.class)
     private File training_file;
 
-    @Parameter(names = "-g", description = "The data set containing the ground truth about multiple classifications", required = true, converter = FileConverter.class)
+    @Parameter(names = "-g", description = "The data set containing the ground truth about multiple classifications.", required = true, converter = FileConverter.class)
     private File gold_standard_file;
 
-    @Parameter(names = "-c", description = "The core classifier to use as part of multiple classification", required = true)
+    @Parameter(names = "-c", description = "The core classifier to use as part of multiple classification.", required = true)
     private ClassifierSupplier core_classifier_supplier;
 
-    @Parameter(names = "-tr", description = "The classification confidence threshold", required = true)
+    @Parameter(names = "-tr", description = "The classification confidence threshold.", required = true)
     private double classification_confidence_threshold;
 
-    @Parameter(names = "-p", description = "The cleaner to use for cleaning data prior to classification", required = true)
+    @Parameter(names = "-p", description = "The cleaner to use for cleaning data prior to classification.", required = true)
     private TextCleanerSupplier text_cleaner_supplier;
 
     @Parameter(names = "-s", description = "Random seed")
@@ -83,6 +72,11 @@ public class MultipleClassifierExperiment implements Runnable {
 
     @Parameter(names = "-d", description = "The path to the file to store the classified data.", required = true, converter = FileConverter.class)
     private File destination;
+
+    @Parameter(names = "-v", description = "Logging verbosity.")
+    private InfoLevel info_level = InfoLevel.VERBOSE;
+
+
 
     private MultipleClassifierExperiment(String... args) throws IOException {
 
@@ -92,10 +86,11 @@ public class MultipleClassifierExperiment implements Runnable {
         random = new Random(random_seed);
         training = new DataSet(training_file.toPath());
         gold_standard = new DataSet(gold_standard_file.toPath());
-        result = new DataSet(gold_standard.getColumnLabels());
+        classified_records = new DataSet(gold_standard.getColumnLabels());
         core_classifier = core_classifier_supplier.get();
         text_cleaner = text_cleaner_supplier.get();
         multiple_classifier = new MultipleClassifier(core_classifier, classification_confidence_threshold, text_cleaner);
+        Logging.setInfoLevel(info_level);
     }
 
     public static void main(String... args) throws IOException {
@@ -111,26 +106,31 @@ public class MultipleClassifierExperiment implements Runnable {
         trainCoreClassifier();
         classify();
         persistClassificationResults();
+        logClassificationMetrics();
+    }
 
-        // generate confusion matrix using gold_standard and result datasets
-        // print confusion matrix analysis
+    private void logClassificationMetrics() {
+
+        final StrictConfusionMatrix confusion_matrix = new StrictConfusionMatrix(classified_records, gold_standard, new ConsistentCodingChecker());
+        final ClassificationMetrics classification_metrics = new ClassificationMetrics(confusion_matrix);
+        classification_metrics.printMetrics();
     }
 
     private void logParameters() {
 
-        LOGGER.info(String.format("Core classifier: %s", core_classifier.getName()));
-        LOGGER.info(String.format("Classification confidenece threshold: %f", classification_confidence_threshold));
-        LOGGER.info(String.format("Pre-classification data cleaner: %s", String.valueOf(text_cleaner_supplier)));
-        LOGGER.info(String.format("Training dataset: %s", String.valueOf(training_file)));
-        LOGGER.info(String.format("Gold standard dataset: %s", String.valueOf(gold_standard_file)));
+        Logging.output(InfoLevel.VERBOSE, String.format("Core classifier: %s", core_classifier.getName()));
+        Logging.output(InfoLevel.VERBOSE, String.format("Classification confidence threshold: %f", classification_confidence_threshold));
+        Logging.output(InfoLevel.VERBOSE, String.format("Pre-classification data cleaner: %s", String.valueOf(text_cleaner_supplier)));
+        Logging.output(InfoLevel.VERBOSE, String.format("Training dataset: %s", String.valueOf(training_file)));
+        Logging.output(InfoLevel.VERBOSE, String.format("Gold standard dataset: %s", String.valueOf(gold_standard_file)));
     }
 
     private void persistClassificationResults() {
 
-        LOGGER.info(String.format("Persisting classified records at %s", String.valueOf(destination)));
+        Logging.output(InfoLevel.VERBOSE, String.format("Persisting classified records at %s", String.valueOf(destination)));
         try (final BufferedWriter out = Files.newBufferedWriter(destination.toPath(), DEFAULT_DESTINATION_CHARSET, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)) {
-            result.print(out);
-            LOGGER.info("Done persisting classified records.");
+            classified_records.print(out);
+            Logging.output(InfoLevel.VERBOSE, "Done persisting classified records.");
         }
         catch (IOException e) {
             throw new RuntimeException("unable to persist classification results", e);
@@ -140,8 +140,8 @@ public class MultipleClassifierExperiment implements Runnable {
     private void classify() {
 
         final int gold_standard_size = gold_standard.getRecords().size();
-
-        LOGGER.info(String.format("Classifying %d records...", gold_standard_size));
+        Logging.setProgressIndicatorSteps(gold_standard_size);
+        Logging.output(InfoLevel.VERBOSE, String.format("Classifying %d records...", gold_standard_size));
 
         final Instant start = Instant.now();
         for (List<String> cells : gold_standard.getRecords()) {
@@ -150,10 +150,11 @@ public class MultipleClassifierExperiment implements Runnable {
             final String data = cells.get(DATA_COLUMN_INDEX);
             final List<Classification> classifications = multiple_classifier.classify(data);
             final List<String> result_row = toDataSetRow(id, data, classifications);
-            result.addRow(result_row);
+            classified_records.addRow(result_row);
+            Logging.progressStep(InfoLevel.VERBOSE);
         }
 
-        LOGGER.info("Done classifying records in " + Duration.between(start, Instant.now()));
+        Logging.output(InfoLevel.VERBOSE, "Done classifying records in " + Formatting.format(Duration.between(start, Instant.now())));
     }
 
     private List<String> toDataSetRow(final String id, final String data, final List<Classification> classifications) {
@@ -168,16 +169,16 @@ public class MultipleClassifierExperiment implements Runnable {
     private void trainCoreClassifier() {
 
         final Bucket consistent_cleaned_bucket = getTrainingBucket();
-        LOGGER.info(String.format("Training core classifier with %d records...", consistent_cleaned_bucket.size()));
+        Logging.output(InfoLevel.VERBOSE, String.format("Training core classifier with %d records...", consistent_cleaned_bucket.size()));
         final Instant start = Instant.now();
         core_classifier.trainAndEvaluate(consistent_cleaned_bucket, 1.0, random);
-        LOGGER.info("Done training core classifier in " + Duration.between(start, Instant.now()));
+        Logging.output(InfoLevel.VERBOSE, "Done training core classifier in " + Formatting.format(Duration.between(start, Instant.now())));
     }
 
     private Bucket getTrainingBucket() {
 
-        // TODO tidy up cleaning before training; horrid.
-        LOGGER.info(String.format("Cleaning %d records prior to training core classifier...", training.getRecords().size()));
+        // TODO tidy up cleaning before training.
+        Logging.output(InfoLevel.VERBOSE, String.format("Cleaning %d records prior to training core classifier...", training.getRecords().size()));
         final Instant start = Instant.now();
 
         final Bucket training_bucket = new Bucket(training);
@@ -185,18 +186,9 @@ public class MultipleClassifierExperiment implements Runnable {
         training_bucket.forEach(record -> cleaned_bucket.add(text_cleaner.cleanRecord(record)));
         final Bucket consistent_cleaned_training_bucket = ConsistentClassificationCleaner.CORRECT.apply(Collections.singletonList(cleaned_bucket)).get(0);
 
-        LOGGER.info("Done cleaning training records in " + Duration.between(start, Instant.now()));
+        Logging.output(InfoLevel.VERBOSE, "Done cleaning training records in " + Formatting.format(Duration.between(start, Instant.now())));
 
         return consistent_cleaned_training_bucket;
-    }
-
-    private static class ExperimentLogFormatter extends Formatter {
-
-        @Override
-        public String format(final LogRecord record) {
-
-            return String.format("%s %s: %s%n", new Date(record.getMillis()).toString(), record.getLevel(), record.getMessage());
-        }
     }
 }
 
