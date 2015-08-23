@@ -36,19 +36,19 @@ public class MultipleClassifier {
     private static final CandidateClassificationListFitnessComparator CANDIDATE_CLASSIFICATION_LIST_FITNESS_COMPARATOR = new CandidateClassificationListFitnessComparator();
     private static final CharSequence TOKEN_JOIN_DELIMITER = " ";
     private static final TextCleaner AS_IS = data -> data;
+    private static final BiPredicate<Classification, Classification> ALWAYS_DISTICT = (one, another) -> true;
     private final Classifier core_classifier;
     private final double classification_confidence_threshold;
     private final TextCleaner pre_classification_data_cleaner;
+    private final BiPredicate<Classification, Classification> distict_classification_checker;
 
     public MultipleClassifier(Classifier core_classifier, double classification_confidence_threshold) {
 
-        this(core_classifier, classification_confidence_threshold, AS_IS);
+        this(core_classifier, classification_confidence_threshold, AS_IS, ALWAYS_DISTICT);
 
     }
 
-    public MultipleClassifier(Classifier core_classifier, double classification_confidence_threshold, TextCleaner pre_classification_data_cleaner) {
-
-        this.pre_classification_data_cleaner = pre_classification_data_cleaner;
+    public MultipleClassifier(Classifier core_classifier, double classification_confidence_threshold, TextCleaner pre_classification_data_cleaner, BiPredicate<Classification, Classification> distict_classification_checker) {
 
         if (classification_confidence_threshold < 0 || classification_confidence_threshold > 1) {
             throw new IllegalArgumentException("confidence threshold must be within inclusive range of 0.0 to 1.0");
@@ -56,12 +56,15 @@ public class MultipleClassifier {
 
         this.core_classifier = core_classifier;
         this.classification_confidence_threshold = classification_confidence_threshold;
+        this.pre_classification_data_cleaner = pre_classification_data_cleaner;
+        this.distict_classification_checker = distict_classification_checker;
     }
 
     public List<Classification> classify(String data) {
 
-        final String cleaned_data = cleanData(data);
-        final List<List<String>> token_combinations = Combinations.all(new TokenList(cleaned_data));
+        final String cleaned_data = cleanData(data).intern();
+        final TokenList cleaned_data_tokens = new TokenList(cleaned_data);
+        final List<List<String>> token_combinations = Combinations.all(cleaned_data_tokens);
         final List<CandidateClassification> candidate_classifications = generateCandidateClassifications(token_combinations);
         final List<List<CandidateClassification>> candidate_combinations = Combinations.powerset(candidate_classifications);
         final List<List<CandidateClassification>> valid_candidate_combinations = removeInvalidCombinations(candidate_combinations);
@@ -78,8 +81,7 @@ public class MultipleClassifier {
 
         for (final List<String> token_combination : token_combinations) {
 
-            final String data_element = String.join(TOKEN_JOIN_DELIMITER, token_combination);
-            final Classification classification = core_classifier.classify(data_element);
+            final Classification classification = classify(token_combination);
 
             if (isAcceptable(classification)) {
                 candidate_classifications.add(new CandidateClassification(token_combination, classification));
@@ -87,6 +89,12 @@ public class MultipleClassifier {
         }
 
         return candidate_classifications;
+    }
+
+    private Classification classify(final List<String> token_combination) {
+
+        final String data_element = String.join(TOKEN_JOIN_DELIMITER, token_combination);
+        return core_classifier.classify(data_element);
     }
 
     private boolean isAcceptable(final Classification classification) {return !classification.isUnclassified() && satisfiesConfidenceThreshold(classification);}
@@ -176,14 +184,12 @@ public class MultipleClassifier {
          */
         boolean isCombinableWith(CandidateClassification other) {
 
-            return isTokensDisjoint(other) && isClassificationDistinct(other);
+            return isTokensDisjoint(other) && isClassificationDistinct(other.classification);
         }
 
-        private boolean isClassificationDistinct(final CandidateClassification other) {
+        private boolean isClassificationDistinct(final Classification other) {
 
-            final String code = classification.getCode();
-            final String other_code = other.classification.getCode();
-            return !code.startsWith(other_code) && !other_code.startsWith(code);
+            return distict_classification_checker.test(classification, other);
         }
 
         private boolean isTokensDisjoint(final CandidateClassification other) {return Collections.disjoint(tokens, other.tokens);}

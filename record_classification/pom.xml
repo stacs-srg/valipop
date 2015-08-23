@@ -165,6 +165,12 @@
             <version>1.48</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-collections4</artifactId>
+            <version>4.0</version>
+        </dependency>
+
         <!--<dependency>-->
         <!--<groupId>nz.ac.waikato.cms.weka</groupId>-->
         <!--<artifactId>weka-stable</artifactId>-->
