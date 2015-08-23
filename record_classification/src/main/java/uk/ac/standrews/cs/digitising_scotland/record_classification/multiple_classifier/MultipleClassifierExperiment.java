@@ -64,19 +64,17 @@ public class MultipleClassifierExperiment implements Runnable {
     @Parameter(names = "-tr", description = "The classification confidence threshold.", required = true)
     private double classification_confidence_threshold;
 
-    @Parameter(names = "-p", description = "The cleaner to use for cleaning data prior to classification.", required = true)
-    private TextCleanerSupplier text_cleaner_supplier;
+    @Parameter(names = "-p", description = "The cleaner to use for cleaning data prior to classification.")
+    private TextCleanerSupplier text_cleaner_supplier = TextCleanerSupplier.ALL;
 
     @Parameter(names = "-s", description = "Random seed")
     private long random_seed = DEFAULT_RANDOM_SEED;
 
-    @Parameter(names = "-d", description = "The path to the file to store the classified data.", required = true, converter = FileConverter.class)
+    @Parameter(names = "-d", description = "The path to the file in which to store the classified data.", required = true, converter = FileConverter.class)
     private File destination;
 
     @Parameter(names = "-v", description = "Logging verbosity.")
-    private InfoLevel info_level = InfoLevel.VERBOSE;
-
-
+    private InfoLevel verbosity = InfoLevel.VERBOSE;
 
     private MultipleClassifierExperiment(String... args) throws IOException {
 
@@ -89,8 +87,8 @@ public class MultipleClassifierExperiment implements Runnable {
         classified_records = new DataSet(gold_standard.getColumnLabels());
         core_classifier = core_classifier_supplier.get();
         text_cleaner = text_cleaner_supplier.get();
-        multiple_classifier = new MultipleClassifier(core_classifier, classification_confidence_threshold, text_cleaner);
-        Logging.setInfoLevel(info_level);
+        multiple_classifier = new MultipleClassifier(core_classifier, classification_confidence_threshold, text_cleaner, (one, another) -> true);
+        Logging.setInfoLevel(verbosity);
     }
 
     public static void main(String... args) throws IOException {
@@ -202,14 +200,8 @@ enum TextCleanerSupplier implements Supplier<TextCleaner> {
 
     private final Supplier<TextCleaner> supplier;
 
-    TextCleanerSupplier(final Supplier<TextCleaner> supplier) {
-
-        this.supplier = supplier;
-    }
+    TextCleanerSupplier(final Supplier<TextCleaner> supplier) { this.supplier = supplier; }
 
     @Override
-    public TextCleaner get() {
-
-        return supplier.get();
-    }
+    public TextCleaner get() { return supplier.get(); }
 }
