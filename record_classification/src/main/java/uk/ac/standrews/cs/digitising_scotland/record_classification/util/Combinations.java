@@ -79,16 +79,26 @@ public final class Combinations {
         return powerset;
     }
 
-    public static <T> Stream<List<T>> powersetStream(Collection<T> input) {
+    public static <T> Stream<List<T>> powerSetStream(Collection<T> input) {
 
         final Iterable<List<T>> lists = new PowerSet<>(input);
         return StreamSupport.stream(lists.spliterator(), false);
+    }
+
+    public static <T> CombinationGenerator<T> powerSetGenerator() {
+
+        return Combinations::powerSetStream;
     }
 
     public static <T> Stream<List<T>> permutationsStream(Collection<T> input) {
 
         final PermutationIterator<T> permuatations = new PermutationIterator<>(input);
         return toStream(permuatations);
+    }
+
+    public static <T> CombinationGenerator<T> permutationsGenerator() {
+
+        return Combinations::permutationsStream;
     }
 
     public static <T> List<List<T>> all(Collection<T> input) {
@@ -141,7 +151,27 @@ public final class Combinations {
 
     }
 
-    private static <T> Stream<T> toStream(Iterator<T> iterator) {
+    public static <T> CombinationGenerator<T> allGenerator() {
+
+        return Combinations::allStream;
+    }
+
+    public static <T> CombinationGenerator<T> generatorWithTruncatedInput(int max_input_length, CombinationGenerator<T> core_generator) {
+
+        return input -> core_generator.apply(input.size() > max_input_length ? subCollection(0, max_input_length, input) : input);
+    }
+
+    private static <T> Collection<T> subCollection(final int from, final int to, final Collection<T> input) {
+
+        return new ArrayList<>(input).subList(from, to);
+    }
+
+    public static <T> CombinationGenerator<T> concatenateGenerators(CombinationGenerator<T> first, CombinationGenerator<T> second) {
+
+        return input -> Stream.concat(first.apply(input), second.apply(input));
+    }
+
+    static <T> Stream<T> toStream(Iterator<T> iterator) {
 
         Iterable<T> iterable = () -> iterator;
         return StreamSupport.stream(iterable.spliterator(), false);
