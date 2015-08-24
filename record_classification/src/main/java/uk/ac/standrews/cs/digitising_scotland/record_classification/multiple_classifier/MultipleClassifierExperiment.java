@@ -23,6 +23,7 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.util.*;
 import uk.ac.standrews.cs.util.dataset.*;
 import uk.ac.standrews.cs.util.tools.*;
 import uk.ac.standrews.cs.util.tools.InfoLevel;
@@ -33,6 +34,10 @@ import java.nio.file.*;
 import java.time.*;
 import java.util.*;
 import java.util.function.*;
+import java.util.stream.*;
+
+import static uk.ac.standrews.cs.digitising_scotland.record_classification.util.Combinations.concatenateGenerators;
+import static uk.ac.standrews.cs.digitising_scotland.record_classification.util.Combinations.generatorWithTruncatedInput;
 
 enum TextCleanerSupplier implements Supplier<TextCleaner> {
 
@@ -48,6 +53,35 @@ enum TextCleanerSupplier implements Supplier<TextCleaner> {
 
     @Override
     public TextCleaner get() { return supplier.get(); }
+}
+
+enum TokenCombinationGeneratorSupplier implements Supplier<CombinationGenerator<String>> {
+    POWER_SET(Combinations::<String>powerSetGenerator),
+    PERMUTATIONS(Combinations::<String>permutationsGenerator),
+    ALL(Combinations::<String>allGenerator),
+
+    TRUNCATED_6_ALL(() -> generatorWithTruncatedInput(6, Combinations.<String>allGenerator())),
+    TRUNCATED_7_ALL(() -> generatorWithTruncatedInput(7, Combinations.<String>allGenerator())),
+    TRUNCATED_8_ALL(() -> generatorWithTruncatedInput(8, Combinations.<String>allGenerator())),
+    TRUNCATED_9_ALL(() -> generatorWithTruncatedInput(9, Combinations.<String>allGenerator())),
+    TRUNCATED_10_ALL(() -> generatorWithTruncatedInput(10, Combinations.<String>allGenerator())),
+    TRUNCATED_11_ALL(() -> generatorWithTruncatedInput(11, Combinations.<String>allGenerator())),
+    TRUNCATED_12_ALL(() -> generatorWithTruncatedInput(12, Combinations.<String>allGenerator())),
+
+    TRUNCATED_6_ALL_WITH_POWER_SET(() -> concatenateGenerators(generatorWithTruncatedInput(6, Combinations.<String>allGenerator()), Combinations.<String>powerSetGenerator())),
+    TRUNCATED_7_ALL_WITH_POWER_SET(() -> concatenateGenerators(generatorWithTruncatedInput(7, Combinations.<String>allGenerator()), Combinations.<String>powerSetGenerator())),
+    TRUNCATED_8_ALL_WITH_POWER_SET(() -> concatenateGenerators(generatorWithTruncatedInput(8, Combinations.<String>allGenerator()), Combinations.<String>powerSetGenerator())),
+    TRUNCATED_9_ALL_WITH_POWER_SET(() -> concatenateGenerators(generatorWithTruncatedInput(9, Combinations.<String>allGenerator()), Combinations.<String>powerSetGenerator())),
+    TRUNCATED_10_ALL_WITH_POWER_SET(() -> concatenateGenerators(generatorWithTruncatedInput(10, Combinations.<String>allGenerator()), Combinations.<String>powerSetGenerator())),
+    TRUNCATED_11_ALL_WITH_POWER_SET(() -> concatenateGenerators(generatorWithTruncatedInput(11, Combinations.<String>allGenerator()), Combinations.<String>powerSetGenerator())),
+    TRUNCATED_12_ALL_WITH_POWER_SET(() -> concatenateGenerators(generatorWithTruncatedInput(12, Combinations.<String>allGenerator()), Combinations.<String>powerSetGenerator()));
+
+    private final Supplier<CombinationGenerator<String>> supplier;
+
+    TokenCombinationGeneratorSupplier(final Supplier<CombinationGenerator<String>> supplier) { this.supplier = supplier; }
+
+    @Override
+    public CombinationGenerator<String> get() { return supplier.get(); }
 }
 
 /**
@@ -68,6 +102,8 @@ public class MultipleClassifierExperiment implements Runnable {
     private final JCommander commander;
     private final Classifier core_classifier;
     private final TextCleaner text_cleaner;
+    private final CombinationGenerator<String> token_combination_generator;
+
     private CSVPrinter csv_printer;
 
     @Parameter(names = "-t", description = "The data set to be used for training the core classifier.", required = true, converter = FileConverter.class)
@@ -85,6 +121,9 @@ public class MultipleClassifierExperiment implements Runnable {
     @Parameter(names = "-p", description = "The cleaner to use for cleaning data prior to classification.")
     private TextCleanerSupplier text_cleaner_supplier = TextCleanerSupplier.ALL;
 
+    @Parameter(names = "-f", description = "The data token combination generator.", required = true)
+    private TokenCombinationGeneratorSupplier token_combination_generator_supplier;
+
     @Parameter(names = "-s", description = "Random seed")
     private long random_seed = DEFAULT_RANDOM_SEED;
 
@@ -97,7 +136,8 @@ public class MultipleClassifierExperiment implements Runnable {
     private MultipleClassifierExperiment(String... args) throws IOException {
 
         commander = new JCommander(this);
-        commander.parse(args);
+
+        parseCommandLineArguments(args);
 
         random = new Random(random_seed);
         training = new DataSet(training_file.toPath());
@@ -105,8 +145,21 @@ public class MultipleClassifierExperiment implements Runnable {
         classified_records = new DataSet(gold_standard.getColumnLabels());
         core_classifier = core_classifier_supplier.get();
         text_cleaner = text_cleaner_supplier.get();
-        multiple_classifier = new MultipleClassifier(core_classifier, classification_confidence_threshold, text_cleaner);
+        token_combination_generator = token_combination_generator_supplier.get();
+        multiple_classifier = new MultipleClassifier(core_classifier, classification_confidence_threshold, text_cleaner, MultipleClassifier.NOT_EQUAL_ONE_ANOTHER, token_combination_generator);
         Logging.setInfoLevel(verbosity);
+    }
+
+    private void parseCommandLineArguments(final String[] args) {
+
+        try {
+            commander.parse(args);
+        }
+        catch (ParameterException e) {
+            System.err.println(e.getMessage());
+            commander.usage();
+            System.exit(1);
+        }
     }
 
     public static void main(String... args) throws IOException {
@@ -177,15 +230,18 @@ public class MultipleClassifierExperiment implements Runnable {
                 Logging.output(InfoLevel.LONG_SUMMARY, "failed to flush csv result printer before closing");
             }
             finally {
-
-                try {
-                    csv_printer.close();
-                }
-                catch (IOException e) {
-                    Logging.output(InfoLevel.LONG_SUMMARY, "failed to close csv result printer");
-                }
+                closeCSVResultPrinter();
             }
+        }
+    }
 
+    private void closeCSVResultPrinter() {
+
+        try {
+            csv_printer.close();
+        }
+        catch (IOException e) {
+            Logging.output(InfoLevel.LONG_SUMMARY, "failed to close csv result printer");
         }
     }
 

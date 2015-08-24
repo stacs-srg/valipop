@@ -32,27 +32,30 @@ import java.util.stream.*;
  */
 public class MultipleClassifier {
 
+    public static final CombinationGenerator<String> DEFAULT_TOKEN_COMBINATION_GENERATOR = Combinations.allGenerator();
+    public static final BiPredicate<Classification, Classification> NOT_EQUAL_ONE_ANOTHER = (one, another) -> !one.equals(another);
+
     private static final List<Classification> UNCLASSIFIED_CLASSIFICATION_LIST = Collections.singletonList(Classification.UNCLASSIFIED);
     private static final CandidateClassificationListFitnessComparator CANDIDATE_CLASSIFICATION_LIST_FITNESS_COMPARATOR = new CandidateClassificationListFitnessComparator();
     private static final CharSequence TOKEN_JOIN_DELIMITER = " ";
     private static final TextCleaner AS_IS = data -> data;
-    private static final BiPredicate<Classification, Classification> NOT_EQUAL_ONE_ANOTHER = (one, another) -> !one.equals(another);
     private final Classifier core_classifier;
     private final double classification_confidence_threshold;
     private final TextCleaner pre_classification_data_cleaner;
     private final BiPredicate<Classification, Classification> distict_classification_checker;
+    private final CombinationGenerator<String> token_combination_generator;
 
     public MultipleClassifier(Classifier core_classifier, double classification_confidence_threshold) {
 
-        this(core_classifier, classification_confidence_threshold, AS_IS, NOT_EQUAL_ONE_ANOTHER);
+        this(core_classifier, classification_confidence_threshold, AS_IS, NOT_EQUAL_ONE_ANOTHER, DEFAULT_TOKEN_COMBINATION_GENERATOR);
     }
 
     public MultipleClassifier(Classifier core_classifier, double classification_confidence_threshold, TextCleaner pre_classification_data_cleaner) {
 
-        this(core_classifier, classification_confidence_threshold, pre_classification_data_cleaner, NOT_EQUAL_ONE_ANOTHER);
+        this(core_classifier, classification_confidence_threshold, pre_classification_data_cleaner, NOT_EQUAL_ONE_ANOTHER, DEFAULT_TOKEN_COMBINATION_GENERATOR);
     }
 
-    public MultipleClassifier(Classifier core_classifier, double classification_confidence_threshold, TextCleaner pre_classification_data_cleaner, BiPredicate<Classification, Classification> distict_classification_checker) {
+    public MultipleClassifier(Classifier core_classifier, double classification_confidence_threshold, TextCleaner pre_classification_data_cleaner, BiPredicate<Classification, Classification> distict_classification_checker, CombinationGenerator<String> token_combination_generator) {
 
         if (classification_confidence_threshold < 0 || classification_confidence_threshold > 1) {
             throw new IllegalArgumentException("confidence threshold must be within inclusive range of 0.0 to 1.0");
@@ -62,24 +65,15 @@ public class MultipleClassifier {
         this.classification_confidence_threshold = classification_confidence_threshold;
         this.pre_classification_data_cleaner = pre_classification_data_cleaner;
         this.distict_classification_checker = distict_classification_checker;
+        this.token_combination_generator = token_combination_generator;
     }
 
     public List<Classification> classify(String data) {
 
         final String cleaned_data = cleanData(data).intern();
         final TokenList cleaned_data_tokens = new TokenList(cleaned_data);
-
-        final List<CandidateClassification> candidate_classifications = Combinations
-                        .allStream(cleaned_data_tokens)
-                        .map(this::classify)
-                        .filter(this::isAcceptable)
-                        .collect(Collectors.toList());
-
-        final Optional<List<CandidateClassification>> fittest_combination = Combinations
-                        .powersetStream(candidate_classifications)
-                        .filter(this::isValidCombination) 
-                        .max(CANDIDATE_CLASSIFICATION_LIST_FITNESS_COMPARATOR);
-
+        final List<CandidateClassification> candidate_classifications = token_combination_generator.apply(cleaned_data_tokens).map(this::classify).filter(this::isAcceptable).collect(Collectors.toList());
+        final Optional<List<CandidateClassification>> fittest_combination = Combinations.powerSetStream(candidate_classifications).filter(this::isValidCombination).max(CANDIDATE_CLASSIFICATION_LIST_FITNESS_COMPARATOR);
         return fittest_combination.isPresent() ? toClassificationList(fittest_combination.get()) : UNCLASSIFIED_CLASSIFICATION_LIST;
     }
 
@@ -95,7 +89,8 @@ public class MultipleClassifier {
     private boolean isAcceptable(final CandidateClassification candidate) {
 
         final Classification classification = candidate.getClassification();
-        return !classification.isUnclassified() && satisfiesConfidenceThreshold(classification);}
+        return !classification.isUnclassified() && satisfiesConfidenceThreshold(classification);
+    }
 
     private boolean satisfiesConfidenceThreshold(final Classification classification) {return classification.getConfidence() >= classification_confidence_threshold;}
 
@@ -135,7 +130,6 @@ public class MultipleClassifier {
         private double collectiveFitness(final List<CandidateClassification> candidate_combination) {
 
             return candidate_combination.stream().mapToDouble(CandidateClassification::fitness).sum();
-
         }
     }
 
