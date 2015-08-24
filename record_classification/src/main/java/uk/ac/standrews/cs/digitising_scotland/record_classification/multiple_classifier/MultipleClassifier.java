@@ -36,7 +36,7 @@ public class MultipleClassifier {
     private static final CandidateClassificationListFitnessComparator CANDIDATE_CLASSIFICATION_LIST_FITNESS_COMPARATOR = new CandidateClassificationListFitnessComparator();
     private static final CharSequence TOKEN_JOIN_DELIMITER = " ";
     private static final TextCleaner AS_IS = data -> data;
-    private static final BiPredicate<Classification, Classification> ALWAYS_DISTICT = (one, another) -> true;
+    private static final BiPredicate<Classification, Classification> NOT_EQUAL_ONE_ANOTHER = (one, another) -> !one.equals(another);
     private final Classifier core_classifier;
     private final double classification_confidence_threshold;
     private final TextCleaner pre_classification_data_cleaner;
@@ -44,8 +44,12 @@ public class MultipleClassifier {
 
     public MultipleClassifier(Classifier core_classifier, double classification_confidence_threshold) {
 
-        this(core_classifier, classification_confidence_threshold, AS_IS, ALWAYS_DISTICT);
+        this(core_classifier, classification_confidence_threshold, AS_IS, NOT_EQUAL_ONE_ANOTHER);
+    }
 
+    public MultipleClassifier(Classifier core_classifier, double classification_confidence_threshold, TextCleaner pre_classification_data_cleaner) {
+
+        this(core_classifier, classification_confidence_threshold, pre_classification_data_cleaner, NOT_EQUAL_ONE_ANOTHER);
     }
 
     public MultipleClassifier(Classifier core_classifier, double classification_confidence_threshold, TextCleaner pre_classification_data_cleaner, BiPredicate<Classification, Classification> distict_classification_checker) {
@@ -64,61 +68,40 @@ public class MultipleClassifier {
 
         final String cleaned_data = cleanData(data).intern();
         final TokenList cleaned_data_tokens = new TokenList(cleaned_data);
-        final List<List<String>> token_combinations = Combinations.all(cleaned_data_tokens);
-        final List<CandidateClassification> candidate_classifications = generateCandidateClassifications(token_combinations);
-        final List<List<CandidateClassification>> candidate_combinations = Combinations.powerset(candidate_classifications);
-        final List<List<CandidateClassification>> valid_candidate_combinations = removeInvalidCombinations(candidate_combinations);
-        final Optional<List<CandidateClassification>> fittest_combination = fittest(valid_candidate_combinations);
+
+        final List<CandidateClassification> candidate_classifications = Combinations
+                        .allStream(cleaned_data_tokens)
+                        .map(this::classify)
+                        .filter(this::isAcceptable)
+                        .collect(Collectors.toList());
+
+        final Optional<List<CandidateClassification>> fittest_combination = Combinations
+                        .powersetStream(candidate_classifications)
+                        .filter(this::isValidCombination) 
+                        .max(CANDIDATE_CLASSIFICATION_LIST_FITNESS_COMPARATOR);
 
         return fittest_combination.isPresent() ? toClassificationList(fittest_combination.get()) : UNCLASSIFIED_CLASSIFICATION_LIST;
     }
 
     private String cleanData(final String data) {return pre_classification_data_cleaner.cleanData(data);}
 
-    private List<CandidateClassification> generateCandidateClassifications(final List<List<String>> token_combinations) {
-
-        final List<CandidateClassification> candidate_classifications = new ArrayList<>();
-
-        for (final List<String> token_combination : token_combinations) {
-
-            final Classification classification = classify(token_combination);
-
-            if (isAcceptable(classification)) {
-                candidate_classifications.add(new CandidateClassification(token_combination, classification));
-            }
-        }
-
-        return candidate_classifications;
-    }
-
-    private Classification classify(final List<String> token_combination) {
+    private CandidateClassification classify(final List<String> token_combination) {
 
         final String data_element = String.join(TOKEN_JOIN_DELIMITER, token_combination);
-        return core_classifier.classify(data_element);
+        final Classification classification = core_classifier.classify(data_element);
+        return new CandidateClassification(token_combination, classification);
     }
 
-    private boolean isAcceptable(final Classification classification) {return !classification.isUnclassified() && satisfiesConfidenceThreshold(classification);}
+    private boolean isAcceptable(final CandidateClassification candidate) {
+
+        final Classification classification = candidate.getClassification();
+        return !classification.isUnclassified() && satisfiesConfidenceThreshold(classification);}
 
     private boolean satisfiesConfidenceThreshold(final Classification classification) {return classification.getConfidence() >= classification_confidence_threshold;}
 
     private List<Classification> toClassificationList(final List<CandidateClassification> candidate_classifications) {
 
         return candidate_classifications.stream().map(CandidateClassification::getClassification).collect(Collectors.toList());
-    }
-
-    private List<List<CandidateClassification>> removeInvalidCombinations(final List<List<CandidateClassification>> candidate_combinations) {
-
-        final Iterator<List<CandidateClassification>> candidate_combinations_iterator = candidate_combinations.iterator();
-
-        while (candidate_combinations_iterator.hasNext()) {
-
-            final List<CandidateClassification> next_candidate_combination = candidate_combinations_iterator.next();
-            if (!isValidCombination(next_candidate_combination)) {
-                candidate_combinations_iterator.remove();
-            }
-        }
-
-        return candidate_combinations;
     }
 
     private boolean isValidCombination(List<CandidateClassification> combination) {
@@ -139,12 +122,6 @@ public class MultipleClassifier {
         }
 
         return true;
-    }
-
-    private Optional<List<CandidateClassification>> fittest(List<List<CandidateClassification>> candidate_combinations) {
-
-        return candidate_combinations.stream().max(CANDIDATE_CLASSIFICATION_LIST_FITNESS_COMPARATOR);
-
     }
 
     private static class CandidateClassificationListFitnessComparator implements Comparator<List<CandidateClassification>> {

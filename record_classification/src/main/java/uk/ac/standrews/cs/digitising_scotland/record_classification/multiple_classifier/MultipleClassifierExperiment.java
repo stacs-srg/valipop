@@ -18,6 +18,7 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.multiple_cl
 
 import com.beust.jcommander.*;
 import com.beust.jcommander.converters.*;
+import org.apache.commons.csv.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.*;
@@ -32,6 +33,22 @@ import java.nio.file.*;
 import java.time.*;
 import java.util.*;
 import java.util.function.*;
+
+enum TextCleanerSupplier implements Supplier<TextCleaner> {
+
+    STOP_WORD(EnglishStopWordCleaner::new),
+    PUNCTUATION(PunctuationCleaner::new),
+    LOWER_CASE(LowerCaseCleaner::new),
+    STEMMING(StemmingCleaner::new),
+    ALL(() -> new EnglishStopWordCleaner().andThen(new PunctuationCleaner()).andThen(new LowerCaseCleaner()).andThen(new StemmingCleaner()));
+
+    private final Supplier<TextCleaner> supplier;
+
+    TextCleanerSupplier(final Supplier<TextCleaner> supplier) { this.supplier = supplier; }
+
+    @Override
+    public TextCleaner get() { return supplier.get(); }
+}
 
 /**
  * @author Masih Hajiarab Derkani
@@ -51,6 +68,7 @@ public class MultipleClassifierExperiment implements Runnable {
     private final JCommander commander;
     private final Classifier core_classifier;
     private final TextCleaner text_cleaner;
+    private CSVPrinter csv_printer;
 
     @Parameter(names = "-t", description = "The data set to be used for training the core classifier.", required = true, converter = FileConverter.class)
     private File training_file;
@@ -87,7 +105,7 @@ public class MultipleClassifierExperiment implements Runnable {
         classified_records = new DataSet(gold_standard.getColumnLabels());
         core_classifier = core_classifier_supplier.get();
         text_cleaner = text_cleaner_supplier.get();
-        multiple_classifier = new MultipleClassifier(core_classifier, classification_confidence_threshold, text_cleaner, (one, another) -> true);
+        multiple_classifier = new MultipleClassifier(core_classifier, classification_confidence_threshold, text_cleaner);
         Logging.setInfoLevel(verbosity);
     }
 
@@ -102,8 +120,7 @@ public class MultipleClassifierExperiment implements Runnable {
 
         logParameters();
         trainCoreClassifier();
-        classify();
-        persistClassificationResults();
+        classifyAndPersistResults();
         logClassificationMetrics();
     }
 
@@ -123,36 +140,77 @@ public class MultipleClassifierExperiment implements Runnable {
         Logging.output(InfoLevel.VERBOSE, String.format("Gold standard dataset: %s", String.valueOf(gold_standard_file)));
     }
 
-    private void persistClassificationResults() {
-
-        Logging.output(InfoLevel.VERBOSE, String.format("Persisting classified records at %s", String.valueOf(destination)));
-        try (final BufferedWriter out = Files.newBufferedWriter(destination.toPath(), DEFAULT_DESTINATION_CHARSET, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)) {
-            classified_records.print(out);
-            Logging.output(InfoLevel.VERBOSE, "Done persisting classified records.");
-        }
-        catch (IOException e) {
-            throw new RuntimeException("unable to persist classification results", e);
-        }
-    }
-
-    private void classify() {
+    private void classifyAndPersistResults() {
 
         final int gold_standard_size = gold_standard.getRecords().size();
         Logging.setProgressIndicatorSteps(gold_standard_size);
         Logging.output(InfoLevel.VERBOSE, String.format("Classifying %d records...", gold_standard_size));
 
-        final Instant start = Instant.now();
-        for (List<String> cells : gold_standard.getRecords()) {
+        try {
+            initCSVResultPrinter();
 
-            final String id = cells.get(ID_COLUMN_INDEX);
-            final String data = cells.get(DATA_COLUMN_INDEX);
-            final List<Classification> classifications = multiple_classifier.classify(data);
-            final List<String> result_row = toDataSetRow(id, data, classifications);
-            classified_records.addRow(result_row);
-            Logging.progressStep(InfoLevel.VERBOSE);
+            final Instant start = Instant.now();
+            for (List<String> cells : gold_standard.getRecords()) {
+
+                final String id = cells.get(ID_COLUMN_INDEX);
+                final String data = cells.get(DATA_COLUMN_INDEX);
+                final List<Classification> classifications = multiple_classifier.classify(data);
+                final List<String> result_row = toDataSetRow(id, data, classifications);
+                classified_records.addRow(result_row);
+                persistClassificationResult(result_row);
+                Logging.progressStep(InfoLevel.VERBOSE);
+            }
+            Logging.output(InfoLevel.VERBOSE, "Done classifying records in " + Formatting.format(Duration.between(start, Instant.now())));
         }
+        finally {
+            destroyCSVResultPrinter();
+        }
+    }
 
-        Logging.output(InfoLevel.VERBOSE, "Done classifying records in " + Formatting.format(Duration.between(start, Instant.now())));
+    private void destroyCSVResultPrinter() {
+
+        if (csv_printer != null) {
+            try {
+                csv_printer.flush();
+            }
+            catch (IOException e) {
+                Logging.output(InfoLevel.LONG_SUMMARY, "failed to flush csv result printer before closing");
+            }
+            finally {
+
+                try {
+                    csv_printer.close();
+                }
+                catch (IOException e) {
+                    Logging.output(InfoLevel.LONG_SUMMARY, "failed to close csv result printer");
+                }
+            }
+
+        }
+    }
+
+    private void persistClassificationResult(List<String> row) {
+
+        try {
+            csv_printer.printRecord(row);
+            csv_printer.flush();
+        }
+        catch (IOException e) {
+            throw new RuntimeException("failed to write result row " + row, e);
+        }
+    }
+
+    private void initCSVResultPrinter() {
+
+        try {
+            final BufferedWriter out = Files.newBufferedWriter(destination.toPath(), DEFAULT_DESTINATION_CHARSET, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+            final List<String> labels = gold_standard.getColumnLabels();
+            final String[] header_array = labels.toArray(new String[labels.size()]);
+            csv_printer = new CSVPrinter(out, DataSet.DEFAULT_CSV_FORMAT.withHeader(header_array));
+        }
+        catch (IOException e) {
+            throw new RuntimeException("failed to initialise csv result printer.", e);
+        }
     }
 
     private List<String> toDataSetRow(final String id, final String data, final List<Classification> classifications) {
@@ -188,20 +246,4 @@ public class MultipleClassifierExperiment implements Runnable {
 
         return consistent_cleaned_training_bucket;
     }
-}
-
-enum TextCleanerSupplier implements Supplier<TextCleaner> {
-
-    STOP_WORD(EnglishStopWordCleaner::new),
-    PUNCTUATION(PunctuationCleaner::new),
-    LOWER_CASE(LowerCaseCleaner::new),
-    STEMMING(StemmingCleaner::new),
-    ALL(() -> new EnglishStopWordCleaner().andThen(new PunctuationCleaner()).andThen(new LowerCaseCleaner()).andThen(new StemmingCleaner()));
-
-    private final Supplier<TextCleaner> supplier;
-
-    TextCleanerSupplier(final Supplier<TextCleaner> supplier) { this.supplier = supplier; }
-
-    @Override
-    public TextCleaner get() { return supplier.get(); }
 }
