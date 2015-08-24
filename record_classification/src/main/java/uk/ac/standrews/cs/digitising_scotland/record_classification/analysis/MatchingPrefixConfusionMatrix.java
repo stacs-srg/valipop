@@ -16,37 +16,41 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.analysis;
 
-import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.Checker;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
-import uk.ac.standrews.cs.util.dataset.DataSet;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
+import uk.ac.standrews.cs.util.dataset.*;
+
+import java.util.*;
 
 /**
- * Confusion matrix using exact matching on codes.
- *
- * @author Fraser Dunlop
- * @author Graham Kirby
+ * @author Masih Hajiarab Derkani
  */
-public class StrictConfusionMatrix extends ConfusionMatrix {
+public class MatchingPrefixConfusionMatrix extends ConfusionMatrix {
 
-    public StrictConfusionMatrix(final Bucket classified_records, final Bucket gold_standard_records, Checker checker) {
+    private final int matching_prefix_length;
+
+    public MatchingPrefixConfusionMatrix(int matching_prefix_length, final Bucket classified_records, final Bucket gold_standard_records, Checker checker) {
 
         super(classified_records, gold_standard_records, checker);
+        this.matching_prefix_length = matching_prefix_length;
     }
 
-    public StrictConfusionMatrix(DataSet classified_records, DataSet gold_standard_records, Checker checker) {
+    public MatchingPrefixConfusionMatrix(int matching_prefix_length, DataSet classified_records, DataSet gold_standard_records, Checker checker) {
 
         super(classified_records, gold_standard_records, checker);
+        this.matching_prefix_length = matching_prefix_length;
     }
 
     @Override
     protected boolean classificationsMatch(String asserted_code, String real_code) {
 
-        return asserted_code.equals(real_code);
+        final String prefix = real_code.length() > matching_prefix_length ? real_code.substring(0, matching_prefix_length) : real_code;
+        return asserted_code.startsWith(prefix);
     }
 
     @Override
     public String toString() {
 
-        return getClass().getSimpleName();
+        return String.format("%s [ matching_prefix_length: %d ]", getClass().getSimpleName(), matching_prefix_length);
     }
 }

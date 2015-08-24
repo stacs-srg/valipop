@@ -96,7 +96,7 @@ public class MultipleClassifier {
 
     private List<Classification> toClassificationList(final List<CandidateClassification> candidate_classifications) {
 
-        return candidate_classifications.stream().map(CandidateClassification::getClassification).collect(Collectors.toList());
+        return candidate_classifications.stream().sorted().map(CandidateClassification::getClassification).collect(Collectors.toList());
     }
 
     private boolean isValidCombination(List<CandidateClassification> combination) {
@@ -133,9 +133,10 @@ public class MultipleClassifier {
         }
     }
 
-    private class CandidateClassification {
+    private class CandidateClassification implements Comparable<CandidateClassification> {
 
         private final int hashcode;
+        private final double fitness;
         private List<String> tokens;
         private Classification classification;
 
@@ -144,6 +145,7 @@ public class MultipleClassifier {
             this.tokens = tokens;
             this.classification = classification;
             hashcode = Objects.hash(tokens, classification);
+            fitness = tokens.size() * classification.getConfidence();
         }
 
         /**
@@ -173,7 +175,7 @@ public class MultipleClassifier {
          */
         private double fitness() {
 
-            return tokens.size() * classification.getConfidence();
+            return fitness;
         }
 
         private Classification getClassification() {
@@ -198,6 +200,12 @@ public class MultipleClassifier {
             }
             final CandidateClassification that = (CandidateClassification) other;
             return Objects.equals(tokens, that.tokens) && Objects.equals(classification, that.classification);
+        }
+
+        @Override
+        public int compareTo(final CandidateClassification other) {
+
+            return Double.compare(fitness(), other.fitness());
         }
     }
 }

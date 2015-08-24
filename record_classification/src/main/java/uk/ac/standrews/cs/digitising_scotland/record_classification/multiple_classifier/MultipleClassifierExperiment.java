@@ -34,7 +34,6 @@ import java.nio.file.*;
 import java.time.*;
 import java.util.*;
 import java.util.function.*;
-import java.util.stream.*;
 
 import static uk.ac.standrews.cs.digitising_scotland.record_classification.util.Combinations.concatenateGenerators;
 import static uk.ac.standrews.cs.digitising_scotland.record_classification.util.Combinations.generatorWithTruncatedInput;
@@ -93,6 +92,7 @@ public class MultipleClassifierExperiment implements Runnable {
     private static final Charset DEFAULT_DESTINATION_CHARSET = StandardCharsets.UTF_8;
     private static final int ID_COLUMN_INDEX = 0;
     private static final int DATA_COLUMN_INDEX = 1;
+    public static final int MAX_MATCHING_PREFIX_LENGTH = 5;
 
     private final MultipleClassifier multiple_classifier;
     private final Random random;
@@ -129,6 +129,9 @@ public class MultipleClassifierExperiment implements Runnable {
 
     @Parameter(names = "-d", description = "The path to the file in which to store the classified data.", required = true, converter = FileConverter.class)
     private File destination;
+
+    @Parameter(names = "-m", description = "The max length of matching prefix classification metrics. If zero, no matching prefix metrics are printed.")
+    private int max_matching_prefix_metrics_length = 0;
 
     @Parameter(names = "-v", description = "Logging verbosity.")
     private InfoLevel verbosity = InfoLevel.VERBOSE;
@@ -179,9 +182,30 @@ public class MultipleClassifierExperiment implements Runnable {
 
     private void logClassificationMetrics() {
 
-        final StrictConfusionMatrix confusion_matrix = new StrictConfusionMatrix(classified_records, gold_standard, new ConsistentCodingChecker());
-        final ClassificationMetrics classification_metrics = new ClassificationMetrics(confusion_matrix);
-        classification_metrics.printMetrics();
+        logStrictClassificationMetrics();
+        logMatchingPrefixClassificationMetrics();
+    }
+
+    private void logMatchingPrefixClassificationMetrics() {
+
+        if (max_matching_prefix_metrics_length > 0) {
+            for (int matching_prefix_length = 1; matching_prefix_length <= max_matching_prefix_metrics_length; matching_prefix_length++) {
+
+                printMetrics(new MatchingPrefixConfusionMatrix(matching_prefix_length, classified_records, gold_standard, new ConsistentCodingChecker()));
+            }
+        }
+    }
+
+    private void logStrictClassificationMetrics() {
+
+        printMetrics(new StrictConfusionMatrix(classified_records, gold_standard, new ConsistentCodingChecker()));
+    }
+
+    private void printMetrics(final ConfusionMatrix confusion_matrix) {
+
+        Logging.output(InfoLevel.VERBOSE, String.format("Classification metrics by: %s", confusion_matrix.toString()));
+        new ClassificationMetrics(confusion_matrix).printMetrics();
+        Logging.output(InfoLevel.VERBOSE, "");
     }
 
     private void logParameters() {

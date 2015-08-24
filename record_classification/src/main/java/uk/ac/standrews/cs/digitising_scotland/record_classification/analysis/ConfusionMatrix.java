@@ -39,7 +39,6 @@ import java.util.*;
  */
 public abstract class ConfusionMatrix {
 
-    private static final long serialVersionUID = -818147039422422286L;
     private final Map<String, Integer> classification_counts;
     private final Map<String, Integer> true_positive_counts;
     private final Map<String, Integer> false_positive_counts;
@@ -80,7 +79,7 @@ public abstract class ConfusionMatrix {
         checkClassifiedDataIsInGoldStandard();
         checkClassifiedToValidCodes();
 
-        if (checker != null && !checker.test(Arrays.asList(gold_standard_records))) {
+        if (checker != null && !checker.test(Collections.singletonList(gold_standard_records))) {
             throw new RuntimeException("check failed");
         }
 
