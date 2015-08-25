@@ -39,6 +39,7 @@ public class MultipleClassifier {
     private static final CandidateClassificationListFitnessComparator CANDIDATE_CLASSIFICATION_LIST_FITNESS_COMPARATOR = new CandidateClassificationListFitnessComparator();
     private static final CharSequence TOKEN_JOIN_DELIMITER = " ";
     private static final TextCleaner AS_IS = data -> data;
+
     private final Classifier core_classifier;
     private final double classification_confidence_threshold;
     private final TextCleaner pre_classification_data_cleaner;

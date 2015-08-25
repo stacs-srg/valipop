@@ -21,7 +21,7 @@ import java.util.function.*;
 import java.util.stream.*;
 
 /**
- * Generates a {@link Stream stream} of the combinations of a collection of elements.
+ * Generates a {@link Stream stream} of the combinations for a collection of elements.
  *
  * @param <Element> the element type
  * @author Masih Hajiarab Derkani
