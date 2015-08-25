@@ -16,11 +16,9 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.analysis;
 
-import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
-import uk.ac.standrews.cs.util.dataset.*;
-
-import java.util.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.Checker;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
+import uk.ac.standrews.cs.util.dataset.DataSet;
 
 /**
  * @author Masih Hajiarab Derkani
@@ -39,13 +37,20 @@ public class MatchingPrefixConfusionMatrix extends ConfusionMatrix {
 
         super(classified_records, gold_standard_records, checker);
         this.matching_prefix_length = matching_prefix_length;
+        initMultipleClassification();
     }
 
     @Override
     protected boolean classificationsMatch(String asserted_code, String real_code) {
 
         final String prefix = real_code.length() > matching_prefix_length ? real_code.substring(0, matching_prefix_length) : real_code;
-        return asserted_code.startsWith(prefix);
+        return !asserted_code.isEmpty() && !real_code.isEmpty() && asserted_code.startsWith(prefix);
+    }
+
+    @Override
+    protected String significantPartOfCode(String code) {
+
+        return code.substring(0, matching_prefix_length);
     }
 
     @Override

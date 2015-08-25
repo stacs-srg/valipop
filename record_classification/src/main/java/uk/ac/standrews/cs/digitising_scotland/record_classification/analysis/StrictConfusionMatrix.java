@@ -36,6 +36,7 @@ public class StrictConfusionMatrix extends ConfusionMatrix {
     public StrictConfusionMatrix(DataSet classified_records, DataSet gold_standard_records, Checker checker) {
 
         super(classified_records, gold_standard_records, checker);
+        initMultipleClassification();
     }
 
     @Override
