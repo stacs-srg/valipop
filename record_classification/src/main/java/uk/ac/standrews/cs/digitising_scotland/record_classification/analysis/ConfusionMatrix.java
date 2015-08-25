@@ -48,6 +48,9 @@ public abstract class ConfusionMatrix {
     private Bucket classified_records;
     private Bucket gold_standard_records;
 
+    private DataSet classified_records_data_set;
+    private DataSet gold_standard_records_data_set;
+
     private int number_of_records;
     private int total_number_of_classifications = 0;
     private int total_number_of_gold_standard_classifications = 0;
@@ -86,7 +89,6 @@ public abstract class ConfusionMatrix {
         calculateCounts();
     }
 
-
     /**
      * Creates a confusion matrix representing the effectiveness of a classification process.
      * This version considers multiple classifications.
@@ -100,13 +102,19 @@ public abstract class ConfusionMatrix {
      */
     public ConfusionMatrix(DataSet classified_records, DataSet gold_standard_records, Checker checker) {
 
+        this.classified_records_data_set = classified_records;
+        this.gold_standard_records_data_set = gold_standard_records;
+
         classification_counts = new HashMap<>();
         true_positive_counts = new HashMap<>();
         true_negative_counts = new HashMap<>();
         false_positive_counts = new HashMap<>();
         false_negative_counts = new HashMap<>();
+    }
 
-        calculateCounts(classified_records, gold_standard_records);
+    protected void initMultipleClassification() {
+
+        calculateCounts(classified_records_data_set, gold_standard_records_data_set);
     }
 
     /**
@@ -117,6 +125,17 @@ public abstract class ConfusionMatrix {
      * @return true if the asserted code is considered to be correct
      */
     protected abstract boolean classificationsMatch(String asserted_code, String real_code);
+
+    /**
+     * Allows for only part of a code to be considered in the confusion matrix, to allow for hierarchical classification systems.
+     *
+     * @param code the code
+     * @return the part of the code to be used in the confusion matrix
+     */
+    protected String significantPartOfCode(String code) {
+
+        return code;
+    }
 
     /**
      * Returns a map from classification class to the number of records classified as that class.
@@ -377,11 +396,11 @@ public abstract class ConfusionMatrix {
 
         for (String possible_code : classification_counts.keySet()) {
 
-            if (classifier_codes.contains(possible_code)) {
+            if (classificationsMatch(possible_code, classifier_codes)) {
 
                 incrementCount(possible_code, classification_counts);
 
-                if (gold_standard_codes.contains(possible_code)) {
+                if (classificationsMatch(possible_code, gold_standard_codes)) {
 
                     incrementCount(possible_code, true_positive_counts);
 
@@ -392,7 +411,7 @@ public abstract class ConfusionMatrix {
                 }
             } else {
 
-                if (gold_standard_codes.contains(possible_code)) {
+                if (classificationsMatch(possible_code, gold_standard_codes)) {
 
                     incrementCount(possible_code, false_negative_counts);
 
@@ -412,9 +431,34 @@ public abstract class ConfusionMatrix {
 
         total_number_of_gold_standard_classifications += gold_standard_codes.size();
 
-        if (number_of_classifications == gold_standard_codes.size()) {
+        int numberOfUniqueClassifierCodes = numberOfUniqueClassificationsAtHierarchyLevel(classifier_codes);
+        int numberOfUniqueGoldStandardCodes = numberOfUniqueClassificationsAtHierarchyLevel(gold_standard_codes);
+        if (numberOfUniqueClassifierCodes == numberOfUniqueGoldStandardCodes) {
+
             total_number_of_records_with_correct_number_of_classifications++;
         }
+    }
+
+    private int numberOfUniqueClassificationsAtHierarchyLevel(List<String> codes) {
+
+        Set<String> unique_codes = new HashSet<>();
+        for (String code : codes) {
+            if (!code.equals(Classification.UNCLASSIFIED.getCode())) {
+                unique_codes.add(significantPartOfCode(code));
+            }
+        }
+        return unique_codes.size();
+    }
+
+    protected boolean classificationsMatch(String code, List<String> codes) {
+
+        for (String other_code : codes) {
+            if (classificationsMatch(other_code, code)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private List<String> findGoldStandardCodes(List<String> classified_record, DataSet gold_standard_records) {
@@ -502,14 +546,23 @@ public abstract class ConfusionMatrix {
 
     private void initCount(String code, Map<String, Integer> counts) {
 
-        if (!counts.containsKey(code)) {
-            counts.put(code, 0);
+        String truncated_code = makeCodeKey(code);
+
+        if (!counts.containsKey(truncated_code)) {
+            counts.put(truncated_code, 0);
         }
+    }
+
+    private String makeCodeKey(String code) {
+
+        return code.equals(Classification.UNCLASSIFIED.getCode()) ? code : significantPartOfCode(code);
     }
 
     private void incrementCount(String code, Map<String, Integer> counts) {
 
-        counts.put(code, counts.get(code) + 1);
+        String truncated_code = makeCodeKey(code);
+
+        counts.put(truncated_code, counts.get(truncated_code) + 1);
     }
 
     public double averageClassificationsPerRecord() {
