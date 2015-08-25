@@ -92,7 +92,6 @@ public class MultipleClassifierExperiment implements Runnable {
     private static final Charset DEFAULT_DESTINATION_CHARSET = StandardCharsets.UTF_8;
     private static final int ID_COLUMN_INDEX = 0;
     private static final int DATA_COLUMN_INDEX = 1;
-    public static final int MAX_MATCHING_PREFIX_LENGTH = 5;
 
     private final MultipleClassifier multiple_classifier;
     private final Random random;
@@ -144,13 +143,32 @@ public class MultipleClassifierExperiment implements Runnable {
 
         random = new Random(random_seed);
         training = new DataSet(training_file.toPath());
-        gold_standard = new DataSet(gold_standard_file.toPath());
+        gold_standard = removeDuplicateData(new DataSet(gold_standard_file.toPath()));
         classified_records = new DataSet(gold_standard.getColumnLabels());
         core_classifier = core_classifier_supplier.get();
         text_cleaner = text_cleaner_supplier.get();
         token_combination_generator = token_combination_generator_supplier.get();
         multiple_classifier = new MultipleClassifier(core_classifier, classification_confidence_threshold, text_cleaner, MultipleClassifier.NOT_EQUAL_ONE_ANOTHER, token_combination_generator);
         Logging.setInfoLevel(verbosity);
+    }
+
+    private DataSet removeDuplicateData(final DataSet source) {
+
+        Logging.output(InfoLevel.VERBOSE, "Removing duplicate data records from gold standard...");
+        final DataSet unique = new DataSet(source.getColumnLabels());
+        final Set<String> unique_data = new HashSet<>();
+
+        final List<List<String>> source_records = source.getRecords();
+        source_records.forEach(row -> {
+            final String data = row.get(1);
+            if (!unique_data.contains(data)) {
+                unique_data.add(data);
+                unique.addRow(row);
+            }
+        });
+
+        Logging.output(InfoLevel.VERBOSE, String.format("Removed %d duplicate data records from gold standard", source_records.size() - unique.getRecords().size()));
+        return unique;
     }
 
     private void parseCommandLineArguments(final String[] args) {
