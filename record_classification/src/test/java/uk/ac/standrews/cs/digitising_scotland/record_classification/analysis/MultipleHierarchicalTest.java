@@ -27,7 +27,7 @@ import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 
-public class MultipleClassifierHierarchicalConfusionMatrixTest {
+public class MultipleHierarchicalTest {
 
     private static final String CLASSIFIED_FILE_NAME = "example_classified.csv";
     private static final String GOLD_STANDARD_FILE_NAME = "example_gold_standard.csv";
@@ -42,11 +42,11 @@ public class MultipleClassifierHierarchicalConfusionMatrixTest {
     @Before
     public void setUp() throws Exception {
 
-        try (InputStreamReader reader = FileManipulation.getInputStreamReaderForResource(MultipleClassifierHierarchicalConfusionMatrixTest.class, CLASSIFIED_FILE_NAME)) {
+        try (InputStreamReader reader = FileManipulation.getInputStreamReaderForResource(MultipleHierarchicalTest.class, CLASSIFIED_FILE_NAME)) {
 
             classified_records_csv = new DataSet(reader, ',');
         }
-        try (InputStreamReader reader = FileManipulation.getInputStreamReaderForResource(MultipleClassifierHierarchicalConfusionMatrixTest.class, GOLD_STANDARD_FILE_NAME)) {
+        try (InputStreamReader reader = FileManipulation.getInputStreamReaderForResource(MultipleHierarchicalTest.class, GOLD_STANDARD_FILE_NAME)) {
 
             gold_standard_records_csv = new DataSet(reader, ',');
         }
