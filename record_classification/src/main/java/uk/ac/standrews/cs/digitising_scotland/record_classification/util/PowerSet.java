@@ -20,8 +20,6 @@ import java.util.*;
 
 /**
  * Heavily based on {@code http://stackoverflow.com/questions/1670862/obtaining-a-powerset-of-a-set-in-java/3078491#3078491}
- *
- * @author masih
  */
 public class PowerSet<T> implements Iterator<List<T>>, Iterable<List<T>> {
 
