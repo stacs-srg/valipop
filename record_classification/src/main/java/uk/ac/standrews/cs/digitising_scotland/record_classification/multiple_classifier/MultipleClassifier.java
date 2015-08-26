@@ -26,13 +26,13 @@ import java.util.function.*;
 import java.util.stream.*;
 
 /**
- * Classifies a given string value to multiple {@link Classification classifications}.
+ * Classifies a given string value to a list of {@link Classification classifications} sorted by their fitness in ascending order (i.e. the last classification in the list is the fittest).
  *
  * @author Masih Hajiarab Derkani
  */
 public class MultipleClassifier {
 
-    public static final CombinationGenerator<String> DEFAULT_TOKEN_COMBINATION_GENERATOR = Combinations.allGenerator();
+    public static final CombinationGenerator<String> ALL_COMBINATION_GENERATOR = Combinations.allGenerator();
     public static final BiPredicate<Classification, Classification> NOT_EQUAL_ONE_ANOTHER = (one, another) -> !one.equals(another);
 
     private static final List<Classification> UNCLASSIFIED_CLASSIFICATION_LIST = Collections.singletonList(Classification.UNCLASSIFIED);
@@ -48,12 +48,12 @@ public class MultipleClassifier {
 
     public MultipleClassifier(Classifier core_classifier, double classification_confidence_threshold) {
 
-        this(core_classifier, classification_confidence_threshold, AS_IS, NOT_EQUAL_ONE_ANOTHER, DEFAULT_TOKEN_COMBINATION_GENERATOR);
+        this(core_classifier, classification_confidence_threshold, AS_IS, NOT_EQUAL_ONE_ANOTHER, ALL_COMBINATION_GENERATOR);
     }
 
     public MultipleClassifier(Classifier core_classifier, double classification_confidence_threshold, TextCleaner pre_classification_data_cleaner) {
 
-        this(core_classifier, classification_confidence_threshold, pre_classification_data_cleaner, NOT_EQUAL_ONE_ANOTHER, DEFAULT_TOKEN_COMBINATION_GENERATOR);
+        this(core_classifier, classification_confidence_threshold, pre_classification_data_cleaner, NOT_EQUAL_ONE_ANOTHER, ALL_COMBINATION_GENERATOR);
     }
 
     public MultipleClassifier(Classifier core_classifier, double classification_confidence_threshold, TextCleaner pre_classification_data_cleaner, BiPredicate<Classification, Classification> distict_classification_checker, CombinationGenerator<String> token_combination_generator) {
@@ -71,7 +71,7 @@ public class MultipleClassifier {
 
     public List<Classification> classify(String data) {
 
-        final String cleaned_data = cleanData(data).intern();
+        final String cleaned_data = cleanData(data);
         final TokenList cleaned_data_tokens = new TokenList(cleaned_data);
         final List<CandidateClassification> candidate_classifications = token_combination_generator.apply(cleaned_data_tokens).map(this::classify).filter(this::isAcceptable).collect(Collectors.toList());
         final Optional<List<CandidateClassification>> fittest_combination = Combinations.powerSetStream(candidate_classifications).filter(this::isValidCombination).max(CANDIDATE_CLASSIFICATION_LIST_FITNESS_COMPARATOR);
