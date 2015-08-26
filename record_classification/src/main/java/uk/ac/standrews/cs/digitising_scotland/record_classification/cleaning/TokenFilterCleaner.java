@@ -16,7 +16,6 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning;
 
-
 import org.apache.lucene.analysis.TokenFilter;
 import org.apache.lucene.analysis.TokenStream;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.TokenList;
@@ -30,19 +29,12 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.model.TokenL
 public abstract class TokenFilterCleaner implements TextCleaner {
 
     private static final long serialVersionUID = -7341612194148263930L;
-    private static final char SPACE = ' ';
+    private static final CharSequence SPACE = " ";
 
     public String cleanData(final String data) {
 
-        final StringBuilder cleaned_data = new StringBuilder();
-
-        for (String token : new TokenList(data, this::getTokenFilter)) {
-
-            if (cleaned_data.length() > 0) cleaned_data.append(SPACE);
-            cleaned_data.append(token);
-        }
-
-        return cleaned_data.toString();
+        final TokenList cleaned_data_tokens = new TokenList(data, this::getTokenFilter);
+        return String.join(SPACE, cleaned_data_tokens);
     }
 
     protected abstract TokenFilter getTokenFilter(final TokenStream stream);
