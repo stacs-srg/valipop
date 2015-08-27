@@ -10,7 +10,7 @@
 
 * [Kirby, GNC][Kirby], [Dearle, A][Dearle], [Dibben, CJL][Dibben] & [Williamson, L][Williamson], Reconstructing Family Trees from Public Records. Lathallan School, 8 December 2014. *[Slides][Lathallan Slides]*
 
-* [Kirby, GNC][Kirby], [Hajiarab Derkani, M][Derkani], [Dearle, A][Dearle], [Carson, JK][Carson], [Dunlop, FRJ][Dunlop], [Dibben, CJL][Dibben] & [Williamson, L][Williamson], 2015, Automatic extraction of multiple underlying causes from textual death records. In *Farr Institute International Conference 2015: Data Intensive Health Research and Care*. St Andrews, Scotland, 26-28 August 2015. *[Poster][Farr Poster]*.
+* [Kirby, GNC][Kirby], [Hajiarab Derkani, M][Derkani], [Dearle, A][Dearle], [Carson, JK][Carson], [Dunlop, FRJ][Dunlop], [Dibben, CJL][Dibben] & [Williamson, L][Williamson], 2015, Automatic extraction of multiple underlying causes from textual death records. In *Farr Institute International Conference 2015: Data Intensive Health Research and Care*. St Andrews, Scotland, 26-28 August 2015. *[Poster][Farr Poster]*, *[Addendum][Farr Poster Addendum]*
 
 [Carson]:       https://risweb.st-andrews.ac.uk/portal/da/persons/jamie-kirk-carson(afa72717-3665-430a-91cc-10efe0fbff76).html
 [Dearle]:       https://risweb.st-andrews.ac.uk/portal/da/persons/alan-dearle(2c185714-f33d-4d3a-9f98-9fe210cc3bdd).html
@@ -31,3 +31,4 @@
 [Amsterdam Coding Slides]: /files/amsterdam-coding-slides.pdf
 [Amsterdam Database Slides]: /files/amsterdam-database-slides.pdf
 [Farr Poster]: /files/farr_poster_2015.pdf
+[Farr Poster Addendum]: /files/farr_poster_addendum_2015.pdf
