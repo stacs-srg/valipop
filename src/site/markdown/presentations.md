@@ -16,7 +16,7 @@
 
 [1]:	https://risweb.st-andrews.ac.uk/portal/da/persons/christopher-john-lloyd-dibben(9361a0d3-e534-4772-9c37-0b744cc7a211).html
 [2]:	https://risweb.st-andrews.ac.uk/portal/en/persons/zhiqiang-feng(c6e40a24-6a24-416b-afe8-73c3ef15abb3).html
-[3]:	http://www.ed.ac.uk/schools-departments/geosciences/people?indv=3962&cw_xml=person.html
+[3]:	http://www.ed.ac.uk/schools-departments/geosciences/people?indv=3962&amp;cw_xml=person.html
 [4]:	https://risweb.st-andrews.ac.uk/portal/da/persons/graham-njal-cameron-kirby(4d01ed18-cde6-4dd6-9948-64451f43a1a7).html
 [5]:	https://risweb.st-andrews.ac.uk/portal/da/persons/lee-williamson(b3d25d36-0c89-48c4-ad99-d96829502488).html
 [6]:	/files/mosaic-poster.pdf
@@ -55,6 +55,6 @@
 [39]:	https://risweb.st-andrews.ac.uk/portal/da/persons/lee-williamson(b3d25d36-0c89-48c4-ad99-d96829502488).html
 [40]:	/files/farr_poster_2015.pdf
 [41]:	/files/farr_poster_addendum_2015.pdf
-[42]:	http://www.ed.ac.uk/schools-departments/geosciences/people?indv=3962&cw_xml=person.html
+[42]:	http://www.ed.ac.uk/schools-departments/geosciences/people?indv=3962&amp;cw_xml=person.html
 [43]:	https://risweb.st-andrews.ac.uk/portal/da/persons/christopher-john-lloyd-dibben(9361a0d3-e534-4772-9c37-0b744cc7a211).html
 [44]:	https://risweb.st-andrews.ac.uk/portal/da/persons/graham-njal-cameron-kirby(4d01ed18-cde6-4dd6-9948-64451f43a1a7).html
