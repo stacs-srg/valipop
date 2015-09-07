@@ -12,7 +12,7 @@
 
 * [Kirby, GNC][33], [Hajiarab Derkani, M][34], [Dearle, A][35], [Carson, JK][36], [Dunlop, FRJ][37], [Dibben, CJL][38] & [Williamson, L][39], 2015, Automatic extraction of multiple underlying causes from textual death records. In *Farr Institute International Conference 2015: Data Intensive Health Research and Care*. St Andrews, Scotland, 26-28 August 2015. *[Poster][40]*, *[Addendum][41]*
 
-* [Huang, Z][42], [Dibben, CJL][43], [Kirby, GNC][44], Deary, I, Popham, F & Connelly, R, 2015, The creation of an administrative data based 1936 birth cohort study. In *Farr Institute International Conference 2015: Data Intensive Health Research and Care*. St Andrews, Scotland, 26-28 August 2015. Poster
+* [Huang, Z][42], [Dibben, CJL][43], [Kirby, GNC][44], Deary, I, Popham, F & Connelly, R, 2015, The creation of an administrative data based 1936 birth cohort study. In *Farr Institute International Conference 2015: Data Intensive Health Research and Care*. St Andrews, Scotland, 26-28 August 2015. *[Poster][45]*
 
 [1]:	https://risweb.st-andrews.ac.uk/portal/da/persons/christopher-john-lloyd-dibben(9361a0d3-e534-4772-9c37-0b744cc7a211).html
 [2]:	https://risweb.st-andrews.ac.uk/portal/en/persons/zhiqiang-feng(c6e40a24-6a24-416b-afe8-73c3ef15abb3).html
@@ -58,3 +58,4 @@
 [42]:	http://www.ed.ac.uk/schools-departments/geosciences/people?indv=3962&amp;cw_xml=person.html
 [43]:	https://risweb.st-andrews.ac.uk/portal/da/persons/christopher-john-lloyd-dibben(9361a0d3-e534-4772-9c37-0b744cc7a211).html
 [44]:	https://risweb.st-andrews.ac.uk/portal/da/persons/graham-njal-cameron-kirby(4d01ed18-cde6-4dd6-9948-64451f43a1a7).html
+[45]:	/files/farr_poster_sls_cohort_2015.pdf
