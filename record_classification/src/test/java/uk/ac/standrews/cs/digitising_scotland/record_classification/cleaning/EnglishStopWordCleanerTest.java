@@ -16,6 +16,10 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning;
 
+import org.apache.lucene.analysis.util.*;
+import org.junit.runner.*;
+import org.junit.runners.*;
+
 import java.util.*;
 
 /**
@@ -23,11 +27,14 @@ import java.util.*;
  *
  * @author Masih Hajiarab Derkani
  */
+@RunWith(Parameterized.class)
 public class EnglishStopWordCleanerTest extends TextCleanerTest {
 
-    public EnglishStopWordCleanerTest() {
+    @Parameterized.Parameters
+    public static Collection<Object[]> data() {
 
-        super(new EnglishStopWordCleaner(), new HashMap<String, String>() {
+        final EnglishStopWordCleaner case_sensitive_cleaner = new EnglishStopWordCleaner();
+        final HashMap<String, String> case_sensitive_test_values = new HashMap<String, String>() {
 
             {
                 put("this and that and the", "");
@@ -35,6 +42,41 @@ public class EnglishStopWordCleanerTest extends TextCleanerTest {
                 put("a fish and the tank", "fish tank");
                 put("stop the words", "stop words");
             }
-        });
+        };
+
+        final EnglishStopWordCleaner case_insensitive_cleaner = new EnglishStopWordCleaner(true);
+        final HashMap<String, String> case_insensitive_test_values = new HashMap<String, String>() {
+
+            {
+                put("thiS AND that and the", "");
+                put("tHIs aND tHe fish", "fish");
+                put("A fish And thE tank", "fish tank");
+                put("stop tHE words", "stop words");
+            }
+        };
+
+        final EnglishStopWordCleaner custom_case_sensitive_cleaner = new EnglishStopWordCleaner(new CharArraySet(Arrays.asList("unpaid", "unknown", "fish"), false));
+        final HashMap<String, String> custom_cleaning_test_values = new HashMap<String, String>() {
+
+            {
+                put("this and the fish", "this and the");
+                put("an unknown fish and the unpaid tank", "an and the tank");
+                put("stop the unpaid unknown fish words", "stop the words");
+            }
+        };
+
+        return new ArrayList<Object[]>() {
+
+            {
+                add(new Object[]{case_sensitive_cleaner, case_sensitive_test_values});
+                add(new Object[]{case_insensitive_cleaner, case_insensitive_test_values});
+                add(new Object[]{custom_case_sensitive_cleaner, custom_cleaning_test_values});
+            }
+        };
+    }
+
+    public EnglishStopWordCleanerTest(EnglishStopWordCleaner cleaner, HashMap<String, String> given_expect) {
+
+        super(cleaner, given_expect);
     }
 }

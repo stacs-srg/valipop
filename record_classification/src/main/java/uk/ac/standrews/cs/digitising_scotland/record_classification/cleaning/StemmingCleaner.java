@@ -17,10 +17,11 @@
 package uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning;
 
 import org.apache.lucene.analysis.*;
+import org.apache.lucene.analysis.core.*;
 import org.apache.lucene.analysis.en.PorterStemFilter;
 
 /**
- * Stemming cleaner that uses {@link PorterStemFilter}.
+ * Stemming cleaner that turns the input into its lowercase form and uses {@link PorterStemFilter} for cleaning.
  *
  * @author Masih Hajiarab Derkani
  */
@@ -31,6 +32,6 @@ public class StemmingCleaner extends TokenFilterCleaner {
     @Override
     protected TokenFilter getTokenFilter(final TokenStream stream) {
 
-        return new PorterStemFilter(stream);
+        return new PorterStemFilter(new LowerCaseFilter(stream));
     }
 }

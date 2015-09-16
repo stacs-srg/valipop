@@ -22,9 +22,8 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Classi
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Record;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.TokenList;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.*;
 
 import static org.junit.Assert.assertEquals;
 
@@ -49,10 +48,19 @@ public abstract class TextCleanerTest {
 
         final Bucket test_bucket = getTestBucket();
         final Bucket expected_cleaned_bucket = getExpectedCleanedBucket();
-
-        final Bucket actual_cleaned_bucket = cleaner.apply(Arrays.asList(test_bucket)).get(0);
+        final Bucket actual_cleaned_bucket = cleaner.apply(Collections.singletonList(test_bucket)).get(0);
 
         assertEquals(expected_cleaned_bucket, actual_cleaned_bucket);
+
+        final List<Record> expected = new ArrayList<>();
+        expected_cleaned_bucket.forEach(expected::add);
+
+        final List<Record> actual = new ArrayList<>();
+        actual_cleaned_bucket.forEach(actual::add);
+
+        for (int i = 0; i < actual.size(); i++) {
+            assertEquals(expected.get(i).getData(), actual.get(i).getData());
+        }
     }
 
     @Test

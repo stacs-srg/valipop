@@ -35,8 +35,8 @@ public class StemmingCleanerTest extends TextCleanerTest {
                 put("classification", "classif");
                 put("this", "thi");
                 put("this and that and the other stuffing shoots the shingles off the roofs", "thi and that and the other stuf shoot the shingl off the roof");
-                put("john's car", "john car");
-                put("ASSISTANT - BAKER'S SHOP", "ASSISTANT BAKER SHOP");
+                put("john's car", "john' car");
+                put("ASSISTANT - BAKER'S SHOP", "assist baker' shop");
             }
         });
     }
