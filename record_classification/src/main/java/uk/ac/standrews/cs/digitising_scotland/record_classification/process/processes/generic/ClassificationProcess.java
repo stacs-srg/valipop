@@ -46,7 +46,6 @@ public class ClassificationProcess implements Serializable {
      * Adds a step to the steps to be performed by this process.
      *
      * @param step the step to be performed in the classification process.
-     * @return this classification process to accommodate chaining of step additions.
      */
     public void addStep(Step step) {
 
