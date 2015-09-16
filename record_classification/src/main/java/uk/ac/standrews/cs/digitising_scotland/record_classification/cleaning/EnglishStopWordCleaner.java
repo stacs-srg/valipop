@@ -23,7 +23,7 @@ import org.apache.lucene.analysis.en.EnglishAnalyzer;
 import org.apache.lucene.analysis.util.CharArraySet;
 
 /**
- * Removes english stop words from records.
+ * Removes english stop words from records. By default this class cleans the case-sensitive set of stop words defined in {@link #DEFAULT_STOP_WORDS}.
  *
  * @author Masih Hajiarab Derkani
  */
@@ -31,11 +31,42 @@ public class EnglishStopWordCleaner extends TokenFilterCleaner {
 
     private static final long serialVersionUID = 3018841867887670242L;
 
-    public static final CharArraySet STOP_WORDS = EnglishAnalyzer.getDefaultStopSet();
+    /** The default set of stop words **/
+    public static final CharArraySet DEFAULT_STOP_WORDS = EnglishAnalyzer.getDefaultStopSet();
+
+    private final CharArraySet stop_words;
+
+    /**
+     * Constructs a new instance of this class with the case-sensitive {@link #DEFAULT_STOP_WORDS default} set of stop words.
+     */
+    public EnglishStopWordCleaner() {
+
+        stop_words = DEFAULT_STOP_WORDS;
+    }
+
+    /**
+     * Constructs a new instance of this class with the {@link #DEFAULT_STOP_WORDS default} set of stop words.
+     *
+     * @param ignore_case weather the ignore the casing of the stop words.
+     */
+    public EnglishStopWordCleaner(boolean ignore_case) {
+
+        stop_words = new CharArraySet(DEFAULT_STOP_WORDS, ignore_case);
+    }
+
+    /**
+     * Constructs a new instance of this class with the specified set of stop words.
+     *
+     * @param stop_words the stop words to clean
+     */
+    public EnglishStopWordCleaner(CharArraySet stop_words) {
+
+        this.stop_words = stop_words;
+    }
 
     @Override
     protected TokenFilter getTokenFilter(final TokenStream stream) {
 
-        return new StopFilter(stream, STOP_WORDS);
+        return new StopFilter(stream, stop_words);
     }
 }

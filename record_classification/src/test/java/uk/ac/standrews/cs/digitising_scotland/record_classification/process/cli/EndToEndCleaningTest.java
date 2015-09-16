@@ -107,7 +107,7 @@ public class EndToEndCleaningTest extends EndToEndCommon {
 
     private void assertNotInStopWords(String token) {
 
-        for (Object o : EnglishStopWordCleaner.STOP_WORDS) {
+        for (Object o : EnglishStopWordCleaner.DEFAULT_STOP_WORDS) {
 
             String stop_word = String.valueOf((char[]) o);
             assertNotEquals(token, stop_word);

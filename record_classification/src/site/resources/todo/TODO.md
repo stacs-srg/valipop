@@ -19,14 +19,19 @@
 - [x] Merge duplicate classification process functionality in process package
 - [x] Enable reproducible training data selection when comparing multiple classifiers.
 - [ ] Optimise training of classifiers in repetitions. 
-- [ ] Implement String record level cleaning.
+- [x] Implement String record level cleaning.
 - [ ] Tests.
    - [ ] End to end test for separate training and testing.
    - [ ] Test on Jeff's data.
    - [ ] Test for variation between repetitions.
    - [ ] Test for voting classifier.
-- [ ] Train using multiple files e.g. HISCO dictionary.
+- [x] Train using multiple files e.g. HISCO dictionary.
 - [ ] Spell checking cleaner, general and specific e.g. HISCO text.
+- [x] Implement the ability to extend/customise the set of stop words in EnglishStopWordCleaner.
+- [ ] Implement conditional stop word cleaning, i.e. a word is a stop word if appears solely.
+- [ ] Improve the user-friendliness of the classification process.
+- [ ] Add the confidence column in output file.
+- [ ] Merge single and multiple classifier API, and parameterise the number of classifications per record.
 
 # Queries and Comments
 
