@@ -26,15 +26,22 @@ import java.io.*;
 
 /**
  * Replaces tokens in the data with words in a given dictionary based on a similarity threshold.
+ *
+ * The suggestions are generated using a {@link SpellChecker} instance.
+ * To customise the configuration of the spell checker, override {@link #configureSpellChecker(Dictionary, float)} method.
+ *
  * By default this class picks the first suggested word for each token of the data.
  * If no suggestion exists for a token, the token itself is suggested.
+ * To customise this behaviour, override {@link #selectSingleSuggestion(String, String[])} method.
+ *
+ * Please note that this class is {@link Closeable}; the instances of this class must be {@link #close() closed} to avoid potential memory leakage.
  *
  * @author Masih Hajiarab Derkani
  */
 public class SuggestiveCleaner implements TextCleaner, Closeable {
 
     private static final String SPACE = " ";
-    public static final int NUMBER_OF_SUGGESTIONS = 5;
+    private static final int NUMBER_OF_SUGGESTIONS = 5;
     private final SpellChecker spell_checker;
 
     /**
@@ -52,7 +59,7 @@ public class SuggestiveCleaner implements TextCleaner, Closeable {
      * Constructs a new instance of this class.
      *
      * @param dictionary the dictionary to use for word suggestion.
-     * @param distance_function the fuction by which to calculate similarity of data tokens to words in the dictionary
+     * @param distance_function the function by which to calculate similarity of data tokens to words in the dictionary
      * @param accuracy_threshold the minimum acceptable accuracy for a suggested word
      * @throws IOException if failure occurs while indexing dictionary
      */
@@ -63,6 +70,18 @@ public class SuggestiveCleaner implements TextCleaner, Closeable {
         }
 
         spell_checker = new SpellChecker(new RAMDirectory(), distance_function);
+        configureSpellChecker(dictionary, accuracy_threshold);
+    }
+
+    /**
+     * Configures the spell checker that is used for dictionary-based suggestions for a token.
+     *
+     * @param dictionary the dictionary to use for word suggestion.
+     * @param accuracy_threshold the minimum acceptable accuracy for a suggested word
+     * @throws IOException if failure occurs while configuring the spell checker
+     */
+    protected void configureSpellChecker(final Dictionary dictionary, final float accuracy_threshold) throws IOException {
+
         spell_checker.setAccuracy(accuracy_threshold);
         spell_checker.indexDictionary(dictionary, new IndexWriterConfig(new SimpleAnalyzer()), true);
     }
@@ -92,7 +111,7 @@ public class SuggestiveCleaner implements TextCleaner, Closeable {
     }
 
     /**
-     * Decides which word should be suggested for the token.
+     * Decides which word should be suggested for the token between a number of suggestions.
      *
      * @param token the original token for which the suggestions are generated
      * @param suggestions the generated suggestions
