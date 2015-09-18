@@ -27,11 +27,12 @@
    - [ ] Test for voting classifier.
 - [x] Train using multiple files e.g. HISCO dictionary.
 - [x] Spell checking cleaner.
+- [ ] Spell checking english dictionary general.
 - [ ] Spell checking dictionary specific for a dataset or coding system e.g. HISCO text.
 - [x] Implement the ability to extend/customise the set of stop words in EnglishStopWordCleaner.
 - [x] Implement stop word cleaning that considers data as a whole, i.e. a word is a stop word if it appears solely.
+- [x] Add the confidence column in output file.
 - [ ] Improve the user-friendliness of the classification process.
-- [ ] Add the confidence column in output file.
 - [ ] Merge single and multiple classifier API, and parameterise the number of classifications per record.
 
 # Queries and Comments
