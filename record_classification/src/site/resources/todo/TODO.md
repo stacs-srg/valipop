@@ -7,15 +7,21 @@
    - [x] Load classifier from persistent state, classify specified unseen data, save results from/to specified locations
 - [ ] Automate Windows executable generation.
 - [ ] Optimise training of classifiers in repetitions.
-- [ ] Tests.
-   - [ ] End to end test for separate training and testing.
-   - [ ] Test on Jeff's data.
-   - [ ] Test for variation between repetitions.
-   - [ ] Test for voting classifier.
-- [ ] Spell checking english dictionary general.
-- [ ] Spell checking dictionary specific for a dataset or coding system e.g. HISCO text.
 - [ ] Improve the user-friendliness of the classification process.
 - [ ] Merge single and multiple classifier API, and parameterise the number of classifications per record.
+- [ ] Spell checking cleaning.
+   - [ ] General English dictionary.
+   - [ ] Domain-specific dictionaries: text from HISCO definition.
+   - [ ] Domain-specific dictionaries: text from ICD10 definition.
+   - [ ] Domain-specific dictionaries: text from archaic medical terms.
+- [ ] Tests.
+   - [ ] End to end test for separate training and testing.
+   - [ ] Test for variation between repetitions.
+   - [ ] Test for voting classifier.
+- [ ] Classification runs for Richard.
+   - [ ] Cambridge data set.
+   - [ ] Jeff's UK data set.
+   - [ ] Decide what others.
 
 - [x] Set up record-classification testing on Windows platform.
 - [x] Implement string similarity classifier.
@@ -38,9 +44,9 @@
 
 # Medium/Long-Term Tasks
 
-- [ ] Implement ensemble using confidence measures.
+- [x] Implement ensemble using confidence measures.
 - [ ] Implement ensemble using ranked lists of possible classifications.
-- [ ] Implement ensemble using accuracy metrics from training - feedback per-class quality as proxy for confidence.
+- [x] Implement ensemble using accuracy metrics from training - feedback per-class quality as proxy for confidence.
 - [ ] Control over whether persisted models include sensitive training data.
 
 
