@@ -1,6 +1,26 @@
  
 # Short-Term Tasks
  
+## For Zen & Kostas
+
+- [ ] Spell checking cleaning.
+   - [ ] General English dictionary.
+   - [ ] Domain-specific dictionary: text from HISCO definition.
+   - [ ] Mechanism for specifying additional dictionaries.
+- [ ] Tests.
+   - [ ] End to end test for separate training and testing.
+   - [ ] Test for variation between repetitions.
+   - [ ] Test for voting classifier.
+
+## For Richard before Edinburgh Meeting
+
+- [ ] Occupation classification runs.
+   - [ ] Cambridge data set.
+   - [ ] Jeff's UK data set.
+   - [ ] Decide what others.
+
+## General
+
 - [ ] Implement second string similarity classifier (GK).
 - [ ] Add multiple user entry points to the project.
    - [x] Train classifier on specified gold standard data and persist state to specified location
@@ -10,18 +30,8 @@
 - [ ] Improve the user-friendliness of the classification process.
 - [ ] Merge single and multiple classifier API, and parameterise the number of classifications per record.
 - [ ] Spell checking cleaning.
-   - [ ] General English dictionary.
-   - [ ] Domain-specific dictionaries: text from HISCO definition.
    - [ ] Domain-specific dictionaries: text from ICD10 definition.
    - [ ] Domain-specific dictionaries: text from archaic medical terms.
-- [ ] Tests.
-   - [ ] End to end test for separate training and testing.
-   - [ ] Test for variation between repetitions.
-   - [ ] Test for voting classifier.
-- [ ] Classification runs for Richard.
-   - [ ] Cambridge data set.
-   - [ ] Jeff's UK data set.
-   - [ ] Decide what others.
 
 - [x] Set up record-classification testing on Windows platform.
 - [x] Implement string similarity classifier.
@@ -48,6 +58,10 @@
 - [ ] Implement ensemble using ranked lists of possible classifications.
 - [x] Implement ensemble using accuracy metrics from training - feedback per-class quality as proxy for confidence.
 - [ ] Control over whether persisted models include sensitive training data.
+- [ ] Project tools.
+   - [ ] Story board?
+   - [ ] Issue tracking?
+   - [ ] High-level log of what's been done.
 
 
 # Queries and Comments
