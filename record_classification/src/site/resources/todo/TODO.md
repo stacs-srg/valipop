@@ -1,10 +1,8 @@
  
 # Short-Term Tasks
  
-- [x] Set up record-classification testing on Windows platform.
-- [x] Implement string similarity classifier.
 - [ ] Implement second string similarity classifier (GK).
-- [ ] Implement Naive Bayes classifier (GK).
+- [x] Implement Naive Bayes classifier (GK).
 - [x] Implement OLR classifier (GK).
 - [x] Implement ensemble classifier.
 - [x] Make this todo page.
@@ -34,6 +32,10 @@
 - [x] Add the confidence column in output file.
 - [ ] Improve the user-friendliness of the classification process.
 - [ ] Merge single and multiple classifier API, and parameterise the number of classifications per record.
+
+- [x] Set up record-classification testing on Windows platform.
+- [x] Implement string similarity classifier.
+
 
 # Queries and Comments
 
