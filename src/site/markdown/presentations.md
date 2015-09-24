@@ -10,9 +10,11 @@
 
 * [Kirby, GNC][28], [Dearle, A][29], [Dibben, CJL][30] & [Williamson, L][31], Reconstructing Family Trees from Public Records. Lathallan School, 8 December 2014. *[Slides][32]*
 
-* [Kirby, GNC][33], [Hajiarab Derkani, M][34], [Dearle, A][35], [Carson, JK][36], [Dunlop, FRJ][37], [Dibben, CJL][38] & [Williamson, L][39], 2015, Automatic extraction of multiple underlying causes from textual death records. In *Farr Institute International Conference 2015: Data Intensive Health Research and Care*. St Andrews, Scotland, 26-28 August 2015. *[Poster][40]*, *[Addendum][41]*
+* [Kirby, GNC][33], [Dearle, A][34], [Dibben, CJL][35] & [Williamson, L][36], Reconstructing Genealogical Relationships from Public Registers. Anstruther Science Cafe, 28 May 2015. *[Slides][37]*
 
-* [Huang, Z][42], [Dibben, CJL][43], [Kirby, GNC][44], Deary, I, Popham, F & Connelly, R, 2015, The creation of an administrative data based 1936 birth cohort study. In *Farr Institute International Conference 2015: Data Intensive Health Research and Care*. St Andrews, Scotland, 26-28 August 2015. *[Poster][45]*
+* [Kirby, GNC][38], [Hajiarab Derkani, M][39], [Dearle, A][40], [Carson, JK][41], [Dunlop, FRJ][42], [Dibben, CJL][43] & [Williamson, L][44], 2015, Automatic extraction of multiple underlying causes from textual death records. In *Farr Institute International Conference 2015: Data Intensive Health Research and Care*. St Andrews, Scotland, 26-28 August 2015. *[Poster][45]*, *[Addendum][46]*
+
+* [Huang, Z][47], [Dibben, CJL][48], [Kirby, GNC][49], Deary, I, Popham, F & Connelly, R, 2015, The creation of an administrative data based 1936 birth cohort study. In *Farr Institute International Conference 2015: Data Intensive Health Research and Care*. St Andrews, Scotland, 26-28 August 2015. *[Poster][50]*
 
 [1]:	https://risweb.st-andrews.ac.uk/portal/da/persons/christopher-john-lloyd-dibben(9361a0d3-e534-4772-9c37-0b744cc7a211).html
 [2]:	https://risweb.st-andrews.ac.uk/portal/en/persons/zhiqiang-feng(c6e40a24-6a24-416b-afe8-73c3ef15abb3).html
@@ -47,15 +49,20 @@
 [31]:	https://risweb.st-andrews.ac.uk/portal/da/persons/lee-williamson(b3d25d36-0c89-48c4-ad99-d96829502488).html
 [32]:	/files/lathallan-school-talk.pdf
 [33]:	https://risweb.st-andrews.ac.uk/portal/da/persons/graham-njal-cameron-kirby(4d01ed18-cde6-4dd6-9948-64451f43a1a7).html
-[34]:	http://masih.host.cs.st-andrews.ac.uk/
-[35]:	https://risweb.st-andrews.ac.uk/portal/da/persons/alan-dearle(2c185714-f33d-4d3a-9f98-9fe210cc3bdd).html
-[36]:	https://risweb.st-andrews.ac.uk/portal/da/persons/jamie-kirk-carson(afa72717-3665-430a-91cc-10efe0fbff76).html
-[37]:	https://risweb.st-andrews.ac.uk/portal/da/persons/fraser-robin-james-dunlop(5339ebb1-528c-4e15-ab7a-ba2c8c26bbc3).html
-[38]:	https://risweb.st-andrews.ac.uk/portal/da/persons/christopher-john-lloyd-dibben(9361a0d3-e534-4772-9c37-0b744cc7a211).html
-[39]:	https://risweb.st-andrews.ac.uk/portal/da/persons/lee-williamson(b3d25d36-0c89-48c4-ad99-d96829502488).html
-[40]:	/files/farr_poster_2015.pdf
-[41]:	/files/farr_poster_addendum_2015.pdf
-[42]:	http://www.ed.ac.uk/schools-departments/geosciences/people?indv=3962&amp;cw_xml=person.html
+[34]:	https://risweb.st-andrews.ac.uk/portal/da/persons/alan-dearle(2c185714-f33d-4d3a-9f98-9fe210cc3bdd).html
+[35]:	https://risweb.st-andrews.ac.uk/portal/da/persons/christopher-john-lloyd-dibben(9361a0d3-e534-4772-9c37-0b744cc7a211).html
+[36]:	https://risweb.st-andrews.ac.uk/portal/da/persons/lee-williamson(b3d25d36-0c89-48c4-ad99-d96829502488).html
+[37]:	/files/anstruther-science-cafe.pdf
+[38]:	https://risweb.st-andrews.ac.uk/portal/da/persons/graham-njal-cameron-kirby(4d01ed18-cde6-4dd6-9948-64451f43a1a7).html
+[39]:	http://masih.host.cs.st-andrews.ac.uk/
+[40]:	https://risweb.st-andrews.ac.uk/portal/da/persons/alan-dearle(2c185714-f33d-4d3a-9f98-9fe210cc3bdd).html
+[41]:	https://risweb.st-andrews.ac.uk/portal/da/persons/jamie-kirk-carson(afa72717-3665-430a-91cc-10efe0fbff76).html
+[42]:	https://risweb.st-andrews.ac.uk/portal/da/persons/fraser-robin-james-dunlop(5339ebb1-528c-4e15-ab7a-ba2c8c26bbc3).html
 [43]:	https://risweb.st-andrews.ac.uk/portal/da/persons/christopher-john-lloyd-dibben(9361a0d3-e534-4772-9c37-0b744cc7a211).html
-[44]:	https://risweb.st-andrews.ac.uk/portal/da/persons/graham-njal-cameron-kirby(4d01ed18-cde6-4dd6-9948-64451f43a1a7).html
-[45]:	/files/farr_poster_sls_cohort_2015.pdf
+[44]:	https://risweb.st-andrews.ac.uk/portal/da/persons/lee-williamson(b3d25d36-0c89-48c4-ad99-d96829502488).html
+[45]:	/files/farr_poster_2015.pdf
+[46]:	/files/farr_poster_addendum_2015.pdf
+[47]:	http://www.ed.ac.uk/schools-departments/geosciences/people?indv=3962&amp;cw_xml=person.html
+[48]:	https://risweb.st-andrews.ac.uk/portal/da/persons/christopher-john-lloyd-dibben(9361a0d3-e534-4772-9c37-0b744cc7a211).html
+[49]:	https://risweb.st-andrews.ac.uk/portal/da/persons/graham-njal-cameron-kirby(4d01ed18-cde6-4dd6-9948-64451f43a1a7).html
+[50]:	/files/farr_poster_sls_cohort_2015.pdf
