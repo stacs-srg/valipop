@@ -14,21 +14,18 @@
  * You should have received a copy of the GNU General Public License along with record_classification. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.commands;
+package uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.command;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.Cleaner;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.CleanerSupplier;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.*;
 import uk.ac.standrews.cs.util.tools.InfoLevel;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.Command;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.Launcher;
 import uk.ac.standrews.cs.util.tools.Logging;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassificationContext;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.serialization.SerializationFormat;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.CleanDataStep;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.CleanUnseenRecordsStep;
 
-import java.nio.file.Path;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -38,36 +35,27 @@ import java.util.function.Supplier;
  * @author Masih Hajiarab Derkani
  * @author Graham Kirby
  */
-@Parameters(commandNames = CleanDataCommand.NAME, commandDescription = "Cleans data records", separators = "=")
-public class CleanDataCommand extends Command {
+@Parameters(commandNames = CleanUnseenRecordsCommand.NAME, commandDescription = "Cleans data records", separators = "=")
+public class CleanUnseenRecordsCommand extends Command {
 
-    /**
-     * The name of this command
-     */
+    /** The name of this command. */
     public static final String NAME = "clean_data";
-    private static final long serialVersionUID = -5151083040631916098L;
 
     @Parameter(required = true, names = {CLEAN_FLAG_SHORT, CLEAN_FLAG_LONG}, description = CLEAN_DESCRIPTION)
     private List<CleanerSupplier> cleaner_suppliers;
 
-    @Override
-    public void perform(final ClassificationContext context) {
+    public CleanUnseenRecordsCommand(final Launcher launcher) {
 
-        perform(context, cleaner_suppliers);
+        super(launcher);
     }
 
-    public static void perform(final ClassificationContext context, List<CleanerSupplier> cleaner_suppliers) {
+    @Override
+    public void run() {
 
         Logging.output(InfoLevel.VERBOSE, "cleaning data...");
-
+        final ClassificationContext context = launcher.getContext();
         for (Supplier<Cleaner> supplier : cleaner_suppliers) {
-            new CleanDataStep(supplier.get()).perform(context);
+            new CleanUnseenRecordsStep(supplier.get()).perform(context);
         }
-    }
-
-    public static void perform(SerializationFormat serialization_format, String process_name, Path process_directory, List<CleanerSupplier> cleaners) throws Exception {
-
-        Launcher.main(addArgs(
-                serialization_format, process_name, process_directory, makeCleaningArgs(NAME, cleaners)));
     }
 }

@@ -17,7 +17,7 @@
 package uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.specific;
 
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.Cleaner;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.commands.TrainCommand;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.command.TrainCommand;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassificationProcess;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.CleanGoldStandardStep;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.EvaluateClassifierStep;

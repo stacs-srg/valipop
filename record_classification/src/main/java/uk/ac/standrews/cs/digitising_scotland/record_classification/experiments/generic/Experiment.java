@@ -26,7 +26,7 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.Cle
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.CleanerSupplier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.InputFileFormatException;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.Validators;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.commands.TrainCommand;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.command.TrainCommand;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassificationContext;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassificationProcess;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.specific.EvaluationExperimentProcess;

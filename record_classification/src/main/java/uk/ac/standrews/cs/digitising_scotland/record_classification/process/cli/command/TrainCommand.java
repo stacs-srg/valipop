@@ -14,18 +14,13 @@
  * You should have received a copy of the GNU General Public License along with record_classification. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.commands;
+package uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.command;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.Command;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.Launcher;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.Validators;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassificationContext;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.serialization.SerializationFormat;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.TrainClassifierStep;
-
-import java.nio.file.Path;
 
 /**
  * The train command of classification process command line interface.
@@ -35,11 +30,7 @@ import java.nio.file.Path;
 @Parameters(commandNames = TrainCommand.NAME, commandDescription = "Train classifier")
 public class TrainCommand extends Command {
 
-    private static final long serialVersionUID = 8026292848547343006L;
-
-    /**
-     * The name of this command
-     */
+    /** The name of this command. */
     public static final String NAME = "train";
 
     public static final double DEFAULT_INTERNAL_TRAINING_RATIO = 0.8;
@@ -51,27 +42,15 @@ public class TrainCommand extends Command {
     @Parameter(names = {INTERNAL_TRAINING_RATIO_FLAG_SHORT, INTERNAL_TRAINING_RATIO_FLAG_LONG}, description = INTERNAL_TRAINING_RATIO_DESCRIPTION, validateValueWith = Validators.BetweenZeroAndOne.class)
     private Double internal_training_ratio = DEFAULT_INTERNAL_TRAINING_RATIO;
 
+    public TrainCommand(final Launcher launcher) {
+
+        super(launcher);
+    }
+
     @Override
-    public void perform(final ClassificationContext context) {
+    public void run() {
 
-        performCommand(context, internal_training_ratio);
-    }
-
-    public static void performCommand(final ClassificationContext context, double internal_training_ratio) {
-
+        final ClassificationContext context = launcher.getContext();
         new TrainClassifierStep(internal_training_ratio).perform(context);
-    }
-
-    public static void perform(SerializationFormat serialization_format, String process_name, Path process_directory, double internal_training_ratio) throws Exception {
-
-        Launcher.main(addArgs(
-                serialization_format, process_name, process_directory, makeInternalTrainingRatioArgs(internal_training_ratio)));
-    }
-
-    private static String[] makeInternalTrainingRatioArgs(double internal_training_ratio) {
-
-        String[] args = {NAME};
-
-        return extendArgs(args, INTERNAL_TRAINING_RATIO_FLAG_SHORT, String.valueOf(internal_training_ratio));
     }
 }

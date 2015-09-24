@@ -27,7 +27,7 @@ import java.nio.file.Path;
  *
  * @author Masih Hajiarab Derkani
  */
-public class LoadDataStep extends LoadStep {
+public class LoadUnseenRecordsStep extends LoadStep {
 
     private static final long serialVersionUID = 7742825393693404041L;
 
@@ -36,7 +36,7 @@ public class LoadDataStep extends LoadStep {
      *
      * @param path the file to the CSV file
      */
-    public LoadDataStep(Path path, Charset charset, String delimiter) {
+    public LoadUnseenRecordsStep(Path path, Charset charset, String delimiter) {
 
         super(path, charset, delimiter);
     }
