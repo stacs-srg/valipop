@@ -3,6 +3,7 @@
  
 ## For Zen & Kostas
 
+- [ ] Improve the user-friendliness of the classification process.
 - [ ] Spell checking cleaning.
    - [ ] General English dictionary.
    - [ ] Domain-specific dictionary: text from HISCO definition.
@@ -12,22 +13,23 @@
    - [ ] Test for variation between repetitions.
    - [ ] Test for voting classifier.
 
+- [x] Custom stop word list.
+- [x] Implement stop word cleaning that considers data as a whole, i.e. a word is a stop word if it appears solely.
+- [x] Add the confidence column in output file.
+
 ## For Richard before Edinburgh Meeting
 
 - [ ] Occupation classification runs.
    - [ ] Cambridge data set.
    - [ ] Jeff's UK data set.
-   - [ ] Decide what others.
+   - [ ] Decide what others from various census data sets.
 
 ## General
 
 - [ ] Implement second string similarity classifier (GK).
-- [ ] Add multiple user entry points to the project.
+- [x] Add multiple user entry points to the project.
    - [x] Train classifier on specified gold standard data and persist state to specified location
    - [x] Load classifier from persistent state, classify specified unseen data, save results from/to specified locations
-- [ ] Automate Windows executable generation.
-- [ ] Optimise training of classifiers in repetitions.
-- [ ] Improve the user-friendliness of the classification process.
 - [ ] Merge single and multiple classifier API, and parameterise the number of classifications per record.
 - [ ] Spell checking cleaning.
    - [ ] Domain-specific dictionaries: text from ICD10 definition.
@@ -47,9 +49,6 @@
 - [x] Implement String record level cleaning.
 - [x] Train using multiple files e.g. HISCO dictionary.
 - [x] Spell checking cleaner.
-- [x] Implement the ability to extend/customise the set of stop words in EnglishStopWordCleaner.
-- [x] Implement stop word cleaning that considers data as a whole, i.e. a word is a stop word if it appears solely.
-- [x] Add the confidence column in output file.
 
 
 # Medium/Long-Term Tasks
