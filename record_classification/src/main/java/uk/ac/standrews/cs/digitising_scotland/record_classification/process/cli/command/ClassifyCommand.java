@@ -14,15 +14,13 @@
  * You should have received a copy of the GNU General Public License along with record_classification. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.commands;
+package uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.command;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.beust.jcommander.converters.PathConverter;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.Command;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.Launcher;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassificationContext;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.serialization.SerializationFormat;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.ClassifyUnseenRecordsStep;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.SaveDataStep;
 import uk.ac.standrews.cs.util.dataset.DataSet;
@@ -39,14 +37,8 @@ import java.util.List;
 @Parameters(commandNames = ClassifyCommand.NAME, commandDescription = "Classify unseen data")
 public class ClassifyCommand extends Command {
 
-    /**
-     * The name of this command
-     */
+    /** The name of this command. */
     public static final String NAME = "classify";
-
-    private static final long serialVersionUID = -5931407069557436051L;
-
-    public static final String UNSEEN_DATA_DESCRIPTION = "Path to the unseen data to classify,";
 
     public static final String DESTINATION_DESCRIPTION = "Path to the place to persist the classified records.";
     public static final String DESTINATION_FLAG_SHORT = "-o";
@@ -54,35 +46,25 @@ public class ClassifyCommand extends Command {
 
     private static final String OUTPUT_DELIMITER = ",";
 
-    @Parameter(required = true, description = UNSEEN_DATA_DESCRIPTION, converter = PathConverter.class)
-    private List<Path> unseen_data;    // A list because required by JCommander.
-
     @Parameter(required = true, names = {DESTINATION_FLAG_SHORT, DESTINATION_FLAG_LONG}, description = DESTINATION_DESCRIPTION, converter = PathConverter.class)
     private Path destination;
 
-    @Override
-    public void perform(final ClassificationContext context) {
+    public ClassifyCommand(final Launcher launcher) {
 
-        perform(context, destination);
+        super(launcher);
     }
 
-    public static void perform(final ClassificationContext context, Path destination) {
+    @Override
+    public void run() {
 
         output("classifying data...");
 
+        final ClassificationContext context = launcher.getContext();
         new ClassifyUnseenRecordsStep().perform(context);
 
         output("saving results...");
 
         final DataSet classified_data_set = context.getClassifiedUnseenRecords().toDataSet(DATA_SET_COLUMN_LABELS);
         new SaveDataStep(classified_data_set, destination).perform(context);
-    }
-
-    public static void perform(SerializationFormat serialization_format, String process_name, Path process_directory, Path unseen_data, Path destination) throws Exception {
-
-        Launcher.main(addArgs(
-                serialization_format, process_name, process_directory,
-                NAME, unseen_data.toString(),
-                DESTINATION_FLAG_SHORT, destination.toString()));
     }
 }

@@ -14,13 +14,13 @@
  * You should have received a copy of the GNU General Public License along with record_classification. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.commands;
+package uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.command;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.beust.jcommander.converters.PathConverter;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.ClassificationMetrics;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.Command;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassificationContext;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.EvaluateClassifierStep;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.SaveDataStep;
@@ -34,9 +34,7 @@ import java.nio.file.Path;
 @Parameters(commandNames = EvaluateCommand.NAME, commandDescription = "Evaluate classifier")
 public class EvaluateCommand extends Command {
 
-    /**
-     * The name of this command
-     */
+    /** The name of this command. */
     public static final String NAME = "evaluate";
     private static final long serialVersionUID = 4285779171774505978L;
 
@@ -45,9 +43,15 @@ public class EvaluateCommand extends Command {
     @Parameter(required = true, names = {"-o", "--output"}, description = "Path to the place to persist the evaluation results.", converter = PathConverter.class)
     private Path destination;
 
-    @Override
-    public void perform(final ClassificationContext context) {
+    public EvaluateCommand(final Launcher launcher) {
 
+        super(launcher);
+    }
+
+    @Override
+    public void run() {
+
+        final ClassificationContext context = launcher.getContext();
         new EvaluateClassifierStep().perform(context);
 
         final DataSet data_set = new DataSet(ClassificationMetrics.DATASET_LABELS);

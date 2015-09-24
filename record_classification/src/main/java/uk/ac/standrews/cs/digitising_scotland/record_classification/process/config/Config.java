@@ -16,7 +16,7 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.process.config;
 
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.commands.TrainCommand;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.command.TrainCommand;
 
 public class Config {
 

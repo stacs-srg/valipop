@@ -39,7 +39,7 @@ public abstract class SingleClassifier extends Classifier {
 
     public final void trainAndEvaluate(final Bucket bucket, final double internal_training_ratio, final Random random) {
 
-        List<Map<String, Double>> confidence_maps = new ArrayList<>();
+        final List<Map<String, Double>> confidence_maps = new ArrayList<>();
 
         for (int i = 0; i < INTERNAL_EVALUATION_REPETITIONS; i++) {
 

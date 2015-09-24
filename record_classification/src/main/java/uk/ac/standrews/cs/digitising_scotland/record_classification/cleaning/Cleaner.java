@@ -29,5 +29,4 @@ import java.util.function.Function;
  *
  * @author Graham Kirby
  */
-public interface Cleaner extends Function<List<Bucket>, List<Bucket>>, Serializable {
-}
+public interface Cleaner extends Function<List<Bucket>, List<Bucket>>, Serializable {}

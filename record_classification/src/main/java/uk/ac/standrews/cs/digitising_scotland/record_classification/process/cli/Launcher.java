@@ -16,15 +16,17 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli;
 
-import com.beust.jcommander.JCommander;
-import com.beust.jcommander.Parameter;
-import com.beust.jcommander.ParameterException;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.commands.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.composite.InitLoadCleanTrainCommand;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.composite.LoadCleanClassifyCommand;
+import com.beust.jcommander.*;
+import com.beust.jcommander.converters.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.command.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.serialization.*;
+import uk.ac.standrews.cs.util.tools.*;
 
-import java.nio.file.FileAlreadyExistsException;
-import java.nio.file.NoSuchFileException;
+import java.io.*;
+import java.nio.file.*;
+import java.util.*;
+import java.util.regex.*;
 
 /**
  * Launches the command line interface for a classification process.
@@ -36,27 +38,39 @@ public class Launcher {
     /** Name of this executable. */
     public static final String PROGRAM_NAME = "classy";
 
-    private final JCommander commander;
+    private static final Pattern COMMAND_LINE_ARGUMENT_PATTERN = Pattern.compile("[^\\s\"']+|\"([^\"]*)\"|'([^']*)'");
+    public static final String DEFAULT_CLASSIFICATION_PROCESS_NAME = "classification_process";
+    private JCommander commander;
+    private ClassificationContext context;
+
+    protected static final String SERIALIZATION_FORMAT_DESCRIPTION = "Format for serialized context files";
+    protected static final String SERIALIZATION_FORMAT_FLAG_SHORT = "-f";
+    protected static final String SERIALIZATION_FORMAT_FLAG_LONG = "--format";
+
+    public static final String PROCESS_DIRECTORY_DESCRIPTION = "A directory to be used by the process";
+    public static final String PROCESS_DIRECTORY_FLAG_SHORT = "-p";
+    public static final String PROCESS_DIRECTORY_FLAG_LONG = "--process-directory";
 
     @Parameter(names = {"-h", "--help"}, description = "Shows usage.", help = true)
     private boolean help;
 
+    @Parameter(names = {"-n", "--name"}, description = "The name of the classification process.", help = true)
+    private String name = DEFAULT_CLASSIFICATION_PROCESS_NAME;
+
+    @Parameter(names = {SERIALIZATION_FORMAT_FLAG_SHORT, SERIALIZATION_FORMAT_FLAG_LONG}, description = SERIALIZATION_FORMAT_DESCRIPTION)
+    protected SerializationFormat serialization_format = SerializationFormat.JAVA_SERIALIZATION;
+
+    @Parameter(names = {PROCESS_DIRECTORY_FLAG_SHORT, PROCESS_DIRECTORY_FLAG_LONG}, description = PROCESS_DIRECTORY_DESCRIPTION, converter = PathConverter.class)
+    protected Path process_directory;
+
+//    @Parameter(names = {"-i", "--interactive"}, description = "Interactive mode; allows multiple command execution.")
+//    private boolean interactive;
+
+    @Parameter(names = {"-c", "--commands"}, description = "Path to a text file containing the commands to be executed (one command per line).", converter = PathConverter.class)
+    private Path commands;
+
     private Launcher() {
 
-        commander = new JCommander(this);
-        commander.setProgramName(PROGRAM_NAME);
-
-        addCommand(new ClassifyCommand());
-        addCommand(new CleanDataCommand());
-        addCommand(new CleanGoldStandardCommand());
-        addCommand(new EvaluateCommand());
-        addCommand(new InitCommand());
-        addCommand(new LoadDataCommand());
-        addCommand(new LoadGoldStandardCommand());
-        addCommand(new TrainCommand());
-
-        addCommand(new InitLoadCleanTrainCommand());
-        addCommand(new LoadCleanClassifyCommand());
     }
 
     void addCommand(Command command) {
@@ -79,7 +93,6 @@ public class Launcher {
             launcher.reportError("process directory '" + e.getFile() + "' already exists.");
         }
         catch (NoSuchFileException e) {
-            e.printStackTrace();
             launcher.reportError("expected context file '" + e.getFile() + "' not found.");
         }
         catch (Exception e) {
@@ -90,19 +103,108 @@ public class Launcher {
 
     private void parse(final String... args) throws ParameterException {
 
+        initCommander();
         commander.parse(args);
     }
 
+    private void initCommander() {
+
+        commander = new JCommander(this);
+        commander.setProgramName(PROGRAM_NAME);
+
+        addCommand(new ClassifyCommand(this));
+        addCommand(new CleanUnseenRecordsCommand(this));
+        addCommand(new CleanGoldStandardCommand(this));
+        addCommand(new EvaluateCommand(this));
+        addCommand(new InitCommand(this));
+        addCommand(new LoadUnseenRecordsCommand(this));
+        addCommand(new LoadGoldStandardCommand(this));
+        addCommand(new TrainCommand(this));
+    }
+
     private void handle() throws Exception {
+
+        loadContext();
+        try {
+
+            if (commands != null) {
+                handleCommandsFile();
+            }
+            else {
+                handleCommand();
+            }
+        }
+        finally {
+            persistContext();
+        }
+    }
+
+    private void handleCommandsFile() throws Exception {
+
+        final List<String> command_lines = Files.readAllLines(commands);
+
+        for (String command_line : command_lines) {
+            String[] args = toCommandLineArguments(command_line);
+            parse(args);
+            handleCommand();
+        }
+    }
+
+    private void loadContext() throws IOException {
+
+        final Path context_path = Serialization.getSerializedContextPath(process_directory, name, serialization_format);
+
+        if (Files.isRegularFile(context_path)) {
+
+            output("loading context...");
+            context = Serialization.loadContext(process_directory, name, serialization_format);
+        }
+        else {
+            context = null;
+        }
+
+        output("done");
+    }
+
+    private String[] toCommandLineArguments(final String command_line) {
+
+        final List<String> arguments = new ArrayList<>();
+        final Matcher matcher = COMMAND_LINE_ARGUMENT_PATTERN.matcher(command_line);
+        while (matcher.find()) {
+            if (matcher.group(1) != null) { // Add double-quoted string without the quotes
+                arguments.add(matcher.group(1));
+            }
+            else if (matcher.group(2) != null) { // Add single-quoted string without the quotes
+                arguments.add(matcher.group(2));
+            }
+            else { // Add unquoted word
+                arguments.add(matcher.group());
+            }
+        }
+
+        return arguments.toArray(new String[arguments.size()]);
+    }
+
+    private void handleCommand() throws Exception {
 
         final String command_name = commander.getParsedCommand();
 
         validateCommand(command_name);
 
-        final JCommander commander = this.commander.getCommands().get(command_name);
-        final Command command = (Command) commander.getObjects().get(0);
+        final JCommander command_commander = commander.getCommands().get(command_name);
+        final Command command = (Command) command_commander.getObjects().get(0);
 
-        command.call();
+        command.run();
+    }
+
+    private void persistContext() throws IOException {
+
+        output("saving context...");
+
+        Files.createDirectories(process_directory.resolve(name));
+        Serialization.persistContext(context, process_directory, name, serialization_format);
+
+        output("done");
     }
 
     private void validateCommand(final String command) {
@@ -123,5 +225,20 @@ public class Launcher {
 
         System.err.println("Process failed: " + error_message);
         System.exit(-1);
+    }
+
+    protected static void output(String message) {
+
+        Logging.output(InfoLevel.VERBOSE, message);
+    }
+
+    public ClassificationContext getContext() {
+
+        return context;
+    }
+
+    public void setContext(final ClassificationContext context) {
+
+        this.context = context;
     }
 }

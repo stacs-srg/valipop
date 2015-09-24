@@ -38,15 +38,15 @@ public enum ConsistentClassificationCleaner implements Cleaner {
         @Override
         public List<Bucket> apply(List<Bucket> buckets) {
 
-            Set<String> inconsistently_classified_data = getInconsistentlyClassifiedData(buckets);
-
-            List<Bucket> cleaned_buckets = new ArrayList<>();
+            final Set<String> inconsistently_classified_data = getInconsistentlyClassifiedData(buckets);
+            final List<Bucket> cleaned_buckets = new ArrayList<>();
 
             for (Bucket bucket : buckets) {
-                Bucket cleaned_bucket = new Bucket();
+                
+                final Bucket cleaned_bucket = new Bucket();
                 for (Record record : bucket) {
 
-                    String data = record.getData();
+                    final String data = record.getData();
 
                     if (!inconsistently_classified_data.contains(data)) {
                         cleaned_bucket.add(record);
@@ -83,7 +83,8 @@ public enum ConsistentClassificationCleaner implements Cleaner {
 
                     if (record.getClassification().getCode().equals(most_popular_classification)) {
                         cleaned_bucket.add(record);
-                    } else {
+                    }
+                    else {
                         cleaned_bucket.add(makeCorrectedRecord(record, most_popular_classification));
                     }
                 }
@@ -113,7 +114,8 @@ public enum ConsistentClassificationCleaner implements Cleaner {
                         if (!code.equals(classifications_encountered.get(data))) {
                             inconsistently_coded_data.add(data);
                         }
-                    } else {
+                    }
+                    else {
                         classifications_encountered.put(data, code);
                     }
                 }

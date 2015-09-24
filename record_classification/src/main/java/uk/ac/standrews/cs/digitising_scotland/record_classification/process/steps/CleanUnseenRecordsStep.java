@@ -24,11 +24,11 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.process.proc
 import java.util.Arrays;
 import java.util.List;
 
-public class CleanDataStep implements Step {
+public class CleanUnseenRecordsStep implements Step {
 
     private final Cleaner cleaner;
 
-    public CleanDataStep(Cleaner cleaner) {
+    public CleanUnseenRecordsStep(Cleaner cleaner) {
 
         this.cleaner = cleaner;
     }

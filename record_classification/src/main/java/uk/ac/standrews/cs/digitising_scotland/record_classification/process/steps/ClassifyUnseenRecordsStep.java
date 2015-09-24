@@ -30,11 +30,8 @@ public class ClassifyUnseenRecordsStep implements Step {
 
     private static final long serialVersionUID = 292143932733171808L;
 
-    /**
-     * Instantiates a new unseen record classification step.
-     */
-    public ClassifyUnseenRecordsStep() {
-    }
+    /** Instantiates a new unseen record classification step. */
+    public ClassifyUnseenRecordsStep() { }
 
     @Override
     public void perform(final ClassificationContext context) {

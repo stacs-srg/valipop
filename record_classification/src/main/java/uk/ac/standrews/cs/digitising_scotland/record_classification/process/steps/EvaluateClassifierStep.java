@@ -64,8 +64,8 @@ public class EvaluateClassifierStep implements Step {
         context.setConfusionMatrix(confusion_matrix);
         context.setClassificationMetrics(classification_metrics);
 
-        final Set<String> unique_training_strings = extractStrings(context.getTrainingRecords().makeUniqueDataRecords());
-        final Set<String> unique_evaluation_strings = extractStrings(evaluation_records);
+        final Set<String> unique_training_strings = extractRecordsData(context.getTrainingRecords().makeUniqueDataRecords());
+        final Set<String> unique_evaluation_strings = extractRecordsData(evaluation_records);
 
         final int training_records_size = context.getTrainingRecords().size();
         final int number_of_evaluation_strings_not_in_training_set = countEvaluationStringsNotInTrainingSet(unique_training_strings, unique_evaluation_strings);
@@ -87,7 +87,7 @@ public class EvaluateClassifierStep implements Step {
         output(LONG_SUMMARY, "----------------------------------");
     }
 
-    private static Set<String> extractStrings(final Bucket bucket) {
+    private static Set<String> extractRecordsData(final Bucket bucket) {
 
         final Set<String> strings = new HashSet<>();
 

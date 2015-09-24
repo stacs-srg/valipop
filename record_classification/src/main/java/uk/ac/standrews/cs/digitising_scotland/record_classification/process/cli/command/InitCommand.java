@@ -14,16 +14,14 @@
  * You should have received a copy of the GNU General Public License along with record_classification. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.commands;
+package uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.command;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.ClassifierSupplier;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.Command;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.Launcher;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassificationContext;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.serialization.Serialization;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.serialization.SerializationFormat;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -39,14 +37,10 @@ import java.util.Random;
 @Parameters(commandNames = InitCommand.NAME, commandDescription = "Initialise a new classification process", separators = "=")
 public class InitCommand extends Command {
 
-    /**
-     * The name of this command
-     */
+    /** The name of this command. */
     public static final String NAME = "init";
 
     private static final long SEED = 34234234234L;
-
-    private static final long serialVersionUID = 5738604903474935932L;
 
     public static final String CLASSIFIER_DESCRIPTION = "The classifier to use for the classification process.";
     public static final String CLASSIFIER_FLAG_SHORT = "-c";
@@ -55,31 +49,15 @@ public class InitCommand extends Command {
     @Parameter(required = true, names = {CLASSIFIER_FLAG_SHORT, CLASSIFIER_FLAG_LONG}, description = CLASSIFIER_DESCRIPTION)
     private ClassifierSupplier classifier_supplier;
 
-    @Override
-    public Void call() throws Exception {
+    public InitCommand(final Launcher launcher) {
 
-        ClassificationContext context = perform(classifier_supplier, process_directory, name);
-
-        Serialization.persistContext(context, process_directory, name, serialization_format);
-
-        return null; // void task
+        super(launcher);
     }
 
     @Override
-    public void perform(final ClassificationContext context) {
-    }
+    public void run() {
 
-    public static ClassificationContext perform(ClassifierSupplier classifier_supplier, Path process_directory, String name) throws IOException {
-
-        Path process_working_directory = Serialization.getProcessWorkingDirectory(process_directory, name);
-        Files.createDirectories(process_working_directory);
-
-        return new ClassificationContext(classifier_supplier.get(), new Random(SEED));
-    }
-
-    public static void perform(SerializationFormat serialization_format, String process_name, Path process_directory, ClassifierSupplier classifier_supplier) throws Exception {
-
-        Launcher.main(addArgs(
-                serialization_format, process_name, process_directory, NAME, CLASSIFIER_FLAG_SHORT, classifier_supplier.toString()));
+        final ClassificationContext context = new ClassificationContext(classifier_supplier.get(), new Random(SEED));
+        launcher.setContext(context);
     }
 }
