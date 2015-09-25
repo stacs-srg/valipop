@@ -17,6 +17,7 @@
 package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.naive_bayes;
 
 import org.junit.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 
 import static org.junit.Assert.*;
@@ -26,17 +27,19 @@ import static org.junit.Assert.*;
  */
 public class NaiveBayesClassifierTest {
 
+    //TODO improve tests
     @Test
     public void testSpaceInClassificationCodeDuringTraining() throws Exception {
 
         final NaiveBayesClassifier classifier = new NaiveBayesClassifier();
-
         final Bucket gold_standard = new Bucket();
 
         gold_standard.add(new Record(1, "fish", new Classification("swims", new TokenList("fish"), 1.0, null)));
         gold_standard.add(new Record(2, "fish", new Classification("swims ", new TokenList("fish"), 1.0, null)));
-        
-        classifier.trainModel(gold_standard);
+
+        final Bucket cleaned_gold_standard = new TrimClassificationCodesCleaner().apply(gold_standard);
+
+        classifier.trainModel(cleaned_gold_standard);
 
     }
 }

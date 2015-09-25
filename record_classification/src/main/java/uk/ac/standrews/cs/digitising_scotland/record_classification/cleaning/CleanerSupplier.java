@@ -32,8 +32,9 @@ public enum CleanerSupplier implements Supplier<Cleaner> {
 
     CONSISTENT_CLASSIFICATION_CLEANER_CORRECT(() -> ConsistentClassificationCleaner.CORRECT, "Corrects the classification of any inconsistently classified records to the most popular"),
     CONSISTENT_CLASSIFICATION_CLEANER_REMOVE(() -> ConsistentClassificationCleaner.REMOVE, "Removes any inconsistently classified records"),
+    TRIM_CLASSIFICATION_CODE(TrimClassificationCodesCleaner::new, "Removes white-space characters fom the beginning/end of classification codes"),
 
-    COMBINED(() -> new CompositeCleaner(Arrays.asList(PUNCTUATION.get(), LOWER_CASE.get(), STOP_WORDS.get(), PORTER_STEM.get(), CONSISTENT_CLASSIFICATION_CLEANER_CORRECT.get())), "Applies all available text cleaners and corrects inconsistent classifications");
+    COMBINED(() -> new CompositeCleaner(Arrays.asList(PUNCTUATION.get(), LOWER_CASE.get(), STOP_WORDS.get(), PORTER_STEM.get(), CONSISTENT_CLASSIFICATION_CLEANER_CORRECT.get(), TRIM_CLASSIFICATION_CODE.get())), "Applies all available text cleaners and corrects inconsistent classifications");
 
     private final Supplier<Cleaner> supplier;
     private final String description;
