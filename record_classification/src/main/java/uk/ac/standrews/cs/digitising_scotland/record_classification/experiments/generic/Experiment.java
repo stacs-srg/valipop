@@ -79,7 +79,7 @@ public abstract class Experiment implements Callable<Void> {
     // TODO collect all JCommander flag definitions into one class and rationalise.
 
     @Parameter(names = {"-v", "--verbosity"}, description = DESCRIPTION_VERBOSITY)
-    private InfoLevel verbosity = DEFAULT_VERBOSITY;
+    protected InfoLevel verbosity = DEFAULT_VERBOSITY;
 
     @Parameter(names = {"-r", "--repetitionCount"}, description = DESCRIPTION_REPETITION)
     private int repetitions = DEFAULT_REPETITIONS;
@@ -94,9 +94,9 @@ public abstract class Experiment implements Callable<Void> {
     private double internal_training_ratio = TrainCommand.DEFAULT_INTERNAL_TRAINING_RATIO;
 
     @Parameter(names = {"-d", "--delimiter"}, description = DESCRIPTION_DELIMITER)
-    private char delimiter = '|';
+    protected String delimiter = "|";
 
-    public static final List<Cleaner> CLEANERS = Arrays.asList(CleanerSupplier.COMBINED.get());
+    public static final List<Cleaner> CLEANERS = Collections.singletonList(CleanerSupplier.COMBINED.get());
 
     protected Experiment() throws IOException, InputFileFormatException {
 
@@ -120,7 +120,8 @@ public abstract class Experiment implements Callable<Void> {
 
         Logging.setInfoLevel(verbosity);
 
-        printSummarisedResults(runExperiment());
+        final List<ClassifierResults> results = runExperiment();
+        printSummarisedResults(results);
 
         return null; //void callable
     }
@@ -253,7 +254,7 @@ public abstract class Experiment implements Callable<Void> {
         System.exit(1);
     }
 
-    private void printSummarisedResults(final List<ClassifierResults> results) throws IOException {
+    protected void printSummarisedResults(final List<ClassifierResults> results) throws IOException {
 
         final String table_caption = String.format(TABLE_CAPTION_STRING, repetitions, getPluralitySuffix(repetitions));
         final TableGenerator table_generator = new TableGenerator(getNames(results), getDataSets(results), System.out, table_caption, FIRST_COLUMN_HEADING, COLUMNS_AS_PERCENTAGES, TAB);

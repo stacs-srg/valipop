@@ -14,7 +14,8 @@
    - [ ] End to end test for separate training and testing.
    - [ ] Test for variation between repetitions.
    - [ ] Test for voting classifier.
-   
+
+- [ ] Assemble dataset overview lists for causes of death, and linked data.
 
 - [x] Custom stop word list.
 - [x] Implement stop word cleaning that considers data as a whole, i.e. a word is a stop word if it appears solely.
@@ -91,6 +92,8 @@
 
 - [ ] Meaningfulness of confidence values of each classification.
    - [ ] Investigate how the confidence values for each classification relates to gold_standard.
+
+- [ ] How often classifiers in voting ensemble agree with eachother.
 
 # Meetings
 
