@@ -39,6 +39,12 @@
    - [ ] Domain-specific dictionaries: text from ICD10 definition.
    - [ ] Domain-specific dictionaries: text from archaic medical terms.
 
+- [ ] White-space characters at the begining/end of classification codes causes error in NaiveBayesClassifier training.
+   Possible solutions:
+      - Check if such codings exist and fail.
+      - Define coding scheme format in a class and clean data according to the coding scheme format (e.g. regex)
+      - Clean classification codes by code.trim, assuming no such code should exist.
+
 - [x] Set up record-classification testing on Windows platform.
 - [x] Implement string similarity classifier.
 - [x] Implement Naive Bayes classifier (GK).
