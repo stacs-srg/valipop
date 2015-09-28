@@ -56,15 +56,14 @@ public abstract class ConfusionMatrix {
     private int total_number_of_gold_standard_classifications = 0;
     private int total_number_of_records_with_correct_number_of_classifications = 0;
 
-
     /**
      * Creates a confusion matrix representing the effectiveness of a classification process.
      *
-     * @param classified_records    the records that have been classified
+     * @param classified_records the records that have been classified
      * @param gold_standard_records the gold standard records against which the classified records should be checked
-     * @param checker               checker for consistent coding
-     * @throws InvalidCodeException                    if a code in the classified records does not appear in the gold standard records
-     * @throws UnknownDataException                    if a record in the classified records contains data that does not appear in the gold standard records
+     * @param checker checker for consistent coding
+     * @throws InvalidCodeException if a code in the classified records does not appear in the gold standard records
+     * @throws UnknownDataException if a record in the classified records contains data that does not appear in the gold standard records
      * @throws UnclassifiedGoldStandardRecordException if a record in the gold standard records is not classified
      */
     ConfusionMatrix(final Bucket classified_records, final Bucket gold_standard_records, Checker checker) {
@@ -93,11 +92,11 @@ public abstract class ConfusionMatrix {
      * Creates a confusion matrix representing the effectiveness of a classification process.
      * This version considers multiple classifications.
      *
-     * @param classified_records    the records that have been classified
+     * @param classified_records the records that have been classified
      * @param gold_standard_records the gold standard records against which the classified records should be checked
-     * @param checker               checker for consistent coding
-     * @throws InvalidCodeException                    if a code in the classified records does not appear in the gold standard records
-     * @throws UnknownDataException                    if a record in the classified records contains data that does not appear in the gold standard records
+     * @param checker checker for consistent coding
+     * @throws InvalidCodeException if a code in the classified records does not appear in the gold standard records
+     * @throws UnknownDataException if a record in the classified records contains data that does not appear in the gold standard records
      * @throws UnclassifiedGoldStandardRecordException if a record in the gold standard records is not classified
      */
     public ConfusionMatrix(DataSet classified_records, DataSet gold_standard_records, Checker checker) {
@@ -121,7 +120,7 @@ public abstract class ConfusionMatrix {
      * Checks whether a classification result is considered to be correct.
      *
      * @param asserted_code the code asserted by the classifier
-     * @param real_code     the real code as defined in the gold standard records
+     * @param real_code the real code as defined in the gold standard records
      * @return true if the asserted code is considered to be correct
      */
     protected abstract boolean classificationsMatch(String asserted_code, String real_code);
@@ -324,6 +323,16 @@ public abstract class ConfusionMatrix {
     }
 
     /**
+     * Gets the classified records based on which this matrix is constructed.
+     *
+     * @return the classified records based on which this matrix is constructed
+     */
+    public Bucket getClassifiedRecords() {
+
+        return classified_records;
+    }
+
+    /**
      * Calculates the true/false positive/negative counts for the bucket.
      */
     private void calculateCounts() throws UnknownDataException {
@@ -404,18 +413,21 @@ public abstract class ConfusionMatrix {
 
                     incrementCount(possible_code, true_positive_counts);
 
-                } else {
+                }
+                else {
 
                     incrementCount(possible_code, false_positive_counts);
 
                 }
-            } else {
+            }
+            else {
 
                 if (classificationsMatch(possible_code, gold_standard_codes)) {
 
                     incrementCount(possible_code, false_negative_counts);
 
-                } else {
+                }
+                else {
 
                     incrementCount(possible_code, true_negative_counts);
                 }
@@ -465,7 +477,8 @@ public abstract class ConfusionMatrix {
 
         String data = classified_record.get(1);
         for (List<String> gold_standard_record : gold_standard_records.getRecords()) {
-            if (gold_standard_record.get(1).equals(data)) return extractCodes(gold_standard_record);
+            if (gold_standard_record.get(1).equals(data))
+                return extractCodes(gold_standard_record);
         }
         return new ArrayList<>();
     }
@@ -480,7 +493,8 @@ public abstract class ConfusionMatrix {
                 found_code = true;
             }
         }
-        if (!found_code) codes.add(Classification.UNCLASSIFIED.getCode());
+        if (!found_code)
+            codes.add(Classification.UNCLASSIFIED.getCode());
         return codes;
     }
 
