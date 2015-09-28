@@ -85,7 +85,11 @@ public class ExperimentCLI extends Experiment {
         final DataSet unseen_data_set = new DataSet(Files.newBufferedReader(unseen_data_path));
         final Bucket unseen_data_bucket = new Bucket(unseen_data_set);
         final Bucket classified_unseen_data = classifier.classify(unseen_data_bucket);
-        final DataSet classified_unseen_data_set = classified_unseen_data.toDataSet(unseen_data_set.getColumnLabels());
+        final List<String> classified_dataset_labels = new ArrayList<>(unseen_data_set.getColumnLabels());
+        classified_dataset_labels.add("CONFIDENCE");
+        classified_dataset_labels.add("DETAILS");
+        
+        final DataSet classified_unseen_data_set = classified_unseen_data.toDataSet(classified_dataset_labels);
 
         if (classified_unseen_data_path != null) {
             try (final BufferedWriter out = Files.newBufferedWriter(classified_unseen_data_path)) {
