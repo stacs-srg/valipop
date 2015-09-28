@@ -40,6 +40,5 @@ public class NaiveBayesClassifierTest {
         final Bucket cleaned_gold_standard = new TrimClassificationCodesCleaner().apply(gold_standard);
 
         classifier.trainModel(cleaned_gold_standard);
-
     }
 }

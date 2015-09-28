@@ -45,6 +45,8 @@
       - Define coding scheme format in a class and clean data according to the coding scheme format (e.g. regex)
       - Clean classification codes by code.trim, assuming no such code should exist.
 
+- [ ] Train different classifiers for different parts of the HISCO hierarchy.
+
 - [x] Set up record-classification testing on Windows platform.
 - [x] Implement string similarity classifier.
 - [x] Implement Naive Bayes classifier (GK).
