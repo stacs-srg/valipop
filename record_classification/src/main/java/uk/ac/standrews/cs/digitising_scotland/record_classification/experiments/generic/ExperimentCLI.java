@@ -36,8 +36,8 @@ import java.util.stream.*;
  */
 public class ExperimentCLI extends Experiment {
 
-    public static final int CODE_INDEX = 2;
-    public static final int LABEL_INDEX = 1;
+    private static final int CODE_INDEX = 2;
+    private static final int LABEL_INDEX = 1;
     @Parameter(names = {"-c", "--classifierSupplier"}, description = "The classifier to use for experiment.", required = true)
     private ClassifierSupplier classifier_supplier;
 
@@ -101,13 +101,15 @@ public class ExperimentCLI extends Experiment {
         final Bucket evaluation_records = context.getEvaluationRecords();
         final Bucket evaluation_classified_records = context.getConfusionMatrix().getClassifiedRecords();
         final Stream<Record> evaluation_records_stream = StreamSupport.stream(evaluation_records.spliterator(), false);
+        final Map<Integer, Record> evaluation_records_map = evaluation_records_stream.collect(Collectors.toMap(Record::getId, record -> record));
 
         final DataSet evaluation_output = new DataSet(Arrays.asList("ID", "RAW_DATA", "GOLD_STANDARD_CODE", "GOLD_STANDARD_SCHEME_LABEL", "OUTPUT_CODE", "OUTPUT_CODE_SCHEME_LABEL", "ANCESTOR_DISTANCE", "CONFIDENCE"));
         for (Record record : evaluation_classified_records) {
 
             final int id = record.getId();
             final Classification classification = record.getClassification();
-            final Record gold_standard_record = evaluation_records_stream.filter(rec -> id == rec.getId()).findFirst().get();
+            
+            final Record gold_standard_record = evaluation_records_map.get(id);
             final Classification gold_standard_classification = gold_standard_record.getClassification();
 
             final String id_string = String.valueOf(id);
@@ -128,7 +130,7 @@ public class ExperimentCLI extends Experiment {
     private void populateCodeLabelLookup() throws IOException {
 
         if (code_label_lookup_path != null) {
-            final DataSet code_label_dataset = new DataSet(Files.newBufferedReader(classified_unseen_data_path));
+            final DataSet code_label_dataset = new DataSet(Files.newBufferedReader(code_label_lookup_path));
 
             for (List<String> cells : code_label_dataset.getRecords()) {
                 code_label_lookup.put(cells.get(CODE_INDEX), cells.get(LABEL_INDEX));
