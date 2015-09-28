@@ -38,6 +38,7 @@ public class ExperimentCLI extends Experiment {
 
     private static final int CODE_INDEX = 2;
     private static final int LABEL_INDEX = 1;
+    public static final int MAX_CODING_SCHEME_LENGTH = 5;
     @Parameter(names = {"-c", "--classifierSupplier"}, description = "The classifier to use for experiment.", required = true)
     private ClassifierSupplier classifier_supplier;
 
@@ -108,17 +109,17 @@ public class ExperimentCLI extends Experiment {
 
             final int id = record.getId();
             final Classification classification = record.getClassification();
-            
+
             final Record gold_standard_record = evaluation_records_map.get(id);
             final Classification gold_standard_classification = gold_standard_record.getClassification();
 
             final String id_string = String.valueOf(id);
             final String raw_data = record.getOriginalData();
             final String gold_standard_code = gold_standard_classification.getCode();
-            final String gold_standard_scheme_label = code_label_lookup.get(gold_standard_code);
+            final String gold_standard_scheme_label = getCodingSchemeLable(gold_standard_code);
             final String output_code = classification.getCode();
-            final String output_code_scheme_label = code_label_lookup.get(output_code);
-            final String ancestor_distance = String.valueOf(longestMatchingPrefixLength(gold_standard_code, output_code));
+            final String output_code_scheme_label = getCodingSchemeLable(output_code);
+            final String ancestor_distance = String.valueOf(MAX_CODING_SCHEME_LENGTH - longestMatchingPrefixLength(gold_standard_code, output_code));
             final String confidence = String.valueOf(classification.getConfidence());
 
             evaluation_output.addRow(id_string, raw_data, gold_standard_code, gold_standard_scheme_label, output_code, output_code_scheme_label, ancestor_distance, confidence);
@@ -126,6 +127,8 @@ public class ExperimentCLI extends Experiment {
 
         persistDataSetToPath(classified_evaluation_data_path, evaluation_output);
     }
+
+    private String getCodingSchemeLable(final String code) {return code_label_lookup.getOrDefault(code, "NON_ROOT");}
 
     private void populateCodeLabelLookup() throws IOException {
 
@@ -172,8 +175,8 @@ public class ExperimentCLI extends Experiment {
             final String id = String.valueOf(record.getId());
             final String raw_data = record.getOriginalData();
             final String output_code = classification.getCode();
-            final String output_code_scheme_label = code_label_lookup.get(output_code);
-            final String confidence = String.valueOf(classification.getConfidence());
+            final String output_code_scheme_label = getCodingSchemeLable(output_code);
+            final String confidence = String.format("%.2f", classification.getConfidence());
 
             classified_unseen_data_set.addRow(id, raw_data, output_code, output_code_scheme_label, confidence);
         }
