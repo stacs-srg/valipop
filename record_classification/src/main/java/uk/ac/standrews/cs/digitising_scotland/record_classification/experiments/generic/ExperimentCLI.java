@@ -120,7 +120,7 @@ public class ExperimentCLI extends Experiment {
             final String output_code = classification.getCode();
             final String output_code_scheme_label = getCodingSchemeLable(output_code);
             final String ancestor_distance = String.valueOf(MAX_CODING_SCHEME_LENGTH - longestMatchingPrefixLength(gold_standard_code, output_code));
-            final String confidence = String.valueOf(classification.getConfidence());
+            final String confidence = String.format("%.2f", classification.getConfidence());
 
             evaluation_output.addRow(id_string, raw_data, gold_standard_code, gold_standard_scheme_label, output_code, output_code_scheme_label, ancestor_distance, confidence);
         }
