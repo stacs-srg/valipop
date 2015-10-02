@@ -4,30 +4,31 @@
 ## For Zen & Kostas
 
 - [ ] Improve the user-friendliness of the classification process.
+   - [ ] The ability to use spell checking from the CLI.
 - [ ] Spell checking cleaning.
-   - [ ] General English dictionary.
+   - [x] General English dictionary.
    - [ ] Domain-specific dictionary: text from HISCO definition.
-   - [ ] Mechanism for specifying additional dictionaries.
-
+   - [x] Mechanism for specifying additional dictionaries.
 - [ ] Tests.
    - [ ] Set up Maven integration test.
    - [ ] End to end test for separate training and testing.
    - [ ] Test for variation between repetitions.
    - [ ] Test for voting classifier.
-
 - [ ] Assemble dataset overview lists for causes of death, and linked data.
-
 - [x] Custom stop word list.
 - [x] Implement stop word cleaning that considers data as a whole, i.e. a word is a stop word if it appears solely.
 - [x] Add the confidence column in output file.
 
 ## For Richard before Edinburgh Meeting
 
-- [ ] Occupation classification runs.
-   - [ ] Cambridge data set.
-   - [ ] Jeff's UK data set.
-   - [ ] Decide what others from various census data sets.
-
+- [x] Occupation classification runs.
+   - [x] Cambridge data set.
+   - [x] Jeff's UK data set.
+   - [x] Decide what others from various census data sets.
+   - [ ] Visualise the relationship between ancestor distance and classification confidence.
+   - [ ] Check for inconsistent coding to sub category heading in gold standard; if inconsistent rerun experiments.
+   - [ ] Produce summary classification metrics per major and minor HISCO groups.
+   
 ## General
 
 - [ ] Implement second string similarity classifier (GK).
@@ -38,15 +39,12 @@
 - [ ] Spell checking cleaning.
    - [ ] Domain-specific dictionaries: text from ICD10 definition.
    - [ ] Domain-specific dictionaries: text from archaic medical terms.
-
-- [ ] White-space characters at the begining/end of classification codes causes error in NaiveBayesClassifier training.
+- [x] White-space characters at the begining/end of classification codes causes error in NaiveBayesClassifier training.
    Possible solutions:
       - Check if such codings exist and fail.
       - Define coding scheme format in a class and clean data according to the coding scheme format (e.g. regex)
       - Clean classification codes by code.trim, assuming no such code should exist.
-
 - [ ] Train different classifiers for different parts of the HISCO hierarchy.
-
 - [x] Set up record-classification testing on Windows platform.
 - [x] Implement string similarity classifier.
 - [x] Implement Naive Bayes classifier (GK).
@@ -111,6 +109,18 @@
    - What did he mean by words that should be counted as stop words if appear alone?
       - This will result in empty strings that *should* be classified as UNCLASSIFIED?
       - Alternatively, we can have a list of strings that are classified as UNCLASSIFIED in gold standard.
+- [ ] What coding schemes can be made public?
+- [ ] Can the column names of a secret data be made public?
+- [ ] Discuss basis for experiments with publishable results and writing papers.
 - [ ] Ask social scientists: 
    - In general, should an empty string be classified as UNCLASSIFIED?
+
+# Infrastructure
+
+- [ ] Need for the ability to store/retrieve encrypted datasets.
+- [ ] Ciesvium purpose needs focus. Should do one thing and do it well.
+   - [ ] CSV stream
+   - [ ] encrypted CSV stream
+   - [ ] CSV to Java Bean
+
 
