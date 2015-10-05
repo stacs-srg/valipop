@@ -18,16 +18,22 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.experiments
 
 import com.beust.jcommander.*;
 import com.beust.jcommander.converters.*;
+import org.apache.commons.math.stat.descriptive.*;
+import uk.ac.standrews.cs.classification_schemes.hisco.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.*;
 import uk.ac.standrews.cs.util.dataset.*;
+import uk.ac.standrews.cs.util.tables.*;
 import uk.ac.standrews.cs.util.tools.*;
 
 import java.io.*;
 import java.nio.file.*;
 import java.util.*;
+import java.util.concurrent.atomic.*;
 import java.util.function.*;
 import java.util.stream.*;
 
@@ -38,7 +44,10 @@ public class ExperimentCLI extends Experiment {
 
     private static final int CODE_INDEX = 2;
     private static final int LABEL_INDEX = 1;
-    public static final int MAX_CODING_SCHEME_LENGTH = 5;
+    private static final int MAX_CODING_SCHEME_LENGTH = 5;
+    private static final HiscoScheme HISCO_SCHEME = new HiscoScheme();
+    public static final List<String> THREE_COLUMN_DATASET = Arrays.asList("id", "title", "code");
+
     @Parameter(names = {"-c", "--classifierSupplier"}, description = "The classifier to use for experiment.", required = true)
     private ClassifierSupplier classifier_supplier;
 
@@ -85,6 +94,8 @@ public class ExperimentCLI extends Experiment {
 
         if (classified_evaluation_data_path != null) {
             persistClassifiedEvaluationRecords(results);
+            persistClassificationMetricsPerGroup(results, getHiscoMajorGroupCodes(), "major");
+            persistClassificationMetricsPerGroup(results, getHiscoMinorGroupCodes(), "minor");
         }
 
         if (unseen_data_path != null) {
@@ -96,9 +107,113 @@ public class ExperimentCLI extends Experiment {
         return null; //void callable
     }
 
+    private void persistClassificationMetricsPerGroup(final List<ClassifierResults> results, Stream<HiscoGroup> groups, final String output_suffix) {
+
+        final DataSet per_group_metrics = new DataSet(Arrays.asList("hisco_group_code", "hisco_group_title", "macro-precision", "macro-recall", "macro-F1", "micro-precision/recall"));
+
+        groups.forEach(group -> {
+
+            String group_code = group.getNumericalCode();
+
+            final Stream<ClassificationMetrics> group_classification_metrics = getClassificationMetricsGroupByCodePrefix(results, group_code);
+
+            final List<List<Double>> metrics_values = group_classification_metrics.map(metric -> Arrays.asList(metric.getMacroAveragePrecision(), metric.getMacroAverageRecall(), metric.getMacroAverageF1(), metric.getMicroAveragePrecision())).collect(Collectors.toList());
+
+            final List<Double> means = new Means(metrics_values).getResults();
+            final List<Double> intervals = new ConfidenceIntervals(metrics_values).getResults();
+
+            final List<String> row = new ArrayList<>();
+            row.add(group_code);
+            row.add(group.getTitle());
+            for (int i = 0; i < means.size(); i++) {
+                row.add(String.format("%.2f ± %.2f", means.get(i), intervals.get(i)));
+            }
+
+            per_group_metrics.addRow(row);
+
+        });
+
+        final Path destination = Paths.get(classified_evaluation_data_path.toString() + ".per_hisco_group_" + output_suffix);
+        try {
+            persistDataSetToPath(destination, per_group_metrics);
+        }
+        catch (IOException e) {
+            throw new RuntimeException("failed to persist classification metrics per group: " + output_suffix, e);
+        }
+    }
+
+    private Stream<ClassificationMetrics> getClassificationMetricsGroupByCodePrefix(final List<ClassifierResults> results_list, final String code_prefix) {
+
+        return results_list.get(0).getContexts().stream().map(context -> {
+
+            final DataSet gold_standard_records = getGoldStandardRecords(context);
+            final DataSet evaluation_classified_records = getClassifiedEvaluationRecords(context);
+
+            final Set<String> gold_standard_record_ids_in_group = getIdOfRecordsWithMatchingCodePrefix(code_prefix, gold_standard_records);
+            final DataSet evaluation_classified_records_in_group = getSubsetById(evaluation_classified_records, gold_standard_record_ids_in_group);
+
+            final StrictConfusionMatrix matrix = new StrictConfusionMatrix(evaluation_classified_records_in_group, gold_standard_records, new ConsistentCodingChecker());
+
+            return new ClassificationMetrics(matrix);
+        });
+    }
+
+    private DataSet getSubsetById(final DataSet evaluation_classified_records, final Set<String> gold_standard_record_ids_in_group) {
+
+        final DataSet evaluation_classified_records_in_group = new DataSet(THREE_COLUMN_DATASET);
+        evaluation_classified_records.getRecords().stream().filter(record -> gold_standard_record_ids_in_group.contains(getRecordId(record))).forEach(evaluation_classified_records_in_group::addRow);
+        return evaluation_classified_records_in_group;
+    }
+
+    private Set<String> getIdOfRecordsWithMatchingCodePrefix(final String major_group_code, final DataSet gold_standard_records) {return getRecordsWithMatchingCodePrefix(gold_standard_records, major_group_code, 2).getRecords().stream().map(this::getRecordId).collect(Collectors.toSet());}
+
+    private DataSet getClassifiedEvaluationRecords(final ClassificationContext context) {return context.getConfusionMatrix().getClassifiedRecords().toDataSet2(THREE_COLUMN_DATASET);}
+
+    private String getRecordId(final List<String> record) {return record.get(0);}
+
+    private static DataSet getRecordsWithMatchingCodePrefix(final DataSet dataSet, final String prefix, final int code_column_index) {
+
+        final DataSet matching_code_prefix = new DataSet(dataSet.getColumnLabels());
+
+        dataSet.getRecords().stream().filter(record -> record.get(code_column_index).startsWith(prefix)).forEach(matching_code_prefix::addRow);
+
+        return matching_code_prefix;
+    }
+
+    private DataSet getGoldStandardRecords(final ClassificationContext context) {
+
+        final Bucket training_records = context.getTrainingRecords();
+        final Bucket evaluation_records = context.getEvaluationRecords();
+        final Bucket gold_standard_records = training_records.union(evaluation_records);
+        return gold_standard_records.toDataSet2(THREE_COLUMN_DATASET);
+    }
+
+    private static Stream<HiscoGroup> getHiscoMajorGroupCodes() {
+
+        return HISCO_SCHEME.getMajorGroups();
+    }
+
+    private static Stream<HiscoGroup> getHiscoMinorGroupCodes() {
+
+        return HISCO_SCHEME.getMinorGroups();
+    }
+
     private void persistClassifiedEvaluationRecords(final List<ClassifierResults> results) throws IOException {
 
-        final ClassificationContext context = getLast(results).getContexts().get(0);
+        final AtomicInteger repetition_count = new AtomicInteger();
+        results.forEach(results1 -> {
+            try {
+                persistClassifiedEvaluationRecords(results1, Paths.get(classified_evaluation_data_path.toString() + ".all_rep_" + repetition_count.getAndIncrement()));
+            }
+            catch (IOException e) {
+                throw new RuntimeException("failed to persist classified evaluation records", e);
+            }
+        });
+    }
+
+    private void persistClassifiedEvaluationRecords(ClassifierResults results, Path destination) throws IOException {
+
+        final ClassificationContext context = results.getContexts().get(0);
         final Bucket evaluation_records = context.getEvaluationRecords();
         final Bucket evaluation_classified_records = context.getConfusionMatrix().getClassifiedRecords();
         final Stream<Record> evaluation_records_stream = StreamSupport.stream(evaluation_records.spliterator(), false);
@@ -125,7 +240,7 @@ public class ExperimentCLI extends Experiment {
             evaluation_output.addRow(id_string, raw_data, gold_standard_code, gold_standard_scheme_label, output_code, output_code_scheme_label, ancestor_distance, confidence);
         }
 
-        persistDataSetToPath(classified_evaluation_data_path, evaluation_output);
+        persistDataSetToPath(destination, evaluation_output);
     }
 
     private String getCodingSchemeLable(final String code) {return code_label_lookup.getOrDefault(code, "NON_ROOT");}
