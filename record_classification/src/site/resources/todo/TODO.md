@@ -26,7 +26,7 @@
    - [x] Jeff's UK data set.
    - [x] Decide what others from various census data sets.
    - [ ] Visualise the relationship between ancestor distance and classification confidence.
-   - [ ] Check for inconsistent coding to sub category heading in gold standard; if inconsistent rerun experiments.
+   - [x] Check for inconsistent coding to sub category heading in gold standard; if inconsistent rerun experiments.
    - [ ] Produce summary classification metrics per major and minor HISCO groups.
    
 ## General
@@ -91,14 +91,11 @@
    - [ ] Threshold based word replacement
    - [ ] Best match word replacement
    - [ ] Word frequency analysis
-
 - [ ] System scalability experiment -- the Goal is to find out:
    - [ ] how much classification/training each classifier can cope with.
    - [ ] investigate the relationship between training time and classification precision/accuracy.
-
 - [ ] Meaningfulness of confidence values of each classification.
    - [ ] Investigate how the confidence values for each classification relates to gold_standard.
-
 - [ ] How often classifiers in voting ensemble agree with eachother.
 
 # Meetings
