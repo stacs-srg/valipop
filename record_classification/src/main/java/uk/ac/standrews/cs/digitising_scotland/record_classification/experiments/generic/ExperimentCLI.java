@@ -19,9 +19,12 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.experiments
 import com.beust.jcommander.*;
 import com.beust.jcommander.converters.*;
 import org.apache.commons.math.stat.descriptive.*;
+import org.apache.lucene.search.spell.*;
+import org.simmetrics.metrics.*;
 import uk.ac.standrews.cs.classification_schemes.hisco.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.string_similarity.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
@@ -36,6 +39,9 @@ import java.util.*;
 import java.util.concurrent.atomic.*;
 import java.util.function.*;
 import java.util.stream.*;
+
+import static uk.ac.standrews.cs.util.tables.ConfidenceIntervals.calculateConfidenceInterval;
+import static uk.ac.standrews.cs.util.tables.Means.calculateMean;
 
 /**
  * @author masih
@@ -109,7 +115,7 @@ public class ExperimentCLI extends Experiment {
 
     private void persistClassificationMetricsPerGroup(final List<ClassifierResults> results, Stream<HiscoGroup> groups, final String output_suffix) {
 
-        final DataSet per_group_metrics = new DataSet(Arrays.asList("hisco_group_code", "hisco_group_title", "macro-precision", "macro-recall", "macro-F1", "micro-precision/recall"));
+        final DataSet per_group_metrics = new DataSet(Arrays.asList("HISCO_GROUP_CODE", "HISCO_GROUP_TITLE", "MACRO-PRECISION", "MACRO-RECALL", "MACRO-F1", "MICRO-PRECISION/RECALL", "TRAINING_RECORDS_COUNT", "TRAINING_RECORDS_TOKEN_LIST_SIZE", "TRAINING_RECORDS_MEAN_JACCARD_SIMILARITY"));
 
         groups.forEach(group -> {
 
@@ -126,20 +132,55 @@ public class ExperimentCLI extends Experiment {
             row.add(group_code);
             row.add(group.getTitle());
             for (int i = 0; i < means.size(); i++) {
-                row.add(String.format("%.2f ± %.2f", means.get(i), intervals.get(i)));
+                row.add(formatMeanAndInterval(means.get(i), intervals.get(i)));
             }
 
-            per_group_metrics.addRow(row);
+            final List<List<Record>> trainingRecordsForCodePrefix_per_repetition = getTrainingRecordsForCodePrefix(results, group_code);
 
+            final List<Double> training_records_count_in_group = trainingRecordsForCodePrefix_per_repetition.stream().map(List::size).map(value -> (double) value).collect(Collectors.toList());
+            row.add(formatMeanAndInterval(calculateMean(training_records_count_in_group), calculateConfidenceInterval(training_records_count_in_group)));
+
+            final List<Double> training_token_length = trainingRecordsForCodePrefix_per_repetition.stream().map(list -> list.stream().map(Record::getData).map(TokenList::new).mapToDouble(tokens -> (double) tokens.size()).average().orElseGet(() -> Double.NaN)).collect(Collectors.toList());
+            row.add(formatMeanAndInterval(calculateMean(training_token_length), calculateConfidenceInterval(training_token_length)));
+
+            final List<Double> mean_jaccard_data_distances = trainingRecordsForCodePrefix_per_repetition.stream().map(records -> getAverageSimilarityAcrossRecords(StringSimilarityMetrics.JACCARD.get(), records)).collect(Collectors.toList());
+            row.add(formatMeanAndInterval(calculateMean(mean_jaccard_data_distances), calculateConfidenceInterval(mean_jaccard_data_distances)));
+
+            per_group_metrics.addRow(row);
         });
 
-        final Path destination = Paths.get(classified_evaluation_data_path.toString() + ".per_hisco_group_" + output_suffix);
+        final Path destination = Paths.get(classified_evaluation_data_path.toString() + ".per_hisco_group_" + output_suffix + ".csv");
         try {
             persistDataSetToPath(destination, per_group_metrics);
         }
         catch (IOException e) {
             throw new RuntimeException("failed to persist classification metrics per group: " + output_suffix, e);
         }
+    }
+
+    private String formatMeanAndInterval(double mean, double interval) {
+
+        return String.format("%.2f ± %.2f", mean, interval);
+    }
+
+    private double getAverageSimilarityAcrossRecords(SimilarityMetric metric, List<Record> records) {
+
+        final int records_size = records.size();
+
+        final List<Double> distances = new ArrayList<>();
+
+        // assuming similarity metric is a symmetric operation
+        for (int outer_index = 0; outer_index < records_size; outer_index++) {
+
+            final Record one = records.get(outer_index);
+            for (int inner_index = outer_index + 1; inner_index < records_size; inner_index++) {
+
+                final Record another = records.get(inner_index);
+                distances.add((double) metric.getSimilarity(one.getData(), another.getData()));
+            }
+        }
+
+        return Means.calculateMean(distances);
     }
 
     private Stream<ClassificationMetrics> getClassificationMetricsGroupByCodePrefix(final List<ClassifierResults> results_list, final String code_prefix) {
@@ -156,6 +197,11 @@ public class ExperimentCLI extends Experiment {
 
             return new ClassificationMetrics(matrix);
         });
+    }
+
+    private List<List<Record>> getTrainingRecordsForCodePrefix(final List<ClassifierResults> results_list, final String code_prefix) {
+
+        return results_list.get(0).getContexts().stream().map(context -> context.getTrainingRecords().stream().filter(record -> record.getClassification().getCode().startsWith(code_prefix)).collect(Collectors.toList())).collect(Collectors.toList());
     }
 
     private DataSet getSubsetById(final DataSet evaluation_classified_records, final Set<String> gold_standard_record_ids_in_group) {
@@ -201,9 +247,9 @@ public class ExperimentCLI extends Experiment {
     private void persistClassifiedEvaluationRecords(final List<ClassifierResults> results) throws IOException {
 
         final AtomicInteger repetition_count = new AtomicInteger();
-        results.forEach(results1 -> {
+        results.get(0).getContexts().forEach(context -> {
             try {
-                persistClassifiedEvaluationRecords(results1, Paths.get(classified_evaluation_data_path.toString() + ".all_rep_" + repetition_count.getAndIncrement()));
+                persistClassifiedEvaluationRecords(context, Paths.get(classified_evaluation_data_path.toString() + ".all_rep_" + repetition_count.getAndIncrement() + ".csv"));
             }
             catch (IOException e) {
                 throw new RuntimeException("failed to persist classified evaluation records", e);
@@ -211,9 +257,8 @@ public class ExperimentCLI extends Experiment {
         });
     }
 
-    private void persistClassifiedEvaluationRecords(ClassifierResults results, Path destination) throws IOException {
+    private void persistClassifiedEvaluationRecords(ClassificationContext context, Path destination) throws IOException {
 
-        final ClassificationContext context = results.getContexts().get(0);
         final Bucket evaluation_records = context.getEvaluationRecords();
         final Bucket evaluation_classified_records = context.getConfusionMatrix().getClassifiedRecords();
         final Stream<Record> evaluation_records_stream = StreamSupport.stream(evaluation_records.spliterator(), false);
