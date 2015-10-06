@@ -27,7 +27,7 @@ import java.io.Serializable;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.*;
-import java.util.stream.Collectors;
+import java.util.stream.*;
 
 public class Bucket implements Iterable<Record>, Serializable {
 
@@ -76,13 +76,15 @@ public class Bucket implements Iterable<Record>, Serializable {
 
                 add(new Record(id, data, classification));
 
-            } catch (InputFileFormatException e) {
+            }
+            catch (InputFileFormatException e) {
 
                 // If this is the first row, assume it's a header row and ignore exception.
                 if (!first) {
                     throw e;
                 }
-            } finally {
+            }
+            finally {
                 first = false;
             }
         }
@@ -120,7 +122,8 @@ public class Bucket implements Iterable<Record>, Serializable {
 
         if (auto_allocate_ids) {
             this.records.addAll(reallocateIds(records));
-        } else {
+        }
+        else {
             this.records.addAll(records);
         }
 
@@ -129,6 +132,11 @@ public class Bucket implements Iterable<Record>, Serializable {
         if (final_size != original_size + records.size()) {
             throw new DuplicateRecordIdException();
         }
+    }
+
+    public Stream<Record> stream() {
+
+        return StreamSupport.stream(spliterator(), false);
     }
 
     public DataSet toDataSet(List<String> column_labels) {
@@ -248,7 +256,8 @@ public class Bucket implements Iterable<Record>, Serializable {
     public boolean containsData(final String data) {
 
         for (Record record : this) {
-            if (record.getData().equals(data)) return true;
+            if (record.getData().equals(data))
+                return true;
         }
 
         return false;
@@ -293,7 +302,7 @@ public class Bucket implements Iterable<Record>, Serializable {
     /**
      * Constructs a new bucket containing a randomly selected subset of records present in this bucket based on a given selection probability.
      *
-     * @param random                the random number generator
+     * @param random the random number generator
      * @param selection_probability the probability of a record being selected expressed within inclusive range of {@code 0.0}  to {@code 1.0}
      * @return a new bucket containing a randomly selected subset of this bucket's records
      */
@@ -307,7 +316,8 @@ public class Bucket implements Iterable<Record>, Serializable {
         for (Record record : this) {
             if (subset.size() < subset_size && random.nextDouble() < selection_probability) {
                 subset.add(record);
-            } else {
+            }
+            else {
                 not_selected.add(record);
             }
         }
@@ -332,7 +342,8 @@ public class Bucket implements Iterable<Record>, Serializable {
         try {
             return Integer.parseInt(id_string);
 
-        } catch (NumberFormatException e) {
+        }
+        catch (NumberFormatException e) {
             throw new InputFileFormatException("invalid numerical id: " + id_string);
         }
     }
@@ -369,7 +380,8 @@ public class Bucket implements Iterable<Record>, Serializable {
         try {
             return Double.parseDouble(confidence_string);
 
-        } catch (NumberFormatException e) {
+        }
+        catch (NumberFormatException e) {
             throw new InputFileFormatException("invalid numerical confidence: " + confidence_string);
         }
     }
@@ -381,7 +393,6 @@ public class Bucket implements Iterable<Record>, Serializable {
 
     private Collection<Record> reallocateIds(Collection<Record> records) {
 
-        return records.stream().map(
-                record -> new Record(next_id++, record.getData(), record.getOriginalData(), record.getClassification())).collect(Collectors.toList());
+        return records.stream().map(record -> new Record(next_id++, record.getData(), record.getOriginalData(), record.getClassification())).collect(Collectors.toList());
     }
 }
