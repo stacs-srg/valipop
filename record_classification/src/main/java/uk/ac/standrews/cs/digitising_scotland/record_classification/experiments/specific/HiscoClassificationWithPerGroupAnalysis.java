@@ -46,38 +46,27 @@ import static uk.ac.standrews.cs.util.tables.Means.calculateMean;
  */
 public class HiscoClassificationWithPerGroupAnalysis extends Experiment {
 
+    private static final List<String> THREE_COLUMN_DATASET = Arrays.asList("id", "title", "code");
+    private static final StringSimilarityMetrics RECORD_SIMILARITY_METRIC = StringSimilarityMetrics.JACCARD;
     private static final int CODE_INDEX = 2;
     private static final int LABEL_INDEX = 1;
     private static final int MAX_CODING_SCHEME_LENGTH = 5;
     private static final HiscoScheme HISCO_SCHEME = new HiscoScheme();
-    public static final List<String> THREE_COLUMN_DATASET = Arrays.asList("id", "title", "code");
-
+    private final Map<String, String> code_label_lookup = new HashMap<>();
     @Parameter(names = {"-c", "--classifierSupplier"}, description = "The classifier to use for experiment.", required = true)
     private ClassifierSupplier classifier_supplier;
-
     @Parameter(names = {"-u", "--unseenData"}, description = "Path to unseen data to be classified.", converter = PathConverter.class)
     private Path unseen_data_path;
-
     @Parameter(names = {"-o", "--classifiedRecordsOutput"}, description = "Path to which to persist the classified unseen data.", converter = PathConverter.class)
     private Path classified_unseen_data_path;
-
     @Parameter(names = {"-oe", "--classifiedEvaluationRecordsOutput"}, description = "Path to which to persist the classified evaluation data.", converter = PathConverter.class)
     private Path classified_evaluation_data_path;
-
     @Parameter(names = {"-h", "--codingLookupCSV"}, description = "Path to coding scheme description lookup; a 3 column csv: id, label and code", converter = PathConverter.class)
     private Path code_label_lookup_path;
-
-    private final Map<String, String> code_label_lookup = new HashMap<>();
 
     protected HiscoClassificationWithPerGroupAnalysis(final String[] args) throws IOException, InputFileFormatException {
 
         super(args);
-    }
-
-    @Override
-    protected List<Supplier<Classifier>> getClassifierFactories() throws IOException, InputFileFormatException {
-
-        return Collections.singletonList(classifier_supplier);
     }
 
     public static void main(String[] args) throws Exception {
@@ -85,6 +74,25 @@ public class HiscoClassificationWithPerGroupAnalysis extends Experiment {
         final HiscoClassificationWithPerGroupAnalysis experiment = new HiscoClassificationWithPerGroupAnalysis(args);
         experiment.call();
 
+    }
+
+    private static DataSet getRecordsWithMatchingCodePrefix(final DataSet dataSet, final String prefix, final int code_column_index) {
+
+        final DataSet matching_code_prefix = new DataSet(dataSet.getColumnLabels());
+
+        dataSet.getRecords().stream().filter(record -> record.get(code_column_index).startsWith(prefix)).forEach(matching_code_prefix::addRow);
+
+        return matching_code_prefix;
+    }
+
+    private static Stream<HiscoGroup> getHiscoMajorGroupCodes() {
+
+        return HISCO_SCHEME.getMajorGroups();
+    }
+
+    private static Stream<HiscoGroup> getHiscoMinorGroupCodes() {
+
+        return HISCO_SCHEME.getMinorGroups();
     }
 
     @Override
@@ -111,13 +119,19 @@ public class HiscoClassificationWithPerGroupAnalysis extends Experiment {
         return null; //void callable
     }
 
+    @Override
+    protected List<Supplier<Classifier>> getClassifierFactories() throws IOException, InputFileFormatException {
+
+        return Collections.singletonList(classifier_supplier);
+    }
+
     private void persistClassificationMetricsPerGroup(final List<ClassifierResults> results, Stream<HiscoGroup> groups, final String output_suffix) {
 
         final DataSet per_group_metrics = new DataSet(Arrays.asList("HISCO_GROUP_CODE", "HISCO_GROUP_TITLE", "MACRO-PRECISION", "MACRO-RECALL", "MACRO-F1", "MICRO-PRECISION/RECALL", "TRAINING_RECORDS_COUNT", "TRAINING_RECORDS_TOKEN_LIST_SIZE", "TRAINING_RECORDS_MEAN_JACCARD_SIMILARITY"));
 
         groups.forEach(group -> {
 
-            String group_code = group.getNumericalCode();
+            final String group_code = group.getNumericalCode();
 
             final Stream<ClassificationMetrics> group_classification_metrics = getClassificationMetricsGroupByCodePrefix(results, group_code);
 
@@ -136,13 +150,13 @@ public class HiscoClassificationWithPerGroupAnalysis extends Experiment {
             final List<List<Record>> trainingRecordsForCodePrefix_per_repetition = getTrainingRecordsForCodePrefix(results, group_code);
 
             final List<Double> training_records_count_in_group = trainingRecordsForCodePrefix_per_repetition.stream().map(List::size).map(value -> (double) value).collect(Collectors.toList());
-            row.add(formatMeanAndInterval(calculateMean(training_records_count_in_group), calculateConfidenceInterval(training_records_count_in_group)));
+            row.add(formatMeanAndInterval(training_records_count_in_group));
 
-            final List<Double> training_token_length = trainingRecordsForCodePrefix_per_repetition.stream().map(list -> list.stream().map(Record::getData).map(TokenList::new).mapToDouble(tokens -> (double) tokens.size()).average().orElseGet(() -> Double.NaN)).collect(Collectors.toList());
-            row.add(formatMeanAndInterval(calculateMean(training_token_length), calculateConfidenceInterval(training_token_length)));
+            final List<Double> training_token_length = trainingRecordsForCodePrefix_per_repetition.stream().map(this::getAverageDataTokenListSize).collect(Collectors.toList());
+            row.add(formatMeanAndInterval(training_token_length));
 
-            final List<Double> mean_jaccard_data_distances = trainingRecordsForCodePrefix_per_repetition.stream().map(records -> getAverageSimilarityAcrossRecords(StringSimilarityMetrics.JACCARD.get(), records)).collect(Collectors.toList());
-            row.add(formatMeanAndInterval(calculateMean(mean_jaccard_data_distances), calculateConfidenceInterval(mean_jaccard_data_distances)));
+            final List<Double> mean_jaccard_data_distances = trainingRecordsForCodePrefix_per_repetition.stream().map(records -> getAverageSimilarityAcrossRecords(RECORD_SIMILARITY_METRIC.get(), records)).collect(Collectors.toList());
+            row.add(formatMeanAndInterval(mean_jaccard_data_distances));
 
             per_group_metrics.addRow(row);
         });
@@ -156,16 +170,31 @@ public class HiscoClassificationWithPerGroupAnalysis extends Experiment {
         }
     }
 
+    private double getAverageDataTokenListSize(List<Record> records) {
+
+        return getDataTokenListSize(records).stream().mapToDouble(value -> value).average().orElseGet(() -> Double.NaN);
+    }
+
+    private List<Double> getDataTokenListSize(List<Record> records) {
+
+        return records.stream().map(Record::getData).map(TokenList::new).map(tokens -> (double) tokens.size()).collect(Collectors.toList());
+    }
+
+    private String formatMeanAndInterval(List<Double> values) {
+
+        return formatMeanAndInterval(Means.calculateMean(values), ConfidenceIntervals.calculateConfidenceInterval(values));
+    }
+
     private String formatMeanAndInterval(double mean, double interval) {
 
         return String.format("%.2f ± %.2f", mean, interval);
     }
 
-    private double getAverageSimilarityAcrossRecords(SimilarityMetric metric, List<Record> records) {
+    private List<Double> getSimilarityAcrossRecords(SimilarityMetric metric, List<Record> records) {
 
         final int records_size = records.size();
 
-        final List<Double> distances = new ArrayList<>();
+        final List<Double> similarities = new ArrayList<>();
 
         // assuming similarity metric is a symmetric operation
         for (int outer_index = 0; outer_index < records_size; outer_index++) {
@@ -174,11 +203,16 @@ public class HiscoClassificationWithPerGroupAnalysis extends Experiment {
             for (int inner_index = outer_index + 1; inner_index < records_size; inner_index++) {
 
                 final Record another = records.get(inner_index);
-                distances.add((double) metric.getSimilarity(one.getData(), another.getData()));
+                similarities.add((double) metric.getSimilarity(one.getData(), another.getData()));
             }
         }
 
-        return Means.calculateMean(distances);
+        return similarities;
+    }
+
+    private double getAverageSimilarityAcrossRecords(SimilarityMetric metric, List<Record> records) {
+
+        return Means.calculateMean(getSimilarityAcrossRecords(metric, records));
     }
 
     private Stream<ClassificationMetrics> getClassificationMetricsGroupByCodePrefix(final List<ClassifierResults> results_list, final String code_prefix) {
@@ -197,11 +231,6 @@ public class HiscoClassificationWithPerGroupAnalysis extends Experiment {
         });
     }
 
-    private List<List<Record>> getTrainingRecordsForCodePrefix(final List<ClassifierResults> results_list, final String code_prefix) {
-
-        return results_list.get(0).getContexts().stream().map(context -> context.getTrainingRecords().stream().filter(record -> record.getClassification().getCode().startsWith(code_prefix)).collect(Collectors.toList())).collect(Collectors.toList());
-    }
-
     private DataSet getSubsetById(final DataSet evaluation_classified_records, final Set<String> gold_standard_record_ids_in_group) {
 
         final DataSet evaluation_classified_records_in_group = new DataSet(THREE_COLUMN_DATASET);
@@ -209,20 +238,11 @@ public class HiscoClassificationWithPerGroupAnalysis extends Experiment {
         return evaluation_classified_records_in_group;
     }
 
+    private String getRecordId(final List<String> record) {return record.get(0);}
+
     private Set<String> getIdOfRecordsWithMatchingCodePrefix(final String major_group_code, final DataSet gold_standard_records) {return getRecordsWithMatchingCodePrefix(gold_standard_records, major_group_code, 2).getRecords().stream().map(this::getRecordId).collect(Collectors.toSet());}
 
     private DataSet getClassifiedEvaluationRecords(final ClassificationContext context) {return context.getConfusionMatrix().getClassifiedRecords().toDataSet2(THREE_COLUMN_DATASET);}
-
-    private String getRecordId(final List<String> record) {return record.get(0);}
-
-    private static DataSet getRecordsWithMatchingCodePrefix(final DataSet dataSet, final String prefix, final int code_column_index) {
-
-        final DataSet matching_code_prefix = new DataSet(dataSet.getColumnLabels());
-
-        dataSet.getRecords().stream().filter(record -> record.get(code_column_index).startsWith(prefix)).forEach(matching_code_prefix::addRow);
-
-        return matching_code_prefix;
-    }
 
     private DataSet getGoldStandardRecords(final ClassificationContext context) {
 
@@ -232,14 +252,14 @@ public class HiscoClassificationWithPerGroupAnalysis extends Experiment {
         return gold_standard_records.toDataSet2(THREE_COLUMN_DATASET);
     }
 
-    private static Stream<HiscoGroup> getHiscoMajorGroupCodes() {
+    private List<List<Record>> getTrainingRecordsForCodePrefix(final List<ClassifierResults> results_list, final String code_prefix) {
 
-        return HISCO_SCHEME.getMajorGroups();
+        return results_list.get(0).getContexts().stream().map(context -> getTrainingRecordsForCodePrefix(context, code_prefix)).collect(Collectors.toList());
     }
 
-    private static Stream<HiscoGroup> getHiscoMinorGroupCodes() {
+    private List<Record> getTrainingRecordsForCodePrefix(final ClassificationContext context, final String code_prefix) {
 
-        return HISCO_SCHEME.getMinorGroups();
+        return context.getTrainingRecords().stream().filter(record -> record.getClassification().getCode().startsWith(code_prefix)).collect(Collectors.toList());
     }
 
     private void persistClassifiedEvaluationRecords(final List<ClassifierResults> results) throws IOException {
@@ -258,11 +278,23 @@ public class HiscoClassificationWithPerGroupAnalysis extends Experiment {
     private void persistClassifiedEvaluationRecords(ClassificationContext context, Path destination) throws IOException {
 
         final Bucket evaluation_records = context.getEvaluationRecords();
-        final Bucket evaluation_classified_records = context.getConfusionMatrix().getClassifiedRecords();
+        final ConfusionMatrix confusion_matrix = context.getConfusionMatrix();
+        final ClassificationMetrics classification_metrics = context.getClassificationMetrics();
+        final Map<String, Double> per_class_precision = classification_metrics.getPerClassPrecision();
+        final Map<String, Double> per_class_recall = classification_metrics.getPerClassRecall();
+        final Map<String, Double> per_class_f1 = classification_metrics.getPerClassF1();
+        final Map<String, Double> per_class_accuracy = classification_metrics.getPerClassAccuracy();
+        final Bucket evaluation_classified_records = confusion_matrix.getClassifiedRecords();
         final Stream<Record> evaluation_records_stream = StreamSupport.stream(evaluation_records.spliterator(), false);
         final Map<Integer, Record> evaluation_records_map = evaluation_records_stream.collect(Collectors.toMap(Record::getId, record -> record));
 
-        final DataSet evaluation_output = new DataSet(Arrays.asList("ID", "RAW_DATA", "GOLD_STANDARD_CODE", "GOLD_STANDARD_SCHEME_LABEL", "OUTPUT_CODE", "OUTPUT_CODE_SCHEME_LABEL", "ANCESTOR_DISTANCE", "CONFIDENCE"));
+        final DataSet evaluation_output = new DataSet(
+                        Arrays.asList("ID", "RAW_DATA", "GOLD_STANDARD_CODE", "GOLD_STANDARD_SCHEME_LABEL", "OUTPUT_CODE", "OUTPUT_CODE_SCHEME_LABEL", "ANCESTOR_DISTANCE", "CONFIDENCE", 
+                                      "OUTPUT_CODE_PRECISION", "OUTPUT_CODE_RECALL", "OUTPUT_CODE_F1", "OUTPUT_CODE_ACCURACY",
+                                      "OUTPUT_CODE_TRAINING_RECORDS_COUNT", "OUTPUT_CODE_TRAINING_RECORDS_TOKEN_LIST_SIZE", "OUTPUT_CODE_TRAINING_RECORDS_MEAN_JACCARD_SIMILARITY",
+                                      "GOLD_STANDARD_CODE_PRECISION", "GOLD_STANDARD_CODE_RECALL", "GOLD_STANDARD_CODE_F1", "GOLD_STANDARD_CODE_ACCURACY",
+                                      "GOLD_STANDARD_CODE_TRAINING_RECORDS_COUNT", "GOLD_STANDARD_CODE_TRAINING_RECORDS_TOKEN_LIST_SIZE", "GOLD_STANDARD_CODE_TRAINING_RECORDS_MEAN_JACCARD_SIMILARITY"
+                        ));
         for (Record record : evaluation_classified_records) {
 
             final int id = record.getId();
@@ -278,26 +310,52 @@ public class HiscoClassificationWithPerGroupAnalysis extends Experiment {
             final String output_code = classification.getCode();
             final String output_code_scheme_label = getCodingSchemeLable(output_code);
             final String ancestor_distance = String.valueOf(MAX_CODING_SCHEME_LENGTH - longestMatchingPrefixLength(gold_standard_code, output_code));
-            final String confidence = String.format("%.2f", classification.getConfidence());
+            final String confidence = formatToTwoDecimalPlaces(classification.getConfidence());
 
-            evaluation_output.addRow(id_string, raw_data, gold_standard_code, gold_standard_scheme_label, output_code, output_code_scheme_label, ancestor_distance, confidence);
+            final String output_precision = formatToTwoDecimalPlaces(per_class_precision.get(output_code));
+            final String output_recall = formatToTwoDecimalPlaces(per_class_recall.get(output_code));
+            final String output_f1 = formatToTwoDecimalPlaces(per_class_f1.get(output_code));
+            final String output_accuracy = formatToTwoDecimalPlaces(per_class_accuracy.get(output_code));
+
+            final List<Record> output_training_records = getTrainingRecordsForCodePrefix(context, output_code);
+            final String output_training_records_count = String.valueOf(output_training_records.size());
+
+            final List<Double> output_training_record_token_sizes = getDataTokenListSize(output_training_records);
+            final String output_training_record_token_sizes_cell = formatMeanAndInterval(output_training_record_token_sizes);
+
+            final List<Double> output_training_records_similarities = getSimilarityAcrossRecords(RECORD_SIMILARITY_METRIC.get(), output_training_records);
+            final String output_training_records_similarities_cell = formatMeanAndInterval(output_training_records_similarities);
+
+
+            final String gold_precision = formatToTwoDecimalPlaces(per_class_precision.get(gold_standard_code));
+            final String gold_recall = formatToTwoDecimalPlaces(per_class_recall.get(gold_standard_code));
+            final String gold_f1 = formatToTwoDecimalPlaces(per_class_f1.get(gold_standard_code));
+            final String gold_accuracy = formatToTwoDecimalPlaces(per_class_accuracy.get(gold_standard_code));
+
+            final List<Record> gold_training_records = getTrainingRecordsForCodePrefix(context, gold_standard_code);
+            final String gold_training_records_count = String.valueOf(gold_training_records.size());
+
+            final List<Double> gold_training_record_token_sizes = getDataTokenListSize(gold_training_records);
+            final String gold_training_record_token_sizes_cell = formatMeanAndInterval(gold_training_record_token_sizes);
+
+            final List<Double> gold_training_records_similarities = getSimilarityAcrossRecords(RECORD_SIMILARITY_METRIC.get(), gold_training_records);
+            final String gold_training_records_similarities_cell = formatMeanAndInterval(gold_training_records_similarities);
+
+            evaluation_output.addRow(
+                            id_string, raw_data, gold_standard_code, gold_standard_scheme_label, output_code, output_code_scheme_label, ancestor_distance, confidence,
+                            output_precision, output_recall, output_f1, output_accuracy, 
+                            output_training_records_count, output_training_record_token_sizes_cell, output_training_records_similarities_cell,
+                            gold_precision, gold_recall, gold_f1, gold_accuracy, 
+                            gold_training_records_count, gold_training_record_token_sizes_cell, gold_training_records_similarities_cell
+            );
         }
 
         persistDataSetToPath(destination, evaluation_output);
     }
 
+    private String formatToTwoDecimalPlaces(final double value) {return String.format("%.2f", value);}
+
     private String getCodingSchemeLable(final String code) {return code_label_lookup.getOrDefault(code, "NON_ROOT");}
-
-    private void populateCodeLabelLookup() throws IOException {
-
-        if (code_label_lookup_path != null) {
-            final DataSet code_label_dataset = new DataSet(Files.newBufferedReader(code_label_lookup_path));
-
-            for (List<String> cells : code_label_dataset.getRecords()) {
-                code_label_lookup.put(cells.get(CODE_INDEX), cells.get(LABEL_INDEX));
-            }
-        }
-    }
 
     public int longestMatchingPrefixLength(String one, String another) {
 
@@ -313,6 +371,24 @@ public class HiscoClassificationWithPerGroupAnalysis extends Experiment {
             }
         }
         return one.substring(0, min_length);
+    }
+
+    private void persistDataSetToPath(Path destination, final DataSet classified_unseen_data_set) throws IOException {
+
+        try (final BufferedWriter out = Files.newBufferedWriter(destination)) {
+            classified_unseen_data_set.print(out);
+        }
+    }
+
+    private void populateCodeLabelLookup() throws IOException {
+
+        if (code_label_lookup_path != null) {
+            final DataSet code_label_dataset = new DataSet(Files.newBufferedReader(code_label_lookup_path));
+
+            for (List<String> cells : code_label_dataset.getRecords()) {
+                code_label_lookup.put(cells.get(CODE_INDEX), cells.get(LABEL_INDEX));
+            }
+        }
     }
 
     private void classifyUnseenRecords(final List<ClassifierResults> results) throws IOException {
@@ -334,7 +410,7 @@ public class HiscoClassificationWithPerGroupAnalysis extends Experiment {
             final String raw_data = record.getOriginalData();
             final String output_code = classification.getCode();
             final String output_code_scheme_label = getCodingSchemeLable(output_code);
-            final String confidence = String.format("%.2f", classification.getConfidence());
+            final String confidence = formatToTwoDecimalPlaces(classification.getConfidence());
 
             classified_unseen_data_set.addRow(id, raw_data, output_code, output_code_scheme_label, confidence);
         }
@@ -350,13 +426,6 @@ public class HiscoClassificationWithPerGroupAnalysis extends Experiment {
             classified_unseen_data_set.print(System.out);
             System.out.println();
             System.out.println();
-        }
-    }
-
-    private void persistDataSetToPath(Path destination, final DataSet classified_unseen_data_set) throws IOException {
-
-        try (final BufferedWriter out = Files.newBufferedWriter(destination)) {
-            classified_unseen_data_set.print(out);
         }
     }
 
