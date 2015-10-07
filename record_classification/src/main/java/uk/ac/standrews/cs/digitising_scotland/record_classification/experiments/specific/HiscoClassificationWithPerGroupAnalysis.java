@@ -14,19 +14,17 @@
  * You should have received a copy of the GNU General Public License along with record_classification. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.digitising_scotland.record_classification.experiments.generic;
+package uk.ac.standrews.cs.digitising_scotland.record_classification.experiments.specific;
 
 import com.beust.jcommander.*;
 import com.beust.jcommander.converters.*;
-import org.apache.commons.math.stat.descriptive.*;
-import org.apache.lucene.search.spell.*;
-import org.simmetrics.metrics.*;
 import uk.ac.standrews.cs.classification_schemes.hisco.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.string_similarity.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.experiments.generic.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.*;
 import uk.ac.standrews.cs.util.dataset.*;
@@ -46,7 +44,7 @@ import static uk.ac.standrews.cs.util.tables.Means.calculateMean;
 /**
  * @author masih
  */
-public class ExperimentCLI extends Experiment {
+public class HiscoClassificationWithPerGroupAnalysis extends Experiment {
 
     private static final int CODE_INDEX = 2;
     private static final int LABEL_INDEX = 1;
@@ -71,7 +69,7 @@ public class ExperimentCLI extends Experiment {
 
     private final Map<String, String> code_label_lookup = new HashMap<>();
 
-    protected ExperimentCLI(final String[] args) throws IOException, InputFileFormatException {
+    protected HiscoClassificationWithPerGroupAnalysis(final String[] args) throws IOException, InputFileFormatException {
 
         super(args);
     }
@@ -84,7 +82,7 @@ public class ExperimentCLI extends Experiment {
 
     public static void main(String[] args) throws Exception {
 
-        final ExperimentCLI experiment = new ExperimentCLI(args);
+        final HiscoClassificationWithPerGroupAnalysis experiment = new HiscoClassificationWithPerGroupAnalysis(args);
         experiment.call();
 
     }

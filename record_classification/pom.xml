@@ -265,7 +265,7 @@
                             <appendAssemblyId>false</appendAssemblyId>
                             <archive>
                                 <manifest>
-                                    <mainClass>uk.ac.standrews.cs.digitising_scotland.record_classification.experiments.generic.ExperimentCLI</mainClass>
+                                    <mainClass>uk.ac.standrews.cs.digitising_scotland.record_classification.experiments.specific.HiscoClassificationWithPerGroupAnalysis</mainClass>
                                 </manifest>
                             </archive>
                             <descriptorRefs>
