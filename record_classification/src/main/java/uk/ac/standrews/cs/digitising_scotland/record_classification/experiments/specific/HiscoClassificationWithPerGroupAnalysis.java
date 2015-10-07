@@ -182,7 +182,8 @@ public class HiscoClassificationWithPerGroupAnalysis extends Experiment {
 
     private String formatMeanAndInterval(List<Double> values) {
 
-        return formatMeanAndInterval(Means.calculateMean(values), ConfidenceIntervals.calculateConfidenceInterval(values));
+        final double confidence_interval = values.size() > 1 ? ConfidenceIntervals.calculateConfidenceInterval(values) : Double.NaN;
+        return formatMeanAndInterval(Means.calculateMean(values), confidence_interval);
     }
 
     private String formatMeanAndInterval(double mean, double interval) {
@@ -325,7 +326,6 @@ public class HiscoClassificationWithPerGroupAnalysis extends Experiment {
 
             final List<Double> output_training_records_similarities = getSimilarityAcrossRecords(RECORD_SIMILARITY_METRIC.get(), output_training_records);
             final String output_training_records_similarities_cell = formatMeanAndInterval(output_training_records_similarities);
-
 
             final String gold_precision = formatToTwoDecimalPlaces(per_class_precision.get(gold_standard_code));
             final String gold_recall = formatToTwoDecimalPlaces(per_class_recall.get(gold_standard_code));
