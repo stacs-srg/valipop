@@ -378,7 +378,7 @@ public final class OrganicPartnership implements IPartnership {
      * @param wife    An OrganicPartnership object representing the female.
      */
     public void divorce(final OrganicPerson husband, final OrganicPerson wife) {
-        husband.populateTimeline(true);
+    	husband.populateTimeline(true);
         wife.populateTimeline(true);
     }
 

@@ -146,7 +146,7 @@ public class LoggingControl {
             writer.println("reset");
 
             writer.println("set terminal pdf");
-            writer.println("set output 'output.pdf'");
+            writer.println("set output 'E:/OneDrive/output.pdf'");
 
             LoggingControl.populationLogger.generateGnuPlotScriptLines(writer);
             LoggingControl.cohabCountLogger.generateGnuPlotScriptLines(writer);
@@ -217,14 +217,14 @@ public class LoggingControl {
                 LoggingControl.cohabitationLengthDistributionLogger.log(currentDay, currentDay - partnership.getParntershipDay());
                 LoggingControl.cohabCountLogger.decCount();
                 break;
-            case COHABITATION_THEN_MARRIAGE:
-                LoggingControl.ageAtDivorceMaleDistributionLogger.log(currentDay, male.getLifeLengthInDays());
-                LoggingControl.ageAtDivorceFemaleDistributionLogger.log(currentDay, female.getLifeLengthInDays());
+            case COHABITATION_THEN_MARRIAGE:           
+                LoggingControl.ageAtDivorceMaleDistributionLogger.log(currentDay, OrganicPopulation.getCurrentDay() - male.getBirthDay());
+                LoggingControl.ageAtDivorceFemaleDistributionLogger.log(currentDay, OrganicPopulation.getCurrentDay() - female.getBirthDay());
                 LoggingControl.cohabThenMarriageCountLogger.decCount();
                 break;
             case MARRIAGE:
-                LoggingControl.ageAtDivorceMaleDistributionLogger.log(currentDay, male.getLifeLengthInDays());
-                LoggingControl.ageAtDivorceFemaleDistributionLogger.log(currentDay, female.getLifeLengthInDays());
+                LoggingControl.ageAtDivorceMaleDistributionLogger.log(currentDay, OrganicPopulation.getCurrentDay() - male.getBirthDay());
+                LoggingControl.ageAtDivorceFemaleDistributionLogger.log(currentDay, OrganicPopulation.getCurrentDay() - female.getBirthDay());
                 LoggingControl.marriageCountLogger.decCount();
                 break;
             default:
