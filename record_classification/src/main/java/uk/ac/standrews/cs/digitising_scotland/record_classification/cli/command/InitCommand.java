@@ -14,18 +14,14 @@
  * You should have received a copy of the GNU General Public License along with record_classification. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.command;
+package uk.ac.standrews.cs.digitising_scotland.record_classification.cli.command;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.ClassifierSupplier;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassificationContext;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.serialization.Serialization;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.ClassificationContext;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Random;
 
 /**

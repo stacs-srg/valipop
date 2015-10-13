@@ -19,7 +19,7 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.process.ser
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.SerializationUtils;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassificationContext;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.ClassificationContext;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.serialization.json.ProcessObjectMapper;
 
 import java.io.IOException;

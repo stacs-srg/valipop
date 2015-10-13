@@ -25,11 +25,10 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.C
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.Cleaner;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.CleanerSupplier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.InputFileFormatException;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.Validators;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.command.TrainCommand;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassificationContext;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassificationProcess;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.specific.EvaluationExperimentProcess;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.Validators;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.command.TrainCommand;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.ClassificationContext;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.ClassificationProcess;
 import uk.ac.standrews.cs.util.dataset.DataSet;
 import uk.ac.standrews.cs.util.tables.TableGenerator;
 import uk.ac.standrews.cs.util.tools.InfoLevel;

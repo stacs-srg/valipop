@@ -18,8 +18,8 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.process.ste
 
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.Classifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassificationContext;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.Step;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.ClassificationContext;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.Step;
 
 import java.time.Duration;
 import java.time.Instant;

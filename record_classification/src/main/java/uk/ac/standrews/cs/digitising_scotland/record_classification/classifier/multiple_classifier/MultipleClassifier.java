@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License along with record_classification. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.digitising_scotland.record_classification.multiple_classifier;
+package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.multiple_classifier;
 
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.*;

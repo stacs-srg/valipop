@@ -23,8 +23,8 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.C
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.UnknownDataException;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Record;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassificationContext;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.specific.EvaluationExperimentProcess;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.ClassificationContext;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.experiments.generic.EvaluationExperimentProcess;
 import uk.ac.standrews.cs.util.tools.FileManipulation;
 
 import java.io.BufferedReader;

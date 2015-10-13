@@ -20,7 +20,7 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.C
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.ClassifierSupplier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.InputFileFormatException;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.experiments.generic.Experiment;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.config.Config;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.experiments.config.Config;
 
 import java.io.IOException;
 import java.util.Collections;

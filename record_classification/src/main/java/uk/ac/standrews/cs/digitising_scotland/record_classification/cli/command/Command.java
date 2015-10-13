@@ -14,11 +14,10 @@
  * You should have received a copy of the GNU General Public License along with record_classification. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.command;
+package uk.ac.standrews.cs.digitising_scotland.record_classification.cli.command;
 
-import com.beust.jcommander.Parameter;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.*;
 import uk.ac.standrews.cs.util.tools.InfoLevel;
 import uk.ac.standrews.cs.util.tools.Logging;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.LoadStep;

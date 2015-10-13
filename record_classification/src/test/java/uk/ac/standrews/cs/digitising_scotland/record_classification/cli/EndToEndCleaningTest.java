@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License along with record_classification. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli;
+package uk.ac.standrews.cs.digitising_scotland.record_classification.cli;
 
 import org.junit.Test;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.ClassifierSupplier;
@@ -22,7 +22,7 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.Eng
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Record;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.TokenList;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassificationContext;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.ClassificationContext;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.serialization.Serialization;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.serialization.SerializationFormat;
 import uk.ac.standrews.cs.util.tools.FileManipulation;

@@ -17,8 +17,8 @@
 package uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps;
 
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.FileWriteException;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassificationContext;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.Step;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.ClassificationContext;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.Step;
 import uk.ac.standrews.cs.util.dataset.DataSet;
 
 import java.io.BufferedWriter;

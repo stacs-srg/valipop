@@ -26,7 +26,7 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.experiments.generic.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.*;
 import uk.ac.standrews.cs.util.dataset.*;
 import uk.ac.standrews.cs.util.tables.*;
 import uk.ac.standrews.cs.util.tools.*;
@@ -39,7 +39,7 @@ import java.util.function.*;
 import java.util.stream.*;
 
 /**
- * @author masih
+ * @author Masih Hajiarab Derkani
  */
 public class HiscoClassificationWithPerGroupAnalysis extends Experiment {
 
@@ -69,15 +69,8 @@ public class HiscoClassificationWithPerGroupAnalysis extends Experiment {
 
     public static void main(String[] args) throws Exception {
 
-//        args = ("-g /Users/masih/Desktop/meeting_12_oct_experiments/data/training/zijdeman.csv " 
-//                        + "-t 0.8 -ir 0.8 -d , -r 2 " 
-//                        + "-h /Users/masih/Desktop/meeting_12_oct_experiments/data/hisco.csv " 
-//                        + "-oe /Users/masih/Desktop/meeting_12_oct_experiments/results/zijdeman-0.8-evaluate-classified-evaluation-records " 
-//                        + "-c VOTING_ENSEMBLE_EXACT_ML_SIMILARITY").split("[ ]");
-
         final HiscoClassificationWithPerGroupAnalysis experiment = new HiscoClassificationWithPerGroupAnalysis(args);
         experiment.call();
-
     }
 
     private static DataSet getRecordsWithMatchingCodePrefix(final DataSet dataSet, final String prefix, final int code_column_index) {

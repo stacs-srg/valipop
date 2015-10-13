@@ -17,9 +17,9 @@
 package uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps;
 
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.Validators;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassificationContext;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.Step;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.Validators;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.ClassificationContext;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.Step;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -98,7 +98,7 @@ public class LoadTrainingAndEvaluationRecordsByRatioStep implements Step {
 
     private void validateRatio(final double ratio) {
 
-        if (!Validators.betweenZeroAndOne(ratio)) {
+        if (!Validators.isBetweenZeroAndOne(ratio)) {
             throw new IllegalArgumentException("ratio must be within inclusive range of 0.0 to 1.0");
         }
     }

@@ -17,9 +17,9 @@
 package uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps;
 
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.CharsetSupplier;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassificationContext;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.Step;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.CharsetSupplier;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.ClassificationContext;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.Step;
 
 import java.io.BufferedReader;
 import java.io.IOException;
