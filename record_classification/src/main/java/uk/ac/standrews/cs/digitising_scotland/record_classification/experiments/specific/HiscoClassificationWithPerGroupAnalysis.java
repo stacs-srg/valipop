@@ -38,9 +38,6 @@ import java.util.concurrent.atomic.*;
 import java.util.function.*;
 import java.util.stream.*;
 
-import static uk.ac.standrews.cs.util.tables.ConfidenceIntervals.calculateConfidenceInterval;
-import static uk.ac.standrews.cs.util.tables.Means.calculateMean;
-
 /**
  * @author masih
  */
@@ -52,6 +49,7 @@ public class HiscoClassificationWithPerGroupAnalysis extends Experiment {
     private static final int LABEL_INDEX = 1;
     private static final int MAX_CODING_SCHEME_LENGTH = 5;
     private static final HiscoScheme HISCO_SCHEME = new HiscoScheme();
+    public static final List<String> CLASSIFICATION_DETAIL_COLUMN_LABELS = Arrays.asList("ID", "DATA", "CODE", "CONFIDENCE", "DETAILS");
     private final Map<String, String> code_label_lookup = new HashMap<>();
     @Parameter(names = {"-c", "--classifierSupplier"}, description = "The classifier to use for experiment.", required = true)
     private ClassifierSupplier classifier_supplier;
@@ -70,6 +68,12 @@ public class HiscoClassificationWithPerGroupAnalysis extends Experiment {
     }
 
     public static void main(String[] args) throws Exception {
+
+//        args = ("-g /Users/masih/Desktop/meeting_12_oct_experiments/data/training/zijdeman.csv " 
+//                        + "-t 0.8 -ir 0.8 -d , -r 2 " 
+//                        + "-h /Users/masih/Desktop/meeting_12_oct_experiments/data/hisco.csv " 
+//                        + "-oe /Users/masih/Desktop/meeting_12_oct_experiments/results/zijdeman-0.8-evaluate-classified-evaluation-records " 
+//                        + "-c VOTING_ENSEMBLE_EXACT_ML_SIMILARITY").split("[ ]");
 
         final HiscoClassificationWithPerGroupAnalysis experiment = new HiscoClassificationWithPerGroupAnalysis(args);
         experiment.call();
@@ -108,6 +112,9 @@ public class HiscoClassificationWithPerGroupAnalysis extends Experiment {
             persistClassifiedEvaluationRecords(results);
             persistClassificationMetricsPerGroup(results, getHiscoMajorGroupCodes(), "major");
             persistClassificationMetricsPerGroup(results, getHiscoMinorGroupCodes(), "minor");
+//
+            persistClassificationDetails(results);
+            persistInconsistentlyCodedRecordsAcrossTwoOrMoreRepetitions(results);
         }
 
         if (unseen_data_path != null) {
@@ -119,6 +126,117 @@ public class HiscoClassificationWithPerGroupAnalysis extends Experiment {
         return null; //void callable
     }
 
+    private void persistInconsistentlyCodedRecordsAcrossTwoOrMoreRepetitions(final List<ClassifierResults> results) {
+
+        System.out.println("Persisting inconsistently coded evaluation records across two or more repetitions...");
+
+        final List<List<Record>> evaluation_records_appearing_twice_or_more = getEvaluationRecordsAcrossRepetitions(results, 2);
+
+        final DataSet inconsistent_dataset = new DataSet(Arrays.asList("DATA", "OUTPUT_CODES", "GOLD_STANDARD_CODE", "REPETITION_APPEARANCE_COUNT", "CORRECT_COUNT", "INCORRECT_COUNT", "UNIQUE_CODE_COUNT"));
+        final Bucket gold_standard = getGoldStandardRecords(results.get(0).getContexts().get(0));
+
+        for (List<Record> records : evaluation_records_appearing_twice_or_more) {
+
+            if (records != null) {
+
+                final String record_original_data = records.get(0).getOriginalData(); //Original data across all records should be the same; if not it's a bug.
+                final List<String> output_codes = records.stream().map(record -> record.getClassification().getCode()).collect(Collectors.toList());
+                final String output_codes_joined = String.join(",", output_codes);
+                final String gold_standard_code = gold_standard.stream().filter(gold_standard_record -> gold_standard_record.getOriginalData().equals(record_original_data)).map(record1 -> record1.getClassification().getCode()).findFirst().orElse("NOT_FOUND");
+                final long correct_code_count = output_codes.stream().filter(code -> code.equals(gold_standard_code)).count();
+                final int repetition_count = output_codes.size();
+
+                inconsistent_dataset.addRow(record_original_data, output_codes_joined, gold_standard_code, String.valueOf(repetition_count), String.valueOf(correct_code_count), String.valueOf(repetition_count - correct_code_count), String.valueOf(new HashSet<>(output_codes).size()));
+            }
+        }
+
+        System.out.printf("\tdetected %d inconsistent codes across two or more repetitions%n", inconsistent_dataset.getRecords().size());
+
+        final Path path = Paths.get(classified_evaluation_data_path.toString() + ".inconsistent_code_across_reps.csv");
+        try {
+            persistDataSetToPath(path, inconsistent_dataset);
+            System.out.println("Done persisting inconsistently coded evaluation records across repetitions.\n");
+        }
+        catch (IOException e) {
+            throw new RuntimeException("failed to persist inconsistently coded evaluation records across repetitions", e);
+        }
+    }
+
+    private List<List<Record>> getEvaluationRecordsAcrossRepetitions(final List<ClassifierResults> results, int min_occurance_count) {
+
+        final List<Map<String, Record>> mapStream = results.get(0).getContexts().stream().map(this::getClassifiedEvaluationRecordsOriginalDataMap).collect(Collectors.toList());
+
+        final Set<String> unique_datas = new HashSet<>();
+        for (Map<String, Record> map : mapStream) {
+            unique_datas.addAll(map.keySet());
+        }
+
+        return unique_datas.stream().filter(data -> {
+            // filter ids that are present across maps
+            int occurance_count = 0;
+            for (Map<String, Record> map : mapStream) {
+                if (map.containsKey(data)) {
+                    occurance_count++;
+                }
+            }
+            return occurance_count >= min_occurance_count;
+        }).map(data -> {
+
+            // map to records
+            List<Record> records = new ArrayList<>();
+
+            for (Map<String, Record> map : mapStream) {
+                if (map.containsKey(data)) {
+                    records.add(map.get(data));
+                }
+            }
+            return records;
+        }).collect(Collectors.toList());
+    }
+
+    private boolean isInconsistentlyCoded(List<Record> records) {
+        // filter records with inconsistent coding
+        String code_sofar = null;
+
+        for (Record record : records) {
+            final String record_code = record.getClassification().getCode();
+            if (code_sofar == null) {
+                code_sofar = record_code;
+            }
+            else if (!code_sofar.equals(record_code)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private Map<String, Record> getClassifiedEvaluationRecordsOriginalDataMap(final ClassificationContext context) {
+
+        return context.getConfusionMatrix().getClassifiedRecords().stream().collect(Collectors.toMap(Record::getOriginalData, Function.identity()));
+    }
+
+    private void persistClassificationDetails(final List<ClassifierResults> results) {
+
+        System.out.println("Persisting classification details of classified evaluation records...");
+        final AtomicInteger repetition_count = new AtomicInteger();
+        results.get(0).getContexts().forEach(context -> persistClassificationDetails(context, Paths.get(classified_evaluation_data_path.toString() + ".classifier_details_" + repetition_count.getAndIncrement() + ".csv")));
+
+        System.out.println("Done persisting classification details of classified evaluation records.\n");
+    }
+
+    private void persistClassificationDetails(final ClassificationContext context, Path output) {
+
+        final Bucket classified_evaluation_records = context.getConfusionMatrix().getClassifiedRecords();
+        final DataSet details = classified_evaluation_records.toDataSet(CLASSIFICATION_DETAIL_COLUMN_LABELS);
+
+        try {
+            persistDataSetToPath(output, details);
+        }
+        catch (IOException e) {
+            throw new RuntimeException("failed to persist classification details at " + output, e);
+        }
+    }
+
     @Override
     protected List<Supplier<Classifier>> getClassifierFactories() throws IOException, InputFileFormatException {
 
@@ -126,6 +244,8 @@ public class HiscoClassificationWithPerGroupAnalysis extends Experiment {
     }
 
     private void persistClassificationMetricsPerGroup(final List<ClassifierResults> results, Stream<HiscoGroup> groups, final String output_suffix) {
+
+        System.out.printf("Persisting classification metrics per HISCO %s group for classified evaluation records...%n", output_suffix);
 
         final DataSet per_group_metrics = new DataSet(Arrays.asList("HISCO_GROUP_CODE", "HISCO_GROUP_TITLE", "MACRO-PRECISION", "MACRO-RECALL", "MACRO-F1", "MICRO-PRECISION/RECALL", "TRAINING_RECORDS_COUNT", "TRAINING_RECORDS_TOKEN_LIST_SIZE", "TRAINING_RECORDS_MEAN_JACCARD_SIMILARITY"));
 
@@ -164,6 +284,7 @@ public class HiscoClassificationWithPerGroupAnalysis extends Experiment {
         final Path destination = Paths.get(classified_evaluation_data_path.toString() + ".per_hisco_group_" + output_suffix + ".csv");
         try {
             persistDataSetToPath(destination, per_group_metrics);
+            System.out.printf("Done persisting classification metrics per HISCO %s group for classified evaluation records.%n%n", output_suffix);
         }
         catch (IOException e) {
             throw new RuntimeException("failed to persist classification metrics per group: " + output_suffix, e);
@@ -220,7 +341,7 @@ public class HiscoClassificationWithPerGroupAnalysis extends Experiment {
 
         return results_list.get(0).getContexts().stream().map(context -> {
 
-            final DataSet gold_standard_records = getGoldStandardRecords(context);
+            final DataSet gold_standard_records = getGoldStandardRecordsDataSet(context);
             final DataSet evaluation_classified_records = getClassifiedEvaluationRecords(context);
 
             final Set<String> gold_standard_record_ids_in_group = getIdOfRecordsWithMatchingCodePrefix(code_prefix, gold_standard_records);
@@ -245,12 +366,16 @@ public class HiscoClassificationWithPerGroupAnalysis extends Experiment {
 
     private DataSet getClassifiedEvaluationRecords(final ClassificationContext context) {return context.getConfusionMatrix().getClassifiedRecords().toDataSet2(THREE_COLUMN_DATASET);}
 
-    private DataSet getGoldStandardRecords(final ClassificationContext context) {
+    private DataSet getGoldStandardRecordsDataSet(final ClassificationContext context) {
+
+        return getGoldStandardRecords(context).toDataSet2(THREE_COLUMN_DATASET);
+    }
+
+    private Bucket getGoldStandardRecords(final ClassificationContext context) {
 
         final Bucket training_records = context.getTrainingRecords();
         final Bucket evaluation_records = context.getEvaluationRecords();
-        final Bucket gold_standard_records = training_records.union(evaluation_records);
-        return gold_standard_records.toDataSet2(THREE_COLUMN_DATASET);
+        return training_records.union(evaluation_records);
     }
 
     private List<List<Record>> getTrainingRecordsForCodePrefix(final List<ClassifierResults> results_list, final String code_prefix) {
@@ -265,10 +390,12 @@ public class HiscoClassificationWithPerGroupAnalysis extends Experiment {
 
     private void persistClassifiedEvaluationRecords(final List<ClassifierResults> results) throws IOException {
 
+        System.out.println("Persisting classified evaluation records...");
         final AtomicInteger repetition_count = new AtomicInteger();
         results.get(0).getContexts().forEach(context -> {
             try {
                 persistClassifiedEvaluationRecords(context, Paths.get(classified_evaluation_data_path.toString() + ".all_rep_" + repetition_count.getAndIncrement() + ".csv"));
+                System.out.println("Done persisting classified evaluation records.");
             }
             catch (IOException e) {
                 throw new RuntimeException("failed to persist classified evaluation records", e);
@@ -290,11 +417,10 @@ public class HiscoClassificationWithPerGroupAnalysis extends Experiment {
         final Map<Integer, Record> evaluation_records_map = evaluation_records_stream.collect(Collectors.toMap(Record::getId, record -> record));
 
         final DataSet evaluation_output = new DataSet(
-                        Arrays.asList("ID", "RAW_DATA", "GOLD_STANDARD_CODE", "GOLD_STANDARD_SCHEME_LABEL", "OUTPUT_CODE", "OUTPUT_CODE_SCHEME_LABEL", "ANCESTOR_DISTANCE", "CONFIDENCE", 
-                                      "OUTPUT_CODE_PRECISION", "OUTPUT_CODE_RECALL", "OUTPUT_CODE_F1", "OUTPUT_CODE_ACCURACY",
-                                      "OUTPUT_CODE_TRAINING_RECORDS_COUNT", "OUTPUT_CODE_TRAINING_RECORDS_TOKEN_LIST_SIZE", "OUTPUT_CODE_TRAINING_RECORDS_MEAN_JACCARD_SIMILARITY",
-                                      "GOLD_STANDARD_CODE_PRECISION", "GOLD_STANDARD_CODE_RECALL", "GOLD_STANDARD_CODE_F1", "GOLD_STANDARD_CODE_ACCURACY",
-                                      "GOLD_STANDARD_CODE_TRAINING_RECORDS_COUNT", "GOLD_STANDARD_CODE_TRAINING_RECORDS_TOKEN_LIST_SIZE", "GOLD_STANDARD_CODE_TRAINING_RECORDS_MEAN_JACCARD_SIMILARITY"
+                        Arrays.asList("ID", "RAW_DATA", "GOLD_STANDARD_CODE", "GOLD_STANDARD_SCHEME_LABEL", "OUTPUT_CODE", "OUTPUT_CODE_SCHEME_LABEL", "ANCESTOR_DISTANCE", "CONFIDENCE", "OUTPUT_CODE_PRECISION", "OUTPUT_CODE_RECALL", "OUTPUT_CODE_F1", "OUTPUT_CODE_ACCURACY",
+//                                      "OUTPUT_CODE_TRAINING_RECORDS_COUNT", "OUTPUT_CODE_TRAINING_RECORDS_TOKEN_LIST_SIZE", "OUTPUT_CODE_TRAINING_RECORDS_MEAN_JACCARD_SIMILARITY",
+                                      "GOLD_STANDARD_CODE_PRECISION", "GOLD_STANDARD_CODE_RECALL", "GOLD_STANDARD_CODE_F1", "GOLD_STANDARD_CODE_ACCURACY"
+//                                      ,"GOLD_STANDARD_CODE_TRAINING_RECORDS_COUNT", "GOLD_STANDARD_CODE_TRAINING_RECORDS_TOKEN_LIST_SIZE", "GOLD_STANDARD_CODE_TRAINING_RECORDS_MEAN_JACCARD_SIMILARITY"
                         ));
         for (Record record : evaluation_classified_records) {
 
@@ -318,35 +444,33 @@ public class HiscoClassificationWithPerGroupAnalysis extends Experiment {
             final String output_f1 = formatToTwoDecimalPlaces(per_class_f1.get(output_code));
             final String output_accuracy = formatToTwoDecimalPlaces(per_class_accuracy.get(output_code));
 
-            final List<Record> output_training_records = getTrainingRecordsForCodePrefix(context, output_code);
-            final String output_training_records_count = String.valueOf(output_training_records.size());
-
-            final List<Double> output_training_record_token_sizes = getDataTokenListSize(output_training_records);
-            final String output_training_record_token_sizes_cell = formatMeanAndInterval(output_training_record_token_sizes);
-
-            final List<Double> output_training_records_similarities = getSimilarityAcrossRecords(RECORD_SIMILARITY_METRIC.get(), output_training_records);
-            final String output_training_records_similarities_cell = formatMeanAndInterval(output_training_records_similarities);
+//            final List<Record> output_training_records = getTrainingRecordsForCodePrefix(context, output_code);
+//            final String output_training_records_count = String.valueOf(output_training_records.size());
+//
+//            final List<Double> output_training_record_token_sizes = getDataTokenListSize(output_training_records);
+//            final String output_training_record_token_sizes_cell = formatMeanAndInterval(output_training_record_token_sizes);
+//
+//            final List<Double> output_training_records_similarities = getSimilarityAcrossRecords(RECORD_SIMILARITY_METRIC.get(), output_training_records);
+//            final String output_training_records_similarities_cell = formatMeanAndInterval(output_training_records_similarities);
 
             final String gold_precision = formatToTwoDecimalPlaces(per_class_precision.get(gold_standard_code));
             final String gold_recall = formatToTwoDecimalPlaces(per_class_recall.get(gold_standard_code));
             final String gold_f1 = formatToTwoDecimalPlaces(per_class_f1.get(gold_standard_code));
             final String gold_accuracy = formatToTwoDecimalPlaces(per_class_accuracy.get(gold_standard_code));
 
-            final List<Record> gold_training_records = getTrainingRecordsForCodePrefix(context, gold_standard_code);
-            final String gold_training_records_count = String.valueOf(gold_training_records.size());
+//            final List<Record> gold_training_records = getTrainingRecordsForCodePrefix(context, gold_standard_code);
+//            final String gold_training_records_count = String.valueOf(gold_training_records.size());
+//
+//            final List<Double> gold_training_record_token_sizes = getDataTokenListSize(gold_training_records);
+//            final String gold_training_record_token_sizes_cell = formatMeanAndInterval(gold_training_record_token_sizes);
+//
+//            final List<Double> gold_training_records_similarities = getSimilarityAcrossRecords(RECORD_SIMILARITY_METRIC.get(), gold_training_records);
+//            final String gold_training_records_similarities_cell = formatMeanAndInterval(gold_training_records_similarities);
 
-            final List<Double> gold_training_record_token_sizes = getDataTokenListSize(gold_training_records);
-            final String gold_training_record_token_sizes_cell = formatMeanAndInterval(gold_training_record_token_sizes);
-
-            final List<Double> gold_training_records_similarities = getSimilarityAcrossRecords(RECORD_SIMILARITY_METRIC.get(), gold_training_records);
-            final String gold_training_records_similarities_cell = formatMeanAndInterval(gold_training_records_similarities);
-
-            evaluation_output.addRow(
-                            id_string, raw_data, gold_standard_code, gold_standard_scheme_label, output_code, output_code_scheme_label, ancestor_distance, confidence,
-                            output_precision, output_recall, output_f1, output_accuracy, 
-                            output_training_records_count, output_training_record_token_sizes_cell, output_training_records_similarities_cell,
-                            gold_precision, gold_recall, gold_f1, gold_accuracy, 
-                            gold_training_records_count, gold_training_record_token_sizes_cell, gold_training_records_similarities_cell
+            evaluation_output.addRow(id_string, raw_data, gold_standard_code, gold_standard_scheme_label, output_code, output_code_scheme_label, ancestor_distance, confidence, output_precision, output_recall, output_f1, output_accuracy,
+//                            output_training_records_count, output_training_record_token_sizes_cell, output_training_records_similarities_cell,
+                                     gold_precision, gold_recall, gold_f1, gold_accuracy
+//                            ,gold_training_records_count, gold_training_record_token_sizes_cell, gold_training_records_similarities_cell
             );
         }
 
@@ -393,6 +517,7 @@ public class HiscoClassificationWithPerGroupAnalysis extends Experiment {
 
     private void classifyUnseenRecords(final List<ClassifierResults> results) throws IOException {
 
+        System.out.println("Classifying unseen records...");
         //TODO embed this into the steps of the last classification process.
         final ClassifierResults last_results = getLast(results);
         final Classifier classifier = last_results.getContexts().get(0).getClassifier();
@@ -417,6 +542,7 @@ public class HiscoClassificationWithPerGroupAnalysis extends Experiment {
 
         if (classified_unseen_data_path != null) {
             persistDataSetToPath(classified_unseen_data_path, classified_unseen_data_set);
+            System.out.println("\t persisted classified unseen records");
         }
         else {
             System.out.println();
@@ -427,6 +553,8 @@ public class HiscoClassificationWithPerGroupAnalysis extends Experiment {
             System.out.println();
             System.out.println();
         }
+
+        System.out.println("Done classifying unseen records.\n");
     }
 
     private ClassifierResults getLast(final List<ClassifierResults> results) {

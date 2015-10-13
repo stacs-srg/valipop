@@ -82,7 +82,7 @@ public abstract class Experiment implements Callable<Void> {
     protected InfoLevel verbosity = DEFAULT_VERBOSITY;
 
     @Parameter(names = {"-r", "--repetitionCount"}, description = DESCRIPTION_REPETITION)
-    private int repetitions = DEFAULT_REPETITIONS;
+    protected int repetitions = DEFAULT_REPETITIONS;
 
     @Parameter(names = {"-g", "--goldStandard"}, description = DESCRIPTION_GOLD_STANDARD, listConverter = PathConverter.class)
     private List<Path> gold_standard_files = Collections.singletonList(Paths.get(DEFAULT_GOLD_STANDARD_PATH));
