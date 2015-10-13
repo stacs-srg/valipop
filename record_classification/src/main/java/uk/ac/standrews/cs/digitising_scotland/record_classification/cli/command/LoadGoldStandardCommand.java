@@ -14,17 +14,16 @@
  * You should have received a copy of the GNU General Public License along with record_classification. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.command;
+package uk.ac.standrews.cs.digitising_scotland.record_classification.cli.command;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.beust.jcommander.converters.PathConverter;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassificationContext;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.ClassificationContext;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.*;
 
 import java.nio.file.Path;
-import java.util.*;
 
 /**
  * Command to load gold standard data from one or more files.
@@ -72,6 +71,7 @@ public class LoadGoldStandardCommand extends Command {
     @Override
     public void run() {
 
-        new LoadTrainingAndEvaluationRecordsByRatioStep(gold_standard, training_ratio, charset.get(), delimiter).perform(launcher.getContext());
+        final ClassificationContext context = launcher.getContext();
+        new LoadTrainingAndEvaluationRecordsByRatioStep(gold_standard, training_ratio, charset.get(), delimiter).perform(context);
     }
 }

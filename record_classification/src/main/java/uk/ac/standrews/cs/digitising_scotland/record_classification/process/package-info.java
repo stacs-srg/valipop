@@ -18,5 +18,6 @@
  * General classification process.
  *
  * @author Graham Kirby (graham.kirby@st-andrews.ac.uk)
+ * @author Masih Hajiarab Derkani (masih.h.derkani@st-andrews.ac.uk)
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.process;

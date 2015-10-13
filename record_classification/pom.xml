@@ -85,7 +85,7 @@
                     <appendAssemblyId>false</appendAssemblyId>
                     <archive>
                         <manifest>
-                            <mainClass>uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.Launcher</mainClass>
+                            <mainClass>uk.ac.standrews.cs.digitising_scotland.record_classification.cli.Launcher</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>
@@ -237,7 +237,7 @@
                             <finalName>multiple_classifier_experiment</finalName>
                             <archive>
                                 <manifest>
-                                    <mainClass>uk.ac.standrews.cs.digitising_scotland.record_classification.multiple_classifier.MultipleClassifierExperiment</mainClass>
+                                    <mainClass>uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.multiple_classifier.MultipleClassifierExperiment</mainClass>
                                 </manifest>
                             </archive>
                             <descriptorRefs>

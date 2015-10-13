@@ -14,19 +14,14 @@
  * You should have received a copy of the GNU General Public License along with record_classification. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.digitising_scotland.record_classification.multiple_classifier;
+package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.multiple_classifier;
 
-import com.google.common.base.*;
 import org.junit.*;
-import org.junit.runners.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.exact_match.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 
 import java.util.*;
-import java.util.function.*;
-import java.util.function.Function;
 
 import static org.junit.Assert.*;
 

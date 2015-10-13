@@ -14,11 +14,11 @@
  * You should have received a copy of the GNU General Public License along with record_classification. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.specific;
+package uk.ac.standrews.cs.digitising_scotland.record_classification.experiments.generic;
 
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.Cleaner;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.command.TrainCommand;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.ClassificationProcess;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.command.TrainCommand;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.ClassificationProcess;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.CleanGoldStandardStep;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.EvaluateClassifierStep;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.LoadTrainingAndEvaluationRecordsByRatioStep;

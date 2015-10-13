@@ -14,14 +14,14 @@
  * You should have received a copy of the GNU General Public License along with record_classification. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli;
+package uk.ac.standrews.cs.digitising_scotland.record_classification.cli;
 
 import org.junit.After;
 import org.junit.Before;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.ClassifierSupplier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.CleanerSupplier;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.command.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.config.Config;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.command.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.experiments.config.Config;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.serialization.Serialization;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.serialization.SerializationFormat;
 import uk.ac.standrews.cs.util.tools.FileManipulation;

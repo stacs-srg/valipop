@@ -14,12 +14,12 @@
  * You should have received a copy of the GNU General Public License along with record_classification. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli;
+package uk.ac.standrews.cs.digitising_scotland.record_classification.cli;
 
 import com.beust.jcommander.*;
 import com.beust.jcommander.converters.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.command.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.processes.generic.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.command.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.serialization.*;
 import uk.ac.standrews.cs.util.tools.*;
 
@@ -39,7 +39,7 @@ public class Launcher {
     public static final String PROGRAM_NAME = "classy";
 
     private static final Pattern COMMAND_LINE_ARGUMENT_PATTERN = Pattern.compile("[^\\s\"']+|\"([^\"]*)\"|'([^']*)'");
-    public static final String DEFAULT_CLASSIFICATION_PROCESS_NAME = "classification_process";
+    protected static final String DEFAULT_CLASSIFICATION_PROCESS_NAME = "classification_process";
     private JCommander commander;
     private ClassificationContext context;
 

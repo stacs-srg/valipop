@@ -25,9 +25,9 @@
    - [x] Cambridge data set.
    - [x] Jeff's UK data set.
    - [x] Decide what others from various census data sets.
-   - [ ] Visualise the relationship between ancestor distance and classification confidence.
+   - [x] Visualise the relationship between ancestor distance and classification confidence.
    - [x] Check for inconsistent coding to sub category heading in gold standard; if inconsistent rerun experiments.
-   - [ ] Produce summary classification metrics per major and minor HISCO groups.
+   - [x] Produce summary classification metrics per major and minor HISCO groups.
    
 ## General
 
@@ -68,13 +68,14 @@
 - [x] Implement ensemble using accuracy metrics from training - feedback per-class quality as proxy for confidence.
 - [ ] Control over whether persisted models include sensitive training data.
 - [ ] Project tools.
-   - [ ] Story board?
-   - [ ] Issue tracking?
-   - [ ] High-level log of what's been done.
-   - [ ] Specify deadlines.
-   - [ ] Tagging of content, tasks, etc.
-   - [ ] Date/Time at which a task was completed.
-   - [ ] Trello?
+   - Story board?
+   - Issue tracking?
+   - High-level log of what's been done.
+   - Specify deadlines.
+   - Tagging of content, tasks, etc.
+   - Date/Time at which a task was completed.
+   - Trello?
+   - YouTrack
 
 
 # Queries and Comments

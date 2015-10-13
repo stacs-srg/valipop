@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License along with record_classification. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli;
+package uk.ac.standrews.cs.digitising_scotland.record_classification.cli;
 
 import com.beust.jcommander.IValueValidator;
 import com.beust.jcommander.ParameterException;
@@ -48,13 +48,13 @@ public final class Validators {
         @Override
         public void validate(final String name, final Double value) throws ParameterException {
 
-            if (!betweenZeroAndOne(value)) {
+            if (!isBetweenZeroAndOne(value)) {
                 throw new ParameterException("The value  of parameter " + name + " must be between 0.0 and 1.0 inclusive");
             }
         }
     }
 
-    public static boolean betweenZeroAndOne(double value) {
+    public static boolean isBetweenZeroAndOne(double value) {
 
         // Use DELTA to avoid rounding-error-prone exact comparison of doubles.
         return value > -DELTA && value < 1.0 + DELTA;
