@@ -25,6 +25,7 @@ import java.util.function.Supplier;
  */
 public enum CharsetSupplier implements Supplier<Charset> {
 
+    SYSTEM_DEFAULT(Charset.defaultCharset()),
     US_ASCII(StandardCharsets.US_ASCII),
     ISO_8859_1(StandardCharsets.ISO_8859_1),
     UTF_8(StandardCharsets.UTF_8),

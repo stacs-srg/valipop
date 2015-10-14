@@ -38,9 +38,7 @@ public class Bucket implements Iterable<Record>, Serializable {
     private boolean auto_allocate_ids;
     private int next_id = 1;
 
-    /**
-     * Instantiates a new empty bucket.
-     */
+    /** Instantiates a new empty bucket. */
     public Bucket() {
 
         this(false);
