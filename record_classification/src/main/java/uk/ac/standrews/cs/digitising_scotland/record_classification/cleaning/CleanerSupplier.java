@@ -28,7 +28,7 @@ public enum CleanerSupplier implements Supplier<Cleaner> {
     PUNCTUATION(PunctuationCleaner::new, "Removes punctuation characters"),
     LOWER_CASE(LowerCaseCleaner::new, "Converts text to lower case"),
     STOP_WORDS(EnglishStopWordCleaner::new, "Removes English stop words"),
-    PORTER_STEM(StemmingCleaner::new, "Performs stemming using Porter algorithm"),
+    PORTER_STEM(PorterStemCleaner::new, "Performs stemming using Porter algorithm"),
 
     CONSISTENT_CLASSIFICATION_CLEANER_CORRECT(() -> ConsistentClassificationCleaner.CORRECT, "Corrects the classification of any inconsistently classified records to the most popular"),
     CONSISTENT_CLASSIFICATION_CLEANER_REMOVE(() -> ConsistentClassificationCleaner.REMOVE, "Removes any inconsistently classified records"),

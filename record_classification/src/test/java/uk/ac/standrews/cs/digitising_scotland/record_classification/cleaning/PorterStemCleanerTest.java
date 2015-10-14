@@ -16,24 +16,28 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning;
 
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
-
-import java.io.Serializable;
 import java.util.*;
-import java.util.function.Function;
 
 /**
- * Cleans a list of {@link Bucket bucket}s.
- * This operates on a list because some cleaning may need to consider multiple buckets, e.g. correcting all
- * training and evaluation records to use consistent classification.
+ * Tests {@link PorterStemCleaner}.
  *
- * @author Graham Kirby
+ * @author Masih Hajiarab Derkani
  */
-public interface Cleaner extends Function<List<Bucket>, List<Bucket>>, Serializable {
+public class PorterStemCleanerTest extends TextCleanerTest {
 
-    
-    default Cleaner andThen(Cleaner after) {
+    public PorterStemCleanerTest() {
 
-        return (List<Bucket> buckets) -> after.apply(apply(buckets));
+        super(new PorterStemCleaner(), new HashMap<String, String>() {
+
+            {
+                put("driving", "drive");
+                put("cats driving cars at the pub", "cat drive car at the pub");
+                put("classification", "classif");
+                put("this", "thi");
+                put("this and that and the other stuffing shoots the shingles off the roofs", "thi and that and the other stuf shoot the shingl off the roof");
+                put("john's car", "john' car");
+                put("ASSISTANT - BAKER'S SHOP", "assist baker' shop");
+            }
+        });
     }
 }

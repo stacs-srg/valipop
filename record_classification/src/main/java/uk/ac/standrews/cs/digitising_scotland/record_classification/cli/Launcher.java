@@ -111,7 +111,6 @@ public class Launcher {
 
         commander = new JCommander(this);
         commander.setProgramName(PROGRAM_NAME);
-
         addCommand(new ClassifyCommand(this));
         addCommand(new CleanUnseenRecordsCommand(this));
         addCommand(new CleanGoldStandardCommand(this));

@@ -16,28 +16,22 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning;
 
-import java.util.*;
+import org.apache.lucene.analysis.*;
+import org.apache.lucene.analysis.core.*;
+import org.apache.lucene.analysis.en.PorterStemFilter;
 
 /**
- * Tests {@link StemmingCleaner}.
+ * Stemming cleaner that turns the input into its lowercase form and uses {@link PorterStemFilter} for cleaning.
  *
  * @author Masih Hajiarab Derkani
  */
-public class StemmingCleanerTest extends TextCleanerTest {
+public class PorterStemCleaner extends TokenFilterCleaner {
 
-    public StemmingCleanerTest() {
+    private static final long serialVersionUID = -4878258237026508723L;
 
-        super(new StemmingCleaner(), new HashMap<String, String>() {
+    @Override
+    protected TokenFilter getTokenFilter(final TokenStream stream) {
 
-            {
-                put("driving", "drive");
-                put("cats driving cars at the pub", "cat drive car at the pub");
-                put("classification", "classif");
-                put("this", "thi");
-                put("this and that and the other stuffing shoots the shingles off the roofs", "thi and that and the other stuf shoot the shingl off the roof");
-                put("john's car", "john' car");
-                put("ASSISTANT - BAKER'S SHOP", "assist baker' shop");
-            }
-        });
+        return new PorterStemFilter(new LowerCaseFilter(stream));
     }
 }

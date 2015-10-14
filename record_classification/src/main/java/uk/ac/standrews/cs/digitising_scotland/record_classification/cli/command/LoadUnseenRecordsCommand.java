@@ -30,7 +30,7 @@ import java.nio.file.Path;
  *
  * @author Masih Hajiarab Derkani
  */
-@Parameters(commandNames = LoadUnseenRecordsCommand.NAME, commandDescription = "Train classifier")
+@Parameters(commandNames = LoadUnseenRecordsCommand.NAME, commandDescription = "Load unseen records")
 public class LoadUnseenRecordsCommand extends Command {
 
     /** The name of this command. */

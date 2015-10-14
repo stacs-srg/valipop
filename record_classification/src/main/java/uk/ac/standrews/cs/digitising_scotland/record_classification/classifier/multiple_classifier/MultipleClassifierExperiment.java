@@ -43,8 +43,8 @@ enum TextCleanerSupplier implements Supplier<TextCleaner> {
     STOP_WORD(EnglishStopWordCleaner::new),
     PUNCTUATION(PunctuationCleaner::new),
     LOWER_CASE(LowerCaseCleaner::new),
-    STEMMING(StemmingCleaner::new),
-    ALL(() -> new EnglishStopWordCleaner().andThen(new PunctuationCleaner()).andThen(new LowerCaseCleaner()).andThen(new StemmingCleaner()));
+    STEMMING(PorterStemCleaner::new),
+    ALL(() -> new EnglishStopWordCleaner().andThen(new PunctuationCleaner()).andThen(new LowerCaseCleaner()).andThen(new PorterStemCleaner()));
 
     private final Supplier<TextCleaner> supplier;
 
