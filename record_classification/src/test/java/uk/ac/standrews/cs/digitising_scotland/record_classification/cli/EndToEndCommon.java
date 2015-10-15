@@ -136,7 +136,6 @@ public class EndToEndCommon {
             appendSpace(commands_builder);
             commands_builder.append(cleaner.name());
         }
-        
         appendNewLine(commands_builder);
     }
 
