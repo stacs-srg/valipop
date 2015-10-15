@@ -36,7 +36,7 @@ public class PopulationProperties {
     /**
      * The default database username.
      */
-    public static final String DEFAULT_DB_USERNAME = "ds_user";
+    public static final String DEFAULT_DB_USERNAME = "tsd4";
 
     /**
      * The default database password.
@@ -46,7 +46,7 @@ public class PopulationProperties {
     /**
      * The default database name.
      */
-    public static final String DEFAULT_DATABASE_NAME = "population";
+    public static final String DEFAULT_DATABASE_NAME = "tsd4_population";
 
     /**
      * The name of the table storing people.

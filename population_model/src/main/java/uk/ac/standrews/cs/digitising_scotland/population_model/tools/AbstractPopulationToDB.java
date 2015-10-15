@@ -50,6 +50,8 @@ public abstract class AbstractPopulationToDB {
 
         if (batch_size > 0 && number_of_batches > 0 && number_of_progress_updates > 0) {
 
+            System.out.println("Exporting");
+
             showInfo(batch_size, number_of_batches);
 
             for (int batch_number = 0; batch_number < number_of_batches; batch_number++) {

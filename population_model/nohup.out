@@ -1,0 +1,63 @@
+sh: src/main/resources/scripts/generate_organic_population.sh: No such file or directory
+sh: src/main/resources/scripts/gen_organic_population.sh: No such file or directory
+Setting heap size: 100GB
+--------MAIN HERE---------
+Setting heap size: 1GB
+--------MAIN HERE---------
+Setting heap size: 250000GB
+Error occurred during initialization of VM
+Could not reserve enough space for 262144000000KB object heap
+Setting heap size: 16GB
+Exporting
+1 batch of population size 1000
+Generating batch 1
+MEMORY MONITOR INITIALIZED
+DISTRIBUTIONS INITIALIZED
+LOGGING CONTROL INITIALIZED
+POPULATION SEEDED
+OUTPUT PRINTER INITIALIZED
+EVENT HANDLING BEGINS
+Number of people generated in population in x ms
+25453    1014
+CREATING GNU PLOT FILES
+Elapsed time: 00:00:01
+Exporting to database
+10%
+20%
+30%
+40%
+50%
+60%
+70%
+80%
+90%
+100%
+Elapsed time: 00:00:29
+1 batch of population size 1000
+Setting heap size: 16GB
+Exporting
+1 batch of population size 1000
+Generating batch 1
+MEMORY MONITOR INITIALIZED
+DISTRIBUTIONS INITIALIZED
+LOGGING CONTROL INITIALIZED
+POPULATION SEEDED
+OUTPUT PRINTER INITIALIZED
+EVENT HANDLING BEGINS
+Number of people generated in population in x ms
+25453    1081
+CREATING GNU PLOT FILES
+Elapsed time: 00:00:01
+Exporting to database
+10%
+20%
+30%
+40%
+50%
+60%
+70%
+80%
+90%
+100%
+Elapsed time: 00:00:32
+1 batch of population size 1000
