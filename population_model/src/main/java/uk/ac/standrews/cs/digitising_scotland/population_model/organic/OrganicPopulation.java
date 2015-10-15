@@ -75,10 +75,10 @@ public class OrganicPopulation implements IPopulation {
     private static PriorityQueue<OrganicEvent> globalEventsQueue = new PriorityQueue<OrganicEvent>();
     
     private String description;
-    private static final int DEFAULT_SEED_SIZE = 1000;
+    private static final int DEFAULT_SEED_SIZE = 100000;
     private static final float DAYS_PER_YEAR = 365.25f;
     private static final int START_YEAR = 1780;
-    private static final int END_YEAR = 2013 ;
+    private static final int END_YEAR = 2013;
     private static final int EPOCH_YEAR = 1600;
     private static Random random = RandomFactory.getRandom();
     private int earliestDate = DateManipulation.dateToDays(getStartYear(), 0, 0);
@@ -153,14 +153,15 @@ public class OrganicPopulation implements IPopulation {
     public void newEventIteration(final boolean print, final boolean memoryMonitor) {
         while (getCurrentDay() <= DateManipulation.dateToDays(getEndYear(), 0, 0)) {
             OrganicEvent event = globalEventsQueue.poll();
-
+            
             if (event == null) {
                 break;
             } else {
                 // While the next event isn't in the same year as the next event.
                 while ((int) (getCurrentDay() / getDaysPerYear()) != (int) (event.getDay() / getDaysPerYear())) {
                     // Log population as if the years end - as we know no more events will occur before the year is out and thus the population is the same now as at the year end
-                    if (logging) {
+                    
+                	if (logging) {
                         LoggingControl.yearEndLog(currentDay);
                     }
                     if (print && logging) {
@@ -175,7 +176,9 @@ public class OrganicPopulation implements IPopulation {
                     double r = getCurrentDay() % DAYS_PER_YEAR;
                     setCurrentDay((int) (getCurrentDay() + Math.round(r)));
                 }
-
+                
+//                System.out.println("Y: " + getCurrentDay()/365);
+                
                 setCurrentDay(event.getDay());
                 if (currentDay % 10.0f == 0) {
                     event.movePeopleFromAffarirsWaitingQueueToAppropriateQueue();

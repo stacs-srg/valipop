@@ -33,6 +33,7 @@ public abstract class RestrictedDistribution<Value> implements Distribution<Valu
     protected Double maximumSpecifiedValue = null;
 
     protected List<Double> unusedSampleValues = new ArrayList<>();
+    protected List<Double> preemptiveSampleValues = new ArrayList<>();
     protected int zeroCount = -1;
     protected double zeroCap;
 
