@@ -150,7 +150,7 @@ public class ClassificationContext implements Serializable {
      */
     public void addEvaluationRecords(final Bucket evaluation_records) {
 
-        number_of_evaluation_records_including_duplicates = evaluation_records.size();
+        number_of_evaluation_records_including_duplicates += evaluation_records.size();
 
         final Bucket unique_evaluation_records = evaluation_records.makeUniqueDataRecords();
 
