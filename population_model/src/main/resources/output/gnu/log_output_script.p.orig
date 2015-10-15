@@ -1,7 +1,7 @@
 # This file is called log_output_script.p
 reset
 set terminal pdf
-set output 'E:/OneDrive/output.pdf'
+set output 'output.pdf'
 set style line 11 lc rgb '#808080' lt 1
 set border 3 back ls 11
 set tics nomirror

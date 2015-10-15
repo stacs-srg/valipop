@@ -53,7 +53,7 @@ public class OrganicPopulation implements IPopulation {
 
         if (args.length == 0) {
             runPopulationModel(DEFAULT_SEED_SIZE, true, true, true);
-        } else if (args.length == 1) {
+        } else if (args.length >= 1) {
             runPopulationModel(Integer.valueOf(args[0]), true, true, true);
         }
         System.out.println("--------MAIN END---------");
