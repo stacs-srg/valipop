@@ -30,7 +30,7 @@ import java.util.Random;
  * @author Masih Hajiarab Derkani
  * @author Graham Kirby
  */
-@Parameters(commandNames = InitCommand.NAME, commandDescription = "Initialise a new classification process", separators = "=")
+@Parameters(commandNames = InitCommand.NAME, commandDescription = "Initialise a new classification process")
 public class InitCommand extends Command {
 
     /** The name of this command. */

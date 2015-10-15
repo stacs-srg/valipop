@@ -43,8 +43,6 @@ public class ClassifyCommand extends Command {
     public static final String DESTINATION_FLAG_SHORT = "-o";
     public static final String DESTINATION_FLAG_LONG = "--output";
 
-    private static final String OUTPUT_DELIMITER = ",";
-
     @Parameter(required = true, names = {DESTINATION_FLAG_SHORT, DESTINATION_FLAG_LONG}, description = DESTINATION_DESCRIPTION, converter = PathConverter.class)
     private Path destination;
 
