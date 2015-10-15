@@ -53,9 +53,7 @@ in the scripts folder. This script takes as an argument the file to train and te
 
 For example, to run an experiment with a gold standard training file, split into 2 parts:    
 
-<div class="source">
 	$sh experimentalRun.sh goldStandardData.txt    
-</div>
 
 This script will use Maven to do build the software, split the file into a training portion (80%) and a testing proportion (20%).    
 The classifier is then trained and the testing files classified using the trained model. Output and analysis metrics are then written to the Experiments Folder.

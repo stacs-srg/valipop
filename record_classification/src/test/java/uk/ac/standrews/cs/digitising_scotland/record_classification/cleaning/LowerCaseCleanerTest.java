@@ -16,8 +16,6 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning;
 
-import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.string.*;
-
 import java.util.*;
 
 /**
@@ -36,7 +34,7 @@ public class LowerCaseCleanerTest extends TextCleanerTest {
                 put("ReSt", "rest");
                 put("yoyO", "yoyo");
                 put("googlYEyesRollLiKe...CrazY", "googlyeyesrolllike...crazy");
-                put("someThingµostp∑çuli0√YO", "someThingµostp∑çuli0√yo");
+                put("someThingµostp∑çuli0√YO", "somethingµostp∑çuli0√yo");
             }
         });
     }

@@ -35,7 +35,7 @@ we end up with a final model for classification.
 ### Classification to Multiple Codes
 
 The ability to classify a record to more than one classification is extremely important when dealing with cause of death records as as single string may
-contain several different causes of death. For example the death certificate may list "bronchitis and whooping cough". It would be innapropriate to code this
+contain several different causes of death. For example the death certificate may list "bronchitis and whooping cough". It would be inappropriate to code this
 as just bronchitis (J40) or whooping cough (A37) when both causes contributed.
 
 The following algorithm is used to code single strings to multiple codes:
