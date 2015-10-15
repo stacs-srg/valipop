@@ -18,9 +18,9 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.cli;
 
 import com.beust.jcommander.*;
 import com.beust.jcommander.converters.*;
+import sun.reflect.generics.reflectiveObjects.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.command.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.serialization.*;
 import uk.ac.standrews.cs.util.tools.*;
 
 import java.io.*;
@@ -35,33 +35,18 @@ import java.util.regex.*;
  */
 public class Launcher {
 
-    /** Name of this executable. */
-    public static final String PROGRAM_NAME = "classy";
+    /** Name of executable form of this program. */
+    public static final String PROGRAM_NAME = "classi";
+
+    /** The name of the folder that contains the persisted state of this program. */
+    public static final String DEFAULT_CLASSIFICATION_PROCESS_NAME = "." + PROGRAM_NAME;
 
     private static final Pattern COMMAND_LINE_ARGUMENT_PATTERN = Pattern.compile("[^\\s\"']+|\"([^\"]*)\"|'([^']*)'");
-    protected static final String DEFAULT_CLASSIFICATION_PROCESS_NAME = "classification_process";
     private JCommander commander;
     private ClassificationContext context;
 
-    protected static final String SERIALIZATION_FORMAT_DESCRIPTION = "Format for serialized context files";
-    protected static final String SERIALIZATION_FORMAT_FLAG_SHORT = "-f";
-    protected static final String SERIALIZATION_FORMAT_FLAG_LONG = "--format";
-
-    public static final String PROCESS_DIRECTORY_DESCRIPTION = "A directory to be used by the process";
-    public static final String PROCESS_DIRECTORY_FLAG_SHORT = "-p";
-    public static final String PROCESS_DIRECTORY_FLAG_LONG = "--process-directory";
-
     @Parameter(names = {"-h", "--help"}, description = "Shows usage.", help = true)
     private boolean help;
-
-    @Parameter(names = {"-n", "--name"}, description = "The name of the classification process.", help = true)
-    private String name = DEFAULT_CLASSIFICATION_PROCESS_NAME;
-
-    @Parameter(names = {SERIALIZATION_FORMAT_FLAG_SHORT, SERIALIZATION_FORMAT_FLAG_LONG}, description = SERIALIZATION_FORMAT_DESCRIPTION)
-    protected SerializationFormat serialization_format = SerializationFormat.JAVA_SERIALIZATION;
-
-    @Parameter(names = {PROCESS_DIRECTORY_FLAG_SHORT, PROCESS_DIRECTORY_FLAG_LONG}, description = PROCESS_DIRECTORY_DESCRIPTION, converter = PathConverter.class)
-    protected Path process_directory;
 
 //    @Parameter(names = {"-i", "--interactive"}, description = "Interactive mode; allows multiple command execution.")
 //    private boolean interactive;
@@ -69,14 +54,7 @@ public class Launcher {
     @Parameter(names = {"-c", "--commands"}, description = "Path to a text file containing the commands to be executed (one command per line).", converter = PathConverter.class)
     private Path commands;
 
-    private Launcher() {
-
-    }
-
-    void addCommand(Command command) {
-
-        commander.addCommand(command);
-    }
+    protected Launcher() { }
 
     public static void main(String[] args) throws Exception {
 
@@ -87,18 +65,28 @@ public class Launcher {
             launcher.handle();
         }
         catch (ParameterException e) {
-            launcher.reportParameterError(e.getMessage());
+            launcher.exitWithError(e.getMessage());
         }
         catch (FileAlreadyExistsException e) {
-            launcher.reportError("process directory '" + e.getFile() + "' already exists.");
+            launcher.exitWithError("process directory '" + e.getFile() + "' already exists.");
         }
         catch (NoSuchFileException e) {
-            launcher.reportError("expected context file '" + e.getFile() + "' not found.");
+            launcher.exitWithError("expected context file '" + e.getFile() + "' not found.");
         }
         catch (Exception e) {
             e.printStackTrace();
-            launcher.reportError(e.getMessage());
+            launcher.exitWithError(e.getMessage());
         }
+    }
+
+    protected static void output(String message) {
+
+        Logging.output(InfoLevel.VERBOSE, message);
+    }
+
+    void addCommand(Command command) {
+
+        commander.addCommand(command);
     }
 
     private void parse(final String... args) throws ParameterException {
@@ -111,6 +99,7 @@ public class Launcher {
 
         commander = new JCommander(this);
         commander.setProgramName(PROGRAM_NAME);
+
         addCommand(new ClassifyCommand(this));
         addCommand(new CleanUnseenRecordsCommand(this));
         addCommand(new CleanGoldStandardCommand(this));
@@ -151,18 +140,21 @@ public class Launcher {
 
     private void loadContext() throws IOException {
 
-        final Path context_path = Serialization.getSerializedContextPath(process_directory, name, serialization_format);
+        //FIXME adapt to the new system
+        throw new NotImplementedException();
 
-        if (Files.isRegularFile(context_path)) {
-
-            output("loading context...");
-            context = Serialization.loadContext(process_directory, name, serialization_format);
-        }
-        else {
-            context = null;
-        }
-
-        output("done");
+//        final Path context_path = Paths.get(DEFAULT_CLASSIFICATION_PROCESS_NAME, "context");
+//
+//        if (Files.isRegularFile(context_path)) {
+//
+//            output("loading context...");
+//            context = Serialization.loadContext(Paths.get("."), DEFAULT_CLASSIFICATION_PROCESS_NAME, SerializationFormat.JSON);
+//        }
+//        else {
+//            context = null;
+//        }
+//
+//        output("done");
     }
 
     private String[] toCommandLineArguments(final String command_line) {
@@ -198,37 +190,36 @@ public class Launcher {
 
     private void persistContext() throws IOException {
 
-        output("saving context...");
+        //FIXME adapt to the new system
+        throw new NotImplementedException();
 
-        Files.createDirectories(process_directory.resolve(name));
-        Serialization.persistContext(context, process_directory, name, serialization_format);
-
-        output("done");
+//        output("saving context...");
+//
+//        Files.createDirectories(process_directory.resolve(name));
+//        Serialization.persistContext(context, process_directory, name, serialization_format);
+//
+//        output("done");
     }
 
     private void validateCommand(final String command) {
 
         if (command == null) {
-            reportParameterError(help ? "" : "Please specify a command");
+            exitWithError(help ? "" : "Please specify a command", true);
         }
     }
 
-    private void reportParameterError(final String error_message) {
+    private void exitWithError(final String message) {
 
-        System.err.println(error_message);
-        commander.usage();
-        System.exit(-1);
+        exitWithError(message, false);
     }
 
-    private void reportError(final String error_message) {
+    private void exitWithError(final String message, boolean show_usage) {
 
-        System.err.println("Process failed: " + error_message);
+        System.err.println(message);
+        if (show_usage) {
+            commander.usage();
+        }
         System.exit(-1);
-    }
-
-    protected static void output(String message) {
-
-        Logging.output(InfoLevel.VERBOSE, message);
     }
 
     public ClassificationContext getContext() {

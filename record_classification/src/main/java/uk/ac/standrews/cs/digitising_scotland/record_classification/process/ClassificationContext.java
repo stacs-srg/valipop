@@ -20,8 +20,10 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.Cla
 import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.ConfusionMatrix;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.Classifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.serialization.*;
 
 import java.io.Serializable;
+import java.nio.charset.*;
 import java.time.Duration;
 import java.util.Random;
 
@@ -50,8 +52,14 @@ public class ClassificationContext implements Serializable {
     private Duration classification_time;
     private int number_of_evaluation_records_including_duplicates;
 
-    // Needed for JSON deserialization.
+    private String default_delimiter;
+    private Charset default_charset;
+    private String name;
+    private SerializationFormat serialization_format;
+
     public ClassificationContext() {
+
+        random = new Random();
     }
 
     /**
@@ -290,5 +298,60 @@ public class ClassificationContext implements Serializable {
     public int getNumberOfEvaluationRecordsIncludingDuplicates() {
 
         return number_of_evaluation_records_including_duplicates;
+    }
+
+    public void setClassifier(final Classifier classifier) {
+
+        this.classifier = classifier;
+    }
+
+    public void setRandom(final Random random) {
+
+        this.random = random;
+    }
+
+    public void setDefaultCharset(final Charset charset) {
+
+        this.default_charset = charset;
+    }
+
+    public Charset getDefaultCharset() {
+
+        return default_charset;
+    }
+
+    public void setDefaultDelimiter(final String delimiter) {
+
+        this.default_delimiter = delimiter;
+    }
+
+    public String getDefaultDelimiter() {
+
+        return default_delimiter;
+    }
+
+    public void setName(final String name) {
+
+        this.name = name;
+    }
+
+    public String getName() {
+
+        return name;
+    }
+
+    public void setSerializationFormat(final SerializationFormat serializationFormat) {
+
+        this.serialization_format = serializationFormat;
+    }
+
+    public SerializationFormat getSerializationFormat() {
+
+        return serialization_format;
+    }
+
+    public void setSerialization_format(final SerializationFormat serialization_format) {
+
+        this.serialization_format = serialization_format;
     }
 }
