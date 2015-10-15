@@ -145,7 +145,7 @@ public class EndToEndCommon {
 
         commands_builder.append(InitCommand.NAME);
         appendSpace(commands_builder);
-        commands_builder.append(InitCommand.CLASSIFIER_FLAG_SHORT);
+        commands_builder.append("classifier");
         appendSpace(commands_builder);
         commands_builder.append(classifier_supplier.name());
         appendNewLine(commands_builder);

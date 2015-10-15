@@ -36,24 +36,16 @@ public class InitCommand extends Command {
     /** The name of this command. */
     public static final String NAME = "init";
 
-    private static final long SEED = 34234234234L;
+    @Parameter(required = true, names = {"name"}, description = "The name of the classification process.")
+    private String name;
 
-    public static final String CLASSIFIER_DESCRIPTION = "The classifier to use for the classification process.";
-    public static final String CLASSIFIER_FLAG_SHORT = "-c";
-    public static final String CLASSIFIER_FLAG_LONG = "--classifier";
-
-    @Parameter(required = true, names = {CLASSIFIER_FLAG_SHORT, CLASSIFIER_FLAG_LONG}, description = CLASSIFIER_DESCRIPTION)
-    private ClassifierSupplier classifier_supplier;
-
-    public InitCommand(final Launcher launcher) {
-
-        super(launcher);
-    }
+    public InitCommand(final Launcher launcher) { super(launcher); }
 
     @Override
     public void run() {
 
-        final ClassificationContext context = new ClassificationContext(classifier_supplier.get(), new Random(SEED));
+        final ClassificationContext context = new ClassificationContext();
+        context.setName(name);
         launcher.setContext(context);
     }
 }
