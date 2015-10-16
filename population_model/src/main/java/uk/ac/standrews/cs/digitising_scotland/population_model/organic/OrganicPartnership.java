@@ -216,7 +216,7 @@ public final class OrganicPartnership implements IPartnership {
         } catch (NoPermissableValueException e) {
             numberOfChildrenToBeHadByCouple = 0;
         } catch (NotSetUpAtClassInitilisationException e) {
-            System.err.println("Non restrited distribution called with restricted values");
+            System.err.println("Non restricted distribution called with restricted values");
         }
 
         if (numberOfChildrenToBeHadByCouple == 0) {
