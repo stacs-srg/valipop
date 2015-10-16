@@ -103,6 +103,7 @@ public class LoggingControl {
 
     private static void output() {
         LoggingControl.populationLogger.outputToGnuPlotFormat();
+        LoggingControl.affairCountLogger.outputToGnuPlotFormat();
         LoggingControl.cohabCountLogger.outputToGnuPlotFormat();
         LoggingControl.cohabThenMarriageCountLogger.outputToGnuPlotFormat();
         LoggingControl.marriageCountLogger.outputToGnuPlotFormat();
@@ -146,7 +147,7 @@ public class LoggingControl {
             writer.println("reset");
 
             writer.println("set terminal pdf");
-            writer.println("set output 'E:/OneDrive/output.pdf'");
+            writer.println("set output '~/output" + System.nanoTime() + ".pdf'");
 
             LoggingControl.populationLogger.generateGnuPlotScriptLines(writer);
             LoggingControl.cohabCountLogger.generateGnuPlotScriptLines(writer);
