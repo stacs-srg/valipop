@@ -1,5 +1,44 @@
 This document specifies the Record Classification Command Line Interface (CLI) operations.
 
+# Configuration
+The configuration file is specified in JSON, and located at `<working_directory>/.classi/config.json`.
+The configuration file contains the following:
+
+    {
+        "classifier": "<classifier_name>",
+        "charset": "<charset>",
+        "delimiter": "<delimiter>",
+        "seed": <numerical_random_seed>,
+        "serialization_format": "<serialization_format_name>",
+        "proceed_on_error": "<boolean_proceed_on_batch_command_execution_error>",
+        "error_log": "<path_to_error_log_file>",
+        "info_log": "<path_to_info_log_file>",
+        
+        "gold_standard": [
+            {
+                "file": "<path_to_data_file>",
+                "training_ratio": "<training_ratio>",
+                "label_column": <label_column_index>,
+                "code_column": <code_column>,
+                "charset": "<charset_optional>",
+                "delimiter": "<delimiter_optional>",
+                "name": "<naming_optional>",
+                "skip_first_row": "boolean_optional"
+            }
+        ],
+        
+        "unseen": [
+            {
+                "file": "<path_to_data_file>",
+                "label_column": <label_column_index>,
+                "charset": "<charset_optional>",
+                "delimiter": "<delimiter_optional>",
+                "name": "<naming_optional>",
+                "skip_first_row": "boolean_optional"
+            }
+        ]
+    }
+
 # Commands
 
 ## Init
@@ -35,7 +74,6 @@ Example usage:
     
     classi set default delimiter X
     > put .classi/config.json -> default.delimiter: "X"
-
 
 ## Load
 

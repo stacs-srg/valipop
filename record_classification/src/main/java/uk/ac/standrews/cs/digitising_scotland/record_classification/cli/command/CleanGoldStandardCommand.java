@@ -39,7 +39,7 @@ public class CleanGoldStandardCommand extends Command {
     /** The name of this command. */
     public static final String NAME = "clean_gold_standard";
 
-    @Parameter(required = true, names = {CLEAN_FLAG_SHORT, CLEAN_FLAG_LONG}, description = CLEAN_DESCRIPTION)
+    @Parameter(required = true, names = {CLEAN_FLAG_SHORT, CLEAN_FLAG_LONG}, description = CLEAN_DESCRIPTION, variableArity = true)
     private List<CleanerSupplier> cleaner_suppliers;
 
     public CleanGoldStandardCommand(final Launcher launcher) {
@@ -51,7 +51,7 @@ public class CleanGoldStandardCommand extends Command {
     public void run() {
 
         final ClassificationContext context = launcher.getContext();
-        for (Supplier<Cleaner> supplier : cleaner_suppliers) {
+        for (final Supplier<Cleaner> supplier : cleaner_suppliers) {
             new CleanGoldStandardStep(supplier.get()).perform(context);
         }
     }

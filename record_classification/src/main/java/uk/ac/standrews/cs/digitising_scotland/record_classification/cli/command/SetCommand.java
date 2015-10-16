@@ -17,13 +17,14 @@
 package uk.ac.standrews.cs.digitising_scotland.record_classification.cli.command;
 
 import com.beust.jcommander.*;
+import com.beust.jcommander.converters.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.serialization.*;
 
 import java.nio.charset.*;
-import java.util.*;
+import java.nio.file.*;
 import java.util.logging.*;
 
 /**
@@ -43,16 +44,19 @@ public class SetCommand extends Command {
     private ClassifierSupplier classifier_supplier;
 
     @Parameter(names = "seed", description = "The seed of random number generator.")
-    private Long random_seed;
+    private Long seed;
 
     @Parameter(names = "charset", description = "The default charset of input/output files.")
     private CharsetSupplier charset_supplier;
 
     @Parameter(names = "delimiter", description = "The default delimiter of input/output files.")
-    private String delimiter;
+    private Character delimiter;
 
     @Parameter(names = "serialization_format", description = "The format of serialised internal classification process settings.")
     private SerializationFormat serialization_format;
+
+    @Parameter(names = "working_directory", description = "The path to the working directory.", converter = PathConverter.class)
+    private Path working_directory;
 
     public SetCommand(final Launcher launcher) { super(launcher); }
 
@@ -60,33 +64,37 @@ public class SetCommand extends Command {
     public void run() {
 
         final ClassificationContext context = launcher.getContext();
+        final Configuration configuration = launcher.getConfiguration();
 
         if (classifier_supplier != null) {
             final Classifier classifier = classifier_supplier.get();
             LOGGER.info(() -> "Setting classifier to " + classifier_supplier);
-            context.setClassifier(classifier);
+            configuration.setClassifier(classifier);
         }
 
-        if (random_seed != null) {
-            final Random random = new Random(random_seed);
-            LOGGER.info(() -> "Setting seed to " + random_seed);
-            context.setRandom(random);
+        if (seed != null) {
+            LOGGER.info(() -> "Setting seed to " + seed);
+            configuration.setSeed(seed);
         }
 
         if (charset_supplier != null) {
-            final Charset charset = charset_supplier.get();
-            LOGGER.info(() -> "Setting default charset to " + charset);
-            context.setDefaultCharset(charset);
+            LOGGER.info(() -> "Setting default charset to " + charset_supplier);
+            configuration.setDefaultCharsetSupplier(charset_supplier);
         }
 
         if (delimiter != null) {
             LOGGER.info(() -> "Setting default delimiter to " + delimiter);
-            context.setDefaultDelimiter(delimiter);
+            configuration.setDefaultDelimiter(delimiter);
         }
 
         if (serialization_format != null) {
             LOGGER.info(() -> "Setting serialization format to " + serialization_format);
-            context.setSerializationFormat(serialization_format);
+            configuration.setSerializationFormat(serialization_format);
+        }
+
+        if (working_directory != null) {
+            LOGGER.info(() -> "Setting the working directory to " + working_directory);
+            configuration.setWorkingDirectory(working_directory);
         }
     }
 }
