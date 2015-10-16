@@ -59,7 +59,7 @@
 - [x] Implement String record level cleaning.
 - [x] Train using multiple files e.g. HISCO dictionary.
 - [x] Spell checking cleaner.
-
+- [ ] Generate EXE file for record classification cli using Launch4j, winrun4j and such.
 
 # Medium/Long-Term Tasks
 

@@ -26,6 +26,7 @@ import uk.ac.standrews.cs.util.tools.*;
 import java.io.*;
 import java.nio.file.*;
 import java.util.*;
+import java.util.logging.*;
 import java.util.regex.*;
 
 /**
@@ -35,15 +36,16 @@ import java.util.regex.*;
  */
 public class Launcher {
 
-    /** Name of executable form of this program. */
-    public static final String PROGRAM_NAME = "classi";
+    private static final Logger LOGGER = Logger.getLogger(Launcher.class.getName());
 
     /** The name of the folder that contains the persisted state of this program. */
-    public static final String DEFAULT_CLASSIFICATION_PROCESS_NAME = "." + PROGRAM_NAME;
+    public static final String DEFAULT_CLASSIFICATION_PROCESS_NAME = "." + Configuration.PROGRAM_NAME;
 
     private static final Pattern COMMAND_LINE_ARGUMENT_PATTERN = Pattern.compile("[^\\s\"']+|\"([^\"]*)\"|'([^']*)'");
+
     private JCommander commander;
     private ClassificationContext context;
+    private Configuration configuration;
 
     @Parameter(names = {"-h", "--help"}, description = "Shows usage.", help = true)
     private boolean help;
@@ -54,7 +56,9 @@ public class Launcher {
     @Parameter(names = {"-c", "--commands"}, description = "Path to a text file containing the commands to be executed (one command per line).", converter = PathConverter.class)
     private Path commands;
 
-    protected Launcher() { }
+    protected Launcher() {
+
+    }
 
     public static void main(String[] args) throws Exception {
 
@@ -98,7 +102,7 @@ public class Launcher {
     private void initCommander() {
 
         commander = new JCommander(this);
-        commander.setProgramName(PROGRAM_NAME);
+        commander.setProgramName(configuration.getProgramName());
 
         addCommand(new ClassifyCommand(this));
         addCommand(new CleanUnseenRecordsCommand(this));
@@ -230,5 +234,15 @@ public class Launcher {
     public void setContext(final ClassificationContext context) {
 
         this.context = context;
+    }
+
+    public Configuration getConfiguration() {
+
+        return configuration;
+    }
+
+    public void setConfiguration(final Configuration configuration) {
+
+        this.configuration = configuration;
     }
 }

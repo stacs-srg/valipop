@@ -22,6 +22,7 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.C
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.ClassificationContext;
 
+import java.nio.file.*;
 import java.util.Random;
 
 /**
@@ -36,7 +37,7 @@ public class InitCommand extends Command {
     /** The name of this command. */
     public static final String NAME = "init";
 
-    @Parameter(required = true, names = {"name"}, description = "The name of the classification process.")
+    @Parameter(names = {"name"}, description = "The name of the classification process.")
     private String name;
 
     public InitCommand(final Launcher launcher) { super(launcher); }
@@ -44,8 +45,17 @@ public class InitCommand extends Command {
     @Override
     public void run() {
 
-        final ClassificationContext context = new ClassificationContext();
-        context.setName(name);
-        launcher.setContext(context);
+        // TODO check if .classi already exists before initialisation; warn or override upon confirmation 
+
+        if (Files.exists(Configuration.CLI_HOME)) {
+            //TODO add force paramter to skip confirmation        
+            //warn("classi is already initialised in this directory");
+            //confirm("override existing? This ");
+        }
+
+        final Configuration configuration = new Configuration();
+        configuration.setName(name);
+
+        launcher.setConfiguration(configuration);
     }
 }

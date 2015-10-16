@@ -35,13 +35,13 @@ import java.util.function.Supplier;
  * @author Masih Hajiarab Derkani
  * @author Graham Kirby
  */
-@Parameters(commandNames = CleanUnseenRecordsCommand.NAME, commandDescription = "Cleans data records", separators = "=")
+@Parameters(commandNames = CleanUnseenRecordsCommand.NAME, commandDescription = "Cleans data records")
 public class CleanUnseenRecordsCommand extends Command {
 
     /** The name of this command. */
     public static final String NAME = "clean_data";
 
-    @Parameter(required = true, names = {CLEAN_FLAG_SHORT, CLEAN_FLAG_LONG}, description = CLEAN_DESCRIPTION)
+    @Parameter(required = true, names = {CLEAN_FLAG_SHORT, CLEAN_FLAG_LONG}, description = CLEAN_DESCRIPTION, variableArity = true)
     private List<CleanerSupplier> cleaner_suppliers;
 
     public CleanUnseenRecordsCommand(final Launcher launcher) {

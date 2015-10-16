@@ -16,6 +16,7 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.process;
 
+import org.apache.commons.csv.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.ClassificationMetrics;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.ConfusionMatrix;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.Classifier;
@@ -52,7 +53,7 @@ public class ClassificationContext implements Serializable {
     private Duration classification_time;
     private int number_of_evaluation_records_including_duplicates;
 
-    private String default_delimiter;
+    private Character default_delimiter;
     private Charset default_charset;
     private String name;
     private SerializationFormat serialization_format;
@@ -320,12 +321,12 @@ public class ClassificationContext implements Serializable {
         return default_charset;
     }
 
-    public void setDefaultDelimiter(final String delimiter) {
+    public void setDefaultDelimiter(final Character delimiter) {
 
         this.default_delimiter = delimiter;
     }
 
-    public String getDefaultDelimiter() {
+    public Character getDefaultDelimiter() {
 
         return default_delimiter;
     }
@@ -354,4 +355,6 @@ public class ClassificationContext implements Serializable {
 
         this.serialization_format = serialization_format;
     }
+
+    
 }

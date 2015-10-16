@@ -159,7 +159,7 @@ public class EndToEndCommon {
             appendSpace(commands_builder);
 
             final Path gold_standard = input_gold_standard_files.get(i);
-            commands_builder.append(LoadGoldStandardCommand.GOLD_STANDARD_FLAG_SHORT);
+            commands_builder.append(LoadGoldStandardCommand.GOLD_STANDARD_FLAG);
             appendSpace(commands_builder);
             appendQuoted(commands_builder, gold_standard);
 
@@ -169,7 +169,7 @@ public class EndToEndCommon {
 
                 if (delimiter != null) {
                     appendSpace(commands_builder);
-                    commands_builder.append(LoadGoldStandardCommand.DELIMITER_FLAG_SHORT);
+                    commands_builder.append(LoadGoldStandardCommand.DELIMITER_FLAG);
                     appendSpace(commands_builder);
                     commands_builder.append(delimiter);
                 }
@@ -179,7 +179,7 @@ public class EndToEndCommon {
                 final CharsetSupplier charset = gold_standard_charset_suppliers.get(i);
                 if (charset != null) {
                     appendSpace(commands_builder);
-                    commands_builder.append(LoadGoldStandardCommand.CHARSET_FLAG_SHORT);
+                    commands_builder.append(LoadGoldStandardCommand.CHARSET_FLAG);
                     appendSpace(commands_builder);
                     commands_builder.append(charset.name());
                 }
@@ -189,7 +189,7 @@ public class EndToEndCommon {
                 final Double training_ratio = training_ratios.get(i);
                 if (training_ratio != null) {
                     appendSpace(commands_builder);
-                    commands_builder.append(LoadGoldStandardCommand.TRAINING_RATIO_FLAG_SHORT);
+                    commands_builder.append(LoadGoldStandardCommand.TRAINING_RATIO_FLAG);
                     appendSpace(commands_builder);
                     commands_builder.append(training_ratio);
                 }
