@@ -28,6 +28,7 @@ public class ConsistentCodingChecker implements Checker {
     @Override
     public boolean test(final List<Bucket> buckets) {
 
+        //TODO optimise; no need to construct a set of inconsistently coded records just to check if it's empty: return upon detection of an inconsistently coded record.
         return ConsistentClassificationCleaner.getInconsistentlyClassifiedData(buckets).isEmpty();
     }
 }

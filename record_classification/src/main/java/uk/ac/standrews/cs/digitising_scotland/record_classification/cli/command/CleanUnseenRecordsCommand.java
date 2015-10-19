@@ -20,14 +20,17 @@ import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.Cleaner;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.CleanerSupplier;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.*;
 import uk.ac.standrews.cs.util.tools.InfoLevel;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.Launcher;
 import uk.ac.standrews.cs.util.tools.Logging;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.CleanUnseenRecordsStep;
 
+import java.io.*;
 import java.util.List;
 import java.util.function.Supplier;
+import java.util.stream.*;
 
 /**
  * Cleans the unseen data.
@@ -39,7 +42,7 @@ import java.util.function.Supplier;
 public class CleanUnseenRecordsCommand extends Command {
 
     /** The name of this command. */
-    public static final String NAME = "clean_data";
+    public static final String NAME = "clean_unseen";
 
     @Parameter(required = true, names = {CLEAN_FLAG_SHORT, CLEAN_FLAG_LONG}, description = CLEAN_DESCRIPTION, variableArity = true)
     private List<CleanerSupplier> cleaner_suppliers;
@@ -52,10 +55,31 @@ public class CleanUnseenRecordsCommand extends Command {
     @Override
     public void run() {
 
-        Logging.output(InfoLevel.VERBOSE, "cleaning data...");
-        final ClassificationContext context = launcher.getContext();
-        for (Supplier<Cleaner> supplier : cleaner_suppliers) {
-            new CleanUnseenRecordsStep(supplier.get()).perform(context);
+        final Configuration configuration = launcher.getConfiguration();
+        final List<? extends Configuration.Unseen> unseens = getRecords(configuration);
+        List<Bucket> buckets = unseens.stream().map(unseen -> {
+            try {
+                return unseen.toBucket();
+            }
+            catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }).collect(Collectors.toList());
+
+        for (final Supplier<Cleaner> supplier : cleaner_suppliers) {
+            final Cleaner cleaner = supplier.get();
+            buckets = cleaner.apply(buckets);
         }
+
+        for (int i = 0; i < buckets.size(); i++) {
+
+            final Bucket bucket = buckets.get(i);
+            unseens.get(i).setBucket(bucket);
+        }
+    }
+
+    protected List<? extends Configuration.Unseen> getRecords(final Configuration configuration) {
+
+        return configuration.getUnseens();
     }
 }

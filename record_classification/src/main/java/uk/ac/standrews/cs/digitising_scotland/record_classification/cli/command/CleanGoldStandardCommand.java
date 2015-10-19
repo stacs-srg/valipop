@@ -18,14 +18,18 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.cli.command
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
+import org.apache.commons.csv.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.Cleaner;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.CleanerSupplier;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.Launcher;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.CleanGoldStandardStep;
 
+import java.io.*;
 import java.util.List;
 import java.util.function.Supplier;
+import java.util.stream.*;
 
 /**
  * Cleans the gold standard data.
@@ -34,13 +38,10 @@ import java.util.function.Supplier;
  * @author Graham Kirby
  */
 @Parameters(commandNames = CleanGoldStandardCommand.NAME, commandDescription = "Cleans gold standard records", separators = "=")
-public class CleanGoldStandardCommand extends Command {
+public class CleanGoldStandardCommand extends CleanUnseenRecordsCommand {
 
     /** The name of this command. */
     public static final String NAME = "clean_gold_standard";
-
-    @Parameter(required = true, names = {CLEAN_FLAG_SHORT, CLEAN_FLAG_LONG}, description = CLEAN_DESCRIPTION, variableArity = true)
-    private List<CleanerSupplier> cleaner_suppliers;
 
     public CleanGoldStandardCommand(final Launcher launcher) {
 
@@ -48,11 +49,8 @@ public class CleanGoldStandardCommand extends Command {
     }
 
     @Override
-    public void run() {
+    protected List<? extends Configuration.Unseen> getRecords(final Configuration configuration) {
 
-        final ClassificationContext context = launcher.getContext();
-        for (final Supplier<Cleaner> supplier : cleaner_suppliers) {
-            new CleanGoldStandardStep(supplier.get()).perform(context);
-        }
+        return configuration.getGoldStandards();
     }
 }

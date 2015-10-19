@@ -255,14 +255,14 @@ public class EndToEndCommon {
 
         if (unseen_data_delimiter != null) {
             appendSpace(commands_builder);
-            commands_builder.append(LoadUnseenRecordsCommand.DELIMITER_FLAG_SHORT);
+            commands_builder.append("delimiter");
             appendSpace(commands_builder);
             commands_builder.append(unseen_data_delimiter);
         }
 
         if (unseen_data_charset_supplier != null) {
             appendSpace(commands_builder);
-            commands_builder.append(LoadUnseenRecordsCommand.CHARSET_FLAG_SHORT);
+            commands_builder.append("charset");
             appendSpace(commands_builder);
             commands_builder.append(unseen_data_charset_supplier.name());
         }

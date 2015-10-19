@@ -2,11 +2,14 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.cli;
 
 import org.apache.commons.csv.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.serialization.*;
 
+import java.io.*;
 import java.nio.charset.*;
 import java.nio.file.*;
 import java.util.*;
+import java.util.stream.*;
 
 /**
  * The Command Line Interface configuration.
@@ -129,53 +132,27 @@ public class Configuration {
 
     }
 
+    public List<GoldStandard> getGoldStandards() {
+
+        return gold_standards;
+    }
+
+    public List<Unseen> getUnseens() {
+
+        return unseens;
+    }
+
     public static class Unseen {
 
-        private Path file;
-        private Integer label_column_index;
-        private Charset charset;
-        private Character delimiter;
+        public static final Charset CHARSET = StandardCharsets.UTF_8;
+        public static CSVFormat CSV_FORMAT = CSVFormat.RFC4180.withHeader("ID", "LABEL");
+
         private String name;
-        private boolean skip_header;
+        private Bucket bucket;
 
-        public Path getFile() {
+        public Unseen(final String name) {
 
-            return file;
-        }
-
-        public void setFile(final Path file) {
-
-            this.file = file;
-        }
-
-        public Integer getLabelColumnIndex() {
-
-            return label_column_index;
-        }
-
-        public void setLabelColumnIndex(final Integer label_column_index) {
-
-            this.label_column_index = label_column_index;
-        }
-
-        public Charset getCharset() {
-
-            return charset;
-        }
-
-        public void setCharset(final Charset charset) {
-
-            this.charset = charset;
-        }
-
-        public Character getDelimiter() {
-
-            return delimiter;
-        }
-
-        public void setDelimiter(final Character delimiter) {
-
-            this.delimiter = delimiter;
+            this.name = name;
         }
 
         public String getName() {
@@ -183,45 +160,86 @@ public class Configuration {
             return name;
         }
 
-        public void setName(final String name) {
+        protected Path getPath() {
 
-            this.name = name;
+            return UNSEEN_HOME.resolve(name);
         }
 
-        public boolean isSkipHeader() {
+        public synchronized Bucket toBucket() throws IOException {
 
-            return skip_header;
+            if (bucket == null) {
+
+                bucket = new Bucket();
+                try (final BufferedReader in = Files.newBufferedReader(getPath(), CHARSET)) {
+
+                    final CSVParser parser = getCsvFormat().parse(in);
+                    for (final CSVRecord csv_record : parser) {
+                        final Record record = toRecord(csv_record);
+                        bucket.add(record);
+                    }
+                }
+            }
+            return bucket;
         }
 
-        public void setSkipHeader(final boolean skip_header) {
+        public CSVFormat getCsvFormat() {
 
-            this.skip_header = skip_header;
+            return CSV_FORMAT;
+        }
+
+        protected Record toRecord(CSVRecord csv_record) {
+
+            final int id = Integer.parseInt(csv_record.get(0));
+            final String label = csv_record.get(1);
+
+            return new Record(id, label);
+        }
+
+        public synchronized void add(final Stream<Record> records) {
+
+            if (bucket == null) {
+                bucket = new Bucket();
+            }
+
+            bucket.add(records.collect(Collectors.toList()));
+        }
+
+        public void setBucket(Bucket bucket) {
+
+            this.bucket = bucket;
         }
     }
 
     public static class GoldStandard extends Unseen {
 
+        public static final CSVFormat CSV_FORMAT = CSVFormat.RFC4180.withHeader("ID", "LABEL", "CLASS");
         private double training_ratio;
-        private Integer class_column_index;
+
+        public GoldStandard(final String name, final double training_ratio) {
+
+            super(name);
+            this.training_ratio = training_ratio;
+        }
 
         public double getTrainingRatio() {
 
             return training_ratio;
         }
 
-        public void setTrainingRatio(final double training_ratio) {
+        @Override
+        public CSVFormat getCsvFormat() {
 
-            this.training_ratio = training_ratio;
+            return CSV_FORMAT;
         }
 
-        public Integer getClassColumnIndex() {
+        @Override
+        protected Record toRecord(final CSVRecord csv_record) {
 
-            return class_column_index;
-        }
+            final int id = Integer.parseInt(csv_record.get(0));
+            final String label = csv_record.get(1);
+            final String clazz = csv_record.get(2);
 
-        public void setClassColumnIndex(final Integer class_column_index) {
-
-            this.class_column_index = class_column_index;
+            return new Record(id, label, new Classification(clazz, new TokenList(label), 0.0, null));
         }
     }
 }
