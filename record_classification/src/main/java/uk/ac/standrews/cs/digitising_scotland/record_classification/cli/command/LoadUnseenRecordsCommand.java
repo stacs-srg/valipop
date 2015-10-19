@@ -21,11 +21,13 @@ import com.beust.jcommander.Parameters;
 import com.beust.jcommander.converters.PathConverter;
 import org.apache.commons.csv.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 
 import java.io.*;
 import java.nio.charset.*;
 import java.nio.file.*;
 import java.util.logging.*;
+import java.util.stream.*;
 
 /**
  * The train command of classification process command line interface.
@@ -62,8 +64,11 @@ public class LoadUnseenRecordsCommand extends Command {
     @Parameter(names = "name", description = "The name of the data file.")
     private String name;
 
-    @Parameter(names = "label_column_index", description = "The index of the column containing the gold standard label, starting from zero.")
-    private Integer label_column_index = 0;
+    @Parameter(names = "id_column_index", description = "The zero-based index of the column containing the ID.")
+    private Integer id_column_index = 0;
+
+    @Parameter(names = "label_column_index", description = "The zero-based index of the column containing the label.")
+    private Integer label_column_index = 1;
 
     public LoadUnseenRecordsCommand(final Launcher launcher) {
 
@@ -74,31 +79,19 @@ public class LoadUnseenRecordsCommand extends Command {
     public void run() {
 
         //TODO Add system logs.
-        loadRecords();
-        updateConfiguration();
+        final Stream<Record> records = loadRecords();
+        updateConfiguration(records);
     }
 
-    protected void updateConfiguration() {
+    protected void updateConfiguration(final Stream<Record> records) {
 
         final Configuration configuration = launcher.getConfiguration();
-
-        final Configuration.Unseen unseen = new Configuration.Unseen();
-        setFieldValues(configuration, unseen);
-
+        final Configuration.Unseen unseen = new Configuration.Unseen(name);
+        unseen.add(records);
         configuration.addUnseen(unseen);
     }
 
-    protected void setFieldValues(final Configuration configuration, final Configuration.Unseen unseen) {
-
-        unseen.setFile(getDestination(configuration));
-        unseen.setLabelColumnIndex(label_column_index);
-        unseen.setCharset(getCharset());
-        unseen.setDelimiter(delimiter);
-        unseen.setName(name);
-        unseen.setSkipHeader(skip_header_record);
-    }
-
-    protected void loadRecords() {
+    protected Stream<Record> loadRecords() {
 
         final Configuration configuration = launcher.getConfiguration();
 
@@ -110,18 +103,11 @@ public class LoadUnseenRecordsCommand extends Command {
         //TODO Check if destination exists, if so override upon confirmation.
         //TODO Add system logs.
 
-        try (
-                        final BufferedReader in = Files.newBufferedReader(source, charset);
-                        final BufferedWriter out = Files.newBufferedWriter(destination, charset)
-        ) {
+        try (final BufferedReader in = Files.newBufferedReader(source, charset)) {
 
             assureDirectoryExists(destination.getParent());
-
             final CSVParser parser = format.parse(in);
-            final CSVPrinter printer = format.print(out);
-
-            parser.forEach(record -> loadRecord(printer, record));
-            out.flush();
+            return StreamSupport.stream(parser.spliterator(), true).map(this::toRecord);
         }
         catch (IOException e) {
             throw new RuntimeException(e);
@@ -158,16 +144,27 @@ public class LoadUnseenRecordsCommand extends Command {
         }
     }
 
-    protected void loadRecord(final CSVPrinter printer, final CSVRecord record) {
+    protected Record toRecord(final CSVRecord record) {
 
-        final String label = record.get(getLabelColumnIndex());
+        final Integer id = getId(record);
+        final String label = getLabel(record);
 
-        try {
-            printer.printRecord(label);
-        }
-        catch (IOException e) {
-            throw new RuntimeException(String.format("failed to load record, no: %d, at: %d", record.getRecordNumber(), record.getCharacterPosition()), e);
-        }
+        return new Record(id, label);
+    }
+
+    protected String getLabel(final CSVRecord record) {
+
+        return record.get(getLabelColumnIndex());
+    }
+
+    protected Integer getId(final CSVRecord record) {
+
+        return Integer.parseInt(record.get(getIdColumnIndex()));
+    }
+
+    protected int getIdColumnIndex() {
+
+        return id_column_index;
     }
 
     protected int getLabelColumnIndex() {

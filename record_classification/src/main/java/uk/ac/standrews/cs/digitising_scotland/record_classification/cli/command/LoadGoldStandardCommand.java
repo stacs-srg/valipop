@@ -20,10 +20,12 @@ import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import org.apache.commons.csv.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 
 import java.io.*;
 import java.nio.file.*;
 import java.util.logging.*;
+import java.util.stream.*;
 
 /**
  * Command to load gold standard data from a file.
@@ -34,35 +36,28 @@ import java.util.logging.*;
 @Parameters(commandNames = LoadGoldStandardCommand.NAME, commandDescription = "Load gold standard data")
 public class LoadGoldStandardCommand extends LoadUnseenRecordsCommand {
 
-    private static final Logger LOGGER = Logger.getLogger(LoadGoldStandardCommand.class.getName());
-
     /** The name of this command. */
     public static final String NAME = "load_gold_standard";
-
     public static final String TRAINING_RATIO_DESCRIPTION = "The ratio of gold standard records to be used for training. The value must be between 0.0 to 1.0 (inclusive).";
     public static final String TRAINING_RATIO_FLAG = "trainingRatio";
+    private static final Logger LOGGER = Logger.getLogger(LoadGoldStandardCommand.class.getName());
     @Parameter(required = true, names = TRAINING_RATIO_FLAG, description = TRAINING_RATIO_DESCRIPTION, validateValueWith = Validators.BetweenZeroAndOne.class)
     private Double training_ratio;
 
-    @Parameter(names = "class_column_index", description = "The index of the column containing the gold standard class associated to each label, starting from zero.")
-    private Integer class_column_index = 1;
+    @Parameter(names = "class_column_index", description = "The zero-based index of the column containing the class associated to each label.")
+    private Integer class_column_index = 2;
 
     public LoadGoldStandardCommand(final Launcher launcher) {
 
         super(launcher);
     }
 
-    protected void loadRecord(final CSVPrinter printer, final CSVRecord record) {
+    protected void updateConfiguration(final Stream<Record> records) {
 
-        final String label = record.get(getLabelColumnIndex());
-        final String clazz = record.get(class_column_index);
-
-        try {
-            printer.printRecord(label, clazz);
-        }
-        catch (IOException e) {
-            throw new RuntimeException(String.format("failed to load gold standard record, no: %d, at: %d", record.getRecordNumber(), record.getCharacterPosition()), e);
-        }
+        final Configuration configuration = launcher.getConfiguration();
+        final Configuration.GoldStandard gold_standard = new Configuration.GoldStandard(getSourceName(), training_ratio);
+        gold_standard.add(records);
+        configuration.addGoldStandard(gold_standard);
     }
 
     @Override
@@ -71,15 +66,18 @@ public class LoadGoldStandardCommand extends LoadUnseenRecordsCommand {
         return configuration.getGoldStandardHome();
     }
 
-    protected void updateConfiguration() {
+    @Override
+    protected Record toRecord(final CSVRecord record) {
 
-        final Configuration configuration = launcher.getConfiguration();
-        final Configuration.GoldStandard gold_standard = new Configuration.GoldStandard();
+        final Integer id = getId(record);
+        final String label = getLabel(record);
+        final String clazz = getClass(record);
 
-        setFieldValues(configuration, gold_standard);
-        gold_standard.setTrainingRatio(training_ratio);
-        gold_standard.setClassColumnIndex(class_column_index);
+        return new Record(id, label, new Classification(clazz, new TokenList(label), 0.0, null));
+    }
 
-        configuration.addGoldStandard(gold_standard);
+    private String getClass(final CSVRecord record) {
+
+        return record.get(class_column_index);
     }
 }
