@@ -58,4 +58,6 @@ public class InitCommand extends Command {
 
         launcher.setConfiguration(configuration);
     }
+    
+    
 }

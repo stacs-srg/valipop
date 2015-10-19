@@ -6,6 +6,7 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.process.seri
 
 import java.nio.charset.*;
 import java.nio.file.*;
+import java.util.*;
 
 /**
  * The Command Line Interface configuration.
@@ -37,6 +38,15 @@ public class Configuration {
     private Classifier classifier;
     private SerializationFormat serialization_format;
     private CsvFormatSupplier default_csv_format_supplier = DEFAULT_CSV_FORMAT_SUPPLIER;
+
+    private List<GoldStandard> gold_standards;
+    private List<Unseen> unseens;
+
+    public Configuration() {
+
+        gold_standards = new ArrayList<>();
+        unseens = new ArrayList<>();
+    }
 
     public String getProgramName() {
 
@@ -103,19 +113,115 @@ public class Configuration {
         return default_charset_supplier;
     }
 
-    class Unseen {
+    public Path getUnseenHome() {
+
+        return UNSEEN_HOME;
+    }
+
+    public void addUnseen(final Unseen unseen) {
+
+        unseens.add(unseen);
+    }
+
+    public void addGoldStandard(final GoldStandard gold_standard) {
+
+        gold_standards.add(gold_standard);
+
+    }
+
+    public static class Unseen {
 
         private Path file;
         private Integer label_column_index;
         private Charset charset;
-        private String delimiter;
+        private Character delimiter;
         private String name;
-        private boolean skip_first_row;
+        private boolean skip_header;
+
+        public Path getFile() {
+
+            return file;
+        }
+
+        public void setFile(final Path file) {
+
+            this.file = file;
+        }
+
+        public Integer getLabelColumnIndex() {
+
+            return label_column_index;
+        }
+
+        public void setLabelColumnIndex(final Integer label_column_index) {
+
+            this.label_column_index = label_column_index;
+        }
+
+        public Charset getCharset() {
+
+            return charset;
+        }
+
+        public void setCharset(final Charset charset) {
+
+            this.charset = charset;
+        }
+
+        public Character getDelimiter() {
+
+            return delimiter;
+        }
+
+        public void setDelimiter(final Character delimiter) {
+
+            this.delimiter = delimiter;
+        }
+
+        public String getName() {
+
+            return name;
+        }
+
+        public void setName(final String name) {
+
+            this.name = name;
+        }
+
+        public boolean isSkipHeader() {
+
+            return skip_header;
+        }
+
+        public void setSkipHeader(final boolean skip_header) {
+
+            this.skip_header = skip_header;
+        }
     }
 
-    class GoldStandard extends Unseen {
+    public static class GoldStandard extends Unseen {
 
         private double training_ratio;
         private Integer class_column_index;
+
+        public double getTrainingRatio() {
+
+            return training_ratio;
+        }
+
+        public void setTrainingRatio(final double training_ratio) {
+
+            this.training_ratio = training_ratio;
+        }
+
+        public Integer getClassColumnIndex() {
+
+            return class_column_index;
+        }
+
+        public void setClassColumnIndex(final Integer class_column_index) {
+
+            this.class_column_index = class_column_index;
+        }
     }
 }
