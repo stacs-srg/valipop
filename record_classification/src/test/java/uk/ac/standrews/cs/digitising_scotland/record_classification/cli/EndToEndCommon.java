@@ -159,7 +159,7 @@ public class EndToEndCommon {
             appendSpace(commands_builder);
 
             final Path gold_standard = input_gold_standard_files.get(i);
-            commands_builder.append(LoadGoldStandardCommand.GOLD_STANDARD_FLAG);
+            commands_builder.append(LoadGoldStandardCommand.DATA_FLAG_SHORT);
             appendSpace(commands_builder);
             appendQuoted(commands_builder, gold_standard);
 
