@@ -19,13 +19,18 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.cli.command
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.beust.jcommander.converters.PathConverter;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.Launcher;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.ClassifyUnseenRecordsStep;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.SaveDataStep;
 import uk.ac.standrews.cs.util.dataset.DataSet;
 
+import java.io.*;
 import java.nio.file.Path;
+import java.util.*;
+import java.util.stream.*;
 
 /**
  * Classification command of the classification process.
@@ -54,14 +59,18 @@ public class ClassifyCommand extends Command {
     @Override
     public void run() {
 
-        output("classifying data...");
+        final Configuration configuration = launcher.getConfiguration();
+        final Classifier classifier = configuration.getClassifier();
 
-        final ClassificationContext context = launcher.getContext();
-        new ClassifyUnseenRecordsStep().perform(context);
+        final List<Bucket> classified_unseen = configuration.getUnseens().stream().map(unseen -> {
+            try {
+                return unseen.toBucket();
+            }
+            catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }).map(classifier::classify).collect(Collectors.toList());
 
-        output("saving results...");
-
-        final DataSet classified_data_set = context.getClassifiedUnseenRecords().toDataSet(DATA_SET_COLUMN_LABELS);
-        new SaveDataStep(classified_data_set, destination).perform(context);
+        //TODO persist classified records
     }
 }

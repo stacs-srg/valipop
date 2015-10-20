@@ -35,150 +35,33 @@ import java.util.stream.*;
  * @author Masih Hajiarab Derkani
  */
 @Parameters(commandNames = LoadUnseenRecordsCommand.NAME, commandDescription = "Load unseen records")
-public class LoadUnseenRecordsCommand extends Command {
+public class LoadUnseenRecordsCommand extends LoadRecordsCommand {
 
     /** The name of this command. */
-    public static final String NAME = "load_unseen";
-    public static final String DATA_DESCRIPTION = "Path to a CSV file containing the data to be loaded.";
-    public static final String DATA_FLAG_SHORT = "from";
-    public static final String CHARSET_DESCRIPTION = "The data file charset";
-    public static final String CHARSET_FLAG = "charset";
-    public static final String DELIMITER_DESCRIPTION = "The data file delimiter character";
-    public static final String DELIMITER_FLAG = "delimiter";
+    public static final String NAME = "unseen";
 
     private static final Logger LOGGER = Logger.getLogger(LoadUnseenRecordsCommand.class.getName());
 
-    @Parameter(required = true, names = DATA_FLAG_SHORT, description = DATA_DESCRIPTION, converter = PathConverter.class)
-    private Path source;
-    @Parameter(names = CHARSET_FLAG, description = CHARSET_DESCRIPTION)
-    private CharsetSupplier charset_supplier = launcher.getConfiguration().getDefaultCharsetSupplier();
-    @Parameter(names = DELIMITER_FLAG, description = DELIMITER_DESCRIPTION)
-    private Character delimiter = launcher.getContext().getDefaultDelimiter();
+    public LoadUnseenRecordsCommand(LoadCommand load_command) {
 
-    @Parameter(names = "format", description = "The format of the csv file containing the data to be loaded")
-    private CsvFormatSupplier csv_format_supplier = launcher.getConfiguration().getDefaultCsvFormatSupplier();
-
-    @Parameter(names = "skip_header", description = "Whether the CSV data file has headers.")
-    private boolean skip_header_record;
-
-    @Parameter(names = "name", description = "The name of the data file.")
-    private String name;
-
-    @Parameter(names = "id_column_index", description = "The zero-based index of the column containing the ID.")
-    private Integer id_column_index = 0;
-
-    @Parameter(names = "label_column_index", description = "The zero-based index of the column containing the label.")
-    private Integer label_column_index = 1;
-
-    public LoadUnseenRecordsCommand(final Launcher launcher) {
-
-        super(launcher);
+        super(load_command);
     }
 
     @Override
-    public void run() {
-
-        //TODO Add system logs.
-        final Stream<Record> records = loadRecords();
-        updateConfiguration(records);
-    }
-
     protected void updateConfiguration(final Stream<Record> records) {
 
         final Configuration configuration = launcher.getConfiguration();
-        final Configuration.Unseen unseen = new Configuration.Unseen(name);
+        final Configuration.Unseen unseen = new Configuration.Unseen(load_command.getName());
         unseen.add(records);
         configuration.addUnseen(unseen);
     }
 
-    protected Stream<Record> loadRecords() {
-
-        final Configuration configuration = launcher.getConfiguration();
-
-        final CSVFormat format = getCsvFormat();
-        final Path destination = getDestination(configuration);
-        final Path source = getSource();
-        final Charset charset = getCharset();
-
-        //TODO Check if destination exists, if so override upon confirmation.
-        //TODO Add system logs.
-
-        try (final BufferedReader in = Files.newBufferedReader(source, charset)) {
-
-            assureDirectoryExists(destination.getParent());
-            final CSVParser parser = format.parse(in);
-            return StreamSupport.stream(parser.spliterator(), true).map(this::toRecord);
-        }
-        catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private Path getDestination(final Configuration configuration) {
-
-        return getDataHome(configuration).resolve(getSourceName());
-    }
-
-    protected String getSourceName() {
-
-        return name == null ? getSource().getFileName().toString() : name;
-    }
-
-    protected Path getSource() {
-
-        return source;
-    }
-
-    protected Path getDataHome(final Configuration configuration) {
-
-        return configuration.getUnseenHome();
-    }
-
-    private void assureDirectoryExists(final Path directory) throws IOException {
-
-        if (!Files.isDirectory(directory)) {
-            final Path directories = Files.createDirectories(directory);
-            if (!Files.isDirectory(directories)) {
-                throw new IOException("failed to create directory");
-            }
-        }
-    }
-
+    @Override
     protected Record toRecord(final CSVRecord record) {
 
         final Integer id = getId(record);
         final String label = getLabel(record);
 
         return new Record(id, label);
-    }
-
-    protected String getLabel(final CSVRecord record) {
-
-        return record.get(getLabelColumnIndex());
-    }
-
-    protected Integer getId(final CSVRecord record) {
-
-        return Integer.parseInt(record.get(getIdColumnIndex()));
-    }
-
-    protected int getIdColumnIndex() {
-
-        return id_column_index;
-    }
-
-    protected int getLabelColumnIndex() {
-
-        return label_column_index;
-    }
-
-    protected Charset getCharset() {
-
-        return charset_supplier.get();
-    }
-
-    protected CSVFormat getCsvFormat() {
-
-        return csv_format_supplier.get().withDelimiter(delimiter).withSkipHeaderRecord(skip_header_record);
     }
 }

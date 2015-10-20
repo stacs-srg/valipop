@@ -41,11 +41,6 @@ public class Serialization {
 
     private static final ObjectMapper JSON_MAPPER = new ProcessObjectMapper();
 
-    public static Path getSerializedContextPath(ClassificationContext context) {
-
-        return getSerializedContextPath(Paths.get("."), context.getName(), context.getSerializationFormat());
-    }
-
     public static Path getSerializedContextPath(Path process_directory, String name, SerializationFormat serialization_format) {
 
         return getProcessWorkingDirectory(process_directory, name).resolve(SERIALIZED_CONTEXT_NAME + "." + getSerializedContextSuffix(serialization_format));

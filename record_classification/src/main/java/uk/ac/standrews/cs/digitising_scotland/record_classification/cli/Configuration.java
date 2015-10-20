@@ -1,5 +1,7 @@
 package uk.ac.standrews.cs.digitising_scotland.record_classification.cli;
 
+import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.databind.*;
 import org.apache.commons.csv.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
@@ -18,13 +20,29 @@ import java.util.stream.*;
  */
 public class Configuration {
 
+    //TODO add parent config loading from user.home if exists.
+
     /** Name of record classification CLI program. */
     public static final String PROGRAM_NAME = "classi";
 
     /** The name of the folder that contains the persisted state of this program. */
-    public static final Path CLI_HOME = Paths.get(".", Configuration.PROGRAM_NAME);
+    public static final Path CLI_HOME = Paths.get(Configuration.PROGRAM_NAME);
+    public static final Path CONFIGURATION_FILE = CLI_HOME.resolve("config.json");
     public static final Path GOLD_STANDARD_HOME = CLI_HOME.resolve("gold_standard");
     public static final Path UNSEEN_HOME = CLI_HOME.resolve("unseen");
+    public static final Path DICTIONARY_HOME = CLI_HOME.resolve("dictionary");
+    public static final Path STOP_WORDS_HOME = CLI_HOME.resolve("stop_words");
+
+    private static final ObjectMapper MAPPER = new ObjectMapper();
+
+    static {
+//        MAPPER.setVisibilityChecker(MAPPER.getSerializationConfig().getDefaultVisibilityChecker().
+//                        withGetterVisibility(JsonAutoDetect.Visibility.NONE).
+//                        withSetterVisibility(JsonAutoDetect.Visibility.NONE));
+//        MAPPER.setVisibilityChecker(MAPPER.getDeserializationConfig().getDefaultVisibilityChecker().
+//                        withGetterVisibility(JsonAutoDetect.Visibility.NONE).
+//                        withSetterVisibility(JsonAutoDetect.Visibility.NONE));
+    }
 
     private static final CsvFormatSupplier DEFAULT_CSV_FORMAT_SUPPLIER = CsvFormatSupplier.DEFAULT;
     private static final char DEFAULT_DELIMITER = DEFAULT_CSV_FORMAT_SUPPLIER.get().getDelimiter();
@@ -36,44 +54,29 @@ public class Configuration {
     private boolean proceed_on_error;
     private Path error_log;
     private Path info_log;
-    private Path working_directory;
-    private String name;
     private Classifier classifier;
+    private ClassifierSupplier classifier_supplier;
     private SerializationFormat serialization_format;
     private CsvFormatSupplier default_csv_format_supplier = DEFAULT_CSV_FORMAT_SUPPLIER;
-
     private List<GoldStandard> gold_standards;
     private List<Unseen> unseens;
+    private List<Dictionary> dictionaries;
+    private List<StopWords> stop_words;
+    @JsonIgnore
+    private Random random;
 
     public Configuration() {
 
         gold_standards = new ArrayList<>();
         unseens = new ArrayList<>();
+        dictionaries = new ArrayList<>();
+        stop_words = new ArrayList<>();
+        random = seed == null ? new Random() : new Random(seed);
     }
 
-    public String getProgramName() {
+    static Configuration load() throws IOException {
 
-        return PROGRAM_NAME;
-    }
-
-    public Path getGoldStandardHome() {
-
-        return GOLD_STANDARD_HOME;
-    }
-
-    public void setWorkingDirectory(final Path working_directory) {
-
-        this.working_directory = working_directory;
-    }
-
-    public void setName(final String name) {
-
-        this.name = name; //TODO think about whether we need this
-    }
-
-    public void setClassifier(final Classifier classifier) {
-
-        this.classifier = classifier;
+        return MAPPER.readValue(Files.newBufferedReader(CONFIGURATION_FILE), Configuration.class);
     }
 
     public void setSeed(final Long seed) {
@@ -81,24 +84,14 @@ public class Configuration {
         this.seed = seed;
     }
 
-    public void setDefaultCharsetSupplier(final CharsetSupplier default_charset_supplier) {
+    public SerializationFormat getSerializationFormat() {
 
-        this.default_charset_supplier = default_charset_supplier;
-    }
-
-    public void setDefaultDelimiter(final Character default_delimiter) {
-
-        this.default_delimiter = default_delimiter;
+        return serialization_format;
     }
 
     public void setSerializationFormat(final SerializationFormat serialization_format) {
 
         this.serialization_format = serialization_format;
-    }
-
-    public SerializationFormat getSerializationFormat() {
-
-        return serialization_format;
     }
 
     public CsvFormatSupplier getDefaultCsvFormatSupplier() {
@@ -116,14 +109,29 @@ public class Configuration {
         return default_charset_supplier;
     }
 
-    public Path getUnseenHome() {
+    public void setDefaultCharsetSupplier(final CharsetSupplier default_charset_supplier) {
 
-        return UNSEEN_HOME;
+        this.default_charset_supplier = default_charset_supplier;
+    }
+
+    public Character getDefaultDelimiter() {
+
+        return default_delimiter;
+    }
+
+    public void setDefaultDelimiter(final Character default_delimiter) {
+
+        this.default_delimiter = default_delimiter;
     }
 
     public void addUnseen(final Unseen unseen) {
 
         unseens.add(unseen);
+    }
+
+    public Classifier getClassifier() {
+
+        return classifier;
     }
 
     public void addGoldStandard(final GoldStandard gold_standard) {
@@ -132,9 +140,34 @@ public class Configuration {
 
     }
 
+    public Optional<Bucket> getGoldStandardRecords() {
+
+        final Optional<Bucket> training_records = getTrainingRecords();
+        final Optional<Bucket> evaluation_records = getEvaluationRecords();
+
+        if (!training_records.isPresent() && !evaluation_records.isPresent()) {
+            return Optional.empty();
+        }
+
+        return Optional.of(training_records.orElse(new Bucket()).union(evaluation_records.orElse(new Bucket())));
+    }
+
+    @JsonIgnore
+    public Optional<Bucket> getTrainingRecords() {
+
+        return getGoldStandards().stream().map(Configuration.GoldStandard::getTrainingRecords).reduce(Bucket::union);
+    }
+
+    @JsonIgnore
     public List<GoldStandard> getGoldStandards() {
 
         return gold_standards;
+    }
+
+    @JsonIgnore
+    public Optional<Bucket> getEvaluationRecords() {
+
+        return getGoldStandards().stream().map(Configuration.GoldStandard::getEvaluationRecords).reduce(Bucket::union);
     }
 
     public List<Unseen> getUnseens() {
@@ -142,15 +175,33 @@ public class Configuration {
         return unseens;
     }
 
-    public static class Unseen {
+    @JsonIgnore
+    public ClassifierSupplier getClassifierSupplier() {
 
-        public static final Charset CHARSET = StandardCharsets.UTF_8;
-        public static CSVFormat CSV_FORMAT = CSVFormat.RFC4180.withHeader("ID", "LABEL");
+        return classifier_supplier;
+    }
 
-        private String name;
-        private Bucket bucket;
+    public void setClassifierSupplier(final ClassifierSupplier classifier_supplier) {
 
-        public Unseen(final String name) {
+        this.classifier_supplier = classifier_supplier;
+        classifier = classifier_supplier.get();
+    }
+
+    public Random getRandom() {
+
+        return random;
+    }
+
+    public void persist() throws IOException {
+
+        MAPPER.writeValue(Files.newOutputStream(CONFIGURATION_FILE, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING), this);
+    }
+
+    abstract static class Resource {
+
+        private final String name;
+
+        public Resource(final String name) {
 
             this.name = name;
         }
@@ -162,7 +213,50 @@ public class Configuration {
 
         protected Path getPath() {
 
-            return UNSEEN_HOME.resolve(name);
+            return getHome().resolve(name);
+        }
+
+        protected abstract Path getHome();
+    }
+
+    public static class Dictionary extends Resource {
+
+        public Dictionary(final String name) {
+
+            super(name);
+        }
+
+        @Override
+        protected Path getHome() {
+
+            return DICTIONARY_HOME;
+        }
+    }
+
+    public static class StopWords extends Resource {
+
+        public StopWords(final String name) {
+
+            super(name);
+        }
+
+        @Override
+        protected Path getHome() {
+
+            return STOP_WORDS_HOME;
+        }
+    }
+
+    public static class Unseen extends Resource {
+
+        public static final Charset CHARSET = StandardCharsets.UTF_8;
+        public static CSVFormat CSV_FORMAT = CSVFormat.RFC4180.withHeader("ID", "LABEL");
+
+        private Bucket bucket;
+
+        public Unseen(final String name) {
+
+            super(name);
         }
 
         public synchronized Bucket toBucket() throws IOException {
@@ -180,6 +274,12 @@ public class Configuration {
                 }
             }
             return bucket;
+        }
+
+        @Override
+        protected Path getHome() {
+
+            return UNSEEN_HOME;
         }
 
         public CSVFormat getCsvFormat() {
@@ -208,6 +308,7 @@ public class Configuration {
 
             this.bucket = bucket;
         }
+
     }
 
     public static class GoldStandard extends Unseen {
@@ -227,6 +328,12 @@ public class Configuration {
         }
 
         @Override
+        protected Path getHome() {
+
+            return GOLD_STANDARD_HOME;
+        }
+
+        @Override
         public CSVFormat getCsvFormat() {
 
             return CSV_FORMAT;
@@ -240,6 +347,16 @@ public class Configuration {
             final String clazz = csv_record.get(2);
 
             return new Record(id, label, new Classification(clazz, new TokenList(label), 0.0, null));
+        }
+
+        public Bucket getTrainingRecords() {
+            //TODO implement
+            return null;
+        }
+
+        public Bucket getEvaluationRecords() {
+            //TODO implement
+            return null;
         }
     }
 }
