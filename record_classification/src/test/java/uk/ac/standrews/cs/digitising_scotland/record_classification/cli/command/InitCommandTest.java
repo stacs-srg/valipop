@@ -8,16 +8,30 @@ import java.nio.file.*;
 import static org.junit.Assert.*;
 
 /**
- * @author masih
+ * @author Masih Hajiarab Derkani
  */
 public class InitCommandTest extends CommandTest {
 
     @Test
-    public void testRun() throws Exception {
+    public void testBasicInitialisation() throws Exception {
 
-        Launcher.main(new String[]{InitCommand.NAME});
+        run(InitCommand.NAME);
 
         assertTrue(Files.isDirectory(Configuration.CLI_HOME));
         assertTrue(Files.isRegularFile(Configuration.CONFIGURATION_FILE));
+    }
+    
+    @Test(expected = RuntimeException.class)
+    public void testBasicInitialisationFailureIfConfigurationExists() throws Exception {
+
+        run(InitCommand.NAME);
+        run(InitCommand.NAME);
+    }
+    
+    @Test
+    public void testForcedInitialisation() throws Exception {
+
+        run(InitCommand.NAME);
+        run(InitCommand.NAME, InitCommand.OPTION_FORCE_LONG);
     }
 }

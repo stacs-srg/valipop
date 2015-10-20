@@ -71,8 +71,11 @@ public class Configuration {
         unseens = new ArrayList<>();
         dictionaries = new ArrayList<>();
         stop_words = new ArrayList<>();
-        random = seed == null ? new Random() : new Random(seed);
+
+        initRandom();
     }
+
+    private void initRandom() {random = seed == null ? new Random() : new Random(seed);}
 
     static Configuration load() throws IOException {
 
@@ -82,6 +85,7 @@ public class Configuration {
     public void setSeed(final Long seed) {
 
         this.seed = seed;
+        initRandom();
     }
 
     public SerializationFormat getSerializationFormat() {
