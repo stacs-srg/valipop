@@ -16,17 +16,20 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.cli.command;
 
-import com.beust.jcommander.Parameter;
-import com.beust.jcommander.Parameters;
+import com.beust.jcommander.*;
 import com.beust.jcommander.converters.PathConverter;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.ClassificationMetrics;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.ClassificationContext;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.EvaluateClassifierStep;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.SaveDataStep;
 import uk.ac.standrews.cs.util.dataset.DataSet;
 
 import java.nio.file.Path;
+import java.time.*;
+import java.util.*;
 
 /**
  * @author Masih Hajiarab Derkani
@@ -48,12 +51,27 @@ public class EvaluateCommand extends Command {
     @Override
     public void run() {
 
-        final ClassificationContext context = launcher.getContext();
-        new EvaluateClassifierStep().perform(context);
+        final Configuration configuration = launcher.getConfiguration();
 
-        final DataSet data_set = new DataSet(ClassificationMetrics.DATASET_LABELS);
-        data_set.addRow(context.getClassificationMetrics().getValues());
+        final Optional<Bucket> evaluation_records = configuration.getEvaluationRecords();
 
-        new SaveDataStep(data_set, destination).perform(context);
+        if (!evaluation_records.isPresent()) {
+            throw new ParameterException("no evaluation record is present.");
+        }
+
+        final Optional<Bucket> gold_standard_records = configuration.getGoldStandardRecords();
+
+        if (!gold_standard_records.isPresent()) {
+            throw new ParameterException("no gold standard record is present.");
+        }
+
+        final Instant start = Instant.now();
+        final Bucket classified_records = configuration.getClassifier().classify(evaluation_records.get().makeStrippedRecords());
+        final Duration classification_time = Duration.between(start, Instant.now());
+
+        final StrictConfusionMatrix confusion_matrix = new StrictConfusionMatrix(classified_records, gold_standard_records.get(), new ConsistentCodingChecker());
+        final ClassificationMetrics classification_metrics = new ClassificationMetrics(confusion_matrix);
+
+        //TODO log outcomes
     }
 }

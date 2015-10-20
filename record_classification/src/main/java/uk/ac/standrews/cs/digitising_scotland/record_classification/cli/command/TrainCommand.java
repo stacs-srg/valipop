@@ -18,9 +18,17 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.cli.command
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.ClassificationContext;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.TrainClassifierStep;
+
+import java.time.*;
+import java.util.*;
+import java.util.function.*;
+import java.util.stream.*;
 
 /**
  * The train command of classification process command line interface.
@@ -50,7 +58,18 @@ public class TrainCommand extends Command {
     @Override
     public void run() {
 
-        final ClassificationContext context = launcher.getContext();
-        new TrainClassifierStep(internal_training_ratio).perform(context);
+        final Configuration configuration = launcher.getConfiguration();
+        final Classifier classifier = configuration.getClassifier();
+        final Optional<Bucket> training_records = configuration.getGoldStandards().stream().map(Configuration.GoldStandard::getTrainingRecords).reduce(Bucket::union);
+
+        if (training_records.isPresent()) {
+            final Instant start = Instant.now();
+            classifier.trainAndEvaluate(training_records.get(), internal_training_ratio, configuration.getRandom());
+            final Duration training_time = Duration.between(start, Instant.now());
+            //TODO log time and the rest
+        }
+        else {
+            //TODO warn of no training records to train with.            
+        }
     }
 }

@@ -18,12 +18,11 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.cli.command
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.ClassifierSupplier;
+import org.apache.commons.io.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.ClassificationContext;
 
+import java.io.*;
 import java.nio.file.*;
-import java.util.Random;
 
 /**
  * Initialisation command of the classification process.
@@ -37,27 +36,53 @@ public class InitCommand extends Command {
     /** The name of this command. */
     public static final String NAME = "init";
 
-    @Parameter(names = {"name"}, description = "The name of the classification process.")
-    private String name;
+    /** The short option name which forces any existing configuration to be replaced upon initialisation. **/
+    public static final String OPTION_FORCE_SHORT = "-f";
+
+    /** The long option name which forces any existing configuration to be replaced upon initialisation. **/
+    public static final String OPTION_FORCE_LONG = "--force";
+
+    @Parameter(names = {OPTION_FORCE_SHORT, OPTION_FORCE_LONG}, description = "Weather to replace configuration if already exists.")
+    private boolean replace_existing;
 
     public InitCommand(final Launcher launcher) { super(launcher); }
 
     @Override
     public void run() {
 
-        // TODO check if .classi already exists before initialisation; warn or override upon confirmation 
+        //TODO working directory?
 
-        if (Files.exists(Configuration.CLI_HOME)) {
-            //TODO add force paramter to skip confirmation        
-            //warn("classi is already initialised in this directory");
-            //confirm("override existing? This ");
+        try {
+            checkDirectoryExistence(Configuration.CLI_HOME, replace_existing);
+            assureDirectoryExists(Configuration.CLI_HOME);
+        }
+        catch (IOException e) {
+            throw new RuntimeException("failed to construct configuration folder", e);
         }
 
-        final Configuration configuration = new Configuration();
-        configuration.setName(name);
-
-        launcher.setConfiguration(configuration);
+        launcher.setConfiguration(new Configuration());
     }
-    
-    
+
+    static void checkDirectoryExistence(Path directory, boolean delete_if_exists) throws IOException {
+
+        if (Files.isDirectory(Configuration.CLI_HOME)) {
+
+            if (delete_if_exists) {
+                FileUtils.deleteDirectory(Configuration.CLI_HOME.toFile());
+            }
+            else {
+                throw new IOException("directory already exists: " + directory);
+            }
+        }
+    }
+
+    static void assureDirectoryExists(final Path directory) throws IOException {
+
+        if (!Files.isDirectory(directory)) {
+            final Path directories = Files.createDirectories(directory);
+            if (!Files.isDirectory(directories)) {
+                throw new IOException("failed to create directory: " + directory);
+            }
+        }
+    }
 }

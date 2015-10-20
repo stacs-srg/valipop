@@ -28,11 +28,11 @@ import java.nio.file.*;
 import java.util.logging.*;
 
 /**
- * Sets a variable in classification process
+ * Sets variables in the Command-line Interface {@link Configuration configuration}.
  *
  * @author Masih Hajiarab Derkani
  */
-@Parameters(commandNames = SetCommand.NAME, commandDescription = "Sets a variable in classification process")
+@Parameters(commandNames = SetCommand.NAME, commandDescription = "Sets a variable in the configuration of this program.")
 public class SetCommand extends Command {
 
     private static final Logger LOGGER = Logger.getLogger(SetCommand.class.getName());
@@ -40,36 +40,66 @@ public class SetCommand extends Command {
     /** The name of this command. */
     public static final String NAME = "set";
 
-    @Parameter(names = "classifier", description = "The classifier to use for the classification process.")
+    /** The short name of the option that specifies the {@link ClassifierSupplier classifier}. */
+    public static final String OPTION_CLASSIFIER_SHORT = "-c";
+
+    /** The long name of the option that specifies the {@link ClassifierSupplier classifier}. */
+    public static final String OPTION_CLASSIFIER_LONG = "--classifier";
+
+    /** The short name of the option that specifies the seed of configuration's random number generator. **/
+    public static final String OPTION_RANDOM_SEED_SHORT = "-r";
+
+    /** The short name of the option that specifies the seed of configuration's random number generator. **/
+    public static final String OPTION_RANDOM_SEED_LONG = "--randomSeed";
+
+    /** The short name of the option that specifies the default {@link CharsetSupplier charset} . **/
+    public static final String OPTION_CHARSET_SHORT = "-ch";
+
+    /** The Long name of the option that specifies the default {@link CharsetSupplier charset} . **/
+    public static final String OPTION_CHARSET_LONG = "--charset";
+
+    /** The short name of the option that specifies the default delimiter in input/output tabular data files. **/
+    public static final String OPTION_DELIMITER_SHORT = "-d";
+
+    /** The long name of the option that specifies the default delimiter in input/output tabular data files. **/
+    public static final String OPTION_DELIMITER_LONG = "--delimiter";
+
+    /** The short name of the option that specifies the {@link SerializationFormat format} in which to persist the state of this program. **/
+    public static final String OPTION_SERIALIZATION_FORMAT_SHORT = "-s";
+
+    /** The long name of the option that specifies the {@link SerializationFormat format} in which to persist the state of this program. **/
+    public static final String OPTION_SERIALIZATION_FORMAT_LONG = "--serializationFormat";
+
+    @Parameter(names = {OPTION_CLASSIFIER_SHORT, OPTION_CLASSIFIER_LONG}, description = "The classifier to use for the classification process.")
     private ClassifierSupplier classifier_supplier;
 
-    @Parameter(names = "seed", description = "The seed of random number generator.")
+    @Parameter(names = {OPTION_RANDOM_SEED_SHORT, OPTION_RANDOM_SEED_LONG}, description = "The seed of random number generator.")
     private Long seed;
 
-    @Parameter(names = "charset", description = "The default charset of input/output files.")
+    @Parameter(names = {OPTION_CHARSET_SHORT, OPTION_CHARSET_LONG}, description = "The default charset of input/output files.")
     private CharsetSupplier charset_supplier;
 
-    @Parameter(names = "delimiter", description = "The default delimiter of input/output files.")
+    @Parameter(names = {OPTION_DELIMITER_SHORT, OPTION_DELIMITER_LONG}, description = "The default delimiter of input/output files.")
     private Character delimiter;
 
-    @Parameter(names = "serialization_format", description = "The format of serialised internal classification process settings.")
+    @Parameter(names = {OPTION_SERIALIZATION_FORMAT_SHORT, OPTION_SERIALIZATION_FORMAT_LONG}, description = "The format of serialised internal classification process settings.")
     private SerializationFormat serialization_format;
 
-    @Parameter(names = "working_directory", description = "The path to the working directory.", converter = PathConverter.class)
-    private Path working_directory;
-
+    /**
+     * Instantiates this command for the given launcher.
+     *
+     * @param launcher the launcher to which this format belongs.
+     */
     public SetCommand(final Launcher launcher) { super(launcher); }
 
     @Override
     public void run() {
 
-        final ClassificationContext context = launcher.getContext();
         final Configuration configuration = launcher.getConfiguration();
 
         if (classifier_supplier != null) {
-            final Classifier classifier = classifier_supplier.get();
             LOGGER.info(() -> "Setting classifier to " + classifier_supplier);
-            configuration.setClassifier(classifier);
+            configuration.setClassifierSupplier(classifier_supplier);
         }
 
         if (seed != null) {
@@ -90,11 +120,6 @@ public class SetCommand extends Command {
         if (serialization_format != null) {
             LOGGER.info(() -> "Setting serialization format to " + serialization_format);
             configuration.setSerializationFormat(serialization_format);
-        }
-
-        if (working_directory != null) {
-            LOGGER.info(() -> "Setting the working directory to " + working_directory);
-            configuration.setWorkingDirectory(working_directory);
         }
     }
 }

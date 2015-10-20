@@ -37,33 +37,29 @@ import java.util.stream.*;
 public class LoadGoldStandardCommand extends LoadUnseenRecordsCommand {
 
     /** The name of this command. */
-    public static final String NAME = "load_gold_standard";
+    public static final String NAME = "gold_standard";
     public static final String TRAINING_RATIO_DESCRIPTION = "The ratio of gold standard records to be used for training. The value must be between 0.0 to 1.0 (inclusive).";
-    public static final String TRAINING_RATIO_FLAG = "trainingRatio";
+    public static final String TRAINING_RATIO_FLAG = "-trainingRatio";
+
     private static final Logger LOGGER = Logger.getLogger(LoadGoldStandardCommand.class.getName());
+
     @Parameter(required = true, names = TRAINING_RATIO_FLAG, description = TRAINING_RATIO_DESCRIPTION, validateValueWith = Validators.BetweenZeroAndOne.class)
     private Double training_ratio;
 
     @Parameter(names = "class_column_index", description = "The zero-based index of the column containing the class associated to each label.")
     private Integer class_column_index = 2;
 
-    public LoadGoldStandardCommand(final Launcher launcher) {
+    public LoadGoldStandardCommand(final LoadCommand load_command) {
 
-        super(launcher);
+        super(load_command);
     }
 
     protected void updateConfiguration(final Stream<Record> records) {
 
         final Configuration configuration = launcher.getConfiguration();
-        final Configuration.GoldStandard gold_standard = new Configuration.GoldStandard(getSourceName(), training_ratio);
+        final Configuration.GoldStandard gold_standard = new Configuration.GoldStandard(load_command.getName(), training_ratio);
         gold_standard.add(records);
         configuration.addGoldStandard(gold_standard);
-    }
-
-    @Override
-    protected Path getDataHome(final Configuration configuration) {
-
-        return configuration.getGoldStandardHome();
     }
 
     @Override

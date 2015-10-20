@@ -20,6 +20,7 @@ import com.beust.jcommander.*;
 import com.beust.jcommander.converters.*;
 import sun.reflect.generics.reflectiveObjects.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.command.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.experiments.config.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.*;
 import uk.ac.standrews.cs.util.tools.*;
 
@@ -56,8 +57,12 @@ public class Launcher {
     @Parameter(names = {"-c", "--commands"}, description = "Path to a text file containing the commands to be executed (one command per line).", converter = PathConverter.class)
     private Path commands;
 
+    @Parameter(names = "working_directory", description = "Path to the working directory.", converter = PathConverter.class)
+    private Path working_directory;
+
     protected Launcher() {
 
+        configuration = new Configuration();
     }
 
     public static void main(String[] args) throws Exception {
@@ -78,6 +83,7 @@ public class Launcher {
             launcher.exitWithError("expected context file '" + e.getFile() + "' not found.");
         }
         catch (Exception e) {
+            LOGGER.log(Level.FINE, "failure", e);
             e.printStackTrace();
             launcher.exitWithError(e.getMessage());
         }
@@ -102,21 +108,27 @@ public class Launcher {
     private void initCommander() {
 
         commander = new JCommander(this);
-        commander.setProgramName(configuration.getProgramName());
+        commander.setProgramName(Configuration.PROGRAM_NAME);
 
         addCommand(new ClassifyCommand(this));
         addCommand(new CleanUnseenRecordsCommand(this));
         addCommand(new CleanGoldStandardCommand(this));
         addCommand(new EvaluateCommand(this));
         addCommand(new InitCommand(this));
-        addCommand(new LoadUnseenRecordsCommand(this));
-        addCommand(new LoadGoldStandardCommand(this));
+
+        final LoadCommand load_command = new LoadCommand(this);
+        addCommand(load_command);
+
+        final JCommander load_commander = commander.getCommands().get(LoadCommand.NAME);
+        load_commander.addCommand(new LoadUnseenRecordsCommand(load_command));
+        load_commander.addCommand(new LoadGoldStandardCommand(load_command));
+
         addCommand(new TrainCommand(this));
     }
 
     private void handle() throws Exception {
 
-        loadContext();
+//        loadContext();
         try {
 
             if (commands != null) {
@@ -127,7 +139,7 @@ public class Launcher {
             }
         }
         finally {
-            persistContext();
+//            persistContext();
         }
     }
 
@@ -144,21 +156,9 @@ public class Launcher {
 
     private void loadContext() throws IOException {
 
-        //FIXME adapt to the new system
-        throw new NotImplementedException();
-
-//        final Path context_path = Paths.get(DEFAULT_CLASSIFICATION_PROCESS_NAME, "context");
-//
-//        if (Files.isRegularFile(context_path)) {
-//
-//            output("loading context...");
-//            context = Serialization.loadContext(Paths.get("."), DEFAULT_CLASSIFICATION_PROCESS_NAME, SerializationFormat.JSON);
-//        }
-//        else {
-//            context = null;
-//        }
-//
-//        output("done");
+        if (Files.isDirectory(Configuration.CLI_HOME)) {
+            configuration = Configuration.load();
+        }
     }
 
     private String[] toCommandLineArguments(final String command_line) {
@@ -194,15 +194,9 @@ public class Launcher {
 
     private void persistContext() throws IOException {
 
-        //FIXME adapt to the new system
-        throw new NotImplementedException();
-
-//        output("saving context...");
-//
-//        Files.createDirectories(process_directory.resolve(name));
-//        Serialization.persistContext(context, process_directory, name, serialization_format);
-//
-//        output("done");
+        if (Files.isDirectory(Configuration.CLI_HOME)) {
+            configuration.persist();
+        }
     }
 
     private void validateCommand(final String command) {
@@ -226,16 +220,6 @@ public class Launcher {
         System.exit(-1);
     }
 
-    public ClassificationContext getContext() {
-
-        return context;
-    }
-
-    public void setContext(final ClassificationContext context) {
-
-        this.context = context;
-    }
-
     public Configuration getConfiguration() {
 
         return configuration;
@@ -244,5 +228,10 @@ public class Launcher {
     public void setConfiguration(final Configuration configuration) {
 
         this.configuration = configuration;
+    }
+
+    public JCommander getCommander() {
+
+        return commander;
     }
 }

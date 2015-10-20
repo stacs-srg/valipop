@@ -53,11 +53,6 @@ public class ClassificationContext implements Serializable {
     private Duration classification_time;
     private int number_of_evaluation_records_including_duplicates;
 
-    private Character default_delimiter;
-    private Charset default_charset;
-    private String name;
-    private SerializationFormat serialization_format;
-
     public ClassificationContext() {
 
         random = new Random();
@@ -310,51 +305,4 @@ public class ClassificationContext implements Serializable {
 
         this.random = random;
     }
-
-    public void setDefaultCharset(final Charset charset) {
-
-        this.default_charset = charset;
-    }
-
-    public Charset getDefaultCharset() {
-
-        return default_charset;
-    }
-
-    public void setDefaultDelimiter(final Character delimiter) {
-
-        this.default_delimiter = delimiter;
-    }
-
-    public Character getDefaultDelimiter() {
-
-        return default_delimiter;
-    }
-
-    public void setName(final String name) {
-
-        this.name = name;
-    }
-
-    public String getName() {
-
-        return name;
-    }
-
-    public void setSerializationFormat(final SerializationFormat serializationFormat) {
-
-        this.serialization_format = serializationFormat;
-    }
-
-    public SerializationFormat getSerializationFormat() {
-
-        return serialization_format;
-    }
-
-    public void setSerialization_format(final SerializationFormat serialization_format) {
-
-        this.serialization_format = serialization_format;
-    }
-
-    
 }

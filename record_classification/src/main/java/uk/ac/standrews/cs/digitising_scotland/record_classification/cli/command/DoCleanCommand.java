@@ -34,8 +34,8 @@ import java.util.stream.*;
  *
  * @author Masih Hajiarab Derkani
  */
-@Parameters(commandNames = CleanCommand.NAME, commandDescription = "Cleans records", separators = "=")
-public class CleanCommand extends Command {
+@Parameters(commandNames = DoCleanCommand.NAME, commandDescription = "Cleans records", separators = "=")
+public class DoCleanCommand extends Command {
 
     /** The name of this command. */
     public static final String NAME = "clean";
@@ -69,10 +69,9 @@ public class CleanCommand extends Command {
      *
      * @param launcher the launcher to which this command belongs
      */
-    public CleanCommand(final Launcher launcher) {
+    public DoCleanCommand(final Launcher launcher) {
 
         super(launcher);
-        
     }
 
     @Override

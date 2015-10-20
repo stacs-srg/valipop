@@ -38,15 +38,17 @@ import java.util.stream.*;
  * @author Masih Hajiarab Derkani
  * @author Graham Kirby
  */
-@Parameters(commandNames = CleanUnseenRecordsCommand.NAME, commandDescription = "Cleans data records")
+@Parameters(commandNames = CleanUnseenRecordsCommand.NAME, commandDescription = "Cleans loaded records")
 public class CleanUnseenRecordsCommand extends Command {
 
     /** The name of this command. */
-    public static final String NAME = "clean_unseen";
+    public static final String NAME = "clean";
 
     @Parameter(required = true, names = {CLEAN_FLAG_SHORT, CLEAN_FLAG_LONG}, description = CLEAN_DESCRIPTION, variableArity = true)
     private List<CleanerSupplier> cleaner_suppliers;
 
+    
+    
     public CleanUnseenRecordsCommand(final Launcher launcher) {
 
         super(launcher);
