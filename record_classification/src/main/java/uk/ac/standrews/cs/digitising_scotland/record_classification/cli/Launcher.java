@@ -60,7 +60,7 @@ public class Launcher {
     @Parameter(names = "working_directory", description = "Path to the working directory.", converter = PathConverter.class)
     private Path working_directory;
 
-    protected Launcher() {
+    public Launcher() {
 
         configuration = new Configuration();
     }
@@ -99,7 +99,7 @@ public class Launcher {
         commander.addCommand(command);
     }
 
-    private void parse(final String... args) throws ParameterException {
+    public void parse(final String... args) throws ParameterException {
 
         initCommander();
         commander.parse(args);
@@ -110,11 +110,12 @@ public class Launcher {
         commander = new JCommander(this);
         commander.setProgramName(Configuration.PROGRAM_NAME);
 
+        addCommand(new InitCommand(this));
+        addCommand(new SetCommand(this));
         addCommand(new ClassifyCommand(this));
         addCommand(new CleanUnseenRecordsCommand(this));
         addCommand(new CleanGoldStandardCommand(this));
         addCommand(new EvaluateCommand(this));
-        addCommand(new InitCommand(this));
 
         final LoadCommand load_command = new LoadCommand(this);
         addCommand(load_command);
@@ -126,7 +127,7 @@ public class Launcher {
         addCommand(new TrainCommand(this));
     }
 
-    private void handle() throws Exception {
+    public void handle() throws Exception {
 
 //        loadContext();
         try {

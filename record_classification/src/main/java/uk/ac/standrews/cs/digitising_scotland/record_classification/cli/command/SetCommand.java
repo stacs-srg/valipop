@@ -18,6 +18,7 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.cli.command
 
 import com.beust.jcommander.*;
 import com.beust.jcommander.converters.*;
+import org.apache.commons.beanutils.converters.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.*;
@@ -79,7 +80,7 @@ public class SetCommand extends Command {
     @Parameter(names = {OPTION_CHARSET_SHORT, OPTION_CHARSET_LONG}, description = "The default charset of input/output files.")
     private CharsetSupplier charset_supplier;
 
-    @Parameter(names = {OPTION_DELIMITER_SHORT, OPTION_DELIMITER_LONG}, description = "The default delimiter of input/output files.")
+    @Parameter(names = {OPTION_DELIMITER_SHORT, OPTION_DELIMITER_LONG}, description = "The default delimiter of input/output files.", converter = Converters.CharacterConverter.class)
     private Character delimiter;
 
     @Parameter(names = {OPTION_SERIALIZATION_FORMAT_SHORT, OPTION_SERIALIZATION_FORMAT_LONG}, description = "The format of serialised internal classification process settings.")
@@ -97,29 +98,40 @@ public class SetCommand extends Command {
 
         final Configuration configuration = launcher.getConfiguration();
 
+        boolean set = false;
+
         if (classifier_supplier != null) {
             LOGGER.info(() -> "Setting classifier to " + classifier_supplier);
             configuration.setClassifierSupplier(classifier_supplier);
+            set = true;
         }
 
         if (seed != null) {
             LOGGER.info(() -> "Setting seed to " + seed);
             configuration.setSeed(seed);
+            set = true;
         }
 
         if (charset_supplier != null) {
             LOGGER.info(() -> "Setting default charset to " + charset_supplier);
             configuration.setDefaultCharsetSupplier(charset_supplier);
+            set = true;
         }
 
         if (delimiter != null) {
             LOGGER.info(() -> "Setting default delimiter to " + delimiter);
             configuration.setDefaultDelimiter(delimiter);
+            set = true;
         }
 
         if (serialization_format != null) {
             LOGGER.info(() -> "Setting serialization format to " + serialization_format);
             configuration.setSerializationFormat(serialization_format);
+            set = true;
+        }
+
+        if (!set) {
+            throw new ParameterException("Please specify at lease one variable to be set.");
         }
     }
 }

@@ -35,7 +35,7 @@ public abstract class LoadRecordsCommand extends Command {
 
     private static final Logger LOGGER = Logger.getLogger(LoadRecordsCommand.class.getName());
 
-    @Parameter(names = "delimiter", description = "The data file delimiter character")
+    @Parameter(names = "delimiter", description = "The data file delimiter character", converter = Converters.CharacterConverter.class)
     private Character delimiter = launcher.getConfiguration().getDefaultDelimiter();
 
     @Parameter(names = "format", description = "The format of the csv file containing the data to be loaded")
