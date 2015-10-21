@@ -37,12 +37,6 @@ public class LoadGoldStandardCommand extends LoadUnseenRecordsCommand {
     /** The name of this command. */
     public static final String NAME = "gold_standard";
 
-    /** The short name of the option that specifies the ratio of the gold standard records to be used for training the classifier. **/
-    public static final String OPTION_TRAINING_RATIO_SHORT = "-t";
-
-    /** The short name of the option that specifies the ratio of the gold standard records to be used for training the classifier. **/
-    public static final String OPTION_TRAINING_RATIO_LONG = "--trainingRatio";
-
     /** The short name of the option that specifies the index of the column that contains the classes associated to each row, starting from {@value 0}. **/
     public static final String OPTION_CLASS_COLUMN_INDEX_SHORT = "-ci";
 
@@ -54,11 +48,10 @@ public class LoadGoldStandardCommand extends LoadUnseenRecordsCommand {
 
     private static final Logger LOGGER = Logger.getLogger(LoadGoldStandardCommand.class.getName());
 
-    @Parameter(required = true,
-                    names = {OPTION_TRAINING_RATIO_SHORT, OPTION_TRAINING_RATIO_LONG},
+    @Parameter(names = {SetCommand.OPTION_TRAINING_RATIO_SHORT, SetCommand.OPTION_TRAINING_RATIO_LONG},
                     description = "The ratio of gold standard records to be used for training. The value must be between 0.0 to 1.0 (inclusive).",
                     validateValueWith = Validators.BetweenZeroToOneInclusive.class)
-    private Double training_ratio;
+    private Double training_ratio = launcher.getConfiguration().getDefaultTrainingRatio();
 
     @Parameter(names = {OPTION_CLASS_COLUMN_INDEX_SHORT, OPTION_CLASS_COLUMN_INDEX_LONG}, description = "The zero-based index of the column containing the class associated to each label.")
     private Integer class_column_index = DEFALUT_CLASS_COLUMN_INDEX;
@@ -88,7 +81,7 @@ public class LoadGoldStandardCommand extends LoadUnseenRecordsCommand {
 
     /**
      * Gets the ratio of the gold standard records to be used for training.
-     * The ratio must be specified via {@value #OPTION_TRAINING_RATIO_SHORT} or {@value #OPTION_TRAINING_RATIO_LONG} options
+     * The ratio must be specified via {@value SetCommand#OPTION_TRAINING_RATIO_SHORT} or {@value SetCommand#OPTION_TRAINING_RATIO_LONG} options
      * as a numerical value within inclusive range of {@code 0.0} to {@code 1.0}.
      *
      * @return the ratio of the gold standard records to be used for training

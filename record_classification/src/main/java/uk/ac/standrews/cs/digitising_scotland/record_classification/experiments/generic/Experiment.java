@@ -24,9 +24,9 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.Cla
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.Classifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.Cleaner;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.CleanerSupplier;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.command.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.InputFileFormatException;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.Validators;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.command.TrainCommand;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.ClassificationContext;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.ClassificationProcess;
 import uk.ac.standrews.cs.util.dataset.DataSet;
@@ -89,8 +89,8 @@ public abstract class Experiment implements Callable<Void> {
     @Parameter(names = {"-t", "--trainingRecordRatio"}, description = DESCRIPTION_RATIO)
     private List<Double> training_ratios = Collections.singletonList(DEFAULT_TRAINING_RATIO);
 
-    @Parameter(names = {TrainCommand.INTERNAL_TRAINING_RATIO_FLAG_SHORT, TrainCommand.INTERNAL_TRAINING_RATIO_FLAG_LONG}, description = TrainCommand.INTERNAL_TRAINING_RATIO_DESCRIPTION, validateValueWith = Validators.BetweenZeroToOneInclusive.class)
-    private double internal_training_ratio = TrainCommand.DEFAULT_INTERNAL_TRAINING_RATIO;
+    @Parameter(names = {SetCommand.OPTION_INTERNAL_TRAINING_RATIO_SHORT, SetCommand.OPTION_INTERNAL_TRAINING_RATIO_LONG}, description = "the ratio of training records to be used for internal training", validateValueWith = Validators.BetweenZeroToOneInclusive.class)
+    private double internal_training_ratio = Configuration.DEFAULT_INTERNAL_TRAINING_RATIO;
 
     @Parameter(names = {"-d", "--delimiter"}, description = DESCRIPTION_DELIMITER)
     protected String delimiter = "|";
@@ -109,7 +109,8 @@ public abstract class Experiment implements Callable<Void> {
         try {
             parse(args);
 
-        } catch (ParameterException e) {
+        }
+        catch (ParameterException e) {
             exitWithErrorMessage(e.getMessage());
         }
     }

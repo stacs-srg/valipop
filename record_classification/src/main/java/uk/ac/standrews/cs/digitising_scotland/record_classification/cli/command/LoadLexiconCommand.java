@@ -19,6 +19,8 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.cli.command
 import com.beust.jcommander.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.*;
 
+import java.nio.charset.*;
+import java.nio.file.*;
 import java.util.logging.*;
 
 /**
@@ -55,26 +57,30 @@ public class LoadLexiconCommand extends Command {
     @Override
     public void run() {
 
+        final Path source = load_command.getSource();
+        final Charset charset = load_command.getCharset();
+        final String name = load_command.getName();
+
         switch (type) {
             case DICTIONARY:
-                loadDictionary();
+                loadDictionary(source, charset, name);
                 break;
             case STOP_WORDS:
-                loadStopWords();
+                loadStopWords(source, charset, name);
                 break;
             default:
-                LOGGER.fine(() -> String.format("unimplemented lexicon tyoe: %s", type));
+                LOGGER.fine(() -> String.format("unimplemented lexicon of type %s", type));
                 throw new UnsupportedOperationException("loading lexicon of type " + type + " is not implemented.");
         }
     }
 
-    private void loadDictionary() {
+    private void loadDictionary(final Path source, final Charset charset, final String name) {
 
         LOGGER.finest("loading dictionary...");
         //TODO implement
     }
 
-    private void loadStopWords() {
+    private void loadStopWords(final Path source, final Charset charset, final String name) {
 
         LOGGER.finest("loading stop words...");
         //TODO implement
