@@ -56,10 +56,14 @@ public class ClassifyCommand extends Command {
         final Configuration configuration = launcher.getConfiguration();
         final Classifier classifier = configuration.requireClassifier();
 
-        final Bucket unseen_records = configuration.requireUnseenRecords();
+        final List<Configuration.Unseen> unseens = configuration.getUnseens();
+        final List<Bucket> unseen_records_list = configuration.requireUnseenRecordsList();
+        final List<Bucket> classified_unseen_records_list = unseen_records_list.stream().map(classifier::classify).collect(Collectors.toList());
 
-        classifier.classify(unseen_records);
-
-        //TODO persist classified records
+        for (int index = 0; index < unseen_records_list.size(); index++) {
+            final Configuration.Unseen unseen = unseens.get(index);
+            final Bucket classified_unseen_records = classified_unseen_records_list.get(index);
+            unseen.setBucket(classified_unseen_records);
+        }
     }
 }

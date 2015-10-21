@@ -20,6 +20,7 @@ import com.beust.jcommander.*;
 import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.databind.*;
 import org.apache.commons.csv.*;
+import org.apache.commons.io.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
@@ -205,6 +206,17 @@ public class Configuration {
         return getUnseenRecords().orElseThrow(() -> new ParameterException("No unseen record is present; please load some unseen records."));
     }
 
+    public List<Bucket> requireUnseenRecordsList() {
+
+        final List<Bucket> unseen_records_list = getUnseenRecordsList();
+
+        if (unseen_records_list.isEmpty()) {
+            new ParameterException("No unseen record is present; please load some unseen records.");
+        }
+
+        return unseen_records_list;
+    }
+
     @JsonIgnore
     public Optional<Bucket> getTrainingRecords() {
 
@@ -275,7 +287,14 @@ public class Configuration {
         return getUnseens().stream().map(Configuration.Unseen::toBucket).reduce(Bucket::union);
     }
 
+    public List<Bucket> getUnseenRecordsList() {
+
+        return getUnseens().stream().map(Configuration.Unseen::toBucket).collect(Collectors.toList());
+    }
+
     abstract static class Resource {
+
+        public static final Charset CHARSET = StandardCharsets.UTF_8;
 
         private final String name;
 
@@ -309,9 +328,18 @@ public class Configuration {
 
             return DICTIONARY_HOME;
         }
+
+        public void load(final Path source, final Charset charset) throws IOException {
+
+            try (final BufferedReader in = Files.newBufferedReader(source, charset);
+                 final BufferedWriter out = Files.newBufferedWriter(getPath(), CHARSET);
+            ) {
+                IOUtils.copy(in, out);
+            }
+        }
     }
 
-    public static class StopWords extends Resource {
+    public static class StopWords extends Dictionary {
 
         public StopWords(final String name) {
 
@@ -327,7 +355,6 @@ public class Configuration {
 
     public static class Unseen extends Resource {
 
-        public static final Charset CHARSET = StandardCharsets.UTF_8;
         public static CSVFormat CSV_FORMAT = CSVFormat.RFC4180.withHeader("ID", "LABEL");
 
         private Bucket bucket;

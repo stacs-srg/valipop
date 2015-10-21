@@ -17,8 +17,14 @@
 package uk.ac.standrews.cs.digitising_scotland.record_classification.cli.command;
 
 import com.beust.jcommander.*;
+import org.apache.lucene.search.spell.*;
+import org.apache.lucene.search.suggest.*;
+import sun.launcher.resources.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.experiments.config.*;
 
+import java.io.*;
 import java.nio.charset.*;
 import java.nio.file.*;
 import java.util.logging.*;
@@ -82,13 +88,27 @@ public class LoadLexiconCommand extends Command {
     private void loadDictionary(final Path source, final Charset charset, final String name) {
 
         LOGGER.finest("loading dictionary...");
-        //TODO implement
+
+        final Configuration.Dictionary dictionary = new Configuration.Dictionary(name);
+        try {
+            dictionary.load(source, charset);
+        }
+        catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private void loadStopWords(final Path source, final Charset charset, final String name) {
 
         LOGGER.finest("loading stop words...");
-        //TODO implement
+
+        final Configuration.StopWords stop_words = new Configuration.StopWords(name);
+        try {
+            stop_words.load(source, charset);
+        }
+        catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /** The types of lexicons that can be loaded by this command. **/

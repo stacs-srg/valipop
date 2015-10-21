@@ -48,10 +48,7 @@ public class TrainCommand extends Command {
      *
      * @param launcher the launcher to which this command belongs.
      */
-    public TrainCommand(final Launcher launcher) {
-
-        super(launcher);
-    }
+    public TrainCommand(final Launcher launcher) { super(launcher); }
 
     @Override
     public void run() {
