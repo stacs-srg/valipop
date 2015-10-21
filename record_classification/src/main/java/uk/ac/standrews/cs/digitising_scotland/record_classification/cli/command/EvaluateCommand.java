@@ -17,19 +17,16 @@
 package uk.ac.standrews.cs.digitising_scotland.record_classification.cli.command;
 
 import com.beust.jcommander.*;
-import com.beust.jcommander.converters.PathConverter;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.ClassificationContext;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.EvaluateClassifierStep;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.SaveDataStep;
-import uk.ac.standrews.cs.util.dataset.DataSet;
 
-import java.nio.file.Path;
 import java.time.*;
 import java.util.*;
+import java.util.logging.*;
+
+import static java.util.logging.Logger.getLogger;
 
 /**
  * @author Masih Hajiarab Derkani
@@ -40,8 +37,7 @@ public class EvaluateCommand extends Command {
     /** The name of this command. */
     public static final String NAME = "evaluate";
 
-    @Parameter(required = true, names = {"-o", "--output"}, description = "Path to the place to persist the evaluation results.", converter = PathConverter.class)
-    private Path destination;
+    private static final Logger LOGGER = getLogger(EvaluateCommand.class.getName());
 
     public EvaluateCommand(final Launcher launcher) {
 
@@ -65,13 +61,35 @@ public class EvaluateCommand extends Command {
             throw new ParameterException("no gold standard record is present.");
         }
 
+        final Bucket evaluation_records_stripped = evaluation_records.get().stripRecordClassifications();
+
         final Instant start = Instant.now();
-        final Bucket classified_records = configuration.getClassifier().classify(evaluation_records.get().makeStrippedRecords());
+        final Bucket classified_records = configuration.getClassifier().classify(evaluation_records_stripped);
         final Duration classification_time = Duration.between(start, Instant.now());
+
+        LOGGER.info(() -> String.format("Classified evaluation %d records in %s", evaluation_records_stripped.size(), classification_time));
 
         final StrictConfusionMatrix confusion_matrix = new StrictConfusionMatrix(classified_records, gold_standard_records.get(), new ConsistentCodingChecker());
         final ClassificationMetrics classification_metrics = new ClassificationMetrics(confusion_matrix);
 
-        //TODO log outcomes
+        LOGGER.info(() -> String.format("Number Of Classes: %10d", confusion_matrix.getNumberOfClasses()));
+        LOGGER.info(() -> String.format("Number Of Classifications: %10d", confusion_matrix.getNumberOfClassifications()));
+        LOGGER.info(() -> String.format("Number Of True Positives: %10d", confusion_matrix.getNumberOfTruePositives()));
+        LOGGER.info(() -> String.format("Number Of True Negatives: %10d", confusion_matrix.getNumberOfTrueNegatives()));
+        LOGGER.info(() -> String.format("Number Of False Negatives: %10d", confusion_matrix.getNumberOfFalseNegatives()));
+        LOGGER.info(() -> String.format("Number Of False Positives: %10d", confusion_matrix.getNumberOfFalsePositives()));
+        LOGGER.info(() -> String.format("Macro Average Accuracy: %10.2f", classification_metrics.getMacroAverageAccuracy()));
+        LOGGER.info(() -> String.format("Macro Average F1: %10.2f", classification_metrics.getMacroAverageF1()));
+        LOGGER.info(() -> String.format("Macro Average Precision: %10.2f", classification_metrics.getMacroAveragePrecision()));
+        LOGGER.info(() -> String.format("Macro Average Recall: %10.2f", classification_metrics.getMacroAverageRecall()));
+        LOGGER.info(() -> String.format("Micro Average Accuracy: %10.2f", classification_metrics.getMicroAverageAccuracy()));
+        LOGGER.info(() -> String.format("Micro Average F1: %10.2f", classification_metrics.getMicroAverageF1()));
+        LOGGER.info(() -> String.format("Micro Average Precision: %10.2f", classification_metrics.getMicroAveragePrecision()));
+        LOGGER.info(() -> String.format("Micro Average Recall: %10.2f", classification_metrics.getMicroAverageRecall()));
+
+        //TODO export matrix as json
+        //TODO export metrics as json
+        //TODO export classified evaluation records
+        //TODO export classified evaluation records
     }
 }

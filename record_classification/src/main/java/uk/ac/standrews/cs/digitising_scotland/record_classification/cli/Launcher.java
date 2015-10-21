@@ -120,7 +120,7 @@ public class Launcher {
 
         final JCommander load_commander = commander.getCommands().get(LoadCommand.NAME);
         load_commander.addCommand(new LoadUnseenRecordsCommand(load_command));
-        load_commander.addCommand(new LoadGoldStandardCommand(load_command));
+        load_commander.addCommand(new LoadGoldStandardRecordsCommand(load_command));
 
         addCommand(new TrainCommand(this));
     }

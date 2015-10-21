@@ -31,8 +31,8 @@ import java.util.stream.*;
  * @author Masih Hajiarab Derkani
  * @author Graham Kirby
  */
-@Parameters(commandNames = LoadGoldStandardCommand.NAME, commandDescription = "Load gold standard data")
-public class LoadGoldStandardCommand extends LoadUnseenRecordsCommand {
+@Parameters(commandNames = LoadGoldStandardRecordsCommand.NAME, commandDescription = "Load gold standard data")
+public class LoadGoldStandardRecordsCommand extends LoadUnseenRecordsCommand {
 
     /** The name of this command. */
     public static final String NAME = "gold_standard";
@@ -46,7 +46,7 @@ public class LoadGoldStandardCommand extends LoadUnseenRecordsCommand {
     /** The default index of the column that contains the classes associated to each row. **/
     public static final int DEFALUT_CLASS_COLUMN_INDEX = 2;
 
-    private static final Logger LOGGER = Logger.getLogger(LoadGoldStandardCommand.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(LoadGoldStandardRecordsCommand.class.getName());
 
     @Parameter(names = {SetCommand.OPTION_TRAINING_RATIO_SHORT, SetCommand.OPTION_TRAINING_RATIO_LONG},
                     description = "The ratio of gold standard records to be used for training. The value must be between 0.0 to 1.0 (inclusive).",
@@ -56,7 +56,7 @@ public class LoadGoldStandardCommand extends LoadUnseenRecordsCommand {
     @Parameter(names = {OPTION_CLASS_COLUMN_INDEX_SHORT, OPTION_CLASS_COLUMN_INDEX_LONG}, description = "The zero-based index of the column containing the class associated to each label.")
     private Integer class_column_index = DEFALUT_CLASS_COLUMN_INDEX;
 
-    public LoadGoldStandardCommand(final LoadCommand load_command) { super(load_command); }
+    public LoadGoldStandardRecordsCommand(final LoadCommand load_command) { super(load_command); }
 
     @Override
     protected void process(final Stream<Record> records) {

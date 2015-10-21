@@ -266,9 +266,9 @@ public class Bucket implements Iterable<Record>, Serializable {
      * Constructs a new bucket containing records of this bucket without classification.
      *
      * @return a new bucket containing records of this bucket without classification
-     * @see Record#Record(int, String)
+     * @see Record#Record(int, String, String)
      */
-    public Bucket makeStrippedRecords() {
+    public Bucket stripRecordClassifications() {
 
         Bucket unclassified_bucket = new Bucket();
 
