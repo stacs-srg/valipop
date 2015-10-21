@@ -55,7 +55,7 @@ public class EvaluateClassifierStep implements Step {
         final Bucket gold_standard_records = training_records.union(evaluation_records);
 
         final Instant start = Instant.now();
-        final Bucket classified_records = context.getClassifier().classify(evaluation_records.makeStrippedRecords());
+        final Bucket classified_records = context.getClassifier().classify(evaluation_records.stripRecordClassifications());
         context.setClassificationTime(Duration.between(start, Instant.now()));
 
         final StrictConfusionMatrix confusion_matrix = new StrictConfusionMatrix(classified_records, gold_standard_records, new ConsistentCodingChecker());

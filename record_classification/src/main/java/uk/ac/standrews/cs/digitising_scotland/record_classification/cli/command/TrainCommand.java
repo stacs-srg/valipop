@@ -16,14 +16,14 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.cli.command;
 
-import com.beust.jcommander.Parameter;
-import com.beust.jcommander.Parameters;
+import com.beust.jcommander.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 
 import java.time.*;
 import java.util.*;
+import java.util.logging.*;
 
 /**
  * The train command of classification process command line interface.
@@ -35,6 +35,8 @@ public class TrainCommand extends Command {
 
     /** The name of this command. */
     public static final String NAME = "train";
+
+    private static final Logger LOGGER = Logger.getLogger(TrainCommand.class.getName());
 
     @Parameter(names = {SetCommand.OPTION_INTERNAL_TRAINING_RATIO_SHORT, SetCommand.OPTION_INTERNAL_TRAINING_RATIO_LONG},
                     description = "The ratio of gold standard records to be used for training as opposed to internal evaluation. The value must be between 0.0 to 1.0 (inclusive).",
@@ -51,6 +53,11 @@ public class TrainCommand extends Command {
 
         final Configuration configuration = launcher.getConfiguration();
         final Classifier classifier = configuration.getClassifier();
+
+        if (classifier == null) {
+            throw new ParameterException("The classifier is not set; please specify a classifier.");
+        }
+
         final Optional<Bucket> training_records = configuration.getTrainingRecords();
 
         if (training_records.isPresent()) {
@@ -59,10 +66,10 @@ public class TrainCommand extends Command {
             classifier.trainAndEvaluate(training_records.get(), internal_training_ratio, configuration.getRandom());
             final Duration training_time = Duration.between(start, Instant.now());
 
-            //TODO log time and the rest
+            LOGGER.info(() -> "trained the classifier in " + training_time);
         }
         else {
-            //TODO warn of no training records to train with.            
+            LOGGER.warning("No training records are loaded; cannot train the classifier.");
         }
     }
 }

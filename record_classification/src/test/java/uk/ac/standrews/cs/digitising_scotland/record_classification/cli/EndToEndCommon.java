@@ -155,7 +155,7 @@ public class EndToEndCommon {
 
         for (int i = 0; i < input_gold_standard_files.size(); i++) {
 
-            commands_builder.append(LoadGoldStandardCommand.NAME);
+            commands_builder.append(LoadGoldStandardRecordsCommand.NAME);
             appendSpace(commands_builder);
 
             final Path gold_standard = input_gold_standard_files.get(i);
