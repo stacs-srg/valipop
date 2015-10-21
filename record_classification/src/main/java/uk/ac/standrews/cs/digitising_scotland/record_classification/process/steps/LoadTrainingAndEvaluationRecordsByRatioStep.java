@@ -95,7 +95,7 @@ public class LoadTrainingAndEvaluationRecordsByRatioStep implements Step {
 
     private void validateRatio(final double ratio) {
 
-        if (!Validators.isBetweenZeroAndOne(ratio)) {
+        if (!Validators.isBetweenZeroToOneInclusive(ratio)) {
             throw new IllegalArgumentException("ratio must be within inclusive range of 0.0 to 1.0");
         }
     }

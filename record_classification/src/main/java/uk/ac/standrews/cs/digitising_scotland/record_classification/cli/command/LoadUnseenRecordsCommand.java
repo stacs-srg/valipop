@@ -48,7 +48,7 @@ public class LoadUnseenRecordsCommand extends LoadRecordsCommand {
     }
 
     @Override
-    protected void updateConfiguration(final Stream<Record> records) {
+    protected void process(final Stream<Record> records) {
 
         final Configuration configuration = launcher.getConfiguration();
         final Configuration.Unseen unseen = new Configuration.Unseen(load_command.getName());
