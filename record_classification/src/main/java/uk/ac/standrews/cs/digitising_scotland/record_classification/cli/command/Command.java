@@ -36,6 +36,11 @@ public abstract class Command implements Runnable {
 
     protected final Launcher launcher;
 
+    /**
+     * Instantiates this command for the given launcher.
+     *
+     * @param launcher the launcher to which this command belongs.
+     */
     public Command(Launcher launcher) { this.launcher = launcher;}
 
     protected static void output(String message) {

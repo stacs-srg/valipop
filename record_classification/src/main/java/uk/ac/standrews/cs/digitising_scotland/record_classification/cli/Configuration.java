@@ -16,6 +16,7 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.cli;
 
+import com.beust.jcommander.*;
 import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.databind.*;
 import org.apache.commons.csv.*;
@@ -156,9 +157,14 @@ public class Configuration {
         unseens.add(unseen);
     }
 
-    public Classifier getClassifier() {
+    public Optional<Classifier> getClassifier() {
 
-        return classifier;
+        return classifier == null ? Optional.empty() : Optional.of(classifier);
+    }
+
+    public Classifier requireClassifier() {
+
+        return getClassifier().orElseThrow(() -> new ParameterException("The classifier is required and not set; please specify a classifier."));
     }
 
     public void addGoldStandard(final GoldStandard gold_standard) {
@@ -177,6 +183,26 @@ public class Configuration {
         }
 
         return Optional.of(training_records.orElse(new Bucket()).union(evaluation_records.orElse(new Bucket())));
+    }
+
+    public Bucket requireGoldStandardRecords() {
+
+        return getGoldStandardRecords().orElseThrow(() -> new ParameterException("No gold standard record is present; please load some gold standard records."));
+    }
+
+    public Bucket requireEvaluationRecords() {
+
+        return getEvaluationRecords().orElseThrow(() -> new ParameterException("No evaluation record is present; please load some evaluation records."));
+    }
+
+    public Bucket requireTrainingRecords() {
+
+        return getTrainingRecords().orElseThrow(() -> new ParameterException("No training record is present; please load some training records."));
+    }
+
+    public Bucket requireUnseenRecords() {
+
+        return getUnseenRecords().orElseThrow(() -> new ParameterException("No unseen record is present; please load some unseen records."));
     }
 
     @JsonIgnore
@@ -242,6 +268,11 @@ public class Configuration {
     public double getDefaultTrainingRatio() {
 
         return default_training_ratio;
+    }
+
+    public Optional<Bucket> getUnseenRecords() {
+
+        return getUnseens().stream().map(Configuration.Unseen::toBucket).reduce(Bucket::union);
     }
 
     abstract static class Resource {

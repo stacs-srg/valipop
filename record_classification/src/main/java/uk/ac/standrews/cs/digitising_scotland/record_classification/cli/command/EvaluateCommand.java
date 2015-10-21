@@ -18,6 +18,7 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.cli.command
 
 import com.beust.jcommander.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
@@ -49,27 +50,18 @@ public class EvaluateCommand extends Command {
 
         final Configuration configuration = launcher.getConfiguration();
 
-        final Optional<Bucket> evaluation_records = configuration.getEvaluationRecords();
-
-        if (!evaluation_records.isPresent()) {
-            throw new ParameterException("no evaluation record is present.");
-        }
-
-        final Optional<Bucket> gold_standard_records = configuration.getGoldStandardRecords();
-
-        if (!gold_standard_records.isPresent()) {
-            throw new ParameterException("no gold standard record is present.");
-        }
-
-        final Bucket evaluation_records_stripped = evaluation_records.get().stripRecordClassifications();
+        final Bucket evaluation_records = configuration.requireEvaluationRecords();
+        final Bucket gold_standard_records = configuration.requireGoldStandardRecords();
+        final Bucket evaluation_records_stripped = evaluation_records.stripRecordClassifications();
 
         final Instant start = Instant.now();
-        final Bucket classified_records = configuration.getClassifier().classify(evaluation_records_stripped);
+        final Classifier classifier = configuration.requireClassifier();
+        final Bucket classified_records = classifier.classify(evaluation_records_stripped);
         final Duration classification_time = Duration.between(start, Instant.now());
 
         LOGGER.info(() -> String.format("Classified evaluation %d records in %s", evaluation_records_stripped.size(), classification_time));
 
-        final StrictConfusionMatrix confusion_matrix = new StrictConfusionMatrix(classified_records, gold_standard_records.get(), new ConsistentCodingChecker());
+        final StrictConfusionMatrix confusion_matrix = new StrictConfusionMatrix(classified_records, gold_standard_records, new ConsistentCodingChecker());
         final ClassificationMetrics classification_metrics = new ClassificationMetrics(confusion_matrix);
 
         LOGGER.info(() -> String.format("Number Of Classes: %10d", confusion_matrix.getNumberOfClasses()));

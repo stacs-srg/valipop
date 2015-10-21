@@ -24,12 +24,12 @@ import java.io.*;
 import java.util.*;
 import java.util.stream.*;
 
-import static org.junit.Assert.*;
-
 /**
- * @author masih
+ * Captures common functionality among {@link Command command} test classes.
+ *
+ * @author Masih Hajiarab Derkani
  */
-public class CommandTest {
+public abstract class CommandTest {
 
     protected Launcher launcher;
 
