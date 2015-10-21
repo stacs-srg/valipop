@@ -29,7 +29,7 @@ public class InitCommandTest extends CommandTest {
     }
     
     @Test
-    public void testForcedInitialisation() throws Exception {
+    public void testForcedInitialisationIfConfigurationExists() throws Exception {
 
         run(InitCommand.NAME);
         run(InitCommand.NAME, InitCommand.OPTION_FORCE_LONG);

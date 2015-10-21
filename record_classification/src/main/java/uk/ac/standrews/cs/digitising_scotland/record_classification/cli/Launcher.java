@@ -18,11 +18,10 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.cli;
 
 import com.beust.jcommander.*;
 import com.beust.jcommander.converters.*;
-import sun.reflect.generics.reflectiveObjects.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.command.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.experiments.config.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.*;
 import uk.ac.standrews.cs.util.tools.*;
+import uk.ac.standrews.cs.util.tools.Logging;
 
 import java.io.*;
 import java.nio.file.*;
