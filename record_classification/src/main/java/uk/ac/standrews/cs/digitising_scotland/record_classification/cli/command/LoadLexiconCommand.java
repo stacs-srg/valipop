@@ -48,6 +48,11 @@ public class LoadLexiconCommand extends Command {
     @Parameter(required = true, names = {OPTION_TYPE_SHORT, OPTION_TYPE_LONG}, description = "The type of the lexicon to be loaded.")
     private LexiconType type;
 
+    /**
+     * Instantiates this command as a sub command of the given load command.
+     *
+     * @param load_command the load command to which this command belongs.
+     */
     public LoadLexiconCommand(final LoadCommand load_command) {
 
         super(load_command.launcher);

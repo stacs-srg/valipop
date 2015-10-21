@@ -56,6 +56,11 @@ public class LoadGoldStandardRecordsCommand extends LoadUnseenRecordsCommand {
     @Parameter(names = {OPTION_CLASS_COLUMN_INDEX_SHORT, OPTION_CLASS_COLUMN_INDEX_LONG}, description = "The zero-based index of the column containing the class associated to each label.")
     private Integer class_column_index = DEFALUT_CLASS_COLUMN_INDEX;
 
+    /**
+     * Instantiates this command as a sub command of the given load command.
+     *
+     * @param load_command the load command to which this command belongs.
+     */
     public LoadGoldStandardRecordsCommand(final LoadCommand load_command) { super(load_command); }
 
     @Override

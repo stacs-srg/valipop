@@ -89,6 +89,11 @@ abstract class LoadRecordsCommand extends Command {
     @Parameter(names = {OPTION_LABEL_COLUMN_INDEX_SHORT, OPTION_LABEL_COLUMN_INDEX_LONG}, description = "The zero-based index of the column containing the label.")
     private Integer label_column_index = DEFAULT_LABEL_COLUMN_INDEX;
 
+    /**
+     * Instantiates this command as a sub command of the given load command.
+     *
+     * @param load_command the load command to which this command belongs.
+     */
     public LoadRecordsCommand(LoadCommand load_command) {
 
         super(load_command.launcher);

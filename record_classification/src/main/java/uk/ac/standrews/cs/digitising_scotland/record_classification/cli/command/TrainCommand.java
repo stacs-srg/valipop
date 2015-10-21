@@ -43,6 +43,11 @@ public class TrainCommand extends Command {
                     validateValueWith = Validators.BetweenZeroToOneInclusive.class)
     private Double internal_training_ratio = launcher.getConfiguration().getDefaultInternalTrainingRatio();
 
+    /**
+     * Instantiates this command for the given launcher.
+     *
+     * @param launcher the launcher to which this command belongs.
+     */
     public TrainCommand(final Launcher launcher) {
 
         super(launcher);
@@ -52,24 +57,14 @@ public class TrainCommand extends Command {
     public void run() {
 
         final Configuration configuration = launcher.getConfiguration();
-        final Classifier classifier = configuration.getClassifier();
+        final Classifier classifier = configuration.requireClassifier();
 
-        if (classifier == null) {
-            throw new ParameterException("The classifier is not set; please specify a classifier.");
-        }
+        final Bucket training_records = configuration.requireTrainingRecords();
 
-        final Optional<Bucket> training_records = configuration.getTrainingRecords();
+        final Instant start = Instant.now();
+        classifier.trainAndEvaluate(training_records, internal_training_ratio, configuration.getRandom());
+        final Duration training_time = Duration.between(start, Instant.now());
 
-        if (training_records.isPresent()) {
-
-            final Instant start = Instant.now();
-            classifier.trainAndEvaluate(training_records.get(), internal_training_ratio, configuration.getRandom());
-            final Duration training_time = Duration.between(start, Instant.now());
-
-            LOGGER.info(() -> "trained the classifier in " + training_time);
-        }
-        else {
-            LOGGER.warning("No training records are loaded; cannot train the classifier.");
-        }
+        LOGGER.info(() -> String.format("trained the classifier on %d in %s", training_records.size(), training_time));
     }
 }

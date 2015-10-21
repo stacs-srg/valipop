@@ -51,7 +51,7 @@ public class CleanCommand extends Command {
     private List<CleanerSupplier> cleaner_suppliers;
 
     /**
-     * Instantiates the clean command for a given launcher.
+     * Instantiates the clean command for the given launcher.
      *
      * @param launcher the launcher to which this command belongs
      */

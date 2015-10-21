@@ -16,8 +16,7 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.cli.command;
 
-import com.beust.jcommander.Parameter;
-import com.beust.jcommander.Parameters;
+import com.beust.jcommander.*;
 import com.beust.jcommander.converters.PathConverter;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.*;
@@ -33,36 +32,33 @@ import java.util.*;
 import java.util.stream.*;
 
 /**
- * Classification command of the classification process.
+ * Classifies unseen records.
  *
  * @author Masih Hajiarab Derkani
  * @author Graham Kirby
  */
-@Parameters(commandNames = ClassifyCommand.NAME, commandDescription = "Classify unseen data")
+@Parameters(commandNames = ClassifyCommand.NAME, commandDescription = "Classifies unseen records")
 public class ClassifyCommand extends Command {
 
     /** The name of this command. */
     public static final String NAME = "classify";
 
-    public static final String DESTINATION_DESCRIPTION = "Path to the place to persist the classified records.";
-    public static final String DESTINATION_FLAG_SHORT = "-o";
-    public static final String DESTINATION_FLAG_LONG = "--output";
-
-    @Parameter(required = true, names = {DESTINATION_FLAG_SHORT, DESTINATION_FLAG_LONG}, description = DESTINATION_DESCRIPTION, converter = PathConverter.class)
-    private Path destination;
-
-    public ClassifyCommand(final Launcher launcher) {
-
-        super(launcher);
-    }
+    /**
+     * Instantiates this command for the given launcher.
+     *
+     * @param launcher the launcher to which this format belongs.
+     */
+    public ClassifyCommand(final Launcher launcher) { super(launcher); }
 
     @Override
     public void run() {
 
         final Configuration configuration = launcher.getConfiguration();
-        final Classifier classifier = configuration.getClassifier();
+        final Classifier classifier = configuration.requireClassifier();
 
-        final List<Bucket> classified_unseen = configuration.getUnseens().stream().map(Configuration.Unseen::toBucket).map(classifier::classify).collect(Collectors.toList());
+        final Bucket unseen_records = configuration.requireUnseenRecords();
+
+        classifier.classify(unseen_records);
 
         //TODO persist classified records
     }

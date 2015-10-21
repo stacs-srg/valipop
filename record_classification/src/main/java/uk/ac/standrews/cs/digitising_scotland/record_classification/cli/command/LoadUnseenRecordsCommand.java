@@ -42,6 +42,11 @@ public class LoadUnseenRecordsCommand extends LoadRecordsCommand {
 
     private static final Logger LOGGER = Logger.getLogger(LoadUnseenRecordsCommand.class.getName());
 
+    /**
+     * Instantiates this command as a sub command of the given load command.
+     *
+     * @param load_command the load command to which this command belongs.
+     */
     public LoadUnseenRecordsCommand(LoadCommand load_command) { super(load_command); }
 
     @Override
