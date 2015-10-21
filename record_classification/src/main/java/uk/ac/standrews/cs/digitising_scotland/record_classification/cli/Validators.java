@@ -29,6 +29,7 @@ public final class Validators {
     public static final double DELTA = 0.001;
 
     private Validators() {
+
         throw new UnsupportedOperationException();
     }
 
@@ -43,18 +44,18 @@ public final class Validators {
         }
     }
 
-    public static class BetweenZeroAndOne implements IValueValidator<Double> {
+    public static class BetweenZeroToOneInclusive implements IValueValidator<Double> {
 
         @Override
         public void validate(final String name, final Double value) throws ParameterException {
 
-            if (!isBetweenZeroAndOne(value)) {
+            if (!isBetweenZeroToOneInclusive(value)) {
                 throw new ParameterException("The value  of parameter " + name + " must be between 0.0 and 1.0 inclusive");
             }
         }
     }
 
-    public static boolean isBetweenZeroAndOne(double value) {
+    public static boolean isBetweenZeroToOneInclusive(double value) {
 
         // Use DELTA to avoid rounding-error-prone exact comparison of doubles.
         return value > -DELTA && value < 1.0 + DELTA;

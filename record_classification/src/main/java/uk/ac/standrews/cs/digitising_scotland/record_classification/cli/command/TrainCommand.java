@@ -18,17 +18,12 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.cli.command
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.ClassificationContext;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.TrainClassifierStep;
 
 import java.time.*;
 import java.util.*;
-import java.util.function.*;
-import java.util.stream.*;
 
 /**
  * The train command of classification process command line interface.
@@ -47,7 +42,7 @@ public class TrainCommand extends Command {
     public static final String INTERNAL_TRAINING_RATIO_FLAG_SHORT = "-ir";
     public static final String INTERNAL_TRAINING_RATIO_FLAG_LONG = "--internalTrainingRecordRatio";
 
-    @Parameter(names = {INTERNAL_TRAINING_RATIO_FLAG_SHORT, INTERNAL_TRAINING_RATIO_FLAG_LONG}, description = INTERNAL_TRAINING_RATIO_DESCRIPTION, validateValueWith = Validators.BetweenZeroAndOne.class)
+    @Parameter(names = {INTERNAL_TRAINING_RATIO_FLAG_SHORT, INTERNAL_TRAINING_RATIO_FLAG_LONG}, description = INTERNAL_TRAINING_RATIO_DESCRIPTION, validateValueWith = Validators.BetweenZeroToOneInclusive.class)
     private Double internal_training_ratio = DEFAULT_INTERNAL_TRAINING_RATIO;
 
     public TrainCommand(final Launcher launcher) {

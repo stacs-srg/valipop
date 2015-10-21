@@ -89,7 +89,7 @@ public abstract class Experiment implements Callable<Void> {
     @Parameter(names = {"-t", "--trainingRecordRatio"}, description = DESCRIPTION_RATIO)
     private List<Double> training_ratios = Collections.singletonList(DEFAULT_TRAINING_RATIO);
 
-    @Parameter(names = {TrainCommand.INTERNAL_TRAINING_RATIO_FLAG_SHORT, TrainCommand.INTERNAL_TRAINING_RATIO_FLAG_LONG}, description = TrainCommand.INTERNAL_TRAINING_RATIO_DESCRIPTION, validateValueWith = Validators.BetweenZeroAndOne.class)
+    @Parameter(names = {TrainCommand.INTERNAL_TRAINING_RATIO_FLAG_SHORT, TrainCommand.INTERNAL_TRAINING_RATIO_FLAG_LONG}, description = TrainCommand.INTERNAL_TRAINING_RATIO_DESCRIPTION, validateValueWith = Validators.BetweenZeroToOneInclusive.class)
     private double internal_training_ratio = TrainCommand.DEFAULT_INTERNAL_TRAINING_RATIO;
 
     @Parameter(names = {"-d", "--delimiter"}, description = DESCRIPTION_DELIMITER)

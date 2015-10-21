@@ -28,29 +28,66 @@ import java.util.logging.*;
 import java.util.stream.*;
 
 /**
+ * Captures common functionality in loading tabular data from file in form of {@link Record records}.
+ *
  * @author Masih Hajiarab Derkani
  */
-@Parameters(optionPrefixes = "")
-public abstract class LoadRecordsCommand extends Command {
+abstract class LoadRecordsCommand extends Command {
+
+    /** The short name of the option that specifies the delimiter character in the tabular resource file to be loaded. **/
+    public static final String OPTION_DELIMITER_SHORT = "-d";
+
+    /** The long name of the option that specifies the delimiter character in the tabular resource file to be loaded. **/
+    public static final String OPTION_DELIMITER_LONG = "--delimiter";
+
+    /** The short name of the option that specifies the {@link CSVFormat format} of the tabular resource file to be loaded. **/
+    public static final String OPTIONS_FORMAT_SHORT = "-f";
+
+    /** The long name of the option that specifies the {@link CSVFormat format} of the tabular resource file to be loaded. **/
+    public static final String OPTIONS_FORMAT_LONG = "--format";
+
+    /** The short name of the option that specifies whether to skip the header record in the tabular resource file to be loaded. **/
+    public static final String OPTION_SKIP_HEADER_SHORT = "-h";
+
+    /** The long name of the option that specifies whether to skip the header record in the tabular resource file to be loaded. **/
+    public static final String OPTION_SKIP_HEADER_LONG = "--skip_header";
+
+    /** The short name of the option that specifies the index of the column that contains the ID associated to each row, starting from {@value 0}. **/
+    public static final String OPTION_ID_COLUMN_INDEX_SHORT = "-ii";
+
+    /** The long name of the option that specifies the index of the column that contains the ID associated to each row, starting from {@value 0}. **/
+    public static final String OPTION_ID_COLUMN_INDEX_LONG = "--id_column_index";
+
+    /** The short name of the option that specifies the index of the column that contains the label associated to each row, starting from {@value 0}. **/
+    public static final String OPTION_LABEL_COLUMN_INDEX_SHORT = "-li";
+
+    /** The long name of the option that specifies the index of the column that contains the label associated to each row, starting from {@value 0}. **/
+    public static final String OPTION_LABEL_COLUMN_INDEX_LONG = "--label_column_index";
+
+    /** The default index of the column that contains the ID associated to each row. **/
+    public static final int DEFAULT_ID_COLUMN_INDEX = 0;
+
+    /** The default index of the column that contains the label associated to each row. **/
+    public static final int DEFAULT_LABEL_COLUMN_INDEX = 1;
 
     private static final Logger LOGGER = Logger.getLogger(LoadRecordsCommand.class.getName());
 
-    @Parameter(names = "delimiter", description = "The data file delimiter character", converter = Converters.CharacterConverter.class)
+    protected final LoadCommand load_command;
+
+    @Parameter(names = {OPTION_DELIMITER_SHORT, OPTION_DELIMITER_LONG}, description = "The data file delimiter character", converter = Converters.CharacterConverter.class)
     private Character delimiter = launcher.getConfiguration().getDefaultDelimiter();
 
-    @Parameter(names = "format", description = "The format of the csv file containing the data to be loaded")
+    @Parameter(names = {OPTIONS_FORMAT_SHORT, OPTIONS_FORMAT_LONG}, description = "The format of the csv file containing the data to be loaded")
     private CsvFormatSupplier csv_format_supplier = launcher.getConfiguration().getDefaultCsvFormatSupplier();
 
-    @Parameter(names = "skip_header", description = "Whether the CSV data file has headers.")
+    @Parameter(names = {OPTION_SKIP_HEADER_SHORT, OPTION_SKIP_HEADER_LONG}, description = "Whether the CSV data file has headers.")
     private boolean skip_header_record;
 
-    @Parameter(names = "id_column_index", description = "The zero-based index of the column containing the ID.")
-    private Integer id_column_index = 0;
+    @Parameter(names = {OPTION_ID_COLUMN_INDEX_SHORT, OPTION_ID_COLUMN_INDEX_LONG}, description = "The zero-based index of the column containing the ID.")
+    private Integer id_column_index = DEFAULT_ID_COLUMN_INDEX;
 
-    @Parameter(names = "label_column_index", description = "The zero-based index of the column containing the label.")
-    private Integer label_column_index = 1;
-
-    protected final LoadCommand load_command;
+    @Parameter(names = {OPTION_LABEL_COLUMN_INDEX_SHORT, OPTION_LABEL_COLUMN_INDEX_LONG}, description = "The zero-based index of the column containing the label.")
+    private Integer label_column_index = DEFAULT_LABEL_COLUMN_INDEX;
 
     public LoadRecordsCommand(LoadCommand load_command) {
 
@@ -63,19 +100,25 @@ public abstract class LoadRecordsCommand extends Command {
 
         //TODO Add system logs.
         final Stream<Record> records = loadRecords();
-        updateConfiguration(records);
+        process(records);
     }
 
-    protected abstract void updateConfiguration(final Stream<Record> records);
+    /**
+     * Processes loaded records.
+     *
+     * @param records the records to be processed
+     */
+    protected abstract void process(final Stream<Record> records);
 
-    protected Stream<Record> loadRecords() {
+    private Stream<Record> loadRecords() {
 
         final CSVFormat format = getCsvFormat();
         final Path source = load_command.getSource();
         final Charset charset = load_command.getCharset();
 
+        LOGGER.finest(() -> String.format("loading records from %s, with charset %s, with format %s", source, charset, format));
+
         //TODO Check if destination exists, if so override upon confirmation.
-        //TODO Add system logs.
 
         try (final BufferedReader in = Files.newBufferedReader(source, charset)) {
 
@@ -83,6 +126,7 @@ public abstract class LoadRecordsCommand extends Command {
             return StreamSupport.stream(parser.spliterator(), true).map(this::toRecord);
         }
         catch (IOException e) {
+            LOGGER.log(Level.FINE, "failure while reading records", e);
             throw new RuntimeException(e);
         }
     }
@@ -92,6 +136,12 @@ public abstract class LoadRecordsCommand extends Command {
         return csv_format_supplier.get().withDelimiter(delimiter).withSkipHeaderRecord(skip_header_record);
     }
 
+    /**
+     * Converts a {@link CSVRecord tabular data record} into a {@link Record}.
+     *
+     * @param record the tabular data record to be converted
+     * @return the converted record
+     */
     protected abstract Record toRecord(final CSVRecord record);
 
     protected String getLabel(final CSVRecord record) {

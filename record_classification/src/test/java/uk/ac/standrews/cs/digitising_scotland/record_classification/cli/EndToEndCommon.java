@@ -189,7 +189,7 @@ public class EndToEndCommon {
                 final Double training_ratio = training_ratios.get(i);
                 if (training_ratio != null) {
                     appendSpace(commands_builder);
-                    commands_builder.append(LoadGoldStandardCommand.TRAINING_RATIO_FLAG);
+                    commands_builder.append(LoadGoldStandardCommand.OPTION_TRAINING_RATIO_LONG);
                     appendSpace(commands_builder);
                     commands_builder.append(training_ratio);
                 }

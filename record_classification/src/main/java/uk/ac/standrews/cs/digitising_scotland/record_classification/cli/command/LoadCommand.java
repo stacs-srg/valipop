@@ -29,7 +29,7 @@ import java.util.logging.*;
 import java.util.stream.*;
 
 /**
- * Command to load resources from a file.
+ * Command to load a resource from the local file system.
  *
  * @author Masih Hajiarab Derkani
  */
