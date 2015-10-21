@@ -98,7 +98,6 @@ abstract class LoadRecordsCommand extends Command {
     @Override
     public void run() {
 
-        //TODO Add system logs.
         final Stream<Record> records = loadRecords();
         process(records);
     }
@@ -131,7 +130,13 @@ abstract class LoadRecordsCommand extends Command {
         }
     }
 
-    protected CSVFormat getCsvFormat() {
+    /**
+     * Gets the {@link CSVFormat format} of the tabular resource file.
+     * The may be format specified via {@value #OPTIONS_FORMAT_SHORT} or {@value #OPTIONS_FORMAT_LONG} options.
+     *
+     * @return the {@link CSVFormat format} of the tabular resource file
+     */
+    public CSVFormat getCsvFormat() {
 
         return csv_format_supplier.get().withDelimiter(delimiter).withSkipHeaderRecord(skip_header_record);
     }

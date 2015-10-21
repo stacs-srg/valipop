@@ -44,11 +44,13 @@ public class CleanUnseenRecordsCommand extends Command {
     /** The name of this command. */
     public static final String NAME = "clean";
 
+    public static final String CLEAN_DESCRIPTION = "A cleaner with which to clean the data";
+    public static final String CLEAN_FLAG_SHORT = "-cl";
+    public static final String CLEAN_FLAG_LONG = "--cleaner";
+    
     @Parameter(required = true, names = {CLEAN_FLAG_SHORT, CLEAN_FLAG_LONG}, description = CLEAN_DESCRIPTION, variableArity = true)
     private List<CleanerSupplier> cleaner_suppliers;
 
-    
-    
     public CleanUnseenRecordsCommand(final Launcher launcher) {
 
         super(launcher);
