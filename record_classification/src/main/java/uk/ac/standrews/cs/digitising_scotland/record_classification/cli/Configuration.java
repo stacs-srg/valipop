@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.databind.*;
 import org.apache.commons.csv.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.serialization.*;
 
@@ -263,7 +264,7 @@ public class Configuration {
             super(name);
         }
 
-        public synchronized Bucket toBucket() throws IOException {
+        public synchronized Bucket toBucket() {
 
             if (bucket == null) {
 
@@ -275,6 +276,9 @@ public class Configuration {
                         final Record record = toRecord(csv_record);
                         bucket.add(record);
                     }
+                }
+                catch (IOException e) {
+                    throw new RuntimeException(e);
                 }
             }
             return bucket;

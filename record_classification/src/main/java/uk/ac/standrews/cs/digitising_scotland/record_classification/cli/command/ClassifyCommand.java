@@ -62,14 +62,7 @@ public class ClassifyCommand extends Command {
         final Configuration configuration = launcher.getConfiguration();
         final Classifier classifier = configuration.getClassifier();
 
-        final List<Bucket> classified_unseen = configuration.getUnseens().stream().map(unseen -> {
-            try {
-                return unseen.toBucket();
-            }
-            catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }).map(classifier::classify).collect(Collectors.toList());
+        final List<Bucket> classified_unseen = configuration.getUnseens().stream().map(Configuration.Unseen::toBucket).map(classifier::classify).collect(Collectors.toList());
 
         //TODO persist classified records
     }

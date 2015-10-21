@@ -16,40 +16,55 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning;
 
+import java.io.*;
 import java.util.Arrays;
 import java.util.function.Supplier;
 
 /**
+ * Predefined enumeration of {@link Cleaner cleaners}.
+ *
  * @author Masih Hajiarab Derkani
  * @author Graham Kirby
  */
 public enum CleanerSupplier implements Supplier<Cleaner> {
 
-    PUNCTUATION(PunctuationCleaner::new, "Removes punctuation characters"),
-    LOWER_CASE(LowerCaseCleaner::new, "Converts text to lower case"),
-    STOP_WORDS(EnglishStopWordCleaner::new, "Removes English stop words"),
-    PORTER_STEM(PorterStemCleaner::new, "Performs stemming using Porter algorithm"),
+    /** Removes punctuation characters. **/
+    PUNCTUATION(PunctuationCleaner::new),
 
-    CONSISTENT_CLASSIFICATION_CLEANER_CORRECT(() -> ConsistentClassificationCleaner.CORRECT, "Corrects the classification of any inconsistently classified records to the most popular"),
-    CONSISTENT_CLASSIFICATION_CLEANER_REMOVE(() -> ConsistentClassificationCleaner.REMOVE, "Removes any inconsistently classified records"),
-    TRIM_CLASSIFICATION_CODE(TrimClassificationCodesCleaner::new, "Removes white-space characters fom the beginning/end of classification codes"),
+    /** Converts text to lower case. **/
+    LOWER_CASE(LowerCaseCleaner::new),
 
-    COMBINED(() -> new CompositeCleaner(Arrays.asList(PUNCTUATION.get(), LOWER_CASE.get(), STOP_WORDS.get(), PORTER_STEM.get(), CONSISTENT_CLASSIFICATION_CLEANER_CORRECT.get(), TRIM_CLASSIFICATION_CODE.get())), "Applies all available text cleaners and corrects inconsistent classifications");
+    /** Removes English stop words. **/
+    ENGLISH_STOP_WORDS(EnglishStopWordCleaner::new),
 
+    /** Performs stemming using Porter algorithm. **/
+    PORTER_STEM(PorterStemCleaner::new),
+
+    /** Corrects the classification of any inconsistently classified records to the most popular. **/
+    CONSISTENT_CLASSIFICATION_CLEANER_CORRECT(() -> ConsistentClassificationCleaner.CORRECT),
+
+    /** Removes any inconsistently classified records. **/
+    CONSISTENT_CLASSIFICATION_CLEANER_REMOVE(() -> ConsistentClassificationCleaner.REMOVE),
+
+    /** Removes white-space characters fom the beginning/end of classification codes. **/
+    TRIM_CLASSIFICATION_CODE(TrimClassificationCodesCleaner::new),
+
+    /** Applies all available text cleaners and corrects inconsistent classifications. **/
+    COMBINED(() -> new CompositeCleaner(Arrays.asList(PUNCTUATION.get(), LOWER_CASE.get(), ENGLISH_STOP_WORDS.get(), PORTER_STEM.get(), CONSISTENT_CLASSIFICATION_CLEANER_CORRECT.get(), TRIM_CLASSIFICATION_CODE.get())));
+
+    @SuppressWarnings("NonSerializableFieldInSerializableClass")
     private final Supplier<Cleaner> supplier;
-    private final String description;
 
-    CleanerSupplier(Supplier<Cleaner> supplier, String description) {
+    CleanerSupplier(Supplier<Cleaner> supplier) {
 
         this.supplier = supplier;
-        this.description = description;
     }
 
-    public String getDescription() {
-
-        return description;
-    }
-
+    /**
+     * Supplies the cleaner.
+     *
+     * @return the cleaner
+     */
     public Cleaner get() {
 
         return supplier.get();
