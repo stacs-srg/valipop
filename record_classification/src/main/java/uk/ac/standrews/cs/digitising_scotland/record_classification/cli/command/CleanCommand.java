@@ -17,120 +17,71 @@
 package uk.ac.standrews.cs.digitising_scotland.record_classification.cli.command;
 
 import com.beust.jcommander.*;
-import com.beust.jcommander.converters.*;
-import org.apache.commons.csv.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.Configuration.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 
-import java.io.*;
-import java.nio.charset.*;
-import java.nio.file.*;
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
 
 /**
- * Cleans records.
+ * Cleans loard gold standard and unseen records.
  *
  * @author Masih Hajiarab Derkani
  */
-@Parameters(commandNames = CleanCommand.NAME, commandDescription = "Cleans records", separators = "=")
+@SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
+@Parameters(commandNames = CleanCommand.NAME, commandDescription = "Cleans loaded gold standard and unseen records.")
 public class CleanCommand extends Command {
 
     /** The name of this command. */
     public static final String NAME = "clean";
 
-    public static final String CLEAN_DESCRIPTION = "A cleaner with which to clean the data";
-    public static final String CLEAN_FLAG_SHORT = "-cl";
-    public static final String CLEAN_FLAG_LONG = "--cleaner";
-    
-    @Parameter(required = true, names = {CLEAN_FLAG_SHORT, CLEAN_FLAG_LONG}, description = CLEAN_DESCRIPTION, variableArity = true)
+    /** The short name of the command that specifies the cleaners by which to clean loaded gold standard and/or unseen records. **/
+    public static final String OPTION_CLEANER_SHORT = "-c";
+
+    /** The long name of the command that specifies the cleaners by which to clean loaded gold standard and/or unseen records. **/
+    public static final String OPTION_CLEANER_LONG = "--cleaner";
+
+    @Parameter(required = true,
+                    names = {OPTION_CLEANER_SHORT, OPTION_CLEANER_LONG},
+                    description = "One or more cleaners with which to clean loaded gold standard and/or unseen records.",
+                    variableArity = true)
     private List<CleanerSupplier> cleaner_suppliers;
-
-    @Parameter(required = true, names = {"-s", "--source"}, description = "The source file containing the records to be cleaned.", converter = PathConverter.class)
-    private Path source;
-
-    @Parameter(required = true, names = {"-d", "--destination"}, description = "The destination in which to persist the cleaned records.", converter = PathConverter.class)
-    private Path destination;
-
-    @Parameter(names = {"-c", "--charset"}, description = "The charset if source/destination file.")
-    private CharsetSupplier charset_supplier = CharsetSupplier.SYSTEM_DEFAULT;
-
-    @Parameter(names = {"-s", "--delimiter"}, description = "The delimiter character of source/destination file.")
-    private Character delimiter = CSVFormat.RFC4180.getDelimiter();
-
-    @Parameter(required = true, names = {"-col", "--sourceColumns"}, description = "The columns in the source file to clean starting from 1.", variableArity = true, validateValueWith = Validators.AtLeastOne.class)
-    private List<Integer> columns;
-
-    @Parameter(names = {"-di", "--dictionary"}, description = "The plain text file containing the dictionary of words to be used for spelling correction; one word per line", variableArity = true)
-    private List<Path> dictionaries;
-
-    @Parameter(names = {"-st", "--stopWord"}, description = "The columns in the source file to clean starting from 1.", variableArity = true)
-    private List<Path> stop_words;
 
     /**
      * Instantiates the clean command for a given launcher.
      *
      * @param launcher the launcher to which this command belongs
      */
-    public CleanCommand(final Launcher launcher) {
-
-        super(launcher);
-        
-    }
+    public CleanCommand(final Launcher launcher) { super(launcher); }
 
     @Override
     public void run() {
 
-        final Charset charset = getCharset();
-        final CSVFormat format = CSVFormat.newFormat(delimiter).withHeader();
-        final Cleaner cleaner = getCombinedStringCleaner();
+        final Cleaner cleaner = getCombinedCleaner();
+        final Configuration configuration = launcher.getConfiguration();
 
-        try (
-                        final CSVParser parser = CSVParser.parse(source.toFile(), charset, format);
-                        final CSVPrinter printer = new CSVPrinter(Files.newBufferedWriter(destination), format)
-        ) {
-            StreamSupport.stream(parser.spliterator(), false).forEach(record -> cleanAndPrint(record, cleaner, printer));
-            printer.flush();
-        }
-        catch (IOException e) {
-            throw new RuntimeException(e);
+        //TODO allow user to choose what to clean; i.e. gold standard all or by name, unseen all or by name?
+
+        clean(cleaner, configuration.getGoldStandards());
+        clean(cleaner, configuration.getUnseens());
+    }
+
+    private void clean(final Cleaner cleaner, final List<? extends Unseen> unclean) {
+
+        final List<Bucket> gold_standard_buckets = unclean.stream().map(Unseen::toBucket).collect(Collectors.toList());
+
+        final List<Bucket> cleaned_buckets = cleaner.apply(gold_standard_buckets);
+        for (int index = 0; index < unclean.size(); index++) {
+            final Unseen gold_standard = unclean.get(index);
+            gold_standard.setBucket(cleaned_buckets.get(index));
         }
     }
 
-    public void cleanAndPrint(CSVRecord record, final Cleaner cleaner, final CSVPrinter printer) {
-
-        try {
-
-            for (int index = 0; index < record.size(); index++) {
-
-                final String cleaned_value = cleanValueAt(cleaner, index, record);
-                printer.print(cleaned_value);
-            }
-
-            printer.println();
-        }
-        catch (IOException e) {
-            throw new RuntimeException(String.format("failed to persist cleaned record, with number %d at position %d", record.getRecordNumber(), record.getCharacterPosition()), e);
-        }
-    }
-
-    public String cleanValueAt(final Cleaner combined, final int index, CSVRecord record) {
-
-        final String value = record.get(index);
-//        return isCleanable(index) ? combined.apply(value) : value;
-        return value;
-    }
-
-    public boolean isCleanable(final int index) {return columns.contains(index);}
-
-    private Cleaner getCombinedStringCleaner() {
+    private Cleaner getCombinedCleaner() {
 
         return cleaner_suppliers.stream().map(Supplier::get).reduce(Cleaner::andThen).orElseThrow(() -> new ParameterException("no cleaner is specified"));
-    }
-
-    private Charset getCharset() {
-
-        return charset_supplier.get();
     }
 }

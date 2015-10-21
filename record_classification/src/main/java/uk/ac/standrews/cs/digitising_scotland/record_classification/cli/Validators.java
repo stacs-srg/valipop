@@ -28,9 +28,17 @@ public final class Validators {
 
     public static final double DELTA = 0.001;
 
-    private Validators() {
+    private Validators() { throw new UnsupportedOperationException(); }
 
-        throw new UnsupportedOperationException();
+    public static class AtLeastZero implements IValueValidator<Integer> {
+
+        @Override
+        public void validate(final String name, final Integer value) throws ParameterException {
+
+            if (value < 0) {
+                throw new ParameterException("The value  of parameter " + name + " must be at least 1");
+            }
+        }
     }
 
     public static class AtLeastOne implements IValueValidator<Integer> {
