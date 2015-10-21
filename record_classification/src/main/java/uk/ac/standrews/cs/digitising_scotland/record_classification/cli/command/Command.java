@@ -27,28 +27,16 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * The glue-code connecting {@link Step steps} in a {@link ClassificationProcess classification process} to the functionality exposed by the command-line interface.
+ * Represents an operation exposed to the user via the {@link Launcher command-line interface}.
  *
  * @author Masih Hajiarab Derkani
  * @author Graham Kirby
  */
 public abstract class Command implements Runnable {
 
-    public static final String CLEAN_DESCRIPTION = "A cleaner with which to clean the data";
-    public static final String CLEAN_FLAG_SHORT = "-cl";
-    public static final String CLEAN_FLAG_LONG = "--cleaner";
-
-    protected static final List<String> DATA_SET_COLUMN_LABELS = Arrays.asList("id", "data", "code", "confidence", "classification_details");
-
-    private static final Charset DEFAULT_CHARSET = LoadStep.DEFAULT_CHARSET_SUPPLIER.get();
-    public static final String DEFAULT_DELIMITER = LoadStep.DEFAULT_DELIMITER;
-
     protected final Launcher launcher;
 
-    public Command(Launcher launcher) {
-
-        this.launcher = launcher;
-    }
+    public Command(Launcher launcher) { this.launcher = launcher;}
 
     protected static void output(String message) {
 

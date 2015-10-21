@@ -30,7 +30,7 @@ import java.util.logging.*;
 import java.util.stream.*;
 
 /**
- * The train command of classification process command line interface.
+ * Command to load unseen records from a file.
  *
  * @author Masih Hajiarab Derkani
  */
@@ -42,10 +42,7 @@ public class LoadUnseenRecordsCommand extends LoadRecordsCommand {
 
     private static final Logger LOGGER = Logger.getLogger(LoadUnseenRecordsCommand.class.getName());
 
-    public LoadUnseenRecordsCommand(LoadCommand load_command) {
-
-        super(load_command);
-    }
+    public LoadUnseenRecordsCommand(LoadCommand load_command) { super(load_command); }
 
     @Override
     protected void process(final Stream<Record> records) {
@@ -58,6 +55,8 @@ public class LoadUnseenRecordsCommand extends LoadRecordsCommand {
 
     @Override
     protected Record toRecord(final CSVRecord record) {
+
+        LOGGER.finest(() -> String.format("loading record number %d, at character position %d", record.getRecordNumber(), record.getCharacterPosition()));
 
         final Integer id = getId(record);
         final String label = getLabel(record);
