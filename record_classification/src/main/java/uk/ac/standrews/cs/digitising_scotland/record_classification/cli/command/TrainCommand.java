@@ -36,14 +36,10 @@ public class TrainCommand extends Command {
     /** The name of this command. */
     public static final String NAME = "train";
 
-    public static final double DEFAULT_INTERNAL_TRAINING_RATIO = 0.8;
-
-    public static final String INTERNAL_TRAINING_RATIO_DESCRIPTION = "The ratio of gold standard records to be used for training as opposed to internal evaluation.";
-    public static final String INTERNAL_TRAINING_RATIO_FLAG_SHORT = "-ir";
-    public static final String INTERNAL_TRAINING_RATIO_FLAG_LONG = "--internalTrainingRecordRatio";
-
-    @Parameter(names = {INTERNAL_TRAINING_RATIO_FLAG_SHORT, INTERNAL_TRAINING_RATIO_FLAG_LONG}, description = INTERNAL_TRAINING_RATIO_DESCRIPTION, validateValueWith = Validators.BetweenZeroToOneInclusive.class)
-    private Double internal_training_ratio = DEFAULT_INTERNAL_TRAINING_RATIO;
+    @Parameter(names = {SetCommand.OPTION_INTERNAL_TRAINING_RATIO_SHORT, SetCommand.OPTION_INTERNAL_TRAINING_RATIO_LONG},
+                    description = "The ratio of gold standard records to be used for training as opposed to internal evaluation. The value must be between 0.0 to 1.0 (inclusive).",
+                    validateValueWith = Validators.BetweenZeroToOneInclusive.class)
+    private Double internal_training_ratio = launcher.getConfiguration().getDefaultInternalTrainingRatio();
 
     public TrainCommand(final Launcher launcher) {
 
@@ -55,12 +51,14 @@ public class TrainCommand extends Command {
 
         final Configuration configuration = launcher.getConfiguration();
         final Classifier classifier = configuration.getClassifier();
-        final Optional<Bucket> training_records = configuration.getGoldStandards().stream().map(Configuration.GoldStandard::getTrainingRecords).reduce(Bucket::union);
+        final Optional<Bucket> training_records = configuration.getTrainingRecords();
 
         if (training_records.isPresent()) {
+
             final Instant start = Instant.now();
             classifier.trainAndEvaluate(training_records.get(), internal_training_ratio, configuration.getRandom());
             final Duration training_time = Duration.between(start, Instant.now());
+
             //TODO log time and the rest
         }
         else {

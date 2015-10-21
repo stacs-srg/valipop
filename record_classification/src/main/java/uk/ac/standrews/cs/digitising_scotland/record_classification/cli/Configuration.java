@@ -47,7 +47,11 @@ public class Configuration {
 
     private static final CsvFormatSupplier DEFAULT_CSV_FORMAT_SUPPLIER = CsvFormatSupplier.DEFAULT;
     private static final char DEFAULT_DELIMITER = DEFAULT_CSV_FORMAT_SUPPLIER.get().getDelimiter();
-    private static final CharsetSupplier DEFAULT_CHARSET_SUPPLIER = CharsetSupplier.SYSTEM_DEFAULT;
+    public static final CharsetSupplier DEFAULT_CHARSET_SUPPLIER = CharsetSupplier.SYSTEM_DEFAULT;
+
+    public static final double DEFAULT_TRAINING_RATIO = 0.8;
+    /** The default ratio of records to be used for internal training of the classifier. **/
+    public static final double DEFAULT_INTERNAL_TRAINING_RATIO = DEFAULT_TRAINING_RATIO;
 
     private CharsetSupplier default_charset_supplier = DEFAULT_CHARSET_SUPPLIER;
     private Character default_delimiter = DEFAULT_DELIMITER;
@@ -65,6 +69,8 @@ public class Configuration {
     private List<StopWords> stop_words;
     @JsonIgnore
     private Random random;
+    private double default_training_ratio = DEFAULT_TRAINING_RATIO;
+    private double default_internal_training_ratio = DEFAULT_INTERNAL_TRAINING_RATIO;
 
     public Configuration() {
 
@@ -200,6 +206,26 @@ public class Configuration {
     public void persist() throws IOException {
 
         MAPPER.writeValue(Files.newOutputStream(CONFIGURATION_FILE, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING), this);
+    }
+
+    public double getDefaultInternalTrainingRatio() {
+
+        return default_internal_training_ratio;
+    }
+
+    public void setDefaultInternalTrainingRatio(final double default_internal_training_ratio) {
+
+        this.default_internal_training_ratio = default_internal_training_ratio;
+    }
+
+    public void setDefaultTrainingRatio(final double default_training_ratio) {
+
+        this.default_training_ratio = default_training_ratio;
+    }
+
+    public double getDefaultTrainingRatio() {
+
+        return default_training_ratio;
     }
 
     abstract static class Resource {

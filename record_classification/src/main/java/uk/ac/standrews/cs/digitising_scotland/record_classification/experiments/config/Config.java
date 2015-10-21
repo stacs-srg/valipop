@@ -16,12 +16,12 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.experiments.config;
 
-import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.command.TrainCommand;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.*;
 
 public class Config {
 
     private static boolean clean_up_files_after_tests = true;
-    private static double internal_training_ratio = TrainCommand.DEFAULT_INTERNAL_TRAINING_RATIO;
+    private static double internal_training_ratio = Configuration.DEFAULT_INTERNAL_TRAINING_RATIO;
 
     public static boolean cleanUpFilesAfterTests() {
 

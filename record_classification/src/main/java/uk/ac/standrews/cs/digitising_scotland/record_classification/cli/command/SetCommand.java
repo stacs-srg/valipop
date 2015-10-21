@@ -71,6 +71,18 @@ public class SetCommand extends Command {
     /** The long name of the option that specifies the {@link SerializationFormat format} in which to persist the state of this program. **/
     public static final String OPTION_SERIALIZATION_FORMAT_LONG = "--serializationFormat";
 
+    /** The short name of the option that specifies the ratio of the gold standard records to be used for training the classifier. **/
+    public static final String OPTION_TRAINING_RATIO_SHORT = "-t";
+
+    /** The short name of the option that specifies the ratio of the gold standard records to be used for training the classifier. **/
+    public static final String OPTION_TRAINING_RATIO_LONG = "--trainingRatio";
+
+    /** The short name of the option that specifies the internal training ratio of the classifier. **/
+    public static final String OPTION_INTERNAL_TRAINING_RATIO_SHORT = "-it";
+
+    /** The long name of the option that specifies the internal training ratio of the classifier. **/
+    public static final String OPTION_INTERNAL_TRAINING_RATIO_LONG = "--internalTrainingRecordRatio";
+
     @Parameter(names = {OPTION_CLASSIFIER_SHORT, OPTION_CLASSIFIER_LONG}, description = "The classifier to use for the classification process.")
     private ClassifierSupplier classifier_supplier;
 
@@ -85,6 +97,12 @@ public class SetCommand extends Command {
 
     @Parameter(names = {OPTION_SERIALIZATION_FORMAT_SHORT, OPTION_SERIALIZATION_FORMAT_LONG}, description = "The format of serialised internal classification process settings.")
     private SerializationFormat serialization_format;
+
+    @Parameter(names = {OPTION_TRAINING_RATIO_SHORT, OPTION_TRAINING_RATIO_LONG}, description = "The default internal training ratio.")
+    private Double training_ratio;
+
+    @Parameter(names = {OPTION_INTERNAL_TRAINING_RATIO_SHORT, OPTION_INTERNAL_TRAINING_RATIO_LONG}, description = "The default internal training ratio.")
+    private Double internal_training_ratio;
 
     /**
      * Instantiates this command for the given launcher.
@@ -127,6 +145,17 @@ public class SetCommand extends Command {
         if (serialization_format != null) {
             LOGGER.info(() -> "Setting serialization format to " + serialization_format);
             configuration.setSerializationFormat(serialization_format);
+            set = true;
+        }
+
+        if (training_ratio != null) {
+            LOGGER.info(() -> "Setting default training ratio to " + training_ratio);
+            configuration.setDefaultTrainingRatio(training_ratio);
+            set = true;
+        }
+        if (internal_training_ratio != null) {
+            LOGGER.info(() -> "Setting default internal training ratio to " + internal_training_ratio);
+            configuration.setDefaultInternalTrainingRatio(internal_training_ratio);
             set = true;
         }
 

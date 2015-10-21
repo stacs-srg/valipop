@@ -27,7 +27,7 @@ import java.util.function.*;
 import java.util.stream.*;
 
 /**
- * Cleans loard gold standard and unseen records.
+ * Cleans load gold standard and unseen records.
  *
  * @author Masih Hajiarab Derkani
  */
@@ -63,11 +63,15 @@ public class CleanCommand extends Command {
         final Cleaner cleaner = getCombinedCleaner();
         final Configuration configuration = launcher.getConfiguration();
 
-        //TODO allow user to choose what to clean; i.e. gold standard all or by name, unseen all or by name?
+        //TODO think about whether we need this: allow user to choose what to clean; i.e. gold standard all or by name, unseen all or by name.
 
-        clean(cleaner, configuration.getGoldStandards());
-        clean(cleaner, configuration.getUnseens());
+        cleanGoldStandardRecords(cleaner, configuration);
+        cleanUnseenRecords(cleaner, configuration);
     }
+
+    private void cleanUnseenRecords(final Cleaner cleaner, final Configuration configuration) {clean(cleaner, configuration.getUnseens());}
+
+    private void cleanGoldStandardRecords(final Cleaner cleaner, final Configuration configuration) {clean(cleaner, configuration.getGoldStandards());}
 
     private void clean(final Cleaner cleaner, final List<? extends Unseen> unclean) {
 

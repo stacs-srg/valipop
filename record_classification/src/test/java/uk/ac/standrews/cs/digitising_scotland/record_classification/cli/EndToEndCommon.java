@@ -68,7 +68,7 @@ public class EndToEndCommon {
         process_name = Launcher.DEFAULT_CLASSIFICATION_PROCESS_NAME;
 
         cleaners = Collections.singletonList(CleanerSupplier.COMBINED);
-        internal_training_ratio = TrainCommand.DEFAULT_INTERNAL_TRAINING_RATIO;
+        internal_training_ratio = Configuration.DEFAULT_INTERNAL_TRAINING_RATIO;
 
         temp_process_directory = Files.createTempDirectory(process_name + "_");
         output_trained_model_file = Serialization.getSerializedContextPath(temp_process_directory, process_name, serialization_format);
@@ -120,7 +120,7 @@ public class EndToEndCommon {
 
         commands_builder.append(TrainCommand.NAME);
         appendSpace(commands_builder);
-        commands_builder.append(TrainCommand.INTERNAL_TRAINING_RATIO_FLAG_SHORT);
+        commands_builder.append(SetCommand.OPTION_INTERNAL_TRAINING_RATIO_SHORT);
         appendSpace(commands_builder);
         commands_builder.append(internal_training_ratio);
         appendNewLine(commands_builder);
@@ -128,11 +128,11 @@ public class EndToEndCommon {
 
     private void appendCleanGoldStandardCommand(final StringBuilder commands_builder) {
 
-        commands_builder.append(CleanGoldStandardCommand.NAME);
+        commands_builder.append(CleanCommand.NAME);
 
         for (CleanerSupplier cleaner : cleaners) {
             appendSpace(commands_builder);
-            commands_builder.append(CleanGoldStandardCommand.CLEAN_FLAG_SHORT);
+            commands_builder.append(CleanCommand.OPTION_CLEANER_LONG);
             appendSpace(commands_builder);
             commands_builder.append(cleaner.name());
         }
@@ -189,7 +189,7 @@ public class EndToEndCommon {
                 final Double training_ratio = training_ratios.get(i);
                 if (training_ratio != null) {
                     appendSpace(commands_builder);
-                    commands_builder.append(LoadGoldStandardCommand.OPTION_TRAINING_RATIO_LONG);
+                    commands_builder.append(SetCommand.OPTION_TRAINING_RATIO_LONG);
                     appendSpace(commands_builder);
                     commands_builder.append(training_ratio);
                 }
@@ -232,12 +232,12 @@ public class EndToEndCommon {
 
     private void appendCleanUnseenRecordsCommand(final StringBuilder commands_builder) {
 
-        commands_builder.append(CleanUnseenRecordsCommand.NAME);
+        commands_builder.append(CleanCommand.NAME);
         appendSpace(commands_builder);
 
         for (CleanerSupplier cleaner : cleaners) {
 
-            commands_builder.append(CleanUnseenRecordsCommand.CLEAN_FLAG_SHORT);
+            commands_builder.append(CleanCommand.OPTION_CLEANER_SHORT);
             appendSpace(commands_builder);
             commands_builder.append(cleaner.name());
             appendSpace(commands_builder);

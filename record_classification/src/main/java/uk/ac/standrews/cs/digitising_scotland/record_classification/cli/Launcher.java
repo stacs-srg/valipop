@@ -112,8 +112,7 @@ public class Launcher {
         addCommand(new InitCommand(this));
         addCommand(new SetCommand(this));
         addCommand(new ClassifyCommand(this));
-        addCommand(new CleanUnseenRecordsCommand(this));
-        addCommand(new CleanGoldStandardCommand(this));
+        addCommand(new CleanCommand(this));
         addCommand(new EvaluateCommand(this));
 
         final LoadCommand load_command = new LoadCommand(this);
