@@ -17,6 +17,7 @@
 package uk.ac.standrews.cs.digitising_scotland.record_classification.cli;
 
 import org.junit.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 
 import java.nio.file.*;
 
@@ -50,7 +51,10 @@ public class ConfigurationTest {
         }
 
         final Configuration expected = new Configuration();
-        expected.newUnseen("test", false);
+        final Configuration.Unseen unseen = expected.newUnseen("test", false);
+        final Bucket bucket = new Bucket();
+        bucket.add(new Record(1, "test"));
+        unseen.setBucket(bucket);
         expected.persist();
 
         final Configuration actual = Configuration.load();

@@ -30,7 +30,7 @@ import static uk.ac.standrews.cs.digitising_scotland.record_classification.cli.C
 import static uk.ac.standrews.cs.digitising_scotland.record_classification.cli.ConfigurationJsonSerializer.ResourceJsonSerializer.*;
 
 /**
- * @author masih
+ * @author Masih Hajirab Derkani
  */
 public class ConfigurationJsonDeserializer extends JsonDeserializer<Configuration> {
 

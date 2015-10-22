@@ -95,6 +95,7 @@ class ConfigurationJsonSerializer extends JsonSerializer<Configuration> {
             out.writeStringField(NAME, resource.getName());
             out.writeEndObject();
 
+            resource.persist();
         }
     }
 
@@ -110,6 +111,7 @@ class ConfigurationJsonSerializer extends JsonSerializer<Configuration> {
             out.writeNumberField(TRAINING_RATIO, gold_standard.getTrainingRatio());
             out.writeEndObject();
 
+            gold_standard.persist();
         }
     }
 

@@ -18,6 +18,7 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.cli;
 
 import com.beust.jcommander.*;
 import com.beust.jcommander.converters.*;
+import sun.util.logging.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.command.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.*;
 import uk.ac.standrews.cs.util.tools.*;
@@ -27,6 +28,7 @@ import java.io.*;
 import java.nio.file.*;
 import java.util.*;
 import java.util.logging.*;
+import java.util.logging.Formatter;
 import java.util.regex.*;
 
 /**
@@ -36,32 +38,55 @@ import java.util.regex.*;
  */
 public class Launcher {
 
+    /** The short name of the option to display usage. **/
+    public static final String OPTION_HELP_SHORT = "-h";
+
+    /** The long name of the option to display usage. **/
+    public static final String OPTION_HELP_LONG = "--help";
+
+    /** The short name of the option that specifies the path to a file containing the batch commands to be executed. **/
+    public static final String OPTION_COMMANDS_SHORT = "-c";
+
+    /** The long name of the option that specifies the path to a file containing the batch commands to be executed. **/
+    public static final String OPTION_COMMANDS_LONG = "--commands";
+
+    /** The short name of the option that specifies the level of verbosity of the command line interface **/
+    public static final String OPTION_VERBOSITY_SHORT = "-v";
+
+    /** The long name of the option that specifies the level of verbosity of the command line interface **/
+    public static final String OPTION_VERBOSITY_LONG = "--verbosity";
+
     private static final Logger LOGGER = Logger.getLogger(Launcher.class.getName());
-
-    /** The name of the folder that contains the persisted state of this program. */
-    public static final String DEFAULT_CLASSIFICATION_PROCESS_NAME = "." + Configuration.PROGRAM_NAME;
-
     private static final Pattern COMMAND_LINE_ARGUMENT_PATTERN = Pattern.compile("[^\\s\"']+|\"([^\"]*)\"|'([^']*)'");
 
     private JCommander commander;
-    private ClassificationContext context;
-    private Configuration configuration;
+    private final Configuration configuration;
 
-    @Parameter(names = {"-h", "--help"}, description = "Shows usage.", help = true)
+    @Parameter(names = {OPTION_HELP_SHORT, OPTION_HELP_LONG}, description = "Shows usage.", help = true)
     private boolean help;
 
-//    @Parameter(names = {"-i", "--interactive"}, description = "Interactive mode; allows multiple command execution.")
-//    private boolean interactive;
-
-    @Parameter(names = {"-c", "--commands"}, description = "Path to a text file containing the commands to be executed (one command per line).", converter = PathConverter.class)
+    @Parameter(names = {OPTION_COMMANDS_SHORT, OPTION_COMMANDS_LONG}, description = "Path to a text file containing the commands to be executed (one command per line).", converter = PathConverter.class)
     private Path commands;
 
-    @Parameter(names = "working_directory", description = "Path to the working directory.", converter = PathConverter.class)
-    private Path working_directory;
+//    @Parameter(names = "working_directory", description = "Path to the working directory.", converter = PathConverter.class)
+//    private Path working_directory;
 
-    public Launcher() {
+    @Parameter(names = {OPTION_VERBOSITY_SHORT, OPTION_VERBOSITY_LONG}, description = "Specifies the verbosity of the command line interface.")
+    private LogLevelSupplier level_supplier = LogLevelSupplier.INFO;
 
-        configuration = new Configuration();
+    //TODO implement interactive mode
+    //TODO //@Parameter(names = {"-i", "--interactive"}, description = "Interactive mode; allows multiple command execution.")
+    //TODO //private boolean interactive;
+
+    public Launcher() throws IOException {
+
+        configuration = loadContext();
+        configuration.setLogLevel(level_supplier.get());
+    }
+
+    private static Configuration loadContext() throws IOException {
+
+        return Files.isRegularFile(Configuration.CONFIGURATION_FILE) ? Configuration.load() : new Configuration();
     }
 
     public static void main(String[] args) throws Exception {
@@ -82,15 +107,12 @@ public class Launcher {
             launcher.exitWithError("expected context file '" + e.getFile() + "' not found.");
         }
         catch (Exception e) {
-            LOGGER.log(Level.FINE, "failure", e);
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Internal faiure", e);
             launcher.exitWithError(e.getMessage());
         }
-    }
 
-    protected static void output(String message) {
-
-        Logging.output(InfoLevel.VERBOSE, message);
+        //TODO expand user-friendly messages per exceptions
+        //TODO think about CLI-specific exceptions.
     }
 
     void addCommand(Command command) {
@@ -127,7 +149,6 @@ public class Launcher {
 
     public void handle() throws Exception {
 
-//        loadContext();
         try {
 
             if (commands != null) {
@@ -138,7 +159,7 @@ public class Launcher {
             }
         }
         finally {
-//            persistContext();
+            persistContext();
         }
     }
 
@@ -147,16 +168,9 @@ public class Launcher {
         final List<String> command_lines = Files.readAllLines(commands);
 
         for (String command_line : command_lines) {
-            String[] args = toCommandLineArguments(command_line);
-            parse(args);
+            final String[] arguments = toCommandLineArguments(command_line);
+            parse(arguments);
             handleCommand();
-        }
-    }
-
-    private void loadContext() throws IOException {
-
-        if (Files.isDirectory(Configuration.CLI_HOME)) {
-            configuration = Configuration.load();
         }
     }
 
@@ -222,11 +236,6 @@ public class Launcher {
     public Configuration getConfiguration() {
 
         return configuration;
-    }
-
-    public void setConfiguration(final Configuration configuration) {
-
-        this.configuration = configuration;
     }
 
     public JCommander getCommander() {

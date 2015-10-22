@@ -28,7 +28,11 @@ import java.io.*;
 import java.nio.charset.*;
 import java.nio.file.*;
 import java.util.*;
+import java.util.logging.*;
+import java.util.logging.Formatter;
 import java.util.stream.*;
+
+import static uk.ac.standrews.cs.digitising_scotland.record_classification.cli.command.InitCommand.*;
 
 /**
  * The Command Line Interface configuration.
@@ -87,6 +91,7 @@ public class Configuration {
     private Random random;
     private double default_training_ratio = DEFAULT_TRAINING_RATIO;
     private double default_internal_training_ratio = DEFAULT_INTERNAL_TRAINING_RATIO;
+    private Level log_level;
 
     public Configuration() {
 
@@ -102,7 +107,9 @@ public class Configuration {
 
     static Configuration load() throws IOException {
 
-        return MAPPER.readValue(Files.newBufferedReader(CONFIGURATION_FILE), Configuration.class);
+        try (final BufferedReader in = Files.newBufferedReader(CONFIGURATION_FILE)) {
+            return MAPPER.readValue(in, Configuration.class);
+        }
     }
 
     public void setSeed(final Long seed) {
@@ -252,7 +259,9 @@ public class Configuration {
 
     public void persist() throws IOException {
 
-        MAPPER.writeValue(Files.newOutputStream(CONFIGURATION_FILE, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING), this);
+        try (final OutputStream out = Files.newOutputStream(CONFIGURATION_FILE, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)) {
+            MAPPER.writerWithDefaultPrettyPrinter().writeValue(out, this);
+        }
     }
 
     public double getDefaultInternalTrainingRatio() {
@@ -343,6 +352,25 @@ public class Configuration {
         this.proceed_on_error = proceed_on_error;
     }
 
+    void setLogLevel(final Level log_level) {
+
+        this.log_level = log_level;
+
+        final Handler handler = new CLILogHandler();
+        handler.setLevel(log_level);
+        final String logger_name = Launcher.class.getPackage().getName();
+        final Logger parent_logger = Logger.getLogger(logger_name);
+        parent_logger.setUseParentHandlers(false);
+        parent_logger.addHandler(handler);
+
+        //TODO add file handler for error.log
+    }
+
+    public Level getLogLevel() {
+
+        return log_level;
+    }
+
     abstract class Resource {
 
         private final String name;
@@ -385,6 +413,8 @@ public class Configuration {
 
             return Objects.hash(name);
         }
+
+        protected abstract void persist() throws IOException;
     }
 
     public class Dictionary extends Resource {
@@ -399,6 +429,12 @@ public class Configuration {
 
             return DICTIONARY_HOME;
         }
+
+        @Override
+        protected void persist() {
+
+        }
+
     }
 
     public class StopWords extends Dictionary {
@@ -459,6 +495,31 @@ public class Configuration {
         protected Path getHome() {
 
             return UNSEEN_HOME;
+        }
+
+        @Override
+        protected void persist() throws IOException {
+
+            persist(bucket, getPath());
+        }
+
+        protected void persist(final Bucket bucket, final Path destination) throws IOException {
+
+            assureDirectoryExists(destination.getParent());
+            try (final BufferedWriter out = Files.newBufferedWriter(destination, getCharset())) {
+
+                final CSVPrinter printer = getCsvFormat().print(out);
+                for (Record record : bucket) {
+                    final Classification classification = record.getClassification();
+                    printer.print(record.getId());
+                    printer.print(record.getData());
+                    printer.print(record.getOriginalData());
+                    printer.print(classification.getCode());
+                    printer.print(classification.getConfidence());
+                    printer.print(classification.getDetail());
+                    printer.println();
+                }
+            }
         }
 
         protected Record toRecord(CSVRecord csv_record) {
@@ -531,6 +592,13 @@ public class Configuration {
             this.bucket = bucket;
             training_records = bucket.randomSubset(getRandom(), training_ratio);
             evaluation_records = bucket.difference(training_records);
+        }
+
+        @Override
+        protected void persist() throws IOException {
+
+            persist(getTrainingRecords(), getTrainingRecordsPath());
+            persist(getEvaluationRecords(), getEvaluationRecordsPath());
         }
 
         private Path getTrainingRecordsPath() {

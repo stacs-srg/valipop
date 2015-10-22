@@ -59,8 +59,6 @@ public class InitCommand extends Command {
         catch (IOException e) {
             throw new RuntimeException("failed to construct configuration folder", e);
         }
-
-        launcher.setConfiguration(new Configuration());
     }
 
     static void checkDirectoryExistence(Path directory, boolean delete_if_exists) throws IOException {
