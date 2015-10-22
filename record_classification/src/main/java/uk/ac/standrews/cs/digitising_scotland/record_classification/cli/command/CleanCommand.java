@@ -75,12 +75,12 @@ public class CleanCommand extends Command {
 
     private void clean(final Cleaner cleaner, final List<? extends Unseen> unclean) {
 
-        final List<Bucket> gold_standard_buckets = unclean.stream().map(Unseen::toBucket).collect(Collectors.toList());
+        final List<Bucket> unclean_buckets = unclean.stream().map(Unseen::toBucket).collect(Collectors.toList());
 
-        final List<Bucket> cleaned_buckets = cleaner.apply(gold_standard_buckets);
+        final List<Bucket> clean_buckets = cleaner.apply(unclean_buckets);
         for (int index = 0; index < unclean.size(); index++) {
-            final Unseen gold_standard = unclean.get(index);
-            gold_standard.setBucket(cleaned_buckets.get(index));
+            final Unseen resource = unclean.get(index);
+            resource.setBucket(clean_buckets.get(index));
         }
     }
 

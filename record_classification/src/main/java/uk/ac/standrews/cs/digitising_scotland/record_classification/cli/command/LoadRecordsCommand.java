@@ -94,7 +94,7 @@ abstract class LoadRecordsCommand extends Command {
      *
      * @param load_command the load command to which this command belongs.
      */
-    public LoadRecordsCommand(LoadCommand load_command) {
+    LoadRecordsCommand(LoadCommand load_command) {
 
         super(load_command.launcher);
         this.load_command = load_command;
@@ -152,11 +152,27 @@ abstract class LoadRecordsCommand extends Command {
      */
     protected abstract Record toRecord(final CSVRecord record);
 
+    /**
+     * Gets the label value from a {@link CSVRecord tabular data record} based on its column index.
+     * The label column index may be specified via {@value #OPTION_LABEL_COLUMN_INDEX_SHORT} or {@value #OPTION_LABEL_COLUMN_INDEX_LONG} options.
+     * If unspecified, the default index of {@value #DEFAULT_LABEL_COLUMN_INDEX} is used.
+     *
+     * @param record the record from which to extract label
+     * @return the record label
+     */
     protected String getLabel(final CSVRecord record) {
 
         return record.get(label_column_index);
     }
 
+    /**
+     * Gets the ID value from a {@link CSVRecord tabular data record} based on its column index.
+     * The ID column index may be specified via {@value #OPTION_ID_COLUMN_INDEX_SHORT} or {@value #OPTION_ID_COLUMN_INDEX_LONG} options.
+     * If unspecified, the default index of {@value #DEFAULT_ID_COLUMN_INDEX} is used.
+     *
+     * @param record the record from which to extract ID
+     * @return the record ID
+     */
     protected Integer getId(final CSVRecord record) {
 
         return Integer.parseInt(record.get(id_column_index));

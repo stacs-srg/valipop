@@ -24,10 +24,9 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 
 import java.time.*;
-import java.util.*;
 import java.util.logging.*;
 
-import static java.util.logging.Logger.getLogger;
+import static java.util.logging.Logger.*;
 
 /**
  * @author Masih Hajiarab Derkani
@@ -81,7 +80,6 @@ public class EvaluateCommand extends Command {
 
         //TODO export matrix as json
         //TODO export metrics as json
-        //TODO export classified evaluation records
         //TODO export classified evaluation records
     }
 }

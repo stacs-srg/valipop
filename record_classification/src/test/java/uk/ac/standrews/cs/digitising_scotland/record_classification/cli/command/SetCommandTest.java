@@ -34,6 +34,7 @@ public class SetCommandTest extends CommandTest {
 
     private static final Character[] TEST_DELIMITERS = new Character[]{',', '|', '?', '.', '<', '>', ':', ';'};
     private static final Long[] TEST_SEEDS = new Long[]{321L, 4L, 44444L, 514654L};
+    private static final Double[] TEST_RATIOS = new Double[]{0.1, 0.7, 0.9, 0.0000005, 1.0000001};
 
     @Test(expected = ParameterException.class)
     public void testUnspecifiedVariableFailure() throws Exception {
@@ -72,8 +73,22 @@ public class SetCommandTest extends CommandTest {
     @Test
     public void testSetSerializationFormat() throws Exception {
 
-        testSet(SetCommand.OPTION_SERIALIZATION_FORMAT_SHORT, SerializationFormat.values(), () -> launcher.getConfiguration().getSerializationFormat());
-        testSet(SetCommand.OPTION_SERIALIZATION_FORMAT_LONG, SerializationFormat.values(), () -> launcher.getConfiguration().getSerializationFormat());
+        testSet(SetCommand.OPTION_SERIALIZATION_FORMAT_SHORT, SerializationFormat.values(), () -> launcher.getConfiguration().getClassifierSerializationFormat());
+        testSet(SetCommand.OPTION_SERIALIZATION_FORMAT_LONG, SerializationFormat.values(), () -> launcher.getConfiguration().getClassifierSerializationFormat());
+    }
+
+    @Test
+    public void testTrainingRatio() throws Exception {
+
+        testSet(SetCommand.OPTION_TRAINING_RATIO_SHORT, TEST_RATIOS, () -> launcher.getConfiguration().getDefaultTrainingRatio());
+        testSet(SetCommand.OPTION_TRAINING_RATIO_LONG, TEST_RATIOS, () -> launcher.getConfiguration().getDefaultTrainingRatio());
+    }
+
+    @Test
+    public void testInternalTrainingRatio() throws Exception {
+
+        testSet(SetCommand.OPTION_INTERNAL_TRAINING_RATIO_SHORT, TEST_RATIOS, () -> launcher.getConfiguration().getDefaultInternalTrainingRatio());
+        testSet(SetCommand.OPTION_INTERNAL_TRAINING_RATIO_LONG, TEST_RATIOS, () -> launcher.getConfiguration().getDefaultInternalTrainingRatio());
     }
 
     private <Value> void testSet(String option, Value[] values, Supplier<Value> actual) throws Exception {
