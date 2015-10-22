@@ -17,15 +17,10 @@
 package uk.ac.standrews.cs.digitising_scotland.record_classification.cli.command;
 
 import com.beust.jcommander.*;
-import com.beust.jcommander.converters.*;
-import org.apache.commons.beanutils.converters.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.serialization.*;
 
-import java.nio.charset.*;
-import java.nio.file.*;
 import java.util.logging.*;
 
 /**
@@ -95,7 +90,7 @@ public class SetCommand extends Command {
     @Parameter(names = {OPTION_DELIMITER_SHORT, OPTION_DELIMITER_LONG}, description = "The default delimiter of input/output files.", converter = Converters.CharacterConverter.class)
     private Character delimiter;
 
-    @Parameter(names = {OPTION_SERIALIZATION_FORMAT_SHORT, OPTION_SERIALIZATION_FORMAT_LONG}, description = "The format of serialised internal classification process settings.")
+    @Parameter(names = {OPTION_SERIALIZATION_FORMAT_SHORT, OPTION_SERIALIZATION_FORMAT_LONG}, description = "The format with which the classifier is serialized.")
     private SerializationFormat serialization_format;
 
     @Parameter(names = {OPTION_TRAINING_RATIO_SHORT, OPTION_TRAINING_RATIO_LONG}, description = "The default internal training ratio.")
@@ -144,7 +139,7 @@ public class SetCommand extends Command {
 
         if (serialization_format != null) {
             LOGGER.info(() -> "Setting serialization format to " + serialization_format);
-            configuration.setSerializationFormat(serialization_format);
+            configuration.setClassifierSerializationFormat(serialization_format);
             set = true;
         }
 

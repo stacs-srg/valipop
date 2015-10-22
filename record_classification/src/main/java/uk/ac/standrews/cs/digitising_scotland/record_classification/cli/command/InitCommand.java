@@ -76,7 +76,7 @@ public class InitCommand extends Command {
         }
     }
 
-    static void assureDirectoryExists(final Path directory) throws IOException {
+    public static void assureDirectoryExists(final Path directory) throws IOException {
 
         if (!Files.isDirectory(directory)) {
             final Path directories = Files.createDirectories(directory);

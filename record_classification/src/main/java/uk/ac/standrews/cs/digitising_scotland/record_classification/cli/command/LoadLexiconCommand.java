@@ -89,7 +89,7 @@ public class LoadLexiconCommand extends Command {
         final Configuration.Dictionary dictionary = launcher.getConfiguration().newDictionary(name, load_command.isOverrideExistingEnabled());
         final Path destination = dictionary.getPath();
         try {
-            copy(source, charset, destination, Configuration.Dictionary.CHARSET);
+            copy(source, charset, destination, dictionary.getCharset());
         }
         catch (IOException e) {
             throw new IOError(e);
@@ -112,7 +112,7 @@ public class LoadLexiconCommand extends Command {
         final Configuration.StopWords stop_words = launcher.getConfiguration().newStopWords(name, load_command.isOverrideExistingEnabled());
         final Path destination = stop_words.getPath();
         try {
-            copy(source, charset, destination, Configuration.StopWords.CHARSET);
+            copy(source, charset, destination, stop_words.getCharset());
         }
         catch (IOException e) {
             throw new RuntimeException(e);
