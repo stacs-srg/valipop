@@ -122,15 +122,13 @@ abstract class LoadRecordsCommand extends Command {
 
         LOGGER.finest(() -> String.format("loading records from %s, with charset %s, with format %s", source, charset, format));
 
-        //TODO Check if destination exists, if so override upon confirmation.
-
         try (final BufferedReader in = Files.newBufferedReader(source, charset)) {
 
             final CSVParser parser = format.parse(in);
             return StreamSupport.stream(parser.spliterator(), true).map(this::toRecord);
         }
         catch (IOException e) {
-            LOGGER.log(Level.FINE, "failure while reading records", e);
+            LOGGER.log(Level.SEVERE, "failure while loading records", e);
             throw new RuntimeException(e);
         }
     }

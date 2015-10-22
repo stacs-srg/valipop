@@ -17,12 +17,9 @@
 package uk.ac.standrews.cs.digitising_scotland.record_classification.cli.command;
 
 import com.beust.jcommander.*;
-import org.apache.lucene.search.spell.*;
-import org.apache.lucene.search.suggest.*;
-import sun.launcher.resources.*;
+import org.apache.commons.io.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.experiments.config.*;
 
 import java.io.*;
 import java.nio.charset.*;
@@ -89,12 +86,22 @@ public class LoadLexiconCommand extends Command {
 
         LOGGER.finest("loading dictionary...");
 
-        final Configuration.Dictionary dictionary = new Configuration.Dictionary(name);
+        final Configuration.Dictionary dictionary = launcher.getConfiguration().newDictionary(name, load_command.isOverrideExistingEnabled());
+        final Path destination = dictionary.getPath();
         try {
-            dictionary.load(source, charset);
+            copy(source, charset, destination, Configuration.Dictionary.CHARSET);
         }
         catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new IOError(e);
+        }
+    }
+
+    protected static void copy(final Path source, final Charset source_charset, final Path destination, final Charset destination_charset) throws IOException {
+
+        try (final BufferedReader in = Files.newBufferedReader(source, source_charset);
+             final BufferedWriter out = Files.newBufferedWriter(destination, destination_charset);
+        ) {
+            IOUtils.copy(in, out);
         }
     }
 
@@ -102,9 +109,10 @@ public class LoadLexiconCommand extends Command {
 
         LOGGER.finest("loading stop words...");
 
-        final Configuration.StopWords stop_words = new Configuration.StopWords(name);
+        final Configuration.StopWords stop_words = launcher.getConfiguration().newStopWords(name, load_command.isOverrideExistingEnabled());
+        final Path destination = stop_words.getPath();
         try {
-            stop_words.load(source, charset);
+            copy(source, charset, destination, Configuration.StopWords.CHARSET);
         }
         catch (IOException e) {
             throw new RuntimeException(e);

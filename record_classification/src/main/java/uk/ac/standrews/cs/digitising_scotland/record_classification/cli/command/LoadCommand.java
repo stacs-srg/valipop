@@ -57,6 +57,12 @@ public class LoadCommand extends Command {
     /** The long name of the option that specifies a name for the resource file to be load. **/
     public static final String OPTION_NAME_LONG = "--named";
 
+    /** The short name of the option that specifies whether to override an existing resource with the same name. **/
+    public static final String OPTION_FORCE_SHORT = "-o";
+
+    /** The long name of the option that specifies whether to override an existing resource with the same name. **/
+    public static final String OPTION_FORCE_LONG = "--overrideExisting";
+
     private static final Logger LOGGER = Logger.getLogger(LoadCommand.class.getName());
 
     @Parameter(names = {OPTION_CHARSET_SHORT, OPTION_CHARSET_LONG}, description = "The resource file's charset.")
@@ -65,8 +71,11 @@ public class LoadCommand extends Command {
     @Parameter(required = true, names = {OPTION_SOURCE_SHORT, OPTION_SOURCE_LONG}, description = "Path to the resource file", converter = PathConverter.class)
     private Path source;
 
-    @Parameter(names = {OPTION_NAME_SHORT, OPTION_NAME_LONG}, description = "The name by which this resource is referred to. If unspecified, the file name is used.")
+    @Parameter(names = {OPTION_NAME_SHORT, OPTION_NAME_LONG}, description = "Whether to override an existing resource with the same name.")
     private String name;
+
+    @Parameter(names = {OPTION_FORCE_SHORT, OPTION_FORCE_LONG}, description = "Whether to override an existing resource with the same name.")
+    private boolean override_existing = false;
 
     public LoadCommand(final Launcher launcher) { super(launcher); }
 
@@ -131,5 +140,17 @@ public class LoadCommand extends Command {
     public Path getSource() {
 
         return source;
+    }
+
+    /**
+     * Whether to override an existing resource with the same name.
+     * This option may be set via {@value #OPTION_FORCE_SHORT} or {@value #OPTION_FORCE_LONG} options.
+     * By default this option is disabled.
+     *
+     * @return whether to override an existing resource with the same name
+     */
+    public boolean isOverrideExistingEnabled() {
+
+        return override_existing;
     }
 }
