@@ -67,9 +67,8 @@ public class LoadGoldStandardRecordsCommand extends LoadUnseenRecordsCommand {
     protected void process(final Stream<Record> records) {
 
         final Configuration configuration = launcher.getConfiguration();
-        final Configuration.GoldStandard gold_standard = new Configuration.GoldStandard(load_command.getName(), training_ratio);
+        final Configuration.GoldStandard gold_standard = configuration.newGoldStandard(load_command.getName(), training_ratio, load_command.isOverrideExistingEnabled());
         gold_standard.add(records);
-        configuration.addGoldStandard(gold_standard);
     }
 
     @Override

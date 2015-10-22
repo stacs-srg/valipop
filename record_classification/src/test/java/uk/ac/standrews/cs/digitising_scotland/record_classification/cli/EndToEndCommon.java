@@ -224,8 +224,6 @@ public class EndToEndCommon {
 
         commands_builder.append(ClassifyCommand.NAME);
         appendSpace(commands_builder);
-        commands_builder.append(ClassifyCommand.DESTINATION_FLAG_SHORT);
-        appendSpace(commands_builder);
         commands_builder.append(output_classified_file);
         appendNewLine(commands_builder);
     }
