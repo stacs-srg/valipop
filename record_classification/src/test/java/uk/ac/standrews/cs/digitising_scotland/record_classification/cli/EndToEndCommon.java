@@ -65,7 +65,7 @@ public class EndToEndCommon {
     @Before
     public void setup() throws IOException {
 
-        process_name = Launcher.DEFAULT_CLASSIFICATION_PROCESS_NAME;
+        process_name = Configuration.PROGRAM_NAME;
 
         cleaners = Collections.singletonList(CleanerSupplier.COMBINED);
         internal_training_ratio = Configuration.DEFAULT_INTERNAL_TRAINING_RATIO;
