@@ -112,15 +112,15 @@ public class SetCommand extends Command {
 
         final Configuration configuration = launcher.getConfiguration();
 
-        boolean set_at_least_one_property = set("classifier", classifier_supplier, configuration::setClassifierSupplier);
-        set_at_least_one_property |= set("seed", seed, configuration::setSeed);
-        set_at_least_one_property |= set("default charset", charset_supplier, configuration::setDefaultCharsetSupplier);
-        set_at_least_one_property |= set("default delimiter", delimiter, configuration::setDefaultDelimiter);
-        set_at_least_one_property |= set("classifier serialization format", serialization_format, configuration::setClassifierSerializationFormat);
-        set_at_least_one_property |= set("default training ratio", training_ratio, configuration::setDefaultTrainingRatio);
-        set_at_least_one_property |= set("default internal training ratio", internal_training_ratio, configuration::setDefaultInternalTrainingRatio);
+        boolean set_at_least_once = set("classifier", classifier_supplier, configuration::setClassifierSupplier);
+        set_at_least_once |= set("seed", seed, configuration::setSeed);
+        set_at_least_once |= set("default charset", charset_supplier, configuration::setDefaultCharsetSupplier);
+        set_at_least_once |= set("default delimiter", delimiter, configuration::setDefaultDelimiter);
+        set_at_least_once |= set("classifier serialization format", serialization_format, configuration::setClassifierSerializationFormat);
+        set_at_least_once |= set("default training ratio", training_ratio, configuration::setDefaultTrainingRatio);
+        set_at_least_once |= set("default internal training ratio", internal_training_ratio, configuration::setDefaultInternalTrainingRatio);
 
-        if (!set_at_least_one_property) {
+        if (!set_at_least_once) {
             throw new ParameterException("Please specify at lease one variable to be set.");
         }
     }
