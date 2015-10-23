@@ -23,6 +23,7 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.command.
 import java.io.*;
 import java.nio.file.*;
 import java.util.*;
+import java.util.ResourceBundle;
 import java.util.logging.*;
 import java.util.regex.*;
 
@@ -107,6 +108,7 @@ public class Launcher {
         }
         catch (Exception e) {
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
+            e.printStackTrace();
             exitWithError();
         }
 

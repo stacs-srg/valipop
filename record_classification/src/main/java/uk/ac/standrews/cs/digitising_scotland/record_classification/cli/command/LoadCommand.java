@@ -65,16 +65,16 @@ public class LoadCommand extends Command {
 
     private static final Logger LOGGER = Logger.getLogger(LoadCommand.class.getName());
 
-    @Parameter(names = {OPTION_CHARSET_SHORT, OPTION_CHARSET_LONG}, description = "The resource file's charset.")
+    @Parameter(names = {OPTION_CHARSET_SHORT, OPTION_CHARSET_LONG}, descriptionKey = "command.load.charset.description")
     private CharsetSupplier charset_supplier = launcher.getConfiguration().getDefaultCharsetSupplier();
 
-    @Parameter(required = true, names = {OPTION_SOURCE_SHORT, OPTION_SOURCE_LONG}, description = "Path to the resource file", converter = PathConverter.class)
+    @Parameter(required = true, names = {OPTION_SOURCE_SHORT, OPTION_SOURCE_LONG}, descriptionKey = "command.load.source.description", converter = PathConverter.class)
     private Path source;
 
-    @Parameter(names = {OPTION_NAME_SHORT, OPTION_NAME_LONG}, description = "Whether to override an existing resource with the same name.")
+    @Parameter(names = {OPTION_NAME_SHORT, OPTION_NAME_LONG}, descriptionKey = "command.load.name.description")
     private String name;
 
-    @Parameter(names = {OPTION_FORCE_SHORT, OPTION_FORCE_LONG}, description = "Whether to override an existing resource with the same name.")
+    @Parameter(names = {OPTION_FORCE_SHORT, OPTION_FORCE_LONG}, description = "command.load.force.description")
     private boolean override_existing = false;
 
     public LoadCommand(final Launcher launcher) { super(launcher); }

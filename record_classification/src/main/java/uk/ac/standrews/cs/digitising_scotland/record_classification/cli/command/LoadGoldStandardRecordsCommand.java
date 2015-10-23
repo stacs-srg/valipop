@@ -31,7 +31,7 @@ import java.util.stream.*;
  * @author Masih Hajiarab Derkani
  * @author Graham Kirby
  */
-@Parameters(commandNames = LoadGoldStandardRecordsCommand.NAME, commandDescription = "Load gold standard data")
+@Parameters(commandNames = LoadGoldStandardRecordsCommand.NAME, resourceBundle = Configuration.RESOURCE_BUNDLE_NAME, commandDescriptionKey = "command.load.gold_standard.description")
 public class LoadGoldStandardRecordsCommand extends LoadUnseenRecordsCommand {
 
     /** The name of this command. */
@@ -44,17 +44,17 @@ public class LoadGoldStandardRecordsCommand extends LoadUnseenRecordsCommand {
     public static final String OPTION_CLASS_COLUMN_INDEX_LONG = "--class_column_index";
 
     /** The default index of the column that contains the classes associated to each row. **/
-    public static final int DEFALUT_CLASS_COLUMN_INDEX = 2;
+    public static final int DEFAULT_CLASS_COLUMN_INDEX = 2;
 
     private static final Logger LOGGER = Logger.getLogger(LoadGoldStandardRecordsCommand.class.getName());
 
     @Parameter(names = {SetCommand.OPTION_TRAINING_RATIO_SHORT, SetCommand.OPTION_TRAINING_RATIO_LONG},
-                    description = "The ratio of gold standard records to be used for training. The value must be between 0.0 to 1.0 (inclusive).",
+                    descriptionKey = "command.load.gold_standard.training_ratio.description",
                     validateValueWith = Validators.BetweenZeroToOneInclusive.class)
     private Double training_ratio = launcher.getConfiguration().getDefaultTrainingRatio();
 
-    @Parameter(names = {OPTION_CLASS_COLUMN_INDEX_SHORT, OPTION_CLASS_COLUMN_INDEX_LONG}, description = "The zero-based index of the column containing the class associated to each label.")
-    private Integer class_column_index = DEFALUT_CLASS_COLUMN_INDEX;
+    @Parameter(names = {OPTION_CLASS_COLUMN_INDEX_SHORT, OPTION_CLASS_COLUMN_INDEX_LONG}, descriptionKey = "command.load.gold_standard.class_column_index.description")
+    private Integer class_column_index = DEFAULT_CLASS_COLUMN_INDEX;
 
     /**
      * Instantiates this command as a sub command of the given load command.

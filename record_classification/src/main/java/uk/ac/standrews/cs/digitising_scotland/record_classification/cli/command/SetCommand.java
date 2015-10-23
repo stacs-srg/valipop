@@ -21,6 +21,7 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.*
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.serialization.*;
 
+import java.util.function.*;
 import java.util.logging.*;
 
 /**
@@ -28,7 +29,7 @@ import java.util.logging.*;
  *
  * @author Masih Hajiarab Derkani
  */
-@Parameters(commandNames = SetCommand.NAME, commandDescription = "Sets a variable in the configuration of this program.")
+@Parameters(commandNames = SetCommand.NAME, commandDescriptionKey = "command.set.description")
 public class SetCommand extends Command {
 
     private static final Logger LOGGER = Logger.getLogger(SetCommand.class.getName());
@@ -78,25 +79,25 @@ public class SetCommand extends Command {
     /** The long name of the option that specifies the internal training ratio of the classifier. **/
     public static final String OPTION_INTERNAL_TRAINING_RATIO_LONG = "--internalTrainingRecordRatio";
 
-    @Parameter(names = {OPTION_CLASSIFIER_SHORT, OPTION_CLASSIFIER_LONG}, description = "The classifier to use for the classification process.")
+    @Parameter(names = {OPTION_CLASSIFIER_SHORT, OPTION_CLASSIFIER_LONG}, descriptionKey = "command.set.classifier.description")
     private ClassifierSupplier classifier_supplier;
 
-    @Parameter(names = {OPTION_RANDOM_SEED_SHORT, OPTION_RANDOM_SEED_LONG}, description = "The seed of random number generator.")
+    @Parameter(names = {OPTION_RANDOM_SEED_SHORT, OPTION_RANDOM_SEED_LONG}, descriptionKey = "command.set.seed.description")
     private Long seed;
 
-    @Parameter(names = {OPTION_CHARSET_SHORT, OPTION_CHARSET_LONG}, description = "The default charset of input/output files.")
+    @Parameter(names = {OPTION_CHARSET_SHORT, OPTION_CHARSET_LONG}, descriptionKey = "command.set.default_charset.description")
     private CharsetSupplier charset_supplier;
 
-    @Parameter(names = {OPTION_DELIMITER_SHORT, OPTION_DELIMITER_LONG}, description = "The default delimiter of input/output files.", converter = Converters.CharacterConverter.class)
+    @Parameter(names = {OPTION_DELIMITER_SHORT, OPTION_DELIMITER_LONG}, descriptionKey = "command.set.default_delimiter.description", converter = Converters.CharacterConverter.class)
     private Character delimiter;
 
-    @Parameter(names = {OPTION_SERIALIZATION_FORMAT_SHORT, OPTION_SERIALIZATION_FORMAT_LONG}, description = "The format with which the classifier is serialized.")
+    @Parameter(names = {OPTION_SERIALIZATION_FORMAT_SHORT, OPTION_SERIALIZATION_FORMAT_LONG}, descriptionKey = "command.set.serialization_format.description")
     private SerializationFormat serialization_format;
 
-    @Parameter(names = {OPTION_TRAINING_RATIO_SHORT, OPTION_TRAINING_RATIO_LONG}, description = "The default internal training ratio.")
+    @Parameter(names = {OPTION_TRAINING_RATIO_SHORT, OPTION_TRAINING_RATIO_LONG}, descriptionKey = "command.set.default_training_ratio.description")
     private Double training_ratio;
 
-    @Parameter(names = {OPTION_INTERNAL_TRAINING_RATIO_SHORT, OPTION_INTERNAL_TRAINING_RATIO_LONG}, description = "The default internal training ratio.")
+    @Parameter(names = {OPTION_INTERNAL_TRAINING_RATIO_SHORT, OPTION_INTERNAL_TRAINING_RATIO_LONG}, descriptionKey = "command.set.default_internal_training_ratio.description")
     private Double internal_training_ratio;
 
     /**
@@ -111,51 +112,26 @@ public class SetCommand extends Command {
 
         final Configuration configuration = launcher.getConfiguration();
 
-        boolean set = false;
+        boolean set_at_least_one_property = set("classifier", classifier_supplier, configuration::setClassifierSupplier);
+        set_at_least_one_property |= set("seed", seed, configuration::setSeed);
+        set_at_least_one_property |= set("default charset", charset_supplier, configuration::setDefaultCharsetSupplier);
+        set_at_least_one_property |= set("default delimiter", delimiter, configuration::setDefaultDelimiter);
+        set_at_least_one_property |= set("classifier serialization format", serialization_format, configuration::setClassifierSerializationFormat);
+        set_at_least_one_property |= set("default training ratio", training_ratio, configuration::setDefaultTrainingRatio);
+        set_at_least_one_property |= set("default internal training ratio", internal_training_ratio, configuration::setDefaultInternalTrainingRatio);
 
-        if (classifier_supplier != null) {
-            LOGGER.info(() -> "Setting classifier to " + classifier_supplier);
-            configuration.setClassifierSupplier(classifier_supplier);
-            set = true;
-        }
-
-        if (seed != null) {
-            LOGGER.info(() -> "Setting seed to " + seed);
-            configuration.setSeed(seed);
-            set = true;
-        }
-
-        if (charset_supplier != null) {
-            LOGGER.info(() -> "Setting default charset to " + charset_supplier);
-            configuration.setDefaultCharsetSupplier(charset_supplier);
-            set = true;
-        }
-
-        if (delimiter != null) {
-            LOGGER.info(() -> "Setting default delimiter to " + delimiter);
-            configuration.setDefaultDelimiter(delimiter);
-            set = true;
-        }
-
-        if (serialization_format != null) {
-            LOGGER.info(() -> "Setting serialization format to " + serialization_format);
-            configuration.setClassifierSerializationFormat(serialization_format);
-            set = true;
-        }
-
-        if (training_ratio != null) {
-            LOGGER.info(() -> "Setting default training ratio to " + training_ratio);
-            configuration.setDefaultTrainingRatio(training_ratio);
-            set = true;
-        }
-        if (internal_training_ratio != null) {
-            LOGGER.info(() -> "Setting default internal training ratio to " + internal_training_ratio);
-            configuration.setDefaultInternalTrainingRatio(internal_training_ratio);
-            set = true;
-        }
-
-        if (!set) {
+        if (!set_at_least_one_property) {
             throw new ParameterException("Please specify at lease one variable to be set.");
         }
+    }
+
+    private <Value> boolean set(String value_name, Value value, Consumer<Value> setter) {
+
+        final boolean settable = value != null;
+        if (settable) {
+            LOGGER.info(() -> "Setting " + value_name + " to " + value);
+            setter.accept(value);
+        }
+        return settable;
     }
 }

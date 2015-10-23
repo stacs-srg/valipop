@@ -16,16 +16,11 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.cli.command;
 
-import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
-import com.beust.jcommander.converters.PathConverter;
 import org.apache.commons.csv.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 
-import java.io.*;
-import java.nio.charset.*;
-import java.nio.file.*;
 import java.util.logging.*;
 import java.util.stream.*;
 
@@ -34,7 +29,7 @@ import java.util.stream.*;
  *
  * @author Masih Hajiarab Derkani
  */
-@Parameters(commandNames = LoadUnseenRecordsCommand.NAME, commandDescription = "Load unseen records")
+@Parameters(commandNames = LoadUnseenRecordsCommand.NAME, resourceBundle = Configuration.RESOURCE_BUNDLE_NAME, commandDescriptionKey = "command.load.unseen.description")
 public class LoadUnseenRecordsCommand extends LoadRecordsCommand {
 
     /** The name of this command. */

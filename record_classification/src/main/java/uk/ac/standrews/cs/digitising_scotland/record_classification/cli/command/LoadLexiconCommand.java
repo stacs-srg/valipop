@@ -32,7 +32,7 @@ import java.util.logging.*;
  *
  * @author Masih Hajiarab Derkani
  */
-@Parameters(commandNames = LoadLexiconCommand.NAME, commandDescription = "Load lexicon")
+@Parameters(commandNames = LoadLexiconCommand.NAME, resourceBundle = Configuration.RESOURCE_BUNDLE_NAME, commandDescriptionKey = "command.load.lexicon.description")
 public class LoadLexiconCommand extends Command {
 
     /** The name of this command. */
@@ -48,7 +48,7 @@ public class LoadLexiconCommand extends Command {
 
     private final LoadCommand load_command;
 
-    @Parameter(required = true, names = {OPTION_TYPE_SHORT, OPTION_TYPE_LONG}, description = "The type of the lexicon to be loaded.")
+    @Parameter(required = true, names = {OPTION_TYPE_SHORT, OPTION_TYPE_LONG}, descriptionKey = "command.load.lexicon.type.description")
     private LexiconType type;
 
     /**
