@@ -32,6 +32,7 @@ import java.util.stream.*;
  *
  * @author Masih Hajiarab Derkani
  */
+@Parameters(resourceBundle = Configuration.RESOURCE_BUNDLE_NAME)
 abstract class LoadRecordsCommand extends Command {
 
     /** The short name of the option that specifies the delimiter character in the tabular resource file to be loaded. **/
@@ -74,19 +75,19 @@ abstract class LoadRecordsCommand extends Command {
 
     protected final LoadCommand load_command;
 
-    @Parameter(names = {OPTION_DELIMITER_SHORT, OPTION_DELIMITER_LONG}, description = "The data file delimiter character", converter = Converters.CharacterConverter.class)
+    @Parameter(names = {OPTION_DELIMITER_SHORT, OPTION_DELIMITER_LONG}, descriptionKey = "command.load_records.delimiter.description", converter = Converters.CharacterConverter.class)
     private Character delimiter = launcher.getConfiguration().getDefaultDelimiter();
 
-    @Parameter(names = {OPTIONS_FORMAT_SHORT, OPTIONS_FORMAT_LONG}, description = "The format of the csv file containing the data to be loaded")
+    @Parameter(names = {OPTIONS_FORMAT_SHORT, OPTIONS_FORMAT_LONG}, descriptionKey = "command.load_records.format.description")
     private CsvFormatSupplier csv_format_supplier = launcher.getConfiguration().getDefaultCsvFormatSupplier();
 
-    @Parameter(names = {OPTION_SKIP_HEADER_SHORT, OPTION_SKIP_HEADER_LONG}, description = "Whether the CSV data file has headers.")
+    @Parameter(names = {OPTION_SKIP_HEADER_SHORT, OPTION_SKIP_HEADER_LONG}, descriptionKey = "command.load_records.skip_header.description")
     private boolean skip_header_record;
 
-    @Parameter(names = {OPTION_ID_COLUMN_INDEX_SHORT, OPTION_ID_COLUMN_INDEX_LONG}, description = "The zero-based index of the column containing the ID.")
+    @Parameter(names = {OPTION_ID_COLUMN_INDEX_SHORT, OPTION_ID_COLUMN_INDEX_LONG}, descriptionKey = "command.load_records.id_column_index.description")
     private Integer id_column_index = DEFAULT_ID_COLUMN_INDEX;
 
-    @Parameter(names = {OPTION_LABEL_COLUMN_INDEX_SHORT, OPTION_LABEL_COLUMN_INDEX_LONG}, description = "The zero-based index of the column containing the label.")
+    @Parameter(names = {OPTION_LABEL_COLUMN_INDEX_SHORT, OPTION_LABEL_COLUMN_INDEX_LONG}, descriptionKey = "command.load_records.label_column_index.description")
     private Integer label_column_index = DEFAULT_LABEL_COLUMN_INDEX;
 
     /**
