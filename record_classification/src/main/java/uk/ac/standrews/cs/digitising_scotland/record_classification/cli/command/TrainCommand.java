@@ -22,7 +22,6 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 
 import java.time.*;
-import java.util.*;
 import java.util.logging.*;
 
 /**
@@ -30,7 +29,7 @@ import java.util.logging.*;
  *
  * @author Masih Hajiarab Derkani
  */
-@Parameters(commandNames = TrainCommand.NAME, commandDescription = "Train classifier")
+@Parameters(commandNames = TrainCommand.NAME, resourceBundle = Configuration.RESOURCE_BUNDLE_NAME, commandDescriptionKey = "command.train.description")
 public class TrainCommand extends Command {
 
     /** The name of this command. */
@@ -39,7 +38,7 @@ public class TrainCommand extends Command {
     private static final Logger LOGGER = Logger.getLogger(TrainCommand.class.getName());
 
     @Parameter(names = {SetCommand.OPTION_INTERNAL_TRAINING_RATIO_SHORT, SetCommand.OPTION_INTERNAL_TRAINING_RATIO_LONG},
-                    description = "The ratio of gold standard records to be used for training as opposed to internal evaluation. The value must be between 0.0 to 1.0 (inclusive).",
+                    descriptionKey = "command.train.internal_training_ratio.description",
                     validateValueWith = Validators.BetweenZeroToOneInclusive.class)
     private Double internal_training_ratio = launcher.getConfiguration().getDefaultInternalTrainingRatio();
 
@@ -58,10 +57,12 @@ public class TrainCommand extends Command {
 
         final Bucket training_records = configuration.requireTrainingRecords();
 
+        LOGGER.info(() -> String.format("training classifier %s...", configuration.getClassifierSupplier()));
+
         final Instant start = Instant.now();
         classifier.trainAndEvaluate(training_records, internal_training_ratio, configuration.getRandom());
         final Duration training_time = Duration.between(start, Instant.now());
 
-        LOGGER.info(() -> String.format("trained the classifier on %d in %s", training_records.size(), training_time));
+        LOGGER.info(() -> String.format("trained the classifier on %d records in %s", training_records.size(), training_time));
     }
 }

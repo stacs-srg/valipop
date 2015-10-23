@@ -29,7 +29,6 @@ import java.nio.charset.*;
 import java.nio.file.*;
 import java.util.*;
 import java.util.logging.*;
-import java.util.logging.Formatter;
 import java.util.stream.*;
 
 import static uk.ac.standrews.cs.digitising_scotland.record_classification.cli.command.InitCommand.*;
@@ -45,6 +44,8 @@ public class Configuration {
 
     /** Name of record classification CLI program. */
     public static final String PROGRAM_NAME = "classi";
+
+    public static final String RESOURCE_BUNDLE_NAME = "uk.ac.standrews.cs.digitising_scotland.record_classification.cli.CLIMessages";
 
     /** The name of the folder that contains the persisted state of this program. */
     public static final Path CLI_HOME = Paths.get(Configuration.PROGRAM_NAME);
@@ -356,7 +357,7 @@ public class Configuration {
 
         this.log_level = log_level;
 
-        final Handler handler = new CLILogHandler();
+        final Handler handler = new CLIConsoleHandler();
         handler.setLevel(log_level);
         final String logger_name = Launcher.class.getPackage().getName();
         final Logger parent_logger = Logger.getLogger(logger_name);
@@ -369,6 +370,24 @@ public class Configuration {
     public Level getLogLevel() {
 
         return log_level;
+    }
+
+    public static void persistBucketAsCSV(Bucket bucket, Path destination, CSVFormat format, Charset charset) throws IOException {
+
+        try (final BufferedWriter out = Files.newBufferedWriter(destination, charset)) {
+
+            final CSVPrinter printer = format.print(out);
+            for (Record record : bucket) {
+                final Classification classification = record.getClassification();
+                printer.print(record.getId());
+                printer.print(record.getData());
+                printer.print(record.getOriginalData());
+                printer.print(classification.getCode());
+                printer.print(classification.getConfidence());
+                printer.print(classification.getDetail());
+                printer.println();
+            }
+        }
     }
 
     abstract class Resource {
@@ -506,20 +525,7 @@ public class Configuration {
         protected void persist(final Bucket bucket, final Path destination) throws IOException {
 
             assureDirectoryExists(destination.getParent());
-            try (final BufferedWriter out = Files.newBufferedWriter(destination, getCharset())) {
-
-                final CSVPrinter printer = getCsvFormat().print(out);
-                for (Record record : bucket) {
-                    final Classification classification = record.getClassification();
-                    printer.print(record.getId());
-                    printer.print(record.getData());
-                    printer.print(record.getOriginalData());
-                    printer.print(classification.getCode());
-                    printer.print(classification.getConfidence());
-                    printer.print(classification.getDetail());
-                    printer.println();
-                }
-            }
+            persistBucketAsCSV(bucket, destination, getCsvFormat(), getCharset());
         }
 
         protected Record toRecord(CSVRecord csv_record) {

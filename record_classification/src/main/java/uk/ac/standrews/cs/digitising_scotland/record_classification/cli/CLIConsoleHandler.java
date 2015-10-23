@@ -21,7 +21,7 @@ import java.util.logging.*;
 /**
  * @author Masih Hajiarab Derkani
  */
-class CLILogHandler extends ConsoleHandler {
+class CLIConsoleHandler extends ConsoleHandler {
 
     public static final Formatter CLI_CONSOLE_LOG_FORMATTER = new Formatter() {
 
@@ -32,12 +32,11 @@ class CLILogHandler extends ConsoleHandler {
         }
     };
 
-    public CLILogHandler() {
+    public CLIConsoleHandler() {
 
         super();
         setFormatter(CLI_CONSOLE_LOG_FORMATTER);
-        setOutputStream(System.out);
     }
 
-    //TODO customise publishing of severe logs via stderr
+    //TODO publish severe log level through stderr
 }

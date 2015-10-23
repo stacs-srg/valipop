@@ -16,6 +16,7 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.cli.command;
 
+import com.beust.jcommander.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.*;
 import uk.ac.standrews.cs.util.tools.InfoLevel;
@@ -42,9 +43,4 @@ public abstract class Command implements Runnable {
      * @param launcher the launcher to which this command belongs.
      */
     public Command(Launcher launcher) { this.launcher = launcher;}
-
-    protected static void output(String message) {
-
-        Logging.output(InfoLevel.VERBOSE, message);
-    }
 }

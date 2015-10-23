@@ -33,7 +33,7 @@ import java.util.stream.*;
  *
  * @author Masih Hajiarab Derkani
  */
-@Parameters(commandNames = LoadCommand.NAME, commandDescription = "Load resource")
+@Parameters(commandNames = LoadCommand.NAME, resourceBundle = Configuration.RESOURCE_BUNDLE_NAME, commandDescriptionKey = "command.load.description")
 public class LoadCommand extends Command {
 
     /** The name of this command. */
