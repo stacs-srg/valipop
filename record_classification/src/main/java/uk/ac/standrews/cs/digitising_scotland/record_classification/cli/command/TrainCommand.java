@@ -54,7 +54,6 @@ public class TrainCommand extends Command {
 
         final Configuration configuration = launcher.getConfiguration();
         final Classifier classifier = configuration.requireClassifier();
-
         final Bucket training_records = configuration.requireTrainingRecords();
 
         LOGGER.info(() -> String.format("training classifier %s...", configuration.getClassifierSupplier()));

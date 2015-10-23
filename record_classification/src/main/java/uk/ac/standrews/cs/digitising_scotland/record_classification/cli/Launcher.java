@@ -75,6 +75,22 @@ public class Launcher {
     //TODO decide whether to keep or loose this:
     //TODO //@Parameter(names = "working_directory", description = "Path to the working directory.", converter = PathConverter.class)
     //TODO //private Path working_directory;
+    
+    
+    //TODO help command: prints usage, describes individual commands, parameters to the commands, etc.;e.g. help classifier STRING_SIMILARITY
+    //TODO status command: prints the current state of the classification process, such as set variables, etc.
+    //TODO think whether to have experiment command: does the repetition and joint analysis
+    //TODO think whether to have reset command: to be used by experiment command; e.g. reset [classifier, random, gold_standard, unseen, lexicon]
+    //TODO think whether to have report command: answer a set of predefined queries about the current state.
+    //TODO think whether to have do command: exposes general utilities for one-off execution, clean, unique, split, remove_duplicates, word_frequency_analysis, sort.
+    //TODO import/export command: import/export pre-trained classifier.
+    //TODO update usage to display description of enums using a custom annotation
+    //TODO move exception messages into a resource bundle? this is useful for possible future internationalization of CLI.
+    //TODO JScience: floating point accuracy.
+    //FIXME Javadoc
+    //FIXME website: the what, the why, the how, table of commands and their description.
+    //FIXME integration testing
+    //FIXME javascript command generator?
 
     public Launcher() throws IOException {
 
