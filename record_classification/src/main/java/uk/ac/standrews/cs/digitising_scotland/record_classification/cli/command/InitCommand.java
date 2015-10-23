@@ -30,7 +30,7 @@ import java.nio.file.*;
  * @author Masih Hajiarab Derkani
  * @author Graham Kirby
  */
-@Parameters(commandNames = InitCommand.NAME, commandDescription = "Initialise a new classification process")
+@Parameters(commandNames = InitCommand.NAME, resourceBundle = Configuration.RESOURCE_BUNDLE_NAME, commandDescriptionKey = "command.init.description")
 public class InitCommand extends Command {
 
     /** The name of this command. */
@@ -42,7 +42,7 @@ public class InitCommand extends Command {
     /** The long option name which forces any existing configuration to be replaced upon initialisation. **/
     public static final String OPTION_FORCE_LONG = "--force";
 
-    @Parameter(names = {OPTION_FORCE_SHORT, OPTION_FORCE_LONG}, description = "Weather to replace configuration if already exists.")
+    @Parameter(names = {OPTION_FORCE_SHORT, OPTION_FORCE_LONG}, descriptionKey = "command.init.force.description")
     private boolean replace_existing;
 
     public InitCommand(final Launcher launcher) { super(launcher); }

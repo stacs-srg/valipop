@@ -37,7 +37,7 @@ import java.util.stream.*;
  * @author Masih Hajiarab Derkani
  * @author Graham Kirby
  */
-@Parameters(commandNames = ClassifyCommand.NAME, commandDescription = "Classifies unseen records")
+@Parameters(commandNames = ClassifyCommand.NAME, resourceBundle = Configuration.RESOURCE_BUNDLE_NAME, commandDescriptionKey = "command.classify.description")
 public class ClassifyCommand extends Command {
 
     /** The name of this command. */

@@ -18,17 +18,12 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.cli;
 
 import com.beust.jcommander.*;
 import com.beust.jcommander.converters.*;
-import sun.util.logging.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.command.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.*;
-import uk.ac.standrews.cs.util.tools.*;
-import uk.ac.standrews.cs.util.tools.Logging;
 
 import java.io.*;
 import java.nio.file.*;
 import java.util.*;
 import java.util.logging.*;
-import java.util.logging.Formatter;
 import java.util.regex.*;
 
 /**
@@ -36,6 +31,7 @@ import java.util.regex.*;
  *
  * @author Masih Hajiarab Derkani
  */
+@Parameters(resourceBundle = Configuration.RESOURCE_BUNDLE_NAME)
 public class Launcher {
 
     /** The short name of the option to display usage. **/
@@ -62,21 +58,22 @@ public class Launcher {
     private JCommander commander;
     private final Configuration configuration;
 
-    @Parameter(names = {OPTION_HELP_SHORT, OPTION_HELP_LONG}, description = "Shows usage.", help = true)
+    @Parameter(names = {OPTION_HELP_SHORT, OPTION_HELP_LONG}, descriptionKey = "launcher.usage.description", help = true)
     private boolean help;
 
-    @Parameter(names = {OPTION_COMMANDS_SHORT, OPTION_COMMANDS_LONG}, description = "Path to a text file containing the commands to be executed (one command per line).", converter = PathConverter.class)
+    @Parameter(names = {OPTION_COMMANDS_SHORT, OPTION_COMMANDS_LONG}, descriptionKey = "launcher.commands.description", converter = PathConverter.class)
     private Path commands;
 
-//    @Parameter(names = "working_directory", description = "Path to the working directory.", converter = PathConverter.class)
-//    private Path working_directory;
-
-    @Parameter(names = {OPTION_VERBOSITY_SHORT, OPTION_VERBOSITY_LONG}, description = "Specifies the verbosity of the command line interface.")
+    @Parameter(names = {OPTION_VERBOSITY_SHORT, OPTION_VERBOSITY_LONG}, descriptionKey = "launcher.verbosity.description")
     private LogLevelSupplier level_supplier = LogLevelSupplier.INFO;
 
     //TODO implement interactive mode
     //TODO //@Parameter(names = {"-i", "--interactive"}, description = "Interactive mode; allows multiple command execution.")
     //TODO //private boolean interactive;
+
+    //TODO decide whether to keep or loose this:
+    //TODO //@Parameter(names = "working_directory", description = "Path to the working directory.", converter = PathConverter.class)
+    //TODO //private Path working_directory;
 
     public Launcher() throws IOException {
 
@@ -89,31 +86,35 @@ public class Launcher {
         return Files.isRegularFile(Configuration.CONFIGURATION_FILE) ? Configuration.load() : new Configuration();
     }
 
-    public static void main(String[] args) throws Exception {
-
-        final Launcher launcher = new Launcher();
+    public static void main(String[] args) {
 
         try {
+            final Launcher launcher = new Launcher();
             launcher.parse(args);
             launcher.handle();
         }
         catch (ParameterException e) {
-            launcher.exitWithError(e.getMessage());
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
+            exitWithError();
         }
         catch (FileAlreadyExistsException e) {
-            launcher.exitWithError("process directory '" + e.getFile() + "' already exists.");
+            LOGGER.log(Level.SEVERE, String.format("file '%s' already exists.", e.getFile()), e);
+            exitWithError();
         }
         catch (NoSuchFileException e) {
-            launcher.exitWithError("expected context file '" + e.getFile() + "' not found.");
+            LOGGER.log(Level.SEVERE, String.format("file '%s' not found.", e.getFile()), e);
+            exitWithError();
         }
         catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Internal faiure", e);
-            launcher.exitWithError(e.getMessage());
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
+            exitWithError();
         }
 
         //TODO expand user-friendly messages per exceptions
         //TODO think about CLI-specific exceptions.
     }
+
+    private static void exitWithError() {System.exit(-1);}
 
     void addCommand(Command command) {
 
@@ -219,18 +220,13 @@ public class Launcher {
         }
     }
 
-    private void exitWithError(final String message) {
-
-        exitWithError(message, false);
-    }
-
     private void exitWithError(final String message, boolean show_usage) {
 
         System.err.println(message);
         if (show_usage) {
             commander.usage();
         }
-        System.exit(-1);
+        exitWithError();
     }
 
     public Configuration getConfiguration() {

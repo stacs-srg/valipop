@@ -26,6 +26,9 @@ import java.util.logging.*;
  */
 public enum LogLevelSupplier implements Supplier<Level> {
 
+    /** Indicates all messegas must be logged. **/
+    ALL(Level.ALL),
+    
     /** Indicates that serious failures must be logged. **/
     SEVERE(Level.SEVERE),
 
@@ -34,9 +37,6 @@ public enum LogLevelSupplier implements Supplier<Level> {
 
     /** Indicates only informational messsages must be logged. **/
     INFO(Level.INFO),
-
-    /** Indicates all messegas must be logged. **/
-    ALL(Level.ALL),
 
     /** Turns off logging. **/
     OFF(Level.OFF);

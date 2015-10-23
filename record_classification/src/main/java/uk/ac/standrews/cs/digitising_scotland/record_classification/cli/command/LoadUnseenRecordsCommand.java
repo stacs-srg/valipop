@@ -60,7 +60,7 @@ public class LoadUnseenRecordsCommand extends LoadRecordsCommand {
     @Override
     protected Record toRecord(final CSVRecord record) {
 
-        LOGGER.finest(() -> String.format("loading record number %d, at character position %d", record.getRecordNumber(), record.getCharacterPosition()));
+        LOGGER.finest(() -> String.format("Loading record number %d, at character position %d", record.getRecordNumber(), record.getCharacterPosition()));
 
         final Integer id = getId(record);
         final String label = getLabel(record);

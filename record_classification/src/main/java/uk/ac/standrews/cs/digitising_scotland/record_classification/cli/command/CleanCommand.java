@@ -24,7 +24,10 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 
 import java.util.*;
 import java.util.function.*;
+import java.util.logging.*;
 import java.util.stream.*;
+
+import static java.util.logging.Logger.getLogger;
 
 /**
  * Cleans load gold standard and unseen records.
@@ -32,7 +35,7 @@ import java.util.stream.*;
  * @author Masih Hajiarab Derkani
  */
 @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
-@Parameters(commandNames = CleanCommand.NAME, commandDescription = "Cleans loaded gold standard and unseen records.")
+@Parameters(commandNames = CleanCommand.NAME, resourceBundle = Configuration.RESOURCE_BUNDLE_NAME, commandDescriptionKey = "command.clean.description")
 public class CleanCommand extends Command {
 
     /** The name of this command. */
@@ -44,10 +47,9 @@ public class CleanCommand extends Command {
     /** The long name of the command that specifies the cleaners by which to clean loaded gold standard and/or unseen records. **/
     public static final String OPTION_CLEANER_LONG = "--cleaner";
 
-    @Parameter(required = true,
-                    names = {OPTION_CLEANER_SHORT, OPTION_CLEANER_LONG},
-                    description = "One or more cleaners with which to clean loaded gold standard and/or unseen records.",
-                    variableArity = true)
+    private static final Logger LOGGER = getLogger(CleanCommand.class.getName());
+
+    @Parameter(required = true, names = {OPTION_CLEANER_SHORT, OPTION_CLEANER_LONG}, descriptionKey = "command.clean.cleaner.description", variableArity = true)
     private List<CleanerSupplier> cleaner_suppliers;
 
     /**
@@ -69,15 +71,25 @@ public class CleanCommand extends Command {
         cleanUnseenRecords(cleaner, configuration);
     }
 
-    private void cleanUnseenRecords(final Cleaner cleaner, final Configuration configuration) {clean(cleaner, configuration.getUnseens());}
+    private void cleanUnseenRecords(final Cleaner cleaner, final Configuration configuration) {
 
-    private void cleanGoldStandardRecords(final Cleaner cleaner, final Configuration configuration) {clean(cleaner, configuration.getGoldStandards());}
+        LOGGER.info("cleaning unseen records...");
+        clean(cleaner, configuration.getUnseens());
+    }
+
+    private void cleanGoldStandardRecords(final Cleaner cleaner, final Configuration configuration) {
+
+        LOGGER.info("cleaning gold standard records...");
+        clean(cleaner, configuration.getGoldStandards());
+    }
 
     private void clean(final Cleaner cleaner, final List<? extends Unseen> unclean) {
 
-        final List<Bucket> unclean_buckets = unclean.stream().map(Unseen::toBucket).collect(Collectors.toList());
+        LOGGER.info(() -> "cleaning " + unclean.stream().map(Unseen::getName).reduce((one, another) -> one + ", " + another).orElse("skipped; no records are loaded to clean."));
 
+        final List<Bucket> unclean_buckets = unclean.stream().map(Unseen::toBucket).collect(Collectors.toList());
         final List<Bucket> clean_buckets = cleaner.apply(unclean_buckets);
+
         for (int index = 0; index < unclean.size(); index++) {
             final Unseen resource = unclean.get(index);
             resource.setBucket(clean_buckets.get(index));
