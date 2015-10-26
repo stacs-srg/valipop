@@ -40,7 +40,7 @@ public class CleanStopWordsCommand extends Command {
     public static final String NAME = "stop_words";
 
     /** The short name of the option that specifies whether the stop words are case sensitive. **/
-    public static final String OPTION_CASE_SENSITIVE_SHORT = "-c";
+    public static final String OPTION_CASE_SENSITIVE_SHORT = "-cs";
 
     /** The long name of the option that specifies whether the stop words are case sensitive. **/
     public static final String OPTION_CASE_SENSITIVE_LONG = "--caseSensitive";
