@@ -79,7 +79,7 @@ public class LoadCommand extends Command {
     @Override
     public void run() {
 
-        final Optional<Command> command = subCommand();
+        final Optional<Command> command = getSubCommand();
 
         if (command.isPresent()) {
             LOGGER.fine(() -> "Detected sub command " + command);

@@ -75,8 +75,7 @@ public class Launcher {
     //TODO decide whether to keep or loose this:
     //TODO //@Parameter(names = "working_directory", description = "Path to the working directory.", converter = PathConverter.class)
     //TODO //private Path working_directory;
-    
-    
+
     //TODO help command: prints usage, describes individual commands, parameters to the commands, etc.;e.g. help classifier STRING_SIMILARITY
     //TODO status command: prints the current state of the classification process, such as set variables, etc.
     //TODO think whether to have experiment command: does the repetition and joint analysis
@@ -154,22 +153,18 @@ public class Launcher {
         addCommand(new SetCommand(this));
         addCommand(new ClassifyCommand(this));
         addCommand(new EvaluateCommand(this));
-        
+        addCommand(new TrainCommand(this));
+
         final CleanCommand clean_command = new CleanCommand(this);
         addCommand(clean_command);
-        
-        final JCommander clean_commander = commander.getCommands().get(CleanCommand.NAME);
-        clean_commander.addCommand(new CleanStopWordsCommand(this));
-        clean_commander.addCommand(new CleanSpellingCommand(this));
+        clean_command.addSubCommand(new CleanStopWordsCommand(this));
+        clean_command.addSubCommand(new CleanSpellingCommand(this));
 
         final LoadCommand load_command = new LoadCommand(this);
         addCommand(load_command);
+        load_command.addSubCommand(new LoadUnseenRecordsCommand(load_command));
+        load_command.addSubCommand(new LoadGoldStandardRecordsCommand(load_command));
 
-        final JCommander load_commander = commander.getCommands().get(LoadCommand.NAME);
-        load_commander.addCommand(new LoadUnseenRecordsCommand(load_command));
-        load_commander.addCommand(new LoadGoldStandardRecordsCommand(load_command));
-
-        addCommand(new TrainCommand(this));
     }
 
     public void handle() throws Exception {

@@ -35,34 +35,55 @@ import java.util.*;
 public abstract class Command implements Runnable {
 
     protected final Launcher launcher;
-    private String name;
+    private final String name;
 
     /**
-     * Instantiates this command for the given launcher.
+     * Instantiates this command for the given launcher and the name by which it is triggered.
      *
      * @param launcher the launcher to which this command belongs.
+     * @param name the name by which this command is triggered via the command line interface
      */
-    public Command(Launcher launcher, String name) {
+    public Command(final Launcher launcher, final String name) {
 
         this.launcher = launcher;
         this.name = name;
     }
 
+    /**
+     * Gets the name by which this command is triggered via the command line interface.
+     *
+     * @return the name by which this command is triggered via the command line interface
+     */
     public final String getCommandName() {
 
         return name;
     }
 
-    protected Optional<Command> subCommand() {
+    /**
+     * Adds a given command to this command as its sub-command.
+     *
+     * @param sub_command the sub command to add to this command
+     * @throws IllegalStateException if this command is not added to a launcher
+     */
+    public void addSubCommand(Command sub_command) {
 
-        final JCommander commander = launcher.getCommander();
-        final JCommander load_commander = commander.getCommands().get(name);
+        final JCommander sub_commander = launcher.getCommander().getCommands().get(name);
+        if (sub_commander != null) {
+            sub_commander.addCommand(sub_command);
+        }
 
-        final String command_name = load_commander.getParsedCommand();
+        throw new IllegalStateException("command must be added to launcher before adding sub commands");
+
+    }
+
+    protected Optional<Command> getSubCommand() {
+
+        final JCommander sub_commander = getSubCommander();
+        final String command_name = sub_commander.getParsedCommand();
 
         final Optional<Command> command;
         if (command_name != null) {
-            final JCommander load_command_commander = load_commander.getCommands().get(command_name);
+            final JCommander load_command_commander = sub_commander.getCommands().get(command_name);
             command = Optional.of((Command) load_command_commander.getObjects().get(0));
         }
         else {
@@ -70,5 +91,11 @@ public abstract class Command implements Runnable {
         }
 
         return command;
+    }
+
+    private JCommander getSubCommander() {
+
+        final JCommander core_commander = launcher.getCommander();
+        return core_commander.getCommands().get(name);
     }
 }
