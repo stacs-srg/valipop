@@ -68,7 +68,7 @@ public class CleanCommand extends Command {
             cleanWithPreDefinedCleaner();
         }
 
-        final Optional<Command> sub_command = subCommand();
+        final Optional<Command> sub_command = getSubCommand();
 
         if (sub_command.isPresent()) {
             LOGGER.fine(() -> "Detected sub command " + sub_command);
