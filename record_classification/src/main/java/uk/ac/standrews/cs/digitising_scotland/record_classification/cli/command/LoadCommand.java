@@ -18,15 +18,12 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.cli.command
 
 import com.beust.jcommander.*;
 import com.beust.jcommander.converters.*;
-import org.apache.commons.csv.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 
 import java.nio.charset.*;
 import java.nio.file.*;
 import java.util.*;
 import java.util.logging.*;
-import java.util.stream.*;
 
 /**
  * Command to load a resource from the local file system.
@@ -82,25 +79,39 @@ public class LoadCommand extends Command {
     @Override
     public void run() {
 
-        final Command command = getCommand();
-        LOGGER.fine(() -> "Detected sub command " + command);
-        command.run();
+        final Optional<Command> command = getSubCommand(launcher);
+
+        if (command.isPresent()) {
+            LOGGER.fine(() -> "Detected sub command " + command);
+            command.get().run();
+        }
+        else {
+            LOGGER.severe(() -> "No sub command detected to execute");
+            throw new ParameterException("Please specify a sub command.");
+        }
     }
 
-    protected Command getCommand() {
+    static Optional<Command> getSubCommand(Launcher launcher) {
 
         //TODO move to a jcommander utility class; merge with duplicate functionality in launcher.
         final JCommander commander = launcher.getCommander();
         final JCommander load_commander = commander.getCommands().get(NAME);
 
         final String command_name = load_commander.getParsedCommand();
-        validateCommandName(command_name);
 
-        final JCommander load_command_commander = load_commander.getCommands().get(command_name);
-        return (Command) load_command_commander.getObjects().get(0);
+        final Optional<Command> command;
+        if (command_name != null) {
+            final JCommander load_command_commander = load_commander.getCommands().get(command_name);
+            command = Optional.of((Command) load_command_commander.getObjects().get(0));
+        }
+        else {
+            command = Optional.empty();
+        }
+
+        return command;
     }
 
-    private void validateCommandName(final String command_name) {
+    private static void validateCommandName(final String command_name) {
 
         if (command_name == null) {
             throw new ParameterException("Please specify sub command");

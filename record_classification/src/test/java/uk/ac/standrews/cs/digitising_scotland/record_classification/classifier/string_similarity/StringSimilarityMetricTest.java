@@ -19,9 +19,6 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.string_similarity.SetMetricAdapter;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.string_similarity.SimilarityMetric;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.string_similarity.StringSimilarityMetrics;
 
 import java.util.*;
 
@@ -54,16 +51,16 @@ public class StringSimilarityMetricTest {
         List<Object[]> parameters = new ArrayList<>();
 
         // See https://en.wikipedia.org/wiki/Sørensen–Dice_coefficient
-        parameters.add(new Object[]{StringSimilarityMetrics.DICE.get(), 1.0, 2.0 * intersection_s1_s2.size() / (s1_bigrams.size() + s2_bigrams.size()), 0.0});
+        parameters.add(new Object[]{StringSimilaritySupplier.DICE.get(), 1.0, 2.0 * intersection_s1_s2.size() / (s1_bigrams.size() + s2_bigrams.size()), 0.0});
 
         // See https://en.wikipedia.org/wiki/Jaccard_index
-        parameters.add(new Object[]{StringSimilarityMetrics.JACCARD.get(), 1.0, (double) intersection_s1_s2.size() / union_s1_s2.size(), 0.0});
+        parameters.add(new Object[]{StringSimilaritySupplier.JACCARD.get(), 1.0, (double) intersection_s1_s2.size() / union_s1_s2.size(), 0.0});
 
         // See https://en.wikipedia.org/wiki/Jaro–Winkler_distance
-        parameters.add(new Object[]{StringSimilarityMetrics.JARO_WINKLER.get(), 1.0, 0.7, 0.0});
+        parameters.add(new Object[]{StringSimilaritySupplier.JARO_WINKLER.get(), 1.0, 0.7, 0.0});
 
         // See https://en.wikipedia.org/wiki/Levenshtein_distance
-        parameters.add(new Object[]{StringSimilarityMetrics.LEVENSHTEIN.get(), 1.0, 0.5, 0.2});
+        parameters.add(new Object[]{StringSimilaritySupplier.LEVENSHTEIN.get(), 1.0, 0.5, 0.2});
 
         return parameters;
     }

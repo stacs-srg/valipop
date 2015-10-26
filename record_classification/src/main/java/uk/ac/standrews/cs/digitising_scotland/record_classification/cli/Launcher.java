@@ -90,7 +90,7 @@ public class Launcher {
     //FIXME Javadoc
     //FIXME website: the what, the why, the how, table of commands and their description.
     //FIXME integration testing
-    //FIXME javascript command generator?
+    //TODO javascript command generator?
 
     public Launcher() throws IOException {
 
@@ -153,8 +153,14 @@ public class Launcher {
         addCommand(new InitCommand(this));
         addCommand(new SetCommand(this));
         addCommand(new ClassifyCommand(this));
-        addCommand(new CleanCommand(this));
         addCommand(new EvaluateCommand(this));
+        
+        final CleanCommand clean_command = new CleanCommand(this);
+        addCommand(clean_command);
+        
+        final JCommander clean_commander = commander.getCommands().get(CleanCommand.NAME);
+        clean_commander.addCommand(new CleanStopWordsCommand(this));
+        clean_commander.addCommand(new CleanSpellingCommand(this));
 
         final LoadCommand load_command = new LoadCommand(this);
         addCommand(load_command);

@@ -52,8 +52,6 @@ public class Configuration {
     public static final Path CONFIGURATION_FILE = CLI_HOME.resolve("config.json");
     public static final Path GOLD_STANDARD_HOME = CLI_HOME.resolve("gold_standard");
     public static final Path UNSEEN_HOME = CLI_HOME.resolve("unseen");
-    public static final Path DICTIONARY_HOME = CLI_HOME.resolve("dictionary");
-    public static final Path STOP_WORDS_HOME = CLI_HOME.resolve("stop_words");
     public static final CSVFormat RECORD_CSV_FORMAT = CSVFormat.RFC4180.withHeader("ID", "DATA", "ORIGINAL_DATA", "CODE", "CONFIDENCE", "DETAIL");
     public static final Charset RESOURCE_CHARSET = StandardCharsets.UTF_8;
     public static final CharsetSupplier DEFAULT_CHARSET_SUPPLIER = CharsetSupplier.SYSTEM_DEFAULT;
@@ -87,8 +85,6 @@ public class Configuration {
     private CsvFormatSupplier default_csv_format_supplier = DEFAULT_CSV_FORMAT_SUPPLIER;
     private Map<String, GoldStandard> gold_standards;
     private Map<String, Unseen> unseens;
-    private Map<String, Dictionary> dictionaries;
-    private Map<String, StopWords> stop_words;
     private Random random;
     private double default_training_ratio = DEFAULT_TRAINING_RATIO;
     private double default_internal_training_ratio = DEFAULT_INTERNAL_TRAINING_RATIO;
@@ -98,8 +94,6 @@ public class Configuration {
 
         gold_standards = new LinkedHashMap<>();
         unseens = new LinkedHashMap<>();
-        dictionaries = new LinkedHashMap<>();
-        stop_words = new LinkedHashMap<>();
 
         initRandom();
     }
@@ -285,29 +279,11 @@ public class Configuration {
         this.default_training_ratio = default_training_ratio;
     }
 
-    public Dictionary newDictionary(final String name, boolean override_existing) {
-
-        checkResourceExistence("dictionary", dictionaries, name, override_existing);
-
-        final Dictionary dictionary = new Dictionary(name);
-        dictionaries.put(name, dictionary);
-        return dictionary;
-    }
-
     private void checkResourceExistence(final String keyword, final Map<String, ? extends Resource> resources, final String name, final boolean override_existing) {
 
         if (override_existing && resources.containsKey(name)) {
             throw new ParameterException(String.format("A %s named %s already exists.", keyword, name));
         }
-    }
-
-    public StopWords newStopWords(final String name, boolean override_existing) {
-
-        checkResourceExistence("stop word collection", stop_words, name, override_existing);
-
-        final StopWords stop_word = new StopWords(name);
-        stop_words.put(name, stop_word);
-        return stop_word;
     }
 
     public Unseen newUnseen(final String name, boolean override_existing) {
@@ -336,16 +312,6 @@ public class Configuration {
     public boolean isProceedOnErrorEnabled() {
 
         return proceed_on_error;
-    }
-
-    public List<Dictionary> getDictionaries() {
-
-        return new ArrayList<>(dictionaries.values());
-    }
-
-    public List<StopWords> getStopWords() {
-
-        return new ArrayList<>(stop_words.values());
     }
 
     public void setProceedOnError(final Boolean proceed_on_error) {
@@ -434,40 +400,6 @@ public class Configuration {
         }
 
         protected abstract void persist() throws IOException;
-    }
-
-    public class Dictionary extends Resource {
-
-        Dictionary(final String name) {
-
-            super(name);
-        }
-
-        @Override
-        protected Path getHome() {
-
-            return DICTIONARY_HOME;
-        }
-
-        @Override
-        protected void persist() {
-
-        }
-
-    }
-
-    public class StopWords extends Dictionary {
-
-        StopWords(final String name) {
-
-            super(name);
-        }
-
-        @Override
-        protected Path getHome() {
-
-            return STOP_WORDS_HOME;
-        }
     }
 
     public class Unseen extends Resource {

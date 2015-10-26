@@ -38,13 +38,11 @@ class ConfigurationJsonSerializer extends JsonSerializer<Configuration> {
     protected static final String DEFAULT_CSV_FORMAT_SUPPLIER = "default_csv_format_supplier";
     protected static final String DEFAULT_TRAINING_RATIO = "default_training_ratio";
     protected static final String DEFAULT_INTERNAL_TRAINING_RATIO = "default_internal_training_ratio";
-    protected static final String DICTIONARIES = "dictionaries";
-    protected static final String STOP_WORDS = "stop_words";
     protected static final String UNSEENS = "unseens";
     protected static final String GOLD_STANDARDS = "gold_standards";
 
     @Override
-    public void serialize(final Configuration configuration, final JsonGenerator out, final SerializerProvider serializers) throws IOException, JsonProcessingException {
+    public void serialize(final Configuration configuration, final JsonGenerator out, final SerializerProvider serializers) throws IOException {
 
         out.writeStartObject();
 
@@ -58,8 +56,6 @@ class ConfigurationJsonSerializer extends JsonSerializer<Configuration> {
         out.writeNumberField(DEFAULT_TRAINING_RATIO, configuration.getDefaultTrainingRatio());
         out.writeNumberField(DEFAULT_INTERNAL_TRAINING_RATIO, configuration.getDefaultInternalTrainingRatio());
 
-        writeResourceList(DICTIONARIES, configuration.getDictionaries(), out, serializers);
-        writeResourceList(STOP_WORDS, configuration.getDictionaries(), out, serializers);
         writeResourceList(UNSEENS, configuration.getUnseens(), out, serializers);
         writeGoldStandards(configuration, out, serializers);
 
