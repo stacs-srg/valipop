@@ -22,6 +22,7 @@ import org.apache.commons.csv.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 
+import java.util.*;
 import java.util.logging.*;
 import java.util.stream.*;
 
@@ -53,7 +54,7 @@ public class LoadGoldStandardRecordsCommand extends LoadUnseenRecordsCommand {
                     validateValueWith = Validators.BetweenZeroToOneInclusive.class)
     private Double training_ratio = launcher.getConfiguration().getDefaultTrainingRatio();
 
-    @Parameter(names = {OPTION_CLASS_COLUMN_INDEX_SHORT, OPTION_CLASS_COLUMN_INDEX_LONG}, descriptionKey = "command.load.gold_standard.class_column_index.description")
+    @Parameter(names = {OPTION_CLASS_COLUMN_INDEX_SHORT, OPTION_CLASS_COLUMN_INDEX_LONG}, descriptionKey = "command.load.gold_standard.class_column_index.description", validateValueWith = Validators.AtLeastZero.class)
     private Integer class_column_index = DEFAULT_CLASS_COLUMN_INDEX;
 
     /**
@@ -64,11 +65,11 @@ public class LoadGoldStandardRecordsCommand extends LoadUnseenRecordsCommand {
     public LoadGoldStandardRecordsCommand(final LoadCommand load_command) { super(load_command, NAME); }
 
     @Override
-    protected void process(final Stream<Record> records) {
+    protected void process(final List<Record> records) {
 
         final Configuration configuration = launcher.getConfiguration();
         final Configuration.GoldStandard gold_standard = configuration.newGoldStandard(load_command.getResourceName(), training_ratio, load_command.isOverrideExistingEnabled());
-        gold_standard.add(records);
+        gold_standard.setBucket(new Bucket(records));
     }
 
     @Override
