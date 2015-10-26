@@ -42,13 +42,15 @@ public class LoadUnseenRecordsCommand extends LoadRecordsCommand {
      *
      * @param load_command the load command to which this command belongs.
      */
-    public LoadUnseenRecordsCommand(LoadCommand load_command) { super(load_command); }
+    public LoadUnseenRecordsCommand(LoadCommand load_command) { this(load_command, NAME); }
+
+    protected LoadUnseenRecordsCommand(final LoadCommand load_command, final String name) { super(load_command, name); }
 
     @Override
     protected void process(final Stream<Record> records) {
 
         final Configuration configuration = launcher.getConfiguration();
-        final Configuration.Unseen unseen = configuration.newUnseen(load_command.getName(), load_command.isOverrideExistingEnabled());
+        final Configuration.Unseen unseen = configuration.newUnseen(load_command.getResourceName(), load_command.isOverrideExistingEnabled());
         unseen.add(records);
     }
 

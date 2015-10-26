@@ -24,8 +24,7 @@ import uk.ac.standrews.cs.util.tools.Logging;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.LoadStep;
 
 import java.nio.charset.Charset;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 /**
  * Represents an operation exposed to the user via the {@link Launcher command-line interface}.
@@ -36,11 +35,40 @@ import java.util.List;
 public abstract class Command implements Runnable {
 
     protected final Launcher launcher;
+    private String name;
 
     /**
      * Instantiates this command for the given launcher.
      *
      * @param launcher the launcher to which this command belongs.
      */
-    public Command(Launcher launcher) { this.launcher = launcher;}
+    public Command(Launcher launcher, String name) {
+
+        this.launcher = launcher;
+        this.name = name;
+    }
+
+    public final String getCommandName() {
+
+        return name;
+    }
+
+    protected Optional<Command> subCommand() {
+
+        final JCommander commander = launcher.getCommander();
+        final JCommander load_commander = commander.getCommands().get(name);
+
+        final String command_name = load_commander.getParsedCommand();
+
+        final Optional<Command> command;
+        if (command_name != null) {
+            final JCommander load_command_commander = load_commander.getCommands().get(command_name);
+            command = Optional.of((Command) load_command_commander.getObjects().get(0));
+        }
+        else {
+            command = Optional.empty();
+        }
+
+        return command;
+    }
 }

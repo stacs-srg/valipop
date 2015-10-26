@@ -57,7 +57,7 @@ public class CleanCommand extends Command {
      *
      * @param launcher the launcher to which this command belongs
      */
-    public CleanCommand(final Launcher launcher) { super(launcher); }
+    public CleanCommand(final Launcher launcher) { super(launcher, NAME); }
 
     @Override
     public void run() {
@@ -68,7 +68,7 @@ public class CleanCommand extends Command {
             cleanWithPreDefinedCleaner();
         }
 
-        final Optional<Command> sub_command = LoadCommand.getSubCommand(launcher);
+        final Optional<Command> sub_command = subCommand();
 
         if (sub_command.isPresent()) {
             LOGGER.fine(() -> "Detected sub command " + sub_command);
@@ -85,7 +85,6 @@ public class CleanCommand extends Command {
         final Cleaner cleaner = getCombinedCleaner();
         final Configuration configuration = launcher.getConfiguration();
 
-        //FIXME implement spelling correction and stop words cleaning using loaded lexicon.
         //TODO think about whether we need this: allow user to choose what to clean; i.e. gold standard all or by name, unseen all or by name.
 
         cleanGoldStandardRecords(cleaner, configuration);

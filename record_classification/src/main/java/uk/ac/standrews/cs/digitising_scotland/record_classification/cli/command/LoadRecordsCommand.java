@@ -95,9 +95,9 @@ abstract class LoadRecordsCommand extends Command {
      *
      * @param load_command the load command to which this command belongs.
      */
-    LoadRecordsCommand(LoadCommand load_command) {
+    LoadRecordsCommand(LoadCommand load_command, String name) {
 
-        super(load_command.launcher);
+        super(load_command.launcher, name);
         this.load_command = load_command;
     }
 

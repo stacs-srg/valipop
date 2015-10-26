@@ -45,7 +45,12 @@ public class CleanStopWordsCommand extends Command {
      */
     public CleanStopWordsCommand(final Launcher launcher) {
 
-        super(launcher);
+        this(launcher, NAME);
+    }
+
+    protected CleanStopWordsCommand(final Launcher launcher, final String name) {
+
+        super(launcher, name);
     }
 
     @Override
