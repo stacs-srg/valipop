@@ -16,8 +16,14 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning;
 
+import org.apache.lucene.search.spell.*;
+import uk.ac.standrews.cs.lexicon.*;
+import uk.ac.standrews.cs.lexicon.dictionary.*;
+import uk.ac.standrews.cs.lexicon.dictionary.Dictionary;
+
 import java.io.*;
-import java.util.Arrays;
+import java.net.*;
+import java.util.*;
 import java.util.function.Supplier;
 
 /**
