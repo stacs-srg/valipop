@@ -45,7 +45,7 @@ public class InitCommand extends Command {
     @Parameter(names = {OPTION_FORCE_SHORT, OPTION_FORCE_LONG}, descriptionKey = "command.init.force.description")
     private boolean replace_existing;
 
-    public InitCommand(final Launcher launcher) { super(launcher); }
+    public InitCommand(final Launcher launcher) { super(launcher, NAME); }
 
     @Override
     public void run() {
@@ -69,7 +69,7 @@ public class InitCommand extends Command {
                 FileUtils.deleteDirectory(Configuration.CLI_HOME.toFile());
             }
             else {
-                throw new IOException("directory already exists: " + directory);
+                throw new FileAlreadyExistsException("directory already exists: " + directory);
             }
         }
     }

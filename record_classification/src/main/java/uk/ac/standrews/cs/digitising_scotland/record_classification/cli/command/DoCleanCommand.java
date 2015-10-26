@@ -75,7 +75,7 @@ public class DoCleanCommand extends Command {
      */
     public DoCleanCommand(final Launcher launcher) {
 
-        super(launcher);
+        super(launcher, NAME);
     }
 
     @Override

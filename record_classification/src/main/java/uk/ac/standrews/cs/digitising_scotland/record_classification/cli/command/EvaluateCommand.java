@@ -56,7 +56,7 @@ public class EvaluateCommand extends Command {
 
     public EvaluateCommand(final Launcher launcher) {
 
-        super(launcher);
+        super(launcher, NAME);
     }
 
     @Override

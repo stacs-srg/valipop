@@ -74,12 +74,12 @@ public class LoadCommand extends Command {
     @Parameter(names = {OPTION_FORCE_SHORT, OPTION_FORCE_LONG}, description = "command.load.force.description")
     private boolean override_existing = false;
 
-    public LoadCommand(final Launcher launcher) { super(launcher); }
+    public LoadCommand(final Launcher launcher) { super(launcher, NAME); }
 
     @Override
     public void run() {
 
-        final Optional<Command> command = getSubCommand(launcher);
+        final Optional<Command> command = subCommand();
 
         if (command.isPresent()) {
             LOGGER.fine(() -> "Detected sub command " + command);
@@ -88,33 +88,6 @@ public class LoadCommand extends Command {
         else {
             LOGGER.severe(() -> "No sub command detected to execute");
             throw new ParameterException("Please specify a sub command.");
-        }
-    }
-
-    static Optional<Command> getSubCommand(Launcher launcher) {
-
-        //TODO move to a jcommander utility class; merge with duplicate functionality in launcher.
-        final JCommander commander = launcher.getCommander();
-        final JCommander load_commander = commander.getCommands().get(NAME);
-
-        final String command_name = load_commander.getParsedCommand();
-
-        final Optional<Command> command;
-        if (command_name != null) {
-            final JCommander load_command_commander = load_commander.getCommands().get(command_name);
-            command = Optional.of((Command) load_command_commander.getObjects().get(0));
-        }
-        else {
-            command = Optional.empty();
-        }
-
-        return command;
-    }
-
-    private static void validateCommandName(final String command_name) {
-
-        if (command_name == null) {
-            throw new ParameterException("Please specify sub command");
         }
     }
 
@@ -137,7 +110,7 @@ public class LoadCommand extends Command {
      *
      * @return the name that is associated to the loaded resource
      */
-    public String getName() {
+    public String getResourceName() {
 
         return name == null ? getSource().getFileName().toString() : name;
     }

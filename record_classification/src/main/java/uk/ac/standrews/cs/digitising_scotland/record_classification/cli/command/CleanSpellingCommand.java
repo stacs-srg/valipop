@@ -49,7 +49,7 @@ public class CleanSpellingCommand extends CleanStopWordsCommand {
      */
     public CleanSpellingCommand(final Launcher launcher) {
 
-        super(launcher);
+        super(launcher, NAME);
     }
 
     @Override

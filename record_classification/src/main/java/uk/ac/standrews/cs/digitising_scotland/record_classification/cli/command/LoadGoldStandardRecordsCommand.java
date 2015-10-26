@@ -61,13 +61,13 @@ public class LoadGoldStandardRecordsCommand extends LoadUnseenRecordsCommand {
      *
      * @param load_command the load command to which this command belongs.
      */
-    public LoadGoldStandardRecordsCommand(final LoadCommand load_command) { super(load_command); }
+    public LoadGoldStandardRecordsCommand(final LoadCommand load_command) { super(load_command, NAME); }
 
     @Override
     protected void process(final Stream<Record> records) {
 
         final Configuration configuration = launcher.getConfiguration();
-        final Configuration.GoldStandard gold_standard = configuration.newGoldStandard(load_command.getName(), training_ratio, load_command.isOverrideExistingEnabled());
+        final Configuration.GoldStandard gold_standard = configuration.newGoldStandard(load_command.getResourceName(), training_ratio, load_command.isOverrideExistingEnabled());
         gold_standard.add(records);
     }
 

@@ -105,7 +105,7 @@ public class SetCommand extends Command {
      *
      * @param launcher the launcher to which this format belongs.
      */
-    public SetCommand(final Launcher launcher) { super(launcher); }
+    public SetCommand(final Launcher launcher) { super(launcher, NAME); }
 
     @Override
     public void run() {

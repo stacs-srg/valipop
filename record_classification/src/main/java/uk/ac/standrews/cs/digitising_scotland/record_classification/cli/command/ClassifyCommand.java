@@ -48,7 +48,7 @@ public class ClassifyCommand extends Command {
      *
      * @param launcher the launcher to which this format belongs.
      */
-    public ClassifyCommand(final Launcher launcher) { super(launcher); }
+    public ClassifyCommand(final Launcher launcher) { super(launcher, NAME); }
 
     @Override
     public void run() {
