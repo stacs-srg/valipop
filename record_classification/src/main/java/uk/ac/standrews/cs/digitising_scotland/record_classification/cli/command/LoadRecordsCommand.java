@@ -24,6 +24,7 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 import java.io.*;
 import java.nio.charset.*;
 import java.nio.file.*;
+import java.util.*;
 import java.util.logging.*;
 import java.util.stream.*;
 
@@ -84,10 +85,10 @@ abstract class LoadRecordsCommand extends Command {
     @Parameter(names = {OPTION_SKIP_HEADER_SHORT, OPTION_SKIP_HEADER_LONG}, descriptionKey = "command.load_records.skip_header.description")
     private boolean skip_header_record;
 
-    @Parameter(names = {OPTION_ID_COLUMN_INDEX_SHORT, OPTION_ID_COLUMN_INDEX_LONG}, descriptionKey = "command.load_records.id_column_index.description")
+    @Parameter(names = {OPTION_ID_COLUMN_INDEX_SHORT, OPTION_ID_COLUMN_INDEX_LONG}, descriptionKey = "command.load_records.id_column_index.description", validateValueWith = Validators.AtLeastZero.class)
     private Integer id_column_index = DEFAULT_ID_COLUMN_INDEX;
 
-    @Parameter(names = {OPTION_LABEL_COLUMN_INDEX_SHORT, OPTION_LABEL_COLUMN_INDEX_LONG}, descriptionKey = "command.load_records.label_column_index.description")
+    @Parameter(names = {OPTION_LABEL_COLUMN_INDEX_SHORT, OPTION_LABEL_COLUMN_INDEX_LONG}, descriptionKey = "command.load_records.label_column_index.description", validateValueWith = Validators.AtLeastZero.class)
     private Integer label_column_index = DEFAULT_LABEL_COLUMN_INDEX;
 
     /**
@@ -104,7 +105,7 @@ abstract class LoadRecordsCommand extends Command {
     @Override
     public void run() {
 
-        final Stream<Record> records = loadRecords();
+        final List<Record> records = readRecords();
         process(records);
     }
 
@@ -113,9 +114,9 @@ abstract class LoadRecordsCommand extends Command {
      *
      * @param records the records to be processed
      */
-    protected abstract void process(final Stream<Record> records);
+    protected abstract void process(final List<Record> records);
 
-    private Stream<Record> loadRecords() {
+    private List<Record> readRecords() {
 
         final CSVFormat format = getCsvFormat();
         final Path source = load_command.getSource();
@@ -126,11 +127,11 @@ abstract class LoadRecordsCommand extends Command {
         try (final BufferedReader in = Files.newBufferedReader(source, charset)) {
 
             final CSVParser parser = format.parse(in);
-            return StreamSupport.stream(parser.spliterator(), true).map(this::toRecord);
+            return StreamSupport.stream(parser.spliterator(), true).map(this::toRecord).collect(Collectors.toList());
         }
         catch (IOException e) {
             LOGGER.log(Level.SEVERE, "failure while loading records", e);
-            throw new RuntimeException(e);
+            throw new IOError(e);
         }
     }
 

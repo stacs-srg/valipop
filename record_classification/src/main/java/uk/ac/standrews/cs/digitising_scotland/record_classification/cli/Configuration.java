@@ -474,15 +474,6 @@ public class Configuration {
             return new Record(id, label, label_original, classification);
         }
 
-        public synchronized void add(final Stream<Record> records) {
-
-            if (bucket == null) {
-                bucket = new Bucket();
-            }
-
-            bucket.add(records.collect(Collectors.toList()));
-        }
-
         public void setBucket(Bucket bucket) {
 
             this.bucket = bucket;

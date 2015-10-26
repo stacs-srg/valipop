@@ -21,6 +21,7 @@ import org.apache.commons.csv.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 
+import java.util.*;
 import java.util.logging.*;
 import java.util.stream.*;
 
@@ -47,11 +48,11 @@ public class LoadUnseenRecordsCommand extends LoadRecordsCommand {
     protected LoadUnseenRecordsCommand(final LoadCommand load_command, final String name) { super(load_command, name); }
 
     @Override
-    protected void process(final Stream<Record> records) {
+    protected void process(final List<Record> records) {
 
         final Configuration configuration = launcher.getConfiguration();
         final Configuration.Unseen unseen = configuration.newUnseen(load_command.getResourceName(), load_command.isOverrideExistingEnabled());
-        unseen.add(records);
+        unseen.setBucket(new Bucket(records));
     }
 
     @Override
