@@ -52,12 +52,12 @@ public final class Validators {
         }
     }
 
-    public static class BetweenZeroToOneInclusive implements IValueValidator<Double> {
+    public static class BetweenZeroToOneInclusive implements IValueValidator<Number> {
 
         @Override
-        public void validate(final String name, final Double value) throws ParameterException {
+        public void validate(final String name, final Number value) throws ParameterException {
 
-            if (!isBetweenZeroToOneInclusive(value)) {
+            if (!isBetweenZeroToOneInclusive(value.doubleValue())) {
                 throw new ParameterException("The value  of parameter " + name + " must be between 0.0 and 1.0 inclusive");
             }
         }

@@ -71,9 +71,9 @@ public abstract class Command implements Runnable {
         if (sub_commander != null) {
             sub_commander.addCommand(sub_command);
         }
-
-        throw new IllegalStateException("command must be added to launcher before adding sub commands");
-
+        else {
+            throw new IllegalStateException("command must be added to launcher before adding sub commands");
+        }
     }
 
     protected Optional<Command> getSubCommand() {
