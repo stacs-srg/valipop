@@ -27,7 +27,9 @@ TODO explain the command concept
 
 ### `init`
 
-The `init` command initialises a new workflow that gets persisted on your hard drive. This means when classli program is closed and re-opened, it will remember where things were left off. 
+The `init` command initialises a new workflow that gets persisted on your hard drive. This means when classli program is closed and re-opened, it will remember where things were left off. The options of this command are:
+
+* `-f` or `--force` -- enables replacement of any existing configuration folder upon initialisation. This option is not mandatory. By default this option is disabled.
 
 To execute this command, type the following and press enter:
 
@@ -40,11 +42,6 @@ The execution of the command above will result in creation of a folder called `.
 Alternatively, the _force_ can be set using its log name:
 
     classli init --force
-
-Short | Long    | Optional | Default Value | Description
-------|---------|----------|---------------|-----------------
-`-f`  |`--force`| Yes      | `false`       | Weather to replace any existing configuration folder.
-[`init` command options.]
 
 ### `set`
 
@@ -74,7 +71,7 @@ The `set` command sets the value of configurable variables in the classli config
 
 * `-d`, `--delimiter` -- specifies the default delimiter character of input/output tabular data files. The value of this option may be specified as a single character. If multiple characters are specified, the first character will be considered as the delimiter.
 
-* `-r` or `--randomSeed` -- specifies the seed of the internal random number generator. By default the internal random number generator us non-deterministic. Setting the random seed results in deterministic selection of training and evaluation records. 
+* `-r` or `--randomSeed` -- specifies the seed of the internal random number generator. By default the internal random number generator us non-deterministic. Setting the random seed results in deterministic selection of training and evaluation records. The value of the seed is specified as a 64-bit integer value.
 
 * `-s` or `--serializationFormat` -- specifies the format by which to persist the classifier. The possible values for this option are:
 
@@ -82,27 +79,87 @@ The `set` command sets the value of configurable variables in the classli config
     - `JSON` -- use human-readable [JSON](https://en.wikipedia.org/wiki/JSON) format.
     - `JSON_COMPRESSED` -- use compressed human-readable [JSON](https://en.wikipedia.org/wiki/JSON) format.
     
-* `-t` or `--trainingRatio` -- specifies the default proportion of _gold standard_ records to use for training the classifier. The remaining gold standard records are used for evaluation of the classifier via the `evaluate` command.
+* `-t` or `--trainingRatio` -- specifies the default proportion of _gold standard_ records to use for training the classifier. The remaining gold standard records are used for evaluation of the classifier via the [`evaluate`](#evaluate) command. The value of this option is specified as a numver between _0.0_ to _1.0_.
                  
-* `-it` or `--internalTrainingRecordRatio` -- specifies the default proportion of _training_ records to use for training the classifier. The remaining training records will be used by the classifier for self evaluation.    
+* `-it` or `--internalTrainingRecordRatio` -- specifies the default proportion of _training_ records to use for training the classifier. The remaining training records will be used by the classifier for self-evaluation mechanism. The value of this option is specified as a numver between _0.0_ to _1.0_.
 
-### Load
+* `-f` or `--format` -- specifies the default CSV format of input/output tabular data files. The possible values for this option are:
+    - `RFC4180` -- the comma separated format as defined by [RFC 4180](http://tools.ietf.org/html/rfc4180). See [RFC4180](https://commons.apache.org/proper/commons-csv/archives/1.2/apidocs/org/apache/commons/csv/CSVFormat.html#RFC4180)
+    - `RFC4180_PIPE_SEPARATED` -- the format as defined by [RFC 4180](http://tools.ietf.org/html/rfc4180), but with `|` (pipe) as delimiter.
+    - `DEFAULT` -- based on `RFC4180` allowing empty lines. See [DEFAULT](https://commons.apache.org/proper/commons-csv/archives/1.2/apidocs/org/apache/commons/csv/CSVFormat.html#DEFAULT)
+    - `EXCEL` -- based on `RFC4180` allowing missing column names. Please note that the delimiter character used by Excel is locale dependent, it may be necessary to customize the delimiter character via `-d` or `--delimiter` options. See [EXCEL](https://commons.apache.org/proper/commons-csv/archives/1.2/apidocs/org/apache/commons/csv/CSVFormat.html#EXCEL)
+    - `MYSQL` -- the default [MySQL](http://dev.mysql.com/doc/refman/5.1/en/load-data.html) format used by the SELECT INTO OUTFILE and LOAD DATA INFILE operations. This is a tab-delimited format with a LF character as the line separator. Values are not quoted and special characters are escaped with `\`. See [MYSQL](https://commons.apache.org/proper/commons-csv/archives/1.2/apidocs/org/apache/commons/csv/CSVFormat.html#MYSQL)
+    - `TDF` -- the tab-delimited format. See [TFD](https://commons.apache.org/proper/commons-csv/archives/1.2/apidocs/org/apache/commons/csv/CSVFormat.html#TDF)
 
-#### Load Unseen Records
+At least one option must be specified when calling the `set` command. For example, execution of the following command:
 
-#### Load Gold Standard Records
+    set --delimiter "|"
 
-### Clean
+sets the default delimiter to `|` (pipe) character. Since the pipe character is a special character in command-line environment, it has been surrounded by double quotes.
 
-#### Clean User-defined Stop Words
+In another example, the following command:
 
-#### Clean User-defined Spelling
+    set -t 0.7
 
-### Evaluate
+sets the default training ratio to 70%. This means unless otherwise specified by default 70% of loaded gold standard data will be used for training the classifier and the remaining 30% will be used for evaluation.
 
-### Train
+It is also possible to set multiple values at once. For example, the following command:
 
-### Classify
+    set -c OLR -r 42 -s JSON
+
+sets the classifier to the _online logistic regression_ classifier, the random seed to _42_ and the classifier serialization format to _JSON_. 
+
+### `load`
+
+The `load` is used for reading in gold standard and unseen records from a file on the local file system. The options of this command are:
+
+* `-s` or `--from` -- the *mandatory* option that specifies the path to the source file from which to load gold standard or unseen records.
+* `-c` or `--charset` -- the character encoding of the source file. If unspecified, the default character encoding is used; see [`set`](#set).
+* `-n` or `--named` -- specifies a name for the records to be loaded. If unspecified the file name is used as the name of the loaded records.
+* `-o` or `--overrideExisting` -- if specified, the load will overrider any existing gold standard or unseen records with the same name. This option is disable by default. 
+
+In order to specify whether the source file contains unseen or gold standard records, the `load` command must be used in conjunction with one of its sub commands: `unseen` and `gold_standard`.
+
+* `unseen` -- the sub command specifying the type of records in the source file as unseen records. The unseen records are records to be classified by the classifier, where each record consist of a unique numerical ID and a textual label. This sub command has the following options:
+    * `-d` or `--delimiter` -- specifies the delimiter character of the tabular data in source file. If unspecified the default delimiter character is used; see [`set`](#set).
+    * `-f` or `--format` -- specifies the tabular data format of the source file. If unspecified, the default csv format is used. See [`set`](#set) command for possible values of this option.
+    * `-ii` or `--id_column_index` -- specifies the index of the column containing the ID associated to each record. The value is specified as a positive integer including `0`. `0` corresponds to the first column, `1` corresponds to the second column and so on. The default value of this option is `0`.
+    * `-li` or `--label_column_index` -- specifies the index of the column containing the label (i.e. text or data) associated to each record. The value is specified as a positive integer including `0`. `0` corresponds to the first column, `1` corresponds to the second column and so on. The default value of this option is `1`.
+    * `-h` or `--skip_header` -- whether to consider the first record in the source file as column headers and skip it. this option is disabled by default.
+
+* `gold_standard` -- the sub command specifying the type of records in the source file as gold standard records. The gold standard records are records to be used to train and evaluate the classifier, where each record consist of a unique numerical ID, a textual label and a textual class. This sub command has the following options:
+    * `-d` or `--delimiter` -- specifies the delimiter character of the tabular data in source file. If unspecified the default delimiter character is used; see [`set`](#set).
+    * `-f` or `--format` -- specifies the tabular data format of the source file. If unspecified, the default csv format is used. See [`set`](#set) command for possible values of this option.
+    * `-ii` or `--id_column_index` -- specifies the index of the column containing the ID associated to each record. The value is specified as a positive integer including `0`. `0` corresponds to the first column, `1` corresponds to the second column and so on. The default value of this option is `0`.
+    * `-li` or `--label_column_index` -- specifies the index of the column containing the label (i.e. text or data) associated to each record. The value is specified as a positive integer including `0`. `0` corresponds to the first column, `1` corresponds to the second column and so on. The default value of this option is `1`.
+    * `-ci` or `--class_column_index` -- specifies the index of the column containing the class (i.e. classification code) associated to each record. The value is specified as a positive integer including `0`. `0` corresponds to the first column, `1` corresponds to the second column and so on. The default value of this option is `2`.
+    * `-h` or `--skip_header` -- whether to consider the first record in the source file as column headers and skip it. this option is disabled by default.
+    *  `-t` or `--trainingRatio` -- specifies the ratio of gold standard records to be used for training. The value must be within inclusive range of _0.0_ to _1.0_. If not specified, the default training ratio is used; see [`set`](#set).
+
+An execution of `load` command either reads gold standard records or unseen records. For example, the following command:
+
+    load --from my_dataset.csv gold_standard -t 0.8 -h
+
+loads  gold standard records from a file in the current working directory called _my_dataset.csv_ while skipping the first record, where 80% of the records will be used for training the classifier, and the remaining 20% will be used for evaluation of the classifier. Default values will be used for any of the unspecified options.
+
+In another example, the following command:
+
+    load --from my_other_dataset.csv unseen -ii 4 -li 5
+
+loads unseen records from a file in the current working directory called my_other_dataset.csv_, where the ID of each record is specified in the fifth column, and the label of each record is specified in the sixth column. Default values will be used for any of the unspecified options.
+
+
+### `clean`
+
+#### `clean stop_words`
+
+#### `clean spelling`
+
+### `evaluate`
+
+### `train`
+
+### `classify`
 
 
 
@@ -170,70 +227,7 @@ The `set` command sets the value of configurable variables in the classli config
                  The path to the file containing the stop words to be cleaned.
     
     
-        load      Loads resources from a file.
-          Usage: load [options]       [command] [command options]
-            Options:
-              -c, --charset
-                 The charset of the resource file to be loaded.
-                 Default: UTF_8
-                 Possible Values: [SYSTEM_DEFAULT, ISO_8859_1, UTF_8, UTF_16BE, UTF_16LE, UTF_16, US_ASCII]
-            * -s, --from
-                 The path to the resource file to be loaded.
-              -n, --named
-                 The name to associate to the loaded resource.
-              -o, --overrideExisting
-                 command.load.force.description
-                 Default: false
-      Commands:
-              unseen      Load unseen records from a file.
-          Usage: unseen [options]
-            Options:
-              -d, --delimiter
-                 The character by which the values are delimited.
-                 Default: |
-              -f, --format
-                 The format of the csv file containing the records to be loaded.
-                 Default: DEFAULT
-                 Possible Values: [DEFAULT, EXCEL, MYSQL, RFC4180, RFC4180_PIPE_SEPARATED, TDF]
-              -ii, --id_column_index
-                 The zero-based index of the column containing the ID.
-                 Default: 0
-              -li, --label_column_index
-                 The zero-based index of the column containing the label.
-                 Default: 1
-              -h, --skip_header
-                 Whether to consider the first records in the source file to be
-                 headers.
-                 Default: false
-    
-              gold_standard      Load gold standard records from a file.
-          Usage: gold_standard [options]
-            Options:
-              -ci, --class_column_index
-                 The zero-based index of the column containing the class associated
-                 to each label.
-                 Default: 2
-              -d, --delimiter
-                 The character by which the values are delimited.
-                 Default: |
-              -f, --format
-                 The format of the csv file containing the records to be loaded.
-                 Default: DEFAULT
-                 Possible Values: [DEFAULT, EXCEL, MYSQL, RFC4180, RFC4180_PIPE_SEPARATED, TDF]
-              -ii, --id_column_index
-                 The zero-based index of the column containing the ID.
-                 Default: 0
-              -li, --label_column_index
-                 The zero-based index of the column containing the label.
-                 Default: 1
-              -h, --skip_header
-                 Whether to consider the first records in the source file to be
-                 headers.
-                 Default: false
-              -t, --trainingRatio
-                 The ratio of gold standard records to be used for training. The
-                 value must be between 0.0 to 1.0 (inclusive).
-                 Default: 0.8
+        
     
     
 

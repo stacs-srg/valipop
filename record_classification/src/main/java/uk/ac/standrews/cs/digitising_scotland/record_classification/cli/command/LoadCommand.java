@@ -71,7 +71,7 @@ public class LoadCommand extends Command {
     @Parameter(names = {OPTION_NAME_SHORT, OPTION_NAME_LONG}, descriptionKey = "command.load.name.description")
     private String name;
 
-    @Parameter(names = {OPTION_FORCE_SHORT, OPTION_FORCE_LONG}, description = "command.load.force.description")
+    @Parameter(names = {OPTION_FORCE_SHORT, OPTION_FORCE_LONG}, descriptionKey = "command.load.force.description")
     private boolean override_existing = false;
 
     public LoadCommand(final Launcher launcher) { super(launcher, NAME); }
