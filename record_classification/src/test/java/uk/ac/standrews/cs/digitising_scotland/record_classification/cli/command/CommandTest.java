@@ -47,6 +47,11 @@ public abstract class CommandTest {
         launcher.handle();
     }
 
+    protected String quote(Object value) {
+
+        return String.format("\"%s\"", String.valueOf(value));
+    }
+
     @After
     public void tearDown() throws Exception {
 

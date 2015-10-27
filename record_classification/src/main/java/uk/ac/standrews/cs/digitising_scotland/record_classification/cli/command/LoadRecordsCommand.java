@@ -83,7 +83,7 @@ abstract class LoadRecordsCommand extends Command {
     private CsvFormatSupplier csv_format_supplier = launcher.getConfiguration().getDefaultCsvFormatSupplier();
 
     @Parameter(names = {OPTION_SKIP_HEADER_SHORT, OPTION_SKIP_HEADER_LONG}, descriptionKey = "command.load_records.skip_header.description")
-    private boolean skip_header_record;
+    private boolean skip_header_record = false;
 
     @Parameter(names = {OPTION_ID_COLUMN_INDEX_SHORT, OPTION_ID_COLUMN_INDEX_LONG}, descriptionKey = "command.load_records.id_column_index.description", validateValueWith = Validators.AtLeastZero.class)
     private Integer id_column_index = DEFAULT_ID_COLUMN_INDEX;
@@ -143,7 +143,8 @@ abstract class LoadRecordsCommand extends Command {
      */
     public CSVFormat getCsvFormat() {
 
-        return csv_format_supplier.get().withDelimiter(delimiter).withSkipHeaderRecord(skip_header_record);
+        final CSVFormat format = csv_format_supplier.get().withDelimiter(delimiter);
+        return skip_header_record ? format.withHeader() : format;
     }
 
     /**
