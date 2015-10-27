@@ -5,11 +5,14 @@
 ## Backgorund
 
 TODO explain command line interface
+
 TODO explain program name
+
 TODO explain the command line parameter concept - short and long name
+
 TODO explain the command concept
 
-    Usage: classi [options] [command] [command options]
+    Usage: classli [options] [command] [command options]
       Options:
         -c, --commands
            Specifies the path to a text file containing the commands to be executed
