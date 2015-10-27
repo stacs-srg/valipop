@@ -21,15 +21,14 @@ import com.beust.jcommander.converters.PathConverter;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.ClassifyUnseenRecordsStep;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.SaveDataStep;
-import uk.ac.standrews.cs.util.dataset.DataSet;
 
 import java.io.*;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.logging.*;
 import java.util.stream.*;
+
+import static java.util.logging.Logger.getLogger;
 
 /**
  * Classifies unseen records.
@@ -42,6 +41,17 @@ public class ClassifyCommand extends Command {
 
     /** The name of this command. */
     public static final String NAME = "classify";
+
+    /** The short name of the option that specifies the path in which to store the classified records. **/
+    public static final String OPTION_OUTPUT_RECORDS_PATH_SHORT = "-o";
+
+    /** The long name of the option that specifies the path in which to store the classified records. **/
+    public static final String OPTION_OUTPUT_RECORDS_PATH_LONG = "--output";
+
+    private static final Logger LOGGER = getLogger(ClassifyCommand.class.getName());
+
+    @Parameter(names = {OPTION_OUTPUT_RECORDS_PATH_SHORT, OPTION_OUTPUT_RECORDS_PATH_LONG}, descriptionKey = "command.classify.output.description", converter = PathConverter.class)
+    private Path output_path;
 
     /**
      * Instantiates this command for the given launcher.
@@ -64,6 +74,18 @@ public class ClassifyCommand extends Command {
             final Configuration.Unseen unseen = unseens.get(index);
             final Bucket classified_unseen_records = classified_unseen_records_list.get(index);
             unseen.setBucket(classified_unseen_records);
+        }
+
+        if (output_path != null) {
+            final Bucket classified_unseen_records = classified_unseen_records_list.stream().reduce(Bucket::union).orElse(new Bucket());
+            LOGGER.info(() -> String.format("Persisting total of %d classified unseen records into path: %s", classified_unseen_records.size(), output_path));
+            try {
+                Configuration.persistBucketAsCSV(classified_unseen_records, output_path, Configuration.RECORD_CSV_FORMAT, Configuration.RESOURCE_CHARSET);
+            }
+            catch (IOException e) {
+                LOGGER.log(Level.SEVERE, "failed to persist classified unseen records: " + e.getMessage(), e);
+                throw new IOError(e);
+            }
         }
     }
 }
