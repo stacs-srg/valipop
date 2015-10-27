@@ -90,6 +90,12 @@ public class SetCommandTest extends CommandTest {
         testSet(SetCommand.OPTION_INTERNAL_TRAINING_RATIO_SHORT, TEST_RATIOS, () -> launcher.getConfiguration().getDefaultInternalTrainingRatio());
         testSet(SetCommand.OPTION_INTERNAL_TRAINING_RATIO_LONG, TEST_RATIOS, () -> launcher.getConfiguration().getDefaultInternalTrainingRatio());
     }
+    @Test
+    public void testCsvFormat() throws Exception {
+
+        testSet(SetCommand.OPTIONS_FORMAT_SHORT, CsvFormatSupplier.values(), () -> launcher.getConfiguration().getDefaultCsvFormatSupplier());
+        testSet(SetCommand.OPTIONS_FORMAT_LONG, CsvFormatSupplier.values(), () -> launcher.getConfiguration().getDefaultCsvFormatSupplier());
+    }
 
     private <Value> void testSet(String option, Value[] values, Supplier<Value> actual) throws Exception {
 

@@ -79,6 +79,45 @@
             </plugin>
 
             <plugin>
+                <groupId>com.akathist.maven.plugins.launch4j</groupId>
+                <artifactId>launch4j-maven-plugin</artifactId>
+                <version>1.7.8</version>
+                <configuration>
+                    <headerType>console</headerType>
+                    <outfile>${project.build.directory}/${project.name}-${project.version}.exe</outfile>
+                    <jar>${project.build.directory}/${project.artifactId}_cli-${project.version}.jar</jar>
+                    <errTitle>${project.name} Error</errTitle>
+                    <classPath>
+                        <mainClass>uk.ac.standrews.cs.digitising_scotland.record_classification.cli.Launcher</mainClass>
+                        <addDependencies>false</addDependencies>
+                        <preCp>anything</preCp>
+                    </classPath>
+                    <jre>
+                        <minVersion>1.8.0</minVersion>
+                        <initialHeapSize>1024</initialHeapSize>
+                        <maxHeapSize>2048</maxHeapSize>
+                    </jre>
+                    <versionInfo>
+                        <fileVersion>${project.version}</fileVersion>
+                        <fileDescription>${project.description}</fileDescription>
+                        <copyright>Copyright ${project.inceptionYear} ${project.organization.name}</copyright>
+                        <productVersion>${project.version}</productVersion>
+                        <productName>${project.name} CLI</productName>
+                        <internalName>${project.name}</internalName>
+                        <originalFilename>${project.name}-${project.version}.exe</originalFilename>
+                    </versionInfo>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>l4j-clui</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>launch4j</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <configuration>
                     <finalName>${project.artifactId}_cli-${project.version}</finalName>
