@@ -25,13 +25,12 @@ public final class Converters {
 
     private Converters() { throw new UnsupportedOperationException(); }
 
-    
     public static class CharacterConverter implements IStringConverter<Character> {
 
         @Override
         public Character convert(final String value) {
 
-            return value.charAt(0);
+            return value.isEmpty() ? null : value.charAt(0);
         }
     }
 }
