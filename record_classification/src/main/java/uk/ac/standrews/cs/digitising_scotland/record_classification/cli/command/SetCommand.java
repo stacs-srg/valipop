@@ -32,7 +32,7 @@ import static uk.ac.standrews.cs.digitising_scotland.record_classification.cli.C
  *
  * @author Masih Hajiarab Derkani
  */
-@Parameters(commandNames = SetCommand.NAME, commandDescriptionKey = "command.set.description")
+@Parameters(commandNames = SetCommand.NAME, resourceBundle = Configuration.RESOURCE_BUNDLE_NAME, commandDescriptionKey = "command.set.description")
 public class SetCommand extends Command {
 
     private static final Logger LOGGER = Logger.getLogger(SetCommand.class.getName());
