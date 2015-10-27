@@ -17,12 +17,15 @@
 package uk.ac.standrews.cs.digitising_scotland.record_classification.cli.command;
 
 import com.beust.jcommander.*;
+import org.apache.commons.csv.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.serialization.*;
 
 import java.util.function.*;
 import java.util.logging.*;
+
+import static uk.ac.standrews.cs.digitising_scotland.record_classification.cli.CAIParameters.*;
 
 /**
  * Sets variables in the Command-line Interface {@link Configuration configuration}.
@@ -79,7 +82,13 @@ public class SetCommand extends Command {
     /** The long name of the option that specifies the internal training ratio of the classifier. **/
     public static final String OPTION_INTERNAL_TRAINING_RATIO_LONG = "--internalTrainingRecordRatio";
 
-    @Parameter(names = {OPTION_CLASSIFIER_SHORT, OPTION_CLASSIFIER_LONG}, descriptionKey = "command.set.classifier.description")
+    /** The short name of the option that specifies the {@link CSVFormat format} of the input/output tabular data files. **/
+    public static final String OPTIONS_FORMAT_SHORT = "-f";
+
+    /** The long name of the option that specifies the {@link CSVFormat format} of the input/output tabular data files. **/
+    public static final String OPTIONS_FORMAT_LONG = "--format";
+
+    @Parameter(names = {ClassifierParameter.SHORT, ClassifierParameter.LONG}, descriptionKey = "command.set.classifier.description")
     private ClassifierSupplier classifier_supplier;
 
     @Parameter(names = {OPTION_RANDOM_SEED_SHORT, OPTION_RANDOM_SEED_LONG}, descriptionKey = "command.set.seed.description")
@@ -100,6 +109,9 @@ public class SetCommand extends Command {
     @Parameter(names = {OPTION_INTERNAL_TRAINING_RATIO_SHORT, OPTION_INTERNAL_TRAINING_RATIO_LONG}, descriptionKey = "command.set.default_internal_training_ratio.description")
     private Double internal_training_ratio;
 
+    @Parameter(names = {OPTIONS_FORMAT_SHORT, OPTIONS_FORMAT_LONG}, descriptionKey = "command.set.default_csv_format.description")
+    private CsvFormatSupplier csv_format;
+
     /**
      * Instantiates this command for the given launcher.
      *
@@ -119,6 +131,7 @@ public class SetCommand extends Command {
         set_at_least_once |= set("classifier serialization format", serialization_format, configuration::setClassifierSerializationFormat);
         set_at_least_once |= set("default training ratio", training_ratio, configuration::setDefaultTrainingRatio);
         set_at_least_once |= set("default internal training ratio", internal_training_ratio, configuration::setDefaultInternalTrainingRatio);
+        set_at_least_once |= set("default csv format", csv_format, configuration::setDefaultCsvFormatSupplier);
 
         if (!set_at_least_once) {
             throw new ParameterException("Please specify at lease one variable to be set.");
@@ -129,8 +142,8 @@ public class SetCommand extends Command {
 
         final boolean settable = value != null;
         if (settable) {
-            LOGGER.info(() -> "Setting " + value_name + " to " + value);
             setter.accept(value);
+            LOGGER.info(() -> String.format("The %s is set to %s", value_name, value));
         }
         return settable;
     }
