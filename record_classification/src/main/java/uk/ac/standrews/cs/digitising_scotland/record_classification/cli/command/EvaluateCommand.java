@@ -46,12 +46,12 @@ public class EvaluateCommand extends Command {
     /** The short name of the option that specifies the path in which to store the classified evaluation records. **/
     public static final String OPTION_OUTPUT_RECORDS_PATH_SHORT = "-o";
 
-    /** The short name of the option that specifies the path in which to store the classified evaluation records. **/
-    public static final String OPTION_OUTPUT_RECORDS_PATH_LONG = "--outputEvaluationRecordsTo";
+    /** The long name of the option that specifies the path in which to store the classified evaluation records. **/
+    public static final String OPTION_OUTPUT_RECORDS_PATH_LONG = "--output";
 
     private static final Logger LOGGER = getLogger(EvaluateCommand.class.getName());
 
-    @Parameter(names = {OPTION_OUTPUT_RECORDS_PATH_SHORT, OPTION_OUTPUT_RECORDS_PATH_LONG}, description = "The path to which to export the classified evaluation records.", converter = PathConverter.class)
+    @Parameter(names = {OPTION_OUTPUT_RECORDS_PATH_SHORT, OPTION_OUTPUT_RECORDS_PATH_LONG}, description = "command.evaluate.output.description", converter = PathConverter.class)
     private Path classified_evaluation_records;
 
     public EvaluateCommand(final Launcher launcher) {

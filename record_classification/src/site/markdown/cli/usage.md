@@ -163,6 +163,7 @@ loads unseen records from a file in the current working directory called my_othe
 ### `train`
 
 ### `classify`
+The `classify` command classifies any loaded unseen records.
 
 
 
