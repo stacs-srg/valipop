@@ -2,12 +2,89 @@
 
 
 
+## Backgorund
+
+TODO explain command line interface
+TODO explain program name
+TODO explain the command line parameter concept - short and long name
+TODO explain the command concept
+
+    Usage: classi [options] [command] [command options]
+      Options:
+        -c, --commands
+           Specifies the path to a text file containing the commands to be executed
+           (one command per line).
+        -h, --help
+           Shows usage.
+           Default: false
+        -v, --verbosity
+           Specifies the verbosity of the command line interface.
+           Default: INFO
+           Possible Values: [ALL, SEVERE, WARNING, INFO, OFF]
+
+
 ## Commands
 
-### Init
+### `init`
 
+The `init` command initialises a new workflow that gets persisted on your hard drive. This means when classli program is closed and re-opened, it will remember where things were left off. 
 
-### Set
+To execute this command, type the following and press enter:
+
+    classli init
+
+The execution of the command above will result in creation of a folder called `.classli` in the current working directory. This is where all the classli files and settings will be stored. The execution of this command in a working directory that already contains a folder named `.classli` will result in failure; to override an existing `.classli` folder, the _force_ parameter must be set:
+ 
+    classli init -f
+
+Alternatively, the _force_ can be set using its log name:
+
+    classli init --force
+
+Short | Long    | Optional | Default Value | Description
+------|---------|----------|---------------|-----------------
+`-f`  |`--force`| Yes      | `false`       | Weather to replace any existing configuration folder.
+[`init` command options.]
+
+### `set`
+
+The `set` command sets the value of configurable variables in the classli configuration. The configurable variables are specified with one of the following options:
+
+* `-ch` or `--charset` -- specifies default [character encoding](https://en.wikipedia.org/wiki/Character_encoding) of input/output files, which should be used if no other encoding is specified. The value of this option can be one of:
+
+    - `SYSTEM_DEFAULT` -- the default character encoding of the current operating system.
+    - `ISO_8859_1` -- the [ISO_8859_1](https://en.wikipedia.org/wiki/ISO/IEC_8859-1) ISO Latin Alphabet No. 1, a.k.a. ISO-LATIN-1.
+    - `UTF_8` -- the [UTF-8](https://en.wikipedia.org/wiki/UTF-8), eight-bit [UCS](https://en.wikipedia.org/wiki/Universal_Coded_Character_Set) Transformation Format.
+    - `UTF_16` -- the [UTF-16](https://en.wikipedia.org/wiki/UTF-16), sixteen-bit [UCS](https://en.wikipedia.org/wiki/Universal_Coded_Character_Set) Transformation Format, byte order identified by an optional byte-order mark.
+    - `UTF_16BE` -- the [UTF-16](https://en.wikipedia.org/wiki/UTF-16), sixteen-bit [UCS](https://en.wikipedia.org/wiki/Universal_Coded_Character_Set) Transformation Format, big-endian byte order.
+    - `UTF_16LE` -- the [UTF-16](https://en.wikipedia.org/wiki/UTF-16), sixteen-bit [UCS](https://en.wikipedia.org/wiki/Universal_Coded_Character_Set) Transformation Format, little-endian byte order
+    - `US_ASCII` -- the seven-bit [ASCII](https://en.wikipedia.org/wiki/ASCII) , a.k.a. ISO646-US, a.k.a. the Basic Latin block of the Unicode character set
+
+* `-c` or `--classifier` -- specifies the classifier to be used for classification of records. The possible values for this option are:
+
+    - `EXACT_MATCH` -- classifies records, which exactly match the training records.
+    - `STRING_SIMILARITY_LEVENSHTEIN` -- classifies records based their [Levenshtein](https://en.wikipedia.org/wiki/Levenshtein_distance) similarity to the training records.
+    - `STRING_SIMILARITY_JARO_WINKLER` -- classifies records based their [Jaro Winkler](https://en.wikipedia.org/wiki/Jaro–Winkler_distance) similarity to the training records.
+    - `STRING_SIMILARITY_JACCARD` -- classifies records based their [Jaccard](https://en.wikipedia.org/wiki/Jaccard_index) similarity to the training records.
+    - `STRING_SIMILARITY_DICE` -- classifies records based their [Dice](http://en.wikipedia.org/wiki/S%C3%B8rensen%E2%80%93Dice_coefficient) similarity to the training records.
+    - `OLR` -- classifies records using an [online machine learning](https://en.wikipedia.org/wiki/Online_machine_learning) algorithm based on a [logistic regression](https://en.wikipedia.org/wiki/Logistic_regression) model. It is a heavily modified version of [Mahout's Logistic Regression implementation](https://mahout.apache.org/users/classification/logistic-regression.html).
+    - `NAIVE_BAYES` -- classifies records a (naive bayes classifier)[https://en.wikipedia.org/wiki/Naive_Bayes_classifier]. It is heavily based on [Weka](http://www.cs.waikato.ac.nz/ml/weka/) implementation of [naive bayes](http://weka.sourceforge.net/doc.dev/weka/classifiers/bayes/NaiveBayes.html).
+    - `VOTING_ENSEMBLE_EXACT_ML_SIMILARITY` -- classifies records using collective voting of `EXACT_MATCH`, `OLR`, `NAIVE_BAYES`, `STRING_SIMILARITY_LEVENSHTEIN`, STRING_SIMILARITY_JARO_WINKLER`, `STRING_SIMILARITY_JACCARD` and `STRING_SIMILARITY_DICE` classifiers. 
+    - `VOTING_ENSEMBLE_EXACT_SIMILARITY` -- classifies records using collective voting of `EXACT_MATCH`, `STRING_SIMILARITY_LEVENSHTEIN`, STRING_SIMILARITY_JARO_WINKLER`, `STRING_SIMILARITY_JACCARD` and `STRING_SIMILARITY_DICE` classifiers. 
+
+* `-d`, `--delimiter` -- specifies the default delimiter character of input/output tabular data files. The value of this option may be specified as a single character. If multiple characters are specified, the first character will be considered as the delimiter.
+
+* `-r` or `--randomSeed` -- specifies the seed of the internal random number generator. By default the internal random number generator us non-deterministic. Setting the random seed results in deterministic selection of training and evaluation records. 
+
+* `-s` or `--serializationFormat` -- specifies the format by which to persist the classifier. The possible values for this option are:
+
+    - `JAVA_SERIALIZATION` -- use Java object serialisation. 
+    - `JSON` -- use human-readable [JSON](https://en.wikipedia.org/wiki/JSON) format.
+    - `JSON_COMPRESSED` -- use compressed human-readable [JSON](https://en.wikipedia.org/wiki/JSON) format.
+    
+* `-t` or `--trainingRatio` -- specifies the default proportion of _gold standard_ records to use for training the classifier. The remaining gold standard records are used for evaluation of the classifier via the `evaluate` command.
+                 
+* `-it` or `--internalTrainingRecordRatio` -- specifies the default proportion of _training_ records to use for training the classifier. The remaining training records will be used by the classifier for self evaluation.    
 
 ### Load
 
@@ -29,51 +106,9 @@
 
 
 
-    Usage: classi [options] [command] [command options]
-      Options:
-        -c, --commands
-           Specifies the path to a text file containing the commands to be executed
-           (one command per line).
-        -h, --help
-           Shows usage.
-           Default: false
-        -v, --verbosity
-           Specifies the verbosity of the command line interface.
-           Default: INFO
-           Possible Values: [ALL, SEVERE, WARNING, INFO, OFF]
+
       Commands:
-        init      Initialises a new classification process, allowing the state to be persisted.
-          Usage: init [options]
-            Options:
-              -f, --force
-                 Weather to replace configuration if it already exists.
-                 Default: false
-    
-        set      
-          Usage: set [options]
-            Options:
-              -ch, --charset
-                 Options: [SYSTEM_DEFAULT, ISO_8859_1, UTF_8, UTF_16BE, UTF_16LE,
-                 UTF_16, US_ASCII]
-                 Possible Values: [SYSTEM_DEFAULT, ISO_8859_1, UTF_8, UTF_16BE, UTF_16LE, UTF_16, US_ASCII]
-              -c, --classifier
-                 Options: [EXACT_MATCH, STRING_SIMILARITY_LEVENSHTEIN,
-                 STRING_SIMILARITY_JARO_WINKLER, STRING_SIMILARITY_JACCARD, STRING_SIMILARITY_DICE, OLR,
-                 NAIVE_BAYES, VOTING_ENSEMBLE_EXACT_ML_SIMILARITY,
-                 VOTING_ENSEMBLE_EXACT_SIMILARITY]
-                 Possible Values: [EXACT_MATCH, STRING_SIMILARITY_LEVENSHTEIN, STRING_SIMILARITY_JARO_WINKLER, STRING_SIMILARITY_JACCARD, STRING_SIMILARITY_DICE, OLR, NAIVE_BAYES, VOTING_ENSEMBLE_EXACT_ML_SIMILARITY, VOTING_ENSEMBLE_EXACT_SIMILARITY]
-              -d, --delimiter
-                 
-              -it, --internalTrainingRecordRatio
-                 
-              -r, --randomSeed
-                 
-              -s, --serializationFormat
-                 Options: [JAVA_SERIALIZATION, JSON, JSON_COMPRESSED]
-                 Possible Values: [JAVA_SERIALIZATION, JSON, JSON_COMPRESSED]
-              -t, --trainingRatio
-                 
-    
+
         classify      Classifies the loaded unseen records.
           Usage: classify [options]
     

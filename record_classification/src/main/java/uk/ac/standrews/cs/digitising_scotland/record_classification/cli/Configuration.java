@@ -43,12 +43,12 @@ public class Configuration {
     //TODO add parent config loading from user.home if exists.
 
     /** Name of record classification CLI program. */
-    public static final String PROGRAM_NAME = "classi";
+    public static final String PROGRAM_NAME = "classli";
 
     public static final String RESOURCE_BUNDLE_NAME = "uk.ac.standrews.cs.digitising_scotland.record_classification.cli.CLIMessages";
 
     /** The name of the folder that contains the persisted state of this program. */
-    public static final Path CLI_HOME = Paths.get(Configuration.PROGRAM_NAME);
+    public static final Path CLI_HOME = Paths.get("." + Configuration.PROGRAM_NAME);
     public static final Path CONFIGURATION_FILE = CLI_HOME.resolve("config.json");
     public static final Path GOLD_STANDARD_HOME = CLI_HOME.resolve("gold_standard");
     public static final Path UNSEEN_HOME = CLI_HOME.resolve("unseen");
@@ -66,7 +66,7 @@ public class Configuration {
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
     static {
-        SimpleModule classi = new SimpleModule("classi");
+        SimpleModule classi = new SimpleModule(PROGRAM_NAME);
         classi.addSerializer(Configuration.class, new ConfigurationJsonSerializer());
         classi.addDeserializer(Configuration.class, new ConfigurationJsonDeserializer());
         MAPPER.registerModule(classi);
