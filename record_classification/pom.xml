@@ -36,6 +36,7 @@
         <jdk.version>1.8</jdk.version>
         <maven.compiler.source>${jdk.version}</maven.compiler.source>
         <maven.compiler.target>${jdk.version}</maven.compiler.target>
+        <cli.binary.name.windows>classli.exe</cli.binary.name.windows>
     </properties>
 
     <build>
@@ -84,7 +85,7 @@
                 <version>1.7.8</version>
                 <configuration>
                     <headerType>console</headerType>
-                    <outfile>${project.build.directory}/${project.name}-${project.version}.exe</outfile>
+                    <outfile>${project.build.directory}/${cli.binary.name.windows}</outfile>
                     <jar>${project.build.directory}/${project.artifactId}_cli-${project.version}.jar</jar>
                     <errTitle>${project.name} Error</errTitle>
                     <classPath>

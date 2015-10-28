@@ -1,5 +1,5 @@
 # Usage
-Once classli is installed, it is possible to start using the program via the command line. Open the command-line interface on your operating system (Terminal on OS X, Command Prompt on Windows, or Bash on Linux/Unix operating systems), type `classli` and press enter. You will see the usage message being printed explaining how to use classli. Do not panic; this document aims to explain what they mean and how to use them. The classli commands and options instruct it to do what it is required it to do.
+Once classli is [installed](install/index.html), it is possible to start using the program via the command line. Open the command-line interface on your operating system (Terminal on OS X, Command Prompt on Windows, or Bash on Linux/Unix operating systems), type `classli` and press enter. You will see the usage message being printed explaining how to use classli. Do not panic; this document aims to explain what they mean and how to use them. The classli commands and options instruct it to do what it is required it to do.
 
  The format by which the command and options are specified consists of 6 parts:
 
