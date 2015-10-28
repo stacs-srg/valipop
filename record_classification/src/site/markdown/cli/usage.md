@@ -201,40 +201,37 @@ To correct spelling of record labels using a custom dictionary the `spelling` su
     - `DAMERAU_LEVENSHTEIN` -- the [Damerau–Levenshtein](https://en.wikipedia.org/wiki/Damerau–Levenshtein_distance) distance function.
     - `JARO_WINKLER` -- the [Jaro-Winkler](https://en.wikipedia.org/wiki/Jaro–Winkler_distance) distance function.
 
-### `evaluate`
-
 ### `train`
+The `train` command trains the classifier with the loaded gold standard records. In order to use this command, firstly, the classifier must be set via the [`set`](#set) command, and secondly, at least one training record must be loaded, i.e. at least one gold standard record collection must be loaded with training ratio of more that _0.0_ (see [`load` command](#load)). The `train` command offers the following option:
+
+* `-it`or `--internalTrainingRecordRatio` -- ratio of gold standard records to be used for training as opposed to internal evaluation. If unspecified, the default internal training ratio is used; see ([`set`](#set)) The value must be within inclusive range of _0.0_ to _1.0_.
+
+For example, the following command:
+
+    train -it 0.9
+
+trains the classifier with 90% of the loaded training records, where the remaining 10% of the training records are used by the classifier to evaluate its own performance.
+
+**Note:** internal evaluation is necessarry in order to calculate confidence measure for a classification; if the internal training ratio is set to _1.0_ (i.e. 100%), all of the loaded training records will be used for training the classifier. The classifier will not perform self evaluation, and therefore, is unable to calcuate confidence for any classified records. 
+
+### `evaluate`
+The `evaluate` command evaluates the performance of the classifier in terms of precision, accuracy and recall. In order to use this command, firstly, the classifier must be set via the [`set`](#set) command, and secondly, at least one evaluation record must be loaded, i.e. at least one gold standard record collection must be loaded with training ratio of less that _1.0_ (see [`load` command](#load)). It is not mandatory to train the classifier prior to evaluation. However, evaluating an untrained classifier can result in poor performance measures. Typically, it is recommended to train the classifier prior to evaluation. The `evaluate` command offers the following option:
+
+* `-o` or `--outputEvaluationRecordsTo` -- the path in which to store the classified evaluation records. If unspecified, the classified evaluation records will not be stored.
+
+For instance, the following command:
+
+    evaluate -o evaluation_records_classified.csv
+
+will evaluate the classifier with the evaluation records previously loaded (see [`load` command](#load)), and stores the classified evaluation records into a file within the current working directory called _evaluation_records_classified.csv_.  
 
 ### `classify`
-The `classify` command classifies any loaded unseen records.
+The `classify` command classifies the loaded unseen records. In order to use this command, firstly, the classifier must be set via the [`set`](#set) command, and secondly, at least one unseen record must be loaded (see [`load` command](#load)). Although, it is not necessary to train the classifier prior to classification, an untrained classifier can result in high proportion if incorrect classifications. Hence, it is recommended to train the classifier prior to the execution of this command. This command offers the following option:
 
+* `-o` or `--output` -- the _mandatory_ option that specifies the path in which to store the classified unseen records.
 
+For example, the following command:
 
+    classify -o classified_unseen_records.csv
 
-      Commands:
-
-        classify      Classifies the loaded unseen records.
-          Usage: classify [options]
-    
-        evaluate      Evaluates the classifier using the loaded gold standard records.
-          Usage: evaluate [options]
-            Options:
-              -o, --outputEvaluationRecordsTo
-                 The path to which to export the classified evaluation records.
-    
-        train      Trains the classifier using the loaded gold standard data.
-          Usage: train [options]
-            Options:
-              -it, --internalTrainingRecordRatio
-                 The ratio of gold standard records to be used for training as
-                 opposed to internal evaluation. The value must be between 0.0 to 1.0
-                 (inclusive).
-                 Default: 0.8
-    
-        
-    
-    
-        
-    
-    
-
+classifies the loaded unseen records and stores the classified records into a file called _classified_unseen_records.csv_ within the current working directory.
