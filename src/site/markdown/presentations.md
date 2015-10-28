@@ -1,6 +1,6 @@
 # Presentations
 
-* [Dibben, CJL][1], [Feng, Z][2], [Huang, Z][3], [Kirby, GNC][4] & [Williamson, L][5], 2012, Linking Scottish vital events records back through time to produce the "Understanding Scotland's People Study". In *2nd Mosaic conference: Residence patterns of the elderly*. Budapest, Hungary, 6-7 September 2012. *[Poster][6]*.
+* [Dibben, CJL][1], [Feng, Z][2], [Huang, Z][3], [Kirby, GNC][4] & [Williamson, L][5], Linking Scottish vital events records back through time to produce the "Understanding Scotland's People Study". In *2nd Mosaic conference: Residence patterns of the elderly*. Budapest, Hungary, 6-7 September 2012. *[Poster][6]*.
 
 * [Kirby, GNC][7], [Carson, JK][8], [Dunlop, FRJ][9], [Dibben, CJL][10], [Dearle, A][11], [Williamson, L][12], [Garrett, E][13] & [Reid, A][14], Automatic methods for coding historical occupation descriptions to standard classifications. Workshop on Population Reconstruction, International Institute of Social History, Amsterdam, Netherlands, 19-21 February 2014. *[Slides][15]*
 
@@ -15,6 +15,9 @@
 * [Kirby, GNC][38], [Hajiarab Derkani, M][39], [Dearle, A][40], [Carson, JK][41], [Dunlop, FRJ][42], [Dibben, CJL][43] & [Williamson, L][44], 2015, Automatic extraction of multiple underlying causes from textual death records. In *Farr Institute International Conference 2015: Data Intensive Health Research and Care*. St Andrews, Scotland, 26-28 August 2015. *[Poster][45]*, *[Addendum][46]*
 
 * [Huang, Z][47], [Dibben, CJL][48], [Kirby, GNC][49], Deary, I, Popham, F & Connelly, R, 2015, The creation of an administrative data based 1936 birth cohort study. In *Farr Institute International Conference 2015: Data Intensive Health Research and Care*. St Andrews, Scotland, 26-28 August 2015. *[Poster][50]*
+
+* [Kirby, GNC][51], [Dearle, A][52], [Hajiarab Derkani, M][53], Dalton, T, [Daras, K][54], [Dibben, CJL][55], [Williamson, L][56], [Huang, Z][57], [Feng, Z][58], [Garrett, E][59] & [Reid, A][60], Reconstructing Genealogical Relationships from Public Registers. Talk for Data Lab Visit to St Andrews, 28 October 2015. *[Slides][61]*
+
 
 [1]:	https://risweb.st-andrews.ac.uk/portal/da/persons/christopher-john-lloyd-dibben(9361a0d3-e534-4772-9c37-0b744cc7a211).html
 [2]:	https://risweb.st-andrews.ac.uk/portal/en/persons/zhiqiang-feng(c6e40a24-6a24-416b-afe8-73c3ef15abb3).html
@@ -66,3 +69,14 @@
 [48]:	https://risweb.st-andrews.ac.uk/portal/da/persons/christopher-john-lloyd-dibben(9361a0d3-e534-4772-9c37-0b744cc7a211).html
 [49]:	https://risweb.st-andrews.ac.uk/portal/da/persons/graham-njal-cameron-kirby(4d01ed18-cde6-4dd6-9948-64451f43a1a7).html
 [50]:	/files/farr_poster_sls_cohort_2015.pdf
+[51]:	https://risweb.st-andrews.ac.uk/portal/da/persons/graham-njal-cameron-kirby(4d01ed18-cde6-4dd6-9948-64451f43a1a7).html
+[52]:	https://risweb.st-andrews.ac.uk/portal/da/persons/alan-dearle(2c185714-f33d-4d3a-9f98-9fe210cc3bdd).html
+[53]:	http://masih.host.cs.st-andrews.ac.uk/
+[54]:	http://sls.lscs.ac.uk/about/the-sls-team/dr-kostas-daras/
+[55]:	https://risweb.st-andrews.ac.uk/portal/da/persons/christopher-john-lloyd-dibben(9361a0d3-e534-4772-9c37-0b744cc7a211).html
+[56]:	https://risweb.st-andrews.ac.uk/portal/da/persons/lee-williamson(b3d25d36-0c89-48c4-ad99-d96829502488).html
+[57]:	http://www.ed.ac.uk/schools-departments/geosciences/people?indv=3962&amp;cw_xml=person.html
+[58]:	http://sls.lscs.ac.uk/about/the-sls-team/dr-zhiqiang-feng/
+[59]:	http://www.geog.cam.ac.uk/people/garrett/
+[60]:	http://www.geog.cam.ac.uk/people/reid/
+[61]:	/files/data-lab-talk.pdf
