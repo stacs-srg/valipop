@@ -36,9 +36,9 @@ public abstract class AbstractPopulationToDB {
     private static final String NUMBER_OF_BATCHES_FLAG = "-n";
     private static final String NUMBER_OF_PROGRESS_UPDATES_FLAG = "-u";
 
-    public static final int DEFAULT_BATCH_SIZE = 1000;
+    public static final int DEFAULT_BATCH_SIZE = 10000;
     public static final int DEFAULT_NUMBER_OF_BATCHES = 1;
-    public static final int DEFAULT_NUMBER_OF_PROGRESS_UPDATES = 10;
+    public static final int DEFAULT_NUMBER_OF_PROGRESS_UPDATES = 100;
 
     public abstract IPopulation getPopulation(int batch_size, ProgressIndicator indicator) throws Exception;
 

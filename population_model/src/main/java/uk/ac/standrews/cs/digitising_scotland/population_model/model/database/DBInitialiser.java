@@ -136,7 +136,7 @@ public class DBInitialiser {
                 SQL_TYPE_DATE,
                 SQL_TYPE_STRING_100,
                 SQL_TYPE_STRING_100,
-                SQL_TYPE_STRING_50};
+                SQL_TYPE_STRING_100};
 
         final boolean[] nulls_allowed = new boolean[]{false, true, true, true, true, true, true, true, true, true};
 

@@ -50,6 +50,8 @@ public class OrganicPopulation implements IPopulation {
      */
     public static void main(final String[] args) {
         System.out.println("--------MAIN HERE---------");
+	
+	System.out.println("Seed size = " + args[0]);
 
         if (args.length == 0) {
             runPopulationModel(DEFAULT_SEED_SIZE, true, true, true);
@@ -433,6 +435,9 @@ public class OrganicPopulation implements IPopulation {
      * @return The created organic population.
      */
     public static OrganicPopulation runPopulationModel(int seedSize, boolean print, final boolean memoryMonitor, final boolean logging) {
+
+	System.out.println("Seed size = " + seedSize);
+
         OrganicPopulation.logging = logging;
         if (memoryMonitor) {
             mm = new MemoryMonitor();

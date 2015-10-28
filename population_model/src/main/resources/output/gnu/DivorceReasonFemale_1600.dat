@@ -1,7 +1,7 @@
 # This file is called DivorceReasonFemale.dat
 Count    Value    Actual    Distribution
-0    ADULTERY    13    17.02
-1    BEHAVIOUR    6    6.08
-2    DESERTION    1    1.22
-3    SEPARATION_WITH_CONSENT    35    26.75
-4    SEPARATION    7    10.94
+0    ADULTERY    210    196.82
+1    BEHAVIOUR    61    70.29
+2    DESERTION    19    14.06
+3    SEPARATION_WITH_CONSENT    285    309.29
+4    SEPARATION    142    126.53
