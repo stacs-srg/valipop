@@ -3,11 +3,11 @@
  
 ## For Zen & Kostas
 
-- [ ] Improve the user-friendliness of the classification process.
-   - [ ] The ability to use spell checking from the CLI.
-- [ ] Spell checking cleaning.
+- [x] Improve the user-friendliness of the classification process.
+   - [x] The ability to use spell checking from the CLI.
+- [x] Spell checking cleaning.
    - [x] General English dictionary.
-   - [ ] Domain-specific dictionary: text from HISCO definition.
+   - [x] Domain-specific dictionary: text from HISCO definition.
    - [x] Mechanism for specifying additional dictionaries.
 - [ ] Tests.
    - [ ] Set up Maven integration test.
@@ -103,7 +103,7 @@
 
 ## Edinburgh meeting at 12th October 2015
 
-- [ ] Ask Zen:
+- [x] Ask Zen:
    - What did he mean by words that should be counted as stop words if appear alone?
       - This will result in empty strings that *should* be classified as UNCLASSIFIED?
       - Alternatively, we can have a list of strings that are classified as UNCLASSIFIED in gold standard.
@@ -116,7 +116,7 @@
 # Infrastructure
 
 - [ ] Need for the ability to store/retrieve encrypted datasets.
-- [ ] Ciesvium purpose needs focus. Should do one thing and do it well.
+- [ ] Ciesvium's purpose needs focus. Should do one thing and do it well.
    - [ ] CSV stream
    - [ ] encrypted CSV stream
    - [ ] CSV to Java Bean

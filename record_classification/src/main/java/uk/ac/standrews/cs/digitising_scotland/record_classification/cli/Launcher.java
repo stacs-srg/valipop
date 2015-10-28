@@ -23,7 +23,6 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.command.
 import java.io.*;
 import java.nio.file.*;
 import java.util.*;
-import java.util.ResourceBundle;
 import java.util.logging.*;
 import java.util.regex.*;
 
@@ -171,8 +170,8 @@ public class Launcher {
 
         try {
 
-            if (commands != null) {
-                handleCommandsFile();
+            if (isBatchModeEnabled()) {
+                handleCommands();
             }
             else {
                 handleCommand();
@@ -183,7 +182,9 @@ public class Launcher {
         }
     }
 
-    private void handleCommandsFile() throws Exception {
+    private boolean isBatchModeEnabled() {return commands != null;}
+
+    private void handleCommands() throws Exception {
 
         final List<String> command_lines = Files.readAllLines(commands);
 
@@ -235,17 +236,8 @@ public class Launcher {
     private void validateCommand(final String command) {
 
         if (command == null) {
-            exitWithError(help ? "" : "Please specify a command", true);
+            throw new ParameterException("Please specify a command");
         }
-    }
-
-    private void exitWithError(final String message, boolean show_usage) {
-
-        System.err.println(message);
-        if (show_usage) {
-            commander.usage();
-        }
-        exitWithError();
     }
 
     public Configuration getConfiguration() {
