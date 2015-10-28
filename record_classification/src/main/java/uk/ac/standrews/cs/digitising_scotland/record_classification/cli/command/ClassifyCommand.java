@@ -29,6 +29,7 @@ import java.util.logging.*;
 import java.util.stream.*;
 
 import static java.util.logging.Logger.getLogger;
+import static uk.ac.standrews.cs.digitising_scotland.record_classification.cli.Configuration.persistBucketAsCSV;
 
 /**
  * Classifies unseen records.
@@ -50,7 +51,7 @@ public class ClassifyCommand extends Command {
 
     private static final Logger LOGGER = getLogger(ClassifyCommand.class.getName());
 
-    @Parameter(names = {OPTION_OUTPUT_RECORDS_PATH_SHORT, OPTION_OUTPUT_RECORDS_PATH_LONG}, descriptionKey = "command.classify.output.description", converter = PathConverter.class)
+    @Parameter(required = true, names = {OPTION_OUTPUT_RECORDS_PATH_SHORT, OPTION_OUTPUT_RECORDS_PATH_LONG}, descriptionKey = "command.classify.output.description", converter = PathConverter.class)
     private Path output_path;
 
     /**
@@ -76,16 +77,20 @@ public class ClassifyCommand extends Command {
             unseen.setBucket(classified_unseen_records);
         }
 
-        if (output_path != null) {
-            final Bucket classified_unseen_records = classified_unseen_records_list.stream().reduce(Bucket::union).orElse(new Bucket());
-            LOGGER.info(() -> String.format("Persisting total of %d classified unseen records into path: %s", classified_unseen_records.size(), output_path));
-            try {
-                Configuration.persistBucketAsCSV(classified_unseen_records, output_path, Configuration.RECORD_CSV_FORMAT, Configuration.RESOURCE_CHARSET);
-            }
-            catch (IOException e) {
-                LOGGER.log(Level.SEVERE, "failed to persist classified unseen records: " + e.getMessage(), e);
-                throw new IOError(e);
-            }
+        persistClassifiedUnseenRecords(classified_unseen_records_list);
+    }
+
+    private void persistClassifiedUnseenRecords(final List<Bucket> classified_unseen_records_list) {
+
+        final Bucket classified_unseen_records = classified_unseen_records_list.stream().reduce(Bucket::union).orElse(new Bucket());
+        LOGGER.info(() -> String.format("Persisting total of %d classified unseen records into path: %s", classified_unseen_records.size(), output_path));
+
+        try {
+            persistBucketAsCSV(classified_unseen_records, output_path, Configuration.RECORD_CSV_FORMAT, Configuration.RESOURCE_CHARSET);
+        }
+        catch (IOException e) {
+            LOGGER.log(Level.SEVERE, "failed to persist classified unseen records: " + e.getMessage(), e);
+            throw new IOError(e);
         }
     }
 }
