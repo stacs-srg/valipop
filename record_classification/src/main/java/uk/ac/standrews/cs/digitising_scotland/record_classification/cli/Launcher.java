@@ -169,8 +169,10 @@ public class Launcher {
     public void handle() throws Exception {
 
         try {
-
-            if (isBatchModeEnabled()) {
+            if (help) {
+                commander.usage();
+            }
+            else if (isBatchModeEnabled()) {
                 handleCommands();
             }
             else {
