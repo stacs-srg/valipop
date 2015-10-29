@@ -19,12 +19,12 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.process.ser
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.SerializationUtils;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.ClassificationContext;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.serialization.json.ProcessObjectMapper;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
+import java.nio.charset.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -125,6 +125,44 @@ public class Serialization {
                 return JSON_SUFFIX;
             default:
                 return JSON_COMPRESSED_SUFFIX;
+        }
+    }
+
+    public static void persist(Path destination, Object value, SerializationFormat format) throws IOException {
+
+        try (final OutputStream out = Files.newOutputStream(destination)) {
+
+            switch (format) {
+                case JAVA_SERIALIZATION:
+                    SerializationUtils.serialize((Serializable) value, out);
+                    break;
+                case JSON:
+                    JSON_MAPPER.writeValue(out, value);
+                    break;
+                case JSON_COMPRESSED:
+                    JSON_MAPPER.writeValue(new GZIPOutputStream(out), value);
+                    break;
+                default:
+                    throw new RuntimeException("unknown serialization format " + format);
+            }
+        }
+    }
+
+    public static <Value> Value load(Path source, Class<Value> type, SerializationFormat format) throws IOException {
+
+        try (final InputStream in = Files.newInputStream(source)) {
+
+            switch (format) {
+                case JAVA_SERIALIZATION:
+                    //noinspection unchecked
+                    return (Value) SerializationUtils.deserialize(in);
+                case JSON:
+                    return JSON_MAPPER.readValue(in, type);
+                case JSON_COMPRESSED:
+                    return JSON_MAPPER.readValue(new GZIPInputStream(in), type);
+                default:
+                    throw new RuntimeException("unknown serialization format " + format);
+            }
         }
     }
 }

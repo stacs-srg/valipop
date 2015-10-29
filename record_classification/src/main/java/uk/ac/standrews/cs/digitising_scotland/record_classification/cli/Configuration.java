@@ -244,7 +244,15 @@ public class Configuration {
     public void setClassifierSupplier(final ClassifierSupplier classifier_supplier) {
 
         this.classifier_supplier = classifier_supplier;
-        classifier = classifier_supplier != null ? classifier_supplier.get() : null;
+        resetClassifier(classifier_supplier);
+    }
+
+    private void resetClassifier(final ClassifierSupplier classifier_supplier) {classifier = classifier_supplier != null ? classifier_supplier.get() : null;}
+
+    
+    void setClassifier(Classifier classifier) {
+
+        this.classifier = classifier;
     }
 
     public Random getRandom() {
@@ -329,8 +337,7 @@ public class Configuration {
         final Logger parent_logger = CLILogManager.CLILogger.getLogger(logger_name);
         parent_logger.setUseParentHandlers(false);
         parent_logger.addHandler(handler);
-        
-        
+
         //TODO add file handler for error.log
     }
 

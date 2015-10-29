@@ -22,6 +22,7 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.*
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.serialization.*;
 
 import java.io.*;
+import java.nio.file.*;
 import java.util.*;
 import java.util.function.*;
 
@@ -34,8 +35,6 @@ import static uk.ac.standrews.cs.digitising_scotland.record_classification.cli.C
  */
 public class ConfigurationJsonDeserializer extends JsonDeserializer<Configuration> {
 
-    //FIXME implement classification deserialization
-    
     @Override
     public Configuration deserialize(final JsonParser in, final DeserializationContext context) throws IOException {
 
@@ -95,7 +94,15 @@ public class ConfigurationJsonDeserializer extends JsonDeserializer<Configuratio
             field_name = in.getCurrentName();
         }
 
+        configuration.setClassifier(readClassifier(configuration));
         return configuration;
+    }
+
+    private Classifier readClassifier(final Configuration configuration) throws IOException {
+
+        final SerializationFormat format = configuration.getClassifierSerializationFormat();
+        final Path source = ConfigurationJsonSerializer.getSerializedClassifierPath(format);
+        return Serialization.load(source, Classifier.class, format);
     }
 
     private void populateResources(JsonParser in, final Consumer<String> handler) throws IOException {
