@@ -16,6 +16,7 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.model;
 
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.DuplicateRecordIdException;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.InputFileFormatException;
 import uk.ac.standrews.cs.util.dataset.DataSet;
@@ -265,9 +266,9 @@ public class Bucket implements Iterable<Record>, Serializable {
      * Constructs a new bucket containing records of this bucket without classification.
      *
      * @return a new bucket containing records of this bucket without classification
-     * @see Record#Record(int, String)
+     * @see Record#Record(int, String, String)
      */
-    public Bucket makeStrippedRecords() {
+    public Bucket stripRecordClassifications() {
 
         Bucket unclassified_bucket = new Bucket();
 
@@ -307,23 +308,30 @@ public class Bucket implements Iterable<Record>, Serializable {
     public Bucket randomSubset(final Random random, double selection_probability) {
 
         final Bucket subset = new Bucket();
-        final Bucket not_selected = new Bucket();
 
-        int subset_size = (int) (size() * selection_probability);
+        if (selection_probability > 1.0 - Validators.DELTA) {
 
-        for (Record record : this) {
-            if (subset.size() < subset_size && random.nextDouble() < selection_probability) {
-                subset.add(record);
-            }
-            else {
-                not_selected.add(record);
-            }
+            subset.add(records);
         }
+        else if (selection_probability > Validators.DELTA) {
 
-        // Add further records as necessary to make up to required size.
-        for (Record record : not_selected) {
-            if (subset.size() < subset_size) {
-                subset.add(record);
+            final Bucket not_selected = new Bucket();
+            final int expected_subset_size = (int) (size() * selection_probability);
+
+            for (Record record : this) {
+                if (subset.size() < expected_subset_size && random.nextDouble() < selection_probability) {
+                    subset.add(record);
+                }
+                else {
+                    not_selected.add(record);
+                }
+            }
+
+            // Add further records as necessary to make up to required size.
+            for (Record record : not_selected) {
+                if (subset.size() < expected_subset_size) {
+                    subset.add(record);
+                }
             }
         }
 
@@ -393,4 +401,5 @@ public class Bucket implements Iterable<Record>, Serializable {
 
         return records.stream().map(record -> new Record(next_id++, record.getData(), record.getOriginalData(), record.getClassification())).collect(Collectors.toList());
     }
+
 }

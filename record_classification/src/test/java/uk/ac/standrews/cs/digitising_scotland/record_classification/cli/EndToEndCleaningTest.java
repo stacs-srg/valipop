@@ -16,7 +16,7 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.cli;
 
-import org.junit.Test;
+import org.junit.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.ClassifierSupplier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.EnglishStopWordCleaner;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
@@ -28,12 +28,11 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.process.seri
 import uk.ac.standrews.cs.util.tools.FileManipulation;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
-
+@Ignore
 public class EndToEndCleaningTest extends EndToEndCommon {
 
     static final String GOLD_STANDARD_FILE_NAME = "test_training_data.csv";
@@ -48,8 +47,8 @@ public class EndToEndCleaningTest extends EndToEndCommon {
         classifier_supplier = ClassifierSupplier.STRING_SIMILARITY_DICE;
         serialization_format = SerializationFormat.JSON;
 
-        input_gold_standard_files = Arrays.asList(FileManipulation.getResourcePath(EndToEndCleaningTest.class, GOLD_STANDARD_FILE_NAME));
-        training_ratios = Arrays.asList(1.0);
+        input_gold_standard_files = Collections.singletonList(FileManipulation.getResourcePath(EndToEndCleaningTest.class, GOLD_STANDARD_FILE_NAME));
+        training_ratios = Collections.singletonList(1.0);
 
         input_unseen_data_file = FileManipulation.getResourcePath(EndToEndCleaningTest.class, EVALUATION_FILE_NAME);
     }

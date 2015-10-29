@@ -30,43 +30,30 @@ import java.util.function.Supplier;
  * @author Masih Hajiarab Derkani
  * @author Graham Kirby
  */
-public enum StringSimilarityMetrics implements Supplier<SimilarityMetric> {
+@SuppressWarnings("NonSerializableFieldInSerializableClass")
+public enum StringSimilaritySupplier implements Supplier<SimilarityMetric> {
 
-    /**
-     * @see {@link JaccardSimilarity}.
-     **/
-    JACCARD(() -> new StringSimilarityMetricWrapper("JACCARD"), new SetMetricAdapter(new JaccardSimilarity<>())),
+    /** @see JaccardSimilarity **/
+    JACCARD(() -> new StringSimilarityMetricWrapper(new JaccardSimilarity<>())),
 
-    /**
-     * @see {@link Levenshtein}.
-     **/
-    LEVENSHTEIN(() -> new StringSimilarityMetricWrapper("LEVENSHTEIN"), new Levenshtein()),
+    /** @see Levenshtein **/
+    LEVENSHTEIN(() -> new StringSimilarityMetricWrapper(new Levenshtein())),
 
-    /**
-     * @see {@link JaroWinkler}
-     **/
-    JARO_WINKLER(() -> new StringSimilarityMetricWrapper("JARO_WINKLER"), new JaroWinkler()),
+    /** @see JaroWinkler **/
+    JARO_WINKLER(() -> new StringSimilarityMetricWrapper(new JaroWinkler())),
 
-    /**
-     * @see {@link DiceSimilarity}.
-     **/
-    DICE(() -> new StringSimilarityMetricWrapper("DICE"), new SetMetricAdapter(new DiceSimilarity<>()));
+    /** @see DiceSimilarity **/
+    DICE(() -> new StringSimilarityMetricWrapper(new DiceSimilarity<>()));
 
     private Supplier<SimilarityMetric> supplier;
-    private StringMetric metric;
 
-    StringSimilarityMetrics(Supplier<SimilarityMetric> supplier, StringMetric metric) {
+    StringSimilaritySupplier(Supplier<SimilarityMetric> supplier) {
 
         this.supplier = supplier;
-        this.metric = metric;
     }
 
     public SimilarityMetric get() {
+
         return supplier.get();
-    }
-
-    StringMetric getStringMetric() {
-
-        return metric;
     }
 }

@@ -60,7 +60,8 @@ public class Serialization {
         if (serialization_format == SerializationFormat.JAVA_SERIALIZATION) {
 
             persistContextToSerializedFile(context, serialized_context_path);
-        } else {
+        }
+        else {
             persistContextToJSONFile(context, serialized_context_path, serialization_format);
         }
     }
@@ -72,7 +73,8 @@ public class Serialization {
         if (serialization_format == SerializationFormat.JAVA_SERIALIZATION) {
 
             return loadContextFromSerializedFile(serialized_context_path);
-        } else {
+        }
+        else {
             return loadContextFromJSONFile(serialized_context_path, serialization_format);
         }
     }
@@ -111,8 +113,7 @@ public class Serialization {
             input_stream = new GZIPInputStream(input_stream);
         }
 
-        return JSON_MAPPER.readValue(input_stream, new TypeReference<ClassificationContext>() {
-        });
+        return JSON_MAPPER.readValue(input_stream, new TypeReference<ClassificationContext>() {});
     }
 
     private static String getSerializedContextSuffix(SerializationFormat serialization_format) {
