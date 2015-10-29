@@ -18,8 +18,12 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.cli;
 
 import com.fasterxml.jackson.core.*;
 import com.fasterxml.jackson.databind.*;
+import org.apache.commons.lang3.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.serialization.*;
 
 import java.io.*;
+import java.nio.file.*;
 import java.util.*;
 
 /**
@@ -27,8 +31,6 @@ import java.util.*;
  */
 class ConfigurationJsonSerializer extends JsonSerializer<Configuration> {
 
-    //FIXME implement classification serialization
-    
     private static final ResourceJsonSerializer RESOURCE_JSON_SERIALIZER = new ResourceJsonSerializer();
     private static final GoldStandardJsonSerializer GOLD_STANDARD_JSON_SERIALIZER = new GoldStandardJsonSerializer();
     protected static final String DEFAULT_CHARSET_SUPPLIER = "default_charset_supplier";
@@ -42,6 +44,7 @@ class ConfigurationJsonSerializer extends JsonSerializer<Configuration> {
     protected static final String DEFAULT_INTERNAL_TRAINING_RATIO = "default_internal_training_ratio";
     protected static final String UNSEENS = "unseens";
     protected static final String GOLD_STANDARDS = "gold_standards";
+    public static final String SERIALIZED_CLASSIFIER_FILE_NAME_PREFIX = "classifier";
 
     @Override
     public void serialize(final Configuration configuration, final JsonGenerator out, final SerializerProvider serializers) throws IOException {
@@ -60,8 +63,20 @@ class ConfigurationJsonSerializer extends JsonSerializer<Configuration> {
 
         writeResourceList(UNSEENS, configuration.getUnseens(), out, serializers);
         writeGoldStandards(configuration, out, serializers);
+        writeClassifier(configuration, out, serializers);
 
         out.writeEndObject();
+    }
+
+    private void writeClassifier(final Configuration configuration, final JsonGenerator out, final SerializerProvider serializers) throws IOException {
+
+        final Optional<Classifier> classifier = configuration.getClassifier();
+        if (classifier.isPresent()) {
+            final SerializationFormat format = configuration.getClassifierSerializationFormat();
+
+            final Path destination = getSerializedClassifierPath(format);
+            Serialization.persist(destination, classifier.get(), format);
+        }
     }
 
     private void writeGoldStandards(final Configuration configuration, final JsonGenerator out, final SerializerProvider serializers) throws IOException {
@@ -80,6 +95,20 @@ class ConfigurationJsonSerializer extends JsonSerializer<Configuration> {
             RESOURCE_JSON_SERIALIZER.serialize(resource, out, serializers);
         }
         out.writeEndArray();
+    }
+
+    static Path getSerializedClassifierPath(SerializationFormat format) {
+
+        switch (format) {
+            case JAVA_SERIALIZATION:
+                return Configuration.CLI_HOME.resolve(SERIALIZED_CLASSIFIER_FILE_NAME_PREFIX + ".object");
+            case JSON:
+                return Configuration.CLI_HOME.resolve(SERIALIZED_CLASSIFIER_FILE_NAME_PREFIX + ".json");
+            case JSON_COMPRESSED:
+                return Configuration.CLI_HOME.resolve(SERIALIZED_CLASSIFIER_FILE_NAME_PREFIX + ".object");
+            default:
+                throw new RuntimeException("unsupported classifier serialization format: " + format);
+        }
     }
 
     static class ResourceJsonSerializer extends JsonSerializer<Configuration.Resource> {
