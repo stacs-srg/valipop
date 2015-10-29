@@ -25,7 +25,9 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 import java.io.*;
 import java.nio.file.*;
 import java.util.*;
+import java.util.logging.*;
 
+import static java.util.logging.Logger.getLogger;
 import static org.junit.Assert.*;
 
 /**
@@ -33,52 +35,55 @@ import static org.junit.Assert.*;
  */
 public abstract class LoadRecordsCommandTest extends CommandTest {
 
-    protected static final Bucket TEST_RECORDS = new Bucket();
     protected static final String ID = "ID";
     protected static final String LABEL = "LABEL";
     protected static final String CODE = "CODE";
-    protected static final CSVFormat DEFAULT_GOLD_STANDARD_FORMAT = CSVFormat.DEFAULT.withHeader(ID, LABEL, CODE);
+    protected static final Bucket TEST_RECORDS = new Bucket();
     protected static final Map<Integer[], CSVFormat> TEST_FORMATS = new HashMap<>();
-    protected static final List<Path> TEMP_PATHS = new ArrayList<>();
 
     static {
         TEST_RECORDS.add(new Record(1, "fish", new Classification("swim", new TokenList("fish"), 0.0, null)));
         TEST_RECORDS.add(new Record(2, "dog", new Classification("bark", new TokenList("dog"), 0.0, null)));
         TEST_RECORDS.add(new Record(3, "cat", new Classification("purr", new TokenList("cat"), 0.0, null)));
         TEST_RECORDS.add(new Record(4, "shark", new Classification("swim", new TokenList("shark"), 0.0, null)));
-    }
 
-    static {
-        TEST_FORMATS.put(new Integer[]{0, 1, 2}, DEFAULT_GOLD_STANDARD_FORMAT);
         TEST_FORMATS.put(new Integer[]{0, 1, 2}, CSVFormat.DEFAULT);
         TEST_FORMATS.put(new Integer[]{0, 1, 2}, CSVFormat.RFC4180);
         TEST_FORMATS.put(new Integer[]{0, 1, 2}, CSVFormat.EXCEL);
         TEST_FORMATS.put(new Integer[]{0, 1, 2}, CSVFormat.MYSQL);
         TEST_FORMATS.put(new Integer[]{0, 1, 2}, CSVFormat.TDF);
         TEST_FORMATS.put(new Integer[]{0, 1, 2}, CsvFormatSupplier.RFC4180_PIPE_SEPARATED.get());
+        TEST_FORMATS.put(new Integer[]{0, 1, 2}, CSVFormat.DEFAULT.withHeader(ID, LABEL, CODE));
         TEST_FORMATS.put(new Integer[]{0, 2, 1}, CSVFormat.DEFAULT.withHeader(ID, CODE, LABEL));
         TEST_FORMATS.put(new Integer[]{2, 1, 0}, CSVFormat.DEFAULT.withHeader(CODE, LABEL, ID));
     }
+
+    private static final Logger LOGGER = getLogger(LoadRecordsCommandTest.class.getName());
 
     private Path path;
     private CSVFormat format;
     private int id_index;
     private int label_index;
+    protected int code_index;
+    private Bucket records;
 
-    protected LoadRecordsCommandTest(Path path, CSVFormat format, int id_index, int label_index) {
+    protected LoadRecordsCommandTest(Bucket records, CSVFormat format, int id_index, int label_index, int code_index) {
 
-        this.path = path;
+        this.records = records;
+
         this.format = format;
         this.id_index = id_index;
         this.label_index = label_index;
+        this.code_index = code_index;
+        this.path = printRecordsIntoTempFileWithFormat(records, format, id_index, label_index, code_index);
     }
 
     protected Bucket getExpectedRecords() {
 
-        return TEST_RECORDS;
+        return records;
     }
 
-    protected static Path printRecordsIntoTempFileWithFormat(Bucket records, CSVFormat format, int id_index, int label_index, int code_index) {
+    protected static Path printRecordsIntoTempFileWithFormat(Bucket records, CSVFormat format, int id_index, int label_index, Integer code_index) {
 
         final Path temp_path = newTempFile();
 
@@ -91,7 +96,9 @@ public abstract class LoadRecordsCommandTest extends CommandTest {
                     final String[] record_csv = new String[3];
                     record_csv[id_index] = String.valueOf(record.getId());
                     record_csv[label_index] = record.getData();
-                    record_csv[code_index] = record.getClassification().getCode();
+                    if (code_index != null) {
+                        record_csv[code_index] = record.getClassification().getCode();
+                    }
                     printer.printRecord(record_csv);
                 }
                 catch (IOException e) { throw new IOError(e); }
@@ -112,13 +119,13 @@ public abstract class LoadRecordsCommandTest extends CommandTest {
         }
     }
 
-    @AfterClass
-    public static void tearDownAfterClass() throws Exception {
+    @After
+    public void tearDownAfterClass() throws Exception {
 
-        TEMP_PATHS.forEach(LoadRecordsCommandTest::deleteQuietlyIfExists);
+        deleteQuietlyIfExists(path);
     }
 
-    @Parameterized.Parameters(name = "{index} - id: {2}, label: {3}")
+    @Parameterized.Parameters(name = "{index} - id: {2}, label: {3}, code: {4}")
     public static Collection<Object[]> data() {
 
         final List<Object[]> arguments = new ArrayList<>();
@@ -129,9 +136,7 @@ public abstract class LoadRecordsCommandTest extends CommandTest {
             final Integer id_index = indices[0];
             final Integer label_index = indices[1];
             final Integer code_index = indices[2];
-            final Path path = printRecordsIntoTempFileWithFormat(TEST_RECORDS, format, id_index, label_index, code_index);
-            arguments.add(new Object[]{path, format, id_index, label_index});
-            TEMP_PATHS.add(path);
+            arguments.add(new Object[]{TEST_RECORDS, format, id_index, label_index, code_index});
         });
 
         return arguments;
@@ -178,7 +183,7 @@ public abstract class LoadRecordsCommandTest extends CommandTest {
             Files.deleteIfExists(path);
         }
         catch (IOException e) {
-            //skip
+            LOGGER.log(Level.FINE, String.format("IO exception while deleting temp file: %s", path), e);
         }
     }
 }

@@ -36,7 +36,8 @@ class CLIConsoleHandler extends ConsoleHandler {
 
         super();
         setFormatter(CLI_CONSOLE_LOG_FORMATTER);
+//        setOutputStream(System.out);
     }
 
-    //TODO publish severe log level through stderr
+//TODO publish severe log level through stderr
 }

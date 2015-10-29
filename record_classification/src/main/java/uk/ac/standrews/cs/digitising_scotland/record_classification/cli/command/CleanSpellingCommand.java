@@ -74,8 +74,8 @@ public class CleanSpellingCommand extends CleanStopWordsCommand {
         final Cleaner cleaner = getCleaner();
         final Configuration configuration = launcher.getConfiguration();
 
-        CleanCommand.cleanUnseenRecords(cleaner, configuration);
-        CleanCommand.cleanGoldStandardRecords(cleaner, configuration);
+        CleanCommand.cleanUnseenRecords(cleaner, configuration, logger);
+        CleanCommand.cleanGoldStandardRecords(cleaner, configuration, logger);
     }
 
     protected Cleaner getCleaner() {

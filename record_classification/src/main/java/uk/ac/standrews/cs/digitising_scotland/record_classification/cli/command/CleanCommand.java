@@ -47,8 +47,6 @@ public class CleanCommand extends Command {
     /** The long name of the command that specifies the cleaners by which to clean loaded gold standard and/or unseen records. **/
     public static final String OPTION_CLEANER_LONG = "--cleaner";
 
-    private static final Logger LOGGER = getLogger(CleanCommand.class.getName());
-
     @Parameter(names = {OPTION_CLEANER_SHORT, OPTION_CLEANER_LONG}, descriptionKey = "command.clean.cleaner.description", variableArity = true)
     private List<CleanerSupplier> cleaner_suppliers;
 
@@ -71,11 +69,11 @@ public class CleanCommand extends Command {
         final Optional<Command> sub_command = getSubCommand();
 
         if (sub_command.isPresent()) {
-            LOGGER.fine(() -> "Detected sub command " + sub_command);
+            logger.fine(() -> "Detected sub command " + sub_command);
             sub_command.get().run();
         }
         else if (!cleaners_specified) {
-            LOGGER.severe(() -> "No sub command detected to execute.");
+            logger.severe(() -> "No sub command detected to execute.");
             throw new ParameterException("Please specify a sub command.");
         }
     }
@@ -87,25 +85,25 @@ public class CleanCommand extends Command {
 
         //TODO think about whether we need this: allow user to choose what to clean; i.e. gold standard all or by name, unseen all or by name.
 
-        cleanGoldStandardRecords(cleaner, configuration);
-        cleanUnseenRecords(cleaner, configuration);
+        cleanGoldStandardRecords(cleaner, configuration, logger);
+        cleanUnseenRecords(cleaner, configuration, logger);
     }
 
-    static void cleanUnseenRecords(final Cleaner cleaner, final Configuration configuration) {
+    static void cleanUnseenRecords(final Cleaner cleaner, final Configuration configuration, Logger logger) {
 
-        LOGGER.info("cleaning unseen records...");
-        clean(cleaner, configuration.getUnseens());
+        logger.info("cleaning unseen records...");
+        clean(cleaner, configuration.getUnseens(), logger);
     }
 
-    static void cleanGoldStandardRecords(final Cleaner cleaner, final Configuration configuration) {
+    static void cleanGoldStandardRecords(final Cleaner cleaner, final Configuration configuration, Logger logger) {
 
-        LOGGER.info("cleaning gold standard records...");
-        clean(cleaner, configuration.getGoldStandards());
+        logger.info("cleaning gold standard records...");
+        clean(cleaner, configuration.getGoldStandards(), logger);
     }
 
-    static void clean(final Cleaner cleaner, final List<? extends Unseen> unclean) {
+    static void clean(final Cleaner cleaner, final List<? extends Unseen> unclean, Logger logger) {
 
-        LOGGER.info(() -> "cleaning " + unclean.stream().map(Unseen::getName).reduce((one, another) -> one + ", " + another).orElse("skipped; no records are loaded to clean."));
+        logger.info(() -> "cleaning " + unclean.stream().map(Unseen::getName).reduce((one, another) -> one + ", " + another).orElse("skipped; no records are loaded to clean."));
 
         final List<Bucket> unclean_buckets = unclean.stream().map(Unseen::toBucket).collect(Collectors.toList());
         final List<Bucket> clean_buckets = cleaner.apply(unclean_buckets);

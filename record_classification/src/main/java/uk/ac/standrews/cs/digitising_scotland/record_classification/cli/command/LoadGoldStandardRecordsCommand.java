@@ -47,7 +47,6 @@ public class LoadGoldStandardRecordsCommand extends LoadUnseenRecordsCommand {
     /** The default index of the column that contains the classes associated to each row. **/
     public static final int DEFAULT_CLASS_COLUMN_INDEX = 2;
 
-    private static final Logger LOGGER = Logger.getLogger(LoadGoldStandardRecordsCommand.class.getName());
 
     @Parameter(names = {SetCommand.OPTION_TRAINING_RATIO_SHORT, SetCommand.OPTION_TRAINING_RATIO_LONG},
                     descriptionKey = "command.load.gold_standard.training_ratio.description",
@@ -75,7 +74,7 @@ public class LoadGoldStandardRecordsCommand extends LoadUnseenRecordsCommand {
     @Override
     protected Record toRecord(final CSVRecord record) {
 
-        LOGGER.finest(() -> String.format("loading record number %d, at character position %d", record.getRecordNumber(), record.getCharacterPosition()));
+        logger.finest(() -> String.format("loading record number %d, at character position %d", record.getRecordNumber(), record.getCharacterPosition()));
 
         final Integer id = getId(record);
         final String label = getLabel(record);

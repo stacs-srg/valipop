@@ -16,8 +16,7 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.cli;
 
-import org.junit.After;
-import org.junit.Before;
+import org.junit.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.ClassifierSupplier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.CleanerSupplier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.command.*;
@@ -34,6 +33,7 @@ import java.util.*;
 
 import static org.junit.Assert.fail;
 
+@Ignore
 public class EndToEndCommon {
 
     private static final String CLASSIFIED_FILE_NAME = "classified.csv";

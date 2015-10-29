@@ -52,7 +52,7 @@ public class Launcher {
     /** The long name of the option that specifies the level of verbosity of the command line interface **/
     public static final String OPTION_VERBOSITY_LONG = "--verbosity";
 
-    private static final Logger LOGGER = Logger.getLogger(Launcher.class.getName());
+    private static final Logger LOGGER = CLILogManager.CLILogger.getLogger(Launcher.class.getName());
     private static final Pattern COMMAND_LINE_ARGUMENT_PATTERN = Pattern.compile("[^\\s\"']+|\"([^\"]*)\"|'([^']*)'");
 
     private JCommander commander;
@@ -130,7 +130,9 @@ public class Launcher {
         //TODO think about CLI-specific exceptions.
     }
 
-    private static void exitWithError() {System.exit(-1);}
+    private static void exitWithError() {
+//        System.exit(-1);
+    }
 
     void addCommand(Command command) {
 

@@ -326,10 +326,11 @@ public class Configuration {
         final Handler handler = new CLIConsoleHandler();
         handler.setLevel(log_level);
         final String logger_name = Launcher.class.getPackage().getName();
-        final Logger parent_logger = Logger.getLogger(logger_name);
+        final Logger parent_logger = CLILogManager.CLILogger.getLogger(logger_name);
         parent_logger.setUseParentHandlers(false);
         parent_logger.addHandler(handler);
-
+        
+        
         //TODO add file handler for error.log
     }
 
