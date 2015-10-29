@@ -9,9 +9,9 @@ The following steps describes how to install `classli` on a Mac OS X operating s
     - To make sure Java is available, in the opened terminal window type `java -version` and press enter; you should see the version and build number of Java.
     - If not, make sure Java installation directory is added to `PATH` environment variable, see [this](https://java.com/en/download/help/path.xml) guide for more information.
 
-2. Download the `classli.zip` which contains the Mac OS X binary from [here](https://builds.cs.st-andrews.ac.uk/job/digitising_scotland/lastSuccessfulBuild/artifact/record_classification/target/classli.tar).
+2. Download the `classli.tar` which contains the Mac OS X binary from [here](https://builds.cs.st-andrews.ac.uk/job/digitising_scotland/lastSuccessfulBuild/artifact/record_classification/target/classli.tar).
 
-3. Extract the downloaded zip file.
+3. Extract the downloaded tar file.
    
 4. Place the extracted `classli` binary in `/usr/local/bin` folder. 
 
