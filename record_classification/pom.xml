@@ -168,7 +168,7 @@
                                     <fileset file="${project.build.directory}/${cli.jar.name}.jar"/>
                                 </concat>
                                 <chmod file="${project.build.directory}/${cli.binary.name}" perm="+x"/>
-                                <zip basedir="${project.build.directory}" destfile="${project.build.directory}/${cli.binary.name}.zip" includesfile="${cli.binary.name}"/>
+                                <zip basedir="${project.build.directory}" destfile="${project.build.directory}/${cli.binary.name}.zip" includesfile="${project.build.directory}/${cli.binary.name}"/>
                                 <delete file="${project.build.directory}/${cli.binary.name}"/>
                             </target>
                         </configuration>
