@@ -34,6 +34,8 @@ import static uk.ac.standrews.cs.digitising_scotland.record_classification.cli.C
  */
 public class ConfigurationJsonDeserializer extends JsonDeserializer<Configuration> {
 
+    //FIXME implement classification deserialization
+    
     @Override
     public Configuration deserialize(final JsonParser in, final DeserializationContext context) throws IOException {
 
