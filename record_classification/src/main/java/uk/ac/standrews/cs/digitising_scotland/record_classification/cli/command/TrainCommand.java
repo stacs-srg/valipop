@@ -35,8 +35,6 @@ public class TrainCommand extends Command {
     /** The name of this command. */
     public static final String NAME = "train";
 
-    private static final Logger LOGGER = Logger.getLogger(TrainCommand.class.getName());
-
     @Parameter(names = {SetCommand.OPTION_INTERNAL_TRAINING_RATIO_SHORT, SetCommand.OPTION_INTERNAL_TRAINING_RATIO_LONG},
                     descriptionKey = "command.train.internal_training_ratio.description",
                     validateValueWith = Validators.BetweenZeroToOneInclusive.class)
@@ -56,12 +54,12 @@ public class TrainCommand extends Command {
         final Classifier classifier = configuration.requireClassifier();
         final Bucket training_records = configuration.requireTrainingRecords();
 
-        LOGGER.info(() -> String.format("training classifier %s...", configuration.getClassifierSupplier()));
+        logger.info(() -> String.format("training classifier %s...", configuration.getClassifierSupplier()));
 
         final Instant start = Instant.now();
         classifier.trainAndEvaluate(training_records, internal_training_ratio, configuration.getRandom());
         final Duration training_time = Duration.between(start, Instant.now());
 
-        LOGGER.info(() -> String.format("trained the classifier on %d records in %s", training_records.size(), training_time));
+        logger.info(() -> String.format("trained the classifier on %d records in %s", training_records.size(), training_time));
     }
 }

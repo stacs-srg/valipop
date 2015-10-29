@@ -60,8 +60,6 @@ public class LoadCommand extends Command {
     /** The long name of the option that specifies whether to override an existing resource with the same name. **/
     public static final String OPTION_FORCE_LONG = "--overrideExisting";
 
-    private static final Logger LOGGER = Logger.getLogger(LoadCommand.class.getName());
-
     @Parameter(names = {OPTION_CHARSET_SHORT, OPTION_CHARSET_LONG}, descriptionKey = "command.load.charset.description")
     private CharsetSupplier charset_supplier = launcher.getConfiguration().getDefaultCharsetSupplier();
 
@@ -82,11 +80,11 @@ public class LoadCommand extends Command {
         final Optional<Command> command = getSubCommand();
 
         if (command.isPresent()) {
-            LOGGER.fine(() -> "Detected sub command " + command);
+            logger.fine(() -> "Detected sub command " + command);
             command.get().run();
         }
         else {
-            LOGGER.severe(() -> "No sub command detected to execute");
+            logger.severe(() -> "No sub command detected to execute");
             throw new ParameterException("Please specify a sub command.");
         }
     }

@@ -35,32 +35,11 @@ import static org.junit.Assert.assertEquals;
 @RunWith(Parameterized.class)
 public class LoadGoldStandardRecordsCommandTest extends LoadRecordsCommandTest {
 
-    private int code_index;
 
-    public LoadGoldStandardRecordsCommandTest(Path path, CSVFormat format, int id_index, int label_index, int code_index) {
-
-        super(path, format, id_index, label_index);
-        this.code_index = code_index;
+    public LoadGoldStandardRecordsCommandTest(Bucket records, CSVFormat format, int id_index, int label_index, int code_index) {
+        super(records, format, id_index, label_index, code_index);
     }
 
-    @Parameterized.Parameters(name = "{index} - id: {2}, label: {3}, code: {4}")
-    public static Collection<Object[]> data() {
-
-        final List<Object[]> arguments = new ArrayList<>();
-
-        TEST_FORMATS.entrySet().forEach(index_format -> {
-            final Integer[] indices = index_format.getKey();
-            final CSVFormat format = index_format.getValue();
-            final Integer id_index = indices[0];
-            final Integer label_index = indices[1];
-            final Integer code_index = indices[2];
-            final Path path = printRecordsIntoTempFileWithFormat(TEST_RECORDS, format, id_index, label_index, code_index);
-            arguments.add(new Object[]{path, format, id_index, label_index, code_index});
-            TEMP_PATHS.add(path);
-        });
-
-        return arguments;
-    }
 
     @Override
     protected List<Object> getArguments() {

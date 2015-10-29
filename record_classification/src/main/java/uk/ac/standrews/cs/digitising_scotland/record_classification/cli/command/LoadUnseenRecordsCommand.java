@@ -36,8 +36,6 @@ public class LoadUnseenRecordsCommand extends LoadRecordsCommand {
     /** The name of this command. */
     public static final String NAME = "unseen";
 
-    private static final Logger LOGGER = Logger.getLogger(LoadUnseenRecordsCommand.class.getName());
-
     /**
      * Instantiates this command as a sub command of the given load command.
      *
@@ -58,7 +56,7 @@ public class LoadUnseenRecordsCommand extends LoadRecordsCommand {
     @Override
     protected Record toRecord(final CSVRecord record) {
 
-        LOGGER.finest(() -> String.format("Loading record number %d, at character position %d", record.getRecordNumber(), record.getCharacterPosition()));
+        logger.finest(() -> String.format("Loading record number %d, at character position %d", record.getRecordNumber(), record.getCharacterPosition()));
 
         final Integer id = getId(record);
         final String label = getLabel(record);

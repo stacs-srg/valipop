@@ -22,7 +22,10 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.*;
 
 import java.io.*;
 import java.util.*;
+import java.util.logging.*;
 import java.util.stream.*;
+
+import static java.util.logging.Logger.getLogger;
 
 /**
  * Captures common functionality among {@link Command command} test classes.
@@ -32,7 +35,7 @@ import java.util.stream.*;
 public abstract class CommandTest {
 
     protected Launcher launcher;
-
+    private static final Logger LOGGER = getLogger(CommandTest.class.getName());
     @Before
     public void setUp() throws Exception {
 
@@ -43,6 +46,7 @@ public abstract class CommandTest {
     protected void run(Object... args) throws Exception {
 
         final List<String> arguments = Arrays.asList(args).stream().map(String::valueOf).collect(Collectors.toList());
+        LOGGER.info(() -> String.format("running: %s", String.join(" ", arguments)));
         launcher.parse(arguments.toArray(new String[arguments.size()]));
         launcher.handle();
     }

@@ -25,6 +25,7 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.process.step
 
 import java.nio.charset.Charset;
 import java.util.*;
+import java.util.logging.*;
 
 /**
  * Represents an operation exposed to the user via the {@link Launcher command-line interface}.
@@ -34,8 +35,9 @@ import java.util.*;
  */
 public abstract class Command implements Runnable {
 
-    protected final Launcher launcher;
     private final String name;
+    protected final Launcher launcher;
+    protected final Logger logger;
 
     /**
      * Instantiates this command for the given launcher and the name by which it is triggered.
@@ -47,6 +49,8 @@ public abstract class Command implements Runnable {
 
         this.launcher = launcher;
         this.name = name;
+
+        logger = CLILogManager.CLILogger.getLogger(getClass().getName());
     }
 
     /**

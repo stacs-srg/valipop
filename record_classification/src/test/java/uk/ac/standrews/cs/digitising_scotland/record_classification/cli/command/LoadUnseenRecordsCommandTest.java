@@ -33,9 +33,9 @@ import static org.junit.Assert.*;
 @RunWith(Parameterized.class)
 public class LoadUnseenRecordsCommandTest extends LoadRecordsCommandTest {
 
-    public LoadUnseenRecordsCommandTest(Path path, CSVFormat format, int id_index, int label_index) {
+    public LoadUnseenRecordsCommandTest(Bucket records, CSVFormat format, int id_index, int label_index, int code_index) {
 
-        super(path, format, id_index, label_index);
+        super(records, format, id_index, label_index, code_index);
     }
 
     @Override

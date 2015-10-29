@@ -1,5 +1,5 @@
 # Usage
-Once classli is [installed](install/index.html), it is possible to start using the program via the command line. Open the command-line interface on your operating system (Terminal on OS X, Command Prompt on Windows, or Bash on Linux/Unix operating systems), type `classli` and press enter. You will see the usage message being printed explaining how to use classli. Do not panic; this document aims to explain what they mean and how to use them. The classli commands and options instruct it to do what it is required it to do.
+Once `classli` is [installed](install/index.html), it is possible to start using the program via the command line. Open the command-line interface on your operating system (Terminal on OS X, Command Prompt on Windows, or Bash on Linux/Unix operating systems), type `classli` and press enter. You will see the usage message being printed explaining how to use classli. Do not panic; this document aims to explain what they mean and how to use them. The `classli` commands and options instruct it to do what it is required it to do.
 
  The format by which the command and options are specified consists of 6 parts:
 
@@ -9,7 +9,7 @@ Once classli is [installed](install/index.html), it is possible to start using t
 
 Part 1, `classli`, specifies the name of the program to execute, telling the command-line interface what program to start.
 
-Parts 2 to 6 specify the command-line parameters to be passed to classli by the command-line interface. The classli command-line parameters are either _options_ or _commands_. Options are specified by their name, always starting with a `-` (hyphen). Each option typically has a short name and a long name, which can be used interchangeably. The short names are useful for quickly specifying commands without having to press lots of keystrokes. The long commands are useful for human readability of the instructions, providing more clues to what an instruction does without having to read the documentations.
+Parts 2 to 6 specify the command-line parameters to be passed to `classli` by the command-line interface. The `classli` command-line parameters are either _options_ or _commands_. Options are specified by their name, always starting with a `-` (hyphen). Each option typically has a short name and a long name, which can be used interchangeably. The short names are useful for quickly specifying commands without having to press lots of keystrokes. The long commands are useful for human readability of the instructions, providing more clues to what an instruction does without having to read the documentations.
 
 Similar to options, commands are also specified by their name, except command names never start with `-`. The command names look more like a verb or a noun. Each command can have its own commands (i.e. sub-command). Further, each command and sub-command can have options. This document explains the possible options and commands of classli, starting with possible options for part 2.
 
@@ -31,7 +31,7 @@ The rest of this document explains parts 3 to 6, i.e. commands, command options,
 
 ### `init`
 
-The `init` command initialises a new workflow that gets persisted on your hard drive. This means when classli program is closed and re-opened, it will remember where things were left off. The options of this command are:
+The `init` command initialises a new workflow that gets persisted on your hard drive. This means when `classli` program is closed and re-opened, it will remember where things were left off. The options of this command are:
 
 * `-f` or `--force` -- enables replacement of any existing configuration folder upon initialisation. This option is not mandatory. By default this option is disabled.
 
@@ -39,7 +39,7 @@ To execute this command, type the following and press enter:
 
     classli init
 
-The execution of the command above will result in creation of a folder called `.classli` in the current working directory. This is where all the classli files and settings will be stored. The execution of this command in a working directory that already contains a folder named `.classli` will result in failure; to override an existing `.classli` folder, the _force_ parameter must be set:
+The execution of the command above will result in creation of a folder called `.classli` in the current working directory. This is where all the `classli` files and settings will be stored. The execution of this command in a working directory that already contains a folder named `.classli` will result in failure; to override an existing `.classli` folder, the _force_ parameter must be set:
  
     classli init -f
 
@@ -49,7 +49,7 @@ Alternatively, the _force_ can be set using its log name:
 
 ### `set`
 
-The `set` command sets the value of configurable variables in the classli configuration. The configurable variables are specified with one of the following options:
+The `set` command sets the value of configurable variables in the `classli` configuration. The configurable variables are specified with one of the following options:
 
 * `-ch` or `--charset` -- specifies default [character encoding](https://en.wikipedia.org/wiki/Character_encoding) of input/output files, which should be used if no other encoding is specified. The value of this option can be one of:
 

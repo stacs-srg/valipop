@@ -72,8 +72,6 @@ abstract class LoadRecordsCommand extends Command {
     /** The default index of the column that contains the label associated to each row. **/
     public static final int DEFAULT_LABEL_COLUMN_INDEX = 1;
 
-    private static final Logger LOGGER = Logger.getLogger(LoadRecordsCommand.class.getName());
-
     protected final LoadCommand load_command;
 
     @Parameter(names = {OPTION_DELIMITER_SHORT, OPTION_DELIMITER_LONG}, descriptionKey = "command.load_records.delimiter.description", converter = Converters.CharacterConverter.class)
@@ -122,7 +120,7 @@ abstract class LoadRecordsCommand extends Command {
         final Path source = load_command.getSource();
         final Charset charset = load_command.getCharset();
 
-        LOGGER.finest(() -> String.format("loading records from %s, with charset %s, with format %s", source, charset, format));
+        logger.finest(() -> String.format("loading records from %s, with charset %s, with format %s", source, charset, format));
 
         try (final BufferedReader in = Files.newBufferedReader(source, charset)) {
 
@@ -130,7 +128,7 @@ abstract class LoadRecordsCommand extends Command {
             return StreamSupport.stream(parser.spliterator(), true).map(this::toRecord).collect(Collectors.toList());
         }
         catch (IOException e) {
-            LOGGER.log(Level.SEVERE, "failure while loading records", e);
+            logger.log(Level.SEVERE, "failure while loading records", e);
             throw new IOError(e);
         }
     }

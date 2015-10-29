@@ -35,8 +35,6 @@ import static uk.ac.standrews.cs.digitising_scotland.record_classification.cli.C
 @Parameters(commandNames = SetCommand.NAME, resourceBundle = Configuration.RESOURCE_BUNDLE_NAME, commandDescriptionKey = "command.set.description")
 public class SetCommand extends Command {
 
-    private static final Logger LOGGER = Logger.getLogger(SetCommand.class.getName());
-
     /** The name of this command. */
     public static final String NAME = "set";
 
@@ -143,7 +141,7 @@ public class SetCommand extends Command {
         final boolean settable = value != null;
         if (settable) {
             setter.accept(value);
-            LOGGER.info(() -> String.format("The %s is set to %s", value_name, value));
+            logger.info(() -> String.format("The %s is set to %s", value_name, value));
         }
         return settable;
     }

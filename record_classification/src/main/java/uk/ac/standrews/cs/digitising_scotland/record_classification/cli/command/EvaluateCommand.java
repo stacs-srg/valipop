@@ -49,8 +49,6 @@ public class EvaluateCommand extends Command {
     /** The long name of the option that specifies the path in which to store the classified evaluation records. **/
     public static final String OPTION_OUTPUT_RECORDS_PATH_LONG = "--output";
 
-    private static final Logger LOGGER = getLogger(EvaluateCommand.class.getName());
-
     @Parameter(names = {OPTION_OUTPUT_RECORDS_PATH_SHORT, OPTION_OUTPUT_RECORDS_PATH_LONG}, description = "command.evaluate.output.description", converter = PathConverter.class)
     private Path classified_evaluation_records;
 
@@ -73,7 +71,7 @@ public class EvaluateCommand extends Command {
         final Bucket classified_records = classifier.classify(evaluation_records_stripped);
         final Duration classification_time = Duration.between(start, Instant.now());
 
-        LOGGER.info(() -> String.format("Classified evaluation %d records in %s", evaluation_records_stripped.size(), classification_time));
+        logger.info(() -> String.format("Classified evaluation %d records in %s", evaluation_records_stripped.size(), classification_time));
 
         final ConfusionMatrix confusion_matrix = new StrictConfusionMatrix(classified_records, gold_standard_records, new ConsistentCodingChecker());
         final ClassificationMetrics classification_metrics = new ClassificationMetrics(confusion_matrix);
@@ -100,30 +98,30 @@ public class EvaluateCommand extends Command {
             persistBucketAsCSV(classified_records, classified_evaluation_records, RECORD_CSV_FORMAT, RESOURCE_CHARSET);
         }
         catch (IOException e) {
-            LOGGER.log(Level.SEVERE, "Failure while exporting classified evaluation records: " + e.getMessage(), e);
+            logger.log(Level.SEVERE, "Failure while exporting classified evaluation records: " + e.getMessage(), e);
             throw new IOError(e);
         }
     }
 
     private void logClassificationMetrics(final ClassificationMetrics classification_metrics) {
 
-        LOGGER.info(() -> String.format("Macro Average Accuracy: %10.2f", classification_metrics.getMacroAverageAccuracy()));
-        LOGGER.info(() -> String.format("Macro Average F1: %10.2f", classification_metrics.getMacroAverageF1()));
-        LOGGER.info(() -> String.format("Macro Average Precision: %10.2f", classification_metrics.getMacroAveragePrecision()));
-        LOGGER.info(() -> String.format("Macro Average Recall: %10.2f", classification_metrics.getMacroAverageRecall()));
-        LOGGER.info(() -> String.format("Micro Average Accuracy: %10.2f", classification_metrics.getMicroAverageAccuracy()));
-        LOGGER.info(() -> String.format("Micro Average F1: %10.2f", classification_metrics.getMicroAverageF1()));
-        LOGGER.info(() -> String.format("Micro Average Precision: %10.2f", classification_metrics.getMicroAveragePrecision()));
-        LOGGER.info(() -> String.format("Micro Average Recall: %10.2f", classification_metrics.getMicroAverageRecall()));
+        logger.info(() -> String.format("Macro Average Accuracy: %10.2f", classification_metrics.getMacroAverageAccuracy()));
+        logger.info(() -> String.format("Macro Average F1: %10.2f", classification_metrics.getMacroAverageF1()));
+        logger.info(() -> String.format("Macro Average Precision: %10.2f", classification_metrics.getMacroAveragePrecision()));
+        logger.info(() -> String.format("Macro Average Recall: %10.2f", classification_metrics.getMacroAverageRecall()));
+        logger.info(() -> String.format("Micro Average Accuracy: %10.2f", classification_metrics.getMicroAverageAccuracy()));
+        logger.info(() -> String.format("Micro Average F1: %10.2f", classification_metrics.getMicroAverageF1()));
+        logger.info(() -> String.format("Micro Average Precision: %10.2f", classification_metrics.getMicroAveragePrecision()));
+        logger.info(() -> String.format("Micro Average Recall: %10.2f", classification_metrics.getMicroAverageRecall()));
     }
 
     private void logConfusionMatrix(final ConfusionMatrix confusion_matrix) {
 
-        LOGGER.info(() -> String.format("Number Of Classes: %10d", confusion_matrix.getNumberOfClasses()));
-        LOGGER.info(() -> String.format("Number Of Classifications: %10d", confusion_matrix.getNumberOfClassifications()));
-        LOGGER.info(() -> String.format("Number Of True Positives: %10d", confusion_matrix.getNumberOfTruePositives()));
-        LOGGER.info(() -> String.format("Number Of True Negatives: %10d", confusion_matrix.getNumberOfTrueNegatives()));
-        LOGGER.info(() -> String.format("Number Of False Negatives: %10d", confusion_matrix.getNumberOfFalseNegatives()));
-        LOGGER.info(() -> String.format("Number Of False Positives: %10d", confusion_matrix.getNumberOfFalsePositives()));
+        logger.info(() -> String.format("Number Of Classes: %10d", confusion_matrix.getNumberOfClasses()));
+        logger.info(() -> String.format("Number Of Classifications: %10d", confusion_matrix.getNumberOfClassifications()));
+        logger.info(() -> String.format("Number Of True Positives: %10d", confusion_matrix.getNumberOfTruePositives()));
+        logger.info(() -> String.format("Number Of True Negatives: %10d", confusion_matrix.getNumberOfTrueNegatives()));
+        logger.info(() -> String.format("Number Of False Negatives: %10d", confusion_matrix.getNumberOfFalseNegatives()));
+        logger.info(() -> String.format("Number Of False Positives: %10d", confusion_matrix.getNumberOfFalsePositives()));
     }
 }
