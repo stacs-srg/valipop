@@ -27,6 +27,8 @@ import java.util.*;
  */
 class ConfigurationJsonSerializer extends JsonSerializer<Configuration> {
 
+    //FIXME implement classification serialization
+    
     private static final ResourceJsonSerializer RESOURCE_JSON_SERIALIZER = new ResourceJsonSerializer();
     private static final GoldStandardJsonSerializer GOLD_STANDARD_JSON_SERIALIZER = new GoldStandardJsonSerializer();
     protected static final String DEFAULT_CHARSET_SUPPLIER = "default_charset_supplier";
