@@ -16,56 +16,51 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.cli.command;
 
-import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
-import com.beust.jcommander.converters.PathConverter;
+import org.apache.commons.csv.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.ClassificationContext;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 
-import java.nio.file.Path;
+import java.util.*;
+import java.util.logging.*;
+import java.util.stream.*;
 
 /**
- * The train command of classification process command line interface.
+ * Command to load unseen records from a file.
  *
  * @author Masih Hajiarab Derkani
  */
-@Parameters(commandNames = LoadUnseenRecordsCommand.NAME, commandDescription = "Load unseen records")
-public class LoadUnseenRecordsCommand extends Command {
+@Parameters(commandNames = LoadUnseenRecordsCommand.NAME, resourceBundle = Configuration.RESOURCE_BUNDLE_NAME, commandDescriptionKey = "command.load.unseen.description")
+public class LoadUnseenRecordsCommand extends LoadRecordsCommand {
 
     /** The name of this command. */
-    public static final String NAME = "load_data";
+    public static final String NAME = "unseen";
 
-    public static final String DATA_DESCRIPTION = "Path to a CSV file containing the data to be classified.";
-    public static final String DATA_FLAG_SHORT = "-d";
-    public static final String DATA_FLAG_LONG = "--data";
+    /**
+     * Instantiates this command as a sub command of the given load command.
+     *
+     * @param load_command the load command to which this command belongs.
+     */
+    public LoadUnseenRecordsCommand(LoadCommand load_command) { this(load_command, NAME); }
 
-    @Parameter(required = true, names = {DATA_FLAG_SHORT, DATA_FLAG_LONG}, description = DATA_DESCRIPTION, converter = PathConverter.class)
-    private Path data;
+    protected LoadUnseenRecordsCommand(final LoadCommand load_command, final String name) { super(load_command, name); }
 
-    public static final String CHARSET_DESCRIPTION = "The data file charset";
-    public static final String CHARSET_FLAG_SHORT = "-ch";
-    public static final String CHARSET_FLAG_LONG = "--charset";
-    @Parameter(names = {CHARSET_FLAG_SHORT, CHARSET_FLAG_LONG}, description = CHARSET_DESCRIPTION)
-    protected CharsetSupplier charset = CharsetSupplier.UTF_8;
+    @Override
+    protected void process(final List<Record> records) {
 
-    public static final String DELIMITER_DESCRIPTION = "The data file delimiter character";
-    public static final String DELIMITER_FLAG_SHORT = "-dl";
-    public static final String DELIMITER_FLAG_LONG = "--delimiter";
-    @Parameter(names = {DELIMITER_FLAG_SHORT, DELIMITER_FLAG_LONG}, description = DELIMITER_DESCRIPTION)
-    protected String delimiter = LoadStep.DEFAULT_DELIMITER;
-
-    public LoadUnseenRecordsCommand(final Launcher launcher) {
-
-        super(launcher);
+        final Configuration configuration = launcher.getConfiguration();
+        final Configuration.Unseen unseen = configuration.newUnseen(load_command.getResourceName(), load_command.isOverrideExistingEnabled());
+        unseen.setBucket(new Bucket(records));
     }
 
     @Override
-    public void run() {
+    protected Record toRecord(final CSVRecord record) {
 
-        output("loading unseen records...");
-        final ClassificationContext context = launcher.getContext();
-        new LoadUnseenRecordsStep(data, charset.get(), delimiter).perform(context);
+        logger.finest(() -> String.format("Loading record number %d, at character position %d", record.getRecordNumber(), record.getCharacterPosition()));
+
+        final Integer id = getId(record);
+        final String label = getLabel(record);
+
+        return new Record(id, label);
     }
-
 }

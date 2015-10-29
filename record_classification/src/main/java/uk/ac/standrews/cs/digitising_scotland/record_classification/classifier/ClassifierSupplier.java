@@ -22,7 +22,7 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.e
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.linear_regression.OLRClassifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.naive_bayes.NaiveBayesClassifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.string_similarity.StringSimilarityClassifier;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.string_similarity.StringSimilarityMetrics;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.string_similarity.StringSimilaritySupplier;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -79,20 +79,20 @@ public enum ClassifierSupplier implements Supplier<Classifier> {
     }
 
     private static StringSimilarityClassifier makeDiceClassifier() {
-        return new StringSimilarityClassifier(StringSimilarityMetrics.DICE.get());
+        return new StringSimilarityClassifier(StringSimilaritySupplier.DICE.get());
     }
 
     private static StringSimilarityClassifier makeJaccardClassifier() {
-        return new StringSimilarityClassifier(StringSimilarityMetrics.JACCARD.get());
+        return new StringSimilarityClassifier(StringSimilaritySupplier.JACCARD.get());
     }
 
     private static StringSimilarityClassifier makeJaroWinklerClassifier() {
-        return new StringSimilarityClassifier(StringSimilarityMetrics.JARO_WINKLER.get());
+        return new StringSimilarityClassifier(StringSimilaritySupplier.JARO_WINKLER.get());
     }
 
     private static StringSimilarityClassifier makeLevenshteinClassifier() {
 
-        return new StringSimilarityClassifier(StringSimilarityMetrics.LEVENSHTEIN.get());
+        return new StringSimilarityClassifier(StringSimilaritySupplier.LEVENSHTEIN.get());
     }
 
     private static EnsembleVotingClassifier makeVotingEnsembleClassifierWithMLAndStringSimilarity() {

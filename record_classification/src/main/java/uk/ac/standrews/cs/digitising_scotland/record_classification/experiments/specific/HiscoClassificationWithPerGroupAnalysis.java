@@ -44,7 +44,7 @@ import java.util.stream.*;
 public class HiscoClassificationWithPerGroupAnalysis extends Experiment {
 
     private static final List<String> THREE_COLUMN_DATASET = Arrays.asList("id", "title", "code");
-    private static final StringSimilarityMetrics RECORD_SIMILARITY_METRIC = StringSimilarityMetrics.JACCARD;
+    private static final StringSimilaritySupplier RECORD_SIMILARITY_METRIC = StringSimilaritySupplier.JACCARD;
     private static final int CODE_INDEX = 2;
     private static final int LABEL_INDEX = 1;
     private static final int MAX_CODING_SCHEME_LENGTH = 5;

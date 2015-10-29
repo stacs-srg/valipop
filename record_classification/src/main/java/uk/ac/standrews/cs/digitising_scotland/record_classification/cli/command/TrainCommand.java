@@ -16,41 +16,50 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.cli.command;
 
-import com.beust.jcommander.Parameter;
-import com.beust.jcommander.Parameters;
+import com.beust.jcommander.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.ClassificationContext;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.TrainClassifierStep;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
+
+import java.time.*;
+import java.util.logging.*;
 
 /**
  * The train command of classification process command line interface.
  *
  * @author Masih Hajiarab Derkani
  */
-@Parameters(commandNames = TrainCommand.NAME, commandDescription = "Train classifier")
+@Parameters(commandNames = TrainCommand.NAME, resourceBundle = Configuration.RESOURCE_BUNDLE_NAME, commandDescriptionKey = "command.train.description")
 public class TrainCommand extends Command {
 
     /** The name of this command. */
     public static final String NAME = "train";
 
-    public static final double DEFAULT_INTERNAL_TRAINING_RATIO = 0.8;
+    @Parameter(names = {SetCommand.OPTION_INTERNAL_TRAINING_RATIO_SHORT, SetCommand.OPTION_INTERNAL_TRAINING_RATIO_LONG},
+                    descriptionKey = "command.train.internal_training_ratio.description",
+                    validateValueWith = Validators.BetweenZeroToOneInclusive.class)
+    private Double internal_training_ratio = launcher.getConfiguration().getDefaultInternalTrainingRatio();
 
-    public static final String INTERNAL_TRAINING_RATIO_DESCRIPTION = "The ratio of gold standard records to be used for training as opposed to internal evaluation.";
-    public static final String INTERNAL_TRAINING_RATIO_FLAG_SHORT = "-ir";
-    public static final String INTERNAL_TRAINING_RATIO_FLAG_LONG = "--internalTrainingRecordRatio";
-
-    @Parameter(names = {INTERNAL_TRAINING_RATIO_FLAG_SHORT, INTERNAL_TRAINING_RATIO_FLAG_LONG}, description = INTERNAL_TRAINING_RATIO_DESCRIPTION, validateValueWith = Validators.BetweenZeroAndOne.class)
-    private Double internal_training_ratio = DEFAULT_INTERNAL_TRAINING_RATIO;
-
-    public TrainCommand(final Launcher launcher) {
-
-        super(launcher);
-    }
+    /**
+     * Instantiates this command for the given launcher.
+     *
+     * @param launcher the launcher to which this command belongs.
+     */
+    public TrainCommand(final Launcher launcher) { super(launcher, NAME); }
 
     @Override
     public void run() {
 
-        final ClassificationContext context = launcher.getContext();
-        new TrainClassifierStep(internal_training_ratio).perform(context);
+        final Configuration configuration = launcher.getConfiguration();
+        final Classifier classifier = configuration.requireClassifier();
+        final Bucket training_records = configuration.requireTrainingRecords();
+
+        logger.info(() -> String.format("training classifier %s...", configuration.getClassifierSupplier()));
+
+        final Instant start = Instant.now();
+        classifier.trainAndEvaluate(training_records, internal_training_ratio, configuration.getRandom());
+        final Duration training_time = Duration.between(start, Instant.now());
+
+        logger.info(() -> String.format("trained the classifier on %d records in %s", training_records.size(), training_time));
     }
 }

@@ -16,6 +16,7 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.cli.command;
 
+import com.beust.jcommander.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.*;
 import uk.ac.standrews.cs.util.tools.InfoLevel;
@@ -23,35 +24,82 @@ import uk.ac.standrews.cs.util.tools.Logging;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.LoadStep;
 
 import java.nio.charset.Charset;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
+import java.util.logging.*;
 
 /**
- * The glue-code connecting {@link Step steps} in a {@link ClassificationProcess classification process} to the functionality exposed by the command-line interface.
+ * Represents an operation exposed to the user via the {@link Launcher command-line interface}.
  *
  * @author Masih Hajiarab Derkani
  * @author Graham Kirby
  */
 public abstract class Command implements Runnable {
 
-    public static final String CLEAN_DESCRIPTION = "A cleaner with which to clean the data";
-    public static final String CLEAN_FLAG_SHORT = "-cl";
-    public static final String CLEAN_FLAG_LONG = "--cleaner";
-
-    protected static final List<String> DATA_SET_COLUMN_LABELS = Arrays.asList("id", "data", "code", "confidence", "classification_details");
-
-    private static final Charset DEFAULT_CHARSET = LoadStep.DEFAULT_CHARSET_SUPPLIER.get();
-    public static final String DEFAULT_DELIMITER = LoadStep.DEFAULT_DELIMITER;
-
+    private final String name;
     protected final Launcher launcher;
+    protected final Logger logger;
 
-    public Command(Launcher launcher) {
+    /**
+     * Instantiates this command for the given launcher and the name by which it is triggered.
+     *
+     * @param launcher the launcher to which this command belongs.
+     * @param name the name by which this command is triggered via the command line interface
+     */
+    public Command(final Launcher launcher, final String name) {
 
         this.launcher = launcher;
+        this.name = name;
+
+        logger = CLILogManager.CLILogger.getLogger(getClass().getName());
     }
 
-    protected static void output(String message) {
+    /**
+     * Gets the name by which this command is triggered via the command line interface.
+     *
+     * @return the name by which this command is triggered via the command line interface
+     */
+    public final String getCommandName() {
 
-        Logging.output(InfoLevel.VERBOSE, message);
+        return name;
+    }
+
+    /**
+     * Adds a given command to this command as its sub-command.
+     *
+     * @param sub_command the sub command to add to this command
+     * @throws IllegalStateException if this command is not added to a launcher
+     */
+    public void addSubCommand(Command sub_command) {
+
+        final JCommander sub_commander = launcher.getCommander().getCommands().get(name);
+        if (sub_commander != null) {
+            sub_commander.addCommand(sub_command);
+        }
+        else {
+            throw new IllegalStateException("command must be added to launcher before adding sub commands");
+        }
+    }
+
+    protected Optional<Command> getSubCommand() {
+
+        final JCommander sub_commander = getSubCommander();
+        final String command_name = sub_commander.getParsedCommand();
+
+        final Optional<Command> command;
+        if (command_name != null) {
+            final JCommander load_command_commander = sub_commander.getCommands().get(command_name);
+            command = Optional.of((Command) load_command_commander.getObjects().get(0));
+        }
+        else {
+            command = Optional.empty();
+        }
+
+        return command;
+    }
+
+    private JCommander getSubCommander() {
+
+        final JCommander core_commander = launcher.getCommander();
+        return core_commander.getCommands().get(name);
     }
 }

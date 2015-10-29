@@ -36,9 +36,6 @@ import java.nio.file.Path;
 public class LoadTrainingAndEvaluationRecordsByRatioStep implements Step {
 
     private static final long serialVersionUID = 6192497012225048336L;
-    private static final double MIN_RATIO = 0.0;
-    private static final double MAX_RATIO = 1.0;
-    private static final double MAX_RATIO_DELTA = 0.999;
 
     private final Path path;
     private final double training_ratio;
@@ -98,7 +95,7 @@ public class LoadTrainingAndEvaluationRecordsByRatioStep implements Step {
 
     private void validateRatio(final double ratio) {
 
-        if (!Validators.isBetweenZeroAndOne(ratio)) {
+        if (!Validators.isBetweenZeroToOneInclusive(ratio)) {
             throw new IllegalArgumentException("ratio must be within inclusive range of 0.0 to 1.0");
         }
     }

@@ -16,8 +16,7 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.cli;
 
-import org.junit.After;
-import org.junit.Before;
+import org.junit.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.ClassifierSupplier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.CleanerSupplier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.command.*;
@@ -34,6 +33,7 @@ import java.util.*;
 
 import static org.junit.Assert.fail;
 
+@Ignore
 public class EndToEndCommon {
 
     private static final String CLASSIFIED_FILE_NAME = "classified.csv";
@@ -65,10 +65,10 @@ public class EndToEndCommon {
     @Before
     public void setup() throws IOException {
 
-        process_name = Launcher.DEFAULT_CLASSIFICATION_PROCESS_NAME;
+        process_name = Configuration.PROGRAM_NAME;
 
         cleaners = Collections.singletonList(CleanerSupplier.COMBINED);
-        internal_training_ratio = TrainCommand.DEFAULT_INTERNAL_TRAINING_RATIO;
+        internal_training_ratio = Configuration.DEFAULT_INTERNAL_TRAINING_RATIO;
 
         temp_process_directory = Files.createTempDirectory(process_name + "_");
         output_trained_model_file = Serialization.getSerializedContextPath(temp_process_directory, process_name, serialization_format);
@@ -120,7 +120,7 @@ public class EndToEndCommon {
 
         commands_builder.append(TrainCommand.NAME);
         appendSpace(commands_builder);
-        commands_builder.append(TrainCommand.INTERNAL_TRAINING_RATIO_FLAG_SHORT);
+        commands_builder.append(SetCommand.OPTION_INTERNAL_TRAINING_RATIO_SHORT);
         appendSpace(commands_builder);
         commands_builder.append(internal_training_ratio);
         appendNewLine(commands_builder);
@@ -128,11 +128,11 @@ public class EndToEndCommon {
 
     private void appendCleanGoldStandardCommand(final StringBuilder commands_builder) {
 
-        commands_builder.append(CleanGoldStandardCommand.NAME);
+        commands_builder.append(CleanCommand.NAME);
 
         for (CleanerSupplier cleaner : cleaners) {
             appendSpace(commands_builder);
-            commands_builder.append(CleanGoldStandardCommand.CLEAN_FLAG_SHORT);
+            commands_builder.append(CleanCommand.OPTION_CLEANER_LONG);
             appendSpace(commands_builder);
             commands_builder.append(cleaner.name());
         }
@@ -145,7 +145,7 @@ public class EndToEndCommon {
 
         commands_builder.append(InitCommand.NAME);
         appendSpace(commands_builder);
-        commands_builder.append(InitCommand.CLASSIFIER_FLAG_SHORT);
+        commands_builder.append("classifier");
         appendSpace(commands_builder);
         commands_builder.append(classifier_supplier.name());
         appendNewLine(commands_builder);
@@ -155,11 +155,11 @@ public class EndToEndCommon {
 
         for (int i = 0; i < input_gold_standard_files.size(); i++) {
 
-            commands_builder.append(LoadGoldStandardCommand.NAME);
+            commands_builder.append(LoadGoldStandardRecordsCommand.NAME);
             appendSpace(commands_builder);
 
             final Path gold_standard = input_gold_standard_files.get(i);
-            commands_builder.append(LoadGoldStandardCommand.GOLD_STANDARD_FLAG_SHORT);
+            commands_builder.append("from");
             appendSpace(commands_builder);
             appendQuoted(commands_builder, gold_standard);
 
@@ -169,7 +169,7 @@ public class EndToEndCommon {
 
                 if (delimiter != null) {
                     appendSpace(commands_builder);
-                    commands_builder.append(LoadGoldStandardCommand.DELIMITER_FLAG_SHORT);
+                    commands_builder.append("delimiter");
                     appendSpace(commands_builder);
                     commands_builder.append(delimiter);
                 }
@@ -179,7 +179,7 @@ public class EndToEndCommon {
                 final CharsetSupplier charset = gold_standard_charset_suppliers.get(i);
                 if (charset != null) {
                     appendSpace(commands_builder);
-                    commands_builder.append(LoadGoldStandardCommand.CHARSET_FLAG_SHORT);
+                    commands_builder.append("charset");
                     appendSpace(commands_builder);
                     commands_builder.append(charset.name());
                 }
@@ -189,7 +189,7 @@ public class EndToEndCommon {
                 final Double training_ratio = training_ratios.get(i);
                 if (training_ratio != null) {
                     appendSpace(commands_builder);
-                    commands_builder.append(LoadGoldStandardCommand.TRAINING_RATIO_FLAG_SHORT);
+                    commands_builder.append(SetCommand.OPTION_TRAINING_RATIO_LONG);
                     appendSpace(commands_builder);
                     commands_builder.append(training_ratio);
                 }
@@ -224,20 +224,18 @@ public class EndToEndCommon {
 
         commands_builder.append(ClassifyCommand.NAME);
         appendSpace(commands_builder);
-        commands_builder.append(ClassifyCommand.DESTINATION_FLAG_SHORT);
-        appendSpace(commands_builder);
         commands_builder.append(output_classified_file);
         appendNewLine(commands_builder);
     }
 
     private void appendCleanUnseenRecordsCommand(final StringBuilder commands_builder) {
 
-        commands_builder.append(CleanUnseenRecordsCommand.NAME);
+        commands_builder.append(CleanCommand.NAME);
         appendSpace(commands_builder);
 
         for (CleanerSupplier cleaner : cleaners) {
 
-            commands_builder.append(CleanUnseenRecordsCommand.CLEAN_FLAG_SHORT);
+            commands_builder.append(CleanCommand.OPTION_CLEANER_SHORT);
             appendSpace(commands_builder);
             commands_builder.append(cleaner.name());
             appendSpace(commands_builder);
@@ -249,20 +247,20 @@ public class EndToEndCommon {
 
         commands_builder.append(LoadUnseenRecordsCommand.NAME);
         appendSpace(commands_builder);
-        commands_builder.append(LoadUnseenRecordsCommand.DATA_FLAG_SHORT);
+        commands_builder.append("from");
         appendSpace(commands_builder);
         appendQuoted(commands_builder, input_unseen_data_file);
 
         if (unseen_data_delimiter != null) {
             appendSpace(commands_builder);
-            commands_builder.append(LoadUnseenRecordsCommand.DELIMITER_FLAG_SHORT);
+            commands_builder.append("delimiter");
             appendSpace(commands_builder);
             commands_builder.append(unseen_data_delimiter);
         }
 
         if (unseen_data_charset_supplier != null) {
             appendSpace(commands_builder);
-            commands_builder.append(LoadUnseenRecordsCommand.CHARSET_FLAG_SHORT);
+            commands_builder.append("charset");
             appendSpace(commands_builder);
             commands_builder.append(unseen_data_charset_supplier.name());
         }

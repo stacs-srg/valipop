@@ -16,7 +16,7 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.cli;
 
-import org.junit.Test;
+import org.junit.*;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.ClassifierSupplier;
@@ -40,6 +40,7 @@ import static java.util.Collections.singletonList;
 import static org.junit.Assert.*;
 
 @RunWith(Parameterized.class)
+@Ignore
 public class EndToEndTest extends EndToEndCommon {
 
     public EndToEndTest(ClassifierSupplier classifier_supplier, SerializationFormat serialization_format, boolean use_cli, boolean include_ensemble_detail, TestInfo test_info) {

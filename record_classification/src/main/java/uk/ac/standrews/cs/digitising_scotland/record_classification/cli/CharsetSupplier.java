@@ -21,17 +21,20 @@ import java.nio.charset.StandardCharsets;
 import java.util.function.Supplier;
 
 /**
+ * Predefined suppliers of {@link Charset}.
+ *
  * @author Graham Kirby
+ * @author Masih Hajiarab Derkani
  */
 public enum CharsetSupplier implements Supplier<Charset> {
 
     SYSTEM_DEFAULT(Charset.defaultCharset()),
-    US_ASCII(StandardCharsets.US_ASCII),
     ISO_8859_1(StandardCharsets.ISO_8859_1),
     UTF_8(StandardCharsets.UTF_8),
     UTF_16BE(StandardCharsets.UTF_16BE),
     UTF_16LE(StandardCharsets.UTF_16LE),
-    UTF_16(StandardCharsets.UTF_16);
+    UTF_16(StandardCharsets.UTF_16),
+    US_ASCII(StandardCharsets.US_ASCII);
 
     private final Charset charset;
 

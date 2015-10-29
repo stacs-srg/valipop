@@ -17,115 +17,105 @@
 package uk.ac.standrews.cs.digitising_scotland.record_classification.cli.command;
 
 import com.beust.jcommander.*;
-import com.beust.jcommander.converters.*;
-import org.apache.commons.csv.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.Configuration.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 
-import java.io.*;
-import java.nio.charset.*;
-import java.nio.file.*;
 import java.util.*;
 import java.util.function.*;
+import java.util.logging.*;
 import java.util.stream.*;
 
+import static java.util.logging.Logger.getLogger;
+
 /**
- * Cleans records.
+ * Cleans load gold standard and unseen records.
  *
  * @author Masih Hajiarab Derkani
  */
-@Parameters(commandNames = CleanCommand.NAME, commandDescription = "Cleans records", separators = "=")
+@SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
+@Parameters(commandNames = CleanCommand.NAME, resourceBundle = Configuration.RESOURCE_BUNDLE_NAME, commandDescriptionKey = "command.clean.description")
 public class CleanCommand extends Command {
 
     /** The name of this command. */
     public static final String NAME = "clean";
 
-    @Parameter(required = true, names = {CLEAN_FLAG_SHORT, CLEAN_FLAG_LONG}, description = CLEAN_DESCRIPTION, variableArity = true)
+    /** The short name of the command that specifies the cleaners by which to clean loaded gold standard and/or unseen records. **/
+    public static final String OPTION_CLEANER_SHORT = "-c";
+
+    /** The long name of the command that specifies the cleaners by which to clean loaded gold standard and/or unseen records. **/
+    public static final String OPTION_CLEANER_LONG = "--cleaner";
+
+    @Parameter(names = {OPTION_CLEANER_SHORT, OPTION_CLEANER_LONG}, descriptionKey = "command.clean.cleaner.description", variableArity = true)
     private List<CleanerSupplier> cleaner_suppliers;
 
-    @Parameter(required = true, names = {"-s", "--source"}, description = "The source file containing the records to be cleaned.", converter = PathConverter.class)
-    private Path source;
-
-    @Parameter(required = true, names = {"-d", "--destination"}, description = "The destination in which to persist the cleaned records.", converter = PathConverter.class)
-    private Path destination;
-
-    @Parameter(names = {"-c", "--charset"}, description = "The charset if source/destination file.")
-    private CharsetSupplier charset_supplier = CharsetSupplier.SYSTEM_DEFAULT;
-
-    @Parameter(names = {"-s", "--delimiter"}, description = "The delimiter character of source/destination file.")
-    private Character delimiter = CSVFormat.RFC4180.getDelimiter();
-
-    @Parameter(required = true, names = {"-col", "--sourceColumns"}, description = "The columns in the source file to clean starting from 1.", variableArity = true, validateValueWith = Validators.AtLeastOne.class)
-    private List<Integer> columns;
-
-    @Parameter(names = {"-di", "--dictionary"}, description = "The plain text file containing the dictionary of words to be used for spelling correction; one word per line", variableArity = true)
-    private List<Path> dictionaries;
-
-    @Parameter(names = {"-st", "--stopWord"}, description = "The columns in the source file to clean starting from 1.", variableArity = true)
-    private List<Path> stop_words;
-
     /**
-     * Instantiates the clean command for a given launcher.
+     * Instantiates the clean command for the given launcher.
      *
      * @param launcher the launcher to which this command belongs
      */
-    public CleanCommand(final Launcher launcher) {
-
-        super(launcher);
-    }
+    public CleanCommand(final Launcher launcher) { super(launcher, NAME); }
 
     @Override
     public void run() {
 
-        final Charset charset = getCharset();
-        final CSVFormat format = CSVFormat.newFormat(delimiter).withHeader();
-        final Cleaner cleaner = getCombinedStringCleaner();
+        final boolean cleaners_specified = cleaner_suppliers != null;
 
-        try (
-                        final CSVParser parser = CSVParser.parse(source.toFile(), charset, format);
-                        final CSVPrinter printer = new CSVPrinter(Files.newBufferedWriter(destination), format)
-        ) {
-            StreamSupport.stream(parser.spliterator(), false).forEach(record -> cleanAndPrint(record, cleaner, printer));
-            printer.flush();
+        if (cleaners_specified) {
+            cleanWithPreDefinedCleaner();
         }
-        catch (IOException e) {
-            throw new RuntimeException(e);
+
+        final Optional<Command> sub_command = getSubCommand();
+
+        if (sub_command.isPresent()) {
+            logger.fine(() -> "Detected sub command " + sub_command);
+            sub_command.get().run();
         }
-    }
-
-    public void cleanAndPrint(CSVRecord record, final Cleaner cleaner, final CSVPrinter printer) {
-
-        try {
-
-            for (int index = 0; index < record.size(); index++) {
-
-                final String cleaned_value = cleanValueAt(cleaner, index, record);
-                printer.print(cleaned_value);
-            }
-
-            printer.println();
-        }
-        catch (IOException e) {
-            throw new RuntimeException(String.format("failed to persist cleaned record, with number %d at position %d", record.getRecordNumber(), record.getCharacterPosition()), e);
+        else if (!cleaners_specified) {
+            logger.severe(() -> "No sub command detected to execute.");
+            throw new ParameterException("Please specify a sub command.");
         }
     }
 
-    public String cleanValueAt(final Cleaner combined, final int index, CSVRecord record) {
+    private void cleanWithPreDefinedCleaner() {
 
-        final String value = record.get(index);
-//        return isCleanable(index) ? combined.apply(value) : value;
-        return value;
+        final Cleaner cleaner = getCombinedCleaner();
+        final Configuration configuration = launcher.getConfiguration();
+
+        //TODO think about whether we need this: allow user to choose what to clean; i.e. gold standard all or by name, unseen all or by name.
+
+        cleanGoldStandardRecords(cleaner, configuration, logger);
+        cleanUnseenRecords(cleaner, configuration, logger);
     }
 
-    public boolean isCleanable(final int index) {return columns.contains(index);}
+    static void cleanUnseenRecords(final Cleaner cleaner, final Configuration configuration, Logger logger) {
 
-    private Cleaner getCombinedStringCleaner() {
+        logger.info("cleaning unseen records...");
+        clean(cleaner, configuration.getUnseens(), logger);
+    }
+
+    static void cleanGoldStandardRecords(final Cleaner cleaner, final Configuration configuration, Logger logger) {
+
+        logger.info("cleaning gold standard records...");
+        clean(cleaner, configuration.getGoldStandards(), logger);
+    }
+
+    static void clean(final Cleaner cleaner, final List<? extends Unseen> unclean, Logger logger) {
+
+        logger.info(() -> "cleaning " + unclean.stream().map(Unseen::getName).reduce((one, another) -> one + ", " + another).orElse("skipped; no records are loaded to clean."));
+
+        final List<Bucket> unclean_buckets = unclean.stream().map(Unseen::toBucket).collect(Collectors.toList());
+        final List<Bucket> clean_buckets = cleaner.apply(unclean_buckets);
+
+        for (int index = 0; index < unclean.size(); index++) {
+            final Unseen resource = unclean.get(index);
+            resource.setBucket(clean_buckets.get(index));
+        }
+    }
+
+    private Cleaner getCombinedCleaner() {
 
         return cleaner_suppliers.stream().map(Supplier::get).reduce(Cleaner::andThen).orElseThrow(() -> new ParameterException("no cleaner is specified"));
-    }
-
-    private Charset getCharset() {
-
-        return charset_supplier.get();
     }
 }

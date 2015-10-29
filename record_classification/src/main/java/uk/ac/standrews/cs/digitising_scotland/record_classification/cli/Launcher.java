@@ -19,13 +19,11 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.cli;
 import com.beust.jcommander.*;
 import com.beust.jcommander.converters.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.command.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.serialization.*;
-import uk.ac.standrews.cs.util.tools.*;
 
 import java.io.*;
 import java.nio.file.*;
 import java.util.*;
+import java.util.logging.*;
 import java.util.regex.*;
 
 /**
@@ -33,44 +31,107 @@ import java.util.regex.*;
  *
  * @author Masih Hajiarab Derkani
  */
+@Parameters(resourceBundle = Configuration.RESOURCE_BUNDLE_NAME)
 public class Launcher {
 
-    /** Name of this executable. */
-    public static final String PROGRAM_NAME = "classy";
+    /** The short name of the option to display usage. **/
+    public static final String OPTION_HELP_SHORT = "-h";
 
+    /** The long name of the option to display usage. **/
+    public static final String OPTION_HELP_LONG = "--help";
+
+    /** The short name of the option that specifies the path to a file containing the batch commands to be executed. **/
+    public static final String OPTION_COMMANDS_SHORT = "-c";
+
+    /** The long name of the option that specifies the path to a file containing the batch commands to be executed. **/
+    public static final String OPTION_COMMANDS_LONG = "--commands";
+
+    /** The short name of the option that specifies the level of verbosity of the command line interface **/
+    public static final String OPTION_VERBOSITY_SHORT = "-v";
+
+    /** The long name of the option that specifies the level of verbosity of the command line interface **/
+    public static final String OPTION_VERBOSITY_LONG = "--verbosity";
+
+    private static final Logger LOGGER = CLILogManager.CLILogger.getLogger(Launcher.class.getName());
     private static final Pattern COMMAND_LINE_ARGUMENT_PATTERN = Pattern.compile("[^\\s\"']+|\"([^\"]*)\"|'([^']*)'");
-    protected static final String DEFAULT_CLASSIFICATION_PROCESS_NAME = "classification_process";
+
     private JCommander commander;
-    private ClassificationContext context;
+    private final Configuration configuration;
 
-    protected static final String SERIALIZATION_FORMAT_DESCRIPTION = "Format for serialized context files";
-    protected static final String SERIALIZATION_FORMAT_FLAG_SHORT = "-f";
-    protected static final String SERIALIZATION_FORMAT_FLAG_LONG = "--format";
-
-    public static final String PROCESS_DIRECTORY_DESCRIPTION = "A directory to be used by the process";
-    public static final String PROCESS_DIRECTORY_FLAG_SHORT = "-p";
-    public static final String PROCESS_DIRECTORY_FLAG_LONG = "--process-directory";
-
-    @Parameter(names = {"-h", "--help"}, description = "Shows usage.", help = true)
+    @Parameter(names = {OPTION_HELP_SHORT, OPTION_HELP_LONG}, descriptionKey = "launcher.usage.description", help = true)
     private boolean help;
 
-    @Parameter(names = {"-n", "--name"}, description = "The name of the classification process.", help = true)
-    private String name = DEFAULT_CLASSIFICATION_PROCESS_NAME;
-
-    @Parameter(names = {SERIALIZATION_FORMAT_FLAG_SHORT, SERIALIZATION_FORMAT_FLAG_LONG}, description = SERIALIZATION_FORMAT_DESCRIPTION)
-    protected SerializationFormat serialization_format = SerializationFormat.JAVA_SERIALIZATION;
-
-    @Parameter(names = {PROCESS_DIRECTORY_FLAG_SHORT, PROCESS_DIRECTORY_FLAG_LONG}, description = PROCESS_DIRECTORY_DESCRIPTION, converter = PathConverter.class)
-    protected Path process_directory;
-
-//    @Parameter(names = {"-i", "--interactive"}, description = "Interactive mode; allows multiple command execution.")
-//    private boolean interactive;
-
-    @Parameter(names = {"-c", "--commands"}, description = "Path to a text file containing the commands to be executed (one command per line).", converter = PathConverter.class)
+    @Parameter(names = {OPTION_COMMANDS_SHORT, OPTION_COMMANDS_LONG}, descriptionKey = "launcher.commands.description", converter = PathConverter.class)
     private Path commands;
 
-    private Launcher() {
+    @Parameter(names = {OPTION_VERBOSITY_SHORT, OPTION_VERBOSITY_LONG}, descriptionKey = "launcher.verbosity.description")
+    private LogLevelSupplier level_supplier = LogLevelSupplier.INFO;
 
+    //TODO implement interactive mode
+    //TODO //@Parameter(names = {"-i", "--interactive"}, description = "Interactive mode; allows multiple command execution.")
+    //TODO //private boolean interactive;
+
+    //TODO decide whether to keep or loose this:
+    //TODO //@Parameter(names = "working_directory", description = "Path to the working directory.", converter = PathConverter.class)
+    //TODO //private Path working_directory;
+
+    //TODO help command: prints usage, describes individual commands, parameters to the commands, etc.;e.g. help classifier STRING_SIMILARITY
+    //TODO status command: prints the current state of the classification process, such as set variables, etc.
+    //TODO think whether to have experiment command: does the repetition and joint analysis
+    //TODO think whether to have reset command: to be used by experiment command; e.g. reset [classifier, random, gold_standard, unseen, lexicon]
+    //TODO think whether to have report command: answer a set of predefined queries about the current state.
+    //TODO think whether to have do command: exposes general utilities for one-off execution, clean, unique, split, remove_duplicates, word_frequency_analysis, sort.
+    //TODO import/export command: import/export pre-trained classifier.
+    //TODO update usage to display description of enums using a custom annotation
+    //TODO move exception messages into a resource bundle? this is useful for possible future internationalization of CLI.
+    //TODO JScience: floating point accuracy.
+    //FIXME Javadoc
+    //FIXME website: the what, the why, the how, table of commands and their description.
+    //FIXME integration testing
+    //TODO javascript command generator?
+
+    public Launcher() throws IOException {
+
+        configuration = loadContext();
+        configuration.setLogLevel(level_supplier.get());
+    }
+
+    private static Configuration loadContext() throws IOException {
+
+        return Files.isRegularFile(Configuration.CONFIGURATION_FILE) ? Configuration.load() : new Configuration();
+    }
+
+    public static void main(String[] args) {
+
+        try {
+            final Launcher launcher = new Launcher();
+            launcher.parse(args);
+            launcher.handle();
+        }
+        catch (ParameterException e) {
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
+            exitWithError();
+        }
+        catch (FileAlreadyExistsException e) {
+            LOGGER.log(Level.SEVERE, String.format("file '%s' already exists.", e.getFile()), e);
+            exitWithError();
+        }
+        catch (NoSuchFileException e) {
+            LOGGER.log(Level.SEVERE, String.format("file '%s' not found.", e.getFile()), e);
+            exitWithError();
+        }
+        catch (Exception e) {
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
+            e.printStackTrace();
+            exitWithError();
+        }
+
+        //TODO expand user-friendly messages per exceptions
+        //TODO think about CLI-specific exceptions.
+    }
+
+    private static void exitWithError() {
+//        System.exit(-1);
     }
 
     void addCommand(Command command) {
@@ -78,30 +139,7 @@ public class Launcher {
         commander.addCommand(command);
     }
 
-    public static void main(String[] args) throws Exception {
-
-        final Launcher launcher = new Launcher();
-
-        try {
-            launcher.parse(args);
-            launcher.handle();
-        }
-        catch (ParameterException e) {
-            launcher.reportParameterError(e.getMessage());
-        }
-        catch (FileAlreadyExistsException e) {
-            launcher.reportError("process directory '" + e.getFile() + "' already exists.");
-        }
-        catch (NoSuchFileException e) {
-            launcher.reportError("expected context file '" + e.getFile() + "' not found.");
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-            launcher.reportError(e.getMessage());
-        }
-    }
-
-    private void parse(final String... args) throws ParameterException {
+    public void parse(final String... args) throws ParameterException {
 
         initCommander();
         commander.parse(args);
@@ -110,24 +148,34 @@ public class Launcher {
     private void initCommander() {
 
         commander = new JCommander(this);
-        commander.setProgramName(PROGRAM_NAME);
-        addCommand(new ClassifyCommand(this));
-        addCommand(new CleanUnseenRecordsCommand(this));
-        addCommand(new CleanGoldStandardCommand(this));
-        addCommand(new EvaluateCommand(this));
+        commander.setProgramName(Configuration.PROGRAM_NAME);
+
         addCommand(new InitCommand(this));
-        addCommand(new LoadUnseenRecordsCommand(this));
-        addCommand(new LoadGoldStandardCommand(this));
+        addCommand(new SetCommand(this));
+        addCommand(new ClassifyCommand(this));
+        addCommand(new EvaluateCommand(this));
         addCommand(new TrainCommand(this));
+
+        final CleanCommand clean_command = new CleanCommand(this);
+        addCommand(clean_command);
+        clean_command.addSubCommand(new CleanStopWordsCommand(this));
+        clean_command.addSubCommand(new CleanSpellingCommand(this));
+
+        final LoadCommand load_command = new LoadCommand(this);
+        addCommand(load_command);
+        load_command.addSubCommand(new LoadUnseenRecordsCommand(load_command));
+        load_command.addSubCommand(new LoadGoldStandardRecordsCommand(load_command));
+
     }
 
-    private void handle() throws Exception {
+    public void handle() throws Exception {
 
-        loadContext();
         try {
-
-            if (commands != null) {
-                handleCommandsFile();
+            if (help) {
+                commander.usage();
+            }
+            else if (isBatchModeEnabled()) {
+                handleCommands();
             }
             else {
                 handleCommand();
@@ -138,31 +186,17 @@ public class Launcher {
         }
     }
 
-    private void handleCommandsFile() throws Exception {
+    private boolean isBatchModeEnabled() {return commands != null;}
+
+    private void handleCommands() throws Exception {
 
         final List<String> command_lines = Files.readAllLines(commands);
 
         for (String command_line : command_lines) {
-            String[] args = toCommandLineArguments(command_line);
-            parse(args);
+            final String[] arguments = toCommandLineArguments(command_line);
+            parse(arguments);
             handleCommand();
         }
-    }
-
-    private void loadContext() throws IOException {
-
-        final Path context_path = Serialization.getSerializedContextPath(process_directory, name, serialization_format);
-
-        if (Files.isRegularFile(context_path)) {
-
-            output("loading context...");
-            context = Serialization.loadContext(process_directory, name, serialization_format);
-        }
-        else {
-            context = null;
-        }
-
-        output("done");
     }
 
     private String[] toCommandLineArguments(final String command_line) {
@@ -198,46 +232,25 @@ public class Launcher {
 
     private void persistContext() throws IOException {
 
-        output("saving context...");
-
-        Files.createDirectories(process_directory.resolve(name));
-        Serialization.persistContext(context, process_directory, name, serialization_format);
-
-        output("done");
+        if (Files.isDirectory(Configuration.CLI_HOME)) {
+            configuration.persist();
+        }
     }
 
     private void validateCommand(final String command) {
 
         if (command == null) {
-            reportParameterError(help ? "" : "Please specify a command");
+            throw new ParameterException("Please specify a command");
         }
     }
 
-    private void reportParameterError(final String error_message) {
+    public Configuration getConfiguration() {
 
-        System.err.println(error_message);
-        commander.usage();
-        System.exit(-1);
+        return configuration;
     }
 
-    private void reportError(final String error_message) {
+    public JCommander getCommander() {
 
-        System.err.println("Process failed: " + error_message);
-        System.exit(-1);
-    }
-
-    protected static void output(String message) {
-
-        Logging.output(InfoLevel.VERBOSE, message);
-    }
-
-    public ClassificationContext getContext() {
-
-        return context;
-    }
-
-    public void setContext(final ClassificationContext context) {
-
-        this.context = context;
+        return commander;
     }
 }

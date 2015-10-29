@@ -18,11 +18,11 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.cli.command
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.ClassifierSupplier;
+import org.apache.commons.io.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.ClassificationContext;
 
-import java.util.Random;
+import java.io.*;
+import java.nio.file.*;
 
 /**
  * Initialisation command of the classification process.
@@ -30,30 +30,57 @@ import java.util.Random;
  * @author Masih Hajiarab Derkani
  * @author Graham Kirby
  */
-@Parameters(commandNames = InitCommand.NAME, commandDescription = "Initialise a new classification process")
+@Parameters(commandNames = InitCommand.NAME, resourceBundle = Configuration.RESOURCE_BUNDLE_NAME, commandDescriptionKey = "command.init.description")
 public class InitCommand extends Command {
 
     /** The name of this command. */
     public static final String NAME = "init";
 
-    private static final long SEED = 34234234234L;
+    /** The short option name which forces any existing configuration to be replaced upon initialisation. **/
+    public static final String OPTION_FORCE_SHORT = "-f";
 
-    public static final String CLASSIFIER_DESCRIPTION = "The classifier to use for the classification process.";
-    public static final String CLASSIFIER_FLAG_SHORT = "-c";
-    public static final String CLASSIFIER_FLAG_LONG = "--classifier";
+    /** The long option name which forces any existing configuration to be replaced upon initialisation. **/
+    public static final String OPTION_FORCE_LONG = "--force";
 
-    @Parameter(required = true, names = {CLASSIFIER_FLAG_SHORT, CLASSIFIER_FLAG_LONG}, description = CLASSIFIER_DESCRIPTION)
-    private ClassifierSupplier classifier_supplier;
+    @Parameter(names = {OPTION_FORCE_SHORT, OPTION_FORCE_LONG}, descriptionKey = "command.init.force.description")
+    private boolean replace_existing;
 
-    public InitCommand(final Launcher launcher) {
-
-        super(launcher);
-    }
+    public InitCommand(final Launcher launcher) { super(launcher, NAME); }
 
     @Override
     public void run() {
 
-        final ClassificationContext context = new ClassificationContext(classifier_supplier.get(), new Random(SEED));
-        launcher.setContext(context);
+        //TODO working directory?
+
+        try {
+            checkDirectoryExistence(Configuration.CLI_HOME, replace_existing);
+            assureDirectoryExists(Configuration.CLI_HOME);
+        }
+        catch (IOException e) {
+            throw new RuntimeException("failed to construct configuration folder", e);
+        }
+    }
+
+    static void checkDirectoryExistence(Path directory, boolean delete_if_exists) throws IOException {
+
+        if (Files.isDirectory(Configuration.CLI_HOME)) {
+
+            if (delete_if_exists) {
+                FileUtils.deleteDirectory(Configuration.CLI_HOME.toFile());
+            }
+            else {
+                throw new FileAlreadyExistsException("directory already exists: " + directory);
+            }
+        }
+    }
+
+    public static void assureDirectoryExists(final Path directory) throws IOException {
+
+        if (!Files.isDirectory(directory)) {
+            final Path directories = Files.createDirectories(directory);
+            if (!Files.isDirectory(directories)) {
+                throw new IOException("failed to create directory: " + directory);
+            }
+        }
     }
 }
