@@ -168,7 +168,11 @@
                                     <fileset file="${project.build.directory}/${cli.jar.name}.jar"/>
                                 </concat>
                                 <chmod file="${project.build.directory}/${cli.binary.name}" perm="+x"/>
-                                <zip basedir="${project.build.directory}" destfile="${project.build.directory}/${cli.binary.name}.zip" includesfile="${project.build.directory}/${cli.binary.name}"/>
+                                <tar basedir="${project.build.directory}" destfile="${project.build.directory}/${cli.binary.name}.tar" excludes="**/*">
+                                    <tarfileset dir="${project.build.directory}" filemode="755">
+                                        <include name="${cli.binary.name}"/>
+                                    </tarfileset>
+                                </tar>
                                 <delete file="${project.build.directory}/${cli.binary.name}"/>
                             </target>
                         </configuration>
