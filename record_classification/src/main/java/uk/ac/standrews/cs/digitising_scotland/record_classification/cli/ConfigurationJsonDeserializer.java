@@ -94,15 +94,18 @@ public class ConfigurationJsonDeserializer extends JsonDeserializer<Configuratio
             field_name = in.getCurrentName();
         }
 
-        configuration.setClassifier(readClassifier(configuration));
+        deserializeClassifier(configuration);
         return configuration;
     }
 
-    private Classifier readClassifier(final Configuration configuration) throws IOException {
+    private void deserializeClassifier(final Configuration configuration) throws IOException {
 
         final SerializationFormat format = configuration.getClassifierSerializationFormat();
         final Path source = ConfigurationJsonSerializer.getSerializedClassifierPath(format);
-        return Serialization.load(source, Classifier.class, format);
+        
+        if (Files.isRegularFile(source)) {
+            configuration.setClassifier(Serialization.load(source, Classifier.class, format));
+        }
     }
 
     private void populateResources(JsonParser in, final Consumer<String> handler) throws IOException {
