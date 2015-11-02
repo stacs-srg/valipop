@@ -51,7 +51,12 @@ public class StringSimilarityMetricWrapper implements SimilarityMetric, Serializ
     StringSimilarityMetricWrapper(StringMetric metric) {
 
         this.metric = metric;
-        name = metric.getClass().getName();
+        if (SetMetricAdapter.class.isAssignableFrom(metric.getClass())) {
+            name = ((SetMetricAdapter) metric).getSetMetric().getClass().getName();
+        }
+        else {
+            name = metric.getClass().getName();
+        }
     }
 
     /**

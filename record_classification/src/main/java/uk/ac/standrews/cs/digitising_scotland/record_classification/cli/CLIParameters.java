@@ -21,9 +21,9 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.*
 /**
  * @author Masih Hajiarab Derkani
  */
-public final class CAIParameters {
+public final class CLIParameters {
 
-    private CAIParameters() { throw new UnsupportedOperationException(); }
+    private CLIParameters() { throw new UnsupportedOperationException(); }
 
     //TODO move option name constants here
 

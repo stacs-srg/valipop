@@ -90,10 +90,14 @@ public class Launcher {
     //FIXME integration testing
     //TODO javascript command generator?
 
+    static{
+        System.setProperty("java.awt.headless", "true");
+    }
+    
     public Launcher() throws IOException {
 
         configuration = loadContext();
-        configuration.setLogLevel(level_supplier.get());
+        
     }
 
     private static Configuration loadContext() throws IOException {
@@ -170,6 +174,8 @@ public class Launcher {
 
     public void handle() throws Exception {
 
+        configuration.setLogLevel(level_supplier.get());
+        
         try {
             if (help) {
                 commander.usage();

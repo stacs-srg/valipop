@@ -33,6 +33,11 @@ public class SetMetricAdapter implements StringMetric {
         this.set_metric = set_metric;
     }
 
+    public SetMetric<String> getSetMetric() {
+
+        return set_metric;
+    }
+
     @Override
     public float compare(String s1, String s2) {
 

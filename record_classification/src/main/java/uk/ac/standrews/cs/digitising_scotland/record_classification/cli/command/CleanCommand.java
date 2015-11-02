@@ -103,7 +103,7 @@ public class CleanCommand extends Command {
 
     static void clean(final Cleaner cleaner, final List<? extends Unseen> unclean, Logger logger) {
 
-        logger.info(() -> "cleaning " + unclean.stream().map(Unseen::getName).reduce((one, another) -> one + ", " + another).orElse("skipped; no records are loaded to clean."));
+//        logger.info(() -> "cleaning " + unclean.stream().map(Unseen::getName).reduce((one, another) -> one + ", " + another).orElse("skipped; no records are loaded to clean."));
 
         final List<Bucket> unclean_buckets = unclean.stream().map(Unseen::toBucket).collect(Collectors.toList());
         final List<Bucket> clean_buckets = cleaner.apply(unclean_buckets);
