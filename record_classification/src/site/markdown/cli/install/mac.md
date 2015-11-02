@@ -21,4 +21,3 @@ The following steps describes how to install `classli` on a Mac OS X operating s
         - add the folder's absolute path to the `PATH` environment variable.
 
 5. To make sure all is well, open a new terminal window and type `classli -h`, which should print the `classli` usage.
-

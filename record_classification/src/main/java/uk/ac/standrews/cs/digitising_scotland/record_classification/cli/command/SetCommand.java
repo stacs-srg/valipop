@@ -23,9 +23,8 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.serialization.*;
 
 import java.util.function.*;
-import java.util.logging.*;
 
-import static uk.ac.standrews.cs.digitising_scotland.record_classification.cli.CAIParameters.*;
+import static uk.ac.standrews.cs.digitising_scotland.record_classification.cli.CLIParameters.*;
 
 /**
  * Sets variables in the Command-line Interface {@link Configuration configuration}.

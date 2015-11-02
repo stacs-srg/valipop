@@ -52,7 +52,7 @@ public class Configuration {
     public static final Path CONFIGURATION_FILE = CLI_HOME.resolve("config.json");
     public static final Path GOLD_STANDARD_HOME = CLI_HOME.resolve("gold_standard");
     public static final Path UNSEEN_HOME = CLI_HOME.resolve("unseen");
-    public static final CSVFormat RECORD_CSV_FORMAT = CSVFormat.RFC4180.withHeader("ID", "DATA", "ORIGINAL_DATA", "CODE", "CONFIDENCE", "DETAIL");
+    public static final CSVFormat RECORD_CSV_FORMAT = CSVFormat.RFC4180.withHeader("ID", "DATA", "ORIGINAL_DATA", "CODE", "CONFIDENCE", "DETAIL").withSkipHeaderRecord();
     public static final Charset RESOURCE_CHARSET = StandardCharsets.UTF_8;
     public static final CharsetSupplier DEFAULT_CHARSET_SUPPLIER = CharsetSupplier.SYSTEM_DEFAULT;
     public static final SerializationFormat DEFAULT_CLASSIFIER_SERIALIZATION_FORMAT = SerializationFormat.JAVA_SERIALIZATION;
@@ -64,6 +64,8 @@ public class Configuration {
     public static final double DEFAULT_INTERNAL_TRAINING_RATIO = DEFAULT_TRAINING_RATIO;
 
     private static final ObjectMapper MAPPER = new ObjectMapper();
+    private static final CsvFormatSupplier DEFAULT_CSV_FORMAT_SUPPLIER = CsvFormatSupplier.DEFAULT;
+    private static final char DEFAULT_DELIMITER = DEFAULT_CSV_FORMAT_SUPPLIER.get().getDelimiter();
 
     static {
         SimpleModule classi = new SimpleModule(PROGRAM_NAME);
@@ -71,9 +73,6 @@ public class Configuration {
         classi.addDeserializer(Configuration.class, new ConfigurationJsonDeserializer());
         MAPPER.registerModule(classi);
     }
-
-    private static final CsvFormatSupplier DEFAULT_CSV_FORMAT_SUPPLIER = CsvFormatSupplier.DEFAULT;
-    private static final char DEFAULT_DELIMITER = DEFAULT_CSV_FORMAT_SUPPLIER.get().getDelimiter();
 
     private CharsetSupplier default_charset_supplier = DEFAULT_CHARSET_SUPPLIER;
     private Character default_delimiter = DEFAULT_DELIMITER;
@@ -107,10 +106,39 @@ public class Configuration {
         }
     }
 
-    public void setSeed(final Long seed) {
+    public static void persistBucketAsCSV(Bucket bucket, Path destination, CSVFormat format, Charset charset) throws IOException {
 
-        this.seed = seed;
-        initRandom();
+        if (bucket != null) {
+
+            try (final BufferedWriter out = Files.newBufferedWriter(destination, charset)) {
+
+                final CSVPrinter printer = format.print(out);
+                for (Record record : bucket) {
+                    final Classification classification = record.getClassification();
+                    printer.print(record.getId());
+                    printer.print(record.getData());
+                    printer.print(record.getOriginalData());
+                    printer.print(classification.getCode());
+                    printer.print(classification.getConfidence());
+                    printer.print(classification.getDetail());
+                    printer.println();
+                }
+            }
+        }
+    }
+
+    public static Record toRecord(final CSVRecord csv_record) {
+
+        final int id = Integer.parseInt(csv_record.get(0));
+        final String label = csv_record.get(1);
+        final String label_original = csv_record.get(2);
+        final String code = csv_record.get(3);
+        final double confidence = Double.parseDouble(csv_record.get(4));
+        final String details = csv_record.get(5);
+
+        final Classification classification = new Classification(code, new TokenList(label), confidence, details);
+
+        return new Record(id, label, label_original, classification);
     }
 
     public SerializationFormat getClassifierSerializationFormat() {
@@ -161,6 +189,11 @@ public class Configuration {
     public Optional<Classifier> getClassifier() {
 
         return classifier == null ? Optional.empty() : Optional.of(classifier);
+    }
+
+    void setClassifier(Classifier classifier) {
+
+        this.classifier = classifier;
     }
 
     public Bucket requireGoldStandardRecords() {
@@ -249,12 +282,6 @@ public class Configuration {
 
     private void resetClassifier(final ClassifierSupplier classifier_supplier) {classifier = classifier_supplier != null ? classifier_supplier.get() : null;}
 
-    
-    void setClassifier(Classifier classifier) {
-
-        this.classifier = classifier;
-    }
-
     public Random getRandom() {
 
         return random;
@@ -287,13 +314,6 @@ public class Configuration {
         this.default_training_ratio = default_training_ratio;
     }
 
-    private void checkResourceExistence(final String keyword, final Map<String, ? extends Resource> resources, final String name, final boolean override_existing) {
-
-        if (override_existing && resources.containsKey(name)) {
-            throw new ParameterException(String.format("A %s named %s already exists.", keyword, name));
-        }
-    }
-
     public Unseen newUnseen(final String name, boolean override_existing) {
 
         checkResourceExistence("unseen record collection", unseens, name, override_existing);
@@ -301,6 +321,13 @@ public class Configuration {
         final Unseen unseen = new Unseen(name);
         unseens.put(name, unseen);
         return unseen;
+    }
+
+    private void checkResourceExistence(final String keyword, final Map<String, ? extends Resource> resources, final String name, final boolean override_existing) {
+
+        if (override_existing && resources.containsKey(name)) {
+            throw new ParameterException(String.format("A %s named %s already exists.", keyword, name));
+        }
     }
 
     public GoldStandard newGoldStandard(final String name, double training_ratio, boolean override_existing) {
@@ -317,6 +344,12 @@ public class Configuration {
         return seed;
     }
 
+    public void setSeed(final Long seed) {
+
+        this.seed = seed;
+        initRandom();
+    }
+
     public boolean isProceedOnErrorEnabled() {
 
         return proceed_on_error;
@@ -325,6 +358,11 @@ public class Configuration {
     public void setProceedOnError(final Boolean proceed_on_error) {
 
         this.proceed_on_error = proceed_on_error;
+    }
+
+    public Level getLogLevel() {
+
+        return log_level;
     }
 
     void setLogLevel(final Level log_level) {
@@ -339,29 +377,6 @@ public class Configuration {
         parent_logger.addHandler(handler);
 
         //TODO add file handler for error.log
-    }
-
-    public Level getLogLevel() {
-
-        return log_level;
-    }
-
-    public static void persistBucketAsCSV(Bucket bucket, Path destination, CSVFormat format, Charset charset) throws IOException {
-
-        try (final BufferedWriter out = Files.newBufferedWriter(destination, charset)) {
-
-            final CSVPrinter printer = format.print(out);
-            for (Record record : bucket) {
-                final Classification classification = record.getClassification();
-                printer.print(record.getId());
-                printer.print(record.getData());
-                printer.print(record.getOriginalData());
-                printer.print(classification.getCode());
-                printer.print(classification.getConfidence());
-                printer.print(classification.getDetail());
-                printer.println();
-            }
-        }
     }
 
     abstract class Resource {
@@ -391,6 +406,12 @@ public class Configuration {
         }
 
         @Override
+        public int hashCode() {
+
+            return Objects.hash(name);
+        }
+
+        @Override
         public boolean equals(final Object o) {
 
             if (this == o)
@@ -399,12 +420,6 @@ public class Configuration {
                 return false;
             final Resource resource = (Resource) o;
             return Objects.equals(name, resource.name);
-        }
-
-        @Override
-        public int hashCode() {
-
-            return Objects.hash(name);
         }
 
         protected abstract void persist() throws IOException;
@@ -450,6 +465,11 @@ public class Configuration {
             return RECORD_CSV_FORMAT;
         }
 
+        protected Record toRecord(CSVRecord csv_record) {
+
+            return Configuration.toRecord(csv_record);
+        }
+
         @Override
         protected Path getHome() {
 
@@ -466,20 +486,6 @@ public class Configuration {
 
             assureDirectoryExists(destination.getParent());
             persistBucketAsCSV(bucket, destination, getCsvFormat(), getCharset());
-        }
-
-        protected Record toRecord(CSVRecord csv_record) {
-
-            final int id = Integer.parseInt(csv_record.get(0));
-            final String label = csv_record.get(1);
-            final String label_original = csv_record.get(2);
-            final String code = csv_record.get(3);
-            final double confidence = Double.parseDouble(csv_record.get(3));
-            final String details = csv_record.get(4);
-
-            final Classification classification = new Classification(code, new TokenList(label), confidence, details);
-
-            return new Record(id, label, label_original, classification);
         }
 
         public void setBucket(Bucket bucket) {
@@ -508,19 +514,20 @@ public class Configuration {
         @Override
         public synchronized Bucket toBucket() {
 
-            if (training_records == null || evaluation_records == null) {
-
-                training_records = load(getTrainingRecordsPath());
-                evaluation_records = load(getEvaluationRecordsPath());
-            }
-
-            return training_records.union(evaluation_records);
+            return getTrainingRecords().union(getEvaluationRecords());
         }
 
         @Override
         protected Path getHome() {
 
             return GOLD_STANDARD_HOME;
+        }
+
+        @Override
+        protected void persist() throws IOException {
+
+            persist(getTrainingRecords(), getTrainingRecordsPath());
+            persist(getEvaluationRecords(), getEvaluationRecordsPath());
         }
 
         @Override
@@ -531,11 +538,21 @@ public class Configuration {
             evaluation_records = bucket.difference(training_records);
         }
 
-        @Override
-        protected void persist() throws IOException {
+        public Bucket getTrainingRecords() {
 
-            persist(getTrainingRecords(), getTrainingRecordsPath());
-            persist(getEvaluationRecords(), getEvaluationRecordsPath());
+            if (training_records == null) {
+                training_records = load(getTrainingRecordsPath());
+            }
+
+            return training_records;
+        }
+
+        public Bucket getEvaluationRecords() {
+
+            if (evaluation_records == null) {
+                evaluation_records = load(getEvaluationRecordsPath());
+            }
+            return evaluation_records;
         }
 
         private Path getTrainingRecordsPath() {
@@ -546,16 +563,6 @@ public class Configuration {
         private Path getEvaluationRecordsPath() {
 
             return getPath().resolve("evaluation.csv");
-        }
-
-        public Bucket getTrainingRecords() {
-
-            return training_records;
-        }
-
-        public Bucket getEvaluationRecords() {
-
-            return evaluation_records;
         }
     }
 }

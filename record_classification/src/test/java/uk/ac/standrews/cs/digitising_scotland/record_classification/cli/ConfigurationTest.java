@@ -18,6 +18,7 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.cli;
 
 import org.junit.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
+import uk.ac.standrews.cs.util.tools.*;
 
 import java.nio.file.*;
 
@@ -36,6 +37,7 @@ public class ConfigurationTest {
     @After
     public void tearDown() throws Exception {
 
+        FileManipulation.deleteDirectory(Configuration.CLI_HOME);
     }
 
     @Test

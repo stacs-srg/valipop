@@ -32,7 +32,7 @@ import java.util.*;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
-@Ignore
+
 public class EndToEndCleaningTest extends EndToEndCommon {
 
     static final String GOLD_STANDARD_FILE_NAME = "test_training_data.csv";
@@ -56,19 +56,20 @@ public class EndToEndCleaningTest extends EndToEndCommon {
     @Test
     public void goldStandardRecordsAreCleaned() throws Exception {
 
-        initLoadTrain();
+        initLoadCleanTrain();
 
-        assertRecordsAreCleaned(loadContext().getTrainingRecords());
-        assertRecordsAreCleaned(loadContext().getEvaluationRecords());
+        final Configuration configuration = Configuration.load();
+        
+            assertRecordsAreCleaned(configuration.getGoldStandardRecords().orElse(new Bucket()));
     }
 
     @Test
     public void dataRecordsAreCleaned() throws Exception {
-
-        initLoadTrain();
+            initLoadCleanTrain();
+        
         loadCleanClassify();
 
-        assertRecordsAreCleaned(loadContext().getClassifiedUnseenRecords());
+        assertRecordsAreCleaned(Configuration.load().getUnseenRecords().orElse(new Bucket()));
     }
 
     private void assertRecordsAreCleaned(Bucket bucket) {
