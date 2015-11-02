@@ -37,7 +37,9 @@ public class ConfigurationTest {
     @After
     public void tearDown() throws Exception {
 
-        FileManipulation.deleteDirectory(Configuration.CLI_HOME);
+        if (Files.isDirectory(Configuration.CLI_HOME)) {
+            FileManipulation.deleteDirectory(Configuration.CLI_HOME);
+        }
     }
 
     @Test
