@@ -16,23 +16,20 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.cli;
 
-import com.sun.tools.classfile.*;
 import org.junit.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.ClassifierSupplier;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.CleanerSupplier;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.command.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.experiments.config.Config;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.serialization.Serialization;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.serialization.SerializationFormat;
-import uk.ac.standrews.cs.util.tools.FileManipulation;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.experiments.config.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.serialization.*;
+import uk.ac.standrews.cs.util.tools.*;
 
-import java.io.IOException;
+import java.io.*;
 import java.nio.charset.*;
 import java.nio.file.*;
 import java.util.*;
 
-import static org.junit.Assert.fail;
-
+import static org.junit.Assert.*;
 
 public class EndToEndCommon {
 
@@ -125,9 +122,7 @@ public class EndToEndCommon {
     private String[] getLauncherMainArguments(final Path commands) {
 
         // "-f", serialization_format.name(), "-n", process_name, "-p", String.format("\"%s\"", temp_process_directory.toString()), 
-        return new String[]{
-                        Launcher.OPTION_VERBOSITY_SHORT, LogLevelSupplier.OFF.name(),
-                        Launcher.OPTION_COMMANDS_SHORT, String.format("\"%s\"", commands.toString())};
+        return new String[]{Launcher.OPTION_VERBOSITY_SHORT, LogLevelSupplier.OFF.name(), Launcher.OPTION_COMMANDS_SHORT, String.format("\"%s\"", commands.toString())};
     }
 
     private void appendTrainCommand(final StringBuilder commands_builder) {
@@ -176,7 +171,6 @@ public class EndToEndCommon {
             appendSpace(commands_builder);
             appendQuoted(commands_builder, gold_standard);
 
-            
             if (gold_standard_charset_suppliers != null && gold_standard_charset_suppliers.size() > i) {
                 final CharsetSupplier charset = gold_standard_charset_suppliers.get(i);
                 if (charset != null) {
@@ -192,7 +186,7 @@ public class EndToEndCommon {
 
             appendSpace(commands_builder);
             commands_builder.append(LoadGoldStandardRecordsCommand.OPTION_SKIP_HEADER_SHORT);
-            
+
             if (gold_standard_delimiters != null && gold_standard_delimiters.size() > i) {
 
                 final String delimiter = gold_standard_delimiters.get(i);
@@ -282,7 +276,7 @@ public class EndToEndCommon {
 
         appendSpace(commands_builder);
         commands_builder.append(LoadUnseenRecordsCommand.OPTION_SKIP_HEADER_SHORT);
-        
+
         if (unseen_data_delimiter != null) {
             appendSpace(commands_builder);
             commands_builder.append(LoadUnseenRecordsCommand.OPTION_DELIMITER_SHORT);
