@@ -18,12 +18,7 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.cli.command
 
 import com.beust.jcommander.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.*;
-import uk.ac.standrews.cs.util.tools.InfoLevel;
-import uk.ac.standrews.cs.util.tools.Logging;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.LoadStep;
 
-import java.nio.charset.Charset;
 import java.util.*;
 import java.util.logging.*;
 import java.util.regex.*;
@@ -54,22 +49,27 @@ public abstract class Command implements Runnable {
         /** Runs this command with the built arguments. */
         public void run() {
 
-            final String[] arguments = build();
+            final String[] unescaped_arguments = build();
+            final String[] escaped_arguments = escapeSpecialCharacters(unescaped_arguments);
+            Launcher.main(escaped_arguments);
+        }
 
-            final StringBuilder command = new StringBuilder();
+        private String[] escapeSpecialCharacters(final String[] arguments) {
 
             for (int i = 0; i < arguments.length; i++) {
 
                 final String argument = arguments[i];
-                if (SPECIAL_CHARACTER.matcher(argument).find()) {
-                    arguments[i] = "\"" + argument + "\"";
+                if (hasSpecialCharacter(argument)) {
+                    arguments[i] = quote(argument);
                 }
             }
 
-            System.out.println(String.join(" ", arguments));
-
-            Launcher.main(arguments);
+            return arguments;
         }
+
+        public static boolean hasSpecialCharacter(final String argument) {return SPECIAL_CHARACTER.matcher(argument).find();}
+
+        public static String quote(Object value) { return String.format("\"%s\"", String.valueOf(value)); }
     }
 
     /**

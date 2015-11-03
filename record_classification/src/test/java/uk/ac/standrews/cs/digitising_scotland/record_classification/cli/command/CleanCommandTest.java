@@ -17,8 +17,10 @@
 package uk.ac.standrews.cs.digitising_scotland.record_classification.cli.command;
 
 import org.junit.*;
+import org.junit.rules.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.dataset.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 
 import java.nio.file.*;
@@ -35,7 +37,10 @@ public class CleanCommandTest extends CommandTest {
 
     private static final List<String> SUFFIXES = Arrays.asList("ing", "s");
     private static final List<String> PUNCTUATION_CHARACTERS = Arrays.asList(".", ",", "'", "\"", "!", "-", "+", "@", "|", "<", ">", "%", "&", "*", "(", ")", "/", "\\");
-    static final String DATA_CSV = "test_training_data.csv";
+
+    @Rule
+    public TemporaryFolder temp = new TemporaryFolder();
+
     private Path source;
 
     @Override
@@ -43,8 +48,8 @@ public class CleanCommandTest extends CommandTest {
     public void setUp() throws Exception {
 
         super.setUp();
-
-        source = Paths.get(getClass().getResource(DATA_CSV).toURI());
+        source = temp.newFile().toPath();
+        TestDataSets.UNCLEAN_TRAINING.getCopy(source);
     }
 
     @Test
