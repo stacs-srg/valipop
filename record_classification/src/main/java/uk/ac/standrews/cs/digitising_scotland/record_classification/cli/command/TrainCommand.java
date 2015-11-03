@@ -17,12 +17,17 @@
 package uk.ac.standrews.cs.digitising_scotland.record_classification.cli.command;
 
 import com.beust.jcommander.*;
+import org.apache.commons.cli2.builder.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 
 import java.time.*;
+import java.util.*;
 import java.util.logging.*;
+
+import static uk.ac.standrews.cs.digitising_scotland.record_classification.cli.command.SetCommand.OPTION_INTERNAL_TRAINING_RATIO_LONG;
+import static uk.ac.standrews.cs.digitising_scotland.record_classification.cli.command.SetCommand.OPTION_INTERNAL_TRAINING_RATIO_SHORT;
 
 /**
  * The train command of classification process command line interface.
@@ -35,10 +40,34 @@ public class TrainCommand extends Command {
     /** The name of this command. */
     public static final String NAME = "train";
 
-    @Parameter(names = {SetCommand.OPTION_INTERNAL_TRAINING_RATIO_SHORT, SetCommand.OPTION_INTERNAL_TRAINING_RATIO_LONG},
+    @Parameter(names = {OPTION_INTERNAL_TRAINING_RATIO_SHORT, OPTION_INTERNAL_TRAINING_RATIO_LONG},
                     descriptionKey = "command.train.internal_training_ratio.description",
                     validateValueWith = Validators.BetweenZeroToOneInclusive.class)
     private Double internal_training_ratio = launcher.getConfiguration().getDefaultInternalTrainingRatio();
+
+    public static class Builder extends Command.Builder {
+
+        private Double internal_training_ratio;
+
+        public Builder internalTrainingRatio(double ratio) {
+
+            this.internal_training_ratio = ratio;
+            return this;
+        }
+
+        @Override
+        public String[] build() {
+
+            final List<String> arguments = new ArrayList<>();
+            arguments.add(NAME);
+            if (internal_training_ratio != null) {
+                arguments.add(OPTION_INTERNAL_TRAINING_RATIO_SHORT);
+                arguments.add(String.valueOf(internal_training_ratio));
+            }
+
+            return arguments.toArray(new String[arguments.size()]);
+        }
+    }
 
     /**
      * Instantiates this command for the given launcher.

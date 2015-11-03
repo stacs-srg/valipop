@@ -36,6 +36,7 @@ public abstract class CommandTest {
 
     protected Launcher launcher;
     private static final Logger LOGGER = getLogger(CommandTest.class.getName());
+
     @Before
     public void setUp() throws Exception {
 
@@ -57,6 +58,8 @@ public abstract class CommandTest {
 
         return String.format("\"%s\"", String.valueOf(value));
     }
+
+    protected void initForcefully() {new InitCommand.Builder().forcefully().run();}
 
     @After
     public void tearDown() throws Exception {

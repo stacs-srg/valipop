@@ -72,6 +72,7 @@ public class Configuration {
         classi.addSerializer(Configuration.class, new ConfigurationJsonSerializer());
         classi.addDeserializer(Configuration.class, new ConfigurationJsonDeserializer());
         MAPPER.registerModule(classi);
+
     }
 
     private CharsetSupplier default_charset_supplier = DEFAULT_CHARSET_SUPPLIER;
@@ -88,6 +89,14 @@ public class Configuration {
     private double default_training_ratio = DEFAULT_TRAINING_RATIO;
     private double default_internal_training_ratio = DEFAULT_INTERNAL_TRAINING_RATIO;
     private Level log_level;
+    public static final Handler HANDLER = new CLIConsoleHandler();
+
+    static {
+        final String logger_name = Launcher.class.getPackage().getName();
+        final Logger parent_logger = CLILogManager.CLILogger.getLogger(logger_name);
+        parent_logger.setUseParentHandlers(false);
+        parent_logger.addHandler(HANDLER);
+    }
 
     public Configuration() {
 
@@ -369,12 +378,7 @@ public class Configuration {
 
         this.log_level = log_level;
 
-        final Handler handler = new CLIConsoleHandler();
-        handler.setLevel(log_level);
-        final String logger_name = Launcher.class.getPackage().getName();
-        final Logger parent_logger = CLILogManager.CLILogger.getLogger(logger_name);
-        parent_logger.setUseParentHandlers(false);
-        parent_logger.addHandler(handler);
+        HANDLER.setLevel(log_level);
 
         //TODO add file handler for error.log
     }
