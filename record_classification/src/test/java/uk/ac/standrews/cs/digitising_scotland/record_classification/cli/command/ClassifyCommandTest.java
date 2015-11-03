@@ -54,7 +54,7 @@ public class ClassifyCommandTest extends CommandTest {
     @Rule
     public TemporaryFolder temp = new TemporaryFolder();
 
-    @Parameterized.Parameters
+    @Parameterized.Parameters(name = "{index} {0}")
     public static Collection<Object[]> data() {
 
         final List<Object[]> parameters = new ArrayList<>();
@@ -63,7 +63,7 @@ public class ClassifyCommandTest extends CommandTest {
             for (CharsetSupplier charset_supplier : CharsetSupplier.values()) {
                 for (CsvFormatSupplier format_supplier : CsvFormatSupplier.values()) {
                     parameters.add(new Object[]{classifier_supplier, CASE_2_TRAINING, CASE_2_EVALUATION, charset_supplier, format_supplier.get()});
-                    parameters.add(new Object[]{classifier_supplier, CASE_4_TRAINING, CASE_4_EVALUATION, charset_supplier, format_supplier.get()});
+//                    parameters.add(new Object[]{classifier_supplier, CASE_4_TRAINING, CASE_4_EVALUATION, charset_supplier, format_supplier.get()});
                 }
             }
         }
@@ -82,13 +82,12 @@ public class ClassifyCommandTest extends CommandTest {
     @Test
     public void testClassification() throws Exception {
 
-
         initForcefully();
         setVerbosity(LogLevelSupplier.OFF);
         setClassifier(classifier_supplier);
         loadGoldStandards();
         loadUnseens();
-        clean();
+        clean(CleanerSupplier.COMBINED);
         train();
         final Path classified_output = classify();
 
@@ -216,7 +215,7 @@ public class ClassifyCommandTest extends CommandTest {
 
     private void train() {new TrainCommand.Builder().run();}
 
-    private void clean() {new CleanCommand.Builder().cleaners(CleanerSupplier.COMBINED).run();}
+    private void clean(CleanerSupplier cleaner) {new CleanCommand.Builder().cleaners(cleaner).run();}
 
     private void loadGoldStandards() {
 
