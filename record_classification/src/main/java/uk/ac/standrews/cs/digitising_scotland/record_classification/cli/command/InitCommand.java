@@ -23,6 +23,7 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.*;
 
 import java.io.*;
 import java.nio.file.*;
+import java.util.*;
 
 /**
  * Initialisation command of the classification process.
@@ -46,6 +47,30 @@ public class InitCommand extends Command {
     private boolean replace_existing;
 
     public InitCommand(final Launcher launcher) { super(launcher, NAME); }
+
+    public static class Builder extends Command.Builder {
+
+        private boolean force;
+
+        public Builder forcefully() {
+
+            this.force = true;
+            return this;
+        }
+
+        @Override
+        public String[] build() {
+
+            final List<String> arguments = new ArrayList<>();
+
+            arguments.add(NAME);
+            if (force) {
+                arguments.add(OPTION_FORCE_SHORT);
+            }
+
+            return arguments.toArray(new String[arguments.size()]);
+        }
+    }
 
     @Override
     public void run() {

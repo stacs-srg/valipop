@@ -36,6 +36,15 @@ public class LoadUnseenRecordsCommand extends LoadRecordsCommand {
     /** The name of this command. */
     public static final String NAME = "unseen";
 
+    public static class Builder extends LoadRecordsCommand.Builder {
+
+        @Override
+        protected String getSubCommandName() {
+
+            return NAME;
+        }
+    }
+
     /**
      * Instantiates this command as a sub command of the given load command.
      *

@@ -50,6 +50,34 @@ public class CleanCommand extends Command {
     @Parameter(names = {OPTION_CLEANER_SHORT, OPTION_CLEANER_LONG}, descriptionKey = "command.clean.cleaner.description", variableArity = true)
     private List<CleanerSupplier> cleaner_suppliers;
 
+    public static class Builder extends Command.Builder {
+
+        private List<CleanerSupplier> cleaners;
+
+        public Builder cleaners(CleanerSupplier... cleaners) {
+
+            if (this.cleaners == null) {
+                this.cleaners = new ArrayList<>();
+            }
+            Collections.addAll(this.cleaners, cleaners);
+            return this;
+        }
+
+        @Override
+        public String[] build() {
+
+            final List<String> arguments = new ArrayList<>();
+            arguments.add(NAME);
+
+            if (cleaners != null) {
+                arguments.add(OPTION_CLEANER_SHORT);
+                cleaners.forEach(cleaner -> arguments.add(cleaner.name()));
+            }
+
+            return arguments.toArray(new String[arguments.size()]);
+        }
+    }
+
     /**
      * Instantiates the clean command for the given launcher.
      *
@@ -103,7 +131,7 @@ public class CleanCommand extends Command {
 
     static void clean(final Cleaner cleaner, final List<? extends Unseen> unclean, Logger logger) {
 
-//        logger.info(() -> "cleaning " + unclean.stream().map(Unseen::getName).reduce((one, another) -> one + ", " + another).orElse("skipped; no records are loaded to clean."));
+        logger.info(() -> "cleaning " + unclean.stream().map(unseen -> unseen.getName()).reduce((one, another) -> one + ", " + another).orElse("skipped; no records are loaded to clean."));
 
         final List<Bucket> unclean_buckets = unclean.stream().map(Unseen::toBucket).collect(Collectors.toList());
         final List<Bucket> clean_buckets = cleaner.apply(unclean_buckets);

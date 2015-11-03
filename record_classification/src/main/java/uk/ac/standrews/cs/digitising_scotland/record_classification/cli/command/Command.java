@@ -39,6 +39,23 @@ public abstract class Command implements Runnable {
     protected final Launcher launcher;
     protected final Logger logger;
 
+    protected static abstract class Builder {
+
+        /**
+         * Builds the command-line arguments for this command.
+         *
+         * @return the command-line arguments of this command.
+         */
+        public abstract String[] build();
+
+        /** Runs this command with the built arguments. */
+        public void run() {
+
+            final String[] arguments = build();
+            Launcher.main(arguments);
+        }
+    }
+
     /**
      * Instantiates this command for the given launcher and the name by which it is triggered.
      *

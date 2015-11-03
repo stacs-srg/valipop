@@ -26,6 +26,9 @@ import java.util.*;
 import java.util.logging.*;
 import java.util.stream.*;
 
+import static uk.ac.standrews.cs.digitising_scotland.record_classification.cli.command.SetCommand.OPTION_TRAINING_RATIO_LONG;
+import static uk.ac.standrews.cs.digitising_scotland.record_classification.cli.command.SetCommand.OPTION_TRAINING_RATIO_SHORT;
+
 /**
  * Command to load gold standard data from a file.
  *
@@ -47,14 +50,55 @@ public class LoadGoldStandardRecordsCommand extends LoadUnseenRecordsCommand {
     /** The default index of the column that contains the classes associated to each row. **/
     public static final int DEFAULT_CLASS_COLUMN_INDEX = 2;
 
-
-    @Parameter(names = {SetCommand.OPTION_TRAINING_RATIO_SHORT, SetCommand.OPTION_TRAINING_RATIO_LONG},
+    @Parameter(names = {OPTION_TRAINING_RATIO_SHORT, OPTION_TRAINING_RATIO_LONG},
                     descriptionKey = "command.load.gold_standard.training_ratio.description",
                     validateValueWith = Validators.BetweenZeroToOneInclusive.class)
     private Double training_ratio = launcher.getConfiguration().getDefaultTrainingRatio();
 
     @Parameter(names = {OPTION_CLASS_COLUMN_INDEX_SHORT, OPTION_CLASS_COLUMN_INDEX_LONG}, descriptionKey = "command.load.gold_standard.class_column_index.description", validateValueWith = Validators.AtLeastZero.class)
     private Integer class_column_index = DEFAULT_CLASS_COLUMN_INDEX;
+
+    public static class Builder extends LoadRecordsCommand.Builder {
+
+        private Double training_ratio;
+        private Integer class_column_index;
+
+        public Builder trainingRatio(Double training_ratio) {
+
+            this.training_ratio = training_ratio;
+            return this;
+        }
+
+        public Builder classColumnIndex(Integer class_column_index) {
+
+            this.class_column_index = class_column_index;
+            return this;
+        }
+
+        @Override
+        protected List<String> getSubCommandArguments() {
+
+            final List<String> arguments = super.getSubCommandArguments();
+            
+            if (training_ratio != null) {
+                arguments.add(OPTION_TRAINING_RATIO_SHORT);
+                arguments.add(String.valueOf(training_ratio));
+            }
+
+            if (class_column_index != null) {
+                arguments.add(OPTION_CLASS_COLUMN_INDEX_SHORT);
+                arguments.add(String.valueOf(class_column_index));
+            }
+
+            return arguments;
+        }
+
+        @Override
+        protected String getSubCommandName() {
+
+            return NAME;
+        }
+    }
 
     /**
      * Instantiates this command as a sub command of the given load command.

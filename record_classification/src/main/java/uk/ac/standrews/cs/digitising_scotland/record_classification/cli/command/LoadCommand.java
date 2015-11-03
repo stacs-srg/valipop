@@ -23,7 +23,6 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.*;
 import java.nio.charset.*;
 import java.nio.file.*;
 import java.util.*;
-import java.util.logging.*;
 
 /**
  * Command to load a resource from the local file system.
@@ -73,6 +72,67 @@ public class LoadCommand extends Command {
     private boolean override_existing = false;
 
     public LoadCommand(final Launcher launcher) { super(launcher, NAME); }
+
+    protected static abstract class Builder extends Command.Builder {
+
+        private CharsetSupplier charset;
+        private Path source;
+        private String name;
+        private boolean override_existing;
+
+        public Builder charset(CharsetSupplier charset) {
+
+            this.charset = charset;
+            return this;
+        }
+
+        public Builder from(Path source) {
+
+            this.source = source;
+            return this;
+        }
+
+        public Builder named(String name) {
+
+            this.name = name;
+            return this;
+        }
+
+        public Builder overrideExisting() {
+
+            override_existing = true;
+            return this;
+        }
+
+        public String[] build() {
+
+            Objects.requireNonNull(source);
+
+            final List<String> arguments = new ArrayList<>();
+            arguments.add(NAME);
+            arguments.add(OPTION_SOURCE_SHORT);
+            arguments.add(source.toString());
+
+            if (name != null) {
+                arguments.add(OPTION_NAME_SHORT);
+                arguments.add(name);
+            }
+
+            if (charset != null) {
+                arguments.add(OPTION_CHARSET_SHORT);
+                arguments.add(charset.name());
+            }
+            if (override_existing) {
+                arguments.add(OPTION_FORCE_SHORT);
+            }
+
+            arguments.addAll(getSubCommandArguments());
+
+            return arguments.toArray(new String[arguments.size()]);
+        }
+
+        protected abstract List<String> getSubCommandArguments();
+    }
 
     @Override
     public void run() {

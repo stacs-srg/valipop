@@ -20,6 +20,7 @@ import com.beust.jcommander.*;
 import org.apache.commons.csv.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
+import weka.classifiers.evaluation.output.prediction.*;
 
 import java.io.*;
 import java.nio.charset.*;
@@ -88,6 +89,78 @@ abstract class LoadRecordsCommand extends Command {
 
     @Parameter(names = {OPTION_LABEL_COLUMN_INDEX_SHORT, OPTION_LABEL_COLUMN_INDEX_LONG}, descriptionKey = "command.load_records.label_column_index.description", validateValueWith = Validators.AtLeastZero.class)
     private Integer label_column_index = DEFAULT_LABEL_COLUMN_INDEX;
+
+    public static abstract class Builder extends LoadCommand.Builder {
+
+        private Character delimiter;
+        private CsvFormatSupplier csv_format;
+        private boolean skip_header_record;
+        private Integer id_column_index;
+        private Integer label_column_index;
+
+        public Builder delimiter(Character delimiter) {
+
+            this.delimiter = delimiter;
+            return this;
+        }
+
+        public Builder format(CsvFormatSupplier csv_format) {
+
+            this.csv_format = csv_format;
+            return this;
+        }
+
+        public Builder skipHeader() {
+
+            this.skip_header_record = true;
+            return this;
+        }
+
+        public Builder idColumnIndex(Integer id_column_index) {
+
+            this.id_column_index = id_column_index;
+            return this;
+        }
+
+        public Builder labelColumnIndex(Integer label_column_index) {
+
+            this.label_column_index = label_column_index;
+            return this;
+        }
+
+        @Override
+        protected List<String> getSubCommandArguments() {
+
+            final List<String> arguments = new ArrayList<>();
+            arguments.add(getSubCommandName());
+
+            if (delimiter != null) {
+                arguments.add(OPTION_DELIMITER_SHORT);
+                arguments.add(String.valueOf(delimiter));
+            }
+
+            if (csv_format != null) {
+                arguments.add(OPTIONS_FORMAT_SHORT);
+                arguments.add(csv_format.name());
+            }
+
+            if (skip_header_record) {
+                arguments.add(OPTION_SKIP_HEADER_SHORT);
+            }
+            if (id_column_index != null) {
+                arguments.add(OPTION_ID_COLUMN_INDEX_SHORT);
+                arguments.add(String.valueOf(id_column_index));
+            }
+            if (label_column_index != null) {
+                arguments.add(OPTION_LABEL_COLUMN_INDEX_SHORT);
+                arguments.add(String.valueOf(label_column_index));
+            }
+
+            return arguments;
+        }
+
+        protected abstract String getSubCommandName();
+    }
 
     /**
      * Instantiates this command as a sub command of the given load command.
