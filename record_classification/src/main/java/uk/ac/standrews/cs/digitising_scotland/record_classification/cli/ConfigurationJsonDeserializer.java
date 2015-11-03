@@ -81,6 +81,10 @@ public class ConfigurationJsonDeserializer extends JsonDeserializer<Configuratio
                     expectNext(in, JsonToken.VALUE_NUMBER_FLOAT);
                     configuration.setDefaultInternalTrainingRatio(in.readValueAs(Double.TYPE));
                     break;
+                case DEFAULT_LOG_LEVEL_SUPPLIER:
+                    expectNext(in, JsonToken.VALUE_STRING);
+                    configuration.setDefaultLogLevelSupplier(in.readValueAs(LogLevelSupplier.class));
+                    break;
                 case UNSEENS:
                     populateResources(in, name -> configuration.newUnseen(name, false));
                     break;

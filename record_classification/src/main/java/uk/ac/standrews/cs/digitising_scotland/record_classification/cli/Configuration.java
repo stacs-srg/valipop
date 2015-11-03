@@ -66,6 +66,7 @@ public class Configuration {
     private static final ObjectMapper MAPPER = new ObjectMapper();
     private static final CsvFormatSupplier DEFAULT_CSV_FORMAT_SUPPLIER = CsvFormatSupplier.DEFAULT;
     private static final char DEFAULT_DELIMITER = DEFAULT_CSV_FORMAT_SUPPLIER.get().getDelimiter();
+    private static final LogLevelSupplier DEFAULT_LOG_LEVEL_SUPPLIER = LogLevelSupplier.INFO;
 
     static {
         SimpleModule classi = new SimpleModule(PROGRAM_NAME);
@@ -89,6 +90,7 @@ public class Configuration {
     private double default_training_ratio = DEFAULT_TRAINING_RATIO;
     private double default_internal_training_ratio = DEFAULT_INTERNAL_TRAINING_RATIO;
     private Level log_level;
+    private LogLevelSupplier default_log_level_supplier = DEFAULT_LOG_LEVEL_SUPPLIER;
     public static final Handler HANDLER = new CLIConsoleHandler();
 
     static {
@@ -377,10 +379,20 @@ public class Configuration {
     void setLogLevel(final Level log_level) {
 
         this.log_level = log_level;
-
         HANDLER.setLevel(log_level);
 
         //TODO add file handler for error.log
+    }
+
+    public void setDefaultLogLevelSupplier(final LogLevelSupplier default_log_level_supplier) {
+
+        this.default_log_level_supplier = default_log_level_supplier;
+        setLogLevel(default_log_level_supplier.get());
+    }
+
+    LogLevelSupplier getDefaultLogLevelSupplier() {
+
+        return default_log_level_supplier;
     }
 
     abstract class Resource {

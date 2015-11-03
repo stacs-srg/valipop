@@ -65,7 +65,7 @@ public class Launcher {
     private Path commands;
 
     @Parameter(names = {OPTION_VERBOSITY_SHORT, OPTION_VERBOSITY_LONG}, descriptionKey = "launcher.verbosity.description")
-    private LogLevelSupplier level_supplier = LogLevelSupplier.INFO;
+    private LogLevelSupplier log_level_supplier;
 
     //TODO implement interactive mode
     //TODO //@Parameter(names = {"-i", "--interactive"}, description = "Interactive mode; allows multiple command execution.")
@@ -97,6 +97,7 @@ public class Launcher {
     public Launcher() throws IOException {
 
         configuration = loadContext();
+        log_level_supplier = configuration.getDefaultLogLevelSupplier();
         
     }
 
@@ -174,7 +175,7 @@ public class Launcher {
 
     public void handle() throws Exception {
 
-        configuration.setLogLevel(level_supplier.get());
+        configuration.setLogLevel(log_level_supplier.get());
         
         try {
             if (help) {

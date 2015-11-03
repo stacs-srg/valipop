@@ -108,6 +108,9 @@ public class SetCommand extends Command {
     @Parameter(names = {OPTIONS_FORMAT_SHORT, OPTIONS_FORMAT_LONG}, descriptionKey = "command.set.default_csv_format.description")
     private CsvFormatSupplier csv_format;
 
+    @Parameter(names = {Launcher.OPTION_VERBOSITY_SHORT, Launcher.OPTION_VERBOSITY_LONG}, descriptionKey = "launcher.verbosity.description")
+    private LogLevelSupplier log_level;
+
     public static class Builder extends Command.Builder {
 
         private ClassifierSupplier classifier_supplier;
@@ -118,6 +121,7 @@ public class SetCommand extends Command {
         private Double training_ratio;
         private Double internal_training_ratio;
         private CsvFormatSupplier csv_format;
+        private LogLevelSupplier verbosity;
 
         public Builder classifier(final ClassifierSupplier classifier_supplier) {
 
@@ -143,7 +147,7 @@ public class SetCommand extends Command {
             return this;
         }
 
-        public Builder classsifierSerializationFormat(final SerializationFormat serialization_format) {
+        public Builder classifierSerializationFormat(final SerializationFormat serialization_format) {
 
             this.serialization_format = serialization_format;
             return this;
@@ -164,6 +168,12 @@ public class SetCommand extends Command {
         public Builder format(final CsvFormatSupplier csv_format) {
 
             this.csv_format = csv_format;
+            return this;
+        }
+
+        public Builder verbosity(final LogLevelSupplier verbosity) {
+
+            this.verbosity = verbosity;
             return this;
         }
 
@@ -204,6 +214,10 @@ public class SetCommand extends Command {
                 arguments.add(OPTIONS_FORMAT_SHORT);
                 arguments.add(String.valueOf(csv_format));
             }
+            if (verbosity != null) {
+                arguments.add(Launcher.OPTION_VERBOSITY_SHORT);
+                arguments.add(String.valueOf(verbosity));
+            }
 
             if (arguments.isEmpty()) {
                 throw new NullPointerException("at least one parameter must be set");
@@ -235,6 +249,7 @@ public class SetCommand extends Command {
         set_at_least_once |= set("default training ratio", training_ratio, configuration::setDefaultTrainingRatio);
         set_at_least_once |= set("default internal training ratio", internal_training_ratio, configuration::setDefaultInternalTrainingRatio);
         set_at_least_once |= set("default csv format", csv_format, configuration::setDefaultCsvFormatSupplier);
+        set_at_least_once |= set("verbosity level", log_level, configuration::setDefaultLogLevelSupplier);
 
         if (!set_at_least_once) {
             throw new ParameterException("Please specify at lease one variable to be set.");

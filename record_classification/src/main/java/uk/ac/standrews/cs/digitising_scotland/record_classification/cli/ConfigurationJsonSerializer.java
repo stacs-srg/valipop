@@ -18,7 +18,6 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.cli;
 
 import com.fasterxml.jackson.core.*;
 import com.fasterxml.jackson.databind.*;
-import org.apache.commons.lang3.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.serialization.*;
 
@@ -42,6 +41,7 @@ class ConfigurationJsonSerializer extends JsonSerializer<Configuration> {
     protected static final String DEFAULT_CSV_FORMAT_SUPPLIER = "default_csv_format_supplier";
     protected static final String DEFAULT_TRAINING_RATIO = "default_training_ratio";
     protected static final String DEFAULT_INTERNAL_TRAINING_RATIO = "default_internal_training_ratio";
+    protected static final String DEFAULT_LOG_LEVEL_SUPPLIER = "default_log_level_supplier";
     protected static final String UNSEENS = "unseens";
     protected static final String GOLD_STANDARDS = "gold_standards";
     public static final String SERIALIZED_CLASSIFIER_FILE_NAME_PREFIX = "classifier";
@@ -60,6 +60,7 @@ class ConfigurationJsonSerializer extends JsonSerializer<Configuration> {
         out.writeObjectField(DEFAULT_CSV_FORMAT_SUPPLIER, configuration.getDefaultCsvFormatSupplier());
         out.writeNumberField(DEFAULT_TRAINING_RATIO, configuration.getDefaultTrainingRatio());
         out.writeNumberField(DEFAULT_INTERNAL_TRAINING_RATIO, configuration.getDefaultInternalTrainingRatio());
+        out.writeObjectField(DEFAULT_LOG_LEVEL_SUPPLIER, configuration.getDefaultLogLevelSupplier());
 
         writeResourceList(UNSEENS, configuration.getUnseens(), out, serializers);
         writeGoldStandards(configuration, out, serializers);

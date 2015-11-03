@@ -63,6 +63,7 @@ public class ClassifyCommandTest extends CommandTest {
             for (CharsetSupplier charset_supplier : CharsetSupplier.values()) {
                 for (CsvFormatSupplier format_supplier : CsvFormatSupplier.values()) {
                     parameters.add(new Object[]{classifier_supplier, CASE_2_TRAINING, CASE_2_EVALUATION, charset_supplier, format_supplier.get()});
+                    parameters.add(new Object[]{classifier_supplier, CASE_4_TRAINING, CASE_4_EVALUATION, charset_supplier, format_supplier.get()});
                 }
             }
         }
@@ -81,7 +82,9 @@ public class ClassifyCommandTest extends CommandTest {
     @Test
     public void testClassification() throws Exception {
 
+
         initForcefully();
+        setVerbosity(LogLevelSupplier.OFF);
         setClassifier(classifier_supplier);
         loadGoldStandards();
         loadUnseens();
@@ -92,7 +95,9 @@ public class ClassifyCommandTest extends CommandTest {
         checkClassification(classified_output);
     }
 
-    private void setClassifier(ClassifierSupplier classifier_supplier) {new SetCommand.Builder().classifier(classifier_supplier).run();}
+    private void setVerbosity(final LogLevelSupplier supplier) { new SetCommand.Builder().verbosity(supplier).run(); }
+
+    private void setClassifier(ClassifierSupplier classifier_supplier) { new SetCommand.Builder().classifier(classifier_supplier).run(); }
 
     private void checkClassification(Path classified_file) throws Exception {
 
