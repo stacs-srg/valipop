@@ -111,7 +111,7 @@ public class CleanCommand extends Command {
         final Cleaner cleaner = getCombinedCleaner();
         final Configuration configuration = launcher.getConfiguration();
 
-        //TODO think about whether we need this: allow user to choose what to clean; i.e. gold standard all or by name, unseen all or by name.
+        //TODO think about whether we need this: allow user to choose what to clean by name; i.e. gold standard all or by name, unseen all or by name.
 
         cleanGoldStandardRecords(cleaner, configuration, logger);
         cleanUnseenRecords(cleaner, configuration, logger);
