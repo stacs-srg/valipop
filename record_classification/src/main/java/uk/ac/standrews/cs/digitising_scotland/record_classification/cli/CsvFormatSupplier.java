@@ -27,12 +27,12 @@ import java.util.function.*;
  */
 public enum CsvFormatSupplier implements Supplier<CSVFormat> {
 
-    DEFAULT(CSVFormat.DEFAULT),
-    EXCEL(CSVFormat.EXCEL),
-    MYSQL(CSVFormat.MYSQL),
-    RFC4180(CSVFormat.RFC4180),
-    RFC4180_PIPE_SEPARATED(CSVFormat.RFC4180.withDelimiter('|')),
-    TDF(CSVFormat.TDF);
+    DEFAULT(CSVFormat.DEFAULT.withIgnoreEmptyLines()),
+    EXCEL(CSVFormat.EXCEL.withIgnoreEmptyLines()),
+    MYSQL(CSVFormat.MYSQL.withIgnoreEmptyLines()),
+    RFC4180(CSVFormat.RFC4180.withIgnoreEmptyLines()),
+    RFC4180_PIPE_SEPARATED(CSVFormat.RFC4180.withDelimiter('|').withIgnoreEmptyLines()),
+    TDF(CSVFormat.TDF.withIgnoreEmptyLines());
 
     private final CSVFormat format;
 

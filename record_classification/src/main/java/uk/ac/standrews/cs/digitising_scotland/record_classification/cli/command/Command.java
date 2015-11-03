@@ -26,6 +26,7 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.process.step
 import java.nio.charset.Charset;
 import java.util.*;
 import java.util.logging.*;
+import java.util.regex.*;
 
 /**
  * Represents an operation exposed to the user via the {@link Launcher command-line interface}.
@@ -38,6 +39,8 @@ public abstract class Command implements Runnable {
     private final String name;
     protected final Launcher launcher;
     protected final Logger logger;
+
+    private static final Pattern SPECIAL_CHARACTER = Pattern.compile("[^-_A-Za-z0-9]");
 
     protected static abstract class Builder {
 
@@ -52,6 +55,19 @@ public abstract class Command implements Runnable {
         public void run() {
 
             final String[] arguments = build();
+
+            final StringBuilder command = new StringBuilder();
+
+            for (int i = 0; i < arguments.length; i++) {
+
+                final String argument = arguments[i];
+                if (SPECIAL_CHARACTER.matcher(argument).find()) {
+                    arguments[i] = "\"" + argument + "\"";
+                }
+            }
+
+            System.out.println(String.join(" ", arguments));
+
             Launcher.main(arguments);
         }
     }

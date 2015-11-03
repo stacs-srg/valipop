@@ -52,6 +52,30 @@ public class ClassifyCommand extends Command {
     @Parameter(required = true, names = {OPTION_OUTPUT_RECORDS_PATH_SHORT, OPTION_OUTPUT_RECORDS_PATH_LONG}, descriptionKey = "command.classify.output.description", converter = PathConverter.class)
     private Path output_path;
 
+    public static class Builder extends Command.Builder {
+
+        private Path output_path;
+
+        public Builder output(Path output_path) {
+
+            this.output_path = output_path;
+            return this;
+        }
+
+        @Override
+        public String[] build() {
+
+            Objects.requireNonNull(output_path);
+
+            final List<String> arguments = new ArrayList<>();
+            arguments.add(NAME);
+            arguments.add(OPTION_OUTPUT_RECORDS_PATH_SHORT);
+            arguments.add(output_path.toString());
+
+            return arguments.toArray(new String[arguments.size()]);
+        }
+    }
+
     /**
      * Instantiates this command for the given launcher.
      *

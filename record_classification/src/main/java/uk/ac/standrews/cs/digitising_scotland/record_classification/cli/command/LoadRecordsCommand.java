@@ -115,6 +115,11 @@ abstract class LoadRecordsCommand extends Command {
             this.skip_header_record = true;
             return this;
         }
+        public Builder skipHeader(boolean skip_header) {
+
+            this.skip_header_record = skip_header;
+            return this;
+        }
 
         public Builder idColumnIndex(Integer id_column_index) {
 

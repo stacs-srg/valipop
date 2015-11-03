@@ -35,6 +35,7 @@ public class CleanCommandTest extends CommandTest {
 
     private static final List<String> SUFFIXES = Arrays.asList("ing", "s");
     private static final List<String> PUNCTUATION_CHARACTERS = Arrays.asList(".", ",", "'", "\"", "!", "-", "+", "@", "|", "<", ">", "%", "&", "*", "(", ")", "/", "\\");
+    static final String DATA_CSV = "test_training_data.csv";
     private Path source;
 
     @Override
@@ -43,7 +44,7 @@ public class CleanCommandTest extends CommandTest {
 
         super.setUp();
 
-        source = Paths.get(getClass().getResource("test_training_data.csv").toURI());
+        source = Paths.get(getClass().getResource(DATA_CSV).toURI());
     }
 
     @Test
