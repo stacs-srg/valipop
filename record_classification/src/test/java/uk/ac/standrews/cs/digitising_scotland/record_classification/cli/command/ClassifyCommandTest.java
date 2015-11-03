@@ -82,7 +82,7 @@ public class ClassifyCommandTest extends CommandTest {
     public void testClassification() throws Exception {
 
         initForcefully();
-        new SetCommand.Builder().classifier(classifier_supplier);
+        setClassifier(classifier_supplier);
         loadGoldStandards();
         loadUnseens();
         clean();
@@ -91,6 +91,8 @@ public class ClassifyCommandTest extends CommandTest {
 
         checkClassification(classified_output);
     }
+
+    private void setClassifier(ClassifierSupplier classifier_supplier) {new SetCommand.Builder().classifier(classifier_supplier).run();}
 
     private void checkClassification(Path classified_file) throws Exception {
 
