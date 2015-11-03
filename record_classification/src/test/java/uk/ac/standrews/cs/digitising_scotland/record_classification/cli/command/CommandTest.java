@@ -46,6 +46,8 @@ public abstract class CommandTest {
     protected void run(Object... args) throws Exception {
 
         final List<String> arguments = Arrays.asList(args).stream().map(String::valueOf).collect(Collectors.toList());
+        arguments.add(0, Launcher.OPTION_VERBOSITY_SHORT);
+        arguments.add(1, LogLevelSupplier.OFF.name());
         LOGGER.info(() -> String.format("running: %s", String.join(" ", arguments)));
         launcher.parse(arguments.toArray(new String[arguments.size()]));
         launcher.handle();

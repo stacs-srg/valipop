@@ -99,7 +99,7 @@ public class Configuration {
 
     private void initRandom() {random = seed == null ? new Random() : new Random(seed);}
 
-    static Configuration load() throws IOException {
+    public static Configuration load() throws IOException {
 
         try (final BufferedReader in = Files.newBufferedReader(CONFIGURATION_FILE)) {
             return MAPPER.readValue(in, Configuration.class);

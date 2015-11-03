@@ -36,10 +36,12 @@ public final class Validators {
         public void validate(final String name, final Integer value) throws ParameterException {
 
             if (value < 0) {
-                throw new ParameterException("The value  of parameter " + name + " must be at least 1");
+                throwParameterMustBeAtLeast(name, 0);
             }
         }
     }
+
+    private static void throwParameterMustBeAtLeast(final String parameter_name, Number least) {throw new ParameterException("The value  of parameter " + parameter_name + " must be at least " + least);}
 
     public static class AtLeastOne implements IValueValidator<Integer> {
 
@@ -47,7 +49,7 @@ public final class Validators {
         public void validate(final String name, final Integer value) throws ParameterException {
 
             if (value < 1) {
-                throw new ParameterException("The value  of parameter " + name + " must be at least 1");
+                throwParameterMustBeAtLeast(name, 1);
             }
         }
     }
@@ -58,7 +60,7 @@ public final class Validators {
         public void validate(final String name, final Number value) throws ParameterException {
 
             if (!isBetweenZeroToOneInclusive(value.doubleValue())) {
-                throw new ParameterException("The value  of parameter " + name + " must be between 0.0 and 1.0 inclusive");
+                throw new ParameterException(String.format("The value  of parameter %s must be between 0.0 and 1.0 inclusive", name));
             }
         }
     }

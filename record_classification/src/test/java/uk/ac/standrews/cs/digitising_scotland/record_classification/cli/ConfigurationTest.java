@@ -64,6 +64,5 @@ public class ConfigurationTest {
         final Configuration actual = Configuration.load();
 
         assertEquals(expected.getUnseens(), actual.getUnseens());
-
     }
 }

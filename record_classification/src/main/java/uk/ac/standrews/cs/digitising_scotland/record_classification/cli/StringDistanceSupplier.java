@@ -23,7 +23,7 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.s
 import java.util.function.*;
 
 /**
- * The metrics by which to measure distance between a pair of strings.
+ * Predefined metrics by which to measure distance between a pair of strings.
  *
  * @author Masih Hajiarab Derkani
  */
