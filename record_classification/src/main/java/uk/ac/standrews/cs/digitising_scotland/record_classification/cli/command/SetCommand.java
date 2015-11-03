@@ -205,6 +205,12 @@ public class SetCommand extends Command {
                 arguments.add(String.valueOf(csv_format));
             }
 
+            if (arguments.isEmpty()) {
+                throw new NullPointerException("at least one parameter must be set");
+            }
+
+            arguments.add(0, NAME);
+
             return arguments.toArray(new String[arguments.size()]);
         }
     }
