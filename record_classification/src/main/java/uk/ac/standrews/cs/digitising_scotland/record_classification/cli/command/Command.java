@@ -64,8 +64,6 @@ public abstract class Command implements Runnable {
                 }
             }
 
-            System.out.println(String.join(" ", arguments));
-            
             return arguments;
         }
 
