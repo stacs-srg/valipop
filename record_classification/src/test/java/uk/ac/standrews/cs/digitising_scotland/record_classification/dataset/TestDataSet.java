@@ -130,6 +130,11 @@ public class TestDataSet {
         return new Record(id, data, data, classification);
     }
 
+    public void getCopy(Path destination) {
+
+        getCopy(destination, DEFAULT_CHARSET, DEFAULT_CSV_FORMAT);
+    }
+
     public void getCopy(Path destination, Charset charset, CSVFormat format) {
 
         try {

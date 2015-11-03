@@ -22,9 +22,8 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.*
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.serialization.*;
 
+import java.util.*;
 import java.util.function.*;
-
-import static uk.ac.standrews.cs.digitising_scotland.record_classification.cli.CLIParameters.*;
 
 /**
  * Sets variables in the Command-line Interface {@link Configuration configuration}.
@@ -85,7 +84,7 @@ public class SetCommand extends Command {
     /** The long name of the option that specifies the {@link CSVFormat format} of the input/output tabular data files. **/
     public static final String OPTIONS_FORMAT_LONG = "--format";
 
-    @Parameter(names = {ClassifierParameter.SHORT, ClassifierParameter.LONG}, descriptionKey = "command.set.classifier.description")
+    @Parameter(names = {OPTION_CLASSIFIER_SHORT, OPTION_CLASSIFIER_LONG}, descriptionKey = "command.set.classifier.description")
     private ClassifierSupplier classifier_supplier;
 
     @Parameter(names = {OPTION_RANDOM_SEED_SHORT, OPTION_RANDOM_SEED_LONG}, descriptionKey = "command.set.seed.description")
@@ -108,6 +107,107 @@ public class SetCommand extends Command {
 
     @Parameter(names = {OPTIONS_FORMAT_SHORT, OPTIONS_FORMAT_LONG}, descriptionKey = "command.set.default_csv_format.description")
     private CsvFormatSupplier csv_format;
+
+    public static class Builder extends Command.Builder {
+
+        private ClassifierSupplier classifier_supplier;
+        private Long seed;
+        private CharsetSupplier charset_supplier;
+        private Character delimiter;
+        private SerializationFormat serialization_format;
+        private Double training_ratio;
+        private Double internal_training_ratio;
+        private CsvFormatSupplier csv_format;
+
+        public Builder classifier(final ClassifierSupplier classifier_supplier) {
+
+            this.classifier_supplier = classifier_supplier;
+            return this;
+        }
+
+        public Builder seed(final Long seed) {
+
+            this.seed = seed;
+            return this;
+        }
+
+        public Builder charset(final CharsetSupplier charset_supplier) {
+
+            this.charset_supplier = charset_supplier;
+            return this;
+        }
+
+        public Builder delimiter(final Character delimiter) {
+
+            this.delimiter = delimiter;
+            return this;
+        }
+
+        public Builder classsifierSerializationFormat(final SerializationFormat serialization_format) {
+
+            this.serialization_format = serialization_format;
+            return this;
+        }
+
+        public Builder trainingRatio(final Double training_ratio) {
+
+            this.training_ratio = training_ratio;
+            return this;
+        }
+
+        public Builder internalTrainingRatio(final Double internal_training_ratio) {
+
+            this.internal_training_ratio = internal_training_ratio;
+            return this;
+        }
+
+        public Builder format(final CsvFormatSupplier csv_format) {
+
+            this.csv_format = csv_format;
+            return this;
+        }
+
+        @Override
+        public String[] build() {
+
+            final List<String> arguments = new ArrayList<>();
+
+            if (classifier_supplier != null) {
+                arguments.add(OPTION_CLASSIFIER_SHORT);
+                arguments.add(String.valueOf(classifier_supplier));
+            }
+            if (seed != null) {
+                arguments.add(OPTION_RANDOM_SEED_SHORT);
+                arguments.add(String.valueOf(seed));
+            }
+            if (charset_supplier != null) {
+                arguments.add(OPTION_CHARSET_SHORT);
+                arguments.add(String.valueOf(charset_supplier));
+            }
+            if (delimiter != null) {
+                arguments.add(OPTION_DELIMITER_SHORT);
+                arguments.add(String.valueOf(delimiter));
+            }
+            if (serialization_format != null) {
+                arguments.add(OPTION_SERIALIZATION_FORMAT_SHORT);
+                arguments.add(String.valueOf(serialization_format));
+            }
+            if (training_ratio != null) {
+                arguments.add(OPTION_TRAINING_RATIO_SHORT);
+                arguments.add(String.valueOf(training_ratio));
+            }
+            if (internal_training_ratio != null) {
+                arguments.add(OPTION_INTERNAL_TRAINING_RATIO_SHORT);
+                arguments.add(String.valueOf(internal_training_ratio));
+            }
+            if (csv_format != null) {
+                arguments.add(OPTIONS_FORMAT_SHORT);
+                arguments.add(String.valueOf(csv_format));
+            }
+
+            return arguments.toArray(new String[arguments.size()]);
+        }
+    }
 
     /**
      * Instantiates this command for the given launcher.

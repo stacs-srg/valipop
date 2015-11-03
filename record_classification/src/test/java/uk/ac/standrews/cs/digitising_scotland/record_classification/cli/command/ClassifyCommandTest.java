@@ -29,7 +29,6 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 import uk.ac.standrews.cs.util.dataset.*;
 
 import java.io.*;
-import java.nio.charset.*;
 import java.nio.file.*;
 import java.util.*;
 import java.util.stream.*;
@@ -83,7 +82,7 @@ public class ClassifyCommandTest extends CommandTest {
     public void testClassification() throws Exception {
 
         initForcefully();
-        run(SetCommand.NAME, SetCommand.OPTION_CLASSIFIER_SHORT, classifier_supplier.name());
+        new SetCommand.Builder().classifier(classifier_supplier);
         loadGoldStandards();
         loadUnseens();
         clean();

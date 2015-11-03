@@ -29,6 +29,7 @@ public final class TestDataSets {
 
     public static final CSVFormat NRS_SAMPLE_CSV_FORMAT = CsvFormatSupplier.RFC4180_PIPE_SEPARATED.get().withIgnoreEmptyLines().withHeader();
 
+    public static final TestDataSet UNCLEAN_TRAINING = getTestDataSet("cleaning/test_training_data.csv");
     public static final List<TestDataSet> CASE_1_TRAINING = Collections.singletonList(getTestDataSet("case1/test_training_data.csv", StandardCharsets.US_ASCII));
 
     public static final List<TestDataSet> CASE_1_EVALUATION = Collections.singletonList(getEvaluationTestDataSet("case1/test_evaluation_UTF8_unix.csv"));
@@ -52,6 +53,11 @@ public final class TestDataSets {
     public static final List<TestDataSet> CASE_5_EVALUATION = Collections.singletonList(getEvaluationTestDataSet("case5/test_evaluation_ascii_windows.csv", StandardCharsets.US_ASCII));
 
     private TestDataSets() { throw new UnsupportedOperationException(); }
+
+    private static TestDataSet getTestDataSet(String resource_name) {
+
+        return new TestDataSet(TestDataSet.class, resource_name);
+    }
 
     private static TestDataSet getTestDataSet(String resource_name, final Charset charset) {
 
