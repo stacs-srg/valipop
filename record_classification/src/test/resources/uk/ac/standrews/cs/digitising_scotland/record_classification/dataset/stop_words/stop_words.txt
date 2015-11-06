@@ -1,0 +1,11 @@
+invalid
+seeking work
+pensioner
+evacuee
+idle
+unknown
+unpaid
+jobless
+retired
+na
+n/a
