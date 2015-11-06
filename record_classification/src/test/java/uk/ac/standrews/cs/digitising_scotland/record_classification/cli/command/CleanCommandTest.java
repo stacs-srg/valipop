@@ -49,7 +49,7 @@ public class CleanCommandTest extends CommandTest {
 
         super.setUp();
         source = temp.newFile().toPath();
-        TestDataSets.UNCLEAN_TRAINING.getCopy(source);
+        TestDataSets.UNCLEAN_TRAINING.copy(source);
     }
 
     @Test

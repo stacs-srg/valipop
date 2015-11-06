@@ -16,11 +16,17 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.cli.command;
 
+import org.apache.commons.csv.*;
 import org.apache.commons.io.*;
 import org.junit.*;
+import org.junit.rules.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.dataset.*;
 
 import java.io.*;
+import java.nio.file.*;
 import java.util.*;
 import java.util.logging.*;
 import java.util.stream.*;
@@ -36,6 +42,9 @@ public abstract class CommandTest {
 
     protected Launcher launcher;
     private static final Logger LOGGER = getLogger(CommandTest.class.getName());
+
+    @Rule
+    public TemporaryFolder temp = new TemporaryFolder();
 
     @Before
     public void setUp() throws Exception {
@@ -60,6 +69,70 @@ public abstract class CommandTest {
     }
 
     protected void initForcefully() {new InitCommand.Builder().forcefully().run();}
+
+    protected void setVerbosity(final LogLevelSupplier supplier) { new SetCommand.Builder().verbosity(supplier).run(); }
+
+    protected void setClassifier(ClassifierSupplier classifier_supplier) { new SetCommand.Builder().classifier(classifier_supplier).run(); }
+
+    protected void loadGoldStandards(List<TestDataSet> gold_standards, final CharsetSupplier charset, final CSVFormat format) {
+
+        gold_standards.forEach(gold_standard -> loadGoldStandard(gold_standard, charset, format));
+    }
+
+    protected void loadUnseens(List<TestDataSet> unseens, final CharsetSupplier charset, final CSVFormat format) {
+
+        unseens.stream().forEach(unseen -> loadUnseen(unseen, charset, format));
+    }
+
+    protected void train() {new TrainCommand.Builder().internalTrainingRatio(1.0).run();}
+
+    protected void clean(CleanerSupplier cleaner) {new CleanCommand.Builder().cleaners(cleaner).run();}
+
+    protected Path classify() throws IOException {
+
+        final Path output_path = temp.newFile().toPath();
+        new ClassifyCommand.Builder().output(output_path).run();
+        return output_path;
+    }
+
+    protected void loadGoldStandards(final List<TestDataSet> records) {
+
+        loadGoldStandards(records, TestDataSet.DEFAULT_CHARSET, TestDataSet.DEFAULT_CSV_FORMAT);
+    }
+
+    protected void loadGoldStandard(final TestDataSet records, final CharsetSupplier charset, final CSVFormat format) {
+
+        final LoadRecordsCommand.Builder builder = new LoadGoldStandardRecordsCommand.Builder().trainingRatio(1.0).classColumnIndex(records.class_column_index);
+        load(builder, records, charset, format);
+    }
+
+    protected void loadUnseens(final List<TestDataSet> records) {
+
+        loadUnseens(records, TestDataSet.DEFAULT_CHARSET, TestDataSet.DEFAULT_CSV_FORMAT);
+    }
+
+    protected void loadUnseen(final TestDataSet records, final CharsetSupplier charset, final CSVFormat format) {
+
+        load(new LoadUnseenRecordsCommand.Builder(), records, charset, format);
+    }
+
+    protected void load(LoadRecordsCommand.Builder builder, TestDataSet records, final CharsetSupplier charset, final CSVFormat format) {
+
+        final Path source = getTestCopy(records, charset, format);
+        builder.idColumnIndex(records.id_column_index).labelColumnIndex(records.label_column_index).delimiter(format.getDelimiter()).skipHeader(format.getSkipHeaderRecord()).from(source).charset(charset).run();
+    }
+
+    protected Path getTestCopy(final TestDataSet records, final CharsetSupplier charset, final CSVFormat format) {
+
+        try {
+            final Path destination = temp.newFile().toPath();
+            records.copy(destination, charset.get(), format);
+            return destination;
+        }
+        catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     @After
     public void tearDown() throws Exception {

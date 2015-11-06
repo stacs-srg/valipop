@@ -178,6 +178,11 @@ public class Bucket implements Iterable<Record>, Serializable {
         return null;
     }
 
+    public Optional<Record> findRecordById(int id) {
+
+        return records.stream().filter(record -> record.getId() == id).findFirst();
+    }
+
     @Override
     public Iterator<Record> iterator() {
 
