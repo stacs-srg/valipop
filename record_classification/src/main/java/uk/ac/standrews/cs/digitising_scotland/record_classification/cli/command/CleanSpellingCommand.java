@@ -58,6 +58,47 @@ public class CleanSpellingCommand extends CleanStopWordsCommand {
     @Parameter(names = {OPTION_DISTANCE_FUNCTION_SHORT, OPTION_DISTANCE_FUNCTION_LONG}, descriptionKey = "command.clean.spelling.distance.description")
     private StringDistanceSupplier string_distance_supplier = StringDistanceSupplier.JARO_WINKLER;
 
+    public static class Builder extends CleanStopWordsCommand.Builder {
+
+        private Float accuracy_threshold;
+        private StringDistanceSupplier string_distance_supplier;
+
+        public Builder accuracyThreshold(float accuracy_threshold) {
+
+            this.accuracy_threshold = accuracy_threshold;
+            return this;
+        }
+
+        public Builder stringDistance(StringDistanceSupplier string_distance_supplier) {
+
+            this.string_distance_supplier = string_distance_supplier;
+            return this;
+        }
+
+        @Override
+        protected String getSubCommandName() {
+
+            return NAME;
+        }
+
+        @Override
+        protected List<String> getCommandArguments() {
+
+            final List<String> arguments = new ArrayList<>(super.getCommandArguments());
+
+            if (accuracy_threshold != null) {
+                arguments.add(OPTION_ACCURACY_THRESHOLD_SHORT);
+                arguments.add(String.valueOf(accuracy_threshold));
+            }
+            if (string_distance_supplier != null) {
+                arguments.add(OPTION_DISTANCE_FUNCTION_SHORT);
+                arguments.add(string_distance_supplier.name());
+            }
+
+            return arguments;
+        }
+    }
+
     /**
      * Instantiates this command for the given launcher.
      *

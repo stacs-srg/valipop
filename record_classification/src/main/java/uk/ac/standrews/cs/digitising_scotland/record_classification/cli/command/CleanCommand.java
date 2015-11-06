@@ -101,8 +101,8 @@ public class CleanCommand extends Command {
             sub_command.get().run();
         }
         else if (!cleaners_specified) {
-            logger.severe(() -> "No sub command detected to execute.");
-            throw new ParameterException("Please specify a sub command.");
+            logger.severe(() -> "No predefined cleaner or sub command detected to execute.");
+            throw new ParameterException("Please specify a predefined cleaner or a sub command.");
         }
     }
 

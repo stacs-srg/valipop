@@ -45,21 +45,18 @@ import static uk.ac.standrews.cs.digitising_scotland.record_classification.datas
 @RunWith(Parameterized.class)
 public class ClassifyCommandTest extends CommandTest {
 
+    public static final List<ClassifierSupplier> CLASSIFIERS = Arrays.asList(ClassifierSupplier.EXACT_MATCH, ClassifierSupplier.STRING_SIMILARITY_JARO_WINKLER, ClassifierSupplier.OLR, ClassifierSupplier.NAIVE_BAYES, ClassifierSupplier.VOTING_ENSEMBLE_EXACT_ML_SIMILARITY);
     private ClassifierSupplier classifier_supplier;
     private List<TestDataSet> gold_standards;
     private List<TestDataSet> unseens;
     private CharsetSupplier charset;
     private CSVFormat format;
 
-    @Rule
-    public TemporaryFolder temp = new TemporaryFolder();
-
     @Parameterized.Parameters(name = "{index} {0}")
     public static Collection<Object[]> data() {
 
         final List<Object[]> parameters = new ArrayList<>();
-        List<ClassifierSupplier> classifiers = Arrays.asList(ClassifierSupplier.EXACT_MATCH, ClassifierSupplier.STRING_SIMILARITY_JARO_WINKLER, ClassifierSupplier.OLR, ClassifierSupplier.NAIVE_BAYES, ClassifierSupplier.VOTING_ENSEMBLE_EXACT_ML_SIMILARITY);
-        for (ClassifierSupplier classifier_supplier : classifiers) {
+        for (ClassifierSupplier classifier_supplier : CLASSIFIERS) {
             for (CharsetSupplier charset_supplier : CharsetSupplier.values()) {
                 for (CsvFormatSupplier format_supplier : CsvFormatSupplier.values()) {
                     parameters.add(new Object[]{classifier_supplier, CASE_2_TRAINING, CASE_2_EVALUATION, charset_supplier, format_supplier.get()});
@@ -85,18 +82,14 @@ public class ClassifyCommandTest extends CommandTest {
         initForcefully();
         setVerbosity(LogLevelSupplier.OFF);
         setClassifier(classifier_supplier);
-        loadGoldStandards();
-        loadUnseens();
+        loadGoldStandards(gold_standards, charset, format);
+        loadUnseens(unseens, charset, format);
         clean(CleanerSupplier.COMBINED);
         train();
         final Path classified_output = classify();
 
         checkClassification(classified_output);
     }
-
-    private void setVerbosity(final LogLevelSupplier supplier) { new SetCommand.Builder().verbosity(supplier).run(); }
-
-    private void setClassifier(ClassifierSupplier classifier_supplier) { new SetCommand.Builder().classifier(classifier_supplier).run(); }
 
     private void checkClassification(Path classified_file) throws Exception {
 
@@ -204,55 +197,5 @@ public class ClassifyCommandTest extends CommandTest {
     private String getEnsembleDetail(List<String> record) {
 
         return record.size() > 5 ? record.get(5) : null;
-    }
-
-    private Path classify() throws IOException {
-
-        final Path output_path = temp.newFile().toPath();
-        new ClassifyCommand.Builder().output(output_path).run();
-        return output_path;
-    }
-
-    private void train() {new TrainCommand.Builder().internalTrainingRatio(1.0).run();}
-
-    private void clean(CleanerSupplier cleaner) {new CleanCommand.Builder().cleaners(cleaner).run();}
-
-    private void loadGoldStandards() {
-
-        gold_standards.forEach(this::loadGoldStandard);
-    }
-
-    private void loadUnseens() {
-
-        unseens.stream().forEach(this::loadUnseen);
-    }
-
-    private void loadGoldStandard(final TestDataSet records) {
-
-        final LoadRecordsCommand.Builder builder = new LoadGoldStandardRecordsCommand.Builder().trainingRatio(1.0).classColumnIndex(records.class_column_index);
-        load(builder, records);
-    }
-
-    private void loadUnseen(final TestDataSet records) {
-
-        load(new LoadUnseenRecordsCommand.Builder(), records);
-    }
-
-    private void load(LoadRecordsCommand.Builder builder, TestDataSet records) {
-
-        final Path source = getTestCopy(records);
-        builder.idColumnIndex(records.id_column_index).labelColumnIndex(records.label_column_index).delimiter(format.getDelimiter()).skipHeader(format.getSkipHeaderRecord()).from(source).charset(charset).run();
-    }
-
-    private Path getTestCopy(final TestDataSet records) {
-
-        try {
-            final Path destination = temp.newFile().toPath();
-            records.getCopy(destination, charset.get(), format);
-            return destination;
-        }
-        catch (IOException e) {
-            throw new RuntimeException(e);
-        }
     }
 }

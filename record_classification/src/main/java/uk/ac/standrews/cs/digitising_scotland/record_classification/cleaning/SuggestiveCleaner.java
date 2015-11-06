@@ -81,7 +81,7 @@ public class SuggestiveCleaner implements TextCleaner, Closeable {
      * @throws IOException if failure occurs while configuring the spell checker
      */
     protected void configureSpellChecker(final Dictionary dictionary, final float accuracy_threshold) throws IOException {
-
+        
         spell_checker.setAccuracy(accuracy_threshold);
         spell_checker.indexDictionary(dictionary, new IndexWriterConfig(new SimpleAnalyzer()), true);
     }
@@ -117,9 +117,10 @@ public class SuggestiveCleaner implements TextCleaner, Closeable {
      * @param suggestions the generated suggestions
      * @return a single suggested word for the token.
      */
-    protected String selectSingleSuggestion(String token, String[] suggestions) {
+    protected String selectSingleSuggestion(String token, String[] suggestions) throws IOException {
 
-        return suggestions.length > 0 ? suggestions[0] : token;
+        
+        return !spell_checker.exist(token) && suggestions.length > 0 ? suggestions[0] : token;
     }
 
     @Override

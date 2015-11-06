@@ -28,6 +28,9 @@ import java.nio.file.*;
 import java.util.*;
 import java.util.stream.*;
 
+import static uk.ac.standrews.cs.digitising_scotland.record_classification.cli.command.LoadCommand.OPTION_CHARSET_SHORT;
+import static uk.ac.standrews.cs.digitising_scotland.record_classification.cli.command.LoadCommand.OPTION_SOURCE_SHORT;
+
 /**
  * Cleans a user-specified set of stop words from the loaded gold standard and unseen records.
  *
@@ -45,7 +48,7 @@ public class CleanStopWordsCommand extends Command {
     /** The long name of the option that specifies whether the stop words are case sensitive. **/
     public static final String OPTION_CASE_SENSITIVE_LONG = "--caseSensitive";
 
-    @Parameter(required = true, names = {LoadCommand.OPTION_SOURCE_SHORT, LoadCommand.OPTION_SOURCE_LONG}, descriptionKey = "command.clean.stop_words.source.description", converter = PathConverter.class)
+    @Parameter(required = true, names = {OPTION_SOURCE_SHORT, LoadCommand.OPTION_SOURCE_LONG}, descriptionKey = "command.clean.stop_words.source.description", converter = PathConverter.class)
     private Path source;
 
     @Parameter(names = {LoadCommand.OPTION_CHARSET_SHORT, LoadCommand.OPTION_CHARSET_LONG}, descriptionKey = "command.clean.stop_words.source.description")
@@ -53,6 +56,67 @@ public class CleanStopWordsCommand extends Command {
 
     @Parameter(names = {OPTION_CASE_SENSITIVE_SHORT, OPTION_CASE_SENSITIVE_LONG}, descriptionKey = "command.clean.stop_words.case_sensitive.description")
     private boolean case_sensitive = false;
+
+    public static class Builder extends Command.Builder {
+
+        private Path source;
+        private CharsetSupplier charset_supplier;
+        private Boolean case_sensitive;
+
+        public Builder from(Path source) {
+
+            this.source = source;
+            return this;
+        }
+
+        public Builder charset(CharsetSupplier charset_supplier) {
+
+            this.charset_supplier = charset_supplier;
+            return this;
+        }
+
+        public Builder caseSensitive(boolean case_sensitive) {
+
+            this.case_sensitive = case_sensitive;
+            return this;
+        }
+
+        @Override
+        public String[] build() {
+
+            final List<String> arguments = new ArrayList<>();
+            arguments.add(CleanCommand.NAME);
+            arguments.add(getSubCommandName());
+            arguments.addAll(getCommandArguments());
+            return arguments.toArray(new String[arguments.size()]);
+        }
+
+        protected String getSubCommandName() {
+
+            return NAME;
+        }
+
+        protected List<String> getCommandArguments() {
+
+            Objects.requireNonNull(source);
+
+            final List<String> arguments = new ArrayList<>();
+
+            arguments.add(OPTION_SOURCE_SHORT);
+            arguments.add(source.toString());
+
+            if (charset_supplier != null) {
+                arguments.add(OPTION_CHARSET_SHORT);
+                arguments.add(charset_supplier.name());
+            }
+
+            if (case_sensitive != null) {
+                arguments.add(OPTION_CASE_SENSITIVE_SHORT);
+            }
+
+            return arguments;
+        }
+    }
 
     /**
      * Instantiates this command for the given launcher.
