@@ -59,7 +59,7 @@ public class ConfigurationTest {
         gold_standard.setBucket(gold_standard_records);
         
         expected.setClassifierSupplier(ClassifierSupplier.EXACT_MATCH);
-        expected.setClassifierSerializationFormat(SerializationFormat.JSON);
+        expected.setClassifierSerializationFormat(SerializationFormat.JAVA_SERIALIZATION);
         expected.setDefaultCharsetSupplier(CharsetSupplier.UTF_16);
         expected.setDefaultLogLevelSupplier(LogLevelSupplier.OFF);
         expected.setProceedOnError(false);
