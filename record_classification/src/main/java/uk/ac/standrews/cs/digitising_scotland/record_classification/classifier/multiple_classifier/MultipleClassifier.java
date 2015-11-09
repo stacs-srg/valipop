@@ -21,6 +21,7 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.util.*;
 
+import java.io.*;
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
@@ -120,7 +121,9 @@ public class MultipleClassifier {
         return true;
     }
 
-    private static class CandidateClassificationListFitnessComparator implements Comparator<List<CandidateClassification>> {
+    private static class CandidateClassificationListFitnessComparator implements Comparator<List<CandidateClassification>>, Serializable {
+
+        private static final long serialVersionUID = 4539055505067693762L;
 
         @Override
         public int compare(final List<CandidateClassification> one, final List<CandidateClassification> another) {

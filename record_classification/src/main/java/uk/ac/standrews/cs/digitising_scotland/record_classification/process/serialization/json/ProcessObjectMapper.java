@@ -35,6 +35,8 @@ import java.util.Arrays;
 
 public class ProcessObjectMapper extends ObjectMapper {
 
+    private static final long serialVersionUID = 6315686309716673307L;
+
     public ProcessObjectMapper() {
 
         // Needed for classes with private fields without setters e.g. Bucket.

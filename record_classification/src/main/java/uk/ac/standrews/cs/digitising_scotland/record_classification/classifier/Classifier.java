@@ -33,6 +33,8 @@ import java.util.Random;
  */
 public abstract class Classifier implements Serializable {
 
+    private static final long serialVersionUID = 7015118610311481144L;
+
     /**
      * Trains the classifier on the given gold standard records, and performs internal evaluation.
      *

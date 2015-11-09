@@ -17,7 +17,11 @@
 package uk.ac.standrews.cs.digitising_scotland.record_classification.cli;
 
 import org.junit.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.dataset.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.experiments.config.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.serialization.*;
 import uk.ac.standrews.cs.util.tools.*;
 
 import java.nio.file.*;
@@ -25,14 +29,9 @@ import java.nio.file.*;
 import static org.junit.Assert.*;
 
 /**
- * @author masih
+ * @author Masih Hajiarab Derkani
  */
 public class ConfigurationTest {
-
-    @Before
-    public void setUp() throws Exception {
-
-    }
 
     @After
     public void tearDown() throws Exception {
@@ -43,11 +42,6 @@ public class ConfigurationTest {
     }
 
     @Test
-    public void testLoad() throws Exception {
-
-    }
-
-    @Test
     public void testSerializationAndDeserialization() throws Exception {
 
         if (!Files.isDirectory(Configuration.CLI_HOME)) {
@@ -55,14 +49,59 @@ public class ConfigurationTest {
         }
 
         final Configuration expected = new Configuration();
+        
         final Configuration.Unseen unseen = expected.newUnseen("test", false);
-        final Bucket bucket = new Bucket();
-        bucket.add(new Record(1, "test"));
-        unseen.setBucket(bucket);
+        final Bucket unseen_records = TestDataSets.CASE_5_EVALUATION.get(0).getBucket();
+        unseen.setBucket(unseen_records);
+
+        final Configuration.GoldStandard gold_standard = expected.newGoldStandard("test", 8.0, false);
+        final Bucket gold_standard_records = TestDataSets.CASE_5_TRAINING.get(0).getBucket();
+        gold_standard.setBucket(gold_standard_records);
+        
+        expected.setClassifierSupplier(ClassifierSupplier.EXACT_MATCH);
+        expected.setClassifierSerializationFormat(SerializationFormat.JSON);
+        expected.setDefaultCharsetSupplier(CharsetSupplier.UTF_16);
+        expected.setDefaultLogLevelSupplier(LogLevelSupplier.OFF);
+        expected.setProceedOnError(false);
+        expected.setSeed(42L);
+        expected.setDefaultCsvFormatSupplier(CsvFormatSupplier.RFC4180_PIPE_SEPARATED);
+        expected.setDefaultTrainingRatio(0.7);
+        expected.setDefaultInternalTrainingRatio(0.1);
+        
+        
         expected.persist();
 
         final Configuration actual = Configuration.load();
 
         assertEquals(expected.getUnseens(), actual.getUnseens());
+        assertEquals(expected.getGoldStandards(), actual.getGoldStandards());
+        assertEquals(expected.getClassifierSupplier(), actual.getClassifierSupplier());
+        assertEquals(expected.getClassifierSerializationFormat(), actual.getClassifierSerializationFormat());
+        assertEquals(expected.getDefaultCharsetSupplier(), actual.getDefaultCharsetSupplier());
+        assertEquals(expected.getDefaultLogLevelSupplier(), actual.getDefaultLogLevelSupplier());
+        assertEquals(expected.isProceedOnErrorEnabled(), actual.isProceedOnErrorEnabled());
+        assertEquals(expected.getSeed(), actual.getSeed());
+        assertEquals(expected.getDefaultCsvFormatSupplier(), actual.getDefaultCsvFormatSupplier());
+        assertEquals(expected.getDefaultTrainingRatio(), actual.getDefaultTrainingRatio(), Validators.DELTA);
+        assertEquals(expected.getDefaultInternalTrainingRatio(), actual.getDefaultInternalTrainingRatio(), Validators.DELTA);
+        assertEquals(expected.getClassifier(), actual.getClassifier());
+        assertEquals(expected.getLogLevel(), actual.getLogLevel());
+        assertEquals(expected.getTrainingRecords(), actual.getTrainingRecords());
+        assertEquals(expected.getEvaluationRecords(), actual.getEvaluationRecords());
+        assertEquals(expected.getUnseenRecords(), actual.getUnseenRecords());
+        assertEquals(expected.getUnseenRecords(), actual.getUnseenRecords());
+    }
+
+    @Test
+    public void testDefaultValuesAreSetInNewInstance() throws Exception {
+
+        final Configuration new_instance = new Configuration();
+        
+        assertEquals(new_instance.getDefaultCharsetSupplier(), Configuration.DEFAULT_CHARSET_SUPPLIER);
+        assertEquals(new_instance.getDefaultCsvFormatSupplier(), Configuration.DEFAULT_CSV_FORMAT_SUPPLIER);
+        assertEquals(new_instance.getDefaultDelimiter(), Configuration.DEFAULT_DELIMITER);
+        assertEquals(new_instance.getDefaultTrainingRatio(), Configuration.DEFAULT_TRAINING_RATIO, Validators.DELTA);
+        assertEquals(new_instance.getDefaultInternalTrainingRatio(), Configuration.DEFAULT_INTERNAL_TRAINING_RATIO, Validators.DELTA);
+        assertEquals(new_instance.getDefaultLogLevelSupplier(), Configuration.DEFAULT_LOG_LEVEL_SUPPLIER);
     }
 }

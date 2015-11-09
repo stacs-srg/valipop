@@ -44,7 +44,7 @@ public abstract class CommandTest {
     private static final Logger LOGGER = getLogger(CommandTest.class.getName());
 
     @Rule
-    public TemporaryFolder temp = new TemporaryFolder();
+    public TemporaryFolder temporary = new TemporaryFolder();
 
     @Before
     public void setUp() throws Exception {
@@ -100,7 +100,7 @@ public abstract class CommandTest {
 
     protected Path classify() throws Exception {
 
-        final Path output_path = temp.newFile().toPath();
+        final Path output_path = temporary.newFile().toPath();
         new ClassifyCommand.Builder().output(output_path).run(launcher);
         return output_path;
     }
@@ -140,7 +140,7 @@ public abstract class CommandTest {
     protected Path getTestCopy(final TestDataSet records, final CharsetSupplier charset, final CSVFormat format) {
 
         try {
-            final Path destination = temp.newFile().toPath();
+            final Path destination = temporary.newFile().toPath();
             records.copy(destination, charset.get(), format);
             return destination;
         }

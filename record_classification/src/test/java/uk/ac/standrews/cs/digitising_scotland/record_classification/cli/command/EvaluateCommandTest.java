@@ -16,8 +16,6 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.cli.command;
 
-import junit.framework.*;
-import org.junit.*;
 import org.junit.Test;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.*;
@@ -55,7 +53,7 @@ public class EvaluateCommandTest extends CommandTest {
 
         init();
         loadGoldStandards(TestDataSets.CASE_1_TRAINING, 8.0);
-        final Path output = temp.newFile().toPath();
+        final Path output = temporary.newFile().toPath();
         evaluate(output);
 
         assertEvaluationOutputIsCorrect(output);
@@ -67,7 +65,6 @@ public class EvaluateCommandTest extends CommandTest {
 
         final Bucket records = Configuration.loadBucket(output);
         assertConsistentClassification(records);
-
     }
 
     private void assertRegularFile(final Path output) {assertTrue(Files.isRegularFile(output));}
