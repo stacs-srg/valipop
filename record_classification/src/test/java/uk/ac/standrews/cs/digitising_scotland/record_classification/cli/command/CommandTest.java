@@ -70,58 +70,64 @@ public abstract class CommandTest {
 
     protected void init() throws Exception {new InitCommand.Builder().run(launcher);}
 
-    protected void initForcefully() {new InitCommand.Builder().forcefully().run();}
+    protected void initForcefully() throws Exception {new InitCommand.Builder().forcefully().run(launcher);}
 
-    protected void setVerbosity(final LogLevelSupplier supplier) { new SetCommand.Builder().verbosity(supplier).run(); }
+    protected void setVerbosity(final LogLevelSupplier supplier) throws Exception { new SetCommand.Builder().verbosity(supplier).run(launcher); }
 
-    protected void setClassifier(ClassifierSupplier classifier_supplier) { new SetCommand.Builder().classifier(classifier_supplier).run(); }
+    protected void setClassifier(ClassifierSupplier classifier_supplier) throws Exception { new SetCommand.Builder().classifier(classifier_supplier).run(launcher); }
 
-    protected void loadGoldStandards(List<TestDataSet> gold_standards, final CharsetSupplier charset, final CSVFormat format) {
+    protected void loadGoldStandards(List<TestDataSet> gold_standards, final CharsetSupplier charset, final CSVFormat format) throws Exception {
 
-        gold_standards.forEach(gold_standard -> loadGoldStandard(gold_standard, charset, format));
+        for (TestDataSet gold_standard : gold_standards) {
+            loadGoldStandard(gold_standard, charset, format);
+        }
     }
 
-    protected void loadUnseens(List<TestDataSet> unseens, final CharsetSupplier charset, final CSVFormat format) {
+    protected void loadUnseens(List<TestDataSet> unseens, final CharsetSupplier charset, final CSVFormat format) throws Exception {
 
-        unseens.stream().forEach(unseen -> loadUnseen(unseen, charset, format));
+        for (TestDataSet unseen : unseens) {
+            loadUnseen(unseen, charset, format);
+        }
     }
 
-    protected void train() {new TrainCommand.Builder().internalTrainingRatio(1.0).run();}
+    protected void evaluate() throws Exception { new EvaluateCommand.Builder().run(launcher); }
 
-    protected void clean(CleanerSupplier cleaner) {new CleanCommand.Builder().cleaners(cleaner).run();}
+    protected void train() throws Exception {new TrainCommand.Builder().internalTrainingRatio(1.0).run(launcher);}
 
-    protected Path classify() throws IOException {
+    protected void clean(CleanerSupplier cleaner) throws Exception {new CleanCommand.Builder().cleaners(cleaner).run(launcher);}
+
+    protected Path classify() throws Exception {
 
         final Path output_path = temp.newFile().toPath();
-        new ClassifyCommand.Builder().output(output_path).run();
+        new ClassifyCommand.Builder().output(output_path).run(launcher);
         return output_path;
     }
 
-    protected void loadGoldStandards(final List<TestDataSet> records) {
+    protected void loadGoldStandards(final List<TestDataSet> records) throws Exception {
 
         loadGoldStandards(records, TestDataSet.DEFAULT_CHARSET, TestDataSet.DEFAULT_CSV_FORMAT);
     }
 
-    protected void loadGoldStandard(final TestDataSet records, final CharsetSupplier charset, final CSVFormat format) {
+    protected void loadGoldStandard(final TestDataSet records, final CharsetSupplier charset, final CSVFormat format) throws Exception {
 
         final LoadRecordsCommand.Builder builder = new LoadGoldStandardRecordsCommand.Builder().trainingRatio(1.0).classColumnIndex(records.class_column_index);
         load(builder, records, charset, format);
     }
 
-    protected void loadUnseens(final List<TestDataSet> records) {
+    protected void loadUnseens(final List<TestDataSet> records) throws Exception {
 
         loadUnseens(records, TestDataSet.DEFAULT_CHARSET, TestDataSet.DEFAULT_CSV_FORMAT);
     }
 
-    protected void loadUnseen(final TestDataSet records, final CharsetSupplier charset, final CSVFormat format) {
+    protected void loadUnseen(final TestDataSet records, final CharsetSupplier charset, final CSVFormat format) throws Exception {
 
         load(new LoadUnseenRecordsCommand.Builder(), records, charset, format);
     }
 
-    protected void load(LoadRecordsCommand.Builder builder, TestDataSet records, final CharsetSupplier charset, final CSVFormat format) {
+    protected void load(LoadRecordsCommand.Builder builder, TestDataSet records, final CharsetSupplier charset, final CSVFormat format) throws Exception {
 
         final Path source = getTestCopy(records, charset, format);
-        builder.idColumnIndex(records.id_column_index).labelColumnIndex(records.label_column_index).delimiter(format.getDelimiter()).skipHeader(format.getSkipHeaderRecord()).from(source).charset(charset).run();
+        builder.idColumnIndex(records.id_column_index).labelColumnIndex(records.label_column_index).delimiter(format.getDelimiter()).skipHeader(format.getSkipHeaderRecord()).from(source).charset(charset).run(launcher);
     }
 
     protected Path getTestCopy(final TestDataSet records, final CharsetSupplier charset, final CSVFormat format) {

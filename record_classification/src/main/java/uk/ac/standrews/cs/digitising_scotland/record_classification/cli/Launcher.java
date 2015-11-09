@@ -113,29 +113,26 @@ public class Launcher {
             launcher.parse(args);
             launcher.handle();
         }
-        catch (ParameterException e) {
-            LOGGER.log(Level.SEVERE, e.getMessage(), e);
-            exitWithError();
+        catch (FileAlreadyExistsException error) {
+            LOGGER.log(Level.SEVERE, String.format("file '%s' already exists.", error.getFile()), error);
+            exitWithError(error);
         }
-        catch (FileAlreadyExistsException e) {
-            LOGGER.log(Level.SEVERE, String.format("file '%s' already exists.", e.getFile()), e);
-            exitWithError();
+        catch (NoSuchFileException error) {
+            LOGGER.log(Level.SEVERE, String.format("file '%s' not found.", error.getFile()), error);
+            exitWithError(error);
         }
-        catch (NoSuchFileException e) {
-            LOGGER.log(Level.SEVERE, String.format("file '%s' not found.", e.getFile()), e);
-            exitWithError();
-        }
-        catch (Exception e) {
-            LOGGER.log(Level.SEVERE, e.getMessage(), e);
-            exitWithError();
+        catch (Exception error) {
+            LOGGER.log(Level.SEVERE, error.getMessage(), error);
+            exitWithError(error);
         }
 
         //TODO expand user-friendly messages per exceptions
         //TODO think about CLI-specific exceptions.
     }
 
-    private static void exitWithError() {
+    private static void exitWithError(final Throwable error) {
 
+//        throw error;
         System.exit(1);
     }
 
