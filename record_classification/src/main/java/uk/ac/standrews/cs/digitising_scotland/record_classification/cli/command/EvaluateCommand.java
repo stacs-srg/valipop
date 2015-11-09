@@ -27,6 +27,7 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 import java.io.*;
 import java.nio.file.*;
 import java.time.*;
+import java.util.*;
 import java.util.logging.*;
 
 import static java.util.logging.Logger.*;
@@ -51,6 +52,30 @@ public class EvaluateCommand extends Command {
 
     @Parameter(names = {OPTION_OUTPUT_RECORDS_PATH_SHORT, OPTION_OUTPUT_RECORDS_PATH_LONG}, description = "command.evaluate.output.description", converter = PathConverter.class)
     private Path classified_evaluation_records;
+
+    public static class Builder extends Command.Builder {
+
+        private Path classified_evaluation_records;
+
+        public Builder output(Path classified_evaluation_records) {
+
+            this.classified_evaluation_records = classified_evaluation_records;
+            return this;
+        }
+
+        @Override
+        public String[] build() {
+
+            final List<String> arguments = new ArrayList<>();
+            arguments.add(NAME);
+            if (classified_evaluation_records != null) {
+                arguments.add(OPTION_OUTPUT_RECORDS_PATH_SHORT);
+                arguments.add(classified_evaluation_records.toString());
+            }
+
+            return arguments.toArray(new String[arguments.size()]);
+        }
+    }
 
     public EvaluateCommand(final Launcher launcher) {
 
