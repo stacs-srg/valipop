@@ -138,6 +138,17 @@ public class Configuration {
         }
     }
 
+    public static Bucket loadBucket(final Path source) throws IOException {
+
+        final Bucket bucket = new Bucket();
+
+        try (final BufferedReader in = Files.newBufferedReader(source, RESOURCE_CHARSET)) {
+            final CSVParser parser = RECORD_CSV_FORMAT.parse(in);
+            StreamSupport.stream(parser.spliterator(), false).map(Configuration::toRecord).forEach(bucket::add);
+        }
+        return bucket;
+    }
+
     public static Record toRecord(final CSVRecord csv_record) {
 
         final int id = Integer.parseInt(csv_record.get(0));

@@ -16,14 +16,22 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.cli.command;
 
+import junit.framework.*;
 import org.junit.*;
+import org.junit.Test;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.dataset.*;
-import weka.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 
-import static org.junit.Assert.*;
+import java.io.*;
+import java.nio.file.*;
+import java.util.*;
+
+import static org.junit.Assert.assertTrue;
 
 /**
- * @author masih
+ * @author Masih Hajiarab Derkani
  */
 public class EvaluateCommandTest extends CommandTest {
 
@@ -38,7 +46,31 @@ public class EvaluateCommandTest extends CommandTest {
     public void testEvaluationFailureWithNoEvaluationRecords() throws Exception {
 
         init();
-        loadGoldStandard(TestDataSets.CASE_1_TRAINING.get(0), TestDataSet.DEFAULT_CHARSET, TestDataSet.DEFAULT_CSV_FORMAT);
+        loadGoldStandards(TestDataSets.CASE_1_TRAINING, 1.0);
         evaluate();
     }
+
+    @Test(expected = RuntimeException.class)
+    public void testEvaluationWithOutput() throws Exception {
+
+        init();
+        loadGoldStandards(TestDataSets.CASE_1_TRAINING, 8.0);
+        final Path output = temp.newFile().toPath();
+        evaluate(output);
+
+        assertEvaluationOutputIsCorrect(output);
+    }
+
+    private void assertEvaluationOutputIsCorrect(final Path output) throws IOException {
+
+        assertRegularFile(output);
+
+        final Bucket records = Configuration.loadBucket(output);
+        assertConsistentClassification(records);
+
+    }
+
+    private void assertRegularFile(final Path output) {assertTrue(Files.isRegularFile(output));}
+
+    private void assertConsistentClassification(final Bucket records) {assertTrue(new ConsistentCodingChecker().test(Collections.singletonList(records)));}
 }
