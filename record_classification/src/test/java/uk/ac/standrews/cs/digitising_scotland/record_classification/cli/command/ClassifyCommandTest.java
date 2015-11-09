@@ -82,7 +82,7 @@ public class ClassifyCommandTest extends CommandTest {
         initForcefully();
         setVerbosity(LogLevelSupplier.OFF);
         setClassifier(classifier_supplier);
-        loadGoldStandards(gold_standards, charset, format);
+        loadGoldStandards(gold_standards, charset, format, 1.0);
         loadUnseens(unseens, charset, format);
         clean(CleanerSupplier.COMBINED);
         train();
@@ -133,15 +133,12 @@ public class ClassifyCommandTest extends CommandTest {
 
     private void assertRecordsConsistentlyClassified(Path classified_csv_file) throws IOException {
 
-        final Bucket bucket = new Bucket();
-
-        try (final BufferedReader in = Files.newBufferedReader(classified_csv_file, Configuration.RESOURCE_CHARSET)) {
-            final CSVParser parser = Configuration.RECORD_CSV_FORMAT.parse(in);
-            StreamSupport.stream(parser.spliterator(), false).map(Configuration::toRecord).forEach(bucket::add);
-        }
+        final Bucket bucket = Configuration.loadBucket(classified_csv_file);
 
         assertTrue(new ConsistentCodingChecker().test(Collections.singletonList(bucket)));
     }
+
+    
 
     private void assertRecordContainsId(List<String> record) {
 

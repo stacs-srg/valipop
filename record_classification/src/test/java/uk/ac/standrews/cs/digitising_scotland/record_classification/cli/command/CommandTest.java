@@ -76,10 +76,10 @@ public abstract class CommandTest {
 
     protected void setClassifier(ClassifierSupplier classifier_supplier) throws Exception { new SetCommand.Builder().classifier(classifier_supplier).run(launcher); }
 
-    protected void loadGoldStandards(List<TestDataSet> gold_standards, final CharsetSupplier charset, final CSVFormat format) throws Exception {
+    protected void loadGoldStandards(List<TestDataSet> gold_standards, final CharsetSupplier charset, final CSVFormat format, double training_ratio) throws Exception {
 
         for (TestDataSet gold_standard : gold_standards) {
-            loadGoldStandard(gold_standard, charset, format);
+            loadGoldStandard(gold_standard, charset, format, training_ratio);
         }
     }
 
@@ -92,6 +92,8 @@ public abstract class CommandTest {
 
     protected void evaluate() throws Exception { new EvaluateCommand.Builder().run(launcher); }
 
+    protected void evaluate(final Path output) throws Exception { new EvaluateCommand.Builder().output(output).run(launcher); }
+
     protected void train() throws Exception {new TrainCommand.Builder().internalTrainingRatio(1.0).run(launcher);}
 
     protected void clean(CleanerSupplier cleaner) throws Exception {new CleanCommand.Builder().cleaners(cleaner).run(launcher);}
@@ -103,14 +105,19 @@ public abstract class CommandTest {
         return output_path;
     }
 
-    protected void loadGoldStandards(final List<TestDataSet> records) throws Exception {
+    protected void loadGoldStandards(final List<TestDataSet> records, double training_ratio) throws Exception {
 
-        loadGoldStandards(records, TestDataSet.DEFAULT_CHARSET, TestDataSet.DEFAULT_CSV_FORMAT);
+        loadGoldStandards(records, TestDataSet.DEFAULT_CHARSET, TestDataSet.DEFAULT_CSV_FORMAT, training_ratio);
     }
 
-    protected void loadGoldStandard(final TestDataSet records, final CharsetSupplier charset, final CSVFormat format) throws Exception {
+    protected void loadGoldStandards(final List<TestDataSet> records) throws Exception {
 
-        final LoadRecordsCommand.Builder builder = new LoadGoldStandardRecordsCommand.Builder().trainingRatio(1.0).classColumnIndex(records.class_column_index);
+        loadGoldStandards(records, TestDataSet.DEFAULT_CHARSET, TestDataSet.DEFAULT_CSV_FORMAT, 1.0);
+    }
+
+    protected void loadGoldStandard(final TestDataSet records, final CharsetSupplier charset, final CSVFormat format, final double training_ratio) throws Exception {
+
+        final LoadRecordsCommand.Builder builder = new LoadGoldStandardRecordsCommand.Builder().trainingRatio(training_ratio).classColumnIndex(records.class_column_index);
         load(builder, records, charset, format);
     }
 
