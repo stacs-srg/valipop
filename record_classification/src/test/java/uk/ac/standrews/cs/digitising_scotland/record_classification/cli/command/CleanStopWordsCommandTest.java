@@ -121,7 +121,7 @@ public class CleanStopWordsCommandTest extends CommandTest {
 
     private void clean() throws IOException {
 
-        final Path copy = temp.newFile().toPath();
+        final Path copy = temporary.newFile().toPath();
         stop_words.copy(copy, stop_words_charset.get());
 
         getBuilder().charset(stop_words_charset).from(copy).caseSensitive(case_sensitive).run();

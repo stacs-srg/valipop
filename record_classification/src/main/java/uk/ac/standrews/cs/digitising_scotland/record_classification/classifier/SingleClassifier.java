@@ -28,14 +28,9 @@ import java.util.*;
 
 public abstract class SingleClassifier extends Classifier {
 
-    private Map<String, Double> confidence_map = new HashMap<>();
-
+    private static final long serialVersionUID = -5145594329971828792L;
     private static final int INTERNAL_EVALUATION_REPETITIONS = 3;
-
-    public abstract void trainModel(final Bucket bucket);
-
-    protected abstract void clearModel();
-    protected abstract Classification doClassify(String data);
+    private Map<String, Double> confidence_map = new HashMap<>();
 
     public final void trainAndEvaluate(final Bucket bucket, final double internal_training_ratio, final Random random) {
 
@@ -50,24 +45,14 @@ public abstract class SingleClassifier extends Classifier {
         confidence_map = lowerConfidenceIntervalBoundaries(confidence_maps);
     }
 
-    @Override
-    public String getName() {
-
-        return getClass().getSimpleName();
-    }
-
-    @Override
-    public String toString() {
-
-        return getName();
-    }
-
     public final Classification classify(String data) {
 
         Classification classification = doClassify(data);
         setConfidence(classification, true);
         return classification;
     }
+
+    protected abstract Classification doClassify(String data);
 
     public Bucket classify(final Bucket bucket) {
 
@@ -141,5 +126,21 @@ public abstract class SingleClassifier extends Classifier {
         final ClassificationMetrics classification_metrics = new ClassificationMetrics(confusion_matrix);
 
         return classification_metrics.getPerClassF1();
+    }
+
+    public abstract void trainModel(final Bucket bucket);
+
+    protected abstract void clearModel();
+
+    @Override
+    public String toString() {
+
+        return getName();
+    }
+
+    @Override
+    public String getName() {
+
+        return getClass().getSimpleName();
     }
 }

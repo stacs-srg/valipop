@@ -28,7 +28,7 @@ class CLIConsoleHandler extends ConsoleHandler {
         @Override
         public String format(final LogRecord record) {
 
-            return String.format("%-7s %s%n", record.getLevel().toString(), record.getMessage());
+            return String.format(record.getMessage());
         }
     };
 
