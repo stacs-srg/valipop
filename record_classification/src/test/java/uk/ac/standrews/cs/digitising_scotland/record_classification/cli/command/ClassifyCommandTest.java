@@ -52,7 +52,7 @@ public class ClassifyCommandTest extends CommandTest {
     private CharsetSupplier charset;
     private CSVFormat format;
 
-    @Parameterized.Parameters(name = "{index} {0}")
+    @Parameterized.Parameters(name = "{index} {0} {3}")
     public static Collection<Object[]> data() {
 
         final List<Object[]> parameters = new ArrayList<>();

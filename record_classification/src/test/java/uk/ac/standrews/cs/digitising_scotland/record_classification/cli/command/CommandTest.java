@@ -68,6 +68,8 @@ public abstract class CommandTest {
         return String.format("\"%s\"", String.valueOf(value));
     }
 
+    protected void init() throws Exception {new InitCommand.Builder().run(launcher);}
+
     protected void initForcefully() {new InitCommand.Builder().forcefully().run();}
 
     protected void setVerbosity(final LogLevelSupplier supplier) { new SetCommand.Builder().verbosity(supplier).run(); }

@@ -51,8 +51,17 @@ public abstract class Command implements Runnable {
 
             final String[] unescaped_arguments = build();
             final String[] escaped_arguments = escapeSpecialCharacters(unescaped_arguments);
+            
             Launcher.main(escaped_arguments);
         }
+
+        public void run(Launcher launcher) throws Exception {
+            final String[] unescaped_arguments = build();
+            final String[] escaped_arguments = escapeSpecialCharacters(unescaped_arguments);
+            launcher.parse(escaped_arguments);
+            launcher.handle();
+        }
+        
 
         private String[] escapeSpecialCharacters(final String[] arguments) {
 

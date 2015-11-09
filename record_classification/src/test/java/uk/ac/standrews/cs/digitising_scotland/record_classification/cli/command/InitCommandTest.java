@@ -16,12 +16,15 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.cli.command;
 
+import org.apache.commons.io.*;
 import org.junit.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.*;
 
+import java.awt.*;
 import java.nio.file.*;
 
 import static org.junit.Assert.*;
+import static uk.ac.standrews.cs.digitising_scotland.record_classification.cli.command.InitCommand.*;
 
 /**
  * @author Masih Hajiarab Derkani
@@ -31,23 +34,23 @@ public class InitCommandTest extends CommandTest {
     @Test
     public void testBasicInitialisation() throws Exception {
 
-        run(InitCommand.NAME);
+        init();
 
         assertTrue(Files.isDirectory(Configuration.CLI_HOME));
         assertTrue(Files.isRegularFile(Configuration.CONFIGURATION_FILE));
     }
-    
+
     @Test(expected = RuntimeException.class)
     public void testBasicInitialisationFailureIfConfigurationExists() throws Exception {
 
-        run(InitCommand.NAME);
-        run(InitCommand.NAME);
+        assureDirectoryExists(Configuration.CLI_HOME);
+        init();
     }
-    
+
     @Test
     public void testForcedInitialisationIfConfigurationExists() throws Exception {
 
-        run(InitCommand.NAME);
-        run(InitCommand.NAME, InitCommand.OPTION_FORCE_LONG);
+        assureDirectoryExists(Configuration.CLI_HOME);
+        initForcefully();
     }
 }
