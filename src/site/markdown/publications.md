@@ -2,7 +2,7 @@
 
 * [Kirby, GNC][1], Carson, JK, [Dunlop, FRJ][2], [Dibben, CJL][3], [Dearle, A][4], [Williamson, L][5], [Garrett, E][6] & [Reid, A][7], 2015, '[Automatic methods for coding historical occupation descriptions to standard classifications][8]'. In: *[Population Reconstruction][9]*, Bloothooft, G, Christen, P, Mandemakers, K & Schraagen, M (Ed.), Springer, pp. 43-60, ISBN 978-3-319-19884-2.
 
-* [Kirby, GNC][10], [de Kerckhove, Conrad][11], Shumailov, Ilia, Carson, JK, [Dearle, A][12], [Dibben, CJL][13] & [Williamson, L][14], 2014, '[Comparing relational and graph databases for pedigree data sets][15]'. *[Workshop on Population Reconstruction][16]*. International Institute of Social History, Amsterdam, Netherlands, 19-21 February. *[Slides][17]*. Preliminary findings presented at the [4th SHIP Conference][18], St Andrews 2013.
+* [Kirby, GNC][10], [de Kerckhove, C][11], Shumailov, I, Carson, JK, [Dearle, A][12], [Dibben, CJL][13] & [Williamson, L][14], 2014, '[Comparing relational and graph databases for pedigree data sets][15]'. *[Workshop on Population Reconstruction][16]*. International Institute of Social History, Amsterdam, Netherlands, 19-21 February. *[Slides][17]*. Preliminary findings presented at the [4th SHIP Conference][18], St Andrews 2013.
 
 * [Kirby, GNC][19], Carson, JK, [Dunlop, FRJ][20], [Dibben, CJL][21], [Dearle, A][22], [Williamson, L][23], [Garrett, E][24] & [Reid, A][25], 2014, '[Automatic methods for coding historical occupation descriptions to standard classifications][26]'. *[Workshop on Population Reconstruction][27]*. International Institute of Social History, Amsterdam, Netherlands, 19-21 February. *[Slides][28]*
 
