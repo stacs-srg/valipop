@@ -197,7 +197,7 @@ public class Launcher {
 
     private void handleCommands() throws Exception {
 
-        final List<String> command_lines = Files.readAllLines(commands);
+        final List<String> command_lines = Files.readAllLines(commands, configuration.getDefaultCharsetSupplier().get());
 
         for (String command_line : command_lines) {
             final Optional<String[]> arguments = toCommandLineArguments(command_line);
