@@ -58,7 +58,7 @@ public abstract class TemporalDistribution<Value> implements ITemporalDistributi
      * @param random The random to be used.
      * @param handleNoPermissibleValueAsZero Indicates if the distribution is to treat the returning of NoPermissibleValueExceptions as returning a zero value.
      */
-    public TemporalDistribution(final OrganicPopulation population, final String distributionKey, final Random random, final boolean handleNoPermissibleValueAsZero) {
+    public TemporalDistribution(final ITemporalPopulationInfo population, final String distributionKey, final Random random, final boolean handleNoPermissibleValueAsZero) {
 
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(getClass().getClassLoader().getResourceAsStream(PopulationProperties.getProperties().getProperty(distributionKey)), FileManipulation.FILE_CHARSET))) {
 

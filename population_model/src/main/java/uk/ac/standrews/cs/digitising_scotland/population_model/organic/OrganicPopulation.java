@@ -16,6 +16,7 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.population_model.organic;
 
+import uk.ac.standrews.cs.digitising_scotland.population_model.distributions.temporal.ITemporalPopulationInfo;
 import uk.ac.standrews.cs.digitising_scotland.population_model.model.IDFactory;
 import uk.ac.standrews.cs.digitising_scotland.population_model.model.IPartnership;
 import uk.ac.standrews.cs.digitising_scotland.population_model.model.IPerson;
@@ -41,7 +42,7 @@ import java.util.Random;
  * @author Victor Andrei (va9@st-andrews.ac.uk)
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class OrganicPopulation implements IPopulation {
+public class OrganicPopulation implements IPopulation, ITemporalPopulationInfo {
 
     /**
      * By running the class the population model is run, the arguments allow for the size of the seed population to be set.
@@ -105,7 +106,7 @@ public class OrganicPopulation implements IPopulation {
     
     /**
      * Adds given partnership to the list of partnerships.
-     * @param person The given partnership.
+     * @param partnership The given partnership.
      */
     public static void addPartnership(OrganicPartnership partnership) {
         partnerships.add(partnership);
@@ -538,7 +539,7 @@ public class OrganicPopulation implements IPopulation {
     /**
      * Sets the maximum number of children in a family.
      * 
-     * @param maximumNumberOfChildrenInFamily The maximumNumberOfChildrenInFamily to set
+     * @param maxNumberOfChildrenInFamily The maximumNumberOfChildrenInFamily to set
      */
     public void setMaximumNumberOfChildrenInFamily(final int maxNumberOfChildrenInFamily) {
         maximumNumberOfChildrenInFamily = maxNumberOfChildrenInFamily;

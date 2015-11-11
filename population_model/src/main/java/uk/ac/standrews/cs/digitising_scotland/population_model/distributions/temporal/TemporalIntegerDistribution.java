@@ -36,10 +36,10 @@ public class TemporalIntegerDistribution extends TemporalDistribution<Integer> {
      * @param population The instance of the population which the distribution pertains to.
      * @param distributionKey The key specified in the config file as the location of the relevant file.
      * @param random The random to be used.
-     * @param handleNoPermissibleValueAsZero Indicates if the distribution is to treat the returning of NoPermissibleValueExceptions as returning a zero value.
+     * @param handleNoPermissableValueAsZero Indicates if the distribution is to treat the returning of NoPermissibleValueExceptions as returning a zero value.
      * @see TemporalDistribution
      */
-    public TemporalIntegerDistribution(final OrganicPopulation population, final String distributionKey, final Random random, final boolean handleNoPermissableValueAsZero) {
+    public TemporalIntegerDistribution(final ITemporalPopulationInfo population, final String distributionKey, final Random random, final boolean handleNoPermissableValueAsZero) {
         super(population, distributionKey, random, handleNoPermissableValueAsZero);
     }
 
