@@ -11,20 +11,20 @@ Here is an example:
     # Step 1: initialise classli
     init
     
-    # Step 2: set the classifier, in this case EXACT_MATCH
+    # Step 2: set the classifier to EXACT_MATCH
     set --classifier EXACT_MATCH
     
     # Step 3: load gold standard data from gs.csv file at the current working directory, and skip header record,
-    #         where 80% of records are used for training and 20% are used for evaluation.
+    #         where 80% of records are used for training and the remaining 20% are used for evaluation.
     load --from gs.csv gold_standard -h -t 0.8
     
-    # Step 4: load unseen data from unseen.csv file at the current working directory, and skip header record
+    # Step 4: load unseen data from unseen.csv file at the current working directory, and skip header record.
     load --from unseen.csv unseen -h
     
-    # Step 5: clean loaded gold standard and unseen data using all the predefined cleaners
+    # Step 5: clean loaded gold standard and unseen data using all the predefined cleaners.
     clean -c COMBINED
     
-    # Step 6: train the classifier using 80% of the cleaned gold standard data
+    # Step 6: train the classifier using 80% of the cleaned gold standard data.
     train
     
     # Step 7: evaluate the classifier using the remaining 20% of the cleaned gold standard data, and
@@ -33,8 +33,9 @@ Here is an example:
     evaluate -o classified-eval-records.csv
     
     # Step 8: classify the unseen records and store the classified records in a file called classified-unseen.csv
-    #         at the current working directory 
+    #         at the current working directory. 
     classify -o classified-unseen.csv
+    
 
 The lines starting with `#` character are comments; they are ignored by the `classli`. The comments in the above example explain what each of the 8 commands do.  
 Additionally, any line that only contains whitespace characters in the batch commands file is also ignored.
@@ -43,9 +44,23 @@ The above commands do not specify all the possible options of `classli`.
 For any unspecified option, `classli` uses internal default values.
 For example, in steps 3 and 4 gold standard records (from `gs.csv`) and unseen records (from `unseen.csv`) are loaded respectively. 
 There are a lot of options we can specify to tell `classli` how to read the two CSV files. These options include `-d` for delimiter (the character by which the values are separated), `-c` for character encoding and many more.
-Since these options are not specified the default values are used (e.g. `,` as delimiter and the operating system's default character encoding). See [usage](usage.html) for a complete list of all the options and their default values.
+Since these options are not specified the default values are used, in this case `,` as delimiter and the operating system's default character encoding. See [usage](usage.html) for a complete list of all the options and their default values.
 
-To run the above commands, they need to be stored in a text file. In this example we assume they are stored in a file called `commands.txt`.
+The gold standard file, `gs.csv`, must have at least 3 columns: id, label and class. The `-h` option in step 3 specifies that the first row in `gs.csv` contains the column labels and should not be considered as part of the data. Here is an example gold standard data file:
+
+    id,label,class
+    1,fish,swims
+    2,dog,barks
+    3,cat,purrs
+
+The unseen file, `unseen.csv`, must have at least 2 columns: id and label. Here is an example unseen data file:
+
+    id,label
+    1,fish
+    2,dog
+
+
+To run the commands in batch mode, they need to be stored in a text file. In this example we assume they are stored in a file called `commands.txt`.
 The file is then passed to `classli` for execution:
 
     classli -c commands.txt
