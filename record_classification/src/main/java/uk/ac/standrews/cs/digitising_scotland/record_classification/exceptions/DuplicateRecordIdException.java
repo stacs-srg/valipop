@@ -18,11 +18,15 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions;
 
 public class DuplicateRecordIdException extends RuntimeException {
 
+    private static final long serialVersionUID = 5174222608121810658L;
+
     public DuplicateRecordIdException() {
+
         super();
     }
 
     public DuplicateRecordIdException(String message) {
+
         super(message);
     }
 }

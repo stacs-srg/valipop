@@ -17,7 +17,7 @@
 package uk.ac.standrews.cs.digitising_scotland.record_classification.analysis;
 
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.Checker;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.InvalidCodeException;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.UnknownClassificationException;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.UnclassifiedGoldStandardRecordException;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.UnknownDataException;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
@@ -62,7 +62,7 @@ public abstract class ConfusionMatrix {
      * @param classified_records the records that have been classified
      * @param gold_standard_records the gold standard records against which the classified records should be checked
      * @param checker checker for consistent coding
-     * @throws InvalidCodeException if a code in the classified records does not appear in the gold standard records
+     * @throws UnknownClassificationException if a code in the classified records does not appear in the gold standard records
      * @throws UnknownDataException if a record in the classified records contains data that does not appear in the gold standard records
      * @throws UnclassifiedGoldStandardRecordException if a record in the gold standard records is not classified
      */
@@ -95,7 +95,7 @@ public abstract class ConfusionMatrix {
      * @param classified_records the records that have been classified
      * @param gold_standard_records the gold standard records against which the classified records should be checked
      * @param checker checker for consistent coding
-     * @throws InvalidCodeException if a code in the classified records does not appear in the gold standard records
+     * @throws UnknownClassificationException if a code in the classified records does not appear in the gold standard records
      * @throws UnknownDataException if a record in the classified records contains data that does not appear in the gold standard records
      * @throws UnclassifiedGoldStandardRecordException if a record in the gold standard records is not classified
      */
@@ -300,7 +300,7 @@ public abstract class ConfusionMatrix {
     /**
      * Checks whether all codes in the classified records appears in the gold standard records.
      *
-     * @throws InvalidCodeException if they do not
+     * @throws UnknownClassificationException if they do not
      */
     private void checkClassifiedToValidCodes() {
 
@@ -317,7 +317,7 @@ public abstract class ConfusionMatrix {
             Classification classification = record.getClassification();
 
             if (!valid_codes.contains(classification.getCode())) {
-                throw new InvalidCodeException("unknown code: " + classification.getCode());
+                throw new UnknownClassificationException("unknown code: " + classification.getCode());
             }
         }
     }
@@ -335,7 +335,7 @@ public abstract class ConfusionMatrix {
     /**
      * Calculates the true/false positive/negative counts for the bucket.
      */
-    private void calculateCounts() throws UnknownDataException {
+    private void calculateCounts() {
 
         initCounts();
         updateCounts();

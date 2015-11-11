@@ -16,8 +16,8 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions;
 
-public class InvalidArgException extends Exception {
-    public InvalidArgException(String message) {
+public class UnknownClassificationException extends RuntimeException {
+    public UnknownClassificationException(String message) {
         super(message);
     }
 }

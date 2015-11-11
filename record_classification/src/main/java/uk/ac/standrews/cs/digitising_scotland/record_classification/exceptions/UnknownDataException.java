@@ -16,8 +16,13 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions;
 
+
 public class UnknownDataException extends RuntimeException {
+
+    private static final long serialVersionUID = -5918917904019827790L;
+
     public UnknownDataException(String message) {
+
         super(message);
     }
 }

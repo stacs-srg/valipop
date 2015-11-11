@@ -50,7 +50,7 @@ public class ConfusionMatrixTest extends AbstractMetricsTest {
         initMatrix();
     }
 
-    @Test(expected = InvalidCodeException.class)
+    @Test(expected = UnknownClassificationException.class)
     public void classificationToCodeNotInGoldStandardThrowsException() throws Exception {
 
         classified_records.add(haddock_incorrect);
