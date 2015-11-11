@@ -19,3 +19,7 @@ To install `classli` please follow the instructions [here](install/index.html).
 # Usage
 
 The user manual of `classli` CLI is located [here](usage.html)
+
+# Examples
+
+Example usage of `classli` can be found in the [examples](examples.html) page.

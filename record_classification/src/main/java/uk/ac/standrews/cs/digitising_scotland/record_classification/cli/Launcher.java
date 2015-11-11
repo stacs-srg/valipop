@@ -133,6 +133,8 @@ public class Launcher {
 
     private static void exitWithError(final Throwable error) {
 
+        //TODO introduce error coding.
+        //TODO set exit value based on error code.
 //        throw error;
         System.exit(1);
     }
@@ -208,7 +210,7 @@ public class Launcher {
 
     private Optional<String[]> toCommandLineArguments(final String command_line) {
 
-        return isComment(command_line) ? Optional.empty() : Optional.of(parseCommandLine(command_line));
+        return command_line.trim().isEmpty() || isComment(command_line) ? Optional.empty() : Optional.of(parseCommandLine(command_line));
     }
 
     private String[] parseCommandLine(final String command_line) {
@@ -238,7 +240,7 @@ public class Launcher {
 
         final String command_name = commander.getParsedCommand();
 
-        validateCommand(command_name);
+        requireCommand(command_name);
 
         final JCommander command_commander = commander.getCommands().get(command_name);
         final Command command = (Command) command_commander.getObjects().get(0);
@@ -253,7 +255,7 @@ public class Launcher {
         }
     }
 
-    private void validateCommand(final String command) {
+    private void requireCommand(final String command) {
 
         if (command == null) {
             throw new ParameterException("Please specify a command");
