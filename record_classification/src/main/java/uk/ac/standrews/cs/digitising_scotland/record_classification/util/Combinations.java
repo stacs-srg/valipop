@@ -26,7 +26,10 @@ import java.util.stream.*;
  */
 public final class Combinations {
 
-    private Combinations() { throw new UnsupportedOperationException(); }
+    private Combinations() {
+
+        throw new UnsupportedOperationException();
+    }
 
     public static <T> List<List<T>> permutations(Collection<T> input) {
 
