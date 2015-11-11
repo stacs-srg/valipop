@@ -16,16 +16,10 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.linear_regression;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.InvalidCodeException;
+import org.slf4j.*;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
+import java.io.*;
+import java.util.*;
 
 /**
  * This class contains a collection of all of the possible valid codes that can be used in training or classification.
@@ -77,7 +71,8 @@ public class CodeDictionary implements Iterable<String> {
             String codeFromFile = splitLine[0].trim();
             String descriptionFromFile = splitLine[1].trim();
             createCodeAndAddToMap(codeFromFile, descriptionFromFile);
-        } else if (splitLine.length == 1) {
+        }
+        else if (splitLine.length == 1) {
             String codeFromFile = splitLine[0].trim();
             String descriptionFromFile = "No Description";
             createCodeAndAddToMap(codeFromFile, descriptionFromFile);
@@ -87,27 +82,12 @@ public class CodeDictionary implements Iterable<String> {
     /**
      * Creates the code and add to map.
      *
-     * @param codeFromFile        the code from file
+     * @param codeFromFile the code from file
      * @param descriptionFromFile the description from file
      */
     private void createCodeAndAddToMap(final String codeFromFile, final String descriptionFromFile) {
 
         validCodes.add(codeFromFile);
-    }
-
-    /**
-     * Gets the code object associated with the string representation.
-     *
-     * @param codeAsString the code as string
-     * @return the code object
-     */
-    public String getCode(final String codeAsString) throws InvalidCodeException {
-
-        if (!validCodes.contains(codeAsString)) {
-            throw new InvalidCodeException(codeAsString + " is not a valid code");
-
-        }
-        return codeAsString;
     }
 
     /**

@@ -54,6 +54,7 @@ public class Launcher {
 
     private static final Logger LOGGER = CLILogManager.CLILogger.getLogger(Launcher.class.getName());
     private static final Pattern COMMAND_LINE_ARGUMENT_PATTERN = Pattern.compile("[^\\s\"']+|\"([^\"]*)\"|'([^']*)'");
+    private static final Pattern COMMENT_PATTERN = Pattern.compile("^ *#");
 
     private JCommander commander;
     private final Configuration configuration;
@@ -197,13 +198,20 @@ public class Launcher {
         final List<String> command_lines = Files.readAllLines(commands);
 
         for (String command_line : command_lines) {
-            final String[] arguments = toCommandLineArguments(command_line);
-            parse(arguments);
-            handleCommand();
+            final Optional<String[]> arguments = toCommandLineArguments(command_line);
+            if (arguments.isPresent()) {
+                parse(arguments.get());
+                handleCommand();
+            }
         }
     }
 
-    private String[] toCommandLineArguments(final String command_line) {
+    private Optional<String[]> toCommandLineArguments(final String command_line) {
+
+        return isComment(command_line) ? Optional.empty() : Optional.of(parseCommandLine(command_line));
+    }
+
+    private String[] parseCommandLine(final String command_line) {
 
         final List<String> arguments = new ArrayList<>();
         final Matcher matcher = COMMAND_LINE_ARGUMENT_PATTERN.matcher(command_line);
@@ -218,8 +226,12 @@ public class Launcher {
                 arguments.add(matcher.group());
             }
         }
-
         return arguments.toArray(new String[arguments.size()]);
+    }
+
+    private boolean isComment(final String command_line) {
+
+        return COMMENT_PATTERN.matcher(command_line).find();
     }
 
     private void handleCommand() throws Exception {

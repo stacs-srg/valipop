@@ -18,7 +18,11 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions;
 
 public class FileWriteException extends RuntimeException {
 
+    private static final long serialVersionUID = 2538812065566890376L;
+
     public FileWriteException(String message) {
+
         super(message);
     }
 }
+
