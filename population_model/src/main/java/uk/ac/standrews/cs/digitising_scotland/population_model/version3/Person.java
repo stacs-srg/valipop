@@ -18,6 +18,7 @@ package uk.ac.standrews.cs.digitising_scotland.population_model.version3;
 
 import uk.ac.standrews.cs.digitising_scotland.util.DateManipulation;
 
+import java.util.Comparator;
 import java.util.Date;
 
 /**
@@ -27,7 +28,7 @@ public class Person {
 
     private int dob;
     private boolean sex;
-    private int dod = -1;
+    private int dod = Integer.MAX_VALUE;
 
     public Person(int dob, boolean sex) {
         this.dob = dob;
@@ -54,7 +55,13 @@ public class Person {
         return dob;
     }
 
+    public int getDod() {
+        return dod;
+    }
+
     public boolean isSex() {
         return sex;
     }
+
+
 }

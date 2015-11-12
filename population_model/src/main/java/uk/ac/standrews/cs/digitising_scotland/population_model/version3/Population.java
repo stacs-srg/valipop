@@ -17,8 +17,12 @@
 package uk.ac.standrews.cs.digitising_scotland.population_model.version3;
 
 
+import uk.ac.standrews.cs.digitising_scotland.population_model.distributions.general.UniformIntegerDistribution;
 import uk.ac.standrews.cs.digitising_scotland.population_model.distributions.temporal.ITemporalPopulationInfo;
 import uk.ac.standrews.cs.digitising_scotland.population_model.distributions.temporal.TemporalIntegerDistribution;
+import uk.ac.standrews.cs.digitising_scotland.population_model.version3.lifetable.LifeTableCatalogue;
+import uk.ac.standrews.cs.digitising_scotland.population_model.version3.lifetable.analysis.LifeTableShadow;
+import uk.ac.standrews.cs.digitising_scotland.util.DateManipulation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,16 +35,23 @@ public class Population implements ITemporalPopulationInfo {
 
     public static void main(String[] args) {
         Population pop = new Population();
-        System.out.println(pop.generateSeedPopulation(10000).size());
+        pop.initLifeTables();
+        pop.generateSeedPopulation(10000);
+        pop.runSimulation();
+        System.out.println(pop.people.size());
     }
 
     private List<Person> people = new ArrayList<Person>();
+    private List<Person> deadPeople = new ArrayList<Person>();
 
     private static final int EPOCH_YEAR = 1600;
     private static final int DAYS_PER_YEAR = 365;
+    private static final int SEX_RATIO = 100;
 
-    private int startYear = 1855;
-    private int endYear = 1900;
+    private int startYearInDays = DateManipulation.dateToDays(1855,0,0);
+    private int endYearInDays = DateManipulation.dateToDays(1956,0,0);
+
+    private int currentDay = startYearInDays;
 
     private int timeStep = 365;
 
@@ -48,17 +59,56 @@ public class Population implements ITemporalPopulationInfo {
 
     private Random random = new Random();
 
+    LifeTableCatalogue lifeTables;
 
-    public ArrayList<Person> generateSeedPopulation(int seedSize) {
+
+
+    public void runSimulation() {
+
+        UniformIntegerDistribution dayInPeriod = new UniformIntegerDistribution(0, timeStep, random);
+
+        while (currentDay < endYearInDays) {
+
+            for(int i = 0; i < people.size(); i++) {
+                Person p = people.get(i);
+                if(lifeTables.toDieByNQX(p, currentDay)) {
+                    p.die(currentDay);
+                    deadPeople.add(p);
+                    people.remove(p);
+                }
+            }
+
+
+            currentDay += timeStep;
+        }
+
+        people.addAll(deadPeople);
+
+    }
+
+    public void generateSeedPopulation(int seedSize) {
 
         TemporalIntegerDistribution seedAgeForMalesDistribution = new TemporalIntegerDistribution(this, "seed_age_for_males_distribution_data_filename", random, false);
         TemporalIntegerDistribution seedAgeForFemalesDistribution = new TemporalIntegerDistribution(this, "seed_age_for_females_distribution_data_filename", random, false);
 
+        ArrayList<Person> seedPop = new ArrayList<Person>();
 
+        for(int i = 0; i < seedSize; i++) {
+            if (random.nextBoolean()) {
+                int age = seedAgeForMalesDistribution.getSample();
+                seedPop.add(new Person(currentDay - age, true));
+            } else {
+                int age = seedAgeForFemalesDistribution.getSample();
+                seedPop.add(new Person(currentDay - age, false));
+            }
+        }
 
-        return new ArrayList<>();
+        people = seedPop;
 
+    }
 
+    public void initLifeTables() {
+        lifeTables = new LifeTableCatalogue(EPOCH_YEAR, "lifetable_catalogue");
     }
 
 
