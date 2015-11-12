@@ -1,5 +1,5 @@
 # This file is called DivorceInstigationByGender.dat
 Count    Value    Actual    Distribution
-0    MALE    755    775.14
-1    FEMALE    717    775.14
-2    NO_DIVORCE    79272    79193.72
+0    MALE    79    95.88
+1    FEMALE    100    95.88
+2    NO_DIVORCE    9809    9796.23

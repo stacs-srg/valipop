@@ -49,6 +49,12 @@
         </plugins>
     </build>
 
+    <properties>
+        <jdk.version>1.8</jdk.version>
+        <maven.compiler.source>${jdk.version}</maven.compiler.source>
+        <maven.compiler.target>${jdk.version}</maven.compiler.target>
+    </properties>
+
     <reporting>
         <plugins>
             <plugin>

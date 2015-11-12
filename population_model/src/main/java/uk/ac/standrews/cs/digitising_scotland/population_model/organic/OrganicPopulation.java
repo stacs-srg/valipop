@@ -52,13 +52,14 @@ public class OrganicPopulation implements IPopulation, ITemporalPopulationInfo {
     public static void main(final String[] args) {
         System.out.println("--------MAIN HERE---------");
 	
-	System.out.println("Seed size = " + args[0]);
+	    System.out.println("Seed size = " + args[0]);
 
         if (args.length == 0) {
             runPopulationModel(DEFAULT_SEED_SIZE, true, true, true);
         } else if (args.length >= 1) {
             runPopulationModel(Integer.valueOf(args[0]), true, true, true);
         }
+
         System.out.println("--------MAIN END---------");
 
     }
