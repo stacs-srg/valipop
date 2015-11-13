@@ -16,10 +16,69 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.population_model.version3.lifetable.analysis;
 
+import uk.ac.standrews.cs.digitising_scotland.population_model.version3.Person;
+import uk.ac.standrews.cs.digitising_scotland.population_model.version3.lifetable.LifeTable;
+import uk.ac.standrews.cs.digitising_scotland.population_model.version3.lifetable.LifeTableCatalogue;
+import uk.ac.standrews.cs.digitising_scotland.util.DateManipulation;
+
+import java.util.Iterator;
+import java.util.List;
+import java.util.TreeMap;
+
 /**
  * Created by tsd4 on 12/11/2015.
  */
 public class LifeTableCatalogueShadow {
+
+    private LifeTableCatalogue lifeTableCatalogue;
+
+    private TreeMap<Integer, LifeTableShadow> tables = new TreeMap<Integer, LifeTableShadow>();
+
+
+    public LifeTableCatalogueShadow(LifeTableCatalogue lifeTableCatalogue, int startYear, int endYear) {
+        this.lifeTableCatalogue = lifeTableCatalogue;
+
+        TreeMap<Integer,LifeTable> tree = lifeTableCatalogue.getCloneOfTreeMap();
+
+        for(int y = startYear; y < endYear; y+=3) {
+            tables.put(y, new LifeTableShadow(tree.get(tree.floorKey(y)), y+3, y));
+        }
+
+
+//        Iterator<Integer> iter = tree.keySet().iterator();
+//
+//        while(iter.hasNext()) {
+//
+//            Integer i = iter.next();
+//
+//            if(iter.hasNext()) {
+//                tables.put(i, new LifeTableShadow(tree.get(i), DateManipulation.dateToDays(tree.ceilingKey(i+1) - 1,0,0)));
+//            } else {
+//                tables.put(i, new LifeTableShadow(tree.get(i), Integer.MAX_VALUE));
+//            }
+//
+//        }
+
+        System.out.println(tables.size());
+
+    }
+
+    public Double[] analyse(List<Person> population) {
+
+        Double[] rSquares = new Double[tables.size()];
+        int p = 0;
+
+        for(Integer i : tables.keySet()) {
+            System.out.println("Y: " + i);
+            LifeTableShadow lts = tables.get(i);
+            System.out.println(lts.getYear());
+            lts.reviewPopulation(population);
+            rSquares[p++] = lts.calcRSquared();
+        }
+
+        return rSquares;
+
+    }
 
 
 }

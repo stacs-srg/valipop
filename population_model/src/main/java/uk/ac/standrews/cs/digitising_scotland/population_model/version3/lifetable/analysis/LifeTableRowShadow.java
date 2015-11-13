@@ -37,7 +37,12 @@ public class LifeTableRowShadow {
     }
 
     public double getCalculatedNMX() {
-        return peopleInRowDieingInInterval / peopleInRowAtMidInterval;
+        if(peopleInRowAtMidInterval == 0) {
+            return 0;
+        } else {
+            System.out.println(peopleInRowDieingInInterval + " / " + peopleInRowAtMidInterval);
+            return peopleInRowDieingInInterval / peopleInRowAtMidInterval;
+        }
     }
 
     public double getResidualSquared() {
@@ -56,4 +61,13 @@ public class LifeTableRowShadow {
     public double getExpectedNMX() {
         return row.getnMx();
     }
+
+    public int getPeopleInRow() {
+        return peopleInRowAtMidInterval;
+    }
+
+    public int getPeopleDieingInRow() {
+        return peopleInRowDieingInInterval;
+    }
+
 }

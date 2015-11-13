@@ -86,4 +86,8 @@ public class LifeTableCatalogue {
     public boolean toDieByNQX(Person p, int currentDay) {
         return catalogue.get(catalogue.floorKey(DateManipulation.daysToYear(currentDay))).toDieByNQX(p, currentDay);
     }
+
+    public TreeMap<Integer,LifeTable> getCloneOfTreeMap() {
+        return (TreeMap<Integer, LifeTable>) catalogue.clone();
+    }
 }
