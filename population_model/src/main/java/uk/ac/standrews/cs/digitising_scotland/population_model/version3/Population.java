@@ -21,6 +21,7 @@ import uk.ac.standrews.cs.digitising_scotland.population_model.distributions.gen
 import uk.ac.standrews.cs.digitising_scotland.population_model.distributions.temporal.ITemporalPopulationInfo;
 import uk.ac.standrews.cs.digitising_scotland.population_model.distributions.temporal.TemporalIntegerDistribution;
 import uk.ac.standrews.cs.digitising_scotland.population_model.version3.lifetable.LifeTableCatalogue;
+import uk.ac.standrews.cs.digitising_scotland.population_model.version3.lifetable.analysis.LifeTableCatalogueShadow;
 import uk.ac.standrews.cs.digitising_scotland.population_model.version3.lifetable.analysis.LifeTableShadow;
 import uk.ac.standrews.cs.digitising_scotland.util.DateManipulation;
 
@@ -36,9 +37,16 @@ public class Population implements ITemporalPopulationInfo {
     public static void main(String[] args) {
         Population pop = new Population();
         pop.initLifeTables();
-        pop.generateSeedPopulation(10000);
+        pop.generateSeedPopulation(500000);
         pop.runSimulation();
         System.out.println(pop.people.size());
+
+        LifeTableCatalogueShadow ltcs = new LifeTableCatalogueShadow(pop.lifeTables, START_YEAR, END_YEAR);
+
+        for (Double d : ltcs.analyse(pop.people)) {
+            System.out.print(d + " ");
+        }
+
     }
 
     private List<Person> people = new ArrayList<Person>();
@@ -48,14 +56,16 @@ public class Population implements ITemporalPopulationInfo {
     private static final int DAYS_PER_YEAR = 365;
     private static final int SEX_RATIO = 100;
 
-    private int startYearInDays = DateManipulation.dateToDays(1855,0,0);
-    private int endYearInDays = DateManipulation.dateToDays(1956,0,0);
+    private static final int START_YEAR = 1775;
+    private static final int END_YEAR = 1825;
+
+    private int startYearInDays = DateManipulation.dateToDays(START_YEAR,0,0);
+    private int endYearInDays = DateManipulation.dateToDays(END_YEAR,0,0);
 
     private int currentDay = startYearInDays;
 
     private int timeStep = 365;
 
-    private int seedSize = 10000;
 
     private Random random = new Random();
 
@@ -75,6 +85,7 @@ public class Population implements ITemporalPopulationInfo {
                     p.die(currentDay);
                     deadPeople.add(p);
                     people.remove(p);
+                    people.add(new Person(currentDay, true));
                 }
             }
 

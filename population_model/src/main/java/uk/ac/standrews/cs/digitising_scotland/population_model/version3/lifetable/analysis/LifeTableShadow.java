@@ -37,20 +37,20 @@ public class LifeTableShadow {
 
     private TreeMap<Integer,LifeTableRowShadow> rows = new TreeMap<Integer,LifeTableRowShadow>();
 
-    public LifeTableShadow(LifeTable lifetable, int endDay) {
-        this(lifetable, endDay, DateManipulation.dateToDays(lifetable.getYear(),0,0));
-    }
 
-    public LifeTableShadow(LifeTable lifetable, int endDay, int startDay) {
+
+    public LifeTableShadow(LifeTable lifetable, int endYear, int startYear) {
         table = lifetable;
-        this.endDay = endDay;
-        this.startDay = startDay;
+        endDay = DateManipulation.dateToDays(endYear,0,0)-1;
+        startDay = DateManipulation.dateToDays(startYear,0,0);
 
         TreeMap<Integer,LifeTableRow> tree = table.getCloneOfTreeMap();
 
-        for(int y : tree.keySet()) {
-            rows.put(y, new LifeTableRowShadow(tree.get(y)));
+        for(int r : tree.keySet()) {
+            rows.put(r, new LifeTableRowShadow(tree.get(r)));
         }
+
+        System.out.println("R: " + rows.size());
 
     }
 
@@ -62,11 +62,16 @@ public class LifeTableShadow {
 
         for(Person p : people) {
             int age = p.getAge(ageingDay);
-            if(age < p.getAge(p.getDod())) {
+            if(age >= 0 && age < p.getAge(p.getDod())) {
                 rows.get(rows.floorKey(age)).incPeopleInRow();
+//                System.out.println("PIRinc: " + rows.get(rows.floorKey(age)).getPeopleInRow());
             }
-            if(startDay <= p.getDod() && p.getDod() < endDay) {
+
+//            System.out.println(startDay + " | " + p.getDod() + " | " + endDay);
+
+            if(age >= 0 && startDay <= p.getDod() && p.getDod() < endDay) {
                 rows.get(rows.floorKey(age)).incPeopleDieingInRow();
+//                System.out.println("PDIRinc: " + rows.get(rows.floorKey(age)).getPeopleDieingInRow());
             }
         }
 
@@ -105,14 +110,24 @@ public class LifeTableShadow {
 
     public double calcRSquared() {
 
-        double sse = getSSE();
-        double tss = getTSS();
         double n = rows.keySet().size() - 1;
 
-        double rSquared = 1 - ((sse/n)/(tss/n));
+        double sse = getSSE()/n;
+        double tss = getTSS()/n;
+
+//        System.out.println(sse + " - " + tss + " - " + n);
+
+
+
+        double rSquared = 1 - (sse/tss);
+
+//        System.out.println(rSquared);
 
         return  rSquared;
 
     }
 
+    public int getYear() {
+        return table.getYear();
+    }
 }
