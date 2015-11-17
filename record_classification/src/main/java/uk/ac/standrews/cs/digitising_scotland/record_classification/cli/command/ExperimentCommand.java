@@ -31,10 +31,18 @@ public class ExperimentCommand extends Command {
     /** The default number of repetitions. **/
     public static final int DEFAULT_REPETITION_COUNT = 5;
 
+    /** The short name of the option that specifies a name for the resource file to be load. **/
+    public static final String OPTION_NAME_SHORT = "-n";
+
+    /** The long name of the option that specifies a name for the resource file to be load. **/
+    public static final String OPTION_NAME_LONG = "--named";
+
     @Parameter(names = {"-r", "--repeat"}, descriptionKey = "")
     private int repetition = DEFAULT_REPETITION_COUNT;
 
-    
+    @Parameter(names = {OPTION_NAME_SHORT, OPTION_NAME_LONG}, descriptionKey = "command.experiment.name.description")
+    private String name;
+
     /**
      * Instantiates this command for the given launcher and the name by which it is triggered.
      *
@@ -47,6 +55,8 @@ public class ExperimentCommand extends Command {
 
     @Override
     public void run() {
-        
+
+        final Configuration configuration = launcher.getConfiguration();
+
     }
 }

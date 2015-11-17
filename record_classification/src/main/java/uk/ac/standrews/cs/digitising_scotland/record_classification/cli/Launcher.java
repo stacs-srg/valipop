@@ -68,13 +68,12 @@ public class Launcher {
     @Parameter(names = {OPTION_VERBOSITY_SHORT, OPTION_VERBOSITY_LONG}, descriptionKey = "launcher.verbosity.description")
     private LogLevelSupplier log_level_supplier;
 
+    @Parameter(names = {"-w", "--workingDirectory"}, descriptionKey = "launcher.working_directory.description", converter = PathConverter.class)
+    private Path working_directory = Configuration.DEFAULT_WORKING_DIRECTORY;
+
     //TODO implement interactive mode
     //TODO //@Parameter(names = {"-i", "--interactive"}, description = "Interactive mode; allows multiple command execution.")
     //TODO //private boolean interactive;
-
-    //TODO decide whether to keep or loose this:
-    //TODO //@Parameter(names = "working_directory", description = "Path to the working directory.", converter = PathConverter.class)
-    //TODO //private Path working_directory;
 
     //TODO help command: prints usage, describes individual commands, parameters to the commands, etc.;e.g. help classifier STRING_SIMILARITY
     //TODO status command: prints the current state of the classification process, such as set variables, etc.
@@ -97,14 +96,14 @@ public class Launcher {
 
     public Launcher() throws IOException {
 
-        configuration = loadContext();
+        configuration = loadContext(working_directory);
         log_level_supplier = configuration.getDefaultLogLevelSupplier();
 
     }
 
-    private static Configuration loadContext() throws IOException {
+    private Configuration loadContext(final Path working_directory) throws IOException {
 
-        return Files.isRegularFile(Configuration.CONFIGURATION_FILE) ? Configuration.load() : new Configuration();
+        return Configuration.exists(working_directory) ? Configuration.load() : new Configuration();
     }
 
     public static void main(String[] args) {
@@ -250,7 +249,7 @@ public class Launcher {
 
     private void persistContext() throws IOException {
 
-        if (Files.isDirectory(Configuration.CLI_HOME)) {
+        if (Files.isDirectory(configuration.getHome())) {
             configuration.persist();
         }
     }

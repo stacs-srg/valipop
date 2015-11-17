@@ -36,21 +36,21 @@ public class InitCommandTest extends CommandTest {
 
         init();
 
-        assertTrue(Files.isDirectory(Configuration.CLI_HOME));
-        assertTrue(Files.isRegularFile(Configuration.CONFIGURATION_FILE));
+        assertTrue(Files.isDirectory(home));
+        assertTrue(Files.isRegularFile(config_file));
     }
 
     @Test(expected = RuntimeException.class)
     public void testBasicInitialisationFailureIfConfigurationExists() throws Exception {
 
-        assureDirectoryExists(Configuration.CLI_HOME);
+        assureDirectoryExists(home);
         init();
     }
 
     @Test
     public void testForcedInitialisationIfConfigurationExists() throws Exception {
 
-        assureDirectoryExists(Configuration.CLI_HOME);
+        assureDirectoryExists(home);
         initForcefully();
     }
 }

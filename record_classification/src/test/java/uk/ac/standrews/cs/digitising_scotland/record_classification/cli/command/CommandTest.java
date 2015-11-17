@@ -41,6 +41,8 @@ import static java.util.logging.Logger.getLogger;
 public abstract class CommandTest {
 
     protected Launcher launcher;
+    protected Path home;
+    protected Path config_file;
     private static final Logger LOGGER = getLogger(CommandTest.class.getName());
 
     @Rule
@@ -49,8 +51,11 @@ public abstract class CommandTest {
     @Before
     public void setUp() throws Exception {
 
-        deleteCliHome();
         launcher = new Launcher();
+        final Configuration configuration = launcher.getConfiguration();
+        home = configuration.getHome();
+        config_file = configuration.getConfigurationFile();
+        deleteCliHome();
     }
 
     protected void run(Object... args) throws Exception {
@@ -155,5 +160,8 @@ public abstract class CommandTest {
         deleteCliHome();
     }
 
-    protected void deleteCliHome() throws IOException {FileUtils.deleteDirectory(Configuration.CLI_HOME.toFile());}
+    protected void deleteCliHome() throws IOException {
+
+        FileUtils.deleteDirectory(home.toFile());
+    }
 }

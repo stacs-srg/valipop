@@ -75,7 +75,7 @@ class ConfigurationJsonSerializer extends JsonSerializer<Configuration> {
         if (classifier.isPresent()) {
             final SerializationFormat format = configuration.getClassifierSerializationFormat();
 
-            final Path destination = getSerializedClassifierPath(format);
+            final Path destination = getSerializedClassifierPath(configuration, format);
             Serialization.persist(destination, classifier.get(), format);
         }
     }
@@ -98,15 +98,15 @@ class ConfigurationJsonSerializer extends JsonSerializer<Configuration> {
         out.writeEndArray();
     }
 
-    static Path getSerializedClassifierPath(SerializationFormat format) {
+    static Path getSerializedClassifierPath(Configuration configuration, SerializationFormat format) {
 
         switch (format) {
             case JAVA_SERIALIZATION:
-                return Configuration.CLI_HOME.resolve(SERIALIZED_CLASSIFIER_FILE_NAME_PREFIX + ".object");
+                return configuration.getHome().resolve(SERIALIZED_CLASSIFIER_FILE_NAME_PREFIX + ".object");
             case JSON:
-                return Configuration.CLI_HOME.resolve(SERIALIZED_CLASSIFIER_FILE_NAME_PREFIX + ".json");
+                return configuration.getHome().resolve(SERIALIZED_CLASSIFIER_FILE_NAME_PREFIX + ".json");
             case JSON_COMPRESSED:
-                return Configuration.CLI_HOME.resolve(SERIALIZED_CLASSIFIER_FILE_NAME_PREFIX + ".object");
+                return configuration.getHome().resolve(SERIALIZED_CLASSIFIER_FILE_NAME_PREFIX + ".object");
             default:
                 throw new RuntimeException("unsupported classifier serialization format: " + format);
         }
