@@ -49,7 +49,7 @@
                         <exclude>src/test/resources/**</exclude>
                         <exclude>src/main/resources/**</exclude>
                         <exclude>src/docs/**</exclude>
-                        <exclude>${build.sourceDirectory}/uk/ac/standrews/cs/digitising_scotland/util/ArrayIterator.java</exclude>
+                        <exclude>${project.build.sourceDirectory}/uk/ac/standrews/cs/digitising_scotland/util/ArrayIterator.java</exclude>
                     </excludes>
                 </configuration>
             </plugin>
