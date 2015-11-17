@@ -17,7 +17,10 @@
 package uk.ac.standrews.cs.digitising_scotland.record_classification.cli.command;
 
 import com.beust.jcommander.*;
+import com.beust.jcommander.converters.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.*;
+
+import java.nio.file.*;
 
 /**
  * @author Masih Hajiarab Derkani
@@ -43,6 +46,9 @@ public class ExperimentCommand extends Command {
     @Parameter(names = {OPTION_NAME_SHORT, OPTION_NAME_LONG}, descriptionKey = "command.experiment.name.description")
     private String name;
 
+    @Parameter(required = true, names = {Launcher.OPTION_COMMANDS_SHORT, Launcher.OPTION_COMMANDS_LONG}, descriptionKey = "launcher.commands.description", converter = PathConverter.class)
+    private Path commands;
+
     /**
      * Instantiates this command for the given launcher and the name by which it is triggered.
      *
@@ -56,6 +62,6 @@ public class ExperimentCommand extends Command {
     @Override
     public void run() {
 
-
     }
+
 }
