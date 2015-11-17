@@ -52,6 +52,12 @@ public class Launcher {
     /** The long name of the option that specifies the level of verbosity of the command line interface **/
     public static final String OPTION_VERBOSITY_LONG = "--verbosity";
 
+    /** The long name of the option that specifies the path to the working directory. **/
+    public static final String OPTION_WORKING_DIRECTORY_SHORT = "-w";
+
+    /** The long name of the option that specifies the path to the working directory. **/
+    public static final String OPTION_WORKING_DIRECTORY_LONG = "--workingDirectory";
+
     private static final Logger LOGGER = CLILogManager.CLILogger.getLogger(Launcher.class.getName());
     private static final Pattern COMMAND_LINE_ARGUMENT_PATTERN = Pattern.compile("[^\\s\"']+|\"([^\"]*)\"|'([^']*)'");
     private static final Pattern COMMENT_PATTERN = Pattern.compile("^ *#");
@@ -68,7 +74,7 @@ public class Launcher {
     @Parameter(names = {OPTION_VERBOSITY_SHORT, OPTION_VERBOSITY_LONG}, descriptionKey = "launcher.verbosity.description")
     private LogLevelSupplier log_level_supplier;
 
-    @Parameter(names = {"-w", "--workingDirectory"}, descriptionKey = "launcher.working_directory.description", converter = PathConverter.class)
+    @Parameter(names = {OPTION_WORKING_DIRECTORY_SHORT, OPTION_WORKING_DIRECTORY_LONG}, descriptionKey = "launcher.working_directory.description", converter = PathConverter.class)
     private Path working_directory = Configuration.DEFAULT_WORKING_DIRECTORY;
 
     //TODO implement interactive mode
@@ -108,6 +114,10 @@ public class Launcher {
 
     public static void main(String[] args) {
 
+        args = new String[]{
+                        "experiment", "-c", "ssss"
+        };
+        
         try {
             final Launcher launcher = new Launcher();
             launcher.parse(args);
@@ -159,6 +169,7 @@ public class Launcher {
         addCommand(new ClassifyCommand(this));
         addCommand(new EvaluateCommand(this));
         addCommand(new TrainCommand(this));
+        addCommand(new ExperimentCommand(this));
 
         final CleanCommand clean_command = new CleanCommand(this);
         addCommand(clean_command);
@@ -196,7 +207,7 @@ public class Launcher {
 
     private void handleCommands() throws Exception {
 
-        final List<String> command_lines = Files.readAllLines(working_directory.resolve(commands), configuration.getDefaultCharsetSupplier().get());
+        final List<String> command_lines = Files.readAllLines(configuration.getWorkingDirectory().resolve(commands), configuration.getDefaultCharsetSupplier().get());
 
         for (String command_line : command_lines) {
             final Optional<String[]> arguments = toCommandLineArguments(command_line);
