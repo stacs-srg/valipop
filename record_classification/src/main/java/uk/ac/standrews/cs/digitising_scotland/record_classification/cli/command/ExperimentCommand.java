@@ -47,6 +47,9 @@ public class ExperimentCommand extends Command {
     /** The long name of the option that specifies the number of times the experiment should be repeated. **/
     public static final String OPTION_REPETITIONS_LONG = "--repeat";
 
+    /** The number associated to the first repetition. **/
+    public static final int FIRST_REPETITION_NUMBER = 1;
+
     @Parameter(names = {OPTION_REPETITIONS_SHORT, OPTION_REPETITIONS_LONG}, descriptionKey = "command.experiment.repetitions.description", validateValueWith = AtLeastOne.class)
     private int repetitions = DEFAULT_REPETITION_COUNT;
 
@@ -68,7 +71,7 @@ public class ExperimentCommand extends Command {
 
         final Path batch_file = getCommandsRelativeToWorkingDirectory();
 
-        for (int repetition = 1; repetition <= repetitions; repetition++) {
+        for (int repetition = FIRST_REPETITION_NUMBER; repetition <= repetitions; repetition++) {
             final Path repetition_working_directory = getRepetitionWorkingDirectory(repetition);
             final Path batch_file_relative_to_repetition = repetition_working_directory.relativize(batch_file);
             String[] args = new String[]{Launcher.OPTION_WORKING_DIRECTORY_SHORT, Command.Builder.quote(repetition_working_directory), NAME, OPTION_COMMANDS_SHORT, Command.Builder.quote(batch_file_relative_to_repetition)};
