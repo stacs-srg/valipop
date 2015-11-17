@@ -1,7 +1,7 @@
 # This file is called DivorceReasonMale.dat
 Count    Value    Actual    Distribution
-0    ADULTERY    15    16.77
-1    BEHAVIOUR    35    44.33
-2    DESERTION    2    1.20
-3    SEPARATION_WITH_CONSENT    44    38.34
-4    SEPARATION    25    20.37
+0    ADULTERY    17    18.85
+1    BEHAVIOUR    52    49.82
+2    DESERTION    2    1.35
+3    SEPARATION_WITH_CONSENT    46    43.09
+4    SEPARATION    19    22.89

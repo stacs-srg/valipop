@@ -50,7 +50,7 @@ public class LifeTableShadow {
             rows.put(r, new LifeTableRowShadow(tree.get(r)));
         }
 
-        System.out.println("R: " + rows.size());
+//        System.out.println("R: " + rows.size());
 
     }
 
@@ -59,6 +59,9 @@ public class LifeTableShadow {
         people.sort(Comparator.comparing(Person::getDod));
 
         int ageingDay = startDay + ((endDay - startDay) / 2);
+
+//        System.out.println(DateManipulation.daysToYear(startDay) + " > " + DateManipulation.daysToYear(endDay));
+
 
         for(Person p : people) {
             int age = p.getAge(ageingDay);
@@ -101,7 +104,7 @@ public class LifeTableShadow {
         double tss = 0;
 
         for(Integer y : rows.keySet()) {
-            tss += Math.pow(mean - rows.get(y).getExpectedNMX(), 2);
+            tss += Math.pow(rows.get(y).getExpectedNMX() - mean, 2);
         }
 
         return tss;
@@ -110,18 +113,18 @@ public class LifeTableShadow {
 
     public double calcRSquared() {
 
-        double n = rows.keySet().size() - 1;
+//        double n = rows.keySet().size() - 1;
 
-        double sse = getSSE()/n;
-        double tss = getTSS()/n;
+        double sse = getSSE();
+        double tss = getTSS();
 
-//        System.out.println(sse + " - " + tss + " - " + n);
 
 
 
         double rSquared = 1 - (sse/tss);
 
-//        System.out.println(rSquared);
+//        System.out.println(sse + " / " + tss + " = " + rSquared);
+
 
         return  rSquared;
 

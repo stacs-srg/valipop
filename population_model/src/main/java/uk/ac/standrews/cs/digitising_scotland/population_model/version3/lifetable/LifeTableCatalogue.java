@@ -26,6 +26,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Map;
+import java.util.Random;
 import java.util.TreeMap;
 
 /**
@@ -83,8 +84,8 @@ public class LifeTableCatalogue {
     }
 
 
-    public boolean toDieByNQX(Person p, int currentDay) {
-        return catalogue.get(catalogue.floorKey(DateManipulation.daysToYear(currentDay))).toDieByNQX(p, currentDay);
+    public boolean toDieByNQX(Person p, int currentDay, Random random) {
+        return catalogue.get(catalogue.floorKey(DateManipulation.daysToYear(currentDay))).toDieByNQX(p, currentDay, random);
     }
 
     public TreeMap<Integer,LifeTable> getCloneOfTreeMap() {

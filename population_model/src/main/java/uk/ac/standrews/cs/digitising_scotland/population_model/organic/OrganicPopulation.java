@@ -52,7 +52,6 @@ public class OrganicPopulation implements IPopulation, ITemporalPopulationInfo {
     public static void main(final String[] args) {
         System.out.println("--------MAIN HERE---------");
 	
-	    System.out.println("Seed size = " + args[0]);
 
         if (args.length == 0) {
             runPopulationModel(DEFAULT_SEED_SIZE, true, true, true);
@@ -79,7 +78,7 @@ public class OrganicPopulation implements IPopulation, ITemporalPopulationInfo {
     private static PriorityQueue<OrganicEvent> globalEventsQueue = new PriorityQueue<OrganicEvent>();
     
     private String description;
-    private static final int DEFAULT_SEED_SIZE = 1150000;
+    private static final int DEFAULT_SEED_SIZE = 10000;
     private static final float DAYS_PER_YEAR = 365.25f;
     private static final int START_YEAR = 1780;
     private static final int END_YEAR = 2013;

@@ -40,13 +40,15 @@ public class LifeTableRowShadow {
         if(peopleInRowAtMidInterval == 0) {
             return 0;
         } else {
-            System.out.println(peopleInRowDieingInInterval + " / " + peopleInRowAtMidInterval);
-            return peopleInRowDieingInInterval / peopleInRowAtMidInterval;
+//            System.out.println(peopleInRowDieingInInterval + "\t" + peopleInRowAtMidInterval);
+            return peopleInRowDieingInInterval / (double) peopleInRowAtMidInterval;
         }
     }
 
     public double getResidualSquared() {
-        return Math.pow((row.getnMx() - getCalculatedNMX()), 2);
+        double v = Math.pow((row.getnMx() - getCalculatedNMX()), 2);
+        System.out.println(row.getnMx() + " -m " + getCalculatedNMX() + " = " + (row.getnMx() - getCalculatedNMX()));
+        return v;
     }
 
     public void incPeopleInRow() {
