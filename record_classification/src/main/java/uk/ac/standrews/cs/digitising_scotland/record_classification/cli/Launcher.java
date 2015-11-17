@@ -114,10 +114,6 @@ public class Launcher {
 
     public static void main(String[] args) {
 
-        args = new String[]{
-                        "experiment", "-c", "ssss"
-        };
-        
         try {
             final Launcher launcher = new Launcher();
             launcher.parse(args);
