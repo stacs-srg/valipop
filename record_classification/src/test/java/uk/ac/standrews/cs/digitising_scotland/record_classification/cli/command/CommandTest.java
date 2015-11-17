@@ -41,6 +41,7 @@ import static java.util.logging.Logger.getLogger;
 public abstract class CommandTest {
 
     protected Launcher launcher;
+    protected Configuration configuration;
     protected Path home;
     protected Path config_file;
     private static final Logger LOGGER = getLogger(CommandTest.class.getName());
@@ -52,7 +53,7 @@ public abstract class CommandTest {
     public void setUp() throws Exception {
 
         launcher = new Launcher();
-        final Configuration configuration = launcher.getConfiguration();
+        configuration = launcher.getConfiguration();
         home = configuration.getHome();
         config_file = configuration.getConfigurationFile();
         deleteCliHome();

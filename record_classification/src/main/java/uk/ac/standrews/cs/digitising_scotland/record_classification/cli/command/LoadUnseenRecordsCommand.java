@@ -57,7 +57,6 @@ public class LoadUnseenRecordsCommand extends LoadRecordsCommand {
     @Override
     protected void process(final List<Record> records) {
 
-        final Configuration configuration = launcher.getConfiguration();
         final Configuration.Unseen unseen = configuration.newUnseen(load_command.getResourceName(), load_command.isOverrideExistingEnabled());
         unseen.setBucket(new Bucket(records));
     }

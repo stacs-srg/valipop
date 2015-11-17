@@ -56,7 +56,6 @@ public class ExperimentCommand extends Command {
     @Override
     public void run() {
 
-        final Configuration configuration = launcher.getConfiguration();
 
     }
 }

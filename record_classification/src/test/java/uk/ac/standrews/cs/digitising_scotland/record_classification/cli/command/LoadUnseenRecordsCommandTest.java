@@ -41,7 +41,7 @@ public class LoadUnseenRecordsCommandTest extends LoadRecordsCommandTest {
     @Override
     protected Bucket getActualRecords() {
 
-        return launcher.getConfiguration().getUnseenRecords().get();
+        return configuration.getUnseenRecords().get();
     }
 
     @Override

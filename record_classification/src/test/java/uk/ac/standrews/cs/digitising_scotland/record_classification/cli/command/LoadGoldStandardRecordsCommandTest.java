@@ -59,6 +59,6 @@ public class LoadGoldStandardRecordsCommandTest extends LoadRecordsCommandTest {
     @Override
     protected Bucket getActualRecords() {
 
-        return launcher.getConfiguration().getGoldStandardRecords().get();
+        return configuration.getGoldStandardRecords().get();
     }
 }

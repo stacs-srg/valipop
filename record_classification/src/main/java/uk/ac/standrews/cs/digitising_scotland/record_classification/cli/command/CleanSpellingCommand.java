@@ -17,10 +17,8 @@
 package uk.ac.standrews.cs.digitising_scotland.record_classification.cli.command;
 
 import com.beust.jcommander.*;
-import org.apache.lucene.analysis.util.*;
 import org.apache.lucene.search.spell.*;
 import org.apache.lucene.search.spell.Dictionary;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.string_similarity.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.*;
 
@@ -113,7 +111,6 @@ public class CleanSpellingCommand extends CleanStopWordsCommand {
     public void run() {
 
         final Cleaner cleaner = getCleaner();
-        final Configuration configuration = launcher.getConfiguration();
 
         CleanCommand.cleanUnseenRecords(cleaner, configuration, logger);
         CleanCommand.cleanGoldStandardRecords(cleaner, configuration, logger);
@@ -132,6 +129,6 @@ public class CleanSpellingCommand extends CleanStopWordsCommand {
 
     private Dictionary LoadDictionary() throws IOException {
 
-        return new PlainTextDictionary(Files.newBufferedReader(getSource(), getCharset()));
+        return new PlainTextDictionary(Files.newBufferedReader(getSourceRelativeToWorkingDirectory(), getCharset()));
     }
 }

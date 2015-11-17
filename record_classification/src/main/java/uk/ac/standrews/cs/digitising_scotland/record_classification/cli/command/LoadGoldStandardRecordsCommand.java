@@ -53,7 +53,7 @@ public class LoadGoldStandardRecordsCommand extends LoadUnseenRecordsCommand {
     @Parameter(names = {OPTION_TRAINING_RATIO_SHORT, OPTION_TRAINING_RATIO_LONG},
                     descriptionKey = "command.load.gold_standard.training_ratio.description",
                     validateValueWith = Validators.BetweenZeroToOneInclusive.class)
-    private Double training_ratio = launcher.getConfiguration().getDefaultTrainingRatio();
+    private Double training_ratio = configuration.getDefaultTrainingRatio();
 
     @Parameter(names = {OPTION_CLASS_COLUMN_INDEX_SHORT, OPTION_CLASS_COLUMN_INDEX_LONG}, descriptionKey = "command.load.gold_standard.class_column_index.description", validateValueWith = Validators.AtLeastZero.class)
     private Integer class_column_index = DEFAULT_CLASS_COLUMN_INDEX;

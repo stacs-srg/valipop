@@ -43,7 +43,7 @@ public class TrainCommand extends Command {
     @Parameter(names = {OPTION_INTERNAL_TRAINING_RATIO_SHORT, OPTION_INTERNAL_TRAINING_RATIO_LONG},
                     descriptionKey = "command.train.internal_training_ratio.description",
                     validateValueWith = Validators.BetweenZeroToOneInclusive.class)
-    private Double internal_training_ratio = launcher.getConfiguration().getDefaultInternalTrainingRatio();
+    private Double internal_training_ratio = configuration.getDefaultInternalTrainingRatio();
 
     public static class Builder extends Command.Builder {
 

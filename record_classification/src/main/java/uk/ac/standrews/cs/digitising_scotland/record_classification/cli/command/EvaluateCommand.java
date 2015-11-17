@@ -85,8 +85,6 @@ public class EvaluateCommand extends Command {
     @Override
     public void run() {
 
-        final Configuration configuration = launcher.getConfiguration();
-
         final Bucket evaluation_records = configuration.requireEvaluationRecords();
         final Bucket gold_standard_records = configuration.requireGoldStandardRecords();
         final Bucket evaluation_records_stripped = evaluation_records.stripRecordClassifications();
@@ -107,7 +105,7 @@ public class EvaluateCommand extends Command {
         if (isOutputClassifiedRecordsPathSet()) {
             persistClassifiedEvaluationRecords(classified_records);
         }
-        
+
         //TODO export matrix as json?
         //TODO export metrics as json?
     }
@@ -119,14 +117,16 @@ public class EvaluateCommand extends Command {
 
     private void persistClassifiedEvaluationRecords(final Bucket classified_records) {
 
+        final Path destination = resolveRelativeToWorkingDirectory(classified_evaluation_records);
         try {
-            persistBucketAsCSV(classified_records, classified_evaluation_records, RECORD_CSV_FORMAT, RESOURCE_CHARSET);
+            persistBucketAsCSV(classified_records, destination, RECORD_CSV_FORMAT, RESOURCE_CHARSET);
         }
         catch (IOException e) {
             logger.log(Level.SEVERE, "Failure while exporting classified evaluation records: " + e.getMessage(), e);
             throw new IOError(e);
         }
     }
+
 
     private void logClassificationMetrics(final ClassificationMetrics classification_metrics) {
 
