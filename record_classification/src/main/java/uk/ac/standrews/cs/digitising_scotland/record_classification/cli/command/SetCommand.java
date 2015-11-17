@@ -239,8 +239,6 @@ public class SetCommand extends Command {
     @Override
     public void run() {
 
-        final Configuration configuration = launcher.getConfiguration();
-
         boolean set_at_least_once = set("classifier", classifier_supplier, configuration::setClassifierSupplier);
         set_at_least_once |= set("seed", seed, configuration::setSeed);
         set_at_least_once |= set("default charset", charset_supplier, configuration::setDefaultCharsetSupplier);

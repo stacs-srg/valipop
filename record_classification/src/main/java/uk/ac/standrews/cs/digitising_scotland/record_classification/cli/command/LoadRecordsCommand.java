@@ -76,10 +76,10 @@ abstract class LoadRecordsCommand extends Command {
     protected final LoadCommand load_command;
 
     @Parameter(names = {OPTION_DELIMITER_SHORT, OPTION_DELIMITER_LONG}, descriptionKey = "command.load_records.delimiter.description", converter = Converters.CharacterConverter.class)
-    private Character delimiter = launcher.getConfiguration().getDefaultDelimiter();
+    private Character delimiter = configuration.getDefaultDelimiter();
 
     @Parameter(names = {OPTIONS_FORMAT_SHORT, OPTIONS_FORMAT_LONG}, descriptionKey = "command.load_records.format.description")
-    private CsvFormatSupplier csv_format_supplier = launcher.getConfiguration().getDefaultCsvFormatSupplier();
+    private CsvFormatSupplier csv_format_supplier = configuration.getDefaultCsvFormatSupplier();
 
     @Parameter(names = {OPTION_SKIP_HEADER_SHORT, OPTION_SKIP_HEADER_LONG}, descriptionKey = "command.load_records.skip_header.description")
     private boolean skip_header_record = false;

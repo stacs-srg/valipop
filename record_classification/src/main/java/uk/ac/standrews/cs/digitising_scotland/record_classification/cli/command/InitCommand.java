@@ -75,7 +75,6 @@ public class InitCommand extends Command {
     @Override
     public void run() {
 
-        final Configuration configuration = launcher.getConfiguration();
         final Path home = configuration.getHome();
         try {
             checkDirectoryExistence(home, replace_existing);

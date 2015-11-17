@@ -52,7 +52,7 @@ public class CleanStopWordsCommand extends Command {
     private Path source;
 
     @Parameter(names = {LoadCommand.OPTION_CHARSET_SHORT, LoadCommand.OPTION_CHARSET_LONG}, descriptionKey = "command.clean.stop_words.source.description")
-    private CharsetSupplier charset_supplier = launcher.getConfiguration().getDefaultCharsetSupplier();
+    private CharsetSupplier charset_supplier = configuration.getDefaultCharsetSupplier();
 
     @Parameter(names = {OPTION_CASE_SENSITIVE_SHORT, OPTION_CASE_SENSITIVE_LONG}, descriptionKey = "command.clean.stop_words.case_sensitive.description")
     private boolean case_sensitive = false;
@@ -137,7 +137,6 @@ public class CleanStopWordsCommand extends Command {
     public void run() {
 
         final Cleaner cleaner = getCleaner();
-        final Configuration configuration = launcher.getConfiguration();
 
         CleanCommand.cleanUnseenRecords(cleaner, configuration, logger);
         CleanCommand.cleanGoldStandardRecords(cleaner, configuration, logger);
@@ -153,17 +152,14 @@ public class CleanStopWordsCommand extends Command {
     private List<String> readWords() {
 
         try {
-            return Files.lines(getSource(), getCharset()).collect(Collectors.toList());
+            return Files.lines(getSourceRelativeToWorkingDirectory(), getCharset()).collect(Collectors.toList());
         }
         catch (IOException e) {
             throw new IOError(e);
         }
     }
 
-    protected Path getSource() {
-
-        return source;
-    }
+    protected Path getSourceRelativeToWorkingDirectory() {return resolveRelativeToWorkingDirectory(source);}
 
     protected Charset getCharset() {
 

@@ -86,7 +86,6 @@ public class ClassifyCommand extends Command {
     @Override
     public void run() {
 
-        final Configuration configuration = launcher.getConfiguration();
         final Classifier classifier = configuration.requireClassifier();
 
         final List<Configuration.Unseen> unseens = configuration.getUnseens();
@@ -105,10 +104,11 @@ public class ClassifyCommand extends Command {
     private void persistClassifiedUnseenRecords(final List<Bucket> classified_unseen_records_list) {
 
         final Bucket classified_unseen_records = classified_unseen_records_list.stream().reduce(Bucket::union).orElse(new Bucket());
-        logger.info(() -> String.format("Persisting total of %d classified unseen records into path: %s", classified_unseen_records.size(), output_path));
+        final Path destination = resolveRelativeToWorkingDirectory(output_path);
 
+        logger.info(() -> String.format("Persisting total of %d classified unseen records into path: %s", classified_unseen_records.size(), destination));
         try {
-            persistBucketAsCSV(classified_unseen_records, output_path, Configuration.RECORD_CSV_FORMAT, Configuration.RESOURCE_CHARSET);
+            persistBucketAsCSV(classified_unseen_records, destination, Configuration.RECORD_CSV_FORMAT, Configuration.RESOURCE_CHARSET);
         }
         catch (IOException e) {
             logger.log(Level.SEVERE, "failed to persist classified unseen records: " + e.getMessage(), e);

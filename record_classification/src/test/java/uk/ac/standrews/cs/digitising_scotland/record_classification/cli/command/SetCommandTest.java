@@ -45,56 +45,56 @@ public class SetCommandTest extends CommandTest {
     @Test
     public void testSetCharset() throws Exception {
 
-        testSet(SetCommand.OPTION_CHARSET_SHORT, CharsetSupplier.values(), () -> launcher.getConfiguration().getDefaultCharsetSupplier());
-        testSet(SetCommand.OPTION_CHARSET_LONG, CharsetSupplier.values(), () -> launcher.getConfiguration().getDefaultCharsetSupplier());
+        testSet(SetCommand.OPTION_CHARSET_SHORT, CharsetSupplier.values(), () -> configuration.getDefaultCharsetSupplier());
+        testSet(SetCommand.OPTION_CHARSET_LONG, CharsetSupplier.values(), () -> configuration.getDefaultCharsetSupplier());
     }
 
     @Test
     public void testSetClassifier() throws Exception {
 
-        testSet(SetCommand.OPTION_CLASSIFIER_SHORT, ClassifierSupplier.values(), () -> launcher.getConfiguration().getClassifierSupplier());
-        testSet(SetCommand.OPTION_CLASSIFIER_LONG, ClassifierSupplier.values(), () -> launcher.getConfiguration().getClassifierSupplier());
+        testSet(SetCommand.OPTION_CLASSIFIER_SHORT, ClassifierSupplier.values(), () -> configuration.getClassifierSupplier());
+        testSet(SetCommand.OPTION_CLASSIFIER_LONG, ClassifierSupplier.values(), () -> configuration.getClassifierSupplier());
     }
 
     @Test
     public void testSetDelimiter() throws Exception {
 
-        testSet(SetCommand.OPTION_DELIMITER_SHORT, TEST_DELIMITERS, () -> launcher.getConfiguration().getDefaultDelimiter());
-        testSet(SetCommand.OPTION_DELIMITER_LONG, TEST_DELIMITERS, () -> launcher.getConfiguration().getDefaultDelimiter());
+        testSet(SetCommand.OPTION_DELIMITER_SHORT, TEST_DELIMITERS, () -> configuration.getDefaultDelimiter());
+        testSet(SetCommand.OPTION_DELIMITER_LONG, TEST_DELIMITERS, () -> configuration.getDefaultDelimiter());
     }
 
     @Test
     public void testSetRandomSeed() throws Exception {
 
-        testSet(SetCommand.OPTION_RANDOM_SEED_SHORT, TEST_SEEDS, () -> launcher.getConfiguration().getRandom().nextLong(), value -> new Random(value).nextLong());
-        testSet(SetCommand.OPTION_RANDOM_SEED_LONG, TEST_SEEDS, () -> launcher.getConfiguration().getRandom().nextLong(), value -> new Random(value).nextLong());
+        testSet(SetCommand.OPTION_RANDOM_SEED_SHORT, TEST_SEEDS, () -> configuration.getRandom().nextLong(), value -> new Random(value).nextLong());
+        testSet(SetCommand.OPTION_RANDOM_SEED_LONG, TEST_SEEDS, () -> configuration.getRandom().nextLong(), value -> new Random(value).nextLong());
     }
 
     @Test
     public void testSetSerializationFormat() throws Exception {
 
-        testSet(SetCommand.OPTION_SERIALIZATION_FORMAT_SHORT, SerializationFormat.values(), () -> launcher.getConfiguration().getClassifierSerializationFormat());
-        testSet(SetCommand.OPTION_SERIALIZATION_FORMAT_LONG, SerializationFormat.values(), () -> launcher.getConfiguration().getClassifierSerializationFormat());
+        testSet(SetCommand.OPTION_SERIALIZATION_FORMAT_SHORT, SerializationFormat.values(), () -> configuration.getClassifierSerializationFormat());
+        testSet(SetCommand.OPTION_SERIALIZATION_FORMAT_LONG, SerializationFormat.values(), () -> configuration.getClassifierSerializationFormat());
     }
 
     @Test
     public void testTrainingRatio() throws Exception {
 
-        testSet(SetCommand.OPTION_TRAINING_RATIO_SHORT, TEST_RATIOS, () -> launcher.getConfiguration().getDefaultTrainingRatio());
-        testSet(SetCommand.OPTION_TRAINING_RATIO_LONG, TEST_RATIOS, () -> launcher.getConfiguration().getDefaultTrainingRatio());
+        testSet(SetCommand.OPTION_TRAINING_RATIO_SHORT, TEST_RATIOS, () -> configuration.getDefaultTrainingRatio());
+        testSet(SetCommand.OPTION_TRAINING_RATIO_LONG, TEST_RATIOS, () -> configuration.getDefaultTrainingRatio());
     }
 
     @Test
     public void testInternalTrainingRatio() throws Exception {
 
-        testSet(SetCommand.OPTION_INTERNAL_TRAINING_RATIO_SHORT, TEST_RATIOS, () -> launcher.getConfiguration().getDefaultInternalTrainingRatio());
-        testSet(SetCommand.OPTION_INTERNAL_TRAINING_RATIO_LONG, TEST_RATIOS, () -> launcher.getConfiguration().getDefaultInternalTrainingRatio());
+        testSet(SetCommand.OPTION_INTERNAL_TRAINING_RATIO_SHORT, TEST_RATIOS, () -> configuration.getDefaultInternalTrainingRatio());
+        testSet(SetCommand.OPTION_INTERNAL_TRAINING_RATIO_LONG, TEST_RATIOS, () -> configuration.getDefaultInternalTrainingRatio());
     }
     @Test
     public void testCsvFormat() throws Exception {
 
-        testSet(SetCommand.OPTIONS_FORMAT_SHORT, CsvFormatSupplier.values(), () -> launcher.getConfiguration().getDefaultCsvFormatSupplier());
-        testSet(SetCommand.OPTIONS_FORMAT_LONG, CsvFormatSupplier.values(), () -> launcher.getConfiguration().getDefaultCsvFormatSupplier());
+        testSet(SetCommand.OPTIONS_FORMAT_SHORT, CsvFormatSupplier.values(), () -> configuration.getDefaultCsvFormatSupplier());
+        testSet(SetCommand.OPTIONS_FORMAT_LONG, CsvFormatSupplier.values(), () -> configuration.getDefaultCsvFormatSupplier());
     }
 
     private <Value> void testSet(String option, Value[] values, Supplier<Value> actual) throws Exception {

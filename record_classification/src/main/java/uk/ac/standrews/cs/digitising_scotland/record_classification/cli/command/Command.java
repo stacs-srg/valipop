@@ -19,6 +19,7 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.cli.command
 import com.beust.jcommander.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.*;
 
+import java.nio.file.*;
 import java.util.*;
 import java.util.logging.*;
 import java.util.regex.*;
@@ -33,6 +34,7 @@ public abstract class Command implements Runnable {
 
     private final String name;
     protected final Launcher launcher;
+    protected final Configuration configuration;
     protected final Logger logger;
 
     private static final Pattern SPECIAL_CHARACTER = Pattern.compile("[^-_A-Za-z0-9]");
@@ -90,6 +92,7 @@ public abstract class Command implements Runnable {
     public Command(final Launcher launcher, final String name) {
 
         this.launcher = launcher;
+        configuration = launcher.getConfiguration();
         this.name = name;
 
         logger = CLILogManager.CLILogger.getLogger(getClass().getName());
@@ -137,6 +140,11 @@ public abstract class Command implements Runnable {
         }
 
         return command;
+    }
+
+    protected Path resolveRelativeToWorkingDirectory(Path path) {
+
+        return configuration.getWorkingDirectory().resolve(path);
     }
 
     private JCommander getSubCommander() {

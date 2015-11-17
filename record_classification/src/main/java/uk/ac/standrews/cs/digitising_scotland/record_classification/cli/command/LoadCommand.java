@@ -60,7 +60,7 @@ public class LoadCommand extends Command {
     public static final String OPTION_FORCE_LONG = "--overrideExisting";
 
     @Parameter(names = {OPTION_CHARSET_SHORT, OPTION_CHARSET_LONG}, descriptionKey = "command.load.charset.description")
-    private CharsetSupplier charset_supplier = launcher.getConfiguration().getDefaultCharsetSupplier();
+    private CharsetSupplier charset_supplier = configuration.getDefaultCharsetSupplier();
 
     @Parameter(required = true, names = {OPTION_SOURCE_SHORT, OPTION_SOURCE_LONG}, descriptionKey = "command.load.source.description", converter = PathConverter.class)
     private Path source;
