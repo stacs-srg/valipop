@@ -19,13 +19,17 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.cli.command
 import com.beust.jcommander.*;
 import com.beust.jcommander.converters.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.Validators.*;
 
 import java.nio.file.*;
+
+import static uk.ac.standrews.cs.digitising_scotland.record_classification.cli.Launcher.OPTION_COMMANDS_LONG;
+import static uk.ac.standrews.cs.digitising_scotland.record_classification.cli.Launcher.OPTION_COMMANDS_SHORT;
 
 /**
  * @author Masih Hajiarab Derkani
  */
-@Parameters(commandNames = CleanCommand.NAME, resourceBundle = Configuration.RESOURCE_BUNDLE_NAME, commandDescriptionKey = "command.clean.description")
+@Parameters(commandNames = ExperimentCommand.NAME, resourceBundle = Configuration.RESOURCE_BUNDLE_NAME, commandDescriptionKey = "command.experiment.description")
 public class ExperimentCommand extends Command {
 
     /** The name of this command. **/
@@ -34,19 +38,19 @@ public class ExperimentCommand extends Command {
     /** The default number of repetitions. **/
     public static final int DEFAULT_REPETITION_COUNT = 5;
 
-    /** The short name of the option that specifies a name for the resource file to be load. **/
-    public static final String OPTION_NAME_SHORT = "-n";
+    /** The prefix of the working directory name for each repetition of an experiment. */
+    public static final String REPETITION_WORKING_DIRECTORY_PREFIX = "repetition_";
 
-    /** The long name of the option that specifies a name for the resource file to be load. **/
-    public static final String OPTION_NAME_LONG = "--named";
+    /** The short name of the option that specifies the number of times the experiment should be repeated. **/
+    public static final String OPTION_REPETITIONS_SHORT = "-r";
 
-    @Parameter(names = {"-r", "--repeat"}, descriptionKey = "")
-    private int repetition = DEFAULT_REPETITION_COUNT;
+    /** The long name of the option that specifies the number of times the experiment should be repeated. **/
+    public static final String OPTION_REPETITIONS_LONG = "--repeat";
 
-    @Parameter(names = {OPTION_NAME_SHORT, OPTION_NAME_LONG}, descriptionKey = "command.experiment.name.description")
-    private String name;
+    @Parameter(names = {OPTION_REPETITIONS_SHORT, OPTION_REPETITIONS_LONG}, descriptionKey = "command.experiment.repetitions.description", validateValueWith = AtLeastOne.class)
+    private int repetitions = DEFAULT_REPETITION_COUNT;
 
-    @Parameter(required = true, names = {Launcher.OPTION_COMMANDS_SHORT, Launcher.OPTION_COMMANDS_LONG}, descriptionKey = "launcher.commands.description", converter = PathConverter.class)
+    @Parameter(required = true, names = {OPTION_COMMANDS_SHORT, OPTION_COMMANDS_LONG}, descriptionKey = "launcher.commands.description", converter = PathConverter.class)
     private Path commands;
 
     /**
@@ -62,6 +66,24 @@ public class ExperimentCommand extends Command {
     @Override
     public void run() {
 
+        final Path batch_file = getCommandsRelativeToWorkingDirectory();
+
+        for (int repetition = 1; repetition <= repetitions; repetition++) {
+            final Path repetition_working_directory = getRepetitionWorkingDirectory(repetition);
+            final Path batch_file_relative_to_repetition = repetition_working_directory.relativize(batch_file);
+            String[] args = new String[]{Launcher.OPTION_WORKING_DIRECTORY_SHORT, Command.Builder.quote(repetition_working_directory), NAME, OPTION_COMMANDS_SHORT, Command.Builder.quote(batch_file_relative_to_repetition)};
+
+            Launcher.main(args);
+        }
+
+        //TODO aggregate results.
+
     }
 
+    private Path getRepetitionWorkingDirectory(final int repetition) {
+
+        return configuration.getWorkingDirectory().resolve(String.format("%s%d", REPETITION_WORKING_DIRECTORY_PREFIX, repetition));
+    }
+
+    private Path getCommandsRelativeToWorkingDirectory() {return resolveRelativeToWorkingDirectory(commands);}
 }
