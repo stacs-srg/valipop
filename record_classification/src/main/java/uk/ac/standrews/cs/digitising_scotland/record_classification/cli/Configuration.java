@@ -104,6 +104,12 @@ public class Configuration {
 
     public Configuration() {
 
+        this(DEFAULT_WORKING_DIRECTORY);
+    }
+
+    public Configuration(Path working_directory) {
+
+        this.working_directory = working_directory;
         gold_standards = new LinkedHashMap<>();
         unseens = new LinkedHashMap<>();
 

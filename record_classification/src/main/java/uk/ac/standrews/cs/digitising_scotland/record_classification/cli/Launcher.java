@@ -103,7 +103,7 @@ public class Launcher {
 
     private Configuration loadContext(final Path working_directory) throws IOException {
 
-        return Configuration.exists(working_directory) ? Configuration.load() : new Configuration();
+        return Configuration.exists(working_directory) ? Configuration.load(working_directory) : new Configuration(working_directory);
     }
 
     public static void main(String[] args) {
@@ -192,11 +192,11 @@ public class Launcher {
         }
     }
 
-    private boolean isBatchModeEnabled() {return commands != null;}
+    public boolean isBatchModeEnabled() {return commands != null;}
 
     private void handleCommands() throws Exception {
 
-        final List<String> command_lines = Files.readAllLines(commands, configuration.getDefaultCharsetSupplier().get());
+        final List<String> command_lines = Files.readAllLines(working_directory.resolve(commands), configuration.getDefaultCharsetSupplier().get());
 
         for (String command_line : command_lines) {
             final Optional<String[]> arguments = toCommandLineArguments(command_line);
