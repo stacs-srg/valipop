@@ -46,7 +46,7 @@
             <organization>University of St Andrews</organization>
             <organizationUrl>http://www.st-andrews.ac.uk/</organizationUrl>
             <roles>
-                <role>Student Intern 2014</role>
+                <role>Developer</role>
             </roles>
         </developer>
         <developer>
@@ -239,7 +239,6 @@
             </plugin>
 
         </plugins>
-
 
         <pluginManagement>
             <!-- Captures common configuration for build plugins in modules -->
