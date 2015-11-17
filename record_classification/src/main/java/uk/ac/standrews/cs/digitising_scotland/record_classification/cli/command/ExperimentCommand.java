@@ -74,7 +74,9 @@ public class ExperimentCommand extends Command {
         for (int repetition = FIRST_REPETITION_NUMBER; repetition <= repetitions; repetition++) {
             final Path repetition_working_directory = getRepetitionWorkingDirectory(repetition);
             final Path batch_file_relative_to_repetition = repetition_working_directory.relativize(batch_file);
-            String[] args = new String[]{Launcher.OPTION_WORKING_DIRECTORY_SHORT, Command.Builder.quote(repetition_working_directory), NAME, OPTION_COMMANDS_SHORT, Command.Builder.quote(batch_file_relative_to_repetition)};
+            final String[] args = new String[]{
+                            Launcher.OPTION_WORKING_DIRECTORY_SHORT, Command.Builder.quote(repetition_working_directory), 
+                            NAME, OPTION_COMMANDS_SHORT, Command.Builder.quote(batch_file_relative_to_repetition)};
 
             Launcher.main(args);
         }

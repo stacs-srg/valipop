@@ -22,4 +22,4 @@ then
     echo Setting heap size: $1GB
 fi
 
-mvn exec:java -q -Dexec.cleanupDaemonThreads=false -Dexec.mainClass="uk.ac.standrews.cs.digitising_scotland.record_classification.process.cli.Launcher" -e -Dexec.args="$2 $3 $4 $5 $6 $7 $8 $9 $10 $11 $12"
+mvn exec:java -q -Dexec.cleanupDaemonThreads=false -Dexec.mainClass="uk.ac.standrews.cs.digitising_scotland.record_classification.cli.Launcher" -e -Dexec.args="$2 $3 $4 $5 $6 $7 $8 $9 $10 $11 $12"
