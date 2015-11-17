@@ -16,14 +16,13 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.population_model.distributions.general;
 
-import java.io.IOException;
+import uk.ac.standrews.cs.digitising_scotland.population_model.distributions.StringWithCumulativeProbability;
+
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Map;
 import java.util.Random;
-
-import uk.ac.standrews.cs.digitising_scotland.population_model.distributions.StringWithCumulativeProbability;
 
 /**
  * A distribution of strings controlled by specified probabilities.
@@ -46,12 +45,11 @@ public class EnumeratedDistribution implements Distribution<String> {
     /**
      * Creates an Enumerated distribution.
      * 
-     * @param item_probabilities Take in a map of strings and double pairings to be used in the creation of the distribution.
-     * @param random Takes in random for use in creation of distribution.
-     * @throws IOException Thrown in the event of an IOException.
-     * @throws InconsistentWeightException Thrown when the weights in the underlying distribution are found to be inconsistent.
+     * @param item_probabilities a map of strings to probabilities to be used in the creation of the distribution.
+     * @param random a Random instance for use in creation of distribution.
+     * @throws InconsistentWeightException if the weights in the underlying distribution do not sum to 1.
      */
-    public EnumeratedDistribution(final Map<String, Double> item_probabilities, final Random random) throws IOException, InconsistentWeightException {
+    public EnumeratedDistribution(final Map<String, Double> item_probabilities, final Random random) throws InconsistentWeightException {
 
         this(random);
         configureProbabilities(item_probabilities);
