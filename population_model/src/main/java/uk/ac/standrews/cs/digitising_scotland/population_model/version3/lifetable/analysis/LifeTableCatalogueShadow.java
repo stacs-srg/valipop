@@ -40,8 +40,8 @@ public class LifeTableCatalogueShadow {
 
         TreeMap<Integer,LifeTable> tree = lifeTableCatalogue.getCloneOfTreeMap();
 
-        for(int y = startYear; y < endYear; y+=3) {
-            tables.put(y, new LifeTableShadow(tree.get(tree.floorKey(y)), y+3, y));
+        for(int y = startYear; y < endYear; y+=1) {
+            tables.put(y, new LifeTableShadow(tree.get(tree.floorKey(y)), y+1, y));
         }
 
 
@@ -69,9 +69,9 @@ public class LifeTableCatalogueShadow {
         int p = 0;
 
         for(Integer i : tables.keySet()) {
-            System.out.println("Y: " + i);
+//            System.out.println("Y: " + i);
             LifeTableShadow lts = tables.get(i);
-            System.out.println(lts.getYear());
+//            System.out.println(lts.toString().split("@")[1]);
             lts.reviewPopulation(population);
             rSquares[p++] = lts.calcRSquared();
         }

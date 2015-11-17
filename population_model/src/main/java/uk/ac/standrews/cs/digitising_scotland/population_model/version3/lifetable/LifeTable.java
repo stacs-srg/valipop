@@ -25,6 +25,7 @@ import uk.ac.standrews.cs.util.tools.FileManipulation;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Random;
 import java.util.TreeMap;
 
 /**
@@ -81,18 +82,20 @@ public class LifeTable {
     }
 
 
-    public boolean toDieByNQX(Person p, int currentDay) {
+    public boolean toDieByNQX(Person p, int currentDay, Random random) {
 
         LifeTableRow r = rows.get(rows.floorKey(p.getAge(currentDay)));
 
-        double nqx = r.getNqx();
-        double rand = r.getNextRand();
+        return r.toDieByNQX(p, currentDay);
 
-        if(rand < nqx) {
-            return true;
-        } else {
-            return false;
-        }
+//        double nqx = r.getNqx();
+//        double rand = random.nextDouble();
+//
+//        if(rand < nqx) {
+//            return true;
+//        } else {
+//            return false;
+//        }
     }
 
     public TreeMap<Integer,LifeTableRow> getCloneOfTreeMap() {

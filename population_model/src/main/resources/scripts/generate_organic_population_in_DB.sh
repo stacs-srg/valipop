@@ -25,5 +25,5 @@ fi
 
 
 
-
+mvn clean compile
 mvn exec:java -q -Dexec.cleanupDaemonThreads=false -Dexec.mainClass="uk.ac.standrews.cs.digitising_scotland.population_model.tools.GenerateOrganicPopulationInDB" -e -Dexec.args="$2 $3 $4"

@@ -81,7 +81,7 @@ public class Population implements ITemporalPopulationInfo {
 
             for(int i = 0; i < people.size(); i++) {
                 Person p = people.get(i);
-                if(lifeTables.toDieByNQX(p, currentDay)) {
+                if(lifeTables.toDieByNQX(p, currentDay, random)) {
                     p.die(currentDay);
                     deadPeople.add(p);
                     people.remove(p);

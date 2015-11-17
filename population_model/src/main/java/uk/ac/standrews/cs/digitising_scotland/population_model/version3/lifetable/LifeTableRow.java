@@ -16,6 +16,9 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.population_model.version3.lifetable;
 
+import uk.ac.standrews.cs.digitising_scotland.population_model.distributions.general.WeightedDistribution;
+import uk.ac.standrews.cs.digitising_scotland.population_model.version3.Person;
+
 import java.util.Random;
 
 /**
@@ -37,6 +40,10 @@ public class LifeTableRow {
 
     private Random random;
 
+    private int survivers = 0;
+    private int deathPoint;
+
+
     public LifeTableRow(int x, int n, double nMx, double nqx) {
 
         random = new Random();
@@ -44,6 +51,9 @@ public class LifeTableRow {
         this.n = n;
         this.nMx = nMx;
         this.nqx = nqx;
+        deathPoint = (int)(1 / nqx);
+//        survivers = deathPoint;
+
     }
 
 
@@ -57,6 +67,20 @@ public class LifeTableRow {
 
     public double getnMx() {
         return nMx;
+    }
+
+    public boolean toDieByNQX(Person p, int currentDay) {
+//        System.out.print(p.toString().split("@")[1] + " {a:" + p.getAge(currentDay) + "=" + x + "/" + (x+n) + "} sur{" + survivers + "/" + deathPoint + "} --- ");
+        if(survivers >= deathPoint) {
+            survivers = 0;
+//            System.out.println(survivers);
+            return true;
+        } else {
+            survivers ++;
+//            System.out.println(survivers);
+            return false;
+        }
+
     }
 
     public double getNqx() {

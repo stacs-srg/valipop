@@ -1,9 +1,9 @@
 # This file is called ChildrenNumberOfAffairs.dat
 # Value    Actual    Distribution
 0.00    0    0.00
-1.00    0    0.80
+1.00    1    0.80
 2.00    0    0.10
 3.00    0    0.05
-4.00    1    0.03
+4.00    0    0.03
 5.00    0    0.01
 6.00    0    0.01

@@ -1,6 +1,6 @@
 # This file is called PartnershipCharacteristic.dat
 Count    Value    Actual    Distribution
-0    SINGLE    36241    22793.64
-1    COHABITATION    13053    15826.15
-2    COHABITATION_THEN_MARRIAGE    42814    51758.48
-3    MARRIAGE    7328    9057.73
+0    SINGLE    35331    22073.86
+1    COHABITATION    12437    15326.39
+2    COHABITATION_THEN_MARRIAGE    41380    50124.04
+3    MARRIAGE    7148    8771.71
