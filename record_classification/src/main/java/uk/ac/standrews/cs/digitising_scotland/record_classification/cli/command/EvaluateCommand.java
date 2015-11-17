@@ -107,7 +107,7 @@ public class EvaluateCommand extends Command {
         if (isOutputClassifiedRecordsPathSet()) {
             persistClassifiedEvaluationRecords(classified_records);
         }
-
+        
         //TODO export matrix as json?
         //TODO export metrics as json?
     }

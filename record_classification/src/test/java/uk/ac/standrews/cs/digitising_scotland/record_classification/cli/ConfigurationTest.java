@@ -33,23 +33,30 @@ import static org.junit.Assert.*;
  */
 public class ConfigurationTest {
 
+    private Configuration expected;
+    private Path home;
+
+    @Before
+    public void setUp() throws Exception {
+
+        expected = new Configuration();
+        home = expected.getHome();
+    }
+
     @After
     public void tearDown() throws Exception {
 
-        if (Files.isDirectory(Configuration.CLI_HOME)) {
-            FileManipulation.deleteDirectory(Configuration.CLI_HOME);
+        if (Files.isDirectory(home)) {
+            FileManipulation.deleteDirectory(home);
         }
     }
 
     @Test
     public void testSerializationAndDeserialization() throws Exception {
 
-        if (!Files.isDirectory(Configuration.CLI_HOME)) {
-            Files.createDirectory(Configuration.CLI_HOME);
+        if (!Files.isDirectory(home)) {
+            Files.createDirectory(home);
         }
-
-        final Configuration expected = new Configuration();
-        
         final Configuration.Unseen unseen = expected.newUnseen("test", false);
         final Bucket unseen_records = TestDataSets.CASE_5_EVALUATION.get(0).getBucket();
         unseen.setBucket(unseen_records);
@@ -57,7 +64,7 @@ public class ConfigurationTest {
         final Configuration.GoldStandard gold_standard = expected.newGoldStandard("test", 8.0, false);
         final Bucket gold_standard_records = TestDataSets.CASE_5_TRAINING.get(0).getBucket();
         gold_standard.setBucket(gold_standard_records);
-        
+
         expected.setClassifierSupplier(ClassifierSupplier.EXACT_MATCH);
         expected.setClassifierSerializationFormat(SerializationFormat.JAVA_SERIALIZATION);
         expected.setDefaultCharsetSupplier(CharsetSupplier.UTF_16);
@@ -67,8 +74,7 @@ public class ConfigurationTest {
         expected.setDefaultCsvFormatSupplier(CsvFormatSupplier.RFC4180_PIPE_SEPARATED);
         expected.setDefaultTrainingRatio(0.7);
         expected.setDefaultInternalTrainingRatio(0.1);
-        
-        
+
         expected.persist();
 
         final Configuration actual = Configuration.load();
@@ -96,7 +102,7 @@ public class ConfigurationTest {
     public void testDefaultValuesAreSetInNewInstance() throws Exception {
 
         final Configuration new_instance = new Configuration();
-        
+
         assertEquals(new_instance.getDefaultCharsetSupplier(), Configuration.DEFAULT_CHARSET_SUPPLIER);
         assertEquals(new_instance.getDefaultCsvFormatSupplier(), Configuration.DEFAULT_CSV_FORMAT_SUPPLIER);
         assertEquals(new_instance.getDefaultDelimiter(), Configuration.DEFAULT_DELIMITER);

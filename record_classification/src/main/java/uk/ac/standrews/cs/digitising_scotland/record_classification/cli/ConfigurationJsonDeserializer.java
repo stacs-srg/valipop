@@ -105,7 +105,7 @@ public class ConfigurationJsonDeserializer extends JsonDeserializer<Configuratio
     private void deserializeClassifier(final Configuration configuration) throws IOException {
 
         final SerializationFormat format = configuration.getClassifierSerializationFormat();
-        final Path source = ConfigurationJsonSerializer.getSerializedClassifierPath(format);
+        final Path source = ConfigurationJsonSerializer.getSerializedClassifierPath(configuration, format);
         
         if (Files.isRegularFile(source)) {
             configuration.setClassifier(Serialization.load(source, Classifier.class, format));

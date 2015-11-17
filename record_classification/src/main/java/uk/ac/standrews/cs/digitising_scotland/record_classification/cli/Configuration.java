@@ -45,13 +45,13 @@ public class Configuration {
     /** Name of record classification CLI program. */
     public static final String PROGRAM_NAME = "classli";
 
+    /** The name of the folder that contains the persisted state of this program. */
+    public static final String HOME_NAME = "." + Configuration.PROGRAM_NAME;
+
     public static final String RESOURCE_BUNDLE_NAME = "uk.ac.standrews.cs.digitising_scotland.record_classification.cli.CLIMessages";
 
-    /** The name of the folder that contains the persisted state of this program. */
-    public static final Path CLI_HOME = Paths.get("." + Configuration.PROGRAM_NAME);
-    public static final Path CONFIGURATION_FILE = CLI_HOME.resolve("config.json");
-    public static final Path GOLD_STANDARD_HOME = CLI_HOME.resolve("gold_standard");
-    public static final Path UNSEEN_HOME = CLI_HOME.resolve("unseen");
+    public static final Path DEFAULT_WORKING_DIRECTORY = Paths.get(System.getProperty("user.dir"));
+
     public static final CSVFormat RECORD_CSV_FORMAT = CSVFormat.RFC4180.withHeader("ID", "DATA", "ORIGINAL_DATA", "CODE", "CONFIDENCE", "DETAIL").withSkipHeaderRecord();
     public static final Charset RESOURCE_CHARSET = StandardCharsets.UTF_8;
     public static final CharsetSupplier DEFAULT_CHARSET_SUPPLIER = CharsetSupplier.SYSTEM_DEFAULT;
@@ -63,17 +63,19 @@ public class Configuration {
     /** The default ratio of records to be used for internal training of the classifier. **/
     public static final double DEFAULT_INTERNAL_TRAINING_RATIO = DEFAULT_TRAINING_RATIO;
 
+    public static final Handler HANDLER = new CLIConsoleHandler();
+
     protected static final CsvFormatSupplier DEFAULT_CSV_FORMAT_SUPPLIER = CsvFormatSupplier.DEFAULT;
     protected static final Character DEFAULT_DELIMITER = DEFAULT_CSV_FORMAT_SUPPLIER.get().getDelimiter();
     protected static final LogLevelSupplier DEFAULT_LOG_LEVEL_SUPPLIER = LogLevelSupplier.INFO;
     private static final ObjectMapper MAPPER = new ObjectMapper();
+    public static final String CONFIG_FILE_NAME = "config.json";
 
     static {
         SimpleModule classi = new SimpleModule(PROGRAM_NAME);
         classi.addSerializer(Configuration.class, new ConfigurationJsonSerializer());
         classi.addDeserializer(Configuration.class, new ConfigurationJsonDeserializer());
         MAPPER.registerModule(classi);
-
     }
 
     private CharsetSupplier default_charset_supplier = DEFAULT_CHARSET_SUPPLIER;
@@ -91,7 +93,7 @@ public class Configuration {
     private double default_internal_training_ratio = DEFAULT_INTERNAL_TRAINING_RATIO;
     private Level log_level;
     private LogLevelSupplier default_log_level_supplier = DEFAULT_LOG_LEVEL_SUPPLIER;
-    public static final Handler HANDLER = new CLIConsoleHandler();
+    private Path working_directory = DEFAULT_WORKING_DIRECTORY;
 
     static {
         final String logger_name = Launcher.class.getPackage().getName();
@@ -108,14 +110,58 @@ public class Configuration {
         initRandom();
     }
 
+    public Path getWorkingDirectory() {
+
+        return working_directory;
+    }
+
+    public void setWorkingDirectory(final Path working_directory) {
+
+        Objects.requireNonNull(working_directory);
+        this.working_directory = working_directory;
+    }
+
+    public Path getHome() {
+
+        return getHome(working_directory);
+    }
+
+    public Path getConfigurationFile() {
+
+        return getConfigurationFile(getHome());
+    }
+
+    public Path getUnseenHome() {
+
+        return getHome().resolve("unseen");
+    }
+
+    public Path getGoldStandardHome() {
+
+        return getHome().resolve("gold_standard");
+    }
+
     private void initRandom() {random = seed == null ? new Random() : new Random(seed);}
 
     public static Configuration load() throws IOException {
 
-        try (final BufferedReader in = Files.newBufferedReader(CONFIGURATION_FILE)) {
-            return MAPPER.readValue(in, Configuration.class);
+        return load(DEFAULT_WORKING_DIRECTORY);
+    }
+
+    public static Configuration load(Path working_directory) throws IOException {
+
+        final Path home = getHome(working_directory);
+        final Path config_file = getConfigurationFile(home);
+        try (final BufferedReader in = Files.newBufferedReader(config_file)) {
+            final Configuration configuration = MAPPER.readValue(in, Configuration.class);
+            configuration.setWorkingDirectory(working_directory);
+            return configuration;
         }
     }
+
+    private static Path getConfigurationFile(final Path home) {return home.resolve(CONFIG_FILE_NAME);}
+
+    private static Path getHome(final Path working_directory) {return working_directory.resolve(HOME_NAME);}
 
     public static void persistBucketAsCSV(Bucket bucket, Path destination, CSVFormat format, Charset charset) throws IOException {
 
@@ -311,7 +357,7 @@ public class Configuration {
 
     public void persist() throws IOException {
 
-        try (final OutputStream out = Files.newOutputStream(CONFIGURATION_FILE, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)) {
+        try (final OutputStream out = Files.newOutputStream(getConfigurationFile(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)) {
             MAPPER.writerWithDefaultPrettyPrinter().writeValue(out, this);
         }
     }
@@ -404,6 +450,11 @@ public class Configuration {
     LogLevelSupplier getDefaultLogLevelSupplier() {
 
         return default_log_level_supplier;
+    }
+
+    static boolean exists(final Path working_directory) {
+
+        return Files.isRegularFile(Configuration.getConfigurationFile(getHome(working_directory)));
     }
 
     abstract class Resource {
@@ -500,7 +551,7 @@ public class Configuration {
         @Override
         protected Path getHome() {
 
-            return UNSEEN_HOME;
+            return getUnseenHome();
         }
 
         @Override
@@ -547,7 +598,7 @@ public class Configuration {
         @Override
         protected Path getHome() {
 
-            return GOLD_STANDARD_HOME;
+            return getGoldStandardHome();
         }
 
         @Override

@@ -75,11 +75,11 @@ public class InitCommand extends Command {
     @Override
     public void run() {
 
-        //TODO working directory?
-
+        final Configuration configuration = launcher.getConfiguration();
+        final Path home = configuration.getHome();
         try {
-            checkDirectoryExistence(Configuration.CLI_HOME, replace_existing);
-            assureDirectoryExists(Configuration.CLI_HOME);
+            checkDirectoryExistence(home, replace_existing);
+            assureDirectoryExists(home);
         }
         catch (IOException e) {
             throw new RuntimeException("failed to construct configuration folder", e);
@@ -88,10 +88,10 @@ public class InitCommand extends Command {
 
     static void checkDirectoryExistence(Path directory, boolean delete_if_exists) throws IOException {
 
-        if (Files.isDirectory(Configuration.CLI_HOME)) {
+        if (Files.isDirectory(directory)) {
 
             if (delete_if_exists) {
-                FileUtils.deleteDirectory(Configuration.CLI_HOME.toFile());
+                FileUtils.deleteDirectory(directory.toFile());
             }
             else {
                 throw new FileAlreadyExistsException("directory already exists: " + directory);
