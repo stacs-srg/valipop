@@ -17,7 +17,9 @@
 package uk.ac.standrews.cs.digitising_scotland.record_classification.cli.command;
 
 import com.beust.jcommander.*;
+
 import org.junit.*;
+
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.serialization.*;
@@ -90,6 +92,7 @@ public class SetCommandTest extends CommandTest {
         testSet(SetCommand.OPTION_INTERNAL_TRAINING_RATIO_SHORT, TEST_RATIOS, () -> configuration.getDefaultInternalTrainingRatio());
         testSet(SetCommand.OPTION_INTERNAL_TRAINING_RATIO_LONG, TEST_RATIOS, () -> configuration.getDefaultInternalTrainingRatio());
     }
+
     @Test
     public void testCsvFormat() throws Exception {
 

@@ -19,7 +19,9 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.cli;
 import com.beust.jcommander.*;
 import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.module.*;
+
 import org.apache.commons.csv.*;
+
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.*;
@@ -119,8 +121,7 @@ public class Configuration extends ClassificationContext {
 
         if (isSeeded()) {
             random = new Random(seed);
-        }
-        else {
+        } else {
             super.initRandom();
         }
     }
@@ -213,11 +214,6 @@ public class Configuration extends ClassificationContext {
         this.working_directory = working_directory;
     }
 
-    public Path getUnseenHome() {
-
-        return getHome().resolve("unseen");
-    }
-
     public Path getHome() {
 
         return getHome(working_directory);
@@ -238,6 +234,16 @@ public class Configuration extends ClassificationContext {
     Path getUnseenRecordsPath() {
 
         return getHome().resolve("unseen.csv");
+    }
+
+    Path getClassifiedUnseenRecordsPath() {
+
+        return getHome().resolve("classified_unseen.csv");
+    }
+
+    Path getClassifiedEvaluationRecordsPath() {
+
+        return getHome().resolve("classified_evaluation.csv");
     }
 
     public SerializationFormat getClassifierSerializationFormat() {

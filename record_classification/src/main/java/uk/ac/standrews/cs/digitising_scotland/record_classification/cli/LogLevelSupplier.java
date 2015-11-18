@@ -26,9 +26,9 @@ import java.util.logging.*;
  */
 public enum LogLevelSupplier implements Supplier<Level> {
 
-    /** Indicates all messegas must be logged. **/
+    /** Indicates all messages must be logged. **/
     ALL(Level.ALL),
-    
+
     /** Indicates that serious failures must be logged. **/
     SEVERE(Level.SEVERE),
 
@@ -44,13 +44,9 @@ public enum LogLevelSupplier implements Supplier<Level> {
     private Level level;
 
     LogLevelSupplier(final Level level) {
-
         this.level = level;
     }
 
     @Override
-    public Level get() {
-
-        return level;
-    }
+    public Level get() { return level; }
 }

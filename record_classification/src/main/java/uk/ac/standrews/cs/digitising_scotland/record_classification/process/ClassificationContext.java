@@ -26,7 +26,8 @@ import java.time.Duration;
 import java.util.*;
 
 /**
- * Captures the shared knowledge among the {@link Step steps} of a {@link ClassificationProcess classification process}.
+ * Captures the shared knowledge among the {@link Step steps} of a {@link ClassificationProcess
+ * classification process}.
  *
  * @author Masih Hajiarab Derkani
  * @author Graham Kirby
@@ -34,9 +35,9 @@ import java.util.*;
 public class ClassificationContext implements Serializable {
 
     private static final long serialVersionUID = -6389479358148790573L;
-    protected Bucket training_records;
-    protected Bucket evaluation_records;
-    protected Bucket unseen_records;
+    private Bucket training_records;
+    private Bucket evaluation_records;
+    private Bucket unseen_records;
     private Bucket classified_evaluation_records;
     private Bucket classified_unseen_records;
     protected Classifier classifier;
@@ -121,7 +122,8 @@ public class ClassificationContext implements Serializable {
     /**
      * Gets the records that are used to train the classifier of this context.
      *
-     * @return the records that are used to train the classifier of this context, or {@code null} if the records are not set.
+     * @return the records that are used to train the classifier of this context, or {@code null} if
+     * the records are not set.
      */
     public Bucket getTrainingRecords() {
 
@@ -144,7 +146,8 @@ public class ClassificationContext implements Serializable {
     }
 
     /**
-     * Adds the given records to the bucket of records that are used to train the classifier of this context.
+     * Adds the given records to the bucket of records that are used to train the classifier of this
+     * context.
      *
      * @param training_records the records to be added
      */
@@ -184,9 +187,19 @@ public class ClassificationContext implements Serializable {
         return Optional.ofNullable(evaluation_records);
     }
 
+    public Optional<Bucket> getClassifiedEvaluationRecordsOptional() {
+
+        return Optional.ofNullable(classified_evaluation_records);
+    }
+
     public Optional<Bucket> getUnseenRecordsOptional() {
 
         return Optional.ofNullable(unseen_records);
+    }
+
+    public Optional<Bucket> getClassifiedUnseenRecordsOptional() {
+
+        return Optional.ofNullable(classified_unseen_records);
     }
 
     public Optional<Bucket> getGoldStandardRecordsOptional() {
@@ -203,14 +216,11 @@ public class ClassificationContext implements Serializable {
 
         if (training_records_is_present && evaluation_records_is_present) {
             return training_optional.get().union(evaluation_optional.get());
-        }
-        else if (training_records_is_present) {
+        } else if (training_records_is_present) {
             return training_optional.get();
-        }
-        else if (evaluation_records_is_present) {
+        } else if (evaluation_records_is_present) {
             return evaluation_optional.get();
-        }
-        else {
+        } else {
             return null;
         }
     }
@@ -353,7 +363,8 @@ public class ClassificationContext implements Serializable {
     /**
      * Gets the time it took to train the classifier in this context.
      *
-     * @return the time it took to train the classifier in this context, or {@code null} if the classifier is not trained
+     * @return the time it took to train the classifier in this context, or {@code null} if the
+     * classifier is not trained
      */
     public Duration getTrainingTime() {
 
@@ -373,7 +384,8 @@ public class ClassificationContext implements Serializable {
     /**
      * Gets the time it took to classify the evaluation records by the classifier in this context.
      *
-     * @return the time it took to classify the evaluation records by the classifier in this context, or {@code null} if the classifier is not evaluated
+     * @return the time it took to classify the evaluation records by the classifier in this
+     * context, or {@code null} if the classifier is not evaluated
      */
     public Duration getClassificationTime() {
 
@@ -383,7 +395,8 @@ public class ClassificationContext implements Serializable {
     /**
      * Sets the time it took to classify the evaluation records by the classifier in this context.
      *
-     * @param evaluation_classification_time the time it took to classify the evaluation records by the classifier in this context
+     * @param evaluation_classification_time the time it took to classify the evaluation records by
+     *                                       the classifier in this context
      */
     public void setEvaluationClassificationTime(Duration evaluation_classification_time) {
 

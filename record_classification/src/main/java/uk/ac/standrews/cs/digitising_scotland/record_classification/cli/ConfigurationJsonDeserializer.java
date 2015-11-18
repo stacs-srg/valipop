@@ -18,6 +18,7 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.cli;
 
 import com.fasterxml.jackson.core.*;
 import com.fasterxml.jackson.databind.*;
+
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.serialization.*;
@@ -90,8 +91,12 @@ public class ConfigurationJsonDeserializer extends JsonDeserializer<Configuratio
             field_name = in.getCurrentName();
         }
 
+        //TODO add lazy loading of records.
+        //FIXME serialize matrix and metrics or generate if needed?
         readUnseenRecords(configuration);
         readGoldStandardRecords(configuration);
+        readClassifiedUnseenRecords(configuration);
+        readClassifiedEvaluationRecords(configuration);
         readClassifier(configuration);
 
         return configuration;
@@ -111,6 +116,12 @@ public class ConfigurationJsonDeserializer extends JsonDeserializer<Configuratio
 
         final Bucket unseen_records = loadBucketIfPresent(configuration.getUnseenRecordsPath());
         configuration.setUnseenRecords(unseen_records);
+    }
+
+    private void readClassifiedUnseenRecords(Configuration configuration) throws IOException {
+
+        final Bucket classified_unseen_records = loadBucketIfPresent(configuration.getClassifiedUnseenRecordsPath());
+        configuration.setClassifiedUnseenRecords(classified_unseen_records);
     }
 
     private Bucket loadBucketIfPresent(Path source) throws IOException {
@@ -134,6 +145,12 @@ public class ConfigurationJsonDeserializer extends JsonDeserializer<Configuratio
 
         final Bucket evaluation_records = loadBucketIfPresent(configuration.getEvaluationRecordsPath());
         configuration.setEvaluationRecords(evaluation_records);
+    }
+
+    private void readClassifiedEvaluationRecords(Configuration configuration) throws IOException {
+
+        final Bucket classified_evaluation_records = loadBucketIfPresent(configuration.getClassifiedEvaluationRecordsPath());
+        configuration.setClassifiedEvaluationRecords(classified_evaluation_records);
     }
 
     private void expectCurrent(final JsonParser in, final JsonToken expected) throws JsonParseException {

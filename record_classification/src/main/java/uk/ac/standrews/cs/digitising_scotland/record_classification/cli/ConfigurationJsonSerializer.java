@@ -18,6 +18,7 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.cli;
 
 import com.fasterxml.jackson.core.*;
 import com.fasterxml.jackson.databind.*;
+
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.serialization.*;
@@ -66,6 +67,8 @@ class ConfigurationJsonSerializer extends JsonSerializer<Configuration> {
 
         writeUnseenRecords(configuration);
         writeGoldStandardRecords(configuration);
+        writeClassifiedUnseenRecords(configuration);
+        writeClassifiedEvaluationRecords(configuration);
         writeClassifier(configuration);
 
         out.writeEndObject();
@@ -115,6 +118,16 @@ class ConfigurationJsonSerializer extends JsonSerializer<Configuration> {
     private void writeUnseenRecords(Configuration configuration) throws IOException {
 
         persistBucketIfPresent(configuration.getUnseenRecordsOptional(), configuration.getUnseenRecordsPath());
+    }
+
+    private void writeClassifiedUnseenRecords(Configuration configuration) throws IOException {
+
+        persistBucketIfPresent(configuration.getClassifiedUnseenRecordsOptional(), configuration.getClassifiedUnseenRecordsPath());
+    }
+
+    private void writeClassifiedEvaluationRecords(final Configuration configuration) throws IOException {
+
+        persistBucketIfPresent(configuration.getClassifiedEvaluationRecordsOptional(), configuration.getClassifiedEvaluationRecordsPath());
     }
 
     private void persistBucketIfPresent(final Optional<Bucket> bucket, final Path destination) throws IOException {
