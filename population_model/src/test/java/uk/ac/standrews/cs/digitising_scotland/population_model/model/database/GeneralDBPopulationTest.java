@@ -29,7 +29,7 @@ import uk.ac.standrews.cs.digitising_scotland.util.DBManipulation;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Collection;
+import java.util.*;
 
 /**
  * Created by graham on 07/07/2014.
@@ -39,6 +39,7 @@ public class GeneralDBPopulationTest extends PopulationComparisonTest {
 
     private String database_name;
     private Connection connection;
+    private Random non_deterministic_random;
 
     // The name string gives informative labels in the JUnit output.
     @Parameterized.Parameters(name = "{0}")
@@ -56,6 +57,7 @@ public class GeneralDBPopulationTest extends PopulationComparisonTest {
     @Before
     public void setUp() throws Exception {
 
+        non_deterministic_random = new Random(System.currentTimeMillis());
         initialiseDatabase();
         writeCompactPopulationToDatabase();
 
@@ -64,12 +66,21 @@ public class GeneralDBPopulationTest extends PopulationComparisonTest {
 
     private void initialiseDatabase() throws SQLException {
 
-        database_name = "population" + Math.abs(RANDOM.nextInt());
+        database_name = generateDatabaseName();
         PopulationProperties.setDatabaseName(database_name);
 
         connection = new DBConnector().createConnection();
         DBManipulation.dropDatabase(connection, database_name);
         new DBInitialiser().setupDB();
+    }
+
+    private String generateDatabaseName() {
+
+        // Deterministic database name generation is disabled for now.
+        // This is to avoid project builds clashing. 
+        // The builds are run on the same machine but different build servers (i.e. Jenkins and TeamCity), accessing a single mysql server.
+        // "population" + Math.abs(RANDOM.nextInt());
+        return "population" + Math.abs(non_deterministic_random.nextInt());
     }
 
     private void writeCompactPopulationToDatabase() throws Exception {
@@ -90,7 +101,7 @@ public class GeneralDBPopulationTest extends PopulationComparisonTest {
 
         connection.close();
 
-        ((DBPopulationAdapter)population).close();
+        ((DBPopulationAdapter) population).close();
         population_writer.close();
     }
 }
