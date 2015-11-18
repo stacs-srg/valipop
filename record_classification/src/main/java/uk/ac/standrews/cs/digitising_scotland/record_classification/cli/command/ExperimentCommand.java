@@ -76,6 +76,7 @@ public class ExperimentCommand extends Command {
         final List<Configuration> repetition_configurations = new ArrayList<>();
 
         for (int repetition = FIRST_REPETITION_NUMBER; repetition <= repetitions; repetition++) {
+
             final Path repetition_working_directory = getRepetitionWorkingDirectory(repetition);
             final Path batch_file_relative_to_repetition = repetition_working_directory.relativize(batch_file);
             final String[] args = new String[]{Launcher.OPTION_WORKING_DIRECTORY_SHORT, Command.Builder.quote(repetition_working_directory), NAME, OPTION_COMMANDS_SHORT, Command.Builder.quote(batch_file_relative_to_repetition)};
@@ -89,7 +90,7 @@ public class ExperimentCommand extends Command {
             catch (IOException e) {
                 throw new RuntimeException("failed to load configuration in repetition " + repetition + " from working directory " + repetition_working_directory, e);
             }
-            
+
             repetition_configurations.add(repetition_config);
         }
 

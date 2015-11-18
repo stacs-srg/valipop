@@ -111,6 +111,12 @@ public class LoadGoldStandardRecordsCommand extends LoadUnseenRecordsCommand {
     protected void process(final List<Record> records) {
 
         final Bucket gold_standard_records = new Bucket(records);
+
+        if (load_command.isOverrideExistingEnabled()) {
+            configuration.clearTrainingRecords();
+            configuration.clearEvaluationRecords();
+        }
+
         configuration.addGoldStandardRecords(gold_standard_records, getTrainingRatio());
     }
 

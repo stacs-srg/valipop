@@ -88,18 +88,21 @@ public class EvaluateCommand extends Command {
         final Bucket unique_evaluation_records = configuration.requireEvaluationRecords().makeUniqueDataRecords();
         final Bucket gold_standard_records = configuration.requireGoldStandardRecords();
         final Bucket evaluation_records_stripped = unique_evaluation_records.stripRecordClassifications();
+        final Classifier classifier = configuration.requireClassifier();
 
         final Instant start = Instant.now();
-        final Classifier classifier = configuration.requireClassifier();
         final Bucket classified_evaluation_records = classifier.classify(evaluation_records_stripped);
-        final Duration classification_time = Duration.between(start, Instant.now());
+        final Duration evaluation_classification_time = Duration.between(start, Instant.now());
 
-        configuration.setClassifiedEvaluationRecords(classified_evaluation_records);
-
-        logger.info(() -> String.format("Classified evaluation %d records in %s", evaluation_records_stripped.size(), classification_time));
+        logger.info(() -> String.format("classified %d evaluation records in %s", evaluation_records_stripped.size(), evaluation_classification_time));
 
         final ConfusionMatrix confusion_matrix = new StrictConfusionMatrix(classified_evaluation_records, gold_standard_records, new ConsistentCodingChecker());
         final ClassificationMetrics classification_metrics = new ClassificationMetrics(confusion_matrix);
+
+        configuration.setClassifiedEvaluationRecords(classified_evaluation_records);
+        configuration.setEvaluationClassificationTime(evaluation_classification_time);
+        configuration.setClassificationMetrics(classification_metrics);
+        configuration.setConfusionMatrix(confusion_matrix);
 
         logConfusionMatrix(confusion_matrix);
         logClassificationMetrics(classification_metrics);

@@ -57,7 +57,12 @@ public class LoadUnseenRecordsCommand extends LoadRecordsCommand {
     @Override
     protected void process(final List<Record> records) {
 
+        if (load_command.isOverrideExistingEnabled()) {
+            configuration.clearUnseenRecords();
+        }
+
         configuration.addUnseenRecords(records);
+
     }
 
     @Override
