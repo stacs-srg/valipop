@@ -33,16 +33,11 @@ import java.util.TreeMap;
  */
 public class LifeTable {
 
-    private TreeMap<Integer,LifeTableRow> rows = new TreeMap<Integer,LifeTableRow>();
-    private int year;
-
-    private String line;
     private static final String TAB = "\t";
     private static final String COMMENT_INDICATOR = "%";
-
-    public void addRow(LifeTableRow row) {
-        rows.put(row.getX(), row);
-    }
+    private TreeMap<Integer, LifeTableRow> rows = new TreeMap<Integer, LifeTableRow>();
+    private int year;
+    private String line;
 
     public LifeTable(int year, String tableKey) {
 
@@ -58,7 +53,7 @@ public class LifeTable {
 
                 String[] lC = line.split(TAB);
 
-                if(lC.length == 4) {
+                if (lC.length == 4) {
 
                     addRow(new LifeTableRow(Integer.valueOf(lC[0]), Integer.valueOf(lC[1]), Double.valueOf(lC[2]), Double.valueOf(lC[3])));
 
@@ -77,6 +72,10 @@ public class LifeTable {
         }
     }
 
+    public void addRow(LifeTableRow row) {
+        rows.put(row.getX(), row);
+    }
+
     public int getYear() {
         return year;
     }
@@ -85,20 +84,11 @@ public class LifeTable {
     public boolean toDieByNQX(Person p, int currentDay, Random random) {
 
         LifeTableRow r = rows.get(rows.floorKey(p.getAge(currentDay)));
+        return r.toDieByNQX();
 
-        return r.toDieByNQX(p, currentDay);
-
-//        double nqx = r.getNqx();
-//        double rand = random.nextDouble();
-//
-//        if(rand < nqx) {
-//            return true;
-//        } else {
-//            return false;
-//        }
     }
 
-    public TreeMap<Integer,LifeTableRow> getCloneOfTreeMap() {
+    public TreeMap<Integer, LifeTableRow> getCloneOfTreeMap() {
         return (TreeMap<Integer, LifeTableRow>) rows.clone();
     }
 }

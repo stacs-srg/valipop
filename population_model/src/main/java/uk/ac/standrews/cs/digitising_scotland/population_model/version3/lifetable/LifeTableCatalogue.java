@@ -34,11 +34,10 @@ import java.util.TreeMap;
  */
 public class LifeTableCatalogue {
 
-    private TreeMap<Integer, LifeTable> catalogue = new TreeMap<Integer, LifeTable>();
-
-    private String line;
     private static final String TAB = "\t";
     private static final String COMMENT_INDICATOR = "%";
+    private TreeMap<Integer, LifeTable> catalogue = new TreeMap<Integer, LifeTable>();
+    private String line;
     private int epochYear;
 
     public LifeTableCatalogue(int epochYear, String catalogueKey) {
@@ -55,9 +54,9 @@ public class LifeTableCatalogue {
 
                 String[] lC = line.split(TAB);
 
-                if(lC.length == 2) {
+                if (lC.length == 2) {
 
-                    if(catalogue.size() == 0) {
+                    if (catalogue.size() == 0) {
                         addTable(new LifeTable(this.epochYear, lC[1]));
                     }
 
@@ -88,7 +87,7 @@ public class LifeTableCatalogue {
         return catalogue.get(catalogue.floorKey(DateManipulation.daysToYear(currentDay))).toDieByNQX(p, currentDay, random);
     }
 
-    public TreeMap<Integer,LifeTable> getCloneOfTreeMap() {
+    public TreeMap<Integer, LifeTable> getCloneOfTreeMap() {
         return (TreeMap<Integer, LifeTable>) catalogue.clone();
     }
 }

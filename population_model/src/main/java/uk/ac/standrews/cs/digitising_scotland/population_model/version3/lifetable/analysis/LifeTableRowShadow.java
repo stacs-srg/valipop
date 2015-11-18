@@ -37,7 +37,8 @@ public class LifeTableRowShadow {
     }
 
     public double getCalculatedNMX() {
-        if(peopleInRowAtMidInterval == 0) {
+        if (peopleInRowAtMidInterval == 0) {
+//            System.out.println("Zero in row --- " + row.getX());
             return 0;
         } else {
 //            System.out.println(peopleInRowDieingInInterval + "\t" + peopleInRowAtMidInterval);
@@ -47,7 +48,8 @@ public class LifeTableRowShadow {
 
     public double getResidualSquared() {
         double v = Math.pow((row.getnMx() - getCalculatedNMX()), 2);
-        System.out.println(row.getnMx() + " -m " + getCalculatedNMX() + " = " + (row.getnMx() - getCalculatedNMX()));
+//        System.out.println(row.getX() + "-" + (row.getX()+row.getN()) + " --- sur{" + row.survivers + "/" + row.deathPoint + "}");
+//        System.out.println(row.getnMx() + " -m " + getCalculatedNMX() + " = " + (row.getnMx() - getCalculatedNMX()));
         return v;
     }
 

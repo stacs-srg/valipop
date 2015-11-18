@@ -34,33 +34,16 @@ import java.util.Random;
  */
 public class Population implements ITemporalPopulationInfo {
 
-    public static void main(String[] args) {
-        Population pop = new Population();
-        pop.initLifeTables();
-        pop.generateSeedPopulation(500000);
-        pop.runSimulation();
-        System.out.println(pop.people.size());
-
-        LifeTableCatalogueShadow ltcs = new LifeTableCatalogueShadow(pop.lifeTables, START_YEAR, END_YEAR);
-
-        for (Double d : ltcs.analyse(pop.people)) {
-            System.out.print(d + " ");
-        }
-
-    }
-
-    private List<Person> people = new ArrayList<Person>();
-    private List<Person> deadPeople = new ArrayList<Person>();
-
     private static final int EPOCH_YEAR = 1600;
     private static final int DAYS_PER_YEAR = 365;
     private static final int SEX_RATIO = 100;
-
     private static final int START_YEAR = 1775;
-    private static final int END_YEAR = 1825;
-
-    private int startYearInDays = DateManipulation.dateToDays(START_YEAR,0,0);
-    private int endYearInDays = DateManipulation.dateToDays(END_YEAR,0,0);
+    private static final int END_YEAR = 1800;
+    LifeTableCatalogue lifeTables;
+    private List<Person> people = new ArrayList<Person>();
+    private List<Person> deadPeople = new ArrayList<Person>();
+    private int startYearInDays = DateManipulation.dateToDays(START_YEAR, 0, 0);
+    private int endYearInDays = DateManipulation.dateToDays(END_YEAR, 0, 0);
 
     private int currentDay = startYearInDays;
 
@@ -69,9 +52,37 @@ public class Population implements ITemporalPopulationInfo {
 
     private Random random = new Random();
 
-    LifeTableCatalogue lifeTables;
+    public static void main(String[] args) {
+        Population pop = new Population();
+        pop.initLifeTables();
+        pop.generateSeedPopulation(50000);
+        pop.runSimulation();
+        System.out.println(pop.people.size());
+
+        LifeTableCatalogueShadow ltcs = new LifeTableCatalogueShadow(pop.lifeTables, START_YEAR, END_YEAR);
+
+        double smallest = Double.MAX_VALUE;
+        double largest = Double.MIN_VALUE;
+        double sum = 0;
+        int count = 0;
+
+        for (Double d : ltcs.analyse(pop.people)) {
+            if (d < smallest)
+                smallest = d;
+            if (d > largest)
+                largest = d;
+
+            count++;
+            sum += d;
+
+            System.out.print(d + " ");
+        }
+
+        System.out.println("\nSmallest\tLargest\tMean");
+        System.out.println(smallest + "\t" + largest + "\t" + sum / (double) count);
 
 
+    }
 
     public void runSimulation() {
 
@@ -79,10 +90,10 @@ public class Population implements ITemporalPopulationInfo {
 
         while (currentDay < endYearInDays) {
 
-            for(int i = 0; i < people.size(); i++) {
+            for (int i = 0; i < people.size(); i++) {
                 Person p = people.get(i);
-                if(lifeTables.toDieByNQX(p, currentDay, random)) {
-                    p.die(currentDay);
+                if (lifeTables.toDieByNQX(p, currentDay, random)) {
+                    p.die(currentDay + dayInPeriod.getSample());
                     deadPeople.add(p);
                     people.remove(p);
                     people.add(new Person(currentDay, true));
@@ -104,7 +115,7 @@ public class Population implements ITemporalPopulationInfo {
 
         ArrayList<Person> seedPop = new ArrayList<Person>();
 
-        for(int i = 0; i < seedSize; i++) {
+        for (int i = 0; i < seedSize; i++) {
             if (random.nextBoolean()) {
                 int age = seedAgeForMalesDistribution.getSample();
                 seedPop.add(new Person(currentDay - age, true));

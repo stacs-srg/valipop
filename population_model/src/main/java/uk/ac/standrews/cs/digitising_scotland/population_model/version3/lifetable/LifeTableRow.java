@@ -18,6 +18,7 @@ package uk.ac.standrews.cs.digitising_scotland.population_model.version3.lifetab
 
 import uk.ac.standrews.cs.digitising_scotland.population_model.distributions.general.WeightedDistribution;
 import uk.ac.standrews.cs.digitising_scotland.population_model.version3.Person;
+import uk.ac.standrews.cs.digitising_scotland.util.DateManipulation;
 
 import java.util.Random;
 
@@ -26,34 +27,25 @@ import java.util.Random;
  */
 public class LifeTableRow {
 
+    public int survivers = 0;
+    public int deathPoint;
     // Age
     private int x;
-
     // Span of years this table pertains to
     private int n;
-
     // The rate of death of the group of people aged x in the n following years
     private double nMx;
-
     // The risk (proability) of death of an individual aged x in the next n years
     private double nqx;
-
-    private Random random;
-
-    private int survivers = 0;
-    private int deathPoint;
 
 
     public LifeTableRow(int x, int n, double nMx, double nqx) {
 
-        random = new Random();
         this.x = x;
         this.n = n;
         this.nMx = nMx;
         this.nqx = nqx;
-        deathPoint = (int)(1 / nqx);
-//        survivers = deathPoint;
-
+        deathPoint = (int) (1 / nqx);
     }
 
 
@@ -69,15 +61,12 @@ public class LifeTableRow {
         return nMx;
     }
 
-    public boolean toDieByNQX(Person p, int currentDay) {
-//        System.out.print(p.toString().split("@")[1] + " {a:" + p.getAge(currentDay) + "=" + x + "/" + (x+n) + "} sur{" + survivers + "/" + deathPoint + "} --- ");
-        if(survivers >= deathPoint) {
+    public boolean toDieByNQX() {
+        if (survivers >= deathPoint) {
             survivers = 0;
-//            System.out.println(survivers);
             return true;
         } else {
-            survivers ++;
-//            System.out.println(survivers);
+            survivers++;
             return false;
         }
 
@@ -87,7 +76,4 @@ public class LifeTableRow {
         return nqx;
     }
 
-    public double getNextRand() {
-        return random.nextDouble();
-    }
 }
