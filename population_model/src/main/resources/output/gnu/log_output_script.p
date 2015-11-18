@@ -1,7 +1,7 @@
 # This file is called log_output_script.p
 reset
 set terminal pdf
-set output '~/output47115600526703.pdf'
+set output '~/output67253423510122.pdf'
 set style line 11 lc rgb '#808080' lt 1
 set border 3 back ls 11
 set tics nomirror

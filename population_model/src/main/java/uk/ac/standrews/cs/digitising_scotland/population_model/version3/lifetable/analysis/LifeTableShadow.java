@@ -35,18 +35,17 @@ public class LifeTableShadow {
     private int endDay;
     private int startDay;
 
-    private TreeMap<Integer,LifeTableRowShadow> rows = new TreeMap<Integer,LifeTableRowShadow>();
-
+    private TreeMap<Integer, LifeTableRowShadow> rows = new TreeMap<Integer, LifeTableRowShadow>();
 
 
     public LifeTableShadow(LifeTable lifetable, int endYear, int startYear) {
         table = lifetable;
-        endDay = DateManipulation.dateToDays(endYear,0,0)-1;
-        startDay = DateManipulation.dateToDays(startYear,0,0);
+        endDay = DateManipulation.dateToDays(endYear, 0, 0) - 1;
+        startDay = DateManipulation.dateToDays(startYear, 0, 0);
 
-        TreeMap<Integer,LifeTableRow> tree = table.getCloneOfTreeMap();
+        TreeMap<Integer, LifeTableRow> tree = table.getCloneOfTreeMap();
 
-        for(int r : tree.keySet()) {
+        for (int r : tree.keySet()) {
             rows.put(r, new LifeTableRowShadow(tree.get(r)));
         }
 
@@ -63,16 +62,16 @@ public class LifeTableShadow {
 //        System.out.println(DateManipulation.daysToYear(startDay) + " > " + DateManipulation.daysToYear(endDay));
 
 
-        for(Person p : people) {
+        for (Person p : people) {
             int age = p.getAge(ageingDay);
-            if(age >= 0 && age < p.getAge(p.getDod())) {
+            if (age >= 0 && age < p.getAge(p.getDod())) {
                 rows.get(rows.floorKey(age)).incPeopleInRow();
 //                System.out.println("PIRinc: " + rows.get(rows.floorKey(age)).getPeopleInRow());
             }
 
 //            System.out.println(startDay + " | " + p.getDod() + " | " + endDay);
 
-            if(age >= 0 && startDay <= p.getDod() && p.getDod() < endDay) {
+            if (age >= 0 && startDay <= p.getDod() && p.getDod() < endDay) {
                 rows.get(rows.floorKey(age)).incPeopleDieingInRow();
 //                System.out.println("PDIRinc: " + rows.get(rows.floorKey(age)).getPeopleDieingInRow());
             }
@@ -84,7 +83,7 @@ public class LifeTableShadow {
 
         double sum = 0;
 
-        for(Integer y : rows.keySet()) {
+        for (Integer y : rows.keySet()) {
             sum += rows.get(y).getResidualSquared();
         }
 
@@ -95,7 +94,7 @@ public class LifeTableShadow {
 
         double sum = 0;
 
-        for(Integer y : rows.keySet()) {
+        for (Integer y : rows.keySet()) {
             sum += rows.get(y).getExpectedNMX();
         }
 
@@ -103,7 +102,7 @@ public class LifeTableShadow {
 
         double tss = 0;
 
-        for(Integer y : rows.keySet()) {
+        for (Integer y : rows.keySet()) {
             tss += Math.pow(rows.get(y).getExpectedNMX() - mean, 2);
         }
 
@@ -119,14 +118,12 @@ public class LifeTableShadow {
         double tss = getTSS();
 
 
-
-
-        double rSquared = 1 - (sse/tss);
+        double rSquared = 1 - (sse / tss);
 
 //        System.out.println(sse + " / " + tss + " = " + rSquared);
 
 
-        return  rSquared;
+        return rSquared;
 
     }
 
