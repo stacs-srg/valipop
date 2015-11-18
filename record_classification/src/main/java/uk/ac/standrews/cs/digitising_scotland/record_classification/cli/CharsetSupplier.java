@@ -45,7 +45,6 @@ public enum CharsetSupplier implements Supplier<Charset> {
 
     @Override
     public Charset get() {
-
         return charset;
     }
 }
