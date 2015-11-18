@@ -8,7 +8,9 @@ import uk.ac.standrews.cs.digitising_scotland.util.FilteredIterator;
 import uk.ac.standrews.cs.digitising_scotland.util.Map2;
 import uk.ac.standrews.cs.digitising_scotland.util.MappedIterator;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * Created by graham on 10/07/2014.
@@ -73,6 +75,15 @@ public class SourceRecordIterator {
 
                 Iterator<IPartnership> partnership_iterator = population.getPartnerships().iterator();
 
+                List<IPartnership> l = new ArrayList<IPartnership>();
+
+                while(partnership_iterator.hasNext()) {
+                    IPartnership p = partnership_iterator.next();
+                    if(p.getMarriageDate() != null)
+                        l.add(p);
+                }
+
+
                 Map2<IPartnership, MarriageSourceRecord> person_to_marriage_record_mapper = new Map2<IPartnership, MarriageSourceRecord>() {
                     @Override
                     public MarriageSourceRecord map(IPartnership partnership) {
@@ -80,7 +91,7 @@ public class SourceRecordIterator {
                     }
                 };
 
-                return new MappedIterator<>(partnership_iterator, person_to_marriage_record_mapper);
+                return new MappedIterator<>(l.iterator(), person_to_marriage_record_mapper);
             }
         };
     }
