@@ -6,5 +6,4 @@ then
     echo Setting heap size: $1GB
 fi
 
-cd linkage
-mvn exec:java -q -Dexec.cleanupDaemonThreads=false -Dexec.mainClass="uk.ac.standrews.cs.digitising_scotland.linkage.tools.GenerateEventRecords" -e -Dexec.args="$2"
+mvn exec:java -q -Dexec.cleanupDaemonThreads=false -Dexec.mainClass="uk.ac.standrews.cs.digitising_scotland.linkage.tools.GenerateEventRecordsFromDB" -e -Dexec.args="$2"

@@ -99,15 +99,22 @@ public class BirthSourceRecord extends IndividualSourceRecord {
 			// Attributes associated with individual's parents' marriage.
 			final Date marriage_date = parents_partnership.getMarriageDate();
 
-			long marriage_day = DateManipulation.dateToDay(marriage_date);
-			long marriage_month = DateManipulation.dateToMonth(marriage_date);
-			long marriage_year = DateManipulation.dateToYear(marriage_date);
+			// added into to allow for the record generator to work with the
+			// organic population model which uses the partnership class with
+			// no marriage date to represent a cohabitation and thus no
+			// record should be generated.
+			if(marriage_date != null) {
 
-			setParentsMarriageDay(String.valueOf(marriage_day));
-			setParentsMarriageMonth(String.valueOf(marriage_month));
-			setParentsMarriageYear(String.valueOf(marriage_year));
+				long marriage_day = DateManipulation.dateToDay(marriage_date);
+				long marriage_month = DateManipulation.dateToMonth(marriage_date);
+				long marriage_year = DateManipulation.dateToYear(marriage_date);
 
-			setParentAttributes(person, population, parents_partnership);
+				setParentsMarriageDay(String.valueOf(marriage_day));
+				setParentsMarriageMonth(String.valueOf(marriage_month));
+				setParentsMarriageYear(String.valueOf(marriage_year));
+
+				setParentAttributes(person, population, parents_partnership);
+			}
 		}
 	}
 
