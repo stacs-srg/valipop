@@ -41,10 +41,10 @@ public class LoadGoldStandardRecordsCommand extends LoadUnseenRecordsCommand {
     /** The name of this command. */
     public static final String NAME = "gold_standard";
 
-    /** The short name of the option that specifies the index of the column that contains the classes associated to each row, starting from {@value 0}. **/
+    /** The short name of the option that specifies the index of the column that contains the classes associated to each row, starting from {@code 0}. **/
     public static final String OPTION_CLASS_COLUMN_INDEX_SHORT = "-ci";
 
-    /** The long name of the option that specifies the index of the column that contains the classes associated to each row, starting from {@value 0}. **/
+    /** The long name of the option that specifies the index of the column that contains the classes associated to each row, starting from {@code 0}. **/
     public static final String OPTION_CLASS_COLUMN_INDEX_LONG = "--class_column_index";
 
     /** The default index of the column that contains the classes associated to each row. **/
@@ -79,7 +79,7 @@ public class LoadGoldStandardRecordsCommand extends LoadUnseenRecordsCommand {
         protected List<String> getSubCommandArguments() {
 
             final List<String> arguments = super.getSubCommandArguments();
-            
+
             if (training_ratio != null) {
                 arguments.add(OPTION_TRAINING_RATIO_SHORT);
                 arguments.add(String.valueOf(training_ratio));
@@ -110,9 +110,8 @@ public class LoadGoldStandardRecordsCommand extends LoadUnseenRecordsCommand {
     @Override
     protected void process(final List<Record> records) {
 
-        final Configuration configuration = launcher.getConfiguration();
-        final Configuration.GoldStandard gold_standard = configuration.newGoldStandard(load_command.getResourceName(), training_ratio, load_command.isOverrideExistingEnabled());
-        gold_standard.setBucket(new Bucket(records));
+        final Bucket gold_standard_records = new Bucket(records);
+        configuration.addGoldStandardRecords(gold_standard_records, getTrainingRatio());
     }
 
     @Override
@@ -122,9 +121,9 @@ public class LoadGoldStandardRecordsCommand extends LoadUnseenRecordsCommand {
 
         final Integer id = getId(record);
         final String label = getLabel(record);
-        final String clazz = getClass(record);
+        final String code = getClass(record);
 
-        return new Record(id, label, new Classification(clazz, new TokenList(label), 0.0, null));
+        return new Record(id, label, new Classification(code, new TokenList(label), 0.0, null));
     }
 
     /**

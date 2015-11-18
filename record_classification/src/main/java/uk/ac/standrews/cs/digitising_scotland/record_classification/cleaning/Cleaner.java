@@ -31,7 +31,11 @@ import java.util.function.Function;
  */
 public interface Cleaner extends Function<List<Bucket>, List<Bucket>>, Serializable {
 
-    
+    default Bucket apply(Bucket bucket) {
+
+        return apply(Collections.singletonList(bucket)).get(0);
+    }
+
     default Cleaner andThen(Cleaner after) {
 
         return (List<Bucket> buckets) -> after.apply(apply(buckets));

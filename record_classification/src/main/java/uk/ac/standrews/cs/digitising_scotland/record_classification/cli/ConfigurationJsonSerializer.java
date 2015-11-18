@@ -19,19 +19,23 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.cli;
 import com.fasterxml.jackson.core.*;
 import com.fasterxml.jackson.databind.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.serialization.*;
 
 import java.io.*;
 import java.nio.file.*;
 import java.util.*;
 
+import static uk.ac.standrews.cs.digitising_scotland.record_classification.cli.Configuration.RECORD_CSV_FORMAT;
+import static uk.ac.standrews.cs.digitising_scotland.record_classification.cli.Configuration.RESOURCE_CHARSET;
+import static uk.ac.standrews.cs.digitising_scotland.record_classification.cli.Configuration.persistBucketAsCSV;
+import static uk.ac.standrews.cs.digitising_scotland.record_classification.cli.command.InitCommand.assureDirectoryExists;
+
 /**
  * @author Masih Hajiarab Derkani
  */
 class ConfigurationJsonSerializer extends JsonSerializer<Configuration> {
 
-    private static final ResourceJsonSerializer RESOURCE_JSON_SERIALIZER = new ResourceJsonSerializer();
-    private static final GoldStandardJsonSerializer GOLD_STANDARD_JSON_SERIALIZER = new GoldStandardJsonSerializer();
     protected static final String DEFAULT_CHARSET_SUPPLIER = "default_charset_supplier";
     protected static final String DEFAULT_DELIMITER = "default_delimiter";
     protected static final String SEED = "seed";
@@ -42,9 +46,7 @@ class ConfigurationJsonSerializer extends JsonSerializer<Configuration> {
     protected static final String DEFAULT_TRAINING_RATIO = "default_training_ratio";
     protected static final String DEFAULT_INTERNAL_TRAINING_RATIO = "default_internal_training_ratio";
     protected static final String DEFAULT_LOG_LEVEL_SUPPLIER = "default_log_level_supplier";
-    protected static final String UNSEENS = "unseens";
-    protected static final String GOLD_STANDARDS = "gold_standards";
-    public static final String SERIALIZED_CLASSIFIER_FILE_NAME_PREFIX = "classifier";
+    protected static final String SERIALIZED_CLASSIFIER_FILE_NAME_PREFIX = "classifier";
 
     @Override
     public void serialize(final Configuration configuration, final JsonGenerator out, final SerializerProvider serializers) throws IOException {
@@ -62,40 +64,22 @@ class ConfigurationJsonSerializer extends JsonSerializer<Configuration> {
         out.writeNumberField(DEFAULT_INTERNAL_TRAINING_RATIO, configuration.getDefaultInternalTrainingRatio());
         out.writeObjectField(DEFAULT_LOG_LEVEL_SUPPLIER, configuration.getDefaultLogLevelSupplier());
 
-        writeResourceList(UNSEENS, configuration.getUnseens(), out, serializers);
-        writeGoldStandards(configuration, out, serializers);
-        writeClassifier(configuration, out, serializers);
+        writeUnseenRecords(configuration);
+        writeGoldStandardRecords(configuration);
+        writeClassifier(configuration);
 
         out.writeEndObject();
     }
 
-    private void writeClassifier(final Configuration configuration, final JsonGenerator out, final SerializerProvider serializers) throws IOException {
+    private void writeClassifier(final Configuration configuration) throws IOException {
 
-        final Optional<Classifier> classifier = configuration.getClassifier();
+        final Optional<Classifier> classifier = configuration.getClassifierOptional();
         if (classifier.isPresent()) {
-            final SerializationFormat format = configuration.getClassifierSerializationFormat();
 
+            final SerializationFormat format = configuration.getClassifierSerializationFormat();
             final Path destination = getSerializedClassifierPath(configuration, format);
             Serialization.persist(destination, classifier.get(), format);
         }
-    }
-
-    private void writeGoldStandards(final Configuration configuration, final JsonGenerator out, final SerializerProvider serializers) throws IOException {
-
-        out.writeArrayFieldStart(GOLD_STANDARDS);
-        for (Configuration.GoldStandard gold_standard : configuration.getGoldStandards()) {
-            GOLD_STANDARD_JSON_SERIALIZER.serialize(gold_standard, out, serializers);
-        }
-        out.writeEndArray();
-    }
-
-    private void writeResourceList(String field_name, final List<? extends Configuration.Resource> resources, final JsonGenerator out, final SerializerProvider serializers) throws IOException {
-
-        out.writeArrayFieldStart(field_name);
-        for (Configuration.Resource resource : resources) {
-            RESOURCE_JSON_SERIALIZER.serialize(resource, out, serializers);
-        }
-        out.writeEndArray();
     }
 
     static Path getSerializedClassifierPath(Configuration configuration, SerializationFormat format) {
@@ -112,35 +96,32 @@ class ConfigurationJsonSerializer extends JsonSerializer<Configuration> {
         }
     }
 
-    static class ResourceJsonSerializer extends JsonSerializer<Configuration.Resource> {
+    private void writeGoldStandardRecords(final Configuration configuration) throws IOException {
 
-        public static final String NAME = "name";
-
-        @Override
-        public void serialize(final Configuration.Resource resource, final JsonGenerator out, final SerializerProvider serializers) throws IOException {
-
-            out.writeStartObject();
-            out.writeStringField(NAME, resource.getName());
-            out.writeEndObject();
-
-            resource.persist();
-        }
+        writeTrainingRecords(configuration);
+        writeEvaluationRecords(configuration);
     }
 
-    static class GoldStandardJsonSerializer extends JsonSerializer<Configuration.GoldStandard> {
+    private void writeTrainingRecords(final Configuration configuration) throws IOException {
 
-        public static final String TRAINING_RATIO = "training_ratio";
-
-        @Override
-        public void serialize(final Configuration.GoldStandard gold_standard, final JsonGenerator out, final SerializerProvider serializers) throws IOException {
-
-            out.writeStartObject();
-            out.writeStringField(ResourceJsonSerializer.NAME, gold_standard.getName());
-            out.writeNumberField(TRAINING_RATIO, gold_standard.getTrainingRatio());
-            out.writeEndObject();
-
-            gold_standard.persist();
-        }
+        persistBucketIfPresent(configuration.getTrainingRecordsOptional(), configuration.getTrainingRecordsPath());
     }
 
+    private void writeEvaluationRecords(final Configuration configuration) throws IOException {
+
+        persistBucketIfPresent(configuration.getEvaluationRecordsOptional(), configuration.getEvaluationRecordsPath());
+    }
+
+    private void writeUnseenRecords(Configuration configuration) throws IOException {
+
+        persistBucketIfPresent(configuration.getUnseenRecordsOptional(), configuration.getUnseenRecordsPath());
+    }
+
+    private void persistBucketIfPresent(final Optional<Bucket> bucket, final Path destination) throws IOException {
+
+        if (bucket.isPresent()) {
+            assureDirectoryExists(destination.getParent());
+            persistBucketAsCSV(bucket.get(), destination, RECORD_CSV_FORMAT, RESOURCE_CHARSET);
+        }
+    }
 }

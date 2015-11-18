@@ -18,11 +18,10 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.experiments
 
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.Cleaner;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.command.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.ClassificationProcess;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.CleanGoldStandardStep;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.EvaluateClassifierStep;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.LoadTrainingAndEvaluationRecordsByRatioStep;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.LoadGoldStandardRecordsByRatioStep;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.steps.TrainClassifierStep;
 
 import java.nio.file.Path;
@@ -66,7 +65,7 @@ public class EvaluationExperimentProcess extends ClassificationProcess {
             Path gold_standard_file = gold_standard_files.get(gold_standard_file_number);
 
             double training_ratio = training_ratios.get(gold_standard_file_number);
-            addStep(new LoadTrainingAndEvaluationRecordsByRatioStep(gold_standard_file, training_ratio));
+            addStep(new LoadGoldStandardRecordsByRatioStep(gold_standard_file, training_ratio));
         }
 
         if (cleaners != null) {

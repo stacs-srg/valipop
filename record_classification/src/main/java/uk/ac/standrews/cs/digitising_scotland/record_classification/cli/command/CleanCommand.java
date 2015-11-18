@@ -19,13 +19,11 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.cli.command
 import com.beust.jcommander.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.Configuration.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 
 import java.util.*;
 import java.util.function.*;
 import java.util.logging.*;
-import java.util.stream.*;
 
 import static java.util.logging.Logger.getLogger;
 
@@ -110,34 +108,41 @@ public class CleanCommand extends Command {
 
         final Cleaner cleaner = getCombinedCleaner();
 
-        //TODO think about whether we need this: allow user to choose what to clean by name; i.e. gold standard all or by name, unseen all or by name.
-
         cleanGoldStandardRecords(cleaner, configuration, logger);
         cleanUnseenRecords(cleaner, configuration, logger);
     }
 
     static void cleanUnseenRecords(final Cleaner cleaner, final Configuration configuration, Logger logger) {
 
-        logger.info("cleaning unseen records...");
-        clean(cleaner, configuration.getUnseens(), logger);
+        clean(cleaner, "unseen", configuration::getUnseenRecordsOptional, configuration::setUnseenRecords, logger);
     }
 
     static void cleanGoldStandardRecords(final Cleaner cleaner, final Configuration configuration, Logger logger) {
 
-        logger.info("cleaning gold standard records...");
-        clean(cleaner, configuration.getGoldStandards(), logger);
+        cleanEvaluationRecords(cleaner, configuration, logger);
+        cleanTrainingRecords(cleaner, configuration, logger);
     }
 
-    static void clean(final Cleaner cleaner, final List<? extends Unseen> unclean, Logger logger) {
+    static void cleanEvaluationRecords(final Cleaner cleaner, final Configuration configuration, Logger logger) {
 
-        logger.info(() -> "cleaning " + unclean.stream().map(unseen -> unseen.getName()).reduce((one, another) -> one + ", " + another).orElse("skipped; no records are loaded to clean."));
+        clean(cleaner, "evaluation", configuration::getEvaluationRecordsOptional, configuration::setEvaluationRecords, logger);
+    }
 
-        final List<Bucket> unclean_buckets = unclean.stream().map(Unseen::toBucket).collect(Collectors.toList());
-        final List<Bucket> clean_buckets = cleaner.apply(unclean_buckets);
+    static void cleanTrainingRecords(final Cleaner cleaner, final Configuration configuration, Logger logger) {
 
-        for (int index = 0; index < unclean.size(); index++) {
-            final Unseen resource = unclean.get(index);
-            resource.setBucket(clean_buckets.get(index));
+        clean(cleaner, "training", configuration::getTrainingRecordsOptional, configuration::setTrainingRecords, logger);
+    }
+
+    private static void clean(final Cleaner cleaner, String name, Supplier<Optional<Bucket>> unclean_getter, Consumer<Bucket> cleaned_setter, Logger logger) {
+
+        final Optional<Bucket> unclean = unclean_getter.get();
+        if (unclean.isPresent()) {
+            logger.info(() -> "cleaning " + name + " records...");
+            final Bucket cleaned = cleaner.apply(unclean.get());
+            cleaned_setter.accept(cleaned);
+        }
+        else {
+            logger.info(() -> "skipped cleaning of " + name + "; no records are loaded to clean.");
         }
     }
 
