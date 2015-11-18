@@ -112,7 +112,7 @@ public class Launcher {
         return Configuration.exists(working_directory) ? Configuration.load(working_directory) : new Configuration(working_directory);
     }
 
-    public static void main(String[] args) {
+    public static void main(String... args) {
 
         try {
             final Launcher launcher = new Launcher();
