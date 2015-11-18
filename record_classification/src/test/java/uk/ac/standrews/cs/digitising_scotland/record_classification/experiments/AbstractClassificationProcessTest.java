@@ -79,9 +79,9 @@ public abstract class AbstractClassificationProcessTest extends AbstractMetricsT
     }
 
     @Test
-    public void evaluationRecordsAreUnique() {
+    public void uniqueEvaluationRecordsAreUnique() {
 
-        assertRecordsAreUnique(context.getEvaluationRecords());
+        assertRecordsAreUnique(context.getUniqueEvaluationRecords());
     }
 
     @Test

@@ -26,6 +26,7 @@ import java.util.List;
 
 public class CleanUnseenRecordsStep implements Step {
 
+    private static final long serialVersionUID = -6593089444683420572L;
     private final Cleaner cleaner;
 
     public CleanUnseenRecordsStep(Cleaner cleaner) {
@@ -36,7 +37,7 @@ public class CleanUnseenRecordsStep implements Step {
     @Override
     public void perform(ClassificationContext context) {
 
-        final List<Bucket> cleaned_buckets = cleaner.apply(Arrays.asList(context.getUnseenRecords()));
-        context.setUnseenRecords(cleaned_buckets.get(0));
+        final Bucket cleaned_unseen_records = cleaner.apply(context.getUnseenRecords());
+        context.setUnseenRecords(cleaned_unseen_records);
     }
 }

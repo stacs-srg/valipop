@@ -88,22 +88,15 @@ public class ClassifyCommand extends Command {
 
         final Classifier classifier = configuration.requireClassifier();
 
-        final List<Configuration.Unseen> unseens = configuration.getUnseens();
-        final List<Bucket> unseen_records_list = configuration.requireUnseenRecordsList();
-        final List<Bucket> classified_unseen_records_list = unseen_records_list.stream().map(classifier::classify).collect(Collectors.toList());
+        final Bucket unseen_records = configuration.requireUnseenRecords();
+        final Bucket classified_unseen_records = classifier.classify(unseen_records);
+        configuration.setClassifiedUnseenRecords(classified_unseen_records);
 
-        for (int index = 0; index < unseen_records_list.size(); index++) {
-            final Configuration.Unseen unseen = unseens.get(index);
-            final Bucket classified_unseen_records = classified_unseen_records_list.get(index);
-            unseen.setBucket(classified_unseen_records);
-        }
-
-        persistClassifiedUnseenRecords(classified_unseen_records_list);
+        persistClassifiedUnseenRecords(classified_unseen_records);
     }
 
-    private void persistClassifiedUnseenRecords(final List<Bucket> classified_unseen_records_list) {
+    private void persistClassifiedUnseenRecords(final Bucket classified_unseen_records) {
 
-        final Bucket classified_unseen_records = classified_unseen_records_list.stream().reduce(Bucket::union).orElse(new Bucket());
         final Path destination = resolveRelativeToWorkingDirectory(output_path);
 
         logger.info(() -> String.format("Persisting total of %d classified unseen records into path: %s", classified_unseen_records.size(), destination));
@@ -112,7 +105,7 @@ public class ClassifyCommand extends Command {
         }
         catch (IOException e) {
             logger.log(Level.SEVERE, "failed to persist classified unseen records: " + e.getMessage(), e);
-            throw new IOError(e);
+            throw new RuntimeException(e);
         }
     }
 }

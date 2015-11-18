@@ -19,7 +19,6 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.cli;
 import org.junit.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.dataset.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.experiments.config.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.serialization.*;
 import uk.ac.standrews.cs.util.tools.*;
@@ -57,13 +56,12 @@ public class ConfigurationTest {
         if (!Files.isDirectory(home)) {
             Files.createDirectory(home);
         }
-        final Configuration.Unseen unseen = expected.newUnseen("test", false);
-        final Bucket unseen_records = TestDataSets.CASE_5_EVALUATION.get(0).getBucket();
-        unseen.setBucket(unseen_records);
 
-        final Configuration.GoldStandard gold_standard = expected.newGoldStandard("test", 8.0, false);
+        final Bucket unseen_records = TestDataSets.CASE_5_EVALUATION.get(0).getBucket();
+        expected.setUnseenRecords(unseen_records);
+
         final Bucket gold_standard_records = TestDataSets.CASE_5_TRAINING.get(0).getBucket();
-        gold_standard.setBucket(gold_standard_records);
+        expected.setGoldStandardRecords(gold_standard_records, 0.8);
 
         expected.setClassifierSupplier(ClassifierSupplier.EXACT_MATCH);
         expected.setClassifierSerializationFormat(SerializationFormat.JAVA_SERIALIZATION);
@@ -79,8 +77,10 @@ public class ConfigurationTest {
 
         final Configuration actual = Configuration.load();
 
-        assertEquals(expected.getUnseens(), actual.getUnseens());
-        assertEquals(expected.getGoldStandards(), actual.getGoldStandards());
+        assertEquals(expected.getUnseenRecords(), actual.getUnseenRecords());
+        assertEquals(expected.getGoldStandardRecords(), actual.getGoldStandardRecords());
+        assertEquals(expected.getTrainingRecords(), actual.getTrainingRecords());
+        assertEquals(expected.getEvaluationRecords(), actual.getEvaluationRecords());
         assertEquals(expected.getClassifierSupplier(), actual.getClassifierSupplier());
         assertEquals(expected.getClassifierSerializationFormat(), actual.getClassifierSerializationFormat());
         assertEquals(expected.getDefaultCharsetSupplier(), actual.getDefaultCharsetSupplier());
@@ -90,12 +90,12 @@ public class ConfigurationTest {
         assertEquals(expected.getDefaultCsvFormatSupplier(), actual.getDefaultCsvFormatSupplier());
         assertEquals(expected.getDefaultTrainingRatio(), actual.getDefaultTrainingRatio(), Validators.DELTA);
         assertEquals(expected.getDefaultInternalTrainingRatio(), actual.getDefaultInternalTrainingRatio(), Validators.DELTA);
-        assertEquals(expected.getClassifier(), actual.getClassifier());
+        assertEquals(expected.getClassifierOptional(), actual.getClassifierOptional());
         assertEquals(expected.getLogLevel(), actual.getLogLevel());
-        assertEquals(expected.getTrainingRecords(), actual.getTrainingRecords());
-        assertEquals(expected.getEvaluationRecords(), actual.getEvaluationRecords());
-        assertEquals(expected.getUnseenRecords(), actual.getUnseenRecords());
-        assertEquals(expected.getUnseenRecords(), actual.getUnseenRecords());
+        assertEquals(expected.getTrainingRecordsOptional(), actual.getTrainingRecordsOptional());
+        assertEquals(expected.getEvaluationRecordsOptional(), actual.getEvaluationRecordsOptional());
+        assertEquals(expected.getUnseenRecordsOptional(), actual.getUnseenRecordsOptional());
+        assertEquals(expected.getUnseenRecordsOptional(), actual.getUnseenRecordsOptional());
     }
 
     @Test

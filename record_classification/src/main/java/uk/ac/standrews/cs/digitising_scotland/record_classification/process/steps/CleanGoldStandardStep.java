@@ -26,6 +26,7 @@ import java.util.List;
 
 public class CleanGoldStandardStep implements Step {
 
+    private static final long serialVersionUID = -306461499132936070L;
     private final Cleaner cleaner;
 
     public CleanGoldStandardStep(Cleaner cleaner) {

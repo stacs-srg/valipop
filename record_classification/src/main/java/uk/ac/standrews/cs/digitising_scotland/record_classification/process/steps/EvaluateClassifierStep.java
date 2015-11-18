@@ -35,7 +35,8 @@ import static uk.ac.standrews.cs.util.tools.Logging.output;
 
 /**
  * Evaluates a classifier in the context of a classification process.
- * Stores the result of evaluation by setting the {@link ClassificationContext#getConfusionMatrix() confusion matrix} and {@link ClassificationContext#getClassificationMetrics() classification metrix} of the context.
+ * Stores the result of evaluation by setting the {@link ClassificationContext#getConfusionMatrix() confusion matrix}
+ * and {@link ClassificationContext#getClassificationMetrics() classification metrix} of the context.
  *
  * @author Graham Kirby
  * @author Masih Hajiarab Derkani
@@ -51,11 +52,11 @@ public class EvaluateClassifierStep implements Step {
     public void perform(final ClassificationContext context) {
 
         final Bucket training_records = context.getTrainingRecords();
-        final Bucket evaluation_records = context.getEvaluationRecords();
-        final Bucket gold_standard_records = training_records.union(evaluation_records);
+        final Bucket unique_evaluation_records = context.getUniqueEvaluationRecords();
+        final Bucket gold_standard_records = training_records.union(unique_evaluation_records);
 
         final Instant start = Instant.now();
-        final Bucket classified_records = context.getClassifier().classify(evaluation_records.stripRecordClassifications());
+        final Bucket classified_records = context.getClassifier().classify(unique_evaluation_records.stripRecordClassifications());
         context.setClassificationTime(Duration.between(start, Instant.now()));
 
         final StrictConfusionMatrix confusion_matrix = new StrictConfusionMatrix(classified_records, gold_standard_records, new ConsistentCodingChecker());
@@ -65,7 +66,7 @@ public class EvaluateClassifierStep implements Step {
         context.setClassificationMetrics(classification_metrics);
 
         final Set<String> unique_training_strings = extractRecordsData(context.getTrainingRecords().makeUniqueDataRecords());
-        final Set<String> unique_evaluation_strings = extractRecordsData(evaluation_records);
+        final Set<String> unique_evaluation_strings = extractRecordsData(unique_evaluation_records);
 
         final int training_records_size = context.getTrainingRecords().size();
         final int number_of_evaluation_strings_not_in_training_set = countEvaluationStringsNotInTrainingSet(unique_training_strings, unique_evaluation_strings);
@@ -73,9 +74,9 @@ public class EvaluateClassifierStep implements Step {
         output(LONG_SUMMARY, "\n----------------------------------\n");
         output(LONG_SUMMARY, "classifier: " + context.getClassifier().getName());
         output(LONG_SUMMARY, "");
-        output(LONG_SUMMARY, "total records              : %s%n", Formatting.format(training_records_size + evaluation_records.size()));
+        output(LONG_SUMMARY, "total records              : %s%n", Formatting.format(training_records_size + unique_evaluation_records.size()));
         output(LONG_SUMMARY, "records used for training  : %s (%s unique)%n", Formatting.format(training_records_size), Formatting.format(unique_training_strings.size()));
-        output(LONG_SUMMARY, "records used for evaluation: %s (%s unique, %s not in training set)%n", Formatting.format(context.getNumberOfEvaluationRecordsIncludingDuplicates()), Formatting.format(evaluation_records.size()), Formatting.format(number_of_evaluation_strings_not_in_training_set));
+        output(LONG_SUMMARY, "records used for evaluation: %s (%s unique, %s not in training set)%n", Formatting.format(context.getEvaluationRecords().size()), Formatting.format(unique_evaluation_records.size()), Formatting.format(number_of_evaluation_strings_not_in_training_set));
         output(LONG_SUMMARY, "");
 
         context.getClassificationMetrics().printMetrics();

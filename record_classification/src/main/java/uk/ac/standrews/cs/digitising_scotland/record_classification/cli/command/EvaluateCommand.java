@@ -85,25 +85,27 @@ public class EvaluateCommand extends Command {
     @Override
     public void run() {
 
-        final Bucket evaluation_records = configuration.requireEvaluationRecords();
+        final Bucket unique_evaluation_records = configuration.requireEvaluationRecords().makeUniqueDataRecords();
         final Bucket gold_standard_records = configuration.requireGoldStandardRecords();
-        final Bucket evaluation_records_stripped = evaluation_records.stripRecordClassifications();
+        final Bucket evaluation_records_stripped = unique_evaluation_records.stripRecordClassifications();
 
         final Instant start = Instant.now();
         final Classifier classifier = configuration.requireClassifier();
-        final Bucket classified_records = classifier.classify(evaluation_records_stripped);
+        final Bucket classified_evaluation_records = classifier.classify(evaluation_records_stripped);
         final Duration classification_time = Duration.between(start, Instant.now());
+
+        configuration.setClassifiedEvaluationRecords(classified_evaluation_records);
 
         logger.info(() -> String.format("Classified evaluation %d records in %s", evaluation_records_stripped.size(), classification_time));
 
-        final ConfusionMatrix confusion_matrix = new StrictConfusionMatrix(classified_records, gold_standard_records, new ConsistentCodingChecker());
+        final ConfusionMatrix confusion_matrix = new StrictConfusionMatrix(classified_evaluation_records, gold_standard_records, new ConsistentCodingChecker());
         final ClassificationMetrics classification_metrics = new ClassificationMetrics(confusion_matrix);
 
         logConfusionMatrix(confusion_matrix);
         logClassificationMetrics(classification_metrics);
 
         if (isOutputClassifiedRecordsPathSet()) {
-            persistClassifiedEvaluationRecords(classified_records);
+            persistClassifiedEvaluationRecords(classified_evaluation_records);
         }
 
         //TODO export matrix as json?
@@ -123,10 +125,9 @@ public class EvaluateCommand extends Command {
         }
         catch (IOException e) {
             logger.log(Level.SEVERE, "Failure while exporting classified evaluation records: " + e.getMessage(), e);
-            throw new IOError(e);
+            throw new RuntimeException(e);
         }
     }
-
 
     private void logClassificationMetrics(final ClassificationMetrics classification_metrics) {
 

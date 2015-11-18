@@ -33,7 +33,7 @@ import java.nio.file.Path;
  * @author Graham Kirby
  * @author Masih Hajiarab Derkani
  */
-public class LoadTrainingAndEvaluationRecordsByRatioStep implements Step {
+public class LoadGoldStandardRecordsByRatioStep implements Step {
 
     private static final long serialVersionUID = 6192497012225048336L;
 
@@ -47,12 +47,12 @@ public class LoadTrainingAndEvaluationRecordsByRatioStep implements Step {
      *
      * @param training_ratio the proportion of gold standard records to be used for training
      */
-    public LoadTrainingAndEvaluationRecordsByRatioStep(Path path, double training_ratio) {
+    public LoadGoldStandardRecordsByRatioStep(Path path, double training_ratio) {
 
         this(path, training_ratio, LoadStep.DEFAULT_CHARSET_SUPPLIER.get(), LoadStep.DEFAULT_DELIMITER);
     }
 
-    public LoadTrainingAndEvaluationRecordsByRatioStep(Path path, double training_ratio, Charset charset, String delimiter) {
+    public LoadGoldStandardRecordsByRatioStep(Path path, double training_ratio, Charset charset, String delimiter) {
 
         validateRatio(training_ratio);
 
@@ -65,32 +65,22 @@ public class LoadTrainingAndEvaluationRecordsByRatioStep implements Step {
     @Override
     public void perform(final ClassificationContext context) {
 
-        final Bucket gold_standard_records;
+        final Bucket gold_standard_records = loadRecords();
+        context.addGoldStandardRecords(gold_standard_records, training_ratio);
+    }
 
+    protected Bucket loadRecords() {
+
+        final Bucket gold_standard_records;
         try (final BufferedReader reader = Files.newBufferedReader(path, charset)) {
 
             gold_standard_records = new Bucket(reader, delimiter.charAt(0));
 
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             throw new RuntimeException(e);
         }
-
-        if (training_ratio < Validators.DELTA) {
-
-            context.addEvaluationRecords(gold_standard_records);
-
-        } else if (training_ratio > 1.0 - Validators.DELTA) {
-
-            context.addTrainingRecords(gold_standard_records);
-
-        } else {
-
-            Bucket new_training_records = gold_standard_records.randomSubset(context.getRandom(), training_ratio);
-            context.addTrainingRecords(new_training_records);
-
-            Bucket difference = gold_standard_records.difference(new_training_records);
-            context.addEvaluationRecords(difference);
-        }
+        return gold_standard_records;
     }
 
     private void validateRatio(final double ratio) {

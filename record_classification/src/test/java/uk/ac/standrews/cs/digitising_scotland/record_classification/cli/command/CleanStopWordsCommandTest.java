@@ -96,7 +96,7 @@ public class CleanStopWordsCommandTest extends CommandTest {
 
     private void assertExpectedGoldStandard(final Configuration configuration) throws IOException {
 
-        final Bucket actual = configuration.getGoldStandardRecords().get();
+        final Bucket actual = configuration.getGoldStandardRecords();
         final Bucket expected = expected_gold_standards.stream().map(TestDataSet::getBucket).reduce(Bucket::union).get();
 
         assertExpected(actual, expected);
@@ -104,7 +104,7 @@ public class CleanStopWordsCommandTest extends CommandTest {
 
     private void assertExpectedUnseen(final Configuration configuration) {
 
-        final Bucket actual = configuration.getUnseenRecords().get();
+        final Bucket actual = configuration.getUnseenRecordsOptional().get();
         final Bucket expected = expected_unseens.stream().map(TestDataSet::getBucket).reduce(Bucket::union).get();
 
         assertExpected(actual, expected);

@@ -299,7 +299,7 @@ public class Bucket implements Iterable<Record>, Serializable {
         }
 
         final Bucket unique_bucket = new Bucket();
-        unique_bucket.records.addAll(unique_data_records.values());
+        unique_bucket.add(unique_data_records.values());
 
         return unique_bucket;
     }

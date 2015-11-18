@@ -19,16 +19,14 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.cli;
 import com.fasterxml.jackson.core.*;
 import com.fasterxml.jackson.databind.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.serialization.*;
 
 import java.io.*;
 import java.nio.file.*;
 import java.util.*;
-import java.util.function.*;
 
 import static uk.ac.standrews.cs.digitising_scotland.record_classification.cli.ConfigurationJsonSerializer.*;
-import static uk.ac.standrews.cs.digitising_scotland.record_classification.cli.ConfigurationJsonSerializer.GoldStandardJsonSerializer.*;
-import static uk.ac.standrews.cs.digitising_scotland.record_classification.cli.ConfigurationJsonSerializer.ResourceJsonSerializer.*;
 
 /**
  * @author Masih Hajirab Derkani
@@ -85,12 +83,6 @@ public class ConfigurationJsonDeserializer extends JsonDeserializer<Configuratio
                     expectNext(in, JsonToken.VALUE_STRING);
                     configuration.setDefaultLogLevelSupplier(in.readValueAs(LogLevelSupplier.class));
                     break;
-                case UNSEENS:
-                    populateResources(in, name -> configuration.newUnseen(name, false));
-                    break;
-                case GOLD_STANDARDS:
-                    populateGoldStandards(in, configuration);
-                    break;
                 default:
                     throw new JsonParseException("unknown configuration parameter", in.getCurrentLocation());
             }
@@ -98,37 +90,50 @@ public class ConfigurationJsonDeserializer extends JsonDeserializer<Configuratio
             field_name = in.getCurrentName();
         }
 
-        deserializeClassifier(configuration);
+        readUnseenRecords(configuration);
+        readGoldStandardRecords(configuration);
+        readClassifier(configuration);
+
         return configuration;
     }
 
-    private void deserializeClassifier(final Configuration configuration) throws IOException {
+    private void readClassifier(final Configuration configuration) throws IOException {
 
         final SerializationFormat format = configuration.getClassifierSerializationFormat();
         final Path source = ConfigurationJsonSerializer.getSerializedClassifierPath(configuration, format);
-        
+
         if (Files.isRegularFile(source)) {
             configuration.setClassifier(Serialization.load(source, Classifier.class, format));
         }
     }
 
-    private void populateResources(JsonParser in, final Consumer<String> handler) throws IOException {
+    private void readUnseenRecords(Configuration configuration) throws IOException {
 
-        expectNext(in, JsonToken.START_ARRAY);
+        final Bucket unseen_records = loadBucketIfPresent(configuration.getUnseenRecordsPath());
+        configuration.setUnseenRecords(unseen_records);
+    }
 
-        JsonToken token = in.nextToken();
-        while (token != JsonToken.END_ARRAY) {
-            expectCurrent(in, JsonToken.START_OBJECT);
-            expectNextFieldName(in, NAME);
+    private Bucket loadBucketIfPresent(Path source) throws IOException {
 
-            expectNext(in, JsonToken.VALUE_STRING);
-            final String name = in.getValueAsString();
+        return Files.isRegularFile(source) ? Configuration.loadBucket(source) : null;
+    }
 
-            handler.accept(name);
+    private void readGoldStandardRecords(Configuration configuration) throws IOException {
 
-            expectNext(in, JsonToken.END_OBJECT);
-            token = in.nextToken();
-        }
+        readTrainingRecords(configuration);
+        readEvaluationRecords(configuration);
+    }
+
+    private void readTrainingRecords(Configuration configuration) throws IOException {
+
+        final Bucket training_records = loadBucketIfPresent(configuration.getTrainingRecordsPath());
+        configuration.setTrainingRecords(training_records);
+    }
+
+    private void readEvaluationRecords(Configuration configuration) throws IOException {
+
+        final Bucket evaluation_records = loadBucketIfPresent(configuration.getEvaluationRecordsPath());
+        configuration.setEvaluationRecords(evaluation_records);
     }
 
     private void expectCurrent(final JsonParser in, final JsonToken expected) throws JsonParseException {
@@ -137,35 +142,10 @@ public class ConfigurationJsonDeserializer extends JsonDeserializer<Configuratio
         expectToken(in, actual, expected);
     }
 
-    private void populateGoldStandards(JsonParser in, Configuration configuration) throws IOException {
+    private void expectToken(final JsonParser in, final JsonToken actual, final JsonToken... expected) throws JsonParseException {
 
-        expectNext(in, JsonToken.START_ARRAY);
-
-        JsonToken token = in.nextToken();
-        while (token != JsonToken.END_ARRAY) {
-            expectCurrent(in, JsonToken.START_OBJECT);
-
-            expectNextFieldName(in, NAME);
-            expectNext(in, JsonToken.VALUE_STRING);
-            final String name = in.getValueAsString();
-
-            expectNextFieldName(in, TRAINING_RATIO);
-            expectNext(in, JsonToken.VALUE_NUMBER_FLOAT);
-            final double training_ratio = in.getValueAsDouble();
-
-            configuration.newGoldStandard(name, training_ratio, false);
-
-            expectNext(in, JsonToken.END_OBJECT);
-            token = in.nextToken();
-        }
-    }
-
-    private void expectNextFieldName(final JsonParser in, final String expected) throws IOException {
-
-        expectNext(in, JsonToken.FIELD_NAME);
-        final String actual = in.getCurrentName();
-        if (!expected.equals(actual)) {
-            throw new JsonParseException(String.format("expected field name called %s, found %s instead", expected, actual), in.getCurrentLocation());
+        if (!Arrays.stream(expected).filter(actual::equals).findAny().isPresent()) {
+            throw new JsonParseException(String.format("expected %s, found %s", Arrays.toString(expected), actual), in.getCurrentLocation());
         }
     }
 
@@ -173,12 +153,5 @@ public class ConfigurationJsonDeserializer extends JsonDeserializer<Configuratio
 
         final JsonToken actual = in.nextToken();
         expectToken(in, actual, expected);
-    }
-
-    private void expectToken(final JsonParser in, final JsonToken actual, final JsonToken... expected) throws JsonParseException {
-
-        if (!Arrays.stream(expected).filter(actual::equals).findAny().isPresent()) {
-            throw new JsonParseException(String.format("expected %s, found %s", Arrays.toString(expected), actual), in.getCurrentLocation());
-        }
     }
 }

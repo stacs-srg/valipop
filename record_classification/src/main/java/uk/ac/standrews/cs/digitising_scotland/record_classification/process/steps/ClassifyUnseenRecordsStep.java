@@ -39,7 +39,6 @@ public class ClassifyUnseenRecordsStep implements Step {
         final Classifier classifier = context.getClassifier();
         final Bucket classified_unseen_records = classifier.classify(context.getUnseenRecords());
 
-        context.clearClassifiedUnseenRecords();
-        context.addClassifiedUnseenRecords(classified_unseen_records);
+        context.setClassifiedUnseenRecords(classified_unseen_records);
     }
 }
