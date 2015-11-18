@@ -89,6 +89,8 @@ public class TrainCommand extends Command {
         classifier.trainAndEvaluate(training_records, internal_training_ratio, configuration.getRandom());
         final Duration training_time = Duration.between(start, Instant.now());
 
+        configuration.setTrainingTime(training_time);
+        
         logger.info(() -> String.format("trained the classifier on %d records in %s", training_records.size(), training_time));
     }
 }

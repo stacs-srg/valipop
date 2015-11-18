@@ -47,12 +47,6 @@ public class LoadCommand extends Command {
     /** The long name of the option that specifies the path to the resource file to be load. **/
     public static final String OPTION_SOURCE_LONG = "--from";
 
-    /** The short name of the option that specifies a name for the resource file to be load. **/
-    public static final String OPTION_NAME_SHORT = "-n";
-
-    /** The long name of the option that specifies a name for the resource file to be load. **/
-    public static final String OPTION_NAME_LONG = "--named";
-
     /** The short name of the option that specifies whether to override an existing resource with the same name. **/
     public static final String OPTION_FORCE_SHORT = "-o";
 
@@ -65,9 +59,6 @@ public class LoadCommand extends Command {
     @Parameter(required = true, names = {OPTION_SOURCE_SHORT, OPTION_SOURCE_LONG}, descriptionKey = "command.load.source.description", converter = PathConverter.class)
     private Path source;
 
-    @Parameter(names = {OPTION_NAME_SHORT, OPTION_NAME_LONG}, descriptionKey = "command.load.name.description")
-    private String name;
-
     @Parameter(names = {OPTION_FORCE_SHORT, OPTION_FORCE_LONG}, descriptionKey = "command.load.force.description")
     private boolean override_existing = false;
 
@@ -77,7 +68,6 @@ public class LoadCommand extends Command {
 
         private CharsetSupplier charset;
         private Path source;
-        private String name;
         private boolean override_existing;
 
         public Builder charset(CharsetSupplier charset) {
@@ -89,12 +79,6 @@ public class LoadCommand extends Command {
         public Builder from(Path source) {
 
             this.source = source;
-            return this;
-        }
-
-        public Builder named(String name) {
-
-            this.name = name;
             return this;
         }
 
@@ -113,10 +97,6 @@ public class LoadCommand extends Command {
             arguments.add(OPTION_SOURCE_SHORT);
             arguments.add(source.toString());
 
-            if (name != null) {
-                arguments.add(OPTION_NAME_SHORT);
-                arguments.add(name);
-            }
 
             if (charset != null) {
                 arguments.add(OPTION_CHARSET_SHORT);
@@ -159,18 +139,6 @@ public class LoadCommand extends Command {
     public Charset getCharset() {
 
         return charset_supplier.get();
-    }
-
-    /**
-     * Gets the name that is associated to the resource to be loaded.
-     * The name offers a human-friendly way to refer to a specific loaded resource.
-     * If no name is specified via {@value #OPTION_NAME_SHORT} or {@value #OPTION_NAME_LONG} options, the resource file name is used.
-     *
-     * @return the name that is associated to the loaded resource
-     */
-    public String getResourceName() {
-
-        return name == null ? getSource().getFileName().toString() : name;
     }
 
     /**

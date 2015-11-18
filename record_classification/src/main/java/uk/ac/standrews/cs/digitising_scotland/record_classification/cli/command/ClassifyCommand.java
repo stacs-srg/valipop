@@ -24,9 +24,9 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 
 import java.io.*;
 import java.nio.file.Path;
+import java.time.*;
 import java.util.*;
 import java.util.logging.*;
-import java.util.stream.*;
 
 import static java.util.logging.Logger.getLogger;
 import static uk.ac.standrews.cs.digitising_scotland.record_classification.cli.Configuration.persistBucketAsCSV;
@@ -89,8 +89,12 @@ public class ClassifyCommand extends Command {
         final Classifier classifier = configuration.requireClassifier();
 
         final Bucket unseen_records = configuration.requireUnseenRecords();
+        final Instant start = Instant.now();
         final Bucket classified_unseen_records = classifier.classify(unseen_records);
+        final Duration classification_time = Duration.between(start, Instant.now());
+
         configuration.setClassifiedUnseenRecords(classified_unseen_records);
+        logger.info(() -> String.format("classified %d records in %s", classified_unseen_records.size(), classification_time));
 
         persistClassifiedUnseenRecords(classified_unseen_records);
     }

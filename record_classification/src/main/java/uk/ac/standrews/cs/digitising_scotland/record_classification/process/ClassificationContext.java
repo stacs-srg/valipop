@@ -45,7 +45,7 @@ public class ClassificationContext implements Serializable {
     private ClassificationMetrics classification_metrics;
 
     private Duration training_time;
-    private Duration classification_time;
+    private Duration evaluation_classification_time;
 
     public ClassificationContext() {
 
@@ -377,7 +377,7 @@ public class ClassificationContext implements Serializable {
      */
     public Duration getClassificationTime() {
 
-        return classification_time;
+        return evaluation_classification_time;
     }
 
     /**
@@ -385,8 +385,8 @@ public class ClassificationContext implements Serializable {
      *
      * @param evaluation_classification_time the time it took to classify the evaluation records by the classifier in this context
      */
-    public void setClassificationTime(Duration evaluation_classification_time) {
+    public void setEvaluationClassificationTime(Duration evaluation_classification_time) {
 
-        this.classification_time = evaluation_classification_time;
+        this.evaluation_classification_time = evaluation_classification_time;
     }
 }
