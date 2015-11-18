@@ -21,7 +21,9 @@ import com.beust.jcommander.converters.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.Validators.*;
 
+import java.io.*;
 import java.nio.file.*;
+import java.util.*;
 
 import static uk.ac.standrews.cs.digitising_scotland.record_classification.cli.Launcher.OPTION_COMMANDS_LONG;
 import static uk.ac.standrews.cs.digitising_scotland.record_classification.cli.Launcher.OPTION_COMMANDS_SHORT;
@@ -71,14 +73,24 @@ public class ExperimentCommand extends Command {
 
         final Path batch_file = getCommandsRelativeToWorkingDirectory();
 
+        final List<Configuration> repetition_configurations = new ArrayList<>();
+
         for (int repetition = FIRST_REPETITION_NUMBER; repetition <= repetitions; repetition++) {
             final Path repetition_working_directory = getRepetitionWorkingDirectory(repetition);
             final Path batch_file_relative_to_repetition = repetition_working_directory.relativize(batch_file);
-            final String[] args = new String[]{
-                            Launcher.OPTION_WORKING_DIRECTORY_SHORT, Command.Builder.quote(repetition_working_directory), 
-                            NAME, OPTION_COMMANDS_SHORT, Command.Builder.quote(batch_file_relative_to_repetition)};
+            final String[] args = new String[]{Launcher.OPTION_WORKING_DIRECTORY_SHORT, Command.Builder.quote(repetition_working_directory), NAME, OPTION_COMMANDS_SHORT, Command.Builder.quote(batch_file_relative_to_repetition)};
 
             Launcher.main(args);
+
+            final Configuration repetition_config;
+            try {
+                repetition_config = Configuration.load(repetition_working_directory);
+            }
+            catch (IOException e) {
+                throw new RuntimeException("failed to load configuration in repetition " + repetition + " from working directory " + repetition_working_directory, e);
+            }
+            
+            repetition_configurations.add(repetition_config);
         }
 
         //TODO aggregate results.
