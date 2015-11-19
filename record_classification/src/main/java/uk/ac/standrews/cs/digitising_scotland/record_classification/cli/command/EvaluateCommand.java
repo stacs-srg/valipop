@@ -23,12 +23,15 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.*
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
+import uk.ac.standrews.cs.util.tables.*;
 
 import java.io.*;
 import java.nio.file.*;
 import java.time.*;
 import java.util.*;
+import java.util.function.*;
 import java.util.logging.*;
+import java.util.stream.*;
 
 import static java.util.logging.Logger.*;
 import static uk.ac.standrews.cs.digitising_scotland.record_classification.cli.Configuration.RECORD_CSV_FORMAT;
@@ -104,8 +107,8 @@ public class EvaluateCommand extends Command {
         configuration.setConfusionMatrix(confusion_matrix);
         configuration.setClassificationMetrics(classification_metrics);
 
-        logConfusionMatrix(confusion_matrix);
-        logClassificationMetrics(classification_metrics);
+        logConfusionMatrix(logger, Collections.singletonList(confusion_matrix));
+        logClassificationMetrics(logger, Collections.singletonList(classification_metrics));
 
         if (isOutputClassifiedRecordsPathSet()) {
             persistClassifiedEvaluationRecords(classified_evaluation_records);
@@ -132,25 +135,46 @@ public class EvaluateCommand extends Command {
         }
     }
 
-    private void logClassificationMetrics(final ClassificationMetrics classification_metrics) {
+    static void logClassificationMetrics(Logger logger, final List<ClassificationMetrics> classification_metrics) {
 
-        logger.info(() -> String.format("%-30s %.2f","Macro Average Accuracy:", classification_metrics.getMacroAverageAccuracy()));
-        logger.info(() -> String.format("%-30s %.2f","Macro Average F1:", classification_metrics.getMacroAverageF1()));
-        logger.info(() -> String.format("%-30s %.2f","Macro Average Precision:", classification_metrics.getMacroAveragePrecision()));
-        logger.info(() -> String.format("%-30s %.2f","Macro Average Recall:", classification_metrics.getMacroAverageRecall()));
-        logger.info(() -> String.format("%-30s %.2f","Micro Average Accuracy:", classification_metrics.getMicroAverageAccuracy()));
-        logger.info(() -> String.format("%-30s %.2f","Micro Average F1:", classification_metrics.getMicroAverageF1()));
-        logger.info(() -> String.format("%-30s %.2f","Micro Average Precision:", classification_metrics.getMicroAveragePrecision()));
-        logger.info(() -> String.format("%-30s %.2f","Micro Average Recall:", classification_metrics.getMicroAverageRecall()));
+        logger.info(() -> String.format("%-30s %s", "Macro Average Accuracy:", getFormattedMeanAndConfidenceInterval(classification_metrics, ClassificationMetrics::getMacroAverageAccuracy)));
+        logger.info(() -> String.format("%-30s %s", "Macro Average F1:", getFormattedMeanAndConfidenceInterval(classification_metrics, ClassificationMetrics::getMacroAverageF1)));
+        logger.info(() -> String.format("%-30s %s", "Macro Average Precision:", getFormattedMeanAndConfidenceInterval(classification_metrics, ClassificationMetrics::getMacroAveragePrecision)));
+        logger.info(() -> String.format("%-30s %s", "Macro Average Recall:", getFormattedMeanAndConfidenceInterval(classification_metrics, ClassificationMetrics::getMacroAverageRecall)));
+        logger.info(() -> String.format("%-30s %s", "Micro Average Accuracy:", getFormattedMeanAndConfidenceInterval(classification_metrics, ClassificationMetrics::getMicroAverageAccuracy)));
+        logger.info(() -> String.format("%-30s %s", "Micro Average F1:", getFormattedMeanAndConfidenceInterval(classification_metrics, ClassificationMetrics::getMicroAverageF1)));
+        logger.info(() -> String.format("%-30s %s", "Micro Average Precision:", getFormattedMeanAndConfidenceInterval(classification_metrics, ClassificationMetrics::getMicroAveragePrecision)));
+        logger.info(() -> String.format("%-30s %s", "Micro Average Recall:", getFormattedMeanAndConfidenceInterval(classification_metrics, ClassificationMetrics::getMicroAverageRecall)));
     }
 
-    private void logConfusionMatrix(final ConfusionMatrix confusion_matrix) {
+    static void logConfusionMatrix(Logger logger, final List<ConfusionMatrix> confusion_matrix) {
 
-        logger.info(() -> String.format("%-30s %d","Number Of Classes:", confusion_matrix.getNumberOfClasses()));
-        logger.info(() -> String.format("%-30s %d","Number Of Classifications:", confusion_matrix.getNumberOfClassifications()));
-        logger.info(() -> String.format("%-30s %d","Number Of True Positives:", confusion_matrix.getNumberOfTruePositives()));
-        logger.info(() -> String.format("%-30s %d","Number Of True Negatives:", confusion_matrix.getNumberOfTrueNegatives()));
-        logger.info(() -> String.format("%-30s %d","Number Of False Negatives:", confusion_matrix.getNumberOfFalseNegatives()));
-        logger.info(() -> String.format("%-30s %d","Number Of False Positives:", confusion_matrix.getNumberOfFalsePositives()));
+        logger.info(() -> String.format("%-30s %d", "Number Of Classes:", getFormattedMeanAndConfidenceInterval(confusion_matrix, ConfusionMatrix::getNumberOfClasses)));
+        logger.info(() -> String.format("%-30s %d", "Number Of Classifications:", getFormattedMeanAndConfidenceInterval(confusion_matrix, ConfusionMatrix::getNumberOfClassifications)));
+        logger.info(() -> String.format("%-30s %d", "Number Of True Positives:", getFormattedMeanAndConfidenceInterval(confusion_matrix, ConfusionMatrix::getNumberOfTruePositives)));
+        logger.info(() -> String.format("%-30s %d", "Number Of True Negatives:", getFormattedMeanAndConfidenceInterval(confusion_matrix, ConfusionMatrix::getNumberOfTrueNegatives)));
+        logger.info(() -> String.format("%-30s %d", "Number Of False Negatives:", getFormattedMeanAndConfidenceInterval(confusion_matrix, ConfusionMatrix::getNumberOfFalseNegatives)));
+        logger.info(() -> String.format("%-30s %d", "Number Of False Positives:", getFormattedMeanAndConfidenceInterval(confusion_matrix, ConfusionMatrix::getNumberOfFalsePositives)));
+    }
+
+    private static <Value> String getFormattedMeanAndConfidenceInterval(List<Value> values, Function<Value, ? extends Number> getter) {
+
+        final List<Double> doubles = values.stream().map(getter).map(Number::doubleValue).collect(Collectors.toList());
+        return formatMeanAndInterval(doubles);
+    }
+
+    private static String formatMeanAndInterval(List<Double> values) {
+
+        if (values.size() == 1) {
+            return String.format("%.2f", values.get(0));
+        }
+        else {
+            return formatMeanAndInterval(Means.calculateMean(values), ConfidenceIntervals.calculateConfidenceInterval(values));
+        }
+    }
+
+    private static String formatMeanAndInterval(double mean, double interval) {
+
+        return String.format("%.2f ± %.2f", mean, interval);
     }
 }
