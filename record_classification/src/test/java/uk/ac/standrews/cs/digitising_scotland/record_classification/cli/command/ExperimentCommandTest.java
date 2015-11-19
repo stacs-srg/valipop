@@ -26,8 +26,10 @@ import static org.junit.Assert.*;
 public class ExperimentCommandTest  extends CommandTest{
 
     @Test(expected = RuntimeException.class)
-    public void testFailureIfCommandsNotSpecified() throws Exception {
+    public void expectFailureIfCommandsNotSpecified() throws Exception {
         
         new ExperimentCommand.Builder().run();
     }
+    
+    
 }

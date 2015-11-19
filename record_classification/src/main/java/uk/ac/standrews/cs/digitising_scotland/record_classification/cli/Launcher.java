@@ -102,14 +102,24 @@ public class Launcher {
 
     public Launcher() throws IOException {
 
-        configuration = loadContext(working_directory);
+        configuration = loadConfiguration(working_directory);
         log_level_supplier = configuration.getDefaultLogLevelSupplier();
 
     }
 
-    private Configuration loadContext(final Path working_directory) throws IOException {
+    private Configuration loadConfiguration(final Path working_directory) {
 
-        return Configuration.exists(working_directory) ? Configuration.load(working_directory) : new Configuration(working_directory);
+        if (Configuration.exists(working_directory)) {
+            try {
+                return Configuration.load(working_directory);
+            }
+            catch (RuntimeException e) {
+                LOGGER.severe(e.getMessage());
+                LOGGER.warning("ignored existing configuration due to load error.");
+            }
+        }
+
+        return new Configuration(working_directory);
     }
 
     public static void main(String... args) {
