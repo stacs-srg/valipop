@@ -149,12 +149,12 @@ public class EvaluateCommand extends Command {
 
     static void logConfusionMatrix(Logger logger, final List<ConfusionMatrix> confusion_matrix) {
 
-        logger.info(() -> String.format("%-30s %d", "Number Of Classes:", getFormattedMeanAndConfidenceInterval(confusion_matrix, ConfusionMatrix::getNumberOfClasses)));
-        logger.info(() -> String.format("%-30s %d", "Number Of Classifications:", getFormattedMeanAndConfidenceInterval(confusion_matrix, ConfusionMatrix::getNumberOfClassifications)));
-        logger.info(() -> String.format("%-30s %d", "Number Of True Positives:", getFormattedMeanAndConfidenceInterval(confusion_matrix, ConfusionMatrix::getNumberOfTruePositives)));
-        logger.info(() -> String.format("%-30s %d", "Number Of True Negatives:", getFormattedMeanAndConfidenceInterval(confusion_matrix, ConfusionMatrix::getNumberOfTrueNegatives)));
-        logger.info(() -> String.format("%-30s %d", "Number Of False Negatives:", getFormattedMeanAndConfidenceInterval(confusion_matrix, ConfusionMatrix::getNumberOfFalseNegatives)));
-        logger.info(() -> String.format("%-30s %d", "Number Of False Positives:", getFormattedMeanAndConfidenceInterval(confusion_matrix, ConfusionMatrix::getNumberOfFalsePositives)));
+        logger.info(() -> String.format("%-30s %s", "Number Of Classes:", getFormattedMeanAndConfidenceInterval(confusion_matrix, ConfusionMatrix::getNumberOfClasses)));
+        logger.info(() -> String.format("%-30s %s", "Number Of Classifications:", getFormattedMeanAndConfidenceInterval(confusion_matrix, ConfusionMatrix::getNumberOfClassifications)));
+        logger.info(() -> String.format("%-30s %s", "Number Of True Positives:", getFormattedMeanAndConfidenceInterval(confusion_matrix, ConfusionMatrix::getNumberOfTruePositives)));
+        logger.info(() -> String.format("%-30s %s", "Number Of True Negatives:", getFormattedMeanAndConfidenceInterval(confusion_matrix, ConfusionMatrix::getNumberOfTrueNegatives)));
+        logger.info(() -> String.format("%-30s %s", "Number Of False Negatives:", getFormattedMeanAndConfidenceInterval(confusion_matrix, ConfusionMatrix::getNumberOfFalseNegatives)));
+        logger.info(() -> String.format("%-30s %s", "Number Of False Positives:", getFormattedMeanAndConfidenceInterval(confusion_matrix, ConfusionMatrix::getNumberOfFalsePositives)));
     }
 
     private static <Value> String getFormattedMeanAndConfidenceInterval(List<Value> values, Function<Value, ? extends Number> getter) {
