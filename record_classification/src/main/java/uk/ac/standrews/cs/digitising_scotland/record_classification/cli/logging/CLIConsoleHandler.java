@@ -14,23 +14,30 @@
  * You should have received a copy of the GNU General Public License along with record_classification. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.digitising_scotland.record_classification.cli;
+package uk.ac.standrews.cs.digitising_scotland.record_classification.cli.logging;
 
-import com.beust.jcommander.*;
+import java.util.logging.*;
 
 /**
- * @author masih
+ * @author Masih Hajiarab Derkani
  */
-public final class Converters {
+public class CLIConsoleHandler extends ConsoleHandler {
 
-    private Converters() { throw new UnsupportedOperationException(); }
-
-    public static class CharacterConverter implements IStringConverter<Character> {
+    public static final Formatter CLI_CONSOLE_LOG_FORMATTER = new Formatter() {
 
         @Override
-        public Character convert(final String value) {
+        public String format(final LogRecord record) {
 
-            return value.isEmpty() ? null : value.charAt(0);
+            return String.format("%s%n", record.getMessage());
         }
+    };
+
+    public CLIConsoleHandler() {
+
+        super();
+        setFormatter(CLI_CONSOLE_LOG_FORMATTER);
+//        setOutputStream(System.out);
     }
+
+//TODO publish severe log level through stderr
 }

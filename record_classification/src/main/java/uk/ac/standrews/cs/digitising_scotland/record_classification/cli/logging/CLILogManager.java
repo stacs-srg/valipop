@@ -14,9 +14,7 @@
  * You should have received a copy of the GNU General Public License along with record_classification. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.digitising_scotland.record_classification.cli;
-
-import sun.reflect.*;
+package uk.ac.standrews.cs.digitising_scotland.record_classification.cli.logging;
 
 import java.util.logging.*;
 
@@ -32,12 +30,11 @@ public class CLILogManager extends LogManager {
     }
 
     public static CLILogManager getLogManager() {
+
         return CLI_LOG_MANAGER;
     }
-    
-    
-    
-    public static class CLILogger extends Logger{
+
+    public static class CLILogger extends Logger {
 
         protected CLILogger(final String name, final String resource_bundle_name) {
 
@@ -45,6 +42,7 @@ public class CLILogManager extends LogManager {
         }
 
         public static Logger getLogger(String name) {
+
             Logger result = CLI_LOG_MANAGER.getLogger(name);
             if (result == null) {
                 Logger newLogger = new CLILogger(name, null);
@@ -54,7 +52,8 @@ public class CLILogManager extends LogManager {
                     }
 
                     result = CLI_LOG_MANAGER.getLogger(name);
-                } while (result == null);
+                }
+                while (result == null);
             }
             return result;
         }

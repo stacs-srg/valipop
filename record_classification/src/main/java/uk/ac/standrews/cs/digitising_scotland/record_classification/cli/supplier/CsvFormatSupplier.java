@@ -14,37 +14,36 @@
  * You should have received a copy of the GNU General Public License along with record_classification. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.digitising_scotland.record_classification.cli;
+package uk.ac.standrews.cs.digitising_scotland.record_classification.cli.supplier;
 
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.util.function.Supplier;
+import org.apache.commons.csv.*;
+
+import java.util.function.*;
 
 /**
- * Predefined suppliers of {@link Charset}.
+ * Predefined {@link CSVFormat csv format}s.
  *
- * @author Graham Kirby
  * @author Masih Hajiarab Derkani
  */
-public enum CharsetSupplier implements Supplier<Charset> {
+public enum CsvFormatSupplier implements Supplier<CSVFormat> {
 
-    SYSTEM_DEFAULT(Charset.defaultCharset()),
-    ISO_8859_1(StandardCharsets.ISO_8859_1),
-    UTF_8(StandardCharsets.UTF_8),
-    UTF_16BE(StandardCharsets.UTF_16BE),
-    UTF_16LE(StandardCharsets.UTF_16LE),
-    UTF_16(StandardCharsets.UTF_16),
-    US_ASCII(StandardCharsets.US_ASCII);
+    DEFAULT(CSVFormat.DEFAULT.withIgnoreEmptyLines()),
+    EXCEL(CSVFormat.EXCEL.withIgnoreEmptyLines()),
+    MYSQL(CSVFormat.MYSQL.withIgnoreEmptyLines()),
+    RFC4180(CSVFormat.RFC4180.withIgnoreEmptyLines()),
+    RFC4180_PIPE_SEPARATED(CSVFormat.RFC4180.withDelimiter('|').withIgnoreEmptyLines()),
+    TDF(CSVFormat.TDF.withIgnoreEmptyLines());
 
-    private final Charset charset;
+    private final CSVFormat format;
 
-    CharsetSupplier(Charset charset) {
+    CsvFormatSupplier(CSVFormat format) {
 
-        this.charset = charset;
+        this.format = format;
     }
 
     @Override
-    public Charset get() {
-        return charset;
+    public CSVFormat get() {
+
+        return format;
     }
 }

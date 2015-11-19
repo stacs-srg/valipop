@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License along with record_classification. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.digitising_scotland.record_classification.cli;
+package uk.ac.standrews.cs.digitising_scotland.record_classification.cli.serialization;
 
 import com.fasterxml.jackson.core.*;
 import com.fasterxml.jackson.databind.*;
@@ -22,6 +22,7 @@ import com.fasterxml.jackson.databind.*;
 import org.apache.commons.lang3.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.ConfusionMatrix;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.serialization.*;
 
@@ -37,7 +38,7 @@ import static uk.ac.standrews.cs.digitising_scotland.record_classification.cli.c
 /**
  * @author Masih Hajiarab Derkani
  */
-class ConfigurationJsonSerializer extends JsonSerializer<Configuration> {
+class ConfigurationSerializer extends JsonSerializer<Configuration> {
 
     protected static final String DEFAULT_CHARSET_SUPPLIER = "default_charset_supplier";
     protected static final String DEFAULT_DELIMITER = "default_delimiter";
@@ -78,7 +79,7 @@ class ConfigurationJsonSerializer extends JsonSerializer<Configuration> {
 
     private void writeUnseenRecords(Configuration configuration) throws IOException {
 
-        persistBucketIfPresent(configuration.getUnseenRecordsOptional(), configuration.getUnseenRecordsPath());
+        persistBucketIfPresent(configuration.getUnseenRecordsOptional(), getUnseenRecordsPath(configuration));
     }
 
     private void writeGoldStandardRecords(final Configuration configuration) throws IOException {
@@ -89,12 +90,12 @@ class ConfigurationJsonSerializer extends JsonSerializer<Configuration> {
 
     private void writeClassifiedUnseenRecords(Configuration configuration) throws IOException {
 
-        persistBucketIfPresent(configuration.getClassifiedUnseenRecordsOptional(), configuration.getClassifiedUnseenRecordsPath());
+        persistBucketIfPresent(configuration.getClassifiedUnseenRecordsOptional(), getClassifiedUnseenRecordsPath(configuration));
     }
 
     private void writeClassifiedEvaluationRecords(final Configuration configuration) throws IOException {
 
-        persistBucketIfPresent(configuration.getClassifiedEvaluationRecordsOptional(), configuration.getClassifiedEvaluationRecordsPath());
+        persistBucketIfPresent(configuration.getClassifiedEvaluationRecordsOptional(), getClassifiedEvaluationRecordsPath(configuration));
     }
 
     private void writeClassifier(final Configuration configuration) throws IOException {
@@ -110,12 +111,12 @@ class ConfigurationJsonSerializer extends JsonSerializer<Configuration> {
 
     private void writeConfusionMatrix(final Configuration configuration) throws IOException {
 
-        persistObjectIfPresent(configuration.getConfusionMatrixOptional(), configuration.getConfusionMatrixPath());
+        persistObjectIfPresent(configuration.getConfusionMatrixOptional(), getConfusionMatrixPath(configuration));
     }
 
     private void writeClassificationMetrics(final Configuration configuration) throws IOException {
 
-        persistObjectIfPresent(configuration.getClassificationMetricsOptional(), configuration.getClassificationMetricsPath());
+        persistObjectIfPresent(configuration.getClassificationMetricsOptional(), getClassificationMetricsPath(configuration));
     }
 
     private void persistBucketIfPresent(final Optional<Bucket> bucket, final Path destination) throws IOException {
@@ -128,7 +129,7 @@ class ConfigurationJsonSerializer extends JsonSerializer<Configuration> {
 
     private void writeTrainingRecords(final Configuration configuration) throws IOException {
 
-        persistBucketIfPresent(configuration.getTrainingRecordsOptional(), configuration.getTrainingRecordsPath());
+        persistBucketIfPresent(configuration.getTrainingRecordsOptional(), getTrainingRecordsPath(configuration));
     }
 
     private void writeEvaluationRecords(final Configuration configuration) throws IOException {
@@ -150,6 +151,36 @@ class ConfigurationJsonSerializer extends JsonSerializer<Configuration> {
         }
     }
 
+    static Path getTrainingRecordsPath(Configuration configuration) {
+
+        return configuration.getHome().resolve("training.csv");
+    }
+
+    static Path getUnseenRecordsPath(Configuration configuration) {
+
+        return configuration.getHome().resolve("unseen.csv");
+    }
+
+    static Path getClassifiedUnseenRecordsPath(Configuration configuration) {
+
+        return configuration.getHome().resolve("classified_unseen.csv");
+    }
+
+    static Path getClassifiedEvaluationRecordsPath(Configuration configuration) {
+
+        return configuration.getHome().resolve("classified_evaluation.csv");
+    }
+
+    static Path getConfusionMatrixPath(Configuration configuration) {
+
+        return configuration.getHome().resolve("confusion_matrix.object");
+    }
+
+    static Path getClassificationMetricsPath(Configuration configuration) {
+
+        return configuration.getHome().resolve("classification_metrics.object");
+    }
+    
     private void persistObjectIfPresent(final Optional<?> object, Path destination) throws IOException {
 
         if (object.isPresent()) {

@@ -21,10 +21,11 @@ import org.apache.lucene.search.spell.*;
 import org.apache.lucene.search.spell.Dictionary;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.supplier.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.util.*;
 
 import java.io.*;
 import java.nio.file.*;
-import java.util.*;
 
 /**
  * @author Masih Hajiarab Derkani

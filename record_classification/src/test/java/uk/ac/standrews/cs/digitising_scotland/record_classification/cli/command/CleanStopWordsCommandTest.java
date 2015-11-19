@@ -20,6 +20,7 @@ import org.junit.*;
 import org.junit.runner.*;
 import org.junit.runners.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.supplier.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.dataset.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 

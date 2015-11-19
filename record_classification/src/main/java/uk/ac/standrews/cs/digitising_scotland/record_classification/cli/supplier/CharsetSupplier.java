@@ -14,39 +14,37 @@
  * You should have received a copy of the GNU General Public License along with record_classification. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.digitising_scotland.record_classification.cli;
+package uk.ac.standrews.cs.digitising_scotland.record_classification.cli.supplier;
 
-import java.util.function.*;
-import java.util.logging.*;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.util.function.Supplier;
 
 /**
- * Supplies {@link Level log level}s.
+ * Predefined suppliers of {@link Charset}.
  *
+ * @author Graham Kirby
  * @author Masih Hajiarab Derkani
  */
-public enum LogLevelSupplier implements Supplier<Level> {
+public enum CharsetSupplier implements Supplier<Charset> {
 
-    /** Indicates all messages must be logged. **/
-    ALL(Level.ALL),
+    SYSTEM_DEFAULT(Charset.defaultCharset()),
+    ISO_8859_1(StandardCharsets.ISO_8859_1),
+    UTF_8(StandardCharsets.UTF_8),
+    UTF_16BE(StandardCharsets.UTF_16BE),
+    UTF_16LE(StandardCharsets.UTF_16LE),
+    UTF_16(StandardCharsets.UTF_16),
+    US_ASCII(StandardCharsets.US_ASCII);
 
-    /** Indicates that serious failures must be logged. **/
-    SEVERE(Level.SEVERE),
+    private final Charset charset;
 
-    /** Indicates that messages about potential problems must be logged. **/
-    WARNING(Level.WARNING),
+    CharsetSupplier(Charset charset) {
 
-    /** Indicates only informational messsages must be logged. **/
-    INFO(Level.INFO),
-
-    /** Turns off logging. **/
-    OFF(Level.OFF);
-
-    private Level level;
-
-    LogLevelSupplier(final Level level) {
-        this.level = level;
+        this.charset = charset;
     }
 
     @Override
-    public Level get() { return level; }
+    public Charset get() {
+        return charset;
+    }
 }

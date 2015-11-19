@@ -20,9 +20,9 @@ import com.beust.jcommander.*;
 import com.beust.jcommander.converters.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.Validators.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.util.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.util.Validators.*;
 
-import java.io.*;
 import java.nio.file.*;
 import java.util.*;
 import java.util.stream.*;
@@ -83,7 +83,7 @@ public class ExperimentCommand extends Command {
 
             final Path repetition_working_directory = getRepetitionWorkingDirectory(repetition);
             final Path batch_file_relative_to_repetition = repetition_working_directory.relativize(batch_file);
-            final String[] args = new String[]{Launcher.OPTION_WORKING_DIRECTORY_SHORT, Command.Builder.quote(repetition_working_directory), NAME, OPTION_COMMANDS_SHORT, Command.Builder.quote(batch_file_relative_to_repetition)};
+            final String[] args = new String[]{Launcher.OPTION_WORKING_DIRECTORY_SHORT, Arguments.quote(repetition_working_directory), NAME, OPTION_COMMANDS_SHORT, Arguments.quote(batch_file_relative_to_repetition)};
 
             Launcher.main(args);
 

@@ -19,12 +19,14 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.cli;
 import com.beust.jcommander.*;
 import com.beust.jcommander.converters.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.command.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.logging.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.supplier.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.util.*;
 
 import java.io.*;
+import java.nio.charset.*;
 import java.nio.file.*;
-import java.util.*;
 import java.util.logging.*;
-import java.util.regex.*;
 
 /**
  * Launches the command line interface for a classification process.
@@ -59,8 +61,6 @@ public class Launcher {
     public static final String OPTION_WORKING_DIRECTORY_LONG = "--workingDirectory";
 
     private static final Logger LOGGER = CLILogManager.CLILogger.getLogger(Launcher.class.getName());
-    private static final Pattern COMMAND_LINE_ARGUMENT_PATTERN = Pattern.compile("[^\\s\"']+|\"([^\"]*)\"|'([^']*)'");
-    private static final Pattern COMMENT_PATTERN = Pattern.compile("^ *#");
 
     private JCommander commander;
     private final Configuration configuration;
@@ -213,46 +213,16 @@ public class Launcher {
 
     private void handleCommands() throws Exception {
 
-        final List<String> command_lines = Files.readAllLines(configuration.getWorkingDirectory().resolve(commands), configuration.getDefaultCharsetSupplier().get());
+        final Path commands_file = configuration.getWorkingDirectory().resolve(commands);
+        final Charset charset = configuration.getDefaultCharsetSupplier().get();
+        Arguments.parseBatchCommandFile(commands_file, charset).forEachOrdered(arguments -> {
+            parse(arguments);
+            handleCommand();
+        });
 
-        for (String command_line : command_lines) {
-            final Optional<String[]> arguments = toCommandLineArguments(command_line);
-            if (arguments.isPresent()) {
-                parse(arguments.get());
-                handleCommand();
-            }
-        }
     }
 
-    private Optional<String[]> toCommandLineArguments(final String command_line) {
-
-        return command_line.trim().isEmpty() || isComment(command_line) ? Optional.empty() : Optional.of(parseCommandLine(command_line));
-    }
-
-    private String[] parseCommandLine(final String command_line) {
-
-        final List<String> arguments = new ArrayList<>();
-        final Matcher matcher = COMMAND_LINE_ARGUMENT_PATTERN.matcher(command_line);
-        while (matcher.find()) {
-            if (matcher.group(1) != null) { // Add double-quoted string without the quotes
-                arguments.add(matcher.group(1));
-            }
-            else if (matcher.group(2) != null) { // Add single-quoted string without the quotes
-                arguments.add(matcher.group(2));
-            }
-            else { // Add unquoted word
-                arguments.add(matcher.group());
-            }
-        }
-        return arguments.toArray(new String[arguments.size()]);
-    }
-
-    private boolean isComment(final String command_line) {
-
-        return COMMENT_PATTERN.matcher(command_line).find();
-    }
-
-    private void handleCommand() throws Exception {
+    private void handleCommand() {
 
         final String command_name = commander.getParsedCommand();
 

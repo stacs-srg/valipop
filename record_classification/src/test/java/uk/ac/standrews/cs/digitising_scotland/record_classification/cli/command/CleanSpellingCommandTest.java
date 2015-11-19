@@ -16,19 +16,15 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.cli.command;
 
-import org.junit.Test;
 import org.junit.runner.*;
 import org.junit.runners.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.supplier.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.dataset.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 
 import java.io.*;
-import java.nio.file.*;
 import java.util.*;
 
 import static org.junit.Assert.assertEquals;
-import static uk.ac.standrews.cs.digitising_scotland.record_classification.dataset.TestDataSets.*;
 
 /**
  * @author Masih Hajirab Derkani
