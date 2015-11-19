@@ -105,7 +105,7 @@ public class HiscoClassificationWithPerGroupAnalysis extends Experiment {
             persistClassifiedEvaluationRecords(results);
             persistClassificationMetricsPerGroup(results, getHiscoMajorGroupCodes(), "major");
             persistClassificationMetricsPerGroup(results, getHiscoMinorGroupCodes(), "minor");
-//
+
             persistClassificationDetails(results);
             persistInconsistentlyCodedRecordsAcrossTwoOrMoreRepetitions(results);
         }
@@ -411,9 +411,7 @@ public class HiscoClassificationWithPerGroupAnalysis extends Experiment {
 
         final DataSet evaluation_output = new DataSet(
                         Arrays.asList("ID", "RAW_DATA", "GOLD_STANDARD_CODE", "GOLD_STANDARD_SCHEME_LABEL", "OUTPUT_CODE", "OUTPUT_CODE_SCHEME_LABEL", "ANCESTOR_DISTANCE", "CONFIDENCE", "OUTPUT_CODE_PRECISION", "OUTPUT_CODE_RECALL", "OUTPUT_CODE_F1", "OUTPUT_CODE_ACCURACY",
-//                                      "OUTPUT_CODE_TRAINING_RECORDS_COUNT", "OUTPUT_CODE_TRAINING_RECORDS_TOKEN_LIST_SIZE", "OUTPUT_CODE_TRAINING_RECORDS_MEAN_JACCARD_SIMILARITY",
                                       "GOLD_STANDARD_CODE_PRECISION", "GOLD_STANDARD_CODE_RECALL", "GOLD_STANDARD_CODE_F1", "GOLD_STANDARD_CODE_ACCURACY"
-//                                      ,"GOLD_STANDARD_CODE_TRAINING_RECORDS_COUNT", "GOLD_STANDARD_CODE_TRAINING_RECORDS_TOKEN_LIST_SIZE", "GOLD_STANDARD_CODE_TRAINING_RECORDS_MEAN_JACCARD_SIMILARITY"
                         ));
         for (Record record : evaluation_classified_records) {
 
@@ -437,33 +435,13 @@ public class HiscoClassificationWithPerGroupAnalysis extends Experiment {
             final String output_f1 = formatToTwoDecimalPlaces(per_class_f1.get(output_code));
             final String output_accuracy = formatToTwoDecimalPlaces(per_class_accuracy.get(output_code));
 
-//            final List<Record> output_training_records = getTrainingRecordsForCodePrefix(context, output_code);
-//            final String output_training_records_count = String.valueOf(output_training_records.size());
-//
-//            final List<Double> output_training_record_token_sizes = getDataTokenListSize(output_training_records);
-//            final String output_training_record_token_sizes_cell = formatMeanAndInterval(output_training_record_token_sizes);
-//
-//            final List<Double> output_training_records_similarities = getSimilarityAcrossRecords(RECORD_SIMILARITY_METRIC.get(), output_training_records);
-//            final String output_training_records_similarities_cell = formatMeanAndInterval(output_training_records_similarities);
-
             final String gold_precision = formatToTwoDecimalPlaces(per_class_precision.get(gold_standard_code));
             final String gold_recall = formatToTwoDecimalPlaces(per_class_recall.get(gold_standard_code));
             final String gold_f1 = formatToTwoDecimalPlaces(per_class_f1.get(gold_standard_code));
             final String gold_accuracy = formatToTwoDecimalPlaces(per_class_accuracy.get(gold_standard_code));
 
-//            final List<Record> gold_training_records = getTrainingRecordsForCodePrefix(context, gold_standard_code);
-//            final String gold_training_records_count = String.valueOf(gold_training_records.size());
-//
-//            final List<Double> gold_training_record_token_sizes = getDataTokenListSize(gold_training_records);
-//            final String gold_training_record_token_sizes_cell = formatMeanAndInterval(gold_training_record_token_sizes);
-//
-//            final List<Double> gold_training_records_similarities = getSimilarityAcrossRecords(RECORD_SIMILARITY_METRIC.get(), gold_training_records);
-//            final String gold_training_records_similarities_cell = formatMeanAndInterval(gold_training_records_similarities);
-
             evaluation_output.addRow(id_string, raw_data, gold_standard_code, gold_standard_scheme_label, output_code, output_code_scheme_label, ancestor_distance, confidence, output_precision, output_recall, output_f1, output_accuracy,
-//                            output_training_records_count, output_training_record_token_sizes_cell, output_training_records_similarities_cell,
                                      gold_precision, gold_recall, gold_f1, gold_accuracy
-//                            ,gold_training_records_count, gold_training_record_token_sizes_cell, gold_training_records_similarities_cell
             );
         }
 

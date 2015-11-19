@@ -18,12 +18,15 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.cli.command
 
 import com.beust.jcommander.*;
 import com.beust.jcommander.converters.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.Validators.*;
+import uk.ac.standrews.cs.util.tables.*;
 
 import java.io.*;
 import java.nio.file.*;
 import java.util.*;
+import java.util.stream.*;
 
 import static uk.ac.standrews.cs.digitising_scotland.record_classification.cli.Launcher.OPTION_COMMANDS_LONG;
 import static uk.ac.standrews.cs.digitising_scotland.record_classification.cli.Launcher.OPTION_COMMANDS_SHORT;
@@ -92,10 +95,27 @@ public class ExperimentCommand extends Command {
             }
 
             repetition_configurations.add(repetition_config);
+
         }
 
-        //TODO aggregate results.
+        logAggregatedConfusionMatrix(repetition_configurations);
+        logAggregatedClassificationMetrics(repetition_configurations);
+    }
 
+    private void logAggregatedClassificationMetrics(final List<Configuration> repetition_configurations) {
+
+        final List<ClassificationMetrics> metrics = repetition_configurations.stream().map(Configuration::getClassificationMetrics).filter(Objects::nonNull).collect(Collectors.toList());
+        if (!metrics.isEmpty()) {
+            EvaluateCommand.logClassificationMetrics(logger, metrics);
+        }
+    }
+
+    private void logAggregatedConfusionMatrix(final List<Configuration> repetition_configurations) {
+
+        final List<ConfusionMatrix> matrices = repetition_configurations.stream().map(Configuration::getConfusionMatrix).filter(Objects::nonNull).collect(Collectors.toList());
+        if (!matrices.isEmpty()) {
+            EvaluateCommand.logConfusionMatrix(logger, matrices);
+        }
     }
 
     private Path getRepetitionWorkingDirectory(final int repetition) {
