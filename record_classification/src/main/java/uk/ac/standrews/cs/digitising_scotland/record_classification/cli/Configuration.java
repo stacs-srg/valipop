@@ -99,7 +99,6 @@ public class Configuration extends ClassificationContext {
     private CsvFormatSupplier default_csv_format_supplier = DEFAULT_CSV_FORMAT_SUPPLIER;
     private LogLevelSupplier default_log_level_supplier = DEFAULT_LOG_LEVEL_SUPPLIER;
     private Long seed;
-    private boolean proceed_on_error;
     private ClassifierSupplier classifier_supplier;
     private SerializationFormat classifier_serialization_format = DEFAULT_CLASSIFIER_SERIALIZATION_FORMAT;
     private Level log_level;
@@ -113,25 +112,6 @@ public class Configuration extends ClassificationContext {
     public Configuration(Path working_directory) {
 
         this.working_directory = working_directory;
-        initRandom();
-    }
-
-    @Override
-    protected void initRandom() {
-
-        if (isSeeded()) {
-            random = new Random(seed);
-        } else {
-            super.initRandom();
-        }
-    }
-
-    public boolean isSeeded() {return seed != null;}
-
-    @Override
-    protected void setClassifier(Classifier classifier) {
-
-        this.classifier = classifier;
     }
 
     public static Configuration load() throws IOException {
@@ -149,6 +129,8 @@ public class Configuration extends ClassificationContext {
             return configuration;
         }
     }
+
+    private static Path getHome(final Path working_directory) {return working_directory.resolve(HOME_NAME);}
 
     private static Path getConfigurationFile(final Path home) {return home.resolve(CONFIG_FILE_NAME);}
 
@@ -203,6 +185,12 @@ public class Configuration extends ClassificationContext {
         return Files.isRegularFile(Configuration.getConfigurationFile(getHome(working_directory)));
     }
 
+    @Override
+    protected void setClassifier(final Classifier classifier) {
+
+        this.classifier = classifier;
+    }
+
     public Path getWorkingDirectory() {
 
         return working_directory;
@@ -214,34 +202,32 @@ public class Configuration extends ClassificationContext {
         this.working_directory = working_directory;
     }
 
+    protected Path getEvaluationRecordsPath() {
+
+        return getHome().resolve("evaluation.csv");
+    }
+
     public Path getHome() {
 
         return getHome(working_directory);
     }
 
-    private static Path getHome(final Path working_directory) {return working_directory.resolve(HOME_NAME);}
-
-    Path getEvaluationRecordsPath() {
-
-        return getHome().resolve("evaluation.csv");
-    }
-
-    Path getTrainingRecordsPath() {
+    protected Path getTrainingRecordsPath() {
 
         return getHome().resolve("training.csv");
     }
 
-    Path getUnseenRecordsPath() {
+    protected Path getUnseenRecordsPath() {
 
         return getHome().resolve("unseen.csv");
     }
 
-    Path getClassifiedUnseenRecordsPath() {
+    protected Path getClassifiedUnseenRecordsPath() {
 
         return getHome().resolve("classified_unseen.csv");
     }
 
-    Path getClassifiedEvaluationRecordsPath() {
+    protected Path getClassifiedEvaluationRecordsPath() {
 
         return getHome().resolve("classified_evaluation.csv");
     }
@@ -324,10 +310,15 @@ public class Configuration extends ClassificationContext {
     public void setClassifierSupplier(final ClassifierSupplier classifier_supplier) {
 
         this.classifier_supplier = classifier_supplier;
-        resetClassifier(classifier_supplier);
+        resetClassifier();
     }
 
-    private void resetClassifier(final ClassifierSupplier classifier_supplier) {classifier = classifier_supplier != null ? classifier_supplier.get() : null;}
+    private void resetClassifier() {
+
+        if (classifier_supplier != null) {
+            classifier = classifier_supplier.get();
+        }
+    }
 
     public void persist() throws IOException {
 
@@ -369,17 +360,19 @@ public class Configuration extends ClassificationContext {
     public void setSeed(final Long seed) {
 
         this.seed = seed;
-        initRandom();
+        resetRandom();
     }
 
-    public boolean isProceedOnErrorEnabled() {
+    private void resetRandom() {
 
-        return proceed_on_error;
+        if (isSeeded()) {
+            setRandom(new Random(seed));
+        }
     }
 
-    public void setProceedOnError(final Boolean proceed_on_error) {
+    public boolean isSeeded() {
 
-        this.proceed_on_error = proceed_on_error;
+        return seed != null;
     }
 
     public Level getLogLevel() {

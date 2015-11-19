@@ -40,7 +40,6 @@ class ConfigurationJsonSerializer extends JsonSerializer<Configuration> {
     protected static final String DEFAULT_CHARSET_SUPPLIER = "default_charset_supplier";
     protected static final String DEFAULT_DELIMITER = "default_delimiter";
     protected static final String SEED = "seed";
-    protected static final String PROCEED_ON_ERROR = "proceed_on_error";
     protected static final String CLASSIFIER_SUPPLIER = "classifier_supplier";
     protected static final String CLASSIFIER_SERIALIZATION_FORMAT = "classifier_serialization_format";
     protected static final String DEFAULT_CSV_FORMAT_SUPPLIER = "default_csv_format_supplier";
@@ -57,7 +56,6 @@ class ConfigurationJsonSerializer extends JsonSerializer<Configuration> {
         out.writeObjectField(DEFAULT_CHARSET_SUPPLIER, configuration.getDefaultCharsetSupplier());
         out.writeObjectField(DEFAULT_DELIMITER, configuration.getDefaultDelimiter());
         out.writeObjectField(SEED, configuration.getSeed());
-        out.writeBooleanField(PROCEED_ON_ERROR, configuration.isProceedOnErrorEnabled());
         out.writeObjectField(CLASSIFIER_SUPPLIER, configuration.getClassifierSupplier());
         out.writeObjectField(CLASSIFIER_SERIALIZATION_FORMAT, configuration.getClassifierSerializationFormat());
         out.writeObjectField(DEFAULT_CSV_FORMAT_SUPPLIER, configuration.getDefaultCsvFormatSupplier());

@@ -56,10 +56,6 @@ public class ConfigurationJsonDeserializer extends JsonDeserializer<Configuratio
                     expectNext(in, JsonToken.VALUE_NULL, JsonToken.VALUE_NUMBER_INT);
                     configuration.setSeed(in.readValueAs(Long.class));
                     break;
-                case PROCEED_ON_ERROR:
-                    expectNext(in, JsonToken.VALUE_TRUE, JsonToken.VALUE_FALSE);
-                    configuration.setProceedOnError(in.readValueAs(Boolean.TYPE));
-                    break;
                 case CLASSIFIER_SUPPLIER:
                     expectNext(in, JsonToken.VALUE_NULL, JsonToken.VALUE_STRING);
                     configuration.setClassifierSupplier(in.readValueAs(ClassifierSupplier.class));
