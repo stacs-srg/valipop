@@ -17,14 +17,12 @@
 package uk.ac.standrews.cs.digitising_scotland.population_model.version3.lifetable.analysis;
 
 import uk.ac.standrews.cs.digitising_scotland.population_model.version3.Person;
+import uk.ac.standrews.cs.digitising_scotland.population_model.version3.Population;
 import uk.ac.standrews.cs.digitising_scotland.population_model.version3.lifetable.LifeTable;
 import uk.ac.standrews.cs.digitising_scotland.population_model.version3.lifetable.LifeTableRow;
 import uk.ac.standrews.cs.digitising_scotland.util.DateManipulation;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.TreeMap;
+import java.util.*;
 
 /**
  * Created by tsd4 on 12/11/2015.
@@ -64,22 +62,46 @@ public class LifeTableShadow {
 
         for (Person p : people) {
             int age = p.getAge(ageingDay);
-            if (age >= 0 && age < p.getAge(p.getDod())) {
-                rows.get(rows.floorKey(age)).incPeopleInRow();
+
+            if (age > -1) {
+
+                if (age < 1) {
+                    int ageInDays = DateManipulation.differenceInDays(startDay, p.getDob());
+                    int halfYear = Population.getDaysInYear() / 2;
+
+                    if (-halfYear < ageInDays && ageInDays < halfYear) {
+                        rows.get(rows.floorKey(0)).incPeopleInRow();
+
+                        if (startDay <= p.getDod() && p.getDod() < endDay) {
+                            rows.get(rows.floorKey(0)).incPeopleDieingInRow();
+                        }
+
+                    }
+                } else {
+
+                    if (age >= 0 && age < p.getAge(p.getDod())) {
+                        rows.get(rows.floorKey(age)).incPeopleInRow();
 //                System.out.println("PIRinc: " + rows.get(rows.floorKey(age)).getPeopleInRow());
-            }
+                    }
 
 //            System.out.println(startDay + " | " + p.getDod() + " | " + endDay);
 
-            if (age >= 0 && startDay <= p.getDod() && p.getDod() < endDay) {
-                rows.get(rows.floorKey(age)).incPeopleDieingInRow();
+                    if (age >= 0 && startDay <= p.getDod() && p.getDod() < endDay) {
+                        rows.get(rows.floorKey(age)).incPeopleDieingInRow();
 //                System.out.println("PDIRinc: " + rows.get(rows.floorKey(age)).getPeopleDieingInRow());
+                    }
+
+                }
+
             }
+
         }
 
     }
 
     private double getSSE() {
+
+        System.out.println(DateManipulation.daysToYear(startDay));
 
         double sum = 0;
 
