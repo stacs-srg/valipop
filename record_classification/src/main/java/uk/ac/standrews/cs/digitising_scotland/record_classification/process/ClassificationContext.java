@@ -35,13 +35,14 @@ import java.util.*;
 public class ClassificationContext implements Serializable {
 
     private static final long serialVersionUID = -6389479358148790573L;
+
+    protected Classifier classifier;
     private Bucket training_records;
     private Bucket evaluation_records;
     private Bucket unseen_records;
     private Bucket classified_evaluation_records;
     private Bucket classified_unseen_records;
-    protected Classifier classifier;
-    protected Random random;
+    private Random random;
     private ConfusionMatrix confusion_matrix;
     private ClassificationMetrics classification_metrics;
 
@@ -50,15 +51,8 @@ public class ClassificationContext implements Serializable {
 
     public ClassificationContext() {
 
-        initRandom();
-        clearTrainingRecords();
-        clearEvaluationRecords();
-        clearUnseenRecords();
-        clearClassifiedUnseenRecords();
-        clearClassifiedEvaluationRecords();
+        this(null, new Random());
     }
-
-    protected void initRandom() {random = new Random();}
 
     /**
      * Instantiates a new classification context.
@@ -114,7 +108,7 @@ public class ClassificationContext implements Serializable {
         return random;
     }
 
-    public void setRandom(final Random random) {
+    protected void setRandom(final Random random) {
 
         this.random = random;
     }

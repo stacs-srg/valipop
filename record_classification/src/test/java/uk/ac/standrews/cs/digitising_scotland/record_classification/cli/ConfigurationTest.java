@@ -67,7 +67,6 @@ public class ConfigurationTest {
         expected.setClassifierSerializationFormat(SerializationFormat.JAVA_SERIALIZATION);
         expected.setDefaultCharsetSupplier(CharsetSupplier.UTF_16);
         expected.setDefaultLogLevelSupplier(LogLevelSupplier.OFF);
-        expected.setProceedOnError(false);
         expected.setSeed(42L);
         expected.setDefaultCsvFormatSupplier(CsvFormatSupplier.RFC4180_PIPE_SEPARATED);
         expected.setDefaultTrainingRatio(0.7);
@@ -85,7 +84,6 @@ public class ConfigurationTest {
         assertEquals(expected.getClassifierSerializationFormat(), actual.getClassifierSerializationFormat());
         assertEquals(expected.getDefaultCharsetSupplier(), actual.getDefaultCharsetSupplier());
         assertEquals(expected.getDefaultLogLevelSupplier(), actual.getDefaultLogLevelSupplier());
-        assertEquals(expected.isProceedOnErrorEnabled(), actual.isProceedOnErrorEnabled());
         assertEquals(expected.getSeed(), actual.getSeed());
         assertEquals(expected.getDefaultCsvFormatSupplier(), actual.getDefaultCsvFormatSupplier());
         assertEquals(expected.getDefaultTrainingRatio(), actual.getDefaultTrainingRatio(), Validators.DELTA);
