@@ -23,6 +23,7 @@ import java.nio.file.*;
 import java.util.*;
 import java.util.logging.*;
 import java.util.regex.*;
+import java.util.stream.*;
 
 /**
  * Represents an operation exposed to the user via the {@link Launcher command-line interface}.
@@ -32,56 +33,10 @@ import java.util.regex.*;
  */
 public abstract class Command implements Runnable {
 
-    private final String name;
     protected final Launcher launcher;
     protected final Configuration configuration;
     protected final Logger logger;
-
-    private static final Pattern SPECIAL_CHARACTER = Pattern.compile("[^-_A-Za-z0-9]");
-
-    protected static abstract class Builder {
-
-        /**
-         * Builds the command-line arguments for this command.
-         *
-         * @return the command-line arguments of this command.
-         */
-        public abstract String[] build();
-
-        /** Runs this command with the built arguments. */
-        public void run() {
-
-            final String[] unescaped_arguments = build();
-            final String[] escaped_arguments = escapeSpecialCharacters(unescaped_arguments);
-
-            Launcher.main(escaped_arguments);
-        }
-
-        public void run(Launcher launcher) throws Exception {
-
-            final String[] unescaped_arguments = build();
-            final String[] escaped_arguments = escapeSpecialCharacters(unescaped_arguments);
-            launcher.parse(escaped_arguments);
-            launcher.handle();
-        }
-
-        private String[] escapeSpecialCharacters(final String[] arguments) {
-
-            for (int i = 0; i < arguments.length; i++) {
-
-                final String argument = arguments[i];
-                if (hasSpecialCharacter(argument)) {
-                    arguments[i] = quote(argument);
-                }
-            }
-
-            return arguments;
-        }
-
-        public static boolean hasSpecialCharacter(final String argument) {return SPECIAL_CHARACTER.matcher(argument).find();}
-
-        public static String quote(Object value) { return String.format("\"%s\"", String.valueOf(value)); }
-    }
+    private final String name;
 
     /**
      * Instantiates this command for the given launcher and the name by which it is triggered.
@@ -142,14 +97,86 @@ public abstract class Command implements Runnable {
         return command;
     }
 
+    private JCommander getSubCommander() {
+
+        final JCommander core_commander = launcher.getCommander();
+        return core_commander.getCommands().get(name);
+    }
+
     protected Path resolveRelativeToWorkingDirectory(Path path) {
 
         return configuration.getWorkingDirectory().resolve(path);
     }
 
-    private JCommander getSubCommander() {
+    /** Builds command line arguments of this command. */
+    protected static abstract class Builder {
 
-        final JCommander core_commander = launcher.getCommander();
-        return core_commander.getCommands().get(name);
+        private static final Pattern SPECIAL_CHARACTER = Pattern.compile("[^-_A-Za-z0-9]");
+
+        private final List<String> arguments;
+
+        protected Builder() {
+
+            arguments = new ArrayList<>();
+        }
+
+        public static String quote(Object value) { return quote(String.valueOf(value)); }
+
+        public static String quote(String value) { return hasSpecialCharacter(value) ? String.format("\"%s\"", String.valueOf(value)) : value; }
+
+        public static boolean hasSpecialCharacter(final String argument) {return SPECIAL_CHARACTER.matcher(argument).find();}
+
+        protected void addArgument(int index, Object argument) {
+
+            arguments.add(index, String.valueOf(argument));
+        }
+
+        protected void addArgument(Object argument) {
+
+            arguments.add(String.valueOf(argument));
+        }
+
+        protected boolean isArgumentsEmpty() {
+
+            return arguments.isEmpty();
+        }
+
+        /** Runs this command with the built arguments. */
+        public void run() { Launcher.main(build()); }
+
+        /**
+         * Builds the command-line arguments for this command with escaped special characters.
+         *
+         * @return the command-line arguments of this command with escaped special characters.
+         */
+        public String[] build() {
+
+            populateArguments();
+            populateSubCommandArguments();
+            final List<String> escaped_arguments = escapeSpecialCharacters(arguments);
+            return escaped_arguments.toArray(new String[escaped_arguments.size()]);
+        }
+
+        protected abstract void populateArguments();
+
+        protected void populateSubCommandArguments() { }
+
+        public static List<String> escapeSpecialCharacters(final List<String> arguments) {
+
+            return arguments.stream().map(Builder::quote).collect(Collectors.toList());
+        }
+
+        /**
+         * Runs this command using a given launcher.
+         *
+         * @param launcher the launcher with which to run the command.
+         * @throws Exception if an error occurs during execution of this command.
+         */
+        public void run(Launcher launcher) throws Exception {
+
+            final String[] args = build();
+            launcher.parse(args);
+            launcher.handle();
+        }
     }
 }

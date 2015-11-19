@@ -48,30 +48,6 @@ public class InitCommand extends Command {
 
     public InitCommand(final Launcher launcher) { super(launcher, NAME); }
 
-    public static class Builder extends Command.Builder {
-
-        private boolean force;
-
-        public Builder forcefully() {
-
-            this.force = true;
-            return this;
-        }
-
-        @Override
-        public String[] build() {
-
-            final List<String> arguments = new ArrayList<>();
-
-            arguments.add(NAME);
-            if (force) {
-                arguments.add(OPTION_FORCE_SHORT);
-            }
-
-            return arguments.toArray(new String[arguments.size()]);
-        }
-    }
-
     @Override
     public void run() {
 
@@ -104,6 +80,25 @@ public class InitCommand extends Command {
             final Path directories = Files.createDirectories(directory);
             if (!Files.isDirectory(directories)) {
                 throw new IOException("failed to create directory: " + directory);
+            }
+        }
+    }
+
+    public static class Builder extends Command.Builder {
+
+        private boolean force;
+
+        public void setForce(boolean force) {
+
+            this.force = force;
+        }
+
+        @Override
+        protected void populateArguments() {
+
+            addArgument(NAME);
+            if (force) {
+                addArgument(OPTION_FORCE_SHORT);
             }
         }
     }

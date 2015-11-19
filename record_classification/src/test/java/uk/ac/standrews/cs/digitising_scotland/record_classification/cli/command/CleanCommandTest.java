@@ -55,24 +55,28 @@ public class CleanCommandTest extends CommandTest {
     @Test
     public void goldStandardCleaned() throws Exception {
 
-        new InitCommand.Builder().forcefully().run();
-        new LoadGoldStandardRecordsCommand.Builder().delimiter(',').skipHeader().from(source).run();
-        new CleanCommand.Builder().cleaners(CleanerSupplier.COMBINED).run();
+        initForcefully();
+        loadGoldStandard();
+        cleanUsingCombinedCleaner();
 
         final Configuration configuration = Configuration.load();
         assertRecordsAreCleaned(configuration.requireGoldStandardRecords());
     }
 
-    @Test
-    public void unseenCleaned() throws Exception {
+    protected void loadGoldStandard() {
 
-        new InitCommand.Builder().forcefully().run();
-        new LoadUnseenRecordsCommand.Builder().delimiter(',').skipHeader().from(source).run();
-        new CleanCommand.Builder().cleaners(CleanerSupplier.COMBINED).run();
+        final LoadGoldStandardRecordsCommand.Builder builder = new LoadGoldStandardRecordsCommand.Builder();
+        builder.setDelimiter(',');
+        builder.setSkipHeader();
+        builder.setSource(source);
+        builder.run();
+    }
 
-        final Configuration configuration = Configuration.load();
-        assertRecordsAreCleaned(configuration.requireUnseenRecords());
+    protected void cleanUsingCombinedCleaner() {
 
+        final CleanCommand.Builder builder = new CleanCommand.Builder();
+        builder.addCleaners(CleanerSupplier.COMBINED);
+        builder.run();
     }
 
     private void assertRecordsAreCleaned(Bucket bucket) {
@@ -123,5 +127,16 @@ public class CleanCommandTest extends CommandTest {
 
             assertFalse(token.endsWith(suffix));
         }
+    }
+
+    @Test
+    public void unseenCleaned() throws Exception {
+
+        initForcefully();
+        loadGoldStandard();
+        cleanUsingCombinedCleaner();
+
+        final Configuration configuration = Configuration.load();
+        assertRecordsAreCleaned(configuration.requireUnseenRecords());
     }
 }

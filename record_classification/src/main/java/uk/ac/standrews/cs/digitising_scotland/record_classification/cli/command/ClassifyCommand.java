@@ -52,30 +52,6 @@ public class ClassifyCommand extends Command {
     @Parameter(required = true, names = {OPTION_OUTPUT_RECORDS_PATH_SHORT, OPTION_OUTPUT_RECORDS_PATH_LONG}, descriptionKey = "command.classify.output.description", converter = PathConverter.class)
     private Path output_path;
 
-    public static class Builder extends Command.Builder {
-
-        private Path output_path;
-
-        public Builder output(Path output_path) {
-
-            this.output_path = output_path;
-            return this;
-        }
-
-        @Override
-        public String[] build() {
-
-            Objects.requireNonNull(output_path);
-
-            final List<String> arguments = new ArrayList<>();
-            arguments.add(NAME);
-            arguments.add(OPTION_OUTPUT_RECORDS_PATH_SHORT);
-            arguments.add(output_path.toString());
-
-            return arguments.toArray(new String[arguments.size()]);
-        }
-    }
-
     /**
      * Instantiates this command for the given launcher.
      *
@@ -110,6 +86,31 @@ public class ClassifyCommand extends Command {
         catch (IOException e) {
             logger.log(Level.SEVERE, "failed to persist classified unseen records: " + e.getMessage(), e);
             throw new RuntimeException(e);
+        }
+    }
+
+    /** Builds command line arguments of this command. */
+    public static class Builder extends Command.Builder {
+
+        private Path output_path;
+
+        /**
+         * Sets the path at which to store the classified unseen records.
+         *
+         * @param output_path the path at which to store the classified unseen records
+         */
+        public void setOutputPath(Path output_path) {
+
+            Objects.requireNonNull(output_path);
+            this.output_path = output_path;
+        }
+
+        @Override
+        protected void populateArguments() {
+
+            addArgument(NAME);
+            addArgument(OPTION_OUTPUT_RECORDS_PATH_SHORT);
+            addArgument(output_path);
         }
     }
 }

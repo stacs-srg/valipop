@@ -77,13 +77,33 @@ public abstract class CommandTest {
 
     protected void init() throws Exception { new InitCommand.Builder().run(launcher); }
 
-    protected void initForcefully() throws Exception {new InitCommand.Builder().forcefully().run(launcher);}
+    protected void initForcefully() throws Exception {
 
-    protected void setVerbosity(final LogLevelSupplier supplier) throws Exception { new SetCommand.Builder().verbosity(supplier).run(launcher); }
+        final InitCommand.Builder builder = new InitCommand.Builder();
+        builder.setForce(true);
+        builder.run(launcher);
+    }
 
-    protected void setSeed() throws Exception { new SetCommand.Builder().seed(TEST_SEED).run(launcher); }
-    
-    protected void setClassifier(ClassifierSupplier classifier_supplier) throws Exception { new SetCommand.Builder().classifier(classifier_supplier).run(launcher); }
+    protected void setVerbosity(final LogLevelSupplier supplier) throws Exception {
+
+        final SetCommand.Builder builder = new SetCommand.Builder();
+        builder.setVerbosity(supplier);
+        builder.run(launcher);
+    }
+
+    protected void setSeed() throws Exception {
+
+        final SetCommand.Builder builder = new SetCommand.Builder();
+        builder.setSeed(TEST_SEED);
+        builder.run(launcher);
+    }
+
+    protected void setClassifier(ClassifierSupplier classifier_supplier) throws Exception {
+
+        final SetCommand.Builder builder = new SetCommand.Builder();
+        builder.setClassifier(classifier_supplier);
+        builder.run(launcher);
+    }
 
     protected void loadGoldStandards(List<TestDataSet> gold_standards, final CharsetSupplier charset, final CSVFormat format, double training_ratio) throws Exception {
 
@@ -101,16 +121,34 @@ public abstract class CommandTest {
 
     protected void evaluate() throws Exception { new EvaluateCommand.Builder().run(launcher); }
 
-    protected void evaluate(final Path output) throws Exception { new EvaluateCommand.Builder().output(output).run(launcher); }
+    protected void evaluate(final Path output) throws Exception {
 
-    protected void train() throws Exception {new TrainCommand.Builder().internalTrainingRatio(1.0).run(launcher);}
+        final EvaluateCommand.Builder builder = new EvaluateCommand.Builder();
+        builder.setOutput(output);
+        builder.run(launcher);
+    }
 
-    protected void clean(CleanerSupplier cleaner) throws Exception {new CleanCommand.Builder().cleaners(cleaner).run(launcher);}
+    protected void train() throws Exception {
+
+        final TrainCommand.Builder builder = new TrainCommand.Builder();
+        builder.setInternalTrainingRatio(1.0);
+        builder.run(launcher);
+    }
+
+    protected void clean(CleanerSupplier cleaner) throws Exception {
+
+        final CleanCommand.Builder builder = new CleanCommand.Builder();
+        builder.addCleaners(cleaner);
+        builder.run(launcher);
+    }
 
     protected Path classify() throws Exception {
 
         final Path output_path = temporary.newFile().toPath();
-        new ClassifyCommand.Builder().output(output_path).run(launcher);
+        final ClassifyCommand.Builder builder = new ClassifyCommand.Builder();
+        builder.setOutputPath(output_path);
+        builder.run(launcher);
+
         return output_path;
     }
 
@@ -126,8 +164,10 @@ public abstract class CommandTest {
 
     protected void loadGoldStandard(final TestDataSet records, final CharsetSupplier charset, final CSVFormat format, final double training_ratio) throws Exception {
 
-        final LoadRecordsCommand.Builder builder = new LoadGoldStandardRecordsCommand.Builder().trainingRatio(training_ratio).classColumnIndex(records.class_column_index);
-        load(builder, records, charset, format);
+        final LoadGoldStandardRecordsCommand.Builder gold_standard_builder = new LoadGoldStandardRecordsCommand.Builder();
+        gold_standard_builder.setTrainingRatio(training_ratio);
+        gold_standard_builder.setClassColumnIndex(records.class_column_index);
+        load(gold_standard_builder, records, charset, format);
     }
 
     protected void loadUnseens(final List<TestDataSet> records) throws Exception {
@@ -143,7 +183,13 @@ public abstract class CommandTest {
     protected void load(LoadRecordsCommand.Builder builder, TestDataSet records, final CharsetSupplier charset, final CSVFormat format) throws Exception {
 
         final Path source = getTestCopy(records, charset, format);
-        builder.idColumnIndex(records.id_column_index).labelColumnIndex(records.label_column_index).delimiter(format.getDelimiter()).skipHeader(format.getSkipHeaderRecord()).from(source).charset(charset).run(launcher);
+        builder.setIdColumnIndex(records.id_column_index);
+        builder.setLabelColumnIndex(records.label_column_index);
+        builder.setDelimiter(format.getDelimiter());
+        builder.setSkipHeader(format.getSkipHeaderRecord());
+        builder.setSource(source);
+        builder.setSourceCharset(charset);
+        builder.run(launcher);
     }
 
     protected Path getTestCopy(final TestDataSet records, final CharsetSupplier charset, final CSVFormat format) {

@@ -120,7 +120,7 @@ public class Configuration extends ClassificationContext {
         return load(DEFAULT_WORKING_DIRECTORY);
     }
 
-    public static Configuration load(Path working_directory) throws IOException {
+    public static Configuration load(Path working_directory) {
 
         final Path home = getHome(working_directory);
         final Path config_file = getConfigurationFile(home);
@@ -128,6 +128,9 @@ public class Configuration extends ClassificationContext {
             final Configuration configuration = MAPPER.readValue(in, Configuration.class);
             configuration.setWorkingDirectory(working_directory);
             return configuration;
+        }
+        catch (IOException e) {
+            throw new RuntimeException("Failed to load configuration from" + home + ", cause: " + e.getMessage(), e);
         }
     }
 
@@ -335,6 +338,7 @@ public class Configuration extends ClassificationContext {
 
         try (final OutputStream out = Files.newOutputStream(getConfigurationFile(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)) {
             MAPPER.writerWithDefaultPrettyPrinter().writeValue(out, this);
+            out.flush();
         }
     }
 
