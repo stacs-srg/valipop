@@ -22,6 +22,7 @@ import com.fasterxml.jackson.databind.module.*;
 
 import org.apache.commons.csv.*;
 
+import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.StrictConfusionMatrix;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.*;
@@ -230,6 +231,16 @@ public class Configuration extends ClassificationContext {
     protected Path getClassifiedEvaluationRecordsPath() {
 
         return getHome().resolve("classified_evaluation.csv");
+    }
+
+    protected Path getConfusionMatrixPath() {
+
+        return getHome().resolve("confusion_matrix.object");
+    }
+
+    protected Path getClassificationMetricsPath() {
+
+        return getHome().resolve("classification_metrics.object");
     }
 
     public SerializationFormat getClassifierSerializationFormat() {

@@ -19,6 +19,8 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.cli;
 import com.fasterxml.jackson.core.*;
 import com.fasterxml.jackson.databind.*;
 
+import org.apache.commons.lang3.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.ConfusionMatrix;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.serialization.*;
@@ -68,8 +70,31 @@ class ConfigurationJsonSerializer extends JsonSerializer<Configuration> {
         writeClassifiedUnseenRecords(configuration);
         writeClassifiedEvaluationRecords(configuration);
         writeClassifier(configuration);
+        writeConfusionMatrix(configuration);
+        writeClassificationMetrics(configuration);
 
         out.writeEndObject();
+    }
+
+    private void writeUnseenRecords(Configuration configuration) throws IOException {
+
+        persistBucketIfPresent(configuration.getUnseenRecordsOptional(), configuration.getUnseenRecordsPath());
+    }
+
+    private void writeGoldStandardRecords(final Configuration configuration) throws IOException {
+
+        writeTrainingRecords(configuration);
+        writeEvaluationRecords(configuration);
+    }
+
+    private void writeClassifiedUnseenRecords(Configuration configuration) throws IOException {
+
+        persistBucketIfPresent(configuration.getClassifiedUnseenRecordsOptional(), configuration.getClassifiedUnseenRecordsPath());
+    }
+
+    private void writeClassifiedEvaluationRecords(final Configuration configuration) throws IOException {
+
+        persistBucketIfPresent(configuration.getClassifiedEvaluationRecordsOptional(), configuration.getClassifiedEvaluationRecordsPath());
     }
 
     private void writeClassifier(final Configuration configuration) throws IOException {
@@ -81,6 +106,34 @@ class ConfigurationJsonSerializer extends JsonSerializer<Configuration> {
             final Path destination = getSerializedClassifierPath(configuration, format);
             Serialization.persist(destination, classifier.get(), format);
         }
+    }
+
+    private void writeConfusionMatrix(final Configuration configuration) throws IOException {
+
+        persistObjectIfPresent(configuration.getConfusionMatrixOptional(), configuration.getConfusionMatrixPath());
+    }
+
+    private void writeClassificationMetrics(final Configuration configuration) throws IOException {
+
+        persistObjectIfPresent(configuration.getClassificationMetricsOptional(), configuration.getClassificationMetricsPath());
+    }
+
+    private void persistBucketIfPresent(final Optional<Bucket> bucket, final Path destination) throws IOException {
+
+        if (bucket.isPresent()) {
+            assureDirectoryExists(destination.getParent());
+            persistBucketAsCSV(bucket.get(), destination, RECORD_CSV_FORMAT, RESOURCE_CHARSET);
+        }
+    }
+
+    private void writeTrainingRecords(final Configuration configuration) throws IOException {
+
+        persistBucketIfPresent(configuration.getTrainingRecordsOptional(), configuration.getTrainingRecordsPath());
+    }
+
+    private void writeEvaluationRecords(final Configuration configuration) throws IOException {
+
+        persistBucketIfPresent(configuration.getEvaluationRecordsOptional(), configuration.getEvaluationRecordsPath());
     }
 
     static Path getSerializedClassifierPath(Configuration configuration, SerializationFormat format) {
@@ -97,42 +150,10 @@ class ConfigurationJsonSerializer extends JsonSerializer<Configuration> {
         }
     }
 
-    private void writeGoldStandardRecords(final Configuration configuration) throws IOException {
+    private void persistObjectIfPresent(final Optional<?> object, Path destination) throws IOException {
 
-        writeTrainingRecords(configuration);
-        writeEvaluationRecords(configuration);
-    }
-
-    private void writeTrainingRecords(final Configuration configuration) throws IOException {
-
-        persistBucketIfPresent(configuration.getTrainingRecordsOptional(), configuration.getTrainingRecordsPath());
-    }
-
-    private void writeEvaluationRecords(final Configuration configuration) throws IOException {
-
-        persistBucketIfPresent(configuration.getEvaluationRecordsOptional(), configuration.getEvaluationRecordsPath());
-    }
-
-    private void writeUnseenRecords(Configuration configuration) throws IOException {
-
-        persistBucketIfPresent(configuration.getUnseenRecordsOptional(), configuration.getUnseenRecordsPath());
-    }
-
-    private void writeClassifiedUnseenRecords(Configuration configuration) throws IOException {
-
-        persistBucketIfPresent(configuration.getClassifiedUnseenRecordsOptional(), configuration.getClassifiedUnseenRecordsPath());
-    }
-
-    private void writeClassifiedEvaluationRecords(final Configuration configuration) throws IOException {
-
-        persistBucketIfPresent(configuration.getClassifiedEvaluationRecordsOptional(), configuration.getClassifiedEvaluationRecordsPath());
-    }
-
-    private void persistBucketIfPresent(final Optional<Bucket> bucket, final Path destination) throws IOException {
-
-        if (bucket.isPresent()) {
-            assureDirectoryExists(destination.getParent());
-            persistBucketAsCSV(bucket.get(), destination, RECORD_CSV_FORMAT, RESOURCE_CHARSET);
+        if (object.isPresent()) {
+            Serialization.persist(destination, object.get(), SerializationFormat.JAVA_SERIALIZATION);
         }
     }
 }

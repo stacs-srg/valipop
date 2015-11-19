@@ -200,7 +200,7 @@ public abstract class Experiment implements Callable<Void> {
         final List<String> values = classificationMetrics.getValues();
 
         values.add(String.valueOf(context.getTrainingTime().getSeconds() / ONE_MINUTE_IN_SECONDS));
-        values.add(String.valueOf(context.getClassificationTime().getSeconds() / ONE_MINUTE_IN_SECONDS));
+        values.add(String.valueOf(context.getEvaluationClassificationTime().getSeconds() / ONE_MINUTE_IN_SECONDS));
 
         return values;
     }

@@ -17,6 +17,7 @@
 package uk.ac.standrews.cs.digitising_scotland.record_classification.cli.command;
 
 import org.junit.Test;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.dataset.*;
@@ -26,6 +27,7 @@ import java.io.*;
 import java.nio.file.*;
 import java.util.*;
 
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -44,19 +46,31 @@ public class EvaluateCommandTest extends CommandTest {
     public void testEvaluationFailureWithNoEvaluationRecords() throws Exception {
 
         init();
+        setClassifier(ClassifierSupplier.EXACT_MATCH);
         loadGoldStandards(TestDataSets.CASE_1_TRAINING, 1.0);
         evaluate();
     }
 
-    @Test(expected = RuntimeException.class)
+    @Test
     public void testEvaluationWithOutput() throws Exception {
 
         init();
-        loadGoldStandards(TestDataSets.CASE_1_TRAINING, 8.0);
+        setSeed();
+        setClassifier(ClassifierSupplier.EXACT_MATCH);
+        loadGoldStandards(TestDataSets.CASE_1_TRAINING, 0.8);
+        clean(CleanerSupplier.COMBINED);
         final Path output = temporary.newFile().toPath();
         evaluate(output);
 
+        assertEvaluationResultsIsSet();
         assertEvaluationOutputIsCorrect(output);
+    }
+
+    private void assertEvaluationResultsIsSet() {
+
+        assertNotNull(configuration.getConfusionMatrix());
+        assertNotNull(configuration.getClassificationMetrics());
+        assertNotNull(configuration.getEvaluationClassificationTime());
     }
 
     private void assertEvaluationOutputIsCorrect(final Path output) throws IOException {

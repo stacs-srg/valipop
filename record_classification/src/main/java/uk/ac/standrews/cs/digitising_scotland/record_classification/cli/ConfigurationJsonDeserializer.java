@@ -19,6 +19,7 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.cli;
 import com.fasterxml.jackson.core.*;
 import com.fasterxml.jackson.databind.*;
 
+import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.serialization.*;
@@ -88,14 +89,52 @@ public class ConfigurationJsonDeserializer extends JsonDeserializer<Configuratio
         }
 
         //TODO add lazy loading of records.
-        //FIXME serialize matrix and metrics or generate if needed?
+
         readUnseenRecords(configuration);
         readGoldStandardRecords(configuration);
         readClassifiedUnseenRecords(configuration);
         readClassifiedEvaluationRecords(configuration);
         readClassifier(configuration);
+        readConfusionMatrix(configuration);
+        readClassificationMetrics(configuration);
 
         return configuration;
+    }
+
+    private void expectCurrent(final JsonParser in, final JsonToken expected) throws JsonParseException {
+
+        final JsonToken actual = in.getCurrentToken();
+        expectToken(in, actual, expected);
+    }
+
+    private void expectNext(final JsonParser in, JsonToken... expected) throws IOException {
+
+        final JsonToken actual = in.nextToken();
+        expectToken(in, actual, expected);
+    }
+
+    private void readUnseenRecords(Configuration configuration) throws IOException {
+
+        final Bucket unseen_records = loadBucketIfPresent(configuration.getUnseenRecordsPath());
+        configuration.setUnseenRecords(unseen_records);
+    }
+
+    private void readGoldStandardRecords(Configuration configuration) throws IOException {
+
+        readTrainingRecords(configuration);
+        readEvaluationRecords(configuration);
+    }
+
+    private void readClassifiedUnseenRecords(Configuration configuration) throws IOException {
+
+        final Bucket classified_unseen_records = loadBucketIfPresent(configuration.getClassifiedUnseenRecordsPath());
+        configuration.setClassifiedUnseenRecords(classified_unseen_records);
+    }
+
+    private void readClassifiedEvaluationRecords(Configuration configuration) throws IOException {
+
+        final Bucket classified_evaluation_records = loadBucketIfPresent(configuration.getClassifiedEvaluationRecordsPath());
+        configuration.setClassifiedEvaluationRecords(classified_evaluation_records);
     }
 
     private void readClassifier(final Configuration configuration) throws IOException {
@@ -108,27 +147,28 @@ public class ConfigurationJsonDeserializer extends JsonDeserializer<Configuratio
         }
     }
 
-    private void readUnseenRecords(Configuration configuration) throws IOException {
+    private void readConfusionMatrix(final Configuration configuration) throws IOException {
 
-        final Bucket unseen_records = loadBucketIfPresent(configuration.getUnseenRecordsPath());
-        configuration.setUnseenRecords(unseen_records);
+        final ConfusionMatrix matrix = loadObjectIfPresent(configuration.getConfusionMatrixPath(), ConfusionMatrix.class);
+        configuration.setConfusionMatrix(matrix);
     }
 
-    private void readClassifiedUnseenRecords(Configuration configuration) throws IOException {
+    private void readClassificationMetrics(final Configuration configuration) throws IOException {
 
-        final Bucket classified_unseen_records = loadBucketIfPresent(configuration.getClassifiedUnseenRecordsPath());
-        configuration.setClassifiedUnseenRecords(classified_unseen_records);
+        final ClassificationMetrics metrics = loadObjectIfPresent(configuration.getConfusionMatrixPath(), ClassificationMetrics.class);
+        configuration.setClassificationMetrics(metrics);
+    }
+
+    private void expectToken(final JsonParser in, final JsonToken actual, final JsonToken... expected) throws JsonParseException {
+
+        if (!Arrays.stream(expected).filter(actual::equals).findAny().isPresent()) {
+            throw new JsonParseException(String.format("expected %s, found %s", Arrays.toString(expected), actual), in.getCurrentLocation());
+        }
     }
 
     private Bucket loadBucketIfPresent(Path source) throws IOException {
 
         return Files.isRegularFile(source) ? Configuration.loadBucket(source) : null;
-    }
-
-    private void readGoldStandardRecords(Configuration configuration) throws IOException {
-
-        readTrainingRecords(configuration);
-        readEvaluationRecords(configuration);
     }
 
     private void readTrainingRecords(Configuration configuration) throws IOException {
@@ -143,28 +183,8 @@ public class ConfigurationJsonDeserializer extends JsonDeserializer<Configuratio
         configuration.setEvaluationRecords(evaluation_records);
     }
 
-    private void readClassifiedEvaluationRecords(Configuration configuration) throws IOException {
+    private <Type> Type loadObjectIfPresent(Path source, Class<Type> type) throws IOException {
 
-        final Bucket classified_evaluation_records = loadBucketIfPresent(configuration.getClassifiedEvaluationRecordsPath());
-        configuration.setClassifiedEvaluationRecords(classified_evaluation_records);
-    }
-
-    private void expectCurrent(final JsonParser in, final JsonToken expected) throws JsonParseException {
-
-        final JsonToken actual = in.getCurrentToken();
-        expectToken(in, actual, expected);
-    }
-
-    private void expectToken(final JsonParser in, final JsonToken actual, final JsonToken... expected) throws JsonParseException {
-
-        if (!Arrays.stream(expected).filter(actual::equals).findAny().isPresent()) {
-            throw new JsonParseException(String.format("expected %s, found %s", Arrays.toString(expected), actual), in.getCurrentLocation());
-        }
-    }
-
-    private void expectNext(final JsonParser in, JsonToken... expected) throws IOException {
-
-        final JsonToken actual = in.nextToken();
-        expectToken(in, actual, expected);
+        return Files.isRegularFile(source) ? Serialization.load(source, type, SerializationFormat.JAVA_SERIALIZATION) : null;
     }
 }
