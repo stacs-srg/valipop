@@ -55,7 +55,7 @@ public class Population implements ITemporalPopulationInfo {
     public static void main(String[] args) {
         Population pop = new Population();
         pop.initLifeTables();
-        pop.generateSeedPopulation(50000);
+        pop.generateSeedPopulation(5000000);
         pop.runSimulation();
         System.out.println(pop.people.size());
 
@@ -72,17 +72,23 @@ public class Population implements ITemporalPopulationInfo {
             if (d > largest)
                 largest = d;
 
+            System.out.println((START_YEAR + count - 1) + "\t" + d);
+
             count++;
             sum += d;
 
-            System.out.print(d + " ");
         }
 
-        System.out.println("\nSmallest\tLargest\tMean");
-        System.out.println(smallest + "\t" + largest + "\t" + sum / (double) count);
+        System.out.println("\nSmallest\tMean\tLargest");
+        System.out.println(smallest + "\t" + sum / (double) count + "\t" + largest);
 
 
     }
+
+    public static int getDaysInYear() {
+        return DAYS_PER_YEAR;
+    }
+
 
     public void runSimulation() {
 
