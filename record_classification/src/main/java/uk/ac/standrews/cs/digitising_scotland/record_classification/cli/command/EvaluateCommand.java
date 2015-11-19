@@ -56,33 +56,52 @@ public class EvaluateCommand extends Command {
     @Parameter(names = {OPTION_OUTPUT_RECORDS_PATH_SHORT, OPTION_OUTPUT_RECORDS_PATH_LONG}, description = "command.evaluate.output.description", converter = PathConverter.class)
     private Path classified_evaluation_records;
 
-    public static class Builder extends Command.Builder {
-
-        private Path classified_evaluation_records;
-
-        public Builder output(Path classified_evaluation_records) {
-
-            this.classified_evaluation_records = classified_evaluation_records;
-            return this;
-        }
-
-        @Override
-        public String[] build() {
-
-            final List<String> arguments = new ArrayList<>();
-            arguments.add(NAME);
-            if (classified_evaluation_records != null) {
-                arguments.add(OPTION_OUTPUT_RECORDS_PATH_SHORT);
-                arguments.add(classified_evaluation_records.toString());
-            }
-
-            return arguments.toArray(new String[arguments.size()]);
-        }
-    }
-
     public EvaluateCommand(final Launcher launcher) {
 
         super(launcher, NAME);
+    }
+
+    static void logClassificationMetrics(Logger logger, final List<ClassificationMetrics> classification_metrics) {
+
+        logger.info(() -> String.format("%-30s %s", "Macro Average Accuracy:", getFormattedMeanAndConfidenceInterval(classification_metrics, ClassificationMetrics::getMacroAverageAccuracy)));
+        logger.info(() -> String.format("%-30s %s", "Macro Average F1:", getFormattedMeanAndConfidenceInterval(classification_metrics, ClassificationMetrics::getMacroAverageF1)));
+        logger.info(() -> String.format("%-30s %s", "Macro Average Precision:", getFormattedMeanAndConfidenceInterval(classification_metrics, ClassificationMetrics::getMacroAveragePrecision)));
+        logger.info(() -> String.format("%-30s %s", "Macro Average Recall:", getFormattedMeanAndConfidenceInterval(classification_metrics, ClassificationMetrics::getMacroAverageRecall)));
+        logger.info(() -> String.format("%-30s %s", "Micro Average Accuracy:", getFormattedMeanAndConfidenceInterval(classification_metrics, ClassificationMetrics::getMicroAverageAccuracy)));
+        logger.info(() -> String.format("%-30s %s", "Micro Average F1:", getFormattedMeanAndConfidenceInterval(classification_metrics, ClassificationMetrics::getMicroAverageF1)));
+        logger.info(() -> String.format("%-30s %s", "Micro Average Precision:", getFormattedMeanAndConfidenceInterval(classification_metrics, ClassificationMetrics::getMicroAveragePrecision)));
+        logger.info(() -> String.format("%-30s %s", "Micro Average Recall:", getFormattedMeanAndConfidenceInterval(classification_metrics, ClassificationMetrics::getMicroAverageRecall)));
+    }
+
+    static void logConfusionMatrix(Logger logger, final List<ConfusionMatrix> confusion_matrix) {
+
+        logger.info(() -> String.format("%-30s %s", "Number Of Classes:", getFormattedMeanAndConfidenceInterval(confusion_matrix, ConfusionMatrix::getNumberOfClasses)));
+        logger.info(() -> String.format("%-30s %s", "Number Of Classifications:", getFormattedMeanAndConfidenceInterval(confusion_matrix, ConfusionMatrix::getNumberOfClassifications)));
+        logger.info(() -> String.format("%-30s %s", "Number Of True Positives:", getFormattedMeanAndConfidenceInterval(confusion_matrix, ConfusionMatrix::getNumberOfTruePositives)));
+        logger.info(() -> String.format("%-30s %s", "Number Of True Negatives:", getFormattedMeanAndConfidenceInterval(confusion_matrix, ConfusionMatrix::getNumberOfTrueNegatives)));
+        logger.info(() -> String.format("%-30s %s", "Number Of False Negatives:", getFormattedMeanAndConfidenceInterval(confusion_matrix, ConfusionMatrix::getNumberOfFalseNegatives)));
+        logger.info(() -> String.format("%-30s %s", "Number Of False Positives:", getFormattedMeanAndConfidenceInterval(confusion_matrix, ConfusionMatrix::getNumberOfFalsePositives)));
+    }
+
+    private static <Value> String getFormattedMeanAndConfidenceInterval(List<Value> values, Function<Value, ? extends Number> getter) {
+
+        final List<Double> doubles = values.stream().map(getter).map(Number::doubleValue).collect(Collectors.toList());
+        return formatMeanAndInterval(doubles);
+    }
+
+    private static String formatMeanAndInterval(List<Double> values) {
+
+        if (values.size() == 1) {
+            return String.format("%.2f", values.get(0));
+        }
+        else {
+            return formatMeanAndInterval(Means.calculateMean(values), ConfidenceIntervals.calculateConfidenceInterval(values));
+        }
+    }
+
+    private static String formatMeanAndInterval(double mean, double interval) {
+
+        return String.format("%.2f ± %.2f", mean, interval);
     }
 
     @Override
@@ -135,46 +154,23 @@ public class EvaluateCommand extends Command {
         }
     }
 
-    static void logClassificationMetrics(Logger logger, final List<ClassificationMetrics> classification_metrics) {
+    public static class Builder extends Command.Builder {
 
-        logger.info(() -> String.format("%-30s %s", "Macro Average Accuracy:", getFormattedMeanAndConfidenceInterval(classification_metrics, ClassificationMetrics::getMacroAverageAccuracy)));
-        logger.info(() -> String.format("%-30s %s", "Macro Average F1:", getFormattedMeanAndConfidenceInterval(classification_metrics, ClassificationMetrics::getMacroAverageF1)));
-        logger.info(() -> String.format("%-30s %s", "Macro Average Precision:", getFormattedMeanAndConfidenceInterval(classification_metrics, ClassificationMetrics::getMacroAveragePrecision)));
-        logger.info(() -> String.format("%-30s %s", "Macro Average Recall:", getFormattedMeanAndConfidenceInterval(classification_metrics, ClassificationMetrics::getMacroAverageRecall)));
-        logger.info(() -> String.format("%-30s %s", "Micro Average Accuracy:", getFormattedMeanAndConfidenceInterval(classification_metrics, ClassificationMetrics::getMicroAverageAccuracy)));
-        logger.info(() -> String.format("%-30s %s", "Micro Average F1:", getFormattedMeanAndConfidenceInterval(classification_metrics, ClassificationMetrics::getMicroAverageF1)));
-        logger.info(() -> String.format("%-30s %s", "Micro Average Precision:", getFormattedMeanAndConfidenceInterval(classification_metrics, ClassificationMetrics::getMicroAveragePrecision)));
-        logger.info(() -> String.format("%-30s %s", "Micro Average Recall:", getFormattedMeanAndConfidenceInterval(classification_metrics, ClassificationMetrics::getMicroAverageRecall)));
-    }
+        private Path classified_evaluation_records;
 
-    static void logConfusionMatrix(Logger logger, final List<ConfusionMatrix> confusion_matrix) {
+        public void setOutput(Path classified_evaluation_records) {
 
-        logger.info(() -> String.format("%-30s %s", "Number Of Classes:", getFormattedMeanAndConfidenceInterval(confusion_matrix, ConfusionMatrix::getNumberOfClasses)));
-        logger.info(() -> String.format("%-30s %s", "Number Of Classifications:", getFormattedMeanAndConfidenceInterval(confusion_matrix, ConfusionMatrix::getNumberOfClassifications)));
-        logger.info(() -> String.format("%-30s %s", "Number Of True Positives:", getFormattedMeanAndConfidenceInterval(confusion_matrix, ConfusionMatrix::getNumberOfTruePositives)));
-        logger.info(() -> String.format("%-30s %s", "Number Of True Negatives:", getFormattedMeanAndConfidenceInterval(confusion_matrix, ConfusionMatrix::getNumberOfTrueNegatives)));
-        logger.info(() -> String.format("%-30s %s", "Number Of False Negatives:", getFormattedMeanAndConfidenceInterval(confusion_matrix, ConfusionMatrix::getNumberOfFalseNegatives)));
-        logger.info(() -> String.format("%-30s %s", "Number Of False Positives:", getFormattedMeanAndConfidenceInterval(confusion_matrix, ConfusionMatrix::getNumberOfFalsePositives)));
-    }
-
-    private static <Value> String getFormattedMeanAndConfidenceInterval(List<Value> values, Function<Value, ? extends Number> getter) {
-
-        final List<Double> doubles = values.stream().map(getter).map(Number::doubleValue).collect(Collectors.toList());
-        return formatMeanAndInterval(doubles);
-    }
-
-    private static String formatMeanAndInterval(List<Double> values) {
-
-        if (values.size() == 1) {
-            return String.format("%.2f", values.get(0));
+            this.classified_evaluation_records = classified_evaluation_records;
         }
-        else {
-            return formatMeanAndInterval(Means.calculateMean(values), ConfidenceIntervals.calculateConfidenceInterval(values));
+
+        @Override
+        protected void populateArguments() {
+
+            addArgument(NAME);
+            if (classified_evaluation_records != null) {
+                addArgument(OPTION_OUTPUT_RECORDS_PATH_SHORT);
+                addArgument(classified_evaluation_records);
+            }
         }
-    }
-
-    private static String formatMeanAndInterval(double mean, double interval) {
-
-        return String.format("%.2f ± %.2f", mean, interval);
     }
 }

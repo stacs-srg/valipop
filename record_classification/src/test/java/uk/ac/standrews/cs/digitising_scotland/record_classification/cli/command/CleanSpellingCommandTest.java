@@ -37,9 +37,8 @@ import static uk.ac.standrews.cs.digitising_scotland.record_classification.datas
 public class CleanSpellingCommandTest extends CleanStopWordsCommandTest {
 
     public static final TestResource DICTIONARY = new TestResource(TestResource.class, "spelling/dictionary.txt");
-    public static final List<TestDataSet> GS_WITH_MISTAKES = Arrays.asList(new TestDataSet(TestDataSet.class, "spelling/gold_standard_with_spelling_mistakes.csv"));
-    public static final List<TestDataSet> GS_WITHOUT_MISTAKES = Arrays.asList(new TestDataSet(TestDataSet.class, "spelling/gold_standard_without_spelling_mistakes.csv"));
-    
+    public static final List<TestDataSet> GS_WITH_MISTAKES = Collections.singletonList(new TestDataSet(TestDataSet.class, "spelling/gold_standard_with_spelling_mistakes.csv"));
+    public static final List<TestDataSet> GS_WITHOUT_MISTAKES = Collections.singletonList(new TestDataSet(TestDataSet.class, "spelling/gold_standard_without_spelling_mistakes.csv"));
 
     @Parameterized.Parameters(name = "{index} {5}")
     public static Collection<Object[]> data() {
@@ -48,6 +47,7 @@ public class CleanSpellingCommandTest extends CleanStopWordsCommandTest {
         for (CharsetSupplier charset_supplier : CharsetSupplier.values()) {
             parameters.add(new Object[]{GS_WITH_MISTAKES, GS_WITH_MISTAKES, GS_WITHOUT_MISTAKES, GS_WITHOUT_MISTAKES, DICTIONARY, charset_supplier, false});
         }
+
         return parameters;
     }
 
@@ -59,6 +59,8 @@ public class CleanSpellingCommandTest extends CleanStopWordsCommandTest {
     @Override
     protected CleanStopWordsCommand.Builder getBuilder() {
 
-        return new CleanSpellingCommand.Builder().accuracyThreshold(0.7f);
+        final CleanSpellingCommand.Builder builder = new CleanSpellingCommand.Builder();
+        builder.setAccuracyThreshold(0.7f);
+        return builder;
     }
 }

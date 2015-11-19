@@ -111,124 +111,6 @@ public class SetCommand extends Command {
     @Parameter(names = {Launcher.OPTION_VERBOSITY_SHORT, Launcher.OPTION_VERBOSITY_LONG}, descriptionKey = "launcher.verbosity.description")
     private LogLevelSupplier log_level;
 
-    public static class Builder extends Command.Builder {
-
-        private ClassifierSupplier classifier_supplier;
-        private Long seed;
-        private CharsetSupplier charset_supplier;
-        private Character delimiter;
-        private SerializationFormat serialization_format;
-        private Double training_ratio;
-        private Double internal_training_ratio;
-        private CsvFormatSupplier csv_format;
-        private LogLevelSupplier verbosity;
-
-        public Builder classifier(final ClassifierSupplier classifier_supplier) {
-
-            this.classifier_supplier = classifier_supplier;
-            return this;
-        }
-
-        public Builder seed(final Long seed) {
-
-            this.seed = seed;
-            return this;
-        }
-
-        public Builder charset(final CharsetSupplier charset_supplier) {
-
-            this.charset_supplier = charset_supplier;
-            return this;
-        }
-
-        public Builder delimiter(final Character delimiter) {
-
-            this.delimiter = delimiter;
-            return this;
-        }
-
-        public Builder classifierSerializationFormat(final SerializationFormat serialization_format) {
-
-            this.serialization_format = serialization_format;
-            return this;
-        }
-
-        public Builder trainingRatio(final Double training_ratio) {
-
-            this.training_ratio = training_ratio;
-            return this;
-        }
-
-        public Builder internalTrainingRatio(final Double internal_training_ratio) {
-
-            this.internal_training_ratio = internal_training_ratio;
-            return this;
-        }
-
-        public Builder format(final CsvFormatSupplier csv_format) {
-
-            this.csv_format = csv_format;
-            return this;
-        }
-
-        public Builder verbosity(final LogLevelSupplier verbosity) {
-
-            this.verbosity = verbosity;
-            return this;
-        }
-
-        @Override
-        public String[] build() {
-
-            final List<String> arguments = new ArrayList<>();
-
-            if (classifier_supplier != null) {
-                arguments.add(OPTION_CLASSIFIER_SHORT);
-                arguments.add(String.valueOf(classifier_supplier));
-            }
-            if (seed != null) {
-                arguments.add(OPTION_RANDOM_SEED_SHORT);
-                arguments.add(String.valueOf(seed));
-            }
-            if (charset_supplier != null) {
-                arguments.add(OPTION_CHARSET_SHORT);
-                arguments.add(String.valueOf(charset_supplier));
-            }
-            if (delimiter != null) {
-                arguments.add(OPTION_DELIMITER_SHORT);
-                arguments.add(String.valueOf(delimiter));
-            }
-            if (serialization_format != null) {
-                arguments.add(OPTION_SERIALIZATION_FORMAT_SHORT);
-                arguments.add(String.valueOf(serialization_format));
-            }
-            if (training_ratio != null) {
-                arguments.add(OPTION_TRAINING_RATIO_SHORT);
-                arguments.add(String.valueOf(training_ratio));
-            }
-            if (internal_training_ratio != null) {
-                arguments.add(OPTION_INTERNAL_TRAINING_RATIO_SHORT);
-                arguments.add(String.valueOf(internal_training_ratio));
-            }
-            if (csv_format != null) {
-                arguments.add(OPTIONS_FORMAT_SHORT);
-                arguments.add(String.valueOf(csv_format));
-            }
-            if (verbosity != null) {
-                arguments.add(Launcher.OPTION_VERBOSITY_SHORT);
-                arguments.add(String.valueOf(verbosity));
-            }
-
-            if (arguments.isEmpty()) {
-                throw new NullPointerException("at least one parameter must be set");
-            }
-
-            arguments.add(0, NAME);
-
-            return arguments.toArray(new String[arguments.size()]);
-        }
-    }
-
     /**
      * Instantiates this command for the given launcher.
      *
@@ -262,5 +144,110 @@ public class SetCommand extends Command {
             logger.info(() -> String.format("The %s is set to %s", value_name, value));
         }
         return settable;
+    }
+
+    public static class Builder extends Command.Builder {
+
+        private ClassifierSupplier classifier_supplier;
+        private Long seed;
+        private CharsetSupplier charset_supplier;
+        private Character delimiter;
+        private SerializationFormat serialization_format;
+        private Double training_ratio;
+        private Double internal_training_ratio;
+        private CsvFormatSupplier csv_format;
+        private LogLevelSupplier verbosity;
+
+        public void setClassifier(final ClassifierSupplier classifier_supplier) {
+
+            this.classifier_supplier = classifier_supplier;
+        }
+
+        public void setSeed(final Long seed) {
+
+            this.seed = seed;
+        }
+
+        public void setDefaultCharset(final CharsetSupplier charset_supplier) {
+
+            this.charset_supplier = charset_supplier;
+        }
+
+        public void setDefaultDelimiter(final Character delimiter) {
+
+            this.delimiter = delimiter;
+        }
+
+        public void setClassifierSerializationFormat(final SerializationFormat serialization_format) {
+
+            this.serialization_format = serialization_format;
+        }
+
+        public void setDefaultTrainingRatio(final Double training_ratio) {
+
+            this.training_ratio = training_ratio;
+        }
+
+        public void setDefaultInternalTrainingRatio(final Double internal_training_ratio) {
+
+            this.internal_training_ratio = internal_training_ratio;
+        }
+
+        public void setDefaultCsvFormat(final CsvFormatSupplier csv_format) {
+
+            this.csv_format = csv_format;
+        }
+
+        public void setVerbosity(final LogLevelSupplier verbosity) {
+
+            this.verbosity = verbosity;
+        }
+
+        @Override
+        protected void populateArguments() {
+
+            if (classifier_supplier != null) {
+                addArgument(OPTION_CLASSIFIER_SHORT);
+                addArgument(String.valueOf(classifier_supplier));
+            }
+            if (seed != null) {
+                addArgument(OPTION_RANDOM_SEED_SHORT);
+                addArgument(String.valueOf(seed));
+            }
+            if (charset_supplier != null) {
+                addArgument(OPTION_CHARSET_SHORT);
+                addArgument(String.valueOf(charset_supplier));
+            }
+            if (delimiter != null) {
+                addArgument(OPTION_DELIMITER_SHORT);
+                addArgument(String.valueOf(delimiter));
+            }
+            if (serialization_format != null) {
+                addArgument(OPTION_SERIALIZATION_FORMAT_SHORT);
+                addArgument(String.valueOf(serialization_format));
+            }
+            if (training_ratio != null) {
+                addArgument(OPTION_TRAINING_RATIO_SHORT);
+                addArgument(String.valueOf(training_ratio));
+            }
+            if (internal_training_ratio != null) {
+                addArgument(OPTION_INTERNAL_TRAINING_RATIO_SHORT);
+                addArgument(String.valueOf(internal_training_ratio));
+            }
+            if (csv_format != null) {
+                addArgument(OPTIONS_FORMAT_SHORT);
+                addArgument(String.valueOf(csv_format));
+            }
+            if (verbosity != null) {
+                addArgument(Launcher.OPTION_VERBOSITY_SHORT);
+                addArgument(String.valueOf(verbosity));
+            }
+
+            if (isArgumentsEmpty()) {
+                throw new ParameterException("at least one parameter must be set");
+            }
+
+            addArgument(0, NAME);
+        }
     }
 }

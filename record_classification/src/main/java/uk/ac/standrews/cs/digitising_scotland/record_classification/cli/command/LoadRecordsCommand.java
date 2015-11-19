@@ -98,70 +98,62 @@ abstract class LoadRecordsCommand extends Command {
         private Integer id_column_index;
         private Integer label_column_index;
 
-        public Builder delimiter(Character delimiter) {
+        public void setDelimiter(Character delimiter) {
 
             this.delimiter = delimiter;
-            return this;
         }
 
-        public Builder format(CsvFormatSupplier csv_format) {
+        public void setFormat(CsvFormatSupplier csv_format) {
 
             this.csv_format = csv_format;
-            return this;
         }
 
-        public Builder skipHeader() {
+        public void setSkipHeader() {
 
             this.skip_header_record = true;
-            return this;
         }
-        public Builder skipHeader(boolean skip_header) {
+
+        public void setSkipHeader(boolean skip_header) {
 
             this.skip_header_record = skip_header;
-            return this;
         }
 
-        public Builder idColumnIndex(Integer id_column_index) {
+        public void setIdColumnIndex(Integer id_column_index) {
 
             this.id_column_index = id_column_index;
-            return this;
         }
 
-        public Builder labelColumnIndex(Integer label_column_index) {
+        public void setLabelColumnIndex(Integer label_column_index) {
 
             this.label_column_index = label_column_index;
-            return this;
         }
 
         @Override
-        protected List<String> getSubCommandArguments() {
+        protected void populateSubCommandArguments() {
 
-            final List<String> arguments = new ArrayList<>();
-            arguments.add(getSubCommandName());
+            addArgument(getSubCommandName());
 
             if (delimiter != null) {
-                arguments.add(OPTION_DELIMITER_SHORT);
-                arguments.add(String.valueOf(delimiter));
+                addArgument(OPTION_DELIMITER_SHORT);
+                addArgument(String.valueOf(delimiter));
             }
 
             if (csv_format != null) {
-                arguments.add(OPTIONS_FORMAT_SHORT);
-                arguments.add(csv_format.name());
+                addArgument(OPTIONS_FORMAT_SHORT);
+                addArgument(csv_format.name());
             }
 
             if (skip_header_record) {
-                arguments.add(OPTION_SKIP_HEADER_SHORT);
+                addArgument(OPTION_SKIP_HEADER_SHORT);
             }
             if (id_column_index != null) {
-                arguments.add(OPTION_ID_COLUMN_INDEX_SHORT);
-                arguments.add(String.valueOf(id_column_index));
+                addArgument(OPTION_ID_COLUMN_INDEX_SHORT);
+                addArgument(String.valueOf(id_column_index));
             }
             if (label_column_index != null) {
-                arguments.add(OPTION_LABEL_COLUMN_INDEX_SHORT);
-                arguments.add(String.valueOf(label_column_index));
+                addArgument(OPTION_LABEL_COLUMN_INDEX_SHORT);
+                addArgument(String.valueOf(label_column_index));
             }
-
-            return arguments;
         }
 
         protected abstract String getSubCommandName();

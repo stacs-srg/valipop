@@ -41,33 +41,9 @@ public class TrainCommand extends Command {
     public static final String NAME = "train";
 
     @Parameter(names = {OPTION_INTERNAL_TRAINING_RATIO_SHORT, OPTION_INTERNAL_TRAINING_RATIO_LONG},
-                    descriptionKey = "command.train.internal_training_ratio.description",
-                    validateValueWith = Validators.BetweenZeroToOneInclusive.class)
+               descriptionKey = "command.train.internal_training_ratio.description",
+               validateValueWith = Validators.BetweenZeroToOneInclusive.class)
     private Double internal_training_ratio = configuration.getDefaultInternalTrainingRatio();
-
-    public static class Builder extends Command.Builder {
-
-        private Double internal_training_ratio;
-
-        public Builder internalTrainingRatio(double ratio) {
-
-            this.internal_training_ratio = ratio;
-            return this;
-        }
-
-        @Override
-        public String[] build() {
-
-            final List<String> arguments = new ArrayList<>();
-            arguments.add(NAME);
-            if (internal_training_ratio != null) {
-                arguments.add(OPTION_INTERNAL_TRAINING_RATIO_SHORT);
-                arguments.add(String.valueOf(internal_training_ratio));
-            }
-
-            return arguments.toArray(new String[arguments.size()]);
-        }
-    }
 
     /**
      * Instantiates this command for the given launcher.
@@ -90,7 +66,27 @@ public class TrainCommand extends Command {
         final Duration training_time = Duration.between(start, Instant.now());
 
         configuration.setTrainingTime(training_time);
-        
+
         logger.info(() -> String.format("trained the classifier on %d records in %s", training_records.size(), training_time));
+    }
+
+    public static class Builder extends Command.Builder {
+
+        private Double internal_training_ratio;
+
+        public void setInternalTrainingRatio(double ratio) {
+
+            this.internal_training_ratio = ratio;
+        }
+
+        @Override
+        protected void populateArguments() {
+
+            addArgument(NAME);
+            if (internal_training_ratio != null) {
+                addArgument(OPTION_INTERNAL_TRAINING_RATIO_SHORT);
+                addArgument(String.valueOf(internal_training_ratio));
+            }
+        }
     }
 }

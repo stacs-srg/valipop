@@ -61,16 +61,14 @@ public class CleanSpellingCommand extends CleanStopWordsCommand {
         private Float accuracy_threshold;
         private StringDistanceSupplier string_distance_supplier;
 
-        public Builder accuracyThreshold(float accuracy_threshold) {
+        public void setAccuracyThreshold(float accuracy_threshold) {
 
             this.accuracy_threshold = accuracy_threshold;
-            return this;
         }
 
-        public Builder stringDistance(StringDistanceSupplier string_distance_supplier) {
+        public void setStringDistance(StringDistanceSupplier string_distance_supplier) {
 
             this.string_distance_supplier = string_distance_supplier;
-            return this;
         }
 
         @Override
@@ -80,20 +78,18 @@ public class CleanSpellingCommand extends CleanStopWordsCommand {
         }
 
         @Override
-        protected List<String> getCommandArguments() {
+        protected void populateSubCommandArguments() {
 
-            final List<String> arguments = new ArrayList<>(super.getCommandArguments());
+            super.populateSubCommandArguments();
 
             if (accuracy_threshold != null) {
-                arguments.add(OPTION_ACCURACY_THRESHOLD_SHORT);
-                arguments.add(String.valueOf(accuracy_threshold));
+                addArgument(OPTION_ACCURACY_THRESHOLD_SHORT);
+                addArgument(accuracy_threshold);
             }
             if (string_distance_supplier != null) {
-                arguments.add(OPTION_DISTANCE_FUNCTION_SHORT);
-                arguments.add(string_distance_supplier.name());
+                addArgument(OPTION_DISTANCE_FUNCTION_SHORT);
+                addArgument(string_distance_supplier.name());
             }
-
-            return arguments;
         }
     }
 

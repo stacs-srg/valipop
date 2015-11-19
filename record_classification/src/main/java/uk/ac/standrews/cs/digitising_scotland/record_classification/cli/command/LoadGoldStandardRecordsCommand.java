@@ -23,8 +23,6 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 
 import java.util.*;
-import java.util.logging.*;
-import java.util.stream.*;
 
 import static uk.ac.standrews.cs.digitising_scotland.record_classification.cli.command.SetCommand.OPTION_TRAINING_RATIO_LONG;
 import static uk.ac.standrews.cs.digitising_scotland.record_classification.cli.command.SetCommand.OPTION_TRAINING_RATIO_SHORT;
@@ -51,8 +49,8 @@ public class LoadGoldStandardRecordsCommand extends LoadUnseenRecordsCommand {
     public static final int DEFAULT_CLASS_COLUMN_INDEX = 2;
 
     @Parameter(names = {OPTION_TRAINING_RATIO_SHORT, OPTION_TRAINING_RATIO_LONG},
-                    descriptionKey = "command.load.gold_standard.training_ratio.description",
-                    validateValueWith = Validators.BetweenZeroToOneInclusive.class)
+               descriptionKey = "command.load.gold_standard.training_ratio.description",
+               validateValueWith = Validators.BetweenZeroToOneInclusive.class)
     private Double training_ratio = configuration.getDefaultTrainingRatio();
 
     @Parameter(names = {OPTION_CLASS_COLUMN_INDEX_SHORT, OPTION_CLASS_COLUMN_INDEX_LONG}, descriptionKey = "command.load.gold_standard.class_column_index.description", validateValueWith = Validators.AtLeastZero.class)
@@ -63,34 +61,30 @@ public class LoadGoldStandardRecordsCommand extends LoadUnseenRecordsCommand {
         private Double training_ratio;
         private Integer class_column_index;
 
-        public Builder trainingRatio(Double training_ratio) {
+        public void setTrainingRatio(Double training_ratio) {
 
             this.training_ratio = training_ratio;
-            return this;
         }
 
-        public Builder classColumnIndex(Integer class_column_index) {
+        public void setClassColumnIndex(Integer class_column_index) {
 
             this.class_column_index = class_column_index;
-            return this;
         }
 
         @Override
-        protected List<String> getSubCommandArguments() {
+        protected void populateSubCommandArguments() {
 
-            final List<String> arguments = super.getSubCommandArguments();
+            super.populateSubCommandArguments();
 
             if (training_ratio != null) {
-                arguments.add(OPTION_TRAINING_RATIO_SHORT);
-                arguments.add(String.valueOf(training_ratio));
+                addArgument(OPTION_TRAINING_RATIO_SHORT);
+                addArgument(String.valueOf(training_ratio));
             }
 
             if (class_column_index != null) {
-                arguments.add(OPTION_CLASS_COLUMN_INDEX_SHORT);
-                arguments.add(String.valueOf(class_column_index));
+                addArgument(OPTION_CLASS_COLUMN_INDEX_SHORT);
+                addArgument(String.valueOf(class_column_index));
             }
-
-            return arguments;
         }
 
         @Override

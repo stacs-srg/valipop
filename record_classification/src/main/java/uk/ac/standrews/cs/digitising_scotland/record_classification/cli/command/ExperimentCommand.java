@@ -21,7 +21,6 @@ import com.beust.jcommander.converters.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.Validators.*;
-import uk.ac.standrews.cs.util.tables.*;
 
 import java.io.*;
 import java.nio.file.*;
@@ -32,6 +31,8 @@ import static uk.ac.standrews.cs.digitising_scotland.record_classification.cli.L
 import static uk.ac.standrews.cs.digitising_scotland.record_classification.cli.Launcher.OPTION_COMMANDS_SHORT;
 
 /**
+ * Runs a batch of commands multiple times in separate contexts within the same JVM and aggregates evaluation results if present.
+ *
  * @author Masih Hajiarab Derkani
  */
 @Parameters(commandNames = ExperimentCommand.NAME, resourceBundle = Configuration.RESOURCE_BUNDLE_NAME, commandDescriptionKey = "command.experiment.description")
@@ -86,14 +87,7 @@ public class ExperimentCommand extends Command {
 
             Launcher.main(args);
 
-            final Configuration repetition_config;
-            try {
-                repetition_config = Configuration.load(repetition_working_directory);
-            }
-            catch (IOException e) {
-                throw new RuntimeException("failed to load configuration in repetition " + repetition + " from working directory " + repetition_working_directory, e);
-            }
-
+            final Configuration repetition_config = Configuration.load(repetition_working_directory);
             repetition_configurations.add(repetition_config);
 
         }
@@ -102,12 +96,11 @@ public class ExperimentCommand extends Command {
         logAggregatedClassificationMetrics(repetition_configurations);
     }
 
-    private void logAggregatedClassificationMetrics(final List<Configuration> repetition_configurations) {
+    private Path getCommandsRelativeToWorkingDirectory() {return resolveRelativeToWorkingDirectory(commands);}
 
-        final List<ClassificationMetrics> metrics = repetition_configurations.stream().map(Configuration::getClassificationMetrics).filter(Objects::nonNull).collect(Collectors.toList());
-        if (!metrics.isEmpty()) {
-            EvaluateCommand.logClassificationMetrics(logger, metrics);
-        }
+    private Path getRepetitionWorkingDirectory(final int repetition) {
+
+        return configuration.getWorkingDirectory().resolve(String.format("%s%d", REPETITION_WORKING_DIRECTORY_PREFIX, repetition));
     }
 
     private void logAggregatedConfusionMatrix(final List<Configuration> repetition_configurations) {
@@ -118,10 +111,42 @@ public class ExperimentCommand extends Command {
         }
     }
 
-    private Path getRepetitionWorkingDirectory(final int repetition) {
+    private void logAggregatedClassificationMetrics(final List<Configuration> repetition_configurations) {
 
-        return configuration.getWorkingDirectory().resolve(String.format("%s%d", REPETITION_WORKING_DIRECTORY_PREFIX, repetition));
+        final List<ClassificationMetrics> metrics = repetition_configurations.stream().map(Configuration::getClassificationMetrics).filter(Objects::nonNull).collect(Collectors.toList());
+        if (!metrics.isEmpty()) {
+            EvaluateCommand.logClassificationMetrics(logger, metrics);
+        }
     }
 
-    private Path getCommandsRelativeToWorkingDirectory() {return resolveRelativeToWorkingDirectory(commands);}
+    public static class Builder extends Command.Builder {
+
+        private Integer repetitions;
+        private Path commands;
+
+        public void setRepetitions(final int repetitions) {
+
+            this.repetitions = repetitions;
+        }
+
+        public void setCommands(final Path commands) {
+
+            this.commands = commands;
+        }
+
+        @Override
+        protected void populateArguments() {
+
+            Objects.requireNonNull(commands);
+
+            addArgument(NAME);
+            addArgument(OPTION_COMMANDS_SHORT);
+            addArgument(commands);
+
+            if (repetitions != null) {
+                addArgument(OPTION_REPETITIONS_SHORT);
+                addArgument(repetitions);
+            }
+        }
+    }
 }

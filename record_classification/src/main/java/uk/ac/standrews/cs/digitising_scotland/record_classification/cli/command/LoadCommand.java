@@ -70,48 +70,40 @@ public class LoadCommand extends Command {
         private Path source;
         private boolean override_existing;
 
-        public Builder charset(CharsetSupplier charset) {
+        public void setSourceCharset(CharsetSupplier charset) {
 
             this.charset = charset;
-            return this;
         }
 
-        public Builder from(Path source) {
+        public void setSource(Path source) {
 
             this.source = source;
-            return this;
         }
 
-        public Builder overrideExisting() {
+        public void setOverrideExisting(boolean override_existing) {
 
-            override_existing = true;
-            return this;
+            this.override_existing = override_existing;
         }
 
-        public String[] build() {
+        @Override
+        protected void populateArguments() {
 
             Objects.requireNonNull(source);
 
-            final List<String> arguments = new ArrayList<>();
-            arguments.add(NAME);
-            arguments.add(OPTION_SOURCE_SHORT);
-            arguments.add(source.toString());
-
+            addArgument(NAME);
+            addArgument(OPTION_SOURCE_SHORT);
+            addArgument(source);
 
             if (charset != null) {
-                arguments.add(OPTION_CHARSET_SHORT);
-                arguments.add(charset.name());
+                addArgument(OPTION_CHARSET_SHORT);
+                addArgument(charset.name());
             }
             if (override_existing) {
-                arguments.add(OPTION_FORCE_SHORT);
+                addArgument(OPTION_FORCE_SHORT);
             }
-
-            arguments.addAll(getSubCommandArguments());
-
-            return arguments.toArray(new String[arguments.size()]);
         }
 
-        protected abstract List<String> getSubCommandArguments();
+        protected abstract void populateSubCommandArguments();
     }
 
     @Override

@@ -86,7 +86,6 @@ public class CleanStopWordsCommandTest extends CommandTest {
         assertExpected();
     }
 
-
     private void assertExpected() throws IOException {
 
         final Configuration configuration = Configuration.load();
@@ -124,7 +123,11 @@ public class CleanStopWordsCommandTest extends CommandTest {
         final Path copy = temporary.newFile().toPath();
         stop_words.copy(copy, stop_words_charset.get());
 
-        getBuilder().charset(stop_words_charset).from(copy).caseSensitive(case_sensitive).run();
+        final CleanStopWordsCommand.Builder builder = getBuilder();
+        builder.setSourceCharset(stop_words_charset);
+        builder.setSource(copy);
+        builder.setCaseSensitive(case_sensitive);
+        builder.run();
     }
 
     protected CleanStopWordsCommand.Builder getBuilder() {return new CleanStopWordsCommand.Builder();}

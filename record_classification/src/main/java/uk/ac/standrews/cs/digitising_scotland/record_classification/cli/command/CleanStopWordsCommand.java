@@ -51,7 +51,7 @@ public class CleanStopWordsCommand extends Command {
     @Parameter(required = true, names = {OPTION_SOURCE_SHORT, LoadCommand.OPTION_SOURCE_LONG}, descriptionKey = "command.clean.stop_words.source.description", converter = PathConverter.class)
     private Path source;
 
-    @Parameter(names = {LoadCommand.OPTION_CHARSET_SHORT, LoadCommand.OPTION_CHARSET_LONG}, descriptionKey = "command.clean.stop_words.source.description")
+    @Parameter(names = {LoadCommand.OPTION_CHARSET_SHORT, LoadCommand.OPTION_CHARSET_LONG}, descriptionKey = "command.clean.stop_words.charset.description")
     private CharsetSupplier charset_supplier = configuration.getDefaultCharsetSupplier();
 
     @Parameter(names = {OPTION_CASE_SENSITIVE_SHORT, OPTION_CASE_SENSITIVE_LONG}, descriptionKey = "command.clean.stop_words.case_sensitive.description")
@@ -63,32 +63,25 @@ public class CleanStopWordsCommand extends Command {
         private CharsetSupplier charset_supplier;
         private Boolean case_sensitive;
 
-        public Builder from(Path source) {
+        public void setSource(Path source) {
 
             this.source = source;
-            return this;
         }
 
-        public Builder charset(CharsetSupplier charset_supplier) {
+        public void setSourceCharset(CharsetSupplier charset_supplier) {
 
             this.charset_supplier = charset_supplier;
-            return this;
         }
 
-        public Builder caseSensitive(boolean case_sensitive) {
+        public void setCaseSensitive(boolean case_sensitive) {
 
             this.case_sensitive = case_sensitive;
-            return this;
         }
 
         @Override
-        public String[] build() {
+        protected void populateArguments() {
 
-            final List<String> arguments = new ArrayList<>();
-            arguments.add(CleanCommand.NAME);
-            arguments.add(getSubCommandName());
-            arguments.addAll(getCommandArguments());
-            return arguments.toArray(new String[arguments.size()]);
+            addArgument(CleanCommand.NAME);
         }
 
         protected String getSubCommandName() {
@@ -96,25 +89,24 @@ public class CleanStopWordsCommand extends Command {
             return NAME;
         }
 
-        protected List<String> getCommandArguments() {
+        @Override
+        protected void populateSubCommandArguments() {
 
             Objects.requireNonNull(source);
 
-            final List<String> arguments = new ArrayList<>();
+            addArgument(getSubCommandName());
 
-            arguments.add(OPTION_SOURCE_SHORT);
-            arguments.add(source.toString());
+            addArgument(OPTION_SOURCE_SHORT);
+            addArgument(source);
 
             if (charset_supplier != null) {
-                arguments.add(OPTION_CHARSET_SHORT);
-                arguments.add(charset_supplier.name());
+                addArgument(OPTION_CHARSET_SHORT);
+                addArgument(charset_supplier.name());
             }
 
             if (case_sensitive != null) {
-                arguments.add(OPTION_CASE_SENSITIVE_SHORT);
+                addArgument(OPTION_CASE_SENSITIVE_SHORT);
             }
-
-            return arguments;
         }
     }
 

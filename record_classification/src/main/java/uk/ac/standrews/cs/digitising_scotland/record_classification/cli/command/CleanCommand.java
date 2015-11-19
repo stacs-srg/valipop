@@ -50,29 +50,28 @@ public class CleanCommand extends Command {
 
     public static class Builder extends Command.Builder {
 
-        private List<CleanerSupplier> cleaners;
+        private List<CleanerSupplier> cleaners = new ArrayList<>();
 
-        public Builder cleaners(CleanerSupplier... cleaners) {
+        public void addCleaners(CleanerSupplier... cleaners) {
 
-            if (this.cleaners == null) {
-                this.cleaners = new ArrayList<>();
-            }
             Collections.addAll(this.cleaners, cleaners);
-            return this;
         }
 
         @Override
-        public String[] build() {
+        protected void populateArguments() {
 
-            final List<String> arguments = new ArrayList<>();
-            arguments.add(NAME);
+            requireAtLeastOneCleaner();
 
-            if (cleaners != null) {
-                arguments.add(OPTION_CLEANER_SHORT);
-                cleaners.forEach(cleaner -> arguments.add(cleaner.name()));
+            addArgument(NAME);
+            addArgument(OPTION_CLEANER_SHORT);
+            cleaners.forEach(cleaner -> addArgument(cleaner.name()));
+        }
+
+        private void requireAtLeastOneCleaner() {
+
+            if (cleaners.isEmpty()) {
+                throw new ParameterException("at least one cleaner must be added");
             }
-
-            return arguments.toArray(new String[arguments.size()]);
         }
     }
 
