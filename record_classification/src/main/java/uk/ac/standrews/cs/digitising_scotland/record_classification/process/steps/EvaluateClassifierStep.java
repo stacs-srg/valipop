@@ -83,7 +83,7 @@ public class EvaluateClassifierStep implements Step {
 
         output(LONG_SUMMARY, "");
         output(LONG_SUMMARY, "training time              : %s%n", Formatting.format(context.getTrainingTime()));
-        output(LONG_SUMMARY, "classification time        : %s%n", Formatting.format(context.getClassificationTime()));
+        output(LONG_SUMMARY, "classification time        : %s%n", Formatting.format(context.getEvaluationClassificationTime()));
 
         output(LONG_SUMMARY, "----------------------------------");
     }

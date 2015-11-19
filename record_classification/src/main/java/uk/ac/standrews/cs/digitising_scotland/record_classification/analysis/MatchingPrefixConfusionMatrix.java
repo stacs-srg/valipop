@@ -25,6 +25,7 @@ import uk.ac.standrews.cs.util.dataset.DataSet;
  */
 public class MatchingPrefixConfusionMatrix extends ConfusionMatrix {
 
+    private static final long serialVersionUID = 7477797660952003199L;
     private final int matching_prefix_length;
 
     public MatchingPrefixConfusionMatrix(int matching_prefix_length, final Bucket classified_records, final Bucket gold_standard_records, Checker checker) {

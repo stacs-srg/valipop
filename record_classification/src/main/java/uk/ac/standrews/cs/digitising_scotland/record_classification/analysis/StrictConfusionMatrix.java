@@ -28,6 +28,8 @@ import uk.ac.standrews.cs.util.dataset.DataSet;
  */
 public class StrictConfusionMatrix extends ConfusionMatrix {
 
+    private static final long serialVersionUID = 983226994385506070L;
+
     public StrictConfusionMatrix(final Bucket classified_records, final Bucket gold_standard_records, Checker checker) {
 
         super(classified_records, gold_standard_records, checker);

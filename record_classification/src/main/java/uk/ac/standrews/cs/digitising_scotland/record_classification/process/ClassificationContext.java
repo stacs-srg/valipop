@@ -324,6 +324,11 @@ public class ClassificationContext implements Serializable {
         return classification_metrics;
     }
 
+    public Optional<ClassificationMetrics> getClassificationMetricsOptional() {
+
+        return Optional.ofNullable(classification_metrics);
+    }
+
     /**
      * Sets the classification metrics of this context.
      *
@@ -342,6 +347,11 @@ public class ClassificationContext implements Serializable {
     public ConfusionMatrix getConfusionMatrix() {
 
         return confusion_matrix;
+    }
+
+    public Optional<ConfusionMatrix> getConfusionMatrixOptional() {
+
+        return Optional.ofNullable(confusion_matrix);
     }
 
     /**
@@ -381,7 +391,7 @@ public class ClassificationContext implements Serializable {
      * @return the time it took to classify the evaluation records by the classifier in this
      * context, or {@code null} if the classifier is not evaluated
      */
-    public Duration getClassificationTime() {
+    public Duration getEvaluationClassificationTime() {
 
         return evaluation_classification_time;
     }

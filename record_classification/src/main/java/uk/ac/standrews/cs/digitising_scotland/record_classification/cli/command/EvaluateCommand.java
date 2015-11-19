@@ -101,8 +101,8 @@ public class EvaluateCommand extends Command {
 
         configuration.setClassifiedEvaluationRecords(classified_evaluation_records);
         configuration.setEvaluationClassificationTime(evaluation_classification_time);
-        configuration.setClassificationMetrics(classification_metrics);
         configuration.setConfusionMatrix(confusion_matrix);
+        configuration.setClassificationMetrics(classification_metrics);
 
         logConfusionMatrix(confusion_matrix);
         logClassificationMetrics(classification_metrics);
@@ -134,23 +134,23 @@ public class EvaluateCommand extends Command {
 
     private void logClassificationMetrics(final ClassificationMetrics classification_metrics) {
 
-        logger.info(() -> String.format("Macro Average Accuracy: %10.2f", classification_metrics.getMacroAverageAccuracy()));
-        logger.info(() -> String.format("Macro Average F1: %10.2f", classification_metrics.getMacroAverageF1()));
-        logger.info(() -> String.format("Macro Average Precision: %10.2f", classification_metrics.getMacroAveragePrecision()));
-        logger.info(() -> String.format("Macro Average Recall: %10.2f", classification_metrics.getMacroAverageRecall()));
-        logger.info(() -> String.format("Micro Average Accuracy: %10.2f", classification_metrics.getMicroAverageAccuracy()));
-        logger.info(() -> String.format("Micro Average F1: %10.2f", classification_metrics.getMicroAverageF1()));
-        logger.info(() -> String.format("Micro Average Precision: %10.2f", classification_metrics.getMicroAveragePrecision()));
-        logger.info(() -> String.format("Micro Average Recall: %10.2f", classification_metrics.getMicroAverageRecall()));
+        logger.info(() -> String.format("%-30s %.2f","Macro Average Accuracy:", classification_metrics.getMacroAverageAccuracy()));
+        logger.info(() -> String.format("%-30s %.2f","Macro Average F1:", classification_metrics.getMacroAverageF1()));
+        logger.info(() -> String.format("%-30s %.2f","Macro Average Precision:", classification_metrics.getMacroAveragePrecision()));
+        logger.info(() -> String.format("%-30s %.2f","Macro Average Recall:", classification_metrics.getMacroAverageRecall()));
+        logger.info(() -> String.format("%-30s %.2f","Micro Average Accuracy:", classification_metrics.getMicroAverageAccuracy()));
+        logger.info(() -> String.format("%-30s %.2f","Micro Average F1:", classification_metrics.getMicroAverageF1()));
+        logger.info(() -> String.format("%-30s %.2f","Micro Average Precision:", classification_metrics.getMicroAveragePrecision()));
+        logger.info(() -> String.format("%-30s %.2f","Micro Average Recall:", classification_metrics.getMicroAverageRecall()));
     }
 
     private void logConfusionMatrix(final ConfusionMatrix confusion_matrix) {
 
-        logger.info(() -> String.format("Number Of Classes: %10d", confusion_matrix.getNumberOfClasses()));
-        logger.info(() -> String.format("Number Of Classifications: %10d", confusion_matrix.getNumberOfClassifications()));
-        logger.info(() -> String.format("Number Of True Positives: %10d", confusion_matrix.getNumberOfTruePositives()));
-        logger.info(() -> String.format("Number Of True Negatives: %10d", confusion_matrix.getNumberOfTrueNegatives()));
-        logger.info(() -> String.format("Number Of False Negatives: %10d", confusion_matrix.getNumberOfFalseNegatives()));
-        logger.info(() -> String.format("Number Of False Positives: %10d", confusion_matrix.getNumberOfFalsePositives()));
+        logger.info(() -> String.format("%-30s %d","Number Of Classes:", confusion_matrix.getNumberOfClasses()));
+        logger.info(() -> String.format("%-30s %d","Number Of Classifications:", confusion_matrix.getNumberOfClassifications()));
+        logger.info(() -> String.format("%-30s %d","Number Of True Positives:", confusion_matrix.getNumberOfTruePositives()));
+        logger.info(() -> String.format("%-30s %d","Number Of True Negatives:", confusion_matrix.getNumberOfTrueNegatives()));
+        logger.info(() -> String.format("%-30s %d","Number Of False Negatives:", confusion_matrix.getNumberOfFalseNegatives()));
+        logger.info(() -> String.format("%-30s %d","Number Of False Positives:", confusion_matrix.getNumberOfFalsePositives()));
     }
 }

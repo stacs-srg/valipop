@@ -28,6 +28,7 @@ import uk.ac.standrews.cs.util.tools.Formatting;
 import uk.ac.standrews.cs.util.tools.InfoLevel;
 import uk.ac.standrews.cs.util.tools.Logging;
 
+import java.io.Serializable;
 import java.util.*;
 
 /**
@@ -37,7 +38,9 @@ import java.util.*;
  * @author Fraser Dunlop
  * @author Graham Kirby
  */
-public abstract class ConfusionMatrix {
+public abstract class ConfusionMatrix implements Serializable {
+
+    private static final long serialVersionUID = -4742093776785376822L;
 
     private final Map<String, Integer> classification_counts;
     private final Map<String, Integer> true_positive_counts;
@@ -137,16 +140,6 @@ public abstract class ConfusionMatrix {
     }
 
     /**
-     * Returns a map from classification class to the number of records classified as that class.
-     *
-     * @return the map
-     */
-    public Map<String, Integer> getClassificationCounts() {
-
-        return classification_counts;
-    }
-
-    /**
      * Returns a map from classification class to the number of true positives for that class.
      * That is, the number of records that were classified as that class, and really were of that class.
      *
@@ -210,6 +203,15 @@ public abstract class ConfusionMatrix {
         return sum(true_positive_counts);
     }
 
+    private int sum(Map<String, Integer> counts) {
+
+        int sum = 0;
+        for (int i : counts.values()) {
+            sum += i;
+        }
+        return sum;
+    }
+
     /**
      * Returns the total number of false positives.
      *
@@ -252,13 +254,14 @@ public abstract class ConfusionMatrix {
         return getClassificationCounts().size();
     }
 
-    private int sum(Map<String, Integer> counts) {
+    /**
+     * Returns a map from classification class to the number of records classified as that class.
+     *
+     * @return the map
+     */
+    public Map<String, Integer> getClassificationCounts() {
 
-        int sum = 0;
-        for (int i : counts.values()) {
-            sum += i;
-        }
-        return sum;
+        return classification_counts;
     }
 
     /**

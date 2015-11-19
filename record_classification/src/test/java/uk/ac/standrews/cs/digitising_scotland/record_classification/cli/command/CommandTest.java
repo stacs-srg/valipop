@@ -40,6 +40,7 @@ import static java.util.logging.Logger.getLogger;
  */
 public abstract class CommandTest {
 
+    public static final long TEST_SEED = 142L;
     protected Launcher launcher;
     protected Configuration configuration;
     protected Path home;
@@ -74,12 +75,14 @@ public abstract class CommandTest {
         return String.format("\"%s\"", String.valueOf(value));
     }
 
-    protected void init() throws Exception {new InitCommand.Builder().run(launcher);}
+    protected void init() throws Exception { new InitCommand.Builder().run(launcher); }
 
     protected void initForcefully() throws Exception {new InitCommand.Builder().forcefully().run(launcher);}
 
     protected void setVerbosity(final LogLevelSupplier supplier) throws Exception { new SetCommand.Builder().verbosity(supplier).run(launcher); }
 
+    protected void setSeed() throws Exception { new SetCommand.Builder().seed(TEST_SEED).run(launcher); }
+    
     protected void setClassifier(ClassifierSupplier classifier_supplier) throws Exception { new SetCommand.Builder().classifier(classifier_supplier).run(launcher); }
 
     protected void loadGoldStandards(List<TestDataSet> gold_standards, final CharsetSupplier charset, final CSVFormat format, double training_ratio) throws Exception {
