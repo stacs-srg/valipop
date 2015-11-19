@@ -22,8 +22,10 @@ import com.fasterxml.jackson.databind.module.*;
 
 import org.apache.commons.csv.*;
 
-import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.StrictConfusionMatrix;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.logging.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.serialization.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.supplier.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.serialization.*;
@@ -82,10 +84,7 @@ public class Configuration extends ClassificationContext {
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
     static {
-        SimpleModule classi = new SimpleModule(PROGRAM_NAME);
-        classi.addSerializer(Configuration.class, new ConfigurationJsonSerializer());
-        classi.addDeserializer(Configuration.class, new ConfigurationJsonDeserializer());
-        MAPPER.registerModule(classi);
+        MAPPER.registerModule(new ClassliModule());
 
         final String logger_name = Launcher.class.getPackage().getName();
         final Logger parent_logger = CLILogManager.CLILogger.getLogger(logger_name);
@@ -190,7 +189,7 @@ public class Configuration extends ClassificationContext {
     }
 
     @Override
-    protected void setClassifier(final Classifier classifier) {
+    public void setClassifier(final Classifier classifier) {
 
         this.classifier = classifier;
     }
@@ -206,7 +205,7 @@ public class Configuration extends ClassificationContext {
         this.working_directory = working_directory;
     }
 
-    protected Path getEvaluationRecordsPath() {
+    public Path getEvaluationRecordsPath() {
 
         return getHome().resolve("evaluation.csv");
     }
@@ -214,36 +213,6 @@ public class Configuration extends ClassificationContext {
     public Path getHome() {
 
         return getHome(working_directory);
-    }
-
-    protected Path getTrainingRecordsPath() {
-
-        return getHome().resolve("training.csv");
-    }
-
-    protected Path getUnseenRecordsPath() {
-
-        return getHome().resolve("unseen.csv");
-    }
-
-    protected Path getClassifiedUnseenRecordsPath() {
-
-        return getHome().resolve("classified_unseen.csv");
-    }
-
-    protected Path getClassifiedEvaluationRecordsPath() {
-
-        return getHome().resolve("classified_evaluation.csv");
-    }
-
-    protected Path getConfusionMatrixPath() {
-
-        return getHome().resolve("confusion_matrix.object");
-    }
-
-    protected Path getClassificationMetricsPath() {
-
-        return getHome().resolve("classification_metrics.object");
     }
 
     public SerializationFormat getClassifierSerializationFormat() {

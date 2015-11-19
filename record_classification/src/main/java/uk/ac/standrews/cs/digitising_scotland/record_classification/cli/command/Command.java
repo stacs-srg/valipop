@@ -18,12 +18,12 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.cli.command
 
 import com.beust.jcommander.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.logging.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.util.*;
 
 import java.nio.file.*;
 import java.util.*;
 import java.util.logging.*;
-import java.util.regex.*;
-import java.util.stream.*;
 
 /**
  * Represents an operation exposed to the user via the {@link Launcher command-line interface}.
@@ -111,20 +111,12 @@ public abstract class Command implements Runnable {
     /** Builds command line arguments of this command. */
     protected static abstract class Builder {
 
-        private static final Pattern SPECIAL_CHARACTER = Pattern.compile("[^-_A-Za-z0-9]");
-
         private final List<String> arguments;
 
         protected Builder() {
 
             arguments = new ArrayList<>();
         }
-
-        public static String quote(Object value) { return quote(String.valueOf(value)); }
-
-        public static String quote(String value) { return hasSpecialCharacter(value) ? String.format("\"%s\"", String.valueOf(value)) : value; }
-
-        public static boolean hasSpecialCharacter(final String argument) {return SPECIAL_CHARACTER.matcher(argument).find();}
 
         protected void addArgument(int index, Object argument) {
 
@@ -153,18 +145,13 @@ public abstract class Command implements Runnable {
 
             populateArguments();
             populateSubCommandArguments();
-            final List<String> escaped_arguments = escapeSpecialCharacters(arguments);
+            final List<String> escaped_arguments = Arguments.escapeSpecialCharacters(arguments);
             return escaped_arguments.toArray(new String[escaped_arguments.size()]);
         }
 
         protected abstract void populateArguments();
 
         protected void populateSubCommandArguments() { }
-
-        public static List<String> escapeSpecialCharacters(final List<String> arguments) {
-
-            return arguments.stream().map(Builder::quote).collect(Collectors.toList());
-        }
 
         /**
          * Runs this command using a given launcher.

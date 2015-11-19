@@ -17,14 +17,12 @@
 package uk.ac.standrews.cs.digitising_scotland.record_classification.cli.command;
 
 import com.beust.jcommander.*;
-import org.apache.commons.cli2.builder.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.util.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 
 import java.time.*;
-import java.util.*;
-import java.util.logging.*;
 
 import static uk.ac.standrews.cs.digitising_scotland.record_classification.cli.command.SetCommand.OPTION_INTERNAL_TRAINING_RATIO_LONG;
 import static uk.ac.standrews.cs.digitising_scotland.record_classification.cli.command.SetCommand.OPTION_INTERNAL_TRAINING_RATIO_SHORT;

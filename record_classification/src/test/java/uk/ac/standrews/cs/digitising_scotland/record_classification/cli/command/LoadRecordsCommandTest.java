@@ -19,7 +19,7 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.cli.command
 import org.apache.commons.csv.*;
 import org.junit.*;
 import org.junit.runners.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.supplier.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 
 import java.io.*;

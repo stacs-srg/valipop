@@ -14,36 +14,39 @@
  * You should have received a copy of the GNU General Public License along with record_classification. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.digitising_scotland.record_classification.cli;
-
-import org.apache.commons.csv.*;
+package uk.ac.standrews.cs.digitising_scotland.record_classification.cli.supplier;
 
 import java.util.function.*;
+import java.util.logging.*;
 
 /**
- * Predefined {@link CSVFormat csv format}s.
+ * Supplies {@link Level log level}s.
  *
  * @author Masih Hajiarab Derkani
  */
-public enum CsvFormatSupplier implements Supplier<CSVFormat> {
+public enum LogLevelSupplier implements Supplier<Level> {
 
-    DEFAULT(CSVFormat.DEFAULT.withIgnoreEmptyLines()),
-    EXCEL(CSVFormat.EXCEL.withIgnoreEmptyLines()),
-    MYSQL(CSVFormat.MYSQL.withIgnoreEmptyLines()),
-    RFC4180(CSVFormat.RFC4180.withIgnoreEmptyLines()),
-    RFC4180_PIPE_SEPARATED(CSVFormat.RFC4180.withDelimiter('|').withIgnoreEmptyLines()),
-    TDF(CSVFormat.TDF.withIgnoreEmptyLines());
+    /** Indicates all messages must be logged. **/
+    ALL(Level.ALL),
 
-    private final CSVFormat format;
+    /** Indicates that serious failures must be logged. **/
+    SEVERE(Level.SEVERE),
 
-    CsvFormatSupplier(CSVFormat format) {
+    /** Indicates that messages about potential problems must be logged. **/
+    WARNING(Level.WARNING),
 
-        this.format = format;
+    /** Indicates only informational messsages must be logged. **/
+    INFO(Level.INFO),
+
+    /** Turns off logging. **/
+    OFF(Level.OFF);
+
+    private Level level;
+
+    LogLevelSupplier(final Level level) {
+        this.level = level;
     }
 
     @Override
-    public CSVFormat get() {
-
-        return format;
-    }
+    public Level get() { return level; }
 }

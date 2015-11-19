@@ -14,13 +14,15 @@
  * You should have received a copy of the GNU General Public License along with record_classification. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.digitising_scotland.record_classification.cli;
+package uk.ac.standrews.cs.digitising_scotland.record_classification.cli.serialization;
 
 import com.fasterxml.jackson.core.*;
 import com.fasterxml.jackson.databind.*;
 
 import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.supplier.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.serialization.*;
 
@@ -28,12 +30,12 @@ import java.io.*;
 import java.nio.file.*;
 import java.util.*;
 
-import static uk.ac.standrews.cs.digitising_scotland.record_classification.cli.ConfigurationJsonSerializer.*;
+import static uk.ac.standrews.cs.digitising_scotland.record_classification.cli.serialization.ConfigurationSerializer.*;
 
 /**
  * @author Masih Hajirab Derkani
  */
-public class ConfigurationJsonDeserializer extends JsonDeserializer<Configuration> {
+public class ConfigurationDeserializer extends JsonDeserializer<Configuration> {
 
     @Override
     public Configuration deserialize(final JsonParser in, final DeserializationContext context) throws IOException {
@@ -88,7 +90,7 @@ public class ConfigurationJsonDeserializer extends JsonDeserializer<Configuratio
             field_name = in.getCurrentName();
         }
 
-        //TODO add lazy loading of records.
+        //TODO add lazy loading of records, matrix and metrics.
 
         readUnseenRecords(configuration);
         readGoldStandardRecords(configuration);
@@ -115,7 +117,7 @@ public class ConfigurationJsonDeserializer extends JsonDeserializer<Configuratio
 
     private void readUnseenRecords(Configuration configuration) throws IOException {
 
-        final Bucket unseen_records = loadBucketIfPresent(configuration.getUnseenRecordsPath());
+        final Bucket unseen_records = loadBucketIfPresent(getUnseenRecordsPath(configuration));
         configuration.setUnseenRecords(unseen_records);
     }
 
@@ -127,20 +129,20 @@ public class ConfigurationJsonDeserializer extends JsonDeserializer<Configuratio
 
     private void readClassifiedUnseenRecords(Configuration configuration) throws IOException {
 
-        final Bucket classified_unseen_records = loadBucketIfPresent(configuration.getClassifiedUnseenRecordsPath());
+        final Bucket classified_unseen_records = loadBucketIfPresent(getClassifiedUnseenRecordsPath(configuration));
         configuration.setClassifiedUnseenRecords(classified_unseen_records);
     }
 
     private void readClassifiedEvaluationRecords(Configuration configuration) throws IOException {
 
-        final Bucket classified_evaluation_records = loadBucketIfPresent(configuration.getClassifiedEvaluationRecordsPath());
+        final Bucket classified_evaluation_records = loadBucketIfPresent(getClassifiedEvaluationRecordsPath(configuration));
         configuration.setClassifiedEvaluationRecords(classified_evaluation_records);
     }
 
     private void readClassifier(final Configuration configuration) throws IOException {
 
         final SerializationFormat format = configuration.getClassifierSerializationFormat();
-        final Path source = ConfigurationJsonSerializer.getSerializedClassifierPath(configuration, format);
+        final Path source = getSerializedClassifierPath(configuration, format);
 
         if (Files.isRegularFile(source)) {
             configuration.setClassifier(Serialization.load(source, Classifier.class, format));
@@ -149,13 +151,13 @@ public class ConfigurationJsonDeserializer extends JsonDeserializer<Configuratio
 
     private void readConfusionMatrix(final Configuration configuration) throws IOException {
 
-        final ConfusionMatrix matrix = loadObjectIfPresent(configuration.getConfusionMatrixPath(), ConfusionMatrix.class);
+        final ConfusionMatrix matrix = loadObjectIfPresent(getConfusionMatrixPath(configuration), ConfusionMatrix.class);
         configuration.setConfusionMatrix(matrix);
     }
 
     private void readClassificationMetrics(final Configuration configuration) throws IOException {
 
-        final ClassificationMetrics metrics = loadObjectIfPresent(configuration.getConfusionMatrixPath(), ClassificationMetrics.class);
+        final ClassificationMetrics metrics = loadObjectIfPresent(getClassificationMetricsPath(configuration), ClassificationMetrics.class);
         configuration.setClassificationMetrics(metrics);
     }
 
@@ -173,7 +175,7 @@ public class ConfigurationJsonDeserializer extends JsonDeserializer<Configuratio
 
     private void readTrainingRecords(Configuration configuration) throws IOException {
 
-        final Bucket training_records = loadBucketIfPresent(configuration.getTrainingRecordsPath());
+        final Bucket training_records = loadBucketIfPresent(getTrainingRecordsPath(configuration));
         configuration.setTrainingRecords(training_records);
     }
 

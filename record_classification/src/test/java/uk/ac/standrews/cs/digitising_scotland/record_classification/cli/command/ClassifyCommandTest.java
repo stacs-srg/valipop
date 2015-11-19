@@ -18,12 +18,12 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.cli.command
 
 import org.apache.commons.csv.*;
 import org.junit.*;
-import org.junit.rules.*;
 import org.junit.runner.*;
 import org.junit.runners.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.supplier.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.dataset.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 import uk.ac.standrews.cs.util.dataset.*;
@@ -31,7 +31,6 @@ import uk.ac.standrews.cs.util.dataset.*;
 import java.io.*;
 import java.nio.file.*;
 import java.util.*;
-import java.util.stream.*;
 
 import static org.junit.Assert.*;
 import static org.junit.Assert.assertNotEquals;
