@@ -16,15 +16,9 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.linear_regression;
 
-import org.apache.mahout.math.DenseMatrix;
-import org.apache.mahout.math.Matrix;
-import org.apache.mahout.math.Vector;
-import org.ejml.simple.*;
+import org.apache.mahout.math.*;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
+import java.io.*;
 
 /**
  * @author Fraser Dunlop
@@ -34,7 +28,6 @@ public class SerializableDenseMatrix implements Serializable {
     private static final long serialVersionUID = -7738028674358816065L;
 
     private DenseMatrix matrix;
-    private SimpleMatrix matrix2;
 
     /**
      * Needed for JSON deserialization.
@@ -73,7 +66,6 @@ public class SerializableDenseMatrix implements Serializable {
 
     public double get(final int row, final int column) {
 
-        matrix2.get(row, column);
         return matrix.get(row, column);
     }
 
@@ -83,7 +75,6 @@ public class SerializableDenseMatrix implements Serializable {
     }
 
     public void setQuick(final int row, final int column, final double value) {
-        matrix2.set(row, column, value);
         matrix.setQuick(row, column, value);
     }
 
