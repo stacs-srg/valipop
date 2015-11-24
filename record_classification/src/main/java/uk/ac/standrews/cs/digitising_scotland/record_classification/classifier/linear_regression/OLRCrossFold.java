@@ -37,14 +37,9 @@ public class OLRCrossFold implements Serializable {
 
     private static final long serialVersionUID = -749333540672669562L;
 
-    /**
-     * The Logger.
-     */
-    private static transient final Logger LOGGER = LoggerFactory.getLogger(OLRCrossFold.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(OLRCrossFold.class);
 
-    /**
-     * The OLRPool models.
-     */
+    /** The OLRPool models. */
     private List<OLRPool> models = new ArrayList<>();
 
     /**
@@ -80,7 +75,7 @@ public class OLRCrossFold implements Serializable {
      * Constructs an OLRCrossFold object with the given trainingVectors.
      *
      * @param trainingVectorList training vectors to use when training/validating each fold.
-     * @param betaMatrix         betaMatrix this matrix contains the betas and will be propagated down to the lowest OLR object.
+     * @param betaMatrix betaMatrix this matrix contains the betas and will be propagated down to the lowest OLR object.
      */
     public OLRCrossFold(final List<NamedVector> trainingVectorList, final Matrix betaMatrix) {
 
@@ -111,7 +106,8 @@ public class OLRCrossFold implements Serializable {
 
             prepareClassifier();
 
-        } catch (InterruptedException e) {
+        }
+        catch (InterruptedException e) {
             LOGGER.error(e.getMessage(), e);
         }
     }

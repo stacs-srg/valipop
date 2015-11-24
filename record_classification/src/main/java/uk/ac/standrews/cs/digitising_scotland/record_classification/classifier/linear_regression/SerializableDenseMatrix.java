@@ -19,6 +19,7 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.
 import org.apache.mahout.math.DenseMatrix;
 import org.apache.mahout.math.Matrix;
 import org.apache.mahout.math.Vector;
+import org.ejml.simple.*;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -33,11 +34,12 @@ public class SerializableDenseMatrix implements Serializable {
     private static final long serialVersionUID = -7738028674358816065L;
 
     private DenseMatrix matrix;
+    private SimpleMatrix matrix2;
 
     /**
      * Needed for JSON deserialization.
      */
-    public SerializableDenseMatrix(){}
+    public SerializableDenseMatrix() {}
 
     public SerializableDenseMatrix(final Matrix matrix) {
 
@@ -56,7 +58,7 @@ public class SerializableDenseMatrix implements Serializable {
 
     public void setMatrix(DenseMatrix matrix) {
 
-        this.matrix= matrix;
+        this.matrix = matrix;
     }
 
     public static double[][] asArray(final Matrix matrix) {
@@ -69,29 +71,30 @@ public class SerializableDenseMatrix implements Serializable {
         return array;
     }
 
-    public double get(final int i, final int j) {
+    public double get(final int row, final int column) {
 
-        return matrix.get(i, j);
+        matrix2.get(row, column);
+        return matrix.get(row, column);
     }
 
     public double getQuick(final int category, final int feature) {
 
-        return matrix.get(category, feature);
+        return matrix.getQuick(category, feature);
     }
 
-    public void setQuick(final int category, final int feature, final double newValue) {
-
-        matrix.setQuick(category, feature, newValue);
+    public void setQuick(final int row, final int column, final double value) {
+        matrix2.set(row, column, value);
+        matrix.setQuick(row, column, value);
     }
 
     public Vector times(final Vector instance) {
-
+        
         return matrix.times(instance);
     }
 
-    public void set(final int category, final int feature, final double newValue) {
+    public void set(final int row, final int column, final double value) {
 
-        matrix.set(category, feature, newValue);
+        matrix.set(row, column, value);
     }
 
     // Next two methods needed for Java serialization.

@@ -34,19 +34,13 @@ public class OLR implements Serializable {
 
     private static final long serialVersionUID = 4157757308558382483L;
 
-    /**
-     * The minimum permitted value for the log likelihood.
-     */
+    /** The minimum permitted value for the log likelihood. */
     private static final double LOGLIK_MINIMUM = -100.0;
 
-    /**
-     * The learning rate.
-     */
+    /** The learning rate. */
     private static final double LEARNING_RATE = 100;
 
-    /**
-     * The decay rates for per term annealing - allows each feature its own learning.
-     */
+    /** The decay rates for per term annealing - allows each feature its own learning. */
     private static final double ANNEALING_RATE = 0.999;
 
     private int number_of_categories;
@@ -72,6 +66,7 @@ public class OLR implements Serializable {
     public OLR(final Matrix matrix) {
 
         init(new SerializableDenseMatrix(matrix.clone()), matrix.numCols(), matrix.numRows() + 1);
+
     }
 
     /**
