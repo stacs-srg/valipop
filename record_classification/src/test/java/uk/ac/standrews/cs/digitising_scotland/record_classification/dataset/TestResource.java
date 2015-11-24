@@ -22,6 +22,7 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.supplier
 import java.io.*;
 import java.nio.charset.*;
 import java.nio.file.*;
+import java.util.*;
 import java.util.function.*;
 
 /**
@@ -56,6 +57,11 @@ public class TestResource {
     public static Supplier<Reader> toReaderSupplier(final Class<?> loader, final String resource_name, Charset charset) {
 
         return () -> new BufferedReader(new InputStreamReader(loader.getResourceAsStream(resource_name), charset));
+    }
+    
+    public List<String> readLines() throws IOException {
+
+        return IOUtils.readLines(resource_reader.get());
     }
 
     public void copy(Path destination, Charset charset) {
