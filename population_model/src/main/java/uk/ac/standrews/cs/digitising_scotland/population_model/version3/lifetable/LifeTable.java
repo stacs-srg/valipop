@@ -33,14 +33,18 @@ import java.util.TreeMap;
  */
 public class LifeTable {
 
+    private static final int MAX_AGE = 110;
+
     private static final String TAB = "\t";
     private static final String COMMENT_INDICATOR = "%";
     private TreeMap<Integer, LifeTableRow> rows = new TreeMap<Integer, LifeTableRow>();
     private int year;
     private String line;
+    private String tableResourceKey;
 
-    public LifeTable(int year, String tableKey) {
+    public  LifeTable(int year, String tableKey) {
 
+        tableResourceKey = tableKey;
         this.year = year;
 
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(getClass().getClassLoader().getResourceAsStream(PopulationProperties.getProperties().getProperty(tableKey)), FileManipulation.FILE_CHARSET))) {
@@ -54,7 +58,7 @@ public class LifeTable {
                 String[] lC = line.split(TAB);
 
                 if (lC.length == 4) {
-
+//                    System.out.println("LT: " + lC[0] + " " + lC[1] + " " + lC[2] + " " + lC[3] + " ");
                     addRow(new LifeTableRow(Integer.valueOf(lC[0]), Integer.valueOf(lC[1]), Double.valueOf(lC[2]), Double.valueOf(lC[3])));
 
                 } else {
@@ -70,6 +74,23 @@ public class LifeTable {
             ErrorHandling.exceptionError(e, "IO Exception");
             e.printStackTrace();
         }
+
+//        LifeTableRow row = rows.get(rows.lastKey());
+//        double tempNMX = row.getnMx();
+//        double taperFactor = (1 - tempNMX) / new Double((MAX_AGE - row.getX()));
+//        System.out.println(taperFactor);
+//        tempNMX += taperFactor;
+//
+//        int n = 1;
+//
+//        for(int i = row.getX() + 1; i <= MAX_AGE; i += n) {
+//            double nMX = tempNMX;
+//            tempNMX += taperFactor;
+//            double nqx = (n * nMX) / (1 + (n * 0.5 * nMX));
+//            LifeTableRow r = new LifeTableRow(i, 1, nMX, nqx);
+//            rows.put(i, r);
+//        }
+
     }
 
     public void addRow(LifeTableRow row) {
@@ -83,12 +104,24 @@ public class LifeTable {
 
     public boolean toDieByNQX(Person p, int currentDay, Random random) {
 
+
+
         LifeTableRow r = rows.get(rows.floorKey(p.getAge(currentDay)));
+
+//        if(rows.floorKey(p.getAge(currentDay)) == 0) {
+//            System.out.println(rows.floorKey(p.getAge(currentDay)));
+//            System.out.println("X: " + r.getX());
+//        }
+
         return r.toDieByNQX();
 
     }
 
     public TreeMap<Integer, LifeTableRow> getCloneOfTreeMap() {
         return (TreeMap<Integer, LifeTableRow>) rows.clone();
+    }
+
+    public String getTableResourceKey() {
+        return tableResourceKey;
     }
 }

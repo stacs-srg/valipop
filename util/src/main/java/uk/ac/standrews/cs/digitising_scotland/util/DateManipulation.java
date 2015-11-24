@@ -293,6 +293,7 @@ public class DateManipulation {
     }
 
     public static synchronized int differenceInYears(final int days1, final int days2) {
+//        System.out.println(days1 + " " + days2 + " = " + (daysToYear(days2) - daysToYear(days1)));
 
         return daysToYear(days2) - daysToYear(days1);
     }

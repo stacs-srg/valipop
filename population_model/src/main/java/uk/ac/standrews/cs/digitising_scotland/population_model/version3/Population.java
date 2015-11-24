@@ -55,7 +55,7 @@ public class Population implements ITemporalPopulationInfo {
     public static void main(String[] args) {
         Population pop = new Population();
         pop.initLifeTables();
-        pop.generateSeedPopulation(5000000);
+        pop.generateSeedPopulation(50000);
         pop.runSimulation();
         System.out.println(pop.people.size());
 
@@ -72,7 +72,7 @@ public class Population implements ITemporalPopulationInfo {
             if (d > largest)
                 largest = d;
 
-            System.out.println((START_YEAR + count - 1) + "\t" + d);
+            System.out.println((START_YEAR + count) + "\t" + d);
 
             count++;
             sum += d;
@@ -92,14 +92,16 @@ public class Population implements ITemporalPopulationInfo {
 
     public void runSimulation() {
 
-        UniformIntegerDistribution dayInPeriod = new UniformIntegerDistribution(0, timeStep, random);
+        UniformIntegerDistribution dayInPeriod = new UniformIntegerDistribution(0, timeStep - 1, random);
 
         while (currentDay < endYearInDays) {
 
             for (int i = 0; i < people.size(); i++) {
                 Person p = people.get(i);
                 if (lifeTables.toDieByNQX(p, currentDay, random)) {
+
                     p.die(currentDay + dayInPeriod.getSample());
+
                     deadPeople.add(p);
                     people.remove(p);
                     people.add(new Person(currentDay, true));
@@ -136,7 +138,7 @@ public class Population implements ITemporalPopulationInfo {
     }
 
     public void initLifeTables() {
-        lifeTables = new LifeTableCatalogue(EPOCH_YEAR, "lifetable_catalogue");
+        lifeTables = new LifeTableCatalogue(EPOCH_YEAR, END_YEAR, "lifetable_catalogue");
     }
 
 
