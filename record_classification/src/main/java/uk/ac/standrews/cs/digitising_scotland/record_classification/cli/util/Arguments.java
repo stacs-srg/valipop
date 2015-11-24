@@ -30,7 +30,7 @@ public final class Arguments {
 
     private static final Pattern SPECIAL_CHARACTER = Pattern.compile("[^-_A-Za-z0-9]");
     private static final Pattern COMMAND_LINE_ARGUMENT_PATTERN = Pattern.compile("[^\\s\"']+|\"([^\"]*)\"|'([^']*)'");
-    private static final Pattern COMMENT_PATTERN = Pattern.compile("^ *#");
+    private static final Pattern COMMENT_PATTERN = Pattern.compile("^\\s*#");
 
     private Arguments() {
 
@@ -64,7 +64,7 @@ public final class Arguments {
 
     private static String[] toCommandLineArguments(final String command_line) {
 
-        return isCommandLine(command_line) ? parseCommandLine(command_line) : null;
+        return isCommandLine(command_line) ? null : parseCommandLine(command_line);
     }
 
     private static boolean isCommandLine(final String command_line) {
@@ -93,7 +93,7 @@ public final class Arguments {
         return arguments.toArray(new String[arguments.size()]);
     }
 
-    private static boolean isComment(final String command_line) {
+    protected static boolean isComment(final String command_line) {
 
         return COMMENT_PATTERN.matcher(command_line).find();
     }

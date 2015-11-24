@@ -1,0 +1,33 @@
+init
+-f
+set
+--classifier
+VOTING_ENSEMBLE_EXACT_ML_SIMILARITY
+load
+--from
+path/to/data/with spaces in path/gs.csv
+gold_standard
+-h
+-t
+1.0
+load
+--from
+path/to/data/without_spaces/gs.csv
+gold_standard
+-h
+-t
+1.0
+load
+--from
+some badly named file with spaces.txt
+unseen
+-h
+-d
+|
+clean
+-c
+COMBINED
+train
+classify
+-o
+classified_some other file.csv
