@@ -38,10 +38,11 @@ public class LifeTableRowShadow {
 
     public double getCalculatedNMX() {
         if (peopleInRowAtMidInterval == 0) {
+            System.out.println(row.getX() + "\t" + peopleInRowDieingInInterval + "\t" + peopleInRowAtMidInterval);
 //            System.out.println("Zero in row --- " + row.getX());
             return 0;
         } else {
-            System.out.println(peopleInRowDieingInInterval + "\t" + peopleInRowAtMidInterval);
+            System.out.println(row.getX() + "\t" + peopleInRowDieingInInterval + "\t" + peopleInRowAtMidInterval);
             return peopleInRowDieingInInterval / (double) peopleInRowAtMidInterval;
         }
     }

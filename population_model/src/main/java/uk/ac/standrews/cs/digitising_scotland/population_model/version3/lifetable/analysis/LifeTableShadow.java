@@ -38,14 +38,16 @@ public class LifeTableShadow {
 
     public LifeTableShadow(LifeTable lifetable, int endYear, int startYear) {
         table = lifetable;
-        endDay = DateManipulation.dateToDays(endYear, 0, 0) - 1;
-        startDay = DateManipulation.dateToDays(startYear, 0, 0);
+        endDay = DateManipulation.dateToDays(endYear-1, 0, 0) - 1;
+        startDay = DateManipulation.dateToDays(startYear-1, 0, 0);
 
         TreeMap<Integer, LifeTableRow> tree = table.getCloneOfTreeMap();
 
         for (int r : tree.keySet()) {
             rows.put(r, new LifeTableRowShadow(tree.get(r)));
         }
+
+//        rows.put(rows.lastKey()+1, new LifeTableRowShadow(new LifeTableRow(rows.lastKey()+1,1,0,0)));
 
 //        System.out.println("R: " + rows.size());
 
@@ -63,9 +65,11 @@ public class LifeTableShadow {
         for (Person p : people) {
             int age = p.getAge(ageingDay);
 
-            if (age > -1) {
+            if (age >= -1) {
 
-                if (age < 1) {
+
+                if (age <= 0) {
+//                    System.out.println("I'm here");
                     int ageInDays = DateManipulation.differenceInDays(startDay, p.getDob());
                     int halfYear = Population.getDaysInYear() / 2;
 
@@ -76,17 +80,30 @@ public class LifeTableShadow {
                             rows.get(rows.floorKey(0)).incPeopleDieingInRow();
                         }
 
+                    } else if (halfYear < ageInDays) {
+                        if (age < p.getAge(p.getDod())) {
+                            rows.get(rows.floorKey(1)).incPeopleInRow();
+//                System.out.println("PIRinc: " + rows.get(rows.floorKey(age)).getPeopleInRow());
+                        }
+
+//            System.out.println(startDay + " | " + p.getDod() + " | " + endDay);
+
+                        if (startDay <= p.getDod() && p.getDod() < endDay) {
+                            rows.get(rows.floorKey(1)).incPeopleDieingInRow();
+//                System.out.println("PDIRinc: " + rows.get(rows.floorKey(age)).getPeopleDieingInRow());
+                        }
                     }
+
                 } else {
 
-                    if (age >= 0 && age < p.getAge(p.getDod())) {
+                    if (age < p.getAge(p.getDod())) {
                         rows.get(rows.floorKey(age)).incPeopleInRow();
 //                System.out.println("PIRinc: " + rows.get(rows.floorKey(age)).getPeopleInRow());
                     }
 
 //            System.out.println(startDay + " | " + p.getDod() + " | " + endDay);
 
-                    if (age >= 0 && startDay <= p.getDod() && p.getDod() < endDay) {
+                    if (startDay <= p.getDod() && p.getDod() < endDay) {
                         rows.get(rows.floorKey(age)).incPeopleDieingInRow();
 //                System.out.println("PDIRinc: " + rows.get(rows.floorKey(age)).getPeopleDieingInRow());
                     }

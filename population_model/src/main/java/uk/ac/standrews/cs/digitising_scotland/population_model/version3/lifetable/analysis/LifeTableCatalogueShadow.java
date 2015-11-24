@@ -40,7 +40,7 @@ public class LifeTableCatalogueShadow {
 
         TreeMap<Integer, LifeTable> tree = lifeTableCatalogue.getCloneOfTreeMap();
 
-        for (int y = startYear; y < endYear; y += 1) {
+        for (int y = startYear+1; y < endYear; y += 1) {
             tables.put(y, new LifeTableShadow(tree.get(tree.floorKey(y)), y + 1, y));
         }
 
@@ -64,6 +64,11 @@ public class LifeTableCatalogueShadow {
     }
 
     public Double[] analyse(List<Person> population) {
+
+//        System.out.println("HHH");
+//        System.out.println(DateManipulation.differenceInYears(2000, 2010));
+//        System.out.println(DateManipulation.differenceInYears(2100, 2000));
+
 
         Double[] rSquares = new Double[tables.size()];
         int p = 0;

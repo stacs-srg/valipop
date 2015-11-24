@@ -46,6 +46,7 @@ public class LifeTableRow {
         this.nMx = nMx;
         this.nqx = nqx;
         deathPoint = (int) (1 / nqx);
+//        survivers = deathPoint / 2;
     }
 
 

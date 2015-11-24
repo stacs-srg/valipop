@@ -25,9 +25,7 @@ import uk.ac.standrews.cs.util.tools.FileManipulation;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Map;
-import java.util.Random;
-import java.util.TreeMap;
+import java.util.*;
 
 /**
  * Created by tsd4 on 11/11/2015.
@@ -40,11 +38,12 @@ public class LifeTableCatalogue {
     private String line;
     private int epochYear;
 
-    public LifeTableCatalogue(int epochYear, String catalogueKey) {
+    public LifeTableCatalogue(int epochYear, int endYear, String catalogueKey) {
 
         this.epochYear = epochYear;
 
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(getClass().getClassLoader().getResourceAsStream(PopulationProperties.getProperties().getProperty(catalogueKey)), FileManipulation.FILE_CHARSET))) {
+
 
             while ((line = reader.readLine()) != null) {
 
@@ -63,7 +62,7 @@ public class LifeTableCatalogue {
                     addTable(new LifeTable(Integer.valueOf(lC[0]), lC[1]));
 
                 } else {
-                    System.err.println("LifeTable data " + catalogueKey + " line too short");
+                    System.err.println("LifeTable data " + catalogueKey + " line incorrect length");
                 }
 
             }
@@ -74,6 +73,31 @@ public class LifeTableCatalogue {
         } catch (IOException e) {
             ErrorHandling.exceptionError(e, "IO Exception");
             e.printStackTrace();
+        }
+
+
+        ArrayList<Integer> keys = new ArrayList<Integer>(catalogue.keySet());
+
+        Stack<Integer> k = new Stack<Integer>();
+
+        for(int i = keys.size()-1; i >= 0; i--) {
+            k.push(keys.get(i));
+        }
+
+
+        while (!k.isEmpty()) {
+            Integer thisKey = k.pop();
+            Integer nextKey;
+            if(!k.isEmpty()) {
+                nextKey = k.peek();
+            } else {
+                nextKey = endYear;
+            }
+
+            for(int y = thisKey + 1; y < nextKey; y++) {
+                catalogue.put(y, new LifeTable(y, catalogue.get(catalogue.floorKey(y)).getTableResourceKey()));
+            }
+
         }
 
     }
