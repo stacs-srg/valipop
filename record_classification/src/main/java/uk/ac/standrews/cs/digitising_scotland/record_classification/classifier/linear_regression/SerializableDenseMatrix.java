@@ -39,9 +39,9 @@ public class SerializableDenseMatrix implements Serializable {
         this.matrix = new DenseMatrix(asArray(matrix));
     }
 
-    public SerializableDenseMatrix(final int i, final int j) {
+    public SerializableDenseMatrix(final int rows, final int columns) {
 
-        this.matrix = new DenseMatrix(i, j);
+        this.matrix =  new DenseMatrix(rows, columns);
     }
 
     public DenseMatrix getMatrix() {

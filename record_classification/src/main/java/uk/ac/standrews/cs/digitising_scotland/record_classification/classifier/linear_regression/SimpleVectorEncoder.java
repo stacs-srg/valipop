@@ -36,11 +36,9 @@ import java.util.Map;
  * to a unique index.
  * Created by fraserdunlop on 23/04/2014 at 19:37.
  */
-public class SimpleVectorEncoder extends AbstractVectorEncoder<String> implements Serializable {
+public class SimpleVectorEncoder implements Serializable {
 
     private static final long serialVersionUID = 6907477522599743250L;
-
-    private static final transient Logger LOGGER = LoggerFactory.getLogger(SimpleVectorEncoder.class);
 
     private Map<String, Integer> dictionary;
     private Integer currentMaxTokenIndexValue;
@@ -53,7 +51,6 @@ public class SimpleVectorEncoder extends AbstractVectorEncoder<String> implement
         initialize();
     }
 
-    @Override
     public Vector encode(final Collection<String> strings, final Vector vector) {
 
         for (String string : strings) {
@@ -66,7 +63,7 @@ public class SimpleVectorEncoder extends AbstractVectorEncoder<String> implement
      * Token first converted to lower case.
      * The value of the vector at the index of the token's unique index value is incremented by 1.
      *
-     * @param token  a token (String) to be encoded to the vector.
+     * @param token a token (String) to be encoded to the vector.
      * @param vector the vector which the supplied token (String) is encoded to.
      */
     public void addToVector(final String token, final Vector vector) {
@@ -101,40 +98,4 @@ public class SimpleVectorEncoder extends AbstractVectorEncoder<String> implement
         return dictionary.size();
     }
 
-    /**
-     * Write.
-     *
-     * @param outputStream the out
-     * @throws IOException Signals that an I/O exception has occurred.
-     */
-    protected void write(final ObjectOutputStream outputStream) throws IOException {
-
-        outputStream.writeInt(currentMaxTokenIndexValue);
-        for (String string : dictionary.keySet()) {
-            outputStream.writeInt(dictionary.get(string));
-            outputStream.writeUTF(string);
-        }
-    }
-
-    /**
-     * Read fields.
-     *
-     * @param inputStream the in
-     * @throws IOException Signals that an I/O exception has occurred.
-     */
-    protected void readFields(final DataInputStream inputStream) throws IOException {
-
-        initialize();
-        int currentMaxTokenIndexValue = inputStream.readInt();
-        for (int i = 0; i < currentMaxTokenIndexValue; i++) {
-            int readint = inputStream.readInt();
-
-            if (i != readint) {
-                LOGGER.error("error reading SimpleVectorEncoder dictionary");
-                throw new RuntimeException("error reading SimpleVectorEncoder dictionary");
-            }
-            updateDictionary(inputStream.readUTF());
-        }
-
-    }
 }
