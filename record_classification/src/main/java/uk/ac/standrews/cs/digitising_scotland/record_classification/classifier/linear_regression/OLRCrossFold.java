@@ -16,9 +16,8 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.linear_regression;
 
-import org.apache.mahout.math.Matrix;
-import org.apache.mahout.math.NamedVector;
-import org.apache.mahout.math.Vector;
+import org.la4j.*;
+import org.la4j.Vector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,9 +61,9 @@ public class OLRCrossFold implements Serializable {
      *
      * @param trainingVectorList training vectors to use when training/validating each fold.
      */
-    public OLRCrossFold(final List<NamedVector> trainingVectorList, int dictionary_size, int code_map_size) {
+    public OLRCrossFold(final List<VectorFactory.NamedVector> trainingVectorList, int dictionary_size, int code_map_size) {
 
-        ArrayList<NamedVector>[][] trainingVectors = init(trainingVectorList);
+        ArrayList<VectorFactory.NamedVector>[][] trainingVectors = init(trainingVectorList);
         for (int i = 0; i < FOLDS + 1; i++) {
             OLRPool model = new OLRPool(trainingVectors[i][0], trainingVectors[i][1], dictionary_size, code_map_size);
             models.add(model);
@@ -77,9 +76,9 @@ public class OLRCrossFold implements Serializable {
      * @param trainingVectorList training vectors to use when training/validating each fold.
      * @param betaMatrix betaMatrix this matrix contains the betas and will be propagated down to the lowest OLR object.
      */
-    public OLRCrossFold(final List<NamedVector> trainingVectorList, final Matrix betaMatrix) {
+    public OLRCrossFold(final List<VectorFactory.NamedVector> trainingVectorList, final Matrix betaMatrix) {
 
-        ArrayList<NamedVector>[][] trainingVectors = init(trainingVectorList);
+        ArrayList<VectorFactory.NamedVector>[][] trainingVectors = init(trainingVectorList);
         for (int i = 0; i < FOLDS + 1; i++) {
             OLRPool model = new OLRPool(betaMatrix, trainingVectors[i][0], trainingVectors[i][1]);
             models.add(model);
@@ -171,13 +170,13 @@ public class OLRCrossFold implements Serializable {
         }
         Matrix classifierMatrix = matrices.pop();
         while (!matrices.empty()) {
-            classifierMatrix = classifierMatrix.plus(matrices.pop());
+            classifierMatrix = classifierMatrix.add(matrices.pop());
         }
         classifierMatrix = classifierMatrix.divide(survivors.size());
         return classifierMatrix;
     }
 
-    private ArrayList<NamedVector>[][] init(final List<NamedVector> trainingVectorList) {
+    private ArrayList<VectorFactory.NamedVector>[][] init(final List<VectorFactory.NamedVector> trainingVectorList) {
 
         return CrossFoldFactory.make(trainingVectorList, FOLDS);
     }

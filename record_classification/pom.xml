@@ -235,13 +235,14 @@
             <groupId>org.apache.mahout</groupId>
             <artifactId>mahout-core</artifactId>
             <version>0.9</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.la4j</groupId>
             <artifactId>la4j</artifactId>
             <version>0.5.5</version>
         </dependency>
-        
+
         <dependency>
             <groupId>com.github.mpkorstanje</groupId>
             <artifactId>simmetrics-core</artifactId>
@@ -259,6 +260,18 @@
             <artifactId>jcommander</artifactId>
             <version>1.48</version>
         </dependency>
+
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.4</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.4</version>
+        </dependency>
+
 
         <dependency>
             <groupId>org.apache.commons</groupId>

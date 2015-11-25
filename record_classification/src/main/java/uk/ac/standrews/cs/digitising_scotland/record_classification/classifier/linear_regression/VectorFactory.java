@@ -16,18 +16,12 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.linear_regression;
 
-import org.apache.mahout.math.NamedVector;
-import org.apache.mahout.math.RandomAccessSparseVector;
-import org.apache.mahout.math.Vector;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Classification;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Record;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.TokenList;
+import org.la4j.Vector;
+import org.la4j.vector.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.io.*;
+import java.util.*;
 
 /**
  * @author Fraser Dunlop
@@ -44,6 +38,7 @@ public class VectorFactory implements Serializable {
      * Needed for JSON deserialization.
      */
     public VectorFactory() {
+
     }
 
     public VectorFactory(final Bucket bucket) {
@@ -91,7 +86,8 @@ public class VectorFactory implements Serializable {
 
         if (record.getClassification() != Classification.UNCLASSIFIED) {
             vectors.addAll(createNamedVectorsWithGoldStandardCodes(record));
-        } else {
+        }
+        else {
             vectors.addAll(createUnNamedVectorsFromDescription(new TokenList(record.getData())));
         }
         return vectors;
@@ -130,7 +126,7 @@ public class VectorFactory implements Serializable {
 
     private Vector createVectorFromString(final TokenList description) {
 
-        Vector vector = new RandomAccessSparseVector(numberOfDistinctTokens());
+        Vector vector = SparseVector.zero(numberOfDistinctTokens());
         addFeaturesToVector(vector, description);
         return vector;
     }
@@ -139,6 +135,24 @@ public class VectorFactory implements Serializable {
 
         for (String token : token_list) {
             vectorEncoder.addToVector(token, vector);
+        }
+    }
+
+    public static class NamedVector implements Cloneable {
+
+        protected final Vector vector;
+        protected final String name;
+
+        public NamedVector(Vector vector, String name) {
+
+            this.vector = vector;
+            this.name = name;
+        }
+
+        @Override
+        protected NamedVector clone() {
+
+            return new NamedVector(vector.copy(), name);
         }
     }
 }

@@ -16,17 +16,10 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.linear_regression;
 
-import org.apache.mahout.math.Vector;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.la4j.Vector;
 
-import java.io.DataInputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.io.*;
+import java.util.*;
 
 /**
  * Used by {@link VectorFactory}
@@ -49,14 +42,6 @@ public class SimpleVectorEncoder implements Serializable {
     public SimpleVectorEncoder() {
 
         initialize();
-    }
-
-    public Vector encode(final Collection<String> strings, final Vector vector) {
-
-        for (String string : strings) {
-            addToVector(string, vector);
-        }
-        return vector;
     }
 
     /**

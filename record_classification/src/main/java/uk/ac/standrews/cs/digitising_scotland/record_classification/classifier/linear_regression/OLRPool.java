@@ -16,21 +16,16 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.linear_regression;
 
-import com.google.common.collect.Lists;
-import org.apache.commons.cli2.util.*;
-import org.apache.mahout.math.Matrix;
-import org.apache.mahout.math.NamedVector;
-import org.apache.mahout.math.Vector;
+import org.la4j.*;
+import org.la4j.Vector;
 
-import java.io.Serializable;
+import java.io.*;
 import java.util.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.*;
 import java.util.stream.*;
 
-import static java.util.Collections.reverseOrder;
+import static java.util.Collections.*;
 
 /**
  * Trains a number of models on the training vectors provided. These models are then used to make predictions
@@ -46,7 +41,7 @@ public class OLRPool implements Runnable, Serializable {
     private static final int NUMBER_OF_SURVIVORS = 2;
 
     private List<OLRShuffled> models = new ArrayList<>();
-    private transient List<NamedVector> testingVectorList = new ArrayList<>();
+    private transient List<VectorFactory.NamedVector> testingVectorList = new ArrayList<>();
 
     /**
      * Needed for JSON deserialization.
@@ -61,23 +56,23 @@ public class OLRPool implements Runnable, Serializable {
      * @param internalTrainingVectorList internal training vector list
      * @param testingVectorList internal testing vector list
      */
-    public OLRPool(final List<NamedVector> internalTrainingVectorList, final List<NamedVector> testingVectorList, int dictionary_size, int code_map_size) {
+    public OLRPool(final List<VectorFactory.NamedVector> internalTrainingVectorList, final List<VectorFactory.NamedVector> testingVectorList, int dictionary_size, int code_map_size) {
 
         this.testingVectorList = testingVectorList;
 
         for (int i = 0; i < POOL_SIZE; i++) {
-            final List<NamedVector> trainingVectorList = new ArrayList<>(internalTrainingVectorList);
+            final List<VectorFactory.NamedVector> trainingVectorList = new ArrayList<>(internalTrainingVectorList);
             OLRShuffled model = new OLRShuffled(trainingVectorList, dictionary_size, code_map_size);
             models.add(model);
         }
     }
 
-    public OLRPool(final Matrix betaMatrix, final ArrayList<NamedVector> internalTrainingVectorList, final ArrayList<NamedVector> testingVectorList) {
+    public OLRPool(final Matrix betaMatrix, final ArrayList<VectorFactory.NamedVector> internalTrainingVectorList, final ArrayList<VectorFactory.NamedVector> testingVectorList) {
 
         this.testingVectorList = testingVectorList;
 
         for (int i = 0; i < POOL_SIZE; i++) {
-            final List<NamedVector> trainingVectorList = new ArrayList<>(internalTrainingVectorList);
+            final List<VectorFactory.NamedVector> trainingVectorList = new ArrayList<>(internalTrainingVectorList);
             OLRShuffled model = new OLRShuffled(betaMatrix, trainingVectorList);
             models.add(model);
         }
@@ -125,13 +120,29 @@ public class OLRPool implements Runnable, Serializable {
     private double getProportionTestingVectorsCorrectlyClassified(final OLRShuffled model) {
 
         int countCorrect = 0;
-        for (NamedVector vector : testingVectorList) {
-            Vector classificationVector = model.classifyFull(vector);
-            int classification = classificationVector.maxValueIndex();
-            if (Integer.parseInt(vector.getName()) == classification) {
+        for (VectorFactory.NamedVector vector : testingVectorList) {
+            final Vector classificationVector = model.classifyFull(vector.vector);
+            final int classification = getMaxValueIndex(classificationVector);
+
+            if (Integer.parseInt(vector.name) == classification) {
                 countCorrect++;
             }
         }
         return ((double) countCorrect) / ((double) testingVectorList.size());
+    }
+
+    static int getMaxValueIndex(final Vector vector) {
+
+        double max = Double.MIN_VALUE;
+        int max_index = -1;
+
+        for (int index = 0; index < vector.length(); index++) {
+            final double value = vector.get(index);
+            if (value > max) {
+                max = value;
+                max_index = index;
+            }
+        }
+        return max_index;
     }
 }

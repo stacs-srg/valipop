@@ -16,11 +16,10 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.linear_regression;
 
-import org.apache.commons.math3.exception.NumberIsTooSmallException;
-import org.apache.mahout.math.NamedVector;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.apache.commons.math3.exception.*;
+
+import java.util.*;
 
 /**
  * Abstract class for the creation of cross folded data structures.
@@ -36,30 +35,30 @@ public abstract class CrossFoldFactory {
      * @param folds number of folds
      * @return ArrayList<NamedVector>[][]
      */
-    public static ArrayList<NamedVector>[][] make(final List<NamedVector> trainingVectorList, final int folds) {
+    public static ArrayList<VectorFactory.NamedVector>[][] make(final List<VectorFactory.NamedVector> trainingVectorList, final int folds) {
 
-        ArrayList<NamedVector>[][] crossFoldedData = initialize(folds);
+        ArrayList<VectorFactory.NamedVector>[][] crossFoldedData = initialize(folds);
         int size = trainingVectorList.size();
         int[] splitPoints = calculateSplitPoints(folds, size);
 
         for (int i = 0; i < folds + 1; i++) {
             for (int j = 0; j < size; j++) {
                 if (j >= splitPoints[i] && j <= splitPoints[i + 1]) {
-                    crossFoldedData[i][1].add(new NamedVector(trainingVectorList.get(j).clone()));
+                    crossFoldedData[i][1].add(trainingVectorList.get(j).clone());
                 }
                 else {
-                    crossFoldedData[i][0].add(new NamedVector(trainingVectorList.get(j).clone()));
+                    crossFoldedData[i][0].add(trainingVectorList.get(j).clone());
                 }
             }
         }
         return crossFoldedData;
     }
 
-    protected static ArrayList<NamedVector>[][] initialize(final int folds) {
+    protected static ArrayList<VectorFactory.NamedVector>[][] initialize(final int folds) {
 
         if (folds < 1) { throw new NumberIsTooSmallException(folds, 1, true); }
 
-        ArrayList<NamedVector>[][] crossFoldedData = new ArrayList[folds + 1][2];
+        ArrayList<VectorFactory.NamedVector>[][] crossFoldedData = new ArrayList[folds + 1][2];
 
         for (int i = 0; i < folds + 1; i++) {
             for (int j = 0; j < 2; j++) {
