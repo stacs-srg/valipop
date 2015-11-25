@@ -115,7 +115,7 @@ public final class CodeIndexer implements Serializable {
     }
 
     /**
-     * Puts a code in the map after checking that it's valid by using the {@link CodeDictionary}.
+     * Puts a code in the map after checking that it's valid.
      *
      * @param code the code to add to the map
      */

@@ -17,6 +17,7 @@
 package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.linear_regression;
 
 import com.google.common.collect.Lists;
+import org.apache.commons.cli2.util.*;
 import org.apache.mahout.math.Matrix;
 import org.apache.mahout.math.NamedVector;
 import org.apache.mahout.math.Vector;
@@ -27,6 +28,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.*;
+
+import static java.util.Collections.reverseOrder;
 
 /**
  * Trains a number of models on the training vectors provided. These models are then used to make predictions
@@ -41,20 +45,21 @@ public class OLRPool implements Runnable, Serializable {
     private static final int POOL_SIZE = 4;
     private static final int NUMBER_OF_SURVIVORS = 2;
 
-    private List<OLRShuffled> models = Lists.newArrayList();
-    private transient List<NamedVector> testingVectorList = Lists.newArrayList();
+    private List<OLRShuffled> models = new ArrayList<>();
+    private transient List<NamedVector> testingVectorList = new ArrayList<>();
 
     /**
      * Needed for JSON deserialization.
      */
     public OLRPool() {
+
     }
 
     /**
      * Constructor.
      *
      * @param internalTrainingVectorList internal training vector list
-     * @param testingVectorList          internal testing vector list
+     * @param testingVectorList internal testing vector list
      */
     public OLRPool(final List<NamedVector> internalTrainingVectorList, final List<NamedVector> testingVectorList, int dictionary_size, int code_map_size) {
 
@@ -97,16 +102,24 @@ public class OLRPool implements Runnable, Serializable {
             executorService.shutdown();
             executorService.awaitTermination(365, TimeUnit.DAYS);
 
-        } catch (InterruptedException ignored) {
+        }
+        catch (InterruptedException ignored) {
         }
     }
 
-    /**
-     * Get the survivors from the model pool.
-     */
+    /** Get the survivors from the model pool. */
     public List<OLRShuffled> survivors() {
 
-        return survivors(testAndPackageModels());
+        return models.stream().sorted(getDescendingCorrectlyClassifiedPortionComparator()).limit(NUMBER_OF_SURVIVORS).collect(Collectors.toList());
+    }
+
+    protected Comparator<OLRShuffled> getDescendingCorrectlyClassifiedPortionComparator() {
+
+        return reverseOrder((one, other) -> {
+            final double one_correct_ratio = getProportionTestingVectorsCorrectlyClassified(one);
+            final double other_correct_ratio = getProportionTestingVectorsCorrectlyClassified(other);
+            return Double.compare(one_correct_ratio, other_correct_ratio);
+        });
     }
 
     private double getProportionTestingVectorsCorrectlyClassified(final OLRShuffled model) {
@@ -120,25 +133,5 @@ public class OLRPool implements Runnable, Serializable {
             }
         }
         return ((double) countCorrect) / ((double) testingVectorList.size());
-    }
-
-    private ArrayList<ModelDoublePair> testAndPackageModels() {
-
-        ArrayList<ModelDoublePair> modelPairs = new ArrayList<>();
-        for (OLRShuffled model : models) {
-            double proportionCorrect = getProportionTestingVectorsCorrectlyClassified(model);
-            modelPairs.add(new ModelDoublePair(model, proportionCorrect));
-        }
-        return modelPairs;
-    }
-
-    private List<OLRShuffled> survivors(final List<ModelDoublePair> modelPairs) {
-
-        ArrayList<OLRShuffled> survivors = new ArrayList<>();
-        Collections.sort(modelPairs);
-        for (int i = modelPairs.size() - 1; i >= modelPairs.size() - NUMBER_OF_SURVIVORS; i--) {
-            survivors.add(modelPairs.get(i).getModel());
-        }
-        return survivors;
     }
 }
