@@ -33,6 +33,8 @@ public final class Utils {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Utils.class);
 
+    private Utils() { throw new UnsupportedOperationException(); }
+
     /**
      * Handles and exceptions or throwables thrown from threads that are handles by a {@link Future} or {@link ExecutorService}.
      *
@@ -44,7 +46,8 @@ public final class Utils {
         for (Future<?> future : futures) {
             try {
                 future.get();
-            } catch (ExecutionException e) {
+            }
+            catch (ExecutionException e) {
                 Throwable rootException = e.getCause();
                 if (rootException != null) {
                     LOGGER.error(rootException.toString(), rootException);

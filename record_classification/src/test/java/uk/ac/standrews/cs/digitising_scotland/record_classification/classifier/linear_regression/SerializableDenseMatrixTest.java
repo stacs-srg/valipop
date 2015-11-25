@@ -39,7 +39,8 @@ public class SerializableDenseMatrixTest {
         final int rows = 1000;
         final int columns = 4000;
         final DenseMatrix mah = new DenseMatrix(rows, columns);
-        final org.la4j.matrix.SparseMatrix la4j = RowMajorSparseMatrix.zero(rows, columns);
+        
+        final org.la4j.matrix.DenseMatrix la4j = org.la4j.matrix.DenseMatrix.zero(rows, columns);
         
         for (int row = 0; row < rows; row++) {
             for (int column = 0; column < columns; column++) {
@@ -55,6 +56,7 @@ public class SerializableDenseMatrixTest {
         }
 
         final DenseVector vector = new DenseVector(vector_values);
+
         final SparseVector that = SparseVector.fromArray(vector_values);
 
         final Instant start2 = Instant.now();
@@ -65,14 +67,10 @@ public class SerializableDenseMatrixTest {
         final org.la4j.Vector la4jtimes = la4j.multiply(that);
         final Duration la4jelapes = Duration.between(start, Instant.now());
 
-        final Instant start_tk = Instant.now();
-        final Duration tkelapes = Duration.between(start, Instant.now());
-
-        System.out.println(mahelapsed.minus(la4jelapes).toMillis());
+        System.out.println(mahelapsed.minus(la4jelapes).toMillis() + " millis saved");
         
         for (int i = 0; i < rows; i++) {
             Assert.assertEquals(la4jtimes.get(i), mahtimes.get(i), Validators.DELTA);
         }
     }
-
 }

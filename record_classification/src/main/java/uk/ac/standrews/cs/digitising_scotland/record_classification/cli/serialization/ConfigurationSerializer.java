@@ -19,8 +19,6 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.cli.seriali
 import com.fasterxml.jackson.core.*;
 import com.fasterxml.jackson.databind.*;
 
-import org.apache.commons.lang3.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.ConfusionMatrix;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;

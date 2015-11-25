@@ -23,7 +23,7 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import org.apache.mahout.math.DenseMatrix;
+import org.la4j.matrix.*;
 import weka.classifiers.bayes.NaiveBayesMultinomialText;
 import weka.core.*;
 

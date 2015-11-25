@@ -16,7 +16,8 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.linear_regression;
 
-import org.apache.mahout.math.*;
+import org.la4j.*;
+import org.la4j.matrix.*;
 
 import java.io.*;
 
@@ -29,19 +30,17 @@ public class SerializableDenseMatrix implements Serializable {
 
     private DenseMatrix matrix;
 
-    /**
-     * Needed for JSON deserialization.
-     */
+    /** Needed for JSON deserialization. */
     public SerializableDenseMatrix() {}
 
     public SerializableDenseMatrix(final Matrix matrix) {
 
-        this.matrix = new DenseMatrix(asArray(matrix));
+        this.matrix = matrix.toDenseMatrix();
     }
 
     public SerializableDenseMatrix(final int rows, final int columns) {
 
-        this.matrix =  new DenseMatrix(rows, columns);
+        this.matrix = DenseMatrix.zero(rows, columns);
     }
 
     public DenseMatrix getMatrix() {
@@ -54,33 +53,14 @@ public class SerializableDenseMatrix implements Serializable {
         this.matrix = matrix;
     }
 
-    public static double[][] asArray(final Matrix matrix) {
-
-        double[][] array = new double[matrix.numRows()][matrix.numCols()];
-        for (int i = 0; i < matrix.numRows(); i++) {
-            for (int j = 0; j < matrix.numCols(); j++)
-                array[i][j] = matrix.get(i, j);
-        }
-        return array;
-    }
-
     public double get(final int row, final int column) {
 
         return matrix.get(row, column);
     }
 
-    public double getQuick(final int category, final int feature) {
+    public Vector times(final Vector vector) {
 
-        return matrix.getQuick(category, feature);
-    }
-
-    public void setQuick(final int row, final int column, final double value) {
-        matrix.setQuick(row, column, value);
-    }
-
-    public Vector times(final Vector instance) {
-        
-        return matrix.times(instance);
+        return matrix.multiply(vector);
     }
 
     public void set(final int row, final int column, final double value) {
@@ -88,14 +68,13 @@ public class SerializableDenseMatrix implements Serializable {
         matrix.set(row, column, value);
     }
 
-    // Next two methods needed for Java serialization.
     private void readObject(final ObjectInputStream inputStream) throws ClassNotFoundException, IOException {
 
-        matrix = new DenseMatrix((double[][]) inputStream.readObject());
+        matrix = DenseMatrix.from2DArray((double[][]) inputStream.readObject());
     }
 
     private void writeObject(final ObjectOutputStream outputStream) throws IOException {
 
-        outputStream.writeObject(asArray(matrix));
+        outputStream.writeObject(matrix.toArray());
     }
 }
