@@ -1,7 +1,6 @@
 model/statistics/distributions/NotSetUpAtClassInitilisationException.class
 model/analysis/lifetable/LifeTableShadow.class
 model/utils/DateManipulation.class
-model/utils/ErrorHandling.class
 model/statistics/distributions/NoPermissableValueException.class
 model/statistics/distributions/ITemporalDistribution.class
 model/statistics/distributions/NegativeDeviationException.class

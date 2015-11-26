@@ -19,8 +19,8 @@ package model.statistics.lifetable;
 import model.config.PopulationProperties;
 import model.Person;
 import model.utils.DateManipulation;
-import model.utils.ErrorHandling;
 import uk.ac.standrews.cs.util.tools.FileManipulation;
+import uk.ac.standrews.cs.nds.util.ErrorHandling;
 
 import java.io.BufferedReader;
 import java.io.IOException;

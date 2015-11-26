@@ -2,7 +2,6 @@
 /Users/tsd4/OneDrive/cs/PhD/population_model/src/main/java/model/statistics/distributions/RestrictedDistribution.java
 /Users/tsd4/OneDrive/cs/PhD/population_model/src/main/java/model/statistics/lifetable/LifeTableCatalogue.java
 /Users/tsd4/OneDrive/cs/PhD/population_model/src/main/java/model/statistics/distributions/WeightedDistribution.java
-/Users/tsd4/OneDrive/cs/PhD/population_model/src/main/java/model/utils/ErrorHandling.java
 /Users/tsd4/OneDrive/cs/PhD/population_model/src/main/java/model/statistics/distributions/NoPermissableValueException.java
 /Users/tsd4/OneDrive/cs/PhD/population_model/src/main/java/model/utils/DateManipulation.java
 /Users/tsd4/OneDrive/cs/PhD/population_model/src/main/java/model/statistics/distributions/NotSetUpAtClassInitilisationException.java
