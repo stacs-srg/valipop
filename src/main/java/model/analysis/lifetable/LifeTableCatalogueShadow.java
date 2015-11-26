@@ -33,7 +33,6 @@ public class LifeTableCatalogueShadow {
 
     private TreeMap<Integer, LifeTableShadow> tables = new TreeMap<Integer, LifeTableShadow>();
 
-
     public LifeTableCatalogueShadow(LifeTableCatalogue lifeTableCatalogue, int startYear, int endYear) {
         this.lifeTableCatalogue = lifeTableCatalogue;
 
@@ -42,47 +41,19 @@ public class LifeTableCatalogueShadow {
         for (int y = startYear + 1; y < endYear; y += 1) {
             tables.put(y, new LifeTableShadow(tree.get(tree.floorKey(y)), y + 1, y));
         }
-
-
-//        Iterator<Integer> iter = tree.keySet().iterator();
-//
-//        while(iter.hasNext()) {
-//
-//            Integer i = iter.next();
-//
-//            if(iter.hasNext()) {
-//                tables.put(i, new LifeTableShadow(tree.get(i), DateManipulation.dateToDays(tree.ceilingKey(i+1) - 1,0,0)));
-//            } else {
-//                tables.put(i, new LifeTableShadow(tree.get(i), Integer.MAX_VALUE));
-//            }
-//
-//        }
-
-//        System.out.println(tables.size());
-
     }
 
     public Double[] analyse(List<Person> population) {
-
-//        System.out.println("HHH");
-//        System.out.println(DateManipulation.differenceInYears(2000, 2010));
-//        System.out.println(DateManipulation.differenceInYears(2100, 2000));
-
 
         Double[] rSquares = new Double[tables.size()];
         int p = 0;
 
         for (Integer i : tables.keySet()) {
-//            System.out.println("Y: " + i);
             LifeTableShadow lts = tables.get(i);
-//            System.out.println(lts.toString().split("@")[1]);
             lts.reviewPopulation(population);
             rSquares[p++] = lts.calcRSquared();
         }
 
         return rSquares;
-
     }
-
-
 }
