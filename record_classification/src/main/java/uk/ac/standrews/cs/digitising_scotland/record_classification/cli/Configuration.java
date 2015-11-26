@@ -21,13 +21,13 @@ import com.fasterxml.jackson.databind.*;
 import org.apache.commons.csv.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.command.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.logging.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.serialization.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.supplier.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.serialization.*;
-import uk.ac.standrews.cs.digitising_scotland.util.*;
 
 import java.io.*;
 import java.nio.charset.*;
@@ -81,12 +81,11 @@ public class Configuration extends ClassificationContext {
     private static final long serialVersionUID = 5386411103557347275L;
     private static final String CONFIG_FILE_NAME = "config.json";
     private static final ObjectMapper MAPPER = new ObjectMapper();
+    private static final Logger LOGGER = CLILogManager.CLILogger.getLogger(Configuration.class.getName());
 
     static {
         MAPPER.registerModule(new ClassliModule());
     }
-
-    private static final Logger LOGGER = CLILogManager.CLILogger.getLogger(Configuration.class.getName());
 
     private CharsetSupplier default_charset_supplier = DEFAULT_CHARSET_SUPPLIER;
     private Character default_delimiter = DEFAULT_DELIMITER;
@@ -108,111 +107,7 @@ public class Configuration extends ClassificationContext {
     private transient Supplier<Bucket> classified_unseen_records_loader;
     private transient Supplier<ConfusionMatrix> confusion_matrix_loader;
     private transient Supplier<ClassificationMetrics> classification_metrics_loader;
-
-    public void setClassificationMetricsLazyLoader(final Supplier<ClassificationMetrics> classification_metrics_loader) {
-
-        this.classification_metrics_loader = classification_metrics_loader;
-    }
-
-    public void setClassifiedEvaluationRecordsLazyLoader(final Supplier<Bucket> classified_evaluation_records_loader) {
-
-        this.classified_evaluation_records_loader = classified_evaluation_records_loader;
-    }
-
-    public void setClassifiedUnseenRecordsLazyLoader(final Supplier<Bucket> classified_unseen_records_loader) {
-
-        this.classified_unseen_records_loader = classified_unseen_records_loader;
-    }
-
-    public void setClassifierLazyLoader(final Supplier<Classifier> classifier_loader) {
-
-        this.classifier_loader = classifier_loader;
-    }
-
-    public void setTrainingRecordsLazyLoader(final Supplier<Bucket> training_records_loader) {
-
-        this.training_records_loader = training_records_loader;
-    }
-
-    public void setUnseenRecordsLazyLoader(final Supplier<Bucket> unseen_records_loader) {
-
-        this.unseen_records_loader = unseen_records_loader;
-    }
-
-    public void setEvaluationRecordsLazyLoader(final Supplier<Bucket> evaluation_records_loader) {
-
-        this.evaluation_records_loader = evaluation_records_loader;
-    }
-
-    public void setConfusionMatrixLazyLoader(final Supplier<ConfusionMatrix> confusion_matrix_loader) {
-
-        this.confusion_matrix_loader = confusion_matrix_loader;
-    }
-
-    @Override
-    public Classifier getClassifier() {
-
-        loadLazily(classifier_loader, this::setClassifier, isClassifierSet(), "classifier");
-        return super.getClassifier();
-    }
-
-    @Override
-    public Bucket getTrainingRecords() {
-
-        loadLazily(training_records_loader, this::setTrainingRecords, isTrainingRecordsSet(), "training records");
-        return super.getTrainingRecords();
-    }
-
-    @Override
-    public Bucket getEvaluationRecords() {
-
-        loadLazily(evaluation_records_loader, this::setEvaluationRecords, isEvaluationRecordsSet(), "evaluation records");
-        return super.getEvaluationRecords();
-    }
-
-    @Override
-    public Bucket getUnseenRecords() {
-
-        loadLazily(unseen_records_loader, this::setUnseenRecords, isUnseenRecordsSet(), "unseen records");
-        return super.getUnseenRecords();
-    }
-
-    @Override
-    public Bucket getClassifiedEvaluationRecords() {
-
-        loadLazily(classified_evaluation_records_loader, this::setClassifiedEvaluationRecords, isClassifiedEvaluationRecordsSet(), "classified evaluation records");
-        return super.getClassifiedEvaluationRecords();
-    }
-
-    @Override
-    public Bucket getClassifiedUnseenRecords() {
-
-        loadLazily(classified_unseen_records_loader, this::setClassifiedUnseenRecords, isClassifiedUnseenRecordsSet(), "classified unseen records");
-        return super.getClassifiedUnseenRecords();
-    }
-
-    @Override
-    public ConfusionMatrix getConfusionMatrix() {
-
-        loadLazily(confusion_matrix_loader, this::setConfusionMatrix, isConfusionMatrixSet(), "confusion matrix");
-        return super.getConfusionMatrix();
-    }
-
-    @Override
-    public ClassificationMetrics getClassificationMetrics() {
-
-        loadLazily(classification_metrics_loader, this::setClassificationMetrics, isClassificationMetricsSet(), "classification metrics");
-
-        return super.getClassificationMetrics();
-    }
-
-    private <Value> void loadLazily(Supplier<Value> loader, Consumer<Value> setter, boolean already_set, String parameter_name) {
-
-        if (!already_set && loader != null) {
-            LOGGER.info(() -> String.format("loading %s...", parameter_name));
-            setter.accept(loader.get());
-        }
-    }
+    private FileHandler internal_log_handler;
 
     public Configuration() {
 
@@ -223,6 +118,15 @@ public class Configuration extends ClassificationContext {
 
         this.working_directory = working_directory;
     }
+
+    public void init() throws IOException {
+
+        InitCommand.assureDirectoryExists(getHome());
+        InitCommand.assureDirectoryExists(getInternalLogsHome());
+        internal_log_handler = CLILogManager.getInternalLogHandler(this);
+    }
+
+    public Path getInternalLogsHome() {return getHome().resolve("logs");}
 
     public static Configuration load() throws IOException {
 
@@ -296,6 +200,117 @@ public class Configuration extends ClassificationContext {
     static boolean exists(final Path working_directory) {
 
         return Files.isRegularFile(Configuration.getConfigurationFile(getHome(working_directory)));
+    }
+
+    public void setClassificationMetricsLazyLoader(final Supplier<ClassificationMetrics> classification_metrics_loader) {
+
+        this.classification_metrics_loader = classification_metrics_loader;
+    }
+
+    public void setClassifiedEvaluationRecordsLazyLoader(final Supplier<Bucket> classified_evaluation_records_loader) {
+
+        this.classified_evaluation_records_loader = classified_evaluation_records_loader;
+    }
+
+    public void setClassifiedUnseenRecordsLazyLoader(final Supplier<Bucket> classified_unseen_records_loader) {
+
+        this.classified_unseen_records_loader = classified_unseen_records_loader;
+    }
+
+    public void setClassifierLazyLoader(final Supplier<Classifier> classifier_loader) {
+
+        this.classifier_loader = classifier_loader;
+    }
+
+    public void setTrainingRecordsLazyLoader(final Supplier<Bucket> training_records_loader) {
+
+        this.training_records_loader = training_records_loader;
+    }
+
+    public void setUnseenRecordsLazyLoader(final Supplier<Bucket> unseen_records_loader) {
+
+        this.unseen_records_loader = unseen_records_loader;
+    }
+
+    public void setEvaluationRecordsLazyLoader(final Supplier<Bucket> evaluation_records_loader) {
+
+        this.evaluation_records_loader = evaluation_records_loader;
+    }
+
+    public void setConfusionMatrixLazyLoader(final Supplier<ConfusionMatrix> confusion_matrix_loader) {
+
+        this.confusion_matrix_loader = confusion_matrix_loader;
+    }
+
+    @Override
+    public Bucket getUnseenRecords() {
+
+        loadLazily(unseen_records_loader, this::setUnseenRecords, isUnseenRecordsSet(), "unseen records");
+        return super.getUnseenRecords();
+    }
+
+    @Override
+    public Bucket getEvaluationRecords() {
+
+        loadLazily(evaluation_records_loader, this::setEvaluationRecords, isEvaluationRecordsSet(), "evaluation records");
+        return super.getEvaluationRecords();
+    }
+
+    @Override
+    public Bucket getClassifiedEvaluationRecords() {
+
+        loadLazily(classified_evaluation_records_loader, this::setClassifiedEvaluationRecords, isClassifiedEvaluationRecordsSet(), "classified evaluation records");
+        return super.getClassifiedEvaluationRecords();
+    }
+
+    @Override
+    public Bucket getClassifiedUnseenRecords() {
+
+        loadLazily(classified_unseen_records_loader, this::setClassifiedUnseenRecords, isClassifiedUnseenRecordsSet(), "classified unseen records");
+        return super.getClassifiedUnseenRecords();
+    }
+
+    @Override
+    public Bucket getTrainingRecords() {
+
+        loadLazily(training_records_loader, this::setTrainingRecords, isTrainingRecordsSet(), "training records");
+        return super.getTrainingRecords();
+    }
+
+    @Override
+    public Classifier getClassifier() {
+
+        loadLazily(classifier_loader, this::setClassifier, isClassifierSet(), "classifier");
+        return super.getClassifier();
+    }
+
+    private <Value> void loadLazily(Supplier<Value> loader, Consumer<Value> setter, boolean already_set, String parameter_name) {
+
+        if (!already_set && loader != null) {
+            LOGGER.info(() -> String.format("loading %s...", parameter_name));
+            setter.accept(loader.get());
+        }
+    }
+
+    @Override
+    public void setClassifier(final Classifier classifier) {
+
+        super.setClassifier(classifier);
+    }
+
+    @Override
+    public ClassificationMetrics getClassificationMetrics() {
+
+        loadLazily(classification_metrics_loader, this::setClassificationMetrics, isClassificationMetricsSet(), "classification metrics");
+
+        return super.getClassificationMetrics();
+    }
+
+    @Override
+    public ConfusionMatrix getConfusionMatrix() {
+
+        loadLazily(confusion_matrix_loader, this::setConfusionMatrix, isConfusionMatrixSet(), "confusion matrix");
+        return super.getConfusionMatrix();
     }
 
     public Path getWorkingDirectory() {
@@ -407,12 +422,6 @@ public class Configuration extends ClassificationContext {
         }
     }
 
-    @Override
-    public void setClassifier(final Classifier classifier) {
-
-        super.setClassifier(classifier);
-    }
-
     public void persist() throws IOException {
 
         try (final OutputStream out = Files.newOutputStream(getConfigurationFile(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)) {
@@ -477,9 +486,14 @@ public class Configuration extends ClassificationContext {
     void setLogLevel(final Level log_level) {
 
         this.log_level = log_level;
-        CLILogManager.setLevel(log_level);
+        CLILogManager.setConsoleLogLevel(log_level);
+    }
 
-        //TODO add file handler for error.log
+    void setInternalLogLevel(final Level log_level) {
+
+        if (internal_log_handler != null) {
+            internal_log_handler.setLevel(log_level);
+        }
     }
 
     public LogLevelSupplier getDefaultLogLevelSupplier() {

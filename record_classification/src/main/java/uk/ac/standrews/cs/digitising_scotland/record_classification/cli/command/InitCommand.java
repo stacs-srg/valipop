@@ -54,7 +54,7 @@ public class InitCommand extends Command {
         final Path home = configuration.getHome();
         try {
             checkDirectoryExistence(home, replace_existing);
-            assureDirectoryExists(home);
+            configuration.init();
         }
         catch (IOException e) {
             throw new RuntimeException("failed to construct configuration folder", e);
@@ -65,10 +65,7 @@ public class InitCommand extends Command {
 
         if (Files.isDirectory(directory)) {
 
-            if (delete_if_exists) {
-                FileUtils.deleteDirectory(directory.toFile());
-            }
-            else {
+            if (!delete_if_exists) {
                 throw new FileAlreadyExistsException("directory already exists: " + directory);
             }
         }

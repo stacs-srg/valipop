@@ -94,7 +94,7 @@ public class ClassifyCommandTest extends CommandTest {
 
         assertFileExists(classified_file);
         assertSameNumberOfRecords(classified_file, unseens);
-//        assertRecordsContainExpectedContent(classified_file);
+        assertRecordsContainExpectedContent(classified_file);
         assertRecordsConsistentlyClassified(classified_file);
     }
 

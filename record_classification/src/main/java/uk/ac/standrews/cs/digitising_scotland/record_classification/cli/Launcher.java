@@ -48,11 +48,17 @@ public class Launcher {
     /** The long name of the option that specifies the path to a file containing the batch commands to be executed. **/
     public static final String OPTION_COMMANDS_LONG = "--commands";
 
-    /** The short name of the option that specifies the level of verbosity of the command line interface **/
+    /** The short name of the option that specifies the level of verbosity of the command line interface. **/
     public static final String OPTION_VERBOSITY_SHORT = "-v";
 
-    /** The long name of the option that specifies the level of verbosity of the command line interface **/
+    /** The long name of the option that specifies the level of verbosity of the command line interface. **/
     public static final String OPTION_VERBOSITY_LONG = "--verbosity";
+
+    /** The short name of the option that specifies the level of verbosity of the internal logging mechanism. **/
+    public static final String OPTION_INTERNAL_VERBOSITY_SHORT = "-iv";
+
+    /** The long name of the option that specifies the level of verbosity of the internal logging mechanism. **/
+    public static final String OPTION_INTERNAL_VERBOSITY_LONG = "--internalVerbosity";
 
     /** The long name of the option that specifies the path to the working directory. **/
     public static final String OPTION_WORKING_DIRECTORY_SHORT = "-w";
@@ -73,6 +79,9 @@ public class Launcher {
 
     @Parameter(names = {OPTION_VERBOSITY_SHORT, OPTION_VERBOSITY_LONG}, descriptionKey = "launcher.verbosity.description")
     private LogLevelSupplier log_level_supplier;
+
+    @Parameter(names = {OPTION_INTERNAL_VERBOSITY_SHORT, OPTION_INTERNAL_VERBOSITY_LONG}, descriptionKey = "launcher.internal_verbosity.description")
+    private LogLevelSupplier internal_log_level_supplier = LogLevelSupplier.SEVERE;
 
     @Parameter(names = {OPTION_WORKING_DIRECTORY_SHORT, OPTION_WORKING_DIRECTORY_LONG}, descriptionKey = "launcher.working_directory.description", converter = PathConverter.class)
     private Path working_directory = Configuration.DEFAULT_WORKING_DIRECTORY;
@@ -191,7 +200,7 @@ public class Launcher {
 
     public void handle() throws Exception {
 
-        configuration.setLogLevel(log_level_supplier.get());
+        setLogLevels();
 
         try {
             if (help) {
@@ -205,8 +214,14 @@ public class Launcher {
             }
         }
         finally {
-            persistContext();
+            possiblyPersistConfiguration();
         }
+    }
+
+    protected void setLogLevels() {
+
+        configuration.setLogLevel(log_level_supplier.get());
+        configuration.setInternalLogLevel(internal_log_level_supplier.get());
     }
 
     public boolean isBatchModeEnabled() {return commands != null;}
@@ -234,7 +249,7 @@ public class Launcher {
         command.run();
     }
 
-    private void persistContext() throws IOException {
+    private void possiblyPersistConfiguration() throws IOException {
 
         if (Files.isDirectory(configuration.getHome())) {
             configuration.persist();
