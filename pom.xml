@@ -16,7 +16,7 @@
 
 	<properties>
 		<repository.type>hg</repository.type>
-		<repository.location>http://quicksilver.hg.cs.st-andrews.ac.uk/population_model</repository.location>
+		<repository.location>http://quicksilver-public.hg.cs.st-andrews.ac.uk/population_model</repository.location>
 	</properties>
 
 	<ciManagement>
