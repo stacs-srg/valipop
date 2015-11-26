@@ -20,7 +20,7 @@ import model.Person;
 import model.Population;
 import model.statistics.lifetable.LifeTable;
 import model.statistics.lifetable.LifeTableRow;
-import uk.ac.standrews.cs.digitising_scotland.util.DateManipulation;
+import model.utils.DateManipulation;
 
 import java.util.*;
 

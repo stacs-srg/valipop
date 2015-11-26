@@ -17,10 +17,9 @@
 	<properties>
 		<repository.type>hg</repository.type>
 		<repository.location>http://quicksilver.hg.cs.st-andrews.ac.uk/population_model</repository.location>
-		<properties>
-        	<jdk.version>1.8</jdk.version>
-        	<maven.compiler.source>${jdk.version}</maven.compiler.source>
-        	<maven.compiler.target>${jdk.version}</maven.compiler.target>
+		<jdk.version>1.8</jdk.version>
+		<maven.compiler.source>${jdk.version}</maven.compiler.source>
+		<maven.compiler.target>${jdk.version}</maven.compiler.target>
 	</properties>
 
 	<ciManagement>
