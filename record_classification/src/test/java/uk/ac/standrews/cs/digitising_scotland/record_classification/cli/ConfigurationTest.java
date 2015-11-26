@@ -68,7 +68,7 @@ public class ConfigurationTest {
         expected.setClassifierSupplier(ClassifierSupplier.EXACT_MATCH);
         expected.setClassifierSerializationFormat(SerializationFormat.JAVA_SERIALIZATION);
         expected.setDefaultCharsetSupplier(CharsetSupplier.UTF_16);
-        expected.setDefaultLogLevelSupplier(LogLevelSupplier.OFF);
+        expected.setDefaultLogLevelSupplier(LogLevelSupplier.INFO);
         expected.setSeed(42L);
         expected.setDefaultCsvFormatSupplier(CsvFormatSupplier.RFC4180_PIPE_SEPARATED);
         expected.setDefaultTrainingRatio(0.7);

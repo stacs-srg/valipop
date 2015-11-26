@@ -64,11 +64,11 @@ class ConfigurationSerializer extends JsonSerializer<Configuration> {
         out.writeNumberField(DEFAULT_INTERNAL_TRAINING_RATIO, configuration.getDefaultInternalTrainingRatio());
         out.writeObjectField(DEFAULT_LOG_LEVEL_SUPPLIER, configuration.getDefaultLogLevelSupplier());
 
-        writeUnseenRecords(configuration);
-        writeGoldStandardRecords(configuration);
-        writeClassifiedUnseenRecords(configuration);
-        writeClassifiedEvaluationRecords(configuration);
         writeClassifier(configuration);
+        writeGoldStandardRecords(configuration);
+        writeUnseenRecords(configuration);
+        writeClassifiedEvaluationRecords(configuration);
+        writeClassifiedUnseenRecords(configuration);
         writeConfusionMatrix(configuration);
         writeClassificationMetrics(configuration);
 

@@ -18,10 +18,8 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.cli;
 
 import com.beust.jcommander.*;
 import com.fasterxml.jackson.databind.*;
-import com.fasterxml.jackson.databind.module.*;
-
 import org.apache.commons.csv.*;
-
+import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.logging.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.serialization.*;
@@ -29,11 +27,13 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.supplier
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.serialization.*;
+import uk.ac.standrews.cs.digitising_scotland.util.*;
 
 import java.io.*;
 import java.nio.charset.*;
 import java.nio.file.*;
 import java.util.*;
+import java.util.function.*;
 import java.util.logging.*;
 import java.util.stream.*;
 
@@ -79,18 +79,14 @@ public class Configuration extends ClassificationContext {
     protected static final LogLevelSupplier DEFAULT_LOG_LEVEL_SUPPLIER = LogLevelSupplier.INFO;
 
     private static final long serialVersionUID = 5386411103557347275L;
-    private static final Handler HANDLER = new CLIConsoleHandler();
     private static final String CONFIG_FILE_NAME = "config.json";
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
     static {
         MAPPER.registerModule(new ClassliModule());
-
-        final String logger_name = Launcher.class.getPackage().getName();
-        final Logger parent_logger = CLILogManager.CLILogger.getLogger(logger_name);
-        parent_logger.setUseParentHandlers(false);
-        parent_logger.addHandler(HANDLER);
     }
+
+    private static final Logger LOGGER = CLILogManager.CLILogger.getLogger(Configuration.class.getName());
 
     private CharsetSupplier default_charset_supplier = DEFAULT_CHARSET_SUPPLIER;
     private Character default_delimiter = DEFAULT_DELIMITER;
@@ -102,7 +98,121 @@ public class Configuration extends ClassificationContext {
     private ClassifierSupplier classifier_supplier;
     private SerializationFormat classifier_serialization_format = DEFAULT_CLASSIFIER_SERIALIZATION_FORMAT;
     private Level log_level;
+
     private transient Path working_directory = DEFAULT_WORKING_DIRECTORY;
+    private transient Supplier<Classifier> classifier_loader;
+    private transient Supplier<Bucket> training_records_loader;
+    private transient Supplier<Bucket> evaluation_records_loader;
+    private transient Supplier<Bucket> unseen_records_loader;
+    private transient Supplier<Bucket> classified_evaluation_records_loader;
+    private transient Supplier<Bucket> classified_unseen_records_loader;
+    private transient Supplier<ConfusionMatrix> confusion_matrix_loader;
+    private transient Supplier<ClassificationMetrics> classification_metrics_loader;
+
+    public void setClassificationMetricsLazyLoader(final Supplier<ClassificationMetrics> classification_metrics_loader) {
+
+        this.classification_metrics_loader = classification_metrics_loader;
+    }
+
+    public void setClassifiedEvaluationRecordsLazyLoader(final Supplier<Bucket> classified_evaluation_records_loader) {
+
+        this.classified_evaluation_records_loader = classified_evaluation_records_loader;
+    }
+
+    public void setClassifiedUnseenRecordsLazyLoader(final Supplier<Bucket> classified_unseen_records_loader) {
+
+        this.classified_unseen_records_loader = classified_unseen_records_loader;
+    }
+
+    public void setClassifierLazyLoader(final Supplier<Classifier> classifier_loader) {
+
+        this.classifier_loader = classifier_loader;
+    }
+
+    public void setTrainingRecordsLazyLoader(final Supplier<Bucket> training_records_loader) {
+
+        this.training_records_loader = training_records_loader;
+    }
+
+    public void setUnseenRecordsLazyLoader(final Supplier<Bucket> unseen_records_loader) {
+
+        this.unseen_records_loader = unseen_records_loader;
+    }
+
+    public void setEvaluationRecordsLazyLoader(final Supplier<Bucket> evaluation_records_loader) {
+
+        this.evaluation_records_loader = evaluation_records_loader;
+    }
+
+    public void setConfusionMatrixLazyLoader(final Supplier<ConfusionMatrix> confusion_matrix_loader) {
+
+        this.confusion_matrix_loader = confusion_matrix_loader;
+    }
+
+    @Override
+    public Classifier getClassifier() {
+
+        loadLazily(classifier_loader, this::setClassifier, isClassifierSet(), "classifier");
+        return super.getClassifier();
+    }
+
+    @Override
+    public Bucket getTrainingRecords() {
+
+        loadLazily(training_records_loader, this::setTrainingRecords, isTrainingRecordsSet(), "training records");
+        return super.getTrainingRecords();
+    }
+
+    @Override
+    public Bucket getEvaluationRecords() {
+
+        loadLazily(evaluation_records_loader, this::setEvaluationRecords, isEvaluationRecordsSet(), "evaluation records");
+        return super.getEvaluationRecords();
+    }
+
+    @Override
+    public Bucket getUnseenRecords() {
+
+        loadLazily(unseen_records_loader, this::setUnseenRecords, isUnseenRecordsSet(), "unseen records");
+        return super.getUnseenRecords();
+    }
+
+    @Override
+    public Bucket getClassifiedEvaluationRecords() {
+
+        loadLazily(classified_evaluation_records_loader, this::setClassifiedEvaluationRecords, isClassifiedEvaluationRecordsSet(), "classified evaluation records");
+        return super.getClassifiedEvaluationRecords();
+    }
+
+    @Override
+    public Bucket getClassifiedUnseenRecords() {
+
+        loadLazily(classified_unseen_records_loader, this::setClassifiedUnseenRecords, isClassifiedUnseenRecordsSet(), "classified unseen records");
+        return super.getClassifiedUnseenRecords();
+    }
+
+    @Override
+    public ConfusionMatrix getConfusionMatrix() {
+
+        loadLazily(confusion_matrix_loader, this::setConfusionMatrix, isConfusionMatrixSet(), "confusion matrix");
+        return super.getConfusionMatrix();
+    }
+
+    @Override
+    public ClassificationMetrics getClassificationMetrics() {
+
+        loadLazily(classification_metrics_loader, this::setClassificationMetrics, isClassificationMetricsSet(), "classification metrics");
+
+        return super.getClassificationMetrics();
+    }
+
+    private <Value> void loadLazily(Supplier<Value> loader, Consumer<Value> setter, boolean already_set, String parameter_name) {
+
+        if (!already_set && loader != null) {
+            LOGGER.info(() -> String.format("loading %s...", parameter_name));
+            setter.accept(loader.get());
+        }
+    }
 
     public Configuration() {
 
@@ -188,12 +298,6 @@ public class Configuration extends ClassificationContext {
         return Files.isRegularFile(Configuration.getConfigurationFile(getHome(working_directory)));
     }
 
-    @Override
-    public void setClassifier(final Classifier classifier) {
-
-        this.classifier = classifier;
-    }
-
     public Path getWorkingDirectory() {
 
         return working_directory;
@@ -257,32 +361,32 @@ public class Configuration extends ClassificationContext {
 
     public Classifier requireClassifier() {
 
-        return getClassifierOptional().orElseThrow(() -> new ParameterException("The classifier is required and not set; please specify a classifier."));
+        return getClassifierOptional().orElseThrow(() -> getMissingParameterException("classifier"));
     }
 
-    public Optional<Classifier> getClassifierOptional() {
+    protected ParameterException getMissingParameterException(final String paramter_name) {
 
-        return classifier == null ? Optional.empty() : Optional.of(classifier);
+        return new ParameterException(String.format("The %s is required but not set; please specify %s.", paramter_name, paramter_name));
     }
 
     public Bucket requireGoldStandardRecords() {
 
-        return getGoldStandardRecordsOptional().orElseThrow(() -> new ParameterException("No gold standard record is present; please load some gold standard records."));
+        return getGoldStandardRecordsOptional().orElseThrow(() -> getMissingParameterException("gold standard records"));
     }
 
     public Bucket requireEvaluationRecords() {
 
-        return getEvaluationRecordsOptional().orElseThrow(() -> new ParameterException("No evaluation record is present; please load some evaluation records."));
+        return getEvaluationRecordsOptional().orElseThrow(() -> getMissingParameterException("evaluation records"));
     }
 
     public Bucket requireTrainingRecords() {
 
-        return getTrainingRecordsOptional().orElseThrow(() -> new ParameterException("No training record is present; please load some training records."));
+        return getTrainingRecordsOptional().orElseThrow(() -> getMissingParameterException("training records"));
     }
 
     public Bucket requireUnseenRecords() {
 
-        return getUnseenRecordsOptional().orElseThrow(() -> new ParameterException("No unseen record is present; please load some unseen records."));
+        return getUnseenRecordsOptional().orElseThrow(() -> getMissingParameterException("unseen records."));
     }
 
     public ClassifierSupplier getClassifierSupplier() {
@@ -299,8 +403,14 @@ public class Configuration extends ClassificationContext {
     private void resetClassifier() {
 
         if (classifier_supplier != null) {
-            classifier = classifier_supplier.get();
+            setClassifier(classifier_supplier.get());
         }
+    }
+
+    @Override
+    public void setClassifier(final Classifier classifier) {
+
+        super.setClassifier(classifier);
     }
 
     public void persist() throws IOException {
@@ -367,7 +477,7 @@ public class Configuration extends ClassificationContext {
     void setLogLevel(final Level log_level) {
 
         this.log_level = log_level;
-        HANDLER.setLevel(log_level);
+        CLILogManager.setLevel(log_level);
 
         //TODO add file handler for error.log
     }
@@ -382,4 +492,5 @@ public class Configuration extends ClassificationContext {
         this.default_log_level_supplier = default_log_level_supplier;
         setLogLevel(default_log_level_supplier.get());
     }
+
 }

@@ -36,13 +36,13 @@ public class ClassificationContext implements Serializable {
 
     private static final long serialVersionUID = -6389479358148790573L;
 
-    protected Classifier classifier;
+    private Random random;
+    private Classifier classifier;
     private Bucket training_records;
     private Bucket evaluation_records;
     private Bucket unseen_records;
     private Bucket classified_evaluation_records;
     private Bucket classified_unseen_records;
-    private Random random;
     private ConfusionMatrix confusion_matrix;
     private ClassificationMetrics classification_metrics;
 
@@ -61,41 +61,231 @@ public class ClassificationContext implements Serializable {
      */
     public ClassificationContext(Classifier classifier, Random random) {
 
-        this.classifier = classifier;
-        this.random = random;
-
-        clearTrainingRecords();
-        clearEvaluationRecords();
-        clearUnseenRecords();
-        clearClassifiedUnseenRecords();
-        clearClassifiedEvaluationRecords();
+        setClassifier(classifier);
+        setRandom(random);
     }
 
-    public void clearTrainingRecords() {
+    /**
+     * Adds the given records to the bucket of records that are to be classified.
+     *
+     * @param unseen_records the records to be added
+     */
+    public void addUnseenRecords(Iterable<Record> unseen_records) {
 
-        // Do allow multiple data sets with potentially clashing ids to be added to training records.
-        training_records = new Bucket(true);
+        final Bucket records = getUnseenRecords();
+        unseen_records.forEach(records::add);
     }
 
-    public void clearEvaluationRecords() {
+    /**
+     * Gets the records that are to be classified.
+     *
+     * @return the records that are to be classified.
+     */
+    public Bucket getUnseenRecords() {
+
+        if (!isUnseenRecordsSet()) {
+            resetUnseenRecords();
+        }
+        return unseen_records;
+    }
+
+    protected boolean isUnseenRecordsSet() {return unseen_records != null;}
+
+    public void resetUnseenRecords() {
+
+        setUnseenRecords(new Bucket());
+    }
+
+    /**
+     * Sets the given records to the bucket of records that are to be classified.
+     *
+     * @param unseen_records the records to be added
+     */
+    public void setUnseenRecords(final Bucket unseen_records) {
+
+        this.unseen_records = unseen_records;
+    }
+
+    /**
+     * Gets the evaluation records with unique data in this context.
+     *
+     * @return the evaluation records with unique data, or {@code null} if not set
+     */
+    public Bucket getUniqueEvaluationRecords() {
+
+        final Optional<Bucket> evaluation_optional = getEvaluationRecordsOptional();
+        return evaluation_optional.isPresent() ? evaluation_optional.get().makeUniqueDataRecords() : null;
+    }
+
+    public Optional<Bucket> getEvaluationRecordsOptional() {
+
+        return Optional.ofNullable(getEvaluationRecords());
+    }
+
+    /**
+     * Gets the evaluation records in this context, including duplicate data records.
+     *
+     * @return the evaluation records including duplicate data records, or {@code null} if not set
+     */
+    public Bucket getEvaluationRecords() {
+
+        if (!isEvaluationRecordsSet()) {
+            resetEvaluationRecords();
+        }
+        return evaluation_records;
+    }
+
+    protected boolean isEvaluationRecordsSet() {return evaluation_records != null;}
+
+    public void resetEvaluationRecords() {
 
         // Do allow multiple data sets with potentially clashing ids to be added to evaluation records.
-        evaluation_records = new Bucket(true);
+        setEvaluationRecords(newBucketWithClashingIdAllowed());
     }
 
-    public void clearUnseenRecords() {
+    protected Bucket newBucketWithClashingIdAllowed() {
 
-        unseen_records = new Bucket();
+        return new Bucket(true);
     }
 
-    public void clearClassifiedUnseenRecords() {
+    public void setEvaluationRecords(Bucket evaluation_records) {
 
-        classified_unseen_records = new Bucket();
+        this.evaluation_records = evaluation_records;
     }
 
-    public void clearClassifiedEvaluationRecords() {
+    public Optional<Bucket> getClassifiedEvaluationRecordsOptional() {
 
-        classified_evaluation_records = new Bucket();
+        return Optional.ofNullable(getClassifiedEvaluationRecords());
+    }
+
+    public Bucket getClassifiedEvaluationRecords() {
+
+        if (!isClassifiedEvaluationRecordsSet()) {
+            resetClassifiedEvaluationRecords();
+        }
+
+        return classified_evaluation_records;
+    }
+
+    protected boolean isClassifiedEvaluationRecordsSet() {return classified_evaluation_records != null;}
+
+    public void resetClassifiedEvaluationRecords() {
+
+        setClassifiedEvaluationRecords(new Bucket());
+    }
+
+    public void setClassifiedEvaluationRecords(final Bucket classified_evaluation_records) {
+
+        this.classified_evaluation_records = classified_evaluation_records;
+    }
+
+    public Optional<Bucket> getUnseenRecordsOptional() {
+
+        return Optional.ofNullable(getUnseenRecords());
+    }
+
+    public Optional<Bucket> getClassifiedUnseenRecordsOptional() {
+
+        return Optional.ofNullable(getClassifiedUnseenRecords());
+    }
+
+    /**
+     * Gets the records that are classified by the classifier.
+     *
+     * @return the records that are classified by the classifier.
+     */
+    public Bucket getClassifiedUnseenRecords() {
+
+        if (!isClassifiedUnseenRecordsSet()) {
+            resetClassifiedUnseenRecords();
+        }
+
+        return classified_unseen_records;
+    }
+
+    protected boolean isClassifiedUnseenRecordsSet() {return classified_unseen_records != null;}
+
+    public void resetClassifiedUnseenRecords() {
+
+        setClassifiedUnseenRecords(new Bucket());
+    }
+
+    /**
+     * Sets the given records to the bucket of records that have been classified.
+     *
+     * @param classified_unseen_records the records to be set
+     */
+    public void setClassifiedUnseenRecords(final Bucket classified_unseen_records) {
+
+        this.classified_unseen_records = classified_unseen_records;
+    }
+
+    public Optional<Bucket> getGoldStandardRecordsOptional() {
+
+        return Optional.ofNullable(getGoldStandardRecords());
+    }
+
+    public Bucket getGoldStandardRecords() {
+
+        final Optional<Bucket> training_optional = getTrainingRecordsOptional();
+        final Optional<Bucket> evaluation_optional = getEvaluationRecordsOptional();
+        final boolean training_records_is_present = training_optional.isPresent();
+        final boolean evaluation_records_is_present = evaluation_optional.isPresent();
+
+        if (training_records_is_present && evaluation_records_is_present) {
+            return training_optional.get().union(evaluation_optional.get());
+        }
+        else if (training_records_is_present) {
+            return training_optional.get();
+        }
+        else if (evaluation_records_is_present) {
+            return evaluation_optional.get();
+        }
+        else {
+            return null;
+        }
+    }
+
+    public Optional<Bucket> getTrainingRecordsOptional() {
+
+        return Optional.ofNullable(getTrainingRecords());
+    }
+
+    /**
+     * Gets the records that are used to train the classifier of this context.
+     *
+     * @return the records that are used to train the classifier of this context, or {@code null} if
+     * the records are not set.
+     */
+    public Bucket getTrainingRecords() {
+
+        if (!isTrainingRecordsSet()) {
+            resetTrainingRecords();
+        }
+
+        return training_records;
+    }
+
+    protected boolean isTrainingRecordsSet() {return training_records != null;}
+
+    public void resetTrainingRecords() {
+
+        // Do allow multiple data sets with potentially clashing ids to be added to training records.
+        setTrainingRecords(newBucketWithClashingIdAllowed());
+    }
+
+    public void setTrainingRecords(Bucket training_records) {
+
+        this.training_records = training_records;
+    }
+
+    public void setGoldStandardRecords(Bucket gold_standard, double training_ratio) {
+
+        final Bucket training_records = gold_standard.randomSubset(getRandom(), training_ratio);
+        final Bucket evaluation_records = gold_standard.difference(training_records);
+
+        setTrainingRecords(training_records);
+        setEvaluationRecords(evaluation_records);
     }
 
     /**
@@ -113,30 +303,13 @@ public class ClassificationContext implements Serializable {
         this.random = random;
     }
 
-    /**
-     * Gets the records that are used to train the classifier of this context.
-     *
-     * @return the records that are used to train the classifier of this context, or {@code null} if
-     * the records are not set.
-     */
-    public Bucket getTrainingRecords() {
+    public void addGoldStandardRecords(Bucket gold_standard, double training_ratio) {
 
-        return training_records;
-    }
+        final Bucket training_records = gold_standard.randomSubset(getRandom(), training_ratio);
+        final Bucket evaluation_records = gold_standard.difference(training_records);
 
-    public void setTrainingRecords(Bucket training_records) {
-
-        this.training_records = training_records;
-    }
-
-    /**
-     * Adds the given records to the bucket of records that are to be classified.
-     *
-     * @param unseen_records the records to be added
-     */
-    public void addUnseenRecords(Iterable<Record> unseen_records) {
-
-        unseen_records.forEach(this.unseen_records::add);
+        addTrainingRecords(training_records);
+        addEvaluationRecords(evaluation_records);
     }
 
     /**
@@ -147,96 +320,8 @@ public class ClassificationContext implements Serializable {
      */
     public void addTrainingRecords(Iterable<Record> training_records) {
 
-        training_records.forEach(this.training_records::add);
-    }
-
-    /**
-     * Gets the evaluation records in this context, including duplicate data records.
-     *
-     * @return the evaluation records including duplicate data records, or {@code null} if not set
-     */
-    public Bucket getEvaluationRecords() {
-
-        return evaluation_records;
-    }
-
-    public void setEvaluationRecords(Bucket evaluation_records) {
-
-        this.evaluation_records = evaluation_records;
-    }
-
-    /**
-     * Gets the evaluation records with unique data in this context.
-     *
-     * @return the evaluation records with unique data, or {@code null} if not set
-     */
-    public Bucket getUniqueEvaluationRecords() {
-
-        final Optional<Bucket> evaluation_optional = getEvaluationRecordsOptional();
-        return evaluation_optional.isPresent() ? evaluation_optional.get().makeUniqueDataRecords() : null;
-    }
-
-    public Optional<Bucket> getEvaluationRecordsOptional() {
-
-        return Optional.ofNullable(evaluation_records);
-    }
-
-    public Optional<Bucket> getClassifiedEvaluationRecordsOptional() {
-
-        return Optional.ofNullable(classified_evaluation_records);
-    }
-
-    public Optional<Bucket> getUnseenRecordsOptional() {
-
-        return Optional.ofNullable(unseen_records);
-    }
-
-    public Optional<Bucket> getClassifiedUnseenRecordsOptional() {
-
-        return Optional.ofNullable(classified_unseen_records);
-    }
-
-    public Optional<Bucket> getGoldStandardRecordsOptional() {
-
-        return Optional.ofNullable(getGoldStandardRecords());
-    }
-
-    public Bucket getGoldStandardRecords() {
-
-        final Optional<Bucket> training_optional = getTrainingRecordsOptional();
-        final Optional<Bucket> evaluation_optional = getEvaluationRecordsOptional();
-        final boolean training_records_is_present = training_optional.isPresent();
-        final boolean evaluation_records_is_present = evaluation_optional.isPresent();
-
-        if (training_records_is_present && evaluation_records_is_present) {
-            return training_optional.get().union(evaluation_optional.get());
-        } else if (training_records_is_present) {
-            return training_optional.get();
-        } else if (evaluation_records_is_present) {
-            return evaluation_optional.get();
-        } else {
-            return null;
-        }
-    }
-
-    public void setGoldStandardRecords(Bucket gold_standard, double training_ratio) {
-
-        training_records = gold_standard.randomSubset(getRandom(), training_ratio);
-        evaluation_records = gold_standard.difference(training_records);
-    }
-
-    public void addGoldStandardRecords(Bucket gold_standard, double training_ratio) {
-
-        final Bucket training_records = gold_standard.randomSubset(getRandom(), training_ratio);
-        final Bucket evaluation_records = gold_standard.difference(training_records);
-
-        addTrainingRecords(training_records);
-        addEvaluationRecords(evaluation_records);
-    }
-
-    public Optional<Bucket> getTrainingRecordsOptional() {
-
-        return Optional.ofNullable(training_records);
+        final Bucket records = getTrainingRecords();
+        training_records.forEach(records::add);
     }
 
     /**
@@ -246,57 +331,13 @@ public class ClassificationContext implements Serializable {
      */
     public void addEvaluationRecords(final Iterable<Record> evaluation_records) {
 
-        evaluation_records.forEach(this.evaluation_records::add);
+        final Bucket records = getEvaluationRecords();
+        evaluation_records.forEach(records::add);
     }
 
-    /**
-     * Gets the records that are to be classified.
-     *
-     * @return the records that are to be classified.
-     */
-    public Bucket getUnseenRecords() {
+    public Optional<Classifier> getClassifierOptional() {
 
-        return unseen_records;
-    }
-
-    /**
-     * Sets the given records to the bucket of records that are to be classified.
-     *
-     * @param unseen_records the records to be added
-     */
-    public void setUnseenRecords(final Bucket unseen_records) {
-
-        this.unseen_records = unseen_records;
-    }
-
-    /**
-     * Gets the records that are classified by the classifier.
-     *
-     * @return the records that are classified by the classifier.
-     */
-    public Bucket getClassifiedUnseenRecords() {
-
-        return classified_unseen_records;
-    }
-
-    /**
-     * Sets the given records to the bucket of records that have been classified.
-     *
-     * @param classified_unseen_records the records to be set
-     */
-    public void setClassifiedUnseenRecords(final Bucket classified_unseen_records) {
-
-        this.classified_unseen_records = classified_unseen_records;
-    }
-
-    public Bucket getClassifiedEvaluationRecords() {
-
-        return classified_evaluation_records;
-    }
-
-    public void setClassifiedEvaluationRecords(final Bucket classified_evaluation_records) {
-
-        this.classified_evaluation_records = classified_evaluation_records;
+        return Optional.ofNullable(getClassifier());
     }
 
     /**
@@ -309,9 +350,16 @@ public class ClassificationContext implements Serializable {
         return classifier;
     }
 
+    protected boolean isClassifierSet() {return classifier != null;}
+
     protected void setClassifier(final Classifier classifier) {
 
         this.classifier = classifier;
+    }
+
+    public Optional<ClassificationMetrics> getClassificationMetricsOptional() {
+
+        return Optional.ofNullable(getClassificationMetrics());
     }
 
     /**
@@ -324,11 +372,6 @@ public class ClassificationContext implements Serializable {
         return classification_metrics;
     }
 
-    public Optional<ClassificationMetrics> getClassificationMetricsOptional() {
-
-        return Optional.ofNullable(classification_metrics);
-    }
-
     /**
      * Sets the classification metrics of this context.
      *
@@ -337,6 +380,11 @@ public class ClassificationContext implements Serializable {
     public void setClassificationMetrics(final ClassificationMetrics classification_metrics) {
 
         this.classification_metrics = classification_metrics;
+    }
+
+    public Optional<ConfusionMatrix> getConfusionMatrixOptional() {
+
+        return Optional.ofNullable(getConfusionMatrix());
     }
 
     /**
@@ -349,11 +397,6 @@ public class ClassificationContext implements Serializable {
         return confusion_matrix;
     }
 
-    public Optional<ConfusionMatrix> getConfusionMatrixOptional() {
-
-        return Optional.ofNullable(confusion_matrix);
-    }
-
     /**
      * Sets the confusion matrix of this context.
      *
@@ -362,6 +405,16 @@ public class ClassificationContext implements Serializable {
     public void setConfusionMatrix(ConfusionMatrix confusion_matrix) {
 
         this.confusion_matrix = confusion_matrix;
+    }
+
+    protected boolean isConfusionMatrixSet() {
+
+        return confusion_matrix != null;
+    }
+
+    protected boolean isClassificationMetricsSet() {
+
+        return classification_metrics != null;
     }
 
     /**
@@ -400,7 +453,7 @@ public class ClassificationContext implements Serializable {
      * Sets the time it took to classify the evaluation records by the classifier in this context.
      *
      * @param evaluation_classification_time the time it took to classify the evaluation records by
-     *                                       the classifier in this context
+     * the classifier in this context
      */
     public void setEvaluationClassificationTime(Duration evaluation_classification_time) {
 

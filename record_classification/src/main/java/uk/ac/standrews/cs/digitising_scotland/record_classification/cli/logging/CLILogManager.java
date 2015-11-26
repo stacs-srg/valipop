@@ -16,6 +16,8 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.cli.logging;
 
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.*;
+
 import java.util.logging.*;
 
 /**
@@ -24,6 +26,14 @@ import java.util.logging.*;
 public class CLILogManager extends LogManager {
 
     public static final CLILogManager CLI_LOG_MANAGER = new CLILogManager();
+    private static final Handler LOG_HANDLER = new CLIConsoleHandler();
+
+    static {
+        final String logger_name = Launcher.class.getPackage().getName();
+        final Logger parent_logger = CLILogManager.CLILogger.getLogger(logger_name);
+        parent_logger.setUseParentHandlers(false);
+        parent_logger.addHandler(LOG_HANDLER);
+    }
 
     private CLILogManager() {
 
@@ -32,6 +42,11 @@ public class CLILogManager extends LogManager {
     public static CLILogManager getLogManager() {
 
         return CLI_LOG_MANAGER;
+    }
+
+    public static void setLevel(final Level log_level) {
+
+        LOG_HANDLER.setLevel(log_level);
     }
 
     public static class CLILogger extends Logger {

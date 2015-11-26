@@ -22,8 +22,6 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 
 import java.util.*;
-import java.util.logging.*;
-import java.util.stream.*;
 
 /**
  * Command to load unseen records from a file.
@@ -49,7 +47,7 @@ public class LoadUnseenRecordsCommand extends LoadRecordsCommand {
     protected void process(final List<Record> records) {
 
         if (load_command.isOverrideExistingEnabled()) {
-            configuration.clearUnseenRecords();
+            configuration.resetUnseenRecords();
         }
 
         configuration.addUnseenRecords(records);
