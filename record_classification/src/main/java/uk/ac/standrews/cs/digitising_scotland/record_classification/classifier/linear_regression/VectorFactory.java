@@ -150,9 +150,8 @@ public class VectorFactory implements Serializable {
         }
 
         @Override
-        protected NamedVector clone() throws CloneNotSupportedException {
+        protected NamedVector clone() {
 
-            super.clone();
             return new NamedVector(vector.copy(), name);
         }
     }
