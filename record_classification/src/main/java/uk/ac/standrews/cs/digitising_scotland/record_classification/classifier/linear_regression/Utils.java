@@ -36,7 +36,7 @@ public final class Utils {
     private Utils() { throw new UnsupportedOperationException(); }
 
     /**
-     * Handles and exceptions or throwables thrown from threads that are handles by a {@link Future} or {@link ExecutorService}.
+     * Handles and exceptions thrown from threads that are handles by a {@link Future} or {@link ExecutorService}.
      *
      * @param futures Collection of executing futures to handle possible exceptions from.
      * @throws InterruptedException if thread is interrupted
