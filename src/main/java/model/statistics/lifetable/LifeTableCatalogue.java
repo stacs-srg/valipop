@@ -80,7 +80,7 @@ public class LifeTableCatalogue {
 
         Stack<Integer> k = new Stack<Integer>();
 
-        for(int i = keys.size()-1; i >= 0; i--) {
+        for (int i = keys.size() - 1; i >= 0; i--) {
             k.push(keys.get(i));
         }
 
@@ -88,13 +88,13 @@ public class LifeTableCatalogue {
         while (!k.isEmpty()) {
             Integer thisKey = k.pop();
             Integer nextKey;
-            if(!k.isEmpty()) {
+            if (!k.isEmpty()) {
                 nextKey = k.peek();
             } else {
                 nextKey = endYear;
             }
 
-            for(int y = thisKey + 1; y < nextKey; y++) {
+            for (int y = thisKey + 1; y < nextKey; y++) {
                 catalogue.put(y, new LifeTable(y, catalogue.get(catalogue.floorKey(y)).getTableResourceKey()));
             }
 

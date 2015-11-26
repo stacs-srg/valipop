@@ -29,32 +29,28 @@ import java.util.*;
 /**
  * Creates a weighted distribution with weights that change over time.
  *
+ * @param <Value> The Value type to be used by the distribution.
  * @author Victor Andrei (va9@st-andrews.ac.uk)
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
- *
- * @param <Value> The Value type to be used by the distribution.
  */
 public abstract class TemporalDistribution<Value> implements ITemporalDistribution<Value> {
 
+    private static final String TAB = "\t";
+    private static final String COMMENT_INDICATOR = "%";
+    protected Enum<?>[] enums;
     private HashMap<Integer, RestrictedDistribution<Value>> map = new HashMap<Integer, RestrictedDistribution<Value>>();
     private String line;
     private boolean firstLine = true;
     private int minimum, maximum;
     private boolean normal;
-
-    protected Enum<?>[] enums;
-
-    private static final String TAB = "\t";
-    private static final String COMMENT_INDICATOR = "%";
-
     private Integer[] keyArray;
 
     /**
      * Constructor for TemporalDistribution. Reads in distributions data for all years from the location specified and creates a mapping of years to distributions.
-     * 
-     * @param population The instance of the population which the distribution pertains to.
-     * @param distributionKey The key specified in the config file as the location of the relevant file.
-     * @param random The random to be used.
+     *
+     * @param population                     The instance of the population which the distribution pertains to.
+     * @param distributionKey                The key specified in the config file as the location of the relevant file.
+     * @param random                         The random to be used.
      * @param handleNoPermissibleValueAsZero Indicates if the distribution is to treat the returning of NoPermissibleValueExceptions as returning a zero value.
      */
     public TemporalDistribution(final ITemporalPopulationInfo population, final String distributionKey, final Random random, final boolean handleNoPermissibleValueAsZero) {
@@ -159,12 +155,12 @@ public abstract class TemporalDistribution<Value> implements ITemporalDistributi
 
     /**
      * Method returns a sample value from the distribution for the specified year which falls within the permissible values range.
-     * 
-     * @param date The date in days since 1/1/1600 which will be used to select the correct distribution to be used for the given year.
+     *
+     * @param date                           The date in days since 1/1/1600 which will be used to select the correct distribution to be used for the given year.
      * @param smallestPermissibleReturnValue The smallest value that the user wishes to be returned from the distribution.
-     * @param largestPermissibleReturnValue The largest value that the user wishes to be returned from the distribution.
+     * @param largestPermissibleReturnValue  The largest value that the user wishes to be returned from the distribution.
      * @return The Value that has been sampled from the distribution.
-     * @throws NoPermissableValueException Thrown if the distribution does not contain a value within the permissible range.
+     * @throws NoPermissableValueException           Thrown if the distribution does not contain a value within the permissible range.
      * @throws NotSetUpAtClassInitilisationException Thrown if the distribution has not been initlised in the correct way to allow restricted sampling.
      */
     public abstract Value getSample(int date, int smallestPermissibleReturnValue, int largestPermissibleReturnValue) throws NoPermissableValueException, NotSetUpAtClassInitilisationException;
@@ -184,10 +180,10 @@ public abstract class TemporalDistribution<Value> implements ITemporalDistributi
     public int getMaximumStatedValue() {
         return maximum;
     }
-    
+
     public Enum<?>[] getEnums() {
         return enums.clone();
     }
-    
+
 
 }

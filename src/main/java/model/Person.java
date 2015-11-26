@@ -38,6 +38,21 @@ public class Person {
         this(DateManipulation.dateToDays(dob), sex);
     }
 
+    public static void main(String[] args) {
+
+        Person p = new Person(1600 * 365, true);
+        System.out.println(DateManipulation.differenceInDays(p.getDob(), 1600 * 365 + 100));
+        System.out.println(p.getAge(1600 * 365 + 100));
+        System.out.println(DateManipulation.differenceInDays(p.getDob(), 1600 * 365 + 365 / 2));
+        System.out.println(p.getAge(1600 * 365 + 365 / 2));
+        System.out.println(DateManipulation.differenceInDays(p.getDob(), 1600 * 365 + 365 / 2 + 1));
+        System.out.println(p.getAge(1600 * 365 + 365 / 2 + 1));
+        System.out.println(DateManipulation.differenceInDays(p.getDob(), 1600 * 365 + 350));
+        System.out.println(p.getAge(1600 * 365 + 364));
+
+
+    }
+
     public int getAge(int currentDay) {
 //        if(currentDay - dob < 365*2) {
 //            if (currentDay < dob) {
@@ -69,22 +84,6 @@ public class Person {
 
     public boolean isSex() {
         return sex;
-    }
-
-
-    public static void main(String[] args) {
-
-        Person p = new Person(1600*365, true);
-        System.out.println(DateManipulation.differenceInDays(p.getDob(), 1600*365 + 100));
-        System.out.println(p.getAge(1600*365 + 100));
-        System.out.println(DateManipulation.differenceInDays(p.getDob(), 1600*365 + 365/2));
-        System.out.println(p.getAge(1600*365 + 365/2));
-        System.out.println(DateManipulation.differenceInDays(p.getDob(), 1600*365 + 365/2 + 1));
-        System.out.println(p.getAge(1600*365 + 365/2 + 1));
-        System.out.println(DateManipulation.differenceInDays(p.getDob(), 1600*365 + 350));
-        System.out.println(p.getAge(1600*365 + 364));
-
-
     }
 
 

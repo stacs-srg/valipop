@@ -18,7 +18,7 @@ package model.statistics.distributions;
 
 /**
  * Exception indicating a negative standard deviation supplied to a distribution.
- * 
+ *
  * @author Graham Kirby (graham.kirby@st-andrews.ac.uk)
  */
 public class NegativeDeviationException extends Exception {
@@ -27,6 +27,7 @@ public class NegativeDeviationException extends Exception {
 
     /**
      * Creates an exception.
+     *
      * @param message the message
      */
     public NegativeDeviationException(final String message) {

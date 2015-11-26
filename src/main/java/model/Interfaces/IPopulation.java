@@ -43,6 +43,7 @@ public interface IPopulation {
 
     /**
      * Retrieves a person by id.
+     *
      * @param id the id
      * @return the corresponding person
      */
@@ -50,6 +51,7 @@ public interface IPopulation {
 
     /**
      * Retrieves a partnership by id.
+     *
      * @param id the id
      * @return the corresponding partnership
      */
@@ -57,6 +59,7 @@ public interface IPopulation {
 
     /**
      * Returns the number of people in the population.
+     *
      * @return the number of people in the population
      * @throws Exception if there is an error determining the number of people
      */
@@ -64,6 +67,7 @@ public interface IPopulation {
 
     /**
      * Returns the number of partnerships in the population.
+     *
      * @return the number of partnerships in the population
      * @throws Exception if there is an error determining the number of partnerships
      */
@@ -71,19 +75,21 @@ public interface IPopulation {
 
     /**
      * Sets a description for the population, which may be useful for testing and debugging.
+     *
      * @param description the description
      */
     void setDescription(String description);
 
     /**
      * Sets a flag controlling whether person attributes are consistent across iterations.
-     *
+     * <p>
      * If set to true, person objects will be cached, which may be problematic for scalability in implementations
      * where the population is initially generated using a compact person representation that is expanded on
      * the fly during iteration.
-     *
+     * <p>
      * If set to false, attributes such as name and occupation may differ when a person with a given id
      * is retrieved multiple times.
+     *
      * @param consistent_across_iterations true if person attributes should remain consistent across iterations
      */
     void setConsistentAcrossIterations(boolean consistent_across_iterations);

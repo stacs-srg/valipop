@@ -39,7 +39,7 @@ public class LifeTableCatalogueShadow {
 
         TreeMap<Integer, LifeTable> tree = lifeTableCatalogue.getCloneOfTreeMap();
 
-        for (int y = startYear+1; y < endYear; y += 1) {
+        for (int y = startYear + 1; y < endYear; y += 1) {
             tables.put(y, new LifeTableShadow(tree.get(tree.floorKey(y)), y + 1, y));
         }
 

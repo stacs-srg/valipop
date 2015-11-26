@@ -88,6 +88,13 @@ public class Population implements ITemporalPopulationInfo {
         return DAYS_PER_YEAR;
     }
 
+    public static int getEpochYear() {
+        return EPOCH_YEAR;
+    }
+
+    public static int getDaysPerYear() {
+        return DAYS_PER_YEAR;
+    }
 
     public void runSimulation() {
 
@@ -124,8 +131,8 @@ public class Population implements ITemporalPopulationInfo {
 
         for (int i = 0; i < seedSize; i++) {
 //            if (random.nextBoolean()) {
-                int age = seedAgeForMalesDistribution.getSample();
-                seedPop.add(new Person(currentDay - age, true));
+            int age = seedAgeForMalesDistribution.getSample();
+            seedPop.add(new Person(currentDay - age, true));
 //            } else {
 //                int age = seedAgeForFemalesDistribution.getSample();
 //                seedPop.add(new Person(currentDay - age, false));
@@ -138,15 +145,6 @@ public class Population implements ITemporalPopulationInfo {
 
     public void initLifeTables() {
         lifeTables = new LifeTableCatalogue(EPOCH_YEAR, END_YEAR, "lifetable_catalogue");
-    }
-
-
-    public static int getEpochYear() {
-        return EPOCH_YEAR;
-    }
-
-    public  static int getDaysPerYear() {
-        return DAYS_PER_YEAR;
     }
 
     @Override

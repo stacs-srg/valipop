@@ -20,7 +20,7 @@ import java.util.Random;
 
 /**
  * A general distribution of integers within a specified range, the shape of which is controlled by a list of weights.
- * 
+ *
  * @author Graham Kirby (graham.kirby@st-andrews.ac.uk)
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
@@ -31,12 +31,12 @@ public class WeightedIntegerDistribution extends RestrictedDistribution<Integer>
 
     /**
      * Initialises the distribution. See {@link WeightedDistribution} for an explanation of the weights.
-     * 
+     *
      * @param minimum the minimum of the distribution.
      * @param maximum the maximum of the distribution.
      * @param weights the weights that control the shape of the distribution.
+     * @param random  the random number generator to be used.
      * @throws NegativeWeightException if any of the weights are negative.
-     * @param random the random number generator to be used.
      * @see WeightedDistribution
      */
     public WeightedIntegerDistribution(final int minimum, final int maximum, final int[] weights, final Random random) throws NegativeWeightException {
@@ -49,11 +49,11 @@ public class WeightedIntegerDistribution extends RestrictedDistribution<Integer>
 
     /**
      * Initialises the distribution. See {@link WeightedDistribution} for an explanation of the weights.
-     * 
-     * @param minimum the minimum of the distribution.
-     * @param maximum the maximum of the distribution.
-     * @param weights the weights that control the shape of the distribution.
-     * @param random the random number generator to be used.
+     *
+     * @param minimum                        the minimum of the distribution.
+     * @param maximum                        the maximum of the distribution.
+     * @param weights                        the weights that control the shape of the distribution.
+     * @param random                         the random number generator to be used.
      * @param handleNoPermissableValueAsZero If set as true then the distribution will view that when it throws a NoPermissableValueException that it is akin to returning a value of 0 to the balance of the distribution - however a NoPermissableValueException will still be thrown.
      * @throws NegativeWeightException if any of the weights are negative.
      */

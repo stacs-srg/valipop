@@ -18,15 +18,15 @@ package model.statistics.distributions;
 
 /**
  * Allows user to pick random samples from some distribution.
- * 
- * @author Graham Kirby (graham.kirby@st-andrews.ac.uk)
  *
  * @param <Value> the type of the samples
+ * @author Graham Kirby (graham.kirby@st-andrews.ac.uk)
  */
 public interface Distribution<Value> {
 
     /**
      * Picks a random sample from the distribution.
+     *
      * @return the next sample from the distribution
      */
     Value getSample();

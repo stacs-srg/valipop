@@ -18,7 +18,7 @@ package model.statistics.distributions;
 
 /**
  * Thrown by a restricted distribution when no possible return value lies between the specified maximum and minimum values.
- * 
+ *
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class NoPermissableValueException extends Exception {

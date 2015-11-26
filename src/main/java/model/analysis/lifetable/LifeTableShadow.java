@@ -38,8 +38,8 @@ public class LifeTableShadow {
 
     public LifeTableShadow(LifeTable lifetable, int endYear, int startYear) {
         table = lifetable;
-        endDay = DateManipulation.dateToDays(endYear-1, 0, 0) - 1;
-        startDay = DateManipulation.dateToDays(startYear-1, 0, 0);
+        endDay = DateManipulation.dateToDays(endYear - 1, 0, 0) - 1;
+        startDay = DateManipulation.dateToDays(startYear - 1, 0, 0);
 
         TreeMap<Integer, LifeTableRow> tree = table.getCloneOfTreeMap();
 

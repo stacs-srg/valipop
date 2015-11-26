@@ -23,18 +23,18 @@ import java.util.Random;
 
 /**
  * Provides an Integer based temporal distribution class.
- * @see TemporalDistribution
- * 
+ *
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
+ * @see TemporalDistribution
  */
 public class TemporalIntegerDistribution extends TemporalDistribution<Integer> {
 
     /**
-     * Constructs an Integer based TemporalDistribution. 
-     * 
-     * @param population The instance of the population which the distribution pertains to.
-     * @param distributionKey The key specified in the config file as the location of the relevant file.
-     * @param random The random to be used.
+     * Constructs an Integer based TemporalDistribution.
+     *
+     * @param population                     The instance of the population which the distribution pertains to.
+     * @param distributionKey                The key specified in the config file as the location of the relevant file.
+     * @param random                         The random to be used.
      * @param handleNoPermissableValueAsZero Indicates if the distribution is to treat the returning of NoPermissibleValueExceptions as returning a zero value.
      * @see TemporalDistribution
      */

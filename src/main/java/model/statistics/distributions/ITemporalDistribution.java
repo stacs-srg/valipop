@@ -18,16 +18,15 @@ package model.statistics.distributions;
 
 /**
  * The interface for Temporal Distributions.
- * 
- * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  *
  * @param <Value> The specified value type to be used by the distribution.
+ * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public interface ITemporalDistribution<Value> extends Distribution<Value> {
 
     /**
      * Method returns a Value from the distribution for the specified date.
-     * 
+     *
      * @param date The year of the distribution to be sampled.
      * @return The Value returned from the distibution.
      */

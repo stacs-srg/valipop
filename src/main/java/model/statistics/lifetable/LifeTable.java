@@ -41,7 +41,7 @@ public class LifeTable {
     private String line;
     private String tableResourceKey;
 
-    public  LifeTable(int year, String tableKey) {
+    public LifeTable(int year, String tableKey) {
 
         tableResourceKey = tableKey;
         this.year = year;
@@ -102,7 +102,6 @@ public class LifeTable {
 
 
     public boolean toDieByNQX(Person p, int currentDay, Random random) {
-
 
 
         LifeTableRow r = rows.get(rows.floorKey(p.getAge(currentDay)));

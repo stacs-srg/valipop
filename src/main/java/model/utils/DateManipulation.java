@@ -31,15 +31,12 @@ public class DateManipulation {
      * Number of days in non-leap-year.
      */
     public static final int DAYS_IN_NON_LEAP_YEAR = 365;
-
+    public static final int START_YEAR = 1600;
     private static final int HOURS_AT_MIDDAY = 12;
     private static final long MILLIS_PER_DAY = 1000 * 60 * 60 * 24;
     private static final long START_IN_MILLIS;
-
     private static final Calendar CALENDAR;
     private static final Map<String, Integer> CALENDAR_MONTHS;
-
-    public static final int START_YEAR = 1600;
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd MMM yyyy");
 
     static {

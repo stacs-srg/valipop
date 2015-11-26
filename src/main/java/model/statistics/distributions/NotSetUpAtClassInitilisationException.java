@@ -19,7 +19,7 @@ package model.statistics.distributions;
 
 /**
  * Thrown when a sample call is made to a distribution with specified minimum and maximum values when the distribution was not set up as a restricted distribution at initialisation.
- * 
+ *
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class NotSetUpAtClassInitilisationException extends Exception {

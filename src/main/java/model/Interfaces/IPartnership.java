@@ -28,18 +28,21 @@ public interface IPartnership extends Comparable<IPartnership> {
 
     /**
      * Gets the partnership's unique identifier.
+     *
      * @return the partnership's unique identifier
      */
     int getId();
 
     /**
      * Gets the identifier of the female in the partnership.
+     *
      * @return the identifier of the female
      */
     int getFemalePartnerId();
 
     /**
      * Gets the identifier of the male in the partnership.
+     *
      * @return the identifier of the male
      */
     int getMalePartnerId();
@@ -47,6 +50,7 @@ public interface IPartnership extends Comparable<IPartnership> {
     /**
      * Gets the identifier of the partner of the person with the given identifier, or -1 if neither member
      * of this partnership has the given identifier.
+     *
      * @param id the identifier
      * @return the identifier of the partner of the person with the given identifier
      */
@@ -54,18 +58,21 @@ public interface IPartnership extends Comparable<IPartnership> {
 
     /**
      * Gets the date of the marriage between the partners in this partnership, or null if they are not married.
+     *
      * @return the date of the marriage of this partnership
      */
     Date getMarriageDate();
 
     /**
      * Gets the place of marriage, or null if not recorded.
+     *
      * @return the place of marriage
      */
     String getMarriagePlace();
 
     /**
      * Gets the identifiers of the partnership's child_ids, or null if none are recorded.
+     *
      * @return the identifiers of the partnership's child_ids
      */
     List<Integer> getChildIds();
