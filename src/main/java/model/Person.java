@@ -16,7 +16,7 @@
  */
 package model;
 
-import uk.ac.standrews.cs.digitising_scotland.util.DateManipulation;
+import model.utils.DateManipulation;
 
 import java.util.Date;
 

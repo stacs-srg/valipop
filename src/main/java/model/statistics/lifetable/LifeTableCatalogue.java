@@ -18,8 +18,8 @@ package model.statistics.lifetable;
 
 import model.config.PopulationProperties;
 import model.Person;
-import uk.ac.standrews.cs.digitising_scotland.util.DateManipulation;
-import uk.ac.standrews.cs.nds.util.ErrorHandling;
+import model.utils.DateManipulation;
+import model.utils.ErrorHandling;
 import uk.ac.standrews.cs.util.tools.FileManipulation;
 
 import java.io.BufferedReader;

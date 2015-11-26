@@ -18,7 +18,7 @@ package model.statistics.distributions;
 
 import model.Population;
 import model.config.PopulationProperties;
-import uk.ac.standrews.cs.nds.util.ErrorHandling;
+import model.utils.ErrorHandling;
 import uk.ac.standrews.cs.util.tools.FileManipulation;
 
 import java.io.BufferedReader;

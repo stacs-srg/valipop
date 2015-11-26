@@ -41,4 +41,15 @@
 		</repository>
 	</repositories>
 
+	<dependencies>
+
+		<dependency>
+			<!-- CSV manipulation utility classes -->
+			<groupId>uk.ac.standrews.cs</groupId>
+			<artifactId>ciesvium</artifactId>
+			<version>1.0-SNAPSHOT</version>
+		</dependency>
+
+	</dependencies>
+
 </project>
