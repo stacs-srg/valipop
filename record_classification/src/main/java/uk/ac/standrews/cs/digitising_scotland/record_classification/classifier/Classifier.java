@@ -19,11 +19,13 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Classification;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Record;
+import uk.ac.standrews.cs.digitising_scotland.util.*;
 import uk.ac.standrews.cs.util.tools.InfoLevel;
 import uk.ac.standrews.cs.util.tools.Logging;
 
 import java.io.Serializable;
 import java.util.Random;
+import java.util.function.*;
 
 /**
  * Basic classifier implementation.
@@ -34,13 +36,42 @@ import java.util.Random;
 public abstract class Classifier implements Serializable {
 
     private static final long serialVersionUID = 7015118610311481144L;
+    private static final int DEFAULT_NUMBER_OF_PROGRESS_UPDATES = 20;
+
+    private transient ProgressIndicator progress_indicator;
+    private transient Consumer<Double> progress_handler;
+
+    protected void resetProgressIndicator(int total) {
+
+        resetProgressIndicator(total, DEFAULT_NUMBER_OF_PROGRESS_UPDATES);
+    }
+
+    protected void resetProgressIndicator(int total_steps, int updates_count) {
+
+        progress_indicator = new ProgressIndicator(updates_count) {
+
+            @Override
+            public void indicateProgress(final double proportion_complete) {
+
+                if (progress_handler != null) {
+                    progress_handler.accept(proportion_complete);
+                }
+            }
+        };
+        progress_indicator.setTotalSteps(total_steps);
+    }
+
+    protected void setProgressHandler(final Consumer<Double> progress_handler) {
+
+        this.progress_handler = progress_handler;
+    }
 
     /**
      * Trains the classifier on the given gold standard records, and performs internal evaluation.
      *
-     * @param bucket                  the training data
+     * @param bucket the training data
      * @param internal_training_ratio the ratio of gold standard records to be used for training as opposed to internal evaluation
-     * @param random                  a random number generator to use in selecting the records to use for internal evaluation
+     * @param random a random number generator to use in selecting the records to use for internal evaluation
      */
     public abstract void trainAndEvaluate(final Bucket bucket, final double internal_training_ratio, final Random random);
 
@@ -66,6 +97,7 @@ public abstract class Classifier implements Serializable {
 
     protected Bucket classify(final Bucket bucket, boolean set_confidence) {
 
+        resetProgressIndicator(bucket.size());
         Logging.setProgressIndicatorSteps(bucket.size());
         Logging.output(InfoLevel.LONG_SUMMARY, "\nClassifying...");
 
@@ -79,6 +111,7 @@ public abstract class Classifier implements Serializable {
             setConfidence(classification, set_confidence);
             classified.add(new Record(record.getId(), data, record.getOriginalData(), classification));
 
+            progressStep();
             Logging.progressStep(InfoLevel.LONG_SUMMARY);
         }
         Logging.output(InfoLevel.LONG_SUMMARY, "Done...\n");
@@ -86,7 +119,13 @@ public abstract class Classifier implements Serializable {
         return classified;
     }
 
+    protected void progressStep() {
+
+        progress_indicator.progressStep();
+    }
+
     protected void setConfidence(Classification classification, boolean set_confidence) {
+
     }
 
     public abstract String getName();

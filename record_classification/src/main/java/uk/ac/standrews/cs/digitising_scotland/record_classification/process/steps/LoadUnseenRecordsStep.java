@@ -50,6 +50,6 @@ public class LoadUnseenRecordsStep extends LoadStep {
     @Override
     protected void clearRecords(ClassificationContext context) {
 
-        context.clearUnseenRecords();
+        context.resetUnseenRecords();
     }
 }

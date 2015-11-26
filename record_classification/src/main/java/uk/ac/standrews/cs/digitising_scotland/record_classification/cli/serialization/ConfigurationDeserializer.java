@@ -90,15 +90,13 @@ public class ConfigurationDeserializer extends JsonDeserializer<Configuration> {
             field_name = in.getCurrentName();
         }
 
-        //TODO add lazy loading of records, matrix and metrics.
-
-        readUnseenRecords(configuration);
-        readGoldStandardRecords(configuration);
-        readClassifiedUnseenRecords(configuration);
-        readClassifiedEvaluationRecords(configuration);
-        readClassifier(configuration);
-        readConfusionMatrix(configuration);
-        readClassificationMetrics(configuration);
+        readClassifierLazily(configuration);
+        readGoldStandardRecordsLazily(configuration);
+        readUnseenRecordsLazily(configuration);
+        readClassifiedEvaluationRecordsLazily(configuration);
+        readClassifiedUnseenRecordsLazily(configuration);
+        readConfusionMatrixLazily(configuration);
+        readClassificationMetricsLazily(configuration);
 
         return configuration;
     }
@@ -115,52 +113,6 @@ public class ConfigurationDeserializer extends JsonDeserializer<Configuration> {
         expectToken(in, actual, expected);
     }
 
-    private void readUnseenRecords(Configuration configuration) throws IOException {
-
-        final Bucket unseen_records = loadBucketIfPresent(getUnseenRecordsPath(configuration));
-        configuration.setUnseenRecords(unseen_records);
-    }
-
-    private void readGoldStandardRecords(Configuration configuration) throws IOException {
-
-        readTrainingRecords(configuration);
-        readEvaluationRecords(configuration);
-    }
-
-    private void readClassifiedUnseenRecords(Configuration configuration) throws IOException {
-
-        final Bucket classified_unseen_records = loadBucketIfPresent(getClassifiedUnseenRecordsPath(configuration));
-        configuration.setClassifiedUnseenRecords(classified_unseen_records);
-    }
-
-    private void readClassifiedEvaluationRecords(Configuration configuration) throws IOException {
-
-        final Bucket classified_evaluation_records = loadBucketIfPresent(getClassifiedEvaluationRecordsPath(configuration));
-        configuration.setClassifiedEvaluationRecords(classified_evaluation_records);
-    }
-
-    private void readClassifier(final Configuration configuration) throws IOException {
-
-        final SerializationFormat format = configuration.getClassifierSerializationFormat();
-        final Path source = getSerializedClassifierPath(configuration, format);
-
-        if (Files.isRegularFile(source)) {
-            configuration.setClassifier(Serialization.load(source, Classifier.class, format));
-        }
-    }
-
-    private void readConfusionMatrix(final Configuration configuration) throws IOException {
-
-        final ConfusionMatrix matrix = loadObjectIfPresent(getConfusionMatrixPath(configuration), ConfusionMatrix.class);
-        configuration.setConfusionMatrix(matrix);
-    }
-
-    private void readClassificationMetrics(final Configuration configuration) throws IOException {
-
-        final ClassificationMetrics metrics = loadObjectIfPresent(getClassificationMetricsPath(configuration), ClassificationMetrics.class);
-        configuration.setClassificationMetrics(metrics);
-    }
-
     private void expectToken(final JsonParser in, final JsonToken actual, final JsonToken... expected) throws JsonParseException {
 
         if (!Arrays.stream(expected).filter(actual::equals).findAny().isPresent()) {
@@ -168,25 +120,79 @@ public class ConfigurationDeserializer extends JsonDeserializer<Configuration> {
         }
     }
 
-    private Bucket loadBucketIfPresent(Path source) throws IOException {
+    private void readUnseenRecordsLazily(Configuration configuration) throws IOException {
 
-        return Files.isRegularFile(source) ? Configuration.loadBucket(source) : null;
+        configuration.setUnseenRecordsLazyLoader(() -> loadBucketIfPresent(getUnseenRecordsPath(configuration)));
     }
 
-    private void readTrainingRecords(Configuration configuration) throws IOException {
+    private Bucket loadBucketIfPresent(Path source) {
 
-        final Bucket training_records = loadBucketIfPresent(getTrainingRecordsPath(configuration));
-        configuration.setTrainingRecords(training_records);
+        try {
+            return Files.isRegularFile(source) ? Configuration.loadBucket(source) : null;
+        }
+        catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    private void readEvaluationRecords(Configuration configuration) throws IOException {
+    private void readGoldStandardRecordsLazily(Configuration configuration) throws IOException {
 
-        final Bucket evaluation_records = loadBucketIfPresent(configuration.getEvaluationRecordsPath());
-        configuration.setEvaluationRecords(evaluation_records);
+        readTrainingRecordsLazily(configuration);
+        readEvaluationRecordsLazily(configuration);
     }
 
-    private <Type> Type loadObjectIfPresent(Path source, Class<Type> type) throws IOException {
+    private void readTrainingRecordsLazily(Configuration configuration) throws IOException {
 
-        return Files.isRegularFile(source) ? Serialization.load(source, type, SerializationFormat.JAVA_SERIALIZATION) : null;
+        configuration.setTrainingRecordsLazyLoader(() -> loadBucketIfPresent(getTrainingRecordsPath(configuration)));
+    }
+
+    private void readEvaluationRecordsLazily(Configuration configuration) throws IOException {
+
+        configuration.setEvaluationRecordsLazyLoader(() -> loadBucketIfPresent(configuration.getEvaluationRecordsPath()));
+    }
+
+    private void readClassifiedUnseenRecordsLazily(Configuration configuration) throws IOException {
+
+        configuration.setClassifiedUnseenRecordsLazyLoader(() -> loadBucketIfPresent(getClassifiedUnseenRecordsPath(configuration)));
+    }
+
+    private void readClassifiedEvaluationRecordsLazily(Configuration configuration) throws IOException {
+
+        configuration.setClassifiedEvaluationRecordsLazyLoader(() -> loadBucketIfPresent(getClassifiedEvaluationRecordsPath(configuration)));
+    }
+
+    private void readClassifierLazily(final Configuration configuration) throws IOException {
+
+        final SerializationFormat format = configuration.getClassifierSerializationFormat();
+        final Path source = getSerializedClassifierPath(configuration, format);
+
+        if (Files.isRegularFile(source)) {
+            configuration.setClassifierLazyLoader(() -> loadSerializedIfPresent(source, Classifier.class, format));
+        }
+    }
+
+    private <Type> Type loadSerializedIfPresent(Path source, Class<Type> type, SerializationFormat format) {
+
+        try {
+            return Files.isRegularFile(source) ? Serialization.load(source, type, format) : null;
+        }
+        catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void readConfusionMatrixLazily(final Configuration configuration) throws IOException {
+
+        configuration.setConfusionMatrixLazyLoader(() -> loadObjectIfPresent(getConfusionMatrixPath(configuration), ConfusionMatrix.class));
+    }
+
+    private <Type> Type loadObjectIfPresent(Path source, Class<Type> type) {
+
+        return loadSerializedIfPresent(source, type, SerializationFormat.JAVA_SERIALIZATION);
+    }
+
+    private void readClassificationMetricsLazily(final Configuration configuration) throws IOException {
+
+        configuration.setClassificationMetricsLazyLoader(() -> loadObjectIfPresent(getClassificationMetricsPath(configuration), ClassificationMetrics.class));
     }
 }
