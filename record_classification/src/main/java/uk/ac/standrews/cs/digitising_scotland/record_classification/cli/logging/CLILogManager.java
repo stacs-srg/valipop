@@ -18,6 +18,9 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.cli.logging
 
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.*;
 
+import java.io.*;
+import java.nio.file.*;
+import java.util.*;
 import java.util.logging.*;
 
 /**
@@ -25,28 +28,64 @@ import java.util.logging.*;
  */
 public class CLILogManager extends LogManager {
 
-    public static final CLILogManager CLI_LOG_MANAGER = new CLILogManager();
-    private static final Handler LOG_HANDLER = new CLIConsoleHandler();
+    private static final CLILogManager CLI_LOG_MANAGER = new CLILogManager();
+    private static final Handler CONSOLE_LOG_HANDLER = new CLIConsoleHandler();
+    private static final String CLI_PARENT_LOGGER_NAME = Launcher.class.getPackage().getName();
+    private static final Map<String, FileHandler> INTERNAL_LOG_HANDLERS = new HashMap<>();
 
     static {
-        final String logger_name = Launcher.class.getPackage().getName();
-        final Logger parent_logger = CLILogManager.CLILogger.getLogger(logger_name);
+        final Logger parent_logger = getCLIParentLogger();
         parent_logger.setUseParentHandlers(false);
-        parent_logger.addHandler(LOG_HANDLER);
+        parent_logger.addHandler(CONSOLE_LOG_HANDLER);
+    }
+
+    public static Logger getCLIParentLogger() {
+
+        return CLILogger.getLogger(CLI_PARENT_LOGGER_NAME);
+    }
+
+    public synchronized static FileHandler getInternalLogHandler(Configuration configuration) throws IOException {
+
+        final String pattern = getLogFilePattern(configuration);
+        return isAlreadyInitialised(pattern) ? getInternalLogHandlerByPattern(pattern) : initInternalLogHandler(pattern);
+    }
+
+    protected static FileHandler getInternalLogHandlerByPattern(final String pattern) {
+
+        return INTERNAL_LOG_HANDLERS.get(pattern);
+    }
+
+    protected static FileHandler initInternalLogHandler(final String pattern) throws IOException {
+
+        final Logger logger = CLILogManager.getCLIParentLogger();
+        final FileHandler handler;
+        handler = new FileHandler(pattern, true);
+        handler.setEncoding(Configuration.RESOURCE_CHARSET.name());
+        handler.setFormatter(new SimpleFormatter());
+        handler.setLevel(Level.SEVERE);
+        logger.addHandler(handler);
+        INTERNAL_LOG_HANDLERS.put(pattern, handler);
+        return handler;
+    }
+
+    protected static boolean isAlreadyInitialised(final String log_file_pattern) {
+
+        return INTERNAL_LOG_HANDLERS.containsKey(log_file_pattern);
+    }
+
+    protected static String getLogFilePattern(final Configuration configuration) {
+
+        final Path logs_home = configuration.getInternalLogsHome();
+        return logs_home.resolve(Configuration.PROGRAM_NAME + "_%g.log").toString();
     }
 
     private CLILogManager() {
 
     }
 
-    public static CLILogManager getLogManager() {
+    public static void setConsoleLogLevel(final Level log_level) {
 
-        return CLI_LOG_MANAGER;
-    }
-
-    public static void setLevel(final Level log_level) {
-
-        LOG_HANDLER.setLevel(log_level);
+        CONSOLE_LOG_HANDLER.setLevel(log_level);
     }
 
     public static class CLILogger extends Logger {
