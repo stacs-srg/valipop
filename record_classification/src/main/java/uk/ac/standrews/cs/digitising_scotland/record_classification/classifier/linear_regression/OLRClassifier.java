@@ -63,6 +63,8 @@ public class OLRClassifier extends SingleClassifier {
 
     public void trainModel(final Bucket bucket) {
 
+        resetTrainingProgressIndicator(bucket.size());
+
         if (vector_factory == null) {
 
             vector_factory = new VectorFactory(bucket);
@@ -126,6 +128,7 @@ public class OLRClassifier extends SingleClassifier {
         for (Record record : bucket) {
             final List<VectorFactory.NamedVector> listOfVectors = vector_factory.generateVectorsFromRecord(record);
             trainingVectorList.addAll(listOfVectors);
+            progressTrainingStep();
         }
         Collections.shuffle(trainingVectorList);
         return trainingVectorList;

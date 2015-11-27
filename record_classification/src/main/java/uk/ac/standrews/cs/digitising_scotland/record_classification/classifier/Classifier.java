@@ -36,36 +36,36 @@ import java.util.function.*;
 public abstract class Classifier implements Serializable {
 
     private static final long serialVersionUID = 7015118610311481144L;
+    private static final Consumer<Double> DEFAULT_PROGRESS_HANDLER = progress -> System.out.println(Math.round(progress * 100) + "%");
+
     private static final int DEFAULT_NUMBER_OF_PROGRESS_UPDATES = 20;
+    private transient ProgressIndicator classification_progress_indicator;
+    private transient Consumer<Double> classification_progress_handler = DEFAULT_PROGRESS_HANDLER;
 
-    private transient ProgressIndicator progress_indicator;
-    private transient Consumer<Double> progress_handler;
+    private transient ProgressIndicator training_progress_indicator;
+    private transient Consumer<Double> training_progress_handler = DEFAULT_PROGRESS_HANDLER;
 
-    protected void resetProgressIndicator(int total) {
+    public void setClassificationProgressHandler(final Consumer<Double> progress_handler) {
 
-        resetProgressIndicator(total, DEFAULT_NUMBER_OF_PROGRESS_UPDATES);
+        this.classification_progress_handler = progress_handler;
     }
 
-    protected void resetProgressIndicator(int total_steps, int updates_count) {
+    protected void resetTrainingProgressIndicator(int total) {
 
-        progress_indicator = new ProgressIndicator(updates_count) {
-
-            @Override
-            public void indicateProgress(final double proportion_complete) {
-
-                if (progress_handler != null) {
-                    progress_handler.accept(proportion_complete);
-                }
-            }
-        };
-        progress_indicator.setTotalSteps(total_steps);
+        resetTrainingProgressIndicator(total, DEFAULT_NUMBER_OF_PROGRESS_UPDATES);
     }
 
-    protected void setProgressHandler(final Consumer<Double> progress_handler) {
+    protected void resetTrainingProgressIndicator(int total_steps, int updates_count) {
 
-        this.progress_handler = progress_handler;
+        training_progress_indicator = new GenericProgressIndicator(updates_count, training_progress_handler);
+        training_progress_indicator.setTotalSteps(total_steps);
     }
 
+    public void setTrainingProgressHandler(final Consumer<Double> progress_handler) {
+
+        this.training_progress_handler = progress_handler;
+    }
+    
     /**
      * Trains the classifier on the given gold standard records, and performs internal evaluation.
      *
@@ -74,14 +74,6 @@ public abstract class Classifier implements Serializable {
      * @param random a random number generator to use in selecting the records to use for internal evaluation
      */
     public abstract void trainAndEvaluate(final Bucket bucket, final double internal_training_ratio, final Random random);
-
-    /**
-     * Classifies a single data item.
-     *
-     * @param data the data to be classified
-     * @return the resulting classification, or {@link Classification#UNCLASSIFIED} if the data cannot be classified
-     */
-    public abstract Classification classify(String data);
 
     /**
      * Classifies a bucket of data items.
@@ -97,8 +89,7 @@ public abstract class Classifier implements Serializable {
 
     protected Bucket classify(final Bucket bucket, boolean set_confidence) {
 
-        resetProgressIndicator(bucket.size());
-        Logging.setProgressIndicatorSteps(bucket.size());
+        resetClassificationProgressIndicator(bucket.size());
         Logging.output(InfoLevel.LONG_SUMMARY, "\nClassifying...");
 
         final Bucket classified = new Bucket();
@@ -111,21 +102,44 @@ public abstract class Classifier implements Serializable {
             setConfidence(classification, set_confidence);
             classified.add(new Record(record.getId(), data, record.getOriginalData(), classification));
 
-            progressStep();
-            Logging.progressStep(InfoLevel.LONG_SUMMARY);
+            progressClassificationStep();
         }
         Logging.output(InfoLevel.LONG_SUMMARY, "Done...\n");
 
         return classified;
     }
 
-    protected void progressStep() {
+    protected void resetClassificationProgressIndicator(int total) {
 
-        progress_indicator.progressStep();
+        resetClassificationProgressIndicator(total, DEFAULT_NUMBER_OF_PROGRESS_UPDATES);
     }
+
+    /**
+     * Classifies a single data item.
+     *
+     * @param data the data to be classified
+     * @return the resulting classification, or {@link Classification#UNCLASSIFIED} if the data cannot be classified
+     */
+    public abstract Classification classify(String data);
 
     protected void setConfidence(Classification classification, boolean set_confidence) {
 
+    }
+
+    protected void progressClassificationStep() {
+
+        classification_progress_indicator.progressStep();
+    }
+
+    protected void resetClassificationProgressIndicator(int total_steps, int updates_count) {
+
+        classification_progress_indicator = new GenericProgressIndicator(updates_count, classification_progress_handler);
+        classification_progress_indicator.setTotalSteps(total_steps);
+    }
+
+    protected void progressTrainingStep() {
+
+        training_progress_indicator.progressStep();
     }
 
     public abstract String getName();

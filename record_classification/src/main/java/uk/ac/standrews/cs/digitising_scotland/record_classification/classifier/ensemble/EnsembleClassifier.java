@@ -44,12 +44,13 @@ public class EnsembleClassifier extends Classifier {
      * Needed for JSON deserialization.
      */
     public EnsembleClassifier() {
+
     }
 
     /**
      * Instantiates a new ensemble classifier.
      *
-     * @param classifiers         the classifiers
+     * @param classifiers the classifiers
      * @param resolution_strategy the strategy by which to decide a single classification between multiple classifications
      */
     public EnsembleClassifier(Collection<SingleClassifier> classifiers, ResolutionStrategy resolution_strategy) {
@@ -67,8 +68,10 @@ public class EnsembleClassifier extends Classifier {
     @Override
     public void trainAndEvaluate(final Bucket bucket, double internal_training_ratio, final Random random) {
 
+        resetTrainingProgressIndicator(classifiers.size());
         for (SingleClassifier classifier : classifiers) {
             classifier.trainAndEvaluate(bucket, internal_training_ratio, random);
+            progressTrainingStep();
         }
 
         if (group != null) {
@@ -97,6 +100,7 @@ public class EnsembleClassifier extends Classifier {
 
     @Override
     public String getName() {
+
         return getClass().getSimpleName() + "[" + concatenateClassifierNames() + "]";
     }
 
@@ -109,12 +113,14 @@ public class EnsembleClassifier extends Classifier {
 
         String result = "";
         for (Classifier classifier : classifiers) {
-            if (result.length() > 0) result += ",";
+            if (result.length() > 0)
+                result += ",";
             result += classifier.getName();
         }
         if (group != null) {
             for (Classifier classifier : group.getClassifiers()) {
-                if (result.length() > 0) result += ",";
+                if (result.length() > 0)
+                    result += ",";
                 result += classifier.getName();
             }
         }

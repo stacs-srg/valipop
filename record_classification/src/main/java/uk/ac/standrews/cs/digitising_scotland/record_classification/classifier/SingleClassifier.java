@@ -25,13 +25,16 @@ import uk.ac.standrews.cs.util.tables.ConfidenceIntervals;
 import uk.ac.standrews.cs.util.tables.Means;
 
 import java.util.*;
+import java.util.logging.*;
 
 public abstract class SingleClassifier extends Classifier {
 
     private static final long serialVersionUID = -5145594329971828792L;
     private static final int INTERNAL_EVALUATION_REPETITIONS = 3;
     private Map<String, Double> confidence_map = new HashMap<>();
+    
 
+    
     public final void trainAndEvaluate(final Bucket bucket, final double internal_training_ratio, final Random random) {
 
         final List<Map<String, Double>> confidence_maps = new ArrayList<>();
@@ -61,7 +64,8 @@ public abstract class SingleClassifier extends Classifier {
 
     protected void setConfidence(Classification classification, boolean set_confidence) {
 
-        if (set_confidence) classification.setConfidence(getConfidence(classification.getCode()));
+        if (set_confidence)
+            classification.setConfidence(getConfidence(classification.getCode()));
     }
 
     protected double getConfidence(String code) {
@@ -71,7 +75,8 @@ public abstract class SingleClassifier extends Classifier {
             double confidence = confidence_map.get(code);
             return (Double.isNaN(confidence)) ? 0.0 : confidence;
 
-        } else {
+        }
+        else {
             return 0.0;
         }
     }

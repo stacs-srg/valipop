@@ -44,8 +44,11 @@ public class ExactMatchClassifier extends SingleClassifier {
     @Override
     public void trainModel(final Bucket bucket) {
 
+        resetTrainingProgressIndicator(bucket.size());
+
         for (Record record : bucket) {
             loadRecord(record);
+            progressTrainingStep();
         }
     }
 
