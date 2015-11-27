@@ -52,6 +52,7 @@ public class StringSimilarityClassifier extends SingleClassifier {
      * Needed for JSON deserialization.
      */
     public StringSimilarityClassifier() {
+
     }
 
     @Override
@@ -63,9 +64,11 @@ public class StringSimilarityClassifier extends SingleClassifier {
     @Override
     public void trainModel(Bucket bucket) {
 
+        resetTrainingProgressIndicator(bucket.size());
         for (Record record : bucket) {
             Classification classification = record.getClassification();
             known_classifications.put(record.getData(), new Classification(classification.getCode(), classification.getTokenList(), 0.0, classification.getDetail()));
+            progressTrainingStep();
         }
     }
 

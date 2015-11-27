@@ -38,6 +38,7 @@ import java.util.Set;
 
 public class NaiveBayesClassifier extends SingleClassifier {
 
+    public static final int NUMBER_OF_ITTERATIONS_OVER_DATA_DURING_TRAINING = 3;
     // With JSON serialisation, don't serialise NB object itself; its state is reconstructed from the instances.
     @JsonIgnore
     private NaiveBayesMultinomialText naive_bayes;
@@ -55,12 +56,15 @@ public class NaiveBayesClassifier extends SingleClassifier {
     @Override
     public void trainModel(final Bucket bucket) {
 
+        resetTrainingProgressIndicator(bucket.size() * NUMBER_OF_ITTERATIONS_OVER_DATA_DURING_TRAINING);
+
         // Naive Bayes implementation doesn't work if there's only one class.
         if (countClasses(bucket) == 1) {
 
             single_class = bucket.getFirstRecord().getClassification().getCode();
 
-        } else {
+        }
+        else {
 
             try {
                 // Get training data into form required by Weka by writing it out to an ARFF format file, and loading it in again.
@@ -75,7 +79,8 @@ public class NaiveBayesClassifier extends SingleClassifier {
                 // Update the classifier state with the training data.
                 updateClassifier(loader);
 
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
                 throw new RuntimeException(e);
             }
         }
@@ -84,9 +89,11 @@ public class NaiveBayesClassifier extends SingleClassifier {
     @Override
     public Classification doClassify(final String data) {
 
-        if (modelIsUntrained()) return Classification.UNCLASSIFIED;
+        if (modelIsUntrained())
+            return Classification.UNCLASSIFIED;
 
-        if (onlyOneClass()) return new Classification(single_class, new TokenList(data), 1.0, null);
+        if (onlyOneClass())
+            return new Classification(single_class, new TokenList(data), 1.0, null);
 
         try {
 
@@ -111,7 +118,8 @@ public class NaiveBayesClassifier extends SingleClassifier {
 
             return new Classification(class_name, new TokenList(data), 0.0, null);
 
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
@@ -138,6 +146,7 @@ public class NaiveBayesClassifier extends SingleClassifier {
         Instance current;
         while ((current = loader.getNextInstance(instances)) != null) {
             naive_bayes.updateClassifier(current);
+            progressTrainingStep();
         }
     }
 
@@ -161,6 +170,7 @@ public class NaiveBayesClassifier extends SingleClassifier {
 
             for (Record record : bucket) {
                 class_names.add(record.getClassification().getCode());
+                progressTrainingStep();
             }
 
             print_stream.println("@attribute data string");
@@ -193,6 +203,7 @@ public class NaiveBayesClassifier extends SingleClassifier {
 
         for (Record record : bucket) {
             classes.add(record.getClassification().getCode());
+            progressTrainingStep();
         }
 
         return classes.size();
