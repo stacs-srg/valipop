@@ -16,6 +16,7 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.cli;
 
+import org.apache.commons.io.*;
 import org.junit.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.supplier.*;
@@ -47,8 +48,10 @@ public class ConfigurationTest {
     @After
     public void tearDown() throws Exception {
 
-        if (Files.isDirectory(home)) {
-            FileManipulation.deleteDirectory(home);
+        final Path configurationFile = expected.getConfigurationFile();
+        if (Files.isRegularFile(configurationFile)) {
+
+            FileUtils.deleteQuietly(configurationFile.toFile());
         }
     }
 
