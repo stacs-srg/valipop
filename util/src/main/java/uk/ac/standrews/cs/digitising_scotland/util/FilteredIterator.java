@@ -16,8 +16,8 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.util;
 
-
 import java.util.Iterator;
+import java.util.function.*;
 
 /**
  * Created by graham on 02/05/2014.
@@ -25,14 +25,14 @@ import java.util.Iterator;
 public class FilteredIterator<T> implements Iterator<T> {
 
     private final Iterator<T> iterator;
-    private final Condition<T> condition;
+    private final Predicate<T> predicate;
 
     private T next = null;
 
-    public FilteredIterator(final Iterator<T> iterator, final Condition<T> condition) {
+    public FilteredIterator(final Iterator<T> iterator, final Predicate<T> Predicate) {
 
         this.iterator = iterator;
-        this.condition = condition;
+        this.predicate = Predicate;
 
         loadNext();
     }
@@ -41,13 +41,14 @@ public class FilteredIterator<T> implements Iterator<T> {
 
         if (iterator.hasNext()) {
             next = iterator.next();
-            while (iterator.hasNext() && !condition.test(next)) {
+            while (iterator.hasNext() && !predicate.test(next)) {
                 next = iterator.next();
             }
-            if (!condition.test(next)) {
+            if (!predicate.test(next)) {
                 next = null;
             }
-        } else {
+        }
+        else {
             next = null;
         }
     }

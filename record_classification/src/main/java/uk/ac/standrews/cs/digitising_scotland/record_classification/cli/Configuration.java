@@ -506,5 +506,4 @@ public class Configuration extends ClassificationContext {
         this.default_log_level_supplier = default_log_level_supplier;
         setLogLevel(default_log_level_supplier.get());
     }
-
 }
