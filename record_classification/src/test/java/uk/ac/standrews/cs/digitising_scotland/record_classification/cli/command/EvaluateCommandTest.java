@@ -54,7 +54,7 @@ public class EvaluateCommandTest extends CommandTest {
     @Test
     public void testEvaluationWithOutput() throws Exception {
 
-        init();
+        initForcefully();
         setSeed();
         setClassifier(ClassifierSupplier.EXACT_MATCH);
         loadGoldStandards(TestDataSets.CASE_1_TRAINING, 0.8);
