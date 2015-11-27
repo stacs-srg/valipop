@@ -36,6 +36,13 @@ public class LifeTableShadow {
     private TreeMap<Integer, LifeTableRowShadow> rows = new TreeMap<Integer, LifeTableRowShadow>();
 
 
+    /**
+     * Instantiates a new Life table shadow.
+     *
+     * @param lifetable the lifetable
+     * @param endYear   the end year
+     * @param startYear the start year
+     */
     public LifeTableShadow(LifeTable lifetable, int endYear, int startYear) {
         table = lifetable;
         endDay = DateManipulation.dateToDays(endYear - 1, 0, 0) - 1;
@@ -53,6 +60,11 @@ public class LifeTableShadow {
 
     }
 
+    /**
+     * Review population.
+     *
+     * @param people the people
+     */
     public void reviewPopulation(List<Person> people) {
 
         people.sort(Comparator.comparing(Person::getDod));
@@ -118,8 +130,6 @@ public class LifeTableShadow {
 
     private double getSSE() {
 
-        System.out.println(DateManipulation.daysToYear(startDay));
-
         double sum = 0;
 
         for (Integer y : rows.keySet()) {
@@ -149,6 +159,11 @@ public class LifeTableShadow {
 
     }
 
+    /**
+     * Calc r squared double.
+     *
+     * @return the double
+     */
     public double calcRSquared() {
 
 //        double n = rows.keySet().size() - 1;
@@ -166,7 +181,20 @@ public class LifeTableShadow {
 
     }
 
+    /**
+     * Gets year.
+     *
+     * @return the year
+     */
     public int getYear() {
         return table.getYear();
+    }
+
+    protected void reset() {
+
+        for(Integer r : rows.keySet()) {
+            rows.get(r).reset();
+        }
+
     }
 }

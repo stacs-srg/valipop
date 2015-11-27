@@ -27,15 +27,38 @@ import java.util.List;
  */
 public abstract class RestrictedDistribution<Value> implements Distribution<Value> {
 
-    // Restricted Distribution Helper Values
+    /**
+     * The Minimum specified value.
+     */
+// Restricted Distribution Helper Values
     protected Double minimumSpecifiedValue = null;
+    /**
+     * The Maximum specified value.
+     */
     protected Double maximumSpecifiedValue = null;
 
+    /**
+     * The Unused sample values.
+     */
     protected List<Double> unusedSampleValues = new ArrayList<>();
+    /**
+     * The Preemptive sample values.
+     */
     protected List<Double> preemptiveSampleValues = new ArrayList<>();
+    /**
+     * The Zero count.
+     */
     protected int zeroCount = -1;
+    /**
+     * The Zero cap.
+     */
     protected double zeroCap;
 
+    /**
+     * Get weights int [ ].
+     *
+     * @return the int [ ]
+     */
     public abstract int[] getWeights();
 
     /**

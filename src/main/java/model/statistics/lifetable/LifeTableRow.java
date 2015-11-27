@@ -24,7 +24,13 @@ import model.utils.DateManipulation;
  */
 public class LifeTableRow {
 
+    /**
+     * The Survivers.
+     */
     public int survivers = 0;
+    /**
+     * The Death point.
+     */
     public int deathPoint;
     // Age
     private int x;
@@ -36,6 +42,14 @@ public class LifeTableRow {
     private double nqx;
 
 
+    /**
+     * Instantiates a new Life table row.
+     *
+     * @param x   the x
+     * @param n   the n
+     * @param nMx the n mx
+     * @param nqx the nqx
+     */
     public LifeTableRow(int x, int n, double nMx, double nqx) {
 
         this.x = x;
@@ -47,18 +61,38 @@ public class LifeTableRow {
     }
 
 
+    /**
+     * Gets x.
+     *
+     * @return the x
+     */
     public int getX() {
         return x;
     }
 
+    /**
+     * Gets n.
+     *
+     * @return the n
+     */
     public int getN() {
         return n;
     }
 
+    /**
+     * Gets mx.
+     *
+     * @return the mx
+     */
     public double getnMx() {
         return nMx;
     }
 
+    /**
+     * To die by nqx boolean.
+     *
+     * @return the boolean
+     */
     public boolean toDieByNQX() {
         if (survivers >= deathPoint) {
             survivers = 0;
@@ -70,6 +104,11 @@ public class LifeTableRow {
 
     }
 
+    /**
+     * Gets nqx.
+     *
+     * @return the nqx
+     */
     public double getNqx() {
         return nqx;
     }

@@ -38,6 +38,9 @@ public class Population implements ITemporalPopulationInfo {
     private static final int SEX_RATIO = 100;
     private static final int START_YEAR = 1775;
     private static final int END_YEAR = 1800;
+    /**
+     * The Life tables.
+     */
     LifeTableCatalogue lifeTables;
     private List<Person> people = new ArrayList<Person>();
     private List<Person> deadPeople = new ArrayList<Person>();
@@ -51,6 +54,11 @@ public class Population implements ITemporalPopulationInfo {
 
     private Random random = new Random();
 
+    /**
+     * The entry point of application.
+     *
+     * @param args the input arguments
+     */
     public static void main(String[] args) {
         Population pop = new Population();
         pop.initLifeTables();
@@ -78,24 +86,41 @@ public class Population implements ITemporalPopulationInfo {
 
         }
 
-        System.out.println("\nSmallest\tMean\tLargest");
+//            System.out.println("\nSmallest\tMean\tLargest");
         System.out.println(smallest + "\t" + sum / (double) count + "\t" + largest);
-
 
     }
 
+    /**
+     * Gets days in year.
+     *
+     * @return the days in year
+     */
     public static int getDaysInYear() {
         return DAYS_PER_YEAR;
     }
 
+    /**
+     * Gets epoch year.
+     *
+     * @return the epoch year
+     */
     public static int getEpochYear() {
         return EPOCH_YEAR;
     }
 
+    /**
+     * Gets days per year.
+     *
+     * @return the days per year
+     */
     public static int getDaysPerYear() {
         return DAYS_PER_YEAR;
     }
 
+    /**
+     * Run simulation.
+     */
     public void runSimulation() {
 
         UniformIntegerDistribution dayInPeriod = new UniformIntegerDistribution(0, timeStep - 1, random);
@@ -122,6 +147,11 @@ public class Population implements ITemporalPopulationInfo {
 
     }
 
+    /**
+     * Generate seed population.
+     *
+     * @param seedSize the seed size
+     */
     public void generateSeedPopulation(int seedSize) {
 
         TemporalIntegerDistribution seedAgeForMalesDistribution = new TemporalIntegerDistribution(this, "seed_age_for_males_distribution_data_filename", random, false);
@@ -143,6 +173,9 @@ public class Population implements ITemporalPopulationInfo {
 
     }
 
+    /**
+     * Init life tables.
+     */
     public void initLifeTables() {
         lifeTables = new LifeTableCatalogue(EPOCH_YEAR, END_YEAR, "lifetable_catalogue");
     }

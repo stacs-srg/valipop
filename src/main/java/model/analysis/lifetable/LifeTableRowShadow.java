@@ -28,14 +28,29 @@ public class LifeTableRowShadow {
     private int peopleInRowAtMidInterval = 0;
     private int peopleInRowDieingInInterval = 0;
 
+    /**
+     * Instantiates a new Life table row shadow.
+     *
+     * @param row the row
+     */
     public LifeTableRowShadow(LifeTableRow row) {
         this.row = row;
     }
 
+    /**
+     * Gets row.
+     *
+     * @return the row
+     */
     public LifeTableRow getRow() {
         return row;
     }
 
+    /**
+     * Gets calculated nmx.
+     *
+     * @return the calculated nmx
+     */
     public double getCalculatedNMX() {
         if (peopleInRowAtMidInterval == 0) {
             System.out.println(row.getX() + "\t" + peopleInRowDieingInInterval + "\t" + peopleInRowAtMidInterval);
@@ -47,6 +62,11 @@ public class LifeTableRowShadow {
         }
     }
 
+    /**
+     * Gets residual squared.
+     *
+     * @return the residual squared
+     */
     public double getResidualSquared() {
         double v = Math.pow((row.getnMx() - getCalculatedNMX()), 2);
 //        System.out.println(row.getX() + "-" + (row.getX()+row.getN()) + " --- sur{" + row.survivers + "/" + row.deathPoint + "}");
@@ -54,25 +74,52 @@ public class LifeTableRowShadow {
         return v;
     }
 
+    /**
+     * Inc people in row.
+     */
     public void incPeopleInRow() {
         peopleInRowAtMidInterval++;
     }
 
+    /**
+     * Inc people dieing in row.
+     */
     public void incPeopleDieingInRow() {
         peopleInRowDieingInInterval++;
     }
 
 
+    /**
+     * Gets expected nmx.
+     *
+     * @return the expected nmx
+     */
     public double getExpectedNMX() {
         return row.getnMx();
     }
 
+    /**
+     * Gets people in row.
+     *
+     * @return the people in row
+     */
     public int getPeopleInRow() {
         return peopleInRowAtMidInterval;
     }
 
+    /**
+     * Gets people dieing in row.
+     *
+     * @return the people dieing in row
+     */
     public int getPeopleDieingInRow() {
         return peopleInRowDieingInInterval;
     }
 
+    protected void reset() {
+
+        peopleInRowAtMidInterval = 0;
+        peopleInRowDieingInInterval = 0;
+
+    }
 }

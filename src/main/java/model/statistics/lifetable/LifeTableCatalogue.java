@@ -38,6 +38,13 @@ public class LifeTableCatalogue {
     private String line;
     private int epochYear;
 
+    /**
+     * Instantiates a new Life table catalogue.
+     *
+     * @param epochYear    the epoch year
+     * @param endYear      the end year
+     * @param catalogueKey the catalogue key
+     */
     public LifeTableCatalogue(int epochYear, int endYear, String catalogueKey) {
 
         this.epochYear = epochYear;
@@ -102,15 +109,33 @@ public class LifeTableCatalogue {
 
     }
 
+    /**
+     * Add table.
+     *
+     * @param table the table
+     */
     public void addTable(LifeTable table) {
         catalogue.put(table.getYear(), table);
     }
 
 
+    /**
+     * To die by nqx boolean.
+     *
+     * @param p          the p
+     * @param currentDay the current day
+     * @param random     the random
+     * @return the boolean
+     */
     public boolean toDieByNQX(Person p, int currentDay, Random random) {
         return catalogue.get(catalogue.floorKey(DateManipulation.daysToYear(currentDay))).toDieByNQX(p, currentDay, random);
     }
 
+    /**
+     * Gets clone of tree map.
+     *
+     * @return the clone of tree map
+     */
     public TreeMap<Integer, LifeTable> getCloneOfTreeMap() {
         return (TreeMap<Integer, LifeTable>) catalogue.clone();
     }

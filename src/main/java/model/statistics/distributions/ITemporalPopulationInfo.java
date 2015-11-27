@@ -20,5 +20,10 @@ package model.statistics.distributions;
  * Created by tsd4 on 11/11/2015.
  */
 public interface ITemporalPopulationInfo {
+    /**
+     * Sets maximum number of children in family.
+     *
+     * @param maximum the maximum
+     */
     void setMaximumNumberOfChildrenInFamily(int maximum);
 }

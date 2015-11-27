@@ -37,6 +37,9 @@ public abstract class TemporalDistribution<Value> implements ITemporalDistributi
 
     private static final String TAB = "\t";
     private static final String COMMENT_INDICATOR = "%";
+    /**
+     * The Enums.
+     */
     protected Enum<?>[] enums;
     private HashMap<Integer, RestrictedDistribution<Value>> map = new HashMap<Integer, RestrictedDistribution<Value>>();
     private String line;
@@ -111,6 +114,12 @@ public abstract class TemporalDistribution<Value> implements ITemporalDistributi
         Arrays.sort(keyArray);
     }
 
+    /**
+     * Gets int sample.
+     *
+     * @param date the date
+     * @return the int sample
+     */
     protected Integer getIntSample(final int date) {
         int key = keyArray[keyArray.length - 1];
         Integer returnValue;
@@ -131,6 +140,16 @@ public abstract class TemporalDistribution<Value> implements ITemporalDistributi
         return returnValue;
     }
 
+    /**
+     * Gets int sample.
+     *
+     * @param date          the date
+     * @param earliestValue the earliest value
+     * @param latestValue   the latest value
+     * @return the int sample
+     * @throws NoPermissableValueException           the no permissable value exception
+     * @throws NotSetUpAtClassInitilisationException the not set up at class initilisation exception
+     */
     protected Integer getIntSample(final int date, final int earliestValue, final int latestValue) throws NoPermissableValueException, NotSetUpAtClassInitilisationException {
         int key = keyArray[keyArray.length - 1];
         Integer returnValue;
@@ -165,22 +184,48 @@ public abstract class TemporalDistribution<Value> implements ITemporalDistributi
      */
     public abstract Value getSample(int date, int smallestPermissibleReturnValue, int largestPermissibleReturnValue) throws NoPermissableValueException, NotSetUpAtClassInitilisationException;
 
+    /**
+     * Get map keys integer [ ].
+     *
+     * @return the integer [ ]
+     */
     public Integer[] getMapKeys() {
         return map.keySet().toArray(new Integer[map.keySet().size()]);
     }
 
+    /**
+     * Gets distribution for year.
+     *
+     * @param year the year
+     * @return the distribution for year
+     */
     public RestrictedDistribution<Value> getDistributionForYear(int year) {
         return (RestrictedDistribution<Value>) map.get(year);
     }
 
+    /**
+     * Gets minimum stated value.
+     *
+     * @return the minimum stated value
+     */
     public int getMinimumStatedValue() {
         return minimum;
     }
 
+    /**
+     * Gets maximum stated value.
+     *
+     * @return the maximum stated value
+     */
     public int getMaximumStatedValue() {
         return maximum;
     }
 
+    /**
+     * Get enums enum [ ].
+     *
+     * @return the enum [ ]
+     */
     public Enum<?>[] getEnums() {
         return enums.clone();
     }

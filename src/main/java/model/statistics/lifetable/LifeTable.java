@@ -41,6 +41,12 @@ public class LifeTable {
     private String line;
     private String tableResourceKey;
 
+    /**
+     * Instantiates a new Life table.
+     *
+     * @param year     the year
+     * @param tableKey the table key
+     */
     public LifeTable(int year, String tableKey) {
 
         tableResourceKey = tableKey;
@@ -92,15 +98,33 @@ public class LifeTable {
 
     }
 
+    /**
+     * Add row.
+     *
+     * @param row the row
+     */
     public void addRow(LifeTableRow row) {
         rows.put(row.getX(), row);
     }
 
+    /**
+     * Gets year.
+     *
+     * @return the year
+     */
     public int getYear() {
         return year;
     }
 
 
+    /**
+     * To die by nqx boolean.
+     *
+     * @param p          the p
+     * @param currentDay the current day
+     * @param random     the random
+     * @return the boolean
+     */
     public boolean toDieByNQX(Person p, int currentDay, Random random) {
 
 
@@ -115,10 +139,20 @@ public class LifeTable {
 
     }
 
+    /**
+     * Gets clone of tree map.
+     *
+     * @return the clone of tree map
+     */
     public TreeMap<Integer, LifeTableRow> getCloneOfTreeMap() {
         return (TreeMap<Integer, LifeTableRow>) rows.clone();
     }
 
+    /**
+     * Gets table resource key.
+     *
+     * @return the table resource key
+     */
     public String getTableResourceKey() {
         return tableResourceKey;
     }

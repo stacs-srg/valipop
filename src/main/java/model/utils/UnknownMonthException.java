@@ -16,6 +16,9 @@
  */
 package model.utils;
 
+/**
+ * The type Unknown month exception.
+ */
 public class UnknownMonthException extends Exception {
 
     /**
@@ -23,6 +26,11 @@ public class UnknownMonthException extends Exception {
      */
     private static final long serialVersionUID = -7319153020356896360L;
 
+    /**
+     * Instantiates a new Unknown month exception.
+     *
+     * @param message the message
+     */
     public UnknownMonthException(final String message) {
 
         super(message);

@@ -132,6 +132,11 @@ public class NormalDistribution extends RestrictedDistribution<Double> {
         return ret;
     }
 
+    /**
+     * Get cumlative weights int [ ].
+     *
+     * @return the int [ ]
+     */
     public int[] getCumlativeWeights() {
         int[] ret = {1, 22, 158, 499, 840, 976, 997, 998};
         return ret;

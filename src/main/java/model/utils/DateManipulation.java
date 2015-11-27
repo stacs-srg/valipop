@@ -31,6 +31,9 @@ public class DateManipulation {
      * Number of days in non-leap-year.
      */
     public static final int DAYS_IN_NON_LEAP_YEAR = 365;
+    /**
+     * The constant START_YEAR.
+     */
     public static final int START_YEAR = 1600;
     private static final int HOURS_AT_MIDDAY = 12;
     private static final long MILLIS_PER_DAY = 1000 * 60 * 60 * 24;
@@ -129,21 +132,49 @@ public class DateManipulation {
         return formatDate(daysToDate(days));
     }
 
+    /**
+     * Format date string.
+     *
+     * @param date      the date
+     * @param formatter the formatter
+     * @return the string
+     */
     public static synchronized String formatDate(final Date date, final SimpleDateFormat formatter) {
 
         return formatter.format(date);
     }
 
+    /**
+     * Format date string.
+     *
+     * @param date the date
+     * @return the string
+     */
     public static synchronized String formatDate(final Date date) {
 
         return formatDate(date, DATE_FORMAT);
     }
 
+    /**
+     * Parse date date.
+     *
+     * @param date_string the date string
+     * @param formatter   the formatter
+     * @return the date
+     * @throws ParseException the parse exception
+     */
     public static synchronized Date parseDate(final String date_string, final SimpleDateFormat formatter) throws ParseException {
 
         return formatter.parse(date_string);
     }
 
+    /**
+     * Parse date date.
+     *
+     * @param date_string the date string
+     * @return the date
+     * @throws ParseException the parse exception
+     */
     public static synchronized Date parseDate(final String date_string) throws ParseException {
 
         return parseDate(date_string, DATE_FORMAT);
@@ -173,6 +204,12 @@ public class DateManipulation {
         return new java.sql.Date(CALENDAR.getTimeInMillis());
     }
 
+    /**
+     * Date to sql date java . sql . date.
+     *
+     * @param date the date
+     * @return the java . sql . date
+     */
     public static synchronized java.sql.Date dateToSQLDate(final Date date) {
 
         return daysToSQLDate(dateToDays(date));
@@ -240,28 +277,60 @@ public class DateManipulation {
         return millisToDays();
     }
 
+    /**
+     * Subtract years int.
+     *
+     * @param days  the days
+     * @param years the years
+     * @return the int
+     */
     public static synchronized int subtractYears(final int days, final int years) {
 
         return addYears(days, -years);
     }
 
+    /**
+     * Add days date.
+     *
+     * @param date the date
+     * @param days the days
+     * @return the date
+     */
     public static synchronized Date addDays(final Date date, final int days) {
 
         return daysToDate(dateToDays(date) + days);
     }
 
+    /**
+     * Date to day int.
+     *
+     * @param date the date
+     * @return the int
+     */
     public static synchronized int dateToDay(final Date date) {
 
         setCalendarToDate(date);
         return CALENDAR.get(Calendar.DAY_OF_MONTH);
     }
 
+    /**
+     * Date to month int.
+     *
+     * @param date the date
+     * @return the int
+     */
     public static synchronized int dateToMonth(final Date date) {
 
         setCalendarToDate(date);
         return CALENDAR.get(Calendar.MONTH);
     }
 
+    /**
+     * Date to year int.
+     *
+     * @param date the date
+     * @return the int
+     */
     public static synchronized int dateToYear(final Date date) {
 
         setCalendarToDate(date);
@@ -280,17 +349,38 @@ public class DateManipulation {
         return days2 - days1;
     }
 
+    /**
+     * Difference in days int.
+     *
+     * @param date1 the date 1
+     * @param date2 the date 2
+     * @return the int
+     */
     public static synchronized int differenceInDays(final Date date1, final Date date2) {
 
         return differenceInDays(dateToDays(date1), dateToDays(date2));
     }
 
+    /**
+     * Difference in years int.
+     *
+     * @param days1 the days 1
+     * @param days2 the days 2
+     * @return the int
+     */
     public static synchronized int differenceInYears(final int days1, final int days2) {
 //        System.out.println(days1 + " " + days2 + " = " + (daysToYear(days2) - daysToYear(days1)));
 
         return daysToYear(days2) - daysToYear(days1);
     }
 
+    /**
+     * Difference in years int.
+     *
+     * @param date1 the date 1
+     * @param date2 the date 2
+     * @return the int
+     */
     public static synchronized int differenceInYears(final Date date1, final Date date2) {
 
         return differenceInYears(dateToDays(date1), dateToDays(date2));

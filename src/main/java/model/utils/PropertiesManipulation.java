@@ -20,8 +20,18 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
+/**
+ * The type Properties manipulation.
+ */
 public class PropertiesManipulation {
 
+    /**
+     * Gets properties.
+     *
+     * @param properties_path_string the properties path string
+     * @return the properties
+     * @throws IOException the io exception
+     */
     public static synchronized Properties getProperties(final String properties_path_string) throws IOException {
 
         try (InputStream stream = PropertiesManipulation.class.getClassLoader().getResourceAsStream(properties_path_string)) {

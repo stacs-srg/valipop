@@ -89,6 +89,12 @@ public class WeightedDistribution extends RestrictedDistribution<Double> {
         return earliestReturnValue <= d && d <= latestReturnValue;
     }
 
+    /**
+     * Sum int.
+     *
+     * @param array the array
+     * @return the int
+     */
     protected static int sum(final int[] array) {
 
         int total = 0;

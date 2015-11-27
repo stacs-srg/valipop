@@ -29,15 +29,32 @@ public class Person {
     private boolean sex;
     private int dod = Integer.MAX_VALUE;
 
+    /**
+     * Instantiates a new Person.
+     *
+     * @param dob the dob
+     * @param sex the sex
+     */
     public Person(int dob, boolean sex) {
         this.dob = dob;
         this.sex = sex;
     }
 
+    /**
+     * Instantiates a new Person.
+     *
+     * @param dob the dob
+     * @param sex the sex
+     */
     public Person(Date dob, boolean sex) {
         this(DateManipulation.dateToDays(dob), sex);
     }
 
+    /**
+     * The entry point of application.
+     *
+     * @param args the input arguments
+     */
     public static void main(String[] args) {
 
         Person p = new Person(1600 * 365, true);
@@ -53,6 +70,12 @@ public class Person {
 
     }
 
+    /**
+     * Gets age.
+     *
+     * @param currentDay the current day
+     * @return the age
+     */
     public int getAge(int currentDay) {
 //        if(currentDay - dob < 365*2) {
 //            if (currentDay < dob) {
@@ -66,22 +89,47 @@ public class Person {
         return age;
     }
 
+    /**
+     * Die.
+     *
+     * @param currentDay the current day
+     */
     public void die(int currentDay) {
         dod = currentDay;
     }
 
+    /**
+     * Gets dob date.
+     *
+     * @return the dob date
+     */
     public Date getDobDate() {
         return DateManipulation.daysToDate(dob);
     }
 
+    /**
+     * Gets dob.
+     *
+     * @return the dob
+     */
     public int getDob() {
         return dob;
     }
 
+    /**
+     * Gets dod.
+     *
+     * @return the dod
+     */
     public int getDod() {
         return dod;
     }
 
+    /**
+     * Is sex boolean.
+     *
+     * @return the boolean
+     */
     public boolean isSex() {
         return sex;
     }
