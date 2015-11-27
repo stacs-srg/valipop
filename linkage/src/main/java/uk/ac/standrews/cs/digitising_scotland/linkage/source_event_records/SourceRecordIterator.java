@@ -17,12 +17,7 @@ public class SourceRecordIterator {
 
             Iterator<IPerson> person_iterator = population.getPeople().iterator();
 
-            Map2<IPerson, BirthSourceRecord> person_to_birth_record_mapper = new Map2<IPerson, BirthSourceRecord>() {
-                @Override
-                public BirthSourceRecord map(IPerson person) {
-                    return new BirthSourceRecord(person, population);
-                }
-            };
+            Map2<IPerson, BirthSourceRecord> person_to_birth_record_mapper = person -> new BirthSourceRecord(person, population);
 
             return new MappedIterator<>(person_iterator, person_to_birth_record_mapper);
         };
@@ -48,7 +43,7 @@ public class SourceRecordIterator {
 
             Iterator<IPartnership> partnership_iterator = population.getPartnerships().iterator();
 
-            List<IPartnership> l = new ArrayList<IPartnership>();
+            List<IPartnership> l = new ArrayList<>();
 
             while(partnership_iterator.hasNext()) {
                 IPartnership p = partnership_iterator.next();

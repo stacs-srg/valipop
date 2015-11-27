@@ -72,13 +72,13 @@ The `-c` option enables batch command execution mode in `classli`, and `commands
 
 ## Example 1: Simple Classification of Records
 
-Assume we would like to classify the following strings to :
+Assume we would like to classify the following strings :
 
     cat walking on the wall
     dog barking at the car
     monkey hanging off the tree
     ape looking at the sea
-    bear looking a bit pale
+    polar bear looking pale
     snail leaving a trail
 
 -->
