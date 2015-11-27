@@ -34,7 +34,7 @@ public class InitCommandTest extends CommandTest {
     @Test
     public void testBasicInitialisation() throws Exception {
 
-        init();
+        initForcefully();
 
         assertTrue(Files.isDirectory(home));
         assertTrue(Files.isRegularFile(config_file));
