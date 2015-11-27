@@ -19,6 +19,7 @@ package uk.ac.standrews.cs.digitising_scotland.util;
 import org.junit.Test;
 
 import java.util.Iterator;
+import java.util.function.*;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -108,8 +109,10 @@ public class FilteredIteratorTest {
     private Iterator<Integer> makeEvensIterator(Integer[] array) {
 
         Iterator<Integer> original = new ArrayIterator<>(array);
-        Condition<Integer> even_filter = new Condition<Integer>() {
+        Predicate<Integer> even_filter = new Predicate<Integer>() {
+
             public boolean test(Integer t) {
+
                 return t % 2 == 0;
             }
         };
