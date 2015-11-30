@@ -62,10 +62,11 @@ public class StringSimilarityClassifier extends SingleClassifier {
     }
 
     @Override
-    public void trainModel(Bucket bucket) {
+    public void trainModel(Bucket training_records) {
 
-        resetTrainingProgressIndicator(bucket.size());
-        for (Record record : bucket) {
+        final int training_records_size = training_records.size();
+        resetTrainingProgressIndicator(training_records_size);
+        for (Record record : training_records) {
             Classification classification = record.getClassification();
             known_classifications.put(record.getData(), new Classification(classification.getCode(), classification.getTokenList(), 0.0, classification.getDetail()));
             progressTrainingStep();

@@ -30,21 +30,26 @@ import java.util.logging.*;
 public abstract class SingleClassifier extends Classifier {
 
     private static final long serialVersionUID = -5145594329971828792L;
+    private static final Logger LOGGER = Logger.getLogger(SingleClassifier.class.getName());
+
     private static final int INTERNAL_EVALUATION_REPETITIONS = 3;
     private Map<String, Double> confidence_map = new HashMap<>();
-    
 
-    
     public final void trainAndEvaluate(final Bucket bucket, final double internal_training_ratio, final Random random) {
 
         final List<Map<String, Double>> confidence_maps = new ArrayList<>();
 
-        for (int i = 0; i < INTERNAL_EVALUATION_REPETITIONS; i++) {
+        LOGGER.info(() -> String.format("training and internally evaluating the %s with internal training ratio of %.2f...", getName(), internal_training_ratio));
+
+        for (int repetition = 0; repetition < INTERNAL_EVALUATION_REPETITIONS; repetition++) {
 
             // On the last iteration, this leaves the model trained.
+            final int natural_repetition_count = repetition + 1;
+            LOGGER.info(() -> String.format("performing repetition %d of %d...", natural_repetition_count, INTERNAL_EVALUATION_REPETITIONS));
             confidence_maps.add(singleTrainAndEvaluate(bucket, internal_training_ratio, random));
+            LOGGER.info(() -> String.format("finished repetition %d of %d.", natural_repetition_count, INTERNAL_EVALUATION_REPETITIONS));
         }
-
+        LOGGER.info(() -> String.format("done training and internally evaluating the %s.", getName()));
         confidence_map = lowerConfidenceIntervalBoundaries(confidence_maps);
     }
 
@@ -119,18 +124,27 @@ public abstract class SingleClassifier extends Classifier {
 
     private Map<String, Double> singleTrainAndEvaluate(Bucket bucket, double internal_training_ratio, Random random) {
 
-        Bucket real_training_records = bucket.randomSubset(random, internal_training_ratio);
-        Bucket internal_evaluation_records = bucket.difference(real_training_records);
+        final Bucket real_training_records = bucket.randomSubset(random, internal_training_ratio);
+        final Bucket internal_evaluation_records = bucket.difference(real_training_records);
 
         clearModel();
+
+        LOGGER.info(() -> String.format("training the %s on %d records...", getName(), real_training_records.size()));
         trainModel(real_training_records);
+        LOGGER.info(() -> String.format("done training the %s.", getName()));
 
-        final Bucket classified_records = classify(internal_evaluation_records, false);
-
-        final StrictConfusionMatrix confusion_matrix = new StrictConfusionMatrix(classified_records, bucket, new ConsistentCodingChecker());
-        final ClassificationMetrics classification_metrics = new ClassificationMetrics(confusion_matrix);
+        LOGGER.info(() -> String.format("internally evaluating the %s on %d records...", getName(), internal_evaluation_records.size()));
+        final ClassificationMetrics classification_metrics = evaluate(bucket, internal_evaluation_records);
+        LOGGER.info(() -> String.format("done internally evaluating the %s.", getName()));
 
         return classification_metrics.getPerClassF1();
+    }
+
+    private ClassificationMetrics evaluate(final Bucket bucket, final Bucket internal_evaluation_records) {
+
+        final Bucket classified_records = classify(internal_evaluation_records, false);
+        final StrictConfusionMatrix confusion_matrix = new StrictConfusionMatrix(classified_records, bucket, new ConsistentCodingChecker());
+        return new ClassificationMetrics(confusion_matrix);
     }
 
     public abstract void trainModel(final Bucket bucket);

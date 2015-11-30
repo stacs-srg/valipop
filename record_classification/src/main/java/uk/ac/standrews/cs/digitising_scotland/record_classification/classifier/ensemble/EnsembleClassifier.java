@@ -24,6 +24,7 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Classi
 
 import java.io.Serializable;
 import java.util.*;
+import java.util.logging.*;
 import java.util.stream.Collectors;
 
 /**
@@ -35,6 +36,7 @@ import java.util.stream.Collectors;
 public class EnsembleClassifier extends Classifier {
 
     private static final long serialVersionUID = 6432371860423757296L;
+    private static final Logger LOGGER = Logger.getLogger(EnsembleClassifier.class.getName());
 
     private List<SingleClassifier> classifiers;
     private StringSimilarityGroupWithSharedState group;
@@ -68,7 +70,10 @@ public class EnsembleClassifier extends Classifier {
     @Override
     public void trainAndEvaluate(final Bucket bucket, double internal_training_ratio, final Random random) {
 
-        resetTrainingProgressIndicator(classifiers.size());
+        final int classifiers_count = classifiers.size();
+        resetTrainingProgressIndicator(classifiers_count);
+        
+        LOGGER.info(() -> String.format("training %d classifiers in the %s...", classifiers_count, getName()));
         for (SingleClassifier classifier : classifiers) {
             classifier.trainAndEvaluate(bucket, internal_training_ratio, random);
             progressTrainingStep();
@@ -77,6 +82,7 @@ public class EnsembleClassifier extends Classifier {
         if (group != null) {
             group.trainAll(bucket);
         }
+        LOGGER.info(() -> String.format("done training the %s.", getName()));
     }
 
     @Override
@@ -130,7 +136,7 @@ public class EnsembleClassifier extends Classifier {
     @Override
     public String getDescription() {
 
-        return "Classifies using a set of classifiers";
+        return "Classifies using a collection of classifiers";
     }
 
     @Override

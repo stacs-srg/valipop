@@ -49,6 +49,17 @@
                 <artifactId>license-maven-plugin</artifactId>
             </plugin>
 
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <systemProperties>
+                        <property>
+                            <name>java.util.logging.config.file</name>
+                            <value>${project.build.directory}/test-classes/logging_test.properties</value>
+                        </property>
+                    </systemProperties>
+                </configuration>
+            </plugin>
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

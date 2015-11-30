@@ -22,6 +22,7 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.*
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 
 import java.util.*;
+import java.util.logging.*;
 
 import static uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.linear_regression.OLRPool.*;
 
@@ -34,6 +35,7 @@ public class OLRClassifier extends SingleClassifier {
 
     private static final long serialVersionUID = -2561454096763303789L;
     private static final double STATIC_CONFIDENCE = 0.89;
+    private static final Logger LOGGER = Logger.getLogger(OLRClassifier.class.getName());
 
     private OLRCrossFold model;
     private String single_code;
@@ -61,13 +63,14 @@ public class OLRClassifier extends SingleClassifier {
         single_code = null;
     }
 
-    public void trainModel(final Bucket bucket) {
+    public void trainModel(final Bucket training_records) {
 
-        resetTrainingProgressIndicator(bucket.size());
+        final int training_records_size = training_records.size();
+        resetTrainingProgressIndicator(training_records_size);
 
         if (vector_factory == null) {
 
-            vector_factory = new VectorFactory(bucket);
+            vector_factory = new VectorFactory(training_records);
             int number_of_distinct_tokens = vector_factory.numberOfDistinctTokens();
             int number_of_distinct_classifications = vector_factory.numberOfDistinctClassifications();
 
@@ -79,17 +82,17 @@ public class OLRClassifier extends SingleClassifier {
                 return;
             }
 
-            model = new OLRCrossFold(getTrainingVectors(bucket), number_of_distinct_tokens, number_of_distinct_classifications);
+            model = new OLRCrossFold(getTrainingVectors(training_records), number_of_distinct_tokens, number_of_distinct_classifications);
 
         }
         else {
 
-            int class_count_difference = updateIndexer(bucket);
-            int feature_count_difference = updateDictionary(bucket);
+            int class_count_difference = updateIndexer(training_records);
+            int feature_count_difference = updateDictionary(training_records);
 
             Matrix matrix = enlarge(model.averageBetaMatrix(), feature_count_difference, class_count_difference);
 
-            model = new OLRCrossFold(getTrainingVectors(bucket), matrix);
+            model = new OLRCrossFold(getTrainingVectors(training_records), matrix);
         }
 
         model.train();

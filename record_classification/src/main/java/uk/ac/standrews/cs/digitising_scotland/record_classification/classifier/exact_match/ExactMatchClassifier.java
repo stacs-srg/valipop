@@ -23,10 +23,12 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Record
 
 import java.util.HashMap;
 import java.util.Objects;
+import java.util.logging.*;
 
 public class ExactMatchClassifier extends SingleClassifier {
 
     private static final long serialVersionUID = 7439350806549465200L;
+    private static final Logger LOGGER = Logger.getLogger(ExactMatchClassifier.class.getName());
 
     private HashMap<String, Classification> known_classifications;
 
@@ -42,11 +44,12 @@ public class ExactMatchClassifier extends SingleClassifier {
     }
 
     @Override
-    public void trainModel(final Bucket bucket) {
+    public void trainModel(final Bucket training_records) {
 
-        resetTrainingProgressIndicator(bucket.size());
+        final int training_records_size = training_records.size();
+        resetTrainingProgressIndicator(training_records_size);
 
-        for (Record record : bucket) {
+        for (Record record : training_records) {
             loadRecord(record);
             progressTrainingStep();
         }

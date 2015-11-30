@@ -36,6 +36,15 @@ import java.util.logging.*;
 @Parameters(resourceBundle = Configuration.RESOURCE_BUNDLE_NAME)
 public class Launcher {
 
+    static {
+        try {
+            LogManager.getLogManager().readConfiguration(Configuration.class.getResourceAsStream("logging.properties"));
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    
     /** The short name of the option to display usage. **/
     public static final String OPTION_HELP_SHORT = "-h";
 

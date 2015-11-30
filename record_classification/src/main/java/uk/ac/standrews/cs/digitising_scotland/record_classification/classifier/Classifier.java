@@ -26,6 +26,7 @@ import uk.ac.standrews.cs.util.tools.Logging;
 import java.io.Serializable;
 import java.util.Random;
 import java.util.function.*;
+import java.util.logging.*;
 
 /**
  * Basic classifier implementation.
@@ -36,13 +37,13 @@ import java.util.function.*;
 public abstract class Classifier implements Serializable {
 
     private static final long serialVersionUID = 7015118610311481144L;
-    private static final Consumer<Double> DEFAULT_PROGRESS_HANDLER = progress -> System.out.println(Math.round(progress * 100) + "%");
-
+    private static final Logger LOGGER = Logger.getLogger(Classifier.class.getName());
+    private static final Consumer<Double> DEFAULT_PROGRESS_HANDLER = progress -> LOGGER.info(Math.round(progress * 100) + "%");
     private static final int DEFAULT_NUMBER_OF_PROGRESS_UPDATES = 20;
-    private transient ProgressIndicator classification_progress_indicator;
-    private transient Consumer<Double> classification_progress_handler = DEFAULT_PROGRESS_HANDLER;
 
+    private transient ProgressIndicator classification_progress_indicator;
     private transient ProgressIndicator training_progress_indicator;
+    private transient Consumer<Double> classification_progress_handler = DEFAULT_PROGRESS_HANDLER;
     private transient Consumer<Double> training_progress_handler = DEFAULT_PROGRESS_HANDLER;
 
     public void setClassificationProgressHandler(final Consumer<Double> progress_handler) {
@@ -57,15 +58,21 @@ public abstract class Classifier implements Serializable {
 
     protected void resetTrainingProgressIndicator(int total_steps, int updates_count) {
 
-        training_progress_indicator = new GenericProgressIndicator(updates_count, training_progress_handler);
-        training_progress_indicator.setTotalSteps(total_steps);
+        training_progress_indicator = initProgressIndicator(total_steps, training_progress_handler, updates_count);
+    }
+
+    private ProgressIndicator initProgressIndicator(int total_steps, Consumer<Double> progress_handler, int updates_count) {
+
+        final ProgressIndicator progress_indicator = new GenericProgressIndicator(updates_count, progress_handler);
+        progress_indicator.setTotalSteps(total_steps);
+        return progress_indicator;
     }
 
     public void setTrainingProgressHandler(final Consumer<Double> progress_handler) {
 
         this.training_progress_handler = progress_handler;
     }
-    
+
     /**
      * Trains the classifier on the given gold standard records, and performs internal evaluation.
      *
@@ -87,14 +94,14 @@ public abstract class Classifier implements Serializable {
         return classify(bucket, false);
     }
 
-    protected Bucket classify(final Bucket bucket, boolean set_confidence) {
-
-        resetClassificationProgressIndicator(bucket.size());
-        Logging.output(InfoLevel.LONG_SUMMARY, "\nClassifying...");
+    protected Bucket classify(final Bucket unclassified, boolean set_confidence) {
 
         final Bucket classified = new Bucket();
+        final int unclassified_records_size = unclassified.size();
 
-        for (Record record : bucket) {
+        resetClassificationProgressIndicator(unclassified_records_size);
+        LOGGER.info(() -> String.format("classifying %d records...", unclassified_records_size));
+        for (Record record : unclassified) {
 
             final String data = record.getData();
 
@@ -104,7 +111,7 @@ public abstract class Classifier implements Serializable {
 
             progressClassificationStep();
         }
-        Logging.output(InfoLevel.LONG_SUMMARY, "Done...\n");
+        LOGGER.info(() -> "done.");
 
         return classified;
     }
@@ -112,6 +119,11 @@ public abstract class Classifier implements Serializable {
     protected void resetClassificationProgressIndicator(int total) {
 
         resetClassificationProgressIndicator(total, DEFAULT_NUMBER_OF_PROGRESS_UPDATES);
+    }
+
+    protected void resetClassificationProgressIndicator(int total_steps, int updates_count) {
+
+        classification_progress_indicator = initProgressIndicator(total_steps, classification_progress_handler, updates_count);
     }
 
     /**
@@ -124,17 +136,12 @@ public abstract class Classifier implements Serializable {
 
     protected void setConfidence(Classification classification, boolean set_confidence) {
 
+        // do nothing; this is to allow extending classes to customise confidence measure of a classification.
     }
 
     protected void progressClassificationStep() {
 
         classification_progress_indicator.progressStep();
-    }
-
-    protected void resetClassificationProgressIndicator(int total_steps, int updates_count) {
-
-        classification_progress_indicator = new GenericProgressIndicator(updates_count, classification_progress_handler);
-        classification_progress_indicator.setTotalSteps(total_steps);
     }
 
     protected void progressTrainingStep() {
