@@ -19,7 +19,6 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.cli;
 import com.beust.jcommander.*;
 import com.beust.jcommander.converters.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.command.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.logging.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.supplier.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.util.*;
 
@@ -37,13 +36,17 @@ import java.util.logging.*;
 public class Launcher {
 
     static {
-        try {
-            if (System.getProperties().getProperty("java.util.logging.config.file") == null) {
+        if (System.getProperty("java.awt.headless") == null) {
+            System.setProperty("java.awt.headless", "true");
+        }
+        if (System.getProperty("java.util.logging.config.file") == null) {
+            try {
+
                 LogManager.getLogManager().readConfiguration(Configuration.class.getResourceAsStream("logging.properties"));
             }
-        }
-        catch (IOException e) {
-            e.printStackTrace();
+            catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -77,7 +80,7 @@ public class Launcher {
     /** The long name of the option that specifies the path to the working directory. **/
     public static final String OPTION_WORKING_DIRECTORY_LONG = "--workingDirectory";
 
-    private static final Logger LOGGER = CLILogManager.CLILogger.getLogger(Launcher.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(Launcher.class.getName());
 
     private JCommander commander;
     private final Configuration configuration;
@@ -97,28 +100,21 @@ public class Launcher {
     @Parameter(names = {OPTION_WORKING_DIRECTORY_SHORT, OPTION_WORKING_DIRECTORY_LONG}, descriptionKey = "launcher.working_directory.description", converter = PathConverter.class)
     private Path working_directory = Configuration.DEFAULT_WORKING_DIRECTORY;
 
-    //TODO implement interactive mode
+    //TODO feature: implement interactive mode
     //TODO //@Parameter(names = {"-i", "--interactive"}, description = "Interactive mode; allows multiple command execution.")
     //TODO //private boolean interactive;
 
-    //TODO help command: prints usage, describes individual commands, parameters to the commands, etc.;e.g. help classifier STRING_SIMILARITY
-    //TODO status command: prints the current state of the classification process, such as set variables, etc.
-    //TODO think whether to have experiment command: does the repetition and joint analysis
-    //TODO think whether to have reset command: to be used by experiment command; e.g. reset [classifier, random, gold_standard, unseen, lexicon]
-    //TODO think whether to have report command: answer a set of predefined queries about the current state.
-    //TODO think whether to have do command: exposes general utilities for one-off execution, clean, unique, split, remove_duplicates, word_frequency_analysis, sort.
-    //TODO import/export command: import/export pre-trained classifier.
-    //TODO update usage to display description of enums using a custom annotation
-    //TODO move exception messages into a resource bundle? this is useful for possible future internationalization of CLI.
-    //TODO JScience: floating point accuracy.
+    //TODO feature: help command: prints usage, describes individual commands, parameters to the commands, etc.;e.g. help classifier STRING_SIMILARITY
+    //TODO feature: status command: prints the current state of the classification process, such as set variables, etc.
+    //TODO feature: think whether to have report command: answer a set of predefined queries about the current state.
+    //TODO feature: think whether to have do command: exposes general utilities for one-off execution, clean, unique, split, remove_duplicates, word_frequency_analysis, sort.
+    //TODO feature: import/export command: import/export pre-trained classifier.
+    //TODO feature: update usage to display description of enums using a custom annotation
+    //TODO feature: move exception messages into a resource bundle? this is useful for possible future internationalization of CLI.
+    //TODO feature: JScience: floating point accuracy.
     //FIXME Javadoc
     //FIXME website: the what, the why, the how, table of commands and their description.
-    //FIXME integration testing
-    //TODO javascript command generator?
-
-    static {
-        System.setProperty("java.awt.headless", "true");
-    }
+    //TODO feature: javascript command generator?
 
     public Launcher() throws IOException {
 

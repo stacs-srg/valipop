@@ -15,12 +15,6 @@
     <name>linkage</name>
     <description>Linkage for historical records.</description>
 
-    <properties>
-        <jdk.version>1.8</jdk.version>
-        <maven.compiler.source>${jdk.version}</maven.compiler.source>
-        <maven.compiler.target>${jdk.version}</maven.compiler.target>
-    </properties>
-
     <build>
         <plugins>
 
