@@ -214,10 +214,9 @@ public abstract class CommandTest {
     protected void deleteCliHome() throws IOException {
 
         final Path configurationFile = configuration.getConfigurationFile();
-        if(Files.isRegularFile(configurationFile)){
-            FileUtils.deleteQuietly(configurationFile.toFile());    
+        if (Files.isRegularFile(configurationFile)) {
+            FileUtils.deleteQuietly(configurationFile.toFile());
         }
-        
-        
+
     }
 }

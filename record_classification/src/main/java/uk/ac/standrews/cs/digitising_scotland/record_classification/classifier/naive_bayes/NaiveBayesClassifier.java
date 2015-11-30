@@ -38,7 +38,9 @@ import java.util.Set;
 
 public class NaiveBayesClassifier extends SingleClassifier {
 
-    public static final int NUMBER_OF_ITTERATIONS_OVER_DATA_DURING_TRAINING = 3;
+    private static final long serialVersionUID = 5651409456204017931L;
+    private static final int NUMBER_OF_ITERATIONS_OVER_DATA_DURING_TRAINING = 3;
+
     // With JSON serialisation, don't serialise NB object itself; its state is reconstructed from the instances.
     @JsonIgnore
     private NaiveBayesMultinomialText naive_bayes;
@@ -54,21 +56,21 @@ public class NaiveBayesClassifier extends SingleClassifier {
     }
 
     @Override
-    public void trainModel(final Bucket bucket) {
+    public void trainModel(final Bucket training_records) {
 
-        resetTrainingProgressIndicator(bucket.size() * NUMBER_OF_ITTERATIONS_OVER_DATA_DURING_TRAINING);
+        resetTrainingProgressIndicator(training_records.size() * NUMBER_OF_ITERATIONS_OVER_DATA_DURING_TRAINING);
 
         // Naive Bayes implementation doesn't work if there's only one class.
-        if (countClasses(bucket) == 1) {
+        if (countClasses(training_records) == 1) {
 
-            single_class = bucket.getFirstRecord().getClassification().getCode();
+            single_class = training_records.getFirstRecord().getClassification().getCode();
 
         }
         else {
 
             try {
                 // Get training data into form required by Weka by writing it out to an ARFF format file, and loading it in again.
-                ArffLoader loader = makeArffLoader(bucket);
+                ArffLoader loader = makeArffLoader(training_records);
 
                 // Load the model structure.
                 instances = loader.getStructure();

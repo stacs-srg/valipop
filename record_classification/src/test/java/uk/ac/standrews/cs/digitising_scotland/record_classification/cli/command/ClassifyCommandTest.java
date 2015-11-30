@@ -31,6 +31,7 @@ import uk.ac.standrews.cs.util.dataset.*;
 import java.io.*;
 import java.nio.file.*;
 import java.util.*;
+import java.util.logging.*;
 
 import static org.junit.Assert.*;
 import static org.junit.Assert.assertNotEquals;
@@ -136,8 +137,6 @@ public class ClassifyCommandTest extends CommandTest {
 
         assertTrue(new ConsistentCodingChecker().test(Collections.singletonList(bucket)));
     }
-
-    
 
     private void assertRecordContainsId(List<String> record) {
 
