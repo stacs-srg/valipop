@@ -55,7 +55,7 @@
                     <systemProperties>
                         <property>
                             <name>java.util.logging.config.file</name>
-                            <value>${project.build.directory}/test-classes/logging_test.properties</value>
+                            <value>${project.build.testOutputDirectory}/logging_test.properties</value>
                         </property>
                     </systemProperties>
                 </configuration>
