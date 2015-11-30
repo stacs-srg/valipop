@@ -38,13 +38,15 @@ public class Launcher {
 
     static {
         try {
-            LogManager.getLogManager().readConfiguration(Configuration.class.getResourceAsStream("logging.properties"));
+            if (System.getProperties().getProperty("java.util.logging.config.file") == null) {
+                LogManager.getLogManager().readConfiguration(Configuration.class.getResourceAsStream("logging.properties"));
+            }
         }
         catch (IOException e) {
             e.printStackTrace();
         }
     }
-    
+
     /** The short name of the option to display usage. **/
     public static final String OPTION_HELP_SHORT = "-h";
 
