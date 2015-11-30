@@ -22,7 +22,6 @@ import org.apache.commons.csv.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.command.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.logging.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.serialization.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.supplier.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
@@ -44,7 +43,7 @@ import java.util.stream.*;
  */
 public class Configuration extends ClassificationContext {
 
-    //TODO add parent config loading from user.home if exists.
+    //TODO feature: add parent config loading from user.home if exists.
 
     /** Name of record classification CLI program. */
     public static final String PROGRAM_NAME = "classli";
@@ -81,7 +80,8 @@ public class Configuration extends ClassificationContext {
     private static final long serialVersionUID = 5386411103557347275L;
     private static final String CONFIG_FILE_NAME = "config.json";
     private static final ObjectMapper MAPPER = new ObjectMapper();
-    private static final Logger LOGGER = CLILogManager.CLILogger.getLogger(Configuration.class.getName());
+
+    private static final Logger LOGGER = Logger.getLogger(Configuration.class.getName());
 
     static {
         MAPPER.registerModule(new ClassliModule());
@@ -107,7 +107,6 @@ public class Configuration extends ClassificationContext {
     private transient Supplier<Bucket> classified_unseen_records_loader;
     private transient Supplier<ConfusionMatrix> confusion_matrix_loader;
     private transient Supplier<ClassificationMetrics> classification_metrics_loader;
-    private FileHandler internal_log_handler;
 
     public Configuration() {
 
@@ -123,7 +122,6 @@ public class Configuration extends ClassificationContext {
 
         InitCommand.assureDirectoryExists(getHome());
         InitCommand.assureDirectoryExists(getInternalLogsHome());
-        internal_log_handler = CLILogManager.getInternalLogHandler(this);
     }
 
     public Path getInternalLogsHome() {return getHome().resolve("logs");}
@@ -486,13 +484,22 @@ public class Configuration extends ClassificationContext {
     void setLogLevel(final Level log_level) {
 
         this.log_level = log_level;
-        CLILogManager.setConsoleLogLevel(log_level);
+
+        setRootLoggerLevelByHandler(ConsoleHandler.class, log_level);
     }
 
     void setInternalLogLevel(final Level log_level) {
 
-        if (internal_log_handler != null) {
-            internal_log_handler.setLevel(log_level);
+        setRootLoggerLevelByHandler(FileHandler.class, log_level);
+    }
+
+    private void setRootLoggerLevelByHandler(Class<? extends Handler> handler_type, Level level) {
+
+        final Handler[] handlers = Logger.getGlobal().getHandlers();
+        for (Handler handler : handlers) {
+            if (handler_type.isAssignableFrom(handler.getClass())) {
+                handler.setLevel(log_level);
+            }
         }
     }
 

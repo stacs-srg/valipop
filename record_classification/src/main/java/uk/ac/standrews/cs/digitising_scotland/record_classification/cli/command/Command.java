@@ -18,7 +18,6 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.cli.command
 
 import com.beust.jcommander.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.logging.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.util.*;
 
 import java.nio.file.*;
@@ -35,7 +34,8 @@ public abstract class Command implements Runnable {
 
     protected final Launcher launcher;
     protected final Configuration configuration;
-    protected final Logger logger;
+    protected final Logger logger = Logger.getLogger(getClass().getName());
+
     private final String name;
 
     /**
@@ -47,10 +47,8 @@ public abstract class Command implements Runnable {
     public Command(final Launcher launcher, final String name) {
 
         this.launcher = launcher;
-        configuration = launcher.getConfiguration();
         this.name = name;
-
-        logger = CLILogManager.CLILogger.getLogger(getClass().getName());
+        configuration = launcher.getConfiguration();
     }
 
     /**

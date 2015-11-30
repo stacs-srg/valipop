@@ -33,9 +33,6 @@
     <description>Automatic record attribute classification.</description>
 
     <properties>
-        <jdk.version>1.8</jdk.version>
-        <maven.compiler.source>${jdk.version}</maven.compiler.source>
-        <maven.compiler.target>${jdk.version}</maven.compiler.target>
         <cli.jar.name>${project.artifactId}_cli-${project.version}</cli.jar.name>
         <cli.binary.name>classli</cli.binary.name>
         <cli.binary.name.windows>${cli.binary.name}.exe</cli.binary.name.windows>
