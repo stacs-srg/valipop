@@ -16,7 +16,7 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.model;
 
-import java.io.Serializable;
+import java.io.*;
 
 /**
  * A data record.
@@ -39,12 +39,13 @@ public class Record implements Comparable<Record>, Serializable {
      * Required for JSON deserialization.
      */
     public Record() {
+
     }
 
     /**
      * Instantiates an {@link Classification#UNCLASSIFIED unclassified} record.
      *
-     * @param id   the unique record identifier
+     * @param id the unique record identifier
      * @param data the record data
      */
     public Record(final int id, final String data) {
@@ -60,8 +61,8 @@ public class Record implements Comparable<Record>, Serializable {
     /**
      * Instantiates a record classified by the given classification.
      *
-     * @param id             the unique record identifier
-     * @param data           the record data
+     * @param id the unique record identifier
+     * @param data the record data
      * @param classification the classification of this record
      * @throws NullPointerException if the given classification is {@code null}
      */

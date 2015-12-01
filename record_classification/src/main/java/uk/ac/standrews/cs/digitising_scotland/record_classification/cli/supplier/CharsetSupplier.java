@@ -36,6 +36,7 @@ public enum CharsetSupplier implements Supplier<Charset> {
     UTF_16(StandardCharsets.UTF_16),
     US_ASCII(StandardCharsets.US_ASCII);
 
+    @SuppressWarnings("NonSerializableFieldInSerializableClass")
     private final Charset charset;
 
     CharsetSupplier(Charset charset) {

@@ -16,19 +16,43 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning;
 
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 
-import java.util.List;
+import java.util.*;
 
 /**
  * @author Graham Kirby
  */
 public class ConsistentCodingChecker implements Checker {
 
+    private static final long serialVersionUID = 3117180381918812824L;
+
     @Override
     public boolean test(final List<Bucket> buckets) {
 
-        //TODO optimise; no need to construct a set of inconsistently coded records just to check if it's empty: return upon detection of an inconsistently coded record.
-        return ConsistentClassificationCleaner.getInconsistentlyClassifiedData(buckets).isEmpty();
+        final Map<String, String> classifications_encountered = new HashMap<>();
+
+        for (Bucket bucket : buckets) {
+
+            for (Record record : bucket) {
+
+                final Classification classification = record.getClassification();
+
+                if (classification != null) {
+                    final String data = record.getData();
+                    final String code = classification.getCode();
+
+                    if (classifications_encountered.containsKey(data)) {
+                        if (!code.equals(classifications_encountered.get(data))) {
+                            return true;
+                        }
+                    }
+                    else {
+                        classifications_encountered.put(data, code);
+                    }
+                }
+            }
+        }
+        return false;
     }
 }
