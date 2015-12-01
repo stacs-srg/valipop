@@ -21,12 +21,18 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 import java.util.*;
 
 /**
+ * Checks whether a list buckets are consistently coded.
+ *
  * @author Graham Kirby
  */
 public class ConsistentCodingChecker implements Checker {
 
     private static final long serialVersionUID = 3117180381918812824L;
 
+    /**
+     * @param buckets the buckets to check for consistent coding
+     * @return {@code true} if the buckets are consistently coded; {@code false} otherwise.
+     */
     @Override
     public boolean test(final List<Bucket> buckets) {
 
@@ -44,7 +50,7 @@ public class ConsistentCodingChecker implements Checker {
 
                     if (classifications_encountered.containsKey(data)) {
                         if (!code.equals(classifications_encountered.get(data))) {
-                            return true;
+                            return false;
                         }
                     }
                     else {
@@ -53,6 +59,6 @@ public class ConsistentCodingChecker implements Checker {
                 }
             }
         }
-        return false;
+        return true;
     }
 }
