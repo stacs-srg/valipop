@@ -42,7 +42,7 @@ public enum ConsistentClassificationCleaner implements Cleaner {
             final List<Bucket> cleaned_buckets = new ArrayList<>();
 
             for (Bucket bucket : buckets) {
-                
+
                 final Bucket cleaned_bucket = new Bucket();
                 for (Record record : bucket) {
 
@@ -97,18 +97,18 @@ public enum ConsistentClassificationCleaner implements Cleaner {
 
     protected static Set<String> getInconsistentlyClassifiedData(List<Bucket> buckets) {
 
-        Set<String> inconsistently_coded_data = new HashSet<>();
-        Map<String, String> classifications_encountered = new HashMap<>();
+        final Set<String> inconsistently_coded_data = new HashSet<>();
+        final Map<String, String> classifications_encountered = new HashMap<>();
 
         for (Bucket bucket : buckets) {
 
             for (Record record : bucket) {
 
-                String data = record.getData();
-                Classification classification = record.getClassification();
+                final Classification classification = record.getClassification();
 
                 if (classification != null) {
-                    String code = classification.getCode();
+                    final String data = record.getData();
+                    final String code = classification.getCode();
 
                     if (classifications_encountered.containsKey(data)) {
                         if (!code.equals(classifications_encountered.get(data))) {

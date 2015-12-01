@@ -33,7 +33,7 @@ import java.util.stream.*;
 public class Bucket implements Iterable<Record>, Serializable {
 
     private static final long serialVersionUID = 7216381249689825103L;
-    
+
     public static final String FORMAT_ERROR_MESSAGE = "record should contain id, data and optional code and confidence";
 
     private final TreeSet<Record> records;
@@ -173,10 +173,7 @@ public class Bucket implements Iterable<Record>, Serializable {
 
     public Record getFirstRecord() {
 
-        for (Record record : records) {
-            return record;
-        }
-        return null;
+        return records.isEmpty() ? null : records.first();
     }
 
     public Optional<Record> findRecordById(int id) {

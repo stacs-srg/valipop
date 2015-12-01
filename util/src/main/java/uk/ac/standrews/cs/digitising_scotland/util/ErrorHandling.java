@@ -115,7 +115,7 @@ public final class ErrorHandling {
         sb.append("\n");
         final StackTraceElement[] trace = e.getStackTrace();
         for (final StackTraceElement element : trace) {
-            sb.append("\tat " + element + "\n");
+            sb.append("\tat ").append(element).append("\n");
         }
 
         return sb.toString();
