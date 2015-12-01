@@ -34,3 +34,4 @@ The following pages explain parts 3 to 6, i.e. commands, command options, sub-co
 - [`train` Command](train.html)
 - [`evaluate` Command](evaluate.html)
 - [`classify` Command](classify.html)
+- [`experiment` Command](experiment.html)

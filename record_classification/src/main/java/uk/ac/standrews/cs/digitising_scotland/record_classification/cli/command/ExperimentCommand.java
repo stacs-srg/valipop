@@ -23,6 +23,7 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.util.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.util.Validators.*;
 
+import java.io.*;
 import java.nio.file.*;
 import java.util.*;
 import java.util.stream.*;
@@ -76,14 +77,13 @@ public class ExperimentCommand extends Command {
     public void run() {
 
         final Path batch_file = getCommandsRelativeToWorkingDirectory();
-
         final List<Configuration> repetition_configurations = new ArrayList<>();
 
         for (int repetition = FIRST_REPETITION_NUMBER; repetition <= repetitions; repetition++) {
 
             final Path repetition_working_directory = getRepetitionWorkingDirectory(repetition);
             final Path batch_file_relative_to_repetition = repetition_working_directory.relativize(batch_file);
-            final String[] args = new String[]{Launcher.OPTION_WORKING_DIRECTORY_SHORT, Arguments.quote(repetition_working_directory), NAME, OPTION_COMMANDS_SHORT, Arguments.quote(batch_file_relative_to_repetition)};
+            final String[] args = new String[]{Launcher.OPTION_WORKING_DIRECTORY_SHORT, Arguments.quote(repetition_working_directory), OPTION_COMMANDS_SHORT, Arguments.quote(batch_file_relative_to_repetition)};
 
             Launcher.main(args);
 
@@ -100,7 +100,14 @@ public class ExperimentCommand extends Command {
 
     private Path getRepetitionWorkingDirectory(final int repetition) {
 
-        return configuration.getWorkingDirectory().resolve(String.format("%s%d", REPETITION_WORKING_DIRECTORY_PREFIX, repetition));
+        final Path repetition_working_directory = configuration.getWorkingDirectory().resolve(String.format("%s%d", REPETITION_WORKING_DIRECTORY_PREFIX, repetition));
+        try {
+            InitCommand.assureDirectoryExists(repetition_working_directory);
+        }
+        catch (IOException e) {
+            throw new RuntimeException("failed to construct repetition working directory at " + repetition_working_directory);
+        }
+        return repetition_working_directory;
     }
 
     private void logAggregatedConfusionMatrix(final List<Configuration> repetition_configurations) {
