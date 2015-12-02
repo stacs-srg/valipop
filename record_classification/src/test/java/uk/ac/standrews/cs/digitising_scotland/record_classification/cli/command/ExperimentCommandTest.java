@@ -55,14 +55,10 @@ public class ExperimentCommandTest extends CommandTest {
 
         final ExperimentCommand.Builder experiment = new ExperimentCommand.Builder();
         experiment.setCommands(batch.toPath());
-        final Path working_directory = temporary.newFolder().toPath();
-        System.out.println(temporary.newFolder().toPath());
-        configuration.setWorkingDirectory(working_directory);
         experiment.run(launcher);
 
         for (int i = ExperimentCommand.FIRST_REPETITION_NUMBER; i <= ExperimentCommand.DEFAULT_REPETITION_COUNT; i++) {
             final File repetition_home = new File(working_directory.toFile(), ExperimentCommand.REPETITION_WORKING_DIRECTORY_PREFIX + i);
-            System.out.println(repetition_home);
             assertTrue(Files.isDirectory(repetition_home.toPath()));
         }
     }

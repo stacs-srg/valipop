@@ -30,6 +30,14 @@ public final class Validators {
 
     private Validators() { throw new UnsupportedOperationException(); }
 
+    private static void throwParameterMustBeAtLeast(final String parameter_name, Number least) {throw new ParameterException("The value  of parameter " + parameter_name + " must be at least " + least);}
+
+    public static boolean isBetweenZeroToOneInclusive(double value) {
+
+        // Use DELTA to avoid rounding-error-prone exact comparison of doubles.
+        return value > -DELTA && value < 1.0 + DELTA;
+    }
+
     public static class AtLeastZero implements IValueValidator<Integer> {
 
         @Override
@@ -40,8 +48,6 @@ public final class Validators {
             }
         }
     }
-
-    private static void throwParameterMustBeAtLeast(final String parameter_name, Number least) {throw new ParameterException("The value  of parameter " + parameter_name + " must be at least " + least);}
 
     public static class AtLeastOne implements IValueValidator<Integer> {
 
@@ -60,14 +66,8 @@ public final class Validators {
         public void validate(final String name, final Number value) throws ParameterException {
 
             if (!isBetweenZeroToOneInclusive(value.doubleValue())) {
-                throw new ParameterException(String.format("The value  of parameter %s must be between 0.0 and 1.0 inclusive", name));
+                throw new ParameterException(String.format("The value of parameter %s must be between 0.0 and 1.0 inclusive", name));
             }
         }
-    }
-
-    public static boolean isBetweenZeroToOneInclusive(double value) {
-
-        // Use DELTA to avoid rounding-error-prone exact comparison of doubles.
-        return value > -DELTA && value < 1.0 + DELTA;
     }
 }
