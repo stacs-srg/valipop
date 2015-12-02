@@ -59,7 +59,6 @@ public class CleanCommandTest extends CommandTest {
         loadGoldStandard();
         cleanUsingCombinedCleaner();
 
-        final Configuration configuration = Configuration.load(working_directory);
         assertRecordsAreCleaned(configuration.requireGoldStandardRecords());
     }
 
@@ -76,7 +75,7 @@ public class CleanCommandTest extends CommandTest {
 
         final CleanCommand.Builder builder = new CleanCommand.Builder();
         builder.addCleaners(CleanerSupplier.COMBINED);
-        builder.run();
+        builder.run(launcher);
     }
 
     private void assertRecordsAreCleaned(Bucket bucket) {
@@ -136,7 +135,6 @@ public class CleanCommandTest extends CommandTest {
         loadGoldStandard();
         cleanUsingCombinedCleaner();
 
-        final Configuration configuration = Configuration.load(working_directory);
         assertRecordsAreCleaned(configuration.requireUnseenRecords());
     }
 }
