@@ -24,17 +24,28 @@ import java.util.regex.*;
 import java.util.stream.*;
 
 /**
- * @author masih
+ * @author Masih Hajiarab Derkani
  */
 public final class Arguments {
 
     private static final Pattern SPECIAL_CHARACTER = Pattern.compile("[^-_A-Za-z0-9]");
     private static final Pattern COMMAND_LINE_ARGUMENT_PATTERN = Pattern.compile("[^\\s\"']+|\"([^\"]*)\"|'([^']*)'");
     private static final Pattern COMMENT_PATTERN = Pattern.compile("^\\s*#");
+    private static final CharSequence SPACE = " ";
 
     private Arguments() {
 
         throw new UnsupportedOperationException();
+    }
+
+    public static String joinWithSpace(CharSequence... arguments) {
+
+        return String.join(SPACE, arguments);
+    }
+
+    public static String joinWithSpace(Iterable<? extends CharSequence> arguments) {
+
+        return String.join(SPACE, arguments);
     }
 
     public static String quote(Object value) {
@@ -77,15 +88,15 @@ public final class Arguments {
         final List<String> arguments = new ArrayList<>();
         final Matcher matcher = COMMAND_LINE_ARGUMENT_PATTERN.matcher(command_line);
         while (matcher.find()) {
-            if (matcher.group(1) != null) { 
+            if (matcher.group(1) != null) {
                 // Add double-quoted string without the quotes
                 arguments.add(matcher.group(1));
             }
-            else if (matcher.group(2) != null) { 
+            else if (matcher.group(2) != null) {
                 // Add single-quoted string without the quotes
                 arguments.add(matcher.group(2));
             }
-            else { 
+            else {
                 // Add unquoted word
                 arguments.add(matcher.group());
             }

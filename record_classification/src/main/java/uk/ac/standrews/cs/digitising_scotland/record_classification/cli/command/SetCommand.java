@@ -17,6 +17,7 @@
 package uk.ac.standrews.cs.digitising_scotland.record_classification.cli.command;
 
 import com.beust.jcommander.*;
+import com.beust.jcommander.converters.*;
 import org.apache.commons.csv.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.*;
@@ -24,6 +25,7 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.supplier
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.util.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.serialization.*;
 
+import java.nio.file.*;
 import java.util.function.*;
 
 /**
@@ -85,6 +87,24 @@ public class SetCommand extends Command {
     /** The long name of the option that specifies the {@link CSVFormat format} of the input/output tabular data files. **/
     public static final String OPTIONS_FORMAT_LONG = "--format";
 
+    /** The short name of the option that specifies the level of verbosity of the command line interface. **/
+    public static final String OPTION_VERBOSITY_SHORT = "-v";
+
+    /** The long name of the option that specifies the level of verbosity of the command line interface. **/
+    public static final String OPTION_VERBOSITY_LONG = "--verbosity";
+
+    /** The short name of the option that specifies the level of verbosity of the internal logging mechanism. **/
+    public static final String OPTION_INTERNAL_VERBOSITY_SHORT = "-iv";
+
+    /** The long name of the option that specifies the level of verbosity of the internal logging mechanism. **/
+    public static final String OPTION_INTERNAL_VERBOSITY_LONG = "--internalVerbosity";
+
+    /** The long name of the option that specifies the path to the working directory. **/
+    public static final String OPTION_WORKING_DIRECTORY_SHORT = "-w";
+
+    /** The long name of the option that specifies the path to the working directory. **/
+    public static final String OPTION_WORKING_DIRECTORY_LONG = "--workingDirectory";
+
     @Parameter(names = {OPTION_CLASSIFIER_SHORT, OPTION_CLASSIFIER_LONG}, descriptionKey = "command.set.classifier.description")
     private ClassifierSupplier classifier_supplier;
 
@@ -109,8 +129,14 @@ public class SetCommand extends Command {
     @Parameter(names = {OPTIONS_FORMAT_SHORT, OPTIONS_FORMAT_LONG}, descriptionKey = "command.set.default_csv_format.description")
     private CsvFormatSupplier csv_format;
 
-    @Parameter(names = {Launcher.OPTION_VERBOSITY_SHORT, Launcher.OPTION_VERBOSITY_LONG}, descriptionKey = "launcher.verbosity.description")
-    private LogLevelSupplier log_level;
+    @Parameter(names = {OPTION_VERBOSITY_SHORT, OPTION_VERBOSITY_LONG}, descriptionKey = "command.set.verbosity.description")
+    private LogLevelSupplier verbosity;
+
+    @Parameter(names = {OPTION_INTERNAL_VERBOSITY_SHORT, OPTION_INTERNAL_VERBOSITY_LONG}, descriptionKey = "command.set.internal_verbosity.description")
+    private LogLevelSupplier internal_verbosity;
+
+    @Parameter(names = {OPTION_WORKING_DIRECTORY_SHORT, OPTION_WORKING_DIRECTORY_LONG}, descriptionKey = "command.set.working_directory.description", converter = PathConverter.class)
+    private Path working_directory;
 
     /**
      * Instantiates this command for the given launcher.
@@ -126,11 +152,13 @@ public class SetCommand extends Command {
         set_at_least_once |= set("seed", seed, configuration::setSeed);
         set_at_least_once |= set("default charset", charset_supplier, configuration::setDefaultCharsetSupplier);
         set_at_least_once |= set("default delimiter", delimiter, configuration::setDefaultDelimiter);
-        set_at_least_once |= set("classifier serialization format", serialization_format, configuration::setClassifierSerializationFormat);
         set_at_least_once |= set("default training ratio", training_ratio, configuration::setDefaultTrainingRatio);
         set_at_least_once |= set("default internal training ratio", internal_training_ratio, configuration::setDefaultInternalTrainingRatio);
         set_at_least_once |= set("default csv format", csv_format, configuration::setDefaultCsvFormatSupplier);
-        set_at_least_once |= set("verbosity level", log_level, configuration::setDefaultLogLevelSupplier);
+        set_at_least_once |= set("classifier serialization format", serialization_format, configuration::setClassifierSerializationFormat);
+        set_at_least_once |= set("verbosity level", verbosity, configuration::setVerbosity);
+        set_at_least_once |= set("internal verbosity level", internal_verbosity, configuration::setInternalVerbosity);
+        set_at_least_once |= set("working directory", working_directory, configuration::setWorkingDirectory);
 
         if (!set_at_least_once) {
             throw new ParameterException("Please specify at lease one variable to be set.");
@@ -158,6 +186,8 @@ public class SetCommand extends Command {
         private Double internal_training_ratio;
         private CsvFormatSupplier csv_format;
         private LogLevelSupplier verbosity;
+        private LogLevelSupplier internal_verbosity;
+        private Path working_directory;
 
         public void setClassifier(final ClassifierSupplier classifier_supplier) {
 
@@ -204,44 +234,62 @@ public class SetCommand extends Command {
             this.verbosity = verbosity;
         }
 
+        public void setInternalVerbosity(final LogLevelSupplier internal_verbosity) {
+
+            this.internal_verbosity = internal_verbosity;
+        }
+
+        public void setWorkingDirectory(final Path working_directory) {
+
+            this.working_directory = working_directory;
+        }
+
         @Override
         protected void populateArguments() {
 
             if (classifier_supplier != null) {
                 addArgument(OPTION_CLASSIFIER_SHORT);
-                addArgument(String.valueOf(classifier_supplier));
+                addArgument(classifier_supplier);
             }
             if (seed != null) {
                 addArgument(OPTION_RANDOM_SEED_SHORT);
-                addArgument(String.valueOf(seed));
+                addArgument(seed);
             }
             if (charset_supplier != null) {
                 addArgument(OPTION_CHARSET_SHORT);
-                addArgument(String.valueOf(charset_supplier));
+                addArgument(charset_supplier);
             }
             if (delimiter != null) {
                 addArgument(OPTION_DELIMITER_SHORT);
-                addArgument(String.valueOf(delimiter));
+                addArgument(delimiter);
             }
             if (serialization_format != null) {
                 addArgument(OPTION_SERIALIZATION_FORMAT_SHORT);
-                addArgument(String.valueOf(serialization_format));
+                addArgument(serialization_format);
             }
             if (training_ratio != null) {
                 addArgument(OPTION_TRAINING_RATIO_SHORT);
-                addArgument(String.valueOf(training_ratio));
+                addArgument(training_ratio);
             }
             if (internal_training_ratio != null) {
                 addArgument(OPTION_INTERNAL_TRAINING_RATIO_SHORT);
-                addArgument(String.valueOf(internal_training_ratio));
+                addArgument(internal_training_ratio);
             }
             if (csv_format != null) {
                 addArgument(OPTIONS_FORMAT_SHORT);
-                addArgument(String.valueOf(csv_format));
+                addArgument(csv_format);
             }
             if (verbosity != null) {
-                addArgument(Launcher.OPTION_VERBOSITY_SHORT);
-                addArgument(String.valueOf(verbosity));
+                addArgument(OPTION_VERBOSITY_SHORT);
+                addArgument(verbosity);
+            }
+            if (internal_verbosity != null) {
+                addArgument(OPTION_INTERNAL_VERBOSITY_SHORT);
+                addArgument(internal_verbosity);
+            }
+            if (working_directory != null) {
+                addArgument(OPTION_WORKING_DIRECTORY_SHORT);
+                addArgument(working_directory);
             }
 
             if (isArgumentsEmpty()) {

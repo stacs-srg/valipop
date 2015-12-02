@@ -63,16 +63,16 @@ public class CleanCommandTest extends CommandTest {
         assertRecordsAreCleaned(configuration.requireGoldStandardRecords());
     }
 
-    protected void loadGoldStandard() {
+    protected void loadGoldStandard() throws Exception {
 
         final LoadGoldStandardRecordsCommand.Builder builder = new LoadGoldStandardRecordsCommand.Builder();
         builder.setDelimiter(',');
         builder.setSkipHeader();
         builder.setSource(source);
-        builder.run();
+        builder.run(launcher);
     }
 
-    protected void cleanUsingCombinedCleaner() {
+    protected void cleanUsingCombinedCleaner() throws Exception {
 
         final CleanCommand.Builder builder = new CleanCommand.Builder();
         builder.addCleaners(CleanerSupplier.COMBINED);

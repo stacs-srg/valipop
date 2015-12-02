@@ -16,20 +16,54 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.cli.command;
 
+import com.google.common.base.*;
+import com.google.common.io.*;
+import org.apache.commons.io.*;
 import org.junit.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.*;
+
+import java.io.*;
+import java.nio.charset.*;
+import java.nio.file.*;
+import java.nio.file.Files;
+import java.util.*;
 
 import static org.junit.Assert.*;
 
 /**
  * @author masih
  */
-public class ExperimentCommandTest  extends CommandTest{
+public class ExperimentCommandTest extends CommandTest {
 
     @Test(expected = RuntimeException.class)
     public void expectFailureIfCommandsNotSpecified() throws Exception {
-        
+
         new ExperimentCommand.Builder().run();
     }
-    
-    
+
+    @Test
+    public void testExperimentRepetitionsFolderAreCreated() throws Exception {
+
+        final File batch = temporary.newFile();
+        final Command.BatchBuilder batch_builder = new Command.BatchBuilder();
+
+        final InitCommand.Builder init = new InitCommand.Builder();
+        init.setForce(true);
+
+        batch_builder.add(init);
+        batch_builder.build(batch, StandardCharsets.UTF_8);
+
+        final ExperimentCommand.Builder experiment = new ExperimentCommand.Builder();
+        experiment.setCommands(batch.toPath());
+        final Path working_directory = temporary.newFolder().toPath();
+        System.out.println(temporary.newFolder().toPath());
+        configuration.setWorkingDirectory(working_directory);
+        experiment.run(launcher);
+
+        for (int i = ExperimentCommand.FIRST_REPETITION_NUMBER; i <= ExperimentCommand.DEFAULT_REPETITION_COUNT; i++) {
+            final File repetition_home = new File(working_directory.toFile(), ExperimentCommand.REPETITION_WORKING_DIRECTORY_PREFIX + i);
+            System.out.println(repetition_home);
+            assertTrue(Files.isDirectory(repetition_home.toPath()));
+        }
+    }
 }

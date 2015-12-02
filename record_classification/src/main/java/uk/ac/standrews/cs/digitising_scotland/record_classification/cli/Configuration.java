@@ -19,6 +19,7 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.cli;
 import com.beust.jcommander.*;
 import com.fasterxml.jackson.databind.*;
 import org.apache.commons.csv.*;
+import org.apache.commons.io.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.command.*;
@@ -92,11 +93,11 @@ public class Configuration extends ClassificationContext {
     private double default_training_ratio = DEFAULT_TRAINING_RATIO;
     private double default_internal_training_ratio = DEFAULT_INTERNAL_TRAINING_RATIO;
     private CsvFormatSupplier default_csv_format_supplier = DEFAULT_CSV_FORMAT_SUPPLIER;
-    private LogLevelSupplier default_log_level_supplier = DEFAULT_LOG_LEVEL_SUPPLIER;
     private Long seed;
     private ClassifierSupplier classifier_supplier;
     private SerializationFormat classifier_serialization_format = DEFAULT_CLASSIFIER_SERIALIZATION_FORMAT;
-    private Level log_level;
+    private LogLevelSupplier log_level = DEFAULT_LOG_LEVEL_SUPPLIER;
+    private LogLevelSupplier internal_log_level = DEFAULT_LOG_LEVEL_SUPPLIER;
 
     private transient Path working_directory = DEFAULT_WORKING_DIRECTORY;
     private transient Supplier<Classifier> classifier_loader;
@@ -108,6 +109,8 @@ public class Configuration extends ClassificationContext {
     private transient Supplier<ConfusionMatrix> confusion_matrix_loader;
     private transient Supplier<ClassificationMetrics> classification_metrics_loader;
 
+    private transient FileHandler internal_log_handler;
+
     public Configuration() {
 
         this(DEFAULT_WORKING_DIRECTORY);
@@ -115,13 +118,24 @@ public class Configuration extends ClassificationContext {
 
     public Configuration(Path working_directory) {
 
-        this.working_directory = working_directory;
+        setWorkingDirectory(working_directory);
     }
 
     public void init() throws IOException {
 
+        final Path internal_log_home = getInternalLogsHome();
+
         InitCommand.assureDirectoryExists(getHome());
-        InitCommand.assureDirectoryExists(getInternalLogsHome());
+        InitCommand.assureDirectoryExists(internal_log_home);
+
+        if (internal_log_handler != null) {
+            internal_log_handler.close();
+            Logger.getGlobal().removeHandler(internal_log_handler);
+        }
+        internal_log_handler = new FileHandler(internal_log_home.resolve("classli_%u.log").toString(), 50000, 1, false);
+        internal_log_handler.setEncoding(StandardCharsets.UTF_8.name());
+        internal_log_handler.setLevel(internal_log_level.get());
+        Logger.getGlobal().addHandler(internal_log_handler);
     }
 
     public Path getInternalLogsHome() {return getHome().resolve("logs");}
@@ -319,7 +333,27 @@ public class Configuration extends ClassificationContext {
     public void setWorkingDirectory(final Path working_directory) {
 
         Objects.requireNonNull(working_directory);
+
+        final Path new_home = getHome(working_directory);
+        final Path current_home = getHome();
+        if (Files.isDirectory(new_home)) {
+            LOGGER.warning("a configuration folder already exists in working directory: " + working_directory);
+            //FIXME reload config.
+        }
+        else {
+
+            if (Files.isDirectory(current_home)) {
+                try {
+                    FileUtils.copyDirectory(current_home.toFile(), new_home.toFile());
+                }
+                catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+
         this.working_directory = working_directory;
+
     }
 
     public Path getEvaluationRecordsPath() {
@@ -476,41 +510,37 @@ public class Configuration extends ClassificationContext {
         return seed != null;
     }
 
-    public Level getLogLevel() {
+    public LogLevelSupplier getLogLevel() {
 
         return log_level;
     }
 
-    void setLogLevel(final Level log_level) {
+    public void setVerbosity(final LogLevelSupplier log_level) {
 
         this.log_level = log_level;
-
-        setRootLoggerLevelByHandler(ConsoleHandler.class, log_level);
+        setRootLoggerLevelByHandler(ConsoleHandler.class, log_level.get());
     }
 
-    void setInternalLogLevel(final Level log_level) {
+    public void setInternalVerbosity(final LogLevelSupplier internal_log_level) {
 
-        setRootLoggerLevelByHandler(FileHandler.class, log_level);
+        this.internal_log_level = internal_log_level;
+        if (internal_log_handler != null) {
+            internal_log_handler.setLevel(internal_log_level.get());
+        }
     }
 
-    private void setRootLoggerLevelByHandler(Class<? extends Handler> handler_type, Level level) {
+    private static void setRootLoggerLevelByHandler(Class<? extends Handler> handler_type, Level level) {
 
         final Handler[] handlers = Logger.getGlobal().getHandlers();
         for (Handler handler : handlers) {
             if (handler_type.isAssignableFrom(handler.getClass())) {
-                handler.setLevel(log_level);
+                handler.setLevel(level);
             }
         }
     }
 
-    public LogLevelSupplier getDefaultLogLevelSupplier() {
+    public LogLevelSupplier getInternalLogLevel() {
 
-        return default_log_level_supplier;
-    }
-
-    public void setDefaultLogLevelSupplier(final LogLevelSupplier default_log_level_supplier) {
-
-        this.default_log_level_supplier = default_log_level_supplier;
-        setLogLevel(default_log_level_supplier.get());
+        return internal_log_level;
     }
 }

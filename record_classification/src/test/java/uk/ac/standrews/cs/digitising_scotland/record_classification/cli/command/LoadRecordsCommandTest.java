@@ -20,6 +20,7 @@ import org.apache.commons.csv.*;
 import org.junit.*;
 import org.junit.runners.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.supplier.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.util.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 
 import java.io.*;
@@ -151,7 +152,7 @@ public abstract class LoadRecordsCommandTest extends CommandTest {
         arguments.add(path);
         arguments.add(getSubCommandName());
         arguments.add(LoadRecordsCommand.OPTION_DELIMITER_SHORT);
-        arguments.add(quote(format.getDelimiter()));
+        arguments.add(Arguments.quote(format.getDelimiter()));
         arguments.add(LoadRecordsCommand.OPTION_ID_COLUMN_INDEX_SHORT);
         arguments.add(id_index);
         arguments.add(LoadRecordsCommand.OPTION_LABEL_COLUMN_INDEX_SHORT);

@@ -119,7 +119,7 @@ public class CleanStopWordsCommandTest extends CommandTest {
         });
     }
 
-    private void clean() throws IOException {
+    private void clean() throws Exception {
 
         final Path copy = temporary.newFile().toPath();
         stop_words.copy(copy, stop_words_charset.get());
@@ -128,7 +128,7 @@ public class CleanStopWordsCommandTest extends CommandTest {
         builder.setSourceCharset(stop_words_charset);
         builder.setSource(copy);
         builder.setCaseSensitive(case_sensitive);
-        builder.run();
+        builder.run(launcher);
     }
 
     protected CleanStopWordsCommand.Builder getBuilder() {return new CleanStopWordsCommand.Builder();}

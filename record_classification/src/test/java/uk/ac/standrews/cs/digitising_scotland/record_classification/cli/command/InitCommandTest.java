@@ -36,21 +36,22 @@ public class InitCommandTest extends CommandTest {
 
         initForcefully();
 
-        assertTrue(Files.isDirectory(home));
-        assertTrue(Files.isRegularFile(config_file));
+        assertTrue(Files.isDirectory(configuration.getHome()));
+        assertTrue(Files.isRegularFile(configuration.getConfigurationFile()));
+        assertTrue(Files.isDirectory(configuration.getInternalLogsHome()));
     }
 
     @Test(expected = RuntimeException.class)
     public void testBasicInitialisationFailureIfConfigurationExists() throws Exception {
 
-        assureDirectoryExists(home);
+        assureDirectoryExists(configuration.getHome());
         init();
     }
 
     @Test
     public void testForcedInitialisationIfConfigurationExists() throws Exception {
 
-        assureDirectoryExists(home);
+        assureDirectoryExists(configuration.getHome());
         initForcefully();
     }
 }

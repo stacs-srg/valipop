@@ -24,7 +24,6 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.util.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.dataset.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.serialization.*;
-import uk.ac.standrews.cs.util.tools.*;
 
 import java.nio.file.*;
 
@@ -63,15 +62,14 @@ public class ConfigurationTest {
         }
 
         final Bucket unseen_records = TestDataSets.CASE_5_EVALUATION.get(0).getBucket();
-        expected.setUnseenRecords(unseen_records);
-
         final Bucket gold_standard_records = TestDataSets.CASE_5_TRAINING.get(0).getBucket();
+        expected.setUnseenRecords(unseen_records);
         expected.setGoldStandardRecords(gold_standard_records, 0.8);
 
         expected.setClassifierSupplier(ClassifierSupplier.EXACT_MATCH);
         expected.setClassifierSerializationFormat(SerializationFormat.JAVA_SERIALIZATION);
         expected.setDefaultCharsetSupplier(CharsetSupplier.UTF_16);
-        expected.setDefaultLogLevelSupplier(LogLevelSupplier.INFO);
+        expected.setVerbosity(LogLevelSupplier.INFO);
         expected.setSeed(42L);
         expected.setDefaultCsvFormatSupplier(CsvFormatSupplier.RFC4180_PIPE_SEPARATED);
         expected.setDefaultTrainingRatio(0.7);
@@ -88,7 +86,8 @@ public class ConfigurationTest {
         assertEquals(expected.getClassifierSupplier(), actual.getClassifierSupplier());
         assertEquals(expected.getClassifierSerializationFormat(), actual.getClassifierSerializationFormat());
         assertEquals(expected.getDefaultCharsetSupplier(), actual.getDefaultCharsetSupplier());
-        assertEquals(expected.getDefaultLogLevelSupplier(), actual.getDefaultLogLevelSupplier());
+        assertEquals(expected.getLogLevel(), actual.getLogLevel());
+        assertEquals(expected.getInternalLogLevel(), actual.getInternalLogLevel());
         assertEquals(expected.getSeed(), actual.getSeed());
         assertEquals(expected.getDefaultCsvFormatSupplier(), actual.getDefaultCsvFormatSupplier());
         assertEquals(expected.getDefaultTrainingRatio(), actual.getDefaultTrainingRatio(), Validators.DELTA);
@@ -111,6 +110,7 @@ public class ConfigurationTest {
         assertEquals(new_instance.getDefaultDelimiter(), Configuration.DEFAULT_DELIMITER);
         assertEquals(new_instance.getDefaultTrainingRatio(), Configuration.DEFAULT_TRAINING_RATIO, Validators.DELTA);
         assertEquals(new_instance.getDefaultInternalTrainingRatio(), Configuration.DEFAULT_INTERNAL_TRAINING_RATIO, Validators.DELTA);
-        assertEquals(new_instance.getDefaultLogLevelSupplier(), Configuration.DEFAULT_LOG_LEVEL_SUPPLIER);
+        assertEquals(new_instance.getLogLevel(), Configuration.DEFAULT_LOG_LEVEL_SUPPLIER);
+        assertEquals(new_instance.getInternalLogLevel(), Configuration.DEFAULT_LOG_LEVEL_SUPPLIER);
     }
 }

@@ -14,7 +14,7 @@
    - [ ] End to end test for separate training and testing.
    - [ ] Test for variation between repetitions.
    - [ ] Test for voting classifier.
-- [ ] Assemble dataset overview lists for causes of death, and linked data.
+- [x] Assemble dataset overview lists for causes of death, and linked data.
 - [x] Custom stop word list.
 - [x] Implement stop word cleaning that considers data as a whole, i.e. a word is a stop word if it appears solely.
 - [x] Add the confidence column in output file.
@@ -59,7 +59,7 @@
 - [x] Implement String record level cleaning.
 - [x] Train using multiple files e.g. HISCO dictionary.
 - [x] Spell checking cleaner.
-- [ ] Generate EXE file for record classification cli using Launch4j, winrun4j and such.
+- [x] Generate EXE file for record classification cli using Launch4j, winrun4j and such.
 
 # Medium/Long-Term Tasks
 
@@ -67,7 +67,7 @@
 - [ ] Implement ensemble using ranked lists of possible classifications.
 - [x] Implement ensemble using accuracy metrics from training - feedback per-class quality as proxy for confidence.
 - [ ] Control over whether persisted models include sensitive training data.
-- [ ] Project tools.
+- [x] Project tools.
    - Story board?
    - Issue tracking?
    - High-level log of what's been done.
