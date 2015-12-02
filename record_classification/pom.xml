@@ -101,7 +101,7 @@
                     <jre>
                         <minVersion>1.8.0</minVersion>
                         <initialHeapPercent>20</initialHeapPercent>
-                        <maxHeapPercent>80</maxHeapPercent>
+                        <maxHeapPercent>90</maxHeapPercent>
                     </jre>
                     <versionInfo>
                         <fileVersion>1.0.0.1</fileVersion>

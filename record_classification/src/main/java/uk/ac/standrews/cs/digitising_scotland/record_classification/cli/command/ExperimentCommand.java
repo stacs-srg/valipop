@@ -83,13 +83,13 @@ public class ExperimentCommand extends Command {
 
             final Path repetition_working_directory = getRepetitionWorkingDirectory(repetition);
             final Path batch_file_relative_to_repetition = repetition_working_directory.relativize(batch_file);
-            final String[] args = new String[]{Launcher.OPTION_WORKING_DIRECTORY_SHORT, Arguments.quote(repetition_working_directory), OPTION_COMMANDS_SHORT, Arguments.quote(batch_file_relative_to_repetition)};
+            final String[] args = new String[]{OPTION_COMMANDS_SHORT, Arguments.quote(batch_file_relative_to_repetition)};
 
-            Launcher.main(args);
+            final Launcher launcher = new Launcher(repetition_working_directory);
+            launcher.parse(args);
+            launcher.run();
 
-            final Configuration repetition_config = Configuration.load(repetition_working_directory);
-            repetition_configurations.add(repetition_config);
-
+            repetition_configurations.add(launcher.getConfiguration());
         }
 
         logAggregatedConfusionMatrix(repetition_configurations);

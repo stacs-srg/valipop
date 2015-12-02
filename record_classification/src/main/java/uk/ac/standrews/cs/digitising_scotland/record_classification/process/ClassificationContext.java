@@ -93,7 +93,7 @@ public class ClassificationContext implements Serializable {
 
     public void resetUnseenRecords() {
 
-        setUnseenRecords(new Bucket());
+        this.unseen_records = new Bucket();
     }
 
     /**
@@ -103,7 +103,8 @@ public class ClassificationContext implements Serializable {
      */
     public void setUnseenRecords(final Bucket unseen_records) {
 
-        this.unseen_records = unseen_records;
+        resetUnseenRecords();
+        this.unseen_records.add(unseen_records);
     }
 
     /**
@@ -140,7 +141,7 @@ public class ClassificationContext implements Serializable {
     public void resetEvaluationRecords() {
 
         // Do allow multiple data sets with potentially clashing ids to be added to evaluation records.
-        setEvaluationRecords(newBucketWithClashingIdAllowed());
+        this.evaluation_records = newBucketWithClashingIdAllowed();
     }
 
     protected Bucket newBucketWithClashingIdAllowed() {
@@ -150,7 +151,8 @@ public class ClassificationContext implements Serializable {
 
     public void setEvaluationRecords(Bucket evaluation_records) {
 
-        this.evaluation_records = evaluation_records;
+        resetEvaluationRecords();
+        this.evaluation_records.add(evaluation_records);
     }
 
     public Optional<Bucket> getClassifiedEvaluationRecordsOptional() {
@@ -171,12 +173,13 @@ public class ClassificationContext implements Serializable {
 
     public void resetClassifiedEvaluationRecords() {
 
-        setClassifiedEvaluationRecords(new Bucket());
+        this.classified_evaluation_records = new Bucket();
     }
 
     public void setClassifiedEvaluationRecords(final Bucket classified_evaluation_records) {
 
-        this.classified_evaluation_records = classified_evaluation_records;
+        resetClassifiedEvaluationRecords();
+        this.classified_evaluation_records.add(classified_evaluation_records);
     }
 
     public Optional<Bucket> getUnseenRecordsOptional() {
@@ -207,7 +210,7 @@ public class ClassificationContext implements Serializable {
 
     public void resetClassifiedUnseenRecords() {
 
-        setClassifiedUnseenRecords(new Bucket());
+        this.classified_unseen_records = new Bucket();
     }
 
     /**
@@ -217,7 +220,8 @@ public class ClassificationContext implements Serializable {
      */
     public void setClassifiedUnseenRecords(final Bucket classified_unseen_records) {
 
-        this.classified_unseen_records = classified_unseen_records;
+        resetClassifiedUnseenRecords();
+        this.classified_unseen_records.add(classified_unseen_records);
     }
 
     public Optional<Bucket> getGoldStandardRecordsOptional() {
@@ -271,12 +275,13 @@ public class ClassificationContext implements Serializable {
     public void resetTrainingRecords() {
 
         // Do allow multiple data sets with potentially clashing ids to be added to training records.
-        setTrainingRecords(newBucketWithClashingIdAllowed());
+        this.training_records = newBucketWithClashingIdAllowed();
     }
 
     public void setTrainingRecords(Bucket training_records) {
 
-        this.training_records = training_records;
+        resetTrainingRecords();
+        this.training_records.add(training_records);
     }
 
     public void setGoldStandardRecords(Bucket gold_standard, double training_ratio) {

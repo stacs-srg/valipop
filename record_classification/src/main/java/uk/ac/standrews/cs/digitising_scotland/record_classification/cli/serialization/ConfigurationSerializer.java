@@ -46,7 +46,8 @@ class ConfigurationSerializer extends JsonSerializer<Configuration> {
     protected static final String DEFAULT_CSV_FORMAT_SUPPLIER = "default_csv_format_supplier";
     protected static final String DEFAULT_TRAINING_RATIO = "default_training_ratio";
     protected static final String DEFAULT_INTERNAL_TRAINING_RATIO = "default_internal_training_ratio";
-    protected static final String DEFAULT_LOG_LEVEL_SUPPLIER = "default_log_level_supplier";
+    protected static final String VERBOSITY = "verbosity";
+    protected static final String INTERNAL_VERBOSITY = "internal_verbosity";
     protected static final String SERIALIZED_CLASSIFIER_FILE_NAME_PREFIX = "classifier";
 
     @Override
@@ -62,7 +63,8 @@ class ConfigurationSerializer extends JsonSerializer<Configuration> {
         out.writeObjectField(DEFAULT_CSV_FORMAT_SUPPLIER, configuration.getDefaultCsvFormatSupplier());
         out.writeNumberField(DEFAULT_TRAINING_RATIO, configuration.getDefaultTrainingRatio());
         out.writeNumberField(DEFAULT_INTERNAL_TRAINING_RATIO, configuration.getDefaultInternalTrainingRatio());
-        out.writeObjectField(DEFAULT_LOG_LEVEL_SUPPLIER, configuration.getDefaultLogLevelSupplier());
+        out.writeObjectField(VERBOSITY, configuration.getLogLevel());
+        out.writeObjectField(INTERNAL_VERBOSITY, configuration.getInternalLogLevel());
 
         writeClassifier(configuration);
         writeGoldStandardRecords(configuration);
@@ -178,7 +180,7 @@ class ConfigurationSerializer extends JsonSerializer<Configuration> {
 
         return configuration.getHome().resolve("classification_metrics.object");
     }
-    
+
     private void persistObjectIfPresent(final Optional<?> object, Path destination) throws IOException {
 
         if (object.isPresent()) {

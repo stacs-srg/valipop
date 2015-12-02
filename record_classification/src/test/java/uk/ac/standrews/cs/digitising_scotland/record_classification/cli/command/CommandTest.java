@@ -24,6 +24,7 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.*
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.supplier.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.util.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.dataset.*;
 
 import java.io.*;
@@ -44,8 +45,6 @@ public abstract class CommandTest {
     public static final long TEST_SEED = 142L;
     protected Launcher launcher;
     protected Configuration configuration;
-    protected Path home;
-    protected Path config_file;
     private static final Logger LOGGER = getLogger(CommandTest.class.getName());
 
     @Rule
@@ -56,24 +55,15 @@ public abstract class CommandTest {
 
         launcher = new Launcher();
         configuration = launcher.getConfiguration();
-        home = configuration.getHome();
-        config_file = configuration.getConfigurationFile();
-        deleteCliHome();
+        configuration.setWorkingDirectory(temporary.newFolder().toPath());
     }
 
     protected void run(Object... args) throws Exception {
 
         final List<String> arguments = Arrays.asList(args).stream().map(String::valueOf).collect(Collectors.toList());
-        arguments.add(0, Launcher.OPTION_VERBOSITY_SHORT);
-        arguments.add(1, LogLevelSupplier.OFF.name());
-        LOGGER.info(() -> String.format("running: %s", String.join(" ", arguments)));
+        LOGGER.info(() -> String.format("running: %s", Arguments.joinWithSpace(arguments)));
         launcher.parse(arguments.toArray(new String[arguments.size()]));
-        launcher.handle();
-    }
-
-    protected String quote(Object value) {
-
-        return String.format("\"%s\"", String.valueOf(value));
+        launcher.run();
     }
 
     protected void init() throws Exception { new InitCommand.Builder().run(launcher); }
@@ -208,15 +198,6 @@ public abstract class CommandTest {
     @After
     public void tearDown() throws Exception {
 
-        deleteCliHome();
-    }
-
-    protected void deleteCliHome() throws IOException {
-
-        final Path configurationFile = configuration.getConfigurationFile();
-        if (Files.isRegularFile(configurationFile)) {
-            FileUtils.deleteQuietly(configurationFile.toFile());
-        }
-
+        LogManager.getLogManager().reset();
     }
 }

@@ -20,9 +20,12 @@ import com.beust.jcommander.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.util.*;
 
+import java.io.*;
+import java.nio.charset.*;
 import java.nio.file.*;
 import java.util.*;
 import java.util.logging.*;
+import java.util.stream.*;
 
 /**
  * Represents an operation exposed to the user via the {@link Launcher command-line interface}.
@@ -78,21 +81,26 @@ public abstract class Command implements Runnable {
         }
     }
 
+    /**
+     * Gets the sub command of this command if it is specified by the user.
+     *
+     * @return the optional sub command of this command.
+     */
     protected Optional<Command> getSubCommand() {
 
+        final Command command;
         final JCommander sub_commander = getSubCommander();
         final String command_name = sub_commander.getParsedCommand();
 
-        final Optional<Command> command;
         if (command_name != null) {
             final JCommander load_command_commander = sub_commander.getCommands().get(command_name);
-            command = Optional.of((Command) load_command_commander.getObjects().get(0));
+            command = (Command) load_command_commander.getObjects().get(0);
         }
         else {
-            command = Optional.empty();
+            command = null;
         }
 
-        return command;
+        return Optional.ofNullable(command);
     }
 
     private JCommander getSubCommander() {
@@ -131,8 +139,33 @@ public abstract class Command implements Runnable {
             return arguments.isEmpty();
         }
 
-        /** Runs this command with the built arguments. */
-        public void run() { Launcher.main(build()); }
+        /**
+         * Runs this command with the built arguments.
+         *
+         * @return the launcher on which this built command was executed
+         * @throws Exception if an error occurs during execution of this command.
+         */
+        public Launcher run() throws Exception {
+
+            final String[] arguments = build();
+            final Launcher launcher = new Launcher();
+            launcher.parse(arguments);
+            launcher.run();
+            return launcher;
+        }
+
+        /**
+         * Runs this command with the built arguments.
+         *
+         * @param launcher the launcher on which to execute this command
+         * @throws Exception if an error occurs during execution of this command.
+         */
+        public void run(Launcher launcher) throws Exception {
+
+            final String[] arguments = build();
+            launcher.parse(arguments);
+            launcher.run();
+        }
 
         /**
          * Builds the command-line arguments for this command with escaped special characters.
@@ -150,18 +183,36 @@ public abstract class Command implements Runnable {
         protected abstract void populateArguments();
 
         protected void populateSubCommandArguments() { }
+    }
 
-        /**
-         * Runs this command using a given launcher.
-         *
-         * @param launcher the launcher with which to run the command.
-         * @throws Exception if an error occurs during execution of this command.
-         */
-        public void run(Launcher launcher) throws Exception {
+    public static final class BatchBuilder {
 
-            final String[] args = build();
-            launcher.parse(args);
-            launcher.handle();
+        private final List<Builder> command_builders;
+
+        public BatchBuilder() {
+
+            command_builders = new ArrayList<>();
+        }
+
+        public boolean add(Builder command_builder) {
+
+            return command_builders.add(command_builder);
+        }
+
+        public List<String[]> build() {
+
+            return command_builders.stream().map(Builder::build).collect(Collectors.toList());
+        }
+
+        public void build(File destination, Charset charset) throws IOException {
+
+            build(destination.toPath(), charset);
+        }
+
+        public void build(Path destination, Charset charset) throws IOException {
+
+            final Iterable<String> command_lines = () -> build().stream().map(Arguments::joinWithSpace).iterator();
+            Files.write(destination, command_lines, charset);
         }
     }
 }

@@ -44,6 +44,7 @@ public enum LogLevelSupplier implements Supplier<Level> {
     private Level level;
 
     LogLevelSupplier(final Level level) {
+
         this.level = level;
     }
 

@@ -79,9 +79,13 @@ public class ConfigurationDeserializer extends JsonDeserializer<Configuration> {
                     expectNext(in, JsonToken.VALUE_NUMBER_FLOAT);
                     configuration.setDefaultInternalTrainingRatio(in.readValueAs(Double.TYPE));
                     break;
-                case DEFAULT_LOG_LEVEL_SUPPLIER:
+                case VERBOSITY:
                     expectNext(in, JsonToken.VALUE_STRING);
-                    configuration.setDefaultLogLevelSupplier(in.readValueAs(LogLevelSupplier.class));
+                    configuration.setVerbosity(in.readValueAs(LogLevelSupplier.class));
+                    break;
+                case INTERNAL_VERBOSITY:
+                    expectNext(in, JsonToken.VALUE_STRING);
+                    configuration.setInternalVerbosity(in.readValueAs(LogLevelSupplier.class));
                     break;
                 default:
                     throw new JsonParseException("unknown configuration parameter", in.getCurrentLocation());

@@ -19,7 +19,6 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.cli;
 import com.beust.jcommander.*;
 import com.beust.jcommander.converters.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.command.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.supplier.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.util.*;
 
 import java.io.*;
@@ -34,6 +33,20 @@ import java.util.logging.*;
  */
 @Parameters(resourceBundle = Configuration.RESOURCE_BUNDLE_NAME)
 public class Launcher {
+
+    /** The short name of the option to display usage. **/
+    public static final String OPTION_HELP_SHORT = "-h";
+
+    /** The long name of the option to display usage. **/
+    public static final String OPTION_HELP_LONG = "--help";
+
+    /** The short name of the option that specifies the path to a file containing the batch commands to be executed. **/
+    public static final String OPTION_COMMANDS_SHORT = "-c";
+
+    /** The long name of the option that specifies the path to a file containing the batch commands to be executed. **/
+    public static final String OPTION_COMMANDS_LONG = "--commands";
+
+    private static final Logger LOGGER = Logger.getLogger(Launcher.class.getName());
 
     static {
         if (System.getProperty("java.awt.headless") == null) {
@@ -50,55 +63,14 @@ public class Launcher {
         }
     }
 
-    /** The short name of the option to display usage. **/
-    public static final String OPTION_HELP_SHORT = "-h";
-
-    /** The long name of the option to display usage. **/
-    public static final String OPTION_HELP_LONG = "--help";
-
-    /** The short name of the option that specifies the path to a file containing the batch commands to be executed. **/
-    public static final String OPTION_COMMANDS_SHORT = "-c";
-
-    /** The long name of the option that specifies the path to a file containing the batch commands to be executed. **/
-    public static final String OPTION_COMMANDS_LONG = "--commands";
-
-    /** The short name of the option that specifies the level of verbosity of the command line interface. **/
-    public static final String OPTION_VERBOSITY_SHORT = "-v";
-
-    /** The long name of the option that specifies the level of verbosity of the command line interface. **/
-    public static final String OPTION_VERBOSITY_LONG = "--verbosity";
-
-    /** The short name of the option that specifies the level of verbosity of the internal logging mechanism. **/
-    public static final String OPTION_INTERNAL_VERBOSITY_SHORT = "-iv";
-
-    /** The long name of the option that specifies the level of verbosity of the internal logging mechanism. **/
-    public static final String OPTION_INTERNAL_VERBOSITY_LONG = "--internalVerbosity";
-
-    /** The long name of the option that specifies the path to the working directory. **/
-    public static final String OPTION_WORKING_DIRECTORY_SHORT = "-w";
-
-    /** The long name of the option that specifies the path to the working directory. **/
-    public static final String OPTION_WORKING_DIRECTORY_LONG = "--workingDirectory";
-
-    private static final Logger LOGGER = Logger.getLogger(Launcher.class.getName());
-
     private JCommander commander;
-    private final Configuration configuration;
+    private Configuration configuration;
 
     @Parameter(names = {OPTION_HELP_SHORT, OPTION_HELP_LONG}, descriptionKey = "launcher.usage.description", help = true)
     private boolean help;
 
     @Parameter(names = {OPTION_COMMANDS_SHORT, OPTION_COMMANDS_LONG}, descriptionKey = "launcher.commands.description", converter = PathConverter.class)
     private Path commands;
-
-    @Parameter(names = {OPTION_VERBOSITY_SHORT, OPTION_VERBOSITY_LONG}, descriptionKey = "launcher.verbosity.description")
-    private LogLevelSupplier log_level_supplier;
-
-    @Parameter(names = {OPTION_INTERNAL_VERBOSITY_SHORT, OPTION_INTERNAL_VERBOSITY_LONG}, descriptionKey = "launcher.internal_verbosity.description")
-    private LogLevelSupplier internal_log_level_supplier = LogLevelSupplier.SEVERE;
-
-    @Parameter(names = {OPTION_WORKING_DIRECTORY_SHORT, OPTION_WORKING_DIRECTORY_LONG}, descriptionKey = "launcher.working_directory.description", converter = PathConverter.class)
-    private Path working_directory = Configuration.DEFAULT_WORKING_DIRECTORY;
 
     //TODO feature: implement interactive mode
     //TODO //@Parameter(names = {"-i", "--interactive"}, description = "Interactive mode; allows multiple command execution.")
@@ -116,18 +88,21 @@ public class Launcher {
     //FIXME website: the what, the why, the how, table of commands and their description.
     //TODO feature: javascript command generator?
 
-    public Launcher() throws IOException {
+    public Launcher() {
 
-        configuration = loadConfiguration(working_directory);
-        log_level_supplier = configuration.getDefaultLogLevelSupplier();
-
+        this(Configuration.DEFAULT_WORKING_DIRECTORY);
     }
 
-    private Configuration loadConfiguration(final Path working_directory) {
+    public Launcher(Path working_directory) {
+
+        loadConfiguration(working_directory);
+    }
+
+    private void loadConfiguration(final Path working_directory) {
 
         if (Configuration.exists(working_directory)) {
             try {
-                return Configuration.load(working_directory);
+                configuration = Configuration.load(working_directory);
             }
             catch (RuntimeException e) {
                 LOGGER.severe(e.getMessage());
@@ -135,7 +110,12 @@ public class Launcher {
             }
         }
 
-        return new Configuration(working_directory);
+        if (configuration == null) {
+            configuration = new Configuration(working_directory);
+        }
+        else {
+            configuration.setWorkingDirectory(working_directory);
+        }
     }
 
     public static void main(String... args) {
@@ -143,18 +123,32 @@ public class Launcher {
         try {
             final Launcher launcher = new Launcher();
             launcher.parse(args);
-            launcher.handle();
+            launcher.run();
         }
-        catch (FileAlreadyExistsException error) {
-            LOGGER.log(Level.SEVERE, String.format("file '%s' already exists.", error.getFile()), error);
-            exitWithError(error);
-        }
-        catch (NoSuchFileException error) {
-            LOGGER.log(Level.SEVERE, String.format("file '%s' not found.", error.getFile()), error);
+        catch (RuntimeException error) {
+            
+            final Throwable cause = error.getCause();
+            if (cause instanceof FileAlreadyExistsException) {
+                FileAlreadyExistsException exception = (FileAlreadyExistsException) cause;
+                LOGGER.log(Level.SEVERE, String.format("file '%s' already exists.", exception.getFile()), error);
+            }
+
+            if (cause instanceof NoSuchFileException) {
+                NoSuchFileException exception = (NoSuchFileException) cause;
+                LOGGER.log(Level.SEVERE, String.format("file '%s' not found.", exception.getFile()), error);
+            }
+
             exitWithError(error);
         }
         catch (Exception error) {
-            LOGGER.log(Level.SEVERE, error.getMessage(), error);
+            final String message = error.getMessage();
+            if (message != null) {
+                LOGGER.log(Level.SEVERE, message, error);
+            }
+            else {
+                LOGGER.log(Level.SEVERE, error.getClass().getName(), error);
+            }
+
             exitWithError(error);
         }
 
@@ -205,19 +199,17 @@ public class Launcher {
 
     }
 
-    public void handle() throws Exception {
-
-        setLogLevels();
+    public void run() {
 
         try {
             if (help) {
                 commander.usage();
             }
             else if (isBatchModeEnabled()) {
-                handleCommands();
+                runCommandBatch();
             }
             else {
-                handleCommand();
+                runCommand();
             }
         }
         finally {
@@ -225,26 +217,25 @@ public class Launcher {
         }
     }
 
-    protected void setLogLevels() {
-
-        configuration.setLogLevel(log_level_supplier.get());
-        configuration.setInternalLogLevel(internal_log_level_supplier.get());
-    }
-
     public boolean isBatchModeEnabled() {return commands != null;}
 
-    private void handleCommands() throws Exception {
+    private void runCommandBatch() {
 
         final Path commands_file = configuration.getWorkingDirectory().resolve(commands);
         final Charset charset = configuration.getDefaultCharsetSupplier().get();
-        Arguments.parseBatchCommandFile(commands_file, charset).forEachOrdered(arguments -> {
-            parse(arguments);
-            handleCommand();
-        });
+        try {
+            Arguments.parseBatchCommandFile(commands_file, charset).forEachOrdered(arguments -> {
+                parse(arguments);
+                runCommand();
+            });
+        }
+        catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
     }
 
-    private void handleCommand() {
+    private void runCommand() {
 
         final String command_name = commander.getParsedCommand();
 
@@ -256,10 +247,15 @@ public class Launcher {
         command.run();
     }
 
-    private void possiblyPersistConfiguration() throws IOException {
+    private void possiblyPersistConfiguration() {
 
         if (Files.isDirectory(configuration.getHome())) {
-            configuration.persist();
+            try {
+                configuration.persist();
+            }
+            catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 
