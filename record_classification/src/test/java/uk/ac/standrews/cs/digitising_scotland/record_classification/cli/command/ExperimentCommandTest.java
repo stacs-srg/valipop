@@ -38,7 +38,7 @@ public class ExperimentCommandTest extends CommandTest {
     @Test(expected = RuntimeException.class)
     public void expectFailureIfCommandsNotSpecified() throws Exception {
 
-        new ExperimentCommand.Builder().run();
+        new ExperimentCommand.Builder().run(launcher);
     }
 
     @Test
