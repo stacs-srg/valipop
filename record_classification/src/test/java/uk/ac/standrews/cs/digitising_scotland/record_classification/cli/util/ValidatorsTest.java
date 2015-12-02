@@ -16,21 +16,24 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.cli.util;
 
-import com.beust.jcommander.*;
+import org.junit.*;
+
+import static org.junit.Assert.*;
 
 /**
  * @author Masih Hajiarab Derkani
  */
-public final class Converters {
+public class ValidatorsTest {
 
-    private Converters() { throw new UnsupportedOperationException(); }
+    @Test
+    public void testBetweenZeroToOneInclusive() throws Exception {
 
-    public static class CharacterConverter implements IStringConverter<Character> {
-
-        @Override
-        public Character convert(final String value) {
-
-            return value.isEmpty() ? null : value.charAt(0);
-        }
+        assertTrue(Validators.isBetweenZeroToOneInclusive(0.2));
+        assertTrue(Validators.isBetweenZeroToOneInclusive(0.0));
+        assertTrue(Validators.isBetweenZeroToOneInclusive(1.0));
+        assertTrue(Validators.isBetweenZeroToOneInclusive(0.0 - Validators.DELTA / 2));
+        assertTrue(Validators.isBetweenZeroToOneInclusive(1.0 + Validators.DELTA / 2));
+        assertFalse(Validators.isBetweenZeroToOneInclusive(0.0 - Validators.DELTA));
+        assertFalse(Validators.isBetweenZeroToOneInclusive(1.0 + Validators.DELTA));
     }
 }
