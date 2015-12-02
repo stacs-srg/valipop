@@ -45,8 +45,9 @@ public abstract class CommandTest {
     public static final long TEST_SEED = 142L;
     protected Launcher launcher;
     protected Configuration configuration;
-    private static final Logger LOGGER = getLogger(CommandTest.class.getName());
+    protected Path working_directory;
 
+    private static final Logger LOGGER = getLogger(CommandTest.class.getName());
     @Rule
     public TemporaryFolder temporary = new TemporaryFolder();
 
@@ -55,7 +56,8 @@ public abstract class CommandTest {
 
         launcher = new Launcher();
         configuration = launcher.getConfiguration();
-        configuration.setWorkingDirectory(temporary.newFolder().toPath());
+        working_directory = temporary.newFolder().toPath();
+        configuration.setWorkingDirectory(working_directory);
     }
 
     protected void run(Object... args) throws Exception {

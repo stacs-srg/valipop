@@ -59,7 +59,7 @@ public class CleanCommandTest extends CommandTest {
         loadGoldStandard();
         cleanUsingCombinedCleaner();
 
-        final Configuration configuration = Configuration.load();
+        final Configuration configuration = Configuration.load(working_directory);
         assertRecordsAreCleaned(configuration.requireGoldStandardRecords());
     }
 
@@ -136,7 +136,7 @@ public class CleanCommandTest extends CommandTest {
         loadGoldStandard();
         cleanUsingCombinedCleaner();
 
-        final Configuration configuration = Configuration.load();
+        final Configuration configuration = Configuration.load(working_directory);
         assertRecordsAreCleaned(configuration.requireUnseenRecords());
     }
 }

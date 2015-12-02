@@ -89,7 +89,7 @@ public class CleanStopWordsCommandTest extends CommandTest {
 
     private void assertExpected() throws IOException {
 
-        final Configuration configuration = Configuration.load();
+        final Configuration configuration = Configuration.load(working_directory);
         assertExpectedGoldStandard(configuration);
         assertExpectedUnseen(configuration);
     }
