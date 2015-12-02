@@ -47,10 +47,10 @@ public class ConfigurationTest {
     @After
     public void tearDown() throws Exception {
 
-        final Path configurationFile = expected.getConfigurationFile();
-        if (Files.isRegularFile(configurationFile)) {
+        
+        if (Files.isDirectory(home)) {
 
-            FileUtils.deleteQuietly(configurationFile.toFile());
+            FileUtils.deleteQuietly(home.toFile());
         }
     }
 
