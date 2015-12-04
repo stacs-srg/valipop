@@ -125,7 +125,7 @@ public class LifeTable {
      * @param random     the random
      * @return the boolean
      */
-    public boolean toDieByNQX(Person p, int currentDay, Random random) {
+    public boolean toDieByNQX(Person p, int currentDay, Random random, int timeStep) {
 
 
         LifeTableRow r = rows.get(rows.floorKey(p.getAge(currentDay)));
@@ -135,7 +135,7 @@ public class LifeTable {
 //            System.out.println("X: " + r.getX());
 //        }
 
-        return r.toDieByNQX();
+        return r.toDieByNQX(timeStep);
 
     }
 

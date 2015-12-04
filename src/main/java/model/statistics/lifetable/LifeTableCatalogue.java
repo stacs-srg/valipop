@@ -101,7 +101,7 @@ public class LifeTableCatalogue {
                 nextKey = endYear;
             }
 
-            for (int y = thisKey + 1; y < nextKey; y++) {
+            for (int y = thisKey + 1; y < nextKey; y+=3) {
                 catalogue.put(y, new LifeTable(y, catalogue.get(catalogue.floorKey(y)).getTableResourceKey()));
             }
 
@@ -127,8 +127,8 @@ public class LifeTableCatalogue {
      * @param random     the random
      * @return the boolean
      */
-    public boolean toDieByNQX(Person p, int currentDay, Random random) {
-        return catalogue.get(catalogue.floorKey(DateManipulation.daysToYear(currentDay))).toDieByNQX(p, currentDay, random);
+    public boolean toDieByNQX(Person p, int currentDay, Random random, int timeStep) {
+        return catalogue.get(catalogue.floorKey(DateManipulation.daysToYear(currentDay))).toDieByNQX(p, currentDay, random, timeStep);
     }
 
     /**

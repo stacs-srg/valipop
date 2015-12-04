@@ -16,6 +16,7 @@
  */
 package model.statistics.lifetable;
 
+import model.Population;
 import model.statistics.distributions.WeightedDistribution;
 import model.utils.DateManipulation;
 
@@ -24,14 +25,9 @@ import model.utils.DateManipulation;
  */
 public class LifeTableRow {
 
-    /**
-     * The Survivers.
-     */
-    public int survivers = 0;
-    /**
-     * The Death point.
-     */
-    public int deathPoint;
+    private int survivers = 0;
+    private int deathPoint;
+
     // Age
     private int x;
     // Span of years this table pertains to
@@ -57,7 +53,7 @@ public class LifeTableRow {
         this.nMx = nMx;
         this.nqx = nqx;
         deathPoint = (int) (1 / nqx);
-//        survivers = deathPoint / 2;
+//        survivers = deathPoint;
     }
 
 
@@ -93,8 +89,8 @@ public class LifeTableRow {
      *
      * @return the boolean
      */
-    public boolean toDieByNQX() {
-        if (survivers >= deathPoint) {
+    public boolean toDieByNQX(int timeStep) {
+        if (survivers >= (deathPoint * (Population.getDaysInYear() / timeStep))) {
             survivers = 0;
             return true;
         } else {

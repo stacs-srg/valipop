@@ -36,8 +36,8 @@ public class Population implements ITemporalPopulationInfo {
     private static final int EPOCH_YEAR = 1600;
     private static final int DAYS_PER_YEAR = 365;
     private static final int SEX_RATIO = 100;
-    private static final int START_YEAR = 1775;
-    private static final int END_YEAR = 1800;
+    private static final int START_YEAR = 1750;
+    private static final int END_YEAR = 1775;
     /**
      * The Life tables.
      */
@@ -49,7 +49,7 @@ public class Population implements ITemporalPopulationInfo {
 
     private int currentDay = startYearInDays;
 
-    private int timeStep = 365;
+    private int timeStep = 71;
 
 
     private Random random = new Random();
@@ -62,7 +62,7 @@ public class Population implements ITemporalPopulationInfo {
     public static void main(String[] args) {
         Population pop = new Population();
         pop.initLifeTables();
-        pop.generateSeedPopulation(100000);
+        pop.generateSeedPopulation(250000);
         pop.runSimulation();
         System.out.println(pop.people.size());
 
@@ -129,13 +129,27 @@ public class Population implements ITemporalPopulationInfo {
 
             for (int i = 0; i < people.size(); i++) {
                 Person p = people.get(i);
-                if (lifeTables.toDieByNQX(p, currentDay, random)) {
+                if (lifeTables.toDieByNQX(p, currentDay, random, timeStep)) {
 
-                    p.die(currentDay + dayInPeriod.getSample());
+                    int year = DateManipulation.daysToYear(currentDay);
+                    int daysLeftInYear = DateManipulation.differenceInDays(currentDay, DateManipulation.dateToDays(year + 1,0,0));
+
+                    int daysToDeath = dayInPeriod.getSample();
+
+                    if(daysLeftInYear < daysToDeath) {
+                        daysToDeath = daysLeftInYear - 1;
+                    }
+
+//                    System.out.println("Y: " + year + "   DL: " + daysLeftInYear + "   DTD: " + daysToDeath);
+
+                    // MAke sure data point being put in current year
+
+
+                    p.die(currentDay + daysToDeath);
 
                     deadPeople.add(p);
                     people.remove(p);
-                    people.add(new Person(currentDay, true));
+//                    people.add(new Person(currentDay, true));
                 }
             }
 

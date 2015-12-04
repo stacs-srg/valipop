@@ -54,7 +54,7 @@ public class LifeTableShadow {
             rows.put(r, new LifeTableRowShadow(tree.get(r)));
         }
 
-//        rows.put(rows.lastKey()+1, new LifeTableRowShadow(new LifeTableRow(rows.lastKey()+1,1,0,0)));
+        rows.put(rows.lastKey()+1, new LifeTableRowShadow(new LifeTableRow(rows.lastKey()+1,1,0,0)));
 
 //        System.out.println("R: " + rows.size());
 
@@ -196,5 +196,9 @@ public class LifeTableShadow {
             rows.get(r).reset();
         }
 
+    }
+
+    public int getNumberOfRows() {
+        return rows.keySet().size();
     }
 }

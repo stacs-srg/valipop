@@ -96,4 +96,22 @@ public class LifeTableCatalogueShadow {
 
     }
 
+//    public double[][] getCatalogueData() {
+//
+//        int key = tables.firstKey();
+//        int number_of_keys = tables.keySet().size();
+//
+//        int number_of_rows = tables.get(key).getNumberOfRows();
+//
+//        double[][] data = new double[number_of_keys * 4 + 1][number_of_rows];
+//
+//        for(int i = 0; i < data.length; i++) {
+//
+//        }
+//
+//        for(Integer i : tables.keySet()) {
+//
+//        }
+//    }
+
 }
