@@ -14,35 +14,33 @@
  * You should have received a copy of the GNU General Public License along with record_classification. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.digitising_scotland.record_classification.experiments.specific;
+package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.logistic_regression;
 
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.Classifier;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.exact_match.ExactMatchClassifier;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.logistic_regression.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.InputFileFormatException;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.experiments.generic.Experiment;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.logistic_regression.legacy.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.experiments.generic.*;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.function.Supplier;
+import java.io.*;
+import java.util.*;
+import java.util.function.*;
 
-public class ExactMatchAndOLRExperiment extends Experiment {
+public class MahoutOLRVsLegacyExperiment extends Experiment {
 
-    protected ExactMatchAndOLRExperiment(final String[] args) throws IOException, InputFileFormatException {
+    protected MahoutOLRVsLegacyExperiment(final String[] args) throws IOException, InputFileFormatException {
 
         super(args);
     }
 
     public static void main(final String[] args) throws Exception {
 
-        final ExactMatchAndOLRExperiment experiment = new ExactMatchAndOLRExperiment(args);
+        final MahoutOLRVsLegacyExperiment experiment = new MahoutOLRVsLegacyExperiment(args);
         experiment.call();
     }
 
     @Override
     protected List<Supplier<Classifier>> getClassifierFactories() throws IOException, InputFileFormatException {
 
-        return Arrays.asList(ExactMatchClassifier::new, MahoutOLR::new);
+        return Arrays.asList(MahoutOLR::new, OLRClassifier::new);
     }
 }

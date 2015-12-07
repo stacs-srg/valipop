@@ -17,40 +17,42 @@
 
 package uk.ac.standrews.cs.digitising_scotland.util;
 
+import java.util.concurrent.atomic.*;
+
 /**
  * Created by graham on 14/05/2014.
  */
 public abstract class ProgressIndicator {
 
-    private final int number_of_updates;
-    private int number_of_steps_since_last_update;
-    private int total_steps;
-    private int number_of_steps_completed;
-    private int number_of_steps_per_update;
+    private final AtomicInteger number_of_updates;
+    private final AtomicInteger number_of_steps_since_last_update = new AtomicInteger();
+    private final AtomicInteger total_steps = new AtomicInteger();
+    private final AtomicInteger number_of_steps_completed = new AtomicInteger();
+    private final AtomicInteger number_of_steps_per_update = new AtomicInteger();
 
     private double proportion_complete;
 
     public ProgressIndicator(final int number_of_updates) {
 
-        this.number_of_updates = number_of_updates;
-        number_of_steps_since_last_update = 0;
+        this.number_of_updates = new AtomicInteger(number_of_updates);
+        number_of_steps_since_last_update.set(0);
     }
 
     public void setTotalSteps(final int total_steps) {
 
-        this.total_steps = total_steps;
-        number_of_steps_per_update = total_steps / number_of_updates;
+        this.total_steps.set(total_steps);
+        number_of_steps_per_update.set(total_steps / number_of_updates.get());
     }
 
     public void progressStep() {
 
-        number_of_steps_completed++;
-        number_of_steps_since_last_update++;
+        number_of_steps_completed.getAndIncrement();
+        number_of_steps_since_last_update.getAndIncrement();
 
-        if (number_of_steps_since_last_update >= number_of_steps_per_update) {
+        if (number_of_steps_since_last_update.get() >= number_of_steps_per_update.get()) {
 
-            proportion_complete = (double) number_of_steps_completed / (double) total_steps;
-            number_of_steps_since_last_update = 0;
+            proportion_complete = (double) number_of_steps_completed.get() / (double) total_steps.get();
+            number_of_steps_since_last_update.set(0);
 
             indicateProgress(proportion_complete);
         }

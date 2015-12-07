@@ -14,10 +14,11 @@
  * You should have received a copy of the GNU General Public License along with record_classification. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.linear_regression;
+package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.logistic_regression.legacy;
 
-import org.la4j.*;
-import org.la4j.Vector;
+import org.apache.mahout.math.Matrix;
+import org.apache.mahout.math.NamedVector;
+import org.apache.mahout.math.Vector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,9 +37,14 @@ public class OLRCrossFold implements Serializable {
 
     private static final long serialVersionUID = -749333540672669562L;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(OLRCrossFold.class);
+    /**
+     * The Logger.
+     */
+    private static transient final Logger LOGGER = LoggerFactory.getLogger(OLRCrossFold.class);
 
-    /** The OLRPool models. */
+    /**
+     * The OLRPool models.
+     */
     private List<OLRPool> models = new ArrayList<>();
 
     /**
@@ -61,9 +67,9 @@ public class OLRCrossFold implements Serializable {
      *
      * @param trainingVectorList training vectors to use when training/validating each fold.
      */
-    public OLRCrossFold(final List<VectorFactory.NamedVector> trainingVectorList, int dictionary_size, int code_map_size) {
+    public OLRCrossFold(final List<NamedVector> trainingVectorList, int dictionary_size, int code_map_size) {
 
-        ArrayList<VectorFactory.NamedVector>[][] trainingVectors = init(trainingVectorList);
+        ArrayList<NamedVector>[][] trainingVectors = init(trainingVectorList);
         for (int i = 0; i < FOLDS + 1; i++) {
             OLRPool model = new OLRPool(trainingVectors[i][0], trainingVectors[i][1], dictionary_size, code_map_size);
             models.add(model);
@@ -74,11 +80,11 @@ public class OLRCrossFold implements Serializable {
      * Constructs an OLRCrossFold object with the given trainingVectors.
      *
      * @param trainingVectorList training vectors to use when training/validating each fold.
-     * @param betaMatrix betaMatrix this matrix contains the betas and will be propagated down to the lowest OLR object.
+     * @param betaMatrix         betaMatrix this matrix contains the betas and will be propagated down to the lowest OLR object.
      */
-    public OLRCrossFold(final List<VectorFactory.NamedVector> trainingVectorList, final Matrix betaMatrix) {
+    public OLRCrossFold(final List<NamedVector> trainingVectorList, final Matrix betaMatrix) {
 
-        ArrayList<VectorFactory.NamedVector>[][] trainingVectors = init(trainingVectorList);
+        ArrayList<NamedVector>[][] trainingVectors = init(trainingVectorList);
         for (int i = 0; i < FOLDS + 1; i++) {
             OLRPool model = new OLRPool(betaMatrix, trainingVectors[i][0], trainingVectors[i][1]);
             models.add(model);
@@ -105,8 +111,7 @@ public class OLRCrossFold implements Serializable {
 
             prepareClassifier();
 
-        }
-        catch (InterruptedException e) {
+        } catch (InterruptedException e) {
             LOGGER.error(e.getMessage(), e);
         }
     }
@@ -170,13 +175,13 @@ public class OLRCrossFold implements Serializable {
         }
         Matrix classifierMatrix = matrices.pop();
         while (!matrices.empty()) {
-            classifierMatrix = classifierMatrix.add(matrices.pop());
+            classifierMatrix = classifierMatrix.plus(matrices.pop());
         }
         classifierMatrix = classifierMatrix.divide(survivors.size());
         return classifierMatrix;
     }
 
-    private ArrayList<VectorFactory.NamedVector>[][] init(final List<VectorFactory.NamedVector> trainingVectorList) {
+    private ArrayList<NamedVector>[][] init(final List<NamedVector> trainingVectorList) {
 
         return CrossFoldFactory.make(trainingVectorList, FOLDS);
     }

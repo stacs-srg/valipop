@@ -141,12 +141,16 @@ public abstract class Classifier implements Serializable {
 
     protected void progressClassificationStep() {
 
-        classification_progress_indicator.progressStep();
+        if (classification_progress_indicator != null) {
+            classification_progress_indicator.progressStep();
+        }
     }
 
     protected void progressTrainingStep() {
 
-        training_progress_indicator.progressStep();
+        if (training_progress_indicator != null) {
+            training_progress_indicator.progressStep();
+        }
     }
 
     public abstract String getName();

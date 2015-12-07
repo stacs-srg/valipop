@@ -55,6 +55,18 @@ public class ConfigurationDeserializer extends JsonDeserializer<Configuration> {
                     expectNext(in, JsonToken.VALUE_STRING);
                     configuration.setDefaultDelimiter(in.readValueAs(Character.TYPE));
                     break;
+                case DEFAULT_TRAINING_RATIO:
+                    expectNext(in, JsonToken.VALUE_NUMBER_FLOAT);
+                    configuration.setDefaultTrainingRatio(in.readValueAs(Double.TYPE));
+                    break;
+                case DEFAULT_INTERNAL_TRAINING_RATIO:
+                    expectNext(in, JsonToken.VALUE_NUMBER_FLOAT);
+                    configuration.setDefaultInternalTrainingRatio(in.readValueAs(Double.TYPE));
+                    break;
+                case DEFAULT_CSV_FORMAT_SUPPLIER:
+                    expectNext(in, JsonToken.VALUE_STRING);
+                    configuration.setDefaultCsvFormatSupplier(in.readValueAs(CsvFormatSupplier.class));
+                    break;
                 case SEED:
                     expectNext(in, JsonToken.VALUE_NULL, JsonToken.VALUE_NUMBER_INT);
                     configuration.setSeed(in.readValueAs(Long.class));
@@ -66,18 +78,6 @@ public class ConfigurationDeserializer extends JsonDeserializer<Configuration> {
                 case CLASSIFIER_SERIALIZATION_FORMAT:
                     expectNext(in, JsonToken.VALUE_STRING);
                     configuration.setClassifierSerializationFormat(in.readValueAs(SerializationFormat.class));
-                    break;
-                case DEFAULT_CSV_FORMAT_SUPPLIER:
-                    expectNext(in, JsonToken.VALUE_STRING);
-                    configuration.setDefaultCsvFormatSupplier(in.readValueAs(CsvFormatSupplier.class));
-                    break;
-                case DEFAULT_TRAINING_RATIO:
-                    expectNext(in, JsonToken.VALUE_NUMBER_FLOAT);
-                    configuration.setDefaultTrainingRatio(in.readValueAs(Double.TYPE));
-                    break;
-                case DEFAULT_INTERNAL_TRAINING_RATIO:
-                    expectNext(in, JsonToken.VALUE_NUMBER_FLOAT);
-                    configuration.setDefaultInternalTrainingRatio(in.readValueAs(Double.TYPE));
                     break;
                 case VERBOSITY:
                     expectNext(in, JsonToken.VALUE_STRING);

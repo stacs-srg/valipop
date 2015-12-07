@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License along with record_classification. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.linear_regression;
+package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.logistic_regression.legacy;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,10 +33,8 @@ public final class Utils {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Utils.class);
 
-    private Utils() { throw new UnsupportedOperationException(); }
-
     /**
-     * Handles and exceptions thrown from threads that are handles by a {@link Future} or {@link ExecutorService}.
+     * Handles and exceptions or throwables thrown from threads that are handles by a {@link Future} or {@link ExecutorService}.
      *
      * @param futures Collection of executing futures to handle possible exceptions from.
      * @throws InterruptedException if thread is interrupted
@@ -46,8 +44,7 @@ public final class Utils {
         for (Future<?> future : futures) {
             try {
                 future.get();
-            }
-            catch (ExecutionException e) {
+            } catch (ExecutionException e) {
                 Throwable rootException = e.getCause();
                 if (rootException != null) {
                     LOGGER.error(rootException.toString(), rootException);
