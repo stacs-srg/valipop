@@ -23,8 +23,7 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning;
  */
 public class PunctuationCleaner implements TextCleaner {
 
-    private static final long serialVersionUID = 345345435L;
-
+    private static final long serialVersionUID = 6585175415850529041L;
     private static final char SPACE = ' ';
     private static final char UNDERSCORE = '_';
 

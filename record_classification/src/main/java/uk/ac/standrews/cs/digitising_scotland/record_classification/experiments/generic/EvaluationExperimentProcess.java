@@ -32,7 +32,7 @@ public class EvaluationExperimentProcess extends ClassificationProcess {
     private List<Path> gold_standard_files;
     private List<Double> training_ratios;
     private List<Cleaner> cleaners;
-    private double internal_training_ratio = Configuration.DEFAULT_INTERNAL_TRAINING_RATIO;
+    private double internal_training_ratio = Experiment.DEFAULT_TRAINING_RATIO;
 
     public EvaluationExperimentProcess setGoldStandardFiles(List<Path> gold_standard_files) {
 

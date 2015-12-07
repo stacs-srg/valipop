@@ -19,6 +19,7 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.ClassificationMetrics;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.StrictConfusionMatrix;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.ConsistentCodingChecker;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.util.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Classification;
 import uk.ac.standrews.cs.util.tables.ConfidenceIntervals;
@@ -45,6 +46,7 @@ public abstract class SingleClassifier extends Classifier {
 
             // On the last iteration, this leaves the model trained.
             final int natural_repetition_count = repetition + 1;
+            
             LOGGER.info(() -> String.format("performing repetition %d of %d...", natural_repetition_count, INTERNAL_EVALUATION_REPETITIONS));
             confidence_maps.add(singleTrainAndEvaluate(bucket, internal_training_ratio, random));
             LOGGER.info(() -> String.format("finished repetition %d of %d.", natural_repetition_count, INTERNAL_EVALUATION_REPETITIONS));
@@ -119,7 +121,7 @@ public abstract class SingleClassifier extends Classifier {
 
     private Double calculateLowerConfidenceIntervalBoundary(List<Double> values) {
 
-        return Math.max(0.0, Means.calculateMean(values) - ConfidenceIntervals.calculateConfidenceInterval(values));
+        return values.size() == 1 ? values.get(0) : Math.max(0.0, Means.calculateMean(values) - ConfidenceIntervals.calculateConfidenceInterval(values));
     }
 
     private Map<String, Double> singleTrainAndEvaluate(Bucket bucket, double internal_training_ratio, Random random) {
@@ -136,7 +138,7 @@ public abstract class SingleClassifier extends Classifier {
         LOGGER.info(() -> String.format("internally evaluating the %s on %d records...", getName(), internal_evaluation_records.size()));
         final ClassificationMetrics classification_metrics = evaluate(bucket, internal_evaluation_records);
         LOGGER.info(() -> String.format("done internally evaluating the %s.", getName()));
-
+        
         return classification_metrics.getPerClassF1();
     }
 

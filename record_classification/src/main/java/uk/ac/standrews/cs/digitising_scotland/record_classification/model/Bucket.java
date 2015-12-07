@@ -101,6 +101,11 @@ public class Bucket implements Iterable<Record>, Serializable {
         this(Arrays.asList(records));
     }
 
+    public boolean isEmpty() {
+
+        return records.isEmpty();
+    }
+
     /**
      * Adds the given records to this bucket.
      *
@@ -137,6 +142,11 @@ public class Bucket implements Iterable<Record>, Serializable {
     public Stream<Record> stream() {
 
         return StreamSupport.stream(spliterator(), false);
+    }
+
+    public Stream<Record> parallelStream() {
+
+        return StreamSupport.stream(spliterator(), true);
     }
 
     public DataSet toDataSet(List<String> column_labels) {

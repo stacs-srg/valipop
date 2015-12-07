@@ -28,6 +28,8 @@ import java.util.stream.*;
  */
 public class TrimClassificationCodesCleaner implements Cleaner {
 
+    private static final long serialVersionUID = 2086569954577088946L;
+
     @Override
     public List<Bucket> apply(final List<Bucket> buckets) {
 
@@ -65,6 +67,6 @@ public class TrimClassificationCodesCleaner implements Cleaner {
 
     private String trim(String code) {
 
-        return code != null ? code.trim() : code;
+        return code != null ? code.trim() : null;
     }
 }

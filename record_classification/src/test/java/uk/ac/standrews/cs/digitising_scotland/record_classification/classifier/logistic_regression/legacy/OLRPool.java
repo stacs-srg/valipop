@@ -14,18 +14,19 @@
  * You should have received a copy of the GNU General Public License along with record_classification. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.linear_regression;
+package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.logistic_regression.legacy;
 
-import org.la4j.*;
-import org.la4j.Vector;
+import com.google.common.collect.Lists;
+import org.apache.mahout.math.Matrix;
+import org.apache.mahout.math.NamedVector;
+import org.apache.mahout.math.Vector;
 
-import java.io.*;
+import java.io.Serializable;
 import java.util.*;
-import java.util.concurrent.*;
-import java.util.concurrent.atomic.*;
-import java.util.stream.*;
-
-import static java.util.Collections.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Trains a number of models on the training vectors provided. These models are then used to make predictions
@@ -40,39 +41,38 @@ public class OLRPool implements Runnable, Serializable {
     private static final int POOL_SIZE = 4;
     private static final int NUMBER_OF_SURVIVORS = 2;
 
-    private List<OLRShuffled> models = new ArrayList<>();
-    private transient List<VectorFactory.NamedVector> testingVectorList = new ArrayList<>();
+    private List<OLRShuffled> models = Lists.newArrayList();
+    private transient List<NamedVector> testingVectorList = Lists.newArrayList();
 
     /**
      * Needed for JSON deserialization.
      */
     public OLRPool() {
-
     }
 
     /**
      * Constructor.
      *
      * @param internalTrainingVectorList internal training vector list
-     * @param testingVectorList internal testing vector list
+     * @param testingVectorList          internal testing vector list
      */
-    public OLRPool(final List<VectorFactory.NamedVector> internalTrainingVectorList, final List<VectorFactory.NamedVector> testingVectorList, int dictionary_size, int code_map_size) {
+    public OLRPool(final List<NamedVector> internalTrainingVectorList, final List<NamedVector> testingVectorList, int dictionary_size, int code_map_size) {
 
         this.testingVectorList = testingVectorList;
 
         for (int i = 0; i < POOL_SIZE; i++) {
-            final List<VectorFactory.NamedVector> trainingVectorList = new ArrayList<>(internalTrainingVectorList);
+            final List<NamedVector> trainingVectorList = new ArrayList<>(internalTrainingVectorList);
             OLRShuffled model = new OLRShuffled(trainingVectorList, dictionary_size, code_map_size);
             models.add(model);
         }
     }
 
-    public OLRPool(final Matrix betaMatrix, final ArrayList<VectorFactory.NamedVector> internalTrainingVectorList, final ArrayList<VectorFactory.NamedVector> testingVectorList) {
+    public OLRPool(final Matrix betaMatrix, final ArrayList<NamedVector> internalTrainingVectorList, final ArrayList<NamedVector> testingVectorList) {
 
         this.testingVectorList = testingVectorList;
 
         for (int i = 0; i < POOL_SIZE; i++) {
-            final List<VectorFactory.NamedVector> trainingVectorList = new ArrayList<>(internalTrainingVectorList);
+            final List<NamedVector> trainingVectorList = new ArrayList<>(internalTrainingVectorList);
             OLRShuffled model = new OLRShuffled(betaMatrix, trainingVectorList);
             models.add(model);
         }
@@ -97,52 +97,48 @@ public class OLRPool implements Runnable, Serializable {
             executorService.shutdown();
             executorService.awaitTermination(365, TimeUnit.DAYS);
 
-        }
-        catch (InterruptedException ignored) {
+        } catch (InterruptedException ignored) {
         }
     }
 
-    /** Get the survivors from the model pool. */
+    /**
+     * Get the survivors from the model pool.
+     */
     public List<OLRShuffled> survivors() {
 
-        return models.stream().sorted(getDescendingCorrectlyClassifiedPortionComparator()).limit(NUMBER_OF_SURVIVORS).collect(Collectors.toList());
-    }
-
-    protected Comparator<OLRShuffled> getDescendingCorrectlyClassifiedPortionComparator() {
-
-        return reverseOrder((one, other) -> {
-            final double one_correct_ratio = getProportionTestingVectorsCorrectlyClassified(one);
-            final double other_correct_ratio = getProportionTestingVectorsCorrectlyClassified(other);
-            return Double.compare(one_correct_ratio, other_correct_ratio);
-        });
+        return survivors(testAndPackageModels());
     }
 
     private double getProportionTestingVectorsCorrectlyClassified(final OLRShuffled model) {
 
         int countCorrect = 0;
-        for (VectorFactory.NamedVector vector : testingVectorList) {
-            final Vector classificationVector = model.classifyFull(vector.vector);
-            final int classification = getMaxValueIndex(classificationVector);
-
-            if (Integer.parseInt(vector.name) == classification) {
+        for (NamedVector vector : testingVectorList) {
+            Vector classificationVector = model.classifyFull(vector);
+            int classification = classificationVector.maxValueIndex();
+            if (Integer.parseInt(vector.getName()) == classification) {
                 countCorrect++;
             }
         }
         return ((double) countCorrect) / ((double) testingVectorList.size());
     }
 
-    static int getMaxValueIndex(final Vector vector) {
+    private ArrayList<ModelDoublePair> testAndPackageModels() {
 
-        double max = Double.MIN_VALUE;
-        int max_index = -1;
-
-        for (int index = 0; index < vector.length(); index++) {
-            final double value = vector.get(index);
-            if (value > max) {
-                max = value;
-                max_index = index;
-            }
+        ArrayList<ModelDoublePair> modelPairs = new ArrayList<>();
+        for (OLRShuffled model : models) {
+            double proportionCorrect = getProportionTestingVectorsCorrectlyClassified(model);
+            modelPairs.add(new ModelDoublePair(model, proportionCorrect));
         }
-        return max_index;
+        return modelPairs;
+    }
+
+    private List<OLRShuffled> survivors(final List<ModelDoublePair> modelPairs) {
+
+        ArrayList<OLRShuffled> survivors = new ArrayList<>();
+        Collections.sort(modelPairs);
+        for (int i = modelPairs.size() - 1; i >= modelPairs.size() - NUMBER_OF_SURVIVORS; i--) {
+            survivors.add(modelPairs.get(i).getModel());
+        }
+        return survivors;
     }
 }

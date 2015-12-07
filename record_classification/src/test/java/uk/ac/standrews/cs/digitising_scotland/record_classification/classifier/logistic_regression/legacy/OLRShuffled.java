@@ -14,12 +14,11 @@
  * You should have received a copy of the GNU General Public License along with record_classification. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.linear_regression;
+package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.logistic_regression.legacy;
 
-
-import org.la4j.*;
-import org.la4j.Matrix;
-import org.la4j.Vector;
+import org.apache.mahout.math.Matrix;
+import org.apache.mahout.math.NamedVector;
+import org.apache.mahout.math.Vector;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -37,7 +36,7 @@ public class OLRShuffled implements Runnable, Serializable {
 
     private OLR model;
     private static final int NUMBER_OF_REPETITIONS = 10;
-    private transient List<VectorFactory.NamedVector> trainingVectorList = new ArrayList<>();
+    private transient List<NamedVector> trainingVectorList = new ArrayList<>();
 
     /**
      * Needed for JSON deserialization.
@@ -50,7 +49,7 @@ public class OLRShuffled implements Runnable, Serializable {
      *
      * @param trainingVectorList the training vector list
      */
-    public OLRShuffled(final List<VectorFactory.NamedVector> trainingVectorList, int dictionary_size, int code_map_size) {
+    public OLRShuffled(final List<NamedVector> trainingVectorList, int dictionary_size, int code_map_size) {
 
         this.trainingVectorList = trainingVectorList;
         model = new OLR(dictionary_size, code_map_size);
@@ -62,7 +61,7 @@ public class OLRShuffled implements Runnable, Serializable {
      * @param betaMatrix         the new beta matrix which is used as a starting point for model training
      * @param trainingVectorList the training vector list
      */
-    public OLRShuffled(final Matrix betaMatrix, final List<VectorFactory.NamedVector> trainingVectorList) {
+    public OLRShuffled(final Matrix betaMatrix, final List<NamedVector> trainingVectorList) {
 
         this.trainingVectorList = trainingVectorList;
         this.model = new OLR(betaMatrix);
@@ -91,7 +90,7 @@ public class OLRShuffled implements Runnable, Serializable {
     /**
      * Gets the beta matrix.
      *
-     * @return the beta matrix
+     * @return the beta maxtrix
      */
     protected Matrix beta() {
 

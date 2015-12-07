@@ -57,12 +57,12 @@ class ConfigurationSerializer extends JsonSerializer<Configuration> {
 
         out.writeObjectField(DEFAULT_CHARSET_SUPPLIER, configuration.getDefaultCharsetSupplier());
         out.writeObjectField(DEFAULT_DELIMITER, configuration.getDefaultDelimiter());
+        out.writeNumberField(DEFAULT_TRAINING_RATIO, configuration.getDefaultTrainingRatio());
+        out.writeNumberField(DEFAULT_INTERNAL_TRAINING_RATIO, configuration.getDefaultInternalTrainingRatio());
+        out.writeObjectField(DEFAULT_CSV_FORMAT_SUPPLIER, configuration.getDefaultCsvFormatSupplier());
         out.writeObjectField(SEED, configuration.getSeed());
         out.writeObjectField(CLASSIFIER_SUPPLIER, configuration.getClassifierSupplier());
         out.writeObjectField(CLASSIFIER_SERIALIZATION_FORMAT, configuration.getClassifierSerializationFormat());
-        out.writeObjectField(DEFAULT_CSV_FORMAT_SUPPLIER, configuration.getDefaultCsvFormatSupplier());
-        out.writeNumberField(DEFAULT_TRAINING_RATIO, configuration.getDefaultTrainingRatio());
-        out.writeNumberField(DEFAULT_INTERNAL_TRAINING_RATIO, configuration.getDefaultInternalTrainingRatio());
         out.writeObjectField(VERBOSITY, configuration.getLogLevel());
         out.writeObjectField(INTERNAL_VERBOSITY, configuration.getInternalLogLevel());
 

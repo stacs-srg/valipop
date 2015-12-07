@@ -55,7 +55,7 @@ public abstract class Experiment implements Callable<Void> {
     private static final String FIRST_COLUMN_HEADING = "classifier";
 
     private static final String DEFAULT_GOLD_STANDARD_PATH = "src/test/resources/uk/ac/standrews/cs/digitising_scotland/record_classification/experiments/AbstractClassificationProcessTest/coded_data_1K.csv";
-    private static final double DEFAULT_TRAINING_RATIO = 0.8;
+    public static final double DEFAULT_TRAINING_RATIO = 0.8;
     private static final int DEFAULT_REPETITIONS = 2;
     private static final InfoLevel DEFAULT_VERBOSITY = InfoLevel.LONG_SUMMARY;
 
@@ -91,7 +91,7 @@ public abstract class Experiment implements Callable<Void> {
     private List<Double> training_ratios = Collections.singletonList(DEFAULT_TRAINING_RATIO);
 
     @Parameter(names = {SetCommand.OPTION_INTERNAL_TRAINING_RATIO_SHORT, SetCommand.OPTION_INTERNAL_TRAINING_RATIO_LONG}, description = "the ratio of training records to be used for internal training", validateValueWith = Validators.BetweenZeroToOneInclusive.class)
-    private double internal_training_ratio = Configuration.DEFAULT_INTERNAL_TRAINING_RATIO;
+    private double internal_training_ratio = DEFAULT_TRAINING_RATIO;
 
     @Parameter(names = {"-d", "--delimiter"}, description = DESCRIPTION_DELIMITER)
     protected String delimiter = "|";

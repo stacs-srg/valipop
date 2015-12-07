@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License along with record_classification. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.linear_regression;
+package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.logistic_regression.legacy;
 
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Record;
 
@@ -115,7 +115,7 @@ public final class CodeIndexer implements Serializable {
     }
 
     /**
-     * Puts a code in the map after checking that it's valid.
+     * Puts a code in the map after checking that it's valid by using the {@link CodeDictionary}.
      *
      * @param code the code to add to the map
      */

@@ -19,7 +19,7 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.composite.StringSimilarityGroupWithSharedState;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.ensemble.EnsembleVotingClassifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.exact_match.ExactMatchClassifier;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.linear_regression.OLRClassifier;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.logistic_regression.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.naive_bayes.NaiveBayesClassifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.string_similarity.StringSimilarityClassifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.string_similarity.StringSimilaritySupplier;
@@ -44,7 +44,7 @@ public enum ClassifierSupplier implements Supplier<Classifier> {
     STRING_SIMILARITY_JACCARD(ClassifierSupplier::makeJaccardClassifier),
     STRING_SIMILARITY_DICE(ClassifierSupplier::makeDiceClassifier),
 
-    OLR(OLRClassifier::new),
+    OLR(MahoutOLR::new),
     NAIVE_BAYES(NaiveBayesClassifier::new),
 
     VOTING_ENSEMBLE_EXACT_ML_SIMILARITY(ClassifierSupplier::makeVotingEnsembleClassifierWithMLAndStringSimilarity),

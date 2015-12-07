@@ -99,7 +99,10 @@ public class Configuration extends ClassificationContext {
     private LogLevelSupplier log_level = DEFAULT_LOG_LEVEL_SUPPLIER;
     private LogLevelSupplier internal_log_level = DEFAULT_LOG_LEVEL_SUPPLIER;
 
+    private transient FileHandler internal_log_handler;
     private transient Path working_directory = DEFAULT_WORKING_DIRECTORY;
+
+    // Loaders of lazily loaded field values
     private transient Supplier<Classifier> classifier_loader;
     private transient Supplier<Bucket> training_records_loader;
     private transient Supplier<Bucket> evaluation_records_loader;
@@ -108,8 +111,6 @@ public class Configuration extends ClassificationContext {
     private transient Supplier<Bucket> classified_unseen_records_loader;
     private transient Supplier<ConfusionMatrix> confusion_matrix_loader;
     private transient Supplier<ClassificationMetrics> classification_metrics_loader;
-
-    private transient FileHandler internal_log_handler;
 
     public Configuration() {
 
