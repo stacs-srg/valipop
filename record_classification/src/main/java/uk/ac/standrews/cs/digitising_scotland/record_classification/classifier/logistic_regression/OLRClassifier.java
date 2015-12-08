@@ -16,13 +16,13 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.logistic_regression;
 
+import org.apache.mahout.classifier.*;
 import org.apache.mahout.classifier.sgd.*;
 import org.apache.mahout.math.*;
 import org.apache.mahout.math.Vector;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 
-import java.io.*;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.*;
@@ -32,17 +32,16 @@ import java.util.stream.*;
 /**
  * @author masih
  */
-public class MahoutOLR extends SingleClassifier {
+public abstract class OLRClassifier extends SingleClassifier {
 
     private static final long serialVersionUID = 5972187130211865595L;
-    private static final int TRAINING_PASSES = 10;
 
     // why intercept is used: http://statistiksoftware.blogspot.nl/2013/01/why-we-need-intercept.html
     private static final int INTERCEPT_OFFSET = 1;
     private static final int INTERCEPT_VECTOR_INDEX = 0;
     private static final int INTERCEPT_INITIAL_VALUE = 1;
 
-    private static final Logger LOGGER = Logger.getLogger(MahoutOLR.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(OLRClassifier.class.getName());
 
     private final AtomicInteger next_token_index = new AtomicInteger(INTERCEPT_OFFSET);
     private final AtomicInteger next_classification_index = new AtomicInteger();
@@ -50,19 +49,9 @@ public class MahoutOLR extends SingleClassifier {
     private final ConcurrentHashMap<String, Integer> classification_to_index;
     private final ConcurrentHashMap<Integer, String> index_to_classification;
     private final ConcurrentHashMap<String, Integer> token_to_index;
-    private final Random random;
+    private transient AbstractVectorClassifier classifier;
 
-    private transient AdaptiveLogisticRegression model;
-    private transient CrossFoldLearner classifier;
-
-    public MahoutOLR() {
-
-        this(null);
-    }
-
-    public MahoutOLR(Random random) {
-
-        this.random = random;
+    public OLRClassifier() {
 
         index_to_classification = new ConcurrentHashMap<>();
         classification_to_index = new ConcurrentHashMap<>();
@@ -103,109 +92,19 @@ public class MahoutOLR extends SingleClassifier {
 
         requireUntrainedModel();
         index(training_records);
-        initModel();
-        final List<OnlineTrainingRecord> online_training_records = toOnlineLainingRecords(training_records);
-        try {
-            train(online_training_records);
-        }
-        finally {
-            model.close();
-        }
+        classifier = train(toOnlineLainingRecords(training_records));
     }
-
-    protected void initModel() {
-
-        // why regularisation: https://class.coursera.org/ml-003/lecture/42
-        final PriorFunction regularisation = new L2();
-        final int categories = countCategories();
-        final int features = countFeatures();
-        model = new AdaptiveLogisticRegression(categories, features, regularisation);
-
-    }
-
-    protected int countCategories() {return classification_to_index.size();}
 
     protected List<OnlineTrainingRecord> toOnlineLainingRecords(final Bucket training_records) {
 
         return training_records.parallelStream().map(this::toOnlineTrainingRecord).collect(Collectors.toList());
     }
 
-    protected void train(final List<OnlineTrainingRecord> training_records) {
-
-        final int training_records_size = training_records.size();
-        final int total_training_steps = training_records_size * TRAINING_PASSES;
-
-        resetTrainingProgressIndicator(total_training_steps);
-
-        final Random random = getRandom();
-        for (int i = 0; i < TRAINING_PASSES; i++) {
-            Collections.shuffle(training_records, random);
-            for (OnlineTrainingRecord record : training_records) {
-
-                model.train(record.id, record.code, record.feature_vector);
-                progressTrainingStep();
-            }
-        }
-
-//        final List<ForkJoinTask<?>> training_iterations = new ArrayList<>();
-//        final ForkJoinPool pool = ForkJoinPool.commonPool();
-//
-//        for (int i = 0; i < TRAINING_PASSES; i++) {
-//            final ForkJoinTask<?> training_iteration = pool.submit(() -> {
-//                shuffle(training_records).parallelStream().forEach(record -> {
-//                    model.train(record.id, record.code, record.feature_vector);
-//                    progressTrainingStep();
-//                });
-//            });
-//            training_iterations.add(training_iteration);
-//        }
-//        awaitCompletion(training_iterations);
-//        classifier = model.getBest().getPayload().getLearner();
-    }
-
-    private void awaitCompletion(final List<ForkJoinTask<?>> training_iterations) {
-
-        for (ForkJoinTask<?> iteration : training_iterations) {
-            try {
-                iteration.get();
-            }
-            catch (InterruptedException error) {
-                cancel(training_iterations);
-                throw new RuntimeException("interrupted while awaiting training completion", error);
-            }
-            catch (ExecutionException error) {
-                cancel(training_iterations);
-                throw new RuntimeException("error while training", error.getCause());
-            }
-        }
-    }
-
-    private void cancel(final List<ForkJoinTask<?>> training_iterations) {
-
-        training_iterations.forEach(iteration -> {
-            iteration.cancel(true);
-        });
-    }
-
-    private List<OnlineTrainingRecord> shuffle(final List<OnlineTrainingRecord> olr_training_records) {
-
-        List<OnlineTrainingRecord> shuffled = new ArrayList<>(olr_training_records);
-        Collections.shuffle(shuffled, getRandom());
-
-        return shuffled;
-    }
-
-    private Random getRandom() {
-
-        return isDeterministic() ? random : ThreadLocalRandom.current();
-    }
-
-    private boolean isDeterministic() {return this.random != null;}
+    protected abstract AbstractVectorClassifier train(final List<OnlineTrainingRecord> training_records);
 
     protected void requireUntrainedModel() {
 
-        // FIXME allow extended training.
-        if (isTrained()) {
+        if (isTrained()) { // FIXME allow extended training.
             throw new UnsupportedOperationException("already trained, further training upon existing trained model is not implemented yet");
         }
     }
@@ -241,7 +140,6 @@ public class MahoutOLR extends SingleClassifier {
     protected void clearModel() {
 
         classifier = null;
-        model = null;
         token_to_index.clear();
         classification_to_index.clear();
         index_to_classification.clear();
@@ -265,7 +163,7 @@ public class MahoutOLR extends SingleClassifier {
         return vector;
     }
 
-    private int countFeatures() {return countUniqueTokens() + INTERCEPT_OFFSET;}
+    int countFeatures() {return countUniqueTokens() + INTERCEPT_OFFSET;}
 
     protected int countUniqueTokens() {return token_to_index.size();}
 
@@ -280,6 +178,8 @@ public class MahoutOLR extends SingleClassifier {
 
         return token_to_index.get(token);
     }
+
+    protected int countCategories() {return classification_to_index.size();}
 
     private Integer indexToken(String token) {
 
@@ -303,11 +203,11 @@ public class MahoutOLR extends SingleClassifier {
         return "Classifies using Mahout Online Logistic Regression Classifier.";
     }
 
-    private class OnlineTrainingRecord {
+    protected class OnlineTrainingRecord {
 
-        private final long id;
-        private final int code;
-        private final Vector feature_vector;
+        protected final long id;
+        protected final int code;
+        protected final Vector feature_vector;
 
         private OnlineTrainingRecord(int code, Vector feature_vector) {
 

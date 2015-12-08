@@ -33,7 +33,7 @@ import java.util.concurrent.*;
  * @author Fraser Dunlop
  * @author Jamie Carson
  */
-public class OLRCrossFold implements Serializable {
+class OLRCrossFold implements Serializable {
 
     private static final long serialVersionUID = -749333540672669562L;
 

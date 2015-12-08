@@ -49,6 +49,11 @@ public class Launcher {
     private static final Logger LOGGER = Logger.getLogger(Launcher.class.getName());
 
     static {
+        setCLISystemProperties();
+    }
+
+    public static void setCLISystemProperties() {
+
         if (System.getProperty("java.awt.headless") == null) {
             System.setProperty("java.awt.headless", "true");
         }

@@ -32,7 +32,7 @@ import java.util.List;
 /**
  * @author Fraser Dunlop
  */
-public class VectorFactory implements Serializable {
+class VectorFactory implements Serializable {
 
     private static final long serialVersionUID = 5369887941319861994L;
 

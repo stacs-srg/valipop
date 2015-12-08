@@ -42,6 +42,7 @@ import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.logging.*;
 import java.util.stream.Collectors;
 
 /**
@@ -49,6 +50,10 @@ import java.util.stream.Collectors;
  * @author Masih Hajiarab Derkani
  */
 public abstract class Experiment implements Callable<Void> {
+
+    static {
+        Launcher.setCLISystemProperties();
+    }
 
     private static final long SEED = 3249870987977239578L;
     private static final char TAB = '\t';
@@ -85,16 +90,13 @@ public abstract class Experiment implements Callable<Void> {
     protected int repetitions = DEFAULT_REPETITIONS;
 
     @Parameter(names = {"-g", "--goldStandard"}, description = DESCRIPTION_GOLD_STANDARD, listConverter = PathConverter.class)
-    private List<Path> gold_standard_files = Collections.singletonList(Paths.get(DEFAULT_GOLD_STANDARD_PATH));
+    protected List<Path> gold_standard_files = Collections.singletonList(Paths.get(DEFAULT_GOLD_STANDARD_PATH));
 
     @Parameter(names = {"-t", "--trainingRecordRatio"}, description = DESCRIPTION_RATIO)
-    private List<Double> training_ratios = Collections.singletonList(DEFAULT_TRAINING_RATIO);
+    protected List<Double> training_ratios = Collections.singletonList(DEFAULT_TRAINING_RATIO);
 
     @Parameter(names = {SetCommand.OPTION_INTERNAL_TRAINING_RATIO_SHORT, SetCommand.OPTION_INTERNAL_TRAINING_RATIO_LONG}, description = "the ratio of training records to be used for internal training", validateValueWith = Validators.BetweenZeroToOneInclusive.class)
-    private double internal_training_ratio = DEFAULT_TRAINING_RATIO;
-
-    @Parameter(names = {"-d", "--delimiter"}, description = DESCRIPTION_DELIMITER)
-    protected String delimiter = "|";
+    protected double internal_training_ratio = DEFAULT_TRAINING_RATIO;
 
     public static final List<Cleaner> CLEANERS = Collections.singletonList(CleanerSupplier.COMBINED.get());
 
@@ -152,7 +154,7 @@ public abstract class Experiment implements Callable<Void> {
 
         // Loop nesting is this way round to avoid performing all repetitions of a given process consecutively, given
         // that timing information is being recorded.
-        for (int i = 0; i < repetitions; i++) {
+        for (int repetition_index = 0; repetition_index < repetitions; repetition_index++) {
 
             for (Supplier<Classifier> factory : classifier_factories) {
 
@@ -160,9 +162,10 @@ public abstract class Experiment implements Callable<Void> {
                 final ClassifierResults result = result_map.get(factory);
                 final Random random = random_map.get(factory);
 
-                final ClassificationContext context = new ClassificationContext(factory.get(), random);
+                final Classifier classifier = factory.get();
+                final ClassificationContext context = new ClassificationContext(classifier, random);
 
-                process.call(context);
+                runRepetition(process, context, repetition_index);
 
                 result.data_set.addRow(getResultValuesWithTimings(context));
                 result.contexts.add(context);
@@ -174,6 +177,11 @@ public abstract class Experiment implements Callable<Void> {
         return new ArrayList<>(result_map.values());
     }
 
+    protected void runRepetition(final ClassificationProcess process, final ClassificationContext context, final int repetition_index) throws Exception {
+
+        process.call(context);
+    }
+
     public Collection<ClassificationProcess> getProcesses() {
 
         return processes;
@@ -181,7 +189,7 @@ public abstract class Experiment implements Callable<Void> {
 
     protected abstract List<Supplier<Classifier>> getClassifierFactories() throws IOException, InputFileFormatException;
 
-    private ClassificationProcess makeClassificationProcess(final Supplier<Classifier> factory) {
+    protected ClassificationProcess makeClassificationProcess(final Supplier<Classifier> factory) {
 
         final EvaluationExperimentProcess process = new EvaluationExperimentProcess();
 

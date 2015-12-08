@@ -42,14 +42,16 @@ public abstract class SingleClassifier extends Classifier {
 
         LOGGER.info(() -> String.format("training and internally evaluating the %s with internal training ratio of %.2f...", getName(), internal_training_ratio));
 
-        for (int repetition = 0; repetition < INTERNAL_EVALUATION_REPETITIONS; repetition++) {
+        final int total_repetitions = Math.abs(1.0 - internal_training_ratio) <= Validators.DELTA ? 1 : INTERNAL_EVALUATION_REPETITIONS;
+
+        for (int repetition = 0; repetition < total_repetitions; repetition++) {
 
             // On the last iteration, this leaves the model trained.
             final int natural_repetition_count = repetition + 1;
-            
-            LOGGER.info(() -> String.format("performing repetition %d of %d...", natural_repetition_count, INTERNAL_EVALUATION_REPETITIONS));
+
+            LOGGER.info(() -> String.format("performing repetition %d of %d...", natural_repetition_count, total_repetitions));
             confidence_maps.add(singleTrainAndEvaluate(bucket, internal_training_ratio, random));
-            LOGGER.info(() -> String.format("finished repetition %d of %d.", natural_repetition_count, INTERNAL_EVALUATION_REPETITIONS));
+            LOGGER.info(() -> String.format("finished repetition %d of %d.", natural_repetition_count, total_repetitions));
         }
         LOGGER.info(() -> String.format("done training and internally evaluating the %s.", getName()));
         confidence_map = lowerConfidenceIntervalBoundaries(confidence_maps);
@@ -138,7 +140,7 @@ public abstract class SingleClassifier extends Classifier {
         LOGGER.info(() -> String.format("internally evaluating the %s on %d records...", getName(), internal_evaluation_records.size()));
         final ClassificationMetrics classification_metrics = evaluate(bucket, internal_evaluation_records);
         LOGGER.info(() -> String.format("done internally evaluating the %s.", getName()));
-        
+
         return classification_metrics.getPerClassF1();
     }
 

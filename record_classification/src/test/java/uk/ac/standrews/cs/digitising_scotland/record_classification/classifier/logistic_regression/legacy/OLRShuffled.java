@@ -30,7 +30,7 @@ import java.util.List;
  *
  * @author Fraser Dunlop
  */
-public class OLRShuffled implements Runnable, Serializable {
+class OLRShuffled implements Runnable, Serializable {
 
     private static final long serialVersionUID = -4877057661440167819L;
 

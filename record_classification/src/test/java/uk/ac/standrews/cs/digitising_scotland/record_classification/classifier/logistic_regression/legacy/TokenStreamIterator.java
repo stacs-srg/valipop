@@ -26,10 +26,10 @@ import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 /**
  * The Class TokenStreamIterator.
  *
- * @author frjd2 & Masih
+ * @author frjd2
  * @param <Attribute> the generic type
  */
-public class TokenStreamIterator<Attribute extends CharTermAttribute> implements Iterator<Attribute>, Closeable {
+class TokenStreamIterator<Attribute extends CharTermAttribute> implements Iterator<Attribute>, Closeable {
 
     /** The tokenizer. */
     private TokenStream tokenizer;

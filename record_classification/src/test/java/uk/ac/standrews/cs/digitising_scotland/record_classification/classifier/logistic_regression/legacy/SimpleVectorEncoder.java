@@ -36,7 +36,7 @@ import java.util.Map;
  * to a unique index.
  * Created by fraserdunlop on 23/04/2014 at 19:37.
  */
-public class SimpleVectorEncoder implements Serializable {
+class SimpleVectorEncoder implements Serializable {
 
     private static final long serialVersionUID = 6907477522599743250L;
 

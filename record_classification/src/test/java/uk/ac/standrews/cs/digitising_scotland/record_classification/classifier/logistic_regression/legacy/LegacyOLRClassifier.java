@@ -34,7 +34,7 @@ import java.util.List;
  * @author Jamie Carson
  * @author Graham Kirby
  */
-public class OLRClassifier extends SingleClassifier {
+public class LegacyOLRClassifier extends SingleClassifier {
 
     private static final long serialVersionUID = -2561454096763303789L;
     private static final double STATIC_CONFIDENCE = 0.89;
@@ -51,7 +51,7 @@ public class OLRClassifier extends SingleClassifier {
         return model;
     }
 
-    public OLRClassifier() {
+    public LegacyOLRClassifier() {
 
         clearModel();
     }

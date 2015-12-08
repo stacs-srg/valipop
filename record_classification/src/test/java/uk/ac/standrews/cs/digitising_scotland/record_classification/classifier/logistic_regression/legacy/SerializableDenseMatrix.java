@@ -28,7 +28,7 @@ import java.io.Serializable;
 /**
  * @author Fraser Dunlop
  */
-public class SerializableDenseMatrix implements Serializable {
+class SerializableDenseMatrix implements Serializable {
 
     private static final long serialVersionUID = -7738028674358816065L;
 

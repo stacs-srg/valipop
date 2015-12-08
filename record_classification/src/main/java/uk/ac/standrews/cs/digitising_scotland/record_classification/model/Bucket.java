@@ -16,6 +16,7 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.model;
 
+import com.google.common.collect.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.util.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.DuplicateRecordIdException;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.InputFileFormatException;
@@ -28,6 +29,7 @@ import java.io.Serializable;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.*;
+import java.util.concurrent.*;
 import java.util.stream.*;
 
 public class Bucket implements Iterable<Record>, Serializable {
@@ -104,6 +106,27 @@ public class Bucket implements Iterable<Record>, Serializable {
     public boolean isEmpty() {
 
         return records.isEmpty();
+    }
+
+    public List<Bucket> split(int ways, Random random) {
+
+        if (ways < 1) {
+            throw new IllegalArgumentException("the number of splits must be at least 1");
+        }
+
+        final List<Bucket> splits = new ArrayList<>(ways);
+        for (int i = 0; i < ways; i++) {
+            splits.add(new Bucket());
+        }
+
+        final List<Record> source_records = getRecordsList();
+        Collections.shuffle(source_records, random);
+        final Iterator<Bucket> splits_iterator = Iterables.cycle(splits).iterator();
+        for (Record record : source_records) {
+            splits_iterator.next().add(record);
+        }
+
+        return splits;
     }
 
     /**
@@ -184,6 +207,11 @@ public class Bucket implements Iterable<Record>, Serializable {
     public Record getFirstRecord() {
 
         return records.isEmpty() ? null : records.first();
+    }
+
+    public List<Record> getRecordsList() {
+
+        return new CopyOnWriteArrayList<>(records);
     }
 
     public Optional<Record> findRecordById(int id) {

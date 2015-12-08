@@ -20,7 +20,7 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.
  * The Class ModelDoublePair.
  * Generally used to track which models in the {@link OLRCrossFold} are performing well, and which are not.
  */
-public class ModelDoublePair implements Comparable<ModelDoublePair> {
+class ModelDoublePair implements Comparable<ModelDoublePair> {
 
     /** The number of correct classifications. */
     private double correct;

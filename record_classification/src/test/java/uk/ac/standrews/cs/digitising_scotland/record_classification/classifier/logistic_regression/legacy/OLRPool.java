@@ -34,7 +34,7 @@ import java.util.concurrent.TimeUnit;
  *
  * @author Fraser Dunlop
  */
-public class OLRPool implements Runnable, Serializable {
+class OLRPool implements Runnable, Serializable {
 
     private static final long serialVersionUID = -7098039612837520093L;
 
