@@ -52,7 +52,7 @@ class CodeDictionary implements Iterable<String> {
 
         validCodes = new HashSet<>();
 
-        try (BufferedReader br = ReaderWriterFactory.createBufferedReader(codeDictionaryFile)) {
+        try (BufferedReader br = Utils.createBufferedReader(codeDictionaryFile)) {
             String line;
             while ((line = br.readLine()) != null) {
                 parseLineAndAddToMap(line);
