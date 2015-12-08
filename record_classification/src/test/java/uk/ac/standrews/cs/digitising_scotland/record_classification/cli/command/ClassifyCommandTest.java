@@ -148,7 +148,7 @@ public class ClassifyCommandTest extends CommandTest {
 
         String classification = getClassification(record);
         assertPresent(classification);
-//        assertNotEquals(Classification.UNCLASSIFIED.getCode(), classification);
+        assertNotEquals(Classification.UNCLASSIFIED.getCode(), classification);
     }
 
     private void assertPresent(String value) {
@@ -186,7 +186,7 @@ public class ClassifyCommandTest extends CommandTest {
 
     private String getConfidence(List<String> record) {
 
-        return record.size() > 4 ? record.get(4) : null;
+        return record.size() > 4 ? record.get(4) : "";
     }
 
     private String getEnsembleDetail(List<String> record) {
