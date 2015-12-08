@@ -27,7 +27,7 @@ import java.util.List;
  *
  * @author frjd2
  */
-public abstract class CrossFoldFactory {
+abstract class CrossFoldFactory {
 
     /**
      * Creates a cross folded data structure.

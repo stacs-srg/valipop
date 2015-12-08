@@ -29,7 +29,7 @@ import java.util.concurrent.Future;
  *
  * @author jkc25
  */
-public final class Utils {
+final class Utils {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Utils.class);
 

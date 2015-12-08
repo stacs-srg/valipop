@@ -30,7 +30,7 @@ import java.util.Map;
  *
  * @author jkc25, frjd2
  */
-public final class CodeIndexer implements Serializable {
+final class CodeIndexer implements Serializable {
 
     private static final long serialVersionUID = 3073583599428985116L;
 

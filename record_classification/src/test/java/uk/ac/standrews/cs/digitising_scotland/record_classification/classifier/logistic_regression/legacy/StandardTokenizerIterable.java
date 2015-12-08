@@ -27,7 +27,7 @@ import java.util.Iterator;
 /**
  * Created by fraserdunlop on 24/04/2014 at 14:08.
  */
-public class StandardTokenizerIterable implements Iterable<CharTermAttribute> {
+class StandardTokenizerIterable implements Iterable<CharTermAttribute> {
 
     /** The tokenizer. */
     private StandardTokenizer tokenizer;

@@ -26,7 +26,7 @@ import java.io.*;
  * Factory for creating buffered readers and writers from Files.
  * Created by fraserdunlop on 13/10/2014 at 09:55.
  */
-public class ReaderWriterFactory {
+class ReaderWriterFactory {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ReaderWriterFactory.class);
 

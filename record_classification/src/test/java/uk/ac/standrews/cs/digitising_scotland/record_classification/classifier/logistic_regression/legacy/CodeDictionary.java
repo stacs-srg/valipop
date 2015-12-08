@@ -28,7 +28,7 @@ import java.util.*;
  *
  * @author jkc25, frjd2
  */
-public class CodeDictionary implements Iterable<String> {
+class CodeDictionary implements Iterable<String> {
 
     /**
      * The Constant LOGGER.

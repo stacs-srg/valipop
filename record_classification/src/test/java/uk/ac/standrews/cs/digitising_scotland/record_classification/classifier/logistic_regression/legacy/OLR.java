@@ -30,7 +30,7 @@ import java.util.concurrent.atomic.AtomicLong;
 /**
  * An online logistic regression model.
  */
-public class OLR implements Serializable {
+class OLR implements Serializable {
 
     private static final long serialVersionUID = 4157757308558382483L;
 

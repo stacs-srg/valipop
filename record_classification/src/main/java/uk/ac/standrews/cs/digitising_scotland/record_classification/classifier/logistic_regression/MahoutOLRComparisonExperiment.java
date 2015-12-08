@@ -16,31 +16,39 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.logistic_regression;
 
+import com.beust.jcommander.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.logistic_regression.legacy.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.experiments.generic.*;
+import uk.ac.standrews.cs.util.tools.*;
 
 import java.io.*;
 import java.util.*;
 import java.util.function.*;
 
-public class MahoutOLRVsLegacyExperiment extends Experiment {
+public class MahoutOLRComparisonExperiment extends Experiment {
 
-    protected MahoutOLRVsLegacyExperiment(final String[] args) throws IOException, InputFileFormatException {
+
+    @Parameter(names = {"-f", "--folds"}, description = "Number of folds in cross fold OLR.")
+    private int folds = 4;
+
+    @Parameter(names = {"-p", "--passes"}, description = "Number of passes over training records.")
+    private int passes = 30;
+    
+    protected MahoutOLRComparisonExperiment(final String[] args) throws IOException, InputFileFormatException {
 
         super(args);
     }
 
     public static void main(final String[] args) throws Exception {
 
-        final MahoutOLRVsLegacyExperiment experiment = new MahoutOLRVsLegacyExperiment(args);
+        final MahoutOLRComparisonExperiment experiment = new MahoutOLRComparisonExperiment(args);
         experiment.call();
     }
 
     @Override
     protected List<Supplier<Classifier>> getClassifierFactories() throws IOException, InputFileFormatException {
 
-        return Arrays.asList(MahoutOLR::new, OLRClassifier::new);
+        return Arrays.asList(() -> new AdaptiveOLRClassifier(passes), () -> new CrossFoldOLRClassifier(folds, passes));
     }
 }
