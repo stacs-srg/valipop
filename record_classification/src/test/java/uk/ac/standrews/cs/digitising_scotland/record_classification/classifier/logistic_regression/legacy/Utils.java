@@ -18,7 +18,9 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import uk.ac.standrews.cs.util.tools.*;
 
+import java.io.*;
 import java.util.Collection;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -28,6 +30,7 @@ import java.util.concurrent.Future;
  * Utility classes related to writing to files and other often used methods.
  *
  * @author jkc25
+ * @author fraser dunlop
  */
 final class Utils {
 
@@ -52,5 +55,24 @@ final class Utils {
 
             }
         }
+    }
+
+    /**
+     * Constructs a {@link java.io.BufferedReader} with the default File_Charset specified in {@link FileManipulation}.
+     * @param inputFile the file to create the reader for
+     * @return BufferedReader for the specified file
+     */
+    public static BufferedReader createBufferedReader(final File inputFile) {
+
+        BufferedReader br = null;
+        try {
+            br = new BufferedReader(new InputStreamReader(new FileInputStream(inputFile.getAbsolutePath()), FileManipulation.FILE_CHARSET));
+        }
+        catch (FileNotFoundException e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+
+        return br;
+
     }
 }
