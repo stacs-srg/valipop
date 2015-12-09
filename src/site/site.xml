@@ -40,6 +40,7 @@
             <item name="Publications"  href="publications.html" />
             <item name="Presentations" href="presentations.html" />
             <item name="Software"      href="project-info.html" />
+            <item name="classli"      href="record_classification/cli/index.html" />
         </links>
     </body>
 

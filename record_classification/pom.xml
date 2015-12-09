@@ -190,7 +190,7 @@
 
     <dependencies>
 
-        <dependency>
+    <dependency>
             <!-- CSV manipulation utility classes -->
             <groupId>uk.ac.standrews.cs</groupId>
             <artifactId>ciesvium</artifactId>
