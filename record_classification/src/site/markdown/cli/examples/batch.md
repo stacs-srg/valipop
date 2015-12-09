@@ -1,9 +1,4 @@
-# Examples
-
-This page describes a few example scenarios on how to use `classli`.
-
-
-## Example 1: Batch Command Execution
+# Batch Command Execution Example
 
 In order to execute multiple commands at once, the commands need to be specified in a text file, where each line in the file corresponds to a command and its options.
 Here is an example:
@@ -68,17 +63,3 @@ The file is then passed to `classli` for execution:
 The `-c` option enables batch command execution mode in `classli`, and `commands.txt` appearing after `-c` option specifies where to find the file containing the commands.
 
 
-<!--
-
-## Example 1: Simple Classification of Records
-
-Assume we would like to classify the following strings :
-
-    cat walking on the wall
-    dog barking at the car
-    monkey hanging off the tree
-    ape looking at the sea
-    polar bear looking pale
-    snail leaving a trail
-
--->

@@ -17,7 +17,6 @@
 package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.logistic_regression;
 
 import org.apache.mahout.classifier.*;
-import org.apache.mahout.classifier.sgd.*;
 import org.apache.mahout.math.*;
 import org.apache.mahout.math.Vector;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.*;
