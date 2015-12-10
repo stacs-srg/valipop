@@ -17,11 +17,13 @@
 package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.logistic_regression;
 
 import org.apache.mahout.classifier.*;
+import org.apache.mahout.classifier.sgd.*;
 import org.apache.mahout.math.*;
 import org.apache.mahout.math.Vector;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 
+import java.io.*;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.*;
@@ -31,7 +33,13 @@ import java.util.stream.*;
 /**
  * @author masih
  */
-public abstract class OLRClassifier extends SingleClassifier {
+public class OLRClassifier extends SingleClassifier implements Externalizable {
+
+    /** The default number of folds in cross-fold learner. **/
+    public static final int DEFAULT_FOLDS = 4;
+
+    /** The default number of iterations over the training records. **/
+    public static final int DEFAULT_ITERATIONS_OVER_TRAINING_DATA = 30;
 
     private static final long serialVersionUID = 5972187130211865595L;
 
@@ -48,9 +56,27 @@ public abstract class OLRClassifier extends SingleClassifier {
     private final ConcurrentHashMap<String, Integer> classification_to_index;
     private final ConcurrentHashMap<Integer, String> index_to_classification;
     private final ConcurrentHashMap<String, Integer> token_to_index;
-    private transient AbstractVectorClassifier classifier;
+    private final int folds;
+    private final int training_iteration;
+
+    private transient Optional<Random> random;
+    private transient CrossFoldLearner model;
 
     public OLRClassifier() {
+
+        this(DEFAULT_FOLDS, DEFAULT_ITERATIONS_OVER_TRAINING_DATA);
+    }
+
+    public OLRClassifier(int folds, int training_iteration) {
+
+        this(folds, training_iteration, Optional.empty());
+    }
+
+    public OLRClassifier(int folds, int training_iteration, Optional<Random> random) {
+
+        this.folds = folds;
+        this.training_iteration = training_iteration;
+        this.random = random;
 
         index_to_classification = new ConcurrentHashMap<>();
         classification_to_index = new ConcurrentHashMap<>();
@@ -69,7 +95,7 @@ public abstract class OLRClassifier extends SingleClassifier {
 
             final TokenList tokens = new TokenList(unclassified);
             final Vector vector = toFeatureVector(tokens);
-            final Vector classification_probability_vector = classifier.classifyFull(vector);
+            final Vector classification_probability_vector = model.classifyFull(vector);
             final int most_probable_classification_index = classification_probability_vector.maxValueIndex();
 
             if (index_to_classification.containsKey(most_probable_classification_index)) {
@@ -84,14 +110,14 @@ public abstract class OLRClassifier extends SingleClassifier {
         return classification;
     }
 
-    private boolean isTrained() { return classifier != null; }
+    private boolean isTrained() { return model != null; }
 
     @Override
     public void trainModel(final Bucket training_records) {
 
         requireUntrainedModel();
         index(training_records);
-        classifier = train(toOnlineLainingRecords(training_records));
+        train(toOnlineLainingRecords(training_records));
     }
 
     protected List<OnlineTrainingRecord> toOnlineLainingRecords(final Bucket training_records) {
@@ -99,7 +125,83 @@ public abstract class OLRClassifier extends SingleClassifier {
         return training_records.parallelStream().map(this::toOnlineTrainingRecord).collect(Collectors.toList());
     }
 
-    protected abstract AbstractVectorClassifier train(final List<OnlineTrainingRecord> training_records);
+    protected void train(final List<OnlineTrainingRecord> training_records) {
+
+        model = initModel();
+
+        final int training_records_size = training_records.size();
+        final int total_training_steps = training_records_size * training_iteration;
+
+        resetTrainingProgressIndicator(total_training_steps);
+
+        final List<ForkJoinTask<?>> training_iterations = new ArrayList<>();
+        final ForkJoinPool pool = ForkJoinPool.commonPool();
+        try {
+            for (int i = 0; i < training_iteration; i++) {
+
+                final ForkJoinTask<?> training_iteration = pool.submit(() -> {
+                    shuffle(training_records).parallelStream().forEach(record -> train(model, record));
+                });
+                training_iterations.add(training_iteration);
+            }
+        }
+        finally {
+            model.close();
+        }
+
+        awaitCompletion(training_iterations);
+    }
+
+    private CrossFoldLearner initModel() {
+
+        final PriorFunction regularisation = new L2();
+        final int categories = countCategories();
+        final int features = countFeatures();
+        return new CrossFoldLearner(folds, categories, features, regularisation);
+    }
+
+    private List<OnlineTrainingRecord> shuffle(final List<OnlineTrainingRecord> olr_training_records) {
+
+        List<OnlineTrainingRecord> shuffled = new ArrayList<>(olr_training_records);
+        Collections.shuffle(shuffled, getRandom());
+
+        return shuffled;
+    }
+
+    protected void train(final OnlineLearner model, final OnlineTrainingRecord record) {
+
+        model.train(record.id, record.code, record.feature_vector);
+        progressTrainingStep();
+    }
+
+    protected Random getRandom() {
+
+        return random.isPresent() ? random.get() : ThreadLocalRandom.current();
+    }
+
+    private void awaitCompletion(final List<ForkJoinTask<?>> training_iterations) {
+
+        for (ForkJoinTask<?> iteration : training_iterations) {
+            try {
+                iteration.get();
+            }
+            catch (InterruptedException error) {
+                cancel(training_iterations);
+                throw new RuntimeException("interrupted while awaiting training completion", error);
+            }
+            catch (ExecutionException error) {
+                cancel(training_iterations);
+                throw new RuntimeException("error while training", error.getCause());
+            }
+        }
+    }
+
+    private void cancel(final List<ForkJoinTask<?>> training_iterations) {
+
+        training_iterations.forEach(iteration -> {
+            iteration.cancel(true);
+        });
+    }
 
     protected void requireUntrainedModel() {
 
@@ -138,7 +240,7 @@ public abstract class OLRClassifier extends SingleClassifier {
     @Override
     protected void clearModel() {
 
-        classifier = null;
+        model = null;
         token_to_index.clear();
         classification_to_index.clear();
         index_to_classification.clear();
@@ -150,9 +252,7 @@ public abstract class OLRClassifier extends SingleClassifier {
     protected Vector toFeatureVector(final TokenList tokens) {
 
         final Vector vector = new RandomAccessSparseVector(countFeatures());
-
         setIntercept(vector);
-
         tokens.forEach(token -> {
             if (isTokenIndexed(token)) {
                 final Integer index = getIndexToken(token);
@@ -199,10 +299,38 @@ public abstract class OLRClassifier extends SingleClassifier {
     @Override
     public String getDescription() {
 
-        return "Classifies using Mahout Online Logistic Regression Classifier.";
+        return "Classifies using Mahout Online Logistic Regression Classifier and CrossFold learner.";
     }
 
-    protected class OnlineTrainingRecord {
+    @Override
+    public void writeExternal(final ObjectOutput out) throws IOException {
+
+        final boolean trained = model != null;
+        out.writeObject(trained);
+        if (trained) {
+            model.write(out);
+        }
+        final boolean random_set = random.isPresent();
+        out.writeObject(random_set);
+        if (random_set) {
+            out.writeObject(random.get());
+        }
+    }
+
+    @Override
+    public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
+
+        final boolean trained = in.readBoolean();
+
+        if (trained) {
+            model = new CrossFoldLearner();
+            model.readFields(in);
+        }
+        final boolean random_set = in.readBoolean();
+        random = random_set ? Optional.of((Random) in.readObject()) : Optional.empty();
+    }
+
+    private class OnlineTrainingRecord {
 
         protected final long id;
         protected final int code;

@@ -56,16 +56,16 @@ abstract class LoadRecordsCommand extends Command {
     /** The long name of the option that specifies whether to skip the header record in the tabular resource file to be loaded. **/
     public static final String OPTION_SKIP_HEADER_LONG = "--skip_header";
 
-    /** The short name of the option that specifies the index of the column that contains the ID associated to each row, starting from {@value 0}. **/
+    /** The short name of the option that specifies the index of the column that contains the ID associated to each row, starting from {@code 0}. **/
     public static final String OPTION_ID_COLUMN_INDEX_SHORT = "-ii";
 
-    /** The long name of the option that specifies the index of the column that contains the ID associated to each row, starting from {@value 0}. **/
+    /** The long name of the option that specifies the index of the column that contains the ID associated to each row, starting from {@code 0}. **/
     public static final String OPTION_ID_COLUMN_INDEX_LONG = "--id_column_index";
 
-    /** The short name of the option that specifies the index of the column that contains the label associated to each row, starting from {@value 0}. **/
+    /** The short name of the option that specifies the index of the column that contains the label associated to each row, starting from {@code 0}. **/
     public static final String OPTION_LABEL_COLUMN_INDEX_SHORT = "-li";
 
-    /** The long name of the option that specifies the index of the column that contains the label associated to each row, starting from {@value 0}. **/
+    /** The long name of the option that specifies the index of the column that contains the label associated to each row, starting from {@code 0}. **/
     public static final String OPTION_LABEL_COLUMN_INDEX_LONG = "--label_column_index";
 
     /** The default index of the column that contains the ID associated to each row. **/

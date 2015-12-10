@@ -41,6 +41,6 @@ public class MahoutOLRAndLegacyOLRExperiment extends Experiment {
     @Override
     protected List<Supplier<Classifier>> getClassifierFactories() throws IOException, InputFileFormatException {
 
-        return Arrays.asList(CrossFoldOLRClassifier::new, AdaptiveOLRClassifier::new, LegacyOLRClassifier::new);
+        return Arrays.asList(OLRClassifier::new, LegacyOLRClassifier::new);
     }
 }

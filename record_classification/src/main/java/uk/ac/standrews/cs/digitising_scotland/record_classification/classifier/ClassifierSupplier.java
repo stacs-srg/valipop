@@ -44,7 +44,7 @@ public enum ClassifierSupplier implements Supplier<Classifier> {
     STRING_SIMILARITY_JACCARD(ClassifierSupplier::makeJaccardClassifier),
     STRING_SIMILARITY_DICE(ClassifierSupplier::makeDiceClassifier),
 
-    OLR(CrossFoldOLRClassifier::new),
+    OLR(OLRClassifier::new),
     NAIVE_BAYES(NaiveBayesClassifier::new),
 
     VOTING_ENSEMBLE_EXACT_ML_SIMILARITY(ClassifierSupplier::makeVotingEnsembleClassifierWithMLAndStringSimilarity),
