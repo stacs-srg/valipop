@@ -43,6 +43,6 @@ public class ExactMatchAndOLRExperiment extends Experiment {
     @Override
     protected List<Supplier<Classifier>> getClassifierFactories() throws IOException, InputFileFormatException {
 
-        return Arrays.asList(CrossFoldOLRClassifier::new, ExactMatchClassifier::new);
+        return Arrays.asList(OLRClassifier::new, ExactMatchClassifier::new);
     }
 }
