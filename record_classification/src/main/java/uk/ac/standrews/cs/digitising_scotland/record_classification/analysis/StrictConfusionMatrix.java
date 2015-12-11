@@ -30,14 +30,19 @@ public class StrictConfusionMatrix extends ConfusionMatrix {
 
     private static final long serialVersionUID = 983226994385506070L;
 
+    public StrictConfusionMatrix(final Bucket classified_records, final Bucket gold_standard_records) {
+
+        super(classified_records, gold_standard_records);
+    }
+
     public StrictConfusionMatrix(final Bucket classified_records, final Bucket gold_standard_records, Checker checker) {
 
         super(classified_records, gold_standard_records, checker);
     }
 
-    public StrictConfusionMatrix(DataSet classified_records, DataSet gold_standard_records, Checker checker) {
+    public StrictConfusionMatrix(DataSet classified_records, DataSet gold_standard_records) {
 
-        super(classified_records, gold_standard_records, checker);
+        super(classified_records, gold_standard_records);
         initMultipleClassification();
     }
 

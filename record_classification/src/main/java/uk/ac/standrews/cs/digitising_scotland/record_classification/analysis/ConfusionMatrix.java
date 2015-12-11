@@ -16,7 +16,7 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.analysis;
 
-import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.Checker;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.UnknownClassificationException;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.UnclassifiedGoldStandardRecordException;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.UnknownDataException;
@@ -30,6 +30,10 @@ import uk.ac.standrews.cs.util.tools.Logging;
 
 import java.io.Serializable;
 import java.util.*;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.*;
+import java.util.function.*;
+import java.util.logging.*;
 
 /**
  * General implementation of confusion matrix representing the effectiveness of a classification process.
@@ -42,18 +46,23 @@ public abstract class ConfusionMatrix implements Serializable {
 
     private static final long serialVersionUID = -4742093776785376822L;
 
-    private final Map<String, Integer> classification_counts;
-    private final Map<String, Integer> true_positive_counts;
-    private final Map<String, Integer> false_positive_counts;
-    private final Map<String, Integer> true_negative_counts;
-    private final Map<String, Integer> false_negative_counts;
+    private static final Logger LOGGER = Logger.getLogger(ConfusionMatrix.class.getName());
+    private static final UnclassifiedChecker HAS_UNCLASSIFIED_RECORDS = new UnclassifiedChecker();
+    private static final Predicate<List<Bucket>> HAS_INCONSISTENTLY_CODED_RECORDS = new ConsistentCodingChecker().negate();
+
+    private final ConcurrentHashMap<String, AtomicInteger> classification_counts;
+    private final ConcurrentHashMap<String, AtomicInteger> true_positive_counts;
+    private final ConcurrentHashMap<String, AtomicInteger> false_positive_counts;
+    private final ConcurrentHashMap<String, AtomicInteger> true_negative_counts;
+    private final ConcurrentHashMap<String, AtomicInteger> false_negative_counts;
+    private final ConcurrentHashMap<String, String> gold_standard_data_to_code_map;
 
     private Bucket classified_records;
+
     private Bucket gold_standard_records;
+    private transient DataSet classified_records_data_set;
 
-    private DataSet classified_records_data_set;
-    private DataSet gold_standard_records_data_set;
-
+    private transient DataSet gold_standard_records_data_set;
     private int number_of_records;
     private int total_number_of_classifications = 0;
     private int total_number_of_gold_standard_classifications = 0;
@@ -64,27 +73,42 @@ public abstract class ConfusionMatrix implements Serializable {
      *
      * @param classified_records the records that have been classified
      * @param gold_standard_records the gold standard records against which the classified records should be checked
-     * @param checker checker for consistent coding
      * @throws UnknownClassificationException if a code in the classified records does not appear in the gold standard records
      * @throws UnknownDataException if a record in the classified records contains data that does not appear in the gold standard records
      * @throws UnclassifiedGoldStandardRecordException if a record in the gold standard records is not classified
      */
-    ConfusionMatrix(final Bucket classified_records, final Bucket gold_standard_records, Checker checker) {
+    ConfusionMatrix(final Bucket classified_records, final Bucket gold_standard_records) {
+
+        this(classified_records, gold_standard_records, null);
+    }
+
+    /**
+     * Creates a confusion matrix representing the effectiveness of a classification process.
+     *
+     * @param classified_records the records that have been classified
+     * @param gold_standard_records the gold standard records against which the classified records should be checked
+     * @param gold_standard_checker custom checking of gold standard records
+     * @throws UnknownClassificationException if a code in the classified records does not appear in the gold standard records
+     * @throws UnknownDataException if a record in the classified records contains data that does not appear in the gold standard records
+     * @throws UnclassifiedGoldStandardRecordException if a record in the gold standard records is not classified
+     */
+    ConfusionMatrix(final Bucket classified_records, final Bucket gold_standard_records, final Checker gold_standard_checker) {
 
         this.classified_records = classified_records;
         this.gold_standard_records = gold_standard_records;
 
-        classification_counts = new HashMap<>();
-        true_positive_counts = new HashMap<>();
-        true_negative_counts = new HashMap<>();
-        false_positive_counts = new HashMap<>();
-        false_negative_counts = new HashMap<>();
+        classification_counts = new ConcurrentHashMap<>();
+        true_positive_counts = new ConcurrentHashMap<>();
+        true_negative_counts = new ConcurrentHashMap<>();
+        false_positive_counts = new ConcurrentHashMap<>();
+        false_negative_counts = new ConcurrentHashMap<>();
+        gold_standard_data_to_code_map = new ConcurrentHashMap<>();
 
-        checkGoldStandardDataIsClassified();
+        checkGoldStandardDataIsClassifiedAndIsConsistent();
         checkClassifiedDataIsInGoldStandard();
         checkClassifiedToValidCodes();
 
-        if (checker != null && !checker.test(Collections.singletonList(gold_standard_records))) {
+        if (gold_standard_checker != null && !gold_standard_checker.test(gold_standard_records)) {
             throw new RuntimeException("check failed");
         }
 
@@ -97,21 +121,21 @@ public abstract class ConfusionMatrix implements Serializable {
      *
      * @param classified_records the records that have been classified
      * @param gold_standard_records the gold standard records against which the classified records should be checked
-     * @param checker checker for consistent coding
      * @throws UnknownClassificationException if a code in the classified records does not appear in the gold standard records
      * @throws UnknownDataException if a record in the classified records contains data that does not appear in the gold standard records
      * @throws UnclassifiedGoldStandardRecordException if a record in the gold standard records is not classified
      */
-    public ConfusionMatrix(DataSet classified_records, DataSet gold_standard_records, Checker checker) {
+    public ConfusionMatrix(DataSet classified_records, DataSet gold_standard_records) {
 
         this.classified_records_data_set = classified_records;
         this.gold_standard_records_data_set = gold_standard_records;
 
-        classification_counts = new HashMap<>();
-        true_positive_counts = new HashMap<>();
-        true_negative_counts = new HashMap<>();
-        false_positive_counts = new HashMap<>();
-        false_negative_counts = new HashMap<>();
+        classification_counts = new ConcurrentHashMap<>();
+        true_positive_counts = new ConcurrentHashMap<>();
+        true_negative_counts = new ConcurrentHashMap<>();
+        false_positive_counts = new ConcurrentHashMap<>();
+        false_negative_counts = new ConcurrentHashMap<>();
+        gold_standard_data_to_code_map = new ConcurrentHashMap<>();
     }
 
     protected void initMultipleClassification() {
@@ -145,7 +169,7 @@ public abstract class ConfusionMatrix implements Serializable {
      *
      * @return the map
      */
-    public Map<String, Integer> getTruePositiveCounts() {
+    public Map<String, AtomicInteger> getTruePositiveCounts() {
 
         return true_positive_counts;
     }
@@ -156,7 +180,7 @@ public abstract class ConfusionMatrix implements Serializable {
      *
      * @return the map
      */
-    public Map<String, Integer> getFalsePositiveCounts() {
+    public Map<String, AtomicInteger> getFalsePositiveCounts() {
 
         return false_positive_counts;
     }
@@ -167,7 +191,7 @@ public abstract class ConfusionMatrix implements Serializable {
      *
      * @return the map
      */
-    public Map<String, Integer> getFalseNegativeCounts() {
+    public Map<String, AtomicInteger> getFalseNegativeCounts() {
 
         return false_negative_counts;
     }
@@ -178,7 +202,7 @@ public abstract class ConfusionMatrix implements Serializable {
      *
      * @return the map
      */
-    public Map<String, Integer> getTrueNegativeCounts() {
+    public Map<String, AtomicInteger> getTrueNegativeCounts() {
 
         return true_negative_counts;
     }
@@ -203,11 +227,11 @@ public abstract class ConfusionMatrix implements Serializable {
         return sum(true_positive_counts);
     }
 
-    private int sum(Map<String, Integer> counts) {
+    private int sum(Map<String, AtomicInteger> counts) {
 
         int sum = 0;
-        for (int i : counts.values()) {
-            sum += i;
+        for (AtomicInteger i : counts.values()) {
+            sum += i.get();
         }
         return sum;
     }
@@ -231,7 +255,7 @@ public abstract class ConfusionMatrix implements Serializable {
 
         // Don't count unclassified decisions in true negatives.
 
-        return sum(true_negative_counts) - true_negative_counts.get(Classification.UNCLASSIFIED.getCode());
+        return sum(true_negative_counts) - true_negative_counts.get(Classification.UNCLASSIFIED.getCode()).get();
     }
 
     /**
@@ -259,22 +283,20 @@ public abstract class ConfusionMatrix implements Serializable {
      *
      * @return the map
      */
-    public Map<String, Integer> getClassificationCounts() {
+    public Map<String, AtomicInteger> getClassificationCounts() {
 
         return classification_counts;
     }
 
     /**
-     * Checks whether all records in the gold standard records are classified.
+     * Checks whether all records in the gold standard records are classified and classified consistently.
      *
      * @throws UnclassifiedGoldStandardRecordException if they are not
      */
-    private void checkGoldStandardDataIsClassified() {
+    private void checkGoldStandardDataIsClassifiedAndIsConsistent() {
 
-        for (Record record : gold_standard_records) {
-            if (record.getClassification().isUnclassified()) {
-                throw new UnclassifiedGoldStandardRecordException();
-            }
+        if (HAS_UNCLASSIFIED_RECORDS.or(HAS_INCONSISTENTLY_CODED_RECORDS).test(Collections.singletonList(gold_standard_records))) {
+            throw new UnclassifiedGoldStandardRecordException();
         }
     }
 
@@ -361,10 +383,20 @@ public abstract class ConfusionMatrix implements Serializable {
 
     private void initCounts() {
 
-        for (Record record : gold_standard_records) {
-            initCounts(record.getClassification().getCode());
-        }
+        gold_standard_records.parallelStream().forEach(record -> {
+
+            final String code = record.getClassification().getCode();
+            updateSearchIndex(record);
+            initCounts(code);
+        });
         initCounts(Classification.UNCLASSIFIED.getCode());
+    }
+
+    private void updateSearchIndex(final Record record) {
+
+        final String code = record.getClassification().getCode();
+        final String data = record.getData();
+        gold_standard_data_to_code_map.putIfAbsent(data, code);
     }
 
     private void initCounts(String code) {
@@ -388,7 +420,7 @@ public abstract class ConfusionMatrix implements Serializable {
 
     private void updateCounts() throws UnknownDataException {
 
-        for (Record record : classified_records) {
+        classified_records.parallelStream().forEach(record -> {
 
             Classification classification = record.getClassification();
 
@@ -398,7 +430,7 @@ public abstract class ConfusionMatrix implements Serializable {
             updateCountsForRecord(asserted_code, real_code);
 
             Logging.output(InfoLevel.VERBOSE, record.getOriginalData() + "\t" + real_code + "\t" + classification.getCode() + "\t" + Formatting.format(classification.getConfidence(), 2) + "\t" + classification.getDetail());
-        }
+        });
     }
 
     private void updateCountsForRecord(List<String> classified_record, DataSet gold_standard_records) {
@@ -527,11 +559,8 @@ public abstract class ConfusionMatrix implements Serializable {
 
     private String findGoldStandardCode(String data) throws UnknownDataException {
 
-        for (Record record : gold_standard_records) {
-
-            if (record.getData().equals(data)) {
-                return record.getClassification().getCode();
-            }
+        if (gold_standard_data_to_code_map.containsKey(data)) {
+            return gold_standard_data_to_code_map.get(data);
         }
 
         throw new UnknownDataException("couldn't find gold standard code for data: " + data);
@@ -561,13 +590,10 @@ public abstract class ConfusionMatrix implements Serializable {
         return classificationsMatch(real_code, this_code) && !classificationsMatch(asserted_code, this_code);
     }
 
-    private void initCount(String code, Map<String, Integer> counts) {
+    private void initCount(String code, ConcurrentHashMap<String, AtomicInteger> counts) {
 
         String truncated_code = makeCodeKey(code);
-
-        if (!counts.containsKey(truncated_code)) {
-            counts.put(truncated_code, 0);
-        }
+        counts.computeIfAbsent(truncated_code, key -> new AtomicInteger(0));
     }
 
     private String makeCodeKey(String code) {
@@ -575,11 +601,19 @@ public abstract class ConfusionMatrix implements Serializable {
         return code.equals(Classification.UNCLASSIFIED.getCode()) ? code : significantPartOfCode(code);
     }
 
-    private void incrementCount(String code, Map<String, Integer> counts) {
+    private void incrementCount(String code, ConcurrentHashMap<String, AtomicInteger> counts) {
 
         String truncated_code = makeCodeKey(code);
 
-        counts.put(truncated_code, counts.get(truncated_code) + 1);
+        counts.compute(truncated_code, (key, value) -> {
+
+            if (value == null) {
+                LOGGER.warning(String.format("uninitialised code: %s", truncated_code));
+                value = new AtomicInteger(0);
+            }
+            value.incrementAndGet();
+            return value;
+        });
     }
 
     public double averageClassificationsPerRecord() {

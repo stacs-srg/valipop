@@ -19,7 +19,7 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
 
 import java.io.Serializable;
-import java.util.List;
+import java.util.*;
 import java.util.function.Predicate;
 
 /**
@@ -31,4 +31,20 @@ import java.util.function.Predicate;
  * @author Graham Kirby
  */
 public interface Checker extends Predicate<List<Bucket>>, Serializable {
+
+    default boolean test(Bucket bucket) {
+
+        return test(Collections.singletonList(bucket));
+    }
+
+    default boolean test(Bucket first, final Bucket... rest) {
+
+        final List<Bucket> buckets = new ArrayList<>();
+        buckets.add(first);
+        if (rest != null) {
+            Collections.addAll(buckets, rest);
+        }
+
+        return test(buckets);
+    }
 }

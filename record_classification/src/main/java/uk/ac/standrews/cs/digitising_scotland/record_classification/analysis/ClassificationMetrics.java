@@ -22,6 +22,7 @@ import uk.ac.standrews.cs.util.tools.Logging;
 
 import java.io.Serializable;
 import java.util.*;
+import java.util.concurrent.atomic.*;
 
 import static uk.ac.standrews.cs.util.tools.Formatting.printMetric;
 import static uk.ac.standrews.cs.util.tools.Logging.output;
@@ -76,12 +77,12 @@ public class ClassificationMetrics implements Serializable {
 
         final Map<String, Double> precision_map = new HashMap<>();
 
-        Map<String, Integer> true_positive_counts = confusion_matrix.getTruePositiveCounts();
-        Map<String, Integer> false_positive_counts = confusion_matrix.getFalsePositiveCounts();
+        Map<String, AtomicInteger> true_positive_counts = confusion_matrix.getTruePositiveCounts();
+        Map<String, AtomicInteger> false_positive_counts = confusion_matrix.getFalsePositiveCounts();
 
         for (String code : getCodes()) {
 
-            precision_map.put(code, calculatePrecision(true_positive_counts.get(code), false_positive_counts.get(code)));
+            precision_map.put(code, calculatePrecision(true_positive_counts.get(code).get(), false_positive_counts.get(code).get()));
         }
 
         return precision_map;
@@ -96,12 +97,12 @@ public class ClassificationMetrics implements Serializable {
 
         final Map<String, Double> recall_map = new HashMap<>();
 
-        Map<String, Integer> true_positive_counts = confusion_matrix.getTruePositiveCounts();
-        Map<String, Integer> false_negative_counts = confusion_matrix.getFalseNegativeCounts();
+        Map<String, AtomicInteger> true_positive_counts = confusion_matrix.getTruePositiveCounts();
+        Map<String, AtomicInteger> false_negative_counts = confusion_matrix.getFalseNegativeCounts();
 
         for (String code : getCodes()) {
 
-            recall_map.put(code, calculateRecall(true_positive_counts.get(code), false_negative_counts.get(code)));
+            recall_map.put(code, calculateRecall(true_positive_counts.get(code).get(), false_negative_counts.get(code).get()));
         }
 
         return recall_map;
@@ -116,14 +117,14 @@ public class ClassificationMetrics implements Serializable {
 
         final Map<String, Double> accuracy_map = new HashMap<>();
 
-        Map<String, Integer> true_positive_counts = confusion_matrix.getTruePositiveCounts();
-        Map<String, Integer> true_negative_counts = confusion_matrix.getTrueNegativeCounts();
-        Map<String, Integer> false_positive_counts = confusion_matrix.getFalsePositiveCounts();
-        Map<String, Integer> false_negative_counts = confusion_matrix.getFalseNegativeCounts();
+        Map<String, AtomicInteger> true_positive_counts = confusion_matrix.getTruePositiveCounts();
+        Map<String, AtomicInteger> true_negative_counts = confusion_matrix.getTrueNegativeCounts();
+        Map<String, AtomicInteger> false_positive_counts = confusion_matrix.getFalsePositiveCounts();
+        Map<String, AtomicInteger> false_negative_counts = confusion_matrix.getFalseNegativeCounts();
 
         for (String code : getCodes()) {
 
-            accuracy_map.put(code, calculateAccuracy(true_positive_counts.get(code), true_negative_counts.get(code), false_positive_counts.get(code), false_negative_counts.get(code)));
+            accuracy_map.put(code, calculateAccuracy(true_positive_counts.get(code).get(), true_negative_counts.get(code).get(), false_positive_counts.get(code).get(), false_negative_counts.get(code).get()));
         }
 
         return accuracy_map;
@@ -138,13 +139,13 @@ public class ClassificationMetrics implements Serializable {
 
         final Map<String, Double> f1_map = new HashMap<>();
 
-        Map<String, Integer> true_positive_counts = confusion_matrix.getTruePositiveCounts();
-        Map<String, Integer> false_positive_counts = confusion_matrix.getFalsePositiveCounts();
-        Map<String, Integer> false_negative_counts = confusion_matrix.getFalseNegativeCounts();
+        Map<String, AtomicInteger> true_positive_counts = confusion_matrix.getTruePositiveCounts();
+        Map<String, AtomicInteger> false_positive_counts = confusion_matrix.getFalsePositiveCounts();
+        Map<String, AtomicInteger> false_negative_counts = confusion_matrix.getFalseNegativeCounts();
 
         for (String code : getCodes()) {
 
-            f1_map.put(code, calculateF1(true_positive_counts.get(code), false_positive_counts.get(code), false_negative_counts.get(code)));
+            f1_map.put(code, calculateF1(true_positive_counts.get(code).get(), false_positive_counts.get(code).get(), false_negative_counts.get(code).get()));
         }
 
         return f1_map;

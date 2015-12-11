@@ -24,6 +24,7 @@ import uk.ac.standrews.cs.util.tools.FileManipulation;
 
 import java.io.InputStreamReader;
 import java.util.Map;
+import java.util.concurrent.atomic.*;
 
 import static org.junit.Assert.assertEquals;
 
@@ -51,13 +52,13 @@ public class MultipleClassifierConfusionMatrixTest {
             gold_standard_records_csv = new DataSet(reader, ',');
         }
 
-        matrix = new StrictConfusionMatrix(classified_records_csv, gold_standard_records_csv, null);
+        matrix = new StrictConfusionMatrix(classified_records_csv, gold_standard_records_csv);
     }
 
     @Test
     public void perCodeClassificationsCountedCorrectly() {
 
-        Map<String, Integer> classification_counts = matrix.getClassificationCounts();
+        Map<String, AtomicInteger> classification_counts = matrix.getClassificationCounts();
 
         assertCount(2, "fish", classification_counts);
         assertCount(2, "mammal", classification_counts);
@@ -72,7 +73,7 @@ public class MultipleClassifierConfusionMatrixTest {
     @Test
     public void truePositivesCountedCorrectly() {
 
-        Map<String, Integer> true_positive_counts = matrix.getTruePositiveCounts();
+        Map<String, AtomicInteger> true_positive_counts = matrix.getTruePositiveCounts();
 
         assertCount(1, "fish", true_positive_counts);
         assertCount(1, "mammal", true_positive_counts);
@@ -87,7 +88,7 @@ public class MultipleClassifierConfusionMatrixTest {
     @Test
     public void trueNegativesCountedCorrectly() {
 
-        Map<String, Integer> true_negative_counts = matrix.getTrueNegativeCounts();
+        Map<String, AtomicInteger> true_negative_counts = matrix.getTrueNegativeCounts();
 
         assertCount(5, "fish", true_negative_counts);
         assertCount(4, "mammal", true_negative_counts);
@@ -102,7 +103,7 @@ public class MultipleClassifierConfusionMatrixTest {
     @Test
     public void falsePositivesCountedCorrectly() {
 
-        Map<String, Integer> false_positive_counts = matrix.getFalsePositiveCounts();
+        Map<String, AtomicInteger> false_positive_counts = matrix.getFalsePositiveCounts();
 
         assertCount(1, "fish", false_positive_counts);
         assertCount(1, "mammal", false_positive_counts);
@@ -119,7 +120,7 @@ public class MultipleClassifierConfusionMatrixTest {
     @Test
     public void falseNegativesCountedCorrectly() {
 
-        Map<String, Integer> false_negative_counts = matrix.getFalseNegativeCounts();
+        Map<String, AtomicInteger> false_negative_counts = matrix.getFalseNegativeCounts();
 
         assertCount(0, "fish", false_negative_counts);
         assertCount(1, "mammal", false_negative_counts);
@@ -139,10 +140,10 @@ public class MultipleClassifierConfusionMatrixTest {
         assertEquals(3.0 / 7.0, matrix.proportionOfRecordsWithCorrectNumberOfClassifications(), DELTA);
     }
 
-    private void assertCount(int count, String code, Map<String, Integer> counts) {
+    private void assertCount(int count, String code, Map<String, AtomicInteger> counts) {
 
         if (counts.containsKey(code)) {
-            assertEquals(count, (int) counts.get(code));
+            assertEquals(count, counts.get(code).get());
         }
     }
 

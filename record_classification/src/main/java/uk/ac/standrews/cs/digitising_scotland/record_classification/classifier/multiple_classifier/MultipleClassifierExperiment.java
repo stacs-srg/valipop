@@ -209,14 +209,14 @@ public class MultipleClassifierExperiment implements Runnable {
         if (max_matching_prefix_metrics_length > 0) {
             for (int matching_prefix_length = 1; matching_prefix_length <= max_matching_prefix_metrics_length; matching_prefix_length++) {
 
-                printMetrics(new MatchingPrefixConfusionMatrix(matching_prefix_length, classified_records, gold_standard, new ConsistentCodingChecker()));
+                printMetrics(new MatchingPrefixConfusionMatrix(matching_prefix_length, classified_records, gold_standard));
             }
         }
     }
 
     private void logStrictClassificationMetrics() {
 
-        printMetrics(new StrictConfusionMatrix(classified_records, gold_standard, new ConsistentCodingChecker()));
+        printMetrics(new StrictConfusionMatrix(classified_records, gold_standard));
     }
 
     private void printMetrics(final ConfusionMatrix confusion_matrix) {
