@@ -305,6 +305,10 @@ public class OLRClassifier extends SingleClassifier implements Externalizable {
     @Override
     public void writeExternal(final ObjectOutput out) throws IOException {
 
+        out.writeObject(classification_to_index);
+        out.writeObject(index_to_classification);
+        out.writeObject(token_to_index);
+
         final boolean trained = model != null;
         out.writeBoolean(trained);
         if (trained) {
@@ -318,10 +322,19 @@ public class OLRClassifier extends SingleClassifier implements Externalizable {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
 
-        final boolean trained = in.readBoolean();
+        final Map<String, Integer> classification_to_index = (Map<String, Integer>) in.readObject();
+        this.classification_to_index.putAll(classification_to_index);
 
+        final Map<Integer, String> index_to_classification = (Map<Integer, String>) in.readObject();
+        this.index_to_classification.putAll(index_to_classification);
+
+        final Map<String, Integer> token_to_index = (Map<String, Integer>) in.readObject();
+        this.token_to_index.putAll(token_to_index);
+
+        final boolean trained = in.readBoolean();
         if (trained) {
             model = new CrossFoldLearner();
             model.readFields(in);

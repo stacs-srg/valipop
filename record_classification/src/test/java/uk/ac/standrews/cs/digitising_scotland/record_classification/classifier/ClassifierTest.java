@@ -16,17 +16,18 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier;
 
-import org.junit.Test;
+import org.junit.*;
+import org.junit.rules.*;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Classification;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Record;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.TokenList;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.process.serialization.*;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.nio.file.*;
+import java.util.*;
 import java.util.function.Supplier;
 
 import static org.junit.Assert.assertEquals;
@@ -42,24 +43,17 @@ public class ClassifierTest {
 
     protected static final String[] TEST_VALUES = new String[]{"trial", "house", "thought", "quick brown fish", "lazy dogs"};
 
-    protected static final Record[] TRAINING_RECORDS = new Record[]{
-            new Record(1, "trail", new Classification("class1", new TokenList("trail"), 1.0, null)),
-            new Record(2, "mouse", new Classification("class2", new TokenList("mouse"), 1.0, null)),
-            new Record(3, "through", new Classification("class3", new TokenList("through"), 1.0, null)),
-            new Record(4, "quick brown fox", new Classification("class4", new TokenList("quick brown fox"), 1.0, null)),
-            new Record(5, "lazy dog", new Classification("class4", new TokenList("lazy dog"), 1.0, null))
-    };
+    protected static final Record[] TRAINING_RECORDS = new Record[]{new Record(1, "trail", new Classification("class1", new TokenList("trail"), 1.0, null)), new Record(2, "mouse", new Classification("class2", new TokenList("mouse"), 1.0, null)),
+                                                                    new Record(3, "through", new Classification("class3", new TokenList("through"), 1.0, null)), new Record(4, "quick brown fox", new Classification("class4", new TokenList("quick brown fox"), 1.0, null)),
+                                                                    new Record(5, "lazy dog", new Classification("class4", new TokenList("lazy dog"), 1.0, null))};
 
-    protected static final Record[] TEST_RECORDS = new Record[]{
-            new Record(1, TEST_VALUES[0]),
-            new Record(2, TEST_VALUES[1]),
-            new Record(3, TEST_VALUES[2]),
-            new Record(4, TEST_VALUES[3]),
-            new Record(5, TEST_VALUES[4])
-    };
+    protected static final Record[] TEST_RECORDS = new Record[]{new Record(1, TEST_VALUES[0]), new Record(2, TEST_VALUES[1]), new Record(3, TEST_VALUES[2]), new Record(4, TEST_VALUES[3]), new Record(5, TEST_VALUES[4])};
 
     protected Supplier<Classifier> factory;
     protected Bucket training_bucket;
+
+    @Rule
+    public TemporaryFolder temporary = new TemporaryFolder();
 
     @Parameterized.Parameters(name = "{0}")
     public static Collection<Object[]> generateData() {
@@ -115,4 +109,26 @@ public class ClassifierTest {
             assertEquals(0.0, classifier.classify("sdifjsjdf").getConfidence(), DELTA);
         }
     }
+
+    @Test
+    public void testSerialization() throws Exception {
+
+        final Classifier classifier = factory.get();
+        trainOnTrainingRecords(classifier);
+
+        final Bucket classified = classifyTestRecords(classifier);
+
+        final Path file = temporary.newFile().toPath();
+
+        Serialization.persist(file, classifier, SerializationFormat.JAVA_SERIALIZATION);
+        final Classifier deserialised_classifier = Serialization.load(file, Classifier.class, SerializationFormat.JAVA_SERIALIZATION);
+
+        final Bucket actual = classifyTestRecords(deserialised_classifier);
+        assertEquals(classified, actual);
+
+    }
+
+    protected static Bucket classifyTestRecords(final Classifier classifier) {return classifier.classify(new Bucket(TEST_RECORDS));}
+
+    protected static void trainOnTrainingRecords(final Classifier classifier) {classifier.trainAndEvaluate(new Bucket(TRAINING_RECORDS), 0.8, new Random(42));}
 }
