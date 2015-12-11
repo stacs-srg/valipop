@@ -293,7 +293,7 @@ public class Configuration extends ClassificationContext {
     @Override
     public Classifier getClassifier() {
 
-        loadLazily(classifier_loader, this::setClassifier, isClassifierSet(), "classifier");
+        loadLazily(classifier_loader != null ? classifier_loader : classifier_supplier, this::setClassifier, isClassifierSet(), "classifier");
         return super.getClassifier();
     }
 
@@ -445,14 +445,6 @@ public class Configuration extends ClassificationContext {
     public void setClassifierSupplier(final ClassifierSupplier classifier_supplier) {
 
         this.classifier_supplier = classifier_supplier;
-        resetClassifier();
-    }
-
-    private void resetClassifier() {
-
-        if (classifier_supplier != null) {
-            setClassifier(classifier_supplier.get());
-        }
     }
 
     public void persist() throws IOException {

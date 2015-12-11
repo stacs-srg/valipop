@@ -145,6 +145,7 @@ public class Serialization {
                 default:
                     throw new RuntimeException("unknown serialization format " + format);
             }
+            out.flush();
         }
     }
 

@@ -306,12 +306,12 @@ public class OLRClassifier extends SingleClassifier implements Externalizable {
     public void writeExternal(final ObjectOutput out) throws IOException {
 
         final boolean trained = model != null;
-        out.writeObject(trained);
+        out.writeBoolean(trained);
         if (trained) {
             model.write(out);
         }
         final boolean random_set = random.isPresent();
-        out.writeObject(random_set);
+        out.writeBoolean(random_set);
         if (random_set) {
             out.writeObject(random.get());
         }

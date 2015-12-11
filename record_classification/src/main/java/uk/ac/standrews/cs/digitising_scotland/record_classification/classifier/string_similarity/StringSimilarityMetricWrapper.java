@@ -28,7 +28,7 @@ import java.io.Serializable;
  * @author Masih Hajiarab Derkani
  * @author Graham Kirby
  */
-public class StringSimilarityMetricWrapper implements SimilarityMetric, Serializable {
+public class StringSimilarityMetricWrapper implements SimilarityMetric {
 
     private static final long serialVersionUID = -7590079815946529116L;
 
