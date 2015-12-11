@@ -16,7 +16,9 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.string_similarity;
 
-public interface SimilarityMetric {
+import java.io.*;
+
+public interface SimilarityMetric extends Serializable {
 
     float getSimilarity(String one, String other);
     String getDescription();
