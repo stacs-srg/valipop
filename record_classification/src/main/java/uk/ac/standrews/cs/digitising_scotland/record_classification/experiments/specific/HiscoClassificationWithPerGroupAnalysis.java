@@ -340,7 +340,7 @@ public class HiscoClassificationWithPerGroupAnalysis extends Experiment {
             final Set<String> gold_standard_record_ids_in_group = getIdOfRecordsWithMatchingCodePrefix(code_prefix, gold_standard_records);
             final DataSet evaluation_classified_records_in_group = getSubsetById(evaluation_classified_records, gold_standard_record_ids_in_group);
 
-            final StrictConfusionMatrix matrix = new StrictConfusionMatrix(evaluation_classified_records_in_group, gold_standard_records, new ConsistentCodingChecker());
+            final StrictConfusionMatrix matrix = new StrictConfusionMatrix(evaluation_classified_records_in_group, gold_standard_records);
 
             return new ClassificationMetrics(matrix);
         });

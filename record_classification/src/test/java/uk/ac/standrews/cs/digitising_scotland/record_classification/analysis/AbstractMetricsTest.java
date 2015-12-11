@@ -71,7 +71,7 @@ public class AbstractMetricsTest {
 
     protected void initMatrix() throws Exception {
 
-        matrix = new StrictConfusionMatrix(classified_records, gold_standard_records, new ConsistentCodingChecker());
+        matrix = new StrictConfusionMatrix(classified_records, gold_standard_records);
     }
 
     protected void initFullRecords() throws InputFileFormatException {

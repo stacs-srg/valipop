@@ -20,7 +20,8 @@ import java.io.Serializable;
 
 public class Classification implements Serializable {
 
-    public static final Classification UNCLASSIFIED = new Classification("UNCLASSIFIED", TokenList.UNMODIFIABLE_TOKEN_SET, 0.0, null);
+    public static final String UNCLASSIFIED_CODE = "UNCLASSIFIED";
+    public static final Classification UNCLASSIFIED = new Classification(UNCLASSIFIED_CODE, TokenList.UNMODIFIABLE_TOKEN_SET, 0.0, null);
 
     private static final long serialVersionUID = 7074436345885045033L;
 

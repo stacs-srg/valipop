@@ -34,9 +34,9 @@ public class MatchingPrefixConfusionMatrix extends ConfusionMatrix {
         this.matching_prefix_length = matching_prefix_length;
     }
 
-    public MatchingPrefixConfusionMatrix(int matching_prefix_length, DataSet classified_records, DataSet gold_standard_records, Checker checker) {
+    public MatchingPrefixConfusionMatrix(int matching_prefix_length, DataSet classified_records, DataSet gold_standard_records) {
 
-        super(classified_records, gold_standard_records, checker);
+        super(classified_records, gold_standard_records);
         this.matching_prefix_length = matching_prefix_length;
         initMultipleClassification();
     }

@@ -72,12 +72,13 @@ public class EnsembleClassifier extends Classifier {
 
         final int classifiers_count = classifiers.size();
         resetTrainingProgressIndicator(classifiers_count);
-        
+
         LOGGER.info(() -> String.format("training %d classifiers in the %s...", classifiers_count, getName()));
-        for (SingleClassifier classifier : classifiers) {
+
+        classifiers.parallelStream().forEach(classifier -> {
             classifier.trainAndEvaluate(bucket, internal_training_ratio, random);
             progressTrainingStep();
-        }
+        });
 
         if (group != null) {
             group.trainAll(bucket);

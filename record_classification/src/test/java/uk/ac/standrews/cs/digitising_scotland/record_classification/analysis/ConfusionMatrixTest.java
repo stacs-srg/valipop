@@ -21,6 +21,7 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.*
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Classification;
 
 import java.util.Map;
+import java.util.concurrent.atomic.*;
 
 import static org.junit.Assert.assertEquals;
 
@@ -94,14 +95,14 @@ public class ConfusionMatrixTest extends AbstractMetricsTest {
         initFullRecords();
         initMatrix();
 
-        Map<String, Integer> classification_counts = matrix.getClassificationCounts();
+        Map<String, AtomicInteger> classification_counts = matrix.getClassificationCounts();
 
         assertEquals(getNumberOfCodes(), classification_counts.size());
 
-        assertEquals(2, (int) classification_counts.get("fish"));
-        assertEquals(2, (int) classification_counts.get("mammal"));
-        assertEquals(2, (int) classification_counts.get("bird"));
-        assertEquals(0, (int) classification_counts.get("mythical"));
+        assertEquals(2, classification_counts.get("fish").get());
+        assertEquals(2, classification_counts.get("mammal").get());
+        assertEquals(2, classification_counts.get("bird").get());
+        assertEquals(0, classification_counts.get("mythical").get());
     }
 
     @Test
@@ -110,14 +111,14 @@ public class ConfusionMatrixTest extends AbstractMetricsTest {
         initFullRecords();
         initMatrix();
 
-        Map<String, Integer> true_positive_counts = matrix.getTruePositiveCounts();
+        Map<String, AtomicInteger> true_positive_counts = matrix.getTruePositiveCounts();
 
         assertEquals(getNumberOfCodes(), true_positive_counts.size());
 
-        assertEquals(1, (int) true_positive_counts.get("fish"));
-        assertEquals(1, (int) true_positive_counts.get("mammal"));
-        assertEquals(2, (int) true_positive_counts.get("bird"));
-        assertEquals(0, (int) true_positive_counts.get("mythical"));
+        assertEquals(1, true_positive_counts.get("fish").get());
+        assertEquals(1, true_positive_counts.get("mammal").get());
+        assertEquals(2, true_positive_counts.get("bird").get());
+        assertEquals(0, true_positive_counts.get("mythical").get());
     }
 
     @Test
@@ -126,14 +127,14 @@ public class ConfusionMatrixTest extends AbstractMetricsTest {
         initFullRecords();
         initMatrix();
 
-        Map<String, Integer> true_negative_counts = matrix.getTrueNegativeCounts();
+        Map<String, AtomicInteger> true_negative_counts = matrix.getTrueNegativeCounts();
 
         assertEquals(getNumberOfCodes(), true_negative_counts.size());
 
-        assertEquals(5, (int) true_negative_counts.get("fish"));
-        assertEquals(4, (int) true_negative_counts.get("mammal"));
-        assertEquals(4, (int) true_negative_counts.get("bird"));
-        assertEquals(6, (int) true_negative_counts.get("mythical"));
+        assertEquals(5, true_negative_counts.get("fish").get());
+        assertEquals(4, true_negative_counts.get("mammal").get());
+        assertEquals(4, true_negative_counts.get("bird").get());
+        assertEquals(6, true_negative_counts.get("mythical").get());
     }
 
     @Test
@@ -142,15 +143,15 @@ public class ConfusionMatrixTest extends AbstractMetricsTest {
         initFullRecords();
         initMatrix();
 
-        Map<String, Integer> false_positive_counts = matrix.getFalsePositiveCounts();
+        Map<String, AtomicInteger> false_positive_counts = matrix.getFalsePositiveCounts();
 
         assertEquals(getNumberOfCodes(), false_positive_counts.size());
 
-        assertEquals(1, (int) false_positive_counts.get("fish"));
-        assertEquals(1, (int) false_positive_counts.get("mammal"));
-        assertEquals(0, (int) false_positive_counts.get("bird"));
-        assertEquals(0, (int) false_positive_counts.get("mythical"));
-        assertEquals(1, (int) false_positive_counts.get(Classification.UNCLASSIFIED.getCode()));
+        assertEquals(1, false_positive_counts.get("fish").get());
+        assertEquals(1, false_positive_counts.get("mammal").get());
+        assertEquals(0, false_positive_counts.get("bird").get());
+        assertEquals(0, false_positive_counts.get("mythical").get());
+        assertEquals(1, false_positive_counts.get(Classification.UNCLASSIFIED.getCode()).get());
     }
 
     @Test
@@ -159,13 +160,13 @@ public class ConfusionMatrixTest extends AbstractMetricsTest {
         initFullRecords();
         initMatrix();
 
-        Map<String, Integer> false_negative_counts = matrix.getFalseNegativeCounts();
+        Map<String, AtomicInteger> false_negative_counts = matrix.getFalseNegativeCounts();
 
         assertEquals(getNumberOfCodes(), false_negative_counts.size());
 
-        assertEquals(0, (int) false_negative_counts.get("fish"));
-        assertEquals(1, (int) false_negative_counts.get("mammal"));
-        assertEquals(1, (int) false_negative_counts.get("bird"));
-        assertEquals(1, (int) false_negative_counts.get("mythical"));
+        assertEquals(0, false_negative_counts.get("fish").get());
+        assertEquals(1, false_negative_counts.get("mammal").get());
+        assertEquals(1, false_negative_counts.get("bird").get());
+        assertEquals(1, false_negative_counts.get("mythical").get());
     }
 }

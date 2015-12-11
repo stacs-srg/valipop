@@ -147,7 +147,7 @@ public abstract class SingleClassifier extends Classifier {
     private ClassificationMetrics evaluate(final Bucket bucket, final Bucket internal_evaluation_records) {
 
         final Bucket classified_records = classify(internal_evaluation_records, false);
-        final StrictConfusionMatrix confusion_matrix = new StrictConfusionMatrix(classified_records, bucket, new ConsistentCodingChecker());
+        final StrictConfusionMatrix confusion_matrix = new StrictConfusionMatrix(classified_records, bucket);
         return new ClassificationMetrics(confusion_matrix);
     }
 
