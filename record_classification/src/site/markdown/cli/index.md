@@ -22,4 +22,4 @@ The user manual of `classli` CLI is located [here](usage/index.html)
 
 # Examples
 
-Example usage of `classli` can be found in the [examples](examples.html) page.
+Example usage of `classli` can be found in the [examples](examples/index.html) page.
