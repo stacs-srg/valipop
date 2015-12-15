@@ -89,8 +89,6 @@ public class Launcher {
     //TODO feature: update usage to display description of enums using a custom annotation
     //TODO feature: move exception messages into a resource bundle? this is useful for possible future internationalization of CLI.
     //TODO feature: JScience: floating point accuracy.
-    //FIXME Javadoc
-    //FIXME website: the what, the why, the how, table of commands and their description.
     //TODO feature: javascript command generator?
 
     public Launcher() {

@@ -31,18 +31,20 @@ import java.util.logging.*;
 import java.util.stream.*;
 
 /**
- * @author masih
+ * @author Masih Hajararab Derkani
  */
 public class OLRClassifier extends SingleClassifier implements Externalizable {
 
     /** The default number of folds in cross-fold learner. **/
     public static final int DEFAULT_FOLDS = 4;
 
+    /** Short description of this classifier. **/
+    public static final String DESCRIPTION = "Classifies using Mahout Online Logistic Regression Classifier and CrossFold learner.";
+
     /** The default number of iterations over the training records. **/
     public static final int DEFAULT_ITERATIONS_OVER_TRAINING_DATA = 30;
 
     private static final long serialVersionUID = 5972187130211865595L;
-
     // why intercept is used: http://statistiksoftware.blogspot.nl/2013/01/why-we-need-intercept.html
     private static final int INTERCEPT_OFFSET = 1;
     private static final int INTERCEPT_VECTOR_INDEX = 0;
@@ -117,10 +119,10 @@ public class OLRClassifier extends SingleClassifier implements Externalizable {
 
         requireUntrainedModel();
         index(training_records);
-        train(toOnlineLainingRecords(training_records));
+        train(toOnlineTrainingRecords(training_records));
     }
 
-    protected List<OnlineTrainingRecord> toOnlineLainingRecords(final Bucket training_records) {
+    protected List<OnlineTrainingRecord> toOnlineTrainingRecords(final Bucket training_records) {
 
         return training_records.parallelStream().map(this::toOnlineTrainingRecord).collect(Collectors.toList());
     }
@@ -212,6 +214,7 @@ public class OLRClassifier extends SingleClassifier implements Externalizable {
 
     protected void index(final Bucket training_records) {
 
+        LOGGER.info(() -> String.format("indexing %d training records...", training_records.size()));
         training_records.parallelStream().map(Record::getClassification).forEach(classification -> {
 
             final String original_code = classification.getCode();
@@ -299,7 +302,7 @@ public class OLRClassifier extends SingleClassifier implements Externalizable {
     @Override
     public String getDescription() {
 
-        return "Classifies using Mahout Online Logistic Regression Classifier and CrossFold learner.";
+        return DESCRIPTION;
     }
 
     @Override
