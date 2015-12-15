@@ -31,6 +31,21 @@ Here is the content of the training data set:
     8,snake,reptile
     9,ant,insect
     10,moose,mammal
+    11,monkey,mammal
+    12,fly,insect
+    13,lizard,reptile
+    14,firefly,insect
+    15,spider,insect
+    16,parrot,bird
+    17,toad,amphibian
+    18,salamander,amphibian
+    19,newt,amphibian
+    20,gecko,reptile
+    21,aligator,reptile
+    22,viper,reptile
+    23,tortoise,reptile
+    24,eagle,bird
+    25,sparrow,bird
 
 Store the training data set into the folder we created earlier, in a file named *training_data.csv*.
 
