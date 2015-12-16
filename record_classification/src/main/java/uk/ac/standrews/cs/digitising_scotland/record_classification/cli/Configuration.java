@@ -337,11 +337,7 @@ public class Configuration extends ClassificationContext {
 
         final Path new_home = getHome(working_directory);
         final Path current_home = getHome();
-        if (Files.isDirectory(new_home)) {
-            LOGGER.warning("a configuration folder already exists in working directory: " + working_directory);
-            //FIXME reload config.
-        }
-        else {
+        if (!Files.isDirectory(new_home)) {
 
             if (Files.isDirectory(current_home)) {
                 try {
