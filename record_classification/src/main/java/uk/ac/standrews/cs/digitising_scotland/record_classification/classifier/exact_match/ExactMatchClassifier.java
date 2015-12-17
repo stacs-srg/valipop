@@ -27,6 +27,9 @@ import java.util.logging.*;
 
 public class ExactMatchClassifier extends SingleClassifier {
 
+    /** The description of this classifier **/
+    public static final String DESCRIPTION = "Classifies based on exact match with training data";
+    
     private static final long serialVersionUID = 7439350806549465200L;
     private static final Logger LOGGER = Logger.getLogger(ExactMatchClassifier.class.getName());
 
@@ -71,7 +74,7 @@ public class ExactMatchClassifier extends SingleClassifier {
     @Override
     public String getDescription() {
 
-        return "Classifies based on exact match with training data";
+        return DESCRIPTION;
     }
 
     @Override

@@ -17,28 +17,49 @@
 package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.naive_bayes;
 
 import org.junit.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 
 import static org.junit.Assert.*;
 
 /**
- * @author masih
+ * @author Masih Hajiarab Derkani
  */
-public class NaiveBayesClassifierTest {
+public class NaiveBayesClassifierTest extends ClassifierTest {
 
-    //TODO improve tests
+    private static final Bucket GOLD_STANDARD_WITH_SPACE_IN_CODE_PREFIX_SUFFIX = new Bucket();
+
+    static {
+        GOLD_STANDARD_WITH_SPACE_IN_CODE_PREFIX_SUFFIX.add(new Record(1, "fish", new Classification("swims", new TokenList("fish"), 1.0, null)));
+        GOLD_STANDARD_WITH_SPACE_IN_CODE_PREFIX_SUFFIX.add(new Record(2, "fish", new Classification("swims   ", new TokenList("fish"), 1.0, null)));
+        GOLD_STANDARD_WITH_SPACE_IN_CODE_PREFIX_SUFFIX.add(new Record(3, "fish", new Classification("   swims", new TokenList("fish"), 1.0, null)));
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void trainingFailsIfClassificationCodeIsUntrimmed() throws Exception {
+
+        // bug in weka: seems to internally trim codes 
+        // fixed by trimming classification codes prior to training
+
+        final NaiveBayesClassifier classifier = newClassifier();
+        classifier.trainModel(GOLD_STANDARD_WITH_SPACE_IN_CODE_PREFIX_SUFFIX);
+    }
+
     @Test
-    public void testSpaceInClassificationCodeDuringTraining() throws Exception {
+    public void trainingSucceedsIfClassificationCodeIsTrimmed() throws Exception {
 
-        final NaiveBayesClassifier classifier = new NaiveBayesClassifier();
-        final Bucket gold_standard = new Bucket();
+        // bug in weka: seems to internally trim codes
+        // fixed by trimming classification codes prior to training
 
-        gold_standard.add(new Record(1, "fish", new Classification("swims", new TokenList("fish"), 1.0, null)));
-        gold_standard.add(new Record(2, "fish", new Classification("swims ", new TokenList("fish"), 1.0, null)));
+        final NaiveBayesClassifier classifier = newClassifier();
+        final Bucket gold_standard_with_trimmed_code = new TrimClassificationCodesCleaner().apply(GOLD_STANDARD_WITH_SPACE_IN_CODE_PREFIX_SUFFIX);
+        classifier.trainModel(gold_standard_with_trimmed_code);
+    }
 
-        final Bucket cleaned_gold_standard = new TrimClassificationCodesCleaner().apply(gold_standard);
+    @Override
+    protected NaiveBayesClassifier newClassifier() {
 
-        classifier.trainModel(cleaned_gold_standard);
+        return new NaiveBayesClassifier();
     }
 }

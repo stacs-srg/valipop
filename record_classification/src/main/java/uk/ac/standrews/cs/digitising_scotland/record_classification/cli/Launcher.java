@@ -46,50 +46,21 @@ public class Launcher {
     /** The long name of the option that specifies the path to a file containing the batch commands to be executed. **/
     public static final String OPTION_COMMANDS_LONG = "--commands";
 
+    protected static final String JVM_LOGGING_CONFIG_PROPERTY = "java.util.logging.config.file";
+    protected static final String JVM_HEADLESS_PROPERTY = "java.awt.headless";
+
     private static final Logger LOGGER = Logger.getLogger(Launcher.class.getName());
 
     static {
         setCLISystemProperties();
     }
 
-    public static void setCLISystemProperties() {
-
-        if (System.getProperty("java.awt.headless") == null) {
-            System.setProperty("java.awt.headless", "true");
-        }
-        if (System.getProperty("java.util.logging.config.file") == null) {
-            try {
-
-                LogManager.getLogManager().readConfiguration(Configuration.class.getResourceAsStream("logging.properties"));
-            }
-            catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
     private JCommander commander;
     private Configuration configuration;
-
     @Parameter(names = {OPTION_HELP_SHORT, OPTION_HELP_LONG}, descriptionKey = "launcher.usage.description", help = true)
     private boolean help;
-
     @Parameter(names = {OPTION_COMMANDS_SHORT, OPTION_COMMANDS_LONG}, descriptionKey = "launcher.commands.description", converter = PathConverter.class)
     private Path commands;
-
-    //TODO feature: implement interactive mode
-    //TODO //@Parameter(names = {"-i", "--interactive"}, description = "Interactive mode; allows multiple command execution.")
-    //TODO //private boolean interactive;
-
-    //TODO feature: help command: prints usage, describes individual commands, parameters to the commands, etc.;e.g. help classifier STRING_SIMILARITY
-    //TODO feature: status command: prints the current state of the classification process, such as set variables, etc.
-    //TODO feature: think whether to have report command: answer a set of predefined queries about the current state.
-    //TODO feature: think whether to have do command: exposes general utilities for one-off execution, clean, unique, split, remove_duplicates, word_frequency_analysis, sort.
-    //TODO feature: import/export command: import/export pre-trained classifier.
-    //TODO feature: update usage to display description of enums using a custom annotation
-    //TODO feature: move exception messages into a resource bundle? this is useful for possible future internationalization of CLI.
-    //TODO feature: JScience: floating point accuracy.
-    //TODO feature: javascript command generator?
 
     public Launcher() {
 
@@ -121,6 +92,22 @@ public class Launcher {
         }
     }
 
+    public static void setCLISystemProperties() {
+
+        if (System.getProperty(JVM_HEADLESS_PROPERTY) == null) {
+            System.setProperty(JVM_HEADLESS_PROPERTY, "true");
+        }
+        if (System.getProperty(JVM_LOGGING_CONFIG_PROPERTY) == null) {
+            try {
+
+                LogManager.getLogManager().readConfiguration(Configuration.class.getResourceAsStream("logging.properties"));
+            }
+            catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     public static void main(String... args) {
 
         try {
@@ -129,7 +116,7 @@ public class Launcher {
             launcher.run();
         }
         catch (RuntimeException error) {
-            
+
             final Throwable cause = error.getCause();
             if (cause instanceof FileAlreadyExistsException) {
                 FileAlreadyExistsException exception = (FileAlreadyExistsException) cause;

@@ -17,31 +17,73 @@
 package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.logistic_regression;
 
 import org.junit.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.logistic_regression.legacy.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.dataset.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 
+import java.util.*;
 import java.util.function.*;
+import java.util.logging.*;
 
 import static org.junit.Assert.*;
 
 /**
- * @author masih
+ * @author Masih Hajiarab Derkani
  */
 public class OLRClassifierTest extends ClassifierTest {
 
-    public OLRClassifierTest(final Supplier<Classifier> factory) {
+    private static final int SEED = 42;
 
-        super(factory);
+    @Test(expected = UnsupportedOperationException.class)
+    public void trainingAlreadyTrainedClassifierFails() throws Exception {
+
+        final OLRClassifier classifier = newClassifier();
+
+        assertFalse(classifier.isTrained());
+        classifier.trainModel(training_bucket);
+        assertTrue(classifier.isTrained());
+        classifier.trainModel(training_bucket); //expected exception
     }
 
     @Test
-    public void testClassifiesToUnclassifiedIfUntrained() throws Exception {
+    public void mahoutOLRClassifierOutperformsLegacyOLRClassifier() throws Exception {
 
-        final OLRClassifier classifier = new OLRClassifier();
+        TestDataSets.ALL_TRAINING_DATASETS.stream().map(TestDataSet::getBucket).forEach(this::assertMahoutOutperformsLegacy);
+    }
+
+    private void assertMahoutOutperformsLegacy(final Bucket gold_standard) {
+
         
-        assertEquals(Classification.UNCLASSIFIED, classifier.doClassify("fish"));
-        assertEquals(Classification.UNCLASSIFIED, classifier.doClassify("sssda"));
-        assertEquals(Classification.UNCLASSIFIED, classifier.doClassify("rrr"));
-        assertEquals(Classification.UNCLASSIFIED, classifier.doClassify(""));
+        final Bucket cleaned_gold_standard = CleanerSupplier.CONSISTENT_CLASSIFICATION_CLEANER_CORRECT.get().apply(gold_standard);
+        final Bucket training = cleaned_gold_standard.randomSubset(new Random(SEED), 0.8);
+        final Bucket evaluation = cleaned_gold_standard.difference(training).stripRecordClassifications();
+
+        final LegacyOLRClassifier legacy = new LegacyOLRClassifier();
+        legacy.trainModel(training);
+        final StrictConfusionMatrix legacy_matrix = new StrictConfusionMatrix(legacy.classify(evaluation), cleaned_gold_standard);
+        final ClassificationMetrics legacy_metrics = new ClassificationMetrics(legacy_matrix);
+
+        final OLRClassifier mahout = newClassifier();
+        mahout.trainModel(training);
+        final StrictConfusionMatrix mahout_matrix = new StrictConfusionMatrix(mahout.classify(evaluation), cleaned_gold_standard);
+        final ClassificationMetrics mahout_metrics = new ClassificationMetrics(mahout_matrix);
+
+        assertTrue(legacy_metrics.getMacroAverageAccuracy() <= mahout_metrics.getMacroAverageAccuracy());
+        assertTrue(legacy_metrics.getMacroAverageF1() <= mahout_metrics.getMacroAverageF1());
+        assertTrue(legacy_metrics.getMacroAveragePrecision() <= mahout_metrics.getMacroAveragePrecision());
+        assertTrue(legacy_metrics.getMacroAverageRecall() <= mahout_metrics.getMacroAverageRecall());
+        assertTrue(legacy_metrics.getMicroAverageAccuracy() <= mahout_metrics.getMicroAverageAccuracy());
+        assertTrue(legacy_metrics.getMicroAverageF1() <= mahout_metrics.getMicroAverageF1());
+        assertTrue(legacy_metrics.getMicroAveragePrecision() <= mahout_metrics.getMicroAveragePrecision());
+        assertTrue(legacy_metrics.getMicroAverageRecall() <= mahout_metrics.getMicroAverageRecall());
+    }
+
+    @Override
+    protected OLRClassifier newClassifier() {
+
+        return new OLRClassifier();
     }
 }

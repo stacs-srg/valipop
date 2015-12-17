@@ -16,35 +16,42 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.ensemble;
 
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.SingleClassifier;
+import org.junit.runner.*;
+import org.junit.runners.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.*;
 
-import java.util.Collection;
+import java.util.*;
+import java.util.function.*;
+
+import static org.junit.Assert.*;
 
 /**
- * @author Graham Kirby
+ * @author masih
  */
-public class EnsembleVotingClassifier extends EnsembleClassifier {
+@RunWith(Parameterized.class)
+public class EnsembleVotingClassifierTest extends ClassifierTest {
 
-    private static final long serialVersionUID = 6432371860467757296L;
+    private Supplier<Classifier> factory;
 
-    /**
-     * Needed for JSON deserialization.
-     */
-    public EnsembleVotingClassifier() {
+    @Parameterized.Parameters(name = "{0}")
+    public static Collection<Object[]> generateData() {
+
+        List<Object[]> result = new ArrayList<>();
+
+        result.add(new Object[]{ClassifierSupplier.VOTING_ENSEMBLE_EXACT_ML_SIMILARITY});
+        result.add(new Object[]{ClassifierSupplier.VOTING_ENSEMBLE_EXACT_SIMILARITY});
+
+        return result;
     }
 
-    /**
-     * Instantiates a new ensemble classifier.
-     *
-     * @param classifiers the classifiers
-     */
-    public EnsembleVotingClassifier(Collection<SingleClassifier> classifiers) {
+    public EnsembleVotingClassifierTest(Supplier<Classifier> factory) {
 
-        super(classifiers, new VotingResolutionStrategy());
+        this.factory = factory;
     }
 
-    public EnsembleVotingClassifier(Collection<SingleClassifier> classifiers, StringSimilarityGroupWithSharedState group) {
+    @Override
+    protected Classifier newClassifier() {
 
-        super(classifiers, group, new VotingResolutionStrategy());
+        return factory.get();
     }
 }

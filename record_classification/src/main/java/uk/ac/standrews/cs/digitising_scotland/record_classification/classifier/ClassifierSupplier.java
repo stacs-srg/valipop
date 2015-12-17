@@ -16,7 +16,7 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier;
 
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.composite.StringSimilarityGroupWithSharedState;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.ensemble.StringSimilarityGroupWithSharedState;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.ensemble.EnsembleVotingClassifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.exact_match.ExactMatchClassifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.logistic_regression.*;
@@ -28,6 +28,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.function.Supplier;
+
+import static uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.string_similarity.StringSimilaritySupplier.*;
 
 /**
  * Classifiers that are accessible via the command-line interface.
@@ -72,48 +74,34 @@ public enum ClassifierSupplier implements Supplier<Classifier> {
         return this == VOTING_ENSEMBLE_EXACT_ML_SIMILARITY || this == VOTING_ENSEMBLE_EXACT_SIMILARITY;
     }
 
-    public static Collection<Supplier<Classifier>> getStringSimilarityClassifiers() {
-
-        return Arrays.asList(STRING_SIMILARITY_DICE, STRING_SIMILARITY_JACCARD,
-                STRING_SIMILARITY_JARO_WINKLER, STRING_SIMILARITY_LEVENSHTEIN);
-    }
-
     private static StringSimilarityClassifier makeDiceClassifier() {
-        return new StringSimilarityClassifier(StringSimilaritySupplier.DICE.get());
+
+        return new StringSimilarityClassifier(DICE.get());
     }
 
     private static StringSimilarityClassifier makeJaccardClassifier() {
-        return new StringSimilarityClassifier(StringSimilaritySupplier.JACCARD.get());
+
+        return new StringSimilarityClassifier(JACCARD.get());
     }
 
     private static StringSimilarityClassifier makeJaroWinklerClassifier() {
-        return new StringSimilarityClassifier(StringSimilaritySupplier.JARO_WINKLER.get());
+
+        return new StringSimilarityClassifier(JARO_WINKLER.get());
     }
 
     private static StringSimilarityClassifier makeLevenshteinClassifier() {
 
-        return new StringSimilarityClassifier(StringSimilaritySupplier.LEVENSHTEIN.get());
+        return new StringSimilarityClassifier(LEVENSHTEIN.get());
     }
 
     private static EnsembleVotingClassifier makeVotingEnsembleClassifierWithMLAndStringSimilarity() {
 
         return new EnsembleVotingClassifier(Arrays.asList((SingleClassifier) EXACT_MATCH.get(), (SingleClassifier) OLR.get(), (SingleClassifier) NAIVE_BAYES.get()),
-                new StringSimilarityGroupWithSharedState(Arrays.asList(
-                        makeDiceClassifier(),
-                        makeJaccardClassifier(),
-                        makeJaroWinklerClassifier(),
-                        makeLevenshteinClassifier()
-                )));
+                                            new StringSimilarityGroupWithSharedState(Arrays.asList(makeDiceClassifier(), makeJaccardClassifier(), makeJaroWinklerClassifier(), makeLevenshteinClassifier())));
     }
 
     private static EnsembleVotingClassifier makeVotingEnsembleClassifierWithStringSimilarity() {
 
-        return new EnsembleVotingClassifier(Collections.singletonList((SingleClassifier) EXACT_MATCH.get()),
-                new StringSimilarityGroupWithSharedState(Arrays.asList(
-                        makeDiceClassifier(),
-                        makeJaccardClassifier(),
-                        makeJaroWinklerClassifier(),
-                        makeLevenshteinClassifier()
-                )));
+        return new EnsembleVotingClassifier(Collections.singletonList((SingleClassifier) EXACT_MATCH.get()), new StringSimilarityGroupWithSharedState(Arrays.asList(makeDiceClassifier(), makeJaccardClassifier(), makeJaroWinklerClassifier(), makeLevenshteinClassifier())));
     }
 }

@@ -36,10 +36,9 @@ import static org.junit.Assert.assertEquals;
  * @author Masih Hajiarab Derkani
  * @author Graham Kirby
  */
-@RunWith(Parameterized.class)
-public class ClassifierTest {
+public abstract class ClassifierTest {
 
-    private static final double DELTA = 0.999;
+    protected static final double DELTA = 0.999;
 
     protected static final String[] TEST_VALUES = new String[]{"trial", "house", "thought", "quick brown fish", "lazy dogs"};
 
@@ -49,34 +48,20 @@ public class ClassifierTest {
 
     protected static final Record[] TEST_RECORDS = new Record[]{new Record(1, TEST_VALUES[0]), new Record(2, TEST_VALUES[1]), new Record(3, TEST_VALUES[2]), new Record(4, TEST_VALUES[3]), new Record(5, TEST_VALUES[4])};
 
-    protected Supplier<Classifier> factory;
     protected Bucket training_bucket;
 
     @Rule
     public TemporaryFolder temporary = new TemporaryFolder();
 
-    @Parameterized.Parameters(name = "{0}")
-    public static Collection<Object[]> generateData() {
+    public ClassifierTest() {
 
-        List<Object[]> result = new ArrayList<>();
-
-        for (Supplier<Classifier> factory : ClassifierSupplier.values()) {
-            result.add(new Object[]{factory});
-        }
-
-        return result;
-    }
-
-    public ClassifierTest(Supplier<Classifier> factory) {
-
-        this.factory = factory;
         training_bucket = new Bucket(TRAINING_RECORDS);
     }
 
     @Test
     public void untrainedClassifierReturnsUnclassified() {
 
-        Classifier classifier = factory.get();
+        Classifier classifier = newClassifier();
 
         for (String value : TEST_VALUES) {
             assertEquals(Classification.UNCLASSIFIED, classifier.classify(value));
@@ -84,36 +69,9 @@ public class ClassifierTest {
     }
 
     @Test
-    public void exactMatchClassificationHasConfidenceOfOne() {
-
-        if (factory == ClassifierSupplier.EXACT_MATCH) {
-
-            SingleClassifier classifier = (SingleClassifier) factory.get();
-
-            classifier.trainModel(training_bucket);
-
-            assertEquals(1.0, classifier.classify("trail").getConfidence(), DELTA);
-            assertEquals(1.0, classifier.classify("through").getConfidence(), DELTA);
-        }
-    }
-
-    @Test
-    public void exactMatchUnclassifiedHasConfidenceOfZero() {
-
-        if (factory == ClassifierSupplier.EXACT_MATCH) {
-
-            SingleClassifier classifier = (SingleClassifier) factory.get();
-
-            classifier.trainModel(training_bucket);
-
-            assertEquals(0.0, classifier.classify("sdifjsjdf").getConfidence(), DELTA);
-        }
-    }
-
-    @Test
     public void testSerialization() throws Exception {
 
-        final Classifier classifier = factory.get();
+        final Classifier classifier = newClassifier();
         trainOnTrainingRecords(classifier);
 
         final Bucket classified = classifyTestRecords(classifier);
@@ -128,7 +86,9 @@ public class ClassifierTest {
 
     }
 
+    protected abstract Classifier newClassifier();
+
     protected static Bucket classifyTestRecords(final Classifier classifier) {return classifier.classify(new Bucket(TEST_RECORDS));}
 
-    protected static void trainOnTrainingRecords(final Classifier classifier) {classifier.trainAndEvaluate(new Bucket(TRAINING_RECORDS), 0.8, new Random(42));}
+    public static void trainOnTrainingRecords(final Classifier classifier) {classifier.trainAndEvaluate(new Bucket(TRAINING_RECORDS), 0.8, new Random(42));}
 }

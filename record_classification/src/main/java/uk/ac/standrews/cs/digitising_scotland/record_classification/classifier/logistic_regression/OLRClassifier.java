@@ -112,7 +112,7 @@ public class OLRClassifier extends SingleClassifier implements Externalizable {
         return classification;
     }
 
-    private boolean isTrained() { return model != null; }
+    protected boolean isTrained() { return model != null; }
 
     @Override
     public void trainModel(final Bucket training_records) {
@@ -207,14 +207,14 @@ public class OLRClassifier extends SingleClassifier implements Externalizable {
 
     protected void requireUntrainedModel() {
 
-        if (isTrained()) { // FIXME allow extended training.
+        if (isTrained()) {
             throw new UnsupportedOperationException("already trained, further training upon existing trained model is not implemented yet");
         }
     }
 
     protected void index(final Bucket training_records) {
 
-        LOGGER.info(() -> String.format("indexing %d training records...", training_records.size()));
+        LOGGER.info(() -> String.format("indexing %d training records as part of olr classifier training...", training_records.size()));
         training_records.parallelStream().map(Record::getClassification).forEach(classification -> {
 
             final String original_code = classification.getCode();
