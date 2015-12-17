@@ -49,7 +49,7 @@ public enum CleanerSupplier implements Supplier<Cleaner> {
     TRIM_CLASSIFICATION_CODE(TrimClassificationCodesCleaner::new),
 
     /** Applies all available text cleaners and corrects inconsistent classifications. **/
-    COMBINED(() -> new CompositeCleaner(Arrays.asList(PUNCTUATION.get(), LOWER_CASE.get(), ENGLISH_STOP_WORDS.get(), PORTER_STEM.get(), CONSISTENT_CLASSIFICATION_CLEANER_CORRECT.get(), TRIM_CLASSIFICATION_CODE.get())));
+    COMBINED(() -> PUNCTUATION.get().andThen(LOWER_CASE.get()).andThen(ENGLISH_STOP_WORDS.get()).andThen(PORTER_STEM.get()).andThen(CONSISTENT_CLASSIFICATION_CLEANER_CORRECT.get()).andThen(TRIM_CLASSIFICATION_CODE.get()));
 
     @SuppressWarnings("NonSerializableFieldInSerializableClass")
     private final Supplier<Cleaner> supplier;

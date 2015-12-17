@@ -37,7 +37,6 @@ public class UnclassifiedChecker implements Checker {
         return buckets.parallelStream().anyMatch(this::test);
     }
 
-    @Override
     public boolean test(final Bucket bucket) {
 
         return bucket.parallelStream().anyMatch(this::isUnclassified);
