@@ -50,30 +50,31 @@ public class StringSimilarityClassifierTest extends ClassifierTest {
     }
 
     private Bucket test_bucket;
+    private Supplier<Classifier> factory;
 
     @Parameterized.Parameters(name = "{0}")
     public static Collection<Object[]> generateData() {
 
-        List<Object[]> result = new ArrayList<>();
+        final List<Object[]> result = new ArrayList<>();
 
-        for (Supplier<Classifier> factory : ClassifierSupplier.getStringSimilarityClassifiers()) {
-            result.add(new Object[]{factory});
-        }
+        result.add(new Object[]{ClassifierSupplier.STRING_SIMILARITY_LEVENSHTEIN});
+        result.add(new Object[]{ClassifierSupplier.STRING_SIMILARITY_JARO_WINKLER});
+        result.add(new Object[]{ClassifierSupplier.STRING_SIMILARITY_JACCARD});
+        result.add(new Object[]{ClassifierSupplier.STRING_SIMILARITY_DICE});
 
         return result;
     }
 
     public StringSimilarityClassifierTest(Supplier<Classifier> factory) {
 
-        super(factory);
-
+        this.factory = factory;
         test_bucket = new Bucket(TEST_RECORDS);
     }
 
     @Test
     public void trainedClassifierReturnsCodeOfSimilarValueForIndividualRecord() {
 
-        SingleClassifier classifier = (SingleClassifier) factory.get();
+        StringSimilarityClassifier classifier = newClassifier();
 
         classifier.trainModel(training_bucket);
 
@@ -86,7 +87,7 @@ public class StringSimilarityClassifierTest extends ClassifierTest {
     @Test
     public void trainedClassifierReturnsCodeOfSimilarValueForBucket() {
 
-        SingleClassifier classifier = (SingleClassifier) factory.get();
+        StringSimilarityClassifier classifier = newClassifier();
 
         classifier.trainModel(training_bucket);
 
@@ -115,5 +116,11 @@ public class StringSimilarityClassifierTest extends ClassifierTest {
             }
         }
         return null;
+    }
+
+    @Override
+    protected StringSimilarityClassifier newClassifier() {
+
+        return (StringSimilarityClassifier) factory.get();
     }
 }

@@ -52,6 +52,16 @@ public final class TestDataSets {
 
     public static final List<TestDataSet> CASE_5_EVALUATION = Collections.singletonList(getEvaluationTestDataSet("case5/test_evaluation_ascii_windows.csv", StandardCharsets.US_ASCII));
 
+    public static final List<TestDataSet> ALL_TRAINING_DATASETS = new ArrayList<>();
+    
+    static{
+        ALL_TRAINING_DATASETS.addAll(CASE_1_TRAINING);
+        ALL_TRAINING_DATASETS.addAll(CASE_2_TRAINING);
+        ALL_TRAINING_DATASETS.addAll(CASE_3_TRAINING);
+        ALL_TRAINING_DATASETS.addAll(CASE_4_TRAINING);
+        ALL_TRAINING_DATASETS.addAll(CASE_5_TRAINING);
+    }
+    
     private TestDataSets() { throw new UnsupportedOperationException(); }
 
     private static TestDataSet getTestDataSet(String resource_name) {

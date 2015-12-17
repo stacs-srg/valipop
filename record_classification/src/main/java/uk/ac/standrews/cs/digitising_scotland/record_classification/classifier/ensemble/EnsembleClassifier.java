@@ -18,7 +18,6 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.
 
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.Classifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.SingleClassifier;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.composite.StringSimilarityGroupWithSharedState;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Classification;
 

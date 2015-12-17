@@ -21,6 +21,8 @@ import java.io.*;
 public interface SimilarityMetric extends Serializable {
 
     float getSimilarity(String one, String other);
+
     String getDescription();
+
     String getName();
 }

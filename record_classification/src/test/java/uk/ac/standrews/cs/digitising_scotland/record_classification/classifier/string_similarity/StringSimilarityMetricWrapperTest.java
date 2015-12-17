@@ -25,7 +25,7 @@ import java.util.*;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(Parameterized.class)
-public class StringSimilarityMetricTest {
+public class StringSimilarityMetricWrapperTest {
 
     private static final double DELTA = 0.001;
 
@@ -65,7 +65,7 @@ public class StringSimilarityMetricTest {
         return parameters;
     }
 
-    public StringSimilarityMetricTest(SimilarityMetric metric, double expected_similarity_for_identical_strings, double expected_similarity_for_similar_strings, double expected_similarity_for_dissimilar_strings) {
+    public StringSimilarityMetricWrapperTest(SimilarityMetric metric, double expected_similarity_for_identical_strings, double expected_similarity_for_similar_strings, double expected_similarity_for_dissimilar_strings) {
 
         this.metric = metric;
         this.expected_similarity_for_identical_strings = expected_similarity_for_identical_strings;

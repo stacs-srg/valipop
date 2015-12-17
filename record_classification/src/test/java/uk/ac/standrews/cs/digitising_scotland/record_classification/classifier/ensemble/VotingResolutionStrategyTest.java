@@ -141,6 +141,8 @@ public class VotingResolutionStrategyTest {
 
         return new SingleClassifier() {
 
+            private static final long serialVersionUID = 5056870270840071301L;
+
             @Override
             public String getName() {
                 return null;

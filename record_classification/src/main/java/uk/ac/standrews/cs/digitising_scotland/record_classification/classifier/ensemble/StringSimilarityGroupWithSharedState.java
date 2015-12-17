@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License along with record_classification. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.composite;
+package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.ensemble;
 
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.string_similarity.StringSimilarityClassifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
@@ -26,6 +26,7 @@ import java.util.Map;
 
 public class StringSimilarityGroupWithSharedState implements Serializable {
 
+    private static final long serialVersionUID = 2905598266409106509L;
     private List<StringSimilarityClassifier> classifiers;
 
     /**
