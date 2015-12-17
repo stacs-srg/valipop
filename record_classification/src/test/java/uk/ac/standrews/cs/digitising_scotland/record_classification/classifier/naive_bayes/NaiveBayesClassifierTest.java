@@ -28,7 +28,7 @@ import static org.junit.Assert.*;
  */
 public class NaiveBayesClassifierTest extends ClassifierTest {
 
-    private static final Bucket GOLD_STANDARD_WITH_SPACE_IN_CODE_PREFIX_SUFFIX = new Bucket();
+    public static final Bucket GOLD_STANDARD_WITH_SPACE_IN_CODE_PREFIX_SUFFIX = new Bucket();
 
     static {
         GOLD_STANDARD_WITH_SPACE_IN_CODE_PREFIX_SUFFIX.add(new Record(1, "fish", new Classification("swims", new TokenList("fish"), 1.0, null)));

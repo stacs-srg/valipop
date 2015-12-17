@@ -32,11 +32,6 @@ import java.util.function.Predicate;
  */
 public interface Checker extends Predicate<List<Bucket>>, Serializable {
 
-    default boolean test(Bucket bucket) {
-
-        return test(Collections.singletonList(bucket));
-    }
-
     default boolean test(Bucket first, final Bucket... rest) {
 
         final List<Bucket> buckets = new ArrayList<>();
