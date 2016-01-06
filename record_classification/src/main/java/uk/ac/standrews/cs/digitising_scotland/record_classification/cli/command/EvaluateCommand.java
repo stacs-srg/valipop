@@ -118,7 +118,7 @@ public class EvaluateCommand extends Command {
 
         logger.info(() -> String.format("classified %d evaluation records in %s", evaluation_records_stripped.size(), evaluation_classification_time));
 
-        final ConfusionMatrix confusion_matrix = new StrictConfusionMatrix(classified_evaluation_records, gold_standard_records);
+        final ConfusionMatrix confusion_matrix = new StrictConfusionMatrix(classified_evaluation_records, gold_standard_records, new ConsistentCodingChecker());
         final ClassificationMetrics classification_metrics = new ClassificationMetrics(confusion_matrix);
 
         configuration.setClassifiedEvaluationRecords(classified_evaluation_records);

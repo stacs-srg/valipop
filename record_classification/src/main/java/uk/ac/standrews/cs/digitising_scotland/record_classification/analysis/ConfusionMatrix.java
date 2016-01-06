@@ -109,7 +109,7 @@ public abstract class ConfusionMatrix implements Serializable {
         checkClassifiedToValidCodes();
 
         if (gold_standard_checker != null && !gold_standard_checker.test(gold_standard_records)) {
-            throw new RuntimeException("check failed");
+            throw new RuntimeException("check failed: " + gold_standard_checker.getClass().getSimpleName());
         }
 
         calculateCounts();
