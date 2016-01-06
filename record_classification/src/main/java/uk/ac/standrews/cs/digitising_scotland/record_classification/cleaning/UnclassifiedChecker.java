@@ -19,6 +19,7 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 
 import java.util.*;
+import java.util.logging.*;
 
 /**
  * Checks whether any records are present that are unclassified.
@@ -30,6 +31,7 @@ import java.util.*;
 public class UnclassifiedChecker implements Checker {
 
     private static final long serialVersionUID = 2465719719128993717L;
+    private static final Logger LOGGER = Logger.getLogger(UnclassifiedChecker.class.getName());
 
     @Override
     public boolean test(final List<Bucket> buckets) {
@@ -45,6 +47,10 @@ public class UnclassifiedChecker implements Checker {
     protected boolean isUnclassified(final Record record) {
 
         final Classification classification = record.getClassification();
-        return classification == null || classification.isUnclassified();
+        boolean unclassified = classification == null || classification.isUnclassified();
+        if (unclassified) {
+            LOGGER.info(() -> "Unclassified record detected: " + record);
+        }
+        return unclassified;
     }
 }

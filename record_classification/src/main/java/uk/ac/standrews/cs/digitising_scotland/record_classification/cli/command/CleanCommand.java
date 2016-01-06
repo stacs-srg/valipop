@@ -118,8 +118,20 @@ public class CleanCommand extends Command {
 
     static void cleanGoldStandardRecords(final Cleaner cleaner, final Configuration configuration, Logger logger) {
 
-        cleanEvaluationRecords(cleaner, configuration, logger);
-        cleanTrainingRecords(cleaner, configuration, logger);
+        final Optional<Bucket> eval_records_optional = configuration.getEvaluationRecordsOptional();
+        final Optional<Bucket> train_records_optional = configuration.getTrainingRecordsOptional();
+
+        if (eval_records_optional.isPresent() && train_records_optional.isPresent()) {
+            logger.info(() -> "cleaning training and evaluation records...");
+            final List<Bucket> cleaned = cleaner.apply(Arrays.asList(eval_records_optional.get(), train_records_optional.get()));
+            configuration.setEvaluationRecords(cleaned.get(0));
+            configuration.setTrainingRecords(cleaned.get(1));
+        }
+        else {
+
+            cleanEvaluationRecords(cleaner, configuration, logger);
+            cleanTrainingRecords(cleaner, configuration, logger);
+        }
     }
 
     static void cleanEvaluationRecords(final Cleaner cleaner, final Configuration configuration, Logger logger) {

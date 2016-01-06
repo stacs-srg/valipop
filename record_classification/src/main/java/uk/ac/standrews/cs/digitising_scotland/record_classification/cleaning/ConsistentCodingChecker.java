@@ -19,6 +19,7 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 
 import java.util.*;
+import java.util.logging.*;
 
 /**
  * Checks whether a list buckets are consistently coded.
@@ -28,6 +29,7 @@ import java.util.*;
 public class ConsistentCodingChecker implements Checker {
 
     private static final long serialVersionUID = 3117180381918812824L;
+    private static final Logger LOGGER = Logger.getLogger(ConsistentCodingChecker.class.getName());
 
     /**
      * @param buckets the buckets to check for consistent coding
@@ -49,7 +51,10 @@ public class ConsistentCodingChecker implements Checker {
                     final String code = classification.getCode();
 
                     if (classifications_encountered.containsKey(data)) {
-                        if (!code.equals(classifications_encountered.get(data))) {
+                        final String other_code = classifications_encountered.get(data);
+                        if (!code.equals(other_code)) {
+
+                            LOGGER.info(() -> "inconsistently coded record codes[" + code + "," + other_code + "] record: " + record);
                             return false;
                         }
                     }
