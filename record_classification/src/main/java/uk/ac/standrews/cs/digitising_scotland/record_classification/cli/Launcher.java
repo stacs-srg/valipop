@@ -151,7 +151,7 @@ public class Launcher {
         //TODO introduce error coding.
         //TODO set exit value based on error code.
 //        throw error;
-
+        error.printStackTrace();
         LOGGER.log(Level.SEVERE, error, () -> "critical error");
         System.exit(1);
     }
