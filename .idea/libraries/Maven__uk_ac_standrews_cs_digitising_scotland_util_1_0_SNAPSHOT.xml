@@ -1,13 +1,13 @@
 <component name="libraryTable">
   <library name="Maven: uk.ac.standrews.cs.digitising_scotland:util:1.0-SNAPSHOT">
     <CLASSES>
-      <root url="jar://$MAVEN_REPOSITORY$/uk/ac/standrews/cs/digitising_scotland/util/1.0-SNAPSHOT/util-1.0-20151126.130314-1534.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/uk/ac/standrews/cs/digitising_scotland/util/1.0-SNAPSHOT/util-1.0-20160124.022928-1629.jar!/" />
     </CLASSES>
     <JAVADOC>
-      <root url="jar://$MAVEN_REPOSITORY$/uk/ac/standrews/cs/digitising_scotland/util/1.0-SNAPSHOT/util-1.0-20151126.130314-1534-javadoc.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/uk/ac/standrews/cs/digitising_scotland/util/1.0-SNAPSHOT/util-1.0-20160124.022928-1629-javadoc.jar!/" />
     </JAVADOC>
     <SOURCES>
-      <root url="jar://$MAVEN_REPOSITORY$/uk/ac/standrews/cs/digitising_scotland/util/1.0-SNAPSHOT/util-1.0-20151126.130314-1534-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/uk/ac/standrews/cs/digitising_scotland/util/1.0-SNAPSHOT/util-1.0-20160124.022928-1629-sources.jar!/" />
     </SOURCES>
   </library>
 </component>

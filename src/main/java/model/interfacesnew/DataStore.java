@@ -166,32 +166,37 @@ public interface DataStore {
      */
 
     /**
-     * All data present boolean.
+     * Checks that data is present (given, calculated or imputed) for each year from the start date to the end date for
+     * every field.
      *
-     * @return the boolean
+     * @return indicates whether all data is present
      */
     boolean allDataPresent();
 
     /**
-     * Data present boolean.
+     * Checks that data is present (given, calculated or imputed) for the specified year for every field.
      *
-     * @param year the year
-     * @return the boolean
+     * @param year a year in the data store
+     * @return indicates whether all data is present
      */
     boolean dataPresent(int year);
 
     /**
-     * Check data data check.
+     * Checks that data is present (given, calculated or imputed) for each year from the start date to the end date for
+     * every field and returns details of every check made and its results for each field in each year.
      *
-     * @return the data check
+     * @return a DataCheck object containing all checks made and there results including the way in which the data was
+     * specified.
      */
     DataCheck checkData();
 
     /**
-     * Check data data check.
+     * Checks that data is present (given, calculated or imputed) for the given year for every field and returns details
+     * of every check made and its results for each field in each year.
      *
      * @param year the year
-     * @return the data check
+     * @return a DataCheck object containing all checks made and there results including the way in which the data was
+     * specified.
      */
     DataCheck checkData(int year);
 
@@ -210,24 +215,28 @@ public interface DataStore {
      */
 
     /**
-     * Calculate data.
+     * Calculates any missing fields in the data store which it is possible to calculate from the data already residing
+     * in the data store.
      */
     void calculateData();
 
     /**
-     * Calculate data.
+     * Calculates any missing fields, for a given year, in the data store which it is possible to calculate from the
+     * data already residing in the data store for that year.
      *
      * @param year the year
      */
     void calculateData(int year);
 
     /**
-     * Impute data.
+     * Imputes data for any missing fields in the data store which is possible to make an imputation for using data
+     * already residing in the data store and based on (?) a given set of parameters.
      */
     void imputeData();
 
     /**
-     * Impute data.
+     * Imputes data for any missing fields, for a given year, in the data store which is possible to make an imputation
+     * for using data already residing in the data store for any year and based on (?) a given set of parameters.
      *
      * @param year the year
      */
