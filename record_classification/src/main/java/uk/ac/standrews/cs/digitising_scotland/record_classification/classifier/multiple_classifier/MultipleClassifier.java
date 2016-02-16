@@ -16,15 +16,17 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.multiple_classifier;
 
-import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.util.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.Classifier;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.TextCleaner;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Classification;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.TokenList;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.util.CombinationGenerator;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.util.Combinations;
 
-import java.io.*;
+import java.io.Serializable;
 import java.util.*;
-import java.util.function.*;
-import java.util.stream.*;
+import java.util.function.BiPredicate;
+import java.util.stream.Collectors;
 
 /**
  * Classifies a given string value to a list of {@link Classification classifications} sorted by their fitness in ascending order (i.e. the last classification in the list is the fittest).
