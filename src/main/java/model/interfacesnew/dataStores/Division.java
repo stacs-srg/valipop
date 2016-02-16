@@ -1,4 +1,4 @@
-package model.interfacesnew;
+package model.interfacesnew.dataStores;
 
 /**
  * A Division represents an interval with a minimum value (inclusive, i.e. age) and a maximum value (exclusive, i.e.

@@ -1,4 +1,4 @@
-package model.interfacesnew;
+package model.interfacesnew.dataStores;
 
 /**
  * The age distribution object provides a mechanism to handle the number of people who fall into a given age bracket in
