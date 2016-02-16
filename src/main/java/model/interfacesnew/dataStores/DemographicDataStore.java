@@ -28,7 +28,7 @@ package model.interfacesnew.dataStores;
  *
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public interface DemographicDataStore {
+public interface DemographicDataStore extends ImputableDataStore, CheckableDataStore {
 
     /*
     ----- Utility parameters -----
@@ -161,85 +161,6 @@ public interface DemographicDataStore {
      */
     void addDataSEPR(int startYear, int endYear, int[] populationSizes, int[] ratios);
 
-    /*
-    ----- Data checking methods -----
-     */
 
-    /**
-     * Checks that data is present (given, calculated or imputed) for each year from the start date to the end date for
-     * every field.
-     *
-     * @return indicates whether all data is present
-     */
-    boolean allDataPresent();
-
-    /**
-     * Checks that data is present (given, calculated or imputed) for the specified year for every field.
-     *
-     * @param year a year in the data store
-     * @return indicates whether all data is present
-     */
-    boolean dataPresent(int year);
-
-    /**
-     * Checks that data is present (given, calculated or imputed) for each year from the start date to the end date for
-     * every field and returns details of every check made and its results for each field in each year.
-     *
-     * @return a DataCheck object containing all checks made and there results including the way in which the data was
-     * specified.
-     */
-    DataCheck checkData();
-
-    /**
-     * Checks that data is present (given, calculated or imputed) for the given year for every field and returns details
-     * of every check made and its results for each field in each year.
-     *
-     * @param year the year
-     * @return a DataCheck object containing all checks made and there results including the way in which the data was
-     * specified.
-     */
-    DataCheck checkData(int year);
-
-    /*
-    ----- Calculation and imputation methods -----
-
-        NOTE: There is a difference between calculation and imputation.
-        Calculating data means we are filling in fields based on information we hold in other fields but the same year
-            e.g. calculating the male to female ratio for 1992 using the data we hold about the size of the male and
-            female populations in 1992
-
-        Imputing data means we are filling in fields based on information we hold in the same field but for different
-        years
-            e.g. imputing that the size of the male population is 1000 in 1992 based on the information that the male
-            population in 1991 and 1993 was 950 and 1050 respectively.
-     */
-
-    /**
-     * Calculates any missing fields in the data store which it is possible to calculate from the data already residing
-     * in the data store.
-     */
-    void calculateData();
-
-    /**
-     * Calculates any missing fields, for a given year, in the data store which it is possible to calculate from the
-     * data already residing in the data store for that year.
-     *
-     * @param year the year
-     */
-    void calculateData(int year);
-
-    /**
-     * Imputes data for any missing fields in the data store which is possible to make an imputation for using data
-     * already residing in the data store and based on (?) a given set of parameters.
-     */
-    void imputeData();
-
-    /**
-     * Imputes data for any missing fields, for a given year, in the data store which is possible to make an imputation
-     * for using data already residing in the data store for any year and based on (?) a given set of parameters.
-     *
-     * @param year the year
-     */
-    void imputeData(int year);
 
 }

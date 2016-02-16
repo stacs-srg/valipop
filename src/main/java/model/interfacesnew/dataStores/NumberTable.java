@@ -3,10 +3,8 @@ package model.interfacesnew.dataStores;
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public interface RateDateStore extends CheckableDataStore, ImputableDataStore {
+public interface NumberTable {
 
-
-
-
+    Division[] getDivisions();
 
 }
