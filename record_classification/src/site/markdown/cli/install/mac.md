@@ -1,23 +1,16 @@
-# `classli` Installation on Mac OS X
+# Installation on OS X
 
-The following steps describes how to install `classli` on a Mac OS X operating system:
+The following steps describe how to install `classli` on OS X.
 
-1. Install [JRE](https://docs.oracle.com/javase/8/docs/technotes/guides/install/mac_jre.html#CHDGECEB) or [JDK](https://docs.oracle.com/javase/8/docs/technotes/guides/install/mac_jdk.html#CHDBADCG) version 8.0 or higher.
-    
-    - See [this FAQ](https://docs.oracle.com/javase/8/docs/technotes/guides/install/mac_install_faq.html#CHDJEDDB) for more information.
-    - Open the terminal app located in `/Applications/Utilities/Terminal.app`.
-    - To make sure Java is available, in the opened terminal window type `java -version` and press enter; you should see the version and build number of Java.
-    - If not, make sure Java installation directory is added to `PATH` environment variable, see [this](https://java.com/en/download/help/path.xml) guide for more information.
+1. If not already present, install [JRE](https://docs.oracle.com/javase/8/docs/technotes/guides/install/mac_jre.html#CHDGECEB) or [JDK](https://docs.oracle.com/javase/8/docs/technotes/guides/install/mac_jdk.html) version 8.0 or higher (see [FAQ](https://docs.oracle.com/javase/8/docs/technotes/guides/install/mac_install_faq.html))
+    - Once installed, open the terminal app `/Applications/Utilities/Terminal.app`.
+    - To check the Java installation, type `java -version` and press enter; you should see the Java version and build number.
+    - If not, make sure the Java installation directory is added to the `PATH` environment variable (see [help](https://java.com/en/download/help/path.xml)).
 
-2. Download the `classli.tar` which contains the Mac OS X binary from [here](https://builds.cs.st-andrews.ac.uk/job/digitising_scotland/lastSuccessfulBuild/artifact/record_classification/target/classli.tar).
-
-3. Extract the downloaded tar file.
+2. Download the `classli.tar` [tar file](https://builds.cs.st-andrews.ac.uk/job/digitising_scotland/lastSuccessfulBuild/artifact/record_classification/target/classli.tar) and extract the contents.
    
-4. Place the extracted `classli` binary in `/usr/local/bin` folder. 
+3. Copy the extracted `classli` file to `/usr/local/bin`, or another directory of your choice.
 
-    - Make sure the `/usr/local/bin` is present in `PATH` environment variable.
-    - If you do not have permissions to copy files into `/usr/local/bin` folder, or you prefer not to, then:
-        - place the downloaded `classli` binary into a folder of your choice, and
-        - add the folder's absolute path to the `PATH` environment variable.
+    - Ensure that the installation directory is included in the `PATH` environment variable.
 
-5. To make sure all is well, open a new terminal window and type `classli -h`, which should print the `classli` usage.
+4. To check the installation, open a new terminal window and type `classli -h`, which should print a usage message.
