@@ -1,4 +1,8 @@
-package model.interfacesnew.dataStores;
+package model.interfacesnew.dataStores.demographic;
+
+import model.interfacesnew.dataStores.general.CheckableDataStore;
+import model.interfacesnew.dataStores.general.ImputableDataStore;
+import model.interfacesnew.dataStores.general.TimedDataStore;
 
 /**
  * The data store is a base of data that describes basic characteristics of the summative population as a whole by year,
@@ -28,32 +32,18 @@ package model.interfacesnew.dataStores;
  *
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public interface DemographicDataStore extends ImputableDataStore, CheckableDataStore {
+public interface DemographicDataStore extends TimedDataStore, ImputableDataStore, CheckableDataStore {
 
     /*
     ----- Utility parameters -----
      */
 
     /**
-     * Gets earliest day that this Data Store is required to provide information regarding.
-     *
-     * @return the earliest day
-     */
-    int getEarliestDay();
-
-    /**
-     * Gets latest day that this Data Store is required to provide information regarding.
-     *
-     * @return the latest day
-     */
-    int getLatestDay();
-
-    /**
      * Enforces the use of ratios to calculate male/female populations over the use of given figures, even in the
      * presence of value data that has been inserted into the data store. The default behaviour is that value based data
      * should be used.
      *
-     * @param b bollean indicating the enforcement of the use of ratios
+     * @param b boolean indicating the enforcement of the use of ratios
      */
     void enforceRatioOverValues(boolean b);
 

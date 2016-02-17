@@ -1,4 +1,4 @@
-package model.interfacesnew.dataStores;
+package model.interfacesnew.dataStores.general;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)

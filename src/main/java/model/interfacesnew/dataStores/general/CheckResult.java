@@ -1,4 +1,4 @@
-package model.interfacesnew.dataStores;
+package model.interfacesnew.dataStores.general;
 
 import model.enums.DataField;
 import model.enums.Status;

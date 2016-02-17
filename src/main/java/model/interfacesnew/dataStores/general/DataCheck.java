@@ -1,4 +1,4 @@
-package model.interfacesnew.dataStores;
+package model.interfacesnew.dataStores.general;
 
 /**
  * The Data Check holds all the information about a set of Check Results of checks ran on the Data Store. These checks

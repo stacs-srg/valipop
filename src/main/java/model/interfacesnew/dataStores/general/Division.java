@@ -1,4 +1,4 @@
-package model.interfacesnew.dataStores;
+package model.interfacesnew.dataStores.general;
 
 /**
  * A Division represents an interval with a given identifier (this could be set to be a numerical interval e.g. a minimum
@@ -12,7 +12,7 @@ package model.interfacesnew.dataStores;
  * @param <S> the type of the secondary Division identifier
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public interface Division<P, S> {
+public interface Division<P, S, T> {
 
     /**
      * Gets division identifier.
@@ -26,7 +26,7 @@ public interface Division<P, S> {
      *
      * @return the number of individuals in the division
      */
-    int getTotalNumber();
+    T getTotalNumber();
 
 
     /**
@@ -34,7 +34,7 @@ public interface Division<P, S> {
      *
      * @return the set of dividers
      */
-    Division<S, ?>[] getSecondaryDivisions();
+    Division<S, ?, T>[] getSecondaryDivisions();
 
 
 
