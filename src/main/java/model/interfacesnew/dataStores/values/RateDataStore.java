@@ -91,5 +91,6 @@ public interface RateDataStore extends TimedDataStore, CheckableDataStore, Imput
      */
     void calculateImportableData(int year, VariableType variable);
 
+    NumberTable deriveSummativeEventCountTable(TableQuery query);
 
 }
