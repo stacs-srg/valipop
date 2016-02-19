@@ -1,6 +1,8 @@
 package model.interfacesnew.dataStores.general;
 
 /**
+ * The interface Timed data store.
+ *
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public interface TimedDataStore {

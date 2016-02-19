@@ -1,10 +1,11 @@
-package model.interfacesnew.dataStores.values;
+package model.interfacesnew.dataStores.query;
 
 /**
- * The interface Value query.
+ * A ValueQuery is used to define a particular value to be retrieved from a data store.
  *
- * @param <P> the type parameter
- * @param <S> the type parameter
+ * @param <P> the Primary Variable
+ * @param <S> the Secondary Variable
+ *
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public interface ValueQuery<P, S> {

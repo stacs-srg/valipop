@@ -4,6 +4,8 @@ import model.enums.VariableType;
 import model.interfacesnew.dataStores.general.CheckableDataStore;
 import model.interfacesnew.dataStores.general.ImputableDataStore;
 import model.interfacesnew.dataStores.general.TimedDataStore;
+import model.interfacesnew.dataStores.query.TableQuery;
+import model.interfacesnew.dataStores.query.ValueQuery;
 
 /**
  * The RateDataStore holds data about the rate at which specified events occur to specified subsets of members of the
@@ -91,6 +93,14 @@ public interface RateDataStore extends TimedDataStore, CheckableDataStore, Imput
      */
     void calculateImportableData(int year, VariableType variable);
 
+
+    /**
+     * Returns a NumberTable containing the event table for the given query. For example the query may be the number of
+     * people who die each year who were born in a given year.
+     *
+     * @param query the query
+     * @return the number table
+     */
     NumberTable deriveSummativeEventCountTable(TableQuery query);
 
 }

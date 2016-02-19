@@ -10,6 +10,7 @@ package model.interfacesnew.dataStores.general;
  *
  * @param <P> the type of the primary Division identifier
  * @param <S> the type of the secondary Division identifier
+ * @param <T> the type parameter
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public interface Division<P, S, T> {

@@ -4,6 +4,7 @@ import model.enums.VariableType;
 import model.interfacesnew.dataStores.general.CheckableDataStore;
 import model.interfacesnew.dataStores.general.ImputableDataStore;
 import model.interfacesnew.dataStores.general.TimedDataStore;
+import model.interfacesnew.dataStores.query.ValueQuery;
 
 /**
  * The SummativeDataStore holds information about the number of events that occur to a given subset of the summative

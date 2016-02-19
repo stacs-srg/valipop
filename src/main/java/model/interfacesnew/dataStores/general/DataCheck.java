@@ -4,11 +4,11 @@ package model.interfacesnew.dataStores.general;
  * The Data Check holds all the information about a set of Check Results of checks ran on the Data Store. These checks
  * cover:
  * <ul>
- *     <li>Passed - data present and reasonable</li>
- *     <li>Missing - empty fields in the data store</li>
- *     <li>Warning - where data appears to be unlikely across years, these though could be mitigated by extreme events
- *     such as war, famine or mass migration</li>
- *     <li>Failed - where data within years that is directly calculable contradicts each another.</li>
+ * <li>Passed - data present and reasonable</li>
+ * <li>Missing - empty fields in the data store</li>
+ * <li>Warning - where data appears to be unlikely across years, these though could be mitigated by extreme events
+ * such as war, famine or mass migration</li>
+ * <li>Failed - where data within years that is directly calculable contradicts each another.</li>
  * </ul>
  *
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
