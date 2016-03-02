@@ -11,7 +11,7 @@ import model.interfacesnew.dataStores.query.TableQuery;
  *
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public interface populationAnalysis extends DemographicVariables {
+public interface PopulationAnalysis extends DemographicVariables {
 
     /**
      * Returns a NumberTable containing the event table for the given query. For example the query may be the number of
