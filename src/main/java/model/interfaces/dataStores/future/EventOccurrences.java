@@ -1,8 +1,6 @@
-package model.occurrencesInformation;
+package model.interfaces.dataStores.future;
 
 import model.interfaces.dataStores.PopulationInformationCollection;
-import model.interfaces.dataStores.informationFlow.query.Query;
-import model.interfaces.dataStores.informationFlow.result.QueryResult;
 
 /**
  * The EventOccurrences holds information about the number of events that occur to a given subset of the summative
@@ -24,8 +22,4 @@ public class EventOccurrences implements PopulationInformationCollection {
         return 0;
     }
 
-    @Override
-    public QueryResult getInfo(Query query) {
-        return null;
-    }
 }

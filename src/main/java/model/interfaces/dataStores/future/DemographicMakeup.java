@@ -1,8 +1,6 @@
-package model.occurrencesInformation;
+package model.interfaces.dataStores.future;
 
 import model.interfaces.dataStores.PopulationInformationCollection;
-import model.interfaces.dataStores.informationFlow.query.Query;
-import model.interfaces.dataStores.informationFlow.result.QueryResult;
 
 /**
  * The data store is a base of data that describes basic characteristics of the summative population as a whole by year,
@@ -45,8 +43,4 @@ public class DemographicMakeup implements PopulationInformationCollection {
         return 0;
     }
 
-    @Override
-    public QueryResult getInfo(Query query) {
-        return null;
-    }
 }

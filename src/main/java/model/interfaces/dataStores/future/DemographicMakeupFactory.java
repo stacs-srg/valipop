@@ -1,6 +1,4 @@
-package model.interfaces.dataStores.informationFactories;
-
-import model.occurrencesInformation.DemographicMakeup;
+package model.interfaces.dataStores.future;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)

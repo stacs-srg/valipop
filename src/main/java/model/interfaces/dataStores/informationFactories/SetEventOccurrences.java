@@ -1,7 +1,7 @@
 package model.interfaces.dataStores.informationFactories;
 
-import model.enums.VariableType;
-import model.interfaces.dataStores.informationFlow.result.returnTable.NumberTable;
+import model.enums.EventType;
+import model.interfaces.dataStores.informationPassing.tableTypes.Table;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
@@ -15,6 +15,6 @@ public interface SetEventOccurrences {
      * @param variable the specified variable
      * @param table    the NumberTable
      */
-    void setData(int year, VariableType variable, NumberTable table);
+    void setData(int year, EventType variable, Table table);
 
 }

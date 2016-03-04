@@ -1,6 +1,6 @@
 package model.interfaces.dataStores.future.check;
 
-import model.occurrencesInformation.EventOccurrences;
+import model.interfaces.dataStores.future.EventOccurrences;
 
 /**
  * The interface CheckOccurrencesData.

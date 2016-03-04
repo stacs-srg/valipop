@@ -1,8 +1,5 @@
 package model.interfaces.dataStores;
 
-import model.interfaces.dataStores.informationFlow.query.Query;
-import model.interfaces.dataStores.informationFlow.result.QueryResult;
-
 /**
  * The interface Timed data store.
  *
@@ -23,10 +20,6 @@ public interface PopulationInformationCollection {
      * @return the latest day
      */
     int getLatestDay();
-
-
-    QueryResult getInfo(Query query);
-
 
 
 }

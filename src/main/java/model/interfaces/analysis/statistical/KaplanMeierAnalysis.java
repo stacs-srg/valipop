@@ -1,6 +1,6 @@
 package model.interfaces.analysis.statistical;
 
-import model.enums.VariableType;
+import model.enums.EventType;
 
 /**
  * This interface is used as the return form for a Kaplan-Meier analysis
@@ -14,7 +14,7 @@ public interface KaplanMeierAnalysis {
      *
      * @return the variable
      */
-    VariableType getVariable();
+    EventType getVariable();
 
     /**
      * Returns the intial year of this analysis. E.g. in the case of death the birth year of all individuals considered.

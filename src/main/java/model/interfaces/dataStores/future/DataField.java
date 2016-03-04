@@ -1,4 +1,4 @@
-package model.enums;
+package model.interfaces.dataStores.future;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)

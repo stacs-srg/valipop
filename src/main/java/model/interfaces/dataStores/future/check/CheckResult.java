@@ -1,7 +1,6 @@
 package model.interfaces.dataStores.future.check;
 
-import model.enums.DataField;
-import model.enums.Status;
+import model.interfaces.dataStores.future.DataField;
 
 /**
  * A Check Results holds information about a test on a single field for the specified year.

@@ -1,7 +1,7 @@
-package model.interfaces.dataStores.informationFactories;
+package model.interfaces.dataStores.future;
 
 
-import model.occurrencesInformation.EventOccurrences;
+import model.interfaces.dataStores.informationFactories.SetEventOccurrences;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)

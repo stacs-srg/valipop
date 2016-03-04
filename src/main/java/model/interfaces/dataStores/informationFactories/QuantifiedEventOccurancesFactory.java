@@ -1,6 +1,6 @@
 package model.interfaces.dataStores.informationFactories;
 
-import model.enums.VariableType;
+import model.enums.EventType;
 import model.occurrencesInformation.QuantifiedEventOccurrences;
 
 /**
@@ -35,7 +35,7 @@ public interface QuantifiedEventOccurancesFactory extends SetEventOccurrences {
      *
      * @param variable the specified variable
      */
-    void calculateImportableData(VariableType variable);
+    void calculateImportableData(EventType variable);
 
     /**
      * Calculates importable data for the specified variable type for the given year in the data store.
@@ -43,6 +43,6 @@ public interface QuantifiedEventOccurancesFactory extends SetEventOccurrences {
      * @param year     the given year
      * @param variable the specified variable
      */
-    void calculateImportableData(int year, VariableType variable);
+    void calculateImportableData(int year, EventType variable);
 
 }
