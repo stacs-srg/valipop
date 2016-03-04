@@ -7,7 +7,7 @@ import model.enums.VariableType;
  *
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public interface KMAnalysis {
+public interface KaplanMeierAnalysis {
 
     /**
      * Returns the variable which this analysis was focused on.

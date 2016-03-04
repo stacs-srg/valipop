@@ -1,11 +1,15 @@
-package model.interfacesnew.dataStores.general;
+package model.interfacesnew.dataStores.future.check;
+
+import model.occurrencesInformation.EventOccurrences;
 
 /**
- * The interface Checkable data store.
+ * The interface CheckOccurrencesData.
  *
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public interface CheckableDataStore {
+public interface CheckOccurrencesData {
+
+    CheckOccurrencesData checkOccurancesData(EventOccurrences occurrences);
 
     /*
     ----- Data checking methods -----

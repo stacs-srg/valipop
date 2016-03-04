@@ -1,11 +1,14 @@
-package model.interfacesnew.dataStores.general;
+package model.interfacesnew.dataStores;
+
+import model.interfacesnew.dataStores.informationFlow.query.Query;
+import model.interfacesnew.dataStores.informationFlow.result.QueryResult;
 
 /**
  * The interface Timed data store.
  *
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public interface TimedDataStore {
+public interface PopulationInformationCollection {
 
     /**
      * Gets earliest day that this Data Store is required to provide information regarding.
@@ -20,5 +23,10 @@ public interface TimedDataStore {
      * @return the latest day
      */
     int getLatestDay();
+
+
+    QueryResult getInfo(Query query);
+
+
 
 }

@@ -1,7 +1,7 @@
 package model.interfacesnew.analysis.statistical;
 
 import model.enums.VariableType;
-import model.interfacesnew.dataStores.values.NumberTable;
+import model.interfacesnew.dataStores.informationFlow.result.returnTable.NumberTable;
 
 /**
  * The StatisticalAnalysis interface provides statistical tests to verify the simulated population.
@@ -19,7 +19,7 @@ public interface StatisticalAnalysis {
      * @param observedEvents the observed events
      * @return the km analysis
      */
-    KMAnalysis runKM(VariableType variable, int year, NumberTable expectedEvents, NumberTable observedEvents);
+    KaplanMeierAnalysis runKaplanMeier(VariableType variable, int year, NumberTable expectedEvents, NumberTable observedEvents);
 
 
 }

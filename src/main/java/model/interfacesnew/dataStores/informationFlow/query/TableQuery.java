@@ -1,4 +1,4 @@
-package model.interfacesnew.dataStores.query;
+package model.interfacesnew.dataStores.informationFlow.query;
 
 import model.enums.VariableType;
 
@@ -7,7 +7,7 @@ import model.enums.VariableType;
  *
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public interface TableQuery {
+public interface TableQuery extends Query{
 
     /**
      * The variable the query focuses on.

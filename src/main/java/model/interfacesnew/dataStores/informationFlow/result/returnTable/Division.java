@@ -1,4 +1,4 @@
-package model.interfacesnew.dataStores.general;
+package model.interfacesnew.dataStores.informationFlow.result.returnTable;
 
 /**
  * A Division represents an interval with a given identifier (this could be set to be a numerical interval e.g. a minimum

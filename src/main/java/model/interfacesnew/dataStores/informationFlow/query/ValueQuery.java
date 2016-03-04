@@ -1,4 +1,4 @@
-package model.interfacesnew.dataStores.query;
+package model.interfacesnew.dataStores.informationFlow.query;
 
 /**
  * A ValueQuery is used to define a particular value to be retrieved from a data store.
@@ -8,7 +8,7 @@ package model.interfacesnew.dataStores.query;
  *
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public interface ValueQuery<P, S> {
+public interface ValueQuery<P, S> extends Query {
 
     /**
      * Primary variable p.

@@ -1,5 +1,7 @@
 package model.interfacesnew.populationModel;
 
+import model.interfacesnew.dataStores.informationFlow.query.Query;
+
 /**
  * This interface defines the additional variables needed for this version of the population model.
  *
@@ -14,6 +16,6 @@ public interface Population extends IPopulation {
      * @param cohort the details of the required cohort
      * @return the set of persons in the population meeting the given query
      */
-    IPerson[] getPersons(CohortQuery cohort);
+    IPerson[] getPersons(Query cohort);
 
 }

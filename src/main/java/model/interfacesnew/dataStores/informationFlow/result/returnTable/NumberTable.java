@@ -1,6 +1,4 @@
-package model.interfacesnew.dataStores.values;
-
-import model.interfacesnew.dataStores.general.Division;
+package model.interfacesnew.dataStores.informationFlow.result.returnTable;
 
 /**
  * A NumberTable holds a set of divisions which allow for the storage of values associated with a set of primary

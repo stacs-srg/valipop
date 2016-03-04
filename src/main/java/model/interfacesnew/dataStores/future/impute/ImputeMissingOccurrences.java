@@ -1,4 +1,6 @@
-package model.interfacesnew.dataStores.general;
+package model.interfacesnew.dataStores.future.impute;
+
+import model.interfacesnew.dataStores.PopulationInformationCollection;
 
 /**
  * The interface Imputable data store.
@@ -17,7 +19,10 @@ package model.interfacesnew.dataStores.general;
  *
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public interface ImputableDataStore {
+public interface ImputeMissingOccurrences {
+
+    // TODO needs to take a Factory as a parameter - need a better understanding of the unifying features of an InformationFactory before we can do this though.
+    PopulationInformationCollection imputeInformation();
 
     /**
      * Calculates any missing fields in the data store which it is possible to calculate from the data already residing
