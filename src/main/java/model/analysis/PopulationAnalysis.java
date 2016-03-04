@@ -1,8 +1,8 @@
 package model.analysis;
 
-import model.interfacesnew.dataStores.PopulationInformationCollection;
-import model.interfacesnew.dataStores.informationFlow.query.Query;
-import model.interfacesnew.dataStores.informationFlow.result.QueryResult;
+import model.interfaces.dataStores.PopulationInformationCollection;
+import model.interfaces.dataStores.informationFlow.query.Query;
+import model.interfaces.dataStores.informationFlow.result.QueryResult;
 
 /**
  * The PopulationAnalysis interface provides the functionality to be able to access the same information about the

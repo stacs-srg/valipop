@@ -1,8 +1,8 @@
 package model.occurrencesInformation;
 
-import model.interfacesnew.dataStores.PopulationInformationCollection;
-import model.interfacesnew.dataStores.informationFlow.query.Query;
-import model.interfacesnew.dataStores.informationFlow.result.QueryResult;
+import model.interfaces.dataStores.PopulationInformationCollection;
+import model.interfaces.dataStores.informationFlow.query.Query;
+import model.interfaces.dataStores.informationFlow.result.QueryResult;
 
 /**
  * The EventOccurrences holds information about the number of events that occur to a given subset of the summative
