@@ -1,7 +1,8 @@
 package model.interfaces.dataStores;
 
 /**
- * The interface Timed data store.
+ * The PopulationInformationCollection interface provides high level common information about the information
+ * collections found in the model.
  *
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */

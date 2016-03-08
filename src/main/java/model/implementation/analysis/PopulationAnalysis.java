@@ -1,4 +1,4 @@
-package model.analysis;
+package model.implementation.analysis;
 
 import model.enums.EventType;
 import model.enums.Gender;
@@ -9,8 +9,8 @@ import model.interfaces.dataStores.informationPassing.tableTypes.TwoWayTable;
 
 /**
  * The PopulationAnalysis interface provides the functionality to be able to access the same information about the
- * simulated population as is provided about the summative population. It also provides methods to retrieve data in the
- * forms required for the various statistical analyses that are used in the verification of the produced population.
+ * simulated population as in the provided population. It also provides methods to retrieve data in the forms required
+ * for the various statistical analyses that are used in the verification of the produced population.
  *
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
@@ -25,7 +25,6 @@ public class PopulationAnalysis implements PopulationInformationCollection, Quan
     public int getLatestDay() {
         return 0;
     }
-
 
     @Override
     public OneWayTable<Double> getDeathRates(int year, Gender gender) {

@@ -3,7 +3,6 @@ package model.interfaces.dataStores.future.impute;
 import model.interfaces.dataStores.PopulationInformationCollection;
 
 /**
- * The interface Imputable data store.
  *
  * ----- Calculation and imputation methods -----
  *

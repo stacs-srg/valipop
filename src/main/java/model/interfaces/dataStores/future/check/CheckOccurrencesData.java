@@ -3,7 +3,8 @@ package model.interfaces.dataStores.future.check;
 import model.interfaces.dataStores.future.EventOccurrences;
 
 /**
- * The interface CheckOccurrencesData.
+ * Methods in the CheckOccurrencesData interface are provided to check for similarity between the rates and what rates
+ * would would be calculable using data in the other stores (where present).
  *
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */

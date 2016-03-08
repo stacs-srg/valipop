@@ -1,7 +1,7 @@
 package model.interfaces.dataStores.informationFactories;
 
 import model.enums.EventType;
-import model.occurrencesInformation.QuantifiedEventOccurrences;
+import model.implementation.occurrencesInformation.QuantifiedEventOccurrences;
 
 /**
  * This factory class handles the correct construction of a QuantifiedEventOccurrences object.

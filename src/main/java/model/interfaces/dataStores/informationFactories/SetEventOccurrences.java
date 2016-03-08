@@ -4,6 +4,9 @@ import model.enums.EventType;
 import model.interfaces.dataStores.informationPassing.tableTypes.Table;
 
 /**
+ * The SetEventOccurrences interface provides a standard approach for the insertion of data into the information
+ * collections in the model.
+ *
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public interface SetEventOccurrences {
