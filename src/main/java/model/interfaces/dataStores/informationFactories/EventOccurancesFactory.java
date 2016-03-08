@@ -1,22 +1,23 @@
 package model.interfaces.dataStores.informationFactories;
 
 import model.enums.EventType;
-import model.implementation.occurrencesInformation.QuantifiedEventOccurrences;
+import model.implementation.occurrencesInformation.EventOccurrences;
+import model.interfaces.dataStores.informationPassing.tableTypes.Table;
 
 /**
- * This factory class handles the correct construction of a QuantifiedEventOccurrences object.
+ * This factory class handles the correct construction of a EventOccurrences object.
  *
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public interface QuantifiedEventOccurancesFactory extends SetEventOccurrences {
+public interface EventOccurancesFactory {
 
 
     /**
-     * Creates a QuantifiedEventOccurrences object.
+     * Creates a EventOccurrences object.
      *
      * @return the quantified event occurrences
      */
-    QuantifiedEventOccurrences createQuantifiedEventOccurances();
+    EventOccurrences createQuantifiedEventOccurances();
 
     /**
      * Calculates rate data based upon the data available in the EventOccurrences and the DemographicMakeup.
@@ -44,5 +45,14 @@ public interface QuantifiedEventOccurancesFactory extends SetEventOccurrences {
      * @param variable the specified variable
      */
     void calculateImportableData(int year, EventType variable);
+
+    /**
+     * Inserts the given NumberTable into the data store for the specified variable for the given year.
+     *
+     * @param year     the given year
+     * @param variable the specified variable
+     * @param table    the NumberTable
+     */
+    void setData(int year, EventType variable, Table table);
 
 }

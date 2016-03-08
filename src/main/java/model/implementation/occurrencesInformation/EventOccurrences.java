@@ -3,17 +3,18 @@ package model.implementation.occurrencesInformation;
 import model.enums.EventType;
 import model.enums.Gender;
 import model.interfaces.dataStores.PopulationInformationCollection;
-import model.interfaces.dataStores.informationAccess.QuantifiedEventAccess;
+import model.interfaces.dataStores.informationAccess.EventRateTables;
+import model.interfaces.dataStores.informationAccess.StatisticalTables;
 import model.interfaces.dataStores.informationPassing.tableTypes.OneWayTable;
 import model.interfaces.dataStores.informationPassing.tableTypes.TwoWayTable;
 
 /**
- * The QuantifiedEventOccurrences holds data about the rate at which specified events occur to specified subsets of
+ * The EventOccurrences holds data about the rate at which specified events occur to specified subsets of
  * members of the summative population.
  *
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class QuantifiedEventOccurrences implements PopulationInformationCollection, QuantifiedEventAccess {
+public class EventOccurrences implements PopulationInformationCollection, EventRateTables, StatisticalTables {
 
 
     @Override
