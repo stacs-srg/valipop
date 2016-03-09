@@ -1,4 +1,4 @@
-package model.implementation.occurrencesInformation;
+package model.implementation.analysis;
 
 import model.enums.EventType;
 import model.enums.Gender;
@@ -9,13 +9,13 @@ import model.interfaces.dataStores.informationPassing.tableTypes.OneWayTable;
 import model.interfaces.dataStores.informationPassing.tableTypes.TwoWayTable;
 
 /**
- * The EventOccurrences holds data about the rate at which specified events occur to specified subsets of
- * members of the summative population.
+ * The GeneratedPopulationComposition interface provides the functionality to be able to access the same information about the
+ * simulated population as in the provided population. It also provides methods to retrieve data in the forms required
+ * for the various statistical analyses that are used in the verification of the produced population.
  *
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class EventOccurrences implements PopulationInformationCollection, EventRateTables, StatisticalTables {
-
+public class GeneratedPopulationComposition implements PopulationInformationCollection, StatisticalTables {
 
     @Override
     public int getEarliestDay() {
@@ -25,27 +25,6 @@ public class EventOccurrences implements PopulationInformationCollection, EventR
     @Override
     public int getLatestDay() {
         return 0;
-    }
-
-
-    @Override
-    public OneWayTable<Double> getDeathRates(int year, Gender gender) {
-        return null;
-    }
-
-    @Override
-    public TwoWayTable<Double> getMarriageRates(int year) {
-        return null;
-    }
-
-    @Override
-    public OneWayTable<Double> getBirthRates(int year) {
-        return null;
-    }
-
-    @Override
-    public TwoWayTable<Double> getBirthRatesByOrder(int year) {
-        return null;
     }
 
     @Override

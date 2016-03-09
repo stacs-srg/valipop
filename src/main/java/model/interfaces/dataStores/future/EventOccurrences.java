@@ -3,9 +3,9 @@ package model.interfaces.dataStores.future;
 import model.interfaces.dataStores.PopulationInformationCollection;
 
 /**
- * The EventOccurrences holds information about the number of events that occur to a given subset of the summative
+ * The DesiredPopulationComposition holds information about the number of events that occur to a given subset of the summative
  * population. By combining this with data about the size of the given subset in the DemographicMakeup it is possible
- * to calculate a rate at which even occurs for a given subset of the population which is stored in the EventOccurrences.
+ * to calculate a rate at which even occurs for a given subset of the population which is stored in the DesiredPopulationComposition.
  *
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */

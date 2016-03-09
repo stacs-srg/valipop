@@ -1,11 +1,11 @@
 package model.interfaces.dataStores.informationFactories;
 
 import model.enums.EventType;
-import model.implementation.occurrencesInformation.EventOccurrences;
+import model.implementation.occurrencesInformation.DesiredPopulationComposition;
 import model.interfaces.dataStores.informationPassing.tableTypes.Table;
 
 /**
- * This factory class handles the correct construction of a EventOccurrences object.
+ * This factory class handles the correct construction of a DesiredPopulationComposition object.
  *
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
@@ -13,14 +13,14 @@ public interface EventOccurancesFactory {
 
 
     /**
-     * Creates a EventOccurrences object.
+     * Creates a DesiredPopulationComposition object.
      *
      * @return the quantified event occurrences
      */
-    EventOccurrences createQuantifiedEventOccurances();
+    DesiredPopulationComposition createQuantifiedEventOccurances();
 
     /**
-     * Calculates rate data based upon the data available in the EventOccurrences and the DemographicMakeup.
+     * Calculates rate data based upon the data available in the DesiredPopulationComposition and the DemographicMakeup.
      */
     void calculateImportableData();
 

@@ -10,7 +10,7 @@ import model.interfaces.dataStores.informationPassing.tableTypes.Table;
 public interface EventOccurrencesFactory {
 
     /**
-     * Creates a EventOccurrences object.
+     * Creates a DesiredPopulationComposition object.
      *
      * @return the event occurrences
      */
