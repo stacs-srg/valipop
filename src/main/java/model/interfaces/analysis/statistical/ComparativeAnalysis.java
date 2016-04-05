@@ -11,6 +11,8 @@ import model.interfaces.dataStores.informationPassing.tableTypes.OneWayTable;
  */
 public interface ComparativeAnalysis {
 
+
+
     /**
      * Runs Kaplan-Meier analysis, see the provided {@link KaplanMeierAnalysis} class.
      *
@@ -22,5 +24,15 @@ public interface ComparativeAnalysis {
      */
     KaplanMeierAnalysis runKaplanMeier(EventType variable, int year, OneWayTable<Integer> expectedEvents, OneWayTable<Integer> observedEvents);
 
+
+    /**
+     * If all comparisons pass then return true, else return fail.
+     *
+     * @return have all comparative analyses passed
+     */
+    boolean passed();
+
+
+    void runAnalysis();
 
 }

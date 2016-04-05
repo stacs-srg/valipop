@@ -1,4 +1,4 @@
-package model.interfaces.analysis.population;
+package model.implementation.analysis;
 
 import model.implementation.analysis.GeneratedPopulationComposition;
 import model.interfaces.populationModel.Population;
@@ -8,8 +8,12 @@ import model.interfaces.populationModel.Population;
  *
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public interface GeneratedPopulationCompositionFactory {
+public abstract class GeneratedPopulationCompositionFactory {
 
-    GeneratedPopulationComposition createGeneratedPopulationComposition(Population population);
+    public static GeneratedPopulationComposition createGeneratedPopulationComposition(Population population) {
+
+
+        return null;
+    }
 
 }

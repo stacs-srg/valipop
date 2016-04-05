@@ -45,20 +45,6 @@ public interface IPerson {
     int getId();
 
     /**
-     * Gets the person's first name.
-     *
-     * @return the person's first name
-     */
-    String getFirstName();
-
-    /**
-     * Gets the person's surname (family name).
-     *
-     * @return the person's surname
-     */
-    String getSurname();
-
-    /**
      * Gets the person's sex, either {@link #FEMALE} or {@link #MALE}.
      *
      * @return the person's sex
@@ -73,13 +59,6 @@ public interface IPerson {
     Date getBirthDate();
 
     /**
-     * Gets the person's place of birth, or null if not recorded.
-     *
-     * @return the person's place of birth
-     */
-    String getBirthPlace();
-
-    /**
      * Gets the person's date of death, or null if they are living.
      *
      * @return the person's date of death
@@ -87,37 +66,17 @@ public interface IPerson {
     Date getDeathDate();
 
     /**
-     * Gets the person's place of death, or null if not recorded.
-     *
-     * @return the person's place of death
-     */
-    String getDeathPlace();
-
-    /**
-     * Gets the person's occupation, or null if not recorded.
-     *
-     * @return the person's occupation
-     */
-    String getOccupation();
-
-    /**
-     * Gets the cause of the person's death, or null if not recorded.
-     *
-     * @return the cause of the person's death
-     */
-    String getDeathCause();
-
-    /**
      * Gets the identifiers of the person's partnerships, or null if none are recorded.
      *
      * @return the identifiers of the person's partnerships
      */
-    List<Integer> getPartnerships();
+    List<IPartnership> getPartnerships();
 
     /**
      * Gets the identifier of the person's parents' partnership, or -1 if none are recorded.
      *
      * @return the identifier of the person's parents' partnership
      */
-    int getParentsPartnership();
+    IPartnership getParentsPartnership();
+
 }
