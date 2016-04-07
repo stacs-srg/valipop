@@ -1,3 +1,7 @@
 #Properties File - for model v3 - Tom, Graham, Al
 #4.3.16
-
+var_birth_files = variables/birth
+var_death_files = variables/death
+var_multiple_birth_files = variables/multiple_birth
+var_partnering_files = variables/partnering
+var_separation_files = variables/separation

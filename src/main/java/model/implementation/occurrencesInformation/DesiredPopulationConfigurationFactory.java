@@ -31,6 +31,6 @@ public class DesiredPopulationConfigurationFactory {
      */
     void setData(int year, EventType variable, Table table) {
 
-    };
+    }
 
 }

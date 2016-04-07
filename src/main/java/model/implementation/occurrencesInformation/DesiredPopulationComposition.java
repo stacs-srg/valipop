@@ -34,7 +34,7 @@ public class DesiredPopulationComposition implements PopulationInformationCollec
     }
 
     @Override
-    public TwoWayTable<Double> getMarriageRates(int year) {
+    public TwoWayTable<Double> getPartneringRates(int year) {
         return null;
     }
 
@@ -44,7 +44,7 @@ public class DesiredPopulationComposition implements PopulationInformationCollec
     }
 
     @Override
-    public TwoWayTable<Double> getBirthRatesByOrder(int year) {
+    public TwoWayTable<Double> getOrderedBirthRates(int year) {
         return null;
     }
 

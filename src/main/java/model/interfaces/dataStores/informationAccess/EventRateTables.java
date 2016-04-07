@@ -48,7 +48,7 @@ public interface EventRateTables {
      * @param year the year
      * @return the marriage rates
      */
-    TwoWayTable<Double> getMarriageRates(int year);
+    TwoWayTable<Double> getPartneringRates(int year);
 
     /**
      * Gets birth rates for births in the given year defined by the age of the mother.
@@ -81,6 +81,40 @@ public interface EventRateTables {
      * @param year the year
      * @return the birth rates by order
      */
-    TwoWayTable<Double> getBirthRatesByOrder(int year);
+    TwoWayTable<Double> getOrderedBirthRates(int year);
+
+    /**
+     * Gets multiple births in a maternity rate for women giving birth in a given year by age of the mother.
+     *
+     *       Number of live children resulting from maternity
+     *
+     *                 |   1   |   2   |   3   |  ...
+     *             ------------------------------------
+     *              16 | 0.003 | 0.002 | 0.000 |  ...
+     *   Age of     17 | 0.052 | 0.012 | 0.003 |  ...
+     *   female     18 | 0.109 | 0.041 | 0.021 |  ...
+     *              .. |  ...  |  ...  |  ...  |
+     *
+     * @param year the year
+     * @return the birth rates by order
+     */
+    TwoWayTable<Double> getMultipleBirthRates(int year);
+
+    /**
+     * Gets the rate of separation after having a given number of children as a couple. The rate is considered in respect
+     * to the whole female population.
+     *
+     *               | Rate
+     *          -------------
+     *            1  | 0.03
+     *  Current   2  | 0.02
+     *    age     3  | 0.01
+     *           ... |  ...
+     *
+     *
+     * @param year   the year
+     * @return the death rates
+     */
+    OneWayTable<Double> getSeperationByChildCountRates(int year);
 
 }
