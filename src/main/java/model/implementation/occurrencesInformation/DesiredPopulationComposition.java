@@ -49,6 +49,16 @@ public class DesiredPopulationComposition implements PopulationInformationCollec
     }
 
     @Override
+    public TwoWayTable<Double> getMultipleBirthRates(int year) {
+        return null;
+    }
+
+    @Override
+    public OneWayTable<Double> getSeparationByChildCountRates(int year) {
+        return null;
+    }
+
+    @Override
     public OneWayTable<Integer> getSurvivorTable(int startYear, int timePeriod, EventType event) {
         return null;
     }

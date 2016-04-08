@@ -1,13 +1,13 @@
 <component name="libraryTable">
   <library name="Maven: uk.ac.standrews.cs:ciesvium:1.0-SNAPSHOT">
     <CLASSES>
-      <root url="jar://$MAVEN_REPOSITORY$/uk/ac/standrews/cs/ciesvium/1.0-SNAPSHOT/ciesvium-1.0-20150821.001607-34.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/uk/ac/standrews/cs/ciesvium/1.0-SNAPSHOT/ciesvium-1.0-20160405.141558-37.jar!/" />
     </CLASSES>
     <JAVADOC>
-      <root url="jar://$MAVEN_REPOSITORY$/uk/ac/standrews/cs/ciesvium/1.0-SNAPSHOT/ciesvium-1.0-20150821.001607-34-javadoc.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/uk/ac/standrews/cs/ciesvium/1.0-SNAPSHOT/ciesvium-1.0-20160405.141558-37-javadoc.jar!/" />
     </JAVADOC>
     <SOURCES>
-      <root url="jar://$MAVEN_REPOSITORY$/uk/ac/standrews/cs/ciesvium/1.0-SNAPSHOT/ciesvium-1.0-20150821.001607-34-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/uk/ac/standrews/cs/ciesvium/1.0-SNAPSHOT/ciesvium-1.0-20160405.141558-37-sources.jar!/" />
     </SOURCES>
   </library>
 </component>

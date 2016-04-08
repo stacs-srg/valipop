@@ -115,6 +115,6 @@ public interface EventRateTables {
      * @param year   the year
      * @return the death rates
      */
-    OneWayTable<Double> getSeperationByChildCountRates(int year);
+    OneWayTable<Double> getSeparationByChildCountRates(int year);
 
 }

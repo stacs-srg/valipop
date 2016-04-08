@@ -5,7 +5,12 @@ import model.implementation.analysis.GeneratedPopulationComposition;
 import model.implementation.analysis.GeneratedPopulationCompositionFactory;
 import model.implementation.config.Config;
 import model.implementation.occurrencesInformation.DesiredPopulationComposition;
+import model.implementation.occurrencesInformation.DesiredPopulationCompositionFactory;
 import model.interfaces.populationModel.Population;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
@@ -45,22 +50,7 @@ public class Simulation {
 
     private static DesiredPopulationComposition setUpSimData() {
 
-        // if config to use saved data
-            // load in saved data
-
-        // else
-            // look in config to find location of data to be used
-            // for each input data type defined
-                // for each year in the simulation
-                    // create an EventRateTable and place in the DesiredPopulationComposition
-                // end for
-            // end for
-
-            // for each data type
-                // smooth value changes in gaps between years for which data is given
-            // end for
-
-        // end else
+        DesiredPopulationComposition composition = DesiredPopulationCompositionFactory.createQuantifiedEventOccurrences(config);
 
         // calculate desired birth rate to achieve seed population at Time 0, to do this:
         // for each population growth rates before Time 0 working backwards to Time start
