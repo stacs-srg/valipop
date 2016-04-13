@@ -1,0 +1,14 @@
+15:57:52.023 [main] INFO  model.implementation.model.Simulation - Program begins
+15:57:52.025 [main] WARN  model.implementation.model.Simulation - PB
+15:57:52.025 [main] TRACE model.implementation.model.Simulation - ddd
+16:01:16.490 [main] INFO  model.implementation.model.Simulation - Program begins
+16:01:16.491 [main] WARN  model.implementation.model.Simulation - PB
+16:01:16.491 [main] TRACE model.implementation.model.Simulation - ddd
+16:01:39.853 [main] INFO  model.implementation.model.Simulation - Program begins
+16:01:39.855 [main] WARN  model.implementation.model.Simulation - PB
+16:01:39.855 [main] TRACE model.implementation.model.Simulation - ddd
+16:01:39.856 [main] INFO  model.implementation.occurrencesInformation.DesiredPopulationCompositionFactory - Creating DesiredPopulationComposition
+16:03:43.063 [main] INFO  main - Program begins
+16:03:43.064 [main] WARN  main - PB
+16:03:43.064 [main] TRACE main - ddd
+16:03:43.064 [main] INFO  model.implementation.occurrencesInformation.DesiredPopulationCompositionFactory - Creating DesiredPopulationComposition

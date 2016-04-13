@@ -4,6 +4,8 @@ import model.enums.EventType;
 import model.implementation.config.Config;
 import model.implementation.occurrencesInformation.DesiredPopulationComposition;
 import model.interfaces.dataStores.informationPassing.tableTypes.Table;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import utils.InputFileReader;
 
 import java.io.File;
@@ -15,6 +17,8 @@ import java.io.File;
  */
 public abstract class DesiredPopulationCompositionFactory {
 
+    private static Logger log = LogManager.getLogger(DesiredPopulationCompositionFactory.class);
+
 
     /**
      * Creates a DesiredPopulationComposition object.
@@ -22,6 +26,8 @@ public abstract class DesiredPopulationCompositionFactory {
      * @return the quantified event occurrences
      */
     public static DesiredPopulationComposition createQuantifiedEventOccurrences(Config config) {
+
+        DesiredPopulationCompositionFactory.log.info("Creating DesiredPopulationComposition");
 
         // if config to use saved data
             // load in saved data

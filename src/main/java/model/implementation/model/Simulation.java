@@ -17,7 +17,9 @@ import org.apache.logging.log4j.Logger;
  */
 public class Simulation {
 
-    private final static String PATH_TO_CONFIG_FILE = "config/config.txt";
+    public static Logger log = LogManager.getLogger(Simulation.class);
+
+    private final static String PATH_TO_CONFIG_FILE = "/Users/tsd4/OneDrive/cs/PhD/population_model/src/main/resources/config/config.txt";
 
     DesiredPopulationComposition desired;
     private final static Config config = new Config(PATH_TO_CONFIG_FILE);
@@ -25,26 +27,39 @@ public class Simulation {
 
     public static void main(String[] args) {
 
+        Logger log = LogManager.getLogger("main");
+
+        log.info("Program begins");
+
         Simulation sim = new Simulation();
 
-        // get desired population info
-        sim.desired = setUpSimData();
-
         // run model
-        Population population = sim.runModel();
+        Population population = sim.makeSimulatedPopulation();
 
-        // get comparable statistics for generate population
-        GeneratedPopulationComposition generated = GeneratedPopulationCompositionFactory.createGeneratedPopulationComposition(population);
-
-        // compare desired and generated population
-        ComparativeAnalysis compare = new ComparativeAnalysis(sim.desired, generated);
-        compare.runAnalysis();
+        // perform comparisons
+        ComparativeAnalysis comparisonOfDesiredAndGenerated = sim.analyseGeneratedPopulation(population);
 
         // Check for statistical significant similarity between desired and generated population
-        if(compare.passed()) {
+        if(comparisonOfDesiredAndGenerated.passed()) {
             System.out.println("Generated population similarity to desired population is statistically significant");
         }
 
+
+    }
+
+    public Simulation() {
+        // get desired population info
+        desired = setUpSimData();
+    }
+
+    public ComparativeAnalysis analyseGeneratedPopulation(Population generatedPopulation) {
+        // get comparable statistics for generate population
+        GeneratedPopulationComposition generatedPopulationComposition = GeneratedPopulationCompositionFactory.createGeneratedPopulationComposition(generatedPopulation);
+
+        // compare desired and generated population
+        ComparativeAnalysis comparisonOfDesiredAndGenerated = new ComparativeAnalysis(desired, generatedPopulationComposition);
+
+        return comparisonOfDesiredAndGenerated;
 
     }
 
@@ -65,7 +80,7 @@ public class Simulation {
     }
 
 
-    private Population runModel() {
+    private Population makeSimulatedPopulation() {
 
         // INFO: at this point all the desired population statistics have been made available
 
