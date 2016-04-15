@@ -136,7 +136,7 @@ public class Simulation {
                 // use data 1 to see how many many children need to be born
                 // use data 2 to decide how many mothers needed to birth children
                 // select the correct number of mothers
-                // assign the specified number of children
+                // make and assign the specified number of children - assign to correct place in population
 
                 // if birth order 0
                     // add mothers to MOTHERS_NEEDING_FATHERS
@@ -154,7 +154,10 @@ public class Simulation {
             // select fathers and add to NEW_FATHERS
 
             // pair up MOTHERS_NEEDING_FATHERS with NEW_FATHERS
-            // make new children - add to population
+
+            // find appropriate birth date for child
+
+            // update new children info to give fathers
             // keep count of children born this quarter as BIRTH_COUNT
 
             // MAGIC CHILDREN BIT
