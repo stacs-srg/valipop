@@ -89,29 +89,18 @@ public class Simulation {
         // start time progression
         // for each time step from T Start to T End
 
-            // if year end
-                handleYearEvents();
-            // fi
+            // at every min timestep
+            // clear out dead people
 
-            // if quarter end
-                handleQuarterlyEvents();
-            // fi
+            // if deaths timestep
+                handleDeaths();
+
+            // if births timestep
+                handleBirths();
 
         // end for
 
         return null;
-    }
-
-    private void handleQuarterlyEvents() {
-
-        // clear out dead people for the quarter
-
-        handleBirths();
-
-    }
-
-    private void handleYearEvents() {
-        handleDeaths();
     }
 
     private void handleDeaths() {
@@ -119,7 +108,13 @@ public class Simulation {
         // handle deaths for the next year
         // for each age
             // DATA - get rate of death by age and gender
-            // execute deaths
+            // get count of people of given age
+            // use data to calculate who to kill off
+
+            // for each to be killed
+                // execute death at a time in the next year
+            // end for
+
         // end for
 
     }
@@ -131,11 +126,17 @@ public class Simulation {
         // create set of NEW_FATHERS
 
         // make children/decide on mothers
-        // for each age of mothers of childbearing age
-            // for each number of children already birthed to mothers
-                // DATA - get rate of births by mothers age and birth order
-                // DATA - get rate of multiple births in a maternity (by order)
+        // for each age of mothers of childbearing age (AGE OF MOTHER)
+            // for each number of children already birthed to mothers (BIRTH ORDER)
+                // DATA 1 - get rate of births by mothers age and birth order
+                // DATA 2 - get rate of multiple births in a maternity (by order)
+
                 // select mothers to give birth (and which will bear twins, etc.)
+                // get count of mothers of this age and birth order
+                // use data 1 to see how many many children need to be born
+                // use data 2 to decide how many mothers needed to birth children
+                // select the correct number of mothers
+                // assign the specified number of children
 
                 // if birth order 0
                     // add mothers to MOTHERS_NEEDING_FATHERS
