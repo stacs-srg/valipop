@@ -1,6 +1,6 @@
 package model.interfaces.dataStores.future.impute;
 
-import model.interfaces.dataStores.PopulationInformationCollection;
+import model.interfaces.dataStores.PopulationDateRange;
 
 /**
  *
@@ -21,7 +21,7 @@ import model.interfaces.dataStores.PopulationInformationCollection;
 public interface ImputeMissingOccurrences {
 
     // TODO needs to take a Factory as a parameter - need a better understanding of the unifying features of an InformationFactory before we can do this though.
-    PopulationInformationCollection imputeInformation();
+    PopulationDateRange imputeInformation();
 
     /**
      * Calculates any missing fields in the data store which it is possible to calculate from the data already residing

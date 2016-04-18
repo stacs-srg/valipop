@@ -2,7 +2,8 @@ package model.implementation.occurrencesInformation;
 
 import model.enums.EventType;
 import model.enums.Gender;
-import model.interfaces.dataStores.PopulationInformationCollection;
+import model.implementation.analysis.PopulationComposition;
+import model.interfaces.dataStores.PopulationDateRange;
 import model.interfaces.dataStores.informationAccess.EventRateTables;
 import model.interfaces.dataStores.informationAccess.StatisticalTables;
 import model.interfaces.dataStores.informationPassing.tableTypes.OneWayTable;
@@ -14,7 +15,7 @@ import model.interfaces.dataStores.informationPassing.tableTypes.TwoWayTable;
  *
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class DesiredPopulationComposition implements PopulationInformationCollection, EventRateTables, StatisticalTables {
+public class DesiredPopulationComposition implements PopulationComposition, EventRateTables {
 
 
     @Override

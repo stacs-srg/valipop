@@ -47,9 +47,7 @@ public abstract class DesiredPopulationCompositionFactory {
                 // end for
             // end for
 
-            // for each data type
-                // smooth value changes in gaps between years for which data is given
-            // end for
+
 
         // end else
 

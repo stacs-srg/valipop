@@ -1,6 +1,6 @@
 package model.interfaces.dataStores.future;
 
-import model.interfaces.dataStores.PopulationInformationCollection;
+import model.interfaces.dataStores.PopulationDateRange;
 
 /**
  * The DesiredPopulationComposition holds information about the number of events that occur to a given subset of the summative
@@ -9,7 +9,7 @@ import model.interfaces.dataStores.PopulationInformationCollection;
  *
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class EventOccurrences implements PopulationInformationCollection {
+public class EventOccurrences implements PopulationDateRange {
 
 
     @Override

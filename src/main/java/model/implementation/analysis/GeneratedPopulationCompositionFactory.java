@@ -10,7 +10,8 @@ import model.interfaces.populationModel.Population;
  */
 public abstract class GeneratedPopulationCompositionFactory {
 
-    public static GeneratedPopulationComposition createGeneratedPopulationComposition(Population population) {
+
+    public static PopulationComposition createGeneratedPopulationComposition(Population population) {
 
 
         return null;

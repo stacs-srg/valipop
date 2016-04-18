@@ -18,6 +18,6 @@ package model.interfaces.dataStores.informationPassing.tableTypes;
  */
 public interface OneWayTable<CellType> {
 
-    CellType getValue(int y);
+    CellType getValue(int rowNumber);
 
 }

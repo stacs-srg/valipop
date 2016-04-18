@@ -1,10 +1,9 @@
 package model.implementation.model;
 
+import model.implementation.analysis.PopulationComposition;
 import model.implementation.analysis.statistics.ComparativeAnalysis;
-import model.implementation.analysis.GeneratedPopulationComposition;
 import model.implementation.analysis.GeneratedPopulationCompositionFactory;
 import model.implementation.config.Config;
-import model.implementation.occurrencesInformation.DesiredPopulationComposition;
 import model.implementation.occurrencesInformation.DesiredPopulationCompositionFactory;
 import model.interfaces.populationModel.Population;
 
@@ -21,7 +20,7 @@ public class Simulation {
 
     private final static String PATH_TO_CONFIG_FILE = "/Users/tsd4/OneDrive/cs/PhD/population_model/src/main/resources/config/config.txt";
 
-    DesiredPopulationComposition desired;
+    PopulationComposition desired;
     private final static Config config = new Config(PATH_TO_CONFIG_FILE);
 
 
@@ -54,7 +53,7 @@ public class Simulation {
 
     public ComparativeAnalysis analyseGeneratedPopulation(Population generatedPopulation) {
         // get comparable statistics for generate population
-        GeneratedPopulationComposition generatedPopulationComposition = GeneratedPopulationCompositionFactory.createGeneratedPopulationComposition(generatedPopulation);
+        PopulationComposition generatedPopulationComposition = GeneratedPopulationCompositionFactory.createGeneratedPopulationComposition(generatedPopulation);
 
         // compare desired and generated population
         ComparativeAnalysis comparisonOfDesiredAndGenerated = new ComparativeAnalysis(desired, generatedPopulationComposition);
@@ -63,9 +62,14 @@ public class Simulation {
 
     }
 
-    private static DesiredPopulationComposition setUpSimData() {
+    private static PopulationComposition setUpSimData() {
 
-        DesiredPopulationComposition composition = DesiredPopulationCompositionFactory.createQuantifiedEventOccurrences(config);
+        PopulationComposition desiredComposition = DesiredPopulationCompositionFactory.createQuantifiedEventOccurrences(config);
+
+        // interpolate
+        // for each data type
+        //      smooth value changes in gaps between years for which data is given
+        // end for
 
         // calculate desired birth rate to achieve seed population at Time 0, to do this:
         // for each population growth rates before Time 0 working backwards to Time start

@@ -18,6 +18,7 @@ package model.interfaces.dataStores.informationPassing.tableTypes;
  */
 public interface TwoWayTable<CellType> extends Table {
 
+    // TODO rename/delete?
     CellType getValue(int y, int x);
 
 }

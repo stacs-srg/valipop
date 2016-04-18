@@ -1,6 +1,6 @@
 package model.interfaces.dataStores.future;
 
-import model.interfaces.dataStores.PopulationInformationCollection;
+import model.interfaces.dataStores.PopulationDateRange;
 
 /**
  * The data store is a base of data that describes basic characteristics of the summative population as a whole by year,
@@ -30,7 +30,7 @@ import model.interfaces.dataStores.PopulationInformationCollection;
  *
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class DemographicMakeup implements PopulationInformationCollection {
+public class DemographicMakeup implements PopulationDateRange {
 
 
     @Override
