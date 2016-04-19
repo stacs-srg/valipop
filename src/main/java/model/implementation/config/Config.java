@@ -1,8 +1,15 @@
 package model.implementation.config;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import utils.InputFileReader;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 /**
@@ -10,34 +17,74 @@ import java.util.List;
  */
 public class Config {
 
-    private File varBirthFiles;
-    private File varDeathFiles;
-    private File varMultipleBirthFiles;
-    private File varPartneringFiles;
-    private File varSeparationFiles;
+    public static Logger log = LogManager.getLogger(Config.class);
 
-    public File[] getVarBirthFiles() {
-        return varBirthFiles.listFiles();
+    private static final String birthSubFile = "birth";
+    private static final String deathSubFile = "death";
+    private static final String multipleBirthSubFile = "multiple_birth";
+    private static final String partneringSubFile = "partnering";
+    private static final String separationSubFile = "separation";
+
+    private Path varBirthFiles;
+    private Path varDeathFiles;
+    private Path varMultipleBirthFiles;
+    private Path varPartneringFiles;
+    private Path varSeparationFiles;
+
+//    private
+
+    public DirectoryStream<Path> getVarBirthFiles() {
+        try {
+            return Files.newDirectoryStream(varBirthFiles);
+        } catch (IOException e) {
+            log.fatal("Error reading in birth files. Will now exit.");
+            System.exit(1);
+        }
+        return null;
     }
 
 
-    public File[] getVarDeathFiles() {
-        return varDeathFiles.listFiles();
+    public DirectoryStream<Path> getVarDeathFiles() {
+        try {
+            return Files.newDirectoryStream(varDeathFiles);
+        } catch (IOException e) {
+            log.fatal("Error reading in death files. Will now exit.");
+            System.exit(1);
+        }
+        return null;
     }
 
 
-    public File[] getVarMultipleBirthFiles() {
-        return varMultipleBirthFiles.listFiles();
+    public DirectoryStream<Path> getVarMultipleBirthFiles() {
+        try {
+            return Files.newDirectoryStream(varMultipleBirthFiles);
+        } catch (IOException e) {
+            log.fatal("Error reading in multiple birth files. Will now exit.");
+            System.exit(1);
+        }
+        return null;
     }
 
 
-    public File[] getVarPartneringFiles() {
-        return varPartneringFiles.listFiles();
+    public DirectoryStream<Path> getVarPartneringFiles() {
+        try {
+            return Files.newDirectoryStream(varPartneringFiles);
+        } catch (IOException e) {
+            log.fatal("Error reading in partnering files. Will now exit.");
+            System.exit(1);
+        }
+        return null;
     }
 
 
-    public File[] getVarSeperationFiles() {
-        return varSeparationFiles.listFiles();
+    public DirectoryStream<Path> getVarSeperationFiles() {
+        try {
+            return Files.newDirectoryStream(varSeparationFiles);
+        } catch (IOException e) {
+            log.fatal("Error reading in separation files. Will now exit.");
+            System.exit(1);
+        }
+        return null;
     }
 
     public Config(String pathToConfigFile) {
@@ -50,23 +97,22 @@ public class Config {
             for(int i = 0; i < split.length; i++)
                 split[i] = split[i].trim();
 
-            switch(split[0]) {
-                case "var_birth_files":
-                    varBirthFiles = new File(split[1]);
-                    break;
-                case "var_death_files":
-                    varDeathFiles = new File(split[1]);
-                    break;
-                case "var_multiple_birth_files":
-                    varMultipleBirthFiles = new File(split[1]);
-                    break;
-                case "var_partnering_files":
-                    varPartneringFiles = new File(split[1]);
-                    break;
-                case "var_separation_files":
-                    varSeparationFiles = new File(split[1]);
-                    break;
+            String path = split[1];
 
+            switch(split[0]) {
+                case "var_data_files":
+                    varBirthFiles = Paths.get(path, birthSubFile);
+                    varDeathFiles = Paths.get(path, deathSubFile);
+                    varMultipleBirthFiles = Paths.get(path, multipleBirthSubFile);
+                    varPartneringFiles = Paths.get(path, partneringSubFile);
+                    varSeparationFiles = Paths.get(path, separationSubFile);
+                    break;
+                case "death_time_step":
+
+                    break;
+                case "birth_time_step":
+
+                    break;
             }
 
         }

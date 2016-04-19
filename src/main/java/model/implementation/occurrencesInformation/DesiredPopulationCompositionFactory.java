@@ -9,6 +9,7 @@ import org.apache.logging.log4j.Logger;
 import utils.InputFileReader;
 
 import java.io.File;
+import java.nio.file.Path;
 
 /**
  * This factory class handles the correct construction of a DesiredPopulationComposition object.
@@ -33,25 +34,28 @@ public abstract class DesiredPopulationCompositionFactory {
             // load in saved data
 
         // else
-            // look in config to find location of data to be used
+            readInDataFiles(config);
 
-            // for each input data type defined
+        return null;
+    }
 
-                for(File f : config.getVarBirthFiles()) {
-                    String[] lines = InputFileReader.getAllLines(f.toString());
+    private static void readInDataFiles(Config config) {
 
-                }
+        for(Path f : config.getVarBirthFiles()) {
 
-                // for each year in the simulation
-                    // create an EventRateTable and place in the DesiredPopulationComposition
-                // end for
+            // read in each file
+
+            // for each year in the simulation
+                // create an EventRateTable and place in the DesiredPopulationComposition
             // end for
 
 
+        }
 
-        // end else
+        // repeat for each data type
 
-        return null;
+
+
     }
 
     /**
