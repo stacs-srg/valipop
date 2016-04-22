@@ -4,7 +4,8 @@ import model.implementation.analysis.PopulationComposition;
 import model.implementation.analysis.statistics.ComparativeAnalysis;
 import model.implementation.analysis.GeneratedPopulationCompositionFactory;
 import model.implementation.config.Config;
-import model.implementation.occurrencesInformation.DesiredPopulationCompositionFactory;
+import model.implementation.populationStatistics.DesiredPopulationStatisticsFactory;
+import model.implementation.populationStatistics.PopulationStatistics;
 import model.interfaces.populationModel.Population;
 
 import org.apache.logging.log4j.LogManager;
@@ -20,7 +21,7 @@ public class Simulation {
 
     private final static String PATH_TO_CONFIG_FILE = "/Users/tsd4/OneDrive/cs/PhD/population_model/src/main/resources/config/config.txt";
 
-    PopulationComposition desired;
+    PopulationStatistics desired;
     private final static Config config = new Config(PATH_TO_CONFIG_FILE);
 
 
@@ -62,9 +63,9 @@ public class Simulation {
 
     }
 
-    private static PopulationComposition setUpSimData() {
+    private static PopulationStatistics setUpSimData() {
 
-        PopulationComposition desiredComposition = DesiredPopulationCompositionFactory.createQuantifiedEventOccurrences(config);
+        PopulationStatistics desiredStatistics = DesiredPopulationStatisticsFactory.intialisePopulationStatistics(config);
 
         // interpolate
         // for each data type
@@ -137,8 +138,8 @@ public class Simulation {
 
                 // select mothers to give birth (and which will bear twins, etc.)
                 // get count of mothers of this age and birth order
-                // use data 1 to see how many many children need to be born
-                // use data 2 to decide how many mothers needed to birth children
+                // use DATA 1 to see how many many children need to be born
+                // use DATA 2 to decide how many mothers needed to birth children
                 // select the correct number of mothers
                 // make and assign the specified number of children - assign to correct place in population
 

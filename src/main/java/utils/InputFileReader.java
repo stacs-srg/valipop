@@ -5,7 +5,10 @@ import uk.ac.standrews.cs.util.dataset.Mapper;
 import uk.ac.standrews.cs.util.tools.FileManipulation;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -16,16 +19,14 @@ public class InputFileReader {
     private static final String TAB = "\t";
     private static final String COMMENT_INDICATOR = "#";
 
-    public static String[] getAllLines(String path) {
+    public static Collection<String> getAllLines(Path path) {
 
-        ArrayList<String> lines = new ArrayList<String>();
+        Collection<String> lines = new ArrayList<String>();
         String line;
 
+        try (BufferedReader reader = Files.newBufferedReader(path)) {
 
-
-        try (BufferedReader reader = new BufferedReader(new FileReader(path))) {
-
-            while((line = reader.readLine())!=null) {
+            while((line = reader.readLine()) != null) {
 
                 if (line.startsWith(COMMENT_INDICATOR)) {
                     continue;
@@ -34,12 +35,10 @@ public class InputFileReader {
                 }
 
             }
-        } catch (FileNotFoundException e) {
+        } catch (IOException e) {
             e.printStackTrace();
-        } catch (IOException e1) {
-            e1.printStackTrace();
         }
-        return lines.toArray(new String[lines.size()]);
+        return lines;
 
 
     }

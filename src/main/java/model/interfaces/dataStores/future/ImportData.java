@@ -8,7 +8,7 @@ import model.enums.EventType;
 public interface ImportData {
 
     /**
-     * Calculates rate data based upon the data available in the DesiredPopulationComposition and the DemographicMakeup.
+     * Calculates rate data based upon the data available in the PopulationStatistics and the DemographicMakeup.
      */
     void calculateImportableData();
 
