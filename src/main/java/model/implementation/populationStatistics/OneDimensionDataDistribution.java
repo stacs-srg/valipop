@@ -1,5 +1,7 @@
 package model.implementation.populationStatistics;
 
+import model.time.TimeClock;
+
 import java.util.Map;
 
 /**
@@ -7,36 +9,57 @@ import java.util.Map;
  */
 public class OneDimensionDataDistribution implements DataDistibution {
 
-    private int year;
+    private TimeClock year;
     private String sourcePopulation;
     private String sourceOrganisation;
 
-    private Map<IntegerRange, Double> targetData;
+//    private Map<IntegerRange, Double> targetData;
+
     private Map<IntegerRange, Double> appliedData;
 
+    public OneDimensionDataDistribution(TimeClock year,
+                                        String sourcePopulation,
+                                        String sourceOrganisation,
+                                        Map<IntegerRange, Double> tableData) {
+
+        this.year = year;
+        this.sourcePopulation = sourcePopulation;
+        this.sourceOrganisation = sourceOrganisation;
+        this.appliedData = tableData;
+    }
+
     @Override
-    public int getYear() {
-        return 0;
+    public TimeClock getYear() {
+        return year;
     }
 
     @Override
     public String getSourcePopulation() {
-        return null;
+        return sourcePopulation;
     }
 
     @Override
     public String getSourceOrganisation() {
-        return null;
+        return sourceOrganisation;
     }
 
-    public Double getData(IntegerRange row, int forNPeople) {
+    public Double getData(IntegerRange row) {
 
-        return null;
+        return appliedData.get(row);
     }
 
-    public void returnUsedData(IntegerRange range, Double appliedToSimulation, int onNPeople) {
-
-
+    public Map<IntegerRange, Double> getData() {
+        return appliedData;
     }
+
+//    public Double getData(IntegerRange row, int forNPeople) {
+//
+//        return null;
+//    }
+//
+//    public void returnUsedData(IntegerRange range, Double appliedToSimulation, int onNPeople) {
+//
+//
+//    }
 
 }

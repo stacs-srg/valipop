@@ -3,11 +3,15 @@ package model.implementation.populationStatistics;
 import model.enums.EventType;
 import model.implementation.config.Config;
 import model.interfaces.dataStores.informationPassing.tableTypes.Table;
+import model.time.TimeClock;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import utils.InputFileReader;
 
+import java.nio.file.DirectoryStream;
 import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * This factory class handles the correct construction of a PopulationStatistics object.
@@ -18,44 +22,50 @@ public abstract class DesiredPopulationStatisticsFactory {
 
     private static Logger log = LogManager.getLogger(DesiredPopulationStatisticsFactory.class);
 
-
     /**
      * Creates a PopulationStatistics object.
      *
      * @return the quantified event occurrences
      */
-    public static PopulationStatistics intialisePopulationStatistics(Config config) {
+    public static PopulationStatistics initialisePopulationStatistics(Config config) {
 
         DesiredPopulationStatisticsFactory.log.info("Creating PopulationStatistics");
 
-        // if config to use saved data
-            // load in saved data
+        Map<TimeClock, OneDimensionDataDistribution> death = readIn1DDataFiles(config.getVarDeathPaths());
+        Map<TimeClock, TwoDimensionDataDistribution> partnering = readIn2DDataFiles(config.getVarPartneringPaths());
+        Map<TimeClock, TwoDimensionDataDistribution> orderedBirth = readIn2DDataFiles(config.getVarOrderedBirthPaths());
+        Map<TimeClock, TwoDimensionDataDistribution> multipleBirth = readIn2DDataFiles(config.getVarMultipleBirthPaths());
+        Map<TimeClock, OneDimensionDataDistribution> separation = readIn1DDataFiles(config.getVarSeperationPaths());
 
-        // else
-            readInDataFiles(config);
-
-        return null;
+        return new PopulationStatistics(config, death, partnering, orderedBirth, multipleBirth, separation);
     }
 
-    private static void readInDataFiles(Config config) {
+    private static Map<TimeClock, TwoDimensionDataDistribution> readIn2DDataFiles(DirectoryStream<Path> paths) {
 
-        for(Path path : config.getVarBirthFiles()) {
+        Map<TimeClock, TwoDimensionDataDistribution> data = new HashMap<TimeClock, TwoDimensionDataDistribution>();
 
+        for(Path path : paths) {
             // read in each file
+            TwoDimensionDataDistribution tempData = InputFileReader.readIn2DDataFile(path);
 
-            InputFileReader.getAllLines(path);
-
-            // for each year in the simulation
-                // create an EventRateTable and place in the PopulationStatistics
-            // end for
-
+            data.put(tempData.getYear(), tempData);
 
         }
+        return data;
+    }
 
-        // repeat for each data type
+    private static Map<TimeClock, OneDimensionDataDistribution> readIn1DDataFiles(DirectoryStream<Path> paths) {
 
+        Map<TimeClock, OneDimensionDataDistribution> data = new HashMap<TimeClock, OneDimensionDataDistribution>();
 
+        for(Path path : paths) {
+            // read in each file
+            OneDimensionDataDistribution tempData = InputFileReader.readIn1DDataFile(path);
 
+            data.put(tempData.getYear(), tempData);
+
+        }
+        return data;
     }
 
     /**

@@ -11,6 +11,9 @@ import model.interfaces.populationModel.Population;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
@@ -19,7 +22,7 @@ public class Simulation {
 
     public static Logger log = LogManager.getLogger(Simulation.class);
 
-    private final static String PATH_TO_CONFIG_FILE = "/Users/tsd4/OneDrive/cs/PhD/population_model/src/main/resources/config/config.txt";
+    private final static Path PATH_TO_CONFIG_FILE = Paths.get("/Users/tsd4/OneDrive/cs/PhD/population_model/src/main/resources/config/config.txt");
 
     PopulationStatistics desired;
     private final static Config config = new Config(PATH_TO_CONFIG_FILE);
@@ -65,7 +68,7 @@ public class Simulation {
 
     private static PopulationStatistics setUpSimData() {
 
-        PopulationStatistics desiredStatistics = DesiredPopulationStatisticsFactory.intialisePopulationStatistics(config);
+        PopulationStatistics desiredStatistics = DesiredPopulationStatisticsFactory.initialisePopulationStatistics(config);
 
         // interpolate
         // for each data type

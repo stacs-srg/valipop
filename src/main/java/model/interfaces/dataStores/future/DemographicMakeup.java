@@ -1,6 +1,7 @@
 package model.interfaces.dataStores.future;
 
 import model.interfaces.dataStores.PopulationDateRange;
+import model.time.TimeClock;
 
 /**
  * The data store is a base of data that describes basic characteristics of the summative population as a whole by year,
@@ -34,13 +35,13 @@ public class DemographicMakeup implements PopulationDateRange {
 
 
     @Override
-    public int getEarliestDay() {
-        return 0;
+    public TimeClock getEarliestDay() {
+        return null;
     }
 
     @Override
-    public int getLatestDay() {
-        return 0;
+    public TimeClock getLatestDay() {
+        return null;
     }
 
 }

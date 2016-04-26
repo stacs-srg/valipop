@@ -1,5 +1,7 @@
 package model.implementation.populationStatistics;
 
+import model.time.TimeClock;
+
 import java.util.Map;
 
 /**
@@ -7,37 +9,50 @@ import java.util.Map;
  */
 public class TwoDimensionDataDistribution implements DataDistibution {
 
-    private int year;
+    private TimeClock year;
     private String sourcePopulation;
     private String sourceOrganisation;
 
-    private Map<IntegerRange, Map<IntegerRange, Double>> targetData;
-    private Map<IntegerRange, Map<IntegerRange, Double>> appliedData;
+//    private Map<IntegerRange, Map<IntegerRange, Double>> targetData;
+
+    private final Map<IntegerRange, Map<IntegerRange, Double>> appliedData;
+
+    public TwoDimensionDataDistribution(TimeClock year, String sourcePopulation, String sourceOrganisation, Map<IntegerRange, Map<IntegerRange, Double>> tableData) {
+        this.year = year;
+        this.sourcePopulation = sourcePopulation;
+        this.sourceOrganisation = sourceOrganisation;
+        this.appliedData = tableData;
+    }
 
     @Override
-    public int getYear() {
-        return 0;
+    public TimeClock getYear() {
+        return year;
     }
 
     @Override
     public String getSourcePopulation() {
-        return null;
+        return sourcePopulation;
     }
 
     @Override
     public String getSourceOrganisation() {
-        return null;
+        return sourceOrganisation;
     }
 
-    public Map<IntegerRange, Double> getData(IntegerRange row, int forNPeople) {
+    public Map<IntegerRange, Double> getData(IntegerRange row) {
 
-        return null;
+        return ((Map<IntegerRange, Double>) appliedData.get(row));
     }
 
-    public void returnUsedData(Map<IntegerRange, Double> appliedToSimulation, int onNPeople) {
+//    public Map<IntegerRange, Double> getData(IntegerRange row, int forNPeople) {
+//
+//        return null;
+//    }
 
-
-    }
+//    public void returnUsedData(Map<IntegerRange, Double> appliedToSimulation, int onNPeople) {
+//
+//
+//    }
 
 
 }

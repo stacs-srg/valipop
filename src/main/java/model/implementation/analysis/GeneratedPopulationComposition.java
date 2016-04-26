@@ -4,6 +4,7 @@ import model.enums.EventType;
 import model.interfaces.dataStores.PopulationDateRange;
 import model.interfaces.dataStores.informationAccess.StatisticalTables;
 import model.interfaces.dataStores.informationPassing.tableTypes.OneWayTable;
+import model.time.TimeClock;
 
 /**
  * The GeneratedPopulationComposition interface provides the functionality to be able to access the same information about the
@@ -15,13 +16,13 @@ import model.interfaces.dataStores.informationPassing.tableTypes.OneWayTable;
 public class GeneratedPopulationComposition implements PopulationComposition {
 
     @Override
-    public int getEarliestDay() {
-        return 0;
+    public TimeClock getEarliestDay() {
+        return null;
     }
 
     @Override
-    public int getLatestDay() {
-        return 0;
+    public TimeClock getLatestDay() {
+        return null;
     }
 
     @Override

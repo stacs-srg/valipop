@@ -3,9 +3,14 @@ package model.implementation.populationStatistics;
 import model.enums.EventType;
 import model.enums.Gender;
 import model.implementation.analysis.PopulationComposition;
+import model.implementation.config.Config;
 import model.interfaces.dataStores.informationAccess.EventRateTables;
 import model.interfaces.dataStores.informationPassing.tableTypes.OneWayTable;
 import model.interfaces.dataStores.informationPassing.tableTypes.TwoWayTable;
+import model.interfaces.populationModel.Population;
+import model.time.TimeClock;
+
+import java.util.Map;
 
 /**
  * The PopulationStatistics holds data about the rate at which specified events occur to specified subsets of
@@ -15,15 +20,42 @@ import model.interfaces.dataStores.informationPassing.tableTypes.TwoWayTable;
  */
 public class PopulationStatistics implements PopulationComposition, EventRateTables {
 
+    TimeClock startDay;
+    TimeClock endDay;
 
-    @Override
-    public int getEarliestDay() {
-        return 0;
+    Map<TimeClock, OneDimensionDataDistribution> death;
+    Map<TimeClock, TwoDimensionDataDistribution> partnering;
+    Map<TimeClock, TwoDimensionDataDistribution> orderedBirth;
+    Map<TimeClock, TwoDimensionDataDistribution> multipleBirth;
+    Map<TimeClock, OneDimensionDataDistribution> separation;
+
+    public PopulationStatistics(Config config,
+                                Map<TimeClock, OneDimensionDataDistribution> death,
+                                Map<TimeClock, TwoDimensionDataDistribution> partnering,
+                                Map<TimeClock, TwoDimensionDataDistribution> orderedBirth,
+                                Map<TimeClock, TwoDimensionDataDistribution> multipleBirth,
+                                Map<TimeClock, OneDimensionDataDistribution> separation) {
+
+        this.death = death;
+        this.partnering = partnering;
+        this.orderedBirth = orderedBirth;
+        this.multipleBirth = multipleBirth;
+        this.separation = separation;
+
+        this.startDay = config.gettS();
+        this.endDay = config.gettE();
+
+
     }
 
     @Override
-    public int getLatestDay() {
-        return 0;
+    public TimeClock getEarliestDay() {
+        return null;
+    }
+
+    @Override
+    public TimeClock getLatestDay() {
+        return null;
     }
 
 
@@ -34,11 +66,6 @@ public class PopulationStatistics implements PopulationComposition, EventRateTab
 
     @Override
     public TwoWayTable<Double> getPartneringRates(int year) {
-        return null;
-    }
-
-    @Override
-    public OneWayTable<Double> getBirthRates(int year) {
         return null;
     }
 

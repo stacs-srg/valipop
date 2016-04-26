@@ -51,21 +51,6 @@ public interface EventRateTables {
     TwoWayTable<Double> getPartneringRates(int year);
 
     /**
-     * Gets birth rates for births in the given year defined by the age of the mother.
-     *
-     *               | ASBR
-     *          -------------
-     *            16 | 0.203
-     *   Female   17 | 0.102
-     *    age     18 | 0.001
-     *            .. |  ...
-     *
-     * @param year the year
-     * @return the birth rates
-     */
-    OneWayTable<Double> getBirthRates(int year);
-
-    /**
      * Gets birth rates by order for births in the given year defined by the age and number of previous children born to
      * the mother.
      *
