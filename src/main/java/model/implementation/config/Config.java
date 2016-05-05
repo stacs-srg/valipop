@@ -1,7 +1,8 @@
 package model.implementation.config;
 
 import model.time.CompoundTimeUnit;
-import model.time.TimeClock;
+import model.time.InvalidTimeUnit;
+import model.time.TimeInstant;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import utils.InputFileReader;
@@ -11,6 +12,7 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.DateTimeException;
 import java.util.Collection;
 
 /**
@@ -20,9 +22,12 @@ public class Config {
 
     public static Logger log = LogManager.getLogger(Config.class);
 
-    private TimeClock tS;
-    private TimeClock t0;
-    private TimeClock tE;
+    private TimeInstant tS;
+    private TimeInstant t0;
+    private TimeInstant tE;
+
+    private int t0PopulationSize;
+    private double setUpGR;
 
     private CompoundTimeUnit deathTimeStep;
     private CompoundTimeUnit birthTimeStep;
@@ -61,20 +66,61 @@ public class Config {
                     varSeparationPaths = Paths.get(path, separationSubFile);
                     break;
                 case "death_time_step":
-                    deathTimeStep = new CompoundTimeUnit(split[1]);
+                    try {
+                        deathTimeStep = new CompoundTimeUnit(split[1]);
+                    } catch(InvalidTimeUnit e) {
+                        log.fatal("Invalid time unit specified for death timestep");
+                        System.exit(3);
+                    }
                     break;
                 case "birth_time_step":
-                    birthTimeStep = new CompoundTimeUnit(split[1]);
+                    try {
+                        birthTimeStep = new CompoundTimeUnit(split[1]);
+                    } catch(InvalidTimeUnit e) {
+                        log.fatal("Invalid time unit specified for birth timestep");
+                        System.exit(3);
+                    }
                     break;
                 case "tS":
-                    tS = new TimeClock(split[1]);
+                    try {
+                        tS = new TimeInstant(split[1]);
+                    } catch (DateTimeException e) {
+                        log.fatal("Invalid Fate format for tS: " + e.getMessage());
+                        System.exit(3);
+                    }
                     break;
                 case "t0":
-                    t0 = new TimeClock(split[1]);
+                    try {
+                        t0 = new TimeInstant(split[1]);
+                    } catch (DateTimeException e) {
+                        log.fatal("Invalid Fate format for t0: " + e.getMessage());
+                        System.exit(3);
+                    }
                     break;
                 case "tE":
-                    tE = new TimeClock(split[1]);
+                    try {
+                        tE = new TimeInstant(split[1]);
+                    } catch (DateTimeException e) {
+                        log.fatal("Invalid Fate format for tE: " + e.getMessage());
+                        System.exit(3);
+                    }
                     break;
+                case "t0_pop_size":
+                    try {
+                        t0PopulationSize = Integer.parseInt(split[1]);
+                    } catch (NumberFormatException e) {
+                        log.fatal("t0 Population size not a valid integer");
+                        System.exit(3);
+                    }
+                    break;
+                case "set_up_gr":
+                    try {
+                        setUpGR = Double.parseDouble(split[1]);
+                    } catch(NumberFormatException e) {
+                        log.fatal("set up growth rate not a valid number");
+                        System.exit(3);
+                    }
+
 
             }
 
@@ -126,7 +172,7 @@ public class Config {
     }
 
 
-    public DirectoryStream<Path> getVarSeperationPaths() {
+    public DirectoryStream<Path> getVarSeparationPaths() {
         try {
             return Files.newDirectoryStream(varSeparationPaths);
         } catch (IOException e) {
@@ -136,15 +182,15 @@ public class Config {
         return null;
     }
 
-    public TimeClock gettS() {
+    public TimeInstant gettS() {
         return tS;
     }
 
-    public TimeClock getT0() {
+    public TimeInstant getT0() {
         return t0;
     }
 
-    public TimeClock gettE() {
+    public TimeInstant gettE() {
         return tE;
     }
 
@@ -154,5 +200,13 @@ public class Config {
 
     public CompoundTimeUnit getDeathTimeStep() {
         return deathTimeStep;
+    }
+
+    public int getT0PopulationSize() {
+        return t0PopulationSize;
+    }
+
+    public double getSetUpGR() {
+        return setUpGR;
     }
 }

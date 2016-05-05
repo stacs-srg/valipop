@@ -9,26 +9,19 @@ import java.util.Collection;
  */
 public class PeopleCollection implements PersonCollection {
 
-    @Override
-    public PersonCollection getMales() {
-        return null;
+    private MaleCollection males = new MaleCollection();
+    private FemaleCollection females = new FemaleCollection();
+
+    public MaleCollection getMales() {
+        return males;
     }
 
-    @Override
-    public PersonCollection getFemales() {
-        return null;
+    public FemaleCollection getFemales() {
+        return females;
     }
 
-    @Override
-    public PersonCollection getAll() {
-        return null;
+    public Collection<IPerson> getAll() {
+        return AggregatePersonCollectionFactory.makeCollectionOfIPersons(females, males);
     }
-
-    @Override
-    public Collection<IPerson> getCollection() {
-        return null;
-    }
-
-    // collections of individuals
 
 }

@@ -8,6 +8,8 @@ import model.implementation.populationStatistics.DesiredPopulationStatisticsFact
 import model.implementation.populationStatistics.PopulationStatistics;
 import model.interfaces.populationModel.Population;
 
+import model.time.TimeUnit;
+import model.time.TimeUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -26,6 +28,8 @@ public class Simulation {
 
     PopulationStatistics desired;
     private final static Config config = new Config(PATH_TO_CONFIG_FILE);
+
+    private int currentHypotheticalPopulationSize;
 
 
     public static void main(String[] args) {
@@ -53,6 +57,25 @@ public class Simulation {
     public Simulation() {
         // get desired population info
         desired = setUpSimData();
+
+        setUpSeedCreationParameters();
+
+    }
+
+    private void setUpSeedCreationParameters() {
+
+        currentHypotheticalPopulationSize = (int) (config.getT0PopulationSize() / Math.pow(config.getSetUpGR() + 1, TimeUtils.differenceInYears(config.gettS(), config.getT0()).getCount()));
+
+
+
+        // calculate desired birth rate to achieve seed population at Time 0, to do this:
+        // for each population growth rates before Time 0 working backwards to Time start
+        // apply the compound negative of the growth rate since the previous growth rate to the seed population desired size
+        // GROWTH_RATES = intended growth rates for times before Time 0
+        // end for
+
+        // store the calculated start population as PRESENT_POPULATION_COUNT
+
     }
 
     public ComparativeAnalysis analyseGeneratedPopulation(Population generatedPopulation) {
@@ -75,13 +98,7 @@ public class Simulation {
         //      smooth value changes in gaps between years for which data is given
         // end for
 
-        // calculate desired birth rate to achieve seed population at Time 0, to do this:
-        // for each population growth rates before Time 0 working backwards to Time start
-            // apply the compound negative of the growth rate since the previous growth rate to the seed population desired size
-            // GROWTH_RATES = intended growth rates for times before Time 0
-        // end for
 
-        // store the calculated start population as PRESENT_POPULATION_COUNT
 
         return null;
 

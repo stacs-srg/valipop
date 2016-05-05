@@ -5,7 +5,7 @@ import java.time.DateTimeException;
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public final class TimeClock {
+public final class TimeInstant {
 
     private static final int MONTHS_IN_YEAR = 12;
 
@@ -13,7 +13,7 @@ public final class TimeClock {
     private final int month;
     private static final int DAY = 1;
 
-    public TimeClock(int month, int year) {
+    public TimeInstant(int month, int year) {
         if(month == 0 || month > 12) {
             throw new DateTimeException("Months should be indexed between 1 and 12 inclusive.");
         }
@@ -21,7 +21,7 @@ public final class TimeClock {
         this.year = year;
     }
 
-    public TimeClock(String ddmmyyyy) {
+    public TimeInstant(String ddmmyyyy) {
         String[] split = ddmmyyyy.split("/");
         month = Integer.parseInt(split[1]);
         if(month == 0 || month > 12) {
@@ -30,14 +30,14 @@ public final class TimeClock {
         year = Integer.parseInt(split[2]);
     }
 
-    public TimeClock advanceTime(int numberOf, TimeUnit unit) {
+    public TimeInstant advanceTime(int numberOf, TimeUnit unit) {
         int m = month;
         int y = year;
 
         switch (unit) {
             case MONTH:
                 m += numberOf;
-                if(m > MONTHS_IN_YEAR) {
+                while(m > MONTHS_IN_YEAR) {
                     y++;
                     m -= MONTHS_IN_YEAR;
                 }
@@ -46,10 +46,10 @@ public final class TimeClock {
                 y += numberOf;
                 break;
         }
-        return new TimeClock(m, y);
+        return new TimeInstant(m, y);
     }
 
-    public TimeClock advanceTime(CompoundTimeUnit timeStep) {
+    public TimeInstant advanceTime(CompoundTimeUnit timeStep) {
         return advanceTime(timeStep.getCount(), timeStep.getUnit());
     }
 

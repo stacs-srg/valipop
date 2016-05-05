@@ -9,12 +9,6 @@ import java.util.Collection;
  */
 public interface PersonCollection {
 
-    PersonCollection getMales();
-
-    PersonCollection getFemales();
-
-    PersonCollection getAll();
-
-    Collection<IPerson> getCollection();
+    Collection<IPerson> getAll();
 
 }

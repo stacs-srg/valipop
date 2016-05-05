@@ -1,7 +1,7 @@
 package model.interfaces.dataStores.future;
 
 import model.interfaces.dataStores.PopulationDateRange;
-import model.time.TimeClock;
+import model.time.TimeInstant;
 
 /**
  * The PopulationStatistics holds information about the number of events that occur to a given subset of the summative
@@ -14,12 +14,12 @@ public class EventOccurrences implements PopulationDateRange {
 
 
     @Override
-    public TimeClock getEarliestDay() {
+    public TimeInstant getEarliestDay() {
         return null;
     }
 
     @Override
-    public TimeClock getLatestDay() {
+    public TimeInstant getLatestDay() {
         return null;
     }
 

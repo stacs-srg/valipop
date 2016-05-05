@@ -3,7 +3,7 @@ package model.implementation.populationStatistics;
 import model.enums.EventType;
 import model.implementation.config.Config;
 import model.interfaces.dataStores.informationPassing.tableTypes.Table;
-import model.time.TimeClock;
+import model.time.TimeInstant;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import utils.InputFileReader;
@@ -31,18 +31,18 @@ public abstract class DesiredPopulationStatisticsFactory {
 
         DesiredPopulationStatisticsFactory.log.info("Creating PopulationStatistics");
 
-        Map<TimeClock, OneDimensionDataDistribution> death = readIn1DDataFiles(config.getVarDeathPaths());
-        Map<TimeClock, TwoDimensionDataDistribution> partnering = readIn2DDataFiles(config.getVarPartneringPaths());
-        Map<TimeClock, TwoDimensionDataDistribution> orderedBirth = readIn2DDataFiles(config.getVarOrderedBirthPaths());
-        Map<TimeClock, TwoDimensionDataDistribution> multipleBirth = readIn2DDataFiles(config.getVarMultipleBirthPaths());
-        Map<TimeClock, OneDimensionDataDistribution> separation = readIn1DDataFiles(config.getVarSeperationPaths());
+        Map<TimeInstant, OneDimensionDataDistribution> death = readIn1DDataFiles(config.getVarDeathPaths());
+        Map<TimeInstant, TwoDimensionDataDistribution> partnering = readIn2DDataFiles(config.getVarPartneringPaths());
+        Map<TimeInstant, TwoDimensionDataDistribution> orderedBirth = readIn2DDataFiles(config.getVarOrderedBirthPaths());
+        Map<TimeInstant, TwoDimensionDataDistribution> multipleBirth = readIn2DDataFiles(config.getVarMultipleBirthPaths());
+        Map<TimeInstant, OneDimensionDataDistribution> separation = readIn1DDataFiles(config.getVarSeparationPaths());
 
         return new PopulationStatistics(config, death, partnering, orderedBirth, multipleBirth, separation);
     }
 
-    private static Map<TimeClock, TwoDimensionDataDistribution> readIn2DDataFiles(DirectoryStream<Path> paths) {
+    private static Map<TimeInstant, TwoDimensionDataDistribution> readIn2DDataFiles(DirectoryStream<Path> paths) {
 
-        Map<TimeClock, TwoDimensionDataDistribution> data = new HashMap<TimeClock, TwoDimensionDataDistribution>();
+        Map<TimeInstant, TwoDimensionDataDistribution> data = new HashMap<TimeInstant, TwoDimensionDataDistribution>();
 
         for(Path path : paths) {
             // read in each file
@@ -54,9 +54,9 @@ public abstract class DesiredPopulationStatisticsFactory {
         return data;
     }
 
-    private static Map<TimeClock, OneDimensionDataDistribution> readIn1DDataFiles(DirectoryStream<Path> paths) {
+    private static Map<TimeInstant, OneDimensionDataDistribution> readIn1DDataFiles(DirectoryStream<Path> paths) {
 
-        Map<TimeClock, OneDimensionDataDistribution> data = new HashMap<TimeClock, OneDimensionDataDistribution>();
+        Map<TimeInstant, OneDimensionDataDistribution> data = new HashMap<TimeInstant, OneDimensionDataDistribution>();
 
         for(Path path : paths) {
             // read in each file

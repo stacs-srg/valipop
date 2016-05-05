@@ -1,6 +1,6 @@
 package model.implementation.populationStatistics;
 
-import model.time.TimeClock;
+import model.time.TimeInstant;
 
 import java.util.Map;
 
@@ -9,7 +9,7 @@ import java.util.Map;
  */
 public class OneDimensionDataDistribution implements DataDistibution {
 
-    private TimeClock year;
+    private TimeInstant year;
     private String sourcePopulation;
     private String sourceOrganisation;
 
@@ -17,7 +17,7 @@ public class OneDimensionDataDistribution implements DataDistibution {
 
     private Map<IntegerRange, Double> appliedData;
 
-    public OneDimensionDataDistribution(TimeClock year,
+    public OneDimensionDataDistribution(TimeInstant year,
                                         String sourcePopulation,
                                         String sourceOrganisation,
                                         Map<IntegerRange, Double> tableData) {
@@ -29,7 +29,7 @@ public class OneDimensionDataDistribution implements DataDistibution {
     }
 
     @Override
-    public TimeClock getYear() {
+    public TimeInstant getYear() {
         return year;
     }
 

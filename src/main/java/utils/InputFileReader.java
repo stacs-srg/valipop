@@ -4,17 +4,13 @@ import model.implementation.populationStatistics.IntegerRange;
 import model.implementation.populationStatistics.InvalidRangeException;
 import model.implementation.populationStatistics.OneDimensionDataDistribution;
 import model.implementation.populationStatistics.TwoDimensionDataDistribution;
-import model.time.TimeClock;
+import model.time.TimeInstant;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import uk.ac.standrews.cs.util.dataset.DataSet;
-import uk.ac.standrews.cs.util.dataset.Mapper;
-import uk.ac.standrews.cs.util.tools.FileManipulation;
 
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.attribute.DosFileAttributes;
 import java.util.*;
 
 /**
@@ -56,7 +52,7 @@ public class InputFileReader {
 
         ArrayList<String> lines = new ArrayList<String>(getAllLines(path));
 
-        TimeClock year = null;
+        TimeInstant year = null;
         String sourcePopulation = null;
         String sourceOrganisation = null;
 
@@ -72,7 +68,7 @@ public class InputFileReader {
             switch (split[0].toLowerCase()) {
                 case "year":
                     try {
-                        year = new TimeClock(split[1]);
+                        year = new TimeInstant(split[1]);
                     } catch (NumberFormatException e) {
                         log.fatal("Non integer value given for year in file: " + path.toString());
                         System.exit(3);
@@ -150,7 +146,7 @@ public class InputFileReader {
 
         ArrayList<String> lines = new ArrayList<String>(getAllLines(path));
 
-        TimeClock year = null;
+        TimeInstant year = null;
         String sourcePopulation = null;
         String sourceOrganisation = null;
 
@@ -165,7 +161,7 @@ public class InputFileReader {
             switch (split[0].toLowerCase()) {
                 case "year":
                     try {
-                        year = new TimeClock(split[1]);
+                        year = new TimeInstant(split[1]);
                     } catch (NumberFormatException e) {
                         log.fatal("Non integer value given for year in file: " + path.toString());
                         System.exit(3);

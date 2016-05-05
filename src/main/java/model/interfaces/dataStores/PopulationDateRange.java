@@ -1,6 +1,6 @@
 package model.interfaces.dataStores;
 
-import model.time.TimeClock;
+import model.time.TimeInstant;
 
 /**
  * The PopulationDateRange interface provides high level common information about the information
@@ -15,14 +15,14 @@ public interface PopulationDateRange {
      *
      * @return the earliest day
      */
-    TimeClock getEarliestDay();
+    TimeInstant getEarliestDay();
 
     /**
      * Gets latest day that this Data Store is required to provide information regarding.
      *
      * @return the latest day
      */
-    TimeClock getLatestDay();
+    TimeInstant getLatestDay();
 
 
 }
