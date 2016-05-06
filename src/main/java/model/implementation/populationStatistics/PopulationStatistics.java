@@ -7,7 +7,7 @@ import model.implementation.config.Config;
 import model.interfaces.dataStores.informationAccess.EventRateTables;
 import model.interfaces.dataStores.informationPassing.tableTypes.OneWayTable;
 import model.interfaces.dataStores.informationPassing.tableTypes.TwoWayTable;
-import model.time.TimeInstant;
+import model.time.DateClock;
 
 import java.util.Map;
 
@@ -19,21 +19,21 @@ import java.util.Map;
  */
 public class PopulationStatistics implements PopulationComposition, EventRateTables {
 
-    TimeInstant startDay;
-    TimeInstant endDay;
+    DateClock startDay;
+    DateClock endDay;
 
-    Map<TimeInstant, OneDimensionDataDistribution> death;
-    Map<TimeInstant, TwoDimensionDataDistribution> partnering;
-    Map<TimeInstant, TwoDimensionDataDistribution> orderedBirth;
-    Map<TimeInstant, TwoDimensionDataDistribution> multipleBirth;
-    Map<TimeInstant, OneDimensionDataDistribution> separation;
+    Map<DateClock, OneDimensionDataDistribution> death;
+    Map<DateClock, TwoDimensionDataDistribution> partnering;
+    Map<DateClock, TwoDimensionDataDistribution> orderedBirth;
+    Map<DateClock, TwoDimensionDataDistribution> multipleBirth;
+    Map<DateClock, OneDimensionDataDistribution> separation;
 
     public PopulationStatistics(Config config,
-                                Map<TimeInstant, OneDimensionDataDistribution> death,
-                                Map<TimeInstant, TwoDimensionDataDistribution> partnering,
-                                Map<TimeInstant, TwoDimensionDataDistribution> orderedBirth,
-                                Map<TimeInstant, TwoDimensionDataDistribution> multipleBirth,
-                                Map<TimeInstant, OneDimensionDataDistribution> separation) {
+                                Map<DateClock, OneDimensionDataDistribution> death,
+                                Map<DateClock, TwoDimensionDataDistribution> partnering,
+                                Map<DateClock, TwoDimensionDataDistribution> orderedBirth,
+                                Map<DateClock, TwoDimensionDataDistribution> multipleBirth,
+                                Map<DateClock, OneDimensionDataDistribution> separation) {
 
         this.death = death;
         this.partnering = partnering;
@@ -48,12 +48,12 @@ public class PopulationStatistics implements PopulationComposition, EventRateTab
     }
 
     @Override
-    public TimeInstant getEarliestDay() {
+    public DateClock getEarliestDay() {
         return null;
     }
 
     @Override
-    public TimeInstant getLatestDay() {
+    public DateClock getLatestDay() {
         return null;
     }
 

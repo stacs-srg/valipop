@@ -7,7 +7,7 @@ import model.interfaces.dataStores.informationPassing.tableTypes.OneWayTable;
 
 /**
  * TODO update
- *
+ * <p>
  * The GeneratedPopulationComposition interface provides the functionality to be able to access the same information about the
  * simulated population as in the provided population. It also provides methods to retrieve data in the forms required
  * for the various statistical analyses that are used in the verification of the produced population.

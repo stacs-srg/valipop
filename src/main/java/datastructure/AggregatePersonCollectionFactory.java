@@ -1,4 +1,4 @@
-package model.datastructure;
+package datastructure;
 
 import model.interfaces.populationModel.IPerson;
 
@@ -16,8 +16,6 @@ public class AggregatePersonCollectionFactory {
 
         return people;
     }
-
-
 
 
 }

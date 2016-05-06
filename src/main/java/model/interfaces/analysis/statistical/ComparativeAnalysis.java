@@ -12,7 +12,6 @@ import model.interfaces.dataStores.informationPassing.tableTypes.OneWayTable;
 public interface ComparativeAnalysis {
 
 
-
     /**
      * Runs Kaplan-Meier analysis, see the provided {@link KaplanMeierAnalysis} class.
      *

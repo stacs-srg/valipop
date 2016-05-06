@@ -1,6 +1,6 @@
 package model.implementation.populationStatistics;
 
-import model.time.TimeInstant;
+import model.time.DateClock;
 
 import java.util.Map;
 
@@ -9,15 +9,14 @@ import java.util.Map;
  */
 public class TwoDimensionDataDistribution implements DataDistibution {
 
-    private TimeInstant year;
+    private final Map<IntegerRange, Map<IntegerRange, Double>> appliedData;
+    private DateClock year;
     private String sourcePopulation;
-    private String sourceOrganisation;
 
 //    private Map<IntegerRange, Map<IntegerRange, Double>> targetData;
+    private String sourceOrganisation;
 
-    private final Map<IntegerRange, Map<IntegerRange, Double>> appliedData;
-
-    public TwoDimensionDataDistribution(TimeInstant year, String sourcePopulation, String sourceOrganisation, Map<IntegerRange, Map<IntegerRange, Double>> tableData) {
+    public TwoDimensionDataDistribution(DateClock year, String sourcePopulation, String sourceOrganisation, Map<IntegerRange, Map<IntegerRange, Double>> tableData) {
         this.year = year;
         this.sourcePopulation = sourcePopulation;
         this.sourceOrganisation = sourceOrganisation;
@@ -25,7 +24,7 @@ public class TwoDimensionDataDistribution implements DataDistibution {
     }
 
     @Override
-    public TimeInstant getYear() {
+    public DateClock getYear() {
         return year;
     }
 

@@ -3,18 +3,17 @@ package model.interfaces.dataStores.future.impute;
 import model.interfaces.dataStores.PopulationDateRange;
 
 /**
- *
  * ----- Calculation and imputation methods -----
- *
- *  NOTE: There is a difference between calculation and imputation.
- *  Calculating data means we are filling in fields based on information we hold in other fields but the same year
- *  e.g. calculating the male to female ratio for 1992 using the data we hold about the size of the male and
- *  female populations in 1992
- *
- *  Imputing data means we are filling in fields based on information we hold in the same field but for different
- *  years
- *      e.g. imputing that the size of the male population is 1000 in 1992 based on the information that the male
- *      population in 1991 and 1993 was 950 and 1050 respectively.
+ * <p>
+ * NOTE: There is a difference between calculation and imputation.
+ * Calculating data means we are filling in fields based on information we hold in other fields but the same year
+ * e.g. calculating the male to female ratio for 1992 using the data we hold about the size of the male and
+ * female populations in 1992
+ * <p>
+ * Imputing data means we are filling in fields based on information we hold in the same field but for different
+ * years
+ * e.g. imputing that the size of the male population is 1000 in 1992 based on the information that the male
+ * population in 1991 and 1993 was 950 and 1050 respectively.
  *
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */

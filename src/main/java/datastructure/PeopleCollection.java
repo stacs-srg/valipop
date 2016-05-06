@@ -1,4 +1,5 @@
-package model.datastructure;
+package datastructure;
+
 
 import model.interfaces.populationModel.IPerson;
 
@@ -22,6 +23,14 @@ public class PeopleCollection implements PersonCollection {
 
     public Collection<IPerson> getAll() {
         return AggregatePersonCollectionFactory.makeCollectionOfIPersons(females, males);
+    }
+
+    public void addPerson(IPerson person) {
+        if (person.getSex() == 'm') {
+            males.addPerson(person);
+        } else {
+            females.addPerson(person);
+        }
     }
 
 }

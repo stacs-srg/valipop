@@ -2,7 +2,7 @@ package model.implementation.analysis;
 
 import model.enums.EventType;
 import model.interfaces.dataStores.informationPassing.tableTypes.OneWayTable;
-import model.time.TimeInstant;
+import model.time.DateClock;
 
 /**
  * The GeneratedPopulationComposition interface provides the functionality to be able to access the same information about the
@@ -14,12 +14,12 @@ import model.time.TimeInstant;
 public class GeneratedPopulationComposition implements PopulationComposition {
 
     @Override
-    public TimeInstant getEarliestDay() {
+    public DateClock getEarliestDay() {
         return null;
     }
 
     @Override
-    public TimeInstant getLatestDay() {
+    public DateClock getLatestDay() {
         return null;
     }
 

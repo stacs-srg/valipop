@@ -16,14 +16,13 @@ public class Center {
 
     public static void main(String[] args) {
 
-        for(int i = 0; i < numberOfLines; i++) {
+        for (int i = 0; i < numberOfLines; i++) {
             new Person(0);
             Person.linePopulationCount += 10;
         }
 
 
-
-        for(Integer i : index.globalIndex.keySet()) {
+        for (Integer i : index.globalIndex.keySet()) {
             index.globalIndex.get(i).print();
         }
 

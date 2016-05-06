@@ -19,10 +19,10 @@ public class CompoundTimeUnit {
         char unit = compoundTimeUnit.toCharArray()[compoundTimeUnit.length() - 1];
 
         switch (unit) {
-            case('m'):
+            case ('m'):
                 this.unit = TimeUnit.MONTH;
                 break;
-            case('y'):
+            case ('y'):
                 this.unit = TimeUnit.YEAR;
                 break;
             default:

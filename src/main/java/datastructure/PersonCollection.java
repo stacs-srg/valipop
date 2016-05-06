@@ -1,4 +1,4 @@
-package model.datastructure;
+package datastructure;
 
 import model.interfaces.populationModel.IPerson;
 
@@ -10,5 +10,7 @@ import java.util.Collection;
 public interface PersonCollection {
 
     Collection<IPerson> getAll();
+
+    public void addPerson(IPerson person);
 
 }

@@ -16,7 +16,8 @@
  */
 package model.interfaces.populationModel;
 
-import java.util.Date;
+import model.time.Date;
+
 import java.util.List;
 
 /**
@@ -24,7 +25,7 @@ import java.util.List;
  *
  * @author Graham Kirby (graham.kirby@st-andrews.ac.uk)
  */
-public interface IPerson {
+public interface IPerson extends Comparable<IPerson> {
 
     /**
      * Representation of female sex.

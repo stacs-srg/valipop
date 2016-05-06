@@ -1,0 +1,88 @@
+package model;
+
+import model.interfaces.populationModel.IPartnership;
+import model.interfaces.populationModel.IPerson;
+import model.time.Date;
+import model.time.DateInstant;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.util.List;
+
+/**
+ * @author Tom Dalton (tsd4@st-andrews.ac.uk)
+ */
+public class Person implements IPerson {
+
+    private static Logger log = LogManager.getLogger(Person.class);
+    private static int nextId = 0;
+
+    private static int getNewId() {
+        return nextId++;
+    }
+
+    private int id;
+    private char sex;
+    private DateInstant birthDate;
+    private DateInstant deathDate;
+    private List<IPartnership> partnerships;
+    private IPartnership parentsPartnership;
+
+    public Person(char sex, Date birthDate, IPartnership parentsPartnership) {
+
+        id = getNewId();
+
+        if (Character.toLowerCase(sex) != 'm' && Character.toLowerCase(sex) != 'f') {
+            log.fatal("Attempted to create a person with a sex that isn't m or f");
+            System.exit(201);
+        }
+        this.sex = Character.toLowerCase(sex);
+
+        this.birthDate = birthDate.getInstant();
+        this.parentsPartnership = parentsPartnership;
+
+    }
+
+    public void recordChildren(IPartnership partnership) {
+        this.partnerships.add(partnership);
+    }
+
+    public void recordDeath(Date date) {
+        deathDate = date.getInstant();
+    }
+
+    @Override
+    public int getId() {
+        return id;
+    }
+
+    @Override
+    public char getSex() {
+        return sex;
+    }
+
+    @Override
+    public Date getBirthDate() {
+        return birthDate;
+    }
+
+    @Override
+    public Date getDeathDate() {
+        return deathDate;
+    }
+
+    @Override
+    public List<IPartnership> getPartnerships() {
+        return partnerships;
+    }
+
+    @Override
+    public IPartnership getParentsPartnership() {
+        return parentsPartnership;
+    }
+
+    @Override
+    public int compareTo(IPerson o) {
+        return this.id == o.getId() ? 0 : -1;
+    }
+}
