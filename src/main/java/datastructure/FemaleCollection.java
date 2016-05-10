@@ -9,10 +9,7 @@ import model.time.YearDate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
@@ -20,7 +17,7 @@ import java.util.Map;
 public class FemaleCollection implements PersonCollection {
 
     private static Logger log = LogManager.getLogger(FemaleCollection.class);
-    Map<YearDate, Map<Integer, Collection<IPerson>>> byYearAndNumberOfChildren;
+    Map<YearDate, Map<Integer, Collection<IPerson>>> byYearAndNumberOfChildren = new HashMap<YearDate, Map<Integer, Collection<IPerson>>>();
 
     public Collection<IPerson> getAll() {
 
@@ -37,7 +34,25 @@ public class FemaleCollection implements PersonCollection {
 
     @Override
     public void addPerson(IPerson person) {
-        byYearAndNumberOfChildren.get(person.getBirthDate().getYearDate()).get(countChildren(person)).add(person);
+        try {
+            byYearAndNumberOfChildren.get(person.getBirthDate().getYearDate()).get(countChildren(person)).add(person);
+        } catch (NullPointerException e) {
+            try {
+                byYearAndNumberOfChildren.get(person.getBirthDate().getYearDate()).put(countChildren(person), new ArrayList<IPerson>());
+                byYearAndNumberOfChildren.get(person.getBirthDate().getYearDate()).get(countChildren(person)).add(person);
+            } catch (NullPointerException e1) {
+                Map<Integer, Collection<IPerson>> temp = new HashMap<Integer, Collection<IPerson>>();
+                temp.put(countChildren(person), new ArrayList<IPerson>());
+                temp.get(countChildren(person)).add(person);
+                byYearAndNumberOfChildren.put(person.getBirthDate().getYearDate(), temp);
+            }
+        }
+    }
+
+    @Override
+    public boolean removePerson(IPerson person) {
+        Collection<IPerson> people = byYearAndNumberOfChildren.get(person.getBirthDate().getYearDate()).get(countChildren(person));
+        return people.remove(person);
     }
 
     public Collection<IPerson> getByYear(Date year) {
@@ -51,12 +66,18 @@ public class FemaleCollection implements PersonCollection {
         return people;
     }
 
+    public Map<Integer, Collection<IPerson>> getMapByYear(Date year) {
+        return byYearAndNumberOfChildren.get(year.getYearDate());
+    }
+
     public Collection<IPerson> getByNumberOfChildren(Date year, Integer numberOfChildren) {
 
         return byYearAndNumberOfChildren.get(year.getYearDate()).get(numberOfChildren);
     }
 
-    public void moveFemale(IPerson person, Integer previousNumberOfChildren) {
+    public void updatePerson(IPerson person, int numberOfChildrenInMostRecentMaternity) {
+
+        int previousNumberOfChildren = countChildren(person) - numberOfChildrenInMostRecentMaternity;
 
         Collection<IPerson> people = byYearAndNumberOfChildren.get(person.getBirthDate().getYearDate()).get(previousNumberOfChildren);
 
@@ -65,14 +86,15 @@ public class FemaleCollection implements PersonCollection {
         for (IPerson p : people) {
             if (person.compareTo(p) == 0) {
                 people.remove(person);
-                byYearAndNumberOfChildren.get(person.getBirthDate().getYearDate()).get(countChildren(person)).add(person);
+                addPerson(person);
                 found = true;
                 break;
             }
         }
 
         if(!found) {
-            log.warn("Failed to find female to be moved");
+            log.fatal("Failed to find female to be moved");
+            System.exit(302);
         }
 
 

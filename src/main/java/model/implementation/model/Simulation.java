@@ -1,19 +1,29 @@
 package model.implementation.model;
 
+import datastructure.PeopleCollection;
 import model.implementation.analysis.PopulationComposition;
 import model.implementation.analysis.statistics.ComparativeAnalysis;
 import model.implementation.analysis.GeneratedPopulationCompositionFactory;
 import model.implementation.config.Config;
 import model.implementation.populationStatistics.DesiredPopulationStatisticsFactory;
+import model.implementation.populationStatistics.IntegerRange;
 import model.implementation.populationStatistics.PopulationStatistics;
+import model.interfaces.populationModel.IPerson;
+import model.interfaces.populationModel.IPopulation;
 import model.interfaces.populationModel.Population;
 
+import model.time.DateClock;
 import model.time.DateUtils;
+import model.time.TimeUnit;
+import model.time.YearDate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import utils.MapUtils;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collection;
+import java.util.Map;
 
 
 /**
@@ -26,6 +36,10 @@ public class Simulation {
     public static Logger log = LogManager.getLogger(Simulation.class);
     PopulationStatistics desired;
     private int currentHypotheticalPopulationSize;
+
+    private PeopleCollection people = new PeopleCollection();
+
+    private DateClock currentTime;
 
 
     public Simulation() {
@@ -45,7 +59,7 @@ public class Simulation {
         Simulation sim = new Simulation();
 
         // run model
-        Population population = sim.makeSimulatedPopulation();
+        IPopulation population = sim.makeSimulatedPopulation();
 
         // perform comparisons
         ComparativeAnalysis comparisonOfDesiredAndGenerated = sim.analyseGeneratedPopulation(population);
@@ -68,7 +82,7 @@ public class Simulation {
         // end for
 
 
-        return null;
+        return desiredStatistics;
 
     }
 
@@ -87,7 +101,7 @@ public class Simulation {
 
     }
 
-    public ComparativeAnalysis analyseGeneratedPopulation(Population generatedPopulation) {
+    public ComparativeAnalysis analyseGeneratedPopulation(IPopulation generatedPopulation) {
         // get comparable statistics for generate population
         PopulationComposition generatedPopulationComposition = GeneratedPopulationCompositionFactory.createGeneratedPopulationComposition(generatedPopulation);
 
@@ -98,27 +112,29 @@ public class Simulation {
 
     }
 
-    private Population makeSimulatedPopulation() {
+    private IPopulation makeSimulatedPopulation() {
 
         // INFO: at this point all the desired population statistics have been made available
 
-        // initialise population structures
-
         // start time progression
         // for each time step from T Start to T End
+        while(DateUtils.dateBefore(currentTime, config.gettE())) {
 
-        // at every min timestep
-        // clear out dead people
+            // at every min timestep
+            // clear out dead people
 
-        // if deaths timestep
-        handleDeaths();
+            // if deaths timestep
+            if(DateUtils.matchesInterval(currentTime, config.getDeathTimeStep())) {
+                handleDeaths();
+            }
 
-        // if births timestep
-        handleBirths();
+            // if births timestep
+            if(DateUtils.matchesInterval(currentTime, config.getBirthTimeStep())) {
+                handleBirths();
+            }
+        }
 
-        // end for
-
-        return null;
+        return people;
     }
 
     private void handleDeaths() {
@@ -144,51 +160,70 @@ public class Simulation {
         // create set of NEW_FATHERS
 
         // make children/decide on mothers
+
         // for each age of mothers of childbearing age (AGE OF MOTHER)
-        // for each number of children already birthed to mothers (BIRTH ORDER)
-        // DATA 1 - get rate of births by mothers age and birth order
-        // DATA 2 - get rate of multiple births in a maternity (by order)
+        int minAge = desired.getOrderedBirthRates(currentTime.getYearDate()).getMinRowLabelValue();
+        int maxAge = desired.getOrderedBirthRates(currentTime.getYearDate()).getMaxRowLabelValue().getMax();
 
-        // select mothers to give birth (and which will bear twins, etc.)
-        // get count of mothers of this age and birth order
-        // use DATA 1 to see how many many children need to be born
-        // use DATA 2 to decide how many mothers needed to birth children
-        // select the correct number of mothers
-        // make and assign the specified number of children - assign to correct place in population
+        YearDate yearOfBirthInConsideration = new YearDate(currentTime.getYear() - minAge);
 
-        // if birth order 0
-        // add mothers to MOTHERS_NEEDING_FATHERS
-        // else
-        // DATA - get rate of separation by number of children had
-        // select mothers to separate with fathers and add to MOTHERS_NEEDING_FATHERS
-        // add the rest to MOTHERS_WITH_FATHERS
+        for(int age = minAge; age < maxAge; age++) {
 
-        // end for
+            Map<Integer, Collection<IPerson>> cohort = people.getFemales().getMapByYear(yearOfBirthInConsideration);
+            int maxOrderInCohort = MapUtils.getMax(cohort.keySet());
 
-        // decide on new fathers
-        // NUMBER_OF_FATHERS_NEEDED = MOTHERS_NEEEDING_FATHERS.size()
-        // DATA - get age difference of parents at childs birth distribution (this is a subset/row of an ages in combination table)
-        // Turn distribution into solid values based on the number of fathers required
-        // select fathers and add to NEW_FATHERS
+            // for each number of children already birthed to mothers (BIRTH ORDER)
+            for(int order = 0; order < maxOrderInCohort; order++) {
 
-        // pair up MOTHERS_NEEDING_FATHERS with NEW_FATHERS
+                // TODO upto here - apply rates to each part of cohort next
 
-        // find appropriate birth date for child
+                // DATA 1 - get rate of births by mothers age and birth order
+                // DATA 2 - get rate of multiple births in a maternity (by order)
 
-        // update new children info to give fathers
-        // keep count of children born this quarter as BIRTH_COUNT
+                // select mothers to give birth (and which will bear twins, etc.)
+                // get count of mothers of this age and birth order
+                // use DATA 1 to see how many many children need to be born
+                // use DATA 2 to decide how many mothers needed to birth children
+                // select the correct number of mothers
+                // make and assign the specified number of children - assign to correct place in population
 
-        // MAGIC CHILDREN BIT
-        // if before end of magic children period
-        // calculate quarterly birth target, using:
-        // current GROWTH_RATES and PRESENT_POPULATION to calculate yearly population growth and divide by 4
-        // then any shortfall in the quarterly BIRTH_COUNT should be made up by:
-        // adding Magic Children to the population
-        // fi
+                // if birth order 0
+                   // add mothers to MOTHERS_NEEDING_FATHERS
+                // else
+                    // DATA - get rate of separation by number of children had
+                    // select mothers to separate with fathers and add to MOTHERS_NEEDING_FATHERS
 
+                // add the rest to MOTHERS_WITH_FATHERS
+
+            }
+            // end for
+
+            // decide on new fathers
+            // NUMBER_OF_FATHERS_NEEDED = MOTHERS_NEEEDING_FATHERS.size()
+            // DATA - get age difference of parents at childs birth distribution (this is a subset/row of an ages in combination table)
+            // Turn distribution into solid values based on the number of fathers required
+            // select fathers and add to NEW_FATHERS
+
+            // pair up MOTHERS_NEEDING_FATHERS with NEW_FATHERS
+
+            // find appropriate birth date for child
+
+            // update new children info to give fathers
+            // keep count of children born this quarter as BIRTH_COUNT
+
+            // MAGIC CHILDREN BIT
+            // if before end of magic children period
+                // calculate quarterly birth target, using:
+                // current GROWTH_RATES and PRESENT_POPULATION to calculate yearly population growth and divide by 4
+                // then any shortfall in the quarterly BIRTH_COUNT should be made up by:
+                // adding Magic Children to the population
+            // fi
+
+        }
         // end for
 
     }
+
 
 
 }

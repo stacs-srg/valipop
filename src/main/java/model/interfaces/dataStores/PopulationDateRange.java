@@ -15,14 +15,14 @@ public interface PopulationDateRange {
      *
      * @return the earliest day
      */
-    DateClock getEarliestDay();
+    DateClock getEarliestDate();
 
     /**
      * Gets latest day that this Data Store is required to provide information regarding.
      *
      * @return the latest day
      */
-    DateClock getLatestDay();
+    DateClock getLatestDate();
 
 
 }

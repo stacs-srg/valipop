@@ -5,6 +5,7 @@ import model.implementation.populationStatistics.InvalidRangeException;
 import model.implementation.populationStatistics.OneDimensionDataDistribution;
 import model.implementation.populationStatistics.TwoDimensionDataDistribution;
 import model.time.DateClock;
+import model.time.YearDate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -51,7 +52,7 @@ public class InputFileReader {
 
         ArrayList<String> lines = new ArrayList<String>(getAllLines(path));
 
-        DateClock year = null;
+        YearDate year = null;
         String sourcePopulation = null;
         String sourceOrganisation = null;
 
@@ -67,7 +68,7 @@ public class InputFileReader {
             switch (split[0].toLowerCase()) {
                 case "year":
                     try {
-                        year = new DateClock(split[1]);
+                        year = new YearDate(Integer.parseInt(split[1]));
                     } catch (NumberFormatException e) {
                         log.fatal("Non integer value given for year in file: " + path.toString());
                         System.exit(103);
@@ -145,7 +146,7 @@ public class InputFileReader {
 
         ArrayList<String> lines = new ArrayList<String>(getAllLines(path));
 
-        DateClock year = null;
+        YearDate year = null;
         String sourcePopulation = null;
         String sourceOrganisation = null;
 
@@ -160,7 +161,7 @@ public class InputFileReader {
             switch (split[0].toLowerCase()) {
                 case "year":
                     try {
-                        year = new DateClock(split[1]);
+                        year = new YearDate(Integer.parseInt(split[1]));
                     } catch (NumberFormatException e) {
                         log.fatal("Non integer value given for year in file: " + path.toString());
                         System.exit(103);

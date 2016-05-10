@@ -7,6 +7,7 @@ import model.time.DateInstant;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -25,7 +26,7 @@ public class Person implements IPerson {
     private char sex;
     private DateInstant birthDate;
     private DateInstant deathDate;
-    private List<IPartnership> partnerships;
+    private List<IPartnership> partnerships = new ArrayList<IPartnership>();
     private IPartnership parentsPartnership;
 
     public Person(char sex, Date birthDate, IPartnership parentsPartnership) {
@@ -43,7 +44,7 @@ public class Person implements IPerson {
 
     }
 
-    public void recordChildren(IPartnership partnership) {
+    public void recordPartnership(IPartnership partnership) {
         this.partnerships.add(partnership);
     }
 

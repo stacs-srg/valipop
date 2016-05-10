@@ -63,5 +63,39 @@ public class DateUtilsTest {
 
     }
 
+    @Test
+    public void checkMatchesIntervalMethod() {
+
+        DateClock a = new DateClock(1, 10);
+        DateClock b = new DateClock(8, 13);
+        DateClock c = new DateClock(1, 2017);
+        DateClock d = new DateClock(7, 2017);
+
+        CompoundTimeUnit monthly = new CompoundTimeUnit(1, TimeUnit.MONTH);
+        CompoundTimeUnit quarterly = new CompoundTimeUnit(3, TimeUnit.MONTH);
+        CompoundTimeUnit annually = new CompoundTimeUnit(1, TimeUnit.YEAR);
+        CompoundTimeUnit biannually = new CompoundTimeUnit(2, TimeUnit.YEAR);
+
+        assertTrue(DateUtils.matchesInterval(a, monthly));
+        assertTrue(DateUtils.matchesInterval(a, quarterly));
+        assertTrue(DateUtils.matchesInterval(a, annually));
+        assertTrue(DateUtils.matchesInterval(a, biannually));
+
+        assertTrue(DateUtils.matchesInterval(b, monthly));
+        assertFalse(DateUtils.matchesInterval(b, quarterly));
+        assertFalse(DateUtils.matchesInterval(b, annually));
+        assertFalse(DateUtils.matchesInterval(b, biannually));
+
+        assertTrue(DateUtils.matchesInterval(c, monthly));
+        assertTrue(DateUtils.matchesInterval(c, quarterly));
+        assertTrue(DateUtils.matchesInterval(c, annually));
+        assertFalse(DateUtils.matchesInterval(c, biannually));
+
+        assertTrue(DateUtils.matchesInterval(d, monthly));
+        assertTrue(DateUtils.matchesInterval(d, quarterly));
+        assertFalse(DateUtils.matchesInterval(d, annually));
+        assertFalse(DateUtils.matchesInterval(d, biannually));
+
+    }
 
 }

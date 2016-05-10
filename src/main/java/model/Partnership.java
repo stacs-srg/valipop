@@ -5,6 +5,7 @@ import model.interfaces.populationModel.IPerson;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -23,14 +24,14 @@ public class Partnership implements IPartnership {
     private IPerson male;
     private IPerson female;
 
-    private List<IPerson> children;
+    private List<IPerson> children = new ArrayList<IPerson>();
 
     public Partnership(IPerson male, IPerson female) {
 
         this.id = getNewId();
 
         if(male.getSex() != 'm' || female.getSex() != 'f') {
-            log.fatal("A member(s) of partnership do not bear correct sex for role.");
+            log.fatal("A member(s) of partnership does not bear correct sex for given role.");
             System.exit(202);
         }
 

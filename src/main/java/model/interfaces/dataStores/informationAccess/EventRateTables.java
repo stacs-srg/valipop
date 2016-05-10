@@ -1,8 +1,11 @@
 package model.interfaces.dataStores.informationAccess;
 
 import model.enums.Gender;
+import model.implementation.populationStatistics.OneDimensionDataDistribution;
+import model.implementation.populationStatistics.TwoDimensionDataDistribution;
 import model.interfaces.dataStores.informationPassing.tableTypes.OneWayTable;
 import model.interfaces.dataStores.informationPassing.tableTypes.TwoWayTable;
+import model.time.YearDate;
 
 /**
  * The EventRateTables interface provides methods that pertain to the events modelled within the population
@@ -28,7 +31,7 @@ public interface EventRateTables {
      * @param gender the gender
      * @return the death rates
      */
-    OneWayTable<Double> getDeathRates(int year, Gender gender);
+    OneDimensionDataDistribution getDeathRates(YearDate year, char gender);
 
     /**
      * Gets marriage rates for those married in the given year. The return table is two dimensional as it shows the rate
@@ -46,7 +49,7 @@ public interface EventRateTables {
      * @param year the year
      * @return the marriage rates
      */
-    TwoWayTable<Double> getPartneringRates(int year);
+    TwoDimensionDataDistribution getPartneringRates(YearDate year);
 
     /**
      * Gets birth rates by order for births in the given year defined by the age and number of previous children born to
@@ -64,7 +67,7 @@ public interface EventRateTables {
      * @param year the year
      * @return the birth rates by order
      */
-    TwoWayTable<Double> getOrderedBirthRates(int year);
+    TwoDimensionDataDistribution getOrderedBirthRates(YearDate year);
 
     /**
      * Gets multiple births in a maternity rate for women giving birth in a given year by age of the mother.
@@ -81,7 +84,7 @@ public interface EventRateTables {
      * @param year the year
      * @return the birth rates by order
      */
-    TwoWayTable<Double> getMultipleBirthRates(int year);
+    TwoDimensionDataDistribution getMultipleBirthRates(YearDate year);
 
     /**
      * Gets the rate of separation after having a given number of children as a couple. The rate is considered in respect
@@ -97,6 +100,6 @@ public interface EventRateTables {
      * @param year the year
      * @return the death rates
      */
-    OneWayTable<Double> getSeparationByChildCountRates(int year);
+    OneDimensionDataDistribution getSeparationByChildCountRates(YearDate year);
 
 }

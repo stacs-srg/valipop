@@ -47,4 +47,24 @@ public class DateUtils {
 
     }
 
+    public static boolean matchesInterval(DateClock date, CompoundTimeUnit interval) {
+
+        if(interval.getUnit() == TimeUnit.YEAR) {
+            if(date.getMonth() == 1) {
+                if(date.getYear() % interval.getCount() == 0) {
+                    return true;
+                }
+            }
+        }
+
+        if(interval.getUnit() == TimeUnit.MONTH) {
+            if((date.getMonth() - 1) % interval.getCount() == 0) {
+                return true;
+            }
+        }
+
+        return false;
+
+    }
+
 }

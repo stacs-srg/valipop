@@ -1,6 +1,6 @@
 package model.implementation.populationStatistics;
 
-import model.time.DateClock;
+import model.time.YearDate;
 
 import java.util.Map;
 
@@ -10,13 +10,13 @@ import java.util.Map;
 public class TwoDimensionDataDistribution implements DataDistibution {
 
     private final Map<IntegerRange, Map<IntegerRange, Double>> appliedData;
-    private DateClock year;
+    private YearDate year;
     private String sourcePopulation;
 
 //    private Map<IntegerRange, Map<IntegerRange, Double>> targetData;
     private String sourceOrganisation;
 
-    public TwoDimensionDataDistribution(DateClock year, String sourcePopulation, String sourceOrganisation, Map<IntegerRange, Map<IntegerRange, Double>> tableData) {
+    public TwoDimensionDataDistribution(YearDate year, String sourcePopulation, String sourceOrganisation, Map<IntegerRange, Map<IntegerRange, Double>> tableData) {
         this.year = year;
         this.sourcePopulation = sourcePopulation;
         this.sourceOrganisation = sourceOrganisation;
@@ -24,7 +24,7 @@ public class TwoDimensionDataDistribution implements DataDistibution {
     }
 
     @Override
-    public DateClock getYear() {
+    public YearDate getYear() {
         return year;
     }
 
@@ -38,10 +38,39 @@ public class TwoDimensionDataDistribution implements DataDistibution {
         return sourceOrganisation;
     }
 
+    @Override
+    public int getMinRowLabelValue() {
+        int min = Integer.MAX_VALUE;
+        for(IntegerRange iR : appliedData.keySet()) {
+            int v = iR.getMin();
+            if(v < min) {
+                min = v;
+            }
+        }
+        return min;
+    }
+
+    @Override
+    public IntegerRange getMaxRowLabelValue() {
+        IntegerRange max = null;
+        int maxV = Integer.MIN_VALUE;
+        for(IntegerRange iR : appliedData.keySet()) {
+            int v = iR.getMax();
+            if(v > maxV) {
+                max = iR;
+                maxV = v;
+            }
+        }
+        return max;
+
+    }
+
     public Map<IntegerRange, Double> getData(IntegerRange row) {
 
         return ((Map<IntegerRange, Double>) appliedData.get(row));
     }
+
+
 
 //    public Map<IntegerRange, Double> getData(IntegerRange row, int forNPeople) {
 //

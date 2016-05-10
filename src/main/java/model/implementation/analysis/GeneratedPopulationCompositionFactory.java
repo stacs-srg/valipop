@@ -1,6 +1,7 @@
 package model.implementation.analysis;
 
 import model.implementation.analysis.GeneratedPopulationComposition;
+import model.interfaces.populationModel.IPopulation;
 import model.interfaces.populationModel.Population;
 
 /**
@@ -11,7 +12,7 @@ import model.interfaces.populationModel.Population;
 public abstract class GeneratedPopulationCompositionFactory {
 
 
-    public static PopulationComposition createGeneratedPopulationComposition(Population population) {
+    public static PopulationComposition createGeneratedPopulationComposition(IPopulation population) {
 
 
         return null;

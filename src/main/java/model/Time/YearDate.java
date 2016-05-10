@@ -46,4 +46,19 @@ public final class YearDate implements Date {
     public YearDate getYearDate() {
         return this;
     }
+
+    @Override
+    public int hashCode() {
+        return year;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(this.year == ((YearDate) obj).getYear()) {
+            return true;
+        }
+        else {
+            return false;
+        }
+   }
 }

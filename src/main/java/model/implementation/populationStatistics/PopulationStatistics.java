@@ -1,13 +1,12 @@
 package model.implementation.populationStatistics;
 
 import model.enums.EventType;
-import model.enums.Gender;
 import model.implementation.analysis.PopulationComposition;
 import model.implementation.config.Config;
 import model.interfaces.dataStores.informationAccess.EventRateTables;
 import model.interfaces.dataStores.informationPassing.tableTypes.OneWayTable;
-import model.interfaces.dataStores.informationPassing.tableTypes.TwoWayTable;
 import model.time.DateClock;
+import model.time.YearDate;
 
 import java.util.Map;
 
@@ -19,68 +18,75 @@ import java.util.Map;
  */
 public class PopulationStatistics implements PopulationComposition, EventRateTables {
 
-    DateClock startDay;
-    DateClock endDay;
+    DateClock startDate;
+    DateClock endDate;
 
-    Map<DateClock, OneDimensionDataDistribution> death;
-    Map<DateClock, TwoDimensionDataDistribution> partnering;
-    Map<DateClock, TwoDimensionDataDistribution> orderedBirth;
-    Map<DateClock, TwoDimensionDataDistribution> multipleBirth;
-    Map<DateClock, OneDimensionDataDistribution> separation;
+    Map<YearDate, OneDimensionDataDistribution> maleDeath;
+    Map<YearDate, OneDimensionDataDistribution> femaleDeath;
+    Map<YearDate, TwoDimensionDataDistribution> partnering;
+    Map<YearDate, TwoDimensionDataDistribution> orderedBirth;
+    Map<YearDate, TwoDimensionDataDistribution> multipleBirth;
+    Map<YearDate, OneDimensionDataDistribution> separation;
 
     public PopulationStatistics(Config config,
-                                Map<DateClock, OneDimensionDataDistribution> death,
-                                Map<DateClock, TwoDimensionDataDistribution> partnering,
-                                Map<DateClock, TwoDimensionDataDistribution> orderedBirth,
-                                Map<DateClock, TwoDimensionDataDistribution> multipleBirth,
-                                Map<DateClock, OneDimensionDataDistribution> separation) {
+                                Map<YearDate, OneDimensionDataDistribution> maleDeath,
+                                Map<YearDate, OneDimensionDataDistribution> femaleDeath,
+                                Map<YearDate, TwoDimensionDataDistribution> partnering,
+                                Map<YearDate, TwoDimensionDataDistribution> orderedBirth,
+                                Map<YearDate, TwoDimensionDataDistribution> multipleBirth,
+                                Map<YearDate, OneDimensionDataDistribution> separation) {
 
-        this.death = death;
+        this.maleDeath = maleDeath;
+        this.femaleDeath = femaleDeath;
         this.partnering = partnering;
         this.orderedBirth = orderedBirth;
         this.multipleBirth = multipleBirth;
         this.separation = separation;
 
-        this.startDay = config.gettS();
-        this.endDay = config.gettE();
+        this.startDate = config.gettS();
+        this.endDate = config.gettE();
 
 
     }
 
     @Override
-    public DateClock getEarliestDay() {
-        return null;
+    public DateClock getEarliestDate() {
+        return startDate;
     }
 
     @Override
-    public DateClock getLatestDay() {
-        return null;
+    public DateClock getLatestDate() {
+        return endDate;
     }
 
 
     @Override
-    public OneWayTable<Double> getDeathRates(int year, Gender gender) {
-        return null;
+    public OneDimensionDataDistribution getDeathRates(YearDate year, char gender) {
+        if(gender == 'm') {
+            return maleDeath.get(year);
+        } else {
+            return femaleDeath.get(year);
+        }
     }
 
     @Override
-    public TwoWayTable<Double> getPartneringRates(int year) {
-        return null;
+    public TwoDimensionDataDistribution getPartneringRates(YearDate year) {
+        return partnering.get(year);
     }
 
     @Override
-    public TwoWayTable<Double> getOrderedBirthRates(int year) {
-        return null;
+    public TwoDimensionDataDistribution getOrderedBirthRates(YearDate year) {
+        return orderedBirth.get(year);
     }
 
     @Override
-    public TwoWayTable<Double> getMultipleBirthRates(int year) {
-        return null;
+    public TwoDimensionDataDistribution getMultipleBirthRates(YearDate year) {
+        return multipleBirth.get(year);
     }
 
     @Override
-    public OneWayTable<Double> getSeparationByChildCountRates(int year) {
-        return null;
+    public OneDimensionDataDistribution getSeparationByChildCountRates(YearDate year) {
+        return separation.get(year);
     }
 
     @Override

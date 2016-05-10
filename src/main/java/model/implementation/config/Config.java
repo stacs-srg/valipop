@@ -21,7 +21,8 @@ import java.util.Collection;
 public class Config {
 
     private static final String ordersBirthSubFile = "ordered_birth";
-    private static final String deathSubFile = "death";
+    private static final String maleDeathSubFile = "death/male";
+    private static final String femaleDeathSubFile = "death/female";
     private static final String multipleBirthSubFile = "multiple_birth";
     private static final String partneringSubFile = "partnering";
     private static final String separationSubFile = "separation";
@@ -34,7 +35,8 @@ public class Config {
     private CompoundTimeUnit deathTimeStep;
     private CompoundTimeUnit birthTimeStep;
     private Path varBirthPaths;
-    private Path varDeathPaths;
+    private Path varMaleDeathPaths;
+    private Path varFemaleDeathPaths;
     private Path varMultipleBirthPaths;
     private Path varPartneringPaths;
     private Path varSeparationPaths;
@@ -55,7 +57,8 @@ public class Config {
             switch (split[0]) {
                 case "var_data_files":
                     varBirthPaths = Paths.get(path, ordersBirthSubFile);
-                    varDeathPaths = Paths.get(path, deathSubFile);
+                    varMaleDeathPaths = Paths.get(path, maleDeathSubFile);
+                    varFemaleDeathPaths = Paths.get(path, femaleDeathSubFile);
                     varMultipleBirthPaths = Paths.get(path, multipleBirthSubFile);
                     varPartneringPaths = Paths.get(path, partneringSubFile);
                     varSeparationPaths = Paths.get(path, separationSubFile);
@@ -134,11 +137,21 @@ public class Config {
     }
 
 
-    public DirectoryStream<Path> getVarDeathPaths() {
+    public DirectoryStream<Path> getVarMaleDeathPaths() {
         try {
-            return Files.newDirectoryStream(varDeathPaths);
+            return Files.newDirectoryStream(varMaleDeathPaths);
         } catch (IOException e) {
-            log.fatal("Error reading in death files. Will now exit.");
+            log.fatal("Error reading in male death files. Will now exit.");
+            System.exit(101);
+        }
+        return null;
+    }
+
+    public DirectoryStream<Path> getVarFemaleDeathPaths() {
+        try {
+            return Files.newDirectoryStream(varFemaleDeathPaths);
+        } catch (IOException e) {
+            log.fatal("Error reading in female death files. Will now exit.");
             System.exit(101);
         }
         return null;

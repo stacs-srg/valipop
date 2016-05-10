@@ -14,12 +14,12 @@ public class EventOccurrences implements PopulationDateRange {
 
 
     @Override
-    public DateClock getEarliestDay() {
+    public DateClock getEarliestDate() {
         return null;
     }
 
     @Override
-    public DateClock getLatestDay() {
+    public DateClock getLatestDate() {
         return null;
     }
 

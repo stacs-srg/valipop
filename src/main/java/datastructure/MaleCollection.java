@@ -35,7 +35,23 @@ public class MaleCollection implements PersonCollection {
     }
 
     public void addPerson(IPerson person) {
-        byYear.get(person.getBirthDate().getYearDate()).add(person);
+        try {
+            byYear.get(person.getBirthDate().getYearDate()).add(person);
+        } catch (NullPointerException e) {
+            byYear.put(person.getBirthDate().getYearDate(), new ArrayList<IPerson>());
+            byYear.get(person.getBirthDate().getYearDate()).add(person);
+        }
+
     }
 
+    @Override
+    public boolean removePerson(IPerson person) {
+        Collection<IPerson> people = byYear.get(person.getBirthDate().getYearDate());
+        return people.remove(person);
+    }
+
+    @Override
+    public void updatePerson(IPerson person, int numberOfChildrenInMostRecentMaternity) {
+        return;
+    }
 }

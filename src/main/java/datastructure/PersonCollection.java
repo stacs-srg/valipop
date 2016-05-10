@@ -13,4 +13,8 @@ public interface PersonCollection {
 
     public void addPerson(IPerson person);
 
+    public boolean removePerson(IPerson person);
+
+    public void updatePerson(IPerson person, int numberOfChildrenInMostRecentMaternity);
+
 }

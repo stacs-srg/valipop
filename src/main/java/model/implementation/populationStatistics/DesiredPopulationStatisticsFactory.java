@@ -4,6 +4,7 @@ import model.enums.EventType;
 import model.implementation.config.Config;
 import model.interfaces.dataStores.informationPassing.tableTypes.Table;
 import model.time.DateClock;
+import model.time.YearDate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import utils.InputFileReader;
@@ -31,18 +32,19 @@ public abstract class DesiredPopulationStatisticsFactory {
 
         DesiredPopulationStatisticsFactory.log.info("Creating PopulationStatistics");
 
-        Map<DateClock, OneDimensionDataDistribution> death = readIn1DDataFiles(config.getVarDeathPaths());
-        Map<DateClock, TwoDimensionDataDistribution> partnering = readIn2DDataFiles(config.getVarPartneringPaths());
-        Map<DateClock, TwoDimensionDataDistribution> orderedBirth = readIn2DDataFiles(config.getVarOrderedBirthPaths());
-        Map<DateClock, TwoDimensionDataDistribution> multipleBirth = readIn2DDataFiles(config.getVarMultipleBirthPaths());
-        Map<DateClock, OneDimensionDataDistribution> separation = readIn1DDataFiles(config.getVarSeparationPaths());
+        Map<YearDate, OneDimensionDataDistribution> maleDeath = readIn1DDataFiles(config.getVarMaleDeathPaths());
+        Map<YearDate, OneDimensionDataDistribution> femaleDeath = readIn1DDataFiles(config.getVarFemaleDeathPaths());
+        Map<YearDate, TwoDimensionDataDistribution> partnering = readIn2DDataFiles(config.getVarPartneringPaths());
+        Map<YearDate, TwoDimensionDataDistribution> orderedBirth = readIn2DDataFiles(config.getVarOrderedBirthPaths());
+        Map<YearDate, TwoDimensionDataDistribution> multipleBirth = readIn2DDataFiles(config.getVarMultipleBirthPaths());
+        Map<YearDate, OneDimensionDataDistribution> separation = readIn1DDataFiles(config.getVarSeparationPaths());
 
-        return new PopulationStatistics(config, death, partnering, orderedBirth, multipleBirth, separation);
+        return new PopulationStatistics(config, maleDeath, femaleDeath, partnering, orderedBirth, multipleBirth, separation);
     }
 
-    private static Map<DateClock, TwoDimensionDataDistribution> readIn2DDataFiles(DirectoryStream<Path> paths) {
+    private static Map<YearDate, TwoDimensionDataDistribution> readIn2DDataFiles(DirectoryStream<Path> paths) {
 
-        Map<DateClock, TwoDimensionDataDistribution> data = new HashMap<DateClock, TwoDimensionDataDistribution>();
+        Map<YearDate, TwoDimensionDataDistribution> data = new HashMap<YearDate, TwoDimensionDataDistribution>();
 
         for (Path path : paths) {
             // read in each file
@@ -54,9 +56,9 @@ public abstract class DesiredPopulationStatisticsFactory {
         return data;
     }
 
-    private static Map<DateClock, OneDimensionDataDistribution> readIn1DDataFiles(DirectoryStream<Path> paths) {
+    private static Map<YearDate, OneDimensionDataDistribution> readIn1DDataFiles(DirectoryStream<Path> paths) {
 
-        Map<DateClock, OneDimensionDataDistribution> data = new HashMap<DateClock, OneDimensionDataDistribution>();
+        Map<YearDate, OneDimensionDataDistribution> data = new HashMap<YearDate, OneDimensionDataDistribution>();
 
         for (Path path : paths) {
             // read in each file
