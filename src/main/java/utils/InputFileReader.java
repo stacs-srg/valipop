@@ -57,7 +57,7 @@ public class InputFileReader {
         String sourceOrganisation = null;
 
         ArrayList<IntegerRange> columnLabels = new ArrayList<IntegerRange>();
-        Map<IntegerRange, Map<IntegerRange, Double>> data = new HashMap<IntegerRange, Map<IntegerRange, Double>>();
+        Map<IntegerRange, OneDimensionDataDistribution> data = new HashMap<IntegerRange, OneDimensionDataDistribution>();
 
 
         for (int i = 0; i < lines.size(); i++) {
@@ -129,7 +129,7 @@ public class InputFileReader {
                             }
                         }
 
-                        data.put(rowLabel, rowMap);
+                        data.put(rowLabel, new OneDimensionDataDistribution(year, sourcePopulation, sourceOrganisation, rowMap));
 
                     }
                     break;

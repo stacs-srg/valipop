@@ -5,7 +5,7 @@ import model.time.YearDate;
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public interface DataDistibution {
+public interface DataDistribution {
 
     public YearDate getYear();
 

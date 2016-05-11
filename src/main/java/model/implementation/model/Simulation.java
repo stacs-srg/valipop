@@ -5,9 +5,7 @@ import model.implementation.analysis.PopulationComposition;
 import model.implementation.analysis.statistics.ComparativeAnalysis;
 import model.implementation.analysis.GeneratedPopulationCompositionFactory;
 import model.implementation.config.Config;
-import model.implementation.populationStatistics.DesiredPopulationStatisticsFactory;
-import model.implementation.populationStatistics.IntegerRange;
-import model.implementation.populationStatistics.PopulationStatistics;
+import model.implementation.populationStatistics.*;
 import model.interfaces.populationModel.IPerson;
 import model.interfaces.populationModel.IPopulation;
 import model.interfaces.populationModel.Population;
@@ -24,6 +22,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Random;
 
 
 /**
@@ -40,6 +39,8 @@ public class Simulation {
     private PeopleCollection people = new PeopleCollection();
 
     private DateClock currentTime;
+
+    private Random randomNumberGenerator = new Random();
 
 
     public Simulation() {
@@ -165,25 +166,41 @@ public class Simulation {
         int minAge = desired.getOrderedBirthRates(currentTime.getYearDate()).getMinRowLabelValue();
         int maxAge = desired.getOrderedBirthRates(currentTime.getYearDate()).getMaxRowLabelValue().getMax();
 
-        YearDate yearOfBirthInConsideration = new YearDate(currentTime.getYear() - minAge);
 
         for(int age = minAge; age < maxAge; age++) {
 
-            Map<Integer, Collection<IPerson>> cohort = people.getFemales().getMapByYear(yearOfBirthInConsideration);
-            int maxOrderInCohort = MapUtils.getMax(cohort.keySet());
+            YearDate yearOfBirthInConsideration = new YearDate(currentTime.getYear() - age);
+
+            Map<Integer, Collection<IPerson>> womenOfThisAge = people.getFemales().getMapByYear(yearOfBirthInConsideration);
+
+            // DATA - get rate of births by mothers age
+            OneDimensionDataDistribution orderedBirthRatesForMothersOfThisAge = desired.getOrderedBirthRates(currentTime.getYearDate()).getData(age);
+
+            // DATA 2 - get rate of multiple births in a maternity (by order)
+            OneDimensionDataDistribution multipleBirthDataForMothersOfThisAgeByMaternity = desired.getMultipleBirthRates(currentTime.getYearDate()).getData(age);
+            OneDimensionDataDistribution proportionOfChildrenBornToEachSizeOfMaternity = transformMaternityProportionsToChildrenProportions(multipleBirthDataForMothersOfThisAgeByMaternity);
+
+            int maxBirthOrderInCohort = MapUtils.getMax(womenOfThisAge.keySet());
+            int sizeOfCohort = MapUtils.countPeopleInMap(womenOfThisAge);
+
 
             // for each number of children already birthed to mothers (BIRTH ORDER)
-            for(int order = 0; order < maxOrderInCohort; order++) {
+            for(int order = 0; order < maxBirthOrderInCohort; order++) {
 
-                // TODO upto here - apply rates to each part of cohort next
+                // women of this age and birth order
+                Collection<IPerson> women = womenOfThisAge.get(order);
 
                 // DATA 1 - get rate of births by mothers age and birth order
-                // DATA 2 - get rate of multiple births in a maternity (by order)
+                Double birthRate = orderedBirthRatesForMothersOfThisAge.getData(order);
 
                 // select mothers to give birth (and which will bear twins, etc.)
-                // get count of mothers of this age and birth order
+
                 // use DATA 1 to see how many many children need to be born
+                int numberOfChildrenToBirth = calculateChildrenToBeBorn(sizeOfCohort, birthRate);
+
                 // use DATA 2 to decide how many mothers needed to birth children
+                Map<Integer, Integer> motherCountsByMaternitySize = calculateMotherCountsByMaternitySize(numberOfChildrenToBirth, proportionOfChildrenBornToEachSizeOfMaternity);
+
                 // select the correct number of mothers
                 // make and assign the specified number of children - assign to correct place in population
 
@@ -224,6 +241,71 @@ public class Simulation {
 
     }
 
+    private Map<Integer,Integer> calculateMotherCountsByMaternitySize(int numberOfChildrenToBirth, OneDimensionDataDistribution proportionOfChildrenBornToEachSizeOfMaternity) {
+
+        // TODO write me next please :)
+
+        // In the comments 'maternity type' is used to term how many children are born from the maternity
+        // i.e. a single child maternity or a two child maternity would be an example of two maternity types
+
+        // calculate numbers of children to be born from each maternity type
+
+        // therefore calculate the resulting number of mothers for each maternity type
+
+        // handle rounding errors
+        // first by split number line dice roll
+
+        // then check if total number of children resulting from this is correct
+
+        // if not (i.e. the number line dice roll caused an additional set of twins or triplets or etc.)
+            // reduce the mother counts for lower maternity types
+
+            // this should be done proportionally by there rounding error
+            // repeat until total number of children is equal to the input given of numberOfChildreToBirth
+
+        return null;
+
+
+    }
+
+    private OneDimensionDataDistribution transformMaternityProportionsToChildrenProportions(OneDimensionDataDistribution multipleBirthDataForMothersOfThisAgeByMaternity) {
+
+        OneDimensionDataDistribution maternities = multipleBirthDataForMothersOfThisAgeByMaternity;
+
+        Map<IntegerRange, Double> temp = maternities.cloneWithIntegerLabelsData();
+
+        double sumOfScaledValues = 0;
+
+        for(IntegerRange iR : temp.keySet()) {
+            double scaledValue = iR.getMin() * temp.get(iR);
+            sumOfScaledValues += scaledValue;
+            temp.replace(iR, scaledValue);
+        }
+
+        for(IntegerRange iR : temp.keySet()) {
+            double proportionalValue = temp.get(iR) / sumOfScaledValues;
+            temp.replace(iR, proportionalValue);
+        }
+
+        return new OneDimensionDataDistribution(maternities.getYear(), maternities.getSourcePopulation(), maternities.getSourceOrganisation(), temp);
+
+    }
+
+    private int calculateChildrenToBeBorn(int sizeOfCohort, Double birthRate) {
+
+        double absoluteNumberOfChildrenToBEBorn = sizeOfCohort * birthRate;
+
+        int childrenToBeBorn = (int) absoluteNumberOfChildrenToBEBorn;
+
+        double leftOverBitOfChild = absoluteNumberOfChildrenToBEBorn - childrenToBeBorn;
+
+        // this is a random dice roll to see if the leftOverBitOfChildren gets made up to a full child or not
+        if(randomNumberGenerator.nextDouble() < leftOverBitOfChild) {
+            childrenToBeBorn++;
+        }
+
+        return childrenToBeBorn;
+    }
 
 
 }

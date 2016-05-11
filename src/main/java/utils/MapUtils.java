@@ -1,5 +1,9 @@
 package utils;
 
+import model.interfaces.populationModel.IPerson;
+
+import java.util.Collection;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -18,6 +22,18 @@ public class MapUtils {
             }
         }
         return max;
+
+    }
+
+    public static int countPeopleInMap(Map<Integer, Collection<IPerson>> map) {
+
+        int count = 0;
+
+        for(Integer i : map.keySet()) {
+            count += map.get(i).size();
+        }
+
+        return count;
 
     }
 }

@@ -6,8 +6,10 @@ import model.implementation.config.Config;
 import model.interfaces.dataStores.informationAccess.EventRateTables;
 import model.interfaces.dataStores.informationPassing.tableTypes.OneWayTable;
 import model.time.DateClock;
+import model.time.DateUtils;
 import model.time.YearDate;
 
+import java.time.Year;
 import java.util.Map;
 
 /**
@@ -63,34 +65,52 @@ public class PopulationStatistics implements PopulationComposition, EventRateTab
     @Override
     public OneDimensionDataDistribution getDeathRates(YearDate year, char gender) {
         if(gender == 'm') {
-            return maleDeath.get(year);
+            return maleDeath.get(getNearestYearInMap(year, maleDeath));
         } else {
-            return femaleDeath.get(year);
+            return femaleDeath.get(getNearestYearInMap(year, femaleDeath));
         }
     }
 
     @Override
     public TwoDimensionDataDistribution getPartneringRates(YearDate year) {
-        return partnering.get(year);
+        return partnering.get(getNearestYearInMap(year, partnering));
     }
 
     @Override
     public TwoDimensionDataDistribution getOrderedBirthRates(YearDate year) {
-        return orderedBirth.get(year);
+        return orderedBirth.get(getNearestYearInMap(year, orderedBirth));
     }
 
     @Override
     public TwoDimensionDataDistribution getMultipleBirthRates(YearDate year) {
-        return multipleBirth.get(year);
+        return multipleBirth.get(getNearestYearInMap(year, multipleBirth));
     }
 
     @Override
     public OneDimensionDataDistribution getSeparationByChildCountRates(YearDate year) {
-        return separation.get(year);
+        return separation.get(getNearestYearInMap(year, separation));
     }
 
     @Override
     public OneWayTable<Integer> getSurvivorTable(int startYear, int timePeriod, EventType event) {
         return null;
     }
+
+    private YearDate getNearestYearInMap(YearDate year, Map<YearDate, ?> map) {
+
+        int minDifferenceInMonths = Integer.MAX_VALUE;
+        YearDate nearestTableYear = null;
+
+        for (YearDate tableYear : map.keySet()) {
+            int difference = DateUtils.differenceInMonths(tableYear, year).getCount();
+            if(difference < minDifferenceInMonths) {
+                minDifferenceInMonths = difference;
+                nearestTableYear = tableYear;
+            }
+        }
+
+        return nearestTableYear;
+
+    }
+
 }

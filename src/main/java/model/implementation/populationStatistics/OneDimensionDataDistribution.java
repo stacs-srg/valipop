@@ -1,14 +1,19 @@
 package model.implementation.populationStatistics;
 
-import model.time.DateClock;
 import model.time.YearDate;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class OneDimensionDataDistribution implements DataDistibution {
+public class OneDimensionDataDistribution implements DataDistribution {
+
+
+    public static Logger log = LogManager.getLogger(OneDimensionDataDistribution.class);
 
     private YearDate year;
     private String sourcePopulation;
@@ -44,13 +49,70 @@ public class OneDimensionDataDistribution implements DataDistibution {
         return sourceOrganisation;
     }
 
-    public Double getData(IntegerRange row) {
+    @Override
+    public int getMinRowLabelValue() {
+        int min = Integer.MAX_VALUE;
+        for(IntegerRange iR : appliedData.keySet()) {
+            int v = iR.getMin();
+            if(v < min) {
+                min = v;
+            }
+        }
+        return min;
+    }
+
+    @Override
+    public IntegerRange getMaxRowLabelValue() {
+        IntegerRange max = null;
+        int maxV = Integer.MIN_VALUE;
+        for(IntegerRange iR : appliedData.keySet()) {
+            int v = iR.getMax();
+            if(v > maxV) {
+                max = iR;
+                maxV = v;
+            }
+        }
+        return max;
+
+    }
+
+    public Double getData(Integer rowValue) {
+
+        IntegerRange row = null;
+        try {
+            row = resolveRowValue(rowValue);
+        } catch (InvalidRangeException e) {
+            log.fatal(e.getMessage());
+            System.exit(303);
+        }
 
         return appliedData.get(row);
     }
 
+    private IntegerRange resolveRowValue(Integer rowValue) {
+
+        for(IntegerRange iR : appliedData.keySet()) {
+            if(iR.contains(rowValue)) {
+                return iR;
+            }
+        }
+
+        throw new InvalidRangeException("RowValue does not exist in this data distribution");
+    }
+
     public Map<IntegerRange, Double> getData() {
         return appliedData;
+    }
+
+    public Map<IntegerRange,Double> cloneWithIntegerLabelsData() {
+        Map<IntegerRange, Double> map = new HashMap<IntegerRange, Double>();
+
+        for(IntegerRange iR : appliedData.keySet()) {
+            map.put(iR, appliedData.get(iR));
+        }
+
+        return map;
+
     }
 
 //    public Double getData(IntegerRange row, int forNPeople) {
