@@ -1,5 +1,6 @@
 package datastructure;
 
+import model.Person;
 import model.interfaces.populationModel.IPerson;
 
 import java.util.Collection;
@@ -9,12 +10,12 @@ import java.util.Collection;
  */
 public interface PersonCollection {
 
-    Collection<IPerson> getAll();
+    Collection<Person> getAll();
 
-    public void addPerson(IPerson person);
+    public void addPerson(Person person);
 
-    public boolean removePerson(IPerson person);
+    public boolean removePerson(Person person);
 
-    public void updatePerson(IPerson person, int numberOfChildrenInMostRecentMaternity);
+    public void updatePerson(Person person, int numberOfChildrenInMostRecentMaternity);
 
 }

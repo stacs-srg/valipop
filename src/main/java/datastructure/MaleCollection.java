@@ -1,11 +1,10 @@
 package datastructure;
 
+import model.Person;
 import model.interfaces.populationModel.IPerson;
 import model.time.Date;
-import model.time.DateClock;
 import model.time.YearDate;
 
-import java.time.Year;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -16,11 +15,11 @@ import java.util.Map;
  */
 public class MaleCollection implements PersonCollection {
 
-    private Map<YearDate, Collection<IPerson>> byYear = new HashMap<YearDate, Collection<IPerson>>();
+    private Map<YearDate, Collection<Person>> byYear = new HashMap<YearDate, Collection<Person>>();
 
-    public Collection<IPerson> getAll() {
+    public Collection<Person> getAll() {
 
-        Collection<IPerson> people = new ArrayList<IPerson>();
+        Collection<Person> people = new ArrayList<Person>();
 
         for (YearDate t : byYear.keySet()) {
             people.addAll(byYear.get(t));
@@ -29,29 +28,29 @@ public class MaleCollection implements PersonCollection {
         return people;
     }
 
-    public Collection<IPerson> getByYear(Date year) {
+    public Collection<Person> getByYear(Date year) {
 
         return byYear.get(year.getYearDate());
     }
 
-    public void addPerson(IPerson person) {
+    public void addPerson(Person person) {
         try {
             byYear.get(person.getBirthDate().getYearDate()).add(person);
         } catch (NullPointerException e) {
-            byYear.put(person.getBirthDate().getYearDate(), new ArrayList<IPerson>());
+            byYear.put(person.getBirthDate().getYearDate(), new ArrayList<Person>());
             byYear.get(person.getBirthDate().getYearDate()).add(person);
         }
 
     }
 
     @Override
-    public boolean removePerson(IPerson person) {
-        Collection<IPerson> people = byYear.get(person.getBirthDate().getYearDate());
+    public boolean removePerson(Person person) {
+        Collection<Person> people = byYear.get(person.getBirthDate().getYearDate());
         return people.remove(person);
     }
 
     @Override
-    public void updatePerson(IPerson person, int numberOfChildrenInMostRecentMaternity) {
+    public void updatePerson(Person person, int numberOfChildrenInMostRecentMaternity) {
         return;
     }
 }

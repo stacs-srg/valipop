@@ -29,7 +29,7 @@ public class IntegerRange {
             max = Integer.parseInt(parts[1]);
 
             if (min >= max) {
-                throw new InvalidRangeException();
+                throw new InvalidRangeException("The minimum value of the range is greater than the maximum value");
             }
         } else {
             throw new NumberFormatException();
@@ -39,7 +39,7 @@ public class IntegerRange {
 
     public IntegerRange(int min, int max) {
         if (min >= max) {
-            throw new InvalidRangeException();
+            throw new InvalidRangeException("The minimum value of the range is greater than the maximum value");
         }
 
         this.min = min;

@@ -33,13 +33,13 @@ public class PeopleCollectionTest {
 
         DateClock start = new DateClock(1, 1600);
 
-        Person m1 = new Person('m', start, null);
-        Person m2 = new Person('m', start, null);
-        Person m3 = new Person('m', start, null);
+        model.Person m1 = new model.Person('m', start, null);
+        model.Person m2 = new model.Person('m', start, null);
+        model.Person m3 = new model.Person('m', start, null);
 
-        Person f1 = new Person('f', start, null);
-        Person f2 = new Person('f', start, null);
-        Person f3 = new Person('f', start, null);
+        model.Person f1 = new model.Person('f', start, null);
+        model.Person f2 = new model.Person('f', start, null);
+        model.Person f3 = new model.Person('f', start, null);
 
         living.addPerson(m1);
         living.addPerson(m2);
@@ -50,7 +50,7 @@ public class PeopleCollectionTest {
 
         // are people added present in the correct place
         // for females
-        Collection<IPerson> females = living.getFemales().getByNumberOfChildren(start, 0);
+        Collection<Person> females = living.getFemales().getByNumberOfChildren(start, 0);
         assertTrue(females.contains(f1));
         assertTrue(females.contains(f2));
         assertTrue(females.contains(f3));
@@ -64,13 +64,13 @@ public class PeopleCollectionTest {
 
         DateClock start = new DateClock(1, 1600);
 
-        Person m1 = new Person('m', start, null);
-        Person m2 = new Person('m', start, null);
-        Person m3 = new Person('m', start, null);
+        model.Person m1 = new model.Person('m', start, null);
+        model.Person m2 = new model.Person('m', start, null);
+        model.Person m3 = new model.Person('m', start, null);
 
-        Person f1 = new Person('f', start, null);
-        Person f2 = new Person('f', start, null);
-        Person f3 = new Person('f', start, null);
+        model.Person f1 = new model.Person('f', start, null);
+        model.Person f2 = new model.Person('f', start, null);
+        model.Person f3 = new model.Person('f', start, null);
 
         living.addPerson(m1);
         living.addPerson(m2);
@@ -82,14 +82,14 @@ public class PeopleCollectionTest {
 
         // are people added present in the correct place
         // for males
-        Collection<IPerson> males = living.getMales().getByYear(start);
+        Collection<Person> males = living.getMales().getByYear(start);
         assertTrue(males.contains(m1));
         assertTrue(males.contains(m2));
         assertTrue(males.contains(m3));
 
         // for females
 
-        Collection<IPerson> females = living.getFemales().getByYear(start);
+        Collection<Person> females = living.getFemales().getByYear(start);
         assertTrue(females.contains(f1));
         assertTrue(females.contains(f2));
         assertTrue(females.contains(f3));
@@ -104,13 +104,13 @@ public class PeopleCollectionTest {
 
         DateClock start = new DateClock(1, 1600);
 
-        Person m1 = new Person('m', start, null);
-        Person m2 = new Person('m', start, null);
-        Person m3 = new Person('m', start, null);
+        model.Person m1 = new model.Person('m', start, null);
+        model.Person m2 = new model.Person('m', start, null);
+        model.Person m3 = new model.Person('m', start, null);
 
-        Person f1 = new Person('f', start, null);
-        Person f2 = new Person('f', start, null);
-        Person f3 = new Person('f', start, null);
+        model.Person f1 = new model.Person('f', start, null);
+        model.Person f2 = new model.Person('f', start, null);
+        model.Person f3 = new model.Person('f', start, null);
 
         living.addPerson(m1);
         living.addPerson(m2);
@@ -121,18 +121,18 @@ public class PeopleCollectionTest {
 
         // are people added present in the correct place
         // for males
-        Collection<IPerson> males = living.getMales().getAll();
+        Collection<Person> males = living.getMales().getAll();
         assertTrue(males.contains(m1));
         assertTrue(males.contains(m2));
         assertTrue(males.contains(m3));
 
         // for females
-        Collection<IPerson> females = living.getFemales().getAll();
+        Collection<Person> females = living.getFemales().getAll();
         assertTrue(females.contains(f1));
         assertTrue(females.contains(f2));
         assertTrue(females.contains(f3));
 
-        Collection<IPerson> all = living.getAll();
+        Collection<Person> all = living.getAll();
         assertTrue(all.contains(m1));
         assertTrue(all.contains(m2));
         assertTrue(all.contains(m3));
@@ -149,13 +149,13 @@ public class PeopleCollectionTest {
 
         DateClock start = new DateClock(1, 1600);
 
-        Person f1 = new Person('f', start, null);
+        model.Person f1 = new model.Person('f', start, null);
 
-        Person m1 = new Person('m', start, null);
+        model.Person m1 = new model.Person('m', start, null);
 
-        Person c1 = new Person('m', start.advanceTime(19, TimeUnit.YEAR), null);
-        Person c2 = new Person('f', start.advanceTime(25, TimeUnit.YEAR), null);
-        Person c3 = new Person('m', start.advanceTime(32, TimeUnit.YEAR), null);
+        model.Person c1 = new model.Person('m', start.advanceTime(19, TimeUnit.YEAR), null);
+        model.Person c2 = new model.Person('f', start.advanceTime(25, TimeUnit.YEAR), null);
+        model.Person c3 = new model.Person('m', start.advanceTime(32, TimeUnit.YEAR), null);
 
         living.addPerson(f1);
 
@@ -170,7 +170,7 @@ public class PeopleCollectionTest {
         living.updatePerson(f1, 1);
 
         // are they in the new place
-        Collection<IPerson> people = living.getFemales().getByNumberOfChildren(m1.getBirthDate().getYearDate(), 1);
+        Collection<Person> people = living.getFemales().getByNumberOfChildren(m1.getBirthDate().getYearDate(), 1);
         assertTrue(people.contains(f1));
 
         // and not in the old place
@@ -213,7 +213,7 @@ public class PeopleCollectionTest {
 
         DateClock start = new DateClock(1, 1600);
 
-        Person m1 = new Person('m', start, null);
+        model.Person m1 = new model.Person('m', start, null);
 
         living.addPerson(m1);
 
@@ -239,23 +239,23 @@ public class PeopleCollectionTest {
         DateInstant startI = new DateInstant(7, 1, 1600);
         YearDate startY = new YearDate(1600);
 
-        Person f1 = new Person('f', start, null);
+        model.Person f1 = new model.Person('f', start, null);
 
-        Person m1 = new Person('m', startI, null);
-        Person m2 = new Person('m', startY, null);
+        model.Person m1 = new model.Person('m', startI, null);
+        model.Person m2 = new model.Person('m', startY, null);
 
         living.addPerson(f1);
 
         living.addPerson(m1);
         living.addPerson(m2);
 
-        Collection<IPerson> males = living.getMales().getByYear(startY);
+        Collection<Person> males = living.getMales().getByYear(startY);
         assertTrue(males.contains(m1));
         assertTrue(males.contains(m2));
 
         // for females
 
-        Collection<IPerson> females = living.getFemales().getByYear(startI);
+        Collection<Person> females = living.getFemales().getByYear(startI);
         assertTrue(females.contains(f1));
 
     }

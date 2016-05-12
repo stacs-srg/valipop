@@ -8,7 +8,7 @@ import java.util.*;
  */
 public final class DateClock implements Date {
 
-    private static final int MONTHS_IN_YEAR = 12;
+    protected static final int MONTHS_IN_YEAR = 12;
     private static final int DAY = 1;
     private final int year;
     private final int month;

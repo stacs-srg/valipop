@@ -1,10 +1,9 @@
 package datastructure;
 
-import model.implementation.populationStatistics.IntegerRange;
+import model.Person;
 import model.interfaces.populationModel.IPartnership;
 import model.interfaces.populationModel.IPerson;
 import model.time.Date;
-import model.time.DateClock;
 import model.time.YearDate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -17,11 +16,11 @@ import java.util.*;
 public class FemaleCollection implements PersonCollection {
 
     private static Logger log = LogManager.getLogger(FemaleCollection.class);
-    Map<YearDate, Map<Integer, Collection<IPerson>>> byYearAndNumberOfChildren = new HashMap<YearDate, Map<Integer, Collection<IPerson>>>();
+    Map<YearDate, Map<Integer, Collection<model.Person>>> byYearAndNumberOfChildren = new HashMap<YearDate, Map<Integer, Collection<model.Person>>>();
 
-    public Collection<IPerson> getAll() {
+    public Collection<Person> getAll() {
 
-        Collection<IPerson> people = new ArrayList<IPerson>();
+        Collection<Person> people = new ArrayList<Person>();
 
         for (YearDate t : byYearAndNumberOfChildren.keySet()) {
             for (Integer i : byYearAndNumberOfChildren.get(t).keySet()) {
@@ -33,16 +32,16 @@ public class FemaleCollection implements PersonCollection {
     }
 
     @Override
-    public void addPerson(IPerson person) {
+    public void addPerson(Person person) {
         try {
             byYearAndNumberOfChildren.get(person.getBirthDate().getYearDate()).get(countChildren(person)).add(person);
         } catch (NullPointerException e) {
             try {
-                byYearAndNumberOfChildren.get(person.getBirthDate().getYearDate()).put(countChildren(person), new ArrayList<IPerson>());
+                byYearAndNumberOfChildren.get(person.getBirthDate().getYearDate()).put(countChildren(person), new ArrayList<model.Person>());
                 byYearAndNumberOfChildren.get(person.getBirthDate().getYearDate()).get(countChildren(person)).add(person);
             } catch (NullPointerException e1) {
-                Map<Integer, Collection<IPerson>> temp = new HashMap<Integer, Collection<IPerson>>();
-                temp.put(countChildren(person), new ArrayList<IPerson>());
+                Map<Integer, Collection<model.Person>> temp = new HashMap<Integer, Collection<model.Person>>();
+                temp.put(countChildren(person), new ArrayList<model.Person>());
                 temp.get(countChildren(person)).add(person);
                 byYearAndNumberOfChildren.put(person.getBirthDate().getYearDate(), temp);
             }
@@ -50,14 +49,23 @@ public class FemaleCollection implements PersonCollection {
     }
 
     @Override
-    public boolean removePerson(IPerson person) {
-        Collection<IPerson> people = byYearAndNumberOfChildren.get(person.getBirthDate().getYearDate()).get(countChildren(person));
+    public boolean removePerson(Person person) {
+        Collection<Person> people = byYearAndNumberOfChildren.get(person.getBirthDate().getYearDate()).get(countChildren(person));
         return people.remove(person);
     }
 
-    public Collection<IPerson> getByYear(Date year) {
+    public Person removeRandomPerson(YearDate yearOfBirth, int withNChildren) {
 
-        Collection<IPerson> people = new ArrayList<IPerson>();
+        model.Person p = byYearAndNumberOfChildren.get(yearOfBirth).get(withNChildren).iterator().next();
+        removePerson(p);
+
+        return p;
+
+    }
+
+    public Collection<Person> getByYear(Date year) {
+
+        Collection<Person> people = new ArrayList<Person>();
 
         for (Integer i : byYearAndNumberOfChildren.get(year.getYearDate()).keySet()) {
             people.addAll(byYearAndNumberOfChildren.get(year.getYearDate()).get(i));
@@ -66,24 +74,24 @@ public class FemaleCollection implements PersonCollection {
         return people;
     }
 
-    public Map<Integer, Collection<IPerson>> getMapByYear(Date year) {
+    public Map<Integer, Collection<Person>> getMapByYear(Date year) {
         return byYearAndNumberOfChildren.get(year.getYearDate());
     }
 
-    public Collection<IPerson> getByNumberOfChildren(Date year, Integer numberOfChildren) {
+    public Collection<Person> getByNumberOfChildren(Date year, Integer numberOfChildren) {
 
         return byYearAndNumberOfChildren.get(year.getYearDate()).get(numberOfChildren);
     }
 
-    public void updatePerson(IPerson person, int numberOfChildrenInMostRecentMaternity) {
+    public void updatePerson(Person person, int numberOfChildrenInMostRecentMaternity) {
 
         int previousNumberOfChildren = countChildren(person) - numberOfChildrenInMostRecentMaternity;
 
-        Collection<IPerson> people = byYearAndNumberOfChildren.get(person.getBirthDate().getYearDate()).get(previousNumberOfChildren);
+        Collection<Person> people = byYearAndNumberOfChildren.get(person.getBirthDate().getYearDate()).get(previousNumberOfChildren);
 
         boolean found = false;
 
-        for (IPerson p : people) {
+        for (Person p : people) {
             if (person.compareTo(p) == 0) {
                 people.remove(person);
                 addPerson(person);
@@ -100,7 +108,7 @@ public class FemaleCollection implements PersonCollection {
 
     }
 
-    private Integer countChildren(IPerson person) {
+    private Integer countChildren(Person person) {
 
         int count = 0;
 

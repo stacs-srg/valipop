@@ -104,7 +104,7 @@ public class OneDimensionDataDistribution implements DataDistribution {
         return appliedData;
     }
 
-    public Map<IntegerRange,Double> cloneWithIntegerLabelsData() {
+    public Map<IntegerRange,Double> cloneData() {
         Map<IntegerRange, Double> map = new HashMap<IntegerRange, Double>();
 
         for(IntegerRange iR : appliedData.keySet()) {

@@ -1,8 +1,11 @@
 package utils;
 
+import model.Person;
+import model.implementation.populationStatistics.IntegerRange;
 import model.interfaces.populationModel.IPerson;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -25,7 +28,7 @@ public class MapUtils {
 
     }
 
-    public static int countPeopleInMap(Map<Integer, Collection<IPerson>> map) {
+    public static int countPeopleInMap(Map<Integer, Collection<Person>> map) {
 
         int count = 0;
 
@@ -34,6 +37,33 @@ public class MapUtils {
         }
 
         return count;
+
+    }
+
+    public static int sumOfFlooredValues(Map<IntegerRange, Double> map) {
+
+        int sum = 0;
+
+        for(IntegerRange iR: map.keySet()) {
+            double d = map.get(iR);
+            sum += (int) d;
+        }
+
+        return sum;
+
+    }
+
+    public static Map<Integer,Integer> floorAllValuesInMap(Map<IntegerRange, Double> map) {
+
+        Map<Integer, Integer> temp = new HashMap<Integer, Integer>();
+
+        for(IntegerRange iR : map.keySet()) {
+
+            temp.put(iR.getValue(), map.get(iR).intValue());
+
+        }
+
+        return temp;
 
     }
 }

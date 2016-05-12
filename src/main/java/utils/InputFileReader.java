@@ -174,6 +174,7 @@ public class InputFileReader {
                     sourceOrganisation = split[1];
                     break;
                 case "data":
+                    i++; // go to next line for data rows
                     for (; i < lines.size(); i++) {
                         s = lines.get(i);
                         split = s.split(TAB);
@@ -182,7 +183,7 @@ public class InputFileReader {
                         try {
                             rowLabel = new IntegerRange(split[0]);
                         } catch (NumberFormatException e) {
-                            log.fatal("The label is of an incorrect form on line " + (i + 1) + "in the file: " + path.toString());
+                            log.fatal("The label is of an incorrect form on line " + (i + 1) + " in the file: " + path.toString());
                             System.exit(103);
                         } catch (InvalidRangeException e1) {
                             log.fatal("The label specifies an invalid range on line " + (i + 1) + "in the file: " + path.toString());

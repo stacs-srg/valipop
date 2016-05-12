@@ -1,10 +1,10 @@
 package datastructure;
 
 
+import model.Person;
 import model.interfaces.populationModel.IPartnership;
 import model.interfaces.populationModel.IPerson;
 import model.interfaces.populationModel.IPopulation;
-import model.interfaces.populationModel.Population;
 
 import java.util.Collection;
 
@@ -24,11 +24,11 @@ public class PeopleCollection implements PersonCollection, IPopulation {
         return females;
     }
 
-    public Collection<IPerson> getAll() {
+    public Collection<Person> getAll() {
         return AggregatePersonCollectionFactory.makeCollectionOfIPersons(females, males);
     }
 
-    public void addPerson(IPerson person) {
+    public void addPerson(Person person) {
         if (person.getSex() == 'm') {
             males.addPerson(person);
         } else {
@@ -36,13 +36,13 @@ public class PeopleCollection implements PersonCollection, IPopulation {
         }
     }
 
-    public void updatePerson(IPerson person, int numberOfChildrenInMostRecentMaternity) {
+    public void updatePerson(Person person, int numberOfChildrenInMostRecentMaternity) {
         if (person.getSex() == 'f') {
             females.updatePerson(person, numberOfChildrenInMostRecentMaternity);
         }
     }
 
-    public boolean removePerson(IPerson person) {
+    public boolean removePerson(Person person) {
         if (person.getSex() == 'm') {
             return males.removePerson(person);
         } else {

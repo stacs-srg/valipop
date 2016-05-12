@@ -1,5 +1,6 @@
 package datastructure;
 
+import model.Person;
 import model.interfaces.populationModel.IPerson;
 
 import java.util.Collection;
@@ -9,9 +10,9 @@ import java.util.Collection;
  */
 public class AggregatePersonCollectionFactory {
 
-    public static Collection<IPerson> makeCollectionOfIPersons(PersonCollection col1, PersonCollection col2) {
+    public static Collection<Person> makeCollectionOfIPersons(PersonCollection col1, PersonCollection col2) {
 
-        Collection<IPerson> people = col1.getAll();
+        Collection<Person> people = col1.getAll();
         people.addAll(col2.getAll());
 
         return people;

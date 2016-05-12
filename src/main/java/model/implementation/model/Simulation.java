@@ -1,26 +1,29 @@
 package model.implementation.model;
 
 import datastructure.PeopleCollection;
+import model.Partnership;
+import model.Person;
 import model.implementation.analysis.PopulationComposition;
 import model.implementation.analysis.statistics.ComparativeAnalysis;
 import model.implementation.analysis.GeneratedPopulationCompositionFactory;
 import model.implementation.config.Config;
 import model.implementation.populationStatistics.*;
+import model.interfaces.populationModel.IPartnership;
 import model.interfaces.populationModel.IPerson;
 import model.interfaces.populationModel.IPopulation;
-import model.interfaces.populationModel.Population;
 
 import model.time.DateClock;
 import model.time.DateUtils;
-import model.time.TimeUnit;
 import model.time.YearDate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import utils.CollectionUtils;
 import utils.MapUtils;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Random;
 
@@ -171,7 +174,7 @@ public class Simulation {
 
             YearDate yearOfBirthInConsideration = new YearDate(currentTime.getYear() - age);
 
-            Map<Integer, Collection<IPerson>> womenOfThisAge = people.getFemales().getMapByYear(yearOfBirthInConsideration);
+            Map<Integer, Collection<Person>> womenOfThisAge = people.getFemales().getMapByYear(yearOfBirthInConsideration);
 
             // DATA - get rate of births by mothers age
             OneDimensionDataDistribution orderedBirthRatesForMothersOfThisAge = desired.getOrderedBirthRates(currentTime.getYearDate()).getData(age);
@@ -188,32 +191,56 @@ public class Simulation {
             for(int order = 0; order < maxBirthOrderInCohort; order++) {
 
                 // women of this age and birth order
-                Collection<IPerson> women = womenOfThisAge.get(order);
+                Collection<Person> women = womenOfThisAge.get(order);
 
                 // DATA 1 - get rate of births by mothers age and birth order
-                Double birthRate = orderedBirthRatesForMothersOfThisAge.getData(order);
-
-                // select mothers to give birth (and which will bear twins, etc.)
+                Double birthRate = orderedBirthRatesForMothersOfThisAge.getData(order) * config.getBirthTimeStep().toDecimalRepresentation();
 
                 // use DATA 1 to see how many many children need to be born
                 int numberOfChildrenToBirth = calculateChildrenToBeBorn(sizeOfCohort, birthRate);
 
+                // calculate numbers of mothers to give birth (and which will bear twins, etc.)
                 // use DATA 2 to decide how many mothers needed to birth children
                 Map<Integer, Integer> motherCountsByMaternitySize = calculateMotherCountsByMaternitySize(numberOfChildrenToBirth, proportionOfChildrenBornToEachSizeOfMaternity);
 
-                // select the correct number of mothers
-                // make and assign the specified number of children - assign to correct place in population
+                // check the mother counts are possible to meet with the current cohort
+                int totalNumberOfMothers = CollectionUtils.sumIntegerCollection(motherCountsByMaternitySize.values());
 
-                // if birth order 0
-                   // add mothers to MOTHERS_NEEDING_FATHERS
-                // else
-                    // DATA - get rate of separation by number of children had
-                    // select mothers to separate with fathers and add to MOTHERS_NEEDING_FATHERS
+                if(women.size() < totalNumberOfMothers) {
+                    log.fatal("The number of mothers required of a given age group and order exceeds the number of females in such");
+                    System.exit(451);
+                }
 
-                // add the rest to MOTHERS_WITH_FATHERS
+                // select the mothers
+                for(Integer childrenInMaternity : motherCountsByMaternitySize.keySet()) {
+
+                    for(int n = 0; n < motherCountsByMaternitySize.get(childrenInMaternity); n++) {
+                        Person mother = people.getFemales().removeRandomPerson(yearOfBirthInConsideration, order);
+
+                        // make and assign the specified number of children - assign to correct place in population
+                        for(int c = 0; c < childrenInMaternity; c++) {
+                            mother.recordPartnership(fromNewChildInPartnership(mother));
+                        }
+
+                        people.addPerson(mother);
+
+                        // TODO implement partnering - part 1
+                        // if birth order 0
+                            // add mothers to MOTHERS_NEEDING_FATHERS
+                        // else
+                            // DATA - get rate of separation by number of children had
+                            // select mothers to separate with fathers and add to MOTHERS_NEEDING_FATHERS
+
+                        // add the rest to MOTHERS_WITH_FATHERS
+
+                    }
+
+                }
+
 
             }
-            // end for
+
+            // TODO implement partnering - part 2
 
             // decide on new fathers
             // NUMBER_OF_FATHERS_NEEDED = MOTHERS_NEEEDING_FATHERS.size()
@@ -228,43 +255,151 @@ public class Simulation {
             // update new children info to give fathers
             // keep count of children born this quarter as BIRTH_COUNT
 
-            // MAGIC CHILDREN BIT
-            // if before end of magic children period
-                // calculate quarterly birth target, using:
-                // current GROWTH_RATES and PRESENT_POPULATION to calculate yearly population growth and divide by 4
-                // then any shortfall in the quarterly BIRTH_COUNT should be made up by:
-                // adding Magic Children to the population
-            // fi
+
 
         }
-        // end for
+
+        // MAGIC CHILDREN BIT
+        // if before end of magic children period
+            // calculate quarterly birth target, using:
+            // current GROWTH_RATES and PRESENT_POPULATION to calculate yearly population growth and divide by 4
+            // then any shortfall in the quarterly BIRTH_COUNT should be made up by:
+            // adding Magic Children to the population
+        // fi
+
+    }
+
+    private IPartnership fromNewChildInPartnership(Person mother) {
+        Partnership partnership = new Partnership(null, mother);
+        Person child = new model.Person(getSex(), currentTime, partnership);
+        partnership.addChildren(Collections.singletonList(child));
+        people.addPerson(child);
+        return partnership;
+    }
+
+    private char getSex() {
+
+        // TODO move over to a specified m to f ratio
+
+        if(randomNumberGenerator.nextBoolean()) {
+            return 'm';
+        } else {
+            return 'f';
+        }
 
     }
 
     private Map<Integer,Integer> calculateMotherCountsByMaternitySize(int numberOfChildrenToBirth, OneDimensionDataDistribution proportionOfChildrenBornToEachSizeOfMaternity) {
 
-        // TODO write me next please :)
-
         // In the comments 'maternity type' is used to term how many children are born from the maternity
         // i.e. a single child maternity or a two child maternity would be an example of two maternity types
 
         // calculate numbers of children to be born from each maternity type
+        Map<IntegerRange, Double> temp = proportionOfChildrenBornToEachSizeOfMaternity.cloneData();
+
+        for(IntegerRange iR : temp.keySet()) {
+            double exactNumberOfChildren = temp.get(iR) * numberOfChildrenToBirth;
+            temp.replace(iR, exactNumberOfChildren);
+        }
+
+        double sumOfRemainders = 0;
+
+        int numberOfChildrenShort = MapUtils.sumOfFlooredValues(temp);
 
         // therefore calculate the resulting number of mothers for each maternity type
+        for(IntegerRange iR : temp.keySet()) {
+            double exactNumberOfMothers = temp.get(iR) / iR.getMin();
+            sumOfRemainders += exactNumberOfMothers - (int) exactNumberOfMothers;
+            temp.replace(iR, exactNumberOfMothers);
+        }
 
-        // handle rounding errors
-        // first by split number line dice roll
+        // handle rounding
+        // check if total number of children resulting from this is correct
+        while(numberOfChildrenShort > 0) {
+            // first by split number line dice roll
+            try {
+                numberOfChildrenShort -= performBalancingIterationOnNumbersOfMothers(temp, sumOfRemainders);
+            } catch (StatisticalManipulationCalculationError e) {
+                log.fatal(e.getMessage());
+                System.exit(401);
+            }
+        }
 
-        // then check if total number of children resulting from this is correct
-
-        // if not (i.e. the number line dice roll caused an additional set of twins or triplets or etc.)
+        // if the number line dice roll caused an additional set of twins or triplets or etc.
+        while(numberOfChildrenShort < 0) {
             // reduce the mother counts for lower maternity types
+            try {
+                numberOfChildrenShort += removeLowerTypeMaternities(temp, numberOfChildrenShort);
+            } catch (StatisticalManipulationCalculationError e) {
+                log.fatal(e.getMessage());
+                System.exit(402);
+            }
 
-            // this should be done proportionally by there rounding error
-            // repeat until total number of children is equal to the input given of numberOfChildreToBirth
+            // repeat until total number of children is equal to the input given of numberOfChildrenToBirth
+        }
 
-        return null;
+        return MapUtils.floorAllValuesInMap(temp);
 
+
+    }
+
+    private int removeLowerTypeMaternities(Map<IntegerRange, Double> temp, int numberOfChildrenShort) throws StatisticalManipulationCalculationError {
+
+        // this should be done proportionally by their rounding error
+        double sumOfQualifyingRemainders = 0;
+
+        for(IntegerRange iR : temp.keySet()) {
+
+            if(iR.getValue() <= Math.abs(numberOfChildrenShort)) {
+                double motherCount = temp.get(iR);
+                double remainder = motherCount - (int) motherCount;
+                sumOfQualifyingRemainders += remainder;
+            }
+
+        }
+
+        double random = randomNumberGenerator.nextDouble();
+
+        double uptoOnNumberLine = 0;
+
+        for(IntegerRange iR : temp.keySet()) {
+
+            if(iR.getValue() <= Math.abs(numberOfChildrenShort)) {
+                double motherCount = temp.get(iR);
+                double remainder = motherCount - (int) motherCount;
+
+                uptoOnNumberLine += remainder / sumOfQualifyingRemainders;
+                if (random < uptoOnNumberLine) {
+                    temp.replace(iR, motherCount - 1);
+                    return iR.getValue();
+                }
+            }
+        }
+
+        throw new StatisticalManipulationCalculationError("Fatal balancing error has occurred in the method: Simulation.removeLowerTypeMaternities(...)");
+
+    }
+
+
+    private int performBalancingIterationOnNumbersOfMothers(Map<IntegerRange, Double> temp, double sumOfRemainders) throws StatisticalManipulationCalculationError {
+
+        double random = randomNumberGenerator.nextDouble();
+
+        double uptoOnNumberLine = 0;
+
+        for(IntegerRange iR : temp.keySet()) {
+
+            double motherCount = temp.get(iR);
+            double remainder = motherCount - (int) motherCount;
+
+            uptoOnNumberLine += remainder / sumOfRemainders;
+            if(random < uptoOnNumberLine) {
+                temp.replace(iR, motherCount + 1);
+                return iR.getValue();
+            }
+        }
+
+        throw new StatisticalManipulationCalculationError("Fatal balancing error has occurred in the method: Simulation.performBalancingIterationOnNumbersOfMothers(...)");
 
     }
 
@@ -272,7 +407,7 @@ public class Simulation {
 
         OneDimensionDataDistribution maternities = multipleBirthDataForMothersOfThisAgeByMaternity;
 
-        Map<IntegerRange, Double> temp = maternities.cloneWithIntegerLabelsData();
+        Map<IntegerRange, Double> temp = maternities.cloneData();
 
         double sumOfScaledValues = 0;
 
@@ -293,11 +428,11 @@ public class Simulation {
 
     private int calculateChildrenToBeBorn(int sizeOfCohort, Double birthRate) {
 
-        double absoluteNumberOfChildrenToBEBorn = sizeOfCohort * birthRate;
+        double absoluteNumberOfChildrenToBeBorn = sizeOfCohort * birthRate;
 
-        int childrenToBeBorn = (int) absoluteNumberOfChildrenToBEBorn;
+        int childrenToBeBorn = (int) absoluteNumberOfChildrenToBeBorn;
 
-        double leftOverBitOfChild = absoluteNumberOfChildrenToBEBorn - childrenToBeBorn;
+        double leftOverBitOfChild = absoluteNumberOfChildrenToBeBorn - childrenToBeBorn;
 
         // this is a random dice roll to see if the leftOverBitOfChildren gets made up to a full child or not
         if(randomNumberGenerator.nextDouble() < leftOverBitOfChild) {

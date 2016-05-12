@@ -12,3 +12,18 @@
 16:03:43.064 [main] WARN  main - PB
 16:03:43.064 [main] TRACE main - ddd
 16:03:43.064 [main] INFO  model.implementation.occurrencesInformation.DesiredPopulationStatisticsFactory - Creating DesiredPopulationComposition
+16:57:10.215 [main] INFO  main - Program begins
+16:57:10.226 [main] INFO  model.implementation.populationStatistics.DesiredPopulationStatisticsFactory - Creating PopulationStatistics
+16:57:10.230 [main] FATAL model.implementation.config.Config - Error reading in male death files. Will now exit.
+17:06:33.068 [main] INFO  main - Program begins
+17:06:33.072 [main] INFO  model.implementation.populationStatistics.DesiredPopulationStatisticsFactory - Creating PopulationStatistics
+17:06:33.073 [main] FATAL model.implementation.config.Config - Error reading in male death files. Will now exit.
+17:07:06.836 [main] INFO  main - Program begins
+17:07:06.842 [main] INFO  model.implementation.populationStatistics.DesiredPopulationStatisticsFactory - Creating PopulationStatistics
+17:07:06.843 [main] FATAL model.implementation.config.Config - Error reading in male death files. Will now exit.
+17:07:49.199 [main] INFO  main - Program begins
+17:07:49.204 [main] INFO  model.implementation.populationStatistics.DesiredPopulationStatisticsFactory - Creating PopulationStatistics
+17:07:49.209 [main] FATAL utils.InputFileReader - The label is of an incorrect form on line 7in the file: src/main/resources/scotland_test_population/death/males/lt_males_1980_scotland.txt
+17:10:26.898 [main] INFO  main - Program begins
+17:10:26.902 [main] INFO  model.implementation.populationStatistics.DesiredPopulationStatisticsFactory - Creating PopulationStatistics
+17:10:26.927 [main] FATAL utils.InputFileReader - Unable to read in the lines of the file: src/main/resources/scotland_test_population/partnering/.DS_Store

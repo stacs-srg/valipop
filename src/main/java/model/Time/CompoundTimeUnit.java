@@ -40,4 +40,13 @@ public class CompoundTimeUnit {
     public TimeUnit getUnit() {
         return unit;
     }
+
+    public double toDecimalRepresentation() {
+        if(unit == TimeUnit.YEAR) {
+            return (double) count;
+        } else {
+            return count / (double) DateClock.MONTHS_IN_YEAR;
+        }
+    }
+
 }

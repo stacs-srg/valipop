@@ -16,7 +16,6 @@
  */
 package model.interfaces.populationModel;
 
-import java.util.Date;
 import java.util.List;
 
 /**

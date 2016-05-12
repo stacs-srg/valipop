@@ -21,8 +21,9 @@ import java.util.Collection;
 public class Config {
 
     private static final String ordersBirthSubFile = "ordered_birth";
-    private static final String maleDeathSubFile = "death/male";
-    private static final String femaleDeathSubFile = "death/female";
+    private static final String deathSubFile = "death";
+    private static final String maleDeathSubFile = "males";
+    private static final String femaleDeathSubFile = "females";
     private static final String multipleBirthSubFile = "multiple_birth";
     private static final String partneringSubFile = "partnering";
     private static final String separationSubFile = "separation";
@@ -57,8 +58,9 @@ public class Config {
             switch (split[0]) {
                 case "var_data_files":
                     varBirthPaths = Paths.get(path, ordersBirthSubFile);
-                    varMaleDeathPaths = Paths.get(path, maleDeathSubFile);
-                    varFemaleDeathPaths = Paths.get(path, femaleDeathSubFile);
+                    String deathSubPath = Paths.get(path, deathSubFile).toString();
+                    varMaleDeathPaths = Paths.get(deathSubPath, maleDeathSubFile);
+                    varFemaleDeathPaths = Paths.get(deathSubPath, femaleDeathSubFile);
                     varMultipleBirthPaths = Paths.get(path, multipleBirthSubFile);
                     varPartneringPaths = Paths.get(path, partneringSubFile);
                     varSeparationPaths = Paths.get(path, separationSubFile);
