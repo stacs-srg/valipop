@@ -9,12 +9,10 @@ import model.implementation.analysis.GeneratedPopulationCompositionFactory;
 import model.implementation.config.Config;
 import model.implementation.populationStatistics.*;
 import model.interfaces.populationModel.IPartnership;
-import model.interfaces.populationModel.IPerson;
 import model.interfaces.populationModel.IPopulation;
 
-import model.time.DateClock;
-import model.time.DateUtils;
-import model.time.YearDate;
+import model.time.*;
+import model.time.Date;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import utils.CollectionUtils;
@@ -22,10 +20,7 @@ import utils.MapUtils;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 
 /**
@@ -39,7 +34,15 @@ public class Simulation {
     PopulationStatistics desired;
     private int currentHypotheticalPopulationSize;
 
+    private CompoundTimeUnit orphanTimeStep = new CompoundTimeUnit(1, TimeUnit.YEAR);
+    private Date endOfOrphanPeriod;
+
     private PeopleCollection people = new PeopleCollection();
+    private PeopleCollection deadPeople = new PeopleCollection();
+
+    private int birthCount = 0;
+    private int deathCount = 0;
+
 
     private DateClock currentTime;
 
@@ -92,7 +95,8 @@ public class Simulation {
 
     private void setUpSeedCreationParameters() {
 
-        currentHypotheticalPopulationSize = (int) (config.getT0PopulationSize() / Math.pow(config.getSetUpGR() + 1, DateUtils.differenceInYears(config.gettS(), config.getT0()).getCount()));
+        currentHypotheticalPopulationSize = (int) (config.getT0PopulationSize() / Math.pow(config.getSetUpBR() - config.getSetUpDR() + 1, DateUtils.differenceInYears(config.gettS(), config.getT0()).getCount()));
+        endOfOrphanPeriod = config.gettS().advanceTime(new CompoundTimeUnit(desired.getOrderedBirthRates(config.gettS().getYearDate()).getMaxRowLabelValue().getValue() , TimeUnit.YEAR));
 
 
         // calculate desired birth rate to achieve seed population at Time 0, to do this:
@@ -136,24 +140,100 @@ public class Simulation {
             if(DateUtils.matchesInterval(currentTime, config.getBirthTimeStep())) {
                 handleBirths();
             }
+
+            if(DateUtils.dateBefore(currentTime, endOfOrphanPeriod) && DateUtils.matchesInterval(currentTime, orphanTimeStep)) {
+                handleOrphanChildren();
+            }
         }
 
         return people;
     }
 
+    private void handleOrphanChildren() {
+
+        // calculate yearly birth target, using:
+
+        // deaths
+        int hypotheticalDeaths = calculateNumberToDie(currentHypotheticalPopulationSize, config.getSetUpDR());
+
+        // births
+        int hypotheticalBirths = calculateNumberToBeBorn(currentHypotheticalPopulationSize, config.getSetUpBR());
+        int shortFallInBirths = hypotheticalBirths - birthCount;
+        birthCount = 0;
+
+        // update hypothetical population
+        currentHypotheticalPopulationSize = currentHypotheticalPopulationSize + hypotheticalBirths - hypotheticalDeaths;
+
+        // add Orphan Children to the population
+        for(int i = 0; i < shortFallInBirths; i++) {
+            Person child = new Person(getSex(), currentTime, null);
+            people.addPerson(child);
+        }
+
+
+    }
+
+
+
     private void handleDeaths() {
 
         // handle deaths for the next year
-        // for each age
-        // DATA - get rate of death by age and gender
-        // get count of people of given age
-        // use data to calculate who to kill off
+        // for each year of birth since tS
+        for(DateClock d = config.gettS(); DateUtils.dateBefore(d, currentTime); d = d.advanceTime(1, TimeUnit.YEAR)) {
 
-        // for each to be killed
-        // execute death at a time in the next year
-        // end for
+            // get count of people of given age
+            int males = people.getMales().getByYear(d).size();
+            int females = people.getFemales().getByYear(d).size();
 
-        // end for
+            // DATA - get rate of death by age and gender
+            Double maleDeathRate = desired.getDeathRates(currentTime.getYearDate(), 'm').getData(currentTime.getYear() - d.getYear());
+            Double femaleDeathRate = desired.getDeathRates(currentTime.getYearDate(), 'f').getData(currentTime.getYear() - d.getYear());
+
+            // use data to calculate who to kill off
+            int malesToDie = calculateNumberToDie(males, maleDeathRate);
+            int femalesToDie = calculateNumberToDie(females, femaleDeathRate);
+
+            deathCount += malesToDie;
+            deathCount += femalesToDie;
+
+            Collection<Person> deadMales = people.getMales().removeRandomPersons(malesToDie, d.getYearDate());
+            Collection<Person> deadFemales = people.getFemales().removeRandomPersons(femalesToDie, d.getYearDate());
+
+            // for each to be killed
+            for(Person m : deadMales) {
+                // TODO execute death at a time in the next year
+                m.recordDeath(currentTime);
+                deadPeople.addPerson(m);
+            }
+
+            for(Person f : deadFemales) {
+                // TODO execute death at a time in the next year
+                f.recordDeath(currentTime);
+                deadPeople.addPerson(f);
+            }
+
+        }
+
+    }
+
+    private int calculateNumberToDie(int people, Double deathRate) {
+
+        double toDie = people * deathRate;
+        int flooredToDie = (int) toDie;
+        toDie -= flooredToDie;
+
+        // this is a random dice roll to see if the fraction of a person dies or not
+        if(randomNumberGenerator.nextDouble() < toDie) {
+            flooredToDie++;
+        }
+
+        return flooredToDie;
+
+    }
+
+    private int calculateNumberToBeBorn(int currentHypotheticalPopulationSize, double setUpBR) {
+
+        return calculateNumberToDie(currentHypotheticalPopulationSize, setUpBR);
 
     }
 
@@ -198,6 +278,7 @@ public class Simulation {
 
                 // use DATA 1 to see how many many children need to be born
                 int numberOfChildrenToBirth = calculateChildrenToBeBorn(sizeOfCohort, birthRate);
+                birthCount += numberOfChildrenToBirth;
 
                 // calculate numbers of mothers to give birth (and which will bear twins, etc.)
                 // use DATA 2 to decide how many mothers needed to birth children
@@ -214,12 +295,13 @@ public class Simulation {
                 // select the mothers
                 for(Integer childrenInMaternity : motherCountsByMaternitySize.keySet()) {
 
+                    ArrayList<Person> mothersToBe = new ArrayList<>(people.getFemales().removeRandomPersons(motherCountsByMaternitySize.get(childrenInMaternity), yearOfBirthInConsideration, order));
                     for(int n = 0; n < motherCountsByMaternitySize.get(childrenInMaternity); n++) {
-                        Person mother = people.getFemales().removeRandomPerson(yearOfBirthInConsideration, order);
+                        Person mother = mothersToBe.get(n);
 
                         // make and assign the specified number of children - assign to correct place in population
                         for(int c = 0; c < childrenInMaternity; c++) {
-                            mother.recordPartnership(fromNewChildInPartnership(mother));
+                            mother.recordPartnership(formNewChildInPartnership(mother));
                         }
 
                         people.addPerson(mother);
@@ -259,19 +341,13 @@ public class Simulation {
 
         }
 
-        // MAGIC CHILDREN BIT
-        // if before end of magic children period
-            // calculate quarterly birth target, using:
-            // current GROWTH_RATES and PRESENT_POPULATION to calculate yearly population growth and divide by 4
-            // then any shortfall in the quarterly BIRTH_COUNT should be made up by:
-            // adding Magic Children to the population
-        // fi
-
     }
 
-    private IPartnership fromNewChildInPartnership(Person mother) {
+    private IPartnership formNewChildInPartnership(Person mother) {
         Partnership partnership = new Partnership(null, mother);
-        Person child = new model.Person(getSex(), currentTime, partnership);
+
+        // TODO vary birth date in quarter
+        Person child = new Person(getSex(), currentTime, partnership);
         partnership.addChildren(Collections.singletonList(child));
         people.addPerson(child);
         return partnership;

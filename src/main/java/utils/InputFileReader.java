@@ -98,6 +98,7 @@ public class InputFileReader {
 
                     break;
                 case "data":
+                    i++; // go to next line for data rows
                     for (; i < lines.size(); i++) {
                         s = lines.get(i);
                         split = s.split(TAB);

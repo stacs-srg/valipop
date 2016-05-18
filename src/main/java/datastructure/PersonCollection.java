@@ -2,6 +2,7 @@ package datastructure;
 
 import model.Person;
 import model.interfaces.populationModel.IPerson;
+import model.time.YearDate;
 
 import java.util.Collection;
 

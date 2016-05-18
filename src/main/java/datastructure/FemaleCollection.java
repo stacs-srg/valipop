@@ -56,10 +56,25 @@ public class FemaleCollection implements PersonCollection {
 
     public Person removeRandomPerson(YearDate yearOfBirth, int withNChildren) {
 
-        model.Person p = byYearAndNumberOfChildren.get(yearOfBirth).get(withNChildren).iterator().next();
+        Person p = byYearAndNumberOfChildren.get(yearOfBirth).get(withNChildren).iterator().next();
         removePerson(p);
 
         return p;
+
+    }
+
+    public Collection<Person> removeRandomPersons(int numberToRemove, YearDate yearOfBirth, int withNChildren) {
+
+        Collection<Person> people = new ArrayList<>(numberToRemove);
+        Iterator<Person> iterator = byYearAndNumberOfChildren.get(yearOfBirth).get(withNChildren).iterator();
+
+        for(int i = 0; i < numberToRemove; i++) {
+            Person p = iterator.next();
+            people.add(p);
+            removePerson(p);
+        }
+
+        return people;
 
     }
 
@@ -106,6 +121,19 @@ public class FemaleCollection implements PersonCollection {
         }
 
 
+    }
+
+    public Collection<Person> removeRandomPersons(int numberToRemove, YearDate yearOfBirth) {
+        Collection<Person> people = new ArrayList<>(numberToRemove);
+        Iterator<Person> iterator = getByYear(yearOfBirth).iterator();
+
+        for(int i = 0; i < numberToRemove; i++) {
+            Person p = iterator.next();
+            people.add(p);
+            removePerson(p);
+        }
+
+        return people;
     }
 
     private Integer countChildren(Person person) {

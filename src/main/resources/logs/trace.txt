@@ -27,3 +27,33 @@
 17:10:26.898 [main] INFO  main - Program begins
 17:10:26.902 [main] INFO  model.implementation.populationStatistics.DesiredPopulationStatisticsFactory - Creating PopulationStatistics
 17:10:26.927 [main] FATAL utils.InputFileReader - Unable to read in the lines of the file: src/main/resources/scotland_test_population/partnering/.DS_Store
+16:38:40.270 [main] INFO  main - Program begins
+16:39:46.021 [main] INFO  main - Program begins
+16:39:46.031 [main] INFO  model.implementation.populationStatistics.DesiredPopulationStatisticsFactory - Creating PopulationStatistics
+16:39:46.051 [main] FATAL utils.InputFileReader - Unable to read in the lines of the file: src/main/resources/scotland_test_population/partnering/.DS_Store
+16:56:09.680 [main] INFO  main - Program begins
+16:56:09.687 [main] INFO  model.implementation.populationStatistics.DesiredPopulationStatisticsFactory - Creating PopulationStatistics
+16:56:46.699 [main] INFO  main - Program begins
+16:56:46.708 [main] INFO  model.implementation.populationStatistics.DesiredPopulationStatisticsFactory - Creating PopulationStatistics
+17:01:04.050 [main] INFO  main - Program begins
+17:01:04.062 [main] INFO  model.implementation.populationStatistics.DesiredPopulationStatisticsFactory - Creating PopulationStatistics
+17:01:42.208 [main] INFO  main - Program begins
+17:01:42.284 [main] INFO  model.implementation.populationStatistics.DesiredPopulationStatisticsFactory - Creating PopulationStatistics
+17:06:54.997 [main] INFO  main - Program begins
+17:06:55.025 [main] INFO  model.implementation.populationStatistics.DesiredPopulationStatisticsFactory - Creating PopulationStatistics
+17:06:55.037 [main] FATAL utils.InputFileReader - One or more data rows do not have the correct number of values in the file: src/main/resources/scotland_test_population/partnering/partnering_2011_engwales.txt
+17:07:46.654 [main] INFO  main - Program begins
+17:07:46.661 [main] INFO  model.implementation.populationStatistics.DesiredPopulationStatisticsFactory - Creating PopulationStatistics
+17:07:46.671 [main] FATAL utils.InputFileReader - One or more data rows do not have the correct number of values in the file: src/main/resources/scotland_test_population/partnering/partnering_2011_engwales.txt
+17:09:15.740 [main] INFO  main - Program begins
+17:09:15.746 [main] INFO  model.implementation.populationStatistics.DesiredPopulationStatisticsFactory - Creating PopulationStatistics
+17:09:15.760 [main] FATAL utils.InputFileReader - One or more data rows do not have the correct number of values in the file: src/main/resources/scotland_test_population/partnering/partnering_2011_engwales.txt
+17:11:33.248 [main] INFO  main - Program begins
+17:11:33.255 [main] INFO  model.implementation.populationStatistics.DesiredPopulationStatisticsFactory - Creating PopulationStatistics
+17:11:33.266 [main] FATAL utils.InputFileReader - One or more data rows do not have the correct number of values in the file: src/main/resources/scotland_test_population/partnering/partnering_2011_engwales.txt
+17:13:55.392 [main] INFO  main - Program begins
+17:13:55.483 [main] INFO  model.implementation.populationStatistics.DesiredPopulationStatisticsFactory - Creating PopulationStatistics
+17:15:01.540 [main] FATAL utils.InputFileReader - One or more data rows do not have the correct number of values in the file: src/main/resources/scotland_test_population/partnering/partnering_2011_engwales.txt
+17:15:09.099 [main] INFO  main - Program begins
+17:15:09.103 [main] INFO  model.implementation.populationStatistics.DesiredPopulationStatisticsFactory - Creating PopulationStatistics
+17:15:09.114 [main] FATAL utils.InputFileReader - One or more data rows do not have the correct number of values in the file: src/main/resources/scotland_test_population/partnering/partnering_2011_engwales.txt

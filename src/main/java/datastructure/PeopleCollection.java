@@ -50,6 +50,12 @@ public class PeopleCollection implements PersonCollection, IPopulation {
         }
     }
 
+    public void addPeople(Collection<Person> people) {
+        for(Person p : people) {
+            addPerson(p);
+        }
+    }
+
 
     // TODO - write these!
     @Override

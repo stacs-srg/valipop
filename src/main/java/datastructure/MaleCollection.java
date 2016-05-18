@@ -5,10 +5,7 @@ import model.interfaces.populationModel.IPerson;
 import model.time.Date;
 import model.time.YearDate;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
@@ -52,5 +49,19 @@ public class MaleCollection implements PersonCollection {
     @Override
     public void updatePerson(Person person, int numberOfChildrenInMostRecentMaternity) {
         return;
+    }
+
+
+    public Collection<Person> removeRandomPersons(int numberToRemove, YearDate yearOfBirth) {
+        Collection<Person> people = new ArrayList<>(numberToRemove);
+        Iterator<Person> iterator = getByYear(yearOfBirth).iterator();
+
+        for(int i = 0; i < numberToRemove; i++) {
+            Person p = iterator.next();
+            people.add(p);
+            removePerson(p);
+        }
+
+        return people;
     }
 }

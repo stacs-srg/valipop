@@ -32,7 +32,8 @@ public class Config {
     private DateClock t0;
     private DateClock tE;
     private int t0PopulationSize;
-    private double setUpGR;
+    private double setUpBR;
+    private double setUpDR;
     private CompoundTimeUnit deathTimeStep;
     private CompoundTimeUnit birthTimeStep;
     private Path varBirthPaths;
@@ -113,13 +114,22 @@ public class Config {
                         System.exit(3);
                     }
                     break;
-                case "set_up_gr":
+                case "set_up_br":
                     try {
-                        setUpGR = Double.parseDouble(split[1]);
+                        setUpBR = Double.parseDouble(split[1]);
                     } catch (NumberFormatException e) {
-                        log.fatal("set up growth rate not a valid number");
+                        log.fatal("set up birth rate not a valid number");
                         System.exit(3);
                     }
+                    break;
+                case "set_up_dr":
+                    try {
+                        setUpDR = Double.parseDouble(split[1]);
+                    } catch (NumberFormatException e) {
+                        log.fatal("set up death rate not a valid number");
+                        System.exit(3);
+                    }
+                    break;
 
 
             }
@@ -128,9 +138,15 @@ public class Config {
 
     }
 
+    private DirectoryStream.Filter<Path> filter = new DirectoryStream.Filter<Path>() {
+        public boolean accept(Path file) throws IOException {
+            return !file.getFileName().toString().matches("^\\..+");
+        }
+    };
+
     public DirectoryStream<Path> getVarOrderedBirthPaths() {
         try {
-            return Files.newDirectoryStream(varBirthPaths);
+            return Files.newDirectoryStream(varBirthPaths, filter);
         } catch (IOException e) {
             log.fatal("Error reading in birth files. Will now exit.");
             System.exit(101);
@@ -141,7 +157,7 @@ public class Config {
 
     public DirectoryStream<Path> getVarMaleDeathPaths() {
         try {
-            return Files.newDirectoryStream(varMaleDeathPaths);
+            return Files.newDirectoryStream(varMaleDeathPaths, filter);
         } catch (IOException e) {
             log.fatal("Error reading in male death files. Will now exit.");
             System.exit(101);
@@ -151,7 +167,7 @@ public class Config {
 
     public DirectoryStream<Path> getVarFemaleDeathPaths() {
         try {
-            return Files.newDirectoryStream(varFemaleDeathPaths);
+            return Files.newDirectoryStream(varFemaleDeathPaths, filter);
         } catch (IOException e) {
             log.fatal("Error reading in female death files. Will now exit.");
             System.exit(101);
@@ -162,7 +178,7 @@ public class Config {
 
     public DirectoryStream<Path> getVarMultipleBirthPaths() {
         try {
-            return Files.newDirectoryStream(varMultipleBirthPaths);
+            return Files.newDirectoryStream(varMultipleBirthPaths, filter);
         } catch (IOException e) {
             log.fatal("Error reading in multiple birth files. Will now exit.");
             System.exit(101);
@@ -173,7 +189,7 @@ public class Config {
 
     public DirectoryStream<Path> getVarPartneringPaths() {
         try {
-            return Files.newDirectoryStream(varPartneringPaths);
+            return Files.newDirectoryStream(varPartneringPaths, filter);
         } catch (IOException e) {
             log.fatal("Error reading in partnering files. Will now exit.");
             System.exit(101);
@@ -184,7 +200,7 @@ public class Config {
 
     public DirectoryStream<Path> getVarSeparationPaths() {
         try {
-            return Files.newDirectoryStream(varSeparationPaths);
+            return Files.newDirectoryStream(varSeparationPaths, filter);
         } catch (IOException e) {
             log.fatal("Error reading in separation files. Will now exit.");
             System.exit(101);
@@ -216,7 +232,11 @@ public class Config {
         return t0PopulationSize;
     }
 
-    public double getSetUpGR() {
-        return setUpGR;
+    public double getSetUpBR() {
+        return setUpBR;
+    }
+
+    public double getSetUpDR() {
+        return setUpDR;
     }
 }

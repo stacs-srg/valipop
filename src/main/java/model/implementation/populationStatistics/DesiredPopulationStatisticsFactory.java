@@ -49,6 +49,7 @@ public abstract class DesiredPopulationStatisticsFactory {
         for (Path path : paths) {
             // read in each file
 
+            // TODO handle dot files
             TwoDimensionDataDistribution tempData = InputFileReader.readIn2DDataFile(path);
 
             data.put(tempData.getYear(), tempData);
