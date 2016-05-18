@@ -27,9 +27,7 @@ import uk.ac.standrews.cs.digitising_scotland.population_model.tools.MemoryMonit
 import uk.ac.standrews.cs.digitising_scotland.util.ArrayManipulation;
 import uk.ac.standrews.cs.digitising_scotland.util.DateManipulation;
 
-import java.io.FileNotFoundException;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -54,9 +52,9 @@ public class OrganicPopulation implements IPopulation, ITemporalPopulationInfo {
 	
 
         if (args.length == 0) {
-            runPopulationModel(DEFAULT_SEED_SIZE, true, true, true);
+            runPopulationModel(DEFAULT_SEED_SIZE, false, false, false);
         } else if (args.length >= 1) {
-            runPopulationModel(Integer.valueOf(args[0]), true, true, true);
+            runPopulationModel(Integer.valueOf(args[0]), false, false, false);
         }
 
         System.out.println("--------MAIN END---------");
@@ -474,9 +472,13 @@ public class OrganicPopulation implements IPopulation, ITemporalPopulationInfo {
             System.out.println("OUTPUT PRINTER INITIALIZED");        
             
             try {
-                writer = new PrintWriter("src/main/resources/output/output_" + System.nanoTime() + ".txt", "UTF-8");
-            } catch (FileNotFoundException | UnsupportedEncodingException e) {
+                File f = new File("/Users/tsd4/OneDrive/cs/PhD/new_ds/digitising_scotland/population_model/src/main/resources/output/new_output.txt");
+                f.createNewFile();
+                writer = new PrintWriter(f, "UTF-8");
+            } catch (IOException e) {
                 System.err.println("Output file could not be created. Model will now terminate.");
+                e.printStackTrace();
+                System.out.println(e.getMessage());
                 System.exit(1);
             }
 
