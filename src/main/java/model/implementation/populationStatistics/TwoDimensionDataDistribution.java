@@ -75,6 +75,7 @@ public class TwoDimensionDataDistribution implements DataDistribution {
         try {
             row = resolveRowValue(rowValue);
         } catch (InvalidRangeException e) {
+            System.out.println("here");
             log.fatal(e.getMessage());
             System.exit(303);
         }
@@ -84,7 +85,10 @@ public class TwoDimensionDataDistribution implements DataDistribution {
 
     private IntegerRange resolveRowValue(Integer rowValue) {
 
+        System.out.println(rowValue);
+
         for(IntegerRange iR : appliedData.keySet()) {
+            System.out.println(iR.toString());
             if(iR.contains(rowValue)) {
                 return iR;
             }

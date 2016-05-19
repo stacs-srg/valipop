@@ -57,6 +57,12 @@ public class PeopleCollection implements PersonCollection, IPopulation {
     }
 
 
+    @Override
+    public int getNumberOfPersons() {
+        return males.getNumberOfPersons() + females.getNumberOfPersons();
+    }
+
+
     // TODO - write these!
     @Override
     public Iterable<IPerson> getPeople() {
@@ -80,8 +86,9 @@ public class PeopleCollection implements PersonCollection, IPopulation {
 
     @Override
     public int getNumberOfPeople() throws Exception {
-        return 0;
+        return males.getNumberOfPersons() + females.getNumberOfPersons();
     }
+
 
     @Override
     public int getNumberOfPartnerships() throws Exception {

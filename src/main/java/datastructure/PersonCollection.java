@@ -19,4 +19,6 @@ public interface PersonCollection {
 
     public void updatePerson(Person person, int numberOfChildrenInMostRecentMaternity);
 
+    int getNumberOfPersons();
+
 }

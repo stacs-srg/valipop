@@ -27,7 +27,15 @@ public class MaleCollection implements PersonCollection {
 
     public Collection<Person> getByYear(Date year) {
 
-        return byYear.get(year.getYearDate());
+        Collection<Person> c = byYear.get(year.getYearDate());
+
+        if(c == null) {
+            Collection<Person> temp = new ArrayList<Person>();
+            byYear.put(year.getYearDate(), temp);
+            c = byYear.get(year.getYearDate());
+        }
+
+        return c;
     }
 
     public void addPerson(Person person) {
@@ -49,6 +57,11 @@ public class MaleCollection implements PersonCollection {
     @Override
     public void updatePerson(Person person, int numberOfChildrenInMostRecentMaternity) {
         return;
+    }
+
+    @Override
+    public int getNumberOfPersons() {
+        return getAll().size();
     }
 
 

@@ -50,6 +50,8 @@ public class Simulation {
 
 
     public Simulation() {
+        currentTime = config.gettS();
+
         // get desired population info
         desired = setUpSimData();
 
@@ -96,9 +98,12 @@ public class Simulation {
     private void setUpSeedCreationParameters() {
 
         currentHypotheticalPopulationSize = (int) (config.getT0PopulationSize() / Math.pow(config.getSetUpBR() - config.getSetUpDR() + 1, DateUtils.differenceInYears(config.gettS(), config.getT0()).getCount()));
+        log.info("Initial hypothetical population size set: " + currentHypotheticalPopulationSize);
+
         endOfOrphanPeriod = config.gettS().advanceTime(new CompoundTimeUnit(desired.getOrderedBirthRates(config.gettS().getYearDate()).getMaxRowLabelValue().getValue() , TimeUnit.YEAR));
+        log.info("End of Orphan Period set: " + endOfOrphanPeriod.toString());
 
-
+        // ALTERNATIVE APPROACH
         // calculate desired birth rate to achieve seed population at Time 0, to do this:
         // for each population growth rates before Time 0 working backwards to Time start
         // apply the compound negative of the growth rate since the previous growth rate to the seed population desired size
@@ -123,6 +128,7 @@ public class Simulation {
     private IPopulation makeSimulatedPopulation() {
 
         // INFO: at this point all the desired population statistics have been made available
+        log.info("Simulation begins");
 
         // start time progression
         // for each time step from T Start to T End
@@ -134,16 +140,23 @@ public class Simulation {
             // if deaths timestep
             if(DateUtils.matchesInterval(currentTime, config.getDeathTimeStep())) {
                 handleDeaths();
+                log.info("Deaths handled: " + currentTime.toString());
             }
 
             // if births timestep
             if(DateUtils.matchesInterval(currentTime, config.getBirthTimeStep())) {
                 handleBirths();
+                log.info("Births handled: " + currentTime.toString());
             }
 
             if(DateUtils.dateBefore(currentTime, endOfOrphanPeriod) && DateUtils.matchesInterval(currentTime, orphanTimeStep)) {
                 handleOrphanChildren();
+                log.info("Orphan children handled: " + currentTime.toString());
             }
+
+            currentTime = currentTime.advanceTime(config.getSimulationTimeStep());
+            log.info("Current Date: " + currentTime.toString() + "    Population: " + people.getNumberOfPersons());
+
         }
 
         return people;
@@ -255,6 +268,8 @@ public class Simulation {
             YearDate yearOfBirthInConsideration = new YearDate(currentTime.getYear() - age);
 
             Map<Integer, Collection<Person>> womenOfThisAge = people.getFemales().getMapByYear(yearOfBirthInConsideration);
+
+
 
             // DATA - get rate of births by mothers age
             OneDimensionDataDistribution orderedBirthRatesForMothersOfThisAge = desired.getOrderedBirthRates(currentTime.getYearDate()).getData(age);

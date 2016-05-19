@@ -37,11 +37,11 @@ public class FemaleCollection implements PersonCollection {
             byYearAndNumberOfChildren.get(person.getBirthDate().getYearDate()).get(countChildren(person)).add(person);
         } catch (NullPointerException e) {
             try {
-                byYearAndNumberOfChildren.get(person.getBirthDate().getYearDate()).put(countChildren(person), new ArrayList<model.Person>());
+                byYearAndNumberOfChildren.get(person.getBirthDate().getYearDate()).put(countChildren(person), new ArrayList<Person>());
                 byYearAndNumberOfChildren.get(person.getBirthDate().getYearDate()).get(countChildren(person)).add(person);
             } catch (NullPointerException e1) {
-                Map<Integer, Collection<model.Person>> temp = new HashMap<Integer, Collection<model.Person>>();
-                temp.put(countChildren(person), new ArrayList<model.Person>());
+                Map<Integer, Collection<model.Person>> temp = new HashMap<Integer, Collection<Person>>();
+                temp.put(countChildren(person), new ArrayList<Person>());
                 temp.get(countChildren(person)).add(person);
                 byYearAndNumberOfChildren.put(person.getBirthDate().getYearDate(), temp);
             }
@@ -52,6 +52,11 @@ public class FemaleCollection implements PersonCollection {
     public boolean removePerson(Person person) {
         Collection<Person> people = byYearAndNumberOfChildren.get(person.getBirthDate().getYearDate()).get(countChildren(person));
         return people.remove(person);
+    }
+
+    @Override
+    public int getNumberOfPersons() {
+        return getAll().size();
     }
 
     public Person removeRandomPerson(YearDate yearOfBirth, int withNChildren) {
@@ -82,6 +87,7 @@ public class FemaleCollection implements PersonCollection {
 
         Collection<Person> people = new ArrayList<Person>();
 
+        // TODO NEXT - fix the null pointer that is showing up down here
         for (Integer i : byYearAndNumberOfChildren.get(year.getYearDate()).keySet()) {
             people.addAll(byYearAndNumberOfChildren.get(year.getYearDate()).get(i));
         }
@@ -90,7 +96,14 @@ public class FemaleCollection implements PersonCollection {
     }
 
     public Map<Integer, Collection<Person>> getMapByYear(Date year) {
-        return byYearAndNumberOfChildren.get(year.getYearDate());
+        Map<Integer, Collection<Person>> map = byYearAndNumberOfChildren.get(year.getYearDate());
+
+        if (map == null) {
+            Map<Integer, Collection<Person>> temp = new HashMap<Integer, Collection<Person>>();
+            byYearAndNumberOfChildren.put(year.getYearDate(), temp);
+            map = byYearAndNumberOfChildren.get(year.getYearDate());
+        }
+        return map;
     }
 
     public Collection<Person> getByNumberOfChildren(Date year, Integer numberOfChildren) {

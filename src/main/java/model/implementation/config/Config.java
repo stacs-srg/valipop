@@ -36,6 +36,7 @@ public class Config {
     private double setUpDR;
     private CompoundTimeUnit deathTimeStep;
     private CompoundTimeUnit birthTimeStep;
+    private CompoundTimeUnit simulationTimeStep;
     private Path varBirthPaths;
     private Path varMaleDeathPaths;
     private Path varFemaleDeathPaths;
@@ -79,6 +80,14 @@ public class Config {
                         birthTimeStep = new CompoundTimeUnit(split[1]);
                     } catch (InvalidTimeUnit e) {
                         log.fatal("Invalid time unit specified for birth timestep");
+                        System.exit(3);
+                    }
+                    break;
+                case "simulation_time_step":
+                    try {
+                        simulationTimeStep = new CompoundTimeUnit(split[1]);
+                    } catch (InvalidTimeUnit e) {
+                        log.fatal("Invalid time unit specified for simulation timestep");
                         System.exit(3);
                     }
                     break;
@@ -136,6 +145,14 @@ public class Config {
 
         }
 
+    }
+
+    public boolean checkConfigValid() {
+
+        // Things to check
+        // The initial date will line up with the time steps
+
+        return false;
     }
 
     private DirectoryStream.Filter<Path> filter = new DirectoryStream.Filter<Path>() {
@@ -226,6 +243,10 @@ public class Config {
 
     public CompoundTimeUnit getDeathTimeStep() {
         return deathTimeStep;
+    }
+
+    public CompoundTimeUnit getSimulationTimeStep() {
+        return simulationTimeStep;
     }
 
     public int getT0PopulationSize() {

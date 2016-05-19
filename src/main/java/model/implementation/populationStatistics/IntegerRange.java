@@ -5,7 +5,7 @@ package model.implementation.populationStatistics;
  */
 public class IntegerRange {
 
-    Boolean plus = null;
+    Boolean plus = false;
     private Integer min = null;
     private Integer max = null;
 
@@ -15,6 +15,7 @@ public class IntegerRange {
         if (parts.length == 1) {
             try {
                 min = Integer.parseInt(parts[0]);
+                max = Integer.parseInt(parts[0]);
                 plus = false;
             } catch (NumberFormatException e) {
                 if (parts[0].toCharArray()[parts[0].length() - 1] == '+') {
@@ -53,16 +54,18 @@ public class IntegerRange {
 
     public IntegerRange(int value) {
         this.min = value;
+        this.max = value;
         plus = false;
     }
 
     public boolean contains(int integer) {
-        if (plus == null) {
-            // if standard integerRange
-            if (integer >= min && integer <= max) {
-                return true;
-            }
-        } else {
+//        if (plus == null) {
+//            // if standard integerRange
+//            if (integer >= min && integer <= max) {
+//                return true;
+//            }
+//        } else {
+
             if (plus) {
                 // if min value +
                 if (integer >= min) {
@@ -70,11 +73,11 @@ public class IntegerRange {
                 }
             } else {
                 // if single value
-                if (integer == min) {
+                if (integer >= min && integer <= max) {
                     return true;
                 }
             }
-        }
+//        }
 
         return false;
 
@@ -89,7 +92,18 @@ public class IntegerRange {
     }
 
     public int getMax() {
-        return max;
+        if(max == null) {
+            return min;
+        } else {
+            return max;
+        }
+    }
+
+    public String toString() {
+        String s = "";
+        s += min + " to " + max;
+        s += plus ? " +" : "";
+        return s;
     }
 
 }
