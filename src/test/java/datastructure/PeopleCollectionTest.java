@@ -28,8 +28,10 @@ public class PeopleCollectionTest {
     @Test
     public void peopleInByYearAndBirthsCorrectPlace() {
 
-        PeopleCollection living = new PeopleCollection();
-        PeopleCollection dead = new PeopleCollection();
+        DateClock s = new DateClock(1, 0);
+        DateClock e = new DateClock(1, 3000);
+
+        PeopleCollection living = new PeopleCollection(s, e);
 
         DateClock start = new DateClock(1, 1600);
 
@@ -60,7 +62,10 @@ public class PeopleCollectionTest {
     @Test
     public void peopleInByYearCorrectPlace() {
 
-        PeopleCollection living = new PeopleCollection();
+        DateClock s = new DateClock(1, 0);
+        DateClock e = new DateClock(1, 3000);
+
+        PeopleCollection living = new PeopleCollection(s, e);
 
         DateClock start = new DateClock(1, 1600);
 
@@ -100,7 +105,10 @@ public class PeopleCollectionTest {
     @Test
     public void peopleInByGetAllCorrectPlace() {
 
-        PeopleCollection living = new PeopleCollection();
+        DateClock s = new DateClock(1, 0);
+        DateClock e = new DateClock(1, 3000);
+
+        PeopleCollection living = new PeopleCollection(s, e);
 
         DateClock start = new DateClock(1, 1600);
 
@@ -145,7 +153,10 @@ public class PeopleCollectionTest {
     @Test
     public void femaleGivesBirthMoveOfBirthCountPosition() {
 
-        PeopleCollection living = new PeopleCollection();
+        DateClock s = new DateClock(1, 0);
+        DateClock e = new DateClock(1, 3000);
+
+        PeopleCollection living = new PeopleCollection(s, e);
 
         DateClock start = new DateClock(1, 1600);
 
@@ -208,8 +219,11 @@ public class PeopleCollectionTest {
     @Test
     public void personIsCorrectlyRelocatedAfterDeath() {
 
-        PeopleCollection living = new PeopleCollection();
-        PeopleCollection dead = new PeopleCollection();
+        DateClock s = new DateClock(1, 0);
+        DateClock e = new DateClock(1, 3000);
+
+        PeopleCollection living = new PeopleCollection(s, e);
+        PeopleCollection dead = new PeopleCollection(s, e);
 
         DateClock start = new DateClock(1, 1600);
 
@@ -233,7 +247,10 @@ public class PeopleCollectionTest {
     @Test
     public void accessWithVariousDateTypes() {
 
-        PeopleCollection living = new PeopleCollection();
+        DateClock s = new DateClock(1, 0);
+        DateClock e = new DateClock(1, 3000);
+
+        PeopleCollection living = new PeopleCollection(s, e);
 
         DateClock start = new DateClock(1, 1600);
         DateInstant startI = new DateInstant(7, 1, 1600);

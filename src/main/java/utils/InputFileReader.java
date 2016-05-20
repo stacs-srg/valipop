@@ -99,15 +99,10 @@ public class InputFileReader {
 
                     break;
                 case "data":
-                    System.out.println();
                     i++; // go to next line for data rows
                     for (; i < lines.size(); i++) {
                         s = lines.get(i);
                         split = s.split(TAB);
-
-//                        System.out.println(s);
-//                        System.out.print(columnLabels.size());
-
 
                         if (split.length != columnLabels.size() + 1) {
                             log.fatal("One or more data rows do not have the correct number of values in the file: " + path.toString());

@@ -37,8 +37,8 @@ public class Simulation {
     private CompoundTimeUnit orphanTimeStep = new CompoundTimeUnit(1, TimeUnit.YEAR);
     private Date endOfOrphanPeriod;
 
-    private PeopleCollection people = new PeopleCollection();
-    private PeopleCollection deadPeople = new PeopleCollection();
+    private PeopleCollection people;
+    private PeopleCollection deadPeople;
 
     private int birthCount = 0;
     private int deathCount = 0;
@@ -51,6 +51,9 @@ public class Simulation {
 
     public Simulation() {
         currentTime = config.gettS();
+        people = new PeopleCollection(config.gettS(), config.gettE());
+        deadPeople = new PeopleCollection(config.gettS(), config.gettE());
+
 
         // get desired population info
         desired = setUpSimData();
@@ -140,13 +143,14 @@ public class Simulation {
             // if deaths timestep
             if(DateUtils.matchesInterval(currentTime, config.getDeathTimeStep())) {
                 handleDeaths();
-                log.info("Deaths handled: " + currentTime.toString());
+                log.info("Deaths handled: " + currentTime.toString() + " - " + deathCount);
+                deathCount = 0;
             }
 
             // if births timestep
             if(DateUtils.matchesInterval(currentTime, config.getBirthTimeStep())) {
                 handleBirths();
-                log.info("Births handled: " + currentTime.toString());
+                log.info("Births handled: " + currentTime.toString() + " - " + birthCount);
             }
 
             if(DateUtils.dateBefore(currentTime, endOfOrphanPeriod) && DateUtils.matchesInterval(currentTime, orphanTimeStep)) {
@@ -173,6 +177,8 @@ public class Simulation {
         int hypotheticalBirths = calculateNumberToBeBorn(currentHypotheticalPopulationSize, config.getSetUpBR());
         int shortFallInBirths = hypotheticalBirths - birthCount;
         birthCount = 0;
+
+        log.info("Current Date: " + currentTime.toString() + "    Short fall in births: " + shortFallInBirths);
 
         // update hypothetical population
         currentHypotheticalPopulationSize = currentHypotheticalPopulationSize + hypotheticalBirths - hypotheticalDeaths;
@@ -273,6 +279,7 @@ public class Simulation {
 
             // DATA - get rate of births by mothers age
             OneDimensionDataDistribution orderedBirthRatesForMothersOfThisAge = desired.getOrderedBirthRates(currentTime.getYearDate()).getData(age);
+            OneDimensionDataDistribution taperedOrderedBirthRatesForMothersOfThisAge = transformOrderedBirthRatesToTaperByOrderCount(orderedBirthRatesForMothersOfThisAge, womenOfThisAge.keySet());
 
             // DATA 2 - get rate of multiple births in a maternity (by order)
             OneDimensionDataDistribution multipleBirthDataForMothersOfThisAgeByMaternity = desired.getMultipleBirthRates(currentTime.getYearDate()).getData(age);
@@ -283,27 +290,38 @@ public class Simulation {
 
 
             // for each number of children already birthed to mothers (BIRTH ORDER)
-            for(int order = 0; order < maxBirthOrderInCohort; order++) {
+            for(int order = 0; order <= maxBirthOrderInCohort; order++) {
 
                 // women of this age and birth order
                 Collection<Person> women = womenOfThisAge.get(order);
 
                 // DATA 1 - get rate of births by mothers age and birth order
-                Double birthRate = orderedBirthRatesForMothersOfThisAge.getData(order) * config.getBirthTimeStep().toDecimalRepresentation();
+                Double birthRate = taperedOrderedBirthRatesForMothersOfThisAge.getData(order) * config.getBirthTimeStep().toDecimalRepresentation();
+
 
                 // use DATA 1 to see how many many children need to be born
                 int numberOfChildrenToBirth = calculateChildrenToBeBorn(sizeOfCohort, birthRate);
                 birthCount += numberOfChildrenToBirth;
 
+//                System.out.println("Age " + age + " | Order " + order + " | BR: " + birthRate + " | Cohort Size: " + sizeOfCohort + " | Number of Children: " + numberOfChildrenToBirth);
+
                 // calculate numbers of mothers to give birth (and which will bear twins, etc.)
                 // use DATA 2 to decide how many mothers needed to birth children
                 Map<Integer, Integer> motherCountsByMaternitySize = calculateMotherCountsByMaternitySize(numberOfChildrenToBirth, proportionOfChildrenBornToEachSizeOfMaternity);
+
+//                ArrayList<Integer> l = new ArrayList(motherCountsByMaternitySize.keySet());
+//                Collections.sort(l);
+//
+//                for(Integer i : l) {
+//                    System.out.print(i + " : " + motherCountsByMaternitySize.get(i) + " | ");
+//                }
+//                System.out.println();
 
                 // check the mother counts are possible to meet with the current cohort
                 int totalNumberOfMothers = CollectionUtils.sumIntegerCollection(motherCountsByMaternitySize.values());
 
                 if(women.size() < totalNumberOfMothers) {
-                    log.fatal("The number of mothers required of a given age group and order exceeds the number of females in such");
+                    log.fatal("Current Date: " + currentTime.toString() + " - Insufficient number of mothers: Eligible women " + women.size() + " | Mothers Required " + totalNumberOfMothers + " | Age " + age + " | Order " + order);
                     System.exit(451);
                 }
 
@@ -354,6 +372,65 @@ public class Simulation {
 
 
 
+        }
+
+    }
+
+    private OneDimensionDataDistribution transformOrderedBirthRatesToTaperByOrderCount(OneDimensionDataDistribution orderedBirthRatesForMothersOfThisAge, Set<Integer> orders) {
+        IntegerRange largestExplicitRange = orderedBirthRatesForMothersOfThisAge.getMaxRowLabelValue();
+
+        if(largestExplicitRange.isPlus()) {
+
+            int largestExplicitValue = largestExplicitRange.getValue();
+            Double birthRateToShare = orderedBirthRatesForMothersOfThisAge.getData(largestExplicitValue);
+
+            int toShareAmong = 0;
+            int denominator = 0;
+
+            for(Integer i : orders) {
+                if(i <= largestExplicitValue) {
+                    toShareAmong++;
+                    denominator += Math.pow(toShareAmong, 2);
+                }
+            }
+
+            Map<IntegerRange, Double> temp = new HashMap<IntegerRange, Double>();
+            ArrayList<Integer> orderedOrders = new ArrayList<>(orders);
+            Collections.sort(orderedOrders);
+
+            int tally = 0;
+
+            for(Integer i : orderedOrders) {
+
+                while(tally < i) {
+                    temp.put(new IntegerRange(tally), 0.0);
+                    tally++;
+                }
+
+                if(i < largestExplicitValue) {
+                    temp.put(new IntegerRange(i), orderedBirthRatesForMothersOfThisAge.getData(i));
+                } else {
+                    double fraction = Math.pow(toShareAmong, 2) / denominator;
+                    toShareAmong--;
+
+                    temp.put(new IntegerRange(i), fraction * birthRateToShare);
+                }
+
+                tally++;
+
+            }
+
+            temp.put(new IntegerRange(tally), 0.0);
+
+            return new OneDimensionDataDistribution(
+                    orderedBirthRatesForMothersOfThisAge.getYear(),
+                    orderedBirthRatesForMothersOfThisAge.getSourcePopulation(),
+                    orderedBirthRatesForMothersOfThisAge.getSourceOrganisation(),
+                    temp);
+
+
+        } else {
+            return orderedBirthRatesForMothersOfThisAge;
         }
 
     }

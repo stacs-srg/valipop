@@ -99,6 +99,10 @@ public class IntegerRange {
         }
     }
 
+    public boolean isPlus() {
+        return plus;
+    }
+
     public String toString() {
         String s = "";
         s += min + " to " + max;

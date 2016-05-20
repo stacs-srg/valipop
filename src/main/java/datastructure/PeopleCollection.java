@@ -5,6 +5,8 @@ import model.Person;
 import model.interfaces.populationModel.IPartnership;
 import model.interfaces.populationModel.IPerson;
 import model.interfaces.populationModel.IPopulation;
+import model.time.Date;
+import model.time.DateClock;
 
 import java.util.Collection;
 
@@ -13,8 +15,13 @@ import java.util.Collection;
  */
 public class PeopleCollection implements PersonCollection, IPopulation {
 
-    private MaleCollection males = new MaleCollection();
-    private FemaleCollection females = new FemaleCollection();
+    private MaleCollection males;
+    private FemaleCollection females;
+
+    public PeopleCollection(DateClock start, DateClock end) {
+        males = new MaleCollection(start, end);
+        females = new FemaleCollection(start, end);
+    }
 
     public MaleCollection getMales() {
         return males;

@@ -1,10 +1,11 @@
 package datastructure;
 
 import model.Person;
+import model.implementation.populationStatistics.IntegerRange;
 import model.interfaces.populationModel.IPartnership;
 import model.interfaces.populationModel.IPerson;
+import model.time.*;
 import model.time.Date;
-import model.time.YearDate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -16,7 +17,13 @@ import java.util.*;
 public class FemaleCollection implements PersonCollection {
 
     private static Logger log = LogManager.getLogger(FemaleCollection.class);
-    Map<YearDate, Map<Integer, Collection<model.Person>>> byYearAndNumberOfChildren = new HashMap<YearDate, Map<Integer, Collection<model.Person>>>();
+    Map<YearDate, Map<Integer, Collection<Person>>> byYearAndNumberOfChildren = new HashMap<YearDate, Map<Integer, Collection<model.Person>>>();
+
+    public FemaleCollection(DateClock start, DateClock end) {
+        for(DateClock y = start; DateUtils.dateBefore(y, end); y = y.advanceTime(1, TimeUnit.YEAR)) {
+            byYearAndNumberOfChildren.put(y.getYearDate(), new HashMap<Integer, Collection<Person>>());
+        }
+    }
 
     public Collection<Person> getAll() {
 
@@ -76,6 +83,9 @@ public class FemaleCollection implements PersonCollection {
         for(int i = 0; i < numberToRemove; i++) {
             Person p = iterator.next();
             people.add(p);
+        }
+
+        for(Person p : people) {
             removePerson(p);
         }
 
@@ -87,7 +97,6 @@ public class FemaleCollection implements PersonCollection {
 
         Collection<Person> people = new ArrayList<Person>();
 
-        // TODO NEXT - fix the null pointer that is showing up down here
         for (Integer i : byYearAndNumberOfChildren.get(year.getYearDate()).keySet()) {
             people.addAll(byYearAndNumberOfChildren.get(year.getYearDate()).get(i));
         }
@@ -143,6 +152,9 @@ public class FemaleCollection implements PersonCollection {
         for(int i = 0; i < numberToRemove; i++) {
             Person p = iterator.next();
             people.add(p);
+        }
+
+        for(Person p : people) {
             removePerson(p);
         }
 

@@ -61,6 +61,19 @@ public class OneDimensionDataDistribution implements DataDistribution {
         return min;
     }
 
+    public IntegerRange getMinRowLabelValue2() {
+        int min = Integer.MAX_VALUE;
+        IntegerRange label = null;
+        for(IntegerRange iR : appliedData.keySet()) {
+            int v = iR.getMin();
+            if(v < min) {
+                min = v;
+                label = iR;
+            }
+        }
+        return label;
+    }
+
     @Override
     public IntegerRange getMaxRowLabelValue() {
         IntegerRange max = null;
@@ -82,7 +95,8 @@ public class OneDimensionDataDistribution implements DataDistribution {
         try {
             row = resolveRowValue(rowValue);
         } catch (InvalidRangeException e) {
-            log.fatal(e.getMessage());
+            log.fatal("here   " + e.getMessage());
+
             System.exit(303);
         }
 
@@ -97,7 +111,7 @@ public class OneDimensionDataDistribution implements DataDistribution {
             }
         }
 
-        throw new InvalidRangeException("RowValue does not exist in this data distribution");
+        throw new InvalidRangeException("Given value not covered by rows - value " + rowValue + " | min row label " + getMinRowLabelValue2().toString() + " | max row label " + getMaxRowLabelValue().toString());
     }
 
     public Map<IntegerRange, Double> getData() {
