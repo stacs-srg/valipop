@@ -1,9 +1,8 @@
 package datastructure.summativeStatistics.generated;
 
 import datastructure.summativeStatistics.PopulationComposition;
-import model.enums.EventType;
 import datastructure.summativeStatistics.structure.OneDimensionDataDistribution;
-import model.time.DateClock;
+import utils.time.DateClock;
 
 /**
  * The GeneratedPopulationComposition interface provides the functionality to be able to access the same information about the

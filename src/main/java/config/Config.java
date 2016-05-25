@@ -1,8 +1,8 @@
 package config;
 
-import model.time.CompoundTimeUnit;
-import model.time.InvalidTimeUnit;
-import model.time.DateClock;
+import utils.time.CompoundTimeUnit;
+import utils.time.InvalidTimeUnit;
+import utils.time.DateClock;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import utils.InputFileReader;
@@ -43,7 +43,11 @@ public class Config {
     private Path varMultipleBirthPaths;
     private Path varPartneringPaths;
     private Path varSeparationPaths;
-
+    private DirectoryStream.Filter<Path> filter = new DirectoryStream.Filter<Path>() {
+        public boolean accept(Path file) throws IOException {
+            return !file.getFileName().toString().matches("^\\..+");
+        }
+    };
 
     public Config(Path pathToConfigFile) {
 
@@ -71,7 +75,7 @@ public class Config {
                     try {
                         deathTimeStep = new CompoundTimeUnit(split[1]);
                     } catch (InvalidTimeUnit e) {
-                        log.fatal("Invalid time unit specified for death timestep");
+                        log.fatal("Invalid utils.time unit specified for death timestep");
                         System.exit(3);
                     }
                     break;
@@ -79,7 +83,7 @@ public class Config {
                     try {
                         birthTimeStep = new CompoundTimeUnit(split[1]);
                     } catch (InvalidTimeUnit e) {
-                        log.fatal("Invalid time unit specified for birth timestep");
+                        log.fatal("Invalid utils.time unit specified for birth timestep");
                         System.exit(3);
                     }
                     break;
@@ -87,7 +91,7 @@ public class Config {
                     try {
                         simulationTimeStep = new CompoundTimeUnit(split[1]);
                     } catch (InvalidTimeUnit e) {
-                        log.fatal("Invalid time unit specified for simulation timestep");
+                        log.fatal("Invalid utils.time unit specified for simulation timestep");
                         System.exit(3);
                     }
                     break;
@@ -150,16 +154,10 @@ public class Config {
     public boolean checkConfigValid() {
 
         // Things to check
-        // The initial date will line up with the time steps
+        // The initial date will line up with the utils.time steps
 
         return false;
     }
-
-    private DirectoryStream.Filter<Path> filter = new DirectoryStream.Filter<Path>() {
-        public boolean accept(Path file) throws IOException {
-            return !file.getFileName().toString().matches("^\\..+");
-        }
-    };
 
     public DirectoryStream<Path> getVarOrderedBirthPaths() {
         try {

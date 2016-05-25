@@ -1,7 +1,5 @@
 package model;
 
-import model.interfaces.populationModel.IPartnership;
-import model.interfaces.populationModel.IPerson;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -15,15 +13,9 @@ public class Partnership implements IPartnership {
 
     private static Logger log = LogManager.getLogger(Partnership.class);
     private static int nextId = 0;
-
-    private static int getNewId() {
-        return nextId++;
-    }
-
     private int id;
     private IPerson male;
     private IPerson female;
-
     private List<IPerson> children = new ArrayList<IPerson>();
 
     public Partnership(IPerson male, IPerson female) {
@@ -38,6 +30,10 @@ public class Partnership implements IPartnership {
         this.male = male;
         this.female = female;
 
+    }
+
+    private static int getNewId() {
+        return nextId++;
     }
 
     public void addChildren(List<IPerson> children) {

@@ -1,8 +1,6 @@
 package datastructure.summativeStatistics;
 
-import model.enums.EventType;
-import model.interfaces.dataStores.PopulationDateRange;
-import model.interfaces.dataStores.informationAccess.StatisticalTables;
+import datastructure.summativeStatistics.generated.StatisticalTables;
 
 /**
  * TODO update

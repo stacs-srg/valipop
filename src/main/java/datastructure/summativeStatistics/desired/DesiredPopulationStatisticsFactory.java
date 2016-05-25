@@ -3,7 +3,7 @@ package datastructure.summativeStatistics.desired;
 import config.Config;
 import datastructure.summativeStatistics.structure.OneDimensionDataDistribution;
 import datastructure.summativeStatistics.structure.TwoDimensionDataDistribution;
-import model.time.YearDate;
+import utils.time.YearDate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import utils.InputFileReader;

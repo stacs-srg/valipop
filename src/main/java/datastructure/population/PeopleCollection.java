@@ -2,10 +2,10 @@ package datastructure.population;
 
 
 import model.Person;
-import model.interfaces.populationModel.IPartnership;
-import model.interfaces.populationModel.IPerson;
-import model.interfaces.populationModel.IPopulation;
-import model.time.DateClock;
+import model.IPartnership;
+import model.IPerson;
+import model.IPopulation;
+import utils.time.DateClock;
 
 import java.util.Collection;
 
@@ -57,7 +57,7 @@ public class PeopleCollection implements PersonCollection, IPopulation {
     }
 
     public void addPeople(Collection<Person> people) {
-        for(Person p : people) {
+        for (Person p : people) {
             addPerson(p);
         }
     }

@@ -1,7 +1,7 @@
 package datastructure.summativeStatistics.structure;
 
 import datastructure.summativeStatistics.DataDistribution;
-import model.time.YearDate;
+import utils.time.YearDate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -18,7 +18,7 @@ public class TwoDimensionDataDistribution implements DataDistribution {
     private YearDate year;
     private String sourcePopulation;
 
-//    private Map<IntegerRange, Map<IntegerRange, Double>> targetData;
+    //    private Map<IntegerRange, Map<IntegerRange, Double>> targetData;
     private String sourceOrganisation;
 
     public TwoDimensionDataDistribution(YearDate year, String sourcePopulation, String sourceOrganisation, Map<IntegerRange, OneDimensionDataDistribution> tableData) {
@@ -46,9 +46,9 @@ public class TwoDimensionDataDistribution implements DataDistribution {
     @Override
     public int getMinRowLabelValue() {
         int min = Integer.MAX_VALUE;
-        for(IntegerRange iR : appliedData.keySet()) {
+        for (IntegerRange iR : appliedData.keySet()) {
             int v = iR.getMin();
-            if(v < min) {
+            if (v < min) {
                 min = v;
             }
         }
@@ -59,9 +59,9 @@ public class TwoDimensionDataDistribution implements DataDistribution {
     public IntegerRange getMaxRowLabelValue() {
         IntegerRange max = null;
         int maxV = Integer.MIN_VALUE;
-        for(IntegerRange iR : appliedData.keySet()) {
+        for (IntegerRange iR : appliedData.keySet()) {
             int v = iR.getMax();
-            if(v > maxV) {
+            if (v > maxV) {
                 max = iR;
                 maxV = v;
             }
@@ -86,8 +86,8 @@ public class TwoDimensionDataDistribution implements DataDistribution {
     private IntegerRange resolveRowValue(Integer rowValue) {
 
 
-        for(IntegerRange iR : appliedData.keySet()) {
-            if(iR.contains(rowValue)) {
+        for (IntegerRange iR : appliedData.keySet()) {
+            if (iR.contains(rowValue)) {
                 return iR;
             }
         }

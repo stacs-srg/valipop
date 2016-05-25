@@ -1,8 +1,8 @@
 package datastructure.population;
 
 import model.Person;
-import model.time.*;
-import model.time.Date;
+import utils.time.*;
+import utils.time.Date;
 
 import java.util.*;
 
@@ -14,7 +14,7 @@ public class MaleCollection implements PersonCollection {
     private Map<YearDate, Collection<Person>> byYear = new HashMap<YearDate, Collection<Person>>();
 
     public MaleCollection(DateClock start, DateClock end) {
-        for(DateClock y = start; DateUtils.dateBefore(y, end); y = y.advanceTime(1, TimeUnit.YEAR)) {
+        for (DateClock y = start; DateUtils.dateBefore(y, end); y = y.advanceTime(1, TimeUnit.YEAR)) {
             byYear.put(y.getYearDate(), new ArrayList<Person>());
         }
     }
@@ -34,7 +34,7 @@ public class MaleCollection implements PersonCollection {
 
         Collection<Person> c = byYear.get(year.getYearDate());
 
-        if(c == null) {
+        if (c == null) {
             Collection<Person> temp = new ArrayList<Person>();
             byYear.put(year.getYearDate(), temp);
             c = byYear.get(year.getYearDate());
@@ -74,12 +74,12 @@ public class MaleCollection implements PersonCollection {
         Collection<Person> people = new ArrayList<>(numberToRemove);
         Iterator<Person> iterator = getByYear(yearOfBirth).iterator();
 
-        for(int i = 0; i < numberToRemove; i++) {
+        for (int i = 0; i < numberToRemove; i++) {
             Person p = iterator.next();
             people.add(p);
         }
 
-        for(Person p : people) {
+        for (Person p : people) {
             removePerson(p);
         }
 

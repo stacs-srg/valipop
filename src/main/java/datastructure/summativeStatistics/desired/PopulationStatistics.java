@@ -1,14 +1,15 @@
 package datastructure.summativeStatistics.desired;
 
-import model.enums.EventType;
+import datastructure.summativeStatistics.generated.EventType;
 import datastructure.summativeStatistics.PopulationComposition;
 import config.Config;
 import datastructure.summativeStatistics.structure.OneDimensionDataDistribution;
 import datastructure.summativeStatistics.structure.TwoDimensionDataDistribution;
-import model.interfaces.dataStores.informationAccess.EventRateTables;
-import model.time.DateClock;
-import model.time.DateUtils;
-import model.time.YearDate;
+import datastructure.summativeStatistics.EventRateTables;
+import utils.time.DateClock;
+import utils.time.DateUtils;
+import utils.time.YearDate;
+
 import java.util.Map;
 
 /**
@@ -63,7 +64,7 @@ public class PopulationStatistics implements PopulationComposition, EventRateTab
 
     @Override
     public OneDimensionDataDistribution getDeathRates(YearDate year, char gender) {
-        if(gender == 'm') {
+        if (gender == 'm') {
             return maleDeath.get(getNearestYearInMap(year, maleDeath));
         } else {
             return femaleDeath.get(getNearestYearInMap(year, femaleDeath));
@@ -102,7 +103,7 @@ public class PopulationStatistics implements PopulationComposition, EventRateTab
 
         for (YearDate tableYear : map.keySet()) {
             int difference = DateUtils.differenceInMonths(tableYear, year).getCount();
-            if(difference < minDifferenceInMonths) {
+            if (difference < minDifferenceInMonths) {
                 minDifferenceInMonths = difference;
                 nearestTableYear = tableYear;
             }

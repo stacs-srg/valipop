@@ -1,11 +1,10 @@
 package datastructure.summativeStatistics.generated;
 
 import datastructure.summativeStatistics.PopulationComposition;
-import model.interfaces.populationModel.IPopulation;
-import model.interfaces.populationModel.Population;
+import model.IPopulation;
 
 /**
- * The GeneratedPopulationCompositionFactory creates an instance of a {@link GeneratedPopulationComposition} given a {@link Population}.
+ * The GeneratedPopulationCompositionFactory creates an instance of a {@link GeneratedPopulationComposition} given a {@link IPopulation}.
  *
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */

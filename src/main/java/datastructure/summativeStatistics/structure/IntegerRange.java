@@ -66,17 +66,17 @@ public class IntegerRange {
 //            }
 //        } else {
 
-            if (plus) {
-                // if min value +
-                if (integer >= min) {
-                    return true;
-                }
-            } else {
-                // if single value
-                if (integer >= min && integer <= max) {
-                    return true;
-                }
+        if (plus) {
+            // if min value +
+            if (integer >= min) {
+                return true;
             }
+        } else {
+            // if single value
+            if (integer >= min && integer <= max) {
+                return true;
+            }
+        }
 //        }
 
         return false;
@@ -92,7 +92,7 @@ public class IntegerRange {
     }
 
     public int getMax() {
-        if(max == null) {
+        if (max == null) {
             return min;
         } else {
             return max;

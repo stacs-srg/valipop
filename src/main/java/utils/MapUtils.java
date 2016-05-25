@@ -18,8 +18,8 @@ public class MapUtils {
 
         int max = Integer.MIN_VALUE;
 
-        for(Integer i : integers) {
-            if(i > max) {
+        for (Integer i : integers) {
+            if (i > max) {
                 max = i;
             }
         }
@@ -31,7 +31,7 @@ public class MapUtils {
 
         int count = 0;
 
-        for(Integer i : map.keySet()) {
+        for (Integer i : map.keySet()) {
             count += map.get(i).size();
         }
 
@@ -43,7 +43,7 @@ public class MapUtils {
 
         int sum = 0;
 
-        for(IntegerRange iR: map.keySet()) {
+        for (IntegerRange iR : map.keySet()) {
             double d = map.get(iR);
             sum += (int) d;
         }
@@ -52,11 +52,11 @@ public class MapUtils {
 
     }
 
-    public static Map<Integer,Integer> floorAllValuesInMap(Map<IntegerRange, Double> map) {
+    public static Map<Integer, Integer> floorAllValuesInMap(Map<IntegerRange, Double> map) {
 
         Map<Integer, Integer> temp = new HashMap<Integer, Integer>();
 
-        for(IntegerRange iR : map.keySet()) {
+        for (IntegerRange iR : map.keySet()) {
 
             temp.put(iR.getValue(), map.get(iR).intValue());
 

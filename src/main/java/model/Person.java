@@ -1,9 +1,7 @@
 package model;
 
-import model.interfaces.populationModel.IPartnership;
-import model.interfaces.populationModel.IPerson;
-import model.time.Date;
-import model.time.DateInstant;
+import utils.time.Date;
+import utils.time.DateInstant;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -17,18 +15,12 @@ public class Person implements IPerson {
 
     private static Logger log = LogManager.getLogger(Person.class);
     private static int nextId = 0;
-
-    private static int getNewId() {
-        return nextId++;
-    }
-
     private int id;
     private char sex;
     private DateInstant birthDate;
     private DateInstant deathDate;
     private List<IPartnership> partnerships = new ArrayList<IPartnership>();
     private IPartnership parentsPartnership;
-
     public Person(char sex, Date birthDate, IPartnership parentsPartnership) {
 
         id = getNewId();
@@ -42,6 +34,10 @@ public class Person implements IPerson {
         this.birthDate = birthDate.getInstant();
         this.parentsPartnership = parentsPartnership;
 
+    }
+
+    private static int getNewId() {
+        return nextId++;
     }
 
     public void recordPartnership(IPartnership partnership) {

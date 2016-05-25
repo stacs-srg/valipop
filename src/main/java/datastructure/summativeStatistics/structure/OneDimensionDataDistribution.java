@@ -1,7 +1,7 @@
 package datastructure.summativeStatistics.structure;
 
 import datastructure.summativeStatistics.DataDistribution;
-import model.time.YearDate;
+import utils.time.YearDate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -53,9 +53,9 @@ public class OneDimensionDataDistribution implements DataDistribution {
     @Override
     public int getMinRowLabelValue() {
         int min = Integer.MAX_VALUE;
-        for(IntegerRange iR : appliedData.keySet()) {
+        for (IntegerRange iR : appliedData.keySet()) {
             int v = iR.getMin();
-            if(v < min) {
+            if (v < min) {
                 min = v;
             }
         }
@@ -65,9 +65,9 @@ public class OneDimensionDataDistribution implements DataDistribution {
     public IntegerRange getMinRowLabelValue2() {
         int min = Integer.MAX_VALUE;
         IntegerRange label = null;
-        for(IntegerRange iR : appliedData.keySet()) {
+        for (IntegerRange iR : appliedData.keySet()) {
             int v = iR.getMin();
-            if(v < min) {
+            if (v < min) {
                 min = v;
                 label = iR;
             }
@@ -79,9 +79,9 @@ public class OneDimensionDataDistribution implements DataDistribution {
     public IntegerRange getMaxRowLabelValue() {
         IntegerRange max = null;
         int maxV = Integer.MIN_VALUE;
-        for(IntegerRange iR : appliedData.keySet()) {
+        for (IntegerRange iR : appliedData.keySet()) {
             int v = iR.getMax();
-            if(v > maxV) {
+            if (v > maxV) {
                 max = iR;
                 maxV = v;
             }
@@ -106,8 +106,8 @@ public class OneDimensionDataDistribution implements DataDistribution {
 
     private IntegerRange resolveRowValue(Integer rowValue) {
 
-        for(IntegerRange iR : appliedData.keySet()) {
-            if(iR.contains(rowValue)) {
+        for (IntegerRange iR : appliedData.keySet()) {
+            if (iR.contains(rowValue)) {
                 return iR;
             }
         }
@@ -119,10 +119,10 @@ public class OneDimensionDataDistribution implements DataDistribution {
         return appliedData;
     }
 
-    public Map<IntegerRange,Double> cloneData() {
+    public Map<IntegerRange, Double> cloneData() {
         Map<IntegerRange, Double> map = new HashMap<IntegerRange, Double>();
 
-        for(IntegerRange iR : appliedData.keySet()) {
+        for (IntegerRange iR : appliedData.keySet()) {
             map.put(iR, appliedData.get(iR));
         }
 

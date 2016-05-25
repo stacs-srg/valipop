@@ -12,7 +12,7 @@ public class CollectionUtils {
 
         int sum = 0;
 
-        for(int v : values) {
+        for (int v : values) {
             sum += v;
         }
 

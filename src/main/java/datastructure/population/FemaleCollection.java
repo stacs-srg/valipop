@@ -1,9 +1,9 @@
 package datastructure.population;
 
 import model.Person;
-import model.interfaces.populationModel.IPartnership;
-import model.time.*;
-import model.time.Date;
+import model.IPartnership;
+import utils.time.*;
+import utils.time.Date;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -18,7 +18,7 @@ public class FemaleCollection implements PersonCollection {
     Map<YearDate, Map<Integer, Collection<Person>>> byYearAndNumberOfChildren = new HashMap<YearDate, Map<Integer, Collection<model.Person>>>();
 
     public FemaleCollection(DateClock start, DateClock end) {
-        for(DateClock y = start; DateUtils.dateBefore(y, end); y = y.advanceTime(1, TimeUnit.YEAR)) {
+        for (DateClock y = start; DateUtils.dateBefore(y, end); y = y.advanceTime(1, TimeUnit.YEAR)) {
             byYearAndNumberOfChildren.put(y.getYearDate(), new HashMap<Integer, Collection<Person>>());
         }
     }
@@ -76,18 +76,18 @@ public class FemaleCollection implements PersonCollection {
     public Collection<Person> removeRandomPersons(int numberToRemove, YearDate yearOfBirth, int withNChildren) {
 
         Collection<Person> people = new ArrayList<>();
-        if(numberToRemove == 0) {
+        if (numberToRemove == 0) {
             return people;
         }
 
         Iterator<Person> iterator = byYearAndNumberOfChildren.get(yearOfBirth).get(withNChildren).iterator();
 
-        for(int i = 0; i < numberToRemove; i++) {
+        for (int i = 0; i < numberToRemove; i++) {
             Person p = iterator.next();
             people.add(p);
         }
 
-        for(Person p : people) {
+        for (Person p : people) {
             removePerson(p);
         }
 
@@ -139,7 +139,7 @@ public class FemaleCollection implements PersonCollection {
             }
         }
 
-        if(!found) {
+        if (!found) {
             log.fatal("Failed to find female to be moved");
             System.exit(302);
         }
@@ -151,12 +151,12 @@ public class FemaleCollection implements PersonCollection {
         Collection<Person> people = new ArrayList<>(numberToRemove);
         Iterator<Person> iterator = getByYear(yearOfBirth).iterator();
 
-        for(int i = 0; i < numberToRemove; i++) {
+        for (int i = 0; i < numberToRemove; i++) {
             Person p = iterator.next();
             people.add(p);
         }
 
-        for(Person p : people) {
+        for (Person p : people) {
             removePerson(p);
         }
 

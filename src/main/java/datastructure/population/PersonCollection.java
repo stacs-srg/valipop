@@ -1,8 +1,6 @@
 package datastructure.population;
 
 import model.Person;
-import model.interfaces.populationModel.IPerson;
-import model.time.YearDate;
 
 import java.util.Collection;
 
@@ -13,11 +11,11 @@ public interface PersonCollection {
 
     Collection<Person> getAll();
 
-    public void addPerson(Person person);
+    void addPerson(Person person);
 
-    public boolean removePerson(Person person);
+    boolean removePerson(Person person);
 
-    public void updatePerson(Person person, int numberOfChildrenInMostRecentMaternity);
+    void updatePerson(Person person, int numberOfChildrenInMostRecentMaternity);
 
     int getNumberOfPersons();
 
