@@ -9,7 +9,7 @@ import java.util.*;
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class MaleCollection implements PersonCollection {
+public class MaleCollection extends PersonCollection {
 
     private Map<YearDate, Collection<Person>> byYear = new HashMap<YearDate, Collection<Person>>();
 
@@ -19,6 +19,7 @@ public class MaleCollection implements PersonCollection {
         }
     }
 
+    @Override
     public Collection<Person> getAll() {
 
         Collection<Person> people = new ArrayList<Person>();
@@ -30,6 +31,7 @@ public class MaleCollection implements PersonCollection {
         return people;
     }
 
+    @Override
     public Collection<Person> getByYear(Date year) {
 
         Collection<Person> c = byYear.get(year.getYearDate());
@@ -43,6 +45,7 @@ public class MaleCollection implements PersonCollection {
         return c;
     }
 
+    @Override
     public void addPerson(Person person) {
         try {
             byYear.get(person.getBirthDate().getYearDate()).add(person);
@@ -54,14 +57,16 @@ public class MaleCollection implements PersonCollection {
     }
 
     @Override
-    public boolean removePerson(Person person) {
+    public boolean removePerson(Person person) throws PersonNotFoundException {
         Collection<Person> people = byYear.get(person.getBirthDate().getYearDate());
-        return people.remove(person);
-    }
 
-    @Override
-    public void updatePerson(Person person, int numberOfChildrenInMostRecentMaternity) {
-        return;
+        if(people.isEmpty()) {
+            throw new PersonNotFoundException("Specified person not found in datastructure");
+        }
+
+        // TODO NEXT also need to handle the person not being in the retrieved collection
+
+        return people.remove(person);
     }
 
     @Override
@@ -69,20 +74,4 @@ public class MaleCollection implements PersonCollection {
         return getAll().size();
     }
 
-
-    public Collection<Person> removeRandomPersons(int numberToRemove, YearDate yearOfBirth) {
-        Collection<Person> people = new ArrayList<>(numberToRemove);
-        Iterator<Person> iterator = getByYear(yearOfBirth).iterator();
-
-        for (int i = 0; i < numberToRemove; i++) {
-            Person p = iterator.next();
-            people.add(p);
-        }
-
-        for (Person p : people) {
-            removePerson(p);
-        }
-
-        return people;
-    }
 }

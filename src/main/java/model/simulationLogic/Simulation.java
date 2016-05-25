@@ -217,8 +217,8 @@ public class Simulation {
             deathCount += malesToDie;
             deathCount += femalesToDie;
 
-            Collection<Person> deadMales = people.getMales().removeRandomPersons(malesToDie, d.getYearDate());
-            Collection<Person> deadFemales = people.getFemales().removeRandomPersons(femalesToDie, d.getYearDate());
+            Collection<Person> deadMales = people.getMales().removeNPersons(malesToDie, d.getYearDate());
+            Collection<Person> deadFemales = people.getFemales().removeNPersons(femalesToDie, d.getYearDate());
 
             // for each to be killed
             for (Person m : deadMales) {
@@ -328,7 +328,7 @@ public class Simulation {
                 // select the mothers
                 for (Integer childrenInMaternity : motherCountsByMaternitySize.keySet()) {
 
-                    ArrayList<Person> mothersToBe = new ArrayList<>(people.getFemales().removeRandomPersons(motherCountsByMaternitySize.get(childrenInMaternity), yearOfBirthInConsideration, order));
+                    ArrayList<Person> mothersToBe = new ArrayList<>(people.getFemales().removeNPersons(motherCountsByMaternitySize.get(childrenInMaternity), yearOfBirthInConsideration, order));
                     for (int n = 0; n < motherCountsByMaternitySize.get(childrenInMaternity); n++) {
                         Person mother = mothersToBe.get(n);
 

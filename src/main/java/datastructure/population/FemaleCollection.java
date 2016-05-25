@@ -12,7 +12,7 @@ import java.util.*;
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class FemaleCollection implements PersonCollection {
+public class FemaleCollection extends PersonCollection {
 
     private static Logger log = LogManager.getLogger(FemaleCollection.class);
     Map<YearDate, Map<Integer, Collection<Person>>> byYearAndNumberOfChildren = new HashMap<YearDate, Map<Integer, Collection<model.Person>>>();
@@ -23,6 +23,7 @@ public class FemaleCollection implements PersonCollection {
         }
     }
 
+    @Override
     public Collection<Person> getAll() {
 
         Collection<Person> people = new ArrayList<Person>();
@@ -31,6 +32,18 @@ public class FemaleCollection implements PersonCollection {
             for (Integer i : byYearAndNumberOfChildren.get(t).keySet()) {
                 people.addAll(byYearAndNumberOfChildren.get(t).get(i));
             }
+        }
+
+        return people;
+    }
+
+    @Override
+    public Collection<Person> getByYear(Date year) {
+
+        Collection<Person> people = new ArrayList<Person>();
+
+        for (Integer i : byYearAndNumberOfChildren.get(year.getYearDate()).keySet()) {
+            people.addAll(byYearAndNumberOfChildren.get(year.getYearDate()).get(i));
         }
 
         return people;
@@ -54,56 +67,19 @@ public class FemaleCollection implements PersonCollection {
     }
 
     @Override
-    public boolean removePerson(Person person) {
+    public boolean removePerson(Person person) throws PersonNotFoundException {
         Collection<Person> people = byYearAndNumberOfChildren.get(person.getBirthDate().getYearDate()).get(countChildren(person));
+
+        if(people.isEmpty()) {
+            throw new PersonNotFoundException("Specified person not found in datastructure");
+        }
+
         return people.remove(person);
     }
 
     @Override
     public int getNumberOfPersons() {
         return getAll().size();
-    }
-
-    public Person removeRandomPerson(YearDate yearOfBirth, int withNChildren) {
-
-        Person p = byYearAndNumberOfChildren.get(yearOfBirth).get(withNChildren).iterator().next();
-        removePerson(p);
-
-        return p;
-
-    }
-
-    public Collection<Person> removeRandomPersons(int numberToRemove, YearDate yearOfBirth, int withNChildren) {
-
-        Collection<Person> people = new ArrayList<>();
-        if (numberToRemove == 0) {
-            return people;
-        }
-
-        Iterator<Person> iterator = byYearAndNumberOfChildren.get(yearOfBirth).get(withNChildren).iterator();
-
-        for (int i = 0; i < numberToRemove; i++) {
-            Person p = iterator.next();
-            people.add(p);
-        }
-
-        for (Person p : people) {
-            removePerson(p);
-        }
-
-        return people;
-
-    }
-
-    public Collection<Person> getByYear(Date year) {
-
-        Collection<Person> people = new ArrayList<Person>();
-
-        for (Integer i : byYearAndNumberOfChildren.get(year.getYearDate()).keySet()) {
-            people.addAll(byYearAndNumberOfChildren.get(year.getYearDate()).get(i));
-        }
-
-        return people;
     }
 
     public Map<Integer, Collection<Person>> getMapByYear(Date year) {
@@ -122,34 +98,14 @@ public class FemaleCollection implements PersonCollection {
         return byYearAndNumberOfChildren.get(year.getYearDate()).get(numberOfChildren);
     }
 
-    public void updatePerson(Person person, int numberOfChildrenInMostRecentMaternity) {
+    public Collection<Person> removeNPersons(int numberToRemove, YearDate yearOfBirth, int withNChildren) {
 
-        int previousNumberOfChildren = countChildren(person) - numberOfChildrenInMostRecentMaternity;
-
-        Collection<Person> people = byYearAndNumberOfChildren.get(person.getBirthDate().getYearDate()).get(previousNumberOfChildren);
-
-        boolean found = false;
-
-        for (Person p : people) {
-            if (person.compareTo(p) == 0) {
-                people.remove(person);
-                addPerson(person);
-                found = true;
-                break;
-            }
+        Collection<Person> people = new ArrayList<>();
+        if (numberToRemove == 0) {
+            return people;
         }
 
-        if (!found) {
-            log.fatal("Failed to find female to be moved");
-            System.exit(302);
-        }
-
-
-    }
-
-    public Collection<Person> removeRandomPersons(int numberToRemove, YearDate yearOfBirth) {
-        Collection<Person> people = new ArrayList<>(numberToRemove);
-        Iterator<Person> iterator = getByYear(yearOfBirth).iterator();
+        Iterator<Person> iterator = byYearAndNumberOfChildren.get(yearOfBirth).get(withNChildren).iterator();
 
         for (int i = 0; i < numberToRemove; i++) {
             Person p = iterator.next();
@@ -157,10 +113,16 @@ public class FemaleCollection implements PersonCollection {
         }
 
         for (Person p : people) {
-            removePerson(p);
+            try {
+                removePerson(p);
+            } catch (PersonNotFoundException e) {
+                throw new ConcurrentModificationException("The People reference list has become out of sync with the " +
+                        "relevant Collection in the underlying map");
+            }
         }
 
         return people;
+
     }
 
     private Integer countChildren(Person person) {

@@ -5,14 +5,18 @@ import model.Person;
 import model.IPartnership;
 import model.IPerson;
 import model.IPopulation;
+import utils.time.Date;
 import utils.time.DateClock;
+import utils.time.YearDate;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class PeopleCollection implements PersonCollection, IPopulation {
+public class PeopleCollection extends PersonCollection implements IPopulation {
 
     private MaleCollection males;
     private FemaleCollection females;
@@ -30,10 +34,19 @@ public class PeopleCollection implements PersonCollection, IPopulation {
         return females;
     }
 
+    @Override
     public Collection<Person> getAll() {
-        return AggregatePersonCollectionFactory.makeCollectionOfIPersons(females, males);
+        return AggregatePersonCollectionFactory.makeCollectionOfPersons(females, males);
     }
 
+    @Override
+    public Collection<Person> getByYear(Date year) {
+        Collection<Person> people = males.getByYear(year);
+        people.addAll(females.getByYear(year));
+        return people;
+    }
+
+    @Override
     public void addPerson(Person person) {
         if (person.getSex() == 'm') {
             males.addPerson(person);
@@ -42,26 +55,14 @@ public class PeopleCollection implements PersonCollection, IPopulation {
         }
     }
 
-    public void updatePerson(Person person, int numberOfChildrenInMostRecentMaternity) {
-        if (person.getSex() == 'f') {
-            females.updatePerson(person, numberOfChildrenInMostRecentMaternity);
-        }
-    }
-
-    public boolean removePerson(Person person) {
+    @Override
+    public boolean removePerson(Person person) throws PersonNotFoundException {
         if (person.getSex() == 'm') {
             return males.removePerson(person);
         } else {
             return females.removePerson(person);
         }
     }
-
-    public void addPeople(Collection<Person> people) {
-        for (Person p : people) {
-            addPerson(p);
-        }
-    }
-
 
     @Override
     public int getNumberOfPersons() {

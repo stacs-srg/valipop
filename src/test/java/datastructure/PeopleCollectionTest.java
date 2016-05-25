@@ -160,17 +160,19 @@ public class PeopleCollectionTest {
 
         DateClock start = new DateClock(1, 1600);
 
-        model.Person f1 = new model.Person('f', start, null);
+        Person f1 = new model.Person('f', start, null);
 
-        model.Person m1 = new model.Person('m', start, null);
+        Person m1 = new model.Person('m', start, null);
 
-        model.Person c1 = new model.Person('m', start.advanceTime(19, TimeUnit.YEAR), null);
-        model.Person c2 = new model.Person('f', start.advanceTime(25, TimeUnit.YEAR), null);
-        model.Person c3 = new model.Person('m', start.advanceTime(32, TimeUnit.YEAR), null);
+        Person c1 = new model.Person('m', start.advanceTime(19, TimeUnit.YEAR), null);
+        Person c2 = new model.Person('f', start.advanceTime(25, TimeUnit.YEAR), null);
+        Person c3 = new model.Person('m', start.advanceTime(32, TimeUnit.YEAR), null);
 
         living.addPerson(f1);
 
         // can we move females (with births) - single birth
+
+        living.removePerson(f1);
 
         Partnership p1 = new Partnership(m1, f1);
         p1.addChildren(Collections.singletonList(c1));
@@ -178,7 +180,7 @@ public class PeopleCollectionTest {
         f1.recordPartnership(p1);
         living.addPerson(c1);
 
-        living.updatePerson(f1, 1);
+        living.addPerson(f1);
 
         // are they in the new place
         Collection<Person> people = living.getFemales().getByNumberOfChildren(m1.getBirthDate().getYearDate(), 1);
@@ -193,13 +195,15 @@ public class PeopleCollectionTest {
         assertTrue(people.contains(c1));
 
 
+        living.removePerson(f1);
+
         // can we move females (with births) - twin births
         p1.addChildren(Arrays.asList(c2, c3));
 
         living.addPerson(c2);
         living.addPerson(c3);
 
-        living.updatePerson(f1, 2);
+        living.addPerson(f1);
 
         // are they in the new place
         people = living.getFemales().getByNumberOfChildren(m1.getBirthDate().getYearDate(), 3);
@@ -274,6 +278,24 @@ public class PeopleCollectionTest {
 
         Collection<Person> females = living.getFemales().getByYear(startI);
         assertTrue(females.contains(f1));
+
+    }
+
+    @Test
+    public void removeNonExistentFemale() {
+
+        DateClock s = new DateClock(1, 0);
+        DateClock e = new DateClock(1, 3000);
+
+        PeopleCollection living = new PeopleCollection(s, e);
+
+        DateClock start = new DateClock(1, 1600);
+
+        Person f1 = new model.Person('f', start, null);
+
+        Person m1 = new model.Person('m', start, null);
+
+        living.removePerson(f1);
 
     }
 
