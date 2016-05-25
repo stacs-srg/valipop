@@ -1,5 +1,6 @@
-package model.implementation.populationStatistics;
+package datastructure.summativeStatistics.structure;
 
+import datastructure.summativeStatistics.DataDistribution;
 import model.time.YearDate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

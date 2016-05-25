@@ -1,9 +1,8 @@
-package model.implementation.populationStatistics;
+package datastructure.summativeStatistics.desired;
 
-import model.enums.EventType;
-import model.implementation.config.Config;
-import model.interfaces.dataStores.informationPassing.tableTypes.Table;
-import model.time.DateClock;
+import config.Config;
+import datastructure.summativeStatistics.structure.OneDimensionDataDistribution;
+import datastructure.summativeStatistics.structure.TwoDimensionDataDistribution;
 import model.time.YearDate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -68,17 +67,6 @@ public abstract class DesiredPopulationStatisticsFactory {
 
         }
         return data;
-    }
-
-    /**
-     * Inserts the given NumberTable into the data store for the specified variable for the given year.
-     *
-     * @param year     the given year
-     * @param variable the specified variable
-     * @param table    the NumberTable
-     */
-    void setData(int year, EventType variable, Table table) {
-
     }
 
 }

@@ -1,7 +1,6 @@
-package datastructure;
+package datastructure.population;
 
 import model.Person;
-import model.interfaces.populationModel.IPerson;
 
 import java.util.Collection;
 

@@ -1,7 +1,7 @@
 package model.interfaces.dataStores.informationAccess;
 
 import model.enums.EventType;
-import model.interfaces.dataStores.informationPassing.tableTypes.OneWayTable;
+import datastructure.summativeStatistics.structure.OneDimensionDataDistribution;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
@@ -27,6 +27,6 @@ public interface StatisticalTables {
      * @param event      the event
      * @return the survivor table
      */
-    OneWayTable<Integer> getSurvivorTable(int startYear, int timePeriod, EventType event);
+    OneDimensionDataDistribution getSurvivorTable(int startYear, int timePeriod, EventType event);
 
 }

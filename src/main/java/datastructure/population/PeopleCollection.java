@@ -1,11 +1,10 @@
-package datastructure;
+package datastructure.population;
 
 
 import model.Person;
 import model.interfaces.populationModel.IPartnership;
 import model.interfaces.populationModel.IPerson;
 import model.interfaces.populationModel.IPopulation;
-import model.time.Date;
 import model.time.DateClock;
 
 import java.util.Collection;

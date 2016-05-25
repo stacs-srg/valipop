@@ -1,13 +1,16 @@
 package model.implementation.model;
 
-import datastructure.PeopleCollection;
+import datastructure.population.PeopleCollection;
+import datastructure.summativeStatistics.desired.DesiredPopulationStatisticsFactory;
+import datastructure.summativeStatistics.desired.PopulationStatistics;
+import datastructure.summativeStatistics.structure.IntegerRange;
+import datastructure.summativeStatistics.structure.OneDimensionDataDistribution;
 import model.Partnership;
 import model.Person;
-import model.implementation.analysis.PopulationComposition;
+import datastructure.summativeStatistics.PopulationComposition;
 import model.implementation.analysis.statistics.ComparativeAnalysis;
-import model.implementation.analysis.GeneratedPopulationCompositionFactory;
-import model.implementation.config.Config;
-import model.implementation.populationStatistics.*;
+import datastructure.summativeStatistics.generated.GeneratedPopulationCompositionFactory;
+import config.Config;
 import model.interfaces.populationModel.IPartnership;
 import model.interfaces.populationModel.IPopulation;
 

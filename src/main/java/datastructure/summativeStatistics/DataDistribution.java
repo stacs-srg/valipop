@@ -1,5 +1,6 @@
-package model.implementation.populationStatistics;
+package datastructure.summativeStatistics;
 
+import datastructure.summativeStatistics.structure.IntegerRange;
 import model.time.YearDate;
 
 /**

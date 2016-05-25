@@ -1,15 +1,14 @@
-package model.implementation.populationStatistics;
+package datastructure.summativeStatistics.desired;
 
 import model.enums.EventType;
-import model.implementation.analysis.PopulationComposition;
-import model.implementation.config.Config;
+import datastructure.summativeStatistics.PopulationComposition;
+import config.Config;
+import datastructure.summativeStatistics.structure.OneDimensionDataDistribution;
+import datastructure.summativeStatistics.structure.TwoDimensionDataDistribution;
 import model.interfaces.dataStores.informationAccess.EventRateTables;
-import model.interfaces.dataStores.informationPassing.tableTypes.OneWayTable;
 import model.time.DateClock;
 import model.time.DateUtils;
 import model.time.YearDate;
-
-import java.time.Year;
 import java.util.Map;
 
 /**
@@ -92,7 +91,7 @@ public class PopulationStatistics implements PopulationComposition, EventRateTab
     }
 
     @Override
-    public OneWayTable<Integer> getSurvivorTable(int startYear, int timePeriod, EventType event) {
+    public OneDimensionDataDistribution getSurvivorTable(int startYear, int timePeriod, EventType event) {
         return null;
     }
 

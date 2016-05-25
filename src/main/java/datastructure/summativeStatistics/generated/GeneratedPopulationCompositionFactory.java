@@ -1,6 +1,6 @@
-package model.implementation.analysis;
+package datastructure.summativeStatistics.generated;
 
-import model.implementation.analysis.GeneratedPopulationComposition;
+import datastructure.summativeStatistics.PopulationComposition;
 import model.interfaces.populationModel.IPopulation;
 import model.interfaces.populationModel.Population;
 

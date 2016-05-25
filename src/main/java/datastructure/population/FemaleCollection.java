@@ -1,9 +1,7 @@
-package datastructure;
+package datastructure.population;
 
 import model.Person;
-import model.implementation.populationStatistics.IntegerRange;
 import model.interfaces.populationModel.IPartnership;
-import model.interfaces.populationModel.IPerson;
 import model.time.*;
 import model.time.Date;
 import org.apache.logging.log4j.LogManager;

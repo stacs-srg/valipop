@@ -1,8 +1,8 @@
 package datastructure;
 
+import datastructure.population.PeopleCollection;
 import model.Partnership;
 import model.Person;
-import model.interfaces.populationModel.IPerson;
 import model.time.DateClock;
 import model.time.DateInstant;
 import model.time.TimeUnit;

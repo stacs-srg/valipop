@@ -1,10 +1,7 @@
 package model.interfaces.dataStores.informationAccess;
 
-import model.enums.Gender;
-import model.implementation.populationStatistics.OneDimensionDataDistribution;
-import model.implementation.populationStatistics.TwoDimensionDataDistribution;
-import model.interfaces.dataStores.informationPassing.tableTypes.OneWayTable;
-import model.interfaces.dataStores.informationPassing.tableTypes.TwoWayTable;
+import datastructure.summativeStatistics.structure.OneDimensionDataDistribution;
+import datastructure.summativeStatistics.structure.TwoDimensionDataDistribution;
 import model.time.YearDate;
 
 /**

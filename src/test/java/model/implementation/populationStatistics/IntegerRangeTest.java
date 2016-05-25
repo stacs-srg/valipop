@@ -1,5 +1,7 @@
 package model.implementation.populationStatistics;
 
+import datastructure.summativeStatistics.structure.IntegerRange;
+import datastructure.summativeStatistics.structure.InvalidRangeException;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

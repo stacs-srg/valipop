@@ -1,7 +1,7 @@
 package model.interfaces.analysis.statistical;
 
 import model.enums.EventType;
-import model.interfaces.dataStores.informationPassing.tableTypes.OneWayTable;
+import datastructure.summativeStatistics.structure.OneDimensionDataDistribution;
 
 /**
  * The ComparativeAnalysis interface provides statistical tests to verify the simulated population against a given
@@ -21,7 +21,7 @@ public interface ComparativeAnalysis {
      * @param observedEvents the observed events
      * @return the km analysis
      */
-    KaplanMeierAnalysis runKaplanMeier(EventType variable, int year, OneWayTable<Integer> expectedEvents, OneWayTable<Integer> observedEvents);
+    KaplanMeierAnalysis runKaplanMeier(EventType variable, int year, OneDimensionDataDistribution expectedEvents, OneDimensionDataDistribution observedEvents);
 
 
     /**

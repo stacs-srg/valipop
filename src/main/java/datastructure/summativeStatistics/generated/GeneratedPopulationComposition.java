@@ -1,7 +1,8 @@
-package model.implementation.analysis;
+package datastructure.summativeStatistics.generated;
 
+import datastructure.summativeStatistics.PopulationComposition;
 import model.enums.EventType;
-import model.interfaces.dataStores.informationPassing.tableTypes.OneWayTable;
+import datastructure.summativeStatistics.structure.OneDimensionDataDistribution;
 import model.time.DateClock;
 
 /**
@@ -24,7 +25,7 @@ public class GeneratedPopulationComposition implements PopulationComposition {
     }
 
     @Override
-    public OneWayTable<Integer> getSurvivorTable(int startYear, int timePeriod, EventType event) {
+    public OneDimensionDataDistribution getSurvivorTable(int startYear, int timePeriod, EventType event) {
         return null;
     }
 }

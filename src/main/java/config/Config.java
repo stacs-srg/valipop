@@ -1,4 +1,4 @@
-package model.implementation.config;
+package config;
 
 import model.time.CompoundTimeUnit;
 import model.time.InvalidTimeUnit;

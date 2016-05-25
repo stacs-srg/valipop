@@ -1,8 +1,7 @@
 package utils;
 
 import model.Person;
-import model.implementation.populationStatistics.IntegerRange;
-import model.interfaces.populationModel.IPerson;
+import datastructure.summativeStatistics.structure.IntegerRange;
 
 import java.util.Collection;
 import java.util.HashMap;

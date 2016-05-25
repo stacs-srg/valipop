@@ -1,4 +1,4 @@
-package model.implementation.populationStatistics;
+package datastructure.summativeStatistics.structure;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)

@@ -1,10 +1,9 @@
 package utils;
 
-import model.implementation.populationStatistics.IntegerRange;
-import model.implementation.populationStatistics.InvalidRangeException;
-import model.implementation.populationStatistics.OneDimensionDataDistribution;
-import model.implementation.populationStatistics.TwoDimensionDataDistribution;
-import model.time.DateClock;
+import datastructure.summativeStatistics.structure.IntegerRange;
+import datastructure.summativeStatistics.structure.InvalidRangeException;
+import datastructure.summativeStatistics.structure.OneDimensionDataDistribution;
+import datastructure.summativeStatistics.structure.TwoDimensionDataDistribution;
 import model.time.YearDate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

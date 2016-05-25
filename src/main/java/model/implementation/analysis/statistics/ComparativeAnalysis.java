@@ -1,9 +1,9 @@
 package model.implementation.analysis.statistics;
 
 import model.enums.EventType;
+import datastructure.summativeStatistics.structure.OneDimensionDataDistribution;
 import model.interfaces.analysis.statistical.KaplanMeierAnalysis;
 import model.interfaces.dataStores.informationAccess.StatisticalTables;
-import model.interfaces.dataStores.informationPassing.tableTypes.OneWayTable;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
@@ -19,7 +19,7 @@ public class ComparativeAnalysis implements model.interfaces.analysis.statistica
     }
 
     @Override
-    public KaplanMeierAnalysis runKaplanMeier(EventType variable, int year, OneWayTable<Integer> expectedEvents, OneWayTable<Integer> observedEvents) {
+    public KaplanMeierAnalysis runKaplanMeier(EventType variable, int year, OneDimensionDataDistribution expectedEvents, OneDimensionDataDistribution observedEvents) {
         return null;
     }
 
