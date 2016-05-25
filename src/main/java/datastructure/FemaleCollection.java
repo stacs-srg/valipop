@@ -77,7 +77,11 @@ public class FemaleCollection implements PersonCollection {
 
     public Collection<Person> removeRandomPersons(int numberToRemove, YearDate yearOfBirth, int withNChildren) {
 
-        Collection<Person> people = new ArrayList<>(numberToRemove);
+        Collection<Person> people = new ArrayList<>();
+        if(numberToRemove == 0) {
+            return people;
+        }
+
         Iterator<Person> iterator = byYearAndNumberOfChildren.get(yearOfBirth).get(withNChildren).iterator();
 
         for(int i = 0; i < numberToRemove; i++) {

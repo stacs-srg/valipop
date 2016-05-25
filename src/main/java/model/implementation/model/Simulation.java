@@ -275,8 +275,6 @@ public class Simulation {
 
             Map<Integer, Collection<Person>> womenOfThisAge = people.getFemales().getMapByYear(yearOfBirthInConsideration);
 
-
-
             // DATA - get rate of births by mothers age
             OneDimensionDataDistribution orderedBirthRatesForMothersOfThisAge = desired.getOrderedBirthRates(currentTime.getYearDate()).getData(age);
             OneDimensionDataDistribution taperedOrderedBirthRatesForMothersOfThisAge = transformOrderedBirthRatesToTaperByOrderCount(orderedBirthRatesForMothersOfThisAge, womenOfThisAge.keySet());
@@ -295,12 +293,20 @@ public class Simulation {
                 // women of this age and birth order
                 Collection<Person> women = womenOfThisAge.get(order);
 
-                // DATA 1 - get rate of births by mothers age and birth order
-                Double birthRate = taperedOrderedBirthRatesForMothersOfThisAge.getData(order) * config.getBirthTimeStep().toDecimalRepresentation();
+                if(women == null) {
+                    women = new ArrayList<Person>();
+                }
 
+
+
+                // DATA 1 - get rate of births by mothers age and birth order
+                double birthRate = taperedOrderedBirthRatesForMothersOfThisAge.getData(order) * config.getBirthTimeStep().toDecimalRepresentation();
+
+                System.out.println("Age " + age + " | Order " + order + " | BR " + birthRate);
 
                 // use DATA 1 to see how many many children need to be born
                 int numberOfChildrenToBirth = calculateChildrenToBeBorn(sizeOfCohort, birthRate);
+
                 birthCount += numberOfChildrenToBirth;
 
 //                System.out.println("Age " + age + " | Order " + order + " | BR: " + birthRate + " | Cohort Size: " + sizeOfCohort + " | Number of Children: " + numberOfChildrenToBirth);
@@ -320,13 +326,18 @@ public class Simulation {
                 // check the mother counts are possible to meet with the current cohort
                 int totalNumberOfMothers = CollectionUtils.sumIntegerCollection(motherCountsByMaternitySize.values());
 
+                System.out.println("Cohort Size " + sizeOfCohort + " | Number of Children " + numberOfChildrenToBirth + " | Number Of Mothers " + totalNumberOfMothers);
+
                 if(women.size() < totalNumberOfMothers) {
                     log.fatal("Current Date: " + currentTime.toString() + " - Insufficient number of mothers: Eligible women " + women.size() + " | Mothers Required " + totalNumberOfMothers + " | Age " + age + " | Order " + order);
+//                    totalNumberOfMothers = women.size();
                     System.exit(451);
                 }
 
                 // select the mothers
                 for(Integer childrenInMaternity : motherCountsByMaternitySize.keySet()) {
+
+//                    log.info(currentTime.toString() + " | " + motherCountsByMaternitySize.get(childrenInMaternity) + " maternities with " + childrenInMaternity + " children | Mother age " + age + " | Order " + order);
 
                     ArrayList<Person> mothersToBe = new ArrayList<>(people.getFemales().removeRandomPersons(motherCountsByMaternitySize.get(childrenInMaternity), yearOfBirthInConsideration, order));
                     for(int n = 0; n < motherCountsByMaternitySize.get(childrenInMaternity); n++) {
@@ -390,7 +401,7 @@ public class Simulation {
             for(Integer i : orders) {
                 if(i <= largestExplicitValue) {
                     toShareAmong++;
-                    denominator += Math.pow(toShareAmong, 2);
+                    denominator += Math.pow(toShareAmong, 3);
                 }
             }
 
@@ -410,7 +421,7 @@ public class Simulation {
                 if(i < largestExplicitValue) {
                     temp.put(new IntegerRange(i), orderedBirthRatesForMothersOfThisAge.getData(i));
                 } else {
-                    double fraction = Math.pow(toShareAmong, 2) / denominator;
+                    double fraction = Math.pow(toShareAmong, 3) / denominator;
                     toShareAmong--;
 
                     temp.put(new IntegerRange(i), fraction * birthRateToShare);
@@ -465,14 +476,20 @@ public class Simulation {
         // calculate numbers of children to be born from each maternity type
         Map<IntegerRange, Double> temp = proportionOfChildrenBornToEachSizeOfMaternity.cloneData();
 
+
+        print("A", temp);
+
         for(IntegerRange iR : temp.keySet()) {
             double exactNumberOfChildren = temp.get(iR) * numberOfChildrenToBirth;
             temp.replace(iR, exactNumberOfChildren);
         }
 
+
+        print("B", temp);
+
         double sumOfRemainders = 0;
 
-        int numberOfChildrenShort = MapUtils.sumOfFlooredValues(temp);
+        int numberOfChildrenShort = numberOfChildrenToBirth - MapUtils.sumOfFlooredValues(temp);
 
         // therefore calculate the resulting number of mothers for each maternity type
         for(IntegerRange iR : temp.keySet()) {
@@ -480,6 +497,8 @@ public class Simulation {
             sumOfRemainders += exactNumberOfMothers - (int) exactNumberOfMothers;
             temp.replace(iR, exactNumberOfMothers);
         }
+
+        print("C", temp);
 
         // handle rounding
         // check if total number of children resulting from this is correct
@@ -492,6 +511,9 @@ public class Simulation {
                 System.exit(401);
             }
         }
+
+
+        print("D", temp);
 
         // if the number line dice roll caused an additional set of twins or triplets or etc.
         while(numberOfChildrenShort < 0) {
@@ -506,9 +528,27 @@ public class Simulation {
             // repeat until total number of children is equal to the input given of numberOfChildrenToBirth
         }
 
+        print("E", temp);
+
         return MapUtils.floorAllValuesInMap(temp);
 
 
+    }
+
+    private void print(String label, Map<IntegerRange, ?> temp) {
+        System.out.print(label + " | ");
+        for(int i = 1 ; i <= 4; i++) {
+            IntegerRange iR = null;
+            for(IntegerRange r : temp.keySet()) {
+                if(r.contains(i)) {
+                    iR = r;
+                    break;
+                }
+            }
+
+            System.out.print(temp.get(iR) + " | ");
+        }
+        System.out.println();
     }
 
     private int removeLowerTypeMaternities(Map<IntegerRange, Double> temp, int numberOfChildrenShort) throws StatisticalManipulationCalculationError {
