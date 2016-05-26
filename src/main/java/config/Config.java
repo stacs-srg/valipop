@@ -75,63 +75,63 @@ public class Config {
                     try {
                         deathTimeStep = new CompoundTimeUnit(split[1]);
                     } catch (InvalidTimeUnit e) {
-                        log.fatal("Invalid utils.time unit specified for death timestep");
-                        System.exit(3);
+                        log.fatal("death_time_step " + e.getMessage());
+                        throw e;
                     }
                     break;
                 case "birth_time_step":
                     try {
                         birthTimeStep = new CompoundTimeUnit(split[1]);
                     } catch (InvalidTimeUnit e) {
-                        log.fatal("Invalid utils.time unit specified for birth timestep");
-                        System.exit(3);
+                        log.fatal("birth_time_step " + e.getMessage());
+                        throw e;
                     }
                     break;
                 case "simulation_time_step":
                     try {
                         simulationTimeStep = new CompoundTimeUnit(split[1]);
                     } catch (InvalidTimeUnit e) {
-                        log.fatal("Invalid utils.time unit specified for simulation timestep");
-                        System.exit(3);
+                        log.fatal("simulation_time_step " + e.getMessage());
+                        throw e;
                     }
                     break;
                 case "tS":
                     try {
                         tS = new DateClock(split[1]);
                     } catch (DateTimeException e) {
-                        log.fatal("Invalid Fate format for tS: " + e.getMessage());
-                        System.exit(3);
+                        log.fatal("tS " + e.getMessage());
+                        throw e;
                     }
                     break;
                 case "t0":
                     try {
                         t0 = new DateClock(split[1]);
                     } catch (DateTimeException e) {
-                        log.fatal("Invalid Fate format for t0: " + e.getMessage());
-                        System.exit(3);
+                        log.fatal("t0 " + e.getMessage());
+                        throw e;
                     }
                     break;
                 case "tE":
                     try {
                         tE = new DateClock(split[1]);
                     } catch (DateTimeException e) {
-                        log.fatal("Invalid Fate format for tE: " + e.getMessage());
-                        System.exit(3);
+                        log.fatal("tE " + e.getMessage());
+                        throw e;
                     }
                     break;
                 case "t0_pop_size":
                     try {
                         t0PopulationSize = Integer.parseInt(split[1]);
                     } catch (NumberFormatException e) {
-                        log.fatal("t0 Population size not a valid integer");
-                        System.exit(3);
+                        log.fatal("t0_pop_size " + e.getMessage());
+                        throw e;
                     }
                     break;
                 case "set_up_br":
                     try {
                         setUpBR = Double.parseDouble(split[1]);
                     } catch (NumberFormatException e) {
-                        log.fatal("set up birth rate not a valid number");
+                        log.fatal("set_up _br " + e.getMessage());
                         System.exit(3);
                     }
                     break;

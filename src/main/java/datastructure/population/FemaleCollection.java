@@ -70,11 +70,11 @@ public class FemaleCollection extends PersonCollection {
     public boolean removePerson(Person person) throws PersonNotFoundException {
         Collection<Person> people = byYearAndNumberOfChildren.get(person.getBirthDate().getYearDate()).get(countChildren(person));
 
-        if(people.isEmpty()) {
+        if(people == null || !people.remove(person)) {
             throw new PersonNotFoundException("Specified person not found in datastructure");
         }
 
-        return people.remove(person);
+        return true;
     }
 
     @Override

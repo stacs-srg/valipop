@@ -26,7 +26,7 @@ public class CompoundTimeUnit {
                 this.unit = TimeUnit.YEAR;
                 break;
             default:
-                throw new InvalidTimeUnit();
+                throw new InvalidTimeUnit("Invalid time unit specified");
         }
 
         this.count = Integer.parseInt(count);

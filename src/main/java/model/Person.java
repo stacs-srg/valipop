@@ -21,19 +21,18 @@ public class Person implements IPerson {
     private DateInstant deathDate;
     private List<IPartnership> partnerships = new ArrayList<IPartnership>();
     private IPartnership parentsPartnership;
-    public Person(char sex, Date birthDate, IPartnership parentsPartnership) {
 
+    public Person(char sex, Date birthDate) {
         id = getNewId();
-
-        if (Character.toLowerCase(sex) != 'm' && Character.toLowerCase(sex) != 'f') {
-            log.fatal("Attempted to create a person with a sex that isn't m or f");
-            System.exit(201);
-        }
         this.sex = Character.toLowerCase(sex);
+        this.birthDate = birthDate.getInstant();
+    }
 
+    public Person(char sex, Date birthDate, IPartnership parentsPartnership) {
+        id = getNewId();
+        this.sex = Character.toLowerCase(sex);
         this.birthDate = birthDate.getInstant();
         this.parentsPartnership = parentsPartnership;
-
     }
 
     private static int getNewId() {

@@ -65,4 +65,21 @@ public class MapUtils {
         return temp;
 
     }
+
+    public static void print(String label, Map<IntegerRange, ?> temp, int s, int interval, int e) {
+        System.out.print(label + " | ");
+        for (int i = s; i <= e; i+=interval) {
+            IntegerRange iR = null;
+            for (IntegerRange r : temp.keySet()) {
+                if (r.contains(i)) {
+                    iR = r;
+                    break;
+                }
+            }
+
+            System.out.print(temp.get(iR) + " | ");
+        }
+        System.out.println();
+    }
+
 }

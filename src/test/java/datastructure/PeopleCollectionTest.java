@@ -1,6 +1,7 @@
 package datastructure;
 
 import datastructure.population.PeopleCollection;
+import datastructure.population.PersonNotFoundException;
 import model.Partnership;
 import model.Person;
 import utils.time.DateClock;
@@ -151,7 +152,7 @@ public class PeopleCollectionTest {
 
 
     @Test
-    public void femaleGivesBirthMoveOfBirthCountPosition() {
+    public void femaleGivesBirthMoveOfBirthCountPosition() throws PersonNotFoundException {
 
         DateClock s = new DateClock(1, 0);
         DateClock e = new DateClock(1, 3000);
@@ -221,7 +222,7 @@ public class PeopleCollectionTest {
     }
 
     @Test
-    public void personIsCorrectlyRelocatedAfterDeath() {
+    public void personIsCorrectlyRelocatedAfterDeath() throws PersonNotFoundException {
 
         DateClock s = new DateClock(1, 0);
         DateClock e = new DateClock(1, 3000);
@@ -281,8 +282,8 @@ public class PeopleCollectionTest {
 
     }
 
-    @Test
-    public void removeNonExistentFemale() {
+    @Test(expected = PersonNotFoundException.class)
+    public void removeNonExistentFemaleFromEmptyCollection() throws PersonNotFoundException {
 
         DateClock s = new DateClock(1, 0);
         DateClock e = new DateClock(1, 3000);
@@ -292,11 +293,66 @@ public class PeopleCollectionTest {
         DateClock start = new DateClock(1, 1600);
 
         Person f1 = new model.Person('f', start, null);
-
-        Person m1 = new model.Person('m', start, null);
-
         living.removePerson(f1);
 
     }
+
+
+    @Test(expected = PersonNotFoundException.class)
+    public void removeNonExistentFemale() throws PersonNotFoundException {
+
+        DateClock s = new DateClock(1, 0);
+        DateClock e = new DateClock(1, 3000);
+
+        PeopleCollection living = new PeopleCollection(s, e);
+
+        DateClock start = new DateClock(1, 1600);
+
+        Person f1 = new model.Person('f', start, null);
+        Person f2 = new model.Person('f', start, null);
+
+        living.addPerson(f2);
+
+        living.removePerson(f1);
+
+
+    }
+
+    @Test(expected = PersonNotFoundException.class)
+    public void removeNonExistentMaleFromEmptyCollection() throws PersonNotFoundException {
+
+        DateClock s = new DateClock(1, 0);
+        DateClock e = new DateClock(1, 3000);
+
+        PeopleCollection living = new PeopleCollection(s, e);
+
+        DateClock start = new DateClock(1, 1600);
+
+        Person m1 = new model.Person('m', start, null);
+        living.removePerson(m1);
+
+    }
+
+
+    @Test(expected = PersonNotFoundException.class)
+    public void removeNonExistentMale() throws PersonNotFoundException {
+
+        DateClock s = new DateClock(1, 0);
+        DateClock e = new DateClock(1, 3000);
+
+        PeopleCollection living = new PeopleCollection(s, e);
+
+        DateClock start = new DateClock(1, 1600);
+
+        Person m1 = new model.Person('m', start, null);
+        Person m2 = new model.Person('m', start, null);
+
+        living.addPerson(m2);
+
+        living.removePerson(m1);
+
+
+    }
+
 
 }
