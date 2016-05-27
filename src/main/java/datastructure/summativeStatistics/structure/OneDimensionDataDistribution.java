@@ -16,13 +16,13 @@ public class OneDimensionDataDistribution implements DataDistribution {
 
     public static Logger log = LogManager.getLogger(OneDimensionDataDistribution.class);
 
-    private YearDate year;
-    private String sourcePopulation;
-    private String sourceOrganisation;
+    private final YearDate year;
+    private final String sourcePopulation;
+    private final String sourceOrganisation;
 
 //    private Map<IntegerRange, Double> targetData;
 
-    private Map<IntegerRange, Double> appliedData;
+    private final Map<IntegerRange, Double> appliedData;
 
     public OneDimensionDataDistribution(YearDate year,
                                         String sourcePopulation,

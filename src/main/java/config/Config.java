@@ -43,13 +43,14 @@ public class Config {
     private Path varMultipleBirthPaths;
     private Path varPartneringPaths;
     private Path varSeparationPaths;
+
     private DirectoryStream.Filter<Path> filter = new DirectoryStream.Filter<Path>() {
         public boolean accept(Path file) throws IOException {
             return !file.getFileName().toString().matches("^\\..+");
         }
     };
 
-    public Config(Path pathToConfigFile) {
+    public Config(Path pathToConfigFile) throws InvalidTimeUnit, DateTimeException, NumberFormatException {
 
         Collection<String> configInput = InputFileReader.getAllLines(pathToConfigFile);
 
@@ -132,15 +133,15 @@ public class Config {
                         setUpBR = Double.parseDouble(split[1]);
                     } catch (NumberFormatException e) {
                         log.fatal("set_up _br " + e.getMessage());
-                        System.exit(3);
+                        throw e;
                     }
                     break;
                 case "set_up_dr":
                     try {
                         setUpDR = Double.parseDouble(split[1]);
                     } catch (NumberFormatException e) {
-                        log.fatal("set up death rate not a valid number");
-                        System.exit(3);
+                        log.fatal("set_up _dr " + e.getMessage());
+                        throw e;
                     }
                     break;
 
@@ -159,71 +160,72 @@ public class Config {
         return false;
     }
 
-    public DirectoryStream<Path> getVarOrderedBirthPaths() {
+    public DirectoryStream<Path> getVarOrderedBirthPaths() throws IOException {
         try {
             return Files.newDirectoryStream(varBirthPaths, filter);
         } catch (IOException e) {
-            log.fatal("Error reading in birth files. Will now exit.");
-            System.exit(101);
+            String message = "Error reading in birth files";
+            log.fatal(message);
+            throw new IOException(message, e);
         }
-        return null;
     }
 
 
-    public DirectoryStream<Path> getVarMaleDeathPaths() {
+    public DirectoryStream<Path> getVarMaleDeathPaths() throws IOException {
         try {
             return Files.newDirectoryStream(varMaleDeathPaths, filter);
         } catch (IOException e) {
-            log.fatal("Error reading in male death files. Will now exit.");
-            System.exit(101);
+            String message = "Error reading in male death files";
+            log.fatal(message);
+            throw new IOException(message, e);
         }
-        return null;
     }
 
-    public DirectoryStream<Path> getVarFemaleDeathPaths() {
+    public DirectoryStream<Path> getVarFemaleDeathPaths() throws IOException {
         try {
             return Files.newDirectoryStream(varFemaleDeathPaths, filter);
         } catch (IOException e) {
-            log.fatal("Error reading in female death files. Will now exit.");
-            System.exit(101);
+            String message = "Error reading in female death files";
+            log.fatal(message);
+            throw new IOException(message, e);
         }
-        return null;
     }
 
 
-    public DirectoryStream<Path> getVarMultipleBirthPaths() {
+    public DirectoryStream<Path> getVarMultipleBirthPaths() throws IOException {
         try {
             return Files.newDirectoryStream(varMultipleBirthPaths, filter);
         } catch (IOException e) {
-            log.fatal("Error reading in multiple birth files. Will now exit.");
-            System.exit(101);
+            String message = "Error reading in multiple birth files";
+            log.fatal(message);
+            throw new IOException(message, e);
         }
-        return null;
     }
 
 
-    public DirectoryStream<Path> getVarPartneringPaths() {
+    public DirectoryStream<Path> getVarPartneringPaths() throws IOException {
         try {
             return Files.newDirectoryStream(varPartneringPaths, filter);
         } catch (IOException e) {
-            log.fatal("Error reading in partnering files. Will now exit.");
-            System.exit(101);
+            String message = "Error reading in partnering files";
+            log.fatal(message);
+            throw new IOException(message, e);
         }
-        return null;
     }
 
 
-    public DirectoryStream<Path> getVarSeparationPaths() {
+    public DirectoryStream<Path> getVarSeparationPaths() throws IOException {
         try {
             return Files.newDirectoryStream(varSeparationPaths, filter);
         } catch (IOException e) {
-            log.fatal("Error reading in separation files. Will now exit.");
-            System.exit(101);
+            String message = "Error reading in separation files";
+            log.fatal(message);
+            throw new IOException(message, e);
         }
-        return null;
     }
 
-    public DateClock gettS() {
+
+    public DateClock getTS() {
         return tS;
     }
 
@@ -231,7 +233,7 @@ public class Config {
         return t0;
     }
 
-    public DateClock gettE() {
+    public DateClock getTE() {
         return tE;
     }
 

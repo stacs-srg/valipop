@@ -23,7 +23,7 @@ public abstract class PersonCollection {
 
     abstract int getNumberOfPersons();
 
-    public Collection<Person> removeNPersons(int numberToRemove, YearDate yearOfBirth) {
+    public Collection<Person> removeNPersons(int numberToRemove, Date yearOfBirth) {
         Collection<Person> people = new ArrayList<>(numberToRemove);
         Iterator<Person> iterator = getByYear(yearOfBirth).iterator();
 

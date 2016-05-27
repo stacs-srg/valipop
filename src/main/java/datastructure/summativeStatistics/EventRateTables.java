@@ -2,6 +2,7 @@ package datastructure.summativeStatistics;
 
 import datastructure.summativeStatistics.structure.OneDimensionDataDistribution;
 import datastructure.summativeStatistics.structure.TwoDimensionDataDistribution;
+import utils.time.Date;
 import utils.time.YearDate;
 
 /**
@@ -28,7 +29,7 @@ public interface EventRateTables {
      * @param gender the gender
      * @return the death rates
      */
-    OneDimensionDataDistribution getDeathRates(YearDate year, char gender);
+    OneDimensionDataDistribution getDeathRates(Date year, char gender);
 
     /**
      * Gets marriage rates for those married in the given year. The return table is two dimensional as it shows the rate
@@ -46,7 +47,7 @@ public interface EventRateTables {
      * @param year the year
      * @return the marriage rates
      */
-    TwoDimensionDataDistribution getPartneringRates(YearDate year);
+    TwoDimensionDataDistribution getPartneringRates(Date year);
 
     /**
      * Gets birth rates by order for births in the given year defined by the age and number of previous children born to
@@ -64,7 +65,7 @@ public interface EventRateTables {
      * @param year the year
      * @return the birth rates by order
      */
-    TwoDimensionDataDistribution getOrderedBirthRates(YearDate year);
+    TwoDimensionDataDistribution getOrderedBirthRates(Date year);
 
     /**
      * Gets multiple births in a maternity rate for women giving birth in a given year by age of the mother.
@@ -81,7 +82,7 @@ public interface EventRateTables {
      * @param year the year
      * @return the birth rates by order
      */
-    TwoDimensionDataDistribution getMultipleBirthRates(YearDate year);
+    TwoDimensionDataDistribution getMultipleBirthRates(Date year);
 
     /**
      * Gets the rate of separation after having a given number of children as a couple. The rate is considered in respect
@@ -97,6 +98,6 @@ public interface EventRateTables {
      * @param year the year
      * @return the death rates
      */
-    OneDimensionDataDistribution getSeparationByChildCountRates(YearDate year);
+    OneDimensionDataDistribution getSeparationByChildCountRates(Date year);
 
 }

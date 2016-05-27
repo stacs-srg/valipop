@@ -98,7 +98,7 @@ public class FemaleCollection extends PersonCollection {
         return byYearAndNumberOfChildren.get(year.getYearDate()).get(numberOfChildren);
     }
 
-    public Collection<Person> removeNPersons(int numberToRemove, YearDate yearOfBirth, int withNChildren) {
+    public Collection<Person> removeNPersons(int numberToRemove, YearDate yearOfBirth, int withNChildren, DateClock currentDate) {
 
         Collection<Person> people = new ArrayList<>();
         if (numberToRemove == 0) {
@@ -109,7 +109,13 @@ public class FemaleCollection extends PersonCollection {
 
         for (int i = 0; i < numberToRemove; i++) {
             Person p = iterator.next();
-            people.add(p);
+
+
+            // TODO NEXT this just broke things
+            if(p.noRecentChildren(currentDate)) {
+                people.add(p);
+            }
+            i--;
         }
 
         for (Person p : people) {

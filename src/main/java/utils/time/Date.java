@@ -19,4 +19,5 @@ public interface Date {
     DateInstant getInstant();
 
     YearDate getYearDate();
+
 }

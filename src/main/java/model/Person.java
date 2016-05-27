@@ -1,7 +1,6 @@
 package model;
 
-import utils.time.Date;
-import utils.time.DateInstant;
+import utils.time.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -80,5 +79,19 @@ public class Person implements IPerson {
     @Override
     public int compareTo(IPerson o) {
         return this.id == o.getId() ? 0 : -1;
+    }
+
+    public boolean noRecentChildren(DateClock currentDate) {
+
+        for(IPartnership p : partnerships) {
+           for(IPerson c : p.getChildren()) {
+               if(DateUtils.dateBefore(currentDate.advanceTime(-9, TimeUnit.MONTH), c.getBirthDate())) {
+                   return true;
+               }
+           }
+        }
+
+        return false;
+
     }
 }

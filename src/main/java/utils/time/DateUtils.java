@@ -8,10 +8,7 @@ public class DateUtils {
     private static final int MONTHS_IN_YEAR = 12;
 
     public static CompoundTimeUnit differenceInYears(Date a, Date b) {
-
         return new CompoundTimeUnit(Math.abs(a.getYear() - b.getYear()), TimeUnit.YEAR);
-
-
     }
 
     public static CompoundTimeUnit differenceInMonths(Date a, Date b) {
@@ -43,17 +40,21 @@ public class DateUtils {
 
     }
 
-    public static boolean matchesInterval(DateClock date, CompoundTimeUnit interval) {
+    public static boolean matchesInterval(Date date, CompoundTimeUnit interval) {
 
+        // If year interval and first month of year
         if (interval.getUnit() == TimeUnit.YEAR) {
             if (date.getMonth() == 1) {
+                // Checks year based on remainder from the year 0
                 if (date.getYear() % interval.getCount() == 0) {
                     return true;
                 }
             }
         }
 
+        // If month interval
         if (interval.getUnit() == TimeUnit.MONTH) {
+            // Offset by one to make month 1, 4, 7, 10 the months for the quarterly interval
             if ((date.getMonth() - 1) % interval.getCount() == 0) {
                 return true;
             }

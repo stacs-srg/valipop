@@ -6,6 +6,7 @@ import config.Config;
 import datastructure.summativeStatistics.structure.OneDimensionDataDistribution;
 import datastructure.summativeStatistics.structure.TwoDimensionDataDistribution;
 import datastructure.summativeStatistics.EventRateTables;
+import utils.time.Date;
 import utils.time.DateClock;
 import utils.time.DateUtils;
 import utils.time.YearDate;
@@ -45,8 +46,8 @@ public class PopulationStatistics implements PopulationComposition, EventRateTab
         this.multipleBirth = multipleBirth;
         this.separation = separation;
 
-        this.startDate = config.gettS();
-        this.endDate = config.gettE();
+        this.startDate = config.getTS();
+        this.endDate = config.getTE();
 
 
     }
@@ -63,32 +64,32 @@ public class PopulationStatistics implements PopulationComposition, EventRateTab
 
 
     @Override
-    public OneDimensionDataDistribution getDeathRates(YearDate year, char gender) {
+    public OneDimensionDataDistribution getDeathRates(Date year, char gender) {
         if (gender == 'm') {
-            return maleDeath.get(getNearestYearInMap(year, maleDeath));
+            return maleDeath.get(getNearestYearInMap(year.getYearDate(), maleDeath));
         } else {
-            return femaleDeath.get(getNearestYearInMap(year, femaleDeath));
+            return femaleDeath.get(getNearestYearInMap(year.getYearDate(), femaleDeath));
         }
     }
 
     @Override
-    public TwoDimensionDataDistribution getPartneringRates(YearDate year) {
-        return partnering.get(getNearestYearInMap(year, partnering));
+    public TwoDimensionDataDistribution getPartneringRates(Date year) {
+        return partnering.get(getNearestYearInMap(year.getYearDate(), partnering));
     }
 
     @Override
-    public TwoDimensionDataDistribution getOrderedBirthRates(YearDate year) {
-        return orderedBirth.get(getNearestYearInMap(year, orderedBirth));
+    public TwoDimensionDataDistribution getOrderedBirthRates(Date year) {
+        return orderedBirth.get(getNearestYearInMap(year.getYearDate(), orderedBirth));
     }
 
     @Override
-    public TwoDimensionDataDistribution getMultipleBirthRates(YearDate year) {
-        return multipleBirth.get(getNearestYearInMap(year, multipleBirth));
+    public TwoDimensionDataDistribution getMultipleBirthRates(Date year) {
+        return multipleBirth.get(getNearestYearInMap(year.getYearDate(), multipleBirth));
     }
 
     @Override
-    public OneDimensionDataDistribution getSeparationByChildCountRates(YearDate year) {
-        return separation.get(getNearestYearInMap(year, separation));
+    public OneDimensionDataDistribution getSeparationByChildCountRates(Date year) {
+        return separation.get(getNearestYearInMap(year.getYearDate(), separation));
     }
 
     @Override
@@ -96,13 +97,13 @@ public class PopulationStatistics implements PopulationComposition, EventRateTab
         return null;
     }
 
-    private YearDate getNearestYearInMap(YearDate year, Map<YearDate, ?> map) {
+    private YearDate getNearestYearInMap(Date year, Map<YearDate, ?> map) {
 
         int minDifferenceInMonths = Integer.MAX_VALUE;
         YearDate nearestTableYear = null;
 
         for (YearDate tableYear : map.keySet()) {
-            int difference = DateUtils.differenceInMonths(tableYear, year).getCount();
+            int difference = DateUtils.differenceInMonths(tableYear, year.getYearDate()).getCount();
             if (difference < minDifferenceInMonths) {
                 minDifferenceInMonths = difference;
                 nearestTableYear = tableYear;

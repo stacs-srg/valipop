@@ -13,6 +13,7 @@ import utils.time.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -34,11 +35,11 @@ public class Simulation {
     private DateClock currentTime;
 
 
-    public Simulation() {
-        currentTime = config.gettS();
+    public Simulation() throws IOException {
+        currentTime = config.getTS();
 
-        people = new PeopleCollection(config.gettS(), config.gettE());
-        deadPeople = new PeopleCollection(config.gettS(), config.gettE());
+        people = new PeopleCollection(config.getTS(), config.getTE());
+        deadPeople = new PeopleCollection(config.getTS(), config.getTE());
 
         // get desired population info
         desired = setUpSimData();
@@ -53,7 +54,15 @@ public class Simulation {
 
         log.info("Program begins");
 
-        Simulation sim = new Simulation();
+        Simulation sim = null;
+        try {
+            sim = new Simulation();
+        } catch (IOException e) {
+            log.fatal(e.getMessage() + " --- Will now exit");
+            log.fatal(e.getStackTrace());
+            e.printStackTrace();
+            System.exit(2);
+        }
 
         // run model
         IPopulation population = sim.makeSimulatedPopulation();
@@ -69,7 +78,7 @@ public class Simulation {
 
     }
 
-    private static PopulationStatistics setUpSimData() {
+    private static PopulationStatistics setUpSimData() throws IOException {
         return DesiredPopulationStatisticsFactory.initialisePopulationStatistics(config);
     }
 
@@ -93,7 +102,7 @@ public class Simulation {
 
         // start utils.time progression
         // for each utils.time step from T Start to T End
-        while (DateUtils.dateBefore(currentTime, config.gettE())) {
+        while (DateUtils.dateBefore(currentTime, config.getTE())) {
 
             // at every min timestep
             // clear out dead people
@@ -114,7 +123,7 @@ public class Simulation {
             }
 
             currentTime = currentTime.advanceTime(config.getSimulationTimeStep());
-            log.info("Current Date: " + currentTime.toString() + "    Population: " + people.getNumberOfPersons());
+            log.info("Time step completed " + currentTime.toString() + "    Population " + people.getNumberOfPersons());
 
         }
 

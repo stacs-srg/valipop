@@ -8,6 +8,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import utils.InputFileReader;
 
+import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Path;
 import java.util.HashMap;
@@ -27,9 +28,9 @@ public abstract class DesiredPopulationStatisticsFactory {
      *
      * @return the quantified event occurrences
      */
-    public static PopulationStatistics initialisePopulationStatistics(Config config) {
+    public static PopulationStatistics initialisePopulationStatistics(Config config) throws IOException {
 
-        DesiredPopulationStatisticsFactory.log.info("Creating PopulationStatistics");
+        DesiredPopulationStatisticsFactory.log.info("Creating PopulationStatistics instance");
 
         Map<YearDate, OneDimensionDataDistribution> maleDeath = readIn1DDataFiles(config.getVarMaleDeathPaths());
         Map<YearDate, OneDimensionDataDistribution> femaleDeath = readIn1DDataFiles(config.getVarFemaleDeathPaths());
@@ -48,9 +49,7 @@ public abstract class DesiredPopulationStatisticsFactory {
         for (Path path : paths) {
             // read in each file
             TwoDimensionDataDistribution tempData = InputFileReader.readIn2DDataFile(path);
-
             data.put(tempData.getYear(), tempData);
-
         }
         return data;
     }
@@ -62,11 +61,8 @@ public abstract class DesiredPopulationStatisticsFactory {
         for (Path path : paths) {
             // read in each file
             OneDimensionDataDistribution tempData = InputFileReader.readIn1DDataFile(path);
-
             data.put(tempData.getYear(), tempData);
-
         }
         return data;
     }
-
 }

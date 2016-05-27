@@ -1,17 +1,12 @@
 package datastructure.population;
 
-
 import model.Person;
 import model.IPartnership;
 import model.IPerson;
 import model.IPopulation;
 import utils.time.Date;
 import utils.time.DateClock;
-import utils.time.YearDate;
-
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
