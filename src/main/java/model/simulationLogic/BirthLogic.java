@@ -4,6 +4,7 @@ import config.Config;
 import datastructure.population.InsufficientNumberOfPeopleException;
 import datastructure.population.PeopleCollection;
 import datastructure.summativeStatistics.desired.PopulationStatistics;
+import datastructure.summativeStatistics.structure.DataKey;
 import datastructure.summativeStatistics.structure.IntegerRange;
 import datastructure.summativeStatistics.structure.OneDimensionDataDistribution;
 import model.Person;
@@ -45,7 +46,7 @@ public class BirthLogic {
             // DATA - get rate of births by mothers age
             OneDimensionDataDistribution orderedBirthRatesForMothersOfThisAge = desiredPopulationStatistics.getOrderedBirthRates(currentTime).getData(age);
             OneDimensionDataDistribution taperedOrderedBirthRatesForMothersOfThisAge = transformOrderedBirthRatesToTaperByOrderCount(orderedBirthRatesForMothersOfThisAge, womenOfThisAge.keySet());
-
+//
 //            MapUtils.print("NON-TAP", orderedBirthRatesForMothersOfThisAge.getData(), orderedBirthRatesForMothersOfThisAge.getMinRowLabelValue(), 1, orderedBirthRatesForMothersOfThisAge.getMaxRowLabelValue().getValue());
 //            MapUtils.print("TAPERED", taperedOrderedBirthRatesForMothersOfThisAge.getData(), taperedOrderedBirthRatesForMothersOfThisAge.getMinRowLabelValue(), 1, taperedOrderedBirthRatesForMothersOfThisAge.getMaxRowLabelValue().getValue());
 
@@ -67,30 +68,46 @@ public class BirthLogic {
                     continue;
                 } else {
                     // DATA 1 - get rate of births by mothers age and birth order
-                    double birthRate = taperedOrderedBirthRatesForMothersOfThisAge.getData(order) * config.getBirthTimeStep().toDecimalRepresentation();
+                    DataKey key = new DataKey(age, order, maxBirthOrderInCohort, women.size());
+
+                    double birthRate = desiredPopulationStatistics.getOrderedBirthRates(currentTime).getCorrectingData(key) * config.getBirthTimeStep().toDecimalRepresentation();
+                            //taperedOrderedBirthRatesForMothersOfThisAge.getData(order) * config.getBirthTimeStep().toDecimalRepresentation();
 
                     System.out.println("Age " + age + " | Order " + order + " | BR " + birthRate);
 
-                    // use DATA 1 to see how many many children need to be born
-                    int numberOfChildrenToBirth = calculateChildrenToBeBorn(sizeOfCohort, birthRate);
+                    int numberOfChildrenToBirth;
+                    int totalNumberOfMothers;
+                    Map<Integer, Integer> motherCountsByMaternitySize;
+
+                    do {
+                        // use DATA 1 to see how many many children need to be born
+                        numberOfChildrenToBirth = calculateChildrenToBeBorn(sizeOfCohort, birthRate);
+
+                        // calculate numbers of mothers to give birth (and which will bear twins, etc.)
+                        // use DATA 2 to decide how many mothers needed to birth children
+                        motherCountsByMaternitySize = calculateMotherCountsByMaternitySize(numberOfChildrenToBirth, proportionOfChildrenBornToEachSizeOfMaternity);
+
+                        // check the mother counts are possible to meet with the current cohort
+                        totalNumberOfMothers = CollectionUtils.sumIntegerCollection(motherCountsByMaternitySize.values());
+
+                        if(women.size() < totalNumberOfMothers) {
+                            double scalingFactor = women.size() / (double) totalNumberOfMothers;
+                            birthRate = scalingFactor * birthRate;
+                            log.info("Rescaling Birth Rate | Current Date: " + currentTime.toString() + " - Insufficient number of mothers: Eligible women " + women.size() + " | Mothers Required " + totalNumberOfMothers + " | Age " + age + " | Order " + order);
+                        }
+
+                    } while(women.size() < totalNumberOfMothers);
+
 
                     birthCount += numberOfChildrenToBirth;
+                    desiredPopulationStatistics.getOrderedBirthRates(currentTime).returnAppliedData(key, birthRate);
 
-                    // calculate numbers of mothers to give birth (and which will bear twins, etc.)
-                    // use DATA 2 to decide how many mothers needed to birth children
-                    Map<Integer, Integer> motherCountsByMaternitySize = calculateMotherCountsByMaternitySize(numberOfChildrenToBirth, proportionOfChildrenBornToEachSizeOfMaternity);
-
-                    // check the mother counts are possible to meet with the current cohort
-                    int totalNumberOfMothers = CollectionUtils.sumIntegerCollection(motherCountsByMaternitySize.values());
-
-                    System.out.println("Cohort Size " + sizeOfCohort + " | Number of Children " + numberOfChildrenToBirth + " | Number Of Mothers " + totalNumberOfMothers);
-
-                    if (women.size() < totalNumberOfMothers) {
-                        log.fatal("Current Date: " + currentTime.toString() + " - Insufficient number of mothers: Eligible women " + women.size() + " | Mothers Required " + totalNumberOfMothers + " | Age " + age + " | Order " + order);
-//                        MapUtils.print("TAPERED", taperedOrderedBirthRatesForMothersOfThisAge.getData(), taperedOrderedBirthRatesForMothersOfThisAge.getMinRowLabelValue(), 1, taperedOrderedBirthRatesForMothersOfThisAge.getMaxRowLabelValue().getValue());
-//                    totalNumberOfMothers = women.size();
-                        System.exit(451);
-                    }
+//                    if (women.size() < totalNumberOfMothers) {
+//                        log.fatal("Current Date: " + currentTime.toString() + " - Insufficient number of mothers: Eligible women " + women.size() + " | Mothers Required " + totalNumberOfMothers + " | Age " + age + " | Order " + order);
+////                        MapUtils.print("TAPERED", taperedOrderedBirthRatesForMothersOfThisAge.getData(), taperedOrderedBirthRatesForMothersOfThisAge.getMinRowLabelValue(), 1, taperedOrderedBirthRatesForMothersOfThisAge.getMaxRowLabelValue().getValue());
+////                    totalNumberOfMothers = women.size();
+//                        System.exit(451);
+//                    }
 
                     // select the mothers
                     for (Integer childrenInMaternity : motherCountsByMaternitySize.keySet()) {

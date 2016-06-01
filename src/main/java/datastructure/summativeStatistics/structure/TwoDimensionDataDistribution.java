@@ -1,10 +1,12 @@
 package datastructure.summativeStatistics.structure;
 
 import datastructure.summativeStatistics.DataDistribution;
+import org.apache.logging.log4j.core.appender.rolling.OnStartupTriggeringPolicy;
 import utils.time.YearDate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -94,6 +96,18 @@ public class TwoDimensionDataDistribution implements DataDistribution {
         throw new InvalidRangeException("RowValue does not exist in this data distribution");
     }
 
+    public Map<IntegerRange, OneDimensionDataDistribution> cloneData() {
+
+        Map<IntegerRange, OneDimensionDataDistribution> clone = new HashMap<IntegerRange, OneDimensionDataDistribution>();
+
+        for(IntegerRange iR : targetData.keySet()) {
+            OneDimensionDataDistribution d = targetData.get(iR);
+            clone.put(iR, new OneDimensionDataDistribution(d.getYear(), d.getSourcePopulation(), d.getSourceOrganisation(), d.cloneData()));
+        }
+
+        return clone;
+
+    }
 
 
 //    public Map<IntegerRange, Double> getData(IntegerRange row, int forNPeople) {

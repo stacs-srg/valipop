@@ -7,11 +7,20 @@ import java.util.Map;
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class SelfCorrectingTwoDimentionalDataDistribution extends TwoDimensionDataDistribution implements SelfCorrection {
+public class SelfCorrectingTwoDimensionDataDistribution extends TwoDimensionDataDistribution implements SelfCorrection {
 
-    public SelfCorrectingTwoDimentionalDataDistribution(YearDate year, String sourcePopulation, String sourceOrganisation, Map<IntegerRange, OneDimensionDataDistribution> tableData) {
+    public SelfCorrectingTwoDimensionDataDistribution(YearDate year, String sourcePopulation, String sourceOrganisation, Map<IntegerRange, OneDimensionDataDistribution> tableData) {
         super(year, sourcePopulation, sourceOrganisation, tableData);
         this.appliedData = tableData;
+        this.appliedCounts = tableData;
+
+        for(IntegerRange iR : appliedCounts.keySet()) {
+            OneDimensionDataDistribution t = appliedCounts.get(iR);
+            for(IntegerRange iR2 : t.getData().keySet()) {
+                t.getData().replace(iR2, 0.0);
+            }
+        }
+
     }
 
     private Map<IntegerRange, OneDimensionDataDistribution> appliedData;
@@ -36,6 +45,11 @@ public class SelfCorrectingTwoDimentionalDataDistribution extends TwoDimensionDa
 
         // get number of people a has been applied to - P
         int P = getCountData(data.getRowValue()).getData(data.getColumnValue()).intValue();
+
+        if(P == 0) {
+            System.out.println("H - 0");
+            return t;
+        }
 
         // calculate total number to be effected - T
         int T = L + P;

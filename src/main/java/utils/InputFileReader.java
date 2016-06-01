@@ -1,9 +1,6 @@
 package utils;
 
-import datastructure.summativeStatistics.structure.IntegerRange;
-import datastructure.summativeStatistics.structure.InvalidRangeException;
-import datastructure.summativeStatistics.structure.OneDimensionDataDistribution;
-import datastructure.summativeStatistics.structure.TwoDimensionDataDistribution;
+import datastructure.summativeStatistics.structure.*;
 import utils.time.YearDate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -142,6 +139,10 @@ public class InputFileReader {
         return new TwoDimensionDataDistribution(year, sourcePopulation, sourceOrganisation, data);
     }
 
+    public static SelfCorrectingTwoDimensionDataDistribution readInSC2DDataFile(Path path) {
+        TwoDimensionDataDistribution d = readIn2DDataFile(path);
+        return new SelfCorrectingTwoDimensionDataDistribution(d.getYear(), d.getSourcePopulation(), d.getSourceOrganisation(), d.cloneData());
+    }
 
     public static OneDimensionDataDistribution readIn1DDataFile(Path path) {
 

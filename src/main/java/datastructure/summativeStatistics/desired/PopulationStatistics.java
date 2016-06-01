@@ -4,6 +4,7 @@ import datastructure.summativeStatistics.generated.EventType;
 import datastructure.summativeStatistics.PopulationComposition;
 import config.Config;
 import datastructure.summativeStatistics.structure.OneDimensionDataDistribution;
+import datastructure.summativeStatistics.structure.SelfCorrectingTwoDimensionDataDistribution;
 import datastructure.summativeStatistics.structure.TwoDimensionDataDistribution;
 import datastructure.summativeStatistics.EventRateTables;
 import utils.time.Date;
@@ -27,7 +28,7 @@ public class PopulationStatistics implements PopulationComposition, EventRateTab
     Map<YearDate, OneDimensionDataDistribution> maleDeath;
     Map<YearDate, OneDimensionDataDistribution> femaleDeath;
     Map<YearDate, TwoDimensionDataDistribution> partnering;
-    Map<YearDate, TwoDimensionDataDistribution> orderedBirth;
+    Map<YearDate, SelfCorrectingTwoDimensionDataDistribution> orderedBirth;
     Map<YearDate, TwoDimensionDataDistribution> multipleBirth;
     Map<YearDate, OneDimensionDataDistribution> separation;
 
@@ -35,7 +36,7 @@ public class PopulationStatistics implements PopulationComposition, EventRateTab
                                 Map<YearDate, OneDimensionDataDistribution> maleDeath,
                                 Map<YearDate, OneDimensionDataDistribution> femaleDeath,
                                 Map<YearDate, TwoDimensionDataDistribution> partnering,
-                                Map<YearDate, TwoDimensionDataDistribution> orderedBirth,
+                                Map<YearDate, SelfCorrectingTwoDimensionDataDistribution> orderedBirth,
                                 Map<YearDate, TwoDimensionDataDistribution> multipleBirth,
                                 Map<YearDate, OneDimensionDataDistribution> separation) {
 
@@ -78,7 +79,7 @@ public class PopulationStatistics implements PopulationComposition, EventRateTab
     }
 
     @Override
-    public TwoDimensionDataDistribution getOrderedBirthRates(Date year) {
+    public SelfCorrectingTwoDimensionDataDistribution getOrderedBirthRates(Date year) {
         return orderedBirth.get(getNearestYearInMap(year.getYearDate(), orderedBirth));
     }
 

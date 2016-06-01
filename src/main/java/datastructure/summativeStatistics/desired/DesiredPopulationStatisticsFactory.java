@@ -2,6 +2,7 @@ package datastructure.summativeStatistics.desired;
 
 import config.Config;
 import datastructure.summativeStatistics.structure.OneDimensionDataDistribution;
+import datastructure.summativeStatistics.structure.SelfCorrectingTwoDimensionDataDistribution;
 import datastructure.summativeStatistics.structure.TwoDimensionDataDistribution;
 import utils.time.YearDate;
 import org.apache.logging.log4j.LogManager;
@@ -35,7 +36,7 @@ public abstract class DesiredPopulationStatisticsFactory {
         Map<YearDate, OneDimensionDataDistribution> maleDeath = readIn1DDataFiles(config.getVarMaleDeathPaths());
         Map<YearDate, OneDimensionDataDistribution> femaleDeath = readIn1DDataFiles(config.getVarFemaleDeathPaths());
         Map<YearDate, TwoDimensionDataDistribution> partnering = readIn2DDataFiles(config.getVarPartneringPaths());
-        Map<YearDate, TwoDimensionDataDistribution> orderedBirth = readIn2DDataFiles(config.getVarOrderedBirthPaths());
+        Map<YearDate, SelfCorrectingTwoDimensionDataDistribution> orderedBirth = readInSC2DDataFiles(config.getVarOrderedBirthPaths());
         Map<YearDate, TwoDimensionDataDistribution> multipleBirth = readIn2DDataFiles(config.getVarMultipleBirthPaths());
         Map<YearDate, OneDimensionDataDistribution> separation = readIn1DDataFiles(config.getVarSeparationPaths());
 
@@ -49,6 +50,18 @@ public abstract class DesiredPopulationStatisticsFactory {
         for (Path path : paths) {
             // read in each file
             TwoDimensionDataDistribution tempData = InputFileReader.readIn2DDataFile(path);
+            data.put(tempData.getYear(), tempData);
+        }
+        return data;
+    }
+
+    private static Map<YearDate, SelfCorrectingTwoDimensionDataDistribution> readInSC2DDataFiles(DirectoryStream<Path> paths) {
+
+        Map<YearDate, SelfCorrectingTwoDimensionDataDistribution> data = new HashMap<YearDate, SelfCorrectingTwoDimensionDataDistribution>();
+
+        for (Path path : paths) {
+            // read in each file
+            SelfCorrectingTwoDimensionDataDistribution tempData = InputFileReader.readInSC2DDataFile(path);
             data.put(tempData.getYear(), tempData);
         }
         return data;
