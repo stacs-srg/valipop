@@ -20,9 +20,7 @@ public class OneDimensionDataDistribution implements DataDistribution {
     private final String sourcePopulation;
     private final String sourceOrganisation;
 
-//    private Map<IntegerRange, Double> targetData;
-
-    private final Map<IntegerRange, Double> appliedData;
+    private final Map<IntegerRange, Double> targetData;
 
     public OneDimensionDataDistribution(YearDate year,
                                         String sourcePopulation,
@@ -32,7 +30,7 @@ public class OneDimensionDataDistribution implements DataDistribution {
         this.year = year;
         this.sourcePopulation = sourcePopulation;
         this.sourceOrganisation = sourceOrganisation;
-        this.appliedData = tableData;
+        this.targetData = tableData;
     }
 
     @Override
@@ -53,7 +51,7 @@ public class OneDimensionDataDistribution implements DataDistribution {
     @Override
     public int getMinRowLabelValue() {
         int min = Integer.MAX_VALUE;
-        for (IntegerRange iR : appliedData.keySet()) {
+        for (IntegerRange iR : targetData.keySet()) {
             int v = iR.getMin();
             if (v < min) {
                 min = v;
@@ -65,7 +63,7 @@ public class OneDimensionDataDistribution implements DataDistribution {
     public IntegerRange getMinRowLabelValue2() {
         int min = Integer.MAX_VALUE;
         IntegerRange label = null;
-        for (IntegerRange iR : appliedData.keySet()) {
+        for (IntegerRange iR : targetData.keySet()) {
             int v = iR.getMin();
             if (v < min) {
                 min = v;
@@ -79,7 +77,7 @@ public class OneDimensionDataDistribution implements DataDistribution {
     public IntegerRange getMaxRowLabelValue() {
         IntegerRange max = null;
         int maxV = Integer.MIN_VALUE;
-        for (IntegerRange iR : appliedData.keySet()) {
+        for (IntegerRange iR : targetData.keySet()) {
             int v = iR.getMax();
             if (v > maxV) {
                 max = iR;
@@ -101,12 +99,12 @@ public class OneDimensionDataDistribution implements DataDistribution {
             System.exit(303);
         }
 
-        return appliedData.get(row);
+        return targetData.get(row);
     }
 
-    private IntegerRange resolveRowValue(Integer rowValue) {
+    protected IntegerRange resolveRowValue(Integer rowValue) {
 
-        for (IntegerRange iR : appliedData.keySet()) {
+        for (IntegerRange iR : targetData.keySet()) {
             if (iR.contains(rowValue)) {
                 return iR;
             }
@@ -116,14 +114,14 @@ public class OneDimensionDataDistribution implements DataDistribution {
     }
 
     public Map<IntegerRange, Double> getData() {
-        return appliedData;
+        return targetData;
     }
 
     public Map<IntegerRange, Double> cloneData() {
         Map<IntegerRange, Double> map = new HashMap<IntegerRange, Double>();
 
-        for (IntegerRange iR : appliedData.keySet()) {
-            map.put(iR, appliedData.get(iR));
+        for (IntegerRange iR : targetData.keySet()) {
+            map.put(iR, targetData.get(iR));
         }
 
         return map;

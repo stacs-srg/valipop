@@ -1,5 +1,6 @@
 package model.simulationLogic;
 
+import datastructure.population.InsufficientNumberOfPeopleException;
 import datastructure.population.PeopleCollection;
 import datastructure.summativeStatistics.desired.DesiredPopulationStatisticsFactory;
 import datastructure.summativeStatistics.desired.PopulationStatistics;
@@ -65,7 +66,16 @@ public class Simulation {
         }
 
         // run model
-        IPopulation population = sim.makeSimulatedPopulation();
+
+        IPopulation population = null;
+        try {
+            population = sim.makeSimulatedPopulation();
+        } catch (InsufficientNumberOfPeopleException e) {
+            log.fatal(e.getMessage() + " --- Will now exit");
+            log.fatal(e.getStackTrace());
+            e.printStackTrace();
+            System.exit(2);
+        }
 
         // perform comparisons
         ComparativeAnalysis comparisonOfDesiredAndGenerated = sim.analyseGeneratedPopulation(population);
@@ -95,7 +105,7 @@ public class Simulation {
 
     }
 
-    private IPopulation makeSimulatedPopulation() {
+    private IPopulation makeSimulatedPopulation() throws InsufficientNumberOfPeopleException {
 
         // INFO: at this point all the desired population statistics have been made available
         log.info("Simulation begins");

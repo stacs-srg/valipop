@@ -1,6 +1,7 @@
 package model.simulationLogic;
 
 import config.Config;
+import datastructure.population.InsufficientNumberOfPeopleException;
 import datastructure.population.PeopleCollection;
 import datastructure.summativeStatistics.desired.PopulationStatistics;
 import datastructure.summativeStatistics.structure.IntegerRange;
@@ -27,7 +28,7 @@ public class BirthLogic {
 
 
     public static int handleBirths(Config config, DateClock currentTime, PopulationStatistics desiredPopulationStatistics,
-                              PeopleCollection people) {
+                              PeopleCollection people) throws InsufficientNumberOfPeopleException {
 
         int birthCount = 0;
 
@@ -45,7 +46,7 @@ public class BirthLogic {
             OneDimensionDataDistribution orderedBirthRatesForMothersOfThisAge = desiredPopulationStatistics.getOrderedBirthRates(currentTime).getData(age);
             OneDimensionDataDistribution taperedOrderedBirthRatesForMothersOfThisAge = transformOrderedBirthRatesToTaperByOrderCount(orderedBirthRatesForMothersOfThisAge, womenOfThisAge.keySet());
 
-            MapUtils.print("NON-TAP", orderedBirthRatesForMothersOfThisAge.getData(), orderedBirthRatesForMothersOfThisAge.getMinRowLabelValue(), 1, orderedBirthRatesForMothersOfThisAge.getMaxRowLabelValue().getValue());
+//            MapUtils.print("NON-TAP", orderedBirthRatesForMothersOfThisAge.getData(), orderedBirthRatesForMothersOfThisAge.getMinRowLabelValue(), 1, orderedBirthRatesForMothersOfThisAge.getMaxRowLabelValue().getValue());
 //            MapUtils.print("TAPERED", taperedOrderedBirthRatesForMothersOfThisAge.getData(), taperedOrderedBirthRatesForMothersOfThisAge.getMinRowLabelValue(), 1, taperedOrderedBirthRatesForMothersOfThisAge.getMaxRowLabelValue().getValue());
 
             // DATA 2 - get rate of multiple births in a maternity by mothers age
@@ -59,7 +60,7 @@ public class BirthLogic {
             // for each number of children already birthed to mothers (BIRTH ORDER)
             for (int order = 0; order <= maxBirthOrderInCohort; order++) {
 
-                // women of this age and birth order
+                // women of this age and birth order - L
                 Collection<Person> women = womenOfThisAge.get(order);
 
                 if (women == null || women.size() == 0) {
@@ -86,7 +87,7 @@ public class BirthLogic {
 
                     if (women.size() < totalNumberOfMothers) {
                         log.fatal("Current Date: " + currentTime.toString() + " - Insufficient number of mothers: Eligible women " + women.size() + " | Mothers Required " + totalNumberOfMothers + " | Age " + age + " | Order " + order);
-                        MapUtils.print("TAPERED", taperedOrderedBirthRatesForMothersOfThisAge.getData(), taperedOrderedBirthRatesForMothersOfThisAge.getMinRowLabelValue(), 1, taperedOrderedBirthRatesForMothersOfThisAge.getMaxRowLabelValue().getValue());
+//                        MapUtils.print("TAPERED", taperedOrderedBirthRatesForMothersOfThisAge.getData(), taperedOrderedBirthRatesForMothersOfThisAge.getMinRowLabelValue(), 1, taperedOrderedBirthRatesForMothersOfThisAge.getMaxRowLabelValue().getValue());
 //                    totalNumberOfMothers = women.size();
                         System.exit(451);
                     }
@@ -94,7 +95,16 @@ public class BirthLogic {
                     // select the mothers
                     for (Integer childrenInMaternity : motherCountsByMaternitySize.keySet()) {
 
-                        ArrayList<Person> mothersToBe = new ArrayList<>(people.getFemales().removeNPersons(motherCountsByMaternitySize.get(childrenInMaternity), yearOfBirthInConsideration, order, currentTime));
+                        ArrayList<Person> mothersToBe = null;
+
+                        try {
+                            mothersToBe = new ArrayList<>(people.getFemales().removeNPersons(motherCountsByMaternitySize.get(childrenInMaternity), yearOfBirthInConsideration, order, currentTime));
+                        } catch (InsufficientNumberOfPeopleException e) {
+                            log.fatal(e.getMessage() + " for allocation of mothers");
+                            throw e;
+                        }
+
+
                         for (int n = 0; n < motherCountsByMaternitySize.get(childrenInMaternity); n++) {
                             Person mother = mothersToBe.get(n);
 

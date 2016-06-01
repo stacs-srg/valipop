@@ -14,18 +14,17 @@ public class TwoDimensionDataDistribution implements DataDistribution {
 
     public static Logger log = LogManager.getLogger(TwoDimensionDataDistribution.class);
 
-    private final Map<IntegerRange, OneDimensionDataDistribution> appliedData;
+    protected final Map<IntegerRange, OneDimensionDataDistribution> targetData;
     private YearDate year;
     private String sourcePopulation;
 
-    //    private Map<IntegerRange, Map<IntegerRange, Double>> targetData;
     private String sourceOrganisation;
 
     public TwoDimensionDataDistribution(YearDate year, String sourcePopulation, String sourceOrganisation, Map<IntegerRange, OneDimensionDataDistribution> tableData) {
         this.year = year;
         this.sourcePopulation = sourcePopulation;
         this.sourceOrganisation = sourceOrganisation;
-        this.appliedData = tableData;
+        this.targetData = tableData;
     }
 
     @Override
@@ -46,7 +45,7 @@ public class TwoDimensionDataDistribution implements DataDistribution {
     @Override
     public int getMinRowLabelValue() {
         int min = Integer.MAX_VALUE;
-        for (IntegerRange iR : appliedData.keySet()) {
+        for (IntegerRange iR : targetData.keySet()) {
             int v = iR.getMin();
             if (v < min) {
                 min = v;
@@ -59,7 +58,7 @@ public class TwoDimensionDataDistribution implements DataDistribution {
     public IntegerRange getMaxRowLabelValue() {
         IntegerRange max = null;
         int maxV = Integer.MIN_VALUE;
-        for (IntegerRange iR : appliedData.keySet()) {
+        for (IntegerRange iR : targetData.keySet()) {
             int v = iR.getMax();
             if (v > maxV) {
                 max = iR;
@@ -74,19 +73,19 @@ public class TwoDimensionDataDistribution implements DataDistribution {
 
         IntegerRange row = null;
         try {
-            row = resolveRowValue(rowValue);
+            row = resolveRowValue(rowValue, targetData);
         } catch (InvalidRangeException e) {
             log.fatal(e.getMessage());
             System.exit(303);
         }
 
-        return appliedData.get(row);
+        return targetData.get(row);
     }
 
-    private IntegerRange resolveRowValue(Integer rowValue) {
+    protected static IntegerRange resolveRowValue(Integer rowValue, Map<IntegerRange, OneDimensionDataDistribution> data) {
 
 
-        for (IntegerRange iR : appliedData.keySet()) {
+        for (IntegerRange iR : data.keySet()) {
             if (iR.contains(rowValue)) {
                 return iR;
             }
@@ -94,6 +93,7 @@ public class TwoDimensionDataDistribution implements DataDistribution {
 
         throw new InvalidRangeException("RowValue does not exist in this data distribution");
     }
+
 
 
 //    public Map<IntegerRange, Double> getData(IntegerRange row, int forNPeople) {
@@ -105,6 +105,8 @@ public class TwoDimensionDataDistribution implements DataDistribution {
 //
 //
 //    }
+
+
 
 
 }

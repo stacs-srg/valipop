@@ -15,6 +15,10 @@ public final class YearDate implements Date {
         this.year = year;
     }
 
+    public String toString() {
+        return "1/1/" + year;
+    }
+
     @Override
     public int getYear() {
         return year;

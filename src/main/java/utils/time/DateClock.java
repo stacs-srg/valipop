@@ -41,6 +41,10 @@ public final class DateClock implements Date {
                     y++;
                     m -= MONTHS_IN_YEAR;
                 }
+                while (m <= 0) {
+                    y--;
+                    m += MONTHS_IN_YEAR;
+                }
                 break;
             case YEAR:
                 y += numberOf;

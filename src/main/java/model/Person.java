@@ -86,12 +86,12 @@ public class Person implements IPerson {
         for(IPartnership p : partnerships) {
            for(IPerson c : p.getChildren()) {
                if(DateUtils.dateBefore(currentDate.advanceTime(-9, TimeUnit.MONTH), c.getBirthDate())) {
-                   return true;
+                   return false;
                }
            }
         }
 
-        return false;
+        return true;
 
     }
 }

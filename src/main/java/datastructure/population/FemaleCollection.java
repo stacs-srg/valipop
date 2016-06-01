@@ -98,7 +98,7 @@ public class FemaleCollection extends PersonCollection {
         return byYearAndNumberOfChildren.get(year.getYearDate()).get(numberOfChildren);
     }
 
-    public Collection<Person> removeNPersons(int numberToRemove, YearDate yearOfBirth, int withNChildren, DateClock currentDate) {
+    public Collection<Person> removeNPersons(int numberToRemove, YearDate yearOfBirth, int withNChildren, DateClock currentDate) throws InsufficientNumberOfPeopleException {
 
         Collection<Person> people = new ArrayList<>();
         if (numberToRemove == 0) {
@@ -108,14 +108,22 @@ public class FemaleCollection extends PersonCollection {
         Iterator<Person> iterator = byYearAndNumberOfChildren.get(yearOfBirth).get(withNChildren).iterator();
 
         for (int i = 0; i < numberToRemove; i++) {
-            Person p = iterator.next();
+
+            Person p;
+            try {
+                p = iterator.next();
+            } catch (NoSuchElementException e) {
+                System.out.println("CD " + currentDate.toString() + " |   YB " + yearOfBirth.toString() + " |   ORDER " + withNChildren + " |   " + i + "/" + numberToRemove + " | " + byYearAndNumberOfChildren.get(yearOfBirth).get(withNChildren).size());
+                throw new InsufficientNumberOfPeopleException("Not enough females to remove specified number from collection");
+            }
 
 
             // TODO NEXT this just broke things
             if(p.noRecentChildren(currentDate)) {
                 people.add(p);
+            } else {
+                i--;
             }
-            i--;
         }
 
         for (Person p : people) {
