@@ -104,4 +104,9 @@ public final class DateInstant implements Date {
         return new YearDate(year);
     }
 
+    @Override
+    public DateClock getDateClock() throws UnsupportedDateConversion {
+        throw new UnsupportedDateConversion("Cannot convert from DateInstant to DateClock due to the resulting loss information regarding the day of the month");
+    }
+
 }

@@ -73,11 +73,12 @@ public class BirthLogic {
                     double birthRate = desiredPopulationStatistics.getOrderedBirthRates(currentTime).getCorrectingData(key) * config.getBirthTimeStep().toDecimalRepresentation();
                             //taperedOrderedBirthRatesForMothersOfThisAge.getData(order) * config.getBirthTimeStep().toDecimalRepresentation();
 
-                    System.out.println("Age " + age + " | Order " + order + " | BR " + birthRate);
+//                    System.out.println("Age " + age + " | Order " + order + " | BR " + birthRate / config.getBirthTimeStep().toDecimalRepresentation());
 
                     int numberOfChildrenToBirth;
                     int totalNumberOfMothers;
                     Map<Integer, Integer> motherCountsByMaternitySize;
+                    int eligableWomen;
 
                     do {
                         // use DATA 1 to see how many many children need to be born
@@ -90,17 +91,19 @@ public class BirthLogic {
                         // check the mother counts are possible to meet with the current cohort
                         totalNumberOfMothers = CollectionUtils.sumIntegerCollection(motherCountsByMaternitySize.values());
 
-                        if(women.size() < totalNumberOfMothers) {
-                            double scalingFactor = women.size() / (double) totalNumberOfMothers;
+                        eligableWomen = eligableMothers(women, currentTime);
+
+                        if(eligableWomen < totalNumberOfMothers || eligableWomen == 0) {
+                            double scalingFactor = eligableWomen / (double) totalNumberOfMothers;
                             birthRate = scalingFactor * birthRate;
                             log.info("Rescaling Birth Rate | Current Date: " + currentTime.toString() + " - Insufficient number of mothers: Eligible women " + women.size() + " | Mothers Required " + totalNumberOfMothers + " | Age " + age + " | Order " + order);
                         }
 
-                    } while(women.size() < totalNumberOfMothers);
+                    } while(eligableWomen < totalNumberOfMothers);
 
 
                     birthCount += numberOfChildrenToBirth;
-                    desiredPopulationStatistics.getOrderedBirthRates(currentTime).returnAppliedData(key, birthRate);
+                    desiredPopulationStatistics.getOrderedBirthRates(currentTime).returnAppliedData(key, birthRate / config.getBirthTimeStep().toDecimalRepresentation());
 
 //                    if (women.size() < totalNumberOfMothers) {
 //                        log.fatal("Current Date: " + currentTime.toString() + " - Insufficient number of mothers: Eligible women " + women.size() + " | Mothers Required " + totalNumberOfMothers + " | Age " + age + " | Order " + order);
@@ -170,7 +173,22 @@ public class BirthLogic {
         }
 
         log.info("Births handled: " + currentTime.toString() + " - " + birthCount);
+        System.out.println("Births handled: " + currentTime.toString() + " - " + birthCount);
         return birthCount;
+
+    }
+
+    private static int eligableMothers(Collection<Person> women, DateClock currentTime) {
+
+        int count = 0;
+
+        for(Person w : women) {
+            if(w.noRecentChildren(currentTime)) {
+                count ++;
+            }
+        }
+
+        return count;
 
     }
 

@@ -33,6 +33,13 @@ public class OneDimensionDataDistribution implements DataDistribution {
         this.targetData = tableData;
     }
 
+    public void updateValue(Integer row, double newValue) {
+
+        IntegerRange rowRange = resolveRowValue(row);
+
+        targetData.replace(rowRange, newValue);
+    }
+
     @Override
     public YearDate getYear() {
         return year;
@@ -125,6 +132,12 @@ public class OneDimensionDataDistribution implements DataDistribution {
         }
 
         return map;
+
+    }
+
+    public OneDimensionDataDistribution clone() {
+
+        return new OneDimensionDataDistribution(year, sourcePopulation, sourceOrganisation, cloneData());
 
     }
 

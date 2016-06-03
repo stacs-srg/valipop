@@ -1,5 +1,6 @@
 package datastructure.summativeStatistics.structure;
 
+import utils.MapUtils;
 import utils.time.YearDate;
 
 import java.util.Map;
@@ -11,8 +12,8 @@ public class SelfCorrectingTwoDimensionDataDistribution extends TwoDimensionData
 
     public SelfCorrectingTwoDimensionDataDistribution(YearDate year, String sourcePopulation, String sourceOrganisation, Map<IntegerRange, OneDimensionDataDistribution> tableData) {
         super(year, sourcePopulation, sourceOrganisation, tableData);
-        this.appliedData = tableData;
-        this.appliedCounts = tableData;
+        this.appliedData = MapUtils.clone(tableData);
+        this.appliedCounts = MapUtils.clone(tableData);
 
         for(IntegerRange iR : appliedCounts.keySet()) {
             OneDimensionDataDistribution t = appliedCounts.get(iR);
@@ -44,10 +45,16 @@ public class SelfCorrectingTwoDimensionDataDistribution extends TwoDimensionData
         double a = getPreviousData(data.getRowValue()).getData(data.getColumnValue());
 
         // get number of people a has been applied to - P
-        int P = getCountData(data.getRowValue()).getData(data.getColumnValue()).intValue();
+        Double dP = getCountData(data.getRowValue()).getData(data.getColumnValue());
+
+        int P = dP.intValue();
+
+//        System.out.println(dP);
+//        System.out.println(P);
 
         if(P == 0) {
-            System.out.println("H - 0");
+            System.out.println("P - 0");
+            System.out.println("t - " + t);
             return t;
         }
 
@@ -65,7 +72,7 @@ public class SelfCorrectingTwoDimensionDataDistribution extends TwoDimensionData
         } else {
             // scale to appropriate value
             // if mcv - 1 > mrl
-            if(data.getMaxColumnValue() - 1 < getMaxRowLabelValue().getValue()) {
+            if(data.getMaxColumnValue() - 1 > getMaxRowLabelValue().getValue()) {
                 // r = x(cV - mcv - 1)^2 / (mcv - mrl)^2
                 return x * Math.pow(data.getColumnValue() - data.getMaxColumnValue() - 1, 2) / Math.pow(data.getMaxColumnValue() - getMaxRowLabelValue().getValue(), 2);
             } else {
@@ -103,8 +110,8 @@ public class SelfCorrectingTwoDimensionDataDistribution extends TwoDimensionData
         // z = (Pa + Lx) / T
         double z = (P*a + L*x) / T;
 
-        // inc count by P
-        updateCounts(data.getRowValue(), data.getColumnValue(), P);
+        // inc count by T
+        updateCounts(data.getRowValue(), data.getColumnValue(), T);
 
         // update appliedData to z
         updateAppliedData(data.getRowValue(), data.getColumnValue(), z);
@@ -115,9 +122,7 @@ public class SelfCorrectingTwoDimensionDataDistribution extends TwoDimensionData
 
     private void updateAppliedData(Integer rowValue, Integer columnValue, double newValue) {
 
-        OneDimensionDataDistribution applied = appliedData.get(resolveRowValue(rowValue, appliedData));
-        applied.getData().replace(applied.resolveRowValue(columnValue), newValue);
-
+        appliedData.get(resolveRowValue(rowValue, appliedData)).updateValue(columnValue, newValue);
 
     }
 

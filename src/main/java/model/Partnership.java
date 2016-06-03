@@ -2,6 +2,7 @@ package model;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import utils.time.Date;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +19,9 @@ public class Partnership implements IPartnership {
     private IPerson female;
     private List<IPerson> children = new ArrayList<IPerson>();
 
-    public Partnership(IPerson male, IPerson female) {
+    private Date partnershipDate;
+
+    public Partnership(IPerson male, IPerson female, Date partnershipDate) {
 
         this.id = getNewId();
 
@@ -27,6 +30,7 @@ public class Partnership implements IPartnership {
 //            System.exit(202);
 //        }
 
+        this.partnershipDate = partnershipDate;
         this.male = male;
         this.female = female;
 
@@ -67,6 +71,11 @@ public class Partnership implements IPartnership {
     @Override
     public List<IPerson> getChildren() {
         return children;
+    }
+
+    @Override
+    public Date getPartnershipDate() {
+        return partnershipDate;
     }
 
     @Override

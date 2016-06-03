@@ -14,12 +14,12 @@ import utils.time.DateClock;
 public class GeneratedPopulationComposition implements PopulationComposition {
 
     @Override
-    public DateClock getEarliestDate() {
+    public DateClock getStartDate() {
         return null;
     }
 
     @Override
-    public DateClock getLatestDate() {
+    public DateClock getEndDate() {
         return null;
     }
 

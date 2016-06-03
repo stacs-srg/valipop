@@ -16,6 +16,8 @@
  */
 package model;
 
+import utils.time.Date;
+
 import java.util.List;
 
 /**
@@ -61,4 +63,6 @@ public interface IPartnership extends Comparable<IPartnership> {
      * @return the identifiers of the partnership's child_ids
      */
     List<IPerson> getChildren();
+
+    Date getPartnershipDate();
 }

@@ -1,5 +1,6 @@
 package datastructure.population;
 
+import datastructure.summativeStatistics.DateBounds;
 import model.Person;
 import utils.time.Date;
 import utils.time.YearDate;
@@ -11,7 +12,7 @@ import java.util.Iterator;
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public abstract class PersonCollection {
+public abstract class PersonCollection implements DateBounds {
 
     abstract Collection<Person> getAll();
 
@@ -43,4 +44,16 @@ public abstract class PersonCollection {
         return people;
     }
 
+    protected Date startDate;
+    protected Date endDate;
+
+    @Override
+    public Date getStartDate() {
+        return startDate;
+    }
+
+    @Override
+    public Date getEndDate() {
+        return endDate;
+    }
 }

@@ -13,8 +13,8 @@ public class MaleCollection extends PersonCollection {
 
     private Map<YearDate, Collection<Person>> byYear = new HashMap<YearDate, Collection<Person>>();
 
-    public MaleCollection(DateClock start, DateClock end) {
-        for (DateClock y = start; DateUtils.dateBefore(y, end); y = y.advanceTime(1, TimeUnit.YEAR)) {
+    public MaleCollection(Date start, Date end) throws UnsupportedDateConversion {
+        for (DateClock y = start.getDateClock(); DateUtils.dateBefore(y, end); y = y.advanceTime(1, TimeUnit.YEAR)) {
             byYear.put(y.getYearDate(), new ArrayList<Person>());
         }
     }

@@ -1,5 +1,6 @@
 package utils;
 
+import datastructure.summativeStatistics.structure.OneDimensionDataDistribution;
 import model.Person;
 import datastructure.summativeStatistics.structure.IntegerRange;
 
@@ -82,4 +83,15 @@ public class MapUtils {
         System.out.println();
     }
 
+    public static Map<IntegerRange,OneDimensionDataDistribution> clone(Map<IntegerRange, OneDimensionDataDistribution> tableData) {
+
+        Map<IntegerRange,OneDimensionDataDistribution> clone = new HashMap<IntegerRange,OneDimensionDataDistribution>();
+
+        for(IntegerRange iR : tableData.keySet()) {
+            clone.put(iR, tableData.get(iR).clone());
+        }
+
+        return clone;
+
+    }
 }

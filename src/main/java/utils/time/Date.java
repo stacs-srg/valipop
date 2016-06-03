@@ -20,4 +20,5 @@ public interface Date {
 
     YearDate getYearDate();
 
+    DateClock getDateClock() throws UnsupportedDateConversion;
 }

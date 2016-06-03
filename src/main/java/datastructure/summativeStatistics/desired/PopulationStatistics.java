@@ -54,12 +54,12 @@ public class PopulationStatistics implements PopulationComposition, EventRateTab
     }
 
     @Override
-    public DateClock getEarliestDate() {
+    public DateClock getStartDate() {
         return startDate;
     }
 
     @Override
-    public DateClock getLatestDate() {
+    public DateClock getEndDate() {
         return endDate;
     }
 

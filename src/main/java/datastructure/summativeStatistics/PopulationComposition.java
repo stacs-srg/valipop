@@ -11,6 +11,6 @@ import datastructure.summativeStatistics.generated.StatisticalTables;
  *
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public interface PopulationComposition extends PopulationDateRange, StatisticalTables {
+public interface PopulationComposition extends DateBounds, StatisticalTables {
 
 }

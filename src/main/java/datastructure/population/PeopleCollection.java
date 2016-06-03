@@ -6,6 +6,8 @@ import model.IPerson;
 import model.IPopulation;
 import utils.time.Date;
 import utils.time.DateClock;
+import utils.time.UnsupportedDateConversion;
+
 import java.util.Collection;
 
 /**
@@ -16,7 +18,7 @@ public class PeopleCollection extends PersonCollection implements IPopulation {
     private MaleCollection males;
     private FemaleCollection females;
 
-    public PeopleCollection(DateClock start, DateClock end) {
+    public PeopleCollection(Date start, Date end) throws UnsupportedDateConversion {
         males = new MaleCollection(start, end);
         females = new FemaleCollection(start, end);
     }

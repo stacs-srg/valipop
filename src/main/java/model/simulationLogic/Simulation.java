@@ -1,5 +1,10 @@
 package model.simulationLogic;
 
+import analytic.ChildrenAnalytics;
+import analytic.DeathAnalytics;
+import analytic.MarriageAnalytics;
+import analytic.PopulationAnalytics;
+import datastructure.population.AggregatePersonCollectionFactory;
 import datastructure.population.InsufficientNumberOfPeopleException;
 import datastructure.population.PeopleCollection;
 import datastructure.summativeStatistics.desired.DesiredPopulationStatisticsFactory;
@@ -36,8 +41,9 @@ public class Simulation {
     private DateClock currentTime;
 
 
-    public Simulation() throws IOException {
+    public Simulation() throws IOException, UnsupportedDateConversion {
         currentTime = config.getTS();
+
 
         people = new PeopleCollection(config.getTS(), config.getTE());
         deadPeople = new PeopleCollection(config.getTS(), config.getTE());
@@ -63,6 +69,11 @@ public class Simulation {
             log.fatal(e.getStackTrace());
             e.printStackTrace();
             System.exit(2);
+        } catch (UnsupportedDateConversion e1) {
+            log.fatal(e1.getMessage() + " --- Will now exit");
+            log.fatal(e1.getStackTrace());
+            e1.printStackTrace();
+            System.exit(2);
         }
 
         // run model
@@ -75,10 +86,23 @@ public class Simulation {
             log.fatal(e.getStackTrace());
             e.printStackTrace();
             System.exit(2);
+        } catch (UnsupportedDateConversion e1) {
+            log.fatal(e1.getMessage() + " --- Will now exit");
+            log.fatal(e1.getStackTrace());
+            e1.printStackTrace();
+            System.exit(2);
         }
 
         // perform comparisons
         ComparativeAnalysis comparisonOfDesiredAndGenerated = sim.analyseGeneratedPopulation(population);
+
+
+        try {
+            runAnalytics(population);
+        } catch (Exception e) {
+            log.info("Analytics run failed");
+            e.printStackTrace();
+        }
 
         // Check for statistical significant similarity between desired and generated population
         if (comparisonOfDesiredAndGenerated.passed()) {
@@ -86,6 +110,13 @@ public class Simulation {
         }
 
 
+    }
+
+    private static void runAnalytics(IPopulation population) throws Exception {
+        new PopulationAnalytics(population).printAllAnalytics();
+        new ChildrenAnalytics(population).printAllAnalytics();
+        new DeathAnalytics(population).printAllAnalytics();
+        new MarriageAnalytics(population).printAllAnalytics();
     }
 
     private static PopulationStatistics setUpSimData() throws IOException {
@@ -105,7 +136,7 @@ public class Simulation {
 
     }
 
-    private IPopulation makeSimulatedPopulation() throws InsufficientNumberOfPeopleException {
+    private IPopulation makeSimulatedPopulation() throws InsufficientNumberOfPeopleException, UnsupportedDateConversion {
 
         // INFO: at this point all the desired population statistics have been made available
         log.info("Simulation begins");
@@ -134,18 +165,10 @@ public class Simulation {
 
             currentTime = currentTime.advanceTime(config.getSimulationTimeStep());
             log.info("Time step completed " + currentTime.toString() + "    Population " + people.getNumberOfPersons());
+            System.out.println("Time step completed " + currentTime.toString() + "    Population " + people.getNumberOfPersons());
 
         }
 
-        return people;
+        return AggregatePersonCollectionFactory.makePeopleCollection(people, deadPeople);
     }
-
-
-
-
-
-
-
-
-
 }

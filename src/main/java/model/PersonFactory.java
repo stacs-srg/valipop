@@ -15,7 +15,7 @@ public class PersonFactory {
 
     public static IPartnership formNewChildInPartnership(Person mother, DateClock birthDate, PeopleCollection people) {
 
-        Partnership partnership = new Partnership(null, mother);
+        Partnership partnership = new Partnership(null, mother, birthDate);
 
         Person child = new Person(getSex(), birthDate, partnership);
         partnership.addChildren(Collections.singletonList(child));

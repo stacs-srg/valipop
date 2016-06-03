@@ -94,4 +94,9 @@ public final class DateClock implements Date {
         return new YearDate(year);
     }
 
+    @Override
+    public DateClock getDateClock() throws UnsupportedDateConversion {
+        return this;
+    }
+
 }

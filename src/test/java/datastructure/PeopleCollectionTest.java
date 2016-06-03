@@ -4,10 +4,7 @@ import datastructure.population.PeopleCollection;
 import datastructure.population.PersonNotFoundException;
 import model.Partnership;
 import model.Person;
-import utils.time.DateClock;
-import utils.time.DateInstant;
-import utils.time.TimeUnit;
-import utils.time.YearDate;
+import utils.time.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.Test;
@@ -27,7 +24,7 @@ public class PeopleCollectionTest {
     Logger log = LogManager.getLogger(PeopleCollectionTest.class);
 
     @Test
-    public void peopleInByYearAndBirthsCorrectPlace() {
+    public void peopleInByYearAndBirthsCorrectPlace() throws UnsupportedDateConversion {
 
         DateClock s = new DateClock(1, 0);
         DateClock e = new DateClock(1, 3000);
@@ -61,7 +58,7 @@ public class PeopleCollectionTest {
     }
 
     @Test
-    public void peopleInByYearCorrectPlace() {
+    public void peopleInByYearCorrectPlace() throws UnsupportedDateConversion  {
 
         DateClock s = new DateClock(1, 0);
         DateClock e = new DateClock(1, 3000);
@@ -104,7 +101,7 @@ public class PeopleCollectionTest {
     }
 
     @Test
-    public void peopleInByGetAllCorrectPlace() {
+    public void peopleInByGetAllCorrectPlace() throws UnsupportedDateConversion  {
 
         DateClock s = new DateClock(1, 0);
         DateClock e = new DateClock(1, 3000);
@@ -152,7 +149,7 @@ public class PeopleCollectionTest {
 
 
     @Test
-    public void femaleGivesBirthMoveOfBirthCountPosition() throws PersonNotFoundException {
+    public void femaleGivesBirthMoveOfBirthCountPosition() throws PersonNotFoundException, UnsupportedDateConversion  {
 
         DateClock s = new DateClock(1, 0);
         DateClock e = new DateClock(1, 3000);
@@ -175,7 +172,7 @@ public class PeopleCollectionTest {
 
         living.removePerson(f1);
 
-        Partnership p1 = new Partnership(m1, f1);
+        Partnership p1 = new Partnership(m1, f1, c1.getBirthDate());
         p1.addChildren(Collections.singletonList(c1));
         m1.recordPartnership(p1);
         f1.recordPartnership(p1);
@@ -222,7 +219,7 @@ public class PeopleCollectionTest {
     }
 
     @Test
-    public void personIsCorrectlyRelocatedAfterDeath() throws PersonNotFoundException {
+    public void personIsCorrectlyRelocatedAfterDeath() throws PersonNotFoundException, UnsupportedDateConversion {
 
         DateClock s = new DateClock(1, 0);
         DateClock e = new DateClock(1, 3000);
@@ -250,7 +247,7 @@ public class PeopleCollectionTest {
     }
 
     @Test
-    public void accessWithVariousDateTypes() {
+    public void accessWithVariousDateTypes() throws UnsupportedDateConversion {
 
         DateClock s = new DateClock(1, 0);
         DateClock e = new DateClock(1, 3000);
@@ -283,7 +280,7 @@ public class PeopleCollectionTest {
     }
 
     @Test(expected = PersonNotFoundException.class)
-    public void removeNonExistentFemaleFromEmptyCollection() throws PersonNotFoundException {
+    public void removeNonExistentFemaleFromEmptyCollection() throws PersonNotFoundException, UnsupportedDateConversion {
 
         DateClock s = new DateClock(1, 0);
         DateClock e = new DateClock(1, 3000);
@@ -299,7 +296,7 @@ public class PeopleCollectionTest {
 
 
     @Test(expected = PersonNotFoundException.class)
-    public void removeNonExistentFemale() throws PersonNotFoundException {
+    public void removeNonExistentFemale() throws PersonNotFoundException, UnsupportedDateConversion {
 
         DateClock s = new DateClock(1, 0);
         DateClock e = new DateClock(1, 3000);
@@ -319,7 +316,7 @@ public class PeopleCollectionTest {
     }
 
     @Test(expected = PersonNotFoundException.class)
-    public void removeNonExistentMaleFromEmptyCollection() throws PersonNotFoundException {
+    public void removeNonExistentMaleFromEmptyCollection() throws PersonNotFoundException, UnsupportedDateConversion {
 
         DateClock s = new DateClock(1, 0);
         DateClock e = new DateClock(1, 3000);
@@ -335,7 +332,7 @@ public class PeopleCollectionTest {
 
 
     @Test(expected = PersonNotFoundException.class)
-    public void removeNonExistentMale() throws PersonNotFoundException {
+    public void removeNonExistentMale() throws PersonNotFoundException, UnsupportedDateConversion
 
         DateClock s = new DateClock(1, 0);
         DateClock e = new DateClock(1, 3000);

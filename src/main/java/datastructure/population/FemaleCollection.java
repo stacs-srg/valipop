@@ -15,10 +15,10 @@ import java.util.*;
 public class FemaleCollection extends PersonCollection {
 
     private static Logger log = LogManager.getLogger(FemaleCollection.class);
-    Map<YearDate, Map<Integer, Collection<Person>>> byYearAndNumberOfChildren = new HashMap<YearDate, Map<Integer, Collection<model.Person>>>();
+    Map<YearDate, Map<Integer, Collection<Person>>> byYearAndNumberOfChildren = new HashMap<YearDate, Map<Integer, Collection<Person>>>();
 
-    public FemaleCollection(DateClock start, DateClock end) {
-        for (DateClock y = start; DateUtils.dateBefore(y, end); y = y.advanceTime(1, TimeUnit.YEAR)) {
+    public FemaleCollection(Date start, Date end) throws UnsupportedDateConversion {
+        for (DateClock y = start.getDateClock(); DateUtils.dateBefore(y, end); y = y.advanceTime(1, TimeUnit.YEAR)) {
             byYearAndNumberOfChildren.put(y.getYearDate(), new HashMap<Integer, Collection<Person>>());
         }
     }

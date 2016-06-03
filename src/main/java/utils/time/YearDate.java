@@ -52,6 +52,11 @@ public final class YearDate implements Date {
     }
 
     @Override
+    public DateClock getDateClock() throws UnsupportedDateConversion {
+        return new DateClock(MONTH, year);
+    }
+
+    @Override
     public int hashCode() {
         return year;
     }
