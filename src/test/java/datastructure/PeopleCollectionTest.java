@@ -2,6 +2,7 @@ package datastructure;
 
 import datastructure.population.PeopleCollection;
 import datastructure.population.PersonNotFoundException;
+import model.IPerson;
 import model.Partnership;
 import model.Person;
 import utils.time.*;
@@ -50,7 +51,7 @@ public class PeopleCollectionTest {
 
         // are people added present in the correct place
         // for females
-        Collection<Person> females = living.getFemales().getByNumberOfChildren(start, 0);
+        Collection<IPerson> females = living.getFemales().getByNumberOfChildren(start, 0);
         assertTrue(females.contains(f1));
         assertTrue(females.contains(f2));
         assertTrue(females.contains(f3));
@@ -85,14 +86,14 @@ public class PeopleCollectionTest {
 
         // are people added present in the correct place
         // for males
-        Collection<Person> males = living.getMales().getByYear(start);
+        Collection<IPerson> males = living.getMales().getByYear(start);
         assertTrue(males.contains(m1));
         assertTrue(males.contains(m2));
         assertTrue(males.contains(m3));
 
         // for females
 
-        Collection<Person> females = living.getFemales().getByYear(start);
+        Collection<IPerson> females = living.getFemales().getByYear(start);
         assertTrue(females.contains(f1));
         assertTrue(females.contains(f2));
         assertTrue(females.contains(f3));
@@ -127,18 +128,18 @@ public class PeopleCollectionTest {
 
         // are people added present in the correct place
         // for males
-        Collection<Person> males = living.getMales().getAll();
+        Collection<IPerson> males = living.getMales().getAll();
         assertTrue(males.contains(m1));
         assertTrue(males.contains(m2));
         assertTrue(males.contains(m3));
 
         // for females
-        Collection<Person> females = living.getFemales().getAll();
+        Collection<IPerson> females = living.getFemales().getAll();
         assertTrue(females.contains(f1));
         assertTrue(females.contains(f2));
         assertTrue(females.contains(f3));
 
-        Collection<Person> all = living.getAll();
+        Collection<IPerson> all = living.getAll();
         assertTrue(all.contains(m1));
         assertTrue(all.contains(m2));
         assertTrue(all.contains(m3));
@@ -181,7 +182,7 @@ public class PeopleCollectionTest {
         living.addPerson(f1);
 
         // are they in the new place
-        Collection<Person> people = living.getFemales().getByNumberOfChildren(m1.getBirthDate().getYearDate(), 1);
+        Collection<IPerson> people = living.getFemales().getByNumberOfChildren(m1.getBirthDate().getYearDate(), 1);
         assertTrue(people.contains(f1));
 
         // and not in the old place
@@ -268,13 +269,13 @@ public class PeopleCollectionTest {
         living.addPerson(m1);
         living.addPerson(m2);
 
-        Collection<Person> males = living.getMales().getByYear(startY);
+        Collection<IPerson> males = living.getMales().getByYear(startY);
         assertTrue(males.contains(m1));
         assertTrue(males.contains(m2));
 
         // for females
 
-        Collection<Person> females = living.getFemales().getByYear(startI);
+        Collection<IPerson> females = living.getFemales().getByYear(startI);
         assertTrue(females.contains(f1));
 
     }
@@ -332,7 +333,7 @@ public class PeopleCollectionTest {
 
 
     @Test(expected = PersonNotFoundException.class)
-    public void removeNonExistentMale() throws PersonNotFoundException, UnsupportedDateConversion
+    public void removeNonExistentMale() throws PersonNotFoundException, UnsupportedDateConversion {
 
         DateClock s = new DateClock(1, 0);
         DateClock e = new DateClock(1, 3000);

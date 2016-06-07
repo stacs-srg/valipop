@@ -9,10 +9,10 @@ import datastructure.population.InsufficientNumberOfPeopleException;
 import datastructure.population.PeopleCollection;
 import datastructure.summativeStatistics.desired.DesiredPopulationStatisticsFactory;
 import datastructure.summativeStatistics.desired.PopulationStatistics;
+import datastructure.summativeStatistics.generated.GeneratedPopulationComposition;
 import model.*;
 import datastructure.summativeStatistics.PopulationComposition;
 import validation.ComparativeAnalysis;
-import datastructure.summativeStatistics.generated.GeneratedPopulationCompositionFactory;
 import config.Config;
 
 import utils.time.*;
@@ -43,7 +43,6 @@ public class Simulation {
 
     public Simulation() throws IOException, UnsupportedDateConversion {
         currentTime = config.getTS();
-
 
         people = new PeopleCollection(config.getTS(), config.getTE());
         deadPeople = new PeopleCollection(config.getTS(), config.getTE());
@@ -94,7 +93,12 @@ public class Simulation {
         }
 
         // perform comparisons
-        ComparativeAnalysis comparisonOfDesiredAndGenerated = sim.analyseGeneratedPopulation(population);
+        ComparativeAnalysis comparisonOfDesiredAndGenerated = null;
+        try {
+            comparisonOfDesiredAndGenerated = sim.analyseGeneratedPopulation(population);
+        } catch (UnsupportedDateConversion unsupportedDateConversion) {
+            unsupportedDateConversion.printStackTrace();
+        }
 
 
         try {
@@ -125,12 +129,13 @@ public class Simulation {
 
 
 
-    public ComparativeAnalysis analyseGeneratedPopulation(IPopulation generatedPopulation) {
+    public ComparativeAnalysis analyseGeneratedPopulation(IPopulation generatedPopulation) throws UnsupportedDateConversion {
         // get comparable statistics for generate population
-        PopulationComposition generatedPopulationComposition = GeneratedPopulationCompositionFactory.createGeneratedPopulationComposition(generatedPopulation);
+        PopulationComposition generatedPopulationComposition = new GeneratedPopulationComposition(config.getTS(), config.getTE(), generatedPopulation);
 
         // compare desired and generated population
-        ComparativeAnalysis comparisonOfDesiredAndGenerated = new ComparativeAnalysis(desired, generatedPopulationComposition);
+        ComparativeAnalysis comparisonOfDesiredAndGenerated = new ComparativeAnalysis(desired, generatedPopulationComposition, config.getTS(), config.getTE());
+        comparisonOfDesiredAndGenerated.runAnalysis();
 
         return comparisonOfDesiredAndGenerated;
 

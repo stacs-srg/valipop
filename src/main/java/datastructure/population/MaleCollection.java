@@ -1,5 +1,6 @@
 package datastructure.population;
 
+import model.IPerson;
 import model.Person;
 import utils.time.*;
 import utils.time.Date;
@@ -11,18 +12,20 @@ import java.util.*;
  */
 public class MaleCollection extends PersonCollection {
 
-    private Map<YearDate, Collection<Person>> byYear = new HashMap<YearDate, Collection<Person>>();
+    private Map<YearDate, Collection<IPerson>> byYear = new HashMap<YearDate, Collection<IPerson>>();
 
     public MaleCollection(Date start, Date end) throws UnsupportedDateConversion {
+        super(start, end);
+
         for (DateClock y = start.getDateClock(); DateUtils.dateBefore(y, end); y = y.advanceTime(1, TimeUnit.YEAR)) {
-            byYear.put(y.getYearDate(), new ArrayList<Person>());
+            byYear.put(y.getYearDate(), new ArrayList<IPerson>());
         }
     }
 
     @Override
-    public Collection<Person> getAll() {
+    public Collection<IPerson> getAll() {
 
-        Collection<Person> people = new ArrayList<Person>();
+        Collection<IPerson> people = new ArrayList<IPerson>();
 
         for (YearDate t : byYear.keySet()) {
             people.addAll(byYear.get(t));
@@ -32,12 +35,12 @@ public class MaleCollection extends PersonCollection {
     }
 
     @Override
-    public Collection<Person> getByYear(Date year) {
+    public Collection<IPerson> getByYear(Date year) {
 
-        Collection<Person> c = byYear.get(year.getYearDate());
+        Collection<IPerson> c = byYear.get(year.getYearDate());
 
         if (c == null) {
-            Collection<Person> temp = new ArrayList<Person>();
+            Collection<IPerson> temp = new ArrayList<IPerson>();
             byYear.put(year.getYearDate(), temp);
             c = byYear.get(year.getYearDate());
         }
@@ -46,19 +49,19 @@ public class MaleCollection extends PersonCollection {
     }
 
     @Override
-    public void addPerson(Person person) {
+    public void addPerson(IPerson person) {
         try {
             byYear.get(person.getBirthDate().getYearDate()).add(person);
         } catch (NullPointerException e) {
-            byYear.put(person.getBirthDate().getYearDate(), new ArrayList<Person>());
+            byYear.put(person.getBirthDate().getYearDate(), new ArrayList<IPerson>());
             byYear.get(person.getBirthDate().getYearDate()).add(person);
         }
 
     }
 
     @Override
-    public boolean removePerson(Person person) throws PersonNotFoundException {
-        Collection<Person> people = byYear.get(person.getBirthDate().getYearDate());
+    public boolean removePerson(IPerson person) throws PersonNotFoundException {
+        Collection<IPerson> people = byYear.get(person.getBirthDate().getYearDate());
 
         if(people == null || !people.remove(person)) {
             throw new PersonNotFoundException("Specified person not found in datastructure");

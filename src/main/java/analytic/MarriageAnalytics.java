@@ -54,7 +54,7 @@ public class MarriageAnalytics {
 
         final int sum = ArrayManipulation.sum(count_marriages);
 
-        System.out.println("Male mariage sizes:");
+        System.out.println("Male marriage sizes:");
         System.out.println("\t unmarried: " + count_marriages[0]);
 
         for (int i = 1; i < count_marriages.length; i++) {

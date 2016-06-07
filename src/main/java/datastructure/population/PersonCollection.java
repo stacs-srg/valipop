@@ -1,6 +1,7 @@
 package datastructure.population;
 
 import datastructure.summativeStatistics.DateBounds;
+import model.IPerson;
 import model.Person;
 import utils.time.Date;
 import utils.time.YearDate;
@@ -14,26 +15,26 @@ import java.util.Iterator;
  */
 public abstract class PersonCollection implements DateBounds {
 
-    abstract Collection<Person> getAll();
+    abstract Collection<IPerson> getAll();
 
-    abstract Collection<Person> getByYear(Date year);
+    abstract Collection<IPerson> getByYear(Date year);
 
-    abstract void addPerson(Person person);
+    abstract void addPerson(IPerson person);
 
-    abstract boolean removePerson(Person person) throws PersonNotFoundException;
+    abstract boolean removePerson(IPerson person) throws PersonNotFoundException;
 
     abstract int getNumberOfPersons();
 
-    public Collection<Person> removeNPersons(int numberToRemove, Date yearOfBirth) {
-        Collection<Person> people = new ArrayList<>(numberToRemove);
-        Iterator<Person> iterator = getByYear(yearOfBirth).iterator();
+    public Collection<IPerson> removeNPersons(int numberToRemove, Date yearOfBirth) {
+        Collection<IPerson> people = new ArrayList<>(numberToRemove);
+        Iterator<IPerson> iterator = getByYear(yearOfBirth).iterator();
 
         for (int i = 0; i < numberToRemove; i++) {
-            Person p = iterator.next();
+            IPerson p = iterator.next();
             people.add(p);
         }
 
-        for (Person p : people) {
+        for (IPerson p : people) {
             try {
                 removePerson(p);
             } catch (PersonNotFoundException e) {
@@ -46,6 +47,11 @@ public abstract class PersonCollection implements DateBounds {
 
     protected Date startDate;
     protected Date endDate;
+
+    public PersonCollection (Date startDate, Date endDate) {
+        this.startDate = startDate;
+        this.endDate = endDate;
+    }
 
     @Override
     public Date getStartDate() {

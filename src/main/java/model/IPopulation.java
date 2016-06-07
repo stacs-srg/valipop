@@ -16,13 +16,18 @@
  */
 package model;
 
+import utils.PopulationUtils;
+import utils.time.Date;
+
+import java.util.Collection;
+
 /**
  * Interface for all population models.
  *
  * @author Victor Andrei (va9@st-andrews.ac.uk)
  * @author Graham Kirby (graham.kirby@st-andrews.ac.uk)
  */
-public interface IPopulation {
+public interface IPopulation extends PopulationUtils {
 
     /**
      * Allows iteration over the people in the population.
@@ -93,4 +98,6 @@ public interface IPopulation {
      * @param consistent_across_iterations true if person attributes should remain consistent across iterations
      */
     void setConsistentAcrossIterations(boolean consistent_across_iterations);
+
+
 }

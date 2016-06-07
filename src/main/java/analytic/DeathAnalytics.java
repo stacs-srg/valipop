@@ -57,7 +57,7 @@ public class DeathAnalytics {
 
         System.out.println("Death distribution:");
         for (int i = 1; i < age_at_death.length; i++) {
-            System.out.println("\tDeaths at age: " + i + " = " + age_at_death[i] + " = " + String.format("%.1f", age_at_death[i] / (double) sum * ONE_HUNDRED) + '%');
+            System.out.println("\tDeaths at age: " + i + " = " + age_at_death[i] + " = " + String.format("%.3f", age_at_death[i] / (double) sum * ONE_HUNDRED) + '%');
         }
     }
 

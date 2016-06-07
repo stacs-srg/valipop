@@ -13,9 +13,10 @@ public class PersonFactory {
 
     private static Random randomNumberGenerator = new Random();
 
-    public static IPartnership formNewChildInPartnership(Person mother, DateClock birthDate, PeopleCollection people) {
+    public static IPartnership formNewChildInPartnership(IPerson mother, DateClock birthDate, PeopleCollection people) {
 
-        Partnership partnership = new Partnership(null, mother, birthDate);
+        IPartnership partnership = new Partnership(null, mother, birthDate);
+        people.addPartnershipToIndex(partnership);
 
         Person child = new Person(getSex(), birthDate, partnership);
         partnership.addChildren(Collections.singletonList(child));
@@ -33,9 +34,9 @@ public class PersonFactory {
         // TODO move over to a specified m to f ratio
 
         if (randomNumberGenerator.nextBoolean()) {
-            return 'm';
+            return 'M';
         } else {
-            return 'f';
+            return 'F';
         }
 
     }

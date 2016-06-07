@@ -38,13 +38,7 @@ public class Person implements IPerson {
         return nextId++;
     }
 
-    public void recordPartnership(IPartnership partnership) {
-        this.partnerships.add(partnership);
-    }
 
-    public void recordDeath(Date date) {
-        deathDate = date.getInstant();
-    }
 
     @Override
     public int getId() {
@@ -81,17 +75,33 @@ public class Person implements IPerson {
         return this.id == o.getId() ? 0 : -1;
     }
 
+    @Override
     public boolean noRecentChildren(DateClock currentDate) {
 
-        for(IPartnership p : partnerships) {
-           for(IPerson c : p.getChildren()) {
-               if(DateUtils.dateBefore(currentDate.advanceTime(-9, TimeUnit.MONTH), c.getBirthDate())) {
-                   return false;
-               }
-           }
+        for(IPartnership p : getPartnerships()) {
+            for(IPerson c : p.getChildren()) {
+                if(DateUtils.dateBefore(currentDate.advanceTime(-9, TimeUnit.MONTH), c.getBirthDate())) {
+                    return false;
+                }
+            }
         }
 
         return true;
 
+    }
+
+    @Override
+    public void recordPartnership(IPartnership partnership) {
+        this.partnerships.add(partnership);
+    }
+
+    @Override
+    public void recordDeath(Date date) {
+        deathDate = date.getInstant();
+    }
+
+    @Override
+    public int ageAtDeath() {
+        return DateUtils.differenceInYears(birthDate, deathDate).getCount();
     }
 }

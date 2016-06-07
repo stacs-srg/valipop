@@ -16,6 +16,7 @@
  */
 package model;
 
+import utils.PersonUtils;
 import utils.time.Date;
 
 import java.util.List;
@@ -25,7 +26,7 @@ import java.util.List;
  *
  * @author Graham Kirby (graham.kirby@st-andrews.ac.uk)
  */
-public interface IPerson extends Comparable<IPerson> {
+public interface IPerson extends Comparable<IPerson>, PersonUtils {
 
     /**
      * Representation of female sex.

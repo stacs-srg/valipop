@@ -1,5 +1,6 @@
 package datastructure.population;
 
+import model.IPerson;
 import model.Person;
 import utils.time.Date;
 import utils.time.DateUtils;
@@ -14,9 +15,9 @@ import java.util.Collection;
  */
 public class AggregatePersonCollectionFactory {
 
-    public static Collection<Person> makeCollectionOfPersons(PersonCollection col1, PersonCollection col2) {
+    public static Collection<IPerson> makeCollectionOfPersons(PersonCollection col1, PersonCollection col2) {
 
-        Collection<Person> people = col1.getAll();
+        Collection<IPerson> people = col1.getAll();
         people.addAll(col2.getAll());
 
         return people;

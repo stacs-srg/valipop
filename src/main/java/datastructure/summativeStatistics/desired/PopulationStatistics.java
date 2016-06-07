@@ -3,15 +3,14 @@ package datastructure.summativeStatistics.desired;
 import datastructure.summativeStatistics.generated.EventType;
 import datastructure.summativeStatistics.PopulationComposition;
 import config.Config;
+import datastructure.summativeStatistics.structure.IntegerRange;
 import datastructure.summativeStatistics.structure.OneDimensionDataDistribution;
 import datastructure.summativeStatistics.structure.SelfCorrectingTwoDimensionDataDistribution;
 import datastructure.summativeStatistics.structure.TwoDimensionDataDistribution;
 import datastructure.summativeStatistics.EventRateTables;
-import utils.time.Date;
-import utils.time.DateClock;
-import utils.time.DateUtils;
-import utils.time.YearDate;
+import utils.time.*;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -66,7 +65,7 @@ public class PopulationStatistics implements PopulationComposition, EventRateTab
 
     @Override
     public OneDimensionDataDistribution getDeathRates(Date year, char gender) {
-        if (gender == 'm') {
+        if (Character.toLowerCase(gender) == 'm') {
             return maleDeath.get(getNearestYearInMap(year.getYearDate(), maleDeath));
         } else {
             return femaleDeath.get(getNearestYearInMap(year.getYearDate(), femaleDeath));
@@ -93,11 +92,6 @@ public class PopulationStatistics implements PopulationComposition, EventRateTab
         return separation.get(getNearestYearInMap(year.getYearDate(), separation));
     }
 
-    @Override
-    public OneDimensionDataDistribution getSurvivorTable(int startYear, int timePeriod, EventType event) {
-        return null;
-    }
-
     private YearDate getNearestYearInMap(Date year, Map<YearDate, ?> map) {
 
         int minDifferenceInMonths = Integer.MAX_VALUE;
@@ -114,5 +108,37 @@ public class PopulationStatistics implements PopulationComposition, EventRateTab
         return nearestTableYear;
 
     }
+
+    @Override
+    public OneDimensionDataDistribution getSurvivorTable(Date startYear, CompoundTimeUnit timePeriod, EventType event) {
+        return null;
+    }
+
+    @Override
+    public OneDimensionDataDistribution getSurvivorTable(Date startYear, CompoundTimeUnit timePeriod, EventType event, Double scalingFactor) throws UnsupportedDateConversion {
+
+        Map<IntegerRange, Double> survival = new HashMap<IntegerRange, Double>();
+
+        double survivors = scalingFactor;
+        survival.put(new IntegerRange(0), survivors);
+
+
+        int age = 0;
+        for(DateClock d = startYear.getDateClock(); DateUtils.dateBefore(d, startYear.getDateClock().advanceTime(100, TimeUnit.YEAR)); d = d.advanceTime(1, TimeUnit.YEAR)) {
+            double nMx = getDeathRates(d, 'm').getData(age);
+            int n = timePeriod.getCount();
+
+            double nQx = (n * nMx) / (1 + (n * 0.5 * nMx));
+
+            survivors = survivors * (1 - nQx);
+
+            survival.put(new IntegerRange(age + 1), survivors);
+
+            age++;
+        }
+
+        return new OneDimensionDataDistribution(startYear.getYearDate(), "", "", survival);
+    }
+
 
 }

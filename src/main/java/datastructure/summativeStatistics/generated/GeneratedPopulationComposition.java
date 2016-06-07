@@ -1,8 +1,17 @@
 package datastructure.summativeStatistics.generated;
 
 import datastructure.summativeStatistics.PopulationComposition;
+import datastructure.summativeStatistics.structure.IntegerRange;
+import datastructure.summativeStatistics.structure.InvalidRangeException;
 import datastructure.summativeStatistics.structure.OneDimensionDataDistribution;
-import utils.time.DateClock;
+import model.IPerson;
+import model.IPopulation;
+import utils.time.CompoundTimeUnit;
+import utils.time.Date;
+
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * The GeneratedPopulationComposition interface provides the functionality to be able to access the same information about the
@@ -13,18 +22,66 @@ import utils.time.DateClock;
  */
 public class GeneratedPopulationComposition implements PopulationComposition {
 
+    private Date startDate;
+    private Date endDate;
+
+    private IPopulation population;
+
+    public GeneratedPopulationComposition(Date startDate, Date endDate, IPopulation population) {
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.population = population;
+    }
+
+
     @Override
-    public DateClock getStartDate() {
-        return null;
+    public Date getStartDate() {
+        return startDate;
     }
 
     @Override
-    public DateClock getEndDate() {
-        return null;
+    public Date getEndDate() {
+        return endDate;
     }
 
     @Override
-    public OneDimensionDataDistribution getSurvivorTable(int startYear, int timePeriod, EventType event) {
-        return null;
+    public OneDimensionDataDistribution getSurvivorTable(Date startYear, CompoundTimeUnit timePeriod, EventType event) {
+
+        Collection<IPerson> males = population.getByYearAndSex('m', startYear);
+
+        Map<IntegerRange, Double> counts = new HashMap<IntegerRange, Double>();
+
+        OneDimensionDataDistribution countsTable = new OneDimensionDataDistribution(startYear.getYearDate(), "", "", counts);
+
+        for(IPerson m : males) {
+            int age = m.ageAtDeath();
+
+            try {
+                counts.replace(countsTable.resolveRowValue(age), counts.get(countsTable.resolveRowValue(age)) + 1);
+            } catch (InvalidRangeException e) {
+                counts.put(new IntegerRange(age), 1.0);
+            }
+
+        }
+
+        Map<IntegerRange, Double> survival = new HashMap<IntegerRange, Double>();
+
+        double survivors = males.size();
+        survival.put(new IntegerRange(0), survivors);
+
+        for(int i = 0; i < 100; i++) {
+            try {
+                survivors -= counts.get(countsTable.resolveRowValue(i));
+            } catch (InvalidRangeException e) { /* No deaths at this age*/ }
+            survival.put(new IntegerRange(i + 1), survivors);
+        }
+
+        return new OneDimensionDataDistribution(startYear.getYearDate(), "", "", survival);
+
+    }
+
+    @Override
+    public OneDimensionDataDistribution getSurvivorTable(Date startYear, CompoundTimeUnit timePeriod, EventType event, Double scalingFactor) {
+        return getSurvivorTable(startYear, timePeriod, event);
     }
 }

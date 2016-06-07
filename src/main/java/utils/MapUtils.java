@@ -1,6 +1,7 @@
 package utils;
 
 import datastructure.summativeStatistics.structure.OneDimensionDataDistribution;
+import model.IPerson;
 import model.Person;
 import datastructure.summativeStatistics.structure.IntegerRange;
 
@@ -28,7 +29,7 @@ public class MapUtils {
 
     }
 
-    public static int countPeopleInMap(Map<Integer, Collection<Person>> map) {
+    public static <U> int countObjectsInCollectionsInMap(Map<Integer, Collection<U>> map) {
 
         int count = 0;
 

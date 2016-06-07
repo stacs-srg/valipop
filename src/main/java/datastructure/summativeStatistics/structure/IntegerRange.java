@@ -1,9 +1,12 @@
 package datastructure.summativeStatistics.structure;
 
+import java.util.ArrayList;
+import java.util.Set;
+
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class IntegerRange {
+public class IntegerRange implements Comparable<IntegerRange> {
 
     Boolean plus = false;
     private Integer min = null;
@@ -110,4 +113,21 @@ public class IntegerRange {
         return s;
     }
 
+//    public static ArrayList<IntegerRange> orderRanges(Set<IntegerRange> integerRanges) {
+//
+//
+//
+//        for(IntegerRange iR : integerRanges) {
+//
+//
+//
+//        }
+//
+//
+//    }
+
+    @Override
+    public int compareTo(IntegerRange o) {
+        return Integer.compare(getValue(), o.getValue());
+    }
 }

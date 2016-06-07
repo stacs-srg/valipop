@@ -1,5 +1,6 @@
 package datastructure.population;
 
+import model.IPerson;
 import model.Person;
 import model.IPartnership;
 import utils.time.*;
@@ -15,18 +16,20 @@ import java.util.*;
 public class FemaleCollection extends PersonCollection {
 
     private static Logger log = LogManager.getLogger(FemaleCollection.class);
-    Map<YearDate, Map<Integer, Collection<Person>>> byYearAndNumberOfChildren = new HashMap<YearDate, Map<Integer, Collection<Person>>>();
+    Map<YearDate, Map<Integer, Collection<IPerson>>> byYearAndNumberOfChildren = new HashMap<YearDate, Map<Integer, Collection<IPerson>>>();
 
     public FemaleCollection(Date start, Date end) throws UnsupportedDateConversion {
+        super(start, end);
+
         for (DateClock y = start.getDateClock(); DateUtils.dateBefore(y, end); y = y.advanceTime(1, TimeUnit.YEAR)) {
-            byYearAndNumberOfChildren.put(y.getYearDate(), new HashMap<Integer, Collection<Person>>());
+            byYearAndNumberOfChildren.put(y.getYearDate(), new HashMap<Integer, Collection<IPerson>>());
         }
     }
 
     @Override
-    public Collection<Person> getAll() {
+    public Collection<IPerson> getAll() {
 
-        Collection<Person> people = new ArrayList<Person>();
+        Collection<IPerson> people = new ArrayList<IPerson>();
 
         for (YearDate t : byYearAndNumberOfChildren.keySet()) {
             for (Integer i : byYearAndNumberOfChildren.get(t).keySet()) {
@@ -38,9 +41,9 @@ public class FemaleCollection extends PersonCollection {
     }
 
     @Override
-    public Collection<Person> getByYear(Date year) {
+    public Collection<IPerson> getByYear(Date year) {
 
-        Collection<Person> people = new ArrayList<Person>();
+        Collection<IPerson> people = new ArrayList<IPerson>();
 
         for (Integer i : byYearAndNumberOfChildren.get(year.getYearDate()).keySet()) {
             people.addAll(byYearAndNumberOfChildren.get(year.getYearDate()).get(i));
@@ -50,16 +53,16 @@ public class FemaleCollection extends PersonCollection {
     }
 
     @Override
-    public void addPerson(Person person) {
+    public void addPerson(IPerson person) {
         try {
             byYearAndNumberOfChildren.get(person.getBirthDate().getYearDate()).get(countChildren(person)).add(person);
         } catch (NullPointerException e) {
             try {
-                byYearAndNumberOfChildren.get(person.getBirthDate().getYearDate()).put(countChildren(person), new ArrayList<Person>());
+                byYearAndNumberOfChildren.get(person.getBirthDate().getYearDate()).put(countChildren(person), new ArrayList<IPerson>());
                 byYearAndNumberOfChildren.get(person.getBirthDate().getYearDate()).get(countChildren(person)).add(person);
             } catch (NullPointerException e1) {
-                Map<Integer, Collection<model.Person>> temp = new HashMap<Integer, Collection<Person>>();
-                temp.put(countChildren(person), new ArrayList<Person>());
+                Map<Integer, Collection<IPerson>> temp = new HashMap<Integer, Collection<IPerson>>();
+                temp.put(countChildren(person), new ArrayList<IPerson>());
                 temp.get(countChildren(person)).add(person);
                 byYearAndNumberOfChildren.put(person.getBirthDate().getYearDate(), temp);
             }
@@ -67,8 +70,8 @@ public class FemaleCollection extends PersonCollection {
     }
 
     @Override
-    public boolean removePerson(Person person) throws PersonNotFoundException {
-        Collection<Person> people = byYearAndNumberOfChildren.get(person.getBirthDate().getYearDate()).get(countChildren(person));
+    public boolean removePerson(IPerson person) throws PersonNotFoundException {
+        Collection<IPerson> people = byYearAndNumberOfChildren.get(person.getBirthDate().getYearDate()).get(countChildren(person));
 
         if(people == null || !people.remove(person)) {
             throw new PersonNotFoundException("Specified person not found in datastructure");
@@ -82,34 +85,34 @@ public class FemaleCollection extends PersonCollection {
         return getAll().size();
     }
 
-    public Map<Integer, Collection<Person>> getMapByYear(Date year) {
-        Map<Integer, Collection<Person>> map = byYearAndNumberOfChildren.get(year.getYearDate());
+    public Map<Integer, Collection<IPerson>> getMapByYear(Date year) {
+        Map<Integer, Collection<IPerson>> map = byYearAndNumberOfChildren.get(year.getYearDate());
 
         if (map == null) {
-            Map<Integer, Collection<Person>> temp = new HashMap<Integer, Collection<Person>>();
+            Map<Integer, Collection<IPerson>> temp = new HashMap<Integer, Collection<IPerson>>();
             byYearAndNumberOfChildren.put(year.getYearDate(), temp);
             map = byYearAndNumberOfChildren.get(year.getYearDate());
         }
         return map;
     }
 
-    public Collection<Person> getByNumberOfChildren(Date year, Integer numberOfChildren) {
+    public Collection<IPerson> getByNumberOfChildren(Date year, Integer numberOfChildren) {
 
         return byYearAndNumberOfChildren.get(year.getYearDate()).get(numberOfChildren);
     }
 
-    public Collection<Person> removeNPersons(int numberToRemove, YearDate yearOfBirth, int withNChildren, DateClock currentDate) throws InsufficientNumberOfPeopleException {
+    public Collection<IPerson> removeNPersons(int numberToRemove, YearDate yearOfBirth, int withNChildren, DateClock currentDate) throws InsufficientNumberOfPeopleException {
 
-        Collection<Person> people = new ArrayList<>();
+        Collection<IPerson> people = new ArrayList<>();
         if (numberToRemove == 0) {
             return people;
         }
 
-        Iterator<Person> iterator = byYearAndNumberOfChildren.get(yearOfBirth).get(withNChildren).iterator();
+        Iterator<IPerson> iterator = byYearAndNumberOfChildren.get(yearOfBirth).get(withNChildren).iterator();
 
         for (int i = 0; i < numberToRemove; i++) {
 
-            Person p;
+            IPerson p;
             try {
                 p = iterator.next();
             } catch (NoSuchElementException e) {
@@ -126,7 +129,7 @@ public class FemaleCollection extends PersonCollection {
             }
         }
 
-        for (Person p : people) {
+        for (IPerson p : people) {
             try {
                 removePerson(p);
             } catch (PersonNotFoundException e) {
@@ -139,7 +142,7 @@ public class FemaleCollection extends PersonCollection {
 
     }
 
-    private Integer countChildren(Person person) {
+    private Integer countChildren(IPerson person) {
 
         int count = 0;
 

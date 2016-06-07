@@ -7,6 +7,7 @@ import datastructure.summativeStatistics.desired.PopulationStatistics;
 import datastructure.summativeStatistics.structure.DataKey;
 import datastructure.summativeStatistics.structure.IntegerRange;
 import datastructure.summativeStatistics.structure.OneDimensionDataDistribution;
+import model.IPerson;
 import model.Person;
 import model.PersonFactory;
 import org.apache.logging.log4j.LogManager;
@@ -41,7 +42,7 @@ public class BirthLogic {
 
             YearDate yearOfBirthInConsideration = new YearDate(currentTime.getYear() - age);
 
-            Map<Integer, Collection<Person>> womenOfThisAge = people.getFemales().getMapByYear(yearOfBirthInConsideration);
+            Map<Integer, Collection<IPerson>> womenOfThisAge = people.getFemales().getMapByYear(yearOfBirthInConsideration);
 
             // DATA - get rate of births by mothers age
             OneDimensionDataDistribution orderedBirthRatesForMothersOfThisAge = desiredPopulationStatistics.getOrderedBirthRates(currentTime).getData(age);
@@ -55,14 +56,14 @@ public class BirthLogic {
             OneDimensionDataDistribution proportionOfChildrenBornToEachSizeOfMaternity = transformMaternityProportionsToChildrenProportions(multipleBirthDataForMothersOfThisAgeByMaternity);
 
             int maxBirthOrderInCohort = MapUtils.getMax(womenOfThisAge.keySet());
-            int sizeOfCohort = MapUtils.countPeopleInMap(womenOfThisAge);
+            int sizeOfCohort = MapUtils.countObjectsInCollectionsInMap(womenOfThisAge);
 
 
             // for each number of children already birthed to mothers (BIRTH ORDER)
             for (int order = 0; order <= maxBirthOrderInCohort; order++) {
 
                 // women of this age and birth order - L
-                Collection<Person> women = womenOfThisAge.get(order);
+                Collection<IPerson> women = womenOfThisAge.get(order);
 
                 if (women == null || women.size() == 0) {
                     continue;
@@ -115,7 +116,7 @@ public class BirthLogic {
                     // select the mothers
                     for (Integer childrenInMaternity : motherCountsByMaternitySize.keySet()) {
 
-                        ArrayList<Person> mothersToBe = null;
+                        ArrayList<IPerson> mothersToBe = null;
 
                         try {
                             mothersToBe = new ArrayList<>(people.getFemales().removeNPersons(motherCountsByMaternitySize.get(childrenInMaternity), yearOfBirthInConsideration, order, currentTime));
@@ -126,7 +127,7 @@ public class BirthLogic {
 
 
                         for (int n = 0; n < motherCountsByMaternitySize.get(childrenInMaternity); n++) {
-                            Person mother = mothersToBe.get(n);
+                            IPerson mother = mothersToBe.get(n);
 
                             // make and assign the specified number of children - assign to correct place in population
                             for (int c = 0; c < childrenInMaternity; c++) {
@@ -178,11 +179,11 @@ public class BirthLogic {
 
     }
 
-    private static int eligableMothers(Collection<Person> women, DateClock currentTime) {
+    private static int eligableMothers(Collection<IPerson> women, DateClock currentTime) {
 
         int count = 0;
 
-        for(Person w : women) {
+        for(IPerson w : women) {
             if(w.noRecentChildren(currentTime)) {
                 count ++;
             }
@@ -415,6 +416,7 @@ public class BirthLogic {
         throw new StatisticalManipulationCalculationError("Fatal balancing error has occurred in the method: Simulation.performBalancingIterationOnNumbersOfMothers(...)");
 
     }
+
 
 
 

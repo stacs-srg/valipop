@@ -30,6 +30,12 @@ public class DateUtilsTest {
         assertEquals(15, DateUtils.differenceInMonths(t, t.advanceTime(new CompoundTimeUnit(15, TimeUnit.MONTH))).getCount());
         assertEquals(15, DateUtils.differenceInMonths(t.advanceTime(new CompoundTimeUnit(15, TimeUnit.MONTH)), t).getCount());
 
+        DateClock t2 = new DateClock(12, 2018);
+        assertEquals(3, DateUtils.differenceInMonths(t, t.advanceTime(new CompoundTimeUnit(3, TimeUnit.MONTH))).getCount());
+        assertEquals(3, DateUtils.differenceInMonths(t2, t2.advanceTime(new CompoundTimeUnit(3, TimeUnit.MONTH))).getCount());
+
+
+
     }
 
     @Test
@@ -37,8 +43,19 @@ public class DateUtilsTest {
 
         DateClock t = new DateClock(6, 1900);
 
+        DateClock t1 = new DateClock(1, 2015);
+        DateClock t2 = new DateClock(12, 2015);
+
         assertEquals(0, DateUtils.differenceInYears(t, t.advanceTime(new CompoundTimeUnit(0, TimeUnit.YEAR))).getCount());
         assertEquals(0, DateUtils.differenceInYears(t.advanceTime(new CompoundTimeUnit(0, TimeUnit.YEAR)), t).getCount());
+
+        assertEquals(0, DateUtils.differenceInYears(t, t.advanceTime(new CompoundTimeUnit(3, TimeUnit.MONTH))).getCount());
+        assertEquals(0, DateUtils.differenceInYears(t, t.advanceTime(new CompoundTimeUnit(6, TimeUnit.MONTH))).getCount());
+        assertEquals(0, DateUtils.differenceInYears(t, t.advanceTime(new CompoundTimeUnit(9, TimeUnit.MONTH))).getCount());
+
+        assertEquals(0, DateUtils.differenceInYears(t1, t1.advanceTime(new CompoundTimeUnit(11, TimeUnit.MONTH))).getCount());
+        assertEquals(1, DateUtils.differenceInYears(t2, t2.advanceTime(new CompoundTimeUnit(12, TimeUnit.MONTH))).getCount());
+        assertEquals(0, DateUtils.differenceInYears(t2, t2.advanceTime(new CompoundTimeUnit(1, TimeUnit.MONTH))).getCount());
 
         assertEquals(7, DateUtils.differenceInYears(t, t.advanceTime(new CompoundTimeUnit(7, TimeUnit.YEAR))).getCount());
         assertEquals(7, DateUtils.differenceInYears(t.advanceTime(new CompoundTimeUnit(7, TimeUnit.YEAR)), t).getCount());
@@ -52,7 +69,9 @@ public class DateUtilsTest {
     @Test
     public void checkBeforeDateMethod() {
 
+        DateClock a3 = new DateClock(12, 2014);
         DateClock a = new DateClock(3, 2015);
+        DateClock a2 = new DateClock(6, 2015);
 
         DateInstant b = new DateInstant(15, 3, 2015);
 
@@ -60,6 +79,14 @@ public class DateUtilsTest {
         assertFalse(DateUtils.dateBefore(b, a));
 
         assertTrue(DateUtils.dateBefore(b, b));
+
+        assertTrue(DateUtils.dateBefore(a3, a));
+        assertTrue(DateUtils.dateBefore(a, a2));
+        assertTrue(DateUtils.dateBefore(a3, a2));
+
+        assertFalse(DateUtils.dateBefore(a, a3));
+        assertFalse(DateUtils.dateBefore(a2, a));
+        assertFalse(DateUtils.dateBefore(a2, a3));
 
     }
 

@@ -109,7 +109,7 @@ public class OneDimensionDataDistribution implements DataDistribution {
         return targetData.get(row);
     }
 
-    protected IntegerRange resolveRowValue(Integer rowValue) {
+    public IntegerRange resolveRowValue(Integer rowValue) {
 
         for (IntegerRange iR : targetData.keySet()) {
             if (iR.contains(rowValue)) {
@@ -117,7 +117,7 @@ public class OneDimensionDataDistribution implements DataDistribution {
             }
         }
 
-        throw new InvalidRangeException("Given value not covered by rows - value " + rowValue + " | min row label " + getMinRowLabelValue2().toString() + " | max row label " + getMaxRowLabelValue().toString());
+        throw new InvalidRangeException("Given value not covered by rows - value " + rowValue);
     }
 
     public Map<IntegerRange, Double> getData() {

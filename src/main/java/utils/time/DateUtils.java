@@ -8,7 +8,10 @@ public class DateUtils {
     private static final int MONTHS_IN_YEAR = 12;
 
     public static CompoundTimeUnit differenceInYears(Date a, Date b) {
-        return new CompoundTimeUnit(Math.abs(a.getYear() - b.getYear()), TimeUnit.YEAR);
+
+        int months = differenceInMonths(a, b).getCount();
+
+        return new CompoundTimeUnit(months / MONTHS_IN_YEAR, TimeUnit.YEAR);
     }
 
     public static CompoundTimeUnit differenceInMonths(Date a, Date b) {
@@ -19,7 +22,7 @@ public class DateUtils {
             b = temp;
         }
 
-        int yearDiffInMonths = MONTHS_IN_YEAR * differenceInYears(a, b).getCount();
+        int yearDiffInMonths = MONTHS_IN_YEAR * Math.abs(a.getYear() - b.getYear());
 
         return new CompoundTimeUnit(yearDiffInMonths + (b.getMonth() - a.getMonth()), TimeUnit.MONTH);
     }
@@ -32,7 +35,11 @@ public class DateUtils {
         } else if (a.getYear() == b.getYear()) {
             if (a.getMonth() < b.getMonth()) {
                 return true;
-            } else return a.getDay() <= b.getDay();
+            } else if (a.getMonth() == b.getMonth()) {
+                return a.getDay() <= b.getDay();
+            } else {
+                return false;
+            }
         } else {
             return false;
         }

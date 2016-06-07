@@ -40,10 +40,6 @@ public class Partnership implements IPartnership {
         return nextId++;
     }
 
-    public void addChildren(List<IPerson> children) {
-        this.children.addAll(children);
-    }
-
     @Override
     public int getId() {
         return id;
@@ -81,5 +77,10 @@ public class Partnership implements IPartnership {
     @Override
     public int compareTo(IPartnership o) {
         return this.id == o.getId() ? 0 : -1;
+    }
+
+    @Override
+    public void addChildren(List<IPerson> children) {
+        this.children.addAll(children);
     }
 }

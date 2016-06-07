@@ -31,6 +31,8 @@ public class SelfCorrectingTwoDimensionDataDistribution extends TwoDimensionData
     @Override
     public double getCorrectingData(DataKey data) {
 
+        // TODO this is likely/is broke
+
         // in the case of births:
         // row value corresponds to age
         // column value corresponds to order - cV
@@ -42,19 +44,14 @@ public class SelfCorrectingTwoDimensionDataDistribution extends TwoDimensionData
         int L = data.getForNPeople();
 
         // get previous applied rate - a
-        double a = getPreviousData(data.getRowValue()).getData(data.getColumnValue());
+        double a = getAppliedRates(data.getRowValue()).getData(data.getColumnValue());
 
         // get number of people a has been applied to - P
-        Double dP = getCountData(data.getRowValue()).getData(data.getColumnValue());
+        Double dP = getCounts(data.getRowValue()).getData(data.getColumnValue());
 
         int P = dP.intValue();
 
-//        System.out.println(dP);
-//        System.out.println(P);
-
         if(P == 0) {
-            System.out.println("P - 0");
-            System.out.println("t - " + t);
             return t;
         }
 
@@ -92,10 +89,10 @@ public class SelfCorrectingTwoDimensionDataDistribution extends TwoDimensionData
     public void returnAppliedData(DataKey data, double appliedRate) {
 
         // get previous applied rate - a
-        double a = getPreviousData(data.getRowValue()).getData(data.getColumnValue());
+        double a = getAppliedRates(data.getRowValue()).getData(data.getColumnValue());
 
         // get number of people it has been applied to - P
-        int P = getCountData(data.getRowValue()).getData(data.getColumnValue()).intValue();
+        int P = getCounts(data.getRowValue()).getData(data.getColumnValue()).intValue();
 
         // get how many returned data will be applied to - L
         int L = data.getForNPeople();
@@ -114,13 +111,13 @@ public class SelfCorrectingTwoDimensionDataDistribution extends TwoDimensionData
         updateCounts(data.getRowValue(), data.getColumnValue(), T);
 
         // update appliedData to z
-        updateAppliedData(data.getRowValue(), data.getColumnValue(), z);
+        updateAppliedRates(data.getRowValue(), data.getColumnValue(), z);
 
 
 
     }
 
-    private void updateAppliedData(Integer rowValue, Integer columnValue, double newValue) {
+    private void updateAppliedRates(Integer rowValue, Integer columnValue, double newValue) {
 
         appliedData.get(resolveRowValue(rowValue, appliedData)).updateValue(columnValue, newValue);
 
@@ -133,7 +130,7 @@ public class SelfCorrectingTwoDimensionDataDistribution extends TwoDimensionData
 
     }
 
-    public OneDimensionDataDistribution getPreviousData(Integer rowValue) {
+    public OneDimensionDataDistribution getAppliedRates(Integer rowValue) {
 
         IntegerRange row = null;
         try {
@@ -146,7 +143,7 @@ public class SelfCorrectingTwoDimensionDataDistribution extends TwoDimensionData
         return appliedData.get(row);
     }
 
-    public OneDimensionDataDistribution getCountData(Integer rowValue) {
+    public OneDimensionDataDistribution getCounts(Integer rowValue) {
 
         IntegerRange row = null;
         try {

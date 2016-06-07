@@ -16,6 +16,7 @@
  */
 package model;
 
+import utils.PartnershipUtils;
 import utils.time.Date;
 
 import java.util.List;
@@ -25,7 +26,7 @@ import java.util.List;
  *
  * @author Graham Kirby (graham.kirby@st-andrews.ac.uk)
  */
-public interface IPartnership extends Comparable<IPartnership> {
+public interface IPartnership extends Comparable<IPartnership>, PartnershipUtils {
 
     /**
      * Gets the partnership's unique identifier.

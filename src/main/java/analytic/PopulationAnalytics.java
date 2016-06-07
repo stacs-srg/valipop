@@ -60,9 +60,9 @@ public class PopulationAnalytics {
         System.out.println("Number of males = " + number_males + " = " + String.format("%.1f", number_males / (double) size * ONE_HUNDRED) + '%');
         System.out.println("Number of females = " + number_females + " = " + String.format("%.1f", number_females / (double) size * ONE_HUNDRED) + '%');
 
-        printAllBirthDates();
-        printAllDeathDates();
-        printAllDates();
+//        printAllBirthDates();
+//        printAllDeathDates();
+//        printAllDates();
     }
 
     private int countMales()  {

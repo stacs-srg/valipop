@@ -3,6 +3,7 @@ package model.simulationLogic;
 import config.Config;
 import datastructure.population.PeopleCollection;
 import datastructure.summativeStatistics.desired.PopulationStatistics;
+import model.IPerson;
 import model.Person;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -35,8 +36,8 @@ public class DeathLogic {
             int numberOfFemales = countFemalesBornIn(livingPopulation, yearOfBirth);
 
             // DATA - get rate of death by age and gender
-            Double maleDeathRate = desiredPopulationStatistics.getDeathRates(currentDate, 'm').getData(getAge(currentDate, yearOfBirth));
-            Double femaleDeathRate = desiredPopulationStatistics.getDeathRates(currentDate, 'f').getData(getAge(currentDate, yearOfBirth));
+            Double maleDeathRate = desiredPopulationStatistics.getDeathRates(currentDate, 'm').getData(getAge(currentDate, yearOfBirth)) * config.getDeathTimeStep().toDecimalRepresentation();
+            Double femaleDeathRate = desiredPopulationStatistics.getDeathRates(currentDate, 'f').getData(getAge(currentDate, yearOfBirth)) * config.getDeathTimeStep().toDecimalRepresentation();
 
             // use DATA to calculate who to kill off
             int malesToDie = calculateNumberToDie(numberOfMales, maleDeathRate);
@@ -45,17 +46,17 @@ public class DeathLogic {
             deathCount += malesToDie;
             deathCount += femalesToDie;
 
-            Collection<Person> deadMales = removeMalesToDieFromPopulation(livingPopulation, yearOfBirth, malesToDie);
-            Collection<Person> deadFemales = removeFemalesToDieFromPopulation(livingPopulation, yearOfBirth, femalesToDie);
+            Collection<IPerson> deadMales = removeMalesToDieFromPopulation(livingPopulation, yearOfBirth, malesToDie);
+            Collection<IPerson> deadFemales = removeFemalesToDieFromPopulation(livingPopulation, yearOfBirth, femalesToDie);
 
             // for each to be killed
-            for (Person m : deadMales) {
+            for (IPerson m : deadMales) {
                 // TODO execute death at a time in the next year
                 m.recordDeath(currentDate);
                 deadPopulation.addPerson(m);
             }
 
-            for (Person f : deadFemales) {
+            for (IPerson f : deadFemales) {
                 // TODO execute death at a time in the next year
                 f.recordDeath(currentDate);
                 deadPopulation.addPerson(f);
@@ -69,11 +70,11 @@ public class DeathLogic {
 
     }
 
-    private static Collection<Person> removeMalesToDieFromPopulation(PeopleCollection population, DateClock yearOfBirth, int numberToDie) {
+    private static Collection<IPerson> removeMalesToDieFromPopulation(PeopleCollection population, DateClock yearOfBirth, int numberToDie) {
         return population.getMales().removeNPersons(numberToDie, yearOfBirth.getYearDate());
     }
 
-    private static Collection<Person> removeFemalesToDieFromPopulation(PeopleCollection population, DateClock yearOfBirth, int numberToDie) {
+    private static Collection<IPerson> removeFemalesToDieFromPopulation(PeopleCollection population, DateClock yearOfBirth, int numberToDie) {
         return population.getFemales().removeNPersons(numberToDie, yearOfBirth.getYearDate());
     }
 
