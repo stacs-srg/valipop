@@ -8,10 +8,7 @@ import model.simulationLogic.StatisticalManipulationCalculationError;
 import utils.MapUtils;
 import utils.time.*;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
@@ -34,17 +31,16 @@ public class ComparativeAnalysis implements IComparativeAnalysis {
     @Override
     public IKaplanMeierAnalysis runKaplanMeier(OneDimensionDataDistribution expectedEvents, OneDimensionDataDistribution observedEvents) throws StatisticalManipulationCalculationError {
 
-        if(getTableSize(expectedEvents) != getTableSize(observedEvents)) {
-            throw new StatisticalManipulationCalculationError("Tables should be the same size");
-        }
+//        if(getTableSize(expectedEvents) != getTableSize(observedEvents)) {
+//            throw new StatisticalManipulationCalculationError("Tables should be the same size");
+//        }
 
-        int[] m1Failures = new int[getTableSize(observedEvents)];
-        int[] m2Failures = new int[getTableSize(expectedEvents)];
-
-        IntegerRange[] orderedKeys = (IntegerRange[]) observedEvents.getData().keySet().toArray();
+        IntegerRange[] orderedKeys = observedEvents.getData().keySet().toArray(new IntegerRange[observedEvents.getData().keySet().size()]);
 
         Arrays.sort(orderedKeys, IntegerRange::compareTo);
 
+        double sumObs_exp = 0;
+        double sumVar = 0;
 
         for(int c = 0; c < orderedKeys.length - 1; c++) {
 
@@ -64,16 +60,19 @@ public class ComparativeAnalysis implements IComparativeAnalysis {
             double obv_exp1 = m1f - e1f;
             double obv_exp2 = m2f - e2f;
 
+            int ns = n1fTHISROW + n2fTHISROW;
+            int ms = m1f + m2f;
 
+            double var = (n1fTHISROW * n2fTHISROW * ms * (ns - ms)) / (Math.pow(ns, 2) * (ns + 1));
 
+            sumObs_exp += obv_exp2;
+            sumVar += var;
 
         }
 
+        double logRankValue = Math.pow(sumObs_exp, 2) / sumVar;
 
-
-
-
-        return null;
+        return new KaplanMeierAnalysis(EventType.MALE_DEATH, new YearDate(1600), logRankValue);
     }
 
     private int getTableSize(OneDimensionDataDistribution table) {
@@ -86,25 +85,36 @@ public class ComparativeAnalysis implements IComparativeAnalysis {
     }
 
     @Override
-    public void runAnalysis() throws UnsupportedDateConversion {
+    public void runAnalysis() throws UnsupportedDateConversion, StatisticalManipulationCalculationError {
 
         // for each year in analysis period
         for(DateClock d = startDate.getDateClock(); DateUtils.dateBefore(d, endDate); d = d.advanceTime(1, TimeUnit.YEAR)) {
-            // get survival tables for all males born in year
-            OneDimensionDataDistribution populationDeathSurvivorTable = generated.getSurvivorTable(d, new CompoundTimeUnit(1, TimeUnit.YEAR), EventType.DEATH);
 
-            MapUtils.print("G SUR-" + d.toString(), populationDeathSurvivorTable.getData(), 0, 1, 100);
+            // EVENT - Male Death
 
-            // get equiverlent table from inputs stats
-            OneDimensionDataDistribution statisticsDeathSurvivorTable = desired.getSurvivorTable(d, new CompoundTimeUnit(1, TimeUnit.YEAR), EventType.DEATH, populationDeathSurvivorTable.getData(0));
+            IKaplanMeierAnalysis result = runKMAnalysis(d, EventType.MALE_DEATH, desired, generated);
+            System.out.println(d.toString() + " | " + EventType.MALE_DEATH.toString() + " | Sig Diff? " + result.significantDifferenceBetweenGroups() + " | " + result.getPValue());
 
-            MapUtils.print("S SUR-" + d.toString(), statisticsDeathSurvivorTable.getData(), 0, 1, 100);
-
-
-            // perform KM analysis and log result
-            IKaplanMeierAnalysis result = runKaplanMeier(statisticsDeathSurvivorTable, populationDeathSurvivorTable);
 
         }
+
+    }
+
+    private IKaplanMeierAnalysis runKMAnalysis(Date date, EventType eventType, StatisticalTables expected, StatisticalTables observed) throws StatisticalManipulationCalculationError, UnsupportedDateConversion {
+        // get survival tables for all males born in year
+        OneDimensionDataDistribution populationSurvivorTable = observed.getSurvivorTable(date, new CompoundTimeUnit(1, TimeUnit.YEAR), eventType);
+
+        MapUtils.print("G SUR-" + date.toString(), populationSurvivorTable.getData(), 0, 1, 100);
+
+        // get equiverlent table from inputs stats
+        OneDimensionDataDistribution statisticsSurvivorTable = expected.getSurvivorTable(date, new CompoundTimeUnit(1, TimeUnit.YEAR), eventType, populationSurvivorTable.getData(0), populationSurvivorTable.getMaxRowLabelValue().getMax());
+
+        MapUtils.print("S SUR-" + date.toString(), statisticsSurvivorTable.getData(), 0, 1, 100);
+
+
+        // perform KM analysis and log result
+        return runKaplanMeier(statisticsSurvivorTable, populationSurvivorTable);
+
 
     }
 }

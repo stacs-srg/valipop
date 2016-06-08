@@ -1,30 +1,68 @@
 package validation;
 
 import datastructure.summativeStatistics.generated.EventType;
+import org.apache.commons.math3.distribution.ChiSquaredDistribution;
+import utils.time.Date;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class KaplanMeierAnalysis implements IKaplanMeierAnalysis {
 
+    private final Date year;
+    private final EventType event;
+    private double logRankValue;
+
+    private double P = 0.05;
+
+    public KaplanMeierAnalysis(EventType event, Date year, double logRankValue) {
+        this.event = event;
+        this.year = year;
+        this.logRankValue = logRankValue;
+    }
+
+    public void setLogRankValue(double logRankValue) {
+        this.logRankValue = logRankValue;
+    }
+
     @Override
     public EventType getVariable() {
-        return null;
+        return event;
     }
 
     @Override
-    public int getYear() {
-        return 0;
+    public Date getYear() {
+        return year;
     }
 
     @Override
-    public double getLogRank() {
-        return 0;
+    public double getLogRankValue() {
+        return logRankValue;
     }
 
     @Override
-    public boolean significantLogRankDifference() {
-        return false;
+    public double getPValue() {
+        ChiSquaredDistribution cSD = new ChiSquaredDistribution(1.0);
+        return 1 - cSD.cumulativeProbability(logRankValue);
+    }
+
+    @Override
+    public boolean significantDifferenceBetweenGroups() {
+        ChiSquaredDistribution cSD = new ChiSquaredDistribution(1.0);
+        double p = 1 - cSD.cumulativeProbability(logRankValue);
+
+        if(P >= p) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public void setConfidenceLevel(double confidenceLevel) {
+        if(confidenceLevel <= 1) {
+            this.P = confidenceLevel;
+        }
     }
 
     @Override
@@ -42,8 +80,5 @@ public class KaplanMeierAnalysis implements IKaplanMeierAnalysis {
         return false;
     }
 
-    @Override
-    public void setConfidenceLevel(int confidenceLevel) {
 
-    }
 }

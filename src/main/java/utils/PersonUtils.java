@@ -2,6 +2,7 @@ package utils;
 
 import model.IPartnership;
 import model.IPerson;
+import model.NotDeadException;
 import utils.time.Date;
 import utils.time.DateClock;
 import utils.time.DateUtils;
@@ -18,7 +19,7 @@ public interface PersonUtils {
 
     void recordDeath(Date date);
 
-    int ageAtDeath();
+    int ageAtDeath() throws NotDeadException;
 
 
 }

@@ -6,6 +6,7 @@ import datastructure.summativeStatistics.structure.InvalidRangeException;
 import datastructure.summativeStatistics.structure.OneDimensionDataDistribution;
 import model.IPerson;
 import model.IPopulation;
+import model.NotDeadException;
 import utils.time.CompoundTimeUnit;
 import utils.time.Date;
 
@@ -54,13 +55,14 @@ public class GeneratedPopulationComposition implements PopulationComposition {
         OneDimensionDataDistribution countsTable = new OneDimensionDataDistribution(startYear.getYearDate(), "", "", counts);
 
         for(IPerson m : males) {
-            int age = m.ageAtDeath();
 
+            Integer age = null;
             try {
+                age = m.ageAtDeath();
                 counts.replace(countsTable.resolveRowValue(age), counts.get(countsTable.resolveRowValue(age)) + 1);
             } catch (InvalidRangeException e) {
                 counts.put(new IntegerRange(age), 1.0);
-            }
+            } catch (NotDeadException e) { /* No need to count in our survivor table as they are beyond the end of our time frame */ }
 
         }
 
@@ -81,7 +83,7 @@ public class GeneratedPopulationComposition implements PopulationComposition {
     }
 
     @Override
-    public OneDimensionDataDistribution getSurvivorTable(Date startYear, CompoundTimeUnit timePeriod, EventType event, Double scalingFactor) {
+    public OneDimensionDataDistribution getSurvivorTable(Date startYear, CompoundTimeUnit timePeriod, EventType event, Double scalingFactor, int timeLimit) {
         return getSurvivorTable(startYear, timePeriod, event);
     }
 }

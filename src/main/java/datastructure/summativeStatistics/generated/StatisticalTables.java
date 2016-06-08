@@ -32,6 +32,6 @@ public interface StatisticalTables {
     OneDimensionDataDistribution getSurvivorTable(Date startYear, CompoundTimeUnit timePeriod, EventType event);
 
 
-    OneDimensionDataDistribution getSurvivorTable(Date startYear, CompoundTimeUnit timePeriod, EventType event, Double scalingFactor) throws UnsupportedDateConversion;
+    OneDimensionDataDistribution getSurvivorTable(Date startYear, CompoundTimeUnit timePeriod, EventType event, Double scalingFactor, int timeLimit) throws UnsupportedDateConversion;
 
 }

@@ -98,6 +98,8 @@ public class Simulation {
             comparisonOfDesiredAndGenerated = sim.analyseGeneratedPopulation(population);
         } catch (UnsupportedDateConversion unsupportedDateConversion) {
             unsupportedDateConversion.printStackTrace();
+        } catch (StatisticalManipulationCalculationError statisticalManipulationCalculationError) {
+            statisticalManipulationCalculationError.printStackTrace();
         }
 
 
@@ -129,7 +131,7 @@ public class Simulation {
 
 
 
-    public ComparativeAnalysis analyseGeneratedPopulation(IPopulation generatedPopulation) throws UnsupportedDateConversion {
+    public ComparativeAnalysis analyseGeneratedPopulation(IPopulation generatedPopulation) throws UnsupportedDateConversion, StatisticalManipulationCalculationError {
         // get comparable statistics for generate population
         PopulationComposition generatedPopulationComposition = new GeneratedPopulationComposition(config.getTS(), config.getTE(), generatedPopulation);
 

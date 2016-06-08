@@ -32,6 +32,6 @@ public interface IComparativeAnalysis {
     boolean passed();
 
 
-    void runAnalysis() throws UnsupportedDateConversion;
+    void runAnalysis() throws UnsupportedDateConversion, StatisticalManipulationCalculationError;
 
 }

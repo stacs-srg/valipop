@@ -115,7 +115,7 @@ public class PopulationStatistics implements PopulationComposition, EventRateTab
     }
 
     @Override
-    public OneDimensionDataDistribution getSurvivorTable(Date startYear, CompoundTimeUnit timePeriod, EventType event, Double scalingFactor) throws UnsupportedDateConversion {
+    public OneDimensionDataDistribution getSurvivorTable(Date startYear, CompoundTimeUnit timePeriod, EventType event, Double scalingFactor, int timeLimit) throws UnsupportedDateConversion {
 
         Map<IntegerRange, Double> survival = new HashMap<IntegerRange, Double>();
 
@@ -124,7 +124,7 @@ public class PopulationStatistics implements PopulationComposition, EventRateTab
 
 
         int age = 0;
-        for(DateClock d = startYear.getDateClock(); DateUtils.dateBefore(d, startYear.getDateClock().advanceTime(100, TimeUnit.YEAR)); d = d.advanceTime(1, TimeUnit.YEAR)) {
+        for(DateClock d = startYear.getDateClock(); DateUtils.dateBefore(d, startYear.getDateClock().advanceTime(timeLimit, TimeUnit.YEAR)); d = d.advanceTime(1, TimeUnit.YEAR)) {
             double nMx = getDeathRates(d, 'm').getData(age);
             int n = timePeriod.getCount();
 

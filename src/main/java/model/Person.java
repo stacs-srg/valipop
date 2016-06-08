@@ -101,7 +101,10 @@ public class Person implements IPerson {
     }
 
     @Override
-    public int ageAtDeath() {
+    public int ageAtDeath() throws NotDeadException {
+        if(deathDate == null) {
+            throw new NotDeadException();
+        }
         return DateUtils.differenceInYears(birthDate, deathDate).getCount();
     }
 }

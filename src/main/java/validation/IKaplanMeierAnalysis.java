@@ -1,6 +1,7 @@
 package validation;
 
 import datastructure.summativeStatistics.generated.EventType;
+import utils.time.Date;
 
 /**
  * This interface is used as the return form for a Kaplan-Meier analysis
@@ -21,21 +22,23 @@ public interface IKaplanMeierAnalysis {
      *
      * @return the year
      */
-    int getYear();
+    Date getYear();
 
     /**
      * Returns the log rank value.
      *
      * @return the log rank value.
      */
-    double getLogRank();
+    double getLogRankValue();
+
+    double getPValue();
 
     /**
      * Considers if the difference in the compared data is significant.
      *
      * @return if true then significant then curves are different (not what we want).
      */
-    boolean significantLogRankDifference();
+    boolean significantDifferenceBetweenGroups();
 
     /**
      * Returns the hazard ratio. The hazard ratio is the hazard rate of the simulated population divided by the hazard
@@ -67,6 +70,6 @@ public interface IKaplanMeierAnalysis {
      *
      * @param confidenceLevel the confidence level
      */
-    void setConfidenceLevel(int confidenceLevel);
+    void setConfidenceLevel(double confidenceLevel);
 
 }

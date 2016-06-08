@@ -7,6 +7,7 @@ public enum EventType {
 
     BIRTH,
     MARRIAGE,
-    DEATH
+    MALE_DEATH,
+    FEMALE_DEATH
 
 }
