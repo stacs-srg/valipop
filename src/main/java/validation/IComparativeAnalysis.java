@@ -1,9 +1,14 @@
 package validation;
 
+import config.Config;
 import datastructure.summativeStatistics.generated.EventType;
 import datastructure.summativeStatistics.structure.OneDimensionDataDistribution;
+import model.IPopulation;
 import model.simulationLogic.StatisticalManipulationCalculationError;
+import utils.time.Date;
 import utils.time.UnsupportedDateConversion;
+
+import java.util.Map;
 
 /**
  * The IComparativeAnalysis interface provides statistical tests to verify the simulated population against a given
@@ -21,7 +26,7 @@ public interface IComparativeAnalysis {
      * @param observedEvents the observed events
      * @return the km analysis
      */
-    IKaplanMeierAnalysis runKaplanMeier(OneDimensionDataDistribution expectedEvents, OneDimensionDataDistribution observedEvents) throws StatisticalManipulationCalculationError;
+    IKaplanMeierAnalysis runKaplanMeier(EventType event, OneDimensionDataDistribution expectedEvents, OneDimensionDataDistribution observedEvents) throws StatisticalManipulationCalculationError;
 
 
     /**
@@ -32,6 +37,11 @@ public interface IComparativeAnalysis {
     boolean passed();
 
 
-    void runAnalysis() throws UnsupportedDateConversion, StatisticalManipulationCalculationError;
+    Map<Date, Map<EventType, IKaplanMeierAnalysis>> getResults();
+
+    void printResults() throws UnsupportedDateConversion;
+
+
+    void runAnalysis(IPopulation generatedPopulation) throws UnsupportedDateConversion, StatisticalManipulationCalculationError;
 
 }

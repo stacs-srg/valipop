@@ -1,5 +1,7 @@
 package utils.time;
 
+import datastructure.summativeStatistics.structure.IntegerRange;
+
 import java.time.DateTimeException;
 import java.util.*;
 
@@ -99,4 +101,12 @@ public final class DateClock implements Date {
         return this;
     }
 
+    @Override
+    public int compareTo(Date o) {
+        if(DateUtils.dateBefore(this, o)) {
+            return -1;
+        } else {
+            return 1;
+        }
+    }
 }

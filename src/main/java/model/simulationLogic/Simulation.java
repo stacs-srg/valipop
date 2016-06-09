@@ -96,11 +96,16 @@ public class Simulation {
         ComparativeAnalysis comparisonOfDesiredAndGenerated = null;
         try {
             comparisonOfDesiredAndGenerated = sim.analyseGeneratedPopulation(population);
+            comparisonOfDesiredAndGenerated.printResults();
         } catch (UnsupportedDateConversion unsupportedDateConversion) {
             unsupportedDateConversion.printStackTrace();
         } catch (StatisticalManipulationCalculationError statisticalManipulationCalculationError) {
             statisticalManipulationCalculationError.printStackTrace();
         }
+
+
+        sim.desired.getOrderedBirthRates(config.getT0()).print();
+
 
 
         try {
@@ -111,9 +116,9 @@ public class Simulation {
         }
 
         // Check for statistical significant similarity between desired and generated population
-        if (comparisonOfDesiredAndGenerated.passed()) {
-            System.out.println("Generated population similarity to desired population is statistically significant");
-        }
+//        if (comparisonOfDesiredAndGenerated.passed()) {
+//            System.out.println("Generated population similarity to desired population is statistically significant");
+//        }
 
 
     }
@@ -137,7 +142,8 @@ public class Simulation {
 
         // compare desired and generated population
         ComparativeAnalysis comparisonOfDesiredAndGenerated = new ComparativeAnalysis(desired, generatedPopulationComposition, config.getTS(), config.getTE());
-        comparisonOfDesiredAndGenerated.runAnalysis();
+
+        comparisonOfDesiredAndGenerated.runAnalysis(generatedPopulation);
 
         return comparisonOfDesiredAndGenerated;
 

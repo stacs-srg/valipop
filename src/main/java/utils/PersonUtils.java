@@ -2,6 +2,7 @@ package utils;
 
 import model.IPartnership;
 import model.IPerson;
+import model.NoChildrenOfDesiredOrder;
 import model.NotDeadException;
 import utils.time.Date;
 import utils.time.DateClock;
@@ -21,5 +22,7 @@ public interface PersonUtils {
 
     int ageAtDeath() throws NotDeadException;
 
+    boolean aliveOnDate(Date date);
 
+    int ageAtFirstChild() throws NoChildrenOfDesiredOrder;
 }

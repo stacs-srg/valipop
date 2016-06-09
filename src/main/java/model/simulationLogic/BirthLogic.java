@@ -59,7 +59,7 @@ public class BirthLogic {
             int sizeOfCohort = MapUtils.countObjectsInCollectionsInMap(womenOfThisAge);
 
 
-            // for each number of children already birthed to mothers (BIRTH ORDER)
+            // for each number of children already birthed to mothers (FIRST_BIRTH ORDER)
             for (int order = 0; order <= maxBirthOrderInCohort; order++) {
 
                 // women of this age and birth order - L

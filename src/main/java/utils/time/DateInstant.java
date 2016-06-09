@@ -109,4 +109,12 @@ public final class DateInstant implements Date {
         throw new UnsupportedDateConversion("Cannot convert from DateInstant to DateClock due to the resulting loss information regarding the day of the month");
     }
 
+    @Override
+    public int compareTo(Date o) {
+        if(DateUtils.dateBefore(this, o)) {
+            return -1;
+        } else {
+            return 1;
+        }
+    }
 }

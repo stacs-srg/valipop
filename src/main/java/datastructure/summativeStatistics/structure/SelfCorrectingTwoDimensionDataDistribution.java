@@ -3,6 +3,7 @@ package datastructure.summativeStatistics.structure;
 import utils.MapUtils;
 import utils.time.YearDate;
 
+import java.util.Arrays;
 import java.util.Map;
 
 /**
@@ -154,5 +155,39 @@ public class SelfCorrectingTwoDimensionDataDistribution extends TwoDimensionData
         }
 
         return appliedCounts.get(row);
+    }
+
+    public void print() {
+        System.out.println("TARGET");
+        printMap(targetData);
+        System.out.println("APPLIED");
+        printMap(appliedData);
+        System.out.println("COUNTS");
+        printMap(appliedCounts);
+    }
+
+    public void printMap(Map<IntegerRange, OneDimensionDataDistribution> data) {
+
+        IntegerRange[] keys = data.keySet().toArray(new IntegerRange[targetData.keySet().size()]);
+        Arrays.sort(keys, IntegerRange::compareTo);
+
+        for(IntegerRange iR : keys) {
+            System.out.print(iR.toString() + " | ");
+
+            Map<IntegerRange, Double> row = data.get(iR).getData();
+            IntegerRange[] orderedKeys = row.keySet().toArray(new IntegerRange[row.keySet().size()]);
+            Arrays.sort(orderedKeys, IntegerRange::compareTo);
+
+            for(IntegerRange iR2 : orderedKeys) {
+                System.out.print(row.get(iR2) + " | ");
+            }
+
+            System.out.println();
+
+        }
+
+
+        System.out.println();
+
     }
 }

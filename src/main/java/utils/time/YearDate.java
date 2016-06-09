@@ -65,4 +65,13 @@ public final class YearDate implements Date {
     public boolean equals(Object obj) {
         return this.year == ((YearDate) obj).getYear();
     }
+
+    @Override
+    public int compareTo(Date o) {
+        if(DateUtils.dateBefore(this, o)) {
+            return -1;
+        } else {
+            return 1;
+        }
+    }
 }

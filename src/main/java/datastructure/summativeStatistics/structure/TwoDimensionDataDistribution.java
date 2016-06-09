@@ -71,15 +71,10 @@ public class TwoDimensionDataDistribution implements DataDistribution {
 
     }
 
-    public OneDimensionDataDistribution getData(Integer rowValue) {
+    public OneDimensionDataDistribution getData(Integer rowValue) throws InvalidRangeException {
 
-        IntegerRange row = null;
-        try {
-            row = resolveRowValue(rowValue, targetData);
-        } catch (InvalidRangeException e) {
-            log.fatal(e.getMessage());
-            System.exit(303);
-        }
+        IntegerRange row = resolveRowValue(rowValue, targetData);
+
 
         return targetData.get(row);
     }

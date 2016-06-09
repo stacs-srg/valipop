@@ -1,5 +1,9 @@
 package utils;
 
+import model.IPerson;
+import utils.time.Date;
+import utils.time.DateClock;
+
 import java.util.Collection;
 
 /**
@@ -18,5 +22,19 @@ public class CollectionUtils {
 
         return sum;
 
+    }
+
+    public static int countPeopleInCollectionAliveOnDate(Collection<IPerson> people, Date date) {
+
+        int count = 0;
+
+        for(IPerson p : people) {
+            if(p.aliveOnDate(date)) {
+                count++;
+            }
+        }
+
+
+        return count;
     }
 }

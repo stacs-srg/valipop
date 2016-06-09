@@ -3,11 +3,10 @@ package datastructure.summativeStatistics.desired;
 import datastructure.summativeStatistics.generated.EventType;
 import datastructure.summativeStatistics.PopulationComposition;
 import config.Config;
-import datastructure.summativeStatistics.structure.IntegerRange;
-import datastructure.summativeStatistics.structure.OneDimensionDataDistribution;
-import datastructure.summativeStatistics.structure.SelfCorrectingTwoDimensionDataDistribution;
-import datastructure.summativeStatistics.structure.TwoDimensionDataDistribution;
+import datastructure.summativeStatistics.structure.*;
 import datastructure.summativeStatistics.EventRateTables;
+import model.IPopulation;
+import utils.CollectionUtils;
 import utils.time.*;
 
 import java.util.HashMap;
@@ -115,29 +114,73 @@ public class PopulationStatistics implements PopulationComposition, EventRateTab
     }
 
     @Override
-    public OneDimensionDataDistribution getSurvivorTable(Date startYear, CompoundTimeUnit timePeriod, EventType event, Double scalingFactor, int timeLimit) throws UnsupportedDateConversion {
+    public OneDimensionDataDistribution getSurvivorTable(Date startYear, CompoundTimeUnit timePeriod, EventType event, Double scalingFactor, int timeLimit, IPopulation generatedPopulation) throws UnsupportedDateConversion {
 
         Map<IntegerRange, Double> survival = new HashMap<IntegerRange, Double>();
 
         double survivors = scalingFactor;
         survival.put(new IntegerRange(0), survivors);
 
-
         int age = 0;
         for(DateClock d = startYear.getDateClock(); DateUtils.dateBefore(d, startYear.getDateClock().advanceTime(timeLimit, TimeUnit.YEAR)); d = d.advanceTime(1, TimeUnit.YEAR)) {
-            double nMx = getDeathRates(d, 'm').getData(age);
+
+            double nMx = 0;
+
+            switch(event) {
+                case FIRST_BIRTH:
+                    nMx = calculateOrderedBirthRate(startYear, d, age, 0, generatedPopulation, survivors);
+                    break;
+                case SECOND_BIRTH:
+                    nMx = calculateOrderedBirthRate(startYear, d, age, 1, generatedPopulation, survivors);
+                    break;
+                case THIRD_BIRTH:
+                    nMx = calculateOrderedBirthRate(startYear, d, age, 2, generatedPopulation, survivors);
+                    break;
+                case FOURTH_BIRTH:
+                    nMx = calculateOrderedBirthRate(startYear, d, age, 3, generatedPopulation, survivors);
+                    break;
+                case FIFTH_BIRTH:
+                    nMx = calculateOrderedBirthRate(startYear, d, age, 4, generatedPopulation, survivors);
+                    break;
+                case MALE_DEATH:
+                    nMx = getDeathRates(d, 'm').getData(age);
+                    break;
+                case FEMALE_DEATH:
+                    nMx = getDeathRates(d, 'f').getData(age);
+                    break;
+            }
+
+
             int n = timePeriod.getCount();
 
             double nQx = (n * nMx) / (1 + (n * 0.5 * nMx));
+
 
             survivors = survivors * (1 - nQx);
 
             survival.put(new IntegerRange(age + 1), survivors);
 
             age++;
+
         }
 
+
         return new OneDimensionDataDistribution(startYear.getYearDate(), "", "", survival);
+    }
+
+    private double calculateOrderedBirthRate(Date startYear, Date currentDate, int age, int birthOrder, IPopulation generatedPopulation, double survivors) {
+        TwoDimensionDataDistribution orderedBirthRates = getOrderedBirthRates(currentDate);
+
+        OneDimensionDataDistribution aSOBR;
+        try {
+            aSOBR = orderedBirthRates.getData(age);
+        } catch (InvalidRangeException e) {
+            return 0.0;
+        }
+
+        int t = CollectionUtils.countPeopleInCollectionAliveOnDate(generatedPopulation.getByYearAndSex('f', startYear), currentDate);
+        double r = aSOBR.getData(birthOrder);
+        return (r * t) / survivors;
     }
 
 

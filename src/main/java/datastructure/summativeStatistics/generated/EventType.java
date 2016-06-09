@@ -5,8 +5,11 @@ package datastructure.summativeStatistics.generated;
  */
 public enum EventType {
 
-    BIRTH,
-    MARRIAGE,
+    FIRST_BIRTH,
+    SECOND_BIRTH,
+    THIRD_BIRTH,
+    FOURTH_BIRTH,
+    FIFTH_BIRTH,
     MALE_DEATH,
     FEMALE_DEATH
 

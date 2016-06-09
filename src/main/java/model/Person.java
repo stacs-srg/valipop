@@ -107,4 +107,36 @@ public class Person implements IPerson {
         }
         return DateUtils.differenceInYears(birthDate, deathDate).getCount();
     }
+
+    @Override
+    public boolean aliveOnDate(Date date) {
+
+        if(DateUtils.dateBefore(birthDate, date)) {
+            if(deathDate == null || DateUtils.dateBefore(date, deathDate)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public int ageAtFirstChild() throws NoChildrenOfDesiredOrder {
+
+        int age = Integer.MAX_VALUE;
+
+        for(IPartnership p : partnerships) {
+            for(IPerson c : p.getChildren()) {
+                int ageAtBirth = DateUtils.differenceInYears(birthDate, c.getBirthDate()).getCount();
+                if(ageAtBirth < age) {
+                    age = ageAtBirth;
+                }
+            }
+        }
+
+        if(age == Integer.MAX_VALUE) {
+            throw new NoChildrenOfDesiredOrder("Women has no children");
+        }
+
+        return age;
+    }
 }

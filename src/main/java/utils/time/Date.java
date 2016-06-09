@@ -1,9 +1,11 @@
 package utils.time;
 
+import datastructure.summativeStatistics.structure.IntegerRange;
+
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public interface Date {
+public interface Date extends Comparable<Date> {
 
 
     int getYear();

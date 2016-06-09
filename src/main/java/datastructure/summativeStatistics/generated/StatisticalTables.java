@@ -1,6 +1,7 @@
 package datastructure.summativeStatistics.generated;
 
 import datastructure.summativeStatistics.structure.OneDimensionDataDistribution;
+import model.IPopulation;
 import utils.time.CompoundTimeUnit;
 import utils.time.Date;
 import utils.time.UnsupportedDateConversion;
@@ -29,9 +30,9 @@ public interface StatisticalTables {
      * @param event      the event
      * @return the survivor table
      */
-    OneDimensionDataDistribution getSurvivorTable(Date startYear, CompoundTimeUnit timePeriod, EventType event);
+    OneDimensionDataDistribution getSurvivorTable(Date startYear, CompoundTimeUnit timePeriod, EventType event) throws UnsupportedEventType;
 
 
-    OneDimensionDataDistribution getSurvivorTable(Date startYear, CompoundTimeUnit timePeriod, EventType event, Double scalingFactor, int timeLimit) throws UnsupportedDateConversion;
+    OneDimensionDataDistribution getSurvivorTable(Date startYear, CompoundTimeUnit timePeriod, EventType event, Double scalingFactor, int timeLimit, IPopulation generatedPopulation) throws UnsupportedDateConversion, UnsupportedEventType;
 
 }
