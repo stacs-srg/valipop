@@ -28,9 +28,14 @@ public class SelfCorrectingTwoDimensionDataDistribution extends TwoDimensionData
     private Map<IntegerRange, OneDimensionDataDistribution> appliedData;
     private Map<IntegerRange, OneDimensionDataDistribution> appliedCounts;
 
+    private int maxCol = 10;
 
     @Override
     public double getCorrectingData(DataKey data) {
+
+        if(maxCol <= data.getColumnValue()) {
+            return 0.0;
+        }
 
         // TODO this is likely/is broke
 
@@ -63,19 +68,29 @@ public class SelfCorrectingTwoDimensionDataDistribution extends TwoDimensionData
         // x = (Tt - Pa) / L
         double x = (T*t - P*a) / L;
 
+
+        int maxBirthOrderInTargetTable = targetData.get(targetData.keySet().iterator().next()).getMaxRowLabelValue().getValue();
+
         // if ! columnValue >= getMaxRowLabelValue()
-        if(!(data.getColumnValue() >= getMaxRowLabelValue().getValue())) {
+//        System.out.println("MRV = " + targetData.get(targetData.keySet().iterator().next()).getMaxRowLabelValue().toString());
+        if(!(data.getColumnValue() >= maxBirthOrderInTargetTable)) {
             // return x
             return x;
         } else {
             // scale to appropriate value
             // if mcv - 1 > mrl
-            if(data.getMaxColumnValue() - 1 > getMaxRowLabelValue().getValue()) {
+            if(data.getMaxColumnValue() - 1 > maxBirthOrderInTargetTable) {
+
                 // r = x(cV - mcv - 1)^2 / (mcv - mrl)^2
-                return x * Math.pow(data.getColumnValue() - data.getMaxColumnValue() - 1, 2) / Math.pow(data.getMaxColumnValue() - getMaxRowLabelValue().getValue(), 2);
+//                double temp = (x * Math.pow(data.getColumnValue() - data.getMaxColumnValue() - 1, 2)) / Math.pow(data.getMaxColumnValue() - maxBirthOrderInTargetTable, 2);
+                double temp = (2 * x * (data.getMaxColumnValue() + 1 - data.getColumnValue())) / (double) (data.getMaxColumnValue() + 1 + maxBirthOrderInTargetTable);
+
+//                System.out.printf("%.3f | " + data.getColumnValue() + " | " + temp + "\n", x);
+
+                return temp;
             } else {
                 // if mcv == mrl
-                if(data.getMaxColumnValue() == getMaxRowLabelValue().getValue()) {
+                if(data.getMaxColumnValue() == maxBirthOrderInTargetTable) {
                     // r = 2x
                     return 2*x;
                 } else {
@@ -88,6 +103,7 @@ public class SelfCorrectingTwoDimensionDataDistribution extends TwoDimensionData
 
     @Override
     public void returnAppliedData(DataKey data, double appliedRate) {
+
 
         // get previous applied rate - a
         double a = getAppliedRates(data.getRowValue()).getData(data.getColumnValue());
@@ -102,7 +118,18 @@ public class SelfCorrectingTwoDimensionDataDistribution extends TwoDimensionData
         int T = L + P;
 
         // the given rate - x
-        double x = appliedRate;
+
+//        double temp = (x * Math.pow(data.getColumnValue() - data.getMaxColumnValue() - 1, 2)) / Math.pow(data.getMaxColumnValue() - maxBirthOrderInTargetTable, 2);
+
+        int maxBirthOrderInTargetTable = targetData.get(targetData.keySet().iterator().next()).getMaxRowLabelValue().getValue();
+
+        double x;
+        if(data.getMaxColumnValue() - 1 > maxBirthOrderInTargetTable) {
+//            x = (appliedRate * Math.pow(data.getMaxColumnValue() - maxBirthOrderInTargetTable, 2)) / Math.pow(data.getColumnValue() - data.getMaxColumnValue() - 1, 2);
+            x = (appliedRate * (data.getMaxColumnValue() + 1 + maxBirthOrderInTargetTable)) / (2 * (data.getMaxColumnValue() + 1 - data.getColumnValue()));
+        } else {
+            x = appliedRate;
+        }
 
         // calc the new applied rate - z
         // z = (Pa + Lx) / T
@@ -112,6 +139,9 @@ public class SelfCorrectingTwoDimensionDataDistribution extends TwoDimensionData
         updateCounts(data.getRowValue(), data.getColumnValue(), T);
 
         // update appliedData to z
+        if(Double.isNaN(z)) {
+            System.out.println(T + " " + P + " " + a + " " + L + " " + x);
+        }
         updateAppliedRates(data.getRowValue(), data.getColumnValue(), z);
 
 

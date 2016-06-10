@@ -85,6 +85,8 @@ public class BirthLogic {
                         // use DATA 1 to see how many many children need to be born
                         numberOfChildrenToBirth = calculateChildrenToBeBorn(sizeOfCohort, birthRate);
 
+//                        System.out.println(numberOfChildrenToBirth);
+
                         // calculate numbers of mothers to give birth (and which will bear twins, etc.)
                         // use DATA 2 to decide how many mothers needed to birth children
                         motherCountsByMaternitySize = calculateMotherCountsByMaternitySize(numberOfChildrenToBirth, proportionOfChildrenBornToEachSizeOfMaternity);
@@ -93,10 +95,20 @@ public class BirthLogic {
                         totalNumberOfMothers = CollectionUtils.sumIntegerCollection(motherCountsByMaternitySize.values());
 
                         eligableWomen = eligableMothers(women, currentTime);
+//                        System.out.println("EW: " + eligableWomen);
 
                         if(eligableWomen < totalNumberOfMothers || eligableWomen == 0) {
-                            double scalingFactor = eligableWomen / (double) totalNumberOfMothers;
-                            birthRate = scalingFactor * birthRate;
+                            if(eligableWomen == 0) {
+                                birthRate = 0.0;
+//                                break;
+                            } else {
+                                double scalingFactor = eligableWomen / (double) totalNumberOfMothers;
+                                birthRate = scalingFactor * birthRate;
+//                            if(Double.isNaN(birthRate)) {
+//                                System.out.println(totalNumberOfMothers);
+//                                System.out.println(eligableWomen);
+//                            }
+                            }
                             log.info("Rescaling Birth Rate | Current Date: " + currentTime.toString() + " - Insufficient number of mothers: Eligible women " + women.size() + " | Mothers Required " + totalNumberOfMothers + " | Age " + age + " | Order " + order);
                         }
 
@@ -353,6 +365,8 @@ public class BirthLogic {
 
 //        MapUtils.print("E", temp, 1, 1, 4);
 
+
+
         return MapUtils.floorAllValuesInMap(temp);
 
 
@@ -385,7 +399,9 @@ public class BirthLogic {
 
                 uptoOnNumberLine += remainder / sumOfQualifyingRemainders;
                 if (random < uptoOnNumberLine) {
-                    temp.replace(iR, motherCount - 1);
+                    if(motherCount - 1 >= 0) {
+                        temp.replace(iR, motherCount - 1);
+                    }
                     return iR.getValue();
                 }
             }
