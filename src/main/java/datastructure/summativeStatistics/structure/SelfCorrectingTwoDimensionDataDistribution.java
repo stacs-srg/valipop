@@ -189,14 +189,42 @@ public class SelfCorrectingTwoDimensionDataDistribution extends TwoDimensionData
 
     public void print() {
         System.out.println("TARGET");
-        printMap(targetData);
+        printMap(targetData, true);
         System.out.println("APPLIED");
-        printMap(appliedData);
+        printMap(appliedData, true);
+        System.out.println("DELTAS");
+        printDeltas(appliedData, targetData);
         System.out.println("COUNTS");
-        printMap(appliedCounts);
+        printMap(appliedCounts, false);
     }
 
-    public void printMap(Map<IntegerRange, OneDimensionDataDistribution> data) {
+    private void printDeltas(Map<IntegerRange, OneDimensionDataDistribution> appliedData, Map<IntegerRange, OneDimensionDataDistribution> targetData) {
+
+        IntegerRange[] keys = targetData.keySet().toArray(new IntegerRange[targetData.keySet().size()]);
+        Arrays.sort(keys, IntegerRange::compareTo);
+
+        for(IntegerRange iR : keys) {
+            System.out.print(iR.toString() + " | ");
+
+            Map<IntegerRange, Double> targetRow = targetData.get(iR).getData();
+            Map<IntegerRange, Double> appliedRow = appliedData.get(iR).getData();
+
+            IntegerRange[] orderedKeys = targetRow.keySet().toArray(new IntegerRange[targetRow.keySet().size()]);
+            Arrays.sort(orderedKeys, IntegerRange::compareTo);
+
+            for(IntegerRange iR2 : orderedKeys) {
+                System.out.printf("%+.4f | ", appliedRow.get(iR2) - targetRow.get(iR2));
+            }
+
+            System.out.println();
+
+        }
+
+        System.out.println();
+
+    }
+
+    public void printMap(Map<IntegerRange, OneDimensionDataDistribution> data, boolean decimal) {
 
         IntegerRange[] keys = data.keySet().toArray(new IntegerRange[targetData.keySet().size()]);
         Arrays.sort(keys, IntegerRange::compareTo);
@@ -209,7 +237,11 @@ public class SelfCorrectingTwoDimensionDataDistribution extends TwoDimensionData
             Arrays.sort(orderedKeys, IntegerRange::compareTo);
 
             for(IntegerRange iR2 : orderedKeys) {
-                System.out.print(row.get(iR2) + " | ");
+                if(decimal) {
+                    System.out.printf("%.4f | ", row.get(iR2));
+                } else {
+                    System.out.printf("%.0f | ", row.get(iR2));
+                }
             }
 
             System.out.println();

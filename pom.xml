@@ -44,6 +44,12 @@
     <dependencies>
 
         <dependency>
+            <groupId>net.sf.jsci</groupId>
+            <artifactId>jsci</artifactId>
+            <version>1.2</version>
+        </dependency>
+
+        <dependency>
             <!-- CSV manipulation utility classes -->
             <groupId>uk.ac.standrews.cs</groupId>
             <artifactId>ciesvium</artifactId>
@@ -55,12 +61,42 @@
             <artifactId>log4j-api</artifactId>
             <version>2.5</version>
         </dependency>
+
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-core</artifactId>
             <version>2.5</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.jfree</groupId>
+            <artifactId>jfreechart</artifactId>
+            <version>1.0.19</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.itextpdf</groupId>
+            <artifactId>itextpdf</artifactId>
+            <version>5.5.9</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.xmlgraphics</groupId>
+            <artifactId>batik-svggen</artifactId>
+            <version>1.8</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.xmlgraphics</groupId>
+            <artifactId>batik-dom</artifactId>
+            <version>1.8</version>
+        </dependency>
+
+        <dependency>
+            <groupId>gov.nist.math</groupId>
+            <artifactId>jama</artifactId>
+            <version>1.0.3</version>
+        </dependency>
 
     </dependencies>
 

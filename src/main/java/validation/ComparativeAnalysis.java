@@ -9,6 +9,7 @@ import datastructure.summativeStatistics.generated.StatisticalTables;
 import model.IPopulation;
 import model.simulationLogic.StatisticalManipulationCalculationError;
 import org.apache.commons.math3.distribution.ChiSquaredDistribution;
+import plots.survival.SurvivalPlot;
 import utils.time.*;
 
 import java.util.Arrays;
@@ -175,6 +176,9 @@ public class ComparativeAnalysis implements IComparativeAnalysis {
             try {
                 result = runKMAnalysis(d, EventType.MALE_DEATH, desired, generated, generatedPopulation);
                 temp.put(EventType.MALE_DEATH, result);
+
+
+                new SurvivalPlot(desired.getSurvivorTable(d, null, EventType.MALE_DEATH), generated.getSurvivorTable(d, null, EventType.MALE_DEATH)).generatePlot();
 
                 if(!Double.isNaN(result.getPValue())) {
                     fisherSumMaleDeath += Math.log(result.getPValue());

@@ -12,6 +12,7 @@ import datastructure.summativeStatistics.desired.PopulationStatistics;
 import datastructure.summativeStatistics.generated.GeneratedPopulationComposition;
 import model.*;
 import datastructure.summativeStatistics.PopulationComposition;
+import plots.survival.SurvivalPlot;
 import validation.ComparativeAnalysis;
 import config.Config;
 
@@ -104,6 +105,7 @@ public class Simulation {
         }
 
 
+
         sim.desired.getOrderedBirthRates(config.getT0()).print();
 
 
@@ -144,6 +146,8 @@ public class Simulation {
         ComparativeAnalysis comparisonOfDesiredAndGenerated = new ComparativeAnalysis(desired, generatedPopulationComposition, config.getTS(), config.getTE());
 
         comparisonOfDesiredAndGenerated.runAnalysis(generatedPopulation);
+
+
 
         return comparisonOfDesiredAndGenerated;
 
