@@ -81,4 +81,40 @@ public interface IPerson extends Comparable<IPerson>, PersonUtils {
      */
     IPartnership getParentsPartnership();
 
+    /**
+     * Gets the person's first name.
+     * @return the person's first name
+     */
+    String getFirstName();
+
+    /**
+     * Gets the person's surname (family name).
+     * @return the person's surname
+     */
+    String getSurname();
+
+    /**
+     * Gets the person's place of birth, or null if not recorded.
+     * @return the person's place of birth
+     */
+    String getBirthPlace();
+
+    /**
+     * Gets the person's place of death, or null if not recorded.
+     * @return the person's place of death
+     */
+    String getDeathPlace();
+
+    /**
+     * Gets the person's occupation, or null if not recorded.
+     * @return the person's occupation
+     */
+    String getOccupation();
+
+    /**
+     * Gets the cause of the person's death, or null if not recorded.
+     * @return the cause of the person's death
+     */
+    String getDeathCause();
+
 }

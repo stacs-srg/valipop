@@ -20,6 +20,10 @@ public class Person implements IPerson {
     private DateInstant deathDate;
     private List<IPartnership> partnerships = new ArrayList<IPartnership>();
     private IPartnership parentsPartnership;
+    private String firstName;
+    private String surname;
+
+
 
     public Person(char sex, Date birthDate) {
         id = getNewId();
@@ -32,6 +36,14 @@ public class Person implements IPerson {
         this.sex = Character.toLowerCase(sex);
         this.birthDate = birthDate.getInstant();
         this.parentsPartnership = parentsPartnership;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public void setSurname(String surname) {
+        this.surname = surname;
     }
 
     private static int getNewId() {
@@ -68,6 +80,39 @@ public class Person implements IPerson {
     @Override
     public IPartnership getParentsPartnership() {
         return parentsPartnership;
+    }
+
+    @Override
+    public String getFirstName() {
+        return firstName;
+    }
+
+    @Override
+    public String getSurname() {
+        return surname;
+    }
+
+    // TODO Implement geography model
+    @Override
+    public String getBirthPlace() {
+        return null;
+    }
+
+    @Override
+    public String getDeathPlace() {
+        return null;
+    }
+
+    // TODO Implement occupation assignment
+    @Override
+    public String getOccupation() {
+        return null;
+    }
+
+    // TODO Implement death causes - does occupation, date, gender, location, etc. influence this?
+    @Override
+    public String getDeathCause() {
+        return null;
     }
 
     @Override
@@ -139,4 +184,5 @@ public class Person implements IPerson {
 
         return age;
     }
+
 }

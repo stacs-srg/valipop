@@ -8,12 +8,12 @@ import datastructure.summativeStatistics.structure.DataKey;
 import datastructure.summativeStatistics.structure.IntegerRange;
 import datastructure.summativeStatistics.structure.OneDimensionDataDistribution;
 import model.IPerson;
-import model.Person;
 import model.PersonFactory;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import utils.CollectionUtils;
 import utils.MapUtils;
+import utils.time.Date;
 import utils.time.DateClock;
 import utils.time.YearDate;
 
@@ -144,7 +144,7 @@ public class BirthLogic {
                             // make and assign the specified number of children - assign to correct place in population
                             for (int c = 0; c < childrenInMaternity; c++) {
                                 // TODO vary birth date in time period
-                                mother.recordPartnership(PersonFactory.formNewChildInPartnership(mother, currentTime, people));
+                                mother.recordPartnership(PersonFactory.formNewChildInPartnership(getRandomFather(people, mother.getBirthDate()), mother, currentTime, people));
                             }
 
                             people.addPerson(mother);
@@ -434,6 +434,12 @@ public class BirthLogic {
     }
 
 
+    public static IPerson getRandomFather(PeopleCollection population, Date fathersYearOfBirth) {
 
+        Collection<IPerson> males = population.getMales().getByYear(fathersYearOfBirth);
 
+        int r = randomNumberGenerator.nextInt(males.size());
+        return males.toArray(new IPerson[males.size()])[r];
+
+    }
 }
