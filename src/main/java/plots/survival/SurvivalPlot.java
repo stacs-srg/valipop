@@ -3,6 +3,7 @@ package plots.survival;
 import datastructure.summativeStatistics.structure.IntegerRange;
 import datastructure.summativeStatistics.structure.OneDimensionDataDistribution;
 import org.jfree.chart.JFreeChart;
+import plots.PlotControl;
 import plots.statgraphics.GraphicalAnalysis;
 import plots.statgraphics.survival.SurvivalEstimatePlot;
 import plots.statgraphics.util.PlotFrame;
@@ -47,14 +48,11 @@ public class SurvivalPlot {
 
 
         String[] names = new String[] {"Observed", "Expected"};
-        PlotFrame[] pf = new PlotFrame[1];
 
-        pf[0] = new PlotFrame("Kaplan-Meier Estimate Plot II",
+        PlotControl.addPlotFrame(new PlotFrame("Kaplan-Meier Estimate Plot II",
                 new SurvivalEstimatePlot(names,
                         new double[][] {sortedTimeObserved, sortedTimeExpected},
-                        new double[][] {sortedSurvivalEstimateObserved, sortedSurvivalEstimateExpected}).plot, 500, 270);
-
-        new PlotFrameFactory().putPlotFrame(pf);
+                        new double[][] {sortedSurvivalEstimateObserved, sortedSurvivalEstimateExpected}).plot, 500, 270));
 
     }
 
