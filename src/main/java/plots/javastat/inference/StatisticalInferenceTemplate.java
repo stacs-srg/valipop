@@ -5,6 +5,7 @@ package plots.javastat.inference;
  * <p>Description: JAVA programs for statistical computations</p>
  * <p>Copyright: Copyright (c) 2009</p>
  * <p>Company: Tung Hai University</p>
+ *
  * @author Wen Hsiang Wei
  * @version 1.4
  */
@@ -12,6 +13,7 @@ package plots.javastat.inference;
 import java.util.Hashtable;
 
 import plots.javastat.StatisticalAnalysis;
+
 import static plots.javastat.util.Argument.*;
 import static plots.javastat.util.Output.*;
 
@@ -21,75 +23,66 @@ import static plots.javastat.util.Output.*;
  * quantities, such as confidence interval, test statistic and p-value.
  */
 
-public abstract class StatisticalInferenceTemplate extends StatisticalAnalysis
-{
-
-    /**
-     * Default StatisticalInferenceTemplate constructor.
-     */
-
-    public StatisticalInferenceTemplate() {}
+public abstract class StatisticalInferenceTemplate extends StatisticalAnalysis {
 
     /**
      * The point estimate.
      */
 
     public double pointEstimate;
-
     /**
      * The standard error of the point estimate.
      */
 
     public double pointEstimateSE;
-
     /**
      * The critical value.
      */
 
     public double criticalValue;
-
     /**
      * The null value.
      */
 
     public double nullValue;
-
     /**
      * The specification of the alternative hypothesis with the choices
      * "greater", "less" or "equal" (or "two.sided").
      */
 
     public String side;
-
     /**
      * The cumulative distribution function.
      */
 
     public double cdf;
-
     /**
      * The confidence interval.
      */
 
-    public double [] confidenceInterval;
-
+    public double[] confidenceInterval;
     /**
      * The test statistic.
      */
 
     public double testStatistic;
-
     /**
      * The p-value.
      */
 
     public double pValue;
-
     /**
      * The index for the specification of the alternative hypothesis..
      */
 
-    private double [] sideIndex;
+    private double[] sideIndex;
+
+    /**
+     * Default StatisticalInferenceTemplate constructor.
+     */
+
+    public StatisticalInferenceTemplate() {
+    }
 
     /**
      * The abstract method (need to be implemented in sub-classes) for computing
@@ -121,16 +114,15 @@ public abstract class StatisticalInferenceTemplate extends StatisticalAnalysis
      */
 
     public Object confidenceInterval(Hashtable argument,
-                                     Object... dataObject)
-    {
+                                     Object... dataObject) {
         criticalValue = ((Double) argument.get(CRITICAL_VALUE)).doubleValue();
         pointEstimate = ((Double) this.pointEstimate(argument, dataObject))
-            .doubleValue();
+                .doubleValue();
         pointEstimateSE = ((Double) this.pointEstimateSE(argument, dataObject))
-            .doubleValue();
+                .doubleValue();
         confidenceInterval = new double[]{pointEstimate -
-            criticalValue * pointEstimateSE,
-            pointEstimate + criticalValue * pointEstimateSE};
+                criticalValue * pointEstimateSE,
+                pointEstimate + criticalValue * pointEstimateSE};
         output.put(CONFIDENCE_INTERVAL, confidenceInterval);
 
         return confidenceInterval;
@@ -144,13 +136,12 @@ public abstract class StatisticalInferenceTemplate extends StatisticalAnalysis
      */
 
     public Object testStatistic(Hashtable argument,
-                                Object... dataObject)
-    {
+                                Object... dataObject) {
         nullValue = ((Double) argument.get(NULL_VALUE)).doubleValue();
         pointEstimate = ((Double) this.pointEstimate(argument, dataObject))
-            .doubleValue();
+                .doubleValue();
         pointEstimateSE = ((Double) this.pointEstimateSE(argument, dataObject))
-            .doubleValue();
+                .doubleValue();
         testStatistic = (pointEstimate - nullValue) / pointEstimateSE;
         output.put(TEST_STATISTIC, new Double(testStatistic));
 
@@ -163,21 +154,15 @@ public abstract class StatisticalInferenceTemplate extends StatisticalAnalysis
      * @return the p-value.
      */
 
-    public double pValue(Hashtable argument)
-    {
+    public double pValue(Hashtable argument) {
         side = (String) argument.get(SIDE);
         cdf = ((Double) argument.get(CDF)).doubleValue();
-        if (side.equalsIgnoreCase("less"))
-        {
-            sideIndex = new double[] {0.0, 1.0};
-        }
-        else if (side.equalsIgnoreCase("greater"))
-        {
-            sideIndex = new double[] {0.0, 0.0};
-        }
-        else
-        {
-            sideIndex = new double[] {1.0, 0.0};
+        if (side.equalsIgnoreCase("less")) {
+            sideIndex = new double[]{0.0, 1.0};
+        } else if (side.equalsIgnoreCase("greater")) {
+            sideIndex = new double[]{0.0, 0.0};
+        } else {
+            sideIndex = new double[]{1.0, 0.0};
         }
 
         return pValue(sideIndex, cdf);
@@ -195,11 +180,10 @@ public abstract class StatisticalInferenceTemplate extends StatisticalAnalysis
      */
 
     public double pValue(double[] sideIndex,
-                         double cdf)
-    {
-        pValue=sideIndex[0] * 2 * (1 - Math.max(cdf, 1.0 - cdf)) +
-            sideIndex[1] * cdf + (1.0 - sideIndex[0] -
-            sideIndex[1]) * (1.0 - cdf);
+                         double cdf) {
+        pValue = sideIndex[0] * 2 * (1 - Math.max(cdf, 1.0 - cdf)) +
+                sideIndex[1] * cdf + (1.0 - sideIndex[0] -
+                sideIndex[1]) * (1.0 - cdf);
         output.put(PVALUE, new Double(pValue));
 
         return pValue;

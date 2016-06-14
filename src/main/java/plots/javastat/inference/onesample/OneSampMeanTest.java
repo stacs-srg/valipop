@@ -5,6 +5,7 @@ package plots.javastat.inference.onesample;
  * <p>Description: JAVA programs for statistical computations</p>
  * <p>Copyright: Copyright (c) 2009</p>
  * <p>Company: Tung Hai University</p>
+ *
  * @author Wen Hsiang Wei
  * @version 1.4
  */
@@ -17,6 +18,7 @@ import JSci.maths.statistics.TDistribution;
 import plots.javastat.StatisticalAnalysis;
 import plots.javastat.inference.StatisticalInferenceTemplate;
 import plots.javastat.util.BasicStatistics;
+
 import static plots.javastat.util.Argument.*;
 import static plots.javastat.util.Output.*;
 
@@ -27,8 +29,7 @@ import static plots.javastat.util.Output.*;
  * <p> </p>
  */
 
-public class OneSampMeanTest extends StatisticalInferenceTemplate
-{
+public class OneSampMeanTest extends StatisticalInferenceTemplate {
 
     /**
      * The level of significance.
@@ -64,7 +65,8 @@ public class OneSampMeanTest extends StatisticalInferenceTemplate
      * Constructs a one sample mean test.
      */
 
-    public OneSampMeanTest() {}
+    public OneSampMeanTest() {
+    }
 
     /**
      * Constructs a one sample mean test given the input arguments and data.
@@ -89,69 +91,52 @@ public class OneSampMeanTest extends StatisticalInferenceTemplate
      */
 
     public OneSampMeanTest(Hashtable argument,
-                           Object ...dataObject)
-    {
+                           Object... dataObject) {
         this.argument = argument;
         this.dataObject = dataObject;
         if (argument.size() > 0 &&
-            dataObject != null)
-        {
+                dataObject != null) {
             if (argument.get(TEST_TYPE) != null &&
-                argument.get(ALPHA) != null &&
-                argument.get(NULL_VALUE) != null &&
-                argument.get(SIDE) != null &&
-                dataObject.length == 1)
-            {
+                    argument.get(ALPHA) != null &&
+                    argument.get(NULL_VALUE) != null &&
+                    argument.get(SIDE) != null &&
+                    dataObject.length == 1) {
                 statisticalAnalysis = new OneSampMeanTest(
                         (String) argument.get(TEST_TYPE),
                         (Double) argument.get(ALPHA),
                         ((Number) argument.get(NULL_VALUE)).doubleValue(),
                         (String) argument.get(SIDE),
                         (double[]) dataObject[0]);
-            }
-            else if (argument.get(TEST_TYPE) != null &&
-                     argument.get(NULL_VALUE) != null &&
-                     argument.get(SIDE) != null && dataObject.length == 1)
-            {
+            } else if (argument.get(TEST_TYPE) != null &&
+                    argument.get(NULL_VALUE) != null &&
+                    argument.get(SIDE) != null && dataObject.length == 1) {
                 statisticalAnalysis = new OneSampMeanTest(
                         (String) argument.get(TEST_TYPE),
                         ((Number) argument.get(NULL_VALUE)).doubleValue(),
                         (String) argument.get(SIDE),
                         (double[]) dataObject[0]);
-            }
-            else if (argument.get(TEST_TYPE) != null &&
-                       argument.get(NULL_VALUE) != null &&
-                       dataObject.length == 1)
-            {
+            } else if (argument.get(TEST_TYPE) != null &&
+                    argument.get(NULL_VALUE) != null &&
+                    dataObject.length == 1) {
                 statisticalAnalysis = new OneSampMeanTest(
                         (String) argument.get(TEST_TYPE),
                         ((Number) argument.get(NULL_VALUE)).doubleValue(),
                         (double[]) dataObject[0]);
-            }
-            else if (argument.get(TEST_TYPE) != null &&
-                     dataObject.length == 1)
-            {
+            } else if (argument.get(TEST_TYPE) != null &&
+                    dataObject.length == 1) {
                 statisticalAnalysis = new OneSampMeanTest(
                         (String) argument.get(TEST_TYPE),
                         (double[]) dataObject[0]);
-            }
-            else
-            {
+            } else {
                 throw new IllegalArgumentException(
                         "Wrong input arguments or data.");
             }
-        }
-        else if (dataObject != null &&
-                 dataObject.length == 1)
-        {
+        } else if (dataObject != null &&
+                dataObject.length == 1) {
             statisticalAnalysis = new OneSampMeanTest((double[]) dataObject[0]);
-        }
-        else if (dataObject == null)
-        {
+        } else if (dataObject == null) {
             statisticalAnalysis = new OneSampMeanTest();
-        }
-        else
-        {
+        } else {
             throw new IllegalArgumentException("Wrong input data.");
         }
     }
@@ -175,8 +160,7 @@ public class OneSampMeanTest extends StatisticalInferenceTemplate
                            double alpha,
                            double u0,
                            String side,
-                           double[] data)
-    {
+                           double[] data) {
         this.testType = testType;
         this.alpha = alpha;
         this.u0 = u0;
@@ -202,8 +186,7 @@ public class OneSampMeanTest extends StatisticalInferenceTemplate
     public OneSampMeanTest(String testType,
                            double u0,
                            String side,
-                           double[] data)
-    {
+                           double[] data) {
         this(testType, 0.05, u0, side, data);
     }
 
@@ -220,8 +203,7 @@ public class OneSampMeanTest extends StatisticalInferenceTemplate
 
     public OneSampMeanTest(String testType,
                            double u0,
-                           double[] data)
-    {
+                           double[] data) {
         this(testType, 0.05, u0, "equal", data);
     }
 
@@ -236,8 +218,7 @@ public class OneSampMeanTest extends StatisticalInferenceTemplate
      */
 
     public OneSampMeanTest(String testType,
-                           double[] data)
-    {
+                           double[] data) {
         this(testType, 0.05, 0.0, "equal", data);
     }
 
@@ -250,8 +231,7 @@ public class OneSampMeanTest extends StatisticalInferenceTemplate
      *                                     not be 0.
      */
 
-    public OneSampMeanTest(double[] data)
-    {
+    public OneSampMeanTest(double[] data) {
         this("Z", 0.05, 0.0, "equal", data);
     }
 
@@ -261,8 +241,7 @@ public class OneSampMeanTest extends StatisticalInferenceTemplate
      * @return the point estimate.
      */
 
-    public double pointEstimate(double[] data)
-    {
+    public double pointEstimate(double[] data) {
         this.data = data;
         pointEstimate = new BasicStatistics().mean(data);
         output.put(POINT_ESTIMATE, pointEstimate);
@@ -278,8 +257,7 @@ public class OneSampMeanTest extends StatisticalInferenceTemplate
      */
 
     public Double pointEstimate(Hashtable argument,
-                                Object ...dataObject)
-    {
+                                Object... dataObject) {
         this.argument = argument;
         this.dataObject = dataObject;
 
@@ -292,8 +270,7 @@ public class OneSampMeanTest extends StatisticalInferenceTemplate
      * @return the standard error of the point estimate.
      */
 
-    public double pointEstimateSE(double[] data)
-    {
+    public double pointEstimateSE(double[] data) {
         this.data = data;
         pointEstimateSE = new BasicStatistics().meanSE(data);
         output.put(POINT_ESTIMATE_SE, pointEstimateSE);
@@ -309,8 +286,7 @@ public class OneSampMeanTest extends StatisticalInferenceTemplate
      */
 
     public Double pointEstimateSE(Hashtable argument,
-                                  Object ...dataObject)
-    {
+                                  Object... dataObject) {
         this.argument = argument;
         this.dataObject = dataObject;
 
@@ -337,37 +313,29 @@ public class OneSampMeanTest extends StatisticalInferenceTemplate
      */
 
     public double[] confidenceInterval(Hashtable argument,
-                                       Object ...dataObject)
-    {
+                                       Object... dataObject) {
         this.argument = argument;
         this.dataObject = dataObject;
         if (argument.get(TEST_TYPE) != null &&
-            argument.get(ALPHA) != null &&
-            dataObject != null &&
-            dataObject.length == 1)
-        {
+                argument.get(ALPHA) != null &&
+                dataObject != null &&
+                dataObject.length == 1) {
             confidenceInterval = confidenceInterval((String) argument.get(
                     TEST_TYPE),
                     (Double) argument.get(ALPHA),
                     (double[]) dataObject[0]);
-        }
-        else if (argument.get(TEST_TYPE) != null &&
-                 dataObject != null &&
-                 dataObject.length == 1)
-        {
+        } else if (argument.get(TEST_TYPE) != null &&
+                dataObject != null &&
+                dataObject.length == 1) {
             confidenceInterval = confidenceInterval((String) argument.get(
                     TEST_TYPE),
                     (double[]) dataObject[0]);
-        }
-        else if (dataObject != null &&
-                 dataObject.length == 1)
-        {
+        } else if (dataObject != null &&
+                dataObject.length == 1) {
             confidenceInterval = confidenceInterval((double[]) dataObject[0]);
-        }
-        else
-        {
+        } else {
             throw new IllegalArgumentException("Wrong input arguments or " +
-                                               "data.");
+                    "data.");
         }
 
         return confidenceInterval;
@@ -381,7 +349,7 @@ public class OneSampMeanTest extends StatisticalInferenceTemplate
      * @return the confidence interval,
      * <br>    confidenceInterval[0]: the lower bound;
      * <br>    confidenceInterval[1]: the upper bound.
-     * @exception  IllegalArgumentException the level of significance should be
+     * @exception IllegalArgumentException the level of significance should be
      *                               (strictly) positive and not greater than 1.
      * @exception IllegalArgumentException the length of the input data should
      *                                     not be 0.
@@ -389,16 +357,13 @@ public class OneSampMeanTest extends StatisticalInferenceTemplate
 
     public double[] confidenceInterval(String testType,
                                        double alpha,
-                                       double[] data)
-    {
-        if ((alpha <= 0.0) || (alpha > 1))
-        {
+                                       double[] data) {
+        if ((alpha <= 0.0) || (alpha > 1)) {
             throw new IllegalArgumentException(
                     "The level of significance should be (strictly) positive " +
-                    "and not greater than 1.");
+                            "and not greater than 1.");
         }
-        if (data.length == 0)
-        {
+        if (data.length == 0) {
             throw new IllegalArgumentException(
                     "The length of the input data should not be 0.");
         }
@@ -407,19 +372,16 @@ public class OneSampMeanTest extends StatisticalInferenceTemplate
         argument.put(TEST_TYPE, testType);
         argument.put(ALPHA, alpha);
         if (testType.equalsIgnoreCase("T") ||
-            testType.equalsIgnoreCase("T Test"))
-        {
+                testType.equalsIgnoreCase("T Test")) {
             argument.put(CRITICAL_VALUE,
-                         new TDistribution((data.length - 1)).
-                         inverse((1 - alpha / 2)));
-        }
-        else
-        {
+                    new TDistribution((data.length - 1)).
+                            inverse((1 - alpha / 2)));
+        } else {
             argument.put(CRITICAL_VALUE,
-                         new NormalDistribution().inverse((1 - alpha / 2)));
+                    new NormalDistribution().inverse((1 - alpha / 2)));
         }
 
-        return (double[])super.confidenceInterval(argument, data);
+        return (double[]) super.confidenceInterval(argument, data);
     }
 
     /**
@@ -434,8 +396,7 @@ public class OneSampMeanTest extends StatisticalInferenceTemplate
      */
 
     public double[] confidenceInterval(String testType,
-                                       double[] data)
-    {
+                                       double[] data) {
         return confidenceInterval(testType, 0.05, data);
     }
 
@@ -449,8 +410,7 @@ public class OneSampMeanTest extends StatisticalInferenceTemplate
      *                                     not be 0.
      */
 
-    public double[] confidenceInterval(double[] data)
-    {
+    public double[] confidenceInterval(double[] data) {
         return confidenceInterval("Z", 0.05, data);
     }
 
@@ -468,27 +428,21 @@ public class OneSampMeanTest extends StatisticalInferenceTemplate
      */
 
     public Double testStatistic(Hashtable argument,
-                                Object ...dataObject)
-    {
+                                Object... dataObject) {
         this.argument = argument;
         this.dataObject = dataObject;
         if (argument.get(NULL_VALUE) != null &&
-            dataObject != null &&
-            dataObject.length == 1)
-        {
+                dataObject != null &&
+                dataObject.length == 1) {
             testStatistic = testStatistic(
                     ((Number) argument.get(NULL_VALUE)).doubleValue(),
                     (double[]) dataObject[0]);
-        }
-        else if (dataObject != null &&
-                 dataObject.length == 1)
-        {
+        } else if (dataObject != null &&
+                dataObject.length == 1) {
             testStatistic = testStatistic((double[]) dataObject[0]);
-        }
-        else
-        {
+        } else {
             throw new IllegalArgumentException("Wrong input arguments or " +
-                                               "data.");
+                    "data.");
         }
 
         return testStatistic;
@@ -504,12 +458,11 @@ public class OneSampMeanTest extends StatisticalInferenceTemplate
      */
 
     public double testStatistic(double u0,
-                                double[] data)
-    {
+                                double[] data) {
         this.u0 = u0;
         argument.put(NULL_VALUE, u0);
 
-        return (Double)super.testStatistic(argument, data);
+        return (Double) super.testStatistic(argument, data);
     }
 
     /**
@@ -520,8 +473,7 @@ public class OneSampMeanTest extends StatisticalInferenceTemplate
      *                                     not be 0.
      */
 
-    public double testStatistic(double[] data)
-    {
+    public double testStatistic(double[] data) {
         return testStatistic(0.0, data);
     }
 
@@ -543,46 +495,36 @@ public class OneSampMeanTest extends StatisticalInferenceTemplate
      */
 
     public Double pValue(Hashtable argument,
-                         Object ...dataObject)
-    {
+                         Object... dataObject) {
         this.argument = argument;
         this.dataObject = dataObject;
         if (argument.get(TEST_TYPE) != null &&
-            argument.get(NULL_VALUE) != null &&
-            argument.get(SIDE) != null &&
-            dataObject != null &&
-            dataObject.length == 1)
-        {
+                argument.get(NULL_VALUE) != null &&
+                argument.get(SIDE) != null &&
+                dataObject != null &&
+                dataObject.length == 1) {
             pValue = pValue((String) argument.get(TEST_TYPE),
-                            ((Number) argument.get(NULL_VALUE)).doubleValue(),
-                            (String) argument.get(SIDE),
-                            (double[]) dataObject[0]);
-        }
-        else if (argument.get(TEST_TYPE) != null &&
-                 argument.get(NULL_VALUE) != null &&
-                 dataObject != null &&
-                 dataObject.length == 1)
-        {
+                    ((Number) argument.get(NULL_VALUE)).doubleValue(),
+                    (String) argument.get(SIDE),
+                    (double[]) dataObject[0]);
+        } else if (argument.get(TEST_TYPE) != null &&
+                argument.get(NULL_VALUE) != null &&
+                dataObject != null &&
+                dataObject.length == 1) {
             pValue = pValue((String) argument.get(TEST_TYPE),
-                            ((Number) argument.get(NULL_VALUE)).doubleValue(),
-                            (double[]) dataObject[0]);
-        }
-        else if (argument.get(TEST_TYPE) != null &&
-                 dataObject != null &&
-                 dataObject.length == 1)
-        {
+                    ((Number) argument.get(NULL_VALUE)).doubleValue(),
+                    (double[]) dataObject[0]);
+        } else if (argument.get(TEST_TYPE) != null &&
+                dataObject != null &&
+                dataObject.length == 1) {
             pValue = pValue((String) argument.get(TEST_TYPE),
-                            (double[]) dataObject[0]);
-        }
-        else if (dataObject != null &&
-                 dataObject.length == 1)
-        {
+                    (double[]) dataObject[0]);
+        } else if (dataObject != null &&
+                dataObject.length == 1) {
             pValue = pValue((double[]) dataObject[0]);
-        }
-        else
-        {
+        } else {
             throw new IllegalArgumentException("Wrong input arguments " +
-                                               "or data.");
+                    "or data.");
         }
 
         return pValue;
@@ -603,8 +545,7 @@ public class OneSampMeanTest extends StatisticalInferenceTemplate
     public double pValue(String testType,
                          double u0,
                          String side,
-                         double[] data)
-    {
+                         double[] data) {
         this.testType = testType;
         this.u0 = u0;
         this.side = side;
@@ -612,16 +553,13 @@ public class OneSampMeanTest extends StatisticalInferenceTemplate
         argument.put(TEST_TYPE, testType);
         argument.put(SIDE, side);
         if (testType.equalsIgnoreCase("T") ||
-            testType.equalsIgnoreCase("T Test"))
-        {
+                testType.equalsIgnoreCase("T Test")) {
             argument.put(CDF,
-                         new TDistribution((data.length - 1)).cumulative(
-                                 testStatistic));
-        }
-        else
-        {
+                    new TDistribution((data.length - 1)).cumulative(
+                            testStatistic));
+        } else {
             argument.put(CDF,
-                         new NormalDistribution().cumulative(testStatistic));
+                    new NormalDistribution().cumulative(testStatistic));
         }
 
         return super.pValue(argument);
@@ -640,8 +578,7 @@ public class OneSampMeanTest extends StatisticalInferenceTemplate
 
     public double pValue(String testType,
                          double u0,
-                         double[] data)
-    {
+                         double[] data) {
         return pValue(testType, u0, "equal", data);
     }
 
@@ -656,8 +593,7 @@ public class OneSampMeanTest extends StatisticalInferenceTemplate
      */
 
     public double pValue(String testType,
-                         double[] data)
-    {
+                         double[] data) {
         return pValue(testType, 0.0, "equal", data);
     }
 
@@ -670,8 +606,7 @@ public class OneSampMeanTest extends StatisticalInferenceTemplate
      *                                     not be 0.
      */
 
-    public double pValue(double[] data)
-    {
+    public double pValue(double[] data) {
         return pValue("T", 0.0, "equal", data);
     }
 

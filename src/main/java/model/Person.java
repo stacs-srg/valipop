@@ -24,7 +24,6 @@ public class Person implements IPerson {
     private String surname;
 
 
-
     public Person(char sex, Date birthDate) {
         id = getNewId();
         this.sex = Character.toLowerCase(sex);
@@ -38,19 +37,9 @@ public class Person implements IPerson {
         this.parentsPartnership = parentsPartnership;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public void setSurname(String surname) {
-        this.surname = surname;
-    }
-
     private static int getNewId() {
         return nextId++;
     }
-
-
 
     @Override
     public int getId() {
@@ -87,9 +76,17 @@ public class Person implements IPerson {
         return firstName;
     }
 
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
     @Override
     public String getSurname() {
         return surname;
+    }
+
+    public void setSurname(String surname) {
+        this.surname = surname;
     }
 
     // TODO Implement geography model
@@ -123,9 +120,9 @@ public class Person implements IPerson {
     @Override
     public boolean noRecentChildren(DateClock currentDate) {
 
-        for(IPartnership p : getPartnerships()) {
-            for(IPerson c : p.getChildren()) {
-                if(DateUtils.dateBefore(currentDate.advanceTime(-9, TimeUnit.MONTH), c.getBirthDate())) {
+        for (IPartnership p : getPartnerships()) {
+            for (IPerson c : p.getChildren()) {
+                if (DateUtils.dateBefore(currentDate.advanceTime(-9, TimeUnit.MONTH), c.getBirthDate())) {
                     return false;
                 }
             }
@@ -147,7 +144,7 @@ public class Person implements IPerson {
 
     @Override
     public int ageAtDeath() throws NotDeadException {
-        if(deathDate == null) {
+        if (deathDate == null) {
             throw new NotDeadException();
         }
         return DateUtils.differenceInYears(birthDate, deathDate).getCount();
@@ -156,8 +153,8 @@ public class Person implements IPerson {
     @Override
     public boolean aliveOnDate(Date date) {
 
-        if(DateUtils.dateBefore(birthDate, date)) {
-            if(deathDate == null || DateUtils.dateBefore(date, deathDate)) {
+        if (DateUtils.dateBefore(birthDate, date)) {
+            if (deathDate == null || DateUtils.dateBefore(date, deathDate)) {
                 return true;
             }
         }
@@ -169,16 +166,16 @@ public class Person implements IPerson {
 
         int age = Integer.MAX_VALUE;
 
-        for(IPartnership p : partnerships) {
-            for(IPerson c : p.getChildren()) {
+        for (IPartnership p : partnerships) {
+            for (IPerson c : p.getChildren()) {
                 int ageAtBirth = DateUtils.differenceInYears(birthDate, c.getBirthDate()).getCount();
-                if(ageAtBirth < age) {
+                if (ageAtBirth < age) {
                     age = ageAtBirth;
                 }
             }
         }
 
-        if(age == Integer.MAX_VALUE) {
+        if (age == Integer.MAX_VALUE) {
             throw new NoChildrenOfDesiredOrder("Women has no children");
         }
 

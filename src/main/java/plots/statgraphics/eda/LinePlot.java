@@ -5,6 +5,7 @@ package plots.statgraphics.eda;
  * <p>Description: The statistical graphics</p>
  * <p>Copyright: Copyright (c) 2009</p>
  * <p>Company: Tung Hai University </p>
+ *
  * @author Wen Hsiang Wei
  * @version 1.4
  */
@@ -14,6 +15,7 @@ import java.util.Hashtable;
 import plots.statgraphics.GraphicalAnalysis;
 import plots.statgraphics.util.DataCreator;
 import plots.statgraphics.util.Plot2DFactory;
+
 import static plots.statgraphics.util.Argument.*;
 
 /**
@@ -92,8 +94,7 @@ import static plots.statgraphics.util.Argument.*;
  * <br> new PlotFrameFactory().putPlotFrame(pf);
  */
 
-public class LinePlot extends GraphicalAnalysis
-{
+public class LinePlot extends GraphicalAnalysis {
 
     /**
      * The input category.
@@ -160,7 +161,8 @@ public class LinePlot extends GraphicalAnalysis
      * Default LinePlot constructor.
      */
 
-    public LinePlot() {}
+    public LinePlot() {
+    }
 
     /**
      * Creates a new line plot given the input arguments and data.
@@ -178,25 +180,20 @@ public class LinePlot extends GraphicalAnalysis
      */
 
     public LinePlot(Hashtable argument,
-                    Object ...dataObject)
-    {
+                    Object... dataObject) {
         this.argument = argument;
         this.dataObject = dataObject;
         if (argument.size() > 0 &&
-            dataObject != null)
-        {
+                dataObject != null) {
             if (argument.get(DATA_NAMES) != null &&
-                argument.get(TITLE) != null &&
-                argument.get(XLABEL) != null &&
-                argument.get(YLABEL) != null)
-            {
-                if (dataObject.length == 2)
-                {
+                    argument.get(TITLE) != null &&
+                    argument.get(XLABEL) != null &&
+                    argument.get(YLABEL) != null) {
+                if (dataObject.length == 2) {
                     if (dataObject[0].getClass().getName().
-                        equalsIgnoreCase("[[D") &&
-                        dataObject[1].getClass().getName().
-                        equalsIgnoreCase("[[D"))
-                    {
+                            equalsIgnoreCase("[[D") &&
+                            dataObject[1].getClass().getName().
+                                    equalsIgnoreCase("[[D")) {
                         graphicalAnalysis = new LinePlot(
                                 (String[]) argument.get(DATA_NAMES),
                                 (String) argument.get(TITLE),
@@ -204,12 +201,10 @@ public class LinePlot extends GraphicalAnalysis
                                 (String) argument.get(YLABEL),
                                 (double[][]) dataObject[0],
                                 (double[][]) dataObject[1]);
-                    }
-                    else if (dataObject[0].getClass().getName().
-                             equalsIgnoreCase("[D") &&
-                             dataObject[1].getClass().getName().
-                             equalsIgnoreCase("[D"))
-                    {
+                    } else if (dataObject[0].getClass().getName().
+                            equalsIgnoreCase("[D") &&
+                            dataObject[1].getClass().getName().
+                                    equalsIgnoreCase("[D")) {
                         graphicalAnalysis = new LinePlot(
                                 (String) argument.get(DATA_NAMES),
                                 (String) argument.get(TITLE),
@@ -217,12 +212,10 @@ public class LinePlot extends GraphicalAnalysis
                                 (String) argument.get(YLABEL),
                                 (double[]) dataObject[0],
                                 (double[]) dataObject[1]);
-                    }
-                    else if (dataObject[0].getClass().getName().
-                             equalsIgnoreCase("[Ljava.lang.String;") &&
-                             dataObject[1].getClass().getName().
-                             equalsIgnoreCase("[[D"))
-                    {
+                    } else if (dataObject[0].getClass().getName().
+                            equalsIgnoreCase("[Ljava.lang.String;") &&
+                            dataObject[1].getClass().getName().
+                                    equalsIgnoreCase("[[D")) {
                         graphicalAnalysis = new LinePlot(
                                 (String[]) argument.get(DATA_NAMES),
                                 (String) argument.get(TITLE),
@@ -230,12 +223,10 @@ public class LinePlot extends GraphicalAnalysis
                                 (String) argument.get(YLABEL),
                                 (String[]) dataObject[0],
                                 (double[][]) dataObject[1]);
-                    }
-                    else if (dataObject[0].getClass().getName().
-                             equalsIgnoreCase("[Ljava.lang.String;") &&
-                             dataObject[1].getClass().getName().
-                             equalsIgnoreCase("[D"))
-                    {
+                    } else if (dataObject[0].getClass().getName().
+                            equalsIgnoreCase("[Ljava.lang.String;") &&
+                            dataObject[1].getClass().getName().
+                                    equalsIgnoreCase("[D")) {
                         graphicalAnalysis = new LinePlot(
                                 (String) argument.get(DATA_NAMES),
                                 (String) argument.get(TITLE),
@@ -243,17 +234,13 @@ public class LinePlot extends GraphicalAnalysis
                                 (String) argument.get(YLABEL),
                                 (String[]) dataObject[0],
                                 (double[]) dataObject[1]);
-                    }
-                    else
-                    {
+                    } else {
                         throw new IllegalArgumentException(
                                 "Wrong input argument(s) or data.");
                     }
-                }
-                else if (dataObject.length > 2 &&
-                         dataObject[0].getClass().getName().equalsIgnoreCase(
-                                 "[Ljava.lang.String;"))
-                {
+                } else if (dataObject.length > 2 &&
+                        dataObject[0].getClass().getName().equalsIgnoreCase(
+                                "[Ljava.lang.String;")) {
                     doubleData = DataCreator.castToDoubleData(1, dataObject);
                     graphicalAnalysis = new LinePlot(
                             (String[]) argument.get(DATA_NAMES),
@@ -261,79 +248,59 @@ public class LinePlot extends GraphicalAnalysis
                             (String) argument.get(XLABEL),
                             (String) argument.get(YLABEL),
                             (String[]) dataObject[0], doubleData);
-                }
-                else
-                {
+                } else {
                     throw new IllegalArgumentException("Wrong input data.");
                 }
-            }
-            else if (argument.get(DATA_NAMES) != null)
-            {
-                if (dataObject.length == 2)
-                {
+            } else if (argument.get(DATA_NAMES) != null) {
+                if (dataObject.length == 2) {
                     if (dataObject[0].getClass().getName().
-                        equalsIgnoreCase("[[D") &&
-                        dataObject[1].getClass().getName().
-                        equalsIgnoreCase("[[D"))
-                    {
+                            equalsIgnoreCase("[[D") &&
+                            dataObject[1].getClass().getName().
+                                    equalsIgnoreCase("[[D")) {
                         graphicalAnalysis = new LinePlot(
                                 (String[]) argument.get(DATA_NAMES),
                                 (double[][]) dataObject[0],
                                 (double[][]) dataObject[1]);
-                    }
-                    else if (dataObject[0].getClass().getName().
-                             equalsIgnoreCase("[D") &&
-                             dataObject[1].getClass().getName().
-                             equalsIgnoreCase("[D"))
-                    {
+                    } else if (dataObject[0].getClass().getName().
+                            equalsIgnoreCase("[D") &&
+                            dataObject[1].getClass().getName().
+                                    equalsIgnoreCase("[D")) {
                         graphicalAnalysis = new LinePlot(
                                 (String) argument.get(DATA_NAMES),
                                 (double[]) dataObject[0],
                                 (double[]) dataObject[1]);
-                    }
-                    else if (dataObject[0].getClass().getName().
-                             equalsIgnoreCase("[Ljava.lang.String;") &&
-                             dataObject[1].getClass().getName().
-                             equalsIgnoreCase("[[D"))
-                    {
+                    } else if (dataObject[0].getClass().getName().
+                            equalsIgnoreCase("[Ljava.lang.String;") &&
+                            dataObject[1].getClass().getName().
+                                    equalsIgnoreCase("[[D")) {
                         graphicalAnalysis = new LinePlot(
                                 (String[]) argument.get(DATA_NAMES),
                                 (String[]) dataObject[0],
                                 (double[][]) dataObject[1]);
-                    }
-                    else if (dataObject[0].getClass().getName().
-                             equalsIgnoreCase("[Ljava.lang.String;") &&
-                             dataObject[1].getClass().getName().
-                             equalsIgnoreCase("[D"))
-                    {
+                    } else if (dataObject[0].getClass().getName().
+                            equalsIgnoreCase("[Ljava.lang.String;") &&
+                            dataObject[1].getClass().getName().
+                                    equalsIgnoreCase("[D")) {
                         graphicalAnalysis = new LinePlot(
                                 (String) argument.get(DATA_NAMES),
                                 (String[]) dataObject[0],
                                 (double[]) dataObject[1]);
-                    }
-                    else
-                    {
+                    } else {
                         throw new IllegalArgumentException(
                                 "Wrong input argument(s) or data.");
                     }
-                }
-                else if (dataObject.length > 2 &&
-                         dataObject[0].getClass().getName().equalsIgnoreCase(
-                                 "[Ljava.lang.String;"))
-                {
+                } else if (dataObject.length > 2 &&
+                        dataObject[0].getClass().getName().equalsIgnoreCase(
+                                "[Ljava.lang.String;")) {
                     doubleData = DataCreator.castToDoubleData(1, dataObject);
                     graphicalAnalysis = new LinePlot(
                             (String[]) argument.get(DATA_NAMES),
                             (String[]) dataObject[0], doubleData);
-                }
-                else
-                {
+                } else {
                     throw new IllegalArgumentException("Wrong input data.");
                 }
             }
-        }
-        else
-        {
+        } else {
             throw new IllegalArgumentException(
                     "Wrong input argument(s) or data.");
         }
@@ -363,8 +330,7 @@ public class LinePlot extends GraphicalAnalysis
                     String xLabel,
                     String yLabel,
                     String[] category,
-                    double[] ...data)
-    {
+                    double[]... data) {
         this.category = category;
         this.data = data;
         this.dataNames = dataNames;
@@ -398,10 +364,9 @@ public class LinePlot extends GraphicalAnalysis
                     String xLabel,
                     String yLabel,
                     String[] category,
-                    double[] data)
-    {
-        this(new String[] {dataName}, title, xLabel, yLabel, category,
-             new double[][] {data});
+                    double[] data) {
+        this(new String[]{dataName}, title, xLabel, yLabel, category,
+                new double[][]{data});
     }
 
     /**
@@ -422,8 +387,7 @@ public class LinePlot extends GraphicalAnalysis
 
     public LinePlot(String[] dataNames,
                     String[] category,
-                    double[] ...data)
-    {
+                    double[]... data) {
         this(dataNames, "Line Plot", "Category", "Value", category, data);
     }
 
@@ -443,10 +407,9 @@ public class LinePlot extends GraphicalAnalysis
 
     public LinePlot(String dataName,
                     String[] category,
-                    double[] data)
-    {
-        this(new String[] {dataName}, "Line Plot", "Category", "Value",
-             category, new double[][] {data});
+                    double[] data) {
+        this(new String[]{dataName}, "Line Plot", "Category", "Value",
+                category, new double[][]{data});
     }
 
     /**
@@ -474,8 +437,7 @@ public class LinePlot extends GraphicalAnalysis
                     String xLabel,
                     String yLabel,
                     double[][] xData,
-                    double[][] yData)
-    {
+                    double[][] yData) {
         this.xData = xData;
         this.yData = yData;
         this.dataNames = dataNames;
@@ -506,8 +468,7 @@ public class LinePlot extends GraphicalAnalysis
 
     public LinePlot(String[] dataNames,
                     double[][] xData,
-                    double[][] yData)
-    {
+                    double[][] yData) {
         this(dataNames, "Line Plot", "Range", "Value", xData, yData);
     }
 
@@ -532,10 +493,9 @@ public class LinePlot extends GraphicalAnalysis
                     String xLabel,
                     String yLabel,
                     double[] xData,
-                    double[] yData)
-    {
-        this(new String[] {dataName}, title, xLabel, yLabel,
-             new double[][] {xData}, new double[][] {yData});
+                    double[] yData) {
+        this(new String[]{dataName}, title, xLabel, yLabel,
+                new double[][]{xData}, new double[][]{yData});
     }
 
     /**
@@ -554,8 +514,7 @@ public class LinePlot extends GraphicalAnalysis
 
     public LinePlot(String dataName,
                     double[] xData,
-                    double[] yData)
-    {
+                    double[] yData) {
         this(dataName, "Line Plot", "Range", "Value", xData, yData);
     }
 

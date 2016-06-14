@@ -20,7 +20,6 @@ import static plots.statgraphics.util.Argument.DATA_NAMES;
 /**
  * Extended from example provided at: http://www2.thu.edu.tw/~wenwei/statgraphics/doc/index.html?statgraphics/survival/SurvivalEstimatePlot.html
  *
- *
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class SurvivalPlot {
@@ -47,12 +46,12 @@ public class SurvivalPlot {
         sortedSurvivalEstimateExpected = getSurvivalEstimates(expected);
 
 
-        String[] names = new String[] {"Observed", "Expected"};
+        String[] names = new String[]{"Observed", "Expected"};
 
         PlotControl.addPlotFrame(new PlotFrame("Kaplan-Meier Estimate Plot II",
                 new SurvivalEstimatePlot(names,
-                        new double[][] {sortedTimeObserved, sortedTimeExpected},
-                        new double[][] {sortedSurvivalEstimateObserved, sortedSurvivalEstimateExpected}).plot, 500, 270));
+                        new double[][]{sortedTimeObserved, sortedTimeExpected},
+                        new double[][]{sortedSurvivalEstimateObserved, sortedSurvivalEstimateExpected}).plot, 500, 270));
 
     }
 
@@ -88,7 +87,7 @@ public class SurvivalPlot {
             double[] times = new double[iRS.length];
             int i = 0;
 
-            for(IntegerRange iR : iRS) {
+            for (IntegerRange iR : iRS) {
                 times[i++] = iR.getValue();
             }
 

@@ -21,10 +21,6 @@ public class KaplanMeierAnalysis implements IKaplanMeierAnalysis {
         this.logRankValue = logRankValue;
     }
 
-    public void setLogRankValue(double logRankValue) {
-        this.logRankValue = logRankValue;
-    }
-
     @Override
     public EventType getVariable() {
         return event;
@@ -40,6 +36,10 @@ public class KaplanMeierAnalysis implements IKaplanMeierAnalysis {
         return logRankValue;
     }
 
+    public void setLogRankValue(double logRankValue) {
+        this.logRankValue = logRankValue;
+    }
+
     @Override
     public double getPValue() {
         ChiSquaredDistribution cSD = new ChiSquaredDistribution(1.0);
@@ -51,16 +51,12 @@ public class KaplanMeierAnalysis implements IKaplanMeierAnalysis {
         ChiSquaredDistribution cSD = new ChiSquaredDistribution(1.0);
         double p = 1 - cSD.cumulativeProbability(logRankValue);
 
-        if(P >= p) {
-            return true;
-        } else {
-            return false;
-        }
+        return P >= p;
     }
 
     @Override
     public void setConfidenceLevel(double confidenceLevel) {
-        if(confidenceLevel <= 1) {
+        if (confidenceLevel <= 1) {
             this.P = confidenceLevel;
         }
     }

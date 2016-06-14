@@ -5,6 +5,7 @@ package plots.javastat.survival.inference;
  * <p>Description: JAVA programs for statistical computations</p>
  * <p>Copyright: Copyright (c) 2009</p>
  * <p>Company: Tung Hai University</p>
+ *
  * @author Wen Hsiang Wei
  * @version 1.4
  */
@@ -58,14 +59,14 @@ import plots.javastat.survival.SurvivalTwoSampTestsInterface;
  */
 
 public class LogRankTest extends SurvivalTestTemplate implements
-        SurvivalTwoSampTestsInterface
-{
+        SurvivalTwoSampTestsInterface {
 
     /**
      *  Default LogRankTest constructor.
      */
 
-    public LogRankTest() {}
+    public LogRankTest() {
+    }
 
     /**
      * Constructs a log-rank test given the survival times and censor indicators
@@ -88,23 +89,17 @@ public class LogRankTest extends SurvivalTestTemplate implements
      */
 
     public LogRankTest(Hashtable argument,
-                       Object ...dataObject)
-    {
+                       Object... dataObject) {
         this.argument = argument;
         this.dataObject = dataObject;
         if (dataObject != null &&
-            dataObject.length == 4)
-        {
+                dataObject.length == 4) {
             statisticalAnalysis = new LogRankTest(
                     (double[]) dataObject[0], (double[]) dataObject[1],
                     (double[]) dataObject[2], (double[]) dataObject[3]);
-        }
-        else if (dataObject == null)
-        {
+        } else if (dataObject == null) {
             statisticalAnalysis = new LogRankTest();
-        }
-        else
-        {
+        } else {
             throw new IllegalArgumentException("Wrong input data.");
         }
     }
@@ -137,8 +132,7 @@ public class LogRankTest extends SurvivalTestTemplate implements
     public LogRankTest(double[] time1,
                        double[] censor1,
                        double[] time2,
-                       double[] censor2)
-    {
+                       double[] censor2) {
         super(time1, censor1, time2, censor2);
     }
 
@@ -148,8 +142,7 @@ public class LogRankTest extends SurvivalTestTemplate implements
      * @return the weight function evaluated at the value of the parameter.
      */
 
-    public double weight(double parameter)
-    {
+    public double weight(double parameter) {
         return 1.0;
     }
 

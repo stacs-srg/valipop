@@ -5,6 +5,7 @@ package plots.javastat;
  * <p>Description: JAVA programs for statistical computations</p>
  * <p>Copyright: Copyright (c) 2009</p>
  * <p>Company: Tung Hai University</p>
+ *
  * @author Wen Hsiang Wei
  * @version 1.4
  */
@@ -27,6 +28,7 @@ import plots.javastat.inference.twosamples.TwoSampMeansZTest;
 import plots.javastat.survival.inference.LogRankTest;
 import plots.javastat.survival.inference.WilcoxonTest;
 import plots.javastat.util.TestType;
+
 import static plots.javastat.util.Argument.*;
 import static plots.javastat.util.TestType.*;
 
@@ -69,11 +71,11 @@ import static plots.javastat.util.TestType.*;
  * <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
  *      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
  *      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                            "R", "R", "R", "A", "R", "A", "E", "A", "R", "A",
+ "R", "R", "R", "A", "R", "A", "E", "A", "R", "A",
  * <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
  *      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
  *      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                            "E", "R", "E", "R", "A", "A", "R", "E", "E", "A"};
+ "E", "R", "E", "R", "A", "A", "R", "E", "E", "A"};
  * <br> double [][] anovaData = {{6.0, 7.0, 6.0, 8.0}, {8.0, 9.0, 8.0, 10.0},
  *                               {13.0, 14.0, 15.0}};
  * <br> double [] time1 = {156, 1040, 59, 329, 268, 638, 1106, 431, 855, 803,
@@ -168,8 +170,7 @@ import static plots.javastat.util.TestType.*;
  *        argument, time1, censor1, time2, censor2).statisticalAnalysis;
  */
 
-public class StatisticalTests extends StatisticalAnalysis
-{
+public class StatisticalTests extends StatisticalAnalysis {
     /**
      * The object represents a statistical test.
      */
@@ -180,7 +181,8 @@ public class StatisticalTests extends StatisticalAnalysis
      * Default StatisticalTests constructor.
      */
 
-    public StatisticalTests() {}
+    public StatisticalTests() {
+    }
 
     /**
      * The test of interest.
@@ -197,216 +199,162 @@ public class StatisticalTests extends StatisticalAnalysis
      */
 
     public StatisticalTests(Hashtable argument,
-                            Object ...dataObject)
-    {
+                            Object... dataObject) {
         this.argument = argument;
         this.dataObject = dataObject;
-        if (dataObject != null)
-        {
+        if (dataObject != null) {
             if (dataObject.length == 4 &&
-                dataObject[0].getClass().getName().equalsIgnoreCase("[D") &&
-                dataObject[1].getClass().getName().equalsIgnoreCase("[D") &&
-                dataObject[2].getClass().getName().equalsIgnoreCase("[D") &&
-                dataObject[3].getClass().getName().equalsIgnoreCase("[D"))
+                    dataObject[0].getClass().getName().equalsIgnoreCase("[D") &&
+                    dataObject[1].getClass().getName().equalsIgnoreCase("[D") &&
+                    dataObject[2].getClass().getName().equalsIgnoreCase("[D") &&
+                    dataObject[3].getClass().getName().equalsIgnoreCase("[D"))
 
             {
                 if (argument.get(TEST_TYPE) != null &&
-                    argument.get(TEST_TYPE).toString().
-                    equalsIgnoreCase("Wilcoxon"))
-                {
+                        argument.get(TEST_TYPE).toString().
+                                equalsIgnoreCase("Wilcoxon")) {
                     argument.remove(TEST_TYPE);
                     statisticalAnalysis = new WilcoxonTest(argument,
                             dataObject).statisticalAnalysis;
-                }
-                else if (dataObject[0].getClass().getName().
-                         equalsIgnoreCase("[D") &&
-                         dataObject[1].getClass().getName().
-                         equalsIgnoreCase("[D") &&
-                         dataObject[2].getClass().getName().
-                         equalsIgnoreCase("[D") &&
-                         dataObject[3].getClass().getName().
-                         equalsIgnoreCase("[D"))
-                {
-                    if (argument.get(TEST_TYPE) != null)
-                    {
+                } else if (dataObject[0].getClass().getName().
+                        equalsIgnoreCase("[D") &&
+                        dataObject[1].getClass().getName().
+                                equalsIgnoreCase("[D") &&
+                        dataObject[2].getClass().getName().
+                                equalsIgnoreCase("[D") &&
+                        dataObject[3].getClass().getName().
+                                equalsIgnoreCase("[D")) {
+                    if (argument.get(TEST_TYPE) != null) {
                         argument.remove(TEST_TYPE);
                     }
                     statisticalAnalysis = new LogRankTest(argument,
                             dataObject).statisticalAnalysis;
-                }
-                else
-                {
+                } else {
                     throw new IllegalArgumentException(
                             "Wrong input arguments or data.");
                 }
-            }
-            else if (dataObject.length == 4 &&
-                     dataObject[0].getClass().getSuperclass().toString().
-                     equalsIgnoreCase("class java.lang.Number") &&
-                     dataObject[1].getClass().getSuperclass().toString().
-                     equalsIgnoreCase("class java.lang.Number") &&
-                     dataObject[2].getClass().getSuperclass().toString().
-                     equalsIgnoreCase("class java.lang.Number") &&
-                     dataObject[3].getClass().getSuperclass().toString().
-                     equalsIgnoreCase("class java.lang.Number"))
-            {
+            } else if (dataObject.length == 4 &&
+                    dataObject[0].getClass().getSuperclass().toString().
+                            equalsIgnoreCase("class java.lang.Number") &&
+                    dataObject[1].getClass().getSuperclass().toString().
+                            equalsIgnoreCase("class java.lang.Number") &&
+                    dataObject[2].getClass().getSuperclass().toString().
+                            equalsIgnoreCase("class java.lang.Number") &&
+                    dataObject[3].getClass().getSuperclass().toString().
+                            equalsIgnoreCase("class java.lang.Number")) {
                 statisticalAnalysis = new TwoSampProps(argument,
                         dataObject).statisticalAnalysis;
-            }
-            else if (dataObject.length == 2 &&
-                     dataObject[0].getClass().getName().
-                     equalsIgnoreCase("[Ljava.lang.String;") &&
-                     dataObject[1].getClass().getName().
-                     equalsIgnoreCase("[Ljava.lang.String;"))
-            {
-                if (argument.get(TEST_TYPE) != null)
-                {
+            } else if (dataObject.length == 2 &&
+                    dataObject[0].getClass().getName().
+                            equalsIgnoreCase("[Ljava.lang.String;") &&
+                    dataObject[1].getClass().getName().
+                            equalsIgnoreCase("[Ljava.lang.String;")) {
+                if (argument.get(TEST_TYPE) != null) {
                     argument.remove(TEST_TYPE);
                 }
                 statisticalAnalysis = new ChisqTest(argument,
                         dataObject).statisticalAnalysis;
-            }
-            else if (dataObject.length == 2 &&
-                     dataObject[0].getClass().getName().
-                     equalsIgnoreCase("[D") &&
-                     dataObject[1].getClass().getName().equalsIgnoreCase("[D"))
-            {
+            } else if (dataObject.length == 2 &&
+                    dataObject[0].getClass().getName().
+                            equalsIgnoreCase("[D") &&
+                    dataObject[1].getClass().getName().equalsIgnoreCase("[D")) {
                 if (argument.get(TEST_TYPE) != null &&
-                    !(argument.get(TEST_TYPE).toString().equalsIgnoreCase("Z")))
-                {
+                        !(argument.get(TEST_TYPE).toString().equalsIgnoreCase("Z"))) {
                     if (argument.get(TEST_TYPE).toString().
-                        equalsIgnoreCase("RankSum"))
-                    {
+                            equalsIgnoreCase("RankSum")) {
                         argument.remove(TEST_TYPE);
                         statisticalAnalysis = new RankSumTest(argument,
                                 dataObject).statisticalAnalysis;
-                    }
-                    else if (argument.get(TEST_TYPE).toString().
-                             equalsIgnoreCase("Paired Z") ||
-                             argument.get(TEST_TYPE).toString().
-                             equalsIgnoreCase("Paired_Z"))
-                    {
+                    } else if (argument.get(TEST_TYPE).toString().
+                            equalsIgnoreCase("Paired Z") ||
+                            argument.get(TEST_TYPE).toString().
+                                    equalsIgnoreCase("Paired_Z")) {
                         argument.remove(TEST_TYPE);
                         statisticalAnalysis = new MatchedSampMeansZTest(
                                 argument, dataObject).statisticalAnalysis;
-                    }
-                    else if (argument.get(TEST_TYPE).toString().
-                             equalsIgnoreCase("Paired T") ||
-                             argument.get(TEST_TYPE).toString().
-                             equalsIgnoreCase("Paired_T"))
-                    {
+                    } else if (argument.get(TEST_TYPE).toString().
+                            equalsIgnoreCase("Paired T") ||
+                            argument.get(TEST_TYPE).toString().
+                                    equalsIgnoreCase("Paired_T")) {
                         argument.remove(TEST_TYPE);
                         statisticalAnalysis = new MatchedSampMeansTTest(
                                 argument, dataObject).statisticalAnalysis;
-                    }
-                    else if (argument.get(TEST_TYPE).toString().
-                               equalsIgnoreCase("T"))
-                    {
+                    } else if (argument.get(TEST_TYPE).toString().
+                            equalsIgnoreCase("T")) {
                         argument.remove(TEST_TYPE);
                         statisticalAnalysis = new TwoSampMeansTTest(argument,
                                 dataObject).statisticalAnalysis;
-                    }
-                    else
-                    {
+                    } else {
                         throw new IllegalArgumentException(
                                 "Wrong input arguments or data.");
                     }
-                }
-                else
-                {
+                } else {
                     statisticalAnalysis = new TwoSampMeansZTest(argument,
                             dataObject).statisticalAnalysis;
                 }
-            }
-            else if (dataObject.length == 2 &&
-                     dataObject[0].getClass().getSuperclass().toString().
-                     equalsIgnoreCase("class java.lang.Number") &&
-                     dataObject[1].getClass().getSuperclass().toString().
-                     equalsIgnoreCase("class java.lang.Number"))
-            {
-                if (argument.get(TEST_TYPE) != null)
-                {
+            } else if (dataObject.length == 2 &&
+                    dataObject[0].getClass().getSuperclass().toString().
+                            equalsIgnoreCase("class java.lang.Number") &&
+                    dataObject[1].getClass().getSuperclass().toString().
+                            equalsIgnoreCase("class java.lang.Number")) {
+                if (argument.get(TEST_TYPE) != null) {
                     argument.remove(TEST_TYPE);
                 }
                 statisticalAnalysis = new OneSampProp(argument,
                         dataObject).statisticalAnalysis;
-            }
-            else if (dataObject.length == 1 &&
-                     dataObject.getClass().getName().equalsIgnoreCase(
-                     "[Ljava.lang.Object;"))
-            {
+            } else if (dataObject.length == 1 &&
+                    dataObject.getClass().getName().equalsIgnoreCase(
+                            "[Ljava.lang.Object;")) {
                 if (argument.get(TEST_TYPE) != null &&
-                    !(argument.get(TEST_TYPE).toString().equalsIgnoreCase("Z")))
-                {
+                        !(argument.get(TEST_TYPE).toString().equalsIgnoreCase("Z"))) {
                     if (argument.get(TEST_TYPE).toString().
-                        equalsIgnoreCase("SignRank"))
-                    {
+                            equalsIgnoreCase("SignRank")) {
                         argument.remove(TEST_TYPE);
                         statisticalAnalysis = new SignRankTest(argument,
                                 dataObject).statisticalAnalysis;
-                    }
-                    else if (argument.get(TEST_TYPE).toString().
-                               equalsIgnoreCase("T"))
-                    {
+                    } else if (argument.get(TEST_TYPE).toString().
+                            equalsIgnoreCase("T")) {
                         argument.remove(TEST_TYPE);
                         statisticalAnalysis = new OneSampMeanTTest(argument,
                                 dataObject).statisticalAnalysis;
-                    }
-                    else
-                    {
+                    } else {
                         throw new IllegalArgumentException(
                                 "Wrong input arguments or data.");
                     }
-                }
-                else
-                {
-                    if (argument.get(TEST_TYPE) != null)
-                    {
+                } else {
+                    if (argument.get(TEST_TYPE) != null) {
                         argument.remove(TEST_TYPE);
                     }
                     statisticalAnalysis = new OneSampMeanZTest(argument,
                             dataObject).statisticalAnalysis;
                 }
-            }
-            else if (dataObject.getClass().getName().equalsIgnoreCase("[[D"))
-            {
+            } else if (dataObject.getClass().getName().equalsIgnoreCase("[[D")) {
                 if (argument.get(TEST_TYPE) != null &&
-                    !(argument.get(TEST_TYPE).toString().
-                      equalsIgnoreCase("OneWayANOVA") ||
-                    argument.get(TEST_TYPE).toString().
-                    equalsIgnoreCase("ONE_WAY_ANOVA")))
-                {
+                        !(argument.get(TEST_TYPE).toString().
+                                equalsIgnoreCase("OneWayANOVA") ||
+                                argument.get(TEST_TYPE).toString().
+                                        equalsIgnoreCase("ONE_WAY_ANOVA"))) {
                     if (argument.get(TEST_TYPE).toString().
-                        equalsIgnoreCase("CHISQUARE"))
-                    {
+                            equalsIgnoreCase("CHISQUARE")) {
                         argument.remove(TEST_TYPE);
                         statisticalAnalysis = new ChisqTest(argument,
                                 dataObject).statisticalAnalysis;
-                    }
-                    else
-                    {
+                    } else {
                         throw new IllegalArgumentException(
                                 "Wrong input arguments or data.");
                     }
-                }
-                else
-                {
-                    if (argument.get(TEST_TYPE) != null)
-                    {
+                } else {
+                    if (argument.get(TEST_TYPE) != null) {
                         argument.remove(TEST_TYPE);
                     }
                     statisticalAnalysis = new OneWayANOVA(argument,
                             dataObject).statisticalAnalysis;
                 }
-            }
-            else
-            {
+            } else {
                 throw new IllegalArgumentException(
                         "Wrong input arguments or data.");
             }
-        }
-        else
-        {
+        } else {
             throw new IllegalArgumentException("There is no input data.");
         }
     }

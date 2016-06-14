@@ -5,6 +5,7 @@ package plots.javastat.inference.nonparametric;
  * <p>Description: JAVA programs for statistical computations</p>
  * <p>Copyright: Copyright (c) 2009</p>
  * <p>Company: Tung Hai University</p>
+ *
  * @author Wen Hsiang Wei
  * @version 1.4
  */
@@ -18,6 +19,7 @@ import plots.javastat.StatisticalInference;
 import plots.javastat.inference.TwoSampInferenceInterface;
 import plots.javastat.util.BasicStatistics;
 import plots.javastat.util.DataManager;
+
 import static plots.javastat.util.Argument.*;
 import static plots.javastat.util.Output.*;
 
@@ -70,8 +72,7 @@ import static plots.javastat.util.Output.*;
  */
 
 public class RankSumTest extends StatisticalInference implements
-        TwoSampInferenceInterface
-{
+        TwoSampInferenceInterface {
 
     /**
      * The level of significance.
@@ -210,7 +211,8 @@ public class RankSumTest extends StatisticalInference implements
      * of the medians of two populations.
      */
 
-    public RankSumTest() {}
+    public RankSumTest() {
+    }
 
     /**
      * Constructs a two-sample Wilcoxon rank sum test given the input arguments
@@ -232,47 +234,34 @@ public class RankSumTest extends StatisticalInference implements
      */
 
     public RankSumTest(Hashtable argument,
-                       Object ...dataObject)
-    {
+                       Object... dataObject) {
         this.argument = argument;
         this.dataObject = dataObject;
         if (argument.size() > 0 &&
-            dataObject != null)
-        {
+                dataObject != null) {
             if (argument.get(ALPHA) != null &&
-                argument.get(SIDE) != null &&
-                dataObject.length == 2)
-            {
+                    argument.get(SIDE) != null &&
+                    dataObject.length == 2) {
                 statisticalAnalysis = new RankSumTest(
                         (Double) argument.get(ALPHA),
                         (String) argument.get(SIDE),
                         (double[]) dataObject[0], (double[]) dataObject[1]);
-            }
-            else if (argument.get(SIDE) != null &&
-                     dataObject.length == 2)
-            {
+            } else if (argument.get(SIDE) != null &&
+                    dataObject.length == 2) {
                 statisticalAnalysis = new RankSumTest(
                         (String) argument.get(SIDE),
                         (double[]) dataObject[0], (double[]) dataObject[1]);
-            }
-            else
-            {
+            } else {
                 throw new IllegalArgumentException(
                         "Wrong input arguments or data.");
             }
-        }
-        else if (dataObject != null &&
-                 dataObject.length == 2)
-        {
+        } else if (dataObject != null &&
+                dataObject.length == 2) {
             statisticalAnalysis = new RankSumTest(
                     (double[]) dataObject[0], (double[]) dataObject[1]);
-        }
-        else if (dataObject == null)
-        {
+        } else if (dataObject == null) {
             statisticalAnalysis = new RankSumTest();
-        }
-        else
-        {
+        } else {
             throw new IllegalArgumentException("Wrong input data.");
         }
     }
@@ -296,8 +285,7 @@ public class RankSumTest extends StatisticalInference implements
     public RankSumTest(double alpha,
                        String side,
                        double[] data1,
-                       double[] data2)
-    {
+                       double[] data2) {
         this.alpha = alpha;
         this.side = side;
         this.data1 = data1;
@@ -324,8 +312,7 @@ public class RankSumTest extends StatisticalInference implements
 
     public RankSumTest(String side,
                        double[] data1,
-                       double[] data2)
-    {
+                       double[] data2) {
         this(0.05, side, data1, data2);
     }
 
@@ -343,8 +330,7 @@ public class RankSumTest extends StatisticalInference implements
      */
 
     public RankSumTest(double[] data1,
-                       double[] data2)
-    {
+                       double[] data2) {
         this(0.05, "equal", data1, data2);
     }
 
@@ -359,19 +345,17 @@ public class RankSumTest extends StatisticalInference implements
      */
 
     public Double testStatistic(Hashtable argument,
-                                Object ...dataObject)
-    {
+                                Object... dataObject) {
         this.argument = argument;
         this.dataObject = dataObject;
         if (dataObject == null ||
-            dataObject.length != 2)
-        {
+                dataObject.length != 2) {
             throw new IllegalArgumentException(
                     "Wrong input arguments or data.");
         }
 
         return testStatistic((double[]) dataObject[0],
-                             (double[]) dataObject[1]);
+                (double[]) dataObject[1]);
     }
 
     /**
@@ -386,44 +370,33 @@ public class RankSumTest extends StatisticalInference implements
      */
 
     public double testStatistic(double[] data1,
-                                double[] data2)
-    {
-        if (data1.length > data2.length)
-        {
+                                double[] data2) {
+        if (data1.length > data2.length) {
             return testStatistic(data2, data1);
-        }
-        else
-        {
+        } else {
             this.data1 = data1;
             this.data2 = data2;
             testStatistic = 0.0;
             data = new DataManager().dataMerge(data1, data2);
-            if (data.length < 3)
-            {
+            if (data.length < 3) {
                 throw new IllegalArgumentException(
                         "The length of the input data should be larger " +
-                        "than 2.");
+                                "than 2.");
             }
-            for (int i = 0; i < data1.length; i++)
-            {
+            for (int i = 0; i < data1.length; i++) {
                 tieNumber = 1;
                 rank = 1.0;
-                for (int k = 0; k < data.length; k++)
-                {
-                    if (k != i)
-                    {
-                        if (data[i] == data[k])
-                        {
+                for (int k = 0; k < data.length; k++) {
+                    if (k != i) {
+                        if (data[i] == data[k]) {
                             tieNumber += 1.0;
                         }
-                        if (data[i] > data[k])
-                        {
+                        if (data[i] > data[k]) {
                             rank += 1.0;
                         }
                     }
                 }
-                if (tieNumber > 1.0)
-                {
+                if (tieNumber > 1.0) {
                     rank += tieNumber * (tieNumber - 1) / (2 * tieNumber);
                 }
                 testStatistic += rank;
@@ -449,26 +422,20 @@ public class RankSumTest extends StatisticalInference implements
      */
 
     public Double wAlpha(Hashtable argument,
-                         Object ...dataObject)
-    {
+                         Object... dataObject) {
         this.argument = argument;
         this.dataObject = dataObject;
         if (argument.get(ALPHA) != null &&
-            dataObject != null &&
-            dataObject.length == 2)
-        {
+                dataObject != null &&
+                dataObject.length == 2) {
             wAlpha = wAlpha((Double) argument.get(ALPHA),
-                            (double[]) dataObject[0], (double[]) dataObject[1]);
-        }
-        else if (dataObject != null &&
-                 dataObject.length == 2)
-        {
+                    (double[]) dataObject[0], (double[]) dataObject[1]);
+        } else if (dataObject != null &&
+                dataObject.length == 2) {
             wAlpha = wAlpha((double[]) dataObject[0], (double[]) dataObject[1]);
-        }
-        else
-        {
+        } else {
             throw new IllegalArgumentException("Wrong input arguments or " +
-                                               "data.");
+                    "data.");
         }
 
         return wAlpha;
@@ -487,48 +454,38 @@ public class RankSumTest extends StatisticalInference implements
 
     public double wAlpha(double alpha,
                          double[] data1,
-                         double[] data2)
-    {
-        if (data1.length > data2.length)
-        {
+                         double[] data2) {
+        if (data1.length > data2.length) {
             return wAlpha(alpha, data2, data1);
-        }
-        else
-        {
+        } else {
             this.alpha = alpha;
             this.data1 = data1;
             this.data2 = data2;
             tableIndex1 = 0;
             data2Index = data2.length - data1.length;
-            if (data1.length <= 2)
-            {
+            if (data1.length <= 2) {
                 data2Index = data2.length - 3;
             }
             if ((data1.length <= 4 && data2.length <= 20) ||
-                (data1.length <= 10 && data2.length <= 10))
-            {
+                    (data1.length <= 10 && data2.length <= 10)) {
                 if (alpha > BasicStatistics.
-                    rankSumTable[data1.length - 1][data2Index][0])
-                {
+                        rankSumTable[data1.length - 1][data2Index][0]) {
                     throw new IllegalArgumentException(
-                        "The input level of significance should be less than "
-                        + BasicStatistics.
-                        rankSumTable[data1.length][data2Index][0]);
+                            "The input level of significance should be less than "
+                                    + BasicStatistics.
+                                    rankSumTable[data1.length][data2Index][0]);
                 }
                 while (alpha <= BasicStatistics.rankSumTable[data1.length - 1]
-                         [data2Index][tableIndex1])
-                {
+                        [data2Index][tableIndex1]) {
                     tableIndex1 += 1;
                 }
                 wAlpha = tableIndex1 +
-                         BasicStatistics.
-                         rankSumIndex[data1.length - 1][data2Index] - 1;
+                        BasicStatistics.
+                                rankSumIndex[data1.length - 1][data2Index] - 1;
                 output.put(WALPHA, wAlpha);
                 return tableIndex1 + BasicStatistics.
                         rankSumIndex[data1.length - 1][data2Index] - 1;
-            }
-            else
-            {
+            } else {
                 wAlpha = Double.NaN;
                 output.put(WALPHA, Double.NaN);
                 return Double.NaN;
@@ -547,8 +504,7 @@ public class RankSumTest extends StatisticalInference implements
      */
 
     public double wAlpha(double[] data1,
-                         double[] data2)
-    {
+                         double[] data2) {
         return wAlpha(0.05, data1, data2);
     }
 
@@ -569,24 +525,18 @@ public class RankSumTest extends StatisticalInference implements
      */
 
     public Double pValue(Hashtable argument,
-                         Object ...dataObject)
-    {
+                         Object... dataObject) {
         this.argument = argument;
         this.dataObject = dataObject;
         if (argument.get(SIDE) != null &&
-            dataObject != null &&
-            dataObject.length == 2)
-        {
+                dataObject != null &&
+                dataObject.length == 2) {
             pValue = pValue((String) argument.get(SIDE),
-                            (double[]) dataObject[0], (double[]) dataObject[1]);
-        }
-        else if (dataObject != null &&
-                 dataObject.length == 2)
-        {
+                    (double[]) dataObject[0], (double[]) dataObject[1]);
+        } else if (dataObject != null &&
+                dataObject.length == 2) {
             pValue = pValue((double[]) dataObject[0], (double[]) dataObject[1]);
-        }
-        else
-        {
+        } else {
             throw new IllegalArgumentException(
                     "Wrong input arguments or data.");
         }
@@ -609,109 +559,83 @@ public class RankSumTest extends StatisticalInference implements
 
     public double pValue(String side,
                          double[] data1,
-                         double[] data2)
-    {
-        if (data1.length > data2.length)
-        {
+                         double[] data2) {
+        if (data1.length > data2.length) {
             return pValue(side, data2, data1);
-        }
-        else
-        {
+        } else {
             this.side = side;
             this.data1 = data1;
             this.data2 = data2;
             testStatistic = testStatistic(data1, data2);
             tableIndex2 = false;
             data2Index = data2.length - data1.length;
-            if (data1.length <= 2)
-            {
+            if (data1.length <= 2) {
                 data2Index = data2.length - 3;
             }
             if ((data1.length <= 4 && data2.length <= 20) ||
-                (data1.length <= 10 && data2.length <= 10))
-            {
+                    (data1.length <= 10 && data2.length <= 10)) {
                 tableIndex2 = true;
             }
             if (data1.length <= 10 &&
-                data2Index >= 0 &&
-                tableIndex2)
-            {
+                    data2Index >= 0 &&
+                    tableIndex2) {
                 tableIndex3 = (int) testStatistic -
-                              BasicStatistics.rankSumIndex[data1.length -
-                              1][data2Index];
-                if (side.equalsIgnoreCase("greater"))
-                {
-                    if (tableIndex3 < 0)
-                    {
+                        BasicStatistics.rankSumIndex[data1.length -
+                                1][data2Index];
+                if (side.equalsIgnoreCase("greater")) {
+                    if (tableIndex3 < 0) {
                         tableIndex3 = data1.length *
-                                      (data1.length + data2.length + 1) -
-                                      (int) testStatistic - BasicStatistics.
-                                      rankSumIndex[data1.length - 1]
-                                      [data2Index];
+                                (data1.length + data2.length + 1) -
+                                (int) testStatistic - BasicStatistics.
+                                rankSumIndex[data1.length - 1]
+                                [data2Index];
                         pValue = 1 - BasicStatistics.
-                                 rankSumTable[data1.length - 1]
-                                 [data2Index][tableIndex3];
-                    }
-                    else
-                    {
+                                rankSumTable[data1.length - 1]
+                                [data2Index][tableIndex3];
+                    } else {
                         pValue = BasicStatistics.rankSumTable[data1.length - 1]
-                                 [data2Index][tableIndex3];
+                                [data2Index][tableIndex3];
                     }
-                }
-                else if (side.equalsIgnoreCase("less"))
-                {
-                    if (tableIndex3 < 0)
-                    {
+                } else if (side.equalsIgnoreCase("less")) {
+                    if (tableIndex3 < 0) {
                         tableIndex3 = data1.length *
-                                      (data1.length + data2.length + 1) -
-                                      (int) testStatistic - BasicStatistics.
-                                      rankSumIndex[data1.length - 1]
-                                      [data2Index];
+                                (data1.length + data2.length + 1) -
+                                (int) testStatistic - BasicStatistics.
+                                rankSumIndex[data1.length - 1]
+                                [data2Index];
                         pValue = BasicStatistics.rankSumTable[data1.length - 1]
-                                 [data2Index][tableIndex3];
-                    }
-                    else
-                    {
+                                [data2Index][tableIndex3];
+                    } else {
                         pValue = 1 - BasicStatistics.
-                                 rankSumTable[data1.length - 1]
-                                 [data2Index][tableIndex3];
+                                rankSumTable[data1.length - 1]
+                                [data2Index][tableIndex3];
                     }
-                }
-                else
-                {
+                } else {
                     tableIndex3 = Math.max((int) testStatistic, data1.length *
-                                           (data1.length + data2.length + 1) -
-                                           (int) testStatistic)
-                                  - BasicStatistics.
-                                  rankSumIndex[data1.length - 1][data2Index];
+                            (data1.length + data2.length + 1) -
+                            (int) testStatistic)
+                            - BasicStatistics.
+                            rankSumIndex[data1.length - 1][data2Index];
                     pValue = 2 * BasicStatistics.rankSumTable[data1.length - 1]
-                             [data2Index][tableIndex3];
-                    if (pValue > 1)
-                    {
+                            [data2Index][tableIndex3];
+                    if (pValue > 1) {
                         pValue = 1.0;
                     }
                 }
-            }
-            else
-            {
+            } else {
                 basicStatistics = new BasicStatistics();
                 rankSumMean = basicStatistics.rankSumMean(data1, data2);
                 rankSumVariance = basicStatistics.rankSumVariance(data1, data2);
                 normalDistribution = new NormalDistribution();
                 zStatistic = (testStatistic - rankSumMean) /
-                             Math.sqrt(rankSumVariance);
-                if (side.equalsIgnoreCase("less"))
-                {
+                        Math.sqrt(rankSumVariance);
+                if (side.equalsIgnoreCase("less")) {
                     pValue = normalDistribution.cumulative(zStatistic);
-                }
-                else if (side.equalsIgnoreCase("greater"))
-                {
+                } else if (side.equalsIgnoreCase("greater")) {
                     pValue = 1 - normalDistribution.cumulative(zStatistic);
-                }
-                else
-                {
+                } else {
                     pValue = 2 * (1 - normalDistribution.
-                                  cumulative(Math.abs(zStatistic)));
+                            cumulative(Math.abs(zStatistic)));
                 }
             }
             output.put(PVALUE, pValue);
@@ -731,8 +655,7 @@ public class RankSumTest extends StatisticalInference implements
      */
 
     public double pValue(double[] data1,
-                         double[] data2)
-    {
+                         double[] data2) {
         return pValue("equal", data1, data2);
     }
 

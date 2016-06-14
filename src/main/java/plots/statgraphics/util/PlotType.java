@@ -5,6 +5,7 @@ package plots.statgraphics.util;
  * <p>Description: The statistical graphics</p>
  * <p>Copyright: Copyright (c) 2009</p>
  * <p>Company: Tung Hai University </p>
+ *
  * @author Wen Hsiang Wei
  * @version 1.4
  */
@@ -13,90 +14,89 @@ package plots.statgraphics.util;
  * The enumerated plot types.
  */
 
-public enum PlotType
-{
+public enum PlotType {
 
-        /**
-         * Pie plot.
-         */
+    /**
+     * Pie plot.
+     */
 
-        PIE,
+    PIE,
 
-        /**
-         * Bar plot.
-         */
+    /**
+     * Bar plot.
+     */
 
-        BAR,
+    BAR,
 
-        /**
-         * Box plot.
-         */
+    /**
+     * Box plot.
+     */
 
-        BOX,
+    BOX,
 
-        /**
-         * Box plot for displaying the data corresponding to different dates.
-         */
+    /**
+     * Box plot for displaying the data corresponding to different dates.
+     */
 
-        BOX_DATE,
+    BOX_DATE,
 
-        /**
-         * Histogram.
-         */
+    /**
+     * Histogram.
+     */
 
-        HISTOGRAM,
+    HISTOGRAM,
 
-        /**
-         * Line plot.
-         */
+    /**
+     * Line plot.
+     */
 
-        LINE,
+    LINE,
 
-        /**
-         * Line plot with the categories the data belong to on the x-coordinate.
-         */
+    /**
+     * Line plot with the categories the data belong to on the x-coordinate.
+     */
 
-        LINE_CATEGORY,
+    LINE_CATEGORY,
 
-        /**
-         * Scatter plot.
-         */
+    /**
+     * Scatter plot.
+     */
 
-        SCATTER,
+    SCATTER,
 
-        /**
-         * Line plot with data points.
-         */
+    /**
+     * Line plot with data points.
+     */
 
-        LINE_POINT,
+    LINE_POINT,
 
-        /**
-         * Residual plot.
-         */
+    /**
+     * Residual plot.
+     */
 
-        LINEAR_REGRESSION,
+    LINEAR_REGRESSION,
 
-        /**
-         * Survival estimate plot.
-         */
+    /**
+     * Survival estimate plot.
+     */
 
-        SURVIVAL,
+    SURVIVAL,
 
-        /**
-         * Time series plot.
-         */
+    /**
+     * Time series plot.
+     */
 
-        TIME_SERIES,
+    TIME_SERIES,
 
-        /**
-         * 3D pie plot.
-         */
+    /**
+     * 3D pie plot.
+     */
 
-        PIE3D,
+    PIE3D,
 
-        /**
-         * 3D bar plot.
-         */
+    /**
+     * 3D bar plot.
+     */
 
-        BAR3D
+    BAR3D
 }

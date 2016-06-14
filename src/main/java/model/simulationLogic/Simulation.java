@@ -105,9 +105,7 @@ public class Simulation {
         }
 
 
-
         sim.desired.getOrderedBirthRates(config.getT0()).print();
-
 
 
         try {
@@ -137,7 +135,6 @@ public class Simulation {
     }
 
 
-
     public ComparativeAnalysis analyseGeneratedPopulation(IPopulation generatedPopulation) throws UnsupportedDateConversion, StatisticalManipulationCalculationError {
         // get comparable statistics for generate population
         PopulationComposition generatedPopulationComposition = new GeneratedPopulationComposition(config.getTS(), config.getTE(), generatedPopulation);
@@ -146,7 +143,6 @@ public class Simulation {
         ComparativeAnalysis comparisonOfDesiredAndGenerated = new ComparativeAnalysis(desired, generatedPopulationComposition, config.getTS(), config.getTE());
 
         comparisonOfDesiredAndGenerated.runAnalysis(generatedPopulation);
-
 
 
         return comparisonOfDesiredAndGenerated;

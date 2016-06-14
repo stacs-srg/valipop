@@ -5,6 +5,7 @@ package plots.statgraphics.util;
  * <p>Description: The statistical graphics</p>
  * <p>Copyright: Copyright (c) 2009</p>
  * <p>Company: Tung Hai University </p>
+ *
  * @author Wen Hsiang Wei
  * @version 1.4
  */
@@ -45,8 +46,7 @@ import org.w3c.dom.DOMImplementation;
  * a file in different formats, including PNG, JPEG, PDF, and SVG. </p>
  */
 
-public class SavePlot extends JPanel
-{
+public class SavePlot extends JPanel {
 
     /**
      * Saves a plot to a file in different formats, including PNG, JPEG, PDF,
@@ -56,8 +56,7 @@ public class SavePlot extends JPanel
      */
 
     public SavePlot(int width,
-                    int height)
-    {
+                    int height) {
         this.setSize(width, height);
     }
 
@@ -66,85 +65,8 @@ public class SavePlot extends JPanel
      * and SVG.
      */
 
-    public SavePlot()
-    {
+    public SavePlot() {
         this(500, 270);
-    }
-
-    /**
-     * Saves a plot to a file in specific format.
-     * @param plot the plot to be saved.
-     * @param filetype the specific format in which the file to be saved,
-     * <br>            "png", "PNG": PNG format;
-     * <br>            "jpeg", "JPEG": JPEG format;
-     * <br>            "pdf", "PDF": PDF format;
-     * <br>            "svg", "SVG": SVG format.
-     * @param width the width of the panel on which the plot is placed.
-     * @param height the height of the panel on which the plot is placed.
-     * @throws IOException signals that an I/O exception of some sort has
-     *                     occurred.
-     */
-
-    public void saveAs(JFreeChart plot,
-                       String filetype,
-                       int width,
-                       int height)
-            throws IOException
-    {
-        JFileChooser fileChooser = new JFileChooser();
-        ExtensionFileFilter filter =
-                new ExtensionFileFilter(filetype.toUpperCase() + " Image Files",
-                                        "." + filetype);
-        fileChooser.addChoosableFileFilter(filter);
-        fileChooser.addChoosableFileFilter(new ExtensionFileFilter("All files",
-                ""));
-        int option = fileChooser.showSaveDialog(this);
-        if (option == JFileChooser.APPROVE_OPTION)
-        {
-            String filename = fileChooser.getSelectedFile().getPath();
-            if (!filename.endsWith("." + filetype))
-            {
-                filename = filename + "." + filetype;
-            }
-            if (filetype.equalsIgnoreCase("png"))
-            {
-                ChartUtilities.saveChartAsPNG(new File(filename), plot, width,
-                                              height);
-            }
-            else if (filetype.equalsIgnoreCase("jpeg"))
-            {
-                ChartUtilities.saveChartAsJPEG(new File(filename), plot, width,
-                                               height);
-            }
-            else if (filetype.equalsIgnoreCase("pdf"))
-            {
-                savePlotAsPDF(new File(filename), plot, width, height,
-                              new DefaultFontMapper());
-            }
-            else
-            {
-                savePlotAsSVG(new File(filename), plot, width, height);
-            }
-        }
-    }
-
-    /**
-     * Saves a plot to a file in specific format.
-     * @param plot the plot to be saved.
-     * @param filetype the specific format in which the file to be saved, <br>
-     *        "png", "PNG": PNG format; <br>
-     *        "jpeg", "JPEG": JPEG format; <br>
-     *        "pdf", "PDF": PDF format; <br>
-     *        "svg", "SVG": SVG format.
-     * @throws IOException signals that an I/O exception of some sort has
-     *                     occurred.
-     */
-
-    public void saveAs(JFreeChart plot,
-                       String filetype)
-            throws IOException
-    {
-        saveAs(plot, filetype, getWidth(), getHeight());
     }
 
     /**
@@ -164,8 +86,7 @@ public class SavePlot extends JPanel
                                      int width,
                                      int height,
                                      FontMapper mapper)
-            throws IOException
-    {
+            throws IOException {
         OutputStream out = new BufferedOutputStream(new FileOutputStream(file));
         writePlotAsPDF(out, plot, width, height, mapper);
         out.close();
@@ -188,12 +109,10 @@ public class SavePlot extends JPanel
                                       int width,
                                       int height,
                                       FontMapper mapper)
-            throws IOException
-    {
+            throws IOException {
         Rectangle pagesize = new Rectangle(width, height);
         Document document = new Document(pagesize, 50, 50, 50, 50);
-        try
-        {
+        try {
             PdfWriter writer = PdfWriter.getInstance(document, out);
             document.addAuthor("JFreeChart");
             document.addSubject("Demonstration");
@@ -205,9 +124,7 @@ public class SavePlot extends JPanel
             plot.draw(g2, r2D);
             g2.dispose();
             cb.addTemplate(tp, 0, 0);
-        }
-        catch (DocumentException de)
-        {
+        } catch (DocumentException de) {
             System.err.println(de.getMessage());
         }
         document.close();
@@ -227,19 +144,83 @@ public class SavePlot extends JPanel
                                      JFreeChart plot,
                                      int width,
                                      int height)
-            throws IOException
-    {
+            throws IOException {
         DOMImplementation domImpl = GenericDOMImplementation.getDOMImplementation();
         org.w3c.dom.Document document =
-            domImpl.createDocument(null, "svg", null);
+                domImpl.createDocument(null, "svg", null);
         SVGGraphics2D svgGenerator = new SVGGraphics2D(document);
         svgGenerator.getGeneratorContext().setPrecision(6);
         plot.draw(svgGenerator,
-                  new Rectangle2D.Double(0, 0, width, height), null);
+                new Rectangle2D.Double(0, 0, width, height), null);
         boolean useCSS = true;
         Writer out = new OutputStreamWriter(new FileOutputStream(file),
-                                            "UTF-8");
+                "UTF-8");
         svgGenerator.stream(out, useCSS);
+    }
+
+    /**
+     * Saves a plot to a file in specific format.
+     * @param plot the plot to be saved.
+     * @param filetype the specific format in which the file to be saved,
+     * <br>            "png", "PNG": PNG format;
+     * <br>            "jpeg", "JPEG": JPEG format;
+     * <br>            "pdf", "PDF": PDF format;
+     * <br>            "svg", "SVG": SVG format.
+     * @param width the width of the panel on which the plot is placed.
+     * @param height the height of the panel on which the plot is placed.
+     * @throws IOException signals that an I/O exception of some sort has
+     *                     occurred.
+     */
+
+    public void saveAs(JFreeChart plot,
+                       String filetype,
+                       int width,
+                       int height)
+            throws IOException {
+        JFileChooser fileChooser = new JFileChooser();
+        ExtensionFileFilter filter =
+                new ExtensionFileFilter(filetype.toUpperCase() + " Image Files",
+                        "." + filetype);
+        fileChooser.addChoosableFileFilter(filter);
+        fileChooser.addChoosableFileFilter(new ExtensionFileFilter("All files",
+                ""));
+        int option = fileChooser.showSaveDialog(this);
+        if (option == JFileChooser.APPROVE_OPTION) {
+            String filename = fileChooser.getSelectedFile().getPath();
+            if (!filename.endsWith("." + filetype)) {
+                filename = filename + "." + filetype;
+            }
+            if (filetype.equalsIgnoreCase("png")) {
+                ChartUtilities.saveChartAsPNG(new File(filename), plot, width,
+                        height);
+            } else if (filetype.equalsIgnoreCase("jpeg")) {
+                ChartUtilities.saveChartAsJPEG(new File(filename), plot, width,
+                        height);
+            } else if (filetype.equalsIgnoreCase("pdf")) {
+                savePlotAsPDF(new File(filename), plot, width, height,
+                        new DefaultFontMapper());
+            } else {
+                savePlotAsSVG(new File(filename), plot, width, height);
+            }
+        }
+    }
+
+    /**
+     * Saves a plot to a file in specific format.
+     * @param plot the plot to be saved.
+     * @param filetype the specific format in which the file to be saved, <br>
+     *        "png", "PNG": PNG format; <br>
+     *        "jpeg", "JPEG": JPEG format; <br>
+     *        "pdf", "PDF": PDF format; <br>
+     *        "svg", "SVG": SVG format.
+     * @throws IOException signals that an I/O exception of some sort has
+     *                     occurred.
+     */
+
+    public void saveAs(JFreeChart plot,
+                       String filetype)
+            throws IOException {
+        saveAs(plot, filetype, getWidth(), getHeight());
     }
 
 }

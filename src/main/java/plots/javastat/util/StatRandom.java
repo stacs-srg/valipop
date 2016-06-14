@@ -5,6 +5,7 @@ package plots.javastat.util;
  * <p>Description: JAVA programs for statistical computations</p>
  * <p>Copyright: Copyright (c) 2009</p>
  * <p>Company: Tung Hai University</p>
+ *
  * @version 1.4
  */
 
@@ -34,56 +35,46 @@ import plots.javastat.util.DistributionType;
  *
  */
 
-public class StatRandom
-{
-
-   /**
-    * The random sample.
-    */
-
-    public double[] randomSample;
+public class StatRandom {
 
     private static double q[] = {0.6931471805599453, 0.9333736875190459,
-                                 0.9888777961838675, 0.9984959252914960,
-                                 0.9998292811061389, 0.9999833164100727,
-                                 0.9999985691438767, 0.9999998906925558,
-                                 0.9999999924734159, 0.9999999995283275,
-                                 0.9999999999728814, 0.9999999999985598,
-                                 0.9999999999999289, 0.9999999999999968,
-                                 0.9999999999999999, 1.0000000000000000};
-
+            0.9888777961838675, 0.9984959252914960,
+            0.9998292811061389, 0.9999833164100727,
+            0.9999985691438767, 0.9999998906925558,
+            0.9999999924734159, 0.9999999995283275,
+            0.9999999999728814, 0.9999999999985598,
+            0.9999999999999289, 0.9999999999999968,
+            0.9999999999999999, 1.0000000000000000};
     private static double[] al = {0.0, 0.0, 0.0,
-                                  0.69314718055994530941723212145817,
-                                  1.79175946922805500081247735838070,
-                                  3.17805383034794561964694160129705,
-                                  4.78749174278204599424770093452324,
-                                  6.57925121201010099506017829290394,
-                                  8.52516136106541430016553103634712};
+            0.69314718055994530941723212145817,
+            1.79175946922805500081247735838070,
+            3.17805383034794561964694160129705,
+            4.78749174278204599424770093452324,
+            6.57925121201010099506017829290394,
+            8.52516136106541430016553103634712};
+    /**
+     * The random sample.
+     */
+
+    public double[] randomSample;
 
     /**
      * Default StatRandom constructor.
      */
 
-    public StatRandom()
-    {
-        this.randomSample=new double[]{this.normal()};
+    public StatRandom() {
+        this.randomSample = new double[]{this.normal()};
     }
 
-    private double afc(int i)
-    {
+    private double afc(int i) {
         double di, value;
-        if (i < 0)
-        {
+        if (i < 0) {
             System.out.println(
                     "rhyper.c: afc(i)+ i=%d < 0 -- SHOULD NOT HAPPEN!\n" + i);
             return -1;
-        }
-        else if (i <= 7)
-        {
+        } else if (i <= 7) {
             value = al[i + 1];
-        }
-        else
-        {
+        } else {
             di = i;
             value = (di + 0.5) * java.lang.Math.log(di) - di +
                     0.08333333333333 / di
@@ -104,8 +95,7 @@ public class StatRandom
      */
 
     public double uniform(double min,
-                          double max)
-    {
+                          double max) {
         return min + (max - min) * new Random().nextDouble();
     }
 
@@ -118,8 +108,7 @@ public class StatRandom
      *         generator's sequence.
      */
 
-    public double uniform()
-    {
+    public double uniform() {
         return uniform(0.0, 1.0);
     }
 
@@ -135,8 +124,7 @@ public class StatRandom
      */
 
     public double beta(double aa,
-                       double bb)
-    {
+                       double bb) {
         int qsame;
         double expmax = 0.0;
         double a = 0.0, b = 0.0, delta = 0.0, r = 0.0, s = 0.0, t = 0.0,
@@ -144,122 +132,92 @@ public class StatRandom
                 alpha = 0.0, beta = 0.0, gamma = 0.0, k1 = 0.0, k2 = 0.0,
                 olda = -1.0, oldb = -1.0;
         Random rng = new Random();
-        if (expmax == 0.0)
-        {
+        if (expmax == 0.0) {
             expmax = java.lang.Math.log(Double.MAX_VALUE);
         }
         qsame = ((olda == aa) && (oldb == bb)) ? 1 : 0;
-        if (!(qsame == 1))
-        {
-            if (aa > 0.0 && bb > 0.0)
-            {
+        if (!(qsame == 1)) {
+            if (aa > 0.0 && bb > 0.0) {
                 olda = aa;
                 oldb = bb;
-            }
-            else
-            {
+            } else {
                 throw new java.lang.ArithmeticException("Math Error: DOMAIN");
             }
         }
         deliver:
         {
-            if (Math.min(aa, bb) <= 1.0)
-            {
-                if (!(qsame == 1))
-                {
+            if (Math.min(aa, bb) <= 1.0) {
+                if (!(qsame == 1)) {
                     a = Math.max(aa, bb);
                     b = Math.min(aa, bb);
                     alpha = a + b;
                     beta = 1.0 / b;
                     delta = 1.0 + a - b;
                     k1 = delta * (0.0138889 + 0.0416667 * b) /
-                         (a * beta - 0.777778);
+                            (a * beta - 0.777778);
                     k2 = 0.25 + (0.5 + 0.25 / delta) * b;
                 }
-                for (; ; )
-                {
+                for (; ; ) {
                     u1 = rng.nextDouble();
                     u2 = rng.nextDouble();
-                    if (u1 < 0.5)
-                    {
+                    if (u1 < 0.5) {
                         y = u1 * u2;
                         z = u1 * y;
-                        if (0.25 * u2 + z - y >= k1)
-                        {
+                        if (0.25 * u2 + z - y >= k1) {
                             continue;
                         }
-                    }
-                    else
-                    {
+                    } else {
                         z = u1 * u1 * u2;
-                        if (z <= 0.25)
-                        {
+                        if (z <= 0.25) {
                             break;
                         }
-                        if (z >= k2)
-                        {
+                        if (z >= k2) {
                             continue;
                         }
                     }
                     v = beta * java.lang.Math.log(u1 / (1.0 - u1));
-                    if (v <= expmax)
-                    {
+                    if (v <= expmax) {
                         w = a * java.lang.Math.exp(v);
-                    }
-                    else
-                    {
+                    } else {
                         w = Double.MAX_VALUE;
                     }
                     if (alpha * (java.lang.Math.log(alpha / (b + w)) + v) -
-                        1.3862944 >= java.lang.Math.log(z))
-                    {
+                            1.3862944 >= java.lang.Math.log(z)) {
                         break deliver;
                     }
                 }
                 v = beta * java.lang.Math.log(u1 / (1.0 - u1));
-                if (v <= expmax)
-                {
+                if (v <= expmax) {
                     w = a * java.lang.Math.exp(v);
-                }
-                else
-                {
+                } else {
                     w = Double.MAX_VALUE;
                 }
-            }
-            else
-            {
-                if (!(qsame == 1))
-                {
+            } else {
+                if (!(qsame == 1)) {
                     a = Math.min(aa, bb);
                     b = Math.max(aa, bb);
                     alpha = a + b;
                     beta = java.lang.Math.sqrt((alpha - 2.0) /
-                                               (2.0 * a * b - alpha));
+                            (2.0 * a * b - alpha));
                     gamma = a + 1.0 / beta;
                 }
-                do
-                {
+                do {
                     u1 = rng.nextDouble();
                     u2 = rng.nextDouble();
                     v = beta * java.lang.Math.log(u1 / (1.0 - u1));
-                    if (v <= expmax)
-                    {
+                    if (v <= expmax) {
                         w = a * java.lang.Math.exp(v);
-                    }
-                    else
-                    {
+                    } else {
                         w = Double.MAX_VALUE;
                     }
                     z = u1 * u1 * u2;
                     r = gamma * v - 1.3862944;
                     s = a + r - w;
-                    if (s + 2.609438 >= 5.0 * z)
-                    {
+                    if (s + 2.609438 >= 5.0 * z) {
                         break;
                     }
                     t = java.lang.Math.log(z);
-                    if (s > t)
-                    {
+                    if (s > t) {
                         break;
                     }
                 }
@@ -282,12 +240,10 @@ public class StatRandom
      */
 
     public double cauchy(double location,
-                         double scale)
-    {
+                         double scale) {
         if (Double.isInfinite(location) ||
-            Double.isInfinite(scale) ||
-            scale < 0)
-        {
+                Double.isInfinite(scale) ||
+                scale < 0) {
             throw new java.lang.ArithmeticException("Math Error: DOMAIN");
         }
 
@@ -302,34 +258,28 @@ public class StatRandom
      *         value with mean 1 from this random number generator's sequence.
      */
 
-    public double exponential()
-    {
+    public double exponential() {
         double a = 0.0, u, ustar, umin;
         int i;
         Random rng = new Random();
         u = rng.nextDouble();
-        for (; ; )
-        {
+        for (; ; ) {
             u = u + u;
-            if (u > 1.0)
-            {
+            if (u > 1.0) {
                 break;
             }
             a = a + q[0];
         }
         u = u - 1.0;
-        if (u <= q[0])
-        {
+        if (u <= q[0]) {
             return a + u;
         }
         i = 0;
         ustar = rng.nextDouble();
         umin = ustar;
-        do
-        {
+        do {
             ustar = rng.nextDouble();
-            if (ustar < umin)
-            {
+            if (ustar < umin) {
                 umin = ustar;
             }
             i = i + 1;
@@ -350,10 +300,8 @@ public class StatRandom
 
      */
 
-    public double exponential(double scale)
-    {
-        if (Double.isInfinite(scale) || scale <= 0.0)
-        {
+    public double exponential(double scale) {
+        if (Double.isInfinite(scale) || scale <= 0.0) {
             throw new java.lang.ArithmeticException("Math Error: DOMAIN");
         }
 
@@ -369,8 +317,7 @@ public class StatRandom
      *         generator's sequence.
      */
 
-    public double normal()
-    {
+    public double normal() {
         return new Random().nextGaussian();
     }
 
@@ -386,8 +333,7 @@ public class StatRandom
      */
 
     public double normal(double mu,
-                         double sigma)
-    {
+                         double sigma) {
         return mu + sigma * normal();
     }
 
@@ -403,46 +349,37 @@ public class StatRandom
      */
 
     public double gamma(double a,
-                        double scale)
-    {
+                        double scale) {
         double aa = 0.0, sqrt32 = 5.656854, a1 = 0.3333333, a2 = -0.250003,
-               a3 = 0.2000062, a4 = -0.1662921, a5 = 0.1423657,
-               a6 = -0.1367177,
-               a7 = 0.1233795, e1 = 1.0, e2 = 0.4999897, e3 = 0.166829,
-               e4 = 0.0407753, e5 = 0.010293, q1 = 0.04166669, q2 = 0.02083148,
-               q3 = 0.00801191, q4 = 0.00144121, q5 = -7.388e-5, q6 = 2.4511e-4,
-               q7 = 2.424e-4, aaa = 0.0, s = 0.0, d = 0.0, s2 = 0.0,
-               q0 = 0.0, b = 0.0, si = 0.0, c = 0.0;
+                a3 = 0.2000062, a4 = -0.1662921, a5 = 0.1423657,
+                a6 = -0.1367177,
+                a7 = 0.1233795, e1 = 1.0, e2 = 0.4999897, e3 = 0.166829,
+                e4 = 0.0407753, e5 = 0.010293, q1 = 0.04166669, q2 = 0.02083148,
+                q3 = 0.00801191, q4 = 0.00144121, q5 = -7.388e-5, q6 = 2.4511e-4,
+                q7 = 2.424e-4, aaa = 0.0, s = 0.0, d = 0.0, s2 = 0.0,
+                q0 = 0.0, b = 0.0, si = 0.0, c = 0.0;
         double p, t, x, u, r, v, w, e, q, ret_val;
-        if (a < 1.0)
-        {
+        if (a < 1.0) {
             aa = 0.0;
             b = 1.0 + 0.36787944117144232159 * a;
-            while (true)
-            {
+            while (true) {
                 p = b * new Random().nextDouble();
-                if (p >= 1.0)
-                {
+                if (p >= 1.0) {
                     ret_val = -java.lang.Math.log((b - p) / a);
                     if (exponential() >=
-                        (1.0 - a) * java.lang.Math.log(ret_val))
-                    {
+                            (1.0 - a) * java.lang.Math.log(ret_val)) {
                         break;
                     }
-                }
-                else
-                {
+                } else {
                     ret_val = java.lang.Math.exp(java.lang.Math.log(p) / a);
-                    if (exponential() >= ret_val)
-                    {
+                    if (exponential() >= ret_val) {
                         break;
                     }
                 }
             }
             return scale * ret_val;
         }
-        if (a != aa)
-        {
+        if (a != aa) {
             aa = a;
             s2 = a - 0.5;
             s = java.lang.Math.sqrt(s2);
@@ -451,99 +388,73 @@ public class StatRandom
         t = normal(0.0, 1.0);
         x = s + 0.5 * t;
         ret_val = x * x;
-        if (t >= 0.0)
-        {
+        if (t >= 0.0) {
             return scale * ret_val;
         }
         u = uniform(0.0, 1.0);
-        if (d * u <= t * t * t)
-        {
+        if (d * u <= t * t * t) {
             return scale * ret_val;
         }
-        if (a != aaa)
-        {
+        if (a != aaa) {
             aaa = a;
             r = 1.0 / a;
             q0 = ((((((q7 * r + q6) * r + q5) * r + q4)
                     * r + q3) * r + q2) * r + q1) * r;
-            if (a <= 3.686)
-            {
+            if (a <= 3.686) {
                 b = 0.463 + s + 0.178 * s2;
                 si = 1.235;
                 c = 0.195 / s - 0.079 + 0.16 * s;
-            }
-            else if (a <= 13.022)
-            {
+            } else if (a <= 13.022) {
                 b = 1.654 + 0.0076 * s2;
                 si = 1.68 / s + 0.275;
                 c = 0.062 / s + 0.024;
-            }
-            else
-            {
+            } else {
                 b = 1.77;
                 si = 0.75;
                 c = 0.1515 / s;
             }
         }
-        if (x > 0.0)
-        {
+        if (x > 0.0) {
             v = t / (s + s);
-            if (java.lang.Math.abs(v) <= 0.25)
-            {
+            if (java.lang.Math.abs(v) <= 0.25) {
                 q = q0 + 0.5 * t * t * ((((((a7 * v + a6) * v + a5) * v + a4) *
-                                          v + a3) * v + a2) * v + a1) * v;
-            }
-            else
-            {
+                        v + a3) * v + a2) * v + a1) * v;
+            } else {
                 q = q0 - s * t + 0.25 * t * t + (s2 + s2) *
-                    java.lang.Math.log(1.0 + v);
+                        java.lang.Math.log(1.0 + v);
             }
-            if (java.lang.Math.log(1.0 - u) <= q)
-            {
+            if (java.lang.Math.log(1.0 - u) <= q) {
                 return scale * ret_val;
             }
         }
-        while (true)
-        {
+        while (true) {
             e = exponential();
             u = uniform(0.0, 1.0);
             u = u + u - 1.0;
-            if (u < 0.0)
-            {
+            if (u < 0.0) {
                 t = b - si * e;
-            }
-            else
-            {
+            } else {
                 t = b + si * e;
             }
-            if (t >= -0.71874483771719)
-            {
+            if (t >= -0.71874483771719) {
                 v = t / (s + s);
-                if (java.lang.Math.abs(v) <= 0.25)
-                {
+                if (java.lang.Math.abs(v) <= 0.25) {
                     q = q0 + 0.5 * t * t * ((((((a7 * v + a6) * v + a5) *
-                                               v + a4) * v + a3)
-                                             * v + a2) * v + a1) * v;
-                }
-                else
-                {
+                            v + a4) * v + a3)
+                            * v + a2) * v + a1) * v;
+                } else {
                     q = q0 - s * t + 0.25 * t * t + (s2 + s2) *
-                        java.lang.Math.log(1.0 + v);
+                            java.lang.Math.log(1.0 + v);
                 }
-                if (q > 0.0)
-                {
-                    if (q <= 0.5)
-                    {
+                if (q > 0.0) {
+                    if (q <= 0.5) {
                         w = ((((e5 * q + e4) * q + e3)
-                              * q + e2) * q + e1) * q;
-                    }
-                    else
-                    {
+                                * q + e2) * q + e1) * q;
+                    } else {
                         w = java.lang.Math.exp(q) - 1.0;
                     }
                     if (c * java.lang.Math.abs(u) <=
-                        w * java.lang.Math.exp(e - 0.5 * t * t))
-                    {
+                            w * java.lang.Math.exp(e - 0.5 * t * t)) {
                         break;
                     }
                 }
@@ -564,10 +475,8 @@ public class StatRandom
      *         generator's sequence.
      */
 
-    public double chisquare(double df)
-    {
-        if (Double.isInfinite(df) || df <= 0.0)
-        {
+    public double chisquare(double df) {
+        if (Double.isInfinite(df) || df <= 0.0) {
             throw new java.lang.ArithmeticException("Math Error: DOMAIN");
         }
 
@@ -586,11 +495,9 @@ public class StatRandom
      */
 
     public double f(double df1,
-                    double df2)
-    {
+                    double df2) {
         double v1, v2;
-        if (Double.isNaN(df1) || Double.isNaN(df2) || df1 <= 0.0 || df2 <= 0.0)
-        {
+        if (Double.isNaN(df1) || Double.isNaN(df2) || df1 <= 0.0 || df2 <= 0.0) {
             throw new java.lang.ArithmeticException("Math Error: DOMAIN");
         }
         v1 = !Double.isInfinite(df1) ? (chisquare(df1) / df1) : normal();
@@ -612,129 +519,98 @@ public class StatRandom
 
     public double hypergeometric(double nn1in,
                                  double nn2in,
-                                 double kkin)
-    {
+                                 double kkin) {
         int ks = -1, n1s = -1, n2s = -1, k = 0, n1 = 0, n2 = 0, minjx = 0,
                 maxjx = 0, m = 0;
         int i, ix, nn1, nn2, kk;
         double con = 57.56462733, deltal = 0.0078, deltau = 0.0034,
-               scale = 1e25, tn = 0.0, w = 0.0, p3 = 0.0, p1 = 0.0, xl = 0.0,
-               p2 = 0.0, lamdl = 0.0, xr = 0.0, lamdr = 0.0, a = 0.0;
+                scale = 1e25, tn = 0.0, w = 0.0, p3 = 0.0, p1 = 0.0, xl = 0.0,
+                p2 = 0.0, lamdl = 0.0, xr = 0.0, lamdr = 0.0, a = 0.0;
         double d, e, f, g, p, r, s, t, u, v, y, y1, de, dg, gl, kl, ub, nk, dr,
-               nm, gu, kr, ds, dt, ym, yn, yk, xm, xn, xk, alv;
+                nm, gu, kr, ds, dt, ym, yn, yk, xm, xn, xk, alv;
         boolean setup1, setup2, reject;
         Random rng = new Random();
         if (Double.isInfinite(nn1in) || Double.isInfinite(nn2in) ||
-            Double.isInfinite(kkin))
-        {
+                Double.isInfinite(kkin)) {
             throw new java.lang.ArithmeticException("Math Error: DOMAIN");
         }
         nn1 = (int) java.lang.Math.floor(nn1in + 0.5);
         nn2 = (int) java.lang.Math.floor(nn2in + 0.5);
         kk = (int) java.lang.Math.floor(kkin + 0.5);
-        if (nn1 < 0 || nn2 < 0 || kk < 0 || kk > nn1 + nn2)
-        {
+        if (nn1 < 0 || nn2 < 0 || kk < 0 || kk > nn1 + nn2) {
             throw new java.lang.ArithmeticException("Math Error: DOMAIN");
         }
         reject = true;
         setup1 = false;
         setup2 = false;
-        if (nn1 != n1s || nn2 != n2s)
-        {
+        if (nn1 != n1s || nn2 != n2s) {
             setup1 = true;
             setup2 = true;
-        }
-        else if (kk != ks)
-        {
+        } else if (kk != ks) {
             setup2 = true;
         }
-        if (setup1)
-        {
+        if (setup1) {
             n1s = nn1;
             n2s = nn2;
             tn = nn1 + nn2;
-            if (nn1 <= nn2)
-            {
+            if (nn1 <= nn2) {
                 n1 = nn1;
                 n2 = nn2;
-            }
-            else
-            {
+            } else {
                 n1 = nn2;
                 n2 = nn1;
             }
         }
-        if (setup2)
-        {
+        if (setup2) {
             ks = kk;
-            if (kk + kk >= tn)
-            {
+            if (kk + kk >= tn) {
                 k = (int) (tn) - kk;
-            }
-            else
-            {
+            } else {
                 k = kk;
             }
         }
-        if (setup1 || setup2)
-        {
+        if (setup1 || setup2) {
             m = (int) ((k + 1.0) * (n1 + 1.0) / (tn + 2.0));
             minjx = Math.max(0, k - n2);
             maxjx = Math.min(n1, k);
         }
-        if (minjx == maxjx)
-        {
+        if (minjx == maxjx) {
             ix = maxjx;
-            if (kk + kk >= tn)
-            {
-                if (nn1 > nn2)
-                {
+            if (kk + kk >= tn) {
+                if (nn1 > nn2) {
                     ix = kk - nn2 + ix;
-                }
-                else
-                {
+                } else {
                     ix = nn1 - ix;
                 }
-            }
-            else
-            {
-                if (nn1 > nn2)
-                {
+            } else {
+                if (nn1 > nn2) {
                     ix = kk - ix;
                 }
             }
             return ix;
-        }
-        else if (m - minjx < 10)
-        {
-            if (setup1 || setup2)
-            {
-                if (k < n2)
-                {
+        } else if (m - minjx < 10) {
+            if (setup1 || setup2) {
+                if (k < n2) {
                     w = java.lang.Math.exp(con + afc(n2) + afc(n1 + n2 - k)
-                                           - afc(n2 - k) - afc(n1 + n2));
-                }
-                else
-                {
+                            - afc(n2 - k) - afc(n1 + n2));
+                } else {
                     w = java.lang.Math.exp(con + afc(n1) + afc(k)
-                                           - afc(k - n2) - afc(n1 + n2));
+                            - afc(k - n2) - afc(n1 + n2));
                 }
             }
-            L10: while (true)
-            {
+            L10:
+            while (true) {
                 p = w;
                 ix = minjx;
                 u = rng.nextDouble() * scale;
-                L20: while (true)
-                {
-                    if (u > p)
-                    {
+                L20:
+                while (true) {
+                    if (u > p) {
                         u = u - p;
                         p = p * (n1 - ix) * (k - ix);
                         ix = ix + 1;
                         p = p / ix / (n2 - k + ix);
-                        if (ix > maxjx)
-                        {
+                        if (ix > maxjx) {
                             continue L10;
                         }
                         continue L20;
@@ -742,85 +618,66 @@ public class StatRandom
                     break L10;
                 }
             }
-        }
-        else
-        {
-            if (setup1 || setup2)
-            {
+        } else {
+            if (setup1 || setup2) {
                 s = java.lang.Math.sqrt((tn - k) * k * n1 * n2 / (tn - 1) / tn /
-                                        tn);
+                        tn);
                 d = (int) (1.5 * s) + .5;
                 xl = m - d + .5;
                 xr = m + d + .5;
                 a = afc(m) + afc(n1 - m) + afc(k - m)
-                    + afc(n2 - k + m);
+                        + afc(n2 - k + m);
                 kl = java.lang.Math.exp(a - afc((int) (xl)) -
-                                        afc((int) (n1 - xl))
-                                        - afc((int) (k - xl))
-                                        - afc((int) (n2 - k + xl)));
+                        afc((int) (n1 - xl))
+                        - afc((int) (k - xl))
+                        - afc((int) (n2 - k + xl)));
                 kr = java.lang.Math.exp(a - afc((int) (xr - 1))
-                                        - afc((int) (n1 - xr + 1))
-                                        - afc((int) (k - xr + 1))
-                                        - afc((int) (n2 - k + xr - 1)));
+                        - afc((int) (n1 - xr + 1))
+                        - afc((int) (k - xr + 1))
+                        - afc((int) (n2 - k + xr - 1)));
                 lamdl = -java.lang.Math.log(xl * (n2 - k + xl) / (n1 - xl + 1)
-                                            / (k - xl + 1));
+                        / (k - xl + 1));
                 lamdr = -java.lang.Math.log((n1 - xr + 1) * (k - xr + 1)
-                                            / xr / (n2 - k + xr));
+                        / xr / (n2 - k + xr));
                 p1 = d + d;
                 p2 = p1 + kl / lamdl;
                 p3 = p2 + kr / lamdr;
             }
-            L30: while (true)
-            {
+            L30:
+            while (true) {
                 u = rng.nextDouble() * p3;
                 v = rng.nextDouble();
-                if (u < p1)
-                {
+                if (u < p1) {
                     ix = (int) (xl + u);
-                }
-                else if (u <= p2)
-                {
+                } else if (u <= p2) {
                     ix = (int) (xl + java.lang.Math.log(v) / lamdl);
-                    if (ix < minjx)
-                    {
+                    if (ix < minjx) {
                         continue L30;
                     }
                     v = v * (u - p1) * lamdl;
-                }
-                else
-                {
+                } else {
                     ix = (int) (xr - java.lang.Math.log(v) / lamdr);
-                    if (ix > maxjx)
-                    {
+                    if (ix > maxjx) {
                         continue L30;
                     }
                     v = v * (u - p2) * lamdr;
                 }
-                if (m < 100 || ix <= 50)
-                {
+                if (m < 100 || ix <= 50) {
                     f = 1.0;
-                    if (m < ix)
-                    {
-                        for (i = m + 1; i <= ix; i++)
-                        {
+                    if (m < ix) {
+                        for (i = m + 1; i <= ix; i++) {
                             f = f * (n1 - i + 1) * (k - i + 1) /
-                                (n2 - k + i) / i;
+                                    (n2 - k + i) / i;
                         }
-                    }
-                    else if (m > ix)
-                    {
-                        for (i = ix + 1; i <= m; i++)
-                        {
+                    } else if (m > ix) {
+                        for (i = ix + 1; i <= m; i++) {
                             f = f * i * (n2 - k + i) / (n1 - i) / (k - i);
                         }
                     }
-                    if (v <= f)
-                    {
+                    if (v <= f) {
                         reject = false;
                     }
-                }
-                else
-                {
+                } else {
                     y = ix;
                     y1 = y + 1.0;
                     ym = y - m;
@@ -833,89 +690,63 @@ public class StatRandom
                     e = -ym / nk;
                     g = yn * yk / (y1 * nk) - 1.0;
                     dg = 1.0;
-                    if (g < 0.0)
-                    {
+                    if (g < 0.0) {
                         dg = 1.0 + g;
                     }
-                    gu = g * (1.0 + g * ( -0.5 + g / 3.0));
+                    gu = g * (1.0 + g * (-0.5 + g / 3.0));
                     gl = gu - .25 * (g * g * g * g) / dg;
                     xm = m + 0.5;
                     xn = n1 - m + 0.5;
                     xk = k - m + 0.5;
                     nm = n2 - k + xm;
                     ub = y * gu - m * gl + deltau
-                         + xm * r * (1. + r * ( -0.5 + r / 3.0))
-                         + xn * s * (1. + s * ( -0.5 + s / 3.0))
-                         + xk * t * (1. + t * ( -0.5 + t / 3.0))
-                         + nm * e * (1. + e * ( -0.5 + e / 3.0));
+                            + xm * r * (1. + r * (-0.5 + r / 3.0))
+                            + xn * s * (1. + s * (-0.5 + s / 3.0))
+                            + xk * t * (1. + t * (-0.5 + t / 3.0))
+                            + nm * e * (1. + e * (-0.5 + e / 3.0));
                     alv = java.lang.Math.log(v);
-                    if (alv > ub)
-                    {
+                    if (alv > ub) {
                         reject = true;
-                    }
-                    else
-                    {
+                    } else {
                         dr = xm * (r * r * r * r);
-                        if (r < 0.0)
-                        {
+                        if (r < 0.0) {
                             dr = dr / (1.0 + r);
                         }
                         ds = xn * (s * s * s * s);
-                        if (s < 0.0)
-                        {
+                        if (s < 0.0) {
                             ds = ds / (1.0 + s);
                         }
                         dt = xk * (t * t * t * t);
-                        if (t < 0.0)
-                        {
+                        if (t < 0.0) {
                             dt = dt / (1.0 + t);
                         }
                         de = nm * (e * e * e * e);
-                        if (e < 0.0)
-                        {
+                        if (e < 0.0) {
                             de = de / (1.0 + e);
                         }
                         if (alv < ub - 0.25 * (dr + ds + dt + de)
-                            + (y + m) * (gl - gu) - deltal)
-                        {
+                                + (y + m) * (gl - gu) - deltal) {
                             reject = false;
-                        }
-                        else
-                        {
-                            if (alv <= (a - afc(ix) - afc(n1 - ix)
-                                        - afc(k - ix) - afc(n2 - k + ix)))
-                            {
-                                reject = false;
-                            }
-                            else
-                            {
-                                reject = true;
-                            }
+                        } else {
+                            reject = alv > (a - afc(ix) - afc(n1 - ix)
+                                    - afc(k - ix) - afc(n2 - k + ix));
                         }
                     }
                 }
-                if (reject)
-                {
+                if (reject) {
                     continue L30;
                 }
                 break L30;
             }
         }
-        if (kk + kk >= tn)
-        {
-            if (nn1 > nn2)
-            {
+        if (kk + kk >= tn) {
+            if (nn1 > nn2) {
                 ix = kk - nn2 + ix;
-            }
-            else
-            {
+            } else {
                 ix = nn1 - ix;
             }
-        }
-        else
-        {
-            if (nn1 > nn2)
-            {
+        } else {
+            if (nn1 > nn2) {
                 ix = kk - ix;
             }
         }
@@ -935,11 +766,9 @@ public class StatRandom
      */
 
     public double logistic(double location,
-                           double scale)
-    {
+                           double scale) {
         double u;
-        if (Double.isInfinite(location) || Double.isInfinite(scale))
-        {
+        if (Double.isInfinite(location) || Double.isInfinite(scale)) {
             throw new java.lang.ArithmeticException("Math Error: DOMAIN");
         }
         u = new Random().nextDouble();
@@ -961,11 +790,9 @@ public class StatRandom
      */
 
     public double lognormal(double logmean,
-                            double logsd)
-    {
+                            double logsd) {
         if (Double.isInfinite(logmean) || Double.isInfinite(logsd) ||
-            logsd <= 0.0)
-        {
+                logsd <= 0.0) {
             throw new java.lang.ArithmeticException("Math Error: DOMAIN");
         }
 
@@ -982,18 +809,13 @@ public class StatRandom
      *         generator's sequence.
      */
 
-    public double t(double df)
-    {
-        if (Double.isNaN(df) || df <= 0.0)
-        {
+    public double t(double df) {
+        if (Double.isNaN(df) || df <= 0.0) {
             throw new java.lang.ArithmeticException("Math Error: DOMAIN");
         }
-        if (Double.isInfinite(df))
-        {
+        if (Double.isInfinite(df)) {
             return normal();
-        }
-        else
-        {
+        } else {
             return normal() / java.lang.Math.sqrt(chisquare(df) / df);
         }
     }
@@ -1010,11 +832,9 @@ public class StatRandom
      */
 
     public double weibull(double shape,
-                          double scale)
-    {
+                          double scale) {
         if (Double.isInfinite(shape) || Double.isInfinite(scale) ||
-            shape <= 0.0 || scale <= 0.0)
-        {
+                shape <= 0.0 || scale <= 0.0) {
             throw new java.lang.ArithmeticException("Math Error: DOMAIN");
         }
 
@@ -1033,13 +853,10 @@ public class StatRandom
 
     public double[] random(DistributionType distribution,
                            double[] parameter,
-                           int sampleSize)
-    {
+                           int sampleSize) {
         randomSample = new double[sampleSize];
-        for(int i = 0; i < sampleSize; i++)
-        {
-            switch (distribution)
-            {
+        for (int i = 0; i < sampleSize; i++) {
+            switch (distribution) {
                 case UNIFORM:
                     randomSample[i] = uniform(parameter[0], parameter[1]);
                     break;
@@ -1066,7 +883,7 @@ public class StatRandom
                     break;
                 case HYPERGEOMETRIC:
                     randomSample[i] = hypergeometric(parameter[0], parameter[1],
-                                                     parameter[2]);
+                            parameter[2]);
                     break;
                 case LOGISTIC:
                     randomSample[i] = logistic(parameter[0], parameter[1]);

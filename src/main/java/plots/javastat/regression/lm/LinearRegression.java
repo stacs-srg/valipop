@@ -5,6 +5,7 @@ package plots.javastat.regression.lm;
  * <p>Description: JAVA programs for statistical computations</p>
  * <p>Copyright: Copyright (c) 2009</p>
  * <p>Company: Tung Hai University</p>
+ *
  * @author Wen Hsiang Wei
  * @version 1.4
  */
@@ -22,6 +23,7 @@ import plots.javastat.StatisticalAnalysis;
 import plots.javastat.util.BasicStatistics;
 import plots.javastat.util.DataManager;
 import plots.javastat.util.Output;
+
 import static plots.javastat.util.Argument.*;
 import static plots.javastat.util.Output.*;
 
@@ -121,8 +123,7 @@ import static plots.javastat.util.Output.*;
  * <br> out.println(myClass4.output.toString());
  */
 
-public class LinearRegression extends Regression
-{
+public class LinearRegression extends Regression {
 
     /**
      * The object represents a linear regression analysis.
@@ -363,7 +364,8 @@ public class LinearRegression extends Regression
      * Constructs a multiple linear regression model.
      */
 
-    public LinearRegression() {}
+    public LinearRegression() {
+    }
 
     /**
      * Constructs a multiple linear regression model given the input arguments
@@ -381,59 +383,44 @@ public class LinearRegression extends Regression
      */
 
     public LinearRegression(Hashtable argument,
-                            Object ...dataObject)
-    {
+                            Object... dataObject) {
         this.argument = argument;
         this.dataObject = dataObject;
-        if (dataObject != null)
-        {
+        if (dataObject != null) {
             if (dataObject.length == 2 &&
-                dataObject[0].getClass().getName().equalsIgnoreCase("[D") &&
-                dataObject[1].getClass().getName().equalsIgnoreCase("[[D"))
-            {
+                    dataObject[0].getClass().getName().equalsIgnoreCase("[D") &&
+                    dataObject[1].getClass().getName().equalsIgnoreCase("[[D")) {
                 doubleCovariate = (double[][]) dataObject[1];
-            }
-            else if (dataObject.length >= 2 &&
-                     dataObject[0].getClass().getName().
-                     equalsIgnoreCase("[D") &&
-                     (dataObject.getClass().getName().equalsIgnoreCase(
-                             "[Ljava.lang.Object;") ||
-                     dataObject.getClass().getName().equalsIgnoreCase("[[D")))
-            {
+            } else if (dataObject.length >= 2 &&
+                    dataObject[0].getClass().getName().
+                            equalsIgnoreCase("[D") &&
+                    (dataObject.getClass().getName().equalsIgnoreCase(
+                            "[Ljava.lang.Object;") ||
+                            dataObject.getClass().getName().equalsIgnoreCase("[[D"))) {
                 doubleCovariate = DataManager.castDoubleObject(1, dataObject);
-            }
-            else
-            {
+            } else {
                 throw new IllegalArgumentException("Wrong input data");
             }
             if (argument.size() > 0 &&
-                argument.get(ALPHA) != null &&
-                argument.get(HAS_INTERCEPT) != null)
-            {
+                    argument.get(ALPHA) != null &&
+                    argument.get(HAS_INTERCEPT) != null) {
                 statisticalAnalysis = new LinearRegression(
                         (Double) argument.get(ALPHA),
                         (Boolean) argument.get(HAS_INTERCEPT),
                         (double[]) dataObject[0], doubleCovariate);
             }
             if (argument.size() > 0 &&
-                argument.get(ALPHA) != null)
-            {
+                    argument.get(ALPHA) != null) {
                 statisticalAnalysis = new LinearRegression(
                         (Double) argument.get(ALPHA), (double[]) dataObject[0],
                         doubleCovariate);
-            }
-            else if (argument.size() == 0)
-            {
+            } else if (argument.size() == 0) {
                 statisticalAnalysis = new LinearRegression(
                         (double[]) dataObject[0], doubleCovariate);
-            }
-            else
-            {
+            } else {
                 throw new IllegalArgumentException("Wrong input argument(s).");
             }
-        }
-        else
-        {
+        } else {
             statisticalAnalysis = new LinearRegression();
         }
     }
@@ -458,8 +445,7 @@ public class LinearRegression extends Regression
     public LinearRegression(double alpha,
                             boolean hasIntercept,
                             double[] response,
-                            double[] ...covariate)
-    {
+                            double[]... covariate) {
         this.alpha = alpha;
         this.response = response;
         this.covariate = covariate;
@@ -486,8 +472,7 @@ public class LinearRegression extends Regression
 
     public LinearRegression(boolean hasIntercept,
                             double[] response,
-                            double[] ...covariate)
-    {
+                            double[]... covariate) {
         this(0.05, hasIntercept, response, covariate);
     }
 
@@ -507,8 +492,7 @@ public class LinearRegression extends Regression
 
     public LinearRegression(double alpha,
                             double[] response,
-                            double[] ...covariate)
-    {
+                            double[]... covariate) {
         this(alpha, true, response, covariate);
     }
 
@@ -526,8 +510,7 @@ public class LinearRegression extends Regression
      */
 
     public LinearRegression(double[] response,
-                            double[] ...covariate)
-    {
+                            double[]... covariate) {
         this(0.05, response, covariate);
     }
 
@@ -542,33 +525,27 @@ public class LinearRegression extends Regression
      */
 
     public double[] coefficients(Hashtable argument,
-                                 Object ...dataObject)
-    {
+                                 Object... dataObject) {
         this.argument = argument;
         this.dataObject = dataObject;
         if (dataObject != null &&
-            dataObject.length == 2 &&
-            dataObject[0].getClass().getName().equalsIgnoreCase("[D") &&
-            dataObject[1].getClass().getName().equalsIgnoreCase("[[D"))
-        {
+                dataObject.length == 2 &&
+                dataObject[0].getClass().getName().equalsIgnoreCase("[D") &&
+                dataObject[1].getClass().getName().equalsIgnoreCase("[[D")) {
             coefficients = coefficients((double[]) dataObject[0],
-                                        (double[][]) dataObject[1]);
-        }
-        else if (dataObject != null &&
-                 dataObject.length >= 2 &&
-                 dataObject[0].getClass().getName().equalsIgnoreCase("[D") &&
-                 (dataObject.getClass().getName().equalsIgnoreCase(
-                     "[Ljava.lang.Object;") ||
-                 dataObject.getClass().getName().equalsIgnoreCase("[[D")))
-        {
+                    (double[][]) dataObject[1]);
+        } else if (dataObject != null &&
+                dataObject.length >= 2 &&
+                dataObject[0].getClass().getName().equalsIgnoreCase("[D") &&
+                (dataObject.getClass().getName().equalsIgnoreCase(
+                        "[Ljava.lang.Object;") ||
+                        dataObject.getClass().getName().equalsIgnoreCase("[[D"))) {
             coefficients = coefficients((double[]) dataObject[0],
-                                        DataManager.
-                                        castDoubleObject(1,dataObject));
-        }
-        else
-        {
+                    DataManager.
+                            castDoubleObject(1, dataObject));
+        } else {
             throw new IllegalArgumentException("Wrong input arguments or " +
-                                               "data.");
+                    "data.");
         }
 
         return coefficients;
@@ -586,8 +563,7 @@ public class LinearRegression extends Regression
      */
 
     public double[] coefficients(double[] response,
-                                 double[] ...covariate)
-    {
+                                 double[]... covariate) {
         testStatistic = testStatistic(response, covariate);
 
         return coefficients;
@@ -604,33 +580,27 @@ public class LinearRegression extends Regression
      */
 
     public double[] testStatistic(Hashtable argument,
-                                  Object ...dataObject)
-    {
+                                  Object... dataObject) {
         this.argument = argument;
         this.dataObject = dataObject;
         if (dataObject != null &&
-            dataObject.length == 2 &&
-            dataObject[0].getClass().getName().equalsIgnoreCase("[D") &&
-            dataObject[1].getClass().getName().equalsIgnoreCase("[[D"))
-        {
+                dataObject.length == 2 &&
+                dataObject[0].getClass().getName().equalsIgnoreCase("[D") &&
+                dataObject[1].getClass().getName().equalsIgnoreCase("[[D")) {
             testStatistic = testStatistic((double[]) dataObject[0],
-                                          (double[][]) dataObject[1]);
-        }
-        else if (dataObject != null &&
-                 dataObject.length >= 2 &&
-                 dataObject[0].getClass().getName().equalsIgnoreCase("[D") &&
-                 (dataObject.getClass().getName().equalsIgnoreCase(
-                     "[Ljava.lang.Object;") ||
-                 dataObject.getClass().getName().equalsIgnoreCase("[[D")))
-        {
+                    (double[][]) dataObject[1]);
+        } else if (dataObject != null &&
+                dataObject.length >= 2 &&
+                dataObject[0].getClass().getName().equalsIgnoreCase("[D") &&
+                (dataObject.getClass().getName().equalsIgnoreCase(
+                        "[Ljava.lang.Object;") ||
+                        dataObject.getClass().getName().equalsIgnoreCase("[[D"))) {
             testStatistic = testStatistic((double[]) dataObject[0],
-                                          DataManager.
-                                          castDoubleObject(1,dataObject));
-        }
-        else
-        {
+                    DataManager.
+                            castDoubleObject(1, dataObject));
+        } else {
             throw new IllegalArgumentException("Wrong input arguments or " +
-                                               "data.");
+                    "data.");
         }
 
         return testStatistic;
@@ -648,35 +618,29 @@ public class LinearRegression extends Regression
      */
 
     public double[] testStatistic(double[] response,
-                                  double[] ...covariate)
-    {
+                                  double[]... covariate) {
         this.response = response;
         this.covariate = covariate;
         new DataManager().checkDimension(covariate);
         degreeFreedom = new double[3];
         basicStatistics = new BasicStatistics();
         responseMatrix = new Matrix(response, response.length);
-        if (hasIntercept)
-        {
+        if (hasIntercept) {
             covariateWithIntercept = new double[covariate.length + 1]
-                                     [response.length];
-            for (int i = 0; i < response.length; i++)
-            {
+                    [response.length];
+            for (int i = 0; i < response.length; i++) {
                 covariateWithIntercept[0][i] = 1.0;
             }
-            for (int j = 1; j < (covariate.length + 1); j++)
-            {
+            for (int j = 1; j < (covariate.length + 1); j++) {
                 covariateWithIntercept[j] = covariate[j - 1];
             }
             covariateMatrix = new Matrix(covariateWithIntercept);
-        }
-        else
-        {
+        } else {
             covariateMatrix = new Matrix(covariate);
         }
         coefficientMatrix = covariateMatrix.times(covariateMatrix.transpose()).
-                            inverse().
-                            times(covariateMatrix.times(responseMatrix));
+                inverse().
+                times(covariateMatrix.times(responseMatrix));
         fittedMatrix = covariateMatrix.transpose().times(coefficientMatrix);
         residualMatrix = responseMatrix.minus(fittedMatrix);
         SSRMatrix = coefficientMatrix.transpose().times(covariateMatrix.times(
@@ -691,31 +655,30 @@ public class LinearRegression extends Regression
         residuals = residualMatrix.getColumnPackedCopy();
         SSE = SSEMatrix.get(0, 0);
         SST = SSTMatrix.get(0, 0) -
-              response.length * Math.pow(basicStatistics.mean(response), 2.0);
+                response.length * Math.pow(basicStatistics.mean(response), 2.0);
         SSR = SSRMatrix.get(0, 0) -
-              response.length * Math.pow(basicStatistics.mean(response), 2.0);
+                response.length * Math.pow(basicStatistics.mean(response), 2.0);
         degreeFreedom[0] = (double) covariate.length;
         degreeFreedom[1] = (double) (response.length - covariate.length - 1);
         degreeFreedom[2] = response.length - 1.0;
         MSE = SSE / degreeFreedom[1];
         varianceMatrix = covariateMatrix.times(covariateMatrix.transpose()).
-                         inverse().times(MSE);
+                inverse().times(MSE);
         variance = varianceMatrix.getArray();
         rSquare = SSR / SST;
         addedColumnLength = new Boolean(hasIntercept).compareTo(false);
         testStatistic = new double[covariate.length + addedColumnLength];
         pValue = new double[covariate.length + addedColumnLength];
-        for (int j = 0; j < covariate.length + addedColumnLength; j++)
-        {
+        for (int j = 0; j < covariate.length + addedColumnLength; j++) {
             testStatistic[j] = coefficients[j] / Math.sqrt(variance[j][j]);
             pValue[j] = 2 *
-                        (1 - new TDistribution(response.length -
-                                               covariate.length - 1).
-                         cumulative(Math.abs(testStatistic[j])));
+                    (1 - new TDistribution(response.length -
+                            covariate.length - 1).
+                            cumulative(Math.abs(testStatistic[j])));
         }
         testFStatistic = SSR / (degreeFreedom[0] * MSE);
         fPValue = 1 - new FDistribution(degreeFreedom[0], degreeFreedom[1]).
-                  cumulative(testFStatistic);
+                cumulative(testFStatistic);
         output.put(COEFFICIENTS, coefficients);
         output.put(COEFFICIENT_VARIANCE, variance);
         output.put(DEGREE_OF_FREEDOM, degreeFreedom);
@@ -756,51 +719,37 @@ public class LinearRegression extends Regression
      */
 
     public double[][] confidenceInterval(Hashtable argument,
-                                         Object ...dataObject)
-    {
+                                         Object... dataObject) {
         this.argument = argument;
         this.dataObject = dataObject;
-        if (dataObject != null)
-        {
+        if (dataObject != null) {
             if (dataObject.length == 2 &&
-                dataObject[0].getClass().getName().equalsIgnoreCase("[D") &&
-                dataObject[1].getClass().getName().equalsIgnoreCase("[[D"))
-            {
+                    dataObject[0].getClass().getName().equalsIgnoreCase("[D") &&
+                    dataObject[1].getClass().getName().equalsIgnoreCase("[[D")) {
                 doubleCovariate = (double[][]) dataObject[1];
-            }
-            else if (dataObject.length >= 2 &&
-                     dataObject[0].getClass().getName().
-                     equalsIgnoreCase("[D") &&
-                     (dataObject.getClass().getName().equalsIgnoreCase(
-                             "[Ljava.lang.Object;") ||
-                     dataObject.getClass().getName().equalsIgnoreCase("[[D")))
-            {
+            } else if (dataObject.length >= 2 &&
+                    dataObject[0].getClass().getName().
+                            equalsIgnoreCase("[D") &&
+                    (dataObject.getClass().getName().equalsIgnoreCase(
+                            "[Ljava.lang.Object;") ||
+                            dataObject.getClass().getName().equalsIgnoreCase("[[D"))) {
                 doubleCovariate = DataManager.castDoubleObject(1, dataObject);
-            }
-            else
-            {
+            } else {
                 throw new IllegalArgumentException("Wrong input data type");
             }
-            if (argument.size() > 0 && argument.get(ALPHA) != null)
-            {
+            if (argument.size() > 0 && argument.get(ALPHA) != null) {
                 confidenceInterval = confidenceInterval((Double) argument.get(
                         ALPHA), (double[]) dataObject[0], doubleCovariate);
-            }
-            else if (argument.size() == 0)
-            {
+            } else if (argument.size() == 0) {
                 confidenceInterval =
                         confidenceInterval((double[]) dataObject[0],
-                                           doubleCovariate);
-            }
-            else
-            {
+                                doubleCovariate);
+            } else {
                 throw new IllegalArgumentException("Wrong input argument(s).");
             }
-        }
-        else
-        {
+        } else {
             throw new IllegalArgumentException("Wrong input arguments or " +
-                                               "data.");
+                    "data.");
         }
 
         return confidenceInterval;
@@ -826,24 +775,21 @@ public class LinearRegression extends Regression
 
     public double[][] confidenceInterval(double alpha,
                                          double[] response,
-                                         double[] ...covariate)
-    {
-        if ((alpha <= 0.0) || (alpha > 1))
-        {
+                                         double[]... covariate) {
+        if ((alpha <= 0.0) || (alpha > 1)) {
             throw new IllegalArgumentException(
                     "The level of significance should be (strictly) positive " +
-                    "and not greater than 1.");
+                            "and not greater than 1.");
         }
         this.alpha = alpha;
         testStatistic = testStatistic(response, covariate);
         zAlpha = new NormalDistribution().inverse((1 - alpha / 2));
         confidenceInterval = new double[testStatistic.length][2];
-        for (int i = 0; i < testStatistic.length; i++)
-        {
+        for (int i = 0; i < testStatistic.length; i++) {
             confidenceInterval[i][0] = coefficients[i] -
-                                       zAlpha * Math.sqrt(variance[i][i]);
+                    zAlpha * Math.sqrt(variance[i][i]);
             confidenceInterval[i][1] = coefficients[i] +
-                                       zAlpha * Math.sqrt(variance[i][i]);
+                    zAlpha * Math.sqrt(variance[i][i]);
         }
         output.put(CONFIDENCE_INTERVAL, confidenceInterval);
 
@@ -869,8 +815,7 @@ public class LinearRegression extends Regression
      */
 
     public double[][] confidenceInterval(double[] response,
-                                         double[] ...covariate)
-    {
+                                         double[]... covariate) {
         return confidenceInterval(0.05, response, covariate);
     }
 
@@ -886,31 +831,25 @@ public class LinearRegression extends Regression
      */
 
     public Double testFStatistic(Hashtable argument,
-                                 Object ...dataObject)
-    {
+                                 Object... dataObject) {
         if (dataObject != null &&
-            dataObject.length == 2 &&
-            dataObject[0].getClass().getName().equalsIgnoreCase("[D") &&
-            dataObject[1].getClass().getName().equalsIgnoreCase("[[D"))
-        {
+                dataObject.length == 2 &&
+                dataObject[0].getClass().getName().equalsIgnoreCase("[D") &&
+                dataObject[1].getClass().getName().equalsIgnoreCase("[[D")) {
             testFStatistic = testFStatistic((double[]) dataObject[0],
-                                            (double[][]) dataObject[1]);
-        }
-        else if (dataObject != null &&
-                 dataObject.length >= 2 &&
-                 dataObject[0].getClass().getName().equalsIgnoreCase("[D") &&
-                 (dataObject.getClass().getName().equalsIgnoreCase(
-                     "[Ljava.lang.Object;") ||
-                 dataObject.getClass().getName().equalsIgnoreCase("[[D")))
-        {
+                    (double[][]) dataObject[1]);
+        } else if (dataObject != null &&
+                dataObject.length >= 2 &&
+                dataObject[0].getClass().getName().equalsIgnoreCase("[D") &&
+                (dataObject.getClass().getName().equalsIgnoreCase(
+                        "[Ljava.lang.Object;") ||
+                        dataObject.getClass().getName().equalsIgnoreCase("[[D"))) {
             testFStatistic = testFStatistic((double[]) dataObject[0],
-                                            DataManager.
-                                            castDoubleObject(1,dataObject));
-        }
-        else
-        {
+                    DataManager.
+                            castDoubleObject(1, dataObject));
+        } else {
             throw new IllegalArgumentException("Wrong input arguments or " +
-                                               "data.");
+                    "data.");
         }
 
         return testFStatistic;
@@ -929,8 +868,7 @@ public class LinearRegression extends Regression
      */
 
     public double testFStatistic(double[] response,
-                                 double[] ...covariate)
-    {
+                                 double[]... covariate) {
         testStatistic = testStatistic(response, covariate);
 
         return testFStatistic;
@@ -947,31 +885,25 @@ public class LinearRegression extends Regression
      */
 
     public double[] pValue(Hashtable argument,
-                           Object ...dataObject)
-    {
+                           Object... dataObject) {
         this.argument = argument;
         this.dataObject = dataObject;
         if (dataObject != null &&
-            dataObject.length == 2 &&
-            dataObject[0].getClass().getName().equalsIgnoreCase("[D") &&
-            dataObject[1].getClass().getName().equalsIgnoreCase("[[D"))
-        {
+                dataObject.length == 2 &&
+                dataObject[0].getClass().getName().equalsIgnoreCase("[D") &&
+                dataObject[1].getClass().getName().equalsIgnoreCase("[[D")) {
             pValue = pValue((double[]) dataObject[0],
-                            (double[][]) dataObject[1]);
-        }
-        else if (dataObject != null && dataObject.length >= 2 &&
-                 dataObject[0].getClass().getName().equalsIgnoreCase("[D") &&
-                 (dataObject.getClass().getName().equalsIgnoreCase(
-                     "[Ljava.lang.Object;") ||
-                 dataObject.getClass().getName().equalsIgnoreCase("[[D")))
-        {
+                    (double[][]) dataObject[1]);
+        } else if (dataObject != null && dataObject.length >= 2 &&
+                dataObject[0].getClass().getName().equalsIgnoreCase("[D") &&
+                (dataObject.getClass().getName().equalsIgnoreCase(
+                        "[Ljava.lang.Object;") ||
+                        dataObject.getClass().getName().equalsIgnoreCase("[[D"))) {
             pValue = pValue((double[]) dataObject[0],
-                            DataManager.castDoubleObject(1, dataObject));
-        }
-        else
-        {
+                    DataManager.castDoubleObject(1, dataObject));
+        } else {
             throw new IllegalArgumentException("Wrong input arguments or " +
-                                               "data.");
+                    "data.");
         }
 
         return pValue;
@@ -989,8 +921,7 @@ public class LinearRegression extends Regression
      */
 
     public double[] pValue(double[] response,
-                           double[] ...covariate)
-    {
+                           double[]... covariate) {
         testStatistic = testStatistic(response, covariate);
 
         return pValue;
@@ -1007,31 +938,25 @@ public class LinearRegression extends Regression
      */
 
     public Double fPValue(Hashtable argument,
-                          Object ...dataObject)
-    {
+                          Object... dataObject) {
         this.argument = argument;
         this.dataObject = dataObject;
         if (dataObject != null &&
-            dataObject.length == 2 &&
-            dataObject[0].getClass().getName().equalsIgnoreCase("[D") &&
-            dataObject[1].getClass().getName().equalsIgnoreCase("[[D"))
-        {
+                dataObject.length == 2 &&
+                dataObject[0].getClass().getName().equalsIgnoreCase("[D") &&
+                dataObject[1].getClass().getName().equalsIgnoreCase("[[D")) {
             fPValue = fPValue((double[]) dataObject[0],
-                              (double[][]) dataObject[1]);
-        }
-        else if (dataObject != null && dataObject.length >= 2 &&
-                 dataObject[0].getClass().getName().equalsIgnoreCase("[D") &&
-                 (dataObject.getClass().getName().equalsIgnoreCase(
-                     "[Ljava.lang.Object;") ||
-                 dataObject.getClass().getName().equalsIgnoreCase("[[D")))
-        {
+                    (double[][]) dataObject[1]);
+        } else if (dataObject != null && dataObject.length >= 2 &&
+                dataObject[0].getClass().getName().equalsIgnoreCase("[D") &&
+                (dataObject.getClass().getName().equalsIgnoreCase(
+                        "[Ljava.lang.Object;") ||
+                        dataObject.getClass().getName().equalsIgnoreCase("[[D"))) {
             fPValue = fPValue((double[]) dataObject[0],
-                              DataManager.castDoubleObject(1, dataObject));
-        }
-        else
-        {
+                    DataManager.castDoubleObject(1, dataObject));
+        } else {
             throw new IllegalArgumentException("Wrong input arguments or " +
-                                               "data.");
+                    "data.");
         }
 
         return fPValue;
@@ -1049,8 +974,7 @@ public class LinearRegression extends Regression
      */
 
     public double fPValue(double[] response,
-                          double[] ...covariate)
-    {
+                          double[]... covariate) {
         testStatistic = testStatistic(response, covariate);
         return fPValue;
     }

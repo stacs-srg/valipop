@@ -5,6 +5,7 @@ package plots.javastat.inference.onesample;
  * <p>Description: JAVA programs for statistical computations</p>
  * <p>Copyright: Copyright (c) 2009</p>
  * <p>Company: Tung Hai University</p>
+ *
  * @author Wen Hsiang Wei
  * @version 1.4
  */
@@ -17,6 +18,7 @@ import plots.javastat.StatisticalAnalysis;
 import plots.javastat.inference.OneSampInferenceInterface;
 import plots.javastat.inference.StatisticalInferenceTemplate;
 import plots.javastat.util.BasicStatistics;
+
 import static plots.javastat.util.Argument.*;
 import static plots.javastat.util.Output.*;
 
@@ -71,8 +73,7 @@ import static plots.javastat.util.Output.*;
  */
 
 public class OneSampProp extends StatisticalInferenceTemplate implements
-        OneSampInferenceInterface
-{
+        OneSampInferenceInterface {
 
     /**
      * The level of significance.
@@ -114,7 +115,8 @@ public class OneSampProp extends StatisticalInferenceTemplate implements
      * Constructs a one sample test for population proportion.
      */
 
-    public OneSampProp() {}
+    public OneSampProp() {
+    }
 
     /**
      * Constructs a one sample test given the input arguments and data.
@@ -138,62 +140,47 @@ public class OneSampProp extends StatisticalInferenceTemplate implements
      */
 
     public OneSampProp(Hashtable argument,
-                       Object ...dataObject)
-    {
+                       Object... dataObject) {
         this.argument = argument;
         this.dataObject = dataObject;
         if (argument.size() > 0 &&
-            dataObject != null)
-        {
+                dataObject != null) {
             if (argument.get(ALPHA) != null &&
-                argument.get(NULL_VALUE) != null &&
-                argument.get(SIDE) != null &&
-                dataObject.length == 2)
-            {
+                    argument.get(NULL_VALUE) != null &&
+                    argument.get(SIDE) != null &&
+                    dataObject.length == 2) {
                 statisticalAnalysis = new OneSampProp(
                         (Double) argument.get(ALPHA),
                         ((Number) argument.get(NULL_VALUE)).doubleValue(),
                         (String) argument.get(SIDE),
                         ((Number) dataObject[0]).doubleValue(),
                         ((Number) dataObject[1]).doubleValue());
-            }
-            else if (argument.get(NULL_VALUE) != null &&
-                     argument.get(SIDE) != null &&
-                     dataObject.length == 2)
-            {
+            } else if (argument.get(NULL_VALUE) != null &&
+                    argument.get(SIDE) != null &&
+                    dataObject.length == 2) {
                 statisticalAnalysis = new OneSampProp(
                         ((Number) argument.get(NULL_VALUE)).doubleValue(),
                         (String) argument.get(SIDE),
                         ((Number) dataObject[0]).doubleValue(),
                         ((Number) dataObject[1]).doubleValue());
-            }
-            else if (argument.get(NULL_VALUE) != null &&
-                     dataObject.length == 2)
-            {
+            } else if (argument.get(NULL_VALUE) != null &&
+                    dataObject.length == 2) {
                 statisticalAnalysis = new OneSampProp(
                         ((Number) argument.get(NULL_VALUE)).doubleValue(),
                         ((Number) dataObject[0]).doubleValue(),
                         ((Number) dataObject[1]).doubleValue());
-            }
-            else
-            {
+            } else {
                 throw new IllegalArgumentException(
                         "Wrong input arguments or data.");
             }
-        }
-        else if (dataObject != null &&
-                 dataObject.length == 2)
-        {
+        } else if (dataObject != null &&
+                dataObject.length == 2) {
             statisticalAnalysis = new OneSampProp(
                     ((Number) dataObject[0]).doubleValue(),
                     ((Number) dataObject[1]).doubleValue());
-        }
-        else if (dataObject == null)
-        {
+        } else if (dataObject == null) {
             statisticalAnalysis = new OneSampProp();
-        }
-        else
-        {
+        } else {
             throw new IllegalArgumentException("Wrong input data.");
         }
     }
@@ -220,8 +207,7 @@ public class OneSampProp extends StatisticalInferenceTemplate implements
                        double p0,
                        String side,
                        double count,
-                       double sampleSize)
-    {
+                       double sampleSize) {
         this.alpha = alpha;
         this.side = side;
         this.count = count;
@@ -251,8 +237,7 @@ public class OneSampProp extends StatisticalInferenceTemplate implements
     public OneSampProp(double p0,
                        String side,
                        double count,
-                       double sampleSize)
-    {
+                       double sampleSize) {
         this(0.05, p0, side, count, sampleSize);
     }
 
@@ -272,8 +257,7 @@ public class OneSampProp extends StatisticalInferenceTemplate implements
 
     public OneSampProp(double p0,
                        double count,
-                       double sampleSize)
-    {
+                       double sampleSize) {
         this(0.05, p0, "equal", count, sampleSize);
     }
 
@@ -291,8 +275,7 @@ public class OneSampProp extends StatisticalInferenceTemplate implements
      */
 
     public OneSampProp(double count,
-                       double sampleSize)
-    {
+                       double sampleSize) {
         this(0.05, 0.5, "equal", count, sampleSize);
     }
 
@@ -304,8 +287,7 @@ public class OneSampProp extends StatisticalInferenceTemplate implements
      */
 
     public double pointEstimate(double count,
-                                double sampleSize)
-    {
+                                double sampleSize) {
         pointEstimate = new BasicStatistics().proportion(count, sampleSize);
         output.put(POINT_ESTIMATE, pointEstimate);
 
@@ -320,13 +302,12 @@ public class OneSampProp extends StatisticalInferenceTemplate implements
      */
 
     public Double pointEstimate(Hashtable argument,
-                                Object ...dataObject)
-    {
+                                Object... dataObject) {
         this.argument = argument;
         this.dataObject = dataObject;
 
         return pointEstimate(((Number) dataObject[0]).doubleValue(),
-                             ((Number) dataObject[1]).doubleValue());
+                ((Number) dataObject[1]).doubleValue());
     }
 
     /**
@@ -342,25 +323,21 @@ public class OneSampProp extends StatisticalInferenceTemplate implements
      */
 
     public Double pointEstimateSE(Hashtable argument,
-                                  Object ...dataObject)
-    {
+                                  Object... dataObject) {
         this.argument = argument;
         this.dataObject = dataObject;
-        if (argument.get(NULL_VALUE) != null)
-        {
+        if (argument.get(NULL_VALUE) != null) {
             p0 = ((Number) argument.get(NULL_VALUE)).doubleValue();
             pointEstimateSE = pointEstimateSE(p0,
-                                              ((Number) dataObject[0]).
-                                              doubleValue(),
-                                              ((Number) dataObject[1]).
-                                              doubleValue());
-        }
-        else
-        {
+                    ((Number) dataObject[0]).
+                            doubleValue(),
+                    ((Number) dataObject[1]).
+                            doubleValue());
+        } else {
             pointEstimateSE = pointEstimateSE(((Number) dataObject[0]).
-                                              doubleValue(),
-                                              ((Number) dataObject[1]).
-                                              doubleValue());
+                            doubleValue(),
+                    ((Number) dataObject[1]).
+                            doubleValue());
         }
 
         return pointEstimateSE;
@@ -379,10 +356,8 @@ public class OneSampProp extends StatisticalInferenceTemplate implements
 
     public double pointEstimateSE(double p0,
                                   double count,
-                                  double sampleSize)
-    {
-        if ((p0 <= 0.0))
-        {
+                                  double sampleSize) {
+        if ((p0 <= 0.0)) {
             throw new IllegalArgumentException(
                     "The proportion under test should be (strictly) positive.");
         }
@@ -403,8 +378,7 @@ public class OneSampProp extends StatisticalInferenceTemplate implements
      */
 
     public double pointEstimateSE(double count,
-                                  double sampleSize)
-    {
+                                  double sampleSize) {
         pointEstimateSE = new BasicStatistics().proportionSE(count, sampleSize);
         output.put(POINT_ESTIMATE_SE, pointEstimateSE);
 
@@ -429,30 +403,24 @@ public class OneSampProp extends StatisticalInferenceTemplate implements
      */
 
     public double[] confidenceInterval(Hashtable argument,
-                                       Object ...dataObject)
-    {
+                                       Object... dataObject) {
         this.argument = argument;
         this.dataObject = dataObject;
         if (argument.get(ALPHA) != null &&
-            dataObject != null &&
-            dataObject.length == 2)
-        {
+                dataObject != null &&
+                dataObject.length == 2) {
             confidenceInterval = confidenceInterval(
                     (Double) argument.get(ALPHA),
                     ((Number) dataObject[0]).doubleValue(),
                     ((Number) dataObject[1]).doubleValue());
-        }
-        else if (dataObject != null &&
-                 dataObject.length == 2)
-        {
+        } else if (dataObject != null &&
+                dataObject.length == 2) {
             confidenceInterval = confidenceInterval(((Number) dataObject[0]).
-                    doubleValue(),
+                            doubleValue(),
                     ((Number) dataObject[1]).doubleValue());
-        }
-        else
-        {
+        } else {
             throw new IllegalArgumentException("Wrong input arguments or " +
-                                               "data.");
+                    "data.");
         }
 
         return confidenceInterval;
@@ -474,20 +442,18 @@ public class OneSampProp extends StatisticalInferenceTemplate implements
 
     public double[] confidenceInterval(double alpha,
                                        double count,
-                                       double sampleSize)
-    {
-        if ((alpha <= 0.0) || (alpha > 1))
-        {
+                                       double sampleSize) {
+        if ((alpha <= 0.0) || (alpha > 1)) {
             throw new IllegalArgumentException(
                     "The level of significance should be (strictly) positive " +
-                    "and not greater than 1.");
+                            "and not greater than 1.");
         }
         this.alpha = alpha;
         argument.put(ALPHA, alpha);
         argument.put(CRITICAL_VALUE,
-                     new NormalDistribution().inverse((1 - alpha / 2)));
+                new NormalDistribution().inverse((1 - alpha / 2)));
 
-        return (double[])super.confidenceInterval(argument, count, sampleSize);
+        return (double[]) super.confidenceInterval(argument, count, sampleSize);
     }
 
     /**
@@ -504,8 +470,7 @@ public class OneSampProp extends StatisticalInferenceTemplate implements
      */
 
     public double[] confidenceInterval(double count,
-                                       double sampleSize)
-    {
+                                       double sampleSize) {
         return confidenceInterval(0.05, count, sampleSize);
     }
 
@@ -525,30 +490,24 @@ public class OneSampProp extends StatisticalInferenceTemplate implements
      */
 
     public Double testStatistic(Hashtable argument,
-                                Object ...dataObject)
-    {
+                                Object... dataObject) {
         this.argument = argument;
         this.dataObject = dataObject;
         if (argument.get(NULL_VALUE) != null &&
-            dataObject != null &&
-            dataObject.length == 2)
-        {
+                dataObject != null &&
+                dataObject.length == 2) {
             testStatistic = testStatistic(
                     ((Number) argument.get(NULL_VALUE)).doubleValue(),
                     ((Number) dataObject[0]).doubleValue(),
                     ((Number) dataObject[1]).doubleValue());
-        }
-        else if (dataObject != null &&
-                 dataObject.length == 2)
-        {
+        } else if (dataObject != null &&
+                dataObject.length == 2) {
             testStatistic = testStatistic((
-                    (Number) dataObject[0]).doubleValue(),
+                            (Number) dataObject[0]).doubleValue(),
                     ((Number) dataObject[1]).doubleValue());
-        }
-        else
-        {
+        } else {
             throw new IllegalArgumentException("Wrong input arguments or " +
-                                               "data.");
+                    "data.");
         }
 
         return testStatistic;
@@ -568,17 +527,15 @@ public class OneSampProp extends StatisticalInferenceTemplate implements
 
     public double testStatistic(double p0,
                                 double count,
-                                double sampleSize)
-    {
-        if ((p0 <= 0.0))
-        {
+                                double sampleSize) {
+        if ((p0 <= 0.0)) {
             throw new IllegalArgumentException(
                     "The proportion under test should be (strictly) positive.");
         }
         this.p0 = p0;
         argument.put(NULL_VALUE, p0);
 
-        return (Double)super.testStatistic(argument, count, sampleSize);
+        return (Double) super.testStatistic(argument, count, sampleSize);
     }
 
     /**
@@ -593,8 +550,7 @@ public class OneSampProp extends StatisticalInferenceTemplate implements
      */
 
     public double testStatistic(double count,
-                                double sampleSize)
-    {
+                                double sampleSize) {
         return testStatistic(0.5, count, sampleSize);
     }
 
@@ -614,38 +570,30 @@ public class OneSampProp extends StatisticalInferenceTemplate implements
      */
 
     public Double pValue(Hashtable argument,
-                         Object ...dataObject)
-    {
+                         Object... dataObject) {
         this.argument = argument;
         this.dataObject = dataObject;
         if (argument.get(NULL_VALUE) != null &&
-            argument.get(SIDE) != null &&
-            dataObject != null &&
-            dataObject.length == 2)
-        {
+                argument.get(SIDE) != null &&
+                dataObject != null &&
+                dataObject.length == 2) {
             pValue = pValue(((Number) argument.get(NULL_VALUE)).doubleValue(),
-                            (String) argument.get(SIDE),
-                            ((Number) dataObject[0]).doubleValue(),
-                            ((Number) dataObject[1]).doubleValue());
-        }
-        else if (argument.get(NULL_VALUE) != null &&
-                 dataObject != null &&
-                   dataObject.length == 2)
-        {
+                    (String) argument.get(SIDE),
+                    ((Number) dataObject[0]).doubleValue(),
+                    ((Number) dataObject[1]).doubleValue());
+        } else if (argument.get(NULL_VALUE) != null &&
+                dataObject != null &&
+                dataObject.length == 2) {
             pValue = pValue(((Number) argument.get(NULL_VALUE)).doubleValue(),
-                            ((Number) dataObject[0]).doubleValue(),
-                            ((Number) dataObject[1]).doubleValue());
-        }
-        else if (dataObject != null &&
-                 dataObject.length == 2)
-        {
+                    ((Number) dataObject[0]).doubleValue(),
+                    ((Number) dataObject[1]).doubleValue());
+        } else if (dataObject != null &&
+                dataObject.length == 2) {
             pValue = pValue(((Number) dataObject[0]).doubleValue(),
-                            ((Number) dataObject[1]).doubleValue());
-        }
-        else
-        {
+                    ((Number) dataObject[1]).doubleValue());
+        } else {
             throw new IllegalArgumentException("Wrong input arguments or " +
-                                               "data.");
+                    "data.");
         }
 
         return pValue;
@@ -658,7 +606,7 @@ public class OneSampProp extends StatisticalInferenceTemplate implements
      *             choices "greater", "less" or "equal" (or "two.sided").
      * @param count the number of successes.
      * @param sampleSize the sample size (the number of trials).
-     * @return  the p value for the test.
+     * @return the p value for the test.
      * @exception IllegalArgumentException the counts and sample size should
      *                                     be (strictly) positive.
      * @exception IllegalArgumentException the proportion under test should be
@@ -668,8 +616,7 @@ public class OneSampProp extends StatisticalInferenceTemplate implements
     public double pValue(double p0,
                          String side,
                          double count,
-                         double sampleSize)
-    {
+                         double sampleSize) {
         this.p0 = p0;
         this.side = side;
         testStatistic = testStatistic(p0, count, sampleSize);
@@ -693,8 +640,7 @@ public class OneSampProp extends StatisticalInferenceTemplate implements
 
     public double pValue(double p0,
                          double count,
-                         double sampleSize)
-    {
+                         double sampleSize) {
         return pValue(p0, "equal", count, sampleSize);
     }
 
@@ -709,8 +655,7 @@ public class OneSampProp extends StatisticalInferenceTemplate implements
      */
 
     public double pValue(double count,
-                         double sampleSize)
-    {
+                         double sampleSize) {
         return pValue(0.5, "equal", count, sampleSize);
     }
 

@@ -5,6 +5,7 @@ package plots.javastat;
  * <p>Description: JAVA programs for statistical computations</p>
  * <p>Copyright: Copyright (c) 2009</p>
  * <p>Company: Tung Hai University</p>
+ *
  * @author Wen Hsiang Wei
  * @version 1.4
  */
@@ -17,27 +18,18 @@ import java.util.Hashtable;
  * of statistical methods can inherit from this class.</p>
  */
 
-public abstract class StatisticalAnalysis
-{
-
-    /**
-     * Default StatisticalAnalysis constructor.
-     */
-
-    public StatisticalAnalysis() {}
+public abstract class StatisticalAnalysis {
 
     /**
      * The arguments in statistical analysis.
      */
 
     public Hashtable argument = new Hashtable();
-
     /**
      * The input data in statistical analysis.
      */
 
     public Object[] dataObject;
-
     /**
      * The output in statistical analysis.
      */
@@ -45,12 +37,18 @@ public abstract class StatisticalAnalysis
     public Hashtable output = new Hashtable();
 
     /**
+     * Default StatisticalAnalysis constructor.
+     */
+
+    public StatisticalAnalysis() {
+    }
+
+    /**
      * Gets the arguments.
      * @return the arguments.
      */
 
-    public Hashtable getArgument()
-    {
+    public Hashtable getArgument() {
         return this.argument;
     }
 
@@ -59,8 +57,7 @@ public abstract class StatisticalAnalysis
      * @return the output.
      */
 
-    public Hashtable getOutput()
-    {
+    public Hashtable getOutput() {
         return this.output;
     }
 

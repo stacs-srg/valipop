@@ -111,7 +111,7 @@ public final class DateInstant implements Date {
 
     @Override
     public int compareTo(Date o) {
-        if(DateUtils.dateBefore(this, o)) {
+        if (DateUtils.dateBefore(this, o)) {
             return -1;
         } else {
             return 1;

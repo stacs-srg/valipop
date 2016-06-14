@@ -5,6 +5,7 @@ package plots.javastat.regression.nonparametric;
  * <p>Description: JAVA programs for statistical computations</p>
  * <p>Copyright: Copyright (c) 2009</p>
  * <p>Company: Tung Hai University</p>
+ *
  * @author Hsu Hui Chan and Wen Hsiang Wei
  * @version 1.4
  */
@@ -13,6 +14,7 @@ import java.util.Hashtable;
 
 import plots.javastat.StatisticalAnalysis;
 import plots.javastat.util.DataManager;
+
 import static plots.javastat.util.Argument.*;
 import static plots.javastat.util.Output.*;
 
@@ -81,8 +83,7 @@ import static plots.javastat.util.Output.*;
  * <br> out.println(testclass2.output.toString());
  */
 
-public class BSplineBasis extends StatisticalAnalysis
-{
+public class BSplineBasis extends StatisticalAnalysis {
 
     /**
      * The object for the B-spline basis.
@@ -191,7 +192,8 @@ public class BSplineBasis extends StatisticalAnalysis
      * Default BSplineBasis constructor.
      */
 
-    public BSplineBasis() {}
+    public BSplineBasis() {
+    }
 
     /**
      * Obtains the spline regression design matrix given the input arguments and
@@ -205,38 +207,27 @@ public class BSplineBasis extends StatisticalAnalysis
      */
 
     public BSplineBasis(Hashtable argument,
-                        Object ...dataObject)
-    {
+                        Object... dataObject) {
         this.argument = argument;
         this.dataObject = dataObject;
         if (argument.size() > 0 &&
-            dataObject != null)
-        {
+                dataObject != null) {
             if (argument.get(DIVISIONS) != null &&
-                argument.get(DEGREE) != null)
-            {
+                    argument.get(DEGREE) != null) {
                 statisticalAnalysis = new BSplineBasis(((Number) argument.get(
                         DIVISIONS)).doubleValue(),
                         ((Number) argument.get(DEGREE)).doubleValue(),
                         (double[]) dataObject[0]);
-            }
-            else if (argument.get(DIVISIONS) != null)
-            {
+            } else if (argument.get(DIVISIONS) != null) {
                 statisticalAnalysis = new BSplineBasis(((Number) argument.get(
                         DIVISIONS)).doubleValue(),
                         (double[]) dataObject[0]);
-            }
-            else
-            {
+            } else {
                 throw new IllegalArgumentException("Wrong input data.");
             }
-        }
-        else if (dataObject == null)
-        {
+        } else if (dataObject == null) {
             statisticalAnalysis = new BSplineBasis();
-        }
-        else
-        {
+        } else {
             throw new IllegalArgumentException(
                     "Wrong input argument(s) or data.");
         }
@@ -251,8 +242,7 @@ public class BSplineBasis extends StatisticalAnalysis
 
     public BSplineBasis(double divisions,
                         double degree,
-                        double[] data)
-    {
+                        double[] data) {
         this.divisions = divisions;
         this.degree = degree;
         this.data = data;
@@ -266,8 +256,7 @@ public class BSplineBasis extends StatisticalAnalysis
      */
 
     public BSplineBasis(double divisions,
-                        double[] data)
-    {
+                        double[] data) {
         basis = basis(divisions, 3.0, data);
     }
 
@@ -282,32 +271,23 @@ public class BSplineBasis extends StatisticalAnalysis
      */
 
     public double[][] basis(Hashtable argument,
-                            Object ...dataObject)
-    {
+                            Object... dataObject) {
         this.argument = argument;
         this.dataObject = dataObject;
         if (argument.size() > 0 &&
-            dataObject != null)
-        {
+                dataObject != null) {
             if (argument.get(DIVISIONS) != null &&
-                argument.get(DEGREE) != null)
-            {
+                    argument.get(DEGREE) != null) {
                 basis = basis(((Number) argument.get(DIVISIONS)).doubleValue(),
-                              ((Number) argument.get(DEGREE)).doubleValue(),
-                              (double[]) dataObject[0]);
-            }
-            else if (argument.get(DIVISIONS) != null)
-            {
+                        ((Number) argument.get(DEGREE)).doubleValue(),
+                        (double[]) dataObject[0]);
+            } else if (argument.get(DIVISIONS) != null) {
                 basis = basis(((Number) argument.get(DIVISIONS)).doubleValue(),
-                              (double[]) dataObject[0]);
-            }
-            else
-            {
+                        (double[]) dataObject[0]);
+            } else {
                 throw new IllegalArgumentException("Wrong input data.");
             }
-        }
-        else
-        {
+        } else {
             throw new IllegalArgumentException(
                     "Wrong input argument(s) or data.");
         }
@@ -325,8 +305,7 @@ public class BSplineBasis extends StatisticalAnalysis
 
     public double[][] basis(double divisions,
                             double degree,
-                            double[] data)
-    {
+                            double[] data) {
         this.divisions = divisions;
         this.degree = degree;
         this.data = data;
@@ -339,46 +318,33 @@ public class BSplineBasis extends StatisticalAnalysis
         t = new double[n];
         P = new double[n];
         B = new double[n];
-        for (int i = 0; i < m; i++)
-        {
+        for (int i = 0; i < m; i++) {
             rowSum = 0;
-            for (int j = 0; j < n; j++)
-            {
+            for (int j = 0; j < n; j++) {
                 t[j] = xl + (dx * (j - degree));
                 P[j] = (data[i] - t[j]) / dx;
-                if ((t[j] <= data[i]) & (data[i] < (t[j] + dx)))
-                {
+                if ((t[j] <= data[i]) & (data[i] < (t[j] + dx))) {
                     B[j] = 1;
-                }
-                else
-                {
+                } else {
                     B[j] = 0;
                 }
             }
-            for (int k = 1; k <= degree; k++)
-            {
+            for (int k = 1; k <= degree; k++) {
                 B0 = B[0];
-                for (int j = 0; j < (n - 1); j++)
-                {
+                for (int j = 0; j < (n - 1); j++) {
                     B[j] = (P[j] * B[j] + (k + 1 - P[j]) * B[j + 1]) / k;
                 }
                 B[n - 1] = (P[n - 1] * B[n - 1] + (k + 1 - P[n - 1]) * B0) / k;
             }
-            for (int j = 0; j < n; j++)
-            {
+            for (int j = 0; j < n; j++) {
                 rowSum += B[j];
             }
-            if (rowSum != 0)
-            {
-                for (int j = 0; j < n; j++)
-                {
+            if (rowSum != 0) {
+                for (int j = 0; j < n; j++) {
                     basis[i][j] = B[j];
                 }
-            }
-            else
-            {
-                for (int j = 0; j < n; j++)
-                {
+            } else {
+                for (int j = 0; j < n; j++) {
                     basis[i][j] = basis[0][n - j - 1];
                 }
             }
@@ -396,8 +362,7 @@ public class BSplineBasis extends StatisticalAnalysis
      */
 
     public double[][] basis(double divisions,
-                            double[] data)
-    {
+                            double[] data) {
         return basis(divisions, 3, data);
     }
 
@@ -411,26 +376,19 @@ public class BSplineBasis extends StatisticalAnalysis
      */
 
     public double[][] difference(Hashtable argument,
-                                 Object ...dataObject)
-    {
+                                 Object... dataObject) {
         this.argument = argument;
         this.dataObject = dataObject;
         if (argument.size() > 0 &&
-            dataObject != null)
-        {
-            if (argument.get(ORDER) != null)
-            {
+                dataObject != null) {
+            if (argument.get(ORDER) != null) {
                 difference = difference(((Number) argument.get(ORDER)).
-                                        doubleValue(),
-                                        (double[]) dataObject[0]);
-            }
-            else
-            {
+                                doubleValue(),
+                        (double[]) dataObject[0]);
+            } else {
                 throw new IllegalArgumentException("Wrong input data.");
             }
-        }
-        else
-        {
+        } else {
             throw new IllegalArgumentException(
                     "Wrong input argument(s) or data.");
         }
@@ -446,28 +404,22 @@ public class BSplineBasis extends StatisticalAnalysis
      */
 
     public double[][] difference(double order,
-                                 double[] ...coefficients)
-    {
+                                 double[]... coefficients) {
         this.order = order;
         this.coefficients = coefficients;
         coefficientClone = coefficients;
-        for (int i = 1; i <= order; i++)
-        {
-            for (int j = 0; j < (coefficients.length - i); j++)
-            {
-                for (int k = 0; k < coefficients[0].length; k++)
-                {
+        for (int i = 1; i <= order; i++) {
+            for (int j = 0; j < (coefficients.length - i); j++) {
+                for (int k = 0; k < coefficients[0].length; k++) {
                     coefficientClone[j][k] = coefficientClone[j + 1][k] -
-                                             coefficientClone[j][k];
+                            coefficientClone[j][k];
                 }
             }
         }
         difference = new double[coefficients.length -
-                     (int) order][coefficients[0].length];
-        for (int j = 0; j < (coefficients.length - order); j++)
-        {
-            for (int k = 0; k < coefficients[0].length; k++)
-            {
+                (int) order][coefficients[0].length];
+        for (int j = 0; j < (coefficients.length - order); j++) {
+            for (int k = 0; k < coefficients[0].length; k++) {
                 difference[j][k] = coefficientClone[j][k];
             }
         }
@@ -482,8 +434,7 @@ public class BSplineBasis extends StatisticalAnalysis
      * @return the difference matrix.
      */
 
-    public double[][] difference(double[] ...coefficients)
-    {
+    public double[][] difference(double[]... coefficients) {
         return difference(2, coefficients);
     }
 

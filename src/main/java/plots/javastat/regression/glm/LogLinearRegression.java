@@ -5,6 +5,7 @@ package plots.javastat.regression.glm;
  * <p>Description: JAVA programs for statistical computations</p>
  * <p>Copyright: Copyright (c) 2009</p>
  * <p>Company: Tung Hai University</p>
+ *
  * @author Wen Hsiang Wei and B. J. Guo
  * @version 1.4
  */
@@ -174,8 +175,7 @@ import static plots.javastat.util.Output.*;
  * <br> out.println(testclass4.output.toString());
  */
 
-public class LogLinearRegression extends GLMTemplate
-{
+public class LogLinearRegression extends GLMTemplate {
 
     /**
      * The nominal covariate.
@@ -272,8 +272,7 @@ public class LogLinearRegression extends GLMTemplate
      * Default LogLinearRegression constructor.
      */
 
-    public LogLinearRegression()
-    {
+    public LogLinearRegression() {
         link = LOG;
     }
 
@@ -282,8 +281,7 @@ public class LogLinearRegression extends GLMTemplate
      * @param link the link function
      */
 
-    public LogLinearRegression(LinkFunction link)
-    {
+    public LogLinearRegression(LinkFunction link) {
         this.link = link;
     }
 
@@ -298,75 +296,66 @@ public class LogLinearRegression extends GLMTemplate
      */
 
     public LogLinearRegression(Hashtable argument,
-                               Object ...dataObject)
-    {
+                               Object... dataObject) {
         this.argument = argument;
         this.dataObject = dataObject;
-        if (dataObject != null)
-        {
+        if (dataObject != null) {
             requiredInputData = getRequiredInputData(dataObject);
-            if (requiredInputData.get("DATA_TYPE") != null)
-            {
-                switch ((Integer) requiredInputData.get("DATA_TYPE"))
-                {
+            if (requiredInputData.get("DATA_TYPE") != null) {
+                switch ((Integer) requiredInputData.get("DATA_TYPE")) {
                     case 1:
                         statisticalAnalysis = new LogLinearRegression(
-                            (double[]) requiredInputData.get("RESPONSE"),
-                            (double[]) requiredInputData.get("OFFSET"),
-                            (String[][]) requiredInputData.get(
-                                "NOMINAL_COVARIATE"));
+                                (double[]) requiredInputData.get("RESPONSE"),
+                                (double[]) requiredInputData.get("OFFSET"),
+                                (String[][]) requiredInputData.get(
+                                        "NOMINAL_COVARIATE"));
                         break;
                     case 2:
                         statisticalAnalysis = new LogLinearRegression(
-                            (double[]) requiredInputData.get("RESPONSE"),
-                            (double[]) requiredInputData.get("OFFSET"),
-                            (double[][]) requiredInputData.get(
-                                "CONTINUOUS_COVARIATE"));
+                                (double[]) requiredInputData.get("RESPONSE"),
+                                (double[]) requiredInputData.get("OFFSET"),
+                                (double[][]) requiredInputData.get(
+                                        "CONTINUOUS_COVARIATE"));
                         break;
                     case 3:
                         statisticalAnalysis = new LogLinearRegression(
-                            (double[]) requiredInputData.get("RESPONSE"),
-                            (double[]) requiredInputData.get("OFFSET"),
-                            (String[][]) requiredInputData.get(
-                                "NOMINAL_COVARIATE"),
-                            (double[][]) requiredInputData.get(
-                                "CONTINUOUS_COVARIATE"));
+                                (double[]) requiredInputData.get("RESPONSE"),
+                                (double[]) requiredInputData.get("OFFSET"),
+                                (String[][]) requiredInputData.get(
+                                        "NOMINAL_COVARIATE"),
+                                (double[][]) requiredInputData.get(
+                                        "CONTINUOUS_COVARIATE"));
                         break;
                     case 4:
                         statisticalAnalysis = new LogLinearRegression(
-                            (double[]) requiredInputData.get("RESPONSE"),
-                            (String[][]) requiredInputData.get(
-                                "NOMINAL_COVARIATE"));
+                                (double[]) requiredInputData.get("RESPONSE"),
+                                (String[][]) requiredInputData.get(
+                                        "NOMINAL_COVARIATE"));
                         break;
                     case 5:
                         statisticalAnalysis = new LogLinearRegression(
-                            (double[]) requiredInputData.get("RESPONSE"),
-                            (double[][]) requiredInputData.get(
-                                "CONTINUOUS_COVARIATE"));
+                                (double[]) requiredInputData.get("RESPONSE"),
+                                (double[][]) requiredInputData.get(
+                                        "CONTINUOUS_COVARIATE"));
                         break;
                     case 6:
                         statisticalAnalysis = new LogLinearRegression(
-                            (double[]) requiredInputData.get("RESPONSE"),
-                            (String[][]) requiredInputData.get(
-                                "NOMINAL_COVARIATE"),
-                            (double[][]) requiredInputData.get(
-                                "CONTINUOUS_COVARIATE"));
+                                (double[]) requiredInputData.get("RESPONSE"),
+                                (String[][]) requiredInputData.get(
+                                        "NOMINAL_COVARIATE"),
+                                (double[][]) requiredInputData.get(
+                                        "CONTINUOUS_COVARIATE"));
                         break;
                     default:
                         throw new IllegalArgumentException(
-                            "No input data type.");
+                                "No input data type.");
                 }
             }
-        }
-        else
-        {
-            if (argument.get(LINK_FUNCTION) != null)
-            {
+        } else {
+            if (argument.get(LINK_FUNCTION) != null) {
                 statisticalAnalysis = new LogLinearRegression((LinkFunction)
                         argument.get(LINK_FUNCTION));
-            }
-            else
-            {
+            } else {
                 statisticalAnalysis = new LogisticRegression();
             }
         }
@@ -390,10 +379,9 @@ public class LogLinearRegression extends GLMTemplate
     private LogLinearRegression(double[] response,
                                 double[][] covariate,
                                 double[] offset,
-                                boolean hasDevianceTable)
-    {
+                                boolean hasDevianceTable) {
         confidenceInterval = confidenceInterval(0.05, response, offset,
-                                                covariate);
+                covariate);
         covariate = glmDataManager.addIntercept(covariate);
         this.offset = offset;
         pValue = super.pValue(response, covariate);
@@ -403,8 +391,7 @@ public class LogLinearRegression extends GLMTemplate
         devianceResiduals = devianceResiduals(response, covariate);
         pearsonResiduals = pearsonResiduals(response, covariate);
         responseResiduals = responseResiduals(response, covariate);
-        if (hasDevianceTable)
-        {
+        if (hasDevianceTable) {
             devianceTable = devianceTable(response, covariate, offset);
         }
     }
@@ -420,10 +407,9 @@ public class LogLinearRegression extends GLMTemplate
      */
 
     private LogLinearRegression(Object[] dataObject,
-                                boolean isMixedType)
-    {
+                                boolean isMixedType) {
         this((double[]) dataObject[0], (double[][]) dataObject[1],
-             (double[]) dataObject[2], (int[]) dataObject[3], isMixedType);
+                (double[]) dataObject[2], (int[]) dataObject[3], isMixedType);
     }
 
     /**
@@ -447,13 +433,11 @@ public class LogLinearRegression extends GLMTemplate
                                 double[][] nominalCovariate,
                                 double[] offset,
                                 int[] level,
-                                boolean isMixedType)
-    {
+                                boolean isMixedType) {
         this(response, nominalCovariate, offset, false);
-        if (!isMixedType)
-        {
+        if (!isMixedType) {
             devianceTable = devianceTable(response, level, glmDataManager.
-                                          addIntercept(nominalCovariate));
+                    addIntercept(nominalCovariate));
         }
     }
 
@@ -473,10 +457,9 @@ public class LogLinearRegression extends GLMTemplate
 
     public LogLinearRegression(double[] response,
                                double[] offset,
-                               String[] ...nominalCovariate)
-    {
+                               String[]... nominalCovariate) {
         this(new GLMDataManager().setData("LogLinear", response,
-                                          nominalCovariate, offset), false);
+                nominalCovariate, offset), false);
         this.nominalCovariate = nominalCovariate;
     }
 
@@ -494,10 +477,9 @@ public class LogLinearRegression extends GLMTemplate
      */
 
     public LogLinearRegression(double[] response,
-                               String[] ...nominalCovariate)
-    {
+                               String[]... nominalCovariate) {
         this(response, new GLMDataManager().zeroArray(response.length),
-             nominalCovariate);
+                nominalCovariate);
     }
 
     /**
@@ -517,8 +499,7 @@ public class LogLinearRegression extends GLMTemplate
 
     public LogLinearRegression(double[] response,
                                double[] offset,
-                               double[] ...continuousCovariate)
-    {
+                               double[]... continuousCovariate) {
         this(response, continuousCovariate, offset, true);
     }
 
@@ -537,10 +518,9 @@ public class LogLinearRegression extends GLMTemplate
      */
 
     public LogLinearRegression(double[] response,
-                               double[] ...continuousCovariate)
-    {
+                               double[]... continuousCovariate) {
         this(response, new GLMDataManager().zeroArray(response.length),
-             continuousCovariate);
+                continuousCovariate);
     }
 
     /**
@@ -564,11 +544,10 @@ public class LogLinearRegression extends GLMTemplate
     public LogLinearRegression(double[] response,
                                double[] offset,
                                String[][] nominalCovariate,
-                               double[][] continuousCovariate)
-    {
+                               double[][] continuousCovariate) {
         this(new GLMDataManager().setData("LogLinear", response,
-                                          nominalCovariate,
-                                          continuousCovariate, offset), true);
+                nominalCovariate,
+                continuousCovariate, offset), true);
         this.continuousCovariate = continuousCovariate;
         this.nominalCovariate = nominalCovariate;
         devianceTable = (double[][]) getRequiredOutput(DEVIANCE_TABLE, response,
@@ -595,10 +574,9 @@ public class LogLinearRegression extends GLMTemplate
 
     public LogLinearRegression(double[] response,
                                String[][] nominalCovariate,
-                               double[][] continuousCovariate)
-    {
+                               double[][] continuousCovariate) {
         this(response, new GLMDataManager().zeroArray(response.length),
-             nominalCovariate, continuousCovariate);
+                nominalCovariate, continuousCovariate);
     }
 
     /**
@@ -613,62 +591,57 @@ public class LogLinearRegression extends GLMTemplate
      */
 
     public double[] coefficients(Hashtable argument,
-                                 Object ...dataObject)
-    {
+                                 Object... dataObject) {
         this.argument = argument;
         this.dataObject = dataObject;
         requiredInputData = getRequiredInputData(dataObject);
-        if (requiredInputData.get("DATA_TYPE") != null)
-        {
-            switch ((Integer) requiredInputData.get("DATA_TYPE"))
-            {
+        if (requiredInputData.get("DATA_TYPE") != null) {
+            switch ((Integer) requiredInputData.get("DATA_TYPE")) {
                 case 1:
                     coefficients = coefficients(
-                        (double[]) requiredInputData.get("RESPONSE"),
-                        (double[]) requiredInputData.get("OFFSET"),
-                        (String[][]) requiredInputData.
-                        get("NOMINAL_COVARIATE"));
+                            (double[]) requiredInputData.get("RESPONSE"),
+                            (double[]) requiredInputData.get("OFFSET"),
+                            (String[][]) requiredInputData.
+                                    get("NOMINAL_COVARIATE"));
                     break;
                 case 2:
                     coefficients = coefficients(
-                        (double[]) requiredInputData.get("RESPONSE"),
-                        (double[]) requiredInputData.get("OFFSET"),
-                        (double[][]) requiredInputData.get(
-                            "CONTINUOUS_COVARIATE"));
+                            (double[]) requiredInputData.get("RESPONSE"),
+                            (double[]) requiredInputData.get("OFFSET"),
+                            (double[][]) requiredInputData.get(
+                                    "CONTINUOUS_COVARIATE"));
                     break;
                 case 3:
                     coefficients = coefficients(
-                        (double[]) requiredInputData.get("RESPONSE"),
-                        (double[]) requiredInputData.get("OFFSET"),
-                        (String[][]) requiredInputData.get("NOMINAL_COVARIATE"),
-                        (double[][]) requiredInputData.get(
-                            "CONTINUOUS_COVARIATE"));
+                            (double[]) requiredInputData.get("RESPONSE"),
+                            (double[]) requiredInputData.get("OFFSET"),
+                            (String[][]) requiredInputData.get("NOMINAL_COVARIATE"),
+                            (double[][]) requiredInputData.get(
+                                    "CONTINUOUS_COVARIATE"));
                     break;
                 case 4:
                     coefficients = coefficients(
-                        (double[]) requiredInputData.get("RESPONSE"),
-                        (String[][]) requiredInputData.
-                        get("NOMINAL_COVARIATE"));
+                            (double[]) requiredInputData.get("RESPONSE"),
+                            (String[][]) requiredInputData.
+                                    get("NOMINAL_COVARIATE"));
                     break;
                 case 5:
                     coefficients = coefficients(
-                        (double[]) requiredInputData.get("RESPONSE"),
-                        (double[][]) requiredInputData.get(
-                            "CONTINUOUS_COVARIATE"));
+                            (double[]) requiredInputData.get("RESPONSE"),
+                            (double[][]) requiredInputData.get(
+                                    "CONTINUOUS_COVARIATE"));
                     break;
                 case 6:
                     coefficients = coefficients(
-                        (double[]) requiredInputData.get("RESPONSE"),
-                        (String[][]) requiredInputData.get("NOMINAL_COVARIATE"),
-                        (double[][]) requiredInputData.get(
-                            "CONTINUOUS_COVARIATE"));
+                            (double[]) requiredInputData.get("RESPONSE"),
+                            (String[][]) requiredInputData.get("NOMINAL_COVARIATE"),
+                            (double[][]) requiredInputData.get(
+                                    "CONTINUOUS_COVARIATE"));
                     break;
                 default:
                     throw new IllegalArgumentException("No input data type.");
             }
-        }
-        else
-        {
+        } else {
             throw new IllegalArgumentException("Wrong input data.");
         }
 
@@ -691,13 +664,12 @@ public class LogLinearRegression extends GLMTemplate
 
     public double[] coefficients(double[] response,
                                  double[] offset,
-                                 String[] ...nominalCovariate)
-    {
+                                 String[]... nominalCovariate) {
         this.response = response;
         this.nominalCovariate = nominalCovariate;
 
         return (double[]) getRequiredOutput(COEFFICIENTS, response,
-                                            nominalCovariate, offset);
+                nominalCovariate, offset);
     }
 
     /**
@@ -714,10 +686,9 @@ public class LogLinearRegression extends GLMTemplate
      */
 
     public double[] coefficients(double[] response,
-                                 String[] ...nominalCovariate)
-    {
+                                 String[]... nominalCovariate) {
         return coefficients(response, glmDataManager.zeroArray(response.length),
-                            nominalCovariate);
+                nominalCovariate);
     }
 
     /**
@@ -737,15 +708,14 @@ public class LogLinearRegression extends GLMTemplate
 
     public double[] coefficients(double[] response,
                                  double[] offset,
-                                 double[] ...continuousCovariate)
-    {
+                                 double[]... continuousCovariate) {
         this.response = response;
         this.offset = offset;
         this.continuousCovariate = continuousCovariate;
 
         return super.coefficients(response,
-                                  glmDataManager.
-                                  addIntercept(continuousCovariate));
+                glmDataManager.
+                        addIntercept(continuousCovariate));
     }
 
     /**
@@ -763,10 +733,9 @@ public class LogLinearRegression extends GLMTemplate
      */
 
     public double[] coefficients(double[] response,
-                                 double[] ...continuousCovariate)
-    {
+                                 double[]... continuousCovariate) {
         return coefficients(response, glmDataManager.zeroArray(response.length),
-                            continuousCovariate);
+                continuousCovariate);
     }
 
     /**
@@ -791,15 +760,14 @@ public class LogLinearRegression extends GLMTemplate
     public double[] coefficients(double[] response,
                                  double[] offset,
                                  String[][] nominalCovariate,
-                                 double[][] continuousCovariate)
-    {
+                                 double[][] continuousCovariate) {
         this.response = response;
         this.nominalCovariate = nominalCovariate;
         this.continuousCovariate = continuousCovariate;
 
         return (double[]) getRequiredOutput(COEFFICIENTS, response,
-                                            nominalCovariate,
-                                            continuousCovariate, offset);
+                nominalCovariate,
+                continuousCovariate, offset);
     }
 
     /**
@@ -822,10 +790,9 @@ public class LogLinearRegression extends GLMTemplate
 
     public double[] coefficients(double[] response,
                                  String[][] nominalCovariate,
-                                 double[][] continuousCovariate)
-    {
+                                 double[][] continuousCovariate) {
         return coefficients(response, glmDataManager.zeroArray(response.length),
-                            nominalCovariate, continuousCovariate);
+                nominalCovariate, continuousCovariate);
     }
 
     /**
@@ -849,65 +816,60 @@ public class LogLinearRegression extends GLMTemplate
      */
 
     public double[][] confidenceInterval(Hashtable argument,
-                                         Object ...dataObject)
-    {
+                                         Object... dataObject) {
         this.argument = argument;
         this.dataObject = dataObject;
         alpha = (Double) argument.get(ALPHA);
         requiredInputData = getRequiredInputData(dataObject);
-        if (requiredInputData.get("DATA_TYPE") != null)
-        {
-            switch ((Integer) requiredInputData.get("DATA_TYPE"))
-            {
+        if (requiredInputData.get("DATA_TYPE") != null) {
+            switch ((Integer) requiredInputData.get("DATA_TYPE")) {
                 case 1:
                     confidenceInterval = confidenceInterval(alpha,
                             (double[]) requiredInputData.get("RESPONSE"),
                             (double[]) requiredInputData.get("OFFSET"),
                             (String[][]) requiredInputData.get(
-                                "NOMINAL_COVARIATE"));
+                                    "NOMINAL_COVARIATE"));
                     break;
                 case 2:
                     confidenceInterval = confidenceInterval(alpha,
                             (double[]) requiredInputData.get("RESPONSE"),
                             (double[]) requiredInputData.get("OFFSET"),
                             (double[][]) requiredInputData.get(
-                                "CONTINUOUS_COVARIATE"));
+                                    "CONTINUOUS_COVARIATE"));
                     break;
                 case 3:
                     confidenceInterval = confidenceInterval(alpha,
                             (double[]) requiredInputData.get("RESPONSE"),
                             (double[]) requiredInputData.get("OFFSET"),
                             (String[][]) requiredInputData.get(
-                                "NOMINAL_COVARIATE"),
+                                    "NOMINAL_COVARIATE"),
                             (double[][]) requiredInputData.get(
-                                "CONTINUOUS_COVARIATE"));
+                                    "CONTINUOUS_COVARIATE"));
                     break;
                 case 4:
                     confidenceInterval = confidenceInterval(alpha,
                             (double[]) requiredInputData.get("RESPONSE"),
                             (String[][]) requiredInputData.get(
-                                "NOMINAL_COVARIATE"));
+                                    "NOMINAL_COVARIATE"));
                     break;
                 case 5:
                     confidenceInterval = confidenceInterval(alpha,
                             (double[]) requiredInputData.get("RESPONSE"),
                             (double[][]) requiredInputData.get(
-                                "CONTINUOUS_COVARIATE"));
+                                    "CONTINUOUS_COVARIATE"));
                     break;
                 case 6:
                     confidenceInterval = confidenceInterval(alpha,
                             (double[]) requiredInputData.get("RESPONSE"),
                             (String[][]) requiredInputData.get(
-                                "NOMINAL_COVARIATE"),
+                                    "NOMINAL_COVARIATE"),
                             (double[][]) requiredInputData.get(
-                                "CONTINUOUS_COVARIATE"));
+                                    "CONTINUOUS_COVARIATE"));
                     break;
                 default:
                     throw new IllegalArgumentException("No input data type.");
             }
-        }
-        else
-        {
+        } else {
             throw new IllegalArgumentException("Wrong input data.");
         }
 
@@ -938,14 +900,13 @@ public class LogLinearRegression extends GLMTemplate
     public double[][] confidenceInterval(double alpha,
                                          double[] response,
                                          double[] offset,
-                                         String[] ...nominalCovariate)
-    {
+                                         String[]... nominalCovariate) {
         this.alpha = alpha;
         this.response = response;
         this.nominalCovariate = nominalCovariate;
 
         return (double[][]) getRequiredOutput(CONFIDENCE_INTERVAL, response,
-                                              nominalCovariate, offset);
+                nominalCovariate, offset);
     }
 
     /**
@@ -971,11 +932,10 @@ public class LogLinearRegression extends GLMTemplate
 
     public double[][] confidenceInterval(double alpha,
                                          double[] response,
-                                         String[] ...nominalCovariate)
-    {
+                                         String[]... nominalCovariate) {
         return confidenceInterval(alpha, response,
-                                  glmDataManager.zeroArray(response.length),
-                                  nominalCovariate);
+                glmDataManager.zeroArray(response.length),
+                nominalCovariate);
     }
 
     /**
@@ -1003,16 +963,15 @@ public class LogLinearRegression extends GLMTemplate
     public double[][] confidenceInterval(double alpha,
                                          double[] response,
                                          double[] offset,
-                                         double[] ...continuousCovariate)
-    {
+                                         double[]... continuousCovariate) {
         this.response = response;
         this.offset = offset;
         this.continuousCovariate = continuousCovariate;
         argument.put(ALPHA, alpha);
 
         return super.confidenceInterval(argument, response,
-                                        glmDataManager.
-                                        addIntercept(continuousCovariate));
+                glmDataManager.
+                        addIntercept(continuousCovariate));
     }
 
     /**
@@ -1039,11 +998,10 @@ public class LogLinearRegression extends GLMTemplate
 
     public double[][] confidenceInterval(double alpha,
                                          double[] response,
-                                         double[] ...continuousCovariate)
-    {
+                                         double[]... continuousCovariate) {
         return confidenceInterval(alpha, response,
-                                  glmDataManager.zeroArray(response.length),
-                                  continuousCovariate);
+                glmDataManager.zeroArray(response.length),
+                continuousCovariate);
     }
 
     /**
@@ -1076,16 +1034,15 @@ public class LogLinearRegression extends GLMTemplate
                                          double[] response,
                                          double[] offset,
                                          String[][] nominalCovariate,
-                                         double[][] continuousCovariate)
-    {
+                                         double[][] continuousCovariate) {
         this.alpha = alpha;
         this.response = response;
         this.nominalCovariate = nominalCovariate;
         this.continuousCovariate = continuousCovariate;
 
         return (double[][]) getRequiredOutput(CONFIDENCE_INTERVAL, response,
-                                              nominalCovariate,
-                                              continuousCovariate, offset);
+                nominalCovariate,
+                continuousCovariate, offset);
     }
 
     /**
@@ -1117,11 +1074,10 @@ public class LogLinearRegression extends GLMTemplate
     public double[][] confidenceInterval(double alpha,
                                          double[] response,
                                          String[][] nominalCovariate,
-                                         double[][] continuousCovariate)
-    {
+                                         double[][] continuousCovariate) {
         return confidenceInterval(alpha, response,
-                                  glmDataManager.zeroArray(response.length),
-                                  nominalCovariate, continuousCovariate);
+                glmDataManager.zeroArray(response.length),
+                nominalCovariate, continuousCovariate);
     }
 
     /**
@@ -1136,62 +1092,57 @@ public class LogLinearRegression extends GLMTemplate
      */
 
     public double[] testStatistic(Hashtable argument,
-                                  Object ...dataObject)
-    {
+                                  Object... dataObject) {
         this.argument = argument;
         this.dataObject = dataObject;
         requiredInputData = getRequiredInputData(dataObject);
-        if (requiredInputData.get("DATA_TYPE") != null)
-        {
-            switch ((Integer) requiredInputData.get("DATA_TYPE"))
-            {
+        if (requiredInputData.get("DATA_TYPE") != null) {
+            switch ((Integer) requiredInputData.get("DATA_TYPE")) {
                 case 1:
                     testStatistic = testStatistic(
-                        (double[]) requiredInputData.get("RESPONSE"),
-                        (double[]) requiredInputData.get("OFFSET"),
-                        (String[][]) requiredInputData.
-                        get("NOMINAL_COVARIATE"));
+                            (double[]) requiredInputData.get("RESPONSE"),
+                            (double[]) requiredInputData.get("OFFSET"),
+                            (String[][]) requiredInputData.
+                                    get("NOMINAL_COVARIATE"));
                     break;
                 case 2:
                     testStatistic = testStatistic(
-                        (double[]) requiredInputData.get("RESPONSE"),
-                        (double[]) requiredInputData.get("OFFSET"),
-                        (double[][]) requiredInputData.get(
-                            "CONTINUOUS_COVARIATE"));
+                            (double[]) requiredInputData.get("RESPONSE"),
+                            (double[]) requiredInputData.get("OFFSET"),
+                            (double[][]) requiredInputData.get(
+                                    "CONTINUOUS_COVARIATE"));
                     break;
                 case 3:
                     testStatistic = testStatistic(
-                        (double[]) requiredInputData.get("RESPONSE"),
-                        (double[]) requiredInputData.get("OFFSET"),
-                        (String[][]) requiredInputData.get("NOMINAL_COVARIATE"),
-                        (double[][]) requiredInputData.get(
-                            "CONTINUOUS_COVARIATE"));
+                            (double[]) requiredInputData.get("RESPONSE"),
+                            (double[]) requiredInputData.get("OFFSET"),
+                            (String[][]) requiredInputData.get("NOMINAL_COVARIATE"),
+                            (double[][]) requiredInputData.get(
+                                    "CONTINUOUS_COVARIATE"));
                     break;
                 case 4:
                     testStatistic = testStatistic(
-                        (double[]) requiredInputData.get("RESPONSE"),
-                        (String[][]) requiredInputData.
-                        get("NOMINAL_COVARIATE"));
+                            (double[]) requiredInputData.get("RESPONSE"),
+                            (String[][]) requiredInputData.
+                                    get("NOMINAL_COVARIATE"));
                     break;
                 case 5:
                     testStatistic = testStatistic(
-                        (double[]) requiredInputData.get("RESPONSE"),
-                        (double[][]) requiredInputData.get(
-                            "CONTINUOUS_COVARIATE"));
+                            (double[]) requiredInputData.get("RESPONSE"),
+                            (double[][]) requiredInputData.get(
+                                    "CONTINUOUS_COVARIATE"));
                     break;
                 case 6:
                     testStatistic = testStatistic(
-                        (double[]) requiredInputData.get("RESPONSE"),
-                        (String[][]) requiredInputData.get("NOMINAL_COVARIATE"),
-                        (double[][]) requiredInputData.get(
-                            "CONTINUOUS_COVARIATE"));
+                            (double[]) requiredInputData.get("RESPONSE"),
+                            (String[][]) requiredInputData.get("NOMINAL_COVARIATE"),
+                            (double[][]) requiredInputData.get(
+                                    "CONTINUOUS_COVARIATE"));
                     break;
                 default:
                     throw new IllegalArgumentException("No input data type.");
             }
-        }
-        else
-        {
+        } else {
             throw new IllegalArgumentException("Wrong input data.");
         }
 
@@ -1214,13 +1165,12 @@ public class LogLinearRegression extends GLMTemplate
 
     public double[] testStatistic(double[] response,
                                   double[] offset,
-                                  String[] ...nominalCovariate)
-    {
+                                  String[]... nominalCovariate) {
         this.response = response;
         this.nominalCovariate = nominalCovariate;
 
         return (double[]) getRequiredOutput(TEST_STATISTIC, response,
-                                            nominalCovariate, offset);
+                nominalCovariate, offset);
     }
 
     /**
@@ -1237,11 +1187,10 @@ public class LogLinearRegression extends GLMTemplate
      */
 
     public double[] testStatistic(double[] response,
-                                  String[] ...nominalCovariate)
-    {
+                                  String[]... nominalCovariate) {
         return testStatistic(response,
-                             glmDataManager.zeroArray(response.length),
-                             nominalCovariate);
+                glmDataManager.zeroArray(response.length),
+                nominalCovariate);
     }
 
     /**
@@ -1261,15 +1210,14 @@ public class LogLinearRegression extends GLMTemplate
 
     public double[] testStatistic(double[] response,
                                   double[] offset,
-                                  double[] ...continuousCovariate)
-    {
+                                  double[]... continuousCovariate) {
         this.response = response;
         this.offset = offset;
         this.continuousCovariate = continuousCovariate;
 
         return super.testStatistic(response,
-                                   glmDataManager.
-                                   addIntercept(continuousCovariate));
+                glmDataManager.
+                        addIntercept(continuousCovariate));
     }
 
     /**
@@ -1287,11 +1235,10 @@ public class LogLinearRegression extends GLMTemplate
      */
 
     public double[] testStatistic(double[] response,
-                                  double[] ...continuousCovariate)
-    {
+                                  double[]... continuousCovariate) {
         return testStatistic(response,
-                             glmDataManager.zeroArray(response.length),
-                             continuousCovariate);
+                glmDataManager.zeroArray(response.length),
+                continuousCovariate);
     }
 
     /**
@@ -1316,15 +1263,14 @@ public class LogLinearRegression extends GLMTemplate
     public double[] testStatistic(double[] response,
                                   double[] offset,
                                   String[][] nominalCovariate,
-                                  double[][] continuousCovariate)
-    {
+                                  double[][] continuousCovariate) {
         this.response = response;
         this.nominalCovariate = nominalCovariate;
         this.continuousCovariate = continuousCovariate;
 
         return (double[]) getRequiredOutput(TEST_STATISTIC, response,
-                                            nominalCovariate,
-                                            continuousCovariate, offset);
+                nominalCovariate,
+                continuousCovariate, offset);
     }
 
     /**
@@ -1347,11 +1293,10 @@ public class LogLinearRegression extends GLMTemplate
 
     public double[] testStatistic(double[] response,
                                   String[][] nominalCovariate,
-                                  double[][] continuousCovariate)
-    {
+                                  double[][] continuousCovariate) {
         return testStatistic(response,
-                             glmDataManager.zeroArray(response.length),
-                             nominalCovariate, continuousCovariate);
+                glmDataManager.zeroArray(response.length),
+                nominalCovariate, continuousCovariate);
     }
 
     /**
@@ -1366,62 +1311,57 @@ public class LogLinearRegression extends GLMTemplate
      */
 
     public double[] pValue(Hashtable argument,
-                           Object ...dataObject)
-    {
+                           Object... dataObject) {
         this.argument = argument;
         this.dataObject = dataObject;
         requiredInputData = getRequiredInputData(dataObject);
-        if (requiredInputData.get("DATA_TYPE") != null)
-        {
-            switch ((Integer) requiredInputData.get("DATA_TYPE"))
-            {
+        if (requiredInputData.get("DATA_TYPE") != null) {
+            switch ((Integer) requiredInputData.get("DATA_TYPE")) {
                 case 1:
                     pValue = pValue(
-                        (double[]) requiredInputData.get("RESPONSE"),
-                        (double[]) requiredInputData.get("OFFSET"),
-                        (String[][]) requiredInputData.
-                        get("NOMINAL_COVARIATE"));
+                            (double[]) requiredInputData.get("RESPONSE"),
+                            (double[]) requiredInputData.get("OFFSET"),
+                            (String[][]) requiredInputData.
+                                    get("NOMINAL_COVARIATE"));
                     break;
                 case 2:
                     pValue = pValue(
-                        (double[]) requiredInputData.get("RESPONSE"),
-                        (double[]) requiredInputData.get("OFFSET"),
-                        (double[][]) requiredInputData.get(
-                            "CONTINUOUS_COVARIATE"));
+                            (double[]) requiredInputData.get("RESPONSE"),
+                            (double[]) requiredInputData.get("OFFSET"),
+                            (double[][]) requiredInputData.get(
+                                    "CONTINUOUS_COVARIATE"));
                     break;
                 case 3:
                     pValue = pValue(
-                        (double[]) requiredInputData.get("RESPONSE"),
-                        (double[]) requiredInputData.get("OFFSET"),
-                        (String[][]) requiredInputData.get("NOMINAL_COVARIATE"),
-                        (double[][]) requiredInputData.get(
-                            "CONTINUOUS_COVARIATE"));
+                            (double[]) requiredInputData.get("RESPONSE"),
+                            (double[]) requiredInputData.get("OFFSET"),
+                            (String[][]) requiredInputData.get("NOMINAL_COVARIATE"),
+                            (double[][]) requiredInputData.get(
+                                    "CONTINUOUS_COVARIATE"));
                     break;
                 case 4:
                     pValue = pValue(
-                        (double[]) requiredInputData.get("RESPONSE"),
-                        (String[][]) requiredInputData.
-                        get("NOMINAL_COVARIATE"));
+                            (double[]) requiredInputData.get("RESPONSE"),
+                            (String[][]) requiredInputData.
+                                    get("NOMINAL_COVARIATE"));
                     break;
                 case 5:
                     pValue = pValue(
-                        (double[]) requiredInputData.get("RESPONSE"),
-                        (double[][]) requiredInputData.get(
-                            "CONTINUOUS_COVARIATE"));
+                            requiredInputData.get("RESPONSE"),
+                            requiredInputData.get(
+                                    "CONTINUOUS_COVARIATE"));
                     break;
                 case 6:
                     pValue = pValue(
-                        (double[]) requiredInputData.get("RESPONSE"),
-                        (String[][]) requiredInputData.get("NOMINAL_COVARIATE"),
-                        (double[][]) requiredInputData.get(
-                            "CONTINUOUS_COVARIATE"));
+                            (double[]) requiredInputData.get("RESPONSE"),
+                            (String[][]) requiredInputData.get("NOMINAL_COVARIATE"),
+                            (double[][]) requiredInputData.get(
+                                    "CONTINUOUS_COVARIATE"));
                     break;
                 default:
                     throw new IllegalArgumentException("No input data type.");
             }
-        }
-        else
-        {
+        } else {
             throw new IllegalArgumentException("Wrong input data.");
         }
 
@@ -1444,13 +1384,12 @@ public class LogLinearRegression extends GLMTemplate
 
     public double[] pValue(double[] response,
                            double[] offset,
-                           String[] ...nominalCovariate)
-    {
+                           String[]... nominalCovariate) {
         this.response = response;
         this.nominalCovariate = nominalCovariate;
 
         return (double[]) getRequiredOutput(PVALUE, response,
-                                            nominalCovariate, offset);
+                nominalCovariate, offset);
     }
 
     /**
@@ -1467,10 +1406,9 @@ public class LogLinearRegression extends GLMTemplate
      */
 
     public double[] pValue(double[] response,
-                           String[] ...nominalCovariate)
-    {
+                           String[]... nominalCovariate) {
         return pValue(response, glmDataManager.zeroArray(response.length),
-                      nominalCovariate);
+                nominalCovariate);
     }
 
     /**
@@ -1490,14 +1428,13 @@ public class LogLinearRegression extends GLMTemplate
 
     public double[] pValue(double[] response,
                            double[] offset,
-                           double[] ...continuousCovariate)
-    {
+                           double[]... continuousCovariate) {
         this.response = response;
         this.offset = offset;
         this.continuousCovariate = continuousCovariate;
 
         return super.pValue(response,
-                            glmDataManager.addIntercept(continuousCovariate));
+                glmDataManager.addIntercept(continuousCovariate));
     }
 
     /**
@@ -1522,14 +1459,13 @@ public class LogLinearRegression extends GLMTemplate
     public double[] pValue(double[] response,
                            double[] offset,
                            String[][] nominalCovariate,
-                           double[][] continuousCovariate)
-    {
+                           double[][] continuousCovariate) {
         this.response = response;
         this.nominalCovariate = nominalCovariate;
         this.continuousCovariate = continuousCovariate;
 
         return (double[]) getRequiredOutput(PVALUE, response, nominalCovariate,
-                                            continuousCovariate, offset);
+                continuousCovariate, offset);
     }
 
     /**
@@ -1552,10 +1488,9 @@ public class LogLinearRegression extends GLMTemplate
 
     public double[] pValue(double[] response,
                            String[][] nominalCovariate,
-                           double[][] continuousCovariate)
-    {
+                           double[][] continuousCovariate) {
         return pValue(response, glmDataManager.zeroArray(response.length),
-                      nominalCovariate, continuousCovariate);
+                nominalCovariate, continuousCovariate);
     }
 
     /**
@@ -1567,36 +1502,30 @@ public class LogLinearRegression extends GLMTemplate
      */
 
     protected double[] means(double[] coefficients,
-                             double[] ...covariate)
-    {
-        if (link == null)
-        {
+                             double[]... covariate) {
+        if (link == null) {
             link = LOG;
         }
         means = this.means(link, coefficients, covariate);
-        switch (link)
-        {
+        switch (link) {
             case LOG:
-                for (int i = 0; i < means.length; i++)
-                {
+                for (int i = 0; i < means.length; i++) {
                     means[i] = offset[i] * means[i];
                 }
                 break;
             case IDENTITY:
-                for (int i = 0; i < means.length; i++)
-                {
+                for (int i = 0; i < means.length; i++) {
                     means[i] = offset[i] + means[i];
                 }
                 break;
             case SQUARE_ROOT:
-                for (int i = 0; i < means.length; i++)
-                {
+                for (int i = 0; i < means.length; i++) {
                     means[i] = Math.pow(Math.sqrt(offset[i]) + means[i], 2.0);
                 }
                 break;
             default:
                 throw new IllegalArgumentException(
-                    "Input link function is not supported.");
+                        "Input link function is not supported.");
         }
 
         return means;
@@ -1611,33 +1540,28 @@ public class LogLinearRegression extends GLMTemplate
      */
 
     protected double[][] weights(double[] coefficients,
-                                 double[] ...covariate)
-    {
+                                 double[]... covariate) {
         means = means(coefficients, covariate);
         weights = new double[means.length][means.length];
-        switch (link)
-        {
+        switch (link) {
             case LOG:
-                for (int i = 0; i < means.length; i++)
-                {
+                for (int i = 0; i < means.length; i++) {
                     weights[i][i] = means[i];
                 }
                 break;
             case IDENTITY:
-                for (int i = 0; i < means.length; i++)
-                {
+                for (int i = 0; i < means.length; i++) {
                     weights[i][i] = 1.0 / means[i];
                 }
                 break;
             case SQUARE_ROOT:
-                for (int i = 0; i < means.length; i++)
-                {
+                for (int i = 0; i < means.length; i++) {
                     weights[i][i] = 0.25;
                 }
                 break;
             default:
                 throw new IllegalArgumentException(
-                    "Input link function is not supported.");
+                        "Input link function is not supported.");
         }
 
         return weights;
@@ -1655,21 +1579,16 @@ public class LogLinearRegression extends GLMTemplate
      */
 
     protected double deviance(double[] response,
-                              double[] ...covariate)
-    {
+                              double[]... covariate) {
         coefficients = super.coefficients(response, covariate);
         means = means(coefficients, covariate);
         deviance = 0.0;
-        for (int i = 0; i < means.length; i++)
-        {
-            if (response[i] != 0.0)
-            {
+        for (int i = 0; i < means.length; i++) {
+            if (response[i] != 0.0) {
                 deviance += 2 *
                         (response[i] * Math.log(response[i] / means[i]) -
-                         (response[i] - means[i]));
-            }
-            else
-            {
+                                (response[i] - means[i]));
+            } else {
                 deviance += 2 * means[i];
             }
         }
@@ -1686,8 +1605,7 @@ public class LogLinearRegression extends GLMTemplate
      *                                     length.
      */
 
-    protected double nullDeviance(double[] response)
-    {
+    protected double nullDeviance(double[] response) {
         return deviance(response, new Matrix(1, response.length, 1).getArray());
     }
 
@@ -1703,15 +1621,13 @@ public class LogLinearRegression extends GLMTemplate
      */
 
     protected double[] pearsonResiduals(double[] response,
-                                        double[] ...covariate)
-    {
+                                        double[]... covariate) {
         coefficients = super.coefficients(response, covariate);
         means = means(coefficients, covariate);
         pearsonResiduals = new double[response.length];
-        for (int i = 0; i < means.length; i++)
-        {
+        for (int i = 0; i < means.length; i++) {
             pearsonResiduals[i] = (response[i] - means[i]) /
-                                  Math.sqrt(means[i]);
+                    Math.sqrt(means[i]);
         }
         output.put(PEARSON_RESIDUALS, pearsonResiduals);
 
@@ -1730,31 +1646,23 @@ public class LogLinearRegression extends GLMTemplate
      */
 
     protected double[] devianceResiduals(double[] response,
-                                         double[] ...covariate)
-    {
+                                         double[]... covariate) {
         coefficients = super.coefficients(response, covariate);
         means = means(coefficients, covariate);
         devianceResiduals = new double[response.length];
         residuals = 0.0;
-        for (int i = 0; i < means.length; i++)
-        {
-            if (response[i] / means[i] > 0 && response[i] != 0)
-            {
+        for (int i = 0; i < means.length; i++) {
+            if (response[i] / means[i] > 0 && response[i] != 0) {
                 residuals = Math.sqrt(2 *
-                                      (response[i] *
-                                       Math.log(response[i] / means[i]) -
-                                       (response[i] - means[i])));
+                        (response[i] *
+                                Math.log(response[i] / means[i]) -
+                                (response[i] - means[i])));
+            } else {
+                residuals = Math.sqrt(-2 * (response[i] - means[i]));
             }
-            else
-            {
-                residuals = Math.sqrt( -2 * (response[i] - means[i]));
-            }
-            if (response[i] - means[i] > 0)
-            {
+            if (response[i] - means[i] > 0) {
                 devianceResiduals[i] = residuals;
-            }
-            else
-            {
+            } else {
                 devianceResiduals[i] = -1.0 * residuals;
             }
         }
@@ -1776,8 +1684,7 @@ public class LogLinearRegression extends GLMTemplate
 
     private double[] fittedValues(double[] response,
                                   double[][] covariate,
-                                  double[] offset)
-    {
+                                  double[] offset) {
         coefficients = super.coefficients(response, covariate);
         logOffset = logOffset(offset);
         covariateMatrix = new Matrix(covariate);
@@ -1786,8 +1693,7 @@ public class LogLinearRegression extends GLMTemplate
                 coefficientMatrix);
         linearPredictors = linearPredictorMatrix.getColumnPackedCopy();
         fittedValues = new double[response.length];
-        for (int i = 0; i < linearPredictors.length; i++)
-        {
+        for (int i = 0; i < linearPredictors.length; i++) {
             fittedValues[i] = Math.exp(linearPredictors[i] + logOffset[i]);
         }
 
@@ -1813,18 +1719,16 @@ public class LogLinearRegression extends GLMTemplate
 
     private double[][] devianceTable(double[] response,
                                      int[] level,
-                                     double[] ...covariate)
-    {
+                                     double[]... covariate) {
         devianceTable = new double[level.length + 1][4];
         devianceTable[0][2] = response.length - 1;
         devianceTable[0][3] = nullDeviance(response);
         int k = 0;
-        for (int i = 1; i < level.length + 1; i++)
-        {
+        for (int i = 1; i < level.length + 1; i++) {
             k = k + level[i - 1] - 1;
             devianceTable[i][3] = deviance(response,
-                                           new Matrix(covariate).getMatrix(0, k,
-                    0, response.length - 1).getArray());
+                    new Matrix(covariate).getMatrix(0, k,
+                            0, response.length - 1).getArray());
             devianceTable[i][2] = response.length - k - 1;
             devianceTable[i][1] = devianceTable[i - 1][3] - devianceTable[i][3];
             devianceTable[i][0] = level[i - 1] - 1;
@@ -1854,24 +1758,21 @@ public class LogLinearRegression extends GLMTemplate
 
     private double[][] devianceTable(double[] response,
                                      double[][] continuousCovariate,
-                                     double[] offset)
-    {
+                                     double[] offset) {
         devianceTable = new double[continuousCovariate.length][4];
         int c = 0;
-        for (int j = 0; j < offset.length; j++)
-        {
+        for (int j = 0; j < offset.length; j++) {
             c += offset[j];
         }
         devianceTable[0][2] = c - 1;
         devianceTable[0][3] = nullDeviance(response);
         int k = 0;
-        for (int i = 1; i < continuousCovariate.length; i++)
-        {
+        for (int i = 1; i < continuousCovariate.length; i++) {
             k = k + 1;
             devianceTable[i][3] = deviance(response,
-                                           new Matrix(continuousCovariate).
-                                           getMatrix(0, k, 0,
-                    response.length - 1).getArray());
+                    new Matrix(continuousCovariate).
+                            getMatrix(0, k, 0,
+                                    response.length - 1).getArray());
             devianceTable[i][2] = c - k - 1;
             devianceTable[i][1] = devianceTable[i - 1][3] - devianceTable[i][3];
             devianceTable[i][0] = 1;
@@ -1898,62 +1799,57 @@ public class LogLinearRegression extends GLMTemplate
      */
 
     public double[][] devianceTable(Hashtable argument,
-                                    Object ...dataObject)
-    {
+                                    Object... dataObject) {
         this.argument = argument;
         this.dataObject = dataObject;
         requiredInputData = getRequiredInputData(dataObject);
-        if (requiredInputData.get("DATA_TYPE") != null)
-        {
-            switch ((Integer) requiredInputData.get("DATA_TYPE"))
-            {
+        if (requiredInputData.get("DATA_TYPE") != null) {
+            switch ((Integer) requiredInputData.get("DATA_TYPE")) {
                 case 1:
                     devianceTable = devianceTable(
-                        (double[]) requiredInputData.get("RESPONSE"),
-                        (double[]) requiredInputData.get("OFFSET"),
-                        (String[][]) requiredInputData.
-                        get("NOMINAL_COVARIATE"));
+                            (double[]) requiredInputData.get("RESPONSE"),
+                            (double[]) requiredInputData.get("OFFSET"),
+                            (String[][]) requiredInputData.
+                                    get("NOMINAL_COVARIATE"));
                     break;
                 case 2:
                     devianceTable = devianceTable(
-                        (double[]) requiredInputData.get("RESPONSE"),
-                        (double[]) requiredInputData.get("OFFSET"),
-                        (double[][]) requiredInputData.get(
-                            "CONTINUOUS_COVARIATE"));
+                            (double[]) requiredInputData.get("RESPONSE"),
+                            (double[]) requiredInputData.get("OFFSET"),
+                            (double[][]) requiredInputData.get(
+                                    "CONTINUOUS_COVARIATE"));
                     break;
                 case 3:
                     devianceTable = devianceTable(
-                        (double[]) requiredInputData.get("RESPONSE"),
-                        (double[]) requiredInputData.get("OFFSET"),
-                        (String[][]) requiredInputData.get("NOMINAL_COVARIATE"),
-                        (double[][]) requiredInputData.get(
-                            "CONTINUOUS_COVARIATE"));
+                            (double[]) requiredInputData.get("RESPONSE"),
+                            (double[]) requiredInputData.get("OFFSET"),
+                            (String[][]) requiredInputData.get("NOMINAL_COVARIATE"),
+                            (double[][]) requiredInputData.get(
+                                    "CONTINUOUS_COVARIATE"));
                     break;
                 case 4:
                     devianceTable = devianceTable(
-                        (double[]) requiredInputData.get("RESPONSE"),
-                        (String[][]) requiredInputData.
-                        get("NOMINAL_COVARIATE"));
+                            (double[]) requiredInputData.get("RESPONSE"),
+                            (String[][]) requiredInputData.
+                                    get("NOMINAL_COVARIATE"));
                     break;
                 case 5:
                     devianceTable = devianceTable(
-                        (double[]) requiredInputData.get("RESPONSE"),
-                        (double[][]) requiredInputData.get(
-                            "CONTINUOUS_COVARIATE"));
+                            (double[]) requiredInputData.get("RESPONSE"),
+                            (double[][]) requiredInputData.get(
+                                    "CONTINUOUS_COVARIATE"));
                     break;
                 case 6:
                     devianceTable = devianceTable(
-                        (double[]) requiredInputData.get("RESPONSE"),
-                        (String[][]) requiredInputData.get("NOMINAL_COVARIATE"),
-                        (double[][]) requiredInputData.get(
-                            "CONTINUOUS_COVARIATE"));
+                            (double[]) requiredInputData.get("RESPONSE"),
+                            (String[][]) requiredInputData.get("NOMINAL_COVARIATE"),
+                            (double[][]) requiredInputData.get(
+                                    "CONTINUOUS_COVARIATE"));
                     break;
                 default:
                     throw new IllegalArgumentException("No input data type.");
             }
-        }
-        else
-        {
+        } else {
             throw new IllegalArgumentException("Wrong input data.");
         }
 
@@ -1981,14 +1877,13 @@ public class LogLinearRegression extends GLMTemplate
 
     public double[][] devianceTable(double[] response,
                                     double[] offset,
-                                    String[] ...nominalCovariate)
-    {
+                                    String[]... nominalCovariate) {
         this.response = response;
         this.nominalCovariate = nominalCovariate;
 
         return (double[][]) getRequiredOutput(DEVIANCE_TABLE, response,
-                                              nominalCovariate,
-                                              offset);
+                nominalCovariate,
+                offset);
     }
 
     /**
@@ -2010,11 +1905,10 @@ public class LogLinearRegression extends GLMTemplate
      */
 
     public double[][] devianceTable(double[] response,
-                                    String[] ...nominalCovariate)
-    {
+                                    String[]... nominalCovariate) {
         return devianceTable(response,
-                             glmDataManager.zeroArray(response.length),
-                             nominalCovariate);
+                glmDataManager.zeroArray(response.length),
+                nominalCovariate);
     }
 
     /**
@@ -2039,13 +1933,12 @@ public class LogLinearRegression extends GLMTemplate
 
     public double[][] devianceTable(double[] response,
                                     double[] offset,
-                                    double[] ...continuousCovariate)
-    {
+                                    double[]... continuousCovariate) {
         this.response = response;
         this.continuousCovariate = continuousCovariate;
 
         return (double[][]) getRequiredOutput(DEVIANCE_TABLE, response,
-                                              continuousCovariate, offset);
+                continuousCovariate, offset);
     }
 
     /**
@@ -2068,11 +1961,10 @@ public class LogLinearRegression extends GLMTemplate
      */
 
     public double[][] devianceTable(double[] response,
-                                    double[] ...continuousCovariate)
-    {
+                                    double[]... continuousCovariate) {
         return devianceTable(response,
-                             glmDataManager.zeroArray(response.length),
-                             continuousCovariate);
+                glmDataManager.zeroArray(response.length),
+                continuousCovariate);
     }
 
     /**
@@ -2102,15 +1994,14 @@ public class LogLinearRegression extends GLMTemplate
     public double[][] devianceTable(double[] response,
                                     double[] offset,
                                     String[][] nominalCovariate,
-                                    double[][] continuousCovariate)
-    {
+                                    double[][] continuousCovariate) {
         this.response = response;
         this.nominalCovariate = nominalCovariate;
         this.continuousCovariate = continuousCovariate;
 
         return (double[][]) getRequiredOutput(DEVIANCE_TABLE, response,
-                                              nominalCovariate,
-                                              continuousCovariate, offset);
+                nominalCovariate,
+                continuousCovariate, offset);
     }
 
     /**
@@ -2138,11 +2029,10 @@ public class LogLinearRegression extends GLMTemplate
 
     public double[][] devianceTable(double[] response,
                                     String[][] nominalCovariate,
-                                    double[][] continuousCovariate)
-    {
+                                    double[][] continuousCovariate) {
         return devianceTable(response,
-                             glmDataManager.zeroArray(response.length),
-                             nominalCovariate, continuousCovariate);
+                glmDataManager.zeroArray(response.length),
+                nominalCovariate, continuousCovariate);
     }
 
     /**
@@ -2151,17 +2041,12 @@ public class LogLinearRegression extends GLMTemplate
      * @return the logarithm of the offset.
      */
 
-    double[] logOffset(double[] offset)
-    {
+    double[] logOffset(double[] offset) {
         logOffset = new double[offset.length];
-        for (int j = 0; j < logOffset.length; j++)
-        {
-            if (offset[j] > 0)
-            {
+        for (int j = 0; j < logOffset.length; j++) {
+            if (offset[j] > 0) {
                 logOffset[j] = Math.log(offset[j]);
-            }
-            else
-            {
+            } else {
                 logOffset[j] = 0;
             }
         }
@@ -2175,112 +2060,83 @@ public class LogLinearRegression extends GLMTemplate
      * @return the required input data.
      */
 
-    private Hashtable getRequiredInputData(Object ...dataObject)
-    {
-        if (dataObject[0].getClass().getName().equalsIgnoreCase("[D"))
-        {
+    private Hashtable getRequiredInputData(Object... dataObject) {
+        if (dataObject[0].getClass().getName().equalsIgnoreCase("[D")) {
             requiredInputData.put("RESPONSE", dataObject[0]);
-        }
-        else
-        {
+        } else {
             throw new IllegalArgumentException("Wrong input data.");
         }
-        if (dataObject[1].getClass().getName().equalsIgnoreCase("[D"))
-        {
+        if (dataObject[1].getClass().getName().equalsIgnoreCase("[D")) {
             requiredInputData.put("OFFSET", dataObject[1]);
             if (dataObject.length == 3 &&
-                dataObject[2].getClass().getName().equalsIgnoreCase(
-                        "[[Ljava.lang.String;"))
-            {
+                    dataObject[2].getClass().getName().equalsIgnoreCase(
+                            "[[Ljava.lang.String;")) {
                 requiredInputData.put("NOMINAL_COVARIATE", dataObject[2]);
                 requiredInputData.put("DATA_TYPE", 1);
-            }
-            else if (dataObject.length == 3 &&
-                     dataObject[2].getClass().getName().equalsIgnoreCase(
-                             "[[D"))
-            {
+            } else if (dataObject.length == 3 &&
+                    dataObject[2].getClass().getName().equalsIgnoreCase(
+                            "[[D")) {
                 requiredInputData.put("CONTINUOUS_COVARIATE", dataObject[2]);
                 requiredInputData.put("DATA_TYPE", 2);
-            }
-            else if (dataObject.length == 4 &&
-                     dataObject[2].getClass().getName().equalsIgnoreCase(
-                             "[[Ljava.lang.String;") &&
-                     dataObject[3].getClass().getName().equalsIgnoreCase(
-                             "[[D"))
-            {
+            } else if (dataObject.length == 4 &&
+                    dataObject[2].getClass().getName().equalsIgnoreCase(
+                            "[[Ljava.lang.String;") &&
+                    dataObject[3].getClass().getName().equalsIgnoreCase(
+                            "[[D")) {
                 requiredInputData.put("NOMINAL_COVARIATE", dataObject[2]);
                 requiredInputData.put("CONTINUOUS_COVARIATE", dataObject[3]);
                 requiredInputData.put("DATA_TYPE", 3);
-            }
-            else if (dataObject.length >= 3 &&
-                     (dataObject.getClass().getName().equalsIgnoreCase(
-                             "[Ljava.lang.Object;") ||
-                     dataObject.getClass().getName().equalsIgnoreCase("[[D")))
-            {
+            } else if (dataObject.length >= 3 &&
+                    (dataObject.getClass().getName().equalsIgnoreCase(
+                            "[Ljava.lang.Object;") ||
+                            dataObject.getClass().getName().equalsIgnoreCase("[[D"))) {
                 requiredInputData.put("CONTINUOUS_COVARIATE",
-                                      DataManager.
-                                      castDoubleObject(2, dataObject));
+                        DataManager.
+                                castDoubleObject(2, dataObject));
                 requiredInputData.put("DATA_TYPE", 2);
-            }
-            else if (dataObject.length >= 3 &&
-                     dataObject[2].getClass().getName().equalsIgnoreCase(
-                             "[Ljava.lang.String;"))
-            {
+            } else if (dataObject.length >= 3 &&
+                    dataObject[2].getClass().getName().equalsIgnoreCase(
+                            "[Ljava.lang.String;")) {
                 requiredInputData.put("NOMINAL_COVARIATE",
-                                      DataManager.
-                                      castStringObject(2, dataObject));
+                        DataManager.
+                                castStringObject(2, dataObject));
                 requiredInputData.put("DATA_TYPE", 1);
-            }
-            else
-            {
+            } else {
                 throw new IllegalArgumentException("Wrong input data.");
             }
-        }
-        else
-        {
+        } else {
             if (dataObject.length == 2 &&
-                dataObject[1].getClass().getName().equalsIgnoreCase(
-                        "[[Ljava.lang.String;"))
-            {
+                    dataObject[1].getClass().getName().equalsIgnoreCase(
+                            "[[Ljava.lang.String;")) {
                 requiredInputData.put("NOMINAL_COVARIATE", dataObject[1]);
                 requiredInputData.put("DATA_TYPE", 4);
-            }
-            else if (dataObject.length == 2 &&
-                     dataObject[1].getClass().getName().equalsIgnoreCase("[[D"))
-            {
+            } else if (dataObject.length == 2 &&
+                    dataObject[1].getClass().getName().equalsIgnoreCase("[[D")) {
                 requiredInputData.put("CONTINUOUS_COVARIATE", dataObject[1]);
                 requiredInputData.put("DATA_TYPE", 5);
-            }
-            else if (dataObject.length == 3 &&
-                     dataObject[1].getClass().getName().equalsIgnoreCase(
-                             "[[Ljava.lang.String;") &&
-                     dataObject[2].getClass().getName().equalsIgnoreCase("[[D"))
-            {
+            } else if (dataObject.length == 3 &&
+                    dataObject[1].getClass().getName().equalsIgnoreCase(
+                            "[[Ljava.lang.String;") &&
+                    dataObject[2].getClass().getName().equalsIgnoreCase("[[D")) {
                 requiredInputData.put("NOMINAL_COVARIATE", dataObject[1]);
                 requiredInputData.put("CONTINUOUS_COVARIATE", dataObject[2]);
                 requiredInputData.put("DATA_TYPE", 6);
-            }
-            else if (dataObject.length >= 2 &&
-                     (dataObject.getClass().getName().equalsIgnoreCase(
-                             "[Ljava.lang.Object;") ||
-                     dataObject.getClass().getName().equalsIgnoreCase("[[D")))
-            {
+            } else if (dataObject.length >= 2 &&
+                    (dataObject.getClass().getName().equalsIgnoreCase(
+                            "[Ljava.lang.Object;") ||
+                            dataObject.getClass().getName().equalsIgnoreCase("[[D"))) {
                 requiredInputData.put("CONTINUOUS_COVARIATE",
-                                      DataManager.
-                                      castDoubleObject(1, dataObject));
+                        DataManager.
+                                castDoubleObject(1, dataObject));
                 requiredInputData.put("DATA_TYPE", 5);
-            }
-            else if (dataObject.length >= 2 &&
-                     dataObject[2].getClass().getName().equalsIgnoreCase(
-                             "[Ljava.lang.String;"))
-            {
+            } else if (dataObject.length >= 2 &&
+                    dataObject[2].getClass().getName().equalsIgnoreCase(
+                            "[Ljava.lang.String;")) {
                 requiredInputData.put("NOMINAL_COVARIATE",
-                                      DataManager.
-                                      castStringObject(1, dataObject));
+                        DataManager.
+                                castStringObject(1, dataObject));
                 requiredInputData.put("DATA_TYPE", 4);
-            }
-            else
-            {
+            } else {
                 throw new IllegalArgumentException("Wrong input data.");
             }
         }
@@ -2299,52 +2155,40 @@ public class LogLinearRegression extends GLMTemplate
      */
 
     private Object getRequiredOutput(Output option,
-                                     Object ...dataObject)
-    {
+                                     Object... dataObject) {
         Object requiredOutput;
         Object[] outputObject = new Object[4];
-        if (dataObject[1].getClass().getName().equalsIgnoreCase("[[D"))
-        {
+        if (dataObject[1].getClass().getName().equalsIgnoreCase("[[D")) {
             response = (double[]) dataObject[0];
             covariate = glmDataManager.addIntercept((double[][]) dataObject[1]);
             offset = (double[]) dataObject[2];
             devianceTable = devianceTable(response, covariate, offset);
-        }
-        else
-        {
+        } else {
             outputObject = glmDataManager.setData("LogLinear", dataObject);
             response = (double[]) outputObject[0];
             covariate = glmDataManager.
-                        addIntercept((double[][]) outputObject[1]);
+                    addIntercept((double[][]) outputObject[1]);
             offset = (double[]) outputObject[2];
             level = (int[]) outputObject[3];
             if (dataObject.length == 4 ||
-                (dataObject.length == 3 &&
-                 !dataObject[2].getClass().getName().equalsIgnoreCase("[D")))
-            {
+                    (dataObject.length == 3 &&
+                            !dataObject[2].getClass().getName().equalsIgnoreCase("[D"))) {
                 int[] newLevel = new int[level.length +
-                                 continuousCovariate.length];
+                        continuousCovariate.length];
                 for (int i = 0; i < level.length + continuousCovariate.length;
-                             i++)
-                {
-                    if (i < level.length)
-                    {
+                     i++) {
+                    if (i < level.length) {
                         newLevel[i] = level[i];
-                    }
-                    else
-                    {
+                    } else {
                         newLevel[i] = 2;
                     }
                 }
                 devianceTable = devianceTable(response, newLevel, covariate);
-            }
-            else
-            {
+            } else {
                 devianceTable = devianceTable(response, level, covariate);
             }
         }
-        switch (option)
-        {
+        switch (option) {
             case CONFIDENCE_INTERVAL:
                 argument.put(ALPHA, this.alpha);
                 requiredOutput = super.confidenceInterval(argument, response,

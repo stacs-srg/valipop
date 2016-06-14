@@ -5,6 +5,7 @@ package plots.statgraphics.eda;
  * <p>Description: The statistical graphics</p>
  * <p>Copyright: Copyright (c) 2009</p>
  * <p>Company: Tung Hai University </p>
+ *
  * @author Wen Hsiang Wei
  * @version 1.4
  */
@@ -15,6 +16,7 @@ import plots.statgraphics.GraphicalAnalysis;
 import plots.statgraphics.util.DataCreator;
 import plots.statgraphics.util.Plot2DFactory;
 import plots.statgraphics.util.Plot3DFactory;
+
 import static plots.statgraphics.util.Argument.*;
 
 /**
@@ -61,8 +63,7 @@ import static plots.statgraphics.util.Argument.*;
  * <br> new PlotFrameFactory().putPlotFrame(pf);
  */
 
-public class BarPlot extends GraphicalAnalysis
-{
+public class BarPlot extends GraphicalAnalysis {
 
     /**
      * The input category.
@@ -117,7 +118,8 @@ public class BarPlot extends GraphicalAnalysis
      * Default BarPlot constructor.
      */
 
-    public BarPlot() {}
+    public BarPlot() {
+    }
 
     /**
      * Creates a new bar plot given the input arguments and data.
@@ -140,37 +142,29 @@ public class BarPlot extends GraphicalAnalysis
      */
 
     public BarPlot(Hashtable argument,
-                   Object ...dataObject)
-    {
+                   Object... dataObject) {
         this.argument = argument;
         this.dataObject = dataObject;
         if (argument.size() > 0 &&
-            dataObject != null)
-        {
+                dataObject != null) {
             if (dataObject.length == 2 &&
-                dataObject[0].getClass().getName().equalsIgnoreCase(
-                        "[Ljava.lang.String;") &&
-                dataObject[1].getClass().getName().equalsIgnoreCase("[[D"))
-            {
+                    dataObject[0].getClass().getName().equalsIgnoreCase(
+                            "[Ljava.lang.String;") &&
+                    dataObject[1].getClass().getName().equalsIgnoreCase("[[D")) {
                 doubleData = (double[][]) dataObject[1];
-            }
-            else if (dataObject.length >= 2 &&
-                     dataObject[0].getClass().getName().equalsIgnoreCase(
-                             "[Ljava.lang.String;") &&
-                     dataObject[1].getClass().getName().equalsIgnoreCase("[D"))
-            {
+            } else if (dataObject.length >= 2 &&
+                    dataObject[0].getClass().getName().equalsIgnoreCase(
+                            "[Ljava.lang.String;") &&
+                    dataObject[1].getClass().getName().equalsIgnoreCase("[D")) {
                 doubleData = DataCreator.castToDoubleData(1, dataObject);
-            }
-            else
-            {
+            } else {
                 throw new IllegalArgumentException("Wrong input data type");
             }
             if (argument.get(OPTION) != null &&
-                argument.get(DATA_NAMES) != null &&
-                argument.get(TITLE) != null &&
-                argument.get(XLABEL) != null &&
-                argument.get(YLABEL) != null)
-            {
+                    argument.get(DATA_NAMES) != null &&
+                    argument.get(TITLE) != null &&
+                    argument.get(XLABEL) != null &&
+                    argument.get(YLABEL) != null) {
                 graphicalAnalysis = new BarPlot(
                         (String) argument.get(OPTION),
                         (String[]) argument.get(DATA_NAMES),
@@ -178,40 +172,30 @@ public class BarPlot extends GraphicalAnalysis
                         (String) argument.get(XLABEL),
                         (String) argument.get(YLABEL),
                         (String[]) dataObject[0], doubleData);
-            }
-            else if (argument.get(DATA_NAMES) != null &&
-                     argument.get(TITLE) != null &&
-                     argument.get(XLABEL) != null &&
-                     argument.get(YLABEL) != null)
-            {
+            } else if (argument.get(DATA_NAMES) != null &&
+                    argument.get(TITLE) != null &&
+                    argument.get(XLABEL) != null &&
+                    argument.get(YLABEL) != null) {
                 graphicalAnalysis = new BarPlot(
                         (String[]) argument.get(DATA_NAMES),
                         (String) argument.get(TITLE),
                         (String) argument.get(XLABEL),
                         (String) argument.get(YLABEL),
                         (String[]) dataObject[0], doubleData);
-            }
-            else if (argument.get(OPTION) != null &&
-                     argument.get(DATA_NAMES) != null)
-            {
+            } else if (argument.get(OPTION) != null &&
+                    argument.get(DATA_NAMES) != null) {
                 graphicalAnalysis = new BarPlot(
                         (String) argument.get(OPTION),
                         (String[]) argument.get(DATA_NAMES),
                         (String[]) dataObject[0], doubleData);
-            }
-            else if (argument.get(DATA_NAMES) != null)
-            {
+            } else if (argument.get(DATA_NAMES) != null) {
                 graphicalAnalysis = new BarPlot(
                         (String[]) argument.get(DATA_NAMES),
                         (String[]) dataObject[0], doubleData);
-            }
-            else
-            {
+            } else {
                 throw new IllegalArgumentException("Wrong input argument(s)");
             }
-        }
-        else
-        {
+        } else {
             throw new IllegalArgumentException(
                     "Wrong input argument(s) or data.");
         }
@@ -242,8 +226,7 @@ public class BarPlot extends GraphicalAnalysis
                    String xLabel,
                    String yLabel,
                    String[] category,
-                   double[] ...data)
-    {
+                   double[]... data) {
         this.category = category;
         this.data = data;
         this.dataNames = dataNames;
@@ -251,13 +234,10 @@ public class BarPlot extends GraphicalAnalysis
         this.xLabel = xLabel;
         this.yLabel = yLabel;
         if (option.equalsIgnoreCase("3D") ||
-            option.equalsIgnoreCase("Three Dimensional"))
-        {
+                option.equalsIgnoreCase("Three Dimensional")) {
             this.plot = new Plot3DFactory().createBar3DPlot(dataNames, title,
                     xLabel, yLabel, category, data);
-        }
-        else
-        {
+        } else {
             this.plot = new Plot2DFactory().createBarPlot(dataNames, title,
                     xLabel, yLabel, category, data);
         }
@@ -287,8 +267,7 @@ public class BarPlot extends GraphicalAnalysis
                    String xLabel,
                    String yLabel,
                    String[] category,
-                   double[] ...data)
-    {
+                   double[]... data) {
         this("2D", dataNames, title, xLabel, yLabel, category, data);
     }
 
@@ -312,10 +291,9 @@ public class BarPlot extends GraphicalAnalysis
     public BarPlot(String option,
                    String[] dataNames,
                    String[] category,
-                   double[] ...data)
-    {
+                   double[]... data) {
         this(option, dataNames, "Bar Plot", "Category", "Value", category,
-             data);
+                data);
     }
 
     /**
@@ -336,8 +314,7 @@ public class BarPlot extends GraphicalAnalysis
 
     public BarPlot(String[] dataNames,
                    String[] category,
-                   double[] ...data)
-    {
+                   double[]... data) {
         this(dataNames, "Bar Plot", "Category", "Value", category, data);
     }
 

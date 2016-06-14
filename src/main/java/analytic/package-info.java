@@ -15,7 +15,6 @@
  * <http://www.gnu.org/licenses/>.
  */
 /**
- *
  * Analytic classes.
  *
  * @author Graham Kirby (graham.kirby@st-andrews.ac.uk)

@@ -5,6 +5,7 @@ package plots.javastat.util;
  * <p>Description: JAVA programs for statistical computations</p>
  * <p>Copyright: Copyright (c) 2009</p>
  * <p>Company: Tung Hai University</p>
+ *
  * @author Wen Hsiang Wei
  * @version 1.4
  */
@@ -29,14 +30,85 @@ import static plots.javastat.util.OperationType.*;
  * the data.</p>
  */
 
-public class DataManager extends Object
-{
+public class DataManager extends Object {
 
     /**
      * Default DataManager constructor.
      */
 
-    public DataManager() {};
+    public DataManager() {
+    }
+
+    /**
+     * Returns the data within specified range.
+     * @param fromRowIndex initial row index.
+     * @param toRowIndex final row index.
+     * @param fromColumnIndex initial column index.
+     * @param toColumnIndex final column index.
+     * @param data the input data.
+     * @return the data within the specified range.
+     */
+
+    public static double[][] getData(int fromRowIndex,
+                                     int toRowIndex,
+                                     int fromColumnIndex,
+                                     int toColumnIndex,
+                                     double[]... data) {
+        double[][] copy = new double[toRowIndex - fromRowIndex + 1]
+                [toColumnIndex - fromColumnIndex + 1];
+        for (int i = fromRowIndex; i <= toRowIndex; i++) {
+            for (int j = fromColumnIndex; j <= toColumnIndex; j++) {
+                copy[i - fromRowIndex][j - fromColumnIndex] = data[i][j];
+            }
+        }
+
+        return copy;
+    }
+
+    /**
+     * Converts the original data to a double array.
+     * @param fromIndex the starting index.
+     * @param dataObject the original data.
+     * @return the double array.
+     * @exception IllegalArgumentException wrong input data.
+     */
+
+    public static double[][] castDoubleObject(int fromIndex,
+                                              Object[] dataObject) {
+        double[][] doubleObject = new double[dataObject.length - fromIndex][];
+        for (int i = fromIndex; i < dataObject.length; i++) {
+            if (!dataObject[i].getClass().getName().equalsIgnoreCase("[D")) {
+                throw new IllegalArgumentException("Wrong input data type.");
+            } else {
+                doubleObject[i - fromIndex] = (double[]) dataObject[i];
+            }
+        }
+
+        return doubleObject;
+    }
+
+    /**
+     * Converts the original data to a string array.
+     * @param fromIndex the starting index.
+     * @param dataObject the original data.
+     * @return the string array.
+     * @exception IllegalArgumentException wrong input data.
+     */
+
+    public static String[][] castStringObject(int fromIndex,
+                                              Object[] dataObject) {
+        String[][] stringObject = new String[dataObject.length - fromIndex][];
+        for (int i = fromIndex; i < dataObject.length; i++) {
+            if (!dataObject[i].getClass().getName().equalsIgnoreCase(
+                    "[Ljava.lang.String;")) {
+                throw new IllegalArgumentException("Wrong input data type.");
+            } else {
+                stringObject[i - fromIndex] = (String[]) dataObject[i];
+            }
+        }
+
+        return stringObject;
+    }
 
     /**
      * Obtains the vector of the absolute values of the input data.
@@ -45,14 +117,11 @@ public class DataManager extends Object
      * @return the vector of the absolute values of the input data.
      */
 
-    public double[][] abs(double[] ...data)
-    {
+    public double[][] abs(double[]... data) {
         double[][] absData = new double[data.length][];
-        for (int i = 0; i < data.length; i++)
-        {
+        for (int i = 0; i < data.length; i++) {
             absData[i] = new double[data[i].length];
-            for (int j = 0; j < data[i].length; j++)
-            {
+            for (int j = 0; j < data[i].length; j++) {
                 absData[i][j] = Math.abs(data[i][j]);
             }
         }
@@ -67,9 +136,8 @@ public class DataManager extends Object
      * @return the vector of the absolute values of the input data.
      */
 
-    public double[] abs(double[] data)
-    {
-        return abs(new double[][] {data})[0];
+    public double[] abs(double[] data) {
+        return abs(new double[][]{data})[0];
     }
 
     /**
@@ -80,8 +148,7 @@ public class DataManager extends Object
      */
 
     public double roundDigits(double a,
-                              double d)
-    {
+                              double d) {
         return (double) Math.round(a * Math.pow(10.0, d)) / Math.pow(10.0, d);
     }
 
@@ -91,11 +158,9 @@ public class DataManager extends Object
      * @return a double array converted from the input string array.
      */
 
-    public double[] stringToDouble(String[] stringArray)
-    {
+    public double[] stringToDouble(String[] stringArray) {
         double[] doubleArray = new double[stringArray.length];
-        for (int i = 0; i <= stringArray.length - 1; i++)
-        {
+        for (int i = 0; i <= stringArray.length - 1; i++) {
             doubleArray[i] = Double.parseDouble(stringArray[i]);
         }
 
@@ -108,11 +173,9 @@ public class DataManager extends Object
      * @return a double array converted from the input string array.
      */
 
-    public double[][] stringToDouble(String[] ...stringArray)
-    {
+    public double[][] stringToDouble(String[]... stringArray) {
         double[][] doubleArray = new double[stringArray.length][];
-        for (int i = 0; i <= stringArray.length - 1; i++)
-        {
+        for (int i = 0; i <= stringArray.length - 1; i++) {
             doubleArray[i] = stringToDouble(stringArray[i]);
         }
 
@@ -125,14 +188,11 @@ public class DataManager extends Object
      * @return a string array converted from the input double array.
      */
 
-    public String[][] doubleToString(double[] ...doubleArray)
-    {
+    public String[][] doubleToString(double[]... doubleArray) {
         String[][] stringArray = new String[doubleArray.length][];
-        for (int i = 0; i < doubleArray.length; i++)
-        {
+        for (int i = 0; i < doubleArray.length; i++) {
             stringArray[i] = new String[doubleArray[i].length];
-            for (int j = 0; j < doubleArray[i].length; j++)
-            {
+            for (int j = 0; j < doubleArray[i].length; j++) {
                 stringArray[i][j] = Double.toString(doubleArray[i][j]);
             }
         }
@@ -146,9 +206,8 @@ public class DataManager extends Object
      * @return a string array converted from the input double array.
      */
 
-    public String[] doubleToString(double[] doubleArray)
-    {
-        return doubleToString(new double[][] {doubleArray})[0];
+    public String[] doubleToString(double[] doubleArray) {
+        return doubleToString(new double[][]{doubleArray})[0];
     }
 
     /**
@@ -157,11 +216,9 @@ public class DataManager extends Object
      * @return an integer array converted from the input string array.
      */
 
-    public int[] stringToInteger(String[] stringArray)
-    {
+    public int[] stringToInteger(String[] stringArray) {
         int[] intArray = new int[stringArray.length];
-        for (int i = 0; i <= stringArray.length - 1; i++)
-        {
+        for (int i = 0; i <= stringArray.length - 1; i++) {
             intArray[i] = Integer.parseInt((stringArray[i]));
         }
 
@@ -174,11 +231,9 @@ public class DataManager extends Object
      * @return an integer array converted from the input string array.
      */
 
-    public int[][] stringToInteger(String[] ...stringArray)
-    {
+    public int[][] stringToInteger(String[]... stringArray) {
         int[][] intArray = new int[stringArray.length][];
-        for (int i = 0; i <= stringArray.length - 1; i++)
-        {
+        for (int i = 0; i <= stringArray.length - 1; i++) {
             intArray[i] = stringToInteger((stringArray[i]));
         }
 
@@ -193,13 +248,10 @@ public class DataManager extends Object
      */
 
     public double numberOfClass(String[] str,
-                                String criterion)
-    {
+                                String criterion) {
         double counts = 0.0;
-        for (int i = 0; i < str.length; i++)
-        {
-            if (str[i].equalsIgnoreCase(criterion))
-            {
+        for (int i = 0; i < str.length; i++) {
+            if (str[i].equalsIgnoreCase(criterion)) {
                 counts += 1.0;
             }
         }
@@ -216,8 +268,7 @@ public class DataManager extends Object
      */
 
     public double[][] contingencyTable(String[] colVar,
-                                       String[] rowVar)
-    {
+                                       String[] rowVar) {
         int[] colVarHcode = new int[colVar.length];
         int[] rowVarHcode = new int[colVar.length];
         int[] colVarHcodeClone = new int[colVar.length];
@@ -225,14 +276,13 @@ public class DataManager extends Object
         double[] totalHcode = new double[rowVar.length];
         int ind1, ind2 = 0;
         boolean zeroind;
-        for (int i = 0; i < colVar.length; i++)
-        {
+        for (int i = 0; i < colVar.length; i++) {
             colVarHcode[i] = colVar[i].toLowerCase().hashCode();
             rowVarHcode[i] = rowVar[i].toLowerCase().hashCode();
             colVarHcodeClone[i] = colVar[i].toLowerCase().hashCode();
             rowVarHcodeClone[i] = rowVar[i].toLowerCase().hashCode();
             totalHcode[i] = ((double) rowVar[i].toLowerCase().hashCode()) +
-                            (1.0 / colVarHcode[i]);
+                    (1.0 / colVarHcode[i]);
         }
         Arrays.sort(colVarHcode);
         Arrays.sort(rowVarHcode);
@@ -243,27 +293,20 @@ public class DataManager extends Object
         Arrays.sort(totalHcode);
         int[] totalIndex = groupIndex(totalHcode);
         double[][] table = new double[nr][nc];
-        for (int j = 0; j < nr; j++)
-        {
-            for (int k = 0; k < nc; k++)
-            {
+        for (int j = 0; j < nr; j++) {
+            for (int k = 0; k < nc; k++) {
                 ind1 = 0;
                 zeroind = true;
-                while ((ind1 < colVar.length) && zeroind)
-                {
+                while ((ind1 < colVar.length) && zeroind) {
                     if ((uniColHcode[k] == colVarHcodeClone[ind1]) &&
-                        (uniRowHcode[j] == rowVarHcodeClone[ind1]))
-                    {
+                            (uniRowHcode[j] == rowVarHcodeClone[ind1])) {
                         zeroind = false;
                     }
                     ind1 += 1;
                 }
-                if (zeroind)
-                {
+                if (zeroind) {
                     table[j][k] = 0.0;
-                }
-                else
-                {
+                } else {
                     table[j][k] = (double) totalIndex[ind2];
                     ind2 += 1;
                 }
@@ -281,25 +324,20 @@ public class DataManager extends Object
      * @return the positions of the data elements in ascending order.
      */
 
-    public int[] orderIndex(double[] data)
-    {
+    public int[] orderIndex(double[] data) {
         boolean ind;
         int j;
         int[] index = new int[data.length];
-        double[] buffer = (double[]) data.clone();
+        double[] buffer = data.clone();
         Arrays.sort(buffer);
-        for (int i = 0; i < data.length; i++)
-        {
+        for (int i = 0; i < data.length; i++) {
             ind = true;
             j = 0;
-            if ((i > 0) && buffer[i] == buffer[i - 1])
-            {
+            if ((i > 0) && buffer[i] == buffer[i - 1]) {
                 j = index[i - 1] + 1;
             }
-            while (ind && (j < data.length))
-            {
-                if (buffer[i] == data[j])
-                {
+            while (ind && (j < data.length)) {
+                if (buffer[i] == data[j]) {
                     ind = false;
                     index[i] = j;
                 }
@@ -316,19 +354,15 @@ public class DataManager extends Object
      * @return the values of the input data without any repetition.
      */
 
-    public int[] unique(int[] orderedData)
-    {
+    public int[] unique(int[] orderedData) {
         int[] originalData = new int[orderedData.length];
         int j = 1, index = 0, number;
-        while (j < orderedData.length)
-        {
+        while (j < orderedData.length) {
             number = 1;
-            while ((orderedData[j - 1] == orderedData[j]))
-            {
+            while ((orderedData[j - 1] == orderedData[j])) {
                 number += 1;
                 j += 1;
-                if (j == orderedData.length)
-                {
+                if (j == orderedData.length) {
                     break;
                 }
             }
@@ -337,8 +371,7 @@ public class DataManager extends Object
             index += 1;
         }
         int[] uniqueData = new int[index];
-        for (int i = 0; i < index; i++)
-        {
+        for (int i = 0; i < index; i++) {
             uniqueData[i] = originalData[i];
         }
 
@@ -351,11 +384,9 @@ public class DataManager extends Object
      * @return a one-dimensional zero array.
      */
 
-    public double[] zeroArray(int arrayDim)
-    {
+    public double[] zeroArray(int arrayDim) {
         double[] data = new double[arrayDim];
-        for (int i = 0; i < arrayDim; i++)
-        {
+        for (int i = 0; i < arrayDim; i++) {
             data[i] = 0.0;
         }
 
@@ -370,13 +401,10 @@ public class DataManager extends Object
      */
 
     public double[][] zeroArray(int arrayDim1,
-                                int arrayDim2)
-    {
+                                int arrayDim2) {
         double[][] data = new double[arrayDim1][arrayDim2];
-        for (int i = 0; i < arrayDim1; i++)
-        {
-            for (int j = 0; j < arrayDim2; j++)
-            {
+        for (int i = 0; i < arrayDim1; i++) {
+            for (int j = 0; j < arrayDim2; j++) {
                 data[i][j] = 0.0;
             }
         }
@@ -392,11 +420,9 @@ public class DataManager extends Object
      */
 
     public double[][] diagonal(double[] dataValues,
-                               int arrayDim)
-    {
+                               int arrayDim) {
         double[][] data = new double[arrayDim][arrayDim];
-        for (int i = 0; i < arrayDim; i++)
-        {
+        for (int i = 0; i < arrayDim; i++) {
             data[i][i] = dataValues[i];
         }
 
@@ -409,11 +435,9 @@ public class DataManager extends Object
      * @return the diagnoal matrix.
      */
 
-    public double[][] identity(int arrayDim)
-    {
+    public double[][] identity(int arrayDim) {
         double[] dataValues = new double[arrayDim];
-        for (int i = 0; i < arrayDim; i++)
-        {
+        for (int i = 0; i < arrayDim; i++) {
             dataValues[i] = 1.0;
         }
 
@@ -430,16 +454,13 @@ public class DataManager extends Object
      */
 
     public double[] matchedDataDifference(double[] data1,
-                                          double[] data2)
-    {
-        if (data1.length != data2.length)
-        {
+                                          double[] data2) {
+        if (data1.length != data2.length) {
             throw new IllegalArgumentException(
                     "The sample sizes of the two data sets must agree.");
         }
         double[] mData = new double[data1.length];
-        for (int i = 0; i < data1.length; i++)
-        {
+        for (int i = 0; i < data1.length; i++) {
             mData[i] = data1[i] - data2[i];
         }
 
@@ -454,13 +475,10 @@ public class DataManager extends Object
      */
 
     public double zeroNumber(double med,
-                             double[] data)
-    {
+                             double[] data) {
         double zn = 0.0;
-        for (int i = 0; i < data.length; i++)
-        {
-            if ((data[i] - med) == 0)
-            {
+        for (int i = 0; i < data.length; i++) {
+            if ((data[i] - med) == 0) {
                 zn += 1.0;
             }
         }
@@ -476,15 +494,12 @@ public class DataManager extends Object
      */
 
     public double[] nonZeroData(double med,
-                                double[] data)
-    {
+                                double[] data) {
         int zn = (int) zeroNumber(med, data);
         double[] nonzeroData = new double[data.length - zn];
         int ind = 0;
-        for (int i = 0; i < data.length; i++)
-        {
-            if ((data[i] - med) != 0)
-            {
+        for (int i = 0; i < data.length; i++) {
+            if ((data[i] - med) != 0) {
                 nonzeroData[ind] = data[i];
                 ind++;
             }
@@ -499,16 +514,12 @@ public class DataManager extends Object
      * @return the tie number of data.
      */
 
-    public double[] tieNumber(double[] data)
-    {
+    public double[] tieNumber(double[] data) {
         double[] tn = new double[data.length];
-        for (int i = 0; i < data.length; i++)
-        {
+        for (int i = 0; i < data.length; i++) {
             tn[i] = 0.0;
-            for (int k = 0; k < data.length; k++)
-            {
-                if (data[i] == data[k])
-                {
+            for (int k = 0; k < data.length; k++) {
+                if (data[i] == data[k]) {
                     tn[i] += 1.0;
                 }
             }
@@ -525,16 +536,12 @@ public class DataManager extends Object
      */
 
     public double[] tieNumber(double med,
-                              double[] data)
-    {
+                              double[] data) {
         double[] tn = new double[data.length];
-        for (int i = 0; i < data.length; i++)
-        {
+        for (int i = 0; i < data.length; i++) {
             tn[i] = 0.0;
-            for (int k = 0; k < data.length; k++)
-            {
-                if (Math.abs((data[i] - med)) == Math.abs((data[k] - med)))
-                {
+            for (int k = 0; k < data.length; k++) {
+                if (Math.abs((data[i] - med)) == Math.abs((data[k] - med))) {
                     tn[i] += 1.0;
                 }
             }
@@ -549,21 +556,17 @@ public class DataManager extends Object
      * <br>          group[i]: the group index of the (i+1)'th data.
      */
 
-    public void dataSort(double[] groups)
-    {
+    public void dataSort(double[] groups) {
         int j;
         double buffer;
-        for (int i = 1; i < groups.length; i++)
-        {
+        for (int i = 1; i < groups.length; i++) {
             j = i;
-            while ((groups[j] < groups[j - 1]))
-            {
+            while ((groups[j] < groups[j - 1])) {
                 buffer = groups[j];
                 groups[j] = groups[j - 1];
                 groups[j - 1] = buffer;
                 j -= 1;
-                if (j == 0)
-                {
+                if (j == 0) {
                     break;
                 }
             }
@@ -583,34 +586,28 @@ public class DataManager extends Object
      */
 
     public void dataSort(double[] groups,
-                         double[] ...covariate)
-    {
+                         double[]... covariate) {
         checkDimension(covariate);
-        if (groups.length != covariate[0].length)
-        {
+        if (groups.length != covariate[0].length) {
             throw new IllegalArgumentException(
                     "The group vector and rows of the covariate matrix must " +
-                    "have the same length.");
+                            "have the same length.");
         }
         int j;
         double buffer;
-        for (int i = 1; i < groups.length; i++)
-        {
+        for (int i = 1; i < groups.length; i++) {
             j = i;
-            while ((groups[j] < groups[j - 1]))
-            {
+            while ((groups[j] < groups[j - 1])) {
                 buffer = groups[j];
                 groups[j] = groups[j - 1];
                 groups[j - 1] = buffer;
-                for (int k = 0; k < covariate.length; k++)
-                {
+                for (int k = 0; k < covariate.length; k++) {
                     buffer = covariate[k][j];
                     covariate[k][j] = covariate[k][j - 1];
                     covariate[k][j - 1] = buffer;
                 }
                 j -= 1;
-                if (j == 0)
-                {
+                if (j == 0) {
                     break;
                 }
             }
@@ -625,15 +622,12 @@ public class DataManager extends Object
      */
 
     public double[] dataMerge(double[] data1,
-                              double[] data2)
-    {
+                              double[] data2) {
         double[] data = new double[data1.length + data2.length];
-        for (int s = 0; s < data1.length; s++)
-        {
+        for (int s = 0; s < data1.length; s++) {
             data[s] = data1[s];
         }
-        for (int m = data1.length; m < data.length; m++)
-        {
+        for (int m = data1.length; m < data.length; m++) {
             data[m] = data2[m - data1.length];
         }
 
@@ -646,11 +640,9 @@ public class DataManager extends Object
      * @return the number of elements of a two-dimensional array.
      */
 
-    public double sampleSize(double[] ...data)
-    {
+    public double sampleSize(double[]... data) {
         double samSize = 0.0;
-        for (int j = 0; j < data.length; j++)
-        {
+        for (int j = 0; j < data.length; j++) {
             samSize += data[j].length;
         }
 
@@ -663,19 +655,15 @@ public class DataManager extends Object
      * @return the number of data in each group.
      */
 
-    public int[] groupIndex(double[] orderGroups)
-    {
+    public int[] groupIndex(double[] orderGroups) {
         int[] oriIndex = new int[orderGroups.length];
         int j = 1, index = 0, number;
-        while (j < orderGroups.length)
-        {
+        while (j < orderGroups.length) {
             number = 1;
-            while ((orderGroups[j - 1] == orderGroups[j]))
-            {
+            while ((orderGroups[j - 1] == orderGroups[j])) {
                 number += 1;
                 j += 1;
-                if (j == orderGroups.length)
-                {
+                if (j == orderGroups.length) {
                     break;
                 }
             }
@@ -684,8 +672,7 @@ public class DataManager extends Object
             index += 1;
         }
         int[] gindex = new int[index];
-        for (int i = 0; i < index; i++)
-        {
+        for (int i = 0; i < index; i++) {
             gindex[i] = oriIndex[i];
         }
 
@@ -707,30 +694,23 @@ public class DataManager extends Object
      */
 
     public double[][] survivalIndex(double[] time,
-                                    double[] censor)
-    {
+                                    double[] censor) {
         checkPositiveRange(time, "time");
         checkCensor(censor);
-        if (time.length != censor.length)
-        {
+        if (time.length != censor.length) {
             throw new IllegalArgumentException(
                     "The time vector and censor vector must have the same " +
-                    "length.");
+                            "length.");
         }
         double[][] index = zeroArray(2, time.length);
-        for (int i = 0; i < time.length; i++)
-        {
-            for (int k = 0; k < time.length; k++)
-            {
-                if (time[k] > time[i])
-                {
+        for (int i = 0; i < time.length; i++) {
+            for (int k = 0; k < time.length; k++) {
+                if (time[k] > time[i]) {
                     index[0][i] += 1.0;
                 }
-                if (time[k] == time[i])
-                {
+                if (time[k] == time[i]) {
                     index[0][i] += 1.0;
-                    if ((int) censor[i] == 1)
-                    {
+                    if ((int) censor[i] == 1) {
                         index[1][i] += 1.0;
                     }
                 }
@@ -750,19 +730,14 @@ public class DataManager extends Object
      *                                     must be postive.
      */
 
-    public final void checkPositiveRangeDimension(double[] ...table)
-    {
-        for (int i = 0; i < table.length; i++)
-        {
-            if (table[i].length != table[0].length)
-            {
+    public final void checkPositiveRangeDimension(double[]... table) {
+        for (int i = 0; i < table.length; i++) {
+            if (table[i].length != table[0].length) {
                 throw new IllegalArgumentException
                         ("All rows must have the same length.");
             }
-            for (int j = 0; j < table[i].length; j++)
-            {
-                if (table[i][j] < 0.0)
-                {
+            for (int j = 0; j < table[i].length; j++) {
+                if (table[i][j] < 0.0) {
                     throw new IllegalArgumentException(
                             "The elements of the table should be positive.");
                 }
@@ -778,15 +753,12 @@ public class DataManager extends Object
      */
 
     public final void checkPositiveRange(double[] vector,
-                                         String s)
-    {
-        for (int i = 0; i < vector.length; i++)
-        {
-            if (vector[i] < 0.0)
-            {
+                                         String s) {
+        for (int i = 0; i < vector.length; i++) {
+            if (vector[i] < 0.0) {
                 throw new IllegalArgumentException(
                         "The elements of the " + s +
-                        " vector should be positive.");
+                                " vector should be positive.");
             }
         }
     }
@@ -797,15 +769,12 @@ public class DataManager extends Object
      * @exception IllegalArgumentException all elements must be either 1 or 0.
      */
 
-    public final void checkCensor(double[] censor)
-    {
-        for (int i = 0; i < censor.length; i++)
-        {
-            if ((int) censor[i] != 0 && (int) censor[i] != 1)
-            {
+    public final void checkCensor(double[] censor) {
+        for (int i = 0; i < censor.length; i++) {
+            if ((int) censor[i] != 0 && (int) censor[i] != 1) {
                 throw new IllegalArgumentException(
                         "The elements of the censor vector should be either" +
-                        " 1 or 0.");
+                                " 1 or 0.");
             }
         }
     }
@@ -817,12 +786,9 @@ public class DataManager extends Object
      *                                     have the same length.
      */
 
-    public final void checkDimension(double[] ...covariate)
-    {
-        for (int i = 1; i < covariate.length; i++)
-        {
-            if (covariate[i].length != covariate[0].length)
-            {
+    public final void checkDimension(double[]... covariate) {
+        for (int i = 1; i < covariate.length; i++) {
+            if (covariate[i].length != covariate[0].length) {
                 throw new IllegalArgumentException
                         ("All rows must have the same length.");
             }
@@ -838,70 +804,33 @@ public class DataManager extends Object
 
     public void scanFileToMatrix(String fileName,
                                  double[][] matrix,
-                                 int nc)
-    {
-        try
-        {
+                                 int nc) {
+        try {
             File file = new File(fileName);
             int size = (int) file.length();
             int readind = 0, ind1 = 0, ind2 = 0;
             FileReader in = new FileReader(file);
             char[] data = new char[size];
-            while (in.ready())
-            {
+            while (in.ready()) {
                 readind += in.read(data, readind, size - readind);
             }
             in.close();
             String s1 = new String(data, 0, readind);
             StringTokenizer st = new StringTokenizer(s1, "\n\r\t, :;");
             double[][] m = new double[nc][st.countTokens() / nc];
-            while (st.hasMoreTokens())
-            {
-                if (ind2 == nc)
-                {
+            while (st.hasMoreTokens()) {
+                if (ind2 == nc) {
                     ind2 = 0;
                     ind1++;
                 }
                 m[ind2++][ind1] = Double.parseDouble(st.nextToken());
             }
-            for (int j = 0; j < nc; j++)
-            {
+            for (int j = 0; j < nc; j++) {
                 matrix[j] = m[j];
             }
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    /**
-     * Returns the data within specified range.
-     * @param fromRowIndex initial row index.
-     * @param toRowIndex final row index.
-     * @param fromColumnIndex initial column index.
-     * @param toColumnIndex final column index.
-     * @param data the input data.
-     * @return the data within the specified range.
-     */
-
-    public static double[][] getData(int fromRowIndex,
-                                     int toRowIndex,
-                                     int fromColumnIndex,
-                                     int toColumnIndex,
-                                     double[] ...data)
-    {
-        double[][] copy = new double[toRowIndex - fromRowIndex + 1]
-                          [toColumnIndex - fromColumnIndex + 1];
-        for (int i = fromRowIndex; i <= toRowIndex; i++)
-        {
-            for (int j = fromColumnIndex; j <= toColumnIndex; j++)
-            {
-                copy[i - fromRowIndex][j - fromColumnIndex] = data[i][j];
-            }
-        }
-
-        return copy;
     }
 
     /**
@@ -910,8 +839,7 @@ public class DataManager extends Object
      * @return the duplicated data.
      */
 
-    public double[] copyData(double[] data)
-    {
+    public double[] copyData(double[] data) {
         double[] copy = new double[data.length];
         System.arraycopy(data, 0, copy, 0, data.length);
 
@@ -927,14 +855,11 @@ public class DataManager extends Object
      */
 
     public double[][] pow(double[][] data,
-                          double[][] power)
-    {
+                          double[][] power) {
         double[][] dataPower = new double[data.length][];
-        for (int i = 0; i < data.length; i++)
-        {
+        for (int i = 0; i < data.length; i++) {
             dataPower[i] = new double[data[i].length];
-            for (int j = 0; j < data[i].length; j++)
-            {
+            for (int j = 0; j < data[i].length; j++) {
                 dataPower[i][j] = Math.pow(data[i][j], power[i][j]);
             }
         }
@@ -951,14 +876,11 @@ public class DataManager extends Object
      */
 
     public double[][] pow(double[][] data,
-                          double power)
-    {
+                          double power) {
         double[][] dataPower = new double[data.length][];
-        for (int i = 0; i < data.length; i++)
-        {
+        for (int i = 0; i < data.length; i++) {
             dataPower[i] = new double[data[i].length];
-            for (int j = 0; j < data[i].length; j++)
-            {
+            for (int j = 0; j < data[i].length; j++) {
                 dataPower[i][j] = Math.pow(data[i][j], power);
             }
         }
@@ -975,9 +897,8 @@ public class DataManager extends Object
      */
 
     public double[] pow(double[] data,
-                        double[] power)
-    {
-        return pow(new double[][] {data}, new double[][] {power})[0];
+                        double[] power) {
+        return pow(new double[][]{data}, new double[][]{power})[0];
     }
 
     /**
@@ -989,9 +910,8 @@ public class DataManager extends Object
      */
 
     public double[] pow(double[] data,
-                        double power)
-    {
-        return pow(new double[][] {data}, power)[0];
+                        double power) {
+        return pow(new double[][]{data}, power)[0];
     }
 
     /**
@@ -1000,8 +920,7 @@ public class DataManager extends Object
      * @return the positive square roots of the input data.
      */
 
-    public double[][] sqrt(double[] ...data)
-    {
+    public double[][] sqrt(double[]... data) {
         return pow(data, 0.5);
     }
 
@@ -1011,8 +930,7 @@ public class DataManager extends Object
      * @return the positive square roots of the input data.
      */
 
-    public double[] sqrt(double[] data)
-    {
+    public double[] sqrt(double[] data) {
         return pow(data, 0.5);
     }
 
@@ -1022,8 +940,7 @@ public class DataManager extends Object
      * @return the squares of the input data.
      */
 
-    public double[][] square(double[] ...data)
-    {
+    public double[][] square(double[]... data) {
         return pow(data, 2.0);
     }
 
@@ -1033,8 +950,7 @@ public class DataManager extends Object
      * @return the squares of the input data.
      */
 
-    public double[] square(double[] data)
-    {
+    public double[] square(double[] data) {
         return pow(data, 2.0);
     }
 
@@ -1044,8 +960,7 @@ public class DataManager extends Object
      * @return the cubes of the input data.
      */
 
-    public double[][] cube(double[] ...data)
-    {
+    public double[][] cube(double[]... data) {
         return pow(data, 3.0);
     }
 
@@ -1055,8 +970,7 @@ public class DataManager extends Object
      * @return the cubes of the input data.
      */
 
-    public double[] cube(double[] data)
-    {
+    public double[] cube(double[] data) {
         return pow(data, 3.0);
     }
 
@@ -1066,8 +980,7 @@ public class DataManager extends Object
      * @return the reciprocals of the input data.
      */
 
-    public double[][] reciprocal(double[] ...data)
-    {
+    public double[][] reciprocal(double[]... data) {
         return pow(data, -1.0);
     }
 
@@ -1077,8 +990,7 @@ public class DataManager extends Object
      * @return the reciprocals of the input data.
      */
 
-    public double[] reciprocal(double[] data)
-    {
+    public double[] reciprocal(double[] data) {
         return pow(data, -1.0);
     }
 
@@ -1088,8 +1000,7 @@ public class DataManager extends Object
      * @return the cubic roots of the input data.
      */
 
-    public double[][] cbrt(double[] ...data)
-    {
+    public double[][] cbrt(double[]... data) {
         return pow(data, 1.0 / 3.0);
     }
 
@@ -1099,8 +1010,7 @@ public class DataManager extends Object
      * @return the cubic roots of the input data.
      */
 
-    public double[] cbrt(double[] data)
-    {
+    public double[] cbrt(double[] data) {
         return pow(data, 1.0 / 3.0);
     }
 
@@ -1110,14 +1020,11 @@ public class DataManager extends Object
      * @return the trigonometric sines of the input data.
      */
 
-    public double[][] sin(double[] ...data)
-    {
+    public double[][] sin(double[]... data) {
         double[][] sinData = new double[data.length][];
-         for (int i = 0; i < data.length; i++)
-         {
+        for (int i = 0; i < data.length; i++) {
             sinData[i] = new double[data[i].length];
-            for (int j = 0; j < data[i].length; j++)
-            {
+            for (int j = 0; j < data[i].length; j++) {
                 sinData[i][j] = Math.sin(data[i][j]);
             }
         }
@@ -1131,9 +1038,8 @@ public class DataManager extends Object
      * @return the trigonometric sines of the input data.
      */
 
-    public double[] sin(double[] data)
-    {
-        return sin(new double[][] {data})[0];
+    public double[] sin(double[] data) {
+        return sin(new double[][]{data})[0];
     }
 
     /**
@@ -1142,14 +1048,11 @@ public class DataManager extends Object
      * @return the trigonometric cosines of the input data.
      */
 
-    public double[][] cos(double[] ...data)
-    {
+    public double[][] cos(double[]... data) {
         double[][] cosData = new double[data.length][];
-        for (int i = 0; i < data.length; i++)
-        {
+        for (int i = 0; i < data.length; i++) {
             cosData[i] = new double[data[i].length];
-            for (int j = 0; j < data[i].length; j++)
-            {
+            for (int j = 0; j < data[i].length; j++) {
                 cosData[i][j] = Math.cos(data[i][j]);
             }
         }
@@ -1163,9 +1066,8 @@ public class DataManager extends Object
      * @return the trigonometric cosines of the input data.
      */
 
-    public double[] cos(double[] data)
-    {
-        return cos(new double[][] {data})[0];
+    public double[] cos(double[] data) {
+        return cos(new double[][]{data})[0];
     }
 
     /**
@@ -1174,14 +1076,11 @@ public class DataManager extends Object
      * @return the trigonometric tangents of the input data.
      */
 
-    public double[][] tan(double[] ...data)
-    {
+    public double[][] tan(double[]... data) {
         double[][] tanData = new double[data.length][];
-        for (int i = 0; i < data.length; i++)
-        {
+        for (int i = 0; i < data.length; i++) {
             tanData[i] = new double[data[i].length];
-            for (int j = 0; j < data[i].length; j++)
-            {
+            for (int j = 0; j < data[i].length; j++) {
                 tanData[i][j] = Math.tan(data[i][j]);
             }
         }
@@ -1195,9 +1094,8 @@ public class DataManager extends Object
      * @return the trigonometric tangents of the input data.
      */
 
-    public double[] tan(double[] data)
-    {
-        return tan(new double[][] {data})[0];
+    public double[] tan(double[] data) {
+        return tan(new double[][]{data})[0];
     }
 
     /**
@@ -1211,11 +1109,9 @@ public class DataManager extends Object
      */
 
     public double[][] trigonoFunction(FunctionType option,
-                                      double[] ...data)
-    {
+                                      double[]... data) {
         double[][] trigonoData;
-        switch (option)
-        {
+        switch (option) {
             case SIN:
                 trigonoData = sin(data);
                 break;
@@ -1244,9 +1140,8 @@ public class DataManager extends Object
      */
 
     public double[] trigonoFunction(FunctionType option,
-                                    double[] data)
-    {
-        return trigonoFunction(option, new double[][] {data})[0];
+                                    double[] data) {
+        return trigonoFunction(option, new double[][]{data})[0];
     }
 
     /**
@@ -1260,10 +1155,9 @@ public class DataManager extends Object
      */
 
     public double[][] trigonoFunction(String option,
-                                      double[] ...data)
-    {
+                                      double[]... data) {
         return trigonoFunction(
-            FunctionType.valueOf(option.toUpperCase()), data);
+                FunctionType.valueOf(option.toUpperCase()), data);
     }
 
     /**
@@ -1277,10 +1171,9 @@ public class DataManager extends Object
      */
 
     public double[] trigonoFunction(String option,
-                                    double[] data)
-    {
+                                    double[] data) {
         return trigonoFunction(
-            FunctionType.valueOf(option.toUpperCase()), data);
+                FunctionType.valueOf(option.toUpperCase()), data);
     }
 
     /**
@@ -1289,14 +1182,11 @@ public class DataManager extends Object
      * @return the arc sines of the input data.
      */
 
-    public double[][] asin(double[] ...data)
-    {
+    public double[][] asin(double[]... data) {
         double[][] asinData = new double[data.length][];
-        for (int i = 0; i < data.length; i++)
-        {
+        for (int i = 0; i < data.length; i++) {
             asinData[i] = new double[data[i].length];
-            for (int j = 0; j < data[i].length; j++)
-            {
+            for (int j = 0; j < data[i].length; j++) {
                 asinData[i][j] = Math.asin(data[i][j]);
             }
         }
@@ -1310,9 +1200,8 @@ public class DataManager extends Object
      * @return the arc sines of the input data.
      */
 
-    public double[] asin(double[] data)
-    {
-        return asin(new double[][] {data})[0];
+    public double[] asin(double[] data) {
+        return asin(new double[][]{data})[0];
     }
 
     /**
@@ -1321,14 +1210,11 @@ public class DataManager extends Object
      * @return the arc cosines of the input data.
      */
 
-    public double[][] acos(double[] ...data)
-    {
+    public double[][] acos(double[]... data) {
         double[][] acosData = new double[data.length][];
-        for (int i = 0; i < data.length; i++)
-        {
+        for (int i = 0; i < data.length; i++) {
             acosData[i] = new double[data[i].length];
-            for (int j = 0; j < data[i].length; j++)
-            {
+            for (int j = 0; j < data[i].length; j++) {
                 acosData[i][j] = Math.acos(data[i][j]);
             }
         }
@@ -1342,9 +1228,8 @@ public class DataManager extends Object
      * @return the arc cosines of the input data.
      */
 
-    public double[] acos(double[] data)
-    {
-        return acos(new double[][] {data})[0];
+    public double[] acos(double[] data) {
+        return acos(new double[][]{data})[0];
     }
 
     /**
@@ -1353,14 +1238,11 @@ public class DataManager extends Object
      * @return the arc tangents of the input data.
      */
 
-    public double[][] atan(double[] ...data)
-    {
+    public double[][] atan(double[]... data) {
         double[][] atanData = new double[data.length][];
-        for (int i = 0; i < data.length; i++)
-        {
+        for (int i = 0; i < data.length; i++) {
             atanData[i] = new double[data[i].length];
-            for (int j = 0; j < data[i].length; j++)
-            {
+            for (int j = 0; j < data[i].length; j++) {
                 atanData[i][j] = Math.atan(data[i][j]);
             }
         }
@@ -1374,9 +1256,8 @@ public class DataManager extends Object
      * @return the arc tangents of the input data.
      */
 
-    public double[] atan(double[] data)
-    {
-        return atan(new double[][] {data})[0];
+    public double[] atan(double[] data) {
+        return atan(new double[][]{data})[0];
     }
 
     /**
@@ -1390,11 +1271,9 @@ public class DataManager extends Object
      */
 
     public double[][] arcFunction(FunctionType option,
-                                  double[] ...data)
-    {
+                                  double[]... data) {
         double[][] arcData;
-        switch (option)
-        {
+        switch (option) {
             case ASIN:
                 arcData = asin(data);
                 break;
@@ -1423,9 +1302,8 @@ public class DataManager extends Object
      */
 
     public double[] arcFunction(FunctionType option,
-                                double[] data)
-    {
-        return arcFunction(option, new double[][] {data})[0];
+                                double[] data) {
+        return arcFunction(option, new double[][]{data})[0];
     }
 
     /**
@@ -1439,8 +1317,7 @@ public class DataManager extends Object
      */
 
     public double[][] arcFunction(String option,
-                                  double[] ...data)
-    {
+                                  double[]... data) {
         return arcFunction(FunctionType.valueOf(option.toUpperCase()), data);
     }
 
@@ -1455,8 +1332,7 @@ public class DataManager extends Object
      */
 
     public double[] arcFunction(String option,
-                                double[] data)
-    {
+                                double[] data) {
         return arcFunction(FunctionType.valueOf(option.toUpperCase()), data);
     }
 
@@ -1466,14 +1342,11 @@ public class DataManager extends Object
      * @return the hyperbolic sines of the input data.
      */
 
-    public double[][] sinh(double[] ...data)
-    {
+    public double[][] sinh(double[]... data) {
         double[][] sinhData = new double[data.length][];
-        for (int i = 0; i < data.length; i++)
-        {
+        for (int i = 0; i < data.length; i++) {
             sinhData[i] = new double[data[i].length];
-            for (int j = 0; j < data[i].length; j++)
-            {
+            for (int j = 0; j < data[i].length; j++) {
                 sinhData[i][j] = Math.sinh(data[i][j]);
             }
         }
@@ -1487,9 +1360,8 @@ public class DataManager extends Object
      * @return the hyperbolic sines of the input data.
      */
 
-    public double[] sinh(double[] data)
-    {
-        return sinh(new double[][] {data})[0];
+    public double[] sinh(double[] data) {
+        return sinh(new double[][]{data})[0];
     }
 
     /**
@@ -1498,14 +1370,11 @@ public class DataManager extends Object
      * @return the hyperbolic cosines of the input data.
      */
 
-    public double[][] cosh(double[] ...data)
-    {
+    public double[][] cosh(double[]... data) {
         double[][] coshData = new double[data.length][];
-        for (int i = 0; i < data.length; i++)
-        {
+        for (int i = 0; i < data.length; i++) {
             coshData[i] = new double[data[i].length];
-            for (int j = 0; j < data[i].length; j++)
-            {
+            for (int j = 0; j < data[i].length; j++) {
                 coshData[i][j] = Math.cosh(data[i][j]);
             }
         }
@@ -1519,9 +1388,8 @@ public class DataManager extends Object
      * @return the hyperbolic cosines of the input data.
      */
 
-    public double[] cosh(double[] data)
-    {
-        return cosh(new double[][] {data})[0];
+    public double[] cosh(double[] data) {
+        return cosh(new double[][]{data})[0];
     }
 
     /**
@@ -1530,14 +1398,11 @@ public class DataManager extends Object
      * @return the hyperbolic tangents of the input data.
      */
 
-    public double[][] tanh(double[] ...data)
-    {
+    public double[][] tanh(double[]... data) {
         double[][] tanhData = new double[data.length][];
-        for (int i = 0; i < data.length; i++)
-        {
+        for (int i = 0; i < data.length; i++) {
             tanhData[i] = new double[data[i].length];
-            for (int j = 0; j < data[i].length; j++)
-            {
+            for (int j = 0; j < data[i].length; j++) {
                 tanhData[i][j] = Math.tanh(data[i][j]);
             }
         }
@@ -1551,9 +1416,8 @@ public class DataManager extends Object
      * @return the hyperbolic tangents of the input data.
      */
 
-    public double[] tanh(double[] data)
-    {
-        return tanh(new double[][] {data})[0];
+    public double[] tanh(double[] data) {
+        return tanh(new double[][]{data})[0];
     }
 
     /**
@@ -1562,14 +1426,11 @@ public class DataManager extends Object
      * @return the inverse hyperbolic sines of the input data.
      */
 
-    public double[][] asinh(double[] ...data)
-    {
+    public double[][] asinh(double[]... data) {
         double[][] asinhData = new double[data.length][];
-        for (int i = 0; i < data.length; i++)
-        {
+        for (int i = 0; i < data.length; i++) {
             asinhData[i] = new double[data[i].length];
-            for (int j = 0; j < data[i].length; j++)
-            {
+            for (int j = 0; j < data[i].length; j++) {
                 asinhData[i][j] = Math.log(data[i][j] + Math.sqrt(data[i][j] *
                         data[i][j] + 1.0));
             }
@@ -1584,9 +1445,8 @@ public class DataManager extends Object
      * @return the inverse hyperbolic sines of the input data.
      */
 
-    public double[] asinh(double[] data)
-    {
-        return asinh(new double[][] {data})[0];
+    public double[] asinh(double[] data) {
+        return asinh(new double[][]{data})[0];
     }
 
     /**
@@ -1595,14 +1455,11 @@ public class DataManager extends Object
      * @return the inverse hyperbolic cosines of the input data.
      */
 
-    public double[][] acosh(double[] ...data)
-    {
+    public double[][] acosh(double[]... data) {
         double[][] acoshData = new double[data.length][];
-        for (int i = 0; i < data.length; i++)
-        {
+        for (int i = 0; i < data.length; i++) {
             acoshData[i] = new double[data[i].length];
-            for (int j = 0; j < data[i].length; j++)
-            {
+            for (int j = 0; j < data[i].length; j++) {
                 acoshData[i][j] = Math.log(data[i][j] + Math.sqrt(data[i][j] *
                         data[i][j] - 1.0));
             }
@@ -1617,9 +1474,8 @@ public class DataManager extends Object
      * @return the inverse hyperbolic cosines of the input data.
      */
 
-    public double[] acosh(double[] data)
-    {
-        return acosh(new double[][] {data})[0];
+    public double[] acosh(double[] data) {
+        return acosh(new double[][]{data})[0];
     }
 
     /**
@@ -1628,16 +1484,13 @@ public class DataManager extends Object
      * @return the inverse hyperbolic tangents of the input data.
      */
 
-    public double[][] atanh(double[] ...data)
-    {
+    public double[][] atanh(double[]... data) {
         double[][] atanhData = new double[data.length][];
-        for (int i = 0; i < data.length; i++)
-        {
+        for (int i = 0; i < data.length; i++) {
             atanhData[i] = new double[data[i].length];
-            for (int j = 0; j < data[i].length; j++)
-            {
+            for (int j = 0; j < data[i].length; j++) {
                 atanhData[i][j] = 0.5 * Math.log((1.0 + data[i][j]) /
-                                                 (1.0 - data[i][j]));
+                        (1.0 - data[i][j]));
             }
         }
 
@@ -1650,9 +1503,8 @@ public class DataManager extends Object
      * @return the inverse hyperbolic tangents of the input data.
      */
 
-    public double[] atanh(double[] data)
-    {
-        return atanh(new double[][] {data})[0];
+    public double[] atanh(double[] data) {
+        return atanh(new double[][]{data})[0];
     }
 
     /**
@@ -1666,11 +1518,9 @@ public class DataManager extends Object
      */
 
     public double[][] hyperbolicFunction(FunctionType option,
-                                         double[] ...data)
-    {
+                                         double[]... data) {
         double[][] hyperbolicData;
-        switch (option)
-        {
+        switch (option) {
             case SINH:
                 hyperbolicData = sinh(data);
                 break;
@@ -1699,9 +1549,8 @@ public class DataManager extends Object
      */
 
     public double[] hyperbolicFunction(FunctionType option,
-                                       double[] data)
-    {
-        return hyperbolicFunction(option, new double[][] {data})[0];
+                                       double[] data) {
+        return hyperbolicFunction(option, new double[][]{data})[0];
     }
 
     /**
@@ -1715,11 +1564,10 @@ public class DataManager extends Object
      */
 
     public double[][] hyperbolicFunction(String option,
-                                         double[] ...data)
-    {
+                                         double[]... data) {
 
         return hyperbolicFunction(FunctionType.valueOf(option.toUpperCase()),
-                                  data);
+                data);
     }
 
     /**
@@ -1733,10 +1581,9 @@ public class DataManager extends Object
      */
 
     public double[] hyperbolicFunction(String option,
-                                       double[] data)
-    {
+                                       double[] data) {
         return hyperbolicFunction(FunctionType.valueOf(option.toUpperCase()),
-                                  data);
+                data);
     }
 
     /**
@@ -1750,11 +1597,9 @@ public class DataManager extends Object
      */
 
     public double[][] inverseHyperbolicFunction(FunctionType option,
-                                                double[] ...data)
-    {
+                                                double[]... data) {
         double[][] inverseHyperbolicData;
-        switch (option)
-        {
+        switch (option) {
             case ASINH:
                 inverseHyperbolicData = asinh(data);
                 break;
@@ -1783,9 +1628,8 @@ public class DataManager extends Object
      */
 
     public double[] inverseHyperbolicFunction(FunctionType option,
-                                              double[] data)
-    {
-        return inverseHyperbolicFunction(option, new double[][] {data})[0];
+                                              double[] data) {
+        return inverseHyperbolicFunction(option, new double[][]{data})[0];
     }
 
     /**
@@ -1799,8 +1643,7 @@ public class DataManager extends Object
      */
 
     public double[][] inverseHyperbolicFunction(String option,
-                                                double[] ...data)
-    {
+                                                double[]... data) {
         return inverseHyperbolicFunction(FunctionType.valueOf(option.
                 toUpperCase()), data);
     }
@@ -1816,8 +1659,7 @@ public class DataManager extends Object
      */
 
     public double[] inverseHyperbolicFunction(String option,
-                                              double[] data)
-    {
+                                              double[] data) {
         return inverseHyperbolicFunction(FunctionType.valueOf("option"), data);
     }
 
@@ -1829,14 +1671,11 @@ public class DataManager extends Object
      */
 
     public double[][] log(double[][] data,
-                          double[][] base)
-    {
+                          double[][] base) {
         double[][] logData = new double[data.length][];
-        for (int i = 0; i < data.length; i++)
-        {
+        for (int i = 0; i < data.length; i++) {
             logData[i] = new double[data[i].length];
-            for (int j = 0; j < data[i].length; j++)
-            {
+            for (int j = 0; j < data[i].length; j++) {
                 logData[i][j] = Math.log(data[i][j]) / Math.log(base[i][j]);
             }
         }
@@ -1852,9 +1691,8 @@ public class DataManager extends Object
      */
 
     public double[] log(double[] data,
-                        double[] base)
-    {
-        return log(new double[][] {data}, new double[][] {base})[0];
+                        double[] base) {
+        return log(new double[][]{data}, new double[][]{base})[0];
     }
 
     /**
@@ -1865,14 +1703,11 @@ public class DataManager extends Object
      */
 
     public double[][] log(double[][] data,
-                          double base)
-    {
+                          double base) {
         double[][] logData = new double[data.length][];
-        for (int i = 0; i < data.length; i++)
-        {
+        for (int i = 0; i < data.length; i++) {
             logData[i] = new double[data[i].length];
-            for (int j = 0; j < data[i].length; j++)
-            {
+            for (int j = 0; j < data[i].length; j++) {
                 logData[i][j] = Math.log(data[i][j]) / Math.log(base);
             }
         }
@@ -1888,9 +1723,8 @@ public class DataManager extends Object
      */
 
     public double[] log(double[] data,
-                        double base)
-    {
-        return log(new double[][] {data}, base)[0];
+                        double base) {
+        return log(new double[][]{data}, base)[0];
     }
 
     /**
@@ -1899,8 +1733,7 @@ public class DataManager extends Object
      * @return the natural logarithms of the input data.
      */
 
-    public double[][] log(double[] ...data)
-    {
+    public double[][] log(double[]... data) {
         return log(data, Math.E);
     }
 
@@ -1910,9 +1743,8 @@ public class DataManager extends Object
      * @return the natural logarithms of the input data.
      */
 
-    public double[] log(double[] data)
-    {
-        return log(new double[][] {data})[0];
+    public double[] log(double[] data) {
+        return log(new double[][]{data})[0];
     }
 
     /**
@@ -1921,8 +1753,7 @@ public class DataManager extends Object
      * @return the logarithms (base 10) of the input data.
      */
 
-    public double[][] log10(double[] ...data)
-    {
+    public double[][] log10(double[]... data) {
         return log(data, 10);
     }
 
@@ -1932,9 +1763,8 @@ public class DataManager extends Object
      * @return the logarithms (base 10) of the input data.
      */
 
-    public double[] log10(double[] data)
-    {
-        return log10(new double[][] {data})[0];
+    public double[] log10(double[] data) {
+        return log10(new double[][]{data})[0];
     }
 
     /**
@@ -1943,14 +1773,11 @@ public class DataManager extends Object
      * @return the exponential transformation of the input data.
      */
 
-    public double[][] exp(double[] ...data)
-    {
+    public double[][] exp(double[]... data) {
         double[][] expData = new double[data.length][];
-        for (int i = 0; i < data.length; i++)
-        {
+        for (int i = 0; i < data.length; i++) {
             expData[i] = new double[data[i].length];
-            for (int j = 0; j < data[i].length; j++)
-            {
+            for (int j = 0; j < data[i].length; j++) {
                 expData[i][j] = Math.exp(data[i][j]);
             }
         }
@@ -1964,9 +1791,8 @@ public class DataManager extends Object
      * @return the exponential transformation of the input data.
      */
 
-    public double[] exp(double[] data)
-    {
-        return exp(new double[][] {data})[0];
+    public double[] exp(double[] data) {
+        return exp(new double[][]{data})[0];
     }
 
     /**
@@ -1975,14 +1801,11 @@ public class DataManager extends Object
      * @return the values of the input angles in radians.
      */
 
-    public double[][] toRadians(double[] ...data)
-    {
+    public double[][] toRadians(double[]... data) {
         double[][] radiansData = new double[data.length][];
-        for (int i = 0; i < data.length; i++)
-        {
+        for (int i = 0; i < data.length; i++) {
             radiansData[i] = new double[data[i].length];
-            for (int j = 0; j < data[i].length; j++)
-            {
+            for (int j = 0; j < data[i].length; j++) {
                 radiansData[i][j] = Math.toRadians(data[i][j]);
             }
         }
@@ -1996,9 +1819,8 @@ public class DataManager extends Object
      * @return the values of the input angles in radians.
      */
 
-    public double[] toRadians(double[] data)
-    {
-        return toRadians(new double[][] {data})[0];
+    public double[] toRadians(double[] data) {
+        return toRadians(new double[][]{data})[0];
     }
 
     /**
@@ -2008,21 +1830,15 @@ public class DataManager extends Object
      * @return the cumulative maxima of the input data.
      */
 
-    public double[][] cummax(double[] ...data)
-    {
+    public double[][] cummax(double[]... data) {
         double[][] cumData = new double[data.length][];
         double maxValue = data[0][0];
-        for (int i = 0; i < data.length; i++)
-        {
+        for (int i = 0; i < data.length; i++) {
             cumData[i] = new double[data[i].length];
-            for (int j = 0; j < data[i].length; j++)
-            {
-                if (data[i][j] <= maxValue)
-                {
+            for (int j = 0; j < data[i].length; j++) {
+                if (data[i][j] <= maxValue) {
                     cumData[i][j] = maxValue;
-                }
-                else
-                {
+                } else {
                     cumData[i][j] = data[i][j];
                     maxValue = data[i][j];
                 }
@@ -2039,9 +1855,8 @@ public class DataManager extends Object
      * @return the cumulative maxima of the input data.
      */
 
-    public double[] cummax(double[] data)
-    {
-        return cummax(new double[][] {data})[0];
+    public double[] cummax(double[] data) {
+        return cummax(new double[][]{data})[0];
     }
 
     /**
@@ -2051,21 +1866,15 @@ public class DataManager extends Object
      * @return the cumulative minima of the input data.
      */
 
-    public double[][] cummin(double[] ...data)
-    {
+    public double[][] cummin(double[]... data) {
         double[][] cumData = new double[data.length][];
         double minValue = data[0][0];
-        for (int i = 0; i < data.length; i++)
-        {
+        for (int i = 0; i < data.length; i++) {
             cumData[i] = new double[data[i].length];
-            for (int j = 0; j < data[i].length; j++)
-            {
-                if (data[i][j] >= minValue)
-                {
+            for (int j = 0; j < data[i].length; j++) {
+                if (data[i][j] >= minValue) {
                     cumData[i][j] = minValue;
-                }
-                else
-                {
+                } else {
                     cumData[i][j] = data[i][j];
                     minValue = data[i][j];
                 }
@@ -2082,9 +1891,8 @@ public class DataManager extends Object
      * @return the cumulative minima of the input data.
      */
 
-    public double[] cummin(double[] data)
-    {
-        return cummin(new double[][] {data})[0];
+    public double[] cummin(double[] data) {
+        return cummin(new double[][]{data})[0];
     }
 
     /**
@@ -2093,15 +1901,12 @@ public class DataManager extends Object
      * @return the cumulative sums of the input data.
      */
 
-    public double[][] cumsum(double[] ...data)
-    {
+    public double[][] cumsum(double[]... data) {
         double[][] cumData = new double[data.length][];
         double total = 0;
-        for (int i = 0; i < data.length; i++)
-        {
+        for (int i = 0; i < data.length; i++) {
             cumData[i] = new double[data[i].length];
-            for (int j = 0; j < data[i].length; j++)
-            {
+            for (int j = 0; j < data[i].length; j++) {
                 total += data[i][j];
                 cumData[i][j] = total;
             }
@@ -2116,9 +1921,8 @@ public class DataManager extends Object
      * @return the cumulative sums of the input data.
      */
 
-    public double[] cumsum(double[] data)
-    {
-        return cumsum(new double[][] {data})[0];
+    public double[] cumsum(double[] data) {
+        return cumsum(new double[][]{data})[0];
     }
 
     /**
@@ -2127,15 +1931,12 @@ public class DataManager extends Object
      * @return the cumulative products of the input data.
      */
 
-    public double[][] cumprod(double[] ...data)
-    {
+    public double[][] cumprod(double[]... data) {
         double[][] cumData = new double[data.length][];
         double total = 1;
-        for (int i = 0; i < data.length; i++)
-        {
+        for (int i = 0; i < data.length; i++) {
             cumData[i] = new double[data[i].length];
-            for (int j = 0; j < data[i].length; j++)
-            {
+            for (int j = 0; j < data[i].length; j++) {
                 total *= data[i][j];
                 cumData[i][j] = total;
             }
@@ -2150,9 +1951,8 @@ public class DataManager extends Object
      * @return the cumulative products of the input data.
      */
 
-    public double[] cumprod(double[] data)
-    {
-        return cumprod(new double[][] {data})[0];
+    public double[] cumprod(double[] data) {
+        return cumprod(new double[][]{data})[0];
     }
 
     /**
@@ -2167,11 +1967,9 @@ public class DataManager extends Object
      */
 
     public double[][] cumFunction(FunctionType option,
-                                  double[] ...data)
-    {
+                                  double[]... data) {
         double[][] cumData;
-        switch (option)
-        {
+        switch (option) {
             case CUMMIN:
                 cumData = cummin(data);
                 break;
@@ -2204,9 +2002,8 @@ public class DataManager extends Object
      */
 
     public double[] cumFunction(FunctionType option,
-                                double[] data)
-    {
-        return cumFunction(option, new double[][] {data})[0];
+                                double[] data) {
+        return cumFunction(option, new double[][]{data})[0];
     }
 
     /**
@@ -2221,8 +2018,7 @@ public class DataManager extends Object
      */
 
     public double[][] cumFunction(String option,
-                                  double[] ...data)
-    {
+                                  double[]... data) {
         return cumFunction(FunctionType.valueOf(option.toUpperCase()), data);
     }
 
@@ -2238,8 +2034,7 @@ public class DataManager extends Object
      */
 
     public double[] cumFunction(String option,
-                                double[] data)
-    {
+                                double[] data) {
         return cumFunction(FunctionType.valueOf(option.toUpperCase()), data);
     }
 
@@ -2249,18 +2044,15 @@ public class DataManager extends Object
      * @return the sorted data.
      */
 
-    public double[][] sort(double[] ...data)
-    {
+    public double[][] sort(double[]... data) {
         double[] oneDData = twoDToOneD(data);
         double[][] sortedData = new double[data.length][];
         int len = 0;
         Arrays.sort(oneDData);
-        for (int i = 0; i < data.length; i++)
-        {
+        for (int i = 0; i < data.length; i++) {
             sortedData[i] = new double[data[i].length];
             len += data[i].length;
-            for (int j = 0; j < data[i].length; j++)
-            {
+            for (int j = 0; j < data[i].length; j++) {
                 sortedData[i][j] = oneDData[len - data[i].length + j];
             }
         }
@@ -2274,9 +2066,8 @@ public class DataManager extends Object
      * @return the sorted data.
      */
 
-    public double[] sort(double[] data)
-    {
-        return sort(new double[][] {data})[0];
+    public double[] sort(double[] data) {
+        return sort(new double[][]{data})[0];
     }
 
     /**
@@ -2285,15 +2076,12 @@ public class DataManager extends Object
      * @return the one-dimentional array.
      */
 
-    public double[] twoDToOneD(double[] ...data)
-    {
+    public double[] twoDToOneD(double[]... data) {
         double[] oneDData = new double[length(data)];
         int len = 0;
-        for (int i = 0; i < data.length; i++)
-        {
+        for (int i = 0; i < data.length; i++) {
             len += data[i].length;
-            for (int j = data[i].length; j > 0; j--)
-            {
+            for (int j = data[i].length; j > 0; j--) {
                 oneDData[len - j] = data[i][data[i].length - j];
             }
         }
@@ -2307,11 +2095,9 @@ public class DataManager extends Object
      * @return the number of elements.
      */
 
-    public int length(double[] ...data)
-    {
+    public int length(double[]... data) {
         int len = 0;
-        for (int i = 0; i < data.length; i++)
-        {
+        for (int i = 0; i < data.length; i++) {
             len += data[i].length;
         }
 
@@ -2326,14 +2112,11 @@ public class DataManager extends Object
      */
 
     public double[][] add(double[][] data1,
-                          double[][] data2)
-    {
+                          double[][] data2) {
         double[][] addedData = new double[data1.length][];
-        for (int i = 0; i < data1.length; i++)
-        {
+        for (int i = 0; i < data1.length; i++) {
             addedData[i] = new double[data1[i].length];
-            for (int j = 0; j < data1[i].length; j++)
-            {
+            for (int j = 0; j < data1[i].length; j++) {
                 addedData[i][j] = data1[i][j] + data2[i][j];
             }
         }
@@ -2349,9 +2132,8 @@ public class DataManager extends Object
      */
 
     public double[] add(double[] data1,
-                        double[] data2)
-    {
-        return add(new double[][] {data1}, new double[][] {data2})[0];
+                        double[] data2) {
+        return add(new double[][]{data1}, new double[][]{data2})[0];
     }
 
     /**
@@ -2362,14 +2144,11 @@ public class DataManager extends Object
      */
 
     public double[][] minus(double[][] data1,
-                            double[][] data2)
-    {
+                            double[][] data2) {
         double[][] substractedData = new double[data1.length][];
-        for (int i = 0; i < data1.length; i++)
-        {
+        for (int i = 0; i < data1.length; i++) {
             substractedData[i] = new double[data1[i].length];
-            for (int j = 0; j < data1[i].length; j++)
-            {
+            for (int j = 0; j < data1[i].length; j++) {
                 substractedData[i][j] = data1[i][j] - data2[i][j];
             }
         }
@@ -2385,9 +2164,8 @@ public class DataManager extends Object
      */
 
     public double[] minus(double[] data1,
-                          double[] data2)
-    {
-        return minus(new double[][] {data1}, new double[][] {data2})[0];
+                          double[] data2) {
+        return minus(new double[][]{data1}, new double[][]{data2})[0];
     }
 
     /**
@@ -2398,14 +2176,11 @@ public class DataManager extends Object
      */
 
     public double[][] prod(double[][] data1,
-                           double[][] data2)
-    {
+                           double[][] data2) {
         double[][] multipliedData = new double[data1.length][];
-        for (int i = 0; i < data1.length; i++)
-        {
+        for (int i = 0; i < data1.length; i++) {
             multipliedData[i] = new double[data1[i].length];
-            for (int j = 0; j < data1[i].length; j++)
-            {
+            for (int j = 0; j < data1[i].length; j++) {
                 multipliedData[i][j] = data1[i][j] * data2[i][j];
             }
         }
@@ -2421,9 +2196,8 @@ public class DataManager extends Object
      */
 
     public double[] prod(double[] data1,
-                         double[] data2)
-    {
-        return prod(new double[][] {data1}, new double[][] {data2})[0];
+                         double[] data2) {
+        return prod(new double[][]{data1}, new double[][]{data2})[0];
     }
 
     /**
@@ -2434,14 +2208,11 @@ public class DataManager extends Object
      */
 
     public double[][] divide(double[][] data1,
-                             double[][] data2)
-    {
+                             double[][] data2) {
         double[][] dividedData = new double[data1.length][];
-        for (int i = 0; i < data1.length; i++)
-        {
+        for (int i = 0; i < data1.length; i++) {
             dividedData[i] = new double[data1[i].length];
-            for (int j = 0; j < data1[i].length; j++)
-            {
+            for (int j = 0; j < data1[i].length; j++) {
                 dividedData[i][j] = data1[i][j] / data2[i][j];
             }
         }
@@ -2457,9 +2228,8 @@ public class DataManager extends Object
      */
 
     public double[] divide(double[] data1,
-                           double[] data2)
-    {
-        return divide(new double[][] {data1}, new double[][] {data2})[0];
+                           double[] data2) {
+        return divide(new double[][]{data1}, new double[][]{data2})[0];
     }
 
     /**
@@ -2470,8 +2240,7 @@ public class DataManager extends Object
      */
 
     public double[][] multiply(double[][] matrix1,
-                               double[][] matrix2)
-    {
+                               double[][] matrix2) {
         return new Matrix(matrix1).times(new Matrix(matrix2)).getArray();
     }
 
@@ -2483,9 +2252,8 @@ public class DataManager extends Object
      */
 
     public double[] multiply(double[] matrix1,
-                             double[] matrix2)
-    {
-        return multiply(new double[][] {matrix1}, new double[][] {matrix2})[0];
+                             double[] matrix2) {
+        return multiply(new double[][]{matrix1}, new double[][]{matrix2})[0];
     }
 
     /**
@@ -2494,8 +2262,7 @@ public class DataManager extends Object
      * @return the inverse of the input matrix.
      */
 
-    public double[][] inverse(double[] ...matrix)
-    {
+    public double[][] inverse(double[]... matrix) {
         return new Matrix(matrix).inverse().getArray();
     }
 
@@ -2505,8 +2272,7 @@ public class DataManager extends Object
      * @return the transpose of the input matrix.
      */
 
-    public double[][] transpose(double[] ...matrix)
-    {
+    public double[][] transpose(double[]... matrix) {
         return new Matrix(matrix).transpose().getArray();
     }
 
@@ -2516,9 +2282,8 @@ public class DataManager extends Object
      * @return the transpose of the input vector.
      */
 
-    public double[] transpose(double[] matrix)
-    {
-        return transpose(new double[][] {matrix})[0];
+    public double[] transpose(double[] matrix) {
+        return transpose(new double[][]{matrix})[0];
     }
 
     /**
@@ -2527,15 +2292,14 @@ public class DataManager extends Object
      * @return the eigenvalus and eigenvecotrs of the input matrix.
      */
 
-    public Hashtable eigenAnalysis(double[] ...matrix)
-    {
+    public Hashtable eigenAnalysis(double[]... matrix) {
         Hashtable<String, Object> eigenTable = new Hashtable<String, Object>();
         EigenvalueDecomposition eigenvalueDecomposition =
                 new EigenvalueDecomposition(new Matrix(matrix));
         eigenTable.put("Eigenvalues",
-                       eigenvalueDecomposition.getRealEigenvalues());
+                eigenvalueDecomposition.getRealEigenvalues());
         eigenTable.put("Eigenvectors",
-                       eigenvalueDecomposition.getV().getArray());
+                eigenvalueDecomposition.getV().getArray());
 
         return eigenTable;
     }
@@ -2546,8 +2310,7 @@ public class DataManager extends Object
      * @return the eigenvalus and eigenvecotrs of the input matrix.
      */
 
-    public Vector eigen(double[] ...matrix)
-    {
+    public Vector eigen(double[]... matrix) {
         EigenvalueDecomposition eigenvalueDecomposition =
                 new EigenvalueDecomposition(new Matrix(matrix));
         Vector eigenTable = new Vector();
@@ -2563,8 +2326,7 @@ public class DataManager extends Object
      * @return the eigenvalus of the input matrix.
      */
 
-    public double[] eigenvalue(double[] ...matrix)
-    {
+    public double[] eigenvalue(double[]... matrix) {
         return (double[]) eigenAnalysis(matrix).get("Eigenvalues");
     }
 
@@ -2574,8 +2336,7 @@ public class DataManager extends Object
      * @return the eigenvecotrs of the input matrix.
      */
 
-    public double[][] eigenvectors(double[] ...matrix)
-    {
+    public double[][] eigenvectors(double[]... matrix) {
         return (double[][]) eigenAnalysis(matrix).get("Eigenvectors");
     }
 
@@ -2585,8 +2346,7 @@ public class DataManager extends Object
      * @return the determinant of the input matrix.
      */
 
-    public double det(double[] ...matrix)
-    {
+    public double det(double[]... matrix) {
         return new Matrix(matrix).det();
     }
 
@@ -2596,9 +2356,8 @@ public class DataManager extends Object
      * @return the determinant of the input matrix.
      */
 
-    public double[][] determinant(double[] ...matrix)
-    {
-        return new double[][] {{det(matrix)}};
+    public double[][] determinant(double[]... matrix) {
+        return new double[][]{{det(matrix)}};
     }
 
     /**
@@ -2609,12 +2368,10 @@ public class DataManager extends Object
      */
 
     public double[][] dataManipulation(FunctionType option,
-                                       double[] ...data)
-    {
+                                       double[]... data) {
         double[][] transformedData;
         Vector eigenTable;
-        switch (option)
-        {
+        switch (option) {
             case RECIPROCAL:
                 transformedData = reciprocal(data);
                 break;
@@ -2682,8 +2439,7 @@ public class DataManager extends Object
                 eigenTable = eigen(data);
                 transformedData = new double[data.length + 1][];
                 transformedData[0] = (double[]) eigenTable.get(0);
-                for (int i = 0; i < data.length; i++)
-                {
+                for (int i = 0; i < data.length; i++) {
                     transformedData[i + 1] =
                             ((double[][]) eigenTable.get(1))[i];
                 }
@@ -2731,8 +2487,7 @@ public class DataManager extends Object
      */
 
     public double[][] dataManipulation(String option,
-                                       double[] ...data)
-    {
+                                       double[]... data) {
         return dataManipulation(FunctionType.valueOf(option), data);
     }
 
@@ -2746,11 +2501,9 @@ public class DataManager extends Object
 
     public double[][] dataManipulation(OperationType option,
                                        double[][] data1,
-                                       double[][] data2)
-    {
+                                       double[][] data2) {
         double[][] operationData;
-        switch (option)
-        {
+        switch (option) {
             case ADD:
                 operationData = add(data1, data2);
                 break;
@@ -2787,8 +2540,7 @@ public class DataManager extends Object
 
     public double[][] dataManipulation(String option,
                                        double[][] data1,
-                                       double[][] data2)
-    {
+                                       double[][] data2) {
         return dataManipulation(OperationType.valueOf(option), data1, data2);
     }
 
@@ -2798,16 +2550,14 @@ public class DataManager extends Object
      * @return the square root matrix of the input matrix.
      */
 
-    public Matrix sqrtMatrix(double[] ...matrix)
-    {
+    public Matrix sqrtMatrix(double[]... matrix) {
         Matrix M = new Matrix(matrix);
         EigenvalueDecomposition eigenDecomposition = new
                 EigenvalueDecomposition(M);
         double[] eigenValues = eigenDecomposition.getRealEigenvalues();
         double[][] sqrtEigenValues = zeroArray(eigenValues.length,
-                                               eigenValues.length);
-        for (int i = 0; i < eigenValues.length; i++)
-        {
+                eigenValues.length);
+        for (int i = 0; i < eigenValues.length; i++) {
             sqrtEigenValues[i][i] = Math.sqrt(eigenValues[i]);
         }
 
@@ -2821,133 +2571,70 @@ public class DataManager extends Object
      * @return the FunctionType value associated with the text.
      */
 
-    public FunctionType textToFunctionType(String text)
-    {
-        if (text.equalsIgnoreCase("reciprocal (1/x)"))
-        {
+    public FunctionType textToFunctionType(String text) {
+        if (text.equalsIgnoreCase("reciprocal (1/x)")) {
             return RECIPROCAL;
-        }
-        else if (text.equalsIgnoreCase("square (x^2)"))
-        {
+        } else if (text.equalsIgnoreCase("square (x^2)")) {
             return SQUARE;
-        }
-        else if (text.equalsIgnoreCase("cubic (x^3)"))
-        {
+        } else if (text.equalsIgnoreCase("cubic (x^3)")) {
             return CUBE;
-        }
-        else if (text.equalsIgnoreCase("absolute value"))
-        {
+        } else if (text.equalsIgnoreCase("absolute value")) {
             return ABS;
-        }
-        else if (text.equalsIgnoreCase("arc cosine"))
-        {
+        } else if (text.equalsIgnoreCase("arc cosine")) {
             return ACOS;
-        }
-        else if (text.equalsIgnoreCase("arc sine"))
-        {
+        } else if (text.equalsIgnoreCase("arc sine")) {
             return ASIN;
-        }
-        else if (text.equalsIgnoreCase("arc tangent"))
-        {
+        } else if (text.equalsIgnoreCase("arc tangent")) {
             return ATAN;
-        }
-        else if (text.equalsIgnoreCase("inverse hyperbolic cosine"))
-        {
+        } else if (text.equalsIgnoreCase("inverse hyperbolic cosine")) {
             return ACOSH;
-        } else if (text.equalsIgnoreCase("inverse hyperbolic sine"))
-        {
+        } else if (text.equalsIgnoreCase("inverse hyperbolic sine")) {
             return ASINH;
-        }
-        else if (text.equalsIgnoreCase("inverse hyperbolic tangent"))
-        {
+        } else if (text.equalsIgnoreCase("inverse hyperbolic tangent")) {
             return ATANH;
-        }
-        else if (text.equalsIgnoreCase("cubic root"))
-        {
+        } else if (text.equalsIgnoreCase("cubic root")) {
             return CBRT;
-        }
-        else if (text.equalsIgnoreCase("cosine"))
-        {
+        } else if (text.equalsIgnoreCase("cosine")) {
             return COS;
-        }
-        else if (text.equalsIgnoreCase("sine"))
-        {
+        } else if (text.equalsIgnoreCase("sine")) {
             return SIN;
-        }
-        else if (text.equalsIgnoreCase("hyperbolic cosine"))
-        {
+        } else if (text.equalsIgnoreCase("hyperbolic cosine")) {
             return COSH;
-        }
-        else if (text.equalsIgnoreCase("cumulative maxima"))
-        {
+        } else if (text.equalsIgnoreCase("cumulative maxima")) {
             return CUMMAX;
-        }
-        else if (text.equalsIgnoreCase("cumulative minima"))
-        {
+        } else if (text.equalsIgnoreCase("cumulative minima")) {
             return CUMMIN;
-        }
-        else if (text.equalsIgnoreCase("cumulative product"))
-        {
+        } else if (text.equalsIgnoreCase("cumulative product")) {
             return CUMPROD;
-        }
-        else if (text.equalsIgnoreCase("cumulative sum"))
-        {
+        } else if (text.equalsIgnoreCase("cumulative sum")) {
             return CUMSUM;
-        }
-        else if (text.equalsIgnoreCase("exponential"))
-        {
+        } else if (text.equalsIgnoreCase("exponential")) {
             return EXP;
-        }
-        else if (text.equalsIgnoreCase("natural logarithm (base e)"))
-        {
+        } else if (text.equalsIgnoreCase("natural logarithm (base e)")) {
             return LOG;
-        }
-        else if (text.equalsIgnoreCase("base 10 logarithm"))
-        {
+        } else if (text.equalsIgnoreCase("base 10 logarithm")) {
             return LOG10;
-        }
-        else if (text.equalsIgnoreCase("inverse matrix"))
-        {
+        } else if (text.equalsIgnoreCase("inverse matrix")) {
             return INVERSE;
-        }
-        else if (text.equalsIgnoreCase("inverse matrix"))
-        {
+        } else if (text.equalsIgnoreCase("inverse matrix")) {
             return INVERSE;
-        }
-        else if (text.equalsIgnoreCase("matrix transpose"))
-        {
+        } else if (text.equalsIgnoreCase("matrix transpose")) {
             return TRANSPOSE;
-        }
-        else if (text.equalsIgnoreCase("eigen analysis"))
-        {
+        } else if (text.equalsIgnoreCase("eigen analysis")) {
             return EIGEN;
-        }
-        else if (text.equalsIgnoreCase("matrix determinant"))
-        {
+        } else if (text.equalsIgnoreCase("matrix determinant")) {
             return DET;
-        }
-        else if (text.equalsIgnoreCase("hyperbolic sine"))
-        {
+        } else if (text.equalsIgnoreCase("hyperbolic sine")) {
             return SINH;
-        }
-        else if (text.equalsIgnoreCase("sort"))
-        {
+        } else if (text.equalsIgnoreCase("sort")) {
             return SORT;
-        }
-        else if (text.equalsIgnoreCase("square root"))
-        {
+        } else if (text.equalsIgnoreCase("square root")) {
             return SQRT;
-        }
-        else if (text.equalsIgnoreCase("tangent"))
-        {
+        } else if (text.equalsIgnoreCase("tangent")) {
             return TAN;
-        }
-        else if (text.equalsIgnoreCase("hyperbolic tangent"))
-        {
+        } else if (text.equalsIgnoreCase("hyperbolic tangent")) {
             return TANH;
-        }
-        else
-        {
+        } else {
             return TORADIANS;
         }
 
@@ -2959,87 +2646,20 @@ public class DataManager extends Object
      * @return the OperationType value associated with the text.
      */
 
-    public OperationType textToOperationType(String text)
-    {
-        if (text.equalsIgnoreCase("+"))
-        {
+    public OperationType textToOperationType(String text) {
+        if (text.equalsIgnoreCase("+")) {
             return ADD;
-        }
-        else if (text.equalsIgnoreCase("-"))
-        {
+        } else if (text.equalsIgnoreCase("-")) {
             return MINUS;
-        }
-        else if (text.equalsIgnoreCase("*"))
-        {
+        } else if (text.equalsIgnoreCase("*")) {
             return PROD;
-        }
-        else if (text.equalsIgnoreCase("/"))
-        {
+        } else if (text.equalsIgnoreCase("/")) {
             return DIVIDE;
-        }
-        else if (text.equalsIgnoreCase("^"))
-        {
+        } else if (text.equalsIgnoreCase("^")) {
             return POW;
-        }
-        else
-        {
+        } else {
             return MULTIPLY;
         }
-    }
-
-    /**
-     * Converts the original data to a double array.
-     * @param fromIndex the starting index.
-     * @param dataObject the original data.
-     * @return the double array.
-     * @exception IllegalArgumentException wrong input data.
-     */
-
-    public static double[][] castDoubleObject(int fromIndex,
-                                              Object[] dataObject)
-    {
-        double[][] doubleObject = new double[dataObject.length - fromIndex][];
-        for (int i = fromIndex; i < dataObject.length; i++)
-        {
-            if (!dataObject[i].getClass().getName().equalsIgnoreCase("[D"))
-            {
-                throw new IllegalArgumentException("Wrong input data type.");
-            }
-            else
-            {
-                doubleObject[i - fromIndex] = (double[]) dataObject[i];
-            }
-        }
-
-        return doubleObject;
-    }
-
-    /**
-     * Converts the original data to a string array.
-     * @param fromIndex the starting index.
-     * @param dataObject the original data.
-     * @return the string array.
-     * @exception IllegalArgumentException wrong input data.
-     */
-
-    public static String[][] castStringObject(int fromIndex,
-                                              Object[] dataObject)
-    {
-        String[][] stringObject = new String[dataObject.length - fromIndex][];
-        for (int i = fromIndex; i < dataObject.length; i++)
-        {
-            if (!dataObject[i].getClass().getName().equalsIgnoreCase(
-                    "[Ljava.lang.String;"))
-            {
-                throw new IllegalArgumentException("Wrong input data type.");
-            }
-            else
-            {
-                stringObject[i - fromIndex] = (String[]) dataObject[i];
-            }
-        }
-
-        return stringObject;
     }
 
     /**
@@ -3051,16 +2671,13 @@ public class DataManager extends Object
      * @return the covariate matrix with the first row equal to the unit vector.
      */
 
-    public double[][] addIntercept(double[] ...covariate)
-    {
+    public double[][] addIntercept(double[]... covariate) {
         double[][] covariateWithIntercept =
-            new double[covariate.length + 1][covariate[0].length];
-        for (int i = 0; i < covariate[0].length; i++)
-        {
+                new double[covariate.length + 1][covariate[0].length];
+        for (int i = 0; i < covariate[0].length; i++) {
             covariateWithIntercept[0][i] = 1.0;
         }
-        for (int i = 1; i < covariateWithIntercept.length; i++)
-        {
+        for (int i = 1; i < covariateWithIntercept.length; i++) {
             covariateWithIntercept[i] = covariate[i - 1];
         }
 
@@ -3075,54 +2692,41 @@ public class DataManager extends Object
      * @return the index.
      */
 
-    public Hashtable dataLengthIndex(Object ...dataObject)
-    {
+    public Hashtable dataLengthIndex(Object... dataObject) {
         int dataLengthIndex;
         double[][] doubleCovariate;
         Hashtable index = new Hashtable();
-        if (dataObject != null)
-        {
+        if (dataObject != null) {
             if (dataObject.length >= 3 &&
-                dataObject[0].getClass().getName().equalsIgnoreCase("[[D") &&
-                dataObject[1].getClass().getName().equalsIgnoreCase("[D") &&
-                dataObject[2].getClass().getName().equalsIgnoreCase("[D"))
-            {
+                    dataObject[0].getClass().getName().equalsIgnoreCase("[[D") &&
+                    dataObject[1].getClass().getName().equalsIgnoreCase("[D") &&
+                    dataObject[2].getClass().getName().equalsIgnoreCase("[D")) {
                 dataLengthIndex = 1;
                 doubleCovariate = castDoubleObject(2, dataObject);
                 index.put("doubleCovariate", doubleCovariate);
-            }
-            else if (dataObject.length == 3 &&
-                     dataObject[0].getClass().getName().
-                     equalsIgnoreCase("[[D") &&
-                     dataObject[1].getClass().getName().
-                     equalsIgnoreCase("[D") &&
-                     dataObject[2].getClass().getName().equalsIgnoreCase("[[D"))
-            {
+            } else if (dataObject.length == 3 &&
+                    dataObject[0].getClass().getName().
+                            equalsIgnoreCase("[[D") &&
+                    dataObject[1].getClass().getName().
+                            equalsIgnoreCase("[D") &&
+                    dataObject[2].getClass().getName().equalsIgnoreCase("[[D")) {
                 dataLengthIndex = 2;
-            }
-            else if (dataObject.length >= 2 &&
-                     dataObject[0].getClass().getName().
-                     equalsIgnoreCase("[D") &&
-                     dataObject[1].getClass().getName().equalsIgnoreCase("[D"))
-            {
+            } else if (dataObject.length >= 2 &&
+                    dataObject[0].getClass().getName().
+                            equalsIgnoreCase("[D") &&
+                    dataObject[1].getClass().getName().equalsIgnoreCase("[D")) {
                 dataLengthIndex = 3;
                 doubleCovariate = castDoubleObject(1, dataObject);
                 index.put("doubleCovariate", doubleCovariate);
-            }
-            else if (dataObject.length == 2 &&
-                     dataObject[0].getClass().getName().
-                     equalsIgnoreCase("[D") &&
-                     dataObject[1].getClass().getName().equalsIgnoreCase("[[D"))
-            {
+            } else if (dataObject.length == 2 &&
+                    dataObject[0].getClass().getName().
+                            equalsIgnoreCase("[D") &&
+                    dataObject[1].getClass().getName().equalsIgnoreCase("[[D")) {
                 dataLengthIndex = 4;
-            }
-            else
-            {
+            } else {
                 throw new IllegalArgumentException("Wrong input data.");
             }
-        }
-        else
-        {
+        } else {
             dataLengthIndex = 0;
         }
         index.put("dataLengthIndex", dataLengthIndex);

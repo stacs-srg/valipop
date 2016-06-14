@@ -7,11 +7,11 @@ public class InsufficientNumberOfPeopleException extends Throwable {
 
     private String message;
 
-    public String getMessage() {
-        return message;
-    }
-
     public InsufficientNumberOfPeopleException(String message) {
         this.message = message;
+    }
+
+    public String getMessage() {
+        return message;
     }
 }

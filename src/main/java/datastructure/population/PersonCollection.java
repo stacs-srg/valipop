@@ -15,6 +15,14 @@ import java.util.Iterator;
  */
 public abstract class PersonCollection implements DateBounds {
 
+    protected Date startDate;
+    protected Date endDate;
+
+    public PersonCollection(Date startDate, Date endDate) {
+        this.startDate = startDate;
+        this.endDate = endDate;
+    }
+
     abstract Collection<IPerson> getAll();
 
     abstract Collection<IPerson> getByYear(Date year);
@@ -43,14 +51,6 @@ public abstract class PersonCollection implements DateBounds {
         }
 
         return people;
-    }
-
-    protected Date startDate;
-    protected Date endDate;
-
-    public PersonCollection (Date startDate, Date endDate) {
-        this.startDate = startDate;
-        this.endDate = endDate;
     }
 
     @Override

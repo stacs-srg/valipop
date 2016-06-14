@@ -75,7 +75,7 @@ public class ChildrenAnalytics {
             final List<IPartnership> partnerships = person.getPartnerships();
             if (partnerships != null) {
 
-                for (final IPartnership partnership  : partnerships) {
+                for (final IPartnership partnership : partnerships) {
 
                     final List<IPerson> child_ids = partnership.getChildren();
 

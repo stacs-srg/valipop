@@ -5,7 +5,8 @@ package plots.statgraphics.eda;
  * <p>Description: The statistical graphics</p>
  * <p>Copyright: Copyright (c) 2009</p>
  * <p>Company: Tung Hai University </p>
- * @author  Wen Hsiang Wei
+ *
+ * @author Wen Hsiang Wei
  * @version 1.4
  */
 
@@ -13,6 +14,7 @@ import java.util.Hashtable;
 
 import plots.statgraphics.GraphicalAnalysis;
 import plots.statgraphics.util.Plot2DFactory;
+
 import static plots.statgraphics.util.Argument.*;
 
 /**
@@ -65,8 +67,7 @@ import static plots.statgraphics.util.Argument.*;
  * <br> new PlotFrameFactory().putPlotFrame(pf);
  */
 
-public class ScatterPlot extends GraphicalAnalysis
-{
+public class ScatterPlot extends GraphicalAnalysis {
 
     /**
      * The data series for the x-coordinate.
@@ -114,7 +115,8 @@ public class ScatterPlot extends GraphicalAnalysis
      * Default ScatterPlot constructor.
      */
 
-    public ScatterPlot() {}
+    public ScatterPlot() {
+    }
 
     /**
      * Creates a new scatter plot given the input arguments and data.
@@ -133,22 +135,18 @@ public class ScatterPlot extends GraphicalAnalysis
      */
 
     public ScatterPlot(Hashtable argument,
-                       Object ...dataObject)
-    {
+                       Object... dataObject) {
         this.argument = argument;
         this.dataObject = dataObject;
-        if (dataObject != null)
-        {
+        if (dataObject != null) {
             if (argument.get(DATA_NAMES) != null &&
-                argument.get(TITLE) != null &&
-                argument.get(XLABEL) != null &&
-                argument.get(YLABEL) != null)
-            {
+                    argument.get(TITLE) != null &&
+                    argument.get(XLABEL) != null &&
+                    argument.get(YLABEL) != null) {
                 if (dataObject.length == 2 &&
-                    dataObject[0].getClass().getName().
-                    equalsIgnoreCase("[[D") &&
-                    dataObject[1].getClass().getName().equalsIgnoreCase("[[D"))
-                {
+                        dataObject[0].getClass().getName().
+                                equalsIgnoreCase("[[D") &&
+                        dataObject[1].getClass().getName().equalsIgnoreCase("[[D")) {
                     graphicalAnalysis = new ScatterPlot(
                             (String[]) argument.get(DATA_NAMES),
                             (String) argument.get(TITLE),
@@ -156,60 +154,45 @@ public class ScatterPlot extends GraphicalAnalysis
                             (String) argument.get(YLABEL),
                             (double[][]) dataObject[0],
                             (double[][]) dataObject[1]);
-                }
-                else if (dataObject.length == 2 &&
-                         dataObject[0].getClass().getName().
-                         equalsIgnoreCase("[D") &&
-                         dataObject[1].getClass().getName().
-                         equalsIgnoreCase("[D"))
-                {
+                } else if (dataObject.length == 2 &&
+                        dataObject[0].getClass().getName().
+                                equalsIgnoreCase("[D") &&
+                        dataObject[1].getClass().getName().
+                                equalsIgnoreCase("[D")) {
                     graphicalAnalysis = new ScatterPlot(
                             (String) argument.get(DATA_NAMES),
                             (String) argument.get(TITLE),
                             (String) argument.get(XLABEL),
                             (String) argument.get(YLABEL),
                             (double[]) dataObject[0], (double[]) dataObject[1]);
-                }
-                else
-                {
+                } else {
                     throw new IllegalArgumentException("Wrong input data.");
                 }
-            }
-            else if (argument.get(DATA_NAMES) != null)
-            {
+            } else if (argument.get(DATA_NAMES) != null) {
                 if (dataObject.length == 2 &&
-                    dataObject[0].getClass().getName().
-                    equalsIgnoreCase("[[D") &&
-                    dataObject[1].getClass().getName().equalsIgnoreCase("[[D"))
-                {
+                        dataObject[0].getClass().getName().
+                                equalsIgnoreCase("[[D") &&
+                        dataObject[1].getClass().getName().equalsIgnoreCase("[[D")) {
                     graphicalAnalysis = new ScatterPlot(
                             (String[]) argument.get(DATA_NAMES),
                             (double[][]) dataObject[0],
                             (double[][]) dataObject[1]);
-                }
-                else if (dataObject.length == 2 &&
-                         dataObject[0].getClass().getName().
-                         equalsIgnoreCase("[D") &&
-                         dataObject[1].getClass().getName().
-                         equalsIgnoreCase("[D"))
-                {
+                } else if (dataObject.length == 2 &&
+                        dataObject[0].getClass().getName().
+                                equalsIgnoreCase("[D") &&
+                        dataObject[1].getClass().getName().
+                                equalsIgnoreCase("[D")) {
                     graphicalAnalysis = new ScatterPlot(
                             (String) argument.get(DATA_NAMES),
                             (double[]) dataObject[0], (double[]) dataObject[1]);
-                }
-                else
-                {
+                } else {
                     throw new IllegalArgumentException("Wrong input data.");
                 }
-            }
-            else
-            {
+            } else {
                 throw new IllegalArgumentException(
                         "Wrong input argument(s) or data.");
             }
-        }
-        else
-        {
+        } else {
             throw new IllegalArgumentException(
                     "Wrong input argument(s) or data.");
         }
@@ -240,8 +223,7 @@ public class ScatterPlot extends GraphicalAnalysis
                        String xLabel,
                        String yLabel,
                        double[][] xData,
-                       double[][] yData)
-    {
+                       double[][] yData) {
         this.xData = xData;
         this.yData = yData;
         this.dataNames = dataNames;
@@ -272,8 +254,7 @@ public class ScatterPlot extends GraphicalAnalysis
 
     public ScatterPlot(String[] dataNames,
                        double[][] xData,
-                       double[][] yData)
-    {
+                       double[][] yData) {
         this(dataNames, "Scatter Plot", "Range", "Value", xData, yData);
     }
 
@@ -299,10 +280,9 @@ public class ScatterPlot extends GraphicalAnalysis
                        String xLabel,
                        String yLabel,
                        double[] xData,
-                       double[] yData)
-    {
-        this(new String[] {dataName}, title, xLabel, yLabel,
-             new double[][] {xData}, new double[][] {yData});
+                       double[] yData) {
+        this(new String[]{dataName}, title, xLabel, yLabel,
+                new double[][]{xData}, new double[][]{yData});
     }
 
     /**
@@ -321,8 +301,7 @@ public class ScatterPlot extends GraphicalAnalysis
 
     public ScatterPlot(String dataName,
                        double[] xData,
-                       double[] yData)
-    {
+                       double[] yData) {
         this(dataName, "Scatter Plot", "Range", "Value", xData, yData);
     }
 

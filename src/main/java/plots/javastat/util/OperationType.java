@@ -5,6 +5,7 @@ package plots.javastat.util;
  * <p>Description: JAVA programs for statistical computations</p>
  * <p>Copyright: Copyright (c) 2009</p>
  * <p>Company: Tung Hai University</p>
+ *
  * @author Wen Hsiang Wei
  * @version 1.4
  */
@@ -13,42 +14,41 @@ package plots.javastat.util;
  * The enumerated operations for data manipulation.
  */
 
-public enum OperationType
-{
+public enum OperationType {
 
-        /**
-         * Addition.
-         */
+    /**
+     * Addition.
+     */
 
-        ADD,
+    ADD,
 
-        /**
-         * Substraction.
-         */
+    /**
+     * Substraction.
+     */
 
-        MINUS,
+    MINUS,
 
-        /**
-         * Product.
-         */
+    /**
+     * Product.
+     */
 
-        PROD,
+    PROD,
 
-        /**
-         * Division.
-         */
+    /**
+     * Division.
+     */
 
-        DIVIDE,
+    DIVIDE,
 
-        /**
-         * Multiplication.
-         */
+    /**
+     * Multiplication.
+     */
 
-        MULTIPLY,
+    MULTIPLY,
 
-        /**
-         * Power.
-         */
+    /**
+     * Power.
+     */
 
-        POW
+    POW
 }

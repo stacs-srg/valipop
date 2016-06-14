@@ -72,7 +72,7 @@ public class DateUtils {
     }
 
     public static Date getEarlistDate(Date startDate, Date startDate1) {
-        if(dateBefore(startDate, startDate1)) {
+        if (dateBefore(startDate, startDate1)) {
             return startDate;
         } else {
             return startDate1;
@@ -80,7 +80,7 @@ public class DateUtils {
     }
 
     public static Date getLatestDate(Date startDate, Date startDate1) {
-        if(dateBefore(startDate, startDate1)) {
+        if (dateBefore(startDate, startDate1)) {
             return startDate1;
         } else {
             return startDate;

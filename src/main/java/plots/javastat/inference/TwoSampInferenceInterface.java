@@ -5,6 +5,7 @@ package plots.javastat.inference;
  * <p>Description: JAVA programs for statistical computations</p>
  * <p>Copyright: Copyright (c) 2009</p>
  * <p>Company: Tung Hai University</p>
+ *
  * @author Wen Hsiang Wei
  * @version 1.4
  */
@@ -13,4 +14,5 @@ package plots.javastat.inference;
  * The inferface for a two-sample inference problem.
  */
 
-public interface TwoSampInferenceInterface {}
+public interface TwoSampInferenceInterface {
+}

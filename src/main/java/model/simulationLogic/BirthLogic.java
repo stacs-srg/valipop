@@ -30,7 +30,7 @@ public class BirthLogic {
 
 
     public static int handleBirths(Config config, DateClock currentTime, PopulationStatistics desiredPopulationStatistics,
-                              PeopleCollection people) throws InsufficientNumberOfPeopleException {
+                                   PeopleCollection people) throws InsufficientNumberOfPeopleException {
 
         int birthCount = 0;
 
@@ -72,7 +72,7 @@ public class BirthLogic {
                     DataKey key = new DataKey(age, order, maxBirthOrderInCohort, women.size());
 
                     double birthRate = desiredPopulationStatistics.getOrderedBirthRates(currentTime).getCorrectingData(key) * config.getBirthTimeStep().toDecimalRepresentation();
-                            //taperedOrderedBirthRatesForMothersOfThisAge.getData(order) * config.getBirthTimeStep().toDecimalRepresentation();
+                    //taperedOrderedBirthRatesForMothersOfThisAge.getData(order) * config.getBirthTimeStep().toDecimalRepresentation();
 
 //                    System.out.println("Age " + age + " | Order " + order + " | BR " + birthRate / config.getBirthTimeStep().toDecimalRepresentation());
 
@@ -97,8 +97,8 @@ public class BirthLogic {
                         eligableWomen = eligableMothers(women, currentTime);
 //                        System.out.println("EW: " + eligableWomen);
 
-                        if(eligableWomen < totalNumberOfMothers || eligableWomen == 0) {
-                            if(eligableWomen == 0) {
+                        if (eligableWomen < totalNumberOfMothers || eligableWomen == 0) {
+                            if (eligableWomen == 0) {
                                 birthRate = 0.0;
 //                                break;
                             } else {
@@ -112,7 +112,7 @@ public class BirthLogic {
                             log.info("Rescaling Birth Rate | Current Date: " + currentTime.toString() + " - Insufficient number of mothers: Eligible women " + women.size() + " | Mothers Required " + totalNumberOfMothers + " | Age " + age + " | Order " + order);
                         }
 
-                    } while(eligableWomen < totalNumberOfMothers);
+                    } while (eligableWomen < totalNumberOfMothers);
 
 
                     birthCount += numberOfChildrenToBirth;
@@ -195,9 +195,9 @@ public class BirthLogic {
 
         int count = 0;
 
-        for(IPerson w : women) {
-            if(w.noRecentChildren(currentTime)) {
-                count ++;
+        for (IPerson w : women) {
+            if (w.noRecentChildren(currentTime)) {
+                count++;
             }
         }
 
@@ -366,7 +366,6 @@ public class BirthLogic {
 //        MapUtils.print("E", temp, 1, 1, 4);
 
 
-
         return MapUtils.floorAllValuesInMap(temp);
 
 
@@ -399,7 +398,7 @@ public class BirthLogic {
 
                 uptoOnNumberLine += remainder / sumOfQualifyingRemainders;
                 if (random < uptoOnNumberLine) {
-                    if(motherCount - 1 >= 0) {
+                    if (motherCount - 1 >= 0) {
                         temp.replace(iR, motherCount - 1);
                     }
                     return iR.getValue();

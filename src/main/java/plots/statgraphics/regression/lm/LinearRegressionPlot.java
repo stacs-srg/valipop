@@ -5,6 +5,7 @@ package plots.statgraphics.regression.lm;
  * <p>Description: The statistical graphics</p>
  * <p>Copyright: Copyright (c) 2009</p>
  * <p>Company: Tung Hai University </p>
+ *
  * @author Wen Hsiang Wei
  * @version 1.4
  */
@@ -13,6 +14,7 @@ import java.util.Hashtable;
 
 import plots.statgraphics.GraphicalAnalysis;
 import plots.statgraphics.util.Plot2DFactory;
+
 import static plots.statgraphics.util.Argument.*;
 
 /**
@@ -59,8 +61,7 @@ import static plots.statgraphics.util.Argument.*;
  * <br> new PlotFrameFactory().putPlotFrame(pf);
  */
 
-public class LinearRegressionPlot extends GraphicalAnalysis
-{
+public class LinearRegressionPlot extends GraphicalAnalysis {
 
     /**
      * The data for the x-coordinate.
@@ -120,7 +121,8 @@ public class LinearRegressionPlot extends GraphicalAnalysis
      * Default LinearRegressionPlot constructor.
      */
 
-    public LinearRegressionPlot() {}
+    public LinearRegressionPlot() {
+    }
 
     /**
      * Creates a new regression plot given the input arguments and data.
@@ -136,48 +138,36 @@ public class LinearRegressionPlot extends GraphicalAnalysis
      */
 
     public LinearRegressionPlot(Hashtable argument,
-                                Object ...dataObject)
-    {
+                                Object... dataObject) {
         this.argument = argument;
         this.dataObject = dataObject;
-        if (dataObject != null)
-        {
+        if (dataObject != null) {
             if (dataObject.length == 4 &&
-                dataObject[0].getClass().getName().equalsIgnoreCase("[D") &&
-                dataObject[1].getClass().getName().equalsIgnoreCase("[D") &&
-                dataObject[2].getClass().getName().equalsIgnoreCase("[D") &&
-                dataObject[3].getClass().getName().equalsIgnoreCase("[D"))
-            {
+                    dataObject[0].getClass().getName().equalsIgnoreCase("[D") &&
+                    dataObject[1].getClass().getName().equalsIgnoreCase("[D") &&
+                    dataObject[2].getClass().getName().equalsIgnoreCase("[D") &&
+                    dataObject[3].getClass().getName().equalsIgnoreCase("[D")) {
                 if (argument.get(TITLE) != null &&
-                    argument.get(XLABEL) != null &&
-                    argument.get(YLABEL) != null)
-                {
+                        argument.get(XLABEL) != null &&
+                        argument.get(YLABEL) != null) {
                     graphicalAnalysis = new LinearRegressionPlot(
                             (String) argument.get(TITLE),
                             (String) argument.get(XLABEL),
                             (String) argument.get(YLABEL),
                             (double[]) dataObject[0], (double[]) dataObject[1],
                             (double[]) dataObject[2], (double[]) dataObject[3]);
-                }
-                else if (argument.size() == 0)
-                {
+                } else if (argument.size() == 0) {
                     graphicalAnalysis = new LinearRegressionPlot(
                             (double[]) dataObject[0], (double[]) dataObject[1],
                             (double[]) dataObject[2], (double[]) dataObject[3]);
-                }
-                else
-                {
+                } else {
                     throw new IllegalArgumentException(
                             "Wrong input argument(s).");
                 }
-            }
-            else
-            {
+            } else {
                 throw new IllegalArgumentException("Wrong input data.");
             }
-        }
-        else
-        {
+        } else {
             throw new IllegalArgumentException(
                     "Wrong input argument(s) or data.");
         }
@@ -206,8 +196,7 @@ public class LinearRegressionPlot extends GraphicalAnalysis
                                 double[] p1,
                                 double[] p2,
                                 double[] xData,
-                                double[] yData)
-    {
+                                double[] yData) {
         this.xData = xData;
         this.yData = yData;
         this.p1 = p1;
@@ -235,8 +224,7 @@ public class LinearRegressionPlot extends GraphicalAnalysis
     public LinearRegressionPlot(double[] p1,
                                 double[] p2,
                                 double[] xData,
-                                double[] yData)
-    {
+                                double[] yData) {
         this("Regression Plot", "X", "Y", p1, p2, xData, yData);
     }
 

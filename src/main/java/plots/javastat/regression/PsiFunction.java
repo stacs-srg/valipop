@@ -5,6 +5,7 @@ package plots.javastat.regression;
  * <p>Description: JAVA programs for statistical computations</p>
  * <p>Copyright: Copyright (c) 2009</p>
  * <p>Company: Tung Hai University</p>
+ *
  * @author Wen Hsiang Wei
  * @version 1.4
  */
@@ -13,24 +14,23 @@ package plots.javastat.regression;
  * The enumerated psi function.
  */
 
-public enum PsiFunction
-{
+public enum PsiFunction {
 
-        /**
-         * Sample size.
-         */
+    /**
+     * Sample size.
+     */
 
-        SAMPLE_SIZE,
+    SAMPLE_SIZE,
 
-        /**
-         * Trace of the weight matrix.
-         */
+    /**
+     * Trace of the weight matrix.
+     */
 
-        TRACE,
+    TRACE,
 
-        /**
-         * Retained number of principal components of the weight matrix.
-         */
+    /**
+     * Retained number of principal components of the weight matrix.
+     */
 
-        PCA_NUMBER
+    PCA_NUMBER
 }

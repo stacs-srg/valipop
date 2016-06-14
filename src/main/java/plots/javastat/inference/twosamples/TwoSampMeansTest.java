@@ -5,6 +5,7 @@ package plots.javastat.inference.twosamples;
  * <p>Description: JAVA programs for statistical computations</p>
  * <p>Copyright: Copyright (c) 2009</p>
  * <p>Company: Tung Hai University</p>
+ *
  * @author Wen Hsiang Wei
  * @version 1.4
  */
@@ -17,6 +18,7 @@ import JSci.maths.statistics.TDistribution;
 import plots.javastat.StatisticalAnalysis;
 import plots.javastat.inference.StatisticalInferenceTemplate;
 import plots.javastat.util.BasicStatistics;
+
 import static plots.javastat.util.Argument.*;
 import static plots.javastat.util.Output.*;
 
@@ -27,8 +29,7 @@ import static plots.javastat.util.Output.*;
  * <p> </p>
  */
 
-public class TwoSampMeansTest extends StatisticalInferenceTemplate
-{
+public class TwoSampMeansTest extends StatisticalInferenceTemplate {
 
     /**
      * The level of significance.
@@ -70,7 +71,8 @@ public class TwoSampMeansTest extends StatisticalInferenceTemplate
      * Default TwoSampMeansTest constructor.
      */
 
-    public TwoSampMeansTest() {}
+    public TwoSampMeansTest() {
+    }
 
     /**
      * Constructs a two-sample means test given the input arguments and data.
@@ -95,71 +97,54 @@ public class TwoSampMeansTest extends StatisticalInferenceTemplate
      */
 
     public TwoSampMeansTest(Hashtable argument,
-                            Object ...dataObject)
-    {
+                            Object... dataObject) {
         this.argument = argument;
         this.dataObject = dataObject;
         if (argument.size() > 0 &&
-            dataObject != null)
-        {
+                dataObject != null) {
             if (argument.get(TEST_TYPE) != null &&
-                argument.get(ALPHA) != null &&
-                argument.get(NULL_VALUE) != null &&
-                argument.get(SIDE) != null &&
-                dataObject.length == 2)
-            {
+                    argument.get(ALPHA) != null &&
+                    argument.get(NULL_VALUE) != null &&
+                    argument.get(SIDE) != null &&
+                    dataObject.length == 2) {
                 statisticalAnalysis = new TwoSampMeansTest(
                         (String) argument.get(TEST_TYPE),
                         (Double) argument.get(ALPHA),
                         ((Number) argument.get(NULL_VALUE)).doubleValue(),
                         (String) argument.get(SIDE),
                         (double[]) dataObject[0], (double[]) dataObject[1]);
-            }
-            else if (argument.get(TEST_TYPE) != null &&
-                     argument.get(NULL_VALUE) != null &&
-                     argument.get(SIDE) != null &&
-                     dataObject.length == 2)
-            {
+            } else if (argument.get(TEST_TYPE) != null &&
+                    argument.get(NULL_VALUE) != null &&
+                    argument.get(SIDE) != null &&
+                    dataObject.length == 2) {
                 statisticalAnalysis = new TwoSampMeansTest(
                         (String) argument.get(TEST_TYPE),
                         ((Number) argument.get(NULL_VALUE)).doubleValue(),
                         (String) argument.get(SIDE),
                         (double[]) dataObject[0], (double[]) dataObject[1]);
-            }
-            else if (argument.get(TEST_TYPE) != null &&
-                     argument.get(NULL_VALUE) != null &&
-                     dataObject.length == 2)
-            {
+            } else if (argument.get(TEST_TYPE) != null &&
+                    argument.get(NULL_VALUE) != null &&
+                    dataObject.length == 2) {
                 statisticalAnalysis = new TwoSampMeansTest(
                         (String) argument.get(TEST_TYPE),
                         ((Number) argument.get(NULL_VALUE)).doubleValue(),
                         (double[]) dataObject[0], (double[]) dataObject[1]);
-            }
-            else if (argument.get(TEST_TYPE) != null &&
-                     dataObject.length == 2)
-            {
+            } else if (argument.get(TEST_TYPE) != null &&
+                    dataObject.length == 2) {
                 statisticalAnalysis = new TwoSampMeansTest(
                         (String) argument.get(TEST_TYPE),
                         (double[]) dataObject[0], (double[]) dataObject[1]);
-            }
-            else
-            {
+            } else {
                 throw new IllegalArgumentException(
                         "Wrong input arguments or data.");
             }
-        }
-        else if (dataObject != null &&
-                 dataObject.length == 2)
-        {
+        } else if (dataObject != null &&
+                dataObject.length == 2) {
             statisticalAnalysis = new TwoSampMeansTest(
                     (double[]) dataObject[0], (double[]) dataObject[1]);
-        }
-        else if (dataObject == null)
-        {
+        } else if (dataObject == null) {
             statisticalAnalysis = new TwoSampMeansTest();
-        }
-        else
-        {
+        } else {
             throw new IllegalArgumentException("Wrong input data.");
         }
     }
@@ -186,8 +171,7 @@ public class TwoSampMeansTest extends StatisticalInferenceTemplate
                             double u12,
                             String side,
                             double[] data1,
-                            double[] data2)
-    {
+                            double[] data2) {
         this.testType = testType;
         this.alpha = alpha;
         this.u12 = u12;
@@ -217,8 +201,7 @@ public class TwoSampMeansTest extends StatisticalInferenceTemplate
                             double u12,
                             String side,
                             double[] data1,
-                            double[] data2)
-    {
+                            double[] data2) {
         this(testType, 0.05, u12, side, data1, data2);
     }
 
@@ -236,8 +219,7 @@ public class TwoSampMeansTest extends StatisticalInferenceTemplate
     public TwoSampMeansTest(String testType,
                             double u12,
                             double[] data1,
-                            double[] data2)
-    {
+                            double[] data2) {
         this(testType, 0.05, u12, "equal", data1, data2);
     }
 
@@ -253,8 +235,7 @@ public class TwoSampMeansTest extends StatisticalInferenceTemplate
 
     public TwoSampMeansTest(String testType,
                             double[] data1,
-                            double[] data2)
-    {
+                            double[] data2) {
         this(testType, 0.05, 0.0, "equal", data1, data2);
     }
 
@@ -268,8 +249,7 @@ public class TwoSampMeansTest extends StatisticalInferenceTemplate
      */
 
     public TwoSampMeansTest(double[] data1,
-                            double[] data2)
-    {
+                            double[] data2) {
         this("Z", 0.05, 0.0, "equal", data1, data2);
     }
 
@@ -281,13 +261,12 @@ public class TwoSampMeansTest extends StatisticalInferenceTemplate
      */
 
     public Double pointEstimate(Hashtable argument,
-                                Object ...dataObject)
-    {
+                                Object... dataObject) {
         this.argument = argument;
         this.dataObject = dataObject;
 
         return pointEstimate((double[]) dataObject[0],
-                             (double[]) dataObject[1]);
+                (double[]) dataObject[1]);
     }
 
     /**
@@ -298,8 +277,7 @@ public class TwoSampMeansTest extends StatisticalInferenceTemplate
      */
 
     public double pointEstimate(double[] data1,
-                                double[] data2)
-    {
+                                double[] data2) {
         this.data1 = data1;
         this.data2 = data2;
         pointEstimate = new BasicStatistics().meanDifference(data1, data2);
@@ -318,8 +296,7 @@ public class TwoSampMeansTest extends StatisticalInferenceTemplate
 
     public double pointEstimateSE(String testType,
                                   double[] data1,
-                                  double[] data2)
-    {
+                                  double[] data2) {
         this.testType = testType;
         this.data1 = data1;
         this.data2 = data2;
@@ -339,14 +316,13 @@ public class TwoSampMeansTest extends StatisticalInferenceTemplate
      */
 
     public Double pointEstimateSE(Hashtable argument,
-                                  Object ...dataObject)
-    {
+                                  Object... dataObject) {
         this.argument = argument;
         this.dataObject = dataObject;
 
         return pointEstimateSE((String) argument.get(TEST_TYPE),
-                               (double[]) dataObject[0],
-                               (double[]) dataObject[1]);
+                (double[]) dataObject[0],
+                (double[]) dataObject[1]);
     }
 
     /**
@@ -369,38 +345,30 @@ public class TwoSampMeansTest extends StatisticalInferenceTemplate
      */
 
     public double[] confidenceInterval(Hashtable argument,
-                                       Object ...dataObject)
-    {
+                                       Object... dataObject) {
         this.argument = argument;
         this.dataObject = dataObject;
         if (argument.get(TEST_TYPE) != null &&
-            argument.get(ALPHA) != null &&
-            dataObject != null &&
-            dataObject.length == 2)
-        {
+                argument.get(ALPHA) != null &&
+                dataObject != null &&
+                dataObject.length == 2) {
             confidenceInterval = confidenceInterval((String) argument.get(
                     TEST_TYPE),
                     (Double) argument.get(ALPHA),
                     (double[]) dataObject[0], (double[]) dataObject[1]);
-        }
-        else if (argument.get(TEST_TYPE) != null &&
-                 dataObject != null &&
-                 dataObject.length == 2)
-        {
+        } else if (argument.get(TEST_TYPE) != null &&
+                dataObject != null &&
+                dataObject.length == 2) {
             confidenceInterval = confidenceInterval((String) argument.get(
                     TEST_TYPE),
                     (double[]) dataObject[0], (double[]) dataObject[1]);
-        }
-        else if (dataObject != null &&
-                 dataObject.length == 2)
-        {
+        } else if (dataObject != null &&
+                dataObject.length == 2) {
             confidenceInterval = confidenceInterval((double[]) dataObject[0],
                     (double[]) dataObject[1]);
-        }
-        else
-        {
+        } else {
             throw new IllegalArgumentException("Wrong input arguments or " +
-                                               "data.");
+                    "data.");
         }
 
         return confidenceInterval;
@@ -424,16 +392,13 @@ public class TwoSampMeansTest extends StatisticalInferenceTemplate
     public double[] confidenceInterval(String testType,
                                        double alpha,
                                        double[] data1,
-                                       double[] data2)
-    {
-        if ((alpha <= 0.0) || (alpha > 1))
-        {
+                                       double[] data2) {
+        if ((alpha <= 0.0) || (alpha > 1)) {
             throw new IllegalArgumentException(
                     "The level of significance should be (strictly) positive " +
-                    "and not greater than 1.");
+                            "and not greater than 1.");
         }
-        if (data1.length == 0 || data2.length == 0)
-        {
+        if (data1.length == 0 || data2.length == 0) {
             throw new IllegalArgumentException(
                     "The length of the input data should not be 0.");
         }
@@ -442,18 +407,15 @@ public class TwoSampMeansTest extends StatisticalInferenceTemplate
         argument.put(TEST_TYPE, testType);
         argument.put(ALPHA, alpha);
         if (testType.equalsIgnoreCase("T") ||
-            testType.equalsIgnoreCase("T Test"))
-        {
+                testType.equalsIgnoreCase("T Test")) {
             argument.put(CRITICAL_VALUE,
-                         new TDistribution((data1.length + data2.length - 2)).
-                         inverse((1 - alpha / 2)));
-            return (double[])super.confidenceInterval(argument, data1, data2);
-        }
-        else
-        {
+                    new TDistribution((data1.length + data2.length - 2)).
+                            inverse((1 - alpha / 2)));
+            return (double[]) super.confidenceInterval(argument, data1, data2);
+        } else {
             argument.put(CRITICAL_VALUE,
-                         new NormalDistribution().inverse((1 - alpha / 2)));
-            return (double[])super.confidenceInterval(argument, data1, data2);
+                    new NormalDistribution().inverse((1 - alpha / 2)));
+            return (double[]) super.confidenceInterval(argument, data1, data2);
         }
     }
 
@@ -471,8 +433,7 @@ public class TwoSampMeansTest extends StatisticalInferenceTemplate
 
     public double[] confidenceInterval(String testType,
                                        double[] data1,
-                                       double[] data2)
-    {
+                                       double[] data2) {
         return confidenceInterval(testType, 0.05, data1, data2);
     }
 
@@ -488,8 +449,7 @@ public class TwoSampMeansTest extends StatisticalInferenceTemplate
      */
 
     public double[] confidenceInterval(double[] data1,
-                                       double[] data2)
-    {
+                                       double[] data2) {
         return confidenceInterval("Z", 0.05, data1, data2);
     }
 
@@ -507,39 +467,31 @@ public class TwoSampMeansTest extends StatisticalInferenceTemplate
      */
 
     public Double testStatistic(Hashtable argument,
-                                Object ...dataObject)
-    {
+                                Object... dataObject) {
         this.argument = argument;
         this.dataObject = dataObject;
         if (argument.get(TEST_TYPE) != null &&
-            argument.get(NULL_VALUE) != null &&
-            dataObject != null &&
-            dataObject.length == 2)
-        {
+                argument.get(NULL_VALUE) != null &&
+                dataObject != null &&
+                dataObject.length == 2) {
             testStatistic = testStatistic((String) argument.get(TEST_TYPE),
-                                          ((Number) argument.get(NULL_VALUE)).
-                                          doubleValue(),
-                                          (double[]) dataObject[0],
-                                          (double[]) dataObject[1]);
-        }
-        else if (argument.get(TEST_TYPE) != null &&
-                 dataObject != null &&
-                 dataObject.length == 2)
-        {
+                    ((Number) argument.get(NULL_VALUE)).
+                            doubleValue(),
+                    (double[]) dataObject[0],
+                    (double[]) dataObject[1]);
+        } else if (argument.get(TEST_TYPE) != null &&
+                dataObject != null &&
+                dataObject.length == 2) {
             testStatistic = testStatistic((String) argument.get(TEST_TYPE),
-                                          (double[]) dataObject[0],
-                                          (double[]) dataObject[1]);
-        }
-        else if (dataObject != null &&
-                 dataObject.length == 2)
-        {
+                    (double[]) dataObject[0],
+                    (double[]) dataObject[1]);
+        } else if (dataObject != null &&
+                dataObject.length == 2) {
             testStatistic = testStatistic((double[]) dataObject[0],
-                                          (double[]) dataObject[1]);
-        }
-        else
-        {
+                    (double[]) dataObject[1]);
+        } else {
             throw new IllegalArgumentException("Wrong input arguments or " +
-                                               "data.");
+                    "data.");
         }
 
         return testStatistic;
@@ -559,14 +511,13 @@ public class TwoSampMeansTest extends StatisticalInferenceTemplate
     public double testStatistic(String testType,
                                 double u12,
                                 double[] data1,
-                                double[] data2)
-    {
+                                double[] data2) {
         this.testType = testType;
         this.u12 = u12;
         argument.put(TEST_TYPE, testType);
         argument.put(NULL_VALUE, u12);
 
-        return (Double)super.testStatistic(argument, data1, data2);
+        return (Double) super.testStatistic(argument, data1, data2);
     }
 
     /**
@@ -581,8 +532,7 @@ public class TwoSampMeansTest extends StatisticalInferenceTemplate
 
     public double testStatistic(String testType,
                                 double[] data1,
-                                double[] data2)
-    {
+                                double[] data2) {
         return testStatistic(testType, 0.0, data1, data2);
     }
 
@@ -596,8 +546,7 @@ public class TwoSampMeansTest extends StatisticalInferenceTemplate
      */
 
     public double testStatistic(double[] data1,
-                                double[] data2)
-    {
+                                double[] data2) {
         return testStatistic("Z", 0.0, data1, data2);
     }
 
@@ -619,46 +568,36 @@ public class TwoSampMeansTest extends StatisticalInferenceTemplate
      */
 
     public Double pValue(Hashtable argument,
-                         Object ...dataObject)
-    {
+                         Object... dataObject) {
         this.argument = argument;
         this.dataObject = dataObject;
         if (argument.get(TEST_TYPE) != null &&
-            argument.get(NULL_VALUE) != null &&
-            argument.get(SIDE) != null &&
-            dataObject != null &&
-            dataObject.length == 2)
-        {
+                argument.get(NULL_VALUE) != null &&
+                argument.get(SIDE) != null &&
+                dataObject != null &&
+                dataObject.length == 2) {
             pValue = pValue((String) argument.get(TEST_TYPE),
-                            ((Number) argument.get(NULL_VALUE)).doubleValue(),
-                            (String) argument.get(SIDE),
-                            (double[]) dataObject[0], (double[]) dataObject[1]);
-        }
-        else if (argument.get(TEST_TYPE) != null &&
-                 argument.get(NULL_VALUE) != null &&
-                   dataObject != null &&
-                   dataObject.length == 2)
-        {
+                    ((Number) argument.get(NULL_VALUE)).doubleValue(),
+                    (String) argument.get(SIDE),
+                    (double[]) dataObject[0], (double[]) dataObject[1]);
+        } else if (argument.get(TEST_TYPE) != null &&
+                argument.get(NULL_VALUE) != null &&
+                dataObject != null &&
+                dataObject.length == 2) {
             pValue = pValue((String) argument.get(TEST_TYPE),
-                            ((Number) argument.get(NULL_VALUE)).doubleValue(),
-                            (double[]) dataObject[0], (double[]) dataObject[1]);
-        }
-        else if (argument.get(TEST_TYPE) != null &&
-                 dataObject != null &&
-                 dataObject.length == 2)
-        {
+                    ((Number) argument.get(NULL_VALUE)).doubleValue(),
+                    (double[]) dataObject[0], (double[]) dataObject[1]);
+        } else if (argument.get(TEST_TYPE) != null &&
+                dataObject != null &&
+                dataObject.length == 2) {
             pValue = pValue((String) argument.get(TEST_TYPE),
-                            (double[]) dataObject[0], (double[]) dataObject[1]);
-        }
-        else if (dataObject != null &&
-                 dataObject.length == 2)
-        {
+                    (double[]) dataObject[0], (double[]) dataObject[1]);
+        } else if (dataObject != null &&
+                dataObject.length == 2) {
             pValue = pValue((double[]) dataObject[0], (double[]) dataObject[1]);
-        }
-        else
-        {
+        } else {
             throw new IllegalArgumentException("Wrong input arguments or " +
-                                               "data.");
+                    "data.");
         }
 
         return pValue;
@@ -681,24 +620,20 @@ public class TwoSampMeansTest extends StatisticalInferenceTemplate
                          double u12,
                          String side,
                          double[] data1,
-                         double[] data2)
-    {
+                         double[] data2) {
         this.u12 = u12;
         this.side = side;
         testStatistic = testStatistic(testType, u12, data1, data2);
         argument.put(SIDE, side);
         if (testType.equalsIgnoreCase("T") ||
-            testType.equalsIgnoreCase("T Test"))
-        {
+                testType.equalsIgnoreCase("T Test")) {
             argument.put(CDF,
-                         new TDistribution((data1.length + data2.length - 2)).
-                         cumulative(testStatistic));
+                    new TDistribution((data1.length + data2.length - 2)).
+                            cumulative(testStatistic));
             return super.pValue(argument);
-        }
-        else
-        {
+        } else {
             argument.put(CDF,
-                         new NormalDistribution().cumulative(testStatistic));
+                    new NormalDistribution().cumulative(testStatistic));
             return super.pValue(argument);
         }
     }
@@ -717,8 +652,7 @@ public class TwoSampMeansTest extends StatisticalInferenceTemplate
     public double pValue(String testType,
                          double u12,
                          double[] data1,
-                         double[] data2)
-    {
+                         double[] data2) {
         return pValue(testType, u12, "equal", data1, data2);
     }
 
@@ -735,8 +669,7 @@ public class TwoSampMeansTest extends StatisticalInferenceTemplate
 
     public double pValue(String testType,
                          double[] data1,
-                         double[] data2)
-    {
+                         double[] data2) {
         return pValue(testType, 0.0, "equal", data1, data2);
     }
 
@@ -751,8 +684,7 @@ public class TwoSampMeansTest extends StatisticalInferenceTemplate
      */
 
     public double pValue(double[] data1,
-                         double[] data2)
-    {
+                         double[] data2) {
         return pValue("Z", 0.0, "equal", data1, data2);
     }
 

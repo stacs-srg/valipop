@@ -5,6 +5,7 @@ package plots.javastat.regression.glm;
  * <p>Description: JAVA programs for statistical computations</p>
  * <p>Copyright: Copyright (c) 2009</p>
  * <p>Company: Tung Hai University</p>
+ *
  * @author Wen Hsiang Wei
  * @version 1.4
  */
@@ -13,48 +14,47 @@ package plots.javastat.regression.glm;
  * The enumerated distributions.
  */
 
-public enum ExponentialFamily
-{
+public enum ExponentialFamily {
 
-        /**
-         * Normal distribution.
-         */
+    /**
+     * Normal distribution.
+     */
 
-        NORMAL,
+    NORMAL,
 
-        /**
-         * Inverse Gaussian distribution.
-         */
+    /**
+     * Inverse Gaussian distribution.
+     */
 
-        INVERSE_GAUSSIAN,
+    INVERSE_GAUSSIAN,
 
-        /**
-         * Gamma distribution.
-         */
+    /**
+     * Gamma distribution.
+     */
 
-        GAMMA,
+    GAMMA,
 
-        /**
-         * Beta distribution.
-         */
+    /**
+     * Beta distribution.
+     */
 
-        BETA,
+    BETA,
 
-        /**
-         * Poisson distribution.
-         */
+    /**
+     * Poisson distribution.
+     */
 
-        POISSON,
+    POISSON,
 
-        /**
-         * Binomial distribution.
-         */
+    /**
+     * Binomial distribution.
+     */
 
-        BINOMIAL,
+    BINOMIAL,
 
-        /**
-         * Negative binomial distribution.
-         */
+    /**
+     * Negative binomial distribution.
+     */
 
-        NEGATIVE_BINOMIAL
+    NEGATIVE_BINOMIAL
 }

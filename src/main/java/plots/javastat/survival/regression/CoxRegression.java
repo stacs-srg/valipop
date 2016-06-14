@@ -5,6 +5,7 @@ package plots.javastat.survival.regression;
  * <p>Description: JAVA programs for statistical computations</p>
  * <p>Copyright: Copyright (c) 2009</p>
  * <p>Company: Tung Hai University</p>
+ *
  * @author Wen Hsiang Wei
  * @version 1.4
  */
@@ -19,6 +20,7 @@ import plots.javastat.Regression;
 import plots.javastat.StatisticalAnalysis;
 import plots.javastat.util.BasicStatistics;
 import plots.javastat.util.DataManager;
+
 import static plots.javastat.util.Argument.*;
 import static plots.javastat.util.Output.*;
 
@@ -104,8 +106,7 @@ import static plots.javastat.util.Output.*;
  * <br> out.println(testclass4.output.toString());
  */
 
-public class CoxRegression extends Regression
-{
+public class CoxRegression extends Regression {
     /**
      * The level of significance.
      */
@@ -173,19 +174,16 @@ public class CoxRegression extends Regression
      */
 
     public double[][] covariate;
-
-    /**
-     * The values of the covariates.
-     */
-
-    private double[][] doubleCovariate;
-
     /**
      * The object represents a fitted proportional hazards model.
      */
 
     public StatisticalAnalysis statisticalAnalysis;
+    /**
+     * The values of the covariates.
+     */
 
+    private double[][] doubleCovariate;
     /**
      * The constant such that the upper-tailed probability of the normal
      * random variable is equal to alpha/2.
@@ -283,7 +281,8 @@ public class CoxRegression extends Regression
      * Constructs a proportional hazards model for survival data.
      */
 
-    public CoxRegression() {}
+    public CoxRegression() {
+    }
 
     /**
      * Constructs a proportional hazards model given the input argument and
@@ -294,7 +293,7 @@ public class CoxRegression extends Regression
      * <br><br>
      * @param dataObject the survival times of the patients and censor
      *                   indicators for the patients.
-     * @exception IllegalArgumentExceptionthe level of significance should be
+     * @exception IllegalArgumentException the level of significance should be
      *                             (strictly) positive and not greater than 1.
      * @exception IllegalArgumentException the time vector, censor vector, and
      *                                     rows of the covariate matrix must
@@ -308,55 +307,41 @@ public class CoxRegression extends Regression
      */
 
     public CoxRegression(Hashtable argument,
-                         Object ...dataObject)
-    {
+                         Object... dataObject) {
         this.argument = argument;
         this.dataObject = dataObject;
-        if (dataObject != null)
-        {
+        if (dataObject != null) {
             if (dataObject.length == 3 &&
-                dataObject[0].getClass().getName().equalsIgnoreCase("[D") &&
-                dataObject[1].getClass().getName().equalsIgnoreCase("[D") &&
-                dataObject[2].getClass().getName().equalsIgnoreCase("[[D"))
-            {
+                    dataObject[0].getClass().getName().equalsIgnoreCase("[D") &&
+                    dataObject[1].getClass().getName().equalsIgnoreCase("[D") &&
+                    dataObject[2].getClass().getName().equalsIgnoreCase("[[D")) {
                 doubleCovariate = (double[][]) dataObject[2];
-            }
-            else if (dataObject.length >= 3 &&
-                     dataObject[0].getClass().getName().
-                     equalsIgnoreCase("[D") &&
-                     dataObject[1].getClass().getName().
-                     equalsIgnoreCase("[D") &&
-                     (dataObject.getClass().getName().
-                      equalsIgnoreCase("[Ljava.lang.Object;") ||
-                     dataObject.getClass().getName().equalsIgnoreCase("[[D")))
-            {
+            } else if (dataObject.length >= 3 &&
+                    dataObject[0].getClass().getName().
+                            equalsIgnoreCase("[D") &&
+                    dataObject[1].getClass().getName().
+                            equalsIgnoreCase("[D") &&
+                    (dataObject.getClass().getName().
+                            equalsIgnoreCase("[Ljava.lang.Object;") ||
+                            dataObject.getClass().getName().equalsIgnoreCase("[[D"))) {
                 doubleCovariate = DataManager.castDoubleObject(2, dataObject);
-            }
-            else
-            {
+            } else {
                 throw new IllegalArgumentException("Wrong input data type");
             }
             if (argument.size() > 0 &&
-                argument.get(ALPHA) != null)
-            {
+                    argument.get(ALPHA) != null) {
                 statisticalAnalysis = new CoxRegression(
                         (Double) argument.get(ALPHA),
                         (double[]) dataObject[0], (double[]) dataObject[1],
                         doubleCovariate);
-            }
-            else if (argument.size() == 0)
-            {
+            } else if (argument.size() == 0) {
                 statisticalAnalysis = new CoxRegression(
                         (double[]) dataObject[0], (double[]) dataObject[1],
                         doubleCovariate);
-            }
-            else
-            {
+            } else {
                 throw new IllegalArgumentException("Wrong input argument(s).");
             }
-        }
-        else
-        {
+        } else {
             statisticalAnalysis = new CoxRegression();
         }
     }
@@ -371,7 +356,7 @@ public class CoxRegression extends Regression
      * <br>          censor[i]=0: censored.
      * @param covariate the values of the covariates,
      * <br>             covariate[j]: the (j+1)'th covariate vector.
-     * @exception IllegalArgumentExceptionthe level of significance should be
+     * @exception IllegalArgumentException the level of significance should be
      *                             (strictly) positive and not greater than 1.
      * @exception IllegalArgumentException the time vector, censor vector, and
      *                                     rows of the covariate matrix must
@@ -387,8 +372,7 @@ public class CoxRegression extends Regression
     public CoxRegression(double alpha,
                          double[] time,
                          double[] censor,
-                         double[] ...covariate)
-    {
+                         double[]... covariate) {
         this.alpha = alpha;
         this.time = time;
         this.censor = censor;
@@ -406,7 +390,7 @@ public class CoxRegression extends Regression
      * <br>          censor[i]=0: censored.
      * @param covariate the values of the covariates,
      * <br>             covariate[j]: the (j+1)'th covariate vector.
-     * @exception IllegalArgumentExceptionthe level of significance should be
+     * @exception IllegalArgumentException the level of significance should be
      *                             (strictly) positive and not greater than 1.
      * @exception IllegalArgumentException the time vector, censor vector, and
      *                                     rows of the covariate matrix must
@@ -421,8 +405,7 @@ public class CoxRegression extends Regression
 
     public CoxRegression(double[] time,
                          double[] censor,
-                         double[] ...covariate)
-    {
+                         double[]... covariate) {
         this(0.05, time, censor, covariate);
     }
 
@@ -444,33 +427,27 @@ public class CoxRegression extends Regression
      */
 
     public double[] coefficients(Hashtable argument,
-                                 Object ...dataObject)
-    {
+                                 Object... dataObject) {
         this.argument = argument;
         this.dataObject = dataObject;
         if (dataObject != null && dataObject.length == 3 &&
-            dataObject[0].getClass().getName().equalsIgnoreCase("[D") &&
-            dataObject[1].getClass().getName().equalsIgnoreCase("[D") &&
-            dataObject[2].getClass().getName().equalsIgnoreCase("[[D"))
-        {
+                dataObject[0].getClass().getName().equalsIgnoreCase("[D") &&
+                dataObject[1].getClass().getName().equalsIgnoreCase("[D") &&
+                dataObject[2].getClass().getName().equalsIgnoreCase("[[D")) {
             coefficients = coefficients((double[]) dataObject[0],
-                                        (double[]) dataObject[1],
-                                        (double[][]) dataObject[2]);
-        }
-        else if (dataObject != null && dataObject.length >= 3 &&
-                 dataObject[0].getClass().getName().equalsIgnoreCase("[D") &&
-                 dataObject[1].getClass().getName().equalsIgnoreCase("[D") &&
-                 (dataObject.getClass().getName().
-                  equalsIgnoreCase("[Ljava.lang.Object;") ||
-                 dataObject.getClass().getName().equalsIgnoreCase("[[D")))
-        {
+                    (double[]) dataObject[1],
+                    (double[][]) dataObject[2]);
+        } else if (dataObject != null && dataObject.length >= 3 &&
+                dataObject[0].getClass().getName().equalsIgnoreCase("[D") &&
+                dataObject[1].getClass().getName().equalsIgnoreCase("[D") &&
+                (dataObject.getClass().getName().
+                        equalsIgnoreCase("[Ljava.lang.Object;") ||
+                        dataObject.getClass().getName().equalsIgnoreCase("[[D"))) {
             coefficients = coefficients((double[]) dataObject[0],
-                                        (double[]) dataObject[1],
-                                        DataManager.
-                                        castDoubleObject(2, dataObject));
-        }
-        else
-        {
+                    (double[]) dataObject[1],
+                    DataManager.
+                            castDoubleObject(2, dataObject));
+        } else {
             throw new IllegalArgumentException(
                     "Wrong input arguments or data.");
         }
@@ -500,8 +477,7 @@ public class CoxRegression extends Regression
 
     public double[] coefficients(double[] time,
                                  double[] censor,
-                                 double[] ...covariate)
-    {
+                                 double[]... covariate) {
         this.time = time;
         this.censor = censor;
         this.covariate = covariate;
@@ -527,34 +503,28 @@ public class CoxRegression extends Regression
      */
 
     public double[] testStatistic(Hashtable argument,
-                                  Object ...dataObject)
-    {
+                                  Object... dataObject) {
         this.argument = argument;
         this.dataObject = dataObject;
         if (dataObject != null &&
-            dataObject.length == 3 &&
-            dataObject[0].getClass().getName().equalsIgnoreCase("[D") &&
-            dataObject[1].getClass().getName().equalsIgnoreCase("[D") &&
-            dataObject[2].getClass().getName().equalsIgnoreCase("[[D"))
-        {
+                dataObject.length == 3 &&
+                dataObject[0].getClass().getName().equalsIgnoreCase("[D") &&
+                dataObject[1].getClass().getName().equalsIgnoreCase("[D") &&
+                dataObject[2].getClass().getName().equalsIgnoreCase("[[D")) {
             testStatistic = testStatistic((double[]) dataObject[0],
-                                          (double[]) dataObject[1],
-                                          (double[][]) dataObject[2]);
-        }
-        else if (dataObject != null && dataObject.length >= 3 &&
-                 dataObject[0].getClass().getName().equalsIgnoreCase("[D") &&
-                 dataObject[1].getClass().getName().equalsIgnoreCase("[D") &&
-                 (dataObject.getClass().getName().
-                  equalsIgnoreCase("[Ljava.lang.Object;") ||
-                  dataObject.getClass().getName().equalsIgnoreCase("[[D")))
-        {
+                    (double[]) dataObject[1],
+                    (double[][]) dataObject[2]);
+        } else if (dataObject != null && dataObject.length >= 3 &&
+                dataObject[0].getClass().getName().equalsIgnoreCase("[D") &&
+                dataObject[1].getClass().getName().equalsIgnoreCase("[D") &&
+                (dataObject.getClass().getName().
+                        equalsIgnoreCase("[Ljava.lang.Object;") ||
+                        dataObject.getClass().getName().equalsIgnoreCase("[[D"))) {
             testStatistic = testStatistic((double[]) dataObject[0],
-                                          (double[]) dataObject[1],
-                                          DataManager.
-                                          castDoubleObject(2, dataObject));
-        }
-        else
-        {
+                    (double[]) dataObject[1],
+                    DataManager.
+                            castDoubleObject(2, dataObject));
+        } else {
             throw new IllegalArgumentException(
                     "Wrong input arguments or data.");
         }
@@ -584,8 +554,7 @@ public class CoxRegression extends Regression
 
     public double[] testStatistic(double[] time,
                                   double[] censor,
-                                  double[] ...covariate)
-    {
+                                  double[]... covariate) {
         this.time = time;
         this.censor = censor;
         this.covariate = covariate;
@@ -606,35 +575,27 @@ public class CoxRegression extends Regression
         dataManager.checkDimension(covariate);
         dataManager.checkPositiveRange(time, "time");
         dataManager.checkCensor(censor);
-        if (time.length != covariate[0].length || time.length != censor.length)
-        {
+        if (time.length != covariate[0].length || time.length != censor.length) {
             throw new IllegalArgumentException(
                     "The time vector, censor vector, and rows of " +
-                    "the covariate matrix must have the same length.");
+                            "the covariate matrix must have the same length.");
         }
         coefficientMatrix = new Matrix(covariate.length, 1, 0.1);
         coefficients = coefficientMatrix.getColumnPackedCopy();
         while ((error1 > BasicStatistics.convergenceCriterion[0]) ||
-               (error2 > BasicStatistics.convergenceCriterion[0]))
-        {
-            for (int i = 0; i < time.length; ++i)
-            {
+                (error2 > BasicStatistics.convergenceCriterion[0])) {
+            for (int i = 0; i < time.length; ++i) {
                 riskFactor[i] = 1.0;
-                for (int s = 0; s < covariate.length; ++s)
-                {
+                for (int s = 0; s < covariate.length; ++s) {
                     riskFactor[i] *= Math.exp(coefficients[s] *
-                                              covariate[s][i]);
+                            covariate[s][i]);
                 }
             }
-            for (int j = 0; j < covariate.length; j++)
-            {
+            for (int j = 0; j < covariate.length; j++) {
                 score[j] = 0.0;
-                for (int i = 0; i < time.length; i++)
-                {
-                    for (int k = 0; k < time.length; k++)
-                    {
-                        if (time[k] >= time[i])
-                        {
+                for (int i = 0; i < time.length; i++) {
+                    for (int k = 0; k < time.length; k++) {
+                        if (time[k] >= time[i]) {
                             denominator += riskFactor[k];
                             numerator += covariate[j][k] * riskFactor[k];
                         }
@@ -646,27 +607,22 @@ public class CoxRegression extends Regression
                     denominator = 0.0;
                 }
             }
-            for (int r = 0; r < covariate.length; r++)
-            {
-                for (int s = 0; s < covariate.length; s++)
-                {
+            for (int r = 0; r < covariate.length; r++) {
+                for (int s = 0; s < covariate.length; s++) {
                     information[r][s] = 0.0;
-                    for (int i = 0; i < time.length; i++)
-                    {
-                        for (int k = 0; k < time.length; k++)
-                        {
-                            if (time[k] >= time[i])
-                            {
+                    for (int i = 0; i < time.length; i++) {
+                        for (int k = 0; k < time.length; k++) {
+                            if (time[k] >= time[i]) {
                                 denominator += riskFactor[k];
                                 numerator +=
                                         (covariate[r][k] * covariate[s][k] *
-                                         riskFactor[k]);
+                                                riskFactor[k]);
                             }
                         }
                         information[r][s] += censor[i] *
                                 (expectedCovariate[r][i] *
-                                 expectedCovariate[s][i] -
-                                 (numerator / denominator));
+                                        expectedCovariate[s][i] -
+                                        (numerator / denominator));
                         numerator = 0.0;
                         denominator = 0.0;
                     }
@@ -681,15 +637,13 @@ public class CoxRegression extends Regression
             error2 = Math.sqrt(scoreMatrix.normF());
         }
         informationMatrix = new Matrix(information);
-        variance = informationMatrix.inverse().times( -1.0).getArray();
-        for (int s = 0; s < covariate.length; ++s)
-        {
+        variance = informationMatrix.inverse().times(-1.0).getArray();
+        for (int s = 0; s < covariate.length; ++s) {
             testStatistic[s] = coefficients[s] / Math.sqrt(variance[s][s]);
         }
-        for (int s = 0; s < testStatistic.length; s++)
-        {
+        for (int s = 0; s < testStatistic.length; s++) {
             pValue[s] = 2 * (1 - normalDistribution.
-                             cumulative(Math.abs(testStatistic[s])));
+                    cumulative(Math.abs(testStatistic[s])));
         }
         output.put(COEFFICIENTS, coefficients);
         output.put(COEFFICIENT_VARIANCE, variance);
@@ -712,7 +666,7 @@ public class CoxRegression extends Regression
      *                                   estimated coefficient;
      * <br>    confidenceInterval[j][1]: the upper bound for the (j+1)'th
      *                                   estimated coefficient.
-     * @exception IllegalArgumentExceptionthe level of significance should be
+     * @exception IllegalArgumentException the level of significance should be
      *                             (strictly) positive and not greater than 1.
      * @exception IllegalArgumentException the time vector, censor vector, and
      *                                     rows of the covariate matrix must
@@ -726,55 +680,41 @@ public class CoxRegression extends Regression
      */
 
     public double[][] confidenceInterval(Hashtable argument,
-                                         Object ...dataObject)
-    {
+                                         Object... dataObject) {
         this.argument = argument;
         this.dataObject = dataObject;
-        if (dataObject != null)
-        {
+        if (dataObject != null) {
             if (dataObject.length == 3 &&
-                dataObject[0].getClass().getName().equalsIgnoreCase("[D") &&
-                dataObject[1].getClass().getName().equalsIgnoreCase("[D") &&
-                dataObject[2].getClass().getName().equalsIgnoreCase("[[D"))
-            {
+                    dataObject[0].getClass().getName().equalsIgnoreCase("[D") &&
+                    dataObject[1].getClass().getName().equalsIgnoreCase("[D") &&
+                    dataObject[2].getClass().getName().equalsIgnoreCase("[[D")) {
                 doubleCovariate = (double[][]) dataObject[2];
-            }
-            else if (dataObject.length >= 3 &&
-                     dataObject[0].getClass().getName().
-                     equalsIgnoreCase("[D") &&
-                     dataObject[1].getClass().getName().
-                     equalsIgnoreCase("[D") &&
-                     (dataObject.getClass().getName().
-                      equalsIgnoreCase("[Ljava.lang.Object;") ||
-                     dataObject.getClass().getName().equalsIgnoreCase("[[D")))
-            {
+            } else if (dataObject.length >= 3 &&
+                    dataObject[0].getClass().getName().
+                            equalsIgnoreCase("[D") &&
+                    dataObject[1].getClass().getName().
+                            equalsIgnoreCase("[D") &&
+                    (dataObject.getClass().getName().
+                            equalsIgnoreCase("[Ljava.lang.Object;") ||
+                            dataObject.getClass().getName().equalsIgnoreCase("[[D"))) {
                 doubleCovariate = DataManager.castDoubleObject(2, dataObject);
-            }
-            else
-            {
+            } else {
                 throw new IllegalArgumentException("Wrong input data type");
             }
             if (argument.size() > 0 &&
-                argument.get(ALPHA) != null)
-            {
+                    argument.get(ALPHA) != null) {
                 confidenceInterval = confidenceInterval(
                         (Double) argument.get(ALPHA),
                         (double[]) dataObject[0], (double[]) dataObject[1],
                         doubleCovariate);
-            }
-            else if (argument.size() == 0)
-            {
+            } else if (argument.size() == 0) {
                 confidenceInterval = confidenceInterval(
                         (double[]) dataObject[0],
                         (double[]) dataObject[1], doubleCovariate);
-            }
-            else
-            {
+            } else {
                 throw new IllegalArgumentException("Wrong input argument(s).");
             }
-        }
-        else
-        {
+        } else {
             throw new IllegalArgumentException("Wrong input data.");
         }
 
@@ -795,7 +735,7 @@ public class CoxRegression extends Regression
      *                                   estimated coefficient;
      * <br>    confidenceInterval[j][1]: the upper bound for the (j+1)'th
      *                                   estimated coefficient.
-     * @exception IllegalArgumentExceptionthe level of significance should be
+     * @exception IllegalArgumentException the level of significance should be
      *                             (strictly) positive and not greater than 1.
      * @exception IllegalArgumentException the time vector, censor vector, and
      *                                     rows of the covariate matrix must
@@ -811,13 +751,11 @@ public class CoxRegression extends Regression
     public double[][] confidenceInterval(double alpha,
                                          double[] time,
                                          double[] censor,
-                                         double[] ...covariate)
-    {
-        if ((alpha <= 0.0) || (alpha > 1))
-        {
+                                         double[]... covariate) {
+        if ((alpha <= 0.0) || (alpha > 1)) {
             throw new IllegalArgumentException(
                     "The level of significance should be (strictly) positive " +
-                    "and not greater than 1.");
+                            "and not greater than 1.");
         }
         this.alpha = alpha;
         this.time = time;
@@ -826,12 +764,11 @@ public class CoxRegression extends Regression
         testStatistic = testStatistic(time, censor, covariate);
         zAlpha = new NormalDistribution().inverse((1 - alpha / 2));
         confidenceInterval = new double[testStatistic.length][2];
-        for (int i = 0; i < testStatistic.length; i++)
-        {
+        for (int i = 0; i < testStatistic.length; i++) {
             confidenceInterval[i][0] = coefficients[i] -
-                                       zAlpha * Math.sqrt(variance[i][i]);
+                    zAlpha * Math.sqrt(variance[i][i]);
             confidenceInterval[i][1] = coefficients[i] +
-                                       zAlpha * Math.sqrt(variance[i][i]);
+                    zAlpha * Math.sqrt(variance[i][i]);
         }
         output.put(CONFIDENCE_INTERVAL, confidenceInterval);
 
@@ -851,7 +788,7 @@ public class CoxRegression extends Regression
      *                                   estimated coefficient;
      * <br>    confidenceInterval[j][1]: the upper bound for the (j+1)'th
      *                                   estimated coefficient.
-     * @exception IllegalArgumentExceptionthe level of significance should be
+     * @exception IllegalArgumentException the level of significance should be
      *                             (strictly) positive and not greater than 1.
      * @exception IllegalArgumentException the time vector, censor vector, and
      *                                     rows of the covariate matrix must
@@ -866,8 +803,7 @@ public class CoxRegression extends Regression
 
     public double[][] confidenceInterval(double[] time,
                                          double[] censor,
-                                         double[][] covariate)
-    {
+                                         double[][] covariate) {
         return confidenceInterval(0.05, time, censor, covariate);
     }
 
@@ -889,33 +825,27 @@ public class CoxRegression extends Regression
      */
 
     public double[] pValue(Hashtable argument,
-                           Object ...dataObject)
-    {
+                           Object... dataObject) {
         this.argument = argument;
         this.dataObject = dataObject;
         if (dataObject != null &&
-            dataObject.length == 3 &&
-            dataObject[0].getClass().getName().equalsIgnoreCase("[D") &&
-            dataObject[1].getClass().getName().equalsIgnoreCase("[D") &&
-            dataObject[2].getClass().getName().equalsIgnoreCase("[[D"))
-        {
+                dataObject.length == 3 &&
+                dataObject[0].getClass().getName().equalsIgnoreCase("[D") &&
+                dataObject[1].getClass().getName().equalsIgnoreCase("[D") &&
+                dataObject[2].getClass().getName().equalsIgnoreCase("[[D")) {
             pValue = pValue((double[]) dataObject[0],
-                            (double[]) dataObject[1],
-                            (double[][]) dataObject[2]);
-        }
-        else if (dataObject != null &&
-                 dataObject.length >= 3 &&
-                 dataObject[0].getClass().getName().equalsIgnoreCase("[D") &&
-                 dataObject[1].getClass().getName().equalsIgnoreCase("[D") &&
-                 (dataObject.getClass().getName().
-                  equalsIgnoreCase("[Ljava.lang.Object;") ||
-                 dataObject.getClass().getName().equalsIgnoreCase("[[D")))
-        {
+                    (double[]) dataObject[1],
+                    (double[][]) dataObject[2]);
+        } else if (dataObject != null &&
+                dataObject.length >= 3 &&
+                dataObject[0].getClass().getName().equalsIgnoreCase("[D") &&
+                dataObject[1].getClass().getName().equalsIgnoreCase("[D") &&
+                (dataObject.getClass().getName().
+                        equalsIgnoreCase("[Ljava.lang.Object;") ||
+                        dataObject.getClass().getName().equalsIgnoreCase("[[D"))) {
             pValue = pValue((double[]) dataObject[0], (double[]) dataObject[1],
-                            DataManager.castDoubleObject(2, dataObject));
-        }
-        else
-        {
+                    DataManager.castDoubleObject(2, dataObject));
+        } else {
             throw new IllegalArgumentException(
                     "Wrong input arguments or data.");
         }
@@ -945,8 +875,7 @@ public class CoxRegression extends Regression
 
     public double[] pValue(double[] time,
                            double[] censor,
-                           double[] ...covariate)
-     {
+                           double[]... covariate) {
         this.time = time;
         this.censor = censor;
         this.covariate = covariate;

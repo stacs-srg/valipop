@@ -5,6 +5,7 @@ package plots.statgraphics.util;
  * <p>Description: The statistical graphics</p>
  * <p>Copyright: Copyright (c) 2009</p>
  * <p>Company: Tung Hai University </p>
+ *
  * @author Wen Hsiang Wei
  * @version 1.4
  */
@@ -25,6 +26,7 @@ import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.general.PieDataset;
 
 import plots.statgraphics.PlotFactory;
+
 import static plots.statgraphics.util.Argument.*;
 import static plots.statgraphics.util.PlotType.*;
 
@@ -34,14 +36,14 @@ import static plots.statgraphics.util.PlotType.*;
  *  for creating some 3D statistical plots.</p>
  */
 
-public class Plot3DFactory extends PlotFactory
-{
+public class Plot3DFactory extends PlotFactory {
 
     /**
      * Default Plot3DFactory constructor.
      */
 
-    public Plot3DFactory() {}
+    public Plot3DFactory() {
+    }
 
     /**
      * Creates a plot given the input arguments and data.
@@ -56,22 +58,20 @@ public class Plot3DFactory extends PlotFactory
      */
 
     public JFreeChart createPlot(Hashtable argument,
-                                 Object ...dataObject)
-    {
-        switch ((PlotType) argument.get(Argument.PLOT_TYPE))
-        {
+                                 Object... dataObject) {
+        switch ((PlotType) argument.get(Argument.PLOT_TYPE)) {
             case PIE3D:
                 plot = createPie3DPlot((String) argument.get(TITLE),
-                                       (String[]) dataObject[0],
-                                       (double[]) dataObject[1]);
+                        (String[]) dataObject[0],
+                        (double[]) dataObject[1]);
                 break;
             case BAR3D:
                 plot = createBar3DPlot((String[]) argument.get(DATA_NAMES),
-                                       (String) argument.get(TITLE),
-                                       (String) argument.get(XLABEL),
-                                       (String) argument.get(YLABEL),
-                                       (String[]) dataObject[0],
-                                       (double[][]) dataObject[1]);
+                        (String) argument.get(TITLE),
+                        (String) argument.get(XLABEL),
+                        (String) argument.get(YLABEL),
+                        (String[]) dataObject[0],
+                        (double[][]) dataObject[1]);
         }
 
         return plot;
@@ -92,10 +92,9 @@ public class Plot3DFactory extends PlotFactory
 
     public JFreeChart createPie3DPlot(String title,
                                       String[] category,
-                                      double[] counts)
-    {
+                                      double[] counts) {
         return createPie3DPlot(title,
-                               DataCreator.createDataset(category, counts));
+                DataCreator.createDataset(category, counts));
     }
 
     /**
@@ -106,14 +105,13 @@ public class Plot3DFactory extends PlotFactory
      */
 
     public JFreeChart createPie3DPlot(String title,
-                                      PieDataset dataset)
-    {
+                                      PieDataset dataset) {
         plot = ChartFactory.createPieChart3D(
-            title,
-            dataset,
-            true,
-            true,
-            false);
+                title,
+                dataset,
+                true,
+                true,
+                false);
         plot.setBackgroundPaint(Color.white);
         PiePlot3D piePlot = (PiePlot3D) plot.getPlot();
         plot.setBackgroundPaint(Color.lightGray);
@@ -144,10 +142,9 @@ public class Plot3DFactory extends PlotFactory
                                       String xLabel,
                                       String yLabel,
                                       String[] category,
-                                      double[] ...data)
-    {
+                                      double[]... data) {
         return createBar3DPlot(title, xLabel, yLabel, DataCreator.
-                               createDataset(dataNames, category, data));
+                createDataset(dataNames, category, data));
     }
 
     /**
@@ -164,22 +161,21 @@ public class Plot3DFactory extends PlotFactory
     public JFreeChart createBar3DPlot(String title,
                                       String xLabel,
                                       String yLabel,
-                                      CategoryDataset dataset)
-    {
+                                      CategoryDataset dataset) {
         plot = ChartFactory.createBarChart3D(
-            title,
-            xLabel,
-            yLabel,
-            dataset,
-            PlotOrientation.VERTICAL,
-            true,
-            true,
-            false);
+                title,
+                xLabel,
+                yLabel,
+                dataset,
+                PlotOrientation.VERTICAL,
+                true,
+                true,
+                false);
         CategoryPlot categoryPlot = plot.getCategoryPlot();
         CategoryAxis axis = categoryPlot.getDomainAxis();
         axis.setCategoryLabelPositions(
-            CategoryLabelPositions.
-            createUpRotationLabelPositions(Math.PI / 8.0));
+                CategoryLabelPositions.
+                        createUpRotationLabelPositions(Math.PI / 8.0));
         CategoryItemRenderer renderer = categoryPlot.getRenderer();
         renderer.setItemLabelsVisible(true);
         BarRenderer barRenderer = (BarRenderer) renderer;
@@ -194,8 +190,7 @@ public class Plot3DFactory extends PlotFactory
      * @return the deserialized plot object.
      */
 
-    public JFreeChart outputDeserialized(String fileName)
-    {
+    public JFreeChart outputDeserialized(String fileName) {
         return (JFreeChart) super.plotDeserialized(fileName);
     }
 

@@ -70,7 +70,7 @@ public class MapUtils {
 
     public static void print(String label, Map<IntegerRange, ?> temp, int s, int interval, int e) {
         System.out.print(label + " | ");
-        for (int i = s; i <= e; i+=interval) {
+        for (int i = s; i <= e; i += interval) {
             IntegerRange iR = null;
             for (IntegerRange r : temp.keySet()) {
                 if (r.contains(i)) {
@@ -84,11 +84,11 @@ public class MapUtils {
         System.out.println();
     }
 
-    public static Map<IntegerRange,OneDimensionDataDistribution> clone(Map<IntegerRange, OneDimensionDataDistribution> tableData) {
+    public static Map<IntegerRange, OneDimensionDataDistribution> clone(Map<IntegerRange, OneDimensionDataDistribution> tableData) {
 
-        Map<IntegerRange,OneDimensionDataDistribution> clone = new HashMap<IntegerRange,OneDimensionDataDistribution>();
+        Map<IntegerRange, OneDimensionDataDistribution> clone = new HashMap<IntegerRange, OneDimensionDataDistribution>();
 
-        for(IntegerRange iR : tableData.keySet()) {
+        for (IntegerRange iR : tableData.keySet()) {
             clone.put(iR, tableData.get(iR).clone());
         }
 

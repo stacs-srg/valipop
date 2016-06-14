@@ -56,7 +56,7 @@ public class PeopleCollection extends PersonCollection implements IPopulation {
 
     @Override
     public Collection<IPerson> getByYearAndSex(char sex, Date year) {
-        if(Character.toLowerCase(sex) == 'm') {
+        if (Character.toLowerCase(sex) == 'm') {
             return getMales().getByYear(year);
         } else {
             return getFemales().getByYear(year);

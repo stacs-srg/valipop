@@ -5,6 +5,7 @@ package plots.javastat.inference;
  * <p>Description: JAVA programs for statistical computations</p>
  * <p>Copyright: Copyright (c) 2009</p>
  * <p>Company: Tung Hai University</p>
+ *
  * @author Wen Hsiang Wei
  * @version 1.4
  */
@@ -17,6 +18,7 @@ import plots.javastat.StatisticalAnalysis;
 import plots.javastat.StatisticalInference;
 import plots.javastat.util.BasicStatistics;
 import plots.javastat.util.DataManager;
+
 import static plots.javastat.util.Output.*;
 
 /**
@@ -60,8 +62,7 @@ import static plots.javastat.util.Output.*;
  * <br> out.println(testclass4.output.toString());
  */
 
-public class OneWayANOVA extends StatisticalInference
-{
+public class OneWayANOVA extends StatisticalInference {
     /**
      * The F statistic for ANOVA.
      */
@@ -93,14 +94,14 @@ public class OneWayANOVA extends StatisticalInference
      * <br> degreeFreedom[1]: the degree of freedom of within sum of squares.
      */
 
-    public double [] degreeFreedom;
+    public double[] degreeFreedom;
 
     /**
      * The input data,
      * <br> data[j][]: the data from (j+1)'th population (treatment).
      */
 
-    public double [][] data;
+    public double[][] data;
 
     /**
      * The object represents a one-way analysis of variance.
@@ -118,7 +119,7 @@ public class OneWayANOVA extends StatisticalInference
      * The vector of sample means.
      */
 
-    private double [] meanVector;
+    private double[] meanVector;
 
     /**
      * The sample variance.
@@ -144,7 +145,8 @@ public class OneWayANOVA extends StatisticalInference
      * more populations.
      */
 
-    public OneWayANOVA(){}
+    public OneWayANOVA() {
+    }
 
     /**
      * Constructs a F test with the input argument and data.
@@ -153,28 +155,20 @@ public class OneWayANOVA extends StatisticalInference
      */
 
     public OneWayANOVA(Hashtable argument,
-                       Object... dataObject)
-    {
+                       Object... dataObject) {
         this.argument = argument;
         this.dataObject = dataObject;
         if (dataObject != null &&
-            dataObject.getClass().getName().equalsIgnoreCase("[[D"))
-        {
+                dataObject.getClass().getName().equalsIgnoreCase("[[D")) {
             statisticalAnalysis = new OneWayANOVA((double[][]) dataObject);
-        }
-        else if (dataObject!=null &&
-                 dataObject.getClass().getName().
-                 equalsIgnoreCase("[Ljava.lang.Object;"))
-        {
+        } else if (dataObject != null &&
+                dataObject.getClass().getName().
+                        equalsIgnoreCase("[Ljava.lang.Object;")) {
             statisticalAnalysis =
-                    new OneWayANOVA(DataManager.castDoubleObject(0,dataObject));
-        }
-        else if (dataObject == null)
-        {
+                    new OneWayANOVA(DataManager.castDoubleObject(0, dataObject));
+        } else if (dataObject == null) {
             statisticalAnalysis = new OneWayANOVA();
-        }
-        else
-        {
+        } else {
             throw new IllegalArgumentException("Wrong input data.");
         }
     }
@@ -185,8 +179,7 @@ public class OneWayANOVA extends StatisticalInference
      * <br>        data[j][]: the data from (j+1)'th population (treatment).
      */
 
-    public OneWayANOVA(double[]... data)
-    {
+    public OneWayANOVA(double[]... data) {
         this.data = data;
         degreeFreedom = degreeFreedom(data);
         testStatistic = testStatistic(data);
@@ -204,27 +197,21 @@ public class OneWayANOVA extends StatisticalInference
      * <br>    degreeFreedom[1]: the degree of freedom of within sum of squares.
      */
 
-    public double [] degreeFreedom(Hashtable argument,
-                                   Object... dataObject)
-    {
-       if (dataObject!=null &&
-           dataObject.getClass().getName().equalsIgnoreCase("[[D"))
-       {
-           degreeFreedom = degreeFreedom((double[][]) dataObject);
-       }
-       else if (dataObject!=null &&
+    public double[] degreeFreedom(Hashtable argument,
+                                  Object... dataObject) {
+        if (dataObject != null &&
+                dataObject.getClass().getName().equalsIgnoreCase("[[D")) {
+            degreeFreedom = degreeFreedom((double[][]) dataObject);
+        } else if (dataObject != null &&
                 dataObject.getClass().getName().
-                equalsIgnoreCase("[Ljava.lang.Object;"))
-       {
-           degreeFreedom = degreeFreedom(DataManager.
-                                         castDoubleObject(0, dataObject));
-       }
-       else
-       {
-           throw new IllegalArgumentException("Wrong input arguments or data.");
-       }
+                        equalsIgnoreCase("[Ljava.lang.Object;")) {
+            degreeFreedom = degreeFreedom(DataManager.
+                    castDoubleObject(0, dataObject));
+        } else {
+            throw new IllegalArgumentException("Wrong input arguments or data.");
+        }
 
-       return degreeFreedom;
+        return degreeFreedom;
     }
 
     /**
@@ -238,8 +225,7 @@ public class OneWayANOVA extends StatisticalInference
      * <br>    degreeFreedom[1]: the degree of freedom of within sum of squares.
      */
 
-    public double [] degreeFreedom(double[]... data)
-    {
+    public double[] degreeFreedom(double[]... data) {
         this.data = data;
         degreeFreedom = new double[2];
         sampleSize = new DataManager().sampleSize(data);
@@ -259,24 +245,18 @@ public class OneWayANOVA extends StatisticalInference
      */
 
     public Double testStatistic(Hashtable argument,
-                                Object... dataObject)
-    {
+                                Object... dataObject) {
         this.argument = argument;
         this.dataObject = dataObject;
         if (dataObject != null &&
-            dataObject.getClass().getName().equalsIgnoreCase("[[D"))
-        {
+                dataObject.getClass().getName().equalsIgnoreCase("[[D")) {
             testStatistic = testStatistic((double[][]) dataObject);
-        }
-        else if (dataObject != null &&
-                 dataObject.getClass().getName().
-                 equalsIgnoreCase("[Ljava.lang.Object;"))
-        {
+        } else if (dataObject != null &&
+                dataObject.getClass().getName().
+                        equalsIgnoreCase("[Ljava.lang.Object;")) {
             testStatistic = testStatistic(DataManager.
-                                          castDoubleObject(0, dataObject));
-        }
-        else
-        {
+                    castDoubleObject(0, dataObject));
+        } else {
             throw new IllegalArgumentException(
                     "Wrong input arguments or data.");
         }
@@ -292,8 +272,7 @@ public class OneWayANOVA extends StatisticalInference
      * @return the value of the F statistic.
      */
 
-    public double testStatistic(double[]... data)
-    {
+    public double testStatistic(double[]... data) {
         this.data = data;
         basicStatistics = new BasicStatistics();
         meanVector = basicStatistics.meanVector(data);
@@ -301,16 +280,15 @@ public class OneWayANOVA extends StatisticalInference
         dataSum = 0.0;
         ssWithin = 0.0;
         ssBetween = 0.0;
-        for (int j = 0; j < data.length; j++)
-        {
+        for (int j = 0; j < data.length; j++) {
             ssBetween += (data[j].length) * Math.pow(meanVector[j], 2.0);
             variance = basicStatistics.variance(data[j]);
             ssWithin += (data[j].length - 1) * variance;
             dataSum += meanVector[j] * data[j].length;
         }
         ssBetween -= (Math.pow(dataSum, 2.0) / sampleSize);
-        testStatistic = (ssBetween*(sampleSize - data.length)) /
-            (ssWithin * (data.length - 1.0));
+        testStatistic = (ssBetween * (sampleSize - data.length)) /
+                (ssWithin * (data.length - 1.0));
         output.put(TEST_STATISTIC, testStatistic);
 
         return testStatistic;
@@ -324,23 +302,17 @@ public class OneWayANOVA extends StatisticalInference
      */
 
     public Double pValue(Hashtable argument,
-                         Object... dataObject)
-    {
+                         Object... dataObject) {
         this.argument = argument;
         this.dataObject = dataObject;
         if (dataObject != null &&
-            dataObject.getClass().getName().equalsIgnoreCase("[[D"))
-        {
+                dataObject.getClass().getName().equalsIgnoreCase("[[D")) {
             pValue = pValue((double[][]) dataObject);
-        }
-        else if (dataObject != null &&
-                 dataObject.getClass().getName().
-                 equalsIgnoreCase("[Ljava.lang.Object;"))
-        {
+        } else if (dataObject != null &&
+                dataObject.getClass().getName().
+                        equalsIgnoreCase("[Ljava.lang.Object;")) {
             pValue = pValue(DataManager.castDoubleObject(0, dataObject));
-        }
-        else
-        {
+        } else {
             throw new IllegalArgumentException(
                     "Wrong input arguments or data.");
         }
@@ -355,12 +327,11 @@ public class OneWayANOVA extends StatisticalInference
      * @return the p value for the test.
      */
 
-    public double pValue(double[]... data)
-    {
+    public double pValue(double[]... data) {
         testStatistic = testStatistic(data);
         sampleSize = new DataManager().sampleSize(data);
         pValue = 1 - new FDistribution(data.length - 1.0,
-            sampleSize - data.length).cumulative(testStatistic);
+                sampleSize - data.length).cumulative(testStatistic);
         output.put(PVALUE, pValue);
 
         return pValue;

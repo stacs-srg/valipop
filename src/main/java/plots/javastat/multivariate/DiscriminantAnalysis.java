@@ -5,6 +5,7 @@ package plots.javastat.multivariate;
  * <p>Description: JAVA programs for statistical computations</p>
  * <p>Copyright: Copyright (c) 2009</p>
  * <p>Company: Tung Hai University</p>
+ *
  * @author Wen Hsiang Wei
  * @version 1.4
  */
@@ -17,6 +18,7 @@ import Jama.Matrix;
 import plots.javastat.StatisticalAnalysis;
 import plots.javastat.util.BasicStatistics;
 import plots.javastat.util.DataManager;
+
 import static plots.javastat.util.Output.*;
 
 /**
@@ -97,8 +99,7 @@ import static plots.javastat.util.Output.*;
  * <br> out.println(testclass6.output.toString());
  */
 
-public class DiscriminantAnalysis extends StatisticalAnalysis
-{
+public class DiscriminantAnalysis extends StatisticalAnalysis {
 
     /**
      * The groups the new data are classified to.
@@ -364,7 +365,8 @@ public class DiscriminantAnalysis extends StatisticalAnalysis
      * Constructs a class for a linear discriminant analysis.
      */
 
-    public DiscriminantAnalysis() {}
+    public DiscriminantAnalysis() {
+    }
 
     /**
      * Constructs a class for a discriminant analysis given the input argument
@@ -381,44 +383,34 @@ public class DiscriminantAnalysis extends StatisticalAnalysis
      */
 
     public DiscriminantAnalysis(Hashtable argument,
-                                Object ...dataObject)
-    {
+                                Object... dataObject) {
         this.argument = argument;
         this.dataObject = dataObject;
         if (dataObject != null &&
-            dataObject.length == 3 &&
-            dataObject[0].getClass().getName().equalsIgnoreCase("[D") &&
-            dataObject[1].getClass().getName().equalsIgnoreCase("[[D") &&
-            dataObject[2].getClass().getName().equalsIgnoreCase("[[D"))
-        {
+                dataObject.length == 3 &&
+                dataObject[0].getClass().getName().equalsIgnoreCase("[D") &&
+                dataObject[1].getClass().getName().equalsIgnoreCase("[[D") &&
+                dataObject[2].getClass().getName().equalsIgnoreCase("[[D")) {
             statisticalAnalysis = new DiscriminantAnalysis(
                     (double[]) dataObject[0], (double[][]) dataObject[1],
                     (double[][]) dataObject[2]);
-        }
-        else if (dataObject != null &&
-                 dataObject.length == 2 &&
-                 dataObject[0].getClass().getName().equalsIgnoreCase("[D") &&
-                 dataObject[1].getClass().getName().equalsIgnoreCase("[[D"))
-        {
+        } else if (dataObject != null &&
+                dataObject.length == 2 &&
+                dataObject[0].getClass().getName().equalsIgnoreCase("[D") &&
+                dataObject[1].getClass().getName().equalsIgnoreCase("[[D")) {
             statisticalAnalysis = new DiscriminantAnalysis(
                     (double[]) dataObject[0], (double[][]) dataObject[1]);
-        }
-        else if (dataObject != null &&
-                 dataObject[0].getClass().getName().equalsIgnoreCase("[D") &&
-                 (dataObject.getClass().getName().equalsIgnoreCase(
-                     "[Ljava.lang.Object;") ||
-                 dataObject.getClass().getName().equalsIgnoreCase("[[D")))
-       {
+        } else if (dataObject != null &&
+                dataObject[0].getClass().getName().equalsIgnoreCase("[D") &&
+                (dataObject.getClass().getName().equalsIgnoreCase(
+                        "[Ljava.lang.Object;") ||
+                        dataObject.getClass().getName().equalsIgnoreCase("[[D"))) {
             statisticalAnalysis = new DiscriminantAnalysis(
                     (double[]) dataObject[0],
                     DataManager.castDoubleObject(1, dataObject));
-        }
-        else if (dataObject == null)
-        {
+        } else if (dataObject == null) {
             statisticalAnalysis = new DiscriminantAnalysis();
-        }
-        else
-        {
+        } else {
             throw new IllegalArgumentException("Wrong input data.");
         }
     }
@@ -440,14 +432,13 @@ public class DiscriminantAnalysis extends StatisticalAnalysis
 
     public DiscriminantAnalysis(double[] groups,
                                 double[][] covariate,
-                                double[][] newCovariate)
-    {
+                                double[][] newCovariate) {
         this.groups = groups;
         this.covariate = covariate;
         this.newCovariate = newCovariate;
         isPredictive = true;
         linearDiscriminants = linearDiscriminants(groups, covariate,
-                                                  newCovariate);
+                newCovariate);
     }
 
     /**
@@ -461,8 +452,7 @@ public class DiscriminantAnalysis extends StatisticalAnalysis
      */
 
     public DiscriminantAnalysis(double[] groups,
-                                double[] ...covariate)
-    {
+                                double[]... covariate) {
         this.groups = groups;
         this.covariate = covariate;
         isPredictive = false;
@@ -485,41 +475,33 @@ public class DiscriminantAnalysis extends StatisticalAnalysis
      */
 
     public double[][] linearDiscriminants(Hashtable argument,
-                                          Object ...dataObject)
-    {
+                                          Object... dataObject) {
         this.argument = argument;
         this.dataObject = dataObject;
         if (dataObject != null &&
-            dataObject.length == 3 &&
-            dataObject[0].getClass().getName().equalsIgnoreCase("[D") &&
-            dataObject[1].getClass().getName().equalsIgnoreCase("[[D") &&
-            dataObject[2].getClass().getName().equalsIgnoreCase("[[D"))
-        {
+                dataObject.length == 3 &&
+                dataObject[0].getClass().getName().equalsIgnoreCase("[D") &&
+                dataObject[1].getClass().getName().equalsIgnoreCase("[[D") &&
+                dataObject[2].getClass().getName().equalsIgnoreCase("[[D")) {
             linearDiscriminants = linearDiscriminants((double[]) dataObject[0],
                     (double[][]) dataObject[1], (double[][]) dataObject[2]);
-        }
-        else if (dataObject != null &&
-                 dataObject.length == 2 &&
-                 dataObject[0].getClass().getName().equalsIgnoreCase("[D") &&
-                 dataObject[1].getClass().getName().equalsIgnoreCase("[[D"))
-        {
+        } else if (dataObject != null &&
+                dataObject.length == 2 &&
+                dataObject[0].getClass().getName().equalsIgnoreCase("[D") &&
+                dataObject[1].getClass().getName().equalsIgnoreCase("[[D")) {
             linearDiscriminants = linearDiscriminants((double[]) dataObject[0],
                     (double[][]) dataObject[1]);
-        }
-        else if (dataObject != null &&
-                 dataObject.length >= 2 &&
-                 dataObject[0].getClass().getName().equalsIgnoreCase("[D") &&
-                 (dataObject.getClass().getName().equalsIgnoreCase(
-                     "[Ljava.lang.Object;") ||
-                 dataObject.getClass().getName().equalsIgnoreCase("[[D")))
-       {
+        } else if (dataObject != null &&
+                dataObject.length >= 2 &&
+                dataObject[0].getClass().getName().equalsIgnoreCase("[D") &&
+                (dataObject.getClass().getName().equalsIgnoreCase(
+                        "[Ljava.lang.Object;") ||
+                        dataObject.getClass().getName().equalsIgnoreCase("[[D"))) {
             linearDiscriminants = linearDiscriminants((double[]) dataObject[0],
                     DataManager.castDoubleObject(1, dataObject));
-        }
-        else
-        {
+        } else {
             throw new IllegalArgumentException("Wrong input arguments or " +
-                                               "data.");
+                    "data.");
         }
 
         return linearDiscriminants;
@@ -537,13 +519,12 @@ public class DiscriminantAnalysis extends StatisticalAnalysis
      */
 
     public double[][] linearDiscriminants(double[] groups,
-                                          double[] ...covariate)
-    {
+                                          double[]... covariate) {
         this.groups = groups;
         this.covariate = covariate;
         isPredictive = false;
         linearDiscriminants = linearDiscriminants(groups, covariate,
-                                                  this.newCovariate);
+                this.newCovariate);
 
         return linearDiscriminants;
     }
@@ -565,21 +546,17 @@ public class DiscriminantAnalysis extends StatisticalAnalysis
 
     public double[][] linearDiscriminants(double[] groups,
                                           double[][] covariate,
-                                          double[][] newCovariate)
-    {
+                                          double[][] newCovariate) {
         this.groups = groups;
         this.covariate = covariate;
         BasicStatistics.convergenceCriterion =
-            new double[]{Math.pow(10, -7), Math.pow(10, -3)};
+                new double[]{Math.pow(10, -7), Math.pow(10, -3)};
         basicStatistics = new BasicStatistics();
         dataManager = new DataManager();
         isPredictive = true;
-        if (newCovariate == null)
-        {
+        if (newCovariate == null) {
             isPredictive = false;
-        }
-        else
-        {
+        } else {
             dataManager.checkDimension(newCovariate);
             predictedGroup = new int[newCovariate[0].length];
             this.newCovariate = newCovariate;
@@ -592,123 +569,105 @@ public class DiscriminantAnalysis extends StatisticalAnalysis
         spoolMatrix = new Matrix(covariate.length, covariate.length, 0.0);
         SSBMatrix = new Matrix(covariate.length, covariate.length, 0.0);
         meanVector = new double[groupIndex.length][covariate.length];
-        for (int j = 0; j < groupIndex.length; j++)
-        {
+        for (int j = 0; j < groupIndex.length; j++) {
             covariateBuffer = new double[covariate.length][groupIndex[j]];
-            for (int l = 0; l < groupIndex[j]; l++)
-            {
-                for (int k = 0; k < covariate.length; k++)
-                {
+            for (int l = 0; l < groupIndex[j]; l++) {
+                for (int k = 0; k < covariate.length; k++) {
                     covariateBuffer[k][l] = covariate[k][covariateIndex + l];
                 }
             }
             covariateIndex += groupIndex[j];
             meanVector[j] = basicStatistics.meanVector(covariateBuffer);
             meanDifferenceMatrix = new Matrix(meanVector[j],
-                                              meanVector[j].length).
-                                   minus(overallMeanMatrix);
+                    meanVector[j].length).
+                    minus(overallMeanMatrix);
             SSBMatrix.plusEquals(meanDifferenceMatrix.times(
                     meanDifferenceMatrix.
-                    transpose()).timesEquals(groupIndex[j]));
+                            transpose()).timesEquals(groupIndex[j]));
             spoolMatrix.plusEquals(new Matrix(basicStatistics.covarianceMatrix(
                     covariateBuffer)).timesEquals((groupIndex[j] - 1)));
         }
         spoolInverseMatrix = spoolMatrix.inverse();
-        if (groupIndex.length == 2)
-        {
+        if (groupIndex.length == 2) {
             meanMatrix1 = new Matrix(meanVector[0], meanVector[0].length);
             meanMatrix2 = new Matrix(meanVector[1], meanVector[1].length);
             discriminantMatrix = spoolInverseMatrix.times(meanMatrix1.minus(
                     meanMatrix2));
             discriminantMatrix.timesEquals(groups.length - groupIndex.length);
-            if (isPredictive)
-            {
+            if (isPredictive) {
                 predictionMatrix = discriminantMatrix.transpose().times(
                         new Matrix(newCovariate));
                 meanPredictionMatrix = discriminantMatrix.transpose().times(
                         meanMatrix1.plusEquals(meanMatrix2).timesEquals(0.5));
-                for (int l = 0; l < newCovariate[0].length; l++)
-                {
+                for (int l = 0; l < newCovariate[0].length; l++) {
                     if (predictionMatrix.get(0, l) >=
-                        meanPredictionMatrix.get(0, 0))
-                    {
+                            meanPredictionMatrix.get(0, 0)) {
                         predictedGroup[l] = (int) groups[0];
-                    }
-                    else
-                    {
+                    } else {
                         predictedGroup[l] = (int) groups[groupIndex[0]];
                     }
                 }
             }
-        }
-        else
-        {
+        } else {
             spoolInverseMatrix.timesEquals(groups.length - groupIndex.length);
             spoolInverseEigenDecomposition = new EigenvalueDecomposition(
                     spoolInverseMatrix);
             spoolInverseEigenValues = spoolInverseEigenDecomposition.
-                                      getRealEigenvalues();
+                    getRealEigenvalues();
             spoolInverseSQREigenValues = dataManager.zeroArray(
                     spoolInverseEigenValues.length,
                     spoolInverseEigenValues.length);
-            for (int i = 0; i < spoolInverseEigenValues.length; i++)
-            {
+            for (int i = 0; i < spoolInverseEigenValues.length; i++) {
                 spoolInverseSQREigenValues[i][i] = Math.sqrt(
                         spoolInverseEigenValues[i]);
             }
             spoolInverseEigenVectorMatrix = spoolInverseEigenDecomposition.
-                                            getV().transpose();
+                    getV().transpose();
             spoolInverseSQRMatrix = spoolInverseEigenDecomposition.getV().times(
                     new Matrix(spoolInverseSQREigenValues)).times(
-                            spoolInverseEigenVectorMatrix);
+                    spoolInverseEigenVectorMatrix);
             eigenDecomposition = new EigenvalueDecomposition(
                     spoolInverseSQRMatrix.times(SSBMatrix).times(
-                    spoolInverseSQRMatrix));
+                            spoolInverseSQRMatrix));
             eigenValues = dataManager.abs(eigenDecomposition.
-                                          getRealEigenvalues());
+                    getRealEigenvalues());
             eigenVectors = eigenDecomposition.getV().getArray();
             dataManager.dataSort(eigenValues, eigenVectors);
             eigenValueInd = 0;
-            for (int i = 0; i < eigenValues.length; i++)
-            {
+            for (int i = 0; i < eigenValues.length; i++) {
                 if (eigenValues[i] < BasicStatistics.convergenceCriterion[0] ||
-                    (eigenValues[i] / basicStatistics.sum(eigenValues)) <
-                    BasicStatistics.convergenceCriterion[1])
-                {
+                        (eigenValues[i] / basicStatistics.sum(eigenValues)) <
+                                BasicStatistics.convergenceCriterion[1]) {
                     eigenValueInd++;
                 }
             }
             discriminantMatrix = spoolInverseSQRMatrix.times(new Matrix(
                     eigenVectors).getMatrix(0, eigenValues.length - 1,
-                                            eigenValueInd,
-                                            eigenValues.length - 1));
-            if (isPredictive)
-            {
+                    eigenValueInd,
+                    eigenValues.length - 1));
+            if (isPredictive) {
                 predictionMatrix = discriminantMatrix.transpose().times(new
                         Matrix(newCovariate));
                 meanPredictionMatrix = discriminantMatrix.transpose().times(new
                         Matrix(meanVector).transpose());
-                for (int s = 0; s < newCovariate[0].length; s++)
-                {
+                for (int s = 0; s < newCovariate[0].length; s++) {
                     predictionSubMatrix = predictionMatrix.getMatrix(0,
                             eigenValues.length - 1 - eigenValueInd, s, s);
                     differenceMatrix = predictionSubMatrix.minus(
                             meanPredictionMatrix.getMatrix(0,
-                            eigenValues.length - 1 - eigenValueInd, 0, 0));
+                                    eigenValues.length - 1 - eigenValueInd, 0, 0));
                     minimumDistance = differenceMatrix.transpose().times(
                             differenceMatrix).get(0, 0);
                     predictedGroupIndex = (int) groups[0];
                     bufferGroupIndex = 0;
-                    for (int m = 1; m < groupIndex.length; m++)
-                    {
-                        bufferGroupIndex += (int) groupIndex[m - 1];
+                    for (int m = 1; m < groupIndex.length; m++) {
+                        bufferGroupIndex += groupIndex[m - 1];
                         differenceMatrix = predictionSubMatrix.minus(
                                 meanPredictionMatrix.getMatrix(0,
-                                eigenValues.length - 1 - eigenValueInd, m, m));
+                                        eigenValues.length - 1 - eigenValueInd, m, m));
                         differenceSquareMatrix = differenceMatrix.transpose().
-                                                 times(differenceMatrix);
-                        if (differenceSquareMatrix.get(0, 0) < minimumDistance)
-                        {
+                                times(differenceMatrix);
+                        if (differenceSquareMatrix.get(0, 0) < minimumDistance) {
                             predictedGroupIndex =
                                     (int) groups[bufferGroupIndex];
                             minimumDistance = differenceSquareMatrix.get(0, 0);
@@ -720,14 +679,12 @@ public class DiscriminantAnalysis extends StatisticalAnalysis
         }
         InverseOrderDiscriminants = discriminantMatrix.transpose().getArray();
         linearDiscriminants = new double[InverseOrderDiscriminants.length][];
-        for (int m = 0; m < InverseOrderDiscriminants.length; m++)
-        {
+        for (int m = 0; m < InverseOrderDiscriminants.length; m++) {
             linearDiscriminants[m] = InverseOrderDiscriminants[
-                                     InverseOrderDiscriminants.length - 1 - m];
+                    InverseOrderDiscriminants.length - 1 - m];
         }
         output.put(LINEAR_DISCRIMINANTS, linearDiscriminants);
-        if (predictedGroup != null)
-        {
+        if (predictedGroup != null) {
             output.put(PREDICTED_GROUP, predictedGroup);
         }
 
@@ -749,43 +706,35 @@ public class DiscriminantAnalysis extends StatisticalAnalysis
      */
 
     public int[] predictedGroup(Hashtable argument,
-                                Object ...dataObject)
-    {
+                                Object... dataObject) {
         this.argument = argument;
         this.dataObject = dataObject;
         if (dataObject != null &&
-            dataObject.length == 3 &&
-            dataObject[0].getClass().getName().equalsIgnoreCase("[D") &&
-            dataObject[1].getClass().getName().equalsIgnoreCase("[[D") &&
-            dataObject[2].getClass().getName().equalsIgnoreCase("[[D"))
-        {
+                dataObject.length == 3 &&
+                dataObject[0].getClass().getName().equalsIgnoreCase("[D") &&
+                dataObject[1].getClass().getName().equalsIgnoreCase("[[D") &&
+                dataObject[2].getClass().getName().equalsIgnoreCase("[[D")) {
             predictedGroup = predictedGroup((double[]) dataObject[0],
-                                            (double[][]) dataObject[1],
-                                            (double[][]) dataObject[2]);
-        }
-        else if (dataObject != null &&
-                 dataObject.length == 2 &&
-                 dataObject[0].getClass().getName().equalsIgnoreCase("[D") &&
-                 dataObject[1].getClass().getName().equalsIgnoreCase("[[D"))
-        {
+                    (double[][]) dataObject[1],
+                    (double[][]) dataObject[2]);
+        } else if (dataObject != null &&
+                dataObject.length == 2 &&
+                dataObject[0].getClass().getName().equalsIgnoreCase("[D") &&
+                dataObject[1].getClass().getName().equalsIgnoreCase("[[D")) {
             predictedGroup = predictedGroup((double[]) dataObject[0],
-                                            (double[][]) dataObject[1]);
-        }
-        else if (dataObject != null &&
-                 dataObject.length >= 2 &&
-                 dataObject[0].getClass().getName().equalsIgnoreCase("[D") &&
-                 (dataObject.getClass().getName().equalsIgnoreCase(
-                     "[Ljava.lang.Object;") ||
-                 dataObject.getClass().getName().equalsIgnoreCase("[[D")))
-       {
+                    (double[][]) dataObject[1]);
+        } else if (dataObject != null &&
+                dataObject.length >= 2 &&
+                dataObject[0].getClass().getName().equalsIgnoreCase("[D") &&
+                (dataObject.getClass().getName().equalsIgnoreCase(
+                        "[Ljava.lang.Object;") ||
+                        dataObject.getClass().getName().equalsIgnoreCase("[[D"))) {
             predictedGroup = predictedGroup((double[]) dataObject[0],
-                                            DataManager.castDoubleObject(1,
-                                            dataObject));
-        }
-        else
-        {
+                    DataManager.castDoubleObject(1,
+                            dataObject));
+        } else {
             throw new IllegalArgumentException("Wrong input arguments or " +
-                                               "data.");
+                    "data.");
         }
 
         return predictedGroup;
@@ -807,8 +756,7 @@ public class DiscriminantAnalysis extends StatisticalAnalysis
 
     public int[] predictedGroup(double[] groups,
                                 double[][] covariate,
-                                double[][] newCovariate)
-    {
+                                double[][] newCovariate) {
         this.groups = groups;
         this.covariate = covariate;
         this.newCovariate = newCovariate;
@@ -829,8 +777,7 @@ public class DiscriminantAnalysis extends StatisticalAnalysis
      */
 
     public int[] predictedGroup(double[] groups,
-                                double[] ...covariate)
-    {
+                                double[]... covariate) {
         this.groups = groups;
         this.covariate = covariate;
         isPredictive = true;

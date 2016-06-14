@@ -5,6 +5,7 @@ package plots.javastat.util;
  * <p>Description: JAVA programs for statistical computations</p>
  * <p>Copyright: Copyright (c) 2009</p>
  * <p>Company: Tung Hai University</p>
+ *
  * @author Wen Hsiang Wei
  * @version 1.4
  */
@@ -13,193 +14,192 @@ package plots.javastat.util;
  * The enumerated functions for data manipulation.
  */
 
-public enum FunctionType
-{
+public enum FunctionType {
 
-        /**
-         * Reciprocal function.
-         */
+    /**
+     * Reciprocal function.
+     */
 
-        RECIPROCAL,
+    RECIPROCAL,
 
-        /**
-         * Square function.
-         */
+    /**
+     * Square function.
+     */
 
-        SQUARE,
+    SQUARE,
 
-        /**
-         * Cube function.
-         */
+    /**
+     * Cube function.
+     */
 
-        CUBE,
+    CUBE,
 
-        /**
-         * Square root function.
-         */
+    /**
+     * Square root function.
+     */
 
-        SQRT,
+    SQRT,
 
-        /**
-         * Cube root function.
-         */
+    /**
+     * Cube root function.
+     */
 
-        CBRT,
+    CBRT,
 
-        /**
-         * Absolute value function.
-         */
+    /**
+     * Absolute value function.
+     */
 
-        ABS,
+    ABS,
 
-        /**
-         * Arc cosine function.
-         */
+    /**
+     * Arc cosine function.
+     */
 
-        ACOS,
+    ACOS,
 
-        /**
-         * Inverse hyperbolic cosine function.
-         */
+    /**
+     * Inverse hyperbolic cosine function.
+     */
 
-        ACOSH,
+    ACOSH,
 
-        /**
-         * Arc sine function.
-         */
+    /**
+     * Arc sine function.
+     */
 
-        ASIN,
+    ASIN,
 
-        /**
-         * Inverse hyperbolic sine function.
-         */
+    /**
+     * Inverse hyperbolic sine function.
+     */
 
-        ASINH,
+    ASINH,
 
-        /**
-         * Arc tangent function.
-         */
+    /**
+     * Arc tangent function.
+     */
 
-        ATAN,
+    ATAN,
 
-        /**
-         * Inverse hyperbolic tangent function.
-         */
+    /**
+     * Inverse hyperbolic tangent function.
+     */
 
-        ATANH,
+    ATANH,
 
-        /**
-         * Cosine function.
-         */
+    /**
+     * Cosine function.
+     */
 
-        COS,
+    COS,
 
-        /**
-         * Hyperbolic cosine function.
-         */
+    /**
+     * Hyperbolic cosine function.
+     */
 
-        COSH,
+    COSH,
 
-        /**
-         * Cumulative maxima function.
-         */
+    /**
+     * Cumulative maxima function.
+     */
 
-        CUMMAX,
+    CUMMAX,
 
-        /**
-         * Cumulative minima function.
-         */
+    /**
+     * Cumulative minima function.
+     */
 
-        CUMMIN,
+    CUMMIN,
 
-        /**
-         * Cumulative product function.
-         */
+    /**
+     * Cumulative product function.
+     */
 
-        CUMPROD,
+    CUMPROD,
 
-        /**
-         * Cumulative sum function.
-         */
+    /**
+     * Cumulative sum function.
+     */
 
-        CUMSUM,
+    CUMSUM,
 
-        /**
-         * Exponential function.
-         */
+    /**
+     * Exponential function.
+     */
 
-        EXP,
+    EXP,
 
-        /**
-         * Matrix inverse.
-         */
+    /**
+     * Matrix inverse.
+     */
 
-        INVERSE,
+    INVERSE,
 
-        /**
-         * Matrix transpose.
-         */
+    /**
+     * Matrix transpose.
+     */
 
-        TRANSPOSE,
+    TRANSPOSE,
 
-        /**
-         * Eigen-analysis.
-         */
+    /**
+     * Eigen-analysis.
+     */
 
-        EIGEN,
+    EIGEN,
 
-        /**
-         * Determinant.
-         */
+    /**
+     * Determinant.
+     */
 
-        DET,
+    DET,
 
-        /**
-         * Natural logarithm.
-         */
+    /**
+     * Natural logarithm.
+     */
 
-        LOG,
+    LOG,
 
-        /**
-         * Base 10 logarithm.
-         */
+    /**
+     * Base 10 logarithm.
+     */
 
-        LOG10,
+    LOG10,
 
-        /**
-         * Sine function.
-         */
+    /**
+     * Sine function.
+     */
 
-        SIN,
+    SIN,
 
-        /**
-         * Hyperbolic sine function.
-         */
+    /**
+     * Hyperbolic sine function.
+     */
 
-        SINH,
+    SINH,
 
-        /**
-         * Sort function.
-         */
+    /**
+     * Sort function.
+     */
 
-        SORT,
+    SORT,
 
-        /**
-         * Tangent function.
-         */
+    /**
+     * Tangent function.
+     */
 
-        TAN,
+    TAN,
 
-        /**
-         * Hyperbolic tangent function.
-         */
+    /**
+     * Hyperbolic tangent function.
+     */
 
-        TANH,
+    TANH,
 
-        /**
-         * Converts an angle measured in degrees to an approximately equivalent
-         * angle measured in radians.
-         */
+    /**
+     * Converts an angle measured in degrees to an approximately equivalent
+     * angle measured in radians.
+     */
 
-        TORADIANS
+    TORADIANS
 }

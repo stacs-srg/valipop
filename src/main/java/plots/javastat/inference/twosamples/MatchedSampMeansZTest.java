@@ -5,6 +5,7 @@ package plots.javastat.inference.twosamples;
  * <p>Description: JAVA programs for statistical computations</p>
  * <p>Copyright: Copyright (c) 2009</p>
  * <p>Company: Tung Hai University</p>
+ *
  * @author Wen Hsiang Wei
  * @version 1.4
  */
@@ -15,6 +16,7 @@ import plots.javastat.StatisticalAnalysis;
 import plots.javastat.inference.TwoSampInferenceInterface;
 import plots.javastat.inference.onesample.OneSampMeanZTest;
 import plots.javastat.util.DataManager;
+
 import static plots.javastat.util.Argument.*;
 
 /**
@@ -100,8 +102,7 @@ import static plots.javastat.util.Argument.*;
  */
 
 public class MatchedSampMeansZTest extends OneSampMeanZTest implements
-        TwoSampInferenceInterface
-{
+        TwoSampInferenceInterface {
 
     /**
      * The sample mean difference.
@@ -151,7 +152,8 @@ public class MatchedSampMeansZTest extends OneSampMeanZTest implements
      * Default MatchedSampMeansZTest constructor.
      */
 
-    public MatchedSampMeansZTest() {}
+    public MatchedSampMeansZTest() {
+    }
 
     /**
      * Constructs a matched-sample z test given the input arguments and data.
@@ -174,59 +176,44 @@ public class MatchedSampMeansZTest extends OneSampMeanZTest implements
      */
 
     public MatchedSampMeansZTest(Hashtable argument,
-                                 Object ...dataObject)
-    {
+                                 Object... dataObject) {
         this.argument = argument;
         this.dataObject = dataObject;
         if (argument.size() > 0 &&
-            dataObject != null)
-        {
+                dataObject != null) {
             if (argument.get(ALPHA) != null &&
-                argument.get(NULL_VALUE) != null &&
-                argument.get(SIDE) != null &&
-                dataObject.length == 2)
-            {
+                    argument.get(NULL_VALUE) != null &&
+                    argument.get(SIDE) != null &&
+                    dataObject.length == 2) {
                 statisticalAnalysis = new MatchedSampMeansZTest(
                         (Double) argument.get(ALPHA),
                         ((Number) argument.get(NULL_VALUE)).doubleValue(),
                         (String) argument.get(SIDE),
                         (double[]) dataObject[0], (double[]) dataObject[1]);
-            }
-            else if (argument.get(NULL_VALUE) != null &&
-                     argument.get(SIDE) != null &&
-                     dataObject.length == 2)
-            {
+            } else if (argument.get(NULL_VALUE) != null &&
+                    argument.get(SIDE) != null &&
+                    dataObject.length == 2) {
                 statisticalAnalysis = new MatchedSampMeansZTest(
                         ((Number) argument.get(NULL_VALUE)).doubleValue(),
                         (String) argument.get(SIDE),
                         (double[]) dataObject[0], (double[]) dataObject[1]);
-            }
-            else if (argument.get(NULL_VALUE) != null &&
-                       dataObject.length == 2)
-            {
+            } else if (argument.get(NULL_VALUE) != null &&
+                    dataObject.length == 2) {
                 statisticalAnalysis = new MatchedSampMeansZTest(
                         ((Number) argument.get(NULL_VALUE)).doubleValue(),
                         (double[]) dataObject[0], (double[]) dataObject[1]);
-            }
-            else
-            {
+            } else {
                 throw new IllegalArgumentException(
                         "Wrong input arguments or data.");
             }
-        }
-        else if (dataObject != null &&
-                 dataObject.length == 2)
-        {
+        } else if (dataObject != null &&
+                dataObject.length == 2) {
             statisticalAnalysis =
                     new MatchedSampMeansZTest((double[]) dataObject[0],
-                                              (double[]) dataObject[1]);
-        }
-        else if (dataObject == null)
-        {
+                            (double[]) dataObject[1]);
+        } else if (dataObject == null) {
             statisticalAnalysis = new MatchedSampMeansZTest();
-        }
-        else
-        {
+        } else {
             throw new IllegalArgumentException("Wrong input data.");
         }
     }
@@ -253,8 +240,7 @@ public class MatchedSampMeansZTest extends OneSampMeanZTest implements
                                  double u12,
                                  String side,
                                  double[] data1,
-                                 double[] data2)
-    {
+                                 double[] data2) {
         this.alpha = alpha;
         this.u12 = u12;
         this.side = side;
@@ -288,8 +274,7 @@ public class MatchedSampMeansZTest extends OneSampMeanZTest implements
     public MatchedSampMeansZTest(double u12,
                                  String side,
                                  double[] data1,
-                                 double[] data2)
-    {
+                                 double[] data2) {
         this(0.05, u12, side, data1, data2);
     }
 
@@ -307,8 +292,7 @@ public class MatchedSampMeansZTest extends OneSampMeanZTest implements
 
     public MatchedSampMeansZTest(double u12,
                                  double[] data1,
-                                 double[] data2)
-    {
+                                 double[] data2) {
         this(0.05, u12, "equal", data1, data2);
     }
 
@@ -324,8 +308,7 @@ public class MatchedSampMeansZTest extends OneSampMeanZTest implements
      */
 
     public MatchedSampMeansZTest(double[] data1,
-                                 double[] data2)
-    {
+                                 double[] data2) {
         this(0.05, 0.0, "equal", data1, data2);
     }
 
@@ -348,12 +331,11 @@ public class MatchedSampMeansZTest extends OneSampMeanZTest implements
      */
 
     public double[] confidenceInterval(Hashtable argument,
-                                       Object ...dataObject)
-    {
+                                       Object... dataObject) {
         return super.confidenceInterval(argument,
-                                        new DataManager().matchedDataDifference(
-                                                (double[]) dataObject[0],
-                                                (double[]) dataObject[1]));
+                new DataManager().matchedDataDifference(
+                        (double[]) dataObject[0],
+                        (double[]) dataObject[1]));
     }
 
     /**
@@ -374,8 +356,7 @@ public class MatchedSampMeansZTest extends OneSampMeanZTest implements
 
     public double[] confidenceInterval(double alpha,
                                        double[] data1,
-                                       double[] data2)
-    {
+                                       double[] data2) {
         this.alpha = alpha;
         this.data1 = data1;
         this.data2 = data2;
@@ -400,8 +381,7 @@ public class MatchedSampMeansZTest extends OneSampMeanZTest implements
      */
 
     public double[] confidenceInterval(double[] data1,
-                                       double[] data2)
-    {
+                                       double[] data2) {
         return confidenceInterval(0.05, data1, data2);
     }
 
@@ -420,12 +400,11 @@ public class MatchedSampMeansZTest extends OneSampMeanZTest implements
      */
 
     public Double testStatistic(Hashtable argument,
-                                Object ...dataObject)
-    {
+                                Object... dataObject) {
         return super.testStatistic(argument,
-                                   new DataManager().matchedDataDifference(
-                                           (double[]) dataObject[0],
-                                           (double[]) dataObject[1]));
+                new DataManager().matchedDataDifference(
+                        (double[]) dataObject[0],
+                        (double[]) dataObject[1]));
     }
 
     /**
@@ -442,13 +421,12 @@ public class MatchedSampMeansZTest extends OneSampMeanZTest implements
 
     public double testStatistic(double u12,
                                 double[] data1,
-                                double[] data2)
-    {
+                                double[] data2) {
         this.u12 = u12;
         this.data1 = data1;
         this.data2 = data2;
         this.differencedData =
-            new DataManager().matchedDataDifference(data1, data2);
+                new DataManager().matchedDataDifference(data1, data2);
         testStatistic = super.testStatistic(u12, differencedData);
 
         return testStatistic;
@@ -466,8 +444,7 @@ public class MatchedSampMeansZTest extends OneSampMeanZTest implements
      */
 
     public double testStatistic(double[] data1,
-                                double[] data2)
-    {
+                                double[] data2) {
         return testStatistic(0.0, data1, data2);
     }
 
@@ -488,12 +465,11 @@ public class MatchedSampMeansZTest extends OneSampMeanZTest implements
      */
 
     public Double pValue(Hashtable argument,
-                         Object ...dataObject)
-    {
+                         Object... dataObject) {
         return super.pValue(argument,
-                            new DataManager().matchedDataDifference(
-                                    (double[]) dataObject[0],
-                                    (double[]) dataObject[1]));
+                new DataManager().matchedDataDifference(
+                        (double[]) dataObject[0],
+                        (double[]) dataObject[1]));
     }
 
     /**
@@ -513,14 +489,13 @@ public class MatchedSampMeansZTest extends OneSampMeanZTest implements
     public double pValue(double u12,
                          String side,
                          double[] data1,
-                         double[] data2)
-    {
+                         double[] data2) {
         this.u12 = u12;
         this.side = side;
         this.data1 = data1;
         this.data2 = data2;
         this.differencedData =
-            new DataManager().matchedDataDifference(data1, data2);
+                new DataManager().matchedDataDifference(data1, data2);
         pValue = super.pValue(u12, side, differencedData);
 
         return pValue;
@@ -540,8 +515,7 @@ public class MatchedSampMeansZTest extends OneSampMeanZTest implements
 
     public double pValue(double u12,
                          double[] data1,
-                         double[] data2)
-    {
+                         double[] data2) {
         return pValue(u12, "equal", data1, data2);
     }
 
@@ -558,8 +532,7 @@ public class MatchedSampMeansZTest extends OneSampMeanZTest implements
      */
 
     public double pValue(double[] data1,
-                         double[] data2)
-    {
+                         double[] data2) {
         return pValue(0.0, "equal", data1, data2);
     }
 

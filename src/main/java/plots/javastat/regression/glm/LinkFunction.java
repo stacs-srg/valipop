@@ -5,6 +5,7 @@ package plots.javastat.regression.glm;
  * <p>Description: JAVA programs for statistical computations</p>
  * <p>Copyright: Copyright (c) 2009</p>
  * <p>Company: Tung Hai University</p>
+ *
  * @author Wen Hsiang Wei
  * @version 1.4
  */
@@ -13,55 +14,54 @@ package plots.javastat.regression.glm;
  * The enumerated link functions.
  */
 
-public enum LinkFunction
-{
+public enum LinkFunction {
 
-        /**
-         * Identity function.
-         */
+    /**
+     * Identity function.
+     */
 
-        IDENTITY,
+    IDENTITY,
 
-        /**
-         * Log function.
-         */
+    /**
+     * Log function.
+     */
 
-        LOG,
+    LOG,
 
-        /**
-         * Inverse function.
-         */
+    /**
+     * Inverse function.
+     */
 
-        INVERSE,
+    INVERSE,
 
-        /**
-         * Inverse square function.
-         */
+    /**
+     * Inverse square function.
+     */
 
-        INVERSE_SQUARE,
+    INVERSE_SQUARE,
 
-        /**
-         * Square root function.
-         */
+    /**
+     * Square root function.
+     */
 
-        SQUARE_ROOT,
+    SQUARE_ROOT,
 
-        /**
-         * Logistic function.
-         */
+    /**
+     * Logistic function.
+     */
 
-        LOGIT,
+    LOGIT,
 
-        /**
-         * Probit function.
-         */
+    /**
+     * Probit function.
+     */
 
-        PROBIT,
+    PROBIT,
 
-        /**
-         * Complementary log-log function.
-         */
+    /**
+     * Complementary log-log function.
+     */
 
-        COMPLEMENTARY_LOGLOG
+    COMPLEMENTARY_LOGLOG
 }
 

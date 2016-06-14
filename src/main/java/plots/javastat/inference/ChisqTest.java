@@ -5,6 +5,7 @@ package plots.javastat.inference;
  * <p>Description: JAVA programs for statistical computations</p>
  * <p>Copyright: Copyright (c) 2009</p>
  * <p>Company: Tung Hai University</p>
+ *
  * @author Wen Hsiang Wei
  * @version 1.4
  */
@@ -91,8 +92,7 @@ import static plots.javastat.util.Output.DEGREE_OF_FREEDOM;
  * <br> out.println(testclass4.output.toString());
  */
 
-public class ChisqTest extends StatisticalInference
-{
+public class ChisqTest extends StatisticalInference {
     /**
      * The chi-square statistic.
      */
@@ -115,7 +115,7 @@ public class ChisqTest extends StatisticalInference
      * The input contingency table.
      */
 
-    public double [][] table;
+    public double[][] table;
 
     /**
      * The object represents a chi-square test.
@@ -139,13 +139,13 @@ public class ChisqTest extends StatisticalInference
      * The vector of row means in the contingency table.
      */
 
-    private double [] rowMean;
+    private double[] rowMean;
 
     /**
      * The vector of column means in the contingency table.
      */
 
-    private double [] columnMean;
+    private double[] columnMean;
 
     /**
      * The class contains the collections of some basic methods used in
@@ -159,49 +159,40 @@ public class ChisqTest extends StatisticalInference
      * two variables.
      */
 
-    public ChisqTest(){}
+    public ChisqTest() {
+    }
 
     /**
      * Constructs a chi-square test with the input argument and data.
      * @param argument the empty argument.
      * @param dataObject the input contingency table or column and row
      *                   categorical variables.
-     * @exception  IllegalArgumentException wrong input data.
+     * @exception IllegalArgumentException wrong input data.
      */
 
     public ChisqTest(Hashtable argument,
-                     Object... dataObject)
-    {
+                     Object... dataObject) {
         this.argument = argument;
         this.dataObject = dataObject;
         if (dataObject != null &&
-            dataObject.length == 2 &&
-            dataObject[0].getClass().getName().
-            equalsIgnoreCase("[Ljava.lang.String;") &&
-            dataObject[1].getClass().getName().
-            equalsIgnoreCase("[Ljava.lang.String;"))
-        {
+                dataObject.length == 2 &&
+                dataObject[0].getClass().getName().
+                        equalsIgnoreCase("[Ljava.lang.String;") &&
+                dataObject[1].getClass().getName().
+                        equalsIgnoreCase("[Ljava.lang.String;")) {
             statisticalAnalysis = new ChisqTest((String[]) dataObject[0],
-                                                (String[]) dataObject[1]);
-        }
-        else if (dataObject != null &&
-                 dataObject.getClass().getName().equalsIgnoreCase("[[D"))
-        {
+                    (String[]) dataObject[1]);
+        } else if (dataObject != null &&
+                dataObject.getClass().getName().equalsIgnoreCase("[[D")) {
             statisticalAnalysis = new ChisqTest((double[][]) dataObject);
-        }
-        else if (dataObject != null &&
-                 dataObject.getClass().getName().
-                 equalsIgnoreCase("[Ljava.lang.Object;"))
-        {
+        } else if (dataObject != null &&
+                dataObject.getClass().getName().
+                        equalsIgnoreCase("[Ljava.lang.Object;")) {
             statisticalAnalysis = new ChisqTest(
                     DataManager.castDoubleObject(0, dataObject));
-        }
-        else if (dataObject == null)
-        {
+        } else if (dataObject == null) {
             statisticalAnalysis = new ChisqTest();
-        }
-        else
-        {
+        } else {
             throw new IllegalArgumentException("Wrong input data.");
         }
     }
@@ -209,14 +200,13 @@ public class ChisqTest extends StatisticalInference
     /**
      * Constructs a chi-square test with the specified contingency table.
      * @param table the input contingency table.
-     * @exception  IllegalArgumentException all rows of the input table must
+     * @exception IllegalArgumentException all rows of the input table must
      *                                      have the same length.
-     * @exception  IllegalArgumentException all elements of the input table must
+     * @exception IllegalArgumentException all elements of the input table must
      *                                      be postive.
      */
 
-    public ChisqTest(double[]... table)
-    {
+    public ChisqTest(double[]... table) {
         this.table = table;
         degreeFreedom = degreeFreedom(table);
         testStatistic = testStatistic(table);
@@ -228,15 +218,14 @@ public class ChisqTest extends StatisticalInference
      * categorical variables.
      * @param columnVariable the input column categorical variable.
      * @param rowVariable the input row categorical variable.
-     * @exception  IllegalArgumentException all rows of the input table must
+     * @exception IllegalArgumentException all rows of the input table must
      *                                      have the same length.
-     * @exception  IllegalArgumentException all elements of the input table must
+     * @exception IllegalArgumentException all elements of the input table must
      *                                      be postive.
      */
 
     public ChisqTest(String[] columnVariable,
-                     String[] rowVariable)
-    {
+                     String[] rowVariable) {
         this(new DataManager().contingencyTable(columnVariable, rowVariable));
     }
 
@@ -249,32 +238,24 @@ public class ChisqTest extends StatisticalInference
      */
 
     public Double degreeFreedom(Hashtable argument,
-                                Object... dataObject)
-    {
-        if (dataObject!=null &&
-            dataObject.length==2  &&
-            dataObject[0].getClass().getName().
-            equalsIgnoreCase("[Ljava.lang.String;") &&
-            dataObject[1].getClass().getName().
-            equalsIgnoreCase("[Ljava.lang.String;"))
-        {
+                                Object... dataObject) {
+        if (dataObject != null &&
+                dataObject.length == 2 &&
+                dataObject[0].getClass().getName().
+                        equalsIgnoreCase("[Ljava.lang.String;") &&
+                dataObject[1].getClass().getName().
+                        equalsIgnoreCase("[Ljava.lang.String;")) {
             degreeFreedom = degreeFreedom((String[]) dataObject[0],
-                                          (String[]) dataObject[1]);
-        }
-        else if (dataObject!=null &&
-                 dataObject.getClass().getName().equalsIgnoreCase("[[D"))
-        {
+                    (String[]) dataObject[1]);
+        } else if (dataObject != null &&
+                dataObject.getClass().getName().equalsIgnoreCase("[[D")) {
             degreeFreedom = degreeFreedom((double[][]) dataObject);
-        }
-        else if (dataObject != null &&
-                 dataObject.getClass().getName().
-                 equalsIgnoreCase("[Ljava.lang.Object;"))
-        {
+        } else if (dataObject != null &&
+                dataObject.getClass().getName().
+                        equalsIgnoreCase("[Ljava.lang.Object;")) {
             degreeFreedom = degreeFreedom(DataManager.
-                                          castDoubleObject(0, dataObject));
-        }
-        else
-        {
+                    castDoubleObject(0, dataObject));
+        } else {
             throw new IllegalArgumentException("Wrong input data.");
         }
 
@@ -287,8 +268,7 @@ public class ChisqTest extends StatisticalInference
      * @return the degree of freedom.
      */
 
-    public double degreeFreedom(double[]... table)
-    {
+    public double degreeFreedom(double[]... table) {
         this.table = table;
         degreeFreedom = (double) ((table.length - 1) * (table[0].length - 1));
         output.put(DEGREE_OF_FREEDOM, degreeFreedom);
@@ -304,10 +284,9 @@ public class ChisqTest extends StatisticalInference
      */
 
     public double degreeFreedom(String[] columnVariable,
-                                String[] rowVariable)
-    {
+                                String[] rowVariable) {
         return degreeFreedom(new DataManager().
-            contingencyTable(columnVariable, rowVariable));
+                contingencyTable(columnVariable, rowVariable));
     }
 
     /**
@@ -324,34 +303,26 @@ public class ChisqTest extends StatisticalInference
      */
 
     public Double testStatistic(Hashtable argument,
-                                Object... dataObject)
-    {
+                                Object... dataObject) {
         this.argument = argument;
         this.dataObject = dataObject;
         if (dataObject != null &&
-            dataObject.length==2 &&
-            dataObject[0].getClass().getName().
-            equalsIgnoreCase("[Ljava.lang.String;") &&
-            dataObject[1].getClass().getName().
-            equalsIgnoreCase("[Ljava.lang.String;"))
-        {
+                dataObject.length == 2 &&
+                dataObject[0].getClass().getName().
+                        equalsIgnoreCase("[Ljava.lang.String;") &&
+                dataObject[1].getClass().getName().
+                        equalsIgnoreCase("[Ljava.lang.String;")) {
             testStatistic = testStatistic((String[]) dataObject[0],
-                                          (String[]) dataObject[1]);
-        }
-        else if (dataObject != null &&
-                 dataObject.getClass().getName().equalsIgnoreCase("[[D"))
-        {
+                    (String[]) dataObject[1]);
+        } else if (dataObject != null &&
+                dataObject.getClass().getName().equalsIgnoreCase("[[D")) {
             testStatistic = testStatistic((double[][]) dataObject);
-        }
-        else if (dataObject != null &&
-                 dataObject.getClass().getName().
-                 equalsIgnoreCase("[Ljava.lang.Object;"))
-        {
+        } else if (dataObject != null &&
+                dataObject.getClass().getName().
+                        equalsIgnoreCase("[Ljava.lang.Object;")) {
             testStatistic = testStatistic(DataManager.
-                                          castDoubleObject(0, dataObject));
-        }
-        else
-        {
+                    castDoubleObject(0, dataObject));
+        } else {
             throw new IllegalArgumentException("Wrong input data.");
         }
 
@@ -368,8 +339,7 @@ public class ChisqTest extends StatisticalInference
      *                                     be postive.
      */
 
-    public double testStatistic(double[]... table)
-    {
+    public double testStatistic(double[]... table) {
         this.table = table;
         new DataManager().checkPositiveRangeDimension(table);
         testStatistic = 0.0;
@@ -377,12 +347,10 @@ public class ChisqTest extends StatisticalInference
         rowMean = basicStatistics.meanVector(table);
         columnMean = basicStatistics.columnMeanVector(table);
         sampleSize = basicStatistics.sum(table);
-        for (int i = 0; i < table[0].length; i++)
-        {
-            for (int k = 0; k < table.length; k++)
-            {
+        for (int i = 0; i < table[0].length; i++) {
+            for (int k = 0; k < table.length; k++) {
                 ei = (table.length * table[0].length *
-                    rowMean[k] * columnMean[i]) / sampleSize;
+                        rowMean[k] * columnMean[i]) / sampleSize;
                 testStatistic += Math.pow(table[k][i] - ei, 2.0) / ei;
             }
         }
@@ -403,10 +371,9 @@ public class ChisqTest extends StatisticalInference
      */
 
     public double testStatistic(String[] columnVariable,
-                                String[] rowVariable)
-    {
+                                String[] rowVariable) {
         return testStatistic(new DataManager().
-            contingencyTable(columnVariable, rowVariable));
+                contingencyTable(columnVariable, rowVariable));
     }
 
     /**
@@ -415,40 +382,32 @@ public class ChisqTest extends StatisticalInference
      * @param dataObject the input contingency table or column
      *                   and row categorical variables.
      * @return the p value for the test.
-     * @exception  IllegalArgumentException wrong input data.
-     * @exception  IllegalArgumentException all rows of the input table must
+     * @exception IllegalArgumentException wrong input data.
+     * @exception IllegalArgumentException all rows of the input table must
      *                                      have the same length.
-     * @exception  IllegalArgumentException all elements of the input table must
+     * @exception IllegalArgumentException all elements of the input table must
      *                                      be postive.
      */
 
     public Double pValue(Hashtable argument,
-                         Object... dataObject)
-    {
+                         Object... dataObject) {
         this.argument = argument;
         this.dataObject = dataObject;
         if (dataObject != null &&
-            dataObject.length == 2 &&
-            dataObject[0].getClass().getName().
-            equalsIgnoreCase("[Ljava.lang.String;") &&
-            dataObject[1].getClass().getName().
-            equalsIgnoreCase("[Ljava.lang.String;"))
-        {
+                dataObject.length == 2 &&
+                dataObject[0].getClass().getName().
+                        equalsIgnoreCase("[Ljava.lang.String;") &&
+                dataObject[1].getClass().getName().
+                        equalsIgnoreCase("[Ljava.lang.String;")) {
             pValue = pValue((String[]) dataObject[0], (String[]) dataObject[1]);
-        }
-        else if (dataObject != null &&
-                 dataObject.getClass().getName().equalsIgnoreCase("[[D"))
-        {
+        } else if (dataObject != null &&
+                dataObject.getClass().getName().equalsIgnoreCase("[[D")) {
             pValue = pValue((double[][]) dataObject);
-        }
-        else if (dataObject != null &&
-                 dataObject.getClass().getName().
-                 equalsIgnoreCase("[Ljava.lang.Object;"))
-        {
+        } else if (dataObject != null &&
+                dataObject.getClass().getName().
+                        equalsIgnoreCase("[Ljava.lang.Object;")) {
             pValue = pValue(DataManager.castDoubleObject(0, dataObject));
-        }
-        else
-        {
+        } else {
             throw new IllegalArgumentException("Wrong input data.");
         }
 
@@ -465,12 +424,11 @@ public class ChisqTest extends StatisticalInference
      *                                     be postive.
      */
 
-    public double pValue(double[]... table)
-    {
+    public double pValue(double[]... table) {
         this.table = table;
         testStatistic = testStatistic(table);
         pValue = 1 - new ChiSqrDistribution((double) ((table.length - 1) *
-            (table[0].length - 1))).cumulative(testStatistic);
+                (table[0].length - 1))).cumulative(testStatistic);
         output.put(Output.PVALUE, pValue);
 
         return pValue;
@@ -488,10 +446,9 @@ public class ChisqTest extends StatisticalInference
      */
 
     public double pValue(String[] columnVariable,
-                         String[] rowVariable)
-    {
+                         String[] rowVariable) {
         return pValue(new DataManager().
-            contingencyTable(columnVariable, rowVariable));
+                contingencyTable(columnVariable, rowVariable));
     }
 
 }

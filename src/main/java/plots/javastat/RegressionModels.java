@@ -5,6 +5,7 @@ package plots.javastat;
  * <p>Description: JAVA programs for statistical computations</p>
  * <p>Copyright: Copyright (c) 2009</p>
  * <p>Company: Tung Hai University</p>
+ *
  * @author Wen Hsiang Wei
  * @version 1.4
  */
@@ -18,6 +19,7 @@ import plots.javastat.regression.glm.LogLinearRegression;
 import plots.javastat.regression.nonparametric.PSplineRegression;
 import plots.javastat.survival.regression.CoxRegression;
 import plots.javastat.util.RegressionType;
+
 import static plots.javastat.util.Argument.*;
 import static plots.javastat.util.RegressionType.*;
 
@@ -50,7 +52,7 @@ import static plots.javastat.util.RegressionType.*;
  *      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
  *      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
  *      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
  *                                {66, 38, 72, 53, 43, 59, 64, 57, 59, 74, 59,
  *                                 53, 56, 44, 56, 55, 44, 50, 43,
  * <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -198,8 +200,7 @@ import static plots.javastat.util.RegressionType.*;
  *        argument, ethanoly, ethanolx).statisticalAnalysis;
  */
 
-public class RegressionModels extends StatisticalAnalysis
-{
+public class RegressionModels extends StatisticalAnalysis {
 
     /**
      * The object represents a fitted regression model.
@@ -211,7 +212,8 @@ public class RegressionModels extends StatisticalAnalysis
      * Default RegressionModels constructor.
      */
 
-    public RegressionModels() {}
+    public RegressionModels() {
+    }
 
     /**
      * Fits a general regression model.
@@ -226,70 +228,54 @@ public class RegressionModels extends StatisticalAnalysis
      */
 
     public RegressionModels(Hashtable argument,
-                            Object ...dataObject)
-    {
+                            Object... dataObject) {
         this.argument = argument;
         this.dataObject = dataObject;
-        if (dataObject != null)
-        {
-            if (argument.get(REGRESSION_TYPE) != null)
-            {
+        if (dataObject != null) {
+            if (argument.get(REGRESSION_TYPE) != null) {
                 if (argument.get(REGRESSION_TYPE).toString().
-                    equalsIgnoreCase("Log_Linear") ||
-                    argument.get(REGRESSION_TYPE).toString().
-                    equalsIgnoreCase("LogLinear"))
-                {
+                        equalsIgnoreCase("Log_Linear") ||
+                        argument.get(REGRESSION_TYPE).toString().
+                                equalsIgnoreCase("LogLinear")) {
                     statisticalAnalysis = new LogLinearRegression(argument,
                             dataObject).statisticalAnalysis;
-                }
-                else if (argument.get(REGRESSION_TYPE).toString().
-                         equalsIgnoreCase("Logistic") &&
-                         dataObject.length == 3 &&
-                         dataObject[0].getClass().getName().
-                         equalsIgnoreCase("[D") &&
-                         dataObject[1].getClass().getName().
-                         equalsIgnoreCase("[D") &&
-                         dataObject[2].getClass().getName().
-                         equalsIgnoreCase("[[D"))
-                {
+                } else if (argument.get(REGRESSION_TYPE).toString().
+                        equalsIgnoreCase("Logistic") &&
+                        dataObject.length == 3 &&
+                        dataObject[0].getClass().getName().
+                                equalsIgnoreCase("[D") &&
+                        dataObject[1].getClass().getName().
+                                equalsIgnoreCase("[D") &&
+                        dataObject[2].getClass().getName().
+                                equalsIgnoreCase("[[D")) {
                     statisticalAnalysis = new LogisticRegression(argument,
                             dataObject).statisticalAnalysis;
-                }
-                else if (argument.get(REGRESSION_TYPE).toString().
-                           equalsIgnoreCase("P_SPLINE") ||
-                           argument.get(REGRESSION_TYPE).toString().
-                           equalsIgnoreCase("PSPLINE"))
-                {
+                } else if (argument.get(REGRESSION_TYPE).toString().
+                        equalsIgnoreCase("P_SPLINE") ||
+                        argument.get(REGRESSION_TYPE).toString().
+                                equalsIgnoreCase("PSPLINE")) {
                     statisticalAnalysis = new PSplineRegression(argument,
                             dataObject).statisticalAnalysis;
                 }
-            }
-            else if (dataObject.length == 3 &&
-                     dataObject[0].getClass().getName().
-                     equalsIgnoreCase("[D") &&
-                     dataObject[1].getClass().getName().
-                     equalsIgnoreCase("[D") &&
-                     dataObject[2].getClass().getName().equalsIgnoreCase("[[D"))
-            {
+            } else if (dataObject.length == 3 &&
+                    dataObject[0].getClass().getName().
+                            equalsIgnoreCase("[D") &&
+                    dataObject[1].getClass().getName().
+                            equalsIgnoreCase("[D") &&
+                    dataObject[2].getClass().getName().equalsIgnoreCase("[[D")) {
                 statisticalAnalysis = new CoxRegression(argument, dataObject).
-                                      statisticalAnalysis;
-            }
-            else if (dataObject.length == 2 &&
-                     dataObject[0].getClass().getName().
-                     equalsIgnoreCase("[D") &&
-                     dataObject[1].getClass().getName().equalsIgnoreCase("[[D"))
-            {
+                        statisticalAnalysis;
+            } else if (dataObject.length == 2 &&
+                    dataObject[0].getClass().getName().
+                            equalsIgnoreCase("[D") &&
+                    dataObject[1].getClass().getName().equalsIgnoreCase("[[D")) {
                 statisticalAnalysis = new LinearRegression(argument,
                         dataObject).statisticalAnalysis;
-            }
-            else
-            {
+            } else {
                 statisticalAnalysis = new LogisticRegression(argument,
                         dataObject).statisticalAnalysis;
             }
-        }
-        else
-        {
+        } else {
             throw new IllegalArgumentException("There is no input data.");
         }
     }

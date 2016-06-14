@@ -5,6 +5,7 @@ package plots.javastat.inference.twosamples;
  * <p>Description: JAVA programs for statistical computations</p>
  * <p>Copyright: Copyright (c) 2009</p>
  * <p>Company: Tung Hai University</p>
+ *
  * @author Wen Hsiang Wei
  * @version 1.4
  */
@@ -14,6 +15,7 @@ import java.util.Hashtable;
 import plots.javastat.StatisticalAnalysis;
 import plots.javastat.inference.StatisticalInferenceTemplate;
 import plots.javastat.inference.TwoSampInferenceInterface;
+
 import static plots.javastat.util.Argument.*;
 import static plots.javastat.util.Output.*;
 
@@ -99,8 +101,7 @@ import static plots.javastat.util.Output.*;
  */
 
 public class TwoSampMeansZTest extends StatisticalInferenceTemplate implements
-        TwoSampInferenceInterface
-{
+        TwoSampInferenceInterface {
 
     /**
      * The level of significance.
@@ -137,7 +138,8 @@ public class TwoSampMeansZTest extends StatisticalInferenceTemplate implements
      * Default TwoSampMeansZTest constructor.
      */
 
-    public TwoSampMeansZTest() {}
+    public TwoSampMeansZTest() {
+    }
 
     /**
      * Constructs a two-sample z test given the input arguments and data.
@@ -159,58 +161,43 @@ public class TwoSampMeansZTest extends StatisticalInferenceTemplate implements
      */
 
     public TwoSampMeansZTest(Hashtable argument,
-                             Object ...dataObject)
-    {
+                             Object... dataObject) {
         this.argument = argument;
         this.dataObject = dataObject;
         if (argument.size() > 0 &&
-            dataObject != null)
-        {
+                dataObject != null) {
             if (argument.get(ALPHA) != null &&
-                argument.get(NULL_VALUE) != null &&
-                argument.get(SIDE) != null &&
-                dataObject.length == 2)
-            {
+                    argument.get(NULL_VALUE) != null &&
+                    argument.get(SIDE) != null &&
+                    dataObject.length == 2) {
                 statisticalAnalysis = new TwoSampMeansZTest(
                         (Double) argument.get(ALPHA),
                         ((Number) argument.get(NULL_VALUE)).doubleValue(),
                         (String) argument.get(SIDE),
                         (double[]) dataObject[0], (double[]) dataObject[1]);
-            }
-            else if (argument.get(NULL_VALUE) != null &&
-                     argument.get(SIDE) != null &&
-                     dataObject.length == 2)
-            {
+            } else if (argument.get(NULL_VALUE) != null &&
+                    argument.get(SIDE) != null &&
+                    dataObject.length == 2) {
                 statisticalAnalysis = new TwoSampMeansZTest(
                         ((Number) argument.get(NULL_VALUE)).doubleValue(),
                         (String) argument.get(SIDE),
                         (double[]) dataObject[0], (double[]) dataObject[1]);
-            }
-            else if (argument.get(NULL_VALUE) != null &&
-                     dataObject.length == 2)
-            {
+            } else if (argument.get(NULL_VALUE) != null &&
+                    dataObject.length == 2) {
                 statisticalAnalysis = new TwoSampMeansZTest(
                         ((Number) argument.get(NULL_VALUE)).doubleValue(),
                         (double[]) dataObject[0], (double[]) dataObject[1]);
-            }
-            else
-            {
+            } else {
                 throw new IllegalArgumentException(
                         "Wrong input arguments or data.");
             }
-        }
-        else if (dataObject != null &&
-                 dataObject.length == 2)
-        {
+        } else if (dataObject != null &&
+                dataObject.length == 2) {
             statisticalAnalysis = new TwoSampMeansZTest(
                     (double[]) dataObject[0], (double[]) dataObject[1]);
-        }
-        else if (dataObject == null)
-        {
+        } else if (dataObject == null) {
             statisticalAnalysis = new TwoSampMeansZTest();
-        }
-        else
-        {
+        } else {
             throw new IllegalArgumentException("Wrong input data.");
         }
     }
@@ -235,8 +222,7 @@ public class TwoSampMeansZTest extends StatisticalInferenceTemplate implements
                              double u12,
                              String side,
                              double[] data1,
-                             double[] data2)
-    {
+                             double[] data2) {
         this.alpha = alpha;
         this.u12 = u12;
         this.side = side;
@@ -246,7 +232,7 @@ public class TwoSampMeansZTest extends StatisticalInferenceTemplate implements
         pointEstimateSE = pointEstimateSE(data1, data2);
         confidenceInterval = confidenceInterval(alpha, data1, data2);
         testStatistic = testStatistic(u12, data1, data2);
-        pValue = pValue(u12, side, data1, data2); ;
+        pValue = pValue(u12, side, data1, data2);
     }
 
     /**
@@ -265,8 +251,7 @@ public class TwoSampMeansZTest extends StatisticalInferenceTemplate implements
     public TwoSampMeansZTest(double u12,
                              String side,
                              double[] data1,
-                             double[] data2)
-    {
+                             double[] data2) {
         this(0.05, u12, side, data1, data2);
     }
 
@@ -282,8 +267,7 @@ public class TwoSampMeansZTest extends StatisticalInferenceTemplate implements
 
     public TwoSampMeansZTest(double u12,
                              double[] data1,
-                             double[] data2)
-    {
+                             double[] data2) {
         this(0.05, u12, "equal", data1, data2);
     }
 
@@ -297,8 +281,7 @@ public class TwoSampMeansZTest extends StatisticalInferenceTemplate implements
      */
 
     public TwoSampMeansZTest(double[] data1,
-                             double[] data2)
-    {
+                             double[] data2) {
         this(0.05, 0.0, "equal", data1, data2);
     }
 
@@ -310,13 +293,12 @@ public class TwoSampMeansZTest extends StatisticalInferenceTemplate implements
      */
 
     public Double pointEstimate(Hashtable argument,
-                                Object ...dataObject)
-    {
+                                Object... dataObject) {
         this.argument = argument;
         this.dataObject = dataObject;
 
         return pointEstimate((double[]) dataObject[0],
-                             (double[]) dataObject[1]);
+                (double[]) dataObject[1]);
     }
 
     /**
@@ -327,8 +309,7 @@ public class TwoSampMeansZTest extends StatisticalInferenceTemplate implements
      */
 
     public double pointEstimate(double[] data1,
-                                double[] data2)
-    {
+                                double[] data2) {
         this.data1 = data1;
         this.data2 = data2;
         pointEstimate = new TwoSampMeansTest().pointEstimate(data1, data2);
@@ -345,12 +326,11 @@ public class TwoSampMeansZTest extends StatisticalInferenceTemplate implements
      */
 
     public double pointEstimateSE(double[] data1,
-                                  double[] data2)
-    {
+                                  double[] data2) {
         this.data1 = data1;
         this.data2 = data2;
         pointEstimateSE =
-            new TwoSampMeansTest().pointEstimateSE("Z", data1, data2);
+                new TwoSampMeansTest().pointEstimateSE("Z", data1, data2);
         output.put(POINT_ESTIMATE_SE, pointEstimateSE);
 
         return pointEstimateSE;
@@ -364,13 +344,12 @@ public class TwoSampMeansZTest extends StatisticalInferenceTemplate implements
      */
 
     public Double pointEstimateSE(Hashtable argument,
-                                  Object ...dataObject)
-    {
+                                  Object... dataObject) {
         this.argument = argument;
         this.dataObject = dataObject;
 
         return pointEstimateSE((double[]) dataObject[0],
-                               (double[]) dataObject[1]);
+                (double[]) dataObject[1]);
     }
 
     /**
@@ -391,13 +370,12 @@ public class TwoSampMeansZTest extends StatisticalInferenceTemplate implements
      */
 
     public double[] confidenceInterval(Hashtable argument,
-                                       Object ...dataObject)
-    {
+                                       Object... dataObject) {
         argument.put(TEST_TYPE, "Z");
         this.argument = argument;
         this.dataObject = dataObject;
         confidenceInterval =
-            new TwoSampMeansTest().confidenceInterval(argument, dataObject);
+                new TwoSampMeansTest().confidenceInterval(argument, dataObject);
         output.put(CONFIDENCE_INTERVAL, confidenceInterval);
 
         return confidenceInterval;
@@ -419,8 +397,7 @@ public class TwoSampMeansZTest extends StatisticalInferenceTemplate implements
 
     public double[] confidenceInterval(double alpha,
                                        double[] data1,
-                                       double[] data2)
-    {
+                                       double[] data2) {
         this.alpha = alpha;
         this.data1 = data1;
         this.data2 = data2;
@@ -443,8 +420,7 @@ public class TwoSampMeansZTest extends StatisticalInferenceTemplate implements
      */
 
     public double[] confidenceInterval(double[] data1,
-                                       double[] data2)
-    {
+                                       double[] data2) {
         return confidenceInterval(0.05, data1, data2);
     }
 
@@ -462,8 +438,7 @@ public class TwoSampMeansZTest extends StatisticalInferenceTemplate implements
      */
 
     public Double testStatistic(Hashtable argument,
-                                Object ...dataObject)
-    {
+                                Object... dataObject) {
         argument.put(TEST_TYPE, "Z");
         this.argument = argument;
         this.dataObject = dataObject;
@@ -486,8 +461,7 @@ public class TwoSampMeansZTest extends StatisticalInferenceTemplate implements
 
     public double testStatistic(double u12,
                                 double[] data1,
-                                double[] data2)
-    {
+                                double[] data2) {
         this.u12 = u12;
         this.data1 = data1;
         this.data2 = data2;
@@ -508,8 +482,7 @@ public class TwoSampMeansZTest extends StatisticalInferenceTemplate implements
      */
 
     public double testStatistic(double[] data1,
-                                double[] data2)
-    {
+                                double[] data2) {
         return testStatistic(0.0, data1, data2);
     }
 
@@ -529,8 +502,7 @@ public class TwoSampMeansZTest extends StatisticalInferenceTemplate implements
      */
 
     public Double pValue(Hashtable argument,
-                         Object ...dataObject)
-    {
+                         Object... dataObject) {
         argument.put(TEST_TYPE, "Z");
         this.argument = argument;
         this.dataObject = dataObject;
@@ -555,8 +527,7 @@ public class TwoSampMeansZTest extends StatisticalInferenceTemplate implements
     public double pValue(double u12,
                          String side,
                          double[] data1,
-                         double[] data2)
-    {
+                         double[] data2) {
         this.u12 = u12;
         this.side = side;
         this.data1 = data1;
@@ -579,8 +550,7 @@ public class TwoSampMeansZTest extends StatisticalInferenceTemplate implements
 
     public double pValue(double u12,
                          double[] data1,
-                         double[] data2)
-    {
+                         double[] data2) {
         return pValue(u12, "equal", data1, data2);
     }
 
@@ -595,8 +565,7 @@ public class TwoSampMeansZTest extends StatisticalInferenceTemplate implements
      */
 
     public double pValue(double[] data1,
-                         double[] data2)
-    {
+                         double[] data2) {
         return pValue(0.0, "equal", data1, data2);
     }
 

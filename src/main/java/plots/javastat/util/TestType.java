@@ -5,6 +5,7 @@ package plots.javastat.util;
  * <p>Description: JAVA programs for statistical computations</p>
  * <p>Copyright: Copyright (c) 2009</p>
  * <p>Company: Tung Hai University</p>
+ *
  * @author Wen Hsiang Wei
  * @version 1.4
  */
@@ -13,66 +14,65 @@ package plots.javastat.util;
  * The enumerated test types.
  */
 
-public enum TestType
-{
+public enum TestType {
 
-        /**
-         * Z test.
-         */
+    /**
+     * Z test.
+     */
 
-        Z,
+    Z,
 
-        /**
-         * T test.
-         */
+    /**
+     * T test.
+     */
 
-        T,
+    T,
 
-        /**
-         * Paired z test.
-         */
+    /**
+     * Paired z test.
+     */
 
-        PAIRED_Z,
+    PAIRED_Z,
 
-        /**
-         * Paired t test.
-         */
+    /**
+     * Paired t test.
+     */
 
-        PAIRED_T,
+    PAIRED_T,
 
-        /**
-         * Wilcoxon sign rank test.
-         */
+    /**
+     * Wilcoxon sign rank test.
+     */
 
-        SIGNRANK,
+    SIGNRANK,
 
-        /**
-         * Wilcoxon rank sum test.
-         */
+    /**
+     * Wilcoxon rank sum test.
+     */
 
-        RANKSUM,
+    RANKSUM,
 
-        /**
-         * Chi-square test on a two-dimensional contingency table.
-         */
+    /**
+     * Chi-square test on a two-dimensional contingency table.
+     */
 
-        CHISQUARE,
+    CHISQUARE,
 
-        /**
-         * One-way ANOVA (F test).
-         */
+    /**
+     * One-way ANOVA (F test).
+     */
 
-        ONE_WAY_ANOVA,
+    ONE_WAY_ANOVA,
 
-        /**
-         * Log rank test.
-         */
+    /**
+     * Log rank test.
+     */
 
-        LOGRANK,
+    LOGRANK,
 
-        /**
-         * Wilcoxon test in survival analysis.
-         */
+    /**
+     * Wilcoxon test in survival analysis.
+     */
 
-        WILCOXON
+    WILCOXON
 }

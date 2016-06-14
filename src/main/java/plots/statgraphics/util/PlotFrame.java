@@ -5,6 +5,7 @@ package plots.statgraphics.util;
  * <p>Description: The statistical graphics</p>
  * <p>Copyright: Copyright (c) 2009</p>
  * <p>Company: Tung Hai University </p>
+ *
  * @author Wen Hsiang Wei
  * @version 1.4
  */
@@ -29,8 +30,7 @@ import org.jfree.chart.JFreeChart;
  * image in a variety of formats and the plot can be placed.</p>
  */
 
-public class PlotFrame extends JInternalFrame
-{
+public class PlotFrame extends JInternalFrame {
     /**
      * A Swing GUI component for displaying the plot.
      */
@@ -138,14 +138,13 @@ public class PlotFrame extends JInternalFrame
     public PlotFrame(String title,
                      JFreeChart plot,
                      int width,
-                     int height)
-    {
+                     int height) {
         super(title, true, true, true, true);
         this.plot = plot;
         plotPanel = new ChartPanel(plot);
         plotPanel.setPreferredSize(new java.awt.Dimension(width, height));
         setJMenuBar(createMenuBar());
-        contentPane = (JPanel)this.getContentPane();
+        contentPane = (JPanel) this.getContentPane();
         contentPane.setLayout(new BorderLayout());
         contentPane.add(plotPanel, BorderLayout.CENTER);
         contentPane.add(createButtonPanel(), BorderLayout.SOUTH);
@@ -159,8 +158,7 @@ public class PlotFrame extends JInternalFrame
      */
 
     public PlotFrame(String title,
-                     JFreeChart plot)
-    {
+                     JFreeChart plot) {
         this(title, plot, 500, 270);
     }
 
@@ -169,8 +167,7 @@ public class PlotFrame extends JInternalFrame
      * @param plot the plot to be displayed.
      */
 
-    public PlotFrame(JFreeChart plot)
-    {
+    public PlotFrame(JFreeChart plot) {
         this("Plot Frame", plot, 500, 270);
     }
 
@@ -179,8 +176,7 @@ public class PlotFrame extends JInternalFrame
      * @return the menu bar.
      */
 
-    private JMenuBar createMenuBar()
-    {
+    private JMenuBar createMenuBar() {
         mb = new JMenuBar();
         fileMenu = new JMenu();
         fileMenu.setText("File");
@@ -194,38 +190,28 @@ public class PlotFrame extends JInternalFrame
         saveJPEGItem.setText("Save As JPEG");
         exitItem = new JMenuItem();
         exitItem.setText("Exit");
-        savePNGItem.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(ActionEvent e)
-            {
+        savePNGItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(ActionEvent e) {
                 savePNGItem_actionPerformed(e);
             }
         });
-        saveJPEGItem.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(ActionEvent e)
-            {
+        saveJPEGItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(ActionEvent e) {
                 saveJPEGItem_actionPerformed(e);
             }
         });
-        savePDFItem.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(ActionEvent e)
-            {
+        savePDFItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(ActionEvent e) {
                 savePDFItem_actionPerformed(e);
             }
         });
-        saveSVGItem.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(ActionEvent e)
-            {
+        saveSVGItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(ActionEvent e) {
                 saveSVGItem_actionPerformed(e);
             }
         });
-        exitItem.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(ActionEvent e)
-            {
+        exitItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(ActionEvent e) {
                 exitItem_actionPerformed(e);
             }
         });
@@ -245,15 +231,11 @@ public class PlotFrame extends JInternalFrame
      * @param e a menu item action occurred.
      */
 
-    void savePNGItem_actionPerformed(ActionEvent e)
-    {
-        try
-        {
+    void savePNGItem_actionPerformed(ActionEvent e) {
+        try {
             new SavePlot(plotPanel.getWidth(),
                     plotPanel.getHeight()).saveAs(plot, "png");
-        }
-        catch (IOException epng)
-        {
+        } catch (IOException epng) {
             epng.printStackTrace();
         }
     }
@@ -263,15 +245,11 @@ public class PlotFrame extends JInternalFrame
      * @param e a menu item action occurred.
      */
 
-    void saveJPEGItem_actionPerformed(ActionEvent e)
-    {
-        try
-        {
+    void saveJPEGItem_actionPerformed(ActionEvent e) {
+        try {
             new SavePlot(plotPanel.getWidth(),
                     plotPanel.getHeight()).saveAs(plot, "jpeg");
-        }
-        catch (IOException epng)
-        {
+        } catch (IOException epng) {
             epng.printStackTrace();
         }
     }
@@ -281,15 +259,11 @@ public class PlotFrame extends JInternalFrame
      * @param e a menu item action occurred.
      */
 
-    void savePDFItem_actionPerformed(ActionEvent e)
-    {
-        try
-        {
+    void savePDFItem_actionPerformed(ActionEvent e) {
+        try {
             new SavePlot(plotPanel.getWidth(),
                     plotPanel.getHeight()).saveAs(plot, "pdf");
-        }
-        catch (IOException epng)
-        {
+        } catch (IOException epng) {
             epng.printStackTrace();
         }
     }
@@ -299,15 +273,11 @@ public class PlotFrame extends JInternalFrame
      * @param e a menu item action occurred.
      */
 
-    void saveSVGItem_actionPerformed(ActionEvent e)
-    {
-        try
-        {
+    void saveSVGItem_actionPerformed(ActionEvent e) {
+        try {
             new SavePlot(plotPanel.getWidth(),
                     plotPanel.getHeight()).saveAs(plot, "svg");
-        }
-        catch (IOException epng)
-        {
+        } catch (IOException epng) {
             epng.printStackTrace();
         }
     }
@@ -317,8 +287,7 @@ public class PlotFrame extends JInternalFrame
      * @param e a menu item action occurred.
      */
 
-    void exitItem_actionPerformed(ActionEvent e)
-    {
+    void exitItem_actionPerformed(ActionEvent e) {
         this.dispose();
     }
 
@@ -327,8 +296,7 @@ public class PlotFrame extends JInternalFrame
      * @return the button panel.
      */
 
-    private JPanel createButtonPanel()
-    {
+    private JPanel createButtonPanel() {
         buttonPanel = new JPanel();
         savePDFButton = new JButton();
         saveSVGButton = new JButton();
@@ -340,38 +308,28 @@ public class PlotFrame extends JInternalFrame
         savePNGButton.setText("Save As PNG");
         saveJPEGButton.setText("Save As JPEG");
         exitButton.setText("Exit");
-        savePNGButton.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(ActionEvent e)
-            {
+        savePNGButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(ActionEvent e) {
                 savePNGButton_actionPerformed(e);
             }
         });
-        saveJPEGButton.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(ActionEvent e)
-            {
+        saveJPEGButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(ActionEvent e) {
                 saveJPEGButton_actionPerformed(e);
             }
         });
-        savePDFButton.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(ActionEvent e)
-            {
+        savePDFButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(ActionEvent e) {
                 savePDFButton_actionPerformed(e);
             }
         });
-        saveSVGButton.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(ActionEvent e)
-            {
+        saveSVGButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(ActionEvent e) {
                 saveSVGButton_actionPerformed(e);
             }
         });
-        exitButton.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(ActionEvent e)
-            {
+        exitButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(ActionEvent e) {
                 exitButton_actionPerformed(e);
             }
         });
@@ -389,15 +347,11 @@ public class PlotFrame extends JInternalFrame
      * @param e a button action occurred.
      */
 
-    void savePNGButton_actionPerformed(ActionEvent e)
-    {
-        try
-        {
+    void savePNGButton_actionPerformed(ActionEvent e) {
+        try {
             new SavePlot(plotPanel.getWidth(),
                     plotPanel.getHeight()).saveAs(plot, "png");
-        }
-        catch (IOException ePng)
-        {
+        } catch (IOException ePng) {
             ePng.printStackTrace();
         }
     }
@@ -407,15 +361,11 @@ public class PlotFrame extends JInternalFrame
      * @param e a button action occurred.
      */
 
-    void saveJPEGButton_actionPerformed(ActionEvent e)
-    {
-        try
-        {
+    void saveJPEGButton_actionPerformed(ActionEvent e) {
+        try {
             new SavePlot(plotPanel.getWidth(),
                     plotPanel.getHeight()).saveAs(plot, "jpeg");
-        }
-        catch (IOException eJpeg)
-        {
+        } catch (IOException eJpeg) {
             eJpeg.printStackTrace();
         }
     }
@@ -425,15 +375,11 @@ public class PlotFrame extends JInternalFrame
      * @param e a button action occurred.
      */
 
-    void savePDFButton_actionPerformed(ActionEvent e)
-    {
-        try
-        {
+    void savePDFButton_actionPerformed(ActionEvent e) {
+        try {
             new SavePlot(plotPanel.getWidth(),
                     plotPanel.getHeight()).saveAs(plot, "pdf");
-        }
-        catch (IOException ePdf)
-        {
+        } catch (IOException ePdf) {
             ePdf.printStackTrace();
         }
     }
@@ -443,15 +389,11 @@ public class PlotFrame extends JInternalFrame
      * @param e a button action occurred.
      */
 
-    void saveSVGButton_actionPerformed(ActionEvent e)
-    {
-        try
-        {
+    void saveSVGButton_actionPerformed(ActionEvent e) {
+        try {
             new SavePlot(plotPanel.getWidth(),
                     plotPanel.getHeight()).saveAs(plot, "svg");
-        }
-        catch (IOException eSvg)
-        {
+        } catch (IOException eSvg) {
             eSvg.printStackTrace();
         }
     }
@@ -461,8 +403,7 @@ public class PlotFrame extends JInternalFrame
      * @param e a button action occurred.
      */
 
-    void exitButton_actionPerformed(ActionEvent e)
-    {
+    void exitButton_actionPerformed(ActionEvent e) {
         this.dispose();
     }
 

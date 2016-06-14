@@ -5,6 +5,7 @@ package plots.javastat.regression.glm;
  * <p>Description: JAVA programs for statistical computations</p>
  * <p>Copyright: Copyright (c) 2009</p>
  * <p>Company: Tung Hai University</p>
+ *
  * @author Wen Hsiang Wei and B. J. Guo
  * @version 1.4
  */
@@ -92,8 +93,7 @@ import static plots.javastat.util.Output.*;
  * <br> out.println(testclass4.output.toString());
  */
 
-public class LogisticRegression extends GLMTemplate
-{
+public class LogisticRegression extends GLMTemplate {
 
     /**
      * The string binary response.
@@ -197,8 +197,7 @@ public class LogisticRegression extends GLMTemplate
      * Default LogisticRegression constructor.
      */
 
-    public LogisticRegression()
-    {
+    public LogisticRegression() {
         link = LOGIT;
     }
 
@@ -207,8 +206,7 @@ public class LogisticRegression extends GLMTemplate
      * @param link the link function.
      */
 
-    public LogisticRegression(LinkFunction link)
-    {
+    public LogisticRegression(LinkFunction link) {
         this.link = link;
     }
 
@@ -226,102 +224,88 @@ public class LogisticRegression extends GLMTemplate
      */
 
     public LogisticRegression(Hashtable argument,
-                              Object ...dataObject)
-    {
+                              Object... dataObject) {
         this.argument = argument;
         this.dataObject = dataObject;
-        if (dataObject != null)
-        {
+        if (dataObject != null) {
             if (dataObject.length == 3 &&
-                dataObject[0].getClass().getName().equalsIgnoreCase("[D") &&
-                dataObject[1].getClass().getName().equalsIgnoreCase("[D") &&
-                dataObject[2].getClass().getName().equalsIgnoreCase("[[D"))
-            {
+                    dataObject[0].getClass().getName().equalsIgnoreCase("[D") &&
+                    dataObject[1].getClass().getName().equalsIgnoreCase("[D") &&
+                    dataObject[2].getClass().getName().equalsIgnoreCase("[[D")) {
                 statisticalAnalysis = new LogisticRegression((double[])
                         dataObject[0],
                         (double[]) dataObject[1], (double[][]) dataObject[2]);
-            }
-            else if (dataObject.length >= 3 &&
-                     dataObject[1].getClass().getName().
-                     equalsIgnoreCase("[D") &&
-                     (dataObject.getClass().getName().equalsIgnoreCase(
-                             "[Ljava.lang.Object;") ||
-                     dataObject.getClass().getName().equalsIgnoreCase("[[D")))
-           {
+            } else if (dataObject.length >= 3 &&
+                    dataObject[1].getClass().getName().
+                            equalsIgnoreCase("[D") &&
+                    (dataObject.getClass().getName().equalsIgnoreCase(
+                            "[Ljava.lang.Object;") ||
+                            dataObject.getClass().getName().equalsIgnoreCase("[[D"))) {
                 statisticalAnalysis = new LogisticRegression((double[])
                         dataObject[0],
                         (double[]) dataObject[1],
                         DataManager.castDoubleObject(1, dataObject));
-            }
-            else
-            {
+            } else {
                 requiredInputData = getRequiredInputData(dataObject);
-                if (requiredInputData.get("DATA_TYPE") != null)
-                {
-                    switch ((Integer) requiredInputData.get("DATA_TYPE"))
-                    {
+                if (requiredInputData.get("DATA_TYPE") != null) {
+                    switch ((Integer) requiredInputData.get("DATA_TYPE")) {
                         case 1:
                             statisticalAnalysis = new LogisticRegression(
-                                (double[]) requiredInputData.get(
-                                    "BINARY_RESPONSE"),
-                                (String[][]) requiredInputData.get(
-                                    "NOMINAL_COVARIATE"));
+                                    (double[]) requiredInputData.get(
+                                            "BINARY_RESPONSE"),
+                                    (String[][]) requiredInputData.get(
+                                            "NOMINAL_COVARIATE"));
                             break;
                         case 2:
                             statisticalAnalysis = new LogisticRegression(
-                                (double[]) requiredInputData.get(
-                                    "BINARY_RESPONSE"),
-                                (double[][]) requiredInputData.get(
-                                    "CONTINUOUS_COVARIATE"));
+                                    (double[]) requiredInputData.get(
+                                            "BINARY_RESPONSE"),
+                                    (double[][]) requiredInputData.get(
+                                            "CONTINUOUS_COVARIATE"));
                             break;
                         case 3:
                             statisticalAnalysis = new LogisticRegression(
-                                (double[]) requiredInputData.get(
-                                    "BINARY_RESPONSE"),
-                                (String[][]) requiredInputData.get(
-                                    "NOMINAL_COVARIATE"),
-                                (double[][]) requiredInputData.get(
-                                    "CONTINUOUS_COVARIATE"));
+                                    (double[]) requiredInputData.get(
+                                            "BINARY_RESPONSE"),
+                                    (String[][]) requiredInputData.get(
+                                            "NOMINAL_COVARIATE"),
+                                    (double[][]) requiredInputData.get(
+                                            "CONTINUOUS_COVARIATE"));
                             break;
                         case 4:
                             statisticalAnalysis = new LogisticRegression(
-                                (String[]) requiredInputData.get(
-                                    "STRING_BINARY_RESPONSE"),
-                                (String[][]) requiredInputData.get(
-                                    "NOMINAL_COVARIATE"));
+                                    (String[]) requiredInputData.get(
+                                            "STRING_BINARY_RESPONSE"),
+                                    (String[][]) requiredInputData.get(
+                                            "NOMINAL_COVARIATE"));
                             break;
                         case 5:
                             statisticalAnalysis = new LogisticRegression(
-                                (String[]) requiredInputData.get(
-                                    "STRING_BINARY_RESPONSE"),
-                                (double[][]) requiredInputData.get(
-                                    "CONTINUOUS_COVARIATE"));
+                                    (String[]) requiredInputData.get(
+                                            "STRING_BINARY_RESPONSE"),
+                                    (double[][]) requiredInputData.get(
+                                            "CONTINUOUS_COVARIATE"));
                             break;
                         case 6:
                             statisticalAnalysis = new LogisticRegression(
-                                (double[]) requiredInputData.get(
-                                    "STRING_BINARY_RESPONSE"),
-                                (String[][]) requiredInputData.get(
-                                    "NOMINAL_COVARIATE"),
-                                (double[][]) requiredInputData.get(
-                                    "CONTINUOUS_COVARIATE"));
+                                    (double[]) requiredInputData.get(
+                                            "STRING_BINARY_RESPONSE"),
+                                    (String[][]) requiredInputData.get(
+                                            "NOMINAL_COVARIATE"),
+                                    (double[][]) requiredInputData.get(
+                                            "CONTINUOUS_COVARIATE"));
                             break;
                         default:
                             throw new IllegalArgumentException(
-                                "No input data type.");
+                                    "No input data type.");
                     }
                 }
             }
-        }
-        else
-        {
-            if (argument.get(LINK_FUNCTION) != null)
-            {
+        } else {
+            if (argument.get(LINK_FUNCTION) != null) {
                 statisticalAnalysis = new LogisticRegression((LinkFunction)
                         argument.get(LINK_FUNCTION));
-            }
-            else
-            {
+            } else {
                 statisticalAnalysis = new LogisticRegression();
             }
         }
@@ -345,13 +329,12 @@ public class LogisticRegression extends GLMTemplate
     private LogisticRegression(double[] response,
                                double[][] covariate,
                                double[] classSize,
-                               boolean hasDevianceTable)
-    {
+                               boolean hasDevianceTable) {
         this.response = response;
         covariate = glmDataManager.addIntercept(covariate);
         this.classSize = classSize;
         confidenceInterval = confidenceInterval(0.05, response, classSize,
-                                                covariate);
+                covariate);
         pValue = pValue(response, classSize, covariate);
         nullDeviance = nullDeviance(response, classSize);
         deviance = deviance(response, classSize, covariate);
@@ -359,8 +342,7 @@ public class LogisticRegression extends GLMTemplate
         devianceResiduals = devianceResiduals(response, classSize, covariate);
         responseResiduals = responseResiduals(response, covariate);
         pearsonResiduals = pearsonResiduals(response, covariate);
-        if (hasDevianceTable)
-        {
+        if (hasDevianceTable) {
             devianceTable = devianceTable(response, classSize, covariate);
         }
     }
@@ -386,15 +368,13 @@ public class LogisticRegression extends GLMTemplate
                                double[][] nominalCovariate,
                                double[] classSize,
                                int[] level,
-                               boolean isMixedType)
-    {
+                               boolean isMixedType) {
         this(response, nominalCovariate, classSize, false);
         this.level = level;
-        if (!isMixedType)
-        {
+        if (!isMixedType) {
             devianceTable = devianceTable(response, classSize, level,
-                                          glmDataManager.
-                                          addIntercept(nominalCovariate));
+                    glmDataManager.
+                            addIntercept(nominalCovariate));
         }
     }
 
@@ -409,10 +389,9 @@ public class LogisticRegression extends GLMTemplate
      */
 
     private LogisticRegression(Object[] dataObject,
-                               boolean isMixedType)
-    {
+                               boolean isMixedType) {
         this((double[]) dataObject[0], (double[][]) dataObject[1],
-             (double[]) dataObject[2], (int[]) dataObject[3], isMixedType);
+                (double[]) dataObject[2], (int[]) dataObject[3], isMixedType);
     }
 
     /**
@@ -427,10 +406,9 @@ public class LogisticRegression extends GLMTemplate
      */
 
     private LogisticRegression(boolean hasDevianceTable,
-                               Object ...dataObject)
-    {
+                               Object... dataObject) {
         this((double[]) dataObject[0], (double[][]) dataObject[1],
-             (double[]) dataObject[2], hasDevianceTable);
+                (double[]) dataObject[2], hasDevianceTable);
     }
 
     /**
@@ -447,10 +425,9 @@ public class LogisticRegression extends GLMTemplate
      */
 
     public LogisticRegression(double[] binaryResponse,
-                              String[] ...nominalCovariate)
-    {
+                              String[]... nominalCovariate) {
         this(new GLMDataManager().setData("Logistic", binaryResponse,
-                                          nominalCovariate), false);
+                nominalCovariate), false);
         this.binaryResponse = binaryResponse;
         this.nominalCovariate = nominalCovariate;
     }
@@ -470,8 +447,7 @@ public class LogisticRegression extends GLMTemplate
 
     public LogisticRegression(double[] response,
                               double[] classSize,
-                              double[] ...covariate)
-    {
+                              double[]... covariate) {
         this(response, covariate, classSize, true);
     }
 
@@ -490,11 +466,10 @@ public class LogisticRegression extends GLMTemplate
      */
 
     public LogisticRegression(double[] binaryResponse,
-                              double[] ...continuousCovariate)
-    {
+                              double[]... continuousCovariate) {
         this(true,
-             new GLMDataManager().setData("Logistic", binaryResponse,
-                                          continuousCovariate));
+                new GLMDataManager().setData("Logistic", binaryResponse,
+                        continuousCovariate));
         this.binaryResponse = binaryResponse;
         this.continuousCovariate = continuousCovariate;
     }
@@ -519,11 +494,10 @@ public class LogisticRegression extends GLMTemplate
 
     public LogisticRegression(double[] binaryResponse,
                               String[][] nominalCovariate,
-                              double[][] continuousCovariate)
-    {
+                              double[][] continuousCovariate) {
         this(new GLMDataManager().setData("Logistic", binaryResponse,
-                                          nominalCovariate,
-                                          continuousCovariate), true);
+                nominalCovariate,
+                continuousCovariate), true);
         this.binaryResponse = binaryResponse;
         this.nominalCovariate = nominalCovariate;
         this.continuousCovariate = continuousCovariate;
@@ -547,10 +521,9 @@ public class LogisticRegression extends GLMTemplate
      */
 
     public LogisticRegression(String[] stringBinaryResponse,
-                              String[] ...nominalCovariate)
-    {
+                              String[]... nominalCovariate) {
         this(new GLMDataManager().setData("Logistic", stringBinaryResponse,
-                                          nominalCovariate), false);
+                nominalCovariate), false);
         this.stringBinaryResponse = stringBinaryResponse;
         this.nominalCovariate = nominalCovariate;
     }
@@ -571,11 +544,10 @@ public class LogisticRegression extends GLMTemplate
      */
 
     public LogisticRegression(String[] stringBinaryResponse,
-                              double[] ...continuousCovariate)
-    {
+                              double[]... continuousCovariate) {
         this(true,
-             new GLMDataManager().setData("Logistic", stringBinaryResponse,
-                                          continuousCovariate));
+                new GLMDataManager().setData("Logistic", stringBinaryResponse,
+                        continuousCovariate));
         this.stringBinaryResponse = stringBinaryResponse;
         this.continuousCovariate = continuousCovariate;
     }
@@ -601,11 +573,10 @@ public class LogisticRegression extends GLMTemplate
 
     public LogisticRegression(String[] stringBinaryResponse,
                               String[][] nominalCovariate,
-                              double[][] continuousCovariate)
-    {
+                              double[][] continuousCovariate) {
         this(new GLMDataManager().setData("Logistic", stringBinaryResponse,
-                                          nominalCovariate,
-                                          continuousCovariate), true);
+                nominalCovariate,
+                continuousCovariate), true);
         this.stringBinaryResponse = stringBinaryResponse;
         this.nominalCovariate = nominalCovariate;
         this.continuousCovariate = continuousCovariate;
@@ -628,8 +599,7 @@ public class LogisticRegression extends GLMTemplate
 
     private double[] coefficients(double[] response,
                                   double[] classSize,
-                                  double[] ...covariate)
-    {
+                                  double[]... covariate) {
         this.classSize = classSize;
 
         return super.coefficients(response, covariate);
@@ -647,63 +617,58 @@ public class LogisticRegression extends GLMTemplate
      */
 
     public double[] coefficients(Hashtable argument,
-                                 Object ...dataObject)
-    {
+                                 Object... dataObject) {
         this.argument = argument;
         this.dataObject = dataObject;
         requiredInputData = getRequiredInputData(dataObject);
-        if (requiredInputData.get("DATA_TYPE") != null)
-        {
-            switch ((Integer) requiredInputData.get("DATA_TYPE"))
-            {
+        if (requiredInputData.get("DATA_TYPE") != null) {
+            switch ((Integer) requiredInputData.get("DATA_TYPE")) {
                 case 1:
                     coefficients = coefficients(
-                        (double[]) requiredInputData.get("BINARY_RESPONSE"),
-                        (String[][]) requiredInputData.
-                        get("NOMINAL_COVARIATE"));
+                            (double[]) requiredInputData.get("BINARY_RESPONSE"),
+                            (String[][]) requiredInputData.
+                                    get("NOMINAL_COVARIATE"));
                     break;
                 case 2:
                     coefficients = coefficients(
-                        (double[]) requiredInputData.get("BINARY_RESPONSE"),
-                        (double[][]) requiredInputData.get(
-                            "CONTINUOUS_COVARIATE"));
+                            (double[]) requiredInputData.get("BINARY_RESPONSE"),
+                            (double[][]) requiredInputData.get(
+                                    "CONTINUOUS_COVARIATE"));
                     break;
                 case 3:
                     coefficients = coefficients(
-                        (double[]) requiredInputData.get("BINARY_RESPONSE"),
-                        (String[][]) requiredInputData.get("NOMINAL_COVARIATE"),
-                        (double[][]) requiredInputData.get(
-                            "CONTINUOUS_COVARIATE"));
+                            (double[]) requiredInputData.get("BINARY_RESPONSE"),
+                            (String[][]) requiredInputData.get("NOMINAL_COVARIATE"),
+                            (double[][]) requiredInputData.get(
+                                    "CONTINUOUS_COVARIATE"));
                     break;
                 case 4:
                     coefficients = coefficients(
-                        (String[]) requiredInputData.get(
-                            "STRING_BINARY_RESPONSE"),
-                        (String[][]) requiredInputData.
-                        get("NOMINAL_COVARIATE"));
+                            (String[]) requiredInputData.get(
+                                    "STRING_BINARY_RESPONSE"),
+                            (String[][]) requiredInputData.
+                                    get("NOMINAL_COVARIATE"));
                     break;
                 case 5:
                     coefficients = coefficients(
-                        (String[]) requiredInputData.get(
-                            "STRING_BINARY_RESPONSE"),
-                        (double[][]) requiredInputData.get(
-                            "CONTINUOUS_COVARIATE"));
+                            (String[]) requiredInputData.get(
+                                    "STRING_BINARY_RESPONSE"),
+                            (double[][]) requiredInputData.get(
+                                    "CONTINUOUS_COVARIATE"));
                     break;
                 case 6:
                     coefficients = coefficients(
-                        (double[]) requiredInputData.get(
-                            "STRING_BINARY_RESPONSE"),
-                        (String[][]) requiredInputData.get("NOMINAL_COVARIATE"),
-                        (double[][]) requiredInputData.get(
-                            "CONTINUOUS_COVARIATE"));
+                            (double[]) requiredInputData.get(
+                                    "STRING_BINARY_RESPONSE"),
+                            (String[][]) requiredInputData.get("NOMINAL_COVARIATE"),
+                            (double[][]) requiredInputData.get(
+                                    "CONTINUOUS_COVARIATE"));
                     break;
                 default:
                     throw new IllegalArgumentException
                             ("No input data type.");
             }
-        }
-        else
-        {
+        } else {
             throw new IllegalArgumentException("Wrong input data.");
         }
 
@@ -724,13 +689,12 @@ public class LogisticRegression extends GLMTemplate
      */
 
     public double[] coefficients(double[] binaryResponse,
-                                 String[] ...nominalCovariate)
-    {
+                                 String[]... nominalCovariate) {
         this.binaryResponse = binaryResponse;
         this.nominalCovariate = nominalCovariate;
 
         return (double[]) getRequiredOutput(COEFFICIENTS,
-                                            binaryResponse, nominalCovariate);
+                binaryResponse, nominalCovariate);
     }
 
     /**
@@ -748,14 +712,13 @@ public class LogisticRegression extends GLMTemplate
      */
 
     public double[] coefficients(double[] binaryResponse,
-                                 double[] ...continuousCovariate)
-    {
+                                 double[]... continuousCovariate) {
         this.binaryResponse = binaryResponse;
         this.continuousCovariate = continuousCovariate;
 
         return (double[]) getRequiredOutput(COEFFICIENTS,
-                                            binaryResponse,
-                                            continuousCovariate);
+                binaryResponse,
+                continuousCovariate);
     }
 
     /**
@@ -778,15 +741,14 @@ public class LogisticRegression extends GLMTemplate
 
     public double[] coefficients(double[] binaryResponse,
                                  String[][] nominalCovariate,
-                                 double[][] continuousCovariate)
-    {
+                                 double[][] continuousCovariate) {
         this.binaryResponse = binaryResponse;
         this.nominalCovariate = nominalCovariate;
         this.continuousCovariate = continuousCovariate;
 
         return (double[]) getRequiredOutput(COEFFICIENTS,
-                                            binaryResponse, nominalCovariate,
-                                            continuousCovariate);
+                binaryResponse, nominalCovariate,
+                continuousCovariate);
     }
 
     /**
@@ -804,14 +766,13 @@ public class LogisticRegression extends GLMTemplate
      */
 
     public double[] coefficients(String[] stringBinaryResponse,
-                                 String[] ...nominalCovariate)
-    {
+                                 String[]... nominalCovariate) {
         this.stringBinaryResponse = stringBinaryResponse;
         this.nominalCovariate = nominalCovariate;
 
         return (double[]) getRequiredOutput(COEFFICIENTS,
-                                            stringBinaryResponse,
-                                            nominalCovariate);
+                stringBinaryResponse,
+                nominalCovariate);
     }
 
     /**
@@ -830,14 +791,13 @@ public class LogisticRegression extends GLMTemplate
      */
 
     public double[] coefficients(String[] stringBinaryResponse,
-                                 double[] ...continuousCovariate)
-    {
+                                 double[]... continuousCovariate) {
         this.stringBinaryResponse = stringBinaryResponse;
         this.continuousCovariate = continuousCovariate;
 
         return (double[]) getRequiredOutput(COEFFICIENTS,
-                                            stringBinaryResponse,
-                                            continuousCovariate);
+                stringBinaryResponse,
+                continuousCovariate);
     }
 
     /**
@@ -861,16 +821,15 @@ public class LogisticRegression extends GLMTemplate
 
     public double[] coefficients(String[] stringBinaryResponse,
                                  String[][] nominalCovariate,
-                                 double[][] continuousCovariate)
-    {
+                                 double[][] continuousCovariate) {
         this.stringBinaryResponse = stringBinaryResponse;
         this.nominalCovariate = nominalCovariate;
         this.continuousCovariate = continuousCovariate;
 
         return (double[]) getRequiredOutput(COEFFICIENTS,
-                                            stringBinaryResponse,
-                                            nominalCovariate,
-                                            continuousCovariate);
+                stringBinaryResponse,
+                nominalCovariate,
+                continuousCovariate);
     }
 
     /**
@@ -895,8 +854,7 @@ public class LogisticRegression extends GLMTemplate
     private double[][] confidenceInterval(double alpha,
                                           double[] response,
                                           double[] classSize,
-                                          double[] ...covariate)
-    {
+                                          double[]... covariate) {
         this.classSize = classSize;
         argument.put(ALPHA, alpha);
 
@@ -924,66 +882,61 @@ public class LogisticRegression extends GLMTemplate
      */
 
     public double[][] confidenceInterval(Hashtable argument,
-                                         Object ...dataObject)
-    {
+                                         Object... dataObject) {
         this.argument = argument;
         this.dataObject = dataObject;
         alpha = (Double) argument.get(ALPHA);
         requiredInputData = getRequiredInputData(dataObject);
-        if (requiredInputData.get("DATA_TYPE") != null)
-        {
-            switch ((Integer) requiredInputData.get("DATA_TYPE"))
-            {
+        if (requiredInputData.get("DATA_TYPE") != null) {
+            switch ((Integer) requiredInputData.get("DATA_TYPE")) {
                 case 1:
                     confidenceInterval = confidenceInterval(alpha,
                             (double[]) requiredInputData.get("BINARY_RESPONSE"),
                             (String[][]) requiredInputData.get(
-                                "NOMINAL_COVARIATE"));
+                                    "NOMINAL_COVARIATE"));
                     break;
                 case 2:
                     confidenceInterval = confidenceInterval(alpha,
                             (double[]) requiredInputData.get("BINARY_RESPONSE"),
                             (double[][]) requiredInputData.get(
-                                "CONTINUOUS_COVARIATE"));
+                                    "CONTINUOUS_COVARIATE"));
                     break;
                 case 3:
                     confidenceInterval = confidenceInterval(alpha,
                             (double[]) requiredInputData.get("BINARY_RESPONSE"),
                             (String[][]) requiredInputData.get(
-                                "NOMINAL_COVARIATE"),
+                                    "NOMINAL_COVARIATE"),
                             (double[][]) requiredInputData.get(
-                                "CONTINUOUS_COVARIATE"));
+                                    "CONTINUOUS_COVARIATE"));
                     break;
                 case 4:
                     confidenceInterval = confidenceInterval(alpha,
                             (String[]) requiredInputData.get(
-                                "STRING_BINARY_RESPONSE"),
+                                    "STRING_BINARY_RESPONSE"),
                             (String[][]) requiredInputData.get(
-                                "NOMINAL_COVARIATE"));
+                                    "NOMINAL_COVARIATE"));
                     break;
                 case 5:
                     confidenceInterval = confidenceInterval(alpha,
                             (String[]) requiredInputData.get(
-                                "STRING_BINARY_RESPONSE"),
+                                    "STRING_BINARY_RESPONSE"),
                             (double[][]) requiredInputData.get(
-                                "CONTINUOUS_COVARIATE"));
+                                    "CONTINUOUS_COVARIATE"));
                     break;
                 case 6:
                     confidenceInterval = confidenceInterval(alpha,
                             (double[]) requiredInputData.get(
-                                "STRING_BINARY_RESPONSE"),
+                                    "STRING_BINARY_RESPONSE"),
                             (String[][]) requiredInputData.get(
-                                "NOMINAL_COVARIATE"),
+                                    "NOMINAL_COVARIATE"),
                             (double[][]) requiredInputData.get(
-                                "CONTINUOUS_COVARIATE"));
+                                    "CONTINUOUS_COVARIATE"));
                     break;
                 default:
                     throw new IllegalArgumentException
                             ("No input data type.");
             }
-        }
-        else
-        {
+        } else {
             throw new IllegalArgumentException("Wrong input data.");
         }
 
@@ -1012,15 +965,14 @@ public class LogisticRegression extends GLMTemplate
 
     public double[][] confidenceInterval(double alpha,
                                          double[] binaryResponse,
-                                         String[] ...nominalCovariate)
-    {
+                                         String[]... nominalCovariate) {
         this.alpha = alpha;
         this.binaryResponse = binaryResponse;
         this.nominalCovariate = nominalCovariate;
 
         return (double[][]) getRequiredOutput(CONFIDENCE_INTERVAL,
-                                              binaryResponse,
-                                              nominalCovariate);
+                binaryResponse,
+                nominalCovariate);
     }
 
     /**
@@ -1046,15 +998,14 @@ public class LogisticRegression extends GLMTemplate
 
     public double[][] confidenceInterval(double alpha,
                                          double[] binaryResponse,
-                                         double[] ...continuousCovariate)
-    {
+                                         double[]... continuousCovariate) {
         this.alpha = alpha;
         this.binaryResponse = binaryResponse;
         this.continuousCovariate = continuousCovariate;
 
         return (double[][]) getRequiredOutput(CONFIDENCE_INTERVAL,
-                                              binaryResponse,
-                                              continuousCovariate);
+                binaryResponse,
+                continuousCovariate);
     }
 
     /**
@@ -1085,17 +1036,16 @@ public class LogisticRegression extends GLMTemplate
     public double[][] confidenceInterval(double alpha,
                                          double[] binaryResponse,
                                          String[][] nominalCovariate,
-                                         double[][] continuousCovariate)
-    {
+                                         double[][] continuousCovariate) {
         this.alpha = alpha;
         this.binaryResponse = binaryResponse;
         this.nominalCovariate = nominalCovariate;
         this.continuousCovariate = continuousCovariate;
 
         return (double[][]) getRequiredOutput(CONFIDENCE_INTERVAL,
-                                              binaryResponse,
-                                              nominalCovariate,
-                                              continuousCovariate);
+                binaryResponse,
+                nominalCovariate,
+                continuousCovariate);
     }
 
     /**
@@ -1121,15 +1071,14 @@ public class LogisticRegression extends GLMTemplate
 
     public double[][] confidenceInterval(double alpha,
                                          String[] stringBinaryResponse,
-                                         String[] ...nominalCovariate)
-    {
+                                         String[]... nominalCovariate) {
         this.alpha = alpha;
         this.stringBinaryResponse = stringBinaryResponse;
         this.nominalCovariate = nominalCovariate;
 
         return (double[][]) getRequiredOutput(CONFIDENCE_INTERVAL,
-                                              stringBinaryResponse,
-                                              nominalCovariate);
+                stringBinaryResponse,
+                nominalCovariate);
     }
 
     /**
@@ -1156,15 +1105,14 @@ public class LogisticRegression extends GLMTemplate
 
     public double[][] confidenceInterval(double alpha,
                                          String[] stringBinaryResponse,
-                                         double[] ...continuousCovariate)
-    {
+                                         double[]... continuousCovariate) {
         this.alpha = alpha;
         this.stringBinaryResponse = stringBinaryResponse;
         this.continuousCovariate = continuousCovariate;
 
         return (double[][]) getRequiredOutput(CONFIDENCE_INTERVAL,
-                                              stringBinaryResponse,
-                                              continuousCovariate);
+                stringBinaryResponse,
+                continuousCovariate);
     }
 
     /**
@@ -1196,17 +1144,16 @@ public class LogisticRegression extends GLMTemplate
     public double[][] confidenceInterval(double alpha,
                                          String[] stringBinaryResponse,
                                          String[][] nominalCovariate,
-                                         double[][] continuousCovariate)
-    {
+                                         double[][] continuousCovariate) {
         this.alpha = alpha;
         this.stringBinaryResponse = stringBinaryResponse;
         this.nominalCovariate = nominalCovariate;
         this.continuousCovariate = continuousCovariate;
 
         return (double[][]) getRequiredOutput(CONFIDENCE_INTERVAL,
-                                              stringBinaryResponse,
-                                              nominalCovariate,
-                                              continuousCovariate);
+                stringBinaryResponse,
+                nominalCovariate,
+                continuousCovariate);
     }
 
     /**
@@ -1218,15 +1165,12 @@ public class LogisticRegression extends GLMTemplate
      */
 
     protected double[] means(double[] coefficients,
-                             double[] ...covariate)
-    {
-        if (link == null)
-        {
+                             double[]... covariate) {
+        if (link == null) {
             link = LOGIT;
         }
         means = pi = means(link, coefficients, covariate);
-        for (int i = 0; i < means.length; i++)
-        {
+        for (int i = 0; i < means.length; i++) {
             means[i] = classSize[i] * means[i];
         }
 
@@ -1242,39 +1186,34 @@ public class LogisticRegression extends GLMTemplate
      */
 
     protected double[][] weights(double[] coefficients,
-                                 double[] ...covariate)
-    {
+                                 double[]... covariate) {
         means = means(coefficients, covariate);
         weights = new double[classSize.length][classSize.length];
-        switch (link)
-        {
+        switch (link) {
             case LOGIT:
-                for (int i = 0; i < classSize.length; i++)
-                {
+                for (int i = 0; i < classSize.length; i++) {
                     weights[i][i] = means[i] * (1 - (means[i] / classSize[i]));
                 }
                 break;
             case PROBIT:
-                for (int i = 0; i < classSize.length; i++)
-                {
+                for (int i = 0; i < classSize.length; i++) {
                     weights[i][i] = Math.exp(
                             -1.0 * Math.pow((means[i] / classSize[i]), 2.0)) /
-                                    (2 * Math.pow(classSize[i], 3.0) *
-                                     (means[i] / classSize[i]) *
-                                     (1 - (means[i] / classSize[i])));
+                            (2 * Math.pow(classSize[i], 3.0) *
+                                    (means[i] / classSize[i]) *
+                                    (1 - (means[i] / classSize[i])));
                 }
                 break;
             case COMPLEMENTARY_LOGLOG:
-                for (int i = 0; i < classSize.length; i++)
-                {
+                for (int i = 0; i < classSize.length; i++) {
                     weights[i][i] = ((classSize[i] - means[i]) * Math.pow(
                             Math.log(1.0 - (means[i] / classSize[i])), 2.0)) /
-                                    (means[i] / classSize[i]);
+                            (means[i] / classSize[i]);
                 }
                 break;
             default:
                 throw new IllegalArgumentException(
-                    "Input link function is not supported.");
+                        "Input link function is not supported.");
         }
 
         return weights;
@@ -1294,8 +1233,7 @@ public class LogisticRegression extends GLMTemplate
 
     private double[] testStatistic(double[] response,
                                    double[] classSize,
-                                   double[] ...covariate)
-    {
+                                   double[]... covariate) {
         this.classSize = classSize;
 
         return super.testStatistic(response, covariate);
@@ -1313,62 +1251,57 @@ public class LogisticRegression extends GLMTemplate
      */
 
     public double[] testStatistic(Hashtable argument,
-                                  Object ...dataObject)
-    {
+                                  Object... dataObject) {
         this.argument = argument;
         this.dataObject = dataObject;
         requiredInputData = getRequiredInputData(dataObject);
-        if (requiredInputData.get("DATA_TYPE") != null)
-        {
-            switch ((Integer) requiredInputData.get("DATA_TYPE"))
-            {
+        if (requiredInputData.get("DATA_TYPE") != null) {
+            switch ((Integer) requiredInputData.get("DATA_TYPE")) {
                 case 1:
                     testStatistic = testStatistic(
-                        (double[]) requiredInputData.get("BINARY_RESPONSE"),
-                        (String[][]) requiredInputData.
-                        get("NOMINAL_COVARIATE"));
+                            (double[]) requiredInputData.get("BINARY_RESPONSE"),
+                            (String[][]) requiredInputData.
+                                    get("NOMINAL_COVARIATE"));
                     break;
                 case 2:
                     testStatistic = testStatistic(
-                        (double[]) requiredInputData.get("BINARY_RESPONSE"),
-                        (double[][]) requiredInputData.get(
-                            "CONTINUOUS_COVARIATE"));
+                            (double[]) requiredInputData.get("BINARY_RESPONSE"),
+                            (double[][]) requiredInputData.get(
+                                    "CONTINUOUS_COVARIATE"));
                     break;
                 case 3:
                     testStatistic = testStatistic(
-                        (double[]) requiredInputData.get("BINARY_RESPONSE"),
-                        (String[][]) requiredInputData.get("NOMINAL_COVARIATE"),
-                        (double[][]) requiredInputData.get(
-                            "CONTINUOUS_COVARIATE"));
+                            (double[]) requiredInputData.get("BINARY_RESPONSE"),
+                            (String[][]) requiredInputData.get("NOMINAL_COVARIATE"),
+                            (double[][]) requiredInputData.get(
+                                    "CONTINUOUS_COVARIATE"));
                     break;
                 case 4:
                     testStatistic = testStatistic(
-                        (String[]) requiredInputData.
-                        get("STRING_BINARY_RESPONSE"),
-                        (String[][]) requiredInputData.
-                        get("NOMINAL_COVARIATE"));
+                            (String[]) requiredInputData.
+                                    get("STRING_BINARY_RESPONSE"),
+                            (String[][]) requiredInputData.
+                                    get("NOMINAL_COVARIATE"));
                     break;
                 case 5:
                     testStatistic = testStatistic(
-                        (String[]) requiredInputData.get(
-                            "STRING_BINARY_RESPONSE"),
-                        (double[][]) requiredInputData.get(
-                            "CONTINUOUS_COVARIATE"));
+                            (String[]) requiredInputData.get(
+                                    "STRING_BINARY_RESPONSE"),
+                            (double[][]) requiredInputData.get(
+                                    "CONTINUOUS_COVARIATE"));
                     break;
                 case 6:
                     testStatistic = testStatistic(
-                        (double[]) requiredInputData.get(
-                            "STRING_BINARY_RESPONSE"),
-                        (String[][]) requiredInputData.get("NOMINAL_COVARIATE"),
-                        (double[][]) requiredInputData.get(
-                            "CONTINUOUS_COVARIATE"));
+                            (double[]) requiredInputData.get(
+                                    "STRING_BINARY_RESPONSE"),
+                            (String[][]) requiredInputData.get("NOMINAL_COVARIATE"),
+                            (double[][]) requiredInputData.get(
+                                    "CONTINUOUS_COVARIATE"));
                     break;
                 default:
                     throw new IllegalArgumentException("No input data type.");
             }
-        }
-        else
-        {
+        } else {
             throw new IllegalArgumentException("Wrong input data.");
         }
 
@@ -1389,13 +1322,12 @@ public class LogisticRegression extends GLMTemplate
      */
 
     public double[] testStatistic(double[] binaryResponse,
-                                  String[] ...nominalCovariate)
-    {
+                                  String[]... nominalCovariate) {
         this.binaryResponse = binaryResponse;
         this.nominalCovariate = nominalCovariate;
 
         return (double[]) getRequiredOutput(TEST_STATISTIC, binaryResponse,
-                                            nominalCovariate);
+                nominalCovariate);
     }
 
     /**
@@ -1413,13 +1345,12 @@ public class LogisticRegression extends GLMTemplate
      */
 
     public double[] testStatistic(double[] binaryResponse,
-                                  double[] ...continuousCovariate)
-    {
+                                  double[]... continuousCovariate) {
         this.binaryResponse = binaryResponse;
         this.continuousCovariate = continuousCovariate;
 
         return (double[]) getRequiredOutput(TEST_STATISTIC, binaryResponse,
-                                            continuousCovariate);
+                continuousCovariate);
     }
 
     /**
@@ -1442,15 +1373,14 @@ public class LogisticRegression extends GLMTemplate
 
     public double[] testStatistic(double[] binaryResponse,
                                   String[][] nominalCovariate,
-                                  double[][] continuousCovariate)
-    {
+                                  double[][] continuousCovariate) {
         this.binaryResponse = binaryResponse;
         this.nominalCovariate = nominalCovariate;
         this.continuousCovariate = continuousCovariate;
 
         return (double[]) getRequiredOutput(TEST_STATISTIC, binaryResponse,
-                                            nominalCovariate,
-                                            continuousCovariate);
+                nominalCovariate,
+                continuousCovariate);
     }
 
     /**
@@ -1468,14 +1398,13 @@ public class LogisticRegression extends GLMTemplate
      */
 
     public double[] testStatistic(String[] stringBinaryResponse,
-                                  String[] ...nominalCovariate)
-    {
+                                  String[]... nominalCovariate) {
         this.stringBinaryResponse = stringBinaryResponse;
         this.nominalCovariate = nominalCovariate;
 
         return (double[]) getRequiredOutput(TEST_STATISTIC,
-                                            stringBinaryResponse,
-                                            nominalCovariate);
+                stringBinaryResponse,
+                nominalCovariate);
     }
 
     /**
@@ -1494,14 +1423,13 @@ public class LogisticRegression extends GLMTemplate
      */
 
     public double[] testStatistic(String[] stringBinaryResponse,
-                                  double[] ...continuousCovariate)
-    {
+                                  double[]... continuousCovariate) {
         this.stringBinaryResponse = stringBinaryResponse;
         this.continuousCovariate = continuousCovariate;
 
         return (double[]) getRequiredOutput(TEST_STATISTIC,
-                                            stringBinaryResponse,
-                                            continuousCovariate);
+                stringBinaryResponse,
+                continuousCovariate);
     }
 
     /**
@@ -1525,16 +1453,15 @@ public class LogisticRegression extends GLMTemplate
 
     public double[] testStatistic(String[] stringBinaryResponse,
                                   String[][] nominalCovariate,
-                                  double[][] continuousCovariate)
-    {
+                                  double[][] continuousCovariate) {
         this.stringBinaryResponse = stringBinaryResponse;
         this.nominalCovariate = nominalCovariate;
         this.continuousCovariate = continuousCovariate;
 
         return (double[]) getRequiredOutput(TEST_STATISTIC,
-                                            stringBinaryResponse,
-                                            nominalCovariate,
-                                            continuousCovariate);
+                stringBinaryResponse,
+                nominalCovariate,
+                continuousCovariate);
     }
 
     /**
@@ -1551,8 +1478,7 @@ public class LogisticRegression extends GLMTemplate
 
     private double[] pValue(double[] response,
                             double[] classSize,
-                            double[][] covariate)
-    {
+                            double[][] covariate) {
         this.classSize = classSize;
 
         return super.pValue(response, covariate);
@@ -1570,63 +1496,58 @@ public class LogisticRegression extends GLMTemplate
      */
 
     public double[] pValue(Hashtable argument,
-                           Object ...dataObject)
-    {
+                           Object... dataObject) {
         this.argument = argument;
         this.dataObject = dataObject;
         requiredInputData = getRequiredInputData(dataObject);
-        if (requiredInputData.get("DATA_TYPE") != null)
-        {
-            switch ((Integer) requiredInputData.get("DATA_TYPE"))
-            {
+        if (requiredInputData.get("DATA_TYPE") != null) {
+            switch ((Integer) requiredInputData.get("DATA_TYPE")) {
                 case 1:
                     pValue = pValue(
-                        (double[]) requiredInputData.get("BINARY_RESPONSE"),
-                        (String[][]) requiredInputData.
-                        get("NOMINAL_COVARIATE"));
+                            (double[]) requiredInputData.get("BINARY_RESPONSE"),
+                            (String[][]) requiredInputData.
+                                    get("NOMINAL_COVARIATE"));
                     break;
                 case 2:
                     pValue = pValue(
-                        (double[]) requiredInputData.get("BINARY_RESPONSE"),
-                        (double[][]) requiredInputData.get(
-                            "CONTINUOUS_COVARIATE"));
+                            (double[]) requiredInputData.get("BINARY_RESPONSE"),
+                            (double[][]) requiredInputData.get(
+                                    "CONTINUOUS_COVARIATE"));
                     break;
                 case 3:
                     pValue = pValue(
-                        (double[]) requiredInputData.get("BINARY_RESPONSE"),
-                        (String[][]) requiredInputData.get("NOMINAL_COVARIATE"),
-                        (double[][]) requiredInputData.get(
-                            "CONTINUOUS_COVARIATE"));
+                            (double[]) requiredInputData.get("BINARY_RESPONSE"),
+                            (String[][]) requiredInputData.get("NOMINAL_COVARIATE"),
+                            (double[][]) requiredInputData.get(
+                                    "CONTINUOUS_COVARIATE"));
                     break;
                 case 4:
                     pValue = pValue(
-                        (String[]) requiredInputData.get(
-                            "STRING_BINARY_RESPONSE"),
-                        (String[][]) requiredInputData.
-                        get("NOMINAL_COVARIATE"));
+                            (String[]) requiredInputData.get(
+                                    "STRING_BINARY_RESPONSE"),
+                            (String[][]) requiredInputData.
+                                    get("NOMINAL_COVARIATE"));
                     break;
                 case 5:
                     pValue = pValue(
-                        (String[]) requiredInputData.get(
-                            "STRING_BINARY_RESPONSE"),
-                        (double[][]) requiredInputData.get(
-                            "CONTINUOUS_COVARIATE"));
+                            (String[]) requiredInputData.get(
+                                    "STRING_BINARY_RESPONSE"),
+                            (double[][]) requiredInputData.get(
+                                    "CONTINUOUS_COVARIATE"));
                     break;
                 case 6:
                     pValue = pValue(
-                        (double[]) requiredInputData.get(
-                            "STRING_BINARY_RESPONSE"),
-                        (String[][]) requiredInputData.get("NOMINAL_COVARIATE"),
-                        (double[][]) requiredInputData.get(
-                            "CONTINUOUS_COVARIATE"));
+                            (double[]) requiredInputData.get(
+                                    "STRING_BINARY_RESPONSE"),
+                            (String[][]) requiredInputData.get("NOMINAL_COVARIATE"),
+                            (double[][]) requiredInputData.get(
+                                    "CONTINUOUS_COVARIATE"));
                     break;
                 default:
                     throw new IllegalArgumentException
                             ("No input data type.");
             }
-        }
-        else
-        {
+        } else {
             throw new IllegalArgumentException("Wrong input data.");
         }
 
@@ -1647,13 +1568,12 @@ public class LogisticRegression extends GLMTemplate
      */
 
     public double[] pValue(double[] binaryResponse,
-                           String[] ...nominalCovariate)
-    {
+                           String[]... nominalCovariate) {
         this.binaryResponse = binaryResponse;
         this.nominalCovariate = nominalCovariate;
 
         return (double[]) getRequiredOutput(PVALUE, binaryResponse,
-                                            nominalCovariate);
+                nominalCovariate);
     }
 
     /**
@@ -1671,13 +1591,12 @@ public class LogisticRegression extends GLMTemplate
      */
 
     public double[] pValue(double[] binaryResponse,
-                           double[] ...continuousCovariate)
-    {
+                           double[]... continuousCovariate) {
         this.binaryResponse = binaryResponse;
         this.continuousCovariate = continuousCovariate;
 
         return (double[]) getRequiredOutput(PVALUE, binaryResponse,
-                                            continuousCovariate);
+                continuousCovariate);
     }
 
     /**
@@ -1700,15 +1619,14 @@ public class LogisticRegression extends GLMTemplate
 
     public double[] pValue(double[] binaryResponse,
                            String[][] nominalCovariate,
-                           double[][] continuousCovariate)
-    {
+                           double[][] continuousCovariate) {
         this.binaryResponse = binaryResponse;
         this.nominalCovariate = nominalCovariate;
         this.continuousCovariate = continuousCovariate;
 
         return (double[]) getRequiredOutput(PVALUE, binaryResponse,
-                                            nominalCovariate,
-                                            continuousCovariate);
+                nominalCovariate,
+                continuousCovariate);
     }
 
     /**
@@ -1726,13 +1644,12 @@ public class LogisticRegression extends GLMTemplate
      */
 
     public double[] pValue(String[] stringBinaryResponse,
-                           String[] ...nominalCovariate)
-    {
+                           String[]... nominalCovariate) {
         this.stringBinaryResponse = stringBinaryResponse;
         this.nominalCovariate = nominalCovariate;
 
         return (double[]) getRequiredOutput(PVALUE, stringBinaryResponse,
-                                            nominalCovariate);
+                nominalCovariate);
     }
 
     /**
@@ -1751,13 +1668,12 @@ public class LogisticRegression extends GLMTemplate
      */
 
     public double[] pValue(String[] stringBinaryResponse,
-                           double[] ...continuousCovariate)
-    {
+                           double[]... continuousCovariate) {
         this.stringBinaryResponse = stringBinaryResponse;
         this.continuousCovariate = continuousCovariate;
 
         return (double[]) getRequiredOutput(PVALUE, stringBinaryResponse,
-                                            continuousCovariate);
+                continuousCovariate);
     }
 
     /**
@@ -1781,15 +1697,14 @@ public class LogisticRegression extends GLMTemplate
 
     public double[] pValue(String[] stringBinaryResponse,
                            String[][] nominalCovariate,
-                           double[][] continuousCovariate)
-    {
+                           double[][] continuousCovariate) {
         this.stringBinaryResponse = stringBinaryResponse;
         this.nominalCovariate = nominalCovariate;
         this.continuousCovariate = continuousCovariate;
 
         return (double[]) getRequiredOutput(PVALUE, stringBinaryResponse,
-                                            nominalCovariate,
-                                            continuousCovariate);
+                nominalCovariate,
+                continuousCovariate);
     }
 
     /**
@@ -1806,29 +1721,22 @@ public class LogisticRegression extends GLMTemplate
 
     protected double deviance(double[] response,
                               double[] classSize,
-                              double[] ...covariate)
-    {
+                              double[]... covariate) {
         coefficients = coefficients(response, classSize, covariate);
         means = means(coefficients, covariate);
         deviance = 0.0;
-        for (int i = 0; i < linearPredictors.length; i++)
-        {
-            if (classSize[i] != response[i] && response[i] != 0.0)
-            {
+        for (int i = 0; i < linearPredictors.length; i++) {
+            if (classSize[i] != response[i] && response[i] != 0.0) {
                 deviance += 2 *
                         (response[i] * Math.log(response[i] / means[i]) +
-                         (classSize[i] - response[i]) *
-                         Math.log((classSize[i] - response[i]) /
-                                  (classSize[i] - means[i])));
-            }
-            else if (response[i] == 0.0)
-            {
+                                (classSize[i] - response[i]) *
+                                        Math.log((classSize[i] - response[i]) /
+                                                (classSize[i] - means[i])));
+            } else if (response[i] == 0.0) {
                 deviance += 2 *
                         (classSize[i] *
-                         Math.log(classSize[i] / (classSize[i] - means[i])));
-            }
-            else
-            {
+                                Math.log(classSize[i] / (classSize[i] - means[i])));
+            } else {
                 deviance += 2 *
                         (response[i] * Math.log(response[i] / means[i]));
             }
@@ -1848,10 +1756,9 @@ public class LogisticRegression extends GLMTemplate
      */
 
     protected double nullDeviance(double[] response,
-                                  double[] classSize)
-    {
+                                  double[] classSize) {
         return deviance(response, classSize,
-                        new Matrix(1, response.length, 1).getArray());
+                new Matrix(1, response.length, 1).getArray());
     }
 
     /**
@@ -1868,8 +1775,7 @@ public class LogisticRegression extends GLMTemplate
 
     private double[] fittedValues(double[] response,
                                   double[] classSize,
-                                  double[] ...covariate)
-    {
+                                  double[]... covariate) {
         coefficients = coefficients(response, classSize, covariate);
         fittedValues = means(coefficients, covariate);
         output.put(FITTED_VALUES, fittedValues);
@@ -1889,15 +1795,13 @@ public class LogisticRegression extends GLMTemplate
      */
 
     protected double[] pearsonResiduals(double[] response,
-                                        double[] ...covariate)
-    {
+                                        double[]... covariate) {
         coefficients = super.coefficients(response, covariate);
         means = means(coefficients, covariate);
         responseVariance = responseVariance(means, ExponentialFamily.BINOMIAL);
         pearsonResiduals = pearsonResiduals(responseVariance, response,
-                                            covariate);
-        for (int i = 0; i < response.length; i++)
-        {
+                covariate);
+        for (int i = 0; i < response.length; i++) {
             pearsonResiduals[i] = pearsonResiduals[i] * Math.sqrt(classSize[i]);
         }
         output.put(PEARSON_RESIDUALS, pearsonResiduals);
@@ -1919,24 +1823,19 @@ public class LogisticRegression extends GLMTemplate
 
     protected double[] devianceResiduals(double[] response,
                                          double[] classSize,
-                                         double[] ...covariate)
-    {
+                                         double[]... covariate) {
         coefficients = coefficients(response, classSize, covariate);
         means = means(coefficients, covariate);
         devianceResiduals = new double[response.length];
         residuals = 0.0;
-        for (int i = 0; i < response.length; i++)
-        {
+        for (int i = 0; i < response.length; i++) {
             double m = means[i];
             residuals = Math.sqrt(
                     -2 * (response[i] * Math.log(m / (classSize[i] - m)) +
-                          Math.log(classSize[i] - m)));
-            if (response[i] - m > 0)
-            {
+                            Math.log(classSize[i] - m)));
+            if (response[i] - m > 0) {
                 devianceResiduals[i] = residuals;
-            }
-            else
-            {
+            } else {
                 devianceResiduals[i] = -1 * residuals;
             }
         }
@@ -1966,23 +1865,20 @@ public class LogisticRegression extends GLMTemplate
     private double[][] devianceTable(double[] response,
                                      double[] classSize,
                                      int[] level,
-                                     double[] ...covariate)
-    {
+                                     double[]... covariate) {
         devianceTable = new double[level.length + 1][4];
         c = 0;
-        for (int j = 0; j < classSize.length; j++)
-        {
+        for (int j = 0; j < classSize.length; j++) {
             c += classSize[j];
         }
         devianceTable[0][2] = c - 1;
         devianceTable[0][3] = nullDeviance(response, classSize);
         k = 0;
-        for (int i = 1; i < level.length + 1; i++)
-        {
+        for (int i = 1; i < level.length + 1; i++) {
             k = k + level[i - 1] - 1;
             devianceTable[i][3] = deviance(response, classSize,
-                                           new Matrix(covariate).getMatrix(0, k,
-                    0, response.length - 1).getArray());
+                    new Matrix(covariate).getMatrix(0, k,
+                            0, response.length - 1).getArray());
             devianceTable[i][2] = c - k - 1;
             devianceTable[i][1] = devianceTable[i - 1][3] - devianceTable[i][3];
             devianceTable[i][0] = level[i - 1] - 1;
@@ -2012,24 +1908,21 @@ public class LogisticRegression extends GLMTemplate
 
     private double[][] devianceTable(double[] response,
                                      double[] classSize,
-                                     double[] ...continuousCovariate)
-    {
+                                     double[]... continuousCovariate) {
         devianceTable = new double[continuousCovariate.length][4];
         c = 0;
-        for (int j = 0; j < classSize.length; j++)
-        {
+        for (int j = 0; j < classSize.length; j++) {
             c += classSize[j];
         }
         devianceTable[0][2] = c - 1;
         devianceTable[0][3] = nullDeviance(response, classSize);
         k = 0;
-        for (int i = 1; i < continuousCovariate.length; i++)
-        {
+        for (int i = 1; i < continuousCovariate.length; i++) {
             k = k + 1;
             devianceTable[i][3] = deviance(response, classSize,
-                                           new Matrix(continuousCovariate).
-                                           getMatrix(0, k, 0,
-                    response.length - 1).getArray());
+                    new Matrix(continuousCovariate).
+                            getMatrix(0, k, 0,
+                                    response.length - 1).getArray());
             devianceTable[i][2] = c - k - 1;
             devianceTable[i][1] = devianceTable[i - 1][3] - devianceTable[i][3];
             devianceTable[i][0] = 1;
@@ -2056,63 +1949,58 @@ public class LogisticRegression extends GLMTemplate
      */
 
     public double[][] devianceTable(Hashtable argument,
-                                    Object ...dataObject)
-    {
+                                    Object... dataObject) {
         this.argument = argument;
         this.dataObject = dataObject;
         requiredInputData = getRequiredInputData(dataObject);
-        if (requiredInputData.get("DATA_TYPE") != null)
-        {
-            switch ((Integer) requiredInputData.get("DATA_TYPE"))
-            {
+        if (requiredInputData.get("DATA_TYPE") != null) {
+            switch ((Integer) requiredInputData.get("DATA_TYPE")) {
                 case 1:
                     devianceTable = devianceTable(
-                        (double[]) requiredInputData.get("BINARY_RESPONSE"),
-                        (String[][]) requiredInputData.
-                        get("NOMINAL_COVARIATE"));
+                            (double[]) requiredInputData.get("BINARY_RESPONSE"),
+                            (String[][]) requiredInputData.
+                                    get("NOMINAL_COVARIATE"));
                     break;
                 case 2:
                     devianceTable = devianceTable(
-                        (double[]) requiredInputData.get("BINARY_RESPONSE"),
-                        (double[][]) requiredInputData.get(
-                            "CONTINUOUS_COVARIATE"));
+                            (double[]) requiredInputData.get("BINARY_RESPONSE"),
+                            (double[][]) requiredInputData.get(
+                                    "CONTINUOUS_COVARIATE"));
                     break;
                 case 3:
                     devianceTable = devianceTable(
-                        (double[]) requiredInputData.get("BINARY_RESPONSE"),
-                        (String[][]) requiredInputData.get("NOMINAL_COVARIATE"),
-                        (double[][]) requiredInputData.get(
-                            "CONTINUOUS_COVARIATE"));
+                            (double[]) requiredInputData.get("BINARY_RESPONSE"),
+                            (String[][]) requiredInputData.get("NOMINAL_COVARIATE"),
+                            (double[][]) requiredInputData.get(
+                                    "CONTINUOUS_COVARIATE"));
                     break;
                 case 4:
                     devianceTable = devianceTable(
-                        (String[]) requiredInputData.get(
-                            "STRING_BINARY_RESPONSE"),
-                        (String[][]) requiredInputData.
-                        get("NOMINAL_COVARIATE"));
+                            (String[]) requiredInputData.get(
+                                    "STRING_BINARY_RESPONSE"),
+                            (String[][]) requiredInputData.
+                                    get("NOMINAL_COVARIATE"));
                     break;
                 case 5:
                     devianceTable = devianceTable(
-                        (String[]) requiredInputData.get(
-                            "STRING_BINARY_RESPONSE"),
-                        (double[][]) requiredInputData.get(
-                            "CONTINUOUS_COVARIATE"));
+                            (String[]) requiredInputData.get(
+                                    "STRING_BINARY_RESPONSE"),
+                            (double[][]) requiredInputData.get(
+                                    "CONTINUOUS_COVARIATE"));
                     break;
                 case 6:
                     devianceTable = devianceTable(
-                        (double[]) requiredInputData.get(
-                            "STRING_BINARY_RESPONSE"),
-                        (String[][]) requiredInputData.get("NOMINAL_COVARIATE"),
-                        (double[][]) requiredInputData.get(
-                            "CONTINUOUS_COVARIATE"));
+                            (double[]) requiredInputData.get(
+                                    "STRING_BINARY_RESPONSE"),
+                            (String[][]) requiredInputData.get("NOMINAL_COVARIATE"),
+                            (double[][]) requiredInputData.get(
+                                    "CONTINUOUS_COVARIATE"));
                     break;
                 default:
                     throw new IllegalArgumentException
                             ("No input data type.");
             }
-        }
-        else
-        {
+        } else {
             throw new IllegalArgumentException("Wrong input data.");
         }
 
@@ -2138,13 +2026,12 @@ public class LogisticRegression extends GLMTemplate
      */
 
     public double[][] devianceTable(double[] binaryResponse,
-                                    String[] ...nominalCovariate)
-    {
+                                    String[]... nominalCovariate) {
         this.binaryResponse = binaryResponse;
         this.nominalCovariate = nominalCovariate;
 
         return (double[][]) getRequiredOutput(DEVIANCE_TABLE, binaryResponse,
-                                              nominalCovariate);
+                nominalCovariate);
     }
 
     /**
@@ -2167,13 +2054,12 @@ public class LogisticRegression extends GLMTemplate
      */
 
     public double[][] devianceTable(double[] binaryResponse,
-                                    double[] ...continuousCovariate)
-    {
+                                    double[]... continuousCovariate) {
         this.binaryResponse = binaryResponse;
         this.continuousCovariate = continuousCovariate;
 
         return (double[][]) getRequiredOutput(DEVIANCE_TABLE, binaryResponse,
-                                              continuousCovariate);
+                continuousCovariate);
     }
 
     /**
@@ -2201,15 +2087,14 @@ public class LogisticRegression extends GLMTemplate
 
     public double[][] devianceTable(double[] binaryResponse,
                                     String[][] nominalCovariate,
-                                    double[][] continuousCovariate)
-    {
+                                    double[][] continuousCovariate) {
         this.binaryResponse = binaryResponse;
         this.nominalCovariate = nominalCovariate;
         this.continuousCovariate = continuousCovariate;
 
         return (double[][]) getRequiredOutput(DEVIANCE_TABLE, binaryResponse,
-                                              nominalCovariate,
-                                              continuousCovariate);
+                nominalCovariate,
+                continuousCovariate);
     }
 
     /**
@@ -2232,14 +2117,13 @@ public class LogisticRegression extends GLMTemplate
      */
 
     public double[][] devianceTable(String[] stringBinaryResponse,
-                                    String[] ...nominalCovariate)
-    {
+                                    String[]... nominalCovariate) {
         this.stringBinaryResponse = stringBinaryResponse;
         this.nominalCovariate = nominalCovariate;
 
         return (double[][]) getRequiredOutput(DEVIANCE_TABLE,
-                                              stringBinaryResponse,
-                                              nominalCovariate);
+                stringBinaryResponse,
+                nominalCovariate);
     }
 
     /**
@@ -2263,14 +2147,13 @@ public class LogisticRegression extends GLMTemplate
      */
 
     public double[][] devianceTable(String[] stringBinaryResponse,
-                                    double[] ...continuousCovariate)
-    {
+                                    double[]... continuousCovariate) {
         this.stringBinaryResponse = stringBinaryResponse;
         this.continuousCovariate = continuousCovariate;
 
         return (double[][]) getRequiredOutput(DEVIANCE_TABLE,
-                                              stringBinaryResponse,
-                                              continuousCovariate);
+                stringBinaryResponse,
+                continuousCovariate);
     }
 
     /**
@@ -2299,16 +2182,15 @@ public class LogisticRegression extends GLMTemplate
 
     public double[][] devianceTable(String[] stringBinaryResponse,
                                     String[][] nominalCovariate,
-                                    double[][] continuousCovariate)
-    {
+                                    double[][] continuousCovariate) {
         this.stringBinaryResponse = stringBinaryResponse;
         this.nominalCovariate = nominalCovariate;
         this.continuousCovariate = continuousCovariate;
 
         return (double[][]) getRequiredOutput(DEVIANCE_TABLE,
-                                              stringBinaryResponse,
-                                              nominalCovariate,
-                                              continuousCovariate);
+                stringBinaryResponse,
+                nominalCovariate,
+                continuousCovariate);
     }
 
     /**
@@ -2317,101 +2199,77 @@ public class LogisticRegression extends GLMTemplate
      * @return the required input data.
      */
 
-    private Hashtable getRequiredInputData(Object ...dataObject)
-    {
-        if (dataObject[0].getClass().getName().equalsIgnoreCase("[D"))
-        {
+    private Hashtable getRequiredInputData(Object... dataObject) {
+        if (dataObject[0].getClass().getName().equalsIgnoreCase("[D")) {
             requiredInputData.put("BINARY_RESPONSE", dataObject[0]);
             if (dataObject.length == 2 &&
-                dataObject[1].getClass().getName().equalsIgnoreCase(
-                        "[[Ljava.lang.String;"))
-            {
+                    dataObject[1].getClass().getName().equalsIgnoreCase(
+                            "[[Ljava.lang.String;")) {
                 requiredInputData.put("NOMINAL_COVARIATE", dataObject[1]);
                 requiredInputData.put("DATA_TYPE", 1);
-            }
-            else if (dataObject.length == 2 &&
-                     dataObject[1].getClass().getName().equalsIgnoreCase("[[D"))
-            {
+            } else if (dataObject.length == 2 &&
+                    dataObject[1].getClass().getName().equalsIgnoreCase("[[D")) {
                 requiredInputData.put("CONTINUOUS_COVARIATE", dataObject[1]);
                 requiredInputData.put("DATA_TYPE", 2);
-            }
-            else if (dataObject.length == 3 &&
-                     dataObject[1].getClass().getName().equalsIgnoreCase(
-                             "[[Ljava.lang.String;") &&
-                     dataObject[2].getClass().getName().equalsIgnoreCase("[[D"))
-            {
+            } else if (dataObject.length == 3 &&
+                    dataObject[1].getClass().getName().equalsIgnoreCase(
+                            "[[Ljava.lang.String;") &&
+                    dataObject[2].getClass().getName().equalsIgnoreCase("[[D")) {
                 requiredInputData.put("NOMINAL_COVARIATE", dataObject[1]);
                 requiredInputData.put("CONTINUOUS_COVARIATE", dataObject[2]);
                 requiredInputData.put("DATA_TYPE", 3);
-            }
-            else if (dataObject.length >= 2 &&
-                     (dataObject.getClass().getName().equalsIgnoreCase(
-                             "[Ljava.lang.Object;") ||
-                     dataObject.getClass().getName().equalsIgnoreCase("[[D")))
-           {
+            } else if (dataObject.length >= 2 &&
+                    (dataObject.getClass().getName().equalsIgnoreCase(
+                            "[Ljava.lang.Object;") ||
+                            dataObject.getClass().getName().equalsIgnoreCase("[[D"))) {
                 requiredInputData.put("CONTINUOUS_COVARIATE",
-                                      DataManager.
-                                      castDoubleObject(1, dataObject));
+                        DataManager.
+                                castDoubleObject(1, dataObject));
                 requiredInputData.put("DATA_TYPE", 2);
-            }
-            else if (dataObject.length >= 2 &&
-                     dataObject[1].getClass().getName().equalsIgnoreCase(
-                             "[Ljava.lang.String;"))
-            {
+            } else if (dataObject.length >= 2 &&
+                    dataObject[1].getClass().getName().equalsIgnoreCase(
+                            "[Ljava.lang.String;")) {
                 requiredInputData.put("NOMINAL_COVARIATE",
-                                      DataManager.castStringObject(1,
-                        dataObject));
+                        DataManager.castStringObject(1,
+                                dataObject));
                 requiredInputData.put("DATA_TYPE", 1);
             }
-        }
-        else if (dataObject[0].getClass().getName().equalsIgnoreCase(
-            "[Ljava.lang.String;"))
-        {
+        } else if (dataObject[0].getClass().getName().equalsIgnoreCase(
+                "[Ljava.lang.String;")) {
             requiredInputData.put("STRING_BINARY_RESPONSE", dataObject[0]);
             if (dataObject.length == 2 &&
-                dataObject[1].getClass().getName().equalsIgnoreCase(
-                        "[[Ljava.lang.String;"))
-            {
+                    dataObject[1].getClass().getName().equalsIgnoreCase(
+                            "[[Ljava.lang.String;")) {
                 requiredInputData.put("NOMINAL_COVARIATE", dataObject[1]);
                 requiredInputData.put("DATA_TYPE", 4);
-            }
-            else if (dataObject.length == 2 &&
-                     dataObject[1].getClass().getName().equalsIgnoreCase("[[D"))
-            {
+            } else if (dataObject.length == 2 &&
+                    dataObject[1].getClass().getName().equalsIgnoreCase("[[D")) {
                 requiredInputData.put("CONTINUOUS_COVARIATE", dataObject[1]);
                 requiredInputData.put("DATA_TYPE", 5);
-            }
-            else if (dataObject.length == 3 &&
-                     dataObject[1].getClass().getName().equalsIgnoreCase(
-                             "[[Ljava.lang.String;") &&
-                     dataObject[2].getClass().getName().equalsIgnoreCase("[[D"))
-            {
+            } else if (dataObject.length == 3 &&
+                    dataObject[1].getClass().getName().equalsIgnoreCase(
+                            "[[Ljava.lang.String;") &&
+                    dataObject[2].getClass().getName().equalsIgnoreCase("[[D")) {
                 requiredInputData.put("NOMINAL_COVARIATE", dataObject[1]);
                 requiredInputData.put("CONTINUOUS_COVARIATE", dataObject[2]);
                 requiredInputData.put("DATA_TYPE", 6);
-            }
-            else if (dataObject.length >= 2 &&
-                     dataObject[1].getClass().getName().equalsIgnoreCase("[D"))
-            {
+            } else if (dataObject.length >= 2 &&
+                    dataObject[1].getClass().getName().equalsIgnoreCase("[D")) {
                 requiredInputData.put("CONTINUOUS_COVARIATE",
-                                      DataManager.
-                                      castDoubleObject(1, dataObject));
+                        DataManager.
+                                castDoubleObject(1, dataObject));
                 requiredInputData.put("DATA_TYPE", 5);
-            }
-            else if (dataObject.length >= 2 &&
-                     (dataObject.getClass().getName().equalsIgnoreCase(
-                             "[Ljava.lang.Object;") ||
-                     dataObject.getClass().getName().equalsIgnoreCase(
-                              "[[Ljava.lang.String;")))
-            {
+            } else if (dataObject.length >= 2 &&
+                    (dataObject.getClass().getName().equalsIgnoreCase(
+                            "[Ljava.lang.Object;") ||
+                            dataObject.getClass().getName().equalsIgnoreCase(
+                                    "[[Ljava.lang.String;"))) {
                 requiredInputData.put("NOMINAL_COVARIATE",
-                                      DataManager.
-                                      castStringObject(1, dataObject));
+                        DataManager.
+                                castStringObject(1, dataObject));
                 requiredInputData.put("DATA_TYPE", 4);
             }
-        }
-        else
-        {
+        } else {
             throw new IllegalArgumentException("Wrong input data.");
         }
 
@@ -2431,58 +2289,44 @@ public class LogisticRegression extends GLMTemplate
      */
 
     private Object getRequiredOutput(Output option,
-                                     Object ...dataObject)
-    {
+                                     Object... dataObject) {
         Object requiredOutput;
         Object[] outputObject = new Object[4];
         outputObject = glmDataManager.setData("Logistic", dataObject);
         response = (double[]) outputObject[0];
         covariate = glmDataManager.addIntercept((double[][]) outputObject[1]);
         classSize = (double[]) outputObject[2];
-        if (option == DEVIANCE_TABLE)
-        {
-            if (!dataObject[1].getClass().getName().equalsIgnoreCase("[[D"))
-            {
+        if (option == DEVIANCE_TABLE) {
+            if (!dataObject[1].getClass().getName().equalsIgnoreCase("[[D")) {
                 level = (int[]) outputObject[3];
-                if (dataObject.length == 3)
-                {
+                if (dataObject.length == 3) {
                     newLevel = new int[level.length +
-                               this.continuousCovariate.length];
+                            this.continuousCovariate.length];
                     for (int i = 0;
                          i < level.length +
-                         this.continuousCovariate.length; i++)
-                    {
-                        if (i < level.length)
-                        {
+                                 this.continuousCovariate.length; i++) {
+                        if (i < level.length) {
                             newLevel[i] = level[i];
-                        }
-                        else
-                        {
+                        } else {
                             newLevel[i] = 2;
                         }
                     }
-                    for (int i = 0; i < newLevel.length; i++)
-                    {
+                    for (int i = 0; i < newLevel.length; i++) {
                         devianceTable = devianceTable(response, classSize,
                                 newLevel, covariate);
                     }
-                }
-                else
-                {
+                } else {
                     devianceTable = devianceTable(response, classSize, level,
-                                                  covariate);
+                            covariate);
                 }
-            }
-            else
-            {
+            } else {
                 devianceTable = devianceTable(response, classSize, covariate);
             }
         }
-        switch (option)
-        {
+        switch (option) {
             case CONFIDENCE_INTERVAL:
                 requiredOutput = confidenceInterval(this.alpha, response,
-                                                    classSize, covariate);
+                        classSize, covariate);
                 break;
             case TEST_STATISTIC:
                 requiredOutput = testStatistic(response, classSize, covariate);

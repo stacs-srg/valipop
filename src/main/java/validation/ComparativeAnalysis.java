@@ -58,15 +58,15 @@ public class ComparativeAnalysis implements IComparativeAnalysis {
         double sumObs_exp = 0;
         double sumVar = 0;
 
-        for(int c = 0; c < orderedKeys.length - 1; c++) {
+        for (int c = 0; c < orderedKeys.length - 1; c++) {
 
             int n1fTHISROW = observedEvents.getData(c).intValue();
-            int n1fNEXTROW = observedEvents.getData(c+1).intValue();
+            int n1fNEXTROW = observedEvents.getData(c + 1).intValue();
 
             int n2fTHISROW = expectedEvents.getData(c).intValue();
-            int n2fNEXTROW = expectedEvents.getData(c+1).intValue();
+            int n2fNEXTROW = expectedEvents.getData(c + 1).intValue();
 
-            if(n1fTHISROW + n2fTHISROW == 0) {
+            if (n1fTHISROW + n2fTHISROW == 0) {
                 // No people left in either at risk group
                 break;
             }
@@ -115,7 +115,7 @@ public class ComparativeAnalysis implements IComparativeAnalysis {
 
         Arrays.sort(years, Date::compareTo);
 
-        for(Date d : years) {
+        for (Date d : years) {
             Map<EventType, IKaplanMeierAnalysis> res = results.get(d);
 
             System.out.print(d.getYear() + " | ");
@@ -138,11 +138,11 @@ public class ComparativeAnalysis implements IComparativeAnalysis {
 
     private void printPassAndPValue(EventType eventType, Map<EventType, IKaplanMeierAnalysis> res) {
 
-        if(res.containsKey(eventType)) {
+        if (res.containsKey(eventType)) {
             System.out.print(getPassPrint(res.get(eventType).significantDifferenceBetweenGroups(), false) + "-");
             System.out.printf("%.3f ", res.get(eventType).getPValue());
 
-            if(Double.isNaN(res.get(eventType).getPValue())) {
+            if (Double.isNaN(res.get(eventType).getPValue())) {
                 System.out.print("  ");
             }
 
@@ -154,7 +154,7 @@ public class ComparativeAnalysis implements IComparativeAnalysis {
     }
 
     private String getPassPrint(boolean result, boolean passCase) {
-        if(result == passCase) {
+        if (result == passCase) {
             return "P";
         } else {
             return "F";
@@ -167,7 +167,7 @@ public class ComparativeAnalysis implements IComparativeAnalysis {
         Map<Date, Map<EventType, IKaplanMeierAnalysis>> results = new HashMap<Date, Map<EventType, IKaplanMeierAnalysis>>();
 
         // for each year in analysis period
-        for(DateClock d = startDate.getDateClock(); DateUtils.dateBefore(d, endDate); d = d.advanceTime(1, TimeUnit.YEAR)) {
+        for (DateClock d = startDate.getDateClock(); DateUtils.dateBefore(d, endDate); d = d.advanceTime(1, TimeUnit.YEAR)) {
 
             // EVENT - Male Death
 
@@ -180,7 +180,7 @@ public class ComparativeAnalysis implements IComparativeAnalysis {
 
                 new SurvivalPlot(desired.getSurvivorTable(d, null, EventType.MALE_DEATH), generated.getSurvivorTable(d, null, EventType.MALE_DEATH)).generatePlot();
 
-                if(!Double.isNaN(result.getPValue())) {
+                if (!Double.isNaN(result.getPValue())) {
                     fisherSumMaleDeath += Math.log(result.getPValue());
                     fisherCountMaleDeath++;
                 }
@@ -195,7 +195,7 @@ public class ComparativeAnalysis implements IComparativeAnalysis {
                 result = runKMAnalysis(d, EventType.FEMALE_DEATH, desired, generated, generatedPopulation);
                 temp.put(EventType.FEMALE_DEATH, result);
 
-                if(!Double.isNaN(result.getPValue())) {
+                if (!Double.isNaN(result.getPValue())) {
                     fisherSumFemaleDeath += Math.log(result.getPValue());
                     fisherCountFemaleDeath++;
                 }
@@ -210,7 +210,7 @@ public class ComparativeAnalysis implements IComparativeAnalysis {
                 result = runKMAnalysis(d, EventType.FIRST_BIRTH, desired, generated, generatedPopulation);
                 temp.put(EventType.FIRST_BIRTH, result);
 
-                if(!Double.isNaN(result.getPValue())) {
+                if (!Double.isNaN(result.getPValue())) {
                     fisherSumFirstBirth += Math.log(result.getPValue());
                     fisherCountFirstBirth++;
                 }

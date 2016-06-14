@@ -5,6 +5,7 @@ package plots.javastat.eda;
  * <p>Description: JAVA programs for statistical computations</p>
  * <p>Copyright: Copyright (c) 2009</p>
  * <p>Company: Tung Hai University</p>
+ *
  * @author Wen Hsiang Wei
  * @version 1.4
  */
@@ -13,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 
 import plots.javastat.StatisticalAnalysis;
+
 import static plots.javastat.util.Output.*;
 
 /**
@@ -108,8 +110,7 @@ import static plots.javastat.util.Output.*;
  * <br> out.println(testclass4.output.toString());
  */
 
-public class QualitativeDataAnalysis extends StatisticalAnalysis
-{
+public class QualitativeDataAnalysis extends StatisticalAnalysis {
 
     /**
      * The frequency table,
@@ -209,7 +210,8 @@ public class QualitativeDataAnalysis extends StatisticalAnalysis
      * Default QualitativeDataAnalysis constructor.
      */
 
-    public QualitativeDataAnalysis() {}
+    public QualitativeDataAnalysis() {
+    }
 
     /**
      * Constructs a class for qualitative data analysis given the specified
@@ -219,16 +221,12 @@ public class QualitativeDataAnalysis extends StatisticalAnalysis
      */
 
     public QualitativeDataAnalysis(Hashtable argument,
-                                   Object ...dataObject)
-    {
+                                   Object... dataObject) {
         this.argument = argument;
         this.dataObject = dataObject;
-        if (dataObject != null)
-        {
+        if (dataObject != null) {
             statisticalAnalysis = new QualitativeDataAnalysis(dataObject);
-        }
-        else
-        {
+        } else {
             statisticalAnalysis = new QualitativeDataAnalysis();
         }
     }
@@ -239,8 +237,7 @@ public class QualitativeDataAnalysis extends StatisticalAnalysis
      * @param data the categorical data.
      */
 
-    public QualitativeDataAnalysis(Object[] data)
-    {
+    public QualitativeDataAnalysis(Object[] data) {
         this.data = data;
         frequencyTable = frequencyTable(data);
     }
@@ -258,23 +255,17 @@ public class QualitativeDataAnalysis extends StatisticalAnalysis
      */
 
     public String[][] frequencyTable(Hashtable argument,
-                                     Object ...dataObject)
-    {
+                                     Object... dataObject) {
         this.argument = argument;
         this.dataObject = dataObject;
         if (dataObject != null &&
-            dataObject.length == 2)
-        {
+                dataObject.length == 2) {
             frequencyTable = frequencyTable((String[]) dataObject[0],
-                                            (String[]) dataObject[1]);
-        }
-        else if (dataObject != null &&
-                 dataObject.length == 1)
-        {
+                    (String[]) dataObject[1]);
+        } else if (dataObject != null &&
+                dataObject.length == 1) {
             frequencyTable = frequencyTable(dataObject);
-        }
-        else
-        {
+        } else {
             throw new IllegalArgumentException("Wrong input data");
         }
 
@@ -291,12 +282,10 @@ public class QualitativeDataAnalysis extends StatisticalAnalysis
      *                            the data values.
      */
 
-    public String[][] frequencyTable(Object[] data)
-    {
+    public String[][] frequencyTable(Object[] data) {
         this.data = data;
         arraylist = new ArrayList<Object>();
-        for (int i = 0; i < data.length; i++)
-        {
+        for (int i = 0; i < data.length; i++) {
             arraylist.add(i, data[i]);
         }
         copy = (ArrayList<Object>) arraylist.clone();
@@ -304,14 +293,11 @@ public class QualitativeDataAnalysis extends StatisticalAnalysis
         indExit = 0;
         startIndex = 0;
         counts = new int[data.length];
-        while (indExit < data.length)
-        {
+        while (indExit < data.length) {
             rmInd = 0;
             initial = (String) arraylist.get(startIndex);
-            for (int i = startIndex; i < (arraylist.size() - 1); i++)
-            {
-                if (initial.equalsIgnoreCase((String) arraylist.get(i + 1)))
-                {
+            for (int i = startIndex; i < (arraylist.size() - 1); i++) {
+                if (initial.equalsIgnoreCase((String) arraylist.get(i + 1))) {
                     copy.remove(i + 1 - rmInd);
                     categoryNumber += 1;
                     rmInd += 1;
@@ -325,8 +311,7 @@ public class QualitativeDataAnalysis extends StatisticalAnalysis
             size = arraylist.size();
         }
         frequencyTable = new String[2][arraylist.size()];
-        for (int j = 0; j < arraylist.size(); j++)
-        {
+        for (int j = 0; j < arraylist.size(); j++) {
             frequencyTable[0][j] = (String) arraylist.get(j);
             frequencyTable[1][j] = Integer.toString(counts[j]);
         }
@@ -351,57 +336,46 @@ public class QualitativeDataAnalysis extends StatisticalAnalysis
      */
 
     public String[][] frequencyTable(String[] category,
-                                     String[] data)
-    {
-        this.data = (Object[]) data;
+                                     String[] data) {
+        this.data = data;
         this.category = category;
         arraylist = new ArrayList<Object>();
-        for (int i = 0; i < data.length; i++)
-        {
+        for (int i = 0; i < data.length; i++) {
             arraylist.add(i, data[i]);
         }
         copy = (ArrayList<Object>) arraylist.clone();
         categoryNumber = 0;
         size = copy.size();
         int[] counts = new int[category.length];
-        for (int j = 0; j < category.length; j++)
-        {
+        for (int j = 0; j < category.length; j++) {
             rmInd = 0;
-            for (int i = 0; i < size; i++)
-            {
+            for (int i = 0; i < size; i++) {
                 initial = (String) arraylist.get(i);
-                if (initial.equalsIgnoreCase(category[j]))
-                {
+                if (initial.equalsIgnoreCase(category[j])) {
                     copy.remove(i - rmInd);
                     categoryNumber += 1;
                     rmInd += 1;
                 }
             }
             counts[j] = categoryNumber;
-            if (copy == null)
-            {
+            if (copy == null) {
                 break;
             }
             categoryNumber = 0;
             size = copy.size();
             arraylist = (ArrayList<Object>) copy.clone();
         }
-        if (copy.size() > 0)
-        {
+        if (copy.size() > 0) {
             String[][] addCount = frequencyTable(copy.toArray());
             frequencyTable = new String[2][category.length + addCount[0].length];
-            for (int i = 0; i < addCount[0].length; i++)
-            {
+            for (int i = 0; i < addCount[0].length; i++) {
                 frequencyTable[0][category.length + i] = addCount[0][i];
                 frequencyTable[1][category.length + i] = addCount[1][i];
             }
-        }
-        else
-        {
+        } else {
             frequencyTable = new String[2][category.length];
         }
-        for (int k = 0; k < category.length; k++)
-        {
+        for (int k = 0; k < category.length; k++) {
             frequencyTable[0][k] = category[k];
             frequencyTable[1][k] = Integer.toString(counts[k]);
         }

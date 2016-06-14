@@ -5,6 +5,7 @@ package plots.statgraphics.survival;
  * <p>Description: The statistical graphics</p>
  * <p>Copyright: Copyright (c) 2009</p>
  * <p>Company: Tung Hai University </p>
+ *
  * @author Wen Hsiang Wei
  * @version 1.4
  */
@@ -13,6 +14,7 @@ import java.util.Hashtable;
 
 import plots.statgraphics.GraphicalAnalysis;
 import plots.statgraphics.util.Plot2DFactory;
+
 import static plots.statgraphics.util.Argument.*;
 
 /**
@@ -77,8 +79,7 @@ import static plots.statgraphics.util.Argument.*;
  * <br> new PlotFrameFactory().putPlotFrame(pf);
  */
 
-public class SurvivalEstimatePlot extends GraphicalAnalysis
-{
+public class SurvivalEstimatePlot extends GraphicalAnalysis {
 
     /**
      * The survival times in ascending order.
@@ -120,7 +121,8 @@ public class SurvivalEstimatePlot extends GraphicalAnalysis
      * Default SurvivalEstimatePlot constructor.
      */
 
-    public SurvivalEstimatePlot() {}
+    public SurvivalEstimatePlot() {
+    }
 
     /**
      * Creates a new survival estimate plot given the input arguments and data.
@@ -137,22 +139,18 @@ public class SurvivalEstimatePlot extends GraphicalAnalysis
      */
 
     public SurvivalEstimatePlot(Hashtable argument,
-                                Object ...dataObject)
-    {
+                                Object... dataObject) {
         this.argument = argument;
         this.dataObject = dataObject;
         if (dataObject != null &&
-            dataObject.length == 2)
-        {
+                dataObject.length == 2) {
             if (argument.get(DATA_NAMES) != null &&
-                argument.get(TITLE) != null &&
-                argument.get(XLABEL) != null &&
-                argument.get(YLABEL) != null)
-            {
+                    argument.get(TITLE) != null &&
+                    argument.get(XLABEL) != null &&
+                    argument.get(YLABEL) != null) {
                 if (dataObject[0].getClass().getName().
-                    equalsIgnoreCase("[[D") &&
-                    dataObject[1].getClass().getName().equalsIgnoreCase("[[D"))
-                {
+                        equalsIgnoreCase("[[D") &&
+                        dataObject[1].getClass().getName().equalsIgnoreCase("[[D")) {
                     graphicalAnalysis = new SurvivalEstimatePlot(
                             (String[]) argument.get(DATA_NAMES),
                             (String) argument.get(TITLE),
@@ -160,52 +158,39 @@ public class SurvivalEstimatePlot extends GraphicalAnalysis
                             (String) argument.get(YLABEL),
                             (double[][]) dataObject[0],
                             (double[][]) dataObject[1]);
-                }
-                else if (dataObject[0].getClass().getName().
-                         equalsIgnoreCase("[D") &&
-                         dataObject[1].getClass().getName().
-                         equalsIgnoreCase("[D"))
-                {
+                } else if (dataObject[0].getClass().getName().
+                        equalsIgnoreCase("[D") &&
+                        dataObject[1].getClass().getName().
+                                equalsIgnoreCase("[D")) {
                     graphicalAnalysis = new SurvivalEstimatePlot(
                             (String) argument.get(DATA_NAMES),
                             (String) argument.get(TITLE),
                             (String) argument.get(XLABEL),
                             (String) argument.get(YLABEL),
                             (double[]) dataObject[0], (double[]) dataObject[1]);
-                }
-                else
-                {
+                } else {
                     throw new IllegalArgumentException("Wrong input data.");
                 }
-            }
-            else if (argument.get(DATA_NAMES) != null)
-            {
+            } else if (argument.get(DATA_NAMES) != null) {
                 if (dataObject[0].getClass().getName().
-                    equalsIgnoreCase("[[D") &&
-                    dataObject[1].getClass().getName().equalsIgnoreCase("[[D"))
-                {
+                        equalsIgnoreCase("[[D") &&
+                        dataObject[1].getClass().getName().equalsIgnoreCase("[[D")) {
                     graphicalAnalysis = new SurvivalEstimatePlot(
                             (String[]) argument.get(DATA_NAMES),
                             (double[][]) dataObject[0],
                             (double[][]) dataObject[1]);
-                }
-                else if (dataObject[0].getClass().getName().
-                         equalsIgnoreCase("[D") &&
-                         dataObject[1].getClass().getName().
-                         equalsIgnoreCase("[D"))
-                {
+                } else if (dataObject[0].getClass().getName().
+                        equalsIgnoreCase("[D") &&
+                        dataObject[1].getClass().getName().
+                                equalsIgnoreCase("[D")) {
                     graphicalAnalysis = new SurvivalEstimatePlot(
                             (String) argument.get(DATA_NAMES),
                             (double[]) dataObject[0], (double[]) dataObject[1]);
-                }
-                else
-                {
+                } else {
                     throw new IllegalArgumentException("Wrong input data.");
                 }
             }
-        }
-        else
-        {
+        } else {
             throw new IllegalArgumentException(
                     "Wrong input argument(s) or data.");
         }
@@ -235,8 +220,7 @@ public class SurvivalEstimatePlot extends GraphicalAnalysis
                                 String xLabel,
                                 String yLabel,
                                 double[][] sortedTime,
-                                double[][] sortedSurvivalEstimate)
-    {
+                                double[][] sortedSurvivalEstimate) {
         this.sortedTime = sortedTime;
         this.sortedSurvivalEstimate = sortedSurvivalEstimate;
         this.title = title;
@@ -267,11 +251,10 @@ public class SurvivalEstimatePlot extends GraphicalAnalysis
                                 String xLabel,
                                 String yLabel,
                                 double[] sortedTime,
-                                double[] sortedSurvivalEstimate)
-    {
-        this(new String[] {dataName}, title, xLabel, yLabel,
-             new double[][] {sortedTime},
-             new double[][] {sortedSurvivalEstimate});
+                                double[] sortedSurvivalEstimate) {
+        this(new String[]{dataName}, title, xLabel, yLabel,
+                new double[][]{sortedTime},
+                new double[][]{sortedSurvivalEstimate});
     }
 
 
@@ -294,11 +277,10 @@ public class SurvivalEstimatePlot extends GraphicalAnalysis
 
     public SurvivalEstimatePlot(String[] dataNames,
                                 double[][] sortedTime,
-                                double[][] sortedSurvivalEstimate)
-    {
+                                double[][] sortedSurvivalEstimate) {
         this(dataNames, "Survival Estimate Plot", "Survival Time",
-             "Survival Estiamte",
-             sortedTime, sortedSurvivalEstimate);
+                "Survival Estiamte",
+                sortedTime, sortedSurvivalEstimate);
     }
 
     /**
@@ -315,11 +297,10 @@ public class SurvivalEstimatePlot extends GraphicalAnalysis
 
     public SurvivalEstimatePlot(String dataName,
                                 double[] sortedTime,
-                                double[] sortedSurvivalEstimate)
-    {
+                                double[] sortedSurvivalEstimate) {
         this(dataName, "Survival Estimate Plot", "Survival Time",
-             "Survival Estiamte",
-             sortedTime, sortedSurvivalEstimate);
+                "Survival Estiamte",
+                sortedTime, sortedSurvivalEstimate);
     }
 
 }

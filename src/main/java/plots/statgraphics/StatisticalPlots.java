@@ -5,6 +5,7 @@ package plots.statgraphics;
  * <p>Description: The statistical graphics</p>
  * <p>Copyright: Copyright (c) 2009</p>
  * <p>Company: Tung Hai University </p>
+ *
  * @author Wen Hsiang Wei
  * @version 1.4
  */
@@ -21,6 +22,7 @@ import plots.statgraphics.eda.TimeSeriesPlot;
 import plots.statgraphics.regression.lm.LinearRegressionPlot;
 import plots.statgraphics.survival.SurvivalEstimatePlot;
 import plots.statgraphics.util.PlotType;
+
 import static plots.statgraphics.util.Argument.*;
 import static plots.statgraphics.util.PlotType.*;
 
@@ -224,8 +226,7 @@ import static plots.statgraphics.util.PlotType.*;
  * <br> new PlotFrameFactory().putPlotFrame(pf);
  */
 
-public class StatisticalPlots extends GraphicalAnalysis
-{
+public class StatisticalPlots extends GraphicalAnalysis {
 
     /**
      * The object represents a bar plot.
@@ -237,7 +238,8 @@ public class StatisticalPlots extends GraphicalAnalysis
      * Default StatisticalPlots constructor.
      */
 
-    public StatisticalPlots() {}
+    public StatisticalPlots() {
+    }
 
     /**
      * The plot of interest.
@@ -250,39 +252,36 @@ public class StatisticalPlots extends GraphicalAnalysis
      */
 
     public StatisticalPlots(Hashtable argument,
-                            Object ...dataObject)
-    {
+                            Object... dataObject) {
         this.argument = argument;
         this.dataObject = dataObject;
         if (dataObject != null &&
-            argument.get(PLOT_TYPE) != null)
-        {
-            switch ((PlotType) argument.get(PLOT_TYPE))
-            {
+                argument.get(PLOT_TYPE) != null) {
+            switch ((PlotType) argument.get(PLOT_TYPE)) {
                 case BAR:
                     graphicalAnalysis = new BarPlot(argument, dataObject).
-                                        graphicalAnalysis;
+                            graphicalAnalysis;
                     break;
                 case BOX:
                     graphicalAnalysis = new BoxPlot(argument, dataObject).
-                                        graphicalAnalysis;
+                            graphicalAnalysis;
                     break;
                 case HISTOGRAM:
                     graphicalAnalysis = new Histogram(argument, dataObject).
-                                        graphicalAnalysis;
+                            graphicalAnalysis;
                     break;
                 case LINE:
                     graphicalAnalysis = new LinePlot(argument, dataObject).
-                                        graphicalAnalysis;
+                            graphicalAnalysis;
                     break;
                 case PIE:
                     graphicalAnalysis = new PiePlot(argument, dataObject).
-                                        graphicalAnalysis;
+                            graphicalAnalysis;
                     break;
                 case TIME_SERIES:
                     graphicalAnalysis =
-                        new TimeSeriesPlot(argument, dataObject).
-                        graphicalAnalysis;
+                            new TimeSeriesPlot(argument, dataObject).
+                                    graphicalAnalysis;
                     break;
                 case LINEAR_REGRESSION:
                     graphicalAnalysis = new LinearRegressionPlot(argument,
@@ -294,13 +293,11 @@ public class StatisticalPlots extends GraphicalAnalysis
                     break;
                 default:
                     graphicalAnalysis = new ScatterPlot(argument, dataObject).
-                                        graphicalAnalysis;
+                            graphicalAnalysis;
             }
-        }
-        else
-        {
+        } else {
             throw new IllegalArgumentException("Wrong input arguments or " +
-                                               "data.");
+                    "data.");
         }
     }
 

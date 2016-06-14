@@ -5,6 +5,7 @@ package plots.javastat;
  * <p>Description: JAVA programs for statistical computations</p>
  * <p>Copyright: Copyright (c) 2009</p>
  * <p>Company: Tung Hai University</p>
+ *
  * @author Wen Hsiang Wei
  * @version 1.4
  */
@@ -16,14 +17,14 @@ import java.util.Hashtable;
  * <p>The class defines the required method in general regression analysis. </p>
  */
 
-public abstract class Regression extends StatisticalInference
-{
+public abstract class Regression extends StatisticalInference {
 
     /**
      * Default Regression constructor.
      */
 
-    public Regression(){}
+    public Regression() {
+    }
 
     /**
      * The estimated coefficients.

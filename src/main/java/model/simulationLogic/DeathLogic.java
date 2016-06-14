@@ -23,7 +23,7 @@ public class DeathLogic {
 
 
     public static int handleDeaths(Config config, DateClock currentDate, PopulationStatistics desiredPopulationStatistics,
-                              PeopleCollection livingPopulation, PeopleCollection deadPopulation) {
+                                   PeopleCollection livingPopulation, PeopleCollection deadPopulation) {
 
         int deathCount = 0;
 

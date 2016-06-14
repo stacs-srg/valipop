@@ -6,9 +6,9 @@ package plots.statgraphics.util;
  * Statistical Software.</p>
  * <p>Copyright: Copyright (c) 2009</p>
  * <p>Company: Tung Hai University</p>
+ *
  * @author Wen Hsiang Wei
  * @version 1.4
- *
  */
 
 import java.awt.BorderLayout;
@@ -23,8 +23,7 @@ import plots.statgraphics.util.PlotFrame;
  * <p> Creates the plot frame for statistical analysis.</p>
  */
 
-public class PlotFrameFactory
-{
+public class PlotFrameFactory {
     /**
      * The plot frame.
      */
@@ -41,7 +40,8 @@ public class PlotFrameFactory
      * Default PlotFrameFactory constructor.
      */
 
-    public PlotFrameFactory() {}
+    public PlotFrameFactory() {
+    }
 
     /**
      * Places multiple plot frames in a specified container.
@@ -51,11 +51,9 @@ public class PlotFrameFactory
      */
 
     public void putPlotFrame(PlotFrame[] plotFrame,
-                             JFrame frame)
-    {
+                             JFrame frame) {
         desktopPane = new JDesktopPane();
-        for (int i = 0; i < plotFrame.length; i++)
-        {
+        for (int i = 0; i < plotFrame.length; i++) {
             desktopPane.add(plotFrame[i]);
             plotFrame[i].pack();
             plotFrame[i].setVisible(true);
@@ -73,8 +71,7 @@ public class PlotFrameFactory
      * <br>             plotFrame[i]: the (i+1)'th plot frame.
      */
 
-    public void putPlotFrame(PlotFrame[] plotFrame)
-    {
+    public void putPlotFrame(PlotFrame[] plotFrame) {
         putPlotFrame(plotFrame, new JFrame());
     }
 
@@ -85,9 +82,8 @@ public class PlotFrameFactory
      */
 
     public void putPlotFrame(PlotFrame plotFrame,
-                             JFrame frame)
-    {
-        putPlotFrame(new PlotFrame[] {plotFrame}, frame);
+                             JFrame frame) {
+        putPlotFrame(new PlotFrame[]{plotFrame}, frame);
     }
 
     /**
@@ -95,8 +91,7 @@ public class PlotFrameFactory
      * @param plotFrame the plot frame.
      */
 
-    public void putPlotFrame(PlotFrame plotFrame)
-    {
+    public void putPlotFrame(PlotFrame plotFrame) {
         putPlotFrame(plotFrame, new JFrame());
     }
 

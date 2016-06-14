@@ -5,6 +5,7 @@ package plots.javastat.regression;
  * <p>Description: JAVA programs for statistical computations</p>
  * <p>Copyright: Copyright (c) 2009</p>
  * <p>Company: Tung Hai University</p>
+ *
  * @author Wen Hsiang Wei
  * @version 1.4
  */
@@ -13,54 +14,53 @@ package plots.javastat.regression;
  * The enumerated selection criteria.
  */
 
-public enum SelectionCriterion
-{
+public enum SelectionCriterion {
 
-        /**
-         * Akaike's information criterion.
-         */
+    /**
+     * Akaike's information criterion.
+     */
 
-        AIC,
+    AIC,
 
-        /**
-         * Bayesian (Schwarz') information criterion.
-         */
+    /**
+     * Bayesian (Schwarz') information criterion.
+     */
 
-        BIC,
+    BIC,
 
-        /**
-         * Mallows' Cp criterion.
-         */
+    /**
+     * Mallows' Cp criterion.
+     */
 
-        CP,
+    CP,
 
-        /**
-         * Akaike's FPE criterion.
-         */
+    /**
+     * Akaike's FPE criterion.
+     */
 
-        FPE,
+    FPE,
 
-        /**
-         * Generalized cross-validation criterion.
-         */
+    /**
+     * Generalized cross-validation criterion.
+     */
 
-        GCV,
+    GCV,
 
-        /**
-         * Shibata's nS criterion.
-         */
+    /**
+     * Shibata's nS criterion.
+     */
 
-        nS,
+    nS,
 
-        /**
-         * Rice's T criterion.
-         */
+    /**
+     * Rice's T criterion.
+     */
 
-        T,
+    T,
 
-        /**
-         * Hocking's U criterion.
-         */
+    /**
+     * Hocking's U criterion.
+     */
 
-        U
+    U
 }

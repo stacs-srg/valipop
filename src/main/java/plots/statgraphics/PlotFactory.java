@@ -5,6 +5,7 @@ package plots.statgraphics;
  * <p>Description: The statistical graphics</p>
  * <p>Copyright: Copyright (c) 2009</p>
  * <p>Company: Tung Hai University </p>
+ *
  * @author Wen Hsiang Wei
  * @version 1.4
  */
@@ -22,14 +23,14 @@ import java.util.Hashtable;
  * creates 2D or 3D statistical plots.</p>
  */
 
-public abstract class PlotFactory extends GraphicalAnalysis
-{
+public abstract class PlotFactory extends GraphicalAnalysis {
 
     /**
      * Default PlotFactory constructor.
      */
 
-    public PlotFactory() {}
+    public PlotFactory() {
+    }
 
 
     /**
@@ -39,21 +40,15 @@ public abstract class PlotFactory extends GraphicalAnalysis
      * @return the plot factory.
      */
 
-    public static PlotFactory getPlotFactory(String plotFactoryName)
-    {
+    public static PlotFactory getPlotFactory(String plotFactoryName) {
         PlotFactory plotFactory = null;
-        try
-        {
+        try {
             plotFactory = (PlotFactory) Class.forName(plotFactoryName).
-                          newInstance();
-        }
-        catch (ClassNotFoundException e)
-        {
+                    newInstance();
+        } catch (ClassNotFoundException e) {
             System.err.println("can not find the class " +
-                               plotFactoryName + ".");
-        }
-        catch (Exception e)
-        {
+                    plotFactoryName + ".");
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -71,8 +66,7 @@ public abstract class PlotFactory extends GraphicalAnalysis
 
     public static Object getPlot(String plotFactoryName,
                                  Hashtable argument,
-                                 Object ...dataObject)
-    {
+                                 Object... dataObject) {
         return getPlotFactory(plotFactoryName).createPlot(argument, dataObject);
     }
 
@@ -85,20 +79,16 @@ public abstract class PlotFactory extends GraphicalAnalysis
 
     public void plotSerialized(String fileName,
                                Hashtable argument,
-                               Object ...dataObject)
-    {
-        try
-        {
+                               Object... dataObject) {
+        try {
             FileOutputStream file = new FileOutputStream(new File(
                     new File(System.getProperty("user.dir") +
-                             System.getProperty("file.separator")), fileName));
+                            System.getProperty("file.separator")), fileName));
             ObjectOutputStream outfile = new ObjectOutputStream(file);
             outfile.writeObject(createPlot(argument, dataObject));
             outfile.flush();
             outfile.close();
-        }
-        catch (java.io.IOException IOE)
-        {
+        } catch (java.io.IOException IOE) {
             System.out.println("IOException");
         }
     }
@@ -109,24 +99,18 @@ public abstract class PlotFactory extends GraphicalAnalysis
      * @return the deserialized plot object.
      */
 
-    public Object plotDeserialized(String fileName)
-    {
+    public Object plotDeserialized(String fileName) {
         Object inputObject = null;
-        try
-        {
+        try {
             FileInputStream file = new FileInputStream(new File(
                     new File(System.getProperty("user.dir") +
-                             System.getProperty("file.separator")), fileName));
+                            System.getProperty("file.separator")), fileName));
             ObjectInputStream input = new ObjectInputStream(file);
             inputObject = input.readObject();
             input.close();
-        }
-        catch (java.io.IOException IOE)
-        {
+        } catch (java.io.IOException IOE) {
             System.out.println("IOException");
-        }
-        catch (ClassNotFoundException cnfe)
-        {
+        } catch (ClassNotFoundException cnfe) {
             System.out.println("IOException");
         }
 
@@ -141,6 +125,6 @@ public abstract class PlotFactory extends GraphicalAnalysis
      */
 
     public abstract Object createPlot(Hashtable argument,
-                                      Object ...dataObject);
+                                      Object... dataObject);
 
 }

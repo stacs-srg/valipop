@@ -32,8 +32,8 @@ import java.util.List;
  */
 public class PopulationAnalytics {
 
-    private final IPopulation population;
     private static final int ONE_HUNDRED = 100;
+    private final IPopulation population;
 
     /**
      * Creates an analytic instance to analyse the entire population.
@@ -43,6 +43,19 @@ public class PopulationAnalytics {
     public PopulationAnalytics(final IPopulation population) {
 
         this.population = population;
+    }
+
+    private static void printBirthDate(final IPerson person) {
+
+        System.out.print(person.getBirthDate().toString());
+    }
+
+    private static void printDeathDate(final IPerson person) {
+
+        final Date death_date = person.getDeathDate();
+        if (death_date != null) {
+            System.out.print(death_date.toString());
+        }
     }
 
     /**
@@ -65,7 +78,7 @@ public class PopulationAnalytics {
 //        printAllDates();
     }
 
-    private int countMales()  {
+    private int countMales() {
 
         int count = 0;
         for (final IPerson person : population.getPeople()) {
@@ -76,7 +89,7 @@ public class PopulationAnalytics {
         return count;
     }
 
-    private int countFemales()  {
+    private int countFemales() {
 
         int count = 0;
         for (final IPerson person : population.getPeople()) {
@@ -90,17 +103,12 @@ public class PopulationAnalytics {
     /**
      * Prints the dates of birth of all people.
      */
-    public void printAllBirthDates()  {
+    public void printAllBirthDates() {
 
         for (final IPerson person : population.getPeople()) {
             printBirthDate(person);
             System.out.println();
         }
-    }
-
-    private static void printBirthDate(final IPerson person) {
-
-        System.out.print(person.getBirthDate().toString());
     }
 
     /**
@@ -111,14 +119,6 @@ public class PopulationAnalytics {
         for (final IPerson person : population.getPeople()) {
             printDeathDate(person);
             System.out.println();
-        }
-    }
-
-    private static void printDeathDate(final IPerson person) {
-
-        final Date death_date = person.getDeathDate();
-        if (death_date != null) {
-            System.out.print(death_date.toString());
         }
     }
 
@@ -139,10 +139,11 @@ public class PopulationAnalytics {
 
     /**
      * Prints the details of partnerships and child_ids for a given person.
+     *
      * @param person the person
      */
     @SuppressWarnings("FeatureEnvy")
-    public void printPartnerships(final IPerson person)  {
+    public void printPartnerships(final IPerson person) {
 
         final List<IPartnership> partnership_ids = person.getPartnerships();
         if (partnership_ids != null) {
@@ -165,7 +166,7 @@ public class PopulationAnalytics {
     /**
      * Prints all significant dates for the population.
      */
-    public void printAllDates()  {
+    public void printAllDates() {
 
         for (final IPerson person : population.getPeople()) {
 

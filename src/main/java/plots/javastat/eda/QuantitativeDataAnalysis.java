@@ -5,6 +5,7 @@ package plots.javastat.eda;
  * <p>Description: JAVA programs for statistical computations</p>
  * <p>Copyright: Copyright (c) 2009</p>
  * <p>Company: Tung Hai University</p>
+ *
  * @author Wen Hsiang Wei
  * @version 1.4
  */
@@ -14,6 +15,7 @@ import java.util.Hashtable;
 
 import plots.javastat.StatisticalAnalysis;
 import plots.javastat.util.BasicStatistics;
+
 import static plots.javastat.util.Argument.*;
 import static plots.javastat.util.Output.*;
 
@@ -62,8 +64,7 @@ import static plots.javastat.util.Output.*;
  * <br> out.println(testclass4.output.toString());
  */
 
-public class QuantitativeDataAnalysis extends StatisticalAnalysis
-{
+public class QuantitativeDataAnalysis extends StatisticalAnalysis {
     /**
      * The five number summary,
      * <br> fiveNumberSummary[0]: the minimum;
@@ -129,7 +130,8 @@ public class QuantitativeDataAnalysis extends StatisticalAnalysis
      * Default QuantitativeDataAnalysis constructor.
      */
 
-    public QuantitativeDataAnalysis() {}
+    public QuantitativeDataAnalysis() {
+    }
 
     /**
      * Constructs a class given the specified number of classes for quantitative
@@ -140,37 +142,26 @@ public class QuantitativeDataAnalysis extends StatisticalAnalysis
      */
 
     public QuantitativeDataAnalysis(Hashtable argument,
-                                    Object ...dataObject)
-    {
+                                    Object... dataObject) {
         this.argument = argument;
         this.dataObject = dataObject;
         if (argument.size() > 0 &&
-            dataObject != null)
-        {
+                dataObject != null) {
             if (argument.get(NUMBER_OF_CLASS) != null &&
-                dataObject.length == 1)
-            {
+                    dataObject.length == 1) {
                 statisticalAnalysis = new QuantitativeDataAnalysis(
                         (Integer) argument.get(NUMBER_OF_CLASS),
                         (double[]) dataObject[0]);
-            }
-            else
-            {
+            } else {
                 throw new IllegalArgumentException("Wrong input data.");
             }
-        }
-        else if (dataObject != null &&
-                 dataObject.length == 1)
-        {
+        } else if (dataObject != null &&
+                dataObject.length == 1) {
             statisticalAnalysis = new QuantitativeDataAnalysis(
                     (double[]) dataObject[0]);
-        }
-        else if (dataObject == null)
-        {
+        } else if (dataObject == null) {
             statisticalAnalysis = new QuantitativeDataAnalysis();
-        }
-        else
-        {
+        } else {
             throw new IllegalArgumentException("Wrong input data.");
         }
     }
@@ -183,8 +174,7 @@ public class QuantitativeDataAnalysis extends StatisticalAnalysis
      */
 
     public QuantitativeDataAnalysis(int nClass,
-                                    double[] data)
-    {
+                                    double[] data) {
         this.nClass = nClass;
         this.data = data;
         fiveNumberSummary = fiveNumberSummary(data);
@@ -197,8 +187,7 @@ public class QuantitativeDataAnalysis extends StatisticalAnalysis
      * @param data the input data.
      */
 
-    public QuantitativeDataAnalysis(double[] data)
-    {
+    public QuantitativeDataAnalysis(double[] data) {
         this(4, data);
     }
 
@@ -211,17 +200,13 @@ public class QuantitativeDataAnalysis extends StatisticalAnalysis
      */
 
     public double[] fiveNumberSummary(Hashtable argument,
-                                      Object ...dataObject)
-    {
+                                      Object... dataObject) {
         this.argument = argument;
         this.dataObject = dataObject;
         if (dataObject != null &&
-            dataObject.length == 1)
-        {
+                dataObject.length == 1) {
             fiveNumberSummary = fiveNumberSummary((double[]) dataObject[0]);
-        }
-        else
-        {
+        } else {
             throw new IllegalArgumentException("Wrong input arguments or data");
         }
 
@@ -235,8 +220,7 @@ public class QuantitativeDataAnalysis extends StatisticalAnalysis
      * @return the five number summary.
      */
 
-    public double[] fiveNumberSummary(double[] data)
-    {
+    public double[] fiveNumberSummary(double[] data) {
         this.data = data;
         fiveNumberSummary = new BasicStatistics().fiveNumberSummary(data);
         output.put(FIVE_NUMBER_SUMMARY, fiveNumberSummary);
@@ -252,24 +236,18 @@ public class QuantitativeDataAnalysis extends StatisticalAnalysis
      */
 
     public double[][] frequencyTable(Hashtable argument,
-                                     Object ...dataObject)
-    {
+                                     Object... dataObject) {
 
         if (argument.get(NUMBER_OF_CLASS) != null &&
-            dataObject != null &&
-            dataObject.length == 1)
-        {
+                dataObject != null &&
+                dataObject.length == 1) {
             frequencyTable = frequencyTable(
                     (Integer) argument.get(NUMBER_OF_CLASS),
                     (double[]) dataObject[0]);
-        }
-        else if (dataObject != null &&
-                 dataObject.length == 1)
-        {
+        } else if (dataObject != null &&
+                dataObject.length == 1) {
             frequencyTable = frequencyTable((double[]) dataObject[0]);
-        }
-        else
-        {
+        } else {
             throw new IllegalArgumentException(
                     "Wrong input arguments or data.");
         }
@@ -285,28 +263,24 @@ public class QuantitativeDataAnalysis extends StatisticalAnalysis
      */
 
     public double[][] frequencyTable(int nClass,
-                                     double[] data)
-    {
-        if (nClass <= 0)
-        {
+                                     double[] data) {
+        if (nClass <= 0) {
             throw new IllegalArgumentException(
                     "The number of classes should be greater thant 0.");
         }
         this.nClass = nClass;
         this.data = data;
-        copy = (double[]) data.clone();
+        copy = data.clone();
         frequencyTable = new double[2][nClass];
         startIndex = 0;
         Arrays.sort(copy);
         classWidth = Math.ceil((Math.ceil(copy[copy.length - 1]) -
-                                Math.floor(copy[0])) / nClass);
-        for (int i = 0; i < nClass; i++)
-        {
+                Math.floor(copy[0])) / nClass);
+        for (int i = 0; i < nClass; i++) {
             frequencyTable[0][i] = Math.floor(copy[0]) + classWidth * (i + 1);
             counts = 0;
             while ((startIndex < copy.length) &&
-                   (copy[startIndex] <= frequencyTable[0][i]))
-            {
+                    (copy[startIndex] <= frequencyTable[0][i])) {
                 startIndex += 1;
                 counts += 1;
             }
@@ -324,8 +298,7 @@ public class QuantitativeDataAnalysis extends StatisticalAnalysis
      * @return the frequency distribution.
      */
 
-    public double[][] frequencyTable(double[] data)
-    {
+    public double[][] frequencyTable(double[] data) {
         return frequencyTable(4, data);
     }
 

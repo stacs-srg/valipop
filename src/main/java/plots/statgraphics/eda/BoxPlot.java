@@ -5,6 +5,7 @@ package plots.statgraphics.eda;
  * <p>Description: The statistical graphics</p>
  * <p>Copyright: Copyright (c) 2009</p>
  * <p>Company: Tung Hai University </p>
+ *
  * @author Wen Hsiang Wei
  * @version 1.4
  */
@@ -15,6 +16,7 @@ import java.util.Hashtable;
 import plots.statgraphics.GraphicalAnalysis;
 import plots.statgraphics.util.DataCreator;
 import plots.statgraphics.util.Plot2DFactory;
+
 import static plots.statgraphics.util.Argument.*;
 
 /**
@@ -91,8 +93,7 @@ import static plots.statgraphics.util.Argument.*;
  * <br> new PlotFrameFactory().putPlotFrame(pf);
  */
 
-public class BoxPlot extends GraphicalAnalysis
-{
+public class BoxPlot extends GraphicalAnalysis {
 
     /**
      * The input data series.
@@ -146,7 +147,8 @@ public class BoxPlot extends GraphicalAnalysis
      * Default BoxPlot constructor.
      */
 
-    public BoxPlot() {}
+    public BoxPlot() {
+    }
 
     /**
      * Creates a new box plot.
@@ -164,56 +166,41 @@ public class BoxPlot extends GraphicalAnalysis
      */
 
     public BoxPlot(Hashtable argument,
-                   Object ...dataObject)
-    {
+                   Object... dataObject) {
         this.argument = argument;
         this.dataObject = dataObject;
         if (argument.size() > 0 &&
-            dataObject != null)
-        {
+                dataObject != null) {
             if (dataObject.length == 1 &&
-                dataObject[0].getClass().getName().equalsIgnoreCase("[D"))
-            {
-                doubleData = new double[][] {(double[]) dataObject[0]};
-            }
-            else if (dataObject.getClass().getName().equalsIgnoreCase("[[D"))
-            {
+                    dataObject[0].getClass().getName().equalsIgnoreCase("[D")) {
+                doubleData = new double[][]{(double[]) dataObject[0]};
+            } else if (dataObject.getClass().getName().equalsIgnoreCase("[[D")) {
                 doubleData = (double[][]) dataObject;
-            }
-            else if (dataObject.length == 2 &&
-                     dataObject[0].getClass().getName().equalsIgnoreCase(
-                             "[Ljava.util.Date;") &&
-                     dataObject[1].getClass().getName().equalsIgnoreCase("[[D"))
-            {
+            } else if (dataObject.length == 2 &&
+                    dataObject[0].getClass().getName().equalsIgnoreCase(
+                            "[Ljava.util.Date;") &&
+                    dataObject[1].getClass().getName().equalsIgnoreCase("[[D")) {
                 doubleData = (double[][]) dataObject[1];
-            }
-            else if (dataObject.length >= 2 &&
-                     dataObject[0].getClass().getName().equalsIgnoreCase(
-                             "[Ljava.util.Date;"))
-            {
+            } else if (dataObject.length >= 2 &&
+                    dataObject[0].getClass().getName().equalsIgnoreCase(
+                            "[Ljava.util.Date;")) {
                 doubleData = DataCreator.castToDoubleData(1, dataObject);
-            }
-            else
-            {
+            } else {
                 throw new IllegalArgumentException("Wrong input data type.");
             }
             if (argument.get(DATA_NAMES) != null &&
-                argument.get(TITLE) != null &&
-                argument.get(XLABEL) != null &&
-                argument.get(YLABEL) != null)
-            {
+                    argument.get(TITLE) != null &&
+                    argument.get(XLABEL) != null &&
+                    argument.get(YLABEL) != null) {
                 if (argument.get(DATA_NAMES).getClass().getName().
-                    equalsIgnoreCase("java.lang.String"))
-                {
+                        equalsIgnoreCase("java.lang.String")) {
                     graphicalAnalysis = new BoxPlot(
-                            new String[] {(String) argument.get(DATA_NAMES)},
+                            new String[]{(String) argument.get(DATA_NAMES)},
                             (String) argument.get(TITLE),
                             (String) argument.get(XLABEL),
                             (String) argument.get(YLABEL),
                             doubleData);
-                }
-                else
-                {
+                } else {
                     graphicalAnalysis = new BoxPlot(
                             (String[]) argument.get(DATA_NAMES),
                             (String) argument.get(TITLE),
@@ -221,62 +208,44 @@ public class BoxPlot extends GraphicalAnalysis
                             (String) argument.get(YLABEL),
                             doubleData);
                 }
-            }
-            else if (argument.get(TITLE) != null &&
-                     argument.get(XLABEL) != null &&
-                     argument.get(YLABEL) != null)
-            {
+            } else if (argument.get(TITLE) != null &&
+                    argument.get(XLABEL) != null &&
+                    argument.get(YLABEL) != null) {
                 graphicalAnalysis = new BoxPlot(
                         (String) argument.get(TITLE),
                         (String) argument.get(XLABEL),
                         (String) argument.get(YLABEL),
                         (Date[]) dataObject[0], doubleData);
-            }
-            else if (argument.get(DATA_NAMES) != null)
-            {
+            } else if (argument.get(DATA_NAMES) != null) {
                 if (argument.get(DATA_NAMES).getClass().getName().
-                    equalsIgnoreCase("java.lang.String"))
-                {
+                        equalsIgnoreCase("java.lang.String")) {
                     graphicalAnalysis = new BoxPlot(
-                            new String[] {(String) argument.get(DATA_NAMES)},
+                            new String[]{(String) argument.get(DATA_NAMES)},
                             (double[][]) dataObject);
-                }
-                else
-                {
+                } else {
                     graphicalAnalysis = new BoxPlot(
                             (String[]) argument.get(DATA_NAMES),
                             (double[][]) dataObject);
                 }
-            }
-            else
-            {
+            } else {
                 throw new IllegalArgumentException("Wrong input argument(s).");
             }
-        }
-        else if (argument.size() == 0 &&
-                 dataObject != null)
-        {
+        } else if (argument.size() == 0 &&
+                dataObject != null) {
             if (dataObject.length == 2 &&
-                dataObject[0].getClass().getName().equalsIgnoreCase(
-                        "[Ljava.util.Date;") &&
-                dataObject[1].getClass().getName().equalsIgnoreCase("[[D"))
-            {
+                    dataObject[0].getClass().getName().equalsIgnoreCase(
+                            "[Ljava.util.Date;") &&
+                    dataObject[1].getClass().getName().equalsIgnoreCase("[[D")) {
                 doubleData = (double[][]) dataObject[1];
-            }
-            else if (dataObject.length >= 2 &&
-                     dataObject[0].getClass().getName().equalsIgnoreCase(
-                             "[Ljava.util.Date;"))
-            {
+            } else if (dataObject.length >= 2 &&
+                    dataObject[0].getClass().getName().equalsIgnoreCase(
+                            "[Ljava.util.Date;")) {
                 doubleData = DataCreator.castToDoubleData(1, dataObject);
-            }
-            else
-            {
+            } else {
                 throw new IllegalArgumentException("Wrong input data.");
             }
             graphicalAnalysis = new BoxPlot((Date[]) dataObject[0], doubleData);
-        }
-        else
-        {
+        } else {
             throw new IllegalArgumentException(
                     "Wrong input argument(s) or data.");
         }
@@ -299,8 +268,7 @@ public class BoxPlot extends GraphicalAnalysis
                    String title,
                    String xLabel,
                    String yLabel,
-                   double[] ...data)
-    {
+                   double[]... data) {
         this.data = data;
         this.dataNames = dataNames;
         this.title = title;
@@ -323,10 +291,9 @@ public class BoxPlot extends GraphicalAnalysis
      */
 
     public BoxPlot(String[] dataNames,
-                   double[] ...data)
-    {
+                   double[]... data) {
         this.plot = new Plot2DFactory().
-                    createBoxPlot(dataNames, "Box Plot", null, "Value", data);
+                createBoxPlot(dataNames, "Box Plot", null, "Value", data);
     }
 
     /**
@@ -342,10 +309,9 @@ public class BoxPlot extends GraphicalAnalysis
                    String title,
                    String xLabel,
                    String yLabel,
-                   double[] data)
-    {
-        this(new String[] {dataName}, title, xLabel, yLabel,
-             new double[][] {data});
+                   double[] data) {
+        this(new String[]{dataName}, title, xLabel, yLabel,
+                new double[][]{data});
     }
 
     /**
@@ -359,8 +325,7 @@ public class BoxPlot extends GraphicalAnalysis
      */
 
     public BoxPlot(String dataName,
-                   double[] data)
-    {
+                   double[] data) {
         this(dataName, "Box Plot", null, "Value", data);
     }
 
@@ -382,8 +347,7 @@ public class BoxPlot extends GraphicalAnalysis
                    String xLabel,
                    String yLabel,
                    Date[] time,
-                   double[] ...data)
-    {
+                   double[]... data) {
         this.data = data;
         this.time = time;
         this.title = title;
@@ -407,8 +371,7 @@ public class BoxPlot extends GraphicalAnalysis
      */
 
     public BoxPlot(Date[] time,
-                   double[] ...data)
-    {
+                   double[]... data) {
         this("Box Plot", "Time", "Value", time, data);
     }
 

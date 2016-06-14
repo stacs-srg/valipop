@@ -122,11 +122,11 @@ public class PopulationStatistics implements PopulationComposition, EventRateTab
         survival.put(new IntegerRange(0), survivors);
 
         int age = 0;
-        for(DateClock d = startYear.getDateClock(); DateUtils.dateBefore(d, startYear.getDateClock().advanceTime(timeLimit, TimeUnit.YEAR)); d = d.advanceTime(1, TimeUnit.YEAR)) {
+        for (DateClock d = startYear.getDateClock(); DateUtils.dateBefore(d, startYear.getDateClock().advanceTime(timeLimit, TimeUnit.YEAR)); d = d.advanceTime(1, TimeUnit.YEAR)) {
 
             double nMx = 0;
 
-            switch(event) {
+            switch (event) {
                 case FIRST_BIRTH:
                     nMx = calculateOrderedBirthRate(startYear, d, age, 0, generatedPopulation, survivors);
                     break;

@@ -5,6 +5,7 @@ package plots.statgraphics.eda;
  * <p>Description: The statistical graphics</p>
  * <p>Copyright: Copyright (c) 2009</p>
  * <p>Company: Tung Hai University </p>
+ *
  * @author Wen Hsiang Wei
  * @version 1.4
  */
@@ -14,6 +15,7 @@ import java.util.Hashtable;
 import plots.statgraphics.GraphicalAnalysis;
 import plots.statgraphics.util.Plot2DFactory;
 import plots.statgraphics.util.Plot3DFactory;
+
 import static plots.statgraphics.util.Argument.*;
 
 /**
@@ -61,8 +63,7 @@ import static plots.statgraphics.util.Argument.*;
  * <br> new PlotFrameFactory().putPlotFrame(pf);
  */
 
-public class PiePlot extends GraphicalAnalysis
-{
+public class PiePlot extends GraphicalAnalysis {
 
     /**
      * The input category.
@@ -86,7 +87,8 @@ public class PiePlot extends GraphicalAnalysis
      * Default PiePlot constructor.
      */
 
-    public PiePlot() {}
+    public PiePlot() {
+    }
 
     /**
      * Creates a new pie plot given the input arguments and data.
@@ -103,50 +105,39 @@ public class PiePlot extends GraphicalAnalysis
      */
 
     public PiePlot(Hashtable argument,
-                   Object ...dataObject)
-    {
+                   Object... dataObject) {
         this.argument = argument;
         this.dataObject = dataObject;
-        if (dataObject != null)
-        {
+        if (dataObject != null) {
             if (argument.get(OPTION) != null &&
-                argument.get(TITLE) != null &&
-                dataObject.length == 2 &&
-                dataObject[0].getClass().getName().equalsIgnoreCase(
-                        "[Ljava.lang.String;") &&
-                dataObject[1].getClass().getName().equalsIgnoreCase("[D"))
-            {
+                    argument.get(TITLE) != null &&
+                    dataObject.length == 2 &&
+                    dataObject[0].getClass().getName().equalsIgnoreCase(
+                            "[Ljava.lang.String;") &&
+                    dataObject[1].getClass().getName().equalsIgnoreCase("[D")) {
                 graphicalAnalysis = new PiePlot(
                         (String) argument.get(OPTION),
                         (String) argument.get(TITLE),
                         (String[]) dataObject[0], (double[]) dataObject[1]);
-            }
-            else if (argument.get(OPTION) != null &&
-                     dataObject.length == 2 &&
-                     dataObject[0].getClass().getName().equalsIgnoreCase(
-                             "[Ljava.lang.String;") &&
-                     dataObject[1].getClass().getName().equalsIgnoreCase("[D"))
-            {
+            } else if (argument.get(OPTION) != null &&
+                    dataObject.length == 2 &&
+                    dataObject[0].getClass().getName().equalsIgnoreCase(
+                            "[Ljava.lang.String;") &&
+                    dataObject[1].getClass().getName().equalsIgnoreCase("[D")) {
                 graphicalAnalysis = new PiePlot(
                         (String) argument.get(OPTION),
                         (String[]) dataObject[0], (double[]) dataObject[1]);
-            }
-            else if (dataObject.length == 2 &&
-                     dataObject[0].getClass().getName().equalsIgnoreCase(
-                             "[Ljava.lang.String;") &&
-                     dataObject[1].getClass().getName().equalsIgnoreCase("[D"))
-            {
+            } else if (dataObject.length == 2 &&
+                    dataObject[0].getClass().getName().equalsIgnoreCase(
+                            "[Ljava.lang.String;") &&
+                    dataObject[1].getClass().getName().equalsIgnoreCase("[D")) {
                 graphicalAnalysis = new PiePlot(
                         (String[]) dataObject[0], (double[]) dataObject[1]);
-            }
-            else
-            {
+            } else {
                 throw new IllegalArgumentException(
                         "Wrong input argument(s) or data.");
             }
-        }
-        else
-        {
+        } else {
             throw new IllegalArgumentException("Wrong input data.");
         }
     }
@@ -169,18 +160,14 @@ public class PiePlot extends GraphicalAnalysis
     public PiePlot(String option,
                    String title,
                    String[] category,
-                   double[] counts)
-    {
+                   double[] counts) {
         this.category = category;
         this.counts = counts;
         if (option.equalsIgnoreCase("3D") ||
-            option.equalsIgnoreCase("Three Dimensional"))
-        {
+                option.equalsIgnoreCase("Three Dimensional")) {
             this.plot = new Plot3DFactory().createPie3DPlot(title, category,
                     counts);
-        }
-        else
-        {
+        } else {
             this.plot = new Plot2DFactory().createPiePlot(title, category,
                     counts);
         }
@@ -202,8 +189,7 @@ public class PiePlot extends GraphicalAnalysis
 
     public PiePlot(String option,
                    String[] category,
-                   double[] counts)
-    {
+                   double[] counts) {
         this(option, "Pie Plot", category, counts);
     }
 
@@ -220,8 +206,7 @@ public class PiePlot extends GraphicalAnalysis
      */
 
     public PiePlot(String[] category,
-                   double[] counts)
-    {
+                   double[] counts) {
         this("2D", "Pie Plot", category, counts);
     }
 

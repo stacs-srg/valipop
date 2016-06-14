@@ -63,7 +63,7 @@ public class MaleCollection extends PersonCollection {
     public boolean removePerson(IPerson person) throws PersonNotFoundException {
         Collection<IPerson> people = byYear.get(person.getBirthDate().getYearDate());
 
-        if(people == null || !people.remove(person)) {
+        if (people == null || !people.remove(person)) {
             throw new PersonNotFoundException("Specified person not found in datastructure");
         }
 

@@ -5,6 +5,7 @@ package plots.javastat.inference.twosamples;
  * <p>Description: JAVA programs for statistical computations</p>
  * <p>Copyright: Copyright (c) 2009</p>
  * <p>Company: Tung Hai University</p>
+ *
  * @author Wen Hsiang Wei
  * @version 1.4
  */
@@ -17,6 +18,7 @@ import plots.javastat.StatisticalAnalysis;
 import plots.javastat.inference.StatisticalInferenceTemplate;
 import plots.javastat.inference.TwoSampInferenceInterface;
 import plots.javastat.util.BasicStatistics;
+
 import static plots.javastat.util.Argument.*;
 import static plots.javastat.util.Output.*;
 
@@ -73,8 +75,7 @@ import static plots.javastat.util.Output.*;
  */
 
 public class TwoSampProps extends StatisticalInferenceTemplate implements
-        TwoSampInferenceInterface
-{
+        TwoSampInferenceInterface {
 
     /**
      * The level of significance.
@@ -135,7 +136,8 @@ public class TwoSampProps extends StatisticalInferenceTemplate implements
      * Default TwoSampProps Constructor.
      */
 
-    public TwoSampProps() {}
+    public TwoSampProps() {
+    }
 
     /**
      * Constructs a two-sample z test given the input arguments and data.
@@ -155,23 +157,20 @@ public class TwoSampProps extends StatisticalInferenceTemplate implements
      *                                     both populations should be positive.
      * @exception IllegalArgumentException the level of significance should be
      *                              (strictly) positive and not greater than 1.
-     * @exception  IllegalArgumentException the absolute value of the difference
+     * @exception IllegalArgumentException the absolute value of the difference
      *                                  under test should be not greater than 1.
      */
 
     public TwoSampProps(Hashtable argument,
-                        Object ...dataObject)
-    {
+                        Object... dataObject) {
         this.argument = argument;
         this.dataObject = dataObject;
         if (argument.size() > 0 &&
-            dataObject != null)
-        {
+                dataObject != null) {
             if (argument.get(ALPHA) != null &&
-                argument.get(NULL_VALUE) != null &&
-                argument.get(SIDE) != null &&
-                dataObject.length == 4)
-            {
+                    argument.get(NULL_VALUE) != null &&
+                    argument.get(SIDE) != null &&
+                    dataObject.length == 4) {
                 statisticalAnalysis = new TwoSampProps(
                         (Double) argument.get(ALPHA),
                         ((Number) argument.get(NULL_VALUE)).doubleValue(),
@@ -180,11 +179,9 @@ public class TwoSampProps extends StatisticalInferenceTemplate implements
                         ((Number) dataObject[1]).doubleValue(),
                         ((Number) dataObject[2]).doubleValue(),
                         ((Number) dataObject[3]).doubleValue());
-            }
-            else if (argument.get(NULL_VALUE) != null &&
-                     argument.get(SIDE) != null &&
-                     dataObject.length == 4)
-            {
+            } else if (argument.get(NULL_VALUE) != null &&
+                    argument.get(SIDE) != null &&
+                    dataObject.length == 4) {
                 statisticalAnalysis = new TwoSampProps(
                         ((Number) argument.get(NULL_VALUE)).doubleValue(),
                         (String) argument.get(SIDE),
@@ -192,38 +189,28 @@ public class TwoSampProps extends StatisticalInferenceTemplate implements
                         ((Number) dataObject[1]).doubleValue(),
                         ((Number) dataObject[2]).doubleValue(),
                         ((Number) dataObject[3]).doubleValue());
-            }
-            else if (argument.get(NULL_VALUE) != null &&
-                     dataObject.length == 4)
-            {
+            } else if (argument.get(NULL_VALUE) != null &&
+                    dataObject.length == 4) {
                 statisticalAnalysis = new TwoSampProps(
                         ((Number) argument.get(NULL_VALUE)).doubleValue(),
                         ((Number) dataObject[0]).doubleValue(),
                         ((Number) dataObject[1]).doubleValue(),
                         ((Number) dataObject[2]).doubleValue(),
                         ((Number) dataObject[3]).doubleValue());
-            }
-            else
-            {
+            } else {
                 throw new IllegalArgumentException(
                         "Wrong input arguments or data.");
             }
-        }
-        else if (dataObject != null &&
-                 dataObject.length == 4)
-        {
+        } else if (dataObject != null &&
+                dataObject.length == 4) {
             statisticalAnalysis = new TwoSampProps(
                     ((Number) dataObject[0]).doubleValue(),
                     ((Number) dataObject[1]).doubleValue(),
                     ((Number) dataObject[2]).doubleValue(),
                     ((Number) dataObject[3]).doubleValue());
-        }
-        else if (dataObject == null)
-        {
+        } else if (dataObject == null) {
             statisticalAnalysis = new TwoSampProps();
-        }
-        else
-        {
+        } else {
             throw new IllegalArgumentException("Wrong input data.");
         }
     }
@@ -254,8 +241,7 @@ public class TwoSampProps extends StatisticalInferenceTemplate implements
                         double count1,
                         double sampleSize1,
                         double count2,
-                        double sampleSize2)
-    {
+                        double sampleSize2) {
         this.alpha = alpha;
         this.p12 = p12;
         this.side = side;
@@ -264,9 +250,9 @@ public class TwoSampProps extends StatisticalInferenceTemplate implements
         this.count2 = count2;
         this.sampleSize2 = sampleSize2;
         confidenceInterval = confidenceInterval(alpha, count1, sampleSize1,
-                                                count2, sampleSize2);
+                count2, sampleSize2);
         testStatistic = testStatistic(p12, count1, sampleSize1, count2,
-                                      sampleSize2);
+                sampleSize2);
         pValue = pValue(p12, side, count1, sampleSize1, count2, sampleSize2);
     }
 
@@ -292,8 +278,7 @@ public class TwoSampProps extends StatisticalInferenceTemplate implements
                         double count1,
                         double sampleSize1,
                         double count2,
-                        double sampleSize2)
-    {
+                        double sampleSize2) {
         this(0.05, p12, side, count1, sampleSize1, count2, sampleSize2);
     }
 
@@ -315,8 +300,7 @@ public class TwoSampProps extends StatisticalInferenceTemplate implements
                         double count1,
                         double sampleSize1,
                         double count2,
-                        double sampleSize2)
-    {
+                        double sampleSize2) {
         this(0.05, p12, "equal", count1, sampleSize1, count2, sampleSize2);
     }
 
@@ -337,8 +321,7 @@ public class TwoSampProps extends StatisticalInferenceTemplate implements
     public TwoSampProps(double count1,
                         double sampleSize1,
                         double count2,
-                        double sampleSize2)
-    {
+                        double sampleSize2) {
         this(0.05, 0.0, "equal", count1, sampleSize1, count2, sampleSize2);
     }
 
@@ -353,15 +336,14 @@ public class TwoSampProps extends StatisticalInferenceTemplate implements
      */
 
     public Double pointEstimate(Hashtable argument,
-                                Object ...dataObject)
-    {
+                                Object... dataObject) {
         this.argument = argument;
         this.dataObject = dataObject;
 
         return pointEstimate(((Number) dataObject[0]).doubleValue(),
-                             ((Number) dataObject[1]).doubleValue(),
-                             ((Number) dataObject[2]).doubleValue(),
-                             ((Number) dataObject[3]).doubleValue());
+                ((Number) dataObject[1]).doubleValue(),
+                ((Number) dataObject[2]).doubleValue(),
+                ((Number) dataObject[3]).doubleValue());
     }
 
     /**
@@ -378,8 +360,7 @@ public class TwoSampProps extends StatisticalInferenceTemplate implements
     public double pointEstimate(double count1,
                                 double sampleSize1,
                                 double count2,
-                                double sampleSize2)
-    {
+                                double sampleSize2) {
         this.count1 = count1;
         this.count2 = count2;
         this.sampleSize1 = sampleSize1;
@@ -408,25 +389,21 @@ public class TwoSampProps extends StatisticalInferenceTemplate implements
      */
 
     public Double pointEstimateSE(Hashtable argument,
-                                  Object ...dataObject)
-    {
+                                  Object... dataObject) {
         this.argument = argument;
         this.dataObject = dataObject;
-        if (argument.get(NULL_VALUE) != null)
-        {
+        if (argument.get(NULL_VALUE) != null) {
             p12 = ((Number) argument.get(NULL_VALUE)).doubleValue();
             return pointEstimateSE(p12,
-                                   ((Number) dataObject[0]).doubleValue(),
-                                   ((Number) dataObject[1]).doubleValue(),
-                                   ((Number) dataObject[2]).doubleValue(),
-                                   ((Number) dataObject[3]).doubleValue());
-        }
-        else
-        {
+                    ((Number) dataObject[0]).doubleValue(),
+                    ((Number) dataObject[1]).doubleValue(),
+                    ((Number) dataObject[2]).doubleValue(),
+                    ((Number) dataObject[3]).doubleValue());
+        } else {
             return pointEstimateSE(((Number) dataObject[0]).doubleValue(),
-                                   ((Number) dataObject[1]).doubleValue(),
-                                   ((Number) dataObject[2]).doubleValue(),
-                                   ((Number) dataObject[3]).doubleValue());
+                    ((Number) dataObject[1]).doubleValue(),
+                    ((Number) dataObject[2]).doubleValue(),
+                    ((Number) dataObject[3]).doubleValue());
         }
     }
 
@@ -444,8 +421,7 @@ public class TwoSampProps extends StatisticalInferenceTemplate implements
     public double pointEstimateSE(double count1,
                                   double sampleSize1,
                                   double count2,
-                                  double sampleSize2)
-    {
+                                  double sampleSize2) {
         this.count1 = count1;
         this.count2 = count2;
         this.sampleSize1 = sampleSize1;
@@ -477,29 +453,24 @@ public class TwoSampProps extends StatisticalInferenceTemplate implements
                                   double count1,
                                   double sampleSize1,
                                   double count2,
-                                  double sampleSize2)
-    {
+                                  double sampleSize2) {
         this.p12 = p12;
         this.count1 = count1;
         this.count2 = count2;
         this.sampleSize1 = sampleSize1;
         this.sampleSize2 = sampleSize2;
-        if ((p12 < -1.0) || (p12 > 1.0))
-        {
+        if ((p12 < -1.0) || (p12 > 1.0)) {
             throw new IllegalArgumentException(
                     "The absolute value of the difference under test " +
-                    "should be not greater than 1.");
+                            "should be not greater than 1.");
         }
-        if (p12 == 0)
-        {
+        if (p12 == 0) {
             proportionH0 = (count1 + count2) / (sampleSize1 + sampleSize2);
             proportionDifferenceSEH0 = pointEstimateSE =
                     Math.sqrt((proportionH0 * (1 - proportionH0)) *
-                              (1.0 / sampleSize1 + 1.0 / sampleSize2));
+                            (1.0 / sampleSize1 + 1.0 / sampleSize2));
             output.put(PROPORTION_DIFFERENCE_SE_H0, proportionDifferenceSEH0);
-        }
-        else
-        {
+        } else {
             pointEstimateSE = new BasicStatistics().proportionDifferenceSE(
                     count1, sampleSize1, count2, sampleSize2);
         }
@@ -528,34 +499,28 @@ public class TwoSampProps extends StatisticalInferenceTemplate implements
      */
 
     public double[] confidenceInterval(Hashtable argument,
-                                       Object ...dataObject)
-    {
+                                       Object... dataObject) {
         this.argument = argument;
         this.dataObject = dataObject;
         if (argument.get(ALPHA) != null &&
-            dataObject != null &&
-            dataObject.length == 4)
-        {
+                dataObject != null &&
+                dataObject.length == 4) {
             confidenceInterval = confidenceInterval(
                     (Double) argument.get(ALPHA),
                     ((Number) dataObject[0]).doubleValue(),
                     ((Number) dataObject[1]).doubleValue(),
                     ((Number) dataObject[2]).doubleValue(),
                     ((Number) dataObject[3]).doubleValue());
-        }
-        else if (dataObject != null &&
-                 dataObject.length == 4)
-        {
+        } else if (dataObject != null &&
+                dataObject.length == 4) {
             confidenceInterval = confidenceInterval(
                     ((Number) dataObject[0]).doubleValue(),
                     ((Number) dataObject[1]).doubleValue(),
                     ((Number) dataObject[2]).doubleValue(),
                     ((Number) dataObject[3]).doubleValue());
-        }
-        else
-        {
+        } else {
             throw new IllegalArgumentException("Wrong input arguments or " +
-                                               "data.");
+                    "data.");
         }
 
         return confidenceInterval;
@@ -581,20 +546,18 @@ public class TwoSampProps extends StatisticalInferenceTemplate implements
                                        double count1,
                                        double sampleSize1,
                                        double count2,
-                                       double sampleSize2)
-    {
-        if ((alpha <= 0.0) || (alpha > 1))
-        {
+                                       double sampleSize2) {
+        if ((alpha <= 0.0) || (alpha > 1)) {
             throw new IllegalArgumentException(
                     "The level of significance should be (strictly) positive " +
-                    "and not greater than 1.");
+                            "and not greater than 1.");
         }
         this.alpha = alpha;
         argument.put(ALPHA, alpha);
         argument.put(CRITICAL_VALUE,
-                     new NormalDistribution().inverse((1 - alpha / 2)));
+                new NormalDistribution().inverse((1 - alpha / 2)));
 
-        return confidenceInterval = (double[])super.confidenceInterval(
+        return confidenceInterval = (double[]) super.confidenceInterval(
                 argument, count1, sampleSize1, count2, sampleSize2);
     }
 
@@ -614,10 +577,9 @@ public class TwoSampProps extends StatisticalInferenceTemplate implements
     public double[] confidenceInterval(double count1,
                                        double sampleSize1,
                                        double count2,
-                                       double sampleSize2)
-    {
+                                       double sampleSize2) {
         return confidenceInterval(0.05, count1, sampleSize1, count2,
-                                  sampleSize2);
+                sampleSize2);
     }
 
     /**
@@ -637,34 +599,28 @@ public class TwoSampProps extends StatisticalInferenceTemplate implements
      */
 
     public Double testStatistic(Hashtable argument,
-                                Object ...dataObject)
-    {
+                                Object... dataObject) {
         this.argument = argument;
         this.dataObject = dataObject;
         if (argument.get(NULL_VALUE) != null &&
-            dataObject != null &&
-            dataObject.length == 4)
-        {
+                dataObject != null &&
+                dataObject.length == 4) {
             testStatistic = testStatistic(
                     ((Number) argument.get(NULL_VALUE)).doubleValue(),
                     ((Number) dataObject[0]).doubleValue(),
                     ((Number) dataObject[1]).doubleValue(),
                     ((Number) dataObject[2]).doubleValue(),
                     ((Number) dataObject[3]).doubleValue());
-        }
-        else if (dataObject != null &&
-                 dataObject.length == 4)
-        {
+        } else if (dataObject != null &&
+                dataObject.length == 4) {
             testStatistic = testStatistic(
                     ((Number) dataObject[0]).doubleValue(),
                     ((Number) dataObject[1]).doubleValue(),
                     ((Number) dataObject[2]).doubleValue(),
                     ((Number) dataObject[3]).doubleValue());
-        }
-        else
-        {
+        } else {
             throw new IllegalArgumentException("Wrong input arguments or " +
-                                               "data.");
+                    "data.");
         }
 
         return testStatistic;
@@ -688,12 +644,11 @@ public class TwoSampProps extends StatisticalInferenceTemplate implements
                                 double count1,
                                 double sampleSize1,
                                 double count2,
-                                double sampleSize2)
-    {
+                                double sampleSize2) {
         this.p12 = p12;
         argument.put(NULL_VALUE, p12);
 
-        return testStatistic = (Double)super.testStatistic(
+        return testStatistic = (Double) super.testStatistic(
                 argument, count1, sampleSize1, count2, sampleSize2);
     }
 
@@ -711,8 +666,7 @@ public class TwoSampProps extends StatisticalInferenceTemplate implements
     public double testStatistic(double count1,
                                 double sampleSize1,
                                 double count2,
-                                double sampleSize2)
-    {
+                                double sampleSize2) {
         return testStatistic(0.0, count1, sampleSize1, count2, sampleSize2);
     }
 
@@ -735,44 +689,36 @@ public class TwoSampProps extends StatisticalInferenceTemplate implements
      */
 
     public Double pValue(Hashtable argument,
-                         Object ...dataObject)
-    {
+                         Object... dataObject) {
         this.argument = argument;
         this.dataObject = dataObject;
         if (argument.get(NULL_VALUE) != null &&
-            argument.get(SIDE) != null &&
-            dataObject != null &&
-            dataObject.length == 4)
-        {
+                argument.get(SIDE) != null &&
+                dataObject != null &&
+                dataObject.length == 4) {
             pValue = pValue(((Number) argument.get(NULL_VALUE)).doubleValue(),
-                            (String) argument.get(SIDE),
-                            ((Number) dataObject[0]).doubleValue(),
-                            ((Number) dataObject[1]).doubleValue(),
-                            ((Number) dataObject[2]).doubleValue(),
-                            ((Number) dataObject[3]).doubleValue());
-        }
-        else if (argument.get(NULL_VALUE) != null &&
-                 dataObject != null &&
-                 dataObject.length == 4)
-        {
+                    (String) argument.get(SIDE),
+                    ((Number) dataObject[0]).doubleValue(),
+                    ((Number) dataObject[1]).doubleValue(),
+                    ((Number) dataObject[2]).doubleValue(),
+                    ((Number) dataObject[3]).doubleValue());
+        } else if (argument.get(NULL_VALUE) != null &&
+                dataObject != null &&
+                dataObject.length == 4) {
             pValue = pValue(((Number) argument.get(NULL_VALUE)).doubleValue(),
-                            ((Number) dataObject[0]).doubleValue(),
-                            ((Number) dataObject[1]).doubleValue(),
-                            ((Number) dataObject[2]).doubleValue(),
-                            ((Number) dataObject[3]).doubleValue());
-        }
-        else if (dataObject != null &&
-                 dataObject.length == 4)
-        {
+                    ((Number) dataObject[0]).doubleValue(),
+                    ((Number) dataObject[1]).doubleValue(),
+                    ((Number) dataObject[2]).doubleValue(),
+                    ((Number) dataObject[3]).doubleValue());
+        } else if (dataObject != null &&
+                dataObject.length == 4) {
             pValue = pValue(((Number) dataObject[0]).doubleValue(),
-                            ((Number) dataObject[1]).doubleValue(),
-                            ((Number) dataObject[2]).doubleValue(),
-                            ((Number) dataObject[3]).doubleValue());
-        }
-        else
-        {
+                    ((Number) dataObject[1]).doubleValue(),
+                    ((Number) dataObject[2]).doubleValue(),
+                    ((Number) dataObject[3]).doubleValue());
+        } else {
             throw new IllegalArgumentException("Wrong input arguments or " +
-                                               "data.");
+                    "data.");
         }
 
         return pValue;
@@ -799,15 +745,14 @@ public class TwoSampProps extends StatisticalInferenceTemplate implements
                          double count1,
                          double sampleSize1,
                          double count2,
-                         double sampleSize2)
-    {
+                         double sampleSize2) {
         this.side = side;
         testStatistic = testStatistic(p12, count1, sampleSize1, count2,
-                                      sampleSize2);
+                sampleSize2);
         argument.put(SIDE, side);
         argument.put(CDF, new NormalDistribution().cumulative(testStatistic));
 
-        return pValue = (Double)super.pValue(argument);
+        return pValue = super.pValue(argument);
     }
 
     /**
@@ -828,8 +773,7 @@ public class TwoSampProps extends StatisticalInferenceTemplate implements
                          double count1,
                          double sampleSize1,
                          double count2,
-                         double sampleSize2)
-    {
+                         double sampleSize2) {
         return pValue(p12, "equal", count1, sampleSize1, count2, sampleSize2);
     }
 
@@ -850,8 +794,7 @@ public class TwoSampProps extends StatisticalInferenceTemplate implements
     public double pValue(double count1,
                          double sampleSize1,
                          double count2,
-                         double sampleSize2)
-    {
+                         double sampleSize2) {
         return pValue(0.0, "equal", count1, sampleSize1, count2, sampleSize2);
     }
 

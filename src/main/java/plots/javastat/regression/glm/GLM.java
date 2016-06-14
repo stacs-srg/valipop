@@ -5,6 +5,7 @@ package plots.javastat.regression.glm;
  * <p>Description: JAVA programs for statistical computations</p>
  * <p>Copyright: Copyright (c) 2009</p>
  * <p>Company: Tung Hai University</p>
+ *
  * @author Wen Hsiang Wei
  * @version 1.4
  */
@@ -12,6 +13,7 @@ package plots.javastat.regression.glm;
 import java.util.Hashtable;
 
 import plots.javastat.StatisticalAnalysis;
+
 import static plots.javastat.util.Argument.*;
 
 /**
@@ -155,8 +157,7 @@ import static plots.javastat.util.Argument.*;
  * <br> devianceTable = (double[][]) testclass2.output.get(DEVIANCE_TABLE);
  */
 
-public class GLM extends StatisticalAnalysis
-{
+public class GLM extends StatisticalAnalysis {
 
     /**
      * The object represents generalized linear models.
@@ -168,7 +169,8 @@ public class GLM extends StatisticalAnalysis
      * Default GLM constructor.
      */
 
-    public GLM() {}
+    public GLM() {
+    }
 
     /**
      * Fits generalized linear models given the input argument and data.
@@ -186,33 +188,24 @@ public class GLM extends StatisticalAnalysis
      */
 
     public GLM(Hashtable argument,
-               Object ...dataObject)
-    {
+               Object... dataObject) {
         this.argument = argument;
         this.dataObject = dataObject;
-        if (argument.get(REGRESSION_TYPE) != null)
-        {
+        if (argument.get(REGRESSION_TYPE) != null) {
             if (argument.get(REGRESSION_TYPE).toString().equalsIgnoreCase(
                     "Log_Linear") ||
-                argument.get(REGRESSION_TYPE).toString().equalsIgnoreCase(
-                    "LogLinear"))
-            {
+                    argument.get(REGRESSION_TYPE).toString().equalsIgnoreCase(
+                            "LogLinear")) {
                 statisticalAnalysis = new LogLinearRegression(argument,
                         dataObject).statisticalAnalysis;
-            }
-            else if (argument.get(REGRESSION_TYPE).toString().
-                     equalsIgnoreCase("Logistic"))
-            {
+            } else if (argument.get(REGRESSION_TYPE).toString().
+                    equalsIgnoreCase("Logistic")) {
                 statisticalAnalysis = new LogisticRegression(argument,
                         dataObject).statisticalAnalysis;
-            }
-            else
-            {
+            } else {
                 throw new IllegalArgumentException("Wrong input argument(s).");
             }
-        }
-        else
-        {
+        } else {
             statisticalAnalysis = new LogisticRegression(argument, dataObject);
         }
     }

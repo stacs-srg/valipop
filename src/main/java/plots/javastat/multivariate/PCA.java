@@ -5,6 +5,7 @@ package plots.javastat.multivariate;
  * <p>Description: JAVA programs for statistical computations</p>
  * <p>Copyright: Copyright (c) 2009</p>
  * <p>Company: Tung Hai University</p>
+ *
  * @author Wen Hsiang Wei
  * @version 1.4
  */
@@ -17,6 +18,7 @@ import Jama.Matrix;
 import plots.javastat.StatisticalAnalysis;
 import plots.javastat.util.BasicStatistics;
 import plots.javastat.util.DataManager;
+
 import static plots.javastat.util.Argument.*;
 import static plots.javastat.util.Output.*;
 
@@ -105,8 +107,7 @@ import static plots.javastat.util.Output.*;
  * <br> out.println(testclass4.output.toString());
  */
 
-public class PCA extends StatisticalAnalysis
-{
+public class PCA extends StatisticalAnalysis {
 
     /**
      * The criterion for including just enough components to explain some amount
@@ -200,64 +201,44 @@ public class PCA extends StatisticalAnalysis
      */
 
     public PCA(Hashtable argument,
-               Object ...dataObject)
-    {
+               Object... dataObject) {
         this.argument = argument;
         this.dataObject = dataObject;
-        if (dataObject != null)
-        {
-            if (dataObject.getClass().getName().equalsIgnoreCase("[[D"))
-            {
+        if (dataObject != null) {
+            if (dataObject.getClass().getName().equalsIgnoreCase("[[D")) {
                 doubleData = (double[][]) dataObject;
-            }
-            else if (dataObject.getClass().getName().equalsIgnoreCase(
-                    "[Ljava.lang.Object;"))
-            {
+            } else if (dataObject.getClass().getName().equalsIgnoreCase(
+                    "[Ljava.lang.Object;")) {
                 doubleData = DataManager.castDoubleObject(0, dataObject);
-            }
-            else
-            {
+            } else {
                 throw new IllegalArgumentException("Wrong input data type.");
             }
-            if (argument.size() > 0)
-            {
+            if (argument.size() > 0) {
                 if (argument.get(LEVEL) != null &&
-                    argument.get(COVARIANCE_CHOICE) != null)
-                {
+                        argument.get(COVARIANCE_CHOICE) != null) {
                     statisticalAnalysis = new PCA(
                             (Double) argument.get(LEVEL),
                             (String) argument.get(COVARIANCE_CHOICE),
                             doubleData);
-                }
-                else if ((argument.get(LEVEL) != null ||
-                         argument.get(COVARIANCE_CHOICE) != null))
-               {
-                    if (argument.containsKey(LEVEL))
-                    {
+                } else if ((argument.get(LEVEL) != null ||
+                        argument.get(COVARIANCE_CHOICE) != null)) {
+                    if (argument.containsKey(LEVEL)) {
                         statisticalAnalysis = new PCA(
                                 (Double) argument.get(LEVEL),
                                 doubleData);
-                    }
-                    else if (argument.containsKey(COVARIANCE_CHOICE))
-                    {
+                    } else if (argument.containsKey(COVARIANCE_CHOICE)) {
                         statisticalAnalysis = new PCA(
                                 (String) argument.get(COVARIANCE_CHOICE),
                                 doubleData);
                     }
-                }
-                else
-                {
+                } else {
                     throw new IllegalArgumentException(
                             "Wrong input argument(s)");
                 }
-            }
-            else
-            {
+            } else {
                 statisticalAnalysis = new PCA(doubleData);
             }
-        }
-        else
-        {
+        } else {
             statisticalAnalysis = new PCA();
             level = 1.0;
         }
@@ -267,8 +248,7 @@ public class PCA extends StatisticalAnalysis
      * Default PCA constructor.
      */
 
-    public PCA()
-    {
+    public PCA() {
         this(1.0);
     }
 
@@ -281,13 +261,11 @@ public class PCA extends StatisticalAnalysis
      *                            (strictly) positive and not greater than 1.
      */
 
-    public PCA(double level)
-    {
-        if ((level <= 0.0) || (level > 1))
-        {
+    public PCA(double level) {
+        if ((level <= 0.0) || (level > 1)) {
             throw new IllegalArgumentException(
                     "The selection criterion should be (strictly) positive " +
-                    "and not greater than 1.");
+                            "and not greater than 1.");
         }
         this.level = level;
     }
@@ -309,13 +287,11 @@ public class PCA extends StatisticalAnalysis
 
     public PCA(double level,
                String covChoice,
-               double[] ...data)
-    {
-        if ((level <= 0.0) || (level > 1))
-        {
+               double[]... data) {
+        if ((level <= 0.0) || (level > 1)) {
             throw new IllegalArgumentException(
                     "The selection criterion should be (strictly) positive " +
-                    "and not greater than 1.");
+                            "and not greater than 1.");
         }
         this.level = level;
         this.covChoice = covChoice;
@@ -337,8 +313,7 @@ public class PCA extends StatisticalAnalysis
      */
 
     public PCA(String covChoice,
-               double[] ...data)
-    {
+               double[]... data) {
         this(0.9, covChoice, data);
     }
 
@@ -356,8 +331,7 @@ public class PCA extends StatisticalAnalysis
      */
 
     public PCA(double level,
-               double[] ...data)
-    {
+               double[]... data) {
         this(level, "correlation", data);
     }
 
@@ -372,8 +346,7 @@ public class PCA extends StatisticalAnalysis
      *                                     the same length.
      */
 
-    public PCA(double[] ...data)
-    {
+    public PCA(double[]... data) {
         this(0.9, "correlation", data);
     }
 
@@ -394,34 +367,26 @@ public class PCA extends StatisticalAnalysis
      */
 
     public double[][] principalComponents(Hashtable argument,
-                                          Object ...dataObject)
-    {
+                                          Object... dataObject) {
         this.argument = argument;
         this.dataObject = dataObject;
         if (argument.get(COVARIANCE_CHOICE) != null &&
-            dataObject != null &&
-            dataObject.getClass().getName().equalsIgnoreCase("[[D"))
-        {
+                dataObject != null &&
+                dataObject.getClass().getName().equalsIgnoreCase("[[D")) {
             principalComponents = principalComponents((String) argument.get(
                     COVARIANCE_CHOICE),
                     (double[][]) dataObject);
-        }
-        else if (dataObject != null &&
-                 dataObject.getClass().getName().equalsIgnoreCase("[[D"))
-        {
+        } else if (dataObject != null &&
+                dataObject.getClass().getName().equalsIgnoreCase("[[D")) {
             principalComponents = principalComponents((double[][]) dataObject);
-        }
-        else if (dataObject != null &&
-                 dataObject.getClass().getName().equalsIgnoreCase(
-                     "[Ljava.lang.Object;"))
-        {
+        } else if (dataObject != null &&
+                dataObject.getClass().getName().equalsIgnoreCase(
+                        "[Ljava.lang.Object;")) {
             principalComponents = principalComponents(DataManager.
                     castDoubleObject(0, dataObject));
-        }
-        else
-        {
+        } else {
             throw new IllegalArgumentException("Wrong input arguments or " +
-                                               "data.");
+                    "data.");
         }
 
         return principalComponents;
@@ -441,19 +406,15 @@ public class PCA extends StatisticalAnalysis
      */
 
     public double[][] principalComponents(String covChoice,
-                                          double[] ...data)
-    {
+                                          double[]... data) {
         this.covChoice = covChoice;
         this.data = data;
         dataManager = new DataManager();
         dataManager.checkDimension(data);
         basicStatistics = new BasicStatistics();
-        if (covChoice.equalsIgnoreCase("covariance"))
-        {
+        if (covChoice.equalsIgnoreCase("covariance")) {
             covariance = basicStatistics.covarianceMatrix(data);
-        }
-        else
-        {
+        } else {
             covariance = basicStatistics.correlationMatrix(data);
         }
         covarianceMatrix = new Matrix(covariance);
@@ -465,12 +426,10 @@ public class PCA extends StatisticalAnalysis
         int indices = basicStatistics.pcaNumber(eigenvalueCovMatrix, level);
         principalComponents = new double[data.length - indices][data.length];
         variance = new double[data.length - indices];
-        for (int i = data.length - 1; i >= indices; i--)
-        {
+        for (int i = data.length - 1; i >= indices; i--) {
             variance[data.length - 1 - i] = eigenvalueCovMatrix[i];
-            for (int k = 0; k < data.length; k++)
-            {
-                principalComponents[data.length - 1 -i][k] =
+            for (int k = 0; k < data.length; k++) {
+                principalComponents[data.length - 1 - i][k] =
                         eigenvectorCov[k][i];
             }
         }
@@ -491,8 +450,7 @@ public class PCA extends StatisticalAnalysis
      *                                     the same length.
      */
 
-    public double[][] principalComponents(double[] ...data)
-    {
+    public double[][] principalComponents(double[]... data) {
         return principalComponents("correlation", data);
     }
 
@@ -512,32 +470,24 @@ public class PCA extends StatisticalAnalysis
      */
 
     public double[] variance(Hashtable argument,
-                             Object ...dataObject)
-    {
+                             Object... dataObject) {
         this.argument = argument;
         this.dataObject = dataObject;
         if (argument.get(COVARIANCE_CHOICE) != null &&
-            dataObject != null &&
-            dataObject.getClass().getName().equalsIgnoreCase("[[D"))
-        {
+                dataObject != null &&
+                dataObject.getClass().getName().equalsIgnoreCase("[[D")) {
             variance = variance((String) argument.get(COVARIANCE_CHOICE),
-                                (double[][]) dataObject);
-        }
-        else if (dataObject != null &&
-                 dataObject.getClass().getName().equalsIgnoreCase("[[D"))
-        {
+                    (double[][]) dataObject);
+        } else if (dataObject != null &&
+                dataObject.getClass().getName().equalsIgnoreCase("[[D")) {
             variance = variance((double[][]) dataObject);
-        }
-        else if (dataObject != null &&
-                 dataObject.getClass().getName().equalsIgnoreCase(
-                     "[Ljava.lang.Object;"))
-        {
+        } else if (dataObject != null &&
+                dataObject.getClass().getName().equalsIgnoreCase(
+                        "[Ljava.lang.Object;")) {
             variance = variance(DataManager.castDoubleObject(0, dataObject));
-        }
-        else
-        {
+        } else {
             throw new IllegalArgumentException("Wrong input arguments or " +
-                                               "data.");
+                    "data.");
         }
 
         return variance;
@@ -556,8 +506,7 @@ public class PCA extends StatisticalAnalysis
      */
 
     public double[] variance(String covChoice,
-                             double[] ...data)
-    {
+                             double[]... data) {
         this.covChoice = covChoice;
         this.data = data;
         principalComponents = principalComponents(covChoice, data);
@@ -576,8 +525,7 @@ public class PCA extends StatisticalAnalysis
      *                                     the same length.
      */
 
-    public double[] variance(double[] ...data)
-    {
+    public double[] variance(double[]... data) {
         return variance("correlation", data);
     }
 

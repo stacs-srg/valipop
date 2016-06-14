@@ -5,6 +5,7 @@ package plots.javastat.survival;
  * <p>Description: JAVA programs for statistical computations</p>
  * <p>Copyright: Copyright (c) 2009</p>
  * <p>Company: Tung Hai University</p>
+ *
  * @author Wen Hsiang Wei
  * @version 1.4
  */
@@ -16,6 +17,7 @@ import JSci.maths.statistics.NormalDistribution;
 import plots.javastat.StatisticalAnalysis;
 import plots.javastat.survival.regression.CoxRegression;
 import plots.javastat.util.DataManager;
+
 import static plots.javastat.util.Argument.*;
 import static plots.javastat.util.Output.*;
 
@@ -112,8 +114,7 @@ import static plots.javastat.util.Output.*;
  */
 
 public class KaplanMeierEstimate extends StatisticalAnalysis implements
-        SurvivalEstimateInterface
-{
+        SurvivalEstimateInterface {
 
     /**
      * The level of significance.
@@ -227,7 +228,8 @@ public class KaplanMeierEstimate extends StatisticalAnalysis implements
      * Constructs a Kaplan Meier estimate for survival data.
      */
 
-    public KaplanMeierEstimate() {}
+    public KaplanMeierEstimate() {
+    }
 
     /**
      * Computes a Kaplan-Meier estimate given the input argument and data.
@@ -248,52 +250,41 @@ public class KaplanMeierEstimate extends StatisticalAnalysis implements
      */
 
     public KaplanMeierEstimate(Hashtable argument,
-                               Object ...dataObject)
-    {
+                               Object... dataObject) {
         this.argument = argument;
         this.dataObject = dataObject;
-        if (dataObject != null)
-        {
+        if (dataObject != null) {
             if (dataObject.length == 2 &&
-                dataObject[0].getClass().getName().equalsIgnoreCase("[D") &&
-                dataObject[1].getClass().getName().equalsIgnoreCase("[D"))
-            {
+                    dataObject[0].getClass().getName().equalsIgnoreCase("[D") &&
+                    dataObject[1].getClass().getName().equalsIgnoreCase("[D")) {
                 statisticalAnalysis = new KaplanMeierEstimate(
                         (double[]) dataObject[0], (double[]) dataObject[1]);
-            }
-            else if (argument.get(ALPHA) != null &&
-                     dataObject.length == 2 &&
-                     dataObject[0].getClass().getName().
-                     equalsIgnoreCase("[D") &&
-                     dataObject[1].getClass().getName().equalsIgnoreCase("[D"))
-            {
+            } else if (argument.get(ALPHA) != null &&
+                    dataObject.length == 2 &&
+                    dataObject[0].getClass().getName().
+                            equalsIgnoreCase("[D") &&
+                    dataObject[1].getClass().getName().equalsIgnoreCase("[D")) {
                 statisticalAnalysis = new KaplanMeierEstimate(
                         (Double) argument.get(ALPHA),
                         (double[]) dataObject[0], (double[]) dataObject[1]);
-            }
-            else if (dataObject.length == 3 &&
-                     dataObject[2].getClass().getName().equalsIgnoreCase("[[D"))
-            {
+            } else if (dataObject.length == 3 &&
+                    dataObject[2].getClass().getName().equalsIgnoreCase("[[D")) {
                 statisticalAnalysis = new KaplanMeierEstimate(
                         (double[]) dataObject[0], (double[]) dataObject[1],
                         (double[][]) dataObject[2]);
-            }
-            else if (dataObject.length >= 3 &&
-                     dataObject[0].getClass().getName().
-                     equalsIgnoreCase("[D") &&
-                     dataObject[1].getClass().getName().
-                     equalsIgnoreCase("[D") &&
-                     (dataObject.getClass().getName().equalsIgnoreCase(
-                             "[Ljava.lang.Object;") ||
-                     dataObject.getClass().getName().equalsIgnoreCase("[[D")))
-            {
+            } else if (dataObject.length >= 3 &&
+                    dataObject[0].getClass().getName().
+                            equalsIgnoreCase("[D") &&
+                    dataObject[1].getClass().getName().
+                            equalsIgnoreCase("[D") &&
+                    (dataObject.getClass().getName().equalsIgnoreCase(
+                            "[Ljava.lang.Object;") ||
+                            dataObject.getClass().getName().equalsIgnoreCase("[[D"))) {
                 statisticalAnalysis = new KaplanMeierEstimate(
                         (double[]) dataObject[0], (double[]) dataObject[1],
                         DataManager.castDoubleObject(2, dataObject));
             }
-        }
-        else
-        {
+        } else {
             statisticalAnalysis = new KaplanMeierEstimate();
         }
     }
@@ -318,8 +309,7 @@ public class KaplanMeierEstimate extends StatisticalAnalysis implements
 
     public KaplanMeierEstimate(double alpha,
                                double[] time,
-                               double[] censor)
-    {
+                               double[] censor) {
         this.alpha = alpha;
         this.time = time;
         this.censor = censor;
@@ -347,8 +337,7 @@ public class KaplanMeierEstimate extends StatisticalAnalysis implements
      */
 
     public KaplanMeierEstimate(double[] time,
-                               double[] censor)
-    {
+                               double[] censor) {
         this(0.05, time, censor);
     }
 
@@ -373,8 +362,7 @@ public class KaplanMeierEstimate extends StatisticalAnalysis implements
 
     public KaplanMeierEstimate(double[] time,
                                double[] censor,
-                               double[] ...covariate)
-    {
+                               double[]... covariate) {
         this.time = time;
         this.censor = censor;
         this.covariate = covariate;
@@ -399,42 +387,34 @@ public class KaplanMeierEstimate extends StatisticalAnalysis implements
      */
 
     public double[] estimate(Hashtable argument,
-                             Object ...dataObject)
-    {
+                             Object... dataObject) {
         this.argument = argument;
         this.dataObject = dataObject;
         if (dataObject != null &&
-            dataObject.length == 3 &&
-            dataObject[0].getClass().getName().equalsIgnoreCase("[D") &&
-            dataObject[1].getClass().getName().equalsIgnoreCase("[D") &&
-            dataObject[2].getClass().getName().equalsIgnoreCase("[[D"))
-        {
+                dataObject.length == 3 &&
+                dataObject[0].getClass().getName().equalsIgnoreCase("[D") &&
+                dataObject[1].getClass().getName().equalsIgnoreCase("[D") &&
+                dataObject[2].getClass().getName().equalsIgnoreCase("[[D")) {
             estimate = estimate((double[]) dataObject[0],
-                                (double[]) dataObject[1],
-                                (double[][]) dataObject[2]);
-        }
-        else if (dataObject != null &&
-                 dataObject.length == 2 &&
-                 dataObject[0].getClass().getName().equalsIgnoreCase("[D") &&
-                 dataObject[1].getClass().getName().equalsIgnoreCase("[D"))
-        {
+                    (double[]) dataObject[1],
+                    (double[][]) dataObject[2]);
+        } else if (dataObject != null &&
+                dataObject.length == 2 &&
+                dataObject[0].getClass().getName().equalsIgnoreCase("[D") &&
+                dataObject[1].getClass().getName().equalsIgnoreCase("[D")) {
             estimate = estimate((double[]) dataObject[0],
-                                (double[]) dataObject[1]);
-        }
-        else if (dataObject != null &&
-                 dataObject.length >= 3 &&
-                 dataObject[0].getClass().getName().equalsIgnoreCase("[D") &&
-                 dataObject[1].getClass().getName().equalsIgnoreCase("[D") &&
-                 (dataObject.getClass().getName().equalsIgnoreCase(
-                     "[Ljava.lang.Object;") ||
-                 dataObject.getClass().getName().equalsIgnoreCase("[[D")))
-        {
+                    (double[]) dataObject[1]);
+        } else if (dataObject != null &&
+                dataObject.length >= 3 &&
+                dataObject[0].getClass().getName().equalsIgnoreCase("[D") &&
+                dataObject[1].getClass().getName().equalsIgnoreCase("[D") &&
+                (dataObject.getClass().getName().equalsIgnoreCase(
+                        "[Ljava.lang.Object;") ||
+                        dataObject.getClass().getName().equalsIgnoreCase("[[D"))) {
             estimate = estimate((double[]) dataObject[0],
-                                (double[]) dataObject[1],
-                                DataManager.castDoubleObject(2, dataObject));
-        }
-        else
-        {
+                    (double[]) dataObject[1],
+                    DataManager.castDoubleObject(2, dataObject));
+        } else {
             throw new IllegalArgumentException(
                     "Wrong input arguments or data.");
         }
@@ -460,22 +440,18 @@ public class KaplanMeierEstimate extends StatisticalAnalysis implements
      */
 
     public double[] estimate(double[] time,
-                             double[] censor)
-    {
+                             double[] censor) {
         this.time = time;
         this.censor = censor;
         isProportionalHazards = false;
         survivalIndex = new DataManager().survivalIndex(time, censor);
         estimate = new double[time.length];
         variance = new double[time.length];
-        for (int i = 0; i < time.length; i++)
-        {
+        for (int i = 0; i < time.length; i++) {
             estimate[i] = 1.0;
             variance[i] = 0.0;
-            for (int k = 0; k < time.length; k++)
-            {
-                if (time[k] <= time[i])
-                {
+            for (int k = 0; k < time.length; k++) {
+                if (time[k] <= time[i]) {
                     estimate[i] *=
                             (1 - (survivalIndex[1][k] / survivalIndex[0][k]));
                     variance[i] += survivalIndex[1][k] / (survivalIndex[0][k] *
@@ -513,8 +489,7 @@ public class KaplanMeierEstimate extends StatisticalAnalysis implements
 
     public double[] estimate(double[] time,
                              double[] censor,
-                             double[] ...covariate)
-    {
+                             double[]... covariate) {
         this.time = time;
         this.censor = censor;
         this.covariate = covariate;
@@ -524,22 +499,15 @@ public class KaplanMeierEstimate extends StatisticalAnalysis implements
         survivalIndex = new DataManager().survivalIndex(time, censor);
         riskFactorVector = new double[time.length];
         estimate = new double[time.length];
-        for (int i = 0; i < time.length; i++)
-        {
-            if ((int) censor[i] == 0)
-            {
+        for (int i = 0; i < time.length; i++) {
+            if ((int) censor[i] == 0) {
                 riskFactorVector[i] = 1.0;
-            }
-            else
-            {
+            } else {
                 riskFactorVector[i] = 0.0;
-                for (int k = 0; k < time.length; k++)
-                {
-                    if (time[k] >= time[i])
-                    {
+                for (int k = 0; k < time.length; k++) {
+                    if (time[k] >= time[i]) {
                         riskFactor = 1;
-                        for (int l = 0; l < coefficients.length; l++)
-                        {
+                        for (int l = 0; l < coefficients.length; l++) {
                             riskFactor *=
                                     Math.exp(coefficients[l] * covariate[l][k]);
                         }
@@ -548,13 +516,10 @@ public class KaplanMeierEstimate extends StatisticalAnalysis implements
                 }
             }
         }
-        for (int i = 0; i < time.length; i++)
-        {
+        for (int i = 0; i < time.length; i++) {
             estimate[i] = 1.0;
-            for (int k = 0; k < time.length; k++)
-            {
-                if (time[k] <= time[i])
-                {
+            for (int k = 0; k < time.length; k++) {
+                if (time[k] <= time[i]) {
                     estimate[i] *=
                             (1 - (survivalIndex[1][k] / riskFactorVector[k]));
                 }
@@ -590,30 +555,24 @@ public class KaplanMeierEstimate extends StatisticalAnalysis implements
      */
 
     public double[][] confidenceInterval(Hashtable argument,
-                                         Object ...dataObject)
-    {
+                                         Object... dataObject) {
         this.argument = argument;
         this.dataObject = dataObject;
         if (argument.get(ALPHA) != null &&
-            dataObject != null &&
-            dataObject.length == 2 &&
-            dataObject[0].getClass().getName().equalsIgnoreCase("[D") &&
-            dataObject[1].getClass().getName().equalsIgnoreCase("[D"))
-        {
+                dataObject != null &&
+                dataObject.length == 2 &&
+                dataObject[0].getClass().getName().equalsIgnoreCase("[D") &&
+                dataObject[1].getClass().getName().equalsIgnoreCase("[D")) {
             confidenceInterval = confidenceInterval(
                     (Double) argument.get(ALPHA),
                     (double[]) dataObject[0], (double[]) dataObject[1]);
-        }
-        else if (dataObject != null &&
-                 dataObject.length == 2 &&
-                 dataObject[0].getClass().getName().equalsIgnoreCase("[D") &&
-                 dataObject[1].getClass().getName().equalsIgnoreCase("[D"))
-        {
+        } else if (dataObject != null &&
+                dataObject.length == 2 &&
+                dataObject[0].getClass().getName().equalsIgnoreCase("[D") &&
+                dataObject[1].getClass().getName().equalsIgnoreCase("[D")) {
             confidenceInterval = confidenceInterval(
                     (double[]) dataObject[0], (double[]) dataObject[1]);
-        }
-        else
-        {
+        } else {
             throw new IllegalArgumentException(
                     "Wrong input arguments or data.");
         }
@@ -645,13 +604,11 @@ public class KaplanMeierEstimate extends StatisticalAnalysis implements
 
     public double[][] confidenceInterval(double alpha,
                                          double[] time,
-                                         double[] censor)
-    {
-        if ((alpha <= 0.0) || (alpha > 1))
-        {
+                                         double[] censor) {
+        if ((alpha <= 0.0) || (alpha > 1)) {
             throw new IllegalArgumentException(
                     "The level of significance should be (strictly) positive " +
-                    "and not greater than 1.");
+                            "and not greater than 1.");
         }
         this.alpha = alpha;
         this.time = time;
@@ -660,18 +617,15 @@ public class KaplanMeierEstimate extends StatisticalAnalysis implements
         estimate = estimate(time, censor);
         zAlpha = new NormalDistribution().inverse((1 - alpha / 2));
         confidenceInterval = new double[time.length][2];
-        for (int i = 0; i < time.length; i++)
-        {
+        for (int i = 0; i < time.length; i++) {
             confidenceInterval[i][0] = estimate[i] -
-                                       zAlpha * Math.sqrt(variance[i]);
+                    zAlpha * Math.sqrt(variance[i]);
             confidenceInterval[i][1] = estimate[i] +
-                                       zAlpha * Math.sqrt(variance[i]);
-            if (confidenceInterval[i][0] < 0)
-            {
+                    zAlpha * Math.sqrt(variance[i]);
+            if (confidenceInterval[i][0] < 0) {
                 confidenceInterval[i][0] = 0.0;
             }
-            if (confidenceInterval[i][1] > 1)
-            {
+            if (confidenceInterval[i][1] > 1) {
                 confidenceInterval[i][1] = 1.0;
             }
         }
@@ -702,8 +656,7 @@ public class KaplanMeierEstimate extends StatisticalAnalysis implements
      */
 
     public double[][] confidenceInterval(double[] time,
-                                         double[] censor)
-    {
+                                         double[] censor) {
         return confidenceInterval(0.05, time, censor);
     }
 
@@ -725,18 +678,14 @@ public class KaplanMeierEstimate extends StatisticalAnalysis implements
      */
 
     public double[] variance(Hashtable argument,
-                             Object ...dataObject)
-    {
+                             Object... dataObject) {
         if (dataObject != null &&
-            dataObject.length == 2 &&
-            dataObject[0].getClass().getName().equalsIgnoreCase("[D") &&
-            dataObject[1].getClass().getName().equalsIgnoreCase("[D"))
-        {
+                dataObject.length == 2 &&
+                dataObject[0].getClass().getName().equalsIgnoreCase("[D") &&
+                dataObject[1].getClass().getName().equalsIgnoreCase("[D")) {
             variance = variance((double[]) dataObject[0],
-                                (double[]) dataObject[1]);
-        }
-        else
-        {
+                    (double[]) dataObject[1]);
+        } else {
             throw new IllegalArgumentException(
                     "Wrong input arguments or data.");
         }
@@ -763,8 +712,7 @@ public class KaplanMeierEstimate extends StatisticalAnalysis implements
      */
 
     public double[] variance(double[] time,
-                             double[] censor)
-    {
+                             double[] censor) {
         this.time = time;
         this.censor = censor;
         isProportionalHazards = false;

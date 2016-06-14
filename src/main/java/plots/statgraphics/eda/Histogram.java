@@ -5,6 +5,7 @@ package plots.statgraphics.eda;
  * <p>Description: The statistical graphics</p>
  * <p>Copyright: Copyright (c) 2009</p>
  * <p>Company: Tung Hai University </p>
+ *
  * @author Wen Hsiang Wei
  * @version 1.4
  */
@@ -14,6 +15,7 @@ import java.util.Hashtable;
 import plots.statgraphics.GraphicalAnalysis;
 import plots.statgraphics.util.DataCreator;
 import plots.statgraphics.util.Plot2DFactory;
+
 import static plots.statgraphics.util.Argument.*;
 
 /**
@@ -78,8 +80,7 @@ import static plots.statgraphics.util.Argument.*;
  * <br> new PlotFrameFactory().putPlotFrame(pf);
  */
 
-public class Histogram extends GraphicalAnalysis
-{
+public class Histogram extends GraphicalAnalysis {
 
     /**
      * The input data series.
@@ -122,7 +123,8 @@ public class Histogram extends GraphicalAnalysis
      * Default Histogram constructor.
      */
 
-    public Histogram() {}
+    public Histogram() {
+    }
 
     /**
      * Creates a new histogram given the input arguments and data.
@@ -144,33 +146,25 @@ public class Histogram extends GraphicalAnalysis
      */
 
     public Histogram(Hashtable argument,
-                     Object ...dataObject)
-    {
+                     Object... dataObject) {
         this.argument = argument;
         this.dataObject = dataObject;
         if (argument.size() > 0 &&
-            dataObject != null)
-        {
-            if (dataObject.getClass().getName().equalsIgnoreCase("[[D"))
-            {
+                dataObject != null) {
+            if (dataObject.getClass().getName().equalsIgnoreCase("[[D")) {
                 doubleData = (double[][]) dataObject;
-            }
-            else if (dataObject.getClass().getName().equalsIgnoreCase(
-                     "[Ljava.lang.Object;"))
-            {
+            } else if (dataObject.getClass().getName().equalsIgnoreCase(
+                    "[Ljava.lang.Object;")) {
                 doubleData = DataCreator.castToDoubleData(0, dataObject);
-            }
-            else
-            {
+            } else {
                 throw new IllegalArgumentException("Wrong input data type.");
             }
             if (argument.get(DATA_NAMES) != null &&
-                argument.get(BIN_NUMBER) != null &&
-                argument.get(FREQUENCY_CHOICE) != null &&
-                argument.get(TITLE) != null &&
-                argument.get(XLABEL) != null &&
-                argument.get(YLABEL) != null)
-            {
+                    argument.get(BIN_NUMBER) != null &&
+                    argument.get(FREQUENCY_CHOICE) != null &&
+                    argument.get(TITLE) != null &&
+                    argument.get(XLABEL) != null &&
+                    argument.get(YLABEL) != null) {
                 graphicalAnalysis = new Histogram(
                         (String[]) argument.get(DATA_NAMES),
                         ((Integer) argument.get(BIN_NUMBER)).intValue(),
@@ -179,13 +173,11 @@ public class Histogram extends GraphicalAnalysis
                         (String) argument.get(XLABEL),
                         (String) argument.get(YLABEL),
                         doubleData);
-            }
-            else if (argument.get(DATA_NAMES) != null &&
-                     argument.get(BIN_NUMBER) != null &&
-                     argument.get(TITLE) != null &&
-                     argument.get(XLABEL) != null &&
-                     argument.get(YLABEL) != null)
-            {
+            } else if (argument.get(DATA_NAMES) != null &&
+                    argument.get(BIN_NUMBER) != null &&
+                    argument.get(TITLE) != null &&
+                    argument.get(XLABEL) != null &&
+                    argument.get(YLABEL) != null) {
                 graphicalAnalysis = new Histogram(
                         (String[]) argument.get(DATA_NAMES),
                         ((Integer) argument.get(BIN_NUMBER)).intValue(),
@@ -193,29 +185,21 @@ public class Histogram extends GraphicalAnalysis
                         (String) argument.get(XLABEL),
                         (String) argument.get(YLABEL),
                         doubleData);
-            }
-            else if (argument.get(DATA_NAMES) != null &&
-                     argument.get(BIN_NUMBER) != null)
-            {
+            } else if (argument.get(DATA_NAMES) != null &&
+                    argument.get(BIN_NUMBER) != null) {
                 graphicalAnalysis = new Histogram(
                         (String[]) argument.get(DATA_NAMES),
                         ((Integer) argument.get(BIN_NUMBER)).intValue(),
                         doubleData);
-            }
-            else if (argument.get(DATA_NAMES) != null)
-            {
+            } else if (argument.get(DATA_NAMES) != null) {
                 graphicalAnalysis = new Histogram(
                         (String[]) argument.get(DATA_NAMES),
                         doubleData);
-            }
-            else
-            {
+            } else {
                 throw new IllegalArgumentException(
                         "Wrong input argument(s) or data.");
             }
-        }
-        else
-        {
+        } else {
             throw new IllegalArgumentException("Wrong input data.");
         }
     }
@@ -243,8 +227,7 @@ public class Histogram extends GraphicalAnalysis
                      String title,
                      String xLabel,
                      String yLabel,
-                     double[] ...data)
-    {
+                     double[]... data) {
         this.data = data;
         this.dataNames = dataNames;
         this.binNumber = binNumber;
@@ -275,8 +258,7 @@ public class Histogram extends GraphicalAnalysis
                      String title,
                      String xLabel,
                      String yLabel,
-                     double[] ...data)
-    {
+                     double[]... data) {
         this(dataNames, binNumber, "Frequency", title, xLabel, yLabel, data);
     }
 
@@ -296,10 +278,9 @@ public class Histogram extends GraphicalAnalysis
 
     public Histogram(String[] dataNames,
                      int binNumber,
-                     double[] ...data)
-    {
+                     double[]... data) {
         this(dataNames, binNumber, "Frequency", "Histogram", null, "Frequency",
-             data);
+                data);
     }
 
     /**
@@ -315,8 +296,7 @@ public class Histogram extends GraphicalAnalysis
      */
 
     public Histogram(String[] dataNames,
-                     double[] ...data)
-    {
+                     double[]... data) {
         this(dataNames, 4, data);
     }
 

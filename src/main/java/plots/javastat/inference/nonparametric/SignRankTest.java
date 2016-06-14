@@ -5,6 +5,7 @@ package plots.javastat.inference.nonparametric;
  * <p>Description: JAVA programs for statistical computations</p>
  * <p>Copyright: Copyright (c) 2009</p>
  * <p>Company: Tung Hai University</p>
+ *
  * @author Wen Hsiang Wei
  * @version 1.4
  */
@@ -18,6 +19,7 @@ import plots.javastat.StatisticalInference;
 import plots.javastat.inference.OneSampInferenceInterface;
 import plots.javastat.util.BasicStatistics;
 import plots.javastat.util.DataManager;
+
 import static plots.javastat.util.Argument.*;
 import static plots.javastat.util.Output.*;
 
@@ -70,8 +72,7 @@ import static plots.javastat.util.Output.*;
  */
 
 public class SignRankTest extends StatisticalInference implements
-        OneSampInferenceInterface
-{
+        OneSampInferenceInterface {
 
     /**
      * The level of significance.
@@ -206,7 +207,8 @@ public class SignRankTest extends StatisticalInference implements
      * Constructs a one sample Wilcoxon sign rank test for population median.
      */
 
-    public SignRankTest() {}
+    public SignRankTest() {
+    }
 
     /**
      * Constructs a one sample Wilcoxon sign rank test given the input
@@ -231,57 +233,42 @@ public class SignRankTest extends StatisticalInference implements
      */
 
     public SignRankTest(Hashtable argument,
-                        Object ...dataObject)
-    {
+                        Object... dataObject) {
         this.argument = argument;
         this.dataObject = dataObject;
         if (argument.size() > 0 &&
-            dataObject != null)
-        {
+                dataObject != null) {
             if (argument.get(ALPHA) != null &&
-                argument.get(NULL_VALUE) != null &&
-                argument.get(SIDE) != null &&
-                dataObject.length == 1)
-            {
+                    argument.get(NULL_VALUE) != null &&
+                    argument.get(SIDE) != null &&
+                    dataObject.length == 1) {
                 statisticalAnalysis = new SignRankTest(
                         (Double) argument.get(ALPHA),
                         ((Number) argument.get(NULL_VALUE)).doubleValue(),
                         (String) argument.get(SIDE),
                         (double[]) dataObject[0]);
-            }
-            else if (argument.get(NULL_VALUE) != null &&
-                       argument.get(SIDE) != null &&
-                       dataObject.length == 1)
-            {
+            } else if (argument.get(NULL_VALUE) != null &&
+                    argument.get(SIDE) != null &&
+                    dataObject.length == 1) {
                 statisticalAnalysis = new SignRankTest(
                         ((Number) argument.get(NULL_VALUE)).doubleValue(),
                         (String) argument.get(SIDE),
                         (double[]) dataObject[0]);
-            }
-            else if (argument.get(NULL_VALUE) != null &&
-                       dataObject.length == 1)
-            {
+            } else if (argument.get(NULL_VALUE) != null &&
+                    dataObject.length == 1) {
                 statisticalAnalysis = new SignRankTest(
                         ((Number) argument.get(NULL_VALUE)).doubleValue(),
                         (double[]) dataObject[0]);
-            }
-            else
-            {
+            } else {
                 throw new IllegalArgumentException(
                         "Wrong input arguments or data.");
             }
-        }
-        else if (dataObject != null &&
-                   dataObject.length == 1)
-        {
+        } else if (dataObject != null &&
+                dataObject.length == 1) {
             statisticalAnalysis = new SignRankTest((double[]) dataObject[0]);
-        }
-        else if (dataObject == null)
-        {
+        } else if (dataObject == null) {
             statisticalAnalysis = new SignRankTest();
-        }
-        else
-        {
+        } else {
             throw new IllegalArgumentException("Wrong input data.");
         }
     }
@@ -306,8 +293,7 @@ public class SignRankTest extends StatisticalInference implements
     public SignRankTest(double alpha,
                         double med,
                         String side,
-                        double[] data)
-    {
+                        double[] data) {
         this.alpha = alpha;
         this.med = med;
         this.side = side;
@@ -335,8 +321,7 @@ public class SignRankTest extends StatisticalInference implements
 
     public SignRankTest(double med,
                         String side,
-                        double[] data)
-    {
+                        double[] data) {
         this(0.05, med, side, data);
     }
 
@@ -354,8 +339,7 @@ public class SignRankTest extends StatisticalInference implements
      */
 
     public SignRankTest(double med,
-                        double[] data)
-    {
+                        double[] data) {
         this(0.05, med, "equal", data);
     }
 
@@ -372,8 +356,7 @@ public class SignRankTest extends StatisticalInference implements
      *                                     the range of the table.
      */
 
-    public SignRankTest(double[] data)
-    {
+    public SignRankTest(double[] data) {
         this(0.05, 0.0, "equal", data);
     }
 
@@ -391,27 +374,21 @@ public class SignRankTest extends StatisticalInference implements
      */
 
     public Double testStatistic(Hashtable argument,
-                                Object ...dataObject)
-    {
+                                Object... dataObject) {
         this.argument = argument;
         this.dataObject = dataObject;
         if (argument.get(NULL_VALUE) != null &&
-            dataObject != null &&
-            dataObject.length == 1)
-        {
+                dataObject != null &&
+                dataObject.length == 1) {
             testStatistic = testStatistic(
                     ((Number) argument.get(NULL_VALUE)).doubleValue(),
                     (double[]) dataObject[0]);
-        }
-        else if (dataObject != null &&
-                   dataObject.length == 1)
-        {
+        } else if (dataObject != null &&
+                dataObject.length == 1) {
             testStatistic = testStatistic((double[]) dataObject[0]);
-        }
-        else
-        {
+        } else {
             throw new IllegalArgumentException("Wrong input arguments or " +
-                                               "data.");
+                    "data.");
         }
 
         return testStatistic;
@@ -427,29 +404,23 @@ public class SignRankTest extends StatisticalInference implements
      */
 
     public double testStatistic(double med,
-                                double[] data)
-    {
+                                double[] data) {
         this.med = med;
         this.data = data;
         dataManager = new DataManager();
         zeroNumber = (int) dataManager.zeroNumber(med, data);
-        if ((data.length - zeroNumber) < 3)
-        {
+        if ((data.length - zeroNumber) < 3) {
             throw new IllegalArgumentException(
                     "The length of the input data should be larger than 2.");
         }
         testStatistic = 0.0;
         tieNumber = dataManager.tieNumber(med, data);
-        for (int i = 0; i < data.length; i++)
-        {
-            if ((data[i] - med) > 0)
-            {
+        for (int i = 0; i < data.length; i++) {
+            if ((data[i] - med) > 0) {
                 rank = 1.0;
-                for (int k = 0; k < data.length; k++)
-                {
+                for (int k = 0; k < data.length; k++) {
                     if ((k != i) &&
-                        (Math.abs((data[i] - med)) > Math.abs((data[k] - med))))
-                    {
+                            (Math.abs((data[i] - med)) > Math.abs((data[k] - med)))) {
                         rank += 1.0;
                     }
                 }
@@ -472,8 +443,7 @@ public class SignRankTest extends StatisticalInference implements
      *                                     be larger than 2.
      */
 
-    public double testStatistic(double[] data)
-    {
+    public double testStatistic(double[] data) {
         return testStatistic(0.0, data);
     }
 
@@ -495,33 +465,25 @@ public class SignRankTest extends StatisticalInference implements
      */
 
     public Double tAlpha(Hashtable argument,
-                         Object ...dataObject)
-    {
+                         Object... dataObject) {
         this.argument = argument;
         this.dataObject = dataObject;
         if (argument.get(ALPHA) != null &&
-            argument.get(NULL_VALUE) != null &&
-            dataObject != null &&
-            dataObject.length == 1)
-        {
+                argument.get(NULL_VALUE) != null &&
+                dataObject != null &&
+                dataObject.length == 1) {
             tAlpha = tAlpha((Double) argument.get(ALPHA),
-                            ((Number) argument.get(NULL_VALUE)).doubleValue(),
-                            (double[]) dataObject[0]);
-        }
-        else if (argument.get(NULL_VALUE) != null &&
-                 dataObject != null &&
-                 dataObject.length == 1)
-        {
+                    ((Number) argument.get(NULL_VALUE)).doubleValue(),
+                    (double[]) dataObject[0]);
+        } else if (argument.get(NULL_VALUE) != null &&
+                dataObject != null &&
+                dataObject.length == 1) {
             tAlpha = tAlpha(((Number) argument.get(NULL_VALUE)).doubleValue(),
-                            (double[]) dataObject[0]);
-        }
-        else if (dataObject != null &&
-                   dataObject.length == 1)
-        {
+                    (double[]) dataObject[0]);
+        } else if (dataObject != null &&
+                dataObject.length == 1) {
             tAlpha = tAlpha((double[]) dataObject[0]);
-        }
-        else
-        {
+        } else {
             throw new IllegalArgumentException(
                     "Wrong input arguments or data.");
         }
@@ -542,36 +504,30 @@ public class SignRankTest extends StatisticalInference implements
 
     public double tAlpha(double alpha,
                          double med,
-                         double[] data)
-    {
+                         double[] data) {
         this.alpha = alpha;
         this.med = med;
         this.data = data;
         int index = 0;
-        zeroNumber = (int)new DataManager().zeroNumber(med, data);
+        zeroNumber = (int) new DataManager().zeroNumber(med, data);
         if ((data.length - zeroNumber) > 30 ||
-            (data.length - zeroNumber) < 3)
-        {
+                (data.length - zeroNumber) < 3) {
             tAlpha = Double.NaN;
-        }
-        else
-        {
+        } else {
             if (alpha > BasicStatistics.
-                signRankTable[data.length - zeroNumber - 3][0])
-            {
+                    signRankTable[data.length - zeroNumber - 3][0]) {
                 throw new IllegalArgumentException(
                         "The input level of significance should be less than " +
-                        BasicStatistics.signRankTable[data.length - 3][0]);
+                                BasicStatistics.signRankTable[data.length - 3][0]);
             }
             while (index < BasicStatistics.
-                     signRankTable[data.length - zeroNumber - 3].length &&
-                     alpha <= BasicStatistics.
-                     signRankTable[data.length - zeroNumber - 3][index])
-            {
+                    signRankTable[data.length - zeroNumber - 3].length &&
+                    alpha <= BasicStatistics.
+                            signRankTable[data.length - zeroNumber - 3][index]) {
                 index += 1;
             }
             tAlpha = index + BasicStatistics.
-                     signRankIndex[data.length - zeroNumber - 3] - 1;
+                    signRankIndex[data.length - zeroNumber - 3] - 1;
         }
         output.put(TALPHA, tAlpha);
 
@@ -589,8 +545,7 @@ public class SignRankTest extends StatisticalInference implements
      */
 
     public double tAlpha(double med,
-                         double[] data)
-    {
+                         double[] data) {
         return tAlpha(0.05, med, data);
     }
 
@@ -604,8 +559,7 @@ public class SignRankTest extends StatisticalInference implements
      *                         should be less than the largest one in the table.
      */
 
-    public double tAlpha(double[] data)
-    {
+    public double tAlpha(double[] data) {
         return tAlpha(0.05, 0.0, data);
     }
 
@@ -627,33 +581,25 @@ public class SignRankTest extends StatisticalInference implements
      */
 
     public Double pValue(Hashtable argument,
-                         Object ...dataObject)
-    {
+                         Object... dataObject) {
         this.argument = argument;
         this.dataObject = dataObject;
         if (argument.get(NULL_VALUE) != null &&
-            argument.get(SIDE) != null &&
-            dataObject != null &&
-            dataObject.length == 1)
-        {
+                argument.get(SIDE) != null &&
+                dataObject != null &&
+                dataObject.length == 1) {
             pValue = pValue(((Number) argument.get(NULL_VALUE)).doubleValue(),
-                            (String) argument.get(SIDE),
-                            (double[]) dataObject[0]);
-        }
-        else if (argument.get(NULL_VALUE) != null &&
-                   dataObject != null &&
-                   dataObject.length == 1)
-        {
+                    (String) argument.get(SIDE),
+                    (double[]) dataObject[0]);
+        } else if (argument.get(NULL_VALUE) != null &&
+                dataObject != null &&
+                dataObject.length == 1) {
             pValue = pValue(((Number) argument.get(NULL_VALUE)).doubleValue(),
-                            (double[]) dataObject[0]);
-        }
-        else if (dataObject != null &&
-                   dataObject.length == 1)
-        {
+                    (double[]) dataObject[0]);
+        } else if (dataObject != null &&
+                dataObject.length == 1) {
             pValue = pValue((double[]) dataObject[0]);
-        }
-        else
-        {
+        } else {
             throw new IllegalArgumentException(
                     "Wrong input arguments or data.");
         }
@@ -676,171 +622,127 @@ public class SignRankTest extends StatisticalInference implements
 
     public double pValue(double med,
                          String side,
-                         double[] data)
-    {
+                         double[] data) {
         this.med = med;
         this.side = side;
         this.data = data;
-        zeroNumber = (int)new DataManager().zeroNumber(med, data);
+        zeroNumber = (int) new DataManager().zeroNumber(med, data);
         testStatistic = testStatistic(med, data);
-        if ((data.length - zeroNumber) >= 30)
-        {
+        if ((data.length - zeroNumber) >= 30) {
             basicStatistics = new BasicStatistics();
             signRankMean = basicStatistics.signRankMean(med, data);
             signRankVariance = basicStatistics.signRankVariance(med, data);
             normalDistribution = new NormalDistribution();
             zStatistic = (testStatistic - signRankMean) /
-                         Math.sqrt(signRankVariance);
-            if (side.equalsIgnoreCase("less"))
-            {
+                    Math.sqrt(signRankVariance);
+            if (side.equalsIgnoreCase("less")) {
                 pValue = normalDistribution.cumulative(zStatistic);
-            }
-            else if (side.equalsIgnoreCase("greater"))
-            {
+            } else if (side.equalsIgnoreCase("greater")) {
                 pValue = 1 - normalDistribution.cumulative(zStatistic);
-            }
-            else
-            {
+            } else {
                 pValue = 2 * (1 - normalDistribution.
-                              cumulative(Math.abs(zStatistic)));
+                        cumulative(Math.abs(zStatistic)));
             }
-        }
-        else
-        {
+        } else {
             tableIndex = (int) testStatistic - BasicStatistics.
-                         signRankIndex[data.length - zeroNumber - 3];
+                    signRankIndex[data.length - zeroNumber - 3];
             rowLengthIndex = BasicStatistics.
-                             signRankTable[data.length - zeroNumber - 3].length;
-            if (side.equalsIgnoreCase("greater"))
-            {
-                if (tableIndex < 0)
-                {
+                    signRankTable[data.length - zeroNumber - 3].length;
+            if (side.equalsIgnoreCase("greater")) {
+                if (tableIndex < 0) {
                     tableIndex = (int) ((data.length - zeroNumber) *
-                                        (data.length + 1 - zeroNumber) / 2 -
-                                        testStatistic) -
-                                 BasicStatistics.
-                                 signRankIndex[data.length - zeroNumber - 3];
-                    if (tableIndex < 0)
-                    {
+                            (data.length + 1 - zeroNumber) / 2 -
+                            testStatistic) -
+                            BasicStatistics.
+                                    signRankIndex[data.length - zeroNumber - 3];
+                    if (tableIndex < 0) {
                         lengthIndex = BasicStatistics.
-                                      signRankTable[data.length - zeroNumber -
-                                      3].
-                                      length - 1;
+                                signRankTable[data.length - zeroNumber -
+                                3].
+                                length - 1;
                         pValue = BasicStatistics.
-                                 signRankTable[data.length - zeroNumber - 3]
-                                 [lengthIndex];
-                    }
-                    else
-                    {
-                        if (tableIndex >= rowLengthIndex)
-                        {
+                                signRankTable[data.length - zeroNumber - 3]
+                                [lengthIndex];
+                    } else {
+                        if (tableIndex >= rowLengthIndex) {
                             pValue = 1 - BasicStatistics.
-                                     signRankTable[data.length - zeroNumber - 3]
-                                     [rowLengthIndex - 1];
-                        }
-                        else
-                        {
+                                    signRankTable[data.length - zeroNumber - 3]
+                                    [rowLengthIndex - 1];
+                        } else {
                             pValue = 1 - BasicStatistics.
-                                     signRankTable[data.length - zeroNumber - 3]
-                                     [tableIndex];
+                                    signRankTable[data.length - zeroNumber - 3]
+                                    [tableIndex];
                         }
                     }
-                }
-                else
-                {
-                    if (tableIndex >= rowLengthIndex)
-                    {
+                } else {
+                    if (tableIndex >= rowLengthIndex) {
                         pValue = BasicStatistics.
-                                 signRankTable[data.length - zeroNumber - 3]
-                                 [rowLengthIndex - 1];
-                    }
-                    else
-                    {
+                                signRankTable[data.length - zeroNumber - 3]
+                                [rowLengthIndex - 1];
+                    } else {
                         pValue = BasicStatistics.
-                                 signRankTable[data.length - zeroNumber - 3]
-                                 [tableIndex];
+                                signRankTable[data.length - zeroNumber - 3]
+                                [tableIndex];
                     }
                 }
-            }
-            else if (side.equalsIgnoreCase("less"))
-            {
-                if (tableIndex < 0)
-                {
+            } else if (side.equalsIgnoreCase("less")) {
+                if (tableIndex < 0) {
                     tableIndex = (int) ((data.length - zeroNumber) *
-                                        (data.length + 1 - zeroNumber) / 2 -
-                                        testStatistic) -
-                                 BasicStatistics.
-                                 signRankIndex[data.length - zeroNumber - 3];
-                    if (tableIndex < 0)
-                    {
+                            (data.length + 1 - zeroNumber) / 2 -
+                            testStatistic) -
+                            BasicStatistics.
+                                    signRankIndex[data.length - zeroNumber - 3];
+                    if (tableIndex < 0) {
                         lengthIndex = BasicStatistics.
-                                      signRankTable[data.length - zeroNumber -
-                                      3].
-                                      length - 1;
+                                signRankTable[data.length - zeroNumber -
+                                3].
+                                length - 1;
                         pValue = BasicStatistics.
-                                 signRankTable[data.length - zeroNumber - 3]
-                                 [lengthIndex];
-                    }
-                    else
-                    {
-                        if (tableIndex >= rowLengthIndex)
-                        {
+                                signRankTable[data.length - zeroNumber - 3]
+                                [lengthIndex];
+                    } else {
+                        if (tableIndex >= rowLengthIndex) {
                             pValue = BasicStatistics.
-                                     signRankTable[data.length - zeroNumber - 3]
-                                     [rowLengthIndex - 1];
-                        }
-                        else
-                        {
+                                    signRankTable[data.length - zeroNumber - 3]
+                                    [rowLengthIndex - 1];
+                        } else {
                             pValue = BasicStatistics.
-                                     signRankTable[data.length - zeroNumber - 3]
-                                     [tableIndex];
+                                    signRankTable[data.length - zeroNumber - 3]
+                                    [tableIndex];
                         }
                     }
-                }
-                else
-                {
-                    if (tableIndex >= rowLengthIndex)
-                    {
+                } else {
+                    if (tableIndex >= rowLengthIndex) {
                         pValue = 1 - BasicStatistics.
-                                 signRankTable[data.length - zeroNumber - 3]
-                                 [rowLengthIndex - 1];
-                    }
-                    else
-                    {
+                                signRankTable[data.length - zeroNumber - 3]
+                                [rowLengthIndex - 1];
+                    } else {
                         pValue = 1 - BasicStatistics.signRankTable
-                                 [data.length - zeroNumber - 3][tableIndex];
+                                [data.length - zeroNumber - 3][tableIndex];
                     }
                 }
-            }
-            else
-            {
+            } else {
                 tableIndex = (int) Math.max(testStatistic,
-                                            ((data.length - zeroNumber) *
-                                             (data.length + 1 - zeroNumber) / 2)
-                                            - testStatistic) - BasicStatistics.
-                             signRankIndex[data.length - zeroNumber - 3];
-                if (tableIndex < 0)
-                {
+                        ((data.length - zeroNumber) *
+                                (data.length + 1 - zeroNumber) / 2)
+                                - testStatistic) - BasicStatistics.
+                        signRankIndex[data.length - zeroNumber - 3];
+                if (tableIndex < 0) {
                     lengthIndex = BasicStatistics.
-                                  signRankTable[data.length - zeroNumber -
-                                  3].length - 1;
+                            signRankTable[data.length - zeroNumber -
+                            3].length - 1;
                     pValue = 2 * BasicStatistics.
-                             signRankTable[data.length - zeroNumber - 3]
-                             [lengthIndex];
-                }
-                else
-                {
-                    if (tableIndex >= rowLengthIndex)
-                    {
+                            signRankTable[data.length - zeroNumber - 3]
+                            [lengthIndex];
+                } else {
+                    if (tableIndex >= rowLengthIndex) {
                         pValue = 2 * BasicStatistics.
-                                 signRankTable[data.length - zeroNumber - 3]
-                                 [rowLengthIndex - 1];
-                    }
-                    else
-                    {
+                                signRankTable[data.length - zeroNumber - 3]
+                                [rowLengthIndex - 1];
+                    } else {
                         pValue = 2 * BasicStatistics.
-                                 signRankTable[data.length - zeroNumber - 3]
-                                 [tableIndex];
+                                signRankTable[data.length - zeroNumber - 3]
+                                [tableIndex];
                     }
                 }
             }
@@ -862,8 +764,7 @@ public class SignRankTest extends StatisticalInference implements
      */
 
     public double pValue(double med,
-                         double[] data)
-    {
+                         double[] data) {
         return pValue(med, "equal", data);
     }
 
@@ -878,8 +779,7 @@ public class SignRankTest extends StatisticalInference implements
      *                                     the range of the table.
      */
 
-    public double pValue(double[] data)
-    {
+    public double pValue(double[] data) {
         return pValue(0.0, "equal", data);
     }
 

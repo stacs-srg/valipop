@@ -29,6 +29,18 @@ public class TwoDimensionDataDistribution implements DataDistribution {
         this.targetData = tableData;
     }
 
+    protected static IntegerRange resolveRowValue(Integer rowValue, Map<IntegerRange, OneDimensionDataDistribution> data) {
+
+
+        for (IntegerRange iR : data.keySet()) {
+            if (iR.contains(rowValue)) {
+                return iR;
+            }
+        }
+
+        throw new InvalidRangeException("RowValue does not exist in this data distribution");
+    }
+
     @Override
     public YearDate getYear() {
         return year;
@@ -79,23 +91,11 @@ public class TwoDimensionDataDistribution implements DataDistribution {
         return targetData.get(row);
     }
 
-    protected static IntegerRange resolveRowValue(Integer rowValue, Map<IntegerRange, OneDimensionDataDistribution> data) {
-
-
-        for (IntegerRange iR : data.keySet()) {
-            if (iR.contains(rowValue)) {
-                return iR;
-            }
-        }
-
-        throw new InvalidRangeException("RowValue does not exist in this data distribution");
-    }
-
     public Map<IntegerRange, OneDimensionDataDistribution> cloneData() {
 
         Map<IntegerRange, OneDimensionDataDistribution> clone = new HashMap<IntegerRange, OneDimensionDataDistribution>();
 
-        for(IntegerRange iR : targetData.keySet()) {
+        for (IntegerRange iR : targetData.keySet()) {
             OneDimensionDataDistribution d = targetData.get(iR);
             clone.put(iR, new OneDimensionDataDistribution(d.getYear(), d.getSourcePopulation(), d.getSourceOrganisation(), d.cloneData()));
         }
@@ -114,8 +114,6 @@ public class TwoDimensionDataDistribution implements DataDistribution {
 //
 //
 //    }
-
-
 
 
 }

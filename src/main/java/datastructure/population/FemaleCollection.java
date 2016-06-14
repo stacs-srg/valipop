@@ -48,7 +48,8 @@ public class FemaleCollection extends PersonCollection {
             for (Integer i : byBirthYearAndNumberOfChildren.get(year.getYearDate()).keySet()) {
                 people.addAll(byBirthYearAndNumberOfChildren.get(year.getYearDate()).get(i));
             }
-        } catch (NullPointerException e) { }
+        } catch (NullPointerException e) {
+        }
 
         return people;
     }
@@ -74,7 +75,7 @@ public class FemaleCollection extends PersonCollection {
     public boolean removePerson(IPerson person) throws PersonNotFoundException {
         Collection<IPerson> people = byBirthYearAndNumberOfChildren.get(person.getBirthDate().getYearDate()).get(countChildren(person));
 
-        if(people == null || !people.remove(person)) {
+        if (people == null || !people.remove(person)) {
             throw new PersonNotFoundException("Specified person not found in datastructure");
         }
 
@@ -123,7 +124,7 @@ public class FemaleCollection extends PersonCollection {
 
 
             // TODO NEXT this just broke things
-            if(p.noRecentChildren(currentDate)) {
+            if (p.noRecentChildren(currentDate)) {
                 people.add(p);
             } else {
                 i--;

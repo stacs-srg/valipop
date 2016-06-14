@@ -5,6 +5,7 @@ package plots.javastat.util;
  * <p>Description: JAVA programs for statistical computations</p>
  * <p>Copyright: Copyright (c) 2009</p>
  * <p>Company: Tung Hai University</p>
+ *
  * @author Wen Hsiang Wei
  * @version 1.4
  */
@@ -13,36 +14,35 @@ package plots.javastat.util;
  * The enumerated regression types.
  */
 
-public enum RegressionType
-{
+public enum RegressionType {
 
-        /**
-         * Linear regression model.
-         */
+    /**
+     * Linear regression model.
+     */
 
-        LINEAR,
+    LINEAR,
 
-        /**
-         * Cox's proportional hazards regression model.
-         */
+    /**
+     * Cox's proportional hazards regression model.
+     */
 
-        COX,
+    COX,
 
-        /**
-         * Logistic regression model.
-         */
+    /**
+     * Logistic regression model.
+     */
 
-        LOGISTIC,
+    LOGISTIC,
 
-        /**
-         * Log-linear regression model.
-         */
+    /**
+     * Log-linear regression model.
+     */
 
-        LOG_LINEAR,
+    LOG_LINEAR,
 
-        /**
-         * P-spline regression model.
-         */
+    /**
+     * P-spline regression model.
+     */
 
-        P_SPLINE
+    P_SPLINE
 }

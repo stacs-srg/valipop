@@ -5,6 +5,7 @@ package plots.javastat.regression;
  * <p>Description: JAVA programs for statistical computations</p>
  * <p>Copyright: Copyright (c) 2009</p>
  * <p>Company: Tung Hai University</p>
+ *
  * @author Wen Hsiang Wei
  * @version 1.4
  */
@@ -19,6 +20,7 @@ import plots.javastat.regression.nonparametric.PSplineRegression;
 import plots.javastat.util.DataManager;
 import plots.javastat.util.RegressionType;
 import plots.javastat.util.Output;
+
 import static plots.javastat.regression.SelectionCriterion.*;
 import static plots.javastat.regression.PsiFunction.*;
 import static plots.javastat.util.Argument.*;
@@ -102,8 +104,7 @@ import static plots.javastat.util.RegressionType.*;
  * <br> out.println(testclass2.output.toString());
  */
 
-public class WeightedSelectionCriterion extends SelectionCriterionTemplate
-{
+public class WeightedSelectionCriterion extends SelectionCriterionTemplate {
 
     /**
      * The object for regression model selection.
@@ -218,7 +219,8 @@ public class WeightedSelectionCriterion extends SelectionCriterionTemplate
      * Default WeightedSelectionCriterion constructor.
      */
 
-    public WeightedSelectionCriterion() {}
+    public WeightedSelectionCriterion() {
+    }
 
     /**
      * Calculates the weighted selection criterion for a linear regression model
@@ -258,288 +260,219 @@ public class WeightedSelectionCriterion extends SelectionCriterionTemplate
      */
 
     public WeightedSelectionCriterion(Hashtable argument,
-                                      Object ...dataObject)
-    {
+                                      Object... dataObject) {
         this.argument = argument;
         this.dataObject = dataObject;
         index = new DataManager().dataLengthIndex(dataObject);
         dataLengthIndex = (Integer) index.get("dataLengthIndex");
-        if (index.get("doubleCovariate") != null)
-        {
+        if (index.get("doubleCovariate") != null) {
             doubleCovariate = (double[][]) index.get("doubleCovariate");
         }
         if (argument.size() > 0 &&
-            dataObject != null)
-        {
+                dataObject != null) {
             if (argument.get(SMOOTHING_PARAMETER) != null &&
-                argument.get(DIVISIONS) != null &&
-                argument.get(DEGREE) != null &&
-                argument.get(ORDER) != null &&
-                argument.get(SELECTION_CRITERION) != null &&
-                argument.get(PSI_FUNCTION) != null)
-            {
-                if (dataLengthIndex == 1)
-                {
+                    argument.get(DIVISIONS) != null &&
+                    argument.get(DEGREE) != null &&
+                    argument.get(ORDER) != null &&
+                    argument.get(SELECTION_CRITERION) != null &&
+                    argument.get(PSI_FUNCTION) != null) {
+                if (dataLengthIndex == 1) {
                     statisticalAnalysis = new WeightedSelectionCriterion(
                             (SelectionCriterion) argument.get(
-                            SELECTION_CRITERION),
+                                    SELECTION_CRITERION),
                             (PsiFunction) argument.get(PSI_FUNCTION),
                             ((Number) argument.get(SMOOTHING_PARAMETER)).
-                            doubleValue(),
+                                    doubleValue(),
                             ((Number) argument.get(DIVISIONS)).doubleValue(),
                             ((Number) argument.get(DEGREE)).doubleValue(),
                             ((Number) argument.get(ORDER)).doubleValue(),
                             (double[][]) dataObject[0],
                             (double[]) dataObject[1], doubleCovariate);
-                }
-                else if (dataLengthIndex == 2)
-                {
+                } else if (dataLengthIndex == 2) {
                     statisticalAnalysis = new WeightedSelectionCriterion(
                             (SelectionCriterion) argument.get(
-                            SELECTION_CRITERION),
+                                    SELECTION_CRITERION),
                             (PsiFunction) argument.get(PSI_FUNCTION),
                             ((Number) argument.get(SMOOTHING_PARAMETER)).
-                            doubleValue(),
+                                    doubleValue(),
                             ((Number) argument.get(DIVISIONS)).doubleValue(),
                             ((Number) argument.get(DEGREE)).doubleValue(),
                             ((Number) argument.get(ORDER)).doubleValue(),
                             (double[][]) dataObject[0],
                             (double[]) dataObject[1],
                             (double[][]) dataObject[2]);
-                }
-                else
-                {
+                } else {
                     throw new IllegalArgumentException("Wrong input data.");
                 }
-            }
-            else if (argument.get(SMOOTHING_PARAMETER) != null &&
-                     argument.get(DIVISIONS) != null &&
-                     argument.get(DEGREE) != null &&
-                     argument.get(ORDER) != null &&
-                     argument.get(SELECTION_CRITERION) != null)
-            {
-                if (dataLengthIndex == 1)
-                {
+            } else if (argument.get(SMOOTHING_PARAMETER) != null &&
+                    argument.get(DIVISIONS) != null &&
+                    argument.get(DEGREE) != null &&
+                    argument.get(ORDER) != null &&
+                    argument.get(SELECTION_CRITERION) != null) {
+                if (dataLengthIndex == 1) {
                     statisticalAnalysis = new WeightedSelectionCriterion(
                             (SelectionCriterion) argument.get(
-                            SELECTION_CRITERION),
+                                    SELECTION_CRITERION),
                             ((Number) argument.get(SMOOTHING_PARAMETER)).
-                            doubleValue(),
+                                    doubleValue(),
                             ((Number) argument.get(DIVISIONS)).doubleValue(),
                             ((Number) argument.get(DEGREE)).doubleValue(),
                             ((Number) argument.get(ORDER)).doubleValue(),
                             (double[][]) dataObject[0],
                             (double[]) dataObject[1], doubleCovariate);
-                }
-                else if (dataLengthIndex == 2)
-                {
+                } else if (dataLengthIndex == 2) {
                     statisticalAnalysis = new WeightedSelectionCriterion(
                             (SelectionCriterion) argument.get(
-                            SELECTION_CRITERION),
+                                    SELECTION_CRITERION),
                             ((Number) argument.get(SMOOTHING_PARAMETER)).
-                            doubleValue(),
+                                    doubleValue(),
                             ((Number) argument.get(DIVISIONS)).doubleValue(),
                             ((Number) argument.get(DEGREE)).doubleValue(),
                             ((Number) argument.get(ORDER)).doubleValue(),
                             (double[][]) dataObject[0],
                             (double[]) dataObject[1],
                             (double[][]) dataObject[2]);
-                }
-                else
-                {
+                } else {
                     throw new IllegalArgumentException("Wrong input data.");
                 }
-            }
-            else if (argument.get(SMOOTHING_PARAMETER) != null &&
-                     argument.get(DIVISIONS) != null &&
-                     argument.get(DEGREE) != null &&
-                     argument.get(ORDER) != null)
-            {
-                if (dataLengthIndex == 1)
-                {
+            } else if (argument.get(SMOOTHING_PARAMETER) != null &&
+                    argument.get(DIVISIONS) != null &&
+                    argument.get(DEGREE) != null &&
+                    argument.get(ORDER) != null) {
+                if (dataLengthIndex == 1) {
                     statisticalAnalysis = new WeightedSelectionCriterion(
                             ((Number) argument.get(SMOOTHING_PARAMETER)).
-                            doubleValue(),
+                                    doubleValue(),
                             ((Number) argument.get(DIVISIONS)).doubleValue(),
                             ((Number) argument.get(DEGREE)).doubleValue(),
                             ((Number) argument.get(ORDER)).doubleValue(),
                             (double[][]) dataObject[0],
                             (double[]) dataObject[1], doubleCovariate);
-                }
-                else if (dataLengthIndex == 2)
-                {
+                } else if (dataLengthIndex == 2) {
                     statisticalAnalysis = new WeightedSelectionCriterion(
                             ((Number) argument.get(SMOOTHING_PARAMETER)).
-                            doubleValue(),
+                                    doubleValue(),
                             ((Number) argument.get(DIVISIONS)).doubleValue(),
                             ((Number) argument.get(DEGREE)).doubleValue(),
                             ((Number) argument.get(ORDER)).doubleValue(),
                             (double[][]) dataObject[0],
                             (double[]) dataObject[1],
                             (double[][]) dataObject[2]);
-                }
-                else if (dataLengthIndex == 3)
-                {
+                } else if (dataLengthIndex == 3) {
                     statisticalAnalysis = new WeightedSelectionCriterion(
                             ((Number) argument.get(SMOOTHING_PARAMETER)).
-                            doubleValue(),
+                                    doubleValue(),
                             ((Number) argument.get(DIVISIONS)).doubleValue(),
                             ((Number) argument.get(DEGREE)).doubleValue(),
                             ((Number) argument.get(ORDER)).doubleValue(),
                             (double[]) dataObject[0], doubleCovariate);
-                }
-                else if (dataLengthIndex == 4)
-                {
+                } else if (dataLengthIndex == 4) {
                     statisticalAnalysis = new WeightedSelectionCriterion(
                             ((Number) argument.get(SMOOTHING_PARAMETER)).
-                            doubleValue(),
+                                    doubleValue(),
                             ((Number) argument.get(DIVISIONS)).doubleValue(),
                             ((Number) argument.get(DEGREE)).doubleValue(),
                             ((Number) argument.get(ORDER)).doubleValue(),
                             (double[]) dataObject[0],
                             (double[][]) dataObject[1]);
-                }
-                else
-                {
+                } else {
                     throw new IllegalArgumentException("Wrong input data.");
                 }
-            }
-            else if (argument.get(SMOOTHING_PARAMETER) != null &&
-                     argument.get(DIVISIONS) != null)
-            {
-                if (dataLengthIndex == 1)
-                {
+            } else if (argument.get(SMOOTHING_PARAMETER) != null &&
+                    argument.get(DIVISIONS) != null) {
+                if (dataLengthIndex == 1) {
                     statisticalAnalysis = new WeightedSelectionCriterion(
                             ((Number) argument.get(SMOOTHING_PARAMETER)).
-                            doubleValue(),
+                                    doubleValue(),
                             ((Number) argument.get(DIVISIONS)).doubleValue(),
                             (double[][]) dataObject[0],
                             (double[]) dataObject[1], doubleCovariate);
-                }
-                else if (dataLengthIndex == 2)
-                {
+                } else if (dataLengthIndex == 2) {
                     statisticalAnalysis = new WeightedSelectionCriterion(
                             ((Number) argument.get(SMOOTHING_PARAMETER)).
-                            doubleValue(),
+                                    doubleValue(),
                             ((Number) argument.get(DIVISIONS)).doubleValue(),
                             (double[][]) dataObject[0],
                             (double[]) dataObject[1],
                             (double[][]) dataObject[2]);
-                }
-                else if (dataLengthIndex == 3)
-                {
+                } else if (dataLengthIndex == 3) {
                     statisticalAnalysis = new WeightedSelectionCriterion(
                             ((Number) argument.get(SMOOTHING_PARAMETER)).
-                            doubleValue(),
+                                    doubleValue(),
                             ((Number) argument.get(DIVISIONS)).doubleValue(),
                             (double[]) dataObject[0], doubleCovariate);
-                }
-                else if (dataLengthIndex == 4)
-                {
+                } else if (dataLengthIndex == 4) {
                     statisticalAnalysis = new WeightedSelectionCriterion(
                             ((Number) argument.get(SMOOTHING_PARAMETER)).
-                            doubleValue(),
+                                    doubleValue(),
                             ((Number) argument.get(DIVISIONS)).doubleValue(),
                             (double[]) dataObject[0],
                             (double[][]) dataObject[1]);
-                }
-                else
-                {
+                } else {
                     throw new IllegalArgumentException("Wrong input data.");
                 }
-            }
-            else if (argument.get(SELECTION_CRITERION) != null &&
-                     argument.get(PSI_FUNCTION) != null)
-            {
-                if (dataLengthIndex == 1)
-                {
+            } else if (argument.get(SELECTION_CRITERION) != null &&
+                    argument.get(PSI_FUNCTION) != null) {
+                if (dataLengthIndex == 1) {
                     statisticalAnalysis = new WeightedSelectionCriterion(
                             (SelectionCriterion) argument.get(
-                            SELECTION_CRITERION),
+                                    SELECTION_CRITERION),
                             (PsiFunction) argument.get(PSI_FUNCTION),
                             (double[][]) dataObject[0],
                             (double[]) dataObject[1], doubleCovariate);
-                }
-                else if (dataLengthIndex == 2)
-                {
+                } else if (dataLengthIndex == 2) {
                     statisticalAnalysis = new WeightedSelectionCriterion(
                             (SelectionCriterion) argument.get(
-                            SELECTION_CRITERION),
+                                    SELECTION_CRITERION),
                             (PsiFunction) argument.get(PSI_FUNCTION),
                             (double[][]) dataObject[0],
                             (double[]) dataObject[1],
                             (double[][]) dataObject[2]);
-                }
-                else
-                {
+                } else {
                     throw new IllegalArgumentException("Wrong input data.");
                 }
-            }
-            else if (argument.get(SELECTION_CRITERION) != null)
-            {
-                if (dataLengthIndex == 1)
-                {
+            } else if (argument.get(SELECTION_CRITERION) != null) {
+                if (dataLengthIndex == 1) {
                     statisticalAnalysis = new WeightedSelectionCriterion(
                             (SelectionCriterion) argument.get(
-                            SELECTION_CRITERION),
+                                    SELECTION_CRITERION),
                             (double[][]) dataObject[0],
                             (double[]) dataObject[1], doubleCovariate);
-                }
-                else if (dataLengthIndex == 2)
-                {
+                } else if (dataLengthIndex == 2) {
                     statisticalAnalysis = new WeightedSelectionCriterion(
                             (SelectionCriterion) argument.get(
-                            SELECTION_CRITERION),
+                                    SELECTION_CRITERION),
                             (double[][]) dataObject[0],
                             (double[]) dataObject[1],
                             (double[][]) dataObject[2]);
-                }
-                else
-                {
+                } else {
                     throw new IllegalArgumentException("Wrong input data.");
                 }
-            }
-            else
-            {
+            } else {
                 throw new IllegalArgumentException(
                         "Wrong input argument(s) or data.");
             }
-        }
-        else if (dataObject != null)
-        {
-            if (dataLengthIndex == 1)
-            {
+        } else if (dataObject != null) {
+            if (dataLengthIndex == 1) {
                 statisticalAnalysis = new WeightedSelectionCriterion(
                         (double[][]) dataObject[0],
                         (double[]) dataObject[1], doubleCovariate);
-            }
-            else if (dataLengthIndex == 2)
-            {
+            } else if (dataLengthIndex == 2) {
                 statisticalAnalysis = new WeightedSelectionCriterion(
                         (double[][]) dataObject[0],
                         (double[]) dataObject[1], (double[][]) dataObject[2]);
-            }
-            else if (dataLengthIndex == 3)
-            {
+            } else if (dataLengthIndex == 3) {
                 statisticalAnalysis = new WeightedSelectionCriterion(
                         (double[]) dataObject[0], doubleCovariate);
-            }
-            else if (dataLengthIndex == 4)
-            {
+            } else if (dataLengthIndex == 4) {
                 statisticalAnalysis = new WeightedSelectionCriterion(
                         (double[]) dataObject[0], (double[][]) dataObject[1]);
-            }
-            else
-            {
+            } else {
                 throw new IllegalArgumentException("Wrong input data.");
             }
-        }
-        else if (dataObject == null)
-        {
+        } else if (dataObject == null) {
             statisticalAnalysis = new WeightedSelectionCriterion();
-        }
-        else
-        {
+        } else {
             throw new IllegalArgumentException(
                     "Wrong input argument(s) or data.");
         }
@@ -572,8 +505,7 @@ public class WeightedSelectionCriterion extends SelectionCriterionTemplate
                                          double degree, double order,
                                          double[][] weightMatrix,
                                          double[] response,
-                                         double[] ...covariate)
-    {
+                                         double[]... covariate) {
         this.regressonType = regressionType;
         this.selectionCriterion = selectionCriterion;
         this.psiFunction = psiFunction;
@@ -607,11 +539,10 @@ public class WeightedSelectionCriterion extends SelectionCriterionTemplate
                                       PsiFunction psiFunction,
                                       double[][] weightMatrix,
                                       double[] response,
-                                      double[] ...covariate)
-    {
+                                      double[]... covariate) {
         this(LINEAR, selectionCriterion, psiFunction,
-             Double.NaN, Double.NaN, Double.NaN, Double.NaN,
-             weightMatrix, response, covariate);
+                Double.NaN, Double.NaN, Double.NaN, Double.NaN,
+                weightMatrix, response, covariate);
     }
 
     /**
@@ -631,8 +562,7 @@ public class WeightedSelectionCriterion extends SelectionCriterionTemplate
     public WeightedSelectionCriterion(SelectionCriterion selectionCriterion,
                                       double[][] weightMatrix,
                                       double[] response,
-                                      double[] ...covariate)
-    {
+                                      double[]... covariate) {
         this(selectionCriterion, PCA_NUMBER, weightMatrix, response, covariate);
     }
 
@@ -651,8 +581,7 @@ public class WeightedSelectionCriterion extends SelectionCriterionTemplate
 
     public WeightedSelectionCriterion(double[][] weightMatrix,
                                       double[] response,
-                                      double[] ...covariate)
-    {
+                                      double[]... covariate) {
         this(AIC, weightMatrix, response, covariate);
     }
 
@@ -668,11 +597,10 @@ public class WeightedSelectionCriterion extends SelectionCriterionTemplate
      */
 
     public WeightedSelectionCriterion(double[] response,
-                                      double[] ...covariate)
-    {
+                                      double[]... covariate) {
         this(AIC, SAMPLE_SIZE,
-             new DataManager().identity(response.length),
-             response, covariate);
+                new DataManager().identity(response.length),
+                response, covariate);
     }
 
     /**
@@ -700,11 +628,10 @@ public class WeightedSelectionCriterion extends SelectionCriterionTemplate
                                       double order,
                                       double[][] weightMatrix,
                                       double[] response,
-                                      double[] ...covariate)
-    {
+                                      double[]... covariate) {
         this(P_SPLINE, selectionCriterion, psiFunction,
-             smoothingParameter, divisions, degree, order,
-             weightMatrix, response, covariate);
+                smoothingParameter, divisions, degree, order,
+                weightMatrix, response, covariate);
     }
 
     /**
@@ -732,10 +659,9 @@ public class WeightedSelectionCriterion extends SelectionCriterionTemplate
                                       double order,
                                       double[][] weightMatrix,
                                       double[] response,
-                                      double[] ...covariate)
-    {
+                                      double[]... covariate) {
         this(selectionCriterion, PCA_NUMBER, smoothingParameter, divisions,
-             degree, order, weightMatrix, response, covariate);
+                degree, order, weightMatrix, response, covariate);
     }
 
     /**
@@ -761,10 +687,9 @@ public class WeightedSelectionCriterion extends SelectionCriterionTemplate
                                       double order,
                                       double[][] weightMatrix,
                                       double[] response,
-                                      double[] ...covariate)
-    {
+                                      double[]... covariate) {
         this(GCV, smoothingParameter, divisions, degree, order,
-             weightMatrix, response, covariate);
+                weightMatrix, response, covariate);
     }
 
     /**
@@ -786,10 +711,9 @@ public class WeightedSelectionCriterion extends SelectionCriterionTemplate
                                       double divisions,
                                       double[][] weightMatrix,
                                       double[] response,
-                                      double[] ...covariate)
-    {
+                                      double[]... covariate) {
         this(GCV, smoothingParameter, divisions, 3.0, 2.0, weightMatrix,
-             response, covariate);
+                response, covariate);
     }
 
     /**
@@ -812,12 +736,11 @@ public class WeightedSelectionCriterion extends SelectionCriterionTemplate
                                       double degree,
                                       double order,
                                       double[] response,
-                                      double[] ...covariate)
-    {
+                                      double[]... covariate) {
         this(GCV, SAMPLE_SIZE,
-             smoothingParameter, divisions, degree, order,
-             new DataManager().identity(response.length),
-             response, covariate);
+                smoothingParameter, divisions, degree, order,
+                new DataManager().identity(response.length),
+                response, covariate);
     }
 
     /**
@@ -836,11 +759,10 @@ public class WeightedSelectionCriterion extends SelectionCriterionTemplate
     public WeightedSelectionCriterion(double smoothingParameter,
                                       double divisions,
                                       double[] response,
-                                      double[] ...covariate)
-    {
+                                      double[]... covariate) {
         this(smoothingParameter, divisions, 3.0, 2.0,
-             new DataManager().identity(response.length),
-             response, covariate);
+                new DataManager().identity(response.length),
+                response, covariate);
     }
 
     /**
@@ -882,209 +804,166 @@ public class WeightedSelectionCriterion extends SelectionCriterionTemplate
      */
 
     public Double penalty(Hashtable argument,
-                          Object ...dataObject)
-    {
+                          Object... dataObject) {
         this.argument = argument;
         this.dataObject = dataObject;
         index = new DataManager().dataLengthIndex(dataObject);
         dataLengthIndex = (Integer) index.get("dataLengthIndex");
-        if (index.get("doubleCovariate") != null)
-        {
+        if (index.get("doubleCovariate") != null) {
             doubleCovariate = (double[][]) index.get("doubleCovariate");
         }
-        if (argument.size() > 0 && dataObject != null)
-        {
+        if (argument.size() > 0 && dataObject != null) {
             if (argument.get(SMOOTHING_PARAMETER) != null &&
-                argument.get(DIVISIONS) != null &&
-                argument.get(DEGREE) != null &&
-                argument.get(ORDER) != null &&
-                argument.get(SELECTION_CRITERION) != null &&
-                argument.get(PSI_FUNCTION) != null)
-            {
-                if (dataLengthIndex == 1)
-                {
+                    argument.get(DIVISIONS) != null &&
+                    argument.get(DEGREE) != null &&
+                    argument.get(ORDER) != null &&
+                    argument.get(SELECTION_CRITERION) != null &&
+                    argument.get(PSI_FUNCTION) != null) {
+                if (dataLengthIndex == 1) {
                     penalty = penalty(
                             (SelectionCriterion) argument.get(
                                     SELECTION_CRITERION),
                             (PsiFunction) argument.get(PSI_FUNCTION),
                             ((Number) argument.get(SMOOTHING_PARAMETER)).
-                            doubleValue(),
+                                    doubleValue(),
                             ((Number) argument.get(DIVISIONS)).doubleValue(),
                             ((Number) argument.get(DEGREE)).doubleValue(),
                             ((Number) argument.get(ORDER)).doubleValue(),
                             (double[][]) dataObject[0],
                             (double[]) dataObject[1], doubleCovariate);
-                }
-                else if (dataLengthIndex == 2)
-                {
+                } else if (dataLengthIndex == 2) {
                     penalty = penalty(
                             (SelectionCriterion) argument.get(
                                     SELECTION_CRITERION),
                             (PsiFunction) argument.get(PSI_FUNCTION),
                             ((Number) argument.get(SMOOTHING_PARAMETER)).
-                            doubleValue(),
+                                    doubleValue(),
                             ((Number) argument.get(DIVISIONS)).doubleValue(),
                             ((Number) argument.get(DEGREE)).doubleValue(),
                             ((Number) argument.get(ORDER)).doubleValue(),
                             (double[][]) dataObject[0],
                             (double[]) dataObject[1],
                             (double[][]) dataObject[2]);
-                }
-                else
-                {
+                } else {
                     throw new IllegalArgumentException("Wrong input data.");
                 }
-            }
-            else if (argument.get(SMOOTHING_PARAMETER) != null &&
-                     argument.get(DIVISIONS) != null &&
-                     argument.get(DEGREE) != null &&
-                     argument.get(ORDER) != null &&
-                     argument.get(SELECTION_CRITERION) != null)
-            {
-                if (dataLengthIndex == 1)
-                {
+            } else if (argument.get(SMOOTHING_PARAMETER) != null &&
+                    argument.get(DIVISIONS) != null &&
+                    argument.get(DEGREE) != null &&
+                    argument.get(ORDER) != null &&
+                    argument.get(SELECTION_CRITERION) != null) {
+                if (dataLengthIndex == 1) {
                     penalty = penalty(
                             (SelectionCriterion) argument.get(
                                     SELECTION_CRITERION),
                             ((Number) argument.get(SMOOTHING_PARAMETER)).
-                            doubleValue(),
+                                    doubleValue(),
                             ((Number) argument.get(DIVISIONS)).doubleValue(),
                             ((Number) argument.get(DEGREE)).doubleValue(),
                             ((Number) argument.get(ORDER)).doubleValue(),
                             (double[][]) dataObject[0],
                             (double[]) dataObject[1], doubleCovariate);
-                }
-                else if (dataLengthIndex == 2)
-                {
+                } else if (dataLengthIndex == 2) {
                     penalty = penalty(
                             (SelectionCriterion) argument.get(
                                     SELECTION_CRITERION),
                             ((Number) argument.get(SMOOTHING_PARAMETER)).
-                            doubleValue(),
+                                    doubleValue(),
                             ((Number) argument.get(DIVISIONS)).doubleValue(),
                             ((Number) argument.get(DEGREE)).doubleValue(),
                             ((Number) argument.get(ORDER)).doubleValue(),
                             (double[][]) dataObject[0],
                             (double[]) dataObject[1],
                             (double[][]) dataObject[2]);
-                }
-                else
-                {
+                } else {
                     throw new IllegalArgumentException("Wrong input data.");
                 }
-            }
-            else if (argument.get(SMOOTHING_PARAMETER) != null &&
-                     argument.get(DIVISIONS) != null &&
-                     argument.get(DEGREE) != null &&
-                     argument.get(ORDER) != null)
-            {
-                if (dataLengthIndex == 1)
-                {
+            } else if (argument.get(SMOOTHING_PARAMETER) != null &&
+                    argument.get(DIVISIONS) != null &&
+                    argument.get(DEGREE) != null &&
+                    argument.get(ORDER) != null) {
+                if (dataLengthIndex == 1) {
                     penalty = penalty(
                             ((Number) argument.get(SMOOTHING_PARAMETER)).
-                            doubleValue(),
+                                    doubleValue(),
                             ((Number) argument.get(DIVISIONS)).doubleValue(),
                             ((Number) argument.get(DEGREE)).doubleValue(),
                             ((Number) argument.get(ORDER)).doubleValue(),
                             (double[][]) dataObject[0],
                             (double[]) dataObject[1], doubleCovariate);
-                }
-                else if (dataLengthIndex == 2)
-                {
+                } else if (dataLengthIndex == 2) {
                     penalty = penalty(
                             ((Number) argument.get(SMOOTHING_PARAMETER)).
-                            doubleValue(),
+                                    doubleValue(),
                             ((Number) argument.get(DIVISIONS)).doubleValue(),
                             ((Number) argument.get(DEGREE)).doubleValue(),
                             ((Number) argument.get(ORDER)).doubleValue(),
                             (double[][]) dataObject[0],
                             (double[]) dataObject[1],
                             (double[][]) dataObject[2]);
-                }
-                else if (dataLengthIndex == 3)
-                {
+                } else if (dataLengthIndex == 3) {
                     penalty = penalty(
                             ((Number) argument.get(SMOOTHING_PARAMETER)).
-                            doubleValue(),
+                                    doubleValue(),
                             ((Number) argument.get(DIVISIONS)).doubleValue(),
                             ((Number) argument.get(DEGREE)).doubleValue(),
                             ((Number) argument.get(ORDER)).doubleValue(),
                             (double[]) dataObject[0], doubleCovariate);
-                }
-                else if (dataLengthIndex == 4)
-                {
+                } else if (dataLengthIndex == 4) {
                     penalty = penalty(
                             ((Number) argument.get(SMOOTHING_PARAMETER)).
-                            doubleValue(),
+                                    doubleValue(),
                             ((Number) argument.get(DIVISIONS)).doubleValue(),
                             ((Number) argument.get(DEGREE)).doubleValue(),
                             ((Number) argument.get(ORDER)).doubleValue(),
                             (double[]) dataObject[0],
                             (double[][]) dataObject[1]);
-                }
-                else
-                {
+                } else {
                     throw new IllegalArgumentException("Wrong input data.");
                 }
-            }
-            else if (argument.get(SMOOTHING_PARAMETER) != null &&
-                     argument.get(DIVISIONS) != null)
-            {
-                if (dataLengthIndex == 1)
-                {
+            } else if (argument.get(SMOOTHING_PARAMETER) != null &&
+                    argument.get(DIVISIONS) != null) {
+                if (dataLengthIndex == 1) {
                     penalty = penalty(
                             ((Number) argument.get(SMOOTHING_PARAMETER)).
-                            doubleValue(),
+                                    doubleValue(),
                             ((Number) argument.get(DIVISIONS)).doubleValue(),
                             (double[][]) dataObject[0],
                             (double[]) dataObject[1], doubleCovariate);
-                }
-                else if (dataLengthIndex == 2)
-                {
+                } else if (dataLengthIndex == 2) {
                     penalty = penalty(
                             ((Number) argument.get(SMOOTHING_PARAMETER)).
-                            doubleValue(),
+                                    doubleValue(),
                             ((Number) argument.get(DIVISIONS)).doubleValue(),
                             (double[][]) dataObject[0],
                             (double[]) dataObject[1],
                             (double[][]) dataObject[2]);
-                }
-                else if (dataLengthIndex == 3)
-                {
+                } else if (dataLengthIndex == 3) {
                     penalty = penalty(
                             ((Number) argument.get(SMOOTHING_PARAMETER)).
-                            doubleValue(),
+                                    doubleValue(),
                             ((Number) argument.get(DIVISIONS)).doubleValue(),
                             (double[]) dataObject[0], doubleCovariate);
-                }
-                else if (dataLengthIndex == 4)
-                {
+                } else if (dataLengthIndex == 4) {
                     penalty = penalty(
                             ((Number) argument.get(SMOOTHING_PARAMETER)).
-                            doubleValue(),
+                                    doubleValue(),
                             ((Number) argument.get(DIVISIONS)).doubleValue(),
                             (double[]) dataObject[0],
                             (double[][]) dataObject[1]);
-                }
-                else
-                {
+                } else {
                     throw new IllegalArgumentException("Wrong input data.");
                 }
-            }
-            else if (argument.get(SELECTION_CRITERION) != null &&
-                     argument.get(PSI_FUNCTION) != null)
-            {
-                if (dataLengthIndex == 1)
-                {
+            } else if (argument.get(SELECTION_CRITERION) != null &&
+                    argument.get(PSI_FUNCTION) != null) {
+                if (dataLengthIndex == 1) {
                     penalty = penalty(
                             (SelectionCriterion) argument.get(
                                     SELECTION_CRITERION),
                             (PsiFunction) argument.get(PSI_FUNCTION),
                             (double[][]) dataObject[0],
                             (double[]) dataObject[1], doubleCovariate);
-                }
-                else if (dataLengthIndex == 2)
-                {
+                } else if (dataLengthIndex == 2) {
                     penalty = penalty(
                             (SelectionCriterion) argument.get(
                                     SELECTION_CRITERION),
@@ -1092,75 +971,51 @@ public class WeightedSelectionCriterion extends SelectionCriterionTemplate
                             (double[][]) dataObject[0],
                             (double[]) dataObject[1],
                             (double[][]) dataObject[2]);
-                }
-                else
-                {
+                } else {
                     throw new IllegalArgumentException("Wrong input data.");
                 }
-            }
-            else if (argument.get(SELECTION_CRITERION) != null)
-            {
-                if (dataLengthIndex == 1)
-                {
+            } else if (argument.get(SELECTION_CRITERION) != null) {
+                if (dataLengthIndex == 1) {
                     penalty = penalty(
                             (SelectionCriterion) argument.get(
                                     SELECTION_CRITERION),
                             (double[][]) dataObject[0],
                             (double[]) dataObject[1], doubleCovariate);
-                }
-                else if (dataLengthIndex == 2)
-                {
+                } else if (dataLengthIndex == 2) {
                     penalty = penalty(
                             (SelectionCriterion) argument.get(
                                     SELECTION_CRITERION),
                             (double[][]) dataObject[0],
                             (double[]) dataObject[1],
                             (double[][]) dataObject[2]);
-                }
-                else
-                {
+                } else {
                     throw new IllegalArgumentException("Wrong input data.");
                 }
-            }
-            else
-            {
+            } else {
                 throw new IllegalArgumentException(
                         "Wrong input argument(s) or data.");
             }
-        }
-        else if (dataObject != null)
-        {
-            if (dataLengthIndex == 1)
-            {
+        } else if (dataObject != null) {
+            if (dataLengthIndex == 1) {
                 penalty = penalty(
                         (double[][]) dataObject[0],
                         (double[]) dataObject[1], doubleCovariate);
-            }
-            else if (dataLengthIndex == 2)
-            {
+            } else if (dataLengthIndex == 2) {
                 penalty = penalty(
                         (double[][]) dataObject[0],
                         (double[]) dataObject[1],
                         (double[][]) dataObject[2]);
-            }
-            else if (dataLengthIndex == 3)
-            {
+            } else if (dataLengthIndex == 3) {
                 penalty = penalty(
                         (double[]) dataObject[0], doubleCovariate);
-            }
-            else if (dataLengthIndex == 4)
-            {
+            } else if (dataLengthIndex == 4) {
                 penalty = penalty(
                         (double[]) dataObject[0],
                         (double[][]) dataObject[1]);
-            }
-            else
-            {
+            } else {
                 throw new IllegalArgumentException("Wrong input data.");
             }
-        }
-        else
-        {
+        } else {
             throw new IllegalArgumentException(
                     "Wrong input argument(s) or data.");
         }
@@ -1196,8 +1051,7 @@ public class WeightedSelectionCriterion extends SelectionCriterionTemplate
                              double order,
                              double[][] weightMatrix,
                              double[] response,
-                             double[] ...covariate)
-    {
+                             double[]... covariate) {
         this.regressonType = regressionType;
         this.selectionCriterion = selectionCriterion;
         this.psiFunction = psiFunction;
@@ -1209,13 +1063,12 @@ public class WeightedSelectionCriterion extends SelectionCriterionTemplate
         this.response = response;
         this.covariate = covariate;
         weightedRSS(regressionType, smoothingParameter, divisions, degree,
-                    order,
-                    weightMatrix, response, covariate);
+                order,
+                weightMatrix, response, covariate);
         argument = new Hashtable();
         argument.put(PSI_FUNCTION, psiFunction);
         psi = psi(argument, weightMatrix, response, covariate);
-        switch (regressionType)
-        {
+        switch (regressionType) {
             case P_SPLINE:
                 H = new Matrix(pSplineRegression.hatMatrix);
                 break;
@@ -1223,13 +1076,12 @@ public class WeightedSelectionCriterion extends SelectionCriterionTemplate
                 H = new Matrix(linearRegression.hatMatrix);
         }
         mu = H.trace() / psi;
-        switch (selectionCriterion)
-        {
+        switch (selectionCriterion) {
             case GCV:
                 penalty = Math.pow((1.0 - mu), 2.0);
                 break;
             case AIC:
-                penalty = Math.exp( -1.0 * 2.0 * mu);
+                penalty = Math.exp(-1.0 * 2.0 * mu);
                 break;
             case T:
                 penalty = (1.0 - 2.0 * mu);
@@ -1242,8 +1094,8 @@ public class WeightedSelectionCriterion extends SelectionCriterionTemplate
                 break;
             case U:
                 penalty = ((1.0 - mu) *
-                           (response.length - 1 - response.length * mu)) /
-                          (response.length - 1);
+                        (response.length - 1 - response.length * mu)) /
+                        (response.length - 1);
                 break;
             default:
                 throw new IllegalArgumentException(
@@ -1272,11 +1124,10 @@ public class WeightedSelectionCriterion extends SelectionCriterionTemplate
                           PsiFunction psiFunction,
                           double[][] weightMatrix,
                           double[] response,
-                          double[] ...covariate)
-    {
+                          double[]... covariate) {
         return penalty(LINEAR, selectionCriterion, psiFunction,
-                       Double.NaN, Double.NaN, Double.NaN, Double.NaN,
-                       weightMatrix, response, covariate);
+                Double.NaN, Double.NaN, Double.NaN, Double.NaN,
+                weightMatrix, response, covariate);
     }
 
     /**
@@ -1297,10 +1148,9 @@ public class WeightedSelectionCriterion extends SelectionCriterionTemplate
     public double penalty(SelectionCriterion selectionCriterion,
                           double[][] weightMatrix,
                           double[] response,
-                          double[] ...covariate)
-    {
+                          double[]... covariate) {
         return penalty(selectionCriterion, PCA_NUMBER, weightMatrix, response,
-                       covariate);
+                covariate);
     }
 
     /**
@@ -1319,8 +1169,7 @@ public class WeightedSelectionCriterion extends SelectionCriterionTemplate
 
     public double penalty(double[][] weightMatrix,
                           double[] response,
-                          double[] ...covariate)
-    {
+                          double[]... covariate) {
         return penalty(AIC, weightMatrix, response, covariate);
     }
 
@@ -1337,11 +1186,10 @@ public class WeightedSelectionCriterion extends SelectionCriterionTemplate
      */
 
     public double penalty(double[] response,
-                          double[] ...covariate)
-    {
+                          double[]... covariate) {
         return penalty(AIC, SAMPLE_SIZE,
-                       new DataManager().
-                       identity(response.length), response, covariate);
+                new DataManager().
+                        identity(response.length), response, covariate);
     }
 
     /**
@@ -1370,11 +1218,10 @@ public class WeightedSelectionCriterion extends SelectionCriterionTemplate
                           double order,
                           double[][] weightMatrix,
                           double[] response,
-                          double[] ...covariate)
-    {
+                          double[]... covariate) {
         return penalty(P_SPLINE, selectionCriterion, psiFunction,
-                       smoothingParameter, divisions, degree, order,
-                       weightMatrix, response, covariate);
+                smoothingParameter, divisions, degree, order,
+                weightMatrix, response, covariate);
     }
 
     /**
@@ -1402,11 +1249,10 @@ public class WeightedSelectionCriterion extends SelectionCriterionTemplate
                           double order,
                           double[][] weightMatrix,
                           double[] response,
-                          double[] ...covariate)
-    {
+                          double[]... covariate) {
         return penalty(selectionCriterion, PCA_NUMBER,
-                       smoothingParameter, divisions, degree, order,
-                       weightMatrix, response, covariate);
+                smoothingParameter, divisions, degree, order,
+                weightMatrix, response, covariate);
     }
 
     /**
@@ -1433,10 +1279,9 @@ public class WeightedSelectionCriterion extends SelectionCriterionTemplate
                           double order,
                           double[][] weightMatrix,
                           double[] response,
-                          double[] ...covariate)
-    {
+                          double[]... covariate) {
         return penalty(GCV, smoothingParameter, divisions, degree, order,
-                       weightMatrix, response, covariate);
+                weightMatrix, response, covariate);
     }
 
     /**
@@ -1459,10 +1304,9 @@ public class WeightedSelectionCriterion extends SelectionCriterionTemplate
                           double divisions,
                           double[][] weightMatrix,
                           double[] response,
-                          double[] ...covariate)
-    {
+                          double[]... covariate) {
         return penalty(GCV, smoothingParameter, divisions, 3.0, 2.0,
-                       weightMatrix, response, covariate);
+                weightMatrix, response, covariate);
     }
 
     /**
@@ -1486,12 +1330,11 @@ public class WeightedSelectionCriterion extends SelectionCriterionTemplate
                           double degree,
                           double order,
                           double[] response,
-                          double[] ...covariate)
-    {
+                          double[]... covariate) {
         return penalty(GCV, SAMPLE_SIZE,
-                       smoothingParameter, divisions, degree, order,
-                       new DataManager().
-                       identity(response.length), response, covariate);
+                smoothingParameter, divisions, degree, order,
+                new DataManager().
+                        identity(response.length), response, covariate);
     }
 
     /**
@@ -1512,11 +1355,10 @@ public class WeightedSelectionCriterion extends SelectionCriterionTemplate
     public double penalty(double smoothingParameter,
                           double divisions,
                           double[] response,
-                          double[] ...covariate)
-    {
+                          double[]... covariate) {
         return penalty(smoothingParameter, divisions, 3.0, 2.0,
-                       new DataManager().
-                       identity(response.length), response, covariate);
+                new DataManager().
+                        identity(response.length), response, covariate);
     }
 
     /**
@@ -1540,59 +1382,49 @@ public class WeightedSelectionCriterion extends SelectionCriterionTemplate
      */
 
     public Double weightedRSS(Hashtable argument,
-                              Object ...dataObject)
-    {
+                              Object... dataObject) {
         this.argument = argument;
         this.dataObject = dataObject;
         index = new DataManager().dataLengthIndex(dataObject);
         dataLengthIndex = (Integer) index.get("dataLengthIndex");
-        if (index.get("doubleCovariate") != null)
-        {
+        if (index.get("doubleCovariate") != null) {
             doubleCovariate = (double[][]) index.get("doubleCovariate");
         }
         if (argument.get(SMOOTHING_PARAMETER) != null &&
-            argument.get(DIVISIONS) != null &&
-            argument.get(DEGREE) != null &&
-            argument.get(ORDER) != null &&
-            dataObject != null)
-        {
-            if (dataLengthIndex == 1)
-            {
+                argument.get(DIVISIONS) != null &&
+                argument.get(DEGREE) != null &&
+                argument.get(ORDER) != null &&
+                dataObject != null) {
+            if (dataLengthIndex == 1) {
                 weightedRSS = weightedRSS(
                         ((Number) argument.get(SMOOTHING_PARAMETER)).
-                        doubleValue(),
+                                doubleValue(),
                         ((Number) argument.get(DIVISIONS)).doubleValue(),
                         ((Number) argument.get(DEGREE)).doubleValue(),
                         ((Number) argument.get(ORDER)).doubleValue(),
                         (double[][]) dataObject[0], (double[]) dataObject[1],
                         doubleCovariate);
-            }
-            else if (dataLengthIndex == 2)
-            {
+            } else if (dataLengthIndex == 2) {
                 weightedRSS = weightedRSS(
                         ((Number) argument.get(SMOOTHING_PARAMETER)).
-                        doubleValue(),
+                                doubleValue(),
                         ((Number) argument.get(DIVISIONS)).doubleValue(),
                         ((Number) argument.get(DEGREE)).doubleValue(),
                         ((Number) argument.get(ORDER)).doubleValue(),
                         (double[][]) dataObject[0], (double[]) dataObject[1],
                         (double[][]) dataObject[2]);
-            }
-            else if (dataLengthIndex == 3)
-            {
+            } else if (dataLengthIndex == 3) {
                 weightedRSS = weightedRSS(
                         ((Number) argument.get(SMOOTHING_PARAMETER)).
-                        doubleValue(),
+                                doubleValue(),
                         ((Number) argument.get(DIVISIONS)).doubleValue(),
                         ((Number) argument.get(DEGREE)).doubleValue(),
                         ((Number) argument.get(ORDER)).doubleValue(),
                         (double[]) dataObject[0], doubleCovariate);
-            }
-            else
-            {
+            } else {
                 weightedRSS = weightedRSS(
                         ((Number) argument.get(SMOOTHING_PARAMETER)).
-                        doubleValue(),
+                                doubleValue(),
                         ((Number) argument.get(DIVISIONS)).doubleValue(),
                         ((Number) argument.get(DEGREE)).doubleValue(),
                         ((Number) argument.get(ORDER)).doubleValue(),
@@ -1600,71 +1432,52 @@ public class WeightedSelectionCriterion extends SelectionCriterionTemplate
             }
         }
         if (argument.get(SMOOTHING_PARAMETER) != null &&
-            argument.get(DIVISIONS) != null &&
-            dataObject != null)
-        {
-            if (dataLengthIndex == 1)
-            {
+                argument.get(DIVISIONS) != null &&
+                dataObject != null) {
+            if (dataLengthIndex == 1) {
                 weightedRSS = weightedRSS(
                         ((Number) argument.get(SMOOTHING_PARAMETER)).
-                        doubleValue(),
+                                doubleValue(),
                         ((Number) argument.get(DIVISIONS)).doubleValue(),
                         (double[][]) dataObject[0], (double[]) dataObject[1],
                         doubleCovariate);
-            }
-            else if (dataLengthIndex == 2)
-            {
+            } else if (dataLengthIndex == 2) {
                 weightedRSS = weightedRSS(
                         ((Number) argument.get(SMOOTHING_PARAMETER)).
-                        doubleValue(),
+                                doubleValue(),
                         ((Number) argument.get(DIVISIONS)).doubleValue(),
                         (double[][]) dataObject[0], (double[]) dataObject[1],
                         (double[][]) dataObject[2]);
-            }
-            else if (dataLengthIndex == 3)
-            {
+            } else if (dataLengthIndex == 3) {
                 weightedRSS = weightedRSS(
                         ((Number) argument.get(SMOOTHING_PARAMETER)).
-                        doubleValue(),
+                                doubleValue(),
                         ((Number) argument.get(DIVISIONS)).doubleValue(),
                         (double[]) dataObject[0], doubleCovariate);
-            }
-            else
-            {
+            } else {
                 weightedRSS = weightedRSS(
                         ((Number) argument.get(SMOOTHING_PARAMETER)).
-                        doubleValue(),
+                                doubleValue(),
                         ((Number) argument.get(DIVISIONS)).doubleValue(),
                         (double[]) dataObject[0], (double[][]) dataObject[1]);
             }
-        }
-        else if (dataObject != null)
-        {
-            if (dataLengthIndex == 1)
-            {
+        } else if (dataObject != null) {
+            if (dataLengthIndex == 1) {
                 weightedRSS = weightedRSS(
                         (double[][]) dataObject[0],
                         (double[]) dataObject[1], doubleCovariate);
-            }
-            else if (dataLengthIndex == 2)
-            {
+            } else if (dataLengthIndex == 2) {
                 weightedRSS = weightedRSS(
                         (double[][]) dataObject[0],
                         (double[]) dataObject[1], (double[][]) dataObject[2]);
-            }
-            else if (dataLengthIndex == 3)
-            {
+            } else if (dataLengthIndex == 3) {
                 weightedRSS = weightedRSS(
                         (double[]) dataObject[0], doubleCovariate);
-            }
-            else
-            {
+            } else {
                 weightedRSS = weightedRSS(
                         (double[]) dataObject[0], (double[][]) dataObject[1]);
             }
-        }
-        else
-        {
+        } else {
             throw new IllegalArgumentException(
                     "Wrong input argument(s) or data.");
         }
@@ -1697,8 +1510,7 @@ public class WeightedSelectionCriterion extends SelectionCriterionTemplate
                                  double order,
                                  double[][] weightMatrix,
                                  double[] response,
-                                 double[] ...covariate)
-    {
+                                 double[]... covariate) {
         this.regressonType = regressionType;
         this.smoothingParameter = smoothingParameter;
         this.divisions = divisions;
@@ -1708,8 +1520,7 @@ public class WeightedSelectionCriterion extends SelectionCriterionTemplate
         this.response = response;
         this.covariate = covariate;
         wSQRMatrix = new DataManager().sqrtMatrix(weightMatrix);
-        switch (regressionType)
-        {
+        switch (regressionType) {
             case P_SPLINE:
                 pSplineRegression = new PSplineRegression(smoothingParameter,
                         divisions, degree, order,
@@ -1720,19 +1531,19 @@ public class WeightedSelectionCriterion extends SelectionCriterionTemplate
                 break;
             default:
                 wSQRMatrix = new DataManager().sqrtMatrix(
-                    weightMatrix);
+                        weightMatrix);
                 linearRegression = new LinearRegression(false,
                         (wSQRMatrix.times(
-                            new Matrix(response, response.length))).
-                               getColumnPackedCopy(),
+                                new Matrix(response, response.length))).
+                                getColumnPackedCopy(),
                         ((new Matrix(new DataManager().
-                                     addIntercept(covariate))).
-                                        times(wSQRMatrix)).getArray());
+                                addIntercept(covariate))).
+                                times(wSQRMatrix)).getArray());
                 residuals = linearRegression.residuals;
         }
         residualMatrix = new Matrix(residuals, residuals.length);
         weightedRSS = (residualMatrix.transpose()).times(residualMatrix).
-                      get(0,0);
+                get(0, 0);
         output.put(Output.RSS, weightedRSS);
         output.put(Output.SSE, weightedRSS);
 
@@ -1754,10 +1565,9 @@ public class WeightedSelectionCriterion extends SelectionCriterionTemplate
 
     public double weightedRSS(double[][] weightMatrix,
                               double[] response,
-                              double[] ...covariate)
-    {
+                              double[]... covariate) {
         return weightedRSS(LINEAR, Double.NaN, Double.NaN, Double.NaN,
-                           Double.NaN,weightMatrix, response, covariate);
+                Double.NaN, weightMatrix, response, covariate);
     }
 
     /**
@@ -1772,10 +1582,9 @@ public class WeightedSelectionCriterion extends SelectionCriterionTemplate
      */
 
     public double weightedRSS(double[] response,
-                              double[] ...covariate)
-    {
+                              double[]... covariate) {
         return weightedRSS(new DataManager().
-                           identity(response.length), response, covariate);
+                identity(response.length), response, covariate);
     }
 
     /**
@@ -1800,10 +1609,9 @@ public class WeightedSelectionCriterion extends SelectionCriterionTemplate
                               double order,
                               double[][] weightMatrix,
                               double[] response,
-                              double[] ...covariate)
-    {
+                              double[]... covariate) {
         return weightedRSS(P_SPLINE, smoothingParameter, divisions, degree,
-                           order, weightMatrix, response, covariate);
+                order, weightMatrix, response, covariate);
     }
 
     /**
@@ -1825,10 +1633,9 @@ public class WeightedSelectionCriterion extends SelectionCriterionTemplate
                               double divisions,
                               double[][] weightMatrix,
                               double[] response,
-                              double[] ...covariate)
-    {
+                              double[]... covariate) {
         return weightedRSS(P_SPLINE, smoothingParameter, divisions, 3.0, 2.0,
-                           weightMatrix, response, covariate);
+                weightMatrix, response, covariate);
     }
 
     /**
@@ -1851,11 +1658,10 @@ public class WeightedSelectionCriterion extends SelectionCriterionTemplate
                               double degree,
                               double order,
                               double[] response,
-                              double[] ...covariate)
-    {
+                              double[]... covariate) {
         return weightedRSS(smoothingParameter, divisions, degree, order,
-                           new DataManager().
-                           identity(response.length), response, covariate);
+                new DataManager().
+                        identity(response.length), response, covariate);
     }
 
     /**
@@ -1867,7 +1673,7 @@ public class WeightedSelectionCriterion extends SelectionCriterionTemplate
      * @param covariate the values of the covariates (excluding the one
      *                  corresponding to intercept),
      * <br>             covariate[j]: the (j+1)'th covariate vector.
-    * @return the weighted residual sum of squares.
+     * @return the weighted residual sum of squares.
      * @exception IllegalArgumentException all rows of the covariates must have
      *                                     the same length.
      */
@@ -1875,11 +1681,10 @@ public class WeightedSelectionCriterion extends SelectionCriterionTemplate
     public double weightedRSS(double smoothingParameter,
                               double divisions,
                               double[] response,
-                              double[] ...covariate)
-    {
+                              double[]... covariate) {
         return weightedRSS(smoothingParameter, divisions, 3.0, 2.0,
-                           new DataManager().
-                           identity(response.length), response, covariate);
+                new DataManager().
+                        identity(response.length), response, covariate);
     }
 
     /**
@@ -1904,7 +1709,7 @@ public class WeightedSelectionCriterion extends SelectionCriterionTemplate
 
     protected double weightedSelectionCriterion(RegressionType regressionType,
                                                 SelectionCriterion
-                                                selectionCriterion,
+                                                        selectionCriterion,
                                                 PsiFunction psiFunction,
                                                 double smoothingParameter,
                                                 double divisions,
@@ -1912,8 +1717,7 @@ public class WeightedSelectionCriterion extends SelectionCriterionTemplate
                                                 double order,
                                                 double[][] weightMatrix,
                                                 double[] response,
-                                                double[] ...covariate)
-    {
+                                                double[]... covariate) {
         this.regressonType = regressionType;
         this.selectionCriterion = selectionCriterion;
         this.psiFunction = psiFunction;
@@ -1928,9 +1732,8 @@ public class WeightedSelectionCriterion extends SelectionCriterionTemplate
         argument.put(SELECTION_CRITERION, selectionCriterion);
         argument.put(PSI_FUNCTION, psiFunction);
         if (!(Double.isNaN(smoothingParameter) ||
-            Double.isNaN(divisions) ||
-            Double.isNaN(degree) || Double.isNaN(order)))
-        {
+                Double.isNaN(divisions) ||
+                Double.isNaN(degree) || Double.isNaN(order))) {
             argument.put(SMOOTHING_PARAMETER, smoothingParameter);
             argument.put(DIVISIONS, divisions);
             argument.put(DEGREE, degree);
@@ -1957,17 +1760,16 @@ public class WeightedSelectionCriterion extends SelectionCriterionTemplate
      */
 
     public double weightedSelectionCriterion(SelectionCriterion
-                                             selectionCriterion,
+                                                     selectionCriterion,
                                              PsiFunction psiFunction,
                                              double[][] weightMatrix,
                                              double[] response,
-                                             double[] ...covariate)
-    {
+                                             double[]... covariate) {
         return weightedSelectionCriterion(LINEAR, selectionCriterion,
-                                          psiFunction,
-                                          Double.NaN, Double.NaN, Double.NaN,
-                                          Double.NaN,
-                                          weightMatrix, response, covariate);
+                psiFunction,
+                Double.NaN, Double.NaN, Double.NaN,
+                Double.NaN,
+                weightMatrix, response, covariate);
     }
 
     /**
@@ -1986,13 +1788,12 @@ public class WeightedSelectionCriterion extends SelectionCriterionTemplate
      */
 
     public double weightedSelectionCriterion(SelectionCriterion
-                                             selectionCriterion,
+                                                     selectionCriterion,
                                              double[][] weightMatrix,
                                              double[] response,
-                                             double[] ...covariate)
-    {
+                                             double[]... covariate) {
         return weightedSelectionCriterion(selectionCriterion, PCA_NUMBER,
-                                          weightMatrix, response, covariate);
+                weightMatrix, response, covariate);
     }
 
     /**
@@ -2011,10 +1812,9 @@ public class WeightedSelectionCriterion extends SelectionCriterionTemplate
 
     public double weightedSelectionCriterion(double[][] weightMatrix,
                                              double[] response,
-                                             double[] ...covariate)
-    {
+                                             double[]... covariate) {
         return weightedSelectionCriterion(AIC, weightMatrix, response,
-                                          covariate);
+                covariate);
     }
 
     /**
@@ -2029,12 +1829,11 @@ public class WeightedSelectionCriterion extends SelectionCriterionTemplate
      */
 
     public double weightedSelectionCriterion(double[] response,
-                                             double[] ...covariate)
-    {
+                                             double[]... covariate) {
         return weightedSelectionCriterion(AIC, SAMPLE_SIZE,
-                                          new DataManager().
-                                          identity(response.length),
-                                          response, covariate);
+                new DataManager().
+                        identity(response.length),
+                response, covariate);
     }
 
     /**
@@ -2056,7 +1855,7 @@ public class WeightedSelectionCriterion extends SelectionCriterionTemplate
      */
 
     public double weightedSelectionCriterion(SelectionCriterion
-                                             selectionCriterion,
+                                                     selectionCriterion,
                                              PsiFunction psiFunction,
                                              double smoothingParameter,
                                              double divisions,
@@ -2064,13 +1863,12 @@ public class WeightedSelectionCriterion extends SelectionCriterionTemplate
                                              double order,
                                              double[][] weightMatrix,
                                              double[] response,
-                                             double[] ...covariate)
-    {
+                                             double[]... covariate) {
         return weightedSelectionCriterion(P_SPLINE, selectionCriterion,
-                                          psiFunction,
-                                          smoothingParameter, divisions, degree,
-                                          order,
-                                          weightMatrix, response, covariate);
+                psiFunction,
+                smoothingParameter, divisions, degree,
+                order,
+                weightMatrix, response, covariate);
     }
 
     /**
@@ -2093,19 +1891,18 @@ public class WeightedSelectionCriterion extends SelectionCriterionTemplate
      */
 
     public double weightedSelectionCriterion(SelectionCriterion
-                                             selectionCriterion,
+                                                     selectionCriterion,
                                              double smoothingParameter,
                                              double divisions,
                                              double degree,
                                              double order,
                                              double[][] weightMatrix,
                                              double[] response,
-                                             double[] ...covariate)
-    {
+                                             double[]... covariate) {
         return weightedSelectionCriterion(selectionCriterion, PCA_NUMBER,
-                                          smoothingParameter, divisions, degree,
-                                          order,
-                                          weightMatrix, response, covariate);
+                smoothingParameter, divisions, degree,
+                order,
+                weightMatrix, response, covariate);
     }
 
     /**
@@ -2132,11 +1929,10 @@ public class WeightedSelectionCriterion extends SelectionCriterionTemplate
                                              double order,
                                              double[][] weightMatrix,
                                              double[] response,
-                                             double[] ...covariate)
-    {
+                                             double[]... covariate) {
         return weightedSelectionCriterion(GCV, smoothingParameter, divisions,
-                                          degree, order,
-                                          weightMatrix, response, covariate);
+                degree, order,
+                weightMatrix, response, covariate);
     }
 
     /**
@@ -2159,11 +1955,10 @@ public class WeightedSelectionCriterion extends SelectionCriterionTemplate
                                              double divisions,
                                              double[][] weightMatrix,
                                              double[] response,
-                                             double[] ...covariate)
-    {
+                                             double[]... covariate) {
         return weightedSelectionCriterion(GCV, smoothingParameter, divisions,
-                                          3.0, 2.0,
-                                          weightMatrix, response, covariate);
+                3.0, 2.0,
+                weightMatrix, response, covariate);
     }
 
     /**
@@ -2186,14 +1981,13 @@ public class WeightedSelectionCriterion extends SelectionCriterionTemplate
                                              double degree,
                                              double order,
                                              double[] response,
-                                             double[] ...covariate)
-    {
+                                             double[]... covariate) {
         return weightedSelectionCriterion(GCV, SAMPLE_SIZE,
-                                          smoothingParameter, divisions, degree,
-                                          order,
-                                          new DataManager().
-                                          identity(response.length),
-                                          response, covariate);
+                smoothingParameter, divisions, degree,
+                order,
+                new DataManager().
+                        identity(response.length),
+                response, covariate);
     }
 
     /**
@@ -2213,12 +2007,11 @@ public class WeightedSelectionCriterion extends SelectionCriterionTemplate
     public double weightedSelectionCriterion(double smoothingParameter,
                                              double divisions,
                                              double[] response,
-                                             double[] ...covariate)
-    {
+                                             double[]... covariate) {
         return weightedSelectionCriterion(smoothingParameter, divisions, 3.0,
-                                          2.0, new DataManager().
-                                          identity(response.length),
-                                          response, covariate);
+                2.0, new DataManager().
+                        identity(response.length),
+                response, covariate);
     }
 
 }

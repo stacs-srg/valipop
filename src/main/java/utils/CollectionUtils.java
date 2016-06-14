@@ -28,8 +28,8 @@ public class CollectionUtils {
 
         int count = 0;
 
-        for(IPerson p : people) {
-            if(p.aliveOnDate(date)) {
+        for (IPerson p : people) {
+            if (p.aliveOnDate(date)) {
                 count++;
             }
         }

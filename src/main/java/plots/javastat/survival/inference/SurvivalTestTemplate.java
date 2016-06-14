@@ -5,6 +5,7 @@ package plots.javastat.survival.inference;
  * <p>Description: JAVA programs for statistical computations</p>
  * <p>Copyright: Copyright (c) 2009</p>
  * <p>Company: Tung Hai University</p>
+ *
  * @author Wen Hsiang Wei
  * @version 1.4
  */
@@ -16,6 +17,7 @@ import JSci.maths.statistics.NormalDistribution;
 import plots.javastat.StatisticalAnalysis;
 import plots.javastat.StatisticalInference;
 import plots.javastat.util.DataManager;
+
 import static plots.javastat.util.Output.*;
 
 /**
@@ -25,8 +27,7 @@ import static plots.javastat.util.Output.*;
  * <p> </p>
  */
 
-public abstract class SurvivalTestTemplate extends StatisticalInference
-{
+public abstract class SurvivalTestTemplate extends StatisticalInference {
 
     /**
      * The test statistic.
@@ -142,7 +143,8 @@ public abstract class SurvivalTestTemplate extends StatisticalInference
      * Default SurvivalTestTemplate constructor.
      */
 
-    public SurvivalTestTemplate() {}
+    public SurvivalTestTemplate() {
+    }
 
     /**
      * Constructs a test given the survival times and censor indicators in two
@@ -165,10 +167,9 @@ public abstract class SurvivalTestTemplate extends StatisticalInference
      */
 
     public SurvivalTestTemplate(Hashtable argument,
-                                Object ...dataObject)
-    {
+                                Object... dataObject) {
         this((double[]) dataObject[0], (double[]) dataObject[1],
-             (double[]) dataObject[2], (double[]) dataObject[3]);
+                (double[]) dataObject[2], (double[]) dataObject[3]);
         this.argument = argument;
         this.dataObject = dataObject;
     }
@@ -201,8 +202,7 @@ public abstract class SurvivalTestTemplate extends StatisticalInference
     public SurvivalTestTemplate(double[] time1,
                                 double[] censor1,
                                 double[] time2,
-                                double[] censor2)
-    {
+                                double[] censor2) {
         this.time1 = time1;
         this.censor1 = censor1;
         this.time2 = time2;
@@ -239,19 +239,15 @@ public abstract class SurvivalTestTemplate extends StatisticalInference
      */
 
     public Double testStatistic(Hashtable argument,
-                                Object ...dataObject)
-    {
+                                Object... dataObject) {
         this.argument = argument;
         this.dataObject = dataObject;
         if (dataObject != null &&
-            dataObject.length == 4)
-        {
+                dataObject.length == 4) {
             testStatistic = testStatistic(
                     (double[]) dataObject[0], (double[]) dataObject[1],
                     (double[]) dataObject[2], (double[]) dataObject[3]);
-        }
-        else
-        {
+        } else {
             throw new IllegalArgumentException(
                     "Wrong input arguments or data.");
         }
@@ -287,8 +283,7 @@ public abstract class SurvivalTestTemplate extends StatisticalInference
     public double testStatistic(double[] time1,
                                 double[] censor1,
                                 double[] time2,
-                                double[] censor2)
-    {
+                                double[] censor2) {
         this.time1 = time1;
         this.censor1 = censor1;
         this.time2 = time2;
@@ -296,41 +291,32 @@ public abstract class SurvivalTestTemplate extends StatisticalInference
         dataManager = new DataManager();
         dataManager.checkPositiveRange(time1, "time1");
         dataManager.checkPositiveRange(time2, "time1");
-        if (time1.length != censor1.length)
-        {
+        if (time1.length != censor1.length) {
             throw new IllegalArgumentException(
                     "The time vector and the censor vector in group 1 must " +
-                    "have the same length.");
+                            "have the same length.");
         }
-        if (time2.length != censor2.length)
-        {
+        if (time2.length != censor2.length) {
             throw new IllegalArgumentException(
                     "The time vector and the censor vector in group 2 must " +
-                    "have the same length.");
+                            "have the same length.");
         }
         survivalIndex1 = dataManager.survivalIndex(time1, censor1);
         survivalIndex2 = dataManager.survivalIndex(time2, censor2);
         testStatistic = 0.0;
         variance = 0.0;
-        for (int i = 0; i < (time1.length + time2.length - 1); i++)
-        {
-            if (i >= time1.length)
-            {
-                if ((int) censor2[i - time1.length] == 1)
-                {
+        for (int i = 0; i < (time1.length + time2.length - 1); i++) {
+            if (i >= time1.length) {
+                if ((int) censor2[i - time1.length] == 1) {
                     n1i = 0.0;
                     d1i = 0.0;
-                    for (int k = 0; k < time1.length; k++)
-                    {
-                        if (time1[k] > time2[i - time1.length])
-                        {
+                    for (int k = 0; k < time1.length; k++) {
+                        if (time1[k] > time2[i - time1.length]) {
                             n1i += 1.0;
                         }
-                        if (time1[k] == time2[i - time1.length])
-                        {
+                        if (time1[k] == time2[i - time1.length]) {
                             n1i += 1.0;
-                            if ((int) censor1[k] == 1)
-                            {
+                            if ((int) censor1[k] == 1) {
                                 d1i += 1;
                             }
                         }
@@ -340,27 +326,20 @@ public abstract class SurvivalTestTemplate extends StatisticalInference
                     testStatistic += weight(ni) * (d1i - (n1i * di / ni));
                     variance += Math.pow(weight(ni), 2.0) *
                             (n1i * survivalIndex2[0][i -
-                             time1.length] * di * (ni - di)) /
+                                    time1.length] * di * (ni - di)) /
                             (Math.pow(ni, 2.0) * (ni - 1));
                 }
-            }
-            else
-            {
-                if ((int) censor1[i] == 1)
-                {
+            } else {
+                if ((int) censor1[i] == 1) {
                     n2i = 0.0;
                     d2i = 0.0;
-                    for (int k = 0; k < time2.length; k++)
-                    {
-                        if (time2[k] > time1[i])
-                        {
+                    for (int k = 0; k < time2.length; k++) {
+                        if (time2[k] > time1[i]) {
                             n2i += 1.0;
                         }
-                        if (time2[k] == time1[i])
-                        {
+                        if (time2[k] == time1[i]) {
                             n2i += 1.0;
-                            if ((int) censor2[k] == 1)
-                            {
+                            if ((int) censor2[k] == 1) {
                                 d2i += 1;
                             }
                         }
@@ -369,15 +348,15 @@ public abstract class SurvivalTestTemplate extends StatisticalInference
                     ni = n2i + survivalIndex1[0][i];
                     testStatistic += weight(ni) *
                             (survivalIndex1[1][i] -
-                             (survivalIndex1[0][i] * di / ni));
+                                    (survivalIndex1[0][i] * di / ni));
                     variance += Math.pow(weight(ni), 2.0) *
                             ((n2i * survivalIndex1[0][i] * di * (ni - di)) /
-                             (Math.pow(ni, 2.0) * (ni - 1)));
+                                    (Math.pow(ni, 2.0) * (ni - 1)));
                 }
             }
         }
         pValue = 2 * (1 - new NormalDistribution().cumulative(
-            Math.abs(testStatistic / Math.pow(variance, 0.5))));
+                Math.abs(testStatistic / Math.pow(variance, 0.5))));
         output.put(TEST_STATISTIC, testStatistic);
         output.put(PVALUE, pValue);
 
@@ -405,20 +384,16 @@ public abstract class SurvivalTestTemplate extends StatisticalInference
      */
 
     public Double pValue(Hashtable argument,
-                         Object ...dataObject)
-    {
+                         Object... dataObject) {
         this.argument = argument;
         this.dataObject = dataObject;
         if (dataObject != null &&
-            dataObject.length == 4)
-        {
+                dataObject.length == 4) {
             pValue = pValue((double[]) dataObject[0], (double[]) dataObject[1],
-                            (double[]) dataObject[2], (double[]) dataObject[3]);
-        }
-        else
-        {
+                    (double[]) dataObject[2], (double[]) dataObject[3]);
+        } else {
             throw new IllegalArgumentException("Wrong input arguments or " +
-                                               "data.");
+                    "data.");
         }
 
         return pValue;
@@ -452,8 +427,7 @@ public abstract class SurvivalTestTemplate extends StatisticalInference
     public double pValue(double[] time1,
                          double[] censor1,
                          double[] time2,
-                         double[] censor2)
-    {
+                         double[] censor2) {
         this.time1 = time1;
         this.censor1 = censor1;
         this.time2 = time2;

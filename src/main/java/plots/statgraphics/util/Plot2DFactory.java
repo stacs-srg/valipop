@@ -5,6 +5,7 @@ package plots.statgraphics.util;
  * <p>Description: The statistical graphics</p>
  * <p>Copyright: Copyright (c) 2009</p>
  * <p>Company: Tung Hai University </p>
+ *
  * @author Wen Hsiang Wei
  * @version 1.4
  */
@@ -43,6 +44,7 @@ import org.jfree.ui.RectangleAnchor;
 import org.jfree.ui.RectangleInsets;
 
 import plots.statgraphics.PlotFactory;
+
 import static plots.statgraphics.util.Argument.*;
 import static plots.statgraphics.util.PlotType.*;
 
@@ -52,14 +54,14 @@ import static plots.statgraphics.util.PlotType.*;
  * statistical plots.</p>
  */
 
-public class Plot2DFactory extends PlotFactory
-{
+public class Plot2DFactory extends PlotFactory {
 
     /**
      * Default Plot2DFactory constructor.
      */
 
-    public Plot2DFactory() {}
+    public Plot2DFactory() {
+    }
 
     /**
      * Creates a plot given the input arguments and data.
@@ -107,92 +109,90 @@ public class Plot2DFactory extends PlotFactory
      */
 
     public JFreeChart createPlot(Hashtable argument,
-                                 Object ...dataObject)
-    {
-        switch ((PlotType) argument.get(PLOT_TYPE))
-        {
+                                 Object... dataObject) {
+        switch ((PlotType) argument.get(PLOT_TYPE)) {
             case BAR:
                 plot = createBarPlot((String[]) argument.get(DATA_NAMES),
-                                     (String) argument.get(TITLE),
-                                     (String) argument.get(XLABEL),
-                                     (String) argument.get(YLABEL),
-                                     (String[]) dataObject[0],
-                                     (double[][]) dataObject[1]);
+                        (String) argument.get(TITLE),
+                        (String) argument.get(XLABEL),
+                        (String) argument.get(YLABEL),
+                        (String[]) dataObject[0],
+                        (double[][]) dataObject[1]);
                 break;
             case BOX:
                 plot = createBoxPlot((String[]) argument.get(DATA_NAMES),
-                                     (double[][]) dataObject[1]);
+                        (double[][]) dataObject[1]);
             case BOX_DATE:
                 plot = createBoxPlot((String) argument.get(TITLE),
-                                     (String) argument.get(XLABEL),
-                                     (String) argument.get(YLABEL),
-                                     (Date[]) dataObject[0],
-                                     (double[][]) dataObject[1]);
+                        (String) argument.get(XLABEL),
+                        (String) argument.get(YLABEL),
+                        (Date[]) dataObject[0],
+                        (double[][]) dataObject[1]);
                 break;
             case HISTOGRAM:
                 plot = createHistogram((String[]) argument.get(DATA_NAMES),
-                                       ((Integer) argument.get(BIN_NUMBER)).
-                                       intValue(),
-                                       (String) argument.get(FREQUENCY_CHOICE),
-                                       (String) argument.get(TITLE),
-                                       (String) argument.get(XLABEL),
-                                       (String) argument.get(YLABEL),
-                                       (double[][]) dataObject[0]);
+                        ((Integer) argument.get(BIN_NUMBER)).
+                                intValue(),
+                        (String) argument.get(FREQUENCY_CHOICE),
+                        (String) argument.get(TITLE),
+                        (String) argument.get(XLABEL),
+                        (String) argument.get(YLABEL),
+                        (double[][]) dataObject[0]);
                 break;
             case LINE:
                 plot = createLinePlot((String[]) argument.get(DATA_NAMES),
-                                      (String) argument.get(TITLE),
-                                      (String) argument.get(XLABEL),
-                                      (String) argument.get(YLABEL),
-                                      (double[][]) dataObject[0],
-                                      (double[][]) dataObject[1]);
+                        (String) argument.get(TITLE),
+                        (String) argument.get(XLABEL),
+                        (String) argument.get(YLABEL),
+                        (double[][]) dataObject[0],
+                        (double[][]) dataObject[1]);
                 break;
             case LINE_CATEGORY:
                 plot = createLinePlot((String[]) argument.get(DATA_NAMES),
-                                      (String) argument.get(TITLE),
-                                      (String) argument.get(XLABEL),
-                                      (String) argument.get(YLABEL),
-                                      (String[]) dataObject[0],
-                                      (double[][]) dataObject[1]);
+                        (String) argument.get(TITLE),
+                        (String) argument.get(XLABEL),
+                        (String) argument.get(YLABEL),
+                        (String[]) dataObject[0],
+                        (double[][]) dataObject[1]);
                 break;
             case SCATTER:
                 plot = createScatterPlot((String[]) argument.get(DATA_NAMES),
-                                         (String) argument.get(TITLE),
-                                         (String) argument.get(XLABEL),
-                                         (String) argument.get(YLABEL),
-                                         (double[][]) dataObject[0],
-                                         (double[][]) dataObject[1]);
+                        (String) argument.get(TITLE),
+                        (String) argument.get(XLABEL),
+                        (String) argument.get(YLABEL),
+                        (double[][]) dataObject[0],
+                        (double[][]) dataObject[1]);
                 break;
             case LINE_POINT:
                 plot = createLineAndPointsPlot((String) argument.get(TITLE),
-                                               (String) argument.get(XLABEL),
-                                               (String) argument.get(YLABEL),
-                                               (double[]) dataObject[0],
-                                               (double[]) dataObject[1],
-                                               (double[]) dataObject[2],
-                                               (double[]) dataObject[3]);
+                        (String) argument.get(XLABEL),
+                        (String) argument.get(YLABEL),
+                        (double[]) dataObject[0],
+                        (double[]) dataObject[1],
+                        (double[]) dataObject[2],
+                        (double[]) dataObject[3]);
                 break;
             case SURVIVAL:
                 plot = createSurvivalEstimatePlot((String[]) argument.
-                                                  get(DATA_NAMES),
-                                                  (String) argument.get(TITLE),
-                                                  (String) argument.get(XLABEL),
-                                                  (String) argument.get(YLABEL),
-                                                  (double[][]) dataObject[0],
-                                                  (double[][]) dataObject[1]);
+                                get(DATA_NAMES),
+                        (String) argument.get(TITLE),
+                        (String) argument.get(XLABEL),
+                        (String) argument.get(YLABEL),
+                        (double[][]) dataObject[0],
+                        (double[][]) dataObject[1]);
                 break;
             case TIME_SERIES:
                 plot = createTimeSeriesPlot((String[]) argument.get(DATA_NAMES),
-                                            (String) argument.get(TITLE),
-                                            (String) argument.get(XLABEL),
-                                            (String) argument.get(YLABEL),
-                                            (int[][][]) dataObject[0],
-                                            (double[][]) dataObject[1]);
+                        (String) argument.get(TITLE),
+                        (String) argument.get(XLABEL),
+                        (String) argument.get(YLABEL),
+                        (int[][][]) dataObject[0],
+                        (double[][]) dataObject[1]);
                 break;
             case PIE:
                 plot = createPiePlot((String) argument.get(TITLE),
-                                     (String[]) dataObject[0],
-                                     (double[]) dataObject[1]);
+                        (String[]) dataObject[0],
+                        (double[]) dataObject[1]);
                 break;
         }
 
@@ -217,10 +217,9 @@ public class Plot2DFactory extends PlotFactory
 
     public JFreeChart createPiePlot(String title,
                                     String[] category,
-                                    double[] counts)
-    {
+                                    double[] counts) {
         return createPiePlot(title,
-                             DataCreator.createDataset(category, counts));
+                DataCreator.createDataset(category, counts));
     }
 
     /**
@@ -236,14 +235,13 @@ public class Plot2DFactory extends PlotFactory
      */
 
     public JFreeChart createPiePlot(String title,
-                                    PieDataset dataset)
-    {
+                                    PieDataset dataset) {
         plot = ChartFactory.createPieChart(
-            title,
-            dataset,
-            true,
-            true,
-            false);
+                title,
+                dataset,
+                true,
+                true,
+                false);
         TextTitle textTitle = plot.getTitle();
         textTitle.setToolTipText("A title tooltip!");
         PiePlot piePlot = (PiePlot) plot.getPlot();
@@ -279,11 +277,10 @@ public class Plot2DFactory extends PlotFactory
                                     String xLabel,
                                     String yLabel,
                                     String[] category,
-                                    double[] ...data)
-    {
+                                    double[]... data) {
         return createBarPlot(title, xLabel, yLabel,
-                             DataCreator.
-                             createDataset(dataNames, category, data));
+                DataCreator.
+                        createDataset(dataNames, category, data));
     }
 
     /**
@@ -298,17 +295,16 @@ public class Plot2DFactory extends PlotFactory
     public JFreeChart createBarPlot(String title,
                                     String xLabel,
                                     String yLabel,
-                                    CategoryDataset dataset)
-    {
+                                    CategoryDataset dataset) {
         plot = ChartFactory.createBarChart(
-            title,
-            xLabel,
-            yLabel,
-            dataset,
-            PlotOrientation.VERTICAL,
-            true,
-            true,
-            false);
+                title,
+                xLabel,
+                yLabel,
+                dataset,
+                PlotOrientation.VERTICAL,
+                true,
+                true,
+                false);
         plot.setBackgroundPaint(new Color(0xBBBBDD));
         CategoryPlot categoryPlot = plot.getCategoryPlot();
         NumberAxis rangeAxis = (NumberAxis) categoryPlot.getRangeAxis();
@@ -337,10 +333,9 @@ public class Plot2DFactory extends PlotFactory
                                     String title,
                                     String xLabel,
                                     String yLabel,
-                                    double[] ...data)
-    {
+                                    double[]... data) {
         return plot = createBoxPlot(title, xLabel, yLabel,
-                                    DataCreator.createDataset(dataNames, data));
+                DataCreator.createDataset(dataNames, data));
     }
 
     /**
@@ -355,8 +350,7 @@ public class Plot2DFactory extends PlotFactory
      */
 
     public JFreeChart createBoxPlot(String[] dataNames,
-                                    double[] ...data)
-    {
+                                    double[]... data) {
         return plot = createBoxPlot(DataCreator.createDataset(dataNames, data));
     }
 
@@ -373,13 +367,12 @@ public class Plot2DFactory extends PlotFactory
     public JFreeChart createBoxPlot(String title,
                                     String xLabel,
                                     String yLabel,
-                                    BoxAndWhiskerCategoryDataset dataset)
-    {
+                                    BoxAndWhiskerCategoryDataset dataset) {
         CategoryAxis domainAxis = new CategoryAxis(xLabel);
         NumberAxis rangeAxis = new NumberAxis(yLabel);
         CategoryItemRenderer renderer = new BoxAndWhiskerRenderer();
         CategoryPlot categoryPlot = new CategoryPlot(dataset, domainAxis,
-                                                     rangeAxis, renderer);
+                rangeAxis, renderer);
         plot = new JFreeChart(title, categoryPlot);
         plot.setBackgroundPaint(Color.white);
         categoryPlot.setBackgroundPaint(Color.lightGray);
@@ -398,8 +391,7 @@ public class Plot2DFactory extends PlotFactory
      * @return the created box plot.
      */
 
-    public JFreeChart createBoxPlot(BoxAndWhiskerCategoryDataset dataset)
-    {
+    public JFreeChart createBoxPlot(BoxAndWhiskerCategoryDataset dataset) {
         return createBoxPlot("Box Plot", null, "Value", dataset);
     }
 
@@ -422,10 +414,9 @@ public class Plot2DFactory extends PlotFactory
                                     String xLabel,
                                     String yLabel,
                                     Date[] time,
-                                    double[] ...data)
-    {
+                                    double[]... data) {
         return createBoxPlot(title, xLabel, yLabel,
-                             DataCreator.createDataset(time, data));
+                DataCreator.createDataset(time, data));
     }
 
     /**
@@ -440,14 +431,13 @@ public class Plot2DFactory extends PlotFactory
     public JFreeChart createBoxPlot(String title,
                                     String xLabel,
                                     String yLabel,
-                                    BoxAndWhiskerXYDataset dataset)
-    {
+                                    BoxAndWhiskerXYDataset dataset) {
         plot = ChartFactory.createBoxAndWhiskerChart(
-            title,
-            xLabel,
-            yLabel,
-            dataset,
-            true);
+                title,
+                xLabel,
+                yLabel,
+                dataset,
+                true);
         plot.setBackgroundPaint(new Color(0xBBBBDD));
 
         return plot;
@@ -476,11 +466,10 @@ public class Plot2DFactory extends PlotFactory
                                       String title,
                                       String xLabel,
                                       String yLabel,
-                                      double[] ...data)
-    {
+                                      double[]... data) {
         return createHistogram(title, xLabel, yLabel, DataCreator.
-                               createDataset(dataNames, binNumber,
-                                             frequencyChoice, data));
+                createDataset(dataNames, binNumber,
+                        frequencyChoice, data));
     }
 
     /**
@@ -501,8 +490,7 @@ public class Plot2DFactory extends PlotFactory
     public JFreeChart createHistogram(String[] dataNames,
                                       int binNumber,
                                       String frequencyChoice,
-                                      double[] ...data)
-    {
+                                      double[]... data) {
         return createHistogram(DataCreator.createDataset(dataNames,
                 binNumber, frequencyChoice, data));
     }
@@ -519,17 +507,16 @@ public class Plot2DFactory extends PlotFactory
     public JFreeChart createHistogram(String title,
                                       String xLabel,
                                       String yLabel,
-                                      IntervalXYDataset dataset)
-    {
+                                      IntervalXYDataset dataset) {
         plot = ChartFactory.createHistogram(
-            title,
-            xLabel,
-            yLabel,
-            dataset,
-            PlotOrientation.VERTICAL,
-            true,
-            false,
-            false);
+                title,
+                xLabel,
+                yLabel,
+                dataset,
+                PlotOrientation.VERTICAL,
+                true,
+                false,
+                false);
         plot.getXYPlot().setForegroundAlpha(0.75f);
 
         return plot;
@@ -542,8 +529,7 @@ public class Plot2DFactory extends PlotFactory
      * @return the created histogram.
      */
 
-    public JFreeChart createHistogram(IntervalXYDataset dataset)
-    {
+    public JFreeChart createHistogram(IntervalXYDataset dataset) {
         return createHistogram("Histogram", null, "Value", dataset);
     }
 
@@ -571,10 +557,9 @@ public class Plot2DFactory extends PlotFactory
                                      String xLabel,
                                      String yLabel,
                                      String[] category,
-                                     double[] ...data)
-    {
+                                     double[]... data) {
         return createLinePlot(title, xLabel, yLabel, DataCreator.
-                              createDataset(dataNames, category, data));
+                createDataset(dataNames, category, data));
     }
 
     /**
@@ -589,17 +574,16 @@ public class Plot2DFactory extends PlotFactory
     public JFreeChart createLinePlot(String title,
                                      String xLabel,
                                      String yLabel,
-                                     CategoryDataset dataset)
-    {
+                                     CategoryDataset dataset) {
         plot = ChartFactory.createLineChart(
-            title,
-            xLabel,
-            yLabel,
-            dataset,
-            PlotOrientation.VERTICAL,
-            true,
-            true,
-            false);
+                title,
+                xLabel,
+                yLabel,
+                dataset,
+                PlotOrientation.VERTICAL,
+                true,
+                true,
+                false);
         plot.setBackgroundPaint(Color.white);
         CategoryPlot categoryPlot = (CategoryPlot) plot.getPlot();
         plot.setBackgroundPaint(Color.lightGray);
@@ -629,17 +613,16 @@ public class Plot2DFactory extends PlotFactory
     public JFreeChart createLinePlot(String title,
                                      String xLabel,
                                      String yLabel,
-                                     XYDataset dataset)
-    {
+                                     XYDataset dataset) {
         plot = ChartFactory.createXYLineChart(
-            title,
-            xLabel,
-            yLabel,
-            dataset,
-            PlotOrientation.VERTICAL,
-            true,
-            true,
-            false);
+                title,
+                xLabel,
+                yLabel,
+                dataset,
+                PlotOrientation.VERTICAL,
+                true,
+                true,
+                false);
 
         return plot;
     }
@@ -654,7 +637,7 @@ public class Plot2DFactory extends PlotFactory
      * @param xData the x(-coordinate) data values.
      * @param yData the y(-coordinate) data values.
      * @return the created line plot.
-     * @exception  IllegalArgumentException the input datasets should have the
+     * @exception IllegalArgumentException the input datasets should have the
      *                                      same number of data series.
      * @exception IllegalArgumentException the data series of the two datasets
      *                                     should have the same sample size.
@@ -667,11 +650,10 @@ public class Plot2DFactory extends PlotFactory
                                      String xLabel,
                                      String yLabel,
                                      double[][] xData,
-                                     double[][] yData)
-    {
+                                     double[][] yData) {
         return createLinePlot(title, xLabel, yLabel,
-                              DataCreator.createDataset(
-                                  dataNames, xData, yData));
+                DataCreator.createDataset(
+                        dataNames, xData, yData));
     }
 
     /**
@@ -699,10 +681,9 @@ public class Plot2DFactory extends PlotFactory
                                         String xLabel,
                                         String yLabel,
                                         double[][] xData,
-                                        double[][] yData)
-    {
+                                        double[][] yData) {
         return createScatterPlot(title, xLabel, yLabel, DataCreator.
-                                 createDataset(dataNames, xData, yData));
+                createDataset(dataNames, xData, yData));
     }
 
     /**
@@ -717,17 +698,16 @@ public class Plot2DFactory extends PlotFactory
     public JFreeChart createScatterPlot(String title,
                                         String xLabel,
                                         String yLabel,
-                                        XYDataset dataset)
-    {
+                                        XYDataset dataset) {
         plot = ChartFactory.createScatterPlot(
-            title,
-            xLabel,
-            yLabel,
-            dataset,
-            PlotOrientation.VERTICAL,
-            true,
-            true,
-            false);
+                title,
+                xLabel,
+                yLabel,
+                dataset,
+                PlotOrientation.VERTICAL,
+                true,
+                true,
+                false);
         NumberAxis domainAxis = (NumberAxis) plot.getXYPlot().getDomainAxis();
         domainAxis.setAutoRangeIncludesZero(false);
 
@@ -756,11 +736,10 @@ public class Plot2DFactory extends PlotFactory
                                               double[] p1,
                                               double[] p2,
                                               double[] xData,
-                                              double[] yData)
-    {
+                                              double[] yData) {
         return createLineAndPointsPlot(title, xLabel, yLabel, p1, p2,
-                                       DataCreator.
-                                       createDataset("Data", xData, yData));
+                DataCreator.
+                        createDataset("Data", xData, yData));
     }
 
     /**
@@ -782,23 +761,22 @@ public class Plot2DFactory extends PlotFactory
                                               String yLabel,
                                               double[] p1,
                                               double[] p2,
-                                              XYDataset dataset)
-    {
+                                              XYDataset dataset) {
         plot = ChartFactory.createScatterPlot(
-            title,
-            xLabel,
-            yLabel,
-            dataset,
-            PlotOrientation.VERTICAL,
-            true,
-            true,
-            false);
+                title,
+                xLabel,
+                yLabel,
+                dataset,
+                PlotOrientation.VERTICAL,
+                true,
+                true,
+                false);
         plot.getLegend().setLegendItemGraphicLocation(RectangleAnchor.
-                                                      BOTTOM_RIGHT);
+                BOTTOM_RIGHT);
         XYPlot xYplot = plot.getXYPlot();
         XYLineAnnotation regressionLine = new XYLineAnnotation(p1[0], p1[1],
                 p2[0], p2[1], new BasicStroke(), Color.BLUE);
-        xYplot.addAnnotation((XYAnnotation) regressionLine);
+        xYplot.addAnnotation(regressionLine);
         ValueAxis rangeAxis = xYplot.getRangeAxis();
         ValueAxis domainAxis = xYplot.getDomainAxis();
         xYplot.setDomainAxis(domainAxis);
@@ -825,12 +803,11 @@ public class Plot2DFactory extends PlotFactory
                                                  String yLabel,
                                                  double[] sortedTime,
                                                  double[]
-                                                 sortedSurvivalEstimate)
-    {
+                                                         sortedSurvivalEstimate) {
         return createSurvivalEstimatePlot(title, xLabel, yLabel,
-                                          DataCreator.createDataset(
-                                              "Survival Estimate", sortedTime,
-                                              sortedSurvivalEstimate));
+                DataCreator.createDataset(
+                        "Survival Estimate", sortedTime,
+                        sortedSurvivalEstimate));
     }
 
     /**
@@ -858,11 +835,10 @@ public class Plot2DFactory extends PlotFactory
                                                  String yLabel,
                                                  double[][] sortedTime,
                                                  double[][]
-                                                 sortedSurvivalEstimate)
-    {
+                                                         sortedSurvivalEstimate) {
         return createSurvivalEstimatePlot(title, xLabel, yLabel, DataCreator.
-                                          createDataset(dataNames, sortedTime,
-                                                       sortedSurvivalEstimate));
+                createDataset(dataNames, sortedTime,
+                        sortedSurvivalEstimate));
     }
 
     /**
@@ -877,17 +853,16 @@ public class Plot2DFactory extends PlotFactory
     public JFreeChart createSurvivalEstimatePlot(String title,
                                                  String xLabel,
                                                  String yLabel,
-                                                 XYDataset dataset)
-    {
+                                                 XYDataset dataset) {
         plot = ChartFactory.createXYLineChart(
-            title,
-            xLabel,
-            yLabel,
-            dataset,
-            PlotOrientation.VERTICAL,
-            true,
-            true,
-            false);
+                title,
+                xLabel,
+                yLabel,
+                dataset,
+                PlotOrientation.VERTICAL,
+                true,
+                true,
+                false);
         XYStepRenderer renderer = new XYStepRenderer();
         renderer.setStroke(new BasicStroke(1.0f));
         renderer.setToolTipGenerator(new StandardXYToolTipGenerator());
@@ -936,10 +911,9 @@ public class Plot2DFactory extends PlotFactory
                                            String xLabel,
                                            String yLabel,
                                            int[][][] time,
-                                           double[] ...data)
-    {
+                                           double[]... data) {
         return createTimeSeriesPlot(title, xLabel, yLabel, DataCreator.
-                                    createDataset(dataNames, time, data));
+                createDataset(dataNames, time, data));
     }
 
     /**
@@ -954,16 +928,15 @@ public class Plot2DFactory extends PlotFactory
     public JFreeChart createTimeSeriesPlot(String title,
                                            String xLabel,
                                            String yLabel,
-                                           XYDataset dataset)
-    {
+                                           XYDataset dataset) {
         plot = ChartFactory.createTimeSeriesChart(
-            title,
-            xLabel,
-            yLabel,
-            dataset,
-            true,
-            true,
-            false);
+                title,
+                xLabel,
+                yLabel,
+                dataset,
+                true,
+                true,
+                false);
         plot.setBackgroundPaint(Color.white);
         XYPlot xYplot = (XYPlot) plot.getPlot();
         xYplot.setBackgroundPaint(Color.lightGray);
@@ -972,8 +945,7 @@ public class Plot2DFactory extends PlotFactory
         xYplot.setDomainCrosshairVisible(true);
         xYplot.setRangeCrosshairVisible(true);
         XYItemRenderer r = xYplot.getRenderer();
-        if (r instanceof XYLineAndShapeRenderer)
-        {
+        if (r instanceof XYLineAndShapeRenderer) {
             XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) r;
             renderer.setBaseShapesVisible(true);
             renderer.setBaseShapesFilled(true);
@@ -990,8 +962,7 @@ public class Plot2DFactory extends PlotFactory
      * @return the deserialized plot object.
      */
 
-    public JFreeChart outputDeserialized(String fileName)
-    {
+    public JFreeChart outputDeserialized(String fileName) {
         return (JFreeChart) super.plotDeserialized(fileName);
     }
 

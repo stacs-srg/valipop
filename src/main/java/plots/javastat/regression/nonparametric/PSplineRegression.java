@@ -5,6 +5,7 @@ package plots.javastat.regression.nonparametric;
  * <p>Description: JAVA programs for statistical computations</p>
  * <p>Copyright: Copyright (c) 2009</p>
  * <p>Company: Tung Hai University</p>
+ *
  * @author Wen Hsiang Wei and Hsu Hui Chan
  * @version 1.4
  */
@@ -20,6 +21,7 @@ import plots.javastat.regression.SelectionCriterion;
 import plots.javastat.util.BasicStatistics;
 import plots.javastat.util.DataManager;
 import plots.javastat.util.Output;
+
 import static plots.javastat.util.Argument.*;
 
 /**
@@ -127,8 +129,7 @@ import static plots.javastat.util.Argument.*;
  * <br> out.println(testclass2.output.toString());
  */
 
-public class PSplineRegression extends StatisticalAnalysis
-{
+public class PSplineRegression extends StatisticalAnalysis {
 
     /**
      * The object represents a P-spline regression analysis.
@@ -402,7 +403,8 @@ public class PSplineRegression extends StatisticalAnalysis
      * Default PSplineRegression constructor.
      */
 
-    public PSplineRegression() {}
+    public PSplineRegression() {
+    }
 
     /**
      * Fits a weighted smoothing spline using the p-spline basis
@@ -422,103 +424,79 @@ public class PSplineRegression extends StatisticalAnalysis
      */
 
     public PSplineRegression(Hashtable argument,
-                             Object ...dataObject)
-    {
+                             Object... dataObject) {
         this.argument = argument;
         this.dataObject = dataObject;
         index = new DataManager().dataLengthIndex(dataObject);
         dataLengthIndex = (Integer) index.get("dataLengthIndex");
-        if (index.get("doubleCovariate") != null)
-        {
+        if (index.get("doubleCovariate") != null) {
             doubleCovariate = (double[][]) index.get("doubleCovariate");
         }
         if (argument.size() > 0 &&
-            dataObject != null)
-        {
+                dataObject != null) {
             if (argument.get(SMOOTHING_PARAMETER) != null &&
-                argument.get(DIVISIONS) != null &&
-                argument.get(DEGREE) != null &&
-                argument.get(ORDER) != null)
-            {
-                if (dataLengthIndex == 1)
-                {
+                    argument.get(DIVISIONS) != null &&
+                    argument.get(DEGREE) != null &&
+                    argument.get(ORDER) != null) {
+                if (dataLengthIndex == 1) {
                     statisticalAnalysis = new PSplineRegression(
                             ((Number) argument.get(SMOOTHING_PARAMETER)).
-                            doubleValue(),
+                                    doubleValue(),
                             ((Number) argument.get(DIVISIONS)).doubleValue(),
                             ((Number) argument.get(DEGREE)).doubleValue(),
                             ((Number) argument.get(ORDER)).doubleValue(),
                             (double[][]) dataObject[0],
                             (double[]) dataObject[1], doubleCovariate);
-                }
-                else if (dataLengthIndex == 2)
-                {
+                } else if (dataLengthIndex == 2) {
                     statisticalAnalysis = new PSplineRegression(
                             ((Number) argument.get(SMOOTHING_PARAMETER)).
-                            doubleValue(),
+                                    doubleValue(),
                             ((Number) argument.get(DIVISIONS)).doubleValue(),
                             ((Number) argument.get(DEGREE)).doubleValue(),
                             ((Number) argument.get(ORDER)).doubleValue(),
                             (double[][]) dataObject[0],
                             (double[]) dataObject[1],
                             (double[][]) dataObject[2]);
-                }
-                else
-                {
+                } else {
                     throw new IllegalArgumentException("Wrong input data.");
                 }
-            }
-            else if (argument.get(SMOOTHING_PARAMETER) != null &&
-                     argument.get(DIVISIONS) != null)
-            {
-                if (dataLengthIndex == 1)
-                {
+            } else if (argument.get(SMOOTHING_PARAMETER) != null &&
+                    argument.get(DIVISIONS) != null) {
+                if (dataLengthIndex == 1) {
                     statisticalAnalysis = new PSplineRegression(
                             ((Number) argument.get(SMOOTHING_PARAMETER)).
-                            doubleValue(),
+                                    doubleValue(),
                             ((Number) argument.get(DIVISIONS)).doubleValue(),
                             (double[][]) dataObject[0],
                             (double[]) dataObject[1], doubleCovariate);
-                }
-                else if (dataLengthIndex == 2)
-                {
+                } else if (dataLengthIndex == 2) {
                     statisticalAnalysis = new PSplineRegression(
                             ((Number) argument.get(SMOOTHING_PARAMETER)).
-                            doubleValue(),
+                                    doubleValue(),
                             ((Number) argument.get(DIVISIONS)).doubleValue(),
                             (double[][]) dataObject[0],
                             (double[]) dataObject[1],
                             (double[][]) dataObject[2]);
-                }
-                else if (dataLengthIndex == 3)
-                {
+                } else if (dataLengthIndex == 3) {
                     statisticalAnalysis = new PSplineRegression(
                             ((Number) argument.get(SMOOTHING_PARAMETER)).
-                            doubleValue(),
+                                    doubleValue(),
                             ((Number) argument.get(DIVISIONS)).doubleValue(),
                             (double[]) dataObject[0], doubleCovariate);
-                }
-                else if (dataLengthIndex == 4)
-                {
+                } else if (dataLengthIndex == 4) {
                     statisticalAnalysis = new PSplineRegression(
                             ((Number) argument.get(SMOOTHING_PARAMETER)).
-                            doubleValue(),
+                                    doubleValue(),
                             ((Number) argument.get(DIVISIONS)).doubleValue(),
                             (double[]) dataObject[0],
                             (double[][]) dataObject[1]);
-                }
-                else
-                {
+                } else {
                     throw new IllegalArgumentException("Wrong input data.");
                 }
             }
-        }
-        else if (dataObject == null)
-        {
+        } else if (dataObject == null) {
             statisticalAnalysis = new PSplineRegression();
-        }
-        else
-        {
+        } else {
             throw new IllegalArgumentException(
                     "Wrong input argument(s) or data.");
         }
@@ -545,8 +523,7 @@ public class PSplineRegression extends StatisticalAnalysis
                              double order,
                              double[][] weightMatrix,
                              double[] response,
-                             double[] ...covariate)
-    {
+                             double[]... covariate) {
         this.smoothingParameter = smoothingParameter;
         this.divisions = divisions;
         this.degree = degree;
@@ -555,8 +532,8 @@ public class PSplineRegression extends StatisticalAnalysis
         this.response = response;
         this.covariate = covariate;
         coefficients = coefficients(smoothingParameter, divisions, degree,
-                                    order,
-                                    weightMatrix, response, covariate);
+                order,
+                weightMatrix, response, covariate);
     }
 
     /**
@@ -577,10 +554,9 @@ public class PSplineRegression extends StatisticalAnalysis
                              double divisions,
                              double[][] weightMatrix,
                              double[] response,
-                             double[] ...covariate)
-    {
+                             double[]... covariate) {
         coefficients = coefficients(smoothingParameter, divisions, 3.0, 2.0,
-                                    weightMatrix, response, covariate);
+                weightMatrix, response, covariate);
     }
 
     /**
@@ -602,10 +578,9 @@ public class PSplineRegression extends StatisticalAnalysis
                              double degree,
                              double order,
                              double[] response,
-                             double[] ...covariate)
-    {
+                             double[]... covariate) {
         this(smoothingParameter, divisions, degree, order,
-             new DataManager().identity(response.length), response, covariate);
+                new DataManager().identity(response.length), response, covariate);
     }
 
     /**
@@ -624,10 +599,9 @@ public class PSplineRegression extends StatisticalAnalysis
     public PSplineRegression(double smoothingParameter,
                              double divisions,
                              double[] response,
-                             double[] ...covariate)
-    {
+                             double[]... covariate) {
         this(smoothingParameter, divisions, 3.0, 2.0,
-             new DataManager().identity(response.length), response, covariate);
+                new DataManager().identity(response.length), response, covariate);
     }
 
     /**
@@ -647,142 +621,114 @@ public class PSplineRegression extends StatisticalAnalysis
      */
 
     public double[][] hatMatrix(Hashtable argument,
-                                Object ...dataObject)
-    {
+                                Object... dataObject) {
         this.argument = argument;
         this.dataObject = dataObject;
         index = new DataManager().dataLengthIndex(dataObject);
         dataLengthIndex = (Integer) index.get("dataLengthIndex");
-        if (index.get("doubleCovariate") != null)
-        {
+        if (index.get("doubleCovariate") != null) {
             doubleCovariate = (double[][]) index.get("doubleCovariate");
         }
         if (argument.size() > 0 &&
-            dataObject != null)
-        {
+                dataObject != null) {
             if (argument.get(SMOOTHING_PARAMETER) != null &&
-                argument.get(DIVISIONS) != null &&
-                argument.get(DEGREE) != null &&
-                argument.get(ORDER) != null)
-            {
+                    argument.get(DIVISIONS) != null &&
+                    argument.get(DEGREE) != null &&
+                    argument.get(ORDER) != null) {
                 if (dataObject.length >= 2 &&
-                    dataObject[0].getClass().getName().
-                    equalsIgnoreCase("[[D") &&
-                    dataObject[1].getClass().getName().equalsIgnoreCase("[[D"))
-                {
+                        dataObject[0].getClass().getName().
+                                equalsIgnoreCase("[[D") &&
+                        dataObject[1].getClass().getName().equalsIgnoreCase("[[D")) {
                     hatMatrix = hatMatrix(
                             ((Number) argument.get(SMOOTHING_PARAMETER)).
-                            doubleValue(),
+                                    doubleValue(),
                             ((Number) argument.get(DIVISIONS)).doubleValue(),
                             ((Number) argument.get(DEGREE)).doubleValue(),
                             ((Number) argument.get(ORDER)).doubleValue(),
                             (double[][]) dataObject[0],
                             (double[][]) dataObject[1]);
-                }
-                else if (dataObject.length >= 2 &&
-                         dataObject[0].getClass().getName().
-                         equalsIgnoreCase("[[D") &&
-                         dataObject[1].getClass().getName().
-                         equalsIgnoreCase("[D"))
-                {
+                } else if (dataObject.length >= 2 &&
+                        dataObject[0].getClass().getName().
+                                equalsIgnoreCase("[[D") &&
+                        dataObject[1].getClass().getName().
+                                equalsIgnoreCase("[D")) {
                     hatMatrix = hatMatrix(
                             ((Number) argument.get(SMOOTHING_PARAMETER)).
-                            doubleValue(),
+                                    doubleValue(),
                             ((Number) argument.get(DIVISIONS)).doubleValue(),
                             ((Number) argument.get(DEGREE)).doubleValue(),
                             ((Number) argument.get(ORDER)).doubleValue(),
                             (double[][]) dataObject[0],
                             new DataManager().castDoubleObject(1, dataObject));
-                }
-                else if (dataObject.length == 1 &&
-                         dataObject[0].getClass().getName().
-                         equalsIgnoreCase("[[D"))
-                {
+                } else if (dataObject.length == 1 &&
+                        dataObject[0].getClass().getName().
+                                equalsIgnoreCase("[[D")) {
                     hatMatrix = hatMatrix(
                             ((Number) argument.get(SMOOTHING_PARAMETER)).
-                            doubleValue(),
+                                    doubleValue(),
                             ((Number) argument.get(DIVISIONS)).doubleValue(),
                             ((Number) argument.get(DEGREE)).doubleValue(),
                             ((Number) argument.get(ORDER)).doubleValue(),
                             (double[][]) dataObject[0]);
-                }
-                else if (dataObject.length >= 1 &&
-                           dataObject[0].getClass().getName().
-                           equalsIgnoreCase("[D"))
-                {
+                } else if (dataObject.length >= 1 &&
+                        dataObject[0].getClass().getName().
+                                equalsIgnoreCase("[D")) {
                     hatMatrix = hatMatrix(
                             ((Number) argument.get(SMOOTHING_PARAMETER)).
-                            doubleValue(),
+                                    doubleValue(),
                             ((Number) argument.get(DIVISIONS)).doubleValue(),
                             ((Number) argument.get(DEGREE)).doubleValue(),
                             ((Number) argument.get(ORDER)).doubleValue(),
                             (double[][]) dataObject);
-                }
-                else
-                {
+                } else {
                     throw new IllegalArgumentException("Wrong input data.");
                 }
-            }
-            else if (argument.get(SMOOTHING_PARAMETER) != null &&
-                     argument.get(DIVISIONS) != null)
-            {
+            } else if (argument.get(SMOOTHING_PARAMETER) != null &&
+                    argument.get(DIVISIONS) != null) {
                 if (dataObject.length >= 2 &&
-                    dataObject[0].getClass().getName().
-                    equalsIgnoreCase("[[D") &&
-                    dataObject[1].getClass().getName().equalsIgnoreCase("[[D"))
-                {
+                        dataObject[0].getClass().getName().
+                                equalsIgnoreCase("[[D") &&
+                        dataObject[1].getClass().getName().equalsIgnoreCase("[[D")) {
                     hatMatrix = hatMatrix(
                             ((Number) argument.get(SMOOTHING_PARAMETER)).
-                            doubleValue(),
+                                    doubleValue(),
                             ((Number) argument.get(DIVISIONS)).doubleValue(),
                             (double[][]) dataObject[0],
                             (double[][]) dataObject[1]);
-                }
-                else if (dataObject.length >= 2 &&
-                         dataObject[0].getClass().getName().
-                         equalsIgnoreCase("[[D") &&
-                         dataObject[1].getClass().getName().
-                         equalsIgnoreCase("[D"))
-                {
+                } else if (dataObject.length >= 2 &&
+                        dataObject[0].getClass().getName().
+                                equalsIgnoreCase("[[D") &&
+                        dataObject[1].getClass().getName().
+                                equalsIgnoreCase("[D")) {
                     hatMatrix = hatMatrix(
                             ((Number) argument.get(SMOOTHING_PARAMETER)).
-                            doubleValue(),
+                                    doubleValue(),
                             ((Number) argument.get(DIVISIONS)).doubleValue(),
                             (double[][]) dataObject[0],
                             new DataManager().castDoubleObject(1, dataObject));
-                }
-                else if (dataObject.length == 1 &&
-                         dataObject[0].getClass().getName().
-                         equalsIgnoreCase("[[D"))
-                {
+                } else if (dataObject.length == 1 &&
+                        dataObject[0].getClass().getName().
+                                equalsIgnoreCase("[[D")) {
                     hatMatrix = hatMatrix(
                             ((Number) argument.get(SMOOTHING_PARAMETER)).
-                            doubleValue(),
+                                    doubleValue(),
                             ((Number) argument.get(DIVISIONS)).doubleValue(),
                             (double[][]) dataObject[0]);
-                }
-                else if (dataObject.length >= 1 &&
-                         dataObject[0].getClass().getName().
-                         equalsIgnoreCase("[D"))
-                {
+                } else if (dataObject.length >= 1 &&
+                        dataObject[0].getClass().getName().
+                                equalsIgnoreCase("[D")) {
                     hatMatrix = hatMatrix(
                             ((Number) argument.get(SMOOTHING_PARAMETER)).
-                            doubleValue(),
+                                    doubleValue(),
                             ((Number) argument.get(DIVISIONS)).doubleValue(),
                             (double[][]) dataObject);
-                }
-                else
-                {
+                } else {
                     throw new IllegalArgumentException("Wrong input data.");
                 }
-            }
-            else
-            {
+            } else {
                 throw new IllegalArgumentException("Wrong input data.");
             }
-        }
-        else
-        {
+        } else {
             throw new IllegalArgumentException(
                     "Wrong input argument(s) or data.");
         }
@@ -811,8 +757,7 @@ public class PSplineRegression extends StatisticalAnalysis
                                 double degree,
                                 double order,
                                 double[][] weightMatrix,
-                                double[] ...covariate)
-    {
+                                double[]... covariate) {
         this.smoothingParameter = smoothingParameter;
         this.divisions = divisions;
         this.degree = degree;
@@ -824,8 +769,8 @@ public class PSplineRegression extends StatisticalAnalysis
         basis = bSplineBasis.basis(divisions, degree, covariate[0]);
         B = new Matrix(basis);
         difference = bSplineBasis.difference(order,
-                                             Matrix.identity(B.
-                getColumnDimension(), B.getColumnDimension()).getArray());
+                Matrix.identity(B.
+                        getColumnDimension(), B.getColumnDimension()).getArray());
         W = new Matrix(weightMatrix);
         D = new Matrix(difference);
         H = B.times(((B.transpose().times(W).times(B)).plus(((D.transpose()).
@@ -854,10 +799,9 @@ public class PSplineRegression extends StatisticalAnalysis
     public double[][] hatMatrix(double smoothingParameter,
                                 double divisions,
                                 double[][] weightMatrix,
-                                double[] ...covariate)
-    {
+                                double[]... covariate) {
         return hatMatrix(smoothingParameter, divisions, 3.0, 2.0, weightMatrix,
-                         covariate);
+                covariate);
     }
 
     /**
@@ -878,11 +822,10 @@ public class PSplineRegression extends StatisticalAnalysis
                                 double divisions,
                                 double degree,
                                 double order,
-                                double[] ...covariate)
-    {
+                                double[]... covariate) {
         return hatMatrix(smoothingParameter, divisions, degree, order,
-                         new DataManager().identity(covariate.length),
-                         covariate);
+                new DataManager().identity(covariate.length),
+                covariate);
     }
 
     /**
@@ -900,8 +843,7 @@ public class PSplineRegression extends StatisticalAnalysis
 
     public double[][] hatMatrix(double smoothingParameter,
                                 double divisions,
-                                double[] ...covariate)
-    {
+                                double[]... covariate) {
         return hatMatrix(smoothingParameter, divisions, 3.0, 2.0, covariate);
     }
 
@@ -923,98 +865,76 @@ public class PSplineRegression extends StatisticalAnalysis
      */
 
     public double[] coefficients(Hashtable argument,
-                                 Object ...dataObject)
-    {
+                                 Object... dataObject) {
         this.argument = argument;
         this.dataObject = dataObject;
         index = new DataManager().dataLengthIndex(dataObject);
         dataLengthIndex = (Integer) index.get("dataLengthIndex");
-        if (index.get("doubleCovariate") != null)
-        {
+        if (index.get("doubleCovariate") != null) {
             doubleCovariate = (double[][]) index.get("doubleCovariate");
         }
-        if (argument.size() > 0 && dataObject != null)
-        {
+        if (argument.size() > 0 && dataObject != null) {
             if (argument.get(SMOOTHING_PARAMETER) != null &&
-                argument.get(DIVISIONS) != null &&
-                argument.get(DEGREE) != null &&
-                argument.get(ORDER) != null)
-            {
-                if (dataLengthIndex == 1)
-                {
+                    argument.get(DIVISIONS) != null &&
+                    argument.get(DEGREE) != null &&
+                    argument.get(ORDER) != null) {
+                if (dataLengthIndex == 1) {
                     coefficients = coefficients(
                             ((Number) argument.get(SMOOTHING_PARAMETER)).
-                            doubleValue(),
+                                    doubleValue(),
                             ((Number) argument.get(DIVISIONS)).doubleValue(),
                             ((Number) argument.get(DEGREE)).doubleValue(),
                             ((Number) argument.get(ORDER)).doubleValue(),
                             (double[][]) dataObject[0],
                             (double[]) dataObject[1], doubleCovariate);
-                }
-                else if (dataLengthIndex == 2)
-                {
+                } else if (dataLengthIndex == 2) {
                     coefficients = coefficients(
                             ((Number) argument.get(SMOOTHING_PARAMETER)).
-                            doubleValue(),
+                                    doubleValue(),
                             ((Number) argument.get(DIVISIONS)).doubleValue(),
                             ((Number) argument.get(DEGREE)).doubleValue(),
                             ((Number) argument.get(ORDER)).doubleValue(),
                             (double[][]) dataObject[0],
                             (double[]) dataObject[1],
                             (double[][]) dataObject[2]);
-                }
-                else
-                {
+                } else {
                     throw new IllegalArgumentException("Wrong input data.");
                 }
-            }
-            else if (argument.get(SMOOTHING_PARAMETER) != null &&
-                     argument.get(DIVISIONS) != null)
-            {
-                if (dataLengthIndex == 1)
-                {
+            } else if (argument.get(SMOOTHING_PARAMETER) != null &&
+                    argument.get(DIVISIONS) != null) {
+                if (dataLengthIndex == 1) {
                     coefficients = coefficients(
                             ((Number) argument.get(SMOOTHING_PARAMETER)).
-                            doubleValue(),
+                                    doubleValue(),
                             ((Number) argument.get(DIVISIONS)).doubleValue(),
                             (double[][]) dataObject[0],
                             (double[]) dataObject[1], doubleCovariate);
-                }
-                else if (dataLengthIndex == 2)
-                {
+                } else if (dataLengthIndex == 2) {
                     coefficients = coefficients(
                             ((Number) argument.get(SMOOTHING_PARAMETER)).
-                            doubleValue(),
+                                    doubleValue(),
                             ((Number) argument.get(DIVISIONS)).doubleValue(),
                             (double[][]) dataObject[0],
                             (double[]) dataObject[1],
                             (double[][]) dataObject[2]);
-                }
-                else if (dataLengthIndex == 3)
-                {
+                } else if (dataLengthIndex == 3) {
                     coefficients = coefficients(
                             ((Number) argument.get(SMOOTHING_PARAMETER)).
-                            doubleValue(),
+                                    doubleValue(),
                             ((Number) argument.get(DIVISIONS)).doubleValue(),
                             (double[]) dataObject[0], doubleCovariate);
-                }
-                else if (dataLengthIndex == 4)
-                {
+                } else if (dataLengthIndex == 4) {
                     coefficients = coefficients(
                             ((Number) argument.get(SMOOTHING_PARAMETER)).
-                            doubleValue(),
+                                    doubleValue(),
                             ((Number) argument.get(DIVISIONS)).doubleValue(),
                             (double[]) dataObject[0],
                             (double[][]) dataObject[1]);
-                }
-                else
-                {
+                } else {
                     throw new IllegalArgumentException("Wrong input data.");
                 }
             }
-        }
-        else
-        {
+        } else {
             throw new IllegalArgumentException(
                     "Wrong input argument(s) or data.");
         }
@@ -1044,8 +964,7 @@ public class PSplineRegression extends StatisticalAnalysis
                                  double order,
                                  double[][] weightMatrix,
                                  double[] response,
-                                 double[] ...covariate)
-    {
+                                 double[]... covariate) {
         this.smoothingParameter = smoothingParameter;
         this.divisions = divisions;
         this.degree = degree;
@@ -1055,12 +974,12 @@ public class PSplineRegression extends StatisticalAnalysis
         this.covariate = covariate;
         new DataManager().checkDimension(covariate);
         hatMatrix = hatMatrix(smoothingParameter, divisions, degree, order,
-                              weightMatrix, covariate);
+                weightMatrix, covariate);
         y = new Matrix(response, response.length);
         coefficients = ((B.transpose().times(W).times(B)).plus(((D.transpose()).
                 times(smoothingParameter)).
                 times(D)).solve(B.transpose().times(W).times(y))).
-                       getColumnPackedCopy();
+                getColumnPackedCopy();
         fittedValues = H.times(y).getColumnPackedCopy();
         residuals = (y.minus(H.times(y))).getColumnPackedCopy();
         output.put(Output.COEFFICIENTS, coefficients);
@@ -1089,10 +1008,9 @@ public class PSplineRegression extends StatisticalAnalysis
                                  double divisions,
                                  double[][] weightMatrix,
                                  double[] response,
-                                 double[] ...covariate)
-    {
+                                 double[]... covariate) {
         return coefficients(smoothingParameter, divisions, 3.0, 2.0,
-                            weightMatrix, response, covariate);
+                weightMatrix, response, covariate);
     }
 
     /**
@@ -1115,11 +1033,10 @@ public class PSplineRegression extends StatisticalAnalysis
                                  double degree,
                                  double order,
                                  double[] response,
-                                 double[] ...covariate)
-    {
+                                 double[]... covariate) {
         return coefficients(smoothingParameter, divisions, degree, order,
-                            new DataManager().identity(response.length),
-                            response, covariate);
+                new DataManager().identity(response.length),
+                response, covariate);
     }
 
     /**
@@ -1139,10 +1056,9 @@ public class PSplineRegression extends StatisticalAnalysis
     public double[] coefficients(double smoothingParameter,
                                  double divisions,
                                  double[] response,
-                                 double[] ...covariate)
-    {
+                                 double[]... covariate) {
         return coefficients(smoothingParameter, divisions, 3.0, 2.0, response,
-                            covariate);
+                covariate);
     }
 
     /**
@@ -1172,42 +1088,35 @@ public class PSplineRegression extends StatisticalAnalysis
      */
 
     public double minimizer(Hashtable argument,
-                            Object ...dataObject)
-    {
+                            Object... dataObject) {
         this.argument = argument;
         this.dataObject = dataObject;
         index = new DataManager().dataLengthIndex(dataObject);
         dataLengthIndex = (Integer) index.get("dataLengthIndex");
-        if (index.get("doubleCovariate") != null)
-        {
+        if (index.get("doubleCovariate") != null) {
             doubleCovariate = (double[][]) index.get("doubleCovariate");
         }
         if (argument.size() > 0 &&
-            dataObject != null)
-        {
+                dataObject != null) {
             if (argument.get(DIVISIONS) != null &&
-                argument.get(DEGREE) != null &&
-                argument.get(ORDER) != null &&
-                argument.get(SELECTION_CRITERION) != null &&
-                argument.get(PSI_FUNCTION) != null)
-            {
-                if (dataLengthIndex == 1)
-                {
+                    argument.get(DEGREE) != null &&
+                    argument.get(ORDER) != null &&
+                    argument.get(SELECTION_CRITERION) != null &&
+                    argument.get(PSI_FUNCTION) != null) {
+                if (dataLengthIndex == 1) {
                     minimizer = minimizer(
                             (SelectionCriterion) argument.get(
-                            SELECTION_CRITERION),
+                                    SELECTION_CRITERION),
                             (PsiFunction) argument.get(PSI_FUNCTION),
                             ((Number) argument.get(DIVISIONS)).doubleValue(),
                             ((Number) argument.get(DEGREE)).doubleValue(),
                             ((Number) argument.get(ORDER)).doubleValue(),
                             (double[][]) dataObject[0],
                             (double[]) dataObject[1], doubleCovariate);
-                }
-                else if (dataLengthIndex == 2)
-                {
+                } else if (dataLengthIndex == 2) {
                     minimizer = minimizer(
                             (SelectionCriterion) argument.get(
-                            SELECTION_CRITERION),
+                                    SELECTION_CRITERION),
                             (PsiFunction) argument.get(PSI_FUNCTION),
                             ((Number) argument.get(DIVISIONS)).doubleValue(),
                             ((Number) argument.get(DEGREE)).doubleValue(),
@@ -1215,60 +1124,46 @@ public class PSplineRegression extends StatisticalAnalysis
                             (double[][]) dataObject[0],
                             (double[]) dataObject[1],
                             (double[][]) dataObject[2]);
-                }
-                else
-                {
+                } else {
                     throw new IllegalArgumentException("Wrong input data.");
                 }
-            }
-            else if (argument.get(DIVISIONS) != null &&
-                     argument.get(DEGREE) != null &&
-                     argument.get(ORDER) != null &&
-                     argument.get(SELECTION_CRITERION) != null)
-            {
-                if (dataLengthIndex == 1)
-                {
+            } else if (argument.get(DIVISIONS) != null &&
+                    argument.get(DEGREE) != null &&
+                    argument.get(ORDER) != null &&
+                    argument.get(SELECTION_CRITERION) != null) {
+                if (dataLengthIndex == 1) {
                     minimizer = minimizer(
                             (SelectionCriterion) argument.get(
-                            SELECTION_CRITERION),
+                                    SELECTION_CRITERION),
                             ((Number) argument.get(DIVISIONS)).doubleValue(),
                             ((Number) argument.get(DEGREE)).doubleValue(),
                             ((Number) argument.get(ORDER)).doubleValue(),
                             (double[][]) dataObject[0],
                             (double[]) dataObject[1], doubleCovariate);
-                }
-                else if (dataLengthIndex == 2)
-                {
+                } else if (dataLengthIndex == 2) {
                     minimizer = minimizer(
                             (SelectionCriterion) argument.get(
-                            SELECTION_CRITERION),
+                                    SELECTION_CRITERION),
                             ((Number) argument.get(DIVISIONS)).doubleValue(),
                             ((Number) argument.get(DEGREE)).doubleValue(),
                             ((Number) argument.get(ORDER)).doubleValue(),
                             (double[][]) dataObject[0],
                             (double[]) dataObject[1],
                             (double[][]) dataObject[2]);
-                }
-                else
-                {
+                } else {
                     throw new IllegalArgumentException("Wrong input data.");
                 }
-            }
-            else if (argument.get(DIVISIONS) != null &&
-                     argument.get(DEGREE) != null &&
-                     argument.get(ORDER) != null)
-            {
-                if (dataLengthIndex == 1)
-                {
+            } else if (argument.get(DIVISIONS) != null &&
+                    argument.get(DEGREE) != null &&
+                    argument.get(ORDER) != null) {
+                if (dataLengthIndex == 1) {
                     minimizer = minimizer(
                             ((Number) argument.get(DIVISIONS)).doubleValue(),
                             ((Number) argument.get(DEGREE)).doubleValue(),
                             ((Number) argument.get(ORDER)).doubleValue(),
                             (double[][]) dataObject[0],
                             (double[]) dataObject[1], doubleCovariate);
-                }
-                else if (dataLengthIndex == 2)
-                {
+                } else if (dataLengthIndex == 2) {
                     minimizer = minimizer(
                             ((Number) argument.get(DIVISIONS)).doubleValue(),
                             ((Number) argument.get(DEGREE)).doubleValue(),
@@ -1276,67 +1171,48 @@ public class PSplineRegression extends StatisticalAnalysis
                             (double[][]) dataObject[0],
                             (double[]) dataObject[1],
                             (double[][]) dataObject[2]);
-                }
-                else if (dataLengthIndex == 3)
-                {
+                } else if (dataLengthIndex == 3) {
                     minimizer = minimizer(
                             ((Number) argument.get(DIVISIONS)).doubleValue(),
                             ((Number) argument.get(DEGREE)).doubleValue(),
                             ((Number) argument.get(ORDER)).doubleValue(),
                             (double[]) dataObject[0], doubleCovariate);
-                }
-                else if (dataLengthIndex == 4)
-                {
+                } else if (dataLengthIndex == 4) {
                     minimizer = minimizer(
                             ((Number) argument.get(DIVISIONS)).doubleValue(),
                             ((Number) argument.get(DEGREE)).doubleValue(),
                             ((Number) argument.get(ORDER)).doubleValue(),
                             (double[]) dataObject[0],
                             (double[][]) dataObject[1]);
-                }
-                else
-                {
+                } else {
                     throw new IllegalArgumentException("Wrong input data.");
                 }
-            }
-            else if (argument.get(DIVISIONS) != null)
-            {
-                if (dataLengthIndex == 1)
-                {
+            } else if (argument.get(DIVISIONS) != null) {
+                if (dataLengthIndex == 1) {
                     minimizer = minimizer(
                             ((Number) argument.get(DIVISIONS)).doubleValue(),
                             (double[][]) dataObject[0],
                             (double[]) dataObject[1], doubleCovariate);
-                }
-                else if (dataLengthIndex == 2)
-                {
+                } else if (dataLengthIndex == 2) {
                     minimizer = minimizer(
                             ((Number) argument.get(DIVISIONS)).doubleValue(),
                             (double[][]) dataObject[0],
                             (double[]) dataObject[1],
                             (double[][]) dataObject[2]);
-                }
-                else if (dataLengthIndex == 3)
-                {
+                } else if (dataLengthIndex == 3) {
                     minimizer = minimizer(
                             ((Number) argument.get(DIVISIONS)).doubleValue(),
                             (double[]) dataObject[0], doubleCovariate);
-                }
-                else if (dataLengthIndex == 4)
-                {
+                } else if (dataLengthIndex == 4) {
                     minimizer = minimizer(
                             ((Number) argument.get(DIVISIONS)).doubleValue(),
                             (double[]) dataObject[0],
                             (double[][]) dataObject[1]);
-                }
-                else
-                {
+                } else {
                     throw new IllegalArgumentException("Wrong input data.");
                 }
             }
-        }
-        else
-        {
+        } else {
             throw new IllegalArgumentException(
                     "Wrong input argument(s) or data.");
         }
@@ -1368,8 +1244,7 @@ public class PSplineRegression extends StatisticalAnalysis
                             double order,
                             double[][] weightMatrix,
                             double[] response,
-                            double[] ...covariate)
-    {
+                            double[]... covariate) {
         this.selectionCriterion = selectionCriterion;
         this.psiFunction = psiFunction;
         this.divisions = divisions;
@@ -1380,11 +1255,10 @@ public class PSplineRegression extends StatisticalAnalysis
         this.covariate = covariate;
         minimizer = 0;
         objFunction = 999;
-        while (Math.abs(objFunction) > 1e-6)
-        {
+        while (Math.abs(objFunction) > 1e-6) {
             y = new Matrix(response, response.length);
             hatMatrix = hatMatrix(minimizer, divisions, degree, order,
-                                  weightMatrix, covariate);
+                    weightMatrix, covariate);
 
             WRSS = ((y.minus(H.times(y))).transpose().times(W).times(y.minus(H.
                     times(y)))).get(0, 0);
@@ -1395,8 +1269,7 @@ public class PSplineRegression extends StatisticalAnalysis
                     transpose())).times(W).times(-1.0);
             ddH = B.times(dA).times(D.transpose().times(D)).times(A).times(B.
                     transpose()).times(W).times(-2.0);
-            switch (psiFunction)
-            {
+            switch (psiFunction) {
                 case SAMPLE_SIZE:
                     mu = H.trace() / response.length;
                     dmu = dH.trace() / response.length;
@@ -1409,10 +1282,10 @@ public class PSplineRegression extends StatisticalAnalysis
                     break;
                 case PCA_NUMBER:
                     pcaVariance = new EigenvalueDecomposition(W).
-                                  getRealEigenvalues();
+                            getRealEigenvalues();
                     new DataManager().dataSort(pcaVariance);
                     psi = weightMatrix.length -
-                          new BasicStatistics().pcaNumber(pcaVariance, 0.9);
+                            new BasicStatistics().pcaNumber(pcaVariance, 0.9);
                     mu = H.trace() / psi;
                     dmu = dH.trace() / psi;
                     ddmu = ddH.trace() / psi;
@@ -1425,19 +1298,18 @@ public class PSplineRegression extends StatisticalAnalysis
                     times(y)))).times(-2.0)).get(0, 0);
             ddWRSS = ((((ddH.times(y)).transpose()).times(W).times(y.minus(H.
                     times(y))).minus(
-                            ((dH.times(y)).transpose()).times(W).times((dH.
-                    times(y))))).times(-2.0)).get(0, 0);
-            switch (selectionCriterion)
-            {
+                    ((dH.times(y)).transpose()).times(W).times((dH.
+                            times(y))))).times(-2.0)).get(0, 0);
+            switch (selectionCriterion) {
                 case GCV:
                     phi = Math.pow((1.0 - mu), 2.0);
                     dphi = -2.0 * (1.0 - mu) * dmu;
                     ddphi = 2.0 * (Math.pow(dmu, 2.0) + dmu * ddmu - ddmu);
                     break;
                 case AIC:
-                    phi = Math.exp( -2.0 * mu);
-                    dphi = Math.exp( -2.0 * mu) * ( -2.0 * dmu);
-                    ddphi = 2 * Math.exp( -2.0 * mu) *
+                    phi = Math.exp(-2.0 * mu);
+                    dphi = Math.exp(-2.0 * mu) * (-2.0 * dmu);
+                    ddphi = 2 * Math.exp(-2.0 * mu) *
                             (2 * Math.pow(dmu, 2.0) - ddmu);
                     break;
                 case T:
@@ -1447,37 +1319,37 @@ public class PSplineRegression extends StatisticalAnalysis
                     break;
                 case FPE:
                     phi = (1.0 - mu) / (1.0 + mu);
-                    dphi = ( -2.0 * dmu) / Math.pow(1.0 + mu, 2.0);
+                    dphi = (-2.0 * dmu) / Math.pow(1.0 + mu, 2.0);
                     ddphi = (4 * Math.pow(dmu, 2.0) - 2.0 * ddmu * (1 + mu)) /
                             Math.pow(1.0 + mu, 3.0);
                     break;
                 case nS:
                     phi = 1.0 / (1.0 + 2.0 * mu);
-                    dphi = ( -2.0 * dmu) / Math.pow(1.0 + 2.0 * mu, 2.0);
+                    dphi = (-2.0 * dmu) / Math.pow(1.0 + 2.0 * mu, 2.0);
                     ddphi = (8.0 * Math.pow(dmu, 2.0) -
-                             2.0 * ddmu * (1.0 + 2.0 * mu)) /
+                            2.0 * ddmu * (1.0 + 2.0 * mu)) /
                             Math.pow(1.0 + 2.0 * mu, 3.0);
                     break;
                 case U:
                     phi = ((1.0 - mu) *
-                           (response.length - 1 - response.length * mu)) /
-                          (response.length - 1);
+                            (response.length - 1 - response.length * mu)) /
+                            (response.length - 1);
                     dphi = (dmu * (2 * response.length * mu -
-                                   2 * response.length + 1)) /
-                           (response.length - 1);
+                            2 * response.length + 1)) /
+                            (response.length - 1);
                     ddphi = (ddmu * (2 * response.length * mu -
-                                     2 * response.length + 1) +
-                             2.0 * response.length * Math.pow(dmu, 2.0)) /
+                            2 * response.length + 1) +
+                            2.0 * response.length * Math.pow(dmu, 2.0)) /
                             (response.length - 1);
                     break;
                 default:
                     throw new IllegalArgumentException(
-                        "No input selection criterion.");
+                            "No input selection criterion.");
             }
             dObjFunction = ddWRSS / phi -
-                           (2 * dWRSS * dphi) / Math.pow(phi, 2.0) +
-                           (WRSS * (2 * Math.pow(dphi, 2.0) - ddphi * phi)) /
-                           Math.pow(phi, 3.0);
+                    (2 * dWRSS * dphi) / Math.pow(phi, 2.0) +
+                    (WRSS * (2 * Math.pow(dphi, 2.0) - ddphi * phi)) /
+                            Math.pow(phi, 3.0);
             objFunction = dWRSS / phi - (WRSS * dphi) / Math.pow(phi, 2.0);
             minimizer = minimizer - (objFunction / dObjFunction);
         }
@@ -1510,10 +1382,9 @@ public class PSplineRegression extends StatisticalAnalysis
                             double order,
                             double[][] weightMatrix,
                             double[] response,
-                            double[] ...covariate)
-    {
+                            double[]... covariate) {
         return minimizer(selectionCriterion, PsiFunction.PCA_NUMBER, divisions,
-                         degree, order, weightMatrix, response, covariate);
+                degree, order, weightMatrix, response, covariate);
     }
 
     /**
@@ -1537,11 +1408,10 @@ public class PSplineRegression extends StatisticalAnalysis
                             double order,
                             double[][] weightMatrix,
                             double[] response,
-                            double[] ...covariate)
-    {
+                            double[]... covariate) {
         return minimizer(SelectionCriterion.GCV, PsiFunction.PCA_NUMBER,
-                         divisions, degree, order,
-                         weightMatrix, response, covariate);
+                divisions, degree, order,
+                weightMatrix, response, covariate);
     }
 
     /**
@@ -1562,11 +1432,10 @@ public class PSplineRegression extends StatisticalAnalysis
     public double minimizer(double divisions,
                             double[][] weightMatrix,
                             double[] response,
-                            double[] ...covariate)
-    {
+                            double[]... covariate) {
         return minimizer(SelectionCriterion.GCV, PsiFunction.PCA_NUMBER,
-                         divisions, 3.0, 2.0,
-                         weightMatrix, response, covariate);
+                divisions, 3.0, 2.0,
+                weightMatrix, response, covariate);
     }
 
     /**
@@ -1588,12 +1457,11 @@ public class PSplineRegression extends StatisticalAnalysis
                             double degree,
                             double order,
                             double[] response,
-                            double[] ...covariate)
-    {
+                            double[]... covariate) {
         return minimizer(SelectionCriterion.GCV, PsiFunction.SAMPLE_SIZE,
-                         divisions, degree, order,
-                         new DataManager().
-                         identity(response.length), response, covariate);
+                divisions, degree, order,
+                new DataManager().
+                        identity(response.length), response, covariate);
     }
 
     /**
@@ -1612,12 +1480,11 @@ public class PSplineRegression extends StatisticalAnalysis
 
     public double minimizer(double divisions,
                             double[] response,
-                            double[] ...covariate)
-    {
+                            double[]... covariate) {
         return minimizer(SelectionCriterion.GCV, PsiFunction.SAMPLE_SIZE,
-                         divisions, 3.0, 2.0,
-                         new DataManager().
-                         identity(response.length), response, covariate);
+                divisions, 3.0, 2.0,
+                new DataManager().
+                        identity(response.length), response, covariate);
     }
 
 }

@@ -49,11 +49,11 @@ public class GeneratedPopulationComposition implements PopulationComposition {
     @Override
     public OneDimensionDataDistribution getSurvivorTable(Date startYear, CompoundTimeUnit timePeriod, EventType event) throws UnsupportedEventType {
 
-        if(event == EventType.MALE_DEATH || event == EventType.FEMALE_DEATH) {
+        if (event == EventType.MALE_DEATH || event == EventType.FEMALE_DEATH) {
             return getDeathTable(startYear, timePeriod, event);
         }
 
-        if(event == EventType.FIRST_BIRTH) {
+        if (event == EventType.FIRST_BIRTH) {
             return getFirstBirthTable(startYear, timePeriod, event);
         }
 
@@ -67,7 +67,6 @@ public class GeneratedPopulationComposition implements PopulationComposition {
     }
 
 
-
     private OneDimensionDataDistribution getFirstBirthTable(Date startYear, CompoundTimeUnit timePeriod, EventType event) throws UnsupportedEventType {
 
         Collection<IPerson> women = population.getByYearAndSex('f', startYear);
@@ -78,13 +77,13 @@ public class GeneratedPopulationComposition implements PopulationComposition {
 
         int maxAge = 0;
 
-        for(IPerson w : women) {
+        for (IPerson w : women) {
 
             Integer age = null;
             try {
                 age = w.ageAtFirstChild();
 
-                if(age > maxAge) {
+                if (age > maxAge) {
                     maxAge = age;
                 }
 
@@ -101,7 +100,7 @@ public class GeneratedPopulationComposition implements PopulationComposition {
         double survivors = women.size();
         survival.put(new IntegerRange(0), survivors);
 
-        for(int i = 0; i < maxAge; i++) {
+        for (int i = 0; i < maxAge; i++) {
             try {
                 survivors -= counts.get(countsTable.resolveRowValue(i));
             } catch (InvalidRangeException e) { /* No deaths at this age*/ }
@@ -117,9 +116,9 @@ public class GeneratedPopulationComposition implements PopulationComposition {
 
         char sex;
 
-        if(event == EventType.MALE_DEATH) {
+        if (event == EventType.MALE_DEATH) {
             sex = 'm';
-        } else if(event == EventType.FEMALE_DEATH) {
+        } else if (event == EventType.FEMALE_DEATH) {
             sex = 'f';
         } else {
             throw new UnsupportedEventType("EventType must be a death type for this method");
@@ -134,13 +133,13 @@ public class GeneratedPopulationComposition implements PopulationComposition {
 
         int maxAge = 0;
 
-        for(IPerson m : females) {
+        for (IPerson m : females) {
 
             Integer age = null;
             try {
                 age = m.ageAtDeath();
 
-                if(age > maxAge) {
+                if (age > maxAge) {
                     maxAge = age;
                 }
 
@@ -156,7 +155,7 @@ public class GeneratedPopulationComposition implements PopulationComposition {
         double survivors = females.size();
         survival.put(new IntegerRange(0), survivors);
 
-        for(int i = 0; i < maxAge; i++) {
+        for (int i = 0; i < maxAge; i++) {
             try {
                 survivors -= counts.get(countsTable.resolveRowValue(i));
             } catch (InvalidRangeException e) { /* No deaths at this age*/ }

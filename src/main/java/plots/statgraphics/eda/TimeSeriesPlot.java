@@ -5,6 +5,7 @@ package plots.statgraphics.eda;
  * <p>Description: The statistical graphics</p>
  * <p>Copyright: Copyright (c) 2009</p>
  * <p>Company: Tung Hai University </p>
+ *
  * @author Wen Hsiang Wei
  * @version 1.4
  */
@@ -14,6 +15,7 @@ import java.util.Hashtable;
 import plots.statgraphics.GraphicalAnalysis;
 import plots.statgraphics.util.DataCreator;
 import plots.statgraphics.util.Plot2DFactory;
+
 import static plots.statgraphics.util.Argument.*;
 
 /**
@@ -82,8 +84,7 @@ import static plots.statgraphics.util.Argument.*;
  * <br> new PlotFrameFactory().putPlotFrame(pf);
  */
 
-public class TimeSeriesPlot extends GraphicalAnalysis
-{
+public class TimeSeriesPlot extends GraphicalAnalysis {
 
     /**
      * The input time series.
@@ -132,7 +133,8 @@ public class TimeSeriesPlot extends GraphicalAnalysis
      * Default TimeSeriesPlot constructor.
      */
 
-    public TimeSeriesPlot() {}
+    public TimeSeriesPlot() {
+    }
 
     /**
      * Creates a new time series plot given the input arguments and data.
@@ -156,23 +158,19 @@ public class TimeSeriesPlot extends GraphicalAnalysis
      */
 
     public TimeSeriesPlot(Hashtable argument,
-                          Object ...dataObject)
-    {
+                          Object... dataObject) {
         this.argument = argument;
         this.dataObject = dataObject;
         if (argument.size() > 0 &&
-            dataObject != null)
-        {
+                dataObject != null) {
             if (argument.get(DATA_NAMES) != null &&
-                argument.get(TITLE) != null &&
-                argument.get(XLABEL) != null &&
-                argument.get(YLABEL) != null)
-            {
+                    argument.get(TITLE) != null &&
+                    argument.get(XLABEL) != null &&
+                    argument.get(YLABEL) != null) {
                 if (dataObject.length == 2 &&
-                    dataObject[0].getClass().getName().
-                    equalsIgnoreCase("[[[I") &&
-                    dataObject[1].getClass().getName().equalsIgnoreCase("[[D"))
-                {
+                        dataObject[0].getClass().getName().
+                                equalsIgnoreCase("[[[I") &&
+                        dataObject[1].getClass().getName().equalsIgnoreCase("[[D")) {
                     graphicalAnalysis = new TimeSeriesPlot(
                             (String[]) argument.get(DATA_NAMES),
                             (String) argument.get(TITLE),
@@ -180,11 +178,9 @@ public class TimeSeriesPlot extends GraphicalAnalysis
                             (String) argument.get(YLABEL),
                             (int[][][]) dataObject[0],
                             (double[][]) dataObject[1]);
-                }
-                else if (dataObject.length >= 2 &&
-                         dataObject[0].getClass().getName().
-                         equalsIgnoreCase("[[[I"))
-                {
+                } else if (dataObject.length >= 2 &&
+                        dataObject[0].getClass().getName().
+                                equalsIgnoreCase("[[[I")) {
                     graphicalAnalysis = new TimeSeriesPlot(
                             (String[]) argument.get(DATA_NAMES),
                             (String) argument.get(TITLE),
@@ -192,13 +188,11 @@ public class TimeSeriesPlot extends GraphicalAnalysis
                             (String) argument.get(YLABEL),
                             (int[][][]) dataObject[0],
                             DataCreator.castToDoubleData(1, dataObject));
-                }
-                else if (dataObject.length == 2 &&
-                         dataObject[0].getClass().getName().
-                         equalsIgnoreCase("[[I") &&
-                         dataObject[1].getClass().getName().
-                         equalsIgnoreCase("[D"))
-                {
+                } else if (dataObject.length == 2 &&
+                        dataObject[0].getClass().getName().
+                                equalsIgnoreCase("[[I") &&
+                        dataObject[1].getClass().getName().
+                                equalsIgnoreCase("[D")) {
                     graphicalAnalysis = new TimeSeriesPlot(
                             (String) argument.get(DATA_NAMES),
                             (String) argument.get(TITLE),
@@ -206,57 +200,42 @@ public class TimeSeriesPlot extends GraphicalAnalysis
                             (String) argument.get(YLABEL),
                             (int[][]) dataObject[0],
                             (double[]) dataObject[1]);
-                }
-                else
-                {
+                } else {
                     throw new IllegalArgumentException("Wrong input data.");
                 }
-            }
-            else if (argument.get(DATA_NAMES) != null)
-            {
+            } else if (argument.get(DATA_NAMES) != null) {
                 if (dataObject.length == 2 &&
-                    dataObject[0].getClass().getName().
-                    equalsIgnoreCase("[[[I") &&
-                    dataObject[1].getClass().getName().equalsIgnoreCase("[[D"))
-                {
+                        dataObject[0].getClass().getName().
+                                equalsIgnoreCase("[[[I") &&
+                        dataObject[1].getClass().getName().equalsIgnoreCase("[[D")) {
                     graphicalAnalysis = new TimeSeriesPlot(
                             (String[]) argument.get(DATA_NAMES),
                             (int[][][]) dataObject[0],
                             (double[][]) dataObject[1]);
-                }
-                else if (dataObject.length >= 2 &&
-                         dataObject[0].getClass().getName().
-                         equalsIgnoreCase("[[[I"))
-                {
+                } else if (dataObject.length >= 2 &&
+                        dataObject[0].getClass().getName().
+                                equalsIgnoreCase("[[[I")) {
                     graphicalAnalysis = new TimeSeriesPlot(
                             (String[]) argument.get(DATA_NAMES),
                             (int[][][]) dataObject[0],
                             DataCreator.castToDoubleData(1, dataObject));
-                }
-                else if (dataObject.length == 2 &&
-                         dataObject[0].getClass().getName().
-                         equalsIgnoreCase("[[I") &&
-                         dataObject[1].getClass().getName().
-                         equalsIgnoreCase("[D"))
-                {
+                } else if (dataObject.length == 2 &&
+                        dataObject[0].getClass().getName().
+                                equalsIgnoreCase("[[I") &&
+                        dataObject[1].getClass().getName().
+                                equalsIgnoreCase("[D")) {
                     graphicalAnalysis = new TimeSeriesPlot(
                             (String) argument.get(DATA_NAMES),
                             (int[][]) dataObject[0],
                             (double[]) dataObject[1]);
-                }
-                else
-                {
+                } else {
                     throw new IllegalArgumentException("Wrong input data.");
                 }
-            }
-            else
-            {
+            } else {
                 throw new IllegalArgumentException(
                         "Wrong input arguments or data.");
             }
-        }
-        else
-        {
+        } else {
             throw new IllegalArgumentException("Wrong input data.");
         }
     }
@@ -301,8 +280,7 @@ public class TimeSeriesPlot extends GraphicalAnalysis
                           String xLabel,
                           String yLabel,
                           int[][][] time,
-                          double[] ...data)
-    {
+                          double[]... data) {
         this.data = data;
         this.time = time;
         this.dataNames = dataNames;
@@ -349,8 +327,7 @@ public class TimeSeriesPlot extends GraphicalAnalysis
 
     public TimeSeriesPlot(String[] dataNames,
                           int[][][] time,
-                          double[] ...data)
-    {
+                          double[]... data) {
         this(dataNames, "Time Series Plot", "Time", "Value", time, data);
     }
 
@@ -386,10 +363,9 @@ public class TimeSeriesPlot extends GraphicalAnalysis
                           String xLabel,
                           String yLabel,
                           int[][] time,
-                          double[] data)
-    {
-        this(new String[] {dataName}, title, xLabel, yLabel,
-             new int[][][] {time}, new double[][] {data});
+                          double[] data) {
+        this(new String[]{dataName}, title, xLabel, yLabel,
+                new int[][][]{time}, new double[][]{data});
     }
 
     /**
@@ -419,8 +395,7 @@ public class TimeSeriesPlot extends GraphicalAnalysis
 
     public TimeSeriesPlot(String dataName,
                           int[][] time,
-                          double[] data)
-    {
+                          double[] data) {
         this(dataName, "Time Series Plot", "Time", "Value", time, data);
     }
 

@@ -11,29 +11,28 @@ import java.util.Map;
  */
 public class SelfCorrectingTwoDimensionDataDistribution extends TwoDimensionDataDistribution implements SelfCorrection {
 
+    private Map<IntegerRange, OneDimensionDataDistribution> appliedData;
+    private Map<IntegerRange, OneDimensionDataDistribution> appliedCounts;
+    private int maxCol = 10;
+
     public SelfCorrectingTwoDimensionDataDistribution(YearDate year, String sourcePopulation, String sourceOrganisation, Map<IntegerRange, OneDimensionDataDistribution> tableData) {
         super(year, sourcePopulation, sourceOrganisation, tableData);
         this.appliedData = MapUtils.clone(tableData);
         this.appliedCounts = MapUtils.clone(tableData);
 
-        for(IntegerRange iR : appliedCounts.keySet()) {
+        for (IntegerRange iR : appliedCounts.keySet()) {
             OneDimensionDataDistribution t = appliedCounts.get(iR);
-            for(IntegerRange iR2 : t.getData().keySet()) {
+            for (IntegerRange iR2 : t.getData().keySet()) {
                 t.getData().replace(iR2, 0.0);
             }
         }
 
     }
 
-    private Map<IntegerRange, OneDimensionDataDistribution> appliedData;
-    private Map<IntegerRange, OneDimensionDataDistribution> appliedCounts;
-
-    private int maxCol = 10;
-
     @Override
     public double getCorrectingData(DataKey data) {
 
-        if(maxCol <= data.getColumnValue()) {
+        if (maxCol <= data.getColumnValue()) {
             return 0.0;
         }
 
@@ -57,7 +56,7 @@ public class SelfCorrectingTwoDimensionDataDistribution extends TwoDimensionData
 
         int P = dP.intValue();
 
-        if(P == 0) {
+        if (P == 0) {
             return t;
         }
 
@@ -66,20 +65,20 @@ public class SelfCorrectingTwoDimensionDataDistribution extends TwoDimensionData
 
         // calculate rate to achieve correction - x
         // x = (Tt - Pa) / L
-        double x = (T*t - P*a) / L;
+        double x = (T * t - P * a) / L;
 
 
         int maxBirthOrderInTargetTable = targetData.get(targetData.keySet().iterator().next()).getMaxRowLabelValue().getValue();
 
         // if ! columnValue >= getMaxRowLabelValue()
 //        System.out.println("MRV = " + targetData.get(targetData.keySet().iterator().next()).getMaxRowLabelValue().toString());
-        if(!(data.getColumnValue() >= maxBirthOrderInTargetTable)) {
+        if (!(data.getColumnValue() >= maxBirthOrderInTargetTable)) {
             // return x
             return x;
         } else {
             // scale to appropriate value
             // if mcv - 1 > mrl
-            if(data.getMaxColumnValue() - 1 > maxBirthOrderInTargetTable) {
+            if (data.getMaxColumnValue() - 1 > maxBirthOrderInTargetTable) {
 
                 // r = x(cV - mcv - 1)^2 / (mcv - mrl)^2
 //                double temp = (x * Math.pow(data.getColumnValue() - data.getMaxColumnValue() - 1, 2)) / Math.pow(data.getMaxColumnValue() - maxBirthOrderInTargetTable, 2);
@@ -90,12 +89,12 @@ public class SelfCorrectingTwoDimensionDataDistribution extends TwoDimensionData
                 return temp;
             } else {
                 // if mcv == mrl
-                if(data.getMaxColumnValue() == maxBirthOrderInTargetTable) {
+                if (data.getMaxColumnValue() == maxBirthOrderInTargetTable) {
                     // r = 2x
-                    return 2*x;
+                    return 2 * x;
                 } else {
                     // r = x/2
-                    return x/2;
+                    return x / 2;
                 }
             }
         }
@@ -124,7 +123,7 @@ public class SelfCorrectingTwoDimensionDataDistribution extends TwoDimensionData
         int maxBirthOrderInTargetTable = targetData.get(targetData.keySet().iterator().next()).getMaxRowLabelValue().getValue();
 
         double x;
-        if(data.getMaxColumnValue() - 1 > maxBirthOrderInTargetTable) {
+        if (data.getMaxColumnValue() - 1 > maxBirthOrderInTargetTable) {
 //            x = (appliedRate * Math.pow(data.getMaxColumnValue() - maxBirthOrderInTargetTable, 2)) / Math.pow(data.getColumnValue() - data.getMaxColumnValue() - 1, 2);
             x = (appliedRate * (data.getMaxColumnValue() + 1 + maxBirthOrderInTargetTable)) / (2 * (data.getMaxColumnValue() + 1 - data.getColumnValue()));
         } else {
@@ -133,17 +132,16 @@ public class SelfCorrectingTwoDimensionDataDistribution extends TwoDimensionData
 
         // calc the new applied rate - z
         // z = (Pa + Lx) / T
-        double z = (P*a + L*x) / T;
+        double z = (P * a + L * x) / T;
 
         // inc count by T
         updateCounts(data.getRowValue(), data.getColumnValue(), T);
 
         // update appliedData to z
-        if(Double.isNaN(z)) {
+        if (Double.isNaN(z)) {
             System.out.println(T + " " + P + " " + a + " " + L + " " + x);
         }
         updateAppliedRates(data.getRowValue(), data.getColumnValue(), z);
-
 
 
     }
@@ -203,7 +201,7 @@ public class SelfCorrectingTwoDimensionDataDistribution extends TwoDimensionData
         IntegerRange[] keys = targetData.keySet().toArray(new IntegerRange[targetData.keySet().size()]);
         Arrays.sort(keys, IntegerRange::compareTo);
 
-        for(IntegerRange iR : keys) {
+        for (IntegerRange iR : keys) {
             System.out.print(iR.toString() + " | ");
 
             Map<IntegerRange, Double> targetRow = targetData.get(iR).getData();
@@ -212,7 +210,7 @@ public class SelfCorrectingTwoDimensionDataDistribution extends TwoDimensionData
             IntegerRange[] orderedKeys = targetRow.keySet().toArray(new IntegerRange[targetRow.keySet().size()]);
             Arrays.sort(orderedKeys, IntegerRange::compareTo);
 
-            for(IntegerRange iR2 : orderedKeys) {
+            for (IntegerRange iR2 : orderedKeys) {
                 System.out.printf("%+.4f | ", appliedRow.get(iR2) - targetRow.get(iR2));
             }
 
@@ -229,15 +227,15 @@ public class SelfCorrectingTwoDimensionDataDistribution extends TwoDimensionData
         IntegerRange[] keys = data.keySet().toArray(new IntegerRange[targetData.keySet().size()]);
         Arrays.sort(keys, IntegerRange::compareTo);
 
-        for(IntegerRange iR : keys) {
+        for (IntegerRange iR : keys) {
             System.out.print(iR.toString() + " | ");
 
             Map<IntegerRange, Double> row = data.get(iR).getData();
             IntegerRange[] orderedKeys = row.keySet().toArray(new IntegerRange[row.keySet().size()]);
             Arrays.sort(orderedKeys, IntegerRange::compareTo);
 
-            for(IntegerRange iR2 : orderedKeys) {
-                if(decimal) {
+            for (IntegerRange iR2 : orderedKeys) {
+                if (decimal) {
                     System.out.printf("%.4f | ", row.get(iR2));
                 } else {
                     System.out.printf("%.0f | ", row.get(iR2));

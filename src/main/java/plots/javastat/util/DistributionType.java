@@ -5,6 +5,7 @@ package plots.javastat.util;
  * <p>Description: JAVA programs for statistical computations</p>
  * <p>Copyright: Copyright (c) 2009</p>
  * <p>Company: Tung Hai University</p>
+ *
  * @author Wen Hsiang Wei
  * @version 1.4
  */
@@ -14,115 +15,114 @@ package plots.javastat.util;
 
  */
 
-public enum DistributionType
-{
+public enum DistributionType {
 
-        /**
-         * Beta distribution.
-         */
+    /**
+     * Beta distribution.
+     */
 
-        BETA,
+    BETA,
 
-        /**
-         * Binomial distribution.
-         */
+    /**
+     * Binomial distribution.
+     */
 
-        BINOMIAL,
+    BINOMIAL,
 
-        /**
-         * Cauchy distribution.
-         */
+    /**
+     * Cauchy distribution.
+     */
 
-        CAUCHY,
+    CAUCHY,
 
-        /**
-         * Chi-square distribution.
-         */
+    /**
+     * Chi-square distribution.
+     */
 
-        CHISQUARE,
+    CHISQUARE,
 
-        /**
-         * Exponential distribution.
-         */
+    /**
+     * Exponential distribution.
+     */
 
-        EXPONENTIAL,
+    EXPONENTIAL,
 
-        /**
-         * F distribution.
-         */
+    /**
+     * F distribution.
+     */
 
-        F,
+    F,
 
-        /**
-         * Gamma distribution.
-         */
+    /**
+     * Gamma distribution.
+     */
 
-        GAMMA,
+    GAMMA,
 
-        /**
-         * Geometric distribution.
-         */
+    /**
+     * Geometric distribution.
+     */
 
-        GEOMETRIC,
+    GEOMETRIC,
 
-        /**
-         * Hyper-geometric distribution.
-         */
+    /**
+     * Hyper-geometric distribution.
+     */
 
-        HYPERGEOMETRIC,
+    HYPERGEOMETRIC,
 
-        /**
-         * Log-normal distribution.
-         */
+    /**
+     * Log-normal distribution.
+     */
 
-        LOGNORMAL,
+    LOGNORMAL,
 
-        /**
-         * Normal distribution.
-         */
+    /**
+     * Normal distribution.
+     */
 
-        NORMAL,
+    NORMAL,
 
-        /**
-         * Negative binomial distribution.
-         */
+    /**
+     * Negative binomial distribution.
+     */
 
-        NEGATIVE_BINOMIAL,
+    NEGATIVE_BINOMIAL,
 
-        /**
-         * Pareto distribution.
-         */
+    /**
+     * Pareto distribution.
+     */
 
-        PARETO,
+    PARETO,
 
-        /**
-         * Poisson distribution.
-         */
+    /**
+     * Poisson distribution.
+     */
 
-        POISSON,
+    POISSON,
 
-        /**
-         * T distribution.
-         */
+    /**
+     * T distribution.
+     */
 
-        T,
+    T,
 
-        /**
-         * Uniform distribution.
-         */
+    /**
+     * Uniform distribution.
+     */
 
-        UNIFORM,
+    UNIFORM,
 
-        /**
-         * Weibull distribution.
-         */
+    /**
+     * Weibull distribution.
+     */
 
-        WEIBULL,
+    WEIBULL,
 
-        /**
-         * Logistic distribution.
-         */
+    /**
+     * Logistic distribution.
+     */
 
-        LOGISTIC
+    LOGISTIC
 }
 

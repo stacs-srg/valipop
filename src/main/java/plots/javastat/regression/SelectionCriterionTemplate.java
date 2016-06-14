@@ -5,6 +5,7 @@ package plots.javastat.regression;
  * <p>Description: JAVA programs for statistical computations</p>
  * <p>Copyright: Copyright (c) 2009</p>
  * <p>Company: Tung Hai University</p>
+ *
  * @author Wen Hsiang Wei
  * @version 1.4
  */
@@ -18,6 +19,7 @@ import plots.javastat.StatisticalAnalysis;
 import plots.javastat.util.BasicStatistics;
 import plots.javastat.util.DataManager;
 import plots.javastat.util.Output;
+
 import static plots.javastat.util.Argument.*;
 
 /**
@@ -26,8 +28,7 @@ import static plots.javastat.util.Argument.*;
  * for regression model selection. </p>
  */
 
-public abstract class SelectionCriterionTemplate extends StatisticalAnalysis
-{
+public abstract class SelectionCriterionTemplate extends StatisticalAnalysis {
 
     /**
      * The responses.
@@ -90,7 +91,8 @@ public abstract class SelectionCriterionTemplate extends StatisticalAnalysis
      * Defualt SelectionCriterionTemplate constructor.
      */
 
-    public SelectionCriterionTemplate() {}
+    public SelectionCriterionTemplate() {
+    }
 
     /**
      * The value reflects the effect of the weight matrix on the weighted
@@ -107,31 +109,23 @@ public abstract class SelectionCriterionTemplate extends StatisticalAnalysis
      */
 
     protected double psi(Hashtable argument,
-                         Object ...dataObject)
-    {
-        if (dataObject[0].getClass().getName().equalsIgnoreCase("[D"))
-        {
+                         Object... dataObject) {
+        if (dataObject[0].getClass().getName().equalsIgnoreCase("[D")) {
             weightMatrix = new DataManager().identity(((double[])
                     dataObject[0]).length);
-        }
-        else
-        {
+        } else {
             weightMatrix = (double[][]) dataObject[0];
         }
         W = new Matrix(weightMatrix);
-        if (((PsiFunction) argument.get(PSI_FUNCTION)) == null ||
-            ((PsiFunction) argument.get(PSI_FUNCTION)).equals(PsiFunction.
-                PCA_NUMBER))
-        {
+        if (argument.get(PSI_FUNCTION) == null ||
+                argument.get(PSI_FUNCTION).equals(PsiFunction.
+                        PCA_NUMBER)) {
             pcaVariance = new EigenvalueDecomposition(W).getRealEigenvalues();
             new DataManager().dataSort(pcaVariance);
             psi = weightMatrix.length -
-                  new BasicStatistics().pcaNumber(pcaVariance, 0.9);
-        }
-        else
-        {
-            switch ((PsiFunction) argument.get(PSI_FUNCTION))
-            {
+                    new BasicStatistics().pcaNumber(pcaVariance, 0.9);
+        } else {
+            switch ((PsiFunction) argument.get(PSI_FUNCTION)) {
                 case SAMPLE_SIZE:
                     psi = weightMatrix[0].length;
                     break;
@@ -140,7 +134,7 @@ public abstract class SelectionCriterionTemplate extends StatisticalAnalysis
                     break;
                 default:
                     throw new IllegalArgumentException(
-                        "Wrong input argument(s).");
+                            "Wrong input argument(s).");
             }
         }
 
@@ -155,7 +149,7 @@ public abstract class SelectionCriterionTemplate extends StatisticalAnalysis
      */
 
     public abstract Object weightedRSS(Hashtable argument,
-                                       Object ...dataObject);
+                                       Object... dataObject);
 
     /**
      * The penalty.
@@ -165,7 +159,7 @@ public abstract class SelectionCriterionTemplate extends StatisticalAnalysis
      */
 
     public abstract Object penalty(Hashtable argument,
-                                   Object ...dataObject);
+                                   Object... dataObject);
 
     /**
      * Calculates the weighted selection criterion for a linear regression model
@@ -195,18 +189,17 @@ public abstract class SelectionCriterionTemplate extends StatisticalAnalysis
      *                   corresponding to intercept).
      * @return the weighted selection criterion.
      * @exception IllegalArgumentException wrong input data.
-     * @exception  IllegalArgumentException wrong input argument(s) or data.
+     * @exception IllegalArgumentException wrong input argument(s) or data.
      */
 
     public Object weightedSelectionCriterion(Hashtable argument,
-                                             Object ...dataObject)
-    {
+                                             Object... dataObject) {
         this.argument = argument;
         this.dataObject = dataObject;
         weightedSelectionCriterion =
-            (Double) weightedRSS(argument, dataObject) /
-            ((Double) psi(argument, dataObject) *
-             (Double) penalty(argument, dataObject));
+                (Double) weightedRSS(argument, dataObject) /
+                        ((Double) psi(argument, dataObject) *
+                                (Double) penalty(argument, dataObject));
         output.put(Output.SELECTION_CRITERION, weightedSelectionCriterion);
 
         return weightedSelectionCriterion;
