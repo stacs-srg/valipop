@@ -36,8 +36,6 @@ public class SelfCorrectingTwoDimensionDataDistribution extends TwoDimensionData
             return 0.0;
         }
 
-        // TODO this is likely/is broke
-
         // in the case of births:
         // row value corresponds to age
         // column value corresponds to order - cV

@@ -1,5 +1,6 @@
 package datastructure.population;
 
+import datastructure.population.exceptions.PersonNotFoundException;
 import model.IPartnership;
 import model.IPerson;
 import model.IPopulation;
@@ -11,6 +12,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * The type People collection.
+ *
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class PeopleCollection extends PersonCollection implements IPopulation {
@@ -23,6 +26,13 @@ public class PeopleCollection extends PersonCollection implements IPopulation {
     private Map<Integer, IPerson> peopleIndex = new HashMap<Integer, IPerson>();
     private Map<Integer, IPartnership> partnershipIndex = new HashMap<Integer, IPartnership>();
 
+    /**
+     * Instantiates a new People collection.
+     *
+     * @param start the start
+     * @param end   the end
+     * @throws UnsupportedDateConversion the unsupported date conversion
+     */
     public PeopleCollection(Date start, Date end) throws UnsupportedDateConversion {
         super(start, end);
 
@@ -30,14 +40,29 @@ public class PeopleCollection extends PersonCollection implements IPopulation {
         females = new FemaleCollection(start, end);
     }
 
+    /**
+     * Gets males.
+     *
+     * @return the males
+     */
     public MaleCollection getMales() {
         return males;
     }
 
+    /**
+     * Gets females.
+     *
+     * @return the females
+     */
     public FemaleCollection getFemales() {
         return females;
     }
 
+    /**
+     * Add partnership to index.
+     *
+     * @param partnership the partnership
+     */
     public void addPartnershipToIndex(IPartnership partnership) {
         partnershipIndex.put(partnership.getId(), partnership);
     }
@@ -48,9 +73,9 @@ public class PeopleCollection extends PersonCollection implements IPopulation {
     }
 
     @Override
-    public Collection<IPerson> getByYear(Date year) {
-        Collection<IPerson> people = males.getByYear(year);
-        people.addAll(females.getByYear(year));
+    public Collection<IPerson> getByYear(Date yearOfBirth) {
+        Collection<IPerson> people = males.getByYear(yearOfBirth);
+        people.addAll(females.getByYear(yearOfBirth));
         return people;
     }
 
@@ -74,21 +99,26 @@ public class PeopleCollection extends PersonCollection implements IPopulation {
     }
 
     @Override
-    public boolean removePerson(IPerson person) throws PersonNotFoundException {
+    public void removePerson(IPerson person) throws PersonNotFoundException {
+        peopleIndex.remove(person.getId());
         if (person.getSex() == 'm') {
-            return males.removePerson(person);
+            males.removePerson(person);
         } else {
-            return females.removePerson(person);
+            females.removePerson(person);
         }
     }
 
     @Override
     public int getNumberOfPersons() {
-        return males.getNumberOfPersons() + females.getNumberOfPersons();
+        return getAll().size();
     }
 
+    @Override
+    int getNumberOfPersons(Date yearOfBirth) {
+        // TODO Write me
+        return 0;
+    }
 
-    // TODO - write these!
     @Override
     public Iterable<IPerson> getPeople() {
         return peopleIndex.values();

@@ -1,19 +1,28 @@
 package datastructure.population;
 
+import datastructure.population.exceptions.PersonNotFoundException;
 import model.IPerson;
-import model.Person;
 import utils.time.*;
 import utils.time.Date;
 
 import java.util.*;
 
 /**
+ * The class MaleCollection is a concrete instantiation of the PersonCollection class.
+ *
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class MaleCollection extends PersonCollection {
 
     private Map<YearDate, Collection<IPerson>> byYear = new HashMap<YearDate, Collection<IPerson>>();
 
+    /**
+     * Instantiates a new MaleCollection.
+     *
+     * @param start the start
+     * @param end   the end
+     * @throws UnsupportedDateConversion the unsupported date conversion
+     */
     public MaleCollection(Date start, Date end) throws UnsupportedDateConversion {
         super(start, end);
 
@@ -35,14 +44,14 @@ public class MaleCollection extends PersonCollection {
     }
 
     @Override
-    public Collection<IPerson> getByYear(Date year) {
+    public Collection<IPerson> getByYear(Date yearOfBirth) {
 
-        Collection<IPerson> c = byYear.get(year.getYearDate());
+        Collection<IPerson> c = byYear.get(yearOfBirth.getYearDate());
 
         if (c == null) {
             Collection<IPerson> temp = new ArrayList<IPerson>();
-            byYear.put(year.getYearDate(), temp);
-            c = byYear.get(year.getYearDate());
+            byYear.put(yearOfBirth.getYearDate(), temp);
+            c = byYear.get(yearOfBirth.getYearDate());
         }
 
         return c;
@@ -60,19 +69,22 @@ public class MaleCollection extends PersonCollection {
     }
 
     @Override
-    public boolean removePerson(IPerson person) throws PersonNotFoundException {
+    public void removePerson(IPerson person) throws PersonNotFoundException {
         Collection<IPerson> people = byYear.get(person.getBirthDate().getYearDate());
 
         if (people == null || !people.remove(person)) {
             throw new PersonNotFoundException("Specified person not found in datastructure");
         }
-
-        return true;
     }
 
     @Override
     public int getNumberOfPersons() {
         return getAll().size();
+    }
+
+    @Override
+    int getNumberOfPersons(Date yearOfBirth) {
+        return byYear.get(yearOfBirth.getYearDate()).size();
     }
 
 }

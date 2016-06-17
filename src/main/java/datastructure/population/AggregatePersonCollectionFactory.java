@@ -9,12 +9,19 @@ import utils.time.UnsupportedDateConversion;
 import java.util.Collection;
 
 /**
- * Aggregates two PersonCollections into a single Collection of Person objects
+ * Provides a set of methods to create aggregates of two PersonCollections
  *
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class AggregatePersonCollectionFactory {
 
+    /**
+     * Aggregates two PersonCollections into a single collection of IPerson.
+     *
+     * @param col1 The first PersonCollection
+     * @param col2 The second PersonCollection
+     * @return The aggregated Collection of people
+     */
     public static Collection<IPerson> makeCollectionOfPersons(PersonCollection col1, PersonCollection col2) {
 
         Collection<IPerson> people = col1.getAll();
@@ -23,7 +30,15 @@ public class AggregatePersonCollectionFactory {
         return people;
     }
 
-    public static PeopleCollection makePeopleCollection(PeopleCollection col1, PeopleCollection col2) throws UnsupportedDateConversion {
+    /**
+     * Aggregates two PersonCollections into a single PersonCollection.
+     *
+     * @param col1 The first PersonCollection
+     * @param col2 The second PersonCollection
+     * @return The aggregated PersonCollection
+     * @throws UnsupportedDateConversion the unsupported date conversion
+     */
+    public static PeopleCollection makePeopleCollection(PersonCollection col1, PersonCollection col2) throws UnsupportedDateConversion {
 
         Date start = DateUtils.getEarlistDate(col1.getStartDate(), col2.getStartDate());
         Date end = DateUtils.getLatestDate(col1.getStartDate(), col2.getStartDate());

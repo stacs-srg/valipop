@@ -2,6 +2,7 @@ package model.simulationLogic;
 
 import config.Config;
 import datastructure.population.PeopleCollection;
+import datastructure.population.exceptions.InsufficientNumberOfPeopleException;
 import datastructure.summativeStatistics.desired.PopulationStatistics;
 import model.IPerson;
 import model.Person;
@@ -23,7 +24,7 @@ public class DeathLogic {
 
 
     public static int handleDeaths(Config config, DateClock currentDate, PopulationStatistics desiredPopulationStatistics,
-                                   PeopleCollection livingPopulation, PeopleCollection deadPopulation) {
+                                   PeopleCollection livingPopulation, PeopleCollection deadPopulation) throws InsufficientNumberOfPeopleException {
 
         int deathCount = 0;
 
@@ -70,11 +71,11 @@ public class DeathLogic {
 
     }
 
-    private static Collection<IPerson> removeMalesToDieFromPopulation(PeopleCollection population, DateClock yearOfBirth, int numberToDie) {
+    private static Collection<IPerson> removeMalesToDieFromPopulation(PeopleCollection population, DateClock yearOfBirth, int numberToDie) throws InsufficientNumberOfPeopleException {
         return population.getMales().removeNPersons(numberToDie, yearOfBirth.getYearDate());
     }
 
-    private static Collection<IPerson> removeFemalesToDieFromPopulation(PeopleCollection population, DateClock yearOfBirth, int numberToDie) {
+    private static Collection<IPerson> removeFemalesToDieFromPopulation(PeopleCollection population, DateClock yearOfBirth, int numberToDie) throws InsufficientNumberOfPeopleException {
         return population.getFemales().removeNPersons(numberToDie, yearOfBirth.getYearDate());
     }
 

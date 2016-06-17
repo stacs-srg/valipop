@@ -5,14 +5,13 @@ import analytic.DeathAnalytics;
 import analytic.MarriageAnalytics;
 import analytic.PopulationAnalytics;
 import datastructure.population.AggregatePersonCollectionFactory;
-import datastructure.population.InsufficientNumberOfPeopleException;
+import datastructure.population.exceptions.InsufficientNumberOfPeopleException;
 import datastructure.population.PeopleCollection;
 import datastructure.summativeStatistics.desired.DesiredPopulationStatisticsFactory;
 import datastructure.summativeStatistics.desired.PopulationStatistics;
 import datastructure.summativeStatistics.generated.GeneratedPopulationComposition;
 import model.*;
 import datastructure.summativeStatistics.PopulationComposition;
-import plots.survival.SurvivalPlot;
 import validation.ComparativeAnalysis;
 import config.Config;
 
@@ -114,12 +113,6 @@ public class Simulation {
             log.info("Analytics run failed");
             e.printStackTrace();
         }
-
-        // Check for statistical significant similarity between desired and generated population
-//        if (comparisonOfDesiredAndGenerated.passed()) {
-//            System.out.println("Generated population similarity to desired population is statistically significant");
-//        }
-
 
     }
 

@@ -1,7 +1,7 @@
 package datastructure;
 
 import datastructure.population.PeopleCollection;
-import datastructure.population.PersonNotFoundException;
+import datastructure.population.exceptions.PersonNotFoundException;
 import model.IPerson;
 import model.Partnership;
 import model.Person;

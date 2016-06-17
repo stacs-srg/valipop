@@ -1,7 +1,7 @@
 package model.simulationLogic;
 
 import config.Config;
-import datastructure.population.InsufficientNumberOfPeopleException;
+import datastructure.population.exceptions.InsufficientNumberOfPeopleException;
 import datastructure.population.PeopleCollection;
 import datastructure.summativeStatistics.desired.PopulationStatistics;
 import datastructure.summativeStatistics.structure.DataKey;
@@ -42,28 +42,18 @@ public class BirthLogic {
 
             YearDate yearOfBirthInConsideration = new YearDate(currentTime.getYear() - age);
 
-            Map<Integer, Collection<IPerson>> womenOfThisAge = people.getFemales().getMapByYear(yearOfBirthInConsideration);
-
-            // DATA - get rate of births by mothers age
-            OneDimensionDataDistribution orderedBirthRatesForMothersOfThisAge = desiredPopulationStatistics.getOrderedBirthRates(currentTime).getData(age);
-            OneDimensionDataDistribution taperedOrderedBirthRatesForMothersOfThisAge = transformOrderedBirthRatesToTaperByOrderCount(orderedBirthRatesForMothersOfThisAge, womenOfThisAge.keySet());
-//
-//            MapUtils.print("NON-TAP", orderedBirthRatesForMothersOfThisAge.getData(), orderedBirthRatesForMothersOfThisAge.getMinRowLabelValue(), 1, orderedBirthRatesForMothersOfThisAge.getMaxRowLabelValue().getValue());
-//            MapUtils.print("TAPERED", taperedOrderedBirthRatesForMothersOfThisAge.getData(), taperedOrderedBirthRatesForMothersOfThisAge.getMinRowLabelValue(), 1, taperedOrderedBirthRatesForMothersOfThisAge.getMaxRowLabelValue().getValue());
-
             // DATA 2 - get rate of multiple births in a maternity by mothers age
             OneDimensionDataDistribution multipleBirthDataForMothersOfThisAgeByMaternity = desiredPopulationStatistics.getMultipleBirthRates(currentTime).getData(age);
             OneDimensionDataDistribution proportionOfChildrenBornToEachSizeOfMaternity = transformMaternityProportionsToChildrenProportions(multipleBirthDataForMothersOfThisAgeByMaternity);
 
-            int maxBirthOrderInCohort = MapUtils.getMax(womenOfThisAge.keySet());
-            int sizeOfCohort = MapUtils.countObjectsInCollectionsInMap(womenOfThisAge);
-
+            int maxBirthOrderInCohort = people.getFemales().getHighestBirthOrder(yearOfBirthInConsideration);
+            int sizeOfCohort = people.getFemales().getNumberOfPersons(yearOfBirthInConsideration);
 
             // for each number of children already birthed to mothers (FIRST_BIRTH ORDER)
             for (int order = 0; order <= maxBirthOrderInCohort; order++) {
 
                 // women of this age and birth order - L
-                Collection<IPerson> women = womenOfThisAge.get(order);
+                Collection<IPerson> women = people.getFemales().getByNumberOfChildren(yearOfBirthInConsideration, order);
 
                 if (women == null || women.size() == 0) {
                     continue;
@@ -74,8 +64,6 @@ public class BirthLogic {
                     double birthRate = desiredPopulationStatistics.getOrderedBirthRates(currentTime).getCorrectingData(key) * config.getBirthTimeStep().toDecimalRepresentation();
                     //taperedOrderedBirthRatesForMothersOfThisAge.getData(order) * config.getBirthTimeStep().toDecimalRepresentation();
 
-//                    System.out.println("Age " + age + " | Order " + order + " | BR " + birthRate / config.getBirthTimeStep().toDecimalRepresentation());
-
                     int numberOfChildrenToBirth;
                     int totalNumberOfMothers;
                     Map<Integer, Integer> motherCountsByMaternitySize;
@@ -85,7 +73,6 @@ public class BirthLogic {
                         // use DATA 1 to see how many many children need to be born
                         numberOfChildrenToBirth = calculateChildrenToBeBorn(sizeOfCohort, birthRate);
 
-//                        System.out.println(numberOfChildrenToBirth);
 
                         // calculate numbers of mothers to give birth (and which will bear twins, etc.)
                         // use DATA 2 to decide how many mothers needed to birth children
@@ -95,19 +82,13 @@ public class BirthLogic {
                         totalNumberOfMothers = CollectionUtils.sumIntegerCollection(motherCountsByMaternitySize.values());
 
                         eligableWomen = eligableMothers(women, currentTime);
-//                        System.out.println("EW: " + eligableWomen);
 
                         if (eligableWomen < totalNumberOfMothers || eligableWomen == 0) {
                             if (eligableWomen == 0) {
                                 birthRate = 0.0;
-//                                break;
                             } else {
                                 double scalingFactor = eligableWomen / (double) totalNumberOfMothers;
                                 birthRate = scalingFactor * birthRate;
-//                            if(Double.isNaN(birthRate)) {
-//                                System.out.println(totalNumberOfMothers);
-//                                System.out.println(eligableWomen);
-//                            }
                             }
                             log.info("Rescaling Birth Rate | Current Date: " + currentTime.toString() + " - Insufficient number of mothers: Eligible women " + women.size() + " | Mothers Required " + totalNumberOfMothers + " | Age " + age + " | Order " + order);
                         }
@@ -117,13 +98,6 @@ public class BirthLogic {
 
                     birthCount += numberOfChildrenToBirth;
                     desiredPopulationStatistics.getOrderedBirthRates(currentTime).returnAppliedData(key, birthRate / config.getBirthTimeStep().toDecimalRepresentation());
-
-//                    if (women.size() < totalNumberOfMothers) {
-//                        log.fatal("Current Date: " + currentTime.toString() + " - Insufficient number of mothers: Eligible women " + women.size() + " | Mothers Required " + totalNumberOfMothers + " | Age " + age + " | Order " + order);
-////                        MapUtils.print("TAPERED", taperedOrderedBirthRatesForMothersOfThisAge.getData(), taperedOrderedBirthRatesForMothersOfThisAge.getMinRowLabelValue(), 1, taperedOrderedBirthRatesForMothersOfThisAge.getMaxRowLabelValue().getValue());
-////                    totalNumberOfMothers = women.size();
-//                        System.exit(451);
-//                    }
 
                     // select the mothers
                     for (Integer childrenInMaternity : motherCountsByMaternitySize.keySet()) {
@@ -213,68 +187,6 @@ public class BirthLogic {
         return desiredPopulationStatistics.getOrderedBirthRates(currentTime).getMinRowLabelValue();
     }
 
-    private static OneDimensionDataDistribution transformOrderedBirthRatesToTaperByOrderCount(OneDimensionDataDistribution orderedBirthRatesForMothersOfThisAge, Set<Integer> orders) {
-
-        IntegerRange largestExplicitRange = orderedBirthRatesForMothersOfThisAge.getMaxRowLabelValue();
-
-        int taperStrength = 4;
-
-        if (largestExplicitRange.isPlus()) {
-
-            int largestExplicitValue = largestExplicitRange.getValue();
-            Double birthRateToShare = orderedBirthRatesForMothersOfThisAge.getData(largestExplicitValue);
-
-            int toShareAmong = 0;
-            int denominator = 0;
-
-            for (Integer i : orders) {
-                if (i <= largestExplicitValue) {
-                    toShareAmong++;
-                    denominator += Math.pow(toShareAmong, taperStrength);
-                }
-            }
-
-            Map<IntegerRange, Double> temp = new HashMap<IntegerRange, Double>();
-            ArrayList<Integer> orderedOrders = new ArrayList<>(orders);
-            Collections.sort(orderedOrders);
-
-            int tally = 0;
-
-            for (Integer i : orderedOrders) {
-
-                while (tally < i) {
-                    temp.put(new IntegerRange(tally), 0.0);
-                    tally++;
-                }
-
-                if (i < largestExplicitValue) {
-                    temp.put(new IntegerRange(i), orderedBirthRatesForMothersOfThisAge.getData(i));
-                } else {
-                    double fraction = Math.pow(toShareAmong, taperStrength) / denominator;
-                    toShareAmong--;
-
-                    temp.put(new IntegerRange(i), fraction * birthRateToShare);
-                }
-
-                tally++;
-
-            }
-
-//            temp.put(new IntegerRange(tally), 0.0);
-
-            return new OneDimensionDataDistribution(
-                    orderedBirthRatesForMothersOfThisAge.getYear(),
-                    orderedBirthRatesForMothersOfThisAge.getSourcePopulation(),
-                    orderedBirthRatesForMothersOfThisAge.getSourceOrganisation(),
-                    temp);
-
-
-        } else {
-            return orderedBirthRatesForMothersOfThisAge;
-        }
-
-    }
-
     private static OneDimensionDataDistribution transformMaternityProportionsToChildrenProportions(OneDimensionDataDistribution multipleBirthDataForMothersOfThisAgeByMaternity) {
 
         Map<IntegerRange, Double> temp = multipleBirthDataForMothersOfThisAgeByMaternity.cloneData();
@@ -311,16 +223,10 @@ public class BirthLogic {
         // calculate numbers of children to be born from each maternity type
         Map<IntegerRange, Double> temp = proportionOfChildrenBornToEachSizeOfMaternity.cloneData();
 
-
-//        MapUtils.print("A", temp, 1, 1, 4);
-
         for (IntegerRange iR : temp.keySet()) {
             double exactNumberOfChildren = temp.get(iR) * numberOfChildrenToBirth;
             temp.replace(iR, exactNumberOfChildren);
         }
-
-
-//        MapUtils.print("B", temp, 1, 1, 4);
 
         double sumOfRemainders = 0;
 
@@ -332,8 +238,6 @@ public class BirthLogic {
             sumOfRemainders += exactNumberOfMothers - (int) exactNumberOfMothers;
             temp.replace(iR, exactNumberOfMothers);
         }
-
-//        MapUtils.print("C", temp, 1, 1, 4);
 
         // handle rounding
         // check if total number of children resulting from this is correct
@@ -347,9 +251,6 @@ public class BirthLogic {
             }
         }
 
-
-//        MapUtils.print("D", temp, 1, 1, 4);
-
         // if the number line dice roll caused an additional set of twins or triplets or etc.
         while (numberOfChildrenShort < 0) {
             // reduce the mother counts for lower maternity types
@@ -362,9 +263,6 @@ public class BirthLogic {
 
             // repeat until total number of children is equal to the input given of numberOfChildrenToBirth
         }
-
-//        MapUtils.print("E", temp, 1, 1, 4);
-
 
         return MapUtils.floorAllValuesInMap(temp);
 

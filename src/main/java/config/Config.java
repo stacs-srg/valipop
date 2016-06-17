@@ -16,6 +16,8 @@ import java.time.DateTimeException;
 import java.util.Collection;
 
 /**
+ * This class provides the configuration for the Simulation model.
+ *
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class Config {
@@ -44,12 +46,21 @@ public class Config {
     private Path varPartneringPaths;
     private Path varSeparationPaths;
 
+    // Filter method to exclude dot files from data file directory streams
     private DirectoryStream.Filter<Path> filter = new DirectoryStream.Filter<Path>() {
         public boolean accept(Path file) throws IOException {
             return !file.getFileName().toString().matches("^\\..+");
         }
     };
 
+    /**
+     * This constructor reads in the file at the given path and stores the given configuration.
+     *
+     * @param pathToConfigFile The path to the location of the configuration file
+     * @throws InvalidTimeUnit
+     * @throws DateTimeException
+     * @throws NumberFormatException
+     */
     public Config(Path pathToConfigFile) throws InvalidTimeUnit, DateTimeException, NumberFormatException {
 
         Collection<String> configInput = InputFileReader.getAllLines(pathToConfigFile);

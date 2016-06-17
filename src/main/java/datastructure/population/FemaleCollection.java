@@ -1,7 +1,11 @@
 package datastructure.population;
 
+import datastructure.population.exceptions.InsufficientNumberOfPeopleException;
+import datastructure.population.exceptions.PersonNotFoundException;
 import model.IPerson;
 import model.IPartnership;
+import org.apache.commons.lang.ObjectUtils;
+import utils.MapUtils;
 import utils.time.*;
 import utils.time.Date;
 import org.apache.logging.log4j.LogManager;
@@ -10,6 +14,10 @@ import org.apache.logging.log4j.Logger;
 import java.util.*;
 
 /**
+ * The FemaleCollection is a specialised concrete implementation of a PersonCollection. The implementation offers an
+ * additional layer of division below the year of birth level which divides females out into seperate collections based
+ * on how many children they have had.
+ *
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class FemaleCollection extends PersonCollection {
@@ -17,6 +25,16 @@ public class FemaleCollection extends PersonCollection {
     private static Logger log = LogManager.getLogger(FemaleCollection.class);
     private Map<YearDate, Map<Integer, Collection<IPerson>>> byBirthYearAndNumberOfChildren = new HashMap<YearDate, Map<Integer, Collection<IPerson>>>();
 
+    /**
+     * Instantiates a new FemaleCollection. The dates specify the earliest and latest expected birth dates of
+     * individuals in the FemaleCollection. There is no hard enforcement of this as the bounds are intended to serve
+     * mainly as a guide for when other things make use of the FemaleCollection - e.g. producing plots, applying
+     * validation statistics.
+     *
+     * @param start the start
+     * @param end   the end
+     * @throws UnsupportedDateConversion the unsupported date conversion
+     */
     public FemaleCollection(Date start, Date end) throws UnsupportedDateConversion {
         super(start, end);
 
@@ -40,13 +58,13 @@ public class FemaleCollection extends PersonCollection {
     }
 
     @Override
-    public Collection<IPerson> getByYear(Date year) {
+    public Collection<IPerson> getByYear(Date yearOfBirth) {
 
         Collection<IPerson> people = new ArrayList<IPerson>();
 
         try {
-            for (Integer i : byBirthYearAndNumberOfChildren.get(year.getYearDate()).keySet()) {
-                people.addAll(byBirthYearAndNumberOfChildren.get(year.getYearDate()).get(i));
+            for (Integer i : byBirthYearAndNumberOfChildren.get(yearOfBirth.getYearDate()).keySet()) {
+                people.addAll(byBirthYearAndNumberOfChildren.get(yearOfBirth.getYearDate()).get(i));
             }
         } catch (NullPointerException e) {
         }
@@ -72,21 +90,56 @@ public class FemaleCollection extends PersonCollection {
     }
 
     @Override
-    public boolean removePerson(IPerson person) throws PersonNotFoundException {
+    public void removePerson(IPerson person) throws PersonNotFoundException {
         Collection<IPerson> people = byBirthYearAndNumberOfChildren.get(person.getBirthDate().getYearDate()).get(countChildren(person));
 
         if (people == null || !people.remove(person)) {
-            throw new PersonNotFoundException("Specified person not found in datastructure");
+            throw new PersonNotFoundException("Specified person not found in data structure");
         }
-
-        return true;
     }
 
     @Override
     public int getNumberOfPersons() {
+        // TODO optomise me
         return getAll().size();
     }
 
+    @Override
+    public int getNumberOfPersons(Date yearOfBirth) {
+
+        Map<Integer, Collection<IPerson>> temp = byBirthYearAndNumberOfChildren.get(yearOfBirth.getYearDate());
+
+        if(temp == null) {
+            return 0;
+        } else {
+            return MapUtils.countObjectsInCollectionsInMap(temp);
+        }
+    }
+
+    /**
+     * Returns the highest birth order (number of children) among women in the specified year of birth.
+     *
+     * @param yearOfBirth the year of birth of the mothers in question
+     * @return the highest birth order value
+     */
+    public int getHighestBirthOrder(Date yearOfBirth) {
+
+        Map<Integer, Collection<IPerson>> temp = byBirthYearAndNumberOfChildren.get(yearOfBirth.getYearDate());
+
+        if(temp == null) {
+            return 0;
+        } else{
+            return MapUtils.getMax(temp.keySet());
+        }
+
+    }
+
+    /**
+     * Gets map by year.
+     *
+     * @param year the year
+     * @return the map by year
+     */
     public Map<Integer, Collection<IPerson>> getMapByYear(Date year) {
         Map<Integer, Collection<IPerson>> map = byBirthYearAndNumberOfChildren.get(year.getYearDate());
 
@@ -98,11 +151,32 @@ public class FemaleCollection extends PersonCollection {
         return map;
     }
 
+    /**
+     * Gets by number of children.
+     *
+     * @param year             the year
+     * @param numberOfChildren the number of children
+     * @return the by number of children
+     */
     public Collection<IPerson> getByNumberOfChildren(Date year, Integer numberOfChildren) {
 
-        return byBirthYearAndNumberOfChildren.get(year.getYearDate()).get(numberOfChildren);
+        try {
+            return byBirthYearAndNumberOfChildren.get(year.getYearDate()).get(numberOfChildren);
+        } catch(NullPointerException e) {
+            return new ArrayList<>();
+        }
     }
 
+    /**
+     * Remove n persons collection.
+     *
+     * @param numberToRemove the number to remove
+     * @param yearOfBirth    the year of birth
+     * @param withNChildren  the with n children
+     * @param currentDate    the current date
+     * @return the collection
+     * @throws InsufficientNumberOfPeopleException the insufficient number of people exception
+     */
     public Collection<IPerson> removeNPersons(int numberToRemove, YearDate yearOfBirth, int withNChildren, DateClock currentDate) throws InsufficientNumberOfPeopleException {
 
         Collection<IPerson> people = new ArrayList<>();
@@ -122,8 +196,6 @@ public class FemaleCollection extends PersonCollection {
                 throw new InsufficientNumberOfPeopleException("Not enough females to remove specified number from collection");
             }
 
-
-            // TODO NEXT this just broke things
             if (p.noRecentChildren(currentDate)) {
                 people.add(p);
             } else {
