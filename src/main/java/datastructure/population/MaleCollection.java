@@ -8,16 +8,19 @@ import utils.time.Date;
 import java.util.*;
 
 /**
- * The class MaleCollection is a concrete instantiation of the PersonCollection class.
+ * The class MaleCollection is a concrete instance of the PersonCollection class.
  *
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class MaleCollection extends PersonCollection {
 
-    private Map<YearDate, Collection<IPerson>> byYear = new HashMap<YearDate, Collection<IPerson>>();
+    private final Map<YearDate, Collection<IPerson>> byYear = new HashMap<>();
 
     /**
-     * Instantiates a new MaleCollection.
+     * Instantiates a new MaleCollection. The dates specify the earliest and latest expected birth dates of
+     * individuals in the MaleCollection. There is no hard enforcement of this as the bounds are intended to serve
+     * mainly as a guide for when other things make use of the MaleCollection - e.g. producing plots, applying
+     * validation statistics.
      *
      * @param start the start
      * @param end   the end
@@ -27,14 +30,18 @@ public class MaleCollection extends PersonCollection {
         super(start, end);
 
         for (DateClock y = start.getDateClock(); DateUtils.dateBefore(y, end); y = y.advanceTime(1, TimeUnit.YEAR)) {
-            byYear.put(y.getYearDate(), new ArrayList<IPerson>());
+            byYear.put(y.getYearDate(), new ArrayList<>());
         }
     }
+
+    /*
+    -------------------- PersonCollection abstract methods --------------------
+     */
 
     @Override
     public Collection<IPerson> getAll() {
 
-        Collection<IPerson> people = new ArrayList<IPerson>();
+        Collection<IPerson> people = new ArrayList<>();
 
         for (YearDate t : byYear.keySet()) {
             people.addAll(byYear.get(t));
@@ -46,15 +53,15 @@ public class MaleCollection extends PersonCollection {
     @Override
     public Collection<IPerson> getByYear(Date yearOfBirth) {
 
-        Collection<IPerson> c = byYear.get(yearOfBirth.getYearDate());
+        Collection<IPerson> people = new ArrayList<>();
 
-        if (c == null) {
-            Collection<IPerson> temp = new ArrayList<IPerson>();
-            byYear.put(yearOfBirth.getYearDate(), temp);
-            c = byYear.get(yearOfBirth.getYearDate());
+        try {
+            people.addAll(byYear.get(yearOfBirth.getYearDate()));
+        } catch (NullPointerException e) {
+            // No need to do anything - we allow the method to return an empty list as no one was born in the year
         }
 
-        return c;
+        return people;
     }
 
     @Override
@@ -62,7 +69,8 @@ public class MaleCollection extends PersonCollection {
         try {
             byYear.get(person.getBirthDate().getYearDate()).add(person);
         } catch (NullPointerException e) {
-            byYear.put(person.getBirthDate().getYearDate(), new ArrayList<IPerson>());
+            // If the year didn't exist in the map
+            byYear.put(person.getBirthDate().getYearDate(), new ArrayList<>());
             byYear.get(person.getBirthDate().getYearDate()).add(person);
         }
 
@@ -72,8 +80,9 @@ public class MaleCollection extends PersonCollection {
     public void removePerson(IPerson person) throws PersonNotFoundException {
         Collection<IPerson> people = byYear.get(person.getBirthDate().getYearDate());
 
+        // Removal of person AND test for removal (all in second clause of the if statement)
         if (people == null || !people.remove(person)) {
-            throw new PersonNotFoundException("Specified person not found in datastructure");
+            throw new PersonNotFoundException("Specified person not found in data structure");
         }
     }
 

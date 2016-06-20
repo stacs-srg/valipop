@@ -8,7 +8,7 @@ package datastructure.population.exceptions;
  */
 public class InsufficientNumberOfPeopleException extends Throwable {
 
-    private String message;
+    private final String message;
 
     /**
      * @param message the message

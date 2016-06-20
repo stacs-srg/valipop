@@ -12,7 +12,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * The type People collection.
+ * The class PeopleCollection is a concrete instance of the PersonCollection class. It provides the layout to structure
+ * and index a population of males and females and provide access to them. The class also implements the IPopulation
+ * interface (adapted to us object references rather than integer id references) allowing it to be used with our other
+ * population suite tools.
  *
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
@@ -23,11 +26,14 @@ public class PeopleCollection extends PersonCollection implements IPopulation {
     private MaleCollection males;
     private FemaleCollection females;
 
-    private Map<Integer, IPerson> peopleIndex = new HashMap<Integer, IPerson>();
-    private Map<Integer, IPartnership> partnershipIndex = new HashMap<Integer, IPartnership>();
+    private final Map<Integer, IPerson> peopleIndex = new HashMap<>();
+    private final Map<Integer, IPartnership> partnershipIndex = new HashMap<>();
 
     /**
-     * Instantiates a new People collection.
+     * Instantiates a new PersonCollection. The dates specify the earliest and latest expected birth dates of
+     * individuals in the PersonCollection. There is no hard enforcement of this as the bounds are intended to serve
+     * mainly as a guide for when other things make use of the PersonCollection - e.g. producing plots, applying
+     * validation statistics.
      *
      * @param start the start
      * @param end   the end
@@ -41,31 +47,31 @@ public class PeopleCollection extends PersonCollection implements IPopulation {
     }
 
     /**
-     * Gets males.
-     *
-     * @return the males
+     * @return the part of the population data structure containing the males
      */
     public MaleCollection getMales() {
         return males;
     }
 
     /**
-     * Gets females.
-     *
-     * @return the females
+     * @return the part of the population data structure containing the females
      */
     public FemaleCollection getFemales() {
         return females;
     }
 
     /**
-     * Add partnership to index.
+     * Adds partnership to  the partnership index.
      *
      * @param partnership the partnership
      */
     public void addPartnershipToIndex(IPartnership partnership) {
         partnershipIndex.put(partnership.getId(), partnership);
     }
+
+    /*
+    -------------------- PersonCollection abstract methods --------------------
+     */
 
     @Override
     public Collection<IPerson> getAll() {
@@ -114,10 +120,13 @@ public class PeopleCollection extends PersonCollection implements IPopulation {
     }
 
     @Override
-    int getNumberOfPersons(Date yearOfBirth) {
-        // TODO Write me
-        return 0;
+    public int getNumberOfPersons(Date yearOfBirth) {
+        return males.getNumberOfPersons(yearOfBirth) + females.getNumberOfPersons(yearOfBirth);
     }
+
+    /*
+    -------------------- IPopulation interface methods --------------------
+     */
 
     @Override
     public Iterable<IPerson> getPeople() {

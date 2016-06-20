@@ -51,7 +51,7 @@ public class PeopleCollectionTest {
 
         // are people added present in the correct place
         // for females
-        Collection<IPerson> females = living.getFemales().getByNumberOfChildren(start, 0);
+        Collection<IPerson> females = living.getFemales().getByYearAndBirthOrder(start, 0);
         assertTrue(females.contains(f1));
         assertTrue(females.contains(f2));
         assertTrue(females.contains(f3));
@@ -182,11 +182,11 @@ public class PeopleCollectionTest {
         living.addPerson(f1);
 
         // are they in the new place
-        Collection<IPerson> people = living.getFemales().getByNumberOfChildren(m1.getBirthDate().getYearDate(), 1);
+        Collection<IPerson> people = living.getFemales().getByYearAndBirthOrder(m1.getBirthDate().getYearDate(), 1);
         assertTrue(people.contains(f1));
 
         // and not in the old place
-        people = living.getFemales().getByNumberOfChildren(m1.getBirthDate().getYearDate(), 0);
+        people = living.getFemales().getByYearAndBirthOrder(m1.getBirthDate().getYearDate(), 0);
         assertFalse(people.contains(f1));
 
         // check for children
@@ -205,11 +205,11 @@ public class PeopleCollectionTest {
         living.addPerson(f1);
 
         // are they in the new place
-        people = living.getFemales().getByNumberOfChildren(m1.getBirthDate().getYearDate(), 3);
+        people = living.getFemales().getByYearAndBirthOrder(m1.getBirthDate().getYearDate(), 3);
         assertTrue(people.contains(f1));
 
         // and not in the old place
-        people = living.getFemales().getByNumberOfChildren(m1.getBirthDate().getYearDate(), 1);
+        people = living.getFemales().getByYearAndBirthOrder(m1.getBirthDate().getYearDate(), 1);
         assertFalse(people.contains(f1));
 
         // check for children

@@ -53,7 +53,7 @@ public class BirthLogic {
             for (int order = 0; order <= maxBirthOrderInCohort; order++) {
 
                 // women of this age and birth order - L
-                Collection<IPerson> women = people.getFemales().getByNumberOfChildren(yearOfBirthInConsideration, order);
+                Collection<IPerson> women = people.getFemales().getByYearAndBirthOrder(yearOfBirthInConsideration, order);
 
                 if (women == null || women.size() == 0) {
                     continue;

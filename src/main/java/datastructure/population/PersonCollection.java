@@ -19,8 +19,8 @@ import java.util.NoSuchElementException;
  */
 public abstract class PersonCollection implements DateBounds {
 
-    private Date startDate;
-    private Date endDate;
+    private final Date startDate;
+    private final Date endDate;
 
     /**
      * Instantiates a new PersonCollection. The dates specify the earliest and latest expected birth dates of
