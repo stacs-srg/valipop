@@ -35,6 +35,9 @@ public class GeneratedPopulationComposition implements PopulationComposition {
         this.population = population;
     }
 
+    /*
+    -------------------- DateBounds interface methods --------------------
+     */
 
     @Override
     public Date getStartDate() {
@@ -45,6 +48,10 @@ public class GeneratedPopulationComposition implements PopulationComposition {
     public Date getEndDate() {
         return endDate;
     }
+
+    /*
+    -------------------- StatisticalTables interface methods --------------------
+     */
 
     @Override
     public OneDimensionDataDistribution getSurvivorTable(Date startYear, CompoundTimeUnit timePeriod, EventType event) throws UnsupportedEventType {
@@ -66,6 +73,9 @@ public class GeneratedPopulationComposition implements PopulationComposition {
         return getSurvivorTable(startYear, timePeriod, event);
     }
 
+    /*
+    -------------------- Specialised table creation methods --------------------
+     */
 
     private OneDimensionDataDistribution getFirstBirthTable(Date startYear, CompoundTimeUnit timePeriod, EventType event) throws UnsupportedEventType {
 
@@ -163,7 +173,6 @@ public class GeneratedPopulationComposition implements PopulationComposition {
             survival.put(new IntegerRange(i + 1), survivors);
         }
 
-//        System.out.println(maxAge + " | " + males.size());
         return new OneDimensionDataDistribution(startYear.getYearDate(), "", "", survival);
     }
 }

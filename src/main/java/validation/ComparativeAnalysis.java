@@ -1,6 +1,5 @@
 package validation;
 
-import config.Config;
 import datastructure.summativeStatistics.generated.EventType;
 import datastructure.summativeStatistics.generated.UnsupportedEventType;
 import datastructure.summativeStatistics.structure.IntegerRange;
@@ -16,7 +15,6 @@ import utils.time.*;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
@@ -237,7 +235,7 @@ public class ComparativeAnalysis implements IComparativeAnalysis {
 //        MapUtils.print("G SUR-" + date.toString(), populationSurvivorTable.getData(), 0, 1, 100);
 
         // get equiverlent table from inputs stats
-        OneDimensionDataDistribution statisticsSurvivorTable = expected.getSurvivorTable(date, new CompoundTimeUnit(1, TimeUnit.YEAR), eventType, populationSurvivorTable.getData(0), populationSurvivorTable.getMaxRowLabelValue().getMax(), generatedPopulation);
+        OneDimensionDataDistribution statisticsSurvivorTable = expected.getSurvivorTable(date, new CompoundTimeUnit(1, TimeUnit.YEAR), eventType, populationSurvivorTable.getData(0), populationSurvivorTable.getLargestLabel().getMax(), generatedPopulation);
 //        MapUtils.print("S SUR-" + date.toString(), statisticsSurvivorTable.getData(), 0, 1, 100);
 
 

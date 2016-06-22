@@ -180,11 +180,11 @@ public class BirthLogic {
     }
 
     public static int getMaxAgeForChildBearing(DateClock currentTime, PopulationStatistics desiredPopulationStatistics) {
-        return desiredPopulationStatistics.getOrderedBirthRates(currentTime).getMaxRowLabelValue().getMax();
+        return desiredPopulationStatistics.getOrderedBirthRates(currentTime).getLargestLabel().getMax();
     }
 
     private static int getMinimumAgeForChildbearing(DateClock currentTime, PopulationStatistics desiredPopulationStatistics) {
-        return desiredPopulationStatistics.getOrderedBirthRates(currentTime).getMinRowLabelValue();
+        return desiredPopulationStatistics.getOrderedBirthRates(currentTime).getSmallestLabel();
     }
 
     private static OneDimensionDataDistribution transformMaternityProportionsToChildrenProportions(OneDimensionDataDistribution multipleBirthDataForMothersOfThisAgeByMaternity) {

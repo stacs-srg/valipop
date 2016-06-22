@@ -66,10 +66,10 @@ public class SelfCorrectingTwoDimensionDataDistribution extends TwoDimensionData
         double x = (T * t - P * a) / L;
 
 
-        int maxBirthOrderInTargetTable = targetData.get(targetData.keySet().iterator().next()).getMaxRowLabelValue().getValue();
+        int maxBirthOrderInTargetTable = targetData.get(targetData.keySet().iterator().next()).getLargestLabel().getValue();
 
-        // if ! columnValue >= getMaxRowLabelValue()
-//        System.out.println("MRV = " + targetData.get(targetData.keySet().iterator().next()).getMaxRowLabelValue().toString());
+        // if ! columnValue >= getLargestLabel()
+//        System.out.println("MRV = " + targetData.get(targetData.keySet().iterator().next()).getLargestLabel().toString());
         if (!(data.getColumnValue() >= maxBirthOrderInTargetTable)) {
             // return x
             return x;
@@ -118,7 +118,7 @@ public class SelfCorrectingTwoDimensionDataDistribution extends TwoDimensionData
 
 //        double temp = (x * Math.pow(data.getColumnValue() - data.getMaxColumnValue() - 1, 2)) / Math.pow(data.getMaxColumnValue() - maxBirthOrderInTargetTable, 2);
 
-        int maxBirthOrderInTargetTable = targetData.get(targetData.keySet().iterator().next()).getMaxRowLabelValue().getValue();
+        int maxBirthOrderInTargetTable = targetData.get(targetData.keySet().iterator().next()).getLargestLabel().getValue();
 
         double x;
         if (data.getMaxColumnValue() - 1 > maxBirthOrderInTargetTable) {

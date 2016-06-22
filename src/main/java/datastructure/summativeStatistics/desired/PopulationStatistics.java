@@ -20,15 +20,15 @@ import java.util.Map;
  */
 public class PopulationStatistics implements PopulationComposition, EventRateTables {
 
-    DateClock startDate;
-    DateClock endDate;
+    private DateClock startDate;
+    private DateClock endDate;
 
-    Map<YearDate, OneDimensionDataDistribution> maleDeath;
-    Map<YearDate, OneDimensionDataDistribution> femaleDeath;
-    Map<YearDate, TwoDimensionDataDistribution> partnering;
-    Map<YearDate, SelfCorrectingTwoDimensionDataDistribution> orderedBirth;
-    Map<YearDate, TwoDimensionDataDistribution> multipleBirth;
-    Map<YearDate, OneDimensionDataDistribution> separation;
+    private Map<YearDate, OneDimensionDataDistribution> maleDeath;
+    private Map<YearDate, OneDimensionDataDistribution> femaleDeath;
+    private Map<YearDate, TwoDimensionDataDistribution> partnering;
+    private Map<YearDate, SelfCorrectingTwoDimensionDataDistribution> orderedBirth;
+    private Map<YearDate, TwoDimensionDataDistribution> multipleBirth;
+    private Map<YearDate, OneDimensionDataDistribution> separation;
 
     public PopulationStatistics(Config config,
                                 Map<YearDate, OneDimensionDataDistribution> maleDeath,
@@ -48,8 +48,11 @@ public class PopulationStatistics implements PopulationComposition, EventRateTab
         this.startDate = config.getTS();
         this.endDate = config.getTE();
 
-
     }
+
+    /*
+    -------------------- DateBounds interface methods --------------------
+     */
 
     @Override
     public DateClock getStartDate() {
@@ -61,6 +64,9 @@ public class PopulationStatistics implements PopulationComposition, EventRateTab
         return endDate;
     }
 
+    /*
+    -------------------- EventRateTables interface methods --------------------
+     */
 
     @Override
     public OneDimensionDataDistribution getDeathRates(Date year, char gender) {
@@ -91,22 +97,9 @@ public class PopulationStatistics implements PopulationComposition, EventRateTab
         return separation.get(getNearestYearInMap(year.getYearDate(), separation));
     }
 
-    private YearDate getNearestYearInMap(Date year, Map<YearDate, ?> map) {
-
-        int minDifferenceInMonths = Integer.MAX_VALUE;
-        YearDate nearestTableYear = null;
-
-        for (YearDate tableYear : map.keySet()) {
-            int difference = DateUtils.differenceInMonths(tableYear, year.getYearDate()).getCount();
-            if (difference < minDifferenceInMonths) {
-                minDifferenceInMonths = difference;
-                nearestTableYear = tableYear;
-            }
-        }
-
-        return nearestTableYear;
-
-    }
+    /*
+    -------------------- StatisticalTables interface methods --------------------
+     */
 
     @Override
     public OneDimensionDataDistribution getSurvivorTable(Date startYear, CompoundTimeUnit timePeriod, EventType event) {
@@ -116,7 +109,7 @@ public class PopulationStatistics implements PopulationComposition, EventRateTab
     @Override
     public OneDimensionDataDistribution getSurvivorTable(Date startYear, CompoundTimeUnit timePeriod, EventType event, Double scalingFactor, int timeLimit, IPopulation generatedPopulation) throws UnsupportedDateConversion {
 
-        Map<IntegerRange, Double> survival = new HashMap<IntegerRange, Double>();
+        Map<IntegerRange, Double> survival = new HashMap<>();
 
         double survivors = scalingFactor;
         survival.put(new IntegerRange(0), survivors);
@@ -168,6 +161,10 @@ public class PopulationStatistics implements PopulationComposition, EventRateTab
         return new OneDimensionDataDistribution(startYear.getYearDate(), "", "", survival);
     }
 
+    /*
+    --------------------- Private Helper Methods ---------------------
+     */
+
     private double calculateOrderedBirthRate(Date startYear, Date currentDate, int age, int birthOrder, IPopulation generatedPopulation, double survivors) {
         TwoDimensionDataDistribution orderedBirthRates = getOrderedBirthRates(currentDate);
 
@@ -181,6 +178,23 @@ public class PopulationStatistics implements PopulationComposition, EventRateTab
         int t = CollectionUtils.countPeopleInCollectionAliveOnDate(generatedPopulation.getByYearAndSex('f', startYear), currentDate);
         double r = aSOBR.getData(birthOrder);
         return (r * t) / survivors;
+    }
+
+    private YearDate getNearestYearInMap(Date year, Map<YearDate, ?> map) {
+
+        int minDifferenceInMonths = Integer.MAX_VALUE;
+        YearDate nearestTableYear = null;
+
+        for (YearDate tableYear : map.keySet()) {
+            int difference = DateUtils.differenceInMonths(tableYear, year.getYearDate()).getCount();
+            if (difference < minDifferenceInMonths) {
+                minDifferenceInMonths = difference;
+                nearestTableYear = tableYear;
+            }
+        }
+
+        return nearestTableYear;
+
     }
 
 

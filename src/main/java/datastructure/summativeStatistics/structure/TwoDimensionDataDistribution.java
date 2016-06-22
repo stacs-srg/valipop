@@ -57,7 +57,7 @@ public class TwoDimensionDataDistribution implements DataDistribution {
     }
 
     @Override
-    public int getMinRowLabelValue() {
+    public int getSmallestLabel() {
         int min = Integer.MAX_VALUE;
         for (IntegerRange iR : targetData.keySet()) {
             int v = iR.getMin();
@@ -69,7 +69,7 @@ public class TwoDimensionDataDistribution implements DataDistribution {
     }
 
     @Override
-    public IntegerRange getMaxRowLabelValue() {
+    public IntegerRange getLargestLabel() {
         IntegerRange max = null;
         int maxV = Integer.MIN_VALUE;
         for (IntegerRange iR : targetData.keySet()) {

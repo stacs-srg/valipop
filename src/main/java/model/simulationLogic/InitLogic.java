@@ -27,7 +27,7 @@ public class InitLogic {
         currentHypotheticalPopulationSize = calculateStartingPopulationSize(config);
         log.info("Initial hypothetical population size set: " + currentHypotheticalPopulationSize);
 
-        endOfInitPeriod = config.getTS().advanceTime(new CompoundTimeUnit(desiredPopulationStatistics.getOrderedBirthRates(config.getTS().getYearDate()).getMaxRowLabelValue().getValue(), TimeUnit.YEAR));
+        endOfInitPeriod = config.getTS().advanceTime(new CompoundTimeUnit(desiredPopulationStatistics.getOrderedBirthRates(config.getTS().getYearDate()).getLargestLabel().getValue(), TimeUnit.YEAR));
         log.info("End of Initialisation Period set: " + endOfInitPeriod.toString());
 
     }
