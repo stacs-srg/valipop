@@ -20,6 +20,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
+import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -29,8 +30,8 @@ import java.nio.file.Paths;
  */
 public class Simulation {
 
-    private final static Path PATH_TO_CONFIG_FILE = Paths.get("/Users/tsd4/OneDrive/cs/PhD/population_model/src/main/resources/config/config.txt");
-    private final static Config config = new Config(PATH_TO_CONFIG_FILE);
+    private static Path PATH_TO_CONFIG_FILE;
+    private static Config config;
 
     public static Logger log = LogManager.getLogger(Simulation.class);
 
@@ -41,7 +42,10 @@ public class Simulation {
     private DateClock currentTime;
 
 
-    public Simulation() throws IOException, UnsupportedDateConversion {
+    public Simulation(String pathToConfigFile) throws IOException, UnsupportedDateConversion, InvalidPathException {
+
+        config = new Config(Paths.get(pathToConfigFile));
+
         currentTime = config.getTS();
 
         people = new PeopleCollection(config.getTS(), config.getTE());
@@ -62,16 +66,11 @@ public class Simulation {
 
         Simulation sim = null;
         try {
-            sim = new Simulation();
-        } catch (IOException e) {
+            sim = new Simulation(args[0]);
+        } catch (IOException | UnsupportedDateConversion | InvalidPathException e) {
             log.fatal(e.getMessage() + " --- Will now exit");
             log.fatal(e.getStackTrace());
             e.printStackTrace();
-            System.exit(2);
-        } catch (UnsupportedDateConversion e1) {
-            log.fatal(e1.getMessage() + " --- Will now exit");
-            log.fatal(e1.getStackTrace());
-            e1.printStackTrace();
             System.exit(2);
         }
 
