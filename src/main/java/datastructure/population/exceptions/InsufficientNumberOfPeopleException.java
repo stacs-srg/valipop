@@ -6,7 +6,7 @@ package datastructure.population.exceptions;
  *
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class InsufficientNumberOfPeopleException extends Throwable {
+public class InsufficientNumberOfPeopleException extends Exception {
 
     private final String message;
 

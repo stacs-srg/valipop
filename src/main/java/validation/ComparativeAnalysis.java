@@ -1,5 +1,6 @@
 package validation;
 
+import config.Config;
 import datastructure.summativeStatistics.generated.EventType;
 import datastructure.summativeStatistics.generated.UnsupportedEventType;
 import datastructure.summativeStatistics.structure.IntegerRange;
@@ -10,8 +11,10 @@ import model.simulationLogic.StatisticalManipulationCalculationError;
 import org.apache.commons.math3.distribution.ChiSquaredDistribution;
 import plots.PlotControl;
 import plots.survival.SurvivalPlot;
+import utils.MapUtils;
 import utils.time.*;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -160,7 +163,7 @@ public class ComparativeAnalysis implements IComparativeAnalysis {
     }
 
     @Override
-    public void runAnalysis(IPopulation generatedPopulation) throws UnsupportedDateConversion, StatisticalManipulationCalculationError {
+    public void runAnalysis(IPopulation generatedPopulation, Config config) throws UnsupportedDateConversion, StatisticalManipulationCalculationError, IOException {
 
         Map<Date, Map<EventType, IKaplanMeierAnalysis>> results = new HashMap<Date, Map<EventType, IKaplanMeierAnalysis>>();
 
@@ -173,10 +176,9 @@ public class ComparativeAnalysis implements IComparativeAnalysis {
 
             IKaplanMeierAnalysis result;
             try {
-                result = runKMAnalysis(d, EventType.MALE_DEATH, desired, generated, generatedPopulation);
+                result = runKMAnalysis(d, EventType.MALE_DEATH, desired, generated, generatedPopulation, config);
                 temp.put(EventType.MALE_DEATH, result);
 
-                new SurvivalPlot(desired.getSurvivorTable(d, null, EventType.MALE_DEATH), generated.getSurvivorTable(d, null, EventType.MALE_DEATH)).generatePlot();
 
                 if (!Double.isNaN(result.getPValue())) {
                     fisherSumMaleDeath += Math.log(result.getPValue());
@@ -190,7 +192,7 @@ public class ComparativeAnalysis implements IComparativeAnalysis {
             }
 
             try {
-                result = runKMAnalysis(d, EventType.FEMALE_DEATH, desired, generated, generatedPopulation);
+                result = runKMAnalysis(d, EventType.FEMALE_DEATH, desired, generated, generatedPopulation, config);
                 temp.put(EventType.FEMALE_DEATH, result);
 
                 if (!Double.isNaN(result.getPValue())) {
@@ -205,7 +207,7 @@ public class ComparativeAnalysis implements IComparativeAnalysis {
             }
 
             try {
-                result = runKMAnalysis(d, EventType.FIRST_BIRTH, desired, generated, generatedPopulation);
+                result = runKMAnalysis(d, EventType.FIRST_BIRTH, desired, generated, generatedPopulation, config);
                 temp.put(EventType.FIRST_BIRTH, result);
 
                 if (!Double.isNaN(result.getPValue())) {
@@ -225,18 +227,22 @@ public class ComparativeAnalysis implements IComparativeAnalysis {
 
         this.results = results;
 
-        PlotControl.showPlots();
+//        PlotControl.showPlots();
 
     }
 
-    private IKaplanMeierAnalysis runKMAnalysis(Date date, EventType eventType, StatisticalTables expected, StatisticalTables observed, IPopulation generatedPopulation) throws StatisticalManipulationCalculationError, UnsupportedDateConversion, UnsupportedEventType {
+    private IKaplanMeierAnalysis runKMAnalysis(Date date, EventType eventType, StatisticalTables expected, StatisticalTables observed, IPopulation generatedPopulation, Config config) throws StatisticalManipulationCalculationError, UnsupportedDateConversion, UnsupportedEventType, IOException {
         // get survival tables for all males born in year
         OneDimensionDataDistribution populationSurvivorTable = observed.getSurvivorTable(date, new CompoundTimeUnit(1, TimeUnit.YEAR), eventType);
 //        MapUtils.print("G SUR-" + date.toString(), populationSurvivorTable.getData(), 0, 1, 100);
 
+//        System.out.println(populationSurvivorTable.getData(0));
+
         // get equiverlent table from inputs stats
         OneDimensionDataDistribution statisticsSurvivorTable = expected.getSurvivorTable(date, new CompoundTimeUnit(1, TimeUnit.YEAR), eventType, populationSurvivorTable.getData(0), populationSurvivorTable.getLargestLabel().getMax(), generatedPopulation);
 //        MapUtils.print("S SUR-" + date.toString(), statisticsSurvivorTable.getData(), 0, 1, 100);
+
+        new SurvivalPlot(statisticsSurvivorTable, populationSurvivorTable).generatePlot(eventType, date, config);
 
 
         // perform KM analysis and log result

@@ -151,7 +151,9 @@ public class PopulationStatistics implements PopulationComposition, EventRateTab
 
             survivors = survivors * (1 - nQx);
 
-            survival.put(new IntegerRange(age + 1), survivors);
+
+
+            survival.put(new IntegerRange(age + 1), (double) Math.round(survivors));
 
             age++;
 

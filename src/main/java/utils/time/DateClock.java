@@ -102,6 +102,11 @@ public final class DateClock implements Date {
     }
 
     @Override
+    public String toOrderableString() {
+        return year + "_" + month + "_" + DAY;
+    }
+
+    @Override
     public int compareTo(Date o) {
         if (DateUtils.dateBefore(this, o)) {
             return -1;

@@ -7,6 +7,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import utils.InputFileReader;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
@@ -45,6 +46,7 @@ public class Config {
     private Path varMultipleBirthPaths;
     private Path varPartneringPaths;
     private Path varSeparationPaths;
+    private Path savePath;
 
     // Filter method to exclude dot files from data file directory streams
     private DirectoryStream.Filter<Path> filter = new DirectoryStream.Filter<Path>() {
@@ -82,6 +84,9 @@ public class Config {
                     varMultipleBirthPaths = Paths.get(path, multipleBirthSubFile);
                     varPartneringPaths = Paths.get(path, partneringSubFile);
                     varSeparationPaths = Paths.get(path, separationSubFile);
+                    break;
+                case "save_location":
+                    savePath = Paths.get(split[1]);
                     break;
                 case "death_time_step":
                     try {
@@ -270,5 +275,9 @@ public class Config {
 
     public double getSetUpDR() {
         return setUpDR;
+    }
+
+    public Path getSavePath() {
+        return savePath;
     }
 }

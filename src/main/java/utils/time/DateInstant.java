@@ -110,6 +110,11 @@ public final class DateInstant implements Date {
     }
 
     @Override
+    public String toOrderableString() {
+        return year + "_" + month + "_" + day;
+    }
+
+    @Override
     public int compareTo(Date o) {
         if (DateUtils.dateBefore(this, o)) {
             return -1;

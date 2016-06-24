@@ -67,6 +67,11 @@ public final class YearDate implements Date {
     }
 
     @Override
+    public String toOrderableString() {
+        return year + "_" + MONTH + "_" + DAY;
+    }
+
+    @Override
     public int compareTo(Date o) {
         if (DateUtils.dateBefore(this, o)) {
             return -1;

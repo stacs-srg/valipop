@@ -118,7 +118,11 @@ public class BirthLogic {
                             // make and assign the specified number of children - assign to correct place in population
                             for (int c = 0; c < childrenInMaternity; c++) {
                                 // TODO vary birth date in time period
-                                mother.recordPartnership(PersonFactory.formNewChildInPartnership(getRandomFather(people, mother.getBirthDate()), mother, currentTime, people));
+                                try {
+                                    mother.recordPartnership(PersonFactory.formNewChildInPartnership(getRandomFather(people, mother.getBirthDate()), mother, currentTime, people));
+                                } catch (InsufficientNumberOfPeopleException e) {
+                                    throw e;
+                                }
                             }
 
                             people.addPerson(mother);
@@ -331,9 +335,13 @@ public class BirthLogic {
     }
 
 
-    public static IPerson getRandomFather(PeopleCollection population, Date fathersYearOfBirth) {
+    public static IPerson getRandomFather(PeopleCollection population, Date fathersYearOfBirth) throws InsufficientNumberOfPeopleException {
 
         Collection<IPerson> males = population.getMales().getByYear(fathersYearOfBirth);
+
+        if(males.size() == 0) {
+            throw new InsufficientNumberOfPeopleException("No males alive in simulation");
+        }
 
         int r = randomNumberGenerator.nextInt(males.size());
         return males.toArray(new IPerson[males.size()])[r];

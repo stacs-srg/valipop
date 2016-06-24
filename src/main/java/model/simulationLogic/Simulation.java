@@ -79,27 +79,22 @@ public class Simulation {
         IPopulation population = null;
         try {
             population = sim.makeSimulatedPopulation();
-        } catch (InsufficientNumberOfPeopleException e) {
-            log.fatal(e.getMessage() + " --- Will now exit");
-            log.fatal(e.getStackTrace());
-            e.printStackTrace();
-            System.exit(2);
         } catch (UnsupportedDateConversion e1) {
             log.fatal(e1.getMessage() + " --- Will now exit");
             log.fatal(e1.getStackTrace());
-            e1.printStackTrace();
-            System.exit(2);
         }
 
         // perform comparisons
         ComparativeAnalysis comparisonOfDesiredAndGenerated = null;
         try {
-            comparisonOfDesiredAndGenerated = sim.analyseGeneratedPopulation(population);
+            comparisonOfDesiredAndGenerated = sim.analyseGeneratedPopulation(population, config);
             comparisonOfDesiredAndGenerated.printResults();
         } catch (UnsupportedDateConversion unsupportedDateConversion) {
             unsupportedDateConversion.printStackTrace();
         } catch (StatisticalManipulationCalculationError statisticalManipulationCalculationError) {
             statisticalManipulationCalculationError.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
 
@@ -127,51 +122,57 @@ public class Simulation {
     }
 
 
-    public ComparativeAnalysis analyseGeneratedPopulation(IPopulation generatedPopulation) throws UnsupportedDateConversion, StatisticalManipulationCalculationError {
+    public ComparativeAnalysis analyseGeneratedPopulation(IPopulation generatedPopulation, Config config) throws UnsupportedDateConversion, StatisticalManipulationCalculationError, IOException {
         // get comparable statistics for generate population
         PopulationComposition generatedPopulationComposition = new GeneratedPopulationComposition(config.getTS(), config.getTE(), generatedPopulation);
 
         // compare desired and generated population
         ComparativeAnalysis comparisonOfDesiredAndGenerated = new ComparativeAnalysis(desired, generatedPopulationComposition, config.getTS(), config.getTE());
 
-        comparisonOfDesiredAndGenerated.runAnalysis(generatedPopulation);
+        comparisonOfDesiredAndGenerated.runAnalysis(generatedPopulation, config);
 
 
         return comparisonOfDesiredAndGenerated;
 
     }
 
-    private IPopulation makeSimulatedPopulation() throws InsufficientNumberOfPeopleException, UnsupportedDateConversion {
+    private IPopulation makeSimulatedPopulation() throws UnsupportedDateConversion {
 
         // INFO: at this point all the desired population statistics have been made available
         log.info("Simulation begins");
 
         // start utils.time progression
         // for each utils.time step from T Start to T End
-        while (DateUtils.dateBefore(currentTime, config.getTE())) {
+        try {
 
-            // at every min timestep
-            // clear out dead people
+            while (DateUtils.dateBefore(currentTime, config.getTE())) {
 
-            // if deaths timestep
-            if (DateUtils.matchesInterval(currentTime, config.getDeathTimeStep())) {
-                DeathLogic.handleDeaths(config, currentTime, desired, people, deadPeople);
+                // at every min timestep
+                // clear out dead people
+
+                // if deaths timestep
+                if (DateUtils.matchesInterval(currentTime, config.getDeathTimeStep())) {
+                    DeathLogic.handleDeaths(config, currentTime, desired, people, deadPeople);
+                }
+
+                // if births timestep
+                if (DateUtils.matchesInterval(currentTime, config.getBirthTimeStep())) {
+                    int births = BirthLogic.handleBirths(config, currentTime, desired, people);
+                    InitLogic.incrementBirthCount(births);
+                }
+
+                if (InitLogic.inInitPeriod(currentTime) && DateUtils.matchesInterval(currentTime, InitLogic.getTimeStep())) {
+                    InitLogic.handleInitPeople(config, currentTime, people);
+                }
+
+                currentTime = currentTime.advanceTime(config.getSimulationTimeStep());
+                log.info("Time step completed " + currentTime.toString() + "    Population " + people.getNumberOfPersons());
+                System.out.println("Time step completed " + currentTime.toString() + "    Population " + people.getNumberOfPersons());
+
             }
 
-            // if births timestep
-            if (DateUtils.matchesInterval(currentTime, config.getBirthTimeStep())) {
-                int births = BirthLogic.handleBirths(config, currentTime, desired, people);
-                InitLogic.incrementBirthCount(births);
-            }
-
-            if (InitLogic.inInitPeriod(currentTime) && DateUtils.matchesInterval(currentTime, InitLogic.getTimeStep())) {
-                InitLogic.handleInitPeople(config, currentTime, people);
-            }
-
-            currentTime = currentTime.advanceTime(config.getSimulationTimeStep());
-            log.info("Time step completed " + currentTime.toString() + "    Population " + people.getNumberOfPersons());
-            System.out.println("Time step completed " + currentTime.toString() + "    Population " + people.getNumberOfPersons());
-
+        } catch (InsufficientNumberOfPeopleException e) {
+            log.fatal(e.getMessage());
         }
 
         return AggregatePersonCollectionFactory.makePeopleCollection(people, deadPeople);

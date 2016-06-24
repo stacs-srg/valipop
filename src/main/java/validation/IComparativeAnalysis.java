@@ -8,6 +8,7 @@ import model.simulationLogic.StatisticalManipulationCalculationError;
 import utils.time.Date;
 import utils.time.UnsupportedDateConversion;
 
+import java.io.IOException;
 import java.util.Map;
 
 /**
@@ -42,6 +43,6 @@ public interface IComparativeAnalysis {
     void printResults() throws UnsupportedDateConversion;
 
 
-    void runAnalysis(IPopulation generatedPopulation) throws UnsupportedDateConversion, StatisticalManipulationCalculationError;
+    void runAnalysis(IPopulation generatedPopulation, Config config) throws UnsupportedDateConversion, StatisticalManipulationCalculationError, IOException;
 
 }

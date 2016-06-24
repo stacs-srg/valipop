@@ -135,7 +135,7 @@ public class GeneratedPopulationComposition implements PopulationComposition {
         }
 
 
-        Collection<IPerson> females = population.getByYearAndSex(sex, startYear);
+        Collection<IPerson> people = population.getByYearAndSex(sex, startYear);
 
         Map<IntegerRange, Double> counts = new HashMap<IntegerRange, Double>();
 
@@ -143,7 +143,7 @@ public class GeneratedPopulationComposition implements PopulationComposition {
 
         int maxAge = 0;
 
-        for (IPerson m : females) {
+        for (IPerson m : people) {
 
             Integer age = null;
             try {
@@ -162,7 +162,7 @@ public class GeneratedPopulationComposition implements PopulationComposition {
 
         Map<IntegerRange, Double> survival = new HashMap<IntegerRange, Double>();
 
-        double survivors = females.size();
+        double survivors = people.size();
         survival.put(new IntegerRange(0), survivors);
 
         for (int i = 0; i < maxAge; i++) {

@@ -23,4 +23,6 @@ public interface Date extends Comparable<Date> {
     YearDate getYearDate();
 
     DateClock getDateClock() throws UnsupportedDateConversion;
+
+    String toOrderableString();
 }
