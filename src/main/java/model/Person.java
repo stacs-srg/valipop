@@ -27,13 +27,13 @@ public class Person implements IPerson {
     public Person(char sex, Date birthDate) {
         id = getNewId();
         this.sex = Character.toLowerCase(sex);
-        this.birthDate = birthDate.getInstant();
+        this.birthDate = birthDate.getDateInstant();
     }
 
     public Person(char sex, Date birthDate, IPartnership parentsPartnership) {
         id = getNewId();
         this.sex = Character.toLowerCase(sex);
-        this.birthDate = birthDate.getInstant();
+        this.birthDate = birthDate.getDateInstant();
         this.parentsPartnership = parentsPartnership;
     }
 
@@ -139,7 +139,7 @@ public class Person implements IPerson {
 
     @Override
     public void recordDeath(Date date) {
-        deathDate = date.getInstant();
+        deathDate = date.getDateInstant();
     }
 
     @Override

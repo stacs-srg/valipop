@@ -5,7 +5,15 @@ package utils.time;
  */
 public class DateUtils {
 
-    private static final int MONTHS_IN_YEAR = 12;
+    protected static final int[] DAYS_IN_MONTH = new int[]{31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+    protected static final int DAYS_IN_LEAP_FEB = 29;
+    protected static final int FEB = 2;
+    protected static final int MONTHS_IN_YEAR = 12;
+
+    protected static final int DAYS_IN_YEAR = 365;
+    protected static final int DAYS_IN_LEAP_YEAR = 366;
+
+
 
     public static CompoundTimeUnit differenceInYears(Date a, Date b) {
 
@@ -71,7 +79,7 @@ public class DateUtils {
 
     }
 
-    public static Date getEarlistDate(Date startDate, Date startDate1) {
+    public static Date getEarliestDate(Date startDate, Date startDate1) {
         if (dateBefore(startDate, startDate1)) {
             return startDate;
         } else {
@@ -85,5 +93,83 @@ public class DateUtils {
         } else {
             return startDate;
         }
+    }
+
+    public static boolean isLeapYear(int year) {
+
+        if (year % 4 == 0) {
+            if (year % 100 == 0) {
+                return year % 400 == 0;
+            } else {
+                return true;
+            }
+        } else {
+            return false;
+        }
+    }
+
+    public static int getDaysInTimePeriod(Date earliestPossibleDate, CompoundTimeUnit consideredTimePeriod) {
+
+        // TODO handle date instants
+
+        int days = 0;
+
+        switch (consideredTimePeriod.getUnit()) {
+
+            case MONTH:
+
+                for(int i = 0; i < consideredTimePeriod.getCount(); i++) {
+
+                    int year = earliestPossibleDate.getYear();
+                    int month = earliestPossibleDate.getMonth() + i;
+
+                    if(month > MONTHS_IN_YEAR) {
+                        int y = (month - 1) / MONTHS_IN_YEAR;
+                        year += y;
+                        month -= y * MONTHS_IN_YEAR;
+                    }
+
+
+                    if(month == FEB) {
+
+                        if(isLeapYear(year)) {
+                            days += DAYS_IN_LEAP_FEB;
+                        } else {
+                            days += DAYS_IN_MONTH[FEB - 1];
+                        }
+
+                    } else {
+                        days += DAYS_IN_MONTH[month - 1];
+                    }
+
+                }
+
+                break;
+            case YEAR:
+
+                for(int i = 0; i < consideredTimePeriod.getCount(); i++) {
+
+                    int year = earliestPossibleDate.getYear() + i;
+
+                    // Does the year stradle the potential leap day
+                    if(earliestPossibleDate.getMonth() == FEB && earliestPossibleDate.getDay() == DAYS_IN_LEAP_FEB
+                            || earliestPossibleDate.getMonth() > FEB) {
+                        year++;
+                    }
+
+                    if(isLeapYear(year)) {
+                        days += DAYS_IN_LEAP_YEAR;
+                    } else {
+                        days += DAYS_IN_YEAR;
+                    }
+
+                }
+
+                break;
+
+        }
+
+
+        return days;
     }
 }

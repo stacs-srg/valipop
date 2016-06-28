@@ -39,7 +39,7 @@ public class AggregatePersonCollectionFactory {
      */
     public static PeopleCollection makePeopleCollection(PersonCollection col1, PersonCollection col2) throws UnsupportedDateConversion {
 
-        Date start = DateUtils.getEarlistDate(col1.getStartDate(), col2.getStartDate());
+        Date start = DateUtils.getEarliestDate(col1.getStartDate(), col2.getStartDate());
         Date end = DateUtils.getLatestDate(col1.getStartDate(), col2.getStartDate());
 
         PeopleCollection people = new PeopleCollection(start, end);

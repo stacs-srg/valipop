@@ -42,7 +42,7 @@ public final class YearDate implements Date {
     }
 
     @Override
-    public DateInstant getInstant() {
+    public DateInstant getDateInstant() {
         return new DateInstant(DAY, MONTH, year);
     }
 

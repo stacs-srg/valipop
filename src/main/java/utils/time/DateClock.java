@@ -87,7 +87,7 @@ public final class DateClock implements Date {
     }
 
     @Override
-    public DateInstant getInstant() {
+    public DateInstant getDateInstant() {
         return new DateInstant(DAY, month, year);
     }
 

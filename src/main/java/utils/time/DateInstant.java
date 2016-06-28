@@ -3,14 +3,16 @@ package utils.time;
 import java.time.DateTimeException;
 import java.util.Calendar;
 
+import static utils.time.DateUtils.DAYS_IN_LEAP_FEB;
+import static utils.time.DateUtils.DAYS_IN_MONTH;
+import static utils.time.DateUtils.FEB;
+
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public final class DateInstant implements Date {
 
-    private static final int[] DAYS_IN_MONTH = new int[]{31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
-    private static final int DAYS_IN_LEAP_FEB = 29;
-    private static final int FEB = 2;
+
 
     private final int year;
     private final int month;
@@ -21,7 +23,7 @@ public final class DateInstant implements Date {
             throw new DateTimeException("Months should be indexed between 1 and 12 inclusive.");
         }
         if (day <= 0 || day > DAYS_IN_MONTH[month - 1]) {
-            if (month != FEB || (isLeapYear(year) && day != DAYS_IN_LEAP_FEB) || (!isLeapYear(year) && day >= DAYS_IN_LEAP_FEB)) {
+            if (month != FEB || (DateUtils.isLeapYear(year) && day != DAYS_IN_LEAP_FEB) || (!DateUtils.isLeapYear(year) && day >= DAYS_IN_LEAP_FEB)) {
                 throw new DateTimeException("Days should be indexed between 1 and the number of days in the given month inclusive.");
             }
         }
@@ -43,7 +45,7 @@ public final class DateInstant implements Date {
             throw new DateTimeException("Months should be indexed between 1 and 12 inclusive.");
         }
         if (day <= 0 || day > DAYS_IN_MONTH[month - 1]) {
-            if (month != FEB || (isLeapYear(year) && day != DAYS_IN_LEAP_FEB || (!isLeapYear(year) && day >= DAYS_IN_LEAP_FEB))) {
+            if (month != FEB || (DateUtils.isLeapYear(year) && day != DAYS_IN_LEAP_FEB || (!DateUtils.isLeapYear(year) && day >= DAYS_IN_LEAP_FEB))) {
                 throw new DateTimeException("Days should be indexed between 1 and the number of days in the given month inclusive.");
             }
         }
@@ -54,18 +56,7 @@ public final class DateInstant implements Date {
 
     }
 
-    private static boolean isLeapYear(int year) {
 
-        if (year % 4 == 0) {
-            if (year % 100 == 0) {
-                return year % 400 == 0;
-            } else {
-                return true;
-            }
-        } else {
-            return false;
-        }
-    }
 
     @Override
     public int getYear() {
@@ -95,7 +86,7 @@ public final class DateInstant implements Date {
     }
 
     @Override
-    public DateInstant getInstant() {
+    public DateInstant getDateInstant() {
         return this;
     }
 

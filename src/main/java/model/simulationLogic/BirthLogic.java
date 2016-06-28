@@ -119,6 +119,7 @@ public class BirthLogic {
                             for (int c = 0; c < childrenInMaternity; c++) {
                                 // TODO vary birth date in time period
                                 try {
+
                                     mother.recordPartnership(PersonFactory.formNewChildInPartnership(getRandomFather(people, mother.getBirthDate()), mother, currentTime, people));
                                 } catch (InsufficientNumberOfPeopleException e) {
                                     throw e;

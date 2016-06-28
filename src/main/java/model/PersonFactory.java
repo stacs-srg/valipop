@@ -35,7 +35,6 @@ public class PersonFactory {
         return makePerson(birthDate, null, population);
     }
 
-
     private static char getSex() {
 
         // TODO move over to a specified m to f ratio

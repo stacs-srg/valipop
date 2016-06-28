@@ -1,5 +1,6 @@
 package utils.time;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -10,6 +11,64 @@ import static org.junit.Assert.assertTrue;
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class DateUtilsTest {
+
+    @Test
+    public void getDaysInTimePeriod() throws Exception {
+
+        Date janDate = new DateClock(1, 2015);
+        Date janDateLeapYear = new DateClock(1, 2016);
+        Date janDatePostLeapYear = new DateClock(1, 2017);
+
+        Date febDate = new DateClock(2, 2015);
+        Date febDateLeapYear = new DateClock(2, 2016);
+
+
+        CompoundTimeUnit oneMonth = new CompoundTimeUnit(1, TimeUnit.MONTH);
+        CompoundTimeUnit sixMonth = new CompoundTimeUnit(6, TimeUnit.MONTH);
+        CompoundTimeUnit elevenMonth = new CompoundTimeUnit(11, TimeUnit.MONTH);
+        CompoundTimeUnit twelveMonth = new CompoundTimeUnit(12, TimeUnit.MONTH);
+        CompoundTimeUnit twentyFourMonth = new CompoundTimeUnit(24, TimeUnit.MONTH);
+        CompoundTimeUnit thirtySixMonth = new CompoundTimeUnit(36, TimeUnit.MONTH);
+
+        CompoundTimeUnit oneYear = new CompoundTimeUnit(1, TimeUnit.YEAR);
+        CompoundTimeUnit twoYear = new CompoundTimeUnit(2, TimeUnit.YEAR);
+        CompoundTimeUnit threeYear = new CompoundTimeUnit(3, TimeUnit.YEAR);
+        CompoundTimeUnit sevenYear = new CompoundTimeUnit(7, TimeUnit.YEAR);
+
+
+        Assert.assertEquals(31, DateUtils.getDaysInTimePeriod(janDate, oneMonth));
+        Assert.assertEquals(28, DateUtils.getDaysInTimePeriod(febDate, oneMonth));
+        Assert.assertEquals(29, DateUtils.getDaysInTimePeriod(febDateLeapYear, oneMonth));
+
+        Assert.assertEquals(181, DateUtils.getDaysInTimePeriod(janDate, sixMonth));
+        Assert.assertEquals(182, DateUtils.getDaysInTimePeriod(janDateLeapYear, sixMonth));
+
+        Assert.assertEquals(365, DateUtils.getDaysInTimePeriod(janDate, oneYear));
+        Assert.assertEquals(366, DateUtils.getDaysInTimePeriod(janDateLeapYear, oneYear));
+
+        Assert.assertEquals(365, DateUtils.getDaysInTimePeriod(janDate, twelveMonth));
+        Assert.assertEquals(366, DateUtils.getDaysInTimePeriod(janDateLeapYear, twelveMonth));
+
+        Assert.assertEquals(334, DateUtils.getDaysInTimePeriod(febDate, elevenMonth));
+        Assert.assertEquals(335, DateUtils.getDaysInTimePeriod(febDateLeapYear, elevenMonth));
+
+        Assert.assertEquals(731, DateUtils.getDaysInTimePeriod(janDate, twoYear));
+        Assert.assertEquals(731, DateUtils.getDaysInTimePeriod(janDateLeapYear, twoYear));
+        Assert.assertEquals(730, DateUtils.getDaysInTimePeriod(janDatePostLeapYear, twoYear));
+
+        Assert.assertEquals(1095, DateUtils.getDaysInTimePeriod(janDatePostLeapYear, threeYear));
+        Assert.assertEquals(1095, DateUtils.getDaysInTimePeriod(janDatePostLeapYear, thirtySixMonth));
+
+        Assert.assertEquals(731, DateUtils.getDaysInTimePeriod(janDate, twentyFourMonth));
+        Assert.assertEquals(731, DateUtils.getDaysInTimePeriod(janDateLeapYear, twentyFourMonth));
+        Assert.assertEquals(730, DateUtils.getDaysInTimePeriod(janDatePostLeapYear, twentyFourMonth));
+
+        Assert.assertEquals(2557, DateUtils.getDaysInTimePeriod(janDate, sevenYear));
+
+
+
+
+    }
 
     @Test
     public void checkMonthsMethod() {
