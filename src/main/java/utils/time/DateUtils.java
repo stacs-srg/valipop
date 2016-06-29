@@ -108,9 +108,15 @@ public class DateUtils {
         }
     }
 
-    public static int getDaysInTimePeriod(Date earliestPossibleDate, CompoundTimeUnit consideredTimePeriod) {
-
-        // TODO handle date instants
+    /**
+     * Counts the number of days in the following time period given the starting date of the time period. The returned
+     * count is inclusive the first date given.
+     *
+     * @param startingDate the day to count from
+     * @param consideredTimePeriod the number of months/years to count days for
+     * @return The number of days, inclusive of the starting day
+     */
+    public static int getDaysInTimePeriod(Date startingDate, CompoundTimeUnit consideredTimePeriod) {
 
         int days = 0;
 
@@ -120,8 +126,8 @@ public class DateUtils {
 
                 for(int i = 0; i < consideredTimePeriod.getCount(); i++) {
 
-                    int year = earliestPossibleDate.getYear();
-                    int month = earliestPossibleDate.getMonth() + i;
+                    int year = startingDate.getYear();
+                    int month = startingDate.getMonth() + i;
 
                     if(month > MONTHS_IN_YEAR) {
                         int y = (month - 1) / MONTHS_IN_YEAR;
@@ -149,11 +155,11 @@ public class DateUtils {
 
                 for(int i = 0; i < consideredTimePeriod.getCount(); i++) {
 
-                    int year = earliestPossibleDate.getYear() + i;
+                    int year = startingDate.getYear() + i;
 
                     // Does the year stradle the potential leap day
-                    if(earliestPossibleDate.getMonth() == FEB && earliestPossibleDate.getDay() == DAYS_IN_LEAP_FEB
-                            || earliestPossibleDate.getMonth() > FEB) {
+                    if(startingDate.getMonth() == FEB && startingDate.getDay() == DAYS_IN_LEAP_FEB
+                            || startingDate.getMonth() > FEB) {
                         year++;
                     }
 
@@ -171,5 +177,12 @@ public class DateUtils {
 
 
         return days;
+    }
+
+    public static DateInstant calculateDateInstant(Date startingDate, int chosenDay) {
+
+
+
+        return null;
     }
 }

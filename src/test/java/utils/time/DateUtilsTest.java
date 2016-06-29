@@ -22,6 +22,12 @@ public class DateUtilsTest {
         Date febDate = new DateClock(2, 2015);
         Date febDateLeapYear = new DateClock(2, 2016);
 
+        Date offJanDate = new DateInstant(15, 1, 2015);
+        Date offJanDateLeapYear = new DateInstant(15, 1, 2016);
+        Date offJanDatePostLeapYear = new DateInstant(15, 1, 2017);
+
+        Date offFebDate = new DateInstant(15, 2, 2015);
+        Date offFebDateLeapYear = new DateInstant(15, 2, 2016);
 
         CompoundTimeUnit oneMonth = new CompoundTimeUnit(1, TimeUnit.MONTH);
         CompoundTimeUnit sixMonth = new CompoundTimeUnit(6, TimeUnit.MONTH);
@@ -64,6 +70,36 @@ public class DateUtilsTest {
         Assert.assertEquals(730, DateUtils.getDaysInTimePeriod(janDatePostLeapYear, twentyFourMonth));
 
         Assert.assertEquals(2557, DateUtils.getDaysInTimePeriod(janDate, sevenYear));
+
+
+        Assert.assertEquals(31, DateUtils.getDaysInTimePeriod(offJanDate, oneMonth));
+        Assert.assertEquals(28, DateUtils.getDaysInTimePeriod(offFebDate, oneMonth));
+        Assert.assertEquals(29, DateUtils.getDaysInTimePeriod(offFebDateLeapYear, oneMonth));
+
+        Assert.assertEquals(181, DateUtils.getDaysInTimePeriod(offJanDate, sixMonth));
+        Assert.assertEquals(182, DateUtils.getDaysInTimePeriod(offJanDateLeapYear, sixMonth));
+
+        Assert.assertEquals(365, DateUtils.getDaysInTimePeriod(offJanDate, oneYear));
+        Assert.assertEquals(366, DateUtils.getDaysInTimePeriod(offJanDateLeapYear, oneYear));
+
+        Assert.assertEquals(365, DateUtils.getDaysInTimePeriod(offJanDate, twelveMonth));
+        Assert.assertEquals(366, DateUtils.getDaysInTimePeriod(offJanDateLeapYear, twelveMonth));
+
+        Assert.assertEquals(334, DateUtils.getDaysInTimePeriod(offFebDate, elevenMonth));
+        Assert.assertEquals(335, DateUtils.getDaysInTimePeriod(offFebDateLeapYear, elevenMonth));
+
+        Assert.assertEquals(731, DateUtils.getDaysInTimePeriod(offJanDate, twoYear));
+        Assert.assertEquals(731, DateUtils.getDaysInTimePeriod(offJanDateLeapYear, twoYear));
+        Assert.assertEquals(730, DateUtils.getDaysInTimePeriod(offJanDatePostLeapYear, twoYear));
+
+        Assert.assertEquals(1095, DateUtils.getDaysInTimePeriod(offJanDatePostLeapYear, threeYear));
+        Assert.assertEquals(1095, DateUtils.getDaysInTimePeriod(offJanDatePostLeapYear, thirtySixMonth));
+
+        Assert.assertEquals(731, DateUtils.getDaysInTimePeriod(offJanDate, twentyFourMonth));
+        Assert.assertEquals(731, DateUtils.getDaysInTimePeriod(offJanDateLeapYear, twentyFourMonth));
+        Assert.assertEquals(730, DateUtils.getDaysInTimePeriod(offJanDatePostLeapYear, twentyFourMonth));
+
+        Assert.assertEquals(2557, DateUtils.getDaysInTimePeriod(offJanDate, sevenYear));
 
 
 
