@@ -13,6 +13,92 @@ import static org.junit.Assert.assertTrue;
 public class DateUtilsTest {
 
     @Test
+    public void calculateDateInstant() throws Exception {
+
+        Date janDate = new DateClock(1, 2015);
+
+        Date febDate = new DateClock(2, 2015);
+        Date febDateLeapYear = new DateClock(2, 2016);
+
+        CompoundTimeUnit oneMonth = new CompoundTimeUnit(1, TimeUnit.MONTH);
+        CompoundTimeUnit sixMonth = new CompoundTimeUnit(6, TimeUnit.MONTH);
+
+        CompoundTimeUnit oneYear = new CompoundTimeUnit(1, TimeUnit.YEAR);
+
+        Date tDate = janDate;
+        CompoundTimeUnit tTimeUnit = oneMonth;
+        DateInstant d = DateUtils.calculateDateInstant(tDate, DateUtils.getDaysInTimePeriod(tDate, tTimeUnit));
+        Assert.assertEquals(tDate.getDay(), d.getDay());
+        Assert.assertEquals(tDate.getMonth() + tTimeUnit.getCount(), d.getMonth());
+        Assert.assertEquals(tDate.getYear(), d.getYear());
+
+        tDate = febDateLeapYear;
+        tTimeUnit = oneMonth;
+        d = DateUtils.calculateDateInstant(tDate, DateUtils.getDaysInTimePeriod(tDate, tTimeUnit));
+        Assert.assertEquals(tDate.getDay(), d.getDay());
+        Assert.assertEquals(tDate.getMonth() + tTimeUnit.getCount(), d.getMonth());
+        Assert.assertEquals(tDate.getYear(), d.getYear());
+
+        tDate = febDate;
+        tTimeUnit = sixMonth;
+        d = DateUtils.calculateDateInstant(tDate, DateUtils.getDaysInTimePeriod(tDate, tTimeUnit));
+        Assert.assertEquals(tDate.getDay(), d.getDay());
+        Assert.assertEquals(tDate.getMonth() + tTimeUnit.getCount(), d.getMonth());
+        Assert.assertEquals(tDate.getYear(), d.getYear());
+
+        tDate = febDate;
+        tTimeUnit = oneYear;
+        d = DateUtils.calculateDateInstant(tDate, DateUtils.getDaysInTimePeriod(tDate, tTimeUnit));
+        Assert.assertEquals(tDate.getDay(), d.getDay());
+        Assert.assertEquals(tDate.getMonth(), d.getMonth());
+        Assert.assertEquals(tDate.getYear() + tTimeUnit.getCount(), d.getYear());
+
+        tDate = febDateLeapYear;
+        tTimeUnit = oneYear;
+        d = DateUtils.calculateDateInstant(tDate, DateUtils.getDaysInTimePeriod(tDate, tTimeUnit));
+        Assert.assertEquals(tDate.getDay(), d.getDay());
+        Assert.assertEquals(tDate.getMonth(), d.getMonth());
+        Assert.assertEquals(tDate.getYear() + tTimeUnit.getCount(), d.getYear());
+
+        tDate = febDateLeapYear;
+        d = DateUtils.calculateDateInstant(tDate, 28);
+        Assert.assertEquals(1, d.getDay());
+        Assert.assertEquals(3, d.getMonth());
+        Assert.assertEquals(febDateLeapYear.getYear(), d.getYear());
+
+        tDate = febDateLeapYear;
+        d = DateUtils.calculateDateInstant(tDate, 0);
+        Assert.assertEquals(tDate.getDay(), d.getDay());
+        Assert.assertEquals(tDate.getMonth(), d.getMonth());
+        Assert.assertEquals(tDate.getYear(), d.getYear());
+
+        tDate = febDateLeapYear;
+        d = DateUtils.calculateDateInstant(tDate, 1);
+        Assert.assertEquals(tDate.getDay() + 1, d.getDay());
+        Assert.assertEquals(tDate.getMonth(), d.getMonth());
+        Assert.assertEquals(tDate.getYear(), d.getYear());
+
+        tDate = febDateLeapYear;
+        d = DateUtils.calculateDateInstant(tDate, 13);
+        Assert.assertEquals(14, d.getDay());
+        Assert.assertEquals(2, d.getMonth());
+        Assert.assertEquals(tDate.getYear(), d.getYear());
+
+        tDate = febDateLeapYear;
+        d = DateUtils.calculateDateInstant(tDate, 72);
+        Assert.assertEquals(13, d.getDay());
+        Assert.assertEquals(4, d.getMonth());
+        Assert.assertEquals(tDate.getYear(), d.getYear());
+
+        tDate = janDate;
+        d = DateUtils.calculateDateInstant(tDate, 12154);
+        Assert.assertEquals(11, d.getDay());
+        Assert.assertEquals(4, d.getMonth());
+        Assert.assertEquals(2048, d.getYear());
+
+    }
+
+    @Test
     public void getDaysInTimePeriod() throws Exception {
 
         Date janDate = new DateClock(1, 2015);

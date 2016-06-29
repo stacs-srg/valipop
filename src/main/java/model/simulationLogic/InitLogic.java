@@ -49,7 +49,7 @@ public class InitLogic {
         // add Orphan Children to the population
         for (int i = 0; i < shortFallInBirths; i++) {
             // TODO need to vary birth date in time period (i.e. the previous year)
-            PersonFactory.formOrphanChild(currentTime, people);
+            PersonFactory.formOrphanChild(currentTime, config.getBirthTimeStep(), people);
         }
 
         log.info("Current Date: " + currentTime.toString() + "   Init Period | Met short fall in births with orphan children: " + shortFallInBirths);

@@ -28,6 +28,6 @@ public class BirthDateSelector implements DateSelector {
 
         // return chosen valid date
 
-        return null;
+        return chosenDate;
     }
 }

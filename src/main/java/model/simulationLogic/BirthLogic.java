@@ -120,7 +120,7 @@ public class BirthLogic {
                                 // TODO vary birth date in time period
                                 try {
 
-                                    mother.recordPartnership(PersonFactory.formNewChildInPartnership(getRandomFather(people, mother.getBirthDate()), mother, currentTime, people));
+                                    mother.recordPartnership(PersonFactory.formNewChildInPartnership(getRandomFather(people, mother.getBirthDate()), mother, currentTime, config.getBirthTimeStep(), people));
                                 } catch (InsufficientNumberOfPeopleException e) {
                                     throw e;
                                 }

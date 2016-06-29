@@ -181,8 +181,42 @@ public class DateUtils {
 
     public static DateInstant calculateDateInstant(Date startingDate, int chosenDay) {
 
+        int day = startingDate.getDay();
+        int month = startingDate.getMonth();
+        int year = startingDate.getYear();
 
 
-        return null;
+        while (chosenDay > 0) {
+
+            int daysLeft;
+
+            // get days left in current month
+            if(month == FEB) {
+                if(isLeapYear(year)) {
+                    daysLeft = DAYS_IN_LEAP_FEB - day;
+                } else {
+                    daysLeft = DAYS_IN_MONTH[month-1] - day;
+                }
+            } else {
+                daysLeft = DAYS_IN_MONTH[month-1] - day;
+            }
+
+            if(chosenDay < daysLeft) {
+                day += chosenDay;
+                chosenDay -= daysLeft;
+                chosenDay--;
+            } else {
+                chosenDay -= daysLeft;
+                day = 1;
+                chosenDay--;
+                month++;
+                if(month > 12) {
+                    month = 1;
+                    year++;
+                }
+            }
+        }
+
+        return new DateInstant(day, month, year);
     }
 }

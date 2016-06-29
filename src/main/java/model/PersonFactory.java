@@ -1,9 +1,12 @@
 package model;
 
 import datastructure.population.PeopleCollection;
+import model.dateSelection.BirthDateSelector;
+import model.dateSelection.DateSelector;
 import model.nameGeneration.FirstNameGenerator;
 import model.nameGeneration.NameGenerator;
 import model.nameGeneration.SurnameGenerator;
+import utils.time.CompoundTimeUnit;
 import utils.time.Date;
 import utils.time.DateClock;
 
@@ -18,21 +21,23 @@ public class PersonFactory {
     private static Random randomNumberGenerator = new Random();
     private static NameGenerator firstNameGenerator = new FirstNameGenerator();
     private static NameGenerator surnameGenerator = new SurnameGenerator();
+    private static DateSelector birthDateSelector = new BirthDateSelector();
 
-    public static IPartnership formNewChildInPartnership(IPerson father, IPerson mother, DateClock birthDate, PeopleCollection population) {
+    public static IPartnership formNewChildInPartnership(IPerson father, IPerson mother, DateClock currentDate,
+                                                         CompoundTimeUnit birthTimeStep, PeopleCollection population) {
 
-        IPartnership partnership = new Partnership(father, mother, birthDate);
+        IPartnership partnership = new Partnership(father, mother, currentDate);
         population.addPartnershipToIndex(partnership);
 
-        IPerson child = makePerson(birthDate, partnership, population);
+        IPerson child = makePerson(currentDate, birthTimeStep, partnership, population);
 
         partnership.addChildren(Collections.singletonList(child));
 
         return partnership;
     }
 
-    public static IPerson formOrphanChild(DateClock birthDate, PeopleCollection population) {
-        return makePerson(birthDate, null, population);
+    public static IPerson formOrphanChild(DateClock currentDate, CompoundTimeUnit birthTimeStep, PeopleCollection population) {
+        return makePerson(currentDate, birthTimeStep, null, population);
     }
 
     private static char getSex() {
@@ -47,9 +52,9 @@ public class PersonFactory {
 
     }
 
-    public static IPerson makePerson(Date birthDate, IPartnership parentsPartnership, PeopleCollection population) {
+    public static IPerson makePerson(Date currentDate, CompoundTimeUnit birthTimeStep, IPartnership parentsPartnership, PeopleCollection population) {
 
-        Person person = new Person(getSex(), birthDate, parentsPartnership);
+        Person person = new Person(getSex(), birthDateSelector.selectDate(currentDate, birthTimeStep), parentsPartnership);
 
         // OZGUR - this is where you're stuff is currently being called from
         person.setFirstName(firstNameGenerator.getName(person));

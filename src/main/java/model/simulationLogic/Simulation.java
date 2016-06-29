@@ -150,15 +150,15 @@ public class Simulation {
                 // at every min timestep
                 // clear out dead people
 
-                // if deaths timestep
-                if (DateUtils.matchesInterval(currentTime, config.getDeathTimeStep())) {
-                    DeathLogic.handleDeaths(config, currentTime, desired, people, deadPeople);
-                }
-
                 // if births timestep
                 if (DateUtils.matchesInterval(currentTime, config.getBirthTimeStep())) {
                     int births = BirthLogic.handleBirths(config, currentTime, desired, people);
                     InitLogic.incrementBirthCount(births);
+                }
+
+                // if deaths timestep
+                if (DateUtils.matchesInterval(currentTime, config.getDeathTimeStep())) {
+                    DeathLogic.handleDeaths(config, currentTime, desired, people, deadPeople);
                 }
 
                 if (InitLogic.inInitPeriod(currentTime) && DateUtils.matchesInterval(currentTime, InitLogic.getTimeStep())) {
