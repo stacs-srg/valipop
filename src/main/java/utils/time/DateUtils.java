@@ -179,14 +179,25 @@ public class DateUtils {
         return days;
     }
 
-    public static DateInstant calculateDateInstant(Date startingDate, int chosenDay) {
+    public static DateInstant calculateDateInstant(Date date, int chosenDay) {
+
+        if(chosenDay < 0) {
+            return calculateBWDateInstant(date, Math.abs(chosenDay));
+        } else {
+            return calculateFWDateInstant(date, chosenDay);
+        }
+
+
+    }
+
+    public static DateInstant calculateFWDateInstant(Date startingDate, int chosenDay) {
 
         int day = startingDate.getDay();
         int month = startingDate.getMonth();
         int year = startingDate.getYear();
 
 
-        while (chosenDay > 0) {
+        while (chosenDay != 0) {
 
             int daysLeft;
 
@@ -203,16 +214,60 @@ public class DateUtils {
 
             if(chosenDay < daysLeft) {
                 day += chosenDay;
-                chosenDay -= daysLeft;
-                chosenDay--;
+                chosenDay = 0;
             } else {
                 chosenDay -= daysLeft;
                 day = 1;
-                chosenDay--;
+                if(chosenDay != 0) {
+                    chosenDay--;
+                }
                 month++;
                 if(month > 12) {
                     month = 1;
                     year++;
+                }
+            }
+        }
+
+        return new DateInstant(day, month, year);
+    }
+
+    public static DateInstant calculateBWDateInstant(Date endingDate, int chosenDay) {
+
+        int day = endingDate.getDay();
+        int month = endingDate.getMonth();
+        int year = endingDate.getYear();
+
+
+        while (chosenDay != 0) {
+
+            int daysLeft = day;
+
+            // get days left in current month
+
+            if(chosenDay < daysLeft) {
+                day -= chosenDay;
+                chosenDay = 0;
+            } else {
+                chosenDay -= daysLeft;
+
+                if(month == FEB) {
+                    if(isLeapYear(year)) {
+                        day = DAYS_IN_LEAP_FEB;
+                    } else {
+                        day = DAYS_IN_MONTH[month-1];
+                    }
+                } else {
+                    day = DAYS_IN_MONTH[month-1];
+                }
+
+                if(chosenDay != 0) {
+                    chosenDay--;
+                }
+                month--;
+                if(month < 1) {
+                    month = 12;
+                    year--;
                 }
             }
         }

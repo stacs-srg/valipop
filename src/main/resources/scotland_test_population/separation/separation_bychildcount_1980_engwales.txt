@@ -1,0 +1,1 @@
+YEAR	1980POPULATION	ENGWALESSOURCE	ONSVAR	SEPARATIONFORM	RATE# This could be described as an REACTIONARY STATISTIC - therefore we can have 5+ as a value as we simply# apply this rate to any couples we see with 5 or more childrenDATA1	0.0013666792	0.0014479893	0.0004653374	0.0001336025+	3.60208E-05

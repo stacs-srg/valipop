@@ -52,13 +52,13 @@ public class DeathLogic {
 
             // for each to be killed
             for (IPerson m : deadMales) {
-                // TODO execute death at a time in the next year
+                // TODO execute death at a time in the past year
                 m.recordDeath(currentDate);
                 deadPopulation.addPerson(m);
             }
 
             for (IPerson f : deadFemales) {
-                // TODO execute death at a time in the next year
+                // TODO execute death at a time in the past year
                 f.recordDeath(currentDate);
                 deadPopulation.addPerson(f);
             }
