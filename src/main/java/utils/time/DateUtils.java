@@ -112,11 +112,22 @@ public class DateUtils {
      * Counts the number of days in the following time period given the starting date of the time period. The returned
      * count is inclusive the first date given.
      *
-     * @param startingDate the day to count from
+     * @param date the day to count from
      * @param consideredTimePeriod the number of months/years to count days for
      * @return The number of days, inclusive of the starting day
      */
-    public static int getDaysInTimePeriod(Date startingDate, CompoundTimeUnit consideredTimePeriod) {
+    public static int getDaysInTimePeriod(Date date, CompoundTimeUnit consideredTimePeriod) {
+
+        if(consideredTimePeriod.getCount() < 0) {
+                return getDaysInNegativeTimePeriod(date, consideredTimePeriod);
+        } else {
+            return getDaysInPositiveTimePeriod(date, consideredTimePeriod);
+        }
+
+    }
+
+
+    private static int getDaysInPositiveTimePeriod(Date startingDate, CompoundTimeUnit consideredTimePeriod) {
 
         int days = 0;
 
@@ -161,6 +172,74 @@ public class DateUtils {
                     if(startingDate.getMonth() == FEB && startingDate.getDay() == DAYS_IN_LEAP_FEB
                             || startingDate.getMonth() > FEB) {
                         year++;
+                    }
+
+                    if(isLeapYear(year)) {
+                        days += DAYS_IN_LEAP_YEAR;
+                    } else {
+                        days += DAYS_IN_YEAR;
+                    }
+
+                }
+
+                break;
+
+        }
+
+
+        return days;
+    }
+
+    private static int getDaysInNegativeTimePeriod(Date startingDate, CompoundTimeUnit consideredTimePeriod) {
+
+        int days = 0;
+
+        switch (consideredTimePeriod.getUnit()) {
+
+            case MONTH:
+
+                for(int i = 0; i < Math.abs(consideredTimePeriod.getCount()); i++) {
+
+                    int year = startingDate.getYear();
+                    int month = startingDate.getMonth() - i;
+
+
+                    if(month < 1) {
+                        int y =  month / MONTHS_IN_YEAR - 1;
+                        year += y;
+                        month += MONTHS_IN_YEAR;
+                    }
+
+
+                    if(month - 1 == FEB) {
+
+                        if(isLeapYear(year)) {
+                            days += DAYS_IN_LEAP_FEB;
+                        } else {
+                            days += DAYS_IN_MONTH[FEB - 1];
+                        }
+
+                    } else {
+                        if(month == 1) {
+                            days += DAYS_IN_MONTH[11];
+                        } else {
+                            days += DAYS_IN_MONTH[month - 2];
+                        }
+                    }
+
+                }
+
+                break;
+            case YEAR:
+
+                for(int i = 0; i < Math.abs(consideredTimePeriod.getCount()); i++) {
+
+                    int year = startingDate.getYear() - i;
+
+                    // Does the year stradle the potential leap day
+                    if(startingDate.getMonth() == FEB && startingDate.getDay() == DAYS_IN_LEAP_FEB
+                            || startingDate.getMonth() < FEB) {
+                        year--;
                     }
 
                     if(isLeapYear(year)) {
@@ -251,6 +330,12 @@ public class DateUtils {
             } else {
                 chosenDay -= daysLeft;
 
+                month--;
+                if(month < 1) {
+                    month = 12;
+                    year--;
+                }
+
                 if(month == FEB) {
                     if(isLeapYear(year)) {
                         day = DAYS_IN_LEAP_FEB;
@@ -261,14 +346,9 @@ public class DateUtils {
                     day = DAYS_IN_MONTH[month-1];
                 }
 
-                if(chosenDay != 0) {
-                    chosenDay--;
-                }
-                month--;
-                if(month < 1) {
-                    month = 12;
-                    year--;
-                }
+//                if(chosenDay != 0) {
+//                    chosenDay--;
+//                }
             }
         }
 

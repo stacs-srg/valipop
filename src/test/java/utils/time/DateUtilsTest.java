@@ -55,23 +55,26 @@ public class DateUtilsTest {
         calcDateInstantHelper(janDate, 12154, 11, 4, 2048);
 
 
-//        calcDateInstantHelper(marDate, minusOneMonth);
-//
-//        calcDateInstantHelper(febDateLeapYear, minusOneMonth);
-//
-//        calcDateInstantHelper(decDate, minusSixMonth);
-//
-//        calcDateInstantHelper(febDate, minusOneYear);
-//
-//        calcDateInstantHelper(febDateLeapYear, minusOneYear);
-//
-//        calcDateInstantHelper(janDate, -12154, 22, 9, 1981);
+        calcDateInstantHelper(marDate, minusOneMonth);
+
+        calcDateInstantHelper(febDateLeapYear, minusOneMonth);
+
+        calcDateInstantHelper(decDate, minusSixMonth);
+
+        calcDateInstantHelper(febDate, minusOneYear);
+
+        calcDateInstantHelper(febDateLeapYear, minusOneYear);
+
+        calcDateInstantHelper(febDate, -31, 1, 1, febDate.getYear());
+        calcDateInstantHelper(janDate, -12154, 22, 9, 1981);
 
     }
 
     private void calcDateInstantHelper(Date tDate, CompoundTimeUnit tTimeUnit) {
 
         DateInstant d = DateUtils.calculateDateInstant(tDate, DateUtils.getDaysInTimePeriod(tDate, tTimeUnit));
+        System.out.println(tDate.toString());
+        System.out.println(d.toString());
         Assert.assertEquals(tDate.getDay(),d.getDay());
         if(tTimeUnit.getUnit() == TimeUnit.MONTH) {
             Assert.assertEquals(tDate.getMonth() + tTimeUnit.getCount(), d.getMonth());
@@ -106,6 +109,9 @@ public class DateUtilsTest {
         Date febDate = new DateClock(2, 2015);
         Date febDateLeapYear = new DateClock(2, 2016);
 
+        Date marDate = new DateClock(3, 2015);
+        Date marDateLeapYear = new DateClock(3, 2016);
+
         Date offJanDate = new DateInstant(15, 1, 2015);
         Date offJanDateLeapYear = new DateInstant(15, 1, 2016);
         Date offJanDatePostLeapYear = new DateInstant(15, 1, 2017);
@@ -125,6 +131,32 @@ public class DateUtilsTest {
         CompoundTimeUnit threeYear = new CompoundTimeUnit(3, TimeUnit.YEAR);
         CompoundTimeUnit sevenYear = new CompoundTimeUnit(7, TimeUnit.YEAR);
 
+        CompoundTimeUnit minusOneMonth = new CompoundTimeUnit(-1, TimeUnit.MONTH);
+        CompoundTimeUnit minusSixMonth = new CompoundTimeUnit(-6, TimeUnit.MONTH);
+        CompoundTimeUnit minusElevenMonth = new CompoundTimeUnit(-11, TimeUnit.MONTH);
+        CompoundTimeUnit minusTwelveMonth = new CompoundTimeUnit(-12, TimeUnit.MONTH);
+        CompoundTimeUnit minusTwentyFourMonth = new CompoundTimeUnit(-24, TimeUnit.MONTH);
+        CompoundTimeUnit minusThirtySixMonth = new CompoundTimeUnit(-36, TimeUnit.MONTH);
+
+        CompoundTimeUnit minusOneYear = new CompoundTimeUnit(-1, TimeUnit.YEAR);
+        CompoundTimeUnit minusTwoYear = new CompoundTimeUnit(-2, TimeUnit.YEAR);
+        CompoundTimeUnit minusThreeYear = new CompoundTimeUnit(-3, TimeUnit.YEAR);
+        CompoundTimeUnit minusSevenYear = new CompoundTimeUnit(-7, TimeUnit.YEAR);
+
+        Assert.assertEquals(31, DateUtils.getDaysInTimePeriod(febDate, minusOneMonth));
+        Assert.assertEquals(28, DateUtils.getDaysInTimePeriod(marDate, minusOneMonth));
+        Assert.assertEquals(29, DateUtils.getDaysInTimePeriod(marDateLeapYear, minusOneMonth));
+
+        Assert.assertEquals(181, DateUtils.getDaysInTimePeriod(marDate, minusSixMonth));
+        Assert.assertEquals(182, DateUtils.getDaysInTimePeriod(marDateLeapYear, minusSixMonth));
+
+        Assert.assertEquals(365, DateUtils.getDaysInTimePeriod(janDate, minusOneYear));
+        Assert.assertEquals(366, DateUtils.getDaysInTimePeriod(janDatePostLeapYear, minusOneYear));
+
+        Assert.assertEquals(365, DateUtils.getDaysInTimePeriod(janDate, minusTwelveMonth));
+        Assert.assertEquals(366, DateUtils.getDaysInTimePeriod(janDatePostLeapYear, minusTwelveMonth));
+
+        // TODO Further reverse teesting here - epsecially some date instants and some on the 29/2 testing
 
         Assert.assertEquals(31, DateUtils.getDaysInTimePeriod(janDate, oneMonth));
         Assert.assertEquals(28, DateUtils.getDaysInTimePeriod(febDate, oneMonth));
