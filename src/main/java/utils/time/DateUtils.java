@@ -119,7 +119,7 @@ public class DateUtils {
     public static int getDaysInTimePeriod(Date date, CompoundTimeUnit consideredTimePeriod) {
 
         if(consideredTimePeriod.getCount() < 0) {
-                return getDaysInNegativeTimePeriod(date, consideredTimePeriod);
+            return (-1) * getDaysInNegativeTimePeriod(date, consideredTimePeriod);
         } else {
             return getDaysInPositiveTimePeriod(date, consideredTimePeriod);
         }
@@ -135,38 +135,86 @@ public class DateUtils {
 
             case MONTH:
 
+                int year = startingDate.getYear();
+                int month = startingDate.getMonth();
+                int day = startingDate.getDay();
+
                 for(int i = 0; i < consideredTimePeriod.getCount(); i++) {
 
-                    int year = startingDate.getYear();
-                    int month = startingDate.getMonth() + i;
-
-                    if(month > MONTHS_IN_YEAR) {
-                        int y = (month - 1) / MONTHS_IN_YEAR;
-                        year += y;
-                        month -= y * MONTHS_IN_YEAR;
-                    }
-
-
-                    if(month == FEB) {
-
-                        if(isLeapYear(year)) {
-                            days += DAYS_IN_LEAP_FEB;
-                        } else {
-                            days += DAYS_IN_MONTH[FEB - 1];
-                        }
+                    if(day < getDaysInNextMonth(month, year)) {
+                        days += getDaysInCurrentMonth(month, year);
 
                     } else {
-                        days += DAYS_IN_MONTH[month - 1];
+                        int t = getDaysInNextMonth(month, year);
+                        days += t;
+
                     }
 
+                    month ++;
+                    if(month >= 13) {
+                        month = 1;
+                        year++;
+                    }
                 }
+
+                // ---------------------------------------------------------
+
+//                for(int i = 0; i < consideredTimePeriod.getCount(); i++) {
+//
+//                    int year = startingDate.getYear();
+//                    int month = startingDate.getMonth() + i;
+//
+//                    if(month > MONTHS_IN_YEAR) {
+//                        int y = (month - 1) / MONTHS_IN_YEAR;
+//                        year += y;
+//                        month -= y * MONTHS_IN_YEAR;
+//                    }
+//
+//
+////                    if(month == FEB) {
+////
+////                        if(isLeapYear(year)) {
+////                            days += DAYS_IN_LEAP_FEB;
+////                        } else {
+////                            days += DAYS_IN_MONTH[FEB - 1];
+////                        }
+////
+////                    } else {
+//                       int tMonth = month;
+//                        if(month == 12) {
+//                            tMonth = 0;
+//                        }
+//                        if(startingDate.getDay() > DAYS_IN_MONTH[tMonth]) {
+//                            if(tMonth == 1) {
+//                                if(isLeapYear(year)) {
+//                                    days += DAYS_IN_LEAP_FEB;
+//                                } else {
+//                                    days += DAYS_IN_MONTH[tMonth];
+//                                }
+//                            } else {
+//                                days += DAYS_IN_MONTH[tMonth];
+//                            }
+//                        } else {
+//                            if(tMonth == 1) {
+//                                if(isLeapYear(year)) {
+//                                    days += DAYS_IN_LEAP_FEB;
+//                                } else {
+//                                    days += DAYS_IN_MONTH[tMonth];
+//                                }
+//                            } else {
+//                                days += DAYS_IN_MONTH[month - 1];
+//                            }
+//                        }
+////                    }
+//
+//                }
 
                 break;
             case YEAR:
 
                 for(int i = 0; i < consideredTimePeriod.getCount(); i++) {
 
-                    int year = startingDate.getYear() + i;
+                    year = startingDate.getYear() + i;
 
                     // Does the year stradle the potential leap day
                     if(startingDate.getMonth() == FEB && startingDate.getDay() == DAYS_IN_LEAP_FEB
@@ -190,6 +238,32 @@ public class DateUtils {
         return days;
     }
 
+    private static int getDaysInCurrentMonth(int currentMonth, int year) {
+
+        if (currentMonth == FEB && isLeapYear(year)) {
+            return DAYS_IN_LEAP_FEB;
+        } else {
+            // We're making a transfer from months denoted from 1-12 to 0-11, hence the -1
+            return DAYS_IN_MONTH[currentMonth - 1];
+        }
+
+    }
+
+    private static int getDaysInNextMonth(int currentMonth, int year) {
+
+        if (currentMonth + 1 == FEB && isLeapYear(year)) {
+            return DAYS_IN_LEAP_FEB;
+        } else {
+            // We're making a transfer from months denoted from 1-12 to 0-11, so really the index is:
+            // DAYS_IN_MONTH[ (currentMonth + 1) - 1 ]
+            if(currentMonth == 12) {
+                return DAYS_IN_MONTH[0];
+            } else {
+                return DAYS_IN_MONTH[currentMonth];
+            }
+        }
+    }
+
     private static int getDaysInNegativeTimePeriod(Date startingDate, CompoundTimeUnit consideredTimePeriod) {
 
         int days = 0;
@@ -210,20 +284,45 @@ public class DateUtils {
                         month += MONTHS_IN_YEAR;
                     }
 
-
                     if(month - 1 == FEB) {
 
                         if(isLeapYear(year)) {
-                            days += DAYS_IN_LEAP_FEB;
+                            if(startingDate.getDay() > DAYS_IN_LEAP_FEB) {
+                                days += DAYS_IN_MONTH[month - 1];
+                            } else {
+                                days += DAYS_IN_LEAP_FEB;
+                            }
                         } else {
-                            days += DAYS_IN_MONTH[FEB - 1];
+                            if(startingDate.getDay() > DAYS_IN_MONTH[FEB - 1]) {
+                                days += DAYS_IN_MONTH[month - 1];
+                            } else {
+                                days += DAYS_IN_MONTH[month - 2];
+                            }
                         }
 
                     } else {
                         if(month == 1) {
-                            days += DAYS_IN_MONTH[11];
+                            if(startingDate.getDay() >= DAYS_IN_MONTH[month - 1]) {
+                                days += DAYS_IN_MONTH[month - 1];
+                            } else {
+                                days += DAYS_IN_MONTH[11];
+                            }
+                        } else if(month == FEB) {
+                            if(startingDate.getDay() >= DAYS_IN_MONTH[month - 1]) {
+                                if(isLeapYear(year)) {
+                                    days += DAYS_IN_LEAP_FEB;
+                                } else {
+                                    days += DAYS_IN_MONTH[month - 1];
+                                }
+                            } else {
+                                days += DAYS_IN_MONTH[month - 2];
+                            }
                         } else {
-                            days += DAYS_IN_MONTH[month - 2];
+                            if(startingDate.getDay() >= DAYS_IN_MONTH[month - 1]) {
+                                days += DAYS_IN_MONTH[month - 1];
+                            } else {
+                                days += DAYS_IN_MONTH[month - 2];
+                            }
                         }
                     }
 
@@ -237,7 +336,7 @@ public class DateUtils {
                     int year = startingDate.getYear() - i;
 
                     // Does the year stradle the potential leap day
-                    if(startingDate.getMonth() == FEB && startingDate.getDay() == DAYS_IN_LEAP_FEB
+                    if(startingDate.getMonth() == FEB && startingDate.getDay() != DAYS_IN_LEAP_FEB
                             || startingDate.getMonth() < FEB) {
                         year--;
                     }
