@@ -13,9 +13,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import utils.CollectionUtils;
 import utils.MapUtils;
+import utils.time.*;
 import utils.time.Date;
-import utils.time.DateClock;
-import utils.time.YearDate;
 
 import java.util.*;
 
@@ -175,7 +174,7 @@ public class BirthLogic {
         int count = 0;
 
         for (IPerson w : women) {
-            if (w.noRecentChildren(currentTime)) {
+            if (w.noRecentChildren(currentTime, new CompoundTimeUnit(-9, TimeUnit.MONTH))) {
                 count++;
             }
         }

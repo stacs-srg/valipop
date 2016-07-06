@@ -47,6 +47,7 @@ public class Config {
     private Path varPartneringPaths;
     private Path varSeparationPaths;
     private Path savePath;
+    private boolean produceGraphs;
 
     // Filter method to exclude dot files from data file directory streams
     private DirectoryStream.Filter<Path> filter = new DirectoryStream.Filter<Path>() {
@@ -87,6 +88,9 @@ public class Config {
                     break;
                 case "save_location":
                     savePath = Paths.get(split[1]);
+                    break;
+                case "produce_graphs":
+                    produceGraphs = new Boolean(split[1]);
                     break;
                 case "death_time_step":
                     try {
@@ -279,5 +283,9 @@ public class Config {
 
     public Path getSavePath() {
         return savePath;
+    }
+
+    public boolean produceGraphs() {
+        return produceGraphs;
     }
 }

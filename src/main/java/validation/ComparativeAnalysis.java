@@ -119,6 +119,8 @@ public class ComparativeAnalysis implements IComparativeAnalysis {
         for (Date d : years) {
             Map<EventType, IKaplanMeierAnalysis> res = results.get(d);
 
+
+
             System.out.print(d.getYear() + " | ");
 
             printPassAndPValue(EventType.MALE_DEATH, res);
@@ -242,8 +244,9 @@ public class ComparativeAnalysis implements IComparativeAnalysis {
         OneDimensionDataDistribution statisticsSurvivorTable = expected.getSurvivorTable(date, new CompoundTimeUnit(1, TimeUnit.YEAR), eventType, populationSurvivorTable.getData(0), populationSurvivorTable.getLargestLabel().getMax(), generatedPopulation);
 //        MapUtils.print("S SUR-" + date.toString(), statisticsSurvivorTable.getData(), 0, 1, 100);
 
-        new SurvivalPlot(statisticsSurvivorTable, populationSurvivorTable).generatePlot(eventType, date, config);
-
+        if(config.produceGraphs()) {
+            new SurvivalPlot(statisticsSurvivorTable, populationSurvivorTable).generatePlot(eventType, date, config);
+        }
 
         // perform KM analysis and log result
         return runKaplanMeier(eventType, statisticsSurvivorTable, populationSurvivorTable);

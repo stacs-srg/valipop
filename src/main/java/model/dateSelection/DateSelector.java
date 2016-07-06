@@ -9,6 +9,8 @@ import utils.time.DateInstant;
  */
 public interface DateSelector {
 
-    DateInstant selectDate(Date earliestPossibleDate, CompoundTimeUnit consideredTimePeriod);
+    DateInstant selectDate(Date possibleDate, CompoundTimeUnit consideredTimePeriod);
+
+    DateInstant selectDate(Date possibleDate, CompoundTimeUnit consideredTimePeriod, int imposedLimit);
 
 }

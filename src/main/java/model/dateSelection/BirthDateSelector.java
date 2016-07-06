@@ -30,4 +30,9 @@ public class BirthDateSelector implements DateSelector {
 
         return chosenDate;
     }
+
+    @Override
+    public DateInstant selectDate(Date possibleDate, CompoundTimeUnit consideredTimePeriod, int imposedLimit) {
+        return selectDate(possibleDate, consideredTimePeriod);
+    }
 }

@@ -121,7 +121,7 @@ public class FemaleCollection extends PersonCollection {
                 throw new InsufficientNumberOfPeopleException("Not enough females to remove specified number from collection");
             }
 
-            if (p.noRecentChildren(currentDate)) {
+            if (p.noRecentChildren(currentDate, new CompoundTimeUnit(-9, TimeUnit.MONTH))) {
                 people.add(p);
             } else {
                 i--;

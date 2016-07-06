@@ -99,6 +99,33 @@ public class DateUtilsTest {
 
     }
 
+    @Test
+    public void differenceInDays() {
+
+        Date a = new DateInstant(1, 1, 2000);
+        Date b = new DateInstant(2, 1, 2000);
+
+        Assert.assertEquals(1, DateUtils.differenceInDays(a, b));
+
+        Date c = new DateInstant(1, 2, 2000);
+
+        Assert.assertEquals(31, DateUtils.differenceInDays(a, c));
+
+        Date d = new DateInstant(1, 1, 2016);
+        Date e = new DateInstant(29, 2, 2016);
+        Date f = new DateInstant(1, 3, 2016);
+
+        Assert.assertEquals(59, DateUtils.differenceInDays(d, e));
+        Assert.assertEquals(60, DateUtils.differenceInDays(d, f));
+
+        Date h = new DateInstant(1, 1, 2001);
+        Assert.assertEquals(366, DateUtils.differenceInDays(a, h));
+
+        Date g = new DateInstant(24, 1, 2034);
+
+        Assert.assertEquals(6598, DateUtils.differenceInDays(d, g));
+
+    }
 
     @Test
     public void getDaysInTimePeriod() throws Exception {
@@ -179,7 +206,6 @@ public class DateUtilsTest {
 
         Assert.assertEquals(-2557, DateUtils.getDaysInTimePeriod(janDate, minusSevenYear));
 
-        // TODO Further reverse testing here - epsecially some date instants and some on the 29/2 testing
         // Reverse checks with complex date cases
 
         Assert.assertEquals(-31, DateUtils.getDaysInTimePeriod(leapMarB, minusOneMonth));

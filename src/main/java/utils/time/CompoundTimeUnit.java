@@ -49,4 +49,7 @@ public class CompoundTimeUnit {
         }
     }
 
+    public CompoundTimeUnit negative() {
+        return new CompoundTimeUnit(-count, unit);
+    }
 }

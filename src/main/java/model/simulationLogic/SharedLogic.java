@@ -16,9 +16,18 @@ public class SharedLogic {
         toHaveEvent -= flooredToHaveEvent;
 
         // this is a random dice roll to see if the fraction of a has the event or not
-        if (randomNumberGenerator.nextDouble() < toHaveEvent) {
+
+        if (randomNumberGenerator.nextInt(100) < toHaveEvent * 100) {
             flooredToHaveEvent++;
         }
+
+//        if (toHaveEvent < 0.5) {
+//            if (randomNumberGenerator.nextDouble() < toHaveEvent) {
+//                flooredToHaveEvent++;
+//            }
+//        } else {
+//            flooredToHaveEvent++;
+//        }
 
         return flooredToHaveEvent;
 

@@ -146,14 +146,15 @@ public class PopulationStatistics implements PopulationComposition, EventRateTab
 
             int n = timePeriod.getCount();
 
-            double nQx = (n * nMx) / (1 + (n * 0.5 * nMx));
+//            double nQx = (n * nMx) / (1 + (n * 0.5 * nMx));
 
 
-            survivors = survivors * (1 - nQx);
+            survivors = survivors * (1 - nMx);
 
 
 
-            survival.put(new IntegerRange(age + 1), (double) Math.round(survivors));
+            // TEMP ive taken the rounding out of here on survivors and a +1 off age - NOW PUT BACK IN
+            survival.put(new IntegerRange(age + 1), survivors);
 
             age++;
 

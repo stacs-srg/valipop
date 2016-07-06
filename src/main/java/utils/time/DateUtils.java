@@ -36,6 +36,13 @@ public class DateUtils {
     }
 
 
+    /**
+     * If the dates represent the same day in time then the return value is true.
+     *
+     * @param a The first date
+     * @param b The second date
+     * @return returns true if date a is before day b (or is the same as date b) else returns false
+     */
     public static boolean dateBefore(Date a, Date b) {
 
         if (a.getYear() < b.getYear()) {
@@ -452,5 +459,40 @@ public class DateUtils {
         }
 
         return new DateInstant(day, month, year);
+    }
+
+    public static int differenceInDays(Date birthDate, Date latestDate) {
+
+        int day = birthDate.getDay();
+        int month = birthDate.getMonth();
+        int year = birthDate.getYear();
+
+        int counts = 0;
+
+        if(day != 1) {
+            counts += (getDaysInCurrentMonth(month, year) - day);
+            month ++;
+        }
+
+        for(int y = year; y < latestDate.getYear(); y++) {
+
+            for(int m = month; m <= MONTHS_IN_YEAR; m++) {
+                counts += getDaysInCurrentMonth(m, y);
+            }
+
+            month = 1;
+
+        }
+
+        for(int m = month; m < latestDate.getMonth(); m++) {
+            counts += getDaysInCurrentMonth(m, latestDate.getYear());
+        }
+
+        if(day != latestDate.getDay()) {
+            counts += latestDate.getDay() - 1;
+        }
+
+
+        return counts;
     }
 }

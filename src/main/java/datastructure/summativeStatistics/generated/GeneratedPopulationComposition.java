@@ -165,7 +165,7 @@ public class GeneratedPopulationComposition implements PopulationComposition {
         double survivors = people.size();
         survival.put(new IntegerRange(0), survivors);
 
-        for (int i = 0; i < maxAge; i++) {
+        for (int i = 0; i <= maxAge; i++) {
             try {
                 survivors -= counts.get(countsTable.resolveRowValue(i));
             } catch (InvalidRangeException e) { /* No deaths at this age*/ }

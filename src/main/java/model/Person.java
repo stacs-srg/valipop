@@ -1,5 +1,7 @@
 package model;
 
+import model.dateSelection.DateSelector;
+import model.dateSelection.DeathDateSelector;
 import utils.time.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -22,6 +24,8 @@ public class Person implements IPerson {
     private IPartnership parentsPartnership;
     private String firstName;
     private String surname;
+
+    private DateSelector deathDateSelector = new DeathDateSelector();
 
 
     public Person(char sex, Date birthDate) {
@@ -118,11 +122,11 @@ public class Person implements IPerson {
     }
 
     @Override
-    public boolean noRecentChildren(DateClock currentDate) {
+    public boolean noRecentChildren(DateClock currentDate, CompoundTimeUnit timePeriod) {
 
         for (IPartnership p : getPartnerships()) {
             for (IPerson c : p.getChildren()) {
-                if (DateUtils.dateBefore(currentDate.advanceTime(-9, TimeUnit.MONTH), c.getBirthDate())) {
+                if (DateUtils.dateBefore(currentDate.advanceTime(timePeriod), c.getBirthDate())) {
                     return false;
                 }
             }
@@ -139,7 +143,56 @@ public class Person implements IPerson {
 
     @Override
     public void recordDeath(Date date) {
+
+
         deathDate = date.getDateInstant();
+    }
+
+    @Override
+    public void causeDeathInTimePeriod(Date latestDate, CompoundTimeUnit timePeriod) {
+
+        int daysInTimePeriod = DateUtils.getDaysInTimePeriod(latestDate, timePeriod.negative());
+
+        if(sex == 'm') {
+            // No events to prevent death in last time period
+            deathDate = deathDateSelector.selectDate(latestDate, timePeriod);
+        } else {
+            // if female
+
+            IPerson lastChild = getLastChild();
+
+            if(lastChild == null) {
+                deathDate = deathDateSelector.selectDate(latestDate, timePeriod);
+            } else {
+
+                int daysSinceLastChild = DateUtils.differenceInDays(lastChild.getBirthDate(), latestDate);
+
+                // if last child was born in time period
+                if (daysSinceLastChild < daysInTimePeriod) {
+                    // then restrict date selection
+                    deathDate = deathDateSelector.selectDate(latestDate, timePeriod, daysSinceLastChild);
+                } else {
+                    // else apply death date as usual
+                    deathDate = deathDateSelector.selectDate(latestDate, timePeriod);
+                }
+            }
+
+        }
+
+//        int days = DateUtils.differenceInDays(deathDate, latestDate);
+//
+//        if(DateUtils.dateBefore(latestDate, deathDate)) {
+//
+//            if(DateUtils.differenceInDays(latestDate, deathDate) != 0)
+//                System.out.println("A2 Error - " + DateUtils.differenceInDays(latestDate, deathDate));
+//        }
+//
+//
+//        if(days > (-1) * daysInTimePeriod) {
+//            System.out.println("A1 Error");
+//        }
+
+
     }
 
     @Override
@@ -180,6 +233,27 @@ public class Person implements IPerson {
         }
 
         return age;
+    }
+
+    @Override
+    public IPerson getLastChild() {
+
+        Date latestChildBirthDate = new YearDate(Integer.MIN_VALUE);
+        IPerson child = null;
+
+        for (IPartnership p : partnerships) {
+            for (IPerson c : p.getChildren()) {
+
+                if(DateUtils.dateBefore(latestChildBirthDate, c.getBirthDate())) {
+                    latestChildBirthDate = c.getBirthDate();
+                    child = c;
+                }
+
+            }
+        }
+
+        return child;
+
     }
 
 }

@@ -158,7 +158,7 @@ public class Simulation {
 
                 // if deaths timestep
                 if (DateUtils.matchesInterval(currentTime, config.getDeathTimeStep())) {
-                    DeathLogic.handleDeaths(config, currentTime, desired, people, deadPeople);
+                    DeathLogic.handleDeaths(config, currentTime, desired, people, deadPeople, config.getDeathTimeStep());
                 }
 
                 if (InitLogic.inInitPeriod(currentTime) && DateUtils.matchesInterval(currentTime, InitLogic.getTimeStep())) {
