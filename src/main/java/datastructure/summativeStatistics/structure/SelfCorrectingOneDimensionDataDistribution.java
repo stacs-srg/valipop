@@ -21,6 +21,7 @@ public class SelfCorrectingOneDimensionDataDistribution extends OneDimensionData
 
         for (IntegerRange iR : appliedCounts.keySet()) {
             appliedCounts.replace(iR, 0.0);
+            appliedRates.replace(iR, 0.0);
         }
 
     }
@@ -36,16 +37,16 @@ public class SelfCorrectingOneDimensionDataDistribution extends OneDimensionData
         // applied count
         double aC = appliedCounts.get(age);
 
+        // if no correction data - i.e. first call to this method
+        if(aC == 0) {
+            return tD;
+        }
+
         // to apply to
         int tAT = data.getForNPeople();
 
         // applied rate
         double aD = appliedRates.get(age);
-
-        // if no correction data - i.e. first call to this method
-        if(aC == 0) {
-            return tD;
-        }
 
         // if no N value given in DataKey
         if(tAT == 0) {

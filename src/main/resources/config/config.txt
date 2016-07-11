@@ -2,7 +2,7 @@
 #4.3.16
 var_data_files = src/main/resources/scotland_test_population
 produce_graphs = true
-death_time_step = 1y
+death_time_step = 3m
 birth_time_step = 3m
 simulation_time_step = 3m
 tS = 1/1/1599

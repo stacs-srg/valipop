@@ -4,6 +4,7 @@ import config.Config;
 import datastructure.population.PeopleCollection;
 import datastructure.population.exceptions.InsufficientNumberOfPeopleException;
 import datastructure.summativeStatistics.desired.PopulationStatistics;
+import datastructure.summativeStatistics.structure.DataKey;
 import model.IPerson;
 import model.Person;
 import org.apache.logging.log4j.LogManager;
@@ -39,16 +40,21 @@ public class DeathLogic {
         // for each year of birth since tS
         for (DateClock yearOfBirth = config.getTS(); DateUtils.dateBefore(yearOfBirth, trueCurrentDate); yearOfBirth = yearOfBirth.advanceTime(1, YEAR)) {
 
+            int age = DateUtils.differenceInYears(yearOfBirth, currentDate).getCount();
+
             // get count of people of given age
             int numberOfMales = countMalesBornIn(livingPopulation, yearOfBirth);
             int numberOfFemales = countFemalesBornIn(livingPopulation, yearOfBirth);
 
+            DataKey maleKey = new DataKey(age, numberOfMales);
+            DataKey femaleKey = new DataKey(age, numberOfFemales);
+
             // DATA - get rate of death by age and gender
-            Double maleDeathRate = desiredPopulationStatistics.getDeathRates(trueCurrentDate, 'm').getData(getAge(trueCurrentDate, yearOfBirth)) * config.getDeathTimeStep().toDecimalRepresentation();
+            Double maleDeathRate = desiredPopulationStatistics.getDeathRates(trueCurrentDate, 'm').getCorrectingData(maleKey) * config.getDeathTimeStep().toDecimalRepresentation();
 
 //            maleDeathRate = (1 * maleDeathRate) / (1 + (1 * 0.5 * maleDeathRate));
 
-            Double femaleDeathRate = desiredPopulationStatistics.getDeathRates(trueCurrentDate, 'f').getData(getAge(trueCurrentDate, yearOfBirth)) * config.getDeathTimeStep().toDecimalRepresentation();
+            Double femaleDeathRate = desiredPopulationStatistics.getDeathRates(trueCurrentDate, 'f').getCorrectingData(femaleKey) * config.getDeathTimeStep().toDecimalRepresentation();
 
 //            femaleDeathRate = (1 * femaleDeathRate) / (1 + (1 * 0.5 * femaleDeathRate));
 
@@ -56,6 +62,15 @@ public class DeathLogic {
             int malesToDie = calculateNumberToDie(numberOfMales, maleDeathRate);
             int femalesToDie = calculateNumberToDie(numberOfFemales, femaleDeathRate);
 
+            if(malesToDie < 0) {
+                System.out.println("MDR@" + age + ": " + maleDeathRate);
+                malesToDie = 0;
+            }
+
+            if(femalesToDie < 0) {
+                System.out.println("FDR@" + age + ": " + femaleDeathRate);
+                femalesToDie = 0;
+            }
 
             deathCount += malesToDie;
             deathCount += femalesToDie;
@@ -94,6 +109,13 @@ public class DeathLogic {
                 }
 
             }
+
+            double appliedMaleRate = deadMales.size() / (double) numberOfMales;
+
+            double appliedFemaleRate = deadFemales.size() / (double) numberOfFemales;
+
+            desiredPopulationStatistics.getDeathRates(trueCurrentDate, 'm').returnAppliedData(maleKey, appliedMaleRate / config.getDeathTimeStep().toDecimalRepresentation());
+            desiredPopulationStatistics.getDeathRates(trueCurrentDate, 'f').returnAppliedData(femaleKey, appliedFemaleRate / config.getDeathTimeStep().toDecimalRepresentation());
 
         }
 
