@@ -23,16 +23,16 @@ public class PopulationStatistics implements PopulationComposition, EventRateTab
     private DateClock startDate;
     private DateClock endDate;
 
-    private Map<YearDate, OneDimensionDataDistribution> maleDeath;
-    private Map<YearDate, OneDimensionDataDistribution> femaleDeath;
+    private Map<YearDate, SelfCorrectingOneDimensionDataDistribution> maleDeath;
+    private Map<YearDate, SelfCorrectingOneDimensionDataDistribution> femaleDeath;
     private Map<YearDate, TwoDimensionDataDistribution> partnering;
     private Map<YearDate, SelfCorrectingTwoDimensionDataDistribution> orderedBirth;
     private Map<YearDate, TwoDimensionDataDistribution> multipleBirth;
     private Map<YearDate, OneDimensionDataDistribution> separation;
 
     public PopulationStatistics(Config config,
-                                Map<YearDate, OneDimensionDataDistribution> maleDeath,
-                                Map<YearDate, OneDimensionDataDistribution> femaleDeath,
+                                Map<YearDate, SelfCorrectingOneDimensionDataDistribution> maleDeath,
+                                Map<YearDate, SelfCorrectingOneDimensionDataDistribution> femaleDeath,
                                 Map<YearDate, TwoDimensionDataDistribution> partnering,
                                 Map<YearDate, SelfCorrectingTwoDimensionDataDistribution> orderedBirth,
                                 Map<YearDate, TwoDimensionDataDistribution> multipleBirth,
@@ -69,7 +69,7 @@ public class PopulationStatistics implements PopulationComposition, EventRateTab
      */
 
     @Override
-    public OneDimensionDataDistribution getDeathRates(Date year, char gender) {
+    public SelfCorrectingOneDimensionDataDistribution getDeathRates(Date year, char gender) {
         if (Character.toLowerCase(gender) == 'm') {
             return maleDeath.get(getNearestYearInMap(year.getYearDate(), maleDeath));
         } else {

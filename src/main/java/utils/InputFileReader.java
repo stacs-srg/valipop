@@ -204,4 +204,8 @@ public class InputFileReader {
         return new OneDimensionDataDistribution(year, sourcePopulation, sourceOrganisation, data);
     }
 
+    public static SelfCorrectingOneDimensionDataDistribution readInSC1DDataFile(Path path) {
+        OneDimensionDataDistribution d = readIn1DDataFile(path);
+        return new SelfCorrectingOneDimensionDataDistribution(d.getYear(), d.getSourcePopulation(), d.getSourceOrganisation(), d.cloneData());
+    }
 }

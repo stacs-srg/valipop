@@ -2,6 +2,7 @@ package datastructure.summativeStatistics.desired;
 
 import config.Config;
 import datastructure.summativeStatistics.structure.OneDimensionDataDistribution;
+import datastructure.summativeStatistics.structure.SelfCorrectingOneDimensionDataDistribution;
 import datastructure.summativeStatistics.structure.SelfCorrectingTwoDimensionDataDistribution;
 import datastructure.summativeStatistics.structure.TwoDimensionDataDistribution;
 import utils.time.YearDate;
@@ -33,14 +34,27 @@ public abstract class DesiredPopulationStatisticsFactory {
 
         DesiredPopulationStatisticsFactory.log.info("Creating PopulationStatistics instance");
 
-        Map<YearDate, OneDimensionDataDistribution> maleDeath = readIn1DDataFiles(config.getVarMaleDeathPaths());
-        Map<YearDate, OneDimensionDataDistribution> femaleDeath = readIn1DDataFiles(config.getVarFemaleDeathPaths());
+        Map<YearDate, SelfCorrectingOneDimensionDataDistribution> maleDeath = readInSC1DDataFiles(config.getVarMaleDeathPaths());
+        Map<YearDate, SelfCorrectingOneDimensionDataDistribution> femaleDeath = readInSC1DDataFiles(config.getVarFemaleDeathPaths());
         Map<YearDate, TwoDimensionDataDistribution> partnering = readIn2DDataFiles(config.getVarPartneringPaths());
         Map<YearDate, SelfCorrectingTwoDimensionDataDistribution> orderedBirth = readInSC2DDataFiles(config.getVarOrderedBirthPaths());
         Map<YearDate, TwoDimensionDataDistribution> multipleBirth = readIn2DDataFiles(config.getVarMultipleBirthPaths());
         Map<YearDate, OneDimensionDataDistribution> separation = readIn1DDataFiles(config.getVarSeparationPaths());
 
         return new PopulationStatistics(config, maleDeath, femaleDeath, partnering, orderedBirth, multipleBirth, separation);
+    }
+
+    private static Map<YearDate,SelfCorrectingOneDimensionDataDistribution> readInSC1DDataFiles(DirectoryStream<Path> paths) {
+
+        Map<YearDate, SelfCorrectingOneDimensionDataDistribution> data = new HashMap<YearDate, SelfCorrectingOneDimensionDataDistribution>();
+
+        for (Path path : paths) {
+            // read in each file
+            SelfCorrectingOneDimensionDataDistribution tempData = InputFileReader.readInSC1DDataFile(path);
+            data.put(tempData.getYear(), tempData);
+        }
+        return data;
+
     }
 
     private static Map<YearDate, TwoDimensionDataDistribution> readIn2DDataFiles(DirectoryStream<Path> paths) {

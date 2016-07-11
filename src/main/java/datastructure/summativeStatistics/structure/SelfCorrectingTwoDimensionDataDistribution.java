@@ -71,7 +71,6 @@ public class SelfCorrectingTwoDimensionDataDistribution extends TwoDimensionData
         // if ! columnValue >= getLargestLabel()
 //        System.out.println("MRV = " + targetData.get(targetData.keySet().iterator().next()).getLargestLabel().toString());
         if (!(data.getColumnValue() >= maxBirthOrderInTargetTable)) {
-            // return x
             return x;
         } else {
             // scale to appropriate value

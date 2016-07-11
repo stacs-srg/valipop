@@ -17,6 +17,10 @@ public class DataKey {
         this.forNPeople = forNPeople;
     }
 
+    public DataKey(Integer rowValue, int forNPeople) {
+        this(rowValue, null, null, forNPeople);
+    }
+
     public int getForNPeople() {
         return forNPeople;
     }

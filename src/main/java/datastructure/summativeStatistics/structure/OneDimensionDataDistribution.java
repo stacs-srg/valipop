@@ -20,7 +20,7 @@ public class OneDimensionDataDistribution implements DataDistribution {
     private final String sourcePopulation;
     private final String sourceOrganisation;
 
-    private final Map<IntegerRange, Double> targetData;
+    protected final Map<IntegerRange, Double> targetData;
 
     public OneDimensionDataDistribution(YearDate year,
                                         String sourcePopulation,
@@ -140,15 +140,5 @@ public class OneDimensionDataDistribution implements DataDistribution {
         return new OneDimensionDataDistribution(year, sourcePopulation, sourceOrganisation, cloneData());
 
     }
-
-//    public Double getData(IntegerRange row, int forNPeople) {
-//
-//        return null;
-//    }
-//
-//    public void returnUsedData(IntegerRange range, Double appliedToSimulation, int onNPeople) {
-//
-//
-//    }
 
 }

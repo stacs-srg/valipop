@@ -95,4 +95,16 @@ public class MapUtils {
         return clone;
 
     }
+
+    public static Map<IntegerRange, Double> cloneODM(Map<IntegerRange, Double> tableData) {
+
+        Map<IntegerRange, Double> clone = new HashMap<IntegerRange, Double>();
+
+        for(IntegerRange iR : tableData.keySet()) {
+            clone.put(iR, tableData.get(tableData.get(iR)));
+        }
+
+
+        return clone;
+    }
 }

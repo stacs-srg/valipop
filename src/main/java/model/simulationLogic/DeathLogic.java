@@ -131,7 +131,7 @@ public class DeathLogic {
 
         // this is a random dice roll to see if the fraction of a has the event or not
 
-        if(deathRate <= 0.0013) {
+        if(deathRate <= 0.001) {
 
             if (randomNumberGenerator.nextInt(100) < toHaveEvent * 100) {
                 flooredToHaveEvent++;
