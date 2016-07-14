@@ -101,6 +101,9 @@ public class SelfCorrectingTwoDimensionDataDistribution extends TwoDimensionData
     @Override
     public void returnAppliedData(DataKey data, double appliedRate) {
 
+        if(Double.isNaN(appliedRate)) {
+            System.out.println("NAN: " + getYear() + " a: " + data.getRowValue() + " o: " + data.getColumnValue());
+        }
 
         // get previous applied rate - a
         double a = getAppliedRates(data.getRowValue()).getData(data.getColumnValue());
