@@ -3,6 +3,7 @@ package datastructure.summativeStatistics.structure;
 import utils.MapUtils;
 import utils.time.YearDate;
 
+import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.Map;
 
@@ -182,24 +183,24 @@ public class SelfCorrectingTwoDimensionDataDistribution extends TwoDimensionData
         return appliedCounts.get(row);
     }
 
-    public void print() {
-        System.out.println("TARGET");
-        printMap(targetData, true);
-        System.out.println("APPLIED");
-        printMap(appliedData, true);
-        System.out.println("DELTAS");
-        printDeltas(appliedData, targetData);
-        System.out.println("COUNTS");
-        printMap(appliedCounts, false);
+    public void outputResults(PrintStream resultsOutput) {
+        resultsOutput.println("TARGET");
+        outputMap(targetData, true, resultsOutput);
+        resultsOutput.println("APPLIED");
+        outputMap(appliedData, true, resultsOutput);
+        resultsOutput.println("DELTAS");
+        printDeltas(appliedData, targetData, resultsOutput);
+        resultsOutput.println("COUNTS");
+        outputMap(appliedCounts, false, resultsOutput);
     }
 
-    private void printDeltas(Map<IntegerRange, OneDimensionDataDistribution> appliedData, Map<IntegerRange, OneDimensionDataDistribution> targetData) {
+    private void printDeltas(Map<IntegerRange, OneDimensionDataDistribution> appliedData, Map<IntegerRange, OneDimensionDataDistribution> targetData, PrintStream resultsOutput) {
 
         IntegerRange[] keys = targetData.keySet().toArray(new IntegerRange[targetData.keySet().size()]);
         Arrays.sort(keys, IntegerRange::compareTo);
 
         for (IntegerRange iR : keys) {
-            System.out.print(iR.toString() + " | ");
+            resultsOutput.print(iR.toString() + " | ");
 
             Map<IntegerRange, Double> targetRow = targetData.get(iR).getData();
             Map<IntegerRange, Double> appliedRow = appliedData.get(iR).getData();
@@ -208,24 +209,24 @@ public class SelfCorrectingTwoDimensionDataDistribution extends TwoDimensionData
             Arrays.sort(orderedKeys, IntegerRange::compareTo);
 
             for (IntegerRange iR2 : orderedKeys) {
-                System.out.printf("%+.4f | ", appliedRow.get(iR2) - targetRow.get(iR2));
+                resultsOutput.printf("%+.4f | ", appliedRow.get(iR2) - targetRow.get(iR2));
             }
 
-            System.out.println();
+            resultsOutput.println();
 
         }
 
-        System.out.println();
+        resultsOutput.println();
 
     }
 
-    public void printMap(Map<IntegerRange, OneDimensionDataDistribution> data, boolean decimal) {
+    public void outputMap(Map<IntegerRange, OneDimensionDataDistribution> data, boolean decimal, PrintStream resultsOutput) {
 
         IntegerRange[] keys = data.keySet().toArray(new IntegerRange[targetData.keySet().size()]);
         Arrays.sort(keys, IntegerRange::compareTo);
 
         for (IntegerRange iR : keys) {
-            System.out.print(iR.toString() + " | ");
+            resultsOutput.print(iR.toString() + " | ");
 
             Map<IntegerRange, Double> row = data.get(iR).getData();
             IntegerRange[] orderedKeys = row.keySet().toArray(new IntegerRange[row.keySet().size()]);
@@ -233,18 +234,18 @@ public class SelfCorrectingTwoDimensionDataDistribution extends TwoDimensionData
 
             for (IntegerRange iR2 : orderedKeys) {
                 if (decimal) {
-                    System.out.printf("%.4f | ", row.get(iR2));
+                    resultsOutput.printf("%.4f | ", row.get(iR2));
                 } else {
-                    System.out.printf("%.0f | ", row.get(iR2));
+                    resultsOutput.printf("%.0f | ", row.get(iR2));
                 }
             }
 
-            System.out.println();
+            resultsOutput.println();
 
         }
 
 
-        System.out.println();
+        resultsOutput.println();
 
     }
 }

@@ -23,6 +23,8 @@ import uk.ac.standrews.cs.digitising_scotland.util.DateManipulation;
 import utils.time.Date;
 import utils.time.DateUtils;
 
+import java.io.PrintStream;
+
 
 /**
  * An analytic class to analyse the distribution of deaths.
@@ -37,15 +39,19 @@ public class DeathAnalytics {
     private final int[] age_at_death = new int[MAX_AGE_AT_DEATH]; // tracks age of death over population
     private final IPopulation population;
 
+    private static PrintStream out;
+
     /**
      * Creates an analytic instance to analyse deaths in a population.
      *
      * @param population the population to analyse
      */
-    public DeathAnalytics(final IPopulation population) {
+    public DeathAnalytics(final IPopulation population, PrintStream resultsOutput) {
 
         this.population = population;
+        out = resultsOutput;
         analyseDeaths();
+
     }
 
     /**
@@ -55,9 +61,9 @@ public class DeathAnalytics {
 
         final int sum = ArrayManipulation.sum(age_at_death);
 
-        System.out.println("Death distribution:");
+        out.println("Death distribution:");
         for (int i = 1; i < age_at_death.length; i++) {
-            System.out.println("\tDeaths at age: " + i + " = " + age_at_death[i] + " = " + String.format("%.3f", age_at_death[i] / (double) sum * ONE_HUNDRED) + '%');
+            out.println("\tDeaths at age: " + i + " = " + age_at_death[i] + " = " + String.format("%.3f", age_at_death[i] / (double) sum * ONE_HUNDRED) + '%');
         }
     }
 

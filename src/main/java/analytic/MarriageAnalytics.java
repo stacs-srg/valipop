@@ -21,6 +21,7 @@ import model.IPerson;
 import model.IPopulation;
 import uk.ac.standrews.cs.digitising_scotland.util.ArrayManipulation;
 
+import java.io.PrintStream;
 import java.util.List;
 
 /**
@@ -36,14 +37,17 @@ public class MarriageAnalytics {
     private final int[] count_marriages = new int[MAX_MARRIAGES]; // tracks marriage size
     private final IPopulation population;
 
+    private static PrintStream out;
+
     /**
      * Creates an analytic instance to analyse marriages in a population.
      *
      * @param population the population to analyse
      */
-    public MarriageAnalytics(final IPopulation population) {
+    public MarriageAnalytics(final IPopulation population, PrintStream resultsOutput) {
 
         this.population = population;
+        out = resultsOutput;
         analyseMarriages();
     }
 
@@ -54,12 +58,12 @@ public class MarriageAnalytics {
 
         final int sum = ArrayManipulation.sum(count_marriages);
 
-        System.out.println("Male marriage sizes:");
-        System.out.println("\t unmarried: " + count_marriages[0]);
+        out.println("Male marriage sizes:");
+        out.println("\t unmarried: " + count_marriages[0]);
 
         for (int i = 1; i < count_marriages.length; i++) {
             if (count_marriages[i] != 0) {
-                System.out.println("\t Married " + i + " times: " + count_marriages[i] + " = " + String.format("%.1f", count_marriages[i] / (double) sum * ONE_HUNDRED) + '%');
+                out.println("\t Married " + i + " times: " + count_marriages[i] + " = " + String.format("%.1f", count_marriages[i] / (double) sum * ONE_HUNDRED) + '%');
             }
         }
     }

@@ -15,8 +15,10 @@ import utils.MapUtils;
 import utils.time.*;
 
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -108,9 +110,18 @@ public class ComparativeAnalysis implements IComparativeAnalysis {
     }
 
     @Override
-    public void printResults() throws UnsupportedDateConversion {
+    public void outputResults(PrintStream resultOutput) throws UnsupportedDateConversion {
 
-        System.out.println("Year | M Death | D Death | 0 Order |");
+        int mPasses = 0;
+        int mFails = 0;
+
+        int fPasses = 0;
+        int fFails = 0;
+
+        int b0Passes = 0;
+        int b0Fails = 0;
+
+        resultOutput.println("Year | M Death | F Death | 0 Order |");
 
         Date[] years = results.keySet().toArray(new Date[results.keySet().size()]);
 
@@ -119,40 +130,67 @@ public class ComparativeAnalysis implements IComparativeAnalysis {
         for (Date d : years) {
             Map<EventType, IKaplanMeierAnalysis> res = results.get(d);
 
+            resultOutput.print(d.getYear() + " | ");
 
+            if(printPassAndPValue(EventType.MALE_DEATH, res, resultOutput)) {
+                mPasses++;
+            } else {
+                mFails++;
+            }
 
-            System.out.print(d.getYear() + " | ");
+            if(printPassAndPValue(EventType.FEMALE_DEATH, res, resultOutput)) {
+                fPasses++;
+            } else {
+                fFails++;
+            }
 
-            printPassAndPValue(EventType.MALE_DEATH, res);
-            printPassAndPValue(EventType.FEMALE_DEATH, res);
-            printPassAndPValue(EventType.FIRST_BIRTH, res);
+            if(printPassAndPValue(EventType.FIRST_BIRTH, res, resultOutput)) {
+                b0Passes++;
+            } else {
+                b0Fails++;
+            }
 
-            System.out.println();
+            resultOutput.println();
         }
 
-        System.out.println();
-        System.out.println("Fisher Combined P Values");
-        System.out.println("Male Death   P Value = " + (1 - new ChiSquaredDistribution(2 * fisherCountMaleDeath).cumulativeProbability(fisherSumMaleDeath)));
-        System.out.println("Female Death P Value = " + (1 - new ChiSquaredDistribution(2 * fisherCountFemaleDeath).cumulativeProbability(fisherSumFemaleDeath)));
-        System.out.println("Both Deaths  P Value = " + (1 - new ChiSquaredDistribution(2 * (fisherCountMaleDeath + fisherCountFemaleDeath)).cumulativeProbability(fisherSumMaleDeath + fisherSumFemaleDeath)));
-        System.out.println("First Births P Value = " + (1 - new ChiSquaredDistribution(2 * fisherCountFirstBirth).cumulativeProbability(fisherSumFirstBirth)));
+        int tPasses = mPasses + fPasses + b0Passes;
+        int tFails = mFails + fFails + b0Fails;
+
+        resultOutput.println();
+        resultOutput.print("Summed Passes and Fails\n");
+        resultOutput.print("Male death   - Passes: " + mPasses + "    |    Fails: " + mFails + "\n");
+        resultOutput.print("Female death - Passes: " + fPasses + "    |    Fails: " + fFails + "\n");
+        resultOutput.print("First births - Passes: " + b0Passes + "    |    Fails: " + b0Fails + "\n");
+        resultOutput.print("Totals       - Passes: " + tPasses + "    |    Fails: " + tFails + "\n");
+
+//        System.out.println();
+//        System.out.println("Fisher Combined P Values");
+//        System.out.println("Male Death   P Value = " + (1 - new ChiSquaredDistribution(2 * fisherCountMaleDeath).cumulativeProbability(fisherSumMaleDeath)));
+//        System.out.println("Female Death P Value = " + (1 - new ChiSquaredDistribution(2 * fisherCountFemaleDeath).cumulativeProbability(fisherSumFemaleDeath)));
+//        System.out.println("Both Deaths  P Value = " + (1 - new ChiSquaredDistribution(2 * (fisherCountMaleDeath + fisherCountFemaleDeath)).cumulativeProbability(fisherSumMaleDeath + fisherSumFemaleDeath)));
+//        System.out.println("First Births P Value = " + (1 - new ChiSquaredDistribution(2 * fisherCountFirstBirth).cumulativeProbability(fisherSumFirstBirth)));
 
     }
 
-    private void printPassAndPValue(EventType eventType, Map<EventType, IKaplanMeierAnalysis> res) {
+    private boolean printPassAndPValue(EventType eventType, Map<EventType, IKaplanMeierAnalysis> res, PrintStream resultOutput) {
+
+        boolean result = res.get(eventType).significantDifferenceBetweenGroups();
 
         if (res.containsKey(eventType)) {
-            System.out.print(getPassPrint(res.get(eventType).significantDifferenceBetweenGroups(), false) + "-");
-            System.out.printf("%.3f ", res.get(eventType).getPValue());
+            resultOutput.print(getPassPrint(result, false) + "-");
+            resultOutput.printf("%.3f ", res.get(eventType).getPValue());
 
             if (Double.isNaN(res.get(eventType).getPValue())) {
-                System.out.print("  ");
+                resultOutput.print("  ");
             }
 
-            System.out.print("| ");
+            resultOutput.print("| ");
         } else {
-            System.out.print("        | ");
+            resultOutput.print("        | ");
         }
+
+        return !result;
+
 
     }
 
@@ -236,13 +274,13 @@ public class ComparativeAnalysis implements IComparativeAnalysis {
     private IKaplanMeierAnalysis runKMAnalysis(Date date, EventType eventType, StatisticalTables expected, StatisticalTables observed, IPopulation generatedPopulation, Config config) throws StatisticalManipulationCalculationError, UnsupportedDateConversion, UnsupportedEventType, IOException {
         // get survival tables for all males born in year
         OneDimensionDataDistribution populationSurvivorTable = observed.getSurvivorTable(date, new CompoundTimeUnit(1, TimeUnit.YEAR), eventType);
-//        MapUtils.print("G SUR-" + date.toString(), populationSurvivorTable.getData(), 0, 1, 100);
+//        MapUtils.outputResults("G SUR-" + date.toString(), populationSurvivorTable.getData(), 0, 1, 100);
 
 //        System.out.println(populationSurvivorTable.getData(0));
 
         // get equiverlent table from inputs stats
         OneDimensionDataDistribution statisticsSurvivorTable = expected.getSurvivorTable(date, new CompoundTimeUnit(1, TimeUnit.YEAR), eventType, populationSurvivorTable.getData(0), populationSurvivorTable.getLargestLabel().getMax(), generatedPopulation);
-//        MapUtils.print("S SUR-" + date.toString(), statisticsSurvivorTable.getData(), 0, 1, 100);
+//        MapUtils.outputResults("S SUR-" + date.toString(), statisticsSurvivorTable.getData(), 0, 1, 100);
 
         if(config.produceGraphs()) {
             new SurvivalPlot(statisticsSurvivorTable, populationSurvivorTable).generatePlot(eventType, date, config);

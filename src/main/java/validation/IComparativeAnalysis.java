@@ -9,6 +9,8 @@ import utils.time.Date;
 import utils.time.UnsupportedDateConversion;
 
 import java.io.IOException;
+import java.io.PrintStream;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -40,7 +42,7 @@ public interface IComparativeAnalysis {
 
     Map<Date, Map<EventType, IKaplanMeierAnalysis>> getResults();
 
-    void printResults() throws UnsupportedDateConversion;
+    void outputResults(PrintStream resultOutput) throws UnsupportedDateConversion;
 
 
     void runAnalysis(IPopulation generatedPopulation, Config config) throws UnsupportedDateConversion, StatisticalManipulationCalculationError, IOException;

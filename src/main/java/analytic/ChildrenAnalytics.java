@@ -21,6 +21,7 @@ import model.IPerson;
 import model.IPopulation;
 import uk.ac.standrews.cs.digitising_scotland.util.ArrayManipulation;
 
+import java.io.PrintStream;
 import java.util.List;
 
 /**
@@ -35,6 +36,8 @@ public class ChildrenAnalytics {
 
     private final int[] children_per_marriage = new int[MAX_CHILDREN]; // tracks family size
     private final IPopulation population;
+    private static PrintStream out;
+
 
     /**
      * Creates an analytic instance to analyse child_ids in a population.
@@ -42,9 +45,10 @@ public class ChildrenAnalytics {
      * @param population the population to analyse
      * @throws Exception if the analysis cannot be completed
      */
-    public ChildrenAnalytics(final IPopulation population) throws Exception {
+    public ChildrenAnalytics(final IPopulation population, PrintStream resultsOutput) throws Exception {
 
         this.population = population;
+        out = resultsOutput;
         analyseChildren();
     }
 
@@ -55,10 +59,10 @@ public class ChildrenAnalytics {
 
         final int sum = ArrayManipulation.sum(children_per_marriage);
 
-        System.out.println("Children per marriage sizes:");
+        out.println("Children per marriage sizes:");
         for (int i = 0; i < children_per_marriage.length; i++) {
             if (children_per_marriage[i] != 0) {
-                System.out.println("\t" + children_per_marriage[i] + " Marriages with " + i + " child_ids" + " = " + String.format("%.1f", children_per_marriage[i] / (double) sum * ONE_HUNDRED) + '%');
+                out.println("\t" + children_per_marriage[i] + " Marriages with " + i + " child_ids" + " = " + String.format("%.1f", children_per_marriage[i] / (double) sum * ONE_HUNDRED) + '%');
             }
         }
     }

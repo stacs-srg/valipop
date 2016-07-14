@@ -22,6 +22,7 @@ import model.IPopulation;
 import uk.ac.standrews.cs.digitising_scotland.util.DateManipulation;
 import utils.time.Date;
 
+import java.io.PrintStream;
 import java.util.List;
 
 /**
@@ -34,27 +35,30 @@ public class PopulationAnalytics {
 
     private static final int ONE_HUNDRED = 100;
     private final IPopulation population;
+    private static PrintStream out;
 
     /**
      * Creates an analytic instance to analyse the entire population.
      *
      * @param population the population to analyse
      */
-    public PopulationAnalytics(final IPopulation population) {
+    public PopulationAnalytics(final IPopulation population, PrintStream resultsOutput) {
 
         this.population = population;
+        out = resultsOutput;
+
     }
 
     private static void printBirthDate(final IPerson person) {
 
-        System.out.print(person.getBirthDate().toString());
+        out.print(person.getBirthDate().toString());
     }
 
     private static void printDeathDate(final IPerson person) {
 
         final Date death_date = person.getDeathDate();
         if (death_date != null) {
-            System.out.print(death_date.toString());
+            out.print(death_date.toString());
         }
     }
 
@@ -69,9 +73,9 @@ public class PopulationAnalytics {
         final int number_males = countMales();
         final int number_females = countFemales();
 
-        System.out.println("Population size = " + size);
-        System.out.println("Number of males = " + number_males + " = " + String.format("%.1f", number_males / (double) size * ONE_HUNDRED) + '%');
-        System.out.println("Number of females = " + number_females + " = " + String.format("%.1f", number_females / (double) size * ONE_HUNDRED) + '%');
+        out.println("Population size = " + size);
+        out.println("Number of males = " + number_males + " = " + String.format("%.1f", number_males / (double) size * ONE_HUNDRED) + '%');
+        out.println("Number of females = " + number_females + " = " + String.format("%.1f", number_females / (double) size * ONE_HUNDRED) + '%');
 
 //        printAllBirthDates();
 //        printAllDeathDates();
@@ -107,7 +111,7 @@ public class PopulationAnalytics {
 
         for (final IPerson person : population.getPeople()) {
             printBirthDate(person);
-            System.out.println();
+            out.println();
         }
     }
 
@@ -118,7 +122,7 @@ public class PopulationAnalytics {
 
         for (final IPerson person : population.getPeople()) {
             printDeathDate(person);
-            System.out.println();
+            out.println();
         }
     }
 
@@ -132,7 +136,7 @@ public class PopulationAnalytics {
         if (partnership.getChildren() != null) {
             for (final IPerson child : partnership.getChildren()) {
 
-                System.out.println("\t\tChild born: " + child.getBirthDate().toString());
+                out.println("\t\tChild born: " + child.getBirthDate().toString());
             }
         }
     }
@@ -151,11 +155,11 @@ public class PopulationAnalytics {
 
 
                 final IPerson partner = partnership.getPartnerOf(person);
-                System.out.println("\tPartner born: " + partner.getBirthDate().toString());
+                out.println("\tPartner born: " + partner.getBirthDate().toString());
 
                 final Date marriage_date = partnership.getPartnershipDate();
                 if (marriage_date != null) {
-                    System.out.println("\tMarriage on " + marriage_date.toString());
+                    out.println("\tMarriage on " + marriage_date.toString());
                 }
 
                 printChildren(partnership);
@@ -170,11 +174,11 @@ public class PopulationAnalytics {
 
         for (final IPerson person : population.getPeople()) {
 
-            System.out.print(person.getSex() + " Born: ");
+            out.print(person.getSex() + " Born: ");
             printBirthDate(person);
-            System.out.print(", Died: ");
+            out.print(", Died: ");
             printDeathDate(person);
-            System.out.println();
+            out.println();
             printPartnerships(person);
         }
     }

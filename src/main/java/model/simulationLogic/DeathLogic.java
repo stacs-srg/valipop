@@ -63,12 +63,10 @@ public class DeathLogic {
             int femalesToDie = calculateNumberToDie(numberOfFemales, femaleDeathRate);
 
             if(malesToDie < 0) {
-                System.out.println("MDR@" + age + ": " + maleDeathRate);
                 malesToDie = 0;
             }
 
             if(femalesToDie < 0) {
-                System.out.println("FDR@" + age + ": " + femaleDeathRate);
                 femalesToDie = 0;
             }
 
@@ -114,8 +112,21 @@ public class DeathLogic {
 
             double appliedFemaleRate = deadFemales.size() / (double) numberOfFemales;
 
-            desiredPopulationStatistics.getDeathRates(trueCurrentDate, 'm').returnAppliedData(maleKey, appliedMaleRate / config.getDeathTimeStep().toDecimalRepresentation());
-            desiredPopulationStatistics.getDeathRates(trueCurrentDate, 'f').returnAppliedData(femaleKey, appliedFemaleRate / config.getDeathTimeStep().toDecimalRepresentation());
+//            if(Double.isNaN(appliedMaleRate)) {
+//                 System.out.println(deadMales.size() + " : dS   |   nOM : " + numberOfMales);
+//            }
+//
+//            if(Double.isNaN(appliedFemaleRate)) {
+//                System.out.println(deadFemales.size() + " : dS   |   nOM : " + numberOfFemales);
+//            }
+
+            if(numberOfMales > 0) {
+                desiredPopulationStatistics.getDeathRates(trueCurrentDate, 'm').returnAppliedData(maleKey, appliedMaleRate / config.getDeathTimeStep().toDecimalRepresentation());
+            }
+
+            if(numberOfFemales > 0) {
+                desiredPopulationStatistics.getDeathRates(trueCurrentDate, 'f').returnAppliedData(femaleKey, appliedFemaleRate / config.getDeathTimeStep().toDecimalRepresentation());
+            }
 
         }
 
@@ -147,31 +158,45 @@ public class DeathLogic {
 
     public static int calculateNumberToDie(int people, Double deathRate) {
 
+
         double toHaveEvent = people * deathRate;
         int flooredToHaveEvent = (int) toHaveEvent;
         toHaveEvent -= flooredToHaveEvent;
 
-        // this is a random dice roll to see if the fraction of a has the event or not
-
-        if(deathRate <= 0.001) {
-
-            if (randomNumberGenerator.nextInt(100) < toHaveEvent * 100) {
-                flooredToHaveEvent++;
-            }
-
-        } else {
-
-            if (toHaveEvent > 0.5) {
-                flooredToHaveEvent++;
-            }
-//            if (randomNumberGenerator.nextDouble() < toHaveEvent) {
-//                flooredToHaveEvent++;
-//            }
-//        } else {
+//        if (randomNumberGenerator.nextInt(100) < toHaveEvent * 100) {
 //            flooredToHaveEvent++;
 //        }
-
+        if (randomNumberGenerator.nextDouble() < toHaveEvent) {
+            flooredToHaveEvent++;
         }
+
+        // this is a random dice roll to see if the fraction of a has the event or not
+
+//        if(deathRate <= 0.001) {
+//
+//            if (randomNumberGenerator.nextInt(100) < toHaveEvent * 100) {
+//                flooredToHaveEvent++;
+//            }
+//
+//        } else {
+//
+//            if (toHaveEvent > 0.5) {
+//                flooredToHaveEvent++;
+//            }
+////            if (randomNumberGenerator.nextDouble() < toHaveEvent) {
+////                flooredToHaveEvent++;
+////            }
+////        } else {
+////            flooredToHaveEvent++;
+////        }
+//
+//        }
+
+        if(deathRate.isNaN()) {
+            System.out.println("NAN: thus toDie: " + flooredToHaveEvent);
+        }
+
+//        flooredToHaveEvent++;
 
         return flooredToHaveEvent;
 

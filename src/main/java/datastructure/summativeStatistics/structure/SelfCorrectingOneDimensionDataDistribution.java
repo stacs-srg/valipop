@@ -31,6 +31,10 @@ public class SelfCorrectingOneDimensionDataDistribution extends OneDimensionData
 
         IntegerRange age = resolveRowValue(data.getRowValue());
 
+        if(data.getRowValue() < 5) {
+            int a = 1;
+        }
+
         // target rate
         double tD = targetData.get(age);
 
@@ -55,6 +59,13 @@ public class SelfCorrectingOneDimensionDataDistribution extends OneDimensionData
 
         // Correction rate
         double cD = ( tD * ( aC + tAT ) - ( aD * aC ) ) / tAT;
+
+        if(cD < 0) {
+            cD = 0;
+        }
+
+//        System.out.println("a: " + age + "   |   tD: " + tD + "   |   cD: " + cD + "   |   tAT: " + tAT + "   |   aD: " + aD  + "   |   aC: " + aC );
+
 
         return cD;
     }
@@ -82,9 +93,28 @@ public class SelfCorrectingOneDimensionDataDistribution extends OneDimensionData
         // new applied rate
         double aDn = ( ( aDo * aCo ) + ( aacD * tAT ) ) / aCn;
 
-        appliedRates.replace(age, aDn);
-        appliedCounts.replace(age, aCn);
+        // target rate
+        double tD = targetData.get(age);
 
+//        System.out.println("a: " + age + "   |   tD: " + tD + "   |   aaCD: " + aacD + "   |   tAT: " + tAT + "   |   aDo: " + aDo + "   |   aDn " + aDn + "   |   aCo: " + aCo  + "   |   aCn: " + aCn );
+
+//        // if new applied rate has switched across target rate then reset count
+        if((aDo < tD && aDn >= tD) || (aDo > tD && aDn <= tD)) {
+
+//            System.out.println("Counts reset   |   y: " + getYear().toString() + " |   a: " + data.getRowValue());
+            // calc r - the number of people it takes to get the applied rate back to the target rate
+//            double r = ( aDo * aCo ) / ( aacD * ( tD - 1 ) );
+
+            double r = ( aCo * ( aDo - tD ) ) / ( tD - aacD );
+
+//            System.out.println("r : " + r);
+
+            appliedRates.replace(age, aacD);
+            appliedCounts.replace(age, tAT - r);
+        } else {
+            appliedRates.replace(age, aDn);
+            appliedCounts.replace(age, aCn);
+        }
 
     }
 

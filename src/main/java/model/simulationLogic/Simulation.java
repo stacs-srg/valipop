@@ -19,7 +19,7 @@ import utils.time.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -66,7 +66,9 @@ public class Simulation {
 
         Simulation sim = null;
         try {
+
             sim = new Simulation(args[0]);
+
         } catch (IOException | UnsupportedDateConversion | InvalidPathException e) {
             log.fatal(e.getMessage() + " --- Will now exit");
             log.fatal(e.getStackTrace());
@@ -78,43 +80,59 @@ public class Simulation {
 
         IPopulation population = null;
         try {
+
             population = sim.makeSimulatedPopulation();
+
         } catch (UnsupportedDateConversion e1) {
             log.fatal(e1.getMessage() + " --- Will now exit");
             log.fatal(e1.getStackTrace());
         }
 
+        PrintStream resultsOutput;
+
+        try {
+
+            File f = Paths.get("." + File.separator + "result" + System.nanoTime() + ".txt").toAbsolutePath().normalize().toFile();
+            resultsOutput = new PrintStream(f);
+
+        } catch (IOException e) {
+            log.info("Failed to set up summary results output stream - will output to standard out instead");
+            resultsOutput = System.out;
+        }
+
         // perform comparisons
         ComparativeAnalysis comparisonOfDesiredAndGenerated = null;
         try {
+
             comparisonOfDesiredAndGenerated = sim.analyseGeneratedPopulation(population, config);
-            comparisonOfDesiredAndGenerated.printResults();
-        } catch (UnsupportedDateConversion unsupportedDateConversion) {
-            unsupportedDateConversion.printStackTrace();
-        } catch (StatisticalManipulationCalculationError statisticalManipulationCalculationError) {
-            statisticalManipulationCalculationError.printStackTrace();
-        } catch (IOException e) {
+            comparisonOfDesiredAndGenerated.outputResults(resultsOutput);
+
+        } catch (IOException | StatisticalManipulationCalculationError | UnsupportedDateConversion e) {
             e.printStackTrace();
         }
 
 
-        sim.desired.getOrderedBirthRates(config.getT0()).print();
+        sim.desired.getOrderedBirthRates(config.getT0()).outputResults(resultsOutput);
 
 
         try {
-            runAnalytics(population);
+
+            runAnalytics(population, resultsOutput);
+
         } catch (Exception e) {
             log.info("Analytics run failed");
             e.printStackTrace();
         }
 
+        resultsOutput.close();
+
     }
 
-    private static void runAnalytics(IPopulation population) throws Exception {
-        new PopulationAnalytics(population).printAllAnalytics();
-        new ChildrenAnalytics(population).printAllAnalytics();
-        new DeathAnalytics(population).printAllAnalytics();
-        new MarriageAnalytics(population).printAllAnalytics();
+    private static void runAnalytics(IPopulation population, PrintStream resultsOutput) throws Exception {
+        new PopulationAnalytics(population, resultsOutput).printAllAnalytics();
+        new ChildrenAnalytics(population, resultsOutput).printAllAnalytics();
+        new DeathAnalytics(population, resultsOutput).printAllAnalytics();
+        new MarriageAnalytics(population, resultsOutput).printAllAnalytics();
     }
 
     private static PopulationStatistics setUpSimData() throws IOException {
