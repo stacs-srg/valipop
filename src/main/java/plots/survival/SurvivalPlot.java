@@ -5,19 +5,14 @@ import datastructure.summativeStatistics.generated.EventType;
 import datastructure.summativeStatistics.structure.IntegerRange;
 import datastructure.summativeStatistics.structure.OneDimensionDataDistribution;
 import org.jfree.chart.ChartUtilities;
-import plots.PlotControl;
 import plots.statgraphics.survival.SurvivalEstimatePlot;
-import plots.statgraphics.util.PlotFrame;
-import plots.statgraphics.util.SavePlot;
 import utils.time.Date;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Map;
-import java.util.Random;
 
 
 /**
@@ -51,14 +46,12 @@ public class SurvivalPlot {
 
         String[] names = new String[]{"Observed", "Expected"};
 
-        System.out.println(Paths.get(config.getSavePath().toString(), event.toString()).toString());
-
-        ChartUtilities.saveChartAsPNG(new File(Paths.get(config.getSavePath().toString(), event.toString()).toString(), d.toOrderableString() + ".png"),
+        ChartUtilities.saveChartAsPNG(new File(Paths.get(config.getSavePathPlots().toString(), event.toString()).toString(), d.toOrderableString() + ".png"),
                 new SurvivalEstimatePlot(names,
                         new double[][]{sortedTimeObserved, sortedTimeExpected},
                         new double[][]{sortedSurvivalEstimateObserved, sortedSurvivalEstimateExpected}).plot, 1680, 1050);
 //
-//        ChartUtilities.saveChartAsPNG(new File(Paths.get(config.getSavePath().toString(), event.toString()).toString(), d.toOrderableString() + "B.png"),
+//        ChartUtilities.saveChartAsPNG(new File(Paths.get(config.getSavePathPlots().toString(), event.toString()).toString(), d.toOrderableString() + "B.png"),
 //                new SurvivalEstimatePlot(names,
 //                        new double[][]{sortedTimeExpected},
 //                        new double[][]{sortedSurvivalEstimateExpected}).plot, 1680, 1050);

@@ -92,7 +92,7 @@ public class Simulation {
 
         try {
 
-            File f = Paths.get("." + File.separator + "result" + System.nanoTime() + ".txt").toAbsolutePath().normalize().toFile();
+            File f = Paths.get("." + File.separator + config.getSavePathSummary() + File.separator + "summaryResults" + System.currentTimeMillis() + ".txt").toAbsolutePath().normalize().toFile();
             resultsOutput = new PrintStream(f);
 
         } catch (IOException e) {

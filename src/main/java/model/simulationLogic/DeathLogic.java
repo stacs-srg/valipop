@@ -52,6 +52,8 @@ public class DeathLogic {
             // DATA - get rate of death by age and gender
             Double maleDeathRate = desiredPopulationStatistics.getDeathRates(trueCurrentDate, 'm').getCorrectingData(maleKey) * config.getDeathTimeStep().toDecimalRepresentation();
 
+            // EDIT put nQx s back in here
+
 //            maleDeathRate = (1 * maleDeathRate) / (1 + (1 * 0.5 * maleDeathRate));
 
             Double femaleDeathRate = desiredPopulationStatistics.getDeathRates(trueCurrentDate, 'f').getCorrectingData(femaleKey) * config.getDeathTimeStep().toDecimalRepresentation();

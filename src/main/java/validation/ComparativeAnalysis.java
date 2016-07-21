@@ -3,23 +3,20 @@ package validation;
 import config.Config;
 import datastructure.summativeStatistics.generated.EventType;
 import datastructure.summativeStatistics.generated.UnsupportedEventType;
+import datastructure.summativeStatistics.structure.FailureAgainstTimeTable.FailureTimeRow;
 import datastructure.summativeStatistics.structure.IntegerRange;
 import datastructure.summativeStatistics.structure.OneDimensionDataDistribution;
 import datastructure.summativeStatistics.generated.StatisticalTables;
 import model.IPopulation;
 import model.simulationLogic.StatisticalManipulationCalculationError;
-import org.apache.commons.math3.distribution.ChiSquaredDistribution;
-import plots.PlotControl;
 import plots.survival.SurvivalPlot;
-import utils.MapUtils;
+import utils.FileUtils;
 import utils.time.*;
+import utils.time.Date;
 
 import java.io.IOException;
 import java.io.PrintStream;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
@@ -69,17 +66,17 @@ public class ComparativeAnalysis implements IComparativeAnalysis {
             int n2fTHISROW = expectedEvents.getData(c).intValue();
             int n2fNEXTROW = expectedEvents.getData(c + 1).intValue();
 
-            if (n1fTHISROW + n2fTHISROW == 0) {
-                // No people left in either at risk group
+            if (n1fTHISROW + n2fTHISROW == 1) {
+                // Last people left in either risk group
                 break;
             }
 
-            int m1f = n1fTHISROW - n1fNEXTROW;
+           int m1f = n1fTHISROW - n1fNEXTROW;
             int m2f = n2fTHISROW - n2fNEXTROW;
 
             double e1f = (n1fTHISROW * (m1f + m2f)) / (double) (n1fTHISROW + n2fTHISROW);
 
-            double e2f = (n2fTHISROW * (m1f + m2f)) / (double) (n1fTHISROW + n2fTHISROW);
+            double e2f = (n2fTHISROW / (double) (n1fTHISROW + n2fTHISROW)) * (m1f + m2f);
 
             double obv_exp1 = m1f - e1f;
             double obv_exp2 = m2f - e2f;
@@ -87,7 +84,7 @@ public class ComparativeAnalysis implements IComparativeAnalysis {
             int ns = n1fTHISROW + n2fTHISROW;
             int ms = m1f + m2f;
 
-            double var = (n1fTHISROW * n2fTHISROW * ms * (ns - ms)) / (Math.pow(ns, 2) * (ns + 1));
+            double var = (n1fTHISROW * n2fTHISROW * ms * (ns - ms)) / (Math.pow(ns, 2) * (ns - 1));
 
             sumObs_exp += obv_exp2;
             sumVar += var;
@@ -179,6 +176,9 @@ public class ComparativeAnalysis implements IComparativeAnalysis {
         if (res.containsKey(eventType)) {
             resultOutput.print(getPassPrint(result, false) + "-");
             resultOutput.printf("%.3f ", res.get(eventType).getPValue());
+            resultOutput.print("(");
+            resultOutput.printf("%.3f ", res.get(eventType).getLogRankValue());
+            resultOutput.print(")");
 
             if (Double.isNaN(res.get(eventType).getPValue())) {
                 resultOutput.print("  ");
@@ -231,6 +231,11 @@ public class ComparativeAnalysis implements IComparativeAnalysis {
                 unsupportedEventType.printStackTrace();
             }
 
+            Collection<FailureTimeRow> generatedMaleDeath = getFailureAtTimesTable(d, EventType.MALE_DEATH, desired, generated, generatedPopulation, config);
+
+            PrintStream resultsOutput = FileUtils.setupResultsFileAsStream("maleDeaths" + d.toOrderableString(), config);
+            FileUtils.outputFailureTimeTable(generatedMaleDeath, resultsOutput);
+
             try {
                 result = runKMAnalysis(d, EventType.FEMALE_DEATH, desired, generated, generatedPopulation, config);
                 temp.put(EventType.FEMALE_DEATH, result);
@@ -268,6 +273,35 @@ public class ComparativeAnalysis implements IComparativeAnalysis {
         this.results = results;
 
 //        PlotControl.showPlots();
+
+    }
+
+    public Collection<FailureTimeRow> getFailureAtTimesTable(Date date, EventType event, StatisticalTables expected, StatisticalTables observed, IPopulation generatedPopulation, Config config) throws UnsupportedDateConversion {
+
+
+        Collection<FailureTimeRow> rows = observed.getFailureAtTimesTable(date, 1, config.getTE(), event);
+
+        int maxAge = getHighestTimeValue(rows);
+
+        int numberInObserved = rows.size() - 1;
+        rows.addAll(expected.getFailureAtTimesTable(date, 0, config.getTE(), event, (double) numberInObserved, maxAge, generatedPopulation));
+
+        return rows;
+
+    }
+
+    private int getHighestTimeValue(Collection<FailureTimeRow> rows) {
+
+        int max = Integer.MIN_VALUE;
+
+        for(FailureTimeRow f : rows) {
+            int v;
+            if(max < (v = f.getTimeElapsed())) {
+                max = v;
+            }
+        }
+
+        return max;
 
     }
 

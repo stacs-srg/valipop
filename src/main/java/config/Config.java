@@ -7,7 +7,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import utils.InputFileReader;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
@@ -46,7 +45,9 @@ public class Config {
     private Path varMultipleBirthPaths;
     private Path varPartneringPaths;
     private Path varSeparationPaths;
-    private Path savePath;
+    private Path savePathPlots;
+    private Path savePathDat;
+    private Path savePathSummary;
     private Path summaryResultsPath;
     private boolean produceGraphs;
 
@@ -87,11 +88,14 @@ public class Config {
                     varPartneringPaths = Paths.get(path, partneringSubFile);
                     varSeparationPaths = Paths.get(path, separationSubFile);
                     break;
-                case "save_location":
-                    savePath = Paths.get(split[1]);
+                case "plots_save_location":
+                    savePathPlots = Paths.get(split[1]);
                     break;
-                case "summary_results_path":
-                    summaryResultsPath = Paths.get(split[1]);
+                case "dat_save_location":
+                    savePathDat = Paths.get(split[1]);
+                    break;
+                case "summary_save_location":
+                    savePathSummary = Paths.get(split[1]);
                     break;
                 case "produce_graphs":
                     produceGraphs = new Boolean(split[1]);
@@ -285,12 +289,16 @@ public class Config {
         return setUpDR;
     }
 
-    public Path getSavePath() {
-        return savePath;
+    public Path getSavePathPlots() {
+        return savePathPlots;
     }
 
-    public Path getSummaryResultsPath() {
-        return summaryResultsPath;
+    public Path getSavePathDat() {
+        return savePathDat;
+    }
+
+    public Path getSavePathSummary() {
+        return savePathSummary;
     }
 
     public boolean produceGraphs() {

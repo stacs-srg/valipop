@@ -1,6 +1,7 @@
 package datastructure.summativeStatistics.generated;
 
 import datastructure.summativeStatistics.PopulationComposition;
+import datastructure.summativeStatistics.structure.FailureAgainstTimeTable.FailureTimeRow;
 import datastructure.summativeStatistics.structure.IntegerRange;
 import datastructure.summativeStatistics.structure.InvalidRangeException;
 import datastructure.summativeStatistics.structure.OneDimensionDataDistribution;
@@ -8,12 +9,15 @@ import model.IPerson;
 import model.IPopulation;
 import model.NoChildrenOfDesiredOrder;
 import model.NotDeadException;
+import model.simulationLogic.Simulation;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import utils.time.CompoundTimeUnit;
 import utils.time.Date;
+import utils.time.DateUtils;
+import utils.time.UnsupportedDateConversion;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * The GeneratedPopulationComposition interface provides the functionality to be able to access the same information about the
@@ -28,6 +32,8 @@ public class GeneratedPopulationComposition implements PopulationComposition {
     private Date endDate;
 
     private IPopulation population;
+
+    public static Logger log = LogManager.getLogger(GeneratedPopulationComposition.class);
 
     public GeneratedPopulationComposition(Date startDate, Date endDate, IPopulation population) {
         this.startDate = startDate;
@@ -71,6 +77,53 @@ public class GeneratedPopulationComposition implements PopulationComposition {
     @Override
     public OneDimensionDataDistribution getSurvivorTable(Date startYear, CompoundTimeUnit timePeriod, EventType event, Double scalingFactor, int timeLimit, IPopulation generatedPopulation) throws UnsupportedEventType {
         return getSurvivorTable(startYear, timePeriod, event);
+    }
+
+    @Override
+    public Collection<FailureTimeRow> getFailureAtTimesTable(Date year, int denoteGroupAs, Date simulationEndDate, EventType event) {
+
+        if(event == EventType.MALE_DEATH) {
+
+            Collection<IPerson> people = population.getByYearAndSex('m', year);
+
+            return getDeathAtTimesTable(people, denoteGroupAs, simulationEndDate);
+
+        } else if(event == EventType.FEMALE_DEATH) {
+
+            Collection<IPerson> people = population.getByYearAndSex('f', year);
+
+            return getDeathAtTimesTable(people, denoteGroupAs, simulationEndDate);
+
+        }
+
+        return null;
+    }
+
+    @Override
+    public Collection<FailureTimeRow> getFailureAtTimesTable(Date year, int denoteGroupAs, Date simulationEndDate, EventType event, Double scalingFactor, int timeLimit, IPopulation generatedPopulation) throws UnsupportedDateConversion {
+        return null;
+    }
+
+    private Collection<FailureTimeRow> getDeathAtTimesTable(Collection<IPerson> people, int denoteGroupAs, Date simulationEndDate) {
+
+        Collection<FailureTimeRow> rows = new ArrayList<>();
+
+        for(IPerson person : people) {
+            if(person.aliveOnDate(simulationEndDate)) {
+                int timeElapsed = DateUtils.differenceInYears(person.getBirthDate(), simulationEndDate).getCount() + 1;
+                rows.add(new FailureTimeRow(timeElapsed, false, denoteGroupAs));
+            } else {
+                int timeElapsed = 0;
+                try {
+                    timeElapsed = person.ageAtDeath() + 1;
+                    rows.add(new FailureTimeRow(timeElapsed, true, denoteGroupAs));
+                } catch (NotDeadException e) {
+                    log.fatal("Could not create death at times table - this should have been handled by surrounding if statement");
+                }
+            }
+        }
+
+        return rows;
     }
 
     /*

@@ -1,10 +1,14 @@
 package datastructure.summativeStatistics.generated;
 
+import datastructure.summativeStatistics.structure.FailureAgainstTimeTable.FailureTimeRow;
 import datastructure.summativeStatistics.structure.OneDimensionDataDistribution;
+import model.IPerson;
 import model.IPopulation;
 import utils.time.CompoundTimeUnit;
 import utils.time.Date;
 import utils.time.UnsupportedDateConversion;
+
+import java.util.Collection;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
@@ -34,5 +38,10 @@ public interface StatisticalTables {
 
 
     OneDimensionDataDistribution getSurvivorTable(Date startYear, CompoundTimeUnit timePeriod, EventType event, Double scalingFactor, int timeLimit, IPopulation generatedPopulation) throws UnsupportedDateConversion, UnsupportedEventType;
+
+
+    Collection<FailureTimeRow> getFailureAtTimesTable(Date year, int denoteGroupAs, Date simulationEndDate, EventType event);
+
+    Collection<FailureTimeRow> getFailureAtTimesTable(Date year, int denoteGroupAs, Date simulationEndDate, EventType event, Double scalingFactor, int timeLimit, IPopulation generatedPopulation) throws UnsupportedDateConversion;
 
 }

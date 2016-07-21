@@ -5,10 +5,13 @@ import datastructure.summativeStatistics.PopulationComposition;
 import config.Config;
 import datastructure.summativeStatistics.structure.*;
 import datastructure.summativeStatistics.EventRateTables;
+import datastructure.summativeStatistics.structure.FailureAgainstTimeTable.FailureTimeRow;
 import model.IPopulation;
 import utils.CollectionUtils;
 import utils.time.*;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -146,6 +149,8 @@ public class PopulationStatistics implements PopulationComposition, EventRateTab
 
             int n = timePeriod.getCount();
 
+
+            // EDIT - put nQx back in here
 //            double nQx = (n * nMx) / (1 + (n * 0.5 * nMx));
 
 
@@ -162,6 +167,38 @@ public class PopulationStatistics implements PopulationComposition, EventRateTab
 
 
         return new OneDimensionDataDistribution(startYear.getYearDate(), "", "", survival);
+    }
+
+    @Override
+    public Collection<FailureTimeRow> getFailureAtTimesTable(Date year, int denoteGroupAs, Date simulationEndDate, EventType event) {
+        return null;
+    }
+
+    @Override
+    public Collection<FailureTimeRow> getFailureAtTimesTable(Date year, int denoteGroupAs, Date simulationEndDate, EventType event, Double scalingFactor, int timeLimit, IPopulation generatedPopulation) throws UnsupportedDateConversion {
+
+        Collection<FailureTimeRow> rows = new ArrayList<>();
+
+        OneDimensionDataDistribution survivorTable = getSurvivorTable(year, new CompoundTimeUnit(1, TimeUnit.YEAR), event, scalingFactor, timeLimit, generatedPopulation);
+
+        double prevSurvivors = survivorTable.getData(0);
+
+        for(int i = 1; i < timeLimit; i++) {
+
+            double currentSurvivors = survivorTable.getData(i);
+            double dead = prevSurvivors - currentSurvivors;
+
+            int d = (int) dead;
+
+            prevSurvivors -= d;
+
+            for(int r = 0 ; r < d ; r++) {
+                rows.add(new FailureTimeRow(i, true, denoteGroupAs));
+            }
+
+        }
+
+        return rows;
     }
 
     /*

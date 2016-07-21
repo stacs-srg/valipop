@@ -13,7 +13,7 @@ public class KaplanMeierAnalysis implements IKaplanMeierAnalysis {
     private final EventType event;
     private double logRankValue;
 
-    private double P = 0.05;
+    private double p = 0.05;
 
     public KaplanMeierAnalysis(EventType event, Date year, double logRankValue) {
         this.event = event;
@@ -51,13 +51,13 @@ public class KaplanMeierAnalysis implements IKaplanMeierAnalysis {
         ChiSquaredDistribution cSD = new ChiSquaredDistribution(1.0);
         double p = 1 - cSD.cumulativeProbability(logRankValue);
 
-        return P >= p;
+        return this.p >= p;
     }
 
     @Override
     public void setConfidenceLevel(double confidenceLevel) {
         if (confidenceLevel <= 1) {
-            this.P = confidenceLevel;
+            this.p = confidenceLevel;
         }
     }
 
