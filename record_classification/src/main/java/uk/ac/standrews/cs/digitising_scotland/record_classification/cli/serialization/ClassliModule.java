@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Digitising Scotland project:
+ * Copyright 2016 Digitising Scotland project:
  * <http://digitisingscotland.cs.st-andrews.ac.uk/>
  *
  * This file is part of the module record_classification.
@@ -20,7 +20,7 @@ import com.fasterxml.jackson.databind.module.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.*;
 
 /**
- * @author masih
+ * @author Masih Hajiarab Derkani
  */
 public class ClassliModule extends SimpleModule {
 
@@ -29,6 +29,7 @@ public class ClassliModule extends SimpleModule {
     public ClassliModule() {
 
         super(Configuration.PROGRAM_NAME);
+
         addSerializer(Configuration.class, new ConfigurationSerializer());
         addDeserializer(Configuration.class, new ConfigurationDeserializer());
     }

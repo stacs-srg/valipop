@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Digitising Scotland project:
+ * Copyright 2016 Digitising Scotland project:
  * <http://digitisingscotland.cs.st-andrews.ac.uk/>
  *
  * This file is part of the module record_classification.
@@ -44,7 +44,8 @@ import java.util.stream.*;
  */
 public class Configuration extends ClassificationContext {
 
-    //TODO feature: add parent config loading from user.home if exists.
+    // TODO feature: add parent config loading from user.home if exists.
+    // TODO why does this extend ClassificationContext?
 
     /** Name of record classification CLI program. */
     public static final String PROGRAM_NAME = "classli";
@@ -137,9 +138,26 @@ public class Configuration extends ClassificationContext {
         internal_log_handler.setEncoding(StandardCharsets.UTF_8.name());
         internal_log_handler.setLevel(internal_log_level.get());
         Logger.getGlobal().addHandler(internal_log_handler);
+
+        clearLazyLoaders();
     }
 
-    public Path getInternalLogsHome() {return getHome().resolve("logs");}
+    private void clearLazyLoaders() {
+
+        classifier_loader = null;
+        training_records_loader = null;
+        evaluation_records_loader = null;
+        unseen_records_loader = null;
+        classified_evaluation_records_loader = null;
+        classified_unseen_records_loader = null;
+        confusion_matrix_loader = null;
+        classification_metrics_loader = null;
+    }
+
+    public Path getInternalLogsHome() {
+
+        return getHome().resolve("logs");
+    }
 
     public static Configuration load() throws IOException {
 
@@ -150,6 +168,7 @@ public class Configuration extends ClassificationContext {
 
         final Path home = getHome(working_directory);
         final Path config_file = getConfigurationFile(home);
+
         try (final BufferedReader in = Files.newBufferedReader(config_file)) {
             final Configuration configuration = MAPPER.readValue(in, Configuration.class);
             configuration.setWorkingDirectory(working_directory);
@@ -160,9 +179,15 @@ public class Configuration extends ClassificationContext {
         }
     }
 
-    private static Path getHome(final Path working_directory) {return working_directory.resolve(HOME_NAME);}
+    private static Path getHome(final Path working_directory) {
 
-    private static Path getConfigurationFile(final Path home) {return home.resolve(CONFIG_FILE_NAME);}
+        return working_directory.resolve(HOME_NAME);
+    }
+
+    private static Path getConfigurationFile(final Path home) {
+
+        return home.resolve(CONFIG_FILE_NAME);
+    }
 
     public static void persistBucketAsCSV(Bucket bucket, Path destination, CSVFormat format, Charset charset) throws IOException {
 
@@ -171,8 +196,11 @@ public class Configuration extends ClassificationContext {
             try (final BufferedWriter out = Files.newBufferedWriter(destination, charset)) {
 
                 final CSVPrinter printer = format.print(out);
+
                 for (Record record : bucket) {
+
                     final Classification classification = record.getClassification();
+
                     printer.print(record.getId());
                     printer.print(record.getData());
                     printer.print(record.getOriginalData());
@@ -196,7 +224,7 @@ public class Configuration extends ClassificationContext {
         return bucket;
     }
 
-    public static Record toRecord(final CSVRecord csv_record) {
+    private static Record toRecord(final CSVRecord csv_record) {
 
         final int id = Integer.parseInt(csv_record.get(0));
         final String label = csv_record.get(1);
@@ -408,9 +436,9 @@ public class Configuration extends ClassificationContext {
         return getClassifierOptional().orElseThrow(() -> getMissingParameterException("classifier"));
     }
 
-    protected ParameterException getMissingParameterException(final String paramter_name) {
+    private ParameterException getMissingParameterException(final String parameter_name) {
 
-        return new ParameterException(String.format("The %s is required but not set; please specify %s.", paramter_name, paramter_name));
+        return new ParameterException(String.format("%s required but not set; please specify %s.", parameter_name, parameter_name));
     }
 
     public Bucket requireGoldStandardRecords() {
@@ -430,7 +458,7 @@ public class Configuration extends ClassificationContext {
 
     public Bucket requireUnseenRecords() {
 
-        return getUnseenRecordsOptional().orElseThrow(() -> getMissingParameterException("unseen records."));
+        return getUnseenRecordsOptional().orElseThrow(() -> getMissingParameterException("unseen records"));
     }
 
     public ClassifierSupplier getClassifierSupplier() {
@@ -446,6 +474,7 @@ public class Configuration extends ClassificationContext {
     public void persist() throws IOException {
 
         try (final OutputStream out = Files.newOutputStream(getConfigurationFile(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)) {
+
             MAPPER.writerWithDefaultPrettyPrinter().writeValue(out, this);
             out.flush();
         }
@@ -494,7 +523,7 @@ public class Configuration extends ClassificationContext {
         }
     }
 
-    public boolean isSeeded() {
+    private boolean isSeeded() {
 
         return seed != null;
     }

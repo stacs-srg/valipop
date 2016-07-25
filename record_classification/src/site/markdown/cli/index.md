@@ -1,6 +1,6 @@
 # `classli`
 
-The record classification CLI, `classli`, allows users to clean records, train and evaluate classifiers based on one or more gold standard data sets, and classify unseen records. It is designed to be easy to use by non-programmers. 
+`classli` is a Command Line Interface (CLI) that allows users to clean records, train and evaluate classifiers based on one or more gold standard data sets, and classify unseen records. It is designed to be easy to use by non-programmers.
 
 # Features
 
@@ -12,14 +12,8 @@ The record classification CLI, `classli`, allows users to clean records, train a
 - Easy to use.
 - Fluent scripting capability.
 
-# Installation
+# Documentation
 
-To install `classli` please follow the instructions [here](install/index.html).
-
-# Usage
-
-The user manual of `classli` CLI is located [here](usage/index.html)
-
-# Examples
-
-Example usage of `classli` can be found in the [examples](examples/index.html) page.
+- [Installation instructions](install/)
+- [User manual](usage/)
+- [Examples of use](examples/)

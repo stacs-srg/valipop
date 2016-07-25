@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Digitising Scotland project:
+ * Copyright 2016 Digitising Scotland project:
  * <http://digitisingscotland.cs.st-andrews.ac.uk/>
  *
  * This file is part of the module record_classification.
@@ -23,7 +23,7 @@ import java.nio.charset.*;
 import java.util.*;
 
 /**
- * @author masih
+ * @author Masih Hajiarab Derkani
  */
 public final class TestDataSets {
 
@@ -48,21 +48,24 @@ public final class TestDataSets {
 
     public static final List<TestDataSet> CASE_5_TRAINING = Arrays
                     .asList(getTestDataSet("case5/test_training_ascii_unix.csv", StandardCharsets.US_ASCII), getTestDataSet("case5/test_training_iso_latin1_unix.csv", StandardCharsets.ISO_8859_1), getTestDataSet("case5/test_training_UTF16_unix.csv", StandardCharsets.UTF_16),
-                            getTestDataSet("case5/test_training_windows_windows.csv", StandardCharsets.ISO_8859_1));
+                                    getTestDataSet("case5/test_training_windows_windows.csv", StandardCharsets.ISO_8859_1));
 
     public static final List<TestDataSet> CASE_5_EVALUATION = Collections.singletonList(getEvaluationTestDataSet("case5/test_evaluation_ascii_windows.csv", StandardCharsets.US_ASCII));
 
     public static final List<TestDataSet> ALL_TRAINING_DATASETS = new ArrayList<>();
-    
-    static{
+
+    static {
         ALL_TRAINING_DATASETS.addAll(CASE_1_TRAINING);
         ALL_TRAINING_DATASETS.addAll(CASE_2_TRAINING);
         ALL_TRAINING_DATASETS.addAll(CASE_3_TRAINING);
         ALL_TRAINING_DATASETS.addAll(CASE_4_TRAINING);
         ALL_TRAINING_DATASETS.addAll(CASE_5_TRAINING);
     }
-    
-    private TestDataSets() { throw new UnsupportedOperationException(); }
+
+    private TestDataSets() {
+
+        throw new UnsupportedOperationException();
+    }
 
     private static TestDataSet getTestDataSet(String resource_name) {
 

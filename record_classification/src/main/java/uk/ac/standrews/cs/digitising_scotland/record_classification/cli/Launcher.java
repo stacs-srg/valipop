@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Digitising Scotland project:
+ * Copyright 2016 Digitising Scotland project:
  * <http://digitisingscotland.cs.st-andrews.ac.uk/>
  *
  * This file is part of the module record_classification.
@@ -20,6 +20,7 @@ import com.beust.jcommander.*;
 import com.beust.jcommander.converters.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.command.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.util.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.*;
 
 import java.io.*;
 import java.nio.charset.*;
@@ -57,6 +58,7 @@ public class Launcher {
 
     private JCommander commander;
     private Configuration configuration;
+
     @Parameter(names = {OPTION_HELP_SHORT, OPTION_HELP_LONG}, descriptionKey = "launcher.usage.description", help = true)
     private boolean help;
     @Parameter(names = {OPTION_COMMANDS_SHORT, OPTION_COMMANDS_LONG}, descriptionKey = "launcher.commands.description", converter = PathConverter.class)
@@ -112,26 +114,38 @@ public class Launcher {
 
         try {
             final Launcher launcher = new Launcher();
+
             launcher.parse(args);
             launcher.run();
         }
         catch (RuntimeException error) {
 
             final Throwable cause = error.getCause();
-            if (cause instanceof FileAlreadyExistsException) {
-                FileAlreadyExistsException exception = (FileAlreadyExistsException) cause;
-                LOGGER.log(Level.SEVERE, String.format("file '%s' already exists.", exception.getFile()), error);
+
+            if (cause instanceof ConfigurationDirectoryAlreadyExistsException) {
+                ConfigurationDirectoryAlreadyExistsException exception = (ConfigurationDirectoryAlreadyExistsException) cause;
+                LOGGER.log(Level.SEVERE, String.format("Configuration directory '%s' already exists. Use %s flag to %s command to force deletion of existing directory.", exception.getFile(), InitCommand.OPTION_FORCE_SHORT, InitCommand.NAME), error);
             }
 
-            if (cause instanceof NoSuchFileException) {
+            else if (cause instanceof NoSuchFileException) {
                 NoSuchFileException exception = (NoSuchFileException) cause;
-                LOGGER.log(Level.SEVERE, String.format("file '%s' not found.", exception.getFile()), error);
+                LOGGER.log(Level.SEVERE, String.format("file '%s' not found", exception.getFile()), error);
             }
 
-            exitWithError(error);
+            else if (cause instanceof IOException) {
+                LOGGER.log(Level.SEVERE, String.format("file format error: %s", cause), error);
+            }
+
+            else {
+                LOGGER.log(Level.SEVERE, "critical error: " + error.getMessage(), error);
+            }
+
+            System.exit(1);
         }
         catch (Exception error) {
+
             final String message = error.getMessage();
+
             if (message != null) {
                 LOGGER.log(Level.SEVERE, message, error);
             }
@@ -139,21 +153,13 @@ public class Launcher {
                 LOGGER.log(Level.SEVERE, error.getClass().getName(), error);
             }
 
-            exitWithError(error);
+            System.exit(1);
         }
 
         //TODO expand user-friendly messages per exceptions
         //TODO think about CLI-specific exceptions.
-    }
-
-    private static void exitWithError(final Throwable error) {
-
         //TODO introduce error coding.
         //TODO set exit value based on error code.
-//        throw error;
-        error.printStackTrace();
-        LOGGER.log(Level.SEVERE, error, () -> "critical error");
-        System.exit(1);
     }
 
     void addCommand(Command command) {
@@ -188,28 +194,27 @@ public class Launcher {
         addCommand(load_command);
         load_command.addSubCommand(new LoadUnseenRecordsCommand(load_command));
         load_command.addSubCommand(new LoadGoldStandardRecordsCommand(load_command));
-
     }
 
     public void run() {
 
-        try {
-            if (help) {
-                commander.usage();
-            }
-            else if (isBatchModeEnabled()) {
-                runCommandBatch();
-            }
-            else {
-                runCommand();
-            }
+        if (help) {
+            commander.usage();
         }
-        finally {
-            possiblyPersistConfiguration();
+        else if (isBatchModeEnabled()) {
+            runCommandBatch();
         }
+        else {
+            runCommand();
+        }
+
+        persistConfiguration();
     }
 
-    public boolean isBatchModeEnabled() {return commands != null;}
+    public boolean isBatchModeEnabled() {
+
+        return commands != null;
+    }
 
     private void runCommandBatch() {
 
@@ -224,7 +229,6 @@ public class Launcher {
         catch (IOException e) {
             throw new RuntimeException(e);
         }
-
     }
 
     private void runCommand() {
@@ -239,7 +243,7 @@ public class Launcher {
         command.run();
     }
 
-    private void possiblyPersistConfiguration() {
+    private void persistConfiguration() {
 
         if (Files.isDirectory(configuration.getHome())) {
             try {

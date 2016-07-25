@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Digitising Scotland project:
+ * Copyright 2016 Digitising Scotland project:
  * <http://digitisingscotland.cs.st-andrews.ac.uk/>
  *
  * This file is part of the module record_classification.
@@ -38,7 +38,7 @@ import java.io.*;
  *
  * @author Masih Hajiarab Derkani
  */
-public class SuggestiveCleaner implements TextCleaner, Closeable {
+public class SpellCheckerCleaner implements TextCleaner, Closeable {
 
     private static final String SPACE = " ";
     private static final int NUMBER_OF_SUGGESTIONS = 5;
@@ -50,7 +50,7 @@ public class SuggestiveCleaner implements TextCleaner, Closeable {
      * @param dictionary the dictionary to use for word suggestion
      * @throws IOException if failure occurs while indexing dictionary
      */
-    public SuggestiveCleaner(Dictionary dictionary) throws IOException {
+    public SpellCheckerCleaner(Dictionary dictionary) throws IOException {
 
         this(dictionary, new JaroWinklerDistance(), SpellChecker.DEFAULT_ACCURACY);
     }
@@ -63,7 +63,7 @@ public class SuggestiveCleaner implements TextCleaner, Closeable {
      * @param accuracy_threshold the minimum acceptable accuracy for a suggested word
      * @throws IOException if failure occurs while indexing dictionary
      */
-    public SuggestiveCleaner(Dictionary dictionary, StringDistance distance_function, float accuracy_threshold) throws IOException {
+    public SpellCheckerCleaner(Dictionary dictionary, StringDistance distance_function, float accuracy_threshold) throws IOException {
 
         if (accuracy_threshold < 0.0 || accuracy_threshold > 1.0) {
             throw new IllegalArgumentException("the accuracy threshold must be within inclusive range of 0.0 to 1.0");
@@ -80,7 +80,7 @@ public class SuggestiveCleaner implements TextCleaner, Closeable {
      * @param accuracy_threshold the minimum acceptable accuracy for a suggested word
      * @throws IOException if failure occurs while configuring the spell checker
      */
-    protected void configureSpellChecker(final Dictionary dictionary, final float accuracy_threshold) throws IOException {
+    private void configureSpellChecker(final Dictionary dictionary, final float accuracy_threshold) throws IOException {
         
         spell_checker.setAccuracy(accuracy_threshold);
         spell_checker.indexDictionary(dictionary, new IndexWriterConfig(new SimpleAnalyzer()), true);

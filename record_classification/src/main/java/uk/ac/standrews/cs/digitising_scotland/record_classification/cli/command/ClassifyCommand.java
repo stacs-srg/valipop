@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Digitising Scotland project:
+ * Copyright 2016 Digitising Scotland project:
  * <http://digitisingscotland.cs.st-andrews.ac.uk/>
  *
  * This file is part of the module record_classification.
@@ -70,7 +70,7 @@ public class ClassifyCommand extends Command {
         final Duration classification_time = Duration.between(start, Instant.now());
 
         configuration.setClassifiedUnseenRecords(classified_unseen_records);
-        logger.info(() -> String.format("classified %d records in %s", classified_unseen_records.size(), classification_time));
+        logger.info(() -> String.format("classified %d records in %s", classified_unseen_records.size(), formatDuration(classification_time)));
 
         persistClassifiedUnseenRecords(classified_unseen_records);
     }

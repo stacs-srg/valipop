@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Digitising Scotland project:
+ * Copyright 2016 Digitising Scotland project:
  * <http://digitisingscotland.cs.st-andrews.ac.uk/>
  *
  * This file is part of the module record_classification.
@@ -43,6 +43,7 @@ public class ConfigurationDeserializer extends JsonDeserializer<Configuration> {
         Configuration configuration = new Configuration();
         expectCurrent(in, JsonToken.START_OBJECT);
         expectNext(in, JsonToken.FIELD_NAME);
+
         String field_name = in.getCurrentName();
         while (field_name != null) {
 

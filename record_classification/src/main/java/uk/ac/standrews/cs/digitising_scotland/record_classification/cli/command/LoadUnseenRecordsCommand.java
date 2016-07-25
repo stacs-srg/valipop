@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Digitising Scotland project:
+ * Copyright 2016 Digitising Scotland project:
  * <http://digitisingscotland.cs.st-andrews.ac.uk/>
  *
  * This file is part of the module record_classification.
@@ -51,7 +51,6 @@ public class LoadUnseenRecordsCommand extends LoadRecordsCommand {
         }
 
         configuration.addUnseenRecords(records);
-
     }
 
     @Override

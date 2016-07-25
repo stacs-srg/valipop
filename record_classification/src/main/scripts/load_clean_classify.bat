@@ -1,5 +1,5 @@
 @REM
-@REM Copyright 2015 Digitising Scotland project:
+@REM Copyright 2016 Digitising Scotland project:
 @REM <http://digitisingscotland.cs.st-andrews.ac.uk/>
 @REM
 @REM This file is part of the module record_classification.

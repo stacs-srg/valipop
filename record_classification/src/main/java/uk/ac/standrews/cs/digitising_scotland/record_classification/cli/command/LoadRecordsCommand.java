@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Digitising Scotland project:
+ * Copyright 2016 Digitising Scotland project:
  * <http://digitisingscotland.cs.st-andrews.ac.uk/>
  *
  * This file is part of the module record_classification.
@@ -174,8 +174,7 @@ abstract class LoadRecordsCommand extends Command {
     @Override
     public void run() {
 
-        final List<Record> records = readRecords();
-        process(records);
+        process(readRecords());
     }
 
     /**
@@ -198,9 +197,13 @@ abstract class LoadRecordsCommand extends Command {
             final CSVParser parser = format.parse(in);
             return StreamSupport.stream(parser.spliterator(), true).map(this::toRecord).collect(Collectors.toList());
         }
+        catch (RuntimeException e) {
+            logger.log(Level.SEVERE, "failure while reading a record: check CSV format at specified line", e);
+            throw e;
+        }
         catch (IOException e) {
             logger.log(Level.SEVERE, "failure while loading records", e);
-            throw new IOError(e);
+            throw new RuntimeException(e);
         }
     }
 
