@@ -5,34 +5,29 @@ Here is an example:
 
     # Step 1: initialise classli
     init
-    
+
     # Step 2: set the classifier to EXACT_MATCH
     set --classifier EXACT_MATCH
-    
-    # Step 3: load gold standard data from gs.csv file at the current working directory, and skip header record,
-    #         where 80% of records are used for training and the remaining 20% are used for evaluation.
-    load --from gs.csv gold_standard -h -t 0.8
-    
-    # Step 4: load unseen data from unseen.csv file at the current working directory, and skip header record.
+
+    # Step 3: load gold standard data from file 'gs.csv' in current working directory,
+    #         skip header record, use all records for training
+    load --from gs.csv gold_standard -h -t 1.0
+
+    # Step 4: load unseen data from file 'unseen.csv' in current working directory,
+    #         skip header record
     load --from unseen.csv unseen -h
-    
-    # Step 5: clean loaded gold standard and unseen data using all the predefined cleaners.
+
+    # Step 5: clean loaded gold standard and unseen data using all predefined cleaners
     clean -c COMBINED
-    
-    # Step 6: train the classifier using 80% of the cleaned gold standard data.
-    train
-    
-    # Step 7: evaluate the classifier using the remaining 20% of the cleaned gold standard data, and
-    #         store the classified evaluation records in a file called classified-eval-records.csv 
-    #         at the current working directory.
-    evaluate -o classified-eval-records.csv
-    
-    # Step 8: classify the unseen records and store the classified records in a file called classified-unseen.csv
-    #         at the current working directory. 
+
+    # Step 6: train classifier using all cleaned gold standard data (no internal evaluation)
+    train -it 1.0
+
+    # Step 7: classify unseen records, store classified records in file
+    #         'classified-unseen.csv' in current working directory
     classify -o classified-unseen.csv
     
-
-The lines starting with `#` character are comments; they are ignored by the `classli`. The comments in the above example explain what each of the 8 commands do.  
+The lines starting with `#` character are comments; they are ignored by the `classli`. The comments in the above example explain what each of the 8 commands do.
 Additionally, any line that only contains whitespace characters in the batch commands file is also ignored.
 
 The above commands do not specify all the possible options of `classli`. 
@@ -62,4 +57,8 @@ The file is then passed to `classli` for execution:
 
 The `-c` option enables batch command execution mode in `classli`, and `commands.txt` appearing after `-c` option specifies where to find the file containing the commands.
 
+Example files:
 
+* [commands.txt](batch/commands.txt)
+* [gs.csv](batch/gs.csv)
+* [unseen.csv](batch/unseen.csv)

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Digitising Scotland project:
+ * Copyright 2016 Digitising Scotland project:
  * <http://digitisingscotland.cs.st-andrews.ac.uk/>
  *
  * This file is part of the module record_classification.
@@ -65,7 +65,7 @@ public class TrainCommand extends Command {
 
         configuration.setTrainingTime(training_time);
 
-        logger.info(() -> String.format("trained the classifier on %d records in %s", training_records.size(), training_time));
+        logger.info(() -> String.format("trained the classifier on %d records in %s", training_records.size(), formatDuration(training_time)));
     }
 
     public static class Builder extends Command.Builder {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Digitising Scotland project:
+ * Copyright 2016 Digitising Scotland project:
  * <http://digitisingscotland.cs.st-andrews.ac.uk/>
  *
  * This file is part of the module record_classification.
@@ -144,7 +144,7 @@ public class ClassificationContext implements Serializable {
         this.evaluation_records = newBucketWithClashingIdAllowed();
     }
 
-    protected Bucket newBucketWithClashingIdAllowed() {
+    private Bucket newBucketWithClashingIdAllowed() {
 
         return new Bucket(true);
     }
@@ -171,7 +171,7 @@ public class ClassificationContext implements Serializable {
 
     protected boolean isClassifiedEvaluationRecordsSet() {return classified_evaluation_records != null;}
 
-    public void resetClassifiedEvaluationRecords() {
+    private void resetClassifiedEvaluationRecords() {
 
         this.classified_evaluation_records = new Bucket();
     }
@@ -208,7 +208,7 @@ public class ClassificationContext implements Serializable {
 
     protected boolean isClassifiedUnseenRecordsSet() {return classified_unseen_records != null;}
 
-    public void resetClassifiedUnseenRecords() {
+    private void resetClassifiedUnseenRecords() {
 
         this.classified_unseen_records = new Bucket();
     }
@@ -224,7 +224,7 @@ public class ClassificationContext implements Serializable {
         this.classified_unseen_records.add(classified_unseen_records);
     }
 
-    public Optional<Bucket> getGoldStandardRecordsOptional() {
+    protected Optional<Bucket> getGoldStandardRecordsOptional() {
 
         return Optional.ofNullable(getGoldStandardRecords());
     }
@@ -233,6 +233,7 @@ public class ClassificationContext implements Serializable {
 
         final Optional<Bucket> training_optional = getTrainingRecordsOptional();
         final Optional<Bucket> evaluation_optional = getEvaluationRecordsOptional();
+
         final boolean training_records_is_present = training_optional.isPresent();
         final boolean evaluation_records_is_present = evaluation_optional.isPresent();
 
@@ -270,7 +271,7 @@ public class ClassificationContext implements Serializable {
         return training_records;
     }
 
-    protected boolean isTrainingRecordsSet() {return training_records != null;}
+    public boolean isTrainingRecordsSet() {return training_records != null;}
 
     public void resetTrainingRecords() {
 

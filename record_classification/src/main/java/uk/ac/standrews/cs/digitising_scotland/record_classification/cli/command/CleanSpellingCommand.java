@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Digitising Scotland project:
+ * Copyright 2016 Digitising Scotland project:
  * <http://digitisingscotland.cs.st-andrews.ac.uk/>
  *
  * This file is part of the module record_classification.
@@ -117,7 +117,7 @@ public class CleanSpellingCommand extends CleanStopWordsCommand {
 
         try {
             final Dictionary dictionary = LoadDictionary();
-            return new SuggestiveCleaner(dictionary, string_distance_supplier.get(), accuracy_threshold);
+            return new SpellCheckerCleaner(dictionary, string_distance_supplier.get(), accuracy_threshold);
         }
         catch (final IOException cause) {
             throw new IOError(cause);

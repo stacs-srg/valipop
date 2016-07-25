@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Digitising Scotland project:
+ * Copyright 2016 Digitising Scotland project:
  * <http://digitisingscotland.cs.st-andrews.ac.uk/>
  *
  * This file is part of the module record_classification.
@@ -29,6 +29,7 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Record
 
 import java.util.*;
 import java.util.function.Supplier;
+import java.util.logging.*;
 
 import static org.junit.Assert.assertEquals;
 
@@ -47,6 +48,7 @@ public class StringSimilarityClassifierTest extends ClassifierTest {
         SIMILARITY_MAP.put("thought", "through");
         SIMILARITY_MAP.put("quick brown fish", "quick brown fox");
         SIMILARITY_MAP.put("lazy dogs", "lazy dog");
+        SIMILARITY_MAP.put("lazy \"dogs\"", "lazy dog");
     }
 
     private Bucket test_bucket;
@@ -99,7 +101,7 @@ public class StringSimilarityClassifierTest extends ClassifierTest {
         }
     }
 
-    protected void assertClassifiedSimilarly(String test_value, Classification test_classification) {
+    private void assertClassifiedSimilarly(String test_value, Classification test_classification) {
 
         final String most_similar_data_in_training_set = SIMILARITY_MAP.get(test_value);
         final Classification classification_in_training_set = getClassificationFromBucket(most_similar_data_in_training_set, training_bucket);

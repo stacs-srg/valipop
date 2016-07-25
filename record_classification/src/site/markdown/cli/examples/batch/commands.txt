@@ -1,0 +1,23 @@
+# Step 1: initialise classli
+init
+    
+# Step 2: set the classifier to EXACT_MATCH
+set --classifier EXACT_MATCH
+    
+# Step 3: load gold standard data from file 'gs.csv' in current working directory,
+#         skip header record, use all records for training
+load --from gs.csv gold_standard -h -t 1.0
+    
+# Step 4: load unseen data from file 'unseen.csv' in current working directory,
+#         skip header record
+load --from unseen.csv unseen -h
+    
+# Step 5: clean loaded gold standard and unseen data using all predefined cleaners
+clean -c COMBINED
+    
+# Step 6: train classifier using all cleaned gold standard data (no internal evaluation)
+train -it 1.0
+        
+# Step 7: classify unseen records, store classified records in file 
+#         'classified-unseen.csv' in current working directory
+classify -o classified-unseen.csv

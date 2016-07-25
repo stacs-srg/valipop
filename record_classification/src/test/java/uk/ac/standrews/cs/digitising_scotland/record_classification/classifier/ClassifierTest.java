@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Digitising Scotland project:
+ * Copyright 2016 Digitising Scotland project:
  * <http://digitisingscotland.cs.st-andrews.ac.uk/>
  *
  * This file is part of the module record_classification.
@@ -29,6 +29,7 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.process.seri
 import java.nio.file.*;
 import java.util.*;
 import java.util.function.Supplier;
+import java.util.logging.*;
 
 import static org.junit.Assert.assertEquals;
 
@@ -40,13 +41,13 @@ public abstract class ClassifierTest {
 
     protected static final double DELTA = 0.999;
 
-    protected static final String[] TEST_VALUES = new String[]{"trial", "house", "thought", "quick brown fish", "lazy dogs"};
+    protected static final String[] TEST_VALUES = new String[]{"trial", "house", "thought", "quick brown fish", "lazy dogs", "lazy \"dogs\""};
 
     protected static final Record[] TRAINING_RECORDS = new Record[]{new Record(1, "trail", new Classification("class1", new TokenList("trail"), 1.0, null)), new Record(2, "mouse", new Classification("class2", new TokenList("mouse"), 1.0, null)),
                                                                     new Record(3, "through", new Classification("class3", new TokenList("through"), 1.0, null)), new Record(4, "quick brown fox", new Classification("class4", new TokenList("quick brown fox"), 1.0, null)),
-                                                                    new Record(5, "lazy dog", new Classification("class4", new TokenList("lazy dog"), 1.0, null))};
+                                                                    new Record(5, "lazy dog", new Classification("class4", new TokenList("lazy dog"), 1.0, null)), new Record(6, "lazy \"cat\"", new Classification("class4", new TokenList("lazy cat"), 1.0, null))};
 
-    protected static final Record[] TEST_RECORDS = new Record[]{new Record(1, TEST_VALUES[0]), new Record(2, TEST_VALUES[1]), new Record(3, TEST_VALUES[2]), new Record(4, TEST_VALUES[3]), new Record(5, TEST_VALUES[4])};
+    protected static final Record[] TEST_RECORDS = new Record[]{new Record(1, TEST_VALUES[0]), new Record(2, TEST_VALUES[1]), new Record(3, TEST_VALUES[2]), new Record(4, TEST_VALUES[3]), new Record(5, TEST_VALUES[4]), new Record(6, TEST_VALUES[5])};
 
     protected Bucket training_bucket;
 
@@ -56,6 +57,8 @@ public abstract class ClassifierTest {
     public ClassifierTest() {
 
         training_bucket = new Bucket(TRAINING_RECORDS);
+
+        Logger.getLogger(Classifier.class.getName()).setLevel(Level.OFF);
     }
 
     @Test
@@ -71,6 +74,8 @@ public abstract class ClassifierTest {
     @Test
     public void testSerialization() throws Exception {
 
+        Logger.getLogger(Classifier.class.getName()).setLevel(Level.OFF);
+
         final Classifier classifier = newClassifier();
         trainOnTrainingRecords(classifier);
 
@@ -83,7 +88,6 @@ public abstract class ClassifierTest {
 
         final Bucket actual = classifyTestRecords(deserialised_classifier);
         assertEquals(classified, actual);
-
     }
 
     protected abstract Classifier newClassifier();

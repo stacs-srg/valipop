@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Digitising Scotland project:
+ * Copyright 2016 Digitising Scotland project:
  * <http://digitisingscotland.cs.st-andrews.ac.uk/>
  *
  * This file is part of the module record_classification.
@@ -52,7 +52,7 @@ public class CleanCommand extends Command {
 
         private List<CleanerSupplier> cleaners = new ArrayList<>();
 
-        public void addCleaners(CleanerSupplier... cleaners) {
+        void addCleaners(CleanerSupplier... cleaners) {
 
             Collections.addAll(this.cleaners, cleaners);
         }
@@ -134,12 +134,12 @@ public class CleanCommand extends Command {
         }
     }
 
-    static void cleanEvaluationRecords(final Cleaner cleaner, final Configuration configuration, Logger logger) {
+    private static void cleanEvaluationRecords(final Cleaner cleaner, final Configuration configuration, Logger logger) {
 
         clean(cleaner, "evaluation", configuration::getEvaluationRecordsOptional, configuration::setEvaluationRecords, logger);
     }
 
-    static void cleanTrainingRecords(final Cleaner cleaner, final Configuration configuration, Logger logger) {
+    private static void cleanTrainingRecords(final Cleaner cleaner, final Configuration configuration, Logger logger) {
 
         clean(cleaner, "training", configuration::getTrainingRecordsOptional, configuration::setTrainingRecords, logger);
     }
@@ -159,6 +159,22 @@ public class CleanCommand extends Command {
 
     private Cleaner getCombinedCleaner() {
 
-        return cleaner_suppliers.stream().map(Supplier::get).reduce(Cleaner::andThen).orElseThrow(() -> new ParameterException("no cleaner is specified"));
+        Cleaner combined = null;
+
+        for (CleanerSupplier supplier : cleaner_suppliers) {
+
+            final Cleaner cleaner = supplier.get();
+
+            if (combined == null) {
+                combined = cleaner;
+            }
+            combined = combined.andThen(cleaner);
+        }
+
+        if (combined == null) throw new ParameterException("no cleaner specified");
+
+        return combined;
+
+        //return this.cleaner_suppliers.stream().map(Supplier::get).reduce(Cleaner::andThen).orElseThrow(() -> new ParameterException("no cleaner is specified"));
     }
 }

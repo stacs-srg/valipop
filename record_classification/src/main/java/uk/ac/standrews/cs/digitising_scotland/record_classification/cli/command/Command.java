@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Digitising Scotland project:
+ * Copyright 2016 Digitising Scotland project:
  * <http://digitisingscotland.cs.st-andrews.ac.uk/>
  *
  * This file is part of the module record_classification.
@@ -23,6 +23,7 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.util.*;
 import java.io.*;
 import java.nio.charset.*;
 import java.nio.file.*;
+import java.time.*;
 import java.util.*;
 import java.util.logging.*;
 import java.util.stream.*;
@@ -214,5 +215,11 @@ public abstract class Command implements Runnable {
             final Iterable<String> command_lines = () -> build().stream().map(Arguments::joinWithSpace).iterator();
             Files.write(destination, command_lines, charset);
         }
+    }
+
+    static String formatDuration(final Duration duration) {
+
+        long s = duration.getSeconds();
+        return String.format("%d:%02d:%02d", s/3600, (s%3600)/60, (s%60)) + " (hrs/mins/secs)";
     }
 }

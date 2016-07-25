@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Digitising Scotland project:
+ * Copyright 2016 Digitising Scotland project:
  * <http://digitisingscotland.cs.st-andrews.ac.uk/>
  *
  * This file is part of the module record_classification.
@@ -20,6 +20,8 @@ import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import org.apache.commons.io.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.*;
+import uk.ac.standrews.cs.util.tools.*;
 
 import java.io.*;
 import java.nio.file.*;
@@ -53,20 +55,24 @@ public class InitCommand extends Command {
 
         final Path home = configuration.getHome();
         try {
+
             checkDirectoryExistence(home, replace_existing);
             configuration.init();
         }
         catch (IOException e) {
-            throw new RuntimeException("failed to construct configuration folder", e);
+            throw new RuntimeException("failed to create configuration folder", e);
         }
     }
 
-    static void checkDirectoryExistence(Path directory, boolean delete_if_exists) throws IOException {
+    private static void checkDirectoryExistence(Path directory, boolean delete_if_exists) throws IOException {
 
         if (Files.isDirectory(directory)) {
 
-            if (!delete_if_exists) {
-                throw new FileAlreadyExistsException("directory already exists: " + directory);
+            if (delete_if_exists) {
+                FileManipulation.deleteDirectory(directory);
+            }
+            else {
+                throw new ConfigurationDirectoryAlreadyExistsException(directory);
             }
         }
     }
@@ -74,9 +80,10 @@ public class InitCommand extends Command {
     public static void assureDirectoryExists(final Path directory) throws IOException {
 
         if (!Files.isDirectory(directory)) {
+
             final Path directories = Files.createDirectories(directory);
             if (!Files.isDirectory(directories)) {
-                throw new IOException("failed to create directory: " + directory);
+                throw new IOException(directory.toString());
             }
         }
     }
@@ -85,7 +92,7 @@ public class InitCommand extends Command {
 
         private boolean force;
 
-        public void setForce(boolean force) {
+        void setForce(boolean force) {
 
             this.force = force;
         }
