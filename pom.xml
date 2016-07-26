@@ -104,7 +104,7 @@
                          do not contain the licence. -->
                     <groupId>com.mycila</groupId>
                     <artifactId>license-maven-plugin</artifactId>
-                    <version>2.4</version>
+                    <version>2.11</version>
                     <configuration>
                         <header>src/main/resources/license-template.txt</header>
                         <headerDefinitions>
@@ -125,6 +125,7 @@
                             <exclude>src/test/resources/**</exclude>
                             <exclude>src/main/resources/**</exclude>
                             <exclude>src/docs/**</exclude>
+                            <exclude>src/site/**</exclude>
                         </excludes>
                     </configuration>
                     <executions>
