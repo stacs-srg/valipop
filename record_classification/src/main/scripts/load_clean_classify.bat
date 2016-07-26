@@ -1,18 +1,20 @@
 @REM
-@REM Copyright 2016 Digitising Scotland project:
-@REM <http://digitisingscotland.cs.st-andrews.ac.uk/>
+@REM record_classification - Automatic record attribute classification.
+@REM Copyright © 2014-2016 Digitising Scotland project
+@REM (http://digitisingscotland.cs.st-andrews.ac.uk/)
 @REM
-@REM This file is part of the module record_classification.
+@REM This program is free software: you can redistribute it and/or modify
+@REM it under the terms of the GNU General Public License as published by
+@REM the Free Software Foundation, either version 3 of the License, or
+@REM (at your option) any later version.
 @REM
-@REM record_classification is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
-@REM License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
-@REM version.
+@REM This program is distributed in the hope that it will be useful,
+@REM but WITHOUT ANY WARRANTY; without even the implied warranty of
+@REM MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+@REM GNU General Public License for more details.
 @REM
-@REM record_classification is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
-@REM warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
-@REM
-@REM You should have received a copy of the GNU General Public License along with record_classification. If not, see
-@REM <http://www.gnu.org/licenses/>.
+@REM You should have received a copy of the GNU General Public License
+@REM along with this program. If not, see <http://www.gnu.org/licenses/>.
 @REM
 
 @ECHO OFF

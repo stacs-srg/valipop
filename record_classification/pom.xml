@@ -1,19 +1,21 @@
 <!--
 
-    Copyright 2016 Digitising Scotland project:
-    <http://digitisingscotland.cs.st-andrews.ac.uk/>
+    record_classification - Automatic record attribute classification.
+    Copyright © 2014-2016 Digitising Scotland project
+    (http://digitisingscotland.cs.st-andrews.ac.uk/)
 
-    This file is part of the module record_classification.
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-    record_classification is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
-    License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
-    version.
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-    record_classification is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
-    warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License along with record_classification. If not, see
-    <http://www.gnu.org/licenses/>.
+    You should have received a copy of the GNU General Public License
+    along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -31,6 +33,8 @@
     <packaging>jar</packaging>
     <name>record_classification</name>
     <description>Automatic record attribute classification.</description>
+    <inceptionYear>2014</inceptionYear>
+
 
     <properties>
         <cli.jar.name>${project.artifactId}_cli-${project.version}</cli.jar.name>
@@ -44,6 +48,10 @@
             <plugin>
                 <groupId>com.mycila</groupId>
                 <artifactId>license-maven-plugin</artifactId>
+                <configuration><properties>
+                    <owner>Digitising Scotland project</owner>
+                    <web>http://digitisingscotland.cs.st-andrews.ac.uk/</web>
+                </properties></configuration>
             </plugin>
 
             <plugin>
@@ -171,22 +179,22 @@
         </repository>
     </repositories>
 
-    <reporting>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-project-info-reports-plugin</artifactId>
-                <version>2.7</version>
-                <reportSets>
-                    <reportSet>
-                        <reports>
-                            <report>dependency-info</report>
-                        </reports>
-                    </reportSet>
-                </reportSets>
-            </plugin>
-        </plugins>
-    </reporting>
+    <!--<reporting>-->
+        <!--<plugins>-->
+            <!--<plugin>-->
+                <!--<groupId>org.apache.maven.plugins</groupId>-->
+                <!--<artifactId>maven-project-info-reports-plugin</artifactId>-->
+                <!--<version>2.7</version>-->
+                <!--<reportSets>-->
+                    <!--<reportSet>-->
+                        <!--<reports>-->
+                            <!--<report>dependency-info</report>-->
+                        <!--</reports>-->
+                    <!--</reportSet>-->
+                <!--</reportSets>-->
+            <!--</plugin>-->
+        <!--</plugins>-->
+    <!--</reporting>-->
 
     <dependencies>
 
