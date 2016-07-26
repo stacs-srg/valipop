@@ -1,8 +1,8 @@
 <!--
 
     record_classification - Automatic record attribute classification.
-    Copyright © 2014-2016 Digitising Scotland project
-    (http://digitisingscotland.cs.st-andrews.ac.uk/)
+    Copyright © 2012-2016 Digitising Scotland project
+    (http://digitisingscotland.cs.st-andrews.ac.uk/record_classification/)
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -33,7 +33,6 @@
     <packaging>jar</packaging>
     <name>record_classification</name>
     <description>Automatic record attribute classification.</description>
-    <inceptionYear>2014</inceptionYear>
 
 
     <properties>
@@ -50,7 +49,6 @@
                 <artifactId>license-maven-plugin</artifactId>
                 <configuration><properties>
                     <owner>Digitising Scotland project</owner>
-                    <web>http://digitisingscotland.cs.st-andrews.ac.uk/</web>
                 </properties></configuration>
             </plugin>
 

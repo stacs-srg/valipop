@@ -1,8 +1,8 @@
 #!/bin/sh
 #
 # record_classification - Automatic record attribute classification.
-# Copyright © 2014-2016 Digitising Scotland project
-# (http://digitisingscotland.cs.st-andrews.ac.uk/)
+# Copyright © 2012-2016 Digitising Scotland project
+# (http://digitisingscotland.cs.st-andrews.ac.uk/record_classification/)
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
