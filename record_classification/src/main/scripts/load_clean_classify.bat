@@ -1,7 +1,7 @@
 @REM
 @REM record_classification - Automatic record attribute classification.
-@REM Copyright © 2014-2016 Digitising Scotland project
-@REM (http://digitisingscotland.cs.st-andrews.ac.uk/)
+@REM Copyright © 2012-2016 Digitising Scotland project
+@REM (http://digitisingscotland.cs.st-andrews.ac.uk/record_classification/)
 @REM
 @REM This program is free software: you can redistribute it and/or modify
 @REM it under the terms of the GNU General Public License as published by
