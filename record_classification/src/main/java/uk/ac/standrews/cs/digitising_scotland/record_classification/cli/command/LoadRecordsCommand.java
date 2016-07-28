@@ -200,11 +200,11 @@ abstract class LoadRecordsCommand extends Command {
             return StreamSupport.stream(parser.spliterator(), true).map(this::toRecord).collect(Collectors.toList());
         }
         catch (RuntimeException e) {
-            logger.log(Level.SEVERE, "failure while reading a record: check CSV format at specified line", e);
+            logger.log(Level.SEVERE, String.format("Failure while reading a record from file %s: check CSV format at specified line.", source), e);
             throw e;
         }
         catch (IOException e) {
-            logger.log(Level.SEVERE, "failure while loading records", e);
+            logger.log(Level.SEVERE, "Failure while loading records.", e);
             throw new RuntimeException(e);
         }
     }
