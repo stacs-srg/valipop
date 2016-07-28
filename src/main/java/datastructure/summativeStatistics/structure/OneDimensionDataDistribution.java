@@ -5,6 +5,8 @@ import utils.time.YearDate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.PrintStream;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -95,16 +97,9 @@ public class OneDimensionDataDistribution implements DataDistribution {
 
     }
 
-    public Double getData(Integer rowValue) {
+    public Double getData(Integer rowValue) throws InvalidRangeException {
 
-        IntegerRange row = null;
-        try {
-            row = resolveRowValue(rowValue);
-        } catch (InvalidRangeException e) {
-            log.fatal("here   " + e.getMessage());
-
-            System.exit(303);
-        }
+        IntegerRange row = resolveRowValue(rowValue);
 
         return targetData.get(row);
     }
@@ -138,6 +133,24 @@ public class OneDimensionDataDistribution implements DataDistribution {
     public OneDimensionDataDistribution clone() {
 
         return new OneDimensionDataDistribution(year, sourcePopulation, sourceOrganisation, cloneData());
+
+    }
+
+    public void print(PrintStream out) {
+
+        IntegerRange[] orderedKeys = getData().keySet().toArray(new IntegerRange[getData().keySet().size()]);
+        Arrays.sort(orderedKeys, IntegerRange::compareTo);
+
+        out.println("YEAR\t" + year);
+        out.println("POPULATION\t" + sourcePopulation);
+        out.println("SOURCE\t" + sourceOrganisation);
+        out.println("DATA");
+
+        for(IntegerRange iR : orderedKeys) {
+            out.println(iR.getValue() + "\t" + targetData.get(iR));
+        }
+
+        out.println();
 
     }
 

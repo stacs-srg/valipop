@@ -29,7 +29,9 @@ public interface IComparativeAnalysis {
      * @param observedEvents the observed events
      * @return the km analysis
      */
-    IKaplanMeierAnalysis runKaplanMeier(EventType event, OneDimensionDataDistribution expectedEvents, OneDimensionDataDistribution observedEvents) throws StatisticalManipulationCalculationError;
+    static IKaplanMeierAnalysis runKaplanMeier(EventType event, OneDimensionDataDistribution expectedEvents, OneDimensionDataDistribution observedEvents) throws StatisticalManipulationCalculationError {
+        return null;
+    }
 
 
     /**

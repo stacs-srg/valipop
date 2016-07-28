@@ -19,6 +19,10 @@ public class FailureTimeRow {
         return timeElapsed;
     }
 
+    public boolean hasEventOccured() {
+        return eventOccured;
+    }
+
     public String toString() {
         if(eventOccured) {
             return Integer.toString(timeElapsed) + " 1 " + Integer.toString(groupIdentifier);

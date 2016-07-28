@@ -156,6 +156,12 @@ public class PopulationStatistics implements PopulationComposition, EventRateTab
 
             survivors = survivors * (1 - nMx);
 
+            if(survivors - (int)survivors < 0.5) {
+                survivors = (int) survivors;
+            } else {
+                survivors = (int) survivors + 1;
+            }
+
 
 
             // TEMP ive taken the rounding out of here on survivors and a +1 off age - NOW PUT BACK IN
@@ -181,7 +187,7 @@ public class PopulationStatistics implements PopulationComposition, EventRateTab
 
         OneDimensionDataDistribution survivorTable = getSurvivorTable(year, new CompoundTimeUnit(1, TimeUnit.YEAR), event, scalingFactor, timeLimit, generatedPopulation);
 
-        double prevSurvivors = survivorTable.getData(0);
+        double prevSurvivors = scalingFactor + 1;
 
         for(int i = 1; i < timeLimit; i++) {
 
@@ -196,6 +202,10 @@ public class PopulationStatistics implements PopulationComposition, EventRateTab
                 rows.add(new FailureTimeRow(i, true, denoteGroupAs));
             }
 
+        }
+
+        for(int s = 0; s < prevSurvivors; s++) {
+            rows.add(new FailureTimeRow(timeLimit, false, denoteGroupAs));
         }
 
         return rows;

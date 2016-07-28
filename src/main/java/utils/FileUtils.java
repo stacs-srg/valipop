@@ -26,7 +26,24 @@ public class FileUtils {
 
         try {
 
-            File f = Paths.get("." + File.separator  + config.getSavePathDat().toString() + File.separator + fileName + "_"+ System.currentTimeMillis() + ".dat").toAbsolutePath().normalize().toFile();
+            File f = Paths.get("." + File.separator  + config.getSavePathDat().toString() + File.separator + fileName + ".dat").toAbsolutePath().normalize().toFile();
+            stream = new PrintStream(f);
+
+        } catch (IOException e) {
+            log.info("Failed to set up summary results output stream - will output to standard out instead");
+            stream = System.out;
+        }
+
+        return stream;
+    }
+
+    public static PrintStream setupDumpPrintStream(String fileName) {
+
+        PrintStream stream;
+
+        try {
+
+            File f = Paths.get("." + File.separator  + "dump" + File.separator + fileName + ".txt").toAbsolutePath().normalize().toFile();
             stream = new PrintStream(f);
 
         } catch (IOException e) {

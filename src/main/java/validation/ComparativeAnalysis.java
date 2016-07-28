@@ -3,12 +3,16 @@ package validation;
 import config.Config;
 import datastructure.summativeStatistics.generated.EventType;
 import datastructure.summativeStatistics.generated.UnsupportedEventType;
+import datastructure.summativeStatistics.structure.FailureAgainstTimeTable.FailureTimeDoubleArrays;
 import datastructure.summativeStatistics.structure.FailureAgainstTimeTable.FailureTimeRow;
 import datastructure.summativeStatistics.structure.IntegerRange;
+import datastructure.summativeStatistics.structure.InvalidRangeException;
 import datastructure.summativeStatistics.structure.OneDimensionDataDistribution;
 import datastructure.summativeStatistics.generated.StatisticalTables;
 import model.IPopulation;
 import model.simulationLogic.StatisticalManipulationCalculationError;
+import plots.javastat.survival.inference.LogRankTest;
+import plots.javastat.survival.inference.SurvivalTestTemplate;
 import plots.survival.SurvivalPlot;
 import utils.FileUtils;
 import utils.time.*;
@@ -48,50 +52,66 @@ public class ComparativeAnalysis implements IComparativeAnalysis {
         this.endDate = analysisEndDate;
     }
 
-    @Override
-    public IKaplanMeierAnalysis runKaplanMeier(EventType event, OneDimensionDataDistribution expectedEvents, OneDimensionDataDistribution observedEvents) throws StatisticalManipulationCalculationError {
+    public static IKaplanMeierAnalysis runKaplanMeier(EventType event, OneDimensionDataDistribution expectedEvents, OneDimensionDataDistribution observedEvents) throws StatisticalManipulationCalculationError {
 
-        IntegerRange[] orderedKeys = observedEvents.getData().keySet().toArray(new IntegerRange[observedEvents.getData().keySet().size()]);
-
+        IntegerRange[] orderedKeys = expectedEvents.getData().keySet().toArray(new IntegerRange[expectedEvents.getData().keySet().size()]);
         Arrays.sort(orderedKeys, IntegerRange::compareTo);
 
-        double sumObs_exp = 0;
+        PrintStream pS = FileUtils.setupDumpPrintStream("survialTables_" + event + "_" + expectedEvents.getYear().getYear());
+        pS.println("Expected");
+        expectedEvents.print(pS);
+        pS.println("Observed");
+        observedEvents.print(pS);
+
+        double sumM1f = 0;
+        double sumE1f = 0;
+
+        double sumM2f = 0;
+        double sumE2f = 0;
+
         double sumVar = 0;
 
         for (int c = 0; c < orderedKeys.length - 1; c++) {
 
-            int n1fTHISROW = observedEvents.getData(c).intValue();
-            int n1fNEXTROW = observedEvents.getData(c + 1).intValue();
+            int n1fNEXTROW;
+            int n2fNEXTROW;
 
-            int n2fTHISROW = expectedEvents.getData(c).intValue();
-            int n2fNEXTROW = expectedEvents.getData(c + 1).intValue();
+            int n1f = observedEvents.getData(c).intValue();
+            int n2f = expectedEvents.getData(c).intValue();
 
-            if (n1fTHISROW + n2fTHISROW == 1) {
-                // Last people left in either risk group
-                break;
-            }
+            n1fNEXTROW = observedEvents.getData(c + 1).intValue();
+            n2fNEXTROW = expectedEvents.getData(c + 1).intValue();
 
-           int m1f = n1fTHISROW - n1fNEXTROW;
-            int m2f = n2fTHISROW - n2fNEXTROW;
 
-            double e1f = (n1fTHISROW * (m1f + m2f)) / (double) (n1fTHISROW + n2fTHISROW);
+            int m1f = n1f - n1fNEXTROW;
+            int m2f = n2f - n2fNEXTROW;
 
-            double e2f = (n2fTHISROW / (double) (n1fTHISROW + n2fTHISROW)) * (m1f + m2f);
+            double e1f = (n1f / (double) (n1f + n2f)) * (m1f + m2f);
+            double e2f = (n2f / (double) (n1f + n2f)) * (m1f + m2f);
 
-            double obv_exp1 = m1f - e1f;
-            double obv_exp2 = m2f - e2f;
+            sumM1f += m1f;
+            sumE1f += e1f;
 
-            int ns = n1fTHISROW + n2fTHISROW;
-            int ms = m1f + m2f;
+            sumM2f += m2f;
+            sumE2f += e2f;
 
-            double var = (n1fTHISROW * n2fTHISROW * ms * (ns - ms)) / (Math.pow(ns, 2) * (ns - 1));
+            int ns = n1f + n2f;
 
-            sumObs_exp += obv_exp2;
+            double var = 0;
+
+
+            long topPart1 = (n1f * n2f);
+            long topPart2 = (m1f + m2f) * (n1f + n2f - m1f - m2f);
+            long bottom = pow((n1f + n2f), 2) * (n1f + n2f);
+
+            var = topPart1/(double)bottom;
+            var = var * topPart2;
+
             sumVar += var;
 
         }
 
-        double logRankValue = Math.pow(sumObs_exp, 2) / sumVar;
+        double logRankValue = Math.pow(sumM1f - sumE1f, 2) / sumVar;
 
         return new KaplanMeierAnalysis(event, observedEvents.getYear(), logRankValue);
     }
@@ -216,6 +236,7 @@ public class ComparativeAnalysis implements IComparativeAnalysis {
 
             IKaplanMeierAnalysis result;
             try {
+//                result = runKMAnalysis(d, EventType.MALE_DEATH, desired, generated, generatedPopulation, config);
                 result = runKMAnalysis(d, EventType.MALE_DEATH, desired, generated, generatedPopulation, config);
                 temp.put(EventType.MALE_DEATH, result);
 
@@ -231,10 +252,14 @@ public class ComparativeAnalysis implements IComparativeAnalysis {
                 unsupportedEventType.printStackTrace();
             }
 
-            Collection<FailureTimeRow> generatedMaleDeath = getFailureAtTimesTable(d, EventType.MALE_DEATH, desired, generated, generatedPopulation, config);
+            FailureTimeDoubleArrays mDA = getFailureAtTimesDoubleArrays(d, EventType.MALE_DEATH, desired, generated, generatedPopulation, config);
+            SurvivalTestTemplate test = new LogRankTest(mDA.getTimeExpected(), mDA.getEventExpected(), mDA.getTimeObserved(), mDA.getEventObserved());
+            System.out.println(d.toOrderableString() + "    " + test.pValue + "   (" + test.testStatistic + ")");
+
+            Collection<FailureTimeRow> maleDeaths = getFailureAtTimesTable(d, EventType.MALE_DEATH, desired, generated, generatedPopulation, config);
 
             PrintStream resultsOutput = FileUtils.setupResultsFileAsStream("maleDeaths" + d.toOrderableString(), config);
-            FileUtils.outputFailureTimeTable(generatedMaleDeath, resultsOutput);
+            FileUtils.outputFailureTimeTable(maleDeaths, resultsOutput);
 
             try {
                 result = runKMAnalysis(d, EventType.FEMALE_DEATH, desired, generated, generatedPopulation, config);
@@ -290,6 +315,45 @@ public class ComparativeAnalysis implements IComparativeAnalysis {
 
     }
 
+    public FailureTimeDoubleArrays getFailureAtTimesDoubleArrays(Date date, EventType event, StatisticalTables expected, StatisticalTables observed, IPopulation generatedPopulation, Config config) throws UnsupportedDateConversion {
+
+
+        Collection<FailureTimeRow> rows = observed.getFailureAtTimesTable(date, 1, config.getTE(), event);
+
+        double[] obseveredTimes = new double[rows.size()];
+        double[] obseveredEvents = new double[rows.size()];
+
+        int c = 0;
+        for(FailureTimeRow r : rows) {
+            obseveredTimes[c] = r.getTimeElapsed();
+            obseveredEvents[c] = toInt(r.hasEventOccured());
+            c++;
+        }
+
+
+        int maxAge = getHighestTimeValue(rows);
+
+        int numberInObserved = rows.size() - 1;
+        rows = expected.getFailureAtTimesTable(date, 0, config.getTE(), event, (double) numberInObserved, maxAge, generatedPopulation);
+
+        double[] expectedTimes = new double[rows.size()];
+        double[] expectedEvents = new double[rows.size()];
+
+        c = 0;
+        for(FailureTimeRow r : rows) {
+            expectedTimes[c] = r.getTimeElapsed();
+            expectedEvents[c] = toInt(r.hasEventOccured());
+            c++;
+        }
+
+        return new FailureTimeDoubleArrays(obseveredTimes, obseveredEvents, expectedTimes, expectedEvents);
+
+    }
+
+    private int toInt(boolean b) {
+       return b ? 1 : 0;
+    }
+
     private int getHighestTimeValue(Collection<FailureTimeRow> rows) {
 
         int max = Integer.MIN_VALUE;
@@ -313,7 +377,7 @@ public class ComparativeAnalysis implements IComparativeAnalysis {
 //        System.out.println(populationSurvivorTable.getData(0));
 
         // get equiverlent table from inputs stats
-        OneDimensionDataDistribution statisticsSurvivorTable = expected.getSurvivorTable(date, new CompoundTimeUnit(1, TimeUnit.YEAR), eventType, populationSurvivorTable.getData(0), populationSurvivorTable.getLargestLabel().getMax(), generatedPopulation);
+        OneDimensionDataDistribution statisticsSurvivorTable = expected.getSurvivorTable(date, new CompoundTimeUnit(1, TimeUnit.YEAR), eventType, populationSurvivorTable.getData(0), populationSurvivorTable.getLargestLabel().getMax() - 1, generatedPopulation);
 //        MapUtils.outputResults("S SUR-" + date.toString(), statisticsSurvivorTable.getData(), 0, 1, 100);
 
         if(config.produceGraphs()) {
@@ -321,8 +385,26 @@ public class ComparativeAnalysis implements IComparativeAnalysis {
         }
 
         // perform KM analysis and log result
+        System.out.print(date.getYear() + " ");
         return runKaplanMeier(eventType, statisticsSurvivorTable, populationSurvivorTable);
 
 
+    }
+
+    private static long pow (long a, int b)
+    {
+        if ( b == 0)        return 1;
+        if ( b == 1)        return a;
+        if (isEven( b ))    return     pow ( a * a, b/2); //even a=(a^2)^b/2
+        else                return a * pow ( a * a, b/2); //odd  a=a*(a^2)^b/2
+
+    }
+
+
+    private static boolean isEven(int i) {
+        if((i%2)==0)
+            return true;
+        else
+            return false;
     }
 }

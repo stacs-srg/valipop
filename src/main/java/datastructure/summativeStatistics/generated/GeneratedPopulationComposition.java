@@ -96,12 +96,14 @@ public class GeneratedPopulationComposition implements PopulationComposition {
 
         }
 
+        // TODO implement for birth
+
         return null;
     }
 
     @Override
     public Collection<FailureTimeRow> getFailureAtTimesTable(Date year, int denoteGroupAs, Date simulationEndDate, EventType event, Double scalingFactor, int timeLimit, IPopulation generatedPopulation) throws UnsupportedDateConversion {
-        return null;
+        return getFailureAtTimesTable(year, denoteGroupAs, simulationEndDate, event);
     }
 
     private Collection<FailureTimeRow> getDeathAtTimesTable(Collection<IPerson> people, int denoteGroupAs, Date simulationEndDate) {
@@ -223,7 +225,9 @@ public class GeneratedPopulationComposition implements PopulationComposition {
                 survivors -= counts.get(countsTable.resolveRowValue(i));
             } catch (InvalidRangeException e) { /* No deaths at this age*/ }
 
-            survival.put(new IntegerRange(i + 1), survivors);
+//            // CHECK this
+//            if(survivors != 0)
+                survival.put(new IntegerRange(i + 1), survivors);
         }
 
         return new OneDimensionDataDistribution(startYear.getYearDate(), "", "", survival);
