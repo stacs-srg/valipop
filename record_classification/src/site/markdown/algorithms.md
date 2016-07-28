@@ -1,4 +1,4 @@
-## Algorithms Information
+## Algorithms
 
 The record classification software uses machine learning models as well as lookup tables to perform coding to single and multiple codes. 
 These algorithms are detailed here.

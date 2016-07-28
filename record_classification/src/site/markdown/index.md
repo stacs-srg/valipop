@@ -19,7 +19,6 @@ This module is available for download in two forms:
 
 The CLI offers an easy-to-use interface to load, clean and classify records, as well as evaluating the performance of various classifiers. Please see [this](cli/index.html) page for more information on how to install and use `classli`.  
 
-
 ### Java API
 
 The Java Jar files containing the latest build of the software can be downloaded from here:

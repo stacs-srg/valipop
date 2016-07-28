@@ -131,11 +131,11 @@ public class Launcher {
 
             else if (cause instanceof NoSuchFileException) {
                 NoSuchFileException exception = (NoSuchFileException) cause;
-                LOGGER.log(Level.SEVERE, String.format("file '%s' not found", exception.getFile()), error);
+                LOGGER.log(Level.SEVERE, String.format("File '%s' not found.", exception.getFile()), error);
             }
 
             else if (cause instanceof IOException) {
-                LOGGER.log(Level.SEVERE, String.format("file format error: %s", cause), error);
+                LOGGER.log(Level.SEVERE, String.format("File format error: %s (see http://digitisingscotland.cs.st-andrews.ac.uk/record_classification/cli/usage/).", cause), error);
             }
 
             else {
@@ -213,7 +213,7 @@ public class Launcher {
         persistConfiguration();
     }
 
-    public boolean isBatchModeEnabled() {
+    private boolean isBatchModeEnabled() {
 
         return commands != null;
     }
