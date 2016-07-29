@@ -59,7 +59,7 @@ public class Configuration extends ClassificationContext {
     public static final String RESOURCE_BUNDLE_NAME = "uk.ac.standrews.cs.digitising_scotland.record_classification.cli.CLIMessages";
 
     /** Format of the {@link Record records} stored in a CSV file by the command line interface. */
-    public static final CSVFormat RECORD_CSV_FORMAT = CSVFormat.RFC4180.withHeader("ID", "DATA", "ORIGINAL_DATA", "CODE", "CONFIDENCE", "DETAIL").withSkipHeaderRecord();
+    public static final CSVFormat RECORD_CSV_FORMAT = CSVFormat.RFC4180.withHeader("ID", "DATA", "ORIGINAL_DATA", "CODE", "CONFIDENCE", "DETAIL");
 
     /** The character encoding by which the state of the command line interface is persisted. */
     public static final Charset RESOURCE_CHARSET = StandardCharsets.UTF_8;
@@ -220,7 +220,7 @@ public class Configuration extends ClassificationContext {
         final Bucket bucket = new Bucket();
 
         try (final BufferedReader in = Files.newBufferedReader(source, RESOURCE_CHARSET)) {
-            final CSVParser parser = RECORD_CSV_FORMAT.parse(in);
+            final CSVParser parser = RECORD_CSV_FORMAT.withSkipHeaderRecord().parse(in);
             StreamSupport.stream(parser.spliterator(), false).map(Configuration::toRecord).forEach(bucket::add);
         }
         return bucket;
