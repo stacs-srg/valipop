@@ -19,8 +19,8 @@ public class DeathFactory extends TFactory<Death> implements ILXPFactory<Death> 
 
 
     @Override
-    public Death create(long label_id, JSONReader reader) throws PersistentObjectException, IllegalKeyException {
-        return new Death(label_id, reader);
+    public Death create(long persistent_object_id, JSONReader reader) throws PersistentObjectException, IllegalKeyException {
+        return new Death(persistent_object_id, reader);
     }
 
 }

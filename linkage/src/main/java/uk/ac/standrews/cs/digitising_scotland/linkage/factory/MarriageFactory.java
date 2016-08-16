@@ -19,8 +19,8 @@ public class MarriageFactory extends TFactory<Marriage> implements ILXPFactory<M
 
 
     @Override
-    public Marriage create(long label_id, JSONReader reader) throws PersistentObjectException, IllegalKeyException {
-        return new Marriage(label_id, reader);
+    public Marriage create(long persistent_object_id, JSONReader reader) throws PersistentObjectException, IllegalKeyException {
+        return new Marriage(persistent_object_id, reader);
     }
 
 }

@@ -70,6 +70,8 @@ public class Marriage extends AbstractLXP {
     @LXP_SCALAR(type = LXPBaseType.STRING)
     public static final String REGISTRATION_DISTRICT_NUMBER = "REGISTRATION_DISTRICT_NUMBER";
     @LXP_SCALAR(type = LXPBaseType.STRING)
+    public static final String REGISTRATION_DISTRICT_SUFFIX = "REGISTRATION_DISTRICT_SUFFIX";
+    @LXP_SCALAR(type = LXPBaseType.STRING)
     public static final String BRIDE_SURNAME = "bride_surname";
     @LXP_SCALAR(type = LXPBaseType.STRING)
     public static final String GROOM_MARITAL_STATUS = "groom_marital_status";
@@ -100,9 +102,9 @@ public class Marriage extends AbstractLXP {
         super();
     }
 
-    public Marriage(long label_id, JSONReader reader) throws PersistentObjectException, IllegalKeyException {
+    public Marriage(long persistent_object_id, JSONReader reader) throws PersistentObjectException, IllegalKeyException {
 
-        super(reader);
+        super(persistent_object_id, reader);
     }
 
 }

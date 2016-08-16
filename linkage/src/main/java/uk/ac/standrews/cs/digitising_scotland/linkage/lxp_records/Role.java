@@ -43,9 +43,9 @@ public class Role extends AbstractLXP {
         super();
     }
 
-    public Role(JSONReader reader) throws PersistentObjectException, IllegalKeyException {
+    public Role(long persistent_object_id, JSONReader reader) throws PersistentObjectException, IllegalKeyException {
 
-        super(reader);
+        super(persistent_object_id, reader);
     }
 
     public Role( String surname, String forename, String sex, role_played role, StoreReference original_record_ref, long original_record_type ) throws StoreException {
@@ -56,7 +56,7 @@ public class Role extends AbstractLXP {
             put(FORENAME, forename);
             put(SEX, sex);
             put(ROLE, role.name() );
-            put(ORIGINAL_RECORD, original_record_ref.toString() );
+            put(ORIGINAL_RECORD, original_record_ref.toString() );  // x // should it be: getOid() ??? AL 15-8-16
             put(ORIGINAL_RECORD_TYPE, original_record_type );
         } catch (IllegalKeyException e) {
             ErrorHandling.error("Illegal key in OID");
@@ -160,7 +160,7 @@ public class Role extends AbstractLXP {
      * @param marriage_record_ref a reference to a record from which to extract person information
      * @return a Person representing the bride
      */
-    public static Role createBrideFromMarriageRecord(StoreReference<Marriage> marriage_record_ref) throws StoreException, BucketException {
+    public static Role createBrideFromMarriageRecord(StoreReference<Marriage> marriage_record_ref, long original_record_type) throws StoreException, BucketException {
 
         Marriage marriage_record = marriage_record_ref.getReferend();
 
@@ -169,7 +169,7 @@ public class Role extends AbstractLXP {
         String sex = "F";
         role_played role = role_played.bride;
 
-        return new Role(surname, forename, sex, role, marriage_record_ref, marriage_record.required_type_labelID );
+        return new Role(surname, forename, sex, role, marriage_record_ref, original_record_type );
     }
 
     /**
@@ -178,7 +178,7 @@ public class Role extends AbstractLXP {
      * @param marriage_record_ref a reference to a record from which to extract person information
      * @return the Person representing the groom
      */
-    public static Role createGroomFromMarriageRecord(StoreReference<Marriage> marriage_record_ref) throws StoreException, BucketException {
+    public static Role createGroomFromMarriageRecord(StoreReference<Marriage> marriage_record_ref, long original_record_type) throws StoreException, BucketException {
 
         Marriage marriage_record = marriage_record_ref.getReferend();
 
@@ -187,7 +187,7 @@ public class Role extends AbstractLXP {
         String sex = "M";
         role_played role = role_played.groom;
 
-        return new Role(surname, forename, sex, role, marriage_record_ref, marriage_record.required_type_labelID );
+        return new Role(surname, forename, sex, role, marriage_record_ref, original_record_type );
 
     }
 
@@ -197,7 +197,7 @@ public class Role extends AbstractLXP {
      * @param marriage_record_ref a reference to a record from which to extract person information
      * @return the Person representing the brides father
      */
-    public static Role createBridesFatherFromMarriageRecord(StoreReference<Marriage> marriage_record_ref) throws StoreException, BucketException {
+    public static Role createBridesFatherFromMarriageRecord(StoreReference<Marriage> marriage_record_ref, long original_record_type) throws StoreException, BucketException {
 
         Marriage marriage_record = marriage_record_ref.getReferend();
 
@@ -209,7 +209,7 @@ public class Role extends AbstractLXP {
         String sex = "M";
         role_played role = role_played.brides_father;
 
-        return new Role(surname, forename, sex, role, marriage_record_ref, marriage_record.required_type_labelID );
+        return new Role(surname, forename, sex, role, marriage_record_ref, original_record_type );
 
     }
 
@@ -219,7 +219,7 @@ public class Role extends AbstractLXP {
      * @param marriage_record_ref a reference to a record from which to extract person information
      * @return the Person representing the brides mother
      */
-    public static Role createBridesMotherFromMarriageRecord(StoreReference<Marriage> marriage_record_ref) throws StoreException, BucketException {
+    public static Role createBridesMotherFromMarriageRecord(StoreReference<Marriage> marriage_record_ref, long original_record_type) throws StoreException, BucketException {
 
         Marriage marriage_record = marriage_record_ref.getReferend();
 
@@ -228,7 +228,7 @@ public class Role extends AbstractLXP {
         String sex = "F";
         role_played role = role_played.brides_mother;
 
-        return new Role(surname, forename, sex, role, marriage_record_ref, marriage_record.required_type_labelID );
+        return new Role(surname, forename, sex, role, marriage_record_ref, original_record_type );
 
     }
 
@@ -238,7 +238,7 @@ public class Role extends AbstractLXP {
      * @param marriage_record_ref a reference to a record from which to extract person information
      * @return the Person representing the grooms father
      */
-    public static Role createGroomsFatherFromMarriageRecord(StoreReference<Marriage> marriage_record_ref) throws StoreException, BucketException {
+    public static Role createGroomsFatherFromMarriageRecord(StoreReference<Marriage> marriage_record_ref, long original_record_type) throws StoreException, BucketException {
 
         Marriage marriage_record = marriage_record_ref.getReferend();
 
@@ -250,7 +250,7 @@ public class Role extends AbstractLXP {
         String sex = "M";
         role_played role = role_played.grooms_father;
 
-        return new Role(surname, forename, sex, role, marriage_record_ref, marriage_record.required_type_labelID );
+        return new Role(surname, forename, sex, role, marriage_record_ref, original_record_type );
     }
 
     /**
@@ -259,7 +259,7 @@ public class Role extends AbstractLXP {
      * @param marriage_record_ref a reference to a record from which to extract person information
      * @return the Person representing the grooms mother father
      */
-    public static Role createGroomsMotherFromMarriageRecord(StoreReference<Marriage> marriage_record_ref) throws StoreException, BucketException {
+    public static Role createGroomsMotherFromMarriageRecord(StoreReference<Marriage> marriage_record_ref, long original_record_type) throws StoreException, BucketException {
 
         Marriage marriage_record = marriage_record_ref.getReferend();
 
@@ -268,7 +268,7 @@ public class Role extends AbstractLXP {
         String sex = "F";
         role_played role = role_played.grooms_mother;
 
-        return new Role(surname, forename, sex, role, marriage_record_ref, marriage_record.required_type_labelID );
+        return new Role(surname, forename, sex, role, marriage_record_ref, original_record_type );
     }
 
     // Getters

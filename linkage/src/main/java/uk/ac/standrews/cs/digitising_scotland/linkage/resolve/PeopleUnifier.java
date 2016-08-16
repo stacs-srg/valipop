@@ -1,14 +1,16 @@
 package uk.ac.standrews.cs.digitising_scotland.linkage.resolve;
 
 
-import uk.ac.standrews.cs.jstore.interfaces.IInputStream;
-import uk.ac.standrews.cs.jstore.interfaces.ILXP;
-import uk.ac.standrews.cs.jstore.interfaces.IOutputStream;
 import uk.ac.standrews.cs.digitising_scotland.linkage.interfaces.IPair;
 import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.Pair;
 import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.Role;
 import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.SameAs;
 import uk.ac.standrews.cs.digitising_scotland.linkage.stream_operators.sharder.AbstractPairwiseUnifier;
+import uk.ac.standrews.cs.jstore.impl.exceptions.BucketException;
+import uk.ac.standrews.cs.jstore.interfaces.IInputStream;
+import uk.ac.standrews.cs.jstore.interfaces.ILXP;
+import uk.ac.standrews.cs.jstore.interfaces.IOutputStream;
+import uk.ac.standrews.cs.nds.util.ErrorHandling;
 
 /**
  * Created by al on 19/06/2014.
@@ -58,7 +60,13 @@ public class PeopleUnifier extends AbstractPairwiseUnifier<Role> {
 
         ILXP result_record = new SameAs(first, second, "???", differentness); // TODO maybe should be simlarity in here
 
-        results.add(result_record);
+        try {
+            results.add(result_record);
+        } catch( BucketException e ) {
+            ErrorHandling.exceptionError(e, "Exception adding record to stream for record: " + result_record );
+
+        }
+
 
 
     }

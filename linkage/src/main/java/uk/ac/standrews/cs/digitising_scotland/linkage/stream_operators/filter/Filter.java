@@ -1,5 +1,6 @@
 package uk.ac.standrews.cs.digitising_scotland.linkage.stream_operators.filter;
 
+import uk.ac.standrews.cs.jstore.impl.exceptions.BucketException;
 import uk.ac.standrews.cs.jstore.interfaces.IFilter;
 import uk.ac.standrews.cs.jstore.interfaces.IInputStream;
 import uk.ac.standrews.cs.jstore.interfaces.ILXP;
@@ -18,7 +19,7 @@ public abstract class Filter<T extends ILXP> implements IFilter<T> {
         this.output = output;
     }
 
-    public void apply() {
+    public void apply() throws BucketException {
 
         for (T record : input) {
             if (select(record)) {
