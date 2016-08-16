@@ -1,6 +1,7 @@
 package uk.ac.standrews.cs.digitising_scotland.linkage.stream_operators.sharder;
 
 
+import uk.ac.standrews.cs.jstore.impl.exceptions.BucketException;
 import uk.ac.standrews.cs.jstore.impl.exceptions.RepositoryException;
 import uk.ac.standrews.cs.jstore.interfaces.*;
 import uk.ac.standrews.cs.nds.util.ErrorHandling;
@@ -61,18 +62,23 @@ public abstract class Blocker<T extends ILXP> implements IBlocker<T> {
                     if (output_repo.bucketExists(bucket_name)) {
                         try {
                             output_repo.getBucket(bucket_name, factory).getOutputStream().add(record);
-                        } catch (RepositoryException e) {
-                            ErrorHandling.exceptionError(e, "RepositoryException obtaining bucket instance");
+                        } catch (RepositoryException | BucketException e) {
+                            ErrorHandling.exceptionError(e, "Exception obtaining bucket instance for record: " + record );
                         }
                     } else { // need to create it
                         try {
                             output_repo.makeBucket(bucket_name, BucketKind.DIRECTORYBACKED, factory).getOutputStream().add(record);
-                        } catch (RepositoryException e) {
-                            e.printStackTrace();
+                        } catch (RepositoryException | BucketException e) {
+                            ErrorHandling.exceptionError(e, "Exception creating bucket for record: " + record );
                         }
                     }
                 } else { // we have seen this name before and hence have a cached bucket
-                    bucket.getOutputStream().add(record);
+
+                    try {
+                        bucket.getOutputStream().add(record);
+                    } catch ( BucketException e) {
+                        ErrorHandling.exceptionError(e, "Exception adding record to stream for record: " + record );
+                    }
                 }
             }
         }

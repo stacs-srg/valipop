@@ -13,14 +13,14 @@ import uk.ac.standrews.cs.nds.rpc.stream.JSONReader;
 public class RoleFactory extends TFactory<Role> implements ILXPFactory<Role> {
 
 
-    public RoleFactory(long personlabelID) {
-        this.required_type_labelID = personlabelID;
+    public RoleFactory(long rolelabelID) {
+        this.required_type_labelID = rolelabelID;
     }
 
 
     @Override
-    public Role create(long label_id, JSONReader reader) throws PersistentObjectException {
-        return new Role(reader);
+    public Role create(long persistent_object_id, JSONReader reader) throws PersistentObjectException {
+        return new Role(persistent_object_id, reader);
     }
 
 }

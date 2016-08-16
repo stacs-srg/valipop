@@ -4,6 +4,7 @@ import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.Birth;
 import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.Death;
 import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.Marriage;
 import uk.ac.standrews.cs.digitising_scotland.linkage.tools.DSFields;
+import uk.ac.standrews.cs.digitising_scotland.util.ErrorHandling;
 import uk.ac.standrews.cs.jstore.impl.LXP;
 import uk.ac.standrews.cs.jstore.impl.exceptions.BucketException;
 import uk.ac.standrews.cs.jstore.impl.exceptions.IllegalKeyException;
@@ -16,9 +17,11 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+
 
 /**
  * Utility classes for importing records in digitising scotland format
@@ -50,8 +53,12 @@ public class EventImporter {
                 while (true) {
                     Death d = new Death();
                     importDigitisingScotlandRecord(d, reader, referencetype, DSFields.DEATH_FIELD_NAMES);
-                    deaths.makePersistent(d);
-                    count++;
+                    try {
+                        deaths.makePersistent(d);
+                        count++;
+                    } catch (BucketException e) {
+                        ErrorHandling.exceptionError(e, "Error making death record persistent: " + d);
+                    }
                 }
             } catch (IOException e) {
                 // expect this to be thrown when we getObjectById to the end.
@@ -69,23 +76,38 @@ public class EventImporter {
      * @throws RecordFormatException
      * @throws BucketException
      */
-    public static int importDigitisingScotlandMarriages(IBucket<Marriage> marriages, String filename, IReferenceType referencetype) throws RecordFormatException, IOException, BucketException, IllegalKeyException {
+    public static int importDigitisingScotlandMarriages(IBucket<Marriage> marriages, String filename, IReferenceType referencetype, ArrayList<Long> oids) {
         long counter = 0;
-        try (final BufferedReader reader = Files.newBufferedReader(Paths.get(filename), FileManipulation.FILE_CHARSET)) {
+        try {
+            try ( final BufferedReader reader = Files.newBufferedReader(Paths.get(filename), FileManipulation.FILE_CHARSET)) {
 
-            int count = 0;
+                int count = 0;
 
-            try {
-                while (true) {
-                    Marriage m = new Marriage();
-                    importDigitisingScotlandRecord(m, reader, referencetype, DSFields.MARRIAGE_FIELD_NAMES);
-                    marriages.makePersistent(m);
-                    count++;
+                try {
+                    while (true) {
+                        Marriage m = new Marriage();
+                        try {
+                            importDigitisingScotlandRecord(m, reader, referencetype, DSFields.MARRIAGE_FIELD_NAMES);
+
+                        } catch (RecordFormatException e) {
+                            ErrorHandling.exceptionError( e, "Record format error reading file: " + filename );
+                        }
+                        try {
+                            marriages.makePersistent(m);
+                            oids.add(m.getId());
+                            count++;
+                        } catch ( Exception e ) {
+                            ErrorHandling.exceptionError( e, "Error making marriage record persistent: " + m );
+                        }
+                    }
+                } catch (IOException e) {
+                    // expect this to be thrown when we getObjectById to the end.
                 }
-            } catch (IOException e) {
-                // expect this to be thrown when we getObjectById to the end.
+                return count;
             }
-            return count;
+        } catch (IOException e) {
+            ErrorHandling.exceptionError( e, "Error opening buffered reader for file: " + filename );
+            return 0;
         }
     }
 
@@ -108,8 +130,12 @@ public class EventImporter {
                 while (true) {
                     Birth b = new Birth();
                     importDigitisingScotlandRecord(b, reader, referencetype, DSFields.BIRTH_FIELD_NAMES );
-                    births.makePersistent(b);
-                    count++;
+                    try {
+                        births.makePersistent(b);
+                        count++;
+                    } catch ( BucketException e ) {
+                        ErrorHandling.exceptionError( e, "Error making marriage record persistent: " + b );
+                    }
                 }
             } catch (IOException e) {
                 // expect this to be thrown when we getObjectById to the end.
