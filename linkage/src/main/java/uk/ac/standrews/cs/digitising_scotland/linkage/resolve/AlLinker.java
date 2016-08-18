@@ -30,11 +30,14 @@ public class AlLinker {
     private static String input_repo_name = "BDM_repo";                         // input repository containing event records
     private static String role_repo_name = "role_repo";                         // repository for Role records
     private static String blocked_role_repo_name = "blocked_role_repo";         // repository for blocked Role records
+    private static String linkage_repo_name = "linkage_repo";                   // repository for Relationship records
+
 
     private IStore store;
     private IRepository input_repo;             // Repository containing buckets of BDM records
     private IRepository role_repo;
     private IRepository blocked_role_repo;
+    private IRepository linkage_repo;
 
     // Bucket declarations
 
@@ -43,6 +46,7 @@ public class AlLinker {
     private IBucket<Death> deaths;                     // Bucket containing death records (inputs).
 
     private IBucket<Role> roles;                      // Bucket containing roles extracted from BDM records
+    private IBucket<Relationship> relationships;      // Bucket containing relationships between Roles
 
     // Paths to sources
 
@@ -53,16 +57,19 @@ public class AlLinker {
     // Names of buckets
 
     private static String role_name = "roles";                                   // Name of bucket containing roles extracted from BDM records
+    private static String relationships_name = "relationships";                  // Name of bucket containing Relationship records
 
     private IReferenceType birthType;
     private IReferenceType deathType;
     private IReferenceType marriageType;
     private IReferenceType roleType;
+    private IReferenceType relationshipType;
 
     private BirthFactory birthFactory;
     private DeathFactory deathFactory;
     private MarriageFactory marriageFactory;
     private RoleFactory roleFactory;
+    private RelationshipFactory relationshipFactory;
     private ArrayList<Long> oids = new ArrayList<>();
 
 
@@ -95,6 +102,7 @@ public class AlLinker {
         input_repo = store.makeRepository(input_repo_name);
         role_repo = store.makeRepository(role_repo_name);
         blocked_role_repo = store.makeRepository(blocked_role_repo_name);  // a repo of Role Buckets of records blocked by  first name, last name
+        linkage_repo = store.makeRepository(linkage_repo_name);
         initialiseTypes();
         initialiseFactories();
 
@@ -102,6 +110,7 @@ public class AlLinker {
         deaths = input_repo.makeBucket(deaths_name, BucketKind.DIRECTORYBACKED, deathFactory);
         marriages = input_repo.makeBucket(marriages_name, BucketKind.DIRECTORYBACKED, marriageFactory);
         roles = role_repo.makeBucket(role_name, BucketKind.DIRECTORYBACKED, roleFactory);
+        relationships = linkage_repo.makeBucket(relationships_name, BucketKind.INDEXED, relationshipFactory );
     }
 
     private void initialiseTypes() {
@@ -112,6 +121,7 @@ public class AlLinker {
         deathType = tf.createType(Death.class, "death");
         marriageType = tf.createType(Marriage.class, "marriage");
         roleType = tf.createType(Role.class, "role");
+        relationshipType = tf.createType(Relationship.class, "relationship");
     }
 
     private void initialiseFactories() {
@@ -119,6 +129,7 @@ public class AlLinker {
         deathFactory = new DeathFactory(deathType.getId());
         marriageFactory = new MarriageFactory(marriageType.getId());
         roleFactory = new RoleFactory(roleType.getId());
+        relationshipFactory = new RelationshipFactory(relationshipType.getId());
     }
 
     /**
@@ -175,7 +186,7 @@ public class AlLinker {
      */
     private void createRolesFromBirths(IBucket bucket) {
 
-        IOutputStream<Role> people_stream = roles.getOutputStream();
+        IOutputStream<Role> role_stream = roles.getOutputStream();
         IInputStream<Birth> stream = null;
         try {
             stream = bucket.getInputStream();
@@ -188,31 +199,36 @@ public class AlLinker {
 
             StoreReference<Birth> birth_record_ref = new StoreReference<Birth>(input_repo, bucket, birth_record);
 
-            Role role = null;
+            Role child = null;
+            Role father = null;
+            Role mother = null;
+
             try {
-                role = Role.createPersonFromOwnBirth(birth_record_ref, birthType.getId());
-                people_stream.add(role);
+                child = Role.createPersonFromOwnBirth(birth_record_ref, birthType.getId());
+                role_stream.add(child);
             } catch (StoreException | BucketException e) {
-                ErrorHandling.exceptionError(e, "Error adding birth record: " + role );
+                ErrorHandling.exceptionError(e, "Error adding birth record: " + child );
             }
 
             try {
-                role = Role.createFatherFromChildsBirth(birth_record_ref, birthType.getId());
-                if (role != null) {
-                    people_stream.add(role);
+                father = Role.createFatherFromChildsBirth(birth_record_ref, birthType.getId());
+                if (father != null) {
+                    role_stream.add(father);
                 }
             } catch (StoreException | BucketException e) {
-                ErrorHandling.exceptionError(e, "Error adding birth record: " + role );
+                ErrorHandling.exceptionError(e, "Error adding birth record: " + father );
             }
 
             try {
-                role = Role.createMotherFromChildsBirth(birth_record_ref, birthType.getId());
-                if (role != null) {
-                    people_stream.add(role);
+                mother = Role.createMotherFromChildsBirth(birth_record_ref, birthType.getId());
+                if (mother != null) {
+                    role_stream.add(mother);
                 }
             } catch (StoreException | BucketException e) {
-                    ErrorHandling.exceptionError(e, "Error adding birth record: " + role );
+                    ErrorHandling.exceptionError(e, "Error adding birth record: " + mother );
             }
+            createRelationship( father, child, Relationship.relationship_kind.fatherof, "Shared certificate" );
+            createRelationship( mother, child, Relationship.relationship_kind.motherof, "Shared certificate" );
         }
     }
 
@@ -224,7 +240,7 @@ public class AlLinker {
      */
     private void createRolesFromDeaths(IBucket bucket)  {
 
-        IOutputStream<Role> people_stream = roles.getOutputStream();
+        IOutputStream<Role> role_stream = roles.getOutputStream();
         IInputStream<Death> stream = null;
         try {
             stream = bucket.getInputStream();
@@ -237,33 +253,39 @@ public class AlLinker {
 
             StoreReference<Death> death_record_ref = new StoreReference<Death>(input_repo, bucket, death_record);
 
-            Role role = null;
+            Role child = null;
+            Role father = null;
+            Role mother = null;
+
             try {
-                role = Role.createPersonFromOwnDeath(death_record_ref, deathType.getId());
-                people_stream.add(role);
+                child = Role.createPersonFromOwnDeath(death_record_ref, deathType.getId());
+                role_stream.add(child);
             } catch (StoreException | BucketException e) {
-                ErrorHandling.exceptionError(e, "Error adding death record: " + role );
+                ErrorHandling.exceptionError(e, "Error adding death record: " + child );
             }
 
             try {
-                role = Role.createFatherFromChildsDeath(death_record_ref, deathType.getId());
-                if (role != null) {
-                    people_stream.add(role);
+                father = Role.createFatherFromChildsDeath(death_record_ref, deathType.getId());
+                if (father != null) {
+                    role_stream.add(father);
                 }
             }
             catch (StoreException | BucketException e) {
-                ErrorHandling.exceptionError(e, "Error adding father from death record: " + role);
+                ErrorHandling.exceptionError(e, "Error adding father from death record: " + father);
             }
 
             try {
-                role = Role.createMotherFromChildsDeath(death_record_ref, deathType.getId());
-                if (role != null) {
-                    people_stream.add(role);
+                mother = Role.createMotherFromChildsDeath(death_record_ref, deathType.getId());
+                if (mother != null) {
+                    role_stream.add(mother);
                 }
             }
             catch (StoreException | BucketException e) {
-                ErrorHandling.exceptionError(e, "Error adding mother from death record: " + role);
+                ErrorHandling.exceptionError(e, "Error adding mother from death record: " + mother);
             }
+
+            createRelationship( father, child, Relationship.relationship_kind.fatherof, "Shared certificate" );
+            createRelationship( mother, child, Relationship.relationship_kind.motherof, "Shared certificate" );
         }
     }
 
@@ -298,67 +320,102 @@ public class AlLinker {
 //                System.out.println( "Did not find oid in oids list for oid: " + marriage_record.getId() + ":" + marriage_record);
 //            }
 
-//            System.out.println( "Got marriage record from stream with oid: " + marriage_record.getId() );
             StoreReference<Marriage> marriage_record_ref = new StoreReference<Marriage>(input_repo.getName(), bucket.getName(), marriage_record.getId());
-//            System.out.println( "Created store reference to record: " + marriage_record_ref );
 
-            Role role = null;
+            Role bride = null;
+            Role groom = null;
+            Role bf = null;
+            Role bm = null;
+            Role gf = null;
+            Role gm = null;
+
             try {
-                role = Role.createBrideFromMarriageRecord(marriage_record_ref, marriageType.getId());
-                if( role != null ) {
-                    roles_stream.add(role);
+                bride = Role.createBrideFromMarriageRecord(marriage_record_ref, marriageType.getId());
+                if( bride != null ) {
+                    roles_stream.add(bride);
                 }
             } catch (StoreException | BucketException e) {
-                ErrorHandling.exceptionError(e, "Error adding bride: " + role);
+                ErrorHandling.exceptionError(e, "Error adding bride: " + bride);
             }
 
             try {
-                role = Role.createGroomFromMarriageRecord(marriage_record_ref, marriageType.getId());
-                if( role != null ) {
-                    roles_stream.add(role);
+                groom = Role.createGroomFromMarriageRecord(marriage_record_ref, marriageType.getId());
+                if( groom != null ) {
+                    roles_stream.add(groom);
                 }
             } catch (StoreException | BucketException e) {
-                ErrorHandling.exceptionError(e, "Error adding groom: " + role);
+                ErrorHandling.exceptionError(e, "Error adding groom: " + groom);
             }
 
             try {
-                role = Role.createGroomsMotherFromMarriageRecord(marriage_record_ref, marriageType.getId());
-                if( role != null ) {
-                    roles_stream.add(role);
+                gm = Role.createGroomsMotherFromMarriageRecord(marriage_record_ref, marriageType.getId());
+                if( gm != null ) {
+                    roles_stream.add(gm);
                 }
             } catch (StoreException | BucketException e) {
-                ErrorHandling.exceptionError(e, "Error adding groom's mother: " + role);
+                ErrorHandling.exceptionError(e, "Error adding groom's mother: " + gm);
             }
 
             try {
-                role = Role.createGroomsFatherFromMarriageRecord(marriage_record_ref, marriageType.getId());
-                if( role != null ) {
-                    roles_stream.add(role);
+                gf = Role.createGroomsFatherFromMarriageRecord(marriage_record_ref, marriageType.getId());
+                if( gf != null ) {
+                    roles_stream.add(gf);
                 }
             } catch (StoreException | BucketException e) {
-                ErrorHandling.exceptionError(e, "Error adding groom's father: " + role);
+                ErrorHandling.exceptionError(e, "Error adding groom's father: " + gf);
             }
 
             try {
-                role = Role.createBridesMotherFromMarriageRecord(marriage_record_ref, marriageType.getId());
-                if( role != null ) {
-                    roles_stream.add(role);
+                bm = Role.createBridesMotherFromMarriageRecord(marriage_record_ref, marriageType.getId());
+                if( bm != null ) {
+                    roles_stream.add(bm);
                 }
             } catch (StoreException | BucketException e) {
-                ErrorHandling.exceptionError(e, "Error adding bride's mother: " + role);
+                ErrorHandling.exceptionError(e, "Error adding bride's mother: " + bm);
             }
             try {
-                role = Role.createBridesFatherFromMarriageRecord(marriage_record_ref, marriageType.getId());
-                if( role != null ) {
-                    roles_stream.add(role);
+                bf = Role.createBridesFatherFromMarriageRecord(marriage_record_ref, marriageType.getId());
+                if( bf != null ) {
+                    roles_stream.add(bf);
                 }
             } catch (StoreException | BucketException e) {
-                ErrorHandling.exceptionError(e, "Error adding bride's father: " + role);
+                ErrorHandling.exceptionError(e, "Error adding bride's father: " + bf);
             }
-
+            createRelationship( bf, bride, Relationship.relationship_kind.fatherof, "Shared certificate" );
+            createRelationship( bm, bride, Relationship.relationship_kind.motherof, "Shared certificate" );
+            createRelationship( gf, groom, Relationship.relationship_kind.fatherof, "Shared certificate" );
+            createRelationship( gm, groom, Relationship.relationship_kind.motherof, "Shared certificate" );
         }
 
         System.out.println( "Processed : " + count + " marriage records" );
+    }
+
+    /**
+     * Create a relationship between the parties and add to the relationship table.
+     * @param subject - the subject
+     * @param object - the object
+     * @param relationship - relationship between subject and object
+     * @param evidence - of the relationship
+     */
+    private void createRelationship(Role subject, Role object, Relationship.relationship_kind relationship , String evidence) {
+
+        if( subject == null || object == null ) {
+            ErrorHandling.error( "createRelationship passed null Role for (" + relationship.name() + ") subject: " + subject + " object: " + object );
+            return;
+        }
+        IOutputStream<Relationship> relationship_stream = relationships.getOutputStream();
+
+        StoreReference<Role> subject_ref = new StoreReference<Role>(role_repo.getName(), roles.getName(), subject.getId());
+        StoreReference<Role> object_ref = new StoreReference<Role>(role_repo.getName(), roles.getName(), object.getId());
+        Relationship r = null;
+        try {
+            r = new Relationship( subject_ref, object_ref,relationship, evidence );
+            relationship_stream.add(r);
+        } catch (StoreException e) {
+            ErrorHandling.exceptionError(e, "Store Error adding relationship: " + r);
+        } catch (BucketException e) {
+            ErrorHandling.exceptionError(e, "Bucket Error adding relationship: " + r);
+        }
     }
 
     /**

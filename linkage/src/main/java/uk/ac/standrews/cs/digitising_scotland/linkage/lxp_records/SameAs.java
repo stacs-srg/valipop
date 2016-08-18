@@ -9,6 +9,7 @@ import uk.ac.standrews.cs.nds.rpc.stream.JSONReader;
 
 /**
  * Created by al on 03/10/2014.
+ * Now not used - used Relationships over Roles instead.
  */
 public class SameAs extends AbstractLXP {
 
