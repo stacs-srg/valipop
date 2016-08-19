@@ -2,6 +2,7 @@ package uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records;
 
 import uk.ac.standrews.cs.digitising_scotland.util.ErrorHandling;
 import uk.ac.standrews.cs.jstore.impl.StoreReference;
+import uk.ac.standrews.cs.jstore.impl.exceptions.BucketException;
 import uk.ac.standrews.cs.jstore.impl.exceptions.IllegalKeyException;
 import uk.ac.standrews.cs.jstore.impl.exceptions.StoreException;
 import uk.ac.standrews.cs.jstore.types.LXP_REF;
@@ -41,15 +42,41 @@ public class Relationship extends AbstractLXP {
 
         this();
         try {
-            put( SUBJECT, subject.toString() );
-            put( OBJECT, subject.toString() );
+            put( SUBJECT, subject );
+            put( OBJECT, object );
             put(RELATIONSHIP, relationship.name() );
             put(EVIDENCE, evidence );
 
         } catch (IllegalKeyException e) {
             ErrorHandling.error("Illegal key in OID");
         }
+    }
 
+    public Role getSubject() {
+        try {
+            return (Role) getRef( SUBJECT ).getReferend();
+        } catch (BucketException e) {
+            ErrorHandling.exceptionError( e, "Cannot get subject from Relationship" );
+            return null;
+        }
+    }
+
+    public Role getObject() {
+        try {
+            return (Role) getRef( OBJECT ).getReferend();
+        } catch (BucketException e) {
+            ErrorHandling.exceptionError( e, "Cannot get object from Relationship" );
+            return null;
+        }
+    }
+
+    public relationship_kind getRelationship() {
+
+        return relationship_kind.valueOf(getString( RELATIONSHIP ));
+    }
+
+    public String getEvidence() {
+        return getString( EVIDENCE );
     }
 
 

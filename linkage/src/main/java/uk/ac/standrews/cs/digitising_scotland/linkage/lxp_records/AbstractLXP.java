@@ -3,7 +3,6 @@ package uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records;
 
 import uk.ac.standrews.cs.jstore.impl.LXP;
 import uk.ac.standrews.cs.jstore.impl.exceptions.IllegalKeyException;
-import uk.ac.standrews.cs.jstore.types.Types;
 import uk.ac.standrews.cs.nds.persistence.PersistentObjectException;
 import uk.ac.standrews.cs.nds.rpc.stream.JSONReader;
 
@@ -12,7 +11,7 @@ import uk.ac.standrews.cs.nds.rpc.stream.JSONReader;
  */
 public abstract class AbstractLXP extends LXP {
 
-    public long required_type_labelID;
+//    public long required_type_labelID;
 
     public AbstractLXP() {
 
@@ -35,11 +34,11 @@ public abstract class AbstractLXP extends LXP {
     /*
      * This says that we can we can create an instance of this type iff the labels supplied in the label_id are present
      */
-    @Override
-    public boolean checkConsistentWith(long label_id) {
-
-        return Types.checkLabelsConsistentWith(label_id, required_type_labelID);
-
-    }
+//    @Override
+//    public boolean checkConsistentWith(long label_id) {
+//
+//        return Types.checkLabelsConsistentWith(label_id, required_type_labelID);
+//
+//    }
 
 }

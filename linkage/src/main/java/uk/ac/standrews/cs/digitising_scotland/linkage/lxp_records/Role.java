@@ -15,7 +15,8 @@ import uk.ac.standrews.cs.jstore.types.LXP_SCALAR;
 import uk.ac.standrews.cs.nds.persistence.PersistentObjectException;
 import uk.ac.standrews.cs.nds.rpc.stream.JSONReader;
 
-import static uk.ac.standrews.cs.jstore.types.LXPBaseType.*;
+import static uk.ac.standrews.cs.jstore.types.LXPBaseType.LONG;
+import static uk.ac.standrews.cs.jstore.types.LXPBaseType.STRING;
 
 /**
  * Created by al on 03/10/2014.
