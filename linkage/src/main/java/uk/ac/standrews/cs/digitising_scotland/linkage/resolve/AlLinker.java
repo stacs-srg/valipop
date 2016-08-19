@@ -87,7 +87,7 @@ public class AlLinker {
 
         System.out.println("Blocking");
         block();
-
+        unify();
     }
 
     private void initialise() throws StoreException, IOException, RepositoryException, RecordFormatException, JSONException {
@@ -110,7 +110,7 @@ public class AlLinker {
         deaths = input_repo.makeBucket(deaths_name, BucketKind.DIRECTORYBACKED, deathFactory);
         marriages = input_repo.makeBucket(marriages_name, BucketKind.DIRECTORYBACKED, marriageFactory);
         roles = role_repo.makeBucket(role_name, BucketKind.DIRECTORYBACKED, roleFactory);
-        relationships = linkage_repo.makeBucket(relationships_name, BucketKind.INDEXED, relationshipFactory );
+        relationships = linkage_repo.makeBucket(relationships_name, BucketKind.DIRECTORYBACKED, relationshipFactory );
     }
 
     private void initialiseTypes() {
@@ -164,6 +164,9 @@ public class AlLinker {
     }
 
 
+    /**
+     * Blocks the Roles into firstname+surname buckets.
+     */
     private void block() {
         try {
             IBlocker blocker = new FNLNOverRole(roles, blocked_role_repo, roleFactory);
@@ -175,6 +178,43 @@ public class AlLinker {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Unifies the Roles together so that equivalent Roles are in a linked list structure
+     */
+    private void unify() {
+
+        System.out.println( "Unifying" );
+        try {
+            IInputStream<Relationship>  relationship_stream = relationships.getInputStream();
+
+            // Try and find other instances of Role's from relationships that are the same as this one
+
+            for (Relationship r : relationship_stream) {
+
+               // Relationship r = null;
+               // try {
+                //    r = (Relationship) l;
+               // } catch ( ClassCastException e ) {
+              //      System.out.println( "class class found: " +l );
+               //     System.out.println( "class of l: " + l.getClass().toString() );
+               // }
+                System.out.println( "Relationship is: " + r );
+            // System.out.println( "class of l: " + l.getClass().toString() );
+                Role subject = r.getSubject();
+                Role object = r.getObject();
+                Relationship.relationship_kind relation = r.getRelationship();
+
+                System.out.println( "processed " + subject.get_surname() );
+                // AL IS HERE
+
+            }
+        } catch (BucketException e) {
+            ErrorHandling.exceptionError( e, "Cannot open role input stream: " );
+        }
+
+
     }
 
 
@@ -227,8 +267,8 @@ public class AlLinker {
             } catch (StoreException | BucketException e) {
                     ErrorHandling.exceptionError(e, "Error adding birth record: " + mother );
             }
-            createRelationship( father, child, Relationship.relationship_kind.fatherof, "Shared certificate" );
-            createRelationship( mother, child, Relationship.relationship_kind.motherof, "Shared certificate" );
+            createRelationship( father, child, Relationship.relationship_kind.fatherof, "Shared certificate1" );
+            createRelationship( mother, child, Relationship.relationship_kind.motherof, "Shared certificate2" );
         }
     }
 
@@ -284,8 +324,8 @@ public class AlLinker {
                 ErrorHandling.exceptionError(e, "Error adding mother from death record: " + mother);
             }
 
-            createRelationship( father, child, Relationship.relationship_kind.fatherof, "Shared certificate" );
-            createRelationship( mother, child, Relationship.relationship_kind.motherof, "Shared certificate" );
+            createRelationship( father, child, Relationship.relationship_kind.fatherof, "Shared certificate3" );
+            createRelationship( mother, child, Relationship.relationship_kind.motherof, "Shared certificate4" );
         }
     }
 
@@ -381,10 +421,10 @@ public class AlLinker {
             } catch (StoreException | BucketException e) {
                 ErrorHandling.exceptionError(e, "Error adding bride's father: " + bf);
             }
-            createRelationship( bf, bride, Relationship.relationship_kind.fatherof, "Shared certificate" );
-            createRelationship( bm, bride, Relationship.relationship_kind.motherof, "Shared certificate" );
-            createRelationship( gf, groom, Relationship.relationship_kind.fatherof, "Shared certificate" );
-            createRelationship( gm, groom, Relationship.relationship_kind.motherof, "Shared certificate" );
+            createRelationship( bf, bride, Relationship.relationship_kind.fatherof, "Shared certificate5" );
+            createRelationship( bm, bride, Relationship.relationship_kind.motherof, "Shared certificate6" );
+            createRelationship( gf, groom, Relationship.relationship_kind.fatherof, "Shared certificate7" );
+            createRelationship( gm, groom, Relationship.relationship_kind.motherof, "Shared certificate8" );
         }
 
         System.out.println( "Processed : " + count + " marriage records" );
@@ -407,6 +447,7 @@ public class AlLinker {
 
         StoreReference<Role> subject_ref = new StoreReference<Role>(role_repo.getName(), roles.getName(), subject.getId());
         StoreReference<Role> object_ref = new StoreReference<Role>(role_repo.getName(), roles.getName(), object.getId());
+
         Relationship r = null;
         try {
             r = new Relationship( subject_ref, object_ref,relationship, evidence );
