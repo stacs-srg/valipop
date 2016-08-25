@@ -52,4 +52,22 @@ public class CompoundTimeUnit {
     public CompoundTimeUnit negative() {
         return new CompoundTimeUnit(-count, unit);
     }
+
+    public String toString() {
+
+        String ret = Integer.toString(count);
+
+        switch(unit) {
+
+            case MONTH:
+                ret += "m";
+                break;
+            case YEAR:
+                ret += "y";
+                break;
+        }
+
+        return ret;
+
+    }
 }

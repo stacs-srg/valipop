@@ -2,6 +2,7 @@ package validation;
 
 import datastructure.summativeStatistics.generated.EventType;
 import org.apache.commons.math3.distribution.ChiSquaredDistribution;
+import utils.time.CompoundTimeUnit;
 import utils.time.Date;
 
 /**

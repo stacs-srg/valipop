@@ -6,6 +6,8 @@ import model.simulationLogic.StatisticalManipulationCalculationError;
 import org.junit.Assert;
 import org.junit.Test;
 import utils.InputFileReader;
+import utils.time.CompoundTimeUnit;
+import utils.time.TimeUnit;
 
 import java.nio.file.Paths;
 

@@ -20,7 +20,7 @@ public class FileUtils {
 
     public static Logger log = LogManager.getLogger(FileUtils.class);
 
-    public static PrintStream setupResultsFileAsStream(String fileName, Config config) {
+    public static PrintStream setupDatFileAsStream(String fileName, Config config) {
 
         PrintStream stream;
 

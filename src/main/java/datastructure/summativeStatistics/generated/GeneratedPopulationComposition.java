@@ -1,21 +1,16 @@
 package datastructure.summativeStatistics.generated;
 
+import datastructure.population.PeopleCollection;
 import datastructure.summativeStatistics.PopulationComposition;
 import datastructure.summativeStatistics.structure.FailureAgainstTimeTable.FailureTimeRow;
 import datastructure.summativeStatistics.structure.IntegerRange;
 import datastructure.summativeStatistics.structure.InvalidRangeException;
 import datastructure.summativeStatistics.structure.OneDimensionDataDistribution;
-import model.IPerson;
-import model.IPopulation;
-import model.NoChildrenOfDesiredOrder;
-import model.NotDeadException;
-import model.simulationLogic.Simulation;
+import model.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import utils.time.CompoundTimeUnit;
+import utils.time.*;
 import utils.time.Date;
-import utils.time.DateUtils;
-import utils.time.UnsupportedDateConversion;
 
 import java.util.*;
 
@@ -31,11 +26,11 @@ public class GeneratedPopulationComposition implements PopulationComposition {
     private Date startDate;
     private Date endDate;
 
-    private IPopulation population;
+    private PeopleCollection population;
 
     public static Logger log = LogManager.getLogger(GeneratedPopulationComposition.class);
 
-    public GeneratedPopulationComposition(Date startDate, Date endDate, IPopulation population) {
+    public GeneratedPopulationComposition(Date startDate, Date endDate, PeopleCollection population) {
         this.startDate = startDate;
         this.endDate = endDate;
         this.population = population;
@@ -60,14 +55,14 @@ public class GeneratedPopulationComposition implements PopulationComposition {
      */
 
     @Override
-    public OneDimensionDataDistribution getSurvivorTable(Date startYear, CompoundTimeUnit timePeriod, EventType event) throws UnsupportedEventType {
+    public OneDimensionDataDistribution getCohortSurvivorTable(Date cohortYear, EventType event) throws UnsupportedEventType {
 
         if (event == EventType.MALE_DEATH || event == EventType.FEMALE_DEATH) {
-            return getDeathTable(startYear, timePeriod, event);
+            return getCohortDeathTable(cohortYear, event);
         }
 
         if (event == EventType.FIRST_BIRTH) {
-            return getFirstBirthTable(startYear, timePeriod, event);
+            return getCohortFirstBirthTable(cohortYear, event);
         }
 
         throw new UnsupportedEventType("No method to create survivor table of specified EventType");
@@ -75,8 +70,65 @@ public class GeneratedPopulationComposition implements PopulationComposition {
     }
 
     @Override
-    public OneDimensionDataDistribution getSurvivorTable(Date startYear, CompoundTimeUnit timePeriod, EventType event, Double scalingFactor, int timeLimit, IPopulation generatedPopulation) throws UnsupportedEventType {
-        return getSurvivorTable(startYear, timePeriod, event);
+    public OneDimensionDataDistribution getCohortSurvivorTable(Date cohortYear, EventType event, Double scalingFactor, int timeLimit, IPopulation generatedPopulation) throws UnsupportedEventType {
+        return getCohortSurvivorTable(cohortYear, event);
+    }
+
+    @Override
+    public OneDimensionDataDistribution getTimePeriodSurvivorTable(Date startYear, CompoundTimeUnit timePeriod, EventType event) throws UnsupportedEventType, UnsupportedDateConversion {
+
+        Map<IntegerRange, Double> survival = new HashMap<>();
+
+        double survivors = 100000;
+        survival.put(new IntegerRange(0), survivors);
+
+
+        for(int age = 0; age < 100; age ++) {
+
+            int totalDeathsForAge = 0;
+            int totalPopulationOfAge = 0;
+
+            for(DateClock d = startYear.getDateClock(); DateUtils.dateBefore(d, startYear.getDateClock().advanceTime(timePeriod)); d.advanceTime(1, TimeUnit.YEAR)) {
+                Collection<IPerson> people = population.getByYear(d.advanceTime(new CompoundTimeUnit(age, TimeUnit.YEAR).negative()));
+
+                for(IPerson person : people) {
+                    try {
+                        if(person.ageAtDeath() == age) {
+                            totalDeathsForAge++;
+                        }
+                    } catch (NotDeadException e) {
+                        e.printStackTrace();
+                    }
+
+                    if(person.aliveOnDate(d.advanceTime(6, TimeUnit.MONTH))) {
+                       totalPopulationOfAge++;
+                    }
+                }
+
+            }
+
+            double nMxForAge = totalDeathsForAge / (double) totalPopulationOfAge;
+
+            survivors = survivors * (1 - nMxForAge);
+
+            if(survivors - (int)survivors < 0.5) {
+                survivors = (int) survivors;
+            } else {
+                survivors = (int) survivors + 1;
+            }
+
+            // TEMP ive taken the rounding out of here on survivors and a +1 off age - NOW PUT BACK IN
+            survival.put(new IntegerRange(age + 1), survivors);
+
+        }
+
+        return new OneDimensionDataDistribution(startYear.getYearDate(), "", "", survival);
+
+    }
+
+    @Override
+    public OneDimensionDataDistribution getTimePeriodSurvivorTable(Date startYear, int ageLimit, EventType event) throws UnsupportedEventType {
+        return null;
     }
 
     @Override
@@ -85,6 +137,8 @@ public class GeneratedPopulationComposition implements PopulationComposition {
         if(event == EventType.MALE_DEATH) {
 
             Collection<IPerson> people = population.getByYearAndSex('m', year);
+
+
 
             return getDeathAtTimesTable(people, denoteGroupAs, simulationEndDate);
 
@@ -95,6 +149,12 @@ public class GeneratedPopulationComposition implements PopulationComposition {
             return getDeathAtTimesTable(people, denoteGroupAs, simulationEndDate);
 
         }
+//        else if(event == EventType.FIRST_BIRTH) {
+//
+//            Collection<IPerson> people = population.getByYearAndSex('f', year);
+//
+//
+//        }
 
         // TODO implement for birth
 
@@ -104,6 +164,11 @@ public class GeneratedPopulationComposition implements PopulationComposition {
     @Override
     public Collection<FailureTimeRow> getFailureAtTimesTable(Date year, int denoteGroupAs, Date simulationEndDate, EventType event, Double scalingFactor, int timeLimit, IPopulation generatedPopulation) throws UnsupportedDateConversion {
         return getFailureAtTimesTable(year, denoteGroupAs, simulationEndDate, event);
+    }
+
+    @Override
+    public Collection<YearDate> getDataYearsInMap(EventType maleDeath) {
+        return null;
     }
 
     private Collection<FailureTimeRow> getDeathAtTimesTable(Collection<IPerson> people, int denoteGroupAs, Date simulationEndDate) {
@@ -132,7 +197,7 @@ public class GeneratedPopulationComposition implements PopulationComposition {
     -------------------- Specialised table creation methods --------------------
      */
 
-    private OneDimensionDataDistribution getFirstBirthTable(Date startYear, CompoundTimeUnit timePeriod, EventType event) throws UnsupportedEventType {
+    private OneDimensionDataDistribution getCohortFirstBirthTable(Date startYear, EventType event) throws UnsupportedEventType {
 
         Collection<IPerson> women = population.getByYearAndSex('f', startYear);
 
@@ -177,7 +242,7 @@ public class GeneratedPopulationComposition implements PopulationComposition {
 
     }
 
-    private OneDimensionDataDistribution getDeathTable(Date startYear, CompoundTimeUnit timePeriod, EventType event) throws UnsupportedEventType {
+    private OneDimensionDataDistribution getCohortDeathTable(Date startYear, EventType event) throws UnsupportedEventType {
 
         char sex;
 

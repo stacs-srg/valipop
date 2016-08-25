@@ -78,7 +78,7 @@ public class Simulation {
 
         // run model
 
-        IPopulation population = null;
+        PeopleCollection population = null;
         try {
 
             population = sim.makeSimulatedPopulation();
@@ -101,7 +101,7 @@ public class Simulation {
         }
 
         // perform comparisons
-        ComparativeAnalysis comparisonOfDesiredAndGenerated = null;
+        ComparativeAnalysis comparisonOfDesiredAndGenerated;
         try {
 
             comparisonOfDesiredAndGenerated = sim.analyseGeneratedPopulation(population, config);
@@ -140,7 +140,7 @@ public class Simulation {
     }
 
 
-    public ComparativeAnalysis analyseGeneratedPopulation(IPopulation generatedPopulation, Config config) throws UnsupportedDateConversion, StatisticalManipulationCalculationError, IOException {
+    public ComparativeAnalysis analyseGeneratedPopulation(PeopleCollection generatedPopulation, Config config) throws UnsupportedDateConversion, StatisticalManipulationCalculationError, IOException {
         // get comparable statistics for generate population
         PopulationComposition generatedPopulationComposition = new GeneratedPopulationComposition(config.getTS(), config.getTE(), generatedPopulation);
 
@@ -154,7 +154,7 @@ public class Simulation {
 
     }
 
-    private IPopulation makeSimulatedPopulation() throws UnsupportedDateConversion {
+    private PeopleCollection makeSimulatedPopulation() throws UnsupportedDateConversion {
 
         // INFO: at this point all the desired population statistics have been made available
         log.info("Simulation begins");

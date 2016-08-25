@@ -3,17 +3,16 @@ package datastructure.summativeStatistics.desired;
 import datastructure.summativeStatistics.generated.EventType;
 import datastructure.summativeStatistics.PopulationComposition;
 import config.Config;
+import datastructure.summativeStatistics.generated.UnsupportedEventType;
 import datastructure.summativeStatistics.structure.*;
 import datastructure.summativeStatistics.EventRateTables;
 import datastructure.summativeStatistics.structure.FailureAgainstTimeTable.FailureTimeRow;
 import model.IPopulation;
 import utils.CollectionUtils;
 import utils.time.*;
+import utils.time.Date;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * The PopulationStatistics holds data about the rate at which specified events occur to specified subsets of
@@ -105,12 +104,12 @@ public class PopulationStatistics implements PopulationComposition, EventRateTab
      */
 
     @Override
-    public OneDimensionDataDistribution getSurvivorTable(Date startYear, CompoundTimeUnit timePeriod, EventType event) {
+    public OneDimensionDataDistribution getCohortSurvivorTable(Date cohortYear, EventType event) {
         return null;
     }
 
     @Override
-    public OneDimensionDataDistribution getSurvivorTable(Date startYear, CompoundTimeUnit timePeriod, EventType event, Double scalingFactor, int timeLimit, IPopulation generatedPopulation) throws UnsupportedDateConversion {
+    public OneDimensionDataDistribution getCohortSurvivorTable(Date cohortYear, EventType event, Double scalingFactor, int timeLimit, IPopulation generatedPopulation) throws UnsupportedDateConversion {
 
         Map<IntegerRange, Double> survival = new HashMap<>();
 
@@ -118,25 +117,25 @@ public class PopulationStatistics implements PopulationComposition, EventRateTab
         survival.put(new IntegerRange(0), survivors);
 
         int age = 0;
-        for (DateClock d = startYear.getDateClock(); DateUtils.dateBefore(d, startYear.getDateClock().advanceTime(timeLimit, TimeUnit.YEAR)); d = d.advanceTime(1, TimeUnit.YEAR)) {
+        for (DateClock d = cohortYear.getDateClock(); DateUtils.dateBefore(d, cohortYear.getDateClock().advanceTime(timeLimit, TimeUnit.YEAR)); d = d.advanceTime(1, TimeUnit.YEAR)) {
 
             double nMx = 0;
 
             switch (event) {
                 case FIRST_BIRTH:
-                    nMx = calculateOrderedBirthRate(startYear, d, age, 0, generatedPopulation, survivors);
+                    nMx = calculateOrderedBirthRate(cohortYear, d, age, 0, generatedPopulation, survivors);
                     break;
                 case SECOND_BIRTH:
-                    nMx = calculateOrderedBirthRate(startYear, d, age, 1, generatedPopulation, survivors);
+                    nMx = calculateOrderedBirthRate(cohortYear, d, age, 1, generatedPopulation, survivors);
                     break;
                 case THIRD_BIRTH:
-                    nMx = calculateOrderedBirthRate(startYear, d, age, 2, generatedPopulation, survivors);
+                    nMx = calculateOrderedBirthRate(cohortYear, d, age, 2, generatedPopulation, survivors);
                     break;
                 case FOURTH_BIRTH:
-                    nMx = calculateOrderedBirthRate(startYear, d, age, 3, generatedPopulation, survivors);
+                    nMx = calculateOrderedBirthRate(cohortYear, d, age, 3, generatedPopulation, survivors);
                     break;
                 case FIFTH_BIRTH:
-                    nMx = calculateOrderedBirthRate(startYear, d, age, 4, generatedPopulation, survivors);
+                    nMx = calculateOrderedBirthRate(cohortYear, d, age, 4, generatedPopulation, survivors);
                     break;
                 case MALE_DEATH:
                     nMx = getDeathRates(d, 'm').getData(age);
@@ -147,7 +146,7 @@ public class PopulationStatistics implements PopulationComposition, EventRateTab
             }
 
 
-            int n = timePeriod.getCount();
+//            int n = timePeriod.getCount();
 
 
             // EDIT - put nQx back in here
@@ -172,6 +171,61 @@ public class PopulationStatistics implements PopulationComposition, EventRateTab
         }
 
 
+        return new OneDimensionDataDistribution(cohortYear.getYearDate(), "", "", survival);
+    }
+
+    @Override
+    public OneDimensionDataDistribution getTimePeriodSurvivorTable(Date startYear, CompoundTimeUnit timePeriod, EventType event) throws UnsupportedEventType {
+
+        return null;
+    }
+
+    // Returns the survival table based on only using the statistics from the given startYear. Top survivor value will be 100,000.
+    @Override
+    public OneDimensionDataDistribution getTimePeriodSurvivorTable(Date startYear, int ageLimit, EventType event) throws UnsupportedEventType {
+
+        Map<IntegerRange, Double> survival = new HashMap<>();
+
+        double survivors = 100000;
+        survival.put(new IntegerRange(0), survivors);
+
+
+        for(int age = 0; age < ageLimit; age++) {
+
+            double nMx = 0;
+
+            switch (event) {
+                case FIRST_BIRTH:
+                case SECOND_BIRTH:
+                case THIRD_BIRTH:
+                case FOURTH_BIRTH:
+                case FIFTH_BIRTH:
+                    System.err.println("Not implemented - PopulationStatistics.getTimePeriodSurvivorTable");
+                    break;
+                case MALE_DEATH:
+                    nMx = getDeathRates(startYear, 'm').getData(age);
+                    break;
+                case FEMALE_DEATH:
+                    nMx = getDeathRates(startYear, 'f').getData(age);
+                    break;
+            }
+
+            survivors = survivors * (1 - nMx);
+
+            if(survivors - (int)survivors < 0.5) {
+                survivors = (int) survivors;
+            } else {
+                survivors = (int) survivors + 1;
+            }
+
+
+
+            // TEMP ive taken the rounding out of here on survivors and a +1 off age - NOW PUT BACK IN
+            survival.put(new IntegerRange(age + 1), survivors);
+
+
+        }
+
         return new OneDimensionDataDistribution(startYear.getYearDate(), "", "", survival);
     }
 
@@ -185,7 +239,7 @@ public class PopulationStatistics implements PopulationComposition, EventRateTab
 
         Collection<FailureTimeRow> rows = new ArrayList<>();
 
-        OneDimensionDataDistribution survivorTable = getSurvivorTable(year, new CompoundTimeUnit(1, TimeUnit.YEAR), event, scalingFactor, timeLimit, generatedPopulation);
+        OneDimensionDataDistribution survivorTable = getCohortSurvivorTable(year, event, scalingFactor, timeLimit, generatedPopulation);
 
         double prevSurvivors = scalingFactor + 1;
 
@@ -209,6 +263,25 @@ public class PopulationStatistics implements PopulationComposition, EventRateTab
         }
 
         return rows;
+    }
+
+    @Override
+    public Collection<YearDate> getDataYearsInMap(EventType eventType) {
+        switch(eventType) {
+
+            case FIRST_BIRTH:
+            case SECOND_BIRTH:
+            case THIRD_BIRTH:
+            case FOURTH_BIRTH:
+            case FIFTH_BIRTH:
+                return orderedBirth.keySet();
+            case MALE_DEATH:
+                return maleDeath.keySet();
+            case FEMALE_DEATH:
+                return femaleDeath.keySet();
+        }
+
+        return Collections.emptyList();
     }
 
     /*
@@ -235,7 +308,11 @@ public class PopulationStatistics implements PopulationComposition, EventRateTab
         int minDifferenceInMonths = Integer.MAX_VALUE;
         YearDate nearestTableYear = null;
 
-        for (YearDate tableYear : map.keySet()) {
+        ArrayList<YearDate> orderedKeySet = new ArrayList<YearDate>(map.keySet());
+        Collections.sort(orderedKeySet);
+
+
+        for (YearDate tableYear : orderedKeySet) {
             int difference = DateUtils.differenceInMonths(tableYear, year.getYearDate()).getCount();
             if (difference < minDifferenceInMonths) {
                 minDifferenceInMonths = difference;

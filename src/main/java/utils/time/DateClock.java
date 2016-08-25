@@ -114,4 +114,9 @@ public final class DateClock implements Date {
             return 1;
         }
     }
+
+    @Override
+    public int hashCode() {
+        return year;
+    }
 }

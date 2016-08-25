@@ -5,6 +5,7 @@ import datastructure.summativeStatistics.generated.EventType;
 import datastructure.summativeStatistics.structure.OneDimensionDataDistribution;
 import model.IPopulation;
 import model.simulationLogic.StatisticalManipulationCalculationError;
+import utils.time.CompoundTimeUnit;
 import utils.time.Date;
 import utils.time.UnsupportedDateConversion;
 
@@ -29,23 +30,13 @@ public interface IComparativeAnalysis {
      * @param observedEvents the observed events
      * @return the km analysis
      */
-    static IKaplanMeierAnalysis runKaplanMeier(EventType event, OneDimensionDataDistribution expectedEvents, OneDimensionDataDistribution observedEvents) throws StatisticalManipulationCalculationError {
+    static IKaplanMeierAnalysis runKaplanMeier(EventType event, CompoundTimeUnit timePeriod, OneDimensionDataDistribution expectedEvents, OneDimensionDataDistribution observedEvents) throws StatisticalManipulationCalculationError {
         return null;
     }
-
-
-    /**
-     * If all comparisons pass then return true, else return fail.
-     *
-     * @return have all comparative analyses passed
-     */
-    boolean passed();
-
 
     Map<Date, Map<EventType, IKaplanMeierAnalysis>> getResults();
 
     void outputResults(PrintStream resultOutput) throws UnsupportedDateConversion;
-
 
     void runAnalysis(IPopulation generatedPopulation, Config config) throws UnsupportedDateConversion, StatisticalManipulationCalculationError, IOException;
 

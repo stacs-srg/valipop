@@ -3,16 +3,14 @@ package validation;
 import config.Config;
 import datastructure.summativeStatistics.generated.EventType;
 import datastructure.summativeStatistics.generated.UnsupportedEventType;
-import datastructure.summativeStatistics.structure.FailureAgainstTimeTable.FailureTimeDoubleArrays;
 import datastructure.summativeStatistics.structure.FailureAgainstTimeTable.FailureTimeRow;
 import datastructure.summativeStatistics.structure.IntegerRange;
-import datastructure.summativeStatistics.structure.InvalidRangeException;
 import datastructure.summativeStatistics.structure.OneDimensionDataDistribution;
 import datastructure.summativeStatistics.generated.StatisticalTables;
 import model.IPopulation;
 import model.simulationLogic.StatisticalManipulationCalculationError;
-import plots.javastat.survival.inference.LogRankTest;
-import plots.javastat.survival.inference.SurvivalTestTemplate;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import plots.survival.SurvivalPlot;
 import utils.FileUtils;
 import utils.time.*;
@@ -33,17 +31,9 @@ public class ComparativeAnalysis implements IComparativeAnalysis {
     private Date startDate;
     private Date endDate;
 
-    private double fisherSumMaleDeath = 0;
-    private double fisherCountMaleDeath = 0;
-
-    private double fisherSumFemaleDeath = 0;
-    private double fisherCountFemaleDeath = 0;
-
-    private double fisherSumFirstBirth = 0;
-    private double fisherCountFirstBirth = 0;
-
-
     private Map<Date, Map<EventType, IKaplanMeierAnalysis>> results;
+
+    public static Logger log = LogManager.getLogger(ComparativeAnalysis.class);
 
     public ComparativeAnalysis(StatisticalTables desired, StatisticalTables generated, Date analysisStartDate, Date analysisEndDate) {
         this.desired = desired;
@@ -52,7 +42,7 @@ public class ComparativeAnalysis implements IComparativeAnalysis {
         this.endDate = analysisEndDate;
     }
 
-    public static IKaplanMeierAnalysis runKaplanMeier(EventType event, OneDimensionDataDistribution expectedEvents, OneDimensionDataDistribution observedEvents) throws StatisticalManipulationCalculationError {
+    protected static IKaplanMeierAnalysis runKaplanMeier(EventType event, OneDimensionDataDistribution expectedEvents, OneDimensionDataDistribution observedEvents) throws StatisticalManipulationCalculationError {
 
         IntegerRange[] orderedKeys = expectedEvents.getData().keySet().toArray(new IntegerRange[expectedEvents.getData().keySet().size()]);
         Arrays.sort(orderedKeys, IntegerRange::compareTo);
@@ -117,13 +107,163 @@ public class ComparativeAnalysis implements IComparativeAnalysis {
     }
 
     @Override
-    public boolean passed() {
-        return false;
+    public Map<Date, Map<EventType, IKaplanMeierAnalysis>> getResults() {
+        return results;
+    }
+
+
+
+    private boolean printPassAndPValue(EventType eventType, Map<EventType, IKaplanMeierAnalysis> res, PrintStream resultOutput) {
+
+        boolean result = res.get(eventType).significantDifferenceBetweenGroups();
+
+        if (res.containsKey(eventType)) {
+            resultOutput.print(getPassPrint(result, false) + "-");
+            resultOutput.printf("%.3f ", res.get(eventType).getPValue());
+            resultOutput.print("(");
+            resultOutput.printf("%.3f ", res.get(eventType).getLogRankValue());
+            resultOutput.print(")");
+
+            if (Double.isNaN(res.get(eventType).getPValue())) {
+                resultOutput.print("  ");
+            }
+
+            resultOutput.print("| ");
+        } else {
+            resultOutput.print("        | ");
+        }
+
+        return !result;
+
+
+    }
+
+    private String getPassPrint(boolean result, boolean passCase) {
+        if (result == passCase) {
+            return "P";
+        } else {
+            return "F";
+        }
     }
 
     @Override
-    public Map<Date, Map<EventType, IKaplanMeierAnalysis>> getResults() {
-        return results;
+    public void runAnalysis(IPopulation generatedPopulation, Config config) throws UnsupportedDateConversion, StatisticalManipulationCalculationError, IOException {
+
+        Map<Date, Map<EventType, IKaplanMeierAnalysis>> results = new HashMap<Date, Map<EventType, IKaplanMeierAnalysis>>();
+
+        ArrayList<YearDate> years = new ArrayList<>();
+
+
+        // for each year in analysis period
+        for (DateClock d = startDate.getDateClock(); DateUtils.dateBefore(d, endDate); d = d.advanceTime(1, TimeUnit.YEAR)) {
+
+            Map<EventType, IKaplanMeierAnalysis> temp = new HashMap<>();
+
+            temp.put(EventType.MALE_DEATH, getKMResult(d, EventType.MALE_DEATH, new CompoundTimeUnit(1, TimeUnit.YEAR), generatedPopulation, config));
+            temp.put(EventType.FEMALE_DEATH, getKMResult(d, EventType.FEMALE_DEATH, new CompoundTimeUnit(1, TimeUnit.YEAR), generatedPopulation, config));
+            temp.put(EventType.FIRST_BIRTH, getKMResult(d, EventType.FIRST_BIRTH, new CompoundTimeUnit(1, TimeUnit.YEAR), generatedPopulation, config));
+
+            results.put(d.getYearDate(), temp);
+        }
+
+        ArrayList<YearDate> maleDeathDataYears = new ArrayList<>(desired.getDataYearsInMap(EventType.MALE_DEATH));
+        Collections.sort(maleDeathDataYears);
+
+        Iterator<YearDate> i = maleDeathDataYears.iterator();
+
+        Date prevDate;
+
+        if(DateUtils.dateBefore(startDate, maleDeathDataYears.get(0))) {
+            prevDate = startDate;
+        } else {
+            prevDate = maleDeathDataYears.get(0);
+        }
+
+        YearDate thisDate = null;
+        YearDate nextDate = null;
+
+        while(i.hasNext()) {
+            if(thisDate == null) {
+                thisDate = i.next();
+            } else {
+                thisDate = nextDate;
+            }
+
+            if(i.hasNext()) {
+                nextDate = i.next();
+            }
+
+            int days = DateUtils.differenceInDays(thisDate, nextDate);
+
+            DateInstant midDate;
+
+            if(days == 0) {
+                midDate = endDate.getDateInstant();
+            } else {
+                midDate = DateUtils.calculateDateInstant(thisDate, days);
+            }
+
+            if(DateUtils.dateBefore(thisDate, startDate)) {
+
+                if(!DateUtils.dateBefore(midDate, startDate)) {
+                    results.get(midDate.getYearDate()).put(EventType.MALE_DEATH, getKMResult(startDate, EventType.MALE_DEATH, DateUtils.differenceInMonths(startDate, midDate), generatedPopulation, config));
+                }
+
+            } else if(DateUtils.dateBefore(endDate, midDate)) {
+
+                results.get(midDate.getYearDate()).put(EventType.MALE_DEATH, getKMResult(prevDate, EventType.MALE_DEATH, DateUtils.differenceInMonths(prevDate, endDate), generatedPopulation, config));
+
+            } else {
+
+                results.get(midDate.getYearDate()).put(EventType.MALE_DEATH, getKMResult(prevDate, EventType.MALE_DEATH, DateUtils.differenceInMonths(prevDate, midDate), generatedPopulation, config));
+            }
+
+            prevDate = midDate;
+
+
+        }
+
+
+        this.results = results;
+
+    }
+
+    private IKaplanMeierAnalysis getKMResult(Date date, EventType eventType, CompoundTimeUnit timePeriod, IPopulation generatedPopulation, Config config) throws UnsupportedDateConversion, StatisticalManipulationCalculationError, IOException {
+        IKaplanMeierAnalysis result = null;
+
+        try {
+            result = runKMAnalysis(date, eventType, desired, generated, timePeriod, generatedPopulation, config);
+
+        } catch (UnsupportedEventType unsupportedEventType) {
+            log.info("Kaplan Meier ran with unsupported event type: " + eventType.toString());
+        }
+
+        if(config.produceDatFiles() && eventType != EventType.FIRST_BIRTH) {
+            outputCalcDataToDatFile(date, timePeriod, "_" + timePeriod.toString(), eventType, generatedPopulation, config);
+        }
+
+        return result;
+    }
+
+    private IKaplanMeierAnalysis runKMAnalysis(Date date, EventType eventType, StatisticalTables expected, StatisticalTables observed, CompoundTimeUnit timePeriod, IPopulation generatedPopulation, Config config) throws StatisticalManipulationCalculationError, UnsupportedDateConversion, UnsupportedEventType, IOException {
+        // get survival tables for all males born in year
+        OneDimensionDataDistribution populationSurvivorTable = observed.getCohortSurvivorTable(date, eventType);
+//        MapUtils.outputResults("G SUR-" + date.toString(), populationSurvivorTable.getData(), 0, 1, 100);
+
+//        System.out.println(populationSurvivorTable.getData(0));
+
+        // get equiverlent table from inputs stats
+        OneDimensionDataDistribution statisticsSurvivorTable = expected.getCohortSurvivorTable(date, eventType, populationSurvivorTable.getData(0), populationSurvivorTable.getLargestLabel().getMax() - 1, generatedPopulation);
+//        MapUtils.outputResults("S SUR-" + date.toString(), statisticsSurvivorTable.getData(), 0, 1, 100);
+
+        if(config.produceGraphs()) {
+            new SurvivalPlot(statisticsSurvivorTable, populationSurvivorTable).generatePlot(eventType, date, config);
+        }
+
+        // perform KM analysis and log result
+        return runKaplanMeier(eventType, statisticsSurvivorTable, populationSurvivorTable);
+
+
     }
 
     @Override
@@ -180,128 +320,42 @@ public class ComparativeAnalysis implements IComparativeAnalysis {
         resultOutput.print("First births - Passes: " + b0Passes + "    |    Fails: " + b0Fails + "\n");
         resultOutput.print("Totals       - Passes: " + tPasses + "    |    Fails: " + tFails + "\n");
 
-//        System.out.println();
-//        System.out.println("Fisher Combined P Values");
-//        System.out.println("Male Death   P Value = " + (1 - new ChiSquaredDistribution(2 * fisherCountMaleDeath).cumulativeProbability(fisherSumMaleDeath)));
-//        System.out.println("Female Death P Value = " + (1 - new ChiSquaredDistribution(2 * fisherCountFemaleDeath).cumulativeProbability(fisherSumFemaleDeath)));
-//        System.out.println("Both Deaths  P Value = " + (1 - new ChiSquaredDistribution(2 * (fisherCountMaleDeath + fisherCountFemaleDeath)).cumulativeProbability(fisherSumMaleDeath + fisherSumFemaleDeath)));
-//        System.out.println("First Births P Value = " + (1 - new ChiSquaredDistribution(2 * fisherCountFirstBirth).cumulativeProbability(fisherSumFirstBirth)));
-
     }
 
-    private boolean printPassAndPValue(EventType eventType, Map<EventType, IKaplanMeierAnalysis> res, PrintStream resultOutput) {
+    private void outputCalcDataToDatFile(Date date, CompoundTimeUnit timePeriod, String note, EventType eventType, IPopulation generatedPopulation, Config config) throws UnsupportedDateConversion {
+        Collection<FailureTimeRow> failures = getFailureAtTimesTable(date, timePeriod, eventType, desired, generated, generatedPopulation, config);
 
-        boolean result = res.get(eventType).significantDifferenceBetweenGroups();
+        String fName = "";
+        switch (eventType) {
 
-        if (res.containsKey(eventType)) {
-            resultOutput.print(getPassPrint(result, false) + "-");
-            resultOutput.printf("%.3f ", res.get(eventType).getPValue());
-            resultOutput.print("(");
-            resultOutput.printf("%.3f ", res.get(eventType).getLogRankValue());
-            resultOutput.print(")");
-
-            if (Double.isNaN(res.get(eventType).getPValue())) {
-                resultOutput.print("  ");
-            }
-
-            resultOutput.print("| ");
-        } else {
-            resultOutput.print("        | ");
+            case FIRST_BIRTH:
+                fName = "firstBirths";
+                break;
+            case SECOND_BIRTH:
+                fName = "secondBirths";
+                break;
+            case THIRD_BIRTH:
+                fName = "thirdBirths";
+                break;
+            case FOURTH_BIRTH:
+                fName = "fourthBirths";
+                break;
+            case FIFTH_BIRTH:
+                fName = "fifthBirths";
+                break;
+            case MALE_DEATH:
+                fName = "maleDeaths";
+                break;
+            case FEMALE_DEATH:
+                fName = "femaleDeaths";
+                break;
         }
 
-        return !result;
-
-
+        PrintStream resultsOutput = FileUtils.setupDatFileAsStream(fName + date.toOrderableString() + note, config);
+        FileUtils.outputFailureTimeTable(failures, resultsOutput);
     }
 
-    private String getPassPrint(boolean result, boolean passCase) {
-        if (result == passCase) {
-            return "P";
-        } else {
-            return "F";
-        }
-    }
-
-    @Override
-    public void runAnalysis(IPopulation generatedPopulation, Config config) throws UnsupportedDateConversion, StatisticalManipulationCalculationError, IOException {
-
-        Map<Date, Map<EventType, IKaplanMeierAnalysis>> results = new HashMap<Date, Map<EventType, IKaplanMeierAnalysis>>();
-
-        // for each year in analysis period
-        for (DateClock d = startDate.getDateClock(); DateUtils.dateBefore(d, endDate); d = d.advanceTime(1, TimeUnit.YEAR)) {
-
-            // EVENT - Male Death
-
-            Map<EventType, IKaplanMeierAnalysis> temp = new HashMap<EventType, IKaplanMeierAnalysis>();
-
-            IKaplanMeierAnalysis result;
-            try {
-//                result = runKMAnalysis(d, EventType.MALE_DEATH, desired, generated, generatedPopulation, config);
-                result = runKMAnalysis(d, EventType.MALE_DEATH, desired, generated, generatedPopulation, config);
-                temp.put(EventType.MALE_DEATH, result);
-
-
-                if (!Double.isNaN(result.getPValue())) {
-                    fisherSumMaleDeath += Math.log(result.getPValue());
-                    fisherCountMaleDeath++;
-                }
-
-//                System.out.println(d.toString() + " | " + EventType.MALE_DEATH.toString() + " | Sig Diff? " + result.significantDifferenceBetweenGroups() + " | " + result.getPValue() + " | " + result.getLogRankValue());
-
-            } catch (UnsupportedEventType unsupportedEventType) {
-                unsupportedEventType.printStackTrace();
-            }
-
-            FailureTimeDoubleArrays mDA = getFailureAtTimesDoubleArrays(d, EventType.MALE_DEATH, desired, generated, generatedPopulation, config);
-            SurvivalTestTemplate test = new LogRankTest(mDA.getTimeExpected(), mDA.getEventExpected(), mDA.getTimeObserved(), mDA.getEventObserved());
-            System.out.println(d.toOrderableString() + "    " + test.pValue + "   (" + test.testStatistic + ")");
-
-            Collection<FailureTimeRow> maleDeaths = getFailureAtTimesTable(d, EventType.MALE_DEATH, desired, generated, generatedPopulation, config);
-
-            PrintStream resultsOutput = FileUtils.setupResultsFileAsStream("maleDeaths" + d.toOrderableString(), config);
-            FileUtils.outputFailureTimeTable(maleDeaths, resultsOutput);
-
-            try {
-                result = runKMAnalysis(d, EventType.FEMALE_DEATH, desired, generated, generatedPopulation, config);
-                temp.put(EventType.FEMALE_DEATH, result);
-
-                if (!Double.isNaN(result.getPValue())) {
-                    fisherSumFemaleDeath += Math.log(result.getPValue());
-                    fisherCountFemaleDeath++;
-                }
-
-//                System.out.println(d.toString() + " | " + EventType.FEMALE_DEATH.toString() + " | Sig Diff? " + result.significantDifferenceBetweenGroups() + " | " + result.getPValue() + " | " + result.getLogRankValue());
-
-            } catch (UnsupportedEventType unsupportedEventType) {
-                unsupportedEventType.printStackTrace();
-            }
-
-            try {
-                result = runKMAnalysis(d, EventType.FIRST_BIRTH, desired, generated, generatedPopulation, config);
-                temp.put(EventType.FIRST_BIRTH, result);
-
-                if (!Double.isNaN(result.getPValue())) {
-                    fisherSumFirstBirth += Math.log(result.getPValue());
-                    fisherCountFirstBirth++;
-                }
-
-
-//                System.out.println(d.toString() + " | " + EventType.FIRST_BIRTH.toString() + " | Sig Diff? " + result.significantDifferenceBetweenGroups() + " | " + result.getPValue() + " | " + result.getLogRankValue());
-
-            } catch (UnsupportedEventType unsupportedEventType) {
-                unsupportedEventType.printStackTrace();
-            }
-
-            results.put(d, temp);
-        }
-
-        this.results = results;
-
-//        PlotControl.showPlots();
-
-    }
-
-    public Collection<FailureTimeRow> getFailureAtTimesTable(Date date, EventType event, StatisticalTables expected, StatisticalTables observed, IPopulation generatedPopulation, Config config) throws UnsupportedDateConversion {
+    public Collection<FailureTimeRow> getFailureAtTimesTable(Date date, CompoundTimeUnit timePeriod, EventType event, StatisticalTables expected, StatisticalTables observed, IPopulation generatedPopulation, Config config) throws UnsupportedDateConversion {
 
 
         Collection<FailureTimeRow> rows = observed.getFailureAtTimesTable(date, 1, config.getTE(), event);
@@ -313,45 +367,6 @@ public class ComparativeAnalysis implements IComparativeAnalysis {
 
         return rows;
 
-    }
-
-    public FailureTimeDoubleArrays getFailureAtTimesDoubleArrays(Date date, EventType event, StatisticalTables expected, StatisticalTables observed, IPopulation generatedPopulation, Config config) throws UnsupportedDateConversion {
-
-
-        Collection<FailureTimeRow> rows = observed.getFailureAtTimesTable(date, 1, config.getTE(), event);
-
-        double[] obseveredTimes = new double[rows.size()];
-        double[] obseveredEvents = new double[rows.size()];
-
-        int c = 0;
-        for(FailureTimeRow r : rows) {
-            obseveredTimes[c] = r.getTimeElapsed();
-            obseveredEvents[c] = toInt(r.hasEventOccured());
-            c++;
-        }
-
-
-        int maxAge = getHighestTimeValue(rows);
-
-        int numberInObserved = rows.size() - 1;
-        rows = expected.getFailureAtTimesTable(date, 0, config.getTE(), event, (double) numberInObserved, maxAge, generatedPopulation);
-
-        double[] expectedTimes = new double[rows.size()];
-        double[] expectedEvents = new double[rows.size()];
-
-        c = 0;
-        for(FailureTimeRow r : rows) {
-            expectedTimes[c] = r.getTimeElapsed();
-            expectedEvents[c] = toInt(r.hasEventOccured());
-            c++;
-        }
-
-        return new FailureTimeDoubleArrays(obseveredTimes, obseveredEvents, expectedTimes, expectedEvents);
-
-    }
-
-    private int toInt(boolean b) {
-       return b ? 1 : 0;
     }
 
     private int getHighestTimeValue(Collection<FailureTimeRow> rows) {
@@ -369,30 +384,7 @@ public class ComparativeAnalysis implements IComparativeAnalysis {
 
     }
 
-    private IKaplanMeierAnalysis runKMAnalysis(Date date, EventType eventType, StatisticalTables expected, StatisticalTables observed, IPopulation generatedPopulation, Config config) throws StatisticalManipulationCalculationError, UnsupportedDateConversion, UnsupportedEventType, IOException {
-        // get survival tables for all males born in year
-        OneDimensionDataDistribution populationSurvivorTable = observed.getSurvivorTable(date, new CompoundTimeUnit(1, TimeUnit.YEAR), eventType);
-//        MapUtils.outputResults("G SUR-" + date.toString(), populationSurvivorTable.getData(), 0, 1, 100);
-
-//        System.out.println(populationSurvivorTable.getData(0));
-
-        // get equiverlent table from inputs stats
-        OneDimensionDataDistribution statisticsSurvivorTable = expected.getSurvivorTable(date, new CompoundTimeUnit(1, TimeUnit.YEAR), eventType, populationSurvivorTable.getData(0), populationSurvivorTable.getLargestLabel().getMax() - 1, generatedPopulation);
-//        MapUtils.outputResults("S SUR-" + date.toString(), statisticsSurvivorTable.getData(), 0, 1, 100);
-
-        if(config.produceGraphs()) {
-            new SurvivalPlot(statisticsSurvivorTable, populationSurvivorTable).generatePlot(eventType, date, config);
-        }
-
-        // perform KM analysis and log result
-        System.out.print(date.getYear() + " ");
-        return runKaplanMeier(eventType, statisticsSurvivorTable, populationSurvivorTable);
-
-
-    }
-
-    private static long pow (long a, int b)
-    {
+    private static long pow (long a, int b) {
         if ( b == 0)        return 1;
         if ( b == 1)        return a;
         if (isEven( b ))    return     pow ( a * a, b/2); //even a=(a^2)^b/2
@@ -407,4 +399,5 @@ public class ComparativeAnalysis implements IComparativeAnalysis {
         else
             return false;
     }
+
 }

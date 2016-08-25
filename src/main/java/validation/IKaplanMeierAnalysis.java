@@ -1,6 +1,7 @@
 package validation;
 
 import datastructure.summativeStatistics.generated.EventType;
+import utils.time.CompoundTimeUnit;
 import utils.time.Date;
 
 /**

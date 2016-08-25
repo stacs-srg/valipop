@@ -97,8 +97,12 @@ public final class DateInstant implements Date {
 
     @Override
     public DateClock getDateClock() throws UnsupportedDateConversion {
-        throw new UnsupportedDateConversion("Cannot convert from DateInstant to DateClock due to the resulting loss " +
-                "of information regarding the day of the month");
+        if(day == 1) {
+            return new DateClock(month, year);
+        } else {
+            throw new UnsupportedDateConversion("Cannot convert from DateInstant to DateClock due to the resulting loss " +
+                    "of information regarding the day of the month");
+        }
     }
 
     @Override
