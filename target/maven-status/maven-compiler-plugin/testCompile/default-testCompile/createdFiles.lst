@@ -1,6 +1,7 @@
+validation/ComparativeAnalysisTest.class
+utils/time/CompoundTimeUnitTest.class
+utils/time/DateInstantTest.class
 utils/time/DateUtilsTest.class
 model/implementation/populationStatistics/IntegerRangeTest.class
-utils/time/CompoundTimeUnitTest.class
 utils/time/DateClockTest.class
-utils/time/DateInstantTest.class
 datastructure/PeopleCollectionTest.class
