@@ -251,8 +251,8 @@ public class ComparativeAnalysis implements IComparativeAnalysis {
         OneDimensionDataDistribution populationSurvivorTable = observed.getCohortSurvivorTable(date, eventType);
         OneDimensionDataDistribution statisticsSurvivorTable = expected.getCohortSurvivorTable(date, eventType, populationSurvivorTable.getData(0), populationSurvivorTable.getLargestLabel().getMax() - 1, generatedPopulation);
 
-        Collection<FailureTimeRow> rows = TableTranformationUtils.transformSurvivorTableToTableOfOrderedIndividualFailureTime(populationSurvivorTable, 1, 100);
-        rows.addAll(TableTranformationUtils.transformSurvivorTableToTableOfOrderedIndividualFailureTime(statisticsSurvivorTable, 0, 100));
+        Collection<FailureTimeRow> rows = TableTranformationUtils.transformSurvivorTableToTableOfOrderedIndividualFailureTime(populationSurvivorTable, "Observed");
+        rows.addAll(TableTranformationUtils.transformSurvivorTableToTableOfOrderedIndividualFailureTime(statisticsSurvivorTable, "Desired"));
 
         return rows;
     }
@@ -285,8 +285,8 @@ public class ComparativeAnalysis implements IComparativeAnalysis {
             new SurvivalPlot(statisticsSurvivorTable, populationSurvivorTable).generatePlot(eventType, date, config);
         }
 
-        Collection<FailureTimeRow> failures = TableTranformationUtils.transformSurvivorTableToTableOfOrderedIndividualFailureTime(populationSurvivorTable, 1, 100);
-        failures.addAll(TableTranformationUtils.transformSurvivorTableToTableOfOrderedIndividualFailureTime(statisticsSurvivorTable, 0, 100));
+        Collection<FailureTimeRow> failures = TableTranformationUtils.transformSurvivorTableToTableOfOrderedIndividualFailureTime(populationSurvivorTable, "Observed");
+        failures.addAll(TableTranformationUtils.transformSurvivorTableToTableOfOrderedIndividualFailureTime(statisticsSurvivorTable, "Desired"));
         outputCalcDataToDatFile(date, "_timeperiod", eventType, config, failures);
 
         // perform KM analysis and log result
@@ -384,12 +384,12 @@ public class ComparativeAnalysis implements IComparativeAnalysis {
 
     public Collection<FailureTimeRow> getFailureAtTimesTable(Date date, EventType event, StatisticalTables expected, StatisticalTables observed, IPopulation generatedPopulation, Config config) throws UnsupportedDateConversion {
 
-        Collection<FailureTimeRow> rows = observed.getFailureAtTimesTable(date, 1, config.getTE(), event);
+        Collection<FailureTimeRow> rows = observed.getFailureAtTimesTable(date, "Observed", config.getTE(), event);
 
         int maxAge = getHighestTimeValue(rows);
 
         int numberInObserved = rows.size() - 1;
-        rows.addAll(expected.getFailureAtTimesTable(date, 0, config.getTE(), event, (double) numberInObserved, maxAge, generatedPopulation));
+        rows.addAll(expected.getFailureAtTimesTable(date, "Desired", config.getTE(), event, (double) numberInObserved, maxAge, generatedPopulation));
 
         return rows;
 

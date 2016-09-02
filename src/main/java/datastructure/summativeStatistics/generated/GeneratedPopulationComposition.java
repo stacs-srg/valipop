@@ -145,7 +145,7 @@ public class GeneratedPopulationComposition implements PopulationComposition {
     }
 
     @Override
-    public Collection<FailureTimeRow> getFailureAtTimesTable(Date year, int denoteGroupAs, Date simulationEndDate, EventType event) {
+    public Collection<FailureTimeRow> getFailureAtTimesTable(Date year, String denoteGroupAs, Date simulationEndDate, EventType event) {
 
         if(event == EventType.MALE_DEATH) {
 
@@ -175,7 +175,7 @@ public class GeneratedPopulationComposition implements PopulationComposition {
     }
 
     @Override
-    public Collection<FailureTimeRow> getFailureAtTimesTable(Date year, int denoteGroupAs, Date simulationEndDate, EventType event, Double scalingFactor, int timeLimit, IPopulation generatedPopulation) throws UnsupportedDateConversion {
+    public Collection<FailureTimeRow> getFailureAtTimesTable(Date year, String denoteGroupAs, Date simulationEndDate, EventType event, Double scalingFactor, int timeLimit, IPopulation generatedPopulation) throws UnsupportedDateConversion {
         return null;
 
     }
@@ -185,7 +185,7 @@ public class GeneratedPopulationComposition implements PopulationComposition {
         return null;
     }
 
-    private Collection<FailureTimeRow> getDeathAtTimesTable(Collection<IPerson> people, int denoteGroupAs, Date simulationEndDate) {
+    private Collection<FailureTimeRow> getDeathAtTimesTable(Collection<IPerson> people, String denoteGroupAs, Date simulationEndDate) {
 
         Collection<FailureTimeRow> rows = new ArrayList<>();
 

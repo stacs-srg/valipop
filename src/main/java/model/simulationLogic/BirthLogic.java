@@ -94,6 +94,7 @@ public class BirthLogic {
 
                     } while (eligableWomen < totalNumberOfMothers);
 
+                    // WERE BROKEN IN HERE SOMEWHERE...
 
                     birthCount += numberOfChildrenToBirth;
                     desiredPopulationStatistics.getOrderedBirthRates(currentTime).returnAppliedData(key, birthRate / config.getBirthTimeStep().toDecimalRepresentation());

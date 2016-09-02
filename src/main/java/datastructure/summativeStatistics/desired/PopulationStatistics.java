@@ -230,14 +230,14 @@ public class PopulationStatistics implements PopulationComposition, EventRateTab
     }
 
     @Override
-    public Collection<FailureTimeRow> getFailureAtTimesTable(Date year, int denoteGroupAs, Date simulationEndDate, EventType event) {
+    public Collection<FailureTimeRow> getFailureAtTimesTable(Date year, String denoteGroupAs, Date simulationEndDate, EventType event) {
         return null;
     }
 
 
     // TODO NEXT Make PopulationStatistics.getFailureAtTimesTable() a util method that takes in a survivor table and restuns the appropriate collection of FailureTimeRows
     @Override
-    public Collection<FailureTimeRow> getFailureAtTimesTable(Date year, int denoteGroupAs, Date simulationEndDate, EventType event, Double scalingFactor, int timeLimit, IPopulation generatedPopulation) throws UnsupportedDateConversion {
+    public Collection<FailureTimeRow> getFailureAtTimesTable(Date year, String denoteGroupAs, Date simulationEndDate, EventType event, Double scalingFactor, int timeLimit, IPopulation generatedPopulation) throws UnsupportedDateConversion {
 
         Collection<FailureTimeRow> rows = new ArrayList<>();
 
