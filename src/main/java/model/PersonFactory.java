@@ -60,6 +60,7 @@ public class PersonFactory {
         person.setFirstName(firstNameGenerator.getName(person));
         person.setSurname(surnameGenerator.getName(person));
 
+
         population.addPerson(person);
 
         return person;

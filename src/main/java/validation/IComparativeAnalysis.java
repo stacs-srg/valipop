@@ -2,6 +2,7 @@ package validation;
 
 import config.Config;
 import datastructure.summativeStatistics.generated.EventType;
+import datastructure.summativeStatistics.generated.UnsupportedEventType;
 import datastructure.summativeStatistics.structure.OneDimensionDataDistribution;
 import model.IPopulation;
 import model.simulationLogic.StatisticalManipulationCalculationError;
@@ -38,6 +39,6 @@ public interface IComparativeAnalysis {
 
     void outputResults(PrintStream resultOutput) throws UnsupportedDateConversion;
 
-    void runAnalysis(IPopulation generatedPopulation, Config config) throws UnsupportedDateConversion, StatisticalManipulationCalculationError, IOException;
+    void runAnalysis(IPopulation generatedPopulation, Config config) throws UnsupportedDateConversion, StatisticalManipulationCalculationError, IOException, UnsupportedEventType;
 
 }

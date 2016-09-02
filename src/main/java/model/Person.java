@@ -1,5 +1,7 @@
 package model;
 
+import datastructure.summativeStatistics.generated.EventType;
+import model.dateSelection.BirthDateSelector;
 import model.dateSelection.DateSelector;
 import model.dateSelection.DeathDateSelector;
 import utils.time.*;
@@ -20,12 +22,13 @@ public class Person implements IPerson {
     private char sex;
     private DateInstant birthDate;
     private DateInstant deathDate;
-    private List<IPartnership> partnerships = new ArrayList<IPartnership>();
+    private List<IPartnership> partnerships = new ArrayList<>();
     private IPartnership parentsPartnership;
     private String firstName;
     private String surname;
 
     private DateSelector deathDateSelector = new DeathDateSelector();
+    private DateSelector birthDateSelector = new BirthDateSelector();
 
 
     public Person(char sex, Date birthDate) {
@@ -149,50 +152,47 @@ public class Person implements IPerson {
     }
 
     @Override
-    public void causeDeathInTimePeriod(Date latestDate, CompoundTimeUnit timePeriod) {
+    public void causeEventInTimePeriod(EventType event, Date latestDate, CompoundTimeUnit timePeriod) {
 
-        int daysInTimePeriod = DateUtils.getDaysInTimePeriod(latestDate, timePeriod.negative());
+        if(isDeathEvent(event)) {
+            int daysInTimePeriod = DateUtils.getDaysInTimePeriod(latestDate, timePeriod.negative());
 
-        if(sex == 'm') {
-            // No events to prevent death in last time period
-            deathDate = deathDateSelector.selectDate(latestDate, timePeriod);
-        } else {
-            // if female
-
-            IPerson lastChild = getLastChild();
-
-            if(lastChild == null) {
+            if(sex == 'm') {
+                // No events to prevent death in last time period
                 deathDate = deathDateSelector.selectDate(latestDate, timePeriod);
             } else {
+                // if female
 
-                int daysSinceLastChild = DateUtils.differenceInDays(lastChild.getBirthDate(), latestDate);
+                IPerson lastChild = getLastChild();
 
-                // if last child was born in time period
-                if (daysSinceLastChild < daysInTimePeriod) {
-                    // then restrict date selection
-                    deathDate = deathDateSelector.selectDate(latestDate, timePeriod, daysSinceLastChild);
-                } else {
-                    // else apply death date as usual
+                if (lastChild == null) {
                     deathDate = deathDateSelector.selectDate(latestDate, timePeriod);
+                } else {
+
+                    int daysSinceLastChild = DateUtils.differenceInDays(lastChild.getBirthDate(), latestDate);
+
+                    // if last child was born in time period
+                    if (daysSinceLastChild < daysInTimePeriod) {
+                        // then restrict date selection
+                        deathDate = deathDateSelector.selectDate(latestDate, timePeriod, daysSinceLastChild);
+                    } else {
+                        // else apply death date as usual
+                        deathDate = deathDateSelector.selectDate(latestDate, timePeriod);
+                    }
                 }
             }
 
         }
 
-//        int days = DateUtils.differenceInDays(deathDate, latestDate);
-//
-//        if(DateUtils.dateBefore(latestDate, deathDate)) {
-//
-//            if(DateUtils.differenceInDays(latestDate, deathDate) != 0)
-//                System.out.println("A2 Error - " + DateUtils.differenceInDays(latestDate, deathDate));
-//        }
-//
-//
-//        if(days > (-1) * daysInTimePeriod) {
-//            System.out.println("A1 Error");
-//        }
+    }
 
+    private boolean isBirthEvent(EventType event) {
+        return event == EventType.FIRST_BIRTH || event == EventType.SECOND_BIRTH || event == EventType.THIRD_BIRTH ||
+                event == EventType.FOURTH_BIRTH || event == EventType.FIFTH_BIRTH;
+    }
 
+    private boolean isDeathEvent(EventType event) {
+        return event == EventType.MALE_DEATH || event == EventType.FEMALE_DEATH;
     }
 
     @Override

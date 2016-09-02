@@ -116,7 +116,7 @@ public class BirthLogic {
 
                             // make and assign the specified number of children - assign to correct place in population
                             for (int c = 0; c < childrenInMaternity; c++) {
-                                // TODO vary birth date in time period
+
                                 try {
 
                                     mother.recordPartnership(PersonFactory.formNewChildInPartnership(getRandomFather(people, mother.getBirthDate()), mother, currentTime, config.getBirthTimeStep(), people));

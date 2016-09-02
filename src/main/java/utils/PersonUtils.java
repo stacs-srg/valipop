@@ -1,5 +1,6 @@
 package utils;
 
+import datastructure.summativeStatistics.generated.EventType;
 import model.IPartnership;
 import model.IPerson;
 import model.NoChildrenOfDesiredOrder;
@@ -17,7 +18,7 @@ public interface PersonUtils {
 
     void recordDeath(Date date);
 
-    void causeDeathInTimePeriod(Date date, CompoundTimeUnit timePeriod);
+    void causeEventInTimePeriod(EventType event, Date date, CompoundTimeUnit timePeriod);
 
     int ageAtDeath() throws NotDeadException;
 

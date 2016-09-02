@@ -31,10 +31,6 @@ public class SelfCorrectingOneDimensionDataDistribution extends OneDimensionData
 
         IntegerRange age = resolveRowValue(data.getRowValue());
 
-        if(data.getRowValue() < 5) {
-            int a = 1;
-        }
-
         // target rate
         double tD = targetData.get(age);
 

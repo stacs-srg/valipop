@@ -4,9 +4,9 @@ import config.Config;
 import datastructure.population.PeopleCollection;
 import datastructure.population.exceptions.InsufficientNumberOfPeopleException;
 import datastructure.summativeStatistics.desired.PopulationStatistics;
+import datastructure.summativeStatistics.generated.EventType;
 import datastructure.summativeStatistics.structure.DataKey;
 import model.IPerson;
-import model.Person;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import utils.time.CompoundTimeUnit;
@@ -33,6 +33,11 @@ public class DeathLogic {
 
         int deathCount = 0;
 
+        double yearForwardWeighting = 1;
+        if(currentDate.getMonth() == 1) {
+            yearForwardWeighting = 1.1;
+        }
+
         Date trueCurrentDate = currentDate.advanceTime(deathTimeStep.negative());
         // advanceTime(deathTimeStep.negative())
 
@@ -50,13 +55,13 @@ public class DeathLogic {
             DataKey femaleKey = new DataKey(age, numberOfFemales);
 
             // DATA - get rate of death by age and gender
-            Double maleDeathRate = desiredPopulationStatistics.getDeathRates(trueCurrentDate, 'm').getCorrectingData(maleKey) * config.getDeathTimeStep().toDecimalRepresentation();
+            Double maleDeathRate = desiredPopulationStatistics.getDeathRates(trueCurrentDate, 'm').getCorrectingData(maleKey) * config.getDeathTimeStep().toDecimalRepresentation() * yearForwardWeighting;
 
             // EDIT put nQx s back in here
 
 //            maleDeathRate = (1 * maleDeathRate) / (1 + (1 * 0.5 * maleDeathRate));
 
-            Double femaleDeathRate = desiredPopulationStatistics.getDeathRates(trueCurrentDate, 'f').getCorrectingData(femaleKey) * config.getDeathTimeStep().toDecimalRepresentation();
+            Double femaleDeathRate = desiredPopulationStatistics.getDeathRates(trueCurrentDate, 'f').getCorrectingData(femaleKey) * config.getDeathTimeStep().toDecimalRepresentation() * yearForwardWeighting;
 
 //            femaleDeathRate = (1 * femaleDeathRate) / (1 + (1 * 0.5 * femaleDeathRate));
 
@@ -83,7 +88,7 @@ public class DeathLogic {
 
             // for each to be killed
             for (IPerson m : deadMales) {
-                m.causeDeathInTimePeriod(currentDate, deathTimeStep);
+                m.causeEventInTimePeriod(EventType.MALE_DEATH, currentDate, deathTimeStep);
                 deadPopulation.addPerson(m);
 
 
@@ -98,7 +103,7 @@ public class DeathLogic {
 
 
             for (IPerson f : deadFemales) {
-                f.causeDeathInTimePeriod(currentDate, deathTimeStep);
+                f.causeEventInTimePeriod(EventType.FEMALE_DEATH, currentDate, deathTimeStep);
                 deadPopulation.addPerson(f);
 
                 Date dod = f.getDeathDate();
@@ -168,29 +173,30 @@ public class DeathLogic {
 //        if (randomNumberGenerator.nextInt(100) < toHaveEvent * 100) {
 //            flooredToHaveEvent++;
 //        }
-        if (randomNumberGenerator.nextDouble() < toHaveEvent) {
-            flooredToHaveEvent++;
-        }
+
+//        if (randomNumberGenerator.nextDouble() < toHaveEvent) {
+//            flooredToHaveEvent++;
+//        }
 
         // this is a random dice roll to see if the fraction of a has the event or not
 
-//        if(deathRate <= 0.001) {
-//
-//            if (randomNumberGenerator.nextInt(100) < toHaveEvent * 100) {
-//                flooredToHaveEvent++;
-//            }
-//
-//        } else {
+        if(deathRate <= 0.001) {
+
+            if (randomNumberGenerator.nextInt(100) < toHaveEvent * 100) {
+                flooredToHaveEvent++;
+            }
+
+        } else {
 //
 //            if (toHaveEvent > 0.5) {
 //                flooredToHaveEvent++;
 //            }
-////            if (randomNumberGenerator.nextDouble() < toHaveEvent) {
-////                flooredToHaveEvent++;
-////            }
+            if (randomNumberGenerator.nextDouble() < toHaveEvent) {
+                flooredToHaveEvent++;
+            }
 ////        } else {
 ////            flooredToHaveEvent++;
-////        }
+        }
 //
 //        }
 

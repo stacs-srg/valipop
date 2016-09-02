@@ -79,7 +79,7 @@ public class GeneratedPopulationComposition implements PopulationComposition {
 
         Map<IntegerRange, Double> survival = new HashMap<>();
 
-        double survivors = 100000;
+        double survivors = 1000;
         survival.put(new IntegerRange(0), survivors);
 
 
@@ -88,7 +88,8 @@ public class GeneratedPopulationComposition implements PopulationComposition {
             int totalDeathsForAge = 0;
             int totalPopulationOfAge = 0;
 
-            for(DateClock d = startYear.getDateClock(); DateUtils.dateBefore(d, startYear.getDateClock().advanceTime(timePeriod)); d.advanceTime(1, TimeUnit.YEAR)) {
+            for(DateClock d = startYear.getDateClock(); DateUtils.dateBefore(d, startYear.getDateClock().advanceTime(timePeriod)); d = d.advanceTime(1, TimeUnit.YEAR)) {
+//                System.out.println(d.toString());
                 Collection<IPerson> people = population.getByYear(d.advanceTime(new CompoundTimeUnit(age, TimeUnit.YEAR).negative()));
 
                 for(IPerson person : people) {
@@ -97,17 +98,29 @@ public class GeneratedPopulationComposition implements PopulationComposition {
                             totalDeathsForAge++;
                         }
                     } catch (NotDeadException e) {
-                        e.printStackTrace();
+                        // No need to handle
                     }
 
                     if(person.aliveOnDate(d.advanceTime(6, TimeUnit.MONTH))) {
-                       totalPopulationOfAge++;
+//                    if(age != 0 && person.aliveOnDate(d)) {
+                        totalPopulationOfAge++;
+                    } else if (person.aliveOnDate(d.advanceTime(1, TimeUnit.YEAR))) {
+                        totalPopulationOfAge++;
                     }
+
                 }
+
+//                System.out.println(d.toString() + " " + age + ": " + totalDeathsForAge + " / " + totalPopulationOfAge);
 
             }
 
-            double nMxForAge = totalDeathsForAge / (double) totalPopulationOfAge;
+            double nMxForAge;
+
+            if(totalPopulationOfAge != 0) {
+                nMxForAge = totalDeathsForAge / (double) totalPopulationOfAge;
+            } else {
+                nMxForAge = 0;
+            }
 
             survivors = survivors * (1 - nMxForAge);
 
@@ -163,7 +176,8 @@ public class GeneratedPopulationComposition implements PopulationComposition {
 
     @Override
     public Collection<FailureTimeRow> getFailureAtTimesTable(Date year, int denoteGroupAs, Date simulationEndDate, EventType event, Double scalingFactor, int timeLimit, IPopulation generatedPopulation) throws UnsupportedDateConversion {
-        return getFailureAtTimesTable(year, denoteGroupAs, simulationEndDate, event);
+        return null;
+
     }
 
     @Override

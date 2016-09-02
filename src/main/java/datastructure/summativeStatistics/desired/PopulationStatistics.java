@@ -186,7 +186,7 @@ public class PopulationStatistics implements PopulationComposition, EventRateTab
 
         Map<IntegerRange, Double> survival = new HashMap<>();
 
-        double survivors = 100000;
+        double survivors = 1000;
         survival.put(new IntegerRange(0), survivors);
 
 
@@ -234,6 +234,8 @@ public class PopulationStatistics implements PopulationComposition, EventRateTab
         return null;
     }
 
+
+    // TODO NEXT Make PopulationStatistics.getFailureAtTimesTable() a util method that takes in a survivor table and restuns the appropriate collection of FailureTimeRows
     @Override
     public Collection<FailureTimeRow> getFailureAtTimesTable(Date year, int denoteGroupAs, Date simulationEndDate, EventType event, Double scalingFactor, int timeLimit, IPopulation generatedPopulation) throws UnsupportedDateConversion {
 
