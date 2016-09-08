@@ -2,6 +2,7 @@ package datastructure.population;
 
 import datastructure.population.exceptions.InsufficientNumberOfPeopleException;
 import datastructure.population.exceptions.PersonNotFoundException;
+import datastructure.summativeStatistics.structure.IntegerRange;
 import utils.time.DateBounds;
 import model.IPerson;
 import utils.time.Date;
@@ -128,4 +129,6 @@ public abstract class PersonCollection implements DateBounds {
     public Date getEndDate() {
         return endDate;
     }
+
+
 }

@@ -9,6 +9,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -254,6 +255,62 @@ public class Person implements IPerson {
 
         return child;
 
+    }
+
+    @Override
+    public int numberOfChildren() {
+        int count = 0;
+
+        for(IPartnership p : partnerships) {
+            count += p.getChildren().size();
+        }
+
+        return count;
+    }
+
+    @Override
+    public void keepFather() {
+        Date latestChildBirthDate = new YearDate(Integer.MIN_VALUE);
+        IPerson child = null;
+
+        for (IPartnership p : partnerships) {
+            for (IPerson c : p.getChildren()) {
+
+                if(p.getMalePartner() != null && DateUtils.dateBefore(latestChildBirthDate, c.getBirthDate())) {
+                    latestChildBirthDate = c.getBirthDate();
+                    child = c;
+                }
+
+            }
+        }
+
+        IPartnership motherPrevChild = child.getParentsPartnership();
+
+
+        IPerson newChild = getLastChild();
+        IPartnership old = newChild.getParentsPartnership();
+        newChild.setParentsPartnership(motherPrevChild);
+        motherPrevChild.addChildren(Collections.singletonList(newChild));
+        partnerships.remove(old);
+
+    }
+
+    @Override
+    public void setParentsPartnership(IPartnership newParents) {
+        parentsPartnership = newParents;
+    }
+
+    @Override
+    public int numberOfChildrenFatheredChildren() {
+        int count = 0;
+
+        for(IPartnership p : partnerships) {
+            if(p.getMalePartner() != null) {
+                count += p.getChildren().size();
+            }
+        }
+
+        return count;
     }
 
 }

@@ -28,4 +28,11 @@ public interface PersonUtils {
 
     IPerson getLastChild();
 
+    int numberOfChildren();
+
+    void keepFather();
+
+    void setParentsPartnership(IPartnership newParents);
+
+    int numberOfChildrenFatheredChildren();
 }

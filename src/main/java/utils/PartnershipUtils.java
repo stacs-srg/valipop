@@ -11,4 +11,6 @@ public interface PartnershipUtils {
 
     void addChildren(List<IPerson> children);
 
+    void setFather(IPerson father);
+
 }

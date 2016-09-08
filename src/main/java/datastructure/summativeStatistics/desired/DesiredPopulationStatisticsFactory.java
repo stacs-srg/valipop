@@ -39,7 +39,7 @@ public abstract class DesiredPopulationStatisticsFactory {
         Map<YearDate, TwoDimensionDataDistribution> partnering = readIn2DDataFiles(config.getVarPartneringPaths());
         Map<YearDate, SelfCorrectingTwoDimensionDataDistribution> orderedBirth = readInSC2DDataFiles(config.getVarOrderedBirthPaths());
         Map<YearDate, TwoDimensionDataDistribution> multipleBirth = readIn2DDataFiles(config.getVarMultipleBirthPaths());
-        Map<YearDate, OneDimensionDataDistribution> separation = readIn1DDataFiles(config.getVarSeparationPaths());
+        Map<YearDate, SelfCorrectingOneDimensionDataDistribution> separation = readInSC1DDataFiles(config.getVarSeparationPaths());
 
         return new PopulationStatistics(config, maleDeath, femaleDeath, partnering, orderedBirth, multipleBirth, separation);
     }

@@ -30,7 +30,7 @@ public class PopulationStatistics implements PopulationComposition, EventRateTab
     private Map<YearDate, TwoDimensionDataDistribution> partnering;
     private Map<YearDate, SelfCorrectingTwoDimensionDataDistribution> orderedBirth;
     private Map<YearDate, TwoDimensionDataDistribution> multipleBirth;
-    private Map<YearDate, OneDimensionDataDistribution> separation;
+    private Map<YearDate, SelfCorrectingOneDimensionDataDistribution> separation;
 
     public PopulationStatistics(Config config,
                                 Map<YearDate, SelfCorrectingOneDimensionDataDistribution> maleDeath,
@@ -38,7 +38,7 @@ public class PopulationStatistics implements PopulationComposition, EventRateTab
                                 Map<YearDate, TwoDimensionDataDistribution> partnering,
                                 Map<YearDate, SelfCorrectingTwoDimensionDataDistribution> orderedBirth,
                                 Map<YearDate, TwoDimensionDataDistribution> multipleBirth,
-                                Map<YearDate, OneDimensionDataDistribution> separation) {
+                                Map<YearDate, SelfCorrectingOneDimensionDataDistribution> separation) {
 
         this.maleDeath = maleDeath;
         this.femaleDeath = femaleDeath;
@@ -95,7 +95,7 @@ public class PopulationStatistics implements PopulationComposition, EventRateTab
     }
 
     @Override
-    public OneDimensionDataDistribution getSeparationByChildCountRates(Date year) {
+    public SelfCorrectingOneDimensionDataDistribution getSeparationByChildCountRates(Date year) {
         return separation.get(getNearestYearInMap(year.getYearDate(), separation));
     }
 

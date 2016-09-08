@@ -36,6 +36,15 @@ public class Partnership implements IPartnership {
 
     }
 
+    public Partnership(IPerson female, Date partnershipDate) {
+
+        this.id = getNewId();
+
+        this.partnershipDate = partnershipDate;
+        this.female = female;
+
+    }
+
     private static int getNewId() {
         return nextId++;
     }
@@ -82,5 +91,10 @@ public class Partnership implements IPartnership {
     @Override
     public void addChildren(List<IPerson> children) {
         this.children.addAll(children);
+    }
+
+    @Override
+    public void setFather(IPerson father) {
+        this.male = father;
     }
 }

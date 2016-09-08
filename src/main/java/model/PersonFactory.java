@@ -10,8 +10,7 @@ import utils.time.CompoundTimeUnit;
 import utils.time.Date;
 import utils.time.DateClock;
 
-import java.util.Collections;
-import java.util.Random;
+import java.util.*;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
@@ -23,7 +22,7 @@ public class PersonFactory {
     private static NameGenerator surnameGenerator = new SurnameGenerator();
     private static DateSelector birthDateSelector = new BirthDateSelector();
 
-    public static IPartnership formNewChildInPartnership(IPerson father, IPerson mother, DateClock currentDate,
+    public static IPartnership formNewChildrenInPartnership(int numberOfChildren, IPerson father, IPerson mother, DateClock currentDate,
                                                          CompoundTimeUnit birthTimeStep, PeopleCollection population) {
 
         IPartnership partnership = new Partnership(father, mother, currentDate);
@@ -32,6 +31,23 @@ public class PersonFactory {
         IPerson child = makePerson(currentDate, birthTimeStep, partnership, population);
 
         partnership.addChildren(Collections.singletonList(child));
+
+        return partnership;
+    }
+
+    public static IPartnership formNewChildrenInPartnership(int numberOfChildren, IPerson mother, DateClock currentDate,
+                                                         CompoundTimeUnit birthTimeStep, PeopleCollection population) {
+
+        IPartnership partnership = new Partnership(mother, currentDate);
+        population.addPartnershipToIndex(partnership);
+
+        List<IPerson> children = new ArrayList<>(numberOfChildren);
+
+        for(int c = 0; c < numberOfChildren; c++) {
+            children.add(makePerson(currentDate, birthTimeStep, partnership, population));
+        }
+
+        partnership.addChildren(children);
 
         return partnership;
     }

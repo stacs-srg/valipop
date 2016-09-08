@@ -7,6 +7,7 @@ import datastructure.summativeStatistics.desired.PopulationStatistics;
 import datastructure.summativeStatistics.structure.DataKey;
 import datastructure.summativeStatistics.structure.IntegerRange;
 import datastructure.summativeStatistics.structure.OneDimensionDataDistribution;
+import datastructure.summativeStatistics.structure.SelfCorrectingOneDimensionDataDistribution;
 import model.IPerson;
 import model.PersonFactory;
 import org.apache.logging.log4j.LogManager;
@@ -29,7 +30,7 @@ public class BirthLogic {
 
 
     public static int handleBirths(Config config, DateClock currentTime, PopulationStatistics desiredPopulationStatistics,
-                                   PeopleCollection people) throws InsufficientNumberOfPeopleException {
+                                   PeopleCollection people) throws InsufficientNumberOfPeopleException, UnsupportedDateConversion {
 
         int birthCount = 0;
 
@@ -38,6 +39,10 @@ public class BirthLogic {
 
         // for each age of mothers of childbearing age (AGE OF MOTHER)
         for (int age = minAge; age < maxAge; age++) {
+
+            ArrayList<IPerson> mothersNeedingPartners = new ArrayList<>();
+            ArrayList<IPerson> mothersNeedingProcessed = new ArrayList<>();
+            int partnershipCount = 0;
 
             YearDate yearOfBirthInConsideration = new YearDate(currentTime.getYear() - age);
 
@@ -54,9 +59,29 @@ public class BirthLogic {
                 // women of this age and birth order - L
                 Collection<IPerson> women = people.getFemales().getByYearAndBirthOrder(yearOfBirthInConsideration, order);
 
+//                System.out.println("------------------");
+//                System.out.println(order + " of " + maxBirthOrderInCohort);
+//                System.out.println(yearOfBirthInConsideration.toString());
+//                if(women != null) {
+//                    System.out.println(women.size());
+//                } else {
+//                    System.out.println("NULL");
+//                }
+
+
+
+
+
                 if (women == null || women.size() == 0) {
                     continue;
                 } else {
+
+                    for(IPerson w : women) {
+                        if(w.getPartnerships().size() != 0) {
+                            partnershipCount++;
+                        }
+                    }
+
                     // DATA 1 - get rate of births by mothers age and birth order
                     DataKey key = new DataKey(age, order, maxBirthOrderInCohort, women.size());
 
@@ -77,6 +102,8 @@ public class BirthLogic {
                         // use DATA 2 to decide how many mothers needed to birth children
                         motherCountsByMaternitySize = calculateMotherCountsByMaternitySize(numberOfChildrenToBirth, proportionOfChildrenBornToEachSizeOfMaternity);
 
+
+
                         // check the mother counts are possible to meet with the current cohort
                         totalNumberOfMothers = CollectionUtils.sumIntegerCollection(motherCountsByMaternitySize.values());
 
@@ -94,10 +121,16 @@ public class BirthLogic {
 
                     } while (eligableWomen < totalNumberOfMothers);
 
-                    // WERE BROKEN IN HERE SOMEWHERE...
+                    if(numberOfChildrenToBirth <= 0) {
+                        birthRate = 0.0;
+                        numberOfChildrenToBirth = 0;
+                    }
+
 
                     birthCount += numberOfChildrenToBirth;
-                    desiredPopulationStatistics.getOrderedBirthRates(currentTime).returnAppliedData(key, birthRate / config.getBirthTimeStep().toDecimalRepresentation());
+
+                    // Taking this out gives better results - underlying error?
+//                    desiredPopulationStatistics.getOrderedBirthRates(currentTime).returnAppliedData(key, birthRate / config.getBirthTimeStep().toDecimalRepresentation());
 
                     // select the mothers
                     for (Integer childrenInMaternity : motherCountsByMaternitySize.keySet()) {
@@ -116,27 +149,22 @@ public class BirthLogic {
                             IPerson mother = mothersToBe.get(n);
 
                             // make and assign the specified number of children - assign to correct place in population
-                            for (int c = 0; c < childrenInMaternity; c++) {
+                            mother.recordPartnership(PersonFactory.formNewChildrenInPartnership(childrenInMaternity, mother, currentTime, config.getBirthTimeStep(), people));
 
-                                try {
-
-                                    mother.recordPartnership(PersonFactory.formNewChildInPartnership(getRandomFather(people, mother.getBirthDate()), mother, currentTime, config.getBirthTimeStep(), people));
-                                } catch (InsufficientNumberOfPeopleException e) {
-                                    throw e;
-                                }
-                            }
-
+                            // Re inserting mother to population datastructure so as she resides in the correct place
                             people.addPerson(mother);
 
                             // TODO implement partnering - part 1
                             // if birth order 0
-                            // add mothers to MOTHERS_NEEDING_FATHERS
-                            // else
-                            // DATA - get rate of separation by number of children had
-                            // select mothers to separate with fathers and add to MOTHERS_NEEDING_FATHERS
+                            if(order == 0) {
+                                // add mothers to MOTHERS_NEEDING_PARTNERS
+                                mothersNeedingPartners.add(mother);
+                            } else {
+                                // else
 
-                            // add the rest to MOTHERS_WITH_FATHERS
+                                mothersNeedingProcessed.add(mother);
 
+                            }
                         }
 
                     }
@@ -145,21 +173,18 @@ public class BirthLogic {
 
             }
 
+            // At this point we have a mothers needing processed list
 
-            // TODO implement partnering - part 2
 
-            // decide on new fathers
-            // NUMBER_OF_FATHERS_NEEDED = MOTHERS_NEEEDING_FATHERS.size()
-            // DATA - get age difference of parents at childs birth distribution (this is a subset/row of an ages in combination table)
-            // Turn distribution into solid values based on the number of fathers required
-            // select fathers and add to NEW_FATHERS
+            SeparationLogic.handleSeparation(desiredPopulationStatistics, currentTime, partnershipCount, mothersNeedingProcessed);
 
-            // pair up MOTHERS_NEEDING_FATHERS with NEW_FATHERS
+            for(IPerson p : mothersNeedingPartners) {
+                p.getLastChild().getParentsPartnership().setFather(getRandomFather(people, yearOfBirthInConsideration));
+            }
 
-            // find appropriate birth date for child
+            // At this point we have a Mothers Needing Fathers List with children already created
 
-            // update new children info to give fathers
-            // keep count of children born this quarter as BIRTH_COUNT
+            PartneringLogic.handlePartnering(desiredPopulationStatistics, currentTime, mothersNeedingPartners, age, people);
 
 
         }
