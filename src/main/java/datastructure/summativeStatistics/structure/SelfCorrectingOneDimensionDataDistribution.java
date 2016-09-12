@@ -29,7 +29,7 @@ public class SelfCorrectingOneDimensionDataDistribution extends OneDimensionData
     @Override
     public double getCorrectingData(DataKey data) {
 
-        IntegerRange age = resolveRowValue(data.getRowValue());
+        IntegerRange age = resolveRowValue(data.getYLabel());
 
         // target rate
         double tD = targetData.get(age);
@@ -69,7 +69,7 @@ public class SelfCorrectingOneDimensionDataDistribution extends OneDimensionData
     @Override
     public void returnAppliedData(DataKey data, double appliedData) {
 
-        IntegerRange age = resolveRowValue(data.getRowValue());
+        IntegerRange age = resolveRowValue(data.getYLabel());
 
         // old applied rate
         double aDo = appliedRates.get(age);
@@ -97,7 +97,7 @@ public class SelfCorrectingOneDimensionDataDistribution extends OneDimensionData
 //        // if new applied rate has switched across target rate then reset count
         if((aDo < tD && aDn >= tD) || (aDo > tD && aDn <= tD)) {
 
-//            System.out.println("Counts reset   |   y: " + getYear().toString() + " |   a: " + data.getRowValue());
+//            System.out.println("Counts reset   |   y: " + getYear().toString() + " |   a: " + data.getYLabel());
             // calc r - the number of people it takes to get the applied rate back to the target rate
 //            double r = ( aDo * aCo ) / ( aacD * ( tD - 1 ) );
 

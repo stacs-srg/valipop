@@ -5,36 +5,36 @@ package datastructure.summativeStatistics.structure;
  */
 public class DataKey {
 
-    private final Integer rowValue;
-    private final Integer columnValue;
-    private final Integer maxColumnValue;
+    private final Integer yLabel;
+    private final Integer xLabel;
+    private final Integer maxXLabel;
     private final int forNPeople;
 
-    public DataKey(Integer rowValue, Integer columnValue, Integer maxColumnValue, int forNPeople) {
-        this.rowValue = rowValue;
-        this.columnValue = columnValue;
-        this.maxColumnValue = maxColumnValue;
+    public DataKey(Integer yLabel, Integer xLabel, Integer maxXLabel, int forNPeople) {
+        this.yLabel = yLabel;
+        this.xLabel = xLabel;
+        this.maxXLabel = maxXLabel;
         this.forNPeople = forNPeople;
     }
 
-    public DataKey(Integer rowValue, int forNPeople) {
-        this(rowValue, null, null, forNPeople);
+    public DataKey(Integer yLabel, int forNPeople) {
+        this(yLabel, null, null, forNPeople);
     }
 
     public int getForNPeople() {
         return forNPeople;
     }
 
-    public Integer getColumnValue() {
-        return columnValue;
+    public Integer getXLabel() {
+        return xLabel;
     }
 
-    public Integer getMaxColumnValue() {
-        return maxColumnValue;
+    public Integer getMaxXLabel() {
+        return maxXLabel;
     }
 
-    public Integer getRowValue() {
-        return rowValue;
+    public Integer getYLabel() {
+        return yLabel;
     }
 
 }

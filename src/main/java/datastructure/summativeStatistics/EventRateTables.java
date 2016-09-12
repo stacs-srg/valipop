@@ -1,6 +1,7 @@
 package datastructure.summativeStatistics;
 
 import datastructure.summativeStatistics.structure.OneDimensionDataDistribution;
+import datastructure.summativeStatistics.structure.SelfCorrectingTwoDimensionDataDistribution;
 import datastructure.summativeStatistics.structure.TwoDimensionDataDistribution;
 import utils.time.Date;
 
@@ -46,7 +47,7 @@ public interface EventRateTables {
      * @param year the year
      * @return the marriage rates
      */
-    TwoDimensionDataDistribution getPartneringRates(Date year);
+    SelfCorrectingTwoDimensionDataDistribution getPartneringRates(Date year);
 
     /**
      * Gets birth rates by order for births in the given year defined by the age and number of previous children born to
@@ -64,7 +65,7 @@ public interface EventRateTables {
      * @param year the year
      * @return the birth rates by order
      */
-    TwoDimensionDataDistribution getOrderedBirthRates(Date year);
+    SelfCorrectingTwoDimensionDataDistribution getOrderedBirthRates(Date year);
 
     /**
      * Gets multiple births in a maternity rate for women giving birth in a given year by age of the mother.

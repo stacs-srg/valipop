@@ -113,7 +113,7 @@ public class Simulation {
         }
 
 
-        sim.desired.getOrderedBirthRates(config.getT0()).outputResults(resultsOutput);
+//        sim.desired.getOrderedBirthRates(config.getT0()).outputResults(resultsOutput);
 
 
         try {

@@ -27,7 +27,7 @@ public class PopulationStatistics implements PopulationComposition, EventRateTab
 
     private Map<YearDate, SelfCorrectingOneDimensionDataDistribution> maleDeath;
     private Map<YearDate, SelfCorrectingOneDimensionDataDistribution> femaleDeath;
-    private Map<YearDate, TwoDimensionDataDistribution> partnering;
+    private Map<YearDate, SelfCorrectingTwoDimensionDataDistribution> partnering;
     private Map<YearDate, SelfCorrectingTwoDimensionDataDistribution> orderedBirth;
     private Map<YearDate, TwoDimensionDataDistribution> multipleBirth;
     private Map<YearDate, SelfCorrectingOneDimensionDataDistribution> separation;
@@ -35,7 +35,7 @@ public class PopulationStatistics implements PopulationComposition, EventRateTab
     public PopulationStatistics(Config config,
                                 Map<YearDate, SelfCorrectingOneDimensionDataDistribution> maleDeath,
                                 Map<YearDate, SelfCorrectingOneDimensionDataDistribution> femaleDeath,
-                                Map<YearDate, TwoDimensionDataDistribution> partnering,
+                                Map<YearDate, SelfCorrectingTwoDimensionDataDistribution> partnering,
                                 Map<YearDate, SelfCorrectingTwoDimensionDataDistribution> orderedBirth,
                                 Map<YearDate, TwoDimensionDataDistribution> multipleBirth,
                                 Map<YearDate, SelfCorrectingOneDimensionDataDistribution> separation) {
@@ -80,7 +80,7 @@ public class PopulationStatistics implements PopulationComposition, EventRateTab
     }
 
     @Override
-    public TwoDimensionDataDistribution getPartneringRates(Date year) {
+    public SelfCorrectingTwoDimensionDataDistribution getPartneringRates(Date year) {
         return partnering.get(getNearestYearInMap(year.getYearDate(), partnering));
     }
 
@@ -291,7 +291,7 @@ public class PopulationStatistics implements PopulationComposition, EventRateTab
      */
 
     private double calculateOrderedBirthRate(Date startYear, Date currentDate, int age, int birthOrder, IPopulation generatedPopulation, double survivors) {
-        TwoDimensionDataDistribution orderedBirthRates = getOrderedBirthRates(currentDate);
+        SelfCorrectingTwoDimensionDataDistribution orderedBirthRates = getOrderedBirthRates(currentDate);
 
         OneDimensionDataDistribution aSOBR;
         try {

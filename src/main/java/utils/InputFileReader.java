@@ -140,9 +140,104 @@ public class InputFileReader {
     }
 
     public static SelfCorrectingTwoDimensionDataDistribution readInSC2DDataFile(Path path) {
-        TwoDimensionDataDistribution d = readIn2DDataFile(path);
-        return new SelfCorrectingTwoDimensionDataDistribution(d.getYear(), d.getSourcePopulation(), d.getSourceOrganisation(), d.cloneData());
+
+        ArrayList<String> lines = new ArrayList<String>(getAllLines(path));
+
+        YearDate year = null;
+        String sourcePopulation = null;
+        String sourceOrganisation = null;
+
+        ArrayList<IntegerRange> columnLabels = new ArrayList<IntegerRange>();
+        Map<IntegerRange, SelfCorrectingOneDimensionDataDistribution> data = new HashMap<>();
+
+
+        for (int i = 0; i < lines.size(); i++) {
+
+            String s = lines.get(i);
+            String[] split = s.split(TAB, 2);
+
+            switch (split[0].toLowerCase()) {
+                case "year":
+                    try {
+                        year = new YearDate(Integer.parseInt(split[1]));
+                    } catch (NumberFormatException e) {
+                        log.fatal("Non integer value given for year in file: " + path.toString());
+                        System.exit(103);
+                    }
+                    break;
+                case "population":
+                    sourcePopulation = split[1];
+                    break;
+                case "source":
+                    sourceOrganisation = split[1];
+                    break;
+                case "labels":
+
+                    s = split[1];
+                    split = s.split(TAB);
+
+                    for (String l : split) {
+                        try {
+                            columnLabels.add(new IntegerRange(l));
+                        } catch (NumberFormatException e) {
+                            log.fatal("A LABEL is of the incorrect form in the file: " + path.toString());
+                            System.exit(103);
+                        } catch (InvalidRangeException e1) {
+                            log.fatal("A LABEL specifies an invalid range in the file: " + path.toString());
+                            System.exit(103);
+                        }
+                    }
+
+                    break;
+                case "data":
+                    i++; // go to next line for data rows
+                    for (; i < lines.size(); i++) {
+                        s = lines.get(i);
+                        split = s.split(TAB);
+
+                        if (split.length != columnLabels.size() + 1) {
+                            log.fatal("One or more data rows do not have the correct number of values in the file: " + path.toString());
+                            System.exit(103);
+                        }
+
+                        IntegerRange rowLabel = null;
+                        try {
+                            rowLabel = new IntegerRange(split[0]);
+                        } catch (NumberFormatException e) {
+                            log.fatal("The first column is of an incorrect form on line " + (i + 1) + "in the file: " + path.toString());
+                            System.exit(103);
+                        } catch (InvalidRangeException e1) {
+                            log.fatal("The first column specifies an invalid range on line " + (i + 1) + "in the file: " + path.toString());
+                            System.exit(103);
+                        }
+
+                        Map<IntegerRange, Double> rowMap = new HashMap<IntegerRange, Double>();
+
+                        for (int j = 1; j < split.length; j++) {
+                            try {
+                                rowMap.put(columnLabels.get(j - 1), Double.parseDouble(split[j]));
+                            } catch (NumberFormatException e) {
+                                log.fatal("The value in column " + j + " should be a Double on line " + (i + 1) + "in the file: " + path.toString());
+                                System.exit(103);
+                            }
+                        }
+
+                        data.put(rowLabel, new SelfCorrectingOneDimensionDataDistribution(year, sourcePopulation, sourceOrganisation, rowMap));
+
+                    }
+                    break;
+            }
+
+
+        }
+
+        return new SelfCorrectingTwoDimensionDataDistribution(year, sourcePopulation, sourceOrganisation, data);
     }
+
+//    public static SelfCorrectingTwoDimensionDataDistribution readInSC2DDataFile(Path path) {
+//        SelfCorrectingTwoDimensionDataDistribution d = readIn2DDataFile(path);
+//        return new SelfCorrectingTwoDimensionDataDistribution(d.getYear(), d.getSourcePopulation(), d.getSourceOrganisation(), d /*removed clone method call */);
+//    }
 
     public static OneDimensionDataDistribution readIn1DDataFile(Path path) {
 
