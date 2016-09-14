@@ -144,11 +144,11 @@ public class DeathLogic {
     }
 
     private static Collection<IPerson> removeMalesToDieFromPopulation(PeopleCollection population, DateClock yearOfBirth, int numberToDie) throws InsufficientNumberOfPeopleException {
-        return population.getMales().removeNPersons(numberToDie, yearOfBirth.getYearDate());
+        return population.getMales().removeNPersons(numberToDie, yearOfBirth.getYearDate(), false);
     }
 
     private static Collection<IPerson> removeFemalesToDieFromPopulation(PeopleCollection population, DateClock yearOfBirth, int numberToDie) throws InsufficientNumberOfPeopleException {
-        return population.getFemales().removeNPersons(numberToDie, yearOfBirth.getYearDate());
+        return population.getFemales().removeNPersons(numberToDie, yearOfBirth.getYearDate(), false);
     }
 
     private static int countFemalesBornIn(PeopleCollection people, DateClock yearOfBirth) {

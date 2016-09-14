@@ -93,10 +93,11 @@ public abstract class PersonCollection implements DateBounds {
      *
      * @param numberToRemove the number of people to remove
      * @param yearOfBirth    the year of birth of those to remove
+     * @param bestAttempt    returns the people that do exist even if there is not enough to meet numberToRemove
      * @return the random Collection of people who have been removed
      * @throws InsufficientNumberOfPeopleException If there are less people alive for the given year of birth than
      */
-    public Collection<IPerson> removeNPersons(int numberToRemove, Date yearOfBirth) throws InsufficientNumberOfPeopleException {
+    public Collection<IPerson> removeNPersons(int numberToRemove, Date yearOfBirth, boolean bestAttempt) throws InsufficientNumberOfPeopleException {
         Collection<IPerson> people = new ArrayList<>(numberToRemove);
         Iterator<IPerson> iterator = getByYear(yearOfBirth).iterator();
 
@@ -105,7 +106,11 @@ public abstract class PersonCollection implements DateBounds {
                 IPerson p = iterator.next();
                 people.add(p);
             } catch(NoSuchElementException e) {
-                throw new InsufficientNumberOfPeopleException("Not enough people in collection to remove desired number");
+                if(bestAttempt) {
+                    break;
+                } else {
+                    throw new InsufficientNumberOfPeopleException("Not enough people in collection to remove desired number");
+                }
             }
         }
 

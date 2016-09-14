@@ -5,11 +5,11 @@ import java.util.Comparator;
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class RemainderComparator implements Comparator<AgeRangeToValue> {
+public class RemainderComparator implements Comparator<AgeRangeWithExactFatherValue> {
 
 
     @Override
-    public int compare(AgeRangeToValue o1, AgeRangeToValue o2) {
+    public int compare(AgeRangeWithExactFatherValue o1, AgeRangeWithExactFatherValue o2) {
 
         double r1 = o1.getRemainder();
         double r2 = o2.getRemainder();
