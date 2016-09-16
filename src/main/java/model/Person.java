@@ -9,6 +9,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -273,6 +274,8 @@ public class Person implements IPerson {
         Date latestChildBirthDate = new YearDate(Integer.MIN_VALUE);
         IPerson child = null;
 
+
+
         for (IPartnership p : partnerships) {
             for (IPerson c : p.getChildren()) {
 
@@ -284,13 +287,21 @@ public class Person implements IPerson {
             }
         }
 
+        // This is the partnership with the last father - we're wanting to put any fatherless kids in here
         IPartnership motherPrevChild = child.getParentsPartnership();
 
 
         IPerson newChild = getLastChild();
         IPartnership old = newChild.getParentsPartnership();
-        newChild.setParentsPartnership(motherPrevChild);
-        motherPrevChild.addChildren(Collections.singletonList(newChild));
+
+        Collection<IPerson> newChildren = old.getChildren();
+
+        for(IPerson c : newChildren) {
+            c.setParentsPartnership(motherPrevChild);
+
+        }
+
+        motherPrevChild.addChildren(newChildren);
         partnerships.remove(old);
 
     }

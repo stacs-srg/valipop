@@ -6,9 +6,11 @@ import datastructure.summativeStatistics.desired.PopulationStatistics;
 import datastructure.summativeStatistics.structure.DataKey;
 import datastructure.summativeStatistics.structure.IntegerRange;
 import datastructure.summativeStatistics.structure.OneDimensionDataDistribution;
+import model.IPartnership;
 import model.IPerson;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.appender.SyslogAppender;
 import utils.time.*;
 import utils.time.Date;
 
@@ -91,6 +93,7 @@ public class PartneringLogic {
                 Collection<IPerson> men = getNMenFromAgeRange(numMen, aRTV.getAgeRange(), currentTime, people);
                 fufilledFathersCount += men.size();
 
+
 //            if(men.size() < numMen) {
 //                int shortfall = numMen - men.size();
 //                fathersCount -= shortfall;
@@ -105,42 +108,62 @@ public class PartneringLogic {
 
             double sumOfUsableExactValues = 0;
 
-            while (fathersNeeded < fufilledFathersCount && usedRanges.size() > 0) {
+
+//            System.out.println("ffc = " + fufilledFathersCount);
+//            System.out.println("fn = " + fathersNeeded);
+
+            while (usedRanges.size() > 0) {
 
                 AgeRangeWithExactFatherValue aRTV = usedRanges.poll();
 
-                if (aRTV.getValue() < (aRTV.getFathers().size() - aRTV.getCarriedFathers())) {
-                    // The remainder in this range has already been rounded up and we have no reason to expect the range has
-                    // been exhausted of men
-                    usableRanges.add(aRTV);
-                } else if ((int) aRTV.getValue() > (aRTV.getFathers().size() - aRTV.getCarriedFathers())) {
-                    // In the previous round of finding men this range returned fewer men than required and therefore we can
-                    // know that there are no men left in this range
-                    emptyRanges.add(aRTV);
-                } else {
-                    // i.e. this ranges remainder hasn't been rounded up and to the best of our knowledge there are still
-                    // men in this range
-                    Collection<IPerson> man = getNMenFromAgeRange(1, aRTV.getAgeRange(), currentTime, people);
+                if(fathersNeeded > fufilledFathersCount) {
 
-                    if (man.size() != 1) {
-                        // This range is therefore empty
+                    if (aRTV.getValue() < (aRTV.getFathers().size() - aRTV.getCarriedFathers())) {
+                        // The remainder in this range has already been rounded up and we have no reason to expect the range has
+                        // been exhausted of men
+//                    System.out.println(aRTV.toString());
+                        usableRanges.add(aRTV);
+                    } else if ((int) aRTV.getValue() > (aRTV.getFathers().size() - aRTV.getCarriedFathers())) {
+                        // In the previous round of finding men this range returned fewer men than required and therefore we can
+                        // know that there are no men left in this range
+//                        System.out.println("eR: " + currentTime.toString() + " " + aRTV.toString());
                         emptyRanges.add(aRTV);
                     } else {
-                        aRTV.addFathers(man);
-                        fufilledFathersCount++;
-                        usableRanges.add(aRTV);
-                        sumOfUsableExactValues += aRTV.getValue();
+                        // i.e. this ranges remainder hasn't been rounded up and to the best of our knowledge there are still
+                        // men in this range
+                        Collection<IPerson> man = getNMenFromAgeRange(1, aRTV.getAgeRange(), currentTime, people);
+
+                        if (man.size() != 1) {
+                            // This range is therefore empty
+//                            System.out.println("eR: " + currentTime.toString() + " " + aRTV.toString());
+                            emptyRanges.add(aRTV);
+                        } else {
+                            aRTV.addFathers(man);
+                            fufilledFathersCount++;
+//                        System.out.println(aRTV.toString());
+                            usableRanges.add(aRTV);
+                            sumOfUsableExactValues += aRTV.getValue();
+                        }
+
                     }
 
+                } else {
+                    // We've got all the fathers we need and so all we're doing in this loop is moving any last ranges
+                    // from usedRanges to availiable ranges so that the range gets processed and thre selcted fathers
+                    // added to the population
+                    availiableRanges.add(aRTV);
                 }
 
             }
 
             // Write repopulation of queue code here
             for(AgeRangeWithExactFatherValue range : usableRanges) {
+//                System.out.println("uR: " + currentTime.toString() + " " + range.toString());
                 range.updateCarriedFathers();
                 double existingExactValue = range.getValue();
-                range.setValue(existingExactValue / sumOfUsableExactValues);
+                int fathersNowNeeded = fathersNeeded - fufilledFathersCount;
+                range.setValue(fathersNowNeeded * existingExactValue / sumOfUsableExactValues);
+//                System.out.println("uR: " + currentTime.toString() + " " + range.toString());
                 availiableRanges.add(range);
             }
 
@@ -151,6 +174,7 @@ public class PartneringLogic {
             Collection<IPerson> men = range.getFathers();
             fathers.addAll(men);
 
+            System.out.println("End aR: " + currentTime.toString() + " " + range.toString());
             desiredPopulationStatistics.getPartneringRates(currentTime).returnAppliedData(range.getKey(), men.size() / (double) fathersNeeded);
         }
 
@@ -158,6 +182,7 @@ public class PartneringLogic {
             Collection<IPerson> men = range.getFathers();
             fathers.addAll(men);
 
+            System.out.println("End eR: " + currentTime.toString() + " " + range.toString());
             desiredPopulationStatistics.getPartneringRates(currentTime).returnAppliedData(range.getKey(), men.size() / (double) fathersNeeded);
         }
 
@@ -217,15 +242,16 @@ public class PartneringLogic {
 //        }
 
 
-        // TODO NEXT - How are we getting here with no men
 
-        System.out.println(fathers.size() + " / " + mothersNeedingPartners.size());
+//        System.out.println(fathers.size() + " / " + mothersNeedingPartners.size());
 
         // pair up MOTHERS_NEEDING_FATHERS with NEW_FATHERS
         for(int p = 0; p < mothersNeedingPartners.size(); p++) {
             IPerson father = fathers.get(p);
             // update new children info to give fathers
-            mothersNeedingPartners.get(p).getLastChild().getParentsPartnership().setFather(father);
+            IPartnership partnership = mothersNeedingPartners.get(p).getLastChild().getParentsPartnership();
+            partnership.setFather(father);
+            father.recordPartnership(partnership);
             people.addPerson(father);
         }
 
@@ -258,6 +284,10 @@ public class PartneringLogic {
             }
 
             int menOfEachAge = numMen / countAgesWithMen(empty);
+
+            if(index >= yearsInAgeBracket) {
+                index -= yearsInAgeBracket;
+            }
 
             for (DateClock yob = start.getDateClock(); DateUtils.dateBefore(yob, end); yob = yob.advanceTime(1, TimeUnit.YEAR)) {
 

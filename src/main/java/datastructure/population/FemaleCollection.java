@@ -104,39 +104,83 @@ public class FemaleCollection extends PersonCollection {
 
         Collection<IPerson> people = new ArrayList<>();
 
+        Collection<IPerson> toReturn = new ArrayList<>();
+
         if (numberToRemove == 0) {
             return people;
         }
 
-        Iterator<IPerson> iterator = byBirthYearAndNumberOfChildren.get(yearOfBirth).get(birthOrder).iterator();
+        while (people.size() < numberToRemove) {
 
-        for (int i = 0; i < numberToRemove; i++) {
+            LinkedList<IPerson> orderedBirthCohort = new LinkedList<>(byBirthYearAndNumberOfChildren.get(yearOfBirth).get(birthOrder));
 
-            // Find the females who we wish to return - if there is enough of them
-            IPerson p;
-            try {
-                p = iterator.next();
-            } catch (NoSuchElementException e) {
-                log.info("Insufficient Number Of Females : CD " + currentDate.toString() + " |   YB " + yearOfBirth.toString() + " |   ORDER " + birthOrder + " |   " + i + "/" + numberToRemove + " | " + byBirthYearAndNumberOfChildren.get(yearOfBirth).get(birthOrder).size());
-                throw new InsufficientNumberOfPeopleException("Not enough females to remove specified number from collection");
+            if(orderedBirthCohort.size() <= 0) {
+                throw new InsufficientNumberOfPeopleException("Ran out of people");
             }
 
-            if (p.noRecentChildren(currentDate, new CompoundTimeUnit(-9, TimeUnit.MONTH))) {
-                people.add(p);
-            } else {
-                i--;
-            }
-        }
 
-        // Remove the chosen females from the population structure
-        for (IPerson p : people) {
+            IPerson p = orderedBirthCohort.removeFirst();
+            if(countChildren(p) != birthOrder) {
+                System.out.println("BOOM");
+            }
+
             try {
                 removePerson(p);
+
+                if (p.noRecentChildren(currentDate, new CompoundTimeUnit(-9, TimeUnit.MONTH))) {
+                    people.add(p);
+                } else {
+                    toReturn.add(p);
+                }
+
+
             } catch (PersonNotFoundException e) {
-                throw new ConcurrentModificationException("The People reference list has become out of sync with the " +
-                        "relevant Collection in the underlying map");
+                System.out.println("This really shouldn't be happening");
+                toReturn.add(p);
             }
+
         }
+
+        for(IPerson p : toReturn) {
+            addPerson(p);
+        }
+
+
+//        IPerson[] arrayCopy = orderedBirthCohort.toArray(new IPerson[orderedBirthCohort.size()]);
+//
+//        if(numberToRemove > arrayCopy.length)
+//            System.out.println("Screwed");
+//
+//        int arrayIndex = 0;
+//
+//        for (int i = 0; i < numberToRemove; i++) {
+//
+//            System.out.println(arrayIndex);
+//            if(arrayIndex >= arrayCopy.length) {
+//                System.out.println(arrayCopy.length);
+//                throw new InsufficientNumberOfPeopleException("Not enough females to remove specified number from collection");
+//            }
+//
+//            // Find the females who we wish to return - if there is enough of them
+//            IPerson p = arrayCopy[arrayIndex];
+//            try {
+//
+
+//
+//            } catch (PersonNotFoundException e) {
+//                i--;
+//                System.out.println("Why?");
+////                throw new ConcurrentModificationException("The People reference list has become out of sync with the " +
+////                        "relevant Collection in the underlying map");
+//            }
+//
+//            arrayIndex++;
+//
+//
+//        }
+//
+//        // Remove the chosen females from the population structure
+//
 
         return people;
 
@@ -240,4 +284,33 @@ public class FemaleCollection extends PersonCollection {
 
     }
 
+    public boolean verify() {
+
+        boolean passed = true;
+
+        for(YearDate y : byBirthYearAndNumberOfChildren.keySet()) {
+
+            Map<Integer, Collection<IPerson>> birthCohort = byBirthYearAndNumberOfChildren.get(y);
+
+            for(Integer birthOrder : birthCohort.keySet()) {
+
+                Collection<IPerson> orderedBirthCohort = birthCohort.get(birthOrder);
+
+                for(IPerson p : orderedBirthCohort) {
+                    if(p.getBirthDate().getYear() != y.getYear()
+                            || p.numberOfChildren() != birthOrder) {
+                        passed = false;
+                        System.out.println("F: " + p.getId() + " YOB: " + p.getBirthDate().getYear() + " ("
+                                + y.getYear() + ") order: " + p.numberOfChildren() + " (" + birthOrder + ")");
+                    }
+                }
+
+            }
+
+
+        }
+
+
+        return passed;
+    }
 }

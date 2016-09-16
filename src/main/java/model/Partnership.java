@@ -5,6 +5,7 @@ import org.apache.logging.log4j.Logger;
 import utils.time.Date;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -89,7 +90,7 @@ public class Partnership implements IPartnership {
     }
 
     @Override
-    public void addChildren(List<IPerson> children) {
+    public void addChildren(Collection<IPerson> children) {
         this.children.addAll(children);
     }
 

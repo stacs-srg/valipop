@@ -18,6 +18,15 @@ public class AgeRangeWithExactFatherValue {
     private Collection<IPerson> fathers = new ArrayList<>();
     private int carriedFathers = 0;
 
+    public String toString() {
+        String s = "";
+        s += "ARwEFV: ";
+        s += ageRange.toString() + "   ";
+        s += "EFV = " + value + "   ";
+        s += "fF = " + fathers.size() + "   ";
+        s += "cF = " + carriedFathers + " ";
+        return s;
+    }
 
     public AgeRangeWithExactFatherValue(DataKey key, IntegerRange ageRange, double value) {
         this.ageRange = ageRange;

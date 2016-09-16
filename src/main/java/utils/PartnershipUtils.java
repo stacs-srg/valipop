@@ -2,6 +2,7 @@ package utils;
 
 import model.IPerson;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -9,7 +10,7 @@ import java.util.List;
  */
 public interface PartnershipUtils {
 
-    void addChildren(List<IPerson> children);
+    void addChildren(Collection<IPerson> children);
 
     void setFather(IPerson father);
 

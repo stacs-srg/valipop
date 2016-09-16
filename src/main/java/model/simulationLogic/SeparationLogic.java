@@ -1,5 +1,6 @@
 package model.simulationLogic;
 
+import datastructure.population.PeopleCollection;
 import datastructure.summativeStatistics.desired.PopulationStatistics;
 import datastructure.summativeStatistics.structure.DataKey;
 import datastructure.summativeStatistics.structure.SelfCorrectingOneDimensionDataDistribution;
@@ -19,7 +20,7 @@ public class SeparationLogic {
 
     public static Logger log = LogManager.getLogger(SeparationLogic.class);
 
-    public static Collection<IPerson> handleSeparation(PopulationStatistics desiredPopulationStatistics, Date currentTime, int partnershipCount, List<IPerson> mothersNeedingProcessed) {
+    public static Collection<IPerson> handleSeparation(PopulationStatistics desiredPopulationStatistics, Date currentTime, int partnershipCount, List<IPerson> mothersNeedingProcessed, PeopleCollection people) {
 
         List<IPerson> mothersNeedingPartners = new ArrayList<>();
 
@@ -68,7 +69,6 @@ public class SeparationLogic {
             } else {
                 // add the rest to MOTHERS_WITH_FATHERS
                 m.keepFather();
-
                 mothersNeedingProcessed.remove(m);
             }
         }

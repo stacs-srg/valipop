@@ -31,7 +31,7 @@ import java.util.List;
  */
 public class ChildrenAnalytics {
 
-    private static final int MAX_CHILDREN = 25;
+    private static final int MAX_CHILDREN = 100;
     private static final int ONE_HUNDRED = 100;
 
     private final int[] children_per_marriage = new int[MAX_CHILDREN]; // tracks family size

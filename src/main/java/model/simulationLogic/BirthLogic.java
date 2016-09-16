@@ -8,6 +8,7 @@ import datastructure.summativeStatistics.structure.DataKey;
 import datastructure.summativeStatistics.structure.IntegerRange;
 import datastructure.summativeStatistics.structure.OneDimensionDataDistribution;
 import datastructure.summativeStatistics.structure.SelfCorrectingOneDimensionDataDistribution;
+import model.IPartnership;
 import model.IPerson;
 import model.PersonFactory;
 import org.apache.logging.log4j.LogManager;
@@ -176,7 +177,14 @@ public class BirthLogic {
             // At this point we have a mothers needing processed list
 
 
-            SeparationLogic.handleSeparation(desiredPopulationStatistics, currentTime, partnershipCount, mothersNeedingProcessed);
+//            mothersNeedingPartners.addAll(mothersNeedingProcessed);
+//            for(IPerson p : mothersNeedingPartners) {
+//                IPartnership partnership = p.getLastChild().getParentsPartnership();
+//                partnership.setFather(getRandomFather(people, yearOfBirthInConsideration));
+//                partnership.getMalePartner().recordPartnership(partnership);
+//            }
+
+            SeparationLogic.handleSeparation(desiredPopulationStatistics, currentTime, partnershipCount, mothersNeedingProcessed, people);
 
             for(IPerson p : mothersNeedingPartners) {
                 p.getLastChild().getParentsPartnership().setFather(getRandomFather(people, yearOfBirthInConsideration));
