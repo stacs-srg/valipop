@@ -1,8 +1,8 @@
 package uk.ac.standrews.cs.digitising_scotland.linkage.factory;
 
 
-import uk.ac.standrews.cs.jstore.impl.exceptions.IllegalKeyException;
-import uk.ac.standrews.cs.jstore.interfaces.ILXPFactory;
+import uk.ac.standrews.cs.storr.impl.exceptions.IllegalKeyException;
+import uk.ac.standrews.cs.storr.interfaces.ILXPFactory;
 import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.Birth;
 import uk.ac.standrews.cs.nds.persistence.PersistentObjectException;
 import uk.ac.standrews.cs.nds.rpc.stream.JSONReader;

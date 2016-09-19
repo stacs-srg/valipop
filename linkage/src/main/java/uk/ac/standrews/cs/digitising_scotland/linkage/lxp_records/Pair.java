@@ -3,11 +3,11 @@ package uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records;
 import org.json.JSONException;
 import org.json.JSONWriter;
 import uk.ac.standrews.cs.digitising_scotland.linkage.interfaces.IPair;
-import uk.ac.standrews.cs.jstore.impl.exceptions.IllegalKeyException;
-import uk.ac.standrews.cs.jstore.impl.exceptions.KeyNotFoundException;
-import uk.ac.standrews.cs.jstore.impl.exceptions.TypeMismatchFoundException;
-import uk.ac.standrews.cs.jstore.interfaces.ILXP;
-import uk.ac.standrews.cs.jstore.interfaces.IReferenceType;
+import uk.ac.standrews.cs.storr.impl.exceptions.IllegalKeyException;
+import uk.ac.standrews.cs.storr.impl.exceptions.KeyNotFoundException;
+import uk.ac.standrews.cs.storr.impl.exceptions.TypeMismatchFoundException;
+import uk.ac.standrews.cs.storr.interfaces.ILXP;
+import uk.ac.standrews.cs.storr.interfaces.IReferenceType;
 import uk.ac.standrews.cs.nds.persistence.PersistentObjectException;
 import uk.ac.standrews.cs.nds.rpc.stream.JSONReader;
 

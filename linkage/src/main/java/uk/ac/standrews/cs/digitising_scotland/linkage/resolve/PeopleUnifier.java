@@ -6,10 +6,10 @@ import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.Pair;
 import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.Role;
 import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.SameAs;
 import uk.ac.standrews.cs.digitising_scotland.linkage.stream_operators.sharder.AbstractPairwiseUnifier;
-import uk.ac.standrews.cs.jstore.impl.exceptions.BucketException;
-import uk.ac.standrews.cs.jstore.interfaces.IInputStream;
-import uk.ac.standrews.cs.jstore.interfaces.ILXP;
-import uk.ac.standrews.cs.jstore.interfaces.IOutputStream;
+import uk.ac.standrews.cs.storr.impl.exceptions.BucketException;
+import uk.ac.standrews.cs.storr.interfaces.IInputStream;
+import uk.ac.standrews.cs.storr.interfaces.ILXP;
+import uk.ac.standrews.cs.storr.interfaces.IOutputStream;
 import uk.ac.standrews.cs.nds.util.ErrorHandling;
 
 /**

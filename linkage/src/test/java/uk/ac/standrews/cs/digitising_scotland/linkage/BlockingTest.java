@@ -2,12 +2,12 @@ package uk.ac.standrews.cs.digitising_scotland.linkage;
 
 import org.junit.Before;
 import org.junit.Test;
-import uk.ac.standrews.cs.jstore.impl.StoreFactory;
-import uk.ac.standrews.cs.jstore.impl.TypeFactory;
-import uk.ac.standrews.cs.jstore.impl.exceptions.IllegalKeyException;
-import uk.ac.standrews.cs.jstore.impl.exceptions.RepositoryException;
-import uk.ac.standrews.cs.jstore.impl.exceptions.StoreException;
-import uk.ac.standrews.cs.jstore.interfaces.*;
+import uk.ac.standrews.cs.storr.impl.StoreFactory;
+import uk.ac.standrews.cs.storr.impl.TypeFactory;
+import uk.ac.standrews.cs.storr.impl.exceptions.IllegalKeyException;
+import uk.ac.standrews.cs.storr.impl.exceptions.RepositoryException;
+import uk.ac.standrews.cs.storr.impl.exceptions.StoreException;
+import uk.ac.standrews.cs.storr.interfaces.*;
 import uk.ac.standrews.cs.digitising_scotland.linkage.blocking.FNLFFMFOverBirths;
 import uk.ac.standrews.cs.digitising_scotland.linkage.factory.BirthFactory;
 import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.Birth;

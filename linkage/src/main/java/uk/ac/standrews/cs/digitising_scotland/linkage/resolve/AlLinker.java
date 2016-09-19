@@ -3,20 +3,23 @@ package uk.ac.standrews.cs.digitising_scotland.linkage.resolve;
 import org.json.JSONException;
 import uk.ac.standrews.cs.digitising_scotland.linkage.EventImporter;
 import uk.ac.standrews.cs.digitising_scotland.linkage.RecordFormatException;
-import uk.ac.standrews.cs.digitising_scotland.linkage.blocking.FNLNOverRole;
+import uk.ac.standrews.cs.digitising_scotland.linkage.blocking.FFNFLNMFNMMNPOMDOMOverActor;
 import uk.ac.standrews.cs.digitising_scotland.linkage.factory.*;
 import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.*;
 import uk.ac.standrews.cs.digitising_scotland.util.ErrorHandling;
-import uk.ac.standrews.cs.jstore.impl.StoreFactory;
-import uk.ac.standrews.cs.jstore.impl.StoreReference;
-import uk.ac.standrews.cs.jstore.impl.TypeFactory;
-import uk.ac.standrews.cs.jstore.impl.exceptions.*;
-import uk.ac.standrews.cs.jstore.interfaces.*;
+import uk.ac.standrews.cs.storr.impl.LXP;
+import uk.ac.standrews.cs.storr.impl.StoreFactory;
+import uk.ac.standrews.cs.storr.impl.StoreReference;
+import uk.ac.standrews.cs.storr.impl.TypeFactory;
+import uk.ac.standrews.cs.storr.impl.exceptions.*;
+import uk.ac.standrews.cs.storr.interfaces.*;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Attempt to create a linking framework
@@ -84,11 +87,17 @@ public class AlLinker {
         }
         System.out.println("Injesting");
         injestBDMRecords(births_source_path, deaths_source_path, marriages_source_path);
+//        checkBDMRecords();
 
         System.out.println("Blocking");
         block();
-        unify();
+        System.out.println("Examining Blocks");
+        examineBlocks(); // debug
+        formFamilies();
+        //unify();
+        System.out.println("Finished");
     }
+
 
     private void initialise() throws StoreException, IOException, RepositoryException, RecordFormatException, JSONException {
 
@@ -163,13 +172,112 @@ public class AlLinker {
         createRolesFromMarriages(marriages);
     }
 
+    private void checkBDMRecords() {
+        System.out.println( "Checking" );
+        checkInjestedBirths();
+        checkInjestedDeaths();
+        checkInjestedMarriages();
+        checkRoles();
+    }
+
+
+    private void checkInjestedBirths() {
+        IInputStream<Birth> stream = null;
+        try {
+            stream = births.getInputStream();
+        } catch (BucketException e) {
+            ErrorHandling.exceptionError(e, "Cannot get stream for Births bucket");
+            return;
+        }
+
+        System.out.println( "Checking Births" );
+// code should look like this:
+//        for (Birth birth_record : stream) {
+//            System.out.println( "Birth for: " + birth_record.get( Birth.FORENAME ) + " " + birth_record.get( Birth.SURNAME ) + " m: " + birth_record.get( Birth.MOTHERS_FORENAME ) + " " + birth_record.get( Birth.MOTHERS_SURNAME ) + " f: " + birth_record.get( Birth.FATHERS_FORENAME ) + " " + birth_record.get( Birth.FATHERS_SURNAME ) + " read OK");
+//        }
+
+            for (LXP l : stream) {
+                Birth birth_record = null;
+                try {
+                    birth_record = (Birth) l;
+                    System.out.println( "Birth for: " + birth_record.get( Birth.FORENAME ) + " " + birth_record.get( Birth.SURNAME ) + " m: " + birth_record.get( Birth.MOTHERS_FORENAME ) + " " + birth_record.get( Birth.MOTHERS_SURNAME ) + " f: " + birth_record.get( Birth.FATHERS_FORENAME ) + " " + birth_record.get( Birth.FATHERS_SURNAME ) + " read OK");
+
+                } catch ( ClassCastException e ) {
+                    System.out.println( "LXP found (not birth): oid: " +  l.getId() + "object: " + l );
+                    System.out.println( "class of l: " + l.getClass().toString() );
+                }
+
+        }
+
+    }
+
+    private void checkInjestedDeaths() {
+        IInputStream<Death> stream = null;
+        try {
+            stream = deaths.getInputStream();
+        } catch (BucketException e) {
+            ErrorHandling.exceptionError(e, "Cannot get stream for Death bucket");
+            return;
+        }
+
+        System.out.println( "Checking Deaths" );
+
+        for (Death death_record : stream) {
+            System.out.println( "Death for: " + death_record.get( Death.FORENAME ) + " " + death_record.get( Death.SURNAME ) + " m: " + death_record.get( Death.MOTHERS_FORENAME ) + " " + death_record.get( Death.MOTHERS_SURNAME ) + " f: " + death_record.get( Death.FATHERS_FORENAME ) + " " + death_record.get( Death.FATHERS_SURNAME ) + " read OK");
+        }
+    }
+
+    private void checkInjestedMarriages() {
+        IInputStream<Marriage> stream = null;
+        try {
+            stream = marriages.getInputStream();
+        } catch (BucketException e) {
+            ErrorHandling.exceptionError(e, "Cannot get stream for Death bucket");
+            return;
+        }
+
+        System.out.println( "Checking Marriages" );
+
+        for (Marriage marriage_record : stream) {
+                System.out.println("Marriage for b: " + marriage_record.get(Marriage.BRIDE_FORENAME) + " " + marriage_record.get(Marriage.BRIDE_SURNAME) + " g: " + marriage_record.get(Marriage.GROOM_FORENAME) + " " + marriage_record.get(Marriage.GROOM_SURNAME));
+                System.out.println("\tbm: " + marriage_record.get(Marriage.BRIDE_MOTHERS_FORENAME) + " " + marriage_record.get(Marriage.BRIDE_MOTHERS_MAIDEN_SURNAME) + " bf: " + marriage_record.get(Marriage.BRIDE_FATHERS_FORENAME) + " " + marriage_record.get(Marriage.BRIDE_FATHERS_SURNAME));
+                System.out.println("\tgm: " + marriage_record.get(Marriage.GROOM_MOTHERS_FORENAME) + " " + marriage_record.get(Marriage.GROOM_MOTHERS_MAIDEN_SURNAME) + " gf: " + marriage_record.get(Marriage.GROOM_FATHERS_FORENAME) + " " + marriage_record.get(Marriage.GROOM_FATHERS_SURNAME));
+        }
+    }
+
+    private void checkRoles() {
+
+        IInputStream<Role> stream = null;
+        try {
+            stream = roles.getInputStream();
+        } catch (BucketException e) {
+            ErrorHandling.exceptionError(e, "Cannot get stream for Births bucket");
+            return;
+        }
+
+
+        for (LXP l : stream) {
+            Role role = null;
+            try {
+                role = (Role) l;
+                System.out.println( "Role for person: " + role.get_forename() + " " + role.get_surname() + " role: " + role.get_role() );
+
+            } catch ( ClassCastException e ) {
+                System.out.println( "LXP found (not role): oid: " +  l.getId() + "object: " + l );
+                System.out.println( "class of l: " + l.getClass().toString() );
+            }
+
+        }
+
+    }
+
 
     /**
-     * Blocks the Roles into firstname+surname buckets.
+     * Blocks the Roles into buckets.
      */
     private void block() {
         try {
-            IBlocker blocker = new FNLNOverRole(roles, blocked_role_repo, roleFactory);
+            IBlocker blocker = new FFNFLNMFNMMNPOMDOMOverActor(roles, blocked_role_repo, roleFactory);
             blocker.apply();
         } catch (RepositoryException e) {
             e.printStackTrace();
@@ -180,8 +288,65 @@ public class AlLinker {
         }
     }
 
+
+    /**
+     * Display the blocks that are formed from the SFNLNFFNFLNMFNDoMOverRole blocking process
+     */
+    private void examineBlocks() {
+
+        Iterator<IBucket<Role>> iter = blocked_role_repo.getIterator(roleFactory);
+
+        while( iter.hasNext() ) {
+            IBucket<Role> bucket = iter.next();
+
+            System.out.println("Bucket name: " + bucket.getName());
+
+            try {
+                for (Role role : bucket.getInputStream()) {
+                    System.out.println(role.toString());
+                }
+            } catch (BucketException e) {
+                System.out.println("Exception whilst getting stream");
+            }
+        }
+    }
+
+    /**
+     * Try and form families from the blocked data from SFNLNFFNFLNMFNDoMOverRole
+     */
+    private void formFamilies() {
+        Iterator<IBucket<Role>> iter = blocked_role_repo.getIterator(roleFactory);
+
+        while (iter.hasNext()) {
+
+            IBucket<Role> bucket = iter.next();
+            List<Role> potential_family = new ArrayList<Role>();
+
+            try {
+                for (Role role : bucket.getInputStream()) {
+                    potential_family.add( role );
+                }
+            } catch (BucketException e) {
+                ErrorHandling.exceptionError(e, "Exception whilst getting stream of Roles");
+            }
+            create_family( potential_family );
+        }
+    }
+
+    /**
+     * Try and create a family unit from the blocked data
+     * @param potential_family - a collection of Roles from SFNLNFFNFLNMFNDoMOverRole blocking
+     */
+    private void create_family(List<Role> potential_family) {
+
+
+    }
+
+
     /**
      * Unifies the Roles together so that equivalent Roles are in a linked list structure
+     * This method doesn't actually do this.
+     * This method is the equivalent of a wreck of a great sea vessal.
      */
     private void unify() {
 
@@ -200,14 +365,13 @@ public class AlLinker {
               //      System.out.println( "class class found: " +l );
                //     System.out.println( "class of l: " + l.getClass().toString() );
                // }
-                System.out.println( "Relationship is: " + r );
+            //    System.out.println( "Relationship is: " + r );
             // System.out.println( "class of l: " + l.getClass().toString() );
                 Role subject = r.getSubject();
                 Role object = r.getObject();
                 Relationship.relationship_kind relation = r.getRelationship();
 
-                System.out.println( "processed " + subject.get_surname() );
-                // AL IS HERE
+            //    System.out.println( "processed " + subject.get_surname() );
 
             }
         } catch (BucketException e) {
@@ -224,7 +388,7 @@ public class AlLinker {
      *
      * @param bucket - the bucket from which to take the inputs records
      */
-    private void createRolesFromBirths(IBucket bucket) {
+    private void createRolesFromBirths(IBucket<Birth> bucket) {
 
         IOutputStream<Role> role_stream = roles.getOutputStream();
         IInputStream<Birth> stream = null;
@@ -440,18 +604,16 @@ public class AlLinker {
     private void createRelationship(Role subject, Role object, Relationship.relationship_kind relationship , String evidence) {
 
         if( subject == null || object == null ) {
-            ErrorHandling.error( "createRelationship passed null Role for (" + relationship.name() + ") subject: " + subject + " object: " + object );
+//            ErrorHandling.error( "createRelationship passed null Role for (" + relationship.name() + ") subject: " + subject + " object: " + object );
             return;
         }
-        IOutputStream<Relationship> relationship_stream = relationships.getOutputStream();
-
         StoreReference<Role> subject_ref = new StoreReference<Role>(role_repo.getName(), roles.getName(), subject.getId());
         StoreReference<Role> object_ref = new StoreReference<Role>(role_repo.getName(), roles.getName(), object.getId());
 
         Relationship r = null;
         try {
             r = new Relationship( subject_ref, object_ref,relationship, evidence );
-            relationship_stream.add(r);
+            relationships.makePersistent(r);
         } catch (StoreException e) {
             ErrorHandling.exceptionError(e, "Store Error adding relationship: " + r);
         } catch (BucketException e) {
@@ -460,7 +622,8 @@ public class AlLinker {
     }
 
     /**
-     * **************************************************************************************************************
+     * *****************************
+     * *********************************************************************************
      */
 
     public static void main(String[] args) throws Exception, KeyNotFoundException, TypeMismatchFoundException, IllegalKeyException {

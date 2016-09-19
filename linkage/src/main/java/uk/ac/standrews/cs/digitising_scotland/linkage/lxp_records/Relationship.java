@@ -1,16 +1,16 @@
 package uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records;
 
 import uk.ac.standrews.cs.digitising_scotland.util.ErrorHandling;
-import uk.ac.standrews.cs.jstore.impl.StoreReference;
-import uk.ac.standrews.cs.jstore.impl.exceptions.BucketException;
-import uk.ac.standrews.cs.jstore.impl.exceptions.IllegalKeyException;
-import uk.ac.standrews.cs.jstore.impl.exceptions.StoreException;
-import uk.ac.standrews.cs.jstore.types.LXP_REF;
-import uk.ac.standrews.cs.jstore.types.LXP_SCALAR;
+import uk.ac.standrews.cs.storr.impl.StoreReference;
+import uk.ac.standrews.cs.storr.impl.exceptions.BucketException;
+import uk.ac.standrews.cs.storr.impl.exceptions.IllegalKeyException;
+import uk.ac.standrews.cs.storr.impl.exceptions.StoreException;
+import uk.ac.standrews.cs.storr.types.LXP_REF;
+import uk.ac.standrews.cs.storr.types.LXP_SCALAR;
 import uk.ac.standrews.cs.nds.persistence.PersistentObjectException;
 import uk.ac.standrews.cs.nds.rpc.stream.JSONReader;
 
-import static uk.ac.standrews.cs.jstore.types.LXPBaseType.STRING;
+import static uk.ac.standrews.cs.storr.types.LXPBaseType.STRING;
 
 /**
  * Created by al on 17/8/16
@@ -38,7 +38,7 @@ public class Relationship extends AbstractLXP {
         super(persistent_object_id, reader);
     }
 
-    public Relationship( StoreReference subject, StoreReference object, relationship_kind relationship, String evidence  ) throws StoreException {
+    public Relationship( StoreReference<Role> subject, StoreReference<Role> object, relationship_kind relationship, String evidence  ) throws StoreException {
 
         this();
         try {
@@ -53,8 +53,12 @@ public class Relationship extends AbstractLXP {
     }
 
     public Role getSubject() {
+//        Diagnostic.trace( "GETSUBJECT: this_id: " +  this.getId() + " this: " + this );
+
         try {
+
             return (Role) getRef( SUBJECT ).getReferend();
+
         } catch (BucketException e) {
             ErrorHandling.exceptionError( e, "Cannot get subject from Relationship" );
             return null;
@@ -62,8 +66,12 @@ public class Relationship extends AbstractLXP {
     }
 
     public Role getObject() {
+//        Diagnostic.trace( "GETOBJECT: this_id: oid: " +  this.getId() + "this: " + this );
+
         try {
+
             return (Role) getRef( OBJECT ).getReferend();
+
         } catch (BucketException e) {
             ErrorHandling.exceptionError( e, "Cannot get object from Relationship" );
             return null;
@@ -78,6 +86,5 @@ public class Relationship extends AbstractLXP {
     public String getEvidence() {
         return getString( EVIDENCE );
     }
-
 
 }

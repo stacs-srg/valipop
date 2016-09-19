@@ -1,10 +1,10 @@
 package uk.ac.standrews.cs.digitising_scotland.linkage.stream_operators.filter;
 
-import uk.ac.standrews.cs.jstore.impl.exceptions.BucketException;
-import uk.ac.standrews.cs.jstore.interfaces.IFilter;
-import uk.ac.standrews.cs.jstore.interfaces.IInputStream;
-import uk.ac.standrews.cs.jstore.interfaces.ILXP;
-import uk.ac.standrews.cs.jstore.interfaces.IOutputStream;
+import uk.ac.standrews.cs.storr.impl.exceptions.BucketException;
+import uk.ac.standrews.cs.storr.interfaces.IFilter;
+import uk.ac.standrews.cs.storr.interfaces.IInputStream;
+import uk.ac.standrews.cs.storr.interfaces.ILXP;
+import uk.ac.standrews.cs.storr.interfaces.IOutputStream;
 
 /**
  * Created by al on 28/04/2014.
