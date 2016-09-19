@@ -3,25 +3,25 @@ package uk.ac.standrews.cs.digitising_scotland.linkage.blocking;
 
 import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.Role;
 import uk.ac.standrews.cs.digitising_scotland.linkage.stream_operators.sharder.Blocker;
-import uk.ac.standrews.cs.jstore.impl.exceptions.BucketException;
-import uk.ac.standrews.cs.jstore.impl.exceptions.RepositoryException;
-import uk.ac.standrews.cs.jstore.interfaces.IBucket;
-import uk.ac.standrews.cs.jstore.interfaces.ILXPFactory;
-import uk.ac.standrews.cs.jstore.interfaces.IRepository;
+import uk.ac.standrews.cs.storr.impl.exceptions.BucketException;
+import uk.ac.standrews.cs.storr.impl.exceptions.RepositoryException;
+import uk.ac.standrews.cs.storr.interfaces.IBucket;
+import uk.ac.standrews.cs.storr.interfaces.ILXPFactory;
+import uk.ac.standrews.cs.storr.interfaces.IRepository;
 
 import java.io.IOException;
 
 /**
  * This class blocks on streams of Role records.
- * The categories of blocking are:
+ * The categories of blocking are: firstname, lastname
  * <p/>
 
  * Created by al on 17/08/16.
  */
 
-public class FNLNOverRole extends Blocker<Role> {
+public class FNLNOverActor extends Blocker<Role> {
 
-    public FNLNOverRole(final IBucket<Role> roleBucket, final IRepository output_repo, ILXPFactory<Role> tFactory) throws BucketException, RepositoryException, IOException {
+    public FNLNOverActor(final IBucket<Role> roleBucket, final IRepository output_repo, ILXPFactory<Role> tFactory) throws BucketException, RepositoryException, IOException {
 
         super(roleBucket.getInputStream(), output_repo, tFactory);
     }

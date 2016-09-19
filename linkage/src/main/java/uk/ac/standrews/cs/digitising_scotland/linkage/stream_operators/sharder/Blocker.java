@@ -1,13 +1,11 @@
 package uk.ac.standrews.cs.digitising_scotland.linkage.stream_operators.sharder;
 
 
-import uk.ac.standrews.cs.jstore.impl.exceptions.BucketException;
-import uk.ac.standrews.cs.jstore.impl.exceptions.RepositoryException;
-import uk.ac.standrews.cs.jstore.interfaces.*;
+import uk.ac.standrews.cs.storr.impl.exceptions.BucketException;
+import uk.ac.standrews.cs.storr.impl.exceptions.NoSuitableBucketException;
+import uk.ac.standrews.cs.storr.impl.exceptions.RepositoryException;
+import uk.ac.standrews.cs.storr.interfaces.*;
 import uk.ac.standrews.cs.nds.util.ErrorHandling;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Blocker takes a stream and blocks it into buckets based on the assigner
@@ -17,7 +15,6 @@ public abstract class Blocker<T extends ILXP> implements IBlocker<T> {
 
     private final IInputStream<T> input;
     private final IRepository output_repo;
-    private final Map<String, IBucket> names = new HashMap<>();
     private ILXPFactory<T> factory;
 
     /**
@@ -51,38 +48,37 @@ public abstract class Blocker<T extends ILXP> implements IBlocker<T> {
     @Override
     public void assign(final T record) {
 
-        for (String bucket_name : determineBlockedBucketNamesForRecord(record)) {
+ //       System.out.println( "LXP in assign: oid: " +  record.getId() + "object: " + record );
+ //       System.out.println( "class of l: " + record.getClass().toString() );
 
-            if( !bucket_name.equals( "" ) ) {
+        String[] bucket_names = null;
+            try {
+                bucket_names = determineBlockedBucketNamesForRecord(record);
+            } catch (NoSuitableBucketException e) {
+                ErrorHandling.error("No suitable bucket for record: " + record);
+                return;
+            }
+            for (String bucket_name : bucket_names ) {
 
-                IBucket bucket = names.get(bucket_name);
-
-                if (bucket == null) { // not seen the field before
-                    // Need to create a new bucket
-                    if (output_repo.bucketExists(bucket_name)) {
-                        try {
-                            output_repo.getBucket(bucket_name, factory).getOutputStream().add(record);
-                        } catch (RepositoryException | BucketException e) {
-                            ErrorHandling.exceptionError(e, "Exception obtaining bucket instance for record: " + record );
-                        }
-                    } else { // need to create it
-                        try {
-                            output_repo.makeBucket(bucket_name, BucketKind.DIRECTORYBACKED, factory).getOutputStream().add(record);
-                        } catch (RepositoryException | BucketException e) {
-                            ErrorHandling.exceptionError(e, "Exception creating bucket for record: " + record );
-                        }
-                    }
-                } else { // we have seen this name before and hence have a cached bucket
-
+                if( bucket_name == null || bucket_name.equals( "" ) ) {
+                    ErrorHandling.error( "Illegal (empty or null) name encountered whilst creating bucket for: " + record);
+                    return;
+                }
+                if (output_repo.bucketExists(bucket_name)) {
                     try {
-                        bucket.getOutputStream().add(record);
-                    } catch ( BucketException e) {
-                        ErrorHandling.exceptionError(e, "Exception adding record to stream for record: " + record );
+                        output_repo.getBucket(bucket_name, factory).getOutputStream().add(record);
+                    } catch (RepositoryException | BucketException e) {
+                        ErrorHandling.exceptionError(e, "Exception obtaining bucket instance for record: " + record );
+                    }
+                } else { // need to create it
+                    try {
+                        output_repo.makeBucket(bucket_name, BucketKind.DIRECTORYBACKED, factory).getOutputStream().add(record);
+                    } catch (RepositoryException | BucketException e) {
+                        ErrorHandling.exceptionError(e, "Exception creating bucket for record: " + record);
                     }
                 }
             }
-        }
     }
 
-    public abstract String[] determineBlockedBucketNamesForRecord(T record);
+    public abstract String[] determineBlockedBucketNamesForRecord(T record) throws NoSuitableBucketException;
 }

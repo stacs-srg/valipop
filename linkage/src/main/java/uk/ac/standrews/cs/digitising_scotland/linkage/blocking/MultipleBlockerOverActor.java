@@ -1,11 +1,11 @@
 package uk.ac.standrews.cs.digitising_scotland.linkage.blocking;
 
 
-import uk.ac.standrews.cs.jstore.impl.exceptions.BucketException;
-import uk.ac.standrews.cs.jstore.impl.exceptions.RepositoryException;
-import uk.ac.standrews.cs.jstore.interfaces.IBucket;
-import uk.ac.standrews.cs.jstore.interfaces.ILXPFactory;
-import uk.ac.standrews.cs.jstore.interfaces.IRepository;
+import uk.ac.standrews.cs.storr.impl.exceptions.BucketException;
+import uk.ac.standrews.cs.storr.impl.exceptions.RepositoryException;
+import uk.ac.standrews.cs.storr.interfaces.IBucket;
+import uk.ac.standrews.cs.storr.interfaces.ILXPFactory;
+import uk.ac.standrews.cs.storr.interfaces.IRepository;
 import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.Role;
 import uk.ac.standrews.cs.digitising_scotland.linkage.stream_operators.sharder.Blocker;
 
@@ -27,9 +27,9 @@ import java.util.ArrayList;
  * <p/>
  * Created by al on 01/08/2014.
  */
-public class MultipleBlockerOverRole extends Blocker<Role> {
+public class MultipleBlockerOverActor extends Blocker<Role> {
 
-    public MultipleBlockerOverRole(final IBucket<Role> roleBucket, final IRepository output_repo, ILXPFactory<Role> tFactory) throws BucketException, RepositoryException, IOException {
+    public MultipleBlockerOverActor(final IBucket<Role> roleBucket, final IRepository output_repo, ILXPFactory<Role> tFactory) throws BucketException, RepositoryException, IOException {
 
         super(roleBucket.getInputStream(), output_repo, tFactory);
     }

@@ -1,10 +1,10 @@
 package uk.ac.standrews.cs.digitising_scotland.linkage.stream_operators.filter;
 
-import uk.ac.standrews.cs.jstore.impl.exceptions.KeyNotFoundException;
-import uk.ac.standrews.cs.jstore.impl.exceptions.TypeMismatchFoundException;
-import uk.ac.standrews.cs.jstore.interfaces.IInputStream;
-import uk.ac.standrews.cs.jstore.interfaces.ILXP;
-import uk.ac.standrews.cs.jstore.interfaces.IOutputStream;
+import uk.ac.standrews.cs.storr.impl.exceptions.KeyNotFoundException;
+import uk.ac.standrews.cs.storr.impl.exceptions.TypeMismatchFoundException;
+import uk.ac.standrews.cs.storr.interfaces.IInputStream;
+import uk.ac.standrews.cs.storr.interfaces.ILXP;
+import uk.ac.standrews.cs.storr.interfaces.IOutputStream;
 import uk.ac.standrews.cs.digitising_scotland.util.ErrorHandling;
 
 /**
