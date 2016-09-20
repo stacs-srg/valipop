@@ -16,10 +16,9 @@
  */
 package analytic;
 
-import model.IPerson;
-import model.IPopulation;
+import model.simulationEntities.IPerson;
+import model.simulationEntities.IPopulation;
 import uk.ac.standrews.cs.digitising_scotland.util.ArrayManipulation;
-import uk.ac.standrews.cs.digitising_scotland.util.DateManipulation;
 import utils.time.Date;
 import utils.time.DateUtils;
 

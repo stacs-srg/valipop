@@ -11,14 +11,15 @@ import datastructure.summativeStatistics.desired.DesiredPopulationStatisticsFact
 import datastructure.summativeStatistics.desired.PopulationStatistics;
 import datastructure.summativeStatistics.generated.GeneratedPopulationComposition;
 import datastructure.summativeStatistics.generated.UnsupportedEventType;
-import model.*;
 import datastructure.summativeStatistics.PopulationComposition;
+import model.simulationEntities.IPopulation;
 import validation.ComparativeAnalysis;
 import config.Config;
 
 import utils.time.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import validation.utils.StatisticalManipulationCalculationError;
 
 import java.io.*;
 import java.nio.file.InvalidPathException;

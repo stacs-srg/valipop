@@ -7,16 +7,15 @@ import datastructure.summativeStatistics.desired.PopulationStatistics;
 import datastructure.summativeStatistics.structure.DataKey;
 import datastructure.summativeStatistics.structure.IntegerRange;
 import datastructure.summativeStatistics.structure.OneDimensionDataDistribution;
-import datastructure.summativeStatistics.structure.SelfCorrectingOneDimensionDataDistribution;
-import model.IPartnership;
-import model.IPerson;
-import model.PersonFactory;
+import model.simulationEntities.IPerson;
+import model.simulationEntities.PersonFactory;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import utils.CollectionUtils;
 import utils.MapUtils;
 import utils.time.*;
 import utils.time.Date;
+import validation.utils.StatisticalManipulationCalculationError;
 
 import java.util.*;
 
@@ -62,7 +61,7 @@ public class BirthLogic {
 
 //                System.out.println("------------------");
 //                System.out.println(order + " of " + maxBirthOrderInCohort);
-//                System.out.println(yearOfBirthInConsideration.toString());
+//                System.out.println(yearOfBirthInConsideration.rowAsString());
 //                if(women != null) {
 //                    System.out.println(women.size());
 //                } else {
@@ -184,14 +183,16 @@ public class BirthLogic {
 //                partnership.getMalePartner().recordPartnership(partnership);
 //            }
 
-            SeparationLogic.handleSeparation(desiredPopulationStatistics, currentTime, partnershipCount, mothersNeedingProcessed, people);
+            // TODO NEXT - big issue is in here
+            mothersNeedingPartners.addAll(SeparationLogic.handleSeparation(desiredPopulationStatistics, currentTime, partnershipCount, mothersNeedingProcessed, people));
 
-            for(IPerson p : mothersNeedingPartners) {
-                p.getLastChild().getParentsPartnership().setFather(getRandomFather(people, yearOfBirthInConsideration));
-            }
+//            for(IPerson p : mothersNeedingPartners) {
+//                p.getLastChild().getParentsPartnership().setFather(getRandomFather(people, yearOfBirthInConsideration));
+//            }
 
             // At this point we have a Mothers Needing Fathers List with children already created
 
+//            mothersNeedingPartners.addAll(mothersNeedingProcessed);
             PartneringLogic.handlePartnering(desiredPopulationStatistics, currentTime, mothersNeedingPartners, age, people);
 
 

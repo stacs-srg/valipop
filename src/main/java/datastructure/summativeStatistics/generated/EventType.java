@@ -11,6 +11,7 @@ public enum EventType {
     FOURTH_BIRTH,
     FIFTH_BIRTH,
     MALE_DEATH,
-    FEMALE_DEATH
+    FEMALE_DEATH,
+    SEPARATION
 
 }

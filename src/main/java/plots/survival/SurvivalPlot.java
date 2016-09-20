@@ -51,7 +51,7 @@ public class SurvivalPlot {
                         new double[][]{sortedTimeObserved, sortedTimeExpected},
                         new double[][]{sortedSurvivalEstimateObserved, sortedSurvivalEstimateExpected}).plot, 1680, 1050);
 //
-//        ChartUtilities.saveChartAsPNG(new File(Paths.get(config.getSavePathPlots().toString(), event.toString()).toString(), d.toOrderableString() + "B.png"),
+//        ChartUtilities.saveChartAsPNG(new File(Paths.get(config.getSavePathPlots().rowAsString(), event.rowAsString()).rowAsString(), d.toOrderableString() + "B.png"),
 //                new SurvivalEstimatePlot(names,
 //                        new double[][]{sortedTimeExpected},
 //                        new double[][]{sortedSurvivalEstimateExpected}).plot, 1680, 1050);

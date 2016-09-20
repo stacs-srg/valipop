@@ -1,10 +1,10 @@
 package utils;
 
 import datastructure.summativeStatistics.generated.EventType;
-import model.IPartnership;
-import model.IPerson;
-import model.NoChildrenOfDesiredOrder;
-import model.NotDeadException;
+import model.simulationEntities.IPartnership;
+import model.simulationEntities.IPerson;
+import model.exceptions.NoChildrenOfDesiredOrder;
+import model.exceptions.NotDeadException;
 import utils.time.*;
 
 /**
@@ -35,4 +35,11 @@ public interface PersonUtils {
     void setParentsPartnership(IPartnership newParents);
 
     int numberOfChildrenFatheredChildren();
+
+    IPartnership isInstigatorOfSeparationOfMothersPreviousPartnership();
+
+    boolean isWidow(Date onDate);
+
+    IPerson getPartner(Date onDate);
+
 }

@@ -97,7 +97,7 @@ public class SelfCorrectingOneDimensionDataDistribution extends OneDimensionData
 //        // if new applied rate has switched across target rate then reset count
         if((aDo < tD && aDn >= tD) || (aDo > tD && aDn <= tD)) {
 
-//            System.out.println("Counts reset   |   y: " + getYear().toString() + " |   a: " + data.getYLabel());
+//            System.out.println("Counts reset   |   y: " + getYear().rowAsString() + " |   a: " + data.getYLabel());
             // calc r - the number of people it takes to get the applied rate back to the target rate
 //            double r = ( aDo * aCo ) / ( aacD * ( tD - 1 ) );
 

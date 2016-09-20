@@ -16,9 +16,9 @@
  */
 package analytic;
 
-import model.IPartnership;
-import model.IPerson;
-import model.IPopulation;
+import model.simulationEntities.IPartnership;
+import model.simulationEntities.IPerson;
+import model.simulationEntities.IPopulation;
 import uk.ac.standrews.cs.digitising_scotland.util.ArrayManipulation;
 
 import java.io.PrintStream;

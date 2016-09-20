@@ -4,7 +4,7 @@ import datastructure.population.PeopleCollection;
 import datastructure.summativeStatistics.desired.PopulationStatistics;
 import datastructure.summativeStatistics.structure.DataKey;
 import datastructure.summativeStatistics.structure.SelfCorrectingOneDimensionDataDistribution;
-import model.IPerson;
+import model.simulationEntities.IPerson;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import utils.time.Date;

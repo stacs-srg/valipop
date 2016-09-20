@@ -1,8 +1,6 @@
 package utils;
 
 import datastructure.summativeStatistics.structure.OneDimensionDataDistribution;
-import model.IPerson;
-import model.Person;
 import datastructure.summativeStatistics.structure.IntegerRange;
 
 import java.util.Collection;

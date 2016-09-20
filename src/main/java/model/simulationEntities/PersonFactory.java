@@ -1,4 +1,4 @@
-package model;
+package model.simulationEntities;
 
 import datastructure.population.PeopleCollection;
 import model.dateSelection.BirthDateSelector;

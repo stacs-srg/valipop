@@ -1,4 +1,4 @@
-package model;
+package model.exceptions;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)

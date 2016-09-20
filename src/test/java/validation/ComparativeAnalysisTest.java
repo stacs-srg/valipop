@@ -2,12 +2,10 @@ package validation;
 
 import datastructure.summativeStatistics.generated.EventType;
 import datastructure.summativeStatistics.structure.OneDimensionDataDistribution;
-import model.simulationLogic.StatisticalManipulationCalculationError;
+import validation.utils.StatisticalManipulationCalculationError;
 import org.junit.Assert;
 import org.junit.Test;
 import utils.InputFileReader;
-import utils.time.CompoundTimeUnit;
-import utils.time.TimeUnit;
 
 import java.nio.file.Paths;
 

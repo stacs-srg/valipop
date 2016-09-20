@@ -1,7 +1,7 @@
 package datastructure.population;
 
 import datastructure.population.exceptions.PersonNotFoundException;
-import model.IPerson;
+import model.simulationEntities.IPerson;
 import utils.time.*;
 import utils.time.Date;
 

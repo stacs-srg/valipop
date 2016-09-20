@@ -1,14 +1,13 @@
 package utils;
 
 import config.Config;
+import datastructure.summativeStatistics.structure.LabelValueDataRow;
 import datastructure.summativeStatistics.structure.FailureAgainstTimeTable.FailureTimeRow;
-import model.simulationLogic.Simulation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.PrintStream;
 import java.nio.file.Paths;
 import java.util.Collection;
@@ -54,12 +53,25 @@ public class FileUtils {
         return stream;
     }
 
-    public static void outputFailureTimeTable(Collection<FailureTimeRow> failureTimeTable, PrintStream stream) {
+    public static void outputFailureTimeRowsToStream(Collection<FailureTimeRow> failureTimeRows, PrintStream stream) {
 
         stream.println("years event group");
 
-        for(FailureTimeRow r : failureTimeTable) {
-            stream.println(r.toString());
+        for(LabelValueDataRow r : failureTimeRows) {
+            stream.println(r.rowAsString());
+        }
+
+    }
+
+    public static void outputDataRowsToStream(String headings, Collection<LabelValueDataRow> dataRows, PrintStream stream) {
+
+        if(headings.length() != 0) {
+            stream.println(headings);
+        }
+
+
+        for(LabelValueDataRow r : dataRows) {
+            stream.println(r.rowAsString());
         }
     }
 }

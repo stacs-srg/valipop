@@ -1,9 +1,9 @@
 package datastructure.population;
 
 import datastructure.population.exceptions.PersonNotFoundException;
-import model.IPartnership;
-import model.IPerson;
-import model.IPopulation;
+import model.simulationEntities.IPartnership;
+import model.simulationEntities.IPerson;
+import model.simulationEntities.IPopulation;
 import utils.time.Date;
 import utils.time.UnsupportedDateConversion;
 

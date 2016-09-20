@@ -1,4 +1,4 @@
-package model;
+package model.simulationEntities;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

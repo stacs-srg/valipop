@@ -14,12 +14,9 @@
  * You should have received a copy of the GNU General Public License along with population_model. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package model;
+package model.simulationEntities;
 
 import utils.PopulationUtils;
-import utils.time.Date;
-
-import java.util.Collection;
 
 /**
  * Interface for all population models.

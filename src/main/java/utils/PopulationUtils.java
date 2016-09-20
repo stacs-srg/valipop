@@ -1,6 +1,6 @@
 package utils;
 
-import model.IPerson;
+import model.simulationEntities.IPerson;
 import utils.time.Date;
 
 import java.util.Collection;

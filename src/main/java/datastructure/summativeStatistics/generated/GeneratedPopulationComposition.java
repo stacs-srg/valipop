@@ -1,12 +1,18 @@
 package datastructure.summativeStatistics.generated;
 
+import datastructure.population.FemaleCollection;
 import datastructure.population.PeopleCollection;
 import datastructure.summativeStatistics.PopulationComposition;
 import datastructure.summativeStatistics.structure.FailureAgainstTimeTable.FailureTimeRow;
 import datastructure.summativeStatistics.structure.IntegerRange;
 import datastructure.summativeStatistics.structure.InvalidRangeException;
 import datastructure.summativeStatistics.structure.OneDimensionDataDistribution;
-import model.*;
+import model.exceptions.NoChildrenOfDesiredOrder;
+import model.exceptions.NotDeadException;
+import model.simulationEntities.IPartnership;
+import model.simulationEntities.IPerson;
+import model.simulationEntities.IPopulation;
+import model.simulationEntities.Partnership;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import utils.time.*;
@@ -89,7 +95,7 @@ public class GeneratedPopulationComposition implements PopulationComposition {
             int totalPopulationOfAge = 0;
 
             for(DateClock d = startYear.getDateClock(); DateUtils.dateBefore(d, startYear.getDateClock().advanceTime(timePeriod)); d = d.advanceTime(1, TimeUnit.YEAR)) {
-//                System.out.println(d.toString());
+//                System.out.println(d.rowAsString());
                 Collection<IPerson> people = population.getByYear(d.advanceTime(new CompoundTimeUnit(age, TimeUnit.YEAR).negative()));
 
                 for(IPerson person : people) {
@@ -110,7 +116,7 @@ public class GeneratedPopulationComposition implements PopulationComposition {
 
                 }
 
-//                System.out.println(d.toString() + " " + age + ": " + totalDeathsForAge + " / " + totalPopulationOfAge);
+//                System.out.println(d.rowAsString() + " " + age + ": " + totalDeathsForAge + " / " + totalPopulationOfAge);
 
             }
 
@@ -183,6 +189,69 @@ public class GeneratedPopulationComposition implements PopulationComposition {
     @Override
     public Collection<YearDate> getDataYearsInMap(EventType maleDeath) {
         return null;
+    }
+
+    @Override
+    public OneDimensionDataDistribution getSeparationData(Date startYear, Date endYear) throws UnsupportedDateConversion {
+        return null;
+    }
+
+
+    @Override
+    public OneDimensionDataDistribution getSeparationData(Date startYear, Date endYear, int childrenCap) throws UnsupportedDateConversion {
+
+        int marriagesActiveInEachYearOfTimePeriod = 0;
+        int[] separationCounts = new int[childrenCap];
+
+        for(DateClock d = startYear.getDateClock(); DateUtils.dateBefore(d, endYear); d = d.advanceTime(1, TimeUnit.YEAR)) {
+
+            // count number of marriages in year and inc total
+
+            for(IPerson p : population.getFemales().getAll()) {
+
+                if(p.getPartnerships().size() != 0 && !p.isWidow(d)) {
+                    // inc marriages count
+                    marriagesActiveInEachYearOfTimePeriod ++;
+
+                }
+
+            }
+
+            // find each childborn in year
+            Collection<IPerson> cohort = population.getByYear(d);
+
+            for(IPerson child : cohort) {
+                IPartnership p = child.isInstigatorOfSeparationOfMothersPreviousPartnership();
+
+                if (p != null) {
+
+                    int numberOfChildren = p.getChildren().size();
+
+                    if(numberOfChildren > childrenCap) {
+                        numberOfChildren = childrenCap;
+                    }
+
+                    separationCounts[numberOfChildren - 1] ++;
+
+                }
+
+            }
+
+
+
+        }
+
+        Map<IntegerRange, Double> tableData = new HashMap<>();
+
+        // process for multiple children in preg
+        for(int c = 0; c < childrenCap; c++) {
+            separationCounts[c] = separationCounts[c] / (c + 1);
+            tableData.put(new IntegerRange(c + 1), separationCounts[c] / (double) marriagesActiveInEachYearOfTimePeriod);
+
+        }
+
+        return new OneDimensionDataDistribution(startYear.getYearDate(), "generated", "", tableData);
+
     }
 
     private Collection<FailureTimeRow> getDeathAtTimesTable(Collection<IPerson> people, String denoteGroupAs, Date simulationEndDate) {

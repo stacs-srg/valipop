@@ -1,9 +1,8 @@
 package utils;
 
-import model.IPerson;
+import model.simulationEntities.IPerson;
 
 import java.util.Collection;
-import java.util.List;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)

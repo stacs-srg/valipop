@@ -1,8 +1,6 @@
-package model.simulationLogic;
+package datastructure.summativeStatistics.structure;
 
-import datastructure.summativeStatistics.structure.DataKey;
-import datastructure.summativeStatistics.structure.IntegerRange;
-import model.IPerson;
+import model.simulationEntities.IPerson;
 
 import java.util.ArrayList;
 import java.util.Collection;

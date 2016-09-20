@@ -7,7 +7,7 @@ import datastructure.summativeStatistics.generated.UnsupportedEventType;
 import datastructure.summativeStatistics.structure.*;
 import datastructure.summativeStatistics.EventRateTables;
 import datastructure.summativeStatistics.structure.FailureAgainstTimeTable.FailureTimeRow;
-import model.IPopulation;
+import model.simulationEntities.IPopulation;
 import utils.CollectionUtils;
 import utils.time.*;
 import utils.time.Date;
@@ -281,9 +281,21 @@ public class PopulationStatistics implements PopulationComposition, EventRateTab
                 return maleDeath.keySet();
             case FEMALE_DEATH:
                 return femaleDeath.keySet();
+            case SEPARATION:
+                return separation.keySet();
         }
 
         return Collections.emptyList();
+    }
+
+    @Override
+    public OneDimensionDataDistribution getSeparationData(Date startYear, Date endYear) throws UnsupportedDateConversion {
+        return getSeparationByChildCountRates(startYear);
+    }
+
+    @Override
+    public OneDimensionDataDistribution getSeparationData(Date startYear, Date endYear, int childCap) throws UnsupportedDateConversion {
+        return getSeparationData(startYear, endYear);
     }
 
     /*
@@ -310,7 +322,7 @@ public class PopulationStatistics implements PopulationComposition, EventRateTab
         int minDifferenceInMonths = Integer.MAX_VALUE;
         YearDate nearestTableYear = null;
 
-        ArrayList<YearDate> orderedKeySet = new ArrayList<YearDate>(map.keySet());
+        ArrayList<YearDate> orderedKeySet = new ArrayList<>(map.keySet());
         Collections.sort(orderedKeySet);
 
 

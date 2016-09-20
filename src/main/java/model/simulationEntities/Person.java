@@ -1,16 +1,17 @@
-package model;
+package model.simulationEntities;
 
 import datastructure.summativeStatistics.generated.EventType;
 import model.dateSelection.BirthDateSelector;
 import model.dateSelection.DateSelector;
 import model.dateSelection.DeathDateSelector;
+import model.exceptions.NoChildrenOfDesiredOrder;
+import model.exceptions.NotDeadException;
 import utils.time.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -322,6 +323,94 @@ public class Person implements IPerson {
         }
 
         return count;
+    }
+
+    @Override
+    public IPartnership isInstigatorOfSeparationOfMothersPreviousPartnership() {
+
+        Collection<IPerson> fullSiblings = parentsPartnership.getChildren();
+        fullSiblings.remove(this);
+
+
+        // check to see if eldest sibling
+        boolean eldest = true;
+        for(IPerson sibling : fullSiblings) {
+            if(DateUtils.dateBefore(sibling.getBirthDate(), getBirthDate())) {
+                eldest = false;
+            }
+        }
+
+        IPartnership prevPartnership = null;
+
+        if(eldest) {
+            // is first child of partnership then look to see if there is a previous partnership for the mother
+            Collection<IPartnership> mothersPartnerships = parentsPartnership.getFemalePartner().getPartnerships();
+            mothersPartnerships.remove(parentsPartnership);
+
+            for(IPartnership p : mothersPartnerships) {
+
+                if(DateUtils.dateBefore(p.getPartnershipDate(), parentsPartnership.getPartnershipDate())) {
+                    if(prevPartnership != null) {
+                        if(DateUtils.dateBefore(prevPartnership.getPartnershipDate(), p.getPartnershipDate())) {
+                            prevPartnership = p;
+                        }
+                    } else {
+                        prevPartnership = p;
+                    }
+                }
+
+            }
+
+
+        }
+
+        return prevPartnership;
+    }
+
+    @Override
+    public boolean isWidow(Date onDate) {
+
+        IPerson partner = getPartner(onDate);
+
+        if(partner == null) {
+            return false;
+        } else {
+            return !partner.aliveOnDate(onDate);
+        }
+
+    }
+
+    @Override
+    public IPerson getPartner(Date onDate) {
+
+        IPartnership currentPartnership = null;
+
+        for(IPartnership p : partnerships) {
+
+            if(DateUtils.dateBefore(p.getPartnershipDate(), onDate)) {
+
+                if(currentPartnership != null) {
+
+                    if(DateUtils.dateBefore(currentPartnership.getPartnershipDate(), p.getPartnershipDate())) {
+                        currentPartnership = p;
+                    }
+
+                } else {
+                    currentPartnership = p;
+                }
+
+            }
+
+        }
+
+        if(currentPartnership == null) {
+            return null;
+        } else if(sex == MALE) {
+            return currentPartnership.getFemalePartner();
+        } else {
+            return currentPartnership.getMalePartner();
+        }
+
     }
 
 }

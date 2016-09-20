@@ -1,6 +1,6 @@
 package model.nameGeneration;
 
-import model.IPerson;
+import model.simulationEntities.IPerson;
 
 /**
  * @author Özgür Akgün

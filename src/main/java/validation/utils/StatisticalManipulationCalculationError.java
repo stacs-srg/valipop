@@ -1,4 +1,4 @@
-package model.simulationLogic;
+package validation.utils;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)

@@ -2,8 +2,7 @@ package datastructure.summativeStatistics.generated;
 
 import datastructure.summativeStatistics.structure.FailureAgainstTimeTable.FailureTimeRow;
 import datastructure.summativeStatistics.structure.OneDimensionDataDistribution;
-import model.IPerson;
-import model.IPopulation;
+import model.simulationEntities.IPopulation;
 import utils.time.CompoundTimeUnit;
 import utils.time.Date;
 import utils.time.UnsupportedDateConversion;
@@ -47,4 +46,8 @@ public interface StatisticalTables {
     Collection<FailureTimeRow> getFailureAtTimesTable(Date year, String denoteGroupAs, Date simulationEndDate, EventType event, Double scalingFactor, int timeLimit, IPopulation generatedPopulation) throws UnsupportedDateConversion;
 
     Collection<YearDate> getDataYearsInMap(EventType maleDeath);
+
+    OneDimensionDataDistribution getSeparationData(Date startYear, Date endYear) throws UnsupportedDateConversion;
+
+    OneDimensionDataDistribution getSeparationData(Date startYear, Date endYear, int childCap) throws UnsupportedDateConversion;
 }

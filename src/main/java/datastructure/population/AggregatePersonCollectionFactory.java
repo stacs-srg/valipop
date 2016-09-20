@@ -1,6 +1,6 @@
 package datastructure.population;
 
-import model.IPerson;
+import model.simulationEntities.IPerson;
 import utils.time.Date;
 import utils.time.DateUtils;
 import utils.time.UnsupportedDateConversion;

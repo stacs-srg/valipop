@@ -6,7 +6,7 @@ import datastructure.population.exceptions.InsufficientNumberOfPeopleException;
 import datastructure.summativeStatistics.desired.PopulationStatistics;
 import datastructure.summativeStatistics.generated.EventType;
 import datastructure.summativeStatistics.structure.DataKey;
-import model.IPerson;
+import model.simulationEntities.IPerson;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import utils.time.CompoundTimeUnit;

@@ -2,9 +2,8 @@ package datastructure.population;
 
 import datastructure.population.exceptions.InsufficientNumberOfPeopleException;
 import datastructure.population.exceptions.PersonNotFoundException;
-import datastructure.summativeStatistics.structure.IntegerRange;
 import utils.time.DateBounds;
-import model.IPerson;
+import model.simulationEntities.IPerson;
 import utils.time.Date;
 
 import java.util.ArrayList;

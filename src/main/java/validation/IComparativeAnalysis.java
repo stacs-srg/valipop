@@ -4,15 +4,14 @@ import config.Config;
 import datastructure.summativeStatistics.generated.EventType;
 import datastructure.summativeStatistics.generated.UnsupportedEventType;
 import datastructure.summativeStatistics.structure.OneDimensionDataDistribution;
-import model.IPopulation;
-import model.simulationLogic.StatisticalManipulationCalculationError;
+import model.simulationEntities.IPopulation;
+import validation.utils.StatisticalManipulationCalculationError;
 import utils.time.CompoundTimeUnit;
 import utils.time.Date;
 import utils.time.UnsupportedDateConversion;
 
 import java.io.IOException;
 import java.io.PrintStream;
-import java.util.List;
 import java.util.Map;
 
 /**

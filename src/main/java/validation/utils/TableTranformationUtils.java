@@ -1,17 +1,12 @@
 package validation.utils;
 
-import datastructure.summativeStatistics.generated.EventType;
 import datastructure.summativeStatistics.structure.FailureAgainstTimeTable.FailureTimeRow;
-import datastructure.summativeStatistics.structure.IntegerRange;
 import datastructure.summativeStatistics.structure.InvalidRangeException;
 import datastructure.summativeStatistics.structure.OneDimensionDataDistribution;
-import model.IPopulation;
-import utils.time.Date;
 import utils.time.UnsupportedDateConversion;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)

@@ -7,8 +7,8 @@ import datastructure.summativeStatistics.structure.FailureAgainstTimeTable.Failu
 import datastructure.summativeStatistics.structure.IntegerRange;
 import datastructure.summativeStatistics.structure.OneDimensionDataDistribution;
 import datastructure.summativeStatistics.generated.StatisticalTables;
-import model.IPopulation;
-import model.simulationLogic.StatisticalManipulationCalculationError;
+import model.simulationEntities.IPopulation;
+import validation.utils.StatisticalManipulationCalculationError;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import plots.survival.SurvivalPlot;
@@ -166,18 +166,20 @@ public class ComparativeAnalysis implements IComparativeAnalysis {
 
             if(config.produceDatFiles()) {
                 Collection<FailureTimeRow> failures = getFailureAtTimesTable(d, EventType.MALE_DEATH, desired, generated, generatedPopulation, config);
-                outputCalcDataToDatFile(d, "_cohort", EventType.MALE_DEATH, config, failures);
+                FileUtils.outputFailureTimeRowsToStream(failures, makeNamedStream(d, "_cohort", EventType.MALE_DEATH, config));
+
                 failures = getFailureAtTimesTable(d, EventType.FEMALE_DEATH, desired, generated, generatedPopulation, config);
-                outputCalcDataToDatFile(d, "_cohort", EventType.FEMALE_DEATH, config, failures);
+                FileUtils.outputFailureTimeRowsToStream(failures, makeNamedStream(d, "_cohort", EventType.FEMALE_DEATH, config));
 
                 failures = getTableOfFailureTimes(d, EventType.FIRST_BIRTH, desired, generated, generatedPopulation);
-                outputCalcDataToDatFile(d, "_cohort", EventType.FIRST_BIRTH, config, failures);
+                FileUtils.outputFailureTimeRowsToStream(failures, makeNamedStream(d, "_cohort", EventType.FIRST_BIRTH, config));
 
             }
 
             results.put(d.getYearDate(), temp);
         }
 
+        compareSeparation(desired, generated);
 
         // Time period anlysis code - only for MALE_DEATH at the moment
 
@@ -199,7 +201,7 @@ public class ComparativeAnalysis implements IComparativeAnalysis {
 //
 //        while(i.hasNext()) {
 //
-//            System.out.println(prevDate.toString());
+//            System.out.println(prevDate.rowAsString());
 //
 //            if(thisDate == null) {
 //                thisDate = i.next();
@@ -247,6 +249,68 @@ public class ComparativeAnalysis implements IComparativeAnalysis {
 
     }
 
+    private void compareSeparation(StatisticalTables desired, StatisticalTables generated) throws UnsupportedDateConversion {
+
+        ArrayList<YearDate> mapKeys = new ArrayList<>(desired.getDataYearsInMap(EventType.SEPARATION));
+
+        // work out the date bounds of map keys
+        Collections.sort(mapKeys);
+
+        // for each bound
+        for(int i = 0; i < mapKeys.size(); i++) {
+
+            Date start;
+            Date end;
+
+            if(i == 0) {
+                start = startDate;
+            } else {
+
+                Date prev = mapKeys.get(i-1);
+                Date current = mapKeys.get(i);
+
+                start = prev.getDateClock().advanceTime(DateUtils.differenceInMonths(prev, current).getCount() / 2, TimeUnit.MONTH);
+
+            }
+
+            if(i == mapKeys.size() - 1) {
+                end = endDate;
+            } else {
+
+                Date next = mapKeys.get(i+1);
+                Date current = mapKeys.get(i);
+
+                end = current.getDateClock().advanceTime(DateUtils.differenceInMonths(current, next).getCount() / 2, TimeUnit.MONTH);
+
+            }
+
+            // get desired data
+            OneDimensionDataDistribution desiredSeparation = desired.getSeparationData(start, end);
+
+            // get generated data
+            OneDimensionDataDistribution generatedSeparation = generated.getSeparationData(start, end, desiredSeparation.getLargestLabel().getValue());
+
+            // statistical comparison
+
+            // TODO NEXT - get this outputting to file and stats working in R
+            // http://stats.stackexchange.com/questions/231059/compare-the-statistical-significance-of-the-difference-between-two-polynomial-re
+
+
+            // log it
+
+            // output it
+
+
+
+        }
+
+
+
+
+
+
+    }
+
     private Collection<FailureTimeRow> getTableOfFailureTimes(Date date, EventType eventType, StatisticalTables expected, StatisticalTables observed, IPopulation generatedPopulation) throws UnsupportedDateConversion, UnsupportedEventType {
         OneDimensionDataDistribution populationSurvivorTable = observed.getCohortSurvivorTable(date, eventType);
         OneDimensionDataDistribution statisticsSurvivorTable = expected.getCohortSurvivorTable(date, eventType, populationSurvivorTable.getData(0), populationSurvivorTable.getLargestLabel().getMax() - 1, generatedPopulation);
@@ -287,7 +351,7 @@ public class ComparativeAnalysis implements IComparativeAnalysis {
 
         Collection<FailureTimeRow> failures = TableTranformationUtils.transformSurvivorTableToTableOfOrderedIndividualFailureTime(populationSurvivorTable, "Observed");
         failures.addAll(TableTranformationUtils.transformSurvivorTableToTableOfOrderedIndividualFailureTime(statisticsSurvivorTable, "Desired"));
-        outputCalcDataToDatFile(date, "_timeperiod", eventType, config, failures);
+        FileUtils.outputFailureTimeRowsToStream(failures, makeNamedStream(date, "_timeperiod", eventType, config));
 
         // perform KM analysis and log result
         return runKaplanMeier(eventType, statisticsSurvivorTable, populationSurvivorTable);
@@ -350,7 +414,7 @@ public class ComparativeAnalysis implements IComparativeAnalysis {
 
     }
 
-    private void outputCalcDataToDatFile(Date date, String note, EventType eventType, Config config, Collection<FailureTimeRow> failures) throws UnsupportedDateConversion {
+    private PrintStream makeNamedStream(Date date, String note, EventType eventType, Config config) throws UnsupportedDateConversion {
 
         String fName = "";
         switch (eventType) {
@@ -376,10 +440,13 @@ public class ComparativeAnalysis implements IComparativeAnalysis {
             case FEMALE_DEATH:
                 fName = "femaleDeaths";
                 break;
+            case SEPARATION:
+                fName = "separation";
+                break;
         }
 
-        PrintStream resultsOutput = FileUtils.setupDatFileAsStream(fName + date.toOrderableString() + note, config);
-        FileUtils.outputFailureTimeTable(failures, resultsOutput);
+        return FileUtils.setupDatFileAsStream(fName + date.toOrderableString() + note, config);
+
     }
 
     public Collection<FailureTimeRow> getFailureAtTimesTable(Date date, EventType event, StatisticalTables expected, StatisticalTables observed, IPopulation generatedPopulation, Config config) throws UnsupportedDateConversion {

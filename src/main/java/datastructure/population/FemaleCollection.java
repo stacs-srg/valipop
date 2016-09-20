@@ -2,8 +2,8 @@ package datastructure.population;
 
 import datastructure.population.exceptions.InsufficientNumberOfPeopleException;
 import datastructure.population.exceptions.PersonNotFoundException;
-import model.IPerson;
-import model.IPartnership;
+import model.simulationEntities.IPerson;
+import model.simulationEntities.IPartnership;
 import utils.MapUtils;
 import utils.time.*;
 import org.apache.logging.log4j.LogManager;

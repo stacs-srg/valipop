@@ -3,7 +3,7 @@ package model.simulationLogic;
 import config.Config;
 import datastructure.population.PeopleCollection;
 import datastructure.summativeStatistics.desired.PopulationStatistics;
-import model.PersonFactory;
+import model.simulationEntities.PersonFactory;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import utils.time.*;

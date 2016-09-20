@@ -1,9 +1,11 @@
 package datastructure.summativeStatistics.structure.FailureAgainstTimeTable;
 
+import datastructure.summativeStatistics.structure.LabelValueDataRow;
+
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class FailureTimeRow {
+public class FailureTimeRow extends LabelValueDataRow {
 
     private int timeElapsed;
     private boolean eventOccured;
@@ -23,7 +25,7 @@ public class FailureTimeRow {
         return eventOccured;
     }
 
-    public String toString() {
+    public String rowAsString() {
         if(eventOccured) {
             return Integer.toString(timeElapsed) + " 1 " + groupIdentifier;
         } else {

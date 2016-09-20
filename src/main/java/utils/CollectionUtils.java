@@ -1,8 +1,7 @@
 package utils;
 
-import model.IPerson;
+import model.simulationEntities.IPerson;
 import utils.time.Date;
-import utils.time.DateClock;
 
 import java.util.Collection;
 

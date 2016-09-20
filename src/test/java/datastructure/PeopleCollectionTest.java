@@ -2,9 +2,9 @@ package datastructure;
 
 import datastructure.population.PeopleCollection;
 import datastructure.population.exceptions.PersonNotFoundException;
-import model.IPerson;
-import model.Partnership;
-import model.Person;
+import model.simulationEntities.IPerson;
+import model.simulationEntities.Partnership;
+import model.simulationEntities.Person;
 import utils.time.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -34,13 +34,13 @@ public class PeopleCollectionTest {
 
         DateClock start = new DateClock(1, 1600);
 
-        model.Person m1 = new model.Person('m', start, null);
-        model.Person m2 = new model.Person('m', start, null);
-        model.Person m3 = new model.Person('m', start, null);
+        Person m1 = new Person('m', start, null);
+        Person m2 = new Person('m', start, null);
+        Person m3 = new Person('m', start, null);
 
-        model.Person f1 = new model.Person('f', start, null);
-        model.Person f2 = new model.Person('f', start, null);
-        model.Person f3 = new model.Person('f', start, null);
+        Person f1 = new Person('f', start, null);
+        Person f2 = new Person('f', start, null);
+        Person f3 = new Person('f', start, null);
 
         living.addPerson(m1);
         living.addPerson(m2);
@@ -68,13 +68,13 @@ public class PeopleCollectionTest {
 
         DateClock start = new DateClock(1, 1600);
 
-        model.Person m1 = new model.Person('m', start, null);
-        model.Person m2 = new model.Person('m', start, null);
-        model.Person m3 = new model.Person('m', start, null);
+        Person m1 = new Person('m', start, null);
+        Person m2 = new Person('m', start, null);
+        Person m3 = new Person('m', start, null);
 
-        model.Person f1 = new model.Person('f', start, null);
-        model.Person f2 = new model.Person('f', start, null);
-        model.Person f3 = new model.Person('f', start, null);
+        Person f1 = new Person('f', start, null);
+        Person f2 = new Person('f', start, null);
+        Person f3 = new Person('f', start, null);
 
         living.addPerson(m1);
         living.addPerson(m2);
@@ -111,13 +111,13 @@ public class PeopleCollectionTest {
 
         DateClock start = new DateClock(1, 1600);
 
-        model.Person m1 = new model.Person('m', start, null);
-        model.Person m2 = new model.Person('m', start, null);
-        model.Person m3 = new model.Person('m', start, null);
+        Person m1 = new Person('m', start, null);
+        Person m2 = new Person('m', start, null);
+        Person m3 = new Person('m', start, null);
 
-        model.Person f1 = new model.Person('f', start, null);
-        model.Person f2 = new model.Person('f', start, null);
-        model.Person f3 = new model.Person('f', start, null);
+        Person f1 = new Person('f', start, null);
+        Person f2 = new Person('f', start, null);
+        Person f3 = new Person('f', start, null);
 
         living.addPerson(m1);
         living.addPerson(m2);
@@ -159,13 +159,13 @@ public class PeopleCollectionTest {
 
         DateClock start = new DateClock(1, 1600);
 
-        Person f1 = new model.Person('f', start, null);
+        Person f1 = new Person('f', start, null);
 
-        Person m1 = new model.Person('m', start, null);
+        Person m1 = new Person('m', start, null);
 
-        Person c1 = new model.Person('m', start.advanceTime(19, TimeUnit.YEAR), null);
-        Person c2 = new model.Person('f', start.advanceTime(25, TimeUnit.YEAR), null);
-        Person c3 = new model.Person('m', start.advanceTime(32, TimeUnit.YEAR), null);
+        Person c1 = new Person('m', start.advanceTime(19, TimeUnit.YEAR), null);
+        Person c2 = new Person('f', start.advanceTime(25, TimeUnit.YEAR), null);
+        Person c3 = new Person('m', start.advanceTime(32, TimeUnit.YEAR), null);
 
         living.addPerson(f1);
 
@@ -230,7 +230,7 @@ public class PeopleCollectionTest {
 
         DateClock start = new DateClock(1, 1600);
 
-        model.Person m1 = new model.Person('m', start, null);
+        Person m1 = new Person('m', start, null);
 
         living.addPerson(m1);
 
@@ -259,10 +259,10 @@ public class PeopleCollectionTest {
         DateInstant startI = new DateInstant(7, 1, 1600);
         YearDate startY = new YearDate(1600);
 
-        model.Person f1 = new model.Person('f', start, null);
+        Person f1 = new Person('f', start, null);
 
-        model.Person m1 = new model.Person('m', startI, null);
-        model.Person m2 = new model.Person('m', startY, null);
+        Person m1 = new Person('m', startI, null);
+        Person m2 = new Person('m', startY, null);
 
         living.addPerson(f1);
 
@@ -290,7 +290,7 @@ public class PeopleCollectionTest {
 
         DateClock start = new DateClock(1, 1600);
 
-        Person f1 = new model.Person('f', start, null);
+        Person f1 = new Person('f', start, null);
         living.removePerson(f1);
 
     }
@@ -306,8 +306,8 @@ public class PeopleCollectionTest {
 
         DateClock start = new DateClock(1, 1600);
 
-        Person f1 = new model.Person('f', start, null);
-        Person f2 = new model.Person('f', start, null);
+        Person f1 = new Person('f', start, null);
+        Person f2 = new Person('f', start, null);
 
         living.addPerson(f2);
 
@@ -326,7 +326,7 @@ public class PeopleCollectionTest {
 
         DateClock start = new DateClock(1, 1600);
 
-        Person m1 = new model.Person('m', start, null);
+        Person m1 = new Person('m', start, null);
         living.removePerson(m1);
 
     }
@@ -342,8 +342,8 @@ public class PeopleCollectionTest {
 
         DateClock start = new DateClock(1, 1600);
 
-        Person m1 = new model.Person('m', start, null);
-        Person m2 = new model.Person('m', start, null);
+        Person m1 = new Person('m', start, null);
+        Person m2 = new Person('m', start, null);
 
         living.addPerson(m2);
 
