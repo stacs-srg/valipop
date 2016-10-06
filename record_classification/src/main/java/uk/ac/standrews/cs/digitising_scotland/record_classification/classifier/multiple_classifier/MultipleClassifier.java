@@ -48,7 +48,7 @@ public class MultipleClassifier {
     private final Classifier core_classifier;
     private final double classification_confidence_threshold;
     private final TextCleaner pre_classification_data_cleaner;
-    private final BiPredicate<Classification, Classification> distict_classification_checker;
+    private final BiPredicate<Classification, Classification> distinct_classification_checker;
     private final CombinationGenerator<String> token_combination_generator;
 
     public MultipleClassifier(Classifier core_classifier, double classification_confidence_threshold) {
@@ -61,7 +61,7 @@ public class MultipleClassifier {
         this(core_classifier, classification_confidence_threshold, pre_classification_data_cleaner, NOT_EQUAL_ONE_ANOTHER, ALL_COMBINATION_GENERATOR);
     }
 
-    public MultipleClassifier(Classifier core_classifier, double classification_confidence_threshold, TextCleaner pre_classification_data_cleaner, BiPredicate<Classification, Classification> distict_classification_checker, CombinationGenerator<String> token_combination_generator) {
+    public MultipleClassifier(Classifier core_classifier, double classification_confidence_threshold, TextCleaner pre_classification_data_cleaner, BiPredicate<Classification, Classification> distinct_classification_checker, CombinationGenerator<String> token_combination_generator) {
 
         if (classification_confidence_threshold < 0 || classification_confidence_threshold > 1) {
             throw new IllegalArgumentException("confidence threshold must be within inclusive range of 0.0 to 1.0");
@@ -70,7 +70,7 @@ public class MultipleClassifier {
         this.core_classifier = core_classifier;
         this.classification_confidence_threshold = classification_confidence_threshold;
         this.pre_classification_data_cleaner = pre_classification_data_cleaner;
-        this.distict_classification_checker = distict_classification_checker;
+        this.distinct_classification_checker = distinct_classification_checker;
         this.token_combination_generator = token_combination_generator;
     }
 
@@ -170,7 +170,7 @@ public class MultipleClassifier {
 
         private boolean isClassificationDistinct(final Classification other) {
 
-            return distict_classification_checker.test(classification, other);
+            return distinct_classification_checker.test(classification, other);
         }
 
         private boolean isTokensDisjoint(final CandidateClassification other) {return Collections.disjoint(tokens, other.tokens);}
