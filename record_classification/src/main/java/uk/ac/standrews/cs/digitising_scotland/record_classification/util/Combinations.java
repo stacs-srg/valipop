@@ -117,30 +117,30 @@ public final class Combinations {
 
         final Iterator<List<T>> all = new Iterator<List<T>>() {
 
-            PermutationIterator<T> permuations;
+            PermutationIterator<T> permutations;
 
             @Override
             public boolean hasNext() {
 
-                return permuationsHasNext() || powerset.hasNext();
+                return permutationsHasNext() || powerset.hasNext();
             }
 
-            private boolean permuationsHasNext() {return permuations != null && permuations.hasNext();}
+            private boolean permutationsHasNext() {return permutations != null && permutations.hasNext();}
 
             @Override
             public List<T> next() {
 
                 final List<T> next;
 
-                if (permuationsHasNext()) {
-                    next = permuations.next();
+                if (permutationsHasNext()) {
+                    next = permutations.next();
                 }
                 else {
 
                     final List<T> powerset_next = powerset.next();
                     if (powerset_next.size() > 1) {
-                        permuations = new PermutationIterator<>(powerset_next);
-                        next = permuations.next();
+                        permutations = new PermutationIterator<>(powerset_next);
+                        next = permutations.next();
                     }
                     else {
                         next = powerset_next;
