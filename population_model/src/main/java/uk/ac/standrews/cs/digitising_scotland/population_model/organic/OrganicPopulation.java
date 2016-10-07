@@ -53,7 +53,7 @@ public class OrganicPopulation implements IPopulation, ITemporalPopulationInfo {
 
         if (args.length == 0) {
             runPopulationModel(DEFAULT_SEED_SIZE, false, false, false);
-        } else if (args.length >= 1) {
+        } else {
             runPopulationModel(Integer.valueOf(args[0]), false, false, false);
         }
 
