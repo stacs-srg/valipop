@@ -53,16 +53,17 @@ public class IndexTest {
 
         birthlabel = TypeFactory.getInstance().createType(Birth.class, "BIRTH");
 
-        IBucket<Birth> b1 = repo.makeBucket(birth_bucket_name1, BucketKind.DIRECTORYBACKED);
-        b1.setTypeLabelID(birthlabel.getId());
-
-        IBucket<Birth> b2 = repo.makeBucket(birth_bucket_name2, BucketKind.DIRECTORYBACKED);
-        b2.setTypeLabelID(birthlabel.getId());
-
-        IBucket b3 = repo.makeBucket(generic_bucket_name1, BucketKind.DIRECTORYBACKED);
-
-        IBucket<Birth> b4 = repo.makeBucket(indexed_bucket_name1, BucketKind.INDEXED);
-        b4.setTypeLabelID(birthlabel.getId());
+//        IBucket<Birth> b1 = repo.makeBucket(birth_bucket_name1, BucketKind.DIRECTORYBACKED);
+//        b1.setTypeLabelID(birthlabel.getId());
+//
+//        IBucket<Birth> b2 = repo.makeBucket(birth_bucket_name2, BucketKind.DIRECTORYBACKED);
+//        b2.setTypeLabelID(birthlabel.getId());
+//
+//        IBucket b3 = repo.makeBucket(generic_bucket_name1, BucketKind.DIRECTORYBACKED);
+//
+//        IBucket<Birth> b4 = repo.makeBucket(indexed_bucket_name1, BucketKind.INDEXED);
+//        b4.setTypeLabelID(birthlabel.getId());
+//
     }
 
     @After
@@ -87,9 +88,19 @@ public class IndexTest {
     @Test
     public synchronized void testIndex() throws Exception, RepositoryException, IllegalKeyException {
 
-        IBucket<Birth> bb = repo.getBucket(indexed_bucket_name1, new BirthFactory(birthlabel.getId()));
+       // IBucket<Birth> bb = repo.getBucket(indexed_bucket_name1, new BirthFactory(birthlabel.getId()));
 
-        IIndexedBucket<Birth> b = (IIndexedBucket<Birth>) repo.getBucket(indexed_bucket_name1, new BirthFactory(birthlabel.getId()));
+        // IIndexedBucket<Birth> b = (IIndexedBucket<Birth>) repo.getBucket(indexed_bucket_name1, new BirthFactory(birthlabel.getId()));
+
+        IBucket<Birth> bc = repo.makeBucket(indexed_bucket_name1, BucketKind.INDEXED);
+        System.out.println( "Class of bucket is: " + bc.getClass().getTypeName() );
+        bc.setTypeLabelID(birthlabel.getId());
+
+
+        IBucket<Birth> iBucket = repo.getBucket(indexed_bucket_name1, new BirthFactory(birthlabel.getId()));
+        System.out.println( "Class of bucket is: " + iBucket.getClass().getTypeName() );
+
+        IIndexedBucket<Birth> b = (IIndexedBucket<Birth>) iBucket;
 
         b.addIndex(Birth.SURNAME);
         long counter1 = EventImporter.importDigitisingScotlandBirths(b, BIRTH_RECORDS_PATH, birthlabel);
