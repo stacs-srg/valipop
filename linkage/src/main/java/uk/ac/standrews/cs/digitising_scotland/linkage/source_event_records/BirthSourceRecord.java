@@ -70,6 +70,7 @@ public class BirthSourceRecord extends IndividualSourceRecord {
 	private String informant_did_not_sign;
 	private String adoption;
 
+
 	public BirthSourceRecord(final IPerson person, IPopulation population) {
 
 		birth_date = new DateRecord();
@@ -112,6 +113,11 @@ public class BirthSourceRecord extends IndividualSourceRecord {
 				setParentsMarriageDay(String.valueOf(marriage_day));
 				setParentsMarriageMonth(String.valueOf(marriage_month));
 				setParentsMarriageYear(String.valueOf(marriage_year));
+
+				setParentsPlaceOfMarriage(parents_partnership.getMarriagePlace());
+
+				// TODO this will need to change to reflect however we choose to model current location in geographical model
+				setBirthAddress(parents_partnership.getMarriagePlace());
 
 				setParentAttributes(person, population, parents_partnership);
 			}

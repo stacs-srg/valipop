@@ -121,11 +121,22 @@ public class MarriageSourceRecord extends SourceRecord {
         IPerson bride = population.findPerson(partnership.getFemalePartnerId());
         IPerson groom = population.findPerson(partnership.getMalePartnerId());
 
+        final Date start_date = partnership.getMarriageDate();
+
+        setMarriageDay(String.valueOf(DateManipulation.dateToDay(start_date)));
+        setMarriageMonth(String.valueOf(DateManipulation.dateToMonth(start_date)));
+        setMarriageYear(String.valueOf(DateManipulation.dateToYear(start_date)));
+
         setGroomForename(groom.getFirstName());
         setGroomSurname(groom.getSurname());
+        setGroomOccupation(groom.getOccupation());
+        setGroomAgeOrDateOfBirth(String.valueOf(fullYearsBetween(groom.getBirthDate(), start_date)));
+
 
         setBrideForename(bride.getFirstName());
         setBrideSurname(bride.getSurname());
+        setBrideOccupation(bride.getOccupation());
+        setBrideAgeOrDateOfBirth(String.valueOf(fullYearsBetween(bride.getBirthDate(), start_date)));
 
         final int groom_parents_partnership_id = groom.getParentsPartnership();
         if (groom_parents_partnership_id != -1) {
@@ -137,9 +148,11 @@ public class MarriageSourceRecord extends SourceRecord {
 
             setGroomFathersForename(groom_father.getFirstName());
             setGroomFathersSurname(getRecordedParentsSurname(groom_father.getSurname(), groom.getSurname()));
+            setGroomFathersOccupation(groom_father.getOccupation());
 
             setGroomMothersForename(groom_mother.getFirstName());
             setGroomMothersMaidenSurname(getMaidenSurname(population, groom_mother));
+
         }
 
         final int bride_parents_partnership_id = bride.getParentsPartnership();
@@ -152,16 +165,13 @@ public class MarriageSourceRecord extends SourceRecord {
 
             setBrideFathersForename(bride_father.getFirstName());
             setBrideFathersSurname(getRecordedParentsSurname(bride_father.getSurname(), bride.getSurname()));
+            setBrideFatherOccupation(bride_father.getOccupation());
 
             setBrideMothersForename(bride_mother.getFirstName());
             setBrideMothersMaidenSurname(getMaidenSurname(population, bride_mother));
         }
 
-        final Date start_date = partnership.getMarriageDate();
 
-        setMarriageDay(String.valueOf(DateManipulation.dateToDay(start_date)));
-        setMarriageMonth(String.valueOf(DateManipulation.dateToMonth(start_date)));
-        setMarriageYear(String.valueOf(DateManipulation.dateToYear(start_date)));
     }
 
     public String getMarriageDay() {
@@ -450,6 +460,28 @@ public class MarriageSourceRecord extends SourceRecord {
 
     public void setBrideFatherOccupation(final String bride_father_occupation) {
         this.bride_father_occupation = bride_father_occupation;
+    }
+
+    private int fullYearsBetween(Date d1, Date d2) {
+
+        if(d2.before(d1)) {
+            Date temp = d1;
+            d1 = d2;
+            d2 = temp;
+        }
+
+        int ys = d2.getYear() - d1.getYear();
+
+        if(d2.getMonth() < d1.getMonth()) {
+            ys--;
+        } else if(d2.getMonth() == d1.getMonth()) {
+            if(d2.getDate() < d1.getDate()) {
+                ys--;
+            }
+        }
+
+        return ys;
+
     }
 
     @Override

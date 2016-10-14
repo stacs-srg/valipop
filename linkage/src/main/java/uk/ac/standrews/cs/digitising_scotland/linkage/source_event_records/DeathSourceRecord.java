@@ -100,6 +100,8 @@ public class DeathSourceRecord extends IndividualSourceRecord {
         setOccupation(person.getOccupation());
         setDeathCauseA(person.getDeathCause());
 
+
+
         Date birth_date = person.getBirthDate();
         Date death_date = person.getDeathDate();
 
@@ -275,12 +277,36 @@ public class DeathSourceRecord extends IndividualSourceRecord {
             long birth_year = DateManipulation.dateToYear(birth_date);
             long death_year = DateManipulation.dateToYear(death_date);
 
+
+
             setDeathYear(String.valueOf(death_year));
-            setDeathAge(String.valueOf(death_year - birth_year));
+            setDeathAge(String.valueOf(fullYearsBetween(birth_date, death_date)));
 
             if (death_year >= DeathSourceRecord.FIRST_YEAR_DOB_PRESENT) {
                 setBirthDate(DateManipulation.formatDate(birth_date, DOB_DATE_FORMAT));
             }
         }
+    }
+
+    private int fullYearsBetween(Date d1, Date d2) {
+
+        if(d2.before(d1)) {
+            Date temp = d1;
+            d1 = d2;
+            d2 = temp;
+        }
+
+        int ys = d2.getYear() - d1.getYear();
+
+        if(d2.getMonth() < d1.getMonth()) {
+            ys--;
+        } else if(d2.getMonth() == d1.getMonth()) {
+            if(d2.getDate() < d1.getDate()) {
+                ys--;
+            }
+        }
+
+        return ys;
+
     }
 }
