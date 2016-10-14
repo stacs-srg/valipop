@@ -12,7 +12,11 @@ public class GeneratePopulationAndEventRecords {
 
     public static void main(final String[] args) throws Exception {
 
-        IPopulation population = OrganicPopulation.runPopulationModel(20000, false, false, false);
+        int popSize = Integer.parseInt(args[0]);
+        System.out.println("Generating population to output to source records of size: " + popSize);
+
+
+        IPopulation population = OrganicPopulation.runPopulationModel(popSize, false, false, false);
         SourceRecordGenerator generator = new SourceRecordGenerator(population);
         generator.generateEventRecords(args);
     }
