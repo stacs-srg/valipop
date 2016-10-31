@@ -1,5 +1,7 @@
 # Presentations
 
+* Dalton, T, [Kirby, GNC][1], [Dearle, A][2] & [Özgür Akgün][62], Evaluating Data Linkage: Creating longitudinal synthetic data to provide a gold-standard linked dataset. Seminar series on Data Linkage and Anonymisation, Issac Newton Institute, Cambridge, England, 20 October 2016. *[Slides][63]*
+
 * [Kirby, GNC][1], [Dearle, A][2], [Hajiarab Derkani, M][3], Dalton, T, [Daras, K][4], [Dibben, CJL][5], [Williamson, L][6], [Huang, Z][7], [Feng, Z][8], [Garrett, E][9] & [Reid, A][10], Reconstructing Genealogical Relationships from Public Registers. Talk for Data Lab Visit to St Andrews, 28 October 2015. *[Slides][11]*
 
 * [Huang, Z][12], [Dibben, CJL][13], [Kirby, GNC][14], Deary, I, Popham, F & Connelly, R, 2015, The creation of an administrative data based 1936 birth cohort study. In *Farr Institute International Conference 2015: Data Intensive Health Research and Care*. St Andrews, Scotland, 26-28 August 2015. *[Poster][15]*
@@ -79,3 +81,5 @@
 [59]:	https://risweb.st-andrews.ac.uk/portal/da/persons/graham-njal-cameron-kirby(4d01ed18-cde6-4dd6-9948-64451f43a1a7).html
 [60]:	https://risweb.st-andrews.ac.uk/portal/da/persons/lee-williamson(b3d25d36-0c89-48c4-ad99-d96829502488).html
 [61]:	/files/mosaic-poster.pdf
+[62]:   https://risweb.st-andrews.ac.uk/portal/en/persons/ozgur-akgun(3dd419ba-d78e-43f2-963a-7a34172bee01).html
+[63]:   /files/ini_slides.pdf
