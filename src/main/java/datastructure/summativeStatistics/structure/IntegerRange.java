@@ -108,8 +108,8 @@ public class IntegerRange implements Comparable<IntegerRange> {
 
     public String toString() {
         String s = "";
-        s += min + " to " + max;
-        s += plus ? " +" : "";
+        s += min + "to" + max;
+        s += plus ? "+" : "";
         return s;
     }
 

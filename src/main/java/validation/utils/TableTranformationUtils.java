@@ -1,7 +1,9 @@
 package validation.utils;
 
 import datastructure.summativeStatistics.structure.FailureAgainstTimeTable.FailureTimeRow;
+import datastructure.summativeStatistics.structure.IntegerRange;
 import datastructure.summativeStatistics.structure.InvalidRangeException;
+import datastructure.summativeStatistics.structure.LabelValueDataRow;
 import datastructure.summativeStatistics.structure.OneDimensionDataDistribution;
 import utils.time.UnsupportedDateConversion;
 
@@ -48,4 +50,29 @@ public class TableTranformationUtils {
 
         return rows;
     }
+
+    public static Collection<LabelValueDataRow> transform1DDDToCollectionOfLabelValueDataRow(OneDimensionDataDistribution data, String denoteGroupAs) {
+
+        Collection<LabelValueDataRow> rows = new ArrayList<>();
+
+        for(IntegerRange iR : data.getData().keySet()) {
+
+            double value;
+
+            try {
+                value = data.getData(iR.getValue());
+                rows.add(new LabelValueDataRow(iR.getValue(), value, denoteGroupAs));
+            } catch (NullPointerException e) {
+                rows.add(new LabelValueDataRow(iR.getValue(), 0, denoteGroupAs));
+            }
+
+
+
+        }
+
+        return rows;
+
+    }
+
+
 }

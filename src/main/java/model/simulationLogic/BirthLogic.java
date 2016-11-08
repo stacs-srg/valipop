@@ -7,6 +7,7 @@ import datastructure.summativeStatistics.desired.PopulationStatistics;
 import datastructure.summativeStatistics.structure.DataKey;
 import datastructure.summativeStatistics.structure.IntegerRange;
 import datastructure.summativeStatistics.structure.OneDimensionDataDistribution;
+import model.simulationEntities.IPartnership;
 import model.simulationEntities.IPerson;
 import model.simulationEntities.PersonFactory;
 import org.apache.logging.log4j.LogManager;
@@ -76,11 +77,11 @@ public class BirthLogic {
                     continue;
                 } else {
 
-                    for(IPerson w : women) {
-                        if(w.getPartnerships().size() != 0) {
-                            partnershipCount++;
-                        }
-                    }
+//                    for(IPerson w : women) {
+//                        if(w.getPartnerships().size() != 0) {
+//                            partnershipCount++;
+//                        }
+//                    }
 
                     // DATA 1 - get rate of births by mothers age and birth order
                     DataKey key = new DataKey(age, order, maxBirthOrderInCohort, women.size());
@@ -135,7 +136,7 @@ public class BirthLogic {
                     // select the mothers
                     for (Integer childrenInMaternity : motherCountsByMaternitySize.keySet()) {
 
-                        ArrayList<IPerson> mothersToBe = null;
+                        ArrayList<IPerson> mothersToBe;
 
                         try {
                             mothersToBe = new ArrayList<>(people.getFemales().removeNPersons(motherCountsByMaternitySize.get(childrenInMaternity), yearOfBirthInConsideration, order, currentTime));
@@ -150,6 +151,12 @@ public class BirthLogic {
 
                             // make and assign the specified number of children - assign to correct place in population
                             mother.recordPartnership(PersonFactory.formNewChildrenInPartnership(childrenInMaternity, mother, currentTime, config.getBirthTimeStep(), people));
+
+//                            for(IPartnership p : mother.getPartnerships()) {
+//                                if(p.getChildren().size() == 0) {
+//                                    System.out.println("GO MAD");
+//                                }
+//                            }
 
                             // Re inserting mother to population datastructure so as she resides in the correct place
                             people.addPerson(mother);
@@ -184,10 +191,11 @@ public class BirthLogic {
 //            }
 
             // TODO NEXT - big issue is in here
-            mothersNeedingPartners.addAll(SeparationLogic.handleSeparation(desiredPopulationStatistics, currentTime, partnershipCount, mothersNeedingProcessed, people));
+            mothersNeedingPartners.addAll(SeparationLogic.handleSeparation(desiredPopulationStatistics, currentTime, mothersNeedingProcessed, people, config));
 
 //            for(IPerson p : mothersNeedingPartners) {
-//                p.getLastChild().getParentsPartnership().setFather(getRandomFather(people, yearOfBirthInConsideration));
+//                System.out.println(p.getLastChild().getParentsPartnership().getMalePartner().getId());
+//// p.getLastChild().getParentsPartnership().setFather(getRandomFather(people, yearOfBirthInConsideration));
 //            }
 
             // At this point we have a Mothers Needing Fathers List with children already created
@@ -196,7 +204,18 @@ public class BirthLogic {
             PartneringLogic.handlePartnering(desiredPopulationStatistics, currentTime, mothersNeedingPartners, age, people);
 
 
+
         }
+
+//        for(IPerson pe : people.getFemales().getAll()) {
+//
+//            for(IPartnership p : pe.getPartnerships()) {
+//                if (p.getChildren().size() == 0) {
+//                    System.out.println("GO MAD");
+//                }
+//            }
+//        }
+
 
         log.info("Births handled: " + currentTime.toString() + " - " + birthCount);
         System.out.println("Births handled: " + currentTime.toString() + " - " + birthCount);

@@ -1,5 +1,6 @@
 package utils;
 
+import datastructure.population.PeopleCollection;
 import datastructure.summativeStatistics.generated.EventType;
 import model.simulationEntities.IPartnership;
 import model.simulationEntities.IPerson;
@@ -30,7 +31,7 @@ public interface PersonUtils {
 
     int numberOfChildren();
 
-    void keepFather();
+    void keepFather(PeopleCollection population);
 
     void setParentsPartnership(IPartnership newParents);
 

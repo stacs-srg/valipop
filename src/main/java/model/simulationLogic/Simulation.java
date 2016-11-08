@@ -13,6 +13,7 @@ import datastructure.summativeStatistics.generated.GeneratedPopulationCompositio
 import datastructure.summativeStatistics.generated.UnsupportedEventType;
 import datastructure.summativeStatistics.PopulationComposition;
 import model.simulationEntities.IPopulation;
+import utils.FileUtils;
 import validation.ComparativeAnalysis;
 import config.Config;
 
@@ -44,9 +45,9 @@ public class Simulation {
     private DateClock currentTime;
 
 
-    public Simulation(String pathToConfigFile) throws IOException, UnsupportedDateConversion, InvalidPathException {
+    public Simulation(String pathToConfigFile, String runPurpose, String startTime) throws IOException, UnsupportedDateConversion, InvalidPathException {
 
-        config = new Config(Paths.get(pathToConfigFile));
+        config = new Config(Paths.get(pathToConfigFile), runPurpose, startTime);
 
         currentTime = config.getTS();
 
@@ -67,9 +68,19 @@ public class Simulation {
         log.info("Program begins");
 
         Simulation sim = null;
+        String runPurpose = null;
+        String startTime = FileUtils.getDateTime();
+
         try {
 
-            sim = new Simulation(args[0]);
+
+            try {
+                runPurpose = args[1];
+            } catch (ArrayIndexOutOfBoundsException e) {
+                runPurpose = "unstated";
+            }
+
+            sim = new Simulation(args[0], runPurpose, startTime);
 
         } catch (IOException | UnsupportedDateConversion | InvalidPathException e) {
             log.fatal(e.getMessage() + " --- Will now exit");
@@ -94,7 +105,9 @@ public class Simulation {
 
         try {
 
-            File f = Paths.get("." + File.separator + config.getSavePathSummary() + File.separator + "summaryResults" + System.currentTimeMillis() + ".txt").toAbsolutePath().normalize().toFile();
+            File f = Paths.get(config.getResultsSavePath().toString(), runPurpose, startTime, "detailed-results-" + startTime + ".txt").toFile();
+
+//            File f = Paths.get("." + File.separator + config.getSavePathSummary() + File.separator + "summaryResults" + System.currentTimeMillis() + ".txt").toAbsolutePath().normalize().toFile();
             resultsOutput = new PrintStream(f);
 
         } catch (IOException e) {

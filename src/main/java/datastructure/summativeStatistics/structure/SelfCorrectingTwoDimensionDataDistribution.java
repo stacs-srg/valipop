@@ -7,6 +7,7 @@ import utils.time.YearDate;
 import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
@@ -173,4 +174,7 @@ public class SelfCorrectingTwoDimensionDataDistribution implements DataDistribut
     }
 
 
+    public Set<IntegerRange> getRowKeys() {
+        return data.keySet();
+    }
 }

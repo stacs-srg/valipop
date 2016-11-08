@@ -39,7 +39,7 @@ public class PersonFactory {
                                                          CompoundTimeUnit birthTimeStep, PeopleCollection population) {
 
         IPartnership partnership = new Partnership(mother, currentDate);
-        population.addPartnershipToIndex(partnership);
+
 
         List<IPerson> children = new ArrayList<>(numberOfChildren);
 
@@ -48,6 +48,8 @@ public class PersonFactory {
         }
 
         partnership.addChildren(children);
+
+        population.addPartnershipToIndex(partnership);
 
         return partnership;
     }

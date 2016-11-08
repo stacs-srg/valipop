@@ -283,6 +283,8 @@ public class PopulationStatistics implements PopulationComposition, EventRateTab
                 return femaleDeath.keySet();
             case SEPARATION:
                 return separation.keySet();
+            case PARTNERING:
+                return partnering.keySet();
         }
 
         return Collections.emptyList();
@@ -296,6 +298,18 @@ public class PopulationStatistics implements PopulationComposition, EventRateTab
     @Override
     public OneDimensionDataDistribution getSeparationData(Date startYear, Date endYear, int childCap) throws UnsupportedDateConversion {
         return getSeparationData(startYear, endYear);
+    }
+
+    @Override
+    public OneDimensionDataDistribution getPartneringData(Date startYear, Date endYear, IntegerRange femaleAgeRange, Set<IntegerRange> maleAgeBrackets) {
+
+
+        return getPartneringRates(startYear).getData(femaleAgeRange.getValue());
+    }
+
+    @Override
+    public SelfCorrectingTwoDimensionDataDistribution getPartneringData(Date startYear, Date endYear) {
+        return getPartneringRates(startYear);
     }
 
     /*

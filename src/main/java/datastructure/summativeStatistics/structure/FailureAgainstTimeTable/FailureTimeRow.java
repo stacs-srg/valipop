@@ -1,11 +1,10 @@
 package datastructure.summativeStatistics.structure.FailureAgainstTimeTable;
 
-import datastructure.summativeStatistics.structure.LabelValueDataRow;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class FailureTimeRow extends LabelValueDataRow {
+public class FailureTimeRow {
 
     private int timeElapsed;
     private boolean eventOccured;

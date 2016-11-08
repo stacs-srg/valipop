@@ -9,10 +9,14 @@ public class LabelValueDataRow {
     private double value;
     private String group;
 
-
+    public LabelValueDataRow(int label, double value, String group) {
+        this.label = label;
+        this.value = value;
+        this.group = group;
+    }
 
     public String rowAsString() {
-        return "";
+        return Integer.toString(label) + " " + Double.toString(value) + " " + group;
     }
 
 }

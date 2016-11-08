@@ -1,5 +1,6 @@
 package config;
 
+import utils.FileUtils;
 import utils.time.CompoundTimeUnit;
 import utils.time.InvalidTimeUnit;
 import utils.time.DateClock;
@@ -48,9 +49,13 @@ public class Config {
     private Path savePathPlots;
     private Path savePathDat;
     private Path savePathSummary;
+    private Path resultsSavePath;
     private Path summaryResultsPath;
     private boolean produceGraphs;
     private boolean produceDatFiles;
+
+    private final String runPurpose;
+    private final String startTime;
 
     // Filter method to exclude dot files from data file directory streams
     private DirectoryStream.Filter<Path> filter = new DirectoryStream.Filter<Path>() {
@@ -67,15 +72,20 @@ public class Config {
      * @throws DateTimeException
      * @throws NumberFormatException
      */
-    public Config(Path pathToConfigFile) throws InvalidTimeUnit, DateTimeException, NumberFormatException {
+    public Config(Path pathToConfigFile, String runPurpose, String startTime) throws InvalidTimeUnit, DateTimeException, NumberFormatException, IOException {
+
+        this.runPurpose = runPurpose;
+        this.startTime = startTime;
 
         Collection<String> configInput = InputFileReader.getAllLines(pathToConfigFile);
 
         for (String l : configInput) {
 
             String[] split = l.split("=");
+
             for (int i = 0; i < split.length; i++)
                 split[i] = split[i].trim();
+
 
             String path = split[1];
 
@@ -97,6 +107,9 @@ public class Config {
                     break;
                 case "summary_save_location":
                     savePathSummary = Paths.get(split[1]);
+                    break;
+                case "results_save_location":
+                    resultsSavePath = Paths.get(split[1]);
                     break;
                 case "produce_graphs":
                     produceGraphs = new Boolean(split[1]);
@@ -181,6 +194,8 @@ public class Config {
             }
 
         }
+
+        FileUtils.makeDirectoryStructure(runPurpose, startTime, this);
 
     }
 
@@ -312,4 +327,17 @@ public class Config {
     public boolean produceDatFiles() {
         return produceDatFiles;
     }
+
+    public Path getResultsSavePath() {
+        return resultsSavePath;
+    }
+
+    public String getStartTime() {
+        return startTime;
+    }
+
+    public String getRunPurpose() {
+        return runPurpose;
+    }
+
 }

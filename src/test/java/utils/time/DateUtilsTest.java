@@ -322,8 +322,6 @@ public class DateUtilsTest {
         assertEquals(3, DateUtils.differenceInMonths(t, t.advanceTime(new CompoundTimeUnit(3, TimeUnit.MONTH))).getCount());
         assertEquals(3, DateUtils.differenceInMonths(t2, t2.advanceTime(new CompoundTimeUnit(3, TimeUnit.MONTH))).getCount());
 
-
-
     }
 
     @Test
@@ -333,6 +331,15 @@ public class DateUtilsTest {
 
         DateClock t1 = new DateClock(1, 2015);
         DateClock t2 = new DateClock(12, 2015);
+
+        DateInstant d1 = new DateInstant(11, 5, 1900);
+        DateInstant d2 = new DateInstant(10, 5, 1901);
+        DateInstant d3 = new DateInstant(11, 5, 1901);
+        DateInstant d4 = new DateInstant(12, 5, 1901);
+
+        assertEquals(0, DateUtils.differenceInYears(d1, d2).getCount());
+        assertEquals(1, DateUtils.differenceInYears(d1, d3).getCount());
+        assertEquals(1, DateUtils.differenceInYears(d1, d4).getCount());
 
         assertEquals(0, DateUtils.differenceInYears(t, t.advanceTime(new CompoundTimeUnit(0, TimeUnit.YEAR))).getCount());
         assertEquals(0, DateUtils.differenceInYears(t.advanceTime(new CompoundTimeUnit(0, TimeUnit.YEAR)), t).getCount());

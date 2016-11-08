@@ -29,7 +29,7 @@ public class InputFileReader {
 
             while ((line = reader.readLine()) != null) {
 
-                if (line.startsWith(COMMENT_INDICATOR)) {
+                if (line.startsWith(COMMENT_INDICATOR) || line.length() == 0) {
                     continue;
                 } else {
                     lines.add(line);

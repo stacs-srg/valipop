@@ -7,6 +7,7 @@ import datastructure.summativeStatistics.structure.FailureAgainstTimeTable.Failu
 import datastructure.summativeStatistics.structure.IntegerRange;
 import datastructure.summativeStatistics.structure.InvalidRangeException;
 import datastructure.summativeStatistics.structure.OneDimensionDataDistribution;
+import datastructure.summativeStatistics.structure.SelfCorrectingTwoDimensionDataDistribution;
 import model.exceptions.NoChildrenOfDesiredOrder;
 import model.exceptions.NotDeadException;
 import model.simulationEntities.IPartnership;
@@ -209,7 +210,7 @@ public class GeneratedPopulationComposition implements PopulationComposition {
 
             for(IPerson p : population.getFemales().getAll()) {
 
-                if(p.getPartnerships().size() != 0 && !p.isWidow(d)) {
+                if(p.aliveOnDate(d) && p.getPartnerships().size() != 0 && !p.isWidow(d)) {
                     // inc marriages count
                     marriagesActiveInEachYearOfTimePeriod ++;
 
@@ -252,6 +253,67 @@ public class GeneratedPopulationComposition implements PopulationComposition {
 
         return new OneDimensionDataDistribution(startYear.getYearDate(), "generated", "", tableData);
 
+    }
+
+    @Override
+    public OneDimensionDataDistribution getPartneringData(Date startYear, Date endYear, IntegerRange femaleAgeRange, Set<IntegerRange> maleAgeBrackets) {
+
+        ArrayList<IntegerRange> extendedMaleAgeBracketsList = new ArrayList<>();
+        extendedMaleAgeBracketsList.addAll(maleAgeBrackets);
+
+        Map<IntegerRange, Integer> map = new HashMap<>();
+        int sum = 0;
+
+        for(IPartnership p : population.getPartnerships()) {
+
+            Date partnershipDate = p.getPartnershipDate();
+
+            // if event happened in interested time period
+            if(DateUtils.dateBefore(startYear, partnershipDate) && DateUtils.dateBefore(partnershipDate, endYear)) {
+
+                int femaleAgeAtEvent = DateUtils.differenceInYears(p.getFemalePartner().getBirthDate(), partnershipDate).getCount();
+
+                // if female in age bracket
+                if(femaleAgeRange.contains(femaleAgeAtEvent)) {
+
+                    Integer maleAgeAtEvent = null;
+
+                    try {
+                        maleAgeAtEvent = DateUtils.differenceInYears(p.getMalePartner().getBirthDate(), partnershipDate).getCount();
+                    } catch (Exception e) {
+                        System.out.println(e.getMessage());
+                    }
+
+                    IntegerRange row = resolveRow(maleAgeAtEvent, extendedMaleAgeBracketsList);
+                    try {
+                        map.put(row, map.get(row) + 1);
+                    } catch (NullPointerException e) {
+                        map.put(row, 1);
+                        extendedMaleAgeBracketsList.add(row);
+                    }
+//                    counts[maleAgeAtEvent]++;
+                    sum++;
+
+                }
+
+            }
+
+        }
+
+        Map<IntegerRange, Double> ret = new HashMap<>();
+
+        for(IntegerRange iR : map.keySet()) {
+
+            ret.put(iR, map.get(iR) / (double) sum);
+
+        }
+
+        return new OneDimensionDataDistribution(startYear.getYearDate(), "Generated", "", ret);
+    }
+
+    @Override
+    public SelfCorrectingTwoDimensionDataDistribution getPartneringData(Date StartYear, Date endYear) {
+        return null;
     }
 
     private Collection<FailureTimeRow> getDeathAtTimesTable(Collection<IPerson> people, String denoteGroupAs, Date simulationEndDate) {
@@ -380,4 +442,16 @@ public class GeneratedPopulationComposition implements PopulationComposition {
 
         return new OneDimensionDataDistribution(startYear.getYearDate(), "", "", survival);
     }
+
+    private IntegerRange resolveRow(Integer i, List<IntegerRange> rows) {
+
+        for (IntegerRange iR : rows) {
+            if (iR.contains(i)) {
+                return iR;
+            }
+        }
+
+        return new IntegerRange(i);
+    }
+
 }

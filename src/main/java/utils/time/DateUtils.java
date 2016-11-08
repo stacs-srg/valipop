@@ -32,7 +32,21 @@ public class DateUtils {
 
         int yearDiffInMonths = MONTHS_IN_YEAR * Math.abs(a.getYear() - b.getYear());
 
-        return new CompoundTimeUnit(yearDiffInMonths + (b.getMonth() - a.getMonth()), TimeUnit.MONTH);
+        int months = yearDiffInMonths + (b.getMonth() - a.getMonth());
+
+        if(a.getDay() > b.getDay()) {
+
+            int daysInMonthA = getDaysInCurrentMonth(a.getMonth(), a.getYear());
+            int daysInMonthB = getDaysInCurrentMonth(b.getMonth(), b.getYear());
+
+            if(daysInMonthB > daysInMonthA && b.getDay() > daysInMonthA && a.getDay() == daysInMonthA) {
+
+            } else {
+                months--;
+            }
+        }
+
+        return new CompoundTimeUnit( months, TimeUnit.MONTH);
     }
 
 

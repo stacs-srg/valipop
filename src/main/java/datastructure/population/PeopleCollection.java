@@ -7,6 +7,7 @@ import model.simulationEntities.IPopulation;
 import utils.time.Date;
 import utils.time.UnsupportedDateConversion;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,6 +29,8 @@ public class PeopleCollection extends PersonCollection implements IPopulation {
 
     private final Map<Integer, IPerson> peopleIndex = new HashMap<>();
     private final Map<Integer, IPartnership> partnershipIndex = new HashMap<>();
+
+    private ArrayList<IPartnership> partTemp = new ArrayList<>();
 
     /**
      * Instantiates a new PersonCollection. The dates specify the earliest and latest expected birth dates of
@@ -67,6 +70,12 @@ public class PeopleCollection extends PersonCollection implements IPopulation {
      */
     public void addPartnershipToIndex(IPartnership partnership) {
         partnershipIndex.put(partnership.getId(), partnership);
+        partTemp.add(partnership);
+    }
+
+    public void removePartnershipFromIndex(IPartnership partnership) {
+        partnershipIndex.remove(partnership.getId(), partnership);
+        partTemp.remove(partnership);
     }
 
     /*
@@ -135,7 +144,8 @@ public class PeopleCollection extends PersonCollection implements IPopulation {
 
     @Override
     public Iterable<IPartnership> getPartnerships() {
-        return partnershipIndex.values();
+
+        return partTemp;
     }
 
     @Override

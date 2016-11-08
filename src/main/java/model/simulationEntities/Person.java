@@ -1,5 +1,6 @@
 package model.simulationEntities;
 
+import datastructure.population.PeopleCollection;
 import datastructure.summativeStatistics.generated.EventType;
 import model.dateSelection.BirthDateSelector;
 import model.dateSelection.DateSelector;
@@ -271,7 +272,7 @@ public class Person implements IPerson {
     }
 
     @Override
-    public void keepFather() {
+    public void keepFather(PeopleCollection population) {
         Date latestChildBirthDate = new YearDate(Integer.MIN_VALUE);
         IPerson child = null;
 
@@ -304,6 +305,7 @@ public class Person implements IPerson {
 
         motherPrevChild.addChildren(newChildren);
         partnerships.remove(old);
+        population.removePartnershipFromIndex(old);
 
     }
 

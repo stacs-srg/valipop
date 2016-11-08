@@ -1,6 +1,7 @@
 package datastructure.population;
 
 import model.simulationEntities.IPerson;
+import model.simulationEntities.Person;
 import utils.time.Date;
 import utils.time.DateUtils;
 import utils.time.UnsupportedDateConversion;
@@ -37,17 +38,21 @@ public class AggregatePersonCollectionFactory {
      * @return The aggregated PersonCollection
      * @throws UnsupportedDateConversion the unsupported date conversion
      */
-    public static PeopleCollection makePeopleCollection(PersonCollection col1, PersonCollection col2) throws UnsupportedDateConversion {
+    public static PeopleCollection makePeopleCollection(PeopleCollection col1, PeopleCollection col2) throws UnsupportedDateConversion {
 
         Date start = DateUtils.getEarliestDate(col1.getStartDate(), col2.getStartDate());
         Date end = DateUtils.getLatestDate(col1.getStartDate(), col2.getStartDate());
 
-        PeopleCollection people = new PeopleCollection(start, end);
+//        PeopleCollection people = new PeopleCollection(start, end);
 
-        col1.getAll().forEach(people::addPerson);
-        col2.getAll().forEach(people::addPerson);
 
-        return people;
+        for(IPerson p : col2.getPeople()) {
+            col1.addPerson(p);
+        }
+
+//        col2.getAll().forEach(col1::addPerson);
+
+        return col1;
     }
 
 

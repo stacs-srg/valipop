@@ -1,7 +1,10 @@
 package datastructure.summativeStatistics.generated;
 
 import datastructure.summativeStatistics.structure.FailureAgainstTimeTable.FailureTimeRow;
+import datastructure.summativeStatistics.structure.IntegerRange;
 import datastructure.summativeStatistics.structure.OneDimensionDataDistribution;
+import datastructure.summativeStatistics.structure.SelfCorrectingTwoDimensionDataDistribution;
+import datastructure.summativeStatistics.structure.TwoDimensionDataDistribution;
 import model.simulationEntities.IPopulation;
 import utils.time.CompoundTimeUnit;
 import utils.time.Date;
@@ -9,6 +12,7 @@ import utils.time.UnsupportedDateConversion;
 import utils.time.YearDate;
 
 import java.util.Collection;
+import java.util.Set;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
@@ -50,4 +54,10 @@ public interface StatisticalTables {
     OneDimensionDataDistribution getSeparationData(Date startYear, Date endYear) throws UnsupportedDateConversion;
 
     OneDimensionDataDistribution getSeparationData(Date startYear, Date endYear, int childCap) throws UnsupportedDateConversion;
+
+    OneDimensionDataDistribution getPartneringData(Date startYear, Date endYear, IntegerRange femaleAgeRange, Set<IntegerRange> maleAgeBrackets);
+
+    SelfCorrectingTwoDimensionDataDistribution getPartneringData(Date startYear, Date endYear);
+
+
 }
