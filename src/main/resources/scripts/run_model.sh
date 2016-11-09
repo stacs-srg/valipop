@@ -24,15 +24,4 @@ then
 fi
 
 
-
-
-mvn exec:java -q -Dexec.cleanupDaemonThreads=false -Dexec.mainClass="model.simulationLogic.Simulation" -e -Dexec.args="$2"
-mvn exec:java -q -Dexec.cleanupDaemonThreads=false -Dexec.mainClass="model.simulationLogic.Simulation" -e -Dexec.args="$2"
-mvn exec:java -q -Dexec.cleanupDaemonThreads=false -Dexec.mainClass="model.simulationLogic.Simulation" -e -Dexec.args="$2"
-mvn exec:java -q -Dexec.cleanupDaemonThreads=false -Dexec.mainClass="model.simulationLogic.Simulation" -e -Dexec.args="$2"
-mvn exec:java -q -Dexec.cleanupDaemonThreads=false -Dexec.mainClass="model.simulationLogic.Simulation" -e -Dexec.args="$2"
-mvn exec:java -q -Dexec.cleanupDaemonThreads=false -Dexec.mainClass="model.simulationLogic.Simulation" -e -Dexec.args="$2"
-mvn exec:java -q -Dexec.cleanupDaemonThreads=false -Dexec.mainClass="model.simulationLogic.Simulation" -e -Dexec.args="$2"
-mvn exec:java -q -Dexec.cleanupDaemonThreads=false -Dexec.mainClass="model.simulationLogic.Simulation" -e -Dexec.args="$2"
-mvn exec:java -q -Dexec.cleanupDaemonThreads=false -Dexec.mainClass="model.simulationLogic.Simulation" -e -Dexec.args="$2"
-mvn exec:java -q -Dexec.cleanupDaemonThreads=false -Dexec.mainClass="model.simulationLogic.Simulation" -e -Dexec.args="$2"
+mvn exec:java -q -Dexec.cleanupDaemonThreads=false -Dexec.mainClass="model.simulationLogic.Simulation" -e -Dexec.args="$2 $3"
