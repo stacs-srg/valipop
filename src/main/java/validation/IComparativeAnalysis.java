@@ -36,7 +36,7 @@ public interface IComparativeAnalysis {
 
     Map<Date, Map<EventType, IKaplanMeierAnalysis>> getResults();
 
-    void outputResults(PrintStream resultOutput) throws UnsupportedDateConversion;
+    SummaryRow outputResults(PrintStream resultOutput, SummaryRow summary) throws UnsupportedDateConversion;
 
     void runAnalysis(IPopulation generatedPopulation, Config config) throws UnsupportedDateConversion, StatisticalManipulationCalculationError, IOException, UnsupportedEventType;
 

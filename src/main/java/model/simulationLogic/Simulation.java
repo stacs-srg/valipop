@@ -20,12 +20,11 @@ import config.Config;
 import utils.time.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import validation.SummaryRow;
 import validation.utils.StatisticalManipulationCalculationError;
 
 import java.io.*;
-import java.nio.file.InvalidPathException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.*;
 
 
 /**
@@ -44,6 +43,8 @@ public class Simulation {
     private PeopleCollection deadPeople;
     private DateClock currentTime;
 
+    private SummaryRow summary;
+
 
     public Simulation(String pathToConfigFile, String runPurpose, String startTime) throws IOException, UnsupportedDateConversion, InvalidPathException {
 
@@ -59,9 +60,15 @@ public class Simulation {
 
         InitLogic.setUpInitParameters(config, desired);
 
+        summary = new SummaryRow(Paths.get(config.getResultsSavePath().toString(), runPurpose, startTime),
+                startTime, runPurpose, config.getBirthTimeStep(), config.getDeathTimeStep(), config.getInputWidth(),
+                config.getT0(), config.getTE(), DateUtils.differenceInDays(config.getT0(), config.getTE()));
+
     }
 
     public static void main(String[] args) {
+
+        long runStartTime = System.nanoTime();
 
         Logger log = LogManager.getLogger("main");
 
@@ -106,8 +113,6 @@ public class Simulation {
         try {
 
             File f = Paths.get(config.getResultsSavePath().toString(), runPurpose, startTime, "detailed-results-" + startTime + ".txt").toFile();
-
-//            File f = Paths.get("." + File.separator + config.getSavePathSummary() + File.separator + "summaryResults" + System.currentTimeMillis() + ".txt").toAbsolutePath().normalize().toFile();
             resultsOutput = new PrintStream(f);
 
         } catch (IOException e) {
@@ -120,7 +125,7 @@ public class Simulation {
         try {
 
             comparisonOfDesiredAndGenerated = sim.analyseGeneratedPopulation(population, config);
-            comparisonOfDesiredAndGenerated.outputResults(resultsOutput);
+            sim.summary = comparisonOfDesiredAndGenerated.outputResults(resultsOutput, sim.summary);
 
         } catch (IOException | StatisticalManipulationCalculationError | UnsupportedEventType | UnsupportedDateConversion e) {
             e.printStackTrace();
@@ -130,12 +135,42 @@ public class Simulation {
 //        sim.desired.getOrderedBirthRates(config.getT0()).outputResults(resultsOutput);
 
 
+
         try {
 
             runAnalytics(population, resultsOutput);
+            sim.summary.setTotalPop(population.getNumberOfPeople());
 
         } catch (Exception e) {
             log.info("Analytics run failed");
+            e.printStackTrace();
+        }
+
+        long runEndTime = System.nanoTime();
+        double runTime = (runEndTime - runStartTime) / Math.pow(10, 9);
+        int minutes = (int) (runTime / 60);
+        int seconds = (int) (runTime % 60);
+        String rT = minutes + ":" + seconds;
+
+        sim.summary.setRunTime(rT);
+
+        try {
+            Files.write(Paths.get(config.getResultsSavePath().toString(), "global-results-summary.csv"),
+                    sim.summary.toSeperatedString(',').getBytes(),
+                    StandardOpenOption.APPEND);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            Files.write(Paths.get(config.getResultsSavePath().toString(), runPurpose, runPurpose + "-results-summary.csv"),
+                    sim.summary.toSeperatedString(',').getBytes(),
+                    StandardOpenOption.APPEND);
+//            File purpose = Paths.get(config.getResultsSavePath().toString(), runPurpose, runPurpose + "-results-summary.csv").toFile();
+//            PrintStream purposeStream = new PrintStream(purpose);
+//            purposeStream.println(sim.summary.toSeperatedString(','));
+//            purposeStream.close();
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
@@ -174,6 +209,9 @@ public class Simulation {
         // INFO: at this point all the desired population statistics have been made available
         log.info("Simulation begins");
 
+        boolean inSimDates = false;
+        int maxPop = 0;
+
         // start utils.time progression
         // for each utils.time step from T Start to T End
         try {
@@ -198,11 +236,25 @@ public class Simulation {
                     InitLogic.handleInitPeople(config, currentTime, people);
                 }
 
+                int currentPop = people.getNumberOfPersons();
                 currentTime = currentTime.advanceTime(config.getSimulationTimeStep());
+
+                if(inSimDates && (currentPop > maxPop)) {
+                    maxPop = currentPop;
+                }
+
+                if(!inSimDates && DateUtils.dateBefore(config.getT0(), currentTime)) {
+                    inSimDates = true;
+                    summary.setStartPop(currentPop);
+                }
+
                 log.info("Time step completed " + currentTime.toString() + "    Population " + people.getNumberOfPersons());
                 System.out.println("Time step completed " + currentTime.toString() + "    Population " + people.getNumberOfPersons());
 
             }
+
+            summary.setPeakPop(maxPop);
+            summary.setEndPop(people.getNumberOfPersons());
 
         } catch (InsufficientNumberOfPeopleException e) {
             log.fatal(e.getMessage());

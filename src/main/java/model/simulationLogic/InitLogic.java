@@ -74,4 +74,7 @@ public class InitLogic {
         return (int) (config.getT0PopulationSize() / Math.pow(config.getSetUpBR() - config.getSetUpDR() + 1, DateUtils.differenceInYears(config.getTS(), config.getT0()).getCount()));
     }
 
+    public static int getCurrentHypotheticalPopulationSize() {
+        return currentHypotheticalPopulationSize;
+    }
 }

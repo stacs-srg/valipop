@@ -170,12 +170,10 @@ public class PartneringLogic {
 
         }
 
-        // TODO - actually add the men to the fathersToBe collection
         for(AgeRangeWithExactFatherValue range : availiableRanges) {
             Collection<IPerson> men = range.getFathers();
             fathers.addAll(men);
 
-//            System.out.println("End aR: " + currentTime.rowAsString() + " " + range.rowAsString());
             desiredPopulationStatistics.getPartneringRates(currentTime).returnAppliedData(range.getKey(), men.size() / (double) fathersNeeded);
         }
 
@@ -183,68 +181,8 @@ public class PartneringLogic {
             Collection<IPerson> men = range.getFathers();
             fathers.addAll(men);
 
-//            System.out.println("End eR: " + currentTime.rowAsString() + " " + range.rowAsString());
             desiredPopulationStatistics.getPartneringRates(currentTime).returnAppliedData(range.getKey(), men.size() / (double) fathersNeeded);
         }
-
-
-        // but not me!
-//        for(IntegerRange ageRange : ageRanges) {
-//
-//            DataKey key = new DataKey(mothersAge, ageRange.getValue(), null, fathersNeeded);
-//
-//            double exactFathersFromAgeBracket = desiredPopulationStatistics.getPartneringRates(currentTime).getCorrectingData(key) * fathersNeeded;
-//            int fathersFromAgeBracket = (int) exactFathersFromAgeBracket;
-//
-//            Date start = currentTime.getDateClock().advanceTime(new CompoundTimeUnit(ageRange.getMax(), TimeUnit.YEAR).negative());
-//            Date end = currentTime.getDateClock().advanceTime(new CompoundTimeUnit(ageRange.getMin(), TimeUnit.YEAR).negative());
-//
-//            int yearsInAgeBracket = ageRange.getMax() - ageRange.getMin() + 1;
-//
-//            int fathersPerYear = (fathersFromAgeBracket / yearsInAgeBracket) + 1;
-//
-//            System.out.println(fathersFromAgeBracket + " (" + exactFathersFromAgeBracket + ")    // " + yearsInAgeBracket + " = " + fathersPerYear);
-//
-//            int yearCount = 1;
-//
-//            int fathersCount = 0;
-//
-//
-//            // Turn distribution into solid values based on the number of fathers required
-//            // select fathers and add to NEW_FATHERS
-//            for(DateClock yob = start.getDateClock(); DateUtils.dateBefore(yob, end); yob = yob.advanceTime(1, TimeUnit.YEAR)) {
-//
-//                boolean applied = false;
-//                fathersPerYear = (fathersFromAgeBracket / yearsInAgeBracket) + 1;
-//
-//                while(!applied && fathersPerYear > 0) {
-//
-//                    if (yearCount == yearsInAgeBracket) {
-//                        fathersPerYear = fathersFromAgeBracket - fathers.size();
-//                    }
-//
-//                    try {
-//                        fathers.addAll(people.getMales().removeNPersons(fathersPerYear, yob));
-//                        fathersCount += fathersPerYear;
-//                        yearCount++;
-//                        applied = true;
-//
-//                    } catch (InsufficientNumberOfPeopleException e) {
-//                        fathersPerYear--;
-//                    }
-//
-//
-//                }
-//
-//            }
-
-
-
-//        }
-
-
-
-//        System.out.println(fathers.size() + " / " + mothersNeedingPartners.size());
 
         // pair up MOTHERS_NEEDING_FATHERS with NEW_FATHERS
         for(int p = 0; p < mothersNeedingPartners.size(); p++) {

@@ -52,6 +52,10 @@ public class KaplanMeierAnalysis implements IKaplanMeierAnalysis {
         ChiSquaredDistribution cSD = new ChiSquaredDistribution(1.0);
         double p = 1 - cSD.cumulativeProbability(logRankValue);
 
+        if(Double.isNaN(p)) {
+            return true;
+        }
+
         return this.p >= p;
     }
 

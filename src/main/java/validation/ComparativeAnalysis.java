@@ -9,6 +9,7 @@ import datastructure.summativeStatistics.structure.LabelValueDataRow;
 import datastructure.summativeStatistics.structure.OneDimensionDataDistribution;
 import datastructure.summativeStatistics.generated.StatisticalTables;
 import model.simulationEntities.IPopulation;
+import org.apache.commons.math3.exception.NotANumberException;
 import validation.utils.StatisticalManipulationCalculationError;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -115,19 +116,22 @@ public class ComparativeAnalysis implements IComparativeAnalysis {
 
 
 
-    private boolean printPassAndPValue(EventType eventType, Map<EventType, IKaplanMeierAnalysis> res, PrintStream resultOutput) {
+    private boolean printPassAndPValue(EventType eventType, Map<EventType, IKaplanMeierAnalysis> res, PrintStream resultOutput) throws PValueInvalidException {
 
         boolean result = res.get(eventType).significantDifferenceBetweenGroups();
 
         if (res.containsKey(eventType)) {
             resultOutput.print(getPassPrint(result, false) + "-");
             resultOutput.printf("%.3f ", res.get(eventType).getPValue());
-            resultOutput.print("(");
-            resultOutput.printf("%.3f ", res.get(eventType).getLogRankValue());
-            resultOutput.print(")");
+
+//            resultOutput.print("(");
+//            resultOutput.printf("%.3f ", res.get(eventType).getLogRankValue());
+//            resultOutput.print(")");
 
             if (Double.isNaN(res.get(eventType).getPValue())) {
                 resultOutput.print("  ");
+                resultOutput.print("| ");
+                throw new PValueInvalidException();
             }
 
             resultOutput.print("| ");
@@ -434,7 +438,8 @@ public class ComparativeAnalysis implements IComparativeAnalysis {
     }
 
     @Override
-    public void outputResults(PrintStream resultOutput) throws UnsupportedDateConversion {
+    public SummaryRow outputResults(PrintStream resultOutput, SummaryRow summary) throws UnsupportedDateConversion {
+
 
         int mPasses = 0;
         int mFails = 0;
@@ -450,31 +455,69 @@ public class ComparativeAnalysis implements IComparativeAnalysis {
         Date[] years = results.keySet().toArray(new Date[results.keySet().size()]);
 
         Arrays.sort(years, Date::compareTo);
+        years = Arrays.copyOfRange(years, 0, years.length - 1);
+
+        int failYear = -1;
+
+        int yearCount = 0;
 
         for (Date d : years) {
             Map<EventType, IKaplanMeierAnalysis> res = results.get(d);
 
             resultOutput.print(d.getYear() + " | ");
 
-            if(printPassAndPValue(EventType.MALE_DEATH, res, resultOutput)) {
-                mPasses++;
-            } else {
+            try {
+                if (printPassAndPValue(EventType.MALE_DEATH, res, resultOutput)) {
+                    mPasses++;
+                } else {
+                    mFails++;
+                }
+            } catch (PValueInvalidException e) {
                 mFails++;
+                if(failYear == -1) {
+                    failYear = yearCount;
+                }
             }
 
+            try {
             if(printPassAndPValue(EventType.FEMALE_DEATH, res, resultOutput)) {
                 fPasses++;
             } else {
                 fFails++;
             }
-
-            if(printPassAndPValue(EventType.FIRST_BIRTH, res, resultOutput)) {
-                b0Passes++;
-            } else {
-                b0Fails++;
+            } catch (PValueInvalidException e) {
+                fFails++;
+                if(failYear == -1) {
+                    failYear = yearCount;
+                }
             }
 
+            try {
+                if (yearCount < years.length - 15) {
+                    if (printPassAndPValue(EventType.FIRST_BIRTH, res, resultOutput)) {
+                        b0Passes++;
+                    } else {
+                        b0Fails++;
+                    }
+                } else {
+                    resultOutput.print("        | ");
+                }
+            } catch (PValueInvalidException e) {
+                b0Fails++;
+                if(failYear == -1) {
+                    failYear = yearCount;
+                }
+            }
+
+            yearCount++;
+
             resultOutput.println();
+        }
+
+        if(failYear == -1) {
+            summary.setCompleted(1);
+        } else {
+            summary.setCompleted(failYear / (double) years.length);
         }
 
         int tPasses = mPasses + fPasses + b0Passes;
@@ -486,6 +529,15 @@ public class ComparativeAnalysis implements IComparativeAnalysis {
         resultOutput.print("Female death - Passes: " + fPasses + "    |    Fails: " + fFails + "\n");
         resultOutput.print("First births - Passes: " + b0Passes + "    |    Fails: " + b0Fails + "\n");
         resultOutput.print("Totals       - Passes: " + tPasses + "    |    Fails: " + tFails + "\n");
+
+        summary.setmDPasses(mPasses / (double) (mPasses + mFails));
+        summary.setfDPasses(fPasses / (double) (fPasses + fFails));
+        summary.setbPasses(b0Passes / (double) (b0Passes + b0Fails));
+
+        summary.setPassed((tPasses) / (double) (tPasses + tFails));
+
+
+        return summary;
 
     }
 

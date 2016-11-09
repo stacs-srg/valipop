@@ -6,6 +6,7 @@ import datastructure.summativeStatistics.structure.LabelValueDataRow;
 import datastructure.summativeStatistics.structure.FailureAgainstTimeTable.FailureTimeRow;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import validation.SummaryRow;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -22,13 +23,6 @@ import java.util.Collection;
 public class FileUtils {
 
     public static Logger log = LogManager.getLogger(FileUtils.class);
-
-    private final static String SUMMARY_FILE_HEADINGS = "Start Time, Reason, Total Pop, Passed, Completed, " +
-            "B Passes, MD Passes, FD Passes, P Passes, S Passes, MB Passes, " +
-            "Sim Length, B Timestep, D Timestep, Input Width, " +
-            "Start Pop, End Pop, Peak Pop, " +
-            "Start Date, End Date" +
-            "Run time, Results Directory";
 
     public static void makeDirectoryStructure(String runPurpose, String startTime, Config config) throws IOException {
 
@@ -171,7 +165,7 @@ public class FileUtils {
 
             try {
                 PrintWriter write = new PrintWriter(summary.toFile(), "UTF-8");
-                write.println(SUMMARY_FILE_HEADINGS);
+                write.println(SummaryRow.getSeparatedHeadings(','));
                 write.close();
             } catch (IOException e) {
                 String m = "Unable to create or write to " + summary.toString();

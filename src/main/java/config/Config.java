@@ -63,6 +63,7 @@ public class Config {
             return !file.getFileName().toString().matches("^\\..+");
         }
     };
+    private CompoundTimeUnit inputWidth;
 
     /**
      * This constructor reads in the file at the given path and stores the given configuration.
@@ -138,6 +139,14 @@ public class Config {
                         simulationTimeStep = new CompoundTimeUnit(split[1]);
                     } catch (InvalidTimeUnit e) {
                         log.fatal("simulation_time_step " + e.getMessage());
+                        throw e;
+                    }
+                    break;
+                case "input_width":
+                    try {
+                        inputWidth = new CompoundTimeUnit(split[1]);
+                    } catch (InvalidTimeUnit e) {
+                        log.fatal("input_width " + e.getMessage());
                         throw e;
                     }
                     break;
@@ -340,4 +349,7 @@ public class Config {
         return runPurpose;
     }
 
+    public CompoundTimeUnit getInputWidth() {
+        return inputWidth;
+    }
 }
