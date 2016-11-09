@@ -301,12 +301,12 @@ public class ComparativeAnalysis implements IComparativeAnalysis {
                 OneDimensionDataDistribution desiredPartnering = desired.getPartneringData(start, end, ageRange, null);
                 OneDimensionDataDistribution generatedPartnering = generated.getPartneringData(start, end, ageRange, desiredPartnering.getData().keySet());
 
-                System.out.println(start.toString());
-                System.out.println("FaR = " + ageRange.toString());
-
-                for(IntegerRange iR : generatedPartnering.getData().keySet()) {
-                    System.out.println(iR.toString());
-                }
+//                System.out.println(start.toString());
+//                System.out.println("FaR = " + ageRange.toString());
+//
+//                for(IntegerRange iR : generatedPartnering.getData().keySet()) {
+//                    System.out.println(iR.toString());
+//                }
 
 
 //                for(int age = ageRange.getMin(); age <= ageRange.getMax(); age ++) {

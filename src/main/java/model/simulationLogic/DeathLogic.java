@@ -138,7 +138,7 @@ public class DeathLogic {
         }
 
         log.info("Deaths handled: " + currentDate.toString() + " - " + deathCount);
-        System.out.println("Deaths handled: " + currentDate.toString() + " - " + deathCount);
+//        System.out.println("Deaths handled: " + currentDate.toString() + " - " + deathCount);
         return deathCount;
 
     }

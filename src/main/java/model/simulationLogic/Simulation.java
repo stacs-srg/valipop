@@ -249,7 +249,7 @@ public class Simulation {
                 }
 
                 log.info("Time step completed " + currentTime.toString() + "    Population " + people.getNumberOfPersons());
-                System.out.println("Time step completed " + currentTime.toString() + "    Population " + people.getNumberOfPersons());
+//                System.out.println("Time step completed " + currentTime.toString() + "    Population " + people.getNumberOfPersons());
 
             }
 

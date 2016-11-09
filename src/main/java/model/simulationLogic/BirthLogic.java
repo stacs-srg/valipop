@@ -218,7 +218,7 @@ public class BirthLogic {
 
 
         log.info("Births handled: " + currentTime.toString() + " - " + birthCount);
-        System.out.println("Births handled: " + currentTime.toString() + " - " + birthCount);
+//        System.out.println("Births handled: " + currentTime.toString() + " - " + birthCount);
         return birthCount;
 
     }
