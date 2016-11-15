@@ -85,7 +85,7 @@ public class MatchingTest {
         IBucket<Birth> b = repo.getBucket(birth_bucket_name1, new BirthFactory(birthlabel.getId()));
         IBucket<Birth> b2 = repo.getBucket(birth_bucket_name2, new BirthFactory(birthlabel.getId()));
 
-        EventImporter.importDigitisingScotlandBirths(b, BIRTH_RECORDS_PATH, birthlabel);
+        BarSeparatedEventImporter.importDigitisingScotlandBirths(b, BIRTH_RECORDS_PATH, birthlabel);
 
         ExactMatch filter = new ExactMatch(b.getInputStream(), b2.getOutputStream(), "surname", "GONTHWICK");
         filter.apply();
