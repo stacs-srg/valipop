@@ -1,7 +1,7 @@
 package uk.ac.standrews.cs.digitising_scotland.linkage.resolve;
 
 import org.json.JSONException;
-import uk.ac.standrews.cs.digitising_scotland.linkage.EventImporter;
+import uk.ac.standrews.cs.digitising_scotland.linkage.BarSeparatedEventImporter;
 import uk.ac.standrews.cs.digitising_scotland.linkage.RecordFormatException;
 import uk.ac.standrews.cs.digitising_scotland.linkage.blocking.FFNFLNMFNMMNPOMDOMOverActor;
 import uk.ac.standrews.cs.digitising_scotland.linkage.factory.*;
@@ -154,11 +154,11 @@ public class AlLinker {
         try {
             System.out.println("Importing BDM records");
             int count = 0;
-            count = EventImporter.importDigitisingScotlandBirths(births, births_source_path, birthType);
+            count = BarSeparatedEventImporter.importDigitisingScotlandBirths(births, births_source_path, birthType);
             System.out.println("Imported " + count + " birth records");
-            count = EventImporter.importDigitisingScotlandDeaths(deaths, deaths_source_path, deathType);
+            count = BarSeparatedEventImporter.importDigitisingScotlandDeaths(deaths, deaths_source_path, deathType);
             System.out.println("Imported " + count + " death records");
-            count = EventImporter.importDigitisingScotlandMarriages(marriages, marriages_source_path, marriageType, oids );
+            count = BarSeparatedEventImporter.importDigitisingScotlandMarriages(marriages, marriages_source_path, marriageType, oids );
             System.out.println("Imported " + count + " marriage records");
         } catch (RecordFormatException | IOException | BucketException e) {
             ErrorHandling.exceptionError(e, "Error whilst injecting records");

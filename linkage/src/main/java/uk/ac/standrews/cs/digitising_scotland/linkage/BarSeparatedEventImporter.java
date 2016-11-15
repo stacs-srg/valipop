@@ -30,7 +30,7 @@ import java.util.NoSuchElementException;
  * @author Alan Dearle (alan.dearle@st-andrews.ac.uk)
  * @author Graham Kirby (graham.kirby@st-andrews.ac.uk)
  */
-public class EventImporter {
+public class BarSeparatedEventImporter {
 
     private static final String SEPARATOR = "\\|";
 
