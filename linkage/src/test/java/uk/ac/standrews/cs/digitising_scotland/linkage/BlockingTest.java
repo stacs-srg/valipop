@@ -53,7 +53,7 @@ public class BlockingTest {
 
         String births_source_path = new File(BlockingTest.class.getResource("/BDMSet1/birth_records.txt").toURI()).getAbsolutePath(); // TODO Make other tests follow this.
 
-        int count = EventImporter.importDigitisingScotlandBirths(births, births_source_path, birthlabel);
+        int count = BarSeparatedEventImporter.importDigitisingScotlandBirths(births, births_source_path, birthlabel);
         System.out.println("read in " + count + " records.");
         FNLFFMFOverBirths blocker = new FNLFFMFOverBirths(births, repo);
 
