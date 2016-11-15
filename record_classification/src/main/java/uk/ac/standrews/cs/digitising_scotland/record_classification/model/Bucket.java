@@ -61,7 +61,7 @@ public class Bucket implements Iterable<Record>, Serializable {
         this(Files.newBufferedReader(records.toPath(), charset), delimiter);
     }
 
-    public Bucket(Reader reader, char delimiter) {
+    public Bucket(Reader reader, char delimiter) throws IOException {
 
         this(new DataSet(reader, delimiter));
     }
