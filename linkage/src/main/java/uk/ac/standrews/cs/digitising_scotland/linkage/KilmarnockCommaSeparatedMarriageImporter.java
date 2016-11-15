@@ -34,7 +34,7 @@ public class KilmarnockCommaSeparatedMarriageImporter {
      * @throws RecordFormatException
      * @throws BucketException
      */
-    public static int importDigitisingScotlandMarriages(IBucket<Marriage> marriages, String filename, IReferenceType referencetype, ArrayList<Long> oids) {
+    public static int importDigitisingScotlandMarriages(IBucket<Marriage> marriages, String filename, ArrayList<Long> oids) {
         long counter = 0;
 //        try {
 //            try (final BufferedReader reader = Files.newBufferedReader(Paths.get(filename), FileManipulation.FILE_CHARSET)) {

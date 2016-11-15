@@ -10,6 +10,7 @@ import uk.ac.standrews.cs.util.dataset.DataSet;
 
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -27,13 +28,12 @@ public class KilmarnockCommaSeparatedDeathImporter {
     /**
      * @param deaths        the bucket from which to import
      * @param filename      containing the source records in digitising scotland format
-     * @param referencetype the expected type of the records being imported
      * @return the number of records read in
      * @throws IOException
      * @throws RecordFormatException
      * @throws BucketException
      */
-    public static int importDigitisingScotlandDeaths(IBucket<Death> deaths, String filename, IReferenceType referencetype) throws RecordFormatException, IOException, BucketException, IllegalKeyException {
+    public static int importDigitisingScotlandDeaths(IBucket<Death> deaths, String filename, ArrayList<Long> oids) throws RecordFormatException, IOException, BucketException, IllegalKeyException {
         long counter = 0;
 //        try (final BufferedReader reader = Files.newBufferedReader(Paths.get(filename), FileManipulation.FILE_CHARSET)) {
 //
