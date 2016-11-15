@@ -1,7 +1,9 @@
 package uk.ac.standrews.cs.digitising_scotland.linkage.resolve;
 
 import org.json.JSONException;
-import uk.ac.standrews.cs.digitising_scotland.linkage.BarSeparatedEventImporter;
+import uk.ac.standrews.cs.digitising_scotland.linkage.KilmarnockCommaSeparatedBirthImporter;
+import uk.ac.standrews.cs.digitising_scotland.linkage.KilmarnockCommaSeparatedDeathImporter;
+import uk.ac.standrews.cs.digitising_scotland.linkage.KilmarnockCommaSeparatedMarriageImporter;
 import uk.ac.standrews.cs.digitising_scotland.linkage.RecordFormatException;
 import uk.ac.standrews.cs.digitising_scotland.linkage.blocking.FFNFLNMFNMMNPOMDOMOverActor;
 import uk.ac.standrews.cs.digitising_scotland.linkage.factory.*;
@@ -25,7 +27,7 @@ import java.util.List;
  * Attempt to create a linking framework
  * Created by al on 6/8/2014.
  */
-public class AlLinker {
+public class KilmarnockLinker {
 
 
     // Repositories and stores
@@ -76,7 +78,7 @@ public class AlLinker {
     private ArrayList<Long> oids = new ArrayList<>();
 
 
-    public AlLinker(String births_source_path, String deaths_source_path, String marriages_source_path) throws BucketException {
+    public KilmarnockLinker(String births_source_path, String deaths_source_path, String marriages_source_path) throws BucketException {
 
         System.out.println("Initialising");
         try {
@@ -154,11 +156,11 @@ public class AlLinker {
         try {
             System.out.println("Importing BDM records");
             int count = 0;
-            count = BarSeparatedEventImporter.importDigitisingScotlandBirths(births, births_source_path, birthType);
+            count = KilmarnockCommaSeparatedBirthImporter.importDigitisingScotlandBirths(births, births_source_path, oids);
             System.out.println("Imported " + count + " birth records");
-            count = BarSeparatedEventImporter.importDigitisingScotlandDeaths(deaths, deaths_source_path, deathType);
+            count = KilmarnockCommaSeparatedDeathImporter.importDigitisingScotlandDeaths(deaths, deaths_source_path, oids);
             System.out.println("Imported " + count + " death records");
-            count = BarSeparatedEventImporter.importDigitisingScotlandMarriages(marriages, marriages_source_path, marriageType, oids );
+            count = KilmarnockCommaSeparatedMarriageImporter.importDigitisingScotlandMarriages(marriages, marriages_source_path, oids );
             System.out.println("Imported " + count + " marriage records");
         } catch (RecordFormatException | IOException | BucketException e) {
             ErrorHandling.exceptionError(e, "Error whilst injecting records");
@@ -632,7 +634,7 @@ public class AlLinker {
         String deaths_source_path =    "/Users/al/Documents/intelliJ/BDMSet1/death_records.txt";
         String marriages_source_path = "/Users/al/Documents/intelliJ/BDMSet1/marriage_records.txt";
 
-        new AlLinker(births_source_path, deaths_source_path, marriages_source_path);
+        new KilmarnockLinker(births_source_path, deaths_source_path, marriages_source_path);
     }
 
 }

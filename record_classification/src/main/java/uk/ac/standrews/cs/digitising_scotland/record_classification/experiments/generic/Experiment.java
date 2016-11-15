@@ -268,13 +268,15 @@ public abstract class Experiment implements Callable<Void> {
     protected void printSummarisedResults(final List<ClassifierResults> results) throws IOException {
 
         final String table_caption = String.format(TABLE_CAPTION_STRING, repetitions, getPluralitySuffix(repetitions));
-        final TableGenerator table_generator = new TableGenerator(getNames(results), getDataSets(results), FIRST_COLUMN_HEADING, COLUMNS_AS_PERCENTAGES, TAB);
+        final TableGenerator table_generator = new TableGenerator(getDataSets(results), getNames(results), FIRST_COLUMN_HEADING, COLUMNS_AS_PERCENTAGES);
 
         printDateStamp();
         printExperimentInputs();
 
         System.out.println(table_caption);
-        table_generator.getTable().print(System.out);
+        final DataSet table = table_generator.getTable();
+        table.setOutputFormat(DataSet.DEFAULT_CSV_FORMAT.withRecordSeparator(TAB));
+        table.print(System.out);
     }
 
     private static String getPluralitySuffix(final int repetitions) {

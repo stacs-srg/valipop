@@ -103,7 +103,7 @@ public class IndexTest {
         IIndexedBucket<Birth> b = (IIndexedBucket<Birth>) iBucket;
 
         b.addIndex(Birth.SURNAME);
-        long counter1 = EventImporter.importDigitisingScotlandBirths(b, BIRTH_RECORDS_PATH, birthlabel);
+        long counter1 = BarSeparatedEventImporter.importDigitisingScotlandBirths(b, BIRTH_RECORDS_PATH, birthlabel);
 
         IBucketIndex index = b.getIndex(Birth.SURNAME);
 
