@@ -44,7 +44,6 @@ import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import java.util.logging.*;
 import java.util.stream.Collectors;
 
 /**
@@ -268,7 +267,7 @@ public abstract class Experiment implements Callable<Void> {
     protected void printSummarisedResults(final List<ClassifierResults> results) throws IOException {
 
         final String table_caption = String.format(TABLE_CAPTION_STRING, repetitions, getPluralitySuffix(repetitions));
-        final TableGenerator table_generator = new TableGenerator(getDataSets(results), getNames(results), FIRST_COLUMN_HEADING, COLUMNS_AS_PERCENTAGES);
+        final TableGenerator table_generator = new TableGenerator(getDataSets(results), FIRST_COLUMN_HEADING, getNames(results), COLUMNS_AS_PERCENTAGES);
 
         printDateStamp();
         printExperimentInputs();
