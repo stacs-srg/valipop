@@ -1,7 +1,7 @@
 package uk.ac.standrews.cs.digitising_scotland.linkage;
 
-import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.Birth;
-import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.Marriage;
+import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.*;
+import uk.ac.standrews.cs.digitising_scotland.util.*;
 import uk.ac.standrews.cs.storr.impl.exceptions.BucketException;
 import uk.ac.standrews.cs.storr.impl.exceptions.IllegalKeyException;
 import uk.ac.standrews.cs.storr.interfaces.IBucket;
@@ -13,7 +13,6 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-
 /**
  * Utility classes for importing records in digitising scotland format
  * Created by al on 8/11/2016.
@@ -23,121 +22,103 @@ import java.util.List;
  */
 public class KilmarnockCommaSeparatedMarriageImporter {
 
-    // GRAHAM IS DOING THIS ONE
-
     /**
-     * @param marriages     the bucket from which to import
-     * @param filename      containing the source records in digitising scotland format
-     * @param referencetype the expected type of the records being imported
+     * Imports a set of marriage records from file to a bucket.
+     *
+     * @param marriages the bucket into which the new records should be put
+     * @param filename string path of file containing the source records in digitising scotland format
+     * @param object_ids a list of object ids, to which the ids of the new records should be added
+     *
      * @return the number of records read in
-     * @throws IOException
-     * @throws RecordFormatException
-     * @throws BucketException
+     * @throws IOException if the data cannot be read from the file
      */
-    public static int importDigitisingScotlandMarriages(IBucket<Marriage> marriages, String filename, ArrayList<Long> oids) {
-        long counter = 0;
-//        try {
-//            try (final BufferedReader reader = Files.newBufferedReader(Paths.get(filename), FileManipulation.FILE_CHARSET)) {
-//
-//                int count = 0;
-//
-//                try {
-//                    while (true) {
-//                        Marriage m = new Marriage();
-//                        try {
-//                            importDigitisingScotlandRecord(m, reader, referencetype, DSFields.MARRIAGE_FIELD_NAMES);
-//                            correctMarriageFields(m);
-//
-//                        } catch (RecordFormatException e) {
-//                            ErrorHandling.exceptionError(e, "Record format error reading file: " + filename);
-//                        }
-//                        try {
-//                            marriages.makePersistent(m);
-//                            oids.add(m.getId());
-//                            count++;
-//                        } catch (Exception e) {
-//                            ErrorHandling.exceptionError(e, "Error making marriage record persistent: " + m);
-//                        }
-//                    }
-//                } catch (IOException e) {
-//                    // expect this to be thrown when we getObjectById to the end.
-//                }
-//                return count;
-//            }
-//        } catch (IOException e) {
-//            ErrorHandling.exceptionError(e, "Error opening buffered reader for file: " + filename);
-//            return 0;
-//        }
-        return 0;
-    }
-
-    /**
-     * @param births        the bucket from which to import
-     * @param filename      containing the source records in digitising scotland format
-     * @param referencetype the expected type of the records being imported
-     * @return the number of records read in
-     * @throws IOException
-     * @throws RecordFormatException
-     * @throws BucketException
-     */
-    public static int importDigitisingScotlandBirths(IBucket<Birth> births, String filename, IReferenceType referencetype) throws RecordFormatException, IOException, BucketException, IllegalKeyException {
+    public static int importDigitisingScotlandMarriages(IBucket<Marriage> marriages, String filename, List<Long> object_ids) throws IOException {
 
         int count = 0;
-        DataSet data = new DataSet( Paths.get(filename) );
-        for( List<String> record : data.getRecords() ) {
-            Birth b = importDigitisingScotlandBirth( data, record );
+
+        DataSet data = new DataSet(Paths.get(filename));
+
+        for (List<String> record : data.getRecords()) {
+            Marriage marriage = importDigitisingScotlandMarriage(data, record);
+            try {
+//                marriages.makePersistent(marriage);
+//                object_ids.add(marriage.getId());
+                count++;
+            }
+            catch (Exception e) {
+                ErrorHandling.exceptionError(e, "Error making marriage record persistent: " + marriage);
+            }
         }
 
         return count;
-
     }
 
-    /**
-     * Fills in a OID record data from a file.
-     */
-    private static Birth importDigitisingScotlandBirth(DataSet data, List<String> record) throws IOException, RecordFormatException, IllegalKeyException {
+    private static Marriage importDigitisingScotlandMarriage(DataSet data, List<String> record) {
 
-        Birth b = new Birth();
-        b.put(Birth.ORIGINAL_ID, data.getValue(record, "ID"));
-        b.put(Birth.SURNAME, data.getValue(record, "child's surname"));
-        b.put(Birth.FORENAME, data.getValue(record, "child's forname(s)"));
-        b.put(Birth.SEX, data.getValue(record, "sex"));
-        b.put(Birth.YEAR_OF_REGISTRATION, data.getValue(record, "year of reg"));
-        b.put(Birth.REGISTRATION_DISTRICT_NUMBER, data.getValue(record, "rd identifier"));
-        b.put(Birth.REGISTRATION_DISTRICT_SUFFIX, data.getValue(record, "register identifier"));
-        b.put(Birth.ENTRY, data.getValue(record, "entry no"));
-        b.put(Birth.MOTHERS_MAIDEN_SURNAME, data.getValue(record, "mother's maiden surname"));
-        b.put(Birth.BIRTH_DAY, data.getValue(record, "day"));
-        b.put(Birth.BIRTH_MONTH, data.getValue(record, "month"));
-        b.put(Birth.BIRTH_YEAR, data.getValue(record, "year"));
-        b.put(Birth.BIRTH_ADDRESS, data.getValue(record, "address 1") + data.getValue(record, "address 2") + data.getValue(record, "address 3"));
-        b.put(Birth.FATHERS_FORENAME, data.getValue(record, "father's forename"));
-        b.put(Birth.FATHERS_SURNAME, data.getValue(record, "father's surname"));
-        b.put(Birth.FATHERS_OCCUPATION, data.getValue(record, "father's occupation"));
-        b.put(Birth.MOTHERS_FORENAME, data.getValue(record, "mother's forename"));
-        b.put(Birth.PARENTS_DAY_OF_MARRIAGE, data.getValue(record, "day of parents' marriage"));
-        b.put(Birth.PARENTS_MONTH_OF_MARRIAGE, data.getValue(record, "month of parents' marriage"));
-        b.put(Birth.PARENTS_YEAR_OF_MARRIAGE, data.getValue(record, "year of parents' marriage"));
-        b.put(Birth.PARENTS_PLACE_OF_MARRIAGE, data.getValue(record, "place of parent's marriage 1") + data.getValue(record, "place of parent's marriage 2") );
-        b.put(Birth.ILLEGITIMATE_INDICATOR, data.getValue(record, "illegitimate"));
-        b.put(Birth.INFORMANT, data.getValue(record, "forename of informant") + data.getValue(record, "surname of informant"));
-        b.put(Birth.INFORMANT_DID_NOT_SIGN, data.getValue(record, "did informant  sign?"));
+        // Information that doesn't currently fit:
 
-        System.out.println( b );
+        // "place of marriage 1", "place of marriage 2", "place of marriage 3"
+        // "groom's mother's occ"
+        // "bride's mother's occ"
+        // "groom's mother's other names"
+        // "bride's mother's other name/s"
 
-        return b;
 
-        // 	family	family beware	parents' marriage	date of birth	cs	cx	fs	fx	ms	mx	parmaryear	parmarplace
-        // line number	rd identifier	register identifier	entry no
-        // 	father's surname	father's occupation	mother's forename		mother's occupation
-        // year of parents' marriage	place of parent's marriage 1	place of parent's marriage 2	forename of informant	surname of informant
-        // relationship of informant to child	did informant  sign?	was informant present?	day of reg	month of reg	year of reg	illegitimate	notes	mother's previous married name
-        // address of informant	address of informant 2	address of informant 3
-        // declaration	fathers dom	fathers dom2	fathers dom3	mothers dom	mothers dom2	mothers dom3	edits	death	pid71	sch71
+        Marriage marriage = new Marriage();
 
+        marriage.put(Marriage.ORIGINAL_ID, data.getValue(record, "ID"));
+        marriage.put(Marriage.YEAR_OF_REGISTRATION, data.getValue(record, "stryear"));
+        marriage.put(Marriage.REGISTRATION_DISTRICT_NUMBER, data.getValue(record, "RD identifier"));
+        marriage.put(Marriage.REGISTRATION_DISTRICT_SUFFIX, data.getValue(record, "register identifier"));
+        marriage.put(Marriage.ENTRY, data.getValue(record, "entry number"));
+        marriage.put(Marriage.DENOMINATION, data.getValue(record, "denomination"));
+
+        marriage.put(Marriage.BRIDE_FORENAME, data.getValue(record, "forename of bride"));
+        marriage.put(Marriage.BRIDE_SURNAME, data.getValue(record, "surname of bride"));
+
+        marriage.put(Marriage.GROOM_FORENAME, data.getValue(record, "forename of groom"));
+        marriage.put(Marriage.GROOM_SURNAME, data.getValue(record, "surname of groom"));
+
+        marriage.put(Marriage.MARRIAGE_DAY, data.getValue(record, "day"));
+        marriage.put(Marriage.MARRIAGE_MONTH, data.getValue(record, "month"));
+        marriage.put(Marriage.MARRIAGE_YEAR, data.getValue(record, "year"));
+
+        marriage.put(Marriage.BRIDE_AGE_OR_DATE_OF_BIRTH, data.getValue(record, "age of bride"));
+        marriage.put(Marriage.GROOM_AGE_OR_DATE_OF_BIRTH, data.getValue(record, "age of groom"));
+
+        marriage.put(Marriage.BRIDE_FATHERS_FORENAME, data.getValue(record, "bride's father's forename"));
+        marriage.put(Marriage.BRIDE_FATHERS_SURNAME, data.getValue(record, "bride's father's surname"));
+        marriage.put(Marriage.BRIDE_MOTHERS_FORENAME, data.getValue(record, "bride's mother's forename"));
+        marriage.put(Marriage.BRIDE_MOTHERS_MAIDEN_SURNAME, data.getValue(record, "bride's mother's maiden surname"));
+
+        marriage.put(Marriage.GROOM_FATHERS_FORENAME, data.getValue(record, "groom's father's forename"));
+        marriage.put(Marriage.GROOM_FATHERS_SURNAME, data.getValue(record, "groom's father's surname"));
+        marriage.put(Marriage.GROOM_MOTHERS_FORENAME, data.getValue(record, "groom's mother's forename"));
+        marriage.put(Marriage.GROOM_MOTHERS_MAIDEN_SURNAME, data.getValue(record, "groom's mother's maiden surname"));
+
+        marriage.put(Marriage.BRIDE_MARITAL_STATUS, data.getValue(record, "marital status of bride"));
+        marriage.put(Marriage.BRIDE_ADDRESS, data.getValue(record, "address of bride 1") + " " + data.getValue(record, "address of bride 2") + " " + data.getValue(record, "address of bride 3"));
+        marriage.put(Marriage.BRIDE_DID_NOT_SIGN, data.getValue(record, "did bride sign?"));
+        marriage.put(Marriage.BRIDE_OCCUPATION, data.getValue(record, "occupation of bride"));
+        marriage.put(Marriage.BRIDE_FATHER_OCCUPATION, data.getValue(record, "bride's father's occupation"));
+        marriage.put(Marriage.BRIDE_FATHER_DECEASED, data.getValue(record, "if bride's father deceased"));
+        marriage.put(Marriage.BRIDE_MOTHER_DECEASED, data.getValue(record, "if bride's mother deceased"));
+
+        marriage.put(Marriage.GROOM_MARITAL_STATUS, data.getValue(record, "marital status of groom"));
+        marriage.put(Marriage.GROOM_ADDRESS, data.getValue(record, "address of groom 1") + " " + data.getValue(record, "address of groom 2") + " " + data.getValue(record, "address of groom 3"));
+        marriage.put(Marriage.GROOM_DID_NOT_SIGN, data.getValue(record, "did groom sign?"));
+        marriage.put(Marriage.GROOM_OCCUPATION, data.getValue(record, "occupation of groom"));
+        marriage.put(Marriage.GROOM_FATHERS_OCCUPATION, data.getValue(record, "groom's father's occupation"));
+        marriage.put(Marriage.GROOM_FATHER_DECEASED, data.getValue(record, "if groom's father deceased"));
+        marriage.put(Marriage.GROOM_MOTHER_DECEASED, data.getValue(record, "if groom's mother deceased"));
+
+        System.out.println(marriage);
+
+        return marriage;
     }
 
     public static void main(String[] args) throws RecordFormatException, BucketException, IOException {
-        importDigitisingScotlandBirths(null,"/Users/al/Desktop/Digi Scotland/Kilmarnock data/kilmarnock_csv/births.csv",null);
+
+        importDigitisingScotlandMarriages(null, "/Users/graham/Desktop/kilmarnock_linked/marriages.csv", null);
     }
 }
