@@ -10,6 +10,7 @@ utils/time/YearDate.class
 model/dateSelection/BirthDateSelector.class
 model/simulationEntities/Person.class
 model/simulationEntities/PersonFactory.class
+validation/PValueInvalidException.class
 datastructure/population/PeopleCollection.class
 datastructure/summativeStatistics/PopulationComposition.class
 model/nameGeneration/FirstNameGenerator.class

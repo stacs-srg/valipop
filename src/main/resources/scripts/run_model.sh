@@ -17,11 +17,20 @@
 
 # Documentation: http://digitisingscotland.cs.st-andrews.ac.uk/population_model/scripts/generate_population.html
 
+# Parameters to this script are
+# 1) Xmx allocation in GB
+# 2) Path to config file
+# 3) String describing run purpose - informs name of dir into which results will be placed e.g. scale-test 
+# 4) Number of times to run simulator (each simulation ran sequnetially)
+
 if [ -n "$1" ];
 then
     export MAVEN_OPTS="-Xmx"$1"G"
     echo Setting heap size: $1GB
 fi
 
-
-mvn exec:java -q -Dexec.cleanupDaemonThreads=false -Dexec.mainClass="model.simulationLogic.Simulation" -e -Dexec.args="$2 $3"
+COUNTER=0
+while [ $COUNTER -lt $4 ]; do
+        let COUNTER=COUNTER+1
+	mvn exec:java -q -Dexec.cleanupDaemonThreads=false -Dexec.mainClass="model.simulationLogic.Simulation" -e -Dexec.args="$2 $3"
+done
