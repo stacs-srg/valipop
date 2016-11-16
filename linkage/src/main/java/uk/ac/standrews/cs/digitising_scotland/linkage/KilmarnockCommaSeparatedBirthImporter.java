@@ -12,6 +12,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
+import static uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.Birth.*;
 
 /**
  * Utility classes for importing records in digitising scotland format
@@ -21,7 +22,33 @@ import java.util.List;
  * @author Graham Kirby (graham.kirby@st-andrews.ac.uk)
  */
 public class KilmarnockCommaSeparatedBirthImporter {
+
+    public static final String[][] RECORD_LABEL_MAP = {
+
+            {ORIGINAL_ID, "ID"},
+            {FORENAME, "child's forname(s)"},
+            {SURNAME, "child's surname"},
+            {SEX, "sex"},
+            {YEAR_OF_REGISTRATION, "year of reg"},
+            {REGISTRATION_DISTRICT_NUMBER, "rd identifier"},
+            {REGISTRATION_DISTRICT_SUFFIX, "register identifier"},
+            {ENTRY, "entry no"},
+            {BIRTH_DAY, "day"},
+            {BIRTH_MONTH, "month"},
+            {BIRTH_YEAR, "year"},
+            {FATHERS_FORENAME, "father's forename"},
+            {FATHERS_SURNAME, "father's surname"},
+            {FATHERS_OCCUPATION, "father's occupation"},
+            {MOTHERS_FORENAME, "mother's forename"},
+            {MOTHERS_MAIDEN_SURNAME, "mother's maiden surname"},
+            {PARENTS_DAY_OF_MARRIAGE, "day of parents' marriage"},
+            {PARENTS_MONTH_OF_MARRIAGE, "month of parents' marriage"},
+            {PARENTS_YEAR_OF_MARRIAGE, "year of parents' marriage"},
+            {ILLEGITIMATE_INDICATOR, "illegitimate"},
+            {INFORMANT_DID_NOT_SIGN, "did informant  sign?"},
+    };
     
+
     /**
      * @param births        the bucket from which to import
      * @param filename      containing the source records in digitising scotland format
@@ -53,33 +80,30 @@ public class KilmarnockCommaSeparatedBirthImporter {
      */
     private static Birth importDigitisingScotlandBirth(DataSet data, List<String> record) throws IOException, RecordFormatException, IllegalKeyException {
 
-        Birth b = new Birth();
-        b.put(Birth.ORIGINAL_ID, data.getValue(record, "ID"));
-        b.put(Birth.SURNAME, data.getValue(record, "child's surname"));
-        b.put(Birth.FORENAME, data.getValue(record, "child's forname(s)"));
-        b.put(Birth.SEX, data.getValue(record, "sex"));
-        b.put(Birth.YEAR_OF_REGISTRATION, data.getValue(record, "year of reg"));
-        b.put(Birth.REGISTRATION_DISTRICT_NUMBER, data.getValue(record, "rd identifier"));
-        b.put(Birth.REGISTRATION_DISTRICT_SUFFIX, data.getValue(record, "register identifier"));
-        b.put(Birth.ENTRY, data.getValue(record, "entry no"));
-        b.put(Birth.MOTHERS_MAIDEN_SURNAME, data.getValue(record, "mother's maiden surname"));
-        b.put(Birth.BIRTH_DAY, data.getValue(record, "day"));
-        b.put(Birth.BIRTH_MONTH, data.getValue(record, "month"));
-        b.put(Birth.BIRTH_YEAR, data.getValue(record, "year"));
-        b.put(Birth.BIRTH_ADDRESS, data.getValue(record, "address 1") + data.getValue(record, "address 2") + data.getValue(record, "address 3"));
-        b.put(Birth.FATHERS_FORENAME, data.getValue(record, "father's forename"));
-        b.put(Birth.FATHERS_SURNAME, data.getValue(record, "father's surname"));
-        b.put(Birth.FATHERS_OCCUPATION, data.getValue(record, "father's occupation"));
-        b.put(Birth.MOTHERS_FORENAME, data.getValue(record, "mother's forename"));
-        b.put(Birth.PARENTS_DAY_OF_MARRIAGE, data.getValue(record, "day of parents' marriage"));
-        b.put(Birth.PARENTS_MONTH_OF_MARRIAGE, data.getValue(record, "month of parents' marriage"));
-        b.put(Birth.PARENTS_YEAR_OF_MARRIAGE, data.getValue(record, "year of parents' marriage"));
-        b.put(Birth.PARENTS_PLACE_OF_MARRIAGE, data.getValue(record, "place of parent's marriage 1") + data.getValue(record, "place of parent's marriage 2") );
-        b.put(Birth.ILLEGITIMATE_INDICATOR, data.getValue(record, "illegitimate"));
-        b.put(Birth.INFORMANT, data.getValue(record, "forename of informant") + data.getValue(record, "surname of informant"));
-        b.put(Birth.INFORMANT_DID_NOT_SIGN, data.getValue(record, "did informant  sign?"));
+        Birth birth = new Birth();
 
-        return b;
+        for (String[] field : RECORD_LABEL_MAP) {
+            birth.put(field[0], field[1]);
+        }
+
+        //  Concatenated fields
+        
+        birth.put(BIRTH_ADDRESS,data.getValue(record, "address 1") + data.getValue(record, "address 2") + data.getValue(record, "address 3" ));
+        birth.put(INFORMANT,data.getValue(record, "forename of informant") + data.getValue(record, "surname of informant"));
+        birth.put(PARENTS_PLACE_OF_MARRIAGE,data.getValue(record, "place of parent's marriage 1") + data.getValue(record, "place of parent's marriage 2"));
+
+        // Unused fields - need to be empty for structure
+
+        birth.put(CHANGED_FORENAME,"");
+        birth.put(CHANGED_SURNAME,"");
+        birth.put(MOTHERS_SURNAME,"");
+        birth.put(CHANGED_MOTHERS_MAIDEN_SURNAME,"");
+        birth.put(CORRECTED_ENTRY,"");
+        birth.put(IMAGE_QUALITY,"");
+        birth.put(BIRTH_ADDRESS,"");
+        birth.put(ADOPTION,"");
+
+        return birth;
     }
 
 }
