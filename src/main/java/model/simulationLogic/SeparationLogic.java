@@ -25,6 +25,7 @@ public class SeparationLogic {
 
         int partnershipCount = 0;
 
+        // TODO optomise - add counter TASK 1
         for(IPerson p : people.getFemales().getAll()) {
 
             if(p.aliveOnDate(currentTime) && p.getPartnerships().size() != 0 && !p.isWidow(currentTime)) {
@@ -63,7 +64,7 @@ public class SeparationLogic {
         double[] separationCounts = new double[childCounts.length];
 
         for(int i = 0; i < separationCounts.length; i++) {
-            // calculate number to be seperated (note: is based upon number of partnerships in the population, not just locally)
+            // calculate number to be separated (note: is based upon number of partnerships in the population, not just locally)
             separationCounts[i] = (int) (separationRates.getCorrectingData(keys[i]) * partnershipCount * config.getBirthTimeStep().toDecimalRepresentation()) + 1;
             if(separationCounts[i] > childCounts[i]) {
                 log.info("Not enough mothers in group to separate");
@@ -89,7 +90,13 @@ public class SeparationLogic {
                 mothersNeedingProcessed.remove(m);
             } else {
                 // add the rest to MOTHERS_WITH_FATHERS
+
                 m.keepFather(people);
+
+                if(m.getLastChild().getParentsPartnership().getMalePartner() == null) {
+                    System.out.println("Null Father");
+                }
+
                 mothersNeedingProcessed.remove(m);
             }
         }

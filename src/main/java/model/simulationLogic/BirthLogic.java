@@ -152,12 +152,6 @@ public class BirthLogic {
                             // make and assign the specified number of children - assign to correct place in population
                             mother.recordPartnership(PersonFactory.formNewChildrenInPartnership(childrenInMaternity, mother, currentTime, config.getBirthTimeStep(), people));
 
-//                            for(IPartnership p : mother.getPartnerships()) {
-//                                if(p.getChildren().size() == 0) {
-//                                    System.out.println("GO MAD");
-//                                }
-//                            }
-
                             // Re inserting mother to population datastructure so as she resides in the correct place
                             people.addPerson(mother);
 

@@ -192,6 +192,10 @@ public class PartneringLogic {
             partnership.setFather(father);
             father.recordPartnership(partnership);
             people.addPerson(father);
+
+            if(partnership.getMalePartner() == null) {
+                System.out.println("Null Father 2");
+            }
         }
 
 

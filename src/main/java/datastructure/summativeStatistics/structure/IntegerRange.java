@@ -69,17 +69,24 @@ public class IntegerRange implements Comparable<IntegerRange> {
 //            }
 //        } else {
 
-        if (plus) {
-            // if min value +
-            if (integer >= min) {
-                return true;
+        try {
+
+            if (plus) {
+                // if min value +
+                if (integer >= min) {
+                    return true;
+                }
+            } else {
+                // if single value
+                if (integer >= min && integer <= max) {
+                    return true;
+                }
             }
-        } else {
-            // if single value
-            if (integer >= min && integer <= max) {
-                return true;
-            }
+
+        } catch (NullPointerException e) {
+            System.out.print("Here");
         }
+
 //        }
 
         return false;

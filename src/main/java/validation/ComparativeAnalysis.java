@@ -272,6 +272,11 @@ public class ComparativeAnalysis implements IComparativeAnalysis {
 
             if(i == 0) {
                 start = startDate;
+
+                while(DateUtils.dateBefore(mapKeys.get(i + 1), startDate)) {
+                    i++;
+                }
+
             } else {
 
                 Date prev = mapKeys.get(i-1);
