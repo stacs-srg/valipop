@@ -12,6 +12,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
+import static uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.Death.*;
 
 /**
  * Utility classes for importing records in digitising scotland format
@@ -22,7 +23,39 @@ import java.util.List;
  */
 public class KilmarnockCommaSeparatedDeathImporter {
 
-    // AL IS DOING THIS ONE
+    public static final String[][] RECORD_LABEL_MAP = {
+
+        {ORIGINAL_ID, "ID"},
+        {SURNAME, "surname of deceased"},
+        {FORENAME, "forename(s) of deceased"},
+        {OCCUPATION, "occupation"},
+        {SEX, "sex"},
+        {YEAR_OF_REGISTRATION, "year of reg"},
+        {REGISTRATION_DISTRICT_NUMBER, "identifier"},
+        {REGISTRATION_DISTRICT_SUFFIX, "register identifier"},
+        {ENTRY, "entry no"},
+        {MOTHERS_MAIDEN_SURNAME, "mother's maiden surname"},
+        {DEATH_DAY, "day of reg"},
+        {DEATH_MONTH, "month of reg"},
+        {DEATH_YEAR, "year of reg"},
+        {FATHERS_FORENAME, "father's forename"},
+        {FATHERS_SURNAME, "father's surname"},
+        {FATHERS_OCCUPATION, "father's occupation"},
+        {MOTHERS_FORENAME, "mother's forename"},
+        {DEATH_DAY, "day"},
+        {DEATH_MONTH, "month"},
+        {DEATH_YEAR, "year"},
+        {AGE_AT_DEATH, "age at death"},
+        {OCCUPATION, "occupation"},
+        {MARITAL_STATUS, "marital status"},
+        {SPOUSES_OCCUPATIONS, "spouse's occ"},
+        {FATHER_DECEASED, "if father deceased"},
+        {MOTHER_DECEASED, "if mother deceased"},
+        {MOTHERS_SURNAME, "mother's maiden surname"},
+        {MOTHERS_MAIDEN_SURNAME,"mothers_maiden_surname"}, // duplicated?
+            {COD_A,"cause of death"}
+    };
+
 
     /**
      * @param deaths        the bucket from which to import
@@ -57,39 +90,29 @@ public class KilmarnockCommaSeparatedDeathImporter {
 
         Death death = new Death();
 
-        death.put(Death.ORIGINAL_ID, data.getValue(record, "ID"));
-        death.put(Death.SURNAME, data.getValue(record, "surname of deceased"));
-        death.put(Death.FORENAME, data.getValue(record, "forename(s) of deceased"));
-        death.put(Death.OCCUPATION, data.getValue(record, "occupation"));
-        death.put(Death.SEX, data.getValue(record, "sex"));
-        death.put(Death.YEAR_OF_REGISTRATION, data.getValue(record, "year of reg"));
-        death.put(Death.REGISTRATION_DISTRICT_NUMBER, data.getValue(record, "identifier"));
-        death.put(Death.REGISTRATION_DISTRICT_SUFFIX, data.getValue(record, "register identifier"));
-        death.put(Death.ENTRY, data.getValue(record, "entry no"));
-        death.put(Death.MOTHERS_MAIDEN_SURNAME, data.getValue(record, "mother's maiden surname"));
-        death.put(Death.DEATH_DAY, data.getValue(record, "day of reg"));
-        death.put(Death.DEATH_MONTH, data.getValue(record, "month of reg"));
-        death.put(Death.DEATH_YEAR, data.getValue(record, "year of reg"));
-        death.put(Death.FATHERS_FORENAME, data.getValue(record, "father's forename"));
-        death.put(Death.FATHERS_SURNAME, data.getValue(record, "father's surname"));
-        death.put(Death.FATHERS_OCCUPATION, data.getValue(record, "father's occupation"));
-        death.put(Death.MOTHERS_FORENAME, data.getValue(record, "mother's forename"));
-        death.put(Death.DEATH_DAY, data.getValue(record, "day"));
-        death.put(Death.DEATH_MONTH, data.getValue(record, "month"));
-        death.put(Death.DEATH_YEAR, data.getValue(record, "year"));
-        death.put(Death.AGE_AT_DEATH, data.getValue(record, "age at death"));
-        death.put(Death.OCCUPATION, data.getValue(record, "occupation"));
-        death.put(Death.MARITAL_STATUS, data.getValue(record, "marital status"));
-        death.put(Death.SPOUSES_NAMES, data.getValue(record, "forename of spouse") + " " + data.getValue(record, "surname of spouse"));
-        death.put(Death.SPOUSES_OCCUPATIONS, data.getValue(record, "spouse's occ"));
-        death.put(Death.PLACE_OF_DEATH, data.getValue(record, "address 1") + "," + data.getValue(record, "address 2") + "," +data.getValue(record, "address 3"));
-        death.put(Death.FATHER_DECEASED, data.getValue(record, "if father deceased"));
-        death.put(Death.MOTHER_DECEASED, data.getValue(record, "if mother deceased"));
-        death.put(Death.MOTHERS_SURNAME, data.getValue(record, "mother's maiden surname"));
-        death.put(Death.COD_A, data.getValue(record, "cause of death"));
+        for (String[] field : RECORD_LABEL_MAP) {
+            death.put(field[0], field[1]);
+        }
 
+        //  Concatenated fields
+
+        death.put(SPOUSES_NAMES, data.getValue(record, "forename of spouse") + " " + data.getValue(record, "surname of spouse"));
+        death.put(PLACE_OF_DEATH, data.getValue(record, "address 1") + "," + data.getValue(record, "address 2") + "," + data.getValue(record, "address 3"));
+
+        // Unused fields - need to be empty for structure
+
+        death.put(CHANGED_FORENAME,"");
+        death.put(CHANGED_SURNAME,"");
+        death.put(CHANGED_MOTHERS_MAIDEN_SURNAME,"");
+        death.put(CORRECTED_ENTRY,"");
+        death.put(IMAGE_QUALITY,"");
+        death.put(CHANGED_DEATH_AGE,"");
+        death.put(COD_B,"");
+        death.put(COD_C,"");
+        death.put(PLACE_OF_DEATH,"");
+        death.put(DATE_OF_BIRTH,"");
+        death.put(CERTIFYING_DOCTOR,"");
+        
         return death;
-
-
     }
 }
