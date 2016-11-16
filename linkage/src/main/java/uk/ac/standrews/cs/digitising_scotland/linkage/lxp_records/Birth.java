@@ -114,6 +114,31 @@ public class Birth extends AbstractLXP {
         super(persistent_Object_id, reader);
 
     }
+
+    public String get_fathers_forename() {
+        return this.getString(FATHERS_FORENAME);
+    }
+
+    public String get_fathers_surname() {
+        return this.getString(FATHERS_SURNAME);
+    }
+
+    public String get_mothers_forename() {
+        return this.getString(MOTHERS_FORENAME);
+    }
+
+    public String get_mothers_maiden_surname() {
+        return this.getString(MOTHERS_MAIDEN_SURNAME);
+    }
+
+    public String get_POM() {
+        return this.getString(PARENTS_PLACE_OF_MARRIAGE);
+    }
+
+    public String get_DOM() {
+        //TODO This needs cleaned properly since it is in weird formats all over.
+        return this.getString(PARENTS_DAY_OF_MARRIAGE) + "/" + this.getString(PARENTS_MONTH_OF_MARRIAGE) + "/" + this.getString(PARENTS_YEAR_OF_MARRIAGE);
+    }
 }
 
 // When these types were encoded as JSON and read in this was the definition from the file birthType.jsn

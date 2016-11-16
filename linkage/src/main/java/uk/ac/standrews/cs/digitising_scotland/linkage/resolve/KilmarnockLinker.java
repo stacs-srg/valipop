@@ -5,7 +5,7 @@ import uk.ac.standrews.cs.digitising_scotland.linkage.KilmarnockCommaSeparatedBi
 import uk.ac.standrews.cs.digitising_scotland.linkage.KilmarnockCommaSeparatedDeathImporter;
 import uk.ac.standrews.cs.digitising_scotland.linkage.KilmarnockCommaSeparatedMarriageImporter;
 import uk.ac.standrews.cs.digitising_scotland.linkage.RecordFormatException;
-import uk.ac.standrews.cs.digitising_scotland.linkage.blocking.FFNFLNMFNMMNPOMDOMOverActor;
+import uk.ac.standrews.cs.digitising_scotland.linkage.blocking.FFNFLNMFNMMNPOMDOMOverBirth;
 import uk.ac.standrews.cs.digitising_scotland.linkage.factory.*;
 import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.*;
 import uk.ac.standrews.cs.digitising_scotland.util.ErrorHandling;
@@ -42,6 +42,7 @@ public class KilmarnockLinker {
     private IRepository input_repo;             // Repository containing buckets of BDM records
     private IRepository role_repo;
     private IRepository blocked_role_repo;
+    private IRepository blocked_births_repo;
     private IRepository linkage_repo;
 
     // Bucket declarations
@@ -166,12 +167,8 @@ public class KilmarnockLinker {
             ErrorHandling.exceptionError(e, "Error whilst injecting records");
         }
 
-        System.out.println("Creating roles from birth records");
-        createRolesFromBirths(births);
-        System.out.println("Creating roles from death records");
-        createRolesFromDeaths(deaths);
-        System.out.println("Creating roles from marriage records");
-        createRolesFromMarriages(marriages);
+        // createRoles( births, deaths, marriages );
+
     }
 
     private void checkBDMRecords() {
@@ -247,6 +244,15 @@ public class KilmarnockLinker {
         }
     }
 
+    private void createRoles(IBucket<Birth> births, IBucket<Death> deaths, IBucket<Marriage> marriages) {
+        System.out.println("Creating roles from birth records");
+        createRolesFromBirths(births);
+        System.out.println("Creating roles from death records");
+        createRolesFromDeaths(deaths);
+        System.out.println("Creating roles from marriage records");
+        createRolesFromMarriages(marriages);
+    }
+
     private void checkRoles() {
 
         IInputStream<Role> stream = null;
@@ -279,7 +285,7 @@ public class KilmarnockLinker {
      */
     private void block() {
         try {
-            IBlocker blocker = new FFNFLNMFNMMNPOMDOMOverActor(roles, blocked_role_repo, roleFactory);
+            IBlocker blocker = new FFNFLNMFNMMNPOMDOMOverBirth(births, blocked_births_repo, birthFactory);
             blocker.apply();
         } catch (RepositoryException e) {
             e.printStackTrace();
@@ -296,16 +302,16 @@ public class KilmarnockLinker {
      */
     private void examineBlocks() {
 
-        Iterator<IBucket<Role>> iter = blocked_role_repo.getIterator(roleFactory);
+        Iterator<IBucket<Birth>> iter = blocked_births_repo.getIterator(birthFactory);
 
         while( iter.hasNext() ) {
-            IBucket<Role> bucket = iter.next();
+            IBucket<Birth> bucket = iter.next();
 
             System.out.println("Bucket name: " + bucket.getName());
 
             try {
-                for (Role role : bucket.getInputStream()) {
-                    System.out.println(role.toString());
+                for (Birth birth : bucket.getInputStream()) {
+                    System.out.println(birth.toString());
                 }
             } catch (BucketException e) {
                 System.out.println("Exception whilst getting stream");
@@ -317,16 +323,16 @@ public class KilmarnockLinker {
      * Try and form families from the blocked data from SFNLNFFNFLNMFNDoMOverRole
      */
     private void formFamilies() {
-        Iterator<IBucket<Role>> iter = blocked_role_repo.getIterator(roleFactory);
+        Iterator<IBucket<Birth>> iter = blocked_births_repo.getIterator(birthFactory);
 
         while (iter.hasNext()) {
 
-            IBucket<Role> bucket = iter.next();
-            List<Role> potential_family = new ArrayList<Role>();
+            IBucket<Birth> bucket = iter.next();
+            List<Birth> potential_family = new ArrayList<>();
 
             try {
-                for (Role role : bucket.getInputStream()) {
-                    potential_family.add( role );
+                for (Birth birth : bucket.getInputStream()) {
+                    potential_family.add( birth );
                 }
             } catch (BucketException e) {
                 ErrorHandling.exceptionError(e, "Exception whilst getting stream of Roles");
@@ -339,9 +345,9 @@ public class KilmarnockLinker {
      * Try and create a family unit from the blocked data
      * @param potential_family - a collection of Roles from SFNLNFFNFLNMFNDoMOverRole blocking
      */
-    private void create_family(List<Role> potential_family) {
+    private void create_family(List<Birth> potential_family) {
 
-
+        // Todo stubbed out here....
     }
 
 
@@ -349,6 +355,7 @@ public class KilmarnockLinker {
      * Unifies the Roles together so that equivalent Roles are in a linked list structure
      * This method doesn't actually do this.
      * This method is the equivalent of a wreck of a great sea vessal.
+     * TODO this is old code from the Role based system
      */
     private void unify() {
 
@@ -630,9 +637,9 @@ public class KilmarnockLinker {
 
     public static void main(String[] args) throws Exception, KeyNotFoundException, TypeMismatchFoundException, IllegalKeyException {
 
-        String births_source_path =    "/Users/al/Documents/intelliJ/BDMSet1/birth_records.txt";
-        String deaths_source_path =    "/Users/al/Documents/intelliJ/BDMSet1/death_records.txt";
-        String marriages_source_path = "/Users/al/Documents/intelliJ/BDMSet1/marriage_records.txt";
+        String births_source_path =    "/Digitising Scotland/KilmarnockBDM/births.csv";
+        String deaths_source_path =    "/Digitising Scotland/KilmarnockBDM/deaths.csv";
+        String marriages_source_path = "/Digitising Scotland/KilmarnockBDM/marriages.csv";
 
         new KilmarnockLinker(births_source_path, deaths_source_path, marriages_source_path);
     }

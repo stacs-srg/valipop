@@ -79,12 +79,7 @@ public class KilmarnockCommaSeparatedBirthImporter {
         b.put(Birth.INFORMANT, data.getValue(record, "forename of informant") + data.getValue(record, "surname of informant"));
         b.put(Birth.INFORMANT_DID_NOT_SIGN, data.getValue(record, "did informant  sign?"));
 
-        System.out.println( b );
-
         return b;
     }
 
-    public static void main(String[] args) throws RecordFormatException, BucketException, IOException {
-        importDigitisingScotlandBirths(null,"/Users/al/Desktop/Digi Scotland/Kilmarnock data/kilmarnock_csv/births.csv",null);
-    }
 }
