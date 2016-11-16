@@ -1,8 +1,7 @@
 package uk.ac.standrews.cs.digitising_scotland.linkage;
 
-import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.*;
-import uk.ac.standrews.cs.digitising_scotland.util.*;
-import uk.ac.standrews.cs.storr.impl.exceptions.BucketException;
+import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.Marriage;
+import uk.ac.standrews.cs.digitising_scotland.util.ErrorHandling;
 import uk.ac.standrews.cs.storr.interfaces.IBucket;
 import uk.ac.standrews.cs.util.dataset.DataSet;
 
@@ -128,8 +127,8 @@ public class KilmarnockCommaSeparatedMarriageImporter {
         for (List<String> record : data.getRecords()) {
             Marriage marriage = importDigitisingScotlandMarriage(data, record);
             try {
-                //                marriages.makePersistent(marriage);
-                //                object_ids.add(marriage.getId());
+                marriages.makePersistent(marriage);
+                object_ids.add(marriage.getId());
                 count++;
             }
             catch (Exception e) {
@@ -154,10 +153,5 @@ public class KilmarnockCommaSeparatedMarriageImporter {
         System.out.println(marriage);
 
         return marriage;
-    }
-
-    public static void main(String[] args) throws RecordFormatException, BucketException, IOException {
-
-        importDigitisingScotlandMarriages(null, "/Digitising Scotland/KilmarnockBDM/marriages.csv", null);
     }
 }
