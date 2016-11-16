@@ -106,7 +106,6 @@ public class Marriage extends AbstractLXP {
 
         super(persistent_object_id, reader);
     }
-
 }
 
 // When these types were encoded as JSON and read in this was the definition from the file marriageType.jsn

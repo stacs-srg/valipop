@@ -1,7 +1,7 @@
 package uk.ac.standrews.cs.digitising_scotland.linkage;
 
 import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.Marriage;
-import uk.ac.standrews.cs.digitising_scotland.util.ErrorHandling;
+import uk.ac.standrews.cs.storr.impl.exceptions.*;
 import uk.ac.standrews.cs.storr.interfaces.IBucket;
 import uk.ac.standrews.cs.util.dataset.DataSet;
 
@@ -18,18 +18,17 @@ import static uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.Marriag
  * @author Alan Dearle (alan.dearle@st-andrews.ac.uk)
  * @author Graham Kirby (graham.kirby@st-andrews.ac.uk)
  */
-public class KilmarnockCommaSeparatedMarriageImporter {
+public class KilmarnockCommaSeparatedMarriageImporter extends KilmarnockCommaSeparatedImporter {
 
     public static final String[][] RECORD_LABEL_MAP = {
 
-                    // Information that doesn't currently fit:
+                    // Information available that doesn't currently fit:
 
                     // "place of marriage 1", "place of marriage 2", "place of marriage 3"
                     // "groom's mother's occ"
                     // "bride's mother's occ"
                     // "groom's mother's other names"
                     // "bride's mother's other name/s"
-
 
                     {ORIGINAL_ID, "ID"},
 
@@ -109,6 +108,14 @@ public class KilmarnockCommaSeparatedMarriageImporter {
 
     };
 
+    public static final String[] UNAVAILABLE_RECORD_LABELS = {
+
+                    // Fields not present in Kilmarnock dataset.
+
+                    CHANGED_GROOM_FORENAME, IMAGE_QUALITY, CHANGED_GROOM_SURNAME, CHANGED_BRIDE_SURNAME, CORRECTED_ENTRY, CHANGED_BRIDE_FORENAME
+
+    };
+
     /**
      * Imports a set of marriage records from file to a bucket.
      *
@@ -118,22 +125,19 @@ public class KilmarnockCommaSeparatedMarriageImporter {
      * @return the number of records read in
      * @throws IOException if the data cannot be read from the file
      */
-    public static int importDigitisingScotlandMarriages(IBucket<Marriage> marriages, String filename, List<Long> object_ids) throws IOException {
+    public static int importDigitisingScotlandMarriages(IBucket<Marriage> marriages, String filename, List<Long> object_ids) throws IOException, BucketException {
 
         int count = 0;
 
         DataSet data = new DataSet(Paths.get(filename));
 
         for (List<String> record : data.getRecords()) {
+
             Marriage marriage = importDigitisingScotlandMarriage(data, record);
-            try {
-                marriages.makePersistent(marriage);
-                object_ids.add(marriage.getId());
-                count++;
-            }
-            catch (Exception e) {
-                ErrorHandling.exceptionError(e, "Error making marriage record persistent: " + marriage);
-            }
+
+            marriages.makePersistent(marriage);
+            object_ids.add(marriage.getId());
+            count++;
         }
 
         return count;
@@ -143,15 +147,16 @@ public class KilmarnockCommaSeparatedMarriageImporter {
 
         Marriage marriage = new Marriage();
 
-        for (String[] field : RECORD_LABEL_MAP) {
-            marriage.put(field[0], data.getValue(record, field[1]));
-        }
-
-        marriage.put(BRIDE_ADDRESS, data.getValue(record, "address of bride 1") + " " + data.getValue(record, "address of bride 2") + " " + data.getValue(record, "address of bride 3"));
-        marriage.put(GROOM_ADDRESS, data.getValue(record, "address of groom 1") + " " + data.getValue(record, "address of groom 2") + " " + data.getValue(record, "address of groom 3"));
-
-        System.out.println(marriage);
+        addAvailableSingleFields(data, record, marriage, RECORD_LABEL_MAP);
+        addAvailableCompoundFields(data, record, marriage);
+        addUnavailableFields(marriage, UNAVAILABLE_RECORD_LABELS);
 
         return marriage;
+    }
+
+    private static void addAvailableCompoundFields(final DataSet data, final List<String> record, final Marriage marriage) {
+
+        marriage.put(BRIDE_ADDRESS, combineFields(data, record, "address of bride 1", "address of bride 2", "address of bride 3"));
+        marriage.put(GROOM_ADDRESS, combineFields(data,record, "address of groom 1", "address of groom 2", "address of groom 3"));
     }
 }
