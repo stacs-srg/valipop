@@ -3,15 +3,14 @@ package uk.ac.standrews.cs.digitising_scotland.linkage;
 import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.*;
 import uk.ac.standrews.cs.digitising_scotland.util.*;
 import uk.ac.standrews.cs.storr.impl.exceptions.BucketException;
-import uk.ac.standrews.cs.storr.impl.exceptions.IllegalKeyException;
 import uk.ac.standrews.cs.storr.interfaces.IBucket;
-import uk.ac.standrews.cs.storr.interfaces.IReferenceType;
 import uk.ac.standrews.cs.util.dataset.DataSet;
 
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.List;
+
+import static uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.Marriage.*;
 
 /**
  * Utility classes for importing records in digitising scotland format
@@ -22,13 +21,101 @@ import java.util.List;
  */
 public class KilmarnockCommaSeparatedMarriageImporter {
 
+    public static final String[][] RECORD_LABEL_MAP = {
+
+                    // Information that doesn't currently fit:
+
+                    // "place of marriage 1", "place of marriage 2", "place of marriage 3"
+                    // "groom's mother's occ"
+                    // "bride's mother's occ"
+                    // "groom's mother's other names"
+                    // "bride's mother's other name/s"
+
+
+                    {ORIGINAL_ID, "ID"},
+
+                    {YEAR_OF_REGISTRATION, "stryear"},
+
+                    {REGISTRATION_DISTRICT_NUMBER, "RD identifier"},
+
+                    {REGISTRATION_DISTRICT_SUFFIX, "register identifier"},
+
+                    {ENTRY, "entry number"},
+
+                    {DENOMINATION, "denomination"},
+
+                    // *********************************
+
+                    {BRIDE_FORENAME, "forename of bride"}, {BRIDE_SURNAME, "surname of bride"},
+
+                    // *********************************
+
+                    {GROOM_FORENAME, "forename of groom"}, {GROOM_SURNAME, "surname of groom"},
+
+                    // *********************************
+
+                    {MARRIAGE_DAY, "day"}, {MARRIAGE_MONTH, "month"}, {MARRIAGE_YEAR, "year"},
+
+                    // *********************************
+
+                    {BRIDE_AGE_OR_DATE_OF_BIRTH, "age of bride"}, {GROOM_AGE_OR_DATE_OF_BIRTH, "age of groom"},
+
+                    // *********************************
+
+                    {BRIDE_FATHERS_FORENAME, "bride's father's forename"},
+
+                    {BRIDE_FATHERS_SURNAME, "bride's father's surname"},
+
+                    {BRIDE_MOTHERS_FORENAME, "bride's mother's forename"},
+
+                    {BRIDE_MOTHERS_MAIDEN_SURNAME, "bride's mother's maiden surname"},
+
+                    // *********************************
+
+                    {GROOM_FATHERS_FORENAME, "groom's father's forename"},
+
+                    {GROOM_FATHERS_SURNAME, "groom's father's surname"},
+
+                    {GROOM_MOTHERS_FORENAME, "groom's mother's forename"},
+
+                    {GROOM_MOTHERS_MAIDEN_SURNAME, "groom's mother's maiden surname"},
+
+                    // *********************************
+
+                    {BRIDE_MARITAL_STATUS, "marital status of bride"},
+
+                    {BRIDE_DID_NOT_SIGN, "did bride sign?"},
+
+                    {BRIDE_OCCUPATION, "occupation of bride"},
+
+                    {BRIDE_FATHER_OCCUPATION, "bride's father's occupation"},
+
+                    {BRIDE_FATHER_DECEASED, "if bride's father deceased"},
+
+                    {BRIDE_MOTHER_DECEASED, "if bride's mother deceased"},
+
+                    // *********************************
+
+                    {GROOM_MARITAL_STATUS, "marital status of groom"},
+
+                    {GROOM_DID_NOT_SIGN, "did groom sign?"},
+
+                    {GROOM_OCCUPATION, "occupation of groom"},
+
+                    {GROOM_FATHERS_OCCUPATION, "groom's father's occupation"},
+
+                    {GROOM_FATHER_DECEASED, "if groom's father deceased"},
+
+                    {GROOM_MOTHER_DECEASED, "if groom's mother deceased"},
+
+    };
+
     /**
      * Imports a set of marriage records from file to a bucket.
      *
      * @param marriages the bucket into which the new records should be put
      * @param filename string path of file containing the source records in digitising scotland format
      * @param object_ids a list of object ids, to which the ids of the new records should be added
-     *
      * @return the number of records read in
      * @throws IOException if the data cannot be read from the file
      */
@@ -41,8 +128,8 @@ public class KilmarnockCommaSeparatedMarriageImporter {
         for (List<String> record : data.getRecords()) {
             Marriage marriage = importDigitisingScotlandMarriage(data, record);
             try {
-//                marriages.makePersistent(marriage);
-//                object_ids.add(marriage.getId());
+                //                marriages.makePersistent(marriage);
+                //                object_ids.add(marriage.getId());
                 count++;
             }
             catch (Exception e) {
@@ -55,62 +142,14 @@ public class KilmarnockCommaSeparatedMarriageImporter {
 
     private static Marriage importDigitisingScotlandMarriage(DataSet data, List<String> record) {
 
-        // Information that doesn't currently fit:
-
-        // "place of marriage 1", "place of marriage 2", "place of marriage 3"
-        // "groom's mother's occ"
-        // "bride's mother's occ"
-        // "groom's mother's other names"
-        // "bride's mother's other name/s"
-
-
         Marriage marriage = new Marriage();
 
-        marriage.put(Marriage.ORIGINAL_ID, data.getValue(record, "ID"));
-        marriage.put(Marriage.YEAR_OF_REGISTRATION, data.getValue(record, "stryear"));
-        marriage.put(Marriage.REGISTRATION_DISTRICT_NUMBER, data.getValue(record, "RD identifier"));
-        marriage.put(Marriage.REGISTRATION_DISTRICT_SUFFIX, data.getValue(record, "register identifier"));
-        marriage.put(Marriage.ENTRY, data.getValue(record, "entry number"));
-        marriage.put(Marriage.DENOMINATION, data.getValue(record, "denomination"));
+        for (String[] field : RECORD_LABEL_MAP) {
+            marriage.put(field[0], data.getValue(record, field[1]));
+        }
 
-        marriage.put(Marriage.BRIDE_FORENAME, data.getValue(record, "forename of bride"));
-        marriage.put(Marriage.BRIDE_SURNAME, data.getValue(record, "surname of bride"));
-
-        marriage.put(Marriage.GROOM_FORENAME, data.getValue(record, "forename of groom"));
-        marriage.put(Marriage.GROOM_SURNAME, data.getValue(record, "surname of groom"));
-
-        marriage.put(Marriage.MARRIAGE_DAY, data.getValue(record, "day"));
-        marriage.put(Marriage.MARRIAGE_MONTH, data.getValue(record, "month"));
-        marriage.put(Marriage.MARRIAGE_YEAR, data.getValue(record, "year"));
-
-        marriage.put(Marriage.BRIDE_AGE_OR_DATE_OF_BIRTH, data.getValue(record, "age of bride"));
-        marriage.put(Marriage.GROOM_AGE_OR_DATE_OF_BIRTH, data.getValue(record, "age of groom"));
-
-        marriage.put(Marriage.BRIDE_FATHERS_FORENAME, data.getValue(record, "bride's father's forename"));
-        marriage.put(Marriage.BRIDE_FATHERS_SURNAME, data.getValue(record, "bride's father's surname"));
-        marriage.put(Marriage.BRIDE_MOTHERS_FORENAME, data.getValue(record, "bride's mother's forename"));
-        marriage.put(Marriage.BRIDE_MOTHERS_MAIDEN_SURNAME, data.getValue(record, "bride's mother's maiden surname"));
-
-        marriage.put(Marriage.GROOM_FATHERS_FORENAME, data.getValue(record, "groom's father's forename"));
-        marriage.put(Marriage.GROOM_FATHERS_SURNAME, data.getValue(record, "groom's father's surname"));
-        marriage.put(Marriage.GROOM_MOTHERS_FORENAME, data.getValue(record, "groom's mother's forename"));
-        marriage.put(Marriage.GROOM_MOTHERS_MAIDEN_SURNAME, data.getValue(record, "groom's mother's maiden surname"));
-
-        marriage.put(Marriage.BRIDE_MARITAL_STATUS, data.getValue(record, "marital status of bride"));
-        marriage.put(Marriage.BRIDE_ADDRESS, data.getValue(record, "address of bride 1") + " " + data.getValue(record, "address of bride 2") + " " + data.getValue(record, "address of bride 3"));
-        marriage.put(Marriage.BRIDE_DID_NOT_SIGN, data.getValue(record, "did bride sign?"));
-        marriage.put(Marriage.BRIDE_OCCUPATION, data.getValue(record, "occupation of bride"));
-        marriage.put(Marriage.BRIDE_FATHER_OCCUPATION, data.getValue(record, "bride's father's occupation"));
-        marriage.put(Marriage.BRIDE_FATHER_DECEASED, data.getValue(record, "if bride's father deceased"));
-        marriage.put(Marriage.BRIDE_MOTHER_DECEASED, data.getValue(record, "if bride's mother deceased"));
-
-        marriage.put(Marriage.GROOM_MARITAL_STATUS, data.getValue(record, "marital status of groom"));
-        marriage.put(Marriage.GROOM_ADDRESS, data.getValue(record, "address of groom 1") + " " + data.getValue(record, "address of groom 2") + " " + data.getValue(record, "address of groom 3"));
-        marriage.put(Marriage.GROOM_DID_NOT_SIGN, data.getValue(record, "did groom sign?"));
-        marriage.put(Marriage.GROOM_OCCUPATION, data.getValue(record, "occupation of groom"));
-        marriage.put(Marriage.GROOM_FATHERS_OCCUPATION, data.getValue(record, "groom's father's occupation"));
-        marriage.put(Marriage.GROOM_FATHER_DECEASED, data.getValue(record, "if groom's father deceased"));
-        marriage.put(Marriage.GROOM_MOTHER_DECEASED, data.getValue(record, "if groom's mother deceased"));
+        marriage.put(BRIDE_ADDRESS, data.getValue(record, "address of bride 1") + " " + data.getValue(record, "address of bride 2") + " " + data.getValue(record, "address of bride 3"));
+        marriage.put(GROOM_ADDRESS, data.getValue(record, "address of groom 1") + " " + data.getValue(record, "address of groom 2") + " " + data.getValue(record, "address of groom 3"));
 
         System.out.println(marriage);
 
@@ -119,6 +158,6 @@ public class KilmarnockCommaSeparatedMarriageImporter {
 
     public static void main(String[] args) throws RecordFormatException, BucketException, IOException {
 
-        importDigitisingScotlandMarriages(null, "/Users/graham/Desktop/kilmarnock_linked/marriages.csv", null);
+        importDigitisingScotlandMarriages(null, "/Digitising Scotland/KilmarnockBDM/marriages.csv", null);
     }
 }
