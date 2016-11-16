@@ -106,6 +106,8 @@ public class DateUtilsTest {
         Date b = new DateInstant(2, 1, 2000);
 
         Assert.assertEquals(1, DateUtils.differenceInDays(a, b));
+        Assert.assertEquals(1, DateUtils.differenceInDays(b, a));
+
 
         Date c = new DateInstant(1, 2, 2000);
 

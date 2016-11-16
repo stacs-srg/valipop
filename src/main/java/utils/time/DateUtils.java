@@ -477,6 +477,12 @@ public class DateUtils {
 
     public static int differenceInDays(Date birthDate, Date latestDate) {
 
+        if(dateBefore(latestDate, birthDate)) {
+            Date temp = latestDate;
+            latestDate = birthDate;
+            birthDate = temp;
+        }
+
         int day = birthDate.getDay();
         int month = birthDate.getMonth();
         int year = birthDate.getYear();

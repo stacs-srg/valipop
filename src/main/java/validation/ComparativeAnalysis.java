@@ -9,7 +9,9 @@ import datastructure.summativeStatistics.structure.LabelValueDataRow;
 import datastructure.summativeStatistics.structure.OneDimensionDataDistribution;
 import datastructure.summativeStatistics.generated.StatisticalTables;
 import model.simulationEntities.IPopulation;
+import org.apache.commons.lang.time.*;
 import org.apache.commons.math3.exception.NotANumberException;
+import utils.time.DateUtils;
 import validation.utils.StatisticalManipulationCalculationError;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -340,6 +342,11 @@ public class ComparativeAnalysis implements IComparativeAnalysis {
 
             if(i == 0) {
                 start = startDate;
+
+                while(DateUtils.dateBefore(mapKeys.get(i + 1), startDate)) {
+                    i++;
+                }
+
             } else {
 
                 Date prev = mapKeys.get(i-1);
