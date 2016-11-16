@@ -88,14 +88,8 @@ public class KilmarnockCommaSeparatedDeathImporter {
         death.put(Death.MOTHERS_SURNAME, data.getValue(record, "mother's maiden surname"));
         death.put(Death.COD_A, data.getValue(record, "cause of death"));
 
-        System.out.println( death );
-
         return death;
 
 
-    }
-
-    public static void main(String[] args) throws RecordFormatException, BucketException, IOException {
-        importDigitisingScotlandDeaths(null,"/Users/al/Desktop/Digi Scotland/Kilmarnock data/kilmarnock_csv/deaths.csv",null);
     }
 }

@@ -26,9 +26,9 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.Cla
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.Classifier;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.Cleaner;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.CleanerSupplier;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.command.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.util.*;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.Launcher;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.command.SetCommand;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.cli.util.Validators;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.InputFileFormatException;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.ClassificationContext;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.ClassificationProcess;
@@ -267,15 +267,11 @@ public abstract class Experiment implements Callable<Void> {
     protected void printSummarisedResults(final List<ClassifierResults> results) throws IOException {
 
         final String table_caption = String.format(TABLE_CAPTION_STRING, repetitions, getPluralitySuffix(repetitions));
-        final TableGenerator table_generator = new TableGenerator(getDataSets(results), FIRST_COLUMN_HEADING, getNames(results), COLUMNS_AS_PERCENTAGES);
+        final TableGenerator table_generator = new TableGenerator(getNames(results), getDataSets(results), System.out, table_caption, FIRST_COLUMN_HEADING, COLUMNS_AS_PERCENTAGES, TAB);
 
         printDateStamp();
         printExperimentInputs();
-
-        System.out.println(table_caption);
-        final DataSet table = table_generator.getTable();
-        table.setOutputFormat(DataSet.DEFAULT_CSV_FORMAT.withRecordSeparator(TAB));
-        table.print(System.out);
+        table_generator.printTable();
     }
 
     private static String getPluralitySuffix(final int repetitions) {
