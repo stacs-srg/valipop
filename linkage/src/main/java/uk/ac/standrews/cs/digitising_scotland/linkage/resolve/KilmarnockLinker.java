@@ -34,6 +34,7 @@ public class KilmarnockLinker {
     private static String input_repo_name = "BDM_repo";                         // input repository containing event records
     private static String role_repo_name = "role_repo";                         // repository for Role records
     private static String blocked_role_repo_name = "blocked_role_repo";         // repository for blocked Role records
+    private static String blocked_birth_repo_name = "blocked_birth_repo";        // repository for blocked Birth records
     private static String linkage_repo_name = "linkage_repo";                   // repository for Relationship records
 
     private IStore store;
@@ -111,6 +112,7 @@ public class KilmarnockLinker {
         input_repo = store.makeRepository(input_repo_name);
         role_repo = store.makeRepository(role_repo_name);
         blocked_role_repo = store.makeRepository(blocked_role_repo_name);  // a repo of Role Buckets of records blocked by  first name, last name
+        blocked_births_repo = store.makeRepository(blocked_birth_repo_name);  // a repo of Birth Buckets of records blocked by parents names, DOM, Place of Marriage.
         linkage_repo = store.makeRepository(linkage_repo_name);
         initialiseTypes();
         initialiseFactories();
