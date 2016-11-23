@@ -57,7 +57,6 @@ public abstract class Experiment implements Callable<Void> {
     }
 
     private static final long SEED = 3249870987977239578L;
-    private static final char TAB = '\t';
     private static final String FIRST_COLUMN_HEADING = "classifier";
 
     private static final String DEFAULT_GOLD_STANDARD_PATH = "src/test/resources/uk/ac/standrews/cs/digitising_scotland/record_classification/experiments/AbstractClassificationProcessTest/coded_data_1K.csv";
@@ -72,7 +71,6 @@ public abstract class Experiment implements Callable<Void> {
     private static final String DESCRIPTION_REPETITION = "The number of repetitions.";
     private static final String DESCRIPTION_VERBOSITY = "The level of output verbosity.";
     private static final String DESCRIPTION_RATIO = "The ratio of gold standard records to be used for training. The value must be between 0.0 to 1.0 (inclusive).";
-    private static final String DESCRIPTION_DELIMITER = "The delimiter character of three column gold standard data.";
 
     private static final String INCONSISTENT_PARAM_NUMBERS_ERROR_MESSAGE = "the number of gold standard files must be equal to the number of training ratios";
     private static final String TABLE_CAPTION_STRING = "\naggregate classifier performance (%d repetition%s):\n";
@@ -267,11 +265,12 @@ public abstract class Experiment implements Callable<Void> {
     protected void printSummarisedResults(final List<ClassifierResults> results) throws IOException {
 
         final String table_caption = String.format(TABLE_CAPTION_STRING, repetitions, getPluralitySuffix(repetitions));
-        final TableGenerator table_generator = new TableGenerator(getNames(results), getDataSets(results), System.out, table_caption, FIRST_COLUMN_HEADING, COLUMNS_AS_PERCENTAGES, TAB);
+        final TableGenerator table_generator = new TableGenerator(getDataSets(results), FIRST_COLUMN_HEADING, getNames(results), COLUMNS_AS_PERCENTAGES);
 
         printDateStamp();
         printExperimentInputs();
-        table_generator.printTable();
+        System.out.println(table_caption);
+        table_generator.getTable().print(System.out);
     }
 
     private static String getPluralitySuffix(final int repetitions) {
