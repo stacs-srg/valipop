@@ -13,6 +13,7 @@ import datastructure.summativeStatistics.generated.GeneratedPopulationCompositio
 import datastructure.summativeStatistics.generated.UnsupportedEventType;
 import datastructure.summativeStatistics.PopulationComposition;
 import model.simulationEntities.IPopulation;
+import org.apache.logging.log4j.core.appender.FileAppender;
 import utils.FileUtils;
 import validation.ComparativeAnalysis;
 import config.Config;
@@ -22,6 +23,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import validation.SummaryRow;
 import validation.utils.StatisticalManipulationCalculationError;
+
 
 import java.io.*;
 import java.nio.file.*;
@@ -35,7 +37,7 @@ public class Simulation {
     private static Path PATH_TO_CONFIG_FILE;
     private static Config config;
 
-    public static Logger log = LogManager.getLogger(Simulation.class);
+    public static Logger log;
 
     PopulationStatistics desired;
 
@@ -46,7 +48,11 @@ public class Simulation {
     private SummaryRow summary;
 
 
-    public Simulation(String pathToConfigFile, String runPurpose, String startTime) throws IOException, UnsupportedDateConversion, InvalidPathException {
+    public Simulation(String pathToConfigFile, String runPurpose, String startTime, String resultsPath) throws IOException, UnsupportedDateConversion {
+
+        FileUtils.makeDirectoryStructure(runPurpose, startTime, resultsPath);
+        System.setProperty("logFilename", FileUtils.pathToLogDir(runPurpose, startTime, resultsPath).toString());
+        log = LogManager.getLogger(Simulation.class);
 
         config = new Config(Paths.get(pathToConfigFile), runPurpose, startTime);
 
@@ -70,26 +76,45 @@ public class Simulation {
 
         long runStartTime = System.nanoTime();
 
-        Logger log = LogManager.getLogger("main");
+//        Logger log = LogManager.getLogger("main");
+//        SimpleLayout layout = new SimpleLayout();
+//        FileAppender appender = FileAppender.createAppender("your filename");
+//        logger.addAppender(appender);
 
-        log.info("Program begins");
+//        log.info("Program begins");
 
         Simulation sim = null;
         String runPurpose = null;
         String startTime = FileUtils.getDateTime();
+        String resultsPath = null;
+        String configPath = null;
 
         try {
 
 
             try {
-                runPurpose = args[1];
+                configPath = args[0];
+            } catch (ArrayIndexOutOfBoundsException e) {
+                System.err.println("No config file given as 1st arg");
+            }
+
+            try {
+                resultsPath = args[1];
+            } catch (ArrayIndexOutOfBoundsException e) {
+                System.err.println("No results write path given as 2nd arg");
+            }
+
+            try {
+                runPurpose = args[2];
             } catch (ArrayIndexOutOfBoundsException e) {
                 runPurpose = "unstated";
             }
 
-            sim = new Simulation(args[0], runPurpose, startTime);
+            sim = new Simulation(configPath, runPurpose, startTime, resultsPath);
 
-        } catch (IOException | UnsupportedDateConversion | InvalidPathException e) {
+        } catch (IOException e) {
+            System.err.println("Error creating directory structure - " + e.getMessage());
+        } catch (UnsupportedDateConversion | InvalidPathException e) {
             log.fatal(e.getMessage() + " --- Will now exit");
             log.fatal(e.getStackTrace());
             e.printStackTrace();

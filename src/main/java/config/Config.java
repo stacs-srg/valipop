@@ -204,8 +204,6 @@ public class Config {
 
         }
 
-        FileUtils.makeDirectoryStructure(runPurpose, startTime, this);
-
     }
 
     public boolean checkConfigValid() {

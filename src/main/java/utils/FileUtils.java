@@ -22,13 +22,19 @@ import java.util.Collection;
  */
 public class FileUtils {
 
-    public static Logger log = LogManager.getLogger(FileUtils.class);
+    public static Logger log = null;
 
-    public static void makeDirectoryStructure(String runPurpose, String startTime, Config config) throws IOException {
+    private static void checkLogFile() {
+        if(log == null) {
+            log = LogManager.getLogger(FileUtils.class);
+        }
+    }
+
+    public static void makeDirectoryStructure(String runPurpose, String startTime, String resultPath) throws IOException {
 
 
         // check results dir exists
-        Path results = config.getResultsSavePath();
+        Path results = Paths.get(resultPath);
         mkDirs(results);
         mkSummaryFile(results, "global-results-summary.csv");
 
@@ -61,17 +67,20 @@ public class FileUtils {
         // make population dir
         mkDirs(run, "population");
 
+        Path log = Paths.get(run.toString(), "log");
+        mkDirs(log);
+        mkBlankFile(log, "trace.txt");
+
     }
 
 
 
 
-    public static void main(String[] args) throws IOException {
-        String dT = getDateTime();
-        Config config = new Config(Paths.get(args[0]), "a", dT);
-        makeDirectoryStructure("a", dT, config);
-        makeDirectoryStructure("b", dT, config);
-//        makeDirectoryStructure("double", config);
+
+
+    public static Path pathToLogDir(String runPurpose, String startTime, String resultPath) {
+
+        return Paths.get(resultPath, runPurpose, startTime, "log", "trace.txt");
 
     }
 
@@ -87,12 +96,15 @@ public class FileUtils {
             stream = new PrintStream(a);
 
         } catch (IOException e) {
+            checkLogFile();
             log.info("Failed to set up summary results output stream - will output to standard out instead");
             stream = System.out;
         }
 
         return stream;
     }
+
+
 
     public static PrintStream setupDumpPrintStream(String fileName, Config config) {
 
@@ -106,6 +118,7 @@ public class FileUtils {
             stream = new PrintStream(a);
 
         } catch (IOException e) {
+            checkLogFile();
             log.info("Failed to set up summary results output stream - will output to standard out instead");
             stream = System.out;
         }
@@ -149,7 +162,6 @@ public class FileUtils {
                 write.close();
             } catch (IOException e) {
                 String m = "Unable to create to " + summary.toString();
-                log.fatal(m);
                 throw new IOException(m, e);
             }
         }
@@ -169,7 +181,6 @@ public class FileUtils {
                 write.close();
             } catch (IOException e) {
                 String m = "Unable to create or write to " + summary.toString();
-                log.fatal(m);
                 throw new IOException(m, e);
             }
         }
