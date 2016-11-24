@@ -191,8 +191,8 @@
         <extensions>
             <extension>
                 <groupId>org.apache.maven.wagon</groupId>
-                <artifactId>wagon-ssh</artifactId>
-                <version>2.3</version>
+                <artifactId>wagon-ssh-external</artifactId>
+                <version>2.10</version>
             </extension>
         </extensions>
     </build>
@@ -223,7 +223,7 @@
         <site>
             <id>digitisingscotland.cs</id>
             <url>
-                scp://digitisingscotland@digitisingscotland.host.cs.st-andrews.ac.uk/cs/home/digitisingscotland/public_html_digitisingscotland
+                scpexe://digitisingscotland@digitisingscotland.host.cs.st-andrews.ac.uk/cs/home/digitisingscotland/public_html_digitisingscotland
             </url>
         </site>
     </distributionManagement>
