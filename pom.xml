@@ -222,7 +222,7 @@
     <!--<distributionManagement>-->
         <!--<site>-->
             <!--<id>digitisingscotland.cs</id>-->
-            <!--<url>-->\
+            <!--<url>-->
                 <!--scp://digitisingscotland@digitisingscotland.host.cs.st-andrews.ac.uk/cs/home/digitisingscotland/public_html_digitisingscotland-->
             <!--</url>-->
         <!--</site>-->
