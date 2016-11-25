@@ -78,11 +78,6 @@
                             <artifactId>reflow-velocity-tools</artifactId>
                             <version>1.1.1</version>
                         </dependency>
-                        <!--<dependency>-->
-                            <!--<groupId>org.apache.velocity</groupId>-->
-                            <!--<artifactId>velocity</artifactId>-->
-                            <!--<version>1.7</version>-->
-                        <!--</dependency>-->
                     </dependencies>
                     <configuration>
                         <generateReports>true</generateReports>
@@ -191,7 +186,7 @@
         <extensions>
             <extension>
                 <groupId>org.apache.maven.wagon</groupId>
-                <artifactId>wagon-ssh</artifactId>
+                <artifactId>wagon-ssh-external</artifactId>
                 <version>2.10</version>
             </extension>
         </extensions>
@@ -222,9 +217,7 @@
     <distributionManagement>
         <site>
             <id>digitisingscotland.cs</id>
-            <url>
-                scp://digitisingscotland@digitisingscotland.host.cs.st-andrews.ac.uk/cs/home/digitisingscotland/public_html_digitisingscotland
-            </url>
+            <url>scpexe://digitisingscotland@digitisingscotland.host.cs.st-andrews.ac.uk/cs/home/digitisingscotland/public_html_digitisingscotland/</url>
         </site>
     </distributionManagement>
 
@@ -289,7 +282,7 @@
                 <role>Developer</role>
             </roles>
         </developer>
-     </developers>
+    </developers>
     <contributors>
         <contributor>
             <name>Masih Hajiarab Derkani</name>
