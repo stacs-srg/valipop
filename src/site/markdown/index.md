@@ -4,7 +4,7 @@
 
 The [Digitising Scotland project][9], funded by ESRC grant [ES/K00574X/1][1], will digitise the 24 million Scottish
 vital events record images (births, marriages and deaths) since 1855. This will allow research access to
-individual-level information on some 18 million individuals – a large proportion of those who have lived in Scotland
+individual-level information on some 18 million individuals - a large proportion of those who have lived in Scotland
 since 1855. At the moment these records are kept as indexed images accessible from [Scotland's People][2], but this
 means that to extract data for research projects a researcher must first search for an individual record by name, and
 then manually transcribe the information they need themselves (eg cause of death, occupation, etc). This has made any

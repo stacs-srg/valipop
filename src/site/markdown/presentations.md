@@ -1,6 +1,6 @@
 # Presentations
 
-* Dalton, T, [Kirby, GNC][1], [Dearle, A][2] & [Özgür Akgün][62], Evaluating Data Linkage: Creating longitudinal synthetic data to provide a gold-standard linked dataset. Seminar series on Data Linkage and Anonymisation, Issac Newton Institute, Cambridge, England, 20 October 2016. *[Slides][63]*
+* Dalton, T, [Kirby, GNC][1], [Dearle, A][2] & [Akgün, Ö][62], Evaluating Data Linkage: Creating longitudinal synthetic data to provide a gold-standard linked dataset. Seminar series on Data Linkage and Anonymisation, Issac Newton Institute, Cambridge, England, 20 October 2016. *[Slides][63]*
 
 * [Kirby, GNC][1], [Dearle, A][2], [Hajiarab Derkani, M][3], Dalton, T, [Daras, K][4], [Dibben, CJL][5], [Williamson, L][6], [Huang, Z][7], [Feng, Z][8], [Garrett, E][9] & [Reid, A][10], Reconstructing Genealogical Relationships from Public Registers. Talk for Data Lab Visit to St Andrews, 28 October 2015. *[Slides][11]*
 
@@ -18,7 +18,7 @@
 
 * [Kirby, GNC][47], [Carson, JK][48], [Dunlop, FRJ][49], [Dibben, CJL][50], [Dearle, A][51], [Williamson, L][52], [Garrett, E][53] & [Reid, A][54], Automatic methods for coding historical occupation descriptions to standard classifications. Workshop on Population Reconstruction, International Institute of Social History, Amsterdam, Netherlands, 19-21 February 2014. *[Slides][55]*
 
-* [Dibben, CJL][56], [Feng, Z][57], [Huang, Z][58], [Kirby, GNC][59] & [Williamson, L][60], Linking Scottish vital events records back through time to produce the "Understanding Scotland's People Study". In *2nd Mosaic conference: Residence patterns of the elderly*. Budapest, Hungary, 6-7 September 2012. *[Poster][61]*.
+* [Dibben, CJL][56], [Feng, Z][57], [Huang, Z][58], [Kirby, GNC][59] & [Williamson, L][60], Linking Scottish vital events records back through time to produce the \"Understanding Scotland\'s People Study\". In *2nd Mosaic conference: Residence patterns of the elderly*. Budapest, Hungary, 6-7 September 2012. *[Poster][61]*.
 
 [1]:	https://risweb.st-andrews.ac.uk/portal/da/persons/graham-njal-cameron-kirby(4d01ed18-cde6-4dd6-9948-64451f43a1a7).html
 [2]:	https://risweb.st-andrews.ac.uk/portal/da/persons/alan-dearle(2c185714-f33d-4d3a-9f98-9fe210cc3bdd).html
