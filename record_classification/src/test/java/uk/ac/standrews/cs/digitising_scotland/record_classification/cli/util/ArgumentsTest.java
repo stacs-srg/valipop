@@ -18,14 +18,10 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.cli.util;
 
-import com.google.common.io.*;
-import com.google.common.io.Files;
-import edu.umd.cs.findbugs.charsets.*;
 import org.junit.*;
 import org.junit.rules.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.dataset.*;
 
-import java.io.*;
 import java.nio.charset.*;
 import java.nio.file.*;
 import java.util.*;
@@ -50,7 +46,6 @@ public class ArgumentsTest {
         assertFalse(Arguments.isComment("not some comment"));
         assertFalse(Arguments.isComment("\tnot some comment"));
         assertFalse(Arguments.isComment("    not some comment"));
-
     }
 
     @Test

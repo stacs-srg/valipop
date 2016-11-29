@@ -35,7 +35,6 @@
         <module>record_classification</module>
     </modules>
 
-
     <build>
         <plugins>
             <plugin>
@@ -66,17 +65,17 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-site-plugin</artifactId>
-                    <version>3.3</version>
+                    <version>3.4</version>
                     <dependencies>
-                        <dependency>
-                            <groupId>org.apache.maven.doxia</groupId>
-                            <artifactId>doxia-module-markdown</artifactId>
-                            <version>1.4</version>
-                        </dependency>
+                        <!--<dependency>-->
+                            <!--<groupId>org.apache.maven.doxia</groupId>-->
+                            <!--<artifactId>doxia-module-markdown</artifactId>-->
+                            <!--<version>1.4</version>-->
+                        <!--</dependency>-->
                         <dependency>
                             <groupId>lt.velykis.maven.skins</groupId>
                             <artifactId>reflow-velocity-tools</artifactId>
-                            <version>1.0.0</version>
+                            <version>1.1.1</version>
                         </dependency>
                         <dependency>
                             <groupId>org.apache.velocity</groupId>

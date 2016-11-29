@@ -16,23 +16,13 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.population_model.model.in_memory;
 
-import uk.ac.standrews.cs.digitising_scotland.population_model.distributions.general.InconsistentWeightException;
-import uk.ac.standrews.cs.digitising_scotland.population_model.distributions.general.NegativeDeviationException;
-import uk.ac.standrews.cs.digitising_scotland.population_model.distributions.general.NegativeWeightException;
-import uk.ac.standrews.cs.digitising_scotland.population_model.model.IPartnership;
-import uk.ac.standrews.cs.digitising_scotland.population_model.model.IPerson;
-import uk.ac.standrews.cs.digitising_scotland.population_model.model.IPopulation;
-import uk.ac.standrews.cs.digitising_scotland.util.ProgressIndicator;
+import uk.ac.standrews.cs.digitising_scotland.population_model.distributions.general.*;
+import uk.ac.standrews.cs.digitising_scotland.population_model.model.*;
+import uk.ac.standrews.cs.util.tools.*;
 
-import javax.annotation.concurrent.NotThreadSafe;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
+import javax.annotation.concurrent.*;
+import java.io.*;
+import java.util.*;
 
 /**
  * Provides an abstract population interface over a compact population representation.

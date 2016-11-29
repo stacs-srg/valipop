@@ -16,28 +16,16 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.population_model.model.in_memory;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import edu.umd.cs.findbugs.annotations.*;
 import uk.ac.standrews.cs.digitising_scotland.population_model.distributions.*;
-import uk.ac.standrews.cs.digitising_scotland.population_model.distributions.general.Distribution;
-import uk.ac.standrews.cs.digitising_scotland.population_model.distributions.general.NegativeDeviationException;
-import uk.ac.standrews.cs.digitising_scotland.population_model.distributions.general.NegativeWeightException;
-import uk.ac.standrews.cs.digitising_scotland.population_model.distributions.general.UniformIntegerDistribution;
-import uk.ac.standrews.cs.digitising_scotland.population_model.model.IDFactory;
-import uk.ac.standrews.cs.digitising_scotland.population_model.model.PopulationLogic;
-import uk.ac.standrews.cs.digitising_scotland.population_model.model.RandomFactory;
-import uk.ac.standrews.cs.digitising_scotland.util.ArrayManipulation;
-import uk.ac.standrews.cs.digitising_scotland.util.DateManipulation;
-import uk.ac.standrews.cs.digitising_scotland.util.ProgressIndicator;
-import uk.ac.standrews.cs.nds.util.QuickSort;
+import uk.ac.standrews.cs.digitising_scotland.population_model.distributions.general.*;
+import uk.ac.standrews.cs.digitising_scotland.population_model.model.*;
+import uk.ac.standrews.cs.digitising_scotland.util.*;
+import uk.ac.standrews.cs.nds.util.*;
+import uk.ac.standrews.cs.util.tools.*;
 
-import javax.annotation.concurrent.NotThreadSafe;
-
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Random;
-import java.util.Set;
+import javax.annotation.concurrent.*;
+import java.util.*;
 
 /**
  * Model of synthetic population.

@@ -20,7 +20,7 @@ package uk.ac.standrews.cs.digitising_scotland.population_model.population_repre
 //import uk.ac.standrews.cs.digitising_scotland.population_model.model.IPopulation;
 import uk.ac.standrews.cs.digitising_scotland.population_model.model.database.DBInitialiser;
 import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.adapted_interfaces.ILinkedPopulation;
-import uk.ac.standrews.cs.digitising_scotland.util.ProgressIndicator;
+import uk.ac.standrews.cs.util.tools.ProgressIndicator;
 //import uk.ac.standrews.cs.digitising_scotland.population_model.tools.AbstractPopulationToDB;
 
 /**
