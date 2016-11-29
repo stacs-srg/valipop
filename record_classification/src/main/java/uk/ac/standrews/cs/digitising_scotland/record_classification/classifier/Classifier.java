@@ -18,15 +18,11 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.record_classification.classifier;
 
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Classification;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Record;
-import uk.ac.standrews.cs.digitising_scotland.util.*;
-import uk.ac.standrews.cs.util.tools.InfoLevel;
-import uk.ac.standrews.cs.util.tools.Logging;
+import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
+import uk.ac.standrews.cs.util.tools.*;
 
-import java.io.Serializable;
-import java.util.Random;
+import java.io.*;
+import java.util.*;
 import java.util.function.*;
 import java.util.logging.*;
 

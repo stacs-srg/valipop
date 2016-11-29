@@ -16,7 +16,7 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.population_model.model;
 
-import uk.ac.standrews.cs.digitising_scotland.util.ProgressIndicator;
+import uk.ac.standrews.cs.util.tools.*;
 
 /**
  * Converts a population from one representation to another.

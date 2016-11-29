@@ -16,17 +16,14 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.population_model.model.in_memory;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import uk.ac.standrews.cs.digitising_scotland.population_model.distributions.general.NegativeDeviationException;
-import uk.ac.standrews.cs.digitising_scotland.population_model.distributions.general.NegativeWeightException;
-import uk.ac.standrews.cs.digitising_scotland.population_model.distributions.general.NormalDistribution;
-import uk.ac.standrews.cs.digitising_scotland.population_model.distributions.general.WeightedIntegerDistribution;
-import uk.ac.standrews.cs.digitising_scotland.population_model.model.PopulationLogic;
-import uk.ac.standrews.cs.digitising_scotland.population_model.model.RandomFactory;
-import uk.ac.standrews.cs.digitising_scotland.util.DateManipulation;
-import uk.ac.standrews.cs.digitising_scotland.util.ProgressIndicator;
+import edu.umd.cs.findbugs.annotations.*;
+import uk.ac.standrews.cs.digitising_scotland.population_model.distributions.general.*;
+import uk.ac.standrews.cs.digitising_scotland.population_model.model.*;
+import uk.ac.standrews.cs.digitising_scotland.util.*;
+import uk.ac.standrews.cs.util.tools.*;
 
-import java.util.Random;
+import java.util.*;
+import java.lang.SuppressWarnings;
 
 /**
  * Links people to partners within a compact population.

@@ -16,12 +16,8 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.adapted_db;
 
-import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.adapted_interfaces.ILinkedChildbearingPartnership;
-import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.adapted_interfaces.ILinkedPerson;
-import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.adapted_interfaces.ILinkedPopulation;
-import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.adapted_interfaces.IPopulationWriter;
-//import uk.ac.standrews.cs.digitising_scotland.population_model.model.IPopulationWriter;
-import uk.ac.standrews.cs.digitising_scotland.util.ProgressIndicator;
+import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.adapted_interfaces.*;
+import uk.ac.standrews.cs.util.tools.*;
 
 /**
  * Converts a population from one representation to another.
