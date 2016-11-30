@@ -58,15 +58,25 @@ public class PersonFactory {
         return makePerson(currentDate, birthTimeStep, null, population);
     }
 
+    private static int sexBalance = 0;
+
     private static char getSex() {
 
         // TODO move over to a specified m to f ratio
 
-        if (randomNumberGenerator.nextBoolean()) {
+        if(sexBalance <= 0) {
+            sexBalance++;
             return 'M';
         } else {
+            sexBalance--;
             return 'F';
         }
+
+//        if (randomNumberGenerator.nextBoolean()) {
+//            return 'M';
+//        } else {
+//            return 'F';
+//        }
 
     }
 

@@ -85,7 +85,7 @@ public class PopulationAnalytics {
 
         int count = 0;
         for (final IPerson person : population.getPeople()) {
-            if (person.getSex() == IPerson.MALE) {
+            if (Character.toUpperCase(person.getSex()) == IPerson.MALE) {
                 count++;
             }
         }
@@ -96,7 +96,7 @@ public class PopulationAnalytics {
 
         int count = 0;
         for (final IPerson person : population.getPeople()) {
-            if (person.getSex() == IPerson.FEMALE) {
+            if (Character.toUpperCase(person.getSex()) == IPerson.FEMALE) {
                 count++;
             }
         }
