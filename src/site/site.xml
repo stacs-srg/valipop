@@ -11,6 +11,7 @@
         <reflowSkin>
             <!--Do not display the creator of skin-->
             <skinAttribution>false</skinAttribution>
+            <protocolRelativeURLs>true</protocolRelativeURLs>
             <brand>
                 <name>Digitising Scotland @ Computer Science</name>
                 <href>index.html</href> 
