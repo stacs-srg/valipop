@@ -14,6 +14,7 @@ import java.util.Set;
  */
 public class SelfCorrectingTwoDimensionDataDistribution implements DataDistribution, SelfCorrection {
 
+    // The integer range here represents the row labels (i.e. the age ranges on the ordered birth table)
     private Map<IntegerRange, SelfCorrectingOneDimensionDataDistribution> data;
 
     private int maxCol = 10;

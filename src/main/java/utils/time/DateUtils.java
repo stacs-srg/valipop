@@ -389,7 +389,7 @@ public class DateUtils {
 
     }
 
-    public static DateInstant calculateFWDateInstant(Date startingDate, int chosenDay) {
+    private static DateInstant calculateFWDateInstant(Date startingDate, int chosenDay) {
 
         int day = startingDate.getDay();
         int month = startingDate.getMonth();
@@ -431,7 +431,7 @@ public class DateUtils {
         return new DateInstant(day, month, year);
     }
 
-    public static DateInstant calculateBWDateInstant(Date endingDate, int chosenDay) {
+    private static DateInstant calculateBWDateInstant(Date endingDate, int chosenDay) {
 
         int day = endingDate.getDay();
         int month = endingDate.getMonth();

@@ -63,6 +63,7 @@ public class PartneringLogic {
         // start of loop ?
         while (fufilledFathersCount < fathersNeeded) {
 
+            // We're still needing men to be fathers but have ran out of men
             if(availiableRanges.size() == 0) {
                 // TODO - we should add the fathers be moved from the population before we throw - these will be in both emptyRanges and availiableRanges
 
@@ -73,17 +74,20 @@ public class PartneringLogic {
                 int womenInPop = people.getFemales().getNumberOfPersons();
                 int womenOfAge = people.getFemales().getByYear(w_yob).size();
 
-
-
                 throw new InsufficientNumberOfPeopleException("Not enough males to meet partner with mother cohort of "
                         + w_yob.getYear() + " \nWomen of age : " + womenOfAge + " \nWomen in pop: " + womenInPop + " \nMen in pop : " + menInPop);
             }
 
             PriorityQueue<AgeRangeWithExactFatherValue> usedRanges = new PriorityQueue<>(ageRanges.size(), new RemainderComparator());
 
+
+            // while age ranges with usable men in exist
             while (availiableRanges.size() > 0) {
 
+                // Grab an age range
                 AgeRangeWithExactFatherValue aRTV = availiableRanges.poll();
+
+                // Get number of men needed from pop of age
                 int numMen = (int) aRTV.getValue();
 
                 if (projectedFathersCount < fathersNeeded) {
@@ -174,14 +178,14 @@ public class PartneringLogic {
             Collection<IPerson> men = range.getFathers();
             fathers.addAll(men);
 
-            desiredPopulationStatistics.getPartneringRates(currentTime).returnAppliedData(range.getKey(), men.size() / (double) fathersNeeded);
+//            desiredPopulationStatistics.getPartneringRates(currentTime).returnAppliedData(range.getKey(), men.size() / (double) fathersNeeded);
         }
 
         for(AgeRangeWithExactFatherValue range : emptyRanges) {
             Collection<IPerson> men = range.getFathers();
             fathers.addAll(men);
 
-            desiredPopulationStatistics.getPartneringRates(currentTime).returnAppliedData(range.getKey(), men.size() / (double) fathersNeeded);
+//            desiredPopulationStatistics.getPartneringRates(currentTime).returnAppliedData(range.getKey(), men.size() / (double) fathersNeeded);
         }
 
         // pair up MOTHERS_NEEDING_FATHERS with NEW_FATHERS

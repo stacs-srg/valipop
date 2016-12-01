@@ -60,28 +60,9 @@ public class BirthLogic {
                 // women of this age and birth order - L
                 Collection<IPerson> women = people.getFemales().getByYearAndBirthOrder(yearOfBirthInConsideration, order);
 
-//                System.out.println("------------------");
-//                System.out.println(order + " of " + maxBirthOrderInCohort);
-//                System.out.println(yearOfBirthInConsideration.rowAsString());
-//                if(women != null) {
-//                    System.out.println(women.size());
-//                } else {
-//                    System.out.println("NULL");
-//                }
-
-
-
-
-
                 if (women == null || women.size() == 0) {
                     continue;
                 } else {
-
-//                    for(IPerson w : women) {
-//                        if(w.getPartnerships().size() != 0) {
-//                            partnershipCount++;
-//                        }
-//                    }
 
                     // DATA 1 - get rate of births by mothers age and birth order
                     DataKey key = new DataKey(age, order, maxBirthOrderInCohort, women.size());
