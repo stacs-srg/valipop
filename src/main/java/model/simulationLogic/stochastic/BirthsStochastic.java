@@ -1,11 +1,15 @@
 package model.simulationLogic.stochastic;
 
 import datastructure.population.FemaleCollection;
+import datastructure.population.PeopleCollection;
+import datastructure.population.exceptions.InsufficientNumberOfPeopleException;
 import datastructure.summativeStatistics.desired.PopulationStatistics;
 import datastructure.summativeStatistics.structure.IntegerRange;
 import datastructure.summativeStatistics.structure.SelfCorrectingOneDimensionDataDistribution;
 import datastructure.summativeStatistics.structure.SelfCorrectingTwoDimensionDataDistribution;
+import model.simulationEntities.IPartnership;
 import model.simulationEntities.IPerson;
+import model.simulationEntities.PersonFactory;
 import utils.time.*;
 import utils.time.Date;
 
@@ -16,15 +20,20 @@ import java.util.*;
  */
 public class BirthsStochastic {
 
+    public static Random random = new Random();
+
     // The purpose of this class is to:
         // take in a population
         // select mothers of the correct age and order to give birth
         // create new children for each birth (these should have no fathers)
         // If a shortage of females exist to mother children then these should be kept over to the next cohort
 
-    public static List<IPerson> handleBirths(FemaleCollection females, PopulationStatistics desired, Date currentDate) {
+    public static Collection<IPartnership> handleBirths(FemaleCollection females, PopulationStatistics desired,
+                                                        DateClock currentDate, CompoundTimeUnit birthTimeStep,
+                                                        PeopleCollection population)
+                                                        throws InsufficientNumberOfPeopleException {
 
-        ArrayList<IPerson> selectedForEvent = new ArrayList<>();
+        Collection<IPartnership> selectedForEvent = new ArrayList<>();
 
         // for females of each age bound
         SelfCorrectingTwoDimensionDataDistribution ratesTable = desired.getOrderedBirthRates(currentDate);
@@ -32,17 +41,40 @@ public class BirthsStochastic {
 
         for(IntegerRange ageRange : ageRanges) {
 
-            // for each order
             SelfCorrectingOneDimensionDataDistribution tableRow = ratesTable.getData(ageRange.getValue());
+            Map<IntegerRange, Collection<IPerson>> femalesByOrders = new HashMap<>();
+            int femalesOfAge = 0;
+
+            // for each order
             ArrayList<IntegerRange> orders = getIntegerRangesInOrder(tableRow);
 
             for(IntegerRange order : orders) {
-
                 // get females to be mothers by rate for order by in age range
-                ArrayList<IPerson> femalesofAgeAndOrder = getFemales(females, ageRange, order, currentDate);
+                Collection<IPerson> femalesOfAgeAndOrder = getFemales(females, ageRange, order, currentDate);
+                femalesOfAge += femalesOfAgeAndOrder.size();
+                femalesByOrders.put(order, femalesOfAgeAndOrder);
+            }
 
-                // TODO next apply statistics here - go stochatic???
-                tableRow.getData(order.getValue());
+            for(IntegerRange order : orders) {
+                // get females to be mothers by rate for order by in age range
+                Collection<IPerson> femalesOfAgeAndOrder = femalesByOrders.get(order);
+
+                double rate = tableRow.getData(order.getValue());
+
+                int eventOccursNTimes = BernoulliApproach.chooseValue(femalesOfAge, rate, random);
+
+                try {
+                    Collection<IPerson> mothersToBe = removeNPeople(eventOccursNTimes, femalesOfAgeAndOrder);
+
+                    for(IPerson mother : mothersToBe) {
+                        selectedForEvent.add(PersonFactory.formNewPartnership(1, mother, currentDate, birthTimeStep, population));
+                    }
+
+                } catch (InsufficientNumberOfPeopleException e) {
+                    throw new InsufficientNumberOfPeopleException(e.getMessage() + ": Current Date " +
+                            currentDate.toString() + " Age Range " + ageRange.toString() + " Order " + order);
+                }
+
 
             }
         }
@@ -51,7 +83,25 @@ public class BirthsStochastic {
 
     }
 
-    private static ArrayList<IPerson> getFemales(FemaleCollection females, IntegerRange ageRange, IntegerRange order, Date currentDate) {
+    private static Collection<IPerson> removeNPeople(int nTimes, Collection<IPerson> people) throws InsufficientNumberOfPeopleException {
+
+        ArrayList<IPerson> peopleAL = new ArrayList<>(people);
+
+        Collection<IPerson> removed = new ArrayList<>();
+
+        for(int i = 0; i < nTimes; i++) {
+
+            if(peopleAL.size() == 0) {
+                throw new InsufficientNumberOfPeopleException("Shortage of females to make into mothers");
+            }
+
+            removed.add(peopleAL.remove(random.nextInt(people.size())));
+        }
+
+        return removed;
+    }
+
+    private static Collection<IPerson> getFemales(FemaleCollection females, IntegerRange ageRange, IntegerRange order, Date currentDate) {
 
         ArrayList<IPerson> femalesOfAgeAndOrder = new ArrayList<>();
 

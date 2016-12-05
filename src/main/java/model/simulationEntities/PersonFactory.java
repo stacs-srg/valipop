@@ -1,6 +1,7 @@
 package model.simulationEntities;
 
 import datastructure.population.PeopleCollection;
+import datastructure.population.exceptions.PersonNotFoundException;
 import model.dateSelection.BirthDateSelector;
 import model.dateSelection.DateSelector;
 import model.nameGeneration.FirstNameGenerator;
@@ -36,7 +37,7 @@ public class PersonFactory {
     }
 
     public static IPartnership formNewChildrenInPartnership(int numberOfChildren, IPerson mother, DateClock currentDate,
-                                                         CompoundTimeUnit birthTimeStep, PeopleCollection population) {
+                                                            CompoundTimeUnit birthTimeStep, PeopleCollection population) {
 
         IPartnership partnership = new Partnership(mother, currentDate);
 
@@ -48,6 +49,34 @@ public class PersonFactory {
         }
 
         partnership.addChildren(children);
+
+        population.addPartnershipToIndex(partnership);
+
+        return partnership;
+    }
+
+    public static IPartnership formNewPartnership(int numberOfChildren, IPerson mother, DateClock currentDate,
+                                                            CompoundTimeUnit birthTimeStep, PeopleCollection population) {
+
+        IPartnership partnership = new Partnership(mother, currentDate);
+
+        try {
+            population.removePerson(mother);
+        } catch (PersonNotFoundException e) {
+            throw new Error("Person not found in population - PeopleCollection has become inconsistent", e);
+        }
+
+        List<IPerson> children = new ArrayList<>(numberOfChildren);
+
+        for(int c = 0; c < numberOfChildren; c++) {
+            children.add(makePerson(currentDate, birthTimeStep, partnership, population));
+        }
+
+        partnership.addChildren(children);
+
+        mother.recordPartnership(partnership);
+
+        population.addPerson(mother);
 
         population.addPartnershipToIndex(partnership);
 
