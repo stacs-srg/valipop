@@ -1,16 +1,9 @@
 package uk.ac.standrews.cs.digitising_scotland.linkage;
 
-import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.*;
-import uk.ac.standrews.cs.digitising_scotland.util.*;
-import uk.ac.standrews.cs.storr.impl.exceptions.*;
-import uk.ac.standrews.cs.storr.interfaces.*;
-import uk.ac.standrews.cs.util.dataset.*;
+import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.AbstractLXP;
+import uk.ac.standrews.cs.util.dataset.DataSet;
 
-import java.io.*;
-import java.nio.file.*;
-import java.util.*;
-
-import static uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.Birth.*;
+import java.util.List;
 
 /**
  * Utility classes for importing records in digitising scotland format
@@ -26,6 +19,7 @@ public class KilmarnockCommaSeparatedImporter {
             lxp_record.put(field[0], data.getValue(record, field[1]));
         }
     }
+
 
     protected static void addUnavailableFields(final AbstractLXP lxp_record, final String[] unavailable_record_labels) {
 

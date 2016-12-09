@@ -1,10 +1,12 @@
 package uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records;
 
-import uk.ac.standrews.cs.storr.impl.exceptions.IllegalKeyException;
-import uk.ac.standrews.cs.storr.types.LXPBaseType;
-import uk.ac.standrews.cs.storr.types.LXP_SCALAR;
 import uk.ac.standrews.cs.nds.persistence.PersistentObjectException;
 import uk.ac.standrews.cs.nds.rpc.stream.JSONReader;
+import uk.ac.standrews.cs.storr.impl.exceptions.IllegalKeyException;
+import uk.ac.standrews.cs.storr.interfaces.IBucket;
+import uk.ac.standrews.cs.storr.interfaces.IRepository;
+import uk.ac.standrews.cs.storr.types.LXPBaseType;
+import uk.ac.standrews.cs.storr.types.LXP_SCALAR;
 
 /**
  * Created by al on 03/10/2014.
@@ -124,9 +126,9 @@ public class Death extends AbstractLXP {
         super();
     }
 
-    public Death(long persistent_Object_id, JSONReader reader) throws PersistentObjectException, IllegalKeyException {
+    public Death(long persistent_Object_id, JSONReader reader, IRepository repository, IBucket bucket) throws PersistentObjectException, IllegalKeyException {
 
-        super(persistent_Object_id, reader);
+        super(persistent_Object_id, reader, repository, bucket);
 
     }
 

@@ -1,7 +1,7 @@
 package uk.ac.standrews.cs.digitising_scotland.linkage.blocking;
 
 
-import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.Birth;
+import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.Marriage;
 import uk.ac.standrews.cs.digitising_scotland.linkage.stream_operators.sharder.Blocker;
 import uk.ac.standrews.cs.digitising_scotland.util.ErrorHandling;
 import uk.ac.standrews.cs.storr.impl.exceptions.*;
@@ -20,9 +20,9 @@ import java.io.IOException;
  * Created by al on 30/8/16
  */
 
-public class FFNFLNMFNMMNPOMDOMOverBirth extends Blocker<Birth> {
+public class FFNFLNMFNMMNPOMDOMOverMarriage extends Blocker<Marriage> {
 
-    public FFNFLNMFNMMNPOMDOMOverBirth(final IBucket<Birth> birthsBucket, final IRepository output_repo, ILXPFactory<Birth> tFactory) throws BucketException, RepositoryException, IOException {
+    public FFNFLNMFNMMNPOMDOMOverMarriage(final IBucket<Marriage> birthsBucket, final IRepository output_repo, ILXPFactory<Marriage> tFactory) throws BucketException, RepositoryException, IOException {
 
         super(birthsBucket.getInputStream(), output_repo, tFactory);
     }
@@ -31,17 +31,17 @@ public class FFNFLNMFNMMNPOMDOMOverBirth extends Blocker<Birth> {
      * @param record - a Person record to be blocked
      * @return the blocking keys based on Father's first name, last name, Mother's first name, last name, place of marriage
      */
-    public String[] determineBlockedBucketNamesForRecord(final Birth record) throws NoSuitableBucketException {
+    public String[] determineBlockedBucketNamesForRecord(final Marriage record) throws NoSuitableBucketException {
 
         // Note will concat null strings into key if any fields are null - working hypothesis - this doesn't matter.
 
         StringBuilder builder = new StringBuilder();
 
         try {
-            builder.append(removeSpaces(record.get_fathers_forename()));
-            builder.append(removeSpaces(record.get_fathers_surname()));
-            builder.append(removeSpaces(record.get_mothers_forename()));
-            builder.append(removeSpaces(record.get_mothers_maiden_surname()));
+            builder.append(removeSpaces(record.get_grooms_forename()));
+            builder.append(removeSpaces(record.get_grooms_surname()));
+            builder.append(removeSpaces(record.get_brides_forename()));
+            builder.append(removeSpaces(record.get_brides_surname()));
             builder.append(removeSpaces(record.get_POM()));
             builder.append(removeSpaces(record.get_DOM()));
             return new String[]{removeNasties(builder.toString())};
@@ -59,12 +59,15 @@ public class FFNFLNMFNMMNPOMDOMOverBirth extends Blocker<Birth> {
      * @param key - a String key to be made into an acceptable bucket name
      * @return the cleaned up String
      */
-    private String removeNasties(final String key) { return key.replace("/", "").replace( "\"", "" ); }
+    private String removeNasties(final String key) {
+        return key.replace("/", "").replace( "\"", "" );
+    }
 
     /**
      * @param input - a String key to be stripped of spaces
      * @return the stripped String
      */
     private String removeSpaces( final String input ) { return input.replace(" ",""); }
+
 }
 

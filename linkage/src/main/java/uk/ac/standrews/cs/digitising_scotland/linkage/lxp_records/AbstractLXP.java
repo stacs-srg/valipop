@@ -5,6 +5,8 @@ import uk.ac.standrews.cs.storr.impl.LXP;
 import uk.ac.standrews.cs.storr.impl.exceptions.IllegalKeyException;
 import uk.ac.standrews.cs.nds.persistence.PersistentObjectException;
 import uk.ac.standrews.cs.nds.rpc.stream.JSONReader;
+import uk.ac.standrews.cs.storr.interfaces.IBucket;
+import uk.ac.standrews.cs.storr.interfaces.IRepository;
 
 /**
  * Created by al on 14/10/2014.
@@ -18,27 +20,9 @@ public abstract class AbstractLXP extends LXP {
         super();
     }
 
-    public AbstractLXP(long object_id) {
 
-        super(object_id);
+    public AbstractLXP(long object_id, JSONReader reader, IRepository repository, IBucket bucket) throws PersistentObjectException, IllegalKeyException {
+        super(object_id, reader, repository, bucket);
     }
-
-    public AbstractLXP(long object_id, JSONReader reader) throws PersistentObjectException, IllegalKeyException {
-        super(object_id, reader);
-    }
-
-    public AbstractLXP(JSONReader reader) throws PersistentObjectException, IllegalKeyException {
-        super(reader);
-    }
-
-    /*
-     * This says that we can we can create an instance of this type iff the labels supplied in the label_id are present
-     */
-//    @Override
-//    public boolean checkConsistentWith(long label_id) {
-//
-//        return Types.checkLabelsConsistentWith(label_id, required_type_labelID);
-//
-//    }
 
 }

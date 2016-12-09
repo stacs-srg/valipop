@@ -1,7 +1,8 @@
 package uk.ac.standrews.cs.digitising_scotland.linkage;
 
 import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.Marriage;
-import uk.ac.standrews.cs.storr.impl.exceptions.*;
+import uk.ac.standrews.cs.digitising_scotland.linkage.normalisation.normaliseDates;
+import uk.ac.standrews.cs.storr.impl.exceptions.BucketException;
 import uk.ac.standrews.cs.storr.interfaces.IBucket;
 import uk.ac.standrews.cs.util.dataset.DataSet;
 
@@ -24,7 +25,6 @@ public class KilmarnockCommaSeparatedMarriageImporter extends KilmarnockCommaSep
 
                     // Information available that doesn't currently fit:
 
-                    // "place of marriage 1", "place of marriage 2", "place of marriage 3"
                     // "groom's mother's occ"
                     // "bride's mother's occ"
                     // "groom's mother's other names"
@@ -52,7 +52,9 @@ public class KilmarnockCommaSeparatedMarriageImporter extends KilmarnockCommaSep
 
                     // *********************************
 
-                    {MARRIAGE_DAY, "day"}, {MARRIAGE_MONTH, "month"}, {MARRIAGE_YEAR, "year"},
+                    {MARRIAGE_YEAR, "year"}, {MARRIAGE_DAY, "day"},
+
+                    {PLACE_OF_MARRIAGE, "place of marriage 3" },
 
                     // *********************************
 
@@ -148,15 +150,24 @@ public class KilmarnockCommaSeparatedMarriageImporter extends KilmarnockCommaSep
         Marriage marriage = new Marriage();
 
         addAvailableSingleFields(data, record, marriage, RECORD_LABEL_MAP);
+        addAvailableNormalisedFields(data, record, marriage);
         addAvailableCompoundFields(data, record, marriage);
         addUnavailableFields(marriage, UNAVAILABLE_RECORD_LABELS);
 
         return marriage;
     }
 
+    private static void addAvailableNormalisedFields(DataSet data, List<String> record, Marriage marriage) {
+
+        marriage.put( MARRIAGE_MONTH, normaliseDates.normaliseMonth( data.getValue(record, "month" ) ) );
+    }
+
     private static void addAvailableCompoundFields(final DataSet data, final List<String> record, final Marriage marriage) {
 
         marriage.put(BRIDE_ADDRESS, combineFields(data, record, "address of bride 1", "address of bride 2", "address of bride 3"));
         marriage.put(GROOM_ADDRESS, combineFields(data,record, "address of groom 1", "address of groom 2", "address of groom 3"));
+        //       marriage.put(PLACE_OF_MARRIAGE, combineFields(data,record, "place of marriage 1", "place of marriage 2", "place of marriage 3" ));
+        // Place of marriage 3 is the townname in this dataset - use this.
+        // TODO look at this and decide what to do - create a cannonical field?
     }
 }

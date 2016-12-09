@@ -1,6 +1,7 @@
 package uk.ac.standrews.cs.digitising_scotland.linkage;
 
-import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.*;
+import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.Death;
+import uk.ac.standrews.cs.digitising_scotland.linkage.normalisation.normaliseDates;
 import uk.ac.standrews.cs.digitising_scotland.util.ErrorHandling;
 import uk.ac.standrews.cs.storr.impl.exceptions.BucketException;
 import uk.ac.standrews.cs.storr.impl.exceptions.IllegalKeyException;
@@ -47,7 +48,7 @@ public class KilmarnockCommaSeparatedDeathImporter extends KilmarnockCommaSepara
 
                     // *********************************
 
-                    {DEATH_DAY, "day"}, {DEATH_MONTH, "month"}, {DEATH_YEAR, "year"},
+                    {DEATH_YEAR, "year"},{DEATH_DAY, "day"},
 
                     {AGE_AT_DEATH, "age at death"},
 
@@ -124,6 +125,7 @@ public class KilmarnockCommaSeparatedDeathImporter extends KilmarnockCommaSepara
 
         addAvailableSingleFields(data, record, death, RECORD_LABEL_MAP);
         addAvailableCompoundFields(data, record, death);
+        addAvailableNormalisedFields(data, record, death);
         addUnavailableFields(death, UNAVAILABLE_RECORD_LABELS);
 
         return death;
@@ -134,5 +136,10 @@ public class KilmarnockCommaSeparatedDeathImporter extends KilmarnockCommaSepara
 
         death.put(SPOUSES_NAMES, combineFields(data,record, "forename of spouse", "surname of spouse"));
         death.put(PLACE_OF_DEATH, combineFields(data,record, "address 1", "address 2", "address 3"));
+    }
+
+    private static void addAvailableNormalisedFields(DataSet data, List<String> record, Death death) {
+
+        death.put( DEATH_MONTH, normaliseDates.normaliseMonth( data.getValue(record, "month" ) ) );
     }
 }
