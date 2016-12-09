@@ -260,7 +260,7 @@ public class AlLinker {
             Role role = null;
             try {
                 role = (Role) l;
-                System.out.println( "Role for person: " + role.get_forename() + " " + role.get_surname() + " role: " + role.get_role() );
+                System.out.println( "Role for person: " + role.getForename() + " " + role.getSurname() + " role: " + role.getRole() );
 
             } catch ( ClassCastException e ) {
                 System.out.println( "LXP found (not role): oid: " +  l.getId() + "object: " + l );
@@ -384,7 +384,7 @@ public class AlLinker {
 
     /**
      * This method populates the roles bucket
-     * For each record in the Births bucket there will be 3 roles created - e.g. mother, father baby
+     * For each record in the Births bucket there will be 3 roles created - e.g. mother, FATHER baby
      *
      * @param bucket - the bucket from which to take the inputs records
      */
@@ -438,7 +438,7 @@ public class AlLinker {
 
     /**
      * This method populates the roles bucket
-     * For each record in the Deaths bucket there will be 3 roles created - e.g. mother, father baby
+     * For each record in the Deaths bucket there will be 3 roles created - e.g. mother, FATHER baby
      *
      * @param bucket - the bucket from which to take the inputs records
      */
@@ -475,7 +475,7 @@ public class AlLinker {
                 }
             }
             catch (StoreException | BucketException e) {
-                ErrorHandling.exceptionError(e, "Error adding father from death record: " + father);
+                ErrorHandling.exceptionError(e, "Error adding FATHER from death record: " + father);
             }
 
             try {
@@ -566,7 +566,7 @@ public class AlLinker {
                     roles_stream.add(gf);
                 }
             } catch (StoreException | BucketException e) {
-                ErrorHandling.exceptionError(e, "Error adding groom's father: " + gf);
+                ErrorHandling.exceptionError(e, "Error adding groom's FATHER: " + gf);
             }
 
             try {
@@ -583,7 +583,7 @@ public class AlLinker {
                     roles_stream.add(bf);
                 }
             } catch (StoreException | BucketException e) {
-                ErrorHandling.exceptionError(e, "Error adding bride's father: " + bf);
+                ErrorHandling.exceptionError(e, "Error adding bride's FATHER: " + bf);
             }
             createRelationship( bf, bride, Relationship.relationship_kind.fatherof, "Shared certificate5" );
             createRelationship( bm, bride, Relationship.relationship_kind.motherof, "Shared certificate6" );

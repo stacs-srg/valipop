@@ -115,7 +115,6 @@ public class KilmarnockCommaSeparatedMarriageImporter extends KilmarnockCommaSep
                     // Fields not present in Kilmarnock dataset.
 
                     CHANGED_GROOM_FORENAME, IMAGE_QUALITY, CHANGED_GROOM_SURNAME, CHANGED_BRIDE_SURNAME, CORRECTED_ENTRY, CHANGED_BRIDE_FORENAME
-
     };
 
     /**

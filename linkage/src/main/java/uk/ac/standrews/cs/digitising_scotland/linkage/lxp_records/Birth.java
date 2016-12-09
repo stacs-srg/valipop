@@ -106,71 +106,43 @@ public class Birth extends AbstractLXP {
     @LXP_SCALAR(type = LXPBaseType.STRING)
     public static final String INFORMANT = "informant";
 
-
     public Birth() {
+
         super();
     }
 
     public Birth(long persistent_Object_id, JSONReader reader, IRepository repository, IBucket bucket) throws PersistentObjectException, IllegalKeyException {
 
         super(persistent_Object_id, reader, repository, bucket);
-
     }
 
-    public String get_fathers_forename() {
-        return this.getString(FATHERS_FORENAME);
+    public String getFathersForename() {
+
+        return getString(FATHERS_FORENAME);
     }
 
-    public String get_fathers_surname() {
-        return this.getString(FATHERS_SURNAME);
+    public String getFathersSurname() {
+
+        return getString(FATHERS_SURNAME);
     }
 
-    public String get_mothers_forename() {
-        return this.getString(MOTHERS_FORENAME);
+    public String getMothersForename() {
+
+        return getString(MOTHERS_FORENAME);
     }
 
-    public String get_mothers_maiden_surname() {
-        return this.getString(MOTHERS_MAIDEN_SURNAME);
+    public String getMothersMaidenSurname() {
+
+        return getString(MOTHERS_MAIDEN_SURNAME);
     }
 
-    public String get_POM() {
-        return this.getString(PARENTS_PLACE_OF_MARRIAGE);
+    public String getPlaceOfMarriage() {
+
+        return getString(PARENTS_PLACE_OF_MARRIAGE);
     }
 
-    public String get_DOM() {
-        //TODO This needs cleaned properly since it is in weird formats all over.
-        return this.getString(PARENTS_DAY_OF_MARRIAGE) + "/" + this.getString(PARENTS_MONTH_OF_MARRIAGE) + "/" + this.getString(PARENTS_YEAR_OF_MARRIAGE);
+    public String getDateOfMarriage() {
+
+        return cleanDate(getString(PARENTS_DAY_OF_MARRIAGE), getString(PARENTS_MONTH_OF_MARRIAGE), getString(PARENTS_YEAR_OF_MARRIAGE));
     }
 }
-
-// When these types were encoded as JSON and read in this was the definition from the file birthType.jsn
-//{"changed_surname":"string",
-//        "sex":"string",
-//        "parents_month_of_marriage":"string",
-//        "surname":"string",
-//        "image_quality":"string",
-//        "illegitimate_indicator":"string",
-//        "fathers_surname":"string",
-//        "fathers_occupation":"string",
-//        "REGISTRATION_DISTRICT_SUFFIX":"string",
-//        "ENTRY":"string",
-//        "parents_place_of_marriage":"string",
-//        "mothers_surname":"string",
-//        "adoption":"string",
-//        "forename":"string",
-//        "birth_address":"string",
-//        "parents_year_of_marriage":"string",
-//        "REGISTRATION_DISTRICT_NUMBER":"string",
-//        "birth_year":"string",
-//        "informant_did_not_sign":"string",
-//        "informant":"string",
-//        "mothers_maiden_surname":"string",
-//        "birth_month":"string",
-//        "corrected_entry":"string",
-//        "birth_day":"string",
-//        "changed_mothers_maiden_surname":"string",
-//        "changed_forename":"string",
-//        "mothers_forename":"string",
-//        "parents_day_of_marriage":"string",
-//        "YEAR_OF_REGISTRATION":"string",
-//        "fathers_forename":"string"}

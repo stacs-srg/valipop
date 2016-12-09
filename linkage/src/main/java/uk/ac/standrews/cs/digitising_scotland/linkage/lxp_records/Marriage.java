@@ -103,7 +103,9 @@ public class Marriage extends AbstractLXP {
     public static final String PLACE_OF_MARRIAGE = "place_of_marriage";
 
     //******************** Constructors ********************
+
     public Marriage() {
+
         super();
     }
 
@@ -114,72 +116,33 @@ public class Marriage extends AbstractLXP {
 
     //******************** Selectors ********************
 
-    public String get_grooms_forename() {
-        return this.getString(GROOM_FORENAME);
+    public String getGroomsForename() {
+
+        return getString(GROOM_FORENAME);
     }
 
-    public String get_grooms_surname() {
-        return this.getString(GROOM_SURNAME);
+    public String getGroomsSurname() {
+
+        return getString(GROOM_SURNAME);
     }
 
-    public String get_brides_forename(){
-        return this.getString(BRIDE_FORENAME);
-    }
-    public String get_brides_surname(){
-        return this.getString(BRIDE_SURNAME);
+    public String getBridesForename() {
+
+        return getString(BRIDE_FORENAME);
     }
 
-    public String get_POM(){
-        return this.getString(PLACE_OF_MARRIAGE);
+    public String getBridesSurname() {
+
+        return getString(BRIDE_SURNAME);
     }
 
-    public String get_DOM(){
-        //TODO This needs cleaned properly since it is in weird formats all over.
-        return this.getString(MARRIAGE_DAY) + "/" + this.getString(MARRIAGE_MONTH) + "/" + this.getString(MARRIAGE_YEAR);
+    public String getPlaceOfMarriage() {
+
+        return getString(PLACE_OF_MARRIAGE);
     }
 
+    public String getDateOfMarriage() {
 
+        return cleanDate(getString(MARRIAGE_DAY) , getString(MARRIAGE_MONTH) , getString(MARRIAGE_YEAR));
+    }
 }
-
-// When these types were encoded as JSON and read in this was the definition from the file marriageType.jsn
-//{"GROOM_MOTHERS_MAIDEN_SURNAME":"string",
-//        "GROOM_SURNAME":"string",
-//        "groom_occupation":"string",
-//        "bride_father_occupation":"string",
-//        "groom_fathers_forename":"string",
-//        "changed_groom_forename":"string",
-//        "image_quality":"string",
-//        "bride_fathers_forename":"string",
-//        "bride_address":"string",
-//        "bride_mothers_maiden_surname":"string",
-//        "groom_fathers_occupation":"string",
-//        "ENTRY":"string",
-//        "groom_address":"string",
-//        "marriage_month":"string",
-//        "marriage_year":"string",
-//        "groom_did_not_sign":"string",
-//        "bride_marital_status":"string",
-//        "denomination":"string",
-//        "bride_father_deceased":"string",
-//        "groom_forename":"string",
-//        "bride_occupation":"string",
-//        "changed_groom_surname":"string",
-//        "bride_did_not_sign":"string",
-//        "bride_mothers_forename":"string",
-//        "bride_mother_deceased":"string",
-//        "groom_mothers_forename":"string",
-//        "groom_mother_deceased":"string",
-//        "REGISTRATION_DISTRICT_NUMBER":"string",
-//        "bride_surname":"string",
-//        "groom_marital_status":"string",
-//        "bride_fathers_surname":"string",
-//        "bride_age_or_date_of_birth":"string",
-//        "changed_bride_surname":"string",
-//        "corrected_entry":"string",
-//        "changed_bride_forename":"string",
-//        "bride_forename":"string",
-//        "groom_fathers_surname":"string",
-//        "groom_father_deceased":"string",
-//        "groom_age_or_date_of_birth":"string",
-//        "YEAR_OF_REGISTRATION":"string",
-//        "marriage_day":"string"}

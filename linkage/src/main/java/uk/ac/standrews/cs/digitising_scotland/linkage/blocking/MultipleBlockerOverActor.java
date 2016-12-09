@@ -1,16 +1,11 @@
 package uk.ac.standrews.cs.digitising_scotland.linkage.blocking;
 
+import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.*;
+import uk.ac.standrews.cs.storr.impl.exceptions.*;
+import uk.ac.standrews.cs.storr.interfaces.*;
 
-import uk.ac.standrews.cs.storr.impl.exceptions.BucketException;
-import uk.ac.standrews.cs.storr.impl.exceptions.RepositoryException;
-import uk.ac.standrews.cs.storr.interfaces.IBucket;
-import uk.ac.standrews.cs.storr.interfaces.ILXPFactory;
-import uk.ac.standrews.cs.storr.interfaces.IRepository;
-import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.Role;
-import uk.ac.standrews.cs.digitising_scotland.linkage.stream_operators.sharder.Blocker;
-
-import java.io.IOException;
-import java.util.ArrayList;
+import java.io.*;
+import java.util.*;
 
 /**
  * This class blocks on streams of Person records.
@@ -27,7 +22,7 @@ import java.util.ArrayList;
  * <p/>
  * Created by al on 01/08/2014.
  */
-public class MultipleBlockerOverActor extends Blocker<Role> {
+public class MultipleBlockerOverActor extends AbstractBlocker<Role> {
 
     public MultipleBlockerOverActor(final IBucket<Role> roleBucket, final IRepository output_repo, ILXPFactory<Role> tFactory) throws BucketException, RepositoryException, IOException {
 
@@ -36,52 +31,38 @@ public class MultipleBlockerOverActor extends Blocker<Role> {
 
     /**
      * @param record - a Person record to be blocked
-     * @return the blocking keys - one for baby and one for father
+     * @return the blocking keys - one for baby and one for FATHER
      */
     public String[] determineBlockedBucketNamesForRecord(final Role record) {
 
         // Only operates over role records
 
-        String FN = record.get_forename();
-        String LN = record.get_surname();
-        String FF = record.get_fathers_forename();
-        String FL = record.get_fathers_surname();
-        FL = (FL == null || FL.equals("0")) ? LN : FL; // TODO fix these - fathers surname coded as "0" if same as baby
-        String MF = record.get_mothers_forename();
-        String MM = record.get_mothers_maiden_surname();
+        String FN = normaliseName(record.getForename());
+        String LN = normaliseName(record.getSurname());
+        String FF = normaliseName(record.getFathersForename());
+        String FL = normaliseName(record.getFathersSurname());
+        String MF = normaliseName(record.getMothersForename());
+        String MM = normaliseName(record.getMothersMaidenSurname());
 
-        String FNLN = removeNasties(FN + LN);
-        String FNLNMF = removeNasties(FNLN + MF);
-        String FNLNFF = removeNasties(FNLN + FF);
-        String FNLNMFFF = removeNasties(FNLN + MF + FF);
-        String FNMF = removeNasties(FN + MF);
-        String FNFF = removeNasties(FN + FF);
-        String FNFL = removeNasties(FN + FL);
-        String MFMMFF = removeNasties(MF + MM + FF);
+        String FNLN = concatenate(FN, LN);
+        String FNLNMF = concatenate(FNLN, MF);
+        String FNLNFF = concatenate(FNLN, FF);
+        String FNLNMFFF = concatenate(FNLN, MF, FF);
+        String FNMF = concatenate(FN, MF);
+        String FNFF = concatenate(FN, FF);
+        String FNFL = concatenate(FN, FL);
+        String MFMMFF = concatenate(MF, MM, FF);
 
         String[] blocked_names = new String[]{FNLN, FNLNMF, FNLNFF, FNLNMFFF, FNMF, FNFF, FNFL, MFMMFF};
-        return dedup(blocked_names);
+        return deduplicate(blocked_names);
     }
 
-    private String[] dedup(String[] blocked_names) {
+    private String[] deduplicate(String[] blocked_names) {
 
-        ArrayList<String> deduped = new ArrayList<String>();
-        for (String name : blocked_names) {
-            if (!deduped.contains(name)) {
-                deduped.add(name);
-            }
-        }
+        Set<String> deduped = new HashSet<String>();
+        deduped.addAll(Arrays.asList(blocked_names));
 
         return deduped.toArray(new String[0]);
     }
-
-    /**
-     * @param key - a String key to be made into an acceptable bucket name
-     * @return the cleaned up String
-     */
-    private String removeNasties(final String key) {
-        return key.replace("/", "");
-    }
-
 }
 

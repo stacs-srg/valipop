@@ -121,54 +121,13 @@ public class Death extends AbstractLXP {
     @LXP_SCALAR(type = LXPBaseType.STRING)
     public static final String CERTIFYING_DOCTOR = "certifying_doctor";
 
-
     public Death() {
+
         super();
     }
 
     public Death(long persistent_Object_id, JSONReader reader, IRepository repository, IBucket bucket) throws PersistentObjectException, IllegalKeyException {
 
         super(persistent_Object_id, reader, repository, bucket);
-
     }
-
 }
-
-// When these types were encoded as JSON and read in this was the definition from the file deathType.jsn
-//{"death_year":"string",
-//        "sex":"string",
-//        "changed_surname":"string",
-//        "surname":"string",
-//        "image_quality":"string",
-//        "cod_a":"string",
-//        "cod_b":"string",
-//        "cod_c":"string",
-//        "age_at_death":"string",
-//        "changed_death_age":"string",
-//        "death_month":"string",
-//        "fathers_surname":"string",
-//        "fathers_occupation":"string",
-//        "spouses_names":"string",
-//        "death_place":"string",
-//        "father_deceased":"string",
-//        "certifying_doctor":"string",
-//        "REGISTRATION_DISTRICT_SUFFIX":"string",
-//        "ENTRY":"string",
-//        "mothers_surname":"string",
-//        "marital_status":"string",
-//        "TYPE":"string",
-//        "spouses_occupations":"string",
-//        "occupation":"string",
-//        "forename":"string",
-//        "birth_date":"string",
-//        "REGISTRATION_DISTRICT_NUMBER":"string",
-//        "mothers_maiden_surname":"string",
-//        "mother_deceased":"string",
-//        "corrected_entry":"string",
-//        "changed_mothers_maiden_surname":"string",
-//        "changed_forename":"string",
-//        "mothers_forename":"string",
-//        "death_day":"string",
-//        "YEAR_OF_REGISTRATION":"string",
-//        "fathers_forename":"string"
-//        }

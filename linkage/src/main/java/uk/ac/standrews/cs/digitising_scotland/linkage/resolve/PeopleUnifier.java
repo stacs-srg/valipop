@@ -40,10 +40,10 @@ public class PeopleUnifier extends AbstractPairwiseUnifier<Role> {
         // TODO This is all wrong - need a way of comparing two people - not about roles ..
 
 
-            if (    first.get_role() == Role.role_played.principal && second.get_role() == Role.role_played.mother ||
-                    first.get_role() == Role.role_played.mother && second.get_role() == Role.role_played.principal ||
-                    first.get_role() == Role.role_played.principal && second.get_role() == Role.role_played.father ||
-                    first.get_role() == Role.role_played.father && second.get_role() == Role.role_played.principal ) {
+            if (    first.getRole() == Role.RolePlayed.PRINCIPAL && second.getRole() == Role.RolePlayed.MOTHER ||
+                    first.getRole() == Role.RolePlayed.MOTHER && second.getRole() == Role.RolePlayed.PRINCIPAL ||
+                    first.getRole() == Role.RolePlayed.PRINCIPAL && second.getRole() == Role.RolePlayed.FATHER ||
+                    first.getRole() == Role.RolePlayed.FATHER && second.getRole() == Role.RolePlayed.PRINCIPAL) {
 
                 return 1.0f;
             }

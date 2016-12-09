@@ -16,11 +16,10 @@ import static uk.ac.standrews.cs.storr.types.LXPBaseType.STRING;
 
 /**
  * Created by al on 17/8/16
- *
  */
 public class Relationship extends AbstractLXP {
 
-    public enum relationship_kind { fatherof, motherof, marriedto }
+    public enum relationship_kind {fatherof, motherof, marriedto}
 
     @LXP_REF(type = "role")
     public static final String SUBJECT = "subject";
@@ -32,6 +31,7 @@ public class Relationship extends AbstractLXP {
     public static final String EVIDENCE = "evidence";
 
     public Relationship() {
+
         super();
     }
 
@@ -40,53 +40,50 @@ public class Relationship extends AbstractLXP {
         super(persistent_object_id, reader, repository, bucket);
     }
 
-    public Relationship( StoreReference<Role> subject, StoreReference<Role> object, relationship_kind relationship, String evidence  ) throws StoreException {
+    public Relationship(StoreReference<Role> subject, StoreReference<Role> object, relationship_kind relationship, String evidence) throws StoreException {
 
         this();
-        try {
-            put( SUBJECT, subject );
-            put( OBJECT, object );
-            put(RELATIONSHIP, relationship.name() );
-            put(EVIDENCE, evidence );
 
-        } catch (IllegalKeyException e) {
+        try {
+            put(SUBJECT, subject);
+            put(OBJECT, object);
+            put(RELATIONSHIP, relationship.name());
+            put(EVIDENCE, evidence);
+        }
+        catch (IllegalKeyException e) {
             ErrorHandling.error("Illegal key in OID");
         }
     }
 
     public Role getSubject() {
-//        Diagnostic.trace( "GETSUBJECT: this_id: " +  this.getId() + " this: " + this );
 
         try {
-
-            return (Role) getRef( SUBJECT ).getReferend();
-
-        } catch (BucketException e) {
-            ErrorHandling.exceptionError( e, "Cannot get subject from Relationship" );
+            return (Role) getRef(SUBJECT).getReferend();
+        }
+        catch (BucketException e) {
+            ErrorHandling.exceptionError(e, "Cannot get subject from Relationship");
             return null;
         }
     }
 
     public Role getObject() {
-//        Diagnostic.trace( "GETOBJECT: this_id: oid: " +  this.getId() + "this: " + this );
 
         try {
-
-            return (Role) getRef( OBJECT ).getReferend();
-
-        } catch (BucketException e) {
-            ErrorHandling.exceptionError( e, "Cannot get object from Relationship" );
+            return (Role) getRef(OBJECT).getReferend();
+        }
+        catch (BucketException e) {
+            ErrorHandling.exceptionError(e, "Cannot get object from Relationship");
             return null;
         }
     }
 
     public relationship_kind getRelationship() {
 
-        return relationship_kind.valueOf(getString( RELATIONSHIP ));
+        return relationship_kind.valueOf(getString(RELATIONSHIP));
     }
 
     public String getEvidence() {
-        return getString( EVIDENCE );
-    }
 
+        return getString(EVIDENCE);
+    }
 }
