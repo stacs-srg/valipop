@@ -1,10 +1,12 @@
 package uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records;
 
-import uk.ac.standrews.cs.storr.impl.exceptions.IllegalKeyException;
-import uk.ac.standrews.cs.storr.types.LXPBaseType;
-import uk.ac.standrews.cs.storr.types.LXP_SCALAR;
 import uk.ac.standrews.cs.nds.persistence.PersistentObjectException;
 import uk.ac.standrews.cs.nds.rpc.stream.JSONReader;
+import uk.ac.standrews.cs.storr.impl.exceptions.IllegalKeyException;
+import uk.ac.standrews.cs.storr.interfaces.IBucket;
+import uk.ac.standrews.cs.storr.interfaces.IRepository;
+import uk.ac.standrews.cs.storr.types.LXPBaseType;
+import uk.ac.standrews.cs.storr.types.LXP_SCALAR;
 
 /**
  * Created by al on 03/10/2014.
@@ -97,15 +99,46 @@ public class Marriage extends AbstractLXP {
     public static final String YEAR_OF_REGISTRATION = "YEAR_OF_REGISTRATION";
     @LXP_SCALAR(type = LXPBaseType.STRING)
     public static final String MARRIAGE_DAY = "marriage_day";
+    @LXP_SCALAR(type = LXPBaseType.STRING)
+    public static final String PLACE_OF_MARRIAGE = "place_of_marriage";
 
+    //******************** Constructors ********************
     public Marriage() {
         super();
     }
 
-    public Marriage(long persistent_object_id, JSONReader reader) throws PersistentObjectException, IllegalKeyException {
+    public Marriage(long persistent_object_id, JSONReader reader, IRepository repository, IBucket bucket) throws PersistentObjectException, IllegalKeyException {
 
-        super(persistent_object_id, reader);
+        super(persistent_object_id, reader, repository, bucket);
     }
+
+    //******************** Selectors ********************
+
+    public String get_grooms_forename() {
+        return this.getString(GROOM_FORENAME);
+    }
+
+    public String get_grooms_surname() {
+        return this.getString(GROOM_SURNAME);
+    }
+
+    public String get_brides_forename(){
+        return this.getString(BRIDE_FORENAME);
+    }
+    public String get_brides_surname(){
+        return this.getString(BRIDE_SURNAME);
+    }
+
+    public String get_POM(){
+        return this.getString(PLACE_OF_MARRIAGE);
+    }
+
+    public String get_DOM(){
+        //TODO This needs cleaned properly since it is in weird formats all over.
+        return this.getString(MARRIAGE_DAY) + "/" + this.getString(MARRIAGE_MONTH) + "/" + this.getString(MARRIAGE_YEAR);
+    }
+
+
 }
 
 // When these types were encoded as JSON and read in this was the definition from the file marriageType.jsn

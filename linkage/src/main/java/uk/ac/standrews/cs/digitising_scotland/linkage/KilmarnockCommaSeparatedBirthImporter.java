@@ -1,6 +1,7 @@
 package uk.ac.standrews.cs.digitising_scotland.linkage;
 
 import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.*;
+import uk.ac.standrews.cs.digitising_scotland.linkage.normalisation.normaliseDates;
 import uk.ac.standrews.cs.digitising_scotland.util.ErrorHandling;
 import uk.ac.standrews.cs.storr.impl.exceptions.BucketException;
 import uk.ac.standrews.cs.storr.impl.exceptions.IllegalKeyException;
@@ -43,7 +44,7 @@ public class KilmarnockCommaSeparatedBirthImporter extends KilmarnockCommaSepara
 
                     // *********************************
 
-                    {BIRTH_DAY, "day"}, {BIRTH_MONTH, "month"}, {BIRTH_YEAR, "year"},
+                    {BIRTH_YEAR, "year"}, {BIRTH_DAY, "day"},
 
 
                     {ILLEGITIMATE_INDICATOR, "illegitimate"},
@@ -63,6 +64,8 @@ public class KilmarnockCommaSeparatedBirthImporter extends KilmarnockCommaSepara
                     {PARENTS_MONTH_OF_MARRIAGE, "month of parents' marriage"},
 
                     {PARENTS_YEAR_OF_MARRIAGE, "year of parents' marriage"},
+
+                    {PARENTS_PLACE_OF_MARRIAGE, "place of parent's marriage 1" },
 
                     {FATHERS_OCCUPATION, "father's occupation"},
 
@@ -111,16 +114,25 @@ public class KilmarnockCommaSeparatedBirthImporter extends KilmarnockCommaSepara
         Birth birth = new Birth();
 
         addAvailableSingleFields(data, record, birth, RECORD_LABEL_MAP);
+        addAvailableNormalisedFields( data, record, birth );
         addAvailableCompoundFields(data, record, birth);
         addUnavailableFields(birth, UNAVAILABLE_RECORD_LABELS);
 
         return birth;
     }
 
+
     private static void addAvailableCompoundFields(final DataSet data, final List<String> record, final Birth birth) {
 
         birth.put(BIRTH_ADDRESS, combineFields(data, record, "address 1", "address 2", "address 3"));
         birth.put(INFORMANT, combineFields(data,record, "forename of informant", "surname of informant"));
-        birth.put(PARENTS_PLACE_OF_MARRIAGE, combineFields(data,record, "place of parent's marriage 1", "place of parent's marriage 2"));
+        // birth.put(PARENTS_PLACE_OF_MARRIAGE, combineFields(data,record, "place of parent's marriage 1", "place of parent's marriage 2"));\
+        // TODO look at this and decide what to do - create a cannonical field?
+        // place of parent's marriage 1 is mostly the town name with some Nas and ngs plus some random stuff - use this for now,
+    }
+
+    private static void addAvailableNormalisedFields(DataSet data, List<String> record, Birth birth) {
+
+        birth.put( BIRTH_MONTH, normaliseDates.normaliseMonth( data.getValue(record, "month" ) ) );
     }
 }

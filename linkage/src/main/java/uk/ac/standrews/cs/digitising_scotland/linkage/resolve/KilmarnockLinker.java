@@ -5,7 +5,9 @@ import uk.ac.standrews.cs.digitising_scotland.linkage.KilmarnockCommaSeparatedBi
 import uk.ac.standrews.cs.digitising_scotland.linkage.KilmarnockCommaSeparatedDeathImporter;
 import uk.ac.standrews.cs.digitising_scotland.linkage.KilmarnockCommaSeparatedMarriageImporter;
 import uk.ac.standrews.cs.digitising_scotland.linkage.RecordFormatException;
+import uk.ac.standrews.cs.digitising_scotland.linkage.blocking.FFNFLNMFNMMNOverMarriage;
 import uk.ac.standrews.cs.digitising_scotland.linkage.blocking.FFNFLNMFNMMNPOMDOMOverBirth;
+import uk.ac.standrews.cs.digitising_scotland.linkage.blocking.FFNFLNMFNMMNPOMDOMOverMarriage;
 import uk.ac.standrews.cs.digitising_scotland.linkage.factory.*;
 import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.*;
 import uk.ac.standrews.cs.digitising_scotland.util.ErrorHandling;
@@ -13,7 +15,9 @@ import uk.ac.standrews.cs.storr.impl.LXP;
 import uk.ac.standrews.cs.storr.impl.StoreFactory;
 import uk.ac.standrews.cs.storr.impl.StoreReference;
 import uk.ac.standrews.cs.storr.impl.TypeFactory;
-import uk.ac.standrews.cs.storr.impl.exceptions.*;
+import uk.ac.standrews.cs.storr.impl.exceptions.BucketException;
+import uk.ac.standrews.cs.storr.impl.exceptions.RepositoryException;
+import uk.ac.standrews.cs.storr.impl.exceptions.StoreException;
 import uk.ac.standrews.cs.storr.interfaces.*;
 
 import java.io.IOException;
@@ -31,17 +35,19 @@ public class KilmarnockLinker {
 
     // Repositories and stores
 
-    private static String input_repo_name = "BDM_repo";                         // input repository containing event records
-    private static String role_repo_name = "role_repo";                         // repository for Role records
-    private static String blocked_role_repo_name = "blocked_role_repo";         // repository for blocked Role records
-    private static String blocked_birth_repo_name = "blocked_birth_repo";        // repository for blocked Birth records
-    private static String linkage_repo_name = "linkage_repo";                   // repository for Relationship records
+    private static String input_repo_name = "BDM_repo";                             // input repository containing event records
+    private static String blocked_birth_repo_name = "blocked_birth_repo";           // repository for blocked Birth records
+    private static String FFNFLNMFNMMNPOMDOM_repo_name = "FFNFLNMFNMMNPOMDOM_repo";   // repository for blocked Marriage records
+    private static String FFNFLNMFNMMN_repo_name = "FFNFLNMFNMMN_repo";   // repository for blocked Marriage records
+
+    private static String linkage_repo_name = "linkage_repo";                       // repository for Relationship records
 
     private IStore store;
     private IRepository input_repo;             // Repository containing buckets of BDM records
     private IRepository role_repo;
-    private IRepository blocked_role_repo;
     private IRepository blocked_births_repo;
+    private IRepository FFNFLNMFNMMNPOMDOM_repo;
+    private IRepository FFNFLNMFNMMN_repo;
     private IRepository linkage_repo;
 
     // Bucket declarations
@@ -76,6 +82,13 @@ public class KilmarnockLinker {
     private RoleFactory roleFactory;
     private RelationshipFactory relationshipFactory;
     private ArrayList<Long> oids = new ArrayList<>();
+    private int birth_count;
+    private int death_count;
+    private int marriage_count;
+    private int families_with_parents;
+    private int families_with_children;
+    private int single_children;
+    private int children_in_groups;
 
     public KilmarnockLinker(String births_source_path, String deaths_source_path, String marriages_source_path) throws BucketException, RecordFormatException, IOException {
 
@@ -94,9 +107,10 @@ public class KilmarnockLinker {
         System.out.println("Blocking");
         block();
         System.out.println("Examining Blocks");
-        examineBlocks(); // debug
-        formFamilies();
-        //unify();
+        printMarriages();
+        printFamilies();
+        // formFamilies();
+        printStats();
         System.out.println("Finished");
     }
 
@@ -110,9 +124,10 @@ public class KilmarnockLinker {
         System.out.println("Store path = " + store_path);
 
         input_repo = store.makeRepository(input_repo_name);
-        role_repo = store.makeRepository(role_repo_name);
-        blocked_role_repo = store.makeRepository(blocked_role_repo_name);  // a repo of Role Buckets of records blocked by  first name, last name
         blocked_births_repo = store.makeRepository(blocked_birth_repo_name);  // a repo of Birth Buckets of records blocked by parents names, DOM, Place of Marriage.
+        FFNFLNMFNMMNPOMDOM_repo = store.makeRepository(FFNFLNMFNMMNPOMDOM_repo_name);  // a repo of Marriage Buckets
+        FFNFLNMFNMMN_repo = store.makeRepository(FFNFLNMFNMMN_repo_name);  // a repo of Marriage Buckets
+
         linkage_repo = store.makeRepository(linkage_repo_name);
         initialiseTypes();
         initialiseFactories();
@@ -120,7 +135,6 @@ public class KilmarnockLinker {
         births = input_repo.makeBucket(births_name, BucketKind.DIRECTORYBACKED, birthFactory);
         deaths = input_repo.makeBucket(deaths_name, BucketKind.DIRECTORYBACKED, deathFactory);
         marriages = input_repo.makeBucket(marriages_name, BucketKind.DIRECTORYBACKED, marriageFactory);
-        roles = role_repo.makeBucket(role_name, BucketKind.DIRECTORYBACKED, roleFactory);
         relationships = linkage_repo.makeBucket(relationships_name, BucketKind.DIRECTORYBACKED, relationshipFactory);
     }
 
@@ -156,13 +170,12 @@ public class KilmarnockLinker {
     private void ingestBDMRecords(String births_source_path, String deaths_source_path, String marriages_source_path) throws RecordFormatException, BucketException, IOException {
 
         System.out.println("Importing BDM records");
-        int count = 0;
-        count = KilmarnockCommaSeparatedBirthImporter.importDigitisingScotlandBirths(births, births_source_path, oids);
-        System.out.println("Imported " + count + " birth records");
-        count = KilmarnockCommaSeparatedDeathImporter.importDigitisingScotlandDeaths(deaths, deaths_source_path, oids);
-        System.out.println("Imported " + count + " death records");
-        count = KilmarnockCommaSeparatedMarriageImporter.importDigitisingScotlandMarriages(marriages, marriages_source_path, oids);
-        System.out.println("Imported " + count + " marriage records");
+        birth_count = KilmarnockCommaSeparatedBirthImporter.importDigitisingScotlandBirths(births, births_source_path, oids);
+        System.out.println("Imported " + birth_count + " birth records");
+        death_count = KilmarnockCommaSeparatedDeathImporter.importDigitisingScotlandDeaths(deaths, deaths_source_path, oids);
+        System.out.println("Imported " + death_count + " death records");
+        marriage_count = KilmarnockCommaSeparatedMarriageImporter.importDigitisingScotlandMarriages(marriages, marriages_source_path, oids);
+        System.out.println("Imported " + marriage_count + " marriage records");
 
         // createRoles( births, deaths, marriages );
     }
@@ -283,10 +296,15 @@ public class KilmarnockLinker {
     }
 
     /**
-     * Blocks the Roles into buckets.
+     * Blocks the Births and Marriages into buckets.
      */
     private void block() {
+        blockBirths();
+        blockMarriages();
+    }
 
+    private void blockBirths() {
+        System.out.println("Blocking births...");
         try {
             IBlocker blocker = new FFNFLNMFNMMNPOMDOMOverBirth(births, blocked_births_repo, birthFactory);
             blocker.apply();
@@ -302,21 +320,99 @@ public class KilmarnockLinker {
         }
     }
 
+    private void blockMarriages() {
+
+        blockMarriagesFFNFLNMFNMMNPOMDOM();
+        blockMarriagesFFNFLNMFNMMN();
+    }
+
+    private void blockMarriagesFFNFLNMFNMMNPOMDOM() {
+        System.out.println("Blocking marriages by FFNFLNMFNMMNPOMDOM...");
+        try {
+            IBlocker blocker = new FFNFLNMFNMMNPOMDOMOverMarriage(marriages, FFNFLNMFNMMNPOMDOM_repo, marriageFactory);
+            blocker.apply();
+        }
+        catch (RepositoryException e) {
+            e.printStackTrace();
+        }
+        catch (BucketException e) {
+            e.printStackTrace();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void blockMarriagesFFNFLNMFNMMN() {
+        System.out.println("Blocking marriages by FFNFLNMFNMMN...");
+        try {
+            IBlocker blocker = new FFNFLNMFNMMNOverMarriage(marriages, FFNFLNMFNMMN_repo, marriageFactory);
+            blocker.apply();
+        }
+        catch (RepositoryException e) {
+            e.printStackTrace();
+        }
+        catch (BucketException e) {
+            e.printStackTrace();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
     /**
-     * Display the blocks that are formed from the SFNLNFFNFLNMFNDoMOverRole blocking process
+     * Display the blocks that are formed from the SFNLNFFNFLNMFNDoMOverBirth blocking process
      */
-    private void examineBlocks() {
+    private void printFamilies() {
 
         Iterator<IBucket<Birth>> iter = blocked_births_repo.getIterator(birthFactory);
 
         while (iter.hasNext()) {
             IBucket<Birth> bucket = iter.next();
 
-            System.out.println("Bucket name: " + bucket.getName());
-
+            String bucket_name = bucket.getName();
+            System.out.println("Bucket name: " + bucket_name);
+            // Look for parents with same blocking key
+            System.out.println("Parents: " + bucket.getName());
+            if (FFNFLNMFNMMNPOMDOM_repo.bucketExists(bucket_name)) {
+                printParents(bucket_name);
+                families_with_parents++;
+            }
+            System.out.println("Children: " + bucket.getName());
+            int children_count = 0;
             try {
                 for (Birth birth : bucket.getInputStream()) {
-                    System.out.println(birth.toString());
+                    System.out.println("\t" + birth.toString());
+                    children_count++;
+                }
+            } catch (BucketException e) {
+                System.out.println("Exception whilst getting stream");
+            }
+            if (children_count > 1) {
+                families_with_children++;
+                children_in_groups += children_count;
+            }
+            if (children_count == 1) {
+                single_children++;
+            }
+        }
+    }
+
+    /**
+     * Display the blocks that are formed from the SFNLNFFNFLNMFNDoMOverMarriage blocking process
+     */
+    private void printMarriages() {
+
+        Iterator<IBucket<Marriage>> iter = FFNFLNMFNMMNPOMDOM_repo.getIterator(marriageFactory);
+
+        while (iter.hasNext()) {
+            IBucket<Marriage> bucket = iter.next();
+
+            System.out.println("Marriage: " + bucket.getName());
+            try {
+                for (Marriage m : bucket.getInputStream()) {
+                    System.out.println("\t" + m.toString());
                 }
             }
             catch (BucketException e) {
@@ -324,6 +420,55 @@ public class KilmarnockLinker {
             }
         }
     }
+
+    /**
+     * Display the blocks that are formed from the SFNLNFFNFLNMFNDoMOverParents blocking process
+     */
+    private void printParents(String bucket_name) {
+        try {
+            IBucket<Marriage> bucket = FFNFLNMFNMMNPOMDOM_repo.getBucket(bucket_name);
+            IInputStream<Marriage> stream = bucket.getInputStream();
+            for (Marriage m : stream) {
+                System.out.println("\t PPPPPPP " + m.toString());
+            }
+        } catch (BucketException | RepositoryException e) {
+            System.out.println("Exception whilst getting parents");
+        }
+
+    }
+
+    private void printStats() {
+
+        System.out.println("Stats:");
+        System.out.println("Births: " + birth_count );
+        System.out.println("Deaths: " + death_count );
+        System.out.println("Marriages: " + marriage_count );
+
+        System.out.println("Parents in families: " + families_with_parents );
+        System.out.println("Sibling groups (>1 child) " + families_with_children );
+        System.out.println("Single children: " + single_children );
+
+
+
+    }
+
+    /**
+     * Return a list of parents formed from the SFNLNFFNFLNMFNDoMOverParents blocking process for some blocking key
+     */
+    private List<Marriage> getParents( String bucket_name) {
+        List<Marriage> parents = new ArrayList<Marriage>();
+        try {
+            IBucket<Marriage> bucket = FFNFLNMFNMMNPOMDOM_repo.getBucket(bucket_name);
+            IInputStream<Marriage> stream = bucket.getInputStream();
+            for (Marriage m : stream) {
+                parents.add(m);
+            }
+        } catch (BucketException | RepositoryException e) {
+            System.out.println("Exception whilst getting parents");
+        }
+        return parents;
+    }
+
 
     /**
      * Try and form families from the blocked data from SFNLNFFNFLNMFNDoMOverRole
@@ -335,28 +480,33 @@ public class KilmarnockLinker {
         while (iter.hasNext()) {
 
             IBucket<Birth> bucket = iter.next();
-            List<Birth> potential_family = new ArrayList<>();
+            String name = bucket.getName();
+            List<Birth> siblings = new ArrayList<>();
 
             try {
                 for (Birth birth : bucket.getInputStream()) {
-                    potential_family.add(birth);
+                    siblings.add(birth);
                 }
             }
             catch (BucketException e) {
                 ErrorHandling.exceptionError(e, "Exception whilst getting stream of Roles");
             }
-            create_family(potential_family);
+            if( FFNFLNMFNMMNPOMDOM_repo.bucketExists(name)) {
+                List<Marriage> parents = getParents(name);
+            }
+            // create_family(siblings);
         }
     }
+
 
     /**
      * Try and create a family unit from the blocked data
      *
-     * @param potential_family - a collection of Roles from SFNLNFFNFLNMFNDoMOverRole blocking
+     * @param parents_marriage - a collection of marriage certificates of the potential parents of the family from Marriage blocking
+     * @param children - a collection of Births from SFNLNFFNFLNMFNDoMOverBirth blocking
      */
-    private void create_family(List<Birth> potential_family) {
+    private void create_family(List <Marriage> parents_marriage, List<Birth> children) {
 
-        // Todo stubbed out here....
     }
 
     /**

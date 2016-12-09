@@ -72,7 +72,7 @@ public abstract class Blocker<T extends ILXP> implements IBlocker<T> {
                     }
                 } else { // need to create it
                     try {
-                        output_repo.makeBucket(bucket_name, BucketKind.DIRECTORYBACKED, factory).getOutputStream().add(record);
+                        output_repo.makeBucket(bucket_name, BucketKind.INDIRECT, factory).getOutputStream().add(record);
                     } catch (RepositoryException | BucketException e) {
                         ErrorHandling.exceptionError(e, "Exception creating bucket for record: " + record);
                     }

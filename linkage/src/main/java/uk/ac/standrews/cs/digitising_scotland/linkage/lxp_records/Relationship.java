@@ -1,14 +1,16 @@
 package uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records;
 
 import uk.ac.standrews.cs.digitising_scotland.util.ErrorHandling;
+import uk.ac.standrews.cs.nds.persistence.PersistentObjectException;
+import uk.ac.standrews.cs.nds.rpc.stream.JSONReader;
 import uk.ac.standrews.cs.storr.impl.StoreReference;
 import uk.ac.standrews.cs.storr.impl.exceptions.BucketException;
 import uk.ac.standrews.cs.storr.impl.exceptions.IllegalKeyException;
 import uk.ac.standrews.cs.storr.impl.exceptions.StoreException;
+import uk.ac.standrews.cs.storr.interfaces.IBucket;
+import uk.ac.standrews.cs.storr.interfaces.IRepository;
 import uk.ac.standrews.cs.storr.types.LXP_REF;
 import uk.ac.standrews.cs.storr.types.LXP_SCALAR;
-import uk.ac.standrews.cs.nds.persistence.PersistentObjectException;
-import uk.ac.standrews.cs.nds.rpc.stream.JSONReader;
 
 import static uk.ac.standrews.cs.storr.types.LXPBaseType.STRING;
 
@@ -33,9 +35,9 @@ public class Relationship extends AbstractLXP {
         super();
     }
 
-    public Relationship(long persistent_object_id, JSONReader reader) throws PersistentObjectException, IllegalKeyException {
+    public Relationship(long persistent_object_id, JSONReader reader, IRepository repository, IBucket bucket) throws PersistentObjectException, IllegalKeyException {
 
-        super(persistent_object_id, reader);
+        super(persistent_object_id, reader, repository, bucket);
     }
 
     public Relationship( StoreReference<Role> subject, StoreReference<Role> object, relationship_kind relationship, String evidence  ) throws StoreException {
