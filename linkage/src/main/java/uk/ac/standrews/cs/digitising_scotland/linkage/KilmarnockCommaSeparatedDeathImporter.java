@@ -79,7 +79,6 @@ public class KilmarnockCommaSeparatedDeathImporter extends KilmarnockCommaSepara
                     {SPOUSES_OCCUPATIONS, "spouse's occ"},
 
                     {COD_A, "cause of death"}
-
     };
 
     public static final String[] UNAVAILABLE_RECORD_LABELS = {

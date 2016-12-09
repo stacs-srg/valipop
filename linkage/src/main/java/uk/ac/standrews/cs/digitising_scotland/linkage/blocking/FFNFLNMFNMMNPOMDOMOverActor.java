@@ -1,18 +1,11 @@
 package uk.ac.standrews.cs.digitising_scotland.linkage.blocking;
 
-
-import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.Birth;
-import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.Marriage;
-import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.Role;
-import uk.ac.standrews.cs.digitising_scotland.linkage.stream_operators.sharder.Blocker;
-import uk.ac.standrews.cs.digitising_scotland.util.ErrorHandling;
+import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.*;
+import uk.ac.standrews.cs.digitising_scotland.util.*;
 import uk.ac.standrews.cs.storr.impl.exceptions.*;
-import uk.ac.standrews.cs.storr.interfaces.IBucket;
-import uk.ac.standrews.cs.storr.interfaces.ILXP;
-import uk.ac.standrews.cs.storr.interfaces.ILXPFactory;
-import uk.ac.standrews.cs.storr.interfaces.IRepository;
+import uk.ac.standrews.cs.storr.interfaces.*;
 
-import java.io.IOException;
+import java.io.*;
 
 /**
  * This class blocks on streams of Role records.
@@ -23,7 +16,7 @@ import java.io.IOException;
  * Created by al on 30/8/16
  */
 
-public class FFNFLNMFNMMNPOMDOMOverActor extends Blocker<Role> {
+public class FFNFLNMFNMMNPOMDOMOverActor extends AbstractBlocker<Role> {
 
     public FFNFLNMFNMMNPOMDOMOverActor(final IBucket<Role> roleBucket, final IRepository output_repo, ILXPFactory<Role> tFactory) throws BucketException, RepositoryException, IOException {
 
@@ -32,123 +25,115 @@ public class FFNFLNMFNMMNPOMDOMOverActor extends Blocker<Role> {
 
     /**
      * @param record - a Person record to be blocked
-     * @return the blocking keys - one for baby and one for father
+     * @return the blocking keys - one for baby and one for FATHER
      */
     public String[] determineBlockedBucketNamesForRecord(final Role record) throws NoSuitableBucketException {
-            switch ( record.get_role() ) {
-                case principal:
-                    return determineBlockedBucketNamesForPrincipal( record );
-                case father:
-                    return determineBlockedBucketNamesForFather( record );
-                case mother:
-                    return determineBlockedBucketNamesForMother( record );
-                case bride:
-                    return determineBlockedBucketNamesForBrideORGroom( record );
-                case groom:
-                    return determineBlockedBucketNamesForBrideORGroom( record );
-                case grooms_father:
-                case grooms_mother:
-                case brides_father:
-                case brides_mother:
-                default:
-                    throw new NoSuitableBucketException( "No match" );
-            }
+
+        switch (record.getRole()) {
+            case PRINCIPAL:
+                return determineBlockedBucketNamesForPrincipal(record);
+            case FATHER:
+                return determineBlockedBucketNamesForFather(record);
+            case MOTHER:
+                return determineBlockedBucketNamesForMother(record);
+            case BRIDE:
+                return determineBlockedBucketNamesForBrideOrGroom(record);
+            case GROOM:
+                return determineBlockedBucketNamesForBrideOrGroom(record);
+
+            default:
+                throw new NoSuitableBucketException("No match");
+        }
     }
 
     /*
-     * @param record - a Person record to be blocked who is in the role of principal
-     * @return the blocking key based on FNLN of mother and father and their place and date of marriage
+     * @param record - a Person record to be blocked who is in the role of PRINCIPAL
+     * @return the blocking key based on FNLN of mother and FATHER and their place and date of marriage
      */
     public String[] determineBlockedBucketNamesForPrincipal(final Role record) throws NoSuitableBucketException {
 
         // Note will concat null strings into key if any fields are null - working hypothesis - this doesn't matter.
 
-        StringBuilder builder = new StringBuilder();
-
         try {
-            builder.append(record.get_fathers_forename());
-            builder.append(record.get_fathers_surname());
-            builder.append(record.get_mothers_forename());
-            builder.append(record.get_mothers_maiden_surname());
-            builder.append(record.get_POM());
-            builder.append(record.get_DOM());
-            return new String[]{removeNasties(builder.toString())};
+            final String normalised_father_forename = normaliseName(record.getFathersForename());
+            final String normalised_father_surname = normaliseName(record.getFathersSurname());
+            final String normalised_mother_forename = normaliseName(record.getMothersForename());
+            final String normalised_mother_maiden_surname = normaliseName(record.getMothersMaidenSurname());
 
-        } catch (KeyNotFoundException e) {
+            String bucket_name = concatenate(normalised_father_forename, normalised_father_surname, normalised_mother_forename, normalised_mother_maiden_surname, record.getPlaceOfMarriage(), record.getDateOfMarriage());
+            return new String[]{bucket_name};
+        }
+        catch (KeyNotFoundException e) {
             ErrorHandling.exceptionError(e, "Key not found");
-            throw new NoSuitableBucketException( e );
-        } catch (TypeMismatchFoundException e) {
+            throw new NoSuitableBucketException(e);
+        }
+        catch (TypeMismatchFoundException e) {
             ErrorHandling.exceptionError(e, "Type mismatch");
-            throw new NoSuitableBucketException( e );
+            throw new NoSuitableBucketException(e);
         }
     }
 
     /*
-     * @param record - a Person record to be blocked who is in the role of father
-     * @return the blocking key based on FNLN of mother and father and their place and date of marriage
+     * @param record - a Person record to be blocked who is in the role of FATHER
+     * @return the blocking key based on FNLN of mother and FATHER and their place and date of marriage
      */
     private String[] determineBlockedBucketNamesForFather(Role record) throws NoSuitableBucketException {
+
         // Note will concat null strings into key if any fields are null - working hypothesis - this doesn't matter.
 
-        StringBuilder builder = new StringBuilder();
-
         try {
-            builder.append(record.get_forename());
-            builder.append(record.get_surname());
+            final String normalised_father_forename = normaliseName(record.getForename());
+            final String normalised_father_surname = normaliseName(record.getSurname());
 
-            // now find the wife from the original record
+            // Get the mother's names from the original record.
+            ILXP primary = record.getOriginalRecord();
 
-            ILXP primary = record.get_original_record();
+            final String normalised_mother_forename = normaliseName((String) primary.get(Birth.MOTHERS_FORENAME));
+            final String normalised_mother_maiden_surname = normaliseName((String) primary.get(Birth.MOTHERS_MAIDEN_SURNAME));
 
-            builder.append( primary.get(Birth.MOTHERS_FORENAME) );
-            builder.append( primary.get(Birth.MOTHERS_MAIDEN_SURNAME) );
-            builder.append(record.get_POM());
-            builder.append(record.get_DOM());
-
-            return new String[]{removeNasties(builder.toString())};
-
-        } catch (KeyNotFoundException e) {
-            ErrorHandling.exceptionError(e, "Key not found");
-            throw new NoSuitableBucketException( e );
-        } catch (TypeMismatchFoundException e) {
-            ErrorHandling.exceptionError(e, "Type mismatch");
-            throw new NoSuitableBucketException( e );
+            String bucket_name = concatenate(normalised_father_forename, normalised_father_surname, normalised_mother_forename, normalised_mother_maiden_surname, record.getPlaceOfMarriage(), record.getDateOfMarriage());
+            return new String[]{bucket_name};
         }
-
+        catch (KeyNotFoundException e) {
+            ErrorHandling.exceptionError(e, "Key not found");
+            throw new NoSuitableBucketException(e);
+        }
+        catch (TypeMismatchFoundException e) {
+            ErrorHandling.exceptionError(e, "Type mismatch");
+            throw new NoSuitableBucketException(e);
+        }
     }
 
     /*
      * @param record - a Person record to be blocked who is in the role of mother
-     * @return the blocking key based on FNLN of mother and father and their place and date of marriage
+     * @return the blocking key based on FNLN of mother and FATHER and their place and date of marriage
      */
     private String[] determineBlockedBucketNamesForMother(Role record) throws NoSuitableBucketException {
+
         // Note will concat null strings into key if any fields are null - working hypothesis - this doesn't matter.
 
         StringBuilder builder = new StringBuilder();
 
         try {
-            // first find the husband from the original record
+            // Get the father's names from the original record.
+            ILXP primary = record.getOriginalRecord();
 
-            ILXP primary = record.get_original_record();
+            final String normalised_father_forename = normaliseName((String) primary.get(Birth.FATHERS_FORENAME));
+            final String normalised_father_surname = normaliseName((String) primary.get(Birth.FATHERS_SURNAME));
 
-            builder.append( primary.get(Birth.FATHERS_FORENAME) );
-            builder.append( primary.get(Birth.FATHERS_SURNAME) );
+            final String normalised_mother_forename = normaliseName(record.getForename());
+            final String normalised_mother_surname = normaliseName(record.getSurname());
 
-            // now the mothers names...
-
-            builder.append(record.get_forename());
-            builder.append(record.get_surname());
-            builder.append(record.get_POM());
-            builder.append(record.get_DOM());
-
-            return new String[]{removeNasties(builder.toString())};
-
-        } catch (KeyNotFoundException e) {
+            String bucket_name = concatenate(normalised_father_forename, normalised_father_surname, normalised_mother_forename, normalised_mother_surname, record.getPlaceOfMarriage(), record.getDateOfMarriage());
+            return new String[]{bucket_name};
+        }
+        catch (KeyNotFoundException e) {
             ErrorHandling.exceptionError(e, "Key not found");
-            throw new NoSuitableBucketException( e );
-        } catch (TypeMismatchFoundException e) {
+            throw new NoSuitableBucketException(e);
+        }
+        catch (TypeMismatchFoundException e) {
             ErrorHandling.exceptionError(e, "Type mismatch");
-            throw new NoSuitableBucketException( e );
+            throw new NoSuitableBucketException(e);
         }
     }
 
@@ -156,46 +141,31 @@ public class FFNFLNMFNMMNPOMDOMOverActor extends Blocker<Role> {
      * @param record - a Person record to be blocked who is in the role of bride or groom
      * @return the blocking key based on FNLN of bride and groom and their place and date of marriage
      */
-    private String[] determineBlockedBucketNamesForBrideORGroom(Role record) throws NoSuitableBucketException {
+    private String[] determineBlockedBucketNamesForBrideOrGroom(Role record) throws NoSuitableBucketException {
+
         // Note will concat null strings into key if any fields are null - working hypothesis - this doesn't matter.
 
-        StringBuilder builder = new StringBuilder();
-
         try {
-            // first find the husband from the original record
+            // Get the spouses' names from the original record.
+            ILXP primary = record.getOriginalRecord();
 
-            ILXP primary = record.get_original_record();
+            final String normalised_groom_forename = normaliseName((String) primary.get(Marriage.GROOM_FORENAME));
+            final String normlaised_groom_surname = normaliseName((String) primary.get(Marriage.GROOM_SURNAME));
 
-            builder.append( primary.get(Marriage.GROOM_FORENAME) );
-            builder.append( primary.get(Marriage.GROOM_SURNAME) );
+            final String normalised_bride_forename = normaliseName((String) primary.get(Marriage.BRIDE_FORENAME));
+            final String normalised_bride_surname = normaliseName((String) primary.get(Marriage.BRIDE_SURNAME));
 
-            // now the mothers names...
-
-            builder.append(primary.get(Marriage.BRIDE_FORENAME) );
-            builder.append( primary.get(Marriage.BRIDE_SURNAME) );
-            builder.append(record.get_POM());
-            builder.append(record.get_DOM());
-
-            return new String[]{removeNasties(builder.toString())};
-
-        } catch (KeyNotFoundException e) {
-            ErrorHandling.exceptionError(e, "Key not found");
-            throw new NoSuitableBucketException( e );
-        } catch (TypeMismatchFoundException e) {
-            ErrorHandling.exceptionError(e, "Type mismatch");
-            throw new NoSuitableBucketException( e );
+            String bucket_name = concatenate(normalised_groom_forename, normlaised_groom_surname, normalised_bride_forename, normalised_bride_surname, record.getPlaceOfMarriage(), record.getDateOfMarriage());
+            return new String[]{bucket_name};
         }
-
+        catch (KeyNotFoundException e) {
+            ErrorHandling.exceptionError(e, "Key not found");
+            throw new NoSuitableBucketException(e);
+        }
+        catch (TypeMismatchFoundException e) {
+            ErrorHandling.exceptionError(e, "Type mismatch");
+            throw new NoSuitableBucketException(e);
+        }
     }
-
-
-    /**
-     * @param key - a String key to be made into an acceptable bucket name
-     * @return the cleaned up String
-     */
-    private String removeNasties(final String key) {
-        return key.replace("/", "").replace( "\"", "" );
-    }
-
 }
 

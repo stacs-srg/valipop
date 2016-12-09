@@ -16,10 +16,14 @@ public class KilmarnockCommaSeparatedImporter {
     protected static void addAvailableSingleFields(final DataSet data, final List<String> record, final AbstractLXP lxp_record, final String[][] label_map) {
 
         for (String[] field : label_map) {
-            lxp_record.put(field[0], data.getValue(record, field[1]));
+            try {
+                lxp_record.put(field[0], data.getValue(record, field[1]));
+            }
+            catch (ArrayIndexOutOfBoundsException e) {
+                throw e;
+            }
         }
     }
-
 
     protected static void addUnavailableFields(final AbstractLXP lxp_record, final String[] unavailable_record_labels) {
 

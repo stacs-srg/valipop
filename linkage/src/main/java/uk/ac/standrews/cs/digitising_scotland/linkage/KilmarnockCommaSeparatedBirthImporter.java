@@ -46,7 +46,6 @@ public class KilmarnockCommaSeparatedBirthImporter extends KilmarnockCommaSepara
 
                     {BIRTH_YEAR, "year"}, {BIRTH_DAY, "day"},
 
-
                     {ILLEGITIMATE_INDICATOR, "illegitimate"},
 
                     // *********************************
@@ -65,11 +64,11 @@ public class KilmarnockCommaSeparatedBirthImporter extends KilmarnockCommaSepara
 
                     {PARENTS_YEAR_OF_MARRIAGE, "year of parents' marriage"},
 
-                    {PARENTS_PLACE_OF_MARRIAGE, "place of parent's marriage 1" },
+                    {PARENTS_PLACE_OF_MARRIAGE, "place of parent's marriage 1"},
 
                     {FATHERS_OCCUPATION, "father's occupation"},
 
-                    {INFORMANT_DID_NOT_SIGN, "did informant  sign?"},
+                    {INFORMANT_DID_NOT_SIGN, "did informant  sign?"}
 
     };
 
@@ -77,7 +76,9 @@ public class KilmarnockCommaSeparatedBirthImporter extends KilmarnockCommaSepara
 
                     // Fields not present in Kilmarnock dataset.
 
-                    CHANGED_FORENAME, CHANGED_SURNAME, MOTHERS_SURNAME, CHANGED_MOTHERS_MAIDEN_SURNAME, CORRECTED_ENTRY, IMAGE_QUALITY, BIRTH_ADDRESS, ADOPTION};
+                    CHANGED_FORENAME, CHANGED_SURNAME, MOTHERS_SURNAME, CHANGED_MOTHERS_MAIDEN_SURNAME, CORRECTED_ENTRY, IMAGE_QUALITY, BIRTH_ADDRESS, ADOPTION
+
+    };
 
     /**
      * @param births the bucket from which to import
@@ -114,18 +115,17 @@ public class KilmarnockCommaSeparatedBirthImporter extends KilmarnockCommaSepara
         Birth birth = new Birth();
 
         addAvailableSingleFields(data, record, birth, RECORD_LABEL_MAP);
-        addAvailableNormalisedFields( data, record, birth );
+        addAvailableNormalisedFields(data, record, birth);
         addAvailableCompoundFields(data, record, birth);
         addUnavailableFields(birth, UNAVAILABLE_RECORD_LABELS);
 
         return birth;
     }
 
-
     private static void addAvailableCompoundFields(final DataSet data, final List<String> record, final Birth birth) {
 
         birth.put(BIRTH_ADDRESS, combineFields(data, record, "address 1", "address 2", "address 3"));
-        birth.put(INFORMANT, combineFields(data,record, "forename of informant", "surname of informant"));
+        birth.put(INFORMANT, combineFields(data, record, "forename of informant", "surname of informant"));
         // birth.put(PARENTS_PLACE_OF_MARRIAGE, combineFields(data,record, "place of parent's marriage 1", "place of parent's marriage 2"));\
         // TODO look at this and decide what to do - create a cannonical field?
         // place of parent's marriage 1 is mostly the town name with some Nas and ngs plus some random stuff - use this for now,
@@ -133,6 +133,6 @@ public class KilmarnockCommaSeparatedBirthImporter extends KilmarnockCommaSepara
 
     private static void addAvailableNormalisedFields(DataSet data, List<String> record, Birth birth) {
 
-        birth.put( BIRTH_MONTH, normaliseDates.normaliseMonth( data.getValue(record, "month" ) ) );
+        birth.put(BIRTH_MONTH, normaliseDates.normaliseMonth(data.getValue(record, "month")));
     }
 }

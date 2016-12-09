@@ -35,7 +35,7 @@ public abstract class AbstractPairwiseUnifier<T extends ILXP> implements IPairWi
     }
 
     /**
-     * @param records a collection of b & d records for people with the same first name, last name, father's first name and mother's first name.
+     * @param records a collection of b & d records for people with the same first name, last name, FATHER's first name and mother's first name.
      */
     private void linkRecords(final List<T> records) {
 
