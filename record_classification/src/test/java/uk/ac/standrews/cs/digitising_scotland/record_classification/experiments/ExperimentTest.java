@@ -24,7 +24,7 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.experiments.
 import uk.ac.standrews.cs.digitising_scotland.record_classification.experiments.specific.ExactMatchAndStringSimilarityExperiment;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.ClassificationContext;
 import uk.ac.standrews.cs.util.tools.FileManipulation;
-import uk.ac.standrews.cs.util.tools.InfoLevel;
+import uk.ac.standrews.cs.util.tools.LoggingLevel;
 import uk.ac.standrews.cs.util.tools.Logging;
 
 import java.nio.file.Path;
@@ -47,7 +47,7 @@ public class ExperimentTest {
     @Before
     public void setup() throws Exception {
 
-        Logging.setInfoLevel(InfoLevel.NONE);
+        Logging.setLoggingLevel(LoggingLevel.NONE);
 
         experiment = new ExactMatchAndStringSimilarityExperiment();
 

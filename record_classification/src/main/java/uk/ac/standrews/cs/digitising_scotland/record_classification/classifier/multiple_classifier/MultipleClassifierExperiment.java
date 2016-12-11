@@ -28,7 +28,7 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.util.*;
 import uk.ac.standrews.cs.util.dataset.*;
 import uk.ac.standrews.cs.util.tools.*;
-import uk.ac.standrews.cs.util.tools.InfoLevel;
+import uk.ac.standrews.cs.util.tools.LoggingLevel;
 
 import java.io.*;
 import java.nio.charset.*;
@@ -135,7 +135,7 @@ public class MultipleClassifierExperiment implements Runnable {
     private int max_matching_prefix_metrics_length = 0;
 
     @Parameter(names = "-v", description = "Logging verbosity.")
-    private InfoLevel verbosity = InfoLevel.VERBOSE;
+    private LoggingLevel verbosity = LoggingLevel.VERBOSE;
 
     private MultipleClassifierExperiment(String... args) throws IOException {
 
@@ -151,12 +151,12 @@ public class MultipleClassifierExperiment implements Runnable {
         text_cleaner = text_cleaner_supplier.get();
         token_combination_generator = token_combination_generator_supplier.get();
         multiple_classifier = new MultipleClassifier(core_classifier, classification_confidence_threshold, text_cleaner, MultipleClassifier.NOT_EQUAL_ONE_ANOTHER, token_combination_generator);
-        Logging.setInfoLevel(verbosity);
+        Logging.setLoggingLevel(verbosity);
     }
 
     private DataSet removeDuplicateData(final DataSet source) {
 
-        Logging.output(InfoLevel.VERBOSE, "Removing duplicate data records from gold standard...");
+        Logging.output(LoggingLevel.VERBOSE, "Removing duplicate data records from gold standard...");
         final DataSet unique = new DataSet(source.getColumnLabels());
         final Set<String> unique_data = new HashSet<>();
 
@@ -169,7 +169,7 @@ public class MultipleClassifierExperiment implements Runnable {
             }
         });
 
-        Logging.output(InfoLevel.VERBOSE, String.format("Removed %d duplicate data records from gold standard", source_records.size() - unique.getRecords().size()));
+        Logging.output(LoggingLevel.VERBOSE, String.format("Removed %d duplicate data records from gold standard", source_records.size() - unique.getRecords().size()));
         return unique;
     }
 
@@ -223,25 +223,25 @@ public class MultipleClassifierExperiment implements Runnable {
 
     private void printMetrics(final ConfusionMatrix confusion_matrix) {
 
-        Logging.output(InfoLevel.VERBOSE, String.format("Classification metrics by: %s", confusion_matrix.toString()));
+        Logging.output(LoggingLevel.VERBOSE, String.format("Classification metrics by: %s", confusion_matrix.toString()));
         new ClassificationMetrics(confusion_matrix).printMetrics();
-        Logging.output(InfoLevel.VERBOSE, "");
+        Logging.output(LoggingLevel.VERBOSE, "");
     }
 
     private void logParameters() {
 
-        Logging.output(InfoLevel.VERBOSE, String.format("Core classifier: %s", core_classifier.getName()));
-        Logging.output(InfoLevel.VERBOSE, String.format("Classification confidence threshold: %f", classification_confidence_threshold));
-        Logging.output(InfoLevel.VERBOSE, String.format("Pre-classification data cleaner: %s", String.valueOf(text_cleaner_supplier)));
-        Logging.output(InfoLevel.VERBOSE, String.format("Training dataset: %s", String.valueOf(training_file)));
-        Logging.output(InfoLevel.VERBOSE, String.format("Gold standard dataset: %s", String.valueOf(gold_standard_file)));
+        Logging.output(LoggingLevel.VERBOSE, String.format("Core classifier: %s", core_classifier.getName()));
+        Logging.output(LoggingLevel.VERBOSE, String.format("Classification confidence threshold: %f", classification_confidence_threshold));
+        Logging.output(LoggingLevel.VERBOSE, String.format("Pre-classification data cleaner: %s", String.valueOf(text_cleaner_supplier)));
+        Logging.output(LoggingLevel.VERBOSE, String.format("Training dataset: %s", String.valueOf(training_file)));
+        Logging.output(LoggingLevel.VERBOSE, String.format("Gold standard dataset: %s", String.valueOf(gold_standard_file)));
     }
 
     private void classifyAndPersistResults() {
 
         final int gold_standard_size = gold_standard.getRecords().size();
-        Logging.setProgressIndicatorSteps(gold_standard_size);
-        Logging.output(InfoLevel.VERBOSE, String.format("Classifying %d records...", gold_standard_size));
+        Logging.initialiseProgressIndicator(gold_standard_size);
+        Logging.output(LoggingLevel.VERBOSE, String.format("Classifying %d records...", gold_standard_size));
 
         try {
             initCSVResultPrinter();
@@ -255,9 +255,9 @@ public class MultipleClassifierExperiment implements Runnable {
                 final List<String> result_row = toDataSetRow(id, data, classifications);
                 classified_records.addRow(result_row);
                 persistClassificationResult(result_row);
-                Logging.progressStep(InfoLevel.VERBOSE);
+                Logging.progressStep(LoggingLevel.VERBOSE);
             }
-            Logging.output(InfoLevel.VERBOSE, "Done classifying records in " + Formatting.format(Duration.between(start, Instant.now())));
+            Logging.output(LoggingLevel.VERBOSE, "Done classifying records in " + Formatting.format(Duration.between(start, Instant.now())));
         }
         finally {
             destroyCSVResultPrinter();
@@ -271,7 +271,7 @@ public class MultipleClassifierExperiment implements Runnable {
                 csv_printer.flush();
             }
             catch (IOException e) {
-                Logging.output(InfoLevel.LONG_SUMMARY, "failed to flush csv result printer before closing");
+                Logging.output(LoggingLevel.LONG_SUMMARY, "failed to flush csv result printer before closing");
             }
             finally {
                 closeCSVResultPrinter();
@@ -285,7 +285,7 @@ public class MultipleClassifierExperiment implements Runnable {
             csv_printer.close();
         }
         catch (IOException e) {
-            Logging.output(InfoLevel.LONG_SUMMARY, "failed to close csv result printer");
+            Logging.output(LoggingLevel.LONG_SUMMARY, "failed to close csv result printer");
         }
     }
 
@@ -325,16 +325,16 @@ public class MultipleClassifierExperiment implements Runnable {
     private void trainCoreClassifier() {
 
         final Bucket consistent_cleaned_bucket = getTrainingBucket();
-        Logging.output(InfoLevel.VERBOSE, String.format("Training core classifier with %d records...", consistent_cleaned_bucket.size()));
+        Logging.output(LoggingLevel.VERBOSE, String.format("Training core classifier with %d records...", consistent_cleaned_bucket.size()));
         final Instant start = Instant.now();
         core_classifier.trainAndEvaluate(consistent_cleaned_bucket, 1.0, random);
-        Logging.output(InfoLevel.VERBOSE, "Done training core classifier in " + Formatting.format(Duration.between(start, Instant.now())));
+        Logging.output(LoggingLevel.VERBOSE, "Done training core classifier in " + Formatting.format(Duration.between(start, Instant.now())));
     }
 
     private Bucket getTrainingBucket() {
 
         // TODO tidy up cleaning before training.
-        Logging.output(InfoLevel.VERBOSE, String.format("Cleaning %d records prior to training core classifier...", training.getRecords().size()));
+        Logging.output(LoggingLevel.VERBOSE, String.format("Cleaning %d records prior to training core classifier...", training.getRecords().size()));
         final Instant start = Instant.now();
 
         final Bucket training_bucket = new Bucket(training);
@@ -342,7 +342,7 @@ public class MultipleClassifierExperiment implements Runnable {
         training_bucket.forEach(record -> cleaned_bucket.add(text_cleaner.cleanRecord(record)));
         final Bucket consistent_cleaned_training_bucket = ConsistentClassificationCleaner.CORRECT.apply(Collections.singletonList(cleaned_bucket)).get(0);
 
-        Logging.output(InfoLevel.VERBOSE, "Done cleaning training records in " + Formatting.format(Duration.between(start, Instant.now())));
+        Logging.output(LoggingLevel.VERBOSE, "Done cleaning training records in " + Formatting.format(Duration.between(start, Instant.now())));
 
         return consistent_cleaned_training_bucket;
     }
