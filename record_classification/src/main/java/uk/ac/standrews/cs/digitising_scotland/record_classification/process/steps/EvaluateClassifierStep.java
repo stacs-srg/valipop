@@ -20,7 +20,6 @@ package uk.ac.standrews.cs.digitising_scotland.record_classification.process.ste
 
 import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.ClassificationMetrics;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.StrictConfusionMatrix;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.ConsistentCodingChecker;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Record;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.ClassificationContext;
@@ -32,7 +31,7 @@ import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
 
-import static uk.ac.standrews.cs.util.tools.InfoLevel.LONG_SUMMARY;
+import static uk.ac.standrews.cs.util.tools.LoggingLevel.LONG_SUMMARY;
 import static uk.ac.standrews.cs.util.tools.Logging.output;
 
 /**

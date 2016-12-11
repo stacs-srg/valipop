@@ -24,7 +24,6 @@ import uk.ac.standrews.cs.classification_schemes.hisco.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.analysis.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.classifier.string_similarity.*;
-import uk.ac.standrews.cs.digitising_scotland.record_classification.cleaning.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.exceptions.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.experiments.generic.*;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.*;
@@ -97,7 +96,7 @@ public class HiscoClassificationWithPerGroupAnalysis extends Experiment {
     @Override
     public Void call() throws Exception {
 
-        Logging.setInfoLevel(verbosity);
+        Logging.setLoggingLevel(verbosity);
 
         final List<ClassifierResults> results = runExperiment();
 

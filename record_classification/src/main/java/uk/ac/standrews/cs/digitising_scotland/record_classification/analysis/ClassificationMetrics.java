@@ -19,7 +19,7 @@
 package uk.ac.standrews.cs.digitising_scotland.record_classification.analysis;
 
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Classification;
-import uk.ac.standrews.cs.util.tools.InfoLevel;
+import uk.ac.standrews.cs.util.tools.LoggingLevel;
 import uk.ac.standrews.cs.util.tools.Logging;
 
 import java.io.Serializable;
@@ -257,22 +257,22 @@ public class ClassificationMetrics implements Serializable {
      */
     public void printMetrics() {
 
-        printMetric(InfoLevel.VERBOSE, "total TPs", confusion_matrix.getNumberOfTruePositives());
-        printMetric(InfoLevel.VERBOSE, "total FPs", confusion_matrix.getNumberOfFalsePositives());
-        printMetric(InfoLevel.VERBOSE, "total TNs", confusion_matrix.getNumberOfTrueNegatives());
-        printMetric(InfoLevel.VERBOSE, "total FNs", confusion_matrix.getNumberOfFalseNegatives());
-        output(InfoLevel.VERBOSE, "");
+        printMetric(LoggingLevel.VERBOSE, "total TPs", confusion_matrix.getNumberOfTruePositives());
+        printMetric(LoggingLevel.VERBOSE, "total FPs", confusion_matrix.getNumberOfFalsePositives());
+        printMetric(LoggingLevel.VERBOSE, "total TNs", confusion_matrix.getNumberOfTrueNegatives());
+        printMetric(LoggingLevel.VERBOSE, "total FNs", confusion_matrix.getNumberOfFalseNegatives());
+        output(LoggingLevel.VERBOSE, "");
 
-        printMetrics(InfoLevel.VERBOSE, "precision", getPerClassPrecision());
-        printMetrics(InfoLevel.VERBOSE, "recall", getPerClassRecall());
-        printMetrics(InfoLevel.VERBOSE, "accuracy", getPerClassAccuracy());
-        printMetrics(InfoLevel.VERBOSE, "F1", getPerClassF1());
-        output(InfoLevel.VERBOSE, "");
+        printMetrics(LoggingLevel.VERBOSE, "precision", getPerClassPrecision());
+        printMetrics(LoggingLevel.VERBOSE, "recall", getPerClassRecall());
+        printMetrics(LoggingLevel.VERBOSE, "accuracy", getPerClassAccuracy());
+        printMetrics(LoggingLevel.VERBOSE, "F1", getPerClassF1());
+        output(LoggingLevel.VERBOSE, "");
 
-        printMetric(InfoLevel.LONG_SUMMARY, "macro-average precision        ", getMacroAveragePrecision());
-        printMetric(InfoLevel.LONG_SUMMARY, "macro-average recall           ", getMacroAverageRecall());
-        printMetric(InfoLevel.LONG_SUMMARY, "macro-average F1               ", getMacroAverageF1());
-        printMetric(InfoLevel.LONG_SUMMARY, "micro-average precision/recall ", getMicroAveragePrecision());
+        printMetric(LoggingLevel.LONG_SUMMARY, "macro-average precision        ", getMacroAveragePrecision());
+        printMetric(LoggingLevel.LONG_SUMMARY, "macro-average recall           ", getMacroAverageRecall());
+        printMetric(LoggingLevel.LONG_SUMMARY, "macro-average F1               ", getMacroAverageF1());
+        printMetric(LoggingLevel.LONG_SUMMARY, "micro-average precision/recall ", getMicroAveragePrecision());
     }
 
     private double getMacroAverage(Map<String, Double> values) {
@@ -323,7 +323,7 @@ public class ClassificationMetrics implements Serializable {
         return (double) (true_positives * 2) / (true_positives * 2 + false_positives + false_negatives);
     }
 
-    private void printMetrics(InfoLevel info_level, String label, Map<String, Double> metrics) {
+    private void printMetrics(LoggingLevel info_level, String label, Map<String, Double> metrics) {
 
         Logging.output(info_level, "\n" + label + ":");
 

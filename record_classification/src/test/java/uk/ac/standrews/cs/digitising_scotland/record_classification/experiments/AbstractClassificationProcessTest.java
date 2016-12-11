@@ -31,7 +31,7 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Bucket
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.ClassificationContext;
 import uk.ac.standrews.cs.digitising_scotland.record_classification.experiments.generic.EvaluationExperimentProcess;
 import uk.ac.standrews.cs.util.tools.FileManipulation;
-import uk.ac.standrews.cs.util.tools.InfoLevel;
+import uk.ac.standrews.cs.util.tools.LoggingLevel;
 import uk.ac.standrews.cs.util.tools.Logging;
 
 import java.nio.file.Path;
@@ -58,7 +58,7 @@ public abstract class AbstractClassificationProcessTest extends AbstractMetricsT
     @Before
     public void setup() throws Exception {
 
-        Logging.setInfoLevel(InfoLevel.NONE);
+        Logging.setLoggingLevel(LoggingLevel.NONE);
 
         List<Path> gold_standard_files = Collections.singletonList(FileManipulation.getResourcePath(AbstractClassificationProcessTest.class, CODED_DATA_1K_FILE_NAME));
         List<Double> training_ratios = Collections.singletonList(0.8);

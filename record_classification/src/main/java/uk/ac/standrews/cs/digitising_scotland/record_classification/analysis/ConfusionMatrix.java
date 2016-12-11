@@ -27,7 +27,7 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Classi
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Record;
 import uk.ac.standrews.cs.util.dataset.DataSet;
 import uk.ac.standrews.cs.util.tools.Formatting;
-import uk.ac.standrews.cs.util.tools.InfoLevel;
+import uk.ac.standrews.cs.util.tools.LoggingLevel;
 import uk.ac.standrews.cs.util.tools.Logging;
 
 import java.io.Serializable;
@@ -431,7 +431,7 @@ public abstract class ConfusionMatrix implements Serializable {
 
             updateCountsForRecord(asserted_code, real_code);
 
-            Logging.output(InfoLevel.VERBOSE, record.getOriginalData() + "\t" + real_code + "\t" + classification.getCode() + "\t" + Formatting.format(classification.getConfidence(), 2) + "\t" + classification.getDetail());
+            Logging.output(LoggingLevel.VERBOSE, record.getOriginalData() + "\t" + real_code + "\t" + classification.getCode() + "\t" + Formatting.format(classification.getConfidence(), 2) + "\t" + classification.getDetail());
         });
     }
 

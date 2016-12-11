@@ -34,7 +34,7 @@ import uk.ac.standrews.cs.digitising_scotland.record_classification.process.Clas
 import uk.ac.standrews.cs.digitising_scotland.record_classification.process.ClassificationProcess;
 import uk.ac.standrews.cs.util.dataset.DataSet;
 import uk.ac.standrews.cs.util.tables.TableGenerator;
-import uk.ac.standrews.cs.util.tools.InfoLevel;
+import uk.ac.standrews.cs.util.tools.LoggingLevel;
 import uk.ac.standrews.cs.util.tools.Logging;
 
 import java.io.IOException;
@@ -62,7 +62,7 @@ public abstract class Experiment implements Callable<Void> {
     private static final String DEFAULT_GOLD_STANDARD_PATH = "src/test/resources/uk/ac/standrews/cs/digitising_scotland/record_classification/experiments/AbstractClassificationProcessTest/coded_data_1K.csv";
     public static final double DEFAULT_TRAINING_RATIO = 0.8;
     private static final int DEFAULT_REPETITIONS = 2;
-    private static final InfoLevel DEFAULT_VERBOSITY = InfoLevel.LONG_SUMMARY;
+    private static final LoggingLevel DEFAULT_VERBOSITY = LoggingLevel.LONG_SUMMARY;
 
     private static final List<Boolean> COLUMNS_AS_PERCENTAGES = Arrays.asList(true, true, true, true, false, false);
     private static final double ONE_MINUTE_IN_SECONDS = 60.0;
@@ -83,7 +83,7 @@ public abstract class Experiment implements Callable<Void> {
     // TODO collect all JCommander flag definitions into one class and rationalise.
 
     @Parameter(names = {"-v", "--verbosity"}, description = DESCRIPTION_VERBOSITY)
-    protected InfoLevel verbosity = DEFAULT_VERBOSITY;
+    protected LoggingLevel verbosity = DEFAULT_VERBOSITY;
 
     @Parameter(names = {"-r", "--repetitionCount"}, description = DESCRIPTION_REPETITION)
     protected int repetitions = DEFAULT_REPETITIONS;
@@ -120,7 +120,7 @@ public abstract class Experiment implements Callable<Void> {
     @Override
     public Void call() throws Exception {
 
-        Logging.setInfoLevel(verbosity);
+        Logging.setLoggingLevel(verbosity);
 
         final List<ClassifierResults> results = runExperiment();
         printSummarisedResults(results);
