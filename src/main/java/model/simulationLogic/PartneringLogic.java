@@ -9,6 +9,8 @@ import datastructure.summativeStatistics.structure.IntegerRange;
 import datastructure.summativeStatistics.structure.OneDimensionDataDistribution;
 import model.simulationEntities.IPartnership;
 import model.simulationEntities.IPerson;
+import model.simulationLogic.stochastic.PopulationCounts;
+import model.simulationLogic.stochastic.SharedNewLogic;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import utils.RemainderComparator;
@@ -20,10 +22,38 @@ import java.util.*;
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class PartneringLogic {
+public class
+PartneringLogic {
 
     private static Random random = new Random();
     private static Logger log = LogManager.getLogger(PartneringLogic.class);
+
+    public static void adapter(PopulationStatistics desiredPopulationStatistics, DateClock currentTime, Collection<IPerson> mothersNeedingPartners, PeopleCollection people) throws UnsupportedDateConversion, InsufficientNumberOfPeopleException {
+
+        int minAge = BirthLogic.getMinimumAgeForChildbearing(currentTime, desiredPopulationStatistics);
+        int maxAge = BirthLogic.getMaxAgeForChildBearing(currentTime, desiredPopulationStatistics);
+
+        Map<Integer, ArrayList<IPerson>> mothersSplitByAge = new HashMap<>();
+
+        for(IPerson p : mothersNeedingPartners) {
+            int age = p.ageOnDate(currentTime);
+            try {
+                mothersSplitByAge.get(age).add(p);
+            } catch (NullPointerException e) {
+                mothersSplitByAge.put(age, new ArrayList<>());
+                mothersSplitByAge.get(age).add(p);
+            }
+        }
+
+        // for each age of mothers of childbearing age (AGE OF MOTHER)
+        for (int age = minAge; age < maxAge; age++) {
+            ArrayList<IPerson> mothersOfAge;
+            if((mothersOfAge = mothersSplitByAge.get(age)) != null) {
+                PartneringLogic.handlePartnering(desiredPopulationStatistics, currentTime, mothersOfAge, age, people);
+            }
+        }
+
+    }
 
 
     public static void handlePartnering(PopulationStatistics desiredPopulationStatistics, Date currentTime, ArrayList<IPerson> mothersNeedingPartners, int mothersAge, PeopleCollection people) throws UnsupportedDateConversion, InsufficientNumberOfPeopleException {
@@ -70,12 +100,28 @@ public class PartneringLogic {
                 Date w_yob = currentTime.getDateClock().advanceTime(
                         new CompoundTimeUnit(mothersAge, TimeUnit.YEAR).negative());
 
+//                for(AgeRangeWithExactFatherValue a : emptyRanges) {
+//                    Collection<IPerson> men = a.getFathers();
+//                    for(IPerson man : men) {
+//                        people.addPerson(man);
+//                    }
+//                }
+//
+//                for(AgeRangeWithExactFatherValue a : availiableRanges) {
+//                    Collection<IPerson> men = a.getFathers();
+//                    for(IPerson man : men) {
+//                        people.addPerson(man);
+//                    }
+//                }
+
                 int menInPop = people.getMales().getNumberOfPersons();
                 int womenInPop = people.getFemales().getNumberOfPersons();
                 int womenOfAge = people.getFemales().getByYear(w_yob).size();
 
                 throw new InsufficientNumberOfPeopleException("Not enough males to meet partner with mother cohort of "
-                        + w_yob.getYear() + " \nWomen of age : " + womenOfAge + " \nWomen in pop: " + womenInPop + " \nMen in pop : " + menInPop);
+                        + w_yob.getYear() + " \nWomen of age : " + womenOfAge + " \nWomen in pop: " + womenInPop +
+                        " \nMen in pop : " + menInPop + " \nCWomen in pop: " + Simulation.pc.getLivingFemales() +
+                        " \nCMen in pop : " + Simulation.pc.getLivingMales());
             }
 
             PriorityQueue<AgeRangeWithExactFatherValue> usedRanges = new PriorityQueue<>(ageRanges.size(), new RemainderComparator());
@@ -190,21 +236,17 @@ public class PartneringLogic {
 
         // pair up MOTHERS_NEEDING_FATHERS with NEW_FATHERS
         for(int p = 0; p < mothersNeedingPartners.size(); p++) {
+
             IPerson father = fathers.get(p);
             // update new children info to give fathers
             IPartnership partnership = mothersNeedingPartners.get(p).getLastChild().getParentsPartnership();
+
             partnership.setFather(father);
+
             father.recordPartnership(partnership);
-            people.addPerson(father);
+            Simulation.pc.newPartnership();
 
-            if(partnership.getMalePartner() == null) {
-                System.out.println("Null Father 2");
-            }
         }
-
-
-        // THIS IS NOW ASSIGNED ELSEWHERE? - find appropriate birth date for child
-
 
     }
 
@@ -239,11 +281,14 @@ public class PartneringLogic {
             for (DateClock yob = start.getDateClock(); DateUtils.dateBefore(yob, end); yob = yob.advanceTime(1, TimeUnit.YEAR)) {
 
                 if (!empty[index]) {
-                    Collection<IPerson> menOfAge = null;
+                    Collection<IPerson> menOfAge = new ArrayList<>();
                     try {
-                        menOfAge = people.getMales().removeNPersons(menOfEachAge, yob, true);
+                        menOfAge.addAll(SharedNewLogic.chooseNFromCollection(menOfEachAge, people.getMales().getByYear(yob), random, log));
+//                        menOfAge = people.getMales().removeNPersons(menOfEachAge, yob, true);
                     } catch (InsufficientNumberOfPeopleException e) {
-                        throw new RuntimeException("PartneringLogic#getNMenFromAgeRange has reached an unreachable state");
+                        menOfAge.addAll(people.getMales().getByYear(yob));
+//                        empty[index] = true;
+//                        throw new RuntimeException("PartneringLogic#getNMenFromAgeRange has reached an unreachable state");
                     }
                     if (menOfAge.size() < menOfEachAge) {
                         empty[index] = true;
@@ -275,7 +320,8 @@ public class PartneringLogic {
             Date yob = start.getDateClock().advanceTime(yearInAgeBracket, TimeUnit.YEAR);
 
             try {
-                fathersToBe.addAll(people.getMales().removeNPersons(1, yob, false));
+                fathersToBe.addAll(SharedNewLogic.chooseNFromCollection(1, people.getMales().getByYear(yob), random, log));
+//                fathersToBe.addAll(people.getMales().removeNPersons(1, yob, false));
             } catch (InsufficientNumberOfPeopleException e) {
                 empty[yearInAgeBracket] = true;
             }

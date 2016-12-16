@@ -2,6 +2,7 @@ package datastructure.population;
 
 import datastructure.population.exceptions.InsufficientNumberOfPeopleException;
 import datastructure.population.exceptions.PersonNotFoundException;
+import datastructure.summativeStatistics.structure.IntegerRange;
 import model.simulationEntities.IPerson;
 import model.simulationEntities.IPartnership;
 import utils.MapUtils;
@@ -65,6 +66,28 @@ public class FemaleCollection extends PersonCollection {
 
     }
 
+    private int getHighestBirthOrder(Date earliestDOB, Date latestDOB) {
+
+        YearDate start = earliestDOB.getYearDate();
+        YearDate end = latestDOB.getYearDate();
+
+        int highestSeenBirthOrder = 0;
+
+        try {
+            for(YearDate y = start; DateUtils.dateBefore(y, end); y = y.getDateClock(true).advanceTime(1, TimeUnit.YEAR).getYearDate()) {
+                int maxOrderForYear = getHighestBirthOrder(y);
+                if(maxOrderForYear > highestSeenBirthOrder) {
+                    highestSeenBirthOrder = maxOrderForYear;
+                }
+            }
+        } catch (UnsupportedDateConversion unsupportedDateConversion) {
+            unsupportedDateConversion.printStackTrace();
+        }
+
+        return highestSeenBirthOrder;
+
+    }
+
     /**
      * Gets the {@link Collection} of mothers born in the give year with the specified birth order (i.e. number of
      * children)
@@ -75,11 +98,20 @@ public class FemaleCollection extends PersonCollection {
      */
     public Collection<IPerson> getByYearAndBirthOrder(Date year, Integer birthOrder) {
 
+        Collection<IPerson> people = null;
+
         try {
-            return byBirthYearAndNumberOfChildren.get(year.getYearDate()).get(birthOrder);
-        } catch(NullPointerException e) {
-            // If no data exists for the year or the given birth order in the given year we return an empty collection.
-            return new ArrayList<>();
+            people = byBirthYearAndNumberOfChildren.get(year.getYearDate()).get(birthOrder);
+        } catch (NullPointerException e) {
+            // in this case no year was found at the given location the map
+            return new ArrayList<IPerson>();
+        }
+
+        if(people == null) {
+            // in this case no people were found at the given location the map
+            return new ArrayList<IPerson>();
+        } else {
+            return people;
         }
     }
 
@@ -118,11 +150,7 @@ public class FemaleCollection extends PersonCollection {
                 throw new InsufficientNumberOfPeopleException("Ran out of people");
             }
 
-
             IPerson p = orderedBirthCohort.removeFirst();
-            if(countChildren(p) != birthOrder) {
-                System.out.println("BOOM");
-            }
 
             try {
                 removePerson(p);
@@ -137,6 +165,8 @@ public class FemaleCollection extends PersonCollection {
             } catch (PersonNotFoundException e) {
                 System.out.println("This really shouldn't be happening");
                 toReturn.add(p);
+                throw new Error("The People reference list has become out of sync with the " +
+                                "relevant Collection in the underlying map");
             }
 
         }
@@ -284,7 +314,9 @@ public class FemaleCollection extends PersonCollection {
 
     }
 
-    public boolean verify() {
+    public boolean verify(String verifyPoint) {
+
+        System.out.println("---FC(V)--- " + verifyPoint + " -------");
 
         boolean passed = true;
 
@@ -311,6 +343,66 @@ public class FemaleCollection extends PersonCollection {
         }
 
 
+        System.out.println("-----------");
+
         return passed;
     }
+
+
+    public Collection<IPerson> getByAgeRangeAndOrder(IntegerRange ageRange, IntegerRange orders, DateClock onDate) {
+
+        ArrayList<IPerson> femalesOfAgeAndOrder = new ArrayList<>();
+
+        // Birth Date bounds on age range for given date
+        DateInstant earliestDOB = DateUtils.calculateDateInstant(onDate, DateUtils.getDaysInTimePeriod(onDate, new CompoundTimeUnit(ageRange.getMax() + 1, TimeUnit.YEAR).negative()));
+        DateInstant latestDOB = DateUtils.calculateDateInstant(onDate, DateUtils.getDaysInTimePeriod(onDate, new CompoundTimeUnit(ageRange.getMin(), TimeUnit.YEAR).negative()) - 1);
+
+        try {
+            for(YearDate y = earliestDOB.getYearDate(); DateUtils.dateBefore(y, latestDOB); y = y.getDateClock().advanceTime(1, TimeUnit.YEAR).getYearDate()) {
+
+                Collection<IPerson> femalesFromYearAndOrder = new ArrayList<>();
+
+                for(int order : orders.getValues(getHighestBirthOrder(earliestDOB, latestDOB))) {
+                    femalesFromYearAndOrder.addAll(getByYearAndBirthOrder(y, order));
+                }
+
+                //noinspection Duplicates
+                if(y.getYear() == earliestDOB.getYear() || y.getYear() == latestDOB.getYear()) {
+
+                    if(firstDayOfEarliestYear(y, earliestDOB) && lastDayOfLatestYear(y, latestDOB)) {
+                        // All females from year can be used
+                        femalesOfAgeAndOrder.addAll(femalesFromYearAndOrder);
+
+                    } else if (y.getYear() == earliestDOB.getYear() && y.getYear() == latestDOB.getYear()) {
+                        // Earliest and latest DOB in same year and fromprevious assertions we can tell that
+                        // truncation of the year has occured, therefore find persons in data bound
+                        Collection<IPerson> ofCorrectAge = getPersonsBornInDateBound(femalesFromYearAndOrder, earliestDOB, latestDOB);
+                        femalesOfAgeAndOrder.addAll(ofCorrectAge);
+
+                    } else if (firstDayOfEarliestYear(y, earliestDOB) || lastDayOfLatestYear(y, latestDOB)) {
+                        // All females from year can be used
+                        femalesOfAgeAndOrder.addAll(femalesFromYearAndOrder);
+
+                    } else {
+                        // If earliestDOB is not the 1/1/YYYY then we handle in here to make sure we do not get over aged individuals get
+                        // Or if latestDOB is not the 31/12/YYYY then we handle in here to make sure we do not get under aged individuals get
+
+                        Collection<IPerson> ofCorrectAge = getPersonsBornInDateBound(femalesFromYearAndOrder, earliestDOB, latestDOB);
+                        femalesOfAgeAndOrder.addAll(ofCorrectAge);
+
+                    }
+
+                } else {
+                    // This is a middle year and thus everyone in the year is okay to be returned
+                    femalesOfAgeAndOrder.addAll(femalesFromYearAndOrder);
+                }
+
+            }
+        } catch (UnsupportedDateConversion unsupportedDateConversion) {
+            throw new Error("YearDate to DateClock conversion should not have resulted in an UnsupportedDateConversion", unsupportedDateConversion);
+        }
+
+        return femalesOfAgeAndOrder;
+    }
+
 }

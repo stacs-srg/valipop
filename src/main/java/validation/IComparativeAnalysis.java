@@ -15,7 +15,7 @@ import java.io.PrintStream;
 import java.util.Map;
 
 /**
- * The IComparativeAnalysis interface provides statistical tests to verify the simulated population against a given
+ * The IComparativeAnalysis interface provides statistical tests to Verify the simulated population against a given
  * population.
  *
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)

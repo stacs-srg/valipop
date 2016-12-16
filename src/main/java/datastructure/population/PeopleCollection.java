@@ -7,10 +7,7 @@ import model.simulationEntities.IPopulation;
 import utils.time.Date;
 import utils.time.UnsupportedDateConversion;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * The class PeopleCollection is a concrete instance of the PersonCollection class. It provides the layout to structure
@@ -106,7 +103,7 @@ public class PeopleCollection extends PersonCollection implements IPopulation {
     @Override
     public void addPerson(IPerson person) {
         peopleIndex.put(person.getId(), person);
-        if (person.getSex() == 'm') {
+        if (Character.toLowerCase(person.getSex()) == 'm') {
             males.addPerson(person);
         } else {
             females.addPerson(person);
@@ -116,7 +113,7 @@ public class PeopleCollection extends PersonCollection implements IPopulation {
     @Override
     public void removePerson(IPerson person) throws PersonNotFoundException {
         peopleIndex.remove(person.getId());
-        if (person.getSex() == 'm') {
+        if (Character.toLowerCase(person.getSex()) == 'm') {
             males.removePerson(person);
         } else {
             females.removePerson(person);
@@ -178,5 +175,24 @@ public class PeopleCollection extends PersonCollection implements IPopulation {
     public void setConsistentAcrossIterations(boolean consistent_across_iterations) {
 
     }
+
+//    public String toString() {
+//
+//        String s = "--- Population ---\n";
+//
+//        ArrayList<Integer> partIds = new ArrayList<>(partnershipIndex.keySet());
+//
+//        Collections.sort(partIds);
+//
+//        for(Integer id : partIds) {
+//            s += partnershipIndex.get(id).toString();
+//        }
+//
+//        s += "-------End-------\n";
+//        return s;
+//
+//
+//
+//    }
 
 }

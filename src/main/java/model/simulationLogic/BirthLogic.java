@@ -9,7 +9,7 @@ import datastructure.summativeStatistics.structure.IntegerRange;
 import datastructure.summativeStatistics.structure.OneDimensionDataDistribution;
 import model.simulationEntities.IPartnership;
 import model.simulationEntities.IPerson;
-import model.simulationEntities.PersonFactory;
+import model.simulationEntities.EntityFactory;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import utils.CollectionUtils;
@@ -126,15 +126,15 @@ public class BirthLogic {
                             throw e;
                         }
 
-
                         for (int n = 0; n < motherCountsByMaternitySize.get(childrenInMaternity); n++) {
                             IPerson mother = mothersToBe.get(n);
 
                             // make and assign the specified number of children - assign to correct place in population
-                            mother.recordPartnership(PersonFactory.formNewChildrenInPartnership(childrenInMaternity, mother, currentTime, config.getBirthTimeStep(), people));
+                            mother.recordPartnership(EntityFactory.formNewChildrenInPartnership(childrenInMaternity, mother, currentTime, config.getBirthTimeStep(), people));
 
                             // Re inserting mother to population datastructure so as she resides in the correct place
                             people.addPerson(mother);
+
 
                             // TODO implement partnering - part 1
                             // if birth order 0
@@ -165,8 +165,12 @@ public class BirthLogic {
 //                partnership.getMalePartner().recordPartnership(partnership);
 //            }
 
+
             // TODO NEXT - big issue is in here
-            mothersNeedingPartners.addAll(SeparationLogic.handleSeparation(desiredPopulationStatistics, currentTime, mothersNeedingProcessed, people, config));
+            Collection<IPartnership> partnershipsNeedingFathers = SeparationLogic.handleSeparationOLD(desiredPopulationStatistics, currentTime, mothersNeedingProcessed, people, config);
+            for(IPartnership p : partnershipsNeedingFathers) {
+                mothersNeedingPartners.add(p.getFemalePartner());
+            }
 
 //            for(IPerson p : mothersNeedingPartners) {
 //                System.out.println(p.getLastChild().getParentsPartnership().getMalePartner().getId());
@@ -177,8 +181,6 @@ public class BirthLogic {
 
 //            mothersNeedingPartners.addAll(mothersNeedingProcessed);
             PartneringLogic.handlePartnering(desiredPopulationStatistics, currentTime, mothersNeedingPartners, age, people);
-
-
 
         }
 
@@ -216,7 +218,7 @@ public class BirthLogic {
         return desiredPopulationStatistics.getOrderedBirthRates(currentTime).getLargestLabel().getMax();
     }
 
-    private static int getMinimumAgeForChildbearing(DateClock currentTime, PopulationStatistics desiredPopulationStatistics) {
+    public static int getMinimumAgeForChildbearing(DateClock currentTime, PopulationStatistics desiredPopulationStatistics) {
         return desiredPopulationStatistics.getOrderedBirthRates(currentTime).getSmallestLabel();
     }
 

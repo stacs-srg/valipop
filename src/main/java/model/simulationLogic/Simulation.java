@@ -12,7 +12,10 @@ import datastructure.summativeStatistics.desired.PopulationStatistics;
 import datastructure.summativeStatistics.generated.GeneratedPopulationComposition;
 import datastructure.summativeStatistics.generated.UnsupportedEventType;
 import datastructure.summativeStatistics.PopulationComposition;
+import model.simulationEntities.IPartnership;
+import model.simulationEntities.IPerson;
 import model.simulationEntities.IPopulation;
+import model.simulationLogic.stochastic.*;
 import org.apache.logging.log4j.core.appender.FileAppender;
 import utils.FileUtils;
 import validation.ComparativeAnalysis;
@@ -23,10 +26,14 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import validation.SummaryRow;
 import validation.utils.StatisticalManipulationCalculationError;
+import verify.Verify;
 
 
 import java.io.*;
 import java.nio.file.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 
 
 /**
@@ -34,6 +41,7 @@ import java.nio.file.*;
  */
 public class Simulation {
 
+    public static PopulationCounts pc;
     private static Path PATH_TO_CONFIG_FILE;
     private static Config config;
 
@@ -49,6 +57,8 @@ public class Simulation {
 
 
     public Simulation(String pathToConfigFile, String runPurpose, String startTime, String resultsPath) throws IOException, UnsupportedDateConversion {
+
+        pc = new PopulationCounts(this);
 
         FileUtils.makeDirectoryStructure(runPurpose, startTime, resultsPath);
         System.setProperty("logFilename", FileUtils.pathToLogDir(runPurpose, startTime, resultsPath).toString());
@@ -75,13 +85,6 @@ public class Simulation {
     public static void main(String[] args) {
 
         long runStartTime = System.nanoTime();
-
-//        Logger log = LogManager.getLogger("main");
-//        SimpleLayout layout = new SimpleLayout();
-//        FileAppender appender = FileAppender.createAppender("your filename");
-//        logger.addAppender(appender);
-
-//        log.info("Program begins");
 
         Simulation sim = null;
         String runPurpose = null;
@@ -128,9 +131,15 @@ public class Simulation {
 
             population = sim.makeSimulatedPopulation();
 
+
         } catch (UnsupportedDateConversion e1) {
             log.fatal(e1.getMessage() + " --- Will now exit");
             log.fatal(e1.getStackTrace());
+        } catch (ValueNotInRangesException e2) {
+
+            log.fatal(e2.getMessage() + " --- Will now exit");
+            log.fatal(e2.getStackTrace());
+            throw new Error(e2);
         }
 
         PrintStream resultsOutput;
@@ -160,10 +169,9 @@ public class Simulation {
 //        sim.desired.getOrderedBirthRates(config.getT0()).outputResults(resultsOutput);
 
 
-
         try {
 
-            runAnalytics(population, resultsOutput);
+            runAnalytics(population, System.out);
             sim.summary.setTotalPop(population.getNumberOfPeople());
 
         } catch (Exception e) {
@@ -203,7 +211,7 @@ public class Simulation {
 
     }
 
-    private static void runAnalytics(IPopulation population, PrintStream resultsOutput) throws Exception {
+    public static void runAnalytics(IPopulation population, PrintStream resultsOutput) throws Exception {
         new PopulationAnalytics(population, resultsOutput).printAllAnalytics();
         new ChildrenAnalytics(population, resultsOutput).printAllAnalytics();
         new DeathAnalytics(population, resultsOutput).printAllAnalytics();
@@ -229,7 +237,7 @@ public class Simulation {
 
     }
 
-    private PeopleCollection makeSimulatedPopulation() throws UnsupportedDateConversion {
+    private PeopleCollection makeSimulatedPopulation() throws UnsupportedDateConversion, ValueNotInRangesException {
 
         // INFO: at this point all the desired population statistics have been made available
         log.info("Simulation begins");
@@ -241,15 +249,31 @@ public class Simulation {
         // for each utils.time step from T Start to T End
         try {
 
-            while (DateUtils.dateBefore(currentTime, config.getTE())) {
+            while (DateUtils.dateBefore(currentTime, config.getTE().getDateClock().advanceTime(config.getSimulationTimeStep().negative()))) {
 
                 // at every min timestep
                 // clear out dead people
 
+                boolean old = false;
+
                 // if births timestep
-                if (DateUtils.matchesInterval(currentTime, config.getBirthTimeStep())) {
-                    int births = BirthLogic.handleBirths(config, currentTime, desired, people);
-                    InitLogic.incrementBirthCount(births);
+                if(old) {
+                    if (DateUtils.matchesInterval(currentTime, config.getBirthTimeStep())) {
+                        int births = BirthLogic.handleBirths(config, currentTime, desired, people);
+                        InitLogic.incrementBirthCount(births);
+                    }
+                } else {
+
+                    if (DateUtils.matchesInterval(currentTime, config.getBirthTimeStep())) {
+
+                        Collection<IPartnership> newMothers = BirthsStochastic.handleBirths(people.getFemales(), desired, currentTime, config.getBirthTimeStep(), people, config.getBirthTimeStep());
+
+                        // TODO Will not work with multiple births - needs to see which mothers are bearing twins/triplets/etc.
+                        InitLogic.incrementBirthCount(newMothers.size());
+                        Collection<IPartnership> partnershipsNeedingFathers = SeparationLogic.handleSeparation(desired, currentTime, newMothers, people, config);
+                        PartneringStochastic.handlePartnering(partnershipsNeedingFathers, desired, currentTime, people);
+
+                    }
                 }
 
                 // if deaths timestep
@@ -274,7 +298,7 @@ public class Simulation {
                 }
 
                 log.info("Time step completed " + currentTime.toString() + "    Population " + people.getNumberOfPersons());
-//                System.out.println("Time step completed " + currentTime.toString() + "    Population " + people.getNumberOfPersons());
+                System.out.println("Time step completed " + currentTime.toString() + "    Population " + people.getNumberOfPersons());
 
             }
 
@@ -283,6 +307,7 @@ public class Simulation {
 
         } catch (InsufficientNumberOfPeopleException e) {
             log.fatal(e.getMessage());
+//            throw new Error(e);
         }
 
         return AggregatePersonCollectionFactory.makePeopleCollection(people, deadPeople);

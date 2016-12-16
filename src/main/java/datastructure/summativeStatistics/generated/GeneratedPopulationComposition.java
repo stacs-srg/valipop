@@ -14,6 +14,7 @@ import model.simulationEntities.IPartnership;
 import model.simulationEntities.IPerson;
 import model.simulationEntities.IPopulation;
 import model.simulationEntities.Partnership;
+import model.simulationLogic.Simulation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import utils.time.*;
@@ -239,7 +240,6 @@ public class GeneratedPopulationComposition implements PopulationComposition {
             }
 
 
-
         }
 
         Map<IntegerRange, Double> tableData = new HashMap<>();
@@ -399,8 +399,12 @@ public class GeneratedPopulationComposition implements PopulationComposition {
             throw new UnsupportedEventType("EventType must be a death type for this method");
         }
 
-
-        Collection<IPerson> people = population.getByYearAndSex(sex, startYear);
+        Collection<IPerson> people = null;
+        try {
+            people = population.getByYearAndSex(sex, startYear);
+        } catch (NullPointerException e) {
+            System.out.println();
+        }
 
         Map<IntegerRange, Double> counts = new HashMap<IntegerRange, Double>();
 

@@ -9,6 +9,7 @@ import datastructure.summativeStatistics.structure.LabelValueDataRow;
 import datastructure.summativeStatistics.structure.OneDimensionDataDistribution;
 import datastructure.summativeStatistics.generated.StatisticalTables;
 import model.simulationEntities.IPopulation;
+import model.simulationLogic.Simulation;
 import org.apache.commons.lang.time.*;
 import org.apache.commons.math3.exception.NotANumberException;
 import utils.time.DateUtils;
@@ -161,6 +162,7 @@ public class ComparativeAnalysis implements IComparativeAnalysis {
 
         ArrayList<YearDate> years = new ArrayList<>();
 
+        System.out.println(generatedPopulation.toString());
 
         // for each year in analysis period
         for (DateClock d = startDate.getDateClock(); DateUtils.dateBefore(d, endDate); d = d.advanceTime(1, TimeUnit.YEAR)) {
@@ -186,8 +188,15 @@ public class ComparativeAnalysis implements IComparativeAnalysis {
             results.put(d.getYearDate(), temp);
         }
 
+
+
         compareSeparation(desired, generated, config);
+
         comparePartnering(desired, generated, config);
+
+
+
+
 
         // Time period anlysis code - only for MALE_DEATH at the moment
 
@@ -345,6 +354,8 @@ public class ComparativeAnalysis implements IComparativeAnalysis {
             Date start;
             Date end;
 
+
+
             if(i == 0) {
                 start = startDate;
 
@@ -380,10 +391,6 @@ public class ComparativeAnalysis implements IComparativeAnalysis {
 
             // statistical comparison
 
-            // TODO NEXT - get this outputting to file and stats working in R
-            // http://stats.stackexchange.com/questions/231059/compare-the-statistical-significance-of-the-difference-between-two-polynomial-re
-
-
             // log it
 
             // output it
@@ -414,6 +421,9 @@ public class ComparativeAnalysis implements IComparativeAnalysis {
 
     private IKaplanMeierAnalysis runKMAnalysisOnCohort(Date date, EventType eventType, StatisticalTables expected, StatisticalTables observed, IPopulation generatedPopulation, Config config) throws StatisticalManipulationCalculationError, UnsupportedDateConversion, UnsupportedEventType, IOException {
         // get survival tables for all males born in year
+
+
+
         OneDimensionDataDistribution populationSurvivorTable = observed.getCohortSurvivorTable(date, eventType);
 
         // get equiverlent table from inputs stats

@@ -83,6 +83,10 @@ public class ChildrenAnalytics {
 
                     final List<IPerson> child_ids = partnership.getChildren();
 
+                    if(child_ids.size() == 0) {
+                        System.out.println("D");
+                    }
+
                     if (child_ids != null) {
                         children_per_marriage[child_ids.size()]++;
                     }

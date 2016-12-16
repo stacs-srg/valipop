@@ -86,7 +86,7 @@ public class Partnership implements IPartnership {
 
     @Override
     public int compareTo(IPartnership o) {
-        return this.id == o.getId() ? 0 : -1;
+        return this.getFemalePartner().getId() == o.getFemalePartner().getId() ? 0 : -1;
     }
 
     @Override
@@ -98,4 +98,26 @@ public class Partnership implements IPartnership {
     public void setFather(IPerson father) {
         this.male = father;
     }
+
+    public String toString() {
+
+        String s = "Partnership ";
+        s += getId() + " " + getPartnershipDate().toString() + " \n";
+
+        s += "Male: ";
+        s += getMalePartner() != null ? getMalePartner().toString() : "null";
+        s += "\n";
+
+        s += "Female: ";
+        s += getFemalePartner() != null ? getFemalePartner().toString() : "null";
+        s += "\n";
+
+        for(IPerson child : children) {
+            s += "Child: " + child.toString() + "\n";
+        }
+
+        return s;
+
+    }
+
 }

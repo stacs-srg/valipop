@@ -1,6 +1,7 @@
 package datastructure.population;
 
 import datastructure.population.exceptions.PersonNotFoundException;
+import datastructure.summativeStatistics.structure.IntegerRange;
 import model.simulationEntities.IPerson;
 import utils.time.*;
 import utils.time.Date;
@@ -96,4 +97,55 @@ public class MaleCollection extends PersonCollection {
         return byYear.get(yearOfBirth.getYearDate()).size();
     }
 
+    public Collection<IPerson> getByAgeRange(IntegerRange ageRange, Date onDate) {
+        ArrayList<IPerson> malesOfAge = new ArrayList<>();
+
+        // Birth Date bounds on age range for given date
+        DateInstant earliestDOB = DateUtils.calculateDateInstant(onDate, DateUtils.getDaysInTimePeriod(onDate, new CompoundTimeUnit(ageRange.getMax() + 1, TimeUnit.YEAR).negative()));
+        DateInstant latestDOB = DateUtils.calculateDateInstant(onDate, DateUtils.getDaysInTimePeriod(onDate, new CompoundTimeUnit(ageRange.getMin(), TimeUnit.YEAR).negative()) - 1);
+
+        try {
+            for(YearDate y = earliestDOB.getYearDate(); DateUtils.dateBefore(y, latestDOB); y = y.getDateClock().advanceTime(1, TimeUnit.YEAR).getYearDate()) {
+
+                Collection<IPerson> malesFromYear = getByYear(y);
+
+                //noinspection Duplicates
+                if(y.getYear() == earliestDOB.getYear() || y.getYear() == latestDOB.getYear()) {
+
+                    if(firstDayOfEarliestYear(y, earliestDOB) && lastDayOfLatestYear(y, latestDOB)) {
+                        // All females from year can be used
+                        malesOfAge.addAll(malesFromYear);
+
+                    } else if (y.getYear() == earliestDOB.getYear() && y.getYear() == latestDOB.getYear()) {
+                        // Earliest and latest DOB in same year and fromprevious assertions we can tell that
+                        // truncation of the year has occured, therefore find persons in data bound
+                        Collection<IPerson> ofCorrectAge = getPersonsBornInDateBound(malesFromYear, earliestDOB, latestDOB);
+                        malesOfAge.addAll(ofCorrectAge);
+
+                    } else if (firstDayOfEarliestYear(y, earliestDOB) || lastDayOfLatestYear(y, latestDOB)) {
+                        // All females from year can be used
+                        malesOfAge.addAll(malesFromYear);
+
+                    } else {
+                        // If earliestDOB is not the 1/1/YYYY then we handle in here to make sure we do not get over aged individuals get
+                        // Or if latestDOB is not the 31/12/YYYY then we handle in here to make sure we do not get under aged individuals get
+
+                        Collection<IPerson> ofCorrectAge = getPersonsBornInDateBound(malesFromYear, earliestDOB, latestDOB);
+                        malesOfAge.addAll(ofCorrectAge);
+
+                    }
+
+                } else {
+                    // This is a middle year and thus everyone in the year is okay to be returned
+                    malesOfAge.addAll(malesFromYear);
+                }
+
+            }
+        } catch (UnsupportedDateConversion unsupportedDateConversion) {
+            throw new Error("YearDate to DateClock conversion should not have resulted in an UnsupportedDateConversion", unsupportedDateConversion);
+        }
+
+        return malesOfAge;
+
+    }
 }

@@ -6,6 +6,7 @@ import model.simulationEntities.IPartnership;
 import model.simulationEntities.IPerson;
 import model.exceptions.NoChildrenOfDesiredOrder;
 import model.exceptions.NotDeadException;
+import model.simulationEntities.PersonNotAliveException;
 import utils.time.*;
 
 /**
@@ -31,7 +32,7 @@ public interface PersonUtils {
 
     int numberOfChildren();
 
-    void keepFather(PeopleCollection population);
+    void keepPreviousFatherForChild(IPartnership child, PeopleCollection population) throws PersonNotAliveException;
 
     void setParentsPartnership(IPartnership newParents);
 
@@ -43,4 +44,5 @@ public interface PersonUtils {
 
     IPerson getPartner(Date onDate);
 
+    int ageOnDate(Date currentTime);
 }

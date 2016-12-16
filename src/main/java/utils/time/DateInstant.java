@@ -106,6 +106,19 @@ public final class DateInstant implements Date {
     }
 
     @Override
+    public DateClock getDateClock(boolean force) throws UnsupportedDateConversion {
+        if(force) {
+            try {
+                return getDateClock();
+            } catch (UnsupportedDateConversion e) {
+                return new DateClock(month, year);
+            }
+        } else {
+            return getDateClock();
+        }
+    }
+
+    @Override
     public String toOrderableString() {
         return year + "_" + month + "_" + day;
     }

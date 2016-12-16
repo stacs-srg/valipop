@@ -34,7 +34,7 @@ public class DeathLogic {
         int deathCount = 0;
 
         double yearForwardWeighting = 1;
-        if(currentDate.getMonth() == 1) {
+        if(currentDate.getMonth() == 1.0) {
             yearForwardWeighting = 1.1;
         }
 
@@ -90,29 +90,12 @@ public class DeathLogic {
             for (IPerson m : deadMales) {
                 m.causeEventInTimePeriod(EventType.MALE_DEATH, currentDate, deathTimeStep);
                 deadPopulation.addPerson(m);
-
-
-                Date dod = m.getDeathDate();
-                if(DateUtils.dateBefore(currentDate, dod)) {
-                    if(DateUtils.differenceInDays(currentDate, dod) != 0) {
-                        System.out.println("M After Current Date " + DateUtils.differenceInDays(currentDate, dod));
-                    }
-                }
-
             }
 
 
             for (IPerson f : deadFemales) {
                 f.causeEventInTimePeriod(EventType.FEMALE_DEATH, currentDate, deathTimeStep);
                 deadPopulation.addPerson(f);
-
-                Date dod = f.getDeathDate();
-                if(DateUtils.dateBefore(currentDate, dod)) {
-                    if(DateUtils.differenceInDays(currentDate, dod) != 0) {
-                        System.out.println("F After Current Date " + DateUtils.differenceInDays(currentDate, dod));
-                    }
-                }
-
             }
 
             double appliedMaleRate = deadMales.size() / (double) numberOfMales;
@@ -165,6 +148,9 @@ public class DeathLogic {
 
     public static int calculateNumberToDie(int people, Double deathRate) {
 
+        if(deathRate > 1) {
+            deathRate = 1.0;
+        }
 
         double toHaveEvent = people * deathRate;
         int flooredToHaveEvent = (int) toHaveEvent;
@@ -187,24 +173,11 @@ public class DeathLogic {
             }
 
         } else {
-//
-//            if (toHaveEvent > 0.5) {
-//                flooredToHaveEvent++;
-//            }
+
             if (randomNumberGenerator.nextDouble() < toHaveEvent) {
                 flooredToHaveEvent++;
             }
-////        } else {
-////            flooredToHaveEvent++;
         }
-//
-//        }
-
-        if(deathRate.isNaN()) {
-            System.out.println("NAN: thus toDie: " + flooredToHaveEvent);
-        }
-
-//        flooredToHaveEvent++;
 
         return flooredToHaveEvent;
 

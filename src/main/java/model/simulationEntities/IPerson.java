@@ -18,6 +18,7 @@ package model.simulationEntities;
 
 import utils.PersonUtils;
 import utils.time.Date;
+import utils.time.DateInstant;
 
 import java.util.List;
 
@@ -58,14 +59,14 @@ public interface IPerson extends Comparable<IPerson>, PersonUtils {
      *
      * @return the person's date of birth
      */
-    Date getBirthDate();
+    DateInstant getBirthDate();
 
     /**
      * Gets the person's date of death, or null if they are living.
      *
      * @return the person's date of death
      */
-    Date getDeathDate();
+    DateInstant getDeathDate();
 
     /**
      * Gets the identifiers of the person's partnerships, or null if none are recorded.

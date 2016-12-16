@@ -2,9 +2,8 @@ package datastructure.population;
 
 import datastructure.population.exceptions.InsufficientNumberOfPeopleException;
 import datastructure.population.exceptions.PersonNotFoundException;
-import utils.time.DateBounds;
+import utils.time.*;
 import model.simulationEntities.IPerson;
-import utils.time.Date;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -134,5 +133,28 @@ public abstract class PersonCollection implements DateBounds {
         return endDate;
     }
 
+    protected Collection<IPerson> getPersonsBornInDateBound(Collection<IPerson> femalesFromYear, DateInstant earliestDOB, DateInstant latestDOB) {
+
+        Collection<IPerson> ofAgePersons = new ArrayList<>();
+
+        for(IPerson p : femalesFromYear) {
+            Date dob = p.getBirthDate();
+
+            if(DateUtils.dateBefore(earliestDOB, dob) && DateUtils.dateBefore(dob, latestDOB)) {
+                ofAgePersons.add(p);
+            }
+
+        }
+
+        return ofAgePersons;
+    }
+
+    protected boolean firstDayOfEarliestYear(YearDate year, Date earliestDOB) {
+        return year.getYear() == earliestDOB.getYear() && (earliestDOB.getMonth() == 1) && (earliestDOB.getDay() == 1);
+    }
+
+    protected boolean lastDayOfLatestYear(YearDate year, Date latestDOB) {
+        return year.getYear() == latestDOB.getYear() && (latestDOB.getMonth() == 12) && (latestDOB.getDay() == 31);
+    }
 
 }

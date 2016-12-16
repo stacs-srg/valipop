@@ -69,8 +69,6 @@ public class IntegerRange implements Comparable<IntegerRange> {
 //            }
 //        } else {
 
-        try {
-
             if (plus) {
                 // if min value +
                 if (integer >= min) {
@@ -83,9 +81,6 @@ public class IntegerRange implements Comparable<IntegerRange> {
                 }
             }
 
-        } catch (NullPointerException e) {
-            System.out.print("Here");
-        }
 
 //        }
 
@@ -115,26 +110,43 @@ public class IntegerRange implements Comparable<IntegerRange> {
 
     public String toString() {
         String s = "";
-        s += min + "to" + max;
+        s += min;
+        s += min.equals(max) ? "" : "to" + max;
         s += plus ? "+" : "";
         return s;
     }
 
-//    public static ArrayList<IntegerRange> orderRanges(Set<IntegerRange> integerRanges) {
-//
-//
-//
-//        for(IntegerRange iR : integerRanges) {
-//
-//
-//
-//        }
-//
-//
-//    }
-
     @Override
     public int compareTo(IntegerRange o) {
         return Integer.compare(getValue(), o.getValue());
+    }
+
+    /**
+     * Returns each distinct integer value that is represented in the Integer Range. If a plus is present (e.g. this
+     * range represents the value 4+) then the parameter given sets the highest value the return array can take.
+     *
+     * @param limitForPlus
+     * @return
+     */
+    public int[] getValues(int limitForPlus) {
+
+        int lMin = getMin();
+        int lMax;
+
+        if(plus && limitForPlus >= lMin) {
+            lMax = limitForPlus;
+        } else {
+            lMax = getMax();
+        }
+
+        int numberOfValue = lMax - lMin + 1;
+        int[] values = new int[numberOfValue];
+
+
+        for(int i = 0; i < numberOfValue; i++) {
+            values[i] = lMin + i;
+        }
+
+        return values;
     }
 }

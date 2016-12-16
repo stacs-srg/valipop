@@ -7,6 +7,8 @@ import model.dateSelection.DateSelector;
 import model.nameGeneration.FirstNameGenerator;
 import model.nameGeneration.NameGenerator;
 import model.nameGeneration.SurnameGenerator;
+import model.simulationLogic.Simulation;
+import model.simulationLogic.stochastic.PopulationCounts;
 import utils.time.CompoundTimeUnit;
 import utils.time.Date;
 import utils.time.DateClock;
@@ -16,25 +18,13 @@ import java.util.*;
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class PersonFactory {
+public class EntityFactory {
 
     private static Random randomNumberGenerator = new Random();
     private static NameGenerator firstNameGenerator = new FirstNameGenerator();
     private static NameGenerator surnameGenerator = new SurnameGenerator();
     private static DateSelector birthDateSelector = new BirthDateSelector();
 
-    public static IPartnership formNewChildrenInPartnership(int numberOfChildren, IPerson father, IPerson mother, DateClock currentDate,
-                                                         CompoundTimeUnit birthTimeStep, PeopleCollection population) {
-
-        IPartnership partnership = new Partnership(father, mother, currentDate);
-        population.addPartnershipToIndex(partnership);
-
-        IPerson child = makePerson(currentDate, birthTimeStep, partnership, population);
-
-        partnership.addChildren(Collections.singletonList(child));
-
-        return partnership;
-    }
 
     public static IPartnership formNewChildrenInPartnership(int numberOfChildren, IPerson mother, DateClock currentDate,
                                                             CompoundTimeUnit birthTimeStep, PeopleCollection population) {
@@ -43,6 +33,10 @@ public class PersonFactory {
 
 
         List<IPerson> children = new ArrayList<>(numberOfChildren);
+
+        if(numberOfChildren == 0) {
+            System.out.println("C A ZERO");
+        }
 
         for(int c = 0; c < numberOfChildren; c++) {
             children.add(makePerson(currentDate, birthTimeStep, partnership, population));
@@ -55,6 +49,7 @@ public class PersonFactory {
         return partnership;
     }
 
+    // LATEST method
     public static IPartnership formNewPartnership(int numberOfChildren, IPerson mother, DateClock currentDate,
                                                             CompoundTimeUnit birthTimeStep, PeopleCollection population) {
 
@@ -67,6 +62,10 @@ public class PersonFactory {
         }
 
         List<IPerson> children = new ArrayList<>(numberOfChildren);
+
+        if(numberOfChildren == 0) {
+            System.out.println("C B ZERO");
+        }
 
         for(int c = 0; c < numberOfChildren; c++) {
             children.add(makePerson(currentDate, birthTimeStep, partnership, population));
@@ -87,20 +86,19 @@ public class PersonFactory {
         return makePerson(currentDate, birthTimeStep, null, population);
     }
 
-    private static int sexBalance = 0;
-
     private static char getSex() {
 
         // TODO move over to a specified m to f ratio
+        double sexBalance = Simulation.pc.getLivingSexRatio();
 
-        if(sexBalance <= 0) {
-            sexBalance++;
+        if(sexBalance <= 1) {
+            Simulation.pc.newMale();
             return 'M';
         } else {
-            sexBalance--;
+            Simulation.pc.newFemale();
             return 'F';
         }
-
+//
 //        if (randomNumberGenerator.nextBoolean()) {
 //            return 'M';
 //        } else {

@@ -102,6 +102,11 @@ public final class DateClock implements Date {
     }
 
     @Override
+    public DateClock getDateClock(boolean force) throws UnsupportedDateConversion {
+        return this;
+    }
+
+    @Override
     public String toOrderableString() {
         return year + "_" + month + "_" + DAY;
     }
