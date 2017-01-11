@@ -172,6 +172,7 @@ public class Simulation {
         try {
 
             runAnalytics(population, System.out);
+            runAnalytics(population, resultsOutput);
             sim.summary.setTotalPop(population.getNumberOfPeople());
 
         } catch (Exception e) {
@@ -254,7 +255,7 @@ public class Simulation {
                 // at every min timestep
                 // clear out dead people
 
-                boolean old = false;
+                boolean old = true;
 
                 // if births timestep
                 if(old) {

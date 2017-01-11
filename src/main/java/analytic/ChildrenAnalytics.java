@@ -16,13 +16,14 @@
  */
 package analytic;
 
+import com.sun.deploy.util.OrderedHashSet;
 import model.simulationEntities.IPartnership;
 import model.simulationEntities.IPerson;
 import model.simulationEntities.IPopulation;
 import uk.ac.standrews.cs.digitising_scotland.util.ArrayManipulation;
 
 import java.io.PrintStream;
-import java.util.List;
+import java.util.*;
 
 /**
  * An analytic class to analyse the distribution of child_ids.
@@ -38,6 +39,7 @@ public class ChildrenAnalytics {
     private final IPopulation population;
     private static PrintStream out;
 
+    private final Map<Integer, Double> fertilityRateByYear = new TreeMap<>();
 
     /**
      * Creates an analytic instance to analyse child_ids in a population.
@@ -50,6 +52,7 @@ public class ChildrenAnalytics {
         this.population = population;
         out = resultsOutput;
         analyseChildren();
+        calculateTFRByYear();
     }
 
     /**
@@ -65,6 +68,15 @@ public class ChildrenAnalytics {
                 out.println("\t" + children_per_marriage[i] + " Marriages with " + i + " child_ids" + " = " + String.format("%.1f", children_per_marriage[i] / (double) sum * ONE_HUNDRED) + '%');
             }
         }
+
+        out.println("Fertility rates by year:");
+        for(Integer year : fertilityRateByYear.keySet()) {
+            if(!fertilityRateByYear.get(year).equals(0.0)) {
+                out.println("\t" + year + " Fertility rate = " + fertilityRateByYear.get(year));
+            }
+        }
+
+
     }
 
     /**
@@ -76,22 +88,136 @@ public class ChildrenAnalytics {
 
         for (final IPerson person : population.getPeople()) {
 
-            final List<IPartnership> partnerships = person.getPartnerships();
-            if (partnerships != null) {
+            if(Character.toLowerCase(person.getSex()) == 'f') {
+                final List<IPartnership> partnerships = person.getPartnerships();
+                if (partnerships != null) {
 
-                for (final IPartnership partnership : partnerships) {
+                    for (final IPartnership partnership : partnerships) {
 
-                    final List<IPerson> child_ids = partnership.getChildren();
+                        final List<IPerson> child_ids = partnership.getChildren();
 
-                    if(child_ids.size() == 0) {
-                        System.out.println("D");
-                    }
-
-                    if (child_ids != null) {
-                        children_per_marriage[child_ids.size()]++;
+                        if (child_ids != null) {
+                            children_per_marriage[child_ids.size()]++;
+                        }
                     }
                 }
             }
         }
+    }
+
+    public void calculateTFRByYear() throws Exception {
+
+        Map<Integer, Integer> livingFemalesOfSBAgeInEachYear = new HashMap<>();
+        Map<Integer, Integer> childrenBornInEachYear = new HashMap<>();
+
+        final int MIN_CB_AGE = 15;
+        final int MAX_CB_AGE = 50;
+
+        for (final IPerson person : population.getPeople()) {
+
+            if(Character.toLowerCase(person.getSex()) == 'f') {
+                final List<IPartnership> partnerships = person.getPartnerships();
+                if (partnerships != null) {
+
+                    for (final IPartnership partnership : partnerships) {
+
+                        final List<IPerson> child_ids = partnership.getChildren();
+
+                        if (child_ids != null) {
+
+                            for(final IPerson child : child_ids) {
+
+                                int yob = child.getBirthDate().getYear();
+
+                                try {
+                                    childrenBornInEachYear.put(yob, childrenBornInEachYear.get(yob) + 1);
+                                } catch(NullPointerException e) {
+                                    childrenBornInEachYear.put(yob, 1);
+                                }
+                            }
+
+                        }
+
+                    }
+
+                }
+
+                int femalesYOB = person.getBirthDate().getYear();
+                for(int y = femalesYOB + MIN_CB_AGE; y < femalesYOB + MAX_CB_AGE; y++) {
+
+                    try {
+                        livingFemalesOfSBAgeInEachYear.put(y, livingFemalesOfSBAgeInEachYear.get(y) + 1);
+                    } catch(NullPointerException e) {
+                        livingFemalesOfSBAgeInEachYear.put(y, 1);
+                    }
+
+                }
+
+            }
+        }
+
+        Integer earliestYear = getSmallestValueInSets(livingFemalesOfSBAgeInEachYear.keySet(), childrenBornInEachYear.keySet());
+        Integer latestYear = getLargestValueInSets(livingFemalesOfSBAgeInEachYear.keySet(), childrenBornInEachYear.keySet());
+
+        if(earliestYear == null || latestYear == null) {
+            throw new Exception("No years identified across dates of births - perhaps no people in the population?");
+        }
+
+        for(int y = earliestYear; y < latestYear; y ++) {
+            int births;
+            int femalesOfCBAge;
+
+            try {
+                births = childrenBornInEachYear.get(y);
+            } catch (NullPointerException e) {
+                births = 0;
+            }
+
+            try {
+                femalesOfCBAge = livingFemalesOfSBAgeInEachYear.get(y);
+            } catch (NullPointerException e) {
+                femalesOfCBAge = 0;
+            }
+
+            double asfrForYear;
+            if(femalesOfCBAge == 0) {
+                asfrForYear = 0;
+            } else {
+                asfrForYear = births / (double) femalesOfCBAge;
+            }
+
+            fertilityRateByYear.put(y, asfrForYear);
+        }
+
+    }
+
+    public static Integer getSmallestValueInSets(Set<Integer> a, Set<Integer> b) {
+
+        ArrayList<Integer> sets = new ArrayList<>(a);
+        sets.addAll(b);
+
+        Collections.sort(sets);
+
+        if(sets.size() == 0) {
+            return null;
+        } else {
+            return sets.get(0);
+        }
+
+    }
+
+    public static Integer getLargestValueInSets(Set<Integer> a, Set<Integer> b) {
+
+        ArrayList<Integer> sets = new ArrayList<>(a);
+        sets.addAll(b);
+
+        Collections.sort(sets);
+
+        if(sets.size() == 0) {
+            return null;
+        } else {
+            return sets.get(sets.size() - 1);
+        }
+
     }
 }
