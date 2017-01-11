@@ -1,6 +1,6 @@
 # Presentations
 
-* Dalton, T, [Kirby, GNC][1], [Dearle, A][2] & [Akgün, Ö][62], Evaluating Data Linkage: Creating longitudinal synthetic data to provide a gold-standard linked dataset. Seminar series on Data Linkage and Anonymisation, Issac Newton Institute, Cambridge, England, 20 October 2016. *[Slides][63]*
+* Dalton, T, [Kirby, GNC][1], [Dearle, A][2] & [Akgün, Ö][62], Evaluating Data Linkage: Creating longitudinal synthetic data to provide a gold-standard linked dataset. Seminar series on Data Linkage and Anonymisation, Isaac Newton Institute, Cambridge, England, 20 October 2016. *[Slides][63]* *[Video][64]*
 
 * [Kirby, GNC][1], [Dearle, A][2], [Hajiarab Derkani, M][3], Dalton, T, [Daras, K][4], [Dibben, CJL][5], [Williamson, L][6], [Huang, Z][7], [Feng, Z][8], [Garrett, E][9] & [Reid, A][10], Reconstructing Genealogical Relationships from Public Registers. Talk for Data Lab Visit to St Andrews, 28 October 2015. *[Slides][11]*
 
@@ -83,3 +83,4 @@
 [61]:	/files/mosaic-poster.pdf
 [62]:   https://risweb.st-andrews.ac.uk/portal/en/persons/ozgur-akgun(3dd419ba-d78e-43f2-963a-7a34172bee01).html
 [63]:   /files/ini_slides.pdf
+[64]:   http://www.newton.ac.uk/seminar/20161020153016302
