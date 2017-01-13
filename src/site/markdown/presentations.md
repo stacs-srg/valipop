@@ -1,6 +1,14 @@
 # Presentations
 
+* [Akgün, Ö][62], [Christen, P][68], Dalton, T, [Dearle, A][2], [Dibben, CJL][13], [Garrett, E][9] & [Kirby, GNC][1], Linkage of Births, Marriages and Deaths. Data Linkage Scotland Showcase, University of Strathclyde, Scotland, 29 November 2016. *[Poster][66]*
+ 
+* [Akgün, Ö][62], [Dearle, A][2], [Kirby, GNC][1], [Christen, P][68] &  Dalton, T, Large Scale Genealogical Discovery using Data Linkage. SISCA Demofest, University of Strathclyde, Scotland, 11 November 2016. *[Poster][65]*
+
 * Dalton, T, [Kirby, GNC][1], [Dearle, A][2] & [Akgün, Ö][62], Evaluating Data Linkage: Creating longitudinal synthetic data to provide a gold-standard linked dataset. Seminar series on Data Linkage and Anonymisation, Isaac Newton Institute, Cambridge, England, 20 October 2016. *[Slides][63]* *[Video][64]*
+
+* [Akgün, Ö][62], Dalton, T, [Dearle, A][2] & [Kirby, GNC][1], Genealogical Discovery. European Researchers Night, St Andrews, Scotland, 30 September 2016. *[Poster][67]*
+
+* Dalton, T, [Kirby, GNC][1], [Dearle, A][2] & [Akgün, Ö][62], Workshop on Data linkage: techniques, challenges and applications, Isaac Newton Institute, Cambridge, England, 12-16 September 2016. *[Poster][69]*
 
 * [Kirby, GNC][1], [Dearle, A][2], [Hajiarab Derkani, M][3], Dalton, T, [Daras, K][4], [Dibben, CJL][5], [Williamson, L][6], [Huang, Z][7], [Feng, Z][8], [Garrett, E][9] & [Reid, A][10], Reconstructing Genealogical Relationships from Public Registers. Talk for Data Lab Visit to St Andrews, 28 October 2015. *[Slides][11]*
 
@@ -84,3 +92,8 @@
 [62]:   https://risweb.st-andrews.ac.uk/portal/en/persons/ozgur-akgun(3dd419ba-d78e-43f2-963a-7a34172bee01).html
 [63]:   /files/ini_slides.pdf
 [64]:   http://www.newton.ac.uk/seminar/20161020153016302
+[65]:   /files/demofest-2016.jpg
+[66]:   /files/data-linkage-showcase-2016.pdf
+[67]:   /files/explorathon-poster-2016.pdf
+[68]:   https://researchers.anu.edu.au/researchers/christen-pj
+[69]:   /files/synthetic-data-poster.pdf
