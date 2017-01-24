@@ -261,7 +261,7 @@ public class Simulation {
                     DeathLogic.handleDeaths(config, currentTime, desired, people, deadPeople, config.getDeathTimeStep());
                 }
 
-                boolean old = false;
+                boolean old = true;
 
                 // if births timestep
                 if(old) {
