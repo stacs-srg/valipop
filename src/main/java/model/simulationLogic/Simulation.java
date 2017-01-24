@@ -226,10 +226,10 @@ public class Simulation {
 
     public ComparativeAnalysis analyseGeneratedPopulation(PeopleCollection generatedPopulation, Config config) throws UnsupportedDateConversion, StatisticalManipulationCalculationError, IOException, UnsupportedEventType {
         // get comparable statistics for generate population
-        PopulationComposition generatedPopulationComposition = new GeneratedPopulationComposition(config.getT0(), config.getTE(), generatedPopulation);
+        PopulationComposition generatedPopulationComposition = new GeneratedPopulationComposition(config.getTS(), config.getTE(), generatedPopulation);
 
         // compare desired and generated population
-        ComparativeAnalysis comparisonOfDesiredAndGenerated = new ComparativeAnalysis(desired, generatedPopulationComposition, config.getT0(), config.getTE());
+        ComparativeAnalysis comparisonOfDesiredAndGenerated = new ComparativeAnalysis(desired, generatedPopulationComposition, config.getTS(), config.getTE());
 
         comparisonOfDesiredAndGenerated.runAnalysis(generatedPopulation, config);
 
@@ -255,7 +255,13 @@ public class Simulation {
                 // at every min timestep
                 // clear out dead people
 
-                boolean old = true;
+
+                // if deaths timestep
+                if (DateUtils.matchesInterval(currentTime, config.getDeathTimeStep())) {
+                    DeathLogic.handleDeaths(config, currentTime, desired, people, deadPeople, config.getDeathTimeStep());
+                }
+
+                boolean old = false;
 
                 // if births timestep
                 if(old) {
@@ -277,10 +283,6 @@ public class Simulation {
                     }
                 }
 
-                // if deaths timestep
-                if (DateUtils.matchesInterval(currentTime, config.getDeathTimeStep())) {
-                    DeathLogic.handleDeaths(config, currentTime, desired, people, deadPeople, config.getDeathTimeStep());
-                }
 
                 if (InitLogic.inInitPeriod(currentTime) && DateUtils.matchesInterval(currentTime, InitLogic.getTimeStep())) {
                     InitLogic.handleInitPeople(config, currentTime, people);

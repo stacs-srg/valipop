@@ -190,7 +190,7 @@ public class ComparativeAnalysis implements IComparativeAnalysis {
 
 
 
-        compareSeparation(desired, generated, config);
+//        compareSeparation(desired, generated, config);
 
         comparePartnering(desired, generated, config);
 
@@ -279,31 +279,40 @@ public class ComparativeAnalysis implements IComparativeAnalysis {
             Date start;
             Date end;
 
-            if(i == 0) {
-                start = startDate;
+            //noinspection Duplicates
+            if(mapKeys.size() == 1) {
 
-                while(DateUtils.dateBefore(mapKeys.get(i + 1), startDate)) {
-                    i++;
+                start = startDate;
+                end = endDate;
+
+            } else {
+
+                if (i == 0) {
+                    start = startDate;
+
+                    while (DateUtils.dateBefore(mapKeys.get(i + 1), startDate)) {
+                        i++;
+                    }
+
+                } else {
+
+                    Date prev = mapKeys.get(i - 1);
+                    Date current = mapKeys.get(i);
+
+                    start = prev.getDateClock().advanceTime(DateUtils.differenceInMonths(prev, current).getCount() / 2, TimeUnit.MONTH);
+
                 }
 
-            } else {
+                if (i == mapKeys.size() - 1) {
+                    end = endDate;
+                } else {
 
-                Date prev = mapKeys.get(i-1);
-                Date current = mapKeys.get(i);
+                    Date next = mapKeys.get(i + 1);
+                    Date current = mapKeys.get(i);
 
-                start = prev.getDateClock().advanceTime(DateUtils.differenceInMonths(prev, current).getCount() / 2, TimeUnit.MONTH);
+                    end = current.getDateClock().advanceTime(DateUtils.differenceInMonths(current, next).getCount() / 2, TimeUnit.MONTH);
 
-            }
-
-            if(i == mapKeys.size() - 1) {
-                end = endDate;
-            } else {
-
-                Date next = mapKeys.get(i+1);
-                Date current = mapKeys.get(i);
-
-                end = current.getDateClock().advanceTime(DateUtils.differenceInMonths(current, next).getCount() / 2, TimeUnit.MONTH);
-
+                }
             }
 
             ArrayList<IntegerRange> femaleAgeRanges = new ArrayList<>(desired.getPartneringData(start, end).getRowKeys());
@@ -354,33 +363,40 @@ public class ComparativeAnalysis implements IComparativeAnalysis {
             Date start;
             Date end;
 
+            //noinspection Duplicates
+            if(mapKeys.size() == 1) {
 
-
-            if(i == 0) {
                 start = startDate;
+                end = endDate;
 
-                while(DateUtils.dateBefore(mapKeys.get(i + 1), startDate)) {
-                    i++;
+            } else {
+
+                if (i == 0) {
+                    start = startDate;
+
+                    while (DateUtils.dateBefore(mapKeys.get(i + 1), startDate)) {
+                        i++;
+                    }
+
+                } else {
+
+                    Date prev = mapKeys.get(i - 1);
+                    Date current = mapKeys.get(i);
+
+                    start = prev.getDateClock().advanceTime(DateUtils.differenceInMonths(prev, current).getCount() / 2, TimeUnit.MONTH);
+
                 }
 
-            } else {
+                if (i == mapKeys.size() - 1) {
+                    end = endDate;
+                } else {
 
-                Date prev = mapKeys.get(i-1);
-                Date current = mapKeys.get(i);
+                    Date next = mapKeys.get(i + 1);
+                    Date current = mapKeys.get(i);
 
-                start = prev.getDateClock().advanceTime(DateUtils.differenceInMonths(prev, current).getCount() / 2, TimeUnit.MONTH);
+                    end = current.getDateClock().advanceTime(DateUtils.differenceInMonths(current, next).getCount() / 2, TimeUnit.MONTH);
 
-            }
-
-            if(i == mapKeys.size() - 1) {
-                end = endDate;
-            } else {
-
-                Date next = mapKeys.get(i+1);
-                Date current = mapKeys.get(i);
-
-                end = current.getDateClock().advanceTime(DateUtils.differenceInMonths(current, next).getCount() / 2, TimeUnit.MONTH);
-
+                }
             }
 
             // get desired data
