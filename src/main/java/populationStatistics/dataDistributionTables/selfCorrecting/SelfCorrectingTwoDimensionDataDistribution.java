@@ -3,7 +3,7 @@ package populationStatistics.dataDistributionTables.selfCorrecting;
 
 import populationStatistics.dataDistributionTables.DataDistribution;
 import populationStatistics.dataDistributionTables.OneDimensionDataDistribution;
-import timeModel.dateRepresentations.YearDate;
+import dateModel.dateImplementations.YearDate;
 import utils.specialTypes.DataKey;
 import utils.specialTypes.integerRange.IntegerRange;
 import utils.specialTypes.integerRange.InvalidRangeException;

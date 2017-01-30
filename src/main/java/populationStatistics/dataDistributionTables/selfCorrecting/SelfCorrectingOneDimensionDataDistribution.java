@@ -1,7 +1,7 @@
 package populationStatistics.dataDistributionTables.selfCorrecting;
 
 import populationStatistics.dataDistributionTables.OneDimensionDataDistribution;
-import timeModel.dateRepresentations.YearDate;
+import dateModel.dateImplementations.YearDate;
 import utils.MapUtils;
 import utils.specialTypes.DataKey;
 import utils.specialTypes.integerRange.IntegerRange;

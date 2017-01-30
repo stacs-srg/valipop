@@ -3,9 +3,9 @@ package config;
 import utils.fileUtils.InputFileReader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import timeModel.dateRepresentations.DateClock;
-import timeModel.exceptions.InvalidTimeUnit;
-import timeModel.timeSteps.CompoundTimeUnit;
+import dateModel.dateImplementations.DateClock;
+import dateModel.exceptions.InvalidTimeUnit;
+import dateModel.timeSteps.CompoundTimeUnit;
 
 import java.io.IOException;
 import java.nio.file.DirectoryStream;

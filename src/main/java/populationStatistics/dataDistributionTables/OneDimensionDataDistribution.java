@@ -2,7 +2,7 @@ package populationStatistics.dataDistributionTables;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import timeModel.dateRepresentations.YearDate;
+import dateModel.dateImplementations.YearDate;
 import utils.specialTypes.integerRange.IntegerRange;
 import utils.specialTypes.integerRange.InvalidRangeException;
 

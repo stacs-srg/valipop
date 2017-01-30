@@ -7,7 +7,7 @@ import populationStatistics.dataDistributionTables.OneDimensionDataDistribution;
 import populationStatistics.dataDistributionTables.TwoDimensionDataDistribution;
 import populationStatistics.dataDistributionTables.selfCorrecting.SelfCorrectingOneDimensionDataDistribution;
 import populationStatistics.dataDistributionTables.selfCorrecting.SelfCorrectingTwoDimensionDataDistribution;
-import timeModel.dateRepresentations.YearDate;
+import dateModel.dateImplementations.YearDate;
 import utils.specialTypes.integerRange.IntegerRange;
 import utils.specialTypes.integerRange.InvalidRangeException;
 

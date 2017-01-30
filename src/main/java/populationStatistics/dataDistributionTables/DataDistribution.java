@@ -1,7 +1,7 @@
 package populationStatistics.dataDistributionTables;
 
 
-import timeModel.dateRepresentations.YearDate;
+import dateModel.dateImplementations.YearDate;
 import utils.specialTypes.integerRange.IntegerRange;
 
 
