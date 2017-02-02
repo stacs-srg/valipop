@@ -16,6 +16,8 @@ public class PopulationCounts {
     private int createdPartnerships = 0;
     private int currentPartnerships = 0;
 
+    private int maxPopulation = 0;
+
     public void newMale(int numberOf) {
         createdMales += numberOf;
         livingMales += numberOf;
@@ -89,5 +91,11 @@ public class PopulationCounts {
 
     public double getLivingSexRatio() {
         return livingMales / (double) livingFemales;
+    }
+
+    public void updateMaxPopulation(int populationSize) {
+        if(populationSize > maxPopulation) {
+            maxPopulation = populationSize;
+        }
     }
 }

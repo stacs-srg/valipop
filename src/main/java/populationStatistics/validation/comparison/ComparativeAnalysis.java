@@ -215,8 +215,9 @@ public class ComparativeAnalysis implements IComparativeAnalysis {
             results.put(d.getYearDate(), temp);
         }
 
-        compareSeparation(desired, generated, config);
-        comparePartnering(desired, generated, config);
+        // TODO put these back in!
+//        compareSeparation(desired, generated, config);
+//        comparePartnering(desired, generated, config);
 
         // Time period anlysis code - only for MALE_DEATH at the moment
 

@@ -15,6 +15,7 @@ import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -231,6 +232,11 @@ public class FileUtils {
 
     public static Path getResultsSummaryPath() {
         return resultsSummaryPath;
+    }
+
+    public static void writeSummaryRowToSummaryFiles(SummaryRow row) throws IOException {
+        Files.write(globalSummaryPath, row.toSeperatedString(',').getBytes(), StandardOpenOption.APPEND);
+        Files.write(resultsSummaryPath, row.toSeperatedString(',').getBytes(), StandardOpenOption.APPEND);
     }
 
 }

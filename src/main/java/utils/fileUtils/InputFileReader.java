@@ -30,7 +30,7 @@ public class InputFileReader {
     private static final String COMMENT_INDICATOR = "#";
     public static Logger log = LogManager.getLogger(InputFileReader.class);
 
-    public static Collection<String> getAllLines(Path path) {
+    public static Collection<String> getAllLines(Path path) throws IOException {
 
         Collection<String> lines = new ArrayList<String>();
         String line;
@@ -48,14 +48,14 @@ public class InputFileReader {
 
             }
         } catch (IOException e) {
-            log.fatal("Unable to read in the lines of the file: " + path.toString());
-            System.exit(102);
+            throw new IOException("Unable to read in the lines of the file: " + path.toString(), e);
+
         }
 
         return lines;
     }
 
-    public static TwoDimensionDataDistribution readIn2DDataFile(Path path) {
+    public static TwoDimensionDataDistribution readIn2DDataFile(Path path) throws IOException, InvalidInputFileException {
 
         ArrayList<String> lines = new ArrayList<String>(getAllLines(path));
 
@@ -77,8 +77,7 @@ public class InputFileReader {
                     try {
                         year = new YearDate(Integer.parseInt(split[1]));
                     } catch (NumberFormatException e) {
-                        log.fatal("Non integer value given for year in file: " + path.toString());
-                        System.exit(103);
+                        throw new InvalidInputFileException("Non integer value given for year in file: " + path.toString(), e);
                     }
                     break;
                 case "population":
@@ -95,12 +94,11 @@ public class InputFileReader {
                     for (String l : split) {
                         try {
                             columnLabels.add(new IntegerRange(l));
+
                         } catch (NumberFormatException e) {
-                            log.fatal("A LABEL is of the incorrect form in the file: " + path.toString());
-                            System.exit(103);
-                        } catch (InvalidRangeException e1) {
-                            log.fatal("A LABEL specifies an invalid range in the file: " + path.toString());
-                            System.exit(103);
+                            throw new InvalidInputFileException("A LABEL is of the incorrect form in the file: " + path.toString(), e);
+                        } catch (InvalidRangeException e) {
+                            throw new InvalidInputFileException("A LABEL specifies an invalid range in the file: " + path.toString(), e);
                         }
                     }
 
@@ -112,19 +110,16 @@ public class InputFileReader {
                         split = s.split(TAB);
 
                         if (split.length != columnLabels.size() + 1) {
-                            log.fatal("One or more data rows do not have the correct number of values in the file: " + path.toString());
-                            System.exit(103);
+                            throw new InvalidInputFileException("One or more data rows do not have the correct number of values in the file: " + path.toString());
                         }
 
                         IntegerRange rowLabel = null;
                         try {
                             rowLabel = new IntegerRange(split[0]);
                         } catch (NumberFormatException e) {
-                            log.fatal("The first column is of an incorrect form on line " + (i + 1) + "in the file: " + path.toString());
-                            System.exit(103);
-                        } catch (InvalidRangeException e1) {
-                            log.fatal("The first column specifies an invalid range on line " + (i + 1) + "in the file: " + path.toString());
-                            System.exit(103);
+                            throw new InvalidInputFileException("The first column is of an incorrect form on line " + (i + 1) + "in the file: " + path.toString(), e);
+                        } catch (InvalidRangeException e) {
+                            throw new InvalidInputFileException("The first column specifies an invalid range on line " + (i + 1) + "in the file: " + path.toString(), e);
                         }
 
                         Map<IntegerRange, Double> rowMap = new HashMap<IntegerRange, Double>();
@@ -133,8 +128,7 @@ public class InputFileReader {
                             try {
                                 rowMap.put(columnLabels.get(j - 1), Double.parseDouble(split[j]));
                             } catch (NumberFormatException e) {
-                                log.fatal("The value in column " + j + " should be a Double on line " + (i + 1) + "in the file: " + path.toString());
-                                System.exit(103);
+                                throw new InvalidInputFileException("The value in column " + j + " should be a Double on line " + (i + 1) + "in the file: " + path.toString(), e);
                             }
                         }
 
@@ -150,7 +144,7 @@ public class InputFileReader {
         return new TwoDimensionDataDistribution(year, sourcePopulation, sourceOrganisation, data);
     }
 
-    public static SelfCorrectingTwoDimensionDataDistribution readInSC2DDataFile(Path path) {
+    public static SelfCorrectingTwoDimensionDataDistribution readInSC2DDataFile(Path path) throws IOException, InvalidInputFileException {
 
         ArrayList<String> lines = new ArrayList<String>(getAllLines(path));
 
@@ -172,8 +166,7 @@ public class InputFileReader {
                     try {
                         year = new YearDate(Integer.parseInt(split[1]));
                     } catch (NumberFormatException e) {
-                        log.fatal("Non integer value given for year in file: " + path.toString());
-                        System.exit(103);
+                        throw new InvalidInputFileException("Non integer value given for year in file: " + path.toString(), e);
                     }
                     break;
                 case "population":
@@ -191,11 +184,9 @@ public class InputFileReader {
                         try {
                             columnLabels.add(new IntegerRange(l));
                         } catch (NumberFormatException e) {
-                            log.fatal("A LABEL is of the incorrect form in the file: " + path.toString());
-                            System.exit(103);
-                        } catch (InvalidRangeException e1) {
-                            log.fatal("A LABEL specifies an invalid range in the file: " + path.toString());
-                            System.exit(103);
+                            throw new InvalidInputFileException("A LABEL is of the incorrect form in the file: " + path.toString(), e);
+                        } catch (InvalidRangeException e) {
+                            throw new InvalidInputFileException("A LABEL specifies an invalid range in the file: " + path.toString(), e);
                         }
                     }
 
@@ -207,19 +198,16 @@ public class InputFileReader {
                         split = s.split(TAB);
 
                         if (split.length != columnLabels.size() + 1) {
-                            log.fatal("One or more data rows do not have the correct number of values in the file: " + path.toString());
-                            System.exit(103);
+                            throw new InvalidInputFileException("One or more data rows do not have the correct number of values in the file: " + path.toString());
                         }
 
                         IntegerRange rowLabel = null;
                         try {
                             rowLabel = new IntegerRange(split[0]);
                         } catch (NumberFormatException e) {
-                            log.fatal("The first column is of an incorrect form on line " + (i + 1) + "in the file: " + path.toString());
-                            System.exit(103);
-                        } catch (InvalidRangeException e1) {
-                            log.fatal("The first column specifies an invalid range on line " + (i + 1) + "in the file: " + path.toString());
-                            System.exit(103);
+                            throw new InvalidInputFileException("The first column is of an incorrect form on line " + (i + 1) + "in the file: " + path.toString(), e);
+                        } catch (InvalidRangeException e) {
+                            throw new InvalidInputFileException("The first column specifies an invalid range on line " + (i + 1) + "in the file: " + path.toString(), e);
                         }
 
                         Map<IntegerRange, Double> rowMap = new HashMap<IntegerRange, Double>();
@@ -228,8 +216,7 @@ public class InputFileReader {
                             try {
                                 rowMap.put(columnLabels.get(j - 1), Double.parseDouble(split[j]));
                             } catch (NumberFormatException e) {
-                                log.fatal("The value in column " + j + " should be a Double on line " + (i + 1) + "in the file: " + path.toString());
-                                System.exit(103);
+                                throw new InvalidInputFileException("The value in column " + j + " should be a Double on line " + (i + 1) + "in the file: " + path.toString(), e);
                             }
                         }
 
@@ -250,7 +237,7 @@ public class InputFileReader {
 //        return new SelfCorrectingTwoDimensionDataDistribution(d.getYear(), d.getSourcePopulation(), d.getSourceOrganisation(), d /*removed clone method call */);
 //    }
 
-    public static OneDimensionDataDistribution readIn1DDataFile(Path path) {
+    public static OneDimensionDataDistribution readIn1DDataFile(Path path) throws IOException, InvalidInputFileException {
 
         ArrayList<String> lines = new ArrayList<String>(getAllLines(path));
 
@@ -271,8 +258,7 @@ public class InputFileReader {
                     try {
                         year = new YearDate(Integer.parseInt(split[1]));
                     } catch (NumberFormatException e) {
-                        log.fatal("Non integer value given for year in file: " + path.toString());
-                        System.exit(103);
+                        throw new InvalidInputFileException("Non integer value given for year in file: " + path.toString(), e);
                     }
                     break;
                 case "population":
@@ -291,11 +277,9 @@ public class InputFileReader {
                         try {
                             rowLabel = new IntegerRange(split[0]);
                         } catch (NumberFormatException e) {
-                            log.fatal("The label is of an incorrect form on line " + (i + 1) + " in the file: " + path.toString());
-                            System.exit(103);
-                        } catch (InvalidRangeException e1) {
-                            log.fatal("The label specifies an invalid range on line " + (i + 1) + "in the file: " + path.toString());
-                            System.exit(103);
+                            throw new InvalidInputFileException("The label is of an incorrect form on line " + (i + 1) + " in the file: " + path.toString(), e);
+                        } catch (InvalidRangeException e) {
+                            throw new InvalidInputFileException("The label specifies an invalid range on line " + (i + 1) + "in the file: " + path.toString(), e);
                         }
 
                         data.put(rowLabel, Double.parseDouble(split[1]));
@@ -310,7 +294,7 @@ public class InputFileReader {
         return new OneDimensionDataDistribution(year, sourcePopulation, sourceOrganisation, data);
     }
 
-    public static SelfCorrectingOneDimensionDataDistribution readInSC1DDataFile(Path path) {
+    public static SelfCorrectingOneDimensionDataDistribution readInSC1DDataFile(Path path) throws IOException, InvalidInputFileException {
         OneDimensionDataDistribution d = readIn1DDataFile(path);
         return new SelfCorrectingOneDimensionDataDistribution(d.getYear(), d.getSourcePopulation(), d.getSourceOrganisation(), d.cloneData());
     }

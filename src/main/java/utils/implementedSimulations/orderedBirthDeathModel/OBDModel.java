@@ -4,23 +4,26 @@ import config.Config;
 import dateModel.DateUtils;
 import dateModel.dateImplementations.ExactDate;
 import dateModel.dateImplementations.MonthDate;
-import dateModel.exceptions.UnsupportedDateConversion;
 import events.UnsupportedEventType;
+import events.birth.BirthLogic;
+import events.death.DeathLogic;
 import events.init.InitLogic;
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import populationStatistics.recording.PopulationStatistics;
 import populationStatistics.recording.inputted.DesiredPopulationStatisticsFactory;
+import populationStatistics.validation.analytic.AnalyticsRunner;
 import populationStatistics.validation.comparison.ComparativeAnalysis;
-import populationStatistics.validation.exceptions.StatisticalManipulationCalculationError;
 import populationStatistics.validation.summaryData.SummaryRow;
-import simulationEntities.EntityFactory;
 import simulationEntities.person.Person;
 import simulationEntities.population.PopulationCounts;
 import simulationEntities.population.dataStructure.PeopleCollection;
+import simulationEntities.population.dataStructure.exceptions.InsufficientNumberOfPeopleException;
+import simulationEntities.population.dataStructure.utils.AggregatePersonCollectionFactory;
 import utils.CustomLog4j;
 import utils.ProcessArgs;
+import utils.ProgramTimer;
 import utils.fileUtils.FileUtils;
+import utils.fileUtils.InvalidInputFileException;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -40,8 +43,8 @@ public class OBDModel {
     private PopulationStatistics desired;
 
     private static PopulationCounts pc;
-    private PeopleCollection people;
-    private PeopleCollection deadPeople;
+    private PeopleCollection population;
+    private PeopleCollection deadPopulation;
     private MonthDate currentTime;
 
 
@@ -53,6 +56,8 @@ public class OBDModel {
             System.exit(1);
         }
 
+        ProgramTimer timer = new ProgramTimer();
+
         OBDModel sim = null;
 
         try {
@@ -63,11 +68,20 @@ public class OBDModel {
                     "permission to read or write on disk. Also, check supporting input files are present at location " +
                     "specified in config file");
             System.exit(1);
+        } catch (InvalidInputFileException e) {
+            System.err.println("Model failed due to an invalid formatting/content of input file, see message: ");
+            System.err.println(e.getMessage());
+            System.exit(1);
         }
 
-        PeopleCollection population = new PeopleCollection(config.getTS(), config.getTE());
-        population.addPerson(new Person('m', new ExactDate(1,1, config.getTS().getYear())));
-        population.addPerson(new Person('f', new ExactDate(1,1, config.getTE().getYear())));
+        PeopleCollection population = null;
+        try {
+            population = sim.runSimulation();
+        } catch (InsufficientNumberOfPeopleException e) {
+            System.err.println("Simulation run incomplete due to insufficient number of people in population to " +
+                    "perform requested events");
+            System.err.println(e.getMessage());
+        }
 
         PrintStream resultsOutput;
         try {
@@ -81,30 +95,41 @@ public class OBDModel {
         try {
             comparisonOfDesiredAndGenerated = ComparativeAnalysis.performComparison(config, population, sim.desired);
             sim.summary = comparisonOfDesiredAndGenerated.outputResults(resultsOutput, sim.summary);
-        } catch (UnsupportedEventType | StatisticalManipulationCalculationError | IOException e) {
-            System.err.println("Comparitive analysis failed");
+        } catch (UnsupportedEventType | IOException e) {
+            System.err.println("Comparative analysis failed");
             System.err.println(e.getMessage());
         }
+
+        AnalyticsRunner.runAnalytics(population, resultsOutput);
+
+        sim.summary.setTotalPop(population.getNumberOfPeople());
+        sim.summary.setRunTime(timer.getTimeMMSS());
+
+        try {
+            FileUtils.writeSummaryRowToSummaryFiles(sim.summary);
+        } catch (IOException e) {
+            System.err.println("Summary row could not be printed to summary files. See message: ");
+            System.err.println(e.getMessage());
+        }
+
+        resultsOutput.close();
 
 
     }
 
 
-    public OBDModel(String pathToConfigFile, String runPurpose, String startTime, String resultsPath) throws IOException {
+    public OBDModel(String pathToConfigFile, String runPurpose, String startTime, String resultsPath) throws IOException, InvalidInputFileException {
 
         FileUtils.makeDirectoryStructure(runPurpose, startTime, resultsPath);
-
         log = CustomLog4j.setup(FileUtils.pathToLogDir(runPurpose, startTime, resultsPath), this);
-
         config = new Config(Paths.get(pathToConfigFile), runPurpose, startTime);
 
 
         // Set up simulation parameters
         currentTime = config.getTS();
-
         pc = new PopulationCounts();
-        people = new PeopleCollection(config.getTS(), config.getTE());
-        deadPeople = new PeopleCollection(config.getTS(), config.getTE());
+        population = new PeopleCollection(config.getTS(), config.getTE());
+        deadPopulation = new PeopleCollection(config.getTS(), config.getTE());
 
         // get desired population info
         desired = DesiredPopulationStatisticsFactory.initialisePopulationStatistics(config);
@@ -115,6 +140,49 @@ public class OBDModel {
                 startTime, runPurpose, config.getBirthTimeStep(), config.getDeathTimeStep(), config.getInputWidth(),
                 config.getT0(), config.getTE(), DateUtils.differenceInDays(config.getT0(), config.getTE()));
 
+    }
+
+    public PeopleCollection runSimulation() throws InsufficientNumberOfPeopleException {
+
+
+        while(DateUtils.dateBefore(currentTime, config.getTE())) {
+
+            if (DateUtils.matchesInterval(currentTime, config.getBirthTimeStep())) {
+                int births = BirthLogic.handleBirths(config, currentTime, desired, population, pc);
+                InitLogic.incrementBirthCount(births);
+            }
+
+            // if deaths timestep
+            if (DateUtils.matchesInterval(currentTime, config.getDeathTimeStep())) {
+                DeathLogic.handleDeaths(config, currentTime, desired, population, deadPopulation, config.getDeathTimeStep());
+            }
+
+
+
+            if (InitLogic.inInitPeriod(currentTime) && DateUtils.matchesInterval(currentTime, InitLogic.getTimeStep())) {
+                InitLogic.handleInitPeople(config, currentTime, population, pc);
+            }
+
+
+
+            if(inSimDates()) {
+                pc.updateMaxPopulation(population.getNumberOfPeople());
+            }
+
+            currentTime = currentTime.advanceTime(config.getSimulationTimeStep());
+
+            log.info("Time step completed " + currentTime.toString() + "    Population " + population.getNumberOfPersons());
+            System.out.println("Time step completed " + currentTime.toString() + "    Population " + population.getNumberOfPersons());
+
+        }
+
+
+
+        return AggregatePersonCollectionFactory.makePeopleCollection(population, deadPopulation);
+    }
+
+    private boolean inSimDates() {
+        return DateUtils.dateBefore(config.getT0(), currentTime);
     }
 
 }

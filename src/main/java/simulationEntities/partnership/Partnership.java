@@ -28,11 +28,6 @@ public class Partnership implements IPartnership {
 
         this.id = getNewId();
 
-//        if(male.getSex() != 'm' || female.getSex() != 'f') {
-//            log.fatal("A member(s) of partnership does not bear correct sex for given role.");
-//            System.exit(202);
-//        }
-
         this.partnershipDate = partnershipDate;
         this.male = male;
         this.female = female;

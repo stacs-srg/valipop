@@ -15,6 +15,7 @@ import populationStatistics.dataDistributionTables.TwoDimensionDataDistribution;
 import populationStatistics.dataDistributionTables.selfCorrecting.SelfCorrectingOneDimensionDataDistribution;
 import populationStatistics.dataDistributionTables.selfCorrecting.SelfCorrectingTwoDimensionDataDistribution;
 import utils.fileUtils.InputFileReader;
+import utils.fileUtils.InvalidInputFileException;
 
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
@@ -37,7 +38,7 @@ public abstract class DesiredPopulationStatisticsFactory {
      *
      * @return the quantified event occurrences
      */
-    public static PopulationStatistics initialisePopulationStatistics(Config config) throws IOException {
+    public static PopulationStatistics initialisePopulationStatistics(Config config) throws IOException, InvalidInputFileException {
 
         DesiredPopulationStatisticsFactory.log.info("Creating PopulationStatistics instance");
 
@@ -51,7 +52,7 @@ public abstract class DesiredPopulationStatisticsFactory {
         return new PopulationStatistics(config, maleDeath, femaleDeath, partnering, orderedBirth, multipleBirth, separation);
     }
 
-    private static Map<YearDate,SelfCorrectingOneDimensionDataDistribution> readInSC1DDataFiles(DirectoryStream<Path> paths, Config config) {
+    private static Map<YearDate,SelfCorrectingOneDimensionDataDistribution> readInSC1DDataFiles(DirectoryStream<Path> paths, Config config) throws IOException, InvalidInputFileException {
 
         Map<YearDate, SelfCorrectingOneDimensionDataDistribution> data = new HashMap<>();
 
@@ -64,7 +65,7 @@ public abstract class DesiredPopulationStatisticsFactory {
 
     }
 
-    private static Map<YearDate, TwoDimensionDataDistribution> readIn2DDataFiles(DirectoryStream<Path> paths, Config config) {
+    private static Map<YearDate, TwoDimensionDataDistribution> readIn2DDataFiles(DirectoryStream<Path> paths, Config config) throws IOException, InvalidInputFileException {
 
         Map<YearDate, TwoDimensionDataDistribution> data = new HashMap<>();
 
@@ -76,7 +77,7 @@ public abstract class DesiredPopulationStatisticsFactory {
         return insertDistributionsToMeetInputWidth(config, data);
     }
 
-    private static Map<YearDate, SelfCorrectingTwoDimensionDataDistribution> readInSC2DDataFiles(DirectoryStream<Path> paths, Config config) {
+    private static Map<YearDate, SelfCorrectingTwoDimensionDataDistribution> readInSC2DDataFiles(DirectoryStream<Path> paths, Config config) throws IOException, InvalidInputFileException {
 
         Map<YearDate, SelfCorrectingTwoDimensionDataDistribution> data = new HashMap<>();
 
@@ -88,7 +89,7 @@ public abstract class DesiredPopulationStatisticsFactory {
         return insertDistributionsToMeetInputWidth(config, data);
     }
 
-    private static Map<YearDate, OneDimensionDataDistribution> readIn1DDataFiles(DirectoryStream<Path> paths, Config config) {
+    private static Map<YearDate, OneDimensionDataDistribution> readIn1DDataFiles(DirectoryStream<Path> paths, Config config) throws IOException, InvalidInputFileException {
 
         Map<YearDate, OneDimensionDataDistribution> data = new HashMap<>();
 

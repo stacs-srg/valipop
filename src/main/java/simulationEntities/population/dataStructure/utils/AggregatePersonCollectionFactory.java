@@ -37,9 +37,8 @@ public class AggregatePersonCollectionFactory {
      * @param col1 The first PersonCollection
      * @param col2 The second PersonCollection
      * @return The aggregated PersonCollection
-     * @throws UnsupportedDateConversion the unsupported date conversion
      */
-    public static PeopleCollection makePeopleCollection(PeopleCollection col1, PeopleCollection col2) throws UnsupportedDateConversion {
+    public static PeopleCollection makePeopleCollection(PeopleCollection col1, PeopleCollection col2) {
 
         Date start = DateUtils.getEarliestDate(col1.getStartDate(), col2.getStartDate());
         Date end = DateUtils.getLatestDate(col1.getStartDate(), col2.getStartDate());

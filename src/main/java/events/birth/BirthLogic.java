@@ -39,7 +39,7 @@ public class BirthLogic {
 
 
     public static int handleBirths(Config config, MonthDate currentTime, PopulationStatistics desiredPopulationStatistics,
-                                   PeopleCollection people, PopulationCounts pc) throws InsufficientNumberOfPeopleException, UnsupportedDateConversion {
+                                   PeopleCollection people, PopulationCounts pc) throws InsufficientNumberOfPeopleException {
 
         int birthCount = 0;
 
@@ -304,23 +304,14 @@ public class BirthLogic {
         // check if total number of children resulting from this is correct
         while (numberOfChildrenShort > 0) {
             // first by split number line dice roll
-            try {
-                numberOfChildrenShort -= performBalancingIterationOnNumbersOfMothers(temp, sumOfRemainders);
-            } catch (StatisticalManipulationCalculationError e) {
-                log.fatal(e.getMessage());
-                System.exit(401);
-            }
+            numberOfChildrenShort -= performBalancingIterationOnNumbersOfMothers(temp, sumOfRemainders);
+
         }
 
         // if the number line dice roll caused an additional set of twins or triplets or etc.
         while (numberOfChildrenShort < 0) {
             // reduce the mother counts for lower maternity types
-            try {
-                numberOfChildrenShort += removeLowerTypeMaternities(temp, numberOfChildrenShort);
-            } catch (StatisticalManipulationCalculationError e) {
-                log.fatal(e.getMessage());
-                System.exit(402);
-            }
+            numberOfChildrenShort += removeLowerTypeMaternities(temp, numberOfChildrenShort);
 
             // repeat until total number of children is equal to the input given of numberOfChildrenToBirth
         }
@@ -369,7 +360,7 @@ public class BirthLogic {
 
     }
 
-    private static int performBalancingIterationOnNumbersOfMothers(Map<IntegerRange, Double> temp, double sumOfRemainders) throws StatisticalManipulationCalculationError {
+    private static int performBalancingIterationOnNumbersOfMothers(Map<IntegerRange, Double> temp, double sumOfRemainders) {
 
         double random = randomNumberGenerator.nextDouble();
 
