@@ -3,13 +3,15 @@ package dateModel.dateImplementations;
 import dateModel.Date;
 import dateModel.DateUtils;
 import dateModel.exceptions.UnsupportedDateConversion;
+import dateModel.timeSteps.CompoundTimeUnit;
+import dateModel.timeSteps.TimeUnit;
 
 import java.util.Calendar;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public final class YearDate implements Date {
+public final class YearDate implements AdvancableDate {
 
     private static final int DAY = 1;
     private final int year;
@@ -56,13 +58,8 @@ public final class YearDate implements Date {
     }
 
     @Override
-    public DateClock getDateClock() throws UnsupportedDateConversion {
-        return new DateClock(MONTH, year);
-    }
-
-    @Override
-    public DateClock getDateClock(boolean force) throws UnsupportedDateConversion {
-        return getDateClock();
+    public MonthDate getMonthDate() {
+        return new MonthDate(MONTH, year);
     }
 
     @Override
@@ -87,5 +84,15 @@ public final class YearDate implements Date {
         } else {
             return 1;
         }
+    }
+
+    @Override
+    public AdvancableDate advanceTime(int numberOf, TimeUnit unit) {
+        return getMonthDate().advanceTime(numberOf, unit);
+    }
+
+    @Override
+    public AdvancableDate advanceTime(CompoundTimeUnit timeStep) {
+        return getMonthDate().advanceTime(timeStep);
     }
 }

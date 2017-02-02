@@ -1,7 +1,8 @@
 package simulationEntities.population.dataStructure;
 
-import simulationEntities.IPartnership;
-import simulationEntities.IPerson;
+import dateModel.dateImplementations.AdvancableDate;
+import simulationEntities.partnership.IPartnership;
+import simulationEntities.person.IPerson;
 import simulationEntities.population.IPopulation;
 import dateModel.Date;
 import dateModel.exceptions.UnsupportedDateConversion;
@@ -43,7 +44,7 @@ public class PeopleCollection extends PersonCollection implements IPopulation {
      * @param end   the end
      * @throws UnsupportedDateConversion the unsupported date conversion
      */
-    public PeopleCollection(Date start, Date end) throws UnsupportedDateConversion {
+    public PeopleCollection(AdvancableDate start, Date end) {
         super(start, end);
 
         males = new MaleCollection(start, end);
@@ -146,6 +147,7 @@ public class PeopleCollection extends PersonCollection implements IPopulation {
     @Override
     public Iterable<IPartnership> getPartnerships() {
 
+        // TODO Is this temp object needed?
         return partTemp;
     }
 
@@ -160,13 +162,13 @@ public class PeopleCollection extends PersonCollection implements IPopulation {
     }
 
     @Override
-    public int getNumberOfPeople() throws Exception {
+    public int getNumberOfPeople() {
         return peopleIndex.size();
     }
 
 
     @Override
-    public int getNumberOfPartnerships() throws Exception {
+    public int getNumberOfPartnerships() {
         return partnershipIndex.size();
     }
 

@@ -1,7 +1,7 @@
 package simulationEntities.population;
 
 
-import simulationEntities.IPerson;
+import simulationEntities.person.IPerson;
 import dateModel.Date;
 
 import java.util.Collection;

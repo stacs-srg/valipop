@@ -3,11 +3,12 @@ package simulationEntities.population.dataStructure;
 
 import dateModel.Date;
 import dateModel.DateUtils;
-import dateModel.dateImplementations.DateClock;
+import dateModel.dateImplementations.AdvancableDate;
+import dateModel.dateImplementations.MonthDate;
 import dateModel.dateImplementations.YearDate;
 import dateModel.exceptions.UnsupportedDateConversion;
 import dateModel.timeSteps.TimeUnit;
-import simulationEntities.IPerson;
+import simulationEntities.person.IPerson;
 import simulationEntities.population.dataStructure.exceptions.PersonNotFoundException;
 
 import java.util.ArrayList;
@@ -34,10 +35,10 @@ public class MaleCollection extends PersonCollection {
      * @param end   the end
      * @throws UnsupportedDateConversion the unsupported date conversion
      */
-    public MaleCollection(Date start, Date end) throws UnsupportedDateConversion {
+    public MaleCollection(AdvancableDate start, Date end) {
         super(start, end);
 
-        for (DateClock y = start.getDateClock(); DateUtils.dateBefore(y, end); y = y.advanceTime(1, TimeUnit.YEAR)) {
+        for (AdvancableDate y = start; DateUtils.dateBefore(y, end); y = y.advanceTime(1, TimeUnit.YEAR)) {
             byYear.put(y.getYearDate(), new ArrayList<>());
         }
     }

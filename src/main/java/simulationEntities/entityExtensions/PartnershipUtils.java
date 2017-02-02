@@ -1,7 +1,7 @@
 package simulationEntities.entityExtensions;
 
 
-import simulationEntities.IPerson;
+import simulationEntities.person.IPerson;
 
 import java.util.Collection;
 

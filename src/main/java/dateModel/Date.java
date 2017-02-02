@@ -1,9 +1,9 @@
 package dateModel;
 
 import dateModel.dateImplementations.ExactDate;
+import dateModel.dateImplementations.MonthDate;
 import dateModel.dateImplementations.YearDate;
 import dateModel.exceptions.UnsupportedDateConversion;
-import dateModel.dateImplementations.DateClock;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
@@ -33,17 +33,17 @@ public interface Date extends Comparable<Date> {
 
     YearDate getYearDate();
 
-    DateClock getDateClock() throws UnsupportedDateConversion;
-
-    /**
-     * If conversion would result in an UnsupportedDateConversion then day is manipulated to allow conversion. Obviously
-     * this removes the ability of exact date transforms and gives a many to one results mapping e.g. when converting a
-     * ExactDate any date in a month will return the first of that month
-     *
-     * @param force whether to force the date conversion - if true then exception will never be thrown
-     * @return The equivalent DateClock
-     */
-    DateClock getDateClock(boolean force) throws UnsupportedDateConversion;
+//    MonthDate getDateClock() throws UnsupportedDateConversion;
+//
+//    /**
+//     * If conversion would result in an UnsupportedDateConversion then day is manipulated to allow conversion. Obviously
+//     * this removes the ability of exact date transforms and gives a many to one results mapping e.g. when converting a
+//     * ExactDate any date in a month will return the first of that month
+//     *
+//     * @param force whether to force the date conversion - if true then exception will never be thrown
+//     * @return The equivalent MonthDate
+//     */
+//    MonthDate getDateClock(boolean force) throws UnsupportedDateConversion;
 
     String toOrderableString();
 

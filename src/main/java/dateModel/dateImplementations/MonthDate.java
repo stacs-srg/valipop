@@ -12,14 +12,14 @@ import java.util.Calendar;
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public final class DateClock implements Date {
+public final class MonthDate implements AdvancableDate {
 
     protected static final int MONTHS_IN_YEAR = 12;
     private static final int DAY = 1;
     private final int year;
     private final int month;
 
-    public DateClock(int month, int year) {
+    public MonthDate(int month, int year) {
         if (month <= 0 || month > 12) {
             throw new DateTimeException("Months should be indexed between 1 and 12 inclusive.");
         }
@@ -27,7 +27,7 @@ public final class DateClock implements Date {
         this.year = year;
     }
 
-    public DateClock(String ddmmyyyy) {
+    public MonthDate(String ddmmyyyy) {
         String[] split = ddmmyyyy.split("/");
         month = Integer.parseInt(split[1]);
         if (month <= 0 || month > 12) {
@@ -36,7 +36,7 @@ public final class DateClock implements Date {
         year = Integer.parseInt(split[2]);
     }
 
-    public DateClock advanceTime(int numberOf, TimeUnit unit) {
+    public MonthDate advanceTime(int numberOf, TimeUnit unit) {
         int m = month;
         int y = year;
 
@@ -56,10 +56,10 @@ public final class DateClock implements Date {
                 y += numberOf;
                 break;
         }
-        return new DateClock(m, y);
+        return new MonthDate(m, y);
     }
 
-    public DateClock advanceTime(CompoundTimeUnit timeStep) {
+    public MonthDate advanceTime(CompoundTimeUnit timeStep) {
         return advanceTime(timeStep.getCount(), timeStep.getUnit());
     }
 
@@ -101,12 +101,7 @@ public final class DateClock implements Date {
     }
 
     @Override
-    public DateClock getDateClock() throws UnsupportedDateConversion {
-        return this;
-    }
-
-    @Override
-    public DateClock getDateClock(boolean force) throws UnsupportedDateConversion {
+    public MonthDate getMonthDate() {
         return this;
     }
 

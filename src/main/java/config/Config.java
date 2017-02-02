@@ -1,9 +1,9 @@
 package config;
 
+import dateModel.dateImplementations.MonthDate;
 import utils.fileUtils.InputFileReader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import dateModel.dateImplementations.DateClock;
 import dateModel.exceptions.InvalidTimeUnit;
 import dateModel.timeSteps.CompoundTimeUnit;
 
@@ -30,9 +30,9 @@ public class Config {
     private static final String partneringSubFile = "partnering";
     private static final String separationSubFile = "separation";
     public static Logger log = LogManager.getLogger(Config.class);
-    private DateClock tS;
-    private DateClock t0;
-    private DateClock tE;
+    private MonthDate tS;
+    private MonthDate t0;
+    private MonthDate tE;
     private int t0PopulationSize;
     private double setUpBR;
     private double setUpDR;
@@ -151,7 +151,7 @@ public class Config {
                     break;
                 case "tS":
                     try {
-                        tS = new DateClock(split[1]);
+                        tS = new MonthDate(split[1]);
                     } catch (DateTimeException e) {
                         log.fatal("tS " + e.getMessage());
                         throw e;
@@ -159,7 +159,7 @@ public class Config {
                     break;
                 case "t0":
                     try {
-                        t0 = new DateClock(split[1]);
+                        t0 = new MonthDate(split[1]);
                     } catch (DateTimeException e) {
                         log.fatal("t0 " + e.getMessage());
                         throw e;
@@ -167,7 +167,7 @@ public class Config {
                     break;
                 case "tE":
                     try {
-                        tE = new DateClock(split[1]);
+                        tE = new MonthDate(split[1]);
                     } catch (DateTimeException e) {
                         log.fatal("tE " + e.getMessage());
                         throw e;
@@ -278,15 +278,15 @@ public class Config {
     }
 
 
-    public DateClock getTS() {
+    public MonthDate getTS() {
         return tS;
     }
 
-    public DateClock getT0() {
+    public MonthDate getT0() {
         return t0;
     }
 
-    public DateClock getTE() {
+    public MonthDate getTE() {
         return tE;
     }
 

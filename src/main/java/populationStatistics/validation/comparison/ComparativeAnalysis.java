@@ -3,7 +3,8 @@ package populationStatistics.validation.comparison;
 import config.Config;
 import dateModel.Date;
 import dateModel.DateUtils;
-import dateModel.dateImplementations.DateClock;
+import dateModel.dateImplementations.AdvancableDate;
+import dateModel.dateImplementations.MonthDate;
 import dateModel.dateImplementations.YearDate;
 import dateModel.exceptions.UnsupportedDateConversion;
 import dateModel.timeSteps.CompoundTimeUnit;
@@ -16,6 +17,9 @@ import org.apache.logging.log4j.Logger;
 import populationStatistics.dataDistributionTables.LabelValueDataRow;
 import populationStatistics.dataDistributionTables.OneDimensionDataDistribution;
 import populationStatistics.dataDistributionTables.selfCorrecting.TableTranformationUtils;
+import populationStatistics.recording.PopulationComposition;
+import populationStatistics.recording.PopulationStatistics;
+import populationStatistics.recording.generated.GeneratedPopulationComposition;
 import populationStatistics.validation.exceptions.PValueInvalidException;
 import populationStatistics.validation.exceptions.StatisticalManipulationCalculationError;
 import populationStatistics.validation.kaplanMeier.IKaplanMeierAnalysis;
@@ -24,6 +28,7 @@ import populationStatistics.validation.kaplanMeier.plots.SurvivalPlot;
 import populationStatistics.validation.kaplanMeier.utils.FailureTimeRow;
 import populationStatistics.validation.summaryData.SummaryRow;
 import simulationEntities.population.IPopulation;
+import simulationEntities.population.dataStructure.PeopleCollection;
 import utils.fileUtils.FileUtils;
 import utils.specialTypes.integerRange.IntegerRange;
 
@@ -39,14 +44,32 @@ public class ComparativeAnalysis implements IComparativeAnalysis {
     private StatisticalTables desired;
     private StatisticalTables generated;
 
-    private Date startDate;
+    private AdvancableDate startDate;
     private Date endDate;
 
     private Map<Date, Map<EventType, IKaplanMeierAnalysis>> results;
 
     public static Logger log = LogManager.getLogger(ComparativeAnalysis.class);
 
-    public ComparativeAnalysis(StatisticalTables desired, StatisticalTables generated, Date analysisStartDate, Date analysisEndDate) {
+    public static ComparativeAnalysis performComparison(Config config, PeopleCollection generatedPopulation,
+                                                        PopulationStatistics desiredPopulationStatistics)
+                                    throws UnsupportedEventType, StatisticalManipulationCalculationError, IOException {
+
+        PopulationComposition generatedPopulationComposition = new GeneratedPopulationComposition(config.getTS(), config.getTE(), generatedPopulation);
+
+        // compare desired and generated population
+        ComparativeAnalysis comparisonOfDesiredAndGenerated = new ComparativeAnalysis(desiredPopulationStatistics, generatedPopulationComposition, config.getT0(), config.getTE());
+
+        comparisonOfDesiredAndGenerated.runAnalysis(generatedPopulation, config);
+
+
+        return comparisonOfDesiredAndGenerated;
+
+
+    }
+
+
+    public ComparativeAnalysis(StatisticalTables desired, StatisticalTables generated, AdvancableDate analysisStartDate, Date analysisEndDate) {
         this.desired = desired;
         this.generated = generated;
         this.startDate = analysisStartDate;
@@ -161,7 +184,7 @@ public class ComparativeAnalysis implements IComparativeAnalysis {
     }
 
     @Override
-    public void runAnalysis(IPopulation generatedPopulation, Config config) throws UnsupportedDateConversion, StatisticalManipulationCalculationError, IOException, UnsupportedEventType {
+    public void runAnalysis(IPopulation generatedPopulation, Config config) throws StatisticalManipulationCalculationError, IOException, UnsupportedEventType {
 
         Map<Date, Map<EventType, IKaplanMeierAnalysis>> results = new HashMap<Date, Map<EventType, IKaplanMeierAnalysis>>();
 
@@ -169,7 +192,7 @@ public class ComparativeAnalysis implements IComparativeAnalysis {
 
 
         // for each year in analysis period
-        for (DateClock d = startDate.getDateClock(); DateUtils.dateBefore(d, endDate); d = d.advanceTime(1, TimeUnit.YEAR)) {
+        for (AdvancableDate d = startDate; DateUtils.dateBefore(d, endDate); d = d.advanceTime(1, TimeUnit.YEAR)) {
 
             Map<EventType, IKaplanMeierAnalysis> temp = new HashMap<>();
 
@@ -263,7 +286,7 @@ public class ComparativeAnalysis implements IComparativeAnalysis {
 
     }
 
-    private void comparePartnering(StatisticalTables desired, StatisticalTables generated, Config config) throws UnsupportedDateConversion {
+    private void comparePartnering(StatisticalTables desired, StatisticalTables generated, Config config) {
 
         ArrayList<YearDate> mapKeys = new ArrayList<>(desired.getDataYearsInMap(EventType.PARTNERING));
 
@@ -285,10 +308,10 @@ public class ComparativeAnalysis implements IComparativeAnalysis {
 
             } else {
 
-                Date prev = mapKeys.get(i-1);
+                AdvancableDate prev = mapKeys.get(i-1);
                 Date current = mapKeys.get(i);
 
-                start = prev.getDateClock().advanceTime(DateUtils.differenceInMonths(prev, current).getCount() / 2, TimeUnit.MONTH);
+                start = prev.advanceTime(DateUtils.differenceInMonths(prev, current).getCount() / 2, TimeUnit.MONTH);
 
             }
 
@@ -297,9 +320,9 @@ public class ComparativeAnalysis implements IComparativeAnalysis {
             } else {
 
                 Date next = mapKeys.get(i+1);
-                Date current = mapKeys.get(i);
+                AdvancableDate current = mapKeys.get(i);
 
-                end = current.getDateClock().advanceTime(DateUtils.differenceInMonths(current, next).getCount() / 2, TimeUnit.MONTH);
+                end = current.advanceTime(DateUtils.differenceInMonths(current, next).getCount() / 2, TimeUnit.MONTH);
 
             }
 
@@ -338,7 +361,7 @@ public class ComparativeAnalysis implements IComparativeAnalysis {
 
     }
 
-    private void compareSeparation(StatisticalTables desired, StatisticalTables generated, Config config) throws UnsupportedDateConversion {
+    private void compareSeparation(StatisticalTables desired, StatisticalTables generated, Config config) {
 
         ArrayList<YearDate> mapKeys = new ArrayList<>(desired.getDataYearsInMap(EventType.SEPARATION));
 
@@ -348,7 +371,7 @@ public class ComparativeAnalysis implements IComparativeAnalysis {
         // for each bound (i.e. each input table)
         for(int i = 0; i < mapKeys.size(); i++) {
 
-            Date start;
+            AdvancableDate start;
             Date end;
 
             if(i == 0) {
@@ -360,10 +383,10 @@ public class ComparativeAnalysis implements IComparativeAnalysis {
 
             } else {
 
-                Date prev = mapKeys.get(i-1);
+                AdvancableDate prev = mapKeys.get(i-1);
                 Date current = mapKeys.get(i);
 
-                start = prev.getDateClock().advanceTime(DateUtils.differenceInMonths(prev, current).getCount() / 2, TimeUnit.MONTH);
+                start = prev.advanceTime(DateUtils.differenceInMonths(prev, current).getCount() / 2, TimeUnit.MONTH);
 
             }
 
@@ -372,9 +395,9 @@ public class ComparativeAnalysis implements IComparativeAnalysis {
             } else {
 
                 Date next = mapKeys.get(i+1);
-                Date current = mapKeys.get(i);
+                AdvancableDate current = mapKeys.get(i);
 
-                end = current.getDateClock().advanceTime(DateUtils.differenceInMonths(current, next).getCount() / 2, TimeUnit.MONTH);
+                end = current.advanceTime(DateUtils.differenceInMonths(current, next).getCount() / 2, TimeUnit.MONTH);
 
             }
 
@@ -408,7 +431,11 @@ public class ComparativeAnalysis implements IComparativeAnalysis {
 
     }
 
-    private Collection<FailureTimeRow> getTableOfFailureTimes(Date date, EventType eventType, StatisticalTables expected, StatisticalTables observed, IPopulation generatedPopulation) throws UnsupportedDateConversion, UnsupportedEventType {
+    private Collection<FailureTimeRow> getTableOfFailureTimes(AdvancableDate date, EventType eventType,
+                                                              StatisticalTables expected, StatisticalTables observed,
+                                                              IPopulation generatedPopulation)
+                                                                throws UnsupportedEventType {
+
         OneDimensionDataDistribution populationSurvivorTable = observed.getCohortSurvivorTable(date, eventType);
         OneDimensionDataDistribution statisticsSurvivorTable = expected.getCohortSurvivorTable(date, eventType, populationSurvivorTable.getData(0), populationSurvivorTable.getLargestLabel().getMax() - 1, generatedPopulation);
 
@@ -418,12 +445,19 @@ public class ComparativeAnalysis implements IComparativeAnalysis {
         return rows;
     }
 
-    private IKaplanMeierAnalysis runKMAnalysisOnCohort(Date date, EventType eventType, StatisticalTables expected, StatisticalTables observed, IPopulation generatedPopulation, Config config) throws StatisticalManipulationCalculationError, UnsupportedDateConversion, UnsupportedEventType, IOException {
+    private IKaplanMeierAnalysis runKMAnalysisOnCohort(AdvancableDate date, EventType eventType, StatisticalTables expected,
+                                                       StatisticalTables observed, IPopulation generatedPopulation,
+                                                       Config config)
+                                                        throws StatisticalManipulationCalculationError,
+                                                        UnsupportedEventType, IOException {
+
         // get survival tables for all males born in year
         OneDimensionDataDistribution populationSurvivorTable = observed.getCohortSurvivorTable(date, eventType);
 
         // get equiverlent table from inputs stats
-        OneDimensionDataDistribution statisticsSurvivorTable = expected.getCohortSurvivorTable(date, eventType, populationSurvivorTable.getData(0), populationSurvivorTable.getLargestLabel().getMax() - 1, generatedPopulation);
+        OneDimensionDataDistribution statisticsSurvivorTable = expected.getCohortSurvivorTable(date, eventType,
+                populationSurvivorTable.getData(0),
+                populationSurvivorTable.getLargestLabel().getMax() - 1, generatedPopulation);
 
         if(config.produceGraphs()) {
             new SurvivalPlot(statisticsSurvivorTable, populationSurvivorTable).generatePlot(eventType, date, config);
@@ -434,7 +468,7 @@ public class ComparativeAnalysis implements IComparativeAnalysis {
 
     }
 
-    private IKaplanMeierAnalysis runKMAnalysisForTimePeriod(Date date, EventType eventType, CompoundTimeUnit timePeriod, Config config) throws StatisticalManipulationCalculationError, UnsupportedDateConversion, UnsupportedEventType, IOException {
+    private IKaplanMeierAnalysis runKMAnalysisForTimePeriod(AdvancableDate date, EventType eventType, CompoundTimeUnit timePeriod, Config config) throws StatisticalManipulationCalculationError, UnsupportedDateConversion, UnsupportedEventType, IOException {
         // get survival tables for all males born in year
 
         OneDimensionDataDistribution populationSurvivorTable = generated.getTimePeriodSurvivorTable(date, timePeriod, eventType);
@@ -456,7 +490,7 @@ public class ComparativeAnalysis implements IComparativeAnalysis {
     }
 
     @Override
-    public SummaryRow outputResults(PrintStream resultOutput, SummaryRow summary) throws UnsupportedDateConversion {
+    public SummaryRow outputResults(PrintStream resultOutput, SummaryRow summary) {
 
 
         int mPasses = 0;
@@ -559,7 +593,7 @@ public class ComparativeAnalysis implements IComparativeAnalysis {
 
     }
 
-    private PrintStream makeNamedStream(Date date, String note, EventType eventType, Config config) throws UnsupportedDateConversion {
+    private PrintStream makeNamedStream(Date date, String note, EventType eventType, Config config) {
 
         String fName = "";
         switch (eventType) {
@@ -598,7 +632,7 @@ public class ComparativeAnalysis implements IComparativeAnalysis {
 
     }
 
-    public Collection<FailureTimeRow> getFailureAtTimesTable(Date date, EventType event, StatisticalTables expected, StatisticalTables observed, IPopulation generatedPopulation, Config config) throws UnsupportedDateConversion {
+    public Collection<FailureTimeRow> getFailureAtTimesTable(AdvancableDate date, EventType event, StatisticalTables expected, StatisticalTables observed, IPopulation generatedPopulation, Config config) throws UnsupportedEventType {
 
         Collection<FailureTimeRow> rows = observed.getFailureAtTimesTable(date, "Observed", config.getTE(), event);
 

@@ -14,10 +14,11 @@
  * You should have received a copy of the GNU General Public License along with population_model. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package simulationEntities;
+package simulationEntities.partnership;
 
 import simulationEntities.entityExtensions.PartnershipUtils;
 import dateModel.Date;
+import simulationEntities.person.IPerson;
 
 import java.util.List;
 

@@ -16,8 +16,8 @@
  */
 package simulationEntities.population;
 
-import simulationEntities.IPartnership;
-import simulationEntities.IPerson;
+import simulationEntities.partnership.IPartnership;
+import simulationEntities.person.IPerson;
 
 /**
  * Interface for all population models.
@@ -64,17 +64,15 @@ public interface IPopulation extends PopulationUtils {
      * Returns the number of people in the population.
      *
      * @return the number of people in the population
-     * @throws Exception if there is an error determining the number of people
      */
-    int getNumberOfPeople() throws Exception;
+    int getNumberOfPeople();
 
     /**
      * Returns the number of partnerships in the population.
      *
      * @return the number of partnerships in the population
-     * @throws Exception if there is an error determining the number of partnerships
      */
-    int getNumberOfPartnerships() throws Exception;
+    int getNumberOfPartnerships();
 
     /**
      * Sets a description for the population, which may be useful for testing and debugging.

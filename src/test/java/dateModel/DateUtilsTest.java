@@ -1,8 +1,8 @@
 package dateModel;
 
+import dateModel.dateImplementations.MonthDate;
 import org.junit.Assert;
 import org.junit.Test;
-import dateModel.dateImplementations.DateClock;
 import dateModel.dateImplementations.ExactDate;
 import dateModel.timeSteps.CompoundTimeUnit;
 import dateModel.timeSteps.TimeUnit;
@@ -17,12 +17,12 @@ public class DateUtilsTest {
     @Test
     public void calculateExactDate() throws Exception {
 
-        Date janDate = new DateClock(1, 2015);
-        Date marDate = new DateClock(3, 2015);
-        Date decDate = new DateClock(12, 2015);
+        Date janDate = new MonthDate(1, 2015);
+        Date marDate = new MonthDate(3, 2015);
+        Date decDate = new MonthDate(12, 2015);
 
-        Date febDate = new DateClock(2, 2015);
-        Date febDateLeapYear = new DateClock(2, 2016);
+        Date febDate = new MonthDate(2, 2015);
+        Date febDateLeapYear = new MonthDate(2, 2016);
 
         CompoundTimeUnit oneMonth = new CompoundTimeUnit(1, TimeUnit.MONTH);
         CompoundTimeUnit sixMonth = new CompoundTimeUnit(6, TimeUnit.MONTH);
@@ -134,15 +134,15 @@ public class DateUtilsTest {
     @Test
     public void getDaysInTimePeriod() throws Exception {
 
-        Date janDate = new DateClock(1, 2015);
-        Date janDateLeapYear = new DateClock(1, 2016);
-        Date janDatePostLeapYear = new DateClock(1, 2017);
+        Date janDate = new MonthDate(1, 2015);
+        Date janDateLeapYear = new MonthDate(1, 2016);
+        Date janDatePostLeapYear = new MonthDate(1, 2017);
 
-        Date febDate = new DateClock(2, 2015);
-        Date febDateLeapYear = new DateClock(2, 2016);
+        Date febDate = new MonthDate(2, 2015);
+        Date febDateLeapYear = new MonthDate(2, 2016);
 
-        Date marDate = new DateClock(3, 2015);
-        Date marDateLeapYear = new DateClock(3, 2016);
+        Date marDate = new MonthDate(3, 2015);
+        Date marDateLeapYear = new MonthDate(3, 2016);
 
         Date offJanDate = new ExactDate(15, 1, 2015);
         Date offJanDateLeapYear = new ExactDate(15, 1, 2016);
@@ -306,7 +306,7 @@ public class DateUtilsTest {
     @Test
     public void checkMonthsMethod() {
         // minus test
-        DateClock t = new DateClock(6, 1900);
+        MonthDate t = new MonthDate(6, 1900);
 
         assertEquals(21, DateUtils.differenceInMonths(t, t.advanceTime(new CompoundTimeUnit(21, TimeUnit.MONTH))).getCount());
         assertEquals(21, DateUtils.differenceInMonths(t.advanceTime(new CompoundTimeUnit(21, TimeUnit.MONTH)), t).getCount());
@@ -322,7 +322,7 @@ public class DateUtilsTest {
         assertEquals(15, DateUtils.differenceInMonths(t, t.advanceTime(new CompoundTimeUnit(15, TimeUnit.MONTH))).getCount());
         assertEquals(15, DateUtils.differenceInMonths(t.advanceTime(new CompoundTimeUnit(15, TimeUnit.MONTH)), t).getCount());
 
-        DateClock t2 = new DateClock(12, 2018);
+        MonthDate t2 = new MonthDate(12, 2018);
         assertEquals(3, DateUtils.differenceInMonths(t, t.advanceTime(new CompoundTimeUnit(3, TimeUnit.MONTH))).getCount());
         assertEquals(3, DateUtils.differenceInMonths(t2, t2.advanceTime(new CompoundTimeUnit(3, TimeUnit.MONTH))).getCount());
 
@@ -331,10 +331,10 @@ public class DateUtilsTest {
     @Test
     public void checkYearsMethod() {
 
-        DateClock t = new DateClock(6, 1900);
+        MonthDate t = new MonthDate(6, 1900);
 
-        DateClock t1 = new DateClock(1, 2015);
-        DateClock t2 = new DateClock(12, 2015);
+        MonthDate t1 = new MonthDate(1, 2015);
+        MonthDate t2 = new MonthDate(12, 2015);
 
         ExactDate d1 = new ExactDate(11, 5, 1900);
         ExactDate d2 = new ExactDate(10, 5, 1901);
@@ -368,9 +368,9 @@ public class DateUtilsTest {
     @Test
     public void checkBeforeDateMethod() {
 
-        DateClock a3 = new DateClock(12, 2014);
-        DateClock a = new DateClock(3, 2015);
-        DateClock a2 = new DateClock(6, 2015);
+        MonthDate a3 = new MonthDate(12, 2014);
+        MonthDate a = new MonthDate(3, 2015);
+        MonthDate a2 = new MonthDate(6, 2015);
 
         ExactDate b = new ExactDate(15, 3, 2015);
 
@@ -392,10 +392,10 @@ public class DateUtilsTest {
     @Test
     public void checkMatchesIntervalMethod() {
 
-        DateClock a = new DateClock(1, 10);
-        DateClock b = new DateClock(8, 13);
-        DateClock c = new DateClock(1, 2017);
-        DateClock d = new DateClock(7, 2017);
+        MonthDate a = new MonthDate(1, 10);
+        MonthDate b = new MonthDate(8, 13);
+        MonthDate c = new MonthDate(1, 2017);
+        MonthDate d = new MonthDate(7, 2017);
 
         CompoundTimeUnit monthly = new CompoundTimeUnit(1, TimeUnit.MONTH);
         CompoundTimeUnit quarterly = new CompoundTimeUnit(3, TimeUnit.MONTH);

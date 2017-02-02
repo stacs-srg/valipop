@@ -1,5 +1,6 @@
 package populationStatistics.validation.comparison;
 
+import dateModel.dateImplementations.AdvancableDate;
 import dateModel.dateImplementations.YearDate;
 import dateModel.exceptions.UnsupportedDateConversion;
 import dateModel.timeSteps.CompoundTimeUnit;
@@ -38,23 +39,23 @@ public interface StatisticalTables {
      * @param event      the event
      * @return the survivor table
      */
-    OneDimensionDataDistribution getCohortSurvivorTable(Date cohortYear, EventType event) throws UnsupportedEventType;
+    OneDimensionDataDistribution getCohortSurvivorTable(AdvancableDate cohortYear, EventType event) throws UnsupportedEventType;
 
-    OneDimensionDataDistribution getCohortSurvivorTable(Date cohortYear, EventType event, Double scalingFactor, int timeLimit, IPopulation generatedPopulation) throws UnsupportedDateConversion, UnsupportedEventType;
+    OneDimensionDataDistribution getCohortSurvivorTable(AdvancableDate cohortYear, EventType event, Double scalingFactor, int timeLimit, IPopulation generatedPopulation) throws UnsupportedEventType;
 
-    OneDimensionDataDistribution getTimePeriodSurvivorTable(Date startYear, CompoundTimeUnit timePeriod, EventType event) throws UnsupportedEventType, UnsupportedDateConversion;
+    OneDimensionDataDistribution getTimePeriodSurvivorTable(AdvancableDate startYear, CompoundTimeUnit timePeriod, EventType event) throws UnsupportedEventType;
 
     OneDimensionDataDistribution getTimePeriodSurvivorTable(Date startYear, int ageLimit, EventType event) throws UnsupportedEventType;
 
-    Collection<FailureTimeRow> getFailureAtTimesTable(Date year, String denoteGroupAs, Date simulationEndDate, EventType event);
+    Collection<FailureTimeRow> getFailureAtTimesTable(AdvancableDate year, String denoteGroupAs, Date simulationEndDate, EventType event);
 
-    Collection<FailureTimeRow> getFailureAtTimesTable(Date year, String denoteGroupAs, Date simulationEndDate, EventType event, Double scalingFactor, int timeLimit, IPopulation generatedPopulation) throws UnsupportedDateConversion;
+    Collection<FailureTimeRow> getFailureAtTimesTable(AdvancableDate year, String denoteGroupAs, Date simulationEndDate, EventType event, Double scalingFactor, int timeLimit, IPopulation generatedPopulation) throws UnsupportedEventType;
 
     Collection<YearDate> getDataYearsInMap(EventType maleDeath);
 
-    OneDimensionDataDistribution getSeparationData(Date startYear, Date endYear) throws UnsupportedDateConversion;
+    OneDimensionDataDistribution getSeparationData(Date startYear, Date endYear);
 
-    OneDimensionDataDistribution getSeparationData(Date startYear, Date endYear, int childCap) throws UnsupportedDateConversion;
+    OneDimensionDataDistribution getSeparationData(AdvancableDate startYear, Date endYear, int childCap);
 
     OneDimensionDataDistribution getPartneringData(Date startYear, Date endYear, IntegerRange femaleAgeRange, Set<IntegerRange> maleAgeBrackets);
 

@@ -27,6 +27,11 @@ public class FileUtils {
 
     public static Logger log = null;
 
+    private static Path globalSummaryPath;
+    private static Path resultsSummaryPath;
+    private static Path detailedResultsPath;
+    private static Path tracePath;
+
     private static void checkLogFile() {
         if(log == null) {
             log = LogManager.getLogger(FileUtils.class);
@@ -39,21 +44,19 @@ public class FileUtils {
         // check results dir exists
         Path results = Paths.get(resultPath);
         mkDirs(results);
-        mkSummaryFile(results, "global-results-summary.csv");
+
+        globalSummaryPath = mkSummaryFile(results, "global-results-summary.csv");
 
         Path purpose = Paths.get(results.toString(), runPurpose);
         mkDirs(purpose);
-        mkSummaryFile(purpose, runPurpose + "-results-summary.csv");
-
-
+        resultsSummaryPath = mkSummaryFile(purpose, runPurpose + "-results-summary.csv");
 
         // make folder named by startTime
         Path run = Paths.get(purpose.toString(), startTime);
         mkDirs(run);
 
-
         // initialise result file
-        mkBlankFile(run, "detailed-results-" + startTime + ".txt");
+        detailedResultsPath = mkBlankFile(run, "detailed-results-" + startTime + ".txt");
 
         // make dat dir
         Path dat = Paths.get(run.toString(), "dat");
@@ -72,7 +75,7 @@ public class FileUtils {
 
         Path log = Paths.get(run.toString(), "log");
         mkDirs(log);
-        mkBlankFile(log, "trace.txt");
+        tracePath = mkBlankFile(log, "trace.txt");
 
     }
 
@@ -153,25 +156,27 @@ public class FileUtils {
         }
     }
 
-    private static void mkBlankFile(Path parent, String fileName) throws IOException {
+    private static Path mkBlankFile(Path parent, String fileName) throws IOException {
 
-        Path summary = Paths.get(parent.toString(), fileName);
+        Path blankFilePath = Paths.get(parent.toString(), fileName);
 
-        if(!Files.exists(summary)) {
+        if(!Files.exists(blankFilePath)) {
             // if not, initialise summary file with headings
 
             try {
-                PrintWriter write = new PrintWriter(summary.toFile(), "UTF-8");
+                PrintWriter write = new PrintWriter(blankFilePath.toFile(), "UTF-8");
                 write.close();
             } catch (IOException e) {
-                String m = "Unable to create to " + summary.toString();
+                String m = "Unable to create to " + blankFilePath.toString();
                 throw new IOException(m, e);
             }
         }
 
+        return blankFilePath;
+
     }
 
-    private static void mkSummaryFile(Path parent, String fileName) throws IOException {
+    private static Path mkSummaryFile(Path parent, String fileName) throws IOException {
         // Check if summary file exists
         Path summary = Paths.get(parent.toString(), fileName);
 
@@ -187,6 +192,8 @@ public class FileUtils {
                 throw new IOException(m, e);
             }
         }
+
+        return summary;
     }
 
     public static String getDateTime() {
@@ -207,6 +214,23 @@ public class FileUtils {
             return new File(path.toString()).mkdirs();
         }
         return true;
+    }
+
+
+    public static Path getGlobalSummaryPath() {
+        return globalSummaryPath;
+    }
+
+    public static Path getDetailedResultsPath() {
+        return detailedResultsPath;
+    }
+
+    public static Path getTracePath() {
+        return tracePath;
+    }
+
+    public static Path getResultsSummaryPath() {
+        return resultsSummaryPath;
     }
 
 }

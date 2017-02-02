@@ -2,15 +2,16 @@ package simulationEntities.population.dataStructure;
 
 import dateModel.Date;
 import dateModel.DateUtils;
-import dateModel.dateImplementations.DateClock;
+import dateModel.dateImplementations.AdvancableDate;
+import dateModel.dateImplementations.MonthDate;
 import dateModel.dateImplementations.YearDate;
 import dateModel.exceptions.UnsupportedDateConversion;
 import dateModel.timeSteps.CompoundTimeUnit;
 import dateModel.timeSteps.TimeUnit;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import simulationEntities.IPartnership;
-import simulationEntities.IPerson;
+import simulationEntities.partnership.IPartnership;
+import simulationEntities.person.IPerson;
 import simulationEntities.population.dataStructure.exceptions.InsufficientNumberOfPeopleException;
 import simulationEntities.population.dataStructure.exceptions.PersonNotFoundException;
 import utils.MapUtils;
@@ -40,10 +41,10 @@ public class FemaleCollection extends PersonCollection {
      * @param end   the end
      * @throws UnsupportedDateConversion the unsupported date conversion
      */
-    public FemaleCollection(Date start, Date end) throws UnsupportedDateConversion {
+    public FemaleCollection(AdvancableDate start, Date end) {
         super(start, end);
 
-        for (DateClock y = start.getDateClock(); DateUtils.dateBefore(y, end); y = y.advanceTime(1, TimeUnit.YEAR)) {
+        for (AdvancableDate y = start; DateUtils.dateBefore(y, end); y = y.advanceTime(1, TimeUnit.YEAR)) {
             byBirthYearAndNumberOfChildren.put(y.getYearDate(), new HashMap<>());
         }
     }
@@ -105,7 +106,7 @@ public class FemaleCollection extends PersonCollection {
      * @return the collection the set of people who have been removed
      * @throws InsufficientNumberOfPeopleException the insufficient number of people exception
      */
-    public Collection<IPerson> removeNPersons(int numberToRemove, YearDate yearOfBirth, int birthOrder, DateClock currentDate) throws InsufficientNumberOfPeopleException {
+    public Collection<IPerson> removeNPersons(int numberToRemove, YearDate yearOfBirth, int birthOrder, MonthDate currentDate) throws InsufficientNumberOfPeopleException {
 
         Collection<IPerson> people = new ArrayList<>();
 

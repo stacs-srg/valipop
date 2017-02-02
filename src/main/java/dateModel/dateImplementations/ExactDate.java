@@ -99,28 +99,28 @@ public final class ExactDate implements Date {
         return new YearDate(year);
     }
 
-    @Override
-    public DateClock getDateClock() throws UnsupportedDateConversion {
-        if(day == 1) {
-            return new DateClock(month, year);
-        } else {
-            throw new UnsupportedDateConversion("Cannot convert from ExactDate to DateClock due to the resulting loss " +
-                    "of information regarding the day of the month");
-        }
-    }
+//    @Override
+//    public MonthDate getDateClock() throws UnsupportedDateConversion {
+//        if(day == 1) {
+//            return new MonthDate(month, year);
+//        } else {
+//            throw new UnsupportedDateConversion("Cannot convert from ExactDate to MonthDate due to the resulting loss " +
+//                    "of information regarding the day of the month");
+//        }
+//    }
 
-    @Override
-    public DateClock getDateClock(boolean force) throws UnsupportedDateConversion {
-        if(force) {
-            try {
-                return getDateClock();
-            } catch (UnsupportedDateConversion e) {
-                return new DateClock(month, year);
-            }
-        } else {
-            return getDateClock();
-        }
-    }
+//    @Override
+//    public MonthDate getDateClock(boolean force) throws UnsupportedDateConversion {
+//        if(force) {
+//            try {
+//                return getDateClock();
+//            } catch (UnsupportedDateConversion e) {
+//                return new MonthDate(month, year);
+//            }
+//        } else {
+//            return getDateClock();
+//        }
+//    }
 
     @Override
     public String toOrderableString() {

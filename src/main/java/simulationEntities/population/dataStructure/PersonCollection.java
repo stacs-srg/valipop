@@ -1,7 +1,7 @@
 package simulationEntities.population.dataStructure;
 
 import dateModel.DateBounds;
-import simulationEntities.IPerson;
+import simulationEntities.person.IPerson;
 import simulationEntities.population.dataStructure.exceptions.InsufficientNumberOfPeopleException;
 import simulationEntities.population.dataStructure.exceptions.PersonNotFoundException;
 import dateModel.Date;

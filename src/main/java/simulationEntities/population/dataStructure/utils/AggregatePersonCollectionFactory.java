@@ -1,6 +1,6 @@
 package simulationEntities.population.dataStructure.utils;
 
-import simulationEntities.IPerson;
+import simulationEntities.person.IPerson;
 import simulationEntities.population.dataStructure.PeopleCollection;
 import simulationEntities.population.dataStructure.PersonCollection;
 import dateModel.Date;

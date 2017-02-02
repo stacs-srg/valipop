@@ -3,11 +3,12 @@ package simulationEntities.entityExtensions;
 import events.EventType;
 import events.birth.NoChildrenOfDesiredOrder;
 import events.death.NotDeadException;
-import simulationEntities.IPartnership;
-import simulationEntities.IPerson;
+import simulationEntities.partnership.IPartnership;
+import simulationEntities.person.IPerson;
 import dateModel.Date;
-import dateModel.dateImplementations.DateClock;
+import dateModel.dateImplementations.MonthDate;
 import dateModel.timeSteps.CompoundTimeUnit;
+import simulationEntities.population.PopulationCounts;
 import simulationEntities.population.dataStructure.PeopleCollection;
 
 /**
@@ -15,11 +16,11 @@ import simulationEntities.population.dataStructure.PeopleCollection;
  */
 public interface PersonUtils {
 
-    boolean noRecentChildren(DateClock currentDate, CompoundTimeUnit timePeriod);
+    boolean noRecentChildren(MonthDate currentDate, CompoundTimeUnit timePeriod);
 
     void recordPartnership(IPartnership partnership);
 
-    void recordDeath(Date date);
+    void recordDeath(Date date, PopulationCounts pc);
 
     void causeEventInTimePeriod(EventType event, Date date, CompoundTimeUnit timePeriod);
 

@@ -16,7 +16,7 @@ import java.util.Collection;
  */
 public class TableTranformationUtils {
 
-    public static Collection<FailureTimeRow> transformSurvivorTableToTableOfOrderedIndividualFailureTime(OneDimensionDataDistribution survivorTable, String denoteGroupAs) throws UnsupportedDateConversion {
+    public static Collection<FailureTimeRow> transformSurvivorTableToTableOfOrderedIndividualFailureTime(OneDimensionDataDistribution survivorTable, String denoteGroupAs) {
 
         Collection<FailureTimeRow> rows = new ArrayList<>();
 
