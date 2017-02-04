@@ -21,11 +21,10 @@ public class MTree<T> {
     private final Distance<T> distance_wrapper;
 
     private IRepository repo;
-    private Level root;
+    private Node root = null;
 
     public MTree( Distance<T> d )  {
 
-        root = new Level();
         distance_wrapper = d;
     }
 
@@ -68,36 +67,52 @@ public class MTree<T> {
      * @param data
      */
     public void add( T data ) throws PreConditionException {
-        insert( root, null, rootisleaf(), data );
+        if( root == null ) {
+            root = new Node( data, null );
+        } else {
+            insert(root, data);
+        }
     }
 
     public void showTree() {
         showTree( root, 0 );
+        System.out.println( "----------------------");
     }
 
     //------------------------- Private methods
 
-    private void showTree( Level current_lvl, int indent ) {
-        for( Node child : current_lvl.children ) {
-            for( int i = 0 ; i < indent; i ++ ) {
-                System.out.print( "\t" );
+    private void showTree( Node node, int indent ) {
+
+        if( node == null ) {
+            print_indent( indent );
+            System.out.println ( "null" );
+        } else  if( node.children.size() == 0 ) {
+            print_indent( indent );
+            System.out.println ( node.data + " R: " + node.radius + " d to parent: " + node.distance_to_parent + " isLeaf: " + node.isLeaf() );
+        } else {
+            print_indent( indent );
+            System.out.println ( node.data + " R: " + node.radius + " d to parent: " + node.distance_to_parent + " isLeaf: " + node.isLeaf() + " children: " );
+            for( Node child : node.children) {
+                showTree(child, indent + 1);
             }
-            if( child.level.children.size() == 0 ) {
-                System.out.println ( child.data + " R: " + child.radius + " d to parent: " + child.distance_to_parent + " isLeaf: " + child.isLeaf() );
-            } else {
-                System.out.println ( child.data + " R: " + child.radius + " d to parent: " + child.distance_to_parent + " isLeaf: " + child.isLeaf() + " children: " );
-                showTree( child.level, indent + 1 );
-            }
+        }
+    }
+
+    private void print_indent( int indent ) {
+        for( int i = 0 ; i < indent; i ++ ) {
+            System.out.print( "\t" );
         }
     }
 
     private List<T> rootRangeSearch(T query, float r) {
         ArrayList<T> results = new ArrayList<T>();
-
-        for( Node n : root.children ) {
-            results.addAll( rangeSearch( n,query,r ) );
-        }
-        return results;
+//
+//        for( Node n : root.children ) {
+//            results.addAll( rangeSearch( n,query,r ) );
+//        }
+//        return results;
+        // TODO rewrite me
+        return null;
     }
 
     /**
@@ -142,7 +157,7 @@ public class MTree<T> {
         Node parent = N.parent;
 
         if( ! N.isLeaf() ) {
-            for( Node child : N.level.children ) {
+            for( Node child : N.children) {
                 float distanceQtoParent = parent == null ? Float.MAX_VALUE : distance_wrapper.distance(parent.data, Q);
                 float distanceChildToParent = parent == null ? Float.MAX_VALUE : distance_wrapper.distance(child.data,parent.data);
                 if( parent == null || Math.abs( distanceQtoParent - distanceChildToParent ) <= RQ + child.radius ) {
@@ -158,7 +173,7 @@ public class MTree<T> {
 
             // LEAVES DO NOT HAVE CHILDREN!!!!!
 
-            for( Node child : N.level.children ) {
+            for( Node child : N.children) {
                // float distanceQtoParent = parent == null ? Float.MAX_VALUE : distance_wrapper.distance(parent.data, Q);
                // float distanceChildToParent = parent == null ? Float.MAX_VALUE : distance_wrapper.distance(child.data,parent.data);
               //  if( parent == null || Math.abs( distanceQtoParent - distanceChildToParent ) <= RQ ) {
@@ -172,31 +187,21 @@ public class MTree<T> {
         return results;
     }
 
-    private boolean rootisleaf() { return  ! root.isFull(); }
-
     /**
-     * Insert some data into some level of the Tree.
+     * Insert some data into a leaf of the Tree.
      *
-     * @param current_lvl - the Level of the MTree into which new data should be inserted.
-     * @param current_node - the parent of the current node.
-     * @param isLeaf whether we are at a leaf node or not.
-     * @param data  - the data to insert into the level
+     * @param node - the parent of the current node.
+     * @param data  - the data to insert into the children
      */
-    private void insert( Level current_lvl, Node current_node, boolean isLeaf, T data ) throws PreConditionException {
-        if( isLeaf ) {
-            if (current_lvl.isFull()) {
-                split(current_lvl, current_node, data);
-            } else {
-                current_lvl.add(new Node(data, current_node)); // level is not yet full - put the data into the level
-                if( current_node != null ) { //**************** TODO Take if this out if we ever make root a node rather than a level.
-                    float new_distance = distance_wrapper.distance(data, current_node.data);
-                    if (new_distance > current_node.radius) {
-                        current_node.radius = new_distance;
-                    }
-                }
-            }
+    private void leaf_insert( Node node, T data ) throws PreConditionException {
+
+        if (( node.isFull() )) {
+            split(node, data);
         } else {
-            insert_into_most_appropriate( current_lvl, data );
+            if( node.isEmpty() ) {
+                node.addChild(new Node(node.data, node)); // we making a leaf into an intermediate node - add Node to its own children
+            }
+            node.addChild(new Node(data, node)); // children is not yet full - put the data into the children
         }
     }
 
@@ -204,23 +209,24 @@ public class MTree<T> {
      * Find the most appropriate node in which data should be inserted.
      * Choose child such that: No enlargement of radius is needed,
      * In case of ties, choose the closest one to the new node.
-     * @param current_lvl - the level in which we are inserting the data into
+     * @param node - the node into which we are inserting the data
      * @param data the new data.
+     * @return the radius of the child with the added node.
      */
-    private void insert_into_most_appropriate(Level current_lvl, T data) throws PreConditionException {
+    private void insert(Node node, T data) throws PreConditionException {
         Node enclosing_pivot = null;
         Node closest_pivot = null;
-        float smallest_distance = -1.0F; // illegal
-        List<Node> children = current_lvl.children;
+        float smallest_distance = -1.0F; // illegal distance
+
         // find the most appropriate child.
-        for( Node existing_pivot : children ) {
-            float new_distance = distance_wrapper.distance(existing_pivot.data, data);
+        for( Node child : node.children ) {
+            float new_distance = distance_wrapper.distance(child.data, data);
 
-            if( new_distance < existing_pivot.radius ) { // we are inside the radius of the current existing pivot - new node falls in within this ball
+            if( new_distance < child.radius ) { // we are inside the radius of the current existing pivot - new node falls in within this ball
 
-                if( new_distance <  smallest_distance || smallest_distance == -1.0F ) { // we are closer to this pivot than any previous pivots
+                if( new_distance < smallest_distance || smallest_distance == -1.0F ) { // we are closer to this pivot than any previous pivots
 
-                    enclosing_pivot = existing_pivot;
+                    enclosing_pivot = child;
                     smallest_distance = new_distance;
                 }
 
@@ -229,34 +235,38 @@ public class MTree<T> {
                 if( closest_pivot == null ) {
                     // no candidates yet so make this one the closest
                     smallest_distance = new_distance;
-                    closest_pivot = existing_pivot;
+                    closest_pivot = child;
                 } else if( new_distance < smallest_distance ) { // this pivot is closer.
                     smallest_distance = new_distance;
-                    closest_pivot = existing_pivot;
+                    closest_pivot = child;
                 }
             }
         }
 
-        if( enclosing_pivot == null ) { // didn't find an enclosing pivot
+        if( enclosing_pivot == null ) { // didn't find an enclosing pivot - put it in the closest.
 
-            insert(closest_pivot.level, closest_pivot, closest_pivot.isLeaf(), data); // do the insertion of the new data
-
-            // add the closet pivot to its own children - this code is from insert but types are all wrong!
-            if (closest_pivot.level.isFull()) {
-                split(closest_pivot.level, closest_pivot, closest_pivot.data );
-            } //else {
-            //    closest_pivot.level.add(new Node(closest_pivot.data, closest_pivot)); // level is not yet full - put the data into the level
-            //}
-
-            closest_pivot.radius = smallest_distance; // make the radius include the new (closest) node - order of assignment is critical - it is a leaf node before assignment
-
+            if (closest_pivot == null || distance_wrapper.distance(node.data, data) <= smallest_distance) { // this node is closer to the new data
+                leaf_insert(node, data);
+            } else { // one of the children are closer
+                float old_radius = closest_pivot.radius;
+                insert(closest_pivot, data);
+                // now check to see if the radius has changed
+                float new_radius = closest_pivot.radius;
+                if( new_radius > old_radius ) { // the radius has grown
+                    float new_distance_to_pivot = distance_wrapper.distance(node.data, closest_pivot.data);
+                    // now check of the parent radius needs to be adjusted too.
+                    if(  new_distance_to_pivot + new_radius > node.radius ) {
+                        node.radius = new_distance_to_pivot + new_radius;
+                    }
+                }
+            }
         } else { // we found an enclosing pivot - no need to make the radius bigger
-            insert(enclosing_pivot.level, enclosing_pivot, enclosing_pivot.isLeaf(), data); // do the insertion
+             insert(enclosing_pivot, data);
         }
     }
 
 
-    private void split(Level current_lvl, Node N, T oN) throws PreConditionException {
+    private void split(Node N, T oN) throws PreConditionException {
         //    Split(N,oN): N is leaf oN is new
         //      Let S be the set containing all entries of N and oN
         //      Select pivots p1 and p2 from S
@@ -269,8 +279,8 @@ public class MTree<T> {
         //          If Np is full, then Split(Np,p2)
         //              else store p2 in node Np
 
-        List<Node> S = current_lvl.children;
-        current_lvl.children = new ArrayList<Node>(); // get rid of existing children of the node
+        List<Node> S = N.children;
+        N.children = new ArrayList<Node>(); // get rid of existing children of the node
 
         S.add(new Node(oN, N));  // add oN into children - now over full
         // but we are about to perform a split - makes computation easier.
@@ -329,8 +339,8 @@ public class MTree<T> {
                 Node Np = N.parent;
                 T pp = Np.data;
                 Np.data = p1.data;
-                if( Np.level.isFull() ) {
-                    split( Np.level, Np, p2.data);
+                if( Np.isFull() ) {
+                    split( Np, p2.data);
                 } else {
                     Np.addChild(p2);
                 }
@@ -401,43 +411,19 @@ public class MTree<T> {
 
     //----------------------- Helper classes
 
-    public class Level {
-
-        public List<Node> children;
-
-        public Level() {
-            children = new ArrayList<Node>();
-        }
-
-        public boolean isFull() {
-            return children.size() >= MTree.MAX_LEVEL_SIZE;
-        }
-
-        public boolean isEmpty() {
-            return children.isEmpty();
-        }
-
-        public void add(Node newNode) throws PreConditionException {
-            if( isFull() ) {
-                throw new PreConditionException( "Level is full" );
-            }
-            children.add( newNode );
-        }
-    }
-
     public class Node {
 
         public T data;
         public float radius;
         public float distance_to_parent;
         public Node parent;      /// NOT SURE IF YOU NEED
-        public Level level;
+        public ArrayList<Node> children;
 
         public Node(T oN, Node parent ) { //, Distance<D> distance) {
             data = oN;
             radius = 0.0F;
             distance_to_parent = parent == null ? 0 : distance_wrapper.distance( oN, parent.data);
-            level = new Level();
+            children = new ArrayList<Node>();
             this.parent = parent;
             //this.distance = distance;
         }
@@ -447,17 +433,30 @@ public class MTree<T> {
          * Pre condition this is only called where a split has already occurred and parent is not full
          * @param newNode the node to add to the Node
          */
-        protected void addChild(Node newNode) throws PreConditionException {
+        protected float addChild(Node newNode) throws PreConditionException {
 
-            level.add( newNode );
-            float newdistance = distance_wrapper.distance(this.data, newNode.data);
-            if( newdistance > radius ) {
-                radius = newdistance;
+            if( isFull() ) {
+                throw new PreConditionException( "Level is full" );
             }
+            children.add( newNode );
+            float newdistance = distance_wrapper.distance(this.data, newNode.data);
+            newNode.distance_to_parent = newdistance;
+            float new_radii = newdistance + newNode.radius;
+            if( new_radii > radius ) {
+                radius = new_radii;
+            }
+            return radius;
         }
 
         public boolean isLeaf() { return this.radius == 0.0F; }
 
+        public boolean isFull() {
+            return children.size() >= MTree.MAX_LEVEL_SIZE;
+        }
+
+        public boolean isEmpty() {
+            return children.isEmpty();
+        }
     }
 
     public class PairOfNodes {
