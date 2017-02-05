@@ -22,7 +22,8 @@ public class MTreeTest {
      */
     @Test
     public void add_one() throws PreConditionException {
-            t.add( new Point( 0.0F, 0.0F ) );
+        t.add( new Point( 0.0F, 0.0F ) );
+        assert( t.size() == 1 );
     }
 
     /**
@@ -34,6 +35,9 @@ public class MTreeTest {
             t.add( new Point( 0.0F, 0.0F ) );
             t.add( new Point( 3.0F, 0.0F ) );
             t.add( new Point( 3.0F, 4.0F ) );
+            assert( t.size() == 3 );
+            assert( t.contains( new Point( 0.0F, 0.0F ) ) );
+            // assert( ! t.contains( new Point( 5.0F, 0.0F ) ) );
         // t.showTree();
     }
 
@@ -46,7 +50,7 @@ public class MTreeTest {
         for( int i = 0; i< 15; i++ ) {
             t.add( new Point( (float) i, 0.0F ) );
         }
-       //  t.showTree();
+        assert( t.size() == 15 );
     }
 
     /**
@@ -54,7 +58,7 @@ public class MTreeTest {
      * such that some will nest
      */
     @Test
-    public void add_nested_points_3() throws PreConditionException {
+    public void add_nested_points_depth_3() throws PreConditionException {
         // lay down 20 points in a line
         for( int i = 0; i< 3; i++ ) {
             t.add( new Point( (float) i * 10, 0.0F ) );
@@ -69,7 +73,31 @@ public class MTreeTest {
         }
         // This should create some nested radii.
 
+        assert( t.size() == 9 );
         // t.showTree();
+    }
+
+    /**
+     * add points to the tree
+     * such that some will nest
+     */
+    @Test
+    public void add_squares() throws PreConditionException {
+        float x_start = 0.0F;
+        float y_start = 0.0F;
+        int count = 0;
+        t.add( new Point( x_start, y_start ) ); count++;
+
+        for( float step = 1.0F; step < 10.0F; step++ ) {
+
+            t.add(new Point(y_start + step, x_start + step)); count++;
+            t.add(new Point(y_start - step, x_start + step)); count++;
+            t.add(new Point(y_start + step, x_start - step)); count++;
+            t.add(new Point(y_start - step, x_start - step)); count++;
+        }
+
+        assert( t.size() == count );
+        t.showTree();
     }
 
     /**
@@ -79,7 +107,7 @@ public class MTreeTest {
     @Test
     public void add_nested_points_60() throws PreConditionException {
             // lay down 20 points in a line
-            for( int i = 0; i< 0; i++ ) {
+            for( int i = 0; i< 20; i++ ) {
                 t.add( new Point( (float) i * 10, 0.0F ) );
                 t.showTree();
             }
@@ -95,36 +123,15 @@ public class MTreeTest {
             }
             // This should create some nested radii.
 
-            // t.showTree();
+            assert( t.size() == 60 );
+            t.showTree();
     }
 
-    /**
-     * add points to the tree
-     * such that some will nest
-     */
     @Test
-    public void add_squares() throws PreConditionException {
-        float x_start = 0.0F;
-        float y_start = 0.0F;
-        t.add( new Point( x_start, y_start ) );
-
-        for( float step = 1.0F; step < 10.0F; step++ ) {
-
-            t.add(new Point(y_start + step, x_start + step));
-            t.add(new Point(y_start - step, x_start + step));
-            t.add(new Point(y_start + step, x_start - step));
-            t.add(new Point(y_start - step, x_start - step));
-        }
-
-        t.showTree();
-    }
-
-
-        @Test
     public void find_close() throws PreConditionException {
         add_nested_points_60();
-        Point p = new Point(2.0F, 0.0F);
-        System.out.println(  t.rangeSearch( p, 5.0F ) );
+        Point p = new Point(15.0F, 0.0F);
+        System.out.println(  t.rangeSearch( p, 10.0F ) );
     }
 
 
@@ -139,7 +146,17 @@ public class MTreeTest {
             this.y = y;
         }
 
+        private final static float epsilon = 0.00000000001F;
+
         public String toString() { return "[" + x + "," + y + "]"; }
+
+        public boolean equals( Object o ) {
+            if( o instanceof Point ) {
+                Point p = (Point) o;
+                return this.x == p.x && this.y == p.y;
+                // return (Math.abs(this.x - p.x) < epsilon) && (Math.abs(this.y - p.y) < epsilon);
+            } else return false;
+        }
     }
 
     public class EuclidianDistance implements Distance<Point> {
@@ -152,9 +169,4 @@ public class MTreeTest {
         }
 
     }
-
-
-
-
-
 }

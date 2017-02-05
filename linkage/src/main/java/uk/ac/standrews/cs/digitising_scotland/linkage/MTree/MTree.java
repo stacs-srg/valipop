@@ -29,6 +29,16 @@ public class MTree<T> {
     }
 
     /**
+     *
+     * @return the number of nodes in the tree
+     * Manually calculated for now as a debugging check
+     * in future could keep a count
+     */
+    public int size() {
+        return size( root );
+    }
+
+    /**
      * Find the closest N nodes to @param query.
      * @param query - some data for which to find the closest N neighbours
      * @param n the number of neighbours to return
@@ -47,8 +57,9 @@ public class MTree<T> {
      */
     public List<T> rangeSearch(T query, float r) {
 
-        return rootRangeSearch(query, r);
-
+        ArrayList<T> results = new ArrayList<T>();
+        rangeSearch( root,query,r, results );
+        return results;
     }
 
 
@@ -63,6 +74,14 @@ public class MTree<T> {
     }
 
     /**
+     * @param data - some data for which to search
+     * @return true if the tree contains the data
+     */
+    public boolean contains( T data ) {
+        return contains( root, data );
+    }
+
+    /**
      * Add some data to the MTree
      * @param data
      */
@@ -70,7 +89,7 @@ public class MTree<T> {
         if( root == null ) {
             root = new Node( data, null );
         } else {
-            insert(root, data);
+            add(root, data);
         }
     }
 
@@ -80,6 +99,20 @@ public class MTree<T> {
     }
 
     //------------------------- Private methods
+
+    private int size(Node node) {
+        if( node == null ) {
+            return 0;
+        } else if( node.isLeaf() ) {
+            return 1;
+        } else {
+            int size = 0;
+            for( Node child : node.children) {
+                size += size(child);
+            }
+            return size;
+        }
+    }
 
     private void showTree( Node node, int indent ) {
 
@@ -104,16 +137,6 @@ public class MTree<T> {
         }
     }
 
-    private List<T> rootRangeSearch(T query, float r) {
-        ArrayList<T> results = new ArrayList<T>();
-//
-//        for( Node n : root.children ) {
-//            results.addAll( rangeSearch( n,query,r ) );
-//        }
-//        return results;
-        // TODO rewrite me
-        return null;
-    }
 
     /**
      * Find the nodes withing @param RQ of @param T.
@@ -150,9 +173,7 @@ public class MTree<T> {
      *   }
      * }
      */
-    private ArrayList<T> rangeSearch(Node N, T Q, float RQ) {
-
-        ArrayList<T> results = new ArrayList<T>();
+    private void rangeSearch(Node N, T Q, float RQ, ArrayList<T> results) {
 
         Node parent = N.parent;
 
@@ -163,7 +184,7 @@ public class MTree<T> {
                 if( parent == null || Math.abs( distanceQtoParent - distanceChildToParent ) <= RQ + child.radius ) {
                     float distanceChildToQ = distance_wrapper.distance(child.data, Q);
                     if (distanceChildToQ <= RQ + child.radius) {
-                        results.addAll(rangeSearch(child, Q, RQ));
+                        rangeSearch(child, Q, RQ,results);
 
                     }
                 }
@@ -173,25 +194,47 @@ public class MTree<T> {
 
             // LEAVES DO NOT HAVE CHILDREN!!!!!
 
-            for( Node child : N.children) {
+            // for( Node child : N.children) {
                // float distanceQtoParent = parent == null ? Float.MAX_VALUE : distance_wrapper.distance(parent.data, Q);
                // float distanceChildToParent = parent == null ? Float.MAX_VALUE : distance_wrapper.distance(child.data,parent.data);
               //  if( parent == null || Math.abs( distanceQtoParent - distanceChildToParent ) <= RQ ) {
-                    float distanceChildToQ = distance_wrapper.distance(child.data, Q);
-                    if (distanceChildToQ <= RQ) {
-                        results.add(child.data);
-              //      }
+                    float distanceNodeToQ = distance_wrapper.distance(N.data, Q);
+                    if (distanceNodeToQ <= RQ) {
+                        results.add(N.data);
+                    }
+         //       }
+          //  }
+        }
+    }
+
+    private boolean contains( Node node, T data ) {
+        if( node.data.equals( data ) ) {
+            return true;
+        }
+        if( node.isLeaf() ) { // is not equal and we are at a leaf;
+            return false;
+        }
+        // node has children and is not equal itself.
+        if( distance_wrapper.distance(node.data, data) > node.radius ) {
+            // search data is outside of range
+            return false;
+        } else { // the data may be inside this ball
+            // need to check children
+            for( Node child : node.children ) {
+                boolean found = contains( child,data );
+                if( found ) {
+                    return true;
                 }
             }
+            return false;
         }
-        return results;
     }
 
     /**
      * Insert some data into a leaf of the Tree.
      *
      * @param node - the parent of the current node.
-     * @param data  - the data to insert into the children
+     * @param data  - the data to add into the children
      */
     private void leaf_insert( Node node, T data ) throws PreConditionException {
 
@@ -213,7 +256,7 @@ public class MTree<T> {
      * @param data the new data.
      * @return the radius of the child with the added node.
      */
-    private void insert(Node node, T data) throws PreConditionException {
+    private void add(Node node, T data) throws PreConditionException {
         Node enclosing_pivot = null;
         Node closest_pivot = null;
         float smallest_distance = -1.0F; // illegal distance
@@ -249,7 +292,7 @@ public class MTree<T> {
                 leaf_insert(node, data);
             } else { // one of the children are closer
                 float old_radius = closest_pivot.radius;
-                insert(closest_pivot, data);
+                add(closest_pivot, data);
                 // now check to see if the radius has changed
                 float new_radius = closest_pivot.radius;
                 if( new_radius > old_radius ) { // the radius has grown
@@ -261,7 +304,7 @@ public class MTree<T> {
                 }
             }
         } else { // we found an enclosing pivot - no need to make the radius bigger
-             insert(enclosing_pivot, data);
+             add(enclosing_pivot, data);
         }
     }
 
