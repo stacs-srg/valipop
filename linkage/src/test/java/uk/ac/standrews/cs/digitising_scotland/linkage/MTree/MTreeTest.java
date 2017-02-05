@@ -32,11 +32,9 @@ public class MTreeTest {
     public void add_three_345() throws PreConditionException {
 
             t.add( new Point( 0.0F, 0.0F ) );
-        t.showTree();
             t.add( new Point( 3.0F, 0.0F ) );
-        t.showTree();
             t.add( new Point( 3.0F, 4.0F ) );
-        t.showTree();
+        // t.showTree();
     }
 
     /**
@@ -47,28 +45,8 @@ public class MTreeTest {
 
         for( int i = 0; i< 15; i++ ) {
             t.add( new Point( (float) i, 0.0F ) );
-            t.showTree();
         }
-
-    }
-
-    /**
-     * add 22 points to the tree
-     * 20 is children size: first test to step slitting.
-     */
-    @Test
-    public void add_linear_22() throws PreConditionException {
-            for( int i = 0; i< 21; i++ ) {
-                t.add( new Point( (float) i, 0.0F ) );
-                t.showTree();
-
-            }
-            for( int i = 21; i< 22; i++ ) {
-                t.add( new Point( (float) i, 0.0F ) );
-                t.showTree();
-            }
-
-            // t.add( new Point( 23.0F, 0.0F ) ); // useful debug breakpoint!
+       //  t.showTree();
     }
 
     /**
@@ -80,23 +58,18 @@ public class MTreeTest {
         // lay down 20 points in a line
         for( int i = 0; i< 3; i++ ) {
             t.add( new Point( (float) i * 10, 0.0F ) );
-            t.showTree();
         }
         // new lay down 20 points in a line - that are all close (4 away) to the first 20
         for( int i = 0; i< 3; i++ ) {
             t.add( new Point( (float) (i * 10) + 4.0F, 0.0F ) );
-            t.showTree();
         }
         // new lay down another 20 points in a line - that are all close (1 away) to the second 20
         for( int i = 0; i< 3; i++ ) {
             t.add( new Point( (float) (i * 10) + 4.5F, 0.0F ) );
-            t.showTree();
         }
         // This should create some nested radii.
 
-        t.showTree();
-
-        t.add( new Point( 21.0F, 1.0F ) ); // useful debug breakpoint!
+        // t.showTree();
     }
 
     /**
@@ -122,12 +95,32 @@ public class MTreeTest {
             }
             // This should create some nested radii.
 
-            t.showTree();
-
-            t.add( new Point( 21.0F, 1.0F ) ); // useful debug breakpoint!
+            // t.showTree();
     }
 
+    /**
+     * add points to the tree
+     * such that some will nest
+     */
     @Test
+    public void add_squares() throws PreConditionException {
+        float x_start = 0.0F;
+        float y_start = 0.0F;
+        t.add( new Point( x_start, y_start ) );
+
+        for( float step = 1.0F; step < 10.0F; step++ ) {
+
+            t.add(new Point(y_start + step, x_start + step));
+            t.add(new Point(y_start - step, x_start + step));
+            t.add(new Point(y_start + step, x_start - step));
+            t.add(new Point(y_start - step, x_start - step));
+        }
+
+        t.showTree();
+    }
+
+
+        @Test
     public void find_close() throws PreConditionException {
         add_nested_points_60();
         Point p = new Point(2.0F, 0.0F);
