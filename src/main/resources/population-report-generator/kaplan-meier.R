@@ -1,23 +1,43 @@
+library(survival)
+setOldClass('gg')
+setOldClass('survdiff')
+
+KMResult <- setClass(
+  
+  "KMResult",
+  
+  slots = c(
+    plot = 'gg',
+    kmAnalysis = "survdiff",
+    p = "numeric"
+  )
+)
+
 # my code
-runKM <- function(path, r){
+runKM <- function(path, r, title){
   # With rho = 0 this test is log-rank or Mantel-Haenszel test
   # With rho = 1 the test is equivalent to the Peto & Peto modification of the Gehan-Wilcoxon test.
   library(survival)
   inData = read.table(path, sep=" ", head=T)
-  inData.lrt = survdiff(Surv(years,event) ~ group, data = inData, rho = r)
-  print(inData.lrt)
-  print(inData.lrt$var)
-  print(inData.lrt$exp)
-  print(inData.lrt$obs)
-  inData.km = survfit(Surv(years, event) ~ group, data=inData)
-  (ggkm <- ggsurv(inData.km))
   
+  result = survdiff(Surv(years,event) ~ group, data = inData, rho = r)
+  pVal = pchisq(result$chisq, df=1, lower.tail = FALSE)
+  
+  result$km = survfit(Surv(years, event) ~ group, data=inData)
+  
+  kmPlot <- ggsurv(result$km, main = title)
+  
+  ret <- KMResult(plot = kmPlot, kmAnalysis = result, p = pVal)
+  
+  return (ret)
 }
+
+
 
 # somebody elses code...
 ggsurv <- function(s, CI = 'def', plot.cens = T, surv.col = 'gg.def',
                    cens.col = 'red', lty.est = 1, lty.ci = 2,
-                   cens.shape = 3, back.white = F, xlab = 'Time',
+                   cens.shape = 3, back.white = T, xlab = 'Time',
                    ylab = 'Survival', main = ''){
   
   library(ggplot2)  

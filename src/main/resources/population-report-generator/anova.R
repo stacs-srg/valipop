@@ -1,3 +1,16 @@
+
+ANOVAResult <- setClass(
+  
+  "ANOVAResult",
+  
+  slots = c(
+    plot = 'recordedplot',
+    anovaAnalysis = "anova",
+    p = "numeric"
+  )
+)
+
+
 runAnovaForAllFilesIn <- function(dir_path, pol_order) {
   
   files = list.files(path = dir_path, pattern = ".*.dat");
@@ -14,7 +27,7 @@ runAnovaForAllFilesIn <- function(dir_path, pol_order) {
   
 }
 
-runAnova <- function(path, pol_order, title) {
+runAnova <- function(path, pol_order, title, xlabel, ylabel) {
   
   print(path)
   mydata = read.table(path, sep=" ", head=T)
@@ -22,11 +35,18 @@ runAnova <- function(path, pol_order, title) {
   #orders data
   mydata = mydata[with(mydata, order(mydata$label)), ]
   
-  #plots data
-  plot(main = title, mydata$label[mydata$group=="generated"], mydata$value[mydata$group=="generated"], xlim=range(mydata$label),
-       ylim=range(mydata$value), type="b", xlab = "Number of children in partnership", ylab = "Proportion of partnerships ending")
+  png()
+  dev.control('enable')
+  
+  plot(main = title, mydata$label[mydata$group=="generated"], mydata$value[mydata$group=="generated"], xlim=range(mydata$label), 
+             ylim=range(mydata$value), type="b", xlab = xlabel, ylab = ylabel)
+  
   lines(mydata$label[mydata$group=="desired"], mydata$value[mydata$group=="desired"], type="b", col=3)
-  #lines(mydata$label, mydata$value, type="b", col=2)
+  legend(100,100, c('Generated', 'Desired'), lty=c(1,1), col=c(0,3))
+  # look at: https://stat.ethz.ch/R-manual/R-devel/library/graphics/html/legend.html
+  
+  gPlot = recordPlot()
+  dev.off()
   
   #model without grouping variable
   try(fit1 <- lm(label ~ poly(value, pol_order), data = mydata))
@@ -35,6 +55,18 @@ runAnova <- function(path, pol_order, title) {
   try(fit2 <- lm(label ~ poly(value, pol_order) * group, data = mydata))
   
   #compare models 
-  try(anova(fit1, fit2))
+  try(anova <- anova(fit1, fit2))
+  
+  ret <- ANOVAResult(plot = gPlot, anovaAnalysis = anova, p = anova$'Pr(>F)'[2])
+  
+  
+  return(ret)
+}
+
+plotGraph <- function(mydata, title, xlabel, ylabel) {
+  
+  p <- plot(main = title, mydata$label[mydata$group=="generated"], mydata$value[mydata$group=="generated"], xlim=range(mydata$label), 
+       ylim=range(mydata$value), type="b", xlab = xlabel, ylab = ylabel)
+  lines(mydata$label[mydata$group=="desired"], mydata$value[mydata$group=="desired"], type="b", col=3)
   
 }
