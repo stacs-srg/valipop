@@ -215,8 +215,9 @@ public class MTree<T> {
             return false;
         }
         // node has children and is not equal itself.
-        if( distance_wrapper.distance(node.data, data) > node.radius ) {
-            // search data is outside of range
+        // see if the data is within range of node
+        if( Math.abs( distance_wrapper.distance(node.data, data) - node.radius + Float.MIN_VALUE ) < Float.MIN_VALUE ) {
+             // search data is outside of range
             return false;
         } else { // the data may be inside this ball
             // need to check children

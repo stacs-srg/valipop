@@ -3,6 +3,8 @@ package uk.ac.standrews.cs.digitising_scotland.linkage.MTree;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.List;
+
 
 /**
  * Created by al on 27/01/2017.
@@ -10,11 +12,13 @@ import org.junit.Test;
 public class MTreeTest {
 
     MTree t;
+    private EuclidianDistance ed;
 
     @Before
     public void setUp() throws Exception {
 
-        t = new MTree( new EuclidianDistance() );
+        ed = new EuclidianDistance();
+        t = new MTree( ed );
     }
 
     /**
@@ -24,6 +28,7 @@ public class MTreeTest {
     public void add_one() throws PreConditionException {
         t.add( new Point( 0.0F, 0.0F ) );
         assert( t.size() == 1 );
+        assert( t.contains( new Point( 0.0F, 0.0F ) ) );
     }
 
     /**
@@ -37,7 +42,8 @@ public class MTreeTest {
             t.add( new Point( 3.0F, 4.0F ) );
             assert( t.size() == 3 );
             assert( t.contains( new Point( 0.0F, 0.0F ) ) );
-            // assert( ! t.contains( new Point( 5.0F, 0.0F ) ) );
+            assert( t.contains( new Point( 3.0F, 0.0F ) ) );
+            assert( t.contains( new Point( 3.0F, 4.0F ) ) );
         // t.showTree();
     }
 
@@ -51,6 +57,9 @@ public class MTreeTest {
             t.add( new Point( (float) i, 0.0F ) );
         }
         assert( t.size() == 15 );
+        for( int i = 0; i< 15; i++ ) {
+            t.contains( new Point((float) i, 0.0F) ) ;
+        }
     }
 
     /**
@@ -71,9 +80,20 @@ public class MTreeTest {
         for( int i = 0; i< 3; i++ ) {
             t.add( new Point( (float) (i * 10) + 4.5F, 0.0F ) );
         }
-        // This should create some nested radii.
 
         assert( t.size() == 9 );
+        for( int i = 0; i< 3; i++ ) {
+            assert( t.contains( new Point( (float) i * 10, 0.0F ) ) );
+        }
+        // new lay down 20 points in a line - that are all close (4 away) to the first 20
+        for( int i = 0; i< 3; i++ ) {
+            assert( t.contains( new Point( (float) (i * 10) + 4.0F, 0.0F ) ) );
+        }
+        // new lay down another 20 points in a line - that are all close (1 away) to the second 20
+        for( int i = 0; i< 3; i++ ) {
+            assert( t.contains( new Point( (float) (i * 10) + 4.5F, 0.0F ) ) );
+        }
+
         // t.showTree();
     }
 
@@ -81,57 +101,121 @@ public class MTreeTest {
      * add points to the tree
      * such that some will nest
      */
-    @Test
-    public void add_squares() throws PreConditionException {
-        float x_start = 0.0F;
-        float y_start = 0.0F;
+    private int add_squares() throws PreConditionException {
+
         int count = 0;
-        t.add( new Point( x_start, y_start ) ); count++;
 
-        for( float step = 1.0F; step < 10.0F; step++ ) {
+        for (float step = 1.0F; step < 50.0F; step++) {
 
-            t.add(new Point(y_start + step, x_start + step)); count++;
-            t.add(new Point(y_start - step, x_start + step)); count++;
-            t.add(new Point(y_start + step, x_start - step)); count++;
-            t.add(new Point(y_start - step, x_start - step)); count++;
+            t.add(new Point(+step, +step));
+            count++;
+            t.add(new Point(-step, +step));
+            count++;
+            t.add(new Point(+step, -step));
+            count++;
+            t.add(new Point(-step, -step));
+            count++;
         }
 
+        return count;
+    }
+
+    /**
+     * test add points to the tree
+     * such that some will nest
+     */
+    @Test
+    public void test_squares() throws PreConditionException {
+
+        int count = add_squares();
+
         assert( t.size() == count );
-        t.showTree();
+        for( float step = 1.0F; step < 50.0F; step++ ) {
+
+            assert( t.contains(new Point( + step,  + step)) );
+            assert( t.contains(new Point( - step,  + step)) );
+            assert( t.contains(new Point( + step,  - step)) );
+            assert( t.contains(new Point( - step,  - step)) );
+        }
     }
 
     /**
      * add points to the tree
      * such that some will nest
      */
-    @Test
-    public void add_nested_points_60() throws PreConditionException {
-            // lay down 20 points in a line
-            for( int i = 0; i< 20; i++ ) {
-                t.add( new Point( (float) i * 10, 0.0F ) );
-                t.showTree();
-            }
-            // new lay down 20 points in a line - that are all close (4 away) to the first 20
-            for( int i = 0; i< 20; i++ ) {
-                t.add( new Point( (float) (i * 10) + 4.0F, 0.0F ) );
-                t.showTree();
-            }
-            // new lay down another 20 points in a line - that are all close (1 away) to the second 20
-            for( int i = 0; i< 20; i++ ) {
-                t.add( new Point( (float) (i * 10) + 4.5F, 0.0F ) );
-                t.showTree();
-            }
-            // This should create some nested radii.
+    private void add_nested_points_60() throws PreConditionException {
+        // lay down 20 points in a line
+        for (int i = 0; i < 20; i++) {
+            t.add(new Point((float) i * 10, 0.0F));
+            //t.showTree();
+        }
+        // new lay down 20 points in a line - that are all close (4 away) to the first 20
+        for (int i = 0; i < 20; i++) {
+            t.add(new Point((float) (i * 10) + 4.0F, 0.0F));
+            //t.showTree();
+        }
+        // new lay down another 20 points in a line - that are all close (1 away) to the second 20
+        for (int i = 0; i < 20; i++) {
+            t.add(new Point((float) (i * 10) + 4.5F, 0.0F));
+            //t.showTree();
+        }
+    }
 
-            assert( t.size() == 60 );
-            t.showTree();
+    /**
+     * test points added to the tree
+     * such that some will nest
+     */
+    @Test
+    public void test_nested_points_60() throws PreConditionException {
+
+        add_nested_points_60();
+
+        assert( t.size() == 60 );
+
+        for( int i = 0; i< 20; i++ ) {
+            assert( t.contains( new Point( (float) i * 10, 0.0F ) ) );
+        }
+        // new lay down 20 points in a line - that are all close (4 away) to the first 20
+        for( int i = 0; i< 20; i++ ) {
+            assert( t.contains( new Point( (float) (i * 10) + 4.0F, 0.0F ) ) );
+        }
+        // new lay down another 20 points in a line - that are all close (1 away) to the second 20
+        for( int i = 0; i< 20; i++ ) {
+            assert( t.contains( new Point( (float) (i * 10) + 4.5F, 0.0F ) ) );
+        }
+
+        // t.showTree();
     }
 
     @Test
-    public void find_close() throws PreConditionException {
+    public void findClosetFrom60() throws PreConditionException {
         add_nested_points_60();
         Point p = new Point(15.0F, 0.0F);
-        System.out.println(  t.rangeSearch( p, 10.0F ) );
+        List<Point> result = t.rangeSearch(p, 10.0F);
+        assert( result.size() == 6 );
+        for( Point pp : result ) {
+            assert( t.contains( pp ) );                 // point added to the tree
+            assert( ed.distance( pp, p ) <= 10.0F );    // and it is in range.
+        }
+    }
+
+
+    @Test
+    public void findClosest_from_squares() throws PreConditionException {
+        int count = add_squares();
+
+        Point p = new Point(0.0F, 0.0F);
+
+        // test search in ever increasing circles.
+        for( float i = 1.0F; i < 50.0F; i++ ) {
+            float search_circle = (float) Math.sqrt( i * i ) ; // size of square plus a little to avoid float errors
+            List<Point> result = t.rangeSearch(p,search_circle);
+            // System.out.println( "d=" + search_circle + " results size =" + result.size() + " results: " + result );
+            for( Point pp : result ) {
+                assert( t.contains( pp ) );
+                assert( ed.distance( pp, p ) <= search_circle );    // and it is in range.
+            }
+        }
     }
 
 
