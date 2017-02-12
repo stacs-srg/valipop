@@ -9,9 +9,9 @@ import java.util.List;
 /**
  * Created by al on 27/01/2017.
  */
-public class MTreeTest {
+public class MTreeEuclidian2DTest {
 
-    MTree t;
+    MTree<Point> t;
     private EuclidianDistance ed;
 
     @Before
@@ -187,6 +187,9 @@ public class MTreeTest {
         // t.showTree();
     }
 
+    /**
+     * test rangeSearch - performing range search on nested nodes - simple version.
+     */
     @Test
     public void findClosetFrom60() throws PreConditionException {
         add_nested_points_60();
@@ -199,7 +202,9 @@ public class MTreeTest {
         }
     }
 
-
+    /**
+     * test rangeSearch - finding nested nodes in nested squares - more complex version.
+     */
     @Test
     public void findClosest_from_squares() throws PreConditionException {
         int count = add_squares();
@@ -208,9 +213,9 @@ public class MTreeTest {
 
         // test search in ever increasing circles.
         for( float i = 1.0F; i < 50.0F; i++ ) {
-            float search_circle = (float) Math.sqrt( i * i ) ; // size of square plus a little to avoid float errors
+            float search_circle = (float) Math.sqrt( i * i ) ; // requested_result_set_size of square plus a little to avoid float errors
             List<Point> result = t.rangeSearch(p,search_circle);
-            // System.out.println( "d=" + search_circle + " results size =" + result.size() + " results: " + result );
+            // System.out.println( "d=" + search_circle + " results requested_result_set_size =" + result.requested_result_set_size() + " results: " + result );
             for( Point pp : result ) {
                 assert( t.contains( pp ) );
                 assert( ed.distance( pp, p ) <= search_circle );    // and it is in range.
@@ -218,7 +223,35 @@ public class MTreeTest {
         }
     }
 
+    /**
+     * test simple nearest neighbour search
+     */
+    @Test
+    public void findClosest() throws PreConditionException {
+        int count = add_squares();
+        Point p = new Point(20.6F, 20.6F);
+        Object result = t.nearestNeighbour(p);
+        System.out.println(result);
+        assert( result.equals( new Point(21.0F, 21.0F) ) ); // closest point to 20.6,20.6 - TODO better tests?
+    }
 
+    /**
+     * test simple nearest neighbour search
+     */
+    @Test
+    public void findClosestN() throws PreConditionException {
+        int count = add_squares();
+        Point p = new Point(0.0F, 0.0F);
+        for( int i = 4; i < 50; i+=4 ) {
+            // move out in squares of size 4, each loop should include 4 more nodes
+            List<Point> result = t.closestN(p, i);
+            assert( result.size() == i );
+            for( Point pp : result ) {
+                assert( t.contains( pp ) );   // TODO How to check that they are the right ones????
+            }
+            System.out.println(result);
+        }
+    }
 
     public class Point {
 

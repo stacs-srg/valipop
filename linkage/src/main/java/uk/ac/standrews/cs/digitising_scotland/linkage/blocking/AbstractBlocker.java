@@ -1,7 +1,10 @@
 package uk.ac.standrews.cs.digitising_scotland.linkage.blocking;
 
-import uk.ac.standrews.cs.digitising_scotland.linkage.stream_operators.sharder.*;
-import uk.ac.standrews.cs.storr.interfaces.*;
+import uk.ac.standrews.cs.digitising_scotland.linkage.stream_operators.sharder.Blocker;
+import uk.ac.standrews.cs.storr.interfaces.IInputStream;
+import uk.ac.standrews.cs.storr.interfaces.ILXP;
+import uk.ac.standrews.cs.storr.interfaces.ILXPFactory;
+import uk.ac.standrews.cs.storr.interfaces.IRepository;
 
 import static org.apache.commons.codec.language.RefinedSoundex.US_ENGLISH;
 
