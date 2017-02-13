@@ -2,6 +2,10 @@ package uk.ac.standrews.cs.digitising_scotland.linkage.MTree;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.simmetrics.metrics.Levenshtein;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by al on 27/01/2017.
@@ -9,14 +13,11 @@ import org.junit.Test;
 public class MTreeStringEditDistanceTest {
 
     MTree<String> t;
-    private EditDistance ed;
-
 
     @Before
     public void setUp() throws Exception {
 
-        ed = new EditDistance();
-        t = new MTree( ed );
+        t = new MTree<>(new EditDistance2());
     }
 
     /**
@@ -24,10 +25,11 @@ public class MTreeStringEditDistanceTest {
      */
     @Test
     public void add_one() throws PreConditionException {
+
         String s = "hello mum";
-        t.add( s );
-        assert( t.size() == 1 );
-        assert( t.contains( s ) );
+        t.add(s);
+        assertEquals(1, t.size());
+        assertTrue(t.contains(s));
     }
 
     /**
@@ -35,40 +37,52 @@ public class MTreeStringEditDistanceTest {
      */
     @Test
     public void check_nearest() throws PreConditionException {
-        String[] words = new String[]{ "girl", "boy", "fish", "flash", "shed", "crash", "hill" , "moon" };
-        for( String word : words ) {
+
+        String[] words = new String[]{"girl", "boy", "fish", "flash", "shed", "crash", "hill", "moon"};
+
+        for (String word : words) {
             t.add(word);
         }
-        assert(  t.nearestNeighbour( "brash").equals( "crash") );
-        assert(  t.nearestNeighbour( "toy").equals( "boy") );
-        assert(  t.nearestNeighbour( "sill").equals( "hill") );
-        assert(  t.nearestNeighbour( "hole").equals( "hill") );
-        assert(  t.nearestNeighbour( "soon").equals( "moon") );
-        assert(  t.nearestNeighbour( "fist").equals( "fish") );
-        assert(  t.nearestNeighbour( "shod").equals( "shed") );
+        assertEquals("crash", t.nearestNeighbour("brash"));
+        assertEquals("boy", t.nearestNeighbour("toy"));
+        assertEquals("hill", t.nearestNeighbour("sill"));
+        assertEquals("hill", t.nearestNeighbour("hole"));
+        assertEquals("moon", t.nearestNeighbour("soon"));
+        assertEquals("fish", t.nearestNeighbour("fist"));
+        assertEquals("shed", t.nearestNeighbour("shod"));
     }
 
+    public class EditDistance2 implements Distance<String> {
 
+        @Override
+        public float distance(String s1, String s2) {
+
+            Levenshtein levenshtein = new Levenshtein();
+
+            System.out.println("Distance between( " + s1 + "," + s2 + " ) is " + levenshtein.distance(s1, s2));
+
+            return levenshtein.distance(s1, s2);
+        }
+    }
 
     public class EditDistance implements Distance<String> {
 
         public float distance(String s1, String s2) {
 
-            System.out.println( "Distance between( " + s1 + "," + s2 + " ) is " + Ldistance( s1, s2 ) );
+            System.out.println("Distance between( " + s1 + "," + s2 + " ) is " + Ldistance(s1, s2));
 
-            return (float) Ldistance( s1, s2 );
+            return (float) Ldistance(s1, s2);
         }
 
         /**
-         *
          * Code from https://github.com/tdebatty/java-string-similarity/blob/master/src/main/java/info/debatty/java/stringsimilarity/Levenshtein.java
-         *
+         * <p>
          * The Levenshtein distance, or edit distance, between two words is the
          * minimum number of single-character edits (insertions, deletions or
          * substitutions) required to change one word into the other.
-         *
+         * <p>
          * http://en.wikipedia.org/wiki/Levenshtein_distance
-         *
+         * <p>
          * It is always at least the difference of the sizes of the two strings.
          * It is at most the length of the longer string.
          * It is zero if and only if the strings are equal.
@@ -77,7 +91,7 @@ public class MTreeStringEditDistanceTest {
          * The Levenshtein distance verifies the triangle inequality (the distance
          * between two strings is no greater than the sum Levenshtein distances from
          * a third string).
-         *
+         * <p>
          * Implementation uses dynamic programming (Wagner–Fischer algorithm), with
          * only 2 rows of data. The space requirement is thus O(m) and the algorithm
          * runs in O(mn).
