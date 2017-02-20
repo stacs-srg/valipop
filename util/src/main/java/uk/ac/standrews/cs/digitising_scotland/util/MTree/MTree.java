@@ -1,7 +1,4 @@
-package uk.ac.standrews.cs.digitising_scotland.linkage.MTree;
-
-import uk.ac.standrews.cs.digitising_scotland.util.ErrorHandling;
-import uk.ac.standrews.cs.storr.interfaces.IRepository;
+package uk.ac.standrews.cs.digitising_scotland.util.MTree;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,10 +13,9 @@ import java.util.List;
  */
 public class MTree<T> {
 
-    public static final int MAX_LEVEL_SIZE = 20;
+    private static final int MAX_LEVEL_SIZE = 20;
     private final Distance<T> distance_wrapper;
 
-    private IRepository repo;
     private Node root = null;
     private int num_entries = 0;
 
@@ -33,18 +29,19 @@ public class MTree<T> {
      * used to call calculateSize - may be needed in persistent version of this code?
      */
     public int size() {
-        return num_entries;
+        // return num_entries;
+        return calculateSize( root ); // TODO remove once working
     }
 
     /**
      * Find the closest N nodes to @param query.
-     * @param query - some data for which to find the closest N neighbours
+     * @param query - some data for which to find the nearest N neighbours
      * @param n the number of neighbours to return
      * @return n neighbours (or as many as possible)
      */
-    public List<T> closestN(T query, int n) {
+    public List<T> nearestN(T query, int n) {
         ClosestSet results = new ClosestSet(n);
-        closestN( root,n,query,results);
+        nearestN( root,n,query,results);
         return results.values();
 
     }
@@ -84,7 +81,7 @@ public class MTree<T> {
      * Add some data to the MTree
      * @param data the data to be added to the tree
      */
-    public void add( T data ) throws PreConditionException {
+    public void add( T data ) {
         num_entries++;
         if( root == null ) {
             root = new Node( data, null );
@@ -97,7 +94,7 @@ public class MTree<T> {
      * Debug method primarily but may be useful
      * Displays the tree.
      */
-    public void showTree() {
+    private void showTree() {
         showTree( root, 0 );
         System.out.println( "----------------------");
     }
@@ -287,7 +284,7 @@ public class MTree<T> {
      * @param query - some data for which to find the closest N neighbours
      * @param results the nearest nodes found thus far
      */
-    private void closestN(Node node, int n, T query, ClosestSet results) {
+    private void nearestN(Node node, int n, T query, ClosestSet results) {
 
         if( node.isLeaf() ) { // we are at a leaf - see if ths is closer than other nodes in results
             float node_distance = distance_wrapper.distance(node.data, query);
@@ -306,7 +303,7 @@ public class MTree<T> {
             // may be nodes in tree closer than those in results
             for( Node child : node.children ) {
 
-                closestN( child, n, query, results ); // have a look at the children
+                nearestN( child, n, query, results ); // have a look at the children
             }
         }
     }
@@ -318,10 +315,10 @@ public class MTree<T> {
      * @param node - the parent of the current node.
      * @param data  - the data to add into the children
      */
-    private void leaf_insert( Node node, T data ) throws PreConditionException {
+    private void leaf_insert( Node node, T data ) {
 
         if (( node.isFull() )) {
-            split(node, data);
+            split(node, new Node( data, null ) );
         } else {
             if( node.isEmpty() ) {
                 node.addChild(new Node(node.data, node)); // we making a leaf into an intermediate node - add Node to its own children
@@ -338,7 +335,7 @@ public class MTree<T> {
      * @param data the new data.
      * @return the radius of the child with the added node.
      */
-    private void add(Node node, T data) throws PreConditionException {
+    private void add(Node node, T data) {
         Node enclosing_pivot = null;
         Node closest_pivot = null;
         float smallest_distance = -1.0F; // illegal distance
@@ -395,90 +392,73 @@ public class MTree<T> {
      * Helper method for splitting levels (children) of node in the tree
      * @param N the node which is being split
      * @param oN a new node being added
-     * @throws PreConditionException
      */
-    private void split(Node N, T oN) throws PreConditionException {
-        //    Split(N,oN): N is leaf oN is new
-        //      Let S be the set containing all entries of N and oN
-        //      Select pivots p1 and p2 from S
-        //      Partition S to S1 and S2 according to p1 and p2
-        //      Store S1 in N and S2 in a new allocated node N’
-        //      If N isRoot
-        //          Allocate a new root and store entries for p1, p2 there
-        //      else
-        //          (let Np and pp be the parent node and parent data of N)   Replace entry pp with p1
-        //          If Np is full, then Split(Np,p2)
-        //              else store p2 in node Np
+    private void split(Node N, Node oN) {
 
-        List<Node> S = N.children;
-        N.children = new ArrayList<Node>(); // get rid of existing children of the node
+        // Insertion into a leaf may cause the node to overflow.
+        // The overflow of a node N is resolved by allocating a new node new_pivot at the same level and
+        //  by redistributing the m + 1 entries between the node subject to overflow and the new pivot
+        // This node split requires two new pivots to be selected and the
+        // corresponding covering radii adjusted to reflect the current membership of the
+        // two new nodes. Naturally, the overflow may propagate towards the root node and,
+        // if the root splits, a new root is created and the tree grows up one level.
 
-        S.add(new Node(oN, N));  // add oN into children - now over full
+        int size_before = calculateSize( root );
+
+        N.addChild( oN );  // add oN into children - now over full
+
         // but we are about to perform a split - makes computation easier.
-        // Select two new data from the children (with data added).
+        // Select a new pivot from the children (with data added).
 
-        // Partition S to S1 and S2 according to p1 and p2:
-        PairOfNodes chosen_pivots = selectPivots( S );
+        // select a second pivot on which to partition S to S1 and S2 according to N and new_pivot:
+        Node pivot_node = selectPivot( N,N.children );
 
-        Node p1 = chosen_pivots.n1; // keep names same as original pseudo code.
-        Node p2 = chosen_pivots.n2;
+        Node new_pivot = new Node( pivot_node.data, null );
 
-        S.remove( p1 );     // remove the two pivots from the children on N  //<<<<<<<< ???????
-        S.remove( p2 );     //<<<<<<<< ???????
+        // Partition children of N to s1 and s2 according to N and new_pivot
+        PairOfNodesList partition = partitionChildrenIntoPivots( N,new_pivot,N.children );
 
-        // Partition S to S1 and S2 according to p1 and p2
-        List<Node>[] partition = partitionChildrenIntoPivots( p1,p2,S );   // are p1 and p2 supposed to be in S
-        if( partition.length != 2 ) {
-            ErrorHandling.error( "Wrong number of children" );
-        }
+        List<Node> s1 = partition.nl1; // keep names same as original pseudo code.
+        List<Node> s2 = partition.nl2; // keep names same as original pseudo code.
 
-        List<Node> s1 = partition[0]; // keep names same as original pseudo code.
-        List<Node> s2 = partition[1]; // keep names same as original pseudo code.
+        N.children = new ArrayList<Node>(); // get rid of existing children of the node before reallocation
 
-        // Store s1 in N and s2 in a new allocated node N’
+        // allocate the children from s1 and s2 to N and new pivot
         for( Node n : s1 ) {
-            N.addChild( n );
+            N.addChild( n );                // radii are adjusted as nodes are added
         }
-        Node Nprime = new Node(p2.data, N.parent );
         for( Node n : s2 ) {
-            Nprime.addChild( n );
+            new_pivot.addChild( n );        // radii are adjusted as nodes are added
         }
 
-        // at this point...
-        //p1 and p2 are still floating, children stored in partitions p1 and p2 are all allocated.
-        // they both need to be put somewhere and the tree fixed up.
+        // Now have the new_pivot unallocated so we try and put it in the parent of N
 
-            if (! N.isLeaf()) {
-                // it is a root
-                // Allocate a new root
-                // and store entries for p1 and p2 in it
-                Node parent = N.parent;
-                Node new_node = new Node(oN,parent );
-                // this bit deals with the floating nodes p1 and p2
-                new_node.addChild( p1 );
-                new_node.addChild( p2 );
-                // Store the new node in the parent
-                parent.addChild( new_node );
+        if ( N == root ) { // it was the root had filled up
 
+            // we need to make new_pivot the new root
+
+            root = new_pivot;
+
+            // make the tree one level deeper.
+
+            root.addChild(N);
+
+        } else {
+            // it is a regular node - not the root - it has a a parent into which we can try to insert new_node
+
+            // let Np and pp be the parent node and parent data of N
+            //  Replace entry pp with p1
+            //  If Np is full, then Split(Np,new_pivot) else store new_pivot in node Np
+
+            Node Np = N.parent;
+            if (Np.isFull()) {
+                split(Np, new_pivot);
             } else {
-                // it is a leaf
-
-                // let Np and pp be the parent node and parent data of N
-                //  Replace entry pp with p1
-                //  If Np is full, then Split(Np,p2) else store p2 in node Np
-
-                Node Np = N.parent;
-                T pp = Np.data;
-                Np.data = p1.data;
-                if( Np.isFull() ) {
-                    split( Np, p2.data);
-                } else {
-                    Np.addChild(p2);
-                }
-
+                Np.addChild(new_pivot);
             }
 
         }
+    }
 
     /**
      * Takes two pivots and a list of Nodes and re-partitions into two Lists of nodes
@@ -488,16 +468,16 @@ public class MTree<T> {
      * @param p2 the second data
      * @param s a list of nodes to partition.
      *
-     * @return an array of two partitions of nodes
+     * @return two partitions of nodes
      */
-    private List<Node>[] partitionChildrenIntoPivots(Node p1, Node p2, List<Node> s) {
+    private PairOfNodesList partitionChildrenIntoPivots(Node p1, Node p2, List<Node> s) {
 
         List<Node> partition1 = new ArrayList<Node>();
         List<Node> partition2 = new ArrayList<Node>();
 
         for( Node child : s ) {
             float r1 = distance_wrapper.distance(p1.data, child.data);
-            float r2 = distance_wrapper.distance(p1.data, child.data);
+            float r2 = distance_wrapper.distance(p2.data, child.data);
 
             if( r1 < r2 ) {
                 partition1.add(child);
@@ -505,39 +485,32 @@ public class MTree<T> {
                 partition2.add(child);
             }
         }
-        return new List[]{ partition1, partition2 };
+        return new PairOfNodesList( partition1, partition2 );
     }
 
 
     /**
-     * Select pivots using M_RAD algorithm:
-     * m_RAD – select p1, p2 with minimum (r1c + r2c)
-     * @param s - a list of nodes from which to choose a data
-     * @return an array containing two Nodes satisfying MRAD property
+     * Select a new pivot
+     * Choose node from s that has the smallest radius and is not the existing @param pivot
+     * @param pivot - the existing pivot
+     * @param candidates - a list of nodes from which to choose a data
+     * @return a new pivot with the smallest radius
      */
-    private PairOfNodes selectPivots(List<Node> s) throws PreConditionException {
-        if( s.size() < 2 ) {
-            throw new PreConditionException( "children list from which to select pivots is too small");
-        }
+    private Node selectPivot( Node pivot, List<Node> candidates ) {
 
-        Node smallest_radius_node = s.get(0);
-        Node next_smallest_radius_node = s.get(1);
+        Node smallest_not_pivot = null;
 
-        if( next_smallest_radius_node.radius < smallest_radius_node.radius ) { // swap them over
-            Node temp = smallest_radius_node;
-            smallest_radius_node = next_smallest_radius_node;
-            next_smallest_radius_node = temp;
-        }
-
-        for( Node child : s.subList( 2,s.size() - 2 ) ) {
-            if( child.radius < smallest_radius_node.radius ) {
-                smallest_radius_node = child;
-            } else if( child.radius < next_smallest_radius_node.radius ) {
-                next_smallest_radius_node = child;
+        for( Node child : candidates ) {
+            if( child.data != pivot.data ) { // not identical since we are looking at children
+                if ( smallest_not_pivot == null ) {
+                    smallest_not_pivot = child;
+                } else if( child.radius < smallest_not_pivot.radius) {
+                    smallest_not_pivot = child;
+                }
             }
         }
-
-        return new PairOfNodes( smallest_radius_node, next_smallest_radius_node );
+        smallest_not_pivot.parent = null; // we are about to re-insert this into the tree at a new position.
+        return smallest_not_pivot;
     }
 
     //----------------------- Helper classes
@@ -545,7 +518,7 @@ public class MTree<T> {
     /**
      * This is the class used to build the M-tree.
      */
-    public class Node {
+    private class Node {
 
         public T data;
         public float radius;
@@ -559,7 +532,6 @@ public class MTree<T> {
             distance_to_parent = parent == null ? 0 : distance_wrapper.distance( oN, parent.data);
             children = new ArrayList<Node>();
             this.parent = parent;
-            //this.distance = distance;
         }
 
         /**
@@ -567,14 +539,12 @@ public class MTree<T> {
          * Pre condition this is only called where a split has already occurred and parent is not full
          * @param newNode the node to add to the Node
          */
-        protected float addChild(Node newNode) throws PreConditionException {
+        protected float addChild(Node newNode) {
 
-            if( isFull() ) {
-                throw new PreConditionException( "Level is full" );
-            }
             children.add( newNode );
             float newdistance = distance_wrapper.distance(this.data, newNode.data);
             newNode.distance_to_parent = newdistance;
+            newNode.parent = this;
             float new_radii = newdistance + newNode.radius;
             if( new_radii > radius ) {
                 radius = new_radii;
@@ -591,19 +561,21 @@ public class MTree<T> {
         public boolean isEmpty() {
             return children.isEmpty();
         }
+
+        public String toString() { return "data= " + data + " r= " + radius + " dp= " + distance_to_parent; }
     }
 
-    public class PairOfNodes {
-        public Node n1;
-        public Node n2;
+    private class PairOfNodesList {
+        public List<Node> nl1;
+        public List<Node> nl2;
 
-        public PairOfNodes( Node n1, Node n2 ) {
-            this.n1 = n1;
-            this.n2 = n2;
+        public PairOfNodesList( List<Node> nl1, List<Node> nl2 ) {
+            this.nl1 = nl1;
+            this.nl2 = nl2;
         }
     }
 
-    public class ClosestSet {
+    private class ClosestSet {
 
         ArrayList<DataDistance> closest;
         int requested_result_set_size;
@@ -616,9 +588,6 @@ public class MTree<T> {
         public int size() { return closest.size(); }
 
         private void add_in_distance_order(T data, float distance) {
-
-            System.out.println( "adding: " + data + " at distance: " + distance +  " to: " );
-            System.out.println( "\t" + this.toString() );
 
             int index;
             if( closest.size() == 0 ) {
@@ -670,7 +639,7 @@ public class MTree<T> {
             return result;
         }
 
-        public class DataDistance {
+        private class DataDistance {
 
             public T val;
             public float dist;

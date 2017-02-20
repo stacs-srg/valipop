@@ -1,8 +1,12 @@
-package uk.ac.standrews.cs.digitising_scotland.linkage.MTree;
+package uk.ac.standrews.cs.digitising_scotland.util.MTree;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.simmetrics.metrics.Levenshtein;
+import uk.ac.standrews.cs.util.dataset.DataSet;
+
+import java.nio.file.Paths;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -10,46 +14,73 @@ import static org.junit.Assert.assertTrue;
 /**
  * Created by al on 27/01/2017.
  */
-public class MTreeStringEditDistanceTest {
+public class MTreeStringDictionaryTest {
 
-    MTree<String> t;
+    private  MTree<String> t;
+    private  int count;
 
     @Before
     public void setUp() throws Exception {
 
         t = new MTree<>(new EditDistance2());
-    }
-
-    /**
-     * add a single point to the tree
-     */
-    @Test
-    public void add_one() throws PreConditionException {
-
-        String s = "hello mum";
-        t.add(s);
-        assertEquals(1, t.size());
-        assertTrue(t.contains(s));
-    }
-
-    /**
-     * add some words and find the closest
-     */
-    @Test
-    public void check_nearest() throws PreConditionException {
-
-        String[] words = new String[]{"girl", "boy", "fish", "flash", "shed", "crash", "hill", "moon"};
-
-        for (String word : words) {
-            t.add(word);
+        long time = System.currentTimeMillis();
+        String dict_file = "/usr/share/dict/words";
+        DataSet data = new DataSet(Paths.get(dict_file));
+        count = 0;
+        for (List<String> lines : data.getRecords()) {  // file has one word per line
+            t.add( lines.get(0) ); count++;
         }
-        assertEquals("crash", t.nearestNeighbour("brash"));
-        assertEquals("boy", t.nearestNeighbour("toy"));
-        assertEquals("hill", t.nearestNeighbour("sill"));
-        assertEquals("hill", t.nearestNeighbour("hole"));
-        assertEquals("moon", t.nearestNeighbour("soon"));
-        assertEquals("fish", t.nearestNeighbour("fist"));
-        assertEquals("shed", t.nearestNeighbour("shod"));
+        // System.out.println( "Time to load " + count + " items = " + ( System.currentTimeMillis() - time ) / 1000 + "s" );
+    }
+
+    /**
+     * test to ensure that the correct number of words are in MTree
+     */
+    @Test
+    public void unix_dictionary_size_test() {
+        assertEquals(count, t.size());
+    }
+
+    /**
+     * test nearest neighbour in  a dictionary of words
+     */
+    @Test
+    public void nearest_neighbour() {
+
+        Object result = t.nearestNeighbour("absilute");
+        assertEquals("absolute", result);
+    }
+
+
+
+    /**
+     * test nearest N in a dictionary of words
+     */
+    @Test
+    public void nearest_N() {
+
+        List<String> result2 = t.nearestN("accelerat", 5);
+        assertTrue(result2.contains("accelerate"));
+        assertTrue(result2.contains("accelerant"));
+        assertTrue(result2.contains("accelerated"));
+        assertTrue(result2.contains("accelerator"));
+        assertTrue(result2.contains("scelerat")); // noun: a villain, or extremely wicked person;
+    }
+
+
+    /**
+     * test range search in a dictionary of words
+     */
+    @Test
+    public void range() {
+        List<String> result3 = t.rangeSearch("tomato",2);
+        assertTrue(  result3.contains( "tomato" ) ); // distance 0
+        assertTrue(  result3.contains( "pomato" ) ); // distance 1
+        assertTrue(  result3.contains( "pomate" ) ); // distance 2
+        assertTrue(  result3.contains( "potato" ) ); // distance 2
+        assertTrue(  result3.contains( "tomcat" ) ); // distance 2
+
+        // System.out.println( "all at 2: " + result3 );
     }
 
     public class EditDistance2 implements Distance<String> {
@@ -59,7 +90,7 @@ public class MTreeStringEditDistanceTest {
 
             Levenshtein levenshtein = new Levenshtein();
 
-            System.out.println("Distance between( " + s1 + "," + s2 + " ) is " + levenshtein.distance(s1, s2));
+         //   System.out.println("Distance between( " + s1 + "," + s2 + " ) is " + levenshtein.distance(s1, s2));
 
             return levenshtein.distance(s1, s2);
         }
@@ -69,20 +100,19 @@ public class MTreeStringEditDistanceTest {
 
         public float distance(String s1, String s2) {
 
-            System.out.println("Distance between( " + s1 + "," + s2 + " ) is " + Ldistance(s1, s2));
+         //   System.out.println("Distance between( " + s1 + "," + s2 + " ) is " + Ldistance(s1, s2));
 
             return (float) Ldistance(s1, s2);
         }
 
         /**
          * Code from https://github.com/tdebatty/java-string-similarity/blob/master/src/main/java/info/debatty/java/stringsimilarity/Levenshtein.java
-         * <p>
          * The Levenshtein distance, or edit distance, between two words is the
          * minimum number of single-character edits (insertions, deletions or
          * substitutions) required to change one word into the other.
-         * <p>
+         *
          * http://en.wikipedia.org/wiki/Levenshtein_distance
-         * <p>
+         *
          * It is always at least the difference of the sizes of the two strings.
          * It is at most the length of the longer string.
          * It is zero if and only if the strings are equal.
@@ -91,7 +121,7 @@ public class MTreeStringEditDistanceTest {
          * The Levenshtein distance verifies the triangle inequality (the distance
          * between two strings is no greater than the sum Levenshtein distances from
          * a third string).
-         * <p>
+         *
          * Implementation uses dynamic programming (Wagner–Fischer algorithm), with
          * only 2 rows of data. The space requirement is thus O(m) and the algorithm
          * runs in O(mn).
