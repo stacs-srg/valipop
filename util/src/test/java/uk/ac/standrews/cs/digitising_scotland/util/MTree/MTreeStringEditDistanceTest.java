@@ -43,13 +43,13 @@ public class MTreeStringEditDistanceTest {
         for (String word : words) {
             t.add(word);
         }
-        assertEquals("crash", t.nearestNeighbour("brash"));
-        assertEquals("boy", t.nearestNeighbour("toy"));
-        assertEquals("hill", t.nearestNeighbour("sill"));
-        assertEquals("hill", t.nearestNeighbour("hole"));
-        assertEquals("moon", t.nearestNeighbour("soon"));
-        assertEquals("fish", t.nearestNeighbour("fist"));
-        assertEquals("shed", t.nearestNeighbour("shod"));
+        assertEquals("crash", t.nearestNeighbour("brash").value);
+        assertEquals("boy", t.nearestNeighbour("toy").value);
+        assertEquals("hill", t.nearestNeighbour("sill").value);
+        assertEquals("hill", t.nearestNeighbour("hole").value);
+        assertEquals("moon", t.nearestNeighbour("soon").value);
+        assertEquals("fish", t.nearestNeighbour("fist").value);
+        assertEquals("shed", t.nearestNeighbour("shod").value);
     }
 
 

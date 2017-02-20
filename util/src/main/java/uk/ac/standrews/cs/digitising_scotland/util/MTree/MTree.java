@@ -30,7 +30,7 @@ public class MTree<T> {
      */
     public int size() {
         // return num_entries;
-        return calculateSize( root ); // TODO remove once working
+        return calculateSize( root ); // TODO remove once working and replace with num_entries
     }
 
     /**
@@ -39,7 +39,7 @@ public class MTree<T> {
      * @param n the number of neighbours to return
      * @return n neighbours (or as many as possible)
      */
-    public List<T> nearestN(T query, int n) {
+    public List<DataDistance<T>> nearestN(T query, int n) {
         ClosestSet results = new ClosestSet(n);
         nearestN( root,n,query,results);
         return results.values();
@@ -52,9 +52,9 @@ public class MTree<T> {
      * @param r the distance from query over which to search
      * @return all those nodes within r of @param T.
      */
-    public List<T> rangeSearch(T query, float r) {
+    public List<DataDistance<T>> rangeSearch(T query, float r) {
 
-        ArrayList<T> results = new ArrayList<T>();
+        ArrayList<DataDistance<T>> results = new ArrayList<DataDistance<T>>();
         rangeSearch( root,query,r, results );
         return results;
     }
@@ -65,7 +65,7 @@ public class MTree<T> {
      * @param query - some data for which to find the nearest neighbour
      * @return the nearest neighbour of T.
      */
-    public T nearestNeighbour(T query) {
+    public DataDistance<T> nearestNeighbour(T query) {
         return nearestNeighbour( root, null, query );
     }
 
@@ -97,6 +97,34 @@ public class MTree<T> {
     private void showTree() {
         showTree( root, 0 );
         System.out.println( "----------------------");
+    }
+
+    //------------------------- Utility methods
+
+    /**
+     * Mathod to extract values from DataDistance lists
+     * @param datadistances a list of distances from which to extract values
+     * @return the set of values from the list
+     */
+    public List<T>  mapValues( List<DataDistance<T>> datadistances ) {
+        ArrayList<T> result = new ArrayList<T>();
+        for( DataDistance<T> dd : datadistances ) {
+            result.add( dd.value );
+        }
+        return result;
+    }
+
+    /**
+     * Mathod to extract distances from DataDistance lists
+     * @param datadistances a list of distances from which to extract values
+     * @return the set of distances from the list
+     */
+    public List<Float> mapDistances(List<DataDistance<T>> datadistances) {
+        ArrayList<Float> result = new ArrayList<Float>();
+        for (DataDistance<T> dd : datadistances) {
+            result.add(dd.distance);
+        }
+        return result;
     }
 
     //------------------------- Private methods
@@ -187,7 +215,7 @@ public class MTree<T> {
      *   }
      * }
      */
-    private void rangeSearch(Node N, T Q, float RQ, ArrayList<T> results) {
+    private void rangeSearch(Node N, T Q, float RQ, ArrayList<DataDistance<T>> results) {
 
         Node parent = N.parent;
 
@@ -208,7 +236,7 @@ public class MTree<T> {
 
                     float distanceNodeToQ = distance_wrapper.distance(N.data, Q);
                     if (distanceNodeToQ <= RQ) {
-                        results.add(N.data);
+                        results.add(new DataDistance<T>(N.data,distanceNodeToQ));
                     }
          //       }
           //  }
@@ -251,25 +279,26 @@ public class MTree<T> {
      * @param query - some data for which to find the nearest neighbour
      * @return the nearest neighbour of T.
      */
-    private T nearestNeighbour(Node node, T closest_thus_far, T query) {
+    private DataDistance<T> nearestNeighbour(Node node, DataDistance<T> closest_thus_far, T query) {
         if( node.data.equals( query ) ) {
-            return node.data;
+            return new DataDistance<T>(node.data,0.0F);
         }
+        float distance_to_node = distance_wrapper.distance(node.data, query);
         if( closest_thus_far == null ) {
-            closest_thus_far = node.data;
+            closest_thus_far = new DataDistance<T>(node.data, distance_to_node );
         }
         if( node.isLeaf() ) { // is not equal and we are at a leaf
-            if( distance_wrapper.distance(node.data, query) < distance_wrapper.distance(closest_thus_far, query) ) { // this node is closer
-                return node.data;
+            if( distance_to_node < closest_thus_far.distance) { // this node is closer
+                return new DataDistance<T>(node.data,distance_to_node);
             }
             return closest_thus_far; // we are not any closer.
         }
         // see if we need to check out the children;
-        if( distance_wrapper.distance(node.data, query) - node.radius < distance_wrapper.distance(closest_thus_far, query) ) {
+        if( distance_to_node - node.radius < closest_thus_far.distance ) {
             // may be interesting results in the children
             for( Node child : node.children ) {
-                T nn = nearestNeighbour( child,closest_thus_far,query );
-                if( distance_wrapper.distance(nn, query)  < distance_wrapper.distance( closest_thus_far, query ) ) {
+                DataDistance<T> nn = nearestNeighbour( child,closest_thus_far,query );
+                if( distance_wrapper.distance(nn.value, query)  < closest_thus_far.distance ) {
                     closest_thus_far = nn;
                 }
             }
@@ -513,6 +542,16 @@ public class MTree<T> {
         return smallest_not_pivot;
     }
 
+    private class PairOfNodesList {
+        public List<Node> nl1;
+        public List<Node> nl2;
+
+        public PairOfNodesList( List<Node> nl1, List<Node> nl2 ) {
+            this.nl1 = nl1;
+            this.nl2 = nl2;
+        }
+    }
+
     //----------------------- Helper classes
 
     /**
@@ -565,23 +604,13 @@ public class MTree<T> {
         public String toString() { return "data= " + data + " r= " + radius + " dp= " + distance_to_parent; }
     }
 
-    private class PairOfNodesList {
-        public List<Node> nl1;
-        public List<Node> nl2;
-
-        public PairOfNodesList( List<Node> nl1, List<Node> nl2 ) {
-            this.nl1 = nl1;
-            this.nl2 = nl2;
-        }
-    }
-
     private class ClosestSet {
 
-        ArrayList<DataDistance> closest;
+        ArrayList<DataDistance<T>> closest;
         int requested_result_set_size;
 
         public ClosestSet(int n) {
-            closest = new ArrayList<DataDistance>();
+            closest = new ArrayList<DataDistance<T>>();
             requested_result_set_size = n;
         }
 
@@ -596,7 +625,7 @@ public class MTree<T> {
             }
             for( index = 0; index < closest.size();  index++ ) {
                 DataDistance next = closest.get(index);
-                if (distance <= next.dist) { // found right point to insert
+                if (distance <= next.distance) { // found right point to insert
                     closest.add( index,new DataDistance( data, distance ) );
                     check_evict();
                     return;
@@ -609,7 +638,7 @@ public class MTree<T> {
 
         public float furthest_distance() {
             DataDistance furthest_element = closest.get(closest.size() - 1);
-            return furthest_element.dist;
+            return furthest_element.distance;
         }
 
         private void check_evict() {
@@ -625,30 +654,17 @@ public class MTree<T> {
             StringBuffer sb = new StringBuffer();
             sb.append( "[" );
             for( int i = 0; i < closest.size();  i++ ) {
-                sb.append("\tdata: " + closest.get(i).val + "distance: " + closest.get(i).dist + "\n");
+                sb.append("\tdata: " + closest.get(i).value + "distance: " + closest.get(i).distance + "\n");
             }
             sb.append( "\t]" );
             return sb.toString();
         }
 
-        public List<T> values() {
-            ArrayList<T> result = new ArrayList<T>();
-            for( DataDistance dd : closest ) {
-                result.add( dd.val );
-            }
-            return result;
+        public List<DataDistance<T>> values() {
+
+            return closest;
         }
 
-        private class DataDistance {
-
-            public T val;
-            public float dist;
-
-            public DataDistance( T data, float distance ) {
-                this.val = data;
-                this.dist = distance;
-            }
-        }
     }
 
 
