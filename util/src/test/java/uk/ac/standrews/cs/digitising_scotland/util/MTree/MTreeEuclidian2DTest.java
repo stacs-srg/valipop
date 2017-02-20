@@ -197,9 +197,10 @@ public class MTreeEuclidian2DTest {
     public void findClosetFrom60() {
         add_nested_points_60();
         Point p = new Point(15.0F, 0.0F);
-        List<Point> result = t.rangeSearch(p, 10.0F);
+        List<DataDistance<Point>> result = t.rangeSearch(p, 10.0F);
+        List<Point> values = t.mapValues(result);
         assertTrue( result.size() == 6 );
-        for( Point pp : result ) {
+        for( Point pp : values ) {
             assertTrue( t.contains( pp ) );                 // point added to the tree
             assertTrue( ed.distance( pp, p ) <= 10.0F );    // and it is in range.
         }
@@ -217,9 +218,10 @@ public class MTreeEuclidian2DTest {
         // test search in ever increasing circles.
         for( float i = 1.0F; i < 50.0F; i++ ) {
             float search_circle = (float) Math.sqrt( i * i ) ; // requested_result_set_size of square plus a little to avoid float errors
-            List<Point> result = t.rangeSearch(p,search_circle);
+            List<DataDistance<Point>> result = t.rangeSearch(p, search_circle);
+            List<Point> values = t.mapValues(result);
             // System.out.println( "d=" + search_circle + " results requested_result_set_size =" + result.requested_result_set_size() + " results: " + result );
-            for( Point pp : result ) {
+            for( Point pp : values ) {
                 assertTrue( t.contains( pp ) );
                 assertTrue( ed.distance( pp, p ) <= search_circle );    // and it is in range.
             }
@@ -233,9 +235,9 @@ public class MTreeEuclidian2DTest {
     public void findClosest() {
         int count = add_squares();
         Point p = new Point(20.6F, 20.6F);
-        Object result = t.nearestNeighbour(p);
+        DataDistance<Point> result = t.nearestNeighbour(p);
         //System.out.println(result);
-        assertEquals( result, new Point(21.0F, 21.0F) ); // closest point to 20.6,20.6 - TODO better tests?
+        assertEquals( result.value, new Point(21.0F, 21.0F) ); // closest point to 20.6,20.6 - TODO better tests?
     }
 
     /**
@@ -247,9 +249,10 @@ public class MTreeEuclidian2DTest {
         Point p = new Point(0.0F, 0.0F);
         for( int i = 4; i < 50; i+=4 ) {
             // move out in squares of size 4, each loop should include 4 more nodes
-            List<Point> result = t.nearestN(p, i);
+            List<DataDistance<Point>> result = t.nearestN(p, i);
+            List<Point> values = t.mapValues(result);
             assertTrue( result.size() == i );
-            for( Point pp : result ) {
+            for( Point pp : values ) {
                 assertTrue( t.contains( pp ) );   // TODO How to check that they are the right ones????
             }
             //System.out.println(result);

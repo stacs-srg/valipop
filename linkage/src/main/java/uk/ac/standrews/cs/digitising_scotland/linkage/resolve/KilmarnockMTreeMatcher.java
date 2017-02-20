@@ -447,17 +447,6 @@ public class KilmarnockMTreeMatcher {
         }
     }
 
-    //***********************************************************************************
-
-    public static void main(String[] args) throws Exception {
-
-        String births_source_path = "/Digitising Scotland/KilmarnockBDM/births.csv";
-        String deaths_source_path = "/Digitising Scotland/KilmarnockBDM/deaths.csv";
-        String marriages_source_path = "/Digitising Scotland/KilmarnockBDM/marriages.csv";
-
-        new KilmarnockMTreeMatcher(births_source_path, deaths_source_path, marriages_source_path);
-    }
-
 
     private class GFNGLNBFNBMNPOMDOMDistance implements Distance<Marriage> {
 
@@ -466,14 +455,31 @@ public class KilmarnockMTreeMatcher {
         @Override
         public float distance(Marriage m1, Marriage m2) {
 
-            float distanceGFN = levenshtein.distance( m1.getGroomsForename(), m2.getGroomsForename() );
-            float distanceGLN = levenshtein.distance( m1.getGroomsSurname(), m2.getGroomsSurname() );
-            float distanceBFN = levenshtein.distance( m1.getBridesForename(), m2.getBridesForename() );
-            float distanceBMN = levenshtein.distance( m1.getBridesSurname(), m2.getBridesSurname() );
-            float distancePOM = ( m1.getPlaceOfMarriage().equals( "ng") || m2.getPlaceOfMarriage().equals( "ng") ? 0 : levenshtein.distance( m1.getPlaceOfMarriage(), m2.getPlaceOfMarriage() ) );
-            float distanceDOM = ( m1.getDateOfMarriage().equals( "ng") || m2.getDateOfMarriage().equals( "ng") ) ? 0 : levenshtein.distance( m1.getDateOfMarriage(), m2.getDateOfMarriage() );
+            return GFNdistance(m1,m2) + GLNdistance(m1,m2) + BFNdistance(m1,m2) + BLNdistance(m1,m2) + POMdistance(m1,m2) + DOMdistance(m1,m2);
+        }
 
-            return distanceGFN + distanceGLN + distanceBFN + distanceBMN + distancePOM + distanceDOM;
+        private float GFNdistance(Marriage m1, Marriage m2) {
+            return levenshtein.distance( m1.getGroomsForename(), m2.getGroomsForename() );
+        }
+
+        private float GLNdistance(Marriage m1, Marriage m2) {
+            return levenshtein.distance( m1.getGroomsSurname(), m2.getGroomsSurname() );
+        }
+
+        private float BFNdistance(Marriage m1, Marriage m2) {
+            return levenshtein.distance( m1.getBridesForename(), m2.getBridesForename() );
+        }
+
+        private float BLNdistance(Marriage m1, Marriage m2) {
+            return levenshtein.distance( m1.getBridesSurname(), m2.getBridesSurname() );
+        }
+
+        private float POMdistance(Marriage m1, Marriage m2) {
+            return ( m1.getPlaceOfMarriage().equals( "ng") || m2.getPlaceOfMarriage().equals( "ng" ) ? 0 : levenshtein.distance( m1.getPlaceOfMarriage(), m2.getPlaceOfMarriage() ) );
+        }
+
+        private float DOMdistance(Marriage m1, Marriage m2) {
+            return m1.getDateOfMarriage().equals( "ng") || m2.getDateOfMarriage().equals( "ng" ) ? 0 : levenshtein.distance( m1.getDateOfMarriage(), m2.getDateOfMarriage() );
         }
 
         protected String normalisePlace(String place) {
@@ -485,5 +491,16 @@ public class KilmarnockMTreeMatcher {
                 return place;
             }
         }
+    }
+
+    //***********************************************************************************
+
+    public static void main(String[] args) throws Exception {
+
+        String births_source_path = "/Digitising Scotland/KilmarnockBDM/births.csv";
+        String deaths_source_path = "/Digitising Scotland/KilmarnockBDM/deaths.csv";
+        String marriages_source_path = "/Digitising Scotland/KilmarnockBDM/marriages.csv";
+
+        new KilmarnockMTreeMatcher(births_source_path, deaths_source_path, marriages_source_path);
     }
 }

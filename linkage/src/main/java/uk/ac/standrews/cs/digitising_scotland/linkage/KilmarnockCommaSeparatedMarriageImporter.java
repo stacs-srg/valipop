@@ -2,6 +2,7 @@ package uk.ac.standrews.cs.digitising_scotland.linkage;
 
 import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.Marriage;
 import uk.ac.standrews.cs.digitising_scotland.linkage.normalisation.normaliseDates;
+import uk.ac.standrews.cs.digitising_scotland.linkage.normalisation.normalisePlaces;
 import uk.ac.standrews.cs.storr.impl.exceptions.BucketException;
 import uk.ac.standrews.cs.storr.interfaces.IBucket;
 import uk.ac.standrews.cs.util.dataset.DataSet;
@@ -54,7 +55,7 @@ public class KilmarnockCommaSeparatedMarriageImporter extends KilmarnockCommaSep
 
                     {MARRIAGE_YEAR, "year"}, {MARRIAGE_DAY, "day"},
 
-                    {PLACE_OF_MARRIAGE, "place of marriage 3" },
+                    // {PLACE_OF_MARRIAGE, "place of marriage 3" },
 
                     // *********************************
 
@@ -159,6 +160,7 @@ public class KilmarnockCommaSeparatedMarriageImporter extends KilmarnockCommaSep
     private static void addAvailableNormalisedFields(DataSet data, List<String> record, Marriage marriage) {
 
         marriage.put( MARRIAGE_MONTH, normaliseDates.normaliseMonth( data.getValue(record, "month" ) ) );
+        marriage.put( PLACE_OF_MARRIAGE, normalisePlaces.normalisePace( data.getValue( record, "place of marriage 3" ) ) );
     }
 
     private static void addAvailableCompoundFields(final DataSet data, final List<String> record, final Marriage marriage) {

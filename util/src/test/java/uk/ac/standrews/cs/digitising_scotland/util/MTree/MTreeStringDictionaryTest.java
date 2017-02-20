@@ -47,8 +47,8 @@ public class MTreeStringDictionaryTest {
     @Test
     public void nearest_neighbour() {
 
-        Object result = t.nearestNeighbour("absilute");
-        assertEquals("absolute", result);
+        DataDistance<String> result = t.nearestNeighbour("absilute");
+        assertEquals("absolute", result.value);
     }
 
 
@@ -59,12 +59,13 @@ public class MTreeStringDictionaryTest {
     @Test
     public void nearest_N() {
 
-        List<String> result2 = t.nearestN("accelerat", 5);
-        assertTrue(result2.contains("accelerate"));
-        assertTrue(result2.contains("accelerant"));
-        assertTrue(result2.contains("accelerated"));
-        assertTrue(result2.contains("accelerator"));
-        assertTrue(result2.contains("scelerat")); // noun: a villain, or extremely wicked person;
+        List<DataDistance<String>> results = t.nearestN("accelerat", 5);
+        List<String> values = t.mapValues(results);
+        assertTrue(values.contains("accelerate"));
+        assertTrue(values.contains("accelerant"));
+        assertTrue(values.contains("accelerated"));
+        assertTrue(values.contains("accelerator"));
+        assertTrue(values.contains("scelerat")); // noun: a villain, or extremely wicked person;
     }
 
 
@@ -73,12 +74,13 @@ public class MTreeStringDictionaryTest {
      */
     @Test
     public void range() {
-        List<String> result3 = t.rangeSearch("tomato",2);
-        assertTrue(  result3.contains( "tomato" ) ); // distance 0
-        assertTrue(  result3.contains( "pomato" ) ); // distance 1
-        assertTrue(  result3.contains( "pomate" ) ); // distance 2
-        assertTrue(  result3.contains( "potato" ) ); // distance 2
-        assertTrue(  result3.contains( "tomcat" ) ); // distance 2
+        List<DataDistance<String>> results = t.rangeSearch("tomato",2);
+        List<String> values = t.mapValues(results);
+        assertTrue(  values.contains( "tomato" ) ); // distance 0
+        assertTrue(  values.contains( "pomato" ) ); // distance 1
+        assertTrue(  values.contains( "pomate" ) ); // distance 2
+        assertTrue(  values.contains( "potato" ) ); // distance 2
+        assertTrue(  values.contains( "tomcat" ) ); // distance 2
 
         // System.out.println( "all at 2: " + result3 );
     }
