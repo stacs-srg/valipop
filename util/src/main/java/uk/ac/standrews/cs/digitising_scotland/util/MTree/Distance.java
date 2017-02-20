@@ -1,4 +1,4 @@
-package uk.ac.standrews.cs.digitising_scotland.linkage.MTree;
+package uk.ac.standrews.cs.digitising_scotland.util.MTree;
 
 /**
  * Created by al on 27/01/2017.

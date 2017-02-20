@@ -1,9 +1,12 @@
-package uk.ac.standrews.cs.digitising_scotland.linkage.MTree;
+package uk.ac.standrews.cs.digitising_scotland.util.MTree;
 
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 
 /**
@@ -25,25 +28,25 @@ public class MTreeEuclidian2DTest {
      * add a single point to the tree
      */
     @Test
-    public void add_one() throws PreConditionException {
+    public void add_one() {
         t.add( new Point( 0.0F, 0.0F ) );
-        assert( t.size() == 1 );
-        assert( t.contains( new Point( 0.0F, 0.0F ) ) );
+        assertTrue( t.size() == 1 );
+        assertTrue( t.contains( new Point( 0.0F, 0.0F ) ) );
     }
 
     /**
      * add 3 points to the tree - 3,4,5 triangle
      */
     @Test
-    public void add_three_345() throws PreConditionException {
+    public void add_three_345() {
 
-            t.add( new Point( 0.0F, 0.0F ) );
-            t.add( new Point( 3.0F, 0.0F ) );
-            t.add( new Point( 3.0F, 4.0F ) );
-            assert( t.size() == 3 );
-            assert( t.contains( new Point( 0.0F, 0.0F ) ) );
-            assert( t.contains( new Point( 3.0F, 0.0F ) ) );
-            assert( t.contains( new Point( 3.0F, 4.0F ) ) );
+        t.add( new Point( 0.0F, 0.0F ) );
+        t.add( new Point( 3.0F, 0.0F ) );
+        t.add( new Point( 3.0F, 4.0F ) );
+        assertTrue( t.size() == 3 );
+        assertTrue( t.contains( new Point( 0.0F, 0.0F ) ) );
+        assertTrue( t.contains( new Point( 3.0F, 0.0F ) ) );
+        assertTrue( t.contains( new Point( 3.0F, 4.0F ) ) );
         // t.showTree();
     }
 
@@ -51,12 +54,12 @@ public class MTreeEuclidian2DTest {
      * add 15 points to the tree
      */
     @Test
-    public void add_linear_15() throws PreConditionException {
+    public void add_linear_15() {
 
         for( int i = 0; i< 15; i++ ) {
             t.add( new Point( (float) i, 0.0F ) );
         }
-        assert( t.size() == 15 );
+        assertTrue( t.size() == 15 );
         for( int i = 0; i< 15; i++ ) {
             t.contains( new Point((float) i, 0.0F) ) ;
         }
@@ -67,7 +70,7 @@ public class MTreeEuclidian2DTest {
      * such that some will nest
      */
     @Test
-    public void add_nested_points_depth_3() throws PreConditionException {
+    public void add_nested_points_depth_3() {
         // lay down 20 points in a line
         for( int i = 0; i< 3; i++ ) {
             t.add( new Point( (float) i * 10, 0.0F ) );
@@ -81,17 +84,17 @@ public class MTreeEuclidian2DTest {
             t.add( new Point( (float) (i * 10) + 4.5F, 0.0F ) );
         }
 
-        assert( t.size() == 9 );
+        assertTrue( t.size() == 9 );
         for( int i = 0; i< 3; i++ ) {
-            assert( t.contains( new Point( (float) i * 10, 0.0F ) ) );
+            assertTrue( t.contains( new Point( (float) i * 10, 0.0F ) ) );
         }
         // new lay down 20 points in a line - that are all close (4 away) to the first 20
         for( int i = 0; i< 3; i++ ) {
-            assert( t.contains( new Point( (float) (i * 10) + 4.0F, 0.0F ) ) );
+            assertTrue( t.contains( new Point( (float) (i * 10) + 4.0F, 0.0F ) ) );
         }
         // new lay down another 20 points in a line - that are all close (1 away) to the second 20
         for( int i = 0; i< 3; i++ ) {
-            assert( t.contains( new Point( (float) (i * 10) + 4.5F, 0.0F ) ) );
+            assertTrue( t.contains( new Point( (float) (i * 10) + 4.5F, 0.0F ) ) );
         }
 
         // t.showTree();
@@ -101,7 +104,7 @@ public class MTreeEuclidian2DTest {
      * add points to the tree
      * such that some will nest
      */
-    private int add_squares() throws PreConditionException {
+    private int add_squares() {
 
         int count = 0;
 
@@ -125,17 +128,17 @@ public class MTreeEuclidian2DTest {
      * such that some will nest
      */
     @Test
-    public void test_squares() throws PreConditionException {
+    public void test_squares() {
 
         int count = add_squares();
 
-        assert( t.size() == count );
+        assertTrue( t.size() == count );
         for( float step = 1.0F; step < 50.0F; step++ ) {
 
-            assert( t.contains(new Point( + step,  + step)) );
-            assert( t.contains(new Point( - step,  + step)) );
-            assert( t.contains(new Point( + step,  - step)) );
-            assert( t.contains(new Point( - step,  - step)) );
+            assertTrue( t.contains(new Point( + step,  + step)) );
+            assertTrue( t.contains(new Point( - step,  + step)) );
+            assertTrue( t.contains(new Point( + step,  - step)) );
+            assertTrue( t.contains(new Point( - step,  - step)) );
         }
     }
 
@@ -143,7 +146,7 @@ public class MTreeEuclidian2DTest {
      * add points to the tree
      * such that some will nest
      */
-    private void add_nested_points_60() throws PreConditionException {
+    private void add_nested_points_60() {
         // lay down 20 points in a line
         for (int i = 0; i < 20; i++) {
             t.add(new Point((float) i * 10, 0.0F));
@@ -166,22 +169,22 @@ public class MTreeEuclidian2DTest {
      * such that some will nest
      */
     @Test
-    public void test_nested_points_60() throws PreConditionException {
+    public void test_nested_points_60() {
 
         add_nested_points_60();
 
-        assert( t.size() == 60 );
+        assertTrue( t.size() == 60 );
 
         for( int i = 0; i< 20; i++ ) {
-            assert( t.contains( new Point( (float) i * 10, 0.0F ) ) );
+            assertTrue( t.contains( new Point( (float) i * 10, 0.0F ) ) );
         }
         // new lay down 20 points in a line - that are all close (4 away) to the first 20
         for( int i = 0; i< 20; i++ ) {
-            assert( t.contains( new Point( (float) (i * 10) + 4.0F, 0.0F ) ) );
+            assertTrue( t.contains( new Point( (float) (i * 10) + 4.0F, 0.0F ) ) );
         }
         // new lay down another 20 points in a line - that are all close (1 away) to the second 20
         for( int i = 0; i< 20; i++ ) {
-            assert( t.contains( new Point( (float) (i * 10) + 4.5F, 0.0F ) ) );
+            assertTrue( t.contains( new Point( (float) (i * 10) + 4.5F, 0.0F ) ) );
         }
 
         // t.showTree();
@@ -191,14 +194,14 @@ public class MTreeEuclidian2DTest {
      * test rangeSearch - performing range search on nested nodes - simple version.
      */
     @Test
-    public void findClosetFrom60() throws PreConditionException {
+    public void findClosetFrom60() {
         add_nested_points_60();
         Point p = new Point(15.0F, 0.0F);
         List<Point> result = t.rangeSearch(p, 10.0F);
-        assert( result.size() == 6 );
+        assertTrue( result.size() == 6 );
         for( Point pp : result ) {
-            assert( t.contains( pp ) );                 // point added to the tree
-            assert( ed.distance( pp, p ) <= 10.0F );    // and it is in range.
+            assertTrue( t.contains( pp ) );                 // point added to the tree
+            assertTrue( ed.distance( pp, p ) <= 10.0F );    // and it is in range.
         }
     }
 
@@ -206,7 +209,7 @@ public class MTreeEuclidian2DTest {
      * test rangeSearch - finding nested nodes in nested squares - more complex version.
      */
     @Test
-    public void findClosest_from_squares() throws PreConditionException {
+    public void findClosest_from_squares() {
         int count = add_squares();
 
         Point p = new Point(0.0F, 0.0F);
@@ -217,8 +220,8 @@ public class MTreeEuclidian2DTest {
             List<Point> result = t.rangeSearch(p,search_circle);
             // System.out.println( "d=" + search_circle + " results requested_result_set_size =" + result.requested_result_set_size() + " results: " + result );
             for( Point pp : result ) {
-                assert( t.contains( pp ) );
-                assert( ed.distance( pp, p ) <= search_circle );    // and it is in range.
+                assertTrue( t.contains( pp ) );
+                assertTrue( ed.distance( pp, p ) <= search_circle );    // and it is in range.
             }
         }
     }
@@ -227,29 +230,29 @@ public class MTreeEuclidian2DTest {
      * test simple nearest neighbour search
      */
     @Test
-    public void findClosest() throws PreConditionException {
+    public void findClosest() {
         int count = add_squares();
         Point p = new Point(20.6F, 20.6F);
         Object result = t.nearestNeighbour(p);
-        System.out.println(result);
-        assert( result.equals( new Point(21.0F, 21.0F) ) ); // closest point to 20.6,20.6 - TODO better tests?
+        //System.out.println(result);
+        assertEquals( result, new Point(21.0F, 21.0F) ); // closest point to 20.6,20.6 - TODO better tests?
     }
 
     /**
      * test simple nearest neighbour search
      */
     @Test
-    public void findClosestN() throws PreConditionException {
+    public void findClosestN() {
         int count = add_squares();
         Point p = new Point(0.0F, 0.0F);
         for( int i = 4; i < 50; i+=4 ) {
             // move out in squares of size 4, each loop should include 4 more nodes
-            List<Point> result = t.closestN(p, i);
-            assert( result.size() == i );
+            List<Point> result = t.nearestN(p, i);
+            assertTrue( result.size() == i );
             for( Point pp : result ) {
-                assert( t.contains( pp ) );   // TODO How to check that they are the right ones????
+                assertTrue( t.contains( pp ) );   // TODO How to check that they are the right ones????
             }
-            System.out.println(result);
+            //System.out.println(result);
         }
     }
 
