@@ -312,7 +312,7 @@ public class AlLinker {
     }
 
     /**
-     * Try and form families from the blocked data from SFNLNFFNFLNMFNDoMOverRole
+     * Try and form families from the blocked data_array from SFNLNFFNFLNMFNDoMOverRole
      */
     private void formFamilies() {
         Iterator<IBucket<Role>> iter = blocked_role_repo.getIterator(roleFactory);
@@ -334,7 +334,7 @@ public class AlLinker {
     }
 
     /**
-     * Try and create a family unit from the blocked data
+     * Try and create a family unit from the blocked data_array
      * @param potential_family - a collection of Roles from SFNLNFFNFLNMFNDoMOverRole blocking
      */
     private void create_family(List<Role> potential_family) {

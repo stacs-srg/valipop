@@ -471,7 +471,7 @@ public class KilmarnockLinker {
     }
 
     /**
-     * Try and create a family unit from the blocked data
+     * Try and create a family unit from the blocked data_array
      *
      * @param parents_marriage - a collection of marriage certificates of the potential parents of the family from Marriage blocking
      * @param children - a collection of Births from SFNLNFFNFLNMFNDoMOverBirth blocking
