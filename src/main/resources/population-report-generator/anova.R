@@ -42,8 +42,8 @@ runAnova <- function(path, pol_order, title, xlabel, ylabel) {
              ylim=range(mydata$value), type="b", xlab = xlabel, ylab = ylabel)
   
   lines(mydata$label[mydata$group=="desired"], mydata$value[mydata$group=="desired"], type="b", col=3)
-  legend(100,100, c('Generated', 'Desired'), lty=c(1,1), col=c(0,3))
-  # look at: https://stat.ethz.ch/R-manual/R-devel/library/graphics/html/legend.html
+  legend(x='topright', legend=c("Generated", "Desired"),
+         col=c(1, 3), lty=1:1, cex=1)
   
   gPlot = recordPlot()
   dev.off()
@@ -61,12 +61,4 @@ runAnova <- function(path, pol_order, title, xlabel, ylabel) {
   
   
   return(ret)
-}
-
-plotGraph <- function(mydata, title, xlabel, ylabel) {
-  
-  p <- plot(main = title, mydata$label[mydata$group=="generated"], mydata$value[mydata$group=="generated"], xlim=range(mydata$label), 
-       ylim=range(mydata$value), type="b", xlab = xlabel, ylab = ylabel)
-  lines(mydata$label[mydata$group=="desired"], mydata$value[mydata$group=="desired"], type="b", col=3)
-  
 }
