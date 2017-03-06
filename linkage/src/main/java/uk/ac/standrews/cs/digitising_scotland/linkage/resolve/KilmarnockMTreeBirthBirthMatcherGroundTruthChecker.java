@@ -8,11 +8,9 @@ import uk.ac.standrews.cs.digitising_scotland.linkage.KilmarnockCommaSeparatedMa
 import uk.ac.standrews.cs.digitising_scotland.linkage.RecordFormatException;
 import uk.ac.standrews.cs.digitising_scotland.linkage.factory.*;
 import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.*;
-import uk.ac.standrews.cs.digitising_scotland.util.ErrorHandling;
 import uk.ac.standrews.cs.digitising_scotland.util.MTree.DataDistance;
 import uk.ac.standrews.cs.digitising_scotland.util.MTree.Distance;
 import uk.ac.standrews.cs.digitising_scotland.util.MTree.MTree;
-import uk.ac.standrews.cs.storr.impl.LXP;
 import uk.ac.standrews.cs.storr.impl.StoreFactory;
 import uk.ac.standrews.cs.storr.impl.TypeFactory;
 import uk.ac.standrews.cs.storr.impl.exceptions.BucketException;
@@ -24,6 +22,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -31,12 +31,12 @@ import java.util.List;
  * File is derived from KilmarnockLinker.
  * Created by al on 17/2/1017
  */
-public class KilmarnockMTreeMatcher {
+public class KilmarnockMTreeBirthBirthMatcherGroundTruthChecker {
 
     // Repositories and stores
 
     private static String input_repo_name = "BDM_repo";                             // input repository containing event records
-    private static String blocked_birth_repo_name = "blocked_birth_repo";           // repository for blocked Birth records
+    private static String blocked_birth_repo_name = "blocked_birth_repo";           // repository for blocked KillieBirth records
     private static String FFNFLNMFNMMNPOMDOM_repo_name = "FFNFLNMFNMMNPOMDOM_repo";   // repository for blocked Marriage records
     private static String FFNFLNMFNMMN_repo_name = "FFNFLNMFNMMN_repo";   // repository for blocked Marriage records
 
@@ -52,7 +52,7 @@ public class KilmarnockMTreeMatcher {
 
     // Bucket declarations
 
-    private IBucket<Birth> births;                     // Bucket containing birth records (inputs).
+    private IBucket<KillieBirth> births;                     // Bucket containing birth records (inputs).
     private IBucket<Marriage> marriages;               // Bucket containing marriage records (inputs).
     private IBucket<Death> deaths;                     // Bucket containing death records (inputs).
 
@@ -85,17 +85,20 @@ public class KilmarnockMTreeMatcher {
     private int birth_count;
     private int death_count;
     private int marriage_count;
-    private int families_with_parents;
-    private int families_with_children;
-    private int single_children;
-    private int children_in_groups;
 
     // Trees
 
-    private  MTree<Marriage> marriageMtree;
+    private  MTree<KillieBirth> birthMTree;
 
-    public KilmarnockMTreeMatcher(String births_source_path, String deaths_source_path, String marriages_source_path) throws BucketException, RecordFormatException, IOException, RepositoryException, StoreException, JSONException {
+    // Maps
 
+    private HashMap< String, Family > family_ground_truth_map = new HashMap<>(); // Maps from FAMILY in birth record to a family unit using ground truth
+    private HashMap< String, Family > inferred_family_map = new HashMap<>(); // Maps from FAMILY in birth record to a family unit using M tree derived data.
+
+
+    public KilmarnockMTreeBirthBirthMatcherGroundTruthChecker(String births_source_path, String deaths_source_path, String marriages_source_path) throws BucketException, RecordFormatException, IOException, RepositoryException, StoreException, JSONException {
+
+        System.out.println("Running KilmarnockMTreeBirthBirthMatcherGroundTruthChecker" );
         System.out.println("Initialising");
         initialise();
 
@@ -103,13 +106,17 @@ public class KilmarnockMTreeMatcher {
         ingestBDMRecords(births_source_path, deaths_source_path, marriages_source_path);
         //        checkBDMRecords();
 
-        System.out.println("Creating Marriage MTree");
+        System.out.println("Creating Birth MTree");
         long time = System.currentTimeMillis();
-        createMarriageMTreeOverGFNGLNBFNBMNPOMDOM();
+        createBirthMTreeOverGFNGLNBFNBMNPOMDOM();
         long elapsed =  ( System.currentTimeMillis() - time ) / 1000 ;
         System.out.println("Created Marriage MTree in " + elapsed + "s");
 
+        System.out.println("Extracting ground truth families");
+//        extractGroundTruth();
+        System.out.println("Forming families from Birth-Birth links");
         formFamilies();
+        showFamilies();
 
         System.out.println("Finished");
     }
@@ -124,7 +131,7 @@ public class KilmarnockMTreeMatcher {
         System.out.println("Store path = " + store_path);
 
         input_repo = store.makeRepository(input_repo_name);
-        blocked_births_repo = store.makeRepository(blocked_birth_repo_name);  // a repo of Birth Buckets of records blocked by parents names, DOM, Place of Marriage.
+        blocked_births_repo = store.makeRepository(blocked_birth_repo_name);  // a repo of KillieBirth Buckets of records blocked by parents names, DOM, Place of Marriage.
         FFNFLNMFNMMNPOMDOM_repo = store.makeRepository(FFNFLNMFNMMNPOMDOM_repo_name);  // a repo of Marriage Buckets
         FFNFLNMFNMMN_repo = store.makeRepository(FFNFLNMFNMMN_repo_name);  // a repo of Marriage Buckets
 
@@ -142,7 +149,7 @@ public class KilmarnockMTreeMatcher {
 
         TypeFactory tf = TypeFactory.getInstance();
 
-        birthType = tf.createType(Birth.class, "birth");
+        birthType = tf.createType(KillieBirth.class, "birth");
         deathType = tf.createType(Death.class, "death");
         marriageType = tf.createType(Marriage.class, "marriage");
         roleType = tf.createType(Role.class, "role");
@@ -177,116 +184,30 @@ public class KilmarnockMTreeMatcher {
         marriage_count = KilmarnockCommaSeparatedMarriageImporter.importDigitisingScotlandMarriages(marriages, marriages_source_path, oids);
         System.out.println("Imported " + marriage_count + " marriage records");
 
-        // createRoles( births, deaths, marriages );
     }
 
-    private void checkBDMRecords() {
+    private void createBirthMTreeOverGFNGLNBFNBMNPOMDOM() throws RepositoryException, BucketException, IOException {
 
-        System.out.println("Checking");
-        checkIngestedBirths();
-        checkIngestedDeaths();
-        checkIngestedMarriages();
-    }
+        System.out.println("Creating M Tree of births by GFNGLNBFNBMNPOMDOMDistance...");
 
-    private void checkIngestedBirths() {
+        birthMTree = new MTree<KillieBirth>( new GFNGLNBFNBMNPOMDOMDistance() );
 
-        IInputStream<Birth> stream = null;
-        try {
-            stream = births.getInputStream();
-        }
-        catch (BucketException e) {
-            ErrorHandling.exceptionError(e, "Cannot get stream for Births bucket");
-            return;
-        }
+        IInputStream<KillieBirth> stream = births.getInputStream();
 
-        for (LXP l : stream) {
-            Birth birth_record = null;
-            try {
-                birth_record = (Birth) l;
-                System.out.println("Birth for: " + birth_record.get(Birth.FORENAME) + " " + birth_record.get(Birth.SURNAME) + " m: " + birth_record.get(Birth.MOTHERS_FORENAME) + " " + birth_record.get(Birth.MOTHERS_SURNAME) + " f: " + birth_record.get(Birth.FATHERS_FORENAME) + " " + birth_record
-                                .get(Birth.FATHERS_SURNAME) + " read OK");
+        for (KillieBirth birth : stream) {
 
-            }
-            catch (ClassCastException e) {
-                System.out.println("LXP found (not birth): oid: " + l.getId() + "object: " + l);
-                System.out.println("class of l: " + l.getClass().toString());
-            }
-        }
-    }
-
-    private void checkIngestedDeaths() {
-
-        IInputStream<Death> stream = null;
-        try {
-            stream = deaths.getInputStream();
-        }
-        catch (BucketException e) {
-            ErrorHandling.exceptionError(e, "Cannot get stream for Death bucket");
-            return;
-        }
-
-        System.out.println("Checking Deaths");
-
-        for (Death death_record : stream) {
-            System.out.println("Death for: " + death_record.get(Death.FORENAME) + " " + death_record.get(Death.SURNAME) + " m: " + death_record.get(Death.MOTHERS_FORENAME) + " " + death_record.get(Death.MOTHERS_SURNAME) + " f: " + death_record.get(Death.FATHERS_FORENAME) + " " + death_record
-                            .get(Death.FATHERS_SURNAME) + " read OK");
-        }
-    }
-
-    private void checkIngestedMarriages() {
-
-        IInputStream<Marriage> stream = null;
-        try {
-            stream = marriages.getInputStream();
-        }
-        catch (BucketException e) {
-            ErrorHandling.exceptionError(e, "Cannot get stream for Death bucket");
-            return;
-        }
-
-        System.out.println("Checking Marriages");
-
-        for (Marriage marriage_record : stream) {
-            System.out.println("Marriage for b: " + marriage_record.get(Marriage.BRIDE_FORENAME) + " " + marriage_record.get(Marriage.BRIDE_SURNAME) + " g: " + marriage_record.get(Marriage.GROOM_FORENAME) + " " + marriage_record.get(Marriage.GROOM_SURNAME));
-            System.out.println("\tbm: " + marriage_record.get(Marriage.BRIDE_MOTHERS_FORENAME) + " " + marriage_record.get(Marriage.BRIDE_MOTHERS_MAIDEN_SURNAME) + " bf: " + marriage_record.get(Marriage.BRIDE_FATHERS_FORENAME) + " " + marriage_record.get(Marriage.BRIDE_FATHERS_SURNAME));
-            System.out.println("\tgm: " + marriage_record.get(Marriage.GROOM_MOTHERS_FORENAME) + " " + marriage_record.get(Marriage.GROOM_MOTHERS_MAIDEN_SURNAME) + " gf: " + marriage_record.get(Marriage.GROOM_FATHERS_FORENAME) + " " + marriage_record.get(Marriage.GROOM_FATHERS_SURNAME));
-        }
-    }
-
-    private void createMarriageMTreeOverGFNGLNBFNBMNPOMDOM() throws RepositoryException, BucketException, IOException {
-
-        System.out.println("Creating M Tree of marriages by GFNGLNBFNBMNPOMDOMDistance...");
-
-        marriageMtree = new MTree<Marriage>( new GFNGLNBFNBMNPOMDOMDistance() );
-
-        IInputStream<Marriage> stream = marriages.getInputStream();
-
-        for (Marriage marriage : stream) {
-
-            marriageMtree.add( marriage );
+            birthMTree.add( birth );
         }
 
     }
 
-    private void printStats() {
-
-        System.out.println("Stats:");
-        System.out.println("Births: " + birth_count);
-        System.out.println("Deaths: " + death_count);
-        System.out.println("Marriages: " + marriage_count);
-
-        System.out.println("Parents in families: " + families_with_parents);
-        System.out.println("Sibling groups (>1 child) " + families_with_children);
-        System.out.println("Single children: " + single_children);
-
-    }
 
     /**
-     * Try and form families from Marriage M Tree data_array
+     * Try and form families from Birth M Tree data_array
      */
     private void formFamilies() {
 
-        IInputStream<Birth> stream;
+        IInputStream<KillieBirth> stream;
         try {
             stream = births.getInputStream();
         } catch (BucketException e) {
@@ -294,29 +215,70 @@ public class KilmarnockMTreeMatcher {
             return;
         }
 
-        for (Birth b : stream) {
+        for (KillieBirth to_match : stream) {
 
-            Marriage marriage_query = new Marriage();
-            marriage_query.put( Marriage.GROOM_FORENAME,b.getFathersForename() );
-            marriage_query.put( Marriage.GROOM_SURNAME,b.getFathersSurname() );
-            marriage_query.put( Marriage.BRIDE_FORENAME,b.getMothersForename() );
-            marriage_query.put( Marriage.BRIDE_SURNAME,b.getMothersMaidenSurname() );
-            marriage_query.put( Marriage.PLACE_OF_MARRIAGE,b.getPlaceOfMarriage() );
+            DataDistance<KillieBirth> matched = birthMTree.nearestNeighbour( to_match );
 
-            marriage_query.put( Marriage.MARRIAGE_DAY,b.getString( Birth.PARENTS_DAY_OF_MARRIAGE ) );
-            marriage_query.put( Marriage.MARRIAGE_MONTH, b.getString( Birth.PARENTS_MONTH_OF_MARRIAGE ) );
-            marriage_query.put( Marriage.MARRIAGE_YEAR, b.getString( Birth.PARENTS_YEAR_OF_MARRIAGE ) );
-
-            List<DataDistance<Marriage>> results = marriageMtree.nearestN(marriage_query, 3);
-
-            print_result( results, b );
-
+            if( matched.distance < 8.0F ) {
+                add_births_to_map(inferred_family_map, to_match, matched.value );
+            }
         }
     }
 
-    private void print_result(List<DataDistance<Marriage>> results, Birth b) {
+    private void showFamilies() {
+        //compareFamilies();
+        showFamilies( inferred_family_map.values() );
+
+    }
+
+    /**
+     * Display the generated families in CSV format
+     */
+    private void showFamilies( Collection<Family> families ) {
+
+        System.out.println( "Number of families formed:" + families.size() );
+        System.out.println( "Family id\tDemographer family id\tPerson id\tForename\tSurname\tDOB\tPOM\tDOM\tFFN\tFSN\tMFN\tMMN" );
+        for( Family f : families ) {
+            for( KillieBirth b : f.siblings ) {
+                System.out.println( f.id + "\t" + b.getString( KillieBirth.FAMILY ) + "\t" + b.getId() + "\t" + b.getString( KillieBirth.FORENAME) + "\t" + b.getString( KillieBirth.SURNAME) + "\t" + b.getDOB() + "\t" + b.getPlaceOfMarriage() + "\t" + b.getDateOfMarriage() + "\t" + b.getFathersForename() + "\t" + b.getFathersSurname() + "\t" + b.getMothersForename() + "\t" + b.getMothersMaidenSurname() );
+            }
+        }
+    }
+
+    /**
+     * Adds a birth record to a family map.
+     * @param map the map to which the record should be added
+     * @param searched the record that was used to search for a match
+     * @param found the record that was matched in the search
+     */
+    private void add_births_to_map( HashMap< String, Family > map, KillieBirth searched, KillieBirth found ) {
+
+        String searched_key = String.valueOf( searched.getId() );
+        String found_key = String.valueOf( found.getId() );
+
+        if( ! map.containsKey( searched_key ) && ! map.containsKey( found_key ) ) { // not seen either birth before
+            // Create a new Family and add to map under both keys.
+            Family new_family = new Family( searched );
+            new_family.siblings.add( found );
+            map.put( searched_key, new_family );
+            map.put( found_key, new_family );
+            return;
+        }
+        // Don't bother with whether these are the same family or not, or if the added values are already in the set
+        // Set implementation should dela with this.
+        if( map.containsKey( searched_key )  && ! map.containsKey( found_key )) { // already seen the searched birth => been found already
+            Family f = map.get( searched_key );
+            f.siblings.add( found );
+        }
+        if( map.containsKey( found_key )  && ! map.containsKey( searched_key ) ) { // already seen the found birth => been searcher for earlier
+            Family f = map.get( found_key );
+            f.siblings.add( searched );
+        }
+    }
+
+    private void print_result(List<DataDistance<Marriage>> results, KillieBirth b) {
         String parents = b.getFathersForename() + " " + b.getFathersSurname() + " + " + b.getMothersForename() + " " + b.getMothersMaidenSurname();
-        System.out.println( "child:                   " + b.get(Birth.FORENAME ) + " " + b.get(Birth.SURNAME ) + " p: " + parents + " at " + b.getPlaceOfMarriage() + " on " + b.getDateOfMarriage() );
+        System.out.println( "child:                   " + b.get(KillieBirth.FORENAME ) + " " + b.get(KillieBirth.SURNAME ) + " p: " + parents + " at " + b.getPlaceOfMarriage() + " on " + b.getDateOfMarriage() );
 
         for( DataDistance<Marriage> dd : results) {
             Marriage m = dd.value;
@@ -328,40 +290,40 @@ public class KilmarnockMTreeMatcher {
     }
 
 
-    private class GFNGLNBFNBMNPOMDOMDistance implements Distance<Marriage> {
+    private class GFNGLNBFNBMNPOMDOMDistance implements Distance<KillieBirth> {
 
         Levenshtein levenshtein = new Levenshtein();
 
         @Override
-        public float distance(Marriage m1, Marriage m2) {
+        public float distance(KillieBirth b1, KillieBirth m2) {
 
-            return GFNdistance(m1,m2) + GLNdistance(m1,m2) + BFNdistance(m1,m2) + BLNdistance(m1,m2) + POMdistance(m1,m2) + DOMdistance(m1,m2);
+            return FFNdistance(b1,m2) + FLNdistance(b1,m2) + MFNdistance(b1,m2) + MMNdistance(b1,m2) + POMdistance(b1,m2) + DOMdistance(b1,m2);
         }
 
-        private float GFNdistance(Marriage m1, Marriage m2) {
-            return levenshtein.distance( m1.getGroomsForename(), m2.getGroomsForename() );
+        private float FFNdistance(KillieBirth b1, KillieBirth m2) {
+            return levenshtein.distance( b1.getFathersSurname(), m2.getFathersSurname() );
         }
 
-        private float GLNdistance(Marriage m1, Marriage m2) {
-            return levenshtein.distance( m1.getGroomsSurname(), m2.getGroomsSurname() );
+        private float FLNdistance(KillieBirth b1, KillieBirth m2) {
+            return levenshtein.distance( b1.getFathersForename(), m2.getFathersForename() );
         }
 
-        private float BFNdistance(Marriage m1, Marriage m2) {
-            return levenshtein.distance( m1.getBridesForename(), m2.getBridesForename() );
+        private float MFNdistance(KillieBirth b1, KillieBirth m2) {
+            return levenshtein.distance( b1.getMothersForename(), m2.getMothersForename() );
         }
 
-        private float BLNdistance(Marriage m1, Marriage m2) {
-            return levenshtein.distance( m1.getBridesSurname(), m2.getBridesSurname() );
+        private float MMNdistance(KillieBirth b1, KillieBirth m2) {
+            return levenshtein.distance( b1.getMothersMaidenSurname(), m2.getMothersMaidenSurname() );
         }
 
-        private float POMdistance(Marriage m1, Marriage m2) {
-            return ( m1.getPlaceOfMarriage().equals( "ng") || m2.getPlaceOfMarriage().equals( "ng" ) ? 0 : levenshtein.distance( m1.getPlaceOfMarriage(), m2.getPlaceOfMarriage() ) );
+        private float POMdistance(KillieBirth b1, KillieBirth m2) {
+            return ( b1.getPlaceOfMarriage().equals( "ng") || m2.getPlaceOfMarriage().equals( "ng" ) ? 0 : levenshtein.distance( b1.getPlaceOfMarriage(), m2.getPlaceOfMarriage() ) );
         }
 
-        private float DOMdistance(Marriage m1, Marriage m2) {
-            float day_dist = m1.getString( Marriage.MARRIAGE_DAY ).equals( "--") || m2.getString( Marriage.MARRIAGE_DAY ).equals( "--" ) ? 0 : levenshtein.distance( m1.getString( Marriage.MARRIAGE_DAY ), m2.getString( Marriage.MARRIAGE_DAY ) );
-            float month_dist = m1.getString( Marriage.MARRIAGE_MONTH ).equals( "---") || m2.getString( Marriage.MARRIAGE_MONTH ).equals( "---" ) ? 0 : levenshtein.distance( m1.getString( Marriage.MARRIAGE_MONTH ), m2.getString( Marriage.MARRIAGE_MONTH ) );
-            float year_dist = m1.getString( Marriage.MARRIAGE_YEAR ).equals( "----") || m2.getString( Marriage.MARRIAGE_YEAR ).equals( "----" ) ? 0 : levenshtein.distance( m1.getString( Marriage.MARRIAGE_YEAR ), m2.getString( Marriage.MARRIAGE_YEAR ) );
+        private float DOMdistance(KillieBirth b1, KillieBirth m2) {
+            float day_dist = b1.getString( KillieBirth.PARENTS_DAY_OF_MARRIAGE ).equals( "--") || m2.getString( KillieBirth.PARENTS_DAY_OF_MARRIAGE ).equals( "--" ) ? 0 : levenshtein.distance( b1.getString( KillieBirth.PARENTS_DAY_OF_MARRIAGE ), m2.getString( KillieBirth.PARENTS_DAY_OF_MARRIAGE ) );
+            float month_dist = b1.getString( KillieBirth.PARENTS_MONTH_OF_MARRIAGE ).equals( "---") || m2.getString( KillieBirth.PARENTS_MONTH_OF_MARRIAGE ).equals( "---" ) ? 0 : levenshtein.distance( b1.getString( KillieBirth.PARENTS_MONTH_OF_MARRIAGE ), m2.getString( KillieBirth.PARENTS_MONTH_OF_MARRIAGE ) );
+            float year_dist = b1.getString( KillieBirth.PARENTS_YEAR_OF_MARRIAGE).equals( "----") || m2.getString( KillieBirth.PARENTS_YEAR_OF_MARRIAGE ).equals( "----" ) ? 0 : levenshtein.distance( b1.getString( KillieBirth.PARENTS_YEAR_OF_MARRIAGE ), m2.getString( KillieBirth.PARENTS_YEAR_OF_MARRIAGE ) );
             return day_dist + month_dist + year_dist;
         }
     }
@@ -374,6 +336,6 @@ public class KilmarnockMTreeMatcher {
         String deaths_source_path = "/Digitising Scotland/KilmarnockBDM/deaths.csv";
         String marriages_source_path = "/Digitising Scotland/KilmarnockBDM/marriages.csv";
 
-        new KilmarnockMTreeMatcher(births_source_path, deaths_source_path, marriages_source_path);
+        new KilmarnockMTreeBirthBirthMatcherGroundTruthChecker(births_source_path, deaths_source_path, marriages_source_path);
     }
 }

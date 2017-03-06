@@ -72,13 +72,13 @@ public class Role extends AbstractLXP {
 
     //*********************** Creator methods ***********************//
 
-    public static Role createPersonFromOwnBirth(StoreReference<Birth> original_record_ref, long original_record_type) throws StoreException, BucketException {
+    public static Role createPersonFromOwnBirth(StoreReference<KillieBirth> original_record_ref, long original_record_type) throws StoreException, BucketException {
 
-        Birth original_record = original_record_ref.getReferend();
+        KillieBirth original_record = original_record_ref.getReferend();
 
-        String surname = original_record.getString(Birth.SURNAME);
-        String forename = original_record.getString(Birth.FORENAME);
-        String sex = original_record.getString(Birth.SEX);
+        String surname = original_record.getString(KillieBirth.SURNAME);
+        String forename = original_record.getString(KillieBirth.FORENAME);
+        String sex = original_record.getString(KillieBirth.SEX);
 
         return new Role(surname, forename, sex, PRINCIPAL, original_record_ref, original_record_type);
     }
@@ -94,16 +94,16 @@ public class Role extends AbstractLXP {
         return new Role(surname, forename, sex, PRINCIPAL, original_record_ref, original_record_type);
     }
 
-    public static Role createFatherFromChildsBirth(StoreReference<Birth> original_record_ref, long original_record_type) throws StoreException, BucketException {
+    public static Role createFatherFromChildsBirth(StoreReference<KillieBirth> original_record_ref, long original_record_type) throws StoreException, BucketException {
 
         ILXP BD_record = original_record_ref.getReferend();
 
-        if (BD_record.getString(Birth.FATHERS_SURNAME).equals("")) {
+        if (BD_record.getString(KillieBirth.FATHERS_SURNAME).equals("")) {
             return null;
         }
 
-        String surname = BD_record.getString(Birth.FATHERS_SURNAME);
-        String forename = BD_record.getString(Birth.FATHERS_FORENAME);
+        String surname = BD_record.getString(KillieBirth.FATHERS_SURNAME);
+        String forename = BD_record.getString(KillieBirth.FATHERS_FORENAME);
 
         return new Role(surname, forename, MALE, FATHER, original_record_ref, original_record_type);
     }
@@ -112,7 +112,7 @@ public class Role extends AbstractLXP {
 
         ILXP BD_record = original_record_ref.getReferend();
 
-        if (BD_record.getString(Birth.FATHERS_SURNAME).equals("")) {
+        if (BD_record.getString(KillieBirth.FATHERS_SURNAME).equals("")) {
             return null;
         }
 
@@ -122,16 +122,16 @@ public class Role extends AbstractLXP {
         return new Role(surname, forename, MALE, FATHER, original_record_ref, original_record_type);
     }
 
-    public static Role createMotherFromChildsBirth(StoreReference<Birth> original_record_ref, long original_record_type) throws StoreException, BucketException {
+    public static Role createMotherFromChildsBirth(StoreReference<KillieBirth> original_record_ref, long original_record_type) throws StoreException, BucketException {
 
         ILXP BD_record = original_record_ref.getReferend();
 
-        if (BD_record.getString(Birth.MOTHERS_SURNAME).equals("")) {
+        if (BD_record.getString(KillieBirth.MOTHERS_SURNAME).equals("")) {
             return null;
         }
 
-        String surname = BD_record.getString(Birth.MOTHERS_MAIDEN_SURNAME);
-        String forename = BD_record.getString(Birth.MOTHERS_FORENAME);
+        String surname = BD_record.getString(KillieBirth.MOTHERS_MAIDEN_SURNAME);
+        String forename = BD_record.getString(KillieBirth.MOTHERS_FORENAME);
 
         return new Role(surname, forename, FEMALE, MOTHER, original_record_ref, original_record_type);
     }
@@ -140,7 +140,7 @@ public class Role extends AbstractLXP {
 
         ILXP BD_record = original_record_ref.getReferend();
 
-        if (BD_record.getString(Birth.MOTHERS_SURNAME).equals("")) {
+        if (BD_record.getString(KillieBirth.MOTHERS_SURNAME).equals("")) {
             return null;
         }
 
@@ -301,7 +301,7 @@ public class Role extends AbstractLXP {
         switch (getRole()) {
 
             case PRINCIPAL: {
-                return getOriginalRecord().getString(Birth.FATHERS_FORENAME);
+                return getOriginalRecord().getString(KillieBirth.FATHERS_FORENAME);
             }
             case BRIDE: {
                 return getOriginalRecord().getString(Marriage.BRIDE_FATHERS_FORENAME);
@@ -320,7 +320,7 @@ public class Role extends AbstractLXP {
         switch (getRole()) {
 
             case PRINCIPAL: {
-                return getOriginalRecord().getString(Birth.FATHERS_SURNAME);
+                return getOriginalRecord().getString(KillieBirth.FATHERS_SURNAME);
             }
             case BRIDE: {
                 return getOriginalRecord().getString(Marriage.BRIDE_FATHERS_SURNAME);
@@ -339,7 +339,7 @@ public class Role extends AbstractLXP {
         switch (getRole()) {
 
             case PRINCIPAL: {
-                return getOriginalRecord().getString(Birth.FATHERS_OCCUPATION);
+                return getOriginalRecord().getString(KillieBirth.FATHERS_OCCUPATION);
             }
             case BRIDE: {
                 return getOriginalRecord().getString(Marriage.BRIDE_FATHER_OCCUPATION);
@@ -358,7 +358,7 @@ public class Role extends AbstractLXP {
         switch (getRole()) {
 
             case PRINCIPAL: {
-                return getOriginalRecord().getString(Birth.MOTHERS_FORENAME);
+                return getOriginalRecord().getString(KillieBirth.MOTHERS_FORENAME);
             }
             case BRIDE: {
                 return getOriginalRecord().getString(Marriage.BRIDE_MOTHERS_FORENAME);
@@ -377,7 +377,7 @@ public class Role extends AbstractLXP {
         switch (getRole()) {
 
             case PRINCIPAL: {
-                return getOriginalRecord().getString(Birth.MOTHERS_MAIDEN_SURNAME);
+                return getOriginalRecord().getString(KillieBirth.MOTHERS_MAIDEN_SURNAME);
             }
             case BRIDE: {
                 return getOriginalRecord().getString(Marriage.BRIDE_MOTHERS_MAIDEN_SURNAME);
@@ -409,7 +409,7 @@ public class Role extends AbstractLXP {
                 return getOriginalRecord().getString(Marriage.BRIDE_OCCUPATION);
             }
             case FATHER: {
-                return getOriginalRecord().getString(Birth.FATHERS_OCCUPATION);
+                return getOriginalRecord().getString(KillieBirth.FATHERS_OCCUPATION);
             }
 
             default:
@@ -422,7 +422,7 @@ public class Role extends AbstractLXP {
         switch (getRole()) {
 
             case PRINCIPAL: {
-                return getOriginalRecord().getString(Birth.PARENTS_PLACE_OF_MARRIAGE);
+                return getOriginalRecord().getString(KillieBirth.PARENTS_PLACE_OF_MARRIAGE);
             }
             case GROOM:
             case BRIDE: {
@@ -453,7 +453,7 @@ public class Role extends AbstractLXP {
 
     private String extractDateOfMarriageFromBirthRecord(final ILXP record) {
 
-        return record.getString(Birth.PARENTS_DAY_OF_MARRIAGE) + DATE_SEPARATOR + record.getString(Birth.PARENTS_MONTH_OF_MARRIAGE) + DATE_SEPARATOR + record.getString(Birth.PARENTS_YEAR_OF_MARRIAGE);
+        return record.getString(KillieBirth.PARENTS_DAY_OF_MARRIAGE) + DATE_SEPARATOR + record.getString(KillieBirth.PARENTS_MONTH_OF_MARRIAGE) + DATE_SEPARATOR + record.getString(KillieBirth.PARENTS_YEAR_OF_MARRIAGE);
     }
 
     private String extractDateOfMarriageFromMarriageRecord(final ILXP record) {

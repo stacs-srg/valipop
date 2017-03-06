@@ -1,6 +1,6 @@
 package uk.ac.standrews.cs.digitising_scotland.linkage;
 
-import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.Birth;
+import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.KillieBirth;
 import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.Death;
 import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.Marriage;
 import uk.ac.standrews.cs.digitising_scotland.linkage.tools.DSFields;
@@ -122,7 +122,7 @@ public class BarSeparatedEventImporter {
      * @throws RecordFormatException
      * @throws BucketException
      */
-    public static int importDigitisingScotlandBirths(IBucket<Birth> births, String filename, IReferenceType referencetype) throws RecordFormatException, IOException, BucketException, IllegalKeyException {
+    public static int importDigitisingScotlandBirths(IBucket<KillieBirth> births, String filename, IReferenceType referencetype) throws RecordFormatException, IOException, BucketException, IllegalKeyException {
         long counter = 0;
         try (final BufferedReader reader = Files.newBufferedReader(Paths.get(filename), FileManipulation.FILE_CHARSET)) {
 
@@ -130,7 +130,7 @@ public class BarSeparatedEventImporter {
 
             try {
                 while (true) {
-                    Birth b = new Birth();
+                    KillieBirth b = new KillieBirth();
                     importDigitisingScotlandRecord(b, reader, referencetype, DSFields.BIRTH_FIELD_NAMES );
                     correctBirthFields( b );
                     try {
@@ -151,12 +151,12 @@ public class BarSeparatedEventImporter {
      * Corrects the 'optimised' fields in the Digitising Scotland encoded birth records
      * @param b the record to correct.
      */
-    private static void correctBirthFields(Birth b) {
-        if( b.get( Birth.MOTHERS_SURNAME ).equals("0" ) ) {
-            b.put( Birth.MOTHERS_SURNAME, b.getString( Birth.SURNAME ) );
+    private static void correctBirthFields(KillieBirth b) {
+        if( b.get( KillieBirth.MOTHERS_SURNAME ).equals("0" ) ) {
+            b.put( KillieBirth.MOTHERS_SURNAME, b.getString( KillieBirth.SURNAME ) );
         }
-        if( b.get( Birth.FATHERS_SURNAME ).equals("0" ) ) {
-            b.put( Birth.FATHERS_SURNAME, b.getString( Birth.SURNAME ) );
+        if( b.get( KillieBirth.FATHERS_SURNAME ).equals("0" ) ) {
+            b.put( KillieBirth.FATHERS_SURNAME, b.getString( KillieBirth.SURNAME ) );
         }
     }
 
@@ -165,11 +165,11 @@ public class BarSeparatedEventImporter {
      * @param d the record to correct.
      */
     private static void correctDeathFields(Death d) {
-        if( d.get( Birth.MOTHERS_SURNAME ).equals("0" ) ) {
-            d.put( Birth.MOTHERS_SURNAME, d.getString( Birth.SURNAME ) );
+        if( d.get( KillieBirth.MOTHERS_SURNAME ).equals("0" ) ) {
+            d.put( KillieBirth.MOTHERS_SURNAME, d.getString( KillieBirth.SURNAME ) );
         }
-        if( d.get( Birth.FATHERS_SURNAME ).equals("0" ) ) {
-            d.put( Birth.FATHERS_SURNAME, d.getString( Birth.SURNAME ) );
+        if( d.get( KillieBirth.FATHERS_SURNAME ).equals("0" ) ) {
+            d.put( KillieBirth.FATHERS_SURNAME, d.getString( KillieBirth.SURNAME ) );
         }
     }
 

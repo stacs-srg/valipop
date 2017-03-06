@@ -44,7 +44,7 @@ public class AlLinker {
 
     // Bucket declarations
 
-    private IBucket<Birth> births;                     // Bucket containing birth records (inputs).
+    private IBucket<KillieBirth> births;                     // Bucket containing birth records (inputs).
     private IBucket<Marriage> marriages;               // Bucket containing marriage records (inputs).
     private IBucket<Death> deaths;                     // Bucket containing death records (inputs).
 
@@ -126,7 +126,7 @@ public class AlLinker {
 
         TypeFactory tf = TypeFactory.getInstance();
 
-        birthType = tf.createType(Birth.class, "birth");
+        birthType = tf.createType(KillieBirth.class, "birth");
         deathType = tf.createType(Death.class, "death");
         marriageType = tf.createType(Marriage.class, "marriage");
         roleType = tf.createType(Role.class, "role");
@@ -182,7 +182,7 @@ public class AlLinker {
 
 
     private void checkInjestedBirths() {
-        IInputStream<Birth> stream = null;
+        IInputStream<KillieBirth> stream = null;
         try {
             stream = births.getInputStream();
         } catch (BucketException e) {
@@ -192,15 +192,15 @@ public class AlLinker {
 
         System.out.println( "Checking Births" );
 // code should look like this:
-//        for (Birth birth_record : stream) {
-//            System.out.println( "Birth for: " + birth_record.get( Birth.FORENAME ) + " " + birth_record.get( Birth.SURNAME ) + " m: " + birth_record.get( Birth.MOTHERS_FORENAME ) + " " + birth_record.get( Birth.MOTHERS_SURNAME ) + " f: " + birth_record.get( Birth.FATHERS_FORENAME ) + " " + birth_record.get( Birth.FATHERS_SURNAME ) + " read OK");
+//        for (KillieBirth birth_record : stream) {
+//            System.out.println( "KillieBirth for: " + birth_record.get( KillieBirth.FORENAME ) + " " + birth_record.get( KillieBirth.SURNAME ) + " m: " + birth_record.get( KillieBirth.MOTHERS_FORENAME ) + " " + birth_record.get( KillieBirth.MOTHERS_SURNAME ) + " f: " + birth_record.get( KillieBirth.FATHERS_FORENAME ) + " " + birth_record.get( KillieBirth.FATHERS_SURNAME ) + " read OK");
 //        }
 
             for (LXP l : stream) {
-                Birth birth_record = null;
+                KillieBirth birth_record = null;
                 try {
-                    birth_record = (Birth) l;
-                    System.out.println( "Birth for: " + birth_record.get( Birth.FORENAME ) + " " + birth_record.get( Birth.SURNAME ) + " m: " + birth_record.get( Birth.MOTHERS_FORENAME ) + " " + birth_record.get( Birth.MOTHERS_SURNAME ) + " f: " + birth_record.get( Birth.FATHERS_FORENAME ) + " " + birth_record.get( Birth.FATHERS_SURNAME ) + " read OK");
+                    birth_record = (KillieBirth) l;
+                    System.out.println( "KillieBirth for: " + birth_record.get( KillieBirth.FORENAME ) + " " + birth_record.get( KillieBirth.SURNAME ) + " m: " + birth_record.get( KillieBirth.MOTHERS_FORENAME ) + " " + birth_record.get( KillieBirth.MOTHERS_SURNAME ) + " f: " + birth_record.get( KillieBirth.FATHERS_FORENAME ) + " " + birth_record.get( KillieBirth.FATHERS_SURNAME ) + " read OK");
 
                 } catch ( ClassCastException e ) {
                     System.out.println( "LXP found (not birth): oid: " +  l.getId() + "object: " + l );
@@ -388,10 +388,10 @@ public class AlLinker {
      *
      * @param bucket - the bucket from which to take the inputs records
      */
-    private void createRolesFromBirths(IBucket<Birth> bucket) {
+    private void createRolesFromBirths(IBucket<KillieBirth> bucket) {
 
         IOutputStream<Role> role_stream = roles.getOutputStream();
-        IInputStream<Birth> stream = null;
+        IInputStream<KillieBirth> stream = null;
         try {
             stream = bucket.getInputStream();
         } catch (BucketException e) {
@@ -399,9 +399,9 @@ public class AlLinker {
             return;
         }
 
-        for (Birth birth_record : stream) {
+        for (KillieBirth birth_record : stream) {
 
-            StoreReference<Birth> birth_record_ref = new StoreReference<Birth>(input_repo, bucket, birth_record);
+            StoreReference<KillieBirth> birth_record_ref = new StoreReference<KillieBirth>(input_repo, bucket, birth_record);
 
             Role child = null;
             Role father = null;
