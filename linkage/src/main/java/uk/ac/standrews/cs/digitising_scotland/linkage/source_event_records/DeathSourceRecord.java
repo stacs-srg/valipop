@@ -32,7 +32,7 @@ import java.util.Date;
  *         12. Changed Surname 3(10)
  *         13. Changed Forename 3(10)
  *         14. Changed Death Age 3(23) (number followed by 'M', 'W', 'D' or 'H' for months/weeks/dates/hours when Age at Death < 1)
- *         15. Date of Birth (Only for 1966 – 1973, e.g. '17091881' or empty)
+ *         15. Date of KillieBirth (Only for 1966 – 1973, e.g. '17091881' or empty)
  *         16. Occupation
  *         17. Marital Status 3(20) ('B', 'D', 'M', 'S', 'W' or empty)
  *         18. Spouse’s Name(s) 3(22)

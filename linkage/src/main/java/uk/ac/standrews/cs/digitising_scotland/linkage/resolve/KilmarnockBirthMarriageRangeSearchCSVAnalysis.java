@@ -8,21 +8,21 @@ import java.nio.file.Paths;
 import java.text.DecimalFormat;
 import java.util.List;
 
-import static uk.ac.standrews.cs.digitising_scotland.linkage.resolve.KilmarnockMatchBirthsAndMarriages.RANGE_MAX;
+import static uk.ac.standrews.cs.digitising_scotland.linkage.resolve.KilmarnockMatchBirthMarriageRangeSearchCSVGenerator.RANGE_MAX;
 
 /**
- * Module to inject and analyse output created by KilmarnockMatchBirthsAndMarriages
+ * Module to inject and analyse output created by KilmarnockMatchBirthMarriageRangeSearchCSVGenerator
  * This is a csv file containing rows number of matches between births and marriages at edit distance 1,2, ..
  * Created by al on 22/02/2017.
  * @author al@st-andrews.ac.uk
  */
-public class KilmarnockMatchAnalysis {
+public class KilmarnockBirthMarriageRangeSearchCSVAnalysis {
 
     private int num_births = 0;
     int[][] data_array;
     private static final int MAX_COUMN_INDEX = RANGE_MAX;
 
-    public KilmarnockMatchAnalysis( String csv_source_path ) {
+    public KilmarnockBirthMarriageRangeSearchCSVAnalysis(String csv_source_path ) {
 
         try {
             num_births = injestCsv( csv_source_path );
@@ -233,6 +233,6 @@ public class KilmarnockMatchAnalysis {
 
         String csv_source_path = "/Digitising Scotland/KilmarnockBDM/birthMarriageDistances.csv";
 
-        new KilmarnockMatchAnalysis( csv_source_path  );
+        new KilmarnockBirthMarriageRangeSearchCSVAnalysis( csv_source_path  );
     }
 }

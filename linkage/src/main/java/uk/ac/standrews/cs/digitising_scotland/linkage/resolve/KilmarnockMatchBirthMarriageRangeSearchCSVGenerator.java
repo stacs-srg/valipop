@@ -30,7 +30,7 @@ import java.util.List;
  * File is derived from KilmarnockLinker.
  * Created by al on 17/2/1017
  */
-public class KilmarnockMatchBirthsAndMarriages {
+public class KilmarnockMatchBirthMarriageRangeSearchCSVGenerator {
 
     // Repositories and stores
 
@@ -41,7 +41,7 @@ public class KilmarnockMatchBirthsAndMarriages {
 
     // Bucket declarations
 
-    private IBucket<Birth> births;                     // Bucket containing birth records (inputs).
+    private IBucket<KillieBirth> births;                     // Bucket containing birth records (inputs).
     private IBucket<Marriage> marriages;               // Bucket containing marriage records (inputs).
     private IBucket<Death> deaths;                     // Bucket containing death records (inputs).
 
@@ -69,8 +69,9 @@ public class KilmarnockMatchBirthsAndMarriages {
 
     private  MTree<Marriage> marriageMtree;
 
-    public KilmarnockMatchBirthsAndMarriages(String births_source_path, String deaths_source_path, String marriages_source_path) throws BucketException, RecordFormatException, IOException, RepositoryException, StoreException, JSONException {
+    public KilmarnockMatchBirthMarriageRangeSearchCSVGenerator(String births_source_path, String deaths_source_path, String marriages_source_path) throws BucketException, RecordFormatException, IOException, RepositoryException, StoreException, JSONException {
 
+        System.out.println("Running KilmarnockMatchBirthMarriageRangeSearchCSVGenerator" );
         System.out.println("Initialising");
         initialise();
 
@@ -112,7 +113,7 @@ public class KilmarnockMatchBirthsAndMarriages {
 
         TypeFactory tf = TypeFactory.getInstance();
 
-        birthType = tf.createType(Birth.class, "birth");
+        birthType = tf.createType(KillieBirth.class, "birth");
         deathType = tf.createType(Death.class, "death");
         marriageType = tf.createType(Marriage.class, "marriage");
     }
@@ -163,7 +164,7 @@ public class KilmarnockMatchBirthsAndMarriages {
      */
     private void outputRangeSearchMatchesBetweenBirthsAndMarriages() {
 
-        IInputStream<Birth> stream;
+        IInputStream<KillieBirth> stream;
         try {
             stream = births.getInputStream();
         } catch (BucketException e) {
@@ -171,7 +172,7 @@ public class KilmarnockMatchBirthsAndMarriages {
             return;
         }
 
-        for (Birth b : stream) {
+        for (KillieBirth b : stream) {
 
             Marriage marriage_query = new Marriage();
             marriage_query.put( Marriage.GROOM_FORENAME,b.getFathersForename() );
@@ -180,9 +181,9 @@ public class KilmarnockMatchBirthsAndMarriages {
             marriage_query.put( Marriage.BRIDE_SURNAME,b.getMothersMaidenSurname() );
             marriage_query.put( Marriage.PLACE_OF_MARRIAGE,b.getPlaceOfMarriage() );
 
-            marriage_query.put( Marriage.MARRIAGE_DAY,b.getString( Birth.PARENTS_DAY_OF_MARRIAGE ) );
-            marriage_query.put( Marriage.MARRIAGE_MONTH, b.getString( Birth.PARENTS_MONTH_OF_MARRIAGE ) );
-            marriage_query.put( Marriage.MARRIAGE_YEAR, b.getString( Birth.PARENTS_YEAR_OF_MARRIAGE ) );
+            marriage_query.put( Marriage.MARRIAGE_DAY,b.getString( KillieBirth.PARENTS_DAY_OF_MARRIAGE ) );
+            marriage_query.put( Marriage.MARRIAGE_MONTH, b.getString( KillieBirth.PARENTS_MONTH_OF_MARRIAGE ) );
+            marriage_query.put( Marriage.MARRIAGE_YEAR, b.getString( KillieBirth.PARENTS_YEAR_OF_MARRIAGE ) );
 
             for( int range = 0; range < RANGE_MAX;  ) {
 
@@ -244,6 +245,6 @@ public class KilmarnockMatchBirthsAndMarriages {
         String deaths_source_path = "/Digitising Scotland/KilmarnockBDM/deaths.csv";
         String marriages_source_path = "/Digitising Scotland/KilmarnockBDM/marriages.csv";
 
-        new KilmarnockMatchBirthsAndMarriages(births_source_path, deaths_source_path, marriages_source_path);
+        new KilmarnockMatchBirthMarriageRangeSearchCSVGenerator(births_source_path, deaths_source_path, marriages_source_path);
     }
 }

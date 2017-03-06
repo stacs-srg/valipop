@@ -8,7 +8,7 @@ import uk.ac.standrews.cs.digitising_scotland.util.DateManipulation;
 import java.util.Date;
 
 /**
- * A representation of a Birth Record in the form used by the Digitising Scotland Project.
+ * A representation of a KillieBirth Record in the form used by the Digitising Scotland Project.
  *
  * @author Alan Dearle (alan.dearle@st-andrews.ac.uk)
  * @author Graham Kirby (graham.kirby@st-andrews.ac.uk)
@@ -24,13 +24,13 @@ import java.util.Date;
  *         6. Registration District Number
  *         7. Registration District Suffix
  *         8. Entry
- *         9. Birth Year
+ *         9. KillieBirth Year
  *         10. Mother’s Maiden Surname
  *         11. Changed Surname
  *         12. Changed Forename
- *         13. Birth Day
- *         14. Birth Month
- *         15. Birth Address
+ *         13. KillieBirth Day
+ *         14. KillieBirth Month
+ *         15. KillieBirth Address
  *         16. Father’s Forename
  *         17. Father’s Surname ('0' if same as Surname)
  *         18. Father’s Occupation

@@ -35,7 +35,7 @@ public class DSFields {
     private static final String CORRECTED_ENTRY = "corrected_entry";
     private static final String IMAGE_QUALITY = "image_quality";
 
-    // Birth fields
+    // KillieBirth fields
 
     private static final String BIRTH_YEAR = "birth_year";
     private static final String BIRTH_DAY = "birth_day";
@@ -163,11 +163,11 @@ public class DSFields {
         *         18. Marriage Month
         *         19. Denomination
         *         20. Groom’s Address
-        *         21. Groom Age or Date of Birth
+        *         21. Groom Age or Date of KillieBirth
         *         22. Groom’s Occupation
         *         23. Groom Marital Status
         *         24. Bride’s Address
-        *         25. Bride Age or Date of Birth
+        *         25. Bride Age or Date of KillieBirth
         *         26. Bride’s Occupation
         *         27. Bride marital status
         *         28. Groom Father’s Forename
