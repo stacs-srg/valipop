@@ -4,7 +4,7 @@ package populationStatistics.dataDistributionTables.selfCorrecting;
 import populationStatistics.dataDistributionTables.DataDistribution;
 import populationStatistics.dataDistributionTables.OneDimensionDataDistribution;
 import dateModel.dateImplementations.YearDate;
-import utils.specialTypes.DataKey;
+import utils.specialTypes.dataKeys.DataKey;
 import utils.specialTypes.integerRange.IntegerRange;
 import utils.specialTypes.integerRange.InvalidRangeException;
 
@@ -36,20 +36,20 @@ public class SelfCorrectingTwoDimensionDataDistribution implements DataDistribut
     }
 
     @Override
-    public double getCorrectingData(DataKey data) {
+    public double getCorrectingRate(DataKey data) {
 
         DataKey temp = new DataKey(data.getXLabel(), data.getForNPeople());
 
-        return getData(data.getYLabel()).getCorrectingData(temp);
+        return getData(data.getYLabel()).getCorrectingRate(temp);
 
     }
 
     @Override
-    public void returnAppliedData(DataKey data, double appliedData) {
+    public void returnAppliedRate(DataKey data, double appliedData) {
 
         DataKey temp = new DataKey(data.getXLabel(), data.getForNPeople());
 
-        getData(data.getYLabel()).returnAppliedData(temp, appliedData);
+        getData(data.getYLabel()).returnAppliedRate(temp, appliedData);
 
     }
 

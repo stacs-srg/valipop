@@ -1,9 +1,12 @@
 package dateModel.dateSelection;
 
+import config.Config;
 import dateModel.Date;
 import dateModel.DateUtils;
+import dateModel.dateImplementations.AdvancableDate;
 import dateModel.dateImplementations.ExactDate;
 import dateModel.timeSteps.CompoundTimeUnit;
+import simulationEntities.person.IPerson;
 
 
 import java.util.Random;
@@ -35,5 +38,20 @@ public class BirthDateSelector implements DateSelector {
     @Override
     public ExactDate selectDate(Date possibleDate, CompoundTimeUnit consideredTimePeriod, int imposedLimit) {
         return selectDate(possibleDate, consideredTimePeriod);
+    }
+
+    @Override
+    public ExactDate selectDateLPD(AdvancableDate currentDate, CompoundTimeUnit consideredTimePeriod, Date latestPossibleDate) {
+        return null;
+    }
+
+    @Override
+    public ExactDate selectDateEPD(AdvancableDate currentDate, CompoundTimeUnit consideredTimePeriod, Date earliestPossibleDate) {
+        return null;
+    }
+
+    @Override
+    public ExactDate selectDate(IPerson p, Config config, AdvancableDate currentDate, CompoundTimeUnit consideredTimePeriod) {
+        return null;
     }
 }

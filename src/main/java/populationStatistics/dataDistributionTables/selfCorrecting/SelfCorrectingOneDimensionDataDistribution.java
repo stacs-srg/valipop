@@ -3,7 +3,7 @@ package populationStatistics.dataDistributionTables.selfCorrecting;
 import populationStatistics.dataDistributionTables.OneDimensionDataDistribution;
 import dateModel.dateImplementations.YearDate;
 import utils.MapUtils;
-import utils.specialTypes.DataKey;
+import utils.specialTypes.dataKeys.DataKey;
 import utils.specialTypes.integerRange.IntegerRange;
 
 
@@ -31,7 +31,7 @@ public class SelfCorrectingOneDimensionDataDistribution extends OneDimensionData
     }
 
     @Override
-    public double getCorrectingData(DataKey data) {
+    public double getCorrectingRate(DataKey data) {
 
         IntegerRange age = resolveRowValue(data.getYLabel());
 
@@ -64,6 +64,12 @@ public class SelfCorrectingOneDimensionDataDistribution extends OneDimensionData
             cD = 0;
         }
 
+
+        // New additions
+        if(cD > 1) {
+            cD = 1;
+        }
+
 //        System.out.println("a: " + age + "   |   tD: " + tD + "   |   cD: " + cD + "   |   tAT: " + tAT + "   |   aD: " + aD  + "   |   aC: " + aC );
 
 
@@ -71,7 +77,7 @@ public class SelfCorrectingOneDimensionDataDistribution extends OneDimensionData
     }
 
     @Override
-    public void returnAppliedData(DataKey data, double appliedData) {
+    public void returnAppliedRate(DataKey data, double appliedData) {
 
         IntegerRange age = resolveRowValue(data.getYLabel());
 

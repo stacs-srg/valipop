@@ -1,15 +1,14 @@
 package simulationEntities.population.dataStructure;
 
 import dateModel.DateBounds;
+import dateModel.dateImplementations.AdvancableDate;
+import dateModel.dateImplementations.YearDate;
 import simulationEntities.person.IPerson;
 import simulationEntities.population.dataStructure.exceptions.InsufficientNumberOfPeopleException;
 import simulationEntities.population.dataStructure.exceptions.PersonNotFoundException;
 import dateModel.Date;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 /**
  * A PersonCollection contains a set of collections of people where the collections are organised by the year of birth
@@ -19,8 +18,8 @@ import java.util.NoSuchElementException;
  */
 public abstract class PersonCollection implements DateBounds {
 
-    private final Date startDate;
-    private final Date endDate;
+    private AdvancableDate startDate;
+    private Date endDate;
 
     /**
      * Instantiates a new PersonCollection. The dates specify the earliest and latest expected birth dates of
@@ -31,7 +30,7 @@ public abstract class PersonCollection implements DateBounds {
      * @param startDate the start date
      * @param endDate   the end date
      */
-    public PersonCollection(Date startDate, Date endDate) {
+    public PersonCollection(AdvancableDate startDate, Date endDate) {
         this.startDate = startDate;
         this.endDate = endDate;
     }
@@ -51,7 +50,7 @@ public abstract class PersonCollection implements DateBounds {
      * @param yearOfBirth the year of birth of the desired cohort
      * @return the desired cohort
      */
-    abstract Collection<IPerson> getByYear(Date yearOfBirth);
+    public abstract Collection<IPerson> getByYear(Date yearOfBirth);
 
     /**
      * Adds the given person to the PersonCollection.
@@ -125,7 +124,7 @@ public abstract class PersonCollection implements DateBounds {
     }
 
     @Override
-    public Date getStartDate() {
+    public AdvancableDate getStartDate() {
         return startDate;
     }
 
@@ -134,5 +133,16 @@ public abstract class PersonCollection implements DateBounds {
         return endDate;
     }
 
+    @Override
+    public void setStartDate(AdvancableDate startDate) {
+        this.startDate = startDate;
+    }
 
+    @Override
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
+    }
+
+
+    public abstract Set<YearDate> getYOBs();
 }

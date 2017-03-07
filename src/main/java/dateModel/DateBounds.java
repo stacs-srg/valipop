@@ -1,5 +1,7 @@
 package dateModel;
 
+import dateModel.dateImplementations.AdvancableDate;
+
 /**
  * The DateBounds interface provides high level common information about the information
  * collections found in the model.
@@ -21,6 +23,21 @@ public interface DateBounds {
      * @return the latest day
      */
     Date getEndDate();
+
+    /**
+     * Sets earliest day that this Data Store is required to provide information regarding.
+     *
+     * @return the earliest day
+     */
+    void setStartDate(AdvancableDate start);
+
+    /**
+     * Sets latest day that this Data Store is required to provide information regarding.
+     *
+     * @return the latest day
+     */
+    void setEndDate(Date end);
+
 
 
 }

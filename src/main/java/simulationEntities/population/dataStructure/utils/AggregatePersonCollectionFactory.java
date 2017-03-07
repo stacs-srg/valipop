@@ -1,5 +1,7 @@
 package simulationEntities.population.dataStructure.utils;
 
+import dateModel.dateImplementations.AdvancableDate;
+import simulationEntities.partnership.IPartnership;
 import simulationEntities.person.IPerson;
 import simulationEntities.population.dataStructure.PeopleCollection;
 import simulationEntities.population.dataStructure.PersonCollection;
@@ -40,19 +42,24 @@ public class AggregatePersonCollectionFactory {
      */
     public static PeopleCollection makePeopleCollection(PeopleCollection col1, PeopleCollection col2) {
 
-        Date start = DateUtils.getEarliestDate(col1.getStartDate(), col2.getStartDate());
+        AdvancableDate start = DateUtils.getEarliestDate(col1.getStartDate(), col2.getStartDate());
         Date end = DateUtils.getLatestDate(col1.getStartDate(), col2.getStartDate());
 
-//        PeopleCollection people = new PeopleCollection(start, end);
+        PeopleCollection cloneCol1 = col1.clone();
+        PeopleCollection cloneCol2 = col2.clone();
 
+        cloneCol1.setStartDate(start);
+        cloneCol1.setEndDate(end);
 
-        for(IPerson p : col2.getPeople()) {
-            col1.addPerson(p);
+        for(IPerson p : cloneCol2.getPeople()) {
+            cloneCol1.addPerson(p);
         }
 
-//        col2.getAll().forEach(col1::addPerson);
+        for(IPartnership p : cloneCol2.getPartnerships()) {
+            cloneCol1.addPartnershipToIndex(p);
+        }
 
-        return col1;
+        return cloneCol1;
     }
 
 

@@ -3,16 +3,19 @@ package events.death;
 import config.Config;
 import dateModel.Date;
 import dateModel.DateUtils;
+import dateModel.dateImplementations.AdvancableDate;
 import dateModel.dateImplementations.MonthDate;
 import dateModel.timeSteps.CompoundTimeUnit;
+import events.EventLogic;
 import events.EventType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import populationStatistics.recording.PopulationStatistics;
 import simulationEntities.person.IPerson;
 import simulationEntities.population.dataStructure.PeopleCollection;
+import simulationEntities.population.dataStructure.Population;
 import simulationEntities.population.dataStructure.exceptions.InsufficientNumberOfPeopleException;
-import utils.specialTypes.DataKey;
+import utils.specialTypes.dataKeys.DataKey;
 
 import java.util.Collection;
 import java.util.Random;
@@ -22,14 +25,15 @@ import static dateModel.timeSteps.TimeUnit.YEAR;
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class DeathLogic {
+public class DeathLogic implements EventLogic {
 
     private static Logger log = LogManager.getLogger(DeathLogic.class);
     private static Random randomNumberGenerator = new Random();
 
 
-    public static int handleDeaths(Config config, MonthDate currentDate, PopulationStatistics desiredPopulationStatistics,
-                                   PeopleCollection livingPopulation, PeopleCollection deadPopulation, CompoundTimeUnit deathTimeStep) throws InsufficientNumberOfPeopleException {
+    public void handleEvent(Config config,
+                            AdvancableDate currentDate, CompoundTimeUnit deathTimeStep,
+                            Population population, PopulationStatistics desiredPopulationStatistics) {
 
         int deathCount = 0;
 
@@ -48,20 +52,20 @@ public class DeathLogic {
             int age = DateUtils.differenceInYears(yearOfBirth, currentDate).getCount();
 
             // get count of people of given age
-            int numberOfMales = countMalesBornIn(livingPopulation, yearOfBirth);
-            int numberOfFemales = countFemalesBornIn(livingPopulation, yearOfBirth);
+            int numberOfMales = countMalesBornIn(population.getLivingPeople(), yearOfBirth);
+            int numberOfFemales = countFemalesBornIn(population.getLivingPeople(), yearOfBirth);
 
             DataKey maleKey = new DataKey(age, numberOfMales);
             DataKey femaleKey = new DataKey(age, numberOfFemales);
 
             // DATA - get rate of death by age and gender
-            Double maleDeathRate = desiredPopulationStatistics.getDeathRates(trueCurrentDate, 'm').getCorrectingData(maleKey) * config.getDeathTimeStep().toDecimalRepresentation() * yearForwardWeighting;
+            Double maleDeathRate = desiredPopulationStatistics.getDeathRates(trueCurrentDate, 'm').getCorrectingRate(maleKey) * config.getDeathTimeStep().toDecimalRepresentation() * yearForwardWeighting;
 
             // EDIT put nQx s back in here
 
 //            maleDeathRate = (1 * maleDeathRate) / (1 + (1 * 0.5 * maleDeathRate));
 
-            Double femaleDeathRate = desiredPopulationStatistics.getDeathRates(trueCurrentDate, 'f').getCorrectingData(femaleKey) * config.getDeathTimeStep().toDecimalRepresentation() * yearForwardWeighting;
+            Double femaleDeathRate = desiredPopulationStatistics.getDeathRates(trueCurrentDate, 'f').getCorrectingRate(femaleKey) * config.getDeathTimeStep().toDecimalRepresentation() * yearForwardWeighting;
 
 //            femaleDeathRate = (1 * femaleDeathRate) / (1 + (1 * 0.5 * femaleDeathRate));
 
@@ -80,8 +84,16 @@ public class DeathLogic {
             deathCount += malesToDie;
             deathCount += femalesToDie;
 
-            Collection<IPerson> deadMales = removeMalesToDieFromPopulation(livingPopulation, yearOfBirth, malesToDie);
-            Collection<IPerson> deadFemales = removeFemalesToDieFromPopulation(livingPopulation, yearOfBirth, femalesToDie);
+            Collection<IPerson> deadMales;
+            Collection<IPerson> deadFemales;
+
+            try {
+                deadMales = removeMalesToDieFromPopulation(population.getLivingPeople(), yearOfBirth, malesToDie);
+                deadFemales = removeFemalesToDieFromPopulation(population.getLivingPeople(), yearOfBirth, femalesToDie);
+            } catch (InsufficientNumberOfPeopleException e) {
+                throw new Error("Insufficient number of people to kill, - this has occured when killing a less " +
+                        "than 1 proportion of a population");
+            }
 
 //            System.out.println(currentDate.getYear() + " M yob " + yearOfBirth.getYear() + " nO " + numberOfMales + " @DR " + maleDeathRate + " res " + malesToDie + " act " + deadMales.size());
 //            System.out.println(currentDate.getYear() + " F yob " + yearOfBirth.getYear() + " nO " + numberOfFemales + " @DR " + femaleDeathRate + " res " + femalesToDie + " act " + deadFemales.size());
@@ -89,7 +101,7 @@ public class DeathLogic {
             // for each to be killed
             for (IPerson m : deadMales) {
                 m.causeEventInTimePeriod(EventType.MALE_DEATH, currentDate, deathTimeStep);
-                deadPopulation.addPerson(m);
+                population.getDeadPeople().addPerson(m);
 
 
                 Date dod = m.getDeathDate();
@@ -104,7 +116,7 @@ public class DeathLogic {
 
             for (IPerson f : deadFemales) {
                 f.causeEventInTimePeriod(EventType.FEMALE_DEATH, currentDate, deathTimeStep);
-                deadPopulation.addPerson(f);
+                population.getDeadPeople().addPerson(f);
 
                 Date dod = f.getDeathDate();
                 if(DateUtils.dateBefore(currentDate, dod)) {
@@ -128,18 +140,18 @@ public class DeathLogic {
 //            }
 
             if(numberOfMales > 0) {
-                desiredPopulationStatistics.getDeathRates(trueCurrentDate, 'm').returnAppliedData(maleKey, appliedMaleRate / config.getDeathTimeStep().toDecimalRepresentation());
+                desiredPopulationStatistics.getDeathRates(trueCurrentDate, 'm').returnAppliedRate(maleKey, appliedMaleRate / config.getDeathTimeStep().toDecimalRepresentation());
             }
 
             if(numberOfFemales > 0) {
-                desiredPopulationStatistics.getDeathRates(trueCurrentDate, 'f').returnAppliedData(femaleKey, appliedFemaleRate / config.getDeathTimeStep().toDecimalRepresentation());
+                desiredPopulationStatistics.getDeathRates(trueCurrentDate, 'f').returnAppliedRate(femaleKey, appliedFemaleRate / config.getDeathTimeStep().toDecimalRepresentation());
             }
 
         }
 
         log.info("Deaths handled: " + currentDate.toString() + " - " + deathCount);
 //        System.out.println("Deaths handled: " + currentDate.toString() + " - " + deathCount);
-        return deathCount;
+//        return deathCount;
 
     }
 

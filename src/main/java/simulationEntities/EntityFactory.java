@@ -15,6 +15,7 @@ import simulationEntities.person.IPerson;
 import simulationEntities.person.Person;
 import simulationEntities.population.PopulationCounts;
 import simulationEntities.population.dataStructure.PeopleCollection;
+import simulationEntities.population.dataStructure.Population;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,12 +34,12 @@ public class EntityFactory {
     private static DateSelector birthDateSelector = new BirthDateSelector();
 
     public static IPartnership formNewChildrenInPartnership(int numberOfChildren, IPerson father, IPerson mother, MonthDate currentDate,
-                                                            CompoundTimeUnit birthTimeStep, PeopleCollection population, PopulationCounts pc) {
+                                                            CompoundTimeUnit birthTimeStep, Population population) {
 
         IPartnership partnership = new Partnership(father, mother, currentDate);
-        population.addPartnershipToIndex(partnership);
+        population.getLivingPeople().addPartnershipToIndex(partnership);
 
-        IPerson child = makePerson(currentDate, birthTimeStep, partnership, population, pc);
+        IPerson child = makePerson(currentDate, birthTimeStep, partnership, population);
 
         partnership.addChildren(Collections.singletonList(child));
 
@@ -46,7 +47,7 @@ public class EntityFactory {
     }
 
     public static IPartnership formNewChildrenInPartnership(int numberOfChildren, IPerson mother, MonthDate currentDate,
-                                                         CompoundTimeUnit birthTimeStep, PeopleCollection population, PopulationCounts pc) {
+                                                            CompoundTimeUnit birthTimeStep, Population population) {
 
         IPartnership partnership = new Partnership(mother, currentDate);
 
@@ -54,18 +55,18 @@ public class EntityFactory {
         List<IPerson> children = new ArrayList<>(numberOfChildren);
 
         for(int c = 0; c < numberOfChildren; c++) {
-            children.add(makePerson(currentDate, birthTimeStep, partnership, population, pc));
+            children.add(makePerson(currentDate, birthTimeStep, partnership, population));
         }
 
         partnership.addChildren(children);
 
-        population.addPartnershipToIndex(partnership);
+        population.getLivingPeople().addPartnershipToIndex(partnership);
 
         return partnership;
     }
 
-    public static IPerson formOrphanChild(MonthDate currentDate, CompoundTimeUnit birthTimeStep, PeopleCollection population, PopulationCounts pc) {
-        return makePerson(currentDate, birthTimeStep, null, population, pc);
+    public static IPerson formOrphanChild(MonthDate currentDate, CompoundTimeUnit birthTimeStep, Population population) {
+        return makePerson(currentDate, birthTimeStep, null, population);
     }
 
     private static char getSex(PopulationCounts pc) {
@@ -92,16 +93,16 @@ public class EntityFactory {
 
     }
 
-    public static IPerson makePerson(Date currentDate, CompoundTimeUnit birthTimeStep, IPartnership parentsPartnership, PeopleCollection population, PopulationCounts pc) {
+    public static IPerson makePerson(Date currentDate, CompoundTimeUnit birthTimeStep, IPartnership parentsPartnership, Population population) {
 
-        Person person = new Person(getSex(pc), birthDateSelector.selectDate(currentDate, birthTimeStep), parentsPartnership);
+        Person person = new Person(getSex(population.getPopulationCounts()), birthDateSelector.selectDate(currentDate, birthTimeStep), parentsPartnership);
 
         // OZGUR - this is where you're stuff is currently being called from
         person.setFirstName(firstNameGenerator.getName(person));
         person.setSurname(surnameGenerator.getName(person));
 
 
-        population.addPerson(person);
+        population.getLivingPeople().addPerson(person);
 
         return person;
     }

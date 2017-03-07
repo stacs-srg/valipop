@@ -63,6 +63,16 @@ public class GeneratedPopulationComposition implements PopulationComposition {
         return endDate;
     }
 
+    @Override
+    public void setStartDate(AdvancableDate start) {
+        startDate = start;
+    }
+
+    @Override
+    public void setEndDate(Date end) {
+        endDate = end;
+    }
+
     /*
     -------------------- StatisticalTables interface methods --------------------
      */

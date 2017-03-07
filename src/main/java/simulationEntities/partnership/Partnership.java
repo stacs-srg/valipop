@@ -94,5 +94,6 @@ public class Partnership implements IPartnership {
     @Override
     public void setFather(IPerson father) {
         this.male = father;
+        father.recordPartnership(this);
     }
 }

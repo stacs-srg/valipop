@@ -14,6 +14,7 @@ import populationStatistics.recording.PopulationStatistics;
 import simulationEntities.EntityFactory;
 import simulationEntities.population.PopulationCounts;
 import simulationEntities.population.dataStructure.PeopleCollection;
+import simulationEntities.population.dataStructure.Population;
 
 
 /**
@@ -40,7 +41,7 @@ public class InitLogic {
 
     }
 
-    public static void handleInitPeople(Config config, MonthDate currentTime, PeopleCollection people, PopulationCounts pc) {
+    public static void handleInitPeople(Config config, MonthDate currentTime, Population population) {
 
         // calculate hypothetical number of expected births
         int hypotheticalBirths = BirthLogic.calculateChildrenToBeBorn(currentHypotheticalPopulationSize, config.getSetUpBR());
@@ -57,7 +58,7 @@ public class InitLogic {
         // add Orphan Children to the population
         for (int i = 0; i < shortFallInBirths; i++) {
             // TODO need to vary birth date in time period (i.e. the previous year)
-            EntityFactory.formOrphanChild(currentTime, config.getBirthTimeStep(), people, pc);
+            EntityFactory.formOrphanChild(currentTime, config.getBirthTimeStep(), population);
         }
 
         log.info("Current Date: " + currentTime.toString() + "   Init Period | Met short fall in births with orphan children: " + shortFallInBirths);

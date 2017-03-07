@@ -1,6 +1,7 @@
 package simulationEntities.population.dataStructure;
 
 import dateModel.dateImplementations.AdvancableDate;
+import dateModel.dateImplementations.YearDate;
 import simulationEntities.partnership.IPartnership;
 import simulationEntities.person.IPerson;
 import simulationEntities.population.IPopulation;
@@ -9,10 +10,7 @@ import dateModel.exceptions.UnsupportedDateConversion;
 import simulationEntities.population.dataStructure.exceptions.PersonNotFoundException;
 import simulationEntities.population.dataStructure.utils.AggregatePersonCollectionFactory;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * The class PeopleCollection is a concrete instance of the PersonCollection class. It provides the layout to structure
@@ -33,6 +31,26 @@ public class PeopleCollection extends PersonCollection implements IPopulation {
     private final Map<Integer, IPartnership> partnershipIndex = new HashMap<>();
 
     private ArrayList<IPartnership> partTemp = new ArrayList<>();
+
+    public PeopleCollection clone() {
+        PeopleCollection clone = new PeopleCollection(getStartDate(), getEndDate());
+
+        for(IPerson m : males.getAll()) {
+            clone.addPerson(m);
+        }
+
+        for(IPerson f : females.getAll()) {
+            clone.addPerson(f);
+        }
+
+        for(Integer k : partnershipIndex.keySet()) {
+            clone.addPartnershipToIndex(partnershipIndex.get(k));
+        }
+
+        clone.setDescription(description);
+
+        return clone;
+    }
 
     /**
      * Instantiates a new PersonCollection. The dates specify the earliest and latest expected birth dates of
@@ -133,6 +151,11 @@ public class PeopleCollection extends PersonCollection implements IPopulation {
     @Override
     public int getNumberOfPersons(Date yearOfBirth) {
         return males.getNumberOfPersons(yearOfBirth) + females.getNumberOfPersons(yearOfBirth);
+    }
+
+    @Override
+    public Set<YearDate> getYOBs() {
+        return null;
     }
 
     /*

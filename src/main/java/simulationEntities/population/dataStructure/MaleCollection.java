@@ -11,10 +11,7 @@ import dateModel.timeSteps.TimeUnit;
 import simulationEntities.person.IPerson;
 import simulationEntities.population.dataStructure.exceptions.PersonNotFoundException;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * The class MaleCollection is a concrete instance of the PersonCollection class.
@@ -103,6 +100,11 @@ public class MaleCollection extends PersonCollection {
     @Override
     int getNumberOfPersons(Date yearOfBirth) {
         return byYear.get(yearOfBirth.getYearDate()).size();
+    }
+
+    @Override
+    public Set<YearDate> getYOBs() {
+        return new HashSet<>(byYear.keySet());
     }
 
 }

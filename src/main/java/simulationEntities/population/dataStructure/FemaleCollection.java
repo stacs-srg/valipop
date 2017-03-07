@@ -274,6 +274,11 @@ public class FemaleCollection extends PersonCollection {
         }
     }
 
+    @Override
+    public Set<YearDate> getYOBs() {
+        return new HashSet<>(byBirthYearAndNumberOfChildren.keySet());
+    }
+
     /*
     -------------------- Private helper methods --------------------
      */

@@ -4,9 +4,11 @@ import config.Config;
 import dateModel.DateUtils;
 import dateModel.dateImplementations.ExactDate;
 import dateModel.dateImplementations.MonthDate;
+import events.EventLogic;
 import events.UnsupportedEventType;
 import events.birth.BirthLogic;
 import events.death.DeathLogic;
+import events.death.NDeathLogic;
 import events.init.InitLogic;
 import org.apache.logging.log4j.Logger;
 import populationStatistics.recording.PopulationStatistics;
@@ -17,6 +19,7 @@ import populationStatistics.validation.summaryData.SummaryRow;
 import simulationEntities.person.Person;
 import simulationEntities.population.PopulationCounts;
 import simulationEntities.population.dataStructure.PeopleCollection;
+import simulationEntities.population.dataStructure.Population;
 import simulationEntities.population.dataStructure.exceptions.InsufficientNumberOfPeopleException;
 import simulationEntities.population.dataStructure.utils.AggregatePersonCollectionFactory;
 import utils.CustomLog4j;
@@ -42,10 +45,11 @@ public class OBDModel {
 
     private PopulationStatistics desired;
 
-    private static PopulationCounts pc;
-    private PeopleCollection population;
-    private PeopleCollection deadPopulation;
+    Population population;
+
     private MonthDate currentTime;
+
+    private EventLogic deathLogic = new NDeathLogic();
 
 
     public static void main(String[] args) {
@@ -127,9 +131,8 @@ public class OBDModel {
 
         // Set up simulation parameters
         currentTime = config.getTS();
-        pc = new PopulationCounts();
-        population = new PeopleCollection(config.getTS(), config.getTE());
-        deadPopulation = new PeopleCollection(config.getTS(), config.getTE());
+
+        population = new Population(config);
 
         // get desired population info
         desired = DesiredPopulationStatisticsFactory.initialisePopulationStatistics(config);
@@ -148,37 +151,37 @@ public class OBDModel {
         while(DateUtils.dateBefore(currentTime, config.getTE())) {
 
             if (DateUtils.matchesInterval(currentTime, config.getBirthTimeStep())) {
-                int births = BirthLogic.handleBirths(config, currentTime, desired, population, pc);
+                int births = BirthLogic.handleBirths(config, currentTime, desired, population);
                 InitLogic.incrementBirthCount(births);
             }
 
             // if deaths timestep
             if (DateUtils.matchesInterval(currentTime, config.getDeathTimeStep())) {
-                DeathLogic.handleDeaths(config, currentTime, desired, population, deadPopulation, config.getDeathTimeStep());
+                deathLogic.handleEvent(config, currentTime, config.getDeathTimeStep(), population, desired);
             }
 
 
 
             if (InitLogic.inInitPeriod(currentTime) && DateUtils.matchesInterval(currentTime, InitLogic.getTimeStep())) {
-                InitLogic.handleInitPeople(config, currentTime, population, pc);
+                InitLogic.handleInitPeople(config, currentTime, population);
             }
 
 
 
             if(inSimDates()) {
-                pc.updateMaxPopulation(population.getNumberOfPeople());
+                population.getPopulationCounts().updateMaxPopulation(population.getLivingPeople().getNumberOfPeople());
             }
 
             currentTime = currentTime.advanceTime(config.getSimulationTimeStep());
 
-            log.info("Time step completed " + currentTime.toString() + "    Population " + population.getNumberOfPersons());
-            System.out.println("Time step completed " + currentTime.toString() + "    Population " + population.getNumberOfPersons());
+            log.info("Time step completed " + currentTime.toString() + "    Population " + population.getLivingPeople().getNumberOfPersons());
+            System.out.println("Time step completed " + currentTime.toString() + "    Population " + population.getLivingPeople().getNumberOfPersons());
 
         }
 
 
 
-        return AggregatePersonCollectionFactory.makePeopleCollection(population, deadPopulation);
+        return population.getAllPeople();
     }
 
     private boolean inSimDates() {

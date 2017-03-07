@@ -34,7 +34,7 @@ import java.util.*;
 public class PopulationStatistics implements PopulationComposition, EventRateTables {
 
     private MonthDate startDate;
-    private MonthDate endDate;
+    private Date endDate;
 
     private Map<YearDate, SelfCorrectingOneDimensionDataDistribution> maleDeath;
     private Map<YearDate, SelfCorrectingOneDimensionDataDistribution> femaleDeath;
@@ -73,8 +73,18 @@ public class PopulationStatistics implements PopulationComposition, EventRateTab
     }
 
     @Override
-    public MonthDate getEndDate() {
+    public Date getEndDate() {
         return endDate;
+    }
+
+    @Override
+    public void setStartDate(AdvancableDate start) {
+        startDate = start.getMonthDate();
+    }
+
+    @Override
+    public void setEndDate(Date end) {
+        endDate = end;
     }
 
     /*

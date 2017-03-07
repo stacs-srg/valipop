@@ -1,6 +1,7 @@
 package config;
 
 import dateModel.dateImplementations.MonthDate;
+import dateModel.timeSteps.TimeUnit;
 import utils.fileUtils.InputFileReader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -52,6 +53,13 @@ public class Config {
     private Path summaryResultsPath;
     private boolean produceGraphs;
     private boolean produceDatFiles;
+
+    // Population Constants
+    private int maxGestationPeriodDays = 280;
+    private int minGestationPeriodDays = 147;
+    private int minBirthSpacingDays = 730;
+    private double maxProportionBirthsDueToInfidelity = 0.01;
+    private double maleProportionOfBirths = 0.52; // i.e. if 0.52 then in every 100 births, 52 will be male and 48 female
 
     private final String runPurpose;
     private final String startTime;
@@ -348,5 +356,25 @@ public class Config {
 
     public CompoundTimeUnit getInputWidth() {
         return inputWidth;
+    }
+
+    public int getMaxGestationPeriod() {
+        return maxGestationPeriodDays;
+    }
+
+    public int getMinBirthSpacing() {
+        return minBirthSpacingDays;
+    }
+
+    public int getMinGestationPeriod() {
+        return minGestationPeriodDays;
+    }
+
+    public double getMaleProportionOfBirths() {
+        return maleProportionOfBirths;
+    }
+
+    public double getMaxProportionBirthsDueToInfidelity() {
+        return maxProportionBirthsDueToInfidelity;
     }
 }

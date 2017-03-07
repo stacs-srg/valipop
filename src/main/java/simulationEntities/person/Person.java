@@ -17,6 +17,7 @@ import org.apache.logging.log4j.Logger;
 import simulationEntities.partnership.IPartnership;
 import simulationEntities.population.PopulationCounts;
 import simulationEntities.population.dataStructure.PeopleCollection;
+import simulationEntities.population.dataStructure.Population;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -156,23 +157,28 @@ public class Person implements IPerson {
     }
 
     @Override
-    public void recordDeath(Date date, PopulationCounts pc) {
+    public boolean recordDeath(Date date, Population population) {
 
         if (partnerships.size() != 0) {
             IPerson lastSpouse = getLastChild().getParentsPartnership().getPartnerOf(this);
+            if(lastSpouse == null) {
+                System.out.println("A");
+            }
             if (lastSpouse.aliveOnDate(date)) {
                 // if the partner is alive on date of death
                 if (lastSpouse.getLastChild().getParentsPartnership().getPartnerOf(lastSpouse).getId() == id) {
                     // and if the lastSpouses last partner is this person
                     // then this is the end of a partnership - caused by death
-                    pc.partnershipEnd();
+                    population.getPopulationCounts().partnershipEnd();
                 }
             }
         }
 
-        pc.death(this);
+        population.getPopulationCounts().death(this);
 
         deathDate = date.getExactDate();
+
+        return true;
     }
 
     @Override

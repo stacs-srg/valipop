@@ -8,8 +8,8 @@ import simulationEntities.person.IPerson;
 import dateModel.Date;
 import dateModel.dateImplementations.MonthDate;
 import dateModel.timeSteps.CompoundTimeUnit;
-import simulationEntities.population.PopulationCounts;
 import simulationEntities.population.dataStructure.PeopleCollection;
+import simulationEntities.population.dataStructure.Population;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
@@ -20,7 +20,7 @@ public interface PersonUtils {
 
     void recordPartnership(IPartnership partnership);
 
-    void recordDeath(Date date, PopulationCounts pc);
+    boolean recordDeath(Date date, Population population);
 
     void causeEventInTimePeriod(EventType event, Date date, CompoundTimeUnit timePeriod);
 

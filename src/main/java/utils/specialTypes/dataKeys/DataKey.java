@@ -1,4 +1,4 @@
-package utils.specialTypes;
+package utils.specialTypes.dataKeys;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)

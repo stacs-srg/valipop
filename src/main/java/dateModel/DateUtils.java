@@ -1,5 +1,6 @@
 package dateModel;
 
+import dateModel.dateImplementations.AdvancableDate;
 import dateModel.dateImplementations.ExactDate;
 import dateModel.timeSteps.CompoundTimeUnit;
 import dateModel.timeSteps.TimeUnit;
@@ -104,7 +105,7 @@ public class DateUtils {
 
     }
 
-    public static Date getEarliestDate(Date startDate, Date startDate1) {
+    public static AdvancableDate getEarliestDate(AdvancableDate startDate, AdvancableDate startDate1) {
         if (dateBefore(startDate, startDate1)) {
             return startDate;
         } else {
