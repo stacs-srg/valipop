@@ -1,0 +1,23 @@
+From Meeting with Oz and Graham 6-3-17
+
+1. Are people being put in more than 1 family?
+
+    A: was yes but hopefully fixed? - need to check with results from running KilmarnockMTreeBirthBirthMatcherGroundTruthChecker
+
+2. Distance between family members
+
+3. Are there families that are asserted to be in 2 families whereas there should be 1?
+
+4. Put those that do not match anywhere into separate families.
+
+    done - altered KilmarnockMTreeBirthBirthMatcherGroundTruthChecker
+
+5. Look at those within distance of N rather than nearest neighbour.
+
+-----
+
+6. Merge the code of KilmarnockMTreeBirthMarriageMatcherGroundTruthChecker and KilmarnockMTreeBirthBirthMatcherGroundTruthChecker
+
+        done.
+
+7. Write new classes to proces the Skye data - like above.
