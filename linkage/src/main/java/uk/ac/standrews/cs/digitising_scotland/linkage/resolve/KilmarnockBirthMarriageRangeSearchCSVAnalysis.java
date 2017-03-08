@@ -8,10 +8,10 @@ import java.nio.file.Paths;
 import java.text.DecimalFormat;
 import java.util.List;
 
-import static uk.ac.standrews.cs.digitising_scotland.linkage.resolve.KilmarnockMatchBirthMarriageRangeSearchCSVGenerator.RANGE_MAX;
+import static uk.ac.standrews.cs.digitising_scotland.linkage.resolve.KilmarnockMTreeBirthMarriageRangeCSVGenerator.RANGE_MAX;
 
 /**
- * Module to inject and analyse output created by KilmarnockMatchBirthMarriageRangeSearchCSVGenerator
+ * Module to inject and analyse output created by KilmarnockMTreeBirthMarriageRangeCSVGenerator
  * This is a csv file containing rows number of matches between births and marriages at edit distance 1,2, ..
  * Created by al on 22/02/2017.
  * @author al@st-andrews.ac.uk
@@ -79,7 +79,7 @@ public class KilmarnockBirthMarriageRangeSearchCSVAnalysis {
         }
         for( int occurrences : counter ) {
             running_total += occurrences;
-            System.out.println( occurrences * 100 / (float) num_births + "%   running total = " + running_total * 100 / (float) num_births + "%" );
+//            System.out.println( occurrences * 100 / (float) num_births + "%   running total = " + running_total * 100 / (float) num_births + "%" );
         }
     }
 
@@ -227,6 +227,8 @@ public class KilmarnockBirthMarriageRangeSearchCSVAnalysis {
         }
         return result;
     }
+
+
 
 
     public static void main(String[] args) throws Exception {

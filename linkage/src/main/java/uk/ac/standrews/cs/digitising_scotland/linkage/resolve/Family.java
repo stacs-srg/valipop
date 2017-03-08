@@ -1,9 +1,9 @@
 package uk.ac.standrews.cs.digitising_scotland.linkage.resolve;
 
 import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.KillieBirth;
+import uk.ac.standrews.cs.digitising_scotland.util.MTree.DataDistance;
 
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 /**
  * Essentially a set of siblings carrying an id.
@@ -13,13 +13,25 @@ public class Family {
 
     public static int family_id = 1;
 
+    public HashMap<KillieBirth,List<DataDistance<KillieBirth>>> distances; // strictly we do not need both distances and siblings but keep for now.
     public Set<KillieBirth> siblings;
     public final int id;
 
 
     public Family(KillieBirth child) {
         this.id = family_id++;
+        this.distances = new HashMap<KillieBirth,List<DataDistance<KillieBirth>>>();
         this.siblings = new TreeSet<KillieBirth>();
         siblings.add(child);
+    }
+
+    public void addDistance( KillieBirth sibling, DataDistance<KillieBirth> distance ) {
+        if( distances.containsKey( sibling ) ) {
+            distances.get( sibling ).add( distance );
+        } else {
+            List<DataDistance<KillieBirth>> l = new ArrayList<DataDistance<KillieBirth>>();
+            l.add( distance );
+            distances.put( sibling,l );
+        }
     }
 }
