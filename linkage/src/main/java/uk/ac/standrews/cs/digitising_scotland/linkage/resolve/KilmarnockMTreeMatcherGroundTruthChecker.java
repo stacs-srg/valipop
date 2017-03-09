@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 
 /**
@@ -192,6 +191,9 @@ public class KilmarnockMTreeMatcherGroundTruthChecker {
     public void listFamilies() throws BucketException {
 
         IInputStream<KillieBirth> stream = births.getInputStream();
+
+        System.out.println("Generated fid\tDemographer fid\tRecord id\tForname\tSurname\tDOB\tPOM\tDOM\tFather's forename\tFather's surname\tMother's forename\tMother's maidenname" );
+
 
         for (KillieBirth b : stream) {
 
