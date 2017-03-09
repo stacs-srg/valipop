@@ -80,39 +80,53 @@ public class KilmarnockMTreeBirthBirthWithinDistanceGroundTruthChecker extends K
 
         for (KillieBirth b : stream) {
 
-            Family bsFamily; // pronounced b's family.
-
-            if( families.containsKey( b.getId() ) ) {
-                bsFamily = families.get(b.getId());
-            } else {
-                bsFamily = new Family( b );
-                families.put( b.getId(),bsFamily );
-            }
-
-            // Calculate the neighbours of b
+            // Calculate the neighbours of b, including b.
             List<DataDistance<KillieBirth>> bsNeighbours = birthMTree.rangeSearch(b, 10);  // pronounced b's neighbours.
+            bsNeighbours.add(new DataDistance<KillieBirth>(b, 0.0F));
 
             // fids is the set of families of neighbours that are different from bsFamily
             Set<Family> fids = new TreeSet<Family>();
 
-            for( DataDistance<KillieBirth> dd_to_b : bsNeighbours ) {
+            Family bsFamily = families.get(b.getId()); // maybe null - is this right????
+
+            for (DataDistance<KillieBirth> dd_to_b : bsNeighbours) {
                 KillieBirth n = dd_to_b.value;
-                Family nsFamily = families.get( n.getId() );
-                if( nsFamily != null && nsFamily != bsFamily ) {
-                    fids.add( nsFamily );
+                Family nsFamily = families.get(n.getId());
+                if (nsFamily != null && nsFamily != bsFamily) {
+                    fids.add(nsFamily);
                 }
             }
 
-            if( fids.isEmpty() ) { // none of the neighbours were seen before, put them in the same family as b
-                for( DataDistance<KillieBirth> dd_to_b : bsNeighbours ) {
-                    KillieBirth n = dd_to_b.value;
-                    // TODO put n in the same family as b
-                }
+            Family thisFamily;
+
+            if (fids.size() == 1) { // just bsFamily in the set?
+                // there are no "competing" family ids for this group of people
+                // their id can remain the same
+
+                thisFamily = fids.iterator().next();
+
             } else {
-                // TODO ******* AL here
+                // there are (zero or) multiple "competing" family ids for this group of people
+                // let's merge them
+                thisFamily = new Family();
+
+                //  by now all neighbours are in the same family
+                for (DataDistance<KillieBirth> dd : bsNeighbours) {
+                    KillieBirth person = dd.value;
+                    families.put(person.getId(), thisFamily);
+                }
+
+                // if a person was previously in a different family, we merge them into "thisFamilyID"
+                for (Family f : fids) {
+                    for (KillieBirth person : f.siblings) {
+
+                        if (families.containsKey(person.getId())) {
+                            families.remove(person.getId()); // nuke old family
+                            families.put(person.getId(), thisFamily); // and replace with the new one.
+                        }
+                    }
+                }
             }
-
-
         }
     }
 

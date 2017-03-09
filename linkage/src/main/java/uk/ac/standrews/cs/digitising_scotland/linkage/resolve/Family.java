@@ -17,11 +17,14 @@ public class Family {
     public Set<KillieBirth> siblings;
     public final int id;
 
-
-    public Family(KillieBirth child) {
+    public Family() {
         this.id = family_id++;
         this.distances = new HashMap<KillieBirth,List<DataDistance<KillieBirth>>>();
         this.siblings = new TreeSet<KillieBirth>();
+    }
+
+    public Family(KillieBirth child) {
+        this();
         siblings.add(child);
     }
 
