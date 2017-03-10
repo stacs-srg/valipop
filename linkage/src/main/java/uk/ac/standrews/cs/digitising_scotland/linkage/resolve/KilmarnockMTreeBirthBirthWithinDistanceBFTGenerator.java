@@ -21,13 +21,13 @@ import java.util.TreeSet;
  * File is derived from KilmarnockLinker.
  * Created by al on 17/2/1017
  */
-public class KilmarnockMTreeBirthBirthWithinDistanceGroundTruthChecker extends KilmarnockMTreeMatcherGroundTruthChecker {
+public class KilmarnockMTreeBirthBirthWithinDistanceBFTGenerator extends KilmarnockMTreeMatcherGroundTruthChecker {
 
     private  MTree<KillieBirth> birthMTree;
 
     // Maps
 
-    public KilmarnockMTreeBirthBirthWithinDistanceGroundTruthChecker(String births_source_path, String deaths_source_path, String marriages_source_path) throws RecordFormatException, RepositoryException, StoreException, JSONException, BucketException, IOException {
+    public KilmarnockMTreeBirthBirthWithinDistanceBFTGenerator(String births_source_path, String deaths_source_path, String marriages_source_path) throws RecordFormatException, RepositoryException, StoreException, JSONException, BucketException, IOException {
         super(births_source_path, deaths_source_path, marriages_source_path );
     }
 
@@ -39,10 +39,46 @@ public class KilmarnockMTreeBirthBirthWithinDistanceGroundTruthChecker extends K
         System.out.println("Created Marriage MTree in " + elapsed + "s");
 
         System.out.println("Forming families from Birth-Birth links");
-        formFamilies();
-        listFamilies();
+
+        dumpBFT();
 
         System.out.println("Finished");
+    }
+
+    private void dumpBFT() {
+        IInputStream<KillieBirth> stream;
+        try {
+            stream = births.getInputStream();
+        } catch (BucketException e) {
+            System.out.println("Exception whilst getting births");
+            return;
+        }
+
+        Boolean first = true;
+
+//        { a : [(b,2), (c,3)],
+//          b : [(a,2), (d,4)]
+//        }
+        System.out.print("{");
+
+        for (KillieBirth b : stream) {
+            if (!first) {
+                System.out.println(",");
+                first = false;
+            }
+            // Calculate the neighbours of b, including b which is found in the rangeSearch
+            List<DataDistance<KillieBirth>> bsNeighbours = birthMTree.rangeSearch(b, 10);  // pronounced b's neighbours.
+
+            System.out.print(b.getId() + ": [");
+            for (int i = 0; i < bsNeighbours.size(); i++) {
+                System.out.print("(" + bsNeighbours.get(i).value.getId() + ", " + bsNeighbours.get(i).distance + ")");
+                if (i != bsNeighbours.size() - 1) {
+                    System.out.print(",");
+                }
+            }
+            System.out.print(']');
+        }
+        System.out.print("}");
     }
 
 
@@ -136,7 +172,7 @@ public class KilmarnockMTreeBirthBirthWithinDistanceGroundTruthChecker extends K
         String deaths_source_path = "/Digitising Scotland/KilmarnockBDM/deaths.csv";
         String marriages_source_path = "/Digitising Scotland/KilmarnockBDM/marriages.csv";
 
-        KilmarnockMTreeBirthBirthWithinDistanceGroundTruthChecker matcher = new KilmarnockMTreeBirthBirthWithinDistanceGroundTruthChecker(births_source_path, deaths_source_path, marriages_source_path);
+        KilmarnockMTreeBirthBirthWithinDistanceBFTGenerator matcher = new KilmarnockMTreeBirthBirthWithinDistanceBFTGenerator(births_source_path, deaths_source_path, marriages_source_path);
         matcher.compute();
     }
 }

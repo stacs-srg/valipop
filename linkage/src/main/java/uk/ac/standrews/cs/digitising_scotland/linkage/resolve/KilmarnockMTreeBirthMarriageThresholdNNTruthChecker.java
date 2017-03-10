@@ -48,9 +48,7 @@ public class KilmarnockMTreeBirthMarriageThresholdNNTruthChecker extends Kilmarn
 
 
     private void showFamilies() throws BucketException {
-        System.out.println( "Number of families formed:" + new HashSet<Family>( inferred_family_map.values() ).size() );
-        System.out.println( "Unmatched families:" + new HashSet<Family>( unmatched_map.values() ).size() );
-        System.out.println( "Family id\tDemographer family id\tPerson id\tForename\tSurname\tDOB\tPOM\tDOM\tFFN\tFSN\tMFN\tMMN" );
+        System.out.println( "Number of families formed:" + new HashSet<Family>( families.values() ).size() );
         listFamilies();
     }
 
@@ -98,7 +96,7 @@ public class KilmarnockMTreeBirthMarriageThresholdNNTruthChecker extends Kilmarn
             DataDistance<Marriage> result = marriageMtree.nearestNeighbour( marriage_query );
 
             if( result.distance < 8.0F ) {
-                add_birth_to_map(inferred_family_map, Long.toString(result.value.getId()), b); // used the marriage id as a unique identifier.
+                add_birth_to_map(families, result.value.getId(), b); // used the marriage id as a unique identifier.
             }
 
         }
@@ -111,7 +109,7 @@ public class KilmarnockMTreeBirthMarriageThresholdNNTruthChecker extends Kilmarn
      * @param map the map to which the record should be added
      * @param birth_record the record to add to the map
      */
-    private void add_birth_to_map( HashMap< String, Family > map, String key,  KillieBirth birth_record ) {
+    private void add_birth_to_map( HashMap<Long, Family> map, Long key,  KillieBirth birth_record ) {
         if( map.containsKey( key ) ) { // have already seen a member of this family - so just add the birth to the family map
             // could check here to ensure parents are the same etc.
             Family f = map.get( key );
