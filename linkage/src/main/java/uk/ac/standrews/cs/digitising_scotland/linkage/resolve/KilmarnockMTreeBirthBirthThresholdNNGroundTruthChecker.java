@@ -48,7 +48,7 @@ public class KilmarnockMTreeBirthBirthThresholdNNGroundTruthChecker extends Kilm
     }
 
 
-    private void createBirthMTreeOverGFNGLNBFNBMNPOMDOM() throws RepositoryException, BucketException, IOException {
+    protected void createBirthMTreeOverGFNGLNBFNBMNPOMDOM() throws RepositoryException, BucketException, IOException {
 
         System.out.println("Creating M Tree of births by GFNGLNBFNBMNPOMDOMDistanceOverBirth...");
 
@@ -67,7 +67,7 @@ public class KilmarnockMTreeBirthBirthThresholdNNGroundTruthChecker extends Kilm
     /**
      * Try and form families from Birth M Tree data_array
      */
-    private void formFamilies() {
+    protected void formFamilies() {
 
         IInputStream<KillieBirth> stream;
         try {
