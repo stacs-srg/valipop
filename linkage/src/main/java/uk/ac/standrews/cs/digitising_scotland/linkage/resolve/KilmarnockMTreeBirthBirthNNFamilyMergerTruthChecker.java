@@ -29,7 +29,8 @@ public class KilmarnockMTreeBirthBirthNNFamilyMergerTruthChecker extends Kilmarn
         mergeFamilies();
         listFamilies();
 
-        System.out.println("Finished");
+        elapsed =  ( System.currentTimeMillis() - time ) / 1000 ;
+        System.out.println("Finished in " + elapsed + "s");
     }
 
     private void mergeFamilies() {
@@ -42,7 +43,6 @@ public class KilmarnockMTreeBirthBirthNNFamilyMergerTruthChecker extends Kilmarn
         if( args.length < 3 ) {
             ErrorHandling.error( "Usage: run with births_source_path deaths_source_path marriages_source_path");
         }
-
 
         System.out.println( "Running KilmarnockMTreeBirthBirthNNFamilyMergerTruthChecker" );
         String births_source_path = args[0];
