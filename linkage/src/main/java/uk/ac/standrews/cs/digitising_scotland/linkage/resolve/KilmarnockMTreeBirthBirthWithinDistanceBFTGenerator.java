@@ -64,6 +64,8 @@ public class KilmarnockMTreeBirthBirthWithinDistanceBFTGenerator extends Kilmarn
         for (KillieBirth b : stream) {
             if (!first) {
                 System.out.println(",");
+            }
+            else {
                 first = false;
             }
             // Calculate the neighbours of b, including b which is found in the rangeSearch
