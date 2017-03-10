@@ -19,8 +19,8 @@ public class Family implements Comparable<Family> {
 
     public Family() {
         this.id = family_id++;
-        this.distances = new HashMap<KillieBirth,List<DataDistance<KillieBirth>>>();
-        this.siblings = new TreeSet<KillieBirth>();
+        this.distances = new HashMap<>();
+        this.siblings = new HashSet<>();
     }
 
     public Family(KillieBirth child) {

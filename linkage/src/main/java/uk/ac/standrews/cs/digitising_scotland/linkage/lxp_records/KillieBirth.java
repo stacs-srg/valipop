@@ -155,4 +155,5 @@ public class KillieBirth extends AbstractLXP {
     public String getDOB() {
         return getString(BIRTH_DAY) + "/" + getString(BIRTH_MONTH) + "/" + getString(BIRTH_YEAR);
     }
+
 }
