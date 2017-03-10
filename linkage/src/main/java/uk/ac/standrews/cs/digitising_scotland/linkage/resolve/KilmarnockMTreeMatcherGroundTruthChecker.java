@@ -7,8 +7,6 @@ import uk.ac.standrews.cs.digitising_scotland.linkage.KilmarnockCommaSeparatedMa
 import uk.ac.standrews.cs.digitising_scotland.linkage.RecordFormatException;
 import uk.ac.standrews.cs.digitising_scotland.linkage.factory.*;
 import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.*;
-import uk.ac.standrews.cs.digitising_scotland.linkage.resolve.distances.GFNGLNBFNBMNPOMDOMDistanceOverBirth;
-import uk.ac.standrews.cs.digitising_scotland.util.MTree.MTree;
 import uk.ac.standrews.cs.storr.impl.StoreFactory;
 import uk.ac.standrews.cs.storr.impl.TypeFactory;
 import uk.ac.standrews.cs.storr.impl.exceptions.BucketException;
@@ -84,13 +82,7 @@ public class KilmarnockMTreeMatcherGroundTruthChecker {
 
     // Maps
 
-    protected HashMap< String, Family > family_ground_truth_map = new HashMap<>(); // Maps from FAMILY in birth record to a family unit using ground truth
-    protected HashMap< String, Family > inferred_family_map = new HashMap<>(); // Maps from FAMILY in birth record to a family unit using M tree derived data.
-    protected HashMap< String, Family > unmatched_map = new HashMap<>(); // Unmatched families
-
-    // Trees
-
-    private  MTree<KillieBirth> birthMTree;
+    protected HashMap<Long, Family> families = new HashMap<>(); // Maps from person id to family.
 
 
     public KilmarnockMTreeMatcherGroundTruthChecker(String births_source_path, String deaths_source_path, String marriages_source_path ) throws StoreException, JSONException, RecordFormatException, RepositoryException, IOException, BucketException {
@@ -168,21 +160,6 @@ public class KilmarnockMTreeMatcherGroundTruthChecker {
 
     }
 
-    private void createBirthMTreeOverGFNGLNBFNBMNPOMDOM() throws RepositoryException, BucketException, IOException {
-
-        System.out.println("Creating M Tree of births by GFNGLNBFNBMNPOMDOMDistanceOverBirth...");
-
-        birthMTree = new MTree<KillieBirth>( new GFNGLNBFNBMNPOMDOMDistanceOverBirth() );
-
-        IInputStream<KillieBirth> stream = births.getInputStream();
-
-        for (KillieBirth birth : stream) {
-
-            birthMTree.add( birth );
-        }
-
-    }
-
     /**
      * Display the  families in CSV format
      * All generated family tags are empty for unmatched families
@@ -197,8 +174,8 @@ public class KilmarnockMTreeMatcherGroundTruthChecker {
 
         for (KillieBirth b : stream) {
 
-            String key = String.valueOf(b.getId());
-            Family f = inferred_family_map.get(key);
+            Long key = b.getId();
+            Family f = families.get(key);
             if (f == null) {
                 System.out.println("" + "\t" + b.getString(KillieBirth.FAMILY) + "\t" + b.getString(KillieBirth.ORIGINAL_ID) + "\t" + b.getString(KillieBirth.FORENAME) + "\t" + b.getString(KillieBirth.SURNAME) + "\t" + b.getDOB() + "\t" + b.getPlaceOfMarriage() + "\t" + b.getDateOfMarriage() + "\t" + b.getFathersForename() + "\t" + b.getFathersSurname() + "\t" + b.getMothersForename() + "\t" + b.getMothersMaidenSurname());
             } else {
