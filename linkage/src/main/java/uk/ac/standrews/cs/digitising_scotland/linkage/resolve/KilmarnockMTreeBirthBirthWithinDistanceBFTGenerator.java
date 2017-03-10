@@ -80,7 +80,7 @@ public class KilmarnockMTreeBirthBirthWithinDistanceBFTGenerator extends Kilmarn
             }
             System.out.print(']');
         }
-        System.out.print("}");
+        System.out.println("}");
     }
 
 
