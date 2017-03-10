@@ -1,0 +1,62 @@
+
+Experiments
+a. Radius search
+	1. Radius of range search, and its effect on quality (precision, recall, family size)
+b. Similarity
+	1. Altering the rules of how distance is calculated (regarding missing values)
+	2. Using weights when calculating distance
+	3. Dates: something more sophisticated then string similarity?
+	4. Using thresholds on individual fields. post-match.
+c. Controlling family size, The Merge
+	1. 
+
+
+
+Problems
+1. Matching of missing values, distance 0 means we are overly generous
+2. Controlling the size of the families (during a merge)
+
+
+
+
+
+minimise the number of families, such that the diameter of each family < threshold
+
+diameter of each family
+	- the max pairwise distance
+	- or the average pairwise distance
+	- or something else that is perfect
+
+minimise the number of families, such that the number of children in each family < threshold
+
+
+constraints may also be attribute-based. for example of the form: 
+- father's surname < threshold
+
+
+
+
+
+BFT: it maps from personID (per birth) to a list of pairs of (personIDs x distance)
+- distances up to 10
+
+
+
+
+Does solving problem: "minimise the number of families, such that the diameter of each family < threshold" solve the familial grouping problem with high precision and recall?
+
+
+If yes: we will still need to configure another algorithm (like Al's MTree based clustering one) such that it achieves similar results. Use a heuristic algorithm as a proxy to the complete one.
+
+
+
+
+
+
+
+
+
+
+
+
+
