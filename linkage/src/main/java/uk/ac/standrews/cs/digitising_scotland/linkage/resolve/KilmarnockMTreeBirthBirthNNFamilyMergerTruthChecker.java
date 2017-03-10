@@ -2,6 +2,7 @@ package uk.ac.standrews.cs.digitising_scotland.linkage.resolve;
 
 import org.json.JSONException;
 import uk.ac.standrews.cs.digitising_scotland.linkage.RecordFormatException;
+import uk.ac.standrews.cs.digitising_scotland.util.ErrorHandling;
 import uk.ac.standrews.cs.storr.impl.exceptions.BucketException;
 import uk.ac.standrews.cs.storr.impl.exceptions.RepositoryException;
 import uk.ac.standrews.cs.storr.impl.exceptions.StoreException;
@@ -38,10 +39,15 @@ public class KilmarnockMTreeBirthBirthNNFamilyMergerTruthChecker extends Kilmarn
 
     public static void main(String[] args) throws Exception {
 
+        if( args.length < 3 ) {
+            ErrorHandling.error( "Usage: run with births_source_path deaths_source_path marriages_source_path");
+        }
+
+
         System.out.println( "Running KilmarnockMTreeBirthBirthNNFamilyMergerTruthChecker" );
-        String births_source_path = "/Digitising Scotland/KilmarnockBDM/births.csv";
-        String deaths_source_path = "/Digitising Scotland/KilmarnockBDM/deaths.csv";
-        String marriages_source_path = "/Digitising Scotland/KilmarnockBDM/marriages.csv";
+        String births_source_path = args[0];
+        String deaths_source_path = args[1];
+        String marriages_source_path = args[2];
 
         KilmarnockMTreeBirthBirthNNFamilyMergerTruthChecker matcher = new KilmarnockMTreeBirthBirthNNFamilyMergerTruthChecker(births_source_path, deaths_source_path, marriages_source_path);
         matcher.compute();
