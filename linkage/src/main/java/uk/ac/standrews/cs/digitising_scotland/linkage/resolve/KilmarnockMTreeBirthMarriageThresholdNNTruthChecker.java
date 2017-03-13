@@ -2,7 +2,7 @@ package uk.ac.standrews.cs.digitising_scotland.linkage.resolve;
 
 import org.json.JSONException;
 import uk.ac.standrews.cs.digitising_scotland.linkage.RecordFormatException;
-import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.KillieBirth;
+import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.BirthFamilyGT;
 import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.Marriage;
 import uk.ac.standrews.cs.digitising_scotland.linkage.resolve.distances.GFNGLNBFNBMNPOMDOMDistanceOverMarriage;
 import uk.ac.standrews.cs.digitising_scotland.util.ErrorHandling;
@@ -73,7 +73,7 @@ public class KilmarnockMTreeBirthMarriageThresholdNNTruthChecker extends Kilmarn
      */
     private void formFamilies() {
 
-        IInputStream<KillieBirth> stream;
+        IInputStream<BirthFamilyGT> stream;
         try {
             stream = births.getInputStream();
         } catch (BucketException e) {
@@ -81,7 +81,7 @@ public class KilmarnockMTreeBirthMarriageThresholdNNTruthChecker extends Kilmarn
             return;
         }
 
-        for (KillieBirth b : stream) {
+        for (BirthFamilyGT b : stream) {
 
             Marriage marriage_query = new Marriage();
             marriage_query.put( Marriage.GROOM_FORENAME,b.getFathersForename() );
@@ -90,9 +90,9 @@ public class KilmarnockMTreeBirthMarriageThresholdNNTruthChecker extends Kilmarn
             marriage_query.put( Marriage.BRIDE_SURNAME,b.getMothersMaidenSurname() );
             marriage_query.put( Marriage.PLACE_OF_MARRIAGE,b.getPlaceOfMarriage() );
 
-            marriage_query.put( Marriage.MARRIAGE_DAY,b.getString( KillieBirth.PARENTS_DAY_OF_MARRIAGE ) );
-            marriage_query.put( Marriage.MARRIAGE_MONTH, b.getString( KillieBirth.PARENTS_MONTH_OF_MARRIAGE ) );
-            marriage_query.put( Marriage.MARRIAGE_YEAR, b.getString( KillieBirth.PARENTS_YEAR_OF_MARRIAGE ) );
+            marriage_query.put( Marriage.MARRIAGE_DAY,b.getString( BirthFamilyGT.PARENTS_DAY_OF_MARRIAGE ) );
+            marriage_query.put( Marriage.MARRIAGE_MONTH, b.getString( BirthFamilyGT.PARENTS_MONTH_OF_MARRIAGE ) );
+            marriage_query.put( Marriage.MARRIAGE_YEAR, b.getString( BirthFamilyGT.PARENTS_YEAR_OF_MARRIAGE ) );
 
             DataDistance<Marriage> result = marriageMtree.nearestNeighbour( marriage_query );
 
@@ -110,7 +110,7 @@ public class KilmarnockMTreeBirthMarriageThresholdNNTruthChecker extends Kilmarn
      * @param map the map to which the record should be added
      * @param birth_record the record to add to the map
      */
-    private void add_birth_to_map( HashMap<Long, Family> map, Long key,  KillieBirth birth_record ) {
+    private void add_birth_to_map( HashMap<Long, Family> map, Long key,  BirthFamilyGT birth_record ) {
         if( map.containsKey( key ) ) { // have already seen a member of this family - so just add the birth to the family map
             // could check here to ensure parents are the same etc.
             Family f = map.get( key );

@@ -86,8 +86,8 @@ public class FFNFLNMFNMMNOverActor extends AbstractBlocker<Role> {
             // Get the mother's names from the original record.
             ILXP primary = record.getOriginalRecord();
 
-            final String normalised_mother_forename = normaliseName((String) primary.get(KillieBirth.MOTHERS_FORENAME));
-            final String normalised_mother_maiden_surname = normaliseName((String) primary.get(KillieBirth.MOTHERS_MAIDEN_SURNAME));
+            final String normalised_mother_forename = normaliseName((String) primary.get(BirthFamilyGT.MOTHERS_FORENAME));
+            final String normalised_mother_maiden_surname = normaliseName((String) primary.get(BirthFamilyGT.MOTHERS_MAIDEN_SURNAME));
 
             String bucket_name = concatenate(normalised_father_forename, normalised_father_surname, normalised_mother_forename, normalised_mother_maiden_surname);
             return new String[]{bucket_name};
@@ -114,8 +114,8 @@ public class FFNFLNMFNMMNOverActor extends AbstractBlocker<Role> {
             // Get the FATHER's names from the original record.
             ILXP primary = record.getOriginalRecord();
 
-            final String normalised_father_forename = normaliseName((String) primary.get(KillieBirth.FATHERS_FORENAME));
-            final String normalised_father_surname = normaliseName((String) primary.get(KillieBirth.FATHERS_SURNAME));
+            final String normalised_father_forename = normaliseName((String) primary.get(BirthFamilyGT.FATHERS_FORENAME));
+            final String normalised_father_surname = normaliseName((String) primary.get(BirthFamilyGT.FATHERS_SURNAME));
 
             final String normalised_mother_forename = normaliseName(record.getForename());
             final String normalised_mother_surname = normaliseName(record.getSurname());

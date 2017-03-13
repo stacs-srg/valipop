@@ -2,7 +2,7 @@ package uk.ac.standrews.cs.digitising_scotland.linkage.resolve;
 
 import org.json.JSONException;
 import uk.ac.standrews.cs.digitising_scotland.linkage.RecordFormatException;
-import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.KillieBirth;
+import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.BirthFamilyGT;
 import uk.ac.standrews.cs.digitising_scotland.linkage.resolve.distances.GFNGLNBFNBMNPOMDOMDistanceOverBirth;
 import uk.ac.standrews.cs.digitising_scotland.util.ErrorHandling;
 import uk.ac.standrews.cs.digitising_scotland.util.MTree.DataDistance;
@@ -24,7 +24,7 @@ import java.util.TreeSet;
  */
 public class KilmarnockMTreeBirthBirthWithinDistanceGroundTruthChecker extends KilmarnockMTreeMatcherGroundTruthChecker {
 
-    private  MTree<KillieBirth> birthMTree;
+    private  MTree<BirthFamilyGT> birthMTree;
 
     // Maps
 
@@ -51,11 +51,11 @@ public class KilmarnockMTreeBirthBirthWithinDistanceGroundTruthChecker extends K
 
         System.out.println("Creating M Tree of births by GFNGLNBFNBMNPOMDOMDistanceOverBirth...");
 
-        birthMTree = new MTree<KillieBirth>( new GFNGLNBFNBMNPOMDOMDistanceOverBirth() );
+        birthMTree = new MTree<BirthFamilyGT>( new GFNGLNBFNBMNPOMDOMDistanceOverBirth() );
 
-        IInputStream<KillieBirth> stream = births.getInputStream();
+        IInputStream<BirthFamilyGT> stream = births.getInputStream();
 
-        for (KillieBirth birth : stream) {
+        for (BirthFamilyGT birth : stream) {
 
             birthMTree.add( birth );
         }
@@ -68,7 +68,7 @@ public class KilmarnockMTreeBirthBirthWithinDistanceGroundTruthChecker extends K
      */
     private void formFamilies() {
 
-        IInputStream<KillieBirth> stream;
+        IInputStream<BirthFamilyGT> stream;
         try {
             stream = births.getInputStream();
         } catch (BucketException e) {
@@ -76,10 +76,10 @@ public class KilmarnockMTreeBirthBirthWithinDistanceGroundTruthChecker extends K
             return;
         }
 
-        for (KillieBirth b : stream) {
+        for (BirthFamilyGT b : stream) {
 
             // Calculate the neighbours of b, including b which is found in the rangeSearch
-            List<DataDistance<KillieBirth>> bsNeighbours = birthMTree.rangeSearch(b, 10);  // pronounced b's neighbours.
+            List<DataDistance<BirthFamilyGT>> bsNeighbours = birthMTree.rangeSearch(b, 10);  // pronounced b's neighbours.
 
             // bs_neighbours_families is the set of families of neighbours that are different from bsFamily
             Set<Family> bs_neighbours_families = new TreeSet<Family>();
@@ -87,8 +87,8 @@ public class KilmarnockMTreeBirthBirthWithinDistanceGroundTruthChecker extends K
             Family bsFamily = families.get(b.getId()); // maybe null - is this right????
 
             // Add all of the families from bsNeighbours to bs_neighbours_families
-            for (DataDistance<KillieBirth> dd_to_bs_neighbour : bsNeighbours) {
-                KillieBirth bsNeighbour = dd_to_bs_neighbour.value;
+            for (DataDistance<BirthFamilyGT> dd_to_bs_neighbour : bsNeighbours) {
+                BirthFamilyGT bsNeighbour = dd_to_bs_neighbour.value;
                 Family bs_neighbours_family = families.get(bsNeighbour.getId());
                 if (bs_neighbours_family != null && bs_neighbours_family != bsFamily) {
                     bs_neighbours_families.add(bs_neighbours_family);
@@ -110,14 +110,14 @@ public class KilmarnockMTreeBirthBirthWithinDistanceGroundTruthChecker extends K
             }
 
             //  make all of bsNeighbours be in thisFamily
-            for (DataDistance<KillieBirth> dd : bsNeighbours) {
-                KillieBirth person = dd.value;
+            for (DataDistance<BirthFamilyGT> dd : bsNeighbours) {
+                BirthFamilyGT person = dd.value;
                 families.put(person.getId(), thisFamily);
             }
 
             // if a person was previously in a different family, we merge them into thisFamily
             for (Family bs_neighbours_familiy : bs_neighbours_families) {
-                for (KillieBirth sibling : bs_neighbours_familiy.siblings) {
+                for (BirthFamilyGT sibling : bs_neighbours_familiy.siblings) {
 
                     if (families.containsKey(sibling.getId())) {
                         families.put(sibling.getId(), thisFamily); //  replace person's family with the new one.

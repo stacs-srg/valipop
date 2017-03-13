@@ -30,7 +30,7 @@ public class KilmarnockMTreeMatcherGroundTruthChecker {
     // Repositories and stores
 
     protected static String input_repo_name = "BDM_repo";                             // input repository containing event records
-    protected static String blocked_birth_repo_name = "blocked_birth_repo";           // repository for blocked KillieBirth records
+    protected static String blocked_birth_repo_name = "blocked_birth_repo";           // repository for blocked BirthFamilyGT records
     protected static String FFNFLNMFNMMNPOMDOM_repo_name = "FFNFLNMFNMMNPOMDOM_repo";   // repository for blocked Marriage records
     protected static String FFNFLNMFNMMN_repo_name = "FFNFLNMFNMMN_repo";   // repository for blocked Marriage records
 
@@ -46,7 +46,7 @@ public class KilmarnockMTreeMatcherGroundTruthChecker {
 
     // Bucket declarations
 
-    protected IBucket<KillieBirth> births;                     // Bucket containing birth records (inputs).
+    protected IBucket<BirthFamilyGT> births;                     // Bucket containing birth records (inputs).
     protected IBucket<Marriage> marriages;               // Bucket containing marriage records (inputs).
     protected IBucket<Death> deaths;                     // Bucket containing death records (inputs).
 
@@ -105,7 +105,7 @@ public class KilmarnockMTreeMatcherGroundTruthChecker {
         System.out.println("Store path = " + store_path);
 
         input_repo = store.makeRepository(input_repo_name);
-        blocked_births_repo = store.makeRepository(blocked_birth_repo_name);  // a repo of KillieBirth Buckets of records blocked by parents names, DOM, Place of Marriage.
+        blocked_births_repo = store.makeRepository(blocked_birth_repo_name);  // a repo of BirthFamilyGT Buckets of records blocked by parents names, DOM, Place of Marriage.
         FFNFLNMFNMMNPOMDOM_repo = store.makeRepository(FFNFLNMFNMMNPOMDOM_repo_name);  // a repo of Marriage Buckets
         FFNFLNMFNMMN_repo = store.makeRepository(FFNFLNMFNMMN_repo_name);  // a repo of Marriage Buckets
 
@@ -123,7 +123,7 @@ public class KilmarnockMTreeMatcherGroundTruthChecker {
 
         TypeFactory tf = TypeFactory.getInstance();
 
-        birthType = tf.createType(KillieBirth.class, "birth");
+        birthType = tf.createType(BirthFamilyGT.class, "birth");
         deathType = tf.createType(Death.class, "death");
         marriageType = tf.createType(Marriage.class, "marriage");
         roleType = tf.createType(Role.class, "role");
@@ -167,19 +167,19 @@ public class KilmarnockMTreeMatcherGroundTruthChecker {
      */
     public void listFamilies() throws BucketException {
 
-        IInputStream<KillieBirth> stream = births.getInputStream();
+        IInputStream<BirthFamilyGT> stream = births.getInputStream();
 
         System.out.println("Generated fid\tDemographer fid\tRecord id\tForname\tSurname\tDOB\tPOM\tDOM\tFather's forename\tFather's surname\tMother's forename\tMother's maidenname" );
 
 
-        for (KillieBirth b : stream) {
+        for (BirthFamilyGT b : stream) {
 
             Long key = b.getId();
             Family f = families.get(key);
             if (f == null) {
-                System.out.println("" + "\t" + b.getString(KillieBirth.FAMILY) + "\t" + b.getString(KillieBirth.ORIGINAL_ID) + "\t" + b.getString(KillieBirth.FORENAME) + "\t" + b.getString(KillieBirth.SURNAME) + "\t" + b.getDOB() + "\t" + b.getPlaceOfMarriage() + "\t" + b.getDateOfMarriage() + "\t" + b.getFathersForename() + "\t" + b.getFathersSurname() + "\t" + b.getMothersForename() + "\t" + b.getMothersMaidenSurname());
+                System.out.println("" + "\t" + b.getString(BirthFamilyGT.FAMILY) + "\t" + b.getString(BirthFamilyGT.ORIGINAL_ID) + "\t" + b.getString(BirthFamilyGT.FORENAME) + "\t" + b.getString(BirthFamilyGT.SURNAME) + "\t" + b.getDOB() + "\t" + b.getPlaceOfMarriage() + "\t" + b.getDateOfMarriage() + "\t" + b.getFathersForename() + "\t" + b.getFathersSurname() + "\t" + b.getMothersForename() + "\t" + b.getMothersMaidenSurname());
             } else {
-                System.out.println(f.id + "\t" + b.getString(KillieBirth.FAMILY) + "\t" + b.getString(KillieBirth.ORIGINAL_ID) + "\t" + b.getString(KillieBirth.FORENAME) + "\t" + b.getString(KillieBirth.SURNAME) + "\t" + b.getDOB() + "\t" + b.getPlaceOfMarriage() + "\t" + b.getDateOfMarriage() + "\t" + b.getFathersForename() + "\t" + b.getFathersSurname() + "\t" + b.getMothersForename() + "\t" + b.getMothersMaidenSurname());
+                System.out.println(f.id + "\t" + b.getString(BirthFamilyGT.FAMILY) + "\t" + b.getString(BirthFamilyGT.ORIGINAL_ID) + "\t" + b.getString(BirthFamilyGT.FORENAME) + "\t" + b.getString(BirthFamilyGT.SURNAME) + "\t" + b.getDOB() + "\t" + b.getPlaceOfMarriage() + "\t" + b.getDateOfMarriage() + "\t" + b.getFathersForename() + "\t" + b.getFathersSurname() + "\t" + b.getMothersForename() + "\t" + b.getMothersMaidenSurname());
             }
         }
     }
