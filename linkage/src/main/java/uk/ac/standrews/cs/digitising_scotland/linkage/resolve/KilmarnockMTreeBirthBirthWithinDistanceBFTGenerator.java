@@ -32,6 +32,7 @@ public class KilmarnockMTreeBirthBirthWithinDistanceBFTGenerator extends Kilmarn
     }
 
     private void compute() throws RepositoryException, BucketException, IOException {
+
         System.out.println("Creating Birth MTree");
         long time = System.currentTimeMillis();
         createBirthMTreeOverGFNGLNBFNBMNPOMDOM();
@@ -39,8 +40,10 @@ public class KilmarnockMTreeBirthBirthWithinDistanceBFTGenerator extends Kilmarn
         System.out.println("Created Marriage MTree in " + elapsed + "s");
 
         System.out.println("Forming families from Birth-Birth links");
-
+        time = System.currentTimeMillis();
         dumpBFT();
+        elapsed =  ( System.currentTimeMillis() - time ) / 1000 ;
+        System.out.println("Created JSON in" + elapsed + "s");
 
         System.out.println("Finished");
     }
@@ -69,11 +72,11 @@ public class KilmarnockMTreeBirthBirthWithinDistanceBFTGenerator extends Kilmarn
                 first = false;
             }
             // Calculate the neighbours of b, including b which is found in the rangeSearch
-            List<DataDistance<KillieBirth>> bsNeighbours = birthMTree.rangeSearch(b, 10);  // pronounced b's neighbours.
+            List<DataDistance<KillieBirth>> bsNeighbours = birthMTree.rangeSearch(b, 5);  // pronounced b's neighbours.
 
-            System.out.print(b.getId() + ": [");
+            System.out.print("\"" + b.getId() + "\" : [");
             for (int i = 0; i < bsNeighbours.size(); i++) {
-                System.out.print("(" + bsNeighbours.get(i).value.getId() + ", " + bsNeighbours.get(i).distance + ")");
+                System.out.print("[" + bsNeighbours.get(i).value.getId() + ", " + Math.round(bsNeighbours.get(i).distance)+ "]");
                 if (i != bsNeighbours.size() - 1) {
                     System.out.print(",");
                 }
