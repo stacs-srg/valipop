@@ -2,7 +2,7 @@ package uk.ac.standrews.cs.digitising_scotland.linkage.resolve;
 
 import org.json.JSONException;
 import uk.ac.standrews.cs.digitising_scotland.linkage.RecordFormatException;
-import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.KillieBirth;
+import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.BirthFamilyGT;
 import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.Marriage;
 import uk.ac.standrews.cs.digitising_scotland.linkage.resolve.distances.GFNGLNBFNBMNPOMDOMDistanceOverMarriage;
 import uk.ac.standrews.cs.digitising_scotland.util.ErrorHandling;
@@ -62,7 +62,7 @@ public class KilmarnockMTreeBirthMarriageRangeCSVGenerator extends KilmarnockMTr
      */
     private void outputRangeSearchMatchesBetweenBirthsAndMarriages() {
 
-        IInputStream<KillieBirth> stream;
+        IInputStream<BirthFamilyGT> stream;
         try {
             stream = births.getInputStream();
         } catch (BucketException e) {
@@ -70,7 +70,7 @@ public class KilmarnockMTreeBirthMarriageRangeCSVGenerator extends KilmarnockMTr
             return;
         }
 
-        for (KillieBirth b : stream) {
+        for (BirthFamilyGT b : stream) {
 
             Marriage marriage_query = new Marriage();
             marriage_query.put( Marriage.GROOM_FORENAME,b.getFathersForename() );
@@ -79,9 +79,9 @@ public class KilmarnockMTreeBirthMarriageRangeCSVGenerator extends KilmarnockMTr
             marriage_query.put( Marriage.BRIDE_SURNAME,b.getMothersMaidenSurname() );
             marriage_query.put( Marriage.PLACE_OF_MARRIAGE,b.getPlaceOfMarriage() );
 
-            marriage_query.put( Marriage.MARRIAGE_DAY,b.getString( KillieBirth.PARENTS_DAY_OF_MARRIAGE ) );
-            marriage_query.put( Marriage.MARRIAGE_MONTH, b.getString( KillieBirth.PARENTS_MONTH_OF_MARRIAGE ) );
-            marriage_query.put( Marriage.MARRIAGE_YEAR, b.getString( KillieBirth.PARENTS_YEAR_OF_MARRIAGE ) );
+            marriage_query.put( Marriage.MARRIAGE_DAY,b.getString( BirthFamilyGT.PARENTS_DAY_OF_MARRIAGE ) );
+            marriage_query.put( Marriage.MARRIAGE_MONTH, b.getString( BirthFamilyGT.PARENTS_MONTH_OF_MARRIAGE ) );
+            marriage_query.put( Marriage.MARRIAGE_YEAR, b.getString( BirthFamilyGT.PARENTS_YEAR_OF_MARRIAGE ) );
 
             for( int range = 0; range < RANGE_MAX;  ) {
 

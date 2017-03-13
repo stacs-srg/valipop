@@ -36,7 +36,7 @@ public class KilmarnockLinker {
     // Repositories and stores
 
     private static String input_repo_name = "BDM_repo";                             // input repository containing event records
-    private static String blocked_birth_repo_name = "blocked_birth_repo";           // repository for blocked KillieBirth records
+    private static String blocked_birth_repo_name = "blocked_birth_repo";           // repository for blocked BirthFamilyGT records
     private static String FFNFLNMFNMMNPOMDOM_repo_name = "FFNFLNMFNMMNPOMDOM_repo";   // repository for blocked Marriage records
     private static String FFNFLNMFNMMN_repo_name = "FFNFLNMFNMMN_repo";   // repository for blocked Marriage records
 
@@ -52,7 +52,7 @@ public class KilmarnockLinker {
 
     // Bucket declarations
 
-    private IBucket<KillieBirth> births;                     // Bucket containing birth records (inputs).
+    private IBucket<BirthFamilyGT> births;                     // Bucket containing birth records (inputs).
     private IBucket<Marriage> marriages;               // Bucket containing marriage records (inputs).
     private IBucket<Death> deaths;                     // Bucket containing death records (inputs).
 
@@ -121,7 +121,7 @@ public class KilmarnockLinker {
         System.out.println("Store path = " + store_path);
 
         input_repo = store.makeRepository(input_repo_name);
-        blocked_births_repo = store.makeRepository(blocked_birth_repo_name);  // a repo of KillieBirth Buckets of records blocked by parents names, DOM, Place of Marriage.
+        blocked_births_repo = store.makeRepository(blocked_birth_repo_name);  // a repo of BirthFamilyGT Buckets of records blocked by parents names, DOM, Place of Marriage.
         FFNFLNMFNMMNPOMDOM_repo = store.makeRepository(FFNFLNMFNMMNPOMDOM_repo_name);  // a repo of Marriage Buckets
         FFNFLNMFNMMN_repo = store.makeRepository(FFNFLNMFNMMN_repo_name);  // a repo of Marriage Buckets
 
@@ -139,7 +139,7 @@ public class KilmarnockLinker {
 
         TypeFactory tf = TypeFactory.getInstance();
 
-        birthType = tf.createType(KillieBirth.class, "birth");
+        birthType = tf.createType(BirthFamilyGT.class, "birth");
         deathType = tf.createType(Death.class, "death");
         marriageType = tf.createType(Marriage.class, "marriage");
         roleType = tf.createType(Role.class, "role");
@@ -188,7 +188,7 @@ public class KilmarnockLinker {
 
     private void checkIngestedBirths() {
 
-        IInputStream<KillieBirth> stream = null;
+        IInputStream<BirthFamilyGT> stream = null;
         try {
             stream = births.getInputStream();
         }
@@ -199,16 +199,16 @@ public class KilmarnockLinker {
 
         System.out.println("Checking Births");
         // code should look like this:
-        //        for (KillieBirth birth_record : stream) {
-        //            System.out.println( "KillieBirth for: " + birth_record.get( KillieBirth.FORENAME ) + " " + birth_record.get( KillieBirth.SURNAME ) + " m: " + birth_record.get( KillieBirth.MOTHERS_FORENAME ) + " " + birth_record.get( KillieBirth.MOTHERS_SURNAME ) + " f: " + birth_record.get( KillieBirth.FATHERS_FORENAME ) + " " + birth_record.get( KillieBirth.FATHERS_SURNAME ) + " read OK");
+        //        for (BirthFamilyGT birth_record : stream) {
+        //            System.out.println( "BirthFamilyGT for: " + birth_record.get( BirthFamilyGT.FORENAME ) + " " + birth_record.get( BirthFamilyGT.SURNAME ) + " m: " + birth_record.get( BirthFamilyGT.MOTHERS_FORENAME ) + " " + birth_record.get( BirthFamilyGT.MOTHERS_SURNAME ) + " f: " + birth_record.get( BirthFamilyGT.FATHERS_FORENAME ) + " " + birth_record.get( BirthFamilyGT.FATHERS_SURNAME ) + " read OK");
         //        }
 
         for (LXP l : stream) {
-            KillieBirth birth_record = null;
+            BirthFamilyGT birth_record = null;
             try {
-                birth_record = (KillieBirth) l;
-                System.out.println("KillieBirth for: " + birth_record.get(KillieBirth.FORENAME) + " " + birth_record.get(KillieBirth.SURNAME) + " m: " + birth_record.get(KillieBirth.MOTHERS_FORENAME) + " " + birth_record.get(KillieBirth.MOTHERS_SURNAME) + " f: " + birth_record.get(KillieBirth.FATHERS_FORENAME) + " " + birth_record
-                                .get(KillieBirth.FATHERS_SURNAME) + " read OK");
+                birth_record = (BirthFamilyGT) l;
+                System.out.println("BirthFamilyGT for: " + birth_record.get(BirthFamilyGT.FORENAME) + " " + birth_record.get(BirthFamilyGT.SURNAME) + " m: " + birth_record.get(BirthFamilyGT.MOTHERS_FORENAME) + " " + birth_record.get(BirthFamilyGT.MOTHERS_SURNAME) + " f: " + birth_record.get(BirthFamilyGT.FATHERS_FORENAME) + " " + birth_record
+                                .get(BirthFamilyGT.FATHERS_SURNAME) + " read OK");
 
             }
             catch (ClassCastException e) {
@@ -257,7 +257,7 @@ public class KilmarnockLinker {
         }
     }
 
-    private void createRoles(IBucket<KillieBirth> births, IBucket<Death> deaths, IBucket<Marriage> marriages) {
+    private void createRoles(IBucket<BirthFamilyGT> births, IBucket<Death> deaths, IBucket<Marriage> marriages) {
 
         System.out.println("Creating roles from birth records");
         createRolesFromBirths(births);
@@ -336,13 +336,13 @@ public class KilmarnockLinker {
      */
     private void printFamilies() {
 
-        Iterator<IBucket<KillieBirth>> iter = blocked_births_repo.getIterator(birthFactory);
+        Iterator<IBucket<BirthFamilyGT>> iter = blocked_births_repo.getIterator(birthFactory);
 
         while (iter.hasNext()) {
-            IBucket<KillieBirth> bucket = iter.next();
+            IBucket<BirthFamilyGT> bucket = iter.next();
 
             String bucket_name = bucket.getName();
-            System.out.println("KillieBirth bucket name: " + bucket_name);
+            System.out.println("BirthFamilyGT bucket name: " + bucket_name);
             // Look for parents with same blocking key
             System.out.println("Parents: ");
             if (FFNFLNMFNMMNPOMDOM_repo.bucketExists(bucket_name)) {
@@ -352,7 +352,7 @@ public class KilmarnockLinker {
             System.out.println("Children: ");
             int children_count = 0;
             try {
-                for (KillieBirth birth : bucket.getInputStream()) {
+                for (BirthFamilyGT birth : bucket.getInputStream()) {
                     System.out.println("\t" + birth.toString());
                     children_count++;
                 }
@@ -447,16 +447,16 @@ public class KilmarnockLinker {
      */
     private void formFamilies() {
 
-        Iterator<IBucket<KillieBirth>> iter = blocked_births_repo.getIterator(birthFactory);
+        Iterator<IBucket<BirthFamilyGT>> iter = blocked_births_repo.getIterator(birthFactory);
 
         while (iter.hasNext()) {
 
-            IBucket<KillieBirth> bucket = iter.next();
+            IBucket<BirthFamilyGT> bucket = iter.next();
             String name = bucket.getName();
-            List<KillieBirth> siblings = new ArrayList<>();
+            List<BirthFamilyGT> siblings = new ArrayList<>();
 
             try {
-                for (KillieBirth birth : bucket.getInputStream()) {
+                for (BirthFamilyGT birth : bucket.getInputStream()) {
                     siblings.add(birth);
                 }
             }
@@ -476,7 +476,7 @@ public class KilmarnockLinker {
      * @param parents_marriage - a collection of marriage certificates of the potential parents of the family from Marriage blocking
      * @param children - a collection of Births from SFNLNFFNFLNMFNDoMOverBirth blocking
      */
-    private void create_family(List<Marriage> parents_marriage, List<KillieBirth> children) {
+    private void create_family(List<Marriage> parents_marriage, List<BirthFamilyGT> children) {
 
     }
 
@@ -525,10 +525,10 @@ public class KilmarnockLinker {
      *
      * @param bucket - the bucket from which to take the inputs records
      */
-    private void createRolesFromBirths(IBucket<KillieBirth> bucket) {
+    private void createRolesFromBirths(IBucket<BirthFamilyGT> bucket) {
 
         IOutputStream<Role> role_stream = roles.getOutputStream();
-        IInputStream<KillieBirth> stream = null;
+        IInputStream<BirthFamilyGT> stream = null;
         try {
             stream = bucket.getInputStream();
         }
@@ -537,9 +537,9 @@ public class KilmarnockLinker {
             return;
         }
 
-        for (KillieBirth birth_record : stream) {
+        for (BirthFamilyGT birth_record : stream) {
 
-            StoreReference<KillieBirth> birth_record_ref = new StoreReference<KillieBirth>(input_repo, bucket, birth_record);
+            StoreReference<BirthFamilyGT> birth_record_ref = new StoreReference<BirthFamilyGT>(input_repo, bucket, birth_record);
 
             Role child = null;
             Role father = null;

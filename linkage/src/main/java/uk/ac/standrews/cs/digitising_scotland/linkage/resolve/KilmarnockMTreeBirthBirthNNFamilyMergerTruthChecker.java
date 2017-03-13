@@ -2,7 +2,9 @@ package uk.ac.standrews.cs.digitising_scotland.linkage.resolve;
 
 import org.json.JSONException;
 import uk.ac.standrews.cs.digitising_scotland.linkage.RecordFormatException;
+import uk.ac.standrews.cs.digitising_scotland.linkage.resolve.distances.GFNGLNBFNBMNPOMDOMDistanceOverMarriage;
 import uk.ac.standrews.cs.digitising_scotland.util.ErrorHandling;
+import uk.ac.standrews.cs.digitising_scotland.util.MTree.MTree;
 import uk.ac.standrews.cs.storr.impl.exceptions.BucketException;
 import uk.ac.standrews.cs.storr.impl.exceptions.RepositoryException;
 import uk.ac.standrews.cs.storr.impl.exceptions.StoreException;
@@ -34,6 +36,12 @@ public class KilmarnockMTreeBirthBirthNNFamilyMergerTruthChecker extends Kilmarn
     }
 
     private void mergeFamilies() {
+        MTree<Family> familyMTree = new MTree( new GFNGLNBFNBMNPOMDOMDistanceOverMarriage() );
+        for( Family f : families.values() ) {
+
+        }
+
+
     }
 
     //***********************************************************************************

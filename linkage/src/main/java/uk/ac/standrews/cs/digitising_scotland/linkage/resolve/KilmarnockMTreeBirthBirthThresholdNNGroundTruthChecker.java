@@ -2,7 +2,7 @@ package uk.ac.standrews.cs.digitising_scotland.linkage.resolve;
 
 import org.json.JSONException;
 import uk.ac.standrews.cs.digitising_scotland.linkage.RecordFormatException;
-import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.KillieBirth;
+import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.BirthFamilyGT;
 import uk.ac.standrews.cs.digitising_scotland.linkage.resolve.distances.GFNGLNBFNBMNPOMDOMDistanceOverBirth;
 import uk.ac.standrews.cs.digitising_scotland.util.ErrorHandling;
 import uk.ac.standrews.cs.digitising_scotland.util.MTree.DataDistance;
@@ -22,7 +22,7 @@ import java.util.*;
  */
 public class KilmarnockMTreeBirthBirthThresholdNNGroundTruthChecker extends KilmarnockMTreeMatcherGroundTruthChecker {
 
-    private  MTree<KillieBirth> birthMTree;
+    private  MTree<BirthFamilyGT> birthMTree;
 
     // Maps
 
@@ -53,11 +53,11 @@ public class KilmarnockMTreeBirthBirthThresholdNNGroundTruthChecker extends Kilm
 
         System.out.println("Creating M Tree of births by GFNGLNBFNBMNPOMDOMDistanceOverBirth...");
 
-        birthMTree = new MTree<KillieBirth>( new GFNGLNBFNBMNPOMDOMDistanceOverBirth() );
+        birthMTree = new MTree<BirthFamilyGT>( new GFNGLNBFNBMNPOMDOMDistanceOverBirth() );
 
-        IInputStream<KillieBirth> stream = births.getInputStream();
+        IInputStream<BirthFamilyGT> stream = births.getInputStream();
 
-        for (KillieBirth birth : stream) {
+        for (BirthFamilyGT birth : stream) {
 
             birthMTree.add( birth );
         }
@@ -70,7 +70,7 @@ public class KilmarnockMTreeBirthBirthThresholdNNGroundTruthChecker extends Kilm
      */
     protected void formFamilies() {
 
-        IInputStream<KillieBirth> stream;
+        IInputStream<BirthFamilyGT> stream;
         try {
             stream = births.getInputStream();
         } catch (BucketException e) {
@@ -78,9 +78,9 @@ public class KilmarnockMTreeBirthBirthThresholdNNGroundTruthChecker extends Kilm
             return;
         }
 
-        for (KillieBirth to_match : stream) {
+        for (BirthFamilyGT to_match : stream) {
 
-            DataDistance<KillieBirth> matched = birthMTree.nearestNeighbour( to_match );
+            DataDistance<BirthFamilyGT> matched = birthMTree.nearestNeighbour( to_match );
 
             if (matched.distance < 8.0F && matched.value != to_match ) {
                 add_births_to_map(inferred_family_map, to_match, matched);
@@ -96,12 +96,12 @@ public class KilmarnockMTreeBirthBirthThresholdNNGroundTruthChecker extends Kilm
 
         for( Family f : families ) {
             if( ! printed_already.contains( f ) ) {
-                HashMap<KillieBirth, List<DataDistance<KillieBirth>>> family_distances = f.distances;
-                for( KillieBirth b : family_distances.keySet() ) {
-                    System.out.print( f.id + "\t" + b.getString( KillieBirth.FAMILY  ) + "\t" + b.getId() + "\t" + b.getString( KillieBirth.FORENAME) + "\t" + b.getString( KillieBirth.SURNAME) + "\t" );
-                    List<DataDistance<KillieBirth>> distances = family_distances.get( b );
-                    for( DataDistance<KillieBirth> dd : distances ) {
-                        System.out.print( dd.distance + "\t" + dd.value.getString( KillieBirth.FORENAME) + "\t" + dd.value.getString( KillieBirth.SURNAME) + "\t" );
+                HashMap<BirthFamilyGT, List<DataDistance<BirthFamilyGT>>> family_distances = f.distances;
+                for( BirthFamilyGT b : family_distances.keySet() ) {
+                    System.out.print( f.id + "\t" + b.getString( BirthFamilyGT.FAMILY  ) + "\t" + b.getId() + "\t" + b.getString( BirthFamilyGT.FORENAME) + "\t" + b.getString( BirthFamilyGT.SURNAME) + "\t" );
+                    List<DataDistance<BirthFamilyGT>> distances = family_distances.get( b );
+                    for( DataDistance<BirthFamilyGT> dd : distances ) {
+                        System.out.print( dd.distance + "\t" + dd.value.getString( BirthFamilyGT.FORENAME) + "\t" + dd.value.getString( BirthFamilyGT.SURNAME) + "\t" );
                     }
                     System.out.println();
                 }
@@ -116,9 +116,9 @@ public class KilmarnockMTreeBirthBirthThresholdNNGroundTruthChecker extends Kilm
      * @param searched the record that was used to search for a match
      * @param found_dd the data distance that was matched in the search
      */
-    private void add_births_to_map(HashMap<String, Family> map, KillieBirth searched, DataDistance<KillieBirth> found_dd ) {
+    private void add_births_to_map(HashMap<String, Family> map, BirthFamilyGT searched, DataDistance<BirthFamilyGT> found_dd ) {
 
-        KillieBirth found = found_dd.value;
+        BirthFamilyGT found = found_dd.value;
 
         String searched_key = String.valueOf( searched.getId() );
         String found_key = String.valueOf( found.getId() );

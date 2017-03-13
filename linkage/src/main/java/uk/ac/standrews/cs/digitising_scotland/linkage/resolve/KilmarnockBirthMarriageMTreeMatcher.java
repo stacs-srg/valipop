@@ -32,7 +32,7 @@ public abstract class KilmarnockBirthMarriageMTreeMatcher {
     // Repositories and stores
 
     private static String input_repo_name = "BDM_repo";                             // input repository containing event records
-    private static String blocked_birth_repo_name = "blocked_birth_repo";           // repository for blocked KillieBirth records
+    private static String blocked_birth_repo_name = "blocked_birth_repo";           // repository for blocked BirthFamilyGT records
     private static String FFNFLNMFNMMNPOMDOM_repo_name = "FFNFLNMFNMMNPOMDOM_repo";   // repository for blocked Marriage records
     private static String FFNFLNMFNMMN_repo_name = "FFNFLNMFNMMN_repo";   // repository for blocked Marriage records
 
@@ -48,7 +48,7 @@ public abstract class KilmarnockBirthMarriageMTreeMatcher {
 
     // Bucket declarations
 
-    private IBucket<KillieBirth> births;                     // Bucket containing birth records (inputs).
+    private IBucket<BirthFamilyGT> births;                     // Bucket containing birth records (inputs).
     private IBucket<Marriage> marriages;               // Bucket containing marriage records (inputs).
     private IBucket<Death> deaths;                     // Bucket containing death records (inputs).
 
@@ -112,7 +112,7 @@ public abstract class KilmarnockBirthMarriageMTreeMatcher {
         System.out.println("Store path = " + store_path);
 
         input_repo = store.makeRepository(input_repo_name);
-        blocked_births_repo = store.makeRepository(blocked_birth_repo_name);  // a repo of KillieBirth Buckets of records blocked by parents names, DOM, Place of Marriage.
+        blocked_births_repo = store.makeRepository(blocked_birth_repo_name);  // a repo of BirthFamilyGT Buckets of records blocked by parents names, DOM, Place of Marriage.
         FFNFLNMFNMMNPOMDOM_repo = store.makeRepository(FFNFLNMFNMMNPOMDOM_repo_name);  // a repo of Marriage Buckets
         FFNFLNMFNMMN_repo = store.makeRepository(FFNFLNMFNMMN_repo_name);  // a repo of Marriage Buckets
 
@@ -130,7 +130,7 @@ public abstract class KilmarnockBirthMarriageMTreeMatcher {
 
         TypeFactory tf = TypeFactory.getInstance();
 
-        birthType = tf.createType(KillieBirth.class, "birth");
+        birthType = tf.createType(BirthFamilyGT.class, "birth");
         deathType = tf.createType(Death.class, "death");
         marriageType = tf.createType(Marriage.class, "marriage");
         roleType = tf.createType(Role.class, "role");
@@ -178,7 +178,7 @@ public abstract class KilmarnockBirthMarriageMTreeMatcher {
 
     private void checkIngestedBirths() {
 
-        IInputStream<KillieBirth> stream = null;
+        IInputStream<BirthFamilyGT> stream = null;
         try {
             stream = births.getInputStream();
         }
@@ -188,11 +188,11 @@ public abstract class KilmarnockBirthMarriageMTreeMatcher {
         }
 
         for (LXP l : stream) {
-            KillieBirth birth_record = null;
+            BirthFamilyGT birth_record = null;
             try {
-                birth_record = (KillieBirth) l;
-                System.out.println("KillieBirth for: " + birth_record.get(KillieBirth.FORENAME) + " " + birth_record.get(KillieBirth.SURNAME) + " m: " + birth_record.get(KillieBirth.MOTHERS_FORENAME) + " " + birth_record.get(KillieBirth.MOTHERS_SURNAME) + " f: " + birth_record.get(KillieBirth.FATHERS_FORENAME) + " " + birth_record
-                                .get(KillieBirth.FATHERS_SURNAME) + " read OK");
+                birth_record = (BirthFamilyGT) l;
+                System.out.println("BirthFamilyGT for: " + birth_record.get(BirthFamilyGT.FORENAME) + " " + birth_record.get(BirthFamilyGT.SURNAME) + " m: " + birth_record.get(BirthFamilyGT.MOTHERS_FORENAME) + " " + birth_record.get(BirthFamilyGT.MOTHERS_SURNAME) + " f: " + birth_record.get(BirthFamilyGT.FATHERS_FORENAME) + " " + birth_record
+                                .get(BirthFamilyGT.FATHERS_SURNAME) + " read OK");
 
             }
             catch (ClassCastException e) {

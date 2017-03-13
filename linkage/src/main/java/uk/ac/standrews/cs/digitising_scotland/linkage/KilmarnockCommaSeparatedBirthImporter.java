@@ -13,7 +13,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-import static uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.KillieBirth.*;
+import static uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.BirthFamilyGT.*;
 
 /**
  * Utility classes for importing records in digitising scotland format
@@ -92,12 +92,12 @@ public class KilmarnockCommaSeparatedBirthImporter extends KilmarnockCommaSepara
      * @throws RecordFormatException
      * @throws BucketException
      */
-    public static int importDigitisingScotlandBirths(IBucket<KillieBirth> births, String filename, ArrayList<Long> oids) throws RecordFormatException, IOException, BucketException, IllegalKeyException {
+    public static int importDigitisingScotlandBirths(IBucket<BirthFamilyGT> births, String filename, ArrayList<Long> oids) throws RecordFormatException, IOException, BucketException, IllegalKeyException {
 
         int count = 0;
         DataSet data = new DataSet(Paths.get(filename));
         for (List<String> record : data.getRecords()) {
-            KillieBirth b = importDigitisingScotlandBirth(data, record);
+            BirthFamilyGT b = importDigitisingScotlandBirth(data, record);
             try {
                 births.makePersistent(b);
                 oids.add(b.getId());
@@ -114,9 +114,9 @@ public class KilmarnockCommaSeparatedBirthImporter extends KilmarnockCommaSepara
     /**
      * Fills in a OID record data from a file.
      */
-    private static KillieBirth importDigitisingScotlandBirth(DataSet data, List<String> record) throws IOException, RecordFormatException, IllegalKeyException {
+    private static BirthFamilyGT importDigitisingScotlandBirth(DataSet data, List<String> record) throws IOException, RecordFormatException, IllegalKeyException {
 
-        KillieBirth birth = new KillieBirth();
+        BirthFamilyGT birth = new BirthFamilyGT();
 
         addAvailableSingleFields(data, record, birth, RECORD_LABEL_MAP);
         addAvailableNormalisedFields(data, record, birth);
@@ -126,7 +126,7 @@ public class KilmarnockCommaSeparatedBirthImporter extends KilmarnockCommaSepara
         return birth;
     }
 
-    private static void addAvailableCompoundFields(final DataSet data, final List<String> record, final KillieBirth birth) {
+    private static void addAvailableCompoundFields(final DataSet data, final List<String> record, final BirthFamilyGT birth) {
 
         birth.put(BIRTH_ADDRESS, combineFields(data, record, "address 1", "address 2", "address 3"));
         birth.put(INFORMANT, combineFields(data, record, "forename of informant", "surname of informant"));
@@ -135,7 +135,7 @@ public class KilmarnockCommaSeparatedBirthImporter extends KilmarnockCommaSepara
         // place of parent's marriage 1 is mostly the town name with some Nas and ngs plus some random stuff - use this for now,
     }
 
-    private static void addAvailableNormalisedFields(DataSet data, List<String> record, KillieBirth birth) {
+    private static void addAvailableNormalisedFields(DataSet data, List<String> record, BirthFamilyGT birth) {
 
         birth.put(BIRTH_MONTH, normaliseDates.normaliseMonth(data.getValue(record, "month")));
     }

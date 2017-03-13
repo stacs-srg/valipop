@@ -9,9 +9,12 @@ import uk.ac.standrews.cs.storr.types.LXPBaseType;
 import uk.ac.standrews.cs.storr.types.LXP_SCALAR;
 
 /**
+ *
+ * Birth Record extended wih Family ground truth for processing Kilmarnock and Isle of Skye datasets
+ *
  * Created by al on 03/10/2014.
  */
-public class KillieBirth extends AbstractLXP {
+public class BirthFamilyGT extends AbstractLXP {
 
     @LXP_SCALAR(type = LXPBaseType.STRING)
     public static final String ORIGINAL_ID = "ORIGINAL_ID";
@@ -112,12 +115,12 @@ public class KillieBirth extends AbstractLXP {
     @LXP_SCALAR(type = LXPBaseType.STRING)
     public static final String FAMILY_BEWARE = "family beware";
 
-    public KillieBirth() {
+    public BirthFamilyGT() {
 
         super();
     }
 
-    public KillieBirth(long persistent_Object_id, JSONReader reader, IRepository repository, IBucket bucket) throws PersistentObjectException, IllegalKeyException {
+    public BirthFamilyGT(long persistent_Object_id, JSONReader reader, IRepository repository, IBucket bucket) throws PersistentObjectException, IllegalKeyException {
 
         super(persistent_Object_id, reader, repository, bucket);
     }

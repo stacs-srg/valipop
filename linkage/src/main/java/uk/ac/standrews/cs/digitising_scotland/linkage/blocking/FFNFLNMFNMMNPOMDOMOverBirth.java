@@ -15,9 +15,9 @@ import java.io.*;
  * These are unique tags for all vital event records.
  * Created by al on 30/8/16
  */
-public class FFNFLNMFNMMNPOMDOMOverBirth extends AbstractBlocker<KillieBirth> {
+public class FFNFLNMFNMMNPOMDOMOverBirth extends AbstractBlocker<BirthFamilyGT> {
 
-    public FFNFLNMFNMMNPOMDOMOverBirth(final IBucket<KillieBirth> birthsBucket, final IRepository output_repo, ILXPFactory<KillieBirth> tFactory) throws BucketException, RepositoryException, IOException {
+    public FFNFLNMFNMMNPOMDOMOverBirth(final IBucket<BirthFamilyGT> birthsBucket, final IRepository output_repo, ILXPFactory<BirthFamilyGT> tFactory) throws BucketException, RepositoryException, IOException {
 
         super(birthsBucket.getInputStream(), output_repo, tFactory);
     }
@@ -26,7 +26,7 @@ public class FFNFLNMFNMMNPOMDOMOverBirth extends AbstractBlocker<KillieBirth> {
      * @param record - a Person record to be blocked
      * @return the blocking keys based on Father's first name, last name, Mother's first name, last name, place of marriage
      */
-    public String[] determineBlockedBucketNamesForRecord(final KillieBirth record) throws NoSuitableBucketException {
+    public String[] determineBlockedBucketNamesForRecord(final BirthFamilyGT record) throws NoSuitableBucketException {
 
         // Note will concat null strings into key if any fields are null - working hypothesis - this doesn't matter.
 
