@@ -5,6 +5,7 @@ import uk.ac.standrews.cs.digitising_scotland.linkage.RecordFormatException;
 import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.KillieBirth;
 import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.Marriage;
 import uk.ac.standrews.cs.digitising_scotland.linkage.resolve.distances.GFNGLNBFNBMNPOMDOMDistanceOverMarriage;
+import uk.ac.standrews.cs.digitising_scotland.util.ErrorHandling;
 import uk.ac.standrews.cs.digitising_scotland.util.MTree.DataDistance;
 import uk.ac.standrews.cs.digitising_scotland.util.MTree.MTree;
 import uk.ac.standrews.cs.storr.impl.exceptions.BucketException;
@@ -99,11 +100,14 @@ public class KilmarnockMTreeBirthMarriageRangeCSVGenerator extends KilmarnockMTr
 
     public static void main(String[] args) throws Exception {
 
-        System.out.println( "Running KilmarnockMTreeBirthMarriageRangeCSVGenerator" );
+        if( args.length < 3 ) {
+            ErrorHandling.error( "Usage: run with births_source_path deaths_source_path marriages_source_path");
+        }
 
-        String births_source_path = "/Digitising Scotland/KilmarnockBDM/births.csv";
-        String deaths_source_path = "/Digitising Scotland/KilmarnockBDM/deaths.csv";
-        String marriages_source_path = "/Digitising Scotland/KilmarnockBDM/marriages.csv";
+        System.out.println( "Running KilmarnockMTreeBirthMarriageRangeCSVGenerator" );
+        String births_source_path = args[0];
+        String deaths_source_path = args[1];
+        String marriages_source_path = args[2];
 
         new KilmarnockMTreeBirthMarriageRangeCSVGenerator(births_source_path, deaths_source_path, marriages_source_path);
     }
