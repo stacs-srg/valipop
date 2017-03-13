@@ -33,6 +33,7 @@ public class KilmarnockMTreeBirthBirthWithinDistanceBFTGenerator extends Kilmarn
     }
 
     private void compute() throws RepositoryException, BucketException, IOException {
+
         System.out.println("Creating Birth MTree");
         long time = System.currentTimeMillis();
         createBirthMTreeOverGFNGLNBFNBMNPOMDOM();
@@ -40,8 +41,10 @@ public class KilmarnockMTreeBirthBirthWithinDistanceBFTGenerator extends Kilmarn
         System.out.println("Created Marriage MTree in " + elapsed + "s");
 
         System.out.println("Forming families from Birth-Birth links");
-
+        time = System.currentTimeMillis();
         dumpBFT();
+        elapsed =  ( System.currentTimeMillis() - time ) / 1000 ;
+        System.out.println("Created JSON in" + elapsed + "s");
 
         System.out.println("Finished");
     }
@@ -72,9 +75,9 @@ public class KilmarnockMTreeBirthBirthWithinDistanceBFTGenerator extends Kilmarn
             // Calculate the neighbours of b, including b which is found in the rangeSearch
             List<DataDistance<BirthFamilyGT>> bsNeighbours = birthMTree.rangeSearch(b, 10);  // pronounced b's neighbours.
 
-            System.out.print(b.getId() + ": [");
+            System.out.print("\"" + b.getId() + "\" : [");
             for (int i = 0; i < bsNeighbours.size(); i++) {
-                System.out.print("(" + bsNeighbours.get(i).value.getId() + ", " + bsNeighbours.get(i).distance + ")");
+                System.out.print("[" + bsNeighbours.get(i).value.getId() + ", " + Math.round(bsNeighbours.get(i).distance)+ "]");
                 if (i != bsNeighbours.size() - 1) {
                     System.out.print(",");
                 }
@@ -100,71 +103,6 @@ public class KilmarnockMTreeBirthBirthWithinDistanceBFTGenerator extends Kilmarn
 
     }
 
-
-    /**
-     * Try and form families from Birth M Tree data_array
-     */
-    private void formFamilies() {
-
-        IInputStream<BirthFamilyGT> stream;
-        try {
-            stream = births.getInputStream();
-        } catch (BucketException e) {
-            System.out.println("Exception whilst getting births");
-            return;
-        }
-
-        for (BirthFamilyGT b : stream) {
-
-            // Calculate the neighbours of b, including b which is found in the rangeSearch
-            List<DataDistance<BirthFamilyGT>> bsNeighbours = birthMTree.rangeSearch(b, 10);  // pronounced b's neighbours.
-
-            // bs_neighbours_families is the set of families of neighbours that are different from bsFamily
-            Set<Family> bs_neighbours_families = new TreeSet<Family>();
-
-            Family bsFamily = families.get(b.getId()); // maybe null - is this right????
-
-            // Add all of the families from bsNeighbours to bs_neighbours_families
-            for (DataDistance<BirthFamilyGT> dd_to_bs_neighbour : bsNeighbours) {
-                BirthFamilyGT bsNeighbour = dd_to_bs_neighbour.value;
-                Family bs_neighbours_family = families.get(bsNeighbour.getId());
-                if (bs_neighbours_family != null && bs_neighbours_family != bsFamily) {
-                    bs_neighbours_families.add(bs_neighbours_family);
-                }
-            }
-
-            Family thisFamily;
-
-            if (bs_neighbours_families.size() == 1) { // just bsFamily in the set?
-                // there are no "competing" family ids for this group of people
-                // their id can remain the same
-
-                thisFamily = bs_neighbours_families.iterator().next();
-
-            } else {
-                // there are (zero or) multiple "competing" family ids for this group of people
-                // let's merge them
-                thisFamily = new Family(b);
-            }
-
-            //  make all of bsNeighbours be in thisFamily
-            for (DataDistance<BirthFamilyGT> dd : bsNeighbours) {
-                BirthFamilyGT person = dd.value;
-                families.put(person.getId(), thisFamily);
-            }
-
-            // if a person was previously in a different family, we merge them into thisFamily
-            for (Family bs_neighbours_familiy : bs_neighbours_families) {
-                for (BirthFamilyGT sibling : bs_neighbours_familiy.siblings) {
-
-                    if (families.containsKey(sibling.getId())) {
-                        families.put(sibling.getId(), thisFamily); //  replace person's family with the new one.
-                    }
-                }
-            }
-
-        }
-    }
 
     //***********************************************************************************
 
