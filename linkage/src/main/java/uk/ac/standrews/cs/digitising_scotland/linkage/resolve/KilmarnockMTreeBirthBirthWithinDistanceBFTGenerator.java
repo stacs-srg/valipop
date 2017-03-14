@@ -12,7 +12,10 @@ import uk.ac.standrews.cs.storr.impl.exceptions.RepositoryException;
 import uk.ac.standrews.cs.storr.impl.exceptions.StoreException;
 import uk.ac.standrews.cs.storr.interfaces.IInputStream;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -49,7 +52,7 @@ public class KilmarnockMTreeBirthBirthWithinDistanceBFTGenerator extends Kilmarn
         System.out.println("Finished");
     }
 
-    private void dumpBFT() {
+    private void dumpBFT() throws FileNotFoundException, UnsupportedEncodingException {
         IInputStream<BirthFamilyGT> stream;
         try {
             stream = births.getInputStream();
@@ -63,28 +66,29 @@ public class KilmarnockMTreeBirthBirthWithinDistanceBFTGenerator extends Kilmarn
 //        { a : [(b,2), (c,3)],
 //          b : [(a,2), (d,4)]
 //        }
-        System.out.print("{");
+        PrintWriter writer = new PrintWriter("bft.json", "UTF-8");
+        writer.print("{");
 
         for (BirthFamilyGT b : stream) {
             if (!first) {
-                System.out.println(",");
+                writer.println(",");
             }
             else {
                 first = false;
             }
             // Calculate the neighbours of b, including b which is found in the rangeSearch
-            List<DataDistance<BirthFamilyGT>> bsNeighbours = birthMTree.rangeSearch(b, 10);  // pronounced b's neighbours.
+            List<DataDistance<BirthFamilyGT>> bsNeighbours = birthMTree.rangeSearch(b, 3);  // pronounced b's neighbours.
 
-            System.out.print("\"" + b.getId() + "\" : [");
+            writer.print("\"" + b.getId() + "\" : [");
             for (int i = 0; i < bsNeighbours.size(); i++) {
-                System.out.print("[" + bsNeighbours.get(i).value.getId() + ", " + Math.round(bsNeighbours.get(i).distance)+ "]");
+                writer.print("[" + bsNeighbours.get(i).value.getId() + ", " + Math.round(bsNeighbours.get(i).distance)+ "]");
                 if (i != bsNeighbours.size() - 1) {
-                    System.out.print(",");
+                    writer.print(",");
                 }
             }
-            System.out.print(']');
+            writer.print(']');
         }
-        System.out.println("}");
+        writer.println("}");
     }
 
 
