@@ -184,4 +184,54 @@ public class KilmarnockMTreeMatcherGroundTruthChecker {
         }
     }
 
+    public void calculateLinkageStats() throws BucketException {
+
+        IInputStream<BirthFamilyGT> stream = births.getInputStream();
+
+        System.out.println("Calculating linkage stats");
+
+        int truePositives = 0;
+        int falsePositives = 0;
+        int falseNegatives = 0;
+
+        for (BirthFamilyGT b1 : stream) {
+            for (BirthFamilyGT b2 : stream) {
+                Family b1AssignedFamily = families.get(b1.getId());
+                Family b2AssignedFamily = families.get(b2.getId());
+                String b1RealFamilyId = b1.getString(BirthFamilyGT.FAMILY);
+                String b2RealFamilyId = b2.getString(BirthFamilyGT.FAMILY);
+
+                if (b1AssignedFamily != null && b2AssignedFamily != null && b1AssignedFamily.id == b2AssignedFamily.id) {
+                    if (b1RealFamilyId != "" && b2RealFamilyId != "" && b2RealFamilyId == b2RealFamilyId) {
+                        truePositives++;
+                    }
+                    else {
+                        falsePositives++;
+                    }
+                }
+                else {
+                    if (b1RealFamilyId != "" && b2RealFamilyId != "" && b2RealFamilyId == b2RealFamilyId) {
+                        falseNegatives++;
+                    }
+                }
+            }
+        }
+
+        System.out.println("True Positives  : " + truePositives);
+        System.out.println("False Positives : " + falsePositives);
+        System.out.println("False Negatives : " + falseNegatives);
+        if ((truePositives + falsePositives) == 0 || (truePositives + falseNegatives) == 0) {
+            System.out.println("Cannot calculate precision and recall.");
+        }
+        else {
+            int precision = truePositives / (truePositives + falsePositives);
+            int recall    = truePositives / (truePositives + falseNegatives);
+            int f1measure = (2 * precision * recall) / (precision + recall);
+            System.out.println("Precision       : " + precision);
+            System.out.println("Recall          : " + recall);
+            System.out.println("F1 Measure      : " + f1measure);
+        }
+
+    }
+
 }
