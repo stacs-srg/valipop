@@ -17,8 +17,7 @@ import uk.ac.standrews.cs.storr.interfaces.*;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 
 /**
  * Attempt to perform linking using MTree matching
@@ -194,11 +193,44 @@ public class KilmarnockMTreeMatcherGroundTruthChecker {
         int falsePositives = 0;
         int falseNegatives = 0;
 
+//      for each assigned family, how many members are there in the family
+        HashMap<Integer, Integer> assignedFamilyCounts = new HashMap<Integer, Integer>();
+//      for how many individuals do fail to assign a family id
+        int assignedFamilyMissing = 0;
+
+//      same for each real (=demographer) family.
+        HashMap<String, Integer> realFamilyCounts = new HashMap<String, Integer>();
+//      for how many individuals did the demographers fail to assign a family id
+        int realFamilyMissing = 0;
+
+
         for (BirthFamilyGT b1 : stream) {
+            Family b1AssignedFamily = families.get(b1.getId());
+            if (b1AssignedFamily != null) {
+                Integer b1AssignedCount = assignedFamilyCounts.get(b1AssignedFamily.id);
+                if (b1AssignedCount == null) {
+                    assignedFamilyCounts.put(b1AssignedFamily.id, 1);
+                } else {
+                    assignedFamilyCounts.put(b1AssignedFamily.id, b1AssignedCount + 1);
+                }
+            } else {
+                assignedFamilyMissing++;
+            }
+
+            String b1RealFamilyId = b1.getString(BirthFamilyGT.FAMILY);
+            if (b1RealFamilyId != "") {
+                Integer b1RealCount = realFamilyCounts.get(b1RealFamilyId);
+                if (b1RealCount  == null) {
+                    realFamilyCounts.put(b1RealFamilyId, 1);
+                } else {
+                    realFamilyCounts.put(b1RealFamilyId, b1RealCount+1);
+                }
+            } else {
+                realFamilyMissing++;
+            }
+
             for (BirthFamilyGT b2 : stream) {
-                Family b1AssignedFamily = families.get(b1.getId());
                 Family b2AssignedFamily = families.get(b2.getId());
-                String b1RealFamilyId = b1.getString(BirthFamilyGT.FAMILY);
                 String b2RealFamilyId = b2.getString(BirthFamilyGT.FAMILY);
 
                 if (b1AssignedFamily != null && b2AssignedFamily != null && b1AssignedFamily.id == b2AssignedFamily.id) {
@@ -217,6 +249,21 @@ public class KilmarnockMTreeMatcherGroundTruthChecker {
             }
         }
 
+        System.out.println("Assigned family stats");
+        System.out.println("Number of families                : " + assignedFamilyCounts.size());
+        System.out.println("Max-size of families              : " + Collections.max(assignedFamilyCounts.values()));
+        System.out.println("Min-size of families              : " + Collections.min(assignedFamilyCounts.values()));
+        System.out.println("Mean-size of families             : " + calcMean(assignedFamilyCounts.values()));
+        System.out.println("Individuals with missing families : " + assignedFamilyMissing);
+        System.out.println();
+        System.out.println("Real family stats");
+        System.out.println("Number of families                : " + realFamilyCounts.size());
+        System.out.println("Max-size of families              : " + Collections.max(realFamilyCounts.values()));
+        System.out.println("Min-size of families              : " + Collections.min(realFamilyCounts.values()));
+        System.out.println("Mean-size of families             : " + calcMean(realFamilyCounts.values()));
+        System.out.println("Individuals with missing families : " + realFamilyMissing);
+        System.out.println();
+        System.out.println("False Negatives : " + falseNegatives);
         System.out.println("True Positives  : " + truePositives);
         System.out.println("False Positives : " + falsePositives);
         System.out.println("False Negatives : " + falseNegatives);
@@ -233,5 +280,14 @@ public class KilmarnockMTreeMatcherGroundTruthChecker {
         }
 
     }
+
+    private double calcMean(Collection<Integer> values) {
+        int sum = 0;
+        for (Integer i : values) {
+            sum += i;
+        }
+        return (sum / values.size());
+    }
+
 
 }
