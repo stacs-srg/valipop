@@ -186,7 +186,8 @@ public class KilmarnockMTreeMatcherGroundTruthChecker {
 
     public void calculateLinkageStats() throws BucketException {
 
-        IInputStream<BirthFamilyGT> stream = births.getInputStream();
+        IInputStream<BirthFamilyGT> stream1 = births.getInputStream();
+        IInputStream<BirthFamilyGT> stream2 = births.getInputStream();
 
         int truePositives = 0;
         int falsePositives = 0;
@@ -203,7 +204,7 @@ public class KilmarnockMTreeMatcherGroundTruthChecker {
         int realFamilyMissing = 0;
 
 
-        for (BirthFamilyGT b1 : stream) {
+        for (BirthFamilyGT b1 : stream1) {
             Family b1AssignedFamily = families.get(b1.getId());
             if (b1AssignedFamily != null) {
                 Integer b1AssignedCount = assignedFamilyCounts.get(b1AssignedFamily.id);
@@ -228,7 +229,7 @@ public class KilmarnockMTreeMatcherGroundTruthChecker {
                 realFamilyMissing++;
             }
 
-            for (BirthFamilyGT b2 : stream) {
+            for (BirthFamilyGT b2 : stream2) {
                 Family b2AssignedFamily = families.get(b2.getId());
                 String b2RealFamilyId = b2.getString(BirthFamilyGT.FAMILY);
 
