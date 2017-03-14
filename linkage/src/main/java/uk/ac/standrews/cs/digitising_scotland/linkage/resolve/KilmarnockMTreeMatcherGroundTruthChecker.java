@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.concurrent.Callable;
 
 /**
  * Attempt to perform linking using MTree matching
@@ -187,8 +188,6 @@ public class KilmarnockMTreeMatcherGroundTruthChecker {
 
         IInputStream<BirthFamilyGT> stream = births.getInputStream();
 
-        System.out.println("Calculating linkage stats");
-
         int truePositives = 0;
         int falsePositives = 0;
         int falseNegatives = 0;
@@ -279,6 +278,14 @@ public class KilmarnockMTreeMatcherGroundTruthChecker {
             System.out.println("F1 Measure      : " + f1measure);
         }
 
+    }
+
+    public void timedRun(String description, Callable<Void> func) throws Exception {
+        System.out.println(description);
+        long time = System.currentTimeMillis();
+        func.call();
+        long elapsed = (System.currentTimeMillis() - time) / 1000 ;
+        System.out.println(description + " - took " + elapsed + " seconds.");
     }
 
     private double calcMean(Collection<Integer> values) {

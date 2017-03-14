@@ -13,6 +13,7 @@ import uk.ac.standrews.cs.storr.impl.exceptions.StoreException;
 import uk.ac.standrews.cs.storr.interfaces.IInputStream;
 
 import java.io.IOException;
+import java.util.concurrent.Callable;
 
 /**
  * Attempt to perform linking using MTree matching
@@ -27,16 +28,29 @@ public class KilmarnockMTreeBirthBirthThresholdNNGroundTruthChecker extends Kilm
         super(births_source_path, deaths_source_path, marriages_source_path );
     }
 
-    private void compute() throws RepositoryException, BucketException, IOException {
-        System.out.println("Creating Birth MTree");
-        long time = System.currentTimeMillis();
-        createBirthMTreeOverGFNGLNBFNBMNPOMDOM();
-        long elapsed =  ( System.currentTimeMillis() - time ) / 1000 ;
-        System.out.println("Created Birth MTree in " + elapsed + "s");
+    private void compute() throws Exception {
+        timedRun("Creating Birth MTree", new Callable<Void>(){
+            public Void call() throws RepositoryException, BucketException, IOException {
+                createBirthMTreeOverGFNGLNBFNBMNPOMDOM();
+                return null;
+            }
+        });
 
-        System.out.println("Forming families from Birth-Birth links");
-        formFamilies();
-        listFamilies();
+        timedRun("Forming families from Birth-Birth links", new Callable<Void>(){
+            public Void call() {
+                formFamilies();
+                return null;
+            }
+        });
+
+//        listFamilies();
+
+        timedRun("Calculating linkage stats", new Callable<Void>(){
+            public Void call() throws BucketException {
+                calculateLinkageStats();
+                return null;
+            }
+        });
 
         System.out.println("Finished");
     }
