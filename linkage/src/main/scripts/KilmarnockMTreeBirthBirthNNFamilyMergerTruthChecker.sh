@@ -12,4 +12,4 @@ births="/DigitisingScotland/KilmarnockBDM/births.csv"
 deaths="/DigitisingScotland/KilmarnockBDM/deaths.csv"
 marriages="/DigitisingScotland/KilmarnockBDM/marriages.csv"
 
-mvn exec:java -q -Dexec.cleanupDaemonThreads=false -Dexec.mainClass="uk.ac.standrews.cs.digitising_scotland.linkage.resolve.KilmarnockMTreeBirthBirthNNFamilyMergerTruthChecker.sh" -e -Dexec.args="$births $deaths $marriages"
+mvn exec:java -q -Dexec.cleanupDaemonThreads=false -Dexec.mainClass="uk.ac.standrews.cs.digitising_scotland.linkage.resolve.KilmarnockMTreeBirthBirthNNFamilyMergerTruthChecker" -e -Dexec.args="$births $deaths $marriages"
