@@ -234,7 +234,7 @@ public class KilmarnockMTreeMatcherGroundTruthChecker {
                 String b2RealFamilyId = b2.getString(BirthFamilyGT.FAMILY);
 
                 if (b1AssignedFamily != null && b2AssignedFamily != null && b1AssignedFamily.id == b2AssignedFamily.id) {
-                    if (b1RealFamilyId != "" && b2RealFamilyId != "" && b2RealFamilyId == b2RealFamilyId) {
+                    if (b1RealFamilyId != "" && b2RealFamilyId != "" && b1RealFamilyId == b2RealFamilyId) {
                         truePositives++;
                     }
                     else {
@@ -242,7 +242,7 @@ public class KilmarnockMTreeMatcherGroundTruthChecker {
                     }
                 }
                 else {
-                    if (b1RealFamilyId != "" && b2RealFamilyId != "" && b2RealFamilyId == b2RealFamilyId) {
+                    if (b1RealFamilyId != "" && b2RealFamilyId != "" && b1RealFamilyId == b2RealFamilyId) {
                         falseNegatives++;
                     }
                 }
@@ -271,9 +271,9 @@ public class KilmarnockMTreeMatcherGroundTruthChecker {
             System.out.println("Cannot calculate precision and recall.");
         }
         else {
-            int precision = truePositives / (truePositives + falsePositives);
-            int recall    = truePositives / (truePositives + falseNegatives);
-            int f1measure = (2 * precision * recall) / (precision + recall);
+            double precision = truePositives / (truePositives + falsePositives);
+            double recall    = truePositives / (truePositives + falseNegatives);
+            double f1measure = (2 * precision * recall) / (precision + recall);
             System.out.println("Precision       : " + precision);
             System.out.println("Recall          : " + recall);
             System.out.println("F1 Measure      : " + f1measure);
