@@ -184,10 +184,32 @@ public class KilmarnockMTreeMatcherGroundTruthChecker {
         }
     }
 
+    public class SimpleTuple3<X, Y, Z> {
+        public final X first;
+        public final Y second;
+        public final Z third;
+        public SimpleTuple3(X first, Y second, Z third) {
+            this.first = first;
+            this.second = second;
+            this.third = third;
+        }
+    }
+
     public void calculateLinkageStats() throws BucketException {
 
-        IInputStream<BirthFamilyGT> stream1 = births.getInputStream();
-        IInputStream<BirthFamilyGT> stream2 = births.getInputStream();
+        IInputStream<BirthFamilyGT> stream = births.getInputStream();
+//      first: person-id
+//      second: assigned-family
+//      third: real family
+        ArrayList<SimpleTuple3<Long, Integer, String>> birthIDs = new ArrayList<SimpleTuple3<Long, Integer, String>>();
+        for (BirthFamilyGT b : stream) {
+            Family assignedFam = families.get(b);
+            Integer assignedFamId = null;
+            if (assignedFam != null) {
+                assignedFamId = assignedFam.id;
+            }
+            birthIDs.add(new SimpleTuple3<Long, Integer, String>(b.getId(), assignedFamId, b.getString(BirthFamilyGT.FAMILY)));
+        }
 
         int truePositives = 0;
         int falsePositives = 0;
@@ -204,20 +226,21 @@ public class KilmarnockMTreeMatcherGroundTruthChecker {
         int realFamilyMissing = 0;
 
 
-        for (BirthFamilyGT b1 : stream1) {
-            Family b1AssignedFamily = families.get(b1.getId());
+        for (SimpleTuple3<Long, Integer, String> b1 : birthIDs) {
+            Integer b1AssignedFamily = b1.second;
+            String b1RealFamilyId = b1.third;
+
             if (b1AssignedFamily != null) {
-                Integer b1AssignedCount = assignedFamilyCounts.get(b1AssignedFamily.id);
+                Integer b1AssignedCount = assignedFamilyCounts.get(b1AssignedFamily);
                 if (b1AssignedCount == null) {
-                    assignedFamilyCounts.put(b1AssignedFamily.id, 1);
+                    assignedFamilyCounts.put(b1AssignedFamily, 1);
                 } else {
-                    assignedFamilyCounts.put(b1AssignedFamily.id, b1AssignedCount + 1);
+                    assignedFamilyCounts.put(b1AssignedFamily, b1AssignedCount + 1);
                 }
             } else {
                 assignedFamilyMissing++;
             }
 
-            String b1RealFamilyId = b1.getString(BirthFamilyGT.FAMILY);
             if (b1RealFamilyId != "") {
                 Integer b1RealCount = realFamilyCounts.get(b1RealFamilyId);
                 if (b1RealCount  == null) {
@@ -229,11 +252,11 @@ public class KilmarnockMTreeMatcherGroundTruthChecker {
                 realFamilyMissing++;
             }
 
-            for (BirthFamilyGT b2 : stream2) {
-                Family b2AssignedFamily = families.get(b2.getId());
-                String b2RealFamilyId = b2.getString(BirthFamilyGT.FAMILY);
+            for (SimpleTuple3<Long, Integer, String> b2 : birthIDs) {
+                Integer b2AssignedFamily = b2.second;
+                String b2RealFamilyId = b2.third;
 
-                if (b1AssignedFamily != null && b2AssignedFamily != null && b1AssignedFamily.id == b2AssignedFamily.id) {
+                if (b1AssignedFamily != null && b2AssignedFamily != null && b1AssignedFamily == b2AssignedFamily) {
                     if (b1RealFamilyId != "" && b2RealFamilyId != "" && b1RealFamilyId == b2RealFamilyId) {
                         truePositives++;
                     }
