@@ -13,7 +13,6 @@ import uk.ac.standrews.cs.storr.impl.exceptions.StoreException;
 import uk.ac.standrews.cs.storr.interfaces.IInputStream;
 
 import java.io.IOException;
-import java.util.*;
 
 /**
  * Attempt to perform linking using MTree matching
@@ -24,12 +23,6 @@ public class KilmarnockMTreeBirthBirthThresholdNNGroundTruthChecker extends Kilm
 
     private  MTree<BirthFamilyGT> birthMTree;
 
-    // Maps
-
-    private HashMap< String, Family > family_ground_truth_map = new HashMap<>(); // Maps from FAMILY in birth record to a family unit using ground truth
-    private HashMap< String, Family > inferred_family_map = new HashMap<>(); // Maps from FAMILY in birth record to a family unit using M tree derived data.
-    private HashMap< String, Family > unmatched_map = new HashMap<>(); // Unmatched families
-
     public KilmarnockMTreeBirthBirthThresholdNNGroundTruthChecker(String births_source_path, String deaths_source_path, String marriages_source_path) throws RecordFormatException, RepositoryException, StoreException, JSONException, BucketException, IOException {
         super(births_source_path, deaths_source_path, marriages_source_path );
     }
@@ -39,7 +32,7 @@ public class KilmarnockMTreeBirthBirthThresholdNNGroundTruthChecker extends Kilm
         long time = System.currentTimeMillis();
         createBirthMTreeOverGFNGLNBFNBMNPOMDOM();
         long elapsed =  ( System.currentTimeMillis() - time ) / 1000 ;
-        System.out.println("Created Marriage MTree in " + elapsed + "s");
+        System.out.println("Created Birth MTree in " + elapsed + "s");
 
         System.out.println("Forming families from Birth-Birth links");
         formFamilies();
@@ -83,66 +76,40 @@ public class KilmarnockMTreeBirthBirthThresholdNNGroundTruthChecker extends Kilm
             DataDistance<BirthFamilyGT> matched = birthMTree.nearestNeighbour( to_match );
 
             if (matched.distance < 8.0F && matched.value != to_match ) {
-                add_births_to_map(inferred_family_map, to_match, matched);
-            } else {
-                unmatched_map.put(String.valueOf(to_match.getId()), new Family(to_match));
-            }
-        }
-    }
-
-    protected void listInterfamilyDistances( Collection<Family> families ) {
-
-        ArrayList<Family> printed_already = new ArrayList();
-
-        for( Family f : families ) {
-            if( ! printed_already.contains( f ) ) {
-                HashMap<BirthFamilyGT, List<DataDistance<BirthFamilyGT>>> family_distances = f.distances;
-                for( BirthFamilyGT b : family_distances.keySet() ) {
-                    System.out.print( f.id + "\t" + b.getString( BirthFamilyGT.FAMILY  ) + "\t" + b.getId() + "\t" + b.getString( BirthFamilyGT.FORENAME) + "\t" + b.getString( BirthFamilyGT.SURNAME) + "\t" );
-                    List<DataDistance<BirthFamilyGT>> distances = family_distances.get( b );
-                    for( DataDistance<BirthFamilyGT> dd : distances ) {
-                        System.out.print( dd.distance + "\t" + dd.value.getString( BirthFamilyGT.FORENAME) + "\t" + dd.value.getString( BirthFamilyGT.SURNAME) + "\t" );
-                    }
-                    System.out.println();
-                }
-                printed_already.add(f);
+                add_births_to_map(to_match, matched);
             }
         }
     }
 
     /**
      * Adds a birth record to a family map.
-     * @param map the map to which the record should be added
      * @param searched the record that was used to search for a match
      * @param found_dd the data distance that was matched in the search
      */
-    private void add_births_to_map(HashMap<String, Family> map, BirthFamilyGT searched, DataDistance<BirthFamilyGT> found_dd ) {
+    private void add_births_to_map(BirthFamilyGT searched, DataDistance<BirthFamilyGT> found_dd ) {
 
         BirthFamilyGT found = found_dd.value;
 
-        String searched_key = String.valueOf( searched.getId() );
-        String found_key = String.valueOf( found.getId() );
+        long searched_key = searched.getId();
+        long found_key = found.getId();
 
-        if( ! map.containsKey( searched_key ) && ! map.containsKey( found_key ) ) { // not seen either birth before
+        if( ! families.containsKey( searched_key ) && ! families.containsKey( found_key ) ) { // not seen either birth before
             // Create a new Family and add to map under both keys.
             Family new_family = new Family( searched );
             new_family.siblings.add( found );
-            new_family.addDistance( searched, found_dd );
-            map.put( searched_key, new_family );
-            map.put( found_key, new_family );
+            families.put( searched_key, new_family );
+            families.put( found_key, new_family );
             return;
         }
         // Don't bother with whether these are the same family or not, or if the added values are already in the set
         // Set implementation should dela with this.
-        if( map.containsKey( searched_key )  && ! map.containsKey( found_key )) { // already seen the searched birth => been found already
-            Family f = map.get( searched_key );
+        if( families.containsKey( searched_key )  && ! families.containsKey( found_key )) { // already seen the searched birth => been found already
+            Family f = families.get( searched_key );
             f.siblings.add( found );
-            f.addDistance( searched, found_dd );
         }
-        if( map.containsKey( found_key )  && ! map.containsKey( searched_key ) ) { // already seen the found birth => been searcher for earlier
-            Family f = map.get( found_key );
+        if( families.containsKey( found_key )  && ! families.containsKey( searched_key ) ) { // already seen the found birth => been searcher for earlier
+            Family f = families.get( found_key );
             f.siblings.add( searched );
-            f.addDistance( searched, found_dd );
         }
     }
 
