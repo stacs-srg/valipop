@@ -3,7 +3,7 @@ package uk.ac.standrews.cs.digitising_scotland.linkage.resolve;
 import org.json.JSONException;
 import uk.ac.standrews.cs.digitising_scotland.linkage.RecordFormatException;
 import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.BirthFamilyGT;
-import uk.ac.standrews.cs.digitising_scotland.linkage.resolve.distances.GFNGLNBFNBMNPOMDOMDistanceOverFamily;
+import uk.ac.standrews.cs.digitising_scotland.linkage.resolve.distances.GFNGLNBFNBMNPOMDOMDistanceOverMarriage;
 import uk.ac.standrews.cs.digitising_scotland.util.ErrorHandling;
 import uk.ac.standrews.cs.digitising_scotland.util.MTree.DataDistance;
 import uk.ac.standrews.cs.digitising_scotland.util.MTree.MTree;
@@ -13,16 +13,15 @@ import uk.ac.standrews.cs.storr.impl.exceptions.StoreException;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 
 /**
  * Created by al on 10/03/2017.
  */
-public class KilmarnockMTreeBirthBirthNNFamilyMergerTruthChecker extends KilmarnockMTreeBirthBirthThresholdNNGroundTruthChecker {
+public class KilmarnockMTreeBirthBirthNNFamilyCentroidMergerTruthChecker extends KilmarnockMTreeBirthBirthThresholdNNGroundTruthChecker {
 
     protected HashMap<Long, Family> family_id_tofamilies = new HashMap<>(); // Maps from family id to family.
 
-    public KilmarnockMTreeBirthBirthNNFamilyMergerTruthChecker(String births_source_path, String deaths_source_path, String marriages_source_path) throws RecordFormatException, RepositoryException, StoreException, JSONException, BucketException, IOException {
+    public KilmarnockMTreeBirthBirthNNFamilyCentroidMergerTruthChecker(String births_source_path, String deaths_source_path, String marriages_source_path) throws RecordFormatException, RepositoryException, StoreException, JSONException, BucketException, IOException {
         super(births_source_path, deaths_source_path, marriages_source_path);
     }
 
@@ -43,7 +42,7 @@ public class KilmarnockMTreeBirthBirthNNFamilyMergerTruthChecker extends Kilmarn
     }
 
     private void mergeFamilies() {
-        MTree<Family> familyMTree = new MTree( new GFNGLNBFNBMNPOMDOMDistanceOverFamily() );
+        MTree<Family> familyMTree = new MTree( new GFNGLNBFNBMNPOMDOMDistanceOverMarriage() );
         for( Family f : families.values() ) {
             familyMTree.add(f);
         }
@@ -52,9 +51,10 @@ public class KilmarnockMTreeBirthBirthNNFamilyMergerTruthChecker extends Kilmarn
 
             Family new_family = f;
 
-            List<DataDistance<Family>> dds = familyMTree.nearestN(f, 15);
-            for( DataDistance<Family> dd : dds ) {
-                if ( dd.distance < 5 && f.getSiblings().size() < 15 ) {
+            boolean merged = true;
+            while( merged ) {
+                DataDistance<Family> dd = familyMTree.nearestNeighbour(f);
+                if (dd.distance < 5) {
                     Family other = dd.value;
                     System.out.println( "Merged family:" + f.getFathersForename() + " " + f.getFathersSurname() + " " + f.getMothersForename() + " " + f.getMothersMaidenSurname());
                     System.out.println( "         with:" + other.getFathersForename() + " " + other.getFathersSurname() + " " + other.getMothersForename() + " " + other.getMothersMaidenSurname());
@@ -63,8 +63,8 @@ public class KilmarnockMTreeBirthBirthNNFamilyMergerTruthChecker extends Kilmarn
                         f.siblings.add( child );
                     }
                 } else {
+                    merged = false;
                     family_id_tofamilies.put( (long) f.id, f ); // put the merged (or otherwise family into the new map
-                    break;
                 }
             }
         }
@@ -86,7 +86,7 @@ public class KilmarnockMTreeBirthBirthNNFamilyMergerTruthChecker extends Kilmarn
         String deaths_source_path = args[1];
         String marriages_source_path = args[2];
 
-        KilmarnockMTreeBirthBirthNNFamilyMergerTruthChecker matcher = new KilmarnockMTreeBirthBirthNNFamilyMergerTruthChecker(births_source_path, deaths_source_path, marriages_source_path);
+        KilmarnockMTreeBirthBirthNNFamilyCentroidMergerTruthChecker matcher = new KilmarnockMTreeBirthBirthNNFamilyCentroidMergerTruthChecker(births_source_path, deaths_source_path, marriages_source_path);
         matcher.compute();
     }
 }

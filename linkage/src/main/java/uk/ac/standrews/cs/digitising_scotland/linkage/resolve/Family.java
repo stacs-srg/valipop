@@ -1,9 +1,9 @@
 package uk.ac.standrews.cs.digitising_scotland.linkage.resolve;
 
 import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.BirthFamilyGT;
-import uk.ac.standrews.cs.digitising_scotland.util.MTree.DataDistance;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Essentially a set of siblings carrying an id.
@@ -13,8 +13,7 @@ public class Family implements Comparable<Family> {
 
     public static int family_id = 1;
 
-    public HashMap<BirthFamilyGT,List<DataDistance<BirthFamilyGT>>> distances; // strictly we do not need both distances and siblings but keep for now.
-    public Set<BirthFamilyGT> siblings;
+    protected Set<BirthFamilyGT> siblings;
     public final int id;
 
     private String pom;
@@ -29,7 +28,6 @@ public class Family implements Comparable<Family> {
 
     private Family() {
         this.id = family_id++;
-        this.distances = new HashMap<>();
         this.siblings = new HashSet<>();
     }
 
@@ -37,16 +35,6 @@ public class Family implements Comparable<Family> {
         this();
         siblings.add(child);
         init_parents( child );
-    }
-
-    public void addDistance(BirthFamilyGT sibling, DataDistance<BirthFamilyGT> distance ) {
-        if( distances.containsKey( sibling ) ) {
-            distances.get( sibling ).add( distance );
-        } else {
-            List<DataDistance<BirthFamilyGT>> l = new ArrayList<DataDistance<BirthFamilyGT>>();
-            l.add( distance );
-            distances.put( sibling,l );
-        }
     }
 
     public String getPlaceOfMarriage() {
@@ -81,6 +69,14 @@ public class Family implements Comparable<Family> {
         return fathers_forename;
     }
 
+    public Set<BirthFamilyGT> getSiblings() {
+        return siblings;
+    }
+
+    public void addSibling( BirthFamilyGT sibling ) {
+        siblings.add(sibling);
+    }
+
     @Override
     public int compareTo(Family that) {
         final int BEFORE = -1;
@@ -92,7 +88,7 @@ public class Family implements Comparable<Family> {
         return AFTER;
     }
 
-    private void init_parents(BirthFamilyGT child) {
+    protected void init_parents(BirthFamilyGT child) {
         this.pom = child.getPlaceOfMarriage();
         this.day_of_marriage = child.getString( BirthFamilyGT.PARENTS_DAY_OF_MARRIAGE );
         this.month_of_marriage = child.getString( BirthFamilyGT.PARENTS_MONTH_OF_MARRIAGE );
