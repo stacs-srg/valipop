@@ -19,6 +19,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.Callable;
 
 /**
  * Attempt to perform linking using MTree matching
@@ -35,19 +36,21 @@ public class KilmarnockMTreeBirthBirthWithinDistanceBFTGenerator extends Kilmarn
         super(births_source_path, deaths_source_path, marriages_source_path );
     }
 
-    private void compute() throws RepositoryException, BucketException, IOException {
+    private void compute() throws Exception {
 
-        System.out.println("Creating Birth MTree");
-        long time = System.currentTimeMillis();
-        createBirthMTreeOverGFNGLNBFNBMNPOMDOM();
-        long elapsed =  ( System.currentTimeMillis() - time ) / 1000 ;
-        System.out.println("Created Marriage MTree in " + elapsed + "s");
+        timedRun("Creating Birth MTree", new Callable<Void>(){
+            public Void call() throws RepositoryException, BucketException, IOException {
+                createBirthMTreeOverGFNGLNBFNBMNPOMDOM();
+                return null;
+            }
+        });
 
-        System.out.println("Forming families from Birth-Birth links");
-        time = System.currentTimeMillis();
-        dumpBFT();
-        elapsed =  ( System.currentTimeMillis() - time ) / 1000 ;
-        System.out.println("Created JSON in" + elapsed + "s");
+        timedRun("Dumping bft.json", new Callable<Void>(){
+            public Void call() throws RepositoryException, BucketException, IOException {
+                dumpBFT();
+                return null;
+            }
+        });
 
         System.out.println("Finished");
     }
@@ -89,6 +92,7 @@ public class KilmarnockMTreeBirthBirthWithinDistanceBFTGenerator extends Kilmarn
             writer.print(']');
         }
         writer.println("}");
+        writer.close();
     }
 
 
@@ -116,10 +120,10 @@ public class KilmarnockMTreeBirthBirthWithinDistanceBFTGenerator extends Kilmarn
             ErrorHandling.error( "Usage: run with births_source_path deaths_source_path marriages_source_path");
         }
 
-        System.out.println( "Running KilmarnockMTreeBirthBirthWithinDistanceGroundTruthChecker" );
         String births_source_path = args[0];
         String deaths_source_path = args[1];
         String marriages_source_path = args[2];
+        System.out.println( "Running KilmarnockMTreeBirthBirthWithinDistanceBFTGenerator" );
 
         KilmarnockMTreeBirthBirthWithinDistanceBFTGenerator matcher = new KilmarnockMTreeBirthBirthWithinDistanceBFTGenerator(births_source_path, deaths_source_path, marriages_source_path);
         matcher.compute();
