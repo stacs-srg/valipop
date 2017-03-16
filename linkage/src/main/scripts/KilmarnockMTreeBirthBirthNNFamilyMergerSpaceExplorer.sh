@@ -24,15 +24,14 @@ for distance in ${DISTANCES[@]}; do
 	for size in ${FAMILY_SIZE[@]}; do
 
                 # RUN 4 jobs in parallel at a time
-				CMD -e -Dexec.args="$FIXED_ARGS $distance $size 3" > /tmp/KilmarnockMTreeBirthBirthNNFamilyMergerSpaceExplorer$distance$size3.txt &
+				CMD -e -Dexec.args="$FIXED_ARGS $distance $size 3" > /tmp/KilmarnockMTreeBirthBirthNNFamilyMergerSpaceExplorer${distance}${size}3.txt &
 				P1=$!
-				CMD -e -Dexec.args="$FIXED_ARGS $distance $size 7" > /tmp/KilmarnockMTreeBirthBirthNNFamilyMergerSpaceExplorer$distance$size7.txt &
+				CMD -e -Dexec.args="$FIXED_ARGS $distance $size 7" > /tmp/KilmarnockMTreeBirthBirthNNFamilyMergerSpaceExplorer${distance}${size}7.txt &
 				P2=$!
-				CMD -e -Dexec.args="$FIXED_ARGS $distance $size 7" > /tmp/KilmarnockMTreeBirthBirthNNFamilyMergerSpaceExplorer$distance$size9.txt &
+				CMD -e -Dexec.args="$FIXED_ARGS $distance $size 9" > /tmp/KilmarnockMTreeBirthBirthNNFamilyMergerSpaceExplorer${distance}${size}9.txt &
 				P3=$!
-				CMD -e -Dexec.args="$FIXED_ARGS $distance $size 7" > /tmp/KilmarnockMTreeBirthBirthNNFamilyMergerSpaceExplorer$distance$size16.txt &
+				CMD -e -Dexec.args="$FIXED_ARGS $distance $size 16" > /tmp/KilmarnockMTreeBirthBirthNNFamilyMergerSpaceExplorer${distance}${size}16.txt &
 				P4=$!
 				wait $P1 $P2 $P3 $P4
-			done
 	done
 done
