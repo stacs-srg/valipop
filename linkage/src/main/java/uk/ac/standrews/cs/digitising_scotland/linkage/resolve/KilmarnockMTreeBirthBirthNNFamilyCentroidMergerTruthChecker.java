@@ -27,6 +27,8 @@ public class KilmarnockMTreeBirthBirthNNFamilyCentroidMergerTruthChecker extends
         super(births_source_path, deaths_source_path, marriages_source_path,match_family_distance_threshold);
         this.max_family_size = max_family_size;
         this.family_merge_distance_threshold = family_merge_distance_threshold;
+        System.out.println("max_family_size= " + max_family_size);
+        System.out.println("family_merge_distance_threshold= " + family_merge_distance_threshold);
     }
 
     private void compute() throws RepositoryException, BucketException, IOException {
