@@ -11,5 +11,6 @@ cd $BASEDIR/../../..
 births="/DigitisingScotland/KilmarnockBDM/births_post71.csv"
 deaths="/DigitisingScotland/KilmarnockBDM/deaths.csv"
 marriages="/DigitisingScotland/KilmarnockBDM/marriages_pre92.csv"
+distance="8"
 
-mvn exec:java -q -Dexec.cleanupDaemonThreads=false -Dexec.mainClass="uk.ac.standrews.cs.digitising_scotland.linkage.resolve.KilmarnockMTreeBirthBirthThresholdNNGroundTruthChecker" -e -Dexec.args="$births $deaths $marriages"
+mvn exec:java -q -Dexec.cleanupDaemonThreads=false -Dexec.mainClass="uk.ac.standrews.cs.digitising_scotland.linkage.resolve.KilmarnockMTreeBirthBirthThresholdNNGroundTruthChecker" -e -Dexec.args="$births $deaths $marriages $distance"
