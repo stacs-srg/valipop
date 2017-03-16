@@ -3,7 +3,7 @@ package uk.ac.standrews.cs.digitising_scotland.linkage.resolve;
 import org.json.JSONException;
 import uk.ac.standrews.cs.digitising_scotland.linkage.RecordFormatException;
 import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.BirthFamilyGT;
-import uk.ac.standrews.cs.digitising_scotland.linkage.resolve.distances.GFNGLNBFNBMNPOMDOMDistanceOverMarriage;
+import uk.ac.standrews.cs.digitising_scotland.linkage.resolve.distances.GFNGLNBFNBMNPOMDOMDistanceOverFamily;
 import uk.ac.standrews.cs.digitising_scotland.util.ErrorHandling;
 import uk.ac.standrews.cs.digitising_scotland.util.MTree.DataDistance;
 import uk.ac.standrews.cs.digitising_scotland.util.MTree.MTree;
@@ -20,8 +20,13 @@ import java.util.List;
  */
 public class KilmarnockMTreeBirthBirthNNFamilyCentroidMergerTruthChecker extends KilmarnockMTreeBirthBirthThresholdNNGroundTruthChecker {
 
-    public KilmarnockMTreeBirthBirthNNFamilyCentroidMergerTruthChecker(String births_source_path, String deaths_source_path, String marriages_source_path,float match_family_distance_threshold) throws RecordFormatException, RepositoryException, StoreException, JSONException, BucketException, IOException {
+    protected int max_family_size;
+    protected float family_merge_distance_threshold;
+
+    public KilmarnockMTreeBirthBirthNNFamilyCentroidMergerTruthChecker(String births_source_path, String deaths_source_path, String marriages_source_path,float match_family_distance_threshold, int max_family_size, float family_merge_distance_threshold) throws RecordFormatException, RepositoryException, StoreException, JSONException, BucketException, IOException {
         super(births_source_path, deaths_source_path, marriages_source_path,match_family_distance_threshold);
+        this.max_family_size = max_family_size;
+        this.family_merge_distance_threshold = family_merge_distance_threshold;
     }
 
     private void compute() throws RepositoryException, BucketException, IOException {
@@ -43,7 +48,7 @@ public class KilmarnockMTreeBirthBirthNNFamilyCentroidMergerTruthChecker extends
     private void mergeFamilies() {
         HashMap<Long, Family> family_id_tofamilies = new HashMap<>(); // Maps from family id to family.
 
-        MTree<Family> familyMTree = new MTree(new GFNGLNBFNBMNPOMDOMDistanceOverMarriage());
+        MTree<Family> familyMTree = new MTree(new GFNGLNBFNBMNPOMDOMDistanceOverFamily());
         for (Family f : families.values()) {
             familyMTree.add(f);
         }
@@ -51,29 +56,39 @@ public class KilmarnockMTreeBirthBirthNNFamilyCentroidMergerTruthChecker extends
         for (Family f : families.values()) {
 
             Family new_family = f;
+            int pool_size = 1; // the size of the pool in which we are examining families to merge.
 
+            // These 3 lines initialise the search and are repeated in the if at the end of the while
+            // Might be able to make this cleaner but at least I think I understand it! - al
+            List<DataDistance<Family>> dds = familyMTree.nearestN(f, pool_size);
+            dds = dds.subList( pool_size - 1, dds.size() ); // chop off the families we have already looked at.
+            int index = 0; // index in dds - the next family to look at in the search
 
-            int n = 1;
-            List<DataDistance<Family>> dds = familyMTree.nearestN(f, n); /// AL IS HERE ***********
+            // This code sweeps out (in pools of 5) in circles looking for families to merge - we stop when the families we are finding are outside the threashold
 
-            while (dds.get(n).distance < 5 && f.getSiblings().size() < 15) {
+            while (dds.get(index).distance < family_merge_distance_threshold && f.getSiblings().size() < max_family_size) {
 
+                Family other = dds.get(index).value; // next family to compare with the current.
 
-                for (DataDistance<Family> dd : dds) {
-                    if (dd.distance < 5 && f.getSiblings().size() < 15) {
-                        Family other = dd.value;
-                        System.out.println("Merged family:" + f.getFathersForename() + " " + f.getFathersSurname() + " " + f.getMothersForename() + " " + f.getMothersMaidenSurname());
-                        System.out.println("         with:" + other.getFathersForename() + " " + other.getFathersSurname() + " " + other.getMothersForename() + " " + other.getMothersMaidenSurname());
+                if( ! f.getSiblings().contains(other ) ) { // only consider families that are not already in the sibling group.
 
-                        for (BirthFamilyGT child : other.siblings) { // merge the families.
-                            f.siblings.add(child);
-                        }
-                    } else {
-                        family_id_tofamilies.put((long) f.id, f); // put the merged (or otherwise family into the new map
+                    System.out.println("Merged family:" + f.getFathersForename() + " " + f.getFathersSurname() + " " + f.getMothersForename() + " " + f.getMothersMaidenSurname());
+                    System.out.println("         with:" + other.getFathersForename() + " " + other.getFathersSurname() + " " + other.getMothersForename() + " " + other.getMothersMaidenSurname());
+
+                    for (BirthFamilyGT child : other.siblings) { // merge the families.
+                        f.siblings.add(child);
                     }
+                    family_id_tofamilies.put((long) f.id, f); // put the merged (or otherwise family into the new map - slightly inefficient but easier to code
                 }
-                dds = familyMTree.nearestN(f, ++n);
+                index++;
+                if( index == dds.size() ) { // we are at the end of the list - get the next circle of Families.
+                    pool_size += 5;
+                    dds = familyMTree.nearestN(f, pool_size); // get the next circle of families (including the ones we have already seen).
+                    dds = dds.subList( pool_size - 1, dds.size() ); // chop off the families we have already looked at.
+                    index = 0;
+                }
             }
+
         }
 
         // finally create a new families hash map
@@ -87,56 +102,23 @@ public class KilmarnockMTreeBirthBirthNNFamilyCentroidMergerTruthChecker extends
     }
 
 
-    /**
-     * Adds a birth record to a family map.
-     * @param searched the record that was used to search for a match
-     * @param found_dd the data distance that was matched in the search
-     */
-    @Override
-    protected void add_births_to_map(BirthFamilyGT searched, DataDistance<BirthFamilyGT> found_dd ) {
-
-//        BirthFamilyGT found = found_dd.value;
-//
-//        long searched_key = searched.getId();
-//        long found_key = found.getId();
-//
-//        if( ! families.containsKey( searched_key ) && ! families.containsKey( found_key ) ) { // not seen either birth before
-//            // Create a new Family and add to map under both keys.
-//            Family new_family = new CentroidFamily( searched );
-//            new_family.siblings.add( found );
-//            families.put( searched_key, new_family );
-//            families.put( found_key, new_family );
-//            return;
-//        }
-//        // Don't bother with whether these are the same family or not, or if the added values are already in the set
-//        // Set implementation should dela with this.
-//        if( families.containsKey( searched_key )  && ! families.containsKey( found_key )) { // already seen the searched birth => been found already
-//            Family f = families.get( searched_key );
-//            f.siblings.add( found );
-//        }
-//        if( families.containsKey( found_key )  && ! families.containsKey( searched_key ) ) { // already seen the found birth => been searcher for earlier
-//            Family f = families.get( found_key );
-//            f.siblings.add( searched );
-//        }
-    }
-
-
-
     //***********************************************************************************
 
     public static void main(String[] args) throws Exception {
 
-        if( args.length < 4 ) {
-            ErrorHandling.error( "Usage: run with births_source_path deaths_source_path marriages_source_path family_distance_threshold");
+        if( args.length < 6 ) {
+            ErrorHandling.error( "Usage: run with births_source_path deaths_source_path marriages_source_path family_distance_threshold max_family_size family_merge_distance_threshold");
         }
 
-        System.out.println( "Running KilmarnockMTreeBirthBirthNNFamilyCentroidMergerTruthChecker" );
         String births_source_path = args[0];
         String deaths_source_path = args[1];
         String marriages_source_path = args[2];
         String family_distance_threshold_string = args[3];
+        String max_family_size_string = args[4];
+        String family_merge_distance_threshold_string = args[5];
 
-        KilmarnockMTreeBirthBirthNNFamilyCentroidMergerTruthChecker matcher = new KilmarnockMTreeBirthBirthNNFamilyCentroidMergerTruthChecker(births_source_path, deaths_source_path, marriages_source_path,new Float(family_distance_threshold_string));
+
+        KilmarnockMTreeBirthBirthNNFamilyCentroidMergerTruthChecker matcher = new KilmarnockMTreeBirthBirthNNFamilyCentroidMergerTruthChecker(births_source_path, deaths_source_path, marriages_source_path,new Float(family_distance_threshold_string), new Integer(max_family_size_string),new Float(family_merge_distance_threshold_string));
         matcher.compute();
     }
 }
