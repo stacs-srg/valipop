@@ -23,9 +23,11 @@ import java.util.concurrent.Callable;
 public class KilmarnockMTreeBirthBirthThresholdNNGroundTruthChecker extends KilmarnockMTreeMatcherGroundTruthChecker {
 
     private  MTree<BirthFamilyGT> birthMTree;
+    protected float match_family_distance_threshold;
 
-    public KilmarnockMTreeBirthBirthThresholdNNGroundTruthChecker(String births_source_path, String deaths_source_path, String marriages_source_path) throws RecordFormatException, RepositoryException, StoreException, JSONException, BucketException, IOException {
+    public KilmarnockMTreeBirthBirthThresholdNNGroundTruthChecker(String births_source_path, String deaths_source_path, String marriages_source_path, float match_family_distance_threshold) throws RecordFormatException, RepositoryException, StoreException, JSONException, BucketException, IOException {
         super(births_source_path, deaths_source_path, marriages_source_path );
+        this.match_family_distance_threshold = match_family_distance_threshold;
     }
 
     private void compute() throws Exception {
@@ -89,7 +91,7 @@ public class KilmarnockMTreeBirthBirthThresholdNNGroundTruthChecker extends Kilm
 
             DataDistance<BirthFamilyGT> matched = birthMTree.nearestNeighbour( to_match );
 
-            if (matched.distance < 8.0F && matched.value != to_match ) {
+            if (matched.distance < match_family_distance_threshold && matched.value != to_match ) {
                 add_births_to_map(to_match, matched);
             }
         }
@@ -100,7 +102,7 @@ public class KilmarnockMTreeBirthBirthThresholdNNGroundTruthChecker extends Kilm
      * @param searched the record that was used to search for a match
      * @param found_dd the data distance that was matched in the search
      */
-    private void add_births_to_map(BirthFamilyGT searched, DataDistance<BirthFamilyGT> found_dd ) {
+    protected void add_births_to_map(BirthFamilyGT searched, DataDistance<BirthFamilyGT> found_dd ) {
 
         BirthFamilyGT found = found_dd.value;
 
@@ -130,16 +132,17 @@ public class KilmarnockMTreeBirthBirthThresholdNNGroundTruthChecker extends Kilm
     //***********************************************************************************
 
     public static void main(String[] args) throws Exception {
-        if( args.length < 3 ) {
-            ErrorHandling.error( "Usage: run with births_source_path deaths_source_path marriages_source_path");
+        if( args.length < 4 ) {
+            ErrorHandling.error( "Usage: run with births_source_path deaths_source_path marriages_source_path family_distance_threshold");
         }
 
         System.out.println( "Running KilmarnockMTreeBirthBirthThresholdNNGroundTruthChecker" );
         String births_source_path = args[0];
         String deaths_source_path = args[1];
         String marriages_source_path = args[2];
+        String family_distance_threshold_string = args[3];
 
-        KilmarnockMTreeBirthBirthThresholdNNGroundTruthChecker matcher = new KilmarnockMTreeBirthBirthThresholdNNGroundTruthChecker(births_source_path, deaths_source_path, marriages_source_path);
+        KilmarnockMTreeBirthBirthThresholdNNGroundTruthChecker matcher = new KilmarnockMTreeBirthBirthThresholdNNGroundTruthChecker(births_source_path, deaths_source_path, marriages_source_path, new Float(family_distance_threshold_string));
         matcher.compute();
     }
 }

@@ -20,10 +20,14 @@ import java.util.List;
  */
 public class KilmarnockMTreeBirthBirthNNFamilyMergerTruthChecker extends KilmarnockMTreeBirthBirthThresholdNNGroundTruthChecker {
 
-    protected HashMap<Long, Family> family_id_tofamilies = new HashMap<>(); // Maps from family id to family.
+    protected int max_family_size;
+    protected float family_merge_distance_threshold;
 
-    public KilmarnockMTreeBirthBirthNNFamilyMergerTruthChecker(String births_source_path, String deaths_source_path, String marriages_source_path) throws RecordFormatException, RepositoryException, StoreException, JSONException, BucketException, IOException {
-        super(births_source_path, deaths_source_path, marriages_source_path);
+
+    public KilmarnockMTreeBirthBirthNNFamilyMergerTruthChecker(String births_source_path, String deaths_source_path, String marriages_source_path, float match_family_distance_threshold, int max_family_size, float family_merge_distance_threshold ) throws RecordFormatException, RepositoryException, StoreException, JSONException, BucketException, IOException {
+        super(births_source_path, deaths_source_path, marriages_source_path,match_family_distance_threshold);
+        this.max_family_size = max_family_size;
+        this.family_merge_distance_threshold = family_merge_distance_threshold;
     }
 
     private void compute() throws RepositoryException, BucketException, IOException {
@@ -43,11 +47,15 @@ public class KilmarnockMTreeBirthBirthNNFamilyMergerTruthChecker extends Kilmarn
     }
 
     private void mergeFamilies() {
+        HashMap<Long, Family> family_id_tofamilies = new HashMap<>(); // Maps from family id to family.
         MTree<Family> familyMTree = new MTree( new GFNGLNBFNBMNPOMDOMDistanceOverFamily() );
+
+        // add families to family distance MTree
         for( Family f : families.values() ) {
             familyMTree.add(f);
         }
 
+        // Merge the families and put merged families into family_id_tofamilies
         for( Family f : families.values() ) {
 
             Family new_family = f;
@@ -69,24 +77,34 @@ public class KilmarnockMTreeBirthBirthNNFamilyMergerTruthChecker extends Kilmarn
             }
         }
 
-        // at end switch the hash map = bit naughty since indexed with a different key
-        families = family_id_tofamilies;
+        // finally create a new families hash map
+        families = new HashMap<>(); // Maps from person id to family.
+        // and insert all the people from family_id_tofamilies into families
+        for( Family f : family_id_tofamilies.values() ) {
+            for(BirthFamilyGT child : f.getSiblings() ) {
+                families.put( child.getId(), f );
+            }
+        }
     }
 
     //***********************************************************************************
 
     public static void main(String[] args) throws Exception {
 
-        if( args.length < 3 ) {
-            ErrorHandling.error( "Usage: run with births_source_path deaths_source_path marriages_source_path");
+        if( args.length < 6 ) {
+            ErrorHandling.error( "Usage: run with births_source_path deaths_source_path marriages_source_path family_distance_threshold max_family_size family_merge_distance_threshold");
         }
 
         System.out.println( "Running KilmarnockMTreeBirthBirthNNFamilyMergerTruthChecker" );
         String births_source_path = args[0];
         String deaths_source_path = args[1];
         String marriages_source_path = args[2];
+        String family_distance_threshold_string = args[3];
+        String max_family_size_string = args[4];
+        String family_merge_distance_threshold_string = args[5];
 
-        KilmarnockMTreeBirthBirthNNFamilyMergerTruthChecker matcher = new KilmarnockMTreeBirthBirthNNFamilyMergerTruthChecker(births_source_path, deaths_source_path, marriages_source_path);
+
+        KilmarnockMTreeBirthBirthNNFamilyMergerTruthChecker matcher = new KilmarnockMTreeBirthBirthNNFamilyMergerTruthChecker(births_source_path, deaths_source_path, marriages_source_path, new Float(family_distance_threshold_string), new Integer(max_family_size_string),new Float(family_merge_distance_threshold_string)  );
         matcher.compute();
     }
 }
