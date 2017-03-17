@@ -9,11 +9,11 @@ import java.util.Set;
  * Essentially a set of siblings carrying an id.
  * Created by al on 28/02/2017.
  */
-public class Family implements Comparable<Family> {
+public class Family  {
 
-    public static int family_id = 1;
+    private static int family_id = 1;
 
-    protected Set<BirthFamilyGT> siblings;
+    Set<BirthFamilyGT> siblings;
     public final int id;
 
     private String pom;
@@ -75,17 +75,6 @@ public class Family implements Comparable<Family> {
 
     public void addSibling( BirthFamilyGT sibling ) {
         siblings.add(sibling);
-    }
-
-    @Override
-    public int compareTo(Family that) {
-        final int BEFORE = -1;
-        final int EQUAL = 0;
-        final int AFTER = 1;
-
-        if (this.family_id == that.family_id) return EQUAL;
-        if (this.family_id  < that.family_id) return BEFORE;
-        return AFTER;
     }
 
     protected void init_parents(BirthFamilyGT child) {
