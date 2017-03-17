@@ -29,20 +29,12 @@ public class KilmarnockMTreeMatcherGroundTruthChecker {
 
     // Repositories and stores
 
-    protected static String input_repo_name = "BDM_repo";                             // input repository containing event records
-    protected static String blocked_birth_repo_name = "blocked_birth_repo";           // repository for blocked BirthFamilyGT records
-    protected static String FFNFLNMFNMMNPOMDOM_repo_name = "FFNFLNMFNMMNPOMDOM_repo";   // repository for blocked Marriage records
-    protected static String FFNFLNMFNMMN_repo_name = "FFNFLNMFNMMN_repo";   // repository for blocked Marriage records
+    private static final String input_repo_name = "BDM_repo";                             // input repository containing event records
+    private static final String blocked_birth_repo_name = "blocked_birth_repo";           // repository for blocked BirthFamilyGT records
+    private static final String FFNFLNMFNMMNPOMDOM_repo_name = "FFNFLNMFNMMNPOMDOM_repo";   // repository for blocked Marriage records
+    private static final String FFNFLNMFNMMN_repo_name = "FFNFLNMFNMMN_repo";   // repository for blocked Marriage records
 
-    protected static String linkage_repo_name = "linkage_repo";                       // repository for Relationship records
-
-    protected IStore store;
-    protected IRepository input_repo;             // Repository containing buckets of BDM records
-    protected IRepository role_repo;
-    protected IRepository blocked_births_repo;
-    protected IRepository FFNFLNMFNMMNPOMDOM_repo;
-    protected IRepository FFNFLNMFNMMN_repo;
-    protected IRepository linkage_repo;
+    private static final String linkage_repo_name = "linkage_repo";                       // repository for Relationship records
 
     // Bucket declarations
 
@@ -50,76 +42,66 @@ public class KilmarnockMTreeMatcherGroundTruthChecker {
     protected IBucket<Marriage> marriages;               // Bucket containing marriage records (inputs).
     protected IBucket<Death> deaths;                     // Bucket containing death records (inputs).
 
-    protected IBucket<Role> roles;                      // Bucket containing roles extracted from BDM records
-    protected IBucket<Relationship> relationships;      // Bucket containing relationships between Roles
-
     // Paths to sources
 
-    protected static String births_name = "birth_records";                            // Name of bucket containing birth records (inputs).
-    protected static String marriages_name = "marriage_records";                      // Name of bucket containing marriage records (inputs).
-    protected static String deaths_name = "death_records";                            // Name of bucket containing marriage records (inputs).
+    private static final String births_name = "birth_records";                            // Name of bucket containing birth records (inputs).
+    private static final String marriages_name = "marriage_records";                      // Name of bucket containing marriage records (inputs).
+    private static final String deaths_name = "death_records";                            // Name of bucket containing marriage records (inputs).
 
     // Names of buckets
 
-    protected static String role_name = "roles";                                   // Name of bucket containing roles extracted from BDM records
-    protected static String relationships_name = "relationships";                  // Name of bucket containing Relationship records
+    private static final String relationships_name = "relationships";                  // Name of bucket containing Relationship records
 
-    protected IReferenceType birthType;
-    protected IReferenceType deathType;
-    protected IReferenceType marriageType;
-    protected IReferenceType roleType;
-    protected IReferenceType relationshipType;
+    private IReferenceType birthType;
+    private IReferenceType deathType;
+    private IReferenceType marriageType;
+    private IReferenceType roleType;
+    private IReferenceType relationshipType;
 
-    protected BirthFactory birthFactory;
-    protected DeathFactory deathFactory;
-    protected MarriageFactory marriageFactory;
-    protected RoleFactory roleFactory;
-    protected RelationshipFactory relationshipFactory;
-    protected ArrayList<Long> oids = new ArrayList<>();
-    protected int birth_count;
-    protected int death_count;
-    protected int marriage_count;
+    private BirthFactory birthFactory;
+    private DeathFactory deathFactory;
+    private MarriageFactory marriageFactory;
+    private RelationshipFactory relationshipFactory;
+    private ArrayList<Long> oids = new ArrayList<>();
 
     // Maps
 
     protected HashMap<Long, Family> families = new HashMap<>(); // Maps from person id to family.
 
-
-    public KilmarnockMTreeMatcherGroundTruthChecker(String births_source_path, String deaths_source_path, String marriages_source_path ) throws StoreException, JSONException, RecordFormatException, RepositoryException, IOException, BucketException {
+    KilmarnockMTreeMatcherGroundTruthChecker(String births_source_path, String deaths_source_path, String marriages_source_path) throws StoreException, JSONException, RecordFormatException, RepositoryException, IOException, BucketException {
 
         System.out.println("Initialising");
         initialise();
 
         System.out.println("Ingesting");
         ingestBDMRecords(births_source_path, deaths_source_path, marriages_source_path);
-        //        checkBDMRecords();
     }
 
-    protected void initialise() throws StoreException, IOException, RepositoryException, RecordFormatException, JSONException {
+    private void initialise() throws StoreException, IOException, RepositoryException, RecordFormatException, JSONException {
 
         Path store_path = Files.createTempDirectory(null);
 
         StoreFactory.setStorePath(store_path);
-        store = StoreFactory.makeStore();
+        IStore store = StoreFactory.makeStore();
 
         System.out.println("Store path = " + store_path);
 
-        input_repo = store.makeRepository(input_repo_name);
-        blocked_births_repo = store.makeRepository(blocked_birth_repo_name);  // a repo of BirthFamilyGT Buckets of records blocked by parents names, DOM, Place of Marriage.
-        FFNFLNMFNMMNPOMDOM_repo = store.makeRepository(FFNFLNMFNMMNPOMDOM_repo_name);  // a repo of Marriage Buckets
-        FFNFLNMFNMMN_repo = store.makeRepository(FFNFLNMFNMMN_repo_name);  // a repo of Marriage Buckets
+        IRepository input_repo = store.makeRepository(input_repo_name);
+        IRepository blocked_births_repo = store.makeRepository(blocked_birth_repo_name);
+        IRepository FFNFLNMFNMMNPOMDOM_repo = store.makeRepository(FFNFLNMFNMMNPOMDOM_repo_name);
+        IRepository FFNFLNMFNMMN_repo = store.makeRepository(FFNFLNMFNMMN_repo_name);
 
-        linkage_repo = store.makeRepository(linkage_repo_name);
+        IRepository linkage_repo = store.makeRepository(linkage_repo_name);
         initialiseTypes();
         initialiseFactories();
 
         births = input_repo.makeBucket(births_name, BucketKind.DIRECTORYBACKED, birthFactory);
         deaths = input_repo.makeBucket(deaths_name, BucketKind.DIRECTORYBACKED, deathFactory);
         marriages = input_repo.makeBucket(marriages_name, BucketKind.DIRECTORYBACKED, marriageFactory);
-        relationships = linkage_repo.makeBucket(relationships_name, BucketKind.DIRECTORYBACKED, relationshipFactory);
+        IBucket<Relationship> relationships = linkage_repo.makeBucket(relationships_name, BucketKind.DIRECTORYBACKED, relationshipFactory);
     }
 
-    protected void initialiseTypes() {
+    private void initialiseTypes() {
 
         TypeFactory tf = TypeFactory.getInstance();
 
@@ -130,12 +112,12 @@ public class KilmarnockMTreeMatcherGroundTruthChecker {
         relationshipType = tf.createType(Relationship.class, "relationship");
     }
 
-    protected void initialiseFactories() {
+    private void initialiseFactories() {
 
         birthFactory = new BirthFactory(birthType.getId());
         deathFactory = new DeathFactory(deathType.getId());
         marriageFactory = new MarriageFactory(marriageType.getId());
-        roleFactory = new RoleFactory(roleType.getId());
+        RoleFactory roleFactory = new RoleFactory(roleType.getId());
         relationshipFactory = new RelationshipFactory(relationshipType.getId());
     }
 
@@ -143,21 +125,16 @@ public class KilmarnockMTreeMatcherGroundTruthChecker {
      * Import the birth,death, marriage records
      * Initialises the roles bucket with the roles injected - one record for each person referenced in the original record
      * Initialises the known(100% certain) relationships between roles and stores the relationships in the relationships bucket
-     *
-     * @param births_source_path
-     * @param deaths_source_path
-     * @param marriages_source_path
      */
-    protected void ingestBDMRecords(String births_source_path, String deaths_source_path, String marriages_source_path) throws RecordFormatException, BucketException, IOException {
+    private void ingestBDMRecords(String births_source_path, String deaths_source_path, String marriages_source_path) throws RecordFormatException, BucketException, IOException {
 
         System.out.println("Importing BDM records");
-        birth_count = KilmarnockCommaSeparatedBirthImporter.importDigitisingScotlandBirths(births, births_source_path, oids);
+        int birth_count = KilmarnockCommaSeparatedBirthImporter.importDigitisingScotlandBirths(births, births_source_path, oids);
         System.out.println("Imported " + birth_count + " birth records");
-        death_count = KilmarnockCommaSeparatedDeathImporter.importDigitisingScotlandDeaths(deaths, deaths_source_path, oids);
+        int death_count = KilmarnockCommaSeparatedDeathImporter.importDigitisingScotlandDeaths(deaths, deaths_source_path, oids);
         System.out.println("Imported " + death_count + " death records");
-        marriage_count = KilmarnockCommaSeparatedMarriageImporter.importDigitisingScotlandMarriages(marriages, marriages_source_path, oids);
+        int marriage_count = KilmarnockCommaSeparatedMarriageImporter.importDigitisingScotlandMarriages(marriages, marriages_source_path, oids);
         System.out.println("Imported " + marriage_count + " marriage records");
-
     }
 
     /**
@@ -165,12 +142,11 @@ public class KilmarnockMTreeMatcherGroundTruthChecker {
      * All generated family tags are empty for unmatched families
      * Tests that families do not appear in map more than once, which can occur in some experiments.
      */
-    public void listFamilies() throws BucketException {
+    void listFamilies() throws BucketException {
 
         IInputStream<BirthFamilyGT> stream = births.getInputStream();
 
-        System.out.println("Generated fid\tDemographer fid\tRecord id\tForname\tSurname\tDOB\tPOM\tDOM\tFather's forename\tFather's surname\tMother's forename\tMother's maidenname" );
-
+        System.out.println("Generated fid\tDemographer fid\tRecord id\tForname\tSurname\tDOB\tPOM\tDOM\tFather's forename\tFather's surname\tMother's forename\tMother's maidenname");
 
         for (BirthFamilyGT b : stream) {
 
@@ -184,25 +160,29 @@ public class KilmarnockMTreeMatcherGroundTruthChecker {
         }
     }
 
-    public class SimpleTuple3<X, Y, Z> {
-        public final X first;
-        public final Y second;
-        public final Z third;
-        public SimpleTuple3(X first, Y second, Z third) {
+    class SimpleTuple3<X, Y, Z> {
+
+        final X first;
+        final Y second;
+        final Z third;
+
+        SimpleTuple3(X first, Y second, Z third) {
             this.first = first;
             this.second = second;
             this.third = third;
         }
     }
 
-    public void calculateLinkageStats() throws BucketException {
+    void calculateLinkageStats() throws BucketException {
 
-        IInputStream<BirthFamilyGT> stream = births.getInputStream();
-//      first: person-id
+        //      first: person-id
 //      second: assigned-family
 //      third: real family
-        ArrayList<SimpleTuple3<Long, Integer, String>> birthIDs = new ArrayList<SimpleTuple3<Long, Integer, String>>();
-        for (BirthFamilyGT b : stream) {
+
+        List<SimpleTuple3<Long, Integer, String>> birthIDs = new ArrayList<>();
+
+        for (BirthFamilyGT b : births.getInputStream()) {
+
             Family assignedFam = families.get(b);
             Integer assignedFamId = null;
             if (assignedFam != null) {
@@ -216,21 +196,21 @@ public class KilmarnockMTreeMatcherGroundTruthChecker {
         int falseNegatives = 0;
 
 //      for each assigned family, how many members are there in the family
-        HashMap<Integer, Integer> assignedFamilyCounts = new HashMap<Integer, Integer>();
+        Map<Integer, Integer> assignedFamilyCounts = new HashMap<>();
 //      for how many individuals do fail to assign a family id
         int assignedFamilyMissing = 0;
 
 //      same for each real (=demographer) family.
-        HashMap<String, Integer> realFamilyCounts = new HashMap<String, Integer>();
+        Map<String, Integer> realFamilyCounts = new HashMap<>();
 //      for how many individuals did the demographers fail to assign a family id
         int realFamilyMissing = 0;
 
-
         for (SimpleTuple3<Long, Integer, String> b1 : birthIDs) {
-            Integer b1AssignedFamily = b1.second;
+
+            int b1AssignedFamily = b1.second;
             String b1RealFamilyId = b1.third;
 
-            if (b1AssignedFamily != null) {
+            if (b1AssignedFamily != 0) {
                 Integer b1AssignedCount = assignedFamilyCounts.get(b1AssignedFamily);
                 if (b1AssignedCount == null) {
                     assignedFamilyCounts.put(b1AssignedFamily, 1);
@@ -241,31 +221,30 @@ public class KilmarnockMTreeMatcherGroundTruthChecker {
                 assignedFamilyMissing++;
             }
 
-            if (b1RealFamilyId != "") {
+            if (b1RealFamilyId.length() > 0) {
                 Integer b1RealCount = realFamilyCounts.get(b1RealFamilyId);
-                if (b1RealCount  == null) {
+                if (b1RealCount == null) {
                     realFamilyCounts.put(b1RealFamilyId, 1);
                 } else {
-                    realFamilyCounts.put(b1RealFamilyId, b1RealCount+1);
+                    realFamilyCounts.put(b1RealFamilyId, b1RealCount + 1);
                 }
             } else {
                 realFamilyMissing++;
             }
 
             for (SimpleTuple3<Long, Integer, String> b2 : birthIDs) {
-                Integer b2AssignedFamily = b2.second;
+
+                int b2AssignedFamily = b2.second;
                 String b2RealFamilyId = b2.third;
 
-                if (b1AssignedFamily != null && b2AssignedFamily != null && b1AssignedFamily == b2AssignedFamily) {
-                    if (b1RealFamilyId != "" && b2RealFamilyId != "" && b1RealFamilyId == b2RealFamilyId) {
+                if (b1AssignedFamily != 0 && b1AssignedFamily == b2AssignedFamily) {
+                    if (b1RealFamilyId.length() > 0 && b1RealFamilyId.equals(b2RealFamilyId)) {
                         truePositives++;
-                    }
-                    else {
+                    } else {
                         falsePositives++;
                     }
-                }
-                else {
-                    if (b1RealFamilyId != "" && b2RealFamilyId != "" && b1RealFamilyId == b2RealFamilyId) {
+                } else {
+                    if (b1RealFamilyId.length() > 0 && b1RealFamilyId.equals(b2RealFamilyId)) {
                         falseNegatives++;
                     }
                 }
@@ -273,60 +252,62 @@ public class KilmarnockMTreeMatcherGroundTruthChecker {
         }
 
         System.out.println("Assigned family stats");
-        try {
-            System.out.println("Number of families                : " + assignedFamilyCounts.size());
-            System.out.println("Max-size of families              : " + Collections.max(assignedFamilyCounts.values()));
-            System.out.println("Min-size of families              : " + Collections.min(assignedFamilyCounts.values()));
-            System.out.println("Mean-size of families             : " + calcMean(assignedFamilyCounts.values()));
-        } catch (Exception e) {
-            System.out.println("No families");
-        }
+        printFamilyStats(assignedFamilyCounts.values());
+
         System.out.println("Individuals with missing families : " + assignedFamilyMissing);
         System.out.println();
+
         System.out.println("Real family stats");
-        try {
-            System.out.println("Number of families                : " + realFamilyCounts.size());
-            System.out.println("Max-size of families              : " + Collections.max(realFamilyCounts.values()));
-            System.out.println("Min-size of families              : " + Collections.min(realFamilyCounts.values()));
-            System.out.println("Mean-size of families             : " + calcMean(realFamilyCounts.values()));
-        } catch (Exception e) {
-            System.out.println("No families");
-        }
+        printFamilyStats(realFamilyCounts.values());
+
         System.out.println("Individuals with missing families : " + realFamilyMissing);
         System.out.println();
         System.out.println("False Negatives : " + falseNegatives);
         System.out.println("True Positives  : " + truePositives);
         System.out.println("False Positives : " + falsePositives);
         System.out.println("False Negatives : " + falseNegatives);
+
         if ((truePositives + falsePositives) == 0 || (truePositives + falseNegatives) == 0) {
+
             System.out.println("Cannot calculate precision and recall.");
-        }
-        else {
+        } else {
             double precision = truePositives / (truePositives + falsePositives);
-            double recall    = truePositives / (truePositives + falseNegatives);
+            double recall = truePositives / (truePositives + falseNegatives);
             double f1measure = (2 * precision * recall) / (precision + recall);
+
             System.out.println("Precision       : " + precision);
             System.out.println("Recall          : " + recall);
             System.out.println("F1 Measure      : " + f1measure);
         }
-
     }
 
-    public void timedRun(String description, Callable<Void> func) throws Exception {
+    private void printFamilyStats(Collection<Integer> values) {
+
+        try {
+            System.out.println("Number of families                : " + values.size());
+            System.out.println("Max-size of families              : " + Collections.max(values));
+            System.out.println("Min-size of families              : " + Collections.min(values));
+            System.out.println("Mean-size of families             : " + calcMean(values));
+        } catch (Exception e) {
+            System.out.println("No families");
+        }
+    }
+
+    void timedRun(String description, Callable<Void> func) throws Exception {
+
         System.out.println(description);
         long time = System.currentTimeMillis();
         func.call();
-        long elapsed = (System.currentTimeMillis() - time) / 1000 ;
+        long elapsed = (System.currentTimeMillis() - time) / 1000;
         System.out.println(description + " - took " + elapsed + " seconds.");
     }
 
     private double calcMean(Collection<Integer> values) {
+
         int sum = 0;
         for (Integer i : values) {
             sum += i;
         }
         return (sum / values.size());
     }
-
-
 }
