@@ -10,7 +10,7 @@ import java.util.Set;
  * Essentially a set of siblings carrying an id.
  * Created by al on 28/02/2017.
  */
-public class CentroidFamily extends Family implements Comparable<Family> {
+public class CentroidFamily extends Family {
 
     final static GFNGLNBFNBMNPOMDOMDistanceOverBirth metric = new GFNGLNBFNBMNPOMDOMDistanceOverBirth();
 
