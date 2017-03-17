@@ -66,8 +66,6 @@ public class KilmarnockMTreeBirthBirthNNFamilyMergerTruthChecker extends Kilmarn
         // Merge the families and put merged families into family_id_tofamilies
         for( Family f : families.values() ) {
 
-            Family new_family = f;
-
             List<DataDistance<Family>> dds = familyMTree.nearestN(f, 15);
             for( DataDistance<Family> dd : dds ) {
                 if ( dd.distance < 5 && f.getSiblings().size() < 15 ) {
