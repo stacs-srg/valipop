@@ -45,7 +45,7 @@ public class KilmarnockMTreeBirthBirthThresholdNNGroundTruthChecker extends Kilm
             }
         });
 
-//        listFamilies();
+        listFamilies();
 
         timedRun("Calculating linkage stats", new Callable<Void>(){
             public Void call() throws BucketException {

@@ -14,6 +14,7 @@ import uk.ac.standrews.cs.storr.impl.exceptions.StoreException;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 /**
  * Created by al on 10/03/2017.
@@ -30,7 +31,7 @@ public class KilmarnockMTreeBirthBirthNNFamilyMergerTruthChecker extends Kilmarn
         this.family_merge_distance_threshold = family_merge_distance_threshold;
     }
 
-    private void compute() throws RepositoryException, BucketException, IOException {
+    private void compute() throws Exception {
         System.out.println("Creating Birth MTree");
         long time = System.currentTimeMillis();
         createBirthMTreeOverGFNGLNBFNBMNPOMDOM();
@@ -41,6 +42,13 @@ public class KilmarnockMTreeBirthBirthNNFamilyMergerTruthChecker extends Kilmarn
         formFamilies();
         mergeFamilies();
         listFamilies();
+
+        timedRun("Calculating linkage stats", new Callable<Void>(){
+            public Void call() throws BucketException {
+                calculateLinkageStats();
+                return null;
+            }
+        });
 
         elapsed =  ( System.currentTimeMillis() - time ) / 1000 ;
         System.out.println("Finished in " + elapsed + "s");

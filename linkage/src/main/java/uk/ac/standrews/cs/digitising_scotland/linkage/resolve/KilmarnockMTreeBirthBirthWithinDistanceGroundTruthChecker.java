@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.Callable;
 
 /**
  * Attempt to perform linking using MTree matching
@@ -32,7 +33,7 @@ public class KilmarnockMTreeBirthBirthWithinDistanceGroundTruthChecker extends K
         super(births_source_path, deaths_source_path, marriages_source_path );
     }
 
-    private void compute() throws RepositoryException, BucketException, IOException {
+    private void compute() throws Exception {
         System.out.println("Creating Birth MTree");
         long time = System.currentTimeMillis();
         createBirthMTreeOverGFNGLNBFNBMNPOMDOM();
@@ -42,6 +43,13 @@ public class KilmarnockMTreeBirthBirthWithinDistanceGroundTruthChecker extends K
         System.out.println("Forming families from Birth-Birth links");
         formFamilies();
         listFamilies();
+
+        timedRun("Calculating linkage stats", new Callable<Void>(){
+            public Void call() throws BucketException {
+                calculateLinkageStats();
+                return null;
+            }
+        });
 
         System.out.println("Finished");
     }
