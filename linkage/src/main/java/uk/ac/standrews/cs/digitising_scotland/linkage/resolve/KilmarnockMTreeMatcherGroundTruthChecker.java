@@ -273,17 +273,25 @@ public class KilmarnockMTreeMatcherGroundTruthChecker {
         }
 
         System.out.println("Assigned family stats");
-        System.out.println("Number of families                : " + assignedFamilyCounts.size());
-        System.out.println("Max-size of families              : " + Collections.max(assignedFamilyCounts.values()));
-        System.out.println("Min-size of families              : " + Collections.min(assignedFamilyCounts.values()));
-        System.out.println("Mean-size of families             : " + calcMean(assignedFamilyCounts.values()));
+        try {
+            System.out.println("Number of families                : " + assignedFamilyCounts.size());
+            System.out.println("Max-size of families              : " + Collections.max(assignedFamilyCounts.values()));
+            System.out.println("Min-size of families              : " + Collections.min(assignedFamilyCounts.values()));
+            System.out.println("Mean-size of families             : " + calcMean(assignedFamilyCounts.values()));
+        } catch (Exception e) {
+            System.out.println("No families");
+        }
         System.out.println("Individuals with missing families : " + assignedFamilyMissing);
         System.out.println();
         System.out.println("Real family stats");
-        System.out.println("Number of families                : " + realFamilyCounts.size());
-        System.out.println("Max-size of families              : " + Collections.max(realFamilyCounts.values()));
-        System.out.println("Min-size of families              : " + Collections.min(realFamilyCounts.values()));
-        System.out.println("Mean-size of families             : " + calcMean(realFamilyCounts.values()));
+        try {
+            System.out.println("Number of families                : " + realFamilyCounts.size());
+            System.out.println("Max-size of families              : " + Collections.max(realFamilyCounts.values()));
+            System.out.println("Min-size of families              : " + Collections.min(realFamilyCounts.values()));
+            System.out.println("Mean-size of families             : " + calcMean(realFamilyCounts.values()));
+        } catch (Exception e) {
+            System.out.println("No families");
+        }
         System.out.println("Individuals with missing families : " + realFamilyMissing);
         System.out.println();
         System.out.println("False Negatives : " + falseNegatives);
