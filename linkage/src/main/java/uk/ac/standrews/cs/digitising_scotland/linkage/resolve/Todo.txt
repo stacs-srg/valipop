@@ -1,9 +1,5 @@
 From Meeting with Oz and Graham 6-3-17
 
-1. Are people being put in more than 1 family?
-
-    A: was yes but hopefully fixed? - need to check with results from running KilmarnockMTreeBirthBirthMatcherGroundTruthChecker
-
 2. Distance between family members
 
 3. Are there families that are asserted to be in 2 families whereas there should be 1?
@@ -14,10 +10,31 @@ From Meeting with Oz and Graham 6-3-17
 
 5. Look at those within distance of N rather than nearest neighbour.
 
------
-
-6. Merge the code of KilmarnockMTreeBirthMarriageMatcherGroundTruthChecker and KilmarnockMTreeBirthBirthMatcherGroundTruthChecker
-
-        done.
-
 7. Write new classes to proces the Skye data - like above.
+
+New list A/Graham/Eilidh 17-3-17
+
+1. date format is inconsistent - use 11 for Nov rather than Nov
+
+2. Names and middle names - try just using first names rather than whole (sometimes middle names are missing) - Adam vs. Adam Sawers
+
+3. Use std names from Kilmarnock dataset.
+
+4. Take account of distribution of names (and places etc.)
+
+5. Weight names by frequency:
+    common name - high frequency
+    uncommon name - low frequency ... so do something like name diatance * frequency / normalisation factor
+
+6. Do not use DOM in match
+
+7. Only use year of marriage +/- 3 years?
+
+8. Do date comparison only and see what works best with Eilidh's families from Kilmarnock data.
+
+9. Put all the data in Storr and use a single store
+
+10. Look at efficiency of for all in stream from Stor
+
+11. I/O problems in Storr - are files being shut properly?
+
