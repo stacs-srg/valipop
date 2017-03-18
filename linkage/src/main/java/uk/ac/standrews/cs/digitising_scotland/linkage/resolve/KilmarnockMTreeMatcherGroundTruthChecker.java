@@ -175,7 +175,7 @@ public class KilmarnockMTreeMatcherGroundTruthChecker {
 
     void calculateLinkageStats() throws BucketException {
 
-        //      first: person-id
+//      first: person-id
 //      second: assigned-family
 //      third: real family
 
@@ -238,13 +238,13 @@ public class KilmarnockMTreeMatcherGroundTruthChecker {
                 String b2RealFamilyId = b2.third;
 
                 if (b1AssignedFamily != 0 && b1AssignedFamily == b2AssignedFamily) {
-                    if (b1RealFamilyId.length() > 0 && b1RealFamilyId.equals(b2RealFamilyId)) {
+                    if (b1RealFamilyId != null && b1RealFamilyId.length() > 0 && b1RealFamilyId.equals(b2RealFamilyId)) {
                         truePositives++;
                     } else {
                         falsePositives++;
                     }
                 } else {
-                    if (b1RealFamilyId.length() > 0 && b1RealFamilyId.equals(b2RealFamilyId)) {
+                    if (b1RealFamilyId != null && b1RealFamilyId.length() > 0 && b1RealFamilyId.equals(b2RealFamilyId)) {
                         falseNegatives++;
                     }
                 }
@@ -253,22 +253,20 @@ public class KilmarnockMTreeMatcherGroundTruthChecker {
 
         System.out.println("Assigned family stats");
         printFamilyStats(assignedFamilyCounts.values());
-
         System.out.println("Individuals with missing families : " + assignedFamilyMissing);
         System.out.println();
 
         System.out.println("Real family stats");
         printFamilyStats(realFamilyCounts.values());
-
         System.out.println("Individuals with missing families : " + realFamilyMissing);
         System.out.println();
+
         System.out.println("False Negatives : " + falseNegatives);
         System.out.println("True Positives  : " + truePositives);
         System.out.println("False Positives : " + falsePositives);
         System.out.println("False Negatives : " + falseNegatives);
 
         if ((truePositives + falsePositives) == 0 || (truePositives + falseNegatives) == 0) {
-
             System.out.println("Cannot calculate precision and recall.");
         } else {
             double precision = truePositives / (truePositives + falsePositives);
