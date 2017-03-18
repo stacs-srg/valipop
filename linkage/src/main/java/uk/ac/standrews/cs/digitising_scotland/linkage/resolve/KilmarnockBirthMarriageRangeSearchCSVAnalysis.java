@@ -44,7 +44,7 @@ public class KilmarnockBirthMarriageRangeSearchCSVAnalysis {
         for (List<String> row : data_set.getRecords()) {
             int data_column = 0;
             for( String entry : row ) {
-                data_array[rows_processed][data_column++] = Integer.valueOf( entry );
+                data_array[rows_processed][data_column++] = Integer.parseInt( entry );
             }
             rows_processed++;
         }

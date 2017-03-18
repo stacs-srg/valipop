@@ -110,7 +110,7 @@ public class KilmarnockMTreeBirthBirthNNFamilyMergerTruthChecker extends Kilmarn
         String family_merge_distance_threshold_string = args[5];
 
 
-        KilmarnockMTreeBirthBirthNNFamilyMergerTruthChecker matcher = new KilmarnockMTreeBirthBirthNNFamilyMergerTruthChecker(births_source_path, deaths_source_path, marriages_source_path, new Float(family_distance_threshold_string), new Integer(max_family_size_string),new Float(family_merge_distance_threshold_string)  );
+        KilmarnockMTreeBirthBirthNNFamilyMergerTruthChecker matcher = new KilmarnockMTreeBirthBirthNNFamilyMergerTruthChecker(births_source_path, deaths_source_path, marriages_source_path, new Float(family_distance_threshold_string), Integer.parseInt(max_family_size_string),Float.parseFloat(family_merge_distance_threshold_string)  );
         matcher.compute();
     }
 }
