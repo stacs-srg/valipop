@@ -207,10 +207,10 @@ public class KilmarnockMTreeMatcherGroundTruthChecker {
 
         for (SimpleTuple3<Long, Integer, String> b1 : birthIDs) {
 
-            int b1AssignedFamily = b1.second;
+            Integer b1AssignedFamily = b1.second;
             String b1RealFamilyId = b1.third;
 
-            if (b1AssignedFamily != 0) {
+            if (b1AssignedFamily != null) {
                 Integer b1AssignedCount = assignedFamilyCounts.get(b1AssignedFamily);
                 if (b1AssignedCount == null) {
                     assignedFamilyCounts.put(b1AssignedFamily, 1);
@@ -234,10 +234,10 @@ public class KilmarnockMTreeMatcherGroundTruthChecker {
 
             for (SimpleTuple3<Long, Integer, String> b2 : birthIDs) {
 
-                int b2AssignedFamily = b2.second;
+                Integer b2AssignedFamily = b2.second;
                 String b2RealFamilyId = b2.third;
 
-                if (b1AssignedFamily != 0 && b1AssignedFamily == b2AssignedFamily) {
+                if (b1AssignedFamily != null && b1AssignedFamily == b2AssignedFamily) {
                     if (b1RealFamilyId != null && b1RealFamilyId.length() > 0 && b1RealFamilyId.equals(b2RealFamilyId)) {
                         truePositives++;
                     } else {
