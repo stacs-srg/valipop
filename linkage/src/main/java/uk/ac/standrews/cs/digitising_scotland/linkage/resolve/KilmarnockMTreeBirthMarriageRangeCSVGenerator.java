@@ -1,11 +1,8 @@
 package uk.ac.standrews.cs.digitising_scotland.linkage.resolve;
 
-import org.json.JSONException;
-import uk.ac.standrews.cs.digitising_scotland.linkage.RecordFormatException;
 import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.BirthFamilyGT;
 import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.Marriage;
 import uk.ac.standrews.cs.digitising_scotland.linkage.resolve.distances.GFNGLNBFNBMNPOMDOMDistanceOverMarriage;
-import uk.ac.standrews.cs.digitising_scotland.util.ErrorHandling;
 import uk.ac.standrews.cs.digitising_scotland.util.MTree.DataDistance;
 import uk.ac.standrews.cs.digitising_scotland.util.MTree.MTree;
 import uk.ac.standrews.cs.storr.impl.exceptions.BucketException;
@@ -24,37 +21,39 @@ import java.util.List;
  */
 public class KilmarnockMTreeBirthMarriageRangeCSVGenerator extends KilmarnockMTreeMatcherGroundTruthChecker {
 
+    private static final String[] ARG_NAMES = {"births_source_path", "deaths_source_path", "marriages_source_path"};
 
-    public final static int RANGE_MAX = 15;
+    final static int RANGE_MAX = 15;
 
-    // Trees
+    private MTree<Marriage> marriageMtree;
 
-    private  MTree<Marriage> marriageMtree;
+    private KilmarnockMTreeBirthMarriageRangeCSVGenerator() throws StoreException, IOException, RepositoryException {
 
-    public KilmarnockMTreeBirthMarriageRangeCSVGenerator(String births_source_path, String deaths_source_path, String marriages_source_path) throws RecordFormatException, RepositoryException, StoreException, JSONException, BucketException, IOException {
-
-        super( births_source_path, deaths_source_path, marriages_source_path );
     }
 
-    public void compute() throws RepositoryException, BucketException, IOException {
-        System.out.println("Creating Marriage MTree");
-        createMarriageMTreeOverGFNGLNBFNBMNPOMDOM();
-        outputRangeSearchMatchesBetweenBirthsAndMarriages();
+    private void compute() throws Exception {
+
+        timedRun("Creating Marriage MTree", () -> {
+            createMarriageMTreeOverGFNGLNBFNBMNPOMDOM();
+            return null;
+        });
+
+        timedRun("Outputting matches", () -> {
+            outputRangeSearchMatchesBetweenBirthsAndMarriages();
+            return null;
+        });
     }
-
-
 
     private void createMarriageMTreeOverGFNGLNBFNBMNPOMDOM() throws RepositoryException, BucketException, IOException {
 
-        marriageMtree = new MTree<Marriage>( new GFNGLNBFNBMNPOMDOMDistanceOverMarriage() );
+        marriageMtree = new MTree<>(new GFNGLNBFNBMNPOMDOMDistanceOverMarriage());
 
         IInputStream<Marriage> stream = marriages.getInputStream();
 
         for (Marriage marriage : stream) {
 
-            marriageMtree.add( marriage );
+            marriageMtree.add(marriage);
         }
-
     }
 
     /**
@@ -73,24 +72,23 @@ public class KilmarnockMTreeBirthMarriageRangeCSVGenerator extends KilmarnockMTr
         for (BirthFamilyGT b : stream) {
 
             Marriage marriage_query = new Marriage();
-            marriage_query.put( Marriage.GROOM_FORENAME,b.getFathersForename() );
-            marriage_query.put( Marriage.GROOM_SURNAME,b.getFathersSurname() );
-            marriage_query.put( Marriage.BRIDE_FORENAME,b.getMothersForename() );
-            marriage_query.put( Marriage.BRIDE_SURNAME,b.getMothersMaidenSurname() );
-            marriage_query.put( Marriage.PLACE_OF_MARRIAGE,b.getPlaceOfMarriage() );
+            marriage_query.put(Marriage.GROOM_FORENAME, b.getFathersForename());
+            marriage_query.put(Marriage.GROOM_SURNAME, b.getFathersSurname());
+            marriage_query.put(Marriage.BRIDE_FORENAME, b.getMothersForename());
+            marriage_query.put(Marriage.BRIDE_SURNAME, b.getMothersMaidenSurname());
+            marriage_query.put(Marriage.PLACE_OF_MARRIAGE, b.getPlaceOfMarriage());
 
-            marriage_query.put( Marriage.MARRIAGE_DAY,b.getString( BirthFamilyGT.PARENTS_DAY_OF_MARRIAGE ) );
-            marriage_query.put( Marriage.MARRIAGE_MONTH, b.getString( BirthFamilyGT.PARENTS_MONTH_OF_MARRIAGE ) );
-            marriage_query.put( Marriage.MARRIAGE_YEAR, b.getString( BirthFamilyGT.PARENTS_YEAR_OF_MARRIAGE ) );
+            marriage_query.put(Marriage.MARRIAGE_DAY, b.getString(BirthFamilyGT.PARENTS_DAY_OF_MARRIAGE));
+            marriage_query.put(Marriage.MARRIAGE_MONTH, b.getString(BirthFamilyGT.PARENTS_MONTH_OF_MARRIAGE));
+            marriage_query.put(Marriage.MARRIAGE_YEAR, b.getString(BirthFamilyGT.PARENTS_YEAR_OF_MARRIAGE));
 
-            for( int range = 0; range < RANGE_MAX;  ) {
+            for (int range = 0; range < RANGE_MAX; ) {
 
                 List<DataDistance<Marriage>> results = marriageMtree.rangeSearch(marriage_query, range++);
-                System.out.print( results.size() );
-                if( range != RANGE_MAX ) {
-                    System.out.print( "," );
+                System.out.print(results.size());
+                if (range != RANGE_MAX) {
+                    System.out.print(",");
                 }
-
             }
             System.out.println();
         }
@@ -100,15 +98,25 @@ public class KilmarnockMTreeBirthMarriageRangeCSVGenerator extends KilmarnockMTr
 
     public static void main(String[] args) throws Exception {
 
-        if( args.length < 3 ) {
-            ErrorHandling.error( "Usage: run with births_source_path deaths_source_path marriages_source_path");
+        KilmarnockMTreeBirthMarriageRangeCSVGenerator matcher = new KilmarnockMTreeBirthMarriageRangeCSVGenerator();
+
+        if (args.length >= ARG_NAMES.length) {
+
+            String births_source_path = args[0];
+            String deaths_source_path = args[1];
+            String marriages_source_path = args[2];
+
+            matcher.printDescription(args);
+            matcher.ingestBDMRecords(births_source_path, deaths_source_path, marriages_source_path);
+            matcher.compute();
+
+        } else {
+            matcher.usage();
         }
+    }
 
-        System.out.println( "Running KilmarnockMTreeBirthMarriageRangeCSVGenerator" );
-        String births_source_path = args[0];
-        String deaths_source_path = args[1];
-        String marriages_source_path = args[2];
+    protected String[] getArgNames() {
 
-        new KilmarnockMTreeBirthMarriageRangeCSVGenerator(births_source_path, deaths_source_path, marriages_source_path);
+        return ARG_NAMES;
     }
 }

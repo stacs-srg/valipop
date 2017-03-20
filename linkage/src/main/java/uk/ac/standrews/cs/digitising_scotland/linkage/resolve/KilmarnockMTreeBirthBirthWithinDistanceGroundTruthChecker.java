@@ -1,10 +1,7 @@
 package uk.ac.standrews.cs.digitising_scotland.linkage.resolve;
 
-import org.json.JSONException;
-import uk.ac.standrews.cs.digitising_scotland.linkage.RecordFormatException;
 import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.BirthFamilyGT;
 import uk.ac.standrews.cs.digitising_scotland.linkage.resolve.distances.GFNGLNBFNBMNPOMDOMDistanceOverBirth;
-import uk.ac.standrews.cs.digitising_scotland.util.ErrorHandling;
 import uk.ac.standrews.cs.digitising_scotland.util.MTree.DataDistance;
 import uk.ac.standrews.cs.digitising_scotland.util.MTree.MTree;
 import uk.ac.standrews.cs.storr.impl.exceptions.BucketException;
@@ -16,7 +13,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.concurrent.Callable;
 
 /**
  * Attempt to perform linking using MTree matching
@@ -25,51 +21,44 @@ import java.util.concurrent.Callable;
  */
 public class KilmarnockMTreeBirthBirthWithinDistanceGroundTruthChecker extends KilmarnockMTreeMatcherGroundTruthChecker {
 
-    private  MTree<BirthFamilyGT> birthMTree;
+    public static final String[] ARG_NAMES = {"births_source_path", "deaths_source_path", "marriages_source_path"};
+    private MTree<BirthFamilyGT> birthMTree;
 
-    // Maps
-
-    public KilmarnockMTreeBirthBirthWithinDistanceGroundTruthChecker(String births_source_path, String deaths_source_path, String marriages_source_path) throws RecordFormatException, RepositoryException, StoreException, JSONException, BucketException, IOException {
-        super(births_source_path, deaths_source_path, marriages_source_path );
+    public KilmarnockMTreeBirthBirthWithinDistanceGroundTruthChecker() throws StoreException, IOException, RepositoryException {
     }
 
     private void compute() throws Exception {
-        System.out.println("Creating Birth MTree");
-        long time = System.currentTimeMillis();
-        createBirthMTreeOverGFNGLNBFNBMNPOMDOM();
-        long elapsed =  ( System.currentTimeMillis() - time ) / 1000 ;
-        System.out.println("Created Marriage MTree in " + elapsed + "s");
 
-        System.out.println("Forming families from Birth-Birth links");
-        formFamilies();
-        listFamilies();
-
-        timedRun("Calculating linkage stats", new Callable<Void>(){
-            public Void call() throws BucketException {
-                calculateLinkageStats();
-                return null;
-            }
+        timedRun("Creating Birth MTree", () -> {
+            createBirthMTreeOverGFNGLNBFNBMNPOMDOM();
+            return null;
         });
 
-        System.out.println("Finished");
-    }
+        timedRun("Forming families from Birth-Birth links", () -> {
+            formFamilies();
+            listFamilies();
+            return null;
+        });
 
+        timedRun("Calculating linkage stats", () -> {
+            calculateLinkageStats();
+            return null;
+        });
+    }
 
     private void createBirthMTreeOverGFNGLNBFNBMNPOMDOM() throws RepositoryException, BucketException, IOException {
 
         System.out.println("Creating M Tree of births by GFNGLNBFNBMNPOMDOMDistanceOverBirth...");
 
-        birthMTree = new MTree<BirthFamilyGT>( new GFNGLNBFNBMNPOMDOMDistanceOverBirth() );
+        birthMTree = new MTree<BirthFamilyGT>(new GFNGLNBFNBMNPOMDOMDistanceOverBirth());
 
         IInputStream<BirthFamilyGT> stream = births.getInputStream();
 
         for (BirthFamilyGT birth : stream) {
 
-            birthMTree.add( birth );
+            birthMTree.add(birth);
         }
-
     }
-
 
     /**
      * Try and form families from Birth M Tree data_array
@@ -132,7 +121,6 @@ public class KilmarnockMTreeBirthBirthWithinDistanceGroundTruthChecker extends K
                     }
                 }
             }
-
         }
     }
 
@@ -140,17 +128,26 @@ public class KilmarnockMTreeBirthBirthWithinDistanceGroundTruthChecker extends K
 
     public static void main(String[] args) throws Exception {
 
-        if( args.length < 3 ) {
-            ErrorHandling.error( "Usage: run with births_source_path deaths_source_path marriages_source_path");
+        KilmarnockMTreeBirthBirthWithinDistanceGroundTruthChecker matcher = new KilmarnockMTreeBirthBirthWithinDistanceGroundTruthChecker();
+
+        if (args.length >= ARG_NAMES.length) {
+
+            String births_source_path = args[0];
+            String deaths_source_path = args[1];
+            String marriages_source_path = args[2];
+
+
+            matcher.printDescription(args);
+            matcher.ingestBDMRecords(births_source_path, deaths_source_path, marriages_source_path);
+            matcher.compute();
+        } else {
+            matcher.usage();
+
         }
+    }
 
-        System.out.println( "Running KilmarnockMTreeBirthBirthWithinDistanceGroundTruthChecker" );
-        String births_source_path = args[0];
-        String deaths_source_path = args[1];
-        String marriages_source_path = args[2];
+    protected String[] getArgNames() {
 
-
-        KilmarnockMTreeBirthBirthWithinDistanceGroundTruthChecker matcher = new KilmarnockMTreeBirthBirthWithinDistanceGroundTruthChecker(births_source_path, deaths_source_path, marriages_source_path);
-        matcher.compute();
+        return ARG_NAMES;
     }
 }

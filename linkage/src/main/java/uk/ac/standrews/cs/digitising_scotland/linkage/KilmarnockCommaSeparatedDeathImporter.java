@@ -10,7 +10,6 @@ import uk.ac.standrews.cs.util.dataset.DataSet;
 
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.List;
 
 import static uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.Death.*;
@@ -96,7 +95,7 @@ public class KilmarnockCommaSeparatedDeathImporter extends KilmarnockCommaSepara
      * @throws RecordFormatException
      * @throws BucketException
      */
-    public static int importDigitisingScotlandDeaths(IBucket<Death> deaths, String filename, ArrayList<Long> oids) throws RecordFormatException, IOException, BucketException, IllegalKeyException {
+    public static int importDigitisingScotlandDeaths(IBucket<Death> deaths, String filename, List<Long> oids) throws RecordFormatException, IOException, BucketException, IllegalKeyException {
 
         int count = 0;
         DataSet data = new DataSet(Paths.get(filename));
