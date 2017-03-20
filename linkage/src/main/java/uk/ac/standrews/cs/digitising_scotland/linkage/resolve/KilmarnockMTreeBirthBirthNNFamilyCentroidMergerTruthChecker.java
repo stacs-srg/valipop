@@ -20,7 +20,8 @@ import java.util.Map;
  */
 public class KilmarnockMTreeBirthBirthNNFamilyCentroidMergerTruthChecker extends KilmarnockMTreeBirthBirthThresholdNNGroundTruthChecker {
 
-    public static final String[] ARG_NAMES = {"births_source_path", "deaths_source_path", "marriages_source_path", "family_distance_threshold", "max_family_size", "family_merge_distance_threshold"};
+    private static final String[] ARG_NAMES = {"births_source_path", "deaths_source_path", "marriages_source_path", "family_distance_threshold", "max_family_size", "family_merge_distance_threshold"};
+
     private int max_family_size;
     private float family_merge_distance_threshold;
 
