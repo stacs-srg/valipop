@@ -44,6 +44,10 @@ public abstract class KilmarnockMTreeMatcherGroundTruthChecker {
     protected IBucket<Marriage> marriages;               // Bucket containing marriage records (inputs).
     protected IBucket<Death> deaths;                     // Bucket containing death records (inputs).
 
+    protected int births_count;
+    protected int marriages_count;
+    protected int deaths_count;
+
     // Paths to sources
 
     private static final String births_name = "birth_records";                            // Name of bucket containing birth records (inputs).
@@ -131,12 +135,9 @@ public abstract class KilmarnockMTreeMatcherGroundTruthChecker {
     private void ingestBDMRecords(String births_source_path, String deaths_source_path, String marriages_source_path) throws RecordFormatException, BucketException, IOException {
 
         System.out.println("Importing BDM records");
-        int birth_count = KilmarnockCommaSeparatedBirthImporter.importDigitisingScotlandBirths(births, births_source_path, oids);
-        System.out.println("Imported " + birth_count + " birth records");
-        int death_count = KilmarnockCommaSeparatedDeathImporter.importDigitisingScotlandDeaths(deaths, deaths_source_path, oids);
-        System.out.println("Imported " + death_count + " death records");
-        int marriage_count = KilmarnockCommaSeparatedMarriageImporter.importDigitisingScotlandMarriages(marriages, marriages_source_path, oids);
-        System.out.println("Imported " + marriage_count + " marriage records");
+        births_count = KilmarnockCommaSeparatedBirthImporter.importDigitisingScotlandBirths(births, births_source_path, oids);
+        deaths_count = KilmarnockCommaSeparatedDeathImporter.importDigitisingScotlandDeaths(deaths, deaths_source_path, oids);
+        marriages_count = KilmarnockCommaSeparatedMarriageImporter.importDigitisingScotlandMarriages(marriages, marriages_source_path, oids);
     }
 
     /**
