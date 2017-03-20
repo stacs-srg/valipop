@@ -69,10 +69,9 @@ public class KilmarnockMTreeBirthBirthNNFamilyCentroidMergerTruthChecker extends
 
             int pool_size = 1; // the size of the pool in which we are examining families to merge.
 
-            // These 3 lines initialise the search and are repeated in the if at the end of the while
+            // These 2 lines initialise the search and are repeated in the if at the end of the while
             // Might be able to make this cleaner but at least I think I understand it! - al
             List<DataDistance<Family>> dds = familyMTree.nearestN(f, pool_size);
-            dds = dds.subList(pool_size - 1, dds.size()); // chop off the families we have already looked at.
             int index = 0; // index in dds - the next family to look at in the search
 
             // This code sweeps out (in pools of 5) in circles looking for families to merge - we stop when the families we are finding are outside the threshold
