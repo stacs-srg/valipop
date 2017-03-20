@@ -5,7 +5,9 @@ import uk.ac.standrews.cs.digitising_scotland.linkage.KilmarnockCommaSeparatedBi
 import uk.ac.standrews.cs.digitising_scotland.linkage.KilmarnockCommaSeparatedDeathImporter;
 import uk.ac.standrews.cs.digitising_scotland.linkage.KilmarnockCommaSeparatedMarriageImporter;
 import uk.ac.standrews.cs.digitising_scotland.linkage.RecordFormatException;
-import uk.ac.standrews.cs.digitising_scotland.linkage.factory.*;
+import uk.ac.standrews.cs.digitising_scotland.linkage.factory.BirthFactory;
+import uk.ac.standrews.cs.digitising_scotland.linkage.factory.DeathFactory;
+import uk.ac.standrews.cs.digitising_scotland.linkage.factory.MarriageFactory;
 import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.*;
 import uk.ac.standrews.cs.storr.impl.StoreFactory;
 import uk.ac.standrews.cs.storr.impl.TypeFactory;
@@ -25,7 +27,7 @@ import java.util.concurrent.Callable;
  * File is derived from KilmarnockLinker.
  * Created by al on 17/2/1017
  */
-public class KilmarnockMTreeMatcherGroundTruthChecker {
+public abstract class KilmarnockMTreeMatcherGroundTruthChecker {
 
     // Repositories and stores
 
@@ -61,12 +63,12 @@ public class KilmarnockMTreeMatcherGroundTruthChecker {
     private BirthFactory birthFactory;
     private DeathFactory deathFactory;
     private MarriageFactory marriageFactory;
-    private RelationshipFactory relationshipFactory;
+    //    private RelationshipFactory relationshipFactory;
     private ArrayList<Long> oids = new ArrayList<>();
 
     // Maps
 
-    protected HashMap<Long, Family> families = new HashMap<>(); // Maps from person id to family.
+    protected Map<Long, Family> families = new HashMap<>(); // Maps from person id to family.
 
     KilmarnockMTreeMatcherGroundTruthChecker(String births_source_path, String deaths_source_path, String marriages_source_path) throws StoreException, JSONException, RecordFormatException, RepositoryException, IOException, BucketException {
 
@@ -87,9 +89,9 @@ public class KilmarnockMTreeMatcherGroundTruthChecker {
         System.out.println("Store path = " + store_path);
 
         IRepository input_repo = store.makeRepository(input_repo_name);
-        IRepository blocked_births_repo = store.makeRepository(blocked_birth_repo_name);
-        IRepository FFNFLNMFNMMNPOMDOM_repo = store.makeRepository(FFNFLNMFNMMNPOMDOM_repo_name);
-        IRepository FFNFLNMFNMMN_repo = store.makeRepository(FFNFLNMFNMMN_repo_name);
+//        IRepository blocked_births_repo = store.makeRepository(blocked_birth_repo_name);
+//        IRepository FFNFLNMFNMMNPOMDOM_repo = store.makeRepository(FFNFLNMFNMMNPOMDOM_repo_name);
+//        IRepository FFNFLNMFNMMN_repo = store.makeRepository(FFNFLNMFNMMN_repo_name);
 
         IRepository linkage_repo = store.makeRepository(linkage_repo_name);
         initialiseTypes();
@@ -98,7 +100,7 @@ public class KilmarnockMTreeMatcherGroundTruthChecker {
         births = input_repo.makeBucket(births_name, BucketKind.DIRECTORYBACKED, birthFactory);
         deaths = input_repo.makeBucket(deaths_name, BucketKind.DIRECTORYBACKED, deathFactory);
         marriages = input_repo.makeBucket(marriages_name, BucketKind.DIRECTORYBACKED, marriageFactory);
-        IBucket<Relationship> relationships = linkage_repo.makeBucket(relationships_name, BucketKind.DIRECTORYBACKED, relationshipFactory);
+//        IBucket<Relationship> relationships = linkage_repo.makeBucket(relationships_name, BucketKind.DIRECTORYBACKED, relationshipFactory);
     }
 
     private void initialiseTypes() {
@@ -117,8 +119,8 @@ public class KilmarnockMTreeMatcherGroundTruthChecker {
         birthFactory = new BirthFactory(birthType.getId());
         deathFactory = new DeathFactory(deathType.getId());
         marriageFactory = new MarriageFactory(marriageType.getId());
-        RoleFactory roleFactory = new RoleFactory(roleType.getId());
-        relationshipFactory = new RelationshipFactory(relationshipType.getId());
+//        RoleFactory roleFactory = new RoleFactory(roleType.getId());
+//        relationshipFactory = new RelationshipFactory(relationshipType.getId());
     }
 
     /**
@@ -160,19 +162,6 @@ public class KilmarnockMTreeMatcherGroundTruthChecker {
         }
     }
 
-    class SimpleTuple3<X, Y, Z> {
-
-        final X first;
-        final Y second;
-        final Z third;
-
-        SimpleTuple3(X first, Y second, Z third) {
-            this.first = first;
-            this.second = second;
-            this.third = third;
-        }
-    }
-
     void calculateLinkageStats() throws BucketException {
 
 //      first: person-id
@@ -183,7 +172,7 @@ public class KilmarnockMTreeMatcherGroundTruthChecker {
 
         for (BirthFamilyGT b : births.getInputStream()) {
 
-            Family assignedFam = families.get(b);
+            Family assignedFam = families.get(b.getId());
             Integer assignedFamId = null;
             if (assignedFam != null) {
                 assignedFamId = assignedFam.id;
@@ -210,42 +199,45 @@ public class KilmarnockMTreeMatcherGroundTruthChecker {
             Integer b1AssignedFamily = b1.second;
             String b1RealFamilyId = b1.third;
 
-            if (b1AssignedFamily != null) {
-                Integer b1AssignedCount = assignedFamilyCounts.get(b1AssignedFamily);
-                if (b1AssignedCount == null) {
-                    assignedFamilyCounts.put(b1AssignedFamily, 1);
-                } else {
-                    assignedFamilyCounts.put(b1AssignedFamily, b1AssignedCount + 1);
-                }
-            } else {
-                assignedFamilyMissing++;
-            }
+            if (b1RealFamilyId != null) {
 
-            if (b1RealFamilyId.length() > 0) {
-                Integer b1RealCount = realFamilyCounts.get(b1RealFamilyId);
-                if (b1RealCount == null) {
-                    realFamilyCounts.put(b1RealFamilyId, 1);
-                } else {
-                    realFamilyCounts.put(b1RealFamilyId, b1RealCount + 1);
-                }
-            } else {
-                realFamilyMissing++;
-            }
-
-            for (SimpleTuple3<Long, Integer, String> b2 : birthIDs) {
-
-                Integer b2AssignedFamily = b2.second;
-                String b2RealFamilyId = b2.third;
-
-                if (b1AssignedFamily != null && b1AssignedFamily == b2AssignedFamily) {
-                    if (b1RealFamilyId != null && b1RealFamilyId.length() > 0 && b1RealFamilyId.equals(b2RealFamilyId)) {
-                        truePositives++;
+                if (b1AssignedFamily != null) {
+                    Integer b1AssignedCount = assignedFamilyCounts.get(b1AssignedFamily);
+                    if (b1AssignedCount == null) {
+                        assignedFamilyCounts.put(b1AssignedFamily, 1);
                     } else {
-                        falsePositives++;
+                        assignedFamilyCounts.put(b1AssignedFamily, b1AssignedCount + 1);
                     }
                 } else {
-                    if (b1RealFamilyId != null && b1RealFamilyId.length() > 0 && b1RealFamilyId.equals(b2RealFamilyId)) {
-                        falseNegatives++;
+                    assignedFamilyMissing++;
+                }
+
+                if (b1RealFamilyId.length() > 0) {
+                    Integer b1RealCount = realFamilyCounts.get(b1RealFamilyId);
+                    if (b1RealCount == null) {
+                        realFamilyCounts.put(b1RealFamilyId, 1);
+                    } else {
+                        realFamilyCounts.put(b1RealFamilyId, b1RealCount + 1);
+                    }
+                } else {
+                    realFamilyMissing++;
+                }
+
+                for (SimpleTuple3<Long, Integer, String> b2 : birthIDs) {
+
+                    Integer b2AssignedFamily = b2.second;
+                    String b2RealFamilyId = b2.third;
+
+                    if (b1AssignedFamily != null && !b1AssignedFamily.equals(b2AssignedFamily)) {
+                        if (b1RealFamilyId.length() > 0 && b1RealFamilyId.equals(b2RealFamilyId)) {
+                            truePositives++;
+                        } else {
+                            falsePositives++;
+                        }
+                    } else {
+                        if (b1RealFamilyId.length() > 0 && b1RealFamilyId.equals(b2RealFamilyId)) {
+                            falseNegatives++;
+                        }
                     }
                 }
             }
@@ -307,5 +299,18 @@ public class KilmarnockMTreeMatcherGroundTruthChecker {
             sum += i;
         }
         return (sum / values.size());
+    }
+
+    class SimpleTuple3<X, Y, Z> {
+
+        final X first;
+        final Y second;
+        final Z third;
+
+        SimpleTuple3(X first, Y second, Z third) {
+            this.first = first;
+            this.second = second;
+            this.third = third;
+        }
     }
 }
