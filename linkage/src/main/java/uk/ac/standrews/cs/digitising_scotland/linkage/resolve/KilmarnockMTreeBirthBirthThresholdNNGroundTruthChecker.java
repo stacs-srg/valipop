@@ -9,10 +9,10 @@ import uk.ac.standrews.cs.digitising_scotland.util.MTree.MTree;
 import uk.ac.standrews.cs.storr.impl.exceptions.BucketException;
 import uk.ac.standrews.cs.storr.impl.exceptions.RepositoryException;
 import uk.ac.standrews.cs.storr.impl.exceptions.StoreException;
-import uk.ac.standrews.cs.storr.interfaces.IInputStream;
+import uk.ac.standrews.cs.util.tools.PercentageProgressIndicator;
+import uk.ac.standrews.cs.util.tools.ProgressIndicator;
 
 import java.io.IOException;
-import java.util.concurrent.Callable;
 
 /**
  * Attempt to perform linking using MTree matching
@@ -21,8 +21,8 @@ import java.util.concurrent.Callable;
  */
 public class KilmarnockMTreeBirthBirthThresholdNNGroundTruthChecker extends KilmarnockMTreeMatcherGroundTruthChecker {
 
-    private MTree<BirthFamilyGT> birthMTree;
-    private float match_family_distance_threshold;
+    private MTree<BirthFamilyGT> birth_MTree;
+    protected float match_family_distance_threshold;
 
     KilmarnockMTreeBirthBirthThresholdNNGroundTruthChecker(String births_source_path, String deaths_source_path, String marriages_source_path, float match_family_distance_threshold) throws RecordFormatException, RepositoryException, StoreException, JSONException, BucketException, IOException {
 
@@ -32,27 +32,22 @@ public class KilmarnockMTreeBirthBirthThresholdNNGroundTruthChecker extends Kilm
     }
 
     private void compute() throws Exception {
-        timedRun("Creating Birth MTree", new Callable<Void>() {
-            public Void call() throws RepositoryException, BucketException, IOException {
-                createBirthMTreeOverGFNGLNBFNBMNPOMDOM();
-                return null;
-            }
+
+        timedRun("Creating Birth MTree", () -> {
+            createBirthMTreeOverGFNGLNBFNBMNPOMDOM();
+            return null;
         });
 
-        timedRun("Forming families from Birth-Birth links", new Callable<Void>() {
-            public Void call() {
-                formFamilies();
-                return null;
-            }
+        timedRun("Forming families from Birth-Birth links", () -> {
+            formFamilies();
+            return null;
         });
 
         listFamilies();
 
-        timedRun("Calculating linkage stats", new Callable<Void>() {
-            public Void call() throws BucketException {
-                calculateLinkageStats();
-                return null;
-            }
+        timedRun("Calculating linkage stats", () -> {
+            calculateLinkageStats();
+            return null;
         });
 
         System.out.println("Finished");
@@ -60,38 +55,34 @@ public class KilmarnockMTreeBirthBirthThresholdNNGroundTruthChecker extends Kilm
 
     void createBirthMTreeOverGFNGLNBFNBMNPOMDOM() throws RepositoryException, BucketException, IOException {
 
-        System.out.println("Creating M Tree of births by GFNGLNBFNBMNPOMDOMDistanceOverBirth...");
+        ProgressIndicator indicator = new PercentageProgressIndicator(10);
+        indicator.setTotalSteps(births_count);
 
-        birthMTree = new MTree<>(new GFNGLNBFNBMNPOMDOMDistanceOverBirth());
+        birth_MTree = new MTree<>(new GFNGLNBFNBMNPOMDOMDistanceOverBirth());
 
-        IInputStream<BirthFamilyGT> stream = births.getInputStream();
+        for (BirthFamilyGT birth : births.getInputStream()) {
 
-        for (BirthFamilyGT birth : stream) {
-
-            birthMTree.add(birth);
+            birth_MTree.add(birth);
+            indicator.progressStep();
         }
     }
 
     /**
      * Try and form families from Birth M Tree data_array
      */
-    void formFamilies() {
+    void formFamilies() throws BucketException {
 
-        IInputStream<BirthFamilyGT> stream;
-        try {
-            stream = births.getInputStream();
-        } catch (BucketException e) {
-            System.out.println("Exception whilst getting births");
-            return;
-        }
+        ProgressIndicator indicator = new PercentageProgressIndicator(10);
+        indicator.setTotalSteps(births_count);
 
-        for (BirthFamilyGT to_match : stream) {
+        for (BirthFamilyGT to_match : births.getInputStream()) {
 
-            DataDistance<BirthFamilyGT> matched = birthMTree.nearestNeighbour(to_match);
+            DataDistance<BirthFamilyGT> matched = birth_MTree.nearestNeighbour(to_match);
 
             if (matched.distance < match_family_distance_threshold && matched.value != to_match) {
                 addBirthsToMap(to_match, matched);
             }
+            indicator.progressStep();
         }
     }
 
@@ -108,7 +99,9 @@ public class KilmarnockMTreeBirthBirthThresholdNNGroundTruthChecker extends Kilm
         long searched_key = searched.getId();
         long found_key = found.getId();
 
-        if (!families.containsKey(searched_key) && !families.containsKey(found_key)) { // not seen either birth before
+        if (!families.containsKey(searched_key) && !families.containsKey(found_key)) {
+
+            // Not seen either birth before.
             // Create a new Family and add to map under both keys.
             Family new_family = new Family(searched);
             new_family.siblings.add(found);
@@ -119,12 +112,16 @@ public class KilmarnockMTreeBirthBirthThresholdNNGroundTruthChecker extends Kilm
 
         // Don't bother with whether these are the same family or not, or if the added values are already in the set
         // Set implementation should deal with this.
-        if (families.containsKey(searched_key) && !families.containsKey(found_key)) { // already seen the searched birth => been found already
+        if (families.containsKey(searched_key) && !families.containsKey(found_key)) {
+
+            // Already seen the searched birth => been found already
             Family f = families.get(searched_key);
             f.siblings.add(found);
         }
 
-        if (families.containsKey(found_key) && !families.containsKey(searched_key)) { // already seen the found birth => been searcher for earlier
+        if (families.containsKey(found_key) && !families.containsKey(searched_key)) {
+
+            // Already seen the found birth => been searched for earlier
             Family f = families.get(found_key);
             f.siblings.add(searched);
         }
@@ -144,6 +141,7 @@ public class KilmarnockMTreeBirthBirthThresholdNNGroundTruthChecker extends Kilm
 
             KilmarnockMTreeBirthBirthThresholdNNGroundTruthChecker matcher = new KilmarnockMTreeBirthBirthThresholdNNGroundTruthChecker(births_source_path, deaths_source_path, marriages_source_path, new Float(family_distance_threshold_string));
             matcher.compute();
+
         } else {
             usage();
         }
