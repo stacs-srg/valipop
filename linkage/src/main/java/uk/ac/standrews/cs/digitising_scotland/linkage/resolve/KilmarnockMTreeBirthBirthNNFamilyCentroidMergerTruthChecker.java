@@ -20,16 +20,20 @@ import java.util.Map;
  */
 public class KilmarnockMTreeBirthBirthNNFamilyCentroidMergerTruthChecker extends KilmarnockMTreeBirthBirthThresholdNNGroundTruthChecker {
 
+    public static final String[] ARG_NAMES = {"births_source_path", "deaths_source_path", "marriages_source_path", "family_distance_threshold", "max_family_size", "family_merge_distance_threshold"};
     private int max_family_size;
     private float family_merge_distance_threshold;
 
-    private KilmarnockMTreeBirthBirthNNFamilyCentroidMergerTruthChecker(String births_source_path, String deaths_source_path, String marriages_source_path, float match_family_distance_threshold, int max_family_size, float family_merge_distance_threshold) throws RecordFormatException, RepositoryException, StoreException, JSONException, BucketException, IOException {
+    private KilmarnockMTreeBirthBirthNNFamilyCentroidMergerTruthChecker(float match_family_distance_threshold, int max_family_size, float family_merge_distance_threshold) throws RecordFormatException, RepositoryException, StoreException, JSONException, BucketException, IOException {
 
-        super(births_source_path, deaths_source_path, marriages_source_path, match_family_distance_threshold);
+        super(match_family_distance_threshold);
+
         this.max_family_size = max_family_size;
         this.family_merge_distance_threshold = family_merge_distance_threshold;
-        System.out.println("max_family_size= " + max_family_size);
-        System.out.println("family_merge_distance_threshold= " + family_merge_distance_threshold);
+    }
+
+    private KilmarnockMTreeBirthBirthNNFamilyCentroidMergerTruthChecker() throws RecordFormatException, RepositoryException, StoreException, JSONException, BucketException, IOException {
+
     }
 
     private void compute() throws Exception {
@@ -112,7 +116,7 @@ public class KilmarnockMTreeBirthBirthNNFamilyCentroidMergerTruthChecker extends
 
     public static void main(String[] args) throws Exception {
 
-        if (args.length >= 6) {
+        if (args.length >= ARG_NAMES.length) {
 
             String births_source_path = args[0];
             String deaths_source_path = args[1];
@@ -121,16 +125,19 @@ public class KilmarnockMTreeBirthBirthNNFamilyCentroidMergerTruthChecker extends
             String max_family_size_string = args[4];
             String family_merge_distance_threshold_string = args[5];
 
+            KilmarnockMTreeBirthBirthNNFamilyCentroidMergerTruthChecker matcher = new KilmarnockMTreeBirthBirthNNFamilyCentroidMergerTruthChecker(Float.parseFloat(family_distance_threshold_string), Integer.parseInt(max_family_size_string), Float.parseFloat(family_merge_distance_threshold_string));
 
-            KilmarnockMTreeBirthBirthNNFamilyCentroidMergerTruthChecker matcher = new KilmarnockMTreeBirthBirthNNFamilyCentroidMergerTruthChecker(births_source_path, deaths_source_path, marriages_source_path, new Float(family_distance_threshold_string), Integer.parseInt(max_family_size_string), Float.parseFloat(family_merge_distance_threshold_string));
+            matcher.printDescription(args);
+            matcher.ingestBDMRecords(births_source_path, deaths_source_path, marriages_source_path);
             matcher.compute();
+
         } else {
-            usage();
+            new KilmarnockMTreeBirthBirthNNFamilyCentroidMergerTruthChecker().usage();
         }
     }
 
-    private static void usage() {
+    protected String[] getArgNames() {
 
-        System.err.println("Usage: run with births_source_path deaths_source_path marriages_source_path family_distance_threshold max_family_size family_merge_distance_threshold");
+        return ARG_NAMES;
     }
 }

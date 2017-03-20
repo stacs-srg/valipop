@@ -1,12 +1,9 @@
 package uk.ac.standrews.cs.digitising_scotland.linkage.resolve;
 
-import org.json.JSONException;
-import uk.ac.standrews.cs.digitising_scotland.linkage.RecordFormatException;
 import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.BirthFamilyGT;
 import uk.ac.standrews.cs.digitising_scotland.linkage.resolve.distances.GFNGLNBFNBMNPOMDOMDistanceOverFamily;
 import uk.ac.standrews.cs.digitising_scotland.util.MTree.DataDistance;
 import uk.ac.standrews.cs.digitising_scotland.util.MTree.MTree;
-import uk.ac.standrews.cs.storr.impl.exceptions.BucketException;
 import uk.ac.standrews.cs.storr.impl.exceptions.RepositoryException;
 import uk.ac.standrews.cs.storr.impl.exceptions.StoreException;
 
@@ -20,16 +17,21 @@ import java.util.Map;
 public class KilmarnockMTreeBirthBirthNNFamilyMergerTruthChecker extends KilmarnockMTreeBirthBirthThresholdNNGroundTruthChecker {
 
     private static final int NUMBER_OF_NEARBY_FAMILIES_TO_CONSIDER_FOR_MERGING = 15;
+    private static final String[] ARG_NAMES = {"births_source_path", "deaths_source_path", "marriages_source_path", "family_distance_threshold", "max_family_size", "family_merge_distance_threshold"};
 
-    private final int max_family_size;
-    private final float family_merge_distance_threshold;
+    private int max_family_size;
+    private float family_merge_distance_threshold;
 
-    private KilmarnockMTreeBirthBirthNNFamilyMergerTruthChecker(String births_source_path, String deaths_source_path, String marriages_source_path, float match_family_distance_threshold, int max_family_size, float family_merge_distance_threshold) throws RecordFormatException, RepositoryException, StoreException, JSONException, BucketException, IOException {
+    private KilmarnockMTreeBirthBirthNNFamilyMergerTruthChecker(float match_family_distance_threshold, int max_family_size, float family_merge_distance_threshold) throws StoreException, IOException, RepositoryException {
 
-        super(births_source_path, deaths_source_path, marriages_source_path, match_family_distance_threshold);
+        super(match_family_distance_threshold);
 
         this.max_family_size = max_family_size;
         this.family_merge_distance_threshold = family_merge_distance_threshold;
+    }
+
+    private KilmarnockMTreeBirthBirthNNFamilyMergerTruthChecker() throws StoreException, IOException, RepositoryException {
+
     }
 
     private void compute() throws Exception {
@@ -98,9 +100,8 @@ public class KilmarnockMTreeBirthBirthNNFamilyMergerTruthChecker extends Kilmarn
 
     public static void main(String[] args) throws Exception {
 
-        if (args.length >= 6) {
+        if (args.length >= ARG_NAMES.length) {
 
-            System.out.println("Running KilmarnockMTreeBirthBirthNNFamilyMergerTruthChecker");
             String births_source_path = args[0];
             String deaths_source_path = args[1];
             String marriages_source_path = args[2];
@@ -108,17 +109,19 @@ public class KilmarnockMTreeBirthBirthNNFamilyMergerTruthChecker extends Kilmarn
             String max_family_size_string = args[4];
             String family_merge_distance_threshold_string = args[5];
 
+            KilmarnockMTreeBirthBirthNNFamilyMergerTruthChecker matcher = new KilmarnockMTreeBirthBirthNNFamilyMergerTruthChecker(Float.parseFloat(family_distance_threshold_string), Integer.parseInt(max_family_size_string), Float.parseFloat(family_merge_distance_threshold_string));
 
-            KilmarnockMTreeBirthBirthNNFamilyMergerTruthChecker matcher = new KilmarnockMTreeBirthBirthNNFamilyMergerTruthChecker(births_source_path, deaths_source_path, marriages_source_path, new Float(family_distance_threshold_string), Integer.parseInt(max_family_size_string), Float.parseFloat(family_merge_distance_threshold_string));
+            matcher.printDescription(args);
+            matcher.ingestBDMRecords(births_source_path, deaths_source_path, marriages_source_path);
             matcher.compute();
 
         } else {
-            usage();
+            new KilmarnockMTreeBirthBirthNNFamilyMergerTruthChecker().usage();
         }
     }
 
-    private static void usage() {
+    protected String[] getArgNames() {
 
-        System.err.println("Usage: run with births_source_path deaths_source_path marriages_source_path family_distance_threshold max_family_size family_merge_distance_threshold");
+        return ARG_NAMES;
     }
 }

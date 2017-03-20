@@ -1,7 +1,5 @@
 package uk.ac.standrews.cs.digitising_scotland.linkage.resolve;
 
-import org.json.JSONException;
-import uk.ac.standrews.cs.digitising_scotland.linkage.RecordFormatException;
 import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.BirthFamilyGT;
 import uk.ac.standrews.cs.digitising_scotland.linkage.resolve.distances.GFNGLNBFNBMNPOMDOMDistanceOverBirth;
 import uk.ac.standrews.cs.digitising_scotland.util.MTree.DataDistance;
@@ -21,14 +19,18 @@ import java.io.IOException;
  */
 public class KilmarnockMTreeBirthBirthThresholdNNGroundTruthChecker extends KilmarnockMTreeMatcherGroundTruthChecker {
 
+    public static final String[] ARG_NAMES = {"births_source_path", "deaths_source_path", "marriages_source_path", "family_distance_threshold"};
     private MTree<BirthFamilyGT> birth_MTree;
-    protected float match_family_distance_threshold;
+    private float match_family_distance_threshold;
 
-    KilmarnockMTreeBirthBirthThresholdNNGroundTruthChecker(String births_source_path, String deaths_source_path, String marriages_source_path, float match_family_distance_threshold) throws RecordFormatException, RepositoryException, StoreException, JSONException, BucketException, IOException {
+    KilmarnockMTreeBirthBirthThresholdNNGroundTruthChecker(float match_family_distance_threshold) throws StoreException, IOException, RepositoryException {
 
-        super(births_source_path, deaths_source_path, marriages_source_path);
+        super();
         this.match_family_distance_threshold = match_family_distance_threshold;
-        System.out.println("match_family_distance_threshold= " + match_family_distance_threshold);
+    }
+
+    KilmarnockMTreeBirthBirthThresholdNNGroundTruthChecker() throws StoreException, IOException, RepositoryException {
+
     }
 
     private void compute() throws Exception {
@@ -131,24 +133,26 @@ public class KilmarnockMTreeBirthBirthThresholdNNGroundTruthChecker extends Kilm
 
     public static void main(String[] args) throws Exception {
 
-        if (args.length >= 4) {
+        if (args.length >= ARG_NAMES.length) {
 
-            System.out.println("Running KilmarnockMTreeBirthBirthThresholdNNGroundTruthChecker");
             String births_source_path = args[0];
             String deaths_source_path = args[1];
             String marriages_source_path = args[2];
             String family_distance_threshold_string = args[3];
 
-            KilmarnockMTreeBirthBirthThresholdNNGroundTruthChecker matcher = new KilmarnockMTreeBirthBirthThresholdNNGroundTruthChecker(births_source_path, deaths_source_path, marriages_source_path, new Float(family_distance_threshold_string));
+            KilmarnockMTreeBirthBirthThresholdNNGroundTruthChecker matcher = new KilmarnockMTreeBirthBirthThresholdNNGroundTruthChecker(Float.parseFloat(family_distance_threshold_string));
+
+            matcher.printDescription(args);
+            matcher.ingestBDMRecords(births_source_path, deaths_source_path, marriages_source_path);
             matcher.compute();
 
         } else {
-            usage();
+            new KilmarnockMTreeBirthBirthThresholdNNGroundTruthChecker().usage();
         }
     }
 
-    private static void usage() {
+    protected String[] getArgNames() {
 
-        System.err.println("Usage: run with births_source_path deaths_source_path marriages_source_path family_distance_threshold");
+        return ARG_NAMES;
     }
 }

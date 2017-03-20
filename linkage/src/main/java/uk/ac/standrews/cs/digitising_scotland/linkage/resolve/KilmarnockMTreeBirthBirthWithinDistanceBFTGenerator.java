@@ -1,7 +1,5 @@
 package uk.ac.standrews.cs.digitising_scotland.linkage.resolve;
 
-import org.json.JSONException;
-import uk.ac.standrews.cs.digitising_scotland.linkage.RecordFormatException;
 import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.BirthFamilyGT;
 import uk.ac.standrews.cs.digitising_scotland.linkage.resolve.distances.GFNGLNBFNBMNPOMDOMDistanceOverBirth;
 import uk.ac.standrews.cs.digitising_scotland.util.MTree.DataDistance;
@@ -16,7 +14,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
-import java.util.concurrent.Callable;
 
 /**
  * Attempt to perform linking using MTree matching
@@ -25,31 +22,24 @@ import java.util.concurrent.Callable;
  */
 public class KilmarnockMTreeBirthBirthWithinDistanceBFTGenerator extends KilmarnockMTreeMatcherGroundTruthChecker {
 
+    public static final String[] ARG_NAMES = {"births_source_path", "deaths_source_path", "marriages_source_path"};
     private  MTree<BirthFamilyGT> birthMTree;
 
-    // Maps
+    public KilmarnockMTreeBirthBirthWithinDistanceBFTGenerator() throws StoreException, IOException, RepositoryException {
 
-    public KilmarnockMTreeBirthBirthWithinDistanceBFTGenerator(String births_source_path, String deaths_source_path, String marriages_source_path) throws RecordFormatException, RepositoryException, StoreException, JSONException, BucketException, IOException {
-        super(births_source_path, deaths_source_path, marriages_source_path );
     }
 
     private void compute() throws Exception {
 
-        timedRun("Creating Birth MTree", new Callable<Void>(){
-            public Void call() throws RepositoryException, BucketException, IOException {
-                createBirthMTreeOverGFNGLNBFNBMNPOMDOM();
-                return null;
-            }
+        timedRun("Creating Birth MTree", () -> {
+            createBirthMTreeOverGFNGLNBFNBMNPOMDOM();
+            return null;
         });
 
-        timedRun("Dumping bft.json", new Callable<Void>(){
-            public Void call() throws RepositoryException, BucketException, IOException {
-                dumpBFT();
-                return null;
-            }
+        timedRun("Dumping bft.json", () -> {
+            dumpBFT();
+            return null;
         });
-
-        System.out.println("Finished");
     }
 
     private void dumpBFT() throws FileNotFoundException, UnsupportedEncodingException {
@@ -108,22 +98,25 @@ public class KilmarnockMTreeBirthBirthWithinDistanceBFTGenerator extends Kilmarn
 
     public static void main(String[] args) throws Exception {
 
-        if (args.length >= 3) {
+        KilmarnockMTreeBirthBirthWithinDistanceBFTGenerator matcher = new KilmarnockMTreeBirthBirthWithinDistanceBFTGenerator();
+
+        if (args.length >= ARG_NAMES.length) {
 
             String births_source_path = args[0];
             String deaths_source_path = args[1];
             String marriages_source_path = args[2];
-            System.out.println("Running KilmarnockMTreeBirthBirthWithinDistanceBFTGenerator");
 
-            KilmarnockMTreeBirthBirthWithinDistanceBFTGenerator matcher = new KilmarnockMTreeBirthBirthWithinDistanceBFTGenerator(births_source_path, deaths_source_path, marriages_source_path);
+            matcher.printDescription(args);
+            matcher.ingestBDMRecords(births_source_path, deaths_source_path, marriages_source_path);
             matcher.compute();
+
         } else {
-            usage();
+            matcher.usage();
         }
     }
 
-    private static void usage() {
+    protected String[] getArgNames() {
 
-        System.err.println("Usage: run with births_source_path deaths_source_path marriages_source_path");
+        return ARG_NAMES;
     }
 }

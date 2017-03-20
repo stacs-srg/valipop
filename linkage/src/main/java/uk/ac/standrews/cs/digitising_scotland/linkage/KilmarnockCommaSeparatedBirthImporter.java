@@ -1,6 +1,6 @@
 package uk.ac.standrews.cs.digitising_scotland.linkage;
 
-import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.*;
+import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.BirthFamilyGT;
 import uk.ac.standrews.cs.digitising_scotland.linkage.normalisation.normaliseDates;
 import uk.ac.standrews.cs.digitising_scotland.util.ErrorHandling;
 import uk.ac.standrews.cs.storr.impl.exceptions.BucketException;
@@ -10,7 +10,6 @@ import uk.ac.standrews.cs.util.dataset.DataSet;
 
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.List;
 
 import static uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.BirthFamilyGT.*;
@@ -92,7 +91,7 @@ public class KilmarnockCommaSeparatedBirthImporter extends KilmarnockCommaSepara
      * @throws RecordFormatException
      * @throws BucketException
      */
-    public static int importDigitisingScotlandBirths(IBucket<BirthFamilyGT> births, String filename, ArrayList<Long> oids) throws RecordFormatException, IOException, BucketException, IllegalKeyException {
+    public static int importDigitisingScotlandBirths(IBucket<BirthFamilyGT> births, String filename, List<Long> oids) throws RecordFormatException, IOException, BucketException, IllegalKeyException {
 
         int count = 0;
         DataSet data = new DataSet(Paths.get(filename));
