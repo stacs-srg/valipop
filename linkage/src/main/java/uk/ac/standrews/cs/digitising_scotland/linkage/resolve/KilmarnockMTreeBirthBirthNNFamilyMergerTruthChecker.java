@@ -19,13 +19,17 @@ import java.util.Map;
  */
 public class KilmarnockMTreeBirthBirthNNFamilyMergerTruthChecker extends KilmarnockMTreeBirthBirthThresholdNNGroundTruthChecker {
 
-    private static final int SIMILARITY_THRESHOLD_1 = 5;
-    private static final int SIMILARITY_THRESHOLD_2 = 15;
-    private static final int FAMILY_SIZE_THRESHOLD = 15;
+    private static final int NUMBER_OF_NEARBY_FAMILIES_TO_CONSIDER_FOR_MERGING = 15;
+
+    private final int max_family_size;
+    private final float family_merge_distance_threshold;
 
     private KilmarnockMTreeBirthBirthNNFamilyMergerTruthChecker(String births_source_path, String deaths_source_path, String marriages_source_path, float match_family_distance_threshold, int max_family_size, float family_merge_distance_threshold) throws RecordFormatException, RepositoryException, StoreException, JSONException, BucketException, IOException {
 
         super(births_source_path, deaths_source_path, marriages_source_path, match_family_distance_threshold);
+
+        this.max_family_size = max_family_size;
+        this.family_merge_distance_threshold = family_merge_distance_threshold;
     }
 
     private void compute() throws Exception {
@@ -61,9 +65,9 @@ public class KilmarnockMTreeBirthBirthNNFamilyMergerTruthChecker extends Kilmarn
         // Merge the families and put merged families into family_id_tofamilies
         for (Family f : families.values()) {
 
-            for (DataDistance<Family> dd : familyMTree.nearestN(f, SIMILARITY_THRESHOLD_2)) {
+            for (DataDistance<Family> dd : familyMTree.nearestN(f, NUMBER_OF_NEARBY_FAMILIES_TO_CONSIDER_FOR_MERGING)) {
 
-                if (dd.distance < SIMILARITY_THRESHOLD_1 && f.getSiblings().size() < FAMILY_SIZE_THRESHOLD) {
+                if (dd.distance < family_merge_distance_threshold && f.getSiblings().size() < max_family_size) {
 
                     Family other_family = dd.value;
                     System.out.println("Merged family:" + f.getFathersForename() + " " + f.getFathersSurname() + " " + f.getMothersForename() + " " + f.getMothersMaidenSurname());
