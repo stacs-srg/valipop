@@ -4,7 +4,6 @@ import org.json.JSONException;
 import uk.ac.standrews.cs.digitising_scotland.linkage.RecordFormatException;
 import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.BirthFamilyGT;
 import uk.ac.standrews.cs.digitising_scotland.linkage.resolve.distances.GFNGLNBFNBMNPOMDOMDistanceOverBirth;
-import uk.ac.standrews.cs.digitising_scotland.util.ErrorHandling;
 import uk.ac.standrews.cs.digitising_scotland.util.MTree.DataDistance;
 import uk.ac.standrews.cs.digitising_scotland.util.MTree.MTree;
 import uk.ac.standrews.cs.storr.impl.exceptions.BucketException;
@@ -23,9 +22,10 @@ import java.util.concurrent.Callable;
 public class KilmarnockMTreeBirthBirthThresholdNNGroundTruthChecker extends KilmarnockMTreeMatcherGroundTruthChecker {
 
     private MTree<BirthFamilyGT> birthMTree;
-    protected float match_family_distance_threshold;
+    private float match_family_distance_threshold;
 
-    public KilmarnockMTreeBirthBirthThresholdNNGroundTruthChecker(String births_source_path, String deaths_source_path, String marriages_source_path, float match_family_distance_threshold) throws RecordFormatException, RepositoryException, StoreException, JSONException, BucketException, IOException {
+    KilmarnockMTreeBirthBirthThresholdNNGroundTruthChecker(String births_source_path, String deaths_source_path, String marriages_source_path, float match_family_distance_threshold) throws RecordFormatException, RepositoryException, StoreException, JSONException, BucketException, IOException {
+
         super(births_source_path, deaths_source_path, marriages_source_path);
         this.match_family_distance_threshold = match_family_distance_threshold;
         System.out.println("match_family_distance_threshold= " + match_family_distance_threshold);
@@ -58,8 +58,7 @@ public class KilmarnockMTreeBirthBirthThresholdNNGroundTruthChecker extends Kilm
         System.out.println("Finished");
     }
 
-
-    protected void createBirthMTreeOverGFNGLNBFNBMNPOMDOM() throws RepositoryException, BucketException, IOException {
+    void createBirthMTreeOverGFNGLNBFNBMNPOMDOM() throws RepositoryException, BucketException, IOException {
 
         System.out.println("Creating M Tree of births by GFNGLNBFNBMNPOMDOMDistanceOverBirth...");
 
@@ -76,7 +75,7 @@ public class KilmarnockMTreeBirthBirthThresholdNNGroundTruthChecker extends Kilm
     /**
      * Try and form families from Birth M Tree data_array
      */
-    protected void formFamilies() {
+    void formFamilies() {
 
         IInputStream<BirthFamilyGT> stream;
         try {
@@ -91,7 +90,7 @@ public class KilmarnockMTreeBirthBirthThresholdNNGroundTruthChecker extends Kilm
             DataDistance<BirthFamilyGT> matched = birthMTree.nearestNeighbour(to_match);
 
             if (matched.distance < match_family_distance_threshold && matched.value != to_match) {
-                add_births_to_map(to_match, matched);
+                addBirthsToMap(to_match, matched);
             }
         }
     }
@@ -102,7 +101,7 @@ public class KilmarnockMTreeBirthBirthThresholdNNGroundTruthChecker extends Kilm
      * @param searched the record that was used to search for a match
      * @param found_dd the data distance that was matched in the search
      */
-    protected void add_births_to_map(BirthFamilyGT searched, DataDistance<BirthFamilyGT> found_dd) {
+    private void addBirthsToMap(BirthFamilyGT searched, DataDistance<BirthFamilyGT> found_dd) {
 
         BirthFamilyGT found = found_dd.value;
 
@@ -134,17 +133,24 @@ public class KilmarnockMTreeBirthBirthThresholdNNGroundTruthChecker extends Kilm
     //***********************************************************************************
 
     public static void main(String[] args) throws Exception {
-        if (args.length < 4) {
-            ErrorHandling.error("Usage: run with births_source_path deaths_source_path marriages_source_path family_distance_threshold");
+
+        if (args.length >= 4) {
+
+            System.out.println("Running KilmarnockMTreeBirthBirthThresholdNNGroundTruthChecker");
+            String births_source_path = args[0];
+            String deaths_source_path = args[1];
+            String marriages_source_path = args[2];
+            String family_distance_threshold_string = args[3];
+
+            KilmarnockMTreeBirthBirthThresholdNNGroundTruthChecker matcher = new KilmarnockMTreeBirthBirthThresholdNNGroundTruthChecker(births_source_path, deaths_source_path, marriages_source_path, new Float(family_distance_threshold_string));
+            matcher.compute();
+        } else {
+            usage();
         }
+    }
 
-        System.out.println("Running KilmarnockMTreeBirthBirthThresholdNNGroundTruthChecker");
-        String births_source_path = args[0];
-        String deaths_source_path = args[1];
-        String marriages_source_path = args[2];
-        String family_distance_threshold_string = args[3];
+    private static void usage() {
 
-        KilmarnockMTreeBirthBirthThresholdNNGroundTruthChecker matcher = new KilmarnockMTreeBirthBirthThresholdNNGroundTruthChecker(births_source_path, deaths_source_path, marriages_source_path, new Float(family_distance_threshold_string));
-        matcher.compute();
+        System.err.println("Usage: run with births_source_path deaths_source_path marriages_source_path family_distance_threshold");
     }
 }

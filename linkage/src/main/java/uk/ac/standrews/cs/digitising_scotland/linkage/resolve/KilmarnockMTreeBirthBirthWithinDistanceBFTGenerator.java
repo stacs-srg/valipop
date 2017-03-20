@@ -4,7 +4,6 @@ import org.json.JSONException;
 import uk.ac.standrews.cs.digitising_scotland.linkage.RecordFormatException;
 import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.BirthFamilyGT;
 import uk.ac.standrews.cs.digitising_scotland.linkage.resolve.distances.GFNGLNBFNBMNPOMDOMDistanceOverBirth;
-import uk.ac.standrews.cs.digitising_scotland.util.ErrorHandling;
 import uk.ac.standrews.cs.digitising_scotland.util.MTree.DataDistance;
 import uk.ac.standrews.cs.digitising_scotland.util.MTree.MTree;
 import uk.ac.standrews.cs.storr.impl.exceptions.BucketException;
@@ -17,8 +16,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 import java.util.concurrent.Callable;
 
 /**
@@ -56,6 +53,7 @@ public class KilmarnockMTreeBirthBirthWithinDistanceBFTGenerator extends Kilmarn
     }
 
     private void dumpBFT() throws FileNotFoundException, UnsupportedEncodingException {
+
         IInputStream<BirthFamilyGT> stream;
         try {
             stream = births.getInputStream();
@@ -64,11 +62,8 @@ public class KilmarnockMTreeBirthBirthWithinDistanceBFTGenerator extends Kilmarn
             return;
         }
 
-        Boolean first = true;
+        boolean first = true;
 
-//        { a : [(b,2), (c,3)],
-//          b : [(a,2), (d,4)]
-//        }
         PrintWriter writer = new PrintWriter("bft.json", "UTF-8");
         writer.print("{");
 
@@ -95,12 +90,11 @@ public class KilmarnockMTreeBirthBirthWithinDistanceBFTGenerator extends Kilmarn
         writer.close();
     }
 
-
     private void createBirthMTreeOverGFNGLNBFNBMNPOMDOM() throws RepositoryException, BucketException, IOException {
 
         System.out.println("Creating M Tree of births by GFNGLNBFNBMNPOMDOMDistanceOverBirth...");
 
-        birthMTree = new MTree<BirthFamilyGT>( new GFNGLNBFNBMNPOMDOMDistanceOverBirth() );
+        birthMTree = new MTree<>(new GFNGLNBFNBMNPOMDOMDistanceOverBirth());
 
         IInputStream<BirthFamilyGT> stream = births.getInputStream();
 
@@ -108,24 +102,28 @@ public class KilmarnockMTreeBirthBirthWithinDistanceBFTGenerator extends Kilmarn
 
             birthMTree.add( birth );
         }
-
     }
-
 
     //***********************************************************************************
 
     public static void main(String[] args) throws Exception {
 
-        if( args.length < 3 ) {
-            ErrorHandling.error( "Usage: run with births_source_path deaths_source_path marriages_source_path");
+        if (args.length >= 3) {
+
+            String births_source_path = args[0];
+            String deaths_source_path = args[1];
+            String marriages_source_path = args[2];
+            System.out.println("Running KilmarnockMTreeBirthBirthWithinDistanceBFTGenerator");
+
+            KilmarnockMTreeBirthBirthWithinDistanceBFTGenerator matcher = new KilmarnockMTreeBirthBirthWithinDistanceBFTGenerator(births_source_path, deaths_source_path, marriages_source_path);
+            matcher.compute();
+        } else {
+            usage();
         }
+    }
 
-        String births_source_path = args[0];
-        String deaths_source_path = args[1];
-        String marriages_source_path = args[2];
-        System.out.println( "Running KilmarnockMTreeBirthBirthWithinDistanceBFTGenerator" );
+    private static void usage() {
 
-        KilmarnockMTreeBirthBirthWithinDistanceBFTGenerator matcher = new KilmarnockMTreeBirthBirthWithinDistanceBFTGenerator(births_source_path, deaths_source_path, marriages_source_path);
-        matcher.compute();
+        System.err.println("Usage: run with births_source_path deaths_source_path marriages_source_path");
     }
 }
