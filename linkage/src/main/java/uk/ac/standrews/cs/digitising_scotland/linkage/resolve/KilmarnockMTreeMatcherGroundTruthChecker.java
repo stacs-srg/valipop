@@ -61,7 +61,7 @@ public abstract class KilmarnockMTreeMatcherGroundTruthChecker {
 
     protected Map<Long, Family> families = new HashMap<>(); // Maps from person id to family.
 
-    KilmarnockMTreeMatcherGroundTruthChecker() throws StoreException, IOException, RepositoryException {
+    protected KilmarnockMTreeMatcherGroundTruthChecker() throws StoreException, IOException, RepositoryException {
 
         initialise();
     }
@@ -145,14 +145,14 @@ public abstract class KilmarnockMTreeMatcherGroundTruthChecker {
 
         List<SimpleTuple3<Long, Integer, String>> birthIDs = new ArrayList<>();
 
-        for (BirthFamilyGT b : births.getInputStream()) {
+        for (BirthFamilyGT birthRecord : births.getInputStream()) {
 
-            Family assignedFam = families.get(b.getId());
-            Integer assignedFamId = null;
-            if (assignedFam != null) {
-                assignedFamId = assignedFam.id;
+            Family assignedFamily = families.get(birthRecord.getId());
+            Integer assignedFamilyId = null;
+            if (assignedFamily != null) {
+                assignedFamilyId = assignedFamily.id;
             }
-            birthIDs.add(new SimpleTuple3<Long, Integer, String>(b.getId(), assignedFamId, b.getString(BirthFamilyGT.FAMILY)));
+            birthIDs.add(new SimpleTuple3<>(birthRecord.getId(), assignedFamilyId, birthRecord.getString(BirthFamilyGT.FAMILY)));
         }
 
         int truePositives = 0;
@@ -202,18 +202,21 @@ public abstract class KilmarnockMTreeMatcherGroundTruthChecker {
 
                 for (SimpleTuple3<Long, Integer, String> b2 : birthIDs) {
 
-                    boolean real_families_same = b1RealFamilyId.length() > 0 && b1RealFamilyId.equals(b2.third);
-                    boolean assigned_families_same = b1AssignedFamily != null && b1AssignedFamily.equals(b2.second);
+                    if (b1 != b2) {
 
-                    if (assigned_families_same) {
-                        if (real_families_same) {
-                            truePositives++;
+                        boolean real_families_same = b1RealFamilyId.length() > 0 && b1RealFamilyId.equals(b2.third);
+                        boolean assigned_families_same = b1AssignedFamily != null && b1AssignedFamily.equals(b2.second);
+
+                        if (assigned_families_same) {
+                            if (real_families_same) {
+                                truePositives++;
+                            } else {
+                                falsePositives++;
+                            }
                         } else {
-                            falsePositives++;
-                        }
-                    } else {
-                        if (real_families_same) {
-                            falseNegatives++;
+                            if (real_families_same) {
+                                falseNegatives++;
+                            }
                         }
                     }
                 }
@@ -238,13 +241,14 @@ public abstract class KilmarnockMTreeMatcherGroundTruthChecker {
             System.out.println("Cannot calculate precision and recall.");
 
         } else {
-            double precision = truePositives / (truePositives + falsePositives);
-            double recall = truePositives / (truePositives + falseNegatives);
-            double f1measure = (2 * precision * recall) / (precision + recall);
 
-            System.out.println("Precision       : " + precision);
-            System.out.println("Recall          : " + recall);
-            System.out.println("F1 Measure      : " + f1measure);
+            double precision = (double) truePositives / (truePositives + falsePositives);
+            double recall = (double) truePositives / (truePositives + falseNegatives);
+            double f1 = (2 * precision * recall) / (precision + recall);
+
+            System.out.println(String.format("Precision       : %.2f", precision));
+            System.out.println(String.format("Recall          : %.2f", recall));
+            System.out.println(String.format("F1 Measure      : %.2f", f1));
         }
     }
 
@@ -255,12 +259,13 @@ public abstract class KilmarnockMTreeMatcherGroundTruthChecker {
             System.out.println("Max-size of families              : " + Collections.max(values));
             System.out.println("Min-size of families              : " + Collections.min(values));
             System.out.println("Mean-size of families             : " + calcMean(values));
+
         } catch (Exception e) {
             System.out.println("No families");
         }
     }
 
-    void timedRun(String description, Callable<Void> func) throws Exception {
+    protected void timedRun(String description, Callable<Void> func) throws Exception {
 
         System.out.println(description);
         long time = System.currentTimeMillis();
@@ -278,7 +283,7 @@ public abstract class KilmarnockMTreeMatcherGroundTruthChecker {
         return (sum / values.size());
     }
 
-    void printDescription(String[] args) {
+    protected void printDescription(String[] args) {
 
         System.out.println("Running algorithm: " + getClass().getSimpleName());
         System.out.println("Arguments:");
@@ -292,7 +297,7 @@ public abstract class KilmarnockMTreeMatcherGroundTruthChecker {
         System.out.println();
     }
 
-    void usage() {
+    protected void usage() {
 
         System.err.println("Usage: run with " + String.join(" ", getArgNames()));
     }
