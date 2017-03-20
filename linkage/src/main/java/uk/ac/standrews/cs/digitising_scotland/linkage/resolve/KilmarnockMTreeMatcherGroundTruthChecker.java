@@ -304,7 +304,7 @@ public abstract class KilmarnockMTreeMatcherGroundTruthChecker {
 
     protected abstract String[] getArgNames();
 
-    class SimpleTuple3<X, Y, Z> {
+    static class SimpleTuple3<X, Y, Z> {
 
         final X first;
         final Y second;
