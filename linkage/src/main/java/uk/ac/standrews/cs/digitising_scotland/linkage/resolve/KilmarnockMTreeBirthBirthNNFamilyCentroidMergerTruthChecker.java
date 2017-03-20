@@ -81,24 +81,22 @@ public class KilmarnockMTreeBirthBirthNNFamilyCentroidMergerTruthChecker extends
 
                 Family other = dds.get(index).value; // next family to compare with the current.
 
-                if (!f.getSiblings().contains(other)) { // only consider families that are not already in the sibling group.
+                System.out.println("Merged family:" + f.getFathersForename() + " " + f.getFathersSurname() + " " + f.getMothersForename() + " " + f.getMothersMaidenSurname());
+                System.out.println("         with:" + other.getFathersForename() + " " + other.getFathersSurname() + " " + other.getMothersForename() + " " + other.getMothersMaidenSurname());
 
-                    System.out.println("Merged family:" + f.getFathersForename() + " " + f.getFathersSurname() + " " + f.getMothersForename() + " " + f.getMothersMaidenSurname());
-                    System.out.println("         with:" + other.getFathersForename() + " " + other.getFathersSurname() + " " + other.getMothersForename() + " " + other.getMothersMaidenSurname());
-
-                    for (BirthFamilyGT child : other.siblings) { // merge the families.
-                        f.siblings.add(child);
-                    }
-                    family_id_to_families.put((long) f.id, f); // put the merged (or otherwise family into the new map - slightly inefficient but easier to code
+                for (BirthFamilyGT child : other.siblings) { // merge the families.
+                    f.siblings.add(child);
                 }
+
                 index++;
-                if (index == dds.size()) { // we are at the end of the list - get the next circle of Families.
+                if( index == dds.size() ) { // we are at the end of the list - get the next circle of Families.
                     pool_size += 5;
                     dds = familyMTree.nearestN(f, pool_size); // get the next circle of families (including the ones we have already seen).
-                    dds = dds.subList(pool_size - 1, dds.size()); // chop off the families we have already looked at.
+                    dds = dds.subList( pool_size - 1, dds.size() ); // chop off the families we have already looked at.
                     index = 0;
                 }
             }
+            family_id_to_families.put((long) f.id, f); // put the merged (or otherwise) family into the new map - slightly inefficient but easier to code
         }
 
         // finally create a new families hash map
