@@ -1,4 +1,4 @@
-package uk.ac.standrews.cs.digitising_scotland.linkage;
+package uk.ac.standrews.cs.digitising_scotland.linkage.importers;
 
 /**
  * Created by graham on 07/05/2014.

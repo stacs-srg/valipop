@@ -1,4 +1,4 @@
-package uk.ac.standrews.cs.digitising_scotland.linkage;
+package uk.ac.standrews.cs.digitising_scotland.linkage.importers.commaSeparated;
 
 import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.AbstractLXP;
 import uk.ac.standrews.cs.util.dataset.DataSet;
@@ -11,7 +11,7 @@ import java.util.List;
  * @author Alan Dearle (alan.dearle@st-andrews.ac.uk)
  * @author Graham Kirby (graham.kirby@st-andrews.ac.uk)
  */
-public class KilmarnockCommaSeparatedImporter {
+public class CommaSeparatedImporter {
 
     protected static void addAvailableSingleFields(final DataSet data, final List<String> record, final AbstractLXP lxp_record, final String[][] label_map) {
 

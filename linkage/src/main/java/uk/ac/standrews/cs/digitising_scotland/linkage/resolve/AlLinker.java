@@ -1,8 +1,8 @@
 package uk.ac.standrews.cs.digitising_scotland.linkage.resolve;
 
 import org.json.JSONException;
-import uk.ac.standrews.cs.digitising_scotland.linkage.BarSeparatedEventImporter;
-import uk.ac.standrews.cs.digitising_scotland.linkage.RecordFormatException;
+import uk.ac.standrews.cs.digitising_scotland.linkage.importers.barSeparated.BarSeparatedEventImporter;
+import uk.ac.standrews.cs.digitising_scotland.linkage.importers.RecordFormatException;
 import uk.ac.standrews.cs.digitising_scotland.linkage.blocking.FFNFLNMFNMMNPOMDOMOverActor;
 import uk.ac.standrews.cs.digitising_scotland.linkage.factory.*;
 import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.*;

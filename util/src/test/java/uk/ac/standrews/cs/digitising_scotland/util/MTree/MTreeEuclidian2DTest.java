@@ -31,7 +31,7 @@ import static org.junit.Assert.assertTrue;
 public class MTreeEuclidian2DTest {
 
     MTree<Point> t;
-    private EuclidianDistance ed;
+    EuclidianDistance ed;
 
     @Before
     public void setUp() throws Exception {

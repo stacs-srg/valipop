@@ -1,13 +1,29 @@
 package uk.ac.standrews.cs.digitising_scotland.linkage.resolve;
 
+import uk.ac.standrews.cs.digitising_scotland.linkage.factory.BirthFactory;
+import uk.ac.standrews.cs.digitising_scotland.linkage.factory.DeathFactory;
+import uk.ac.standrews.cs.digitising_scotland.linkage.factory.MarriageFactory;
+import uk.ac.standrews.cs.digitising_scotland.linkage.importers.RecordFormatException;
+import uk.ac.standrews.cs.digitising_scotland.linkage.importers.kilmarnock.KilmarnockCommaSeparatedBirthImporter;
+import uk.ac.standrews.cs.digitising_scotland.linkage.importers.kilmarnock.KilmarnockCommaSeparatedDeathImporter;
+import uk.ac.standrews.cs.digitising_scotland.linkage.importers.kilmarnock.KilmarnockCommaSeparatedMarriageImporter;
 import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.BirthFamilyGT;
+import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.Death;
+import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.Marriage;
 import uk.ac.standrews.cs.digitising_scotland.util.Metrics;
+import uk.ac.standrews.cs.storr.impl.StoreFactory;
+import uk.ac.standrews.cs.storr.impl.TypeFactory;
 import uk.ac.standrews.cs.storr.impl.exceptions.BucketException;
 import uk.ac.standrews.cs.storr.impl.exceptions.RepositoryException;
 import uk.ac.standrews.cs.storr.impl.exceptions.StoreException;
+import uk.ac.standrews.cs.storr.interfaces.BucketKind;
 import uk.ac.standrews.cs.storr.interfaces.IInputStream;
+import uk.ac.standrews.cs.storr.interfaces.IRepository;
+import uk.ac.standrews.cs.storr.interfaces.IStore;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 
 /**
@@ -20,6 +36,56 @@ public abstract class KilmarnockMTreeMatcherGroundTruthChecker extends Kilmarnoc
     protected Map<Long, Family> families = new HashMap<>(); // Maps from person id to family.
 
     protected KilmarnockMTreeMatcherGroundTruthChecker() throws StoreException, IOException, RepositoryException {
+
+        initialise();
+    }
+
+    private void initialise() throws StoreException, IOException, RepositoryException {
+
+        Path store_path = Files.createTempDirectory(null);
+
+        StoreFactory.setStorePath(store_path);
+        IStore store = StoreFactory.makeStore();
+
+        IRepository input_repo = store.makeRepository(input_repo_name);
+
+        initialiseTypes();
+        initialiseFactories();
+
+        births = input_repo.makeBucket(births_name, BucketKind.DIRECTORYBACKED, birthFactory);
+        deaths = input_repo.makeBucket(deaths_name, BucketKind.DIRECTORYBACKED, deathFactory);
+        marriages = input_repo.makeBucket(marriages_name, BucketKind.DIRECTORYBACKED, marriageFactory);
+    }
+
+    private void initialiseTypes() {
+
+        TypeFactory tf = TypeFactory.getInstance();
+
+        birthType = tf.createType(BirthFamilyGT.class, "birth");
+        deathType = tf.createType(Death.class, "death");
+        marriageType = tf.createType(Marriage.class, "marriage");
+    }
+
+    private void initialiseFactories() {
+
+        birthFactory = new BirthFactory(birthType.getId());
+        deathFactory = new DeathFactory(deathType.getId());
+        marriageFactory = new MarriageFactory(marriageType.getId());
+    }
+
+    /**
+     * Import the birth,death, marriage records
+     * Initialises the roles bucket with the roles injected - one record for each person referenced in the original record
+     * Initialises the known(100% certain) relationships between roles and stores the relationships in the relationships bucket
+     */
+    protected void ingestBDMRecords(String births_source_path, String deaths_source_path, String marriages_source_path) throws RecordFormatException, BucketException, IOException {
+
+        births_count = new KilmarnockCommaSeparatedBirthImporter().importDigitisingScotlandBirths(births, births_source_path);
+        System.out.println("Imported " + births_count + " birth records");
+        deaths_count = new KilmarnockCommaSeparatedDeathImporter().importDigitisingScotlandDeaths(deaths, deaths_source_path);
+        System.out.println("Imported " + deaths_count + " death records");
+        marriages_count = new KilmarnockCommaSeparatedMarriageImporter().importDigitisingScotlandMarriages(marriages, marriages_source_path);
+        System.out.println("Imported " + marriages_count + " marriage records");
     }
 
     /**

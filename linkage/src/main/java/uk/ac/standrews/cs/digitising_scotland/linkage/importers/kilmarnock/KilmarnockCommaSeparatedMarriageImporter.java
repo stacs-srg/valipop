@@ -1,5 +1,6 @@
-package uk.ac.standrews.cs.digitising_scotland.linkage;
+package uk.ac.standrews.cs.digitising_scotland.linkage.importers.kilmarnock;
 
+import uk.ac.standrews.cs.digitising_scotland.linkage.importers.commaSeparated.CommaSeparatedMarriageImporter;
 import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.Marriage;
 import uk.ac.standrews.cs.digitising_scotland.linkage.normalisation.DateNormalisation;
 import uk.ac.standrews.cs.digitising_scotland.linkage.normalisation.PlaceNormalisation;
@@ -20,7 +21,7 @@ import static uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.Marriag
  * @author Alan Dearle (alan.dearle@st-andrews.ac.uk)
  * @author Graham Kirby (graham.kirby@st-andrews.ac.uk)
  */
-public class KilmarnockCommaSeparatedMarriageImporter extends KilmarnockCommaSeparatedImporter {
+public class KilmarnockCommaSeparatedMarriageImporter extends CommaSeparatedMarriageImporter {
 
     public static final String[][] RECORD_LABEL_MAP = {
 
@@ -118,6 +119,10 @@ public class KilmarnockCommaSeparatedMarriageImporter extends KilmarnockCommaSep
                     CHANGED_GROOM_FORENAME, IMAGE_QUALITY, CHANGED_GROOM_SURNAME, CHANGED_BRIDE_SURNAME, CORRECTED_ENTRY, CHANGED_BRIDE_FORENAME
     };
 
+    public String[][] get_record_map() { return RECORD_LABEL_MAP; }
+
+    public String[] get_unavailable_records() { return UNAVAILABLE_RECORD_LABELS; }
+
     /**
      * Imports a set of marriage records from file to a bucket.
      *
@@ -126,7 +131,7 @@ public class KilmarnockCommaSeparatedMarriageImporter extends KilmarnockCommaSep
      * @return the number of records read in
      * @throws IOException if the data cannot be read from the file
      */
-    public static int importDigitisingScotlandMarriages(IBucket<Marriage> marriages, String marriages_source_path) throws IOException, BucketException {
+    public  int importDigitisingScotlandMarriages(IBucket<Marriage> marriages, String marriages_source_path) throws IOException, BucketException {
 
         DataSet data = new DataSet(Paths.get(marriages_source_path));
         int count = 0;
@@ -141,7 +146,7 @@ public class KilmarnockCommaSeparatedMarriageImporter extends KilmarnockCommaSep
         return count;
     }
 
-    private static Marriage importDigitisingScotlandMarriage(DataSet data, List<String> record) {
+    public Marriage importDigitisingScotlandMarriage(DataSet data, List<String> record) {
 
         Marriage marriage = new Marriage();
 
@@ -153,13 +158,13 @@ public class KilmarnockCommaSeparatedMarriageImporter extends KilmarnockCommaSep
         return marriage;
     }
 
-    private static void addAvailableNormalisedFields(DataSet data, List<String> record, Marriage marriage) {
+    public   void addAvailableNormalisedFields(DataSet data, List<String> record, Marriage marriage) {
 
         marriage.put(MARRIAGE_MONTH, DateNormalisation.normaliseMonth(data.getValue(record, "month")));
         marriage.put(PLACE_OF_MARRIAGE, PlaceNormalisation.normalisePace(data.getValue(record, "place of marriage 3")));
     }
 
-    private static void addAvailableCompoundFields(final DataSet data, final List<String> record, final Marriage marriage) {
+    public void addAvailableCompoundFields(final DataSet data, final List<String> record, final Marriage marriage) {
 
         marriage.put(BRIDE_ADDRESS, combineFields(data, record, "address of bride 1", "address of bride 2", "address of bride 3"));
         marriage.put(GROOM_ADDRESS, combineFields(data,record, "address of groom 1", "address of groom 2", "address of groom 3"));
@@ -167,4 +172,5 @@ public class KilmarnockCommaSeparatedMarriageImporter extends KilmarnockCommaSep
         // Place of marriage 3 is the townname in this dataset - use this.
         // TODO look at this and decide what to do - create a cannonical field?
     }
+
 }
