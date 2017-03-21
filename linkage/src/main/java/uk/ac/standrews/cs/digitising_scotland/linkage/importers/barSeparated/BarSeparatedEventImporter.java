@@ -1,5 +1,6 @@
-package uk.ac.standrews.cs.digitising_scotland.linkage;
+package uk.ac.standrews.cs.digitising_scotland.linkage.importers.barSeparated;
 
+import uk.ac.standrews.cs.digitising_scotland.linkage.importers.RecordFormatException;
 import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.BirthFamilyGT;
 import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.Death;
 import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.Marriage;

@@ -1,5 +1,7 @@
-package uk.ac.standrews.cs.digitising_scotland.linkage;
+package uk.ac.standrews.cs.digitising_scotland.linkage.importers.kilmarnock;
 
+import uk.ac.standrews.cs.digitising_scotland.linkage.importers.RecordFormatException;
+import uk.ac.standrews.cs.digitising_scotland.linkage.importers.commaSeparated.CommaSeparatedBirthImporter;
 import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.BirthFamilyGT;
 import uk.ac.standrews.cs.digitising_scotland.linkage.normalisation.DateNormalisation;
 import uk.ac.standrews.cs.storr.impl.exceptions.BucketException;
@@ -13,6 +15,7 @@ import java.util.List;
 
 import static uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.BirthFamilyGT.*;
 
+
 /**
  * Utility classes for importing records in digitising scotland format
  * Created by al on 8/11/2016.
@@ -20,7 +23,7 @@ import static uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.BirthFa
  * @author Alan Dearle (alan.dearle@st-andrews.ac.uk)
  * @author Graham Kirby (graham.kirby@st-andrews.ac.uk)
  */
-public class KilmarnockCommaSeparatedBirthImporter extends KilmarnockCommaSeparatedImporter {
+public class KilmarnockCommaSeparatedBirthImporter extends CommaSeparatedBirthImporter {
 
     public static final String[][] RECORD_LABEL_MAP = {
 
@@ -82,6 +85,11 @@ public class KilmarnockCommaSeparatedBirthImporter extends KilmarnockCommaSepara
 
     };
 
+    @Override
+    public String[][] get_record_map() {
+        return RECORD_LABEL_MAP;
+    }
+
     /**
      * @param births   the bucket from which to import
      * @param births_source_path containing the source records in digitising scotland format
@@ -90,7 +98,7 @@ public class KilmarnockCommaSeparatedBirthImporter extends KilmarnockCommaSepara
      * @throws RecordFormatException
      * @throws BucketException
      */
-    public static int importDigitisingScotlandBirths(IBucket<BirthFamilyGT> births, String births_source_path) throws IOException, RecordFormatException, BucketException {
+    public int importDigitisingScotlandBirths(IBucket<BirthFamilyGT> births, String births_source_path) throws IOException, RecordFormatException, BucketException {
 
         DataSet data = new DataSet(Paths.get(births_source_path));
         int count = 0;
@@ -105,10 +113,16 @@ public class KilmarnockCommaSeparatedBirthImporter extends KilmarnockCommaSepara
         return count;
     }
 
+
+    @Override
+    public String[] get_unavailable_records() {
+        return UNAVAILABLE_RECORD_LABELS;
+    }
+
     /**
      * Fills in a record.
      */
-    private static BirthFamilyGT importDigitisingScotlandBirth(DataSet data, List<String> record) throws IOException, RecordFormatException, IllegalKeyException {
+    private BirthFamilyGT importDigitisingScotlandBirth(DataSet data, List<String> record) throws IOException, RecordFormatException, IllegalKeyException {
 
         BirthFamilyGT birth = new BirthFamilyGT();
 
@@ -120,16 +134,19 @@ public class KilmarnockCommaSeparatedBirthImporter extends KilmarnockCommaSepara
         return birth;
     }
 
-    private static void addAvailableCompoundFields(final DataSet data, final List<String> record, final BirthFamilyGT birth) {
+    @Override
+    public void addAvailableCompoundFields(DataSet data, List<String> record, BirthFamilyGT birth) {
 
         birth.put(BIRTH_ADDRESS, combineFields(data, record, "address 1", "address 2", "address 3"));
         birth.put(INFORMANT, combineFields(data, record, "forename of informant", "surname of informant"));
         // birth.put(PARENTS_PLACE_OF_MARRIAGE, combineFields(data,record, "place of parent's marriage 1", "place of parent's marriage 2"));\
         // TODO look at this and decide what to do - create a cannonical field?
         // place of parent's marriage 1 is mostly the town name with some Nas and ngs plus some random stuff - use this for now,
+
     }
 
-    private static void addAvailableNormalisedFields(DataSet data, List<String> record, BirthFamilyGT birth) {
+    @Override
+    public void addAvailableNormalisedFields(DataSet data, List<String> record, BirthFamilyGT birth) {
 
         birth.put(BIRTH_MONTH, DateNormalisation.normaliseMonth(data.getValue(record, "month")));
     }

@@ -1,12 +1,12 @@
 package uk.ac.standrews.cs.digitising_scotland.linkage.resolve;
 
-import uk.ac.standrews.cs.digitising_scotland.linkage.KilmarnockCommaSeparatedBirthImporter;
-import uk.ac.standrews.cs.digitising_scotland.linkage.KilmarnockCommaSeparatedDeathImporter;
-import uk.ac.standrews.cs.digitising_scotland.linkage.KilmarnockCommaSeparatedMarriageImporter;
-import uk.ac.standrews.cs.digitising_scotland.linkage.RecordFormatException;
 import uk.ac.standrews.cs.digitising_scotland.linkage.factory.BirthFactory;
 import uk.ac.standrews.cs.digitising_scotland.linkage.factory.DeathFactory;
 import uk.ac.standrews.cs.digitising_scotland.linkage.factory.MarriageFactory;
+import uk.ac.standrews.cs.digitising_scotland.linkage.importers.RecordFormatException;
+import uk.ac.standrews.cs.digitising_scotland.linkage.importers.kilmarnock.KilmarnockCommaSeparatedBirthImporter;
+import uk.ac.standrews.cs.digitising_scotland.linkage.importers.kilmarnock.KilmarnockCommaSeparatedDeathImporter;
+import uk.ac.standrews.cs.digitising_scotland.linkage.importers.kilmarnock.KilmarnockCommaSeparatedMarriageImporter;
 import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.BirthFamilyGT;
 import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.Death;
 import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.Marriage;
@@ -29,7 +29,7 @@ import java.util.concurrent.Callable;
  */
 public class KilmarnockExperiment {
 
-    private static final String input_repo_name = "BDM_repo";               // Repository containing event records
+    static final String input_repo_name = "BDM_repo";               // Repository containing event records
 
     // Bucket declarations
 
@@ -37,23 +37,23 @@ public class KilmarnockExperiment {
     protected IBucket<Marriage> marriages;                                  // Bucket containing marriage records (inputs).
     protected IBucket<Death> deaths;                                        // Bucket containing death records (inputs).
 
-    private int births_count;
-    private int marriages_count;
-    private int deaths_count;
+    int births_count;
+    int marriages_count;
+    int deaths_count;
 
     // Paths to sources
 
-    private static final String births_name = "birth_records";              // Name of bucket containing birth records (inputs).
-    private static final String marriages_name = "marriage_records";        // Name of bucket containing marriage records (inputs).
-    private static final String deaths_name = "death_records";              // Name of bucket containing death records (inputs).
+    static final String births_name = "birth_records";              // Name of bucket containing birth records (inputs).
+    static final String marriages_name = "marriage_records";        // Name of bucket containing marriage records (inputs).
+    static final String deaths_name = "death_records";              // Name of bucket containing death records (inputs).
 
-    private IReferenceType birthType;
-    private IReferenceType deathType;
-    private IReferenceType marriageType;
+    IReferenceType birthType;
+    IReferenceType deathType;
+    IReferenceType marriageType;
 
-    private BirthFactory birthFactory;
-    private DeathFactory deathFactory;
-    private MarriageFactory marriageFactory;
+    BirthFactory birthFactory;
+    DeathFactory deathFactory;
+    MarriageFactory marriageFactory;
     private List<Long> oids = new ArrayList<>();
 
     public KilmarnockExperiment() throws StoreException, IOException, RepositoryException {
@@ -78,13 +78,13 @@ public class KilmarnockExperiment {
      */
     public void ingestRecords(String births_source_path, String deaths_source_path, String marriages_source_path) throws RecordFormatException, BucketException, IOException {
 
-        births_count = KilmarnockCommaSeparatedBirthImporter.importDigitisingScotlandBirths(births, births_source_path);
+        births_count = new KilmarnockCommaSeparatedBirthImporter().importDigitisingScotlandBirths(births, births_source_path);
         System.out.println("Imported " + births_count + " birth records");
 
-        deaths_count = KilmarnockCommaSeparatedDeathImporter.importDigitisingScotlandDeaths(deaths, deaths_source_path);
+        deaths_count = new KilmarnockCommaSeparatedDeathImporter().importDigitisingScotlandDeaths(deaths, deaths_source_path);
         System.out.println("Imported " + deaths_count + " death records");
 
-        marriages_count = KilmarnockCommaSeparatedMarriageImporter.importDigitisingScotlandMarriages(marriages, marriages_source_path);
+        marriages_count = new KilmarnockCommaSeparatedMarriageImporter().importDigitisingScotlandMarriages(marriages, marriages_source_path);
         System.out.println("Imported " + marriages_count + " marriage records");
         System.out.println();
     }

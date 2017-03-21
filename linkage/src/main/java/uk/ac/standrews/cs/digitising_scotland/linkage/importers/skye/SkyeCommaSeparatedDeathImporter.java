@@ -1,5 +1,7 @@
-package uk.ac.standrews.cs.digitising_scotland.linkage;
+package uk.ac.standrews.cs.digitising_scotland.linkage.importers.skye;
 
+import uk.ac.standrews.cs.digitising_scotland.linkage.importers.RecordFormatException;
+import uk.ac.standrews.cs.digitising_scotland.linkage.importers.commaSeparated.CommaSeparatedDeathImporter;
 import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.Death;
 import uk.ac.standrews.cs.digitising_scotland.linkage.normalisation.DateNormalisation;
 import uk.ac.standrews.cs.storr.impl.exceptions.BucketException;
@@ -13,6 +15,7 @@ import java.util.List;
 
 import static uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.Death.*;
 
+
 /**
  * Utility classes for importing records in digitising scotland format
  * Created by al on 8/11/2016.
@@ -20,9 +23,11 @@ import static uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.Death.*
  * @author Alan Dearle (alan.dearle@st-andrews.ac.uk)
  * @author Graham Kirby (graham.kirby@st-andrews.ac.uk)
  */
-public class KilmarnockCommaSeparatedDeathImporter extends KilmarnockCommaSeparatedImporter {
+public class SkyeCommaSeparatedDeathImporter extends CommaSeparatedDeathImporter {
 
-    public static final String[][] RECORD_LABEL_MAP = {
+    // TODO Fix ME - THESE ARE THE KILLIE FIELDS
+
+    private static final String[][] RECORD_LABEL_MAP = {
 
             // Information available that doesn't currently fit:
 
@@ -79,12 +84,17 @@ public class KilmarnockCommaSeparatedDeathImporter extends KilmarnockCommaSepara
             {COD_A, "cause of death"}
     };
 
-    public static final String[] UNAVAILABLE_RECORD_LABELS = {
+    private static final String[] UNAVAILABLE_RECORD_LABELS = {
 
             // Fields not present in Kilmarnock dataset.
 
             CHANGED_FORENAME, CHANGED_SURNAME, CHANGED_MOTHERS_MAIDEN_SURNAME, CORRECTED_ENTRY, IMAGE_QUALITY, CHANGED_DEATH_AGE, COD_B, COD_C, PLACE_OF_DEATH, DATE_OF_BIRTH, CERTIFYING_DOCTOR, MOTHERS_SURNAME
     };
+
+    public String[][] get_record_map() { return RECORD_LABEL_MAP; }
+
+    @Override
+    public String[] get_unavailable_records() { return UNAVAILABLE_RECORD_LABELS; }
 
     /**
      * @param deaths   the bucket from which to import
@@ -94,7 +104,7 @@ public class KilmarnockCommaSeparatedDeathImporter extends KilmarnockCommaSepara
      * @throws RecordFormatException
      * @throws BucketException
      */
-    public static int importDigitisingScotlandDeaths(IBucket<Death> deaths, String deaths_source_path) throws IOException, RecordFormatException, BucketException {
+    public int importDigitisingScotlandDeaths(IBucket<Death> deaths, String deaths_source_path) throws IOException, RecordFormatException, BucketException {
 
         DataSet data = new DataSet(Paths.get(deaths_source_path));
         int count = 0;
@@ -106,14 +116,13 @@ public class KilmarnockCommaSeparatedDeathImporter extends KilmarnockCommaSepara
             count++;
 
         }
-
         return count;
     }
 
     /**
      * Fills in a record.
      */
-    private static Death importDigitisingScotlandDeath(DataSet data, List<String> record) throws IOException, RecordFormatException, IllegalKeyException {
+    public Death importDigitisingScotlandDeath(DataSet data, List<String> record) throws IOException, RecordFormatException, IllegalKeyException {
 
         Death death = new Death();
 
@@ -125,13 +134,13 @@ public class KilmarnockCommaSeparatedDeathImporter extends KilmarnockCommaSepara
         return death;
     }
 
-    private static void addAvailableCompoundFields(final DataSet data, final List<String> record, final Death death) {
+    public void addAvailableCompoundFields(final DataSet data, final List<String> record, final Death death) {
 
         death.put(SPOUSES_NAMES, combineFields(data, record, "forename of spouse", "surname of spouse"));
         death.put(PLACE_OF_DEATH, combineFields(data, record, "address 1", "address 2", "address 3"));
     }
 
-    private static void addAvailableNormalisedFields(DataSet data, List<String> record, Death death) {
+    public void addAvailableNormalisedFields(DataSet data, List<String> record, Death death) {
 
         death.put(DEATH_MONTH, DateNormalisation.normaliseMonth(data.getValue(record, "month")));
     }
