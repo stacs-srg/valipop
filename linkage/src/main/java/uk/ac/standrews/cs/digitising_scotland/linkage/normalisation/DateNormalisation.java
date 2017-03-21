@@ -5,7 +5,7 @@ import uk.ac.standrews.cs.digitising_scotland.util.ErrorHandling;
 /**
  * Created by al on 06/12/2016.
  */
-public class normaliseDates {
+public class DateNormalisation {
 
     /**
      * @param input the text to normalise

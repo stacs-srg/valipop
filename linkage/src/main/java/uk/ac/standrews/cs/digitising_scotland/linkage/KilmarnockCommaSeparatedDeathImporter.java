@@ -1,7 +1,7 @@
 package uk.ac.standrews.cs.digitising_scotland.linkage;
 
 import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.Death;
-import uk.ac.standrews.cs.digitising_scotland.linkage.normalisation.normaliseDates;
+import uk.ac.standrews.cs.digitising_scotland.linkage.normalisation.DateNormalisation;
 import uk.ac.standrews.cs.storr.impl.exceptions.BucketException;
 import uk.ac.standrews.cs.storr.impl.exceptions.IllegalKeyException;
 import uk.ac.standrews.cs.storr.interfaces.IBucket;
@@ -133,6 +133,6 @@ public class KilmarnockCommaSeparatedDeathImporter extends KilmarnockCommaSepara
 
     private static void addAvailableNormalisedFields(DataSet data, List<String> record, Death death) {
 
-        death.put(DEATH_MONTH, normaliseDates.normaliseMonth(data.getValue(record, "month")));
+        death.put(DEATH_MONTH, DateNormalisation.normaliseMonth(data.getValue(record, "month")));
     }
 }

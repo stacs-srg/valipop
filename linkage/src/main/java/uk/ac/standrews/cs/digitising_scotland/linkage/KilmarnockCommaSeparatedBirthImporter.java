@@ -1,7 +1,7 @@
 package uk.ac.standrews.cs.digitising_scotland.linkage;
 
 import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.BirthFamilyGT;
-import uk.ac.standrews.cs.digitising_scotland.linkage.normalisation.normaliseDates;
+import uk.ac.standrews.cs.digitising_scotland.linkage.normalisation.DateNormalisation;
 import uk.ac.standrews.cs.storr.impl.exceptions.BucketException;
 import uk.ac.standrews.cs.storr.impl.exceptions.IllegalKeyException;
 import uk.ac.standrews.cs.storr.interfaces.IBucket;
@@ -131,6 +131,6 @@ public class KilmarnockCommaSeparatedBirthImporter extends KilmarnockCommaSepara
 
     private static void addAvailableNormalisedFields(DataSet data, List<String> record, BirthFamilyGT birth) {
 
-        birth.put(BIRTH_MONTH, normaliseDates.normaliseMonth(data.getValue(record, "month")));
+        birth.put(BIRTH_MONTH, DateNormalisation.normaliseMonth(data.getValue(record, "month")));
     }
 }
