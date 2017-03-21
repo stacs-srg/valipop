@@ -158,11 +158,11 @@ public abstract class KilmarnockBirthMarriageMTreeMatcher {
     private void ingestBDMRecords(String births_source_path, String deaths_source_path, String marriages_source_path) throws RecordFormatException, BucketException, IOException {
 
         System.out.println("Importing BDM records");
-        birth_count = KilmarnockCommaSeparatedBirthImporter.importDigitisingScotlandBirths(births, births_source_path, oids);
+        birth_count = KilmarnockCommaSeparatedBirthImporter.importDigitisingScotlandBirths(births, births_source_path);
         System.out.println("Imported " + birth_count + " birth records");
-        death_count = KilmarnockCommaSeparatedDeathImporter.importDigitisingScotlandDeaths(deaths, deaths_source_path, oids);
+        death_count = KilmarnockCommaSeparatedDeathImporter.importDigitisingScotlandDeaths(deaths, deaths_source_path);
         System.out.println("Imported " + death_count + " death records");
-        marriage_count = KilmarnockCommaSeparatedMarriageImporter.importDigitisingScotlandMarriages(marriages, marriages_source_path, oids);
+        marriage_count = KilmarnockCommaSeparatedMarriageImporter.importDigitisingScotlandMarriages(marriages, marriages_source_path);
         System.out.println("Imported " + marriage_count + " marriage records");
 
         // createRoles( births, deaths, marriages );

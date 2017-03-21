@@ -1,5 +1,6 @@
 package uk.ac.standrews.cs.digitising_scotland.linkage.resolve;
 
+import uk.ac.standrews.cs.digitising_scotland.linkage.experiments.Experiment;
 import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.BirthFamilyGT;
 import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.Marriage;
 import uk.ac.standrews.cs.digitising_scotland.linkage.resolve.distances.GFNGLNBFNBMNPOMDOMDistanceOverMarriage;
@@ -11,6 +12,7 @@ import uk.ac.standrews.cs.storr.impl.exceptions.StoreException;
 import uk.ac.standrews.cs.storr.interfaces.IInputStream;
 
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.util.HashSet;
 import java.util.Map;
 
@@ -28,6 +30,7 @@ public class KilmarnockMTreeBirthMarriageThresholdNNTruthChecker extends Kilmarn
 
     private KilmarnockMTreeBirthMarriageThresholdNNTruthChecker() throws StoreException, RepositoryException, IOException {
 
+        super();
     }
 
     private void compute() throws Exception {
@@ -115,7 +118,7 @@ public class KilmarnockMTreeBirthMarriageThresholdNNTruthChecker extends Kilmarn
 
     public static void main(String[] args) throws Exception {
 
-        KilmarnockMTreeBirthMarriageThresholdNNTruthChecker matcher = new KilmarnockMTreeBirthMarriageThresholdNNTruthChecker();
+        Experiment experiment = new Experiment(ARG_NAMES, args, MethodHandles.lookup().lookupClass());
 
         if (args.length >= ARG_NAMES.length) {
 
@@ -123,17 +126,15 @@ public class KilmarnockMTreeBirthMarriageThresholdNNTruthChecker extends Kilmarn
             String deaths_source_path = args[1];
             String marriages_source_path = args[2];
 
-            matcher.printDescription(args);
-            matcher.ingestBDMRecords(births_source_path, deaths_source_path, marriages_source_path);
+            KilmarnockMTreeBirthMarriageThresholdNNTruthChecker matcher = new KilmarnockMTreeBirthMarriageThresholdNNTruthChecker();
+
+            experiment.printDescription();
+
+            matcher.ingestRecords(births_source_path, deaths_source_path, marriages_source_path);
             matcher.compute();
 
         } else {
-            matcher.usage();
+            experiment.usage();
         }
-    }
-
-    protected String[] getArgNames() {
-
-        return ARG_NAMES;
     }
 }

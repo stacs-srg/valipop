@@ -1,5 +1,6 @@
 package uk.ac.standrews.cs.digitising_scotland.linkage.resolve;
 
+import uk.ac.standrews.cs.digitising_scotland.linkage.experiments.Experiment;
 import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.BirthFamilyGT;
 import uk.ac.standrews.cs.digitising_scotland.linkage.resolve.distances.GFNGLNBFNBMNPOMDOMDistanceOverBirth;
 import uk.ac.standrews.cs.digitising_scotland.util.MTree.DataDistance;
@@ -11,6 +12,7 @@ import uk.ac.standrews.cs.util.tools.PercentageProgressIndicator;
 import uk.ac.standrews.cs.util.tools.ProgressIndicator;
 
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 
 /**
  * Attempt to perform linking using MTree matching
@@ -58,7 +60,7 @@ public class KilmarnockMTreeBirthBirthThresholdNNGroundTruthChecker extends Kilm
     void createBirthMTreeOverGFNGLNBFNBMNPOMDOM() throws RepositoryException, BucketException, IOException {
 
         ProgressIndicator indicator = new PercentageProgressIndicator(10);
-        indicator.setTotalSteps(births_count);
+        indicator.setTotalSteps(getBirthsCount());
 
         birth_MTree = new MTree<>(new GFNGLNBFNBMNPOMDOMDistanceOverBirth());
 
@@ -75,7 +77,7 @@ public class KilmarnockMTreeBirthBirthThresholdNNGroundTruthChecker extends Kilm
     void formFamilies() throws BucketException {
 
         ProgressIndicator indicator = new PercentageProgressIndicator(10);
-        indicator.setTotalSteps(births_count);
+        indicator.setTotalSteps(getBirthsCount());
 
         for (BirthFamilyGT to_match : births.getInputStream()) {
 
@@ -133,6 +135,8 @@ public class KilmarnockMTreeBirthBirthThresholdNNGroundTruthChecker extends Kilm
 
     public static void main(String[] args) throws Exception {
 
+        Experiment experiment = new Experiment(ARG_NAMES, args, MethodHandles.lookup().lookupClass());
+
         if (args.length >= ARG_NAMES.length) {
 
             String births_source_path = args[0];
@@ -142,17 +146,13 @@ public class KilmarnockMTreeBirthBirthThresholdNNGroundTruthChecker extends Kilm
 
             KilmarnockMTreeBirthBirthThresholdNNGroundTruthChecker matcher = new KilmarnockMTreeBirthBirthThresholdNNGroundTruthChecker(Float.parseFloat(family_distance_threshold_string));
 
-            matcher.printDescription(args);
-            matcher.ingestBDMRecords(births_source_path, deaths_source_path, marriages_source_path);
+            experiment.printDescription();
+
+            matcher.ingestRecords(births_source_path, deaths_source_path, marriages_source_path);
             matcher.compute();
 
         } else {
-            new KilmarnockMTreeBirthBirthThresholdNNGroundTruthChecker().usage();
+            experiment.usage();
         }
-    }
-
-    protected String[] getArgNames() {
-
-        return ARG_NAMES;
     }
 }

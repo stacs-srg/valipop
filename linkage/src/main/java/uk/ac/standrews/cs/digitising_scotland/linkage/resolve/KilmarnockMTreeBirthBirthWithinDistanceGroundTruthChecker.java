@@ -1,5 +1,6 @@
 package uk.ac.standrews.cs.digitising_scotland.linkage.resolve;
 
+import uk.ac.standrews.cs.digitising_scotland.linkage.experiments.Experiment;
 import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.BirthFamilyGT;
 import uk.ac.standrews.cs.digitising_scotland.linkage.resolve.distances.GFNGLNBFNBMNPOMDOMDistanceOverBirth;
 import uk.ac.standrews.cs.digitising_scotland.util.MTree.DataDistance;
@@ -10,6 +11,7 @@ import uk.ac.standrews.cs.storr.impl.exceptions.StoreException;
 import uk.ac.standrews.cs.storr.interfaces.IInputStream;
 
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -128,7 +130,7 @@ public class KilmarnockMTreeBirthBirthWithinDistanceGroundTruthChecker extends K
 
     public static void main(String[] args) throws Exception {
 
-        KilmarnockMTreeBirthBirthWithinDistanceGroundTruthChecker matcher = new KilmarnockMTreeBirthBirthWithinDistanceGroundTruthChecker();
+        Experiment experiment = new Experiment(ARG_NAMES, args, MethodHandles.lookup().lookupClass());
 
         if (args.length >= ARG_NAMES.length) {
 
@@ -136,18 +138,15 @@ public class KilmarnockMTreeBirthBirthWithinDistanceGroundTruthChecker extends K
             String deaths_source_path = args[1];
             String marriages_source_path = args[2];
 
+            KilmarnockMTreeBirthBirthWithinDistanceGroundTruthChecker matcher = new KilmarnockMTreeBirthBirthWithinDistanceGroundTruthChecker();
 
-            matcher.printDescription(args);
-            matcher.ingestBDMRecords(births_source_path, deaths_source_path, marriages_source_path);
+            experiment.printDescription();
+
+            matcher.ingestRecords(births_source_path, deaths_source_path, marriages_source_path);
             matcher.compute();
+
         } else {
-            matcher.usage();
-
+            experiment.usage();
         }
-    }
-
-    protected String[] getArgNames() {
-
-        return ARG_NAMES;
     }
 }

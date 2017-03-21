@@ -18,11 +18,7 @@ package uk.ac.standrews.cs.digitising_scotland.util;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Locale;
-import java.util.Map;
-import java.util.StringTokenizer;
+import java.util.*;
 
 /**
  * Provides methods to manipulate dates represented as integers containing number of days elapsed since a fixed start date.
@@ -64,7 +60,6 @@ public class DateManipulation {
         START_IN_MILLIS = CALENDAR.getTimeInMillis();
     }
 
-
     /**
      * Calculates the number of days elapsed between 1st January of the {@link #START_YEAR} and the given date.
      *
@@ -99,7 +94,7 @@ public class DateManipulation {
      * @return a java.sql.Date representation of the date
      * @throws ParseException if the date representation is not valid
      */
-    public static synchronized java.sql.Date stringSQLToDate(final String date) throws ParseException {
+    public static synchronized java.sql.Date stringToSQLDate(final String date) throws ParseException {
 
         try {
             final StringTokenizer st = new StringTokenizer(date, " ");
@@ -293,7 +288,6 @@ public class DateManipulation {
     }
 
     public static synchronized int differenceInYears(final int days1, final int days2) {
-//        System.out.println(days1 + " " + days2 + " = " + (daysToYear(days2) - daysToYear(days1)));
 
         return daysToYear(days2) - daysToYear(days1);
     }
