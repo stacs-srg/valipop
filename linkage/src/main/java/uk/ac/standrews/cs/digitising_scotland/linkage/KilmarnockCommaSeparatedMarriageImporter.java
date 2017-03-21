@@ -122,23 +122,19 @@ public class KilmarnockCommaSeparatedMarriageImporter extends KilmarnockCommaSep
      * Imports a set of marriage records from file to a bucket.
      *
      * @param marriages the bucket into which the new records should be put
-     * @param filename string path of file containing the source records in digitising scotland format
-     * @param object_ids a list of object ids, to which the ids of the new records should be added
+     * @param marriages_source_path string path of file containing the source records in digitising scotland format
      * @return the number of records read in
      * @throws IOException if the data cannot be read from the file
      */
-    public static int importDigitisingScotlandMarriages(IBucket<Marriage> marriages, String filename, List<Long> object_ids) throws IOException, BucketException {
+    public static int importDigitisingScotlandMarriages(IBucket<Marriage> marriages, String marriages_source_path) throws IOException, BucketException {
 
+        DataSet data = new DataSet(Paths.get(marriages_source_path));
         int count = 0;
-
-        DataSet data = new DataSet(Paths.get(filename));
 
         for (List<String> record : data.getRecords()) {
 
-            Marriage marriage = importDigitisingScotlandMarriage(data, record);
-
-            marriages.makePersistent(marriage);
-            object_ids.add(marriage.getId());
+            Marriage marriage_record = importDigitisingScotlandMarriage(data, record);
+            marriages.makePersistent(marriage_record);
             count++;
         }
 

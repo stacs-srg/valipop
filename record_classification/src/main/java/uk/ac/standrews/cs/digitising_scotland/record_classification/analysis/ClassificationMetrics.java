@@ -19,12 +19,13 @@
 package uk.ac.standrews.cs.digitising_scotland.record_classification.analysis;
 
 import uk.ac.standrews.cs.digitising_scotland.record_classification.model.Classification;
-import uk.ac.standrews.cs.util.tools.LoggingLevel;
+import uk.ac.standrews.cs.digitising_scotland.util.Metrics;
 import uk.ac.standrews.cs.util.tools.Logging;
+import uk.ac.standrews.cs.util.tools.LoggingLevel;
 
 import java.io.Serializable;
 import java.util.*;
-import java.util.concurrent.atomic.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static uk.ac.standrews.cs.util.tools.Formatting.printMetric;
 import static uk.ac.standrews.cs.util.tools.Logging.output;
@@ -84,7 +85,7 @@ public class ClassificationMetrics implements Serializable {
 
         for (String code : getCodes()) {
 
-            precision_map.put(code, calculatePrecision(true_positive_counts.get(code).get(), false_positive_counts.get(code).get()));
+            precision_map.put(code, Metrics.precision(true_positive_counts.get(code).get(), false_positive_counts.get(code).get()));
         }
 
         return precision_map;
@@ -104,7 +105,7 @@ public class ClassificationMetrics implements Serializable {
 
         for (String code : getCodes()) {
 
-            recall_map.put(code, calculateRecall(true_positive_counts.get(code).get(), false_negative_counts.get(code).get()));
+            recall_map.put(code, Metrics.recall(true_positive_counts.get(code).get(), false_negative_counts.get(code).get()));
         }
 
         return recall_map;
@@ -126,7 +127,7 @@ public class ClassificationMetrics implements Serializable {
 
         for (String code : getCodes()) {
 
-            accuracy_map.put(code, calculateAccuracy(true_positive_counts.get(code).get(), true_negative_counts.get(code).get(), false_positive_counts.get(code).get(), false_negative_counts.get(code).get()));
+            accuracy_map.put(code, Metrics.accuracy(true_positive_counts.get(code).get(), true_negative_counts.get(code).get(), false_positive_counts.get(code).get(), false_negative_counts.get(code).get()));
         }
 
         return accuracy_map;
@@ -147,7 +148,7 @@ public class ClassificationMetrics implements Serializable {
 
         for (String code : getCodes()) {
 
-            f1_map.put(code, calculateF1(true_positive_counts.get(code).get(), false_positive_counts.get(code).get(), false_negative_counts.get(code).get()));
+            f1_map.put(code, Metrics.F1(true_positive_counts.get(code).get(), false_positive_counts.get(code).get(), false_negative_counts.get(code).get()));
         }
 
         return f1_map;
@@ -204,7 +205,7 @@ public class ClassificationMetrics implements Serializable {
         int total_true_positives = confusion_matrix.getNumberOfTruePositives();
         int total_false_positives = confusion_matrix.getNumberOfFalsePositives();
 
-        return calculatePrecision(total_true_positives, total_false_positives);
+        return Metrics.precision(total_true_positives, total_false_positives);
     }
 
     /**
@@ -218,7 +219,7 @@ public class ClassificationMetrics implements Serializable {
         int total_true_positives = confusion_matrix.getNumberOfTruePositives();
         int total_false_negatives = confusion_matrix.getNumberOfFalseNegatives();
 
-        return calculateRecall(total_true_positives, total_false_negatives);
+        return Metrics.recall(total_true_positives, total_false_negatives);
     }
 
     /**
@@ -234,7 +235,7 @@ public class ClassificationMetrics implements Serializable {
         int total_false_positives = confusion_matrix.getNumberOfFalsePositives();
         int total_false_negatives = confusion_matrix.getNumberOfFalseNegatives();
 
-        return calculateAccuracy(total_true_positives, total_true_negatives, total_false_positives, total_false_negatives);
+        return Metrics.accuracy(total_true_positives, total_true_negatives, total_false_positives, total_false_negatives);
     }
 
     /**
@@ -249,7 +250,7 @@ public class ClassificationMetrics implements Serializable {
         int total_false_positives = confusion_matrix.getNumberOfFalsePositives();
         int total_false_negatives = confusion_matrix.getNumberOfFalseNegatives();
 
-        return calculateF1(total_true_positives, total_false_positives, total_false_negatives);
+        return Metrics.F1(total_true_positives, total_false_positives, total_false_negatives);
     }
 
     /**
@@ -298,29 +299,6 @@ public class ClassificationMetrics implements Serializable {
     private Set<String> getCodes() {
 
         return confusion_matrix.getClassificationCounts().keySet();
-    }
-
-    private double calculatePrecision(int true_positives, int false_positives) {
-
-        // Precision is TP / (TP + FP).
-
-        return (double) true_positives / (true_positives + false_positives);
-    }
-
-    private double calculateRecall(int true_positives, int false_negatives) {
-
-        return (double) true_positives / (true_positives + false_negatives);
-    }
-
-    private double calculateAccuracy(int true_positives, int true_negatives, int false_positives, int false_negatives) {
-
-        int total_cases = true_positives + true_negatives + false_positives + false_negatives;
-        return (double) (true_positives + true_negatives) / total_cases;
-    }
-
-    private double calculateF1(int true_positives, int false_positives, int false_negatives) {
-
-        return (double) (true_positives * 2) / (true_positives * 2 + false_positives + false_negatives);
     }
 
     private void printMetrics(LoggingLevel info_level, String label, Map<String, Double> metrics) {

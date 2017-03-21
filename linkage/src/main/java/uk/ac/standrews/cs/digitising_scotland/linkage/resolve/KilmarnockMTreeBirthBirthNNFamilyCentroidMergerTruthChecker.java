@@ -2,6 +2,7 @@ package uk.ac.standrews.cs.digitising_scotland.linkage.resolve;
 
 import org.json.JSONException;
 import uk.ac.standrews.cs.digitising_scotland.linkage.RecordFormatException;
+import uk.ac.standrews.cs.digitising_scotland.linkage.experiments.Experiment;
 import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.BirthFamilyGT;
 import uk.ac.standrews.cs.digitising_scotland.linkage.resolve.distances.GFNGLNBFNBMNPOMDOMDistanceOverFamily;
 import uk.ac.standrews.cs.digitising_scotland.util.MTree.DataDistance;
@@ -11,6 +12,7 @@ import uk.ac.standrews.cs.storr.impl.exceptions.RepositoryException;
 import uk.ac.standrews.cs.storr.impl.exceptions.StoreException;
 
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -114,6 +116,8 @@ public class KilmarnockMTreeBirthBirthNNFamilyCentroidMergerTruthChecker extends
 
     public static void main(String[] args) throws Exception {
 
+        Experiment experiment = new Experiment(ARG_NAMES, args, MethodHandles.lookup().lookupClass());
+
         if (args.length >= ARG_NAMES.length) {
 
             String births_source_path = args[0];
@@ -125,17 +129,13 @@ public class KilmarnockMTreeBirthBirthNNFamilyCentroidMergerTruthChecker extends
 
             KilmarnockMTreeBirthBirthNNFamilyCentroidMergerTruthChecker matcher = new KilmarnockMTreeBirthBirthNNFamilyCentroidMergerTruthChecker(Float.parseFloat(family_distance_threshold_string), Integer.parseInt(max_family_size_string), Float.parseFloat(family_merge_distance_threshold_string));
 
-            matcher.printDescription(args);
-            matcher.ingestBDMRecords(births_source_path, deaths_source_path, marriages_source_path);
+            experiment.printDescription();
+
+            matcher.ingestRecords(births_source_path, deaths_source_path, marriages_source_path);
             matcher.compute();
 
         } else {
-            new KilmarnockMTreeBirthBirthNNFamilyCentroidMergerTruthChecker().usage();
+            experiment.usage();
         }
-    }
-
-    protected String[] getArgNames() {
-
-        return ARG_NAMES;
     }
 }

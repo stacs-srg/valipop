@@ -2,7 +2,6 @@ package uk.ac.standrews.cs.digitising_scotland.linkage;
 
 import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.Death;
 import uk.ac.standrews.cs.digitising_scotland.linkage.normalisation.normaliseDates;
-import uk.ac.standrews.cs.digitising_scotland.util.ErrorHandling;
 import uk.ac.standrews.cs.storr.impl.exceptions.BucketException;
 import uk.ac.standrews.cs.storr.impl.exceptions.IllegalKeyException;
 import uk.ac.standrews.cs.storr.interfaces.IBucket;
@@ -25,97 +24,94 @@ public class KilmarnockCommaSeparatedDeathImporter extends KilmarnockCommaSepara
 
     public static final String[][] RECORD_LABEL_MAP = {
 
-                    // Information available that doesn't currently fit:
+            // Information available that doesn't currently fit:
 
-                    // "day of reg", "month of reg", "year of reg"
+            // "day of reg", "month of reg", "year of reg"
 
-                    {ORIGINAL_ID, "ID"},
+            {ORIGINAL_ID, "ID"},
 
-                    {YEAR_OF_REGISTRATION, "year of reg"},
+            {YEAR_OF_REGISTRATION, "year of reg"},
 
-                    {REGISTRATION_DISTRICT_NUMBER, "identifier"},
+            {REGISTRATION_DISTRICT_NUMBER, "identifier"},
 
-                    {REGISTRATION_DISTRICT_SUFFIX, "register identifier"},
+            {REGISTRATION_DISTRICT_SUFFIX, "register identifier"},
 
-                    {ENTRY, "entry no"},
+            {ENTRY, "entry no"},
 
-                    // *********************************
+            // *********************************
 
-                    {FORENAME, "forename(s) of deceased"}, {SURNAME, "surname of deceased"},
+            {FORENAME, "forename(s) of deceased"}, {SURNAME, "surname of deceased"},
 
-                    {SEX, "sex"},
+            {SEX, "sex"},
 
-                    // *********************************
+            // *********************************
 
-                    {DEATH_YEAR, "year"},{DEATH_DAY, "day"},
+            {DEATH_YEAR, "year"}, {DEATH_DAY, "day"},
 
-                    {AGE_AT_DEATH, "age at death"},
+            {AGE_AT_DEATH, "age at death"},
 
-                    // *********************************
+            // *********************************
 
-                    {MOTHERS_FORENAME, "mother's forename"},
+            {MOTHERS_FORENAME, "mother's forename"},
 
-                    {MOTHERS_MAIDEN_SURNAME, "mother's maiden surname"},
+            {MOTHERS_MAIDEN_SURNAME, "mother's maiden surname"},
 
-                    {MOTHER_DECEASED, "if mother deceased"},
+            {MOTHER_DECEASED, "if mother deceased"},
 
-                    // *********************************
+            // *********************************
 
-                    {FATHERS_FORENAME, "father's forename"},
+            {FATHERS_FORENAME, "father's forename"},
 
-                    {FATHERS_SURNAME, "father's surname"},
+            {FATHERS_SURNAME, "father's surname"},
 
-                    {FATHERS_OCCUPATION, "father's occupation"},
+            {FATHERS_OCCUPATION, "father's occupation"},
 
-                    {FATHER_DECEASED, "if father deceased"},
+            {FATHER_DECEASED, "if father deceased"},
 
-                    // *********************************
+            // *********************************
 
-                    {OCCUPATION, "occupation"},
+            {OCCUPATION, "occupation"},
 
-                    {MARITAL_STATUS, "marital status"},
+            {MARITAL_STATUS, "marital status"},
 
-                    {SPOUSES_OCCUPATIONS, "spouse's occ"},
+            {SPOUSES_OCCUPATIONS, "spouse's occ"},
 
-                    {COD_A, "cause of death"}
+            {COD_A, "cause of death"}
     };
 
     public static final String[] UNAVAILABLE_RECORD_LABELS = {
 
-                    // Fields not present in Kilmarnock dataset.
+            // Fields not present in Kilmarnock dataset.
 
-                    CHANGED_FORENAME, CHANGED_SURNAME, CHANGED_MOTHERS_MAIDEN_SURNAME, CORRECTED_ENTRY,IMAGE_QUALITY, CHANGED_DEATH_AGE, COD_B, COD_C, PLACE_OF_DEATH, DATE_OF_BIRTH, CERTIFYING_DOCTOR, MOTHERS_SURNAME
+            CHANGED_FORENAME, CHANGED_SURNAME, CHANGED_MOTHERS_MAIDEN_SURNAME, CORRECTED_ENTRY, IMAGE_QUALITY, CHANGED_DEATH_AGE, COD_B, COD_C, PLACE_OF_DEATH, DATE_OF_BIRTH, CERTIFYING_DOCTOR, MOTHERS_SURNAME
     };
 
     /**
-     * @param deaths the bucket from which to import
-     * @param filename containing the source records in digitising scotland format
+     * @param deaths   the bucket from which to import
+     * @param deaths_source_path containing the source records in digitising scotland format
      * @return the number of records read in
      * @throws IOException
      * @throws RecordFormatException
      * @throws BucketException
      */
-    public static int importDigitisingScotlandDeaths(IBucket<Death> deaths, String filename, List<Long> oids) throws RecordFormatException, IOException, BucketException, IllegalKeyException {
+    public static int importDigitisingScotlandDeaths(IBucket<Death> deaths, String deaths_source_path) throws IOException, RecordFormatException, BucketException {
 
+        DataSet data = new DataSet(Paths.get(deaths_source_path));
         int count = 0;
-        DataSet data = new DataSet(Paths.get(filename));
+
         for (List<String> record : data.getRecords()) {
-            Death d = importDigitisingScotlandDeath(data, record);
-            try {
-                deaths.makePersistent(d);
-                oids.add(d.getId());
-                count++;
-            }
-            catch (Exception e) {
-                ErrorHandling.exceptionError(e, "Error making death record persistent: " + d);
-            }
+
+            Death death_record = importDigitisingScotlandDeath(data, record);
+            deaths.makePersistent(death_record);
+            count++;
+
         }
 
         return count;
     }
 
     /**
-     * Fills in a OID record data from a file.
+     * Fills in a record.
      */
     private static Death importDigitisingScotlandDeath(DataSet data, List<String> record) throws IOException, RecordFormatException, IllegalKeyException {
 
@@ -129,15 +125,14 @@ public class KilmarnockCommaSeparatedDeathImporter extends KilmarnockCommaSepara
         return death;
     }
 
-
     private static void addAvailableCompoundFields(final DataSet data, final List<String> record, final Death death) {
 
-        death.put(SPOUSES_NAMES, combineFields(data,record, "forename of spouse", "surname of spouse"));
-        death.put(PLACE_OF_DEATH, combineFields(data,record, "address 1", "address 2", "address 3"));
+        death.put(SPOUSES_NAMES, combineFields(data, record, "forename of spouse", "surname of spouse"));
+        death.put(PLACE_OF_DEATH, combineFields(data, record, "address 1", "address 2", "address 3"));
     }
 
     private static void addAvailableNormalisedFields(DataSet data, List<String> record, Death death) {
 
-        death.put( DEATH_MONTH, normaliseDates.normaliseMonth( data.getValue(record, "month" ) ) );
+        death.put(DEATH_MONTH, normaliseDates.normaliseMonth(data.getValue(record, "month")));
     }
 }

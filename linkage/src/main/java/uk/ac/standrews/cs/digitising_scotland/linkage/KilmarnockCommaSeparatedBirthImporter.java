@@ -2,7 +2,6 @@ package uk.ac.standrews.cs.digitising_scotland.linkage;
 
 import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.BirthFamilyGT;
 import uk.ac.standrews.cs.digitising_scotland.linkage.normalisation.normaliseDates;
-import uk.ac.standrews.cs.digitising_scotland.util.ErrorHandling;
 import uk.ac.standrews.cs.storr.impl.exceptions.BucketException;
 import uk.ac.standrews.cs.storr.impl.exceptions.IllegalKeyException;
 import uk.ac.standrews.cs.storr.interfaces.IBucket;
@@ -25,93 +24,89 @@ public class KilmarnockCommaSeparatedBirthImporter extends KilmarnockCommaSepara
 
     public static final String[][] RECORD_LABEL_MAP = {
 
-                    {ORIGINAL_ID, "ID"},
+            {ORIGINAL_ID, "ID"},
 
-                    {YEAR_OF_REGISTRATION, "year of reg"},
+            {YEAR_OF_REGISTRATION, "year of reg"},
 
-                    {REGISTRATION_DISTRICT_NUMBER, "rd identifier"},
+            {REGISTRATION_DISTRICT_NUMBER, "rd identifier"},
 
-                    {REGISTRATION_DISTRICT_SUFFIX, "register identifier"},
+            {REGISTRATION_DISTRICT_SUFFIX, "register identifier"},
 
-                    {ENTRY, "entry no"},
+            {ENTRY, "entry no"},
 
-                    // *********************************
+            // *********************************
 
-                    {FORENAME, "child's forname(s)"}, {SURNAME, "child's surname"},
+            {FORENAME, "child's forname(s)"}, {SURNAME, "child's surname"},
 
-                    {SEX, "sex"},
+            {SEX, "sex"},
 
-                    // *********************************
+            // *********************************
 
-                    {BIRTH_YEAR, "year"}, {BIRTH_DAY, "day"},
+            {BIRTH_YEAR, "year"}, {BIRTH_DAY, "day"},
 
-                    {ILLEGITIMATE_INDICATOR, "illegitimate"},
+            {ILLEGITIMATE_INDICATOR, "illegitimate"},
 
-                    // *********************************
+            // *********************************
 
-                    {MOTHERS_FORENAME, "mother's forename"}, {MOTHERS_MAIDEN_SURNAME, "mother's maiden surname"},
+            {MOTHERS_FORENAME, "mother's forename"}, {MOTHERS_MAIDEN_SURNAME, "mother's maiden surname"},
 
-                    // *********************************
+            // *********************************
 
-                    {FATHERS_FORENAME, "father's forename"}, {FATHERS_SURNAME, "father's surname"},
+            {FATHERS_FORENAME, "father's forename"}, {FATHERS_SURNAME, "father's surname"},
 
-                    // *********************************
+            // *********************************
 
-                    {PARENTS_DAY_OF_MARRIAGE, "day of parents' marriage"},
+            {PARENTS_DAY_OF_MARRIAGE, "day of parents' marriage"},
 
-                    {PARENTS_MONTH_OF_MARRIAGE, "month of parents' marriage"},
+            {PARENTS_MONTH_OF_MARRIAGE, "month of parents' marriage"},
 
-                    {PARENTS_YEAR_OF_MARRIAGE, "year of parents' marriage"},
+            {PARENTS_YEAR_OF_MARRIAGE, "year of parents' marriage"},
 
-                    {PARENTS_PLACE_OF_MARRIAGE, "place of parent's marriage 1"},
+            {PARENTS_PLACE_OF_MARRIAGE, "place of parent's marriage 1"},
 
-                    {FATHERS_OCCUPATION, "father's occupation"},
+            {FATHERS_OCCUPATION, "father's occupation"},
 
-                    {INFORMANT_DID_NOT_SIGN, "did informant  sign?"},
+            {INFORMANT_DID_NOT_SIGN, "did informant  sign?"},
 
-                    {FAMILY, "family"},
+            {FAMILY, "family"},
 
-                    {FAMILY_BEWARE, "family beware" }
+            {FAMILY_BEWARE, "family beware"}
 
     };
 
     public static final String[] UNAVAILABLE_RECORD_LABELS = {
 
-                    // Fields not present in Kilmarnock dataset.
+            // Fields not present in Kilmarnock dataset.
 
-                    CHANGED_FORENAME, CHANGED_SURNAME, MOTHERS_SURNAME, CHANGED_MOTHERS_MAIDEN_SURNAME, CORRECTED_ENTRY, IMAGE_QUALITY, BIRTH_ADDRESS, ADOPTION
+            CHANGED_FORENAME, CHANGED_SURNAME, MOTHERS_SURNAME, CHANGED_MOTHERS_MAIDEN_SURNAME, CORRECTED_ENTRY, IMAGE_QUALITY, BIRTH_ADDRESS, ADOPTION
 
     };
 
     /**
-     * @param births the bucket from which to import
-     * @param filename containing the source records in digitising scotland format
+     * @param births   the bucket from which to import
+     * @param births_source_path containing the source records in digitising scotland format
      * @return the number of records read in
      * @throws IOException
      * @throws RecordFormatException
      * @throws BucketException
      */
-    public static int importDigitisingScotlandBirths(IBucket<BirthFamilyGT> births, String filename, List<Long> oids) throws RecordFormatException, IOException, BucketException, IllegalKeyException {
+    public static int importDigitisingScotlandBirths(IBucket<BirthFamilyGT> births, String births_source_path) throws IOException, RecordFormatException, BucketException {
 
+        DataSet data = new DataSet(Paths.get(births_source_path));
         int count = 0;
-        DataSet data = new DataSet(Paths.get(filename));
+
         for (List<String> record : data.getRecords()) {
-            BirthFamilyGT b = importDigitisingScotlandBirth(data, record);
-            try {
-                births.makePersistent(b);
-                oids.add(b.getId());
-                count++;
-            }
-            catch (Exception e) {
-                ErrorHandling.exceptionError(e, "Error making birth record persistent: " + b);
-            }
+
+            BirthFamilyGT birth_record = importDigitisingScotlandBirth(data, record);
+            births.makePersistent(birth_record);
+            count++;
         }
 
         return count;
     }
 
     /**
-     * Fills in a OID record data from a file.
+     * Fills in a record.
      */
     private static BirthFamilyGT importDigitisingScotlandBirth(DataSet data, List<String> record) throws IOException, RecordFormatException, IllegalKeyException {
 
