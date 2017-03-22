@@ -19,8 +19,6 @@ import static uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.Marriag
  */
 public class SkyeCommaSeparatedMarriageImporter extends CommaSeparatedMarriageImporter {
 
-    // TODO Fix ME - THESE ARE THE KILLIE FIELDS
-
     public static final String[][] RECORD_LABEL_MAP = {
 
                     // Information available that doesn't currently fit:
@@ -40,8 +38,6 @@ public class SkyeCommaSeparatedMarriageImporter extends CommaSeparatedMarriageIm
 
                     {ENTRY, "entry number"},
 
-                    {DENOMINATION, "denomination"},
-
                     // *********************************
 
                     {BRIDE_FORENAME, "forename of bride"}, {BRIDE_SURNAME, "surname of bride"},
@@ -53,8 +49,6 @@ public class SkyeCommaSeparatedMarriageImporter extends CommaSeparatedMarriageIm
                     // *********************************
 
                     {MARRIAGE_YEAR, "year"}, {MARRIAGE_DAY, "day"},
-
-                    // {PLACE_OF_MARRIAGE, "place of marriage 3" },
 
                     // *********************************
 
@@ -114,7 +108,7 @@ public class SkyeCommaSeparatedMarriageImporter extends CommaSeparatedMarriageIm
 
                     // Fields not present in Kilmarnock dataset.
 
-                    CHANGED_GROOM_FORENAME, IMAGE_QUALITY, CHANGED_GROOM_SURNAME, CHANGED_BRIDE_SURNAME, CORRECTED_ENTRY, CHANGED_BRIDE_FORENAME
+            DENOMINATION, CHANGED_GROOM_FORENAME, IMAGE_QUALITY, CHANGED_GROOM_SURNAME, CHANGED_BRIDE_SURNAME, CORRECTED_ENTRY, CHANGED_BRIDE_FORENAME
     };
 
     public String[][] get_record_map() { return RECORD_LABEL_MAP; }
@@ -131,7 +125,7 @@ public class SkyeCommaSeparatedMarriageImporter extends CommaSeparatedMarriageIm
 
         marriage.put(BRIDE_ADDRESS, combineFields(data, record, "address of bride 1", "address of bride 2", "address of bride 3"));
         marriage.put(GROOM_ADDRESS, combineFields(data,record, "address of groom 1", "address of groom 2", "address of groom 3"));
-        //       marriage.put(PLACE_OF_MARRIAGE, combineFields(data,record, "place of marriage 1", "place of marriage 2", "place of marriage 3" ));
+        // marriage.put(PLACE_OF_MARRIAGE, combineFields(data,record, "place of marriage 1", "place of marriage 2", "place of marriage 3" ));
         // Place of marriage 3 is the townname in this dataset - use this.
         // TODO look at this and decide what to do - create a cannonical field?
     }
