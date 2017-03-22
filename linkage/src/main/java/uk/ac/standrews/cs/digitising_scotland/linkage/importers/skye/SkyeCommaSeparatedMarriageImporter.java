@@ -4,12 +4,8 @@ import uk.ac.standrews.cs.digitising_scotland.linkage.importers.commaSeparated.C
 import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.Marriage;
 import uk.ac.standrews.cs.digitising_scotland.linkage.normalisation.DateNormalisation;
 import uk.ac.standrews.cs.digitising_scotland.linkage.normalisation.PlaceNormalisation;
-import uk.ac.standrews.cs.storr.impl.exceptions.BucketException;
-import uk.ac.standrews.cs.storr.interfaces.IBucket;
 import uk.ac.standrews.cs.util.dataset.DataSet;
 
-import java.io.IOException;
-import java.nio.file.Paths;
 import java.util.List;
 
 import static uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.Marriage.*;
@@ -124,41 +120,6 @@ public class SkyeCommaSeparatedMarriageImporter extends CommaSeparatedMarriageIm
     public String[][] get_record_map() { return RECORD_LABEL_MAP; }
 
     public String[] get_unavailable_records() { return UNAVAILABLE_RECORD_LABELS; }
-
-    /**
-     * Imports a set of marriage records from file to a bucket.
-     *
-     * @param marriages the bucket into which the new records should be put
-     * @param marriages_source_path string path of file containing the source records in digitising scotland format
-     * @return the number of records read in
-     * @throws IOException if the data cannot be read from the file
-     */
-    public int importDigitisingScotlandMarriages(IBucket<Marriage> marriages, String marriages_source_path) throws IOException, BucketException {
-
-        DataSet data = new DataSet(Paths.get(marriages_source_path));
-        int count = 0;
-
-        for (List<String> record : data.getRecords()) {
-
-            Marriage marriage_record = importDigitisingScotlandMarriage(data, record);
-            marriages.makePersistent(marriage_record);
-            count++;
-        }
-
-        return count;
-    }
-
-    public Marriage importDigitisingScotlandMarriage(DataSet data, List<String> record) {
-
-        Marriage marriage = new Marriage();
-
-        addAvailableSingleFields(data, record, marriage, RECORD_LABEL_MAP);
-        addAvailableNormalisedFields(data, record, marriage);
-        addAvailableCompoundFields(data, record, marriage);
-        addUnavailableFields(marriage, UNAVAILABLE_RECORD_LABELS);
-
-        return marriage;
-    }
 
     public void addAvailableNormalisedFields(DataSet data, List<String> record, Marriage marriage) {
 
