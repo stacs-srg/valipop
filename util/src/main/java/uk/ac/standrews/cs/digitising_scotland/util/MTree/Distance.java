@@ -21,5 +21,5 @@ package uk.ac.standrews.cs.digitising_scotland.util.MTree;
  */
 public interface Distance<T> {
 
-    public float distance(T a, T b);
+    float distance(T a, T b);
 }
