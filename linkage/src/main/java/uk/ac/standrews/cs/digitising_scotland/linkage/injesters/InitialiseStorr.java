@@ -54,6 +54,8 @@ public class InitialiseStorr {
         births = input_repo.makeBucket(births_name, BucketKind.DIRECTORYBACKED, new BirthFactory(birthType.getId()));
         deaths = input_repo.makeBucket(deaths_name, BucketKind.DIRECTORYBACKED, new DeathFactory(deathType.getId()));
         marriages = input_repo.makeBucket(marriages_name, BucketKind.DIRECTORYBACKED, new MarriageFactory(marriageType.getId()));
+
+        System.out.println( "BDM Infrastructure successfully created in " + store_path );
     }
 
     //***********************************************************************************
