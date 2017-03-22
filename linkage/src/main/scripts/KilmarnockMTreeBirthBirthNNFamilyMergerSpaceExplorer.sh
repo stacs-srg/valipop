@@ -22,8 +22,12 @@ DISTANCES=(3 7 9 16)
 FAMILY_SIZE=(5 10 20)
 MERGE_DISTANCES=(3 7 9 16)
 
-parallel --no-notice -j4 --joblog /data/KilmarnockMTreeBirthBirthNNFamilyMergerSpaceExplorer-joblog.txt \
-    "mvn exec:java $MVN_ARGS -Dexec.args='$FIXED_ARGS {1} {2} {3}' > /data/KilmarnockMTreeBirthBirthNNFamilyMergerSpaceExplorer-{1}-{2}-{3}.txt" \
+# become root
+# mkdir /data/digitising_scotland_outputs
+# chown -R secure:secure /data/digitising_scotland_outputs
+parallel --no-notice -j4 --joblog /data/digitising_scotland_outputs/KilmarnockMTreeBirthBirthNNFamilyMergerSpaceExplorer-joblog.txt \
+    --eta \
+    "mvn exec:java $MVN_ARGS -Dexec.args='$FIXED_ARGS {1} {2} {3}' > /data/digitising_scotland_outputs/KilmarnockMTreeBirthBirthNNFamilyMergerSpaceExplorer-{1}-{2}-{3}.txt" \
     ::: ${DISTANCES[@]} \
     ::: ${FAMILY_SIZE[@]} \
     ::: ${MERGE_DISTANCES[@]}
