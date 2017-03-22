@@ -22,8 +22,8 @@ DISTANCES=(3 7 9 16)
 FAMILY_SIZE=(5 10 20)
 MERGE_DISTANCES=(3 7 9 16)
 
-parallel --no-notice -j4 --joblog /tmp/KilmarnockMTreeBirthBirthNNFamilyMergerSpaceExplorer-joblog.txt \
-    "mvn exec:java $MVN_ARGS -Dexec.args='$FIXED_ARGS {1} {2} {3}' > /tmp/KilmarnockMTreeBirthBirthNNFamilyMergerSpaceExplorer-{1}-{2}-{3}.txt" \
+parallel --no-notice -j4 --joblog /data/KilmarnockMTreeBirthBirthNNFamilyMergerSpaceExplorer-joblog.txt \
+    "mvn exec:java $MVN_ARGS -Dexec.args='$FIXED_ARGS {1} {2} {3}' > /data/KilmarnockMTreeBirthBirthNNFamilyMergerSpaceExplorer-{1}-{2}-{3}.txt" \
     ::: ${DISTANCES[@]} \
     ::: ${FAMILY_SIZE[@]} \
     ::: ${MERGE_DISTANCES[@]}
