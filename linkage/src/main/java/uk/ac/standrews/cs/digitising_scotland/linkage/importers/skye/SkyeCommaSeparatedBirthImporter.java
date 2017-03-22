@@ -40,14 +40,6 @@ public class SkyeCommaSeparatedBirthImporter extends CommaSeparatedBirthImporter
 
             {MOTHERS_FORENAME, "mother's forename"}, {MOTHERS_MAIDEN_SURNAME, "mother's maiden surname"},
 
-            {BIRTH_YEAR, "year"}, {BIRTH_DAY, "day"},
-
-            {ILLEGITIMATE_INDICATOR, "illegitimate"},
-
-            // *********************************
-
-            {MOTHERS_FORENAME, "mother's forename"}, {MOTHERS_MAIDEN_SURNAME, "mother's maiden surname"},
-
             // *********************************
 
             {FATHERS_FORENAME, "father's forename"}, {FATHERS_SURNAME, "father's surname"},
@@ -74,7 +66,7 @@ public class SkyeCommaSeparatedBirthImporter extends CommaSeparatedBirthImporter
 
             // Fields not present in Kilmarnock dataset.
 
-                    CHANGED_FORENAME, CHANGED_SURNAME, MOTHERS_SURNAME, CHANGED_MOTHERS_MAIDEN_SURNAME, CORRECTED_ENTRY, IMAGE_QUALITY, BIRTH_ADDRESS, ADOPTION, ILLEGITIMATE_INDICATOR, BIRTH_YEAR, BIRTH_DAY
+            ILLEGITIMATE_INDICATOR, CHANGED_FORENAME, CHANGED_SURNAME, MOTHERS_SURNAME, CHANGED_MOTHERS_MAIDEN_SURNAME, CORRECTED_ENTRY, IMAGE_QUALITY, BIRTH_ADDRESS, ADOPTION, ILLEGITIMATE_INDICATOR, BIRTH_YEAR, BIRTH_DAY
     };
 
     @Override
@@ -90,15 +82,18 @@ public class SkyeCommaSeparatedBirthImporter extends CommaSeparatedBirthImporter
     @Override
     public void addAvailableCompoundFields(DataSet data, List<String> record, BirthFamilyGT birth) {
 
-        birth.put(BIRTH_ADDRESS, combineFields(data, record, "address 1", "address 2", "address 3"));
+        birth.put(BIRTH_ADDRESS, combineFields(data, record, "address 1", "address 2"));
         birth.put(INFORMANT, combineFields(data, record, "forename of informant", "surname of informant"));
-
-        // TODO what to do with birth date??
     }
 
     @Override
     public void addAvailableNormalisedFields(DataSet data, List<String> record, BirthFamilyGT birth) {
 
-        birth.put(BIRTH_MONTH, DateNormalisation.normaliseMonth(data.getValue(record, "month")));
+        String dob = data.getValue(record, "birth date"); // These are of the form 7/4/1861, 25/4/1861 etc.
+        String[] dob_parts = dob.split("/");
+
+        if( dob_parts.length > 0 ) { birth.put(BIRTH_DAY, DateNormalisation.normaliseMonth( dob_parts[0])); }
+        if( dob_parts.length > 1 ) { birth.put(BIRTH_MONTH, DateNormalisation.normaliseMonth( dob_parts[1])); }
+        if( dob_parts.length > 2 ) { birth.put(BIRTH_YEAR, DateNormalisation.normaliseMonth( dob_parts[2])); }
     }
 }
