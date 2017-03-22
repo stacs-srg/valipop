@@ -63,7 +63,7 @@ public class KilmarnockInjestor {
         StoreFactory.setStorePath( p );
         IStore store = StoreFactory.getStore();
 
-        IRepository input_repo = store.makeRepository(input_repo_name);
+        IRepository input_repo = store.getRepo(input_repo_name);
 
         TypeFactory type_factory = TypeFactory.getInstance();
 
