@@ -19,8 +19,6 @@ import static uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.Death.*
  */
 public class SkyeCommaSeparatedDeathImporter extends CommaSeparatedDeathImporter {
 
-    // TODO Fix ME - THESE ARE THE KILLIE FIELDS
-
     private static final String[][] RECORD_LABEL_MAP = {
 
             // Information available that doesn't currently fit:
@@ -29,7 +27,6 @@ public class SkyeCommaSeparatedDeathImporter extends CommaSeparatedDeathImporter
 
             {ORIGINAL_ID, "ID"},
 
-            {YEAR_OF_REGISTRATION, "year of reg"},
 
             {REGISTRATION_DISTRICT_NUMBER, "identifier"},
 
@@ -82,7 +79,7 @@ public class SkyeCommaSeparatedDeathImporter extends CommaSeparatedDeathImporter
 
             // Fields not present in Kilmarnock dataset.
 
-            CHANGED_FORENAME, CHANGED_SURNAME, CHANGED_MOTHERS_MAIDEN_SURNAME, CORRECTED_ENTRY, IMAGE_QUALITY, CHANGED_DEATH_AGE, COD_B, COD_C, PLACE_OF_DEATH, DATE_OF_BIRTH, CERTIFYING_DOCTOR, MOTHERS_SURNAME
+            YEAR_OF_REGISTRATION, CHANGED_FORENAME, CHANGED_SURNAME, CHANGED_MOTHERS_MAIDEN_SURNAME, CORRECTED_ENTRY, IMAGE_QUALITY, CHANGED_DEATH_AGE, COD_B, COD_C, PLACE_OF_DEATH, DATE_OF_BIRTH, CERTIFYING_DOCTOR, MOTHERS_SURNAME
     };
 
     public String[][] get_record_map() { return RECORD_LABEL_MAP; }
@@ -94,7 +91,7 @@ public class SkyeCommaSeparatedDeathImporter extends CommaSeparatedDeathImporter
     public void addAvailableCompoundFields(final DataSet data, final List<String> record, final Death death) {
 
         death.put(SPOUSES_NAMES, combineFields(data, record, "forename of spouse", "surname of spouse"));
-        death.put(PLACE_OF_DEATH, combineFields(data, record, "address 1", "address 2", "address 3"));
+        death.put(PLACE_OF_DEATH, combineFields(data, record, "address 1", "address 2"));
     }
 
     public void addAvailableNormalisedFields(DataSet data, List<String> record, Death death) {
