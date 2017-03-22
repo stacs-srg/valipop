@@ -23,10 +23,10 @@ import java.util.TreeSet;
  */
 public class KilmarnockMTreeBirthBirthWithinDistanceGroundTruthChecker extends KilmarnockExperiment {
 
-    public static final String[] ARG_NAMES = {"births_source_path", "deaths_source_path", "marriages_source_path"};
+    private static final String[] ARG_NAMES = {"births_source_path", "deaths_source_path", "marriages_source_path"};
     private MTree<BirthFamilyGT> birthMTree;
 
-    public KilmarnockMTreeBirthBirthWithinDistanceGroundTruthChecker() throws StoreException, IOException, RepositoryException {
+    private KilmarnockMTreeBirthBirthWithinDistanceGroundTruthChecker() throws StoreException, IOException, RepositoryException {
     }
 
     private void compute() throws Exception {

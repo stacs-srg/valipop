@@ -30,7 +30,6 @@ public class KilmarnockMTreeBirthMarriageRangeCSVGenerator extends KilmarnockExp
     private MTree<Marriage> marriageMtree;
 
     private KilmarnockMTreeBirthMarriageRangeCSVGenerator() throws StoreException, IOException, RepositoryException {
-
     }
 
     private void compute() throws Exception {

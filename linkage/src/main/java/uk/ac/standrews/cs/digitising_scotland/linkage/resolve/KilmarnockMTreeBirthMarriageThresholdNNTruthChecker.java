@@ -29,8 +29,6 @@ public class KilmarnockMTreeBirthMarriageThresholdNNTruthChecker extends Kilmarn
     private MTree<Marriage> marriageMtree;
 
     private KilmarnockMTreeBirthMarriageThresholdNNTruthChecker() throws StoreException, RepositoryException, IOException {
-
-        super();
     }
 
     private void compute() throws Exception {

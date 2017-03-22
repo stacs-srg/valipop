@@ -16,12 +16,7 @@ public class CommaSeparatedImporter {
     protected static void addAvailableSingleFields(final DataSet data, final List<String> record, final LXP lxp_record, final String[][] label_map) {
 
         for (String[] field : label_map) {
-            try {
-                lxp_record.put(field[0], data.getValue(record, field[1]));
-            }
-            catch (ArrayIndexOutOfBoundsException e) {
-                throw e;
-            }
+            lxp_record.put(field[0], data.getValue(record, field[1]));
         }
     }
 

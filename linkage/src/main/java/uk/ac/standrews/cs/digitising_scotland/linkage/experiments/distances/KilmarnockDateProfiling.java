@@ -1,6 +1,5 @@
 package uk.ac.standrews.cs.digitising_scotland.linkage.experiments.distances;
 
-import org.simmetrics.metrics.Levenshtein;
 import uk.ac.standrews.cs.digitising_scotland.linkage.experiments.Experiment;
 import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.BirthFamilyGT;
 import uk.ac.standrews.cs.digitising_scotland.linkage.resolve.KilmarnockExperiment;
@@ -12,7 +11,6 @@ import java.util.*;
 public class KilmarnockDateProfiling extends KilmarnockExperiment {
 
     private static final String[] ARG_NAMES = {"births_source_path", "deaths_source_path", "marriages_source_path"};
-    private final Levenshtein levenshtein = new Levenshtein();
 
     private KilmarnockDateProfiling() throws Exception {
     }

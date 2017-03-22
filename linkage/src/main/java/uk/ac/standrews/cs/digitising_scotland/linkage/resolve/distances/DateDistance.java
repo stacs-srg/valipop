@@ -4,31 +4,98 @@ import org.simmetrics.metrics.Levenshtein;
 import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.Birth;
 import uk.ac.standrews.cs.digitising_scotland.util.MTree.Distance;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 public class DateDistance {
 
     public static final Levenshtein LEVENSHTEIN = new Levenshtein();
 
-    public static final Distance<Birth> DATE_DISTANCE1 = new Distance<Birth>() {
+    public static final Distance<Birth> DAY_DISTANCE = (b1, b2) -> {
 
-        @Override
-        public float distance(Birth b1, Birth b2) {
+        String day1 = b1.getString(Birth.PARENTS_DAY_OF_MARRIAGE);
+        String day2 = b2.getString(Birth.PARENTS_DAY_OF_MARRIAGE);
 
-            String day1 = b1.getString(Birth.PARENTS_DAY_OF_MARRIAGE);
-            String day2 = b2.getString(Birth.PARENTS_DAY_OF_MARRIAGE);
-
-            String month1 = b1.getString(Birth.PARENTS_MONTH_OF_MARRIAGE);
-            String month2 = b2.getString(Birth.PARENTS_MONTH_OF_MARRIAGE);
-
-            String year1 = b1.getString(Birth.PARENTS_YEAR_OF_MARRIAGE);
-            String year2 = b2.getString(Birth.PARENTS_YEAR_OF_MARRIAGE);
-
-            float day_dist = day1.equals("--") || day2.equals("--") ? 0 : LEVENSHTEIN.distance(day1, day2);
-            float month_dist = month1.equals("---") || month2.equals("---") ? 0 : LEVENSHTEIN.distance(month1, month2);
-            float year_dist = year1.equals("----") || year2.equals("----") ? 0 : LEVENSHTEIN.distance(year1, year2);
-
-            return day_dist + month_dist + year_dist;
-        }
+        return day1.equals("--") || day2.equals("--") ? 0 : LEVENSHTEIN.distance(day1, day2);
     };
+
+    public static final Distance<Birth> MONTH_DISTANCE = (b1, b2) -> {
+
+        String month1 = b1.getString(Birth.PARENTS_MONTH_OF_MARRIAGE);
+        String month2 = b2.getString(Birth.PARENTS_MONTH_OF_MARRIAGE);
+
+        return month1.equals("---") || month2.equals("---") ? 0 : LEVENSHTEIN.distance(month1, month2);
+    };
+
+    public static final Distance<Birth> YEAR_DISTANCE = (b1, b2) -> {
+
+        String year1 = b1.getString(Birth.PARENTS_YEAR_OF_MARRIAGE);
+        String year2 = b2.getString(Birth.PARENTS_YEAR_OF_MARRIAGE);
+
+        return year1.equals("----") || year2.equals("----") ? 0 : LEVENSHTEIN.distance(year1, year2);
+    };
+
+    public static final Distance<Birth> ORIGINAL_DATE_DISTANCE = (b1, b2) -> DAY_DISTANCE.distance(b1, b2) + MONTH_DISTANCE.distance(b1, b2) + YEAR_DISTANCE.distance(b1, b2);
+
+
+    public static final Distance<Birth> DAY_DISTANCE2 = (b1, b2) -> {
+
+        String day1 = b1.getString(Birth.PARENTS_DAY_OF_MARRIAGE);
+        String day2 = b2.getString(Birth.PARENTS_DAY_OF_MARRIAGE);
+
+        return LEVENSHTEIN.distance(day1, day2);
+    };
+
+    public static final Distance<Birth> MONTH_DISTANCE2 = (b1, b2) -> {
+
+        String month1 = b1.getString(Birth.PARENTS_MONTH_OF_MARRIAGE);
+        String month2 = b2.getString(Birth.PARENTS_MONTH_OF_MARRIAGE);
+
+        return LEVENSHTEIN.distance(month1, month2);
+    };
+
+    public static final Distance<Birth> YEAR_DISTANCE2 = (b1, b2) -> {
+
+        String year1 = b1.getString(Birth.PARENTS_YEAR_OF_MARRIAGE);
+        String year2 = b2.getString(Birth.PARENTS_YEAR_OF_MARRIAGE);
+
+        return LEVENSHTEIN.distance(year1, year2);
+    };
+
+    public static final Distance<Birth> LEVENSHTEIN_DATE_DISTANCE = (b1, b2) -> DAY_DISTANCE2.distance(b1, b2) + MONTH_DISTANCE2.distance(b1, b2) + YEAR_DISTANCE2.distance(b1, b2);
+
+    private static final Set<String> NULL_VALUES_FOR_DAYS = new HashSet<>(Arrays.asList("", " ", "  ", "na", "ng", "?", "n/a"));
+
+    public static final Distance<Birth> DAY_DISTANCE_WITH_NULL_FILTERING = (b1, b2) -> {
+
+        String day1 = b1.getString(Birth.PARENTS_DAY_OF_MARRIAGE);
+        String day2 = b2.getString(Birth.PARENTS_DAY_OF_MARRIAGE);
+
+        return NULL_VALUES_FOR_DAYS.contains(day1) || NULL_VALUES_FOR_DAYS.contains(day2) ? 0 : LEVENSHTEIN.distance(day1, day2);
+    };
+
+    private static final Set<String> NULL_VALUES_FOR_MONTHS = new HashSet<>(Arrays.asList("  "));
+
+    public static final Distance<Birth> MONTH_DISTANCE_WITH_NULL_FILTERING = (b1, b2) -> {
+
+        String month1 = b1.getString(Birth.PARENTS_MONTH_OF_MARRIAGE);
+        String month2 = b2.getString(Birth.PARENTS_MONTH_OF_MARRIAGE);
+
+        return NULL_VALUES_FOR_MONTHS.contains(month1) || NULL_VALUES_FOR_MONTHS.contains(month2) ? 0 : LEVENSHTEIN.distance(month1, month2);
+    };
+
+    private static final Set<String> NULL_VALUES_FOR_YEARS = new HashSet<>(Arrays.asList("", "na", "ng", " "));
+
+    public static final Distance<Birth> YEAR_DISTANCE_WITH_NULL_FILTERING = (b1, b2) -> {
+
+        String year1 = b1.getString(Birth.PARENTS_YEAR_OF_MARRIAGE);
+        String year2 = b2.getString(Birth.PARENTS_YEAR_OF_MARRIAGE);
+
+        return NULL_VALUES_FOR_YEARS.contains(year1) || NULL_VALUES_FOR_YEARS.contains(year2) ? 0 : LEVENSHTEIN.distance(year1, year2);
+    };
+
+    public static final Distance<Birth> LEVENSHTEIN_DATE_DISTANCE_WITH_NULL_FILTERING = (b1, b2) -> DAY_DISTANCE_WITH_NULL_FILTERING.distance(b1, b2) + MONTH_DISTANCE_WITH_NULL_FILTERING.distance(b1, b2) + YEAR_DISTANCE_WITH_NULL_FILTERING.distance(b1, b2);
 
     // Profile of day of marriage strings from Kilmarnock births:
     //    1 "10th"

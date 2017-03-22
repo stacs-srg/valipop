@@ -35,9 +35,9 @@ public class KilmarnockMTreeBirthBirthNNFamilyCentroidMergerTruthChecker extends
         this.family_merge_distance_threshold = family_merge_distance_threshold;
     }
 
-    private KilmarnockMTreeBirthBirthNNFamilyCentroidMergerTruthChecker() throws RecordFormatException, RepositoryException, StoreException, JSONException, BucketException, IOException {
-
-    }
+//    private KilmarnockMTreeBirthBirthNNFamilyCentroidMergerTruthChecker() throws RecordFormatException, RepositoryException, StoreException, JSONException, BucketException, IOException {
+//
+//    }
 
     private void compute() throws Exception {
 
