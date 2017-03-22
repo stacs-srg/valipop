@@ -18,9 +18,6 @@ package uk.ac.standrews.cs.digitising_scotland.util;
 
 import static java.util.concurrent.TimeUnit.*;
 
-/**
- * Created by graham on 28/05/2014.
- */
 public class TimeManipulation {
 
     public static void reportElapsedTime(final long start_time) {
@@ -28,7 +25,7 @@ public class TimeManipulation {
         Diagnostic.traceNoSource("Elapsed time: " + formatMillis(System.currentTimeMillis() - start_time));
     }
 
-    private static String formatMillis(final long millis) {
+    public static String formatMillis(final long millis) {
 
         final long hours = MILLISECONDS.toHours(millis);
         long millis_remaining = millis - HOURS.toMillis(hours);

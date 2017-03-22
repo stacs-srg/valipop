@@ -18,6 +18,8 @@ package uk.ac.standrews.cs.digitising_scotland.util.MTree;
 
 import org.junit.Before;
 import org.junit.Test;
+import uk.ac.standrews.cs.digitising_scotland.util.MTree.experiments.euclidean.EuclideanDistance;
+import uk.ac.standrews.cs.digitising_scotland.util.MTree.experiments.euclidean.Point;
 
 import java.util.List;
 
@@ -31,12 +33,12 @@ import static org.junit.Assert.assertTrue;
 public class MTreeEuclidian2DTest {
 
     MTree<Point> t;
-    EuclidianDistance ed;
+    EuclideanDistance ed;
 
     @Before
     public void setUp() throws Exception {
 
-        ed = new EuclidianDistance();
+        ed = new EuclideanDistance();
         t = new MTree( ed );
     }
 
@@ -273,39 +275,5 @@ public class MTreeEuclidian2DTest {
             }
             //System.out.println(result);
         }
-    }
-
-    public class Point {
-
-        public float x;
-        public float y;
-
-        public Point( float x, float y ) {
-            this.x = x;
-            this.y = y;
-        }
-
-        private final static float epsilon = 0.00000000001F;
-
-        public String toString() { return "[" + x + "," + y + "]"; }
-
-        public boolean equals( Object o ) {
-            if( o instanceof Point ) {
-                Point p = (Point) o;
-                return this.x == p.x && this.y == p.y;
-                // return (Math.abs(this.x - p.x) < epsilon) && (Math.abs(this.y - p.y) < epsilon);
-            } else return false;
-        }
-    }
-
-    public class EuclidianDistance implements Distance<Point> {
-
-        public float distance(Point p1, Point p2) {
-            float xdistance = p1.x - p2.x;
-            float ydistance = p1.y - p2.y;
-
-            return (float) Math.sqrt( ( xdistance * xdistance ) + ( ydistance * ydistance ) );
-        }
-
     }
 }
