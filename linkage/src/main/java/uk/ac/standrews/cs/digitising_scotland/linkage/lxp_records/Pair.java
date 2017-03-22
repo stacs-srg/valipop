@@ -3,6 +3,7 @@ package uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records;
 import uk.ac.standrews.cs.digitising_scotland.linkage.interfaces.IPair;
 import uk.ac.standrews.cs.nds.persistence.PersistentObjectException;
 import uk.ac.standrews.cs.nds.rpc.stream.JSONReader;
+import uk.ac.standrews.cs.storr.impl.LXP;
 import uk.ac.standrews.cs.storr.impl.exceptions.IllegalKeyException;
 import uk.ac.standrews.cs.storr.impl.exceptions.KeyNotFoundException;
 import uk.ac.standrews.cs.storr.impl.exceptions.TypeMismatchFoundException;
@@ -18,7 +19,8 @@ import java.util.Set;
 /**
  * Created by al on 19/06/2014.
  */
-public class Pair<T extends ILXP> extends AbstractLXP implements IPair<T> {
+public class Pair<T extends ILXP> extends LXP implements IPair<T> {
+
     private long typeLabel;
     private T first;
     private T second;

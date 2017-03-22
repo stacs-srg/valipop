@@ -19,7 +19,7 @@ import java.lang.invoke.MethodHandles;
  * File is derived from KilmarnockLinker.
  * Created by al on 17/2/1017
  */
-public class KilmarnockMTreeBirthBirthThresholdNNGroundTruthChecker extends KilmarnockMTreeMatcherGroundTruthChecker {
+public class KilmarnockMTreeBirthBirthThresholdNNGroundTruthChecker extends KilmarnockExperiment {
 
     public static final String[] ARG_NAMES = {"births_source_path", "deaths_source_path", "marriages_source_path", "family_distance_threshold"};
     private MTree<BirthFamilyGT> birth_MTree;
@@ -47,10 +47,10 @@ public class KilmarnockMTreeBirthBirthThresholdNNGroundTruthChecker extends Kilm
             return null;
         });
 
-        listFamilies();
+        printFamilies();
 
         timedRun("Calculating linkage stats", () -> {
-            calculateLinkageStats();
+            printLinkageStats();
             return null;
         });
 
@@ -103,30 +103,30 @@ public class KilmarnockMTreeBirthBirthThresholdNNGroundTruthChecker extends Kilm
         long searched_key = searched.getId();
         long found_key = found.getId();
 
-        if (!families.containsKey(searched_key) && !families.containsKey(found_key)) {
+        if (!person_to_family_map.containsKey(searched_key) && !person_to_family_map.containsKey(found_key)) {
 
             // Not seen either birth before.
             // Create a new Family and add to map under both keys.
             Family new_family = new Family(searched);
             new_family.siblings.add(found);
-            families.put(searched_key, new_family);
-            families.put(found_key, new_family);
+            person_to_family_map.put(searched_key, new_family);
+            person_to_family_map.put(found_key, new_family);
             return;
         }
 
         // Don't bother with whether these are the same family or not, or if the added values are already in the set
         // Set implementation should deal with this.
-        if (families.containsKey(searched_key) && !families.containsKey(found_key)) {
+        if (person_to_family_map.containsKey(searched_key) && !person_to_family_map.containsKey(found_key)) {
 
             // Already seen the searched birth => been found already
-            Family f = families.get(searched_key);
+            Family f = person_to_family_map.get(searched_key);
             f.siblings.add(found);
         }
 
-        if (families.containsKey(found_key) && !families.containsKey(searched_key)) {
+        if (person_to_family_map.containsKey(found_key) && !person_to_family_map.containsKey(searched_key)) {
 
             // Already seen the found birth => been searched for earlier
-            Family f = families.get(found_key);
+            Family f = person_to_family_map.get(found_key);
             f.siblings.add(searched);
         }
     }

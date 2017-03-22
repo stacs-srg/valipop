@@ -9,14 +9,14 @@ import java.util.Set;
  * Essentially a set of siblings carrying an id.
  * Created by al on 28/02/2017.
  */
-public class Family  {
+public class Family {
 
-    private static int family_id = 1;
+    private static long next_id_to_be_allocated = 1;
 
     Set<BirthFamilyGT> siblings;
-    public final int id;
+    public final long id;
 
-    private String pom;
+    private String place_of_marriage;
     private String day_of_marriage;
     private String month_of_marriage;
     private String year_of_marriage;
@@ -25,20 +25,21 @@ public class Family  {
     private String fathers_surname;
     private String fathers_forename;
 
-
     private Family() {
-        this.id = family_id++;
+
+        this.id = next_id_to_be_allocated++;
         this.siblings = new HashSet<>();
     }
 
     public Family(BirthFamilyGT child) {
+
         this();
         siblings.add(child);
-        init_parents( child );
+        initParents(child);
     }
 
     public String getPlaceOfMarriage() {
-        return pom;
+        return place_of_marriage;
     }
 
     public String getDayOfMarriage() {
@@ -73,15 +74,16 @@ public class Family  {
         return siblings;
     }
 
-    public void addSibling( BirthFamilyGT sibling ) {
+    public void addSibling(BirthFamilyGT sibling) {
         siblings.add(sibling);
     }
 
-    protected void init_parents(BirthFamilyGT child) {
-        this.pom = child.getPlaceOfMarriage();
-        this.day_of_marriage = child.getString( BirthFamilyGT.PARENTS_DAY_OF_MARRIAGE );
-        this.month_of_marriage = child.getString( BirthFamilyGT.PARENTS_MONTH_OF_MARRIAGE );
-        this.year_of_marriage = child.getString( BirthFamilyGT.PARENTS_YEAR_OF_MARRIAGE );
+    protected void initParents(BirthFamilyGT child) {
+
+        this.place_of_marriage = child.getPlaceOfMarriage();
+        this.day_of_marriage = child.getString(BirthFamilyGT.PARENTS_DAY_OF_MARRIAGE);
+        this.month_of_marriage = child.getString(BirthFamilyGT.PARENTS_MONTH_OF_MARRIAGE);
+        this.year_of_marriage = child.getString(BirthFamilyGT.PARENTS_YEAR_OF_MARRIAGE);
 
 
         this.mothers_maiden_surname = child.getMothersMaidenSurname();

@@ -1,6 +1,6 @@
 package uk.ac.standrews.cs.digitising_scotland.linkage.importers.commaSeparated;
 
-import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.AbstractLXP;
+import uk.ac.standrews.cs.storr.impl.LXP;
 import uk.ac.standrews.cs.util.dataset.DataSet;
 
 import java.util.List;
@@ -13,7 +13,7 @@ import java.util.List;
  */
 public class CommaSeparatedImporter {
 
-    protected static void addAvailableSingleFields(final DataSet data, final List<String> record, final AbstractLXP lxp_record, final String[][] label_map) {
+    protected static void addAvailableSingleFields(final DataSet data, final List<String> record, final LXP lxp_record, final String[][] label_map) {
 
         for (String[] field : label_map) {
             try {
@@ -25,7 +25,7 @@ public class CommaSeparatedImporter {
         }
     }
 
-    protected static void addUnavailableFields(final AbstractLXP lxp_record, final String[] unavailable_record_labels) {
+    protected static void addUnavailableFields(final LXP lxp_record, final String[] unavailable_record_labels) {
 
         for (String field : unavailable_record_labels) {
             lxp_record.put(field, "");

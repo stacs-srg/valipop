@@ -21,7 +21,7 @@ import java.util.TreeSet;
  * File is derived from KilmarnockLinker.
  * Created by al on 17/2/1017
  */
-public class KilmarnockMTreeBirthBirthWithinDistanceGroundTruthChecker extends KilmarnockMTreeMatcherGroundTruthChecker {
+public class KilmarnockMTreeBirthBirthWithinDistanceGroundTruthChecker extends KilmarnockExperiment {
 
     public static final String[] ARG_NAMES = {"births_source_path", "deaths_source_path", "marriages_source_path"};
     private MTree<BirthFamilyGT> birthMTree;
@@ -38,12 +38,12 @@ public class KilmarnockMTreeBirthBirthWithinDistanceGroundTruthChecker extends K
 
         timedRun("Forming families from Birth-Birth links", () -> {
             formFamilies();
-            listFamilies();
+            printFamilies();
             return null;
         });
 
         timedRun("Calculating linkage stats", () -> {
-            calculateLinkageStats();
+            printLinkageStats();
             return null;
         });
     }
@@ -83,12 +83,12 @@ public class KilmarnockMTreeBirthBirthWithinDistanceGroundTruthChecker extends K
             // bs_neighbours_families is the set of families of neighbours that are different from bsFamily
             Set<Family> bs_neighbours_families = new TreeSet<Family>();
 
-            Family bsFamily = families.get(b.getId()); // maybe null - is this right????
+            Family bsFamily = person_to_family_map.get(b.getId()); // maybe null - is this right????
 
             // Add all of the families from bsNeighbours to bs_neighbours_families
             for (DataDistance<BirthFamilyGT> dd_to_bs_neighbour : bsNeighbours) {
                 BirthFamilyGT bsNeighbour = dd_to_bs_neighbour.value;
-                Family bs_neighbours_family = families.get(bsNeighbour.getId());
+                Family bs_neighbours_family = person_to_family_map.get(bsNeighbour.getId());
                 if (bs_neighbours_family != null && bs_neighbours_family != bsFamily) {
                     bs_neighbours_families.add(bs_neighbours_family);
                 }
@@ -111,15 +111,15 @@ public class KilmarnockMTreeBirthBirthWithinDistanceGroundTruthChecker extends K
             //  make all of bsNeighbours be in thisFamily
             for (DataDistance<BirthFamilyGT> dd : bsNeighbours) {
                 BirthFamilyGT person = dd.value;
-                families.put(person.getId(), thisFamily);
+                person_to_family_map.put(person.getId(), thisFamily);
             }
 
             // if a person was previously in a different family, we merge them into thisFamily
             for (Family bs_neighbours_familiy : bs_neighbours_families) {
                 for (BirthFamilyGT sibling : bs_neighbours_familiy.siblings) {
 
-                    if (families.containsKey(sibling.getId())) {
-                        families.put(sibling.getId(), thisFamily); //  replace person's family with the new one.
+                    if (person_to_family_map.containsKey(sibling.getId())) {
+                        person_to_family_map.put(sibling.getId(), thisFamily); //  replace person's family with the new one.
                     }
                 }
             }

@@ -1,7 +1,9 @@
 package uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records;
 
+import uk.ac.standrews.cs.digitising_scotland.linkage.normalisation.DateNormalisation;
 import uk.ac.standrews.cs.nds.persistence.PersistentObjectException;
 import uk.ac.standrews.cs.nds.rpc.stream.JSONReader;
+import uk.ac.standrews.cs.storr.impl.LXP;
 import uk.ac.standrews.cs.storr.impl.exceptions.IllegalKeyException;
 import uk.ac.standrews.cs.storr.interfaces.IBucket;
 import uk.ac.standrews.cs.storr.interfaces.IRepository;
@@ -11,7 +13,7 @@ import uk.ac.standrews.cs.storr.types.LXP_SCALAR;
 /**
  * Created by al on 03/10/2014.
  */
-public class Birth extends AbstractLXP {
+public class Birth extends LXP {
 
     @LXP_SCALAR(type = LXPBaseType.STRING)
     public static final String ORIGINAL_ID = "ORIGINAL_ID";
@@ -143,6 +145,11 @@ public class Birth extends AbstractLXP {
 
     public String getDateOfMarriage() {
 
-        return cleanDate(getString(PARENTS_DAY_OF_MARRIAGE), getString(PARENTS_MONTH_OF_MARRIAGE), getString(PARENTS_YEAR_OF_MARRIAGE));
+        return DateNormalisation.cleanDate(getString(PARENTS_DAY_OF_MARRIAGE), getString(PARENTS_MONTH_OF_MARRIAGE), getString(PARENTS_YEAR_OF_MARRIAGE));
+    }
+
+    public String getDOB() {
+
+        return getString(BIRTH_DAY) + "/" + getString(BIRTH_MONTH) + "/" + getString(BIRTH_YEAR);
     }
 }
