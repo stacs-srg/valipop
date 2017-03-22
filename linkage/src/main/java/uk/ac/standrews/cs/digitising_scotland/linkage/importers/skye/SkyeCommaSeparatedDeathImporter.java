@@ -1,16 +1,10 @@
 package uk.ac.standrews.cs.digitising_scotland.linkage.importers.skye;
 
-import uk.ac.standrews.cs.digitising_scotland.linkage.importers.RecordFormatException;
 import uk.ac.standrews.cs.digitising_scotland.linkage.importers.commaSeparated.CommaSeparatedDeathImporter;
 import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.Death;
 import uk.ac.standrews.cs.digitising_scotland.linkage.normalisation.DateNormalisation;
-import uk.ac.standrews.cs.storr.impl.exceptions.BucketException;
-import uk.ac.standrews.cs.storr.impl.exceptions.IllegalKeyException;
-import uk.ac.standrews.cs.storr.interfaces.IBucket;
 import uk.ac.standrews.cs.util.dataset.DataSet;
 
-import java.io.IOException;
-import java.nio.file.Paths;
 import java.util.List;
 
 import static uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.Death.*;
@@ -18,7 +12,7 @@ import static uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.Death.*
 
 /**
  * Utility classes for importing records in digitising scotland format
- * Created by al on 8/11/2016.
+ * Created by al on 21/3/2017.
  *
  * @author Alan Dearle (alan.dearle@st-andrews.ac.uk)
  * @author Graham Kirby (graham.kirby@st-andrews.ac.uk)
@@ -96,43 +90,6 @@ public class SkyeCommaSeparatedDeathImporter extends CommaSeparatedDeathImporter
     @Override
     public String[] get_unavailable_records() { return UNAVAILABLE_RECORD_LABELS; }
 
-    /**
-     * @param deaths   the bucket from which to import
-     * @param deaths_source_path containing the source records in digitising scotland format
-     * @return the number of records read in
-     * @throws IOException
-     * @throws RecordFormatException
-     * @throws BucketException
-     */
-    public int importDigitisingScotlandDeaths(IBucket<Death> deaths, String deaths_source_path) throws IOException, RecordFormatException, BucketException {
-
-        DataSet data = new DataSet(Paths.get(deaths_source_path));
-        int count = 0;
-
-        for (List<String> record : data.getRecords()) {
-
-            Death death_record = importDigitisingScotlandDeath(data, record);
-            deaths.makePersistent(death_record);
-            count++;
-
-        }
-        return count;
-    }
-
-    /**
-     * Fills in a record.
-     */
-    public Death importDigitisingScotlandDeath(DataSet data, List<String> record) throws IOException, RecordFormatException, IllegalKeyException {
-
-        Death death = new Death();
-
-        addAvailableSingleFields(data, record, death, RECORD_LABEL_MAP);
-        addAvailableCompoundFields(data, record, death);
-        addAvailableNormalisedFields(data, record, death);
-        addUnavailableFields(death, UNAVAILABLE_RECORD_LABELS);
-
-        return death;
-    }
 
     public void addAvailableCompoundFields(final DataSet data, final List<String> record, final Death death) {
 

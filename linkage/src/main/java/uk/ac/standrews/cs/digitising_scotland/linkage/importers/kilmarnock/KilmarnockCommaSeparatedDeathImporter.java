@@ -1,16 +1,10 @@
 package uk.ac.standrews.cs.digitising_scotland.linkage.importers.kilmarnock;
 
-import uk.ac.standrews.cs.digitising_scotland.linkage.importers.RecordFormatException;
 import uk.ac.standrews.cs.digitising_scotland.linkage.importers.commaSeparated.CommaSeparatedDeathImporter;
 import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.Death;
 import uk.ac.standrews.cs.digitising_scotland.linkage.normalisation.DateNormalisation;
-import uk.ac.standrews.cs.storr.impl.exceptions.BucketException;
-import uk.ac.standrews.cs.storr.impl.exceptions.IllegalKeyException;
-import uk.ac.standrews.cs.storr.interfaces.IBucket;
 import uk.ac.standrews.cs.util.dataset.DataSet;
 
-import java.io.IOException;
-import java.nio.file.Paths;
 import java.util.List;
 
 import static uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.Death.*;
@@ -93,45 +87,6 @@ public class KilmarnockCommaSeparatedDeathImporter extends CommaSeparatedDeathIm
     public String[][] get_record_map() { return RECORD_LABEL_MAP; }
 
     public String[] get_unavailable_records() { return UNAVAILABLE_RECORD_LABELS; }
-
-    /**
-     * @param deaths   the bucket from which to import
-     * @param deaths_source_path containing the source records in digitising scotland format
-     * @return the number of records read in
-     * @throws IOException
-     * @throws RecordFormatException
-     * @throws BucketException
-     */
-    public  int importDigitisingScotlandDeaths(IBucket<Death> deaths, String deaths_source_path) throws IOException, RecordFormatException, BucketException {
-
-        DataSet data = new DataSet(Paths.get(deaths_source_path));
-        int count = 0;
-
-        for (List<String> record : data.getRecords()) {
-
-            Death death_record = importDigitisingScotlandDeath(data, record);
-            deaths.makePersistent(death_record);
-            count++;
-
-        }
-
-        return count;
-    }
-
-    /**
-     * Fills in a record.
-     */
-    private Death importDigitisingScotlandDeath(DataSet data, List<String> record) throws IOException, RecordFormatException, IllegalKeyException {
-
-        Death death = new Death();
-
-        addAvailableSingleFields(data, record, death, RECORD_LABEL_MAP);
-        addAvailableCompoundFields(data, record, death);
-        addAvailableNormalisedFields(data, record, death);
-        addUnavailableFields(death, UNAVAILABLE_RECORD_LABELS);
-
-        return death;
-    }
 
     public void addAvailableCompoundFields(final DataSet data, final List<String> record, final Death death) {
 

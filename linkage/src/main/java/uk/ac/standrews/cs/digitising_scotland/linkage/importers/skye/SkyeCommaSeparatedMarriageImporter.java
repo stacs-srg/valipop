@@ -16,7 +16,7 @@ import static uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.Marriag
 
 /**
  * Utility classes for importing records in digitising scotland format
- * Created by al on 8/11/2016.
+ * Created by al on 21/3/2017.
  *
  * @author Alan Dearle (alan.dearle@st-andrews.ac.uk)
  * @author Graham Kirby (graham.kirby@st-andrews.ac.uk)
