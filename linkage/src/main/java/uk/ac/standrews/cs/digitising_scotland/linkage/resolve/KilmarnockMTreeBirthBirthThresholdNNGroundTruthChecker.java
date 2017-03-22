@@ -31,9 +31,9 @@ public class KilmarnockMTreeBirthBirthThresholdNNGroundTruthChecker extends Kilm
         this.match_family_distance_threshold = match_family_distance_threshold;
     }
 
-    KilmarnockMTreeBirthBirthThresholdNNGroundTruthChecker() throws StoreException, IOException, RepositoryException {
-
-    }
+//    KilmarnockMTreeBirthBirthThresholdNNGroundTruthChecker() throws StoreException, IOException, RepositoryException {
+//
+//    }
 
     private void compute() throws Exception {
 

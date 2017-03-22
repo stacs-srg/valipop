@@ -32,9 +32,9 @@ public class KilmarnockMTreeBirthBirthNNFamilyMergerTruthChecker extends Kilmarn
         this.family_merge_distance_threshold = family_merge_distance_threshold;
     }
 
-    private KilmarnockMTreeBirthBirthNNFamilyMergerTruthChecker() throws StoreException, IOException, RepositoryException {
-
-    }
+//    private KilmarnockMTreeBirthBirthNNFamilyMergerTruthChecker() throws StoreException, IOException, RepositoryException {
+//
+//    }
 
     private void compute() throws Exception {
 

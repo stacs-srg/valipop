@@ -28,7 +28,6 @@ public class KilmarnockMTreeBirthBirthWithinDistanceBFTGenerator extends Kilmarn
     private  MTree<BirthFamilyGT> birthMTree;
 
     public KilmarnockMTreeBirthBirthWithinDistanceBFTGenerator() throws StoreException, IOException, RepositoryException {
-
     }
 
     private void compute() throws Exception {
