@@ -3,6 +3,7 @@ package uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records;
 import uk.ac.standrews.cs.digitising_scotland.util.ErrorHandling;
 import uk.ac.standrews.cs.nds.persistence.PersistentObjectException;
 import uk.ac.standrews.cs.nds.rpc.stream.JSONReader;
+import uk.ac.standrews.cs.storr.impl.LXP;
 import uk.ac.standrews.cs.storr.impl.StoreReference;
 import uk.ac.standrews.cs.storr.impl.exceptions.BucketException;
 import uk.ac.standrews.cs.storr.impl.exceptions.IllegalKeyException;
@@ -20,7 +21,7 @@ import static uk.ac.standrews.cs.storr.types.LXPBaseType.STRING;
 /**
  * Created by al on 03/10/2014.
  */
-public class Role extends AbstractLXP {
+public class Role extends LXP {
 
     private static final String DATE_SEPARATOR = "-";
     private static final String MALE = "M";
@@ -32,14 +33,19 @@ public class Role extends AbstractLXP {
 
     @LXP_SCALAR(type = STRING)
     public static final String SURNAME = "surname";
+
     @LXP_SCALAR(type = STRING)
     public static final String FORENAME = "forename";
+
     @LXP_SCALAR(type = STRING)
     public static final String SEX = "sex";
+
     @LXP_REF(type = "lxp")
     public static final String ORIGINAL_RECORD = "original_record";
+
     @LXP_SCALAR(type = LONG)
     public static final String ORIGINAL_RECORD_TYPE = "original_record_type";
+
     @LXP_SCALAR(type = STRING)
     public static final String ROLE = "role";
 

@@ -2,6 +2,7 @@ package uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records;
 
 import uk.ac.standrews.cs.nds.persistence.PersistentObjectException;
 import uk.ac.standrews.cs.nds.rpc.stream.JSONReader;
+import uk.ac.standrews.cs.storr.impl.LXP;
 import uk.ac.standrews.cs.storr.impl.exceptions.IllegalKeyException;
 import uk.ac.standrews.cs.storr.interfaces.IBucket;
 import uk.ac.standrews.cs.storr.interfaces.IRepository;
@@ -11,7 +12,7 @@ import uk.ac.standrews.cs.storr.types.LXP_SCALAR;
 /**
  * Created by al on 03/10/2014.
  */
-public class Death extends AbstractLXP {
+public class Death extends LXP {
 
     @LXP_SCALAR(type = LXPBaseType.STRING)
     public static final String ORIGINAL_ID = "ORIGINAL_ID";

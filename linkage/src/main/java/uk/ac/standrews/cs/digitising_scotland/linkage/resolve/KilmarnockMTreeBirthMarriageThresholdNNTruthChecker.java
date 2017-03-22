@@ -21,7 +21,7 @@ import java.util.Map;
  * File is derived from KilmarnockLinker.
  * Created by al on 17/2/1017
  */
-public class KilmarnockMTreeBirthMarriageThresholdNNTruthChecker extends KilmarnockMTreeMatcherGroundTruthChecker {
+public class KilmarnockMTreeBirthMarriageThresholdNNTruthChecker extends KilmarnockExperiment {
 
     private static final String[] ARG_NAMES = {"births_source_path", "deaths_source_path", "marriages_source_path"};
     public static final float DISTANCE_THRESHOLD = 8.0F;
@@ -49,8 +49,8 @@ public class KilmarnockMTreeBirthMarriageThresholdNNTruthChecker extends Kilmarn
 
     private void showFamilies() throws BucketException {
 
-        System.out.println("Number of families formed:" + new HashSet<>(families.values()).size());
-        listFamilies();
+        System.out.println("Number of families formed:" + new HashSet<>(person_to_family_map.values()).size());
+        printFamilies();
     }
 
     private void createMarriageMTreeOverGFNGLNBFNBMNPOMDOM() throws RepositoryException, BucketException, IOException {
@@ -91,7 +91,7 @@ public class KilmarnockMTreeBirthMarriageThresholdNNTruthChecker extends Kilmarn
             DataDistance<Marriage> result = marriageMtree.nearestNeighbour(marriage_query);
 
             if (result.distance < DISTANCE_THRESHOLD) {
-                addBirthToMap(families, result.value.getId(), b); // used the marriage id as a unique identifier.
+                addBirthToMap(person_to_family_map, result.value.getId(), b); // used the marriage id as a unique identifier.
             }
         }
     }

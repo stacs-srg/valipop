@@ -60,7 +60,7 @@ public class CentroidFamily extends Family {
     }
 
     @Override
-    protected void init_parents(BirthFamilyGT child) {
+    protected void initParents(BirthFamilyGT child) {
         // don't do anything in this case.
     }
 

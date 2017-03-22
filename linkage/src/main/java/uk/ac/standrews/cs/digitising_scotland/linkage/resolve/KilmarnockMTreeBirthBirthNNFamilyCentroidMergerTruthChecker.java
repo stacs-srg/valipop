@@ -49,12 +49,12 @@ public class KilmarnockMTreeBirthBirthNNFamilyCentroidMergerTruthChecker extends
         timedRun("Forming families from Birth-Birth links", () -> {
             formFamilies();
             mergeFamilies();
-            listFamilies();
+            printFamilies();
             return null;
         });
 
         timedRun("Calculating linkage stats", () -> {
-            calculateLinkageStats();
+            printLinkageStats();
             return null;
         });
     }
@@ -64,11 +64,11 @@ public class KilmarnockMTreeBirthBirthNNFamilyCentroidMergerTruthChecker extends
         Map<Long, Family> family_id_to_families = new HashMap<>(); // Maps from family id to family.
 
         MTree<Family> familyMTree = new MTree<>(new GFNGLNBFNBMNPOMDOMDistanceOverFamily());
-        for (Family f : families.values()) {
+        for (Family f : person_to_family_map.values()) {
             familyMTree.add(f);
         }
 
-        for (Family f : families.values()) {
+        for (Family f : person_to_family_map.values()) {
 
             int pool_size = 1; // the size of the pool in which we are examining families to merge.
 
@@ -102,12 +102,12 @@ public class KilmarnockMTreeBirthBirthNNFamilyCentroidMergerTruthChecker extends
         }
 
         // finally create a new families hash map
-        families = new HashMap<>(); // Maps from person id to family.
+        person_to_family_map = new HashMap<>(); // Maps from person id to family.
 
         // and insert all the people from family_id_tofamilies into families
         for (Family f : family_id_to_families.values()) {
             for (BirthFamilyGT child : f.getSiblings()) {
-                families.put(child.getId(), f);
+                person_to_family_map.put(child.getId(), f);
             }
         }
     }

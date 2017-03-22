@@ -21,7 +21,7 @@ import java.util.List;
  * File is derived from KilmarnockLinker.
  * Created by al on 17/2/1017
  */
-public class KilmarnockMTreeBirthMarriageRangeCSVGenerator extends KilmarnockMTreeMatcherGroundTruthChecker {
+public class KilmarnockMTreeBirthMarriageRangeCSVGenerator extends KilmarnockExperiment {
 
     private static final String[] ARG_NAMES = {"births_source_path", "deaths_source_path", "marriages_source_path"};
 
