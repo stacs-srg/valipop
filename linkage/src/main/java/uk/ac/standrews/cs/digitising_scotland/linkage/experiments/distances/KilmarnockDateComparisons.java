@@ -1,11 +1,10 @@
 package uk.ac.standrews.cs.digitising_scotland.linkage.experiments.distances;
 
-import org.simmetrics.metrics.Levenshtein;
 import uk.ac.standrews.cs.digitising_scotland.linkage.experiments.Experiment;
 import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.Birth;
 import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.BirthFamilyGT;
 import uk.ac.standrews.cs.digitising_scotland.linkage.resolve.KilmarnockExperiment;
-import uk.ac.standrews.cs.digitising_scotland.linkage.resolve.distances.DateDistance;
+import uk.ac.standrews.cs.digitising_scotland.linkage.resolve.distances.BirthMarriageDateDistance;
 import uk.ac.standrews.cs.digitising_scotland.util.MTree.Distance;
 import uk.ac.standrews.cs.util.tools.PercentageProgressIndicator;
 import uk.ac.standrews.cs.util.tools.ProgressIndicator;
@@ -16,21 +15,23 @@ import java.util.Set;
 public class KilmarnockDateComparisons extends KilmarnockExperiment {
 
     private static final String[] ARG_NAMES = {"births_source_path", "deaths_source_path", "marriages_source_path"};
-    private final Levenshtein levenshtein = new Levenshtein();
 
     private KilmarnockDateComparisons() throws Exception {
     }
 
     private void evaluateDateComparison() throws Exception {
 
-        System.out.println("DATE_DISTANCE1:");
-        evaluateDateComparison(5000, 0, DateDistance.ORIGINAL_DATE_DISTANCE);
-
         System.out.println("LEVENSHTEIN_DATE_DISTANCE:");
-        evaluateDateComparison(5000, 0, DateDistance.LEVENSHTEIN_DATE_DISTANCE);
+        evaluateDateComparison(5000, 0, BirthMarriageDateDistance.LEVENSHTEIN_DATE_DISTANCE);
 
         System.out.println("LEVENSHTEIN_DATE_DISTANCE_WITH_NULL_FILTERING:");
-        evaluateDateComparison(5000, 0, DateDistance.LEVENSHTEIN_DATE_DISTANCE_WITH_NULL_FILTERING);
+        evaluateDateComparison(5000, 0, BirthMarriageDateDistance.LEVENSHTEIN_DATE_DISTANCE_WITH_NULL_FILTERING);
+
+        System.out.println("LEVENSHTEIN_DATE_DISTANCE_WITH_DIFFERENTIAL_NULL_FILTERING:");
+        evaluateDateComparison(5000, 0, BirthMarriageDateDistance.LEVENSHTEIN_DATE_DISTANCE_WITH_DIFFERENTIAL_NULL_FILTERING);
+
+        System.out.println("NUMERICAL_DATE_DISTANCE:");
+        evaluateDateComparison(5000, 0, BirthMarriageDateDistance.NUMERICAL_DATE_DISTANCE);
     }
 
     private void evaluateDateComparison(int number_of_births_to_process, int number_of_updates, Distance<Birth> distance_metric) throws Exception {
