@@ -173,9 +173,9 @@ public abstract class KilmarnockExperiment {
         for (BirthFamilyGT birth_record : births.getInputStream()) {
 
             final long birth_record_id = birth_record.getId();
-            final long assigned_family_id = person_to_family_map.containsKey(birth_record_id) ? person_to_family_map.get(birth_record_id).id : 0;
+            final String assigned_family_id = person_to_family_map.containsKey(birth_record_id) ? String.valueOf(person_to_family_map.get(birth_record_id).id) : null;
 
-            results.add(new FamilyLinkResult(String.valueOf(birth_record_id), String.valueOf(assigned_family_id), birth_record.getString(BirthFamilyGT.FAMILY)));
+            results.add(new FamilyLinkResult(String.valueOf(birth_record_id), assigned_family_id, birth_record.getString(BirthFamilyGT.FAMILY)));
         }
         return results;
     }
@@ -247,8 +247,12 @@ public abstract class KilmarnockExperiment {
 
     private static void updateLinkageCounts(LinkageCounts linkage_counts, FamilyLinkResult result1, FamilyLinkResult result2) {
 
-        boolean real_families_same = present(result1.real_family_id) && result1.real_family_id.equals(result2.real_family_id);
-        boolean assigned_families_same = present(result1.assigned_family_id) && result1.assigned_family_id.equals(result2.assigned_family_id);
+        boolean real_families_same = present(result1.real_family_id)
+                                            && present(result2.real_family_id)
+                                            && result1.real_family_id.equals(result2.real_family_id);
+        boolean assigned_families_same = present(result1.assigned_family_id)
+                                            && present(result2.assigned_family_id)
+                                            && result1.assigned_family_id.equals(result2.assigned_family_id);
 
         if (assigned_families_same) {
 
