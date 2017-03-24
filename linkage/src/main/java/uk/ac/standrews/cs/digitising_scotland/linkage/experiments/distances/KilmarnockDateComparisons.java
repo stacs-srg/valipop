@@ -6,8 +6,6 @@ import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.BirthFamilyGT;
 import uk.ac.standrews.cs.digitising_scotland.linkage.resolve.KilmarnockExperiment;
 import uk.ac.standrews.cs.digitising_scotland.linkage.resolve.distances.BirthMarriageDateDistance;
 import uk.ac.standrews.cs.digitising_scotland.util.MTree.Distance;
-import uk.ac.standrews.cs.util.tools.PercentageProgressIndicator;
-import uk.ac.standrews.cs.util.tools.ProgressIndicator;
 
 import java.lang.invoke.MethodHandles;
 import java.util.Set;
@@ -15,6 +13,7 @@ import java.util.Set;
 public class KilmarnockDateComparisons extends KilmarnockExperiment {
 
     private static final String[] ARG_NAMES = {"births_source_path", "deaths_source_path", "marriages_source_path"};
+    private static final int NUMBER_OF_BIRTHS_TO_PROCESS = 50000;
 
     private KilmarnockDateComparisons() throws Exception {
     }
@@ -22,56 +21,104 @@ public class KilmarnockDateComparisons extends KilmarnockExperiment {
     private void evaluateDateComparison() throws Exception {
 
         System.out.println("LEVENSHTEIN_DATE_DISTANCE:");
-        evaluateDateComparison(5000, 0, BirthMarriageDateDistance.LEVENSHTEIN_DATE_DISTANCE);
+        evaluateDateComparison(BirthMarriageDateDistance.LEVENSHTEIN_DATE_DISTANCE);
 
         System.out.println("LEVENSHTEIN_DATE_DISTANCE_WITH_NULL_FILTERING:");
-        evaluateDateComparison(5000, 0, BirthMarriageDateDistance.LEVENSHTEIN_DATE_DISTANCE_WITH_NULL_FILTERING);
+        evaluateDateComparison(BirthMarriageDateDistance.LEVENSHTEIN_DATE_DISTANCE_WITH_NULL_FILTERING);
 
         System.out.println("LEVENSHTEIN_DATE_DISTANCE_WITH_DIFFERENTIAL_NULL_FILTERING:");
-        evaluateDateComparison(5000, 0, BirthMarriageDateDistance.LEVENSHTEIN_DATE_DISTANCE_WITH_DIFFERENTIAL_NULL_FILTERING);
+        evaluateDateComparison(BirthMarriageDateDistance.LEVENSHTEIN_DATE_DISTANCE_WITH_DIFFERENTIAL_NULL_FILTERING);
 
         System.out.println("NUMERICAL_DATE_DISTANCE:");
-        evaluateDateComparison(5000, 0, BirthMarriageDateDistance.NUMERICAL_DATE_DISTANCE);
+        evaluateDateComparison(BirthMarriageDateDistance.NUMERICAL_DATE_DISTANCE);
+
+        System.out.println("NUMERICAL_DATE_DISTANCE_WITH_NULL_FILTERING:");
+        evaluateDateComparison(BirthMarriageDateDistance.COMPOSITE_DATE_DISTANCE_WITH_NULL_FILTERING);
+
+        System.out.println("NUMERICAL_DATE_DISTANCE:");
+        evaluateDateComparison(BirthMarriageDateDistance.NUMERICAL_DATE_DISTANCE);
+
+        System.out.println("NUMERICAL_DATE_DISTANCE_THRESHOLD:");
+        evaluateDateComparison(BirthMarriageDateDistance.NUMERICAL_DATE_DISTANCE_THRESHOLD);
+
+        System.out.println("NUMERICAL_YEAR_THRESHOLD1:");
+        evaluateDateComparison(BirthMarriageDateDistance.NUMERICAL_YEAR_THRESHOLD1);
+
+        System.out.println("NUMERICAL_YEAR_THRESHOLD2:");
+        evaluateDateComparison(BirthMarriageDateDistance.NUMERICAL_YEAR_THRESHOLD2);
+
+        System.out.println("NUMERICAL_YEAR_THRESHOLD3:");
+        evaluateDateComparison(BirthMarriageDateDistance.NUMERICAL_YEAR_THRESHOLD3);
+
+        System.out.println("NUMERICAL_YEAR_THRESHOLD4:");
+        evaluateDateComparison(BirthMarriageDateDistance.NUMERICAL_YEAR_THRESHOLD4);
+
+        System.out.println("NUMERICAL_YEAR_THRESHOLD5:");
+        evaluateDateComparison(BirthMarriageDateDistance.NUMERICAL_YEAR_THRESHOLD5);
+
+        System.out.println("NUMERICAL_YEAR_THRESHOLD6:");
+        evaluateDateComparison(BirthMarriageDateDistance.NUMERICAL_YEAR_THRESHOLD6);
     }
 
-    private void evaluateDateComparison(int number_of_births_to_process, int number_of_updates, Distance<Birth> distance_metric) throws Exception {
+    private void evaluateDateComparison(Distance<Birth> distance_metric) throws Exception {
 
-        Set<BirthFamilyGT> birth_set = loadBirths(number_of_births_to_process);
+        BirthMarriageDateDistance.resetCache();
+
+        Set<BirthFamilyGT> birth_set = loadBirths(NUMBER_OF_BIRTHS_TO_PROCESS);
 
         double total_distance_within_families = 0;
         double total_distance_between_families = 0;
 
-        long count_of_pairs_within_families = 0;
-        long count_of_pairs_between_families = 0;
+        float max_distance_within_families = 0;
+        float min_distance_between_families = Float.MAX_VALUE;
 
-        ProgressIndicator indicator = new PercentageProgressIndicator(number_of_updates);
-        indicator.setTotalSteps(birth_set.size());
+        long number_of_links = 0;
+        long number_of_non_links = 0;
 
         for (BirthFamilyGT birth1 : birth_set) {
             for (BirthFamilyGT birth2 : birth_set) {
                 if (birth1 != birth2) {
 
-                    float date_distance = distance_metric.distance(birth1, birth2);
-
                     if (birth1.get(BirthFamilyGT.FAMILY).equals(birth2.get(BirthFamilyGT.FAMILY))) {
 
+                        float date_distance = distance_metric.distance(birth1, birth2);
+
                         total_distance_within_families += date_distance;
-                        count_of_pairs_within_families++;
+                        number_of_links++;
 
-                    } else {
-
-                        total_distance_between_families += date_distance;
-                        count_of_pairs_between_families++;
+                        if (date_distance > max_distance_within_families) {
+                            max_distance_within_families = date_distance;
+                        }
                     }
                 }
             }
-
-            indicator.progressStep();
         }
 
-        System.out.println(String.format("Number of people considered:       %d", number_of_births_to_process));
-        System.out.println(String.format("Average distance within families:  %.1f", total_distance_within_families / count_of_pairs_within_families));
-        System.out.println(String.format("Average distance between families: %.1f", total_distance_between_families / count_of_pairs_between_families));
+        for (BirthFamilyGT birth1 : birth_set) {
+            for (BirthFamilyGT birth2 : birth_set) {
+                if (birth1 != birth2) {
+
+
+                    if (!birth1.get(BirthFamilyGT.FAMILY).equals(birth2.get(BirthFamilyGT.FAMILY))) {
+
+                        float date_distance = distance_metric.distance(birth1, birth2);
+
+                        total_distance_between_families += date_distance;
+                        number_of_non_links++;
+
+                        if (date_distance < min_distance_between_families) {
+                            min_distance_between_families = date_distance;
+                        }
+                    }
+                }
+            }
+        }
+
+        System.out.println(String.format("Number of people considered:    %d", birth_set.size()));
+        System.out.println(String.format("Number of links considered:     %d", number_of_links));
+        System.out.println(String.format("Number of non-links considered: %d", number_of_links));
+        System.out.println(String.format("Average distance for links:     %.1f", total_distance_within_families / number_of_links));
+        System.out.println(String.format("Average distance for non-links: %.1f", total_distance_between_families / number_of_non_links));
         System.out.println();
     }
 
