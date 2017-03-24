@@ -31,8 +31,8 @@ import java.util.Random;
  */
 public class MTreeSizeCheck {
 
-    int initial = 5000000; // 1/2  million
-    int increment = 5000000; // 1/2  million
+    int initial = 5000000; // 5 million
+    int increment = 5000000; // 5 million
     int max = 30000000; // 30 million.
 
     EuclideanDistance ed = new EuclideanDistance();
