@@ -4,9 +4,9 @@ import uk.ac.standrews.cs.digitising_scotland.linkage.factory.BirthFactory;
 import uk.ac.standrews.cs.digitising_scotland.linkage.factory.DeathFactory;
 import uk.ac.standrews.cs.digitising_scotland.linkage.factory.MarriageFactory;
 import uk.ac.standrews.cs.digitising_scotland.linkage.importers.RecordFormatException;
-import uk.ac.standrews.cs.digitising_scotland.linkage.importers.kilmarnock.KilmarnockCommaSeparatedBirthImporter;
-import uk.ac.standrews.cs.digitising_scotland.linkage.importers.kilmarnock.KilmarnockCommaSeparatedDeathImporter;
-import uk.ac.standrews.cs.digitising_scotland.linkage.importers.kilmarnock.KilmarnockCommaSeparatedMarriageImporter;
+import uk.ac.standrews.cs.digitising_scotland.linkage.importers.skye.SkyeCommaSeparatedBirthImporter;
+import uk.ac.standrews.cs.digitising_scotland.linkage.importers.skye.SkyeCommaSeparatedDeathImporter;
+import uk.ac.standrews.cs.digitising_scotland.linkage.importers.skye.SkyeCommaSeparatedMarriageImporter;
 import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.BirthFamilyGT;
 import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.Death;
 import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.Marriage;
@@ -26,11 +26,11 @@ import java.nio.file.Paths;
 
 /**
  * Module to injest BBM records into a store initialised by class such as InitialiseStorr in this package
- * Created by al on 22/3/2017.
+ * Created by al on 25/3/2017.
  * @author al@st-andrews.ac.uk
  */
 
-public class KilmarnockInjestor {
+public class SkyeInjestor {
 
     private static final String births_name = "birth_records";              // Name of bucket containing birth records (inputs).
     private static final String marriages_name = "marriage_records";        // Name of bucket containing marriage records (inputs).
@@ -46,10 +46,10 @@ public class KilmarnockInjestor {
     private int marriages_count;
     private int deaths_count;
 
-    private static final String[] ARG_NAMES = {"store_path","repo_name","kilmarnock_births_path","kilmarnock_deaths_path","kilmarnock_marriages_path"};
+    private static final String[] ARG_NAMES = {"store_path","repo_name","skye_births_path","skye_deaths_path","skye_marriages_path"};
 
 
-    public KilmarnockInjestor( String store_path, String repo_name ) throws StoreException, RepositoryException, IOException {
+    public SkyeInjestor(String store_path, String repo_name ) throws StoreException, RepositoryException, IOException {
         System.out.println( "Injesting records into repo: " +  repo_name );
         initialise( store_path, repo_name );
     }
@@ -82,13 +82,13 @@ public class KilmarnockInjestor {
      */
     public void ingestRecords(String births_source_path, String deaths_source_path, String marriages_source_path) throws RecordFormatException, BucketException, IOException {
 
-        births_count = new KilmarnockCommaSeparatedBirthImporter().importDigitisingScotlandBirths(births, births_source_path);
+        births_count = new SkyeCommaSeparatedBirthImporter().importDigitisingScotlandBirths(births, births_source_path);
         System.out.println("Imported " + births_count + " birth records");
 
-        deaths_count = new KilmarnockCommaSeparatedDeathImporter().importDigitisingScotlandDeaths(deaths, deaths_source_path);
+        deaths_count = new SkyeCommaSeparatedDeathImporter().importDigitisingScotlandDeaths(deaths, deaths_source_path);
         System.out.println("Imported " + deaths_count + " death records");
 
-        marriages_count = new KilmarnockCommaSeparatedMarriageImporter().importDigitisingScotlandMarriages(marriages, marriages_source_path);
+        marriages_count = new SkyeCommaSeparatedMarriageImporter().importDigitisingScotlandMarriages(marriages, marriages_source_path);
         System.out.println("Imported " + marriages_count + " marriage records");
         System.out.println();
         System.out.println( "Injest of records complete" );
@@ -111,7 +111,7 @@ public class KilmarnockInjestor {
             String deaths_source_path = args[3];
             String marriages_source_path = args[4];
 
-            KilmarnockInjestor injestor = new KilmarnockInjestor( store_path, repo_name );
+            SkyeInjestor injestor = new SkyeInjestor( store_path, repo_name );
             injestor.ingestRecords(births_source_path,deaths_source_path,marriages_source_path);
 
         } else {
