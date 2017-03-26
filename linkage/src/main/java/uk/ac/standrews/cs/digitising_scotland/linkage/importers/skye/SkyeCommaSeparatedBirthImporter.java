@@ -24,7 +24,7 @@ public class SkyeCommaSeparatedBirthImporter extends CommaSeparatedBirthImporter
 
             {YEAR_OF_REGISTRATION, "year of reg"},
 
-            {REGISTRATION_DISTRICT_SUFFIX, "RD identifier"},
+            {REGISTRATION_DISTRICT_SUFFIX, "RD Identifier"},
 
             {REGISTRATION_DISTRICT_SUFFIX, "register identifier"},
 
@@ -56,7 +56,7 @@ public class SkyeCommaSeparatedBirthImporter extends CommaSeparatedBirthImporter
 
             {FATHERS_OCCUPATION, "father's occupation"},
 
-            {INFORMANT_DID_NOT_SIGN, "did informant  sign?"},
+            {INFORMANT_DID_NOT_SIGN, "did inform sign?"},
 
             {FAMILY, "family"},
 
@@ -70,7 +70,7 @@ public class SkyeCommaSeparatedBirthImporter extends CommaSeparatedBirthImporter
     };
 
     @Override
-    public String[][] get_record_map(){
+    public String[][] get_record_map() {
         return RECORD_LABEL_MAP;
     }
 
@@ -92,8 +92,14 @@ public class SkyeCommaSeparatedBirthImporter extends CommaSeparatedBirthImporter
         String dob = data.getValue(record, "birth date"); // These are of the form 7/4/1861, 25/4/1861 etc.
         String[] dob_parts = dob.split("/");
 
-        if( dob_parts.length > 0 ) { birth.put(BIRTH_DAY, DateNormalisation.normaliseMonth( dob_parts[0])); }
-        if( dob_parts.length > 1 ) { birth.put(BIRTH_MONTH, DateNormalisation.normaliseMonth( dob_parts[1])); }
-        if( dob_parts.length > 2 ) { birth.put(BIRTH_YEAR, DateNormalisation.normaliseMonth( dob_parts[2])); }
+        if (dob_parts.length > 0) {
+            birth.put(BIRTH_DAY, DateNormalisation.normaliseDay(dob_parts[0]));
+        }
+        if (dob_parts.length > 1) {
+            birth.put(BIRTH_MONTH, DateNormalisation.normaliseMonth(dob_parts[1]));
+        }
+        if (dob_parts.length > 2) {
+            birth.put(BIRTH_YEAR, dob_parts[2]);
+        }
     }
 }
