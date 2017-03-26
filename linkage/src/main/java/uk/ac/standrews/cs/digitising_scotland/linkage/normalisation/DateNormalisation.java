@@ -1,7 +1,5 @@
 package uk.ac.standrews.cs.digitising_scotland.linkage.normalisation;
 
-import uk.ac.standrews.cs.digitising_scotland.util.ErrorHandling;
-
 /**
  * Created by al on 06/12/2016.
  */
@@ -40,10 +38,7 @@ public class DateNormalisation {
         if (input.equals("december") || input.equals("12") || input.equals("dec"))
             return "dec";
 
-        else {
-            ErrorHandling.error("Unrecognized month: " + input);
-            return "MONTH NORMALISATION ERROR";
-        }
+        throw new RuntimeException("Unrecognized month: " + input);
     }
 
     /**
@@ -68,12 +63,9 @@ public class DateNormalisation {
             return "sat";
         if (input.equals("sunday") || input.equals("7") || input.equals("sun"))
             return "sun";
-        else {
-            ErrorHandling.error("Unrecognized day: " + input);
-            return "MONTH NORMALISATION ERROR";
-        }
-    }
 
+        throw new RuntimeException("Unrecognized day: " + input);
+    }
 
     private static String stripRubbish(String input) {
         if (input.contains(" ")) {
