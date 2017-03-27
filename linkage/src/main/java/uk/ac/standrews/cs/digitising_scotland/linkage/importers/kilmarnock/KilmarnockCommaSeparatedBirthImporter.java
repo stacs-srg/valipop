@@ -67,8 +67,6 @@ public class KilmarnockCommaSeparatedBirthImporter extends CommaSeparatedBirthIm
 
             {FAMILY, "family"},
 
-            {FAMILY_BEWARE, "family beware"}
-
     };
 
     public static final String[] UNAVAILABLE_RECORD_LABELS = {
