@@ -50,7 +50,7 @@ public abstract class KilmarnockExperiment {
         Path store_path = Files.createTempDirectory(null);
 
         StoreFactory.setStorePath(store_path);
-        IStore store = StoreFactory.makeStore();
+        IStore store = StoreFactory.getStore();
 
         IRepository input_repo = store.makeRepository(input_repo_name);
 

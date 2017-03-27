@@ -38,7 +38,7 @@ public class InitialiseStorr {
 
         System.out.println( "Creating Storr in " + store_path );
         StoreFactory.setStorePath( Paths.get( store_path) );
-        IStore store = StoreFactory.makeStore();
+        IStore store = StoreFactory.getStore();
         System.out.println( "Storr successfully created in " + store_path );
     }
 
