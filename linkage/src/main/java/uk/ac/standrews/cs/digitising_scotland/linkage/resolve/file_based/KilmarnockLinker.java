@@ -116,7 +116,7 @@ public class KilmarnockLinker {
         Path store_path = Files.createTempDirectory(null);
 
         StoreFactory.setStorePath(store_path);
-        store = StoreFactory.makeStore();
+        store = StoreFactory.getStore();
 
         System.out.println("Store path = " + store_path);
 
