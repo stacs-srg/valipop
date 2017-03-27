@@ -139,9 +139,9 @@ public class MTreeBirthBirthWithinDistanceGroundTruthChecker extends BDMExperime
             String store_path = args[0];
             String repo_name = args[1];
 
-            MTreeBirthBirthWithinDistanceGroundTruthChecker matcher = new MTreeBirthBirthWithinDistanceGroundTruthChecker(store_path,repo_name);
-
             experiment.printDescription();
+
+            MTreeBirthBirthWithinDistanceGroundTruthChecker matcher = new MTreeBirthBirthWithinDistanceGroundTruthChecker(store_path,repo_name);
 
             matcher.compute();
 
