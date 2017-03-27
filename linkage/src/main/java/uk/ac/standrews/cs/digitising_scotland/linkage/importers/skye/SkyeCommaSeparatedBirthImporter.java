@@ -64,7 +64,7 @@ public class SkyeCommaSeparatedBirthImporter extends CommaSeparatedBirthImporter
 
     public static final String[] UNAVAILABLE_RECORD_LABELS = {
 
-            // Fields not present in Kilmarnock dataset.
+            // Fields not present in Skye dataset.
 
             REGISTRATION_DISTRICT_NUMBER, ILLEGITIMATE_INDICATOR, CHANGED_FORENAME, CHANGED_SURNAME, MOTHERS_SURNAME, CHANGED_MOTHERS_MAIDEN_SURNAME, CORRECTED_ENTRY, IMAGE_QUALITY, BIRTH_ADDRESS, ADOPTION, ILLEGITIMATE_INDICATOR, BIRTH_YEAR, BIRTH_DAY
     };
@@ -93,7 +93,7 @@ public class SkyeCommaSeparatedBirthImporter extends CommaSeparatedBirthImporter
         String[] dob_parts = dob.split("/");
 
         if (dob_parts.length > 0) {
-            birth.put(BIRTH_DAY, DateNormalisation.normaliseDay(dob_parts[0]));
+            birth.put(BIRTH_DAY, dob_parts[0]);
         }
         if (dob_parts.length > 1) {
             birth.put(BIRTH_MONTH, DateNormalisation.normaliseMonth(dob_parts[1]));

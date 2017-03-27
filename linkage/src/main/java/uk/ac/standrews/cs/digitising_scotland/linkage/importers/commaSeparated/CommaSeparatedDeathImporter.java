@@ -125,10 +125,10 @@ public abstract class CommaSeparatedDeathImporter extends CommaSeparatedImporter
 
         Death death = new Death();
 
-        addAvailableSingleFields(data, record, death, RECORD_LABEL_MAP);
+        addAvailableSingleFields(data, record, death, get_record_map());
         addAvailableCompoundFields(data, record, death);
         addAvailableNormalisedFields(data, record, death);
-        addUnavailableFields(death, UNAVAILABLE_RECORD_LABELS);
+        addUnavailableFields(death, get_unavailable_records());
 
         return death;
     }

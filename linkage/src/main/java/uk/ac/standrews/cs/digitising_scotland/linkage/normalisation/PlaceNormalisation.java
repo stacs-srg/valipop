@@ -5,20 +5,13 @@ package uk.ac.standrews.cs.digitising_scotland.linkage.normalisation;
  */
 public class PlaceNormalisation {
 
-    private static String notgiven = "ng";
-
     /**
      * @param input the text to normalise
      * @return that text representation of the place in a standard form
      */
-    public static String normalisePace(String input) {
+    public static String normalisePlace(String input) {
 
-        input = stripRubbish(input).toLowerCase();
-
-        if (input.equals("")) {
-            return notgiven;
-        }
-        return input;
+        return stripRubbish(input.trim()).toLowerCase();
     }
 
     private static String stripRubbish(String input) {
