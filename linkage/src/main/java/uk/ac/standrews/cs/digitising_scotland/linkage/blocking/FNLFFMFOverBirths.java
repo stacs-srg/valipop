@@ -1,13 +1,17 @@
 package uk.ac.standrews.cs.digitising_scotland.linkage.blocking;
 
-import uk.ac.standrews.cs.digitising_scotland.linkage.factory.*;
-import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.*;
-import uk.ac.standrews.cs.digitising_scotland.util.*;
-import uk.ac.standrews.cs.storr.impl.*;
-import uk.ac.standrews.cs.storr.impl.exceptions.*;
-import uk.ac.standrews.cs.storr.interfaces.*;
+import uk.ac.standrews.cs.digitising_scotland.linkage.factory.BirthFactory;
+import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.BirthFamilyGT;
+import uk.ac.standrews.cs.digitising_scotland.util.ErrorHandling;
+import uk.ac.standrews.cs.storr.impl.TypeFactory;
+import uk.ac.standrews.cs.storr.impl.exceptions.BucketException;
+import uk.ac.standrews.cs.storr.impl.exceptions.KeyNotFoundException;
+import uk.ac.standrews.cs.storr.impl.exceptions.RepositoryException;
+import uk.ac.standrews.cs.storr.impl.exceptions.TypeMismatchFoundException;
+import uk.ac.standrews.cs.storr.interfaces.IBucket;
+import uk.ac.standrews.cs.storr.interfaces.IRepository;
 
-import java.io.*;
+import java.io.IOException;
 
 /**
  * This class blocks based on persons' first name, last name and first name of parents over streams of BirthFamilyGT records
@@ -17,7 +21,7 @@ public class FNLFFMFOverBirths extends AbstractBlocker<BirthFamilyGT> {
 
     public FNLFFMFOverBirths(final IBucket<BirthFamilyGT> birthsBucket, final IRepository output_repo) throws BucketException, RepositoryException, IOException {
 
-        super(birthsBucket.getInputStream(), output_repo, new BirthFactory(TypeFactory.getInstance().typeWithname("BirthFamilyGT").getId()));
+        super(birthsBucket.getInputStream(), output_repo, new BirthFactory(TypeFactory.getInstance().typeWithName("BirthFamilyGT").getId()));
     }
 
     @Override

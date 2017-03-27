@@ -3,6 +3,7 @@ package uk.ac.standrews.cs.digitising_scotland.linkage.resolve.repo_based;
 import uk.ac.standrews.cs.digitising_scotland.linkage.factory.BirthFactory;
 import uk.ac.standrews.cs.digitising_scotland.linkage.factory.DeathFactory;
 import uk.ac.standrews.cs.digitising_scotland.linkage.factory.MarriageFactory;
+import uk.ac.standrews.cs.digitising_scotland.linkage.injesters.InitialiseBDMRepo;
 import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.BirthFamilyGT;
 import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.Death;
 import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.Marriage;
@@ -27,20 +28,11 @@ import java.util.concurrent.Callable;
 
 public abstract class BDMExperiment {
 
-    private static final String input_repo_name = "BDM_repo";               // Repository containing event records
-    private static final String births_name = "birth_records";              // Name of bucket containing birth records (inputs).
-    private static final String marriages_name = "marriage_records";        // Name of bucket containing marriage records (inputs).
-    private static final String deaths_name = "death_records";              // Name of bucket containing death records (inputs).
-
     // Bucket declarations
 
     protected IBucket<BirthFamilyGT> births;                                // Bucket containing birth records (inputs).
     protected IBucket<Marriage> marriages;                                  // Bucket containing marriage records (inputs).
     protected IBucket<Death> deaths;                                        // Bucket containing death records (inputs).
-
-    private int births_count;
-    private int marriages_count;
-    private int deaths_count;
 
     protected Map<Long, Family> person_to_family_map = new HashMap<>();     // Maps from person id to family.
 
@@ -57,13 +49,13 @@ public abstract class BDMExperiment {
 
         TypeFactory type_factory = TypeFactory.getInstance();
 
-        IReferenceType birthType = type_factory.typeWithname("birth");
-        IReferenceType deathType = type_factory.typeWithname("death");
-        IReferenceType marriageType = type_factory.typeWithname("marriage");
+        IReferenceType birthType = type_factory.typeWithName(InitialiseBDMRepo.BIRTH_TYPE_NAME);
+        IReferenceType deathType = type_factory.typeWithName(InitialiseBDMRepo.DEATH_TYPE_NAME);
+        IReferenceType marriageType = type_factory.typeWithName(InitialiseBDMRepo.MARRIAGE_TYPE_NAME);
 
-        births = input_repo.getBucket(births_name, new BirthFactory(birthType.getId()));
-        deaths = input_repo.getBucket(deaths_name, new DeathFactory(deathType.getId()));
-        marriages = input_repo.getBucket(marriages_name, new MarriageFactory(marriageType.getId()));
+        births = input_repo.getBucket(InitialiseBDMRepo.BIRTHS_BUCKET_NAME, new BirthFactory(birthType.getId()));
+        deaths = input_repo.getBucket(InitialiseBDMRepo.DEATHS_BUCKET_NAME, new DeathFactory(deathType.getId()));
+        marriages = input_repo.getBucket(InitialiseBDMRepo.MARRIAGES_BUCKET_NAME, new MarriageFactory(marriageType.getId()));
     }
 
     public void printFamilies() throws BucketException {
@@ -93,17 +85,17 @@ public abstract class BDMExperiment {
 
     public int getBirthsCount() {
 
-        return births_count;
+        throw new UnsupportedOperationException();
     }
 
     public int getMarriagesCount() {
 
-        return marriages_count;
+        throw new UnsupportedOperationException();
     }
 
     public int getDeathsCount() {
 
-        return deaths_count;
+        throw new UnsupportedOperationException();
     }
 
     protected Set<BirthFamilyGT> loadBirths() throws BucketException {
