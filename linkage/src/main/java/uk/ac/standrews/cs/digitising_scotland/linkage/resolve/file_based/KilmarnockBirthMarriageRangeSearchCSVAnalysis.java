@@ -1,4 +1,4 @@
-package uk.ac.standrews.cs.digitising_scotland.linkage.resolve;
+package uk.ac.standrews.cs.digitising_scotland.linkage.resolve.file_based;
 
 import uk.ac.standrews.cs.digitising_scotland.util.ErrorHandling;
 import uk.ac.standrews.cs.util.dataset.DataSet;
@@ -7,8 +7,6 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.text.DecimalFormat;
 import java.util.List;
-
-import static uk.ac.standrews.cs.digitising_scotland.linkage.resolve.KilmarnockMTreeBirthMarriageRangeCSVGenerator.RANGE_MAX;
 
 /**
  * Module to inject and analyse output created by KilmarnockMTreeBirthMarriageRangeCSVGenerator
@@ -20,7 +18,7 @@ public class KilmarnockBirthMarriageRangeSearchCSVAnalysis {
 
     private int num_births = 0;
     int[][] data_array;
-    private static final int MAX_COUMN_INDEX = RANGE_MAX;
+    private static final int MAX_COUMN_INDEX = KilmarnockMTreeBirthMarriageRangeCSVGenerator.RANGE_MAX;
 
     public KilmarnockBirthMarriageRangeSearchCSVAnalysis(String csv_source_path ) {
 

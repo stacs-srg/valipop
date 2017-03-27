@@ -13,7 +13,7 @@ public class Family {
 
     private static long next_id_to_be_allocated = 1;
 
-    Set<BirthFamilyGT> siblings;
+    public Set<BirthFamilyGT> siblings;
     public final long id;
 
     private String place_of_marriage;

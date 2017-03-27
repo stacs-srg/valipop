@@ -1,4 +1,4 @@
-package uk.ac.standrews.cs.digitising_scotland.linkage.resolve;
+package uk.ac.standrews.cs.digitising_scotland.linkage.resolve.file_based;
 
 import org.json.JSONException;
 import uk.ac.standrews.cs.digitising_scotland.linkage.blocking.FFNFLNMFNMMNOverMarriage;
