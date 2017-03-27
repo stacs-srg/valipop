@@ -106,7 +106,7 @@ public class TwoDimensionDataDistribution implements DataDistribution {
     }
 
 
-//    public Map<IntegerRange, Double> getData(IntegerRange row, int forNPeople) {
+//    public Map<IntegerRange, Double> getRate(IntegerRange row, int forNPeople) {
 //
 //        return null;
 //    }

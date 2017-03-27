@@ -61,7 +61,7 @@ ggsurv <- function(s, CI = 'def', plot.cens = T, surv.col = 'gg.def',
     
     pl <- ggplot(dat, aes(x = time, y = surv)) + 
       xlab(xlab) + ylab(ylab) + ggtitle(main) + 
-      geom_step(col = col, lty = lty.est)
+      geom_step(col = col, lty = lty.est) + coord_cartesian(ylim = c(0, 1)) 
     
     pl <- if(CI == T | CI == 'def') {
       pl + geom_step(aes(y = up), color = col, lty = lty.ci) +
@@ -108,7 +108,7 @@ ggsurv <- function(s, CI = 'def', plot.cens = T, surv.col = 'gg.def',
     
     pl <- ggplot(dat, aes(x = time, y = surv, group = group)) + 
       xlab(xlab) + ylab(ylab) + ggtitle(main) + 
-      geom_step(aes(col = group, lty = group))
+      geom_step(aes(col = group, lty = group)) + coord_cartesian(ylim = c(0, 1)) 
     
     col <- if(length(surv.col == 1)){
       scale_colour_manual(name = gr.name, values = rep(surv.col, strata))

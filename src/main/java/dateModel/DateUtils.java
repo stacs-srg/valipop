@@ -520,4 +520,14 @@ public class DateUtils {
 
         return counts;
     }
+
+    public static int stepsInYear(CompoundTimeUnit timeStep) {
+
+        if(timeStep.getUnit() == TimeUnit.YEAR) {
+            return MONTHS_IN_YEAR * timeStep.getCount();
+        } else { // unit == MONTH
+            return MONTHS_IN_YEAR / timeStep.getCount();
+        }
+
+    }
 }

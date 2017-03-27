@@ -27,6 +27,7 @@ public class InitLogic {
     private static int currentHypotheticalPopulationSize;
 
     private static CompoundTimeUnit initTimeStep = new CompoundTimeUnit(1, TimeUnit.YEAR);
+//    private static CompoundTimeUnit initTimeStep = new CompoundTimeUnit(6, TimeUnit.MONTH);
     private static Date endOfInitPeriod;
 
     private static int numberOfBirthsInThisTimestep = 0;
@@ -58,7 +59,7 @@ public class InitLogic {
         // add Orphan Children to the population
         for (int i = 0; i < shortFallInBirths; i++) {
             // TODO need to vary birth date in time period (i.e. the previous year)
-            EntityFactory.formOrphanChild(currentTime, config.getBirthTimeStep(), population);
+            EntityFactory.formOrphanChild(currentTime, InitLogic.getTimeStep(), population);
         }
 
         log.info("Current Date: " + currentTime.toString() + "   Init Period | Met short fall in births with orphan children: " + shortFallInBirths);

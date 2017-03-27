@@ -1,6 +1,7 @@
 package populationStatistics.dataDistributionTables.selfCorrecting;
 
 
+import dateModel.timeSteps.CompoundTimeUnit;
 import populationStatistics.dataDistributionTables.DataDistribution;
 import populationStatistics.dataDistributionTables.OneDimensionDataDistribution;
 import dateModel.dateImplementations.YearDate;
@@ -36,20 +37,20 @@ public class SelfCorrectingTwoDimensionDataDistribution implements DataDistribut
     }
 
     @Override
-    public double getCorrectingRate(DataKey data) {
+    public double getCorrectingRate(DataKey data, CompoundTimeUnit consideredTimePeriod) {
 
         DataKey temp = new DataKey(data.getXLabel(), data.getForNPeople());
 
-        return getData(data.getYLabel()).getCorrectingRate(temp);
+        return getData(data.getYLabel()).getCorrectingRate(temp, consideredTimePeriod);
 
     }
 
     @Override
-    public void returnAppliedRate(DataKey data, double appliedData) {
+    public void returnAppliedRate(DataKey data, double appliedData, CompoundTimeUnit consideredTimePeriod) {
 
         DataKey temp = new DataKey(data.getXLabel(), data.getForNPeople());
 
-        getData(data.getYLabel()).returnAppliedRate(temp, appliedData);
+        getData(data.getYLabel()).returnAppliedRate(temp, appliedData, consideredTimePeriod);
 
     }
 
@@ -132,8 +133,8 @@ public class SelfCorrectingTwoDimensionDataDistribution implements DataDistribut
         for (IntegerRange iR : keys) {
             resultsOutput.print(iR.toString() + " | ");
 
-            Map<IntegerRange, Double> targetRow = targetData.get(iR).getData();
-            Map<IntegerRange, Double> appliedRow = appliedData.get(iR).getData();
+            Map<IntegerRange, Double> targetRow = targetData.get(iR).getRate();
+            Map<IntegerRange, Double> appliedRow = appliedData.get(iR).getRate();
 
             IntegerRange[] orderedKeys = targetRow.keySet().toArray(new IntegerRange[targetRow.keySet().size()]);
             Arrays.sort(orderedKeys, IntegerRange::compareTo);
@@ -158,7 +159,7 @@ public class SelfCorrectingTwoDimensionDataDistribution implements DataDistribut
         for (IntegerRange iR : keys) {
             resultsOutput.print(iR.toString() + " | ");
 
-            Map<IntegerRange, Double> row = data.get(iR).getData();
+            Map<IntegerRange, Double> row = data.get(iR).getRate();
             IntegerRange[] orderedKeys = row.keySet().toArray(new IntegerRange[row.keySet().size()]);
             Arrays.sort(orderedKeys, IntegerRange::compareTo);
 

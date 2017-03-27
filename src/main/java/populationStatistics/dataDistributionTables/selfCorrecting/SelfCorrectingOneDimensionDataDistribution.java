@@ -1,5 +1,7 @@
 package populationStatistics.dataDistributionTables.selfCorrecting;
 
+import dateModel.DateUtils;
+import dateModel.timeSteps.CompoundTimeUnit;
 import populationStatistics.dataDistributionTables.OneDimensionDataDistribution;
 import dateModel.dateImplementations.YearDate;
 import utils.MapUtils;
@@ -31,7 +33,7 @@ public class SelfCorrectingOneDimensionDataDistribution extends OneDimensionData
     }
 
     @Override
-    public double getCorrectingRate(DataKey data) {
+    public double getCorrectingRate(DataKey data, CompoundTimeUnit consideredTimePeriod) {
 
         IntegerRange age = resolveRowValue(data.getYLabel());
 
@@ -43,7 +45,8 @@ public class SelfCorrectingOneDimensionDataDistribution extends OneDimensionData
 
         // if no correction data - i.e. first call to this method
         if(aC == 0) {
-            return tD;
+
+            return calcAdjustedRate(tD, consideredTimePeriod);
         }
 
         // to apply to
@@ -54,7 +57,7 @@ public class SelfCorrectingOneDimensionDataDistribution extends OneDimensionData
 
         // if no N value given in DataKey
         if(tAT == 0) {
-            return tD;
+            return calcAdjustedRate(tD, consideredTimePeriod);
         }
 
         // Correction rate
@@ -72,12 +75,19 @@ public class SelfCorrectingOneDimensionDataDistribution extends OneDimensionData
 
 //        System.out.println("a: " + age + "   |   tD: " + tD + "   |   cD: " + cD + "   |   tAT: " + tAT + "   |   aD: " + aD  + "   |   aC: " + aC );
 
+        return calcAdjustedRate(cD, consideredTimePeriod);
+    }
 
-        return cD;
+    private double calcAdjustedRate(double rate, CompoundTimeUnit timePeriod) {
+
+        double stepsInYear = DateUtils.stepsInYear(timePeriod);
+        double adjustedRate = 1 - Math.pow(1 - rate, stepsInYear / 12);
+
+        return adjustedRate;
     }
 
     @Override
-    public void returnAppliedRate(DataKey data, double appliedData) {
+    public void returnAppliedRate(DataKey data, double appliedData, CompoundTimeUnit consideredTimePeriod) {
 
         IntegerRange age = resolveRowValue(data.getYLabel());
 
@@ -88,7 +98,8 @@ public class SelfCorrectingOneDimensionDataDistribution extends OneDimensionData
         double aCo = appliedCounts.get(age);
 
         // actually applied correction rate
-        double aacD = appliedData;
+        double stepsInYear = DateUtils.stepsInYear(consideredTimePeriod);
+        double aacD = 1 - Math.pow(1 - appliedData, stepsInYear / 12);
 
         // to apply to
         int tAT = data.getForNPeople();
@@ -97,7 +108,10 @@ public class SelfCorrectingOneDimensionDataDistribution extends OneDimensionData
         double aCn = aCo + tAT;
 
         // new applied rate
-        double aDn = ( ( aDo * aCo ) + ( aacD * tAT ) ) / aCn;
+        double aDn = 0;
+        if(aCn != 0) {
+            aDn = ((aDo * aCo) + (aacD * tAT)) / aCn;
+        }
 
         // target rate
         double tD = targetData.get(age);
@@ -111,12 +125,18 @@ public class SelfCorrectingOneDimensionDataDistribution extends OneDimensionData
             // calc r - the number of people it takes to get the applied rate back to the target rate
 //            double r = ( aDo * aCo ) / ( aacD * ( tD - 1 ) );
 
-            double r = ( aCo * ( aDo - tD ) ) / ( tD - aacD );
+            double numberOfPeopleToBringRateToCrossOverPoint;
+
+            if(tD == aacD) {
+                numberOfPeopleToBringRateToCrossOverPoint = tAT;
+            } else {
+                numberOfPeopleToBringRateToCrossOverPoint = (aCo * (aDo - tD)) / (tD - aacD);
+            }
 
 //            System.out.println("r : " + r);
 
             appliedRates.replace(age, aacD);
-            appliedCounts.replace(age, tAT - r);
+            appliedCounts.replace(age, tAT - numberOfPeopleToBringRateToCrossOverPoint);
         } else {
             appliedRates.replace(age, aDn);
             appliedCounts.replace(age, aCn);

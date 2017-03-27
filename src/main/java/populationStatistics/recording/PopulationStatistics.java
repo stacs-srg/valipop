@@ -6,7 +6,6 @@ import dateModel.DateUtils;
 import dateModel.dateImplementations.AdvancableDate;
 import dateModel.dateImplementations.MonthDate;
 import dateModel.dateImplementations.YearDate;
-import dateModel.exceptions.UnsupportedDateConversion;
 import dateModel.timeSteps.CompoundTimeUnit;
 import dateModel.timeSteps.TimeUnit;
 import events.EventType;
@@ -159,10 +158,10 @@ public class PopulationStatistics implements PopulationComposition, EventRateTab
                     nMx = calculateOrderedBirthRate(cohortYear, d, age, 4, generatedPopulation, survivors);
                     break;
                 case MALE_DEATH:
-                    nMx = getDeathRates(d, 'm').getData(age);
+                    nMx = getDeathRates(d, 'm').getRate(age);
                     break;
                 case FEMALE_DEATH:
-                    nMx = getDeathRates(d, 'f').getData(age);
+                    nMx = getDeathRates(d, 'f').getRate(age);
                     break;
             }
 
@@ -224,10 +223,10 @@ public class PopulationStatistics implements PopulationComposition, EventRateTab
                     System.err.println("Not implemented - PopulationStatistics.getTimePeriodSurvivorTable");
                     break;
                 case MALE_DEATH:
-                    nMx = getDeathRates(startYear, 'm').getData(age);
+                    nMx = getDeathRates(startYear, 'm').getRate(age);
                     break;
                 case FEMALE_DEATH:
-                    nMx = getDeathRates(startYear, 'f').getData(age);
+                    nMx = getDeathRates(startYear, 'f').getRate(age);
                     break;
             }
 
@@ -268,7 +267,7 @@ public class PopulationStatistics implements PopulationComposition, EventRateTab
 
         for(int i = 1; i < timeLimit; i++) {
 
-            double currentSurvivors = survivorTable.getData(i);
+            double currentSurvivors = survivorTable.getRate(i);
             double dead = prevSurvivors - currentSurvivors;
 
             int d = (int) dead;
@@ -348,7 +347,7 @@ public class PopulationStatistics implements PopulationComposition, EventRateTab
         }
 
         int t = CollectionUtils.countPeopleInCollectionAliveOnDate(generatedPopulation.getByYearAndSex('f', startYear), currentDate);
-        double r = aSOBR.getData(birthOrder);
+        double r = aSOBR.getRate(birthOrder);
         return (r * t) / survivors;
     }
 

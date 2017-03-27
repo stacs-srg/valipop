@@ -1,7 +1,6 @@
 package populationStatistics.dataDistributionTables.selfCorrecting;
 
 
-import dateModel.exceptions.UnsupportedDateConversion;
 import populationStatistics.dataDistributionTables.LabelValueDataRow;
 import populationStatistics.dataDistributionTables.OneDimensionDataDistribution;
 import populationStatistics.validation.kaplanMeier.utils.FailureTimeRow;
@@ -22,13 +21,13 @@ public class TableTranformationUtils {
 
         int timeLimit = survivorTable.getLargestLabel().getMax();
 
-        double prevSurvivors = survivorTable.getData(0);
+        double prevSurvivors = survivorTable.getRate(0);
 
         try {
 
             for (int i = 1; i <= timeLimit; i++) {
 
-                double currentSurvivors = survivorTable.getData(i);
+                double currentSurvivors = survivorTable.getRate(i);
                 double dead = prevSurvivors - currentSurvivors;
 
                 int d = (int) dead;
@@ -56,12 +55,12 @@ public class TableTranformationUtils {
 
         Collection<LabelValueDataRow> rows = new ArrayList<>();
 
-        for(IntegerRange iR : data.getData().keySet()) {
+        for(IntegerRange iR : data.getRate().keySet()) {
 
             double value;
 
             try {
-                value = data.getData(iR.getValue());
+                value = data.getRate(iR.getValue());
                 rows.add(new LabelValueDataRow(iR.getValue(), value, denoteGroupAs));
             } catch (NullPointerException e) {
                 rows.add(new LabelValueDataRow(iR.getValue(), 0, denoteGroupAs));

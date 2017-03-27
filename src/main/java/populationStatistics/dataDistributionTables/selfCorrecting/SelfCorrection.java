@@ -1,5 +1,6 @@
 package populationStatistics.dataDistributionTables.selfCorrecting;
 
+import dateModel.timeSteps.CompoundTimeUnit;
 import utils.specialTypes.dataKeys.DataKey;
 
 /**
@@ -7,8 +8,8 @@ import utils.specialTypes.dataKeys.DataKey;
  */
 public interface SelfCorrection {
 
-    double getCorrectingRate(DataKey data);
+    double getCorrectingRate(DataKey data, CompoundTimeUnit consideredTimePeriod);
 
-    void returnAppliedRate(DataKey data, double appliedData);
+    void returnAppliedRate(DataKey data, double appliedData, CompoundTimeUnit consideredTimePeriod);
 
 }

@@ -67,9 +67,9 @@ public class SurvivalPlot {
     private double[] getSurvivalEstimates(OneDimensionDataDistribution observed) {
 
         try {
-            Map<IntegerRange, Double> data = observed.getData();
+            Map<IntegerRange, Double> data = observed.getRate();
 
-            IntegerRange[] iRS = data.keySet().toArray(new IntegerRange[observed.getData().keySet().size()]);
+            IntegerRange[] iRS = data.keySet().toArray(new IntegerRange[observed.getRate().keySet().size()]);
             Arrays.sort(iRS, IntegerRange::compareTo);
 
             double[] estimates = new double[iRS.length];
@@ -89,8 +89,8 @@ public class SurvivalPlot {
     private double[] getTimeDivisions(OneDimensionDataDistribution observed) {
 
         try {
-            Map<IntegerRange, Double> data = observed.getData();
-            IntegerRange[] iRS = data.keySet().toArray(new IntegerRange[observed.getData().keySet().size()]);
+            Map<IntegerRange, Double> data = observed.getRate();
+            IntegerRange[] iRS = data.keySet().toArray(new IntegerRange[observed.getRate().keySet().size()]);
             Arrays.sort(iRS, IntegerRange::compareTo);
 
             double[] times = new double[iRS.length];

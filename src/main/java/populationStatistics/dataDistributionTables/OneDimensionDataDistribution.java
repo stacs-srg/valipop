@@ -1,5 +1,7 @@
 package populationStatistics.dataDistributionTables;
 
+import dateModel.DateUtils;
+import dateModel.timeSteps.CompoundTimeUnit;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import dateModel.dateImplementations.YearDate;
@@ -98,11 +100,21 @@ public class OneDimensionDataDistribution implements DataDistribution {
 
     }
 
-    public Double getData(Integer rowValue) throws InvalidRangeException {
+    public double getRate(Integer rowValue) throws InvalidRangeException {
 
         IntegerRange row = resolveRowValue(rowValue);
 
         return targetData.get(row);
+    }
+
+    public double getRate(Integer rowValue, CompoundTimeUnit timeStep) {
+
+        double basicRate = getRate(rowValue);
+
+        double stepsInYear = DateUtils.stepsInYear(timeStep);
+        double adjustedRate = 1 - Math.pow(1 - basicRate, 1 / stepsInYear);
+
+        return adjustedRate;
     }
 
     public IntegerRange resolveRowValue(Integer rowValue) {
@@ -116,7 +128,7 @@ public class OneDimensionDataDistribution implements DataDistribution {
         throw new InvalidRangeException("Given value not covered by rows - value " + rowValue);
     }
 
-    public Map<IntegerRange, Double> getData() {
+    public Map<IntegerRange, Double> getRate() {
         return targetData;
     }
 
@@ -139,7 +151,7 @@ public class OneDimensionDataDistribution implements DataDistribution {
 
     public void print(PrintStream out) {
 
-        IntegerRange[] orderedKeys = getData().keySet().toArray(new IntegerRange[getData().keySet().size()]);
+        IntegerRange[] orderedKeys = getRate().keySet().toArray(new IntegerRange[getRate().keySet().size()]);
         Arrays.sort(orderedKeys, IntegerRange::compareTo);
 
         out.println("YEAR\t" + year);

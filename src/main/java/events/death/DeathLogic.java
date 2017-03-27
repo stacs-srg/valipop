@@ -59,13 +59,13 @@ public class DeathLogic implements EventLogic {
             DataKey femaleKey = new DataKey(age, numberOfFemales);
 
             // DATA - get rate of death by age and gender
-            Double maleDeathRate = desiredPopulationStatistics.getDeathRates(trueCurrentDate, 'm').getCorrectingRate(maleKey) * config.getDeathTimeStep().toDecimalRepresentation() * yearForwardWeighting;
+            Double maleDeathRate = desiredPopulationStatistics.getDeathRates(trueCurrentDate, 'm').getCorrectingRate(maleKey, config.getDeathTimeStep()) * yearForwardWeighting;
 
             // EDIT put nQx s back in here
 
 //            maleDeathRate = (1 * maleDeathRate) / (1 + (1 * 0.5 * maleDeathRate));
 
-            Double femaleDeathRate = desiredPopulationStatistics.getDeathRates(trueCurrentDate, 'f').getCorrectingRate(femaleKey) * config.getDeathTimeStep().toDecimalRepresentation() * yearForwardWeighting;
+            Double femaleDeathRate = desiredPopulationStatistics.getDeathRates(trueCurrentDate, 'f').getCorrectingRate(femaleKey, config.getDeathTimeStep()) * yearForwardWeighting;
 
 //            femaleDeathRate = (1 * femaleDeathRate) / (1 + (1 * 0.5 * femaleDeathRate));
 
@@ -140,11 +140,11 @@ public class DeathLogic implements EventLogic {
 //            }
 
             if(numberOfMales > 0) {
-                desiredPopulationStatistics.getDeathRates(trueCurrentDate, 'm').returnAppliedRate(maleKey, appliedMaleRate / config.getDeathTimeStep().toDecimalRepresentation());
+                desiredPopulationStatistics.getDeathRates(trueCurrentDate, 'm').returnAppliedRate(maleKey, appliedMaleRate, config.getDeathTimeStep());
             }
 
             if(numberOfFemales > 0) {
-                desiredPopulationStatistics.getDeathRates(trueCurrentDate, 'f').returnAppliedRate(femaleKey, appliedFemaleRate / config.getDeathTimeStep().toDecimalRepresentation());
+                desiredPopulationStatistics.getDeathRates(trueCurrentDate, 'f').returnAppliedRate(femaleKey, appliedFemaleRate, config.getDeathTimeStep());
             }
 
         }

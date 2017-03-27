@@ -4,7 +4,6 @@ import config.Config;
 import dateModel.Date;
 import dateModel.DateUtils;
 import dateModel.dateImplementations.AdvancableDate;
-import dateModel.dateImplementations.MonthDate;
 import dateModel.dateImplementations.YearDate;
 import dateModel.exceptions.UnsupportedDateConversion;
 import dateModel.timeSteps.CompoundTimeUnit;
@@ -78,7 +77,7 @@ public class ComparativeAnalysis implements IComparativeAnalysis {
 
     protected static IKaplanMeierAnalysis runKaplanMeier(EventType event, OneDimensionDataDistribution expectedEvents, OneDimensionDataDistribution observedEvents, Config config) throws StatisticalManipulationCalculationError {
 
-        IntegerRange[] orderedKeys = expectedEvents.getData().keySet().toArray(new IntegerRange[expectedEvents.getData().keySet().size()]);
+        IntegerRange[] orderedKeys = expectedEvents.getRate().keySet().toArray(new IntegerRange[expectedEvents.getRate().keySet().size()]);
         Arrays.sort(orderedKeys, IntegerRange::compareTo);
 
         PrintStream pS = FileUtils.setupDumpPrintStream("survialTables-" + event + "-" + expectedEvents.getYear().getYear(), config);
@@ -100,11 +99,13 @@ public class ComparativeAnalysis implements IComparativeAnalysis {
             int n1fNEXTROW;
             int n2fNEXTROW;
 
-            int n1f = observedEvents.getData(c).intValue();
-            int n2f = expectedEvents.getData(c).intValue();
+            // This looks mad - but happens because I'm storing int values in a doubles datastructure...
+            // I should fix it, but i think all this code is going in the bin at some point soon
+            int n1f = new Double(observedEvents.getRate(c)).intValue();
+            int n2f = new Double(expectedEvents.getRate(c)).intValue();
 
-            n1fNEXTROW = observedEvents.getData(c + 1).intValue();
-            n2fNEXTROW = expectedEvents.getData(c + 1).intValue();
+            n1fNEXTROW = new Double(observedEvents.getRate(c + 1)).intValue();
+            n2fNEXTROW = new Double(expectedEvents.getRate(c + 1)).intValue();
 
 
             int m1f = n1f - n1fNEXTROW;
@@ -336,18 +337,18 @@ public class ComparativeAnalysis implements IComparativeAnalysis {
                 IntegerRange ageRange = femaleAgeRanges.get(a);
 
                 OneDimensionDataDistribution desiredPartnering = desired.getPartneringData(start, end, ageRange, null);
-                OneDimensionDataDistribution generatedPartnering = generated.getPartneringData(start, end, ageRange, desiredPartnering.getData().keySet());
+                OneDimensionDataDistribution generatedPartnering = generated.getPartneringData(start, end, ageRange, desiredPartnering.getRate().keySet());
 
 //                System.out.println(start.toString());
 //                System.out.println("FaR = " + ageRange.toString());
 //
-//                for(IntegerRange iR : generatedPartnering.getData().keySet()) {
+//                for(IntegerRange iR : generatedPartnering.getRate().keySet()) {
 //                    System.out.println(iR.toString());
 //                }
 
 
 //                for(int age = ageRange.getMin(); age <= ageRange.getMax(); age ++) {
-//                    generated.getPartneringData(start, end).getData(age);
+//                    generated.getPartneringData(start, end).getRate(age);
 //                }
 //                generated.getPartneringData(start, end);
 
@@ -438,7 +439,7 @@ public class ComparativeAnalysis implements IComparativeAnalysis {
                                                                 throws UnsupportedEventType {
 
         OneDimensionDataDistribution populationSurvivorTable = observed.getCohortSurvivorTable(date, eventType);
-        OneDimensionDataDistribution statisticsSurvivorTable = expected.getCohortSurvivorTable(date, eventType, populationSurvivorTable.getData(0), populationSurvivorTable.getLargestLabel().getMax() - 1, generatedPopulation);
+        OneDimensionDataDistribution statisticsSurvivorTable = expected.getCohortSurvivorTable(date, eventType, populationSurvivorTable.getRate(0), populationSurvivorTable.getLargestLabel().getMax() - 1, generatedPopulation);
 
         Collection<FailureTimeRow> rows = TableTranformationUtils.transformSurvivorTableToTableOfOrderedIndividualFailureTime(populationSurvivorTable, "Observed");
         rows.addAll(TableTranformationUtils.transformSurvivorTableToTableOfOrderedIndividualFailureTime(statisticsSurvivorTable, "Desired"));
@@ -457,7 +458,7 @@ public class ComparativeAnalysis implements IComparativeAnalysis {
 
         // get equiverlent table from inputs stats
         OneDimensionDataDistribution statisticsSurvivorTable = expected.getCohortSurvivorTable(date, eventType,
-                populationSurvivorTable.getData(0),
+                populationSurvivorTable.getRate(0),
                 populationSurvivorTable.getLargestLabel().getMax() - 1, generatedPopulation);
 
         if(config.produceGraphs()) {

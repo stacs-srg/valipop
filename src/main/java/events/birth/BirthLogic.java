@@ -94,8 +94,8 @@ public class BirthLogic {
                     // DATA 1 - get rate of births by mothers age and birth order
                     DataKey key = new DataKey(age, order, maxBirthOrderInCohort, women.size());
 
-                    double birthRate = desiredPopulationStatistics.getOrderedBirthRates(currentTime).getCorrectingRate(key) * config.getBirthTimeStep().toDecimalRepresentation();
-                    //taperedOrderedBirthRatesForMothersOfThisAge.getData(order) * config.getBirthTimeStep().toDecimalRepresentation();
+                    double birthRate = desiredPopulationStatistics.getOrderedBirthRates(currentTime).getCorrectingRate(key, config.getBirthTimeStep());
+                    //taperedOrderedBirthRatesForMothersOfThisAge.getRate(order) * config.getBirthTimeStep().toDecimalRepresentation();
 
                     int numberOfChildrenToBirth;
                     int totalNumberOfMothers;
@@ -139,7 +139,7 @@ public class BirthLogic {
                     birthCount += numberOfChildrenToBirth;
 
                     // Taking this out gives better results - underlying error?
-//                    desiredPopulationStatistics.getOrderedBirthRates(currentTime).returnAppliedData(key, birthRate / config.getBirthTimeStep().toDecimalRepresentation());
+//                    desiredPopulationStatistics.getOrderedBirthRates(currentTime).returnAppliedRate(key, birthRate, config.getBirthTimeStep());
 
                     // select the mothers
                     for (Integer childrenInMaternity : motherCountsByMaternitySize.keySet()) {

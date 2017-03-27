@@ -61,11 +61,9 @@ public class NDeathLogic implements EventLogic {
                 int peopleOfAge = ofSexLiving.getByYear(yob).size();
 
                 DataKey key = new DeathDataKey(age, peopleOfAge);
-                double deathRate = desiredPopulationStatistics.getDeathRates(currentDate, sex).getCorrectingRate(key);
+                double deathRate = desiredPopulationStatistics.getDeathRates(currentDate, sex).getCorrectingRate(key, consideredTimePeriod);
 
-                deathRate = deathRate * consideredTimePeriod.toDecimalRepresentation();
-
-                Integer numberToKill = new Long(Math.round(peopleOfAge * deathRate)).intValue();
+                Integer numberToKill = (int) Math.round(peopleOfAge * deathRate);
 
                 Collection<IPerson> peopleToKill = null;
                 try {
@@ -77,11 +75,13 @@ public class NDeathLogic implements EventLogic {
 
                 int killed = killPeople(peopleToKill, config, currentDate, consideredTimePeriod, population);
 
-                double appliedRate = killed / (double) peopleOfAge;
+                double appliedRate = 0;
+                if(peopleOfAge != 0) {
+                    appliedRate = killed / (double) peopleOfAge;
+                }
 
-                appliedRate = appliedRate / consideredTimePeriod.toDecimalRepresentation();
 
-                desiredPopulationStatistics.getDeathRates(currentDate, sex).returnAppliedRate(key, appliedRate);
+                desiredPopulationStatistics.getDeathRates(currentDate, sex).returnAppliedRate(key, appliedRate, consideredTimePeriod);
             }
         }
 
