@@ -23,7 +23,7 @@ public class KilmarnockCommaSeparatedDeathImporter extends CommaSeparatedDeathIm
 
             // Information available that doesn't currently fit:
 
-            // "day of reg", "month of reg", "year of reg"
+            // "day of reg", "month of reg"
 
             {ORIGINAL_ID, "ID"},
 

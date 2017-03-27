@@ -27,6 +27,7 @@ import java.nio.file.Paths;
 /**
  * Module to injest BBM records into a store initialised by class such as InitialiseStorr in this package
  * Created by al on 25/3/2017.
+ *
  * @author al@st-andrews.ac.uk
  */
 
@@ -46,21 +47,21 @@ public class SkyeInjestor {
     private int marriages_count;
     private int deaths_count;
 
-    private static final String[] ARG_NAMES = {"store_path","repo_name","skye_births_path","skye_deaths_path","skye_marriages_path"};
+    private static final String[] ARG_NAMES = {"store_path", "repo_name", "skye_births_path", "skye_deaths_path", "skye_marriages_path"};
 
 
-    public SkyeInjestor(String store_path, String repo_name ) throws StoreException, RepositoryException, IOException {
-        System.out.println( "Injesting records into repo: " +  repo_name );
-        initialise( store_path, repo_name );
+    public SkyeInjestor(String store_path, String repo_name) throws StoreException, RepositoryException, IOException {
+        System.out.println("Injesting records into repo: " + repo_name);
+        initialise(store_path, repo_name);
     }
 
-    private void initialise( String store_path, String repo_name ) throws StoreException, IOException, RepositoryException {
+    private void initialise(String store_path, String repo_name) throws StoreException, IOException, RepositoryException {
 
-        Path p = Paths.get( store_path);
-        if( ! p.toFile().isDirectory() ) {
-            throw new RepositoryException( "Illegal store root specified");
+        Path p = Paths.get(store_path);
+        if (!p.toFile().isDirectory()) {
+            throw new RepositoryException("Illegal store root specified");
         }
-        StoreFactory.setStorePath( p );
+        StoreFactory.setStorePath(p);
         IStore store = StoreFactory.getStore();
 
         IRepository input_repo = store.getRepo(repo_name);
@@ -74,7 +75,6 @@ public class SkyeInjestor {
         births = input_repo.getBucket(births_name, new BirthFactory(birthType.getId()));
         deaths = input_repo.getBucket(deaths_name, new DeathFactory(deathType.getId()));
         marriages = input_repo.getBucket(marriages_name, new MarriageFactory(marriageType.getId()));
-
     }
 
     /**
@@ -91,7 +91,7 @@ public class SkyeInjestor {
         marriages_count = new SkyeCommaSeparatedMarriageImporter().importDigitisingScotlandMarriages(marriages, marriages_source_path);
         System.out.println("Imported " + marriages_count + " marriage records");
         System.out.println();
-        System.out.println( "Injest of records complete" );
+        System.out.println("Injest of records complete");
     }
 
     //***********************************************************************************
@@ -111,12 +111,11 @@ public class SkyeInjestor {
             String deaths_source_path = args[3];
             String marriages_source_path = args[4];
 
-            SkyeInjestor injestor = new SkyeInjestor( store_path, repo_name );
-            injestor.ingestRecords(births_source_path,deaths_source_path,marriages_source_path);
+            SkyeInjestor injestor = new SkyeInjestor(store_path, repo_name);
+            injestor.ingestRecords(births_source_path, deaths_source_path, marriages_source_path);
 
         } else {
             usage();
         }
     }
-
 }

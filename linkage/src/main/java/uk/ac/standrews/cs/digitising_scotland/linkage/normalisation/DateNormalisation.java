@@ -1,9 +1,44 @@
 package uk.ac.standrews.cs.digitising_scotland.linkage.normalisation;
 
-/**
- * Created by al on 06/12/2016.
- */
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 public class DateNormalisation {
+
+    public static List<String> NORMALISED_MONTH_NAMES = Arrays.asList("jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec");
+
+    public static List<Set<String>> MONTH_NAMES = Arrays.asList(
+            new HashSet<>(Arrays.asList("january")),
+            new HashSet<>(Arrays.asList("february")),
+            new HashSet<>(Arrays.asList("march")),
+            new HashSet<>(Arrays.asList("april")),
+            new HashSet<>(Arrays.asList("may")),
+            new HashSet<>(Arrays.asList("june")),
+            new HashSet<>(Arrays.asList("july")),
+            new HashSet<>(Arrays.asList("august")),
+            new HashSet<>(Arrays.asList("september", "sept")),
+            new HashSet<>(Arrays.asList("october")),
+            new HashSet<>(Arrays.asList("november")),
+            new HashSet<>(Arrays.asList("december")));
+
+    static {
+        // Add the normalised names and month indices to the recognised month names.
+        for (int month = 0; month < NORMALISED_MONTH_NAMES.size(); month++) {
+
+            Set<String> this_month_names = MONTH_NAMES.get(month);
+
+            this_month_names.add(NORMALISED_MONTH_NAMES.get(month));
+
+            String index_as_string = String.valueOf(month + 1);
+            this_month_names.add(index_as_string);
+
+            if (index_as_string.length() == 1) {
+                this_month_names.add("0" + index_as_string);
+            }
+        }
+    }
 
     /**
      * @param input the text to normalise
@@ -13,39 +48,21 @@ public class DateNormalisation {
 
         input = stripRubbish(input).toLowerCase();
 
-        if (input.equals("january") || input.equals("1") || input.equals("jan"))
-            return "jan";
-        if (input.equals("february") || input.equals("2") || input.equals("feb"))
-            return "feb";
-        if (input.equals("march") || input.equals("3") || input.equals("mar"))
-            return "mar";
-        if (input.equals("april") || input.equals("4") || input.equals("apr"))
-            return "apr";
-        if (input.equals("may") || input.equals("5"))
-            return "may";
-        if (input.equals("june") || input.equals("6") || input.equals("jun"))
-            return "jun";
-        if (input.equals("july") || input.equals("7") || input.equals("jul"))
-            return "mar";
-        if (input.equals("august") || input.equals("8") || input.equals("aug"))
-            return "aug";
-        if (input.equals("september") || input.equals("9") || input.equals("sep") || input.equals("sept"))
-            return "sep";
-        if (input.equals("october") || input.equals("10") || input.equals("oct"))
-            return "oct";
-        if (input.equals("november") || input.equals("11") || input.equals("nov"))
-            return "nov";
-        if (input.equals("december") || input.equals("12") || input.equals("dec"))
-            return "dec";
+        for (int month = 0; month < NORMALISED_MONTH_NAMES.size(); month++) {
 
-        throw new RuntimeException("Unrecognized month: " + input);
+            if (MONTH_NAMES.get(month).contains(input)) {
+                return NORMALISED_MONTH_NAMES.get(month);
+            }
+        }
+
+        return input;
     }
 
     /**
      * @param input the text to normalise
-     * @return that text representation of the month in a standard form
+     * @return that text representation of the day of week in a standard form
      */
-    public static String normaliseDay(String input) {
+    public static String normaliseDayOfWeek(String input) {
 
         input = stripRubbish(input).toLowerCase();
 
@@ -68,6 +85,8 @@ public class DateNormalisation {
     }
 
     private static String stripRubbish(String input) {
+
+        input = input.trim();
         if (input.contains(" ")) {
             input = input.substring(0, input.indexOf(" "));
         }

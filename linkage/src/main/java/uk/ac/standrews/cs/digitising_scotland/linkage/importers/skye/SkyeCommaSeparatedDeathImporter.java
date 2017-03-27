@@ -23,16 +23,15 @@ public class SkyeCommaSeparatedDeathImporter extends CommaSeparatedDeathImporter
 
             // Information available that doesn't currently fit:
 
-            // "day of reg", "month of reg", "year of reg"
+            // "day of reg", "month of reg"
 
             {ORIGINAL_ID, "ID"},
-
 
             {REGISTRATION_DISTRICT_NUMBER, "identifier"},
 
             {REGISTRATION_DISTRICT_SUFFIX, "register identifier"},
 
-            {ENTRY, "entry no"},
+            {ENTRY, "entry number"},
 
             // *********************************
 
@@ -77,7 +76,7 @@ public class SkyeCommaSeparatedDeathImporter extends CommaSeparatedDeathImporter
 
     private static final String[] UNAVAILABLE_RECORD_LABELS = {
 
-            // Fields not present in Kilmarnock dataset.
+            // Fields not present in Skye dataset.
 
             YEAR_OF_REGISTRATION, CHANGED_FORENAME, CHANGED_SURNAME, CHANGED_MOTHERS_MAIDEN_SURNAME, CORRECTED_ENTRY, IMAGE_QUALITY, CHANGED_DEATH_AGE, COD_B, COD_C, PLACE_OF_DEATH, DATE_OF_BIRTH, CERTIFYING_DOCTOR, MOTHERS_SURNAME
     };
