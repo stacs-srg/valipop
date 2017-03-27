@@ -1,8 +1,10 @@
-package uk.ac.standrews.cs.digitising_scotland.linkage.resolve;
+package uk.ac.standrews.cs.digitising_scotland.linkage.resolve.repo_based;
 
 import uk.ac.standrews.cs.digitising_scotland.linkage.experiments.Experiment;
 import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.BirthFamilyGT;
 import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.Marriage;
+import uk.ac.standrews.cs.digitising_scotland.linkage.resolve.BDMExperiment;
+import uk.ac.standrews.cs.digitising_scotland.linkage.resolve.Family;
 import uk.ac.standrews.cs.digitising_scotland.linkage.resolve.distances.GFNGLNBFNBMNPOMDOMDistanceOverMarriage;
 import uk.ac.standrews.cs.digitising_scotland.util.MTree.DataDistance;
 import uk.ac.standrews.cs.digitising_scotland.util.MTree.MTree;
@@ -13,23 +15,23 @@ import uk.ac.standrews.cs.storr.interfaces.IInputStream;
 
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Map;
 
 /**
- * Output on std out matches between births and marriages in a csv format
- * The output is the number of matches between births and marriages at edit distances 0,1,2.. RANGE_MAX
+ * Attempt to perform linking using MTree matching
  * File is derived from KilmarnockLinker.
  * Created by al on 17/2/1017
  */
-public class KilmarnockMTreeBirthMarriageRangeCSVGenerator extends KilmarnockExperiment {
+public class MTreeBirthMarriageThresholdNNTruthChecker extends BDMExperiment {
 
-    private static final String[] ARG_NAMES = {"births_source_path", "deaths_source_path", "marriages_source_path"};
-
-    final static int RANGE_MAX = 15;
+    private static final String[] ARG_NAMES = {"store_path","repo_name"};
+    public static final float DISTANCE_THRESHOLD = 8.0F;
 
     private MTree<Marriage> marriageMtree;
 
-    private KilmarnockMTreeBirthMarriageRangeCSVGenerator() throws StoreException, IOException, RepositoryException {
+    private MTreeBirthMarriageThresholdNNTruthChecker(String store_path, String repo_name) throws StoreException, RepositoryException, IOException {
+        super(store_path,repo_name);
     }
 
     private void compute() throws Exception {
@@ -39,28 +41,32 @@ public class KilmarnockMTreeBirthMarriageRangeCSVGenerator extends KilmarnockExp
             return null;
         });
 
-        timedRun("Outputting matches", () -> {
-            outputRangeSearchMatchesBetweenBirthsAndMarriages();
+        timedRun("Forming families from Marriage-Birth links", () -> {
+            formFamilies();
+            showFamilies();
             return null;
         });
+    }
+
+    private void showFamilies() throws BucketException {
+
+        System.out.println("Number of families formed:" + new HashSet<>(person_to_family_map.values()).size());
+        printFamilies();
     }
 
     private void createMarriageMTreeOverGFNGLNBFNBMNPOMDOM() throws RepositoryException, BucketException, IOException {
 
         marriageMtree = new MTree<>(new GFNGLNBFNBMNPOMDOMDistanceOverMarriage());
 
-        IInputStream<Marriage> stream = marriages.getInputStream();
-
-        for (Marriage marriage : stream) {
-
+        for (Marriage marriage : marriages.getInputStream()) {
             marriageMtree.add(marriage);
         }
     }
 
     /**
-     * Output number of matches between births and marriages in csv format.
+     * Try and form families from Marriage M Tree data_array
      */
-    private void outputRangeSearchMatchesBetweenBirthsAndMarriages() {
+    private void formFamilies() {
 
         IInputStream<BirthFamilyGT> stream;
         try {
@@ -83,15 +89,29 @@ public class KilmarnockMTreeBirthMarriageRangeCSVGenerator extends KilmarnockExp
             marriage_query.put(Marriage.MARRIAGE_MONTH, b.getString(BirthFamilyGT.PARENTS_MONTH_OF_MARRIAGE));
             marriage_query.put(Marriage.MARRIAGE_YEAR, b.getString(BirthFamilyGT.PARENTS_YEAR_OF_MARRIAGE));
 
-            for (int range = 0; range < RANGE_MAX; ) {
+            DataDistance<Marriage> result = marriageMtree.nearestNeighbour(marriage_query);
 
-                List<DataDistance<Marriage>> results = marriageMtree.rangeSearch(marriage_query, range++);
-                System.out.print(results.size());
-                if (range != RANGE_MAX) {
-                    System.out.print(",");
-                }
+            if (result.distance < DISTANCE_THRESHOLD) {
+                addBirthToMap(person_to_family_map, result.value.getId(), b); // used the marriage id as a unique identifier.
             }
-            System.out.println();
+        }
+    }
+
+    /**
+     * Adds a birth record to a family map.
+     *
+     * @param map          the map to which the record should be added
+     * @param birth_record the record to add to the map
+     */
+    private void addBirthToMap(Map<Long, Family> map, Long key, BirthFamilyGT birth_record) {
+
+        if (map.containsKey(key)) { // have already seen a member of this family - so just add the birth to the family map
+            // could check here to ensure parents are the same etc.
+            Family f = map.get(key);
+            f.siblings.add(birth_record);
+        } else { // a new family we have not seen before
+            Family new_family = new Family(birth_record);
+            map.put(key, new_family);
         }
     }
 
@@ -103,15 +123,13 @@ public class KilmarnockMTreeBirthMarriageRangeCSVGenerator extends KilmarnockExp
 
         if (args.length >= ARG_NAMES.length) {
 
-            String births_source_path = args[0];
-            String deaths_source_path = args[1];
-            String marriages_source_path = args[2];
+            String store_path = args[0];
+            String repo_name = args[1];
 
-            KilmarnockMTreeBirthMarriageRangeCSVGenerator matcher = new KilmarnockMTreeBirthMarriageRangeCSVGenerator();
+            MTreeBirthMarriageThresholdNNTruthChecker matcher = new MTreeBirthMarriageThresholdNNTruthChecker(store_path,repo_name);
 
             experiment.printDescription();
 
-            matcher.ingestRecords(births_source_path, deaths_source_path, marriages_source_path);
             matcher.compute();
 
         } else {

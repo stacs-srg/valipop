@@ -2,7 +2,7 @@ package uk.ac.standrews.cs.digitising_scotland.linkage.experiments.distances;
 
 import uk.ac.standrews.cs.digitising_scotland.linkage.experiments.Experiment;
 import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.BirthFamilyGT;
-import uk.ac.standrews.cs.digitising_scotland.linkage.resolve.KilmarnockExperiment;
+import uk.ac.standrews.cs.digitising_scotland.linkage.resolve.file_based.KilmarnockExperiment;
 import uk.ac.standrews.cs.storr.impl.exceptions.BucketException;
 
 import java.lang.invoke.MethodHandles;
