@@ -1,4 +1,4 @@
-package uk.ac.standrews.cs.digitising_scotland.linkage.resolve;
+package uk.ac.standrews.cs.digitising_scotland.linkage.resolve.repo_based;
 
 import uk.ac.standrews.cs.digitising_scotland.linkage.factory.BirthFactory;
 import uk.ac.standrews.cs.digitising_scotland.linkage.factory.DeathFactory;
@@ -6,6 +6,7 @@ import uk.ac.standrews.cs.digitising_scotland.linkage.factory.MarriageFactory;
 import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.BirthFamilyGT;
 import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.Death;
 import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.Marriage;
+import uk.ac.standrews.cs.digitising_scotland.linkage.resolve.Family;
 import uk.ac.standrews.cs.digitising_scotland.util.Metrics;
 import uk.ac.standrews.cs.digitising_scotland.util.TimeManipulation;
 import uk.ac.standrews.cs.storr.impl.StoreFactory;
