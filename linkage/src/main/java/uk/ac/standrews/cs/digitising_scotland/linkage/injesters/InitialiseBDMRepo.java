@@ -17,16 +17,20 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 /**
- * Module to initialise the store ready for injesting of BBM records.
+ * Module to initialise the store ready for ingesting of birth/death/marriage records.
  * Created by al on 22/3/2017.
+ *
  * @author al@st-andrews.ac.uk
  */
-
 public class InitialiseBDMRepo {
 
-    private static final String births_name = "birth_records";              // Name of bucket containing birth records (inputs).
-    private static final String marriages_name = "marriage_records";        // Name of bucket containing marriage records (inputs).
-    private static final String deaths_name = "death_records";              // Name of bucket containing death records (inputs).
+    public static final String BIRTHS_BUCKET_NAME = "birth_records";              // Name of bucket containing birth records (inputs).
+    public static final String DEATHS_BUCKET_NAME = "death_records";              // Name of bucket containing death records (inputs).
+    public static final String MARRIAGES_BUCKET_NAME = "marriage_records";        // Name of bucket containing marriage records (inputs).
+
+    public static final String BIRTH_TYPE_NAME = "birth";
+    public static final String DEATH_TYPE_NAME = "death";
+    public static final String MARRIAGE_TYPE_NAME = "marriage";
 
     // Bucket declarations
 
@@ -34,32 +38,31 @@ public class InitialiseBDMRepo {
     protected IBucket<Marriage> marriages;                                  // Bucket containing marriage records (inputs).
     protected IBucket<Death> deaths;                                        // Bucket containing death records (inputs).
 
-    private static final String[] ARG_NAMES = {"store_path","repo_name"};
+    private static final String[] ARG_NAMES = {"store_path", "repo_name"};
 
+    public InitialiseBDMRepo(String store_path, String repo_name) throws StoreException, IOException, RepositoryException {
 
-    public InitialiseBDMRepo( String store_path, String repo_name ) throws StoreException, IOException, RepositoryException {
-
-        System.out.println( "Creating BDM Repo named " + store_path );
-        Path p = Paths.get( store_path);
-        if( ! p.toFile().isDirectory() ) {
-            throw new RepositoryException( "Illegal store root specified");
+        System.out.println("Creating BDM Repo named " + store_path);
+        Path p = Paths.get(store_path);
+        if (!p.toFile().isDirectory()) {
+            throw new RepositoryException("Illegal store root specified");
         }
-        StoreFactory.setStorePath( p );
+        StoreFactory.setStorePath(p);
         IStore store = StoreFactory.getStore();
 
         IRepository input_repo = store.makeRepository(repo_name);
 
         TypeFactory type_factory = TypeFactory.getInstance();
 
-        IReferenceType birthType = type_factory.createType(BirthFamilyGT.class, "birth");
-        IReferenceType deathType = type_factory.createType(Death.class, "death");
-        IReferenceType marriageType = type_factory.createType(Marriage.class, "marriage");
+        IReferenceType birthType = type_factory.containsKey(BIRTH_TYPE_NAME) ? type_factory.typeWithName(BIRTH_TYPE_NAME) : type_factory.createType(BirthFamilyGT.class, BIRTH_TYPE_NAME);
+        IReferenceType deathType = type_factory.containsKey(DEATH_TYPE_NAME) ? type_factory.typeWithName(DEATH_TYPE_NAME) : type_factory.createType(Death.class, DEATH_TYPE_NAME);
+        IReferenceType marriageType = type_factory.containsKey(MARRIAGE_TYPE_NAME) ? type_factory.typeWithName(MARRIAGE_TYPE_NAME) : type_factory.createType(Marriage.class, MARRIAGE_TYPE_NAME);
 
-        births = input_repo.makeBucket(births_name, BucketKind.DIRECTORYBACKED, new BirthFactory(birthType.getId()));
-        deaths = input_repo.makeBucket(deaths_name, BucketKind.DIRECTORYBACKED, new DeathFactory(deathType.getId()));
-        marriages = input_repo.makeBucket(marriages_name, BucketKind.DIRECTORYBACKED, new MarriageFactory(marriageType.getId()));
+        births = input_repo.makeBucket(BIRTHS_BUCKET_NAME, BucketKind.DIRECTORYBACKED, new BirthFactory(birthType.getId()));
+        deaths = input_repo.makeBucket(DEATHS_BUCKET_NAME, BucketKind.DIRECTORYBACKED, new DeathFactory(deathType.getId()));
+        marriages = input_repo.makeBucket(MARRIAGES_BUCKET_NAME, BucketKind.DIRECTORYBACKED, new MarriageFactory(marriageType.getId()));
 
-        System.out.println( "BDM Repo " + repo_name + " successfully initialised" );
+        System.out.println("BDM Repo " + repo_name + " successfully initialised");
     }
 
     //***********************************************************************************
@@ -75,12 +78,10 @@ public class InitialiseBDMRepo {
 
             String store_path = args[0];
             String repo_name = args[1];
-            new InitialiseBDMRepo( store_path,repo_name );
+            new InitialiseBDMRepo(store_path, repo_name);
 
         } else {
             usage();
         }
     }
-
-
 }
