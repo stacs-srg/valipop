@@ -52,11 +52,11 @@ public class InitialiseBDMRepo {
 
         IRepository input_repo = store.makeRepository(repo_name);
 
-        TypeFactory type_factory = TypeFactory.getInstance();
+        TypeFactory type_factory = store.getTypeFactory();
 
-        IReferenceType birthType = type_factory.containsKey(BIRTH_TYPE_NAME) ? type_factory.typeWithName(BIRTH_TYPE_NAME) : type_factory.createType(BirthFamilyGT.class, BIRTH_TYPE_NAME);
-        IReferenceType deathType = type_factory.containsKey(DEATH_TYPE_NAME) ? type_factory.typeWithName(DEATH_TYPE_NAME) : type_factory.createType(Death.class, DEATH_TYPE_NAME);
-        IReferenceType marriageType = type_factory.containsKey(MARRIAGE_TYPE_NAME) ? type_factory.typeWithName(MARRIAGE_TYPE_NAME) : type_factory.createType(Marriage.class, MARRIAGE_TYPE_NAME);
+        IReferenceType birthType = type_factory.containsKey(BIRTH_TYPE_NAME) ? type_factory.getTypeWithName(BIRTH_TYPE_NAME) : type_factory.createType(BirthFamilyGT.class, BIRTH_TYPE_NAME);
+        IReferenceType deathType = type_factory.containsKey(DEATH_TYPE_NAME) ? type_factory.getTypeWithName(DEATH_TYPE_NAME) : type_factory.createType(Death.class, DEATH_TYPE_NAME);
+        IReferenceType marriageType = type_factory.containsKey(MARRIAGE_TYPE_NAME) ? type_factory.getTypeWithName(MARRIAGE_TYPE_NAME) : type_factory.createType(Marriage.class, MARRIAGE_TYPE_NAME);
 
         births = input_repo.makeBucket(BIRTHS_BUCKET_NAME, BucketKind.DIRECTORYBACKED, new BirthFactory(birthType.getId()));
         deaths = input_repo.makeBucket(DEATHS_BUCKET_NAME, BucketKind.DIRECTORYBACKED, new DeathFactory(deathType.getId()));

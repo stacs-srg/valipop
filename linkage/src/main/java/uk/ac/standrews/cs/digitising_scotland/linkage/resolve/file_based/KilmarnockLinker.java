@@ -137,7 +137,7 @@ public class KilmarnockLinker {
 
     private void initialiseTypes() {
 
-        TypeFactory tf = TypeFactory.getInstance();
+        TypeFactory tf = store.getTypeFactory();
 
         birthType = tf.createType(BirthFamilyGT.class, "birth");
         deathType = tf.createType(Death.class, "death");

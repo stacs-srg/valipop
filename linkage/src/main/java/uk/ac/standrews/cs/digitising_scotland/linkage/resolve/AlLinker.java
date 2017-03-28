@@ -1,10 +1,10 @@
 package uk.ac.standrews.cs.digitising_scotland.linkage.resolve;
 
 import org.json.JSONException;
-import uk.ac.standrews.cs.digitising_scotland.linkage.importers.barSeparated.BarSeparatedEventImporter;
-import uk.ac.standrews.cs.digitising_scotland.linkage.importers.RecordFormatException;
 import uk.ac.standrews.cs.digitising_scotland.linkage.blocking.FFNFLNMFNMMNPOMDOMOverActor;
 import uk.ac.standrews.cs.digitising_scotland.linkage.factory.*;
+import uk.ac.standrews.cs.digitising_scotland.linkage.importers.RecordFormatException;
+import uk.ac.standrews.cs.digitising_scotland.linkage.importers.barSeparated.BarSeparatedEventImporter;
 import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.*;
 import uk.ac.standrews.cs.digitising_scotland.util.ErrorHandling;
 import uk.ac.standrews.cs.storr.impl.LXP;
@@ -124,7 +124,7 @@ public class AlLinker {
 
     private void initialiseTypes() {
 
-        TypeFactory tf = TypeFactory.getInstance();
+        TypeFactory tf = store.getTypeFactory();
 
         birthType = tf.createType(BirthFamilyGT.class, "birth");
         deathType = tf.createType(Death.class, "death");
