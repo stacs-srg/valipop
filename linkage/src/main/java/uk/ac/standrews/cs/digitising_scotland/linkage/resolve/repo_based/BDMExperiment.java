@@ -10,7 +10,7 @@ import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.Marriage;
 import uk.ac.standrews.cs.digitising_scotland.linkage.resolve.Family;
 import uk.ac.standrews.cs.digitising_scotland.util.Metrics;
 import uk.ac.standrews.cs.digitising_scotland.util.TimeManipulation;
-import uk.ac.standrews.cs.storr.impl.StoreFactory;
+import uk.ac.standrews.cs.storr.impl.Store;
 import uk.ac.standrews.cs.storr.impl.TypeFactory;
 import uk.ac.standrews.cs.storr.impl.exceptions.BucketException;
 import uk.ac.standrews.cs.storr.impl.exceptions.RepositoryException;
@@ -36,17 +36,15 @@ public abstract class BDMExperiment {
 
     protected Map<Long, Family> person_to_family_map = new HashMap<>();     // Maps from person id to family.
 
-    public BDMExperiment( String store_path, String repo_name ) throws StoreException, IOException, RepositoryException {
+    public BDMExperiment(String store_path, String repo_name) throws StoreException, IOException, RepositoryException {
 
-        Path p = Paths.get( store_path );
-        if( ! p.toFile().isDirectory() ) {
-            throw new RepositoryException( "Illegal store root specified");
+        Path p = Paths.get(store_path);
+        if (!p.toFile().isDirectory()) {
+            throw new RepositoryException("Illegal store root specified");
         }
-        StoreFactory.setStorePath( p );
-        IStore store = StoreFactory.getStore();
 
+        IStore store = new Store(p);
         IRepository input_repo = store.getRepository(repo_name);
-
         TypeFactory type_factory = store.getTypeFactory();
 
         IReferenceType birthType = type_factory.getTypeWithName(InitialiseBDMRepo.BIRTH_TYPE_NAME);
@@ -63,7 +61,7 @@ public abstract class BDMExperiment {
         printFamilies(births, person_to_family_map);
     }
 
-    public void printLinkageStats() throws BucketException {
+    void printLinkageStats() throws BucketException {
 
         printLinkageStats(printLinkageStats(loadFamilyLinkResults(births, person_to_family_map)));
     }
@@ -103,7 +101,7 @@ public abstract class BDMExperiment {
         return loadBirths(Integer.MAX_VALUE);
     }
 
-    protected Set<BirthFamilyGT> loadBirths(int number_of_births_to_process) throws BucketException {
+    private Set<BirthFamilyGT> loadBirths(int number_of_births_to_process) throws BucketException {
 
         Set<BirthFamilyGT> birth_set = new HashSet<>();
 
@@ -140,7 +138,7 @@ public abstract class BDMExperiment {
 
             Family family = person_to_family_map.get(birth_record.getId());
 
-            System.out.println(( family != null ? family.id : "" ) + "\t" + birth_record.getString(BirthFamilyGT.FAMILY) + "\t" + birth_record.getString(BirthFamilyGT.ORIGINAL_ID) + "\t" + birth_record.getString(BirthFamilyGT.FORENAME) + "\t" + birth_record.getString(BirthFamilyGT.SURNAME) + "\t" + birth_record.getDOB() + "\t" + birth_record.getPlaceOfMarriage() + "\t" + birth_record.getDateOfMarriage() + "\t" + birth_record.getFathersForename() + "\t" + birth_record.getFathersSurname() + "\t" + birth_record.getMothersForename() + "\t" + birth_record.getMothersMaidenSurname());
+            System.out.println((family != null ? family.id : "") + "\t" + birth_record.getString(BirthFamilyGT.FAMILY) + "\t" + birth_record.getString(BirthFamilyGT.ORIGINAL_ID) + "\t" + birth_record.getString(BirthFamilyGT.FORENAME) + "\t" + birth_record.getString(BirthFamilyGT.SURNAME) + "\t" + birth_record.getDOB() + "\t" + birth_record.getPlaceOfMarriage() + "\t" + birth_record.getDateOfMarriage() + "\t" + birth_record.getFathersForename() + "\t" + birth_record.getFathersSurname() + "\t" + birth_record.getMothersForename() + "\t" + birth_record.getMothersMaidenSurname());
         }
     }
 
@@ -226,11 +224,11 @@ public abstract class BDMExperiment {
     private static void updateLinkageCounts(LinkageCounts linkage_counts, FamilyLinkResult result1, FamilyLinkResult result2) {
 
         boolean real_families_same = present(result1.real_family_id)
-                                            && present(result2.real_family_id)
-                                            && result1.real_family_id.equals(result2.real_family_id);
+                && present(result2.real_family_id)
+                && result1.real_family_id.equals(result2.real_family_id);
         boolean assigned_families_same = present(result1.assigned_family_id)
-                                            && present(result2.assigned_family_id)
-                                            && result1.assigned_family_id.equals(result2.assigned_family_id);
+                && present(result2.assigned_family_id)
+                && result1.assigned_family_id.equals(result2.assigned_family_id);
 
         if (assigned_families_same) {
 

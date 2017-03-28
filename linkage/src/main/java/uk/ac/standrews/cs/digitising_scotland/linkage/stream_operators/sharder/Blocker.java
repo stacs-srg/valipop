@@ -1,6 +1,8 @@
 package uk.ac.standrews.cs.digitising_scotland.linkage.stream_operators.sharder;
 
-import uk.ac.standrews.cs.nds.util.*;
+import uk.ac.standrews.cs.nds.util.Diagnostic;
+import uk.ac.standrews.cs.nds.util.DiagnosticLevel;
+import uk.ac.standrews.cs.nds.util.ErrorHandling;
 import uk.ac.standrews.cs.storr.impl.exceptions.BucketException;
 import uk.ac.standrews.cs.storr.impl.exceptions.NoSuitableBucketException;
 import uk.ac.standrews.cs.storr.impl.exceptions.RepositoryException;
@@ -13,7 +15,7 @@ import uk.ac.standrews.cs.storr.interfaces.*;
 public abstract class Blocker<T extends ILXP> implements IBlocker<T> {
 
     private final IInputStream<T> input;
-    private final IRepository output_repo;
+    protected final IRepository output_repo;
     private ILXPFactory<T> factory;
 
     /**

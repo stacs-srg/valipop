@@ -10,7 +10,7 @@ import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.*;
 import uk.ac.standrews.cs.digitising_scotland.util.ErrorHandling;
 import uk.ac.standrews.cs.digitising_scotland.util.MTree.MTree;
 import uk.ac.standrews.cs.storr.impl.LXP;
-import uk.ac.standrews.cs.storr.impl.StoreFactory;
+import uk.ac.standrews.cs.storr.impl.Store;
 import uk.ac.standrews.cs.storr.impl.TypeFactory;
 import uk.ac.standrews.cs.storr.impl.exceptions.BucketException;
 import uk.ac.standrews.cs.storr.impl.exceptions.RepositoryException;
@@ -98,16 +98,13 @@ public abstract class KilmarnockBirthMarriageMTreeMatcher {
 
         System.out.println("Ingesting");
         ingestBDMRecords(births_source_path, deaths_source_path, marriages_source_path);
-        //        checkBDMRecords();
-
     }
 
     private void initialise() throws StoreException, IOException, RepositoryException, RecordFormatException, JSONException {
 
         Path store_path = Files.createTempDirectory(null);
 
-        StoreFactory.setStorePath(store_path);
-        store = StoreFactory.getStore();
+        store = new Store(store_path);
 
         System.out.println("Store path = " + store_path);
 

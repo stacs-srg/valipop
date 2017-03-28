@@ -3,7 +3,6 @@ package uk.ac.standrews.cs.digitising_scotland.linkage.blocking;
 import uk.ac.standrews.cs.digitising_scotland.linkage.factory.BirthFactory;
 import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.BirthFamilyGT;
 import uk.ac.standrews.cs.digitising_scotland.util.ErrorHandling;
-import uk.ac.standrews.cs.storr.impl.StoreFactory;
 import uk.ac.standrews.cs.storr.impl.exceptions.BucketException;
 import uk.ac.standrews.cs.storr.impl.exceptions.KeyNotFoundException;
 import uk.ac.standrews.cs.storr.impl.exceptions.RepositoryException;
@@ -21,7 +20,7 @@ public class FNLFFMFOverBirths extends AbstractBlocker<BirthFamilyGT> {
 
     public FNLFFMFOverBirths(final IBucket<BirthFamilyGT> birthsBucket, final IRepository output_repo) throws BucketException, RepositoryException, IOException {
 
-        super(birthsBucket.getInputStream(), output_repo, new BirthFactory(StoreFactory.getStore().getTypeFactory().getTypeWithName("BirthFamilyGT").getId()));
+        super(birthsBucket.getInputStream(), output_repo, new BirthFactory(output_repo.getStore().getTypeFactory().getTypeWithName("BirthFamilyGT").getId()));
     }
 
     @Override
