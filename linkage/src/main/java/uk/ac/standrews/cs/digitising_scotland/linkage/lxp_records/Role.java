@@ -284,14 +284,11 @@ public class Role extends LXP {
 
     public ILXP getOriginalRecord() {
 
-        String serialised = getString(ORIGINAL_RECORD);
-        StoreReference ref = new StoreReference(serialised);
         try {
-            return ref.getReferend();
+            return new StoreReference(getString(ORIGINAL_RECORD), getRepository().getStore()).getReferend();
         }
         catch (BucketException e) {
-            ErrorHandling.error("Cannot deference: " + serialised);
-            return null; // should not reach
+            throw new StoreException(e);
         }
     }
 

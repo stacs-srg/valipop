@@ -6,7 +6,7 @@ import uk.ac.standrews.cs.digitising_scotland.linkage.factory.MarriageFactory;
 import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.BirthFamilyGT;
 import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.Death;
 import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.Marriage;
-import uk.ac.standrews.cs.storr.impl.StoreFactory;
+import uk.ac.standrews.cs.storr.impl.Store;
 import uk.ac.standrews.cs.storr.impl.TypeFactory;
 import uk.ac.standrews.cs.storr.impl.exceptions.RepositoryException;
 import uk.ac.standrews.cs.storr.impl.exceptions.StoreException;
@@ -43,15 +43,14 @@ public class InitialiseBDMRepo {
     public InitialiseBDMRepo(String store_path, String repo_name) throws StoreException, IOException, RepositoryException {
 
         System.out.println("Creating BDM Repo named " + store_path);
+
         Path p = Paths.get(store_path);
         if (!p.toFile().isDirectory()) {
             throw new RepositoryException("Illegal store root specified");
         }
-        StoreFactory.setStorePath(p);
-        IStore store = StoreFactory.getStore();
 
+        IStore store = new Store(p);
         IRepository input_repo = store.makeRepository(repo_name);
-
         TypeFactory type_factory = store.getTypeFactory();
 
         IReferenceType birthType = type_factory.containsKey(BIRTH_TYPE_NAME) ? type_factory.getTypeWithName(BIRTH_TYPE_NAME) : type_factory.createType(BirthFamilyGT.class, BIRTH_TYPE_NAME);

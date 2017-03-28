@@ -8,10 +8,12 @@ import uk.ac.standrews.cs.digitising_scotland.linkage.importers.barSeparated.Bar
 import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.*;
 import uk.ac.standrews.cs.digitising_scotland.util.ErrorHandling;
 import uk.ac.standrews.cs.storr.impl.LXP;
-import uk.ac.standrews.cs.storr.impl.StoreFactory;
+import uk.ac.standrews.cs.storr.impl.Store;
 import uk.ac.standrews.cs.storr.impl.StoreReference;
 import uk.ac.standrews.cs.storr.impl.TypeFactory;
-import uk.ac.standrews.cs.storr.impl.exceptions.*;
+import uk.ac.standrews.cs.storr.impl.exceptions.BucketException;
+import uk.ac.standrews.cs.storr.impl.exceptions.RepositoryException;
+import uk.ac.standrews.cs.storr.impl.exceptions.StoreException;
 import uk.ac.standrews.cs.storr.interfaces.*;
 
 import java.io.IOException;
@@ -98,13 +100,10 @@ public class AlLinker {
         System.out.println("Finished");
     }
 
-
     private void initialise() throws StoreException, IOException, RepositoryException, RecordFormatException, JSONException {
 
         Path store_path = Files.createTempDirectory(null);
-
-        StoreFactory.setStorePath(store_path);
-        store = StoreFactory.getStore();
+        store = new Store(store_path);
 
         System.out.println( "Store path = " + store_path );
 
@@ -401,7 +400,7 @@ public class AlLinker {
 
         for (BirthFamilyGT birth_record : stream) {
 
-            StoreReference<BirthFamilyGT> birth_record_ref = new StoreReference<BirthFamilyGT>(input_repo, bucket, birth_record);
+            StoreReference<BirthFamilyGT> birth_record_ref = new StoreReference<BirthFamilyGT>(input_repo, bucket, birth_record, store);
 
             Role child = null;
             Role father = null;
@@ -455,7 +454,7 @@ public class AlLinker {
 
         for (Death death_record : stream) {
 
-            StoreReference<Death> death_record_ref = new StoreReference<Death>(input_repo, bucket, death_record);
+            StoreReference<Death> death_record_ref = new StoreReference<Death>(input_repo, bucket, death_record, store);
 
             Role child = null;
             Role father = null;
@@ -524,7 +523,7 @@ public class AlLinker {
 //                System.out.println( "Did not find oid in oids list for oid: " + marriage_record.getId() + ":" + marriage_record);
 //            }
 
-            StoreReference<Marriage> marriage_record_ref = new StoreReference<Marriage>(input_repo.getName(), bucket.getName(), marriage_record.getId());
+            StoreReference<Marriage> marriage_record_ref = new StoreReference<Marriage>(input_repo.getName(), bucket.getName(), marriage_record.getId(), store);
 
             Role bride = null;
             Role groom = null;
@@ -604,11 +603,10 @@ public class AlLinker {
     private void createRelationship(Role subject, Role object, Relationship.relationship_kind relationship , String evidence) {
 
         if( subject == null || object == null ) {
-//            ErrorHandling.error( "createRelationship passed null Role for (" + relationship.name() + ") subject: " + subject + " object: " + object );
             return;
         }
-        StoreReference<Role> subject_ref = new StoreReference<Role>(role_repo.getName(), roles.getName(), subject.getId());
-        StoreReference<Role> object_ref = new StoreReference<Role>(role_repo.getName(), roles.getName(), object.getId());
+        StoreReference<Role> subject_ref = new StoreReference<Role>(role_repo.getName(), roles.getName(), subject.getId(), store);
+        StoreReference<Role> object_ref = new StoreReference<Role>(role_repo.getName(), roles.getName(), object.getId(), store);
 
         Relationship r = null;
         try {
@@ -621,12 +619,7 @@ public class AlLinker {
         }
     }
 
-    /**
-     * *****************************
-     * *********************************************************************************
-     */
-
-    public static void main(String[] args) throws Exception, KeyNotFoundException, TypeMismatchFoundException, IllegalKeyException {
+    public static void main(String[] args) throws Exception {
 
         String births_source_path =    "/Users/al/Documents/intelliJ/BDMSet1/birth_records.txt";
         String deaths_source_path =    "/Users/al/Documents/intelliJ/BDMSet1/death_records.txt";
@@ -634,5 +627,4 @@ public class AlLinker {
 
         new AlLinker(births_source_path, deaths_source_path, marriages_source_path);
     }
-
 }

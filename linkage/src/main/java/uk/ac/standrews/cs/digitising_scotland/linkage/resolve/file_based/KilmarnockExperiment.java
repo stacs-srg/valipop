@@ -13,7 +13,7 @@ import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.Marriage;
 import uk.ac.standrews.cs.digitising_scotland.linkage.resolve.Family;
 import uk.ac.standrews.cs.digitising_scotland.util.Metrics;
 import uk.ac.standrews.cs.digitising_scotland.util.TimeManipulation;
-import uk.ac.standrews.cs.storr.impl.StoreFactory;
+import uk.ac.standrews.cs.storr.impl.Store;
 import uk.ac.standrews.cs.storr.impl.TypeFactory;
 import uk.ac.standrews.cs.storr.impl.exceptions.BucketException;
 import uk.ac.standrews.cs.storr.impl.exceptions.RepositoryException;
@@ -49,8 +49,7 @@ public abstract class KilmarnockExperiment {
 
         Path store_path = Files.createTempDirectory(null);
 
-        StoreFactory.setStorePath(store_path);
-        IStore store = StoreFactory.getStore();
+        IStore store = new Store(store_path);
 
         IRepository input_repo = store.makeRepository(input_repo_name);
 
