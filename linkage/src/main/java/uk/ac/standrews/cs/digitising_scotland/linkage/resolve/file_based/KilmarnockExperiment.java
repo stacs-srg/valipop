@@ -54,7 +54,7 @@ public abstract class KilmarnockExperiment {
 
         IRepository input_repo = store.makeRepository(input_repo_name);
 
-        TypeFactory type_factory = TypeFactory.getInstance();
+        TypeFactory type_factory = store.getTypeFactory();
 
         IReferenceType birthType = type_factory.createType(BirthFamilyGT.class, "birth");
         IReferenceType deathType = type_factory.createType(Death.class, "death");

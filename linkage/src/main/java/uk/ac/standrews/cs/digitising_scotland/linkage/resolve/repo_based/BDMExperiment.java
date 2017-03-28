@@ -45,13 +45,13 @@ public abstract class BDMExperiment {
         StoreFactory.setStorePath( p );
         IStore store = StoreFactory.getStore();
 
-        IRepository input_repo = store.getRepo(repo_name);
+        IRepository input_repo = store.getRepository(repo_name);
 
-        TypeFactory type_factory = TypeFactory.getInstance();
+        TypeFactory type_factory = store.getTypeFactory();
 
-        IReferenceType birthType = type_factory.typeWithName(InitialiseBDMRepo.BIRTH_TYPE_NAME);
-        IReferenceType deathType = type_factory.typeWithName(InitialiseBDMRepo.DEATH_TYPE_NAME);
-        IReferenceType marriageType = type_factory.typeWithName(InitialiseBDMRepo.MARRIAGE_TYPE_NAME);
+        IReferenceType birthType = type_factory.getTypeWithName(InitialiseBDMRepo.BIRTH_TYPE_NAME);
+        IReferenceType deathType = type_factory.getTypeWithName(InitialiseBDMRepo.DEATH_TYPE_NAME);
+        IReferenceType marriageType = type_factory.getTypeWithName(InitialiseBDMRepo.MARRIAGE_TYPE_NAME);
 
         births = input_repo.getBucket(InitialiseBDMRepo.BIRTHS_BUCKET_NAME, new BirthFactory(birthType.getId()));
         deaths = input_repo.getBucket(InitialiseBDMRepo.DEATHS_BUCKET_NAME, new DeathFactory(deathType.getId()));

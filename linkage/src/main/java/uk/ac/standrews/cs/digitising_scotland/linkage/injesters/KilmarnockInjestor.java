@@ -63,13 +63,13 @@ public class KilmarnockInjestor {
         StoreFactory.setStorePath( p );
         IStore store = StoreFactory.getStore();
 
-        IRepository input_repo = store.getRepo(repo_name);
+        IRepository input_repo = store.getRepository(repo_name);
 
-        TypeFactory type_factory = TypeFactory.getInstance();
+        TypeFactory type_factory = store.getTypeFactory();
 
-        IReferenceType birthType = type_factory.typeWithName("birth");
-        IReferenceType deathType = type_factory.typeWithName("death");
-        IReferenceType marriageType = type_factory.typeWithName("marriage");
+        IReferenceType birthType = type_factory.getTypeWithName("birth");
+        IReferenceType deathType = type_factory.getTypeWithName("death");
+        IReferenceType marriageType = type_factory.getTypeWithName("marriage");
 
         births = input_repo.getBucket(births_name, new BirthFactory(birthType.getId()));
         deaths = input_repo.getBucket(deaths_name, new DeathFactory(deathType.getId()));
