@@ -70,8 +70,7 @@ public class Role extends LXP {
             put(ROLE, role.name());
             put(ORIGINAL_RECORD, original_record_ref.toString());
             put(ORIGINAL_RECORD_TYPE, original_record_type);
-        }
-        catch (IllegalKeyException e) {
+        } catch (IllegalKeyException e) {
             ErrorHandling.error("Illegal key in OID");
         }
     }
@@ -285,9 +284,8 @@ public class Role extends LXP {
     public ILXP getOriginalRecord() {
 
         try {
-            return new StoreReference(getString(ORIGINAL_RECORD), getRepository().getStore()).getReferend();
-        }
-        catch (BucketException e) {
+            return new StoreReference(getRepository().getStore(), getString(ORIGINAL_RECORD)).getReferend();
+        } catch (BucketException e) {
             throw new StoreException(e);
         }
     }

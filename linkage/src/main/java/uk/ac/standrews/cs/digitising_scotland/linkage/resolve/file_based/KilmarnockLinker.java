@@ -190,8 +190,7 @@ public class KilmarnockLinker {
         IInputStream<BirthFamilyGT> stream = null;
         try {
             stream = births.getInputStream();
-        }
-        catch (BucketException e) {
+        } catch (BucketException e) {
             ErrorHandling.exceptionError(e, "Cannot get stream for Births bucket");
             return;
         }
@@ -207,10 +206,9 @@ public class KilmarnockLinker {
             try {
                 birth_record = (BirthFamilyGT) l;
                 System.out.println("BirthFamilyGT for: " + birth_record.get(BirthFamilyGT.FORENAME) + " " + birth_record.get(BirthFamilyGT.SURNAME) + " m: " + birth_record.get(BirthFamilyGT.MOTHERS_FORENAME) + " " + birth_record.get(BirthFamilyGT.MOTHERS_SURNAME) + " f: " + birth_record.get(BirthFamilyGT.FATHERS_FORENAME) + " " + birth_record
-                                .get(BirthFamilyGT.FATHERS_SURNAME) + " read OK");
+                        .get(BirthFamilyGT.FATHERS_SURNAME) + " read OK");
 
-            }
-            catch (ClassCastException e) {
+            } catch (ClassCastException e) {
                 System.out.println("LXP found (not birth): oid: " + l.getId() + "object: " + l);
                 System.out.println("class of l: " + l.getClass().toString());
             }
@@ -222,8 +220,7 @@ public class KilmarnockLinker {
         IInputStream<Death> stream = null;
         try {
             stream = deaths.getInputStream();
-        }
-        catch (BucketException e) {
+        } catch (BucketException e) {
             ErrorHandling.exceptionError(e, "Cannot get stream for Death bucket");
             return;
         }
@@ -232,7 +229,7 @@ public class KilmarnockLinker {
 
         for (Death death_record : stream) {
             System.out.println("Death for: " + death_record.get(Death.FORENAME) + " " + death_record.get(Death.SURNAME) + " m: " + death_record.get(Death.MOTHERS_FORENAME) + " " + death_record.get(Death.MOTHERS_SURNAME) + " f: " + death_record.get(Death.FATHERS_FORENAME) + " " + death_record
-                            .get(Death.FATHERS_SURNAME) + " read OK");
+                    .get(Death.FATHERS_SURNAME) + " read OK");
         }
     }
 
@@ -241,8 +238,7 @@ public class KilmarnockLinker {
         IInputStream<Marriage> stream = null;
         try {
             stream = marriages.getInputStream();
-        }
-        catch (BucketException e) {
+        } catch (BucketException e) {
             ErrorHandling.exceptionError(e, "Cannot get stream for Death bucket");
             return;
         }
@@ -271,8 +267,7 @@ public class KilmarnockLinker {
         IInputStream<Role> stream = null;
         try {
             stream = roles.getInputStream();
-        }
-        catch (BucketException e) {
+        } catch (BucketException e) {
             ErrorHandling.exceptionError(e, "Cannot get stream for Births bucket");
             return;
         }
@@ -283,8 +278,7 @@ public class KilmarnockLinker {
                 role = (Role) l;
                 System.out.println("Role for person: " + role.getForename() + " " + role.getSurname() + " role: " + role.getRole());
 
-            }
-            catch (ClassCastException e) {
+            } catch (ClassCastException e) {
                 System.out.println("LXP found (not role): oid: " + l.getId() + "object: " + l);
                 System.out.println("class of l: " + l.getClass().toString());
             }
@@ -355,8 +349,7 @@ public class KilmarnockLinker {
                     System.out.println("\t" + birth.toString());
                     children_count++;
                 }
-            }
-            catch (BucketException e) {
+            } catch (BucketException e) {
                 System.out.println("Exception whilst getting stream");
             }
             if (children_count > 1) {
@@ -384,8 +377,7 @@ public class KilmarnockLinker {
                 for (Marriage m : bucket.getInputStream()) {
                     System.out.println("\t" + m.toString());
                 }
-            }
-            catch (BucketException e) {
+            } catch (BucketException e) {
                 System.out.println("Exception whilst getting stream");
             }
         }
@@ -402,8 +394,7 @@ public class KilmarnockLinker {
             for (Marriage m : stream) {
                 System.out.println("\t PPPPPPP " + m.toString());
             }
-        }
-        catch (BucketException | RepositoryException e) {
+        } catch (BucketException | RepositoryException e) {
             System.out.println("Exception whilst getting parents");
         }
 
@@ -434,8 +425,7 @@ public class KilmarnockLinker {
             for (Marriage m : stream) {
                 parents.add(m);
             }
-        }
-        catch (BucketException | RepositoryException e) {
+        } catch (BucketException | RepositoryException e) {
             System.out.println("Exception whilst getting parents");
         }
         return parents;
@@ -458,8 +448,7 @@ public class KilmarnockLinker {
                 for (BirthFamilyGT birth : bucket.getInputStream()) {
                     siblings.add(birth);
                 }
-            }
-            catch (BucketException e) {
+            } catch (BucketException e) {
                 ErrorHandling.exceptionError(e, "Exception whilst getting stream of Roles");
             }
             if (FFNFLNMFNMMNPOMDOM_repo.bucketExists(name)) {
@@ -473,7 +462,7 @@ public class KilmarnockLinker {
      * Try and create a family unit from the blocked data_array
      *
      * @param parents_marriage - a collection of marriage certificates of the potential parents of the family from Marriage blocking
-     * @param children - a collection of Births from SFNLNFFNFLNMFNDoMOverBirth blocking
+     * @param children         - a collection of Births from SFNLNFFNFLNMFNDoMOverBirth blocking
      */
     private void create_family(List<Marriage> parents_marriage, List<BirthFamilyGT> children) {
 
@@ -511,8 +500,7 @@ public class KilmarnockLinker {
                 //    System.out.println( "processed " + subject.get_surname() );
 
             }
-        }
-        catch (BucketException e) {
+        } catch (BucketException e) {
             ErrorHandling.exceptionError(e, "Cannot open role input stream: ");
         }
 
@@ -530,15 +518,14 @@ public class KilmarnockLinker {
         IInputStream<BirthFamilyGT> stream = null;
         try {
             stream = bucket.getInputStream();
-        }
-        catch (BucketException e) {
+        } catch (BucketException e) {
             ErrorHandling.exceptionError(e, "Cannot get stream for Births bucket");
             return;
         }
 
         for (BirthFamilyGT birth_record : stream) {
 
-            StoreReference<BirthFamilyGT> birth_record_ref = new StoreReference<BirthFamilyGT>(input_repo, bucket, birth_record, store);
+            StoreReference<BirthFamilyGT> birth_record_ref = new StoreReference<>(input_repo, bucket, birth_record);
 
             Role child = null;
             Role father = null;
@@ -547,8 +534,7 @@ public class KilmarnockLinker {
             try {
                 child = Role.createPersonFromOwnBirth(birth_record_ref, birthType.getId());
                 role_stream.add(child);
-            }
-            catch (StoreException | BucketException e) {
+            } catch (StoreException | BucketException e) {
                 ErrorHandling.exceptionError(e, "Error adding birth record: " + child);
             }
 
@@ -557,8 +543,7 @@ public class KilmarnockLinker {
                 if (father != null) {
                     role_stream.add(father);
                 }
-            }
-            catch (StoreException | BucketException e) {
+            } catch (StoreException | BucketException e) {
                 ErrorHandling.exceptionError(e, "Error adding birth record: " + father);
             }
 
@@ -567,8 +552,7 @@ public class KilmarnockLinker {
                 if (mother != null) {
                     role_stream.add(mother);
                 }
-            }
-            catch (StoreException | BucketException e) {
+            } catch (StoreException | BucketException e) {
                 ErrorHandling.exceptionError(e, "Error adding birth record: " + mother);
             }
             createRelationship(father, child, Relationship.relationship_kind.fatherof, "Shared certificate1");
@@ -588,15 +572,14 @@ public class KilmarnockLinker {
         IInputStream<Death> stream = null;
         try {
             stream = bucket.getInputStream();
-        }
-        catch (BucketException e) {
+        } catch (BucketException e) {
             ErrorHandling.exceptionError(e, "Cannot get stream for Deaths bucket");
             return;
         }
 
         for (Death death_record : stream) {
 
-            StoreReference<Death> death_record_ref = new StoreReference<Death>(input_repo, bucket, death_record, store);
+            StoreReference<Death> death_record_ref = new StoreReference<>(input_repo, bucket, death_record);
 
             Role child = null;
             Role father = null;
@@ -605,8 +588,7 @@ public class KilmarnockLinker {
             try {
                 child = Role.createPersonFromOwnDeath(death_record_ref, deathType.getId());
                 role_stream.add(child);
-            }
-            catch (StoreException | BucketException e) {
+            } catch (StoreException | BucketException e) {
                 ErrorHandling.exceptionError(e, "Error adding death record: " + child);
             }
 
@@ -615,8 +597,7 @@ public class KilmarnockLinker {
                 if (father != null) {
                     role_stream.add(father);
                 }
-            }
-            catch (StoreException | BucketException e) {
+            } catch (StoreException | BucketException e) {
                 ErrorHandling.exceptionError(e, "Error adding FATHER from death record: " + father);
             }
 
@@ -625,8 +606,7 @@ public class KilmarnockLinker {
                 if (mother != null) {
                     role_stream.add(mother);
                 }
-            }
-            catch (StoreException | BucketException e) {
+            } catch (StoreException | BucketException e) {
                 ErrorHandling.exceptionError(e, "Error adding mother from death record: " + mother);
             }
 
@@ -648,8 +628,7 @@ public class KilmarnockLinker {
         IInputStream<Marriage> stream = null;
         try {
             stream = bucket.getInputStream();
-        }
-        catch (BucketException e) {
+        } catch (BucketException e) {
             ErrorHandling.exceptionError(e, "Cannot get stream for Marriages bucket");
             return;
         }
@@ -660,7 +639,7 @@ public class KilmarnockLinker {
 
             count++;
 
-            StoreReference<Marriage> marriage_record_ref = new StoreReference<>(input_repo.getName(), bucket.getName(), marriage_record.getId(), store);
+            StoreReference<Marriage> marriage_record_ref = new StoreReference<>(store, input_repo.getName(), bucket.getName(), marriage_record.getId());
 
             Role bride = null;
             Role groom = null;
@@ -674,8 +653,7 @@ public class KilmarnockLinker {
                 if (bride != null) {
                     roles_stream.add(bride);
                 }
-            }
-            catch (StoreException | BucketException e) {
+            } catch (StoreException | BucketException e) {
                 ErrorHandling.exceptionError(e, "Error adding bride: " + bride);
             }
 
@@ -684,8 +662,7 @@ public class KilmarnockLinker {
                 if (groom != null) {
                     roles_stream.add(groom);
                 }
-            }
-            catch (StoreException | BucketException e) {
+            } catch (StoreException | BucketException e) {
                 ErrorHandling.exceptionError(e, "Error adding groom: " + groom);
             }
 
@@ -694,8 +671,7 @@ public class KilmarnockLinker {
                 if (gm != null) {
                     roles_stream.add(gm);
                 }
-            }
-            catch (StoreException | BucketException e) {
+            } catch (StoreException | BucketException e) {
                 ErrorHandling.exceptionError(e, "Error adding groom's mother: " + gm);
             }
 
@@ -704,8 +680,7 @@ public class KilmarnockLinker {
                 if (gf != null) {
                     roles_stream.add(gf);
                 }
-            }
-            catch (StoreException | BucketException e) {
+            } catch (StoreException | BucketException e) {
                 ErrorHandling.exceptionError(e, "Error adding groom's FATHER: " + gf);
             }
 
@@ -714,8 +689,7 @@ public class KilmarnockLinker {
                 if (bm != null) {
                     roles_stream.add(bm);
                 }
-            }
-            catch (StoreException | BucketException e) {
+            } catch (StoreException | BucketException e) {
                 ErrorHandling.exceptionError(e, "Error adding bride's mother: " + bm);
             }
             try {
@@ -723,8 +697,7 @@ public class KilmarnockLinker {
                 if (bf != null) {
                     roles_stream.add(bf);
                 }
-            }
-            catch (StoreException | BucketException e) {
+            } catch (StoreException | BucketException e) {
                 ErrorHandling.exceptionError(e, "Error adding bride's FATHER: " + bf);
             }
             createRelationship(bf, bride, Relationship.relationship_kind.fatherof, "Shared certificate5");
@@ -739,28 +712,26 @@ public class KilmarnockLinker {
     /**
      * Create a relationship between the parties and add to the relationship table.
      *
-     * @param subject - the subject
-     * @param object - the object
+     * @param subject      - the subject
+     * @param object       - the object
      * @param relationship - relationship between subject and object
-     * @param evidence - of the relationship
+     * @param evidence     - of the relationship
      */
     private void createRelationship(Role subject, Role object, Relationship.relationship_kind relationship, String evidence) {
 
         if (subject == null || object == null) {
             return;
         }
-        StoreReference<Role> subject_ref = new StoreReference<Role>(role_repo.getName(), roles.getName(), subject.getId(), store);
-        StoreReference<Role> object_ref = new StoreReference<Role>(role_repo.getName(), roles.getName(), object.getId(), store);
+        StoreReference<Role> subject_ref = new StoreReference<>(store, role_repo.getName(), roles.getName(), subject.getId());
+        StoreReference<Role> object_ref = new StoreReference<>(store, role_repo.getName(), roles.getName(), object.getId());
 
         Relationship r = null;
         try {
             r = new Relationship(subject_ref, object_ref, relationship, evidence);
             relationships.makePersistent(r);
-        }
-        catch (StoreException e) {
+        } catch (StoreException e) {
             ErrorHandling.exceptionError(e, "Store Error adding relationship: " + r);
-        }
-        catch (BucketException e) {
+        } catch (BucketException e) {
             ErrorHandling.exceptionError(e, "Bucket Error adding relationship: " + r);
         }
     }

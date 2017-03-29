@@ -84,7 +84,7 @@ public class AlLinker {
         try {
             initialise();
         } catch (StoreException | JSONException | RecordFormatException | RepositoryException | IOException e) {
-            ErrorHandling.exceptionError( e, "Error initialising system");
+            ErrorHandling.exceptionError(e, "Error initialising system");
             return;
         }
         System.out.println("Injesting");
@@ -105,7 +105,7 @@ public class AlLinker {
         Path store_path = Files.createTempDirectory(null);
         store = new Store(store_path);
 
-        System.out.println( "Store path = " + store_path );
+        System.out.println("Store path = " + store_path);
 
         input_repo = store.makeRepository(input_repo_name);
         role_repo = store.makeRepository(role_repo_name);
@@ -118,7 +118,7 @@ public class AlLinker {
         deaths = input_repo.makeBucket(deaths_name, BucketKind.DIRECTORYBACKED, deathFactory);
         marriages = input_repo.makeBucket(marriages_name, BucketKind.DIRECTORYBACKED, marriageFactory);
         roles = role_repo.makeBucket(role_name, BucketKind.DIRECTORYBACKED, roleFactory);
-        relationships = linkage_repo.makeBucket(relationships_name, BucketKind.DIRECTORYBACKED, relationshipFactory );
+        relationships = linkage_repo.makeBucket(relationships_name, BucketKind.DIRECTORYBACKED, relationshipFactory);
     }
 
     private void initialiseTypes() {
@@ -144,6 +144,7 @@ public class AlLinker {
      * Import the birth,death, marriage records
      * Initialises the roles bucket with the roles injected - one record for each person referenced in the original record
      * Initialises the known(100% certain) relationships between roles and stores the relationships in the relationships bucket
+     *
      * @param births_source_path
      * @param deaths_source_path
      * @param marriages_source_path
@@ -157,7 +158,7 @@ public class AlLinker {
             System.out.println("Imported " + count + " birth records");
             count = BarSeparatedEventImporter.importDigitisingScotlandDeaths(deaths, deaths_source_path, deathType);
             System.out.println("Imported " + count + " death records");
-            count = BarSeparatedEventImporter.importDigitisingScotlandMarriages(marriages, marriages_source_path, marriageType, oids );
+            count = BarSeparatedEventImporter.importDigitisingScotlandMarriages(marriages, marriages_source_path, marriageType, oids);
             System.out.println("Imported " + count + " marriage records");
         } catch (RecordFormatException | IOException | BucketException e) {
             ErrorHandling.exceptionError(e, "Error whilst injecting records");
@@ -172,7 +173,7 @@ public class AlLinker {
     }
 
     private void checkBDMRecords() {
-        System.out.println( "Checking" );
+        System.out.println("Checking");
         checkInjestedBirths();
         checkInjestedDeaths();
         checkInjestedMarriages();
@@ -189,22 +190,22 @@ public class AlLinker {
             return;
         }
 
-        System.out.println( "Checking Births" );
+        System.out.println("Checking Births");
 // code should look like this:
 //        for (BirthFamilyGT birth_record : stream) {
 //            System.out.println( "BirthFamilyGT for: " + birth_record.get( BirthFamilyGT.FORENAME ) + " " + birth_record.get( BirthFamilyGT.SURNAME ) + " m: " + birth_record.get( BirthFamilyGT.MOTHERS_FORENAME ) + " " + birth_record.get( BirthFamilyGT.MOTHERS_SURNAME ) + " f: " + birth_record.get( BirthFamilyGT.FATHERS_FORENAME ) + " " + birth_record.get( BirthFamilyGT.FATHERS_SURNAME ) + " read OK");
 //        }
 
-            for (LXP l : stream) {
-                BirthFamilyGT birth_record = null;
-                try {
-                    birth_record = (BirthFamilyGT) l;
-                    System.out.println( "BirthFamilyGT for: " + birth_record.get( BirthFamilyGT.FORENAME ) + " " + birth_record.get( BirthFamilyGT.SURNAME ) + " m: " + birth_record.get( BirthFamilyGT.MOTHERS_FORENAME ) + " " + birth_record.get( BirthFamilyGT.MOTHERS_SURNAME ) + " f: " + birth_record.get( BirthFamilyGT.FATHERS_FORENAME ) + " " + birth_record.get( BirthFamilyGT.FATHERS_SURNAME ) + " read OK");
+        for (LXP l : stream) {
+            BirthFamilyGT birth_record = null;
+            try {
+                birth_record = (BirthFamilyGT) l;
+                System.out.println("BirthFamilyGT for: " + birth_record.get(BirthFamilyGT.FORENAME) + " " + birth_record.get(BirthFamilyGT.SURNAME) + " m: " + birth_record.get(BirthFamilyGT.MOTHERS_FORENAME) + " " + birth_record.get(BirthFamilyGT.MOTHERS_SURNAME) + " f: " + birth_record.get(BirthFamilyGT.FATHERS_FORENAME) + " " + birth_record.get(BirthFamilyGT.FATHERS_SURNAME) + " read OK");
 
-                } catch ( ClassCastException e ) {
-                    System.out.println( "LXP found (not birth): oid: " +  l.getId() + "object: " + l );
-                    System.out.println( "class of l: " + l.getClass().toString() );
-                }
+            } catch (ClassCastException e) {
+                System.out.println("LXP found (not birth): oid: " + l.getId() + "object: " + l);
+                System.out.println("class of l: " + l.getClass().toString());
+            }
 
         }
 
@@ -219,10 +220,10 @@ public class AlLinker {
             return;
         }
 
-        System.out.println( "Checking Deaths" );
+        System.out.println("Checking Deaths");
 
         for (Death death_record : stream) {
-            System.out.println( "Death for: " + death_record.get( Death.FORENAME ) + " " + death_record.get( Death.SURNAME ) + " m: " + death_record.get( Death.MOTHERS_FORENAME ) + " " + death_record.get( Death.MOTHERS_SURNAME ) + " f: " + death_record.get( Death.FATHERS_FORENAME ) + " " + death_record.get( Death.FATHERS_SURNAME ) + " read OK");
+            System.out.println("Death for: " + death_record.get(Death.FORENAME) + " " + death_record.get(Death.SURNAME) + " m: " + death_record.get(Death.MOTHERS_FORENAME) + " " + death_record.get(Death.MOTHERS_SURNAME) + " f: " + death_record.get(Death.FATHERS_FORENAME) + " " + death_record.get(Death.FATHERS_SURNAME) + " read OK");
         }
     }
 
@@ -235,12 +236,12 @@ public class AlLinker {
             return;
         }
 
-        System.out.println( "Checking Marriages" );
+        System.out.println("Checking Marriages");
 
         for (Marriage marriage_record : stream) {
-                System.out.println("Marriage for b: " + marriage_record.get(Marriage.BRIDE_FORENAME) + " " + marriage_record.get(Marriage.BRIDE_SURNAME) + " g: " + marriage_record.get(Marriage.GROOM_FORENAME) + " " + marriage_record.get(Marriage.GROOM_SURNAME));
-                System.out.println("\tbm: " + marriage_record.get(Marriage.BRIDE_MOTHERS_FORENAME) + " " + marriage_record.get(Marriage.BRIDE_MOTHERS_MAIDEN_SURNAME) + " bf: " + marriage_record.get(Marriage.BRIDE_FATHERS_FORENAME) + " " + marriage_record.get(Marriage.BRIDE_FATHERS_SURNAME));
-                System.out.println("\tgm: " + marriage_record.get(Marriage.GROOM_MOTHERS_FORENAME) + " " + marriage_record.get(Marriage.GROOM_MOTHERS_MAIDEN_SURNAME) + " gf: " + marriage_record.get(Marriage.GROOM_FATHERS_FORENAME) + " " + marriage_record.get(Marriage.GROOM_FATHERS_SURNAME));
+            System.out.println("Marriage for b: " + marriage_record.get(Marriage.BRIDE_FORENAME) + " " + marriage_record.get(Marriage.BRIDE_SURNAME) + " g: " + marriage_record.get(Marriage.GROOM_FORENAME) + " " + marriage_record.get(Marriage.GROOM_SURNAME));
+            System.out.println("\tbm: " + marriage_record.get(Marriage.BRIDE_MOTHERS_FORENAME) + " " + marriage_record.get(Marriage.BRIDE_MOTHERS_MAIDEN_SURNAME) + " bf: " + marriage_record.get(Marriage.BRIDE_FATHERS_FORENAME) + " " + marriage_record.get(Marriage.BRIDE_FATHERS_SURNAME));
+            System.out.println("\tgm: " + marriage_record.get(Marriage.GROOM_MOTHERS_FORENAME) + " " + marriage_record.get(Marriage.GROOM_MOTHERS_MAIDEN_SURNAME) + " gf: " + marriage_record.get(Marriage.GROOM_FATHERS_FORENAME) + " " + marriage_record.get(Marriage.GROOM_FATHERS_SURNAME));
         }
     }
 
@@ -259,11 +260,11 @@ public class AlLinker {
             Role role = null;
             try {
                 role = (Role) l;
-                System.out.println( "Role for person: " + role.getForename() + " " + role.getSurname() + " role: " + role.getRole() );
+                System.out.println("Role for person: " + role.getForename() + " " + role.getSurname() + " role: " + role.getRole());
 
-            } catch ( ClassCastException e ) {
-                System.out.println( "LXP found (not role): oid: " +  l.getId() + "object: " + l );
-                System.out.println( "class of l: " + l.getClass().toString() );
+            } catch (ClassCastException e) {
+                System.out.println("LXP found (not role): oid: " + l.getId() + "object: " + l);
+                System.out.println("class of l: " + l.getClass().toString());
             }
 
         }
@@ -295,7 +296,7 @@ public class AlLinker {
 
         Iterator<IBucket<Role>> iter = blocked_role_repo.getIterator(roleFactory);
 
-        while( iter.hasNext() ) {
+        while (iter.hasNext()) {
             IBucket<Role> bucket = iter.next();
 
             System.out.println("Bucket name: " + bucket.getName());
@@ -323,17 +324,18 @@ public class AlLinker {
 
             try {
                 for (Role role : bucket.getInputStream()) {
-                    potential_family.add( role );
+                    potential_family.add(role);
                 }
             } catch (BucketException e) {
                 ErrorHandling.exceptionError(e, "Exception whilst getting stream of Roles");
             }
-            create_family( potential_family );
+            create_family(potential_family);
         }
     }
 
     /**
      * Try and create a family unit from the blocked data_array
+     *
      * @param potential_family - a collection of Roles from SFNLNFFNFLNMFNDoMOverRole blocking
      */
     private void create_family(List<Role> potential_family) {
@@ -349,32 +351,32 @@ public class AlLinker {
      */
     private void unify() {
 
-        System.out.println( "Unifying" );
+        System.out.println("Unifying");
         try {
-            IInputStream<Relationship>  relationship_stream = relationships.getInputStream();
+            IInputStream<Relationship> relationship_stream = relationships.getInputStream();
 
             // Try and find other instances of Role's from relationships that are the same as this one
 
             for (Relationship r : relationship_stream) {
 
-               // Relationship r = null;
-               // try {
+                // Relationship r = null;
+                // try {
                 //    r = (Relationship) l;
-               // } catch ( ClassCastException e ) {
-              //      System.out.println( "class class found: " +l );
-               //     System.out.println( "class of l: " + l.getClass().toString() );
-               // }
-            //    System.out.println( "Relationship is: " + r );
-            // System.out.println( "class of l: " + l.getClass().toString() );
+                // } catch ( ClassCastException e ) {
+                //      System.out.println( "class class found: " +l );
+                //     System.out.println( "class of l: " + l.getClass().toString() );
+                // }
+                //    System.out.println( "Relationship is: " + r );
+                // System.out.println( "class of l: " + l.getClass().toString() );
                 Role subject = r.getSubject();
                 Role object = r.getObject();
                 Relationship.relationship_kind relation = r.getRelationship();
 
-            //    System.out.println( "processed " + subject.get_surname() );
+                //    System.out.println( "processed " + subject.get_surname() );
 
             }
         } catch (BucketException e) {
-            ErrorHandling.exceptionError( e, "Cannot open role input stream: " );
+            ErrorHandling.exceptionError(e, "Cannot open role input stream: ");
         }
 
 
@@ -400,7 +402,7 @@ public class AlLinker {
 
         for (BirthFamilyGT birth_record : stream) {
 
-            StoreReference<BirthFamilyGT> birth_record_ref = new StoreReference<BirthFamilyGT>(input_repo, bucket, birth_record, store);
+            StoreReference<BirthFamilyGT> birth_record_ref = new StoreReference<>(input_repo, bucket, birth_record);
 
             Role child = null;
             Role father = null;
@@ -410,7 +412,7 @@ public class AlLinker {
                 child = Role.createPersonFromOwnBirth(birth_record_ref, birthType.getId());
                 role_stream.add(child);
             } catch (StoreException | BucketException e) {
-                ErrorHandling.exceptionError(e, "Error adding birth record: " + child );
+                ErrorHandling.exceptionError(e, "Error adding birth record: " + child);
             }
 
             try {
@@ -419,7 +421,7 @@ public class AlLinker {
                     role_stream.add(father);
                 }
             } catch (StoreException | BucketException e) {
-                ErrorHandling.exceptionError(e, "Error adding birth record: " + father );
+                ErrorHandling.exceptionError(e, "Error adding birth record: " + father);
             }
 
             try {
@@ -428,10 +430,10 @@ public class AlLinker {
                     role_stream.add(mother);
                 }
             } catch (StoreException | BucketException e) {
-                    ErrorHandling.exceptionError(e, "Error adding birth record: " + mother );
+                ErrorHandling.exceptionError(e, "Error adding birth record: " + mother);
             }
-            createRelationship( father, child, Relationship.relationship_kind.fatherof, "Shared certificate1" );
-            createRelationship( mother, child, Relationship.relationship_kind.motherof, "Shared certificate2" );
+            createRelationship(father, child, Relationship.relationship_kind.fatherof, "Shared certificate1");
+            createRelationship(mother, child, Relationship.relationship_kind.motherof, "Shared certificate2");
         }
     }
 
@@ -441,7 +443,7 @@ public class AlLinker {
      *
      * @param bucket - the bucket from which to take the inputs records
      */
-    private void createRolesFromDeaths(IBucket bucket)  {
+    private void createRolesFromDeaths(IBucket bucket) {
 
         IOutputStream<Role> role_stream = roles.getOutputStream();
         IInputStream<Death> stream = null;
@@ -454,7 +456,7 @@ public class AlLinker {
 
         for (Death death_record : stream) {
 
-            StoreReference<Death> death_record_ref = new StoreReference<Death>(input_repo, bucket, death_record, store);
+            StoreReference<Death> death_record_ref = new StoreReference<>(input_repo, bucket, death_record);
 
             Role child = null;
             Role father = null;
@@ -464,7 +466,7 @@ public class AlLinker {
                 child = Role.createPersonFromOwnDeath(death_record_ref, deathType.getId());
                 role_stream.add(child);
             } catch (StoreException | BucketException e) {
-                ErrorHandling.exceptionError(e, "Error adding death record: " + child );
+                ErrorHandling.exceptionError(e, "Error adding death record: " + child);
             }
 
             try {
@@ -472,8 +474,7 @@ public class AlLinker {
                 if (father != null) {
                     role_stream.add(father);
                 }
-            }
-            catch (StoreException | BucketException e) {
+            } catch (StoreException | BucketException e) {
                 ErrorHandling.exceptionError(e, "Error adding FATHER from death record: " + father);
             }
 
@@ -482,13 +483,12 @@ public class AlLinker {
                 if (mother != null) {
                     role_stream.add(mother);
                 }
-            }
-            catch (StoreException | BucketException e) {
+            } catch (StoreException | BucketException e) {
                 ErrorHandling.exceptionError(e, "Error adding mother from death record: " + mother);
             }
 
-            createRelationship( father, child, Relationship.relationship_kind.fatherof, "Shared certificate3" );
-            createRelationship( mother, child, Relationship.relationship_kind.motherof, "Shared certificate4" );
+            createRelationship(father, child, Relationship.relationship_kind.fatherof, "Shared certificate3");
+            createRelationship(mother, child, Relationship.relationship_kind.motherof, "Shared certificate4");
         }
     }
 
@@ -516,14 +516,7 @@ public class AlLinker {
 
             count++;
 
-//            if( oids.contains(marriage_record.getId() )) {
-//                System.out.println( "Found oid in oids list for oid: " + marriage_record.getId() + ":" + marriage_record);
-//
-//            } else {
-//                System.out.println( "Did not find oid in oids list for oid: " + marriage_record.getId() + ":" + marriage_record);
-//            }
-
-            StoreReference<Marriage> marriage_record_ref = new StoreReference<Marriage>(input_repo.getName(), bucket.getName(), marriage_record.getId(), store);
+            StoreReference<Marriage> marriage_record_ref = new StoreReference<>(store, input_repo.getName(), bucket.getName(), marriage_record.getId());
 
             Role bride = null;
             Role groom = null;
@@ -534,7 +527,7 @@ public class AlLinker {
 
             try {
                 bride = Role.createBrideFromMarriageRecord(marriage_record_ref, marriageType.getId());
-                if( bride != null ) {
+                if (bride != null) {
                     roles_stream.add(bride);
                 }
             } catch (StoreException | BucketException e) {
@@ -543,7 +536,7 @@ public class AlLinker {
 
             try {
                 groom = Role.createGroomFromMarriageRecord(marriage_record_ref, marriageType.getId());
-                if( groom != null ) {
+                if (groom != null) {
                     roles_stream.add(groom);
                 }
             } catch (StoreException | BucketException e) {
@@ -552,7 +545,7 @@ public class AlLinker {
 
             try {
                 gm = Role.createGroomsMotherFromMarriageRecord(marriage_record_ref, marriageType.getId());
-                if( gm != null ) {
+                if (gm != null) {
                     roles_stream.add(gm);
                 }
             } catch (StoreException | BucketException e) {
@@ -561,7 +554,7 @@ public class AlLinker {
 
             try {
                 gf = Role.createGroomsFatherFromMarriageRecord(marriage_record_ref, marriageType.getId());
-                if( gf != null ) {
+                if (gf != null) {
                     roles_stream.add(gf);
                 }
             } catch (StoreException | BucketException e) {
@@ -570,7 +563,7 @@ public class AlLinker {
 
             try {
                 bm = Role.createBridesMotherFromMarriageRecord(marriage_record_ref, marriageType.getId());
-                if( bm != null ) {
+                if (bm != null) {
                     roles_stream.add(bm);
                 }
             } catch (StoreException | BucketException e) {
@@ -578,39 +571,40 @@ public class AlLinker {
             }
             try {
                 bf = Role.createBridesFatherFromMarriageRecord(marriage_record_ref, marriageType.getId());
-                if( bf != null ) {
+                if (bf != null) {
                     roles_stream.add(bf);
                 }
             } catch (StoreException | BucketException e) {
                 ErrorHandling.exceptionError(e, "Error adding bride's FATHER: " + bf);
             }
-            createRelationship( bf, bride, Relationship.relationship_kind.fatherof, "Shared certificate5" );
-            createRelationship( bm, bride, Relationship.relationship_kind.motherof, "Shared certificate6" );
-            createRelationship( gf, groom, Relationship.relationship_kind.fatherof, "Shared certificate7" );
-            createRelationship( gm, groom, Relationship.relationship_kind.motherof, "Shared certificate8" );
+            createRelationship(bf, bride, Relationship.relationship_kind.fatherof, "Shared certificate5");
+            createRelationship(bm, bride, Relationship.relationship_kind.motherof, "Shared certificate6");
+            createRelationship(gf, groom, Relationship.relationship_kind.fatherof, "Shared certificate7");
+            createRelationship(gm, groom, Relationship.relationship_kind.motherof, "Shared certificate8");
         }
 
-        System.out.println( "Processed : " + count + " marriage records" );
+        System.out.println("Processed : " + count + " marriage records");
     }
 
     /**
      * Create a relationship between the parties and add to the relationship table.
-     * @param subject - the subject
-     * @param object - the object
+     *
+     * @param subject      - the subject
+     * @param object       - the object
      * @param relationship - relationship between subject and object
-     * @param evidence - of the relationship
+     * @param evidence     - of the relationship
      */
-    private void createRelationship(Role subject, Role object, Relationship.relationship_kind relationship , String evidence) {
+    private void createRelationship(Role subject, Role object, Relationship.relationship_kind relationship, String evidence) {
 
-        if( subject == null || object == null ) {
+        if (subject == null || object == null) {
             return;
         }
-        StoreReference<Role> subject_ref = new StoreReference<Role>(role_repo.getName(), roles.getName(), subject.getId(), store);
-        StoreReference<Role> object_ref = new StoreReference<Role>(role_repo.getName(), roles.getName(), object.getId(), store);
+        StoreReference<Role> subject_ref = new StoreReference<>(store, role_repo.getName(), roles.getName(), subject.getId());
+        StoreReference<Role> object_ref = new StoreReference<>(store, role_repo.getName(), roles.getName(), object.getId());
 
         Relationship r = null;
         try {
-            r = new Relationship( subject_ref, object_ref,relationship, evidence );
+            r = new Relationship(subject_ref, object_ref, relationship, evidence);
             relationships.makePersistent(r);
         } catch (StoreException e) {
             ErrorHandling.exceptionError(e, "Store Error adding relationship: " + r);
@@ -621,8 +615,8 @@ public class AlLinker {
 
     public static void main(String[] args) throws Exception {
 
-        String births_source_path =    "/Users/al/Documents/intelliJ/BDMSet1/birth_records.txt";
-        String deaths_source_path =    "/Users/al/Documents/intelliJ/BDMSet1/death_records.txt";
+        String births_source_path = "/Users/al/Documents/intelliJ/BDMSet1/birth_records.txt";
+        String deaths_source_path = "/Users/al/Documents/intelliJ/BDMSet1/death_records.txt";
         String marriages_source_path = "/Users/al/Documents/intelliJ/BDMSet1/marriage_records.txt";
 
         new AlLinker(births_source_path, deaths_source_path, marriages_source_path);
