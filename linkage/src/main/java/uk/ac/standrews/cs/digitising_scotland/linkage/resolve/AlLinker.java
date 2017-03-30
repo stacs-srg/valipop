@@ -7,10 +7,7 @@ import uk.ac.standrews.cs.digitising_scotland.linkage.importers.RecordFormatExce
 import uk.ac.standrews.cs.digitising_scotland.linkage.importers.barSeparated.BarSeparatedEventImporter;
 import uk.ac.standrews.cs.digitising_scotland.linkage.lxp_records.*;
 import uk.ac.standrews.cs.digitising_scotland.util.ErrorHandling;
-import uk.ac.standrews.cs.storr.impl.LXP;
-import uk.ac.standrews.cs.storr.impl.Store;
-import uk.ac.standrews.cs.storr.impl.StoreReference;
-import uk.ac.standrews.cs.storr.impl.TypeFactory;
+import uk.ac.standrews.cs.storr.impl.*;
 import uk.ac.standrews.cs.storr.impl.exceptions.BucketException;
 import uk.ac.standrews.cs.storr.impl.exceptions.RepositoryException;
 import uk.ac.standrews.cs.storr.impl.exceptions.StoreException;
