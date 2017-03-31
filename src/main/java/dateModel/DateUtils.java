@@ -530,4 +530,24 @@ public class DateUtils {
         }
 
     }
+
+    public static int calcSubTimeUnitsInTimeUnit(CompoundTimeUnit subTimeUnit, CompoundTimeUnit timeUnit){
+
+        double n = monthsInTimeUnit(timeUnit) / (double) monthsInTimeUnit(subTimeUnit);
+
+        if(n % 1 == 0) {
+            return (int) Math.floor(n);
+        }
+
+        return -1;
+
+    }
+
+    private static int monthsInTimeUnit(CompoundTimeUnit timeUnit) {
+        if(timeUnit.getUnit() == TimeUnit.MONTH) {
+            return timeUnit.getCount();
+        } else {
+            return timeUnit.getCount() * MONTHS_IN_YEAR;
+        }
+    }
 }

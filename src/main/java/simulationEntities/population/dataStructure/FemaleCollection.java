@@ -2,6 +2,7 @@ package simulationEntities.population.dataStructure;
 
 import dateModel.Date;
 import dateModel.DateUtils;
+import dateModel.MisalignedTimeDivisionError;
 import dateModel.dateImplementations.AdvancableDate;
 import dateModel.dateImplementations.MonthDate;
 import dateModel.dateImplementations.YearDate;
@@ -29,7 +30,7 @@ import java.util.*;
 public class FemaleCollection extends PersonCollection {
 
     private static final Logger log = LogManager.getLogger(FemaleCollection.class);
-    private final Map<YearDate, Map<Integer, Collection<IPerson>>> byBirthYearAndNumberOfChildren = new HashMap<>();
+    private final Map<MonthDate, Map<Integer, Collection<IPerson>>> byBirthYearAndNumberOfChildren = new HashMap<>();
 
     /**
      * Instantiates a new FemaleCollection. The dates specify the earliest and latest expected birth dates of
@@ -41,11 +42,11 @@ public class FemaleCollection extends PersonCollection {
      * @param end   the end
      * @throws UnsupportedDateConversion the unsupported date conversion
      */
-    public FemaleCollection(AdvancableDate start, Date end) {
-        super(start, end);
+    public FemaleCollection(AdvancableDate start, Date end, CompoundTimeUnit divisionSize) {
+        super(start, end, divisionSize);
 
-        for (AdvancableDate y = start; DateUtils.dateBefore(y, end); y = y.advanceTime(1, TimeUnit.YEAR)) {
-            byBirthYearAndNumberOfChildren.put(y.getYearDate(), new HashMap<>());
+        for (AdvancableDate d = start; DateUtils.dateBefore(d, end); d = d.advanceTime(divisionSize)) {
+            byBirthYearAndNumberOfChildren.put(d.getMonthDate(), new HashMap<>());
         }
     }
 
@@ -56,18 +57,35 @@ public class FemaleCollection extends PersonCollection {
     /**
      * Returns the highest birth order (number of children) among women in the specified year of birth.
      *
-     * @param yearOfBirth the year of birth of the mothers in question
+     * @param dateOfBirth the year of birth of the mothers in question
      * @return the highest birth order value
      */
-    public int getHighestBirthOrder(Date yearOfBirth) {
+    public int getHighestBirthOrder(AdvancableDate dateOfBirth, CompoundTimeUnit period) {
 
-        Map<Integer, Collection<IPerson>> temp = byBirthYearAndNumberOfChildren.get(yearOfBirth.getYearDate());
+        int divisionsInPeriod = DateUtils.calcSubTimeUnitsInTimeUnit(period, getDivisionSize());
 
-        if(temp == null) {
-            return 0;
-        } else{
-            return MapUtils.getMax(temp.keySet());
+        if(divisionsInPeriod == -1) {
+            throw new MisalignedTimeDivisionError();
         }
+
+        ArrayList<IPerson> people = new ArrayList<>();
+        MonthDate divisionDate = dateOfBirth.getMonthDate();
+
+        int highestBirthOrder = 0;
+
+        for(int i = 0; i < divisionsInPeriod; i++) {
+
+            Map<Integer, Collection<IPerson>> temp = byBirthYearAndNumberOfChildren.get(divisionDate);
+
+            if(temp != null && MapUtils.getMax(temp.keySet()) > highestBirthOrder) {
+                highestBirthOrder = MapUtils.getMax(temp.keySet());
+            }
+
+            // move on to the new division date until we've covered the required divisions
+            divisionDate = divisionDate.advanceTime(getDivisionSize());
+        }
+
+        return highestBirthOrder;
 
     }
 
@@ -75,18 +93,36 @@ public class FemaleCollection extends PersonCollection {
      * Gets the {@link Collection} of mothers born in the give year with the specified birth order (i.e. number of
      * children)
      *
-     * @param year             the year
-     * @param birthOrder the number of children
+     * @param date             the date
+     * @param period           the period following the date to find people from
+     * @param birthOrder       the number of children
      * @return the by number of children
      */
-    public Collection<IPerson> getByYearAndBirthOrder(Date year, Integer birthOrder) {
+    public Collection<IPerson> getByDatePeriodAndBirthOrder(AdvancableDate date, CompoundTimeUnit period, Integer birthOrder) {
 
-        try {
-            return byBirthYearAndNumberOfChildren.get(year.getYearDate()).get(birthOrder);
-        } catch(NullPointerException e) {
-            // If no data exists for the year or the given birth order in the given year we return an empty collection.
-            return new ArrayList<>();
+        int divisionsInPeriod = DateUtils.calcSubTimeUnitsInTimeUnit(period, getDivisionSize());
+
+        if(divisionsInPeriod == -1) {
+            throw new MisalignedTimeDivisionError();
         }
+
+        ArrayList<IPerson> people = new ArrayList<>();
+        MonthDate divisionDate = date.getMonthDate();
+
+        for(int i = 0; i < divisionsInPeriod; i++) {
+
+            try {
+                people.addAll(byBirthYearAndNumberOfChildren.get(divisionDate).get(birthOrder));
+            } catch (NullPointerException e) {
+                // If no data exists for the year or the given birth order in the given year, then there's no one to add
+            }
+
+            // move on to the new division date until we've covered the required divisions
+            divisionDate = divisionDate.advanceTime(getDivisionSize());
+        }
+
+        return people;
+
     }
 
     /**
@@ -106,7 +142,41 @@ public class FemaleCollection extends PersonCollection {
      * @return the collection the set of people who have been removed
      * @throws InsufficientNumberOfPeopleException the insufficient number of people exception
      */
-    public Collection<IPerson> removeNPersons(int numberToRemove, YearDate yearOfBirth, int birthOrder, MonthDate currentDate) throws InsufficientNumberOfPeopleException {
+    public Collection<IPerson> removeNPersons(int numberToRemove, AdvancableDate dateOfBirth, CompoundTimeUnit period,
+                                              int birthOrder, MonthDate currentDate)
+                                                            throws InsufficientNumberOfPeopleException {
+
+        Collection<IPerson> toReturn = new ArrayList<>();
+
+        int divisionsInPeriod = DateUtils.calcSubTimeUnitsInTimeUnit(period, getDivisionSize());
+
+        if(divisionsInPeriod == -1) {
+            throw new MisalignedTimeDivisionError();
+        }
+
+        ArrayList<IPerson> people = new ArrayList<>();
+        MonthDate divisionDate = dateOfBirth.getMonthDate();
+
+        ArrayList<MonthDate> reusableDivisions = new ArrayList<>();
+        int numberToRemoveFromDivision = numberToRemove / divisionsInPeriod;
+
+        for(int i = 0; i < divisionsInPeriod; i++) {
+
+            try {
+                removeNPeopleFromDivisionStartingOnDate(numberToRemoveFromDivision, divisionDate, birthOrder, currentDate);
+            } catch (InsufficientNumberOfPeopleException e) {
+                // TODO NEXT Writing code here
+            }
+
+
+            divisionDate = divisionDate.advanceTime(getDivisionSize());
+        }
+
+        return toReturn;
+
+    }
+
+    private Collection<IPerson> removeNPeopleFromDivisionStartingOnDate(int numberToRemove, MonthDate divisionDate, int birthOrder, MonthDate currentDate) throws InsufficientNumberOfPeopleException {
 
         Collection<IPerson> people = new ArrayList<>();
 
@@ -118,7 +188,7 @@ public class FemaleCollection extends PersonCollection {
 
         while (people.size() < numberToRemove) {
 
-            LinkedList<IPerson> orderedBirthCohort = new LinkedList<>(byBirthYearAndNumberOfChildren.get(yearOfBirth).get(birthOrder));
+            LinkedList<IPerson> orderedBirthCohort = new LinkedList<>(byBirthYearAndNumberOfChildren.get(divisionDate).get(birthOrder));
 
             if(orderedBirthCohort.size() <= 0) {
                 throw new InsufficientNumberOfPeopleException("Ran out of people");
@@ -151,45 +221,7 @@ public class FemaleCollection extends PersonCollection {
             addPerson(p);
         }
 
-
-//        IPerson[] arrayCopy = orderedBirthCohort.toArray(new IPerson[orderedBirthCohort.size()]);
-//
-//        if(numberToRemove > arrayCopy.length)
-//            System.out.println("Screwed");
-//
-//        int arrayIndex = 0;
-//
-//        for (int i = 0; i < numberToRemove; i++) {
-//
-//            System.out.println(arrayIndex);
-//            if(arrayIndex >= arrayCopy.length) {
-//                System.out.println(arrayCopy.length);
-//                throw new InsufficientNumberOfPeopleException("Not enough females to remove specified number from collection");
-//            }
-//
-//            // Find the females who we wish to return - if there is enough of them
-//            IPerson p = arrayCopy[arrayIndex];
-//            try {
-//
-
-//
-//            } catch (PersonNotFoundException e) {
-//                i--;
-//                System.out.println("Why?");
-////                throw new ConcurrentModificationException("The People reference list has become out of sync with the " +
-////                        "relevant Collection in the underlying map");
-//            }
-//
-//            arrayIndex++;
-//
-//
-//        }
-//
-//        // Remove the chosen females from the population structure
-//
-
         return people;
-
     }
 
     /*
@@ -272,6 +304,11 @@ public class FemaleCollection extends PersonCollection {
         } else {
             return MapUtils.countObjectsInCollectionsInMap(temp);
         }
+    }
+
+    @Override
+    public Set<Date> getDivisionDates() {
+        return null;
     }
 
     @Override

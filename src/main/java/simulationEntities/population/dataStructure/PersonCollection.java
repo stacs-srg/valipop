@@ -3,6 +3,7 @@ package simulationEntities.population.dataStructure;
 import dateModel.DateBounds;
 import dateModel.dateImplementations.AdvancableDate;
 import dateModel.dateImplementations.YearDate;
+import dateModel.timeSteps.CompoundTimeUnit;
 import simulationEntities.person.IPerson;
 import simulationEntities.population.dataStructure.exceptions.InsufficientNumberOfPeopleException;
 import simulationEntities.population.dataStructure.exceptions.PersonNotFoundException;
@@ -20,6 +21,7 @@ public abstract class PersonCollection implements DateBounds {
 
     private AdvancableDate startDate;
     private Date endDate;
+    private CompoundTimeUnit divisionSize;
 
     /**
      * Instantiates a new PersonCollection. The dates specify the earliest and latest expected birth dates of
@@ -30,9 +32,10 @@ public abstract class PersonCollection implements DateBounds {
      * @param startDate the start date
      * @param endDate   the end date
      */
-    public PersonCollection(AdvancableDate startDate, Date endDate) {
+    public PersonCollection(AdvancableDate startDate, Date endDate, CompoundTimeUnit divisionSize) {
         this.startDate = startDate;
         this.endDate = endDate;
+        this.divisionSize = divisionSize;
     }
 
     /**
@@ -143,6 +146,12 @@ public abstract class PersonCollection implements DateBounds {
         this.endDate = endDate;
     }
 
+
+    public CompoundTimeUnit getDivisionSize() {
+        return divisionSize;
+    }
+
+    public abstract Set<Date> getDivisionDates();
 
     public abstract Set<YearDate> getYOBs();
 }

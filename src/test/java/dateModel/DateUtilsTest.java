@@ -424,4 +424,19 @@ public class DateUtilsTest {
 
     }
 
+    @Test
+    public void subTimeUnitsInTimeUnitTests() {
+        CompoundTimeUnit monthly = new CompoundTimeUnit(1, TimeUnit.MONTH);
+        CompoundTimeUnit quarterly = new CompoundTimeUnit(3, TimeUnit.MONTH);
+        CompoundTimeUnit annually = new CompoundTimeUnit(1, TimeUnit.YEAR);
+        CompoundTimeUnit biannually = new CompoundTimeUnit(2, TimeUnit.YEAR);
+
+        Assert.assertEquals(12, DateUtils.calcSubTimeUnitsInTimeUnit(monthly, annually));
+        Assert.assertEquals(4, DateUtils.calcSubTimeUnitsInTimeUnit(quarterly, annually));
+        Assert.assertEquals(1, DateUtils.calcSubTimeUnitsInTimeUnit(annually, annually));
+        Assert.assertEquals(-1, DateUtils.calcSubTimeUnitsInTimeUnit(biannually, annually));
+
+
+    }
+
 }
