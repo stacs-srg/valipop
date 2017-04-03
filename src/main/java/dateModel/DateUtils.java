@@ -533,6 +533,7 @@ public class DateUtils {
 
     public static int calcSubTimeUnitsInTimeUnit(CompoundTimeUnit subTimeUnit, CompoundTimeUnit timeUnit){
 
+        // div by 0?
         double n = monthsInTimeUnit(timeUnit) / (double) monthsInTimeUnit(subTimeUnit);
 
         if(n % 1 == 0) {

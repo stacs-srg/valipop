@@ -136,7 +136,7 @@ public class FemaleCollection extends PersonCollection {
      * that point will be placed into the location corresponding to their new birth order.
      *
      * @param numberToRemove the number to remove
-     * @param yearOfBirth    the year of birth of the female
+     * @param dateOfBirth    the year of birth of the female
      * @param birthOrder     the birth order (i.e. number of children)
      * @param currentDate    the current date
      * @return the collection the set of people who have been removed
@@ -146,82 +146,122 @@ public class FemaleCollection extends PersonCollection {
                                               int birthOrder, MonthDate currentDate)
                                                             throws InsufficientNumberOfPeopleException {
 
-        Collection<IPerson> toReturn = new ArrayList<>();
 
         int divisionsInPeriod = DateUtils.calcSubTimeUnitsInTimeUnit(period, getDivisionSize());
 
-        if(divisionsInPeriod == -1) {
+        if(divisionsInPeriod <= 0) {
             throw new MisalignedTimeDivisionError();
         }
 
         ArrayList<IPerson> people = new ArrayList<>();
         MonthDate divisionDate = dateOfBirth.getMonthDate();
 
-        ArrayList<MonthDate> reusableDivisions = new ArrayList<>();
-        int numberToRemoveFromDivision = numberToRemove / divisionsInPeriod;
+        LinkedList<MonthDate> reusableDivisions = new LinkedList<>();
 
+        // find all the division dates
         for(int i = 0; i < divisionsInPeriod; i++) {
-
-            try {
-                removeNPeopleFromDivisionStartingOnDate(numberToRemoveFromDivision, divisionDate, birthOrder, currentDate);
-            } catch (InsufficientNumberOfPeopleException e) {
-                // TODO NEXT Writing code here
-            }
-
-
+            reusableDivisions.add(divisionDate);
             divisionDate = divisionDate.advanceTime(getDivisionSize());
         }
 
-        return toReturn;
+        // this by design rounds down
+        int numberToRemoveFromDivision = (numberToRemove - people.size()) / reusableDivisions.size();
+
+        // check variables to decide when to recalculate number to remove from each division at the current iteration
+        int numberOfReusableDivisions = reusableDivisions.size();
+        int divisionsUsed = 0;
+
+        while(people.size() < numberToRemove) {
+
+            if(reusableDivisions.isEmpty()) {
+                throw new InsufficientNumberOfPeopleException("Not enought people in timeperiod to meet request of" +
+                        numberToRemove + " females from " + dateOfBirth.toString() + " and following time period " +
+                        period.toString());
+            }
+
+            // If every division has been sampled at the current level then and we are still short of people then we
+            // need to recalculate the number to take from each division
+            if(divisionsUsed == numberOfReusableDivisions) {
+                // Reset check variables
+                numberOfReusableDivisions = reusableDivisions.size();
+                divisionsUsed = 0;
+
+                double tempNumberToRemoveFromDivisions = (numberToRemove - people.size()) / (double) reusableDivisions.size();
+                if(tempNumberToRemoveFromDivisions < 1) {
+                    // in the case where we are down to the last couple of people (defined by the current number of
+                    // reusable divisions minus 1) we proceed to remove 1 person from each interval in turn until we
+                    // reach the required number of people to be removed.
+                    numberToRemoveFromDivision = (int) Math.ceil(tempNumberToRemoveFromDivisions);
+                } else {
+                    numberToRemoveFromDivision = (int) tempNumberToRemoveFromDivisions;
+                }
+            }
+
+            // dequeue division
+            MonthDate consideredDivision = reusableDivisions.removeFirst();
+            divisionsUsed ++;
+
+            Collection<IPerson> selectedPeople = removeNPeopleFromDivisionStartingOnDate(numberToRemoveFromDivision, consideredDivision, birthOrder, currentDate);
+            people.addAll(selectedPeople);
+
+            // if more people in division keep note incase of shortfall in other divisions
+            if(selectedPeople.size() >= numberToRemoveFromDivision) {
+                // enqueue division is still containing people
+                reusableDivisions.addLast(consideredDivision);
+            }
+
+        }
+
+        return people;
 
     }
 
-    private Collection<IPerson> removeNPeopleFromDivisionStartingOnDate(int numberToRemove, MonthDate divisionDate, int birthOrder, MonthDate currentDate) throws InsufficientNumberOfPeopleException {
+    private Collection<IPerson> removeNPeopleFromDivisionStartingOnDate(int numberToRemove, MonthDate divisionDate, int birthOrder, MonthDate currentDate) {
 
-        Collection<IPerson> people = new ArrayList<>();
+        // The selected people
+        Collection<IPerson> selectedPeople = new ArrayList<>();
 
-        Collection<IPerson> toReturn = new ArrayList<>();
+        // Those unable to give birth at this time
+        Collection<IPerson> unusablePeople = new ArrayList<>();
 
         if (numberToRemove == 0) {
-            return people;
+            return selectedPeople;
         }
 
-        while (people.size() < numberToRemove) {
+        LinkedList<IPerson> orderedBirthCohort = new LinkedList<>(byBirthYearAndNumberOfChildren.get(divisionDate).get(birthOrder));
 
-            LinkedList<IPerson> orderedBirthCohort = new LinkedList<>(byBirthYearAndNumberOfChildren.get(divisionDate).get(birthOrder));
+        while (selectedPeople.size() < numberToRemove) {
 
             if(orderedBirthCohort.size() <= 0) {
-                throw new InsufficientNumberOfPeopleException("Ran out of people");
+                return selectedPeople;
+                //                throw new InsufficientNumberOfPeopleException("Ran out of people");
             }
-
 
             IPerson p = orderedBirthCohort.removeFirst();
-            if(countChildren(p) != birthOrder) {
-                System.out.println("BOOM");
-            }
 
             try {
                 removePerson(p);
 
                 if (p.noRecentChildren(currentDate, new CompoundTimeUnit(-9, TimeUnit.MONTH))) {
-                    people.add(p);
+                    selectedPeople.add(p);
                 } else {
-                    toReturn.add(p);
+                    unusablePeople.add(p);
                 }
 
 
             } catch (PersonNotFoundException e) {
                 System.out.println("This really shouldn't be happening");
-                toReturn.add(p);
+                unusablePeople.add(p);
             }
 
         }
 
-        for(IPerson p : toReturn) {
+        // Add people unable to give birth at this time to the population structure
+        for(IPerson p : unusablePeople) {
             addPerson(p);
         }
 
-        return people;
+        return selectedPeople;
     }
 
     /*
