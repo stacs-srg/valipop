@@ -1,2 +1,0 @@
-Training data: subset of case1, all mapping to same code (this caused a crash in the OLR classifier)
-Evaluation data: strings in expected format for NRS 1939 data set

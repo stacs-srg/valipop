@@ -1,2 +1,0 @@
-Training data: 1000 anonymised strings and codes
-Evaluation data: same strings with codes removed

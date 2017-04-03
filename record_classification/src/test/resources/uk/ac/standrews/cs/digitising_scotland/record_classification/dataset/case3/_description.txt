@@ -1,2 +1,0 @@
-Training data: two disjoint subsets from case 1, with ids in common
-Evaluation data: same as case 1
