@@ -1,0 +1,20 @@
+#Properties File - for model v3 - Tom, Graham, Al
+#4.3.16
+var_data_files = src/main/resources/scotland_test_population
+produce_graphs = false
+produce_dat_files = true
+death_time_step = 2m
+birth_time_step = 4m
+simulation_time_step = 2m
+input_width = 5y
+tS = 1/1/1599
+t0 = 1/1/1855
+tE = 1/1/2016
+t0_pop_size = 2000000
+# this is defined by the birth rate and death rates for the years data to be used in the set up period
+set_up_br = 0.0133
+set_up_dr = 0.0122
+results_save_location = results
+plots_save_location = results/plots
+dat_save_location = results/dat
+summary_save_location = results/summary
