@@ -1,0 +1,170 @@
+package datastructure.summativeStatistics.desired;
+
+import config.Config;
+import datastructure.summativeStatistics.DataDistribution;
+import datastructure.summativeStatistics.structure.OneDimensionDataDistribution;
+import datastructure.summativeStatistics.structure.SelfCorrectingOneDimensionDataDistribution;
+import datastructure.summativeStatistics.structure.SelfCorrectingTwoDimensionDataDistribution;
+import datastructure.summativeStatistics.structure.TwoDimensionDataDistribution;
+import utils.time.*;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import utils.InputFileReader;
+import utils.time.Date;
+
+import java.io.IOException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Path;
+import java.util.*;
+
+/**
+ * This factory class handles the correct construction of a PopulationStatistics object.
+ *
+ * @author Tom Dalton (tsd4@st-andrews.ac.uk)
+ */
+public abstract class DesiredPopulationStatisticsFactory {
+
+    private static Logger log = LogManager.getLogger(DesiredPopulationStatisticsFactory.class);
+
+    /**
+     * Creates a PopulationStatistics object.
+     *
+     * @return the quantified event occurrences
+     */
+    public static PopulationStatistics initialisePopulationStatistics(Config config) throws IOException {
+
+        DesiredPopulationStatisticsFactory.log.info("Creating PopulationStatistics instance");
+
+        Map<YearDate, SelfCorrectingOneDimensionDataDistribution> maleDeath = readInSC1DDataFiles(config.getVarMaleDeathPaths(), config);
+        Map<YearDate, SelfCorrectingOneDimensionDataDistribution> femaleDeath = readInSC1DDataFiles(config.getVarFemaleDeathPaths(), config);
+        Map<YearDate, SelfCorrectingTwoDimensionDataDistribution> partnering = readInSC2DDataFiles(config.getVarPartneringPaths(), config);
+        Map<YearDate, SelfCorrectingTwoDimensionDataDistribution> orderedBirth = readInSC2DDataFiles(config.getVarOrderedBirthPaths(), config);
+        Map<YearDate, TwoDimensionDataDistribution> multipleBirth = readIn2DDataFiles(config.getVarMultipleBirthPaths(), config);
+        Map<YearDate, SelfCorrectingOneDimensionDataDistribution> separation = readInSC1DDataFiles(config.getVarSeparationPaths(), config);
+
+        return new PopulationStatistics(config, maleDeath, femaleDeath, partnering, orderedBirth, multipleBirth, separation);
+    }
+
+    private static Map<YearDate,SelfCorrectingOneDimensionDataDistribution> readInSC1DDataFiles(DirectoryStream<Path> paths, Config config) {
+
+        Map<YearDate, SelfCorrectingOneDimensionDataDistribution> data = new HashMap<>();
+
+        for (Path path : paths) {
+            // read in each file
+            SelfCorrectingOneDimensionDataDistribution tempData = InputFileReader.readInSC1DDataFile(path);
+            data.put(tempData.getYear(), tempData);
+        }
+        return insertDistributionsToMeetInputWidth(config, data);
+
+    }
+
+    private static Map<YearDate, TwoDimensionDataDistribution> readIn2DDataFiles(DirectoryStream<Path> paths, Config config) {
+
+        Map<YearDate, TwoDimensionDataDistribution> data = new HashMap<>();
+
+        for (Path path : paths) {
+            // read in each file
+            TwoDimensionDataDistribution tempData = InputFileReader.readIn2DDataFile(path);
+            data.put(tempData.getYear(), tempData);
+        }
+        return insertDistributionsToMeetInputWidth(config, data);
+    }
+
+    private static Map<YearDate, SelfCorrectingTwoDimensionDataDistribution> readInSC2DDataFiles(DirectoryStream<Path> paths, Config config) {
+
+        Map<YearDate, SelfCorrectingTwoDimensionDataDistribution> data = new HashMap<>();
+
+        for (Path path : paths) {
+            // read in each file
+            SelfCorrectingTwoDimensionDataDistribution tempData = InputFileReader.readInSC2DDataFile(path);
+            data.put(tempData.getYear(), tempData);
+        }
+        return insertDistributionsToMeetInputWidth(config, data);
+    }
+
+    private static Map<YearDate, OneDimensionDataDistribution> readIn1DDataFiles(DirectoryStream<Path> paths, Config config) {
+
+        Map<YearDate, OneDimensionDataDistribution> data = new HashMap<>();
+
+        for (Path path : paths) {
+            // read in each file
+            OneDimensionDataDistribution tempData = InputFileReader.readIn1DDataFile(path);
+            data.put(tempData.getYear(), tempData);
+        }
+        return insertDistributionsToMeetInputWidth(config, data);
+    }
+
+    private static <T extends DataDistribution> Map<YearDate, T>  insertDistributionsToMeetInputWidth(Config config, Map<YearDate, T> inputs) {
+
+        CompoundTimeUnit inputWidth = config.getInputWidth();
+
+        YearDate prevInputDate = config.getTS().getYearDate();
+
+        int c = 1;
+        Date curDate;
+//        CompoundTimeUnit ctu = null;
+
+//        Map<YearDate, T> temp = new HashMap<>();
+
+        try {
+
+            YearDate[] years = inputs.keySet().toArray(new YearDate[inputs.keySet().size()]);
+            Arrays.sort(years);
+
+            if(years.length == 0) {
+                return inputs;
+            }
+
+            while(DateUtils.dateBefore(curDate = prevInputDate.getDateClock().advanceTime(new CompoundTimeUnit(inputWidth.getCount() * c, inputWidth.getUnit())), years[0])) {
+                inputs.put(curDate.getYearDate(), inputs.get(years[0]));
+                c++;
+            }
+
+            prevInputDate = years[0];
+
+            for(YearDate curInputDate : years) {
+
+//                ctu = new CompoundTimeUnit(inputWidth.getCount() * c, inputWidth.getUnit());
+
+                while(DateUtils.dateBefore(curDate = prevInputDate.getDateClock().advanceTime(new CompoundTimeUnit(inputWidth.getCount() * c, inputWidth.getUnit())), curInputDate)) {
+                    YearDate duplicateFrom = getNearestDate(curDate, prevInputDate, curInputDate);
+                    inputs.put(curDate.getYearDate(), inputs.get(duplicateFrom));
+                    c++;
+                }
+
+                c = 1;
+                prevInputDate = curInputDate;
+            }
+
+            while(DateUtils.dateBefore(curDate = prevInputDate.getDateClock().advanceTime(new CompoundTimeUnit(inputWidth.getCount() * c, inputWidth.getUnit())), config.getTE())) {
+                inputs.put(curDate.getYearDate(), inputs.get(prevInputDate));
+                c++;
+            }
+
+        } catch (UnsupportedDateConversion unsupportedDateConversion) {
+            String m = "Unreachable error statement";
+            log.fatal(m);
+            throw new Error(m, unsupportedDateConversion);
+        }
+
+//        for(YearDate date : temp.keySet()) {
+//            inputs.put(date, temp.get(date));
+//        }
+
+        return inputs;
+
+    }
+
+    private static YearDate getNearestDate(Date referenceDate, YearDate option1, YearDate option2) {
+
+        int refTo1 = DateUtils.differenceInDays(referenceDate, option1);
+        int refTo2 = DateUtils.differenceInDays(referenceDate, option2);
+
+        if(refTo1 < refTo2) {
+            return option1;
+        } else {
+            return option2;
+        }
+
+    }
+}
