@@ -5,6 +5,7 @@ import datastructure.population.exceptions.PersonNotFoundException;
 import model.simulationEntities.IPerson;
 import model.simulationEntities.Partnership;
 import model.simulationEntities.Person;
+import model.simulationLogic.Simulation;
 import utils.time.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -13,6 +14,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -220,7 +222,9 @@ public class PeopleCollectionTest {
     }
 
     @Test
-    public void personIsCorrectlyRelocatedAfterDeath() throws PersonNotFoundException, UnsupportedDateConversion {
+    public void personIsCorrectlyRelocatedAfterDeath() throws PersonNotFoundException, UnsupportedDateConversion, IOException {
+
+        Simulation temp = new Simulation("./src/test/resources/validation/config.txt", "", "", "results");
 
         DateClock s = new DateClock(1, 0);
         DateClock e = new DateClock(1, 3000);
