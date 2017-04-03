@@ -1,9 +1,13 @@
 package simulationEntities.population.dataStructure;
 
 import dateModel.DateBounds;
+import dateModel.DateUtils;
+import dateModel.MisalignedTimeDivisionError;
 import dateModel.dateImplementations.AdvancableDate;
+import dateModel.dateImplementations.MonthDate;
 import dateModel.dateImplementations.YearDate;
 import dateModel.timeSteps.CompoundTimeUnit;
+import dateModel.timeSteps.TimeUnit;
 import simulationEntities.person.IPerson;
 import simulationEntities.population.dataStructure.exceptions.InsufficientNumberOfPeopleException;
 import simulationEntities.population.dataStructure.exceptions.PersonNotFoundException;
@@ -50,10 +54,11 @@ public abstract class PersonCollection implements DateBounds {
     /**
      * Gets all the people in the PersonCollection who were born in the given year.
      *
-     * @param yearOfBirth the year of birth of the desired cohort
+     * @param firstDate the year of birth of the desired cohort
      * @return the desired cohort
      */
-    public abstract Collection<IPerson> getByYear(Date yearOfBirth);
+    // Was getByYear()
+    public abstract Collection<IPerson> getByDateAndPeriod(AdvancableDate firstDate, CompoundTimeUnit timePeriod);
 
     /**
      * Adds the given person to the PersonCollection.
@@ -86,44 +91,126 @@ public abstract class PersonCollection implements DateBounds {
      *
      * @return the number of persons in the PersonCollection
      */
-    abstract int getNumberOfPersons(Date yearOfBirth);
+    abstract int getNumberOfPersons(AdvancableDate firstDate, CompoundTimeUnit timePeriod);
 
     /**
      * Removes n people with the specified year of birth from the PersonCollection. If there are not enough people then
      * an exception is thrown.
      *
      * @param numberToRemove the number of people to remove
-     * @param yearOfBirth    the year of birth of those to remove
+     * @param firstDate    the year of birth of those to remove
      * @param bestAttempt    returns the people that do exist even if there is not enough to meet numberToRemove
      * @return the random Collection of people who have been removed
      * @throws InsufficientNumberOfPeopleException If there are less people alive for the given year of birth than
      */
-    public Collection<IPerson> removeNPersons(int numberToRemove, Date yearOfBirth, boolean bestAttempt) throws InsufficientNumberOfPeopleException {
-        Collection<IPerson> people = new ArrayList<>(numberToRemove);
-        Iterator<IPerson> iterator = getByYear(yearOfBirth).iterator();
+    @SuppressWarnings("Duplicates")
+    public Collection<IPerson> removeNPersons(int numberToRemove, AdvancableDate firstDate, CompoundTimeUnit timePeriod, boolean bestAttempt) throws InsufficientNumberOfPeopleException {
 
-        for (int i = 0; i < numberToRemove; i++) {
-            try {
-                IPerson p = iterator.next();
-                people.add(p);
-            } catch(NoSuchElementException e) {
-                if(bestAttempt) {
-                    break;
-                } else {
-                    throw new InsufficientNumberOfPeopleException("Not enough people in collection to remove desired number");
-                }
-            }
+        int divisionsInPeriod = DateUtils.calcSubTimeUnitsInTimeUnit(timePeriod, divisionSize);
+
+        if(divisionsInPeriod <= 0) {
+            throw new MisalignedTimeDivisionError();
         }
 
-        for (IPerson p : people) {
-            try {
-                removePerson(p);
-            } catch (PersonNotFoundException e) {
-                e.printStackTrace();
+        ArrayList<IPerson> people = new ArrayList<>();
+        MonthDate divisionDate = firstDate.getMonthDate();
+
+        LinkedList<MonthDate> reusableDivisions = new LinkedList<>();
+
+        // find all the division dates
+        for(int i = 0; i < divisionsInPeriod; i++) {
+            reusableDivisions.add(divisionDate);
+            divisionDate = divisionDate.advanceTime(getDivisionSize());
+        }
+
+        // this by design rounds down
+        int numberToRemoveFromDivision = (numberToRemove - people.size()) / reusableDivisions.size();
+
+        // check variables to decide when to recalculate number to remove from each division at the current iteration
+        int numberOfReusableDivisions = reusableDivisions.size();
+        int divisionsUsed = 0;
+
+        while(people.size() < numberToRemove) {
+
+            if(reusableDivisions.isEmpty()) {
+                if(bestAttempt) {
+                    return people;
+                } else {
+                    throw new InsufficientNumberOfPeopleException("Not enought people in timeperiod to meet request of" +
+                            numberToRemove + " females from " + firstDate.toString() + " and following time period " +
+                            timePeriod.toString());
+                }
             }
+
+
+            // If every division has been sampled at the current level then and we are still short of people then we
+            // need to recalculate the number to take from each division
+            if(divisionsUsed == numberOfReusableDivisions) {
+                // Reset check variables
+                numberOfReusableDivisions = reusableDivisions.size();
+                divisionsUsed = 0;
+
+                double tempNumberToRemoveFromDivisions = (numberToRemove - people.size()) / (double) reusableDivisions.size();
+                if(tempNumberToRemoveFromDivisions < 1) {
+                    // in the case where we are down to the last couple of people (defined by the current number of
+                    // reusable divisions minus 1) we proceed to remove 1 person from each interval in turn until we
+                    // reach the required number of people to be removed.
+                    numberToRemoveFromDivision = (int) Math.ceil(tempNumberToRemoveFromDivisions);
+                } else {
+                    numberToRemoveFromDivision = (int) tempNumberToRemoveFromDivisions;
+                }
+            }
+
+            // dequeue division
+            MonthDate consideredDivision = reusableDivisions.removeFirst();
+            divisionsUsed ++;
+
+            Collection<IPerson> selectedPeople = removeNPersonsFromDivision(numberToRemoveFromDivision, consideredDivision);
+            people.addAll(selectedPeople);
+
+            // if more people in division keep note incase of shortfall in other divisions
+            if(selectedPeople.size() >= numberToRemoveFromDivision) {
+                // enqueue division is still containing people
+                reusableDivisions.addLast(consideredDivision);
+            }
+
         }
 
         return people;
+
+
+    }
+
+    private Collection<IPerson> removeNPersonsFromDivision(int numberToRemove, AdvancableDate divisionDate) {
+
+        // The selected people
+        Collection<IPerson> selectedPeople = new ArrayList<>();
+
+        if (numberToRemove == 0) {
+            return selectedPeople;
+        }
+
+        LinkedList<IPerson> cohort = new LinkedList<>(getByDateAndPeriod(divisionDate, divisionSize));
+
+        while (selectedPeople.size() < numberToRemove) {
+
+            if(cohort.size() <= 0) {
+                return selectedPeople;
+            }
+
+            IPerson p = cohort.removeFirst();
+
+            try {
+                removePerson(p);
+                selectedPeople.add(p);
+            } catch (PersonNotFoundException e) {
+                throw new ConcurrentModificationException();
+            }
+
+        }
+
+        return selectedPeople;
+
     }
 
     @Override
@@ -151,7 +238,5 @@ public abstract class PersonCollection implements DateBounds {
         return divisionSize;
     }
 
-    public abstract Set<Date> getDivisionDates();
-
-    public abstract Set<YearDate> getYOBs();
+    public abstract Set<AdvancableDate> getDivisionDates();
 }

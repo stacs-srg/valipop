@@ -273,7 +273,7 @@ public class FemaleCollection extends PersonCollection {
 
         Collection<IPerson> people = new ArrayList<>();
 
-        for (YearDate t : byBirthYearAndNumberOfChildren.keySet()) {
+        for (MonthDate t : byBirthYearAndNumberOfChildren.keySet()) {
             for (Integer i : byBirthYearAndNumberOfChildren.get(t).keySet()) {
                 people.addAll(byBirthYearAndNumberOfChildren.get(t).get(i));
             }
@@ -334,11 +334,11 @@ public class FemaleCollection extends PersonCollection {
     }
 
     @Override
-    public int getNumberOfPersons(Date yearOfBirth) {
+    public int getNumberOfPersons(AdvancableDate firstDate, CompoundTimeUnit timePeriod) {
 
-        Map<Integer, Collection<IPerson>> temp = byBirthYearAndNumberOfChildren.get(yearOfBirth.getYearDate());
+        Map<Integer, Collection<IPerson>> temp = byBirthYearAndNumberOfChildren.get(firstDate.getMonthDate());
 
-        // No data about the given year is treated as no body born in that year
+        // No data about the given division is treated as no body born in that year
         if(temp == null) {
             return 0;
         } else {
@@ -347,14 +347,10 @@ public class FemaleCollection extends PersonCollection {
     }
 
     @Override
-    public Set<Date> getDivisionDates() {
-        return null;
-    }
-
-    @Override
-    public Set<YearDate> getYOBs() {
+    public Set<AdvancableDate> getDivisionDates() {
         return new HashSet<>(byBirthYearAndNumberOfChildren.keySet());
     }
+
 
     /*
     -------------------- Private helper methods --------------------
@@ -372,11 +368,13 @@ public class FemaleCollection extends PersonCollection {
 
     }
 
+
+    // May be broke with changes - method needs checked
     public boolean verify() {
 
         boolean passed = true;
 
-        for(YearDate y : byBirthYearAndNumberOfChildren.keySet()) {
+        for(MonthDate y : byBirthYearAndNumberOfChildren.keySet()) {
 
             Map<Integer, Collection<IPerson>> birthCohort = byBirthYearAndNumberOfChildren.get(y);
 
