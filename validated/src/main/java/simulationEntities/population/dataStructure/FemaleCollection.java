@@ -5,7 +5,6 @@ import dateModel.DateUtils;
 import dateModel.MisalignedTimeDivisionError;
 import dateModel.dateImplementations.AdvancableDate;
 import dateModel.dateImplementations.MonthDate;
-import dateModel.dateImplementations.YearDate;
 import dateModel.exceptions.UnsupportedDateConversion;
 import dateModel.timeSteps.CompoundTimeUnit;
 import dateModel.timeSteps.TimeUnit;
@@ -142,15 +141,16 @@ public class FemaleCollection extends PersonCollection {
      * @return the collection the set of people who have been removed
      * @throws InsufficientNumberOfPeopleException the insufficient number of people exception
      */
+    @SuppressWarnings("Duplicates")
     public Collection<IPerson> removeNPersons(int numberToRemove, AdvancableDate dateOfBirth, CompoundTimeUnit period,
                                               int birthOrder, MonthDate currentDate)
                                                             throws InsufficientNumberOfPeopleException {
 
 
-        int divisionsInPeriod = DateUtils.calcSubTimeUnitsInTimeUnit(period, getDivisionSize());
+        int divisionsInPeriod = DateUtils.calcSubTimeUnitsInTimeUnit(getDivisionSize(), period);
 
         if(divisionsInPeriod <= 0) {
-            throw new MisalignedTimeDivisionError();
+            throw new MisalignedTimeDivisionError("");
         }
 
         ArrayList<IPerson> people = new ArrayList<>();
@@ -228,13 +228,12 @@ public class FemaleCollection extends PersonCollection {
             return selectedPeople;
         }
 
-        LinkedList<IPerson> orderedBirthCohort = new LinkedList<>(byBirthYearAndNumberOfChildren.get(divisionDate).get(birthOrder));
+        LinkedList<IPerson> orderedBirthCohort = new LinkedList<>(getAllPeopleFromDivision(divisionDate).get(birthOrder));
 
         while (selectedPeople.size() < numberToRemove) {
 
             if(orderedBirthCohort.size() <= 0) {
                 return selectedPeople;
-                //                throw new InsufficientNumberOfPeopleException("Ran out of people");
             }
 
             IPerson p = orderedBirthCohort.removeFirst();
@@ -264,6 +263,20 @@ public class FemaleCollection extends PersonCollection {
         return selectedPeople;
     }
 
+    private Map<Integer, Collection<IPerson>> getAllPeopleFromDivision(AdvancableDate divisionDate) {
+
+        try {
+            return byBirthYearAndNumberOfChildren.get(divisionDate.getMonthDate());
+        } catch (NullPointerException e) {
+            if(checkDateAlignmentToDivisions(divisionDate)) {
+                // If division date is resonable but no people exist in it yet
+                return new HashMap<>();
+            } else {
+                throw new MisalignedTimeDivisionError("Date provided to underlying population structure does not align");
+            }
+        }
+    }
+
     /*
     -------------------- PersonCollection abstract methods --------------------
      */
@@ -283,16 +296,32 @@ public class FemaleCollection extends PersonCollection {
     }
 
     @Override
-    public Collection<IPerson> getByYear(Date yearOfBirth) {
+    public Collection<IPerson> getAllPersonsInTimePeriod(AdvancableDate firstDate, CompoundTimeUnit timePeriod) {
 
         Collection<IPerson> people = new ArrayList<>();
 
-        try {
-            for (Integer i : byBirthYearAndNumberOfChildren.get(yearOfBirth.getYearDate()).keySet()) {
-                people.addAll(byBirthYearAndNumberOfChildren.get(yearOfBirth.getYearDate()).get(i));
+        int divisionsInPeriod = DateUtils.calcSubTimeUnitsInTimeUnit(getDivisionSize(), timePeriod);
+
+        if(divisionsInPeriod <= 0) {
+            throw new MisalignedTimeDivisionError("");
+        }
+
+        MonthDate divisionDate = firstDate.getMonthDate();
+
+        // for all the division dates
+        for(int i = 0; i < divisionsInPeriod; i++) {
+
+            try {
+                Map<Integer, Collection<IPerson>> mapForDiv;
+                // for each birth order
+                for (Integer j : (mapForDiv = getAllPeopleFromDivision(firstDate)).keySet()) {
+                    people.addAll(mapForDiv.get(j));
+                }
+            } catch (NullPointerException e) {
+                // No need to do anything - we allow the method to return an empty list as no one was born in the year
             }
-        } catch (NullPointerException e) {
-            // No need to do anything - we allow the method to return an empty list as no one was born in the year
+
+            divisionDate = divisionDate.advanceTime(getDivisionSize());
         }
 
         return people;
@@ -301,26 +330,30 @@ public class FemaleCollection extends PersonCollection {
     @Override
     public void addPerson(IPerson person) {
         try {
-            byBirthYearAndNumberOfChildren.get(person.getBirthDate().getYearDate()).get(countChildren(person)).add(person);
+            byBirthYearAndNumberOfChildren.get(
+                    resolveDateToCorrectDivisionDate(person.getBirthDate())).get(countChildren(person)).add(person);
         } catch (NullPointerException e) {
             // If years or birth order doesn't exist in map then add missing part of map and add in person
             try {
-                byBirthYearAndNumberOfChildren.get(person.getBirthDate().getYearDate()).put(countChildren(person), new ArrayList<>());
+                byBirthYearAndNumberOfChildren.get(
+                        resolveDateToCorrectDivisionDate(person.getBirthDate())).put(countChildren(person), new ArrayList<>());
                 // If the year existed but the correct birth order did not
-                byBirthYearAndNumberOfChildren.get(person.getBirthDate().getYearDate()).get(countChildren(person)).add(person);
+                byBirthYearAndNumberOfChildren.get(
+                        resolveDateToCorrectDivisionDate(person.getBirthDate())).get(countChildren(person)).add(person);
             } catch (NullPointerException e1) {
                 // If the year didn't exist in the map
                 Map<Integer, Collection<IPerson>> temp = new HashMap<>();
                 temp.put(countChildren(person), new ArrayList<>());
                 temp.get(countChildren(person)).add(person);
-                byBirthYearAndNumberOfChildren.put(person.getBirthDate().getYearDate(), temp);
+                byBirthYearAndNumberOfChildren.put(resolveDateToCorrectDivisionDate(person.getBirthDate()), temp);
             }
         }
     }
 
     @Override
     public void removePerson(IPerson person) throws PersonNotFoundException {
-        Collection<IPerson> people = byBirthYearAndNumberOfChildren.get(person.getBirthDate().getYearDate()).get(countChildren(person));
+        Collection<IPerson> people = byBirthYearAndNumberOfChildren.get(
+                resolveDateToCorrectDivisionDate(person.getBirthDate())).get(countChildren(person));
 
         // Removal of person AND test for removal (all in second clause of the if statement)
         if (people == null || !people.remove(person)) {
@@ -336,14 +369,33 @@ public class FemaleCollection extends PersonCollection {
     @Override
     public int getNumberOfPersons(AdvancableDate firstDate, CompoundTimeUnit timePeriod) {
 
-        Map<Integer, Collection<IPerson>> temp = byBirthYearAndNumberOfChildren.get(firstDate.getMonthDate());
+        int count = 0;
 
-        // No data about the given division is treated as no body born in that year
-        if(temp == null) {
-            return 0;
-        } else {
-            return MapUtils.countObjectsInCollectionsInMap(temp);
+        int divisionsInPeriod = DateUtils.calcSubTimeUnitsInTimeUnit(getDivisionSize(), timePeriod);
+
+        if(divisionsInPeriod <= 0) {
+            throw new MisalignedTimeDivisionError("");
         }
+
+        MonthDate divisionDate = firstDate.getMonthDate();
+
+        // for all the division dates
+        for(int i = 0; i < divisionsInPeriod; i++) {
+
+            try {
+                Map<Integer, Collection<IPerson>> mapForDiv;
+                // for each birth order
+                for (Integer j : (mapForDiv = getAllPeopleFromDivision(firstDate)).keySet()) {
+                    count += mapForDiv.get(j).size();
+                }
+            } catch (NullPointerException e) {
+                // No need to do anything - we allow the method to return an empty list as no one was born in the year
+            }
+
+            divisionDate = divisionDate.advanceTime(getDivisionSize());
+        }
+
+        return count;
     }
 
     @Override

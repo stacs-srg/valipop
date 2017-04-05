@@ -2,6 +2,7 @@ package simulationEntities.population.dataStructure;
 
 import dateModel.dateImplementations.AdvancableDate;
 import dateModel.dateImplementations.YearDate;
+import dateModel.timeSteps.CompoundTimeUnit;
 import simulationEntities.partnership.IPartnership;
 import simulationEntities.person.IPerson;
 import simulationEntities.population.IPopulation;
@@ -33,7 +34,7 @@ public class PeopleCollection extends PersonCollection implements IPopulation {
     private ArrayList<IPartnership> partTemp = new ArrayList<>();
 
     public PeopleCollection clone() {
-        PeopleCollection clone = new PeopleCollection(getStartDate(), getEndDate());
+        PeopleCollection clone = new PeopleCollection(getStartDate(), getEndDate(), getDivisionSize());
 
         for(IPerson m : males.getAll()) {
             clone.addPerson(m);
@@ -62,11 +63,11 @@ public class PeopleCollection extends PersonCollection implements IPopulation {
      * @param end   the end
      * @throws UnsupportedDateConversion the unsupported date conversion
      */
-    public PeopleCollection(AdvancableDate start, Date end) {
-        super(start, end);
+    public PeopleCollection(AdvancableDate start, Date end, CompoundTimeUnit divisionSize) {
+        super(start, end, divisionSize);
 
-        males = new MaleCollection(start, end);
-        females = new FemaleCollection(start, end);
+        males = new MaleCollection(start, end, divisionSize);
+        females = new FemaleCollection(start, end, divisionSize);
     }
 
     /**
@@ -108,20 +109,27 @@ public class PeopleCollection extends PersonCollection implements IPopulation {
     }
 
     @Override
-    public Collection<IPerson> getByYear(Date yearOfBirth) {
-        Collection<IPerson> people = males.getByYear(yearOfBirth);
-        people.addAll(females.getByYear(yearOfBirth));
+    public Collection<IPerson> getAllPersonsInTimePeriod(AdvancableDate firstDate, CompoundTimeUnit timePeriod) {
+        Collection<IPerson> people =  males.getAllPersonsInTimePeriod(firstDate, timePeriod);
+        people.addAll(females.getAllPersonsInTimePeriod(firstDate, timePeriod));
         return people;
     }
 
-    @Override
-    public Collection<IPerson> getByYearAndSex(char sex, Date year) {
-        if (Character.toLowerCase(sex) == 'm') {
-            return getMales().getByYear(year);
-        } else {
-            return getFemales().getByYear(year);
-        }
-    }
+//    @Override
+//    public Collection<IPerson> getByYear(Date yearOfBirth) {
+//        Collection<IPerson> people = males.getByYear(yearOfBirth);
+//        people.addAll(females.getByYear(yearOfBirth));
+//        return people;
+//    }
+//
+//    @Override
+//    public Collection<IPerson> getByYearAndSex(char sex, Date year) {
+//        if (Character.toLowerCase(sex) == 'm') {
+//            return getMales().getByYear(year);
+//        } else {
+//            return getFemales().getByYear(year);
+//        }
+//    }
 
     @Override
     public void addPerson(IPerson person) {
@@ -149,13 +157,13 @@ public class PeopleCollection extends PersonCollection implements IPopulation {
     }
 
     @Override
-    public int getNumberOfPersons(Date yearOfBirth) {
-        return males.getNumberOfPersons(yearOfBirth) + females.getNumberOfPersons(yearOfBirth);
+    public int getNumberOfPersons(AdvancableDate firstDate, CompoundTimeUnit timePeriod) {
+        return males.getNumberOfPersons(firstDate, timePeriod) + females.getNumberOfPersons(firstDate, timePeriod);
     }
 
     @Override
-    public Set<YearDate> getYOBs() {
-        return null;
+    public Set<AdvancableDate> getDivisionDates() {
+        return females.getDivisionDates();
     }
 
     /*

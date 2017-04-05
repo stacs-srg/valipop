@@ -11,8 +11,8 @@ import java.util.Collection;
  */
 public interface PopulationUtils {
 
-    Collection<IPerson> getByYear(Date year);
+//    Collection<IPerson> getByYear(Date year);
 
-    Collection<IPerson> getByYearAndSex(char sex, Date year);
+//    Collection<IPerson> getByYearAndSex(char sex, Date year);
 
 }
