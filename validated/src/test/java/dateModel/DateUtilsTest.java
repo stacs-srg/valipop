@@ -392,6 +392,10 @@ public class DateUtilsTest {
     @Test
     public void checkMatchesIntervalMethod() {
 
+        MonthDate s1 = new MonthDate(1,0);
+        MonthDate s2 = new MonthDate(2,0);
+
+
         MonthDate a = new MonthDate(1, 10);
         MonthDate b = new MonthDate(8, 13);
         MonthDate c = new MonthDate(1, 2017);
@@ -402,25 +406,26 @@ public class DateUtilsTest {
         CompoundTimeUnit annually = new CompoundTimeUnit(1, TimeUnit.YEAR);
         CompoundTimeUnit biannually = new CompoundTimeUnit(2, TimeUnit.YEAR);
 
-        assertTrue(DateUtils.matchesInterval(a, monthly));
-        assertTrue(DateUtils.matchesInterval(a, quarterly));
-        assertTrue(DateUtils.matchesInterval(a, annually));
-        assertTrue(DateUtils.matchesInterval(a, biannually));
+        assertTrue(DateUtils.matchesInterval(a, monthly, s1));
+        assertTrue(DateUtils.matchesInterval(a, quarterly, s1));
+        assertTrue(DateUtils.matchesInterval(a, annually, s1));
+        assertTrue(DateUtils.matchesInterval(a, biannually, s1));
 
-        assertTrue(DateUtils.matchesInterval(b, monthly));
-        assertFalse(DateUtils.matchesInterval(b, quarterly));
-        assertFalse(DateUtils.matchesInterval(b, annually));
-        assertFalse(DateUtils.matchesInterval(b, biannually));
+        assertTrue(DateUtils.matchesInterval(b, monthly, s2));
+        assertFalse(DateUtils.matchesInterval(b, quarterly, s1));
+        assertTrue(DateUtils.matchesInterval(b, quarterly, s2));
+        assertFalse(DateUtils.matchesInterval(b, annually, s2));
+        assertFalse(DateUtils.matchesInterval(b, biannually, s2));
 
-        assertTrue(DateUtils.matchesInterval(c, monthly));
-        assertTrue(DateUtils.matchesInterval(c, quarterly));
-        assertTrue(DateUtils.matchesInterval(c, annually));
-        assertFalse(DateUtils.matchesInterval(c, biannually));
+        assertTrue(DateUtils.matchesInterval(c, monthly, s1));
+        assertTrue(DateUtils.matchesInterval(c, quarterly, s1));
+        assertTrue(DateUtils.matchesInterval(c, annually, s1));
+        assertFalse(DateUtils.matchesInterval(c, biannually, s1));
 
-        assertTrue(DateUtils.matchesInterval(d, monthly));
-        assertTrue(DateUtils.matchesInterval(d, quarterly));
-        assertFalse(DateUtils.matchesInterval(d, annually));
-        assertFalse(DateUtils.matchesInterval(d, biannually));
+        assertTrue(DateUtils.matchesInterval(d, monthly, s1));
+        assertTrue(DateUtils.matchesInterval(d, quarterly, s1));
+        assertFalse(DateUtils.matchesInterval(d, annually, s1));
+        assertFalse(DateUtils.matchesInterval(d, biannually, s1));
 
     }
 

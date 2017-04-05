@@ -3,10 +3,12 @@ package simulationEntities.population.dataStructure;
 
 import dateModel.Date;
 import dateModel.DateUtils;
+import dateModel.MisalignedTimeDivisionError;
 import dateModel.dateImplementations.AdvancableDate;
 import dateModel.dateImplementations.MonthDate;
 import dateModel.dateImplementations.YearDate;
 import dateModel.exceptions.UnsupportedDateConversion;
+import dateModel.timeSteps.CompoundTimeUnit;
 import dateModel.timeSteps.TimeUnit;
 import simulationEntities.person.IPerson;
 import simulationEntities.population.dataStructure.exceptions.PersonNotFoundException;
@@ -20,7 +22,7 @@ import java.util.*;
  */
 public class MaleCollection extends PersonCollection {
 
-    private final Map<YearDate, Collection<IPerson>> byYear = new HashMap<>();
+    private final Map<MonthDate, Collection<IPerson>> byYear = new HashMap<>();
 
     /**
      * Instantiates a new MaleCollection. The dates specify the earliest and latest expected birth dates of
@@ -32,11 +34,11 @@ public class MaleCollection extends PersonCollection {
      * @param end   the end
      * @throws UnsupportedDateConversion the unsupported date conversion
      */
-    public MaleCollection(AdvancableDate start, Date end) {
-        super(start, end);
+    public MaleCollection(AdvancableDate start, Date end, CompoundTimeUnit divisionSize) {
+        super(start, end, divisionSize);
 
-        for (AdvancableDate y = start; DateUtils.dateBefore(y, end); y = y.advanceTime(1, TimeUnit.YEAR)) {
-            byYear.put(y.getYearDate(), new ArrayList<>());
+        for (AdvancableDate d = start; DateUtils.dateBefore(d, end); d = d.advanceTime(divisionSize)) {
+            byYear.put(d.getMonthDate(), new ArrayList<>());
         }
     }
 
@@ -49,7 +51,7 @@ public class MaleCollection extends PersonCollection {
 
         Collection<IPerson> people = new ArrayList<>();
 
-        for (YearDate t : byYear.keySet()) {
+        for (MonthDate t : byYear.keySet()) {
             people.addAll(byYear.get(t));
         }
 
@@ -57,27 +59,44 @@ public class MaleCollection extends PersonCollection {
     }
 
     @Override
-    public Collection<IPerson> getByYear(Date yearOfBirth) {
+    public Collection<IPerson> getAllPersonsInTimePeriod(AdvancableDate firstDate, CompoundTimeUnit timePeriod) {
 
         Collection<IPerson> people = new ArrayList<>();
 
-        try {
-            people.addAll(byYear.get(yearOfBirth.getYearDate()));
-        } catch (NullPointerException e) {
-            // No need to do anything - we allow the method to return an empty list as no one was born in the year
+        int divisionsInPeriod = DateUtils.calcSubTimeUnitsInTimeUnit(getDivisionSize(), timePeriod);
+
+        if(divisionsInPeriod <= 0) {
+            throw new MisalignedTimeDivisionError("");
+        }
+
+        MonthDate divisionDate = firstDate.getMonthDate();
+
+        // for all the division dates
+        for(int i = 0; i < divisionsInPeriod; i++) {
+
+            try {
+                people.addAll(byYear.get(firstDate.getMonthDate()));
+            } catch (NullPointerException e) {
+                // No need to do anything - we allow the method to return an empty list as no one was born in the year
+            }
+
+            divisionDate = divisionDate.advanceTime(getDivisionSize());
         }
 
         return people;
+
     }
 
     @Override
     public void addPerson(IPerson person) {
+        MonthDate divisionDate = resolveDateToCorrectDivisionDate(person.getBirthDate());
+
         try {
-            byYear.get(person.getBirthDate().getYearDate()).add(person);
+            byYear.get(divisionDate).add(person);
         } catch (NullPointerException e) {
             // If the year didn't exist in the map
-            byYear.put(person.getBirthDate().getYearDate(), new ArrayList<>());
-            byYear.get(person.getBirthDate().getYearDate()).add(person);
+            byYear.put(divisionDate, new ArrayList<>());
+            byYear.get(divisionDate).add(person);
         }
 
     }
@@ -98,12 +117,35 @@ public class MaleCollection extends PersonCollection {
     }
 
     @Override
-    int getNumberOfPersons(Date yearOfBirth) {
-        return byYear.get(yearOfBirth.getYearDate()).size();
+    int getNumberOfPersons(AdvancableDate firstDate, CompoundTimeUnit timePeriod) {
+
+        int count = 0;
+
+        int divisionsInPeriod = DateUtils.calcSubTimeUnitsInTimeUnit(getDivisionSize(), timePeriod);
+
+        if(divisionsInPeriod <= 0) {
+            throw new MisalignedTimeDivisionError("");
+        }
+
+        MonthDate divisionDate = firstDate.getMonthDate();
+
+        // for all the division dates
+        for(int i = 0; i < divisionsInPeriod; i++) {
+
+            try {
+                count += byYear.get(firstDate.getMonthDate()).size();
+            } catch (NullPointerException e) {
+                // No need to do anything - we allow the method to return an empty list as no one was born in the year
+            }
+
+            divisionDate = divisionDate.advanceTime(getDivisionSize());
+        }
+
+        return count;
     }
 
     @Override
-    public Set<YearDate> getYOBs() {
+    public Set<AdvancableDate> getDivisionDates() {
         return new HashSet<>(byYear.keySet());
     }
 

@@ -5,9 +5,7 @@ import dateModel.DateUtils;
 import dateModel.MisalignedTimeDivisionError;
 import dateModel.dateImplementations.AdvancableDate;
 import dateModel.dateImplementations.MonthDate;
-import dateModel.dateImplementations.YearDate;
 import dateModel.timeSteps.CompoundTimeUnit;
-import dateModel.timeSteps.TimeUnit;
 import simulationEntities.person.IPerson;
 import simulationEntities.population.dataStructure.exceptions.InsufficientNumberOfPeopleException;
 import simulationEntities.population.dataStructure.exceptions.PersonNotFoundException;
@@ -58,7 +56,7 @@ public abstract class PersonCollection implements DateBounds {
      * @return the desired cohort
      */
     // Was getByYear()
-    public abstract Collection<IPerson> getByDateAndPeriod(AdvancableDate firstDate, CompoundTimeUnit timePeriod);
+    public abstract Collection<IPerson> getAllPersonsInTimePeriod(AdvancableDate firstDate, CompoundTimeUnit timePeriod);
 
     /**
      * Adds the given person to the PersonCollection.
@@ -190,7 +188,7 @@ public abstract class PersonCollection implements DateBounds {
             return selectedPeople;
         }
 
-        LinkedList<IPerson> cohort = new LinkedList<>(getByDateAndPeriod(divisionDate, divisionSize));
+        LinkedList<IPerson> cohort = new LinkedList<>(getAllPersonsInTimePeriod(divisionDate, divisionSize));
 
         while (selectedPeople.size() < numberToRemove) {
 
@@ -239,4 +237,33 @@ public abstract class PersonCollection implements DateBounds {
     }
 
     public abstract Set<AdvancableDate> getDivisionDates();
+
+    public boolean checkDateAlignmentToDivisions(AdvancableDate date) {
+         return DateUtils.matchesInterval(date, divisionSize, startDate);
+    }
+
+    public MonthDate resolveDateToCorrectDivisionDate(Date date) {
+
+        int dM = date.getMonth();
+        int dY = date.getYear();
+
+        int sM = startDate.getMonth();
+        int sY = startDate.getYear();
+
+        int tsc = divisionSize.getCount();
+
+        int adm = (12 * ((dY - sY) % tsc)) + dM;
+
+        int cm = (sM % tsc) + tsc * (int) Math.floor((adm - (sM % tsc)) / tsc);
+
+        int absm = cm - 12 * ((dY - sY) % tsc);
+
+        int iM = 12 + absm - 12 * (int) Math.ceil((absm / 12));
+
+        int iY = dY + (int) Math.ceil(absm / 12) - 1;
+
+        return new MonthDate(iM, iY);
+
+    }
+
 }

@@ -81,27 +81,33 @@ public class DateUtils {
 
     }
 
-    public static boolean matchesInterval(Date date, CompoundTimeUnit interval) {
+    public static boolean matchesInterval(Date currentDate, CompoundTimeUnit interval, Date startDate) {
 
-        // If year interval and first month of year
-        if (interval.getUnit() == TimeUnit.YEAR) {
-            if (date.getMonth() == 1) {
-                // Checks year based on remainder from the year 0
-                if (date.getYear() % interval.getCount() == 0) {
-                    return true;
-                }
-            }
-        }
+        int dM = differenceInMonths(startDate, currentDate).getCount();
 
-        // If month interval
-        if (interval.getUnit() == TimeUnit.MONTH) {
-            // Offset by one to make month 1, 4, 7, 10 the months for the quarterly interval
-            if ((date.getMonth() - 1) % interval.getCount() == 0) {
-                return true;
-            }
-        }
+        return dM % monthsInTimeUnit(interval) == 0;
 
-        return false;
+
+
+//        // If year interval and first month of year
+//        if (interval.getUnit() == TimeUnit.YEAR) {
+//            if (currentDate.getMonth() == 1) {
+//                // Checks year based on remainder from the year 0
+//                if (currentDate.getYear() % interval.getCount() == 0) {
+//                    return true;
+//                }
+//            }
+//        }
+//
+//        // If month interval
+//        if (interval.getUnit() == TimeUnit.MONTH) {
+//            // Offset by one to make month 1, 4, 7, 10 the months for the quarterly interval
+//            if ((currentDate.getMonth() - 1) % interval.getCount() == 0) {
+//                return true;
+//            }
+//        }
+//
+//        return false;
 
     }
 
