@@ -119,6 +119,11 @@ public final class MonthDate implements AdvancableDate {
         }
     }
 
+    @Override
+    public int hashCode() {
+        return year * 100 + month;
+    }
+
 //    @Override
 //    public int hashCode() {
 //        return year;

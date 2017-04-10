@@ -1,0 +1,46 @@
+---
+title: "Missing row example"
+author: "Tom Dalton"
+date: "27/03/2017"
+output: pdf_document
+geometry: margin=0.5in 
+---
+
+
+
+```{r}
+library("MASS")
+close = read.table("fake-pop-close-match.dat", header = T)
+close.missing = read.table("fake-pop-close-match-missing-row.dat", header = T)
+close.zeroed = read.table("fake-pop-close-match-zeroed-row.dat", header = T)
+
+close
+tail(close.missing)
+tail(close.zeroed)
+```
+
+
+```{r results='hide'}
+dT <- close
+model.sat = loglm(freq ~ yob * age * sex * died * source, data = dT)
+model.step.result = step(model.sat, direction = "backward")
+model.sel = eval(parse(text=model.step.result["call"]))
+
+dT <- close.missing
+model2.sat = loglm(freq ~ yob * age * sex * died * source, data = dT)
+model2.step.result = step(model2.sat, direction = "backward")
+model2.sel = eval(parse(text=model2.step.result["call"]))
+
+dT <- close.zeroed
+model3.sat = loglm(freq ~ yob * age * sex * died * source, data = dT)
+model3.step.result = step(model3.sat, direction = "backward")
+model3.sel = eval(parse(text=model3.step.result["call"]))
+```
+
+
+```{r}
+model.sel
+model2.sel
+model3.sel
+```
+
