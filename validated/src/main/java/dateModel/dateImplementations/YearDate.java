@@ -2,7 +2,6 @@ package dateModel.dateImplementations;
 
 import dateModel.Date;
 import dateModel.DateUtils;
-import dateModel.exceptions.UnsupportedDateConversion;
 import dateModel.timeSteps.CompoundTimeUnit;
 import dateModel.timeSteps.TimeUnit;
 
@@ -64,12 +63,13 @@ public final class YearDate implements AdvancableDate {
 
     @Override
     public int hashCode() {
-        return year;
+        return year * 100 + MONTH;
     }
 
     @Override
     public boolean equals(Object obj) {
-        return this.year == ((YearDate) obj).getYear();
+        AdvancableDate date = (AdvancableDate) obj;
+        return this.year == date.getYear() && this.getMonth() == date.getMonth();
     }
 
     @Override
@@ -79,7 +79,7 @@ public final class YearDate implements AdvancableDate {
 
     @Override
     public int compareTo(Date o) {
-        if (DateUtils.dateBefore(this, o)) {
+        if (DateUtils.dateBeforeOrEqual(this, o)) {
             return -1;
         } else {
             return 1;

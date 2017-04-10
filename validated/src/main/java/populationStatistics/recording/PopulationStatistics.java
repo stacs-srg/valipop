@@ -137,7 +137,7 @@ public class PopulationStatistics implements PopulationComposition, EventRateTab
         survival.put(new IntegerRange(0), survivors);
 
         int age = 0;
-        for (AdvancableDate d = cohortYear; DateUtils.dateBefore(d, cohortYear.advanceTime(timeLimit, TimeUnit.YEAR)); d = d.advanceTime(1, TimeUnit.YEAR)) {
+        for (AdvancableDate d = cohortYear; DateUtils.dateBeforeOrEqual(d, cohortYear.advanceTime(timeLimit, TimeUnit.YEAR)); d = d.advanceTime(1, TimeUnit.YEAR)) {
 
             double nMx = 0;
 
@@ -336,7 +336,7 @@ public class PopulationStatistics implements PopulationComposition, EventRateTab
     --------------------- Private Helper Methods ---------------------
      */
 
-    private double calculateOrderedBirthRate(Date startYear, Date currentDate, int age, int birthOrder, IPopulation generatedPopulation, double survivors) {
+    private double calculateOrderedBirthRate(AdvancableDate startYear, Date currentDate, int age, int birthOrder, IPopulation generatedPopulation, double survivors) {
         SelfCorrectingTwoDimensionDataDistribution orderedBirthRates = getOrderedBirthRates(currentDate);
 
         OneDimensionDataDistribution aSOBR;
@@ -346,7 +346,12 @@ public class PopulationStatistics implements PopulationComposition, EventRateTab
             return 0.0;
         }
 
-        int t = CollectionUtils.countPeopleInCollectionAliveOnDate(generatedPopulation.getByYearAndSex('f', startYear), currentDate);
+        int t = CollectionUtils.countPeopleInCollectionAliveOnDate(
+                generatedPopulation.forceGetAllPersonsByTimePeriodAndSex(
+                        startYear,
+                        new CompoundTimeUnit(1, TimeUnit.YEAR),
+                        'f'),
+                currentDate);
         double r = aSOBR.getRate(birthOrder);
         return (r * t) / survivors;
     }

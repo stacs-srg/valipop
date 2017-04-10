@@ -18,18 +18,17 @@ import java.util.Set;
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class SelfCorrectingTwoDimensionDataDistribution implements DataDistribution, SelfCorrection {
+public class SelfCorrectingProportionalTwoDimensionDataDistribution implements DataDistribution, SelfCorrection {
 
     // The integer range here represents the row labels (i.e. the age ranges on the ordered birth table)
     private Map<IntegerRange, SelfCorrectingOneDimensionDataDistribution> data;
 
-    private int maxCol = 10;
     private YearDate year;
     private String sourcePopulation;
 
     private String sourceOrganisation;
 
-    public SelfCorrectingTwoDimensionDataDistribution(YearDate year, String sourcePopulation, String sourceOrganisation, Map<IntegerRange, SelfCorrectingOneDimensionDataDistribution> tableData) {
+    public SelfCorrectingProportionalTwoDimensionDataDistribution(YearDate year, String sourcePopulation, String sourceOrganisation, Map<IntegerRange, SelfCorrectingOneDimensionDataDistribution> tableData) {
         this.year = year;
         this.sourceOrganisation = sourceOrganisation;
         this.sourcePopulation = sourcePopulation;

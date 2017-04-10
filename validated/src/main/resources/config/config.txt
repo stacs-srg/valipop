@@ -1,6 +1,6 @@
 #Properties File - for model v3 - Tom, Graham, Al
 #4.3.16
-var_data_files = src/main/resources/scotland_test_population
+var_data_files = validated/src/main/resources/scotland_test_population
 produce_graphs = false
 produce_dat_files = true
 death_time_step = 1y

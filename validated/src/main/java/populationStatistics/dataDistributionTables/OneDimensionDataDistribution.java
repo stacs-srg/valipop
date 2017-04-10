@@ -25,7 +25,7 @@ public class OneDimensionDataDistribution implements DataDistribution {
     private final String sourcePopulation;
     private final String sourceOrganisation;
 
-    protected final Map<IntegerRange, Double> targetData;
+    protected final Map<IntegerRange, Double> targetRates;
 
     public OneDimensionDataDistribution(YearDate year,
                                         String sourcePopulation,
@@ -35,14 +35,14 @@ public class OneDimensionDataDistribution implements DataDistribution {
         this.year = year;
         this.sourcePopulation = sourcePopulation;
         this.sourceOrganisation = sourceOrganisation;
-        this.targetData = tableData;
+        this.targetRates = tableData;
     }
 
     public void updateValue(Integer row, double newValue) {
 
         IntegerRange rowRange = resolveRowValue(row);
 
-        targetData.replace(rowRange, newValue);
+        targetRates.replace(rowRange, newValue);
     }
 
     @Override
@@ -63,7 +63,7 @@ public class OneDimensionDataDistribution implements DataDistribution {
     @Override
     public int getSmallestLabel() {
         int min = Integer.MAX_VALUE;
-        for (IntegerRange iR : targetData.keySet()) {
+        for (IntegerRange iR : targetRates.keySet()) {
             int v = iR.getMin();
             if (v < min) {
                 min = v;
@@ -75,7 +75,7 @@ public class OneDimensionDataDistribution implements DataDistribution {
     public IntegerRange getMinRowLabelValue2() {
         int min = Integer.MAX_VALUE;
         IntegerRange label = null;
-        for (IntegerRange iR : targetData.keySet()) {
+        for (IntegerRange iR : targetRates.keySet()) {
             int v = iR.getMin();
             if (v < min) {
                 min = v;
@@ -89,7 +89,7 @@ public class OneDimensionDataDistribution implements DataDistribution {
     public IntegerRange getLargestLabel() {
         IntegerRange max = null;
         int maxV = Integer.MIN_VALUE;
-        for (IntegerRange iR : targetData.keySet()) {
+        for (IntegerRange iR : targetRates.keySet()) {
             int v = iR.getMax();
             if (v > maxV) {
                 max = iR;
@@ -104,7 +104,7 @@ public class OneDimensionDataDistribution implements DataDistribution {
 
         IntegerRange row = resolveRowValue(rowValue);
 
-        return targetData.get(row);
+        return targetRates.get(row);
     }
 
     public double getRate(Integer rowValue, CompoundTimeUnit timeStep) {
@@ -119,7 +119,7 @@ public class OneDimensionDataDistribution implements DataDistribution {
 
     public IntegerRange resolveRowValue(Integer rowValue) {
 
-        for (IntegerRange iR : targetData.keySet()) {
+        for (IntegerRange iR : targetRates.keySet()) {
             if (iR.contains(rowValue)) {
                 return iR;
             }
@@ -129,14 +129,14 @@ public class OneDimensionDataDistribution implements DataDistribution {
     }
 
     public Map<IntegerRange, Double> getRate() {
-        return targetData;
+        return targetRates;
     }
 
     public Map<IntegerRange, Double> cloneData() {
         Map<IntegerRange, Double> map = new HashMap<IntegerRange, Double>();
 
-        for (IntegerRange iR : targetData.keySet()) {
-            map.put(iR, targetData.get(iR));
+        for (IntegerRange iR : targetRates.keySet()) {
+            map.put(iR, targetRates.get(iR));
         }
 
         return map;
@@ -160,7 +160,7 @@ public class OneDimensionDataDistribution implements DataDistribution {
         out.println("DATA");
 
         for(IntegerRange iR : orderedKeys) {
-            out.println(iR.getValue() + "\t" + targetData.get(iR));
+            out.println(iR.getValue() + "\t" + targetRates.get(iR));
         }
 
         out.println();

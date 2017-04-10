@@ -2,12 +2,10 @@ package utils.implementedSimulations.orderedBirthDeathModel;
 
 import config.Config;
 import dateModel.DateUtils;
-import dateModel.dateImplementations.ExactDate;
 import dateModel.dateImplementations.MonthDate;
 import events.EventLogic;
 import events.UnsupportedEventType;
 import events.birth.BirthLogic;
-import events.death.DeathLogic;
 import events.death.NDeathLogic;
 import events.init.InitLogic;
 import org.apache.logging.log4j.Logger;
@@ -16,12 +14,9 @@ import populationStatistics.recording.inputted.DesiredPopulationStatisticsFactor
 import populationStatistics.validation.analytic.AnalyticsRunner;
 import populationStatistics.validation.comparison.ComparativeAnalysis;
 import populationStatistics.validation.summaryData.SummaryRow;
-import simulationEntities.person.Person;
-import simulationEntities.population.PopulationCounts;
 import simulationEntities.population.dataStructure.PeopleCollection;
 import simulationEntities.population.dataStructure.Population;
 import simulationEntities.population.dataStructure.exceptions.InsufficientNumberOfPeopleException;
-import simulationEntities.population.dataStructure.utils.AggregatePersonCollectionFactory;
 import utils.CustomLog4j;
 import utils.ProcessArgs;
 import utils.ProgramTimer;
@@ -148,23 +143,24 @@ public class OBDModel {
     public PeopleCollection runSimulation() throws InsufficientNumberOfPeopleException {
 
 
-        while(DateUtils.dateBefore(currentTime, config.getTE())) {
+        while(DateUtils.dateBeforeOrEqual(currentTime, config.getTE())) {
 
-            if (DateUtils.matchesInterval(currentTime, config.getBirthTimeStep())) {
-                int births = BirthLogic.handleBirths(config, currentTime, desired, population);
-                InitLogic.incrementBirthCount(births);
-            }
+//            if (DateUtils.matchesInterval(currentTime, config.getBirthTimeStep(), config.getTS())) {
+//                int births = BirthLogic.handleBirths(config, currentTime, desired, population);
+//                InitLogic.incrementBirthCount(births);
+//            }
 
             // if deaths timestep
-            if (DateUtils.matchesInterval(currentTime, config.getDeathTimeStep())) {
+            if (DateUtils.matchesInterval(currentTime, config.getDeathTimeStep(), config.getTS())) {
                 deathLogic.handleEvent(config, currentTime, config.getDeathTimeStep(), population, desired);
             }
 
 
 
-            if (InitLogic.inInitPeriod(currentTime) && DateUtils.matchesInterval(currentTime, InitLogic.getTimeStep())) {
+//            if (InitLogic.inInitPeriod(currentTime) &&
+//                    DateUtils.matchesInterval(currentTime, InitLogic.getTimeStep(), config.getTS())) {
                 InitLogic.handleInitPeople(config, currentTime, population);
-            }
+//            }
 
 
 
@@ -185,7 +181,7 @@ public class OBDModel {
     }
 
     private boolean inSimDates() {
-        return DateUtils.dateBefore(config.getT0(), currentTime);
+        return DateUtils.dateBeforeOrEqual(config.getT0(), currentTime);
     }
 
 }

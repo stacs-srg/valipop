@@ -4,7 +4,6 @@ import config.Config;
 import dateModel.Date;
 import dateModel.DateUtils;
 import dateModel.dateImplementations.YearDate;
-import dateModel.exceptions.UnsupportedDateConversion;
 import dateModel.timeSteps.CompoundTimeUnit;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -117,7 +116,7 @@ public abstract class DesiredPopulationStatisticsFactory {
             return inputs;
         }
 
-        while(DateUtils.dateBefore(curDate = prevInputDate.advanceTime(new CompoundTimeUnit(inputWidth.getCount() * c, inputWidth.getUnit())), years[0])) {
+        while(DateUtils.dateBeforeOrEqual(curDate = prevInputDate.advanceTime(new CompoundTimeUnit(inputWidth.getCount() * c, inputWidth.getUnit())), years[0])) {
             inputs.put(curDate.getYearDate(), inputs.get(years[0]));
             c++;
         }
@@ -127,7 +126,7 @@ public abstract class DesiredPopulationStatisticsFactory {
         for(YearDate curInputDate : years) {
 
 
-            while(DateUtils.dateBefore(curDate = prevInputDate.advanceTime(new CompoundTimeUnit(inputWidth.getCount() * c, inputWidth.getUnit())), curInputDate)) {
+            while(DateUtils.dateBeforeOrEqual(curDate = prevInputDate.advanceTime(new CompoundTimeUnit(inputWidth.getCount() * c, inputWidth.getUnit())), curInputDate)) {
                 YearDate duplicateFrom = getNearestDate(curDate, prevInputDate, curInputDate);
                 inputs.put(curDate.getYearDate(), inputs.get(duplicateFrom));
                 c++;
@@ -137,7 +136,7 @@ public abstract class DesiredPopulationStatisticsFactory {
             prevInputDate = curInputDate;
         }
 
-        while(DateUtils.dateBefore(curDate = prevInputDate.advanceTime(new CompoundTimeUnit(inputWidth.getCount() * c, inputWidth.getUnit())), config.getTE())) {
+        while(DateUtils.dateBeforeOrEqual(curDate = prevInputDate.advanceTime(new CompoundTimeUnit(inputWidth.getCount() * c, inputWidth.getUnit())), config.getTE())) {
             inputs.put(curDate.getYearDate(), inputs.get(prevInputDate));
             c++;
         }

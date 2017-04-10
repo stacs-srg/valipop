@@ -1,6 +1,8 @@
 package simulationEntities.population;
 
 
+import dateModel.dateImplementations.AdvancableDate;
+import dateModel.timeSteps.CompoundTimeUnit;
 import simulationEntities.person.IPerson;
 import dateModel.Date;
 
@@ -14,5 +16,9 @@ public interface PopulationUtils {
 //    Collection<IPerson> getByYear(Date year);
 
 //    Collection<IPerson> getByYearAndSex(char sex, Date year);
+
+    Collection<IPerson> forceGetAllPersonsByTimePeriod(AdvancableDate firstDate, CompoundTimeUnit timePeriod);
+
+    Collection<IPerson> forceGetAllPersonsByTimePeriodAndSex(AdvancableDate firstDate, CompoundTimeUnit timePeriod, char sex);
 
 }

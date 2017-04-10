@@ -1,7 +1,8 @@
 package simulationEntities.population.dataStructure;
 
+import dateModel.DateUtils;
+import dateModel.MisalignedTimeDivisionError;
 import dateModel.dateImplementations.AdvancableDate;
-import dateModel.dateImplementations.YearDate;
 import dateModel.timeSteps.CompoundTimeUnit;
 import simulationEntities.partnership.IPartnership;
 import simulationEntities.person.IPerson;
@@ -213,4 +214,78 @@ public class PeopleCollection extends PersonCollection implements IPopulation {
 
     }
 
+    @Override
+    public Collection<IPerson> forceGetAllPersonsByTimePeriod(AdvancableDate firstDate, CompoundTimeUnit timePeriod) {
+        Collection<IPerson> people = new ArrayList<>();
+        people.addAll(forceGetAllPersonsByTimePeriodAndSex(firstDate, timePeriod, 'm'));
+        people.addAll(forceGetAllPersonsByTimePeriodAndSex(firstDate, timePeriod, 'f'));
+
+        return people;
+    }
+
+    @Override
+    public Collection<IPerson> forceGetAllPersonsByTimePeriodAndSex(AdvancableDate firstDate, CompoundTimeUnit timePeriod, char sex) {
+        Collection<IPerson> people = new ArrayList<>();
+
+        if(Character.toLowerCase(sex) == 'm') {
+            try {
+                people = getMales().getAllPersonsInTimePeriod(firstDate, timePeriod);
+            } catch (MisalignedTimeDivisionError e) {
+                people.addAll(getPeopleBetweenDates(getMales(), firstDate, firstDate.advanceTime(timePeriod)));
+            }
+        } else if(Character.toLowerCase(sex) == 'f') {
+            try {
+                people = getFemales().getAllPersonsInTimePeriod(firstDate, timePeriod);
+            } catch (MisalignedTimeDivisionError e) {
+                people.addAll(getPeopleBetweenDates(getMales(), firstDate, firstDate.advanceTime(timePeriod)));
+            }
+        }
+
+        return people;
+    }
+
+    private Collection<IPerson> getPeopleBetweenDates(PersonCollection collection,
+                                                      AdvancableDate firstDateOfInterest,
+                                                      AdvancableDate lastDateOfInterest) {
+
+        Collection<IPerson> people = new ArrayList<>();
+
+        AdvancableDate firstDivOfInterest = resolveDateToCorrectDivisionDate(firstDateOfInterest);
+        AdvancableDate lastDivOfInterest = resolveDateToCorrectDivisionDate(lastDateOfInterest);
+
+        AdvancableDate consideredDate = firstDivOfInterest;
+
+        while(DateUtils.dateBeforeOrEqual(consideredDate, lastDivOfInterest)) {
+
+            Collection<IPerson> temp = collection.getAllPersonsInTimePeriod(consideredDate, getDivisionSize());
+
+            if(DateUtils.datesEqual(firstDivOfInterest, consideredDate)) {
+
+                for(IPerson p : temp) {
+
+                    if(!DateUtils.dateBefore(p.getBirthDate(), firstDateOfInterest)) {
+                        people.add(p);
+                    }
+
+                }
+
+            } else if(DateUtils.datesEqual(lastDivOfInterest, consideredDate)){
+
+                for(IPerson p : temp) {
+
+                    if(DateUtils.dateBefore(p.getBirthDate(), lastDateOfInterest)) {
+                        people.add(p);
+                    }
+
+                }
+
+            } else {
+                people.addAll(temp);
+            }
+
+            consideredDate = consideredDate.advanceTime(getDivisionSize());
+        }
+
+        return people;
+    }
 }

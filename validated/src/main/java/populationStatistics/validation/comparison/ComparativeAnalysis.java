@@ -193,7 +193,7 @@ public class ComparativeAnalysis implements IComparativeAnalysis {
 
 
         // for each year in analysis period
-        for (AdvancableDate d = startDate; DateUtils.dateBefore(d, endDate); d = d.advanceTime(1, TimeUnit.YEAR)) {
+        for (AdvancableDate d = startDate; DateUtils.dateBeforeOrEqual(d, endDate); d = d.advanceTime(1, TimeUnit.YEAR)) {
 
             Map<EventType, IKaplanMeierAnalysis> temp = new HashMap<>();
 
@@ -229,7 +229,7 @@ public class ComparativeAnalysis implements IComparativeAnalysis {
 //
 //        Date prevDate;
 //
-//        if(DateUtils.dateBefore(startDate, maleDeathDataYears.get(0))) {
+//        if(DateUtils.dateBeforeOrEqual(startDate, maleDeathDataYears.get(0))) {
 //            prevDate = startDate;
 //        } else {
 //            prevDate = maleDeathDataYears.get(0);
@@ -262,14 +262,14 @@ public class ComparativeAnalysis implements IComparativeAnalysis {
 //                midDate = DateUtils.calculateDateInstant(thisDate, days);
 //            }
 //
-//            if(DateUtils.dateBefore(thisDate, startDate)) {
+//            if(DateUtils.dateBeforeOrEqual(thisDate, startDate)) {
 //
-//                if(!DateUtils.dateBefore(midDate, startDate)) {
+//                if(!DateUtils.dateBeforeOrEqual(midDate, startDate)) {
 //
 //                    results.get(midDate.getYearDate()).put(EventType.MALE_DEATH, runKMAnalysisForTimePeriod(prevDate, EventType.MALE_DEATH, DateUtils.differenceInMonths(prevDate, midDate), config));
 //                }
 //
-//            } else if(DateUtils.dateBefore(endDate, midDate)) {
+//            } else if(DateUtils.dateBeforeOrEqual(endDate, midDate)) {
 //
 //                results.get(midDate.getYearDate()).put(EventType.MALE_DEATH, runKMAnalysisForTimePeriod(prevDate, EventType.MALE_DEATH, DateUtils.differenceInMonths(prevDate, endDate), config));
 //
@@ -304,7 +304,7 @@ public class ComparativeAnalysis implements IComparativeAnalysis {
             if(i == 0) {
                 start = startDate;
 
-                while(DateUtils.dateBefore(mapKeys.get(i + 1), startDate)) {
+                while(DateUtils.dateBeforeOrEqual(mapKeys.get(i + 1), startDate)) {
                     i++;
                 }
 
@@ -379,7 +379,7 @@ public class ComparativeAnalysis implements IComparativeAnalysis {
             if(i == 0) {
                 start = startDate;
 
-                while(DateUtils.dateBefore(mapKeys.get(i + 1), startDate)) {
+                while(DateUtils.dateBeforeOrEqual(mapKeys.get(i + 1), startDate)) {
                     i++;
                 }
 
