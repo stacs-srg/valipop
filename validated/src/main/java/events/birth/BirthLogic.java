@@ -1,9 +1,7 @@
 package events.birth;
 
 import config.Config;
-import dateModel.Date;
 import dateModel.dateImplementations.MonthDate;
-import dateModel.dateImplementations.YearDate;
 import dateModel.timeSteps.CompoundTimeUnit;
 import dateModel.timeSteps.TimeUnit;
 import org.apache.logging.log4j.LogManager;
@@ -11,18 +9,13 @@ import org.apache.logging.log4j.Logger;
 import populationStatistics.dataDistributionTables.OneDimensionDataDistribution;
 import populationStatistics.recording.PopulationStatistics;
 import populationStatistics.validation.exceptions.StatisticalManipulationCalculationError;
-import simulationEntities.EntityFactory;
 import simulationEntities.person.IPerson;
-import simulationEntities.population.dataStructure.PeopleCollection;
 import simulationEntities.population.dataStructure.Population;
 import simulationEntities.population.dataStructure.exceptions.InsufficientNumberOfPeopleException;
-import utils.CollectionUtils;
 import utils.MapUtils;
 import utils.selectionApproaches.SharedLogic;
-import utils.specialTypes.dataKeys.DataKey;
 import utils.specialTypes.integerRange.IntegerRange;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Random;
@@ -91,9 +84,9 @@ public class BirthLogic {
 ////                    }
 //
 //                    // DATA 1 - get rate of births by mothers age and birth order
-//                    DataKey key = new DataKey(age, order, maxBirthOrderInCohort, women.size());
+//                    StatsKey key = new StatsKey(age, order, maxBirthOrderInCohort, women.size());
 //
-//                    double birthRate = desiredPopulationStatistics.getOrderedBirthRates(currentTime).getCorrectingRate(key, config.getBirthTimeStep());
+//                    double birthRate = desiredPopulationStatistics.getOrderedBirthRates(currentTime).determineCount(key, config.getBirthTimeStep());
 //                    //taperedOrderedBirthRatesForMothersOfThisAge.getRate(order) * config.getBirthTimeStep().toDecimalRepresentation();
 //
 //                    int numberOfChildrenToBirth;
@@ -138,7 +131,7 @@ public class BirthLogic {
 //                    birthCount += numberOfChildrenToBirth;
 //
 //                    // Taking this out gives better results - underlying error?
-////                    desiredPopulationStatistics.getOrderedBirthRates(currentTime).returnAppliedRate(key, birthRate, config.getBirthTimeStep());
+////                    desiredPopulationStatistics.getOrderedBirthRates(currentTime).returnAchievedCount(key, birthRate, config.getBirthTimeStep());
 //
 //                    // select the mothers
 //                    for (Integer childrenInMaternity : motherCountsByMaternitySize.keySet()) {

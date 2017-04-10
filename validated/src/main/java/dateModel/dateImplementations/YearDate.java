@@ -79,7 +79,9 @@ public final class YearDate implements AdvancableDate {
 
     @Override
     public int compareTo(Date o) {
-        if (DateUtils.dateBeforeOrEqual(this, o)) {
+        if(equals(o)) {
+            return 0;
+        } else if (DateUtils.dateBeforeOrEqual(this, o)) {
             return -1;
         } else {
             return 1;

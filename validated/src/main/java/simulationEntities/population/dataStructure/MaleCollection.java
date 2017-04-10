@@ -20,7 +20,7 @@ import java.util.*;
  */
 public class MaleCollection extends PersonCollection {
 
-    private final Map<MonthDate, Collection<IPerson>> byYear = new HashMap<>();
+    private final Map<MonthDate, Collection<IPerson>> byYear = new TreeMap<>();
 
     /**
      * Instantiates a new MaleCollection. The dates specify the earliest and latest expected birth dates of
@@ -101,7 +101,7 @@ public class MaleCollection extends PersonCollection {
 
     @Override
     public void removePerson(IPerson person) throws PersonNotFoundException {
-        Collection<IPerson> people = byYear.get(person.getBirthDate().getYearDate());
+        Collection<IPerson> people = byYear.get(resolveDateToCorrectDivisionDate(person.getBirthDate()));
 
         // Removal of person AND test for removal (all in second clause of the if statement)
         if (people == null || !people.remove(person)) {
@@ -143,8 +143,8 @@ public class MaleCollection extends PersonCollection {
     }
 
     @Override
-    public Set<AdvancableDate> getDivisionDates() {
-        return new HashSet<>(byYear.keySet());
+    public TreeSet<AdvancableDate> getDivisionDates() {
+        return new TreeSet<>(byYear.keySet());
     }
 
 }

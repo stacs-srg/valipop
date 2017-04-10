@@ -163,7 +163,7 @@ public class PeopleCollection extends PersonCollection implements IPopulation {
     }
 
     @Override
-    public Set<AdvancableDate> getDivisionDates() {
+    public TreeSet<AdvancableDate> getDivisionDates() {
         return females.getDivisionDates();
     }
 

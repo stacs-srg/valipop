@@ -29,7 +29,7 @@ import java.util.*;
 public class FemaleCollection extends PersonCollection {
 
     private static final Logger log = LogManager.getLogger(FemaleCollection.class);
-    private final Map<MonthDate, Map<Integer, Collection<IPerson>>> byBirthYearAndNumberOfChildren = new HashMap<>();
+    private final TreeMap<MonthDate, TreeMap<Integer, Collection<IPerson>>> byBirthYearAndNumberOfChildren = new TreeMap<>();
 
     /**
      * Instantiates a new FemaleCollection. The dates specify the earliest and latest expected birth dates of
@@ -45,7 +45,7 @@ public class FemaleCollection extends PersonCollection {
         super(start, end, divisionSize);
 
         for (AdvancableDate d = start; DateUtils.dateBeforeOrEqual(d, end); d = d.advanceTime(divisionSize)) {
-            byBirthYearAndNumberOfChildren.put(d.getMonthDate(), new HashMap<>());
+            byBirthYearAndNumberOfChildren.put(d.getMonthDate(), new TreeMap<>());
         }
     }
 
@@ -341,7 +341,7 @@ public class FemaleCollection extends PersonCollection {
                         resolveDateToCorrectDivisionDate(person.getBirthDate())).get(countChildren(person)).add(person);
             } catch (NullPointerException e1) {
                 // If the year didn't exist in the map
-                Map<Integer, Collection<IPerson>> temp = new HashMap<>();
+                TreeMap<Integer, Collection<IPerson>> temp = new TreeMap<>();
                 temp.put(countChildren(person), new ArrayList<>());
                 temp.get(countChildren(person)).add(person);
                 byBirthYearAndNumberOfChildren.put(resolveDateToCorrectDivisionDate(person.getBirthDate()), temp);
@@ -398,8 +398,8 @@ public class FemaleCollection extends PersonCollection {
     }
 
     @Override
-    public Set<AdvancableDate> getDivisionDates() {
-        return new HashSet<>(byBirthYearAndNumberOfChildren.keySet());
+    public TreeSet<AdvancableDate> getDivisionDates() {
+        return new TreeSet<>(byBirthYearAndNumberOfChildren.keySet());
     }
 
 

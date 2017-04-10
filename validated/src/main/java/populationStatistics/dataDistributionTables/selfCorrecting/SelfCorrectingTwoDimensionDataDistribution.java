@@ -5,7 +5,8 @@ import dateModel.timeSteps.CompoundTimeUnit;
 import populationStatistics.dataDistributionTables.DataDistribution;
 import populationStatistics.dataDistributionTables.OneDimensionDataDistribution;
 import dateModel.dateImplementations.YearDate;
-import utils.specialTypes.dataKeys.DataKey;
+import populationStatistics.dataDistributionTables.determinedCounts.DeterminedCount;
+import populationStatistics.dataDistributionTables.statsKeys.StatsKey;
 import utils.specialTypes.integerRange.IntegerRange;
 import utils.specialTypes.integerRange.InvalidRangeException;
 
@@ -18,7 +19,7 @@ import java.util.Set;
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class SelfCorrectingTwoDimensionDataDistribution implements DataDistribution, SelfCorrection {
+public class SelfCorrectingTwoDimensionDataDistribution implements DataDistribution {
 
     // The integer range here represents the row labels (i.e. the age ranges on the ordered birth table)
     private Map<IntegerRange, SelfCorrectingOneDimensionDataDistribution> data;
@@ -36,28 +37,21 @@ public class SelfCorrectingTwoDimensionDataDistribution implements DataDistribut
         this.data = tableData;
     }
 
-    @Override
-    public double getCorrectingRate(DataKey data, CompoundTimeUnit consideredTimePeriod) {
+    public DeterminedCount determineCount(StatsKey key) {
 
-        DataKey temp = new DataKey(data.getXLabel(), data.getForNPeople());
-
-        return getData(data.getYLabel()).getCorrectingRate(temp, consideredTimePeriod);
+        return getData(key.getYLabel()).determineCount(key);
 
     }
 
-    @Override
-    public void returnAppliedRate(DataKey data, double appliedData, CompoundTimeUnit consideredTimePeriod) {
+    public void returnAchievedCount(DeterminedCount achievedCount) {
 
-        DataKey temp = new DataKey(data.getXLabel(), data.getForNPeople());
-
-        getData(data.getYLabel()).returnAppliedRate(temp, appliedData, consideredTimePeriod);
+        getData(achievedCount.getKey().getYLabel()).returnAchievedCount(achievedCount);
 
     }
 
     public SelfCorrectingOneDimensionDataDistribution getData(Integer yLabel) throws InvalidRangeException {
 
         IntegerRange row = resolveRowValue(yLabel);
-
         return data.get(row);
     }
 

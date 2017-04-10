@@ -552,12 +552,12 @@ public class DateUtils {
         return counts;
     }
 
-    public static int stepsInYear(CompoundTimeUnit timeStep) {
+    public static double stepsInYear(CompoundTimeUnit timeStep) {
 
         if(timeStep.getUnit() == TimeUnit.YEAR) {
-            return MONTHS_IN_YEAR * timeStep.getCount();
+            return 1 / (double) timeStep.getCount();
         } else { // unit == MONTH
-            return MONTHS_IN_YEAR / timeStep.getCount();
+            return MONTHS_IN_YEAR / (double) timeStep.getCount();
         }
 
     }
