@@ -81,27 +81,33 @@ public class DateUtils {
 
     }
 
-    public static boolean matchesInterval(Date date, CompoundTimeUnit interval) {
+    public static boolean matchesInterval(Date currentDate, CompoundTimeUnit interval, Date startDate) {
 
-        // If year interval and first month of year
-        if (interval.getUnit() == TimeUnit.YEAR) {
-            if (date.getMonth() == 1) {
-                // Checks year based on remainder from the year 0
-                if (date.getYear() % interval.getCount() == 0) {
-                    return true;
-                }
-            }
-        }
+        int dM = differenceInMonths(startDate, currentDate).getCount();
 
-        // If month interval
-        if (interval.getUnit() == TimeUnit.MONTH) {
-            // Offset by one to make month 1, 4, 7, 10 the months for the quarterly interval
-            if ((date.getMonth() - 1) % interval.getCount() == 0) {
-                return true;
-            }
-        }
+        return dM % monthsInTimeUnit(interval) == 0;
 
-        return false;
+
+
+//        // If year interval and first month of year
+//        if (interval.getUnit() == TimeUnit.YEAR) {
+//            if (currentDate.getMonth() == 1) {
+//                // Checks year based on remainder from the year 0
+//                if (currentDate.getYear() % interval.getCount() == 0) {
+//                    return true;
+//                }
+//            }
+//        }
+//
+//        // If month interval
+//        if (interval.getUnit() == TimeUnit.MONTH) {
+//            // Offset by one to make month 1, 4, 7, 10 the months for the quarterly interval
+//            if ((currentDate.getMonth() - 1) % interval.getCount() == 0) {
+//                return true;
+//            }
+//        }
+//
+//        return false;
 
     }
 
@@ -529,5 +535,26 @@ public class DateUtils {
             return MONTHS_IN_YEAR / timeStep.getCount();
         }
 
+    }
+
+    public static int calcSubTimeUnitsInTimeUnit(CompoundTimeUnit subTimeUnit, CompoundTimeUnit timeUnit){
+
+        // div by 0?
+        double n = monthsInTimeUnit(timeUnit) / (double) monthsInTimeUnit(subTimeUnit);
+
+        if(n % 1 == 0) {
+            return (int) Math.floor(n);
+        }
+
+        return -1;
+
+    }
+
+    private static int monthsInTimeUnit(CompoundTimeUnit timeUnit) {
+        if(timeUnit.getUnit() == TimeUnit.MONTH) {
+            return timeUnit.getCount();
+        } else {
+            return timeUnit.getCount() * MONTHS_IN_YEAR;
+        }
     }
 }

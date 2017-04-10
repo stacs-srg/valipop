@@ -13,7 +13,6 @@ import populationStatistics.recording.PopulationStatistics;
 import populationStatistics.validation.exceptions.StatisticalManipulationCalculationError;
 import simulationEntities.EntityFactory;
 import simulationEntities.person.IPerson;
-import simulationEntities.population.PopulationCounts;
 import simulationEntities.population.dataStructure.PeopleCollection;
 import simulationEntities.population.dataStructure.Population;
 import simulationEntities.population.dataStructure.exceptions.InsufficientNumberOfPeopleException;
@@ -66,7 +65,7 @@ public class BirthLogic {
             for (int order = 0; order <= maxBirthOrderInCohort; order++) {
 
                 // women of this age and birth order - L
-                Collection<IPerson> women = population.getLivingPeople().getFemales().getByYearAndBirthOrder(yearOfBirthInConsideration, order);
+                Collection<IPerson> women = population.getLivingPeople().getFemales().getByDatePeriodAndBirthOrder(yearOfBirthInConsideration, order);
 
 //                System.out.println("------------------");
 //                System.out.println(order + " of " + maxBirthOrderInCohort);
