@@ -38,7 +38,7 @@ public class SelfCorrectingOneDimensionDataDistribution extends OneDimensionData
         IntegerRange age = resolveRowValue(data.getYLabel());
 
         // target rate
-        double tD = targetData.get(age);
+        double tD = targetRates.get(age);
 
         // applied count
         double aC = appliedCounts.get(age);
@@ -114,7 +114,7 @@ public class SelfCorrectingOneDimensionDataDistribution extends OneDimensionData
         }
 
         // target rate
-        double tD = targetData.get(age);
+        double tD = targetRates.get(age);
 
 //        System.out.println("a: " + age + "   |   tD: " + tD + "   |   aaCD: " + aacD + "   |   tAT: " + tAT + "   |   aDo: " + aDo + "   |   aDn " + aDn + "   |   aCo: " + aCo  + "   |   aCn: " + aCn );
 

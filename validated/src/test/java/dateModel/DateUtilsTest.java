@@ -374,18 +374,18 @@ public class DateUtilsTest {
 
         ExactDate b = new ExactDate(15, 3, 2015);
 
-        assertTrue(DateUtils.dateBefore(a, b));
-        assertFalse(DateUtils.dateBefore(b, a));
+        assertTrue(DateUtils.dateBeforeOrEqual(a, b));
+        assertFalse(DateUtils.dateBeforeOrEqual(b, a));
 
-        assertTrue(DateUtils.dateBefore(b, b));
+        assertTrue(DateUtils.dateBeforeOrEqual(b, b));
 
-        assertTrue(DateUtils.dateBefore(a3, a));
-        assertTrue(DateUtils.dateBefore(a, a2));
-        assertTrue(DateUtils.dateBefore(a3, a2));
+        assertTrue(DateUtils.dateBeforeOrEqual(a3, a));
+        assertTrue(DateUtils.dateBeforeOrEqual(a, a2));
+        assertTrue(DateUtils.dateBeforeOrEqual(a3, a2));
 
-        assertFalse(DateUtils.dateBefore(a, a3));
-        assertFalse(DateUtils.dateBefore(a2, a));
-        assertFalse(DateUtils.dateBefore(a2, a3));
+        assertFalse(DateUtils.dateBeforeOrEqual(a, a3));
+        assertFalse(DateUtils.dateBeforeOrEqual(a2, a));
+        assertFalse(DateUtils.dateBeforeOrEqual(a2, a3));
 
     }
 

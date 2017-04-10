@@ -45,7 +45,7 @@ public class DeathDateSelector implements DateSelector {
     public ExactDate selectDateLPD(AdvancableDate currentDate, CompoundTimeUnit consideredTimePeriod, Date latestPossibleDate) {
 
         // if specified latestPossibleDate is in consideredTimePeriod
-        if (DateUtils.dateBefore(latestPossibleDate, currentDate.advanceTime(consideredTimePeriod))) {
+        if (DateUtils.dateBeforeOrEqual(latestPossibleDate, currentDate.advanceTime(consideredTimePeriod))) {
             // then select date between currentDate and latestPossible date
             int days = DateUtils.differenceInDays(currentDate, latestPossibleDate);
             int chosenDay = random.nextInt(Math.abs(days));
@@ -61,7 +61,7 @@ public class DeathDateSelector implements DateSelector {
     public ExactDate selectDateEPD(AdvancableDate currentDate, CompoundTimeUnit consideredTimePeriod, Date earliestPossibleDate) {
 
         // if specified earliestPossibleDate is in consideredTimePeriod
-        if(DateUtils.dateBefore(currentDate, earliestPossibleDate)) {
+        if(DateUtils.dateBeforeOrEqual(currentDate, earliestPossibleDate)) {
             // The select date between earliestPossibleDate and currentDate + consideredTimePeriod
             int days = DateUtils.differenceInDays(earliestPossibleDate, currentDate.advanceTime(consideredTimePeriod));
             int chosenDay = random.nextInt(Math.abs(days));
@@ -83,9 +83,11 @@ public class DeathDateSelector implements DateSelector {
             Date birthDateOfLastChild = child.getBirthDate().getExactDate();
 
             if (Character.toLowerCase(p.getSex()) == 'm') {
+                // If a male with a child then the man cannot die more than 9 months before the birth date
                 Date ePD = DateUtils.calculateExactDate(birthDateOfLastChild, (-1) * config.getMaxGestationPeriod());
                 return selectDateEPD(currentDate, consideredTimePeriod, ePD);
             } else {
+                // If a female with a child then the cannot die before birth of child
                 return selectDateEPD(currentDate, consideredTimePeriod, birthDateOfLastChild);
             }
 

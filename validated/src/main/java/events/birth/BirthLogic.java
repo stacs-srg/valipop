@@ -39,196 +39,196 @@ public class BirthLogic {
 
     public static int handleBirths(Config config, MonthDate currentTime, PopulationStatistics desiredPopulationStatistics,
                                    Population population) throws InsufficientNumberOfPeopleException {
-
-        int birthCount = 0;
-
-        int minAge = getMinimumAgeForChildbearing(currentTime, desiredPopulationStatistics);
-        int maxAge = getMaxAgeForChildBearing(currentTime, desiredPopulationStatistics);
-
-        // for each age of mothers of childbearing age (AGE OF MOTHER)
-        for (int age = minAge; age < maxAge; age++) {
-
-            ArrayList<IPerson> mothersNeedingPartners = new ArrayList<>();
-            ArrayList<IPerson> mothersNeedingProcessed = new ArrayList<>();
-            int partnershipCount = 0;
-
-            YearDate yearOfBirthInConsideration = new YearDate(currentTime.getYear() - age);
-
-            // DATA 2 - get rate of multiple births in a maternity by mothers age
-            OneDimensionDataDistribution multipleBirthDataForMothersOfThisAgeByMaternity = desiredPopulationStatistics.getMultipleBirthRates(currentTime).getData(age);
-            OneDimensionDataDistribution proportionOfChildrenBornToEachSizeOfMaternity = transformMaternityProportionsToChildrenProportions(multipleBirthDataForMothersOfThisAgeByMaternity);
-
-            int maxBirthOrderInCohort = population.getLivingPeople().getFemales().getHighestBirthOrder(yearOfBirthInConsideration);
-            int sizeOfCohort = population.getLivingPeople().getFemales().getNumberOfPersons(yearOfBirthInConsideration);
-
-            // for each number of children already birthed to mothers (FIRST_BIRTH ORDER)
-            for (int order = 0; order <= maxBirthOrderInCohort; order++) {
-
-                // women of this age and birth order - L
-                Collection<IPerson> women = population.getLivingPeople().getFemales().getByDatePeriodAndBirthOrder(yearOfBirthInConsideration, order);
-
-//                System.out.println("------------------");
-//                System.out.println(order + " of " + maxBirthOrderInCohort);
-//                System.out.println(yearOfBirthInConsideration.rowAsString());
-//                if(women != null) {
-//                    System.out.println(women.size());
-//                } else {
-//                    System.out.println("NULL");
-//                }
-
-
-
-
-
-                if (women == null || women.size() == 0) {
-                    continue;
-                } else {
-
-//                    for(IPerson w : women) {
-//                        if(w.getPartnerships().size() != 0) {
-//                            partnershipCount++;
-//                        }
-//                    }
-
-                    // DATA 1 - get rate of births by mothers age and birth order
-                    DataKey key = new DataKey(age, order, maxBirthOrderInCohort, women.size());
-
-                    double birthRate = desiredPopulationStatistics.getOrderedBirthRates(currentTime).getCorrectingRate(key, config.getBirthTimeStep());
-                    //taperedOrderedBirthRatesForMothersOfThisAge.getRate(order) * config.getBirthTimeStep().toDecimalRepresentation();
-
-                    int numberOfChildrenToBirth;
-                    int totalNumberOfMothers;
-                    Map<Integer, Integer> motherCountsByMaternitySize;
-                    int eligableWomen;
-
-                    do {
-                        // use DATA 1 to see how many many children need to be born
-                        numberOfChildrenToBirth = calculateChildrenToBeBorn(sizeOfCohort, birthRate);
-
-
-                        // calculate numbers of mothers to give birth (and which will bear twins, etc.)
-                        // use DATA 2 to decide how many mothers needed to birth children
-                        motherCountsByMaternitySize = calculateMotherCountsByMaternitySize(numberOfChildrenToBirth, proportionOfChildrenBornToEachSizeOfMaternity);
-
-
-
-                        // check the mother counts are possible to meet with the current cohort
-                        totalNumberOfMothers = CollectionUtils.sumIntegerCollection(motherCountsByMaternitySize.values());
-
-                        eligableWomen = eligableMothers(women, currentTime);
-
-                        if (eligableWomen < totalNumberOfMothers || eligableWomen == 0) {
-                            if (eligableWomen == 0) {
-                                birthRate = 0.0;
-                            } else {
-                                double scalingFactor = eligableWomen / (double) totalNumberOfMothers;
-                                birthRate = scalingFactor * birthRate;
-                            }
-                            log.info("Rescaling Birth Rate | Current Date: " + currentTime.toString() + " - Insufficient number of mothers: Eligible women " + women.size() + " | Mothers Required " + totalNumberOfMothers + " | Age " + age + " | Order " + order);
-                        }
-
-                    } while (eligableWomen < totalNumberOfMothers);
-
-                    if(numberOfChildrenToBirth <= 0) {
-                        birthRate = 0.0;
-                        numberOfChildrenToBirth = 0;
-                    }
-
-
-                    birthCount += numberOfChildrenToBirth;
-
-                    // Taking this out gives better results - underlying error?
-//                    desiredPopulationStatistics.getOrderedBirthRates(currentTime).returnAppliedRate(key, birthRate, config.getBirthTimeStep());
-
-                    // select the mothers
-                    for (Integer childrenInMaternity : motherCountsByMaternitySize.keySet()) {
-
-                        ArrayList<IPerson> mothersToBe;
-
-                        try {
-                            mothersToBe = new ArrayList<>(population.getLivingPeople().getFemales().removeNPersons(motherCountsByMaternitySize.get(childrenInMaternity), yearOfBirthInConsideration, order, currentTime));
-                        } catch (InsufficientNumberOfPeopleException e) {
-                            log.fatal(e.getMessage() + " for allocation of mothers");
-                            throw e;
-                        }
-
-
-                        for (int n = 0; n < motherCountsByMaternitySize.get(childrenInMaternity); n++) {
-                            IPerson mother = mothersToBe.get(n);
-
-                            // make and assign the specified number of children - assign to correct place in population
-                            mother.recordPartnership(EntityFactory.formNewChildrenInPartnership(childrenInMaternity, mother, currentTime, config.getBirthTimeStep(), population));
-
-                            // Re inserting mother to population datastructure so as she resides in the correct place
-                            population.getLivingPeople().addPerson(mother);
-
-                            // TODO implement partnering - part 1
-                            // if birth order 0
-                            if(order == 0) {
-                                // add mothers to MOTHERS_NEEDING_PARTNERS
-                                mothersNeedingPartners.add(mother);
-                            } else {
-                                // else
-
-                                mothersNeedingProcessed.add(mother);
-
-                            }
-                        }
-
-                    }
-                }
-
-
-            }
-
-            // At this point we have a mothers needing processed list
-
-
-//            mothersNeedingPartners.addAll(mothersNeedingProcessed);
-//            for(IPerson p : mothersNeedingPartners) {
-//                IPartnership partnership = p.getLastChild().getParentsPartnership();
-//                partnership.setFather(getRandomFather(people, yearOfBirthInConsideration));
-//                partnership.getMalePartner().recordPartnership(partnership);
-//            }
-
-            // TODO NEXT - bring next line back in for rb seperation
-//            mothersNeedingPartners.addAll(SeparationLogic.handleSeparation(desiredPopulationStatistics, currentTime, mothersNeedingProcessed, people, config));
-
-//            for(IPerson p : mothersNeedingPartners) {
-//                System.out.println(p.getLastChild().getParentsPartnership().getMalePartner().getId());
-//// p.getLastChild().getParentsPartnership().setFather(getRandomFather(people, yearOfBirthInConsideration));
-//            }
-
-            // At this point we have a Mothers Needing Fathers List with children already created
-
-            mothersNeedingPartners.addAll(mothersNeedingProcessed);
-            // TODO NEXT - bring next line back in for rb partnering
-//            PartneringLogic.handlePartnering(desiredPopulationStatistics, currentTime, mothersNeedingPartners, age, people);
-
-
-            for(IPerson mother : mothersNeedingPartners) {
-                IPerson f =  new ArrayList<>(population.getLivingPeople().getMales().removeNPersons(1, yearOfBirthInConsideration, true)).get(0);
-                population.getLivingPeople().addPerson(f);
-                mother.getLastChild().getParentsPartnership().setFather(f);
-            }
-
-        }
-
-
-
-
-//        for(IPerson pe : people.getFemales().getAll()) {
 //
-//            for(IPartnership p : pe.getPartnerships()) {
-//                if (p.getChildren().size() == 0) {
-//                    System.out.println("GO MAD");
+        int birthCount = 0;
+//
+//        int minAge = getMinimumAgeForChildbearing(currentTime, desiredPopulationStatistics);
+//        int maxAge = getMaxAgeForChildBearing(currentTime, desiredPopulationStatistics);
+//
+//        // for each age of mothers of childbearing age (AGE OF MOTHER)
+//        for (int age = minAge; age < maxAge; age++) {
+//
+//            ArrayList<IPerson> mothersNeedingPartners = new ArrayList<>();
+//            ArrayList<IPerson> mothersNeedingProcessed = new ArrayList<>();
+//            int partnershipCount = 0;
+//
+//            YearDate yearOfBirthInConsideration = new YearDate(currentTime.getYear() - age);
+//
+//            // DATA 2 - get rate of multiple births in a maternity by mothers age
+//            OneDimensionDataDistribution multipleBirthDataForMothersOfThisAgeByMaternity = desiredPopulationStatistics.getMultipleBirthRates(currentTime).getData(age);
+//            OneDimensionDataDistribution proportionOfChildrenBornToEachSizeOfMaternity = transformMaternityProportionsToChildrenProportions(multipleBirthDataForMothersOfThisAgeByMaternity);
+//
+//            int maxBirthOrderInCohort = population.getLivingPeople().getFemales().getHighestBirthOrder(yearOfBirthInConsideration);
+//            int sizeOfCohort = population.getLivingPeople().getFemales().getNumberOfPersons(yearOfBirthInConsideration);
+//
+//            // for each number of children already birthed to mothers (FIRST_BIRTH ORDER)
+//            for (int order = 0; order <= maxBirthOrderInCohort; order++) {
+//
+//                // women of this age and birth order - L
+//                Collection<IPerson> women = population.getLivingPeople().getFemales().getByDatePeriodAndBirthOrder(yearOfBirthInConsideration, order);
+//
+////                System.out.println("------------------");
+////                System.out.println(order + " of " + maxBirthOrderInCohort);
+////                System.out.println(yearOfBirthInConsideration.rowAsString());
+////                if(women != null) {
+////                    System.out.println(women.size());
+////                } else {
+////                    System.out.println("NULL");
+////                }
+//
+//
+//
+//
+//
+//                if (women == null || women.size() == 0) {
+//                    continue;
+//                } else {
+//
+////                    for(IPerson w : women) {
+////                        if(w.getPartnerships().size() != 0) {
+////                            partnershipCount++;
+////                        }
+////                    }
+//
+//                    // DATA 1 - get rate of births by mothers age and birth order
+//                    DataKey key = new DataKey(age, order, maxBirthOrderInCohort, women.size());
+//
+//                    double birthRate = desiredPopulationStatistics.getOrderedBirthRates(currentTime).getCorrectingRate(key, config.getBirthTimeStep());
+//                    //taperedOrderedBirthRatesForMothersOfThisAge.getRate(order) * config.getBirthTimeStep().toDecimalRepresentation();
+//
+//                    int numberOfChildrenToBirth;
+//                    int totalNumberOfMothers;
+//                    Map<Integer, Integer> motherCountsByMaternitySize;
+//                    int eligableWomen;
+//
+//                    do {
+//                        // use DATA 1 to see how many many children need to be born
+//                        numberOfChildrenToBirth = calculateChildrenToBeBorn(sizeOfCohort, birthRate);
+//
+//
+//                        // calculate numbers of mothers to give birth (and which will bear twins, etc.)
+//                        // use DATA 2 to decide how many mothers needed to birth children
+//                        motherCountsByMaternitySize = calculateMotherCountsByMaternitySize(numberOfChildrenToBirth, proportionOfChildrenBornToEachSizeOfMaternity);
+//
+//
+//
+//                        // check the mother counts are possible to meet with the current cohort
+//                        totalNumberOfMothers = CollectionUtils.sumIntegerCollection(motherCountsByMaternitySize.values());
+//
+//                        eligableWomen = eligableMothers(women, currentTime);
+//
+//                        if (eligableWomen < totalNumberOfMothers || eligableWomen == 0) {
+//                            if (eligableWomen == 0) {
+//                                birthRate = 0.0;
+//                            } else {
+//                                double scalingFactor = eligableWomen / (double) totalNumberOfMothers;
+//                                birthRate = scalingFactor * birthRate;
+//                            }
+//                            log.info("Rescaling Birth Rate | Current Date: " + currentTime.toString() + " - Insufficient number of mothers: Eligible women " + women.size() + " | Mothers Required " + totalNumberOfMothers + " | Age " + age + " | Order " + order);
+//                        }
+//
+//                    } while (eligableWomen < totalNumberOfMothers);
+//
+//                    if(numberOfChildrenToBirth <= 0) {
+//                        birthRate = 0.0;
+//                        numberOfChildrenToBirth = 0;
+//                    }
+//
+//
+//                    birthCount += numberOfChildrenToBirth;
+//
+//                    // Taking this out gives better results - underlying error?
+////                    desiredPopulationStatistics.getOrderedBirthRates(currentTime).returnAppliedRate(key, birthRate, config.getBirthTimeStep());
+//
+//                    // select the mothers
+//                    for (Integer childrenInMaternity : motherCountsByMaternitySize.keySet()) {
+//
+//                        ArrayList<IPerson> mothersToBe;
+//
+//                        try {
+//                            mothersToBe = new ArrayList<>(population.getLivingPeople().getFemales().removeNPersons(motherCountsByMaternitySize.get(childrenInMaternity), yearOfBirthInConsideration, order, currentTime));
+//                        } catch (InsufficientNumberOfPeopleException e) {
+//                            log.fatal(e.getMessage() + " for allocation of mothers");
+//                            throw e;
+//                        }
+//
+//
+//                        for (int n = 0; n < motherCountsByMaternitySize.get(childrenInMaternity); n++) {
+//                            IPerson mother = mothersToBe.get(n);
+//
+//                            // make and assign the specified number of children - assign to correct place in population
+//                            mother.recordPartnership(EntityFactory.formNewChildrenInPartnership(childrenInMaternity, mother, currentTime, config.getBirthTimeStep(), population));
+//
+//                            // Re inserting mother to population datastructure so as she resides in the correct place
+//                            population.getLivingPeople().addPerson(mother);
+//
+//                            // TODO implement partnering - part 1
+//                            // if birth order 0
+//                            if(order == 0) {
+//                                // add mothers to MOTHERS_NEEDING_PARTNERS
+//                                mothersNeedingPartners.add(mother);
+//                            } else {
+//                                // else
+//
+//                                mothersNeedingProcessed.add(mother);
+//
+//                            }
+//                        }
+//
+//                    }
 //                }
+//
+//
 //            }
+//
+//            // At this point we have a mothers needing processed list
+//
+//
+////            mothersNeedingPartners.addAll(mothersNeedingProcessed);
+////            for(IPerson p : mothersNeedingPartners) {
+////                IPartnership partnership = p.getLastChild().getParentsPartnership();
+////                partnership.setFather(getRandomFather(people, yearOfBirthInConsideration));
+////                partnership.getMalePartner().recordPartnership(partnership);
+////            }
+//
+//            // TODO NEXT - bring next line back in for rb seperation
+////            mothersNeedingPartners.addAll(SeparationLogic.handleSeparation(desiredPopulationStatistics, currentTime, mothersNeedingProcessed, people, config));
+//
+////            for(IPerson p : mothersNeedingPartners) {
+////                System.out.println(p.getLastChild().getParentsPartnership().getMalePartner().getId());
+////// p.getLastChild().getParentsPartnership().setFather(getRandomFather(people, yearOfBirthInConsideration));
+////            }
+//
+//            // At this point we have a Mothers Needing Fathers List with children already created
+//
+//            mothersNeedingPartners.addAll(mothersNeedingProcessed);
+//            // TODO NEXT - bring next line back in for rb partnering
+////            PartneringLogic.handlePartnering(desiredPopulationStatistics, currentTime, mothersNeedingPartners, age, people);
+//
+//
+//            for(IPerson mother : mothersNeedingPartners) {
+//                IPerson f =  new ArrayList<>(population.getLivingPeople().getMales().removeNPersons(1, yearOfBirthInConsideration, true)).get(0);
+//                population.getLivingPeople().addPerson(f);
+//                mother.getLastChild().getParentsPartnership().setFather(f);
+//            }
+//
 //        }
-
-
-        log.info("Births handled: " + currentTime.toString() + " - " + birthCount);
-//        System.out.println("Births handled: " + currentTime.toString() + " - " + birthCount);
+//
+//
+//
+//
+////        for(IPerson pe : people.getFemales().getAll()) {
+////
+////            for(IPartnership p : pe.getPartnerships()) {
+////                if (p.getChildren().size() == 0) {
+////                    System.out.println("GO MAD");
+////                }
+////            }
+////        }
+//
+//
+//        log.info("Births handled: " + currentTime.toString() + " - " + birthCount);
+////        System.out.println("Births handled: " + currentTime.toString() + " - " + birthCount);
         return birthCount;
 
     }
@@ -283,7 +283,7 @@ public class BirthLogic {
         return SharedLogic.calculateNumberToHaveEvent(sizeOfCohort, birthRate);
     }
 
-    private static Map<Integer, Integer> calculateMotherCountsByMaternitySize(int numberOfChildrenToBirth, OneDimensionDataDistribution proportionOfChildrenBornToEachSizeOfMaternity) {
+    private static Map<Integer, Integer>  calculateMotherCountsByMaternitySize(int numberOfChildrenToBirth, OneDimensionDataDistribution proportionOfChildrenBornToEachSizeOfMaternity) {
 
         // In the comments 'maternity type' is used to term how many children are born from the maternity
         // i.e. a single child maternity or a two child maternity would be an example of two maternity types
@@ -390,16 +390,16 @@ public class BirthLogic {
     }
 
 
-    public static IPerson getRandomFather(PeopleCollection population, Date fathersYearOfBirth) throws InsufficientNumberOfPeopleException {
-
-        Collection<IPerson> males = population.getMales().getByYear(fathersYearOfBirth);
-
-        if(males.size() == 0) {
-            throw new InsufficientNumberOfPeopleException("No males alive in simulation");
-        }
-
-        int r = randomNumberGenerator.nextInt(males.size());
-        return males.toArray(new IPerson[males.size()])[r];
-
-    }
+//    public static IPerson getRandomFather(PeopleCollection population, Date fathersYearOfBirth) throws InsufficientNumberOfPeopleException {
+//
+//        Collection<IPerson> males = population.getMales().getByYear(fathersYearOfBirth);
+//
+//        if(males.size() == 0) {
+//            throw new InsufficientNumberOfPeopleException("No males alive in simulation");
+//        }
+//
+//        int r = randomNumberGenerator.nextInt(males.size());
+//        return males.toArray(new IPerson[males.size()])[r];
+//
+//    }
 }

@@ -4,7 +4,6 @@ import dateModel.Date;
 import dateModel.DateUtils;
 import dateModel.dateImplementations.AdvancableDate;
 import dateModel.dateImplementations.YearDate;
-import dateModel.exceptions.UnsupportedDateConversion;
 import dateModel.timeSteps.CompoundTimeUnit;
 import dateModel.timeSteps.TimeUnit;
 import events.EventType;
@@ -113,9 +112,13 @@ public class GeneratedPopulationComposition implements PopulationComposition {
 
 
             // Is this the first advanceTime on this line nessersary?
-            for(AdvancableDate d = startYear; DateUtils.dateBefore(d, startYear.advanceTime(timePeriod)); d = d.advanceTime(1, TimeUnit.YEAR)) {
+            for(AdvancableDate d = startYear; DateUtils.dateBeforeOrEqual(d, startYear.advanceTime(timePeriod)); d = d.advanceTime(1, TimeUnit.YEAR)) {
 //                System.out.println(d.rowAsString());
-                Collection<IPerson> people = population.getByYear(d.advanceTime(new CompoundTimeUnit(age, TimeUnit.YEAR).negative()));
+
+                // THIS HANDLES BOTH GENDERS TOGETHER???
+
+                Collection<IPerson> people = population.forceGetAllPersonsByTimePeriod(d.advanceTime(new CompoundTimeUnit(age, TimeUnit.YEAR).negative()), new CompoundTimeUnit(1, TimeUnit.YEAR));
+//                Collection<IPerson> people = population.getByYear(d.advanceTime(new CompoundTimeUnit(age, TimeUnit.YEAR).negative()));
 
                 for(IPerson person : people) {
                     try {
@@ -174,7 +177,7 @@ public class GeneratedPopulationComposition implements PopulationComposition {
 
         if(event == EventType.MALE_DEATH) {
 
-            Collection<IPerson> people = population.getByYearAndSex('m', year);
+            Collection<IPerson> people = population.forceGetAllPersonsByTimePeriodAndSex(year, new CompoundTimeUnit(1, TimeUnit.YEAR), 'm');
 
 
 
@@ -182,7 +185,7 @@ public class GeneratedPopulationComposition implements PopulationComposition {
 
         } else if(event == EventType.FEMALE_DEATH) {
 
-            Collection<IPerson> people = population.getByYearAndSex('f', year);
+            Collection<IPerson> people = population.forceGetAllPersonsByTimePeriodAndSex(year, new CompoundTimeUnit(1, TimeUnit.YEAR), 'f');
 
             return getDeathAtTimesTable(people, denoteGroupAs, simulationEndDate);
 
@@ -222,7 +225,7 @@ public class GeneratedPopulationComposition implements PopulationComposition {
         int marriagesActiveInEachYearOfTimePeriod = 0;
         int[] separationCounts = new int[childrenCap];
 
-        for(AdvancableDate d = startYear; DateUtils.dateBefore(d, endYear); d = d.advanceTime(1, TimeUnit.YEAR)) {
+        for(AdvancableDate d = startYear; DateUtils.dateBeforeOrEqual(d, endYear); d = d.advanceTime(1, TimeUnit.YEAR)) {
 
             // count number of marriages in year and inc total
 
@@ -237,7 +240,7 @@ public class GeneratedPopulationComposition implements PopulationComposition {
             }
 
             // find each childborn in year
-            Collection<IPerson> cohort = population.getByYear(d);
+            Collection<IPerson> cohort = population.forceGetAllPersonsByTimePeriod(d, new CompoundTimeUnit(1, TimeUnit.YEAR));
 
             for(IPerson child : cohort) {
                 IPartnership p = child.isInstigatorOfSeparationOfMothersPreviousPartnership();
@@ -286,7 +289,7 @@ public class GeneratedPopulationComposition implements PopulationComposition {
             Date partnershipDate = p.getPartnershipDate();
 
             // if event happened in interested time period
-            if(DateUtils.dateBefore(startYear, partnershipDate) && DateUtils.dateBefore(partnershipDate, endYear)) {
+            if(DateUtils.dateBeforeOrEqual(startYear, partnershipDate) && DateUtils.dateBeforeOrEqual(partnershipDate, endYear)) {
 
                 int femaleAgeAtEvent = DateUtils.differenceInYears(p.getFemalePartner().getBirthDate(), partnershipDate).getCount();
 
@@ -359,9 +362,9 @@ public class GeneratedPopulationComposition implements PopulationComposition {
     -------------------- Specialised table creation methods --------------------
      */
 
-    private OneDimensionDataDistribution getCohortFirstBirthTable(Date startYear, EventType event) throws UnsupportedEventType {
+    private OneDimensionDataDistribution getCohortFirstBirthTable(AdvancableDate startYear, EventType event) throws UnsupportedEventType {
 
-        Collection<IPerson> women = population.getByYearAndSex('f', startYear);
+        Collection<IPerson> women = population.forceGetAllPersonsByTimePeriodAndSex(startYear, new CompoundTimeUnit(1, TimeUnit.YEAR), 'f');
 
         Map<IntegerRange, Double> counts = new HashMap<IntegerRange, Double>();
 
@@ -404,7 +407,7 @@ public class GeneratedPopulationComposition implements PopulationComposition {
 
     }
 
-    private OneDimensionDataDistribution getCohortDeathTable(Date startYear, EventType event) throws UnsupportedEventType {
+    private OneDimensionDataDistribution getCohortDeathTable(AdvancableDate startYear, EventType event) throws UnsupportedEventType {
 
         char sex;
 
@@ -418,7 +421,7 @@ public class GeneratedPopulationComposition implements PopulationComposition {
 
         Collection<IPerson> people = null;
         try {
-            people = population.getByYearAndSex(sex, startYear);
+            people = population.forceGetAllPersonsByTimePeriodAndSex(startYear, new CompoundTimeUnit(1, TimeUnit.YEAR), sex);
         } catch (NullPointerException e) {
             System.out.println();
         }

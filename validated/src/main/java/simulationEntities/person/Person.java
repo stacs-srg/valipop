@@ -15,7 +15,6 @@ import events.death.NotDeadException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import simulationEntities.partnership.IPartnership;
-import simulationEntities.population.PopulationCounts;
 import simulationEntities.population.dataStructure.PeopleCollection;
 import simulationEntities.population.dataStructure.Population;
 
@@ -141,7 +140,7 @@ public class Person implements IPerson {
 
         for (IPartnership p : getPartnerships()) {
             for (IPerson c : p.getChildren()) {
-                if (DateUtils.dateBefore(currentDate.advanceTime(timePeriod), c.getBirthDate())) {
+                if (DateUtils.dateBeforeOrEqual(currentDate.advanceTime(timePeriod), c.getBirthDate())) {
                     return false;
                 }
             }
@@ -236,8 +235,8 @@ public class Person implements IPerson {
     @Override
     public boolean aliveOnDate(Date date) {
 
-        if (DateUtils.dateBefore(birthDate, date)) {
-            if (deathDate == null || DateUtils.dateBefore(date, deathDate)) {
+        if (DateUtils.dateBeforeOrEqual(birthDate, date)) {
+            if (deathDate == null || DateUtils.dateBeforeOrEqual(date, deathDate)) {
                 return true;
             }
         }
@@ -274,7 +273,7 @@ public class Person implements IPerson {
         for (IPartnership p : partnerships) {
             for (IPerson c : p.getChildren()) {
 
-                if(DateUtils.dateBefore(latestChildBirthDate, c.getBirthDate())) {
+                if(DateUtils.dateBeforeOrEqual(latestChildBirthDate, c.getBirthDate())) {
                     latestChildBirthDate = c.getBirthDate();
                     child = c;
                 }
@@ -307,7 +306,7 @@ public class Person implements IPerson {
         for (IPartnership p : partnerships) {
             for (IPerson c : p.getChildren()) {
 
-                if(p.getMalePartner() != null && DateUtils.dateBefore(latestChildBirthDate, c.getBirthDate())) {
+                if(p.getMalePartner() != null && DateUtils.dateBeforeOrEqual(latestChildBirthDate, c.getBirthDate())) {
                     latestChildBirthDate = c.getBirthDate();
                     child = c;
                 }
@@ -363,7 +362,7 @@ public class Person implements IPerson {
         // check to see if eldest sibling
         boolean eldest = true;
         for(IPerson sibling : fullSiblings) {
-            if(DateUtils.dateBefore(sibling.getBirthDate(), getBirthDate())) {
+            if(DateUtils.dateBeforeOrEqual(sibling.getBirthDate(), getBirthDate())) {
                 eldest = false;
             }
         }
@@ -377,9 +376,9 @@ public class Person implements IPerson {
 
             for(IPartnership p : mothersPartnerships) {
 
-                if(DateUtils.dateBefore(p.getPartnershipDate(), parentsPartnership.getPartnershipDate())) {
+                if(DateUtils.dateBeforeOrEqual(p.getPartnershipDate(), parentsPartnership.getPartnershipDate())) {
                     if(prevPartnership != null) {
-                        if(DateUtils.dateBefore(prevPartnership.getPartnershipDate(), p.getPartnershipDate())) {
+                        if(DateUtils.dateBeforeOrEqual(prevPartnership.getPartnershipDate(), p.getPartnershipDate())) {
                             prevPartnership = p;
                         }
                     } else {
@@ -415,11 +414,11 @@ public class Person implements IPerson {
 
         for(IPartnership p : partnerships) {
 
-            if(DateUtils.dateBefore(p.getPartnershipDate(), onDate)) {
+            if(DateUtils.dateBeforeOrEqual(p.getPartnershipDate(), onDate)) {
 
                 if(currentPartnership != null) {
 
-                    if(DateUtils.dateBefore(currentPartnership.getPartnershipDate(), p.getPartnershipDate())) {
+                    if(DateUtils.dateBeforeOrEqual(currentPartnership.getPartnershipDate(), p.getPartnershipDate())) {
                         currentPartnership = p;
                     }
 

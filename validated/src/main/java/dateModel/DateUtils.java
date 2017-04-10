@@ -29,7 +29,7 @@ public class DateUtils {
 
     public static CompoundTimeUnit differenceInMonths(Date a, Date b) {
 
-        if (dateBefore(b, a)) {
+        if (dateBeforeOrEqual(b, a)) {
             Date temp = a;
             a = b;
             b = temp;
@@ -54,6 +54,9 @@ public class DateUtils {
         return new CompoundTimeUnit( months, TimeUnit.MONTH);
     }
 
+    public static boolean datesEqual(Date a, Date b) {
+        return a.getDay() == b.getDay() && a. getMonth() == b.getMonth() && a.getYear() == b.getYear();
+    }
 
     /**
      * If the dates represent the same day in time then the return value is true.
@@ -62,7 +65,7 @@ public class DateUtils {
      * @param b The second date
      * @return returns true if date a is before day b (or is the same as date b) else returns false
      */
-    public static boolean dateBefore(Date a, Date b) {
+    public static boolean dateBeforeOrEqual(Date a, Date b) {
 
         if (a.getYear() < b.getYear()) {
             return true;
@@ -80,6 +83,28 @@ public class DateUtils {
 
 
     }
+
+    public static boolean dateBefore(Date a, Date b) {
+
+        if (a.getYear() < b.getYear()) {
+            return true;
+        } else if (a.getYear() == b.getYear()) {
+            if (a.getMonth() < b.getMonth()) {
+                return true;
+            } else if (a.getMonth() == b.getMonth()) {
+                return a.getDay() < b.getDay();
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+
+
+    }
+
+
+
 
     public static boolean matchesInterval(Date currentDate, CompoundTimeUnit interval, Date startDate) {
 
@@ -112,7 +137,7 @@ public class DateUtils {
     }
 
     public static AdvancableDate getEarliestDate(AdvancableDate startDate, AdvancableDate startDate1) {
-        if (dateBefore(startDate, startDate1)) {
+        if (dateBeforeOrEqual(startDate, startDate1)) {
             return startDate;
         } else {
             return startDate1;
@@ -120,7 +145,7 @@ public class DateUtils {
     }
 
     public static Date getLatestDate(Date startDate, Date startDate1) {
-        if (dateBefore(startDate, startDate1)) {
+        if (dateBeforeOrEqual(startDate, startDate1)) {
             return startDate1;
         } else {
             return startDate;
@@ -488,7 +513,7 @@ public class DateUtils {
 
     public static int differenceInDays(Date birthDate, Date latestDate) {
 
-        if(dateBefore(latestDate, birthDate)) {
+        if(dateBeforeOrEqual(latestDate, birthDate)) {
             Date temp = latestDate;
             latestDate = birthDate;
             birthDate = temp;
@@ -550,7 +575,7 @@ public class DateUtils {
 
     }
 
-    private static int monthsInTimeUnit(CompoundTimeUnit timeUnit) {
+    public static int monthsInTimeUnit(CompoundTimeUnit timeUnit) {
         if(timeUnit.getUnit() == TimeUnit.MONTH) {
             return timeUnit.getCount();
         } else {

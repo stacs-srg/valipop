@@ -15,8 +15,8 @@ public class Population {
     private PopulationCounts populationCounts;
 
     public Population(Config config) {
-        livingPeople = new PeopleCollection(config.getTS(), config.getTE());
-        deadPeople = new PeopleCollection(config.getTS(), config.getTE());
+        livingPeople = new PeopleCollection(config.getTS(), config.getTE(), config.getSimulationTimeStep());
+        deadPeople = new PeopleCollection(config.getTS(), config.getTE(), config.getSimulationTimeStep());
         populationCounts = new PopulationCounts();
     }
 

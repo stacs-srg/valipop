@@ -12,8 +12,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import populationStatistics.recording.PopulationStatistics;
 import simulationEntities.EntityFactory;
-import simulationEntities.population.PopulationCounts;
-import simulationEntities.population.dataStructure.PeopleCollection;
 import simulationEntities.population.dataStructure.Population;
 
 
@@ -72,7 +70,7 @@ public class InitLogic {
     }
 
     public static boolean inInitPeriod(MonthDate currentTime) {
-        return DateUtils.dateBefore(currentTime, endOfInitPeriod);
+        return DateUtils.dateBeforeOrEqual(currentTime, endOfInitPeriod);
     }
 
     public static CompoundTimeUnit getTimeStep() {

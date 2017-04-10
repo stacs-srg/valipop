@@ -2,7 +2,6 @@ package dateModel.dateImplementations;
 
 import dateModel.Date;
 import dateModel.DateUtils;
-import dateModel.exceptions.UnsupportedDateConversion;
 
 import java.time.DateTimeException;
 import java.util.Calendar;
@@ -129,7 +128,7 @@ public final class ExactDate implements Date {
 
     @Override
     public int compareTo(Date o) {
-        if (DateUtils.dateBefore(this, o)) {
+        if (DateUtils.dateBeforeOrEqual(this, o)) {
             return -1;
         } else {
             return 1;

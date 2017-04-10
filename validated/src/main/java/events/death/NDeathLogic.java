@@ -4,18 +4,15 @@ import config.Config;
 import dateModel.Date;
 import dateModel.DateUtils;
 import dateModel.dateImplementations.AdvancableDate;
-import dateModel.dateImplementations.YearDate;
 import dateModel.dateSelection.DateSelector;
 import dateModel.dateSelection.DeathDateSelector;
 import dateModel.timeSteps.CompoundTimeUnit;
 import events.EventLogic;
 import populationStatistics.recording.PopulationStatistics;
 import simulationEntities.person.IPerson;
-import simulationEntities.population.dataStructure.PeopleCollection;
 import simulationEntities.population.dataStructure.PersonCollection;
 import simulationEntities.population.dataStructure.Population;
 import simulationEntities.population.dataStructure.exceptions.InsufficientNumberOfPeopleException;
-import uk.ac.standrews.cs.digitising_scotland.util.DateManipulation;
 import utils.specialTypes.dataKeys.DataKey;
 import utils.specialTypes.dataKeys.DeathDataKey;
 
@@ -51,23 +48,29 @@ public class NDeathLogic implements EventLogic {
             ofSexLiving = population.getLivingPeople().getFemales();
         }
 
-        Set<YearDate> yobs = ofSexLiving.getYOBs();
+        Set<AdvancableDate> divDates = ofSexLiving.getDivisionDates();
 
-        for(YearDate yob : yobs) {
+        // For each division in the population data store
+        for(AdvancableDate divDate : divDates) {
 
-            if(DateUtils.dateBefore(yob, currentDate)) {
+            // Up until the current dat
+            if(DateUtils.dateBeforeOrEqual(divDate, currentDate)) {
 
-                Integer age = DateUtils.differenceInYears(yob, currentDate).getCount();
-                int peopleOfAge = ofSexLiving.getByYear(yob).size();
+                // Calcs age of people in the selected division at the current date
+                Integer age = DateUtils.differenceInYears(divDate, currentDate).getCount();
+                int peopleOfAge = ofSexLiving.getNumberOfPersons(divDate, consideredTimePeriod);
 
+                // gets death rate for people of age at the current date
                 DataKey key = new DeathDataKey(age, peopleOfAge);
                 double deathRate = desiredPopulationStatistics.getDeathRates(currentDate, sex).getCorrectingRate(key, consideredTimePeriod);
 
+
+                // Calculate the appropriate number to kill and then kill
                 Integer numberToKill = (int) Math.round(peopleOfAge * deathRate);
 
-                Collection<IPerson> peopleToKill = null;
+                Collection<IPerson> peopleToKill;
                 try {
-                    peopleToKill = ofSexLiving.removeNPersons(numberToKill, yob, true);
+                    peopleToKill = ofSexLiving.removeNPersons(numberToKill, divDate, consideredTimePeriod, true);
                 } catch (InsufficientNumberOfPeopleException e) {
                     throw new Error("Insufficient number of people to kill, - this has occured when killing a less " +
                             "than 1 proportion of a population");
@@ -75,13 +78,14 @@ public class NDeathLogic implements EventLogic {
 
                 int killed = killPeople(peopleToKill, config, currentDate, consideredTimePeriod, population);
 
+                // Calculates achieved death rate and returns this to the distribution manager
                 double appliedRate = 0;
                 if(peopleOfAge != 0) {
                     appliedRate = killed / (double) peopleOfAge;
                 }
 
-
                 desiredPopulationStatistics.getDeathRates(currentDate, sex).returnAppliedRate(key, appliedRate, consideredTimePeriod);
+
             }
         }
 
