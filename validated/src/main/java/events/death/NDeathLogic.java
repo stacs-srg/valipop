@@ -8,16 +8,19 @@ import dateModel.dateSelection.DateSelector;
 import dateModel.dateSelection.DeathDateSelector;
 import dateModel.timeSteps.CompoundTimeUnit;
 import events.EventLogic;
+import populationStatistics.dataDistributionTables.determinedCounts.DeterminedCount;
+import populationStatistics.dataDistributionTables.statsKeys.StatsKey;
 import populationStatistics.recording.PopulationStatistics;
 import simulationEntities.person.IPerson;
 import simulationEntities.population.dataStructure.PersonCollection;
 import simulationEntities.population.dataStructure.Population;
 import simulationEntities.population.dataStructure.exceptions.InsufficientNumberOfPeopleException;
-import utils.specialTypes.dataKeys.DataKey;
-import utils.specialTypes.dataKeys.DeathDataKey;
+import populationStatistics.dataDistributionTables.statsKeys.DeathStatsKey;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
@@ -48,10 +51,11 @@ public class NDeathLogic implements EventLogic {
             ofSexLiving = population.getLivingPeople().getFemales();
         }
 
-        Set<AdvancableDate> divDates = ofSexLiving.getDivisionDates();
+        TreeSet<AdvancableDate> divDates = ofSexLiving.getDivisionDates();
 
         // For each division in the population data store
-        for(AdvancableDate divDate : divDates) {
+        for (Iterator<AdvancableDate> it = divDates.iterator(); it.hasNext(); ) {
+            AdvancableDate divDate = it.next();
 
             // Up until the current dat
             if(DateUtils.dateBeforeOrEqual(divDate, currentDate)) {
@@ -61,12 +65,12 @@ public class NDeathLogic implements EventLogic {
                 int peopleOfAge = ofSexLiving.getNumberOfPersons(divDate, consideredTimePeriod);
 
                 // gets death rate for people of age at the current date
-                DataKey key = new DeathDataKey(age, peopleOfAge);
-                double deathRate = desiredPopulationStatistics.getDeathRates(currentDate, sex).getCorrectingRate(key, consideredTimePeriod);
+                StatsKey key = new DeathStatsKey(age, peopleOfAge, consideredTimePeriod);
+                DeterminedCount determinedCount = desiredPopulationStatistics.getDeathRates(currentDate, sex).determineCount(key);
 
 
                 // Calculate the appropriate number to kill and then kill
-                Integer numberToKill = (int) Math.round(peopleOfAge * deathRate);
+                Integer numberToKill = determinedCount.getDeterminedCount();
 
                 Collection<IPerson> peopleToKill;
                 try {
@@ -78,14 +82,13 @@ public class NDeathLogic implements EventLogic {
 
                 int killed = killPeople(peopleToKill, config, currentDate, consideredTimePeriod, population);
 
-                // Calculates achieved death rate and returns this to the distribution manager
-                double appliedRate = 0;
-                if(peopleOfAge != 0) {
-                    appliedRate = killed / (double) peopleOfAge;
-                }
+                // Returns the number killed to the distribution manager
+                determinedCount.setFufilledCount(killed);
+                desiredPopulationStatistics.getDeathRates(currentDate, sex).returnAchievedCount(determinedCount);
 
-                desiredPopulationStatistics.getDeathRates(currentDate, sex).returnAppliedRate(key, appliedRate, consideredTimePeriod);
-
+            } else {
+                break;  // Based on assumed underlying order of divisionDate set,
+                        // once we've passed the current date we can break out of the for loop
             }
         }
 

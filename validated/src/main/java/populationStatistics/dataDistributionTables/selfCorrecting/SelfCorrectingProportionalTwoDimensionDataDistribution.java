@@ -5,7 +5,7 @@ import dateModel.timeSteps.CompoundTimeUnit;
 import populationStatistics.dataDistributionTables.DataDistribution;
 import populationStatistics.dataDistributionTables.OneDimensionDataDistribution;
 import dateModel.dateImplementations.YearDate;
-import utils.specialTypes.dataKeys.DataKey;
+import populationStatistics.dataDistributionTables.statsKeys.StatsKey;
 import utils.specialTypes.integerRange.IntegerRange;
 import utils.specialTypes.integerRange.InvalidRangeException;
 
@@ -18,7 +18,7 @@ import java.util.Set;
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class SelfCorrectingProportionalTwoDimensionDataDistribution implements DataDistribution, SelfCorrection {
+public class SelfCorrectingProportionalTwoDimensionDataDistribution implements DataDistribution {
 
     // The integer range here represents the row labels (i.e. the age ranges on the ordered birth table)
     private Map<IntegerRange, SelfCorrectingOneDimensionDataDistribution> data;
@@ -35,23 +35,23 @@ public class SelfCorrectingProportionalTwoDimensionDataDistribution implements D
         this.data = tableData;
     }
 
-    @Override
-    public double getCorrectingRate(DataKey data, CompoundTimeUnit consideredTimePeriod) {
-
-        DataKey temp = new DataKey(data.getXLabel(), data.getForNPeople());
-
-        return getData(data.getYLabel()).getCorrectingRate(temp, consideredTimePeriod);
-
-    }
-
-    @Override
-    public void returnAppliedRate(DataKey data, double appliedData, CompoundTimeUnit consideredTimePeriod) {
-
-        DataKey temp = new DataKey(data.getXLabel(), data.getForNPeople());
-
-        getData(data.getYLabel()).returnAppliedRate(temp, appliedData, consideredTimePeriod);
-
-    }
+//    @Override
+//    public double getCorrectingRate(StatsKey data, CompoundTimeUnit consideredTimePeriod) {
+//
+//        StatsKey temp = new StatsKey(data.getXLabel(), data.getForNPeople());
+//
+//        return getData(data.getYLabel()).determineCount(temp, consideredTimePeriod);
+//
+//    }
+//
+//    @Override
+//    public void returnAppliedRate(StatsKey data, double appliedData, CompoundTimeUnit consideredTimePeriod) {
+//
+//        StatsKey temp = new StatsKey(data.getXLabel(), data.getForNPeople());
+//
+//        getData(data.getYLabel()).returnAchievedCount(temp, appliedData, consideredTimePeriod);
+//
+//    }
 
     public SelfCorrectingOneDimensionDataDistribution getData(Integer yLabel) throws InvalidRangeException {
 

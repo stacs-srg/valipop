@@ -1,26 +1,15 @@
 package events.death;
 
 import config.Config;
-import dateModel.Date;
-import dateModel.DateUtils;
 import dateModel.dateImplementations.AdvancableDate;
-import dateModel.dateImplementations.MonthDate;
 import dateModel.timeSteps.CompoundTimeUnit;
 import events.EventLogic;
-import events.EventType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import populationStatistics.recording.PopulationStatistics;
-import simulationEntities.person.IPerson;
-import simulationEntities.population.dataStructure.PeopleCollection;
 import simulationEntities.population.dataStructure.Population;
-import simulationEntities.population.dataStructure.exceptions.InsufficientNumberOfPeopleException;
-import utils.specialTypes.dataKeys.DataKey;
 
-import java.util.Collection;
 import java.util.Random;
-
-import static dateModel.timeSteps.TimeUnit.YEAR;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
@@ -55,8 +44,8 @@ public class DeathLogic implements EventLogic {
 //            int numberOfMales = countMalesBornIn(population.getLivingPeople(), yearOfBirth);
 //            int numberOfFemales = countFemalesBornIn(population.getLivingPeople(), yearOfBirth);
 //
-//            DataKey maleKey = new DataKey(age, numberOfMales);
-//            DataKey femaleKey = new DataKey(age, numberOfFemales);
+//            StatsKey maleKey = new StatsKey(age, numberOfMales);
+//            StatsKey femaleKey = new StatsKey(age, numberOfFemales);
 //
 //            // DATA - get rate of death by age and gender
 //            Double maleDeathRate = desiredPopulationStatistics.getDeathRates(trueCurrentDate, 'm').getCorrectingRate(maleKey, config.getDeathTimeStep()) * yearForwardWeighting;
@@ -140,11 +129,11 @@ public class DeathLogic implements EventLogic {
 ////            }
 //
 //            if(numberOfMales > 0) {
-//                desiredPopulationStatistics.getDeathRates(trueCurrentDate, 'm').returnAppliedRate(maleKey, appliedMaleRate, config.getDeathTimeStep());
+//                desiredPopulationStatistics.getDeathRates(trueCurrentDate, 'm').returnAchievedCount(maleKey, appliedMaleRate, config.getDeathTimeStep());
 //            }
 //
 //            if(numberOfFemales > 0) {
-//                desiredPopulationStatistics.getDeathRates(trueCurrentDate, 'f').returnAppliedRate(femaleKey, appliedFemaleRate, config.getDeathTimeStep());
+//                desiredPopulationStatistics.getDeathRates(trueCurrentDate, 'f').returnAchievedCount(femaleKey, appliedFemaleRate, config.getDeathTimeStep());
 //            }
 //
 //        }

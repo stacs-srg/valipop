@@ -236,7 +236,7 @@ public abstract class PersonCollection implements DateBounds {
         return divisionSize;
     }
 
-    public abstract Set<AdvancableDate> getDivisionDates();
+    public abstract TreeSet<AdvancableDate> getDivisionDates();
 
     public boolean checkDateAlignmentToDivisions(AdvancableDate date) {
          return DateUtils.matchesInterval(date, divisionSize, startDate);
