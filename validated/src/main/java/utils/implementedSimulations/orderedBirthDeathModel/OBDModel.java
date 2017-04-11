@@ -6,6 +6,7 @@ import dateModel.dateImplementations.MonthDate;
 import events.EventLogic;
 import events.UnsupportedEventType;
 import events.birth.BirthLogic;
+import events.birth.NBirthLogic;
 import events.death.NDeathLogic;
 import events.init.InitLogic;
 import org.apache.logging.log4j.Logger;
@@ -45,6 +46,8 @@ public class OBDModel {
     private MonthDate currentTime;
 
     private EventLogic deathLogic = new NDeathLogic();
+    private EventLogic birthLogic = new NBirthLogic();
+
 
 
     public static void main(String[] args) {
@@ -145,17 +148,15 @@ public class OBDModel {
 
         while(DateUtils.dateBeforeOrEqual(currentTime, config.getTE())) {
 
-//            if (DateUtils.matchesInterval(currentTime, config.getBirthTimeStep(), config.getTS())) {
-//                int births = BirthLogic.handleBirths(config, currentTime, desired, population);
-//                InitLogic.incrementBirthCount(births);
-//            }
+            if (DateUtils.matchesInterval(currentTime, config.getBirthTimeStep(), config.getTS())) {
+                birthLogic.handleEvent(config, currentTime, config.getBirthTimeStep(), population, desired);
+            }
 
-            if (/*InitLogic.inInitPeriod(currentTime) && */
+            if (InitLogic.inInitPeriod(currentTime) &&
                     DateUtils.matchesInterval(currentTime, InitLogic.getTimeStep(), config.getTS())) {
                 InitLogic.handleInitPeople(config, currentTime, population);
             }
 
-            // if deaths timestep
             if (DateUtils.matchesInterval(currentTime, config.getDeathTimeStep(), config.getTS())) {
                 deathLogic.handleEvent(config, currentTime, config.getDeathTimeStep(), population, desired);
             }

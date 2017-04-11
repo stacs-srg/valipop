@@ -11,6 +11,7 @@ import dateModel.timeSteps.TimeUnit;
 import events.EventType;
 import events.UnsupportedEventType;
 import populationStatistics.dataDistributionTables.determinedCounts.DeterminedCount;
+import populationStatistics.dataDistributionTables.statsKeys.BirthStatsKey;
 import populationStatistics.dataDistributionTables.statsKeys.DeathStatsKey;
 import populationStatistics.dataDistributionTables.statsKeys.StatsKey;
 import populationStatistics.validation.comparison.EventRateTables;
@@ -100,6 +101,11 @@ public class PopulationStatistics implements PopulationComposition, EventRateTab
             return getDeathRates(k.getDate(), k.getSex()).determineCount(key);
         }
 
+        if(key instanceof BirthStatsKey) {
+            BirthStatsKey k = (BirthStatsKey) key;
+            return getOrderedBirthRates(k.getDate()).determineCount(key);
+        }
+
         throw new Error("Key access not implemented for key class: " + key.getClass().toGenericString());
     }
 
@@ -108,6 +114,13 @@ public class PopulationStatistics implements PopulationComposition, EventRateTab
         if(achievedCount.getKey() instanceof DeathStatsKey) {
             DeathStatsKey k = (DeathStatsKey) achievedCount.getKey();
             getDeathRates(k.getDate(), k.getSex()).returnAchievedCount(achievedCount);
+            return;
+        }
+
+        if(achievedCount.getKey() instanceof BirthStatsKey) {
+            BirthStatsKey k = (BirthStatsKey) achievedCount.getKey();
+            getOrderedBirthRates(k.getDate()).returnAchievedCount(achievedCount);
+            return;
         }
 
         throw new Error("Key access not implemented for key class: "

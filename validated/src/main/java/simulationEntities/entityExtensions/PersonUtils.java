@@ -1,5 +1,6 @@
 package simulationEntities.entityExtensions;
 
+import dateModel.dateImplementations.AdvancableDate;
 import events.EventType;
 import events.birth.NoChildrenOfDesiredOrder;
 import events.death.NotDeadException;
@@ -46,4 +47,9 @@ public interface PersonUtils {
 
     IPerson getPartner(Date onDate);
 
+    void giveChildren(int numberOfChildren, AdvancableDate onDate, CompoundTimeUnit birthTimeStep, Population population);
+
+    boolean toSeparate();
+
+    void willSeparate(boolean b);
 }

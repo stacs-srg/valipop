@@ -52,11 +52,11 @@ public class SelfCorrectionTests {
             double check = sc1DDDCopy.getRate(iR.getValue());
 
             // Basic first retrieval tests
-            StatsKey k1 = new DeathStatsKey(iR.getValue(), 100, y);
+            StatsKey k1 = new DeathStatsKey(iR.getValue(), 100, y, null, 'm');
             DeterminedCount r1 = sc1DDD.determineCount(k1);
             Assert.assertEquals((int)Math.round(check * 100), r1.getDeterminedCount(), DELTA);
 
-            StatsKey k2 = new DeathStatsKey(iR.getValue(), 1000, y);
+            StatsKey k2 = new DeathStatsKey(iR.getValue(), 1000, y, null, 'm');
             DeterminedCount r2 = sc1DDD.determineCount(k2);
             Assert.assertEquals((int)Math.round(check * 1000), r2.getDeterminedCount(), DELTA);
 
@@ -74,7 +74,7 @@ public class SelfCorrectionTests {
             r1 = sc1DDD.determineCount(k1);
             Assert.assertEquals((int)Math.round(check * 100), r1.getDeterminedCount(), DELTA);
 
-            StatsKey k4 = new DeathStatsKey(iR.getValue(), 10, y);
+            StatsKey k4 = new DeathStatsKey(iR.getValue(), 10, y, null, 'm');
             DeterminedCount r4 = sc1DDD.determineCount(k4);
 
             Assert.assertEquals((int)Math.round(check * 10), r4.getDeterminedCount(), DELTA);
@@ -98,8 +98,8 @@ public class SelfCorrectionTests {
 
             for (IntegerRange iR : sc1DDD.getRate().keySet()) {
 
-                StatsKey k1 = new DeathStatsKey(iR.getValue(), 100, tp);
-                StatsKey k2 = new DeathStatsKey(iR.getValue(), 1000, tp);
+                StatsKey k1 = new DeathStatsKey(iR.getValue(), 100, tp, null, 'm');
+                StatsKey k2 = new DeathStatsKey(iR.getValue(), 1000, tp, null, 'm');
 
                 // --- B
 
@@ -294,11 +294,11 @@ public class SelfCorrectionTests {
         CompoundTimeUnit m2 = new CompoundTimeUnit(2, TimeUnit.MONTH);
 
 
-        StatsKey yearK = new DeathStatsKey(age, popSize, y);
+        StatsKey yearK = new DeathStatsKey(age, popSize, y, null, 'm');
         int expPopSize = popSize - data.determineCount(yearK).getDeterminedCount();
 
         for(int m = 1; m <= 12; m+=2) {
-            StatsKey k = new DeathStatsKey(age, popSize, m2);
+            StatsKey k = new DeathStatsKey(age, popSize, m2, null, 'm');
 
             int count = data.determineCount(k).getDeterminedCount();
 
