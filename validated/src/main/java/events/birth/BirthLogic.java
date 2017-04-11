@@ -1,6 +1,8 @@
 package events.birth;
 
 import config.Config;
+import dateModel.Date;
+import dateModel.dateImplementations.AdvancableDate;
 import dateModel.dateImplementations.MonthDate;
 import dateModel.timeSteps.CompoundTimeUnit;
 import dateModel.timeSteps.TimeUnit;
@@ -10,6 +12,7 @@ import populationStatistics.dataDistributionTables.OneDimensionDataDistribution;
 import populationStatistics.recording.PopulationStatistics;
 import populationStatistics.validation.exceptions.StatisticalManipulationCalculationError;
 import simulationEntities.person.IPerson;
+import simulationEntities.population.dataStructure.PeopleCollection;
 import simulationEntities.population.dataStructure.Population;
 import simulationEntities.population.dataStructure.exceptions.InsufficientNumberOfPeopleException;
 import utils.MapUtils;
@@ -383,16 +386,16 @@ public class BirthLogic {
     }
 
 
-//    public static IPerson getRandomFather(PeopleCollection population, Date fathersYearOfBirth) throws InsufficientNumberOfPeopleException {
-//
-//        Collection<IPerson> males = population.getMales().getByYear(fathersYearOfBirth);
-//
-//        if(males.size() == 0) {
-//            throw new InsufficientNumberOfPeopleException("No males alive in simulation");
-//        }
-//
-//        int r = randomNumberGenerator.nextInt(males.size());
-//        return males.toArray(new IPerson[males.size()])[r];
-//
-//    }
+    public static IPerson getRandomFather(Population population, AdvancableDate date, CompoundTimeUnit tp) throws InsufficientNumberOfPeopleException {
+
+        Collection<IPerson> males = population.getLivingPeople().getMales().getAllPersonsInTimePeriod(date, tp);
+
+        if(males.size() == 0) {
+            throw new InsufficientNumberOfPeopleException("No males alive in simulation");
+        }
+
+        int r = randomNumberGenerator.nextInt(males.size());
+        return males.toArray(new IPerson[males.size()])[r];
+
+    }
 }

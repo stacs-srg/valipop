@@ -87,6 +87,30 @@ public class FemaleCollection extends PersonCollection {
 
     }
 
+    public Set<Integer> getBirthOrdersInDivision(AdvancableDate dateOfBirth, CompoundTimeUnit period) {
+        int divisionsInPeriod = DateUtils.calcSubTimeUnitsInTimeUnit(period, getDivisionSize());
+
+        if(divisionsInPeriod == -1) {
+            throw new MisalignedTimeDivisionError();
+        }
+
+        MonthDate divisionDate = dateOfBirth.getMonthDate();
+
+        HashSet<Integer> orders = new HashSet<>();
+
+        for(int i = 0; i < divisionsInPeriod; i++) {
+
+            Map<Integer, Collection<IPerson>> temp = byBirthYearAndNumberOfChildren.get(divisionDate);
+            orders.addAll(temp.keySet());
+
+
+            divisionDate = divisionDate.advanceTime(getDivisionSize());
+        }
+
+        return orders;
+
+    }
+
     /**
      * Gets the {@link Collection} of mothers born in the give year with the specified birth order (i.e. number of
      * children)

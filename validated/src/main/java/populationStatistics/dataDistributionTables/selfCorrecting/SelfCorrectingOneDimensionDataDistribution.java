@@ -5,6 +5,7 @@ import dateModel.timeSteps.CompoundTimeUnit;
 import populationStatistics.dataDistributionTables.OneDimensionDataDistribution;
 import dateModel.dateImplementations.YearDate;
 import populationStatistics.dataDistributionTables.determinedCounts.DeterminedCount;
+import populationStatistics.dataDistributionTables.statsKeys.BirthStatsKey;
 import utils.MapUtils;
 import populationStatistics.dataDistributionTables.statsKeys.StatsKey;
 import utils.specialTypes.integerRange.IntegerRange;
@@ -34,6 +35,10 @@ public class SelfCorrectingOneDimensionDataDistribution extends OneDimensionData
     }
 
     public DeterminedCount determineCount(StatsKey key) {
+
+        if(key instanceof BirthStatsKey) {
+            System.out.print("");
+        }
 
         IntegerRange age = resolveRowValue(key.getYLabel());
 

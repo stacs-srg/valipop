@@ -2,6 +2,7 @@ package simulationEntities.person;
 
 import dateModel.Date;
 import dateModel.DateUtils;
+import dateModel.dateImplementations.AdvancableDate;
 import dateModel.dateImplementations.MonthDate;
 import dateModel.dateImplementations.ExactDate;
 import dateModel.dateImplementations.YearDate;
@@ -14,9 +15,11 @@ import events.birth.NoChildrenOfDesiredOrder;
 import events.death.NotDeadException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import simulationEntities.EntityFactory;
 import simulationEntities.partnership.IPartnership;
 import simulationEntities.population.dataStructure.PeopleCollection;
 import simulationEntities.population.dataStructure.Population;
+import simulationEntities.population.dataStructure.exceptions.PersonNotFoundException;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -40,6 +43,8 @@ public class Person implements IPerson {
 
     private DateSelector deathDateSelector = new DeathDateSelector();
     private DateSelector birthDateSelector = new BirthDateSelector();
+
+    private boolean toSeparate = true;
 
 
     public Person(char sex, Date birthDate) {
@@ -438,6 +443,39 @@ public class Person implements IPerson {
             return currentPartnership.getMalePartner();
         }
 
+    }
+
+    @Override
+    public void giveChildren(int numberOfChildren, AdvancableDate onDate, CompoundTimeUnit birthTimeStep, Population population) {
+
+        try {
+            population.getLivingPeople().removePerson(this);
+        } catch (PersonNotFoundException e) {
+            e.printStackTrace();
+        }
+//        if(!toSeparate && !isWidow()) {
+//            // Not separating from current partner, therefore add children to last existing partnership
+        partnerships.add(EntityFactory.formNewChildrenInPartnership(numberOfChildren, this, onDate.getMonthDate(), birthTimeStep, population));
+//        } else {
+//            // New partner to be found - thus make children in a new partnership
+//
+//
+//        }
+
+        population.getLivingPeople().addPerson(this);
+
+
+
+    }
+
+    @Override
+    public boolean toSeparate() {
+        return toSeparate;
+    }
+
+    @Override
+    public void willSeparate(boolean b) {
+        toSeparate = b;
     }
 
 }
