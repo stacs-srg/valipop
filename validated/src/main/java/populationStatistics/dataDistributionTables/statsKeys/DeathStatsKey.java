@@ -1,5 +1,6 @@
 package populationStatistics.dataDistributionTables.statsKeys;
 
+import dateModel.Date;
 import dateModel.timeSteps.CompoundTimeUnit;
 
 /**
@@ -7,11 +8,18 @@ import dateModel.timeSteps.CompoundTimeUnit;
  */
 public class DeathStatsKey extends StatsKey {
 
-    public DeathStatsKey(Integer age, int forNPeople, CompoundTimeUnit consideredTimePeriod) {
-        super(age, forNPeople, consideredTimePeriod);
+    private final char sex;
+
+    public DeathStatsKey(Integer age, int forNPeople, CompoundTimeUnit consideredTimePeriod, Date currentDate, char sex) {
+        super(age, forNPeople, consideredTimePeriod, currentDate);
+        this.sex = sex;
     }
 
     public Integer getAge() {
         return getYLabel();
+    }
+
+    public char getSex() {
+        return sex;
     }
 }

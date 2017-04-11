@@ -10,6 +10,9 @@ import dateModel.timeSteps.CompoundTimeUnit;
 import dateModel.timeSteps.TimeUnit;
 import events.EventType;
 import events.UnsupportedEventType;
+import populationStatistics.dataDistributionTables.determinedCounts.DeterminedCount;
+import populationStatistics.dataDistributionTables.statsKeys.DeathStatsKey;
+import populationStatistics.dataDistributionTables.statsKeys.StatsKey;
 import populationStatistics.validation.comparison.EventRateTables;
 import populationStatistics.dataDistributionTables.OneDimensionDataDistribution;
 import populationStatistics.dataDistributionTables.TwoDimensionDataDistribution;
@@ -89,6 +92,28 @@ public class PopulationStatistics implements PopulationComposition, EventRateTab
     /*
     -------------------- EventRateTables interface methods --------------------
      */
+
+    public DeterminedCount getDeterminedCount(StatsKey key) {
+
+        if(key instanceof DeathStatsKey) {
+            DeathStatsKey k = (DeathStatsKey) key;
+            return getDeathRates(k.getDate(), k.getSex()).determineCount(key);
+        }
+
+        throw new Error("Key access not implemented for key class: " + key.getClass().toGenericString());
+    }
+
+    public void returnAchievedCount(DeterminedCount achievedCount) {
+
+        if(achievedCount.getKey() instanceof DeathStatsKey) {
+            DeathStatsKey k = (DeathStatsKey) achievedCount.getKey();
+            getDeathRates(k.getDate(), k.getSex()).returnAchievedCount(achievedCount);
+        }
+
+        throw new Error("Key access not implemented for key class: "
+                + achievedCount.getKey().getClass().toGenericString());
+
+    }
 
     @Override
     public SelfCorrectingOneDimensionDataDistribution getDeathRates(Date year, char gender) {

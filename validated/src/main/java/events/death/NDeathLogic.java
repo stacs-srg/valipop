@@ -19,15 +19,13 @@ import populationStatistics.dataDistributionTables.statsKeys.DeathStatsKey;
 
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.Set;
-import java.util.TreeSet;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class NDeathLogic implements EventLogic {
 
-    DateSelector deathDateSelector = new DeathDateSelector();
+    private DateSelector deathDateSelector = new DeathDateSelector();
 
     // Move from year to sim date and time step
     public void handleEvent(Config config,
@@ -43,57 +41,38 @@ public class NDeathLogic implements EventLogic {
                                     AdvancableDate currentDate, CompoundTimeUnit consideredTimePeriod,
                                     Population population, PopulationStatistics desiredPopulationStatistics) {
 
-        PersonCollection ofSexLiving;
+        PersonCollection ofSexLiving = getLivingPeopleOfSex(sex, population);
+        Iterator<AdvancableDate> divDates = ofSexLiving.getDivisionDates().iterator();
 
-        if(Character.toLowerCase(sex) == 'm') {
-            ofSexLiving = population.getLivingPeople().getMales();
-        } else {
-            ofSexLiving = population.getLivingPeople().getFemales();
-        }
+        AdvancableDate divDate;
+        // For each division in the population data store upto the current date
+        while(divDates.hasNext() && DateUtils.dateBeforeOrEqual(divDate = divDates.next(), currentDate)) {
 
-        TreeSet<AdvancableDate> divDates = ofSexLiving.getDivisionDates();
+            int age = DateUtils.differenceInYears(divDate, currentDate).getCount();
+            int peopleOfAge = ofSexLiving.getNumberOfPersons(divDate, consideredTimePeriod);
 
-        // For each division in the population data store
-        for (Iterator<AdvancableDate> it = divDates.iterator(); it.hasNext(); ) {
-            AdvancableDate divDate = it.next();
+            // gets death rate for people of age at the current date
+            StatsKey key = new DeathStatsKey(age, peopleOfAge, consideredTimePeriod, currentDate, sex);
+            DeterminedCount determinedCount = desiredPopulationStatistics.getDeterminedCount(key);
 
-            // Up until the current dat
-            if(DateUtils.dateBeforeOrEqual(divDate, currentDate)) {
+            // Calculate the appropriate number to kill and then kill
+            Integer numberToKill = determinedCount.getDeterminedCount();
 
-                // Calcs age of people in the selected division at the current date
-                Integer age = DateUtils.differenceInYears(divDate, currentDate).getCount(); // TODO A -1 causes issues, never see age zero people? Do step through check to find out
-
-                int peopleOfAge = ofSexLiving.getNumberOfPersons(divDate, consideredTimePeriod);
-
-                // gets death rate for people of age at the current date
-                StatsKey key = new DeathStatsKey(age, peopleOfAge, consideredTimePeriod);
-                DeterminedCount determinedCount = desiredPopulationStatistics.getDeathRates(currentDate, sex).determineCount(key);
-
-
-                // Calculate the appropriate number to kill and then kill
-                Integer numberToKill = determinedCount.getDeterminedCount();
-
-                Collection<IPerson> peopleToKill;
-                try {
-                    peopleToKill = ofSexLiving.removeNPersons(numberToKill, divDate, consideredTimePeriod, true);
-                } catch (InsufficientNumberOfPeopleException e) {
-                    throw new Error("Insufficient number of people to kill, - this has occured when killing a less " +
-                            "than 1 proportion of a population");
-                }
-
-                int killed = killPeople(peopleToKill, config, currentDate, consideredTimePeriod, population);
-
-                // Returns the number killed to the distribution manager
-                determinedCount.setFufilledCount(killed);
-                desiredPopulationStatistics.getDeathRates(currentDate, sex).returnAchievedCount(determinedCount);
-
-            } else {
-                break;  // Based on assumed underlying order of divisionDate set,
-                        // once we've passed the current date we can break out of the for loop
+            Collection<IPerson> peopleToKill;
+            try {
+                peopleToKill =
+                        ofSexLiving.removeNPersons(numberToKill, divDate, consideredTimePeriod, true);
+            } catch (InsufficientNumberOfPeopleException e) {
+                throw new Error("Insufficient number of people to kill, - this has occured when selecting a less " +
+                        "than 1 proportion of a population");
             }
+
+            int killed = killPeople(peopleToKill, config, currentDate, consideredTimePeriod, population);
+
+            // Returns the number killed to the distribution manager
+            determinedCount.setFufilledCount(killed);
+            desiredPopulationStatistics.returnAchievedCount(determinedCount);
         }
-
-
     }
 
 
@@ -119,6 +98,18 @@ public class NDeathLogic implements EventLogic {
         }
 
         return killed;
+    }
+
+    private PersonCollection getLivingPeopleOfSex(char sex, Population population) {
+        PersonCollection ofSexLiving;
+
+        if(Character.toLowerCase(sex) == 'm') {
+            ofSexLiving = population.getLivingPeople().getMales();
+        } else {
+            ofSexLiving = population.getLivingPeople().getFemales();
+        }
+
+        return ofSexLiving;
     }
 
 }
