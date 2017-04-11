@@ -61,7 +61,8 @@ public class NDeathLogic implements EventLogic {
             if(DateUtils.dateBeforeOrEqual(divDate, currentDate)) {
 
                 // Calcs age of people in the selected division at the current date
-                Integer age = DateUtils.differenceInYears(divDate, currentDate).getCount();
+                Integer age = DateUtils.differenceInYears(divDate, currentDate).getCount(); // TODO A -1 causes issues, never see age zero people? Do step through check to find out
+
                 int peopleOfAge = ofSexLiving.getNumberOfPersons(divDate, consideredTimePeriod);
 
                 // gets death rate for people of age at the current date

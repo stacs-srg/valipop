@@ -59,7 +59,7 @@ public class Config {
     private int minGestationPeriodDays = 147;
     private int minBirthSpacingDays = 730;
     private double maxProportionBirthsDueToInfidelity = 0.01;
-    private double maleProportionOfBirths = 0.52; // i.e. if 0.52 then in every 100 births, 52 will be male and 48 female
+    private double maleProportionOfBirths = 0.5; // i.e. if 0.52 then in every 100 births, 52 will be male and 48 female
 
     private final String runPurpose;
     private final String startTime;

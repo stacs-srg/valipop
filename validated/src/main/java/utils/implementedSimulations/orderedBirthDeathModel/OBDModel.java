@@ -150,6 +150,11 @@ public class OBDModel {
 //                InitLogic.incrementBirthCount(births);
 //            }
 
+            if (/*InitLogic.inInitPeriod(currentTime) && */
+                    DateUtils.matchesInterval(currentTime, InitLogic.getTimeStep(), config.getTS())) {
+                InitLogic.handleInitPeople(config, currentTime, population);
+            }
+
             // if deaths timestep
             if (DateUtils.matchesInterval(currentTime, config.getDeathTimeStep(), config.getTS())) {
                 deathLogic.handleEvent(config, currentTime, config.getDeathTimeStep(), population, desired);
@@ -157,10 +162,7 @@ public class OBDModel {
 
 
 
-//            if (InitLogic.inInitPeriod(currentTime) &&
-//                    DateUtils.matchesInterval(currentTime, InitLogic.getTimeStep(), config.getTS())) {
-                InitLogic.handleInitPeople(config, currentTime, population);
-//            }
+
 
 
 
