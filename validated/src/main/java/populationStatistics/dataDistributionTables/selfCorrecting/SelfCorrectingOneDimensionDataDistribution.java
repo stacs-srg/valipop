@@ -45,7 +45,7 @@ public class SelfCorrectingOneDimensionDataDistribution extends OneDimensionData
 
         // if no correction data - i.e. first call to this method
         if(aC == 0) {
-            double rateToApply = calcAdjustedRate(tD, key.getConsideredTimePeriod());
+            double rateToApply = calcSubRateFromYearRate(tD, key.getConsideredTimePeriod());
             return resolveRateToCount(key, rateToApply);
         }
 
@@ -57,26 +57,21 @@ public class SelfCorrectingOneDimensionDataDistribution extends OneDimensionData
 
         // if no N value given in StatsKey
         if(tAT == 0) {
-            double rateToApply = calcAdjustedRate(tD, key.getConsideredTimePeriod());
+            double rateToApply = calcSubRateFromYearRate(tD, key.getConsideredTimePeriod());
             return resolveRateToCount(key, rateToApply);
         }
 
         // Correction rate
         double cD = ( tD * ( aC + tAT ) - ( aD * aC ) ) / tAT;
 
+        // Checks that rate falls in bounds
         if(cD < 0) {
             cD = 0;
-        }
-
-
-        // New additions
-        if(cD > 1) {
+        } else if(cD > 1) {
             cD = 1;
         }
 
-//        System.out.println("a: " + age + "   |   tD: " + tD + "   |   cD: " + cD + "   |   tAT: " + tAT + "   |   aD: " + aD  + "   |   aC: " + aC );
-
-        double rateToApply = calcAdjustedRate(cD, key.getConsideredTimePeriod());
+        double rateToApply = calcSubRateFromYearRate(cD, key.getConsideredTimePeriod());
         return resolveRateToCount(key, rateToApply);
     }
 
@@ -99,8 +94,7 @@ public class SelfCorrectingOneDimensionDataDistribution extends OneDimensionData
         double aCo = appliedCounts.get(age);
 
         // actually applied correction rate
-        double stepsInYear = DateUtils.stepsInYear(key.getConsideredTimePeriod());
-        double aacD = 1 - Math.pow(1 - achievedRate, stepsInYear);
+        double aacD = calcAppliedYearRateFromSubRate(achievedRate, key.getConsideredTimePeriod());
 
         // to apply to
         int tAT = key.getForNPeople();
@@ -117,15 +111,10 @@ public class SelfCorrectingOneDimensionDataDistribution extends OneDimensionData
         // target rate
         double tD = targetRates.get(age);
 
-//        System.out.println("a: " + age + "   |   tD: " + tD + "   |   aaCD: " + aacD + "   |   tAT: " + tAT + "   |   aDo: " + aDo + "   |   aDn " + aDn + "   |   aCo: " + aCo  + "   |   aCn: " + aCn );
-
-//        // if new applied rate has switched across target rate then reset count
+        // if new applied rate has switched across target rate then reset count
         if((aDo < tD && aDn >= tD) || (aDo > tD && aDn <= tD)) {
 
-//            System.out.println("Counts reset   |   y: " + getYear().rowAsString() + " |   a: " + data.getYLabel());
-            // calc r - the number of people it takes to get the applied rate back to the target rate
-//            double r = ( aDo * aCo ) / ( aacD * ( tD - 1 ) );
-
+            // the number of people it takes at the the applied rate back to the target rate
             double numberOfPeopleToBringRateToCrossOverPoint;
 
             if(tD == aacD) {
@@ -133,8 +122,6 @@ public class SelfCorrectingOneDimensionDataDistribution extends OneDimensionData
             } else {
                 numberOfPeopleToBringRateToCrossOverPoint = (aCo * (aDo - tD)) / (tD - aacD);
             }
-
-//            System.out.println("r : " + r);
 
             appliedRates.replace(age, aacD);
             appliedCounts.replace(age, tAT - numberOfPeopleToBringRateToCrossOverPoint);
@@ -151,12 +138,18 @@ public class SelfCorrectingOneDimensionDataDistribution extends OneDimensionData
         return new DeterminedCount(key, determinedCount);
     }
 
-    private double calcAdjustedRate(double rate, CompoundTimeUnit timePeriod) {
+    private double calcAppliedYearRateFromSubRate(double subRate, CompoundTimeUnit timePeriod) {
+        double stepsInYear = DateUtils.stepsInYear(timePeriod);
+        double appliedYearRate = 1 - Math.pow(1 - subRate, stepsInYear);
+        return appliedYearRate;
+    }
+
+    private double calcSubRateFromYearRate(double yearRate, CompoundTimeUnit timePeriod) {
 
         double stepsInYear = DateUtils.stepsInYear(timePeriod);
-        double adjustedRate = 1 - Math.pow(1 - rate, 1 / stepsInYear);
+        double subRate = 1 - Math.pow(1 - yearRate, 1 / stepsInYear);
 
-        return adjustedRate;
+        return subRate;
     }
 
 }
