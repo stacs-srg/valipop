@@ -27,7 +27,7 @@ import uk.ac.standrews.cs.digitising_scotland.population_model.population_repres
 import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.data_structure.LinkedPerson;
 import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.data_structure.MarriageBridge;
 import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.data_structure.SiblingBridge;
-import uk.ac.standrews.cs.digitising_scotland.util.ArrayManipulation;
+import uk.ac.standrews.cs.utilities.ArrayManipulation;
 
 /**
  * 

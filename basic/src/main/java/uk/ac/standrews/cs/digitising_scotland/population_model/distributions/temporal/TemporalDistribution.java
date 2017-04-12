@@ -19,8 +19,7 @@ package uk.ac.standrews.cs.digitising_scotland.population_model.distributions.te
 import uk.ac.standrews.cs.digitising_scotland.population_model.config.PopulationProperties;
 import uk.ac.standrews.cs.digitising_scotland.population_model.distributions.general.*;
 import uk.ac.standrews.cs.digitising_scotland.population_model.organic.OrganicPopulation;
-import uk.ac.standrews.cs.nds.util.ErrorHandling;
-import uk.ac.standrews.cs.util.tools.FileManipulation;
+import uk.ac.standrews.cs.utilities.FileManipulation;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -58,7 +57,7 @@ public abstract class TemporalDistribution<Value> implements ITemporalDistributi
      * @param random The random to be used.
      * @param handleNoPermissibleValueAsZero Indicates if the distribution is to treat the returning of NoPermissibleValueExceptions as returning a zero value.
      */
-    public TemporalDistribution(final ITemporalPopulationInfo population, final String distributionKey, final Random random, final boolean handleNoPermissibleValueAsZero) {
+    public TemporalDistribution(final ITemporalPopulationInfo population, final String distributionKey, final Random random, final boolean handleNoPermissibleValueAsZero) throws NegativeDeviationException, NegativeWeightException, IOException {
 
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(getClass().getClassLoader().getResourceAsStream(PopulationProperties.getProperties().getProperty(distributionKey)), FileManipulation.FILE_CHARSET))) {
 
@@ -97,19 +96,8 @@ public abstract class TemporalDistribution<Value> implements ITemporalDistributi
                 }
             }
 
-        } catch (NumberFormatException e) {
-            ErrorHandling.exceptionError(e, "Could not process line:" + line);
-            e.printStackTrace();
-        } catch (IOException e) {
-            ErrorHandling.exceptionError(e, "IO Exception");
-            e.printStackTrace();
-        } catch (NegativeWeightException e) {
-            ErrorHandling.exceptionError(e, "NegativeWeightException");
-            e.printStackTrace();
-        } catch (NegativeDeviationException e) {
-            ErrorHandling.exceptionError(e, "NegativeDeviationException");
-            e.printStackTrace();
         }
+
         Set<Integer> keys = map.keySet();
         ArrayList<Integer> keyList = new ArrayList<>(keys);
         keyArray = keyList.toArray(new Integer[keyList.size()]);

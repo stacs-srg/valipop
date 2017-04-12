@@ -19,7 +19,7 @@ package uk.ac.standrews.cs.digitising_scotland.population_model.model.gedcom;
 import uk.ac.standrews.cs.digitising_scotland.population_model.model.AbstractFilePopulationWriter;
 import uk.ac.standrews.cs.digitising_scotland.population_model.model.IPartnership;
 import uk.ac.standrews.cs.digitising_scotland.population_model.model.IPerson;
-import uk.ac.standrews.cs.digitising_scotland.util.DateManipulation;
+import uk.ac.standrews.cs.utilities.DateManipulation;
 
 import java.io.IOException;
 import java.io.PrintWriter;

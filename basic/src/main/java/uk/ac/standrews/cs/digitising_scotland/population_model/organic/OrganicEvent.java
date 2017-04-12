@@ -16,14 +16,18 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.population_model.organic;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.PriorityQueue;
-
+import uk.ac.standrews.cs.digitising_scotland.population_model.distributions.general.InconsistentWeightException;
+import uk.ac.standrews.cs.digitising_scotland.population_model.distributions.general.NegativeDeviationException;
+import uk.ac.standrews.cs.digitising_scotland.population_model.distributions.general.NegativeWeightException;
 import uk.ac.standrews.cs.digitising_scotland.population_model.model.IDFactory;
 import uk.ac.standrews.cs.digitising_scotland.population_model.model.PopulationLogic;
 import uk.ac.standrews.cs.digitising_scotland.population_model.organic.logger.LoggingControl;
-import uk.ac.standrews.cs.digitising_scotland.util.DateManipulation;
+import uk.ac.standrews.cs.utilities.DateManipulation;
+
+import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.PriorityQueue;
 
 /**
  * The OrganicEvent class represents the possible events that can occur within the population.
@@ -42,7 +46,6 @@ public class OrganicEvent implements Comparable<OrganicEvent>, Runnable {
 
     // The day on which this event is to occur.
     private int day;
-
     
     /*
      * -------------------------------- Thread method --------------------------------
@@ -50,7 +53,12 @@ public class OrganicEvent implements Comparable<OrganicEvent>, Runnable {
     
     @Override
     public void run() {
-        handleEvent(this);
+        try {
+            handleEvent(this);
+
+        } catch (NegativeWeightException | NegativeDeviationException | InconsistentWeightException | IOException e) {
+            e.printStackTrace();
+        }
     }
     
     /*
@@ -93,7 +101,7 @@ public class OrganicEvent implements Comparable<OrganicEvent>, Runnable {
      * -------------------------------- Event handle methods --------------------------------
      */
     
-    private void handleEvent(final OrganicEvent event) {
+    private void handleEvent(final OrganicEvent event) throws NegativeWeightException, NegativeDeviationException, InconsistentWeightException, IOException {
         // If Person event
         if (event.getPartnership() != null) {
             switch (event.getEventType()) {
@@ -162,7 +170,7 @@ public class OrganicEvent implements Comparable<OrganicEvent>, Runnable {
         }
     }
 
-    private void handleBirthEvent(final OrganicPartnership partnership, final OrganicPerson male, final OrganicPerson female) {
+    private void handleBirthEvent(final OrganicPartnership partnership, final OrganicPerson male, final OrganicPerson female) throws NegativeWeightException, NegativeDeviationException, InconsistentWeightException, IOException {
         OrganicPerson[] children = partnership.setUpBirthEvent(male, female, day);
         for (OrganicPerson child : children) {
             OrganicPopulation.addLivingPerson(child);
@@ -246,7 +254,7 @@ public class OrganicEvent implements Comparable<OrganicEvent>, Runnable {
      * 
      * @param type The family type of the queue to be paired up.
      */
-    public void partnerTogetherPeopleInPartnershipQueue(final FamilyType type) {
+    public void partnerTogetherPeopleInPartnershipQueue(final FamilyType type) throws NegativeWeightException, NegativeDeviationException, InconsistentWeightException, IOException {
         // if (DEBUG) {
         // writer.println("PARTNERING UP QUEUE - " + type.toString());
         // }
@@ -352,7 +360,7 @@ public class OrganicEvent implements Comparable<OrganicEvent>, Runnable {
      * @param wife The female to be married.
      * @param days The day of the marriage in days since the 1/1/1600.
      */
-    private void partner(final FamilyType familyType, final OrganicPerson husband, final OrganicPerson wife, final int days) throws NoSuchEventException {
+    private void partner(final FamilyType familyType, final OrganicPerson husband, final OrganicPerson wife, final int days) throws NoSuchEventException, NegativeWeightException, NegativeDeviationException, InconsistentWeightException, IOException {
 
         // Create partnership
         Object[] partnershipObjects = OrganicPartnership.createOrganicPartnership(IDFactory.getNextID(), husband, wife, days, day, familyType);

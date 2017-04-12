@@ -19,7 +19,7 @@ package uk.ac.standrews.cs.digitising_scotland.population_model.tools;
 import uk.ac.standrews.cs.digitising_scotland.population_model.model.*;
 import uk.ac.standrews.cs.digitising_scotland.population_model.model.database.*;
 import uk.ac.standrews.cs.digitising_scotland.population_model.organic.*;
-import uk.ac.standrews.cs.util.tools.*;
+import uk.ac.standrews.cs.utilities.ProgressIndicator;
 
 /**
  * Generates a population in a series of independent batches, and exports to the database.

@@ -20,7 +20,7 @@ import uk.ac.standrews.cs.digitising_scotland.population_model.model.IPopulation
 import uk.ac.standrews.cs.digitising_scotland.population_model.model.IPopulationWriter;
 import uk.ac.standrews.cs.digitising_scotland.population_model.model.gedcom.GEDCOMPopulationWriter;
 import uk.ac.standrews.cs.digitising_scotland.population_model.model.in_memory.CompactPopulationAdapter;
-import uk.ac.standrews.cs.nds.util.CommandLineArgs;
+import uk.ac.standrews.cs.utilities.archive.CommandLineArgs;
 
 import java.io.IOException;
 import java.nio.file.Path;

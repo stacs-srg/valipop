@@ -20,7 +20,7 @@ import org.gedcom4j.model.Family;
 import org.gedcom4j.model.FamilyEvent;
 import org.gedcom4j.model.Individual;
 import uk.ac.standrews.cs.digitising_scotland.population_model.model.AbstractPartnership;
-import uk.ac.standrews.cs.digitising_scotland.util.DateManipulation;
+import uk.ac.standrews.cs.utilities.DateManipulation;
 
 import java.text.ParseException;
 import java.util.ArrayList;

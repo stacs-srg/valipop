@@ -16,9 +16,12 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.population_model.distributions.temporal;
 
-import java.util.Random;
-
+import uk.ac.standrews.cs.digitising_scotland.population_model.distributions.general.NegativeDeviationException;
+import uk.ac.standrews.cs.digitising_scotland.population_model.distributions.general.NegativeWeightException;
 import uk.ac.standrews.cs.digitising_scotland.population_model.organic.OrganicPopulation;
+
+import java.io.IOException;
+import java.util.Random;
 
 /**
  * Provides a temporal distribution for partnership characteristic.
@@ -34,7 +37,7 @@ public class TemporalEnumDistribution<Value> extends TemporalDistribution<Value>
      * @param distributionKey The key specified in the config file as the location of the relevant file.
      * @param random the random number generator to be used.
      */
-    public TemporalEnumDistribution(final OrganicPopulation population, final String distributionKey, final Random random, final Enum[] enums) {
+    public TemporalEnumDistribution(final OrganicPopulation population, final String distributionKey, final Random random, final Enum[] enums) throws NegativeWeightException, IOException, NegativeDeviationException {
         super(population, distributionKey, random, false);
         this.enums = enums.clone();
     }

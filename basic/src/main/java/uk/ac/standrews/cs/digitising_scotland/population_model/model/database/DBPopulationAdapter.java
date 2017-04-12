@@ -20,7 +20,7 @@ import uk.ac.standrews.cs.digitising_scotland.population_model.config.Population
 import uk.ac.standrews.cs.digitising_scotland.population_model.model.IPartnership;
 import uk.ac.standrews.cs.digitising_scotland.population_model.model.IPerson;
 import uk.ac.standrews.cs.digitising_scotland.population_model.model.IPopulation;
-import uk.ac.standrews.cs.digitising_scotland.util.DBManipulation;
+import uk.ac.standrews.cs.utilities.DBManipulation;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

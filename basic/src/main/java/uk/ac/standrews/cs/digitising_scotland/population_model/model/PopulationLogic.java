@@ -16,7 +16,7 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.population_model.model;
 
-import uk.ac.standrews.cs.digitising_scotland.util.DateManipulation;
+import uk.ac.standrews.cs.utilities.DateManipulation;
 
 import java.util.Date;
 
@@ -79,7 +79,7 @@ public class PopulationLogic {
 
     /**
      * Checks whether the ages of the given parents are sensible for the given child.
-     * Dates are expressed as defined in {@link uk.ac.standrews.cs.digitising_scotland.util.DateManipulation#dateToDays(java.util.Date)}.
+     * Dates are expressed as defined in {@link DateManipulation#dateToDays(java.util.Date)}.
      *
      * @param father_birth_date the birth date of the father
      * @param father_death_date the death date of the father
@@ -101,7 +101,7 @@ public class PopulationLogic {
 
     /**
      * Returns the earliest possible child birth date, for a given marriage date and optional previous child birth date.
-     * Dates are expressed as defined in {@link uk.ac.standrews.cs.digitising_scotland.util.DateManipulation#dateToDays(java.util.Date)}.
+     * Dates are expressed as defined in {@link DateManipulation#dateToDays(java.util.Date)}.
      *
      * @param marriage_date             the marriage date
      * @param previous_child_birth_date the previous child birth date, or -1 if there is no previous birth
@@ -114,7 +114,7 @@ public class PopulationLogic {
 
     /**
      * Checks whether the age difference between the two prospective partners is reasonable.
-     * Dates are expressed as defined in {@link uk.ac.standrews.cs.digitising_scotland.util.DateManipulation#dateToDays(java.util.Date)}.
+     * Dates are expressed as defined in {@link DateManipulation#dateToDays(java.util.Date)}.
      *
      * @param birth_date1 the first birth date
      * @param birth_date2 the second birth date
@@ -122,12 +122,12 @@ public class PopulationLogic {
      */
     public static boolean partnerAgeDifferenceIsReasonable(final int birth_date1, final int birth_date2) {
 
-        return Math.abs(DateManipulation.differenceInYears(birth_date1, birth_date2)) <= MAXIMUM_AGE_DIFFERENCE_IN_PARTNERSHIP;
+        return Math.abs(DateManipulation.differenceInCalendarYears(birth_date1, birth_date2)) <= MAXIMUM_AGE_DIFFERENCE_IN_PARTNERSHIP;
     }
 
     /**
      * Checks whether there is a long enough period between the two given marriage dates.
-     * Dates are expressed as defined in {@link uk.ac.standrews.cs.digitising_scotland.util.DateManipulation#dateToDays(java.util.Date)}.
+     * Dates are expressed as defined in {@link DateManipulation#dateToDays(java.util.Date)}.
      *
      * @param marriage_date          the prospective marriage date
      * @param previous_marriage_date the previous marriage date
@@ -135,12 +135,12 @@ public class PopulationLogic {
      */
     public static boolean longEnoughBetweenMarriages(final int marriage_date, final int previous_marriage_date) {
 
-        return DateManipulation.differenceInYears(previous_marriage_date, marriage_date) > MINIMUM_PERIOD_BETWEEN_PARTNERSHIPS;
+        return DateManipulation.differenceInCalendarYears(previous_marriage_date, marriage_date) > MINIMUM_PERIOD_BETWEEN_PARTNERSHIPS;
     }
 
     /**
      * Checks whether the given divorce date is after the given marriage date.
-     * Dates are expressed as defined in {@link uk.ac.standrews.cs.digitising_scotland.util.DateManipulation#dateToDays(java.util.Date)}.
+     * Dates are expressed as defined in {@link DateManipulation#dateToDays(java.util.Date)}.
      *
      * @param divorce_date  the divorce date
      * @param marriage_date the marriage date
@@ -153,7 +153,7 @@ public class PopulationLogic {
 
     /**
      * Checks whether the given date is before the given death date.
-     * Dates are expressed as defined in {@link uk.ac.standrews.cs.digitising_scotland.util.DateManipulation#dateToDays(java.util.Date)}.
+     * Dates are expressed as defined in {@link DateManipulation#dateToDays(java.util.Date)}.
      *
      * @param candidate_date the divorce date
      * @param death_date   the death date

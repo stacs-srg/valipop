@@ -18,7 +18,7 @@ package uk.ac.standrews.cs.digitising_scotland.population_model.tools;
 
 import uk.ac.standrews.cs.digitising_scotland.population_model.config.PopulationProperties;
 import uk.ac.standrews.cs.digitising_scotland.population_model.model.database.DBInitialiser;
-import uk.ac.standrews.cs.nds.util.Diagnostic;
+import uk.ac.standrews.cs.utilities.archive.Diagnostic;
 
 import java.io.IOException;
 import java.sql.SQLException;

@@ -16,11 +16,13 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.population_model.distributions.temporal;
 
-import java.util.Random;
-
+import uk.ac.standrews.cs.digitising_scotland.population_model.distributions.general.NegativeDeviationException;
+import uk.ac.standrews.cs.digitising_scotland.population_model.distributions.general.NegativeWeightException;
 import uk.ac.standrews.cs.digitising_scotland.population_model.distributions.general.NoPermissableValueException;
 import uk.ac.standrews.cs.digitising_scotland.population_model.distributions.general.NotSetUpAtClassInitilisationException;
-import uk.ac.standrews.cs.digitising_scotland.population_model.organic.OrganicPopulation;
+
+import java.io.IOException;
+import java.util.Random;
 
 /**
  * Provides an Integer based temporal distribution class.
@@ -39,7 +41,7 @@ public class TemporalIntegerDistribution extends TemporalDistribution<Integer> {
      * @param handleNoPermissableValueAsZero Indicates if the distribution is to treat the returning of NoPermissibleValueExceptions as returning a zero value.
      * @see TemporalDistribution
      */
-    public TemporalIntegerDistribution(final ITemporalPopulationInfo population, final String distributionKey, final Random random, final boolean handleNoPermissableValueAsZero) {
+    public TemporalIntegerDistribution(final ITemporalPopulationInfo population, final String distributionKey, final Random random, final boolean handleNoPermissableValueAsZero) throws NegativeWeightException, IOException, NegativeDeviationException {
         super(population, distributionKey, random, handleNoPermissableValueAsZero);
     }
 
@@ -57,5 +59,4 @@ public class TemporalIntegerDistribution extends TemporalDistribution<Integer> {
     public Integer getSample(final int date, final int earliestValue, final int latestValue) throws NoPermissableValueException, NotSetUpAtClassInitilisationException {
         return getIntSample(date, earliestValue, latestValue);
     }
-
 }
