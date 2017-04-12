@@ -16,7 +16,7 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.population_model.model;
 
-import uk.ac.standrews.cs.util.tools.FileManipulation;
+import uk.ac.standrews.cs.utilities.FileManipulation;
 
 import java.io.IOException;
 import java.io.PrintWriter;

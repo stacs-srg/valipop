@@ -22,7 +22,7 @@ import uk.ac.standrews.cs.digitising_scotland.population_model.distributions.gen
 import uk.ac.standrews.cs.digitising_scotland.population_model.model.AbstractPartnership;
 import uk.ac.standrews.cs.digitising_scotland.population_model.model.IPartnership;
 import uk.ac.standrews.cs.digitising_scotland.population_model.model.RandomFactory;
-import uk.ac.standrews.cs.digitising_scotland.util.DateManipulation;
+import uk.ac.standrews.cs.utilities.DateManipulation;
 
 import javax.annotation.concurrent.NotThreadSafe;
 

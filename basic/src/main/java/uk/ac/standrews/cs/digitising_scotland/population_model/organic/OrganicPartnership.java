@@ -17,10 +17,7 @@
 package uk.ac.standrews.cs.digitising_scotland.population_model.organic;
 
 import uk.ac.standrews.cs.digitising_scotland.population_model.distributions.AffairSpacingDistribution;
-import uk.ac.standrews.cs.digitising_scotland.population_model.distributions.general.NegativeDeviationException;
-import uk.ac.standrews.cs.digitising_scotland.population_model.distributions.general.NoPermissableValueException;
-import uk.ac.standrews.cs.digitising_scotland.population_model.distributions.general.NormalDistribution;
-import uk.ac.standrews.cs.digitising_scotland.population_model.distributions.general.NotSetUpAtClassInitilisationException;
+import uk.ac.standrews.cs.digitising_scotland.population_model.distributions.general.*;
 import uk.ac.standrews.cs.digitising_scotland.population_model.distributions.temporal.TemporalEnumDistribution;
 import uk.ac.standrews.cs.digitising_scotland.population_model.distributions.temporal.TemporalIntegerDistribution;
 import uk.ac.standrews.cs.digitising_scotland.population_model.model.IDFactory;
@@ -28,8 +25,9 @@ import uk.ac.standrews.cs.digitising_scotland.population_model.model.IPartnershi
 import uk.ac.standrews.cs.digitising_scotland.population_model.model.PopulationLogic;
 import uk.ac.standrews.cs.digitising_scotland.population_model.model.RandomFactory;
 import uk.ac.standrews.cs.digitising_scotland.population_model.organic.logger.LoggingControl;
-import uk.ac.standrews.cs.digitising_scotland.util.DateManipulation;
+import uk.ac.standrews.cs.utilities.DateManipulation;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -100,7 +98,8 @@ public final class OrganicPartnership implements IPartnership {
      * 
      * @param population The instance of the population to which the distributions are to pertain.
      */
-    public static void setupTemporalDistributionsInOrganicPartnershipClass(final OrganicPopulation population) {
+    public static void setupTemporalDistributionsInOrganicPartnershipClass(final OrganicPopulation population) throws NegativeWeightException, IOException, NegativeDeviationException {
+
         temporalChildrenNumberOfInCohabDistribution = new TemporalIntegerDistribution(population, "children_number_of_in_cohab_distributions_filename", random, true);
         temporalChildrenNumberOfInCohabThenMarriageDistribution = new TemporalIntegerDistribution(population, "children_number_of_in_cohab_then_marriage_distributions_filename", random, true);
         temporalChildrenNumberOfInMarriageDistribution = new TemporalIntegerDistribution(population, "children_number_of_in_marriage_distributions_filename", random, true);
@@ -125,10 +124,9 @@ public final class OrganicPartnership implements IPartnership {
      * @param partnershipDay The marriage day specified in days since 1/1/1600.
      * @param currentDay  The current day of the simulation in days since 1/1/1600.
      * @param familyType  The type of family as defined in the enum {@link FamilyType}
-     * @param population  The instance of the population of which the partnership is a member.
      * @return Returns an object array of size 2, where at index 0 can be found the newly constructed OrganicPartnership and at index 1 the partnerships child (if no child then value is null)
      */
-    public static Object[] createOrganicPartnership(final int id, final OrganicPerson husband, final OrganicPerson wife, final int partnershipDay, final int currentDay, final FamilyType familyType) {
+    public static Object[] createOrganicPartnership(final int id, final OrganicPerson husband, final OrganicPerson wife, final int partnershipDay, final int currentDay, final FamilyType familyType) throws NegativeWeightException, NegativeDeviationException, InconsistentWeightException, IOException {
         // Handle children appropriately
         OrganicPartnership partnership = new OrganicPartnership(id, husband, wife, partnershipDay, familyType);
         // Contains OrganicPerson objects aka the children - if no children returns null
@@ -171,7 +169,7 @@ public final class OrganicPartnership implements IPartnership {
      * -------------------------------- SetUp methods --------------------------------
      */
 
-    private OrganicPerson[] setupPartnership(final OrganicPerson male, final OrganicPerson female, final int currentDay) {
+    private OrganicPerson[] setupPartnership(final OrganicPerson male, final OrganicPerson female, final int currentDay) throws NegativeWeightException, NegativeDeviationException, InconsistentWeightException, IOException {
         // Decide if/when partnership terminates
         if (cohabiting && !married) {
             // cohabiting
@@ -184,7 +182,7 @@ public final class OrganicPartnership implements IPartnership {
         return setUpBirthPlan(male, female, currentDay);
     }
 
-    private OrganicPerson[] setUpBirthPlan(final OrganicPerson husband, final OrganicPerson wife, final int currentDay) {
+    private OrganicPerson[] setUpBirthPlan(final OrganicPerson husband, final OrganicPerson wife, final int currentDay) throws NegativeWeightException, NegativeDeviationException, InconsistentWeightException, IOException {
         int maxPossibleChildren = (int) ((getLastPossibleBirthDate(husband, wife) - OrganicPopulation.getCurrentDay()) / (PopulationLogic.getInterChildInterval() * OrganicPopulation.getDaysPerYear()));
 
         try {
@@ -337,15 +335,16 @@ public final class OrganicPartnership implements IPartnership {
      * @param currentDay The current day of the simulation
      * @return An OrganicPerson array containing any children to be born in the birth event. Size zero if none.
      */
-    public OrganicPerson[] setUpBirthEvent(final OrganicPerson husband, final OrganicPerson wife, final int currentDay) {
-        int numberOfChildrenInPregnacy = temporalChildrenNumberOfInMaternityDistribution.getSample(OrganicPopulation.getCurrentDay());
-        if (numberOfChildrenInPregnacy > numberOfChildrenToBeHadByCouple - childrenIds.size()) {
-            numberOfChildrenInPregnacy = numberOfChildrenToBeHadByCouple - childrenIds.size();
+    public OrganicPerson[] setUpBirthEvent(final OrganicPerson husband, final OrganicPerson wife, final int currentDay) throws NegativeWeightException, NegativeDeviationException, InconsistentWeightException, IOException {
+
+        int numberOfChildrenInPregnancy = temporalChildrenNumberOfInMaternityDistribution.getSample(OrganicPopulation.getCurrentDay());
+        if (numberOfChildrenInPregnancy > numberOfChildrenToBeHadByCouple - childrenIds.size()) {
+            numberOfChildrenInPregnancy = numberOfChildrenToBeHadByCouple - childrenIds.size();
         }
-        if (numberOfChildrenInPregnacy == 0) {
+        if (numberOfChildrenInPregnancy == 0) {
             return new OrganicPerson[0];
         } else {
-            OrganicPerson[] children = new OrganicPerson[numberOfChildrenInPregnacy];
+            OrganicPerson[] children = new OrganicPerson[numberOfChildrenInPregnancy];
             int dayOfBirth;
             do {
                 dayOfBirth = timeBetweenMaternitiesDistrobution.getSample().intValue();
@@ -353,12 +352,12 @@ public final class OrganicPartnership implements IPartnership {
             if (husband != null && wife != null && PopulationLogic.parentsHaveSensibleAgesAtChildBirth(husband.getBirthDay(), husband.getDeathDay(), wife.getBirthDay(), wife.getDeathDay(), dayOfBirth + currentDay)) {
                 new OrganicEvent(EventType.BIRTH, this, husband, wife, currentDay + dayOfBirth);
                 wife.addDayToRecordOfBirths(currentDay + dayOfBirth);
-                for (int i = 0; i < numberOfChildrenInPregnacy; i++) {
+                for (int i = 0; i < numberOfChildrenInPregnancy; i++) {
                     children[i] = new OrganicPerson(IDFactory.getNextID(), currentDay + dayOfBirth, id, wife.getPopulation(), false, this);
                     childrenIds.add(children[i].getId());
                 }
                 if (OrganicPopulation.isLogging()) {
-                    LoggingControl.getNumberOfChildrenInMaterityDistributionLogger().log(currentDay, numberOfChildrenInPregnacy);
+                    LoggingControl.getNumberOfChildrenInMaterityDistributionLogger().log(currentDay, numberOfChildrenInPregnancy);
                 }
                 return children;
             } else {

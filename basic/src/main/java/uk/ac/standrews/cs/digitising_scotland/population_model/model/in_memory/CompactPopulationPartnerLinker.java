@@ -19,8 +19,8 @@ package uk.ac.standrews.cs.digitising_scotland.population_model.model.in_memory;
 import edu.umd.cs.findbugs.annotations.*;
 import uk.ac.standrews.cs.digitising_scotland.population_model.distributions.general.*;
 import uk.ac.standrews.cs.digitising_scotland.population_model.model.*;
-import uk.ac.standrews.cs.digitising_scotland.util.*;
-import uk.ac.standrews.cs.util.tools.*;
+import uk.ac.standrews.cs.utilities.DateManipulation;
+import uk.ac.standrews.cs.utilities.ProgressIndicator;
 
 import java.util.*;
 import java.lang.SuppressWarnings;
@@ -153,7 +153,7 @@ class CompactPopulationPartnerLinker {
 
             private boolean oldEnoughToMarry(final CompactPerson person, final int marriage_date) {
 
-                return DateManipulation.differenceInYears(person.getBirthDate(), marriage_date) > MINIMUM_AGE_AT_MARRIAGE;
+                return DateManipulation.differenceInCalendarYears(person.getBirthDate(), marriage_date) > MINIMUM_AGE_AT_MARRIAGE;
             }
 
             private boolean notPreviouslyPartners(final CompactPerson person, final int index, final CompactPerson candidate_partner) {

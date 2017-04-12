@@ -17,10 +17,11 @@
 package uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.adapted_db;
 
 import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.adapted_interfaces.*;
-import uk.ac.standrews.cs.digitising_scotland.util.*;
-import uk.ac.standrews.cs.nds.util.*;
-import uk.ac.standrews.cs.nds.util.Diagnostic;
-import uk.ac.standrews.cs.util.tools.*;
+import uk.ac.standrews.cs.utilities.PercentageProgressIndicator;
+import uk.ac.standrews.cs.utilities.ProgressIndicator;
+import uk.ac.standrews.cs.utilities.TimeManipulation;
+import uk.ac.standrews.cs.utilities.archive.CommandLineArgs;
+import uk.ac.standrews.cs.utilities.archive.Diagnostic;
 
 /**
  * Generates a population in a series of independent batches, and exports to the database.

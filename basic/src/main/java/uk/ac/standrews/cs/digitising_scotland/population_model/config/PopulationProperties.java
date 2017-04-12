@@ -16,7 +16,7 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.population_model.config;
 
-import uk.ac.standrews.cs.digitising_scotland.util.PropertiesManipulation;
+import uk.ac.standrews.cs.utilities.PropertiesManipulation;
 
 import java.io.IOException;
 import java.util.Properties;

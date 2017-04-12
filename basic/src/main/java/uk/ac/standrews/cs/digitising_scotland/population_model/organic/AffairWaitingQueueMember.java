@@ -16,9 +16,12 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.population_model.organic;
 
-import java.util.Random;
-
+import uk.ac.standrews.cs.digitising_scotland.population_model.distributions.general.NegativeDeviationException;
+import uk.ac.standrews.cs.digitising_scotland.population_model.distributions.general.NegativeWeightException;
 import uk.ac.standrews.cs.digitising_scotland.population_model.distributions.temporal.TemporalEnumDistribution;
+
+import java.io.IOException;
+import java.util.Random;
 
 /**
  * Provides an orderable queue element to be used in the affair waiting queue.
@@ -41,7 +44,7 @@ public class AffairWaitingQueueMember implements Comparable<AffairWaitingQueueMe
      * @param distributionKey The key corresponding to the file path in the config file.
      * @param random The random number generator to be used.
      */
-    public static void initialiseAffairWithMarrieadOrSingleDistribution(final OrganicPopulation population, final String distributionKey, final Random random) {
+    public static void initialiseAffairWithMarrieadOrSingleDistribution(final OrganicPopulation population, final String distributionKey, final Random random) throws NegativeWeightException, IOException, NegativeDeviationException {
         affairWithMarriedOrSingleDistribution = new TemporalEnumDistribution<FamilyType>(population, distributionKey, random, AFFAIR_WITH_MARRIED_OR_SINGLE_FAMILY_TYPE_ARRAY);
     }
 

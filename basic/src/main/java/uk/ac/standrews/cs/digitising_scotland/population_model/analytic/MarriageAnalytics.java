@@ -18,7 +18,7 @@ package uk.ac.standrews.cs.digitising_scotland.population_model.analytic;
 
 import uk.ac.standrews.cs.digitising_scotland.population_model.model.IPerson;
 import uk.ac.standrews.cs.digitising_scotland.population_model.model.IPopulation;
-import uk.ac.standrews.cs.digitising_scotland.util.ArrayManipulation;
+import uk.ac.standrews.cs.utilities.ArrayManipulation;
 
 import java.util.List;
 

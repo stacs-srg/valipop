@@ -16,8 +16,7 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.population_model.distributions.util;
 
-import uk.ac.standrews.cs.nds.util.ErrorHandling;
-import uk.ac.standrews.cs.util.tools.FileManipulation;
+import uk.ac.standrews.cs.utilities.FileManipulation;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -95,7 +94,6 @@ public class FileDistributionGenerator {
 
     private static void recordString(final String s, final Map<String, Integer> string_counts) {
 
-        try {
             String processed_string = s;
             int count = 1;
 
@@ -111,10 +109,6 @@ public class FileDistributionGenerator {
 
             final int previous_count = string_counts.containsKey(processed_string) ? string_counts.get(processed_string) : 0;
             string_counts.put(processed_string, previous_count + count);
-
-        } catch (final NumberFormatException e) {
-            ErrorHandling.exceptionError(e, "invalid count on line: " + s);
-        }
     }
 
     private static void recordFrequencies(final Map<String, Integer> string_counts, final Path input_file_path, final Path output_file_path) throws IOException {

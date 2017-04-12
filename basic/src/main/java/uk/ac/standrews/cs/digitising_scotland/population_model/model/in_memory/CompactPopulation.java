@@ -20,9 +20,10 @@ import edu.umd.cs.findbugs.annotations.*;
 import uk.ac.standrews.cs.digitising_scotland.population_model.distributions.*;
 import uk.ac.standrews.cs.digitising_scotland.population_model.distributions.general.*;
 import uk.ac.standrews.cs.digitising_scotland.population_model.model.*;
-import uk.ac.standrews.cs.digitising_scotland.util.*;
-import uk.ac.standrews.cs.nds.util.*;
-import uk.ac.standrews.cs.util.tools.*;
+import uk.ac.standrews.cs.utilities.ArrayManipulation;
+import uk.ac.standrews.cs.utilities.DateManipulation;
+import uk.ac.standrews.cs.utilities.ProgressIndicator;
+import uk.ac.standrews.cs.utilities.archive.QuickSort;
 
 import javax.annotation.concurrent.*;
 import java.util.*;
@@ -65,8 +66,8 @@ class CompactPopulation {
      * Creates a synthetic population.
      *
      * @param population_size    the number of people in the population
-     * @param earliest_date      the earliest date of any event (birth, death, marriage, parenthood), represented as days since {@link uk.ac.standrews.cs.digitising_scotland.util.DateManipulation#START_YEAR}
-     * @param latest_date        the latest date of any event, represented as days since {@link uk.ac.standrews.cs.digitising_scotland.util.DateManipulation#START_YEAR}
+     * @param earliest_date      the earliest date of any event (birth, death, marriage, parenthood), represented as days since {@link DateManipulation#START_YEAR}
+     * @param latest_date        the latest date of any event, represented as days since {@link DateManipulation#START_YEAR}
      * @param progress_indicator a progress indicator
      * @throws NegativeWeightException    if one of the underlying distributions cannot be initialised
      * @throws NegativeDeviationException if one of the underlying distributions cannot be initialised

@@ -4,4 +4,3 @@ syntax: glob
 *.iml
 .idea
 target
-.Ulysses*

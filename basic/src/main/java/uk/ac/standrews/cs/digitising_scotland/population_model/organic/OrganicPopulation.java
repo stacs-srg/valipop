@@ -16,6 +16,9 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.population_model.organic;
 
+import uk.ac.standrews.cs.digitising_scotland.population_model.distributions.general.InconsistentWeightException;
+import uk.ac.standrews.cs.digitising_scotland.population_model.distributions.general.NegativeDeviationException;
+import uk.ac.standrews.cs.digitising_scotland.population_model.distributions.general.NegativeWeightException;
 import uk.ac.standrews.cs.digitising_scotland.population_model.distributions.temporal.ITemporalPopulationInfo;
 import uk.ac.standrews.cs.digitising_scotland.population_model.model.IDFactory;
 import uk.ac.standrews.cs.digitising_scotland.population_model.model.IPartnership;
@@ -24,8 +27,8 @@ import uk.ac.standrews.cs.digitising_scotland.population_model.model.IPopulation
 import uk.ac.standrews.cs.digitising_scotland.population_model.model.RandomFactory;
 import uk.ac.standrews.cs.digitising_scotland.population_model.organic.logger.LoggingControl;
 import uk.ac.standrews.cs.digitising_scotland.population_model.tools.MemoryMonitor;
-import uk.ac.standrews.cs.digitising_scotland.util.ArrayManipulation;
-import uk.ac.standrews.cs.digitising_scotland.util.DateManipulation;
+import uk.ac.standrews.cs.utilities.ArrayManipulation;
+import uk.ac.standrews.cs.utilities.DateManipulation;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -36,7 +39,7 @@ import java.util.Random;
 
 /**
  * The OrganicPopulation class models and handles the population as a whole.
- * 
+ *
  * @author Victor Andrei (va9@st-andrews.ac.uk)
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
@@ -44,27 +47,22 @@ public class OrganicPopulation implements IPopulation, ITemporalPopulationInfo {
 
     /**
      * By running the class the population model is run, the arguments allow for the size of the seed population to be set.
-     * 
+     *
      * @param args The size of the seed population.
      */
-    public static void main(final String[] args) {
-        System.out.println("--------MAIN HERE---------");
-	
+    public static void main(final String[] args) throws NegativeWeightException, NegativeDeviationException, InconsistentWeightException, IOException {
 
-        if (args.length == 0) {
-            runPopulationModel(DEFAULT_SEED_SIZE, false, false, false);
-        } else {
-            runPopulationModel(Integer.valueOf(args[0]), false, false, false);
-        }
+        System.out.println("--------MAIN HERE---------");
+
+        runPopulationModel(args.length == 0 ? DEFAULT_SEED_SIZE : Integer.valueOf(args[0]), false, false, false);
 
         System.out.println("--------MAIN END---------");
-
     }
 
     /*
      * -------------------------------- Logging and output --------------------------------
      */
-    
+
     private static MemoryMonitor mm;
     private static PrintWriter writer = null;
     private static boolean logging = true;
@@ -72,9 +70,9 @@ public class OrganicPopulation implements IPopulation, ITemporalPopulationInfo {
     /*
      * -------------------------------- Universal population variables --------------------------------
      */
-    
+
     private static PriorityQueue<OrganicEvent> globalEventsQueue = new PriorityQueue<OrganicEvent>();
-    
+
     private String description;
     private static final int DEFAULT_SEED_SIZE = 10000;
     private static final float DAYS_PER_YEAR = 365.25f;
@@ -86,24 +84,26 @@ public class OrganicPopulation implements IPopulation, ITemporalPopulationInfo {
     private static int currentDay;
     private boolean seedGeneration = true;
     private int maximumNumberOfChildrenInFamily;
-    
+
     /*
      * -------------------------------- People and partnership lists --------------------------------
      */
     private static List<OrganicPerson> livingPeople = new ArrayList<OrganicPerson>();
-    
+
     private static List<OrganicPartnership> partnerships = new ArrayList<OrganicPartnership>();
-    
+
     /**
      * Adds given person to the list of people.
+     *
      * @param person The given person.
      */
     public static void addLivingPerson(OrganicPerson person) {
         livingPeople.add(person);
     }
-    
+
     /**
      * Adds given partnership to the list of partnerships.
+     *
      * @param partnership The given partnership.
      */
     public static void addPartnership(OrganicPartnership partnership) {
@@ -116,7 +116,7 @@ public class OrganicPopulation implements IPopulation, ITemporalPopulationInfo {
 
     /**
      * Constructs a new OrganicPopulation.
-     * 
+     *
      * @param description The population descriptor string.
      */
     public OrganicPopulation(final String description) {
@@ -130,15 +130,16 @@ public class OrganicPopulation implements IPopulation, ITemporalPopulationInfo {
     /**
      * Calls the makeSeed method with the default specified seed size.
      */
-    public void makeSeed() {
+    public void makeSeed() throws NegativeWeightException, NegativeDeviationException, InconsistentWeightException, IOException {
         makeSeed(getDefaultSeedSize());
     }
 
     /**
      * Creates a seed population of the specified size.
+     *
      * @param size The number of individuals to be created in the seed population.
      */
-    public void makeSeed(final int size) {
+    public void makeSeed(final int size) throws NegativeWeightException, NegativeDeviationException, InconsistentWeightException, IOException {
         for (int i = 0; i < size; i++) {
             OrganicPerson person = new OrganicPerson(IDFactory.getNextID(), 0, -1, this, seedGeneration, null);
             livingPeople.add(person);
@@ -148,21 +149,22 @@ public class OrganicPopulation implements IPopulation, ITemporalPopulationInfo {
 
     /**
      * Called to begin the event iteration which commences the simulation.
-     * 
+     *
      * @param print Specifies whether to print year end information to console.
      */
-    public void newEventIteration(final boolean print, final boolean memoryMonitor) {
+    public void newEventIteration(final boolean print, final boolean memoryMonitor) throws NegativeWeightException, NegativeDeviationException, InconsistentWeightException, IOException {
+
         while (getCurrentDay() <= DateManipulation.dateToDays(getEndYear(), 0, 0)) {
             OrganicEvent event = globalEventsQueue.poll();
-            
+
             if (event == null) {
                 break;
             } else {
                 // While the next event isn't in the same year as the next event.
                 while ((int) (getCurrentDay() / getDaysPerYear()) != (int) (event.getDay() / getDaysPerYear())) {
                     // Log population as if the years end - as we know no more events will occur before the year is out and thus the population is the same now as at the year end
-                    
-                	if (logging) {
+
+                    if (logging) {
                         LoggingControl.yearEndLog(currentDay);
                     }
                     if (print && logging) {
@@ -177,9 +179,7 @@ public class OrganicPopulation implements IPopulation, ITemporalPopulationInfo {
                     double r = getCurrentDay() % DAYS_PER_YEAR;
                     setCurrentDay((int) (getCurrentDay() + Math.round(r)));
                 }
-                
-//                System.out.println("Y: " + getCurrentDay()/365);
-                
+
                 setCurrentDay(event.getDay());
                 if (currentDay % 10.0f == 0) {
                     event.movePeopleFromAffarirsWaitingQueueToAppropriateQueue();
@@ -190,16 +190,15 @@ public class OrganicPopulation implements IPopulation, ITemporalPopulationInfo {
                     event.partnerTogetherPeopleInPartnershipQueue(FamilyType.COHABITATION_THEN_MARRIAGE);
                     event.partnerTogetherPeopleInPartnershipQueue(FamilyType.MARRIAGE);
                 }
-                
+
                 event.run();
             }
-
         }
     }
 
     /**
      * Adds event to global events queue.
-     * 
+     *
      * @param event The event to be added to the global events queue.
      */
     public static void addEventToGlobalQueue(final OrganicEvent event) {
@@ -212,7 +211,7 @@ public class OrganicPopulation implements IPopulation, ITemporalPopulationInfo {
 
     /**
      * Returns the epoch year.
-     * 
+     *
      * @return The epoch year.
      */
     public static int getEpochYear() {
@@ -221,7 +220,7 @@ public class OrganicPopulation implements IPopulation, ITemporalPopulationInfo {
 
     /**
      * Size of initially generated seed population.
-     * 
+     *
      * @return the defaultSeedSize
      */
     public static int getDefaultSeedSize() {
@@ -230,7 +229,7 @@ public class OrganicPopulation implements IPopulation, ITemporalPopulationInfo {
 
     /**
      * The approximate average number of days per year.
-     * 
+     *
      * @return the daysPerYear
      */
     public static float getDaysPerYear() {
@@ -239,7 +238,7 @@ public class OrganicPopulation implements IPopulation, ITemporalPopulationInfo {
 
     /**
      * The start year of the simulation.
-     * 
+     *
      * @return the startYear
      */
     public static int getStartYear() {
@@ -248,7 +247,7 @@ public class OrganicPopulation implements IPopulation, ITemporalPopulationInfo {
 
     /**
      * The end year of the simulation.
-     * 
+     *
      * @return the endYear
      */
     public static int getEndYear() {
@@ -257,7 +256,7 @@ public class OrganicPopulation implements IPopulation, ITemporalPopulationInfo {
 
     /**
      * Returns the earliestDate in days since the 1/1/1600.
-     * 
+     *
      * @return The earliestDate in days since the 1/1/1600.
      */
     public int getEarliestDate() {
@@ -266,7 +265,7 @@ public class OrganicPopulation implements IPopulation, ITemporalPopulationInfo {
 
     /**
      * Sets the earliest date field to the specified date.
-     * 
+     *
      * @param earlyDate The value which earliestDate is to be set to.
      */
     public void setEarliestDate(final int earlyDate) {
@@ -275,7 +274,7 @@ public class OrganicPopulation implements IPopulation, ITemporalPopulationInfo {
 
     /**
      * Returns the population description string.
-     * 
+     *
      * @return The population description string.
      */
     public String getDescription() {
@@ -368,7 +367,7 @@ public class OrganicPopulation implements IPopulation, ITemporalPopulationInfo {
 
     /**
      * Returns partnership with given id. Works by calling findPartnership but then casts to an OrganicPartenrship.
-     * 
+     *
      * @param id The id of the partnership.
      * @return The partnership.
      */
@@ -426,51 +425,51 @@ public class OrganicPopulation implements IPopulation, ITemporalPopulationInfo {
      * Memory log file: memory_usage{time in ns}.dat in directory src/main/resources/output/
      * GnuPlot script file: log_output_script.p in directory src/main/resources/output/gnu/
      * GnuPlot dat files: in directory src/main/resources/output/gnu/
-     * 
-     * @param seedSize The size of the initial seed population.
-     * @param print If the program should print results to file.
+     *
+     * @param seedSize      The size of the initial seed population.
+     * @param print         If the program should print results to file.
      * @param memoryMonitor If the program should record memory footprint.
-     * @param logging If the program should log population statistics - note: Must be enabled to use either print or memory monitoring options.
+     * @param logging       If the program should log population statistics - note: Must be enabled to use either print or memory monitoring options.
      * @return The created organic population.
      */
-    public static OrganicPopulation runPopulationModel(int seedSize, boolean print, final boolean memoryMonitor, final boolean logging) {
+    public static OrganicPopulation runPopulationModel(int seedSize, boolean print, final boolean memoryMonitor, final boolean logging) throws NegativeWeightException, NegativeDeviationException, InconsistentWeightException, IOException {
 
-	System.out.println("Seed size = " + seedSize);
+        System.out.println("Seed size = " + seedSize);
 
         OrganicPopulation.logging = logging;
         if (memoryMonitor) {
             mm = new MemoryMonitor();
-            System.out.println("MEMORY MONITOR INITIALIZED");        
+            System.out.println("MEMORY MONITOR INITIALIZED");
         }
-        
+
         long startTime = System.nanoTime();
         OrganicPopulation op = new OrganicPopulation("Test Population");
         OrganicPartnership.setupTemporalDistributionsInOrganicPartnershipClass(op);
         OrganicPerson.initializeDistributions(op);
-        
-        System.out.println("DISTRIBUTIONS INITIALIZED");        
-        
+
+        System.out.println("DISTRIBUTIONS INITIALIZED");
+
         AffairWaitingQueueMember.initialiseAffairWithMarrieadOrSingleDistribution(op, "affair_with_single_or_married_distributions_data_filename", random);
 
         if (logging) {
             LoggingControl.setUpLogger();
         }
-        
-        System.out.println("LOGGING CONTROL INITIALIZED");        
-        
-        
+
+        System.out.println("LOGGING CONTROL INITIALIZED");
+
+
         if (livingPeople.size() == 0) {
             op.makeSeed(seedSize);
             op.setCurrentDay(op.getEarliestDate() - 1);
         }
-        
-        System.out.println("POPULATION SEEDED");        
-        
+
+        System.out.println("POPULATION SEEDED");
+
 
         if (print) {
-        	
-            System.out.println("OUTPUT PRINTER INITIALIZED");        
-            
+
+            System.out.println("OUTPUT PRINTER INITIALIZED");
+
             try {
                 File f = new File("/Users/tsd4/OneDrive/cs/PhD/new_ds/digitising_scotland/population_model/src/main/resources/output/new_output.txt");
                 f.createNewFile();
@@ -484,10 +483,10 @@ public class OrganicPopulation implements IPopulation, ITemporalPopulationInfo {
 
             writer.println(op.getDescription());
         }
-        
-        System.out.println("EVENT HANDLING BEGINS");        
-        
-        
+
+        System.out.println("EVENT HANDLING BEGINS");
+
+
         op.newEventIteration(print, memoryMonitor);
         long timeTaken = System.nanoTime() - startTime;
         System.out.println("Number of people generated in population in x ms");
@@ -500,7 +499,7 @@ public class OrganicPopulation implements IPopulation, ITemporalPopulationInfo {
             writer.println("Run time " + timeTaken / 1000000 + "ms");
             writer.println();
             if (logging) {
-                System.out.println("CREATING GNU PLOT FILES");        
+                System.out.println("CREATING GNU PLOT FILES");
                 LoggingControl.createGnuPlotOutputFilesAndScript();
             }
             writer.close();
@@ -513,7 +512,7 @@ public class OrganicPopulation implements IPopulation, ITemporalPopulationInfo {
 
     /**
      * Returns current day of simulation.
-     * 
+     *
      * @return the currentDay
      */
     public static int getCurrentDay() {
@@ -522,7 +521,7 @@ public class OrganicPopulation implements IPopulation, ITemporalPopulationInfo {
 
     /**
      * Sets current day for simulation.
-     * 
+     *
      * @param currentDay The currentDay to set
      */
     public static void setCurrentDay(final int currentDay) {
@@ -531,7 +530,7 @@ public class OrganicPopulation implements IPopulation, ITemporalPopulationInfo {
 
     /**
      * returns the maximum number of children in a family.
-     * 
+     *
      * @return the maximumNumberOfChildrenInFamily
      */
     public int getMaximumNumberOfChildrenInFamily() {
@@ -540,15 +539,16 @@ public class OrganicPopulation implements IPopulation, ITemporalPopulationInfo {
 
     /**
      * Sets the maximum number of children in a family.
-     * 
+     *
      * @param maxNumberOfChildrenInFamily The maximumNumberOfChildrenInFamily to set
      */
     public void setMaximumNumberOfChildrenInFamily(final int maxNumberOfChildrenInFamily) {
         maximumNumberOfChildrenInFamily = maxNumberOfChildrenInFamily;
     }
-    
+
     /**
      * Checks logging flag.
+     *
      * @return Logging flag value.
      */
     public static boolean isLogging() {
@@ -557,6 +557,7 @@ public class OrganicPopulation implements IPopulation, ITemporalPopulationInfo {
 
     /**
      * Sets logging flag value.
+     *
      * @param logging The boolean value to be set to.
      */
     public static void setLogging(boolean logging) {

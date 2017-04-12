@@ -24,7 +24,7 @@ import org.gedcom4j.model.IndividualEvent;
 import org.gedcom4j.model.PersonalName;
 import uk.ac.standrews.cs.digitising_scotland.population_model.model.AbstractPerson;
 import uk.ac.standrews.cs.digitising_scotland.population_model.model.IPerson;
-import uk.ac.standrews.cs.digitising_scotland.util.DateManipulation;
+import uk.ac.standrews.cs.utilities.DateManipulation;
 
 import java.text.ParseException;
 import java.util.List;

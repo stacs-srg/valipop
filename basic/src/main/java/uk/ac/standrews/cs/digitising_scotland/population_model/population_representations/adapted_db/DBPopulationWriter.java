@@ -18,7 +18,6 @@ package uk.ac.standrews.cs.digitising_scotland.population_model.population_repre
 
 import uk.ac.standrews.cs.digitising_scotland.population_model.config.PopulationProperties;
 import uk.ac.standrews.cs.digitising_scotland.population_model.model.database.DBConnector;
-import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.adapted_interfaces.ILinkedMarriagePartnership;
 import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.adapted_interfaces.ILinkedChildbearingPartnership;
 import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.adapted_interfaces.ILinkedPerson;
 import uk.ac.standrews.cs.digitising_scotland.population_model.population_representations.adapted_interfaces.IPopulationWriter;
@@ -26,8 +25,8 @@ import uk.ac.standrews.cs.digitising_scotland.population_model.population_repres
 //import uk.ac.standrews.cs.digitising_scotland.population_model.model.IPartnership;
 //import uk.ac.standrews.cs.digitising_scotland.population_model.model.IPerson;
 //import uk.ac.standrews.cs.digitising_scotland.population_model.model.IPopulationWriter;
-import uk.ac.standrews.cs.digitising_scotland.util.DBManipulation;
-import uk.ac.standrews.cs.digitising_scotland.util.DateManipulation;
+import uk.ac.standrews.cs.utilities.DBManipulation;
+import uk.ac.standrews.cs.utilities.DateManipulation;
 
 import java.io.IOException;
 import java.sql.Connection;

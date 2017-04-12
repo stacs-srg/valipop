@@ -24,7 +24,7 @@ import uk.ac.standrews.cs.digitising_scotland.population_model.model.IPopulation
 import uk.ac.standrews.cs.digitising_scotland.population_model.model.IPopulationWriter;
 import uk.ac.standrews.cs.digitising_scotland.population_model.model.PopulationConverter;
 import uk.ac.standrews.cs.digitising_scotland.population_model.model.in_memory.AbstractExporterTest;
-import uk.ac.standrews.cs.util.tools.FileManipulation;
+import uk.ac.standrews.cs.utilities.FileManipulation;
 
 import java.io.IOException;
 import java.nio.file.Files;

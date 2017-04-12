@@ -16,8 +16,8 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.population_model.tools;
 
-import uk.ac.standrews.cs.nds.util.CommandLineArgs;
 import uk.ac.standrews.cs.digitising_scotland.population_model.distributions.util.FileDistributionGenerator;
+import uk.ac.standrews.cs.utilities.archive.CommandLineArgs;
 
 import java.io.IOException;
 

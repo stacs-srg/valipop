@@ -19,7 +19,7 @@ package uk.ac.standrews.cs.digitising_scotland.population_model.model.in_memory;
 import edu.umd.cs.findbugs.annotations.*;
 import uk.ac.standrews.cs.digitising_scotland.population_model.distributions.general.*;
 import uk.ac.standrews.cs.digitising_scotland.population_model.model.*;
-import uk.ac.standrews.cs.util.tools.*;
+import uk.ac.standrews.cs.utilities.ProgressIndicator;
 
 import java.util.*;
 import java.lang.SuppressWarnings;

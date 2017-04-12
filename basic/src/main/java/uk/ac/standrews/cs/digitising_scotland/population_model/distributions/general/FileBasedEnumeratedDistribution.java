@@ -17,8 +17,7 @@
 package uk.ac.standrews.cs.digitising_scotland.population_model.distributions.general;
 
 import uk.ac.standrews.cs.digitising_scotland.population_model.distributions.util.FileDistributionGenerator;
-import uk.ac.standrews.cs.nds.util.ErrorHandling;
-import uk.ac.standrews.cs.util.tools.FileManipulation;
+import uk.ac.standrews.cs.utilities.FileManipulation;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -39,10 +38,10 @@ public class FileBasedEnumeratedDistribution extends EnumeratedDistribution {
 
     /**
      * Creates a File Based Enumerated distribution.
-     * 
+     *
      * @param path_string Path of file.
-     * @param random Takes in random for use in creation of distribution.
-     * @throws IOException Thrown in the event of an IOException.
+     * @param random      Takes in random for use in creation of distribution.
+     * @throws IOException                 Thrown in the event of an IOException.
      * @throws InconsistentWeightException Thrown when the weights in the underlying distribution are found to be inconsistent.
      */
     public FileBasedEnumeratedDistribution(final String path_string, final Random random) throws IOException, InconsistentWeightException {
@@ -58,19 +57,13 @@ public class FileBasedEnumeratedDistribution extends EnumeratedDistribution {
                 line = reader.readLine();
             }
 
-            try {
-                while (line != null) {
+            while (line != null) {
 
-                    final String[] strings = line.split(TAB);
+                final String[] strings = line.split(TAB);
 
-                    double probability = Double.parseDouble(strings[1]);
-                    item_probabilities.put(strings[0], probability);
-                    line = reader.readLine();
-                }
-            } catch (final Exception e) {
-
-                // TODO use proper logger
-                ErrorHandling.exceptionError(e, "Could not process line:" + line);
+                double probability = Double.parseDouble(strings[1]);
+                item_probabilities.put(strings[0], probability);
+                line = reader.readLine();
             }
         }
 

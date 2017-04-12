@@ -16,7 +16,7 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.population_model.model;
 
-import uk.ac.standrews.cs.nds.util.ErrorHandling;
+import uk.ac.standrews.cs.utilities.archive.ErrorHandling;
 
 /**
  * Generates sequential unique IDs. There is no built-in mechanism for persisting the last issued

@@ -16,9 +16,12 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.population_model.model;
 
-import org.junit.Test;
-
+import uk.ac.standrews.cs.digitising_scotland.population_model.distributions.general.InconsistentWeightException;
+import uk.ac.standrews.cs.digitising_scotland.population_model.distributions.general.NegativeDeviationException;
+import uk.ac.standrews.cs.digitising_scotland.population_model.distributions.general.NegativeWeightException;
 import uk.ac.standrews.cs.digitising_scotland.population_model.organic.OrganicPopulation;
+
+import java.io.IOException;
 
 /**
  * @author Victor Andrei (va9@st-andrews.ac.uk)
@@ -26,13 +29,7 @@ import uk.ac.standrews.cs.digitising_scotland.population_model.organic.OrganicPo
  */
 public class GeneralOrganicPopulationTest extends GeneralPopulationStructureTests {
 
-    public GeneralOrganicPopulationTest() {
+    public GeneralOrganicPopulationTest() throws NegativeWeightException, NegativeDeviationException, InconsistentWeightException, IOException {
     	super(OrganicPopulation.runPopulationModel(500, false, false, true), false);
-    	
     }
-    
-//    @Test
-//    public void largeRunTest() {
-//        OrganicPopulation.runPopulationModel(true, 10000, false);
-//    }
 }

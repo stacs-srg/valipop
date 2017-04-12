@@ -19,7 +19,7 @@ package uk.ac.standrews.cs.digitising_scotland.population_model.analytic;
 import uk.ac.standrews.cs.digitising_scotland.population_model.model.IPartnership;
 import uk.ac.standrews.cs.digitising_scotland.population_model.model.IPerson;
 import uk.ac.standrews.cs.digitising_scotland.population_model.model.IPopulation;
-import uk.ac.standrews.cs.digitising_scotland.util.DateManipulation;
+import uk.ac.standrews.cs.utilities.DateManipulation;
 
 import java.util.Date;
 import java.util.List;
