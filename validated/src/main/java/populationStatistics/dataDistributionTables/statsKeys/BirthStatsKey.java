@@ -14,10 +14,10 @@ public class BirthStatsKey extends StatsKey {
     }
 
     public Integer getAge() {
-        return getYLabel();
+        return getXLabel();
     }
 
     public Integer getOrder() {
-        return getXLabel();
+        return getYLabel();
     }
 }

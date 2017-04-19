@@ -26,13 +26,16 @@ import java.util.Set;
  */
 public class NBirthLogic implements EventLogic {
 
+    public static int tBirths = 0;
 
     @Override
     public void handleEvent(Config config, AdvancableDate currentDate, CompoundTimeUnit consideredTimePeriod,
                             Population population, PopulationStatistics desiredPopulationStatistics) throws InsufficientNumberOfPeopleException {
 
+        int bornAtTS = 0;
+
         FemaleCollection femalesLiving = population.getLivingPeople().getFemales();
-        Iterator<AdvancableDate> divDates = femalesLiving.getDivisionDates().iterator();
+        Iterator<AdvancableDate> divDates = femalesLiving.getDivisionDates(consideredTimePeriod).iterator();
 
         AdvancableDate divDate;
         // For each division in the population data store upto the current date
@@ -60,7 +63,8 @@ public class NBirthLogic implements EventLogic {
 
                 int childrenMade = mothers.size();
 
-//                InitLogic.incrementBirthCount(childrenMade);
+                bornAtTS += childrenMade;
+                InitLogic.incrementBirthCount(childrenMade);
 
                 determinedCount.setFufilledCount(childrenMade);
                 desiredPopulationStatistics.returnAchievedCount(determinedCount);
@@ -68,6 +72,9 @@ public class NBirthLogic implements EventLogic {
             }
             // Partner females of age who don't have partners
         }
+
+        tBirths += bornAtTS;
+        System.out.print(bornAtTS + "\t");
 
     }
 
@@ -88,7 +95,7 @@ public class NBirthLogic implements EventLogic {
 
             if(eligible(f, config, currentDate)) {
                 f.giveChildren(1, currentDate, consideredTimePeriod, population);
-                f.getLastChild().getParentsPartnership().setFather(BirthLogic.getRandomFather(population, currentDate, consideredTimePeriod));
+                f.getLastChild().getParentsPartnership().setFather(BirthLogic.getRandomFather(population, population.getLivingPeople().resolveDateToCorrectDivisionDate(f.getBirthDate()), consideredTimePeriod));
                 needPartners.add(f);
                 childrenMade ++;
             }

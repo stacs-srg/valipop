@@ -37,8 +37,6 @@ public class Config {
     private int t0PopulationSize;
     private double setUpBR;
     private double setUpDR;
-    private CompoundTimeUnit deathTimeStep;
-    private CompoundTimeUnit birthTimeStep;
     private CompoundTimeUnit simulationTimeStep;
     private Path varBirthPaths;
     private Path varMaleDeathPaths;
@@ -124,22 +122,6 @@ public class Config {
                     break;
                 case "produce_dat_files":
                     produceDatFiles = new Boolean(split[1]);
-                    break;
-                case "death_time_step":
-                    try {
-                        deathTimeStep = new CompoundTimeUnit(split[1]);
-                    } catch (InvalidTimeUnit e) {
-                        log.fatal("death_time_step " + e.getMessage());
-                        throw e;
-                    }
-                    break;
-                case "birth_time_step":
-                    try {
-                        birthTimeStep = new CompoundTimeUnit(split[1]);
-                    } catch (InvalidTimeUnit e) {
-                        log.fatal("birth_time_step " + e.getMessage());
-                        throw e;
-                    }
                     break;
                 case "simulation_time_step":
                     try {
@@ -296,14 +278,6 @@ public class Config {
 
     public MonthDate getTE() {
         return tE;
-    }
-
-    public CompoundTimeUnit getBirthTimeStep() {
-        return birthTimeStep;
-    }
-
-    public CompoundTimeUnit getDeathTimeStep() {
-        return deathTimeStep;
     }
 
     public CompoundTimeUnit getSimulationTimeStep() {

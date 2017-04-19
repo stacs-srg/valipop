@@ -29,7 +29,7 @@ public class PeopleCollection extends PersonCollection implements IPopulation {
     private MaleCollection males;
     private FemaleCollection females;
 
-    private final Map<Integer, IPerson> peopleIndex = new HashMap<>();
+//    private final Map<Integer, IPerson> peopleIndex = new HashMap<>();
     private final Map<Integer, IPartnership> partnershipIndex = new HashMap<>();
 
     private ArrayList<IPartnership> partTemp = new ArrayList<>();
@@ -134,7 +134,7 @@ public class PeopleCollection extends PersonCollection implements IPopulation {
 
     @Override
     public void addPerson(IPerson person) {
-        peopleIndex.put(person.getId(), person);
+//        peopleIndex.put(person.getId(), person);
         if (person.getSex() == 'm') {
             males.addPerson(person);
         } else {
@@ -144,7 +144,7 @@ public class PeopleCollection extends PersonCollection implements IPopulation {
 
     @Override
     public void removePerson(IPerson person) throws PersonNotFoundException {
-        peopleIndex.remove(person.getId());
+//        peopleIndex.remove(person.getId());
         if (person.getSex() == 'm') {
             males.removePerson(person);
         } else {
@@ -173,7 +173,7 @@ public class PeopleCollection extends PersonCollection implements IPopulation {
 
     @Override
     public Iterable<IPerson> getPeople() {
-        return peopleIndex.values();
+        return getAll();
     }
 
     @Override
@@ -183,10 +183,10 @@ public class PeopleCollection extends PersonCollection implements IPopulation {
         return partTemp;
     }
 
-    @Override
-    public IPerson findPerson(int id) {
-        return peopleIndex.get(id);
-    }
+//    @Override
+//    public IPerson findPerson(int id) {
+//        return peopleIndex.get(id);
+//    }
 
     @Override
     public IPartnership findPartnership(int id) {
@@ -195,7 +195,7 @@ public class PeopleCollection extends PersonCollection implements IPopulation {
 
     @Override
     public int getNumberOfPeople() {
-        return peopleIndex.size();
+        return getAll().size();
     }
 
 

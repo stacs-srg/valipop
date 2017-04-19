@@ -50,7 +50,7 @@ public interface IPopulation extends PopulationUtils {
      * @param id the id
      * @return the corresponding person
      */
-    IPerson findPerson(int id);
+//    IPerson findPerson(int id);
 
     /**
      * Retrieves a partnership by id.

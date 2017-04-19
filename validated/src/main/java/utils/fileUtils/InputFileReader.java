@@ -117,9 +117,9 @@ public class InputFileReader {
                         try {
                             rowLabel = new IntegerRange(split[0]);
                         } catch (NumberFormatException e) {
-                            throw new InvalidInputFileException("The first column is of an incorrect form on line " + (i + 1) + "in the file: " + path.toString(), e);
+                            throw new InvalidInputFileException("The first column is of an incorrect form on line " + (i + 1) + " in the file: " + path.toString(), e);
                         } catch (InvalidRangeException e) {
-                            throw new InvalidInputFileException("The first column specifies an invalid range on line " + (i + 1) + "in the file: " + path.toString(), e);
+                            throw new InvalidInputFileException("The first column specifies an invalid range on line " + (i + 1) + " in the file: " + path.toString(), e);
                         }
 
                         Map<IntegerRange, Double> rowMap = new HashMap<IntegerRange, Double>();
@@ -205,9 +205,9 @@ public class InputFileReader {
                         try {
                             rowLabel = new IntegerRange(split[0]);
                         } catch (NumberFormatException e) {
-                            throw new InvalidInputFileException("The first column is of an incorrect form on line " + (i + 1) + "in the file: " + path.toString(), e);
+                            throw new InvalidInputFileException("The first column is of an incorrect form on line " + (i + 1) + " in the file: " + path.toString(), e);
                         } catch (InvalidRangeException e) {
-                            throw new InvalidInputFileException("The first column specifies an invalid range on line " + (i + 1) + "in the file: " + path.toString(), e);
+                            throw new InvalidInputFileException("The first column specifies an invalid range on line " + (i + 1) + " in the file: " + path.toString(), e);
                         }
 
                         Map<IntegerRange, Double> rowMap = new HashMap<IntegerRange, Double>();

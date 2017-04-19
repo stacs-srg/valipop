@@ -36,10 +36,6 @@ public class SelfCorrectingOneDimensionDataDistribution extends OneDimensionData
 
     public DeterminedCount determineCount(StatsKey key) {
 
-        if(key instanceof BirthStatsKey) {
-            System.out.print("");
-        }
-
         IntegerRange age = resolveRowValue(key.getYLabel());
 
         // target rate
@@ -90,6 +86,7 @@ public class SelfCorrectingOneDimensionDataDistribution extends OneDimensionData
             achievedRate = count / (double) key.getForNPeople();
         }
 
+        // This is age for Death (1DDD) but this is order in the case of birth (2DDD)
         IntegerRange age = resolveRowValue(key.getYLabel());
 
         // old applied rate
@@ -145,6 +142,8 @@ public class SelfCorrectingOneDimensionDataDistribution extends OneDimensionData
 
     private double calcAppliedYearRateFromSubRate(double subRate, CompoundTimeUnit timePeriod) {
         double stepsInYear = DateUtils.stepsInYear(timePeriod);
+//        return subRate * stepsInYear;
+
         double appliedYearRate = 1 - Math.pow(1 - subRate, stepsInYear);
         return appliedYearRate;
     }
@@ -152,6 +151,8 @@ public class SelfCorrectingOneDimensionDataDistribution extends OneDimensionData
     private double calcSubRateFromYearRate(double yearRate, CompoundTimeUnit timePeriod) {
 
         double stepsInYear = DateUtils.stepsInYear(timePeriod);
+//        return yearRate / stepsInYear;
+
         double subRate = 1 - Math.pow(1 - yearRate, 1 / stepsInYear);
 
         return subRate;

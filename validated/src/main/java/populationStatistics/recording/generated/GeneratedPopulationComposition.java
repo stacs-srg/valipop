@@ -426,7 +426,7 @@ public class GeneratedPopulationComposition implements PopulationComposition {
             System.out.println();
         }
 
-        Map<IntegerRange, Double> counts = new HashMap<IntegerRange, Double>();
+        Map<IntegerRange, Double> counts = new HashMap<>();
 
         OneDimensionDataDistribution countsTable = new OneDimensionDataDistribution(startYear.getYearDate(), "", "", counts);
 

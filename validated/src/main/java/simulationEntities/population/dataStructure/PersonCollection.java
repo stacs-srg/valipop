@@ -104,7 +104,7 @@ public abstract class PersonCollection implements DateBounds {
     @SuppressWarnings("Duplicates")
     public Collection<IPerson> removeNPersons(int numberToRemove, AdvancableDate firstDate, CompoundTimeUnit timePeriod, boolean bestAttempt) throws InsufficientNumberOfPeopleException {
 
-        int divisionsInPeriod = DateUtils.calcSubTimeUnitsInTimeUnit(timePeriod, divisionSize);
+        int divisionsInPeriod = DateUtils.calcSubTimeUnitsInTimeUnit(divisionSize, timePeriod);
 
         if(divisionsInPeriod <= 0) {
             throw new MisalignedTimeDivisionError();
@@ -237,6 +237,35 @@ public abstract class PersonCollection implements DateBounds {
     }
 
     public abstract TreeSet<AdvancableDate> getDivisionDates();
+
+    public TreeSet<AdvancableDate> getDivisionDates(CompoundTimeUnit forTimeStep) {
+        int jump = DateUtils.calcSubTimeUnitsInTimeUnit(getDivisionSize(), forTimeStep);
+
+        if(jump == -1) {
+            throw new MisalignedTimeDivisionError();
+        }
+
+        if(jump == 1) {
+            return getDivisionDates();
+        }
+
+        int count = jump;
+
+        TreeSet<AdvancableDate> allDivs = getDivisionDates();
+        TreeSet<AdvancableDate> selectedDivs = new TreeSet<>();
+
+        for(AdvancableDate div : allDivs) {
+
+            if(count == jump) {
+                selectedDivs.add(div);
+                count = 0;
+            }
+
+            count++;
+        }
+
+        return selectedDivs;
+    }
 
     public boolean checkDateAlignmentToDivisions(AdvancableDate date) {
          return DateUtils.matchesInterval(date, divisionSize, startDate);
