@@ -1,35 +1,21 @@
 package populationStatistics.dataDistributionTables.determinedCounts;
 
 import populationStatistics.dataDistributionTables.statsKeys.StatsKey;
+import utils.specialTypes.integerRange.IntegerRange;
+
+import java.util.Map;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class DeterminedCount {
+public interface DeterminedCount<T> {
 
-    private StatsKey key;
-    int determinedCount;
+    StatsKey getKey();
 
-    int fufilledCount;
+    T getDeterminedCount();
 
-    public DeterminedCount(StatsKey key, int determinedCount) {
-        this.key = key;
-        this.determinedCount = determinedCount;
-    }
+    void setFufilledCount(T fufilledCount);
 
-    public int getDeterminedCount() {
-        return determinedCount;
-    }
+    T getFufilledCount();
 
-    public StatsKey getKey() {
-        return key;
-    }
-
-    public int getFufilledCount() {
-        return fufilledCount;
-    }
-
-    public void setFufilledCount(int fufilledCount) {
-        this.fufilledCount = fufilledCount;
-    }
 }

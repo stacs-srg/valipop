@@ -9,7 +9,10 @@ import dateModel.timeSteps.CompoundTimeUnit;
 import events.EventLogic;
 import events.init.InitLogic;
 import populationStatistics.dataDistributionTables.determinedCounts.DeterminedCount;
+import populationStatistics.dataDistributionTables.determinedCounts.MultipleDeterminedCount;
+import populationStatistics.dataDistributionTables.determinedCounts.SingleDeterminedCount;
 import populationStatistics.dataDistributionTables.statsKeys.BirthStatsKey;
+import populationStatistics.dataDistributionTables.statsKeys.MultipleBirthStatsKey;
 import populationStatistics.recording.PopulationStatistics;
 import simulationEntities.person.IPerson;
 import simulationEntities.population.dataStructure.FemaleCollection;
@@ -52,7 +55,7 @@ public class NBirthLogic implements EventLogic {
                 int number = people.size();
 
                 BirthStatsKey key = new BirthStatsKey(age, order, number, consideredTimePeriod, currentDate);
-                DeterminedCount determinedCount = desiredPopulationStatistics.getDeterminedCount(key);
+                SingleDeterminedCount determinedCount = desiredPopulationStatistics.getDeterminedCount(key);
 
                 int numberOfChildren = determinedCount.getDeterminedCount();
 
@@ -78,12 +81,21 @@ public class NBirthLogic implements EventLogic {
 
     }
 
-    private MotherSet selectMothers(Config config, Collection<IPerson> females, int numberOfChildren,
+    private MotherSet selectMothers(Config config, ArrayList<IPerson> females, int numberOfChildren,
                                     PopulationStatistics desiredPopulationStatistics, AdvancableDate currentDate,
                                     CompoundTimeUnit consideredTimePeriod, Population population) throws InsufficientNumberOfPeopleException {
 
         Collection<IPerson> needPartners = new ArrayList<>();
         Collection<IPerson> havePartners = new ArrayList<>();
+
+        if(females.size() == 0) {
+            return new MotherSet(havePartners, needPartners);
+        }
+
+        int ageOfMothers = females.get(0).ageOnDate(currentDate);
+
+        MultipleDeterminedCount requiredBirths = calcNumberOfPreganciesOfMultipleBirth(ageOfMothers, numberOfChildren,
+                desiredPopulationStatistics, currentDate, consideredTimePeriod);
 
         int childrenMade = 0;
 
@@ -102,6 +114,16 @@ public class NBirthLogic implements EventLogic {
         }
 
         return new MotherSet(havePartners, needPartners);
+
+    }
+
+    private MultipleDeterminedCount calcNumberOfPreganciesOfMultipleBirth(int ageOfMothers, int numberOfChildren, PopulationStatistics desiredPopulationStatistics, AdvancableDate currentDate,
+                                                                          CompoundTimeUnit consideredTimePeriod) {
+
+        MultipleBirthStatsKey key = new MultipleBirthStatsKey(ageOfMothers, numberOfChildren, consideredTimePeriod, currentDate);
+
+        desiredPopulationStatistics.getDeterminedCount(key);
+
 
     }
 

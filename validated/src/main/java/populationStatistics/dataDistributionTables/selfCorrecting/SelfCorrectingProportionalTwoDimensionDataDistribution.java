@@ -5,6 +5,8 @@ import dateModel.timeSteps.CompoundTimeUnit;
 import populationStatistics.dataDistributionTables.DataDistribution;
 import populationStatistics.dataDistributionTables.OneDimensionDataDistribution;
 import dateModel.dateImplementations.YearDate;
+import populationStatistics.dataDistributionTables.determinedCounts.DeterminedCount;
+import populationStatistics.dataDistributionTables.determinedCounts.MultipleDeterminedCount;
 import populationStatistics.dataDistributionTables.statsKeys.StatsKey;
 import utils.specialTypes.integerRange.IntegerRange;
 import utils.specialTypes.integerRange.InvalidRangeException;
@@ -34,6 +36,12 @@ public class SelfCorrectingProportionalTwoDimensionDataDistribution implements D
         this.sourcePopulation = sourcePopulation;
         this.data = tableData;
     }
+
+    public DeterminedCount determineCount(StatsKey key) {
+
+        return new MultipleDeterminedCount(key, null);
+    }
+
 
 //    @Override
 //    public double getCorrectingRate(StatsKey data, CompoundTimeUnit consideredTimePeriod) {

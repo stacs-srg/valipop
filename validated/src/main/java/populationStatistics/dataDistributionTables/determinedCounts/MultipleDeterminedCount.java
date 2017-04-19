@@ -10,14 +10,14 @@ import java.util.Map;
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class DeterminedCounts {
+public class MultipleDeterminedCount implements DeterminedCount<Map<IntegerRange, Integer>> {
 
     private StatsKey key;
     Map<IntegerRange, Integer> determinedCount;
 
     Map<IntegerRange, Integer> fufilledCount;
 
-    public DeterminedCounts(StatsKey key, Map<IntegerRange, Integer> determinedCount) {
+    public MultipleDeterminedCount(StatsKey key, Map<IntegerRange, Integer> determinedCount) {
         this.key = key;
         this.determinedCount = determinedCount;
     }

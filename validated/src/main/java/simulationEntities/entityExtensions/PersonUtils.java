@@ -52,4 +52,6 @@ public interface PersonUtils {
     boolean toSeparate();
 
     void willSeparate(boolean b);
+
+    int ageOnDate(Date date);
 }
