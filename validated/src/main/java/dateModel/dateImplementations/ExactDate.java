@@ -127,6 +127,11 @@ public final class ExactDate implements Date {
     }
 
     @Override
+    public MonthDate getMonthDate() {
+        return new MonthDate(month, year);
+    }
+
+    @Override
     public int compareTo(Date o) {
         if (DateUtils.dateBeforeOrEqual(this, o)) {
             return -1;

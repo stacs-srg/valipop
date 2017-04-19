@@ -61,7 +61,7 @@ public class FemaleCollection extends PersonCollection {
      */
     public int getHighestBirthOrder(AdvancableDate dateOfBirth, CompoundTimeUnit period) {
 
-        int divisionsInPeriod = DateUtils.calcSubTimeUnitsInTimeUnit(period, getDivisionSize());
+        int divisionsInPeriod = DateUtils.calcSubTimeUnitsInTimeUnit(getDivisionSize(), period);
 
         if(divisionsInPeriod == -1) {
             throw new MisalignedTimeDivisionError();
@@ -88,7 +88,7 @@ public class FemaleCollection extends PersonCollection {
     }
 
     public Set<Integer> getBirthOrdersInDivision(AdvancableDate dateOfBirth, CompoundTimeUnit period) {
-        int divisionsInPeriod = DateUtils.calcSubTimeUnitsInTimeUnit(period, getDivisionSize());
+        int divisionsInPeriod = DateUtils.calcSubTimeUnitsInTimeUnit(getDivisionSize(), period);
 
         if(divisionsInPeriod == -1) {
             throw new MisalignedTimeDivisionError();
@@ -122,7 +122,7 @@ public class FemaleCollection extends PersonCollection {
      */
     public Collection<IPerson> getByDatePeriodAndBirthOrder(AdvancableDate date, CompoundTimeUnit period, Integer birthOrder) {
 
-        int divisionsInPeriod = DateUtils.calcSubTimeUnitsInTimeUnit(period, getDivisionSize());
+        int divisionsInPeriod = DateUtils.calcSubTimeUnitsInTimeUnit(getDivisionSize(), period);
 
         if(divisionsInPeriod == -1) {
             throw new MisalignedTimeDivisionError();

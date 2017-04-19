@@ -89,8 +89,8 @@ public class BirthLogic {
 //                    // DATA 1 - get rate of births by mothers age and birth order
 //                    StatsKey key = new StatsKey(age, order, maxBirthOrderInCohort, women.size());
 //
-//                    double birthRate = desiredPopulationStatistics.getOrderedBirthRates(currentTime).determineCount(key, config.getBirthTimeStep());
-//                    //taperedOrderedBirthRatesForMothersOfThisAge.getRate(order) * config.getBirthTimeStep().toDecimalRepresentation();
+//                    double birthRate = desiredPopulationStatistics.getOrderedBirthRates(currentTime).determineCount(key, config.getSimulationTimeStep());
+//                    //taperedOrderedBirthRatesForMothersOfThisAge.getRate(order) * config.getSimulationTimeStep().toDecimalRepresentation();
 //
 //                    int numberOfChildrenToBirth;
 //                    int totalNumberOfMothers;
@@ -134,7 +134,7 @@ public class BirthLogic {
 //                    birthCount += numberOfChildrenToBirth;
 //
 //                    // Taking this out gives better results - underlying error?
-////                    desiredPopulationStatistics.getOrderedBirthRates(currentTime).returnAchievedCount(key, birthRate, config.getBirthTimeStep());
+////                    desiredPopulationStatistics.getOrderedBirthRates(currentTime).returnAchievedCount(key, birthRate, config.getSimulationTimeStep());
 //
 //                    // select the mothers
 //                    for (Integer childrenInMaternity : motherCountsByMaternitySize.keySet()) {
@@ -153,7 +153,7 @@ public class BirthLogic {
 //                            IPerson mother = mothersToBe.get(n);
 //
 //                            // make and assign the specified number of children - assign to correct place in population
-//                            mother.recordPartnership(EntityFactory.formNewChildrenInPartnership(childrenInMaternity, mother, currentTime, config.getBirthTimeStep(), population));
+//                            mother.recordPartnership(EntityFactory.formNewChildrenInPartnership(childrenInMaternity, mother, currentTime, config.getSimulationTimeStep(), population));
 //
 //                            // Re inserting mother to population datastructure so as she resides in the correct place
 //                            population.getLivingPeople().addPerson(mother);

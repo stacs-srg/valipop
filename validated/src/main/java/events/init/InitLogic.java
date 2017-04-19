@@ -13,6 +13,7 @@ import org.apache.logging.log4j.Logger;
 import populationStatistics.recording.PopulationStatistics;
 import simulationEntities.EntityFactory;
 import simulationEntities.population.dataStructure.Population;
+import simulationEntities.population.dataStructure.exceptions.InsufficientNumberOfPeopleException;
 
 
 /**
@@ -24,8 +25,7 @@ public class InitLogic {
 
     private static int currentHypotheticalPopulationSize;
 
-    private static CompoundTimeUnit initTimeStep = new CompoundTimeUnit(1, TimeUnit.YEAR);
-//    private static CompoundTimeUnit initTimeStep = new CompoundTimeUnit(6, TimeUnit.MONTH);
+    private static CompoundTimeUnit initTimeStep;
     private static Date endOfInitPeriod;
 
     private static int numberOfBirthsInThisTimestep = 0;
@@ -38,28 +38,61 @@ public class InitLogic {
         endOfInitPeriod = config.getTS().advanceTime(new CompoundTimeUnit(desiredPopulationStatistics.getOrderedBirthRates(config.getTS().getYearDate()).getLargestLabel().getValue(), TimeUnit.YEAR));
         log.info("End of Initialisation Period set: " + endOfInitPeriod.toString());
 
+        initTimeStep = config.getSimulationTimeStep();
+
     }
 
     public static void handleInitPeople(Config config, MonthDate currentTime, Population population) {
 
         // calculate hypothetical number of expected births
-        int hypotheticalBirths = BirthLogic.calculateChildrenToBeBorn(currentHypotheticalPopulationSize, config.getSetUpBR());
+        int hypotheticalBirths = BirthLogic.calculateChildrenToBeBorn(currentHypotheticalPopulationSize, config.getSetUpBR() * initTimeStep.toDecimalRepresentation());
 
         int shortFallInBirths = hypotheticalBirths - numberOfBirthsInThisTimestep;
         numberOfBirthsInThisTimestep = 0;
 
         // calculate hypothetical number of expected deaths
-        int hypotheticalDeaths = DeathLogic.calculateNumberToDie(currentHypotheticalPopulationSize, config.getSetUpDR());
+        int hypotheticalDeaths = DeathLogic.calculateNumberToDie(currentHypotheticalPopulationSize, config.getSetUpDR() * initTimeStep.toDecimalRepresentation());
 
         // update hypothetical population
         currentHypotheticalPopulationSize = currentHypotheticalPopulationSize + hypotheticalBirths - hypotheticalDeaths;
 
-        // add Orphan Children to the population
-        for (int i = 0; i < shortFallInBirths; i++) {
-            // TODO need to vary birth date in time period (i.e. the previous year)
-            EntityFactory.formOrphanChild(currentTime, InitLogic.getTimeStep(), population);
+        if(shortFallInBirths >= 0) {
+            // add Orphan Children to the population
+            for (int i = 0; i < shortFallInBirths; i++) {
+                // TODO need to vary birth date in time period (i.e. the previous year)
+                EntityFactory.formOrphanChild(currentTime, InitLogic.getTimeStep(), population);
+            }
+        } else {
+            double removeN = Math.abs(shortFallInBirths) / 2.0;
+            int removeMales;
+            int removeFemales;
+
+            if(removeN % 1 != 0) {
+                removeMales = (int) Math.ceil(removeN);
+                removeFemales = (int) Math.floor(removeN);
+            } else {
+                removeMales = (int) removeN;
+                removeFemales = (int) removeN;
+            }
+
+            try {
+                for (int i = 0; i < removeMales; i++) {
+                    population.getLivingPeople().getMales().removeNPersons(removeMales, currentTime, initTimeStep, true);
+                }
+
+                for (int i = 0; i < removeFemales; i++) {
+                    population.getLivingPeople().getFemales().removeNPersons(removeFemales, currentTime, initTimeStep, true);
+                }
+
+            } catch (InsufficientNumberOfPeopleException e) {
+                // Never should happen
+                throw new Error();
+            }
+
+//            shortFallInBirths = shortFallInBirths + removeFemales + removeMales;
         }
 
+        System.out.print(shortFallInBirths  + "\t");
         log.info("Current Date: " + currentTime.toString() + "   Init Period | Met short fall in births with orphan children: " + shortFallInBirths);
 //        System.out.println("Current Date: " + currentTime.toString() + "   Init Period | Met short fall in births with orphan children: " + shortFallInBirths);
 

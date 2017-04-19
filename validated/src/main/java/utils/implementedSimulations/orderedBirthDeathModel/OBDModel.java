@@ -5,7 +5,6 @@ import dateModel.DateUtils;
 import dateModel.dateImplementations.MonthDate;
 import events.EventLogic;
 import events.UnsupportedEventType;
-import events.birth.BirthLogic;
 import events.birth.NBirthLogic;
 import events.death.NDeathLogic;
 import events.init.InitLogic;
@@ -83,6 +82,7 @@ public class OBDModel {
             System.err.println("Simulation run incomplete due to insufficient number of people in population to " +
                     "perform requested events");
             System.err.println(e.getMessage());
+            System.exit(1);
         }
 
         PrintStream resultsOutput;
@@ -138,7 +138,7 @@ public class OBDModel {
         InitLogic.setUpInitParameters(config, desired);
 
         summary = new SummaryRow(Paths.get(config.getResultsSavePath().toString(), runPurpose, startTime),
-                startTime, runPurpose, config.getBirthTimeStep(), config.getDeathTimeStep(), config.getInputWidth(),
+                startTime, runPurpose, config.getSimulationTimeStep(), config.getSimulationTimeStep(), config.getInputWidth(),
                 config.getT0(), config.getTE(), DateUtils.differenceInDays(config.getT0(), config.getTE()));
 
     }
@@ -146,26 +146,27 @@ public class OBDModel {
     public PeopleCollection runSimulation() throws InsufficientNumberOfPeopleException {
 
 
+        boolean first = true;
         while(DateUtils.dateBeforeOrEqual(currentTime, config.getTE())) {
 
-            if (DateUtils.matchesInterval(currentTime, config.getBirthTimeStep(), config.getTS())) {
-                birthLogic.handleEvent(config, currentTime, config.getBirthTimeStep(), population, desired);
+            System.out.print(currentTime.toString() + "\t");
+
+            if (DateUtils.matchesInterval(currentTime, config.getSimulationTimeStep(), config.getTS())) {
+                birthLogic.handleEvent(config, currentTime, config.getSimulationTimeStep(), population, desired);
             }
 
             if (InitLogic.inInitPeriod(currentTime) &&
                     DateUtils.matchesInterval(currentTime, InitLogic.getTimeStep(), config.getTS())) {
                 InitLogic.handleInitPeople(config, currentTime, population);
+            } else if(!InitLogic.inInitPeriod(currentTime)) {
+//                System.out.println("Init over");
+//                first = false;
+                System.out.print(0 + "\t");
             }
 
-            if (DateUtils.matchesInterval(currentTime, config.getDeathTimeStep(), config.getTS())) {
-                deathLogic.handleEvent(config, currentTime, config.getDeathTimeStep(), population, desired);
+            if (DateUtils.matchesInterval(currentTime, config.getSimulationTimeStep(), config.getTS())) {
+                deathLogic.handleEvent(config, currentTime, config.getSimulationTimeStep(), population, desired);
             }
-
-
-
-
-
-
 
             if(inSimDates()) {
                 population.getPopulationCounts().updateMaxPopulation(population.getLivingPeople().getNumberOfPeople());
@@ -174,11 +175,15 @@ public class OBDModel {
             currentTime = currentTime.advanceTime(config.getSimulationTimeStep());
 
             log.info("Time step completed " + currentTime.toString() + "    Population " + population.getLivingPeople().getNumberOfPersons());
-            System.out.println("Time step completed " + currentTime.toString() + "    Population " + population.getLivingPeople().getNumberOfPersons());
+//            System.out.println("Time step completed " + currentTime.toString() + "    Population " + population.getLivingPeople().getNumberOfPersons());
+            System.out.println(population.getLivingPeople().getNumberOfPeople() + "\t" + population.getDeadPeople().getNumberOfPeople());
 
         }
 
 
+        System.out.println("TKilled\t" + NDeathLogic.tKilled);
+        System.out.println("TBorn\t" + NBirthLogic.tBirths);
+        System.out.println("Ratio\t" + NDeathLogic.tKilled / (double) NBirthLogic.tBirths);
 
         return population.getAllPeople();
     }

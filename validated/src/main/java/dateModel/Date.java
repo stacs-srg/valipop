@@ -47,5 +47,7 @@ public interface Date extends Comparable<Date> {
 
     String toOrderableString();
 
+    MonthDate getMonthDate();
+
 
 }

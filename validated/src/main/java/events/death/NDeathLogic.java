@@ -37,12 +37,16 @@ public class NDeathLogic implements EventLogic {
 
     }
 
+    public static int tKilled = 0;
+
     private void handleDeathsForSex(char sex, Config config,
                                     AdvancableDate currentDate, CompoundTimeUnit consideredTimePeriod,
                                     Population population, PopulationStatistics desiredPopulationStatistics) {
 
+        int killedAtTS = 0;
+
         PersonCollection ofSexLiving = getLivingPeopleOfSex(sex, population);
-        Iterator<AdvancableDate> divDates = ofSexLiving.getDivisionDates().iterator();
+        Iterator<AdvancableDate> divDates = ofSexLiving.getDivisionDates(consideredTimePeriod).iterator();
 
         AdvancableDate divDate;
         // For each division in the population data store upto the current date
@@ -68,11 +72,15 @@ public class NDeathLogic implements EventLogic {
             }
 
             int killed = killPeople(peopleToKill, config, currentDate, consideredTimePeriod, population);
+            killedAtTS += killed;
 
             // Returns the number killed to the distribution manager
             determinedCount.setFufilledCount(killed);
             desiredPopulationStatistics.returnAchievedCount(determinedCount);
         }
+
+        tKilled += killedAtTS;
+        System.out.print(killedAtTS + "\t");
     }
 
 

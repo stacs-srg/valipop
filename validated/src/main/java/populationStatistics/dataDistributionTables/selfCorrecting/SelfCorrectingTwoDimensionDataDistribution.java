@@ -47,7 +47,7 @@ public class SelfCorrectingTwoDimensionDataDistribution implements DataDistribut
 
     public void returnAchievedCount(DeterminedCount achievedCount) {
         try {
-            getData(achievedCount.getKey().getYLabel()).returnAchievedCount(achievedCount);
+            getData(achievedCount.getKey().getXLabel()).returnAchievedCount(achievedCount);
         } catch (InvalidRangeException e) {
             if(achievedCount.getDeterminedCount() == 0) {
                 // all okay, a blank DeterminedCount had been issued due as no recorded data on the request

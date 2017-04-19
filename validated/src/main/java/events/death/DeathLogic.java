@@ -48,13 +48,13 @@ public class DeathLogic implements EventLogic {
 //            StatsKey femaleKey = new StatsKey(age, numberOfFemales);
 //
 //            // DATA - get rate of death by age and gender
-//            Double maleDeathRate = desiredPopulationStatistics.getDeathRates(trueCurrentDate, 'm').getCorrectingRate(maleKey, config.getDeathTimeStep()) * yearForwardWeighting;
+//            Double maleDeathRate = desiredPopulationStatistics.getDeathRates(trueCurrentDate, 'm').getCorrectingRate(maleKey, config.getSimulationTimeStep()) * yearForwardWeighting;
 //
 //            // EDIT put nQx s back in here
 //
 ////            maleDeathRate = (1 * maleDeathRate) / (1 + (1 * 0.5 * maleDeathRate));
 //
-//            Double femaleDeathRate = desiredPopulationStatistics.getDeathRates(trueCurrentDate, 'f').getCorrectingRate(femaleKey, config.getDeathTimeStep()) * yearForwardWeighting;
+//            Double femaleDeathRate = desiredPopulationStatistics.getDeathRates(trueCurrentDate, 'f').getCorrectingRate(femaleKey, config.getSimulationTimeStep()) * yearForwardWeighting;
 //
 ////            femaleDeathRate = (1 * femaleDeathRate) / (1 + (1 * 0.5 * femaleDeathRate));
 //
@@ -129,11 +129,11 @@ public class DeathLogic implements EventLogic {
 ////            }
 //
 //            if(numberOfMales > 0) {
-//                desiredPopulationStatistics.getDeathRates(trueCurrentDate, 'm').returnAchievedCount(maleKey, appliedMaleRate, config.getDeathTimeStep());
+//                desiredPopulationStatistics.getDeathRates(trueCurrentDate, 'm').returnAchievedCount(maleKey, appliedMaleRate, config.getSimulationTimeStep());
 //            }
 //
 //            if(numberOfFemales > 0) {
-//                desiredPopulationStatistics.getDeathRates(trueCurrentDate, 'f').returnAchievedCount(femaleKey, appliedFemaleRate, config.getDeathTimeStep());
+//                desiredPopulationStatistics.getDeathRates(trueCurrentDate, 'f').returnAchievedCount(femaleKey, appliedFemaleRate, config.getSimulationTimeStep());
 //            }
 //
 //        }
