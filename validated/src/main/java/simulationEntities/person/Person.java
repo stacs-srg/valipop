@@ -478,4 +478,9 @@ public class Person implements IPerson {
         toSeparate = b;
     }
 
+    @Override
+    public int ageOnDate(Date currentDate) {
+        return DateUtils.differenceInYears(birthDate, currentDate).getCount();
+    }
+
 }

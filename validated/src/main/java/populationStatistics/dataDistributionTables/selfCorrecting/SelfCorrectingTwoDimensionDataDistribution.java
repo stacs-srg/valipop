@@ -6,6 +6,7 @@ import populationStatistics.dataDistributionTables.DataDistribution;
 import populationStatistics.dataDistributionTables.OneDimensionDataDistribution;
 import dateModel.dateImplementations.YearDate;
 import populationStatistics.dataDistributionTables.determinedCounts.DeterminedCount;
+import populationStatistics.dataDistributionTables.determinedCounts.SingleDeterminedCount;
 import populationStatistics.dataDistributionTables.statsKeys.StatsKey;
 import utils.specialTypes.integerRange.IntegerRange;
 import utils.specialTypes.integerRange.InvalidRangeException;
@@ -36,16 +37,16 @@ public class SelfCorrectingTwoDimensionDataDistribution implements DataDistribut
         this.data = tableData;
     }
 
-    public DeterminedCount determineCount(StatsKey key) {
+    public SingleDeterminedCount determineCount(StatsKey key) {
         try {
             return getData(key.getXLabel()).determineCount(key);
         } catch (InvalidRangeException e) {
-            return new DeterminedCount(key, 0);
+            return new SingleDeterminedCount(key, 0);
         }
 
     }
 
-    public void returnAchievedCount(DeterminedCount achievedCount) {
+    public void returnAchievedCount(DeterminedCount<Integer> achievedCount) {
         try {
             getData(achievedCount.getKey().getXLabel()).returnAchievedCount(achievedCount);
         } catch (InvalidRangeException e) {

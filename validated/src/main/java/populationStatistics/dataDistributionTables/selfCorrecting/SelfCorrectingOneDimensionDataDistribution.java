@@ -5,6 +5,7 @@ import dateModel.timeSteps.CompoundTimeUnit;
 import populationStatistics.dataDistributionTables.OneDimensionDataDistribution;
 import dateModel.dateImplementations.YearDate;
 import populationStatistics.dataDistributionTables.determinedCounts.DeterminedCount;
+import populationStatistics.dataDistributionTables.determinedCounts.SingleDeterminedCount;
 import populationStatistics.dataDistributionTables.statsKeys.BirthStatsKey;
 import utils.MapUtils;
 import populationStatistics.dataDistributionTables.statsKeys.StatsKey;
@@ -34,7 +35,7 @@ public class SelfCorrectingOneDimensionDataDistribution extends OneDimensionData
 
     }
 
-    public DeterminedCount determineCount(StatsKey key) {
+    public SingleDeterminedCount determineCount(StatsKey key) {
 
         IntegerRange age = resolveRowValue(key.getYLabel());
 
@@ -76,7 +77,7 @@ public class SelfCorrectingOneDimensionDataDistribution extends OneDimensionData
         return resolveRateToCount(key, rateToApply);
     }
 
-    public void returnAchievedCount(DeterminedCount achievedCount) {
+    public void returnAchievedCount(DeterminedCount<Integer> achievedCount) {
 
         StatsKey key = achievedCount.getKey();
 
@@ -135,9 +136,9 @@ public class SelfCorrectingOneDimensionDataDistribution extends OneDimensionData
     }
 
 
-    private DeterminedCount resolveRateToCount(StatsKey key, double rate) {
+    private SingleDeterminedCount resolveRateToCount(StatsKey key, double rate) {
         int determinedCount = (int) Math.round(rate * key.getForNPeople());
-        return new DeterminedCount(key, determinedCount);
+        return new SingleDeterminedCount(key, determinedCount);
     }
 
     private double calcAppliedYearRateFromSubRate(double subRate, CompoundTimeUnit timePeriod) {
