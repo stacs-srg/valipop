@@ -2,6 +2,8 @@ package populationStatistics.dataDistributionTables.determinedCounts;
 
 import populationStatistics.dataDistributionTables.statsKeys.StatsKey;
 import utils.MapUtils;
+import utils.specialTypes.IntegerRangeToIntegerSet;
+import utils.specialTypes.LabeledValueSet;
 import utils.specialTypes.integerRange.IntegerRange;
 
 import java.util.HashMap;
@@ -10,19 +12,19 @@ import java.util.Map;
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class MultipleDeterminedCount implements DeterminedCount<Map<IntegerRange, Integer>> {
+public class MultipleDeterminedCount implements DeterminedCount<LabeledValueSet<IntegerRange, Integer>> {
 
     private StatsKey key;
-    Map<IntegerRange, Integer> determinedCount;
+    LabeledValueSet<IntegerRange, Integer> determinedCount;
 
-    Map<IntegerRange, Integer> fufilledCount;
+    LabeledValueSet<IntegerRange, Integer> fufilledCount;
 
-    public MultipleDeterminedCount(StatsKey key, Map<IntegerRange, Integer> determinedCount) {
+    public MultipleDeterminedCount(StatsKey key, LabeledValueSet<IntegerRange, Integer> determinedCount) {
         this.key = key;
         this.determinedCount = determinedCount;
     }
 
-    public Map<IntegerRange, Integer> getDeterminedCount() {
+    public LabeledValueSet<IntegerRange, Integer> getDeterminedCount() {
         return determinedCount;
     }
 
@@ -30,24 +32,16 @@ public class MultipleDeterminedCount implements DeterminedCount<Map<IntegerRange
         return key;
     }
 
-    public Map<IntegerRange, Integer> getFufilledCount() {
+    public LabeledValueSet<IntegerRange, Integer> getFufilledCount() {
         return fufilledCount;
     }
 
-    public void setFufilledCount(Map<IntegerRange, Integer> fufilledCount) {
+    public void setFufilledCount(LabeledValueSet<IntegerRange, Integer> fufilledCount) {
         this.fufilledCount = fufilledCount;
     }
 
-    public Map<IntegerRange, Integer> getZeroedCountsTemplate() {
-
-        Map<IntegerRange, Integer> template = new HashMap<>();
-
-        for(IntegerRange iR : determinedCount.keySet()) {
-            template.put(iR, 0);
-        }
-
-        return template;
-
+    public LabeledValueSet<IntegerRange, Integer> getZeroedCountsTemplate() {
+        return new IntegerRangeToIntegerSet(determinedCount.getLabels(), 0);
     }
 
 }
