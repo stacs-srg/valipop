@@ -55,9 +55,9 @@ public class NBirthLogic implements EventLogic {
                 int number = people.size();
 
                 BirthStatsKey key = new BirthStatsKey(age, order, number, consideredTimePeriod, currentDate);
-                SingleDeterminedCount determinedCount = desiredPopulationStatistics.getDeterminedCount(key);
+                DeterminedCount determinedCount = desiredPopulationStatistics.getDeterminedCount(key);
 
-                int numberOfChildren = determinedCount.getDeterminedCount();
+                int numberOfChildren = ((SingleDeterminedCount) determinedCount).getDeterminedCount();
 
                 // Make women into mothers
 
@@ -81,7 +81,7 @@ public class NBirthLogic implements EventLogic {
 
     }
 
-    private MotherSet selectMothers(Config config, ArrayList<IPerson> females, int numberOfChildren,
+    private MotherSet selectMothers(Config config, Collection<IPerson> females, int numberOfChildren,
                                     PopulationStatistics desiredPopulationStatistics, AdvancableDate currentDate,
                                     CompoundTimeUnit consideredTimePeriod, Population population) throws InsufficientNumberOfPeopleException {
 
@@ -92,14 +92,16 @@ public class NBirthLogic implements EventLogic {
             return new MotherSet(havePartners, needPartners);
         }
 
-        int ageOfMothers = females.get(0).ageOnDate(currentDate);
+        ArrayList<IPerson> femalesAL = new ArrayList<>(females);
+
+        int ageOfMothers = femalesAL.get(0).ageOnDate(currentDate);
 
         MultipleDeterminedCount requiredBirths = calcNumberOfPreganciesOfMultipleBirth(ageOfMothers, numberOfChildren,
                 desiredPopulationStatistics, currentDate, consideredTimePeriod);
 
         int childrenMade = 0;
 
-        for(IPerson f : females) {
+        for(IPerson f : femalesAL) {
 
             if(childrenMade >= numberOfChildren) {
                 break;
@@ -125,6 +127,7 @@ public class NBirthLogic implements EventLogic {
         desiredPopulationStatistics.getDeterminedCount(key);
 
 
+        return null;
     }
 
     private boolean eligible(IPerson potentialMother, Config config, Date currentDate) {

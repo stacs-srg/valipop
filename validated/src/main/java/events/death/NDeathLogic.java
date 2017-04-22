@@ -9,6 +9,7 @@ import dateModel.dateSelection.DeathDateSelector;
 import dateModel.timeSteps.CompoundTimeUnit;
 import events.EventLogic;
 import populationStatistics.dataDistributionTables.determinedCounts.DeterminedCount;
+import populationStatistics.dataDistributionTables.determinedCounts.SingleDeterminedCount;
 import populationStatistics.dataDistributionTables.statsKeys.StatsKey;
 import populationStatistics.recording.PopulationStatistics;
 import simulationEntities.person.IPerson;
@@ -60,7 +61,7 @@ public class NDeathLogic implements EventLogic {
             DeterminedCount determinedCount = desiredPopulationStatistics.getDeterminedCount(key);
 
             // Calculate the appropriate number to kill and then kill
-            Integer numberToKill = determinedCount.getDeterminedCount();
+            Integer numberToKill = ((SingleDeterminedCount) determinedCount).getDeterminedCount();
 
             Collection<IPerson> peopleToKill;
             try {

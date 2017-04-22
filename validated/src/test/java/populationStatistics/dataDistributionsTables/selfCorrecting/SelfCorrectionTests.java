@@ -54,30 +54,30 @@ public class SelfCorrectionTests {
             // Basic first retrieval tests
             StatsKey k1 = new DeathStatsKey(iR.getValue(), 100, y, null, 'm');
             DeterminedCount r1 = sc1DDD.determineCount(k1);
-            Assert.assertEquals((int)Math.round(check * 100), r1.getDeterminedCount(), DELTA);
+            Assert.assertEquals((int)Math.round(check * 100), (int) r1.getDeterminedCount(), DELTA);
 
             StatsKey k2 = new DeathStatsKey(iR.getValue(), 1000, y, null, 'm');
             DeterminedCount r2 = sc1DDD.determineCount(k2);
-            Assert.assertEquals((int)Math.round(check * 1000), r2.getDeterminedCount(), DELTA);
+            Assert.assertEquals((int)Math.round(check * 1000), (int) r2.getDeterminedCount(), DELTA);
 
             // Secondary retrieval having met first request
             r1.setFufilledCount(r1.getDeterminedCount());
             sc1DDD.returnAchievedCount(r1);
             r1 = sc1DDD.determineCount(k1);
-            Assert.assertEquals((int)Math.round(check * 100), r1.getDeterminedCount(), DELTA);
+            Assert.assertEquals((int)Math.round(check * 100), (int) r1.getDeterminedCount(), DELTA);
 
             r2.setFufilledCount(r2.getDeterminedCount());
             sc1DDD.returnAchievedCount(r2);
             r2 = sc1DDD.determineCount(k2);
-            Assert.assertEquals((int)Math.round(check * 1000), r2.getDeterminedCount(), DELTA);
+            Assert.assertEquals((int)Math.round(check * 1000), (int) r2.getDeterminedCount(), DELTA);
 
             r1 = sc1DDD.determineCount(k1);
-            Assert.assertEquals((int)Math.round(check * 100), r1.getDeterminedCount(), DELTA);
+            Assert.assertEquals((int)Math.round(check * 100), (int) r1.getDeterminedCount(), DELTA);
 
             StatsKey k4 = new DeathStatsKey(iR.getValue(), 10, y, null, 'm');
             DeterminedCount r4 = sc1DDD.determineCount(k4);
 
-            Assert.assertEquals((int)Math.round(check * 10), r4.getDeterminedCount(), DELTA);
+            Assert.assertEquals((int)Math.round(check * 10), (int) r4.getDeterminedCount(), DELTA);
 
         }
 
@@ -108,7 +108,7 @@ public class SelfCorrectionTests {
                 DeterminedCount r1 = sc1DDD.determineCount(k1);
                 Assert.assertEquals((int) Math.round(c1 * r1.getKey().getForNPeople()), r1.getDeterminedCount());
 
-                int rr2 = (int) Math.round(1.5 * r1.getDeterminedCount());
+                int rr2 = (int) Math.round(1.5 * (int) r1.getDeterminedCount());
                 r1.setFufilledCount(rr2);
                 sc1DDD.returnAchievedCount(r1);
 
@@ -133,7 +133,7 @@ public class SelfCorrectionTests {
                 Assert.assertEquals((int) Math.round(c1 * rr3c.getKey().getForNPeople()), rr3c.getDeterminedCount());
 
 
-                int rr4 = (int) Math.round(0.5 * r1.getDeterminedCount());
+                int rr4 = (int) Math.round(0.5 * (int) r1.getDeterminedCount());
                 rr3c.setFufilledCount(rr4);
                 sc1DDD.returnAchievedCount(rr3c);
 
@@ -151,7 +151,7 @@ public class SelfCorrectionTests {
 
                 Assert.assertEquals(expc4c2, rr4c2.getDeterminedCount());
 
-                if (rr4c2.getDeterminedCount() == rr4c2.getKey().getForNPeople()) {
+                if ((int) rr4c2.getDeterminedCount() == rr4c2.getKey().getForNPeople()) {
                     rr4c2.setFufilledCount(calcUnfetteredExpectedCount(rr3c, k2, c1));
                 } else {
                     rr4c2.setFufilledCount(expc4c2);
@@ -241,7 +241,7 @@ public class SelfCorrectionTests {
 
     private int calcUnfetteredExpectedCount(DeterminedCount applied, StatsKey corrective, double targetRate) {
 
-        return (int) Math.round(targetRate * (applied.getKey().getForNPeople() + corrective.getForNPeople()) - applied.getFufilledCount());
+        return (int) Math.round(targetRate * (applied.getKey().getForNPeople() + corrective.getForNPeople()) - (int) applied.getFufilledCount());
     }
 
     private double calcAdditiveRate(StatsKey k1, double r1, StatsKey k2, double r2) {

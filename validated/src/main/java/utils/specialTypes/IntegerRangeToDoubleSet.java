@@ -97,7 +97,7 @@ public class IntegerRangeToDoubleSet implements LabeledValueSet<IntegerRange, Do
 
         for(IntegerRange iR : map.keySet()) {
             labels.add(iR);
-            products.add(getValue(iR) * n);
+            products.add(getValue(iR) * (double) n);
         }
 
         return new IntegerRangeToDoubleSet(labels, products);
@@ -160,6 +160,19 @@ public class IntegerRangeToDoubleSet implements LabeledValueSet<IntegerRange, Do
     }
 
     @Override
+    public LabeledValueSet<IntegerRange, Integer> floorValues() {
+        List<IntegerRange> labels = new ArrayList<>();
+        List<Integer> values = new ArrayList<>();
+
+        for(IntegerRange iR : map.keySet()) {
+            labels.add(iR);
+            values.add((int) Math.floor(getValue(iR)));
+        }
+
+        return new IntegerRangeToIntegerSet(labels, values);
+    }
+
+    @Override
     public LabeledValueSet<IntegerRange, Double> clone() {
         List<IntegerRange> labels = new ArrayList<>();
         List<Double> values = new ArrayList<>();
@@ -197,6 +210,7 @@ public class IntegerRangeToDoubleSet implements LabeledValueSet<IntegerRange, Do
         return labelOfLargestRemainder;
     }
 
+    @SuppressWarnings("Duplicates")
     @Override
     public LabeledValueSet<IntegerRange, Double> valuesPlusValues(LabeledValueSet<IntegerRange, ? extends Number> n) {
         List<IntegerRange> labels = new ArrayList<>();
