@@ -34,9 +34,11 @@ public interface LabeledValueSet<L,V> {
 
     LabeledValueSet<L,Integer> controlledRoundingMaintainingSum();
 
+    LabeledValueSet<L,Integer> floorValues();
+
     LabeledValueSet<L,V> clone();
 
     L getLabelOfValueWithGreatestRemainder(Set<L> usedLabels);
 
-    LabeledValueSet<L,V> valuesPlusValues(LabeledValueSet<L, ? extends Number> n);
+    LabeledValueSet<L,Double> valuesPlusValues(LabeledValueSet<L, ? extends Number> n);
 }

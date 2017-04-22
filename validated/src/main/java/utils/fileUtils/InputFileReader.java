@@ -386,4 +386,6 @@ public class InputFileReader {
             }
 
         }
+        return new SelfCorrectingProportionalTwoDimensionDataDistribution(year, sourcePopulation, sourceOrganisation, data);
+    }
 }

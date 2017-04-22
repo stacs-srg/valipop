@@ -87,6 +87,11 @@ public class IntegerRangeToIntegerSet implements LabeledValueSet<IntegerRange, I
     }
 
     @Override
+    public void update(IntegerRange label, Integer value) {
+        map.replace(label, value);
+    }
+
+    @Override
     public Integer remove(IntegerRange label) {
         return map.remove(label);
     }
@@ -110,6 +115,11 @@ public class IntegerRangeToIntegerSet implements LabeledValueSet<IntegerRange, I
     }
 
     @Override
+    public LabeledValueSet<IntegerRange, Integer> floorValues() {
+        return clone();
+    }
+
+    @Override
     public LabeledValueSet<IntegerRange, Integer> clone() {
 
         List<IntegerRange> labels = new ArrayList<>();
@@ -121,6 +131,33 @@ public class IntegerRangeToIntegerSet implements LabeledValueSet<IntegerRange, I
         }
 
         return new IntegerRangeToIntegerSet(labels, values);
+    }
+
+    @Override
+    public IntegerRange getLabelOfValueWithGreatestRemainder(Set<IntegerRange> usedLabels) {
+        throw new NoSuchElementException("Integer cannot have remainders when divided by one, therefore the largest " +
+                "remainder is by definition an undefinable concept");
+    }
+
+    @SuppressWarnings("Duplicates")
+    @Override
+    public LabeledValueSet<IntegerRange, Double> valuesPlusValues(LabeledValueSet<IntegerRange, ? extends Number> n) {
+        List<IntegerRange> labels = new ArrayList<>();
+        List<Double> results = new ArrayList<>();
+
+        for(IntegerRange iR : map.keySet()) {
+            labels.add(iR);
+
+            Number sub = n.getValue(iR);
+            if(sub == null) {
+                throw new IncompatibleLabelValueSets("Sets do not contain same labels - " +
+                        "mathematical operations not possible", this, n);
+            }
+
+            results.add(getValue(iR) + sub.doubleValue());
+        }
+
+        return new IntegerRangeToDoubleSet(labels, results);
     }
 
     @SuppressWarnings("Duplicates")

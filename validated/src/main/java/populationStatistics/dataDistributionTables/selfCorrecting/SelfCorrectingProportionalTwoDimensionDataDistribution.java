@@ -15,10 +15,7 @@ import utils.specialTypes.integerRange.InvalidRangeException;
 
 
 import java.io.PrintStream;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
@@ -50,12 +47,20 @@ public class SelfCorrectingProportionalTwoDimensionDataDistribution implements D
 
         int age = key.getYLabel();
 
-        LabeledValueSet<IntegerRange, Integer> achievedCountsForAge = achievedCounts.get(resolveRowValue(age));
+        LabeledValueSet<IntegerRange, Integer> achievedCountsForAge;
+        try {
+            achievedCountsForAge = achievedCounts.get(resolveRowValue(age));
+        } catch (InvalidRangeException e) {
+            // If no stats in distribution fo rthe given key then return a zero count object
+            return new MultipleDeterminedCount(key, new IntegerRangeToIntegerSet(
+                    Collections.singleton(new IntegerRange(0)), 0));
+        }
         Integer sumOfAC = achievedCountsForAge.getSumOfValues();
         Integer totalCount = sumOfAC + key.getForNPeople();
 
         // Verbose code down to end of method - commented line is one line solution
         LabeledValueSet<IntegerRange, Double> targetProportionsForAge = targetProportions.get(resolveRowValue(age));
+        // In here the values get calculate then they disappear!?! on return?
         LabeledValueSet<IntegerRange, Double> targetNumbers = targetProportionsForAge.productOfValuesAndN(totalCount);
 
         LabeledValueSet<IntegerRange, Double> targetNumbersMinusAchievedCounts =
@@ -75,7 +80,9 @@ public class SelfCorrectingProportionalTwoDimensionDataDistribution implements D
         LabeledValueSet<IntegerRange, Integer> previousAchievedCountsForAge = achievedCounts.get(resolveRowValue(age));
         LabeledValueSet<IntegerRange, Integer> newAchievedCountsForAge = achievedCount.getFufilledCount();
 
-        LabeledValueSet<IntegerRange, Integer> summedAchievedCountsForAge = previousAchievedCountsForAge.valuesPlusValues(newAchievedCountsForAge);
+        LabeledValueSet<IntegerRange, Integer> summedAchievedCountsForAge = previousAchievedCountsForAge
+                .valuesPlusValues(newAchievedCountsForAge).floorValues();
+
         achievedCounts.replace(resolveRowValue(age), previousAchievedCountsForAge, summedAchievedCountsForAge);
 
     }
