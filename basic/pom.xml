@@ -22,59 +22,27 @@
 
     <parent>
         <groupId>uk.ac.standrews.cs</groupId>
-        <artifactId>digitising_scotland</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <artifactId>common-pom</artifactId>
+        <version>3.0-SNAPSHOT</version>
     </parent>
 
-    <groupId>uk.ac.standrews.cs.digitising_scotland</groupId>
     <artifactId>population_model</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>population_model</name>
+
     <description>A simple synthetic population generator.</description>
 
-    <build>
-        <plugins>
-
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-            </plugin>
-
-            <plugin>
-                <groupId>com.mycila</groupId>
-                <artifactId>license-maven-plugin</artifactId>
-            </plugin>
-
-        </plugins>
-    </build>
-
-    <reporting>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-project-info-reports-plugin</artifactId>
-                <version>2.7</version>
-                <reportSets>
-                    <reportSet>
-                        <reports>
-                            <report>dependency-info</report>
-                        </reports>
-                    </reportSet>
-                </reportSets>
-            </plugin>
-        </plugins>
-    </reporting>
-
     <repositories>
+
+        <!-- Repository to which this module is deployed, and others retrieved from.                 -->
+        <!-- This has to be replicated from the parent POM so the parent POM can be found.           -->
         <repository>
             <id>uk.ac.standrews.cs.maven.repository</id>
             <name>School of Computer Science Maven Repository</name>
             <url>http://maven.cs.st-andrews.ac.uk/</url>
-            <snapshots>
-                <updatePolicy>always</updatePolicy>
-            </snapshots>
         </repository>
+
     </repositories>
 
     <dependencies>
