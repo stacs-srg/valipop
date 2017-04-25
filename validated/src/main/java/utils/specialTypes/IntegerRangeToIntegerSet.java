@@ -20,6 +20,7 @@ public class IntegerRangeToIntegerSet implements LabeledValueSet<IntegerRange, I
         int c = 0;
         for(IntegerRange iR : labels) {
             map.put(iR, values.get(c));
+            c++;
         }
     }
 

@@ -1,5 +1,6 @@
 package utils.specialTypes;
 
+import utils.DoubleComparer;
 import utils.specialTypes.integerRange.IntegerRange;
 
 import java.util.*;
@@ -8,6 +9,8 @@ import java.util.*;
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class IntegerRangeToDoubleSet implements LabeledValueSet<IntegerRange, Double> {
+
+    private static double DELTA = 1E-4;
 
     private Map<IntegerRange, Double> map = new HashMap<>();
 
@@ -20,6 +23,7 @@ public class IntegerRangeToDoubleSet implements LabeledValueSet<IntegerRange, Do
         int c = 0;
         for(IntegerRange iR : labels) {
             map.put(iR, values.get(c));
+            c++;
         }
 
     }
@@ -129,13 +133,14 @@ public class IntegerRangeToDoubleSet implements LabeledValueSet<IntegerRange, Do
     public LabeledValueSet<IntegerRange, Integer> controlledRoundingMaintainingSum() {
 
         double sum = getSumOfValues();
+        double sumRounded = Math.round(sum);
 
-        if(sum % 1 != 0) {
+        if(!DoubleComparer.equal(sum, sumRounded, DELTA)) {
             throw new ValuesDoNotSumToWholeNumberException("Cannot perform controlled rounding and maintain sum as " +
                     "values do not sum to a whole number", this);
         }
 
-        int sumInt = (int) sum;
+        int sumInt = (int) sumRounded;
 
         LabeledValueSet<IntegerRange, Integer> roundingSet = new IntegerRangeToIntegerSet();
 
