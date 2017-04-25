@@ -5,9 +5,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import populationStatistics.dataDistributionTables.OneDimensionDataDistribution;
 import populationStatistics.dataDistributionTables.TwoDimensionDataDistribution;
-import populationStatistics.dataDistributionTables.selfCorrecting.SelfCorrectingOneDimensionDataDistribution;
-import populationStatistics.dataDistributionTables.selfCorrecting.SelfCorrectingProportionalTwoDimensionDataDistribution;
-import populationStatistics.dataDistributionTables.selfCorrecting.SelfCorrectingTwoDimensionDataDistribution;
+import populationStatistics.dataDistributionTables.selfCorrecting.*;
 import dateModel.dateImplementations.YearDate;
 import utils.specialTypes.IntegerRangeToDoubleSet;
 import utils.specialTypes.LabeledValueSet;
@@ -90,21 +88,7 @@ public class InputFileReader {
                     sourceOrganisation = split[1];
                     break;
                 case "labels":
-
-                    s = split[1];
-                    split = s.split(TAB);
-
-                    for (String l : split) {
-                        try {
-                            columnLabels.add(new IntegerRange(l));
-
-                        } catch (NumberFormatException e) {
-                            throw new InvalidInputFileException("A LABEL is of the incorrect form in the file: " + path.toString(), e);
-                        } catch (InvalidRangeException e) {
-                            throw new InvalidInputFileException("A LABEL specifies an invalid range in the file: " + path.toString(), e);
-                        }
-                    }
-
+                    columnLabels = readInLabels(split, path);
                     break;
                 case "data":
                     i++; // go to next line for data rows
@@ -147,7 +131,6 @@ public class InputFileReader {
         return new TwoDimensionDataDistribution(year, sourcePopulation, sourceOrganisation, data);
     }
 
-    @SuppressWarnings("Duplicates")
     public static SelfCorrectingTwoDimensionDataDistribution readInSC2DDataFile(Path path) throws IOException, InvalidInputFileException {
 
         ArrayList<String> lines = new ArrayList<String>(getAllLines(path));
@@ -180,20 +163,7 @@ public class InputFileReader {
                     sourceOrganisation = split[1];
                     break;
                 case "labels":
-
-                    s = split[1];
-                    split = s.split(TAB);
-
-                    for (String l : split) {
-                        try {
-                            columnLabels.add(new IntegerRange(l));
-                        } catch (NumberFormatException e) {
-                            throw new InvalidInputFileException("A LABEL is of the incorrect form in the file: " + path.toString(), e);
-                        } catch (InvalidRangeException e) {
-                            throw new InvalidInputFileException("A LABEL specifies an invalid range in the file: " + path.toString(), e);
-                        }
-                    }
-
+                    columnLabels = readInLabels(split, path);
                     break;
                 case "data":
                     i++; // go to next line for data rows
@@ -235,11 +205,6 @@ public class InputFileReader {
 
         return new SelfCorrectingTwoDimensionDataDistribution(year, sourcePopulation, sourceOrganisation, data);
     }
-
-//    public static SelfCorrectingTwoDimensionDataDistribution readInSC2DDataFile(Path path) {
-//        SelfCorrectingTwoDimensionDataDistribution d = readIn2DDataFile(path);
-//        return new SelfCorrectingTwoDimensionDataDistribution(d.getYear(), d.getSourcePopulation(), d.getSourceOrganisation(), d /*removed clone method call */);
-//    }
 
     public static OneDimensionDataDistribution readIn1DDataFile(Path path) throws IOException, InvalidInputFileException {
 
@@ -303,8 +268,7 @@ public class InputFileReader {
         return new SelfCorrectingOneDimensionDataDistribution(d.getYear(), d.getSourcePopulation(), d.getSourceOrganisation(), d.cloneData());
     }
 
-    @SuppressWarnings("Duplicates")
-    public static SelfCorrectingProportionalTwoDimensionDataDistribution readInAgeAndProportionalStatsInput(Path path) throws IOException, InvalidInputFileException {
+    public static SelfCorrectingProportionalDistribution readInAgeAndProportionalStatsInput(Path path) throws IOException, InvalidInputFileException {
         ArrayList<String> lines = new ArrayList<String>(getAllLines(path));
 
         YearDate year = null;
@@ -335,57 +299,115 @@ public class InputFileReader {
                     sourceOrganisation = split[1];
                     break;
                 case "labels":
-
-                    s = split[1];
-                    split = s.split(TAB);
-
-                    for (String l : split) {
-                        try {
-                            columnLabels.add(new IntegerRange(l));
-                        } catch (NumberFormatException e) {
-                            throw new InvalidInputFileException("A LABEL is of the incorrect form in the file: " + path.toString(), e);
-                        } catch (InvalidRangeException e) {
-                            throw new InvalidInputFileException("A LABEL specifies an invalid range in the file: " + path.toString(), e);
-                        }
-                    }
-
+                    columnLabels = readInLabels(split, path);
                     break;
                 case "data":
-                    i++; // go to next line for data rows
-                    for (; i < lines.size(); i++) {
-                        s = lines.get(i);
-                        split = s.split(TAB);
-
-                        if (split.length != columnLabels.size() + 1) {
-                            throw new InvalidInputFileException("One or more data rows do not have the correct number of values in the file: " + path.toString());
-                        }
-
-                        IntegerRange rowLabel = null;
-                        try {
-                            rowLabel = new IntegerRange(split[0]);
-                        } catch (NumberFormatException e) {
-                            throw new InvalidInputFileException("The first column is of an incorrect form on line " + (i + 1) + " in the file: " + path.toString(), e);
-                        } catch (InvalidRangeException e) {
-                            throw new InvalidInputFileException("The first column specifies an invalid range on line " + (i + 1) + " in the file: " + path.toString(), e);
-                        }
-
-                        Map<IntegerRange, Double> rowMap = new HashMap<IntegerRange, Double>();
-
-                        for (int j = 1; j < split.length; j++) {
-                            try {
-                                rowMap.put(columnLabels.get(j - 1), Double.parseDouble(split[j]));
-                            } catch (NumberFormatException e) {
-                                throw new InvalidInputFileException("The value in column " + j + " should be a Double on line " + (i + 1) + "in the file: " + path.toString(), e);
-                            }
-                        }
-
-                        data.put(rowLabel, new IntegerRangeToDoubleSet(rowMap));
-
-                    }
+                    data = readIn2DDataTable(i, lines, path, columnLabels);
                     break;
             }
 
         }
-        return new SelfCorrectingProportionalTwoDimensionDataDistribution(year, sourcePopulation, sourceOrganisation, data);
+        return new SelfCorrectingProportionalDistribution(year, sourcePopulation, sourceOrganisation, data);
     }
+
+    public static ProportionalDistributionAdapter readInAndAdaptAgeAndProportionalStatsInput(Path path) throws IOException, InvalidInputFileException {
+
+        ArrayList<String> lines = new ArrayList<>(getAllLines(path));
+
+        YearDate year = null;
+        String sourcePopulation = null;
+        String sourceOrganisation = null;
+
+        ArrayList<IntegerRange> columnLabels = new ArrayList<>();
+        Map<IntegerRange, LabeledValueSet<IntegerRange, Double>> data = new HashMap<>();
+
+
+        for (int i = 0; i < lines.size(); i++) {
+
+            String s = lines.get(i);
+            String[] split = s.split(TAB, 2);
+
+            switch (split[0].toLowerCase()) {
+                case "year":
+                    try {
+                        year = new YearDate(Integer.parseInt(split[1]));
+                    } catch (NumberFormatException e) {
+                        throw new InvalidInputFileException("Non integer value given for year in file: " + path.toString(), e);
+                    }
+                    break;
+                case "population":
+                    sourcePopulation = split[1];
+                    break;
+                case "source":
+                    sourceOrganisation = split[1];
+                    break;
+                case "labels":
+                    columnLabels = readInLabels(split, path);
+                    break;
+                case "data":
+                    data = readIn2DDataTable(i, lines, path, columnLabels);
+                    break;
+            }
+
+        }
+        return new MotherChildAdapter(year, sourcePopulation, sourceOrganisation, data);
+    }
+
+    private static ArrayList<IntegerRange> readInLabels(String[] split, Path path) throws InvalidInputFileException {
+
+        ArrayList<IntegerRange> columnLabels = new ArrayList<>();
+        String s = split[1];
+        split = s.split(TAB);
+
+        for (String l : split) {
+            try {
+                columnLabels.add(new IntegerRange(l));
+            } catch (NumberFormatException e) {
+                throw new InvalidInputFileException("A LABEL is of the incorrect form in the file: " + path.toString(), e);
+            } catch (InvalidRangeException e) {
+                throw new InvalidInputFileException("A LABEL specifies an invalid range in the file: " + path.toString(), e);
+            }
+        }
+
+        return columnLabels;
+    }
+
+    private static Map<IntegerRange, LabeledValueSet<IntegerRange, Double>> readIn2DDataTable(int i, ArrayList<String> lines, Path path, ArrayList<IntegerRange> columnLabels) throws InvalidInputFileException {
+
+        Map<IntegerRange, LabeledValueSet<IntegerRange, Double>> data = new HashMap<>();
+
+        i++; // go to next line for data rows
+        for (; i < lines.size(); i++) {
+            String s = lines.get(i);
+            String[] split = s.split(TAB);
+
+            if (split.length != columnLabels.size() + 1) {
+                throw new InvalidInputFileException("One or more data rows do not have the correct number of values in the file: " + path.toString());
+            }
+
+            IntegerRange rowLabel = null;
+            try {
+                rowLabel = new IntegerRange(split[0]);
+            } catch (NumberFormatException e) {
+                throw new InvalidInputFileException("The first column is of an incorrect form on line " + (i + 1) + " in the file: " + path.toString(), e);
+            } catch (InvalidRangeException e) {
+                throw new InvalidInputFileException("The first column specifies an invalid range on line " + (i + 1) + " in the file: " + path.toString(), e);
+            }
+
+            Map<IntegerRange, Double> rowMap = new HashMap<IntegerRange, Double>();
+
+            for (int j = 1; j < split.length; j++) {
+                try {
+                    rowMap.put(columnLabels.get(j - 1), Double.parseDouble(split[j]));
+                } catch (NumberFormatException e) {
+                    throw new InvalidInputFileException("The value in column " + j + " should be a Double on line " + (i + 1) + "in the file: " + path.toString(), e);
+                }
+            }
+
+            data.put(rowLabel, new IntegerRangeToDoubleSet(rowMap));
+
+        }
+        return data;
+    }
+
 }

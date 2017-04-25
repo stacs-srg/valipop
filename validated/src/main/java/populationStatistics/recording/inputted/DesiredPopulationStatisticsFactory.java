@@ -7,7 +7,8 @@ import dateModel.dateImplementations.YearDate;
 import dateModel.timeSteps.CompoundTimeUnit;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import populationStatistics.dataDistributionTables.selfCorrecting.SelfCorrectingProportionalTwoDimensionDataDistribution;
+import populationStatistics.dataDistributionTables.selfCorrecting.ProportionalDistributionAdapter;
+import populationStatistics.dataDistributionTables.selfCorrecting.SelfCorrectingProportionalDistribution;
 import populationStatistics.recording.PopulationStatistics;
 import populationStatistics.dataDistributionTables.DataDistribution;
 import populationStatistics.dataDistributionTables.OneDimensionDataDistribution;
@@ -46,7 +47,7 @@ public abstract class DesiredPopulationStatisticsFactory {
         Map<YearDate, SelfCorrectingOneDimensionDataDistribution> femaleDeath = readInSC1DDataFiles(config.getVarFemaleDeathPaths(), config);
         Map<YearDate, SelfCorrectingTwoDimensionDataDistribution> partnering = readInSC2DDataFiles(config.getVarPartneringPaths(), config);
         Map<YearDate, SelfCorrectingTwoDimensionDataDistribution> orderedBirth = readInSC2DDataFiles(config.getVarOrderedBirthPaths(), config);
-        Map<YearDate, SelfCorrectingProportionalTwoDimensionDataDistribution> multipleBirth = readInAgeAndProportionalStatsInputFiles(config.getVarMultipleBirthPaths(), config);
+        Map<YearDate, ProportionalDistributionAdapter> multipleBirth = readInAndAdaptAgeAndProportionalStatsInputFiles(config.getVarMultipleBirthPaths(), config);
         Map<YearDate, SelfCorrectingOneDimensionDataDistribution> separation = readInSC1DDataFiles(config.getVarSeparationPaths(), config);
 
         return new PopulationStatistics(config, maleDeath, femaleDeath, partnering, orderedBirth, multipleBirth, separation);
@@ -89,13 +90,25 @@ public abstract class DesiredPopulationStatisticsFactory {
         return insertDistributionsToMeetInputWidth(config, data);
     }
 
-    private static Map<YearDate, SelfCorrectingProportionalTwoDimensionDataDistribution> readInAgeAndProportionalStatsInputFiles(DirectoryStream<Path> paths, Config config) throws IOException, InvalidInputFileException {
+    private static Map<YearDate, SelfCorrectingProportionalDistribution> readInAgeAndProportionalStatsInputFiles(DirectoryStream<Path> paths, Config config) throws IOException, InvalidInputFileException {
 
-        Map<YearDate, SelfCorrectingProportionalTwoDimensionDataDistribution> data = new HashMap<>();
+        Map<YearDate, SelfCorrectingProportionalDistribution> data = new HashMap<>();
 
         for (Path path : paths) {
             // read in each file
-            SelfCorrectingProportionalTwoDimensionDataDistribution tempData = InputFileReader.readInAgeAndProportionalStatsInput(path);
+            SelfCorrectingProportionalDistribution tempData = InputFileReader.readInAgeAndProportionalStatsInput(path);
+            data.put(tempData.getYear(), tempData);
+        }
+        return insertDistributionsToMeetInputWidth(config, data);
+    }
+
+    private static Map<YearDate, ProportionalDistributionAdapter> readInAndAdaptAgeAndProportionalStatsInputFiles(DirectoryStream<Path> paths, Config config) throws IOException, InvalidInputFileException {
+
+        Map<YearDate, ProportionalDistributionAdapter> data = new HashMap<>();
+
+        for (Path path : paths) {
+            // read in each file
+            ProportionalDistributionAdapter tempData = InputFileReader.readInAndAdaptAgeAndProportionalStatsInput(path);
             data.put(tempData.getYear(), tempData);
         }
         return insertDistributionsToMeetInputWidth(config, data);
