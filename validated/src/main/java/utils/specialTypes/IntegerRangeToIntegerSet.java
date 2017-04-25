@@ -116,6 +116,11 @@ public class IntegerRangeToIntegerSet implements LabeledValueSet<IntegerRange, I
     }
 
     @Override
+    public LabeledValueSet<IntegerRange, Integer> controlledRoundingMaintainingSumProductOfLabelValues() {
+        return this.clone();
+    }
+
+    @Override
     public LabeledValueSet<IntegerRange, Integer> floorValues() {
         return clone();
     }
@@ -161,6 +166,24 @@ public class IntegerRangeToIntegerSet implements LabeledValueSet<IntegerRange, I
         return new IntegerRangeToDoubleSet(labels, results);
     }
 
+    @Override
+    public LabeledValueSet<IntegerRange, Double> reproportion() {
+        throw new UnsupportedOperationException("Cannot re-proportion integer values");
+    }
+
+    @Override
+    public LabeledValueSet<IntegerRange, Double> divisionOfValuesByN(double n) {
+        List<IntegerRange> labels = new ArrayList<>();
+        List<Double> products = new ArrayList<>();
+
+        for(IntegerRange iR : map.keySet()) {
+            labels.add(iR);
+            products.add(getValue(iR) / n);
+        }
+
+        return new IntegerRangeToDoubleSet(labels, products);
+    }
+
     @SuppressWarnings("Duplicates")
     @Override
     public LabeledValueSet<IntegerRange, Double> valuesSubtractValues(LabeledValueSet<IntegerRange, ? extends Number> n) {
@@ -180,5 +203,44 @@ public class IntegerRangeToIntegerSet implements LabeledValueSet<IntegerRange, I
         }
 
         return new IntegerRangeToDoubleSet(labels, results);
+    }
+
+    @Override
+    public LabeledValueSet<IntegerRange, Double> divisionOfValuesByLabels() {
+        List<IntegerRange> labels = new ArrayList<>();
+        List<Double> products = new ArrayList<>();
+
+        for(IntegerRange iR : map.keySet()) {
+            labels.add(iR);
+            products.add(getValue(iR) / (double) iR.getValue());
+        }
+
+        return new IntegerRangeToDoubleSet(labels, products);
+    }
+
+
+    @Override
+    public IntegerRange getLargestLabelOfNoneZeroValueAndLabelLessOrEqualTo(IntegerRange n) {
+
+        IntegerRange largestLabel = null;
+
+        for(IntegerRange iR : map.keySet()) {
+
+            int currentIRLabel = iR.getValue();
+
+            if(currentIRLabel <= n.getValue()) {
+                if(largestLabel == null || currentIRLabel > largestLabel.getValue()) {
+                    largestLabel = iR;
+                }
+            }
+
+        }
+
+        if(largestLabel == null) {
+            throw new NoSuchElementException("No values in set or no values in set less that n - set size: "
+                    + getLabels().size());
+        }
+
+        return largestLabel;
     }
 }

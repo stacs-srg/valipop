@@ -20,7 +20,7 @@ import java.util.*;
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class SelfCorrectingProportionalTwoDimensionDataDistribution implements DataDistribution {
+public class SelfCorrectingProportionalDistribution implements DataDistribution {
 
     // The integer range here represents the row labels (i.e. the age ranges on the ordered birth table)
     private Map<IntegerRange, LabeledValueSet<IntegerRange, Double>> targetProportions;
@@ -30,7 +30,7 @@ public class SelfCorrectingProportionalTwoDimensionDataDistribution implements D
     private String sourcePopulation;
     private String sourceOrganisation;
 
-    public SelfCorrectingProportionalTwoDimensionDataDistribution(YearDate year, String sourcePopulation, String sourceOrganisation, Map<IntegerRange, LabeledValueSet<IntegerRange, Double>> targetProportions) {
+    public SelfCorrectingProportionalDistribution(YearDate year, String sourcePopulation, String sourceOrganisation, Map<IntegerRange, LabeledValueSet<IntegerRange, Double>> targetProportions) {
         this.year = year;
         this.sourceOrganisation = sourceOrganisation;
         this.sourcePopulation = sourcePopulation;
@@ -51,25 +51,18 @@ public class SelfCorrectingProportionalTwoDimensionDataDistribution implements D
         try {
             achievedCountsForAge = achievedCounts.get(resolveRowValue(age));
         } catch (InvalidRangeException e) {
-            // If no stats in distribution fo rthe given key then return a zero count object
+            // If no stats in distribution for the given key then return a zero count object
             return new MultipleDeterminedCount(key, new IntegerRangeToIntegerSet(
-                    Collections.singleton(new IntegerRange(0)), 0));
+                    Collections.singleton(new IntegerRange(1)), 0));
         }
         Integer sumOfAC = achievedCountsForAge.getSumOfValues();
         Integer totalCount = sumOfAC + key.getForNPeople();
 
-        // Verbose code down to end of method - commented line is one line solution
-        LabeledValueSet<IntegerRange, Double> targetProportionsForAge = targetProportions.get(resolveRowValue(age));
-        // In here the values get calculate then they disappear!?! on return?
-        LabeledValueSet<IntegerRange, Double> targetNumbers = targetProportionsForAge.productOfValuesAndN(totalCount);
-
-        LabeledValueSet<IntegerRange, Double> targetNumbersMinusAchievedCounts =
-                targetNumbers.valuesSubtractValues(achievedCountsForAge);
-
         LabeledValueSet<IntegerRange, Integer> retValues =
-                targetNumbersMinusAchievedCounts.controlledRoundingMaintainingSum();
-
-        //        LabeledValueSet<IntegerRange, Integer> retValues = targetProportions.get(resolveRowValue(age)).productOfValuesAndN(totalCount).valuesSubtractValues(achievedCountsForAge).controlledRoundingMaintainingSum();
+                targetProportions.get(resolveRowValue(age))
+                        .productOfValuesAndN(totalCount)
+                        .valuesSubtractValues(achievedCountsForAge)
+                        .controlledRoundingMaintainingSum();
 
         return new MultipleDeterminedCount(key, retValues);
     }

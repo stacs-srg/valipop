@@ -164,6 +164,49 @@ public class IntegerRangeToDoubleSet implements LabeledValueSet<IntegerRange, Do
         return roundingSet;
     }
 
+    @SuppressWarnings("Duplicates")
+    @Override
+    public LabeledValueSet<IntegerRange, Integer> controlledRoundingMaintainingSumProductOfLabelValues() {
+        double sum = productOfLabelsAndValues().getSumOfValues();
+        double sumRounded = Math.round(sum);
+
+        if(!DoubleComparer.equal(sum, sumRounded, DELTA)) {
+            throw new ValuesDoNotSumToWholeNumberException("Cannot perform controlled rounding and maintain sum as " +
+                    "values do not sum to a whole number", this);
+        }
+
+        int sumInt = (int) sumRounded;
+
+        LabeledValueSet<IntegerRange, Integer> roundingSet = new IntegerRangeToIntegerSet();
+
+        for(IntegerRange iR : getLabels()) {
+            roundingSet.add(iR, (int) Math.floor(getValue(iR)));
+        }
+
+        Set<IntegerRange> usedLabels = new HashSet<>();
+
+        int roundingSetSum;
+        while((roundingSetSum = roundingSet.productOfLabelsAndValues().getSumOfValues()) != sumInt) {
+
+            if(roundingSetSum < sumInt) {
+                // need more in the rounding set therefore
+                IntegerRange labelOfGreatestRemainder = this.getLabelOfValueWithGreatestRemainder(usedLabels);
+                roundingSet.update(labelOfGreatestRemainder, roundingSet.getValue(labelOfGreatestRemainder)+1);
+                usedLabels.add(labelOfGreatestRemainder);
+            }
+
+            // too many in rounding set therefore
+            if(roundingSetSum > sumInt) {
+                IntegerRange largestReducatbleLabel =
+                        roundingSet.getLargestLabelOfNoneZeroValueAndLabelLessOrEqualTo(new IntegerRange(roundingSetSum - sumInt));
+                roundingSet.update(largestReducatbleLabel, roundingSet.getValue(largestReducatbleLabel)-1);
+            }
+
+        }
+
+        return roundingSet;
+    }
+
     @Override
     public LabeledValueSet<IntegerRange, Integer> floorValues() {
         List<IntegerRange> labels = new ArrayList<>();
@@ -236,4 +279,63 @@ public class IntegerRangeToDoubleSet implements LabeledValueSet<IntegerRange, Do
 
         return new IntegerRangeToDoubleSet(labels, results);
     }
+
+    @Override
+    public LabeledValueSet<IntegerRange, Double> reproportion() {
+
+        return divisionOfValuesByN(getSumOfValues());
+    }
+
+    @Override
+    public LabeledValueSet<IntegerRange, Double> divisionOfValuesByN(double n) {
+        List<IntegerRange> labels = new ArrayList<>();
+        List<Double> products = new ArrayList<>();
+
+        for(IntegerRange iR : map.keySet()) {
+            labels.add(iR);
+            products.add(getValue(iR) / n);
+        }
+
+        return new IntegerRangeToDoubleSet(labels, products);
+    }
+
+    @Override
+    public LabeledValueSet<IntegerRange, Double> divisionOfValuesByLabels() {
+        List<IntegerRange> labels = new ArrayList<>();
+        List<Double> products = new ArrayList<>();
+
+        for(IntegerRange iR : map.keySet()) {
+            labels.add(iR);
+            products.add(getValue(iR) / (double) iR.getValue());
+        }
+
+        return new IntegerRangeToDoubleSet(labels, products);
+    }
+
+    @Override
+    public IntegerRange getLargestLabelOfNoneZeroValueAndLabelLessOrEqualTo(IntegerRange n) {
+
+        IntegerRange largestLabel = null;
+
+        for(IntegerRange iR : map.keySet()) {
+
+            int currentIRLable = iR.getValue();
+
+            if(currentIRLable <= n.getValue()) {
+                if(largestLabel == null || currentIRLable > largestLabel.getValue()) {
+                    largestLabel = iR;
+                }
+            }
+
+        }
+
+        if(largestLabel == null) {
+            throw new NoSuchElementException("No values in set or no values in set less that n - set size: "
+                    + getLabels().size());
+        }
+
+        return largestLabel;
+    }
+
+
 }

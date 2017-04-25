@@ -11,14 +11,13 @@ import dateModel.timeSteps.TimeUnit;
 import events.EventType;
 import events.UnsupportedEventType;
 import populationStatistics.dataDistributionTables.determinedCounts.DeterminedCount;
-import populationStatistics.dataDistributionTables.selfCorrecting.SelfCorrectingProportionalTwoDimensionDataDistribution;
+import populationStatistics.dataDistributionTables.selfCorrecting.ProportionalDistributionAdapter;
 import populationStatistics.dataDistributionTables.statsKeys.BirthStatsKey;
 import populationStatistics.dataDistributionTables.statsKeys.DeathStatsKey;
 import populationStatistics.dataDistributionTables.statsKeys.MultipleBirthStatsKey;
 import populationStatistics.dataDistributionTables.statsKeys.StatsKey;
 import populationStatistics.validation.comparison.EventRateTables;
 import populationStatistics.dataDistributionTables.OneDimensionDataDistribution;
-import populationStatistics.dataDistributionTables.TwoDimensionDataDistribution;
 import populationStatistics.dataDistributionTables.selfCorrecting.SelfCorrectingOneDimensionDataDistribution;
 import populationStatistics.dataDistributionTables.selfCorrecting.SelfCorrectingTwoDimensionDataDistribution;
 import populationStatistics.validation.kaplanMeier.utils.FailureTimeRow;
@@ -45,7 +44,7 @@ public class PopulationStatistics implements PopulationComposition, EventRateTab
     private Map<YearDate, SelfCorrectingOneDimensionDataDistribution> femaleDeath;
     private Map<YearDate, SelfCorrectingTwoDimensionDataDistribution> partnering;
     private Map<YearDate, SelfCorrectingTwoDimensionDataDistribution> orderedBirth;
-    private Map<YearDate, SelfCorrectingProportionalTwoDimensionDataDistribution> multipleBirth;
+    private Map<YearDate, ProportionalDistributionAdapter> multipleBirth;
     private Map<YearDate, SelfCorrectingOneDimensionDataDistribution> separation;
 
     public PopulationStatistics(Config config,
@@ -53,7 +52,7 @@ public class PopulationStatistics implements PopulationComposition, EventRateTab
                                 Map<YearDate, SelfCorrectingOneDimensionDataDistribution> femaleDeath,
                                 Map<YearDate, SelfCorrectingTwoDimensionDataDistribution> partnering,
                                 Map<YearDate, SelfCorrectingTwoDimensionDataDistribution> orderedBirth,
-                                Map<YearDate, SelfCorrectingProportionalTwoDimensionDataDistribution> multipleBirth,
+                                Map<YearDate, ProportionalDistributionAdapter> multipleBirth,
                                 Map<YearDate, SelfCorrectingOneDimensionDataDistribution> separation) {
 
         this.maleDeath = maleDeath;
@@ -155,7 +154,7 @@ public class PopulationStatistics implements PopulationComposition, EventRateTab
     }
 
     @Override
-    public SelfCorrectingProportionalTwoDimensionDataDistribution getMultipleBirthRates(Date year) {
+    public ProportionalDistributionAdapter getMultipleBirthRates(Date year) {
         return multipleBirth.get(getNearestYearInMap(year.getYearDate(), multipleBirth));
     }
 

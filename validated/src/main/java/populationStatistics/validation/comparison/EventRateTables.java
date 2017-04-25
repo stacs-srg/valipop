@@ -2,8 +2,7 @@ package populationStatistics.validation.comparison;
 
 import dateModel.Date;
 import populationStatistics.dataDistributionTables.OneDimensionDataDistribution;
-import populationStatistics.dataDistributionTables.TwoDimensionDataDistribution;
-import populationStatistics.dataDistributionTables.selfCorrecting.SelfCorrectingProportionalTwoDimensionDataDistribution;
+import populationStatistics.dataDistributionTables.selfCorrecting.ProportionalDistributionAdapter;
 import populationStatistics.dataDistributionTables.selfCorrecting.SelfCorrectingTwoDimensionDataDistribution;
 
 /**
@@ -83,7 +82,7 @@ public interface EventRateTables {
      * @param year the year
      * @return the birth rates by order
      */
-    SelfCorrectingProportionalTwoDimensionDataDistribution getMultipleBirthRates(Date year);
+    ProportionalDistributionAdapter getMultipleBirthRates(Date year);
 
     /**
      * Gets the rate of separation after having a given number of children as a couple. The rate is considered in respect

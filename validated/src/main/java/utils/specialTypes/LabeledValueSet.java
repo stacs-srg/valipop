@@ -34,6 +34,8 @@ public interface LabeledValueSet<L,V> {
 
     LabeledValueSet<L,Integer> controlledRoundingMaintainingSum();
 
+    LabeledValueSet<L,Integer> controlledRoundingMaintainingSumProductOfLabelValues();
+
     LabeledValueSet<L,Integer> floorValues();
 
     LabeledValueSet<L,V> clone();
@@ -41,4 +43,12 @@ public interface LabeledValueSet<L,V> {
     L getLabelOfValueWithGreatestRemainder(Set<L> usedLabels);
 
     LabeledValueSet<L,Double> valuesPlusValues(LabeledValueSet<L, ? extends Number> n);
+
+    LabeledValueSet<L,Double> reproportion();
+
+    LabeledValueSet<L,Double> divisionOfValuesByN(double n);
+
+    LabeledValueSet<L,Double> divisionOfValuesByLabels();
+
+    L getLargestLabelOfNoneZeroValueAndLabelLessOrEqualTo(L n);
 }
