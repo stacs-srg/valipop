@@ -166,8 +166,9 @@ public class Person implements IPerson {
         if (partnerships.size() != 0) {
             IPerson lastSpouse = getLastChild().getParentsPartnership().getPartnerOf(this);
             if(lastSpouse == null) {
-                System.out.println("A");
-            }
+                // TODO remove this once new partnering has been implemented
+//                System.out.println("A");
+            } else
             if (lastSpouse.aliveOnDate(date)) {
                 // if the partner is alive on date of death
                 if (lastSpouse.getLastChild().getParentsPartnership().getPartnerOf(lastSpouse).getId() == id) {
@@ -481,6 +482,20 @@ public class Person implements IPerson {
     @Override
     public int ageOnDate(Date currentDate) {
         return DateUtils.differenceInYears(birthDate, currentDate).getCount();
+    }
+
+    @Override
+    public boolean needsPartner(AdvancableDate currentDate) {
+        return toSeparate() || lastPartnerDied(currentDate);
+    }
+
+    private boolean lastPartnerDied(Date currentDate) {
+        return !getLastChild().getParentsPartnership().getMalePartner().aliveOnDate(currentDate);
+    }
+
+    @Override
+    public int numberOfChildrenInLatestPartnership() {
+        return getLastChild().getParentsPartnership().getChildren().size();
     }
 
 }

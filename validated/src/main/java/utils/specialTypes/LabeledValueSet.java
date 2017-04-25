@@ -51,4 +51,6 @@ public interface LabeledValueSet<L,V> {
     LabeledValueSet<L,Double> divisionOfValuesByLabels();
 
     L getLargestLabelOfNoneZeroValueAndLabelLessOrEqualTo(L n);
+
+    L getLargestLabelOfNoneZeroValue();
 }

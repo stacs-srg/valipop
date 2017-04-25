@@ -145,7 +145,11 @@ public class IntegerRangeToDoubleSet implements LabeledValueSet<IntegerRange, Do
         LabeledValueSet<IntegerRange, Integer> roundingSet = new IntegerRangeToIntegerSet();
 
         for(IntegerRange iR : getLabels()) {
-            roundingSet.add(iR, (int) Math.floor(getValue(iR)));
+            if(getValue(iR) < 0) {
+                roundingSet.add(iR, 0);
+            } else {
+                roundingSet.add(iR, (int) Math.floor(getValue(iR)));
+            }
         }
 
         Set<IntegerRange> usedLabels = new HashSet<>();
@@ -157,6 +161,12 @@ public class IntegerRangeToDoubleSet implements LabeledValueSet<IntegerRange, Do
                 // need more in the rounding set therefore
                 IntegerRange labelOfGreatestRemainder = this.getLabelOfValueWithGreatestRemainder(usedLabels);
                 roundingSet.update(labelOfGreatestRemainder, roundingSet.getValue(labelOfGreatestRemainder)+1);
+            }
+
+            if(roundingSetSum > sumInt) {
+                IntegerRange largestReducatbleLabel =
+                        roundingSet.getLargestLabelOfNoneZeroValueAndLabelLessOrEqualTo(new IntegerRange(roundingSetSum - sumInt));
+                roundingSet.update(largestReducatbleLabel, roundingSet.getValue(largestReducatbleLabel)-1);
             }
 
         }
@@ -180,7 +190,11 @@ public class IntegerRangeToDoubleSet implements LabeledValueSet<IntegerRange, Do
         LabeledValueSet<IntegerRange, Integer> roundingSet = new IntegerRangeToIntegerSet();
 
         for(IntegerRange iR : getLabels()) {
-            roundingSet.add(iR, (int) Math.floor(getValue(iR)));
+            if(getValue(iR) < 0) {
+                roundingSet.add(iR, 0);
+            } else {
+                roundingSet.add(iR, (int) Math.floor(getValue(iR)));
+            }
         }
 
         Set<IntegerRange> usedLabels = new HashSet<>();
@@ -332,6 +346,28 @@ public class IntegerRangeToDoubleSet implements LabeledValueSet<IntegerRange, Do
         if(largestLabel == null) {
             throw new NoSuchElementException("No values in set or no values in set less that n - set size: "
                     + getLabels().size());
+        }
+
+        return largestLabel;
+    }
+
+    @Override
+    public IntegerRange getLargestLabelOfNoneZeroValue() {
+        IntegerRange largestLabel = null;
+
+        for(IntegerRange iR : map.keySet()) {
+
+            int currentIRLable = iR.getValue();
+
+            if(largestLabel == null || currentIRLable > largestLabel.getValue()) {
+                if(!DoubleComparer.equal(0, get(iR), DELTA)) {
+                    largestLabel = iR;
+                }
+            }
+        }
+
+        if(largestLabel == null) {
+            throw new NoSuchElementException("No non zero values in set - set size: " + getLabels().size());
         }
 
         return largestLabel;

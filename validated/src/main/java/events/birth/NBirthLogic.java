@@ -7,6 +7,7 @@ import dateModel.dateImplementations.AdvancableDate;
 import dateModel.dateImplementations.ExactDate;
 import dateModel.timeSteps.CompoundTimeUnit;
 import events.EventLogic;
+import events.SeparationLogic;
 import events.init.InitLogic;
 import populationStatistics.dataDistributionTables.determinedCounts.DeterminedCount;
 import populationStatistics.dataDistributionTables.determinedCounts.MultipleDeterminedCount;
@@ -18,11 +19,11 @@ import simulationEntities.person.IPerson;
 import simulationEntities.population.dataStructure.FemaleCollection;
 import simulationEntities.population.dataStructure.Population;
 import simulationEntities.population.dataStructure.exceptions.InsufficientNumberOfPeopleException;
+import utils.specialTypes.IntegerRangeToIntegerSet;
+import utils.specialTypes.LabeledValueSet;
+import utils.specialTypes.integerRange.IntegerRange;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
@@ -44,10 +45,15 @@ public class NBirthLogic implements EventLogic {
         // For each division in the population data store upto the current date
         while(divDates.hasNext() && DateUtils.dateBeforeOrEqual(divDate = divDates.next(), currentDate)) {
 
-            int age = DateUtils.differenceInYears(divDate, currentDate).getCount();
-            Collection<IPerson> needingPartners = new ArrayList<>();
+            int age = DateUtils.differenceInYears(divDate.advanceTime(consideredTimePeriod), currentDate).getCount();
+//            Collection<IPerson> needingPartners = new ArrayList<>();
 
             Set<Integer> orders = femalesLiving.getBirthOrdersInDivision(divDate, consideredTimePeriod);
+
+            if(age > 14)
+                System.out.print("");
+
+            // Its screwed in here somewhere... try the other code again...
 
             for(Integer order : orders) {
 
@@ -55,14 +61,16 @@ public class NBirthLogic implements EventLogic {
                 int number = people.size();
 
                 BirthStatsKey key = new BirthStatsKey(age, order, number, consideredTimePeriod, currentDate);
-                DeterminedCount determinedCount = desiredPopulationStatistics.getDeterminedCount(key);
+                SingleDeterminedCount determinedCount = (SingleDeterminedCount) desiredPopulationStatistics.getDeterminedCount(key);
 
-                int numberOfChildren = ((SingleDeterminedCount) determinedCount).getDeterminedCount();
+                int numberOfChildren = determinedCount.getDeterminedCount();
 
                 // Make women into mothers
 
                 MotherSet mothers = selectMothers(config, people, numberOfChildren, desiredPopulationStatistics,
                         currentDate, consideredTimePeriod, population);
+
+//                needingPartners.addAll(mothers.getNeedPartners());
 
                 int childrenMade = mothers.size();
 
@@ -74,6 +82,8 @@ public class NBirthLogic implements EventLogic {
 
             }
             // Partner females of age who don't have partners
+//            PartneringLogic.handle(needingPartners);
+
         }
 
         tBirths += bornAtTS;
@@ -101,19 +111,93 @@ public class NBirthLogic implements EventLogic {
 
         int childrenMade = 0;
 
+        int numberOfMothers = requiredBirths.getDeterminedCount().productOfLabelsAndValues().getSumOfValues();
+
+        Map<Integer, ArrayList<IPerson>> continuingPartnedFemalesByChildren = new HashMap<>();
+
+        LabeledValueSet<IntegerRange, Integer> motherCountsByMaternities =
+                new IntegerRangeToIntegerSet(requiredBirths.getDeterminedCount().getLabels(), 0);
+        LabeledValueSet<IntegerRange, Integer> remainingMothersToFind = requiredBirths.getDeterminedCount().clone();
+
         for(IPerson f : femalesAL) {
 
-            if(childrenMade >= numberOfChildren) {
+            if(childrenMade >= numberOfMothers) {
                 break;
             }
 
             if(eligible(f, config, currentDate)) {
                 f.giveChildren(1, currentDate, consideredTimePeriod, population);
-                f.getLastChild().getParentsPartnership().setFather(BirthLogic.getRandomFather(population, population.getLivingPeople().resolveDateToCorrectDivisionDate(f.getBirthDate()), consideredTimePeriod));
-                needPartners.add(f);
                 childrenMade ++;
+                needPartners.add(f);
+                try {
+                    continuingPartnedFemalesByChildren.get(1).add(f);
+                } catch (NullPointerException e) {
+                    continuingPartnedFemalesByChildren.put(1, new ArrayList<>(Collections.singleton(f)));
+                }
             }
+
         }
+
+        motherCountsByMaternities.update(new IntegerRange(1), childrenMade);
+
+
+        // break
+
+//        IntegerRange highestBirthOption;
+//
+//        try {
+//            highestBirthOption = remainingMothersToFind.getLargestLabelOfNoneZeroValue();
+//        } catch (NoSuchElementException e) {
+//            return new MotherSet(havePartners, needPartners);
+//        }
+//
+//
+//
+//        for(IPerson female : femalesAL) {
+//
+//            if(childrenMade >= numberOfChildren) {
+//                break;
+//            }
+//
+//            if(eligible(female, config, currentDate)) {
+//                female.giveChildren(highestBirthOption.getValue(), currentDate, consideredTimePeriod, population);
+////                f.getLastChild().getParentsPartnership().setFather(BirthLogic.getRandomFather(population, population.getLivingPeople().resolveDateToCorrectDivisionDate(f.getBirthDate()), consideredTimePeriod));
+////                needPartners.add(f);
+//                childrenMade += highestBirthOption.getValue();
+//
+//                if(female.needsPartner(currentDate)) {
+//                    needPartners.add(female);
+//                } else {
+//                    havePartners.add(female);
+////         Probs needs a null pointer catch the on first entry
+//                    try {
+//                        continuingPartnedFemalesByChildren.get(female.numberOfChildrenInLatestPartnership()).add(female);
+//                    } catch (NullPointerException e) {
+//                        continuingPartnedFemalesByChildren.put(female.numberOfChildrenInLatestPartnership(), new ArrayList<>(Collections.singleton(female)));
+//                    }
+//                }
+//
+//                int furtherMothersNeededForMaternitySize = remainingMothersToFind.get(highestBirthOption) - 1;
+//                remainingMothersToFind.update(highestBirthOption, furtherMothersNeededForMaternitySize);
+//                motherCountsByMaternities
+//                        .update(highestBirthOption, motherCountsByMaternities.getValue(highestBirthOption) + 1);
+//
+//                if(furtherMothersNeededForMaternitySize <= 0) {
+//                    try {
+//                        highestBirthOption = remainingMothersToFind.getLargestLabelOfNoneZeroValue();
+//                    } catch (NoSuchElementException e) {
+//                        // In this case we have ran out of females to use as mothers, we continue on with the mothers we have created
+//                        break;
+//                    }
+//
+//                }
+//            }
+//        }
+
+//        SeparationLogic.handle(continuingPartnedFemalesByChildren);
+
+        requiredBirths.setFufilledCount(motherCountsByMaternities);
+        desiredPopulationStatistics.returnAchievedCount(requiredBirths);
 
         return new MotherSet(havePartners, needPartners);
 
@@ -123,11 +207,8 @@ public class NBirthLogic implements EventLogic {
                                                                           CompoundTimeUnit consideredTimePeriod) {
 
         MultipleBirthStatsKey key = new MultipleBirthStatsKey(ageOfMothers, numberOfChildren, consideredTimePeriod, currentDate);
+        return (MultipleDeterminedCount) desiredPopulationStatistics.getDeterminedCount(key);
 
-        desiredPopulationStatistics.getDeterminedCount(key);
-
-
-        return null;
     }
 
     private boolean eligible(IPerson potentialMother, Config config, Date currentDate) {
