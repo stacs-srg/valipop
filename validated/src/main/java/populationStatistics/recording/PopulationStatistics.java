@@ -112,7 +112,7 @@ public class PopulationStatistics implements PopulationComposition, EventRateTab
             return getMultipleBirthRates(k.getDate()).determineCount(key);
         }
 
-        throw new Error("Key access not implemented for key class: " + key.getClass().toGenericString());
+        throw new Error("Key based access not implemented for key class: " + key.getClass().toGenericString());
     }
 
     public void returnAchievedCount(DeterminedCount achievedCount) {
@@ -129,7 +129,13 @@ public class PopulationStatistics implements PopulationComposition, EventRateTab
             return;
         }
 
-        throw new Error("Key access not implemented for key class: "
+        if(achievedCount.getKey() instanceof MultipleBirthStatsKey) {
+            MultipleBirthStatsKey k = (MultipleBirthStatsKey) achievedCount.getKey();
+            getMultipleBirthRates(k.getDate()).returnAchievedCount(achievedCount);
+            return;
+        }
+
+        throw new Error("Key based access not implemented for key class: "
                 + achievedCount.getKey().getClass().toGenericString());
 
     }

@@ -11,6 +11,7 @@ import dateModel.dateImplementations.MonthDate;
 import dateModel.timeSteps.CompoundTimeUnit;
 import simulationEntities.population.dataStructure.PeopleCollection;
 import simulationEntities.population.dataStructure.Population;
+import utils.specialTypes.integerRange.IntegerRange;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
@@ -54,4 +55,8 @@ public interface PersonUtils {
     void willSeparate(boolean b);
 
     int ageOnDate(Date date);
+
+    boolean needsPartner(AdvancableDate currentDate);
+
+    int numberOfChildrenInLatestPartnership();
 }

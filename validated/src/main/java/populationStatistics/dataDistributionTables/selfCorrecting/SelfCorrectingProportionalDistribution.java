@@ -67,10 +67,17 @@ public class SelfCorrectingProportionalDistribution implements DataDistribution 
         return new MultipleDeterminedCount(key, retValues);
     }
 
-    public void returnAchievedCount(MultipleDeterminedCount achievedCount) {
+    public void returnAchievedCount(DeterminedCount<LabeledValueSet<IntegerRange, Integer>> achievedCount) {
 
         int age = achievedCount.getKey().getYLabel();
-        LabeledValueSet<IntegerRange, Integer> previousAchievedCountsForAge = achievedCounts.get(resolveRowValue(age));
+        LabeledValueSet<IntegerRange, Integer> previousAchievedCountsForAge;
+
+        try {
+            previousAchievedCountsForAge = achievedCounts.get(resolveRowValue(age));
+        } catch (InvalidRangeException e) {
+            return;
+        }
+
         LabeledValueSet<IntegerRange, Integer> newAchievedCountsForAge = achievedCount.getFufilledCount();
 
         LabeledValueSet<IntegerRange, Integer> summedAchievedCountsForAge = previousAchievedCountsForAge

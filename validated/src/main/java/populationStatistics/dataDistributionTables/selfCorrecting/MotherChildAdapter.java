@@ -1,6 +1,7 @@
 package populationStatistics.dataDistributionTables.selfCorrecting;
 
 import dateModel.dateImplementations.YearDate;
+import populationStatistics.dataDistributionTables.determinedCounts.DeterminedCount;
 import populationStatistics.dataDistributionTables.determinedCounts.MultipleDeterminedCount;
 import populationStatistics.dataDistributionTables.statsKeys.StatsKey;
 import utils.specialTypes.LabeledValueSet;
@@ -70,7 +71,7 @@ public class MotherChildAdapter implements ProportionalDistributionAdapter {
     }
 
     @Override
-    public void returnAchievedCount(MultipleDeterminedCount achievedCount) {
+    public void returnAchievedCount(DeterminedCount<LabeledValueSet<IntegerRange, Integer>> achievedCount) {
 
         // Transforms counts to be of children born rather than mothers giving birth
         achievedCount.setFufilledCount(achievedCount.getFufilledCount().productOfLabelsAndValues());

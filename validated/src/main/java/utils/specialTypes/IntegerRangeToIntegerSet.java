@@ -1,5 +1,6 @@
 package utils.specialTypes;
 
+import utils.DoubleComparer;
 import utils.specialTypes.integerRange.IntegerRange;
 
 import java.util.*;
@@ -239,6 +240,28 @@ public class IntegerRangeToIntegerSet implements LabeledValueSet<IntegerRange, I
         if(largestLabel == null) {
             throw new NoSuchElementException("No values in set or no values in set less that n - set size: "
                     + getLabels().size());
+        }
+
+        return largestLabel;
+    }
+
+    @Override
+    public IntegerRange getLargestLabelOfNoneZeroValue() {
+        IntegerRange largestLabel = null;
+
+        for(IntegerRange iR : map.keySet()) {
+
+            int currentIRLabel = iR.getValue();
+
+            if(largestLabel == null || currentIRLabel > largestLabel.getValue()) {
+                if(get(iR) != 0) {
+                    largestLabel = iR;
+                }
+            }
+        }
+
+        if(largestLabel == null) {
+            throw new NoSuchElementException("No non zero values in set - set size: " + getLabels().size());
         }
 
         return largestLabel;
