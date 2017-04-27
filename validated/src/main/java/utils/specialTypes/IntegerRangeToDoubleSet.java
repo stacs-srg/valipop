@@ -204,15 +204,27 @@ public class IntegerRangeToDoubleSet implements LabeledValueSet<IntegerRange, Do
 
             if(roundingSetSum < sumInt) {
                 // need more in the rounding set therefore
-                IntegerRange labelOfGreatestRemainder = this.getLabelOfValueWithGreatestRemainder(usedLabels);
-                roundingSet.update(labelOfGreatestRemainder, roundingSet.getValue(labelOfGreatestRemainder)+1);
+                IntegerRange labelOfGreatestRemainder;
+                try {
+                    labelOfGreatestRemainder = this.getLabelOfValueWithGreatestRemainder(usedLabels);
+                } catch (NoSuchElementException e) {
+                    labelOfGreatestRemainder = this.smallestLabel();
+                }
+                roundingSet.update(labelOfGreatestRemainder, roundingSet.getValue(labelOfGreatestRemainder) + 1);
                 usedLabels.add(labelOfGreatestRemainder);
             }
 
             // too many in rounding set therefore
             if(roundingSetSum > sumInt) {
-                IntegerRange largestReducatbleLabel =
-                        roundingSet.getLargestLabelOfNoneZeroValueAndLabelLessOrEqualTo(new IntegerRange(roundingSetSum - sumInt));
+                // catch and increase to self - then the up will put in a lower order birth
+                IntegerRange largestReducatbleLabel;
+                try {
+                    largestReducatbleLabel =
+                            roundingSet.getLargestLabelOfNoneZeroValueAndLabelLessOrEqualTo(new IntegerRange(roundingSetSum - sumInt));
+                } catch (NoSuchElementException e) {
+                    largestReducatbleLabel = this.smallestLabel();
+//                            roundingSet.getLargestLabelOfNoneZeroValueAndLabelLessOrEqualTo(new IntegerRange(roundingSetSum - sumInt + 1));
+                }
                 roundingSet.update(largestReducatbleLabel, roundingSet.getValue(largestReducatbleLabel)-1);
             }
 
@@ -371,6 +383,23 @@ public class IntegerRangeToDoubleSet implements LabeledValueSet<IntegerRange, Do
         }
 
         return largestLabel;
+    }
+
+    @Override
+    public IntegerRange smallestLabel() {
+        Set<IntegerRange> labels = getLabels();
+
+        int minLabelInt = Integer.MAX_VALUE;
+        IntegerRange minLabel = null;
+
+        for(IntegerRange label : labels) {
+            if(label.getValue() < minLabelInt) {
+                minLabel = label;
+                minLabelInt = label.getValue();
+            }
+        }
+
+        return minLabel;
     }
 
 

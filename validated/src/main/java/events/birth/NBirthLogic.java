@@ -72,7 +72,7 @@ public class NBirthLogic implements EventLogic {
 
 //                needingPartners.addAll(mothers.getNeedPartners());
 
-                int childrenMade = mothers.size();
+                int childrenMade = mothers.getNewlyProducedChildren();
 
                 bornAtTS += childrenMade;
                 InitLogic.incrementBirthCount(childrenMade);
@@ -117,89 +117,93 @@ public class NBirthLogic implements EventLogic {
 
         LabeledValueSet<IntegerRange, Integer> motherCountsByMaternities =
                 new IntegerRangeToIntegerSet(requiredBirths.getDeterminedCount().getLabels(), 0);
+
         LabeledValueSet<IntegerRange, Integer> remainingMothersToFind = requiredBirths.getDeterminedCount().clone();
 
-        for(IPerson f : femalesAL) {
+//        for(IPerson f : femalesAL) {
+//
+//            if(childrenMade >= numberOfMothers) {
+//                break;
+//            }
+//
+//            if(eligible(f, config, currentDate)) {
+//                f.giveChildren(1, currentDate, consideredTimePeriod, population);
+//                childrenMade ++;
+//                needPartners.add(f);
+//                try {
+//                    continuingPartnedFemalesByChildren.get(1).add(f);
+//                } catch (NullPointerException e) {
+//                    continuingPartnedFemalesByChildren.put(1, new ArrayList<>(Collections.singleton(f)));
+//                }
+//            }
+//
+//        }
 
-            if(childrenMade >= numberOfMothers) {
-                break;
-            }
-
-            if(eligible(f, config, currentDate)) {
-                f.giveChildren(1, currentDate, consideredTimePeriod, population);
-                childrenMade ++;
-                needPartners.add(f);
-                try {
-                    continuingPartnedFemalesByChildren.get(1).add(f);
-                } catch (NullPointerException e) {
-                    continuingPartnedFemalesByChildren.put(1, new ArrayList<>(Collections.singleton(f)));
-                }
-            }
-
-        }
-
-        motherCountsByMaternities.update(new IntegerRange(1), childrenMade);
+//        motherCountsByMaternities.update(new IntegerRange(1), childrenMade);
 
 
         // break
 
-//        IntegerRange highestBirthOption;
-//
-//        try {
-//            highestBirthOption = remainingMothersToFind.getLargestLabelOfNoneZeroValue();
-//        } catch (NoSuchElementException e) {
-//            return new MotherSet(havePartners, needPartners);
-//        }
-//
-//
-//
-//        for(IPerson female : femalesAL) {
-//
-//            if(childrenMade >= numberOfChildren) {
-//                break;
-//            }
-//
-//            if(eligible(female, config, currentDate)) {
-//                female.giveChildren(highestBirthOption.getValue(), currentDate, consideredTimePeriod, population);
-////                f.getLastChild().getParentsPartnership().setFather(BirthLogic.getRandomFather(population, population.getLivingPeople().resolveDateToCorrectDivisionDate(f.getBirthDate()), consideredTimePeriod));
-////                needPartners.add(f);
-//                childrenMade += highestBirthOption.getValue();
-//
-//                if(female.needsPartner(currentDate)) {
-//                    needPartners.add(female);
-//                } else {
-//                    havePartners.add(female);
-////         Probs needs a null pointer catch the on first entry
-//                    try {
-//                        continuingPartnedFemalesByChildren.get(female.numberOfChildrenInLatestPartnership()).add(female);
-//                    } catch (NullPointerException e) {
-//                        continuingPartnedFemalesByChildren.put(female.numberOfChildrenInLatestPartnership(), new ArrayList<>(Collections.singleton(female)));
-//                    }
-//                }
-//
-//                int furtherMothersNeededForMaternitySize = remainingMothersToFind.get(highestBirthOption) - 1;
-//                remainingMothersToFind.update(highestBirthOption, furtherMothersNeededForMaternitySize);
-//                motherCountsByMaternities
-//                        .update(highestBirthOption, motherCountsByMaternities.getValue(highestBirthOption) + 1);
-//
-//                if(furtherMothersNeededForMaternitySize <= 0) {
-//                    try {
-//                        highestBirthOption = remainingMothersToFind.getLargestLabelOfNoneZeroValue();
-//                    } catch (NoSuchElementException e) {
-//                        // In this case we have ran out of females to use as mothers, we continue on with the mothers we have created
-//                        break;
-//                    }
-//
-//                }
-//            }
-//        }
+        IntegerRange highestBirthOption;
+
+        try {
+            highestBirthOption = remainingMothersToFind.getLargestLabelOfNoneZeroValue();
+        } catch (NoSuchElementException e) {
+            return new MotherSet(havePartners, needPartners);
+        }
+
+
+
+        for(IPerson female : femalesAL) {
+
+            if(childrenMade >= numberOfChildren) {
+                break;
+            }
+
+            if(eligible(female, config, currentDate)) {
+                female.giveChildren(highestBirthOption.getValue(), currentDate, consideredTimePeriod, population);
+//                f.getLastChild().getParentsPartnership().setFather(BirthLogic.getRandomFather(population, population.getLivingPeople().resolveDateToCorrectDivisionDate(f.getBirthDate()), consideredTimePeriod));
+//                needPartners.add(f);
+                childrenMade += highestBirthOption.getValue();
+
+                if(female.needsPartner(currentDate)) {
+                    needPartners.add(female);
+                } else {
+                    havePartners.add(female);
+//         Probs needs a null pointer catch the on first entry
+                    try {
+                        continuingPartnedFemalesByChildren.get(female.numberOfChildrenInLatestPartnership()).add(female);
+                    } catch (NullPointerException e) {
+                        continuingPartnedFemalesByChildren.put(female.numberOfChildrenInLatestPartnership(), new ArrayList<>(Collections.singleton(female)));
+                    }
+                }
+
+                // updates count of remaining mothers to find
+                int furtherMothersNeededForMaternitySize = remainingMothersToFind.get(highestBirthOption) - 1;
+                remainingMothersToFind.update(highestBirthOption, furtherMothersNeededForMaternitySize);
+
+                // updates count of mother found
+                motherCountsByMaternities
+                        .update(highestBirthOption, motherCountsByMaternities.getValue(highestBirthOption) + 1);
+
+                if(furtherMothersNeededForMaternitySize <= 0) {
+                    try {
+                        highestBirthOption = remainingMothersToFind.getLargestLabelOfNoneZeroValue();
+                    } catch (NoSuchElementException e) {
+                        // In this case we have created all the new mothers and children required
+                        break;
+                    }
+
+                }
+            }
+        }
 
 //        SeparationLogic.handle(continuingPartnedFemalesByChildren);
 
         requiredBirths.setFufilledCount(motherCountsByMaternities);
         desiredPopulationStatistics.returnAchievedCount(requiredBirths);
 
-        return new MotherSet(havePartners, needPartners);
+        return new MotherSet(havePartners, needPartners, childrenMade);
 
     }
 
