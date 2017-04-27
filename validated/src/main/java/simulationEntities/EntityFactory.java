@@ -54,8 +54,18 @@ public class EntityFactory {
 
         List<IPerson> children = new ArrayList<>(numberOfChildren);
 
+        // This ensures twins are born on the same day
+        Date childrenBirthDate = null;
+
         for(int c = 0; c < numberOfChildren; c++) {
-            children.add(makePerson(currentDate, birthTimeStep, partnership, population));
+            IPerson child;
+            if(childrenBirthDate == null) {
+                child = makePerson(currentDate, birthTimeStep, partnership, population);
+                childrenBirthDate = child.getBirthDate();
+            } else {
+                child = makePerson(childrenBirthDate, partnership, population);
+            }
+            children.add(child);
         }
 
         partnership.addChildren(children);
@@ -93,9 +103,9 @@ public class EntityFactory {
 
     }
 
-    public static IPerson makePerson(Date currentDate, CompoundTimeUnit birthTimeStep, IPartnership parentsPartnership, Population population) {
+    public static IPerson makePerson(Date birthDate, IPartnership parentsPartnership, Population population) {
 
-        Person person = new Person(getSex(population.getPopulationCounts()), birthDateSelector.selectDate(currentDate, birthTimeStep), parentsPartnership);
+        Person person = new Person(getSex(population.getPopulationCounts()), birthDate, parentsPartnership);
 
         // OZGUR - this is where your stuff is currently being called from
         person.setFirstName(firstNameGenerator.getName(person));
@@ -105,5 +115,12 @@ public class EntityFactory {
         population.getLivingPeople().addPerson(person);
 
         return person;
+
+    }
+
+    public static IPerson makePerson(Date currentDate, CompoundTimeUnit birthTimeStep, IPartnership parentsPartnership, Population population) {
+
+        return makePerson(birthDateSelector.selectDate(currentDate, birthTimeStep), parentsPartnership, population);
+
     }
 }

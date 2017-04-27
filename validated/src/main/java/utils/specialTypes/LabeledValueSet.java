@@ -53,4 +53,6 @@ public interface LabeledValueSet<L,V> {
     L getLargestLabelOfNoneZeroValueAndLabelLessOrEqualTo(L n);
 
     L getLargestLabelOfNoneZeroValue();
+
+    L smallestLabel();
 }

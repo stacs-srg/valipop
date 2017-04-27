@@ -231,7 +231,9 @@ public class IntegerRangeToIntegerSet implements LabeledValueSet<IntegerRange, I
 
             if(currentIRLabel <= n.getValue()) {
                 if(largestLabel == null || currentIRLabel > largestLabel.getValue()) {
-                    largestLabel = iR;
+                    if(getValue(iR) != 0) {
+                        largestLabel = iR;
+                    }
                 }
             }
 
@@ -265,5 +267,24 @@ public class IntegerRangeToIntegerSet implements LabeledValueSet<IntegerRange, I
         }
 
         return largestLabel;
+    }
+
+    @SuppressWarnings("Duplicates")
+    @Override
+    public IntegerRange smallestLabel() {
+        Set<IntegerRange> labels = getLabels();
+
+        int minLabelInt = Integer.MAX_VALUE;
+        IntegerRange minLabel = null;
+
+        for(IntegerRange label : labels) {
+            if(label.getValue() < minLabelInt) {
+                minLabel = label;
+                minLabelInt = label.getValue();
+            }
+        }
+
+        return minLabel;
+
     }
 }

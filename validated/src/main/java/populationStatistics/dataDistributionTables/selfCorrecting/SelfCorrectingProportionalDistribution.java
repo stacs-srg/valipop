@@ -59,10 +59,10 @@ public class SelfCorrectingProportionalDistribution implements DataDistribution 
         Integer totalCount = sumOfAC + key.getForNPeople();
 
         LabeledValueSet<IntegerRange, Integer> retValues =
-                targetProportions.get(resolveRowValue(age))
-                        .productOfValuesAndN(totalCount)
-                        .valuesSubtractValues(achievedCountsForAge)
-                        .controlledRoundingMaintainingSum();
+                    targetProportions.get(resolveRowValue(age))
+                            .productOfValuesAndN(totalCount)
+                            .valuesSubtractValues(achievedCountsForAge)
+                            .controlledRoundingMaintainingSum();
 
         return new MultipleDeterminedCount(key, retValues);
     }
