@@ -223,7 +223,6 @@ public class IntegerRangeToDoubleSet implements LabeledValueSet<IntegerRange, Do
                             roundingSet.getLargestLabelOfNoneZeroValueAndLabelLessOrEqualTo(new IntegerRange(roundingSetSum - sumInt));
                 } catch (NoSuchElementException e) {
                     largestReducatbleLabel = this.smallestLabel();
-//                            roundingSet.getLargestLabelOfNoneZeroValueAndLabelLessOrEqualTo(new IntegerRange(roundingSetSum - sumInt + 1));
                 }
                 roundingSet.update(largestReducatbleLabel, roundingSet.getValue(largestReducatbleLabel)-1);
             }

@@ -403,7 +403,8 @@ public class PopulationStatistics implements PopulationComposition, EventRateTab
                         'f'),
                 currentDate);
         double r = aSOBR.getRate(birthOrder);
-        return (r * t) / survivors;
+        return r;
+//        return (r * t) / survivors;
     }
 
     private YearDate getNearestYearInMap(Date year, Map<YearDate, ?> map) {

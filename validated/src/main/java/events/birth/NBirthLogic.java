@@ -50,11 +50,6 @@ public class NBirthLogic implements EventLogic {
 
             Set<Integer> orders = femalesLiving.getBirthOrdersInDivision(divDate, consideredTimePeriod);
 
-            if(age > 14)
-                System.out.print("");
-
-            // Its screwed in here somewhere... try the other code again...
-
             for(Integer order : orders) {
 
                 Collection<IPerson> people = femalesLiving.getByDatePeriodAndBirthOrder(divDate, consideredTimePeriod, order);
@@ -162,15 +157,14 @@ public class NBirthLogic implements EventLogic {
 
             if(eligible(female, config, currentDate)) {
                 female.giveChildren(highestBirthOption.getValue(), currentDate, consideredTimePeriod, population);
-//                f.getLastChild().getParentsPartnership().setFather(BirthLogic.getRandomFather(population, population.getLivingPeople().resolveDateToCorrectDivisionDate(f.getBirthDate()), consideredTimePeriod));
-//                needPartners.add(f);
+                female.getLastChild().getParentsPartnership().setFather(BirthLogic.getRandomFather(population, population.getLivingPeople().resolveDateToCorrectDivisionDate(female.getBirthDate()), consideredTimePeriod));
                 childrenMade += highestBirthOption.getValue();
 
                 if(female.needsPartner(currentDate)) {
                     needPartners.add(female);
                 } else {
                     havePartners.add(female);
-//         Probs needs a null pointer catch the on first entry
+
                     try {
                         continuingPartnedFemalesByChildren.get(female.numberOfChildrenInLatestPartnership()).add(female);
                     } catch (NullPointerException e) {
@@ -198,7 +192,7 @@ public class NBirthLogic implements EventLogic {
             }
         }
 
-//        SeparationLogic.handle(continuingPartnedFemalesByChildren);
+        SeparationLogic.handle(continuingPartnedFemalesByChildren);
 
         requiredBirths.setFufilledCount(motherCountsByMaternities);
         desiredPopulationStatistics.returnAchievedCount(requiredBirths);
