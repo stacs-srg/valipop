@@ -51,7 +51,6 @@ public class EntityFactory {
 
         IPartnership partnership = new Partnership(mother, currentDate);
 
-
         List<IPerson> children = new ArrayList<>(numberOfChildren);
 
         // This ensures twins are born on the same day
