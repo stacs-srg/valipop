@@ -1,7 +1,9 @@
 package populationStatistics.dataDistributionTables.selfCorrecting;
 
+import config.Config;
 import dateModel.DateUtils;
 import dateModel.timeSteps.CompoundTimeUnit;
+import org.apache.commons.math3.distribution.BinomialDistribution;
 import populationStatistics.dataDistributionTables.OneDimensionDataDistribution;
 import dateModel.dateImplementations.YearDate;
 import populationStatistics.dataDistributionTables.determinedCounts.DeterminedCount;
@@ -19,14 +21,17 @@ import java.util.Map;
  */
 public class SelfCorrectingOneDimensionDataDistribution extends OneDimensionDataDistribution {
 
+    private boolean binominalSampling;
+
     private Map<IntegerRange, Double> appliedRates;
     private Map<IntegerRange, Double> appliedCounts;
 
-    public SelfCorrectingOneDimensionDataDistribution(YearDate year, String sourcePopulation, String sourceOrganisation, Map<IntegerRange, Double> tableData) {
+    public SelfCorrectingOneDimensionDataDistribution(YearDate year, String sourcePopulation, String sourceOrganisation, Map<IntegerRange, Double> tableData, boolean binominalSampling) {
         super(year, sourcePopulation, sourceOrganisation, tableData);
 
         this.appliedRates = MapUtils.cloneODM(tableData);
         this.appliedCounts = MapUtils.cloneODM(tableData);
+        this.binominalSampling = binominalSampling;
 
         for (IntegerRange iR : appliedCounts.keySet()) {
             appliedCounts.replace(iR, 0.0);
@@ -42,39 +47,46 @@ public class SelfCorrectingOneDimensionDataDistribution extends OneDimensionData
         // target rate
         double tD = targetRates.get(age);
 
-        // applied count
-        double aC = appliedCounts.get(age);
+        if(binominalSampling) {
+            int determinedCount = new BinomialDistribution(key.getForNPeople(), tD).sample();
+            return new SingleDeterminedCount(key, determinedCount);
 
-        // if no correction data - i.e. first call to this method
-        if(aC == 0) {
-            double rateToApply = calcSubRateFromYearRate(tD, key.getConsideredTimePeriod());
+        } else {
+
+            // applied count
+            double aC = appliedCounts.get(age);
+
+            // if no correction data - i.e. first call to this method
+            if (aC == 0) {
+                double rateToApply = calcSubRateFromYearRate(tD, key.getConsideredTimePeriod());
+                return resolveRateToCount(key, rateToApply);
+            }
+
+            // to apply to
+            int tAT = key.getForNPeople();
+
+            // applied rate
+            double aD = appliedRates.get(age);
+
+            // if no N value given in StatsKey
+            if (tAT == 0) {
+                double rateToApply = calcSubRateFromYearRate(tD, key.getConsideredTimePeriod());
+                return resolveRateToCount(key, rateToApply);
+            }
+
+            // Correction rate
+            double cD = (tD * (aC + tAT) - (aD * aC)) / tAT;
+
+            // Checks that rate falls in bounds
+            if (cD < 0) {
+                cD = 0;
+            } else if (cD > 1) {
+                cD = 1;
+            }
+
+            double rateToApply = calcSubRateFromYearRate(cD, key.getConsideredTimePeriod());
             return resolveRateToCount(key, rateToApply);
         }
-
-        // to apply to
-        int tAT = key.getForNPeople();
-
-        // applied rate
-        double aD = appliedRates.get(age);
-
-        // if no N value given in StatsKey
-        if(tAT == 0) {
-            double rateToApply = calcSubRateFromYearRate(tD, key.getConsideredTimePeriod());
-            return resolveRateToCount(key, rateToApply);
-        }
-
-        // Correction rate
-        double cD = ( tD * ( aC + tAT ) - ( aD * aC ) ) / tAT;
-
-        // Checks that rate falls in bounds
-        if(cD < 0) {
-            cD = 0;
-        } else if(cD > 1) {
-            cD = 1;
-        }
-
-        double rateToApply = calcSubRateFromYearRate(cD, key.getConsideredTimePeriod());
-        return resolveRateToCount(key, rateToApply);
     }
 
     public void returnAchievedCount(DeterminedCount<Integer> achievedCount) {

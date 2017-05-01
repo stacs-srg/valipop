@@ -163,9 +163,15 @@ public class IntegerRangeToDoubleSet implements LabeledValueSet<IntegerRange, Do
                 roundingSet.update(labelOfGreatestRemainder, roundingSet.getValue(labelOfGreatestRemainder)+1);
             }
 
+
             if(roundingSetSum > sumInt) {
-                IntegerRange largestReducatbleLabel =
-                        roundingSet.getLargestLabelOfNoneZeroValueAndLabelLessOrEqualTo(new IntegerRange(roundingSetSum - sumInt));
+                IntegerRange largestReducatbleLabel;
+                try {
+                    largestReducatbleLabel =
+                            roundingSet.getLargestLabelOfNoneZeroValueAndLabelLessOrEqualTo(new IntegerRange(roundingSetSum - sumInt));
+                } catch (NoSuchElementException e) {
+                    largestReducatbleLabel = this.smallestLabel();
+                }
                 roundingSet.update(largestReducatbleLabel, roundingSet.getValue(largestReducatbleLabel)-1);
             }
 

@@ -59,7 +59,7 @@ public abstract class DesiredPopulationStatisticsFactory {
 
         for (Path path : paths) {
             // read in each file
-            SelfCorrectingOneDimensionDataDistribution tempData = InputFileReader.readInSC1DDataFile(path);
+            SelfCorrectingOneDimensionDataDistribution tempData = InputFileReader.readInSC1DDataFile(path, config);
             data.put(tempData.getYear(), tempData);
         }
         return insertDistributionsToMeetInputWidth(config, data);
@@ -84,7 +84,7 @@ public abstract class DesiredPopulationStatisticsFactory {
 
         for (Path path : paths) {
             // read in each file
-            SelfCorrectingTwoDimensionDataDistribution tempData = InputFileReader.readInSC2DDataFile(path);
+            SelfCorrectingTwoDimensionDataDistribution tempData = InputFileReader.readInSC2DDataFile(path, config);
             data.put(tempData.getYear(), tempData);
         }
         return insertDistributionsToMeetInputWidth(config, data);

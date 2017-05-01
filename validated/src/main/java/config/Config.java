@@ -59,6 +59,8 @@ public class Config {
     private double maxProportionBirthsDueToInfidelity = 0.01;
     private double maleProportionOfBirths = 0.5; // i.e. if 0.52 then in every 100 births, 52 will be male and 48 female
 
+    private boolean binominalSampling = false;
+
     private final String runPurpose;
     private final String startTime;
 
@@ -350,5 +352,9 @@ public class Config {
 
     public double getMaxProportionBirthsDueToInfidelity() {
         return maxProportionBirthsDueToInfidelity;
+    }
+
+    public boolean binominalSampling() {
+        return binominalSampling;
     }
 }
