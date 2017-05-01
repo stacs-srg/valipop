@@ -34,7 +34,7 @@ public class SelfCorrectionTests {
 
         SelfCorrectingOneDimensionDataDistribution sc1DDD =
                 new SelfCorrectingOneDimensionDataDistribution(new YearDate(0),"test",
-                                                                "test", data);
+                                                                "test", data, false);
 
         return sc1DDD;
     }

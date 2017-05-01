@@ -1,6 +1,7 @@
 package utils.fileUtils;
 
 
+import config.Config;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import populationStatistics.dataDistributionTables.OneDimensionDataDistribution;
@@ -131,7 +132,7 @@ public class InputFileReader {
         return new TwoDimensionDataDistribution(year, sourcePopulation, sourceOrganisation, data);
     }
 
-    public static SelfCorrectingTwoDimensionDataDistribution readInSC2DDataFile(Path path) throws IOException, InvalidInputFileException {
+    public static SelfCorrectingTwoDimensionDataDistribution readInSC2DDataFile(Path path, Config config) throws IOException, InvalidInputFileException {
 
         ArrayList<String> lines = new ArrayList<String>(getAllLines(path));
 
@@ -194,7 +195,7 @@ public class InputFileReader {
                             }
                         }
 
-                        data.put(rowLabel, new SelfCorrectingOneDimensionDataDistribution(year, sourcePopulation, sourceOrganisation, rowMap));
+                        data.put(rowLabel, new SelfCorrectingOneDimensionDataDistribution(year, sourcePopulation, sourceOrganisation, rowMap, config.binominalSampling()));
 
                     }
                     break;
@@ -263,9 +264,9 @@ public class InputFileReader {
         return new OneDimensionDataDistribution(year, sourcePopulation, sourceOrganisation, data);
     }
 
-    public static SelfCorrectingOneDimensionDataDistribution readInSC1DDataFile(Path path) throws IOException, InvalidInputFileException {
+    public static SelfCorrectingOneDimensionDataDistribution readInSC1DDataFile(Path path, Config config) throws IOException, InvalidInputFileException {
         OneDimensionDataDistribution d = readIn1DDataFile(path);
-        return new SelfCorrectingOneDimensionDataDistribution(d.getYear(), d.getSourcePopulation(), d.getSourceOrganisation(), d.cloneData());
+        return new SelfCorrectingOneDimensionDataDistribution(d.getYear(), d.getSourcePopulation(), d.getSourceOrganisation(), d.cloneData(), config.binominalSampling());
     }
 
     public static SelfCorrectingProportionalDistribution readInAgeAndProportionalStatsInput(Path path) throws IOException, InvalidInputFileException {

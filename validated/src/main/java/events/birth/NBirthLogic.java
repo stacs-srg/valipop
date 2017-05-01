@@ -50,6 +50,13 @@ public class NBirthLogic implements EventLogic {
 
             Set<Integer> orders = femalesLiving.getBirthOrdersInDivision(divDate, consideredTimePeriod);
 
+//            int totalFromDiv = 0;
+//
+//            for(Integer order : orders) {
+//                Collection<IPerson> people = femalesLiving.getByDatePeriodAndBirthOrder(divDate, consideredTimePeriod, order);
+//                totalFromDiv = people.size();
+//            }
+
             for(Integer order : orders) {
 
                 Collection<IPerson> people = femalesLiving.getByDatePeriodAndBirthOrder(divDate, consideredTimePeriod, order);
