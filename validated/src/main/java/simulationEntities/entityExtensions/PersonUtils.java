@@ -52,6 +52,8 @@ public interface PersonUtils {
 
     void giveChildren(int numberOfChildren, AdvancableDate onDate, CompoundTimeUnit birthTimeStep, Population population);
 
+    void giveChildrenWithinLastPartnership(int numberOfChildren, AdvancableDate onDate, CompoundTimeUnit birthTimeStep, Population population);
+
     boolean toSeparate();
 
     void willSeparate(boolean b);

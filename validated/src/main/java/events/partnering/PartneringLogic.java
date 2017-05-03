@@ -5,6 +5,7 @@ import dateModel.dateImplementations.AdvancableDate;
 import dateModel.dateImplementations.YearDate;
 import dateModel.timeSteps.CompoundTimeUnit;
 import dateModel.timeSteps.TimeUnit;
+import events.SeparationLogic;
 import populationStatistics.dataDistributionTables.determinedCounts.MultipleDeterminedCount;
 import populationStatistics.dataDistributionTables.statsKeys.PartneringStatsKey;
 import populationStatistics.recording.PopulationStatistics;
@@ -191,9 +192,26 @@ public class PartneringLogic {
                 throw new InsufficientNumberOfPeopleException("No man to partner this woman to...");
             }
 
+            Map<Integer, ArrayList<IPerson>> partneredFemalesByChildren = new HashMap<>();
+
             for(ProposedPartnership pp : proposedPartnerships) {
-                pp.getFemale().getLastChild().getParentsPartnership().setFather(pp.getMale());
+                IPerson mother = pp.getFemale();
+                IPartnership partnershipNeedingFather = mother.getLastChild().getParentsPartnership();
+
+                partnershipNeedingFather.setFather(pp.getMale());
+                int numChildrenInPartnership = partnershipNeedingFather.getChildren().size();
+
+                try {
+                    partneredFemalesByChildren.get(numChildrenInPartnership).add(mother);
+                } catch (NullPointerException e) {
+                    partneredFemalesByChildren.put(numChildrenInPartnership, new ArrayList<>(Collections.singleton(mother)));
+                }
+
             }
+
+
+
+            SeparationLogic.handle(partneredFemalesByChildren);
 
         }
     }
@@ -316,7 +334,7 @@ public class PartneringLogic {
                 //  Mother's sister
                 // (Mother's father's children)
                 if(man
-                        .getParentsPartnership().getMalePartner()
+                        .getParentsPartnership().getFemalePartner()
                         .getParentsPartnership().getMalePartner().getAllChildren().contains(woman))
                     return false;
 

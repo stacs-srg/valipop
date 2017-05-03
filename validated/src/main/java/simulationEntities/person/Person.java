@@ -23,6 +23,7 @@ import simulationEntities.population.dataStructure.exceptions.PersonNotFoundExce
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -454,18 +455,41 @@ public class Person implements IPerson {
         } catch (PersonNotFoundException e) {
             e.printStackTrace();
         }
-//        if(!toSeparate && !isWidow()) {
-//            // Not separating from current partner, therefore add children to last existing partnership
+
         partnerships.add(EntityFactory.formNewChildrenInPartnership(numberOfChildren, this, onDate.getMonthDate(), birthTimeStep, population));
-//        } else {
-//            // New partner to be found - thus make children in a new partnership
-//
-//
-//        }
 
         population.getLivingPeople().addPerson(this);
 
 
+
+    }
+
+    @Override
+    public void giveChildrenWithinLastPartnership(int numberOfChildren, AdvancableDate onDate, CompoundTimeUnit birthTimeStep, Population population) {
+
+        try {
+            population.getLivingPeople().removePerson(this);
+        } catch (PersonNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        IPartnership last = getLastChild().getParentsPartnership();
+
+        Date birthDate = null;
+
+        for(int c = 0; c < numberOfChildren; c++) {
+            if(birthDate == null) {
+                IPerson child = EntityFactory.makePerson(onDate, birthTimeStep, last, population);
+                last.addChildren(Collections.singleton(child));
+                birthDate = child.getBirthDate();
+            } else {
+                IPerson child = EntityFactory.makePerson(onDate, last, population);
+                last.addChildren(Collections.singleton(child));
+            }
+
+        }
+
+        population.getLivingPeople().addPerson(this);
 
     }
 
@@ -486,16 +510,57 @@ public class Person implements IPerson {
 
     @Override
     public boolean needsPartner(AdvancableDate currentDate) {
-        return toSeparate() || lastPartnerDied(currentDate);
+        return partnerships.size() == 0 || toSeparate() || lastPartnerDied(currentDate);
     }
 
     private boolean lastPartnerDied(Date currentDate) {
-        return !getLastChild().getParentsPartnership().getMalePartner().aliveOnDate(currentDate);
+        try {
+            return !getLastChild().getParentsPartnership().getMalePartner().aliveOnDate(currentDate);
+        } catch (NullPointerException e) {
+            return true;
+        }
     }
 
     @Override
     public int numberOfChildrenInLatestPartnership() {
         return getLastChild().getParentsPartnership().getChildren().size();
+    }
+
+    @Override
+    public Collection<IPerson> getAllChildren() {
+        Collection<IPerson> children = new ArrayList<>();
+
+        for(IPartnership part : getPartnerships()) {
+            children.addAll(part.getChildren());
+        }
+
+        return children;
+    }
+
+    @Override
+    public Collection<IPerson> getAllGrandChildren() {
+        Collection<IPerson> grandChildren = new ArrayList<>();
+
+        Collection<IPerson> children = getAllChildren();
+
+        for(IPerson c : children) {
+            grandChildren.addAll(c.getAllChildren());
+        }
+
+        return grandChildren;
+    }
+
+    @Override
+    public Collection<IPerson> getAllGreatGrandChildren() {
+        Collection<IPerson> greatGrandChildren = new ArrayList<>();
+
+        Collection<IPerson> grandChildren = getAllGrandChildren();
+
+        for (IPerson gC: grandChildren) {
+            greatGrandChildren.addAll(gC.getAllChildren());
+        }
+
+        return greatGrandChildren;
     }
 
 }

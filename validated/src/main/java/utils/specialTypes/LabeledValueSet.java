@@ -60,7 +60,7 @@ public interface LabeledValueSet<L,V> {
 
     int countNegativeValues();
 
-    LabeledValueSet<L,Double> zeroNegativeValues();
+    LabeledValueSet<L,V> zeroNegativeValues();
 
     int countPositiveValues();
 }

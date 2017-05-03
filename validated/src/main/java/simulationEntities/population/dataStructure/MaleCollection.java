@@ -73,7 +73,7 @@ public class MaleCollection extends PersonCollection {
         for(int i = 0; i < divisionsInPeriod; i++) {
 
             try {
-                people.addAll(byYear.get(firstDate.getMonthDate()));
+                people.addAll(byYear.get(divisionDate));
             } catch (NullPointerException e) {
                 // No need to do anything - we allow the method to return an empty list as no one was born in the year
             }
