@@ -9,7 +9,7 @@ import dateModel.timeSteps.CompoundTimeUnit;
 import events.EventLogic;
 import events.SeparationLogic;
 import events.init.InitLogic;
-import populationStatistics.dataDistributionTables.determinedCounts.DeterminedCount;
+import events.partnering.PartneringLogic;
 import populationStatistics.dataDistributionTables.determinedCounts.MultipleDeterminedCount;
 import populationStatistics.dataDistributionTables.determinedCounts.SingleDeterminedCount;
 import populationStatistics.dataDistributionTables.statsKeys.BirthStatsKey;
@@ -46,7 +46,7 @@ public class NBirthLogic implements EventLogic {
         while(divDates.hasNext() && DateUtils.dateBeforeOrEqual(divDate = divDates.next(), currentDate)) {
 
             int age = DateUtils.differenceInYears(divDate.advanceTime(consideredTimePeriod), currentDate).getCount();
-//            Collection<IPerson> needingPartners = new ArrayList<>();
+            Collection<IPerson> needingPartners = new ArrayList<>();
 
             Set<Integer> orders = femalesLiving.getBirthOrdersInDivision(divDate, consideredTimePeriod);
 
@@ -72,7 +72,7 @@ public class NBirthLogic implements EventLogic {
                 MotherSet mothers = selectMothers(config, people, numberOfChildren, desiredPopulationStatistics,
                         currentDate, consideredTimePeriod, population);
 
-//                needingPartners.addAll(mothers.getNeedPartners());
+                needingPartners.addAll(mothers.getNeedPartners());
 
                 int childrenMade = mothers.getNewlyProducedChildren();
 
@@ -84,7 +84,7 @@ public class NBirthLogic implements EventLogic {
 
             }
             // Partner females of age who don't have partners
-//            PartneringLogic.handle(needingPartners);
+            PartneringLogic.handle(needingPartners);
 
         }
 

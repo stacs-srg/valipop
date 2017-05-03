@@ -8,6 +8,7 @@ import events.EventType;
 import events.UnsupportedEventType;
 import populationStatistics.dataDistributionTables.OneDimensionDataDistribution;
 import dateModel.Date;
+import populationStatistics.dataDistributionTables.selfCorrecting.SelfCorrectingProportionalDistribution;
 import populationStatistics.dataDistributionTables.selfCorrecting.SelfCorrectingTwoDimensionDataDistribution;
 import populationStatistics.validation.kaplanMeier.utils.FailureTimeRow;
 import simulationEntities.population.IPopulation;
@@ -57,9 +58,9 @@ public interface StatisticalTables {
 
     OneDimensionDataDistribution getSeparationData(AdvancableDate startYear, Date endYear, int childCap);
 
-    OneDimensionDataDistribution getPartneringData(Date startYear, Date endYear, IntegerRange femaleAgeRange, Set<IntegerRange> maleAgeBrackets);
-
-    SelfCorrectingTwoDimensionDataDistribution getPartneringData(Date startYear, Date endYear);
+//    OneDimensionDataDistribution getPartneringData(Date startYear, Date endYear, IntegerRange femaleAgeRange, Set<IntegerRange> maleAgeBrackets);
+//
+//    SelfCorrectingProportionalDistribution getPartneringData(Date startYear, Date endYear);
 
 
 }

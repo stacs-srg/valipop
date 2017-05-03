@@ -4,17 +4,21 @@ import config.Config;
 import dateModel.DateUtils;
 import dateModel.timeSteps.CompoundTimeUnit;
 import org.apache.commons.math3.distribution.BinomialDistribution;
+import org.apache.commons.math3.random.JDKRandomGenerator;
+import org.apache.commons.math3.random.RandomGenerator;
 import populationStatistics.dataDistributionTables.OneDimensionDataDistribution;
 import dateModel.dateImplementations.YearDate;
 import populationStatistics.dataDistributionTables.determinedCounts.DeterminedCount;
 import populationStatistics.dataDistributionTables.determinedCounts.SingleDeterminedCount;
 import populationStatistics.dataDistributionTables.statsKeys.BirthStatsKey;
+
 import utils.MapUtils;
 import populationStatistics.dataDistributionTables.statsKeys.StatsKey;
 import utils.specialTypes.integerRange.IntegerRange;
 
 
 import java.util.Map;
+import java.util.Random;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
@@ -22,6 +26,7 @@ import java.util.Map;
 public class SelfCorrectingOneDimensionDataDistribution extends OneDimensionDataDistribution {
 
     private boolean binominalSampling;
+    private RandomGenerator rng;
 
     private Map<IntegerRange, Double> appliedRates;
     private Map<IntegerRange, Double> appliedCounts;
@@ -38,6 +43,8 @@ public class SelfCorrectingOneDimensionDataDistribution extends OneDimensionData
             appliedRates.replace(iR, 0.0);
         }
 
+        rng = new JDKRandomGenerator();
+
     }
 
     public SingleDeterminedCount determineCount(StatsKey key) {
@@ -47,11 +54,11 @@ public class SelfCorrectingOneDimensionDataDistribution extends OneDimensionData
         // target rate
         double tD = targetRates.get(age);
 
-        if(binominalSampling) {
-            int determinedCount = new BinomialDistribution(key.getForNPeople(), tD).sample();
-            return new SingleDeterminedCount(key, determinedCount);
-
-        } else {
+//        if(binominalSampling) {
+//            int determinedCount = new BinomialDistribution(rng, key.getForNPeople(), tD).sample();
+//            return new SingleDeterminedCount(key, determinedCount);
+//
+//        } else {
 
             // applied count
             double aC = appliedCounts.get(age);
@@ -86,7 +93,7 @@ public class SelfCorrectingOneDimensionDataDistribution extends OneDimensionData
 
             double rateToApply = calcSubRateFromYearRate(cD, key.getConsideredTimePeriod());
             return resolveRateToCount(key, rateToApply);
-        }
+//        }
     }
 
     public void returnAchievedCount(DeterminedCount<Integer> achievedCount) {
@@ -149,7 +156,13 @@ public class SelfCorrectingOneDimensionDataDistribution extends OneDimensionData
 
 
     private SingleDeterminedCount resolveRateToCount(StatsKey key, double rate) {
-        int determinedCount = (int) Math.round(rate * key.getForNPeople());
+
+        int determinedCount;
+        if(binominalSampling) {
+            determinedCount = new BinomialDistribution(rng, key.getForNPeople(), rate).sample();
+        } else {
+            determinedCount = (int) Math.round(rate * key.getForNPeople());
+        }
         return new SingleDeterminedCount(key, determinedCount);
     }
 

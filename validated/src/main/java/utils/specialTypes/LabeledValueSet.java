@@ -55,4 +55,12 @@ public interface LabeledValueSet<L,V> {
     L getLargestLabelOfNoneZeroValue();
 
     L smallestLabel();
+
+    LabeledValueSet<L,Double> valuesAddNWhereCorrespondingLabelNegativeInLVS(double n, LabeledValueSet<L, ? extends Number> lvs);
+
+    int countNegativeValues();
+
+    LabeledValueSet<L,Double> zeroNegativeValues();
+
+    int countPositiveValues();
 }

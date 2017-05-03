@@ -288,80 +288,80 @@ public class ComparativeAnalysis implements IComparativeAnalysis {
 
     }
 
-    private void comparePartnering(StatisticalTables desired, StatisticalTables generated, Config config) {
-
-        ArrayList<YearDate> mapKeys = new ArrayList<>(desired.getDataYearsInMap(EventType.PARTNERING));
-
-        // work out the date bounds of map keys
-        Collections.sort(mapKeys);
-
-        // for each bound (i.e. each input table)
-        for(int i = 0; i < mapKeys.size(); i++) {
-
-            Date start;
-            Date end;
-
-            if(i == 0) {
-                start = startDate;
-
-                while(DateUtils.dateBeforeOrEqual(mapKeys.get(i + 1), startDate)) {
-                    i++;
-                }
-
-            } else {
-
-                AdvancableDate prev = mapKeys.get(i-1);
-                Date current = mapKeys.get(i);
-
-                start = prev.advanceTime(DateUtils.differenceInMonths(prev, current).getCount() / 2, TimeUnit.MONTH);
-
-            }
-
-            if(i == mapKeys.size() - 1) {
-                end = endDate;
-            } else {
-
-                Date next = mapKeys.get(i+1);
-                AdvancableDate current = mapKeys.get(i);
-
-                end = current.advanceTime(DateUtils.differenceInMonths(current, next).getCount() / 2, TimeUnit.MONTH);
-
-            }
-
-            ArrayList<IntegerRange> femaleAgeRanges = new ArrayList<>(desired.getPartneringData(start, end).getRowKeys());
-
-            Collections.sort(femaleAgeRanges);
-
-            for(int a = 0; a < femaleAgeRanges.size(); a++) {
-
-                IntegerRange ageRange = femaleAgeRanges.get(a);
-
-                OneDimensionDataDistribution desiredPartnering = desired.getPartneringData(start, end, ageRange, null);
-                OneDimensionDataDistribution generatedPartnering = generated.getPartneringData(start, end, ageRange, desiredPartnering.getRate().keySet());
-
-//                System.out.println(start.toString());
-//                System.out.println("FaR = " + ageRange.toString());
+//    private void comparePartnering(StatisticalTables desired, StatisticalTables generated, Config config) {
 //
-//                for(IntegerRange iR : generatedPartnering.getRate().keySet()) {
-//                    System.out.println(iR.toString());
+//        ArrayList<YearDate> mapKeys = new ArrayList<>(desired.getDataYearsInMap(EventType.PARTNERING));
+//
+//        // work out the date bounds of map keys
+//        Collections.sort(mapKeys);
+//
+//        // for each bound (i.e. each input table)
+//        for(int i = 0; i < mapKeys.size(); i++) {
+//
+//            Date start;
+//            Date end;
+//
+//            if(i == 0) {
+//                start = startDate;
+//
+//                while(DateUtils.dateBeforeOrEqual(mapKeys.get(i + 1), startDate)) {
+//                    i++;
 //                }
-
-
-//                for(int age = ageRange.getMin(); age <= ageRange.getMax(); age ++) {
-//                    generated.getPartneringData(start, end).getRate(age);
-//                }
-//                generated.getPartneringData(start, end);
-
-                Collection<LabelValueDataRow> table = TableTranformationUtils.transform1DDDToCollectionOfLabelValueDataRow(desiredPartnering, "desired");
-                table.addAll(TableTranformationUtils.transform1DDDToCollectionOfLabelValueDataRow(generatedPartnering, "generated"));
-                FileUtils.outputDataRowsToStream("label value group", table, makeNamedStream(start, "_" + ageRange.toString(), EventType.PARTNERING, config));
-
-            }
-
-        }
-
-
-    }
+//
+//            } else {
+//
+//                AdvancableDate prev = mapKeys.get(i-1);
+//                Date current = mapKeys.get(i);
+//
+//                start = prev.advanceTime(DateUtils.differenceInMonths(prev, current).getCount() / 2, TimeUnit.MONTH);
+//
+//            }
+//
+//            if(i == mapKeys.size() - 1) {
+//                end = endDate;
+//            } else {
+//
+//                Date next = mapKeys.get(i+1);
+//                AdvancableDate current = mapKeys.get(i);
+//
+//                end = current.advanceTime(DateUtils.differenceInMonths(current, next).getCount() / 2, TimeUnit.MONTH);
+//
+//            }
+//
+//            ArrayList<IntegerRange> femaleAgeRanges = new ArrayList<>(desired.getPartneringData(start, end).getRowKeys());
+//
+//            Collections.sort(femaleAgeRanges);
+//
+//            for(int a = 0; a < femaleAgeRanges.size(); a++) {
+//
+//                IntegerRange ageRange = femaleAgeRanges.get(a);
+//
+//                OneDimensionDataDistribution desiredPartnering = desired.getPartneringData(start, end, ageRange, null);
+//                OneDimensionDataDistribution generatedPartnering = generated.getPartneringData(start, end, ageRange, desiredPartnering.getRate().keySet());
+//
+////                System.out.println(start.toString());
+////                System.out.println("FaR = " + ageRange.toString());
+////
+////                for(IntegerRange iR : generatedPartnering.getRate().keySet()) {
+////                    System.out.println(iR.toString());
+////                }
+//
+//
+////                for(int age = ageRange.getMin(); age <= ageRange.getMax(); age ++) {
+////                    generated.getPartneringData(start, end).getRate(age);
+////                }
+////                generated.getPartneringData(start, end);
+//
+//                Collection<LabelValueDataRow> table = TableTranformationUtils.transform1DDDToCollectionOfLabelValueDataRow(desiredPartnering, "desired");
+//                table.addAll(TableTranformationUtils.transform1DDDToCollectionOfLabelValueDataRow(generatedPartnering, "generated"));
+//                FileUtils.outputDataRowsToStream("label value group", table, makeNamedStream(start, "_" + ageRange.toString(), EventType.PARTNERING, config));
+//
+//            }
+//
+//        }
+//
+//
+//    }
 
     private void compareSeparation(StatisticalTables desired, StatisticalTables generated, Config config) {
 
