@@ -74,6 +74,8 @@ public class EntityFactory {
         return partnership;
     }
 
+
+
     public static IPerson formOrphanChild(MonthDate currentDate, CompoundTimeUnit birthTimeStep, Population population) {
         return makePerson(currentDate, birthTimeStep, null, population);
     }

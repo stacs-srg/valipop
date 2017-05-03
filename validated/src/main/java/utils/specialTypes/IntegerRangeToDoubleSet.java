@@ -407,5 +407,66 @@ public class IntegerRangeToDoubleSet implements LabeledValueSet<IntegerRange, Do
         return minLabel;
     }
 
+    @Override
+    public LabeledValueSet<IntegerRange, Double> valuesAddNWhereCorrespondingLabelNegativeInLVS(double n, LabeledValueSet<IntegerRange, ? extends Number> lvs) {
+        ArrayList<IntegerRange> labels = new ArrayList<>(getLabels());
+        ArrayList<Double> newValues = new ArrayList<>();
+
+
+        for(IntegerRange label : labels) {
+            if((Double) lvs.get(label) < 0) {
+                newValues.add(getValue(label) + n);
+            } else {
+                newValues.add(getValue(label));
+            }
+        }
+
+
+        return new IntegerRangeToDoubleSet(labels, newValues);
+    }
+
+    @Override
+    public int countNegativeValues() {
+        int count = 0;
+
+        for(IntegerRange label : getLabels()) {
+            if(getValue(label) < 0) {
+                count++;
+            }
+        }
+
+        return count;
+    }
+
+    @Override
+    public LabeledValueSet<IntegerRange, Double> zeroNegativeValues() {
+        ArrayList<IntegerRange> labels = new ArrayList<>(getLabels());
+        ArrayList<Double> newValues = new ArrayList<>();
+
+
+        for(IntegerRange label : labels) {
+            if(getValue(label) < 0) {
+                newValues.add(0.0);
+            } else {
+                newValues.add(getValue(label));
+            }
+        }
+
+        return new IntegerRangeToDoubleSet(labels, newValues);
+    }
+
+    @Override
+    public int countPositiveValues() {
+        int count = 0;
+
+        for(IntegerRange label : getLabels()) {
+            if(getValue(label) > 0) {
+                count++;
+            }
+        }
+
+        return count;
+    }
+
 
 }

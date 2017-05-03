@@ -84,7 +84,7 @@ public class NBirthLogic implements EventLogic {
 
             }
             // Partner females of age who don't have partners
-            PartneringLogic.handle(needingPartners);
+            PartneringLogic.handle(needingPartners, desiredPopulationStatistics, currentDate, consideredTimePeriod, population);
 
         }
 
@@ -115,7 +115,7 @@ public class NBirthLogic implements EventLogic {
 
         int numberOfMothers = requiredBirths.getDeterminedCount().productOfLabelsAndValues().getSumOfValues();
 
-        Map<Integer, ArrayList<IPerson>> continuingPartnedFemalesByChildren = new HashMap<>();
+        Map<Integer, ArrayList<IPerson>> continuingPartneredFemalesByChildren = new HashMap<>();
 
         LabeledValueSet<IntegerRange, Integer> motherCountsByMaternities =
                 new IntegerRangeToIntegerSet(requiredBirths.getDeterminedCount().getLabels(), 0);
@@ -163,19 +163,22 @@ public class NBirthLogic implements EventLogic {
             }
 
             if(eligible(female, config, currentDate)) {
-                female.giveChildren(highestBirthOption.getValue(), currentDate, consideredTimePeriod, population);
-                female.getLastChild().getParentsPartnership().setFather(BirthLogic.getRandomFather(population, population.getLivingPeople().resolveDateToCorrectDivisionDate(female.getBirthDate()), consideredTimePeriod));
+
+//                female.getLastChild().getParentsPartnership().setFather(BirthLogic.getRandomFather(population, population.getLivingPeople().resolveDateToCorrectDivisionDate(female.getBirthDate()), consideredTimePeriod));
                 childrenMade += highestBirthOption.getValue();
 
                 if(female.needsPartner(currentDate)) {
+                    female.giveChildren(highestBirthOption.getValue(), currentDate, consideredTimePeriod, population);
                     needPartners.add(female);
                 } else {
+
+                    female.giveChildrenWithinLastPartnership(highestBirthOption.getValue(), currentDate, consideredTimePeriod, population);
                     havePartners.add(female);
 
                     try {
-                        continuingPartnedFemalesByChildren.get(female.numberOfChildrenInLatestPartnership()).add(female);
+                        continuingPartneredFemalesByChildren.get(female.numberOfChildrenInLatestPartnership()).add(female);
                     } catch (NullPointerException e) {
-                        continuingPartnedFemalesByChildren.put(female.numberOfChildrenInLatestPartnership(), new ArrayList<>(Collections.singleton(female)));
+                        continuingPartneredFemalesByChildren.put(female.numberOfChildrenInLatestPartnership(), new ArrayList<>(Collections.singleton(female)));
                     }
                 }
 
@@ -199,7 +202,7 @@ public class NBirthLogic implements EventLogic {
             }
         }
 
-        SeparationLogic.handle(continuingPartnedFemalesByChildren);
+        SeparationLogic.handle(continuingPartneredFemalesByChildren);
 
         requiredBirths.setFufilledCount(motherCountsByMaternities);
         desiredPopulationStatistics.returnAchievedCount(requiredBirths);

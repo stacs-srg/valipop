@@ -11,5 +11,10 @@ import java.util.Map;
 public class SeparationLogic {
     public static void handle(Map<Integer, ArrayList<IPerson>> continuingPartnedFemalesByChildren) {
 
+        for(Integer i : continuingPartnedFemalesByChildren.keySet()) {
+            for(IPerson p : continuingPartnedFemalesByChildren.get(i)) {
+                p.willSeparate(false);
+            }
+        }
     }
 }
