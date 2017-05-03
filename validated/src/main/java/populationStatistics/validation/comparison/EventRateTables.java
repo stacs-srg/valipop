@@ -3,6 +3,7 @@ package populationStatistics.validation.comparison;
 import dateModel.Date;
 import populationStatistics.dataDistributionTables.OneDimensionDataDistribution;
 import populationStatistics.dataDistributionTables.selfCorrecting.ProportionalDistributionAdapter;
+import populationStatistics.dataDistributionTables.selfCorrecting.SelfCorrectingProportionalDistribution;
 import populationStatistics.dataDistributionTables.selfCorrecting.SelfCorrectingTwoDimensionDataDistribution;
 
 /**
@@ -47,7 +48,7 @@ public interface EventRateTables {
      * @param year the year
      * @return the marriage rates
      */
-    SelfCorrectingTwoDimensionDataDistribution getPartneringRates(Date year);
+    SelfCorrectingProportionalDistribution getPartneringRates(Date year);
 
     /**
      * Gets birth rates by order for births in the given year defined by the age and number of previous children born to

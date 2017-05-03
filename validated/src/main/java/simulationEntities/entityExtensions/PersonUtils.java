@@ -13,6 +13,8 @@ import simulationEntities.population.dataStructure.PeopleCollection;
 import simulationEntities.population.dataStructure.Population;
 import utils.specialTypes.integerRange.IntegerRange;
 
+import java.util.Collection;
+
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
@@ -59,4 +61,10 @@ public interface PersonUtils {
     boolean needsPartner(AdvancableDate currentDate);
 
     int numberOfChildrenInLatestPartnership();
+
+    Collection<IPerson> getAllChildren();
+
+    Collection<IPerson> getAllGrandChildren();
+
+    Collection<IPerson> getAllGreatGrandChildren();
 }
