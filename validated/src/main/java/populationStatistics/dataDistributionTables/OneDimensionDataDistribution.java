@@ -12,6 +12,7 @@ import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
@@ -167,4 +168,7 @@ public class OneDimensionDataDistribution implements DataDistribution {
 
     }
 
+    public Set<IntegerRange> getLabels() {
+        return targetRates.keySet();
+    }
 }

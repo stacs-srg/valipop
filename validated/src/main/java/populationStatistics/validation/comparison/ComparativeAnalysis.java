@@ -328,7 +328,7 @@ public class ComparativeAnalysis implements IComparativeAnalysis {
 //
 //            }
 //
-//            ArrayList<IntegerRange> femaleAgeRanges = new ArrayList<>(desired.getPartneringData(start, end).getRowKeys());
+//            ArrayList<IntegerRange> femaleAgeRanges = new ArrayList<>(desired.getPartneringData(start, end).getRowLabels());
 //
 //            Collections.sort(femaleAgeRanges);
 //

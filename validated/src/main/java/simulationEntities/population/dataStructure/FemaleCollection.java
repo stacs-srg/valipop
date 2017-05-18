@@ -15,6 +15,7 @@ import simulationEntities.person.IPerson;
 import simulationEntities.population.dataStructure.exceptions.InsufficientNumberOfPeopleException;
 import simulationEntities.population.dataStructure.exceptions.PersonNotFoundException;
 import utils.MapUtils;
+import utils.specialTypes.integerRange.IntegerRange;
 
 import java.util.*;
 
@@ -145,6 +146,23 @@ public class FemaleCollection extends PersonCollection {
 
         return people;
 
+    }
+
+    public Collection<IPerson> getByDatePeriodAndBirthOrder(AdvancableDate date, CompoundTimeUnit period, IntegerRange birthOrder) {
+
+        Integer highestBirthOrder = getHighestBirthOrder(date, period);
+
+        if(!birthOrder.isPlus()) {
+            highestBirthOrder = birthOrder.getMax();
+        }
+
+        Collection<IPerson> people = new ArrayList<>();
+
+        for(Integer i = birthOrder.getMin(); i <= highestBirthOrder; i++) {
+            people.addAll(getByDatePeriodAndBirthOrder(date, period, i));
+        }
+
+        return people;
     }
 
     /**
