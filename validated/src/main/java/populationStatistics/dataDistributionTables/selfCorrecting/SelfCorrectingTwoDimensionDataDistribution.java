@@ -186,7 +186,11 @@ public class SelfCorrectingTwoDimensionDataDistribution implements DataDistribut
     }
 
 
-    public Set<IntegerRange> getRowKeys() {
+    public Set<IntegerRange> getRowLabels() {
         return data.keySet();
+    }
+
+    public Set<IntegerRange> getColumnLabels () {
+        return data.get(resolveRowValue(getSmallestLabel())).getLabels();
     }
 }

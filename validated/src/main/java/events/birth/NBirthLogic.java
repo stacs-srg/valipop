@@ -49,6 +49,9 @@ public class NBirthLogic implements EventLogic {
             Collection<IPerson> needingPartners = new ArrayList<>();
 
             Set<Integer> orders = femalesLiving.getBirthOrdersInDivision(divDate, consideredTimePeriod);
+            int cohortSize = femalesLiving.getAllPersonsInTimePeriod(divDate, consideredTimePeriod).size();
+
+            Set<IntegerRange> inputOrders = desiredPopulationStatistics.getOrderedBirthRates(currentDate).getColumnLabels();
 
 //            int totalFromDiv = 0;
 //
@@ -57,12 +60,14 @@ public class NBirthLogic implements EventLogic {
 //                totalFromDiv = people.size();
 //            }
 
-            for(Integer order : orders) {
+            for(IntegerRange order : inputOrders) {
+//            for(Integer order : orders) {
 
                 Collection<IPerson> people = femalesLiving.getByDatePeriodAndBirthOrder(divDate, consideredTimePeriod, order);
                 int number = people.size();
 
-                BirthStatsKey key = new BirthStatsKey(age, order, number, consideredTimePeriod, currentDate);
+//                BirthStatsKey key = new BirthStatsKey(age, order, number, consideredTimePeriod, currentDate);
+                BirthStatsKey key = new BirthStatsKey(age, order.getValue(), cohortSize, consideredTimePeriod, currentDate);
                 SingleDeterminedCount determinedCount = (SingleDeterminedCount) desiredPopulationStatistics.getDeterminedCount(key);
 
                 int numberOfChildren = determinedCount.getDeterminedCount();
