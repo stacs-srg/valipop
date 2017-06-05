@@ -509,7 +509,7 @@ public class Person implements IPerson {
     }
 
     @Override
-    public boolean needsPartner(AdvancableDate currentDate) {
+    public boolean needsNewPartner(AdvancableDate currentDate) {
         return partnerships.size() == 0 || toSeparate() || lastPartnerDied(currentDate);
     }
 

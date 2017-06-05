@@ -101,7 +101,7 @@ public class PartneringLogic {
                         }
                     }
 
-                    if(eligible(man, woman)) {
+                    if(eligible(man, woman, population, desiredPopulationStatistics)) {
                         proposedPartnerships.add(new ProposedPartnership(man, woman, iR));
                         determinedCount--;
                         head = null;
@@ -134,11 +134,11 @@ public class PartneringLogic {
 
                             for(IPerson m : allMen.get(uR)) {
 
-                                if(eligible(m, f) && !inPPs(m, proposedPartnerships)) {
+                                if(eligible(m, f, population, desiredPopulationStatistics) && !inPPs(m, proposedPartnerships)) {
 
                                     for(IPerson uf : women) {
 
-                                        if(eligible(pp.getMale(), uf)) {
+                                        if(eligible(pp.getMale(), uf, population, desiredPopulationStatistics)) {
                                             // husband swap
                                             proposedPartnerships.add(new ProposedPartnership(pp.getMale(), uf, pp.getMalesRange()));
                                             pp.setMale(m, uR);
@@ -156,7 +156,7 @@ public class PartneringLogic {
 
                                         for(IPerson m2 : allMen.get(pp.getMalesRange())) {
 
-                                            if(eligible(m2, uf) && !inPPs(m2, proposedPartnerships)) {
+                                            if(eligible(m2, uf, population, desiredPopulationStatistics) && !inPPs(m2, proposedPartnerships)) {
                                                 // husband swap
                                                 proposedPartnerships.add(new ProposedPartnership(m2, uf, pp.getMalesRange()));
                                                 pp.setMale(m, uR);
@@ -180,7 +180,7 @@ public class PartneringLogic {
                 for (IPerson uf : women) {
                     for (IntegerRange iR : partnerCounts.getLabels()) {
                         for (IPerson m : allMen.get(iR)) {
-                            if(eligible(m, uf) && !inPPs(m, proposedPartnerships)) {
+                            if(eligible(m, uf, population, desiredPopulationStatistics) && !inPPs(m, proposedPartnerships)) {
                                 proposedPartnerships.add(new ProposedPartnership(m, uf, iR));
                             }
                         }
@@ -211,7 +211,7 @@ public class PartneringLogic {
 
 
 
-            SeparationLogic.handle(partneredFemalesByChildren);
+            SeparationLogic.handle(partneredFemalesByChildren, consideredTimePeriod, currentDate, desiredPopulationStatistics, population);
 
         }
     }
@@ -226,9 +226,31 @@ public class PartneringLogic {
         return false;
     }
 
-    private static boolean eligible(IPerson man, IPerson woman) {
+    private static boolean eligible(IPerson man, IPerson woman, Population population, PopulationStatistics desiredPopulationStatistics) {
 
-        //  consanguinity relationships
+        return maleAvailable(man, population, desiredPopulationStatistics) && legallyEligible(man, woman);
+
+    }
+
+
+    private static boolean maleAvailable(IPerson man, Population population,
+                                         PopulationStatistics desiredPopulationStatistics) {
+
+        if(man.toSeparate()) {
+            return true;
+        }
+
+        double permissableIllegitimateBirths = desiredPopulationStatistics.getMaxProportionBirthsDueToInfidelity() * population.getPopulationCounts().getCreatedPeople();
+        if(population.getPopulationCounts().getIllegitimateBirths() < permissableIllegitimateBirths) {
+            population.getPopulationCounts().newIllegitimateBirth();
+            return true;
+        } else {
+            return false;
+        }
+
+    }
+
+    private static boolean legallyEligible(IPerson man, IPerson woman) {
 
         if(man
             .getParentsPartnership() != null) {
@@ -265,9 +287,9 @@ public class PartneringLogic {
 
             // grand parents - fathers side
 
-            if(     man
-                        .getParentsPartnership().getMalePartner()
-                        .getParentsPartnership() != null) {
+            if(man
+                    .getParentsPartnership().getMalePartner()
+                    .getParentsPartnership() != null) {
 
                 //  Father's mother
                 if(man

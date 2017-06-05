@@ -18,6 +18,8 @@ public class PopulationCounts {
 
     private int maxPopulation = 0;
 
+    private int illegitimateBirths = 0;
+
     public void newMale(int numberOf) {
         createdMales += numberOf;
         livingMales += numberOf;
@@ -69,6 +71,14 @@ public class PopulationCounts {
         }
     }
 
+    public void newIllegitimateBirth(int numberOf) {
+        illegitimateBirths += numberOf;
+    }
+
+    public void newIllegitimateBirth() {
+        newIllegitimateBirth(1);
+    }
+
     public void partnershipEnd(int numberOf) {
         currentPartnerships -= numberOf;
     }
@@ -97,5 +107,13 @@ public class PopulationCounts {
         if(populationSize > maxPopulation) {
             maxPopulation = populationSize;
         }
+    }
+
+    public int getCreatedPeople() {
+        return createdFemales + createdMales;
+    }
+
+    public int getIllegitimateBirths() {
+        return illegitimateBirths;
     }
 }

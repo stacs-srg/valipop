@@ -69,6 +69,8 @@ public class EntityFactory {
 
         partnership.addChildren(children);
 
+        population.getPopulationCounts().newPartnership();
+
         population.getLivingPeople().addPartnershipToIndex(partnership);
 
         return partnership;

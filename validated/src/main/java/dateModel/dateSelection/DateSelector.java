@@ -5,6 +5,7 @@ import dateModel.Date;
 import dateModel.dateImplementations.AdvancableDate;
 import dateModel.dateImplementations.ExactDate;
 import dateModel.timeSteps.CompoundTimeUnit;
+import populationStatistics.recording.PopulationStatistics;
 import simulationEntities.person.IPerson;
 import simulationEntities.person.Person;
 
@@ -21,6 +22,6 @@ public interface DateSelector {
 
     ExactDate selectDateEPD(AdvancableDate currentDate, CompoundTimeUnit consideredTimePeriod, Date earliestPossibleDate);
 
-    ExactDate selectDate(IPerson p, Config config, AdvancableDate currentDate, CompoundTimeUnit consideredTimePeriod);
+    ExactDate selectDate(IPerson p, PopulationStatistics desiredPopulationStatistics, AdvancableDate currentDate, CompoundTimeUnit consideredTimePeriod);
 
 }

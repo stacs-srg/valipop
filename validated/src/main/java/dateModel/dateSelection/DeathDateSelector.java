@@ -6,6 +6,7 @@ import dateModel.DateUtils;
 import dateModel.dateImplementations.AdvancableDate;
 import dateModel.dateImplementations.ExactDate;
 import dateModel.timeSteps.CompoundTimeUnit;
+import populationStatistics.recording.PopulationStatistics;
 import simulationEntities.person.IPerson;
 
 import java.util.Random;
@@ -74,7 +75,7 @@ public class DeathDateSelector implements DateSelector {
     }
 
     @Override
-    public ExactDate selectDate(IPerson p, Config config, AdvancableDate currentDate, CompoundTimeUnit consideredTimePeriod) {
+    public ExactDate selectDate(IPerson p, PopulationStatistics desiredPopulationStatistics, AdvancableDate currentDate, CompoundTimeUnit consideredTimePeriod) {
 
         IPerson child = p.getLastChild();
 
@@ -84,7 +85,7 @@ public class DeathDateSelector implements DateSelector {
 
             if (Character.toLowerCase(p.getSex()) == 'm') {
                 // If a male with a child then the man cannot die more than 9 months before the birth date
-                Date ePD = DateUtils.calculateExactDate(birthDateOfLastChild, (-1) * config.getMaxGestationPeriod());
+                Date ePD = DateUtils.calculateExactDate(birthDateOfLastChild, (-1) * desiredPopulationStatistics.getMaxGestationPeriod());
                 return selectDateEPD(currentDate, consideredTimePeriod, ePD);
             } else {
                 // If a female with a child then the cannot die before birth of child
