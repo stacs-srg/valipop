@@ -167,12 +167,12 @@ public class NBirthLogic implements EventLogic {
                 break;
             }
 
-            if(eligible(female, config, currentDate)) {
+            if(eligible(female, desiredPopulationStatistics, currentDate)) {
 
 //                female.getLastChild().getParentsPartnership().setFather(BirthLogic.getRandomFather(population, population.getLivingPeople().resolveDateToCorrectDivisionDate(female.getBirthDate()), consideredTimePeriod));
                 childrenMade += highestBirthOption.getValue();
 
-                if(female.needsPartner(currentDate)) {
+                if(female.needsNewPartner(currentDate)) {
                     female.giveChildren(highestBirthOption.getValue(), currentDate, consideredTimePeriod, population);
                     needPartners.add(female);
                 } else {
@@ -207,7 +207,7 @@ public class NBirthLogic implements EventLogic {
             }
         }
 
-        SeparationLogic.handle(continuingPartneredFemalesByChildren);
+        SeparationLogic.handle(continuingPartneredFemalesByChildren, consideredTimePeriod, currentDate, desiredPopulationStatistics, population);
 
         requiredBirths.setFufilledCount(motherCountsByMaternities);
         desiredPopulationStatistics.returnAchievedCount(requiredBirths);
@@ -224,13 +224,13 @@ public class NBirthLogic implements EventLogic {
 
     }
 
-    private boolean eligible(IPerson potentialMother, Config config, Date currentDate) {
+    private boolean eligible(IPerson potentialMother, PopulationStatistics desiredPopulationStatistics, Date currentDate) {
 
         IPerson lastChild = potentialMother.getLastChild();
 
         if(lastChild != null) {
             ExactDate earliestDateOfNextChild = DateUtils.
-                    calculateExactDate(lastChild.getBirthDate(), config.getMinBirthSpacing());
+                    calculateExactDate(lastChild.getBirthDate(), desiredPopulationStatistics.getMinBirthSpacing());
 
             // Returns true if last child was born far enough in the past for another child to be born at currentDate
             return DateUtils.dateBefore(earliestDateOfNextChild, currentDate);

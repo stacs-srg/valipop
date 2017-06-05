@@ -9,14 +9,12 @@ import dateModel.dateImplementations.YearDate;
 import dateModel.timeSteps.CompoundTimeUnit;
 import dateModel.timeSteps.TimeUnit;
 import events.EventType;
+import events.SeparationLogic;
 import events.UnsupportedEventType;
 import populationStatistics.dataDistributionTables.determinedCounts.DeterminedCount;
 import populationStatistics.dataDistributionTables.selfCorrecting.ProportionalDistributionAdapter;
 import populationStatistics.dataDistributionTables.selfCorrecting.SelfCorrectingProportionalDistribution;
-import populationStatistics.dataDistributionTables.statsKeys.BirthStatsKey;
-import populationStatistics.dataDistributionTables.statsKeys.DeathStatsKey;
-import populationStatistics.dataDistributionTables.statsKeys.MultipleBirthStatsKey;
-import populationStatistics.dataDistributionTables.statsKeys.StatsKey;
+import populationStatistics.dataDistributionTables.statsKeys.*;
 import populationStatistics.validation.comparison.EventRateTables;
 import populationStatistics.dataDistributionTables.OneDimensionDataDistribution;
 import populationStatistics.dataDistributionTables.selfCorrecting.SelfCorrectingOneDimensionDataDistribution;
@@ -47,6 +45,13 @@ public class PopulationStatistics implements PopulationComposition, EventRateTab
     private Map<YearDate, SelfCorrectingTwoDimensionDataDistribution> orderedBirth;
     private Map<YearDate, ProportionalDistributionAdapter> multipleBirth;
     private Map<YearDate, SelfCorrectingOneDimensionDataDistribution> separation;
+
+    // Population Constants
+    private int maxGestationPeriodDays = 280;
+    private int minGestationPeriodDays = 147;
+    private int minBirthSpacingDays = 730;
+    private double maxProportionBirthsDueToInfidelity = 0.01;
+    private double maleProportionOfBirths = 0.5; // i.e. if 0.52 then in every 100 births, 52 will be male and 48 female
 
     public PopulationStatistics(Config config,
                                 Map<YearDate, SelfCorrectingOneDimensionDataDistribution> maleDeath,
@@ -100,17 +105,22 @@ public class PopulationStatistics implements PopulationComposition, EventRateTab
 
         if(key instanceof DeathStatsKey) {
             DeathStatsKey k = (DeathStatsKey) key;
-            return getDeathRates(k.getDate(), k.getSex()).determineCount(key);
+            return getDeathRates(k.getDate(), k.getSex()).determineCount(k);
         }
 
         if(key instanceof BirthStatsKey) {
             BirthStatsKey k = (BirthStatsKey) key;
-            return getOrderedBirthRates(k.getDate()).determineCount(key);
+            return getOrderedBirthRates(k.getDate()).determineCount(k);
         }
 
         if(key instanceof MultipleBirthStatsKey) {
             MultipleBirthStatsKey k = (MultipleBirthStatsKey) key;
-            return getMultipleBirthRates(k.getDate()).determineCount(key);
+            return getMultipleBirthRates(k.getDate()).determineCount(k);
+        }
+
+        if(key instanceof SeparationStatsKey) {
+            SeparationStatsKey k = (SeparationStatsKey) key;
+            return getSeparationByChildCountRates(k.getDate()).determineCount(k);
         }
 
         throw new Error("Key based access not implemented for key class: " + key.getClass().toGenericString());
@@ -133,6 +143,12 @@ public class PopulationStatistics implements PopulationComposition, EventRateTab
         if(achievedCount.getKey() instanceof MultipleBirthStatsKey) {
             MultipleBirthStatsKey k = (MultipleBirthStatsKey) achievedCount.getKey();
             getMultipleBirthRates(k.getDate()).returnAchievedCount(achievedCount);
+            return;
+        }
+
+        if(achievedCount.getKey() instanceof SeparationStatsKey) {
+            SeparationStatsKey k = (SeparationStatsKey) achievedCount.getKey();
+            getSeparationByChildCountRates(k.getDate()).returnAchievedCount(achievedCount);
             return;
         }
 
@@ -427,6 +443,26 @@ public class PopulationStatistics implements PopulationComposition, EventRateTab
 
         return nearestTableYear;
 
+    }
+
+    public int getMaxGestationPeriod() {
+        return maxGestationPeriodDays;
+    }
+
+    public int getMinBirthSpacing() {
+        return minBirthSpacingDays;
+    }
+
+    public int getMinGestationPeriod() {
+        return minGestationPeriodDays;
+    }
+
+    public double getMaleProportionOfBirths() {
+        return maleProportionOfBirths;
+    }
+
+    public double getMaxProportionBirthsDueToInfidelity() {
+        return maxProportionBirthsDueToInfidelity;
     }
 
 

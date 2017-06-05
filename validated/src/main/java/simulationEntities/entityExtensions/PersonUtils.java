@@ -60,7 +60,7 @@ public interface PersonUtils {
 
     int ageOnDate(Date date);
 
-    boolean needsPartner(AdvancableDate currentDate);
+    boolean needsNewPartner(AdvancableDate currentDate);
 
     int numberOfChildrenInLatestPartnership();
 

@@ -72,7 +72,7 @@ public class NDeathLogic implements EventLogic {
                         "than 1 proportion of a population");
             }
 
-            int killed = killPeople(peopleToKill, config, currentDate, consideredTimePeriod, population);
+            int killed = killPeople(peopleToKill, desiredPopulationStatistics, currentDate, consideredTimePeriod, population);
             killedAtTS += killed;
 
             // Returns the number killed to the distribution manager
@@ -86,7 +86,7 @@ public class NDeathLogic implements EventLogic {
 
 
     private int killPeople(Collection<IPerson> people,
-                            Config config, AdvancableDate currentDate, CompoundTimeUnit consideredTimePeriod,
+                            PopulationStatistics desiredPopulationStatistics, AdvancableDate currentDate, CompoundTimeUnit consideredTimePeriod,
                             Population population) {
 
         int killed = 0;
@@ -94,7 +94,7 @@ public class NDeathLogic implements EventLogic {
         for(IPerson person : people) {
 
             // choose date of death
-            Date deathDate = deathDateSelector.selectDate(person, config, currentDate, consideredTimePeriod);
+            Date deathDate = deathDateSelector.selectDate(person, desiredPopulationStatistics, currentDate, consideredTimePeriod);
 
             // execute death
             if(person.recordDeath(deathDate, population)) {

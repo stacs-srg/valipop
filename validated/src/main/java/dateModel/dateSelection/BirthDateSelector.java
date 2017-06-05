@@ -6,6 +6,7 @@ import dateModel.DateUtils;
 import dateModel.dateImplementations.AdvancableDate;
 import dateModel.dateImplementations.ExactDate;
 import dateModel.timeSteps.CompoundTimeUnit;
+import populationStatistics.recording.PopulationStatistics;
 import simulationEntities.person.IPerson;
 
 
@@ -51,7 +52,7 @@ public class BirthDateSelector implements DateSelector {
     }
 
     @Override
-    public ExactDate selectDate(IPerson p, Config config, AdvancableDate currentDate, CompoundTimeUnit consideredTimePeriod) {
+    public ExactDate selectDate(IPerson p, PopulationStatistics desiredPopulationStatistics, AdvancableDate currentDate, CompoundTimeUnit consideredTimePeriod) {
         return null;
     }
 }
