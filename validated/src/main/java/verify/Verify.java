@@ -1,8 +1,8 @@
 package verify;
 
-import datastructure.population.PeopleCollection;
-import model.simulationEntities.IPartnership;
-import model.simulationEntities.IPerson;
+import simulationEntities.partnership.IPartnership;
+import simulationEntities.person.IPerson;
+import simulationEntities.population.dataStructure.PeopleCollection;
 
 import java.io.PrintStream;
 
