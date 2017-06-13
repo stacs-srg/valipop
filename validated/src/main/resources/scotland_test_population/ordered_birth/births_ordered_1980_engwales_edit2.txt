@@ -1,0 +1,28 @@
+YEAR	1850
+POPULATION	ENGWALES
+SOURCE	ONS
+VAR	BIRTH
+TYPE	ORDERED
+FORM	RATE
+# USING THIS DATA - get the cohort count by age division (in row labels) = cc
+# multiply cc by the ASFR for a given order to give the number of children to
+# be born from this subset of women.
+# ---------------------------------------------------------------------------
+# The values are components of ASFR. The sum of a row gives the ASFR for the
+# given age range. The proportion of the ASFR speaks to how the value is
+# split up across mothers with different numbers of existing children. This
+# spread is simply treatable as a proportion.
+# ---------------------------------------------------------------------------
+# This could be described as a REACTIONARY STATISTIC - therefore we can have
+# 4+ as a value as we simply apply this rate to any females we see with 4 or
+# more children. This data has been adjusted to give a tapered lead in that
+# can be met at the first application of the data.
+LABELS	0	1	2	3	4+
+#Origonal data - FR - 2.41
+DATA
+15-19	0.06274908	0.0082416	0.00184932	0	0
+20-24	0.0830088	0.0244944	0.0217728	0.0054432	0.0013608
+25-29	0.048096	0.032064	0.0529056	0.0192384	0.008016
+30-34	0.013730909	0.012014545	0.036901818	0.015447272	0.006865454
+35-39	0.00264	0.003696	0.011352	0.005544	0.003168
+40-49	0.0003168	0.0003744	0.0010368	0.0006336	0.0005184

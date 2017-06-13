@@ -1,7 +1,8 @@
 package utils;
 
-import datastructure.summativeStatistics.structure.OneDimensionDataDistribution;
-import datastructure.summativeStatistics.structure.IntegerRange;
+
+import populationStatistics.dataDistributionTables.OneDimensionDataDistribution;
+import utils.specialTypes.integerRange.IntegerRange;
 
 import java.util.Collection;
 import java.util.HashMap;
