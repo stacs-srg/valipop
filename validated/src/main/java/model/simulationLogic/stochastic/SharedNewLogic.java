@@ -1,24 +1,26 @@
 package model.simulationLogic.stochastic;
 
-import datastructure.population.exceptions.InsufficientNumberOfPeopleException;
-import datastructure.summativeStatistics.structure.IntegerRange;
-import datastructure.summativeStatistics.structure.SelfCorrectingOneDimensionDataDistribution;
-import datastructure.summativeStatistics.structure.SelfCorrectingTwoDimensionDataDistribution;
-import model.simulationEntities.IPerson;
+
 
 import java.util.*;
 
 import org.apache.logging.log4j.Logger;
+import populationStatistics.dataDistributionTables.selfCorrecting.SelfCorrectingOneDimensionDataDistribution;
+import populationStatistics.dataDistributionTables.selfCorrecting.SelfCorrectingTwoDimensionDataDistribution;
+import simulationEntities.person.IPerson;
+import simulationEntities.population.dataStructure.exceptions.InsufficientNumberOfPeopleException;
+import utils.specialTypes.integerRange.IntegerRange;
+
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class SharedNewLogic {
 
-    public static ArrayList<IntegerRange> getIntegerRangesInOrder(SelfCorrectingOneDimensionDataDistribution tableRow) {
-        ArrayList<IntegerRange> integerRanges = new ArrayList<>(tableRow.getData().keySet());
-        Collections.sort(integerRanges);
-        return integerRanges;
-    }
+//    public static ArrayList<IntegerRange> getIntegerRangesInOrder(SelfCorrectingOneDimensionDataDistribution tableRow) {
+//        ArrayList<IntegerRange> integerRanges = new ArrayList<>(tableRow.getData().keySet());
+//        Collections.sort(integerRanges);
+//        return integerRanges;
+//    }
 
     public static <V> ArrayList<IntegerRange> getIntegerRangesInOrder(Map<IntegerRange, V> map) {
         ArrayList<IntegerRange> integerRanges = new ArrayList<>(map.keySet());
@@ -27,7 +29,7 @@ public class SharedNewLogic {
     }
 
     public static ArrayList<IntegerRange> getIntegerRangesInOrder(SelfCorrectingTwoDimensionDataDistribution table) {
-        ArrayList<IntegerRange> integerRanges = new ArrayList<>(table.getRowKeys());
+        ArrayList<IntegerRange> integerRanges = new ArrayList<>(table.getRowLabels());
         Collections.sort(integerRanges);
         return integerRanges;
     }

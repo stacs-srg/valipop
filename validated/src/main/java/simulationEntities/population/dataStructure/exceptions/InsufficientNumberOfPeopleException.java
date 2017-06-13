@@ -1,5 +1,9 @@
 package simulationEntities.population.dataStructure.exceptions;
 
+import simulationEntities.person.IPerson;
+
+import java.util.Collection;
+
 /**
  * The {@link InsufficientNumberOfPeopleException} is thrown when there is not enough people to meet a request made of
  * a PersonCollection data structure.
@@ -14,6 +18,11 @@ public class InsufficientNumberOfPeopleException extends Exception {
      * @param message the message
      */
     public InsufficientNumberOfPeopleException(String message) {
+        this.message = message;
+    }
+
+
+    public InsufficientNumberOfPeopleException(String message, Collection<IPerson> chosen) {
         this.message = message;
     }
 
