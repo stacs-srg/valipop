@@ -1,12 +1,12 @@
 package config;
 
-import utils.FileUtils;
-import utils.time.CompoundTimeUnit;
-import utils.time.InvalidTimeUnit;
-import utils.time.DateClock;
+import dateModel.dateImplementations.MonthDate;
+import dateModel.timeSteps.TimeUnit;
+import utils.fileUtils.InputFileReader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import utils.InputFileReader;
+import dateModel.exceptions.InvalidTimeUnit;
+import dateModel.timeSteps.CompoundTimeUnit;
 
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
@@ -31,14 +31,12 @@ public class Config {
     private static final String partneringSubFile = "partnering";
     private static final String separationSubFile = "separation";
     public static Logger log = LogManager.getLogger(Config.class);
-    private DateClock tS;
-    private DateClock t0;
-    private DateClock tE;
+    private MonthDate tS;
+    private MonthDate t0;
+    private MonthDate tE;
     private int t0PopulationSize;
     private double setUpBR;
     private double setUpDR;
-    private CompoundTimeUnit deathTimeStep;
-    private CompoundTimeUnit birthTimeStep;
     private CompoundTimeUnit simulationTimeStep;
     private Path varBirthPaths;
     private Path varMaleDeathPaths;
@@ -53,6 +51,10 @@ public class Config {
     private Path summaryResultsPath;
     private boolean produceGraphs;
     private boolean produceDatFiles;
+
+
+
+    private boolean binominalSampling = false;
 
     private final String runPurpose;
     private final String startTime;
@@ -118,22 +120,6 @@ public class Config {
                 case "produce_dat_files":
                     produceDatFiles = new Boolean(split[1]);
                     break;
-                case "death_time_step":
-                    try {
-                        deathTimeStep = new CompoundTimeUnit(split[1]);
-                    } catch (InvalidTimeUnit e) {
-                        log.fatal("death_time_step " + e.getMessage());
-                        throw e;
-                    }
-                    break;
-                case "birth_time_step":
-                    try {
-                        birthTimeStep = new CompoundTimeUnit(split[1]);
-                    } catch (InvalidTimeUnit e) {
-                        log.fatal("birth_time_step " + e.getMessage());
-                        throw e;
-                    }
-                    break;
                 case "simulation_time_step":
                     try {
                         simulationTimeStep = new CompoundTimeUnit(split[1]);
@@ -152,7 +138,7 @@ public class Config {
                     break;
                 case "tS":
                     try {
-                        tS = new DateClock(split[1]);
+                        tS = new MonthDate(split[1]);
                     } catch (DateTimeException e) {
                         log.fatal("tS " + e.getMessage());
                         throw e;
@@ -160,7 +146,7 @@ public class Config {
                     break;
                 case "t0":
                     try {
-                        t0 = new DateClock(split[1]);
+                        t0 = new MonthDate(split[1]);
                     } catch (DateTimeException e) {
                         log.fatal("t0 " + e.getMessage());
                         throw e;
@@ -168,7 +154,7 @@ public class Config {
                     break;
                 case "tE":
                     try {
-                        tE = new DateClock(split[1]);
+                        tE = new MonthDate(split[1]);
                     } catch (DateTimeException e) {
                         log.fatal("tE " + e.getMessage());
                         throw e;
@@ -279,24 +265,16 @@ public class Config {
     }
 
 
-    public DateClock getTS() {
+    public MonthDate getTS() {
         return tS;
     }
 
-    public DateClock getT0() {
+    public MonthDate getT0() {
         return t0;
     }
 
-    public DateClock getTE() {
+    public MonthDate getTE() {
         return tE;
-    }
-
-    public CompoundTimeUnit getBirthTimeStep() {
-        return birthTimeStep;
-    }
-
-    public CompoundTimeUnit getDeathTimeStep() {
-        return deathTimeStep;
     }
 
     public CompoundTimeUnit getSimulationTimeStep() {
@@ -349,5 +327,9 @@ public class Config {
 
     public CompoundTimeUnit getInputWidth() {
         return inputWidth;
+    }
+
+    public boolean binominalSampling() {
+        return binominalSampling;
     }
 }
