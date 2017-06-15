@@ -1,0 +1,195 @@
+package uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.dataDistributionTables.selfCorrecting;
+
+
+import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.dataDistributionTables.DataDistribution;
+import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.dataDistributionTables.OneDimensionDataDistribution;
+import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateImplementations.YearDate;
+import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.dataDistributionTables.determinedCounts.DeterminedCount;
+import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.dataDistributionTables.determinedCounts.SingleDeterminedCount;
+import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.dataDistributionTables.statsKeys.StatsKey;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.integerRange.IntegerRange;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.integerRange.InvalidRangeException;
+
+
+import java.io.PrintStream;
+import java.util.Arrays;
+import java.util.Map;
+import java.util.Set;
+
+/**
+ * @author Tom Dalton (tsd4@st-andrews.ac.uk)
+ */
+public class SelfCorrectingTwoDimensionDataDistribution implements DataDistribution {
+
+    // The integer range here represents the row labels (i.e. the age ranges on the ordered birth table)
+    private Map<IntegerRange, SelfCorrectingOneDimensionDataDistribution> data;
+
+    private YearDate year;
+    private String sourcePopulation;
+
+    private String sourceOrganisation;
+
+    public SelfCorrectingTwoDimensionDataDistribution(YearDate year, String sourcePopulation, String sourceOrganisation, Map<IntegerRange, SelfCorrectingOneDimensionDataDistribution> tableData) {
+        this.year = year;
+        this.sourceOrganisation = sourceOrganisation;
+        this.sourcePopulation = sourcePopulation;
+        this.data = tableData;
+    }
+
+    public SingleDeterminedCount determineCount(StatsKey key) {
+        try {
+            return getData(key.getXLabel()).determineCount(key);
+        } catch (InvalidRangeException e) {
+            return new SingleDeterminedCount(key, 0);
+        }
+
+    }
+
+    public void returnAchievedCount(DeterminedCount<Integer> achievedCount) {
+        try {
+            getData(achievedCount.getKey().getXLabel()).returnAchievedCount(achievedCount);
+        } catch (InvalidRangeException e) {
+            if(achievedCount.getDeterminedCount() == 0) {
+                // all okay, a blank DeterminedCount had been issued due as no recorded data on the request
+            } else {
+                // Something is not right here
+                throw e;
+            }
+        }
+
+    }
+
+    public SelfCorrectingOneDimensionDataDistribution getData(Integer yLabel) throws InvalidRangeException {
+
+        IntegerRange row = resolveRowValue(yLabel);
+        return data.get(row);
+    }
+
+    @Override
+    public YearDate getYear() {
+        return year;
+    }
+
+    @Override
+    public String getSourcePopulation() {
+        return sourcePopulation;
+    }
+
+    @Override
+    public String getSourceOrganisation() {
+        return sourceOrganisation;
+    }
+
+    @Override
+    public int getSmallestLabel() {
+        int min = Integer.MAX_VALUE;
+        for (IntegerRange iR : data.keySet()) {
+            int v = iR.getMin();
+            if (v < min) {
+                min = v;
+            }
+        }
+        return min;
+    }
+
+    @Override
+    public IntegerRange getLargestLabel() {
+        IntegerRange max = null;
+        int maxV = Integer.MIN_VALUE;
+        for (IntegerRange iR : data.keySet()) {
+            int v = iR.getMax();
+            if (v > maxV) {
+                max = iR;
+                maxV = v;
+            }
+        }
+        return max;
+
+    }
+
+    private IntegerRange resolveRowValue(Integer rowValue) {
+
+        for (IntegerRange iR : data.keySet()) {
+            if (iR.contains(rowValue)) {
+                return iR;
+            }
+        }
+
+        throw new InvalidRangeException("Given value not covered by rows - value " + rowValue);
+    }
+
+//    public void outputResults(PrintStream resultsOutput) {
+//        resultsOutput.println("TARGET");
+//        outputMap(targetRates, true, resultsOutput);
+//        resultsOutput.println("APPLIED");
+//        outputMap(appliedData, true, resultsOutput);
+//        resultsOutput.println("DELTAS");
+//        printDeltas(appliedData, targetRates, resultsOutput);
+//        resultsOutput.println("COUNTS");
+//        outputMap(appliedCounts, false, resultsOutput);
+//    }
+
+    private void printDeltas(Map<IntegerRange, OneDimensionDataDistribution> appliedData, Map<IntegerRange, OneDimensionDataDistribution> targetData, PrintStream resultsOutput) {
+
+        IntegerRange[] keys = targetData.keySet().toArray(new IntegerRange[targetData.keySet().size()]);
+        Arrays.sort(keys, IntegerRange::compareTo);
+
+        for (IntegerRange iR : keys) {
+            resultsOutput.print(iR.toString() + " | ");
+
+            Map<IntegerRange, Double> targetRow = targetData.get(iR).getRate();
+            Map<IntegerRange, Double> appliedRow = appliedData.get(iR).getRate();
+
+            IntegerRange[] orderedKeys = targetRow.keySet().toArray(new IntegerRange[targetRow.keySet().size()]);
+            Arrays.sort(orderedKeys, IntegerRange::compareTo);
+
+            for (IntegerRange iR2 : orderedKeys) {
+                resultsOutput.printf("%+.4f | ", appliedRow.get(iR2) - targetRow.get(iR2));
+            }
+
+            resultsOutput.println();
+
+        }
+
+        resultsOutput.println();
+
+    }
+
+    public void outputMap(Map<IntegerRange, OneDimensionDataDistribution> data, boolean decimal, PrintStream resultsOutput) {
+
+        IntegerRange[] keys = data.keySet().toArray(new IntegerRange[data.keySet().size()]);
+        Arrays.sort(keys, IntegerRange::compareTo);
+
+        for (IntegerRange iR : keys) {
+            resultsOutput.print(iR.toString() + " | ");
+
+            Map<IntegerRange, Double> row = data.get(iR).getRate();
+            IntegerRange[] orderedKeys = row.keySet().toArray(new IntegerRange[row.keySet().size()]);
+            Arrays.sort(orderedKeys, IntegerRange::compareTo);
+
+            for (IntegerRange iR2 : orderedKeys) {
+                if (decimal) {
+                    resultsOutput.printf("%.4f | ", row.get(iR2));
+                } else {
+                    resultsOutput.printf("%.0f | ", row.get(iR2));
+                }
+            }
+
+            resultsOutput.println();
+
+        }
+
+
+        resultsOutput.println();
+
+    }
+
+
+    public Set<IntegerRange> getRowLabels() {
+        return data.keySet();
+    }
+
+    public Set<IntegerRange> getColumnLabels () {
+        return data.get(resolveRowValue(getSmallestLabel())).getLabels();
+    }
+}

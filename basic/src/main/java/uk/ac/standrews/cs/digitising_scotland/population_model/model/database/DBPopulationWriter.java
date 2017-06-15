@@ -146,6 +146,6 @@ public class DBPopulationWriter implements IPopulationWriter {
 
     protected static Object getSQLDate(final java.util.Date date) {
 
-        return date != null ? DateManipulation.dateToSQLDate(date) : DBManipulation.NULL_DATE;
+        return date != null ? DateManipulation.dateToSQLDate(date) : new Object();
     }
 }

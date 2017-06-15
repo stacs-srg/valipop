@@ -1,11 +1,13 @@
 package dateModel;
 
-import dateModel.dateImplementations.MonthDate;
+import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.Date;
+import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.DateUtils;
+import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateImplementations.MonthDate;
 import org.junit.Assert;
 import org.junit.Test;
-import dateModel.dateImplementations.ExactDate;
-import dateModel.timeSteps.CompoundTimeUnit;
-import dateModel.timeSteps.TimeUnit;
+import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateImplementations.ExactDate;
+import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.timeSteps.CompoundTimeUnit;
+import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.timeSteps.TimeUnit;
 
 import static org.junit.Assert.*;
 

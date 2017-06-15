@@ -1,25 +1,22 @@
 package datastructure;
 
 
-import dateModel.dateImplementations.ExactDate;
-import dateModel.dateImplementations.MonthDate;
-import dateModel.dateImplementations.YearDate;
-import dateModel.exceptions.UnsupportedDateConversion;
-import dateModel.timeSteps.CompoundTimeUnit;
-import dateModel.timeSteps.TimeUnit;
+import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateImplementations.MonthDate;
+import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.exceptions.UnsupportedDateConversion;
+import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.timeSteps.CompoundTimeUnit;
+import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.timeSteps.TimeUnit;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.Test;
-import simulationEntities.partnership.Partnership;
-import simulationEntities.person.IPerson;
-import simulationEntities.person.Person;
-import simulationEntities.population.dataStructure.PeopleCollection;
-import simulationEntities.population.dataStructure.exceptions.PersonNotFoundException;
+import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.partnership.Partnership;
+import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPerson;
+import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.Person;
+import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.dataStructure.PeopleCollection;
+import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.dataStructure.exceptions.PersonNotFoundException;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;

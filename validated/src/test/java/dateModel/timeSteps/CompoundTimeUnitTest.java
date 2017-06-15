@@ -1,7 +1,9 @@
 package dateModel.timeSteps;
 
 import org.junit.Test;
-import dateModel.exceptions.InvalidTimeUnit;
+import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.exceptions.InvalidTimeUnit;
+import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.timeSteps.CompoundTimeUnit;
+import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.timeSteps.TimeUnit;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
