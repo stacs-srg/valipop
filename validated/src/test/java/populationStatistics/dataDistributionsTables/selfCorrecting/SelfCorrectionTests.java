@@ -1,16 +1,16 @@
 package populationStatistics.dataDistributionsTables.selfCorrecting;
 
-import dateModel.dateImplementations.YearDate;
-import dateModel.timeSteps.CompoundTimeUnit;
-import dateModel.timeSteps.TimeUnit;
+import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateImplementations.YearDate;
+import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.timeSteps.CompoundTimeUnit;
+import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.timeSteps.TimeUnit;
 import org.junit.Assert;
 import org.junit.Test;
-import populationStatistics.dataDistributionTables.OneDimensionDataDistribution;
-import populationStatistics.dataDistributionTables.determinedCounts.DeterminedCount;
-import populationStatistics.dataDistributionTables.selfCorrecting.SelfCorrectingOneDimensionDataDistribution;
-import populationStatistics.dataDistributionTables.statsKeys.DeathStatsKey;
-import populationStatistics.dataDistributionTables.statsKeys.StatsKey;
-import utils.specialTypes.integerRange.IntegerRange;
+import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.dataDistributionTables.OneDimensionDataDistribution;
+import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.dataDistributionTables.determinedCounts.DeterminedCount;
+import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.dataDistributionTables.selfCorrecting.SelfCorrectingOneDimensionDataDistribution;
+import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.dataDistributionTables.statsKeys.DeathStatsKey;
+import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.dataDistributionTables.statsKeys.StatsKey;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.integerRange.IntegerRange;
 
 import java.util.HashMap;
 import java.util.Map;

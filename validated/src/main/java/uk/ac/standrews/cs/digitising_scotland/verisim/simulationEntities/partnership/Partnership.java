@@ -1,0 +1,99 @@
+package uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.partnership;
+
+import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.Date;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPerson;
+
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+/**
+ * @author Tom Dalton (tsd4@st-andrews.ac.uk)
+ */
+public class Partnership implements IPartnership {
+
+    private static Logger log = LogManager.getLogger(Partnership.class);
+    private static int nextId = 0;
+    private int id;
+    private IPerson male;
+    private IPerson female;
+    private List<IPerson> children = new ArrayList<IPerson>();
+
+    private Date partnershipDate;
+
+    public Partnership(IPerson male, IPerson female, Date partnershipDate) {
+
+        this.id = getNewId();
+
+        this.partnershipDate = partnershipDate;
+        this.male = male;
+        this.female = female;
+
+    }
+
+    public Partnership(IPerson female, Date partnershipDate) {
+
+        this.id = getNewId();
+
+        this.partnershipDate = partnershipDate;
+        this.female = female;
+
+    }
+
+    private static int getNewId() {
+        return nextId++;
+    }
+
+    @Override
+    public int getId() {
+        return id;
+    }
+
+    @Override
+    public IPerson getFemalePartner() {
+        return female;
+    }
+
+    @Override
+    public IPerson getMalePartner() {
+        return male;
+    }
+
+    @Override
+    public IPerson getPartnerOf(IPerson id) {
+        if (id.getSex() == 'm') {
+            return female;
+        } else {
+            return male;
+        }
+    }
+
+    @Override
+    public List<IPerson> getChildren() {
+        return children;
+    }
+
+    @Override
+    public Date getPartnershipDate() {
+        return partnershipDate;
+    }
+
+    @Override
+    public int compareTo(IPartnership o) {
+        return this.id == o.getId() ? 0 : -1;
+    }
+
+    @Override
+    public void addChildren(Collection<IPerson> children) {
+        this.children.addAll(children);
+    }
+
+    @Override
+    public void setFather(IPerson father) {
+        this.male = father;
+        father.recordPartnership(this);
+    }
+}

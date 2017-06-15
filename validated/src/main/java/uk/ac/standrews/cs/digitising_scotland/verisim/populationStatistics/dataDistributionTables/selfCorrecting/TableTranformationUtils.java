@@ -1,0 +1,78 @@
+package uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.dataDistributionTables.selfCorrecting;
+
+
+import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.dataDistributionTables.LabelValueDataRow;
+import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.dataDistributionTables.OneDimensionDataDistribution;
+import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.validation.kaplanMeier.utils.FailureTimeRow;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.integerRange.IntegerRange;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.integerRange.InvalidRangeException;
+
+import java.util.ArrayList;
+import java.util.Collection;
+
+/**
+ * @author Tom Dalton (tsd4@st-andrews.ac.uk)
+ */
+public class TableTranformationUtils {
+
+    public static Collection<FailureTimeRow> transformSurvivorTableToTableOfOrderedIndividualFailureTime(OneDimensionDataDistribution survivorTable, String denoteGroupAs) {
+
+        Collection<FailureTimeRow> rows = new ArrayList<>();
+
+        int timeLimit = survivorTable.getLargestLabel().getMax();
+
+        double prevSurvivors = survivorTable.getRate(0);
+
+        try {
+
+            for (int i = 1; i <= timeLimit; i++) {
+
+                double currentSurvivors = survivorTable.getRate(i);
+                double dead = prevSurvivors - currentSurvivors;
+
+                int d = (int) dead;
+
+                prevSurvivors -= d;
+
+                for (int r = 0; r < d; r++) {
+                    rows.add(new FailureTimeRow(i, true, denoteGroupAs));
+                }
+
+            }
+
+        } catch(InvalidRangeException e) {
+            // No action needed
+        }
+
+        for(int s = 0; s < prevSurvivors; s++) {
+            rows.add(new FailureTimeRow(timeLimit, false, denoteGroupAs));
+        }
+
+        return rows;
+    }
+
+    public static Collection<LabelValueDataRow> transform1DDDToCollectionOfLabelValueDataRow(OneDimensionDataDistribution data, String denoteGroupAs) {
+
+        Collection<LabelValueDataRow> rows = new ArrayList<>();
+
+        for(IntegerRange iR : data.getRate().keySet()) {
+
+            double value;
+
+            try {
+                value = data.getRate(iR.getValue());
+                rows.add(new LabelValueDataRow(iR.getValue(), value, denoteGroupAs));
+            } catch (NullPointerException e) {
+                rows.add(new LabelValueDataRow(iR.getValue(), 0, denoteGroupAs));
+            }
+
+
+
+        }
+
+        return rows;
+
+    }
+
+
+}
