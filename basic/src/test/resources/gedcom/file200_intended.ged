@@ -1555,521 +1555,522 @@
 2 PLAC 93 Main St, St Andrews
 1 OCCU slubber
 1 FAMC @m00000039@
-0 @p00000124@ INDI
-1 NAME William /STREET/
-1 SEX M
-1 BIRT
-2 DATE 04 Oct 1926
-2 PLAC 7 Main St, St Andrews
-1 DEAT
-2 DATE 11 Mar 1996
-2 PLAC 44 Main St, St Andrews
-2 CAUS premature birth
-1 OCCU florist
-0 @p00000125@ INDI
-1 NAME Christina /SMITH/
-1 SEX F
-1 BIRT
-2 DATE 09 Apr 1927
-2 PLAC 63 Main St, St Andrews
-1 OCCU master fishmonger
-0 @p00000126@ INDI
-1 NAME William /DOWNS/
-1 SEX M
-1 BIRT
-2 DATE 14 Sep 1927
-2 PLAC 54 Main St, St Andrews
-1 DEAT
-2 DATE 25 May 1968
-2 PLAC 98 Main St, St Andrews
-2 CAUS premature birth
-1 OCCU labourer
-0 @p00000128@ INDI
-1 NAME Alexander /BATE/
-1 SEX M
-1 BIRT
-2 DATE 28 Oct 1929
-2 PLAC 28 Main St, St Andrews
-1 OCCU machinist
-0 @p00000129@ INDI
-1 NAME John /COCKING/
-1 SEX M
-1 BIRT
-2 DATE 13 Apr 1930
-2 PLAC 86 Main St, St Andrews
-1 OCCU driver in grain mill
-0 @p00000130@ INDI
-1 NAME George /FORSTER/
-1 SEX M
-1 BIRT
-2 DATE 15 Feb 1931
-2 PLAC 10 Main St, St Andrews
-1 DEAT
-2 DATE 18 Apr 1996
-2 PLAC 77 Main St, St Andrews
-2 CAUS bronchitis
-1 OCCU farmer
-0 @p00000131@ INDI
-1 NAME George /DODD/
-1 SEX M
-1 BIRT
-2 DATE 24 Aug 1931
-2 PLAC 67 Main St, St Andrews
-1 OCCU clerk
-0 @p00000132@ INDI
-1 NAME Neil /SMITH/
-1 SEX M
-1 BIRT
-2 DATE 08 May 1933
-2 PLAC 23 Main St, St Andrews
-1 DEAT
-2 DATE 03 Nov 2002
-2 PLAC 47 Main St, St Andrews
-2 CAUS atrophy and debility
-1 OCCU fisherman
-0 @p00000134@ INDI
-1 NAME Horace /SKINNER/
-1 SEX M
-1 BIRT
-2 DATE 27 Dec 1937
-2 PLAC 50 Main St, St Andrews
-1 OCCU publishers commercial traveller
-0 @p00000135@ INDI
-1 NAME Phelix /MANNING/
-1 SEX M
-1 BIRT
-2 DATE 10 Jul 1941
-2 PLAC 53 Main St, St Andrews
-1 OCCU royal navy, commander
-0 @p00000136@ INDI
-1 NAME William /HANFORD/
-1 SEX M
-1 BIRT
-2 DATE 22 Jun 1942
-2 PLAC 91 Main St, St Andrews
-1 DEAT
-2 DATE 20 Nov 2002
-2 PLAC 20 Main St, St Andrews
-2 CAUS "syncope, heart disease (not specified)"
-1 OCCU ploughman
-0 @p00000137@ INDI
-1 NAME John /WHITE/
-1 SEX M
-1 BIRT
-2 DATE 17 Sep 1942
-2 PLAC 78 Main St, St Andrews
-1 DEAT
-2 DATE 11 May 1995
-2 PLAC 24 Main St, St Andrews
-2 CAUS bronchitis
-1 OCCU marine store dealer
-0 @p00000139@ INDI
-1 NAME Mary /HIGGET/
-1 SEX F
-1 BIRT
-2 DATE 04 Oct 1948
-2 PLAC 31 Main St, St Andrews
-1 OCCU iron plate moulder
-0 @p00000140@ INDI
-1 NAME Elizabeth /PARK/
-1 SEX F
-1 BIRT
-2 DATE 22 Dec 1948
-2 PLAC 92 Main St, St Andrews
-1 OCCU sawyer
-0 @p00000142@ INDI
-1 NAME Annella /GLASS/
-1 SEX F
-1 BIRT
-2 DATE 27 May 1950
-2 PLAC 73 Main St, St Andrews
-1 OCCU brewers agent
-0 @p00000143@ INDI
-1 NAME Robert /WILMOT/
-1 SEX M
-1 BIRT
-2 DATE 06 Jun 1952
-2 PLAC 25 Main St, St Andrews
-1 OCCU publican
-0 @p00000145@ INDI
-1 NAME Chirsty /FINLEY/
-1 SEX F
-1 BIRT
-2 DATE 06 Aug 1955
-2 PLAC 60 Main St, St Andrews
-1 DEAT
-2 DATE 21 Feb 1996
-2 PLAC 73 Main St, St Andrews
-2 CAUS otherwise
-1 OCCU gardener
-0 @p00000147@ INDI
-1 NAME John /SAINSBURY/
-1 SEX M
-1 BIRT
-2 DATE 03 May 1959
-2 PLAC 56 Main St, St Andrews
-1 OCCU farm worker
-0 @p00000148@ INDI
-1 NAME Sarah /STEWART/
-1 SEX F
-1 BIRT
-2 DATE 12 Dec 1960
-2 PLAC 48 Main St, St Andrews
-1 OCCU weaver
-0 @p00000150@ INDI
-1 NAME Maggie /WRIGHT/
-1 SEX F
-1 BIRT
-2 DATE 30 Dec 1963
-2 PLAC 86 Main St, St Andrews
-1 OCCU fisherman
-0 @p00000151@ INDI
-1 NAME Jane /HARRISON/
-1 SEX F
-1 BIRT
-2 DATE 03 Dec 1964
-2 PLAC 77 Main St, St Andrews
-1 OCCU farmer
-0 @p00000153@ INDI
-1 NAME Emily /LLOYD/
-1 SEX F
-1 BIRT
-2 DATE 21 Sep 1967
-2 PLAC 46 Main St, St Andrews
-1 OCCU soldier
-0 @p00000154@ INDI
-1 NAME Isabella /LOVELL/
-1 SEX F
-1 BIRT
-2 DATE 13 Jan 1969
-2 PLAC 93 Main St, St Andrews
-1 OCCU auctioneer
-0 @p00000155@ INDI
-1 NAME Marget /CAREY/
-1 SEX F
-1 BIRT
-2 DATE 25 May 1970
-2 PLAC 12 Main St, St Andrews
-1 OCCU farmer
-0 @p00000156@ INDI
-1 NAME Alexander /WARNER/
-1 SEX M
-1 BIRT
-2 DATE 09 Nov 1972
-2 PLAC 20 Main St, St Andrews
-1 OCCU iron brazier
 0 @p00000157@ INDI
-1 NAME John /STILES/
+1 NAME Owen /CROFT/
 1 SEX M
 1 BIRT
 2 DATE 01 Aug 1973
+2 PLAC 39 Main St, St Andrews
+1 OCCU labourer
+1 FAMC @m00000039@
+0 @p00000124@ INDI
+1 NAME Thomas /GRIFFOTH/
+1 SEX M
+1 BIRT
+2 DATE 04 Oct 1926
+2 PLAC 99 Main St, St Andrews
+1 DEAT
+2 DATE 11 Mar 1996
+2 PLAC 90 Main St, St Andrews
+2 CAUS specified causes
+1 OCCU smith
+0 @p00000125@ INDI
+1 NAME Helen /MORRELL/
+1 SEX F
+1 BIRT
+2 DATE 09 Apr 1927
+2 PLAC 25 Main St, St Andrews
+1 OCCU motor fitter
+0 @p00000126@ INDI
+1 NAME Thomas /SHARRATT/
+1 SEX M
+1 BIRT
+2 DATE 14 Sep 1927
+2 PLAC 73 Main St, St Andrews
+1 DEAT
+2 DATE 25 May 1968
+2 PLAC 45 Main St, St Andrews
+2 CAUS congestion of lung
+1 OCCU calico printer
+0 @p00000128@ INDI
+1 NAME Henry /BURNETT/
+1 SEX M
+1 BIRT
+2 DATE 28 Oct 1929
+2 PLAC 13 Main St, St Andrews
+1 OCCU law clerk
+0 @p00000129@ INDI
+1 NAME David /THOMAS/
+1 SEX M
+1 BIRT
+2 DATE 13 Apr 1930
+2 PLAC 61 Main St, St Andrews
+1 OCCU weaver
+0 @p00000130@ INDI
+1 NAME John /CAWOOD/
+1 SEX M
+1 BIRT
+2 DATE 15 Feb 1931
+2 PLAC 5 Main St, St Andrews
+1 DEAT
+2 DATE 18 Apr 1996
+2 PLAC 99 Main St, St Andrews
+2 CAUS not specified
+1 OCCU ag lab
+0 @p00000131@ INDI
+1 NAME Thomas /ELDRET/
+1 SEX M
+1 BIRT
+2 DATE 24 Aug 1931
+2 PLAC 28 Main St, St Andrews
+1 OCCU miner
+0 @p00000132@ INDI
+1 NAME George /CHAMBERLAIN/
+1 SEX M
+1 BIRT
+2 DATE 08 May 1933
+2 PLAC 40 Main St, St Andrews
+1 DEAT
+2 DATE 03 Nov 2002
+2 PLAC 25 Main St, St Andrews
+2 CAUS specified causes
+1 OCCU farmer
+0 @p00000134@ INDI
+1 NAME Andrew /JACKSON/
+1 SEX M
+1 BIRT
+2 DATE 27 Dec 1937
+2 PLAC 87 Main St, St Andrews
+1 OCCU glover
+0 @p00000135@ INDI
+1 NAME David /WILKIN/
+1 SEX M
+1 BIRT
+2 DATE 10 Jul 1941
+2 PLAC 8 Main St, St Andrews
+1 OCCU butcher
+0 @p00000136@ INDI
+1 NAME Wm /DALZIEL/
+1 SEX M
+1 BIRT
+2 DATE 22 Jun 1942
+2 PLAC 45 Main St, St Andrews
+1 DEAT
+2 DATE 20 Nov 2002
+2 PLAC 100 Main St, St Andrews
+2 CAUS tuberculosis - respiratory system
+1 OCCU horse keeper
+0 @p00000137@ INDI
+1 NAME John /OSBORNE/
+1 SEX M
+1 BIRT
+2 DATE 17 Sep 1942
+2 PLAC 21 Main St, St Andrews
+1 DEAT
+2 DATE 11 May 1995
+2 PLAC 23 Main St, St Andrews
+2 CAUS broncho-pneumonia
+1 OCCU ag lab
+0 @p00000139@ INDI
+1 NAME Jane /WELHAM/
+1 SEX F
+1 BIRT
+2 DATE 04 Oct 1948
+2 PLAC 25 Main St, St Andrews
+1 OCCU wool merchant
+0 @p00000140@ INDI
+1 NAME Isabella /CLARK/
+1 SEX F
+1 BIRT
+2 DATE 22 Dec 1948
+2 PLAC 60 Main St, St Andrews
+1 OCCU school master
+0 @p00000142@ INDI
+1 NAME Christina /WHITE/
+1 SEX F
+1 BIRT
+2 DATE 27 May 1950
+2 PLAC 27 Main St, St Andrews
+1 OCCU glazier
+0 @p00000143@ INDI
+1 NAME Robert /STEDMAN/
+1 SEX M
+1 BIRT
+2 DATE 06 Jun 1952
+2 PLAC 60 Main St, St Andrews
+1 OCCU labourer
+0 @p00000145@ INDI
+1 NAME Annie /DAVIES/
+1 SEX F
+1 BIRT
+2 DATE 06 Aug 1955
+2 PLAC 83 Main St, St Andrews
+1 DEAT
+2 DATE 21 Feb 1996
+2 PLAC 77 Main St, St Andrews
+2 CAUS phthisis
+1 OCCU general labourer
+0 @p00000147@ INDI
+1 NAME Willi /JACKSON/
+1 SEX M
+1 BIRT
+2 DATE 03 May 1959
+2 PLAC 48 Main St, St Andrews
+1 OCCU lab
+0 @p00000148@ INDI
+1 NAME Margaret /OATES/
+1 SEX F
+1 BIRT
+2 DATE 12 Dec 1960
+2 PLAC 82 Main St, St Andrews
+1 OCCU cutler
+0 @p00000150@ INDI
+1 NAME Catherine /KIRBY/
+1 SEX F
+1 BIRT
+2 DATE 30 Dec 1963
+2 PLAC 13 Main St, St Andrews
+1 OCCU book keeper
+0 @p00000151@ INDI
+1 NAME Betsy /THREAPLETON/
+1 SEX F
+1 BIRT
+2 DATE 03 Dec 1964
+2 PLAC 62 Main St, St Andrews
+1 OCCU accountant
+0 @p00000153@ INDI
+1 NAME Ellen /ROOKSBY/
+1 SEX F
+1 BIRT
+2 DATE 21 Sep 1967
+2 PLAC 21 Main St, St Andrews
+1 OCCU cotton mill operative
+0 @p00000154@ INDI
+1 NAME Margaret /OLIVER/
+1 SEX F
+1 BIRT
+2 DATE 13 Jan 1969
+2 PLAC 90 Main St, St Andrews
+1 OCCU jeweller
+0 @p00000155@ INDI
+1 NAME Christina /GLADSTONE/
+1 SEX F
+1 BIRT
+2 DATE 25 May 1970
+2 PLAC 14 Main St, St Andrews
+1 OCCU blacksmith
+0 @p00000156@ INDI
+1 NAME Allan /HOAD/
+1 SEX M
+1 BIRT
+2 DATE 09 Nov 1972
 2 PLAC 24 Main St, St Andrews
-1 OCCU decorator
+1 OCCU carpenter
 0 @p00000158@ INDI
-1 NAME Euphemia /NAYLOR/
+1 NAME Isobella /FOWLE/
 1 SEX F
 1 BIRT
 2 DATE 17 Nov 1974
-2 PLAC 89 Main St, St Andrews
-1 OCCU lace cutter (leather trade)
+2 PLAC 45 Main St, St Andrews
+1 OCCU joiner
 0 @p00000159@ INDI
-1 NAME John /ROBERTSON/
+1 NAME William /ASH/
 1 SEX M
 1 BIRT
 2 DATE 20 Oct 1975
-2 PLAC 47 Main St, St Andrews
-1 OCCU laboratory technician
+2 PLAC 34 Main St, St Andrews
+1 OCCU railway inspector
 0 @p00000160@ INDI
-1 NAME Margaret /WREN/
+1 NAME Mary /BOWER/
 1 SEX F
 1 BIRT
 2 DATE 11 Jul 1976
-2 PLAC 63 Main St, St Andrews
-1 OCCU joiner
+2 PLAC 36 Main St, St Andrews
+1 OCCU stonemason
 0 @p00000161@ INDI
-1 NAME John /CLAYTON/
+1 NAME George /DENNIS/
 1 SEX M
 1 BIRT
 2 DATE 14 Jul 1977
-2 PLAC 9 Main St, St Andrews
-1 OCCU clerk
+2 PLAC 56 Main St, St Andrews
+1 OCCU turner
 0 @p00000162@ INDI
-1 NAME Margaret /GRAY/
+1 NAME Wilelmina /MINNIS/
 1 SEX F
 1 BIRT
 2 DATE 18 Oct 1977
-2 PLAC 83 Main St, St Andrews
-1 OCCU shop assistant
+2 PLAC 53 Main St, St Andrews
+1 OCCU gardener
 0 @p00000163@ INDI
-1 NAME Isabella /GRAHAM/
+1 NAME Rachel /STONE/
 1 SEX F
 1 BIRT
 2 DATE 06 Feb 1978
-2 PLAC 94 Main St, St Andrews
-1 OCCU farm lab
+2 PLAC 32 Main St, St Andrews
+1 OCCU farmer
 0 @p00000164@ INDI
-1 NAME Janet /ANDREWS/
+1 NAME Jeanie /ANDERSON/
 1 SEX F
 1 BIRT
 2 DATE 17 Aug 1978
-2 PLAC 68 Main St, St Andrews
-1 OCCU dressmaker
+2 PLAC 77 Main St, St Andrews
+1 OCCU maltster
 0 @p00000165@ INDI
-1 NAME Ann /SCHOFIELD/
+1 NAME Gabella /HISCOCKS/
 1 SEX F
 1 BIRT
 2 DATE 31 Oct 1978
-2 PLAC 14 Main St, St Andrews
-1 OCCU yeoman farmer
+2 PLAC 65 Main St, St Andrews
+1 OCCU traveller
 0 @p00000166@ INDI
-1 NAME Robert /BOSLEY/
+1 NAME David /THURLOW/
 1 SEX M
 1 BIRT
 2 DATE 12 Nov 1978
-2 PLAC 56 Main St, St Andrews
-1 OCCU labourer
+2 PLAC 36 Main St, St Andrews
+1 OCCU waterman
 0 @p00000167@ INDI
-1 NAME Elizabeth /THING/
+1 NAME Sarah /CONWAY/
 1 SEX F
 1 BIRT
 2 DATE 10 Jul 1979
-2 PLAC 79 Main St, St Andrews
-1 OCCU fen reeve
+2 PLAC 8 Main St, St Andrews
+1 OCCU removal contractor
 0 @p00000168@ INDI
-1 NAME James /BABBAGE/
+1 NAME John /BOLTON/
 1 SEX M
 1 BIRT
 2 DATE 26 Apr 1980
-2 PLAC 17 Main St, St Andrews
-1 OCCU mariner
+2 PLAC 10 Main St, St Andrews
+1 OCCU labourer
 0 @p00000169@ INDI
-1 NAME James /PLAWRIGHT/
+1 NAME John /BOWRING/
 1 SEX M
 1 BIRT
 2 DATE 10 Dec 1982
-2 PLAC 85 Main St, St Andrews
-1 OCCU merchantile clerk
+2 PLAC 66 Main St, St Andrews
+1 OCCU basket maker
 0 @p00000170@ INDI
-1 NAME Margaret /LUNN/
+1 NAME Mary /INGLIS/
 1 SEX F
 1 BIRT
 2 DATE 20 Jul 1983
-2 PLAC 18 Main St, St Andrews
-1 OCCU farmer
+2 PLAC 27 Main St, St Andrews
+1 OCCU plumber
 0 @p00000171@ INDI
-1 NAME Hugh /MCDOLE/
+1 NAME Robert /GAMBLE/
 1 SEX M
 1 BIRT
 2 DATE 03 Feb 1985
-2 PLAC 63 Main St, St Andrews
+2 PLAC 71 Main St, St Andrews
 1 DEAT
 2 DATE 28 Oct 2012
 2 PLAC 63 Main St, St Andrews
-2 CAUS bronchitis
-1 OCCU dairy farmer
+2 CAUS chronic rheumatism
+1 OCCU seaman
 0 @p00000172@ INDI
-1 NAME Catherine /HOWMAN/
+1 NAME Agnes /PRYCE/
 1 SEX F
 1 BIRT
 2 DATE 14 May 1985
-2 PLAC 91 Main St, St Andrews
-1 OCCU ships carpenter, seagoing
+2 PLAC 78 Main St, St Andrews
+1 OCCU butcher
 0 @p00000173@ INDI
-1 NAME Alexander /HUGHES/
+1 NAME John /FRANCIS/
 1 SEX M
 1 BIRT
 2 DATE 13 Sep 1985
-2 PLAC 60 Main St, St Andrews
-1 OCCU air force officer
+2 PLAC 14 Main St, St Andrews
+1 OCCU labourer
 0 @p00000174@ INDI
-1 NAME Jessie /PLATT/
+1 NAME Margaret /MITCHELL/
 1 SEX F
 1 BIRT
 2 DATE 13 Nov 1986
 2 PLAC 94 Main St, St Andrews
-1 OCCU maltster
+1 OCCU farmer
 0 @p00000175@ INDI
-1 NAME Fanny /MCNAB/
+1 NAME Marion /ASPINALL/
 1 SEX F
 1 BIRT
 2 DATE 14 Mar 1988
-2 PLAC 99 Main St, St Andrews
-1 OCCU dental technician
+2 PLAC 59 Main St, St Andrews
+1 OCCU shoemaker
 0 @p00000176@ INDI
-1 NAME David /PATERSON/
+1 NAME Alexander /WILKINSON/
 1 SEX M
 1 BIRT
 2 DATE 13 Nov 1989
-2 PLAC 22 Main St, St Andrews
-1 OCCU joiner
+2 PLAC 26 Main St, St Andrews
+1 OCCU farmer
 0 @p00000177@ INDI
-1 NAME William /BLAYNEY/
+1 NAME James /GAFFREY/
 1 SEX M
 1 BIRT
 2 DATE 05 Oct 1993
-2 PLAC 83 Main St, St Andrews
-1 OCCU needlewoman
+2 PLAC 8 Main St, St Andrews
+1 OCCU lighterman & waterman
 0 @p00000178@ INDI
-1 NAME Cecilia /WEBB/
+1 NAME Agnes /GREEN/
 1 SEX F
 1 BIRT
 2 DATE 18 Feb 1994
-2 PLAC 61 Main St, St Andrews
-1 OCCU coachman
+2 PLAC 93 Main St, St Andrews
+1 OCCU coalminer
 0 @p00000179@ INDI
-1 NAME John /RIDDELL/
+1 NAME Alexander /AINSWORTH/
 1 SEX M
 1 BIRT
 2 DATE 01 Jul 1995
-2 PLAC 9 Main St, St Andrews
-1 OCCU colliery viewer
+2 PLAC 40 Main St, St Andrews
+1 OCCU war office clerk
 0 @p00000180@ INDI
-1 NAME Janet /LEWIS/
+1 NAME Elizabeth /MURRAY/
 1 SEX F
 1 BIRT
 2 DATE 02 Jul 1995
-2 PLAC 48 Main St, St Andrews
-1 OCCU baker
+2 PLAC 66 Main St, St Andrews
+1 OCCU silversmiths salesman
 0 @p00000181@ INDI
-1 NAME Margaret /PILLMAN/
+1 NAME Margaret /RIGHT/
 1 SEX F
 1 BIRT
 2 DATE 11 Aug 1995
-2 PLAC 73 Main St, St Andrews
-1 OCCU labourer
+2 PLAC 89 Main St, St Andrews
+1 OCCU school master
 0 @p00000182@ INDI
-1 NAME Agness /LAW/
+1 NAME Janet /GOWER/
 1 SEX F
 1 BIRT
 2 DATE 23 Apr 1996
-2 PLAC 88 Main St, St Andrews
-1 OCCU grocer
+2 PLAC 11 Main St, St Andrews
+1 OCCU ironmoulder
 0 @p00000183@ INDI
-1 NAME Robert /GRIMSDITCH/
+1 NAME James /ROLES/
 1 SEX M
 1 BIRT
 2 DATE 07 Sep 1996
-2 PLAC 68 Main St, St Andrews
-1 OCCU engineering inspector
+2 PLAC 89 Main St, St Andrews
+1 OCCU farm labourer
 0 @p00000184@ INDI
-1 NAME Rose /HALL/
+1 NAME Marion /RUSSELL/
 1 SEX F
 1 BIRT
 2 DATE 25 Apr 1997
-2 PLAC 10 Main St, St Andrews
-1 OCCU royal navy
+2 PLAC 60 Main St, St Andrews
+1 OCCU weaver
 0 @p00000185@ INDI
-1 NAME Isabella /ATYEO/
+1 NAME Maria /ARCHBOLD/
 1 SEX F
 1 BIRT
 2 DATE 05 Feb 1998
-2 PLAC 51 Main St, St Andrews
-1 OCCU frame work knitter
+2 PLAC 32 Main St, St Andrews
+1 OCCU husbandman
 0 @p00000186@ INDI
-1 NAME Charles /FERRIER/
+1 NAME David /MURRAY/
 1 SEX M
 1 BIRT
 2 DATE 30 Oct 2001
-2 PLAC 53 Main St, St Andrews
-1 OCCU weaver
+2 PLAC 94 Main St, St Andrews
+1 OCCU clerk railway company
 0 @p00000187@ INDI
-1 NAME Robert /PARNELL/
+1 NAME Joseph /CULYER/
 1 SEX M
 1 BIRT
 2 DATE 28 Jan 2003
-2 PLAC 59 Main St, St Andrews
-1 OCCU clerk
+2 PLAC 27 Main St, St Andrews
+1 OCCU lab
 0 @p00000188@ INDI
-1 NAME Mary /CORBETT/
+1 NAME Cath /STRONG/
 1 SEX F
 1 BIRT
 2 DATE 17 Jun 2003
-2 PLAC 21 Main St, St Andrews
-1 OCCU reservoir keeper
+2 PLAC 18 Main St, St Andrews
+1 OCCU fendermaker
 0 @p00000189@ INDI
-1 NAME Anw /LINDOW/
+1 NAME Peter /TODD/
 1 SEX M
 1 BIRT
 2 DATE 11 Sep 2003
-2 PLAC 99 Main St, St Andrews
-1 OCCU labourer
+2 PLAC 98 Main St, St Andrews
+1 OCCU shoemaker
 0 @p00000190@ INDI
-1 NAME Alexander /JONES/
+1 NAME George /HASWELL/
 1 SEX M
 1 BIRT
 2 DATE 06 Aug 2004
-2 PLAC 88 Main St, St Andrews
-1 OCCU soldier
+2 PLAC 23 Main St, St Andrews
+1 OCCU clerk, (bible society)
 0 @p00000191@ INDI
-1 NAME Catherine /MCCARTHY/
+1 NAME Marion /GRUNDY/
 1 SEX F
 1 BIRT
 2 DATE 13 Oct 2004
-2 PLAC 99 Main St, St Andrews
-1 OCCU farmer's daughter
+2 PLAC 64 Main St, St Andrews
+1 OCCU florist
 0 @p00000192@ INDI
-1 NAME Mary /CONACHER/
+1 NAME Margt /WRIGHT/
 1 SEX F
 1 BIRT
 2 DATE 13 May 2007
-2 PLAC 57 Main St, St Andrews
-1 OCCU hairdresser
+2 PLAC 29 Main St, St Andrews
+1 OCCU servant
 0 @p00000193@ INDI
-1 NAME Helen /JOHNSON/
+1 NAME Agnes /GREEN/
 1 SEX F
 1 BIRT
 2 DATE 08 May 2009
-2 PLAC 86 Main St, St Andrews
-1 OCCU insurance agent
+2 PLAC 58 Main St, St Andrews
+1 OCCU file manufacturer
 0 @p00000194@ INDI
-1 NAME John /PEARCE/
+1 NAME John /ROCKING/
 1 SEX M
 1 BIRT
 2 DATE 28 May 2009
-2 PLAC 19 Main St, St Andrews
-1 OCCU weaver
+2 PLAC 40 Main St, St Andrews
+1 OCCU coal miner
 0 @p00000195@ INDI
-1 NAME Charles /HARRIS/
+1 NAME James /BLEIKIE/
 1 SEX M
 1 BIRT
 2 DATE 07 Oct 2009
-2 PLAC 15 Main St, St Andrews
-1 OCCU shorthand typist
+2 PLAC 50 Main St, St Andrews
+1 OCCU teacher
 0 @p00000196@ INDI
-1 NAME John /HOLDEN/
+1 NAME Alex /MACKAY/
 1 SEX M
 1 BIRT
 2 DATE 15 Oct 2010
-2 PLAC 34 Main St, St Andrews
-1 OCCU weaver
+2 PLAC 68 Main St, St Andrews
+1 OCCU furnace lab
 0 @p00000197@ INDI
-1 NAME Jessie /BUTLER/
+1 NAME Christina /DAVIS/
 1 SEX F
 1 BIRT
 2 DATE 28 Jun 2011
-2 PLAC 41 Main St, St Andrews
-1 OCCU master butcher
+2 PLAC 22 Main St, St Andrews
+1 OCCU paper maker
 0 @p00000198@ INDI
-1 NAME Barbra /RAWBONE/
+1 NAME Jane /DICKENSON/
 1 SEX F
 1 BIRT
 2 DATE 21 Mar 2012
-2 PLAC 30 Main St, St Andrews
-1 OCCU mackintosh manufacturer
+2 PLAC 93 Main St, St Andrews
+1 OCCU painter and decorator
 0 @p00000199@ INDI
-1 NAME Thomas /DANIELS/
+1 NAME William /HUNT/
 1 SEX M
 1 BIRT
 2 DATE 16 Mar 2013
-2 PLAC 32 Main St, St Andrews
-1 OCCU tailor
+2 PLAC 90 Main St, St Andrews
+1 OCCU publican
 0 @p00000200@ INDI
-1 NAME David /HUGHES/
+1 NAME John /STONER/
 1 SEX M
 1 BIRT
 2 DATE 01 Nov 2013
-2 PLAC 40 Main St, St Andrews
-1 OCCU cattle spice manufacturer
+2 PLAC 15 Main St, St Andrews
+1 OCCU bricklayers labourer
 0 @m00000002@ FAM
 1 MARR
 2 DATE 24 Jul 1798
@@ -2359,6 +2360,7 @@
 1 CHIL @p00000146@
 1 CHIL @p00000149@
 1 CHIL @p00000152@
+1 CHIL @p00000157@
 0 @S1@ SUBM
 1 NAME Digitising Scotland Project
 0 TRLR
