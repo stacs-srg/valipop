@@ -18,6 +18,7 @@ package uk.ac.standrews.cs.digitising_scotland.population_model.model.database;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import uk.ac.standrews.cs.digitising_scotland.population_model.config.PopulationProperties;
 import uk.ac.standrews.cs.digitising_scotland.population_model.model.RandomFactory;
@@ -33,7 +34,7 @@ import static org.junit.Assert.assertTrue;
 /**
  * Created by graham on 15/06/2014.
  */
-public class DBTest {
+@Ignore public class DBTest {
 
     private String database_name;
     private Connection connection;

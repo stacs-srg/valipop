@@ -18,6 +18,7 @@ package uk.ac.standrews.cs.digitising_scotland.population_model.model.database;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import uk.ac.standrews.cs.digitising_scotland.population_model.config.PopulationProperties;
@@ -35,7 +36,7 @@ import java.util.*;
  * Created by graham on 07/07/2014.
  */
 @RunWith(Parameterized.class)
-public class GeneralDBPopulationTest extends PopulationComparisonTest {
+@Ignore public class GeneralDBPopulationTest extends PopulationComparisonTest {
 
     private String database_name;
     private Connection connection;
