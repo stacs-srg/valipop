@@ -1,3 +1,21 @@
+<!--
+
+    Copyright 2017 Systems Research Group, University of St Andrews:
+    <https://github.com/stacs-srg>
+
+    This file is part of the module population_model.
+
+    population_model is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+    License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
+    version.
+
+    population_model is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+    warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License along with population_model. If not, see
+    <http://www.gnu.org/licenses/>.
+
+-->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
@@ -28,17 +46,6 @@
         <maven.compiler.source>${jdk.version}</maven.compiler.source>
         <maven.compiler.target>${jdk.version}</maven.compiler.target>
     </properties>
-
-    <ciManagement>
-        <system>Jenkins</system>
-        <url>https://builds.cs.st-andrews.ac.uk/job/population_model</url>
-    </ciManagement>
-
-    <scm>
-        <connection>scm:${repository.type}:${repository.location}</connection>
-        <developerConnection>scm:${repository.type}:${repository.location}</developerConnection>
-        <url>${repository.location}</url>
-    </scm>
 
     <build>
         <plugins>
@@ -110,12 +117,6 @@
             <groupId>gov.nist.math</groupId>
             <artifactId>jama</artifactId>
             <version>1.0.3</version>
-        </dependency>
-
-        <dependency>
-            <groupId>uk.ac.standrews.cs</groupId>
-            <artifactId>javastat_fork</artifactId>
-            <version>1.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
