@@ -17,6 +17,7 @@
 package uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.entityExtensions;
 
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateImplementations.AdvancableDate;
+import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateImplementations.YearDate;
 import uk.ac.standrews.cs.digitising_scotland.verisim.events.EventType;
 import uk.ac.standrews.cs.digitising_scotland.verisim.events.birth.NoChildrenOfDesiredOrder;
 import uk.ac.standrews.cs.digitising_scotland.verisim.events.death.NotDeadException;
@@ -84,4 +85,10 @@ public interface PersonUtils {
     Collection<IPerson> getAllGrandChildren();
 
     Collection<IPerson> getAllGreatGrandChildren();
+
+    boolean diedInYear(YearDate year);
+
+    Collection<IPartnership> getPartnershipsActiveInYear(YearDate year);
+
+    boolean bornInYear(YearDate year);
 }
