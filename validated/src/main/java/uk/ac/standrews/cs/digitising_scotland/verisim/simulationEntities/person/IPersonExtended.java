@@ -17,8 +17,9 @@
 package uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person;
 
 
+import uk.ac.standrews.cs.digitising_scotland.population_model.model.IPerson;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.Date;
-import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.partnership.IPartnership;
+import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.partnership.IPartnershipExtended;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.entityExtensions.PersonUtils;
 
 import java.util.List;
@@ -28,101 +29,35 @@ import java.util.List;
  *
  * @author Graham Kirby (graham.kirby@st-andrews.ac.uk)
  */
-public interface IPerson extends Comparable<IPerson>, PersonUtils {
-
-    /**
-     * Representation of female sex.
-     */
-    char FEMALE = 'F';
-
-    /**
-     * Representation of male sex.
-     */
-    char MALE = 'M';
-
-    /**
-     * Gets the person's unique identifier. It can be assumed that identifiers are allocated in temporal
-     * order, so an older person's identifier is always less than that of a younger person.
-     *
-     * @return the person's unique identifier
-     */
-    int getId();
-
-    /**
-     * Gets the person's sex, either {@link #FEMALE} or {@link #MALE}.
-     *
-     * @return the person's sex
-     */
-    char getSex();
+public interface IPersonExtended extends IPerson, Comparable<IPersonExtended>, PersonUtils {
 
     /**
      * Gets the person's date of birth.
      *
      * @return the person's date of birth
      */
-    Date getBirthDate();
+    Date getBirthDate_ex();
 
     /**
      * Gets the person's date of death, or null if they are living.
      *
      * @return the person's date of death
      */
-    Date getDeathDate();
+    Date getDeathDate_ex();
 
     /**
      * Gets the identifiers of the person's partnerships, or null if none are recorded.
      *
      * @return the identifiers of the person's partnerships
      */
-    List<IPartnership> getPartnerships();
+    List<IPartnershipExtended> getPartnerships_ex();
 
     /**
      * Gets the identifier of the person's parents' partnership, or -1 if none are recorded.
      *
      * @return the identifier of the person's parents' partnership
      */
-    IPartnership getParentsPartnership();
+    IPartnershipExtended getParentsPartnership_ex();
 
-    /**
-     * Gets the person's first name.
-     *
-     * @return the person's first name
-     */
-    String getFirstName();
-
-    /**
-     * Gets the person's surname (family name).
-     *
-     * @return the person's surname
-     */
-    String getSurname();
-
-    /**
-     * Gets the person's place of birth, or null if not recorded.
-     *
-     * @return the person's place of birth
-     */
-    String getBirthPlace();
-
-    /**
-     * Gets the person's place of death, or null if not recorded.
-     *
-     * @return the person's place of death
-     */
-    String getDeathPlace();
-
-    /**
-     * Gets the person's occupation, or null if not recorded.
-     *
-     * @return the person's occupation
-     */
-    String getOccupation();
-
-    /**
-     * Gets the cause of the person's death, or null if not recorded.
-     *
-     * @return the cause of the person's death
-     */
-    String getDeathCause();
 
 }

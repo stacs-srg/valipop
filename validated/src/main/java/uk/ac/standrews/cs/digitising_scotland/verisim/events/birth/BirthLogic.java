@@ -26,7 +26,7 @@ import org.apache.logging.log4j.Logger;
 import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.dataDistributionTables.OneDimensionDataDistribution;
 import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.recording.PopulationStatistics;
 import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.validation.exceptions.StatisticalManipulationCalculationError;
-import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPerson;
+import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPersonExtended;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.dataStructure.Population;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.dataStructure.exceptions.InsufficientNumberOfPeopleException;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.MapUtils;
@@ -58,8 +58,8 @@ public class BirthLogic {
 //        // for each age of mothers of childbearing age (AGE OF MOTHER)
 //        for (int age = minAge; age < maxAge; age++) {
 //
-//            ArrayList<IPerson> mothersNeedingPartners = new ArrayList<>();
-//            ArrayList<IPerson> mothersNeedingProcessed = new ArrayList<>();
+//            ArrayList<IPersonExtended> mothersNeedingPartners = new ArrayList<>();
+//            ArrayList<IPersonExtended> mothersNeedingProcessed = new ArrayList<>();
 //            int partnershipCount = 0;
 //
 //            YearDate yearOfBirthInConsideration = new YearDate(currentTime.getYear() - age);
@@ -75,7 +75,7 @@ public class BirthLogic {
 //            for (int order = 0; order <= maxBirthOrderInCohort; order++) {
 //
 //                // women of this age and birth order - L
-//                Collection<IPerson> women = population.getLivingPeople().getFemales().getByDatePeriodAndBirthOrder(yearOfBirthInConsideration, order);
+//                Collection<IPersonExtended> women = population.getLivingPeople().getFemales().getByDatePeriodAndBirthOrder(yearOfBirthInConsideration, order);
 //
 ////                System.out.println("------------------");
 ////                System.out.println(order + " of " + maxBirthOrderInCohort);
@@ -94,8 +94,8 @@ public class BirthLogic {
 //                    continue;
 //                } else {
 //
-////                    for(IPerson w : women) {
-////                        if(w.getPartnerships().size() != 0) {
+////                    for(IPersonExtended w : women) {
+////                        if(w.getPartnerships_ex().size() != 0) {
 ////                            partnershipCount++;
 ////                        }
 ////                    }
@@ -153,7 +153,7 @@ public class BirthLogic {
 //                    // select the mothers
 //                    for (Integer childrenInMaternity : motherCountsByMaternitySize.keySet()) {
 //
-//                        ArrayList<IPerson> mothersToBe;
+//                        ArrayList<IPersonExtended> mothersToBe;
 //
 //                        try {
 //                            mothersToBe = new ArrayList<>(population.getLivingPeople().getFemales().removeNPersons(motherCountsByMaternitySize.get(childrenInMaternity), yearOfBirthInConsideration, order, currentTime));
@@ -164,7 +164,7 @@ public class BirthLogic {
 //
 //
 //                        for (int n = 0; n < motherCountsByMaternitySize.get(childrenInMaternity); n++) {
-//                            IPerson mother = mothersToBe.get(n);
+//                            IPersonExtended mother = mothersToBe.get(n);
 //
 //                            // make and assign the specified number of children - assign to correct place in population
 //                            mother.recordPartnership(EntityFactory.formNewChildrenInPartnership(childrenInMaternity, mother, currentTime, config.getSimulationTimeStep(), population));
@@ -195,8 +195,8 @@ public class BirthLogic {
 //
 //
 ////            mothersNeedingPartners.addAll(mothersNeedingProcessed);
-////            for(IPerson p : mothersNeedingPartners) {
-////                IPartnership partnership = p.getLastChild().getParentsPartnership();
+////            for(IPersonExtended p : mothersNeedingPartners) {
+////                IPartnershipExtended partnership = p.getLastChild().getParentsPartnership_ex();
 ////                partnership.setFather(getRandomFather(people, yearOfBirthInConsideration));
 ////                partnership.getMalePartner().recordPartnership(partnership);
 ////            }
@@ -204,9 +204,9 @@ public class BirthLogic {
 //            // TODO NEXT - bring next line back in for rb seperation
 ////            mothersNeedingPartners.addAll(SeparationLogic.handleSeparation(desiredPopulationStatistics, currentTime, mothersNeedingProcessed, people, config));
 //
-////            for(IPerson p : mothersNeedingPartners) {
-////                System.out.println(p.getLastChild().getParentsPartnership().getMalePartner().getId());
-////// p.getLastChild().getParentsPartnership().setFather(getRandomFather(people, yearOfBirthInConsideration));
+////            for(IPersonExtended p : mothersNeedingPartners) {
+////                System.out.println(p.getLastChild().getParentsPartnership_ex().getMalePartner().getId());
+////// p.getLastChild().getParentsPartnership_ex().setFather(getRandomFather(people, yearOfBirthInConsideration));
 ////            }
 //
 //            // At this point we have a Mothers Needing Fathers List with children already created
@@ -216,10 +216,10 @@ public class BirthLogic {
 ////            PartneringLogic.handlePartnering(desiredPopulationStatistics, currentTime, mothersNeedingPartners, age, people);
 //
 //
-//            for(IPerson mother : mothersNeedingPartners) {
-//                IPerson f =  new ArrayList<>(population.getLivingPeople().getMales().removeNPersons(1, yearOfBirthInConsideration, true)).get(0);
+//            for(IPersonExtended mother : mothersNeedingPartners) {
+//                IPersonExtended f =  new ArrayList<>(population.getLivingPeople().getMales().removeNPersons(1, yearOfBirthInConsideration, true)).get(0);
 //                population.getLivingPeople().addPerson(f);
-//                mother.getLastChild().getParentsPartnership().setFather(f);
+//                mother.getLastChild().getParentsPartnership_ex().setFather(f);
 //            }
 //
 //        }
@@ -227,9 +227,9 @@ public class BirthLogic {
 //
 //
 //
-////        for(IPerson pe : people.getFemales().getAll()) {
+////        for(IPersonExtended pe : people.getFemales().getAll()) {
 ////
-////            for(IPartnership p : pe.getPartnerships()) {
+////            for(IPartnershipExtended p : pe.getPartnerships_ex()) {
 ////                if (p.getChildren().size() == 0) {
 ////                    System.out.println("GO MAD");
 ////                }
@@ -243,11 +243,11 @@ public class BirthLogic {
 
     }
 
-    private static int eligableMothers(Collection<IPerson> women, MonthDate currentTime) {
+    private static int eligableMothers(Collection<IPersonExtended> women, MonthDate currentTime) {
 
         int count = 0;
 
-        for (IPerson w : women) {
+        for (IPersonExtended w : women) {
             if (w.noRecentChildren(currentTime, new CompoundTimeUnit(-9, TimeUnit.MONTH))) {
                 count++;
             }
@@ -400,16 +400,16 @@ public class BirthLogic {
     }
 
 
-    public static IPerson getRandomFather(Population population, AdvancableDate date, CompoundTimeUnit tp) throws InsufficientNumberOfPeopleException {
+    public static IPersonExtended getRandomFather(Population population, AdvancableDate date, CompoundTimeUnit tp) throws InsufficientNumberOfPeopleException {
 
-        Collection<IPerson> males = population.getLivingPeople().getMales().getAllPersonsInTimePeriod(date, tp);
+        Collection<IPersonExtended> males = population.getLivingPeople().getMales().getAllPersonsInTimePeriod(date, tp);
 
         if(males.size() == 0) {
             throw new InsufficientNumberOfPeopleException("No males alive in simulation");
         }
 
         int r = randomNumberGenerator.nextInt(males.size());
-        return males.toArray(new IPerson[males.size()])[r];
+        return males.toArray(new IPersonExtended[males.size()])[r];
 
     }
 }

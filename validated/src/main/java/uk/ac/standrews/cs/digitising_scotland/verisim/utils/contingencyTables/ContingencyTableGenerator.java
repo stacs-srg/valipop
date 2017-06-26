@@ -5,33 +5,36 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.DateUtils;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateImplementations.YearDate;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.timeSteps.TimeUnit;
 import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.recording.PopulationStatistics;
-import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.partnership.IPartnership;
-import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPerson;
+import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.partnership.IPartnershipExtended;
+import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPersonExtended;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.IPopulation;
-import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.integerRange.IntegerRange;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedList;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class ContingencyTableGenerator {
 
-    private TableNode<String,       // Root
-            TableNode<Boolean,      // Synthetic / Statistics
-            TableNode<YearDate,     // Year
-            TableNode<Boolean,      // Male / Female
-            TableNode<Integer,      // Age
-            TableNode<Boolean,      // Died / Alive
-            TableNode<Integer,      // Previous children in years first active partnership
-            TableNode<Integer,      // Children in year
-            TableNode<Boolean,      // Separated in year
-            TableNode<IntegerRange, // Current Partner age / none
-            TableNode<IntegerRange, // Previous Partner age / none (if two partners in year)
-                    ?>>>>>>>>>>>     // Count
-                        tree = new TableNode<>("ROOT");
+//    private TableNode<String,       // Root
+//            TableNode<Boolean,      // Synthetic / Statistics
+//            TableNode<YearDate,     // Year
+//            TableNode<Boolean,      // Male / Female
+//            TableNode<Integer,      // Age
+//            TableNode<Boolean,      // Died / Alive
+//            TableNode<Integer,      // Children in active partnership
+//            TableNode<Boolean,      // Separated
+//            TableNode<Integer,      // New partner age
+//            TableNode<Integer,      // Children birthed in previous years
+//            TableNode<Integer,      // Children birthed in year
+//                    ?>>>>>>>>>>>    // Count
+//                        t = new TableNode<>("ROOT");
 
     private TableNode<String, Boolean> t = new TableNode<>("ROOT");
+
+    private static final String SEP = ",";
 
     public ContingencyTableGenerator(IPopulation population, PopulationStatistics expectedStatistics,
                                      Date startDate, Date endDate) {
@@ -41,23 +44,150 @@ public class ContingencyTableGenerator {
              y = y.advanceTime(1, TimeUnit.YEAR).getYearDate()) {
 
             // for every person in population
-            for(IPerson person : population.getPeople()) {
+            for(IPersonExtended person : population.getPeople()) {
 
                 // who was alive or died in the year of consideration
                 if(person.aliveInYear(y)) {
-
+                    addPersonToTree(person, true, y);
                 }
-
-
             }
-
-
-
         }
 
     }
 
-    public void addPersonToTree(IPerson person, Boolean synthetic, YearDate y) {
+    public void outputTable() {
+
+        System.out.println("source, yob, sex, age, died, children birthed in partnership, separated, new partner age, " +
+                "previous children birthed, children birthed in year, freq");
+
+        LinkedList<String> descent = new LinkedList<>();
+
+        for(TableNode source : t.getChildren()) {
+
+            // Stat / sim
+            TableNode<Boolean, Integer> n = (TableNode<Boolean, Integer>) source;
+
+            Boolean synthetic = n.getValue();
+
+            if(synthetic) {
+                descent.add("sim");
+            } else {
+                descent.add("stats");
+            }
+
+            for(TableNode yob : n.getChildren()) {
+
+                // yob
+                TableNode<YearDate, Boolean> n1 = (TableNode<YearDate, Boolean>) yob;
+
+                descent.add(Integer.toString(n1.getValue().getYear()));
+
+                for(TableNode sex : n1.getChildren()) {
+
+                    // sex
+                    TableNode<Boolean, Integer> n2 = (TableNode<Boolean, Integer>) sex;
+                    Boolean male = n2.getValue();
+
+                    if(male) {
+                        descent.add("Male");
+                    } else {
+                        descent.add("Female");
+                    }
+
+                    for(TableNode age : n2.getChildren()) {
+
+                        // age
+                        TableNode<Integer, Boolean> n3 = (TableNode<Integer, Boolean>) age;
+
+                        descent.add(n3.getValue().toString());
+
+                        for(TableNode died: n3.getChildren()) {
+
+                            // Died / Alive
+                            TableNode<Boolean, Integer> n4 = (TableNode<Boolean, Integer>) died;
+                            Boolean dead = n4.getValue();
+
+                            if(dead) {
+                                descent.add("Y");
+                            } else {
+                                descent.add("N");
+                            }
+
+                            for(TableNode childrenInActivePartnership : n4.getChildren()) {
+
+                                // Children in active partnership
+                                TableNode<Integer, Boolean> n5 = (TableNode<Integer, Boolean>) childrenInActivePartnership;
+                                descent.add(n5.getValue().toString());
+
+                                for(TableNode separated : n5.getChildren()) {
+
+                                    // Separated
+                                    TableNode<Boolean, Integer> n6 = (TableNode<Boolean, Integer>) separated;
+
+                                    Boolean s = n6.getValue();
+
+                                    if(s == null) {
+                                        descent.add("NA");
+                                    } else if(s) {
+                                        descent.add("T");
+                                    } else {
+                                        descent.add("F");
+                                    }
+
+                                    for(TableNode newPartnerAge : n6.getChildren()) {
+
+                                        TableNode<Integer, Integer> n7 = (TableNode<Integer, Integer>) newPartnerAge;
+
+                                        Integer a = n7.getValue();
+                                        if(a == null) {
+                                            descent.add("None");
+                                        } else {
+                                            descent.add(a.toString());
+                                        }
+
+
+
+                                        for(TableNode prevChildren : n7.getChildren()) {
+
+                                            TableNode<Integer, Integer> n8 = (TableNode<Integer, Integer>) prevChildren;
+
+                                            descent.add(n8.getValue().toString());
+
+                                            for(TableNode childrenInYear : n8.getChildren()) {
+
+                                                TableNode<Integer, ?> n9 = (TableNode<Integer, ?>) childrenInYear;
+
+                                                descent.add(n9.getValue().toString());
+
+                                                for(String str : descent) {
+                                                    System.out.print(str + SEP);
+                                                }
+                                                System.out.println(n9.getCount());
+
+                                                descent.removeLast();
+                                            }
+                                            descent.removeLast();
+                                        }
+                                        descent.removeLast();
+                                    }
+                                    descent.removeLast();
+                                }
+                                descent.removeLast();
+                            }
+                            descent.removeLast();
+                        }
+                        descent.removeLast();
+                    }
+                    descent.removeLast();
+                }
+                descent.removeLast();
+            }
+            descent.removeLast();
+        }
+
+    }
+
+    public void addPersonToTree(IPersonExtended person, Boolean synthetic, YearDate y) {
 
         TableNode node;
 
@@ -71,7 +201,7 @@ public class ContingencyTableGenerator {
 
         // Get node for year of birth
 
-        YearDate birthYear = person.getBirthDate().getYearDate();
+        YearDate birthYear = person.getBirthDate_ex().getYearDate();
         try {
             node = node.getChild(birthYear);
         } catch (IsLeafException | ChildNotFoundException e) {
@@ -105,18 +235,25 @@ public class ContingencyTableGenerator {
             node = node.addChild(died);
         }
 
-        Collection<IPartnership> partnershipsFromYear = person.getPartnershipsActiveInYear(y);
+        Collection<IPartnershipExtended> partnershipsFromYear = person.getPartnershipsActiveInYear(y);
 
         if(partnershipsFromYear.size() > 1) {
             if(sex) {
-                System.out.println("Male multiple active partners in year: " + partnershipsFromYear);
+                System.out.println("Male multiple active partners in year: " + partnershipsFromYear.size());
             } else {
-                System.out.println("Female multiple active partners in year: " + partnershipsFromYear);
+                System.out.println("Female multiple active partners in year: " + partnershipsFromYear.size());
             }
         }
 
-        IPartnership activePartnership = getActivePartnership(partnershipsFromYear);
-        int childrenInActivePartnership = activePartnership.getChildren().size();
+        // Get node for Children birthed in Active partnership
+
+        IPartnershipExtended activePartnership = getActivePartnership(partnershipsFromYear);
+
+        int childrenInActivePartnership = 0;
+
+        if(activePartnership != null) {
+            childrenInActivePartnership = activePartnership.getChildren().size();
+        }
 
         try {
             node = node.getChild(childrenInActivePartnership);
@@ -126,22 +263,24 @@ public class ContingencyTableGenerator {
 
         Integer childrenBirthedInYear = getChildrenBirthedInYear(activePartnership, y);
 
-        Boolean activePartnershipToEndInYear = null;
+        // Get node for separated
+        Boolean activePartnershipToSeparateWithNoFurtherChildren = null;
         if(childrenBirthedInYear != 0) {
-            activePartnershipToEndInYear = isPartnershipToEndInYear(activePartnership, y);
+            activePartnershipToSeparateWithNoFurtherChildren = toSeparate(activePartnership, y);
         }
 
         try {
-            node = node.getChild(activePartnershipToEndInYear);
+            node = node.getChild(activePartnershipToSeparateWithNoFurtherChildren);
         } catch (IsLeafException | ChildNotFoundException e) {
-            node = node.addChild(activePartnershipToEndInYear);
+            node = node.addChild(activePartnershipToSeparateWithNoFurtherChildren);
         }
 
-        IntegerRange prevChildrennewPartnerAge = null;
-        if(startedInYear(activePartnership, y)) {
-            IPerson partner = activePartnership.getPartnerOf(person);
-            int partnerAge = partner.ageOnDate(activePartnership.getPartnershipDate());
-            newPartnerAge = resolveToRange(partnerAge);
+        // Get node for new partner age
+        Integer newPartnerAge = null;
+
+        if(activePartnership != null && startedInYear(activePartnership, y)) {
+            IPersonExtended partner = activePartnership.getPartnerOf(person);
+            newPartnerAge = partner.ageOnDate(activePartnership.getPartnershipDate());
         }
 
         try {
@@ -150,7 +289,8 @@ public class ContingencyTableGenerator {
             node = node.addChild(newPartnerAge);
         }
 
-        Collection<IPartnership> allPartnerships = person.getPartnerships();
+        // Get node for children birthed in previous years with anyone
+        Collection<IPartnershipExtended> partnershipsInPastYears = person.getPartnerships_ex();
         Integer prevChildren = sumChildrenBirthedFromPrevYears(partnershipsInPastYears, y);
 
         try {
@@ -159,30 +299,71 @@ public class ContingencyTableGenerator {
             node = node.addChild(prevChildren);
         }
 
+        // Get node for children birthed in year
+
         try {
             node = node.getChild(childrenBirthedInYear);
         } catch (IsLeafException | ChildNotFoundException e) {
             node = node.addChild(childrenBirthedInYear);
         }
 
+        // Inc freq
         node.incrementCount(1);
 
+    }
+
+    private Integer sumChildrenBirthedFromPrevYears(Collection<IPartnershipExtended> partnershipsInPastYears, YearDate y) {
+
+        int count = 0;
+
+        for(IPartnershipExtended p : partnershipsInPastYears) {
+            for(IPersonExtended c : p.getChildren()) {
+                if(DateUtils.dateBefore(c.getBirthDate_ex(), y)) {
+                    count ++;
+                }
+            }
+        }
+
+        return count;
+    }
+
+    private boolean startedInYear(IPartnershipExtended activePartnership, YearDate y) {
+
+        Date startDate = activePartnership.getPartnershipDate();
+
+        return !DateUtils.dateBefore(startDate, y) && DateUtils.dateBefore(startDate, y.advanceTime(1, TimeUnit.YEAR));
+    }
+
+    private Boolean toSeparate(IPartnershipExtended activePartnership, YearDate y) {
+
+        if(activePartnership == null) {
+            return null;
+        }
+
+        IPersonExtended lastChild = activePartnership.getLastChild();
+
+        if (!lastChild.bornInYear(y)) {
+            return false;
+        } else if (activePartnership.getSeparationDate() != null) {
+            return true;
+        } else {
+            return false;
+        }
+
 
     }
 
-    private Boolean isPartnershipToEndInYear(IPartnership activePartnership, YearDate y) {
+    private Integer getChildrenBirthedInYear(IPartnershipExtended activePartnership, YearDate year) {
 
+        if(activePartnership == null) {
+            return 0;
+        }
 
-
-    }
-
-    private Integer getChildrenBirthedInYear(IPartnership activePartnership, YearDate year) {
-
-        Collection<IPerson> children = activePartnership.getChildren();
+        Collection<IPersonExtended> children = activePartnership.getChildren();
 
         int c = 0;
 
-        for(IPerson child : children) {
+        for(IPersonExtended child : children) {
             if(child.bornInYear(year)) {
                 c++;
             }
@@ -192,8 +373,20 @@ public class ContingencyTableGenerator {
 
     }
 
-    private IPartnership getActivePartnership(Collection<IPartnership> partnershipsFromYear) {
-        return null;
+    private IPartnershipExtended getActivePartnership(Collection<IPartnershipExtended> partnershipsFromYear) {
+
+        IPartnershipExtended latestPartnershipInYear = null;
+        Date latestDate = new YearDate(Integer.MIN_VALUE);
+
+        for(IPartnershipExtended p : partnershipsFromYear) {
+            if(DateUtils.dateBefore(latestDate, p.getPartnershipDate())) {
+                latestDate = p.getPartnershipDate();
+                latestPartnershipInYear = p;
+            }
+        }
+
+        return latestPartnershipInYear;
+
     }
 
     private Boolean convertSexToBoolean(char sex) {

@@ -23,7 +23,7 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateImplementati
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateImplementations.MonthDate;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.exceptions.UnsupportedDateConversion;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.timeSteps.CompoundTimeUnit;
-import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPerson;
+import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPersonExtended;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.dataStructure.exceptions.PersonNotFoundException;
 
 import java.util.*;
@@ -35,7 +35,7 @@ import java.util.*;
  */
 public class MaleCollection extends PersonCollection {
 
-    private final Map<MonthDate, Collection<IPerson>> byYear = new TreeMap<>();
+    private final Map<MonthDate, Collection<IPersonExtended>> byYear = new TreeMap<>();
 
     /**
      * Instantiates a new MaleCollection. The dates specify the earliest and latest expected birth dates of
@@ -60,9 +60,9 @@ public class MaleCollection extends PersonCollection {
      */
 
     @Override
-    public Collection<IPerson> getAll() {
+    public Collection<IPersonExtended> getAll() {
 
-        Collection<IPerson> people = new ArrayList<>();
+        Collection<IPersonExtended> people = new ArrayList<>();
 
         for (MonthDate t : byYear.keySet()) {
             people.addAll(byYear.get(t));
@@ -72,9 +72,9 @@ public class MaleCollection extends PersonCollection {
     }
 
     @Override
-    public Collection<IPerson> getAllPersonsInTimePeriod(AdvancableDate firstDate, CompoundTimeUnit timePeriod) {
+    public Collection<IPersonExtended> getAllPersonsInTimePeriod(AdvancableDate firstDate, CompoundTimeUnit timePeriod) {
 
-        Collection<IPerson> people = new ArrayList<>();
+        Collection<IPersonExtended> people = new ArrayList<>();
 
         int divisionsInPeriod = DateUtils.calcSubTimeUnitsInTimeUnit(getDivisionSize(), timePeriod);
 
@@ -101,8 +101,8 @@ public class MaleCollection extends PersonCollection {
     }
 
     @Override
-    public void addPerson(IPerson person) {
-        MonthDate divisionDate = resolveDateToCorrectDivisionDate(person.getBirthDate());
+    public void addPerson(IPersonExtended person) {
+        MonthDate divisionDate = resolveDateToCorrectDivisionDate(person.getBirthDate_ex());
 
         try {
             byYear.get(divisionDate).add(person);
@@ -115,8 +115,8 @@ public class MaleCollection extends PersonCollection {
     }
 
     @Override
-    public void removePerson(IPerson person) throws PersonNotFoundException {
-        Collection<IPerson> people = byYear.get(resolveDateToCorrectDivisionDate(person.getBirthDate()));
+    public void removePerson(IPersonExtended person) throws PersonNotFoundException {
+        Collection<IPersonExtended> people = byYear.get(resolveDateToCorrectDivisionDate(person.getBirthDate_ex()));
 
         // Removal of person AND test for removal (all in second clause of the if statement)
         if (people == null || !people.remove(person)) {

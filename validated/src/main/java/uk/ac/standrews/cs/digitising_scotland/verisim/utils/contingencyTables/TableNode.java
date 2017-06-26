@@ -9,7 +9,7 @@ import java.util.HashMap;
 public class TableNode<ParentType, ChildType> {
 
     ParentType value;
-    HashMap<ChildType, TableNode<ChildType, ?>> children = null;
+    HashMap<ChildType, TableNode<ChildType, ?>> children = new HashMap<>();
 
     int count = 0;
 

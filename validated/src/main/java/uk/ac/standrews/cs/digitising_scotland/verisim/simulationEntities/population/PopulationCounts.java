@@ -16,7 +16,7 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population;
 
-import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPerson;
+import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPersonExtended;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
@@ -79,7 +79,7 @@ public class PopulationCounts {
         femaleDeath(1);
     }
 
-    public void death(IPerson deceased) {
+    public void death(IPersonExtended deceased) {
         if(Character.toLowerCase(deceased.getSex()) == 'm') {
             maleDeath();
         } else {

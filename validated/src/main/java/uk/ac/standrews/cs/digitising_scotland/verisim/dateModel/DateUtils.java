@@ -18,6 +18,7 @@ package uk.ac.standrews.cs.digitising_scotland.verisim.dateModel;
 
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateImplementations.AdvancableDate;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateImplementations.ExactDate;
+import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateImplementations.YearDate;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.timeSteps.CompoundTimeUnit;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.timeSteps.TimeUnit;
 
@@ -597,5 +598,11 @@ public class DateUtils {
         } else {
             return timeUnit.getCount() * MONTHS_IN_YEAR;
         }
+    }
+
+    public static boolean dateInYear(Date date, YearDate year) {
+
+        return !DateUtils.dateBefore(date, year) && DateUtils.dateBefore(date, year.advanceTime(1, TimeUnit.YEAR));
+
     }
 }

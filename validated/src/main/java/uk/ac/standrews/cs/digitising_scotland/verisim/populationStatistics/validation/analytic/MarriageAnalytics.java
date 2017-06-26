@@ -16,8 +16,8 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.validation.analytic;
 
-import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.partnership.IPartnership;
-import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPerson;
+import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.partnership.IPartnershipExtended;
+import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPersonExtended;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.IPopulation;
 import uk.ac.standrews.cs.digitising_scotland.util.ArrayManipulation;
 
@@ -73,11 +73,11 @@ public class MarriageAnalytics {
      */
     public void analyseMarriages() {
 
-        for (final IPerson person : population.getPeople()) {
+        for (final IPersonExtended person : population.getPeople()) {
 
-            if (person.getSex() == IPerson.MALE) { // only look at Males to avoid counting marriages twice.
+            if (person.getSex() == IPersonExtended.MALE) { // only look at Males to avoid counting marriages twice.
 
-                final List<IPartnership> partnership_ids = person.getPartnerships();
+                final List<IPartnershipExtended> partnership_ids = person.getPartnerships_ex();
                 if (partnership_ids == null) {
                     count_marriages[0]++;
                 } else {

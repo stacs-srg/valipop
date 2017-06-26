@@ -22,7 +22,7 @@ import java.util.*;
 
 import org.apache.logging.log4j.Logger;
 import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.dataDistributionTables.selfCorrecting.SelfCorrectingTwoDimensionDataDistribution;
-import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPerson;
+import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPersonExtended;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.dataStructure.exceptions.InsufficientNumberOfPeopleException;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.integerRange.IntegerRange;
 
@@ -49,10 +49,10 @@ public class SharedNewLogic {
         return integerRanges;
     }
 
-    public static Collection<IPerson> chooseNFromCollection(Integer n, Collection<IPerson> collection, Random random, Logger log) throws InsufficientNumberOfPeopleException {
+    public static Collection<IPersonExtended> chooseNFromCollection(Integer n, Collection<IPersonExtended> collection, Random random, Logger log) throws InsufficientNumberOfPeopleException {
 
-        ArrayList<IPerson> collectionAL = new ArrayList<>(collection);
-        Collection<IPerson> chosen = new ArrayList<>();
+        ArrayList<IPersonExtended> collectionAL = new ArrayList<>(collection);
+        Collection<IPersonExtended> chosen = new ArrayList<>();
 
         try {
             for (int i = 0; i < n; i++) {

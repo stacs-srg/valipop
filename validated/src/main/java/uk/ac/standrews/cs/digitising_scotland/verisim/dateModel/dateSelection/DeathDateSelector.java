@@ -22,7 +22,7 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateImplementati
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateImplementations.ExactDate;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.timeSteps.CompoundTimeUnit;
 import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.recording.PopulationStatistics;
-import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPerson;
+import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPersonExtended;
 
 import java.util.Random;
 
@@ -90,13 +90,13 @@ public class DeathDateSelector implements DateSelector {
     }
 
     @Override
-    public ExactDate selectDate(IPerson p, PopulationStatistics desiredPopulationStatistics, AdvancableDate currentDate, CompoundTimeUnit consideredTimePeriod) {
+    public ExactDate selectDate(IPersonExtended p, PopulationStatistics desiredPopulationStatistics, AdvancableDate currentDate, CompoundTimeUnit consideredTimePeriod) {
 
-        IPerson child = p.getLastChild();
+        IPersonExtended child = p.getLastChild();
 
         if(child != null) {
 
-            Date birthDateOfLastChild = child.getBirthDate().getExactDate();
+            Date birthDateOfLastChild = child.getBirthDate_ex().getExactDate();
 
             if (Character.toLowerCase(p.getSex()) == 'm') {
                 // If a male with a child then the man cannot die more than 9 months before the birth date

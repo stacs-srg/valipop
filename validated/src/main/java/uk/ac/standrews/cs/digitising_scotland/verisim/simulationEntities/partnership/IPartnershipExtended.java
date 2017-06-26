@@ -16,9 +16,10 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.partnership;
 
+import uk.ac.standrews.cs.digitising_scotland.population_model.model.IPartnership;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.entityExtensions.PartnershipUtils;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.Date;
-import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPerson;
+import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPersonExtended;
 
 import java.util.List;
 
@@ -27,44 +28,39 @@ import java.util.List;
  *
  * @author Graham Kirby (graham.kirby@st-andrews.ac.uk)
  */
-public interface IPartnership extends Comparable<IPartnership>, PartnershipUtils {
-
-    /**
-     * Gets the partnership's unique identifier.
-     *
-     * @return the partnership's unique identifier
-     */
-    int getId();
+public interface IPartnershipExtended extends IPartnership, PartnershipUtils {
 
     /**
      * Gets the female in the partnership.
      *
      * @return the female
      */
-    IPerson getFemalePartner();
+    IPersonExtended getFemalePartner();
 
     /**
      * Gets the male in the partnership.
      *
      * @return the male
      */
-    IPerson getMalePartner();
+    IPersonExtended getMalePartner();
 
     /**
      * Gets the identifier of the partner of the person with the given identifier, or -1 if neither member
      * of this partnership has the given identifier.
      *
-     * @param id the identifier
+     * @param person the person
      * @return the identifier of the partner of the person with the given identifier
      */
-    IPerson getPartnerOf(IPerson id);
+    IPersonExtended getPartnerOf(IPersonExtended person);
 
     /**
      * Gets the identifiers of the partnership's child_ids, or null if none are recorded.
      *
      * @return the identifiers of the partnership's child_ids
      */
-    List<IPerson> getChildren();
+    List<IPersonExtended> getChildren();
 
     Date getPartnershipDate();
+
+    Date getSeparationDate();
 }

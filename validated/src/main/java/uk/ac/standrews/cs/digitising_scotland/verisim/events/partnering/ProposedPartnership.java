@@ -16,7 +16,7 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.verisim.events.partnering;
 
-import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPerson;
+import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPersonExtended;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.integerRange.IntegerRange;
 
 /**
@@ -24,18 +24,18 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.integer
  */
 public class ProposedPartnership {
 
-    IPerson male;
+    IPersonExtended male;
     IntegerRange malesRange;
 
-    IPerson female;
+    IPersonExtended female;
 
-    public ProposedPartnership(IPerson male, IPerson female, IntegerRange malesRange) {
+    public ProposedPartnership(IPersonExtended male, IPersonExtended female, IntegerRange malesRange) {
         this.male = male;
         this.female = female;
         this.malesRange = malesRange;
     }
 
-    public void setMale(IPerson newMale, IntegerRange newMalesRange) {
+    public void setMale(IPersonExtended newMale, IntegerRange newMalesRange) {
         this.male = newMale;
         this.malesRange = newMalesRange;
     }
@@ -44,11 +44,11 @@ public class ProposedPartnership {
         return malesRange;
     }
 
-    public IPerson getFemale() {
+    public IPersonExtended getFemale() {
         return female;
     }
 
-    public IPerson getMale() {
+    public IPersonExtended getMale() {
         return male;
     }
 }

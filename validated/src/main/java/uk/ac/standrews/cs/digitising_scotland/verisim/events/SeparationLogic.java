@@ -21,7 +21,7 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.timeSteps.Compou
 import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.dataDistributionTables.determinedCounts.SingleDeterminedCount;
 import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.dataDistributionTables.statsKeys.SeparationStatsKey;
 import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.recording.PopulationStatistics;
-import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPerson;
+import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPersonExtended;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.dataStructure.Population;
 
 import java.util.ArrayList;
@@ -32,31 +32,39 @@ import java.util.Map;
  */
 public class SeparationLogic {
 
-    public static void handle(Map<Integer, ArrayList<IPerson>> continuingPartnedFemalesByChildren,
+    public static void handle(Map<Integer, ArrayList<IPersonExtended>> continuingPartnedFemalesByChildren,
                               CompoundTimeUnit consideredTimePeriod, Date currentDate, PopulationStatistics desiredPopulationStatistics, Population population) {
 
+        // Consideration of separation is based on number of children in females current partnerships
         for(Integer numberOfChildren : continuingPartnedFemalesByChildren.keySet()) {
 
-            ArrayList<IPerson> mothers = continuingPartnedFemalesByChildren.get(numberOfChildren);
+            // Get mothers with given number of children in current partnership
+            ArrayList<IPersonExtended> mothers = continuingPartnedFemalesByChildren.get(numberOfChildren);
 
+            // Get determined count for separations for this group of mothers
             SeparationStatsKey key = new SeparationStatsKey(numberOfChildren, mothers.size(), consideredTimePeriod, currentDate);
-
             SingleDeterminedCount dC = (SingleDeterminedCount) desiredPopulationStatistics.getDeterminedCount(key);
 
             int count = 0;
 
-            for(IPerson p : continuingPartnedFemalesByChildren.get(numberOfChildren)) {
+            // For each mother in this group
+            for(IPersonExtended p : continuingPartnedFemalesByChildren.get(numberOfChildren)) {
 
+                // If enough mothers have been separated then break
                 if(count >= dC.getDeterminedCount()) {
                     break;
                 }
 
+                // else mark partnership for separation
+                p.getLastPartnership().separate(currentDate, consideredTimePeriod);
+
                 p.willSeparate(false);
-                p.getLastChild().getParentsPartnership().getMalePartner().willSeparate(false);
+                p.getLastChild().getParentsPartnership_ex().getMalePartner().willSeparate(false);
                 count++;
 
             }
 
+            // Return achieved statistics to the statistics handler
             population.getPopulationCounts().partnershipEnd(count);
             dC.setFufilledCount(count);
             desiredPopulationStatistics.returnAchievedCount(dC);

@@ -17,8 +17,8 @@
 package uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.dataStructure.utils;
 
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateImplementations.AdvancableDate;
-import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.partnership.IPartnership;
-import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPerson;
+import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.partnership.IPartnershipExtended;
+import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPersonExtended;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.dataStructure.PeopleCollection;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.dataStructure.PersonCollection;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.Date;
@@ -34,15 +34,15 @@ import java.util.Collection;
 public class AggregatePersonCollectionFactory {
 
     /**
-     * Aggregates two PersonCollections into a single collection of IPerson.
+     * Aggregates two PersonCollections into a single collection of IPersonExtended.
      *
      * @param col1 The first PersonCollection
      * @param col2 The second PersonCollection
      * @return The aggregated Collection of people
      */
-    public static Collection<IPerson> makeCollectionOfPersons(PersonCollection col1, PersonCollection col2) {
+    public static Collection<IPersonExtended> makeCollectionOfPersons(PersonCollection col1, PersonCollection col2) {
 
-        Collection<IPerson> people = col1.getAll();
+        Collection<IPersonExtended> people = col1.getAll();
         people.addAll(col2.getAll());
 
         return people;
@@ -66,11 +66,11 @@ public class AggregatePersonCollectionFactory {
         cloneCol1.setStartDate(start);
         cloneCol1.setEndDate(end);
 
-        for(IPerson p : cloneCol2.getPeople()) {
+        for(IPersonExtended p : cloneCol2.getPeople()) {
             cloneCol1.addPerson(p);
         }
 
-        for(IPartnership p : cloneCol2.getPartnerships()) {
+        for(IPartnershipExtended p : cloneCol2.getPartnerships()) {
             cloneCol1.addPartnershipToIndex(p);
         }
 

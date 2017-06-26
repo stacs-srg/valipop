@@ -17,12 +17,12 @@
 package uk.ac.standrews.cs.digitising_scotland.verisim.annotations.names;
 
 
-import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPerson;
+import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPersonExtended;
 
 public class FirstNameGenerator implements NameGenerator {
 
     @Override
-    public String getName(IPerson personToBeNamed) {
+    public String getName(IPersonExtended personToBeNamed) {
 
         // OZGUR - forename stuff handled here
 

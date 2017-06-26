@@ -21,8 +21,8 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateImplementati
 import uk.ac.standrews.cs.digitising_scotland.verisim.events.EventType;
 import uk.ac.standrews.cs.digitising_scotland.verisim.events.birth.NoChildrenOfDesiredOrder;
 import uk.ac.standrews.cs.digitising_scotland.verisim.events.death.NotDeadException;
-import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.partnership.IPartnership;
-import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPerson;
+import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.partnership.IPartnershipExtended;
+import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPersonExtended;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.Date;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateImplementations.MonthDate;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.timeSteps.CompoundTimeUnit;
@@ -38,7 +38,7 @@ public interface PersonUtils {
 
     boolean noRecentChildren(MonthDate currentDate, CompoundTimeUnit timePeriod);
 
-    void recordPartnership(IPartnership partnership);
+    void recordPartnership(IPartnershipExtended partnership);
 
     boolean recordDeath(Date date, Population population);
 
@@ -50,21 +50,21 @@ public interface PersonUtils {
 
     int ageAtFirstChild() throws NoChildrenOfDesiredOrder;
 
-    IPerson getLastChild();
+    IPersonExtended getLastChild();
 
     int numberOfChildren();
 
     void keepFather(PeopleCollection population);
 
-    void setParentsPartnership(IPartnership newParents);
+    void setParentsPartnership(IPartnershipExtended newParents);
 
     int numberOfChildrenFatheredChildren();
 
-    IPartnership isInstigatorOfSeparationOfMothersPreviousPartnership();
+    IPartnershipExtended isInstigatorOfSeparationOfMothersPreviousPartnership();
 
     boolean isWidow(Date onDate);
 
-    IPerson getPartner(Date onDate);
+    IPersonExtended getPartner(Date onDate);
 
     void giveChildren(int numberOfChildren, AdvancableDate onDate, CompoundTimeUnit birthTimeStep, Population population);
 
@@ -80,15 +80,19 @@ public interface PersonUtils {
 
     int numberOfChildrenInLatestPartnership();
 
-    Collection<IPerson> getAllChildren();
+    Collection<IPersonExtended> getAllChildren();
 
-    Collection<IPerson> getAllGrandChildren();
+    Collection<IPersonExtended> getAllGrandChildren();
 
-    Collection<IPerson> getAllGreatGrandChildren();
+    Collection<IPersonExtended> getAllGreatGrandChildren();
 
     boolean diedInYear(YearDate year);
 
-    Collection<IPartnership> getPartnershipsActiveInYear(YearDate year);
+    Collection<IPartnershipExtended> getPartnershipsActiveInYear(YearDate year);
 
     boolean bornInYear(YearDate year);
+
+    boolean aliveInYear(YearDate y);
+
+    IPartnershipExtended getLastPartnership();
 }
