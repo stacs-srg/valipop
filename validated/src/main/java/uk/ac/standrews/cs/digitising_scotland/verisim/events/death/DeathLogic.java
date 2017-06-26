@@ -89,8 +89,8 @@ public class DeathLogic implements EventLogic {
 //            deathCount += malesToDie;
 //            deathCount += femalesToDie;
 //
-//            Collection<IPerson> deadMales;
-//            Collection<IPerson> deadFemales;
+//            Collection<IPersonExtended> deadMales;
+//            Collection<IPersonExtended> deadFemales;
 //
 //            try {
 //                deadMales = removeMalesToDieFromPopulation(population.getLivingPeople(), yearOfBirth, malesToDie);
@@ -104,12 +104,12 @@ public class DeathLogic implements EventLogic {
 ////            System.out.println(currentDate.getYear() + " F yob " + yearOfBirth.getYear() + " nO " + numberOfFemales + " @DR " + femaleDeathRate + " res " + femalesToDie + " act " + deadFemales.size());
 //
 //            // for each to be killed
-//            for (IPerson m : deadMales) {
+//            for (IPersonExtended m : deadMales) {
 //                m.causeEventInTimePeriod(EventType.MALE_DEATH, currentDate, deathTimeStep);
 //                population.getDeadPeople().addPerson(m);
 //
 //
-//                Date dod = m.getDeathDate();
+//                Date dod = m.getDeathDate_ex();
 //                if(DateUtils.dateBeforeOrEqual(currentDate, dod)) {
 //                    if(DateUtils.differenceInDays(currentDate, dod) != 0) {
 //                        System.out.println("M After Current Date " + DateUtils.differenceInDays(currentDate, dod));
@@ -119,11 +119,11 @@ public class DeathLogic implements EventLogic {
 //            }
 //
 //
-//            for (IPerson f : deadFemales) {
+//            for (IPersonExtended f : deadFemales) {
 //                f.causeEventInTimePeriod(EventType.FEMALE_DEATH, currentDate, deathTimeStep);
 //                population.getDeadPeople().addPerson(f);
 //
-//                Date dod = f.getDeathDate();
+//                Date dod = f.getDeathDate_ex();
 //                if(DateUtils.dateBeforeOrEqual(currentDate, dod)) {
 //                    if(DateUtils.differenceInDays(currentDate, dod) != 0) {
 //                        System.out.println("F After Current Date " + DateUtils.differenceInDays(currentDate, dod));
@@ -160,11 +160,11 @@ public class DeathLogic implements EventLogic {
 
     }
 
-//    private static Collection<IPerson> removeMalesToDieFromPopulation(PeopleCollection population, MonthDate yearOfBirth, int numberToDie) throws InsufficientNumberOfPeopleException {
+//    private static Collection<IPersonExtended> removeMalesToDieFromPopulation(PeopleCollection population, MonthDate yearOfBirth, int numberToDie) throws InsufficientNumberOfPeopleException {
 //        return population.getMales().removeNPersons(numberToDie, yearOfBirth.getYearDate(), false);
 //    }
 //
-//    private static Collection<IPerson> removeFemalesToDieFromPopulation(PeopleCollection population, MonthDate yearOfBirth, int numberToDie) throws InsufficientNumberOfPeopleException {
+//    private static Collection<IPersonExtended> removeFemalesToDieFromPopulation(PeopleCollection population, MonthDate yearOfBirth, int numberToDie) throws InsufficientNumberOfPeopleException {
 //        return population.getFemales().removeNPersons(numberToDie, yearOfBirth.getYearDate(), false);
 //    }
 //

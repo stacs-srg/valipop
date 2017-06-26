@@ -17,7 +17,7 @@
 package uk.ac.standrews.cs.digitising_scotland.verisim.utils;
 
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.Date;
-import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPerson;
+import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPersonExtended;
 
 import java.util.Collection;
 
@@ -39,11 +39,11 @@ public class CollectionUtils {
 
     }
 
-    public static int countPeopleInCollectionAliveOnDate(Collection<IPerson> people, Date date) {
+    public static int countPeopleInCollectionAliveOnDate(Collection<IPersonExtended> people, Date date) {
 
         int count = 0;
 
-        for (IPerson p : people) {
+        for (IPersonExtended p : people) {
             if (p.aliveOnDate(date)) {
                 count++;
             }

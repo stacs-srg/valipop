@@ -16,31 +16,37 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.partnership;
 
+import uk.ac.standrews.cs.digitising_scotland.population_model.model.IPartnership;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.Date;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPerson;
+import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.DateUtils;
+import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateImplementations.YearDate;
+import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.timeSteps.CompoundTimeUnit;
+import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPersonExtended;
 
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class Partnership implements IPartnership {
+public class Partnership implements IPartnershipExtended {
 
     private static Logger log = LogManager.getLogger(Partnership.class);
     private static int nextId = 0;
     private int id;
-    private IPerson male;
-    private IPerson female;
-    private List<IPerson> children = new ArrayList<IPerson>();
+    private IPersonExtended male;
+    private IPersonExtended female;
+    private List<IPersonExtended> children = new ArrayList<IPersonExtended>();
 
     private Date partnershipDate;
+    private Date separationDate = null;
 
-    public Partnership(IPerson male, IPerson female, Date partnershipDate) {
+    public Partnership(IPersonExtended male, IPersonExtended female, Date partnershipDate) {
 
         this.id = getNewId();
 
@@ -50,13 +56,25 @@ public class Partnership implements IPartnership {
 
     }
 
-    public Partnership(IPerson female, Date partnershipDate) {
+    public Partnership(IPersonExtended female, Date partnershipDate) {
 
         this.id = getNewId();
 
         this.partnershipDate = partnershipDate;
         this.female = female;
 
+    }
+
+    public Partnership(IPersonExtended female) {
+
+        this.id = getNewId();
+
+        this.female = female;
+
+    }
+
+    public void setPartnershipDate(Date startDate) {
+        partnershipDate = startDate;
     }
 
     private static int getNewId() {
@@ -69,17 +87,57 @@ public class Partnership implements IPartnership {
     }
 
     @Override
-    public IPerson getFemalePartner() {
+    public int getFemalePartnerId() {
+        return getFemalePartner().getId();
+    }
+
+    @Override
+    public int getMalePartnerId() {
+        return getMalePartner().getId();
+    }
+
+    @Override
+    public int getPartnerOf(int i) {
+        if(getFemalePartnerId() == i) {
+            return getMalePartnerId();
+        } else {
+            return getFemalePartnerId();
+        }
+    }
+
+    @Override
+    public java.util.Date getMarriageDate() {
+        return getPartnershipDate().getDate();
+    }
+
+    @Override
+    public String getMarriagePlace() {
+        return null;
+    }
+
+    @Override
+    public List<Integer> getChildIds() {
+        List<Integer> childrenIDs = Collections.emptyList();
+
+        for(IPersonExtended p : getChildren()) {
+            childrenIDs.add(p.getId());
+        }
+
+        return childrenIDs;
+    }
+
+    @Override
+    public IPersonExtended getFemalePartner() {
         return female;
     }
 
     @Override
-    public IPerson getMalePartner() {
+    public IPersonExtended getMalePartner() {
         return male;
     }
 
     @Override
-    public IPerson getPartnerOf(IPerson id) {
+    public IPersonExtended getPartnerOf(IPersonExtended id) {
         if (id.getSex() == 'm') {
             return female;
         } else {
@@ -88,7 +146,7 @@ public class Partnership implements IPartnership {
     }
 
     @Override
-    public List<IPerson> getChildren() {
+    public List<IPersonExtended> getChildren() {
         return children;
     }
 
@@ -98,18 +156,49 @@ public class Partnership implements IPartnership {
     }
 
     @Override
+    public Date getSeparationDate() {
+        // TODO separation stuff
+
+        return separationDate;
+    }
+
+    @Override
     public int compareTo(IPartnership o) {
         return this.id == o.getId() ? 0 : -1;
     }
 
     @Override
-    public void addChildren(Collection<IPerson> children) {
+    public void addChildren(Collection<IPersonExtended> children) {
         this.children.addAll(children);
     }
 
     @Override
-    public void setFather(IPerson father) {
+    public void setFather(IPersonExtended father) {
         this.male = father;
         father.recordPartnership(this);
+    }
+
+    @Override
+    public void separate(Date currentDate, CompoundTimeUnit consideredTimePeriod) {
+        // TODO move over to selecting a date between the currentDate and the date of next partnership
+
+        separationDate = currentDate;
+
+    }
+
+    @Override
+    public IPersonExtended getLastChild() {
+
+        Date latestBirthDate = new YearDate(Integer.MIN_VALUE);
+        IPersonExtended latestChild = null;
+
+        for(IPersonExtended c : getChildren()) {
+            if(DateUtils.dateBefore(latestBirthDate, c.getBirthDate_ex())) {
+                latestBirthDate = c.getBirthDate_ex();
+                latestChild = c;
+            }
+        }
+
+        return latestChild;
     }
 }

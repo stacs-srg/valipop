@@ -19,7 +19,7 @@ package uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.popula
 
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateImplementations.AdvancableDate;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.timeSteps.CompoundTimeUnit;
-import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPerson;
+import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPersonExtended;
 
 import java.util.Collection;
 
@@ -28,12 +28,12 @@ import java.util.Collection;
  */
 public interface PopulationUtils {
 
-//    Collection<IPerson> getByYear(Date year);
+//    Collection<IPersonExtended> getByYear(Date year);
 
-//    Collection<IPerson> getByYearAndSex(char sex, Date year);
+//    Collection<IPersonExtended> getByYearAndSex(char sex, Date year);
 
-    Collection<IPerson> forceGetAllPersonsByTimePeriod(AdvancableDate firstDate, CompoundTimeUnit timePeriod);
+    Collection<IPersonExtended> forceGetAllPersonsByTimePeriod(AdvancableDate firstDate, CompoundTimeUnit timePeriod);
 
-    Collection<IPerson> forceGetAllPersonsByTimePeriodAndSex(AdvancableDate firstDate, CompoundTimeUnit timePeriod, char sex);
+    Collection<IPersonExtended> forceGetAllPersonsByTimePeriodAndSex(AdvancableDate firstDate, CompoundTimeUnit timePeriod, char sex);
 
 }

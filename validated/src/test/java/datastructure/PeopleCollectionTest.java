@@ -25,7 +25,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.Test;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.partnership.Partnership;
-import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPerson;
+import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPersonExtended;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.Person;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.dataStructure.PeopleCollection;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.dataStructure.exceptions.PersonNotFoundException;
@@ -73,7 +73,7 @@ public class PeopleCollectionTest {
 
         // are people added present in the correct place
         // for females
-        Collection<IPerson> females = living.getFemales().getByDatePeriodAndBirthOrder(start, y, 0);
+        Collection<IPersonExtended> females = living.getFemales().getByDatePeriodAndBirthOrder(start, y, 0);
         assertTrue(females.contains(f1));
         assertTrue(females.contains(f2));
         assertTrue(females.contains(f3));
@@ -109,14 +109,14 @@ public class PeopleCollectionTest {
 
         // are people added present in the correct place
         // for males
-        Collection<IPerson> males = living.getMales().getAllPersonsInTimePeriod(start, y);
+        Collection<IPersonExtended> males = living.getMales().getAllPersonsInTimePeriod(start, y);
         assertTrue(males.contains(m1));
         assertTrue(males.contains(m2));
         assertTrue(males.contains(m3));
 
         // for females
 
-        Collection<IPerson> females = living.getFemales().getAllPersonsInTimePeriod(start, y);
+        Collection<IPersonExtended> females = living.getFemales().getAllPersonsInTimePeriod(start, y);
         assertTrue(females.contains(f1));
         assertTrue(females.contains(f2));
         assertTrue(females.contains(f3));
@@ -152,18 +152,18 @@ public class PeopleCollectionTest {
 
         // are people added present in the correct place
         // for males
-        Collection<IPerson> males = living.getMales().getAll();
+        Collection<IPersonExtended> males = living.getMales().getAll();
         assertTrue(males.contains(m1));
         assertTrue(males.contains(m2));
         assertTrue(males.contains(m3));
 
         // for females
-        Collection<IPerson> females = living.getFemales().getAll();
+        Collection<IPersonExtended> females = living.getFemales().getAll();
         assertTrue(females.contains(f1));
         assertTrue(females.contains(f2));
         assertTrue(females.contains(f3));
 
-        Collection<IPerson> all = living.getAll();
+        Collection<IPersonExtended> all = living.getAll();
         assertTrue(all.contains(m1));
         assertTrue(all.contains(m2));
         assertTrue(all.contains(m3));
@@ -198,7 +198,7 @@ public class PeopleCollectionTest {
 
         living.removePerson(f1);
 
-        Partnership p1 = new Partnership(m1, f1, c1.getBirthDate());
+        Partnership p1 = new Partnership(m1, f1, c1.getBirthDate_ex());
         p1.addChildren(Collections.singletonList(c1));
         m1.recordPartnership(p1);
         f1.recordPartnership(p1);
@@ -207,11 +207,11 @@ public class PeopleCollectionTest {
         living.addPerson(f1);
 
         // are they in the new place
-        Collection<IPerson> people = living.getFemales().getByDatePeriodAndBirthOrder(m1.getBirthDate().getYearDate(), y, 1);
+        Collection<IPersonExtended> people = living.getFemales().getByDatePeriodAndBirthOrder(m1.getBirthDate_ex().getYearDate(), y, 1);
         assertTrue(people.contains(f1));
 
         // and not in the old place
-        people = living.getFemales().getByDatePeriodAndBirthOrder(m1.getBirthDate().getYearDate(), y, 0);
+        people = living.getFemales().getByDatePeriodAndBirthOrder(m1.getBirthDate_ex().getYearDate(), y, 0);
         assertFalse(people.contains(f1));
 
         // check for children
@@ -230,11 +230,11 @@ public class PeopleCollectionTest {
         living.addPerson(f1);
 
         // are they in the new place
-        people = living.getFemales().getByDatePeriodAndBirthOrder(m1.getBirthDate().getYearDate(), y, 3);
+        people = living.getFemales().getByDatePeriodAndBirthOrder(m1.getBirthDate_ex().getYearDate(), y, 3);
         assertTrue(people.contains(f1));
 
         // and not in the old place
-        people = living.getFemales().getByDatePeriodAndBirthOrder(m1.getBirthDate().getYearDate(), y, 1);
+        people = living.getFemales().getByDatePeriodAndBirthOrder(m1.getBirthDate_ex().getYearDate(), y, 1);
         assertFalse(people.contains(f1));
 
         // check for children
@@ -297,13 +297,13 @@ public class PeopleCollectionTest {
 //        living.addPerson(m1);
 //        living.addPerson(m2);
 //
-//        Collection<IPerson> males = living.getMales().getAllPersonsInTimePeriod(startY, y);
+//        Collection<IPersonExtended> males = living.getMales().getAllPersonsInTimePeriod(startY, y);
 //        assertTrue(males.contains(m1));
 //        assertTrue(males.contains(m2));
 //
 //        // for females
 //
-//        Collection<IPerson> females = living.getFemales().getAllPersonsInTimePeriod(startI, y);
+//        Collection<IPersonExtended> females = living.getFemales().getAllPersonsInTimePeriod(startI, y);
 //        assertTrue(females.contains(f1));
 //
 //    }

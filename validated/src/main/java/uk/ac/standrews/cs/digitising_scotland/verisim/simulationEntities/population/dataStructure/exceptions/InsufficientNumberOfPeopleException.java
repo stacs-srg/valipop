@@ -16,7 +16,7 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.dataStructure.exceptions;
 
-import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPerson;
+import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPersonExtended;
 
 import java.util.Collection;
 
@@ -38,7 +38,7 @@ public class InsufficientNumberOfPeopleException extends Exception {
     }
 
 
-    public InsufficientNumberOfPeopleException(String message, Collection<IPerson> chosen) {
+    public InsufficientNumberOfPeopleException(String message, Collection<IPersonExtended> chosen) {
         this.message = message;
     }
 

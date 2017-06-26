@@ -16,7 +16,7 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.verisim.events.birth;
 
-import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPerson;
+import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPersonExtended;
 
 import java.util.Collection;
 
@@ -25,25 +25,25 @@ import java.util.Collection;
  */
 public class MotherSet {
 
-    private Collection<IPerson> havePartners;
-    private Collection<IPerson> needPartners;
+    private Collection<IPersonExtended> havePartners;
+    private Collection<IPersonExtended> needPartners;
     private int newlyProducedChildren;
 
-    public MotherSet(Collection<IPerson> havePartners, Collection<IPerson> needPartners) {
+    public MotherSet(Collection<IPersonExtended> havePartners, Collection<IPersonExtended> needPartners) {
         this.havePartners = havePartners;
         this.needPartners = needPartners;
     }
 
-    public MotherSet(Collection<IPerson> havePartners, Collection<IPerson> needPartners, int newlyProducedChildren) {
+    public MotherSet(Collection<IPersonExtended> havePartners, Collection<IPersonExtended> needPartners, int newlyProducedChildren) {
         this(havePartners, needPartners);
         this.newlyProducedChildren = newlyProducedChildren;
     }
 
-    public Collection<IPerson> getHavePartners() {
+    public Collection<IPersonExtended> getHavePartners() {
         return havePartners;
     }
 
-    public Collection<IPerson> getNeedPartners() {
+    public Collection<IPersonExtended> getNeedPartners() {
         return needPartners;
     }
 

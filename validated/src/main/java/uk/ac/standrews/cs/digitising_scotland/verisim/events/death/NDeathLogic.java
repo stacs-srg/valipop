@@ -28,7 +28,7 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.dataD
 import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.dataDistributionTables.determinedCounts.SingleDeterminedCount;
 import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.dataDistributionTables.statsKeys.StatsKey;
 import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.recording.PopulationStatistics;
-import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPerson;
+import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPersonExtended;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.dataStructure.PersonCollection;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.dataStructure.Population;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.dataStructure.exceptions.InsufficientNumberOfPeopleException;
@@ -79,7 +79,7 @@ public class NDeathLogic implements EventLogic {
             // Calculate the appropriate number to kill and then kill
             Integer numberToKill = ((SingleDeterminedCount) determinedCount).getDeterminedCount();
 
-            Collection<IPerson> peopleToKill;
+            Collection<IPersonExtended> peopleToKill;
             try {
                 peopleToKill =
                         ofSexLiving.removeNPersons(numberToKill, divDate, consideredTimePeriod, true);
@@ -101,13 +101,13 @@ public class NDeathLogic implements EventLogic {
     }
 
 
-    private int killPeople(Collection<IPerson> people,
+    private int killPeople(Collection<IPersonExtended> people,
                             PopulationStatistics desiredPopulationStatistics, AdvancableDate currentDate, CompoundTimeUnit consideredTimePeriod,
                             Population population) {
 
         int killed = 0;
 
-        for(IPerson person : people) {
+        for(IPersonExtended person : people) {
 
             // choose date of death
             Date deathDate = deathDateSelector.selectDate(person, desiredPopulationStatistics, currentDate, consideredTimePeriod);

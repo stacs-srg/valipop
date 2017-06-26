@@ -20,8 +20,8 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.DateUtils;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.MisalignedTimeDivisionError;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateImplementations.AdvancableDate;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.timeSteps.CompoundTimeUnit;
-import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.partnership.IPartnership;
-import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPerson;
+import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.partnership.IPartnershipExtended;
+import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPersonExtended;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.IPopulation;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.exceptions.UnsupportedDateConversion;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.dataStructure.exceptions.PersonNotFoundException;
@@ -44,19 +44,19 @@ public class PeopleCollection extends PersonCollection implements IPopulation {
     private MaleCollection males;
     private FemaleCollection females;
 
-//    private final Map<Integer, IPerson> peopleIndex = new HashMap<>();
-    private final Map<Integer, IPartnership> partnershipIndex = new HashMap<>();
+//    private final Map<Integer, IPersonExtended> peopleIndex = new HashMap<>();
+    private final Map<Integer, IPartnershipExtended> partnershipIndex = new HashMap<>();
 
-    private ArrayList<IPartnership> partTemp = new ArrayList<>();
+    private ArrayList<IPartnershipExtended> partTemp = new ArrayList<>();
 
     public PeopleCollection clone() {
         PeopleCollection clone = new PeopleCollection(getStartDate(), getEndDate(), getDivisionSize());
 
-        for(IPerson m : males.getAll()) {
+        for(IPersonExtended m : males.getAll()) {
             clone.addPerson(m);
         }
 
-        for(IPerson f : females.getAll()) {
+        for(IPersonExtended f : females.getAll()) {
             clone.addPerson(f);
         }
 
@@ -105,12 +105,12 @@ public class PeopleCollection extends PersonCollection implements IPopulation {
      *
      * @param partnership the partnership
      */
-    public void addPartnershipToIndex(IPartnership partnership) {
+    public void addPartnershipToIndex(IPartnershipExtended partnership) {
         partnershipIndex.put(partnership.getId(), partnership);
         partTemp.add(partnership);
     }
 
-    public void removePartnershipFromIndex(IPartnership partnership) {
+    public void removePartnershipFromIndex(IPartnershipExtended partnership) {
         partnershipIndex.remove(partnership.getId(), partnership);
         partTemp.remove(partnership);
     }
@@ -120,26 +120,26 @@ public class PeopleCollection extends PersonCollection implements IPopulation {
      */
 
     @Override
-    public Collection<IPerson> getAll() {
+    public Collection<IPersonExtended> getAll() {
         return AggregatePersonCollectionFactory.makeCollectionOfPersons(females, males);
     }
 
     @Override
-    public Collection<IPerson> getAllPersonsInTimePeriod(AdvancableDate firstDate, CompoundTimeUnit timePeriod) {
-        Collection<IPerson> people =  males.getAllPersonsInTimePeriod(firstDate, timePeriod);
+    public Collection<IPersonExtended> getAllPersonsInTimePeriod(AdvancableDate firstDate, CompoundTimeUnit timePeriod) {
+        Collection<IPersonExtended> people =  males.getAllPersonsInTimePeriod(firstDate, timePeriod);
         people.addAll(females.getAllPersonsInTimePeriod(firstDate, timePeriod));
         return people;
     }
 
 //    @Override
-//    public Collection<IPerson> getByYear(Date yearOfBirth) {
-//        Collection<IPerson> people = males.getByYear(yearOfBirth);
+//    public Collection<IPersonExtended> getByYear(Date yearOfBirth) {
+//        Collection<IPersonExtended> people = males.getByYear(yearOfBirth);
 //        people.addAll(females.getByYear(yearOfBirth));
 //        return people;
 //    }
 //
 //    @Override
-//    public Collection<IPerson> getByYearAndSex(char sex, Date year) {
+//    public Collection<IPersonExtended> getByYearAndSex(char sex, Date year) {
 //        if (Character.toLowerCase(sex) == 'm') {
 //            return getMales().getByYear(year);
 //        } else {
@@ -148,7 +148,7 @@ public class PeopleCollection extends PersonCollection implements IPopulation {
 //    }
 
     @Override
-    public void addPerson(IPerson person) {
+    public void addPerson(IPersonExtended person) {
 //        peopleIndex.put(person.getId(), person);
         if (person.getSex() == 'm') {
             males.addPerson(person);
@@ -158,7 +158,7 @@ public class PeopleCollection extends PersonCollection implements IPopulation {
     }
 
     @Override
-    public void removePerson(IPerson person) throws PersonNotFoundException {
+    public void removePerson(IPersonExtended person) throws PersonNotFoundException {
 //        peopleIndex.remove(person.getId());
         if (person.getSex() == 'm') {
             males.removePerson(person);
@@ -187,24 +187,24 @@ public class PeopleCollection extends PersonCollection implements IPopulation {
      */
 
     @Override
-    public Iterable<IPerson> getPeople() {
+    public Iterable<IPersonExtended> getPeople() {
         return getAll();
     }
 
     @Override
-    public Iterable<IPartnership> getPartnerships() {
+    public Iterable<IPartnershipExtended> getPartnerships() {
 
         // TODO Is this temp object needed?
         return partTemp;
     }
 
 //    @Override
-//    public IPerson findPerson(int id) {
+//    public IPersonExtended findPerson(int id) {
 //        return peopleIndex.get(id);
 //    }
 
     @Override
-    public IPartnership findPartnership(int id) {
+    public IPartnershipExtended findPartnership(int id) {
         return partnershipIndex.get(id);
     }
 
@@ -230,8 +230,8 @@ public class PeopleCollection extends PersonCollection implements IPopulation {
     }
 
     @Override
-    public Collection<IPerson> forceGetAllPersonsByTimePeriod(AdvancableDate firstDate, CompoundTimeUnit timePeriod) {
-        Collection<IPerson> people = new ArrayList<>();
+    public Collection<IPersonExtended> forceGetAllPersonsByTimePeriod(AdvancableDate firstDate, CompoundTimeUnit timePeriod) {
+        Collection<IPersonExtended> people = new ArrayList<>();
         people.addAll(forceGetAllPersonsByTimePeriodAndSex(firstDate, timePeriod, 'm'));
         people.addAll(forceGetAllPersonsByTimePeriodAndSex(firstDate, timePeriod, 'f'));
 
@@ -239,8 +239,8 @@ public class PeopleCollection extends PersonCollection implements IPopulation {
     }
 
     @Override
-    public Collection<IPerson> forceGetAllPersonsByTimePeriodAndSex(AdvancableDate firstDate, CompoundTimeUnit timePeriod, char sex) {
-        Collection<IPerson> people = new ArrayList<>();
+    public Collection<IPersonExtended> forceGetAllPersonsByTimePeriodAndSex(AdvancableDate firstDate, CompoundTimeUnit timePeriod, char sex) {
+        Collection<IPersonExtended> people = new ArrayList<>();
 
         if(Character.toLowerCase(sex) == 'm') {
             try {
@@ -259,11 +259,11 @@ public class PeopleCollection extends PersonCollection implements IPopulation {
         return people;
     }
 
-    private Collection<IPerson> getPeopleBetweenDates(PersonCollection collection,
-                                                      AdvancableDate firstDateOfInterest,
-                                                      AdvancableDate lastDateOfInterest) {
+    private Collection<IPersonExtended> getPeopleBetweenDates(PersonCollection collection,
+                                                              AdvancableDate firstDateOfInterest,
+                                                              AdvancableDate lastDateOfInterest) {
 
-        Collection<IPerson> people = new ArrayList<>();
+        Collection<IPersonExtended> people = new ArrayList<>();
 
         AdvancableDate firstDivOfInterest = resolveDateToCorrectDivisionDate(firstDateOfInterest);
         AdvancableDate lastDivOfInterest = resolveDateToCorrectDivisionDate(lastDateOfInterest);
@@ -272,13 +272,13 @@ public class PeopleCollection extends PersonCollection implements IPopulation {
 
         while(DateUtils.dateBeforeOrEqual(consideredDate, lastDivOfInterest)) {
 
-            Collection<IPerson> temp = collection.getAllPersonsInTimePeriod(consideredDate, getDivisionSize());
+            Collection<IPersonExtended> temp = collection.getAllPersonsInTimePeriod(consideredDate, getDivisionSize());
 
             if(DateUtils.datesEqual(firstDivOfInterest, consideredDate)) {
 
-                for(IPerson p : temp) {
+                for(IPersonExtended p : temp) {
 
-                    if(!DateUtils.dateBefore(p.getBirthDate(), firstDateOfInterest)) {
+                    if(!DateUtils.dateBefore(p.getBirthDate_ex(), firstDateOfInterest)) {
                         people.add(p);
                     }
 
@@ -286,9 +286,9 @@ public class PeopleCollection extends PersonCollection implements IPopulation {
 
             } else if(DateUtils.datesEqual(lastDivOfInterest, consideredDate)){
 
-                for(IPerson p : temp) {
+                for(IPersonExtended p : temp) {
 
-                    if(DateUtils.dateBefore(p.getBirthDate(), lastDateOfInterest)) {
+                    if(DateUtils.dateBefore(p.getBirthDate_ex(), lastDateOfInterest)) {
                         people.add(p);
                     }
 

@@ -26,8 +26,8 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.timeSteps.Compou
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.timeSteps.TimeUnit;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.partnership.IPartnership;
-import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPerson;
+import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.partnership.IPartnershipExtended;
+import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPersonExtended;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.dataStructure.exceptions.InsufficientNumberOfPeopleException;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.dataStructure.exceptions.PersonNotFoundException;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.MapUtils;
@@ -46,7 +46,7 @@ import java.util.*;
 public class FemaleCollection extends PersonCollection {
 
     private static final Logger log = LogManager.getLogger(FemaleCollection.class);
-    private final TreeMap<MonthDate, TreeMap<Integer, Collection<IPerson>>> byBirthYearAndNumberOfChildren = new TreeMap<>();
+    private final TreeMap<MonthDate, TreeMap<Integer, Collection<IPersonExtended>>> byBirthYearAndNumberOfChildren = new TreeMap<>();
 
     /**
      * Instantiates a new FemaleCollection. The dates specify the earliest and latest expected birth dates of
@@ -90,7 +90,7 @@ public class FemaleCollection extends PersonCollection {
 
         for(int i = 0; i < divisionsInPeriod; i++) {
 
-            Map<Integer, Collection<IPerson>> temp = byBirthYearAndNumberOfChildren.get(divisionDate);
+            Map<Integer, Collection<IPersonExtended>> temp = byBirthYearAndNumberOfChildren.get(divisionDate);
 
             if(temp != null && MapUtils.getMax(temp.keySet()) > highestBirthOrder) {
                 highestBirthOrder = MapUtils.getMax(temp.keySet());
@@ -117,7 +117,7 @@ public class FemaleCollection extends PersonCollection {
 
         for(int i = 0; i < divisionsInPeriod; i++) {
 
-            Map<Integer, Collection<IPerson>> temp = byBirthYearAndNumberOfChildren.get(divisionDate);
+            Map<Integer, Collection<IPersonExtended>> temp = byBirthYearAndNumberOfChildren.get(divisionDate);
             orders.addAll(temp.keySet());
 
 
@@ -137,7 +137,7 @@ public class FemaleCollection extends PersonCollection {
      * @param birthOrder       the number of children
      * @return the by number of children
      */
-    public Collection<IPerson> getByDatePeriodAndBirthOrder(AdvancableDate date, CompoundTimeUnit period, Integer birthOrder) {
+    public Collection<IPersonExtended> getByDatePeriodAndBirthOrder(AdvancableDate date, CompoundTimeUnit period, Integer birthOrder) {
 
         int divisionsInPeriod = DateUtils.calcSubTimeUnitsInTimeUnit(getDivisionSize(), period);
 
@@ -145,7 +145,7 @@ public class FemaleCollection extends PersonCollection {
             throw new MisalignedTimeDivisionError();
         }
 
-        ArrayList<IPerson> people = new ArrayList<>();
+        ArrayList<IPersonExtended> people = new ArrayList<>();
         MonthDate divisionDate = date.getMonthDate();
 
         for(int i = 0; i < divisionsInPeriod; i++) {
@@ -164,7 +164,7 @@ public class FemaleCollection extends PersonCollection {
 
     }
 
-    public Collection<IPerson> getByDatePeriodAndBirthOrder(AdvancableDate date, CompoundTimeUnit period, IntegerRange birthOrder) {
+    public Collection<IPersonExtended> getByDatePeriodAndBirthOrder(AdvancableDate date, CompoundTimeUnit period, IntegerRange birthOrder) {
 
         Integer highestBirthOrder = getHighestBirthOrder(date, period);
 
@@ -172,7 +172,7 @@ public class FemaleCollection extends PersonCollection {
             highestBirthOrder = birthOrder.getMax();
         }
 
-        Collection<IPerson> people = new ArrayList<>();
+        Collection<IPersonExtended> people = new ArrayList<>();
 
         for(Integer i = birthOrder.getMin(); i <= highestBirthOrder; i++) {
             people.addAll(getByDatePeriodAndBirthOrder(date, period, i));
@@ -199,8 +199,8 @@ public class FemaleCollection extends PersonCollection {
      * @throws InsufficientNumberOfPeopleException the insufficient number of people exception
      */
     @SuppressWarnings("Duplicates")
-    public Collection<IPerson> removeNPersons(int numberToRemove, AdvancableDate dateOfBirth, CompoundTimeUnit period,
-                                              int birthOrder, MonthDate currentDate)
+    public Collection<IPersonExtended> removeNPersons(int numberToRemove, AdvancableDate dateOfBirth, CompoundTimeUnit period,
+                                                      int birthOrder, MonthDate currentDate)
                                                             throws InsufficientNumberOfPeopleException {
 
 
@@ -210,7 +210,7 @@ public class FemaleCollection extends PersonCollection {
             throw new MisalignedTimeDivisionError("");
         }
 
-        ArrayList<IPerson> people = new ArrayList<>();
+        ArrayList<IPersonExtended> people = new ArrayList<>();
         MonthDate divisionDate = dateOfBirth.getMonthDate();
 
         LinkedList<MonthDate> reusableDivisions = new LinkedList<>();
@@ -258,7 +258,7 @@ public class FemaleCollection extends PersonCollection {
             MonthDate consideredDivision = reusableDivisions.removeFirst();
             divisionsUsed ++;
 
-            Collection<IPerson> selectedPeople = removeNPeopleFromDivisionStartingOnDate(numberToRemoveFromDivision, consideredDivision, birthOrder, currentDate);
+            Collection<IPersonExtended> selectedPeople = removeNPeopleFromDivisionStartingOnDate(numberToRemoveFromDivision, consideredDivision, birthOrder, currentDate);
             people.addAll(selectedPeople);
 
             // if more people in division keep note incase of shortfall in other divisions
@@ -273,19 +273,19 @@ public class FemaleCollection extends PersonCollection {
 
     }
 
-    private Collection<IPerson> removeNPeopleFromDivisionStartingOnDate(int numberToRemove, MonthDate divisionDate, int birthOrder, MonthDate currentDate) {
+    private Collection<IPersonExtended> removeNPeopleFromDivisionStartingOnDate(int numberToRemove, MonthDate divisionDate, int birthOrder, MonthDate currentDate) {
 
         // The selected people
-        Collection<IPerson> selectedPeople = new ArrayList<>();
+        Collection<IPersonExtended> selectedPeople = new ArrayList<>();
 
         // Those unable to give birth at this time
-        Collection<IPerson> unusablePeople = new ArrayList<>();
+        Collection<IPersonExtended> unusablePeople = new ArrayList<>();
 
         if (numberToRemove == 0) {
             return selectedPeople;
         }
 
-        LinkedList<IPerson> orderedBirthCohort = new LinkedList<>(getAllPeopleFromDivision(divisionDate).get(birthOrder));
+        LinkedList<IPersonExtended> orderedBirthCohort = new LinkedList<>(getAllPeopleFromDivision(divisionDate).get(birthOrder));
 
         while (selectedPeople.size() < numberToRemove) {
 
@@ -293,7 +293,7 @@ public class FemaleCollection extends PersonCollection {
                 return selectedPeople;
             }
 
-            IPerson p = orderedBirthCohort.removeFirst();
+            IPersonExtended p = orderedBirthCohort.removeFirst();
 
             try {
                 removePerson(p);
@@ -313,14 +313,14 @@ public class FemaleCollection extends PersonCollection {
         }
 
         // Add people unable to give birth at this time to the population structure
-        for(IPerson p : unusablePeople) {
+        for(IPersonExtended p : unusablePeople) {
             addPerson(p);
         }
 
         return selectedPeople;
     }
 
-    private Map<Integer, Collection<IPerson>> getAllPeopleFromDivision(AdvancableDate divisionDate) {
+    private Map<Integer, Collection<IPersonExtended>> getAllPeopleFromDivision(AdvancableDate divisionDate) {
 
         try {
             return byBirthYearAndNumberOfChildren.get(divisionDate.getMonthDate());
@@ -339,9 +339,9 @@ public class FemaleCollection extends PersonCollection {
      */
 
     @Override
-    public Collection<IPerson> getAll() {
+    public Collection<IPersonExtended> getAll() {
 
-        Collection<IPerson> people = new ArrayList<>();
+        Collection<IPersonExtended> people = new ArrayList<>();
 
         for (MonthDate t : byBirthYearAndNumberOfChildren.keySet()) {
             for (Integer i : byBirthYearAndNumberOfChildren.get(t).keySet()) {
@@ -353,9 +353,9 @@ public class FemaleCollection extends PersonCollection {
     }
 
     @Override
-    public Collection<IPerson> getAllPersonsInTimePeriod(AdvancableDate firstDate, CompoundTimeUnit timePeriod) {
+    public Collection<IPersonExtended> getAllPersonsInTimePeriod(AdvancableDate firstDate, CompoundTimeUnit timePeriod) {
 
-        Collection<IPerson> people = new ArrayList<>();
+        Collection<IPersonExtended> people = new ArrayList<>();
 
         int divisionsInPeriod = DateUtils.calcSubTimeUnitsInTimeUnit(getDivisionSize(), timePeriod);
 
@@ -369,7 +369,7 @@ public class FemaleCollection extends PersonCollection {
         for(int i = 0; i < divisionsInPeriod; i++) {
 
             try {
-                Map<Integer, Collection<IPerson>> mapForDiv;
+                Map<Integer, Collection<IPersonExtended>> mapForDiv;
                 // for each birth order
                 for (Integer j : (mapForDiv = getAllPeopleFromDivision(firstDate)).keySet()) {
                     people.addAll(mapForDiv.get(j));
@@ -385,32 +385,32 @@ public class FemaleCollection extends PersonCollection {
     }
 
     @Override
-    public void addPerson(IPerson person) {
+    public void addPerson(IPersonExtended person) {
         try {
             byBirthYearAndNumberOfChildren.get(
-                    resolveDateToCorrectDivisionDate(person.getBirthDate())).get(countChildren(person)).add(person);
+                    resolveDateToCorrectDivisionDate(person.getBirthDate_ex())).get(countChildren(person)).add(person);
         } catch (NullPointerException e) {
             // If years or birth order doesn't exist in map then add missing part of map and add in person
             try {
                 byBirthYearAndNumberOfChildren.get(
-                        resolveDateToCorrectDivisionDate(person.getBirthDate())).put(countChildren(person), new ArrayList<>());
+                        resolveDateToCorrectDivisionDate(person.getBirthDate_ex())).put(countChildren(person), new ArrayList<>());
                 // If the year existed but the correct birth order did not
                 byBirthYearAndNumberOfChildren.get(
-                        resolveDateToCorrectDivisionDate(person.getBirthDate())).get(countChildren(person)).add(person);
+                        resolveDateToCorrectDivisionDate(person.getBirthDate_ex())).get(countChildren(person)).add(person);
             } catch (NullPointerException e1) {
                 // If the year didn't exist in the map
-                TreeMap<Integer, Collection<IPerson>> temp = new TreeMap<>();
+                TreeMap<Integer, Collection<IPersonExtended>> temp = new TreeMap<>();
                 temp.put(countChildren(person), new ArrayList<>());
                 temp.get(countChildren(person)).add(person);
-                byBirthYearAndNumberOfChildren.put(resolveDateToCorrectDivisionDate(person.getBirthDate()), temp);
+                byBirthYearAndNumberOfChildren.put(resolveDateToCorrectDivisionDate(person.getBirthDate_ex()), temp);
             }
         }
     }
 
     @Override
-    public void removePerson(IPerson person) throws PersonNotFoundException {
-        Collection<IPerson> people = byBirthYearAndNumberOfChildren.get(
-                resolveDateToCorrectDivisionDate(person.getBirthDate())).get(countChildren(person));
+    public void removePerson(IPersonExtended person) throws PersonNotFoundException {
+        Collection<IPersonExtended> people = byBirthYearAndNumberOfChildren.get(
+                resolveDateToCorrectDivisionDate(person.getBirthDate_ex())).get(countChildren(person));
 
         // Removal of person AND test for removal (all in second clause of the if statement)
         if (people == null || !people.remove(person)) {
@@ -440,7 +440,7 @@ public class FemaleCollection extends PersonCollection {
         for(int i = 0; i < divisionsInPeriod; i++) {
 
             try {
-                Map<Integer, Collection<IPerson>> mapForDiv;
+                Map<Integer, Collection<IPersonExtended>> mapForDiv;
                 // for each birth order
                 for (Integer j : (mapForDiv = getAllPeopleFromDivision(firstDate)).keySet()) {
                     count += mapForDiv.get(j).size();
@@ -465,11 +465,11 @@ public class FemaleCollection extends PersonCollection {
     -------------------- Private helper methods --------------------
      */
 
-    private Integer countChildren(IPerson person) {
+    private Integer countChildren(IPersonExtended person) {
 
         int count = 0;
 
-        for (IPartnership partnership : person.getPartnerships()) {
+        for (IPartnershipExtended partnership : person.getPartnerships_ex()) {
             count += partnership.getChildren().size();
         }
 
@@ -485,17 +485,17 @@ public class FemaleCollection extends PersonCollection {
 
         for(MonthDate y : byBirthYearAndNumberOfChildren.keySet()) {
 
-            Map<Integer, Collection<IPerson>> birthCohort = byBirthYearAndNumberOfChildren.get(y);
+            Map<Integer, Collection<IPersonExtended>> birthCohort = byBirthYearAndNumberOfChildren.get(y);
 
             for(Integer birthOrder : birthCohort.keySet()) {
 
-                Collection<IPerson> orderedBirthCohort = birthCohort.get(birthOrder);
+                Collection<IPersonExtended> orderedBirthCohort = birthCohort.get(birthOrder);
 
-                for(IPerson p : orderedBirthCohort) {
-                    if(p.getBirthDate().getYear() != y.getYear()
+                for(IPersonExtended p : orderedBirthCohort) {
+                    if(p.getBirthDate_ex().getYear() != y.getYear()
                             || p.numberOfChildren() != birthOrder) {
                         passed = false;
-                        System.out.println("F: " + p.getId() + " YOB: " + p.getBirthDate().getYear() + " ("
+                        System.out.println("F: " + p.getId() + " YOB: " + p.getBirthDate_ex().getYear() + " ("
                                 + y.getYear() + ") order: " + p.numberOfChildren() + " (" + birthOrder + ")");
                     }
                 }

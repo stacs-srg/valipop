@@ -16,12 +16,12 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.verisim.annotations.names;
 
-import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPerson;
+import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPersonExtended;
 
 public class SurnameGenerator implements NameGenerator {
 
     @Override
-    public String getName(IPerson personToBeNamed) {
+    public String getName(IPersonExtended personToBeNamed) {
 
         // OZGUR - surname stuff handled here
 

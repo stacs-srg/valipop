@@ -16,13 +16,13 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.verisim.annotations.names;
 
-import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPerson;
+import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPersonExtended;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public interface NameGenerator {
 
-    String getName(IPerson personToBeNamed);
+    String getName(IPersonExtended personToBeNamed);
 
 }

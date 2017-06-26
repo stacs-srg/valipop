@@ -31,7 +31,7 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.dataD
 import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.dataDistributionTables.statsKeys.BirthStatsKey;
 import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.dataDistributionTables.statsKeys.MultipleBirthStatsKey;
 import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.recording.PopulationStatistics;
-import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPerson;
+import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPersonExtended;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.dataStructure.FemaleCollection;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.dataStructure.Population;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.dataStructure.exceptions.InsufficientNumberOfPeopleException;
@@ -62,7 +62,7 @@ public class NBirthLogic implements EventLogic {
         while(divDates.hasNext() && DateUtils.dateBeforeOrEqual(divDate = divDates.next(), currentDate)) {
 
             int age = DateUtils.differenceInYears(divDate.advanceTime(consideredTimePeriod), currentDate).getCount();
-            Collection<IPerson> needingPartners = new ArrayList<>();
+            Collection<IPersonExtended> needingPartners = new ArrayList<>();
 
             Set<Integer> orders = femalesLiving.getBirthOrdersInDivision(divDate, consideredTimePeriod);
             int cohortSize = femalesLiving.getAllPersonsInTimePeriod(divDate, consideredTimePeriod).size();
@@ -72,14 +72,14 @@ public class NBirthLogic implements EventLogic {
 //            int totalFromDiv = 0;
 //
 //            for(Integer order : orders) {
-//                Collection<IPerson> people = femalesLiving.getByDatePeriodAndBirthOrder(divDate, consideredTimePeriod, order);
+//                Collection<IPersonExtended> people = femalesLiving.getByDatePeriodAndBirthOrder(divDate, consideredTimePeriod, order);
 //                totalFromDiv = people.size();
 //            }
 
             for(IntegerRange order : inputOrders) {
 //            for(Integer order : orders) {
 
-                Collection<IPerson> people = femalesLiving.getByDatePeriodAndBirthOrder(divDate, consideredTimePeriod, order);
+                Collection<IPersonExtended> people = femalesLiving.getByDatePeriodAndBirthOrder(divDate, consideredTimePeriod, order);
                 int number = people.size();
 
 //                BirthStatsKey key = new BirthStatsKey(age, order, number, consideredTimePeriod, currentDate);
@@ -114,18 +114,18 @@ public class NBirthLogic implements EventLogic {
 
     }
 
-    private MotherSet selectMothers(Config config, Collection<IPerson> females, int numberOfChildren,
+    private MotherSet selectMothers(Config config, Collection<IPersonExtended> females, int numberOfChildren,
                                     PopulationStatistics desiredPopulationStatistics, AdvancableDate currentDate,
                                     CompoundTimeUnit consideredTimePeriod, Population population) throws InsufficientNumberOfPeopleException {
 
-        Collection<IPerson> needPartners = new ArrayList<>();
-        Collection<IPerson> havePartners = new ArrayList<>();
+        Collection<IPersonExtended> needPartners = new ArrayList<>();
+        Collection<IPersonExtended> havePartners = new ArrayList<>();
 
         if(females.size() == 0) {
             return new MotherSet(havePartners, needPartners);
         }
 
-        ArrayList<IPerson> femalesAL = new ArrayList<>(females);
+        ArrayList<IPersonExtended> femalesAL = new ArrayList<>(females);
 
         int ageOfMothers = femalesAL.get(0).ageOnDate(currentDate);
 
@@ -136,14 +136,14 @@ public class NBirthLogic implements EventLogic {
 
         int numberOfMothers = requiredBirths.getDeterminedCount().productOfLabelsAndValues().getSumOfValues();
 
-        Map<Integer, ArrayList<IPerson>> continuingPartneredFemalesByChildren = new HashMap<>();
+        Map<Integer, ArrayList<IPersonExtended>> continuingPartneredFemalesByChildren = new HashMap<>();
 
         LabeledValueSet<IntegerRange, Integer> motherCountsByMaternities =
                 new IntegerRangeToIntegerSet(requiredBirths.getDeterminedCount().getLabels(), 0);
 
         LabeledValueSet<IntegerRange, Integer> remainingMothersToFind = requiredBirths.getDeterminedCount().clone();
 
-//        for(IPerson f : femalesAL) {
+//        for(IPersonExtended f : femalesAL) {
 //
 //            if(childrenMade >= numberOfMothers) {
 //                break;
@@ -177,7 +177,7 @@ public class NBirthLogic implements EventLogic {
 
 
 
-        for(IPerson female : femalesAL) {
+        for(IPersonExtended female : femalesAL) {
 
             if(childrenMade >= numberOfChildren) {
                 break;
@@ -185,7 +185,7 @@ public class NBirthLogic implements EventLogic {
 
             if(eligible(female, desiredPopulationStatistics, currentDate)) {
 
-//                female.getLastChild().getParentsPartnership().setFather(BirthLogic.getRandomFather(population, population.getLivingPeople().resolveDateToCorrectDivisionDate(female.getBirthDate()), consideredTimePeriod));
+//                female.getLastChild().getParentsPartnership_ex().setFather(BirthLogic.getRandomFather(population, population.getLivingPeople().resolveDateToCorrectDivisionDate(female.getBirthDate_ex()), consideredTimePeriod));
                 childrenMade += highestBirthOption.getValue();
 
                 if(female.needsNewPartner(currentDate)) {
@@ -240,13 +240,13 @@ public class NBirthLogic implements EventLogic {
 
     }
 
-    private boolean eligible(IPerson potentialMother, PopulationStatistics desiredPopulationStatistics, Date currentDate) {
+    private boolean eligible(IPersonExtended potentialMother, PopulationStatistics desiredPopulationStatistics, Date currentDate) {
 
-        IPerson lastChild = potentialMother.getLastChild();
+        IPersonExtended lastChild = potentialMother.getLastChild();
 
         if(lastChild != null) {
             ExactDate earliestDateOfNextChild = DateUtils.
-                    calculateExactDate(lastChild.getBirthDate(), desiredPopulationStatistics.getMinBirthSpacing());
+                    calculateExactDate(lastChild.getBirthDate_ex(), desiredPopulationStatistics.getMinBirthSpacing());
 
             // Returns true if last child was born far enough in the past for another child to be born at currentDate
             return DateUtils.dateBefore(earliestDateOfNextChild, currentDate);

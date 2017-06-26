@@ -25,8 +25,8 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.events.SeparationLogic;
 import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.dataDistributionTables.determinedCounts.MultipleDeterminedCount;
 import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.dataDistributionTables.statsKeys.PartneringStatsKey;
 import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.recording.PopulationStatistics;
-import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.partnership.IPartnership;
-import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPerson;
+import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.partnership.IPartnershipExtended;
+import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPersonExtended;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.dataStructure.Population;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.dataStructure.exceptions.InsufficientNumberOfPeopleException;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.IntegerRangeToIntegerSet;
@@ -40,13 +40,13 @@ import java.util.*;
  */
 public class PartneringLogic {
 
-    public static void handle(Collection<IPerson> needingPartners, PopulationStatistics desiredPopulationStatistics, Date currentDate, CompoundTimeUnit consideredTimePeriod, Population population) throws InsufficientNumberOfPeopleException {
+    public static void handle(Collection<IPersonExtended> needingPartners, PopulationStatistics desiredPopulationStatistics, AdvancableDate currentDate, CompoundTimeUnit consideredTimePeriod, Population population) throws InsufficientNumberOfPeopleException {
 
         int forNFemales = needingPartners.size();
 
         if(forNFemales != 0) {
 
-            LinkedList<IPerson> women = new LinkedList<>(needingPartners);
+            LinkedList<IPersonExtended> women = new LinkedList<>(needingPartners);
 
             int age = women.getFirst().ageOnDate(currentDate);
 
@@ -61,13 +61,13 @@ public class PartneringLogic {
             LabeledValueSet<IntegerRange, Integer> availableMen = new IntegerRangeToIntegerSet(partnerCounts.getLabels(), 0);
 
             // this section gets all the men in the age ranges we may need to look at
-            Map<IntegerRange, LinkedList<IPerson>> allMen = new HashMap<>();
+            Map<IntegerRange, LinkedList<IPersonExtended>> allMen = new HashMap<>();
 
             for(IntegerRange iR: partnerCounts.getLabels()) {
                 AdvancableDate yobOfOlderEndOfIR = getYobOfOlderEndOfIR(iR, currentDate);
                 CompoundTimeUnit iRLength = getIRLength(iR);
 
-                Collection<IPerson> m = population.getLivingPeople().getMales().getAllPersonsInTimePeriod(yobOfOlderEndOfIR, iRLength);
+                Collection<IPersonExtended> m = population.getLivingPeople().getMales().getAllPersonsInTimePeriod(yobOfOlderEndOfIR, iRLength);
 
                 allMen.put(iR, new LinkedList<>(m));
                 availableMen.update(iR, m.size());
@@ -91,15 +91,15 @@ public class PartneringLogic {
 
                 int determinedCount = partnerCounts.get(iR);
 
-                LinkedList<IPerson> men = allMen.get(iR);
-                IPerson head = null; // keeps track of first man seen to prevent infinite loop
+                LinkedList<IPersonExtended> men = allMen.get(iR);
+                IPersonExtended head = null; // keeps track of first man seen to prevent infinite loop
 
-                Collection<IPerson> unmatchedFemales = new ArrayList<>();
+                Collection<IPersonExtended> unmatchedFemales = new ArrayList<>();
 
                 // Keep going until enough females have been matched for this iR
                 while(determinedCount > 0) {
-                    IPerson man = men.pollFirst();
-                    IPerson woman;
+                    IPersonExtended man = men.pollFirst();
+                    IPersonExtended woman;
 
                     if(!women.isEmpty()) {
                         woman = women.pollFirst();
@@ -117,7 +117,7 @@ public class PartneringLogic {
                         }
                     }
 
-                    if(eligible(man, woman, population, desiredPopulationStatistics)) {
+                    if(eligible(man, woman, population, desiredPopulationStatistics, currentDate)) {
                         proposedPartnerships.add(new ProposedPartnership(man, woman, iR));
                         determinedCount--;
                         head = null;
@@ -146,15 +146,15 @@ public class PartneringLogic {
                         ppLoop:
                         for(ProposedPartnership pp : proposedPartnerships) {
 
-                            IPerson f = pp.getFemale();
+                            IPersonExtended f = pp.getFemale();
 
-                            for(IPerson m : allMen.get(uR)) {
+                            for(IPersonExtended m : allMen.get(uR)) {
 
-                                if(eligible(m, f, population, desiredPopulationStatistics) && !inPPs(m, proposedPartnerships)) {
+                                if(eligible(m, f, population, desiredPopulationStatistics, currentDate) && !inPPs(m, proposedPartnerships)) {
 
-                                    for(IPerson uf : women) {
+                                    for(IPersonExtended uf : women) {
 
-                                        if(eligible(pp.getMale(), uf, population, desiredPopulationStatistics)) {
+                                        if(eligible(pp.getMale(), uf, population, desiredPopulationStatistics, currentDate)) {
                                             // husband swap
                                             proposedPartnerships.add(new ProposedPartnership(pp.getMale(), uf, pp.getMalesRange()));
                                             pp.setMale(m, uR);
@@ -168,11 +168,11 @@ public class PartneringLogic {
 
                                     }
 
-                                    for(IPerson uf : women) {
+                                    for(IPersonExtended uf : women) {
 
-                                        for(IPerson m2 : allMen.get(pp.getMalesRange())) {
+                                        for(IPersonExtended m2 : allMen.get(pp.getMalesRange())) {
 
-                                            if(eligible(m2, uf, population, desiredPopulationStatistics) && !inPPs(m2, proposedPartnerships)) {
+                                            if(eligible(m2, uf, population, desiredPopulationStatistics, currentDate) && !inPPs(m2, proposedPartnerships)) {
                                                 // husband swap
                                                 proposedPartnerships.add(new ProposedPartnership(m2, uf, pp.getMalesRange()));
                                                 pp.setMale(m, uR);
@@ -193,10 +193,10 @@ public class PartneringLogic {
             }
 
             if(!women.isEmpty()) {
-                for (IPerson uf : women) {
+                for (IPersonExtended uf : women) {
                     for (IntegerRange iR : partnerCounts.getLabels()) {
-                        for (IPerson m : allMen.get(iR)) {
-                            if(eligible(m, uf, population, desiredPopulationStatistics) && !inPPs(m, proposedPartnerships)) {
+                        for (IPersonExtended m : allMen.get(iR)) {
+                            if(eligible(m, uf, population, desiredPopulationStatistics, currentDate) && !inPPs(m, proposedPartnerships)) {
                                 proposedPartnerships.add(new ProposedPartnership(m, uf, iR));
                             }
                         }
@@ -208,11 +208,11 @@ public class PartneringLogic {
                 throw new InsufficientNumberOfPeopleException("No man to partner this woman to...");
             }
 
-            Map<Integer, ArrayList<IPerson>> partneredFemalesByChildren = new HashMap<>();
+            Map<Integer, ArrayList<IPersonExtended>> partneredFemalesByChildren = new HashMap<>();
 
             for(ProposedPartnership pp : proposedPartnerships) {
-                IPerson mother = pp.getFemale();
-                IPartnership partnershipNeedingFather = mother.getLastChild().getParentsPartnership();
+                IPersonExtended mother = pp.getFemale();
+                IPartnershipExtended partnershipNeedingFather = mother.getLastChild().getParentsPartnership_ex();
 
                 partnershipNeedingFather.setFather(pp.getMale());
                 int numChildrenInPartnership = partnershipNeedingFather.getChildren().size();
@@ -232,7 +232,7 @@ public class PartneringLogic {
         }
     }
 
-    private static boolean inPPs(IPerson p, ArrayList<ProposedPartnership> pps) {
+    private static boolean inPPs(IPersonExtended p, ArrayList<ProposedPartnership> pps) {
 
         for(ProposedPartnership pp : pps) {
             if(pp.getMale() == p || pp.getFemale() == p) {
@@ -242,17 +242,17 @@ public class PartneringLogic {
         return false;
     }
 
-    private static boolean eligible(IPerson man, IPerson woman, Population population, PopulationStatistics desiredPopulationStatistics) {
+    private static boolean eligible(IPersonExtended man, IPersonExtended woman, Population population, PopulationStatistics desiredPopulationStatistics, AdvancableDate currentDate) {
 
-        return maleAvailable(man, population, desiredPopulationStatistics) && legallyEligible(man, woman);
+        return maleAvailable(man, population, desiredPopulationStatistics, currentDate) && legallyEligible(man, woman);
 
     }
 
 
-    private static boolean maleAvailable(IPerson man, Population population,
-                                         PopulationStatistics desiredPopulationStatistics) {
+    private static boolean maleAvailable(IPersonExtended man, Population population,
+                                         PopulationStatistics desiredPopulationStatistics, AdvancableDate currentDate) {
 
-        if(man.toSeparate()) {
+        if(man.needsNewPartner(currentDate)) {
             return true;
         }
 
@@ -266,35 +266,35 @@ public class PartneringLogic {
 
     }
 
-    private static boolean legallyEligible(IPerson man, IPerson woman) {
+    private static boolean legallyEligible(IPersonExtended man, IPersonExtended woman) {
 
         if(man
-            .getParentsPartnership() != null) {
+            .getParentsPartnership_ex() != null) {
 
             //  Mother
             if(man
-                    .getParentsPartnership().getFemalePartner() == woman)
+                    .getParentsPartnership_ex().getFemalePartner() == woman)
                 return false;
 
             //  Sister and half sister
             if(man
-                    .getParentsPartnership().getMalePartner().getAllChildren().contains(woman))
+                    .getParentsPartnership_ex().getMalePartner().getAllChildren().contains(woman))
                 return false;
 
             if(man
-                    .getParentsPartnership().getFemalePartner().getAllChildren().contains(woman))
+                    .getParentsPartnership_ex().getFemalePartner().getAllChildren().contains(woman))
                 return false;
 
             //  Brother's daughter
             //  Sister's daughter
-            for(IPerson sibling : man.getParentsPartnership().getChildren()) {
+            for(IPersonExtended sibling : man.getParentsPartnership_ex().getChildren()) {
                 if(sibling.getAllChildren().contains(woman))
                     return false;
             }
 
             //  Former wife of father
-            for(IPartnership fathersPart : man
-                    .getParentsPartnership().getMalePartner().getPartnerships()) {
+            for(IPartnershipExtended fathersPart : man
+                    .getParentsPartnership_ex().getMalePartner().getPartnerships_ex()) {
 
                 if(fathersPart.getFemalePartner() == woman)
                     return false;
@@ -304,32 +304,32 @@ public class PartneringLogic {
             // grand parents - fathers side
 
             if(man
-                    .getParentsPartnership().getMalePartner()
-                    .getParentsPartnership() != null) {
+                    .getParentsPartnership_ex().getMalePartner()
+                    .getParentsPartnership_ex() != null) {
 
                 //  Father's mother
                 if(man
-                        .getParentsPartnership().getMalePartner()
-                        .getParentsPartnership().getFemalePartner() == woman)
+                        .getParentsPartnership_ex().getMalePartner()
+                        .getParentsPartnership_ex().getFemalePartner() == woman)
                     return false;
 
                 // Father's sister
                 // (Father's father's children)
                 if(man
-                        .getParentsPartnership().getMalePartner()
-                        .getParentsPartnership().getMalePartner().getAllChildren().contains(woman))
+                        .getParentsPartnership_ex().getMalePartner()
+                        .getParentsPartnership_ex().getMalePartner().getAllChildren().contains(woman))
                     return false;
 
                 // (Father's mothers's children)
                 if(man
-                        .getParentsPartnership().getMalePartner()
-                        .getParentsPartnership().getFemalePartner().getAllChildren().contains(woman))
+                        .getParentsPartnership_ex().getMalePartner()
+                        .getParentsPartnership_ex().getFemalePartner().getAllChildren().contains(woman))
                     return false;
 
                 //  Former wife of father's father
-                for(IPartnership gFathersPart : man
-                        .getParentsPartnership().getMalePartner()
-                        .getParentsPartnership().getMalePartner().getPartnerships()) {
+                for(IPartnershipExtended gFathersPart : man
+                        .getParentsPartnership_ex().getMalePartner()
+                        .getParentsPartnership_ex().getMalePartner().getPartnerships_ex()) {
 
                     if(gFathersPart.getFemalePartner() == woman)
                         return false;
@@ -338,19 +338,19 @@ public class PartneringLogic {
                 // great grand parents - fathers father parents
 
                 //  Father's father's mother
-                IPartnership ffP = man
-                        .getParentsPartnership().getMalePartner()
-                        .getParentsPartnership().getMalePartner()
-                        .getParentsPartnership();
+                IPartnershipExtended ffP = man
+                        .getParentsPartnership_ex().getMalePartner()
+                        .getParentsPartnership_ex().getMalePartner()
+                        .getParentsPartnership_ex();
 
                 if(ffP != null && ffP.getFemalePartner() == woman)
                     return false;
 
                 //  Father's mother's mother
-                IPartnership fmP = man
-                        .getParentsPartnership().getMalePartner()
-                        .getParentsPartnership().getFemalePartner()
-                        .getParentsPartnership();
+                IPartnershipExtended fmP = man
+                        .getParentsPartnership_ex().getMalePartner()
+                        .getParentsPartnership_ex().getFemalePartner()
+                        .getParentsPartnership_ex();
 
                 if(fmP != null && fmP.getFemalePartner() == woman)
                     return false;
@@ -360,51 +360,51 @@ public class PartneringLogic {
             // grand parents - mothers side
 
             if( man
-                    .getParentsPartnership().getFemalePartner()
-                    .getParentsPartnership() != null) {
+                    .getParentsPartnership_ex().getFemalePartner()
+                    .getParentsPartnership_ex() != null) {
 
                 //  Mother's mother
                 if(man
-                        .getParentsPartnership().getFemalePartner()
-                        .getParentsPartnership().getFemalePartner() == woman)
+                        .getParentsPartnership_ex().getFemalePartner()
+                        .getParentsPartnership_ex().getFemalePartner() == woman)
                     return false;
 
                 //  Mother's sister
                 // (Mother's father's children)
                 if(man
-                        .getParentsPartnership().getFemalePartner()
-                        .getParentsPartnership().getMalePartner().getAllChildren().contains(woman))
+                        .getParentsPartnership_ex().getFemalePartner()
+                        .getParentsPartnership_ex().getMalePartner().getAllChildren().contains(woman))
                     return false;
 
                 // (Mother's mothers's children)
                 if(man
-                        .getParentsPartnership().getFemalePartner()
-                        .getParentsPartnership().getFemalePartner().getAllChildren().contains(woman))
+                        .getParentsPartnership_ex().getFemalePartner()
+                        .getParentsPartnership_ex().getFemalePartner().getAllChildren().contains(woman))
                     return false;
 
                 //  Former wife of mother's father
-                for(IPartnership gFathersPart : man
-                        .getParentsPartnership().getFemalePartner()
-                        .getParentsPartnership().getMalePartner().getPartnerships()) {
+                for(IPartnershipExtended gFathersPart : man
+                        .getParentsPartnership_ex().getFemalePartner()
+                        .getParentsPartnership_ex().getMalePartner().getPartnerships_ex()) {
 
                     if(gFathersPart.getFemalePartner() == woman)
                         return false;
                 }
 
                 //  Mother's father's mother
-                IPartnership mfP = man
-                        .getParentsPartnership().getFemalePartner()
-                        .getParentsPartnership().getMalePartner()
-                        .getParentsPartnership();
+                IPartnershipExtended mfP = man
+                        .getParentsPartnership_ex().getFemalePartner()
+                        .getParentsPartnership_ex().getMalePartner()
+                        .getParentsPartnership_ex();
 
                 if(mfP != null && mfP.getFemalePartner() == woman)
                     return false;
 
                 //  Mother's mother's mother
-                IPartnership mmP = man
-                        .getParentsPartnership().getFemalePartner()
-                        .getParentsPartnership().getFemalePartner()
-                        .getParentsPartnership();
+                IPartnershipExtended mmP = man
+                        .getParentsPartnership_ex().getFemalePartner()
+                        .getParentsPartnership_ex().getFemalePartner()
+                        .getParentsPartnership_ex();
 
                 if(mmP != null && mmP.getFemalePartner() == woman)
                     return false;
@@ -433,8 +433,8 @@ public class PartneringLogic {
             return false;
 
         //  Former wife of son
-        for(IPerson child : man.getAllChildren()) {
-            for (IPartnership childsPart : child.getPartnerships()) {
+        for(IPersonExtended child : man.getAllChildren()) {
+            for (IPartnershipExtended childsPart : child.getPartnerships_ex()) {
                 if(childsPart.getFemalePartner() == woman)
                     return false;
             }
@@ -442,8 +442,8 @@ public class PartneringLogic {
 
         //  Former wife of son's son
         //  Former wife of daughter's son
-        for(IPerson gChild: man.getAllGrandChildren()) {
-            for(IPartnership gChildPart : gChild.getPartnerships()) {
+        for(IPersonExtended gChild: man.getAllGrandChildren()) {
+            for(IPartnershipExtended gChildPart : gChild.getPartnerships_ex()) {
                 if(gChildPart.getFemalePartner() == woman)
                     return false;
             }
@@ -452,7 +452,7 @@ public class PartneringLogic {
         // Wives parents checks
 
         //  of former wife - level1
-        for(IPartnership part : man.getPartnerships()) {
+        for(IPartnershipExtended part : man.getPartnerships_ex()) {
 
             //  Daughter of former wife
             if(part.getFemalePartner()
@@ -468,30 +468,30 @@ public class PartneringLogic {
         }
 
         //  of former wife - level2
-        for(IPartnership part : man.getPartnerships()) {
+        for(IPartnershipExtended part : man.getPartnerships_ex()) {
 
             //  Mother of former wife
-            IPartnership p = part.getFemalePartner().getParentsPartnership();
+            IPartnershipExtended p = part.getFemalePartner().getParentsPartnership_ex();
             if(p != null && p.getFemalePartner() == woman)
                 return false;
 
         }
 
         //  of former wife - level3
-        for(IPartnership part : man.getPartnerships()) {
+        for(IPartnershipExtended part : man.getPartnerships_ex()) {
 
             //  Mother of father of former wife
-            IPartnership p1 = part.getFemalePartner().getParentsPartnership();
+            IPartnershipExtended p1 = part.getFemalePartner().getParentsPartnership_ex();
             if(p1 != null) {
-                IPartnership p3 = p1.getMalePartner().getParentsPartnership();
+                IPartnershipExtended p3 = p1.getMalePartner().getParentsPartnership_ex();
                 if (p3 != null && p3.getFemalePartner() == woman)
                     return false;
             }
 
             //  Mother of mother of former wife
-            IPartnership p2 = part.getFemalePartner().getParentsPartnership();
+            IPartnershipExtended p2 = part.getFemalePartner().getParentsPartnership_ex();
             if(p1 != null) {
-                IPartnership p3 = p1.getFemalePartner().getParentsPartnership();
+                IPartnershipExtended p3 = p1.getFemalePartner().getParentsPartnership_ex();
                 if (p3 != null && p3.getFemalePartner() == woman)
                     return false;
             }

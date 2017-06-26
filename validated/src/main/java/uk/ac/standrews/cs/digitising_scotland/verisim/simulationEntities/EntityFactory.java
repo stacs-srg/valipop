@@ -25,9 +25,9 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateImplementati
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateSelection.BirthDateSelector;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateSelection.DateSelector;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.timeSteps.CompoundTimeUnit;
-import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.partnership.IPartnership;
+import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.partnership.IPartnershipExtended;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.partnership.Partnership;
-import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPerson;
+import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPersonExtended;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.Person;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.PopulationCounts;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.dataStructure.Population;
@@ -48,40 +48,41 @@ public class EntityFactory {
     private static NameGenerator surnameGenerator = new SurnameGenerator();
     private static DateSelector birthDateSelector = new BirthDateSelector();
 
-    public static IPartnership formNewChildrenInPartnership(int numberOfChildren, IPerson father, IPerson mother, MonthDate currentDate,
-                                                            CompoundTimeUnit birthTimeStep, Population population) {
+    public static IPartnershipExtended formNewChildrenInPartnership(int numberOfChildren, IPersonExtended father, IPersonExtended mother, MonthDate currentDate,
+                                                                    CompoundTimeUnit birthTimeStep, Population population) {
 
-        IPartnership partnership = new Partnership(father, mother, currentDate);
+        IPartnershipExtended partnership = new Partnership(father, mother, currentDate);
         population.getLivingPeople().addPartnershipToIndex(partnership);
 
-        IPerson child = makePerson(currentDate, birthTimeStep, partnership, population);
+        IPersonExtended child = makePerson(currentDate, birthTimeStep, partnership, population);
 
         partnership.addChildren(Collections.singletonList(child));
 
         return partnership;
     }
 
-    public static IPartnership formNewChildrenInPartnership(int numberOfChildren, IPerson mother, MonthDate currentDate,
-                                                            CompoundTimeUnit birthTimeStep, Population population) {
+    public static IPartnershipExtended formNewChildrenInPartnership(int numberOfChildren, IPersonExtended mother, MonthDate currentDate,
+                                                                    CompoundTimeUnit birthTimeStep, Population population) {
 
-        IPartnership partnership = new Partnership(mother, currentDate);
+        IPartnershipExtended partnership = new Partnership(mother);
 
-        List<IPerson> children = new ArrayList<>(numberOfChildren);
+        List<IPersonExtended> children = new ArrayList<>(numberOfChildren);
 
         // This ensures twins are born on the same day
         Date childrenBirthDate = null;
 
         for(int c = 0; c < numberOfChildren; c++) {
-            IPerson child;
+            IPersonExtended child;
             if(childrenBirthDate == null) {
                 child = makePerson(currentDate, birthTimeStep, partnership, population);
-                childrenBirthDate = child.getBirthDate();
+                childrenBirthDate = child.getBirthDate_ex();
             } else {
                 child = makePerson(childrenBirthDate, partnership, population);
             }
             children.add(child);
         }
 
+        partnership.setPartnershipDate(childrenBirthDate);
         partnership.addChildren(children);
 
         population.getPopulationCounts().newPartnership();
@@ -93,7 +94,7 @@ public class EntityFactory {
 
 
 
-    public static IPerson formOrphanChild(MonthDate currentDate, CompoundTimeUnit birthTimeStep, Population population) {
+    public static IPersonExtended formOrphanChild(MonthDate currentDate, CompoundTimeUnit birthTimeStep, Population population) {
         return makePerson(currentDate, birthTimeStep, null, population);
     }
 
@@ -121,7 +122,7 @@ public class EntityFactory {
 
     }
 
-    public static IPerson makePerson(Date birthDate, IPartnership parentsPartnership, Population population) {
+    public static IPersonExtended makePerson(Date birthDate, IPartnershipExtended parentsPartnership, Population population) {
 
         Person person = new Person(getSex(population.getPopulationCounts()), birthDate, parentsPartnership);
 
@@ -136,7 +137,7 @@ public class EntityFactory {
 
     }
 
-    public static IPerson makePerson(Date currentDate, CompoundTimeUnit birthTimeStep, IPartnership parentsPartnership, Population population) {
+    public static IPersonExtended makePerson(Date currentDate, CompoundTimeUnit birthTimeStep, IPartnershipExtended parentsPartnership, Population population) {
 
         return makePerson(birthDateSelector.selectDate(currentDate, birthTimeStep), parentsPartnership, population);
 

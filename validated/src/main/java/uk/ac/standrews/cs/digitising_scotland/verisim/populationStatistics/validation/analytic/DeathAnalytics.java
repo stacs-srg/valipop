@@ -18,7 +18,7 @@ package uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.vali
 
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.Date;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.DateUtils;
-import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPerson;
+import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPersonExtended;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.IPopulation;
 import uk.ac.standrews.cs.digitising_scotland.util.ArrayManipulation;
 
@@ -71,13 +71,13 @@ public class DeathAnalytics {
      */
     public void analyseDeaths() {
 
-        for (final IPerson person : population.getPeople()) {
+        for (final IPersonExtended person : population.getPeople()) {
 
-            final Date death_date = person.getDeathDate();
+            final Date death_date = person.getDeathDate_ex();
 
             if (death_date != null) {
 
-                final Date birth_date = person.getBirthDate();
+                final Date birth_date = person.getBirthDate_ex();
                 final int age_at_death_in_years = DateUtils.differenceInYears(birth_date, death_date).getCount();
                 if (age_at_death_in_years >= 0 && age_at_death_in_years < age_at_death.length) {
                     age_at_death[age_at_death_in_years]++;

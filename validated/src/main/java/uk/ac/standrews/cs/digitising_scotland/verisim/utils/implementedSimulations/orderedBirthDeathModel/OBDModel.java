@@ -36,6 +36,7 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.populat
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.CustomLog4j;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.ProcessArgs;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.ProgramTimer;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.ContingencyTableGenerator;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.fileUtils.FileUtils;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.fileUtils.InvalidInputFileException;
 
@@ -109,16 +110,16 @@ public class OBDModel {
                     "model run", e);
         }
 
-        ComparativeAnalysis comparisonOfDesiredAndGenerated;
-        try {
-            comparisonOfDesiredAndGenerated = ComparativeAnalysis.performComparison(config, population, sim.desired);
-            sim.summary = comparisonOfDesiredAndGenerated.outputResults(resultsOutput, sim.summary);
-        } catch (UnsupportedEventType | IOException e) {
-            System.err.println("Comparative analysis failed");
-            System.err.println(e.getMessage());
-        }
-
-        AnalyticsRunner.runAnalytics(population, resultsOutput);
+//        ComparativeAnalysis comparisonOfDesiredAndGenerated;
+//        try {
+//            comparisonOfDesiredAndGenerated = ComparativeAnalysis.performComparison(config, population, sim.desired);
+//            sim.summary = comparisonOfDesiredAndGenerated.outputResults(resultsOutput, sim.summary);
+//        } catch (UnsupportedEventType | IOException e) {
+//            System.err.println("Comparative analysis failed");
+//            System.err.println(e.getMessage());
+//        }
+//
+//        AnalyticsRunner.runAnalytics(population, resultsOutput);
 
         sim.summary.setTotalPop(population.getNumberOfPeople());
         sim.summary.setRunTime(timer.getTimeMMSS());
@@ -132,6 +133,8 @@ public class OBDModel {
 
         resultsOutput.close();
 
+        ContingencyTableGenerator table = new ContingencyTableGenerator(population, sim.desired, config.getT0(), config.getTE());
+        table.outputTable();
 
     }
 

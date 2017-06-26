@@ -16,8 +16,8 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.validation.analytic;
 
-import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.partnership.IPartnership;
-import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPerson;
+import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.partnership.IPartnershipExtended;
+import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPersonExtended;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.IPopulation;
 import uk.ac.standrews.cs.digitising_scotland.util.ArrayManipulation;
 
@@ -87,15 +87,15 @@ public class ChildrenAnalytics {
      */
     public void analyseChildren() {
 
-        for (final IPerson person : population.getPeople()) {
+        for (final IPersonExtended person : population.getPeople()) {
 
             if(Character.toLowerCase(person.getSex()) == 'f') {
-                final List<IPartnership> partnerships = person.getPartnerships();
+                final List<IPartnershipExtended> partnerships = person.getPartnerships_ex();
                 if (partnerships != null) {
 
-                    for (final IPartnership partnership : partnerships) {
+                    for (final IPartnershipExtended partnership : partnerships) {
 
-                        final List<IPerson> child_ids = partnership.getChildren();
+                        final List<IPersonExtended> child_ids = partnership.getChildren();
 
                         if (child_ids != null) {
                             children_per_marriage[child_ids.size()]++;
@@ -114,21 +114,21 @@ public class ChildrenAnalytics {
         final int MIN_CB_AGE = 15;
         final int MAX_CB_AGE = 50;
 
-        for (final IPerson person : population.getPeople()) {
+        for (final IPersonExtended person : population.getPeople()) {
 
             if(Character.toLowerCase(person.getSex()) == 'f') {
-                final List<IPartnership> partnerships = person.getPartnerships();
+                final List<IPartnershipExtended> partnerships = person.getPartnerships_ex();
                 if (partnerships != null) {
 
-                    for (final IPartnership partnership : partnerships) {
+                    for (final IPartnershipExtended partnership : partnerships) {
 
-                        final List<IPerson> child_ids = partnership.getChildren();
+                        final List<IPersonExtended> child_ids = partnership.getChildren();
 
                         if (child_ids != null) {
 
-                            for(final IPerson child : child_ids) {
+                            for(final IPersonExtended child : child_ids) {
 
-                                int yob = child.getBirthDate().getYear();
+                                int yob = child.getBirthDate_ex().getYear();
 
                                 try {
                                     childrenBornInEachYear.put(yob, childrenBornInEachYear.get(yob) + 1);
@@ -143,7 +143,7 @@ public class ChildrenAnalytics {
 
                 }
 
-                int femalesYOB = person.getBirthDate().getYear();
+                int femalesYOB = person.getBirthDate_ex().getYear();
                 for(int y = femalesYOB + MIN_CB_AGE; y < femalesYOB + MAX_CB_AGE; y++) {
 
                     try {

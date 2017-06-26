@@ -16,8 +16,8 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population;
 
-import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.partnership.IPartnership;
-import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPerson;
+import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.partnership.IPartnershipExtended;
+import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPersonExtended;
 
 /**
  * Interface for all population models.
@@ -34,7 +34,7 @@ public interface IPopulation extends PopulationUtils {
      *
      * @return an iterable sequence of people
      */
-    Iterable<IPerson> getPeople();
+    Iterable<IPersonExtended> getPeople();
 
     /**
      * Allows iteration over the partnerships in the population.
@@ -42,7 +42,7 @@ public interface IPopulation extends PopulationUtils {
      *
      * @return an iterable sequence of partnerships
      */
-    Iterable<IPartnership> getPartnerships();
+    Iterable<IPartnershipExtended> getPartnerships();
 
     /**
      * Retrieves a person by id.
@@ -50,7 +50,7 @@ public interface IPopulation extends PopulationUtils {
      * @param id the id
      * @return the corresponding person
      */
-//    IPerson findPerson(int id);
+//    IPersonExtended findPerson(int id);
 
     /**
      * Retrieves a partnership by id.
@@ -58,7 +58,7 @@ public interface IPopulation extends PopulationUtils {
      * @param id the id
      * @return the corresponding partnership
      */
-    IPartnership findPartnership(int id);
+    IPartnershipExtended findPartnership(int id);
 
     /**
      * Returns the number of people in the population.

@@ -31,8 +31,8 @@ import org.apache.logging.log4j.Logger;
 import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.dataDistributionTables.OneDimensionDataDistribution;
 import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.recording.PopulationComposition;
 import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.validation.kaplanMeier.utils.FailureTimeRow;
-import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.partnership.IPartnership;
-import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPerson;
+import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.partnership.IPartnershipExtended;
+import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPersonExtended;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.IPopulation;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.dataStructure.PeopleCollection;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.integerRange.IntegerRange;
@@ -132,10 +132,10 @@ public class GeneratedPopulationComposition implements PopulationComposition {
 
                 // THIS HANDLES BOTH GENDERS TOGETHER???
 
-                Collection<IPerson> people = population.forceGetAllPersonsByTimePeriod(d.advanceTime(new CompoundTimeUnit(age, TimeUnit.YEAR).negative()), new CompoundTimeUnit(1, TimeUnit.YEAR));
-//                Collection<IPerson> people = population.getByYear(d.advanceTime(new CompoundTimeUnit(age, TimeUnit.YEAR).negative()));
+                Collection<IPersonExtended> people = population.forceGetAllPersonsByTimePeriod(d.advanceTime(new CompoundTimeUnit(age, TimeUnit.YEAR).negative()), new CompoundTimeUnit(1, TimeUnit.YEAR));
+//                Collection<IPersonExtended> people = population.getByYear(d.advanceTime(new CompoundTimeUnit(age, TimeUnit.YEAR).negative()));
 
-                for(IPerson person : people) {
+                for(IPersonExtended person : people) {
                     try {
                         if(person.ageAtDeath() == age) {
                             totalDeathsForAge++;
@@ -192,7 +192,7 @@ public class GeneratedPopulationComposition implements PopulationComposition {
 
         if(event == EventType.MALE_DEATH) {
 
-            Collection<IPerson> people = population.forceGetAllPersonsByTimePeriodAndSex(year, new CompoundTimeUnit(1, TimeUnit.YEAR), 'm');
+            Collection<IPersonExtended> people = population.forceGetAllPersonsByTimePeriodAndSex(year, new CompoundTimeUnit(1, TimeUnit.YEAR), 'm');
 
 
 
@@ -200,14 +200,14 @@ public class GeneratedPopulationComposition implements PopulationComposition {
 
         } else if(event == EventType.FEMALE_DEATH) {
 
-            Collection<IPerson> people = population.forceGetAllPersonsByTimePeriodAndSex(year, new CompoundTimeUnit(1, TimeUnit.YEAR), 'f');
+            Collection<IPersonExtended> people = population.forceGetAllPersonsByTimePeriodAndSex(year, new CompoundTimeUnit(1, TimeUnit.YEAR), 'f');
 
             return getDeathAtTimesTable(people, denoteGroupAs, simulationEndDate);
 
         }
 //        else if(event == EventType.FIRST_BIRTH) {
 //
-//            Collection<IPerson> people = population.getByYearAndSex('f', year);
+//            Collection<IPersonExtended> people = population.getByYearAndSex('f', year);
 //
 //
 //        }
@@ -244,9 +244,9 @@ public class GeneratedPopulationComposition implements PopulationComposition {
 
             // count number of marriages in year and inc total
 
-            for(IPerson p : population.getFemales().getAll()) {
+            for(IPersonExtended p : population.getFemales().getAll()) {
 
-                if(p.aliveOnDate(d) && p.getPartnerships().size() != 0 && !p.isWidow(d)) {
+                if(p.aliveOnDate(d) && p.getPartnerships_ex().size() != 0 && !p.isWidow(d)) {
                     // inc marriages count
                     marriagesActiveInEachYearOfTimePeriod ++;
 
@@ -255,10 +255,10 @@ public class GeneratedPopulationComposition implements PopulationComposition {
             }
 
             // find each childborn in year
-            Collection<IPerson> cohort = population.forceGetAllPersonsByTimePeriod(d, new CompoundTimeUnit(1, TimeUnit.YEAR));
+            Collection<IPersonExtended> cohort = population.forceGetAllPersonsByTimePeriod(d, new CompoundTimeUnit(1, TimeUnit.YEAR));
 
-            for(IPerson child : cohort) {
-                IPartnership p = child.isInstigatorOfSeparationOfMothersPreviousPartnership();
+            for(IPersonExtended child : cohort) {
+                IPartnershipExtended p = child.isInstigatorOfSeparationOfMothersPreviousPartnership();
 
                 if (p != null) {
 
@@ -299,14 +299,14 @@ public class GeneratedPopulationComposition implements PopulationComposition {
 //        Map<IntegerRange, Integer> map = new HashMap<>();
 //        int sum = 0;
 //
-//        for(IPartnership p : population.getPartnerships()) {
+//        for(IPartnershipExtended p : population.getPartnerships_ex()) {
 //
 //            Date partnershipDate = p.getPartnershipDate();
 //
 //            // if event happened in interested time period
 //            if(DateUtils.dateBeforeOrEqual(startYear, partnershipDate) && DateUtils.dateBeforeOrEqual(partnershipDate, endYear)) {
 //
-//                int femaleAgeAtEvent = DateUtils.differenceInYears(p.getFemalePartner().getBirthDate(), partnershipDate).getCount();
+//                int femaleAgeAtEvent = DateUtils.differenceInYears(p.getFemalePartner().getBirthDate_ex(), partnershipDate).getCount();
 //
 //                // if female in age bracket
 //                if(femaleAgeRange.contains(femaleAgeAtEvent)) {
@@ -314,7 +314,7 @@ public class GeneratedPopulationComposition implements PopulationComposition {
 //                    Integer maleAgeAtEvent = null;
 //
 //                    try {
-//                        maleAgeAtEvent = DateUtils.differenceInYears(p.getMalePartner().getBirthDate(), partnershipDate).getCount();
+//                        maleAgeAtEvent = DateUtils.differenceInYears(p.getMalePartner().getBirthDate_ex(), partnershipDate).getCount();
 //                    } catch (Exception e) {
 //                        System.out.println(e.getMessage());
 //                    }
@@ -351,13 +351,13 @@ public class GeneratedPopulationComposition implements PopulationComposition {
 //        return null;
 //    }
 //
-    private Collection<FailureTimeRow> getDeathAtTimesTable(Collection<IPerson> people, String denoteGroupAs, Date simulationEndDate) {
+    private Collection<FailureTimeRow> getDeathAtTimesTable(Collection<IPersonExtended> people, String denoteGroupAs, Date simulationEndDate) {
 
         Collection<FailureTimeRow> rows = new ArrayList<>();
 
-        for(IPerson person : people) {
+        for(IPersonExtended person : people) {
             if(person.aliveOnDate(simulationEndDate)) {
-                int timeElapsed = DateUtils.differenceInYears(person.getBirthDate(), simulationEndDate).getCount() + 1;
+                int timeElapsed = DateUtils.differenceInYears(person.getBirthDate_ex(), simulationEndDate).getCount() + 1;
                 rows.add(new FailureTimeRow(timeElapsed, false, denoteGroupAs));
             } else {
                 int timeElapsed = 0;
@@ -379,7 +379,7 @@ public class GeneratedPopulationComposition implements PopulationComposition {
 
     private OneDimensionDataDistribution getCohortFirstBirthTable(AdvancableDate startYear, EventType event) throws UnsupportedEventType {
 
-        Collection<IPerson> women = population.forceGetAllPersonsByTimePeriodAndSex(startYear, new CompoundTimeUnit(1, TimeUnit.YEAR), 'f');
+        Collection<IPersonExtended> women = population.forceGetAllPersonsByTimePeriodAndSex(startYear, new CompoundTimeUnit(1, TimeUnit.YEAR), 'f');
 
         Map<IntegerRange, Double> counts = new HashMap<IntegerRange, Double>();
 
@@ -387,7 +387,7 @@ public class GeneratedPopulationComposition implements PopulationComposition {
 
         int maxAge = 0;
 
-        for (IPerson w : women) {
+        for (IPersonExtended w : women) {
 
             Integer age = null;
             try {
@@ -434,7 +434,7 @@ public class GeneratedPopulationComposition implements PopulationComposition {
             throw new UnsupportedEventType("EventType must be a death type for this method");
         }
 
-        Collection<IPerson> people = null;
+        Collection<IPersonExtended> people = null;
         try {
             people = population.forceGetAllPersonsByTimePeriodAndSex(startYear, new CompoundTimeUnit(1, TimeUnit.YEAR), sex);
         } catch (NullPointerException e) {
@@ -447,7 +447,7 @@ public class GeneratedPopulationComposition implements PopulationComposition {
 
         int maxAge = 0;
 
-        for (IPerson m : people) {
+        for (IPersonExtended m : people) {
 
             Integer age = null;
             try {

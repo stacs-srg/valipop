@@ -16,8 +16,8 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.verisim.verify;
 
-import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.partnership.IPartnership;
-import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPerson;
+import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.partnership.IPartnershipExtended;
+import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPersonExtended;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.dataStructure.PeopleCollection;
 
 import java.io.PrintStream;
@@ -41,7 +41,7 @@ public class Verify {
 
         String text = "";
 
-        for(IPartnership partnership : population.getPartnerships()) {
+        for(IPartnershipExtended partnership : population.getPartnerships()) {
             if(partnership.getMalePartner() == null || partnership.getFemalePartner() == null) {
 
                 failureCount++;
@@ -69,16 +69,16 @@ public class Verify {
 
     public boolean verifyNoZeroChildPartnerships(PeopleCollection population) {
 
-        for(IPerson p : population.getMales().getAll()) {
-            for(IPartnership part : p.getPartnerships()) {
+        for(IPersonExtended p : population.getMales().getAll()) {
+            for(IPartnershipExtended part : p.getPartnerships_ex()) {
                 if(part.getChildren().size() == 0) {
                     return false;
                 }
             }
         }
 
-        for(IPerson p : population.getFemales().getAll()) {
-            for(IPartnership part : p.getPartnerships()) {
+        for(IPersonExtended p : population.getFemales().getAll()) {
+            for(IPartnershipExtended part : p.getPartnerships_ex()) {
                 if(part.getChildren().size() == 0) {
                     return false;
                 }

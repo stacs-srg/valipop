@@ -17,7 +17,9 @@
 package uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.entityExtensions;
 
 
-import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPerson;
+import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.Date;
+import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.timeSteps.CompoundTimeUnit;
+import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPersonExtended;
 
 import java.util.Collection;
 
@@ -26,8 +28,13 @@ import java.util.Collection;
  */
 public interface PartnershipUtils {
 
-    void addChildren(Collection<IPerson> children);
+    void addChildren(Collection<IPersonExtended> children);
 
-    void setFather(IPerson father);
+    void setFather(IPersonExtended father);
 
+    void setPartnershipDate(Date startDate);
+
+    void separate(Date currentDate, CompoundTimeUnit consideredTimePeriod);
+
+    IPersonExtended getLastChild();
 }
