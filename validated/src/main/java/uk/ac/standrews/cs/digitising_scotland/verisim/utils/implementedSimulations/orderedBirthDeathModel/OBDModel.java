@@ -134,7 +134,7 @@ public class OBDModel {
         resultsOutput.close();
 
         ContingencyTableGenerator table = new ContingencyTableGenerator(population, sim.desired, config.getT0(), config.getTE());
-        table.outputTable();
+        table.outputTable(config, table.getFullTable());
 
     }
 

@@ -29,6 +29,7 @@ public enum EventType {
     MALE_DEATH,
     FEMALE_DEATH,
     SEPARATION,
-    PARTNERING
+    PARTNERING,
+    CT
 
 }

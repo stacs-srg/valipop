@@ -1,17 +1,24 @@
 package uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables;
 
+import uk.ac.standrews.cs.digitising_scotland.verisim.config.Config;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.Date;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.DateUtils;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateImplementations.YearDate;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.timeSteps.TimeUnit;
+import uk.ac.standrews.cs.digitising_scotland.verisim.events.EventType;
 import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.recording.PopulationStatistics;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.partnership.IPartnershipExtended;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPersonExtended;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.IPopulation;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.fileUtils.FileUtils;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.integerRange.IntegerRange;
 
+import java.io.*;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.Objects;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
@@ -32,7 +39,11 @@ public class ContingencyTableGenerator {
 //                    ?>>>>>>>>>>>    // Count
 //                        t = new TableNode<>("ROOT");
 
-    private TableNode<String, Boolean> t = new TableNode<>("ROOT");
+    private TableNode<String, Boolean> table = new TableNode<>("ROOT");
+
+    public TableNode getFullTable() {
+        return table;
+    }
 
     private static final String SEP = ",";
 
@@ -48,17 +59,87 @@ public class ContingencyTableGenerator {
 
                 // who was alive or died in the year of consideration
                 if(person.aliveInYear(y)) {
-                    addPersonToTree(person, true, y);
+                    addPersonToTree(person, true, y, table);
                 }
             }
         }
 
     }
 
-    public void outputTable() {
 
-        System.out.println("source, yob, sex, age, died, children birthed in partnership, separated, new partner age, " +
-                "previous children birthed, children birthed in year, freq");
+//    public TableNode transformTableForDeath(TableNode<String, Boolean> oTable, )
+
+    private IntegerRange[] ageRanges = {
+            new IntegerRange(0,14),
+            new IntegerRange(15,19),
+            new IntegerRange(20,24),
+            new IntegerRange(25,29),
+            new IntegerRange(30,34),
+            new IntegerRange(35,39),
+            new IntegerRange(40,44),
+            new IntegerRange(45,49),
+            new IntegerRange(50, true)
+    };
+
+    private IntegerRange[] childrenSepRanges = {
+            new IntegerRange(0),
+            new IntegerRange(1),
+            new IntegerRange(2),
+            new IntegerRange(3),
+            new IntegerRange(4),
+            new IntegerRange(5, true)
+    };
+
+    private IntegerRange[] childrenOBRanges = {
+            new IntegerRange(0),
+            new IntegerRange(1),
+            new IntegerRange(2),
+            new IntegerRange(3),
+            new IntegerRange(4, true)
+    };
+
+    private IntegerRange discritiseValue(int value, IntegerRange[] ranges) {
+
+        for(IntegerRange iR : ranges) {
+            if(iR.contains(value)) {
+                return iR;
+            }
+        }
+
+        return null;
+    }
+
+    private boolean boolValue(int value) {
+        return value != 0;
+    }
+
+    public void outputTable(Config config, TableNode<String, Boolean> t) {
+
+        PrintWriter table = null;
+        try {
+            table = new PrintWriter("table-CT-wF.csv", "UTF-8");
+        } catch (FileNotFoundException | UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+//        PrintStream table = new PrintStream(Paths.get("Desktop", "table.dat"));
+
+                //FileUtils.setupDatFileAsStream(EventType.CT, "table", config);
+
+//        table.println("source, yob, sex, age, died, children birthed in partnership, separated, new partner age, " +
+//                "previous children birthed, children birthed in year");
+
+        table.println(
+                        "source, " +    // 0
+                        "yob, " +       // 1
+                        "sex, " +       // 2
+                        "age, age.dis, " +      // 3
+                        "died, " +              // 4
+                        "children.birthed.in.partnership, children.birthed.in.partnership.dis, " +       // 5
+                        "separated, " +         // 6
+                        "new.partner.age, new.partner.age.dis, " +  // 7
+                        "previous.children.birthed, previous.children.birthed.dis, " +      // 8
+                        "children.birthed.in.year, children.birthed.in.year.bool, " +       // 9
+                        "freq");
 
         LinkedList<String> descent = new LinkedList<>();
 
@@ -159,10 +240,40 @@ public class ContingencyTableGenerator {
 
                                                 descent.add(n9.getValue().toString());
 
-                                                for(String str : descent) {
-                                                    System.out.print(str + SEP);
-                                                }
-                                                System.out.println(n9.getCount());
+
+//                                                for(int i = 0; i < n9.getCount(); i++) {
+                                                    int c = 0;
+                                                    for (String str : descent) {
+                                                        switch(c) {
+                                                            case 3:
+                                                            case 7:
+                                                                table.print(str + SEP);
+                                                                if(!Objects.equals(str, "None")) {
+                                                                    table.print(discritiseValue(new Integer(str), ageRanges) + SEP);
+                                                                } else {
+                                                                    table.print(str + SEP);
+                                                                }
+                                                                break;
+                                                            case 5:
+                                                                table.print(str + SEP);
+                                                                table.print(discritiseValue(new Integer(str), childrenSepRanges) + SEP);
+                                                                break;
+                                                            case 8:
+                                                                table.print(str + SEP);
+                                                                table.print(discritiseValue(new Integer(str), childrenOBRanges) + SEP);
+                                                                break;
+                                                            case 9:
+                                                                table.print(str + SEP);
+                                                                table.print(boolValue(new Integer(str)) + SEP);
+                                                                break;
+                                                            default:
+                                                                table.print(str + SEP);
+                                                        }
+
+                                                        c++;
+                                                    }
+//                                                }
+                                                table.println(n9.getCount());
 
                                                 descent.removeLast();
                                             }
@@ -187,7 +298,7 @@ public class ContingencyTableGenerator {
 
     }
 
-    public void addPersonToTree(IPersonExtended person, Boolean synthetic, YearDate y) {
+    public void addPersonToTree(IPersonExtended person, Boolean synthetic, YearDate y, TableNode t) {
 
         TableNode node;
 
