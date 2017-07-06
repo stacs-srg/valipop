@@ -43,7 +43,7 @@ public class IntegerRangeToIntegerSet implements LabeledValueSet<IntegerRange, I
     public IntegerRangeToIntegerSet(Set<IntegerRange> labels, Integer integerInitValue) {
 
         for(IntegerRange iR : labels) {
-            map.put(iR, 0);
+            map.put(iR, integerInitValue);
         }
 
     }
@@ -114,16 +114,16 @@ public class IntegerRangeToIntegerSet implements LabeledValueSet<IntegerRange, I
     }
 
     @Override
-    public LabeledValueSet<IntegerRange, Integer> productOfValuesAndN(Integer n) {
+    public LabeledValueSet<IntegerRange, Double> productOfValuesAndN(Double n) {
         List<IntegerRange> labels = new ArrayList<>();
-        List<Integer> products = new ArrayList<>();
+        List<Double> products = new ArrayList<>();
 
         for(IntegerRange iR : map.keySet()) {
             labels.add(iR);
             products.add(getValue(iR) * n);
         }
 
-        return new IntegerRangeToIntegerSet(labels, products);
+        return new IntegerRangeToDoubleSet(labels, products);
     }
 
     @Override

@@ -10,7 +10,7 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.ex
 public class PreviousNumberOfChildrenInPartnershipNode extends Node<Integer, Integer> {
 
 
-    public PreviousNumberOfChildrenInPartnershipNode(Integer option, DiedNode parentNode, int initCount) {
+    public PreviousNumberOfChildrenInPartnershipNode(Integer option, DiedNode parentNode, double initCount) {
         super(option, parentNode, initCount);
     }
 
@@ -20,7 +20,9 @@ public class PreviousNumberOfChildrenInPartnershipNode extends Node<Integer, Int
     }
 
     @Override
-    public Node<Integer, ?> addChild(Integer childOption, int initCount) {
+    public Node<Integer, ?> addChild(Integer childOption, double initCount) {
+
+
         return null;
     }
 

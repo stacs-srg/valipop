@@ -13,8 +13,11 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.integer
  */
 public class AgeNode extends Node<IntegerRange, DiedOption> implements RunnableNode {
 
+    public AgeNode() {
+        super();
+    }
 
-    public AgeNode(IntegerRange age, YOBNode parentNode, int initCount, boolean incremental) {
+    public AgeNode(IntegerRange age, SexNode parentNode, double initCount, boolean incremental) {
         super(age, parentNode, initCount);
 
         if(!incremental) {
@@ -32,7 +35,8 @@ public class AgeNode extends Node<IntegerRange, DiedOption> implements RunnableN
     }
 
     @Override
-    public Node<DiedOption, ?> addChild(DiedOption childOption, int initCount) {
+    public Node<DiedOption, ?> addChild(DiedOption childOption, double initCount) {
+        // NA
         return null;
     }
 
@@ -43,12 +47,12 @@ public class AgeNode extends Node<IntegerRange, DiedOption> implements RunnableN
 
     @Override
     public void advanceCount() {
-
+        // NA
     }
 
     @Override
     public void calcCount() {
-
+        // NA
     }
 
     @Override

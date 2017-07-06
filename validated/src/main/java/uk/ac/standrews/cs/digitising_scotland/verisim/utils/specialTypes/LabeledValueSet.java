@@ -42,7 +42,7 @@ public interface LabeledValueSet<L,V> {
 
     V remove(L label);
 
-    LabeledValueSet<L,V> productOfValuesAndN(Integer n);
+    LabeledValueSet<L,Double> productOfValuesAndN(Double n);
 
     LabeledValueSet<L, Double> valuesSubtractValues(LabeledValueSet<L, ? extends Number> n);
 

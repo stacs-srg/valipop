@@ -16,7 +16,7 @@ import java.util.*;
  */
 public class SourceNode extends Node<SourceType, YearDate> {
 
-    public SourceNode(SourceType option, ContingencyTable parent) {
+    public SourceNode(SourceType option, Table parent) {
          super(option, parent);
     }
 
@@ -32,7 +32,7 @@ public class SourceNode extends Node<SourceType, YearDate> {
         // NA
     }
 
-    public Node<YearDate, ?> addChild(YearDate childOption, int initCount) {
+    public Node<YearDate, ?> addChild(YearDate childOption, double initCount) {
 
         YOBNode childNode;
         try {

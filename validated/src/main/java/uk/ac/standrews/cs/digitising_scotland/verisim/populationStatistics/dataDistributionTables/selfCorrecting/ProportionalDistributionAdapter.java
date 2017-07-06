@@ -29,6 +29,6 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.integer
 public interface ProportionalDistributionAdapter extends DataDistribution {
 
     MultipleDeterminedCount determineCount(StatsKey key);
-    void returnAchievedCount(DeterminedCount<LabeledValueSet<IntegerRange, Integer>> achievedCount);
+    void returnAchievedCount(DeterminedCount<LabeledValueSet<IntegerRange, Integer>, LabeledValueSet<IntegerRange, Double>> achievedCount);
 
 }

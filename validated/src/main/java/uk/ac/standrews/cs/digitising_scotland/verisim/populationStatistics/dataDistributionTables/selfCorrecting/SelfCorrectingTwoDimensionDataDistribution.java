@@ -54,16 +54,16 @@ public class SelfCorrectingTwoDimensionDataDistribution implements DataDistribut
 
     public SingleDeterminedCount determineCount(StatsKey key) {
         try {
-            return getData(key.getXLabel()).determineCount(key);
+            return getData(key.getYLabel()).determineCount(key);
         } catch (InvalidRangeException e) {
-            return new SingleDeterminedCount(key, 0);
+            return new SingleDeterminedCount(key, 0, 0);
         }
 
     }
 
-    public void returnAchievedCount(DeterminedCount<Integer> achievedCount) {
+    public void returnAchievedCount(DeterminedCount<Integer, Double> achievedCount) {
         try {
-            getData(achievedCount.getKey().getXLabel()).returnAchievedCount(achievedCount);
+            getData(achievedCount.getKey().getYLabel()).returnAchievedCount(achievedCount);
         } catch (InvalidRangeException e) {
             if(achievedCount.getDeterminedCount() == 0) {
                 // all okay, a blank DeterminedCount had been issued due as no recorded data on the request

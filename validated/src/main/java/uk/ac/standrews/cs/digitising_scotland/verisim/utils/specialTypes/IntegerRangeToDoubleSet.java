@@ -48,6 +48,14 @@ public class IntegerRangeToDoubleSet implements LabeledValueSet<IntegerRange, Do
         this.map = map;
     }
 
+    public IntegerRangeToDoubleSet(Set<IntegerRange> labels, Double initValue) {
+
+        for(IntegerRange iR : labels) {
+            map.put(iR, initValue);
+        }
+
+    }
+
     @Override
     public Map<IntegerRange, Double> getMap() {
         return map;
@@ -111,7 +119,7 @@ public class IntegerRangeToDoubleSet implements LabeledValueSet<IntegerRange, Do
     }
 
     @Override
-    public LabeledValueSet<IntegerRange, Double> productOfValuesAndN(Integer n) {
+    public LabeledValueSet<IntegerRange, Double> productOfValuesAndN(Double n) {
         List<IntegerRange> labels = new ArrayList<>();
         List<Double> products = new ArrayList<>();
 

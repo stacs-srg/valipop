@@ -67,49 +67,43 @@ public class SelfCorrectingOneDimensionDataDistribution extends OneDimensionData
         // target rate
         double tD = targetRates.get(age);
 
-//        if(binominalSampling) {
-//            int determinedCount = new BinomialDistribution(rng, key.getForNPeople(), tD).sample();
-//            return new SingleDeterminedCount(key, determinedCount);
-//
-//        } else {
 
-            // applied count
-            double aC = appliedCounts.get(age);
+        double aC = appliedCounts.get(age);
 
-            // if no correction data - i.e. first call to this method
-            if (aC == 0) {
-                double rateToApply = calcSubRateFromYearRate(tD, key.getConsideredTimePeriod());
-                return resolveRateToCount(key, rateToApply);
-            }
-
-            // to apply to
-            int tAT = key.getForNPeople();
-
-            // applied rate
-            double aD = appliedRates.get(age);
-
-            // if no N value given in StatsKey
-            if (tAT == 0) {
-                double rateToApply = calcSubRateFromYearRate(tD, key.getConsideredTimePeriod());
-                return resolveRateToCount(key, rateToApply);
-            }
-
-            // Correction rate
-            double cD = (tD * (aC + tAT) - (aD * aC)) / tAT;
-
-            // Checks that rate falls in bounds
-            if (cD < 0) {
-                cD = 0;
-            } else if (cD > 1) {
-                cD = 1;
-            }
-
-            double rateToApply = calcSubRateFromYearRate(cD, key.getConsideredTimePeriod());
+        // if no correction data - i.e. first call to this method
+        if (aC == 0 || !key.performSelfCorrection()) {
+            double rateToApply = calcSubRateFromYearRate(tD, key.getConsideredTimePeriod());
             return resolveRateToCount(key, rateToApply);
-//        }
+        }
+
+        // to apply to
+        Double tAT = key.getForNPeople();
+
+        // applied rate
+        double aD = appliedRates.get(age);
+
+        // if no N value given in StatsKey
+        if (tAT.equals(0.0)) {
+            double rateToApply = calcSubRateFromYearRate(tD, key.getConsideredTimePeriod());
+            return resolveRateToCount(key, rateToApply);
+        }
+
+        // Correction rate
+        double cD = (tD * (aC + tAT) - (aD * aC)) / tAT;
+
+        // Checks that rate falls in bounds
+        if (cD < 0) {
+            cD = 0;
+        } else if (cD > 1) {
+            cD = 1;
+        }
+
+        double rateToApply = calcSubRateFromYearRate(cD, key.getConsideredTimePeriod());
+        return resolveRateToCount(key, rateToApply);
+
     }
 
-    public void returnAchievedCount(DeterminedCount<Integer> achievedCount) {
+    public void returnAchievedCount(DeterminedCount<Integer, Double> achievedCount) {
 
         StatsKey key = achievedCount.getKey();
 
@@ -132,7 +126,7 @@ public class SelfCorrectingOneDimensionDataDistribution extends OneDimensionData
         double aacD = calcAppliedYearRateFromSubRate(achievedRate, key.getConsideredTimePeriod());
 
         // to apply to
-        int tAT = key.getForNPeople();
+        double tAT = key.getForNPeople();
 
         // new applied count
         double aCn = aCo + tAT;
@@ -172,11 +166,14 @@ public class SelfCorrectingOneDimensionDataDistribution extends OneDimensionData
 
         int determinedCount;
         if(binominalSampling) {
-            determinedCount = new BinomialDistribution(rng, key.getForNPeople(), rate).sample();
+            determinedCount = new BinomialDistribution(rng, key.getForNPeople().intValue(), rate).sample();
         } else {
             determinedCount = (int) Math.round(rate * key.getForNPeople());
         }
-        return new SingleDeterminedCount(key, determinedCount);
+
+        double rawCount = rate * key.getForNPeople();
+
+        return new SingleDeterminedCount(key, determinedCount, rawCount);
     }
 
     private double calcAppliedYearRateFromSubRate(double subRate, CompoundTimeUnit timePeriod) {

@@ -26,7 +26,11 @@ public class BirthStatsKey extends StatsKey {
 
 
     public BirthStatsKey(Integer age, Integer order, int forNPeople, CompoundTimeUnit consideredTimePeriod, Date currentDate) {
-        super(order, age, forNPeople, consideredTimePeriod, currentDate);
+        this(order, age, forNPeople, consideredTimePeriod, currentDate, true);
+    }
+
+    public BirthStatsKey(Integer age, Integer order, int forNPeople, CompoundTimeUnit consideredTimePeriod, Date currentDate, boolean selfCorrection) {
+        super(order, age, null, forNPeople, consideredTimePeriod, currentDate, selfCorrection);
     }
 
     public Integer getAge() {

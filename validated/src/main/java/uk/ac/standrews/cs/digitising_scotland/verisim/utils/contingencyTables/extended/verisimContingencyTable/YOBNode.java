@@ -5,17 +5,20 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateImplementati
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPersonExtended;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.ChildNotFoundException;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.Node;
-import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.integerRange.IntegerRange;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class YOBNode extends Node<YearDate, IntegerRange> {
+public class YOBNode extends Node<YearDate, SexOption> {
 
 
 
-    public YOBNode(YearDate option, SourceNode parentNode, int initCount) {
+    public YOBNode(YearDate option, SourceNode parentNode, double initCount) {
         super(option, parentNode, initCount);
+    }
+
+    public YOBNode() {
+        super();
     }
 
     @Override
@@ -24,14 +27,14 @@ public class YOBNode extends Node<YearDate, IntegerRange> {
     }
 
     @Override
-    public Node<IntegerRange, ?> addChild(IntegerRange childOption, int initCount) {
+    public Node<SexOption, ?> addChild(SexOption childOption, double initCount) {
 
-        AgeNode childNode;
+        SexNode childNode;
         try {
-            childNode = (AgeNode) getChild(childOption);
+            childNode = (SexNode) getChild(childOption);
             childNode.incCount(initCount);
         } catch (ChildNotFoundException e) {
-            childNode = new AgeNode(childOption, this, initCount, false);
+            childNode = new SexNode(childOption, this, initCount);
             super.addChild(childNode);
         }
 
@@ -40,8 +43,8 @@ public class YOBNode extends Node<YearDate, IntegerRange> {
     }
 
     @Override
-    public Node<IntegerRange, ?> addChild(IntegerRange childOption) {
-        return addChild(childOption);
+    public Node<SexOption, ?> addChild(SexOption childOption) {
+        return addChild(childOption, 0);
     }
 
     @Override
@@ -58,23 +61,21 @@ public class YOBNode extends Node<YearDate, IntegerRange> {
     public void processPerson(IPersonExtended person, Date currentDate) {
         incCount(1);
 
-        int age = person.ageOnDate(currentDate);
+        SexOption sex;
+
+        if(Character.toUpperCase(person.getSex()) == 'M') {
+            sex = SexOption.MALE;
+        } else {
+            sex = SexOption.FEMALE;
+        }
+
         try {
-            resolveChildNodeForAge(age).processPerson(person, currentDate);
+            getChild(sex).processPerson(person, currentDate);
         } catch (ChildNotFoundException e) {
-            addChild(new IntegerRange(age)).processPerson(person, currentDate);
+            addChild(sex).processPerson(person, currentDate);
         }
 
     }
 
-    private Node<IntegerRange, ?> resolveChildNodeForAge(int age) throws ChildNotFoundException {
 
-        for(Node<IntegerRange, ?> aN : getChildren()) {
-            if(aN.getOption().contains(age)) {
-                return aN;
-            }
-        }
-
-        throw new ChildNotFoundException();
-    }
 }

@@ -21,16 +21,19 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.dataD
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class SingleDeterminedCount implements DeterminedCount<Integer> {
+public class SingleDeterminedCount implements DeterminedCount<Integer, Double> {
 
     private StatsKey key;
     int determinedCount;
 
     int fufilledCount;
 
-    public SingleDeterminedCount(StatsKey key, int determinedCount) {
+    double rawCount;
+
+    public SingleDeterminedCount(StatsKey key, int determinedCount, double rawCount) {
         this.key = key;
         this.determinedCount = determinedCount;
+        this.rawCount = rawCount;
     }
 
     public Integer getDeterminedCount() {
@@ -43,6 +46,11 @@ public class SingleDeterminedCount implements DeterminedCount<Integer> {
 
     public Integer getFufilledCount() {
         return fufilledCount;
+    }
+
+    @Override
+    public Double getRawCount() {
+        return rawCount;
     }
 
     public void setFufilledCount(Integer fufilledCount) {

@@ -244,7 +244,7 @@ public class SelfCorrectionTests {
         int count = calcUnfetteredExpectedCount(applied, corrective, targetRate);
 
         if(count > corrective.getForNPeople()) {
-            count = corrective.getForNPeople();
+            count = corrective.getForNPeople().intValue();
         }
 
         if(count < 0) {

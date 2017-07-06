@@ -24,16 +24,19 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.Integer
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class MultipleDeterminedCount implements DeterminedCount<LabeledValueSet<IntegerRange, Integer>> {
+public class MultipleDeterminedCount implements DeterminedCount<LabeledValueSet<IntegerRange, Integer>, LabeledValueSet<IntegerRange, Double>> {
 
     private StatsKey key;
     LabeledValueSet<IntegerRange, Integer> determinedCount;
 
     LabeledValueSet<IntegerRange, Integer> fufilledCount;
 
-    public MultipleDeterminedCount(StatsKey key, LabeledValueSet<IntegerRange, Integer> determinedCount) {
+    LabeledValueSet<IntegerRange, Double> rawCount;
+
+    public MultipleDeterminedCount(StatsKey key, LabeledValueSet<IntegerRange, Integer> determinedCount, LabeledValueSet<IntegerRange, Double> rawCount) {
         this.key = key;
         this.determinedCount = determinedCount;
+        this.rawCount = rawCount;
     }
 
     public LabeledValueSet<IntegerRange, Integer> getDeterminedCount() {
@@ -46,6 +49,10 @@ public class MultipleDeterminedCount implements DeterminedCount<LabeledValueSet<
 
     public LabeledValueSet<IntegerRange, Integer> getFufilledCount() {
         return fufilledCount;
+    }
+
+    public LabeledValueSet<IntegerRange, Double> getRawCount() {
+        return rawCount;
     }
 
     public void setFufilledCount(LabeledValueSet<IntegerRange, Integer> fufilledCount) {

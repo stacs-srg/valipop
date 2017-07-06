@@ -79,15 +79,17 @@ public class MotherChildAdapter implements ProportionalDistributionAdapter {
 
         MultipleDeterminedCount childNumbers = distribution.determineCount(key);
 
-        LabeledValueSet<IntegerRange, Integer> motherNumbers = childNumbers.getDeterminedCount()
-                .divisionOfValuesByLabels()
-                .controlledRoundingMaintainingSumProductOfLabelValues();
+        LabeledValueSet<IntegerRange, Double> rawMotherNumbers = childNumbers.getDeterminedCount()
+                                                                                .divisionOfValuesByLabels();
 
-        return new MultipleDeterminedCount(key, motherNumbers);
+        LabeledValueSet<IntegerRange, Integer> motherNumbers = rawMotherNumbers
+                                                            .controlledRoundingMaintainingSumProductOfLabelValues();
+
+        return new MultipleDeterminedCount(key, motherNumbers, rawMotherNumbers);
     }
 
     @Override
-    public void returnAchievedCount(DeterminedCount<LabeledValueSet<IntegerRange, Integer>> achievedCount) {
+    public void returnAchievedCount(DeterminedCount<LabeledValueSet<IntegerRange, Integer>, LabeledValueSet<IntegerRange, Double>> achievedCount) {
 
         // Transforms counts to be of children born rather than mothers giving birth
         achievedCount.setFufilledCount(achievedCount.getFufilledCount().productOfLabelsAndValues());

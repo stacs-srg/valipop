@@ -27,30 +27,42 @@ public class StatsKey {
     private final Integer yLabel;
     private final Integer xLabel;
     private final Integer maxXLabel;
-    private final int forNPeople;
+    private final Double forNPeople;
     private final CompoundTimeUnit consideredTimePeriod;
     private final Date date;
+    private final boolean selfCorrection;
 
-    public StatsKey(Integer yLabel, Integer xLabel, Integer maxXLabel, int forNPeople, CompoundTimeUnit consideredTimePeriod, Date date) {
+
+    public StatsKey(Integer yLabel, Integer xLabel, Integer maxXLabel, int forNPeople, CompoundTimeUnit consideredTimePeriod, Date date, boolean selfCorrection) {
         this.yLabel = yLabel;
         this.xLabel = xLabel;
         this.maxXLabel = maxXLabel;
-        this.forNPeople = forNPeople;
+
+        this.forNPeople = (double) forNPeople;
+
         this.consideredTimePeriod = consideredTimePeriod;
         this.date = date;
+        this.selfCorrection = selfCorrection;
+
+
     }
 
-    public StatsKey(Integer yLabel, Integer xLabel, int forNPeople, CompoundTimeUnit consideredTimePeriod, Date date) {
-        this(yLabel, xLabel, null, forNPeople, consideredTimePeriod, date);
+    public StatsKey(Integer yLabel, Integer xLabel, Integer maxXLabel, double forNPeople, CompoundTimeUnit consideredTimePeriod, Date date, boolean selfCorrection) {
+        this.yLabel = yLabel;
+        this.xLabel = xLabel;
+        this.maxXLabel = maxXLabel;
+
+        this.forNPeople = forNPeople;
+
+        this.consideredTimePeriod = consideredTimePeriod;
+        this.date = date;
+        this.selfCorrection = selfCorrection;
     }
 
-    public StatsKey(Integer yLabel, int forNPeople, CompoundTimeUnit consideredTimePeriod, Date date) {
-        this(yLabel, null, null, forNPeople, consideredTimePeriod, date);
-    }
-
-    public int getForNPeople() {
+    public Double getForNPeople() {
         return forNPeople;
     }
+
 
     public Integer getXLabel() {
         return xLabel;
@@ -71,4 +83,9 @@ public class StatsKey {
     public Date getDate() {
         return date;
     }
+
+    public boolean performSelfCorrection() {
+        return selfCorrection;
+    }
+
 }
