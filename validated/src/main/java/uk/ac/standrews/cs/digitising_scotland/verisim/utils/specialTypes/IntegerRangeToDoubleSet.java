@@ -131,6 +131,19 @@ public class IntegerRangeToDoubleSet implements LabeledValueSet<IntegerRange, Do
         return new IntegerRangeToDoubleSet(labels, products);
     }
 
+    @Override
+    public LabeledValueSet<IntegerRange, Double> productOfValuesAndN(Double n) {
+        List<IntegerRange> labels = new ArrayList<>();
+        List<Double> products = new ArrayList<>();
+
+        for(IntegerRange iR : map.keySet()) {
+            labels.add(iR);
+            products.add(getValue(iR) * n);
+        }
+
+        return new IntegerRangeToDoubleSet(labels, products);
+    }
+
     @SuppressWarnings("Duplicates")
     @Override
     public LabeledValueSet<IntegerRange, Double> valuesSubtractValues(LabeledValueSet<IntegerRange, ? extends Number> n) {

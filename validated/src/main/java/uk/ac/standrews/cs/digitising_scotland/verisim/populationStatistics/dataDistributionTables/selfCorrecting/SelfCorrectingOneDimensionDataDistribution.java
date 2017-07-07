@@ -83,7 +83,7 @@ public class SelfCorrectingOneDimensionDataDistribution extends OneDimensionData
             }
 
             // to apply to
-            int tAT = key.getForNPeople();
+            Double tAT = key.getForNPeople();
 
             // applied rate
             double aD = appliedRates.get(age);
@@ -133,7 +133,7 @@ public class SelfCorrectingOneDimensionDataDistribution extends OneDimensionData
         double aacD = calcAppliedYearRateFromSubRate(achievedRate, key.getConsideredTimePeriod());
 
         // to apply to
-        int tAT = key.getForNPeople();
+        Double tAT = key.getForNPeople();
 
         // new applied count
         double aCn = aCo + tAT;
@@ -176,7 +176,8 @@ public class SelfCorrectingOneDimensionDataDistribution extends OneDimensionData
 
         int determinedCount;
         if(binominalSampling) {
-            determinedCount = new BinomialDistribution(rng, key.getForNPeople(), rate).sample();
+
+            determinedCount = new BinomialDistribution(rng, (int) Math.round(key.getForNPeople()), rate).sample();
         } else {
             determinedCount = (int) Math.round(rate * key.getForNPeople());
         }
