@@ -1,20 +1,23 @@
-package uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable;
+package uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.DoubleNodes;
 
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.Date;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPersonExtended;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.ChildNotFoundException;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.DoubleNode;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.Node;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.RunnableNode;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.ControlChildrenNode;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.IntNodes.SexNodeInt;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.enumerations.DiedOption;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.integerRange.IntegerRange;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class AgeNode extends Node<IntegerRange, DiedOption> implements RunnableNode {
+public class AgeNodeDouble extends DoubleNode<IntegerRange, DiedOption> implements RunnableNode, ControlChildrenNode {
 
 
-    public AgeNode(IntegerRange age, SexNode parentNode, int initCount, boolean incremental) {
+    public AgeNodeDouble(IntegerRange age, SexNodeInt parentNode, int initCount, boolean incremental) {
         super(age, parentNode, initCount);
 
         if(!incremental) {
@@ -22,8 +25,13 @@ public class AgeNode extends Node<IntegerRange, DiedOption> implements RunnableN
         }
     }
 
-    public AgeNode() {
+    public AgeNodeDouble() {
         super();
+    }
+
+    @Override
+    public Node<DiedOption, ?, Double, ?> makeChildInstance(DiedOption childOption, Double initCount) {
+        return null;
     }
 
     @Override
@@ -32,26 +40,6 @@ public class AgeNode extends Node<IntegerRange, DiedOption> implements RunnableN
         for(DiedOption o : DiedOption.values()) {
             addChild(o);
         }
-
-    }
-
-    @Override
-    public Node<DiedOption, ?> addChild(DiedOption childOption, int initCount) {
-        return null;
-    }
-
-    @Override
-    public Node<DiedOption, ?> addChild(DiedOption childOption) {
-        return addChild(new DiedNode(childOption, this));
-    }
-
-    @Override
-    public void advanceCount() {
-
-    }
-
-    @Override
-    public void calcCount() {
 
     }
 

@@ -10,13 +10,21 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.ex
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class Table extends Node<String, SourceType> implements ContingencyTable {
-    public Table(String option, Node<?, String> parent) {
-        super(option, parent);
-    }
+public class Table extends Node<String, SourceType, Number, Number> implements ContingencyTable {
+
 
     public Table() {
 
+    }
+
+    @Override
+    public Node<SourceType, ?, Number, ?> addChild(SourceType childOption, Number initCount) {
+        return null;
+    }
+
+    @Override
+    public Node<SourceType, ?, Number, ?> addChild(SourceType childOption) {
+        return null;
     }
 
     // TODO write code
@@ -32,27 +40,17 @@ public class Table extends Node<String, SourceType> implements ContingencyTable 
     }
 
     @Override
-    public void makeChildren() {
+    public void incCount(Number byCount) {
 
     }
 
     @Override
-    public Node<SourceType, ?> addChild(SourceType childOption, int initCount) {
-        return null;
-    }
-
-    @Override
-    public Node<SourceType, ?> addChild(SourceType childOption) {
-        return null;
-    }
-
-    @Override
-    public void advanceCount() {
+    public void incCountByOne() {
 
     }
 
     @Override
-    public void calcCount() {
+    public void incChild(SourceType childOption, Number byCount) {
 
     }
 

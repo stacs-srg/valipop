@@ -1,4 +1,4 @@
-package uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable;
+package uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.DoubleNodes;
 
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.Date;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateImplementations.YearDate;
@@ -9,7 +9,10 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.dataD
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.partnership.IPartnershipExtended;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPersonExtended;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.ChildNotFoundException;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.ControlSelfNode;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.DoubleNode;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.Node;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.IntNodes.SexNodeInt;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.enumerations.DiedOption;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.enumerations.SexOption;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.integerRange.IntegerRange;
@@ -19,46 +22,18 @@ import java.util.ArrayList;
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class DiedNode extends Node<DiedOption, Integer> {
+public class DiedNodeDouble extends DoubleNode<DiedOption, Integer> implements ControlSelfNode {
 
-    public DiedNode(DiedOption option, AgeNode parentNode) {
+    public DiedNodeDouble(DiedOption option, AgeNodeDouble parentNode) {
         super(option, parentNode);
         calcCount();
-    }
-
-    @Override
-    public void makeChildren() {
-        // NA
-    }
-
-    @Override
-    public Node<Integer, ?> addChild(Integer childOption, int initCount) {
-
-        PreviousNumberOfChildrenInPartnershipNode childNode;
-        try {
-            childNode = (PreviousNumberOfChildrenInPartnershipNode) getChild(childOption);
-            childNode.incCount(initCount);
-        } catch (ChildNotFoundException e) {
-            childNode = new PreviousNumberOfChildrenInPartnershipNode(childOption, this, initCount);
-            super.addChild(childNode);
-        }
-
-        return childNode;
-
-    }
-
-    // TODO keep writing code...
-
-    @Override
-    public Node<Integer, ?> addChild(Integer childOption) {
-        return null;
     }
 
     @Override
     public void advanceCount() {
 
         if(getOption() == DiedOption.NO) {
-            AgeNode aN = (AgeNode) getAncestor(new AgeNode());
+            AgeNodeDouble aN = (AgeNodeDouble) getAncestor(new AgeNodeDouble());
             aN.getParent().addChild(new IntegerRange(aN.getOption().getValue() + 1), getCount());
         }
 
@@ -67,8 +42,8 @@ public class DiedNode extends Node<DiedOption, Integer> {
     @Override
     public void calcCount() {
 
-        YearDate yob = ((YOBNode) getAncestor(new YOBNode())).getOption();
-        Integer age = ((AgeNode) getAncestor(new AgeNode())).getOption().getValue();
+        YearDate yob = ((YOBNodeDouble) getAncestor(new YOBNodeDouble())).getOption();
+        Integer age = ((AgeNodeDouble) getAncestor(new AgeNodeDouble())).getOption().getValue();
 
         Date currentDate = yob.advanceTime(age, TimeUnit.YEAR);
 
@@ -77,7 +52,7 @@ public class DiedNode extends Node<DiedOption, Integer> {
 
         char sex;
 
-        SexOption sexOption = (SexOption) getAncestor(new SexNode()).getOption();
+        SexOption sexOption = (SexOption) getAncestor(new SexNodeInt()).getOption();
 
         if(sexOption == SexOption.MALE) {
             sex = 'm';
@@ -89,9 +64,9 @@ public class DiedNode extends Node<DiedOption, Integer> {
                 .getDeterminedCount(new DeathStatsKey(age, forNPeople, timePeriod, currentDate, sex));
 
         if(getOption() == DiedOption.YES) {
-//            setCount(rDC.getRawUncorrectedCount());
+            setCount(rDC.getRawUncorrectedCount());
         } else {
-//            setCount(forNPeople - rDC.getRawUncorrectedCount());
+            setCount(forNPeople - rDC.getRawUncorrectedCount());
         }
 
         advanceCount();
@@ -125,5 +100,11 @@ public class DiedNode extends Node<DiedOption, Integer> {
 
         }
 
+    }
+
+    @Override
+    public Node<Integer, ?, Double, ?> makeChildInstance(Integer childOption, Double initCount) {
+        // TODO construct
+        return null;
     }
 }
