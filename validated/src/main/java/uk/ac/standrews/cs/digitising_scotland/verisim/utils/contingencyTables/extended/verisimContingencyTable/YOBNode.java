@@ -5,12 +5,13 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateImplementati
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPersonExtended;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.ChildNotFoundException;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.Node;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.enumerations.SexOption;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.integerRange.IntegerRange;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class YOBNode extends Node<YearDate, IntegerRange> {
+public class YOBNode extends Node<YearDate, SexOption> {
 
 
 
@@ -28,23 +29,23 @@ public class YOBNode extends Node<YearDate, IntegerRange> {
     }
 
     @Override
-    public Node<IntegerRange, ?> addChild(IntegerRange childOption, int initCount) {
+    public Node<SexOption, ?> addChild(SexOption childOption, int initCount) {
 
-        AgeNode childNode;
-        try {
-            childNode = (AgeNode) getChild(childOption);
-            childNode.incCount(initCount);
-        } catch (ChildNotFoundException e) {
-            childNode = new AgeNode(childOption, this, initCount, false);
-            super.addChild(childNode);
-        }
+        SexNode childNode = null;
+//        try {
+//            childNode = (AgeNode) getChild(childOption);
+//            childNode.incCount(initCount);
+//        } catch (ChildNotFoundException e) {
+//            childNode = new AgeNode(childOption, this, initCount, false);
+//            super.addChild(childNode);
+//        }
 
         return childNode;
 
     }
 
     @Override
-    public Node<IntegerRange, ?> addChild(IntegerRange childOption) {
+    public Node<SexOption, ?> addChild(SexOption childOption) {
         return addChild(childOption);
     }
 
@@ -60,25 +61,25 @@ public class YOBNode extends Node<YearDate, IntegerRange> {
 
     @Override
     public void processPerson(IPersonExtended person, Date currentDate) {
-        incCount(1);
-
-        int age = person.ageOnDate(currentDate);
-        try {
-            resolveChildNodeForAge(age).processPerson(person, currentDate);
-        } catch (ChildNotFoundException e) {
-            addChild(new IntegerRange(age)).processPerson(person, currentDate);
-        }
+//        incCount(1);
+//
+//        int age = person.ageOnDate(currentDate);
+//        try {
+//            resolveChildNodeForAge(age).processPerson(person, currentDate);
+//        } catch (ChildNotFoundException e) {
+//            addChild(new IntegerRange(age)).processPerson(person, currentDate);
+//        }
 
     }
 
-    private Node<IntegerRange, ?> resolveChildNodeForAge(int age) throws ChildNotFoundException {
-
-        for(Node<IntegerRange, ?> aN : getChildren()) {
-            if(aN.getOption().contains(age)) {
-                return aN;
-            }
-        }
-
-        throw new ChildNotFoundException();
-    }
+//    private Node<IntegerRange, ?> resolveChildNodeForAge(int age) throws ChildNotFoundException {
+//
+//        for(Node<IntegerRange, ?> aN : getChildren()) {
+//            if(aN.getOption().contains(age)) {
+//                return aN;
+//            }
+//        }
+//
+//        throw new ChildNotFoundException();
+//    }
 }

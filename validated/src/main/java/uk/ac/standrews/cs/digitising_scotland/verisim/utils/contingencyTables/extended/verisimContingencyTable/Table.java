@@ -15,6 +15,9 @@ public class Table extends Node<String, SourceType> implements ContingencyTable 
         super(option, parent);
     }
 
+    public Table() {
+
+    }
 
     // TODO write code
 

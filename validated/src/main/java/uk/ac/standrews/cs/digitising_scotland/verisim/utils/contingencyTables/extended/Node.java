@@ -2,9 +2,11 @@ package uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.e
 
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.Date;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateImplementations.YearDate;
+import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.recording.PopulationStatistics;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPersonExtended;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.ChildNotFoundException;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.SourceNode;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.Table;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.YOBNode;
 
 import java.util.Collection;
@@ -95,6 +97,10 @@ public abstract class Node<Op, cOp> {
         } else {
             return getParent().getAncestor(nodeType);
         }
+    }
+
+    public PopulationStatistics getInputStats() {
+        return getAncestor(new Table()).getInputStats();
     }
 
 
