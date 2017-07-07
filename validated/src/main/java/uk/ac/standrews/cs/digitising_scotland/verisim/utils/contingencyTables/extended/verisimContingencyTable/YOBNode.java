@@ -18,6 +18,10 @@ public class YOBNode extends Node<YearDate, IntegerRange> {
         super(option, parentNode, initCount);
     }
 
+    public YOBNode() {
+
+    }
+
     @Override
     public void makeChildren() {
         // NA

@@ -22,6 +22,10 @@ public class AgeNode extends Node<IntegerRange, DiedOption> implements RunnableN
         }
     }
 
+    public AgeNode() {
+        super();
+    }
+
     @Override
     public void makeChildren() {
 
