@@ -44,6 +44,8 @@ public interface LabeledValueSet<L,V> {
 
     LabeledValueSet<L,V> productOfValuesAndN(Integer n);
 
+    LabeledValueSet<L,Double> productOfValuesAndN(Double n);
+
     LabeledValueSet<L, Double> valuesSubtractValues(LabeledValueSet<L, ? extends Number> n);
 
     LabeledValueSet<L,Integer> controlledRoundingMaintainingSum();

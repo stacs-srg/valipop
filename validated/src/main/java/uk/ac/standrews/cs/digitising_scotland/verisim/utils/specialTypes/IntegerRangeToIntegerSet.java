@@ -127,6 +127,19 @@ public class IntegerRangeToIntegerSet implements LabeledValueSet<IntegerRange, I
     }
 
     @Override
+    public LabeledValueSet<IntegerRange, Double> productOfValuesAndN(Double n) {
+        List<IntegerRange> labels = new ArrayList<>();
+        List<Double> products = new ArrayList<>();
+
+        for(IntegerRange iR : map.keySet()) {
+            labels.add(iR);
+            products.add(new Double(getValue(iR)) * n);
+        }
+
+        return new IntegerRangeToDoubleSet(labels, products);
+    }
+
+    @Override
     public LabeledValueSet<IntegerRange, Integer> controlledRoundingMaintainingSum() {
         return this.clone();
     }

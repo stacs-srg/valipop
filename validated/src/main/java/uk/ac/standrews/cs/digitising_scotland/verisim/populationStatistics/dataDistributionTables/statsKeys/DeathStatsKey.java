@@ -26,7 +26,7 @@ public class DeathStatsKey extends StatsKey {
 
     private final char sex;
 
-    public DeathStatsKey(Integer age, int forNPeople, CompoundTimeUnit consideredTimePeriod, Date currentDate, char sex) {
+    public DeathStatsKey(Integer age, double forNPeople, CompoundTimeUnit consideredTimePeriod, Date currentDate, char sex) {
         super(age, forNPeople, consideredTimePeriod, currentDate);
         this.sex = sex;
     }

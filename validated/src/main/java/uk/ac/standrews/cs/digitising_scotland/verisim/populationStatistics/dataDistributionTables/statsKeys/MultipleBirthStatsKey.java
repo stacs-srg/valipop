@@ -32,7 +32,7 @@ public class MultipleBirthStatsKey extends StatsKey {
         return getYLabel();
     }
 
-    public int getForNumberOfChildren() {
+    public Double getForNumberOfChildren() {
         return getForNPeople();
     }
 

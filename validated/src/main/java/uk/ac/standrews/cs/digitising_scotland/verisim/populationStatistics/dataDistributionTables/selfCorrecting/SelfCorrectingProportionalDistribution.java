@@ -72,7 +72,7 @@ public class SelfCorrectingProportionalDistribution implements DataDistribution 
                     new IntegerRangeToDoubleSet(Collections.singleton(new IntegerRange(1)), 0.0));
         }
         Integer sumOfAC = achievedCountsForAge.getSumOfValues();
-        Integer totalCount = sumOfAC + key.getForNPeople();
+        Double totalCount = sumOfAC + key.getForNPeople();
 
         LabeledValueSet<IntegerRange, Double> rawCorrectedValues =
                     targetProportions.get(resolveRowValue(age))

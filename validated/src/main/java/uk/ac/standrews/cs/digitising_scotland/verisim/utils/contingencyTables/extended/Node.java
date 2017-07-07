@@ -61,6 +61,10 @@ public abstract class Node<Op, cOp> {
         count += byCount;
     }
 
+    public void setCount(int count) {
+        this.count = count;
+    }
+
     public Op getOption() {
         return option;
     }

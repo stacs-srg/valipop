@@ -32,7 +32,7 @@ public class PartneringStatsKey extends StatsKey {
         return getYLabel();
     }
 
-    public int getForNumberOfFemales() {
+    public double getForNumberOfFemales() {
         return getForNPeople();
     }
 }
