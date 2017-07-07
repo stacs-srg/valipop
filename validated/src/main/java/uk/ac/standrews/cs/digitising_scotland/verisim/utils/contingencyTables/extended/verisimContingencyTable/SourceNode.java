@@ -16,7 +16,7 @@ import java.util.*;
  */
 public class SourceNode extends Node<SourceType, YearDate> {
 
-    public SourceNode(SourceType option, ContingencyTable parent) {
+    public SourceNode(SourceType option, Node parent) {
          super(option, parent);
     }
 
