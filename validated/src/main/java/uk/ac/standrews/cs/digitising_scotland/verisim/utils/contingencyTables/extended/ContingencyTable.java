@@ -3,7 +3,7 @@ package uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.e
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public interface ContingencyTable extends Node {
+public interface ContingencyTable {
 
     Node getRootNode();
 
