@@ -22,6 +22,7 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateImplementati
 import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.dataDistributionTables.determinedCounts.DeterminedCount;
 import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.dataDistributionTables.determinedCounts.MultipleDeterminedCount;
 import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.dataDistributionTables.statsKeys.StatsKey;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.IntegerRangeToDoubleSet;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.IntegerRangeToIntegerSet;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.LabeledValueSet;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.integerRange.IntegerRange;
@@ -65,22 +66,32 @@ public class SelfCorrectingProportionalDistribution implements DataDistribution 
             achievedCountsForAge = achievedCounts.get(resolveRowValue(age));
         } catch (InvalidRangeException e) {
             // If no stats in distribution for the given key then return a zero count object
-            return new MultipleDeterminedCount(key, new IntegerRangeToIntegerSet(
-                    Collections.singleton(new IntegerRange(1)), 0));
+            return new MultipleDeterminedCount(key,
+                    new IntegerRangeToIntegerSet(Collections.singleton(new IntegerRange(1)), 0),
+                    new IntegerRangeToDoubleSet(Collections.singleton(new IntegerRange(1)), 0.0),
+                    new IntegerRangeToDoubleSet(Collections.singleton(new IntegerRange(1)), 0.0));
         }
         Integer sumOfAC = achievedCountsForAge.getSumOfValues();
         Integer totalCount = sumOfAC + key.getForNPeople();
 
-        LabeledValueSet<IntegerRange, Integer> retValues =
+        LabeledValueSet<IntegerRange, Double> rawCorrectedValues =
                     targetProportions.get(resolveRowValue(age))
                             .productOfValuesAndN(totalCount)
-                            .valuesSubtractValues(achievedCountsForAge)
+                            .valuesSubtractValues(achievedCountsForAge);
+
+        LabeledValueSet<IntegerRange, Integer> retValues =
+                    rawCorrectedValues
                             .controlledRoundingMaintainingSum();
 
-        return new MultipleDeterminedCount(key, retValues);
+        LabeledValueSet<IntegerRange, Double> rawUncorrectedValues =
+                    targetProportions.get(resolveRowValue(age))
+                            .productOfValuesAndN(key.getForNPeople());
+
+        return new MultipleDeterminedCount(key, retValues, rawCorrectedValues, rawUncorrectedValues);
     }
 
-    public void returnAchievedCount(DeterminedCount<LabeledValueSet<IntegerRange, Integer>> achievedCount) {
+    public void returnAchievedCount(DeterminedCount<LabeledValueSet<IntegerRange, Integer>,
+                                                        LabeledValueSet<IntegerRange, Double>> achievedCount) {
 
         int age = achievedCount.getKey().getYLabel();
         LabeledValueSet<IntegerRange, Integer> previousAchievedCountsForAge;
