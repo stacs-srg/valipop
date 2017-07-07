@@ -21,6 +21,10 @@ public abstract class Node<Op, cOp> {
     private Map<cOp, Node<cOp, ?>> children = new HashMap<>();
     private Node<?, Op> parent;
 
+    public Node() {
+
+    }
+
     public abstract void makeChildren();
     public abstract Node<cOp, ?> addChild(cOp childOption, int initCount);
     public abstract Node<cOp, ?> addChild(cOp childOption);
