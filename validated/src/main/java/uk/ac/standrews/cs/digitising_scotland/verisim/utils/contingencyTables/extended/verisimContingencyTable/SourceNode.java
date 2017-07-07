@@ -16,12 +16,17 @@ import java.util.*;
  */
 public class SourceNode extends Node<SourceType, YearDate> {
 
-    public SourceNode(SourceType option, Table parent) {
+    public SourceNode(SourceType option, Node parent) {
          super(option, parent);
     }
 
     public void makeChildren() {
         // NA
+    }
+
+    @Override
+    public Node<YearDate, ?> addChild(YearDate childOption, double initCount) {
+        return null;
     }
 
     public void advanceCount() {
@@ -32,7 +37,7 @@ public class SourceNode extends Node<SourceType, YearDate> {
         // NA
     }
 
-    public Node<YearDate, ?> addChild(YearDate childOption, double initCount) {
+    public Node<YearDate, ?> addChild(YearDate childOption, int initCount) {
 
         YOBNode childNode;
         try {
