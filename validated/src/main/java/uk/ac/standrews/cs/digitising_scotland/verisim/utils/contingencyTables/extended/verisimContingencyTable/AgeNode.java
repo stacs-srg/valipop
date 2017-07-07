@@ -14,7 +14,7 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.integer
 public class AgeNode extends Node<IntegerRange, DiedOption> implements RunnableNode {
 
 
-    public AgeNode(IntegerRange age, YOBNode parentNode, int initCount, boolean incremental) {
+    public AgeNode(IntegerRange age, SexNode parentNode, int initCount, boolean incremental) {
         super(age, parentNode, initCount);
 
         if(!incremental) {
