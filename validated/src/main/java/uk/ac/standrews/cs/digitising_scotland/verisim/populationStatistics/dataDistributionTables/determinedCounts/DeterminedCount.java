@@ -21,7 +21,7 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.dataD
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public interface DeterminedCount<T> {
+public interface DeterminedCount<T, Raw> {
 
     StatsKey getKey();
 
@@ -30,5 +30,9 @@ public interface DeterminedCount<T> {
     void setFufilledCount(T fufilledCount);
 
     T getFufilledCount();
+
+    Raw getRawCorrectedCount();
+
+    Raw getRawUncorrectedCount();
 
 }

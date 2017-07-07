@@ -44,6 +44,14 @@ public class IntegerRangeToDoubleSet implements LabeledValueSet<IntegerRange, Do
 
     }
 
+    public IntegerRangeToDoubleSet(Set<IntegerRange> labels, Double initValue) {
+
+        for(IntegerRange iR : labels) {
+            map.put(iR, initValue);
+        }
+
+    }
+
     public IntegerRangeToDoubleSet(Map<IntegerRange, Double> map) {
         this.map = map;
     }

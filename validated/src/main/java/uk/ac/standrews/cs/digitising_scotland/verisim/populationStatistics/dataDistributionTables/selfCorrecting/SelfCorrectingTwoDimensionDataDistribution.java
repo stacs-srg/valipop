@@ -56,12 +56,12 @@ public class SelfCorrectingTwoDimensionDataDistribution implements DataDistribut
         try {
             return getData(key.getXLabel()).determineCount(key);
         } catch (InvalidRangeException e) {
-            return new SingleDeterminedCount(key, 0);
+            return new SingleDeterminedCount(key, 0, 0, 0);
         }
 
     }
 
-    public void returnAchievedCount(DeterminedCount<Integer> achievedCount) {
+    public void returnAchievedCount(DeterminedCount<Integer, Double> achievedCount) {
         try {
             getData(achievedCount.getKey().getXLabel()).returnAchievedCount(achievedCount);
         } catch (InvalidRangeException e) {

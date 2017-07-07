@@ -85,13 +85,13 @@ public class DiedNode extends Node<DiedOption, Integer> {
             sex = 'f';
         }
 
-        SingleDeterminedCount rDC = (SingleDeterminedCount) getInputStats()
-                .getDeterminedCount(new DeathStatsKey(age, forNPeople, timePeriod, currentDate, sex, false));
+//        SingleDeterminedCount rDC = (SingleDeterminedCount) getInputStats()
+//                .getDeterminedCount(new DeathStatsKey(age, forNPeople, timePeriod, currentDate, sex, false));
 
         if(getOption() == DiedOption.YES) {
-            setCount(forNPeople * rDC.getRawCount());
+//            setCount(rDC.getRawUncorrectedCount());
         } else {
-            setCount(forNPeople * (1 - rDC.getRawCount()));
+//            setCount(forNPeople - rDC.getRawUncorrectedCount());
         }
 
         advanceCount();

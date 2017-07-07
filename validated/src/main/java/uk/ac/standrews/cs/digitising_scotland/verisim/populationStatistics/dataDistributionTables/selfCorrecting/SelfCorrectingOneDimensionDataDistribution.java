@@ -79,7 +79,7 @@ public class SelfCorrectingOneDimensionDataDistribution extends OneDimensionData
             // if no correction data - i.e. first call to this method
             if (aC == 0) {
                 double rateToApply = calcSubRateFromYearRate(tD, key.getConsideredTimePeriod());
-                return resolveRateToCount(key, rateToApply);
+                return resolveRateToCount(key, rateToApply, rateToApply); // Same due to correction rate currently same as target rate
             }
 
             // to apply to
@@ -91,7 +91,7 @@ public class SelfCorrectingOneDimensionDataDistribution extends OneDimensionData
             // if no N value given in StatsKey
             if (tAT == 0) {
                 double rateToApply = calcSubRateFromYearRate(tD, key.getConsideredTimePeriod());
-                return resolveRateToCount(key, rateToApply);
+                return resolveRateToCount(key, rateToApply, rateToApply);
             }
 
             // Correction rate
@@ -105,11 +105,12 @@ public class SelfCorrectingOneDimensionDataDistribution extends OneDimensionData
             }
 
             double rateToApply = calcSubRateFromYearRate(cD, key.getConsideredTimePeriod());
-            return resolveRateToCount(key, rateToApply);
+            double uncorrectedRate = calcSubRateFromYearRate(tD, key.getConsideredTimePeriod());
+            return resolveRateToCount(key, rateToApply, uncorrectedRate);
 //        }
     }
 
-    public void returnAchievedCount(DeterminedCount<Integer> achievedCount) {
+    public void returnAchievedCount(DeterminedCount<Integer, Double> achievedCount) {
 
         StatsKey key = achievedCount.getKey();
 
@@ -168,7 +169,10 @@ public class SelfCorrectingOneDimensionDataDistribution extends OneDimensionData
     }
 
 
-    private SingleDeterminedCount resolveRateToCount(StatsKey key, double rate) {
+    private SingleDeterminedCount resolveRateToCount(StatsKey key, double rate, double uncorrectedRate) {
+
+        double rawCorrectedCount = rate * key.getForNPeople();
+        double rawUncorrectedCount = uncorrectedRate * key.getForNPeople();
 
         int determinedCount;
         if(binominalSampling) {
@@ -176,7 +180,7 @@ public class SelfCorrectingOneDimensionDataDistribution extends OneDimensionData
         } else {
             determinedCount = (int) Math.round(rate * key.getForNPeople());
         }
-        return new SingleDeterminedCount(key, determinedCount);
+        return new SingleDeterminedCount(key, determinedCount, rawCorrectedCount, rawUncorrectedCount);
     }
 
     private double calcAppliedYearRateFromSubRate(double subRate, CompoundTimeUnit timePeriod) {
