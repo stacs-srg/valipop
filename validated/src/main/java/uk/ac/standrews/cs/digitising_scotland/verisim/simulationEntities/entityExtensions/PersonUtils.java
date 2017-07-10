@@ -16,6 +16,7 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.entityExtensions;
 
+import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.DateUtils;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateImplementations.AdvancableDate;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateImplementations.YearDate;
 import uk.ac.standrews.cs.digitising_scotland.verisim.events.EventType;
@@ -95,4 +96,6 @@ public interface PersonUtils {
     boolean aliveInYear(YearDate y);
 
     IPartnershipExtended getLastPartnership();
+
+    Integer numberOfChildrenBirthedBeforeDate(YearDate y);
 }

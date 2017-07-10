@@ -3,10 +3,6 @@ package uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.e
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.Date;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPersonExtended;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.ChildNotFoundException;
-import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.Node;
-import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.enumerations.DiedOption;
-
-import java.util.Collection;
 
 
 /**

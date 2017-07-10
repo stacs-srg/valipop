@@ -23,11 +23,14 @@ public class YOBNodeInt extends IntNode<YearDate, SexOption> {
 
     }
 
+    public YOBNodeInt(YearDate option, SourceNodeInt parentNode, Integer initCount) {
+        super(option, parentNode, initCount);
+    }
+
     @Override
     public Node<SexOption, ?, Integer, ?> makeChildInstance(SexOption childOption, Integer initCount) {
         return new SexNodeInt(childOption, this, initCount);
     }
-
 
     @Override
     public void processPerson(IPersonExtended person, Date currentDate) {

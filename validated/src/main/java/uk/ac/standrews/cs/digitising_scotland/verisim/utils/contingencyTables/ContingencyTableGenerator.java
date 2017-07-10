@@ -461,7 +461,6 @@ public class ContingencyTableGenerator {
             return false;
         }
 
-
     }
 
     private Integer getChildrenBirthedInYear(IPartnershipExtended activePartnership, YearDate year) {
