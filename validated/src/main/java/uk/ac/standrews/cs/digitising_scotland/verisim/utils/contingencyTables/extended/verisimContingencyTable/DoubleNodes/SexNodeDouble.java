@@ -18,13 +18,9 @@ public class SexNodeDouble extends DoubleNode<SexOption, IntegerRange> {
         super(option, parentNode, initCount);
     }
 
-    public SexNodeDouble(SexOption childOption, DoubleNode<?, YearDate> parent, Double initCount) {
-        super();
-    }
-
     @Override
     public Node<IntegerRange, ?, Double, ?> makeChildInstance(IntegerRange childOption, Double initCount) {
-        return null;
+        return new AgeNodeDouble(childOption, this, initCount);
     }
 
     @Override

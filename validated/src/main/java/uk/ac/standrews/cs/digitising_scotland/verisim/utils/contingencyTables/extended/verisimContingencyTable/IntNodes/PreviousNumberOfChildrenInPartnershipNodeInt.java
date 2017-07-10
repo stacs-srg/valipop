@@ -1,25 +1,19 @@
-package uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.DoubleNodes;
+package uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.IntNodes;
 
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.Date;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPersonExtended;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.ChildNotFoundException;
-import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.DoubleNode;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.IntNode;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.Node;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class PreviousNumberOfChildrenInPartnershipNodeDouble extends DoubleNode<Integer, Integer> {
+public class PreviousNumberOfChildrenInPartnershipNodeInt extends IntNode<Integer, Integer> {
 
-
-    public PreviousNumberOfChildrenInPartnershipNodeDouble(Integer option, DiedNodeDouble parentNode, double initCount) {
+    public PreviousNumberOfChildrenInPartnershipNodeInt(Integer option, DiedNodeInt parentNode, Integer initCount) {
         super(option, parentNode, initCount);
     }
-
-    public PreviousNumberOfChildrenInPartnershipNodeDouble() {
-        super();
-    }
-
 
     @Override
     public void processPerson(IPersonExtended person, Date currentDate) {
@@ -34,7 +28,7 @@ public class PreviousNumberOfChildrenInPartnershipNodeDouble extends DoubleNode<
     }
 
     @Override
-    public Node<Integer, ?, Double, ?> makeChildInstance(Integer childOption, Double initCount) {
-        return new NumberOfPreviousChildrenInAnyPartnershipNodeDouble(childOption, this, initCount);
+    public Node<Integer, ?, Integer, ?> makeChildInstance(Integer childOption, Integer initCount) {
+        return new NumberOfPreviousChildrenInAnyPartnershipNodeInt(childOption, this, initCount);
     }
 }

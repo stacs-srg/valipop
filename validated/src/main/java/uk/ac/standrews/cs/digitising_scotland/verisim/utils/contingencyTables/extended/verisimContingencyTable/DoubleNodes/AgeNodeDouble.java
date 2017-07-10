@@ -14,15 +14,12 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.integer
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class AgeNodeDouble extends DoubleNode<IntegerRange, DiedOption> implements RunnableNode, ControlChildrenNode {
+public class AgeNodeDouble extends DoubleNode<IntegerRange, DiedOption> implements ControlChildrenNode {
 
 
-    public AgeNodeDouble(IntegerRange age, SexNodeInt parentNode, int initCount, boolean incremental) {
+    public AgeNodeDouble(IntegerRange age, SexNodeDouble parentNode, double initCount) {
         super(age, parentNode, initCount);
 
-        if(!incremental) {
-            makeChildren();
-        }
     }
 
     public AgeNodeDouble() {
@@ -31,7 +28,7 @@ public class AgeNodeDouble extends DoubleNode<IntegerRange, DiedOption> implemen
 
     @Override
     public Node<DiedOption, ?, Double, ?> makeChildInstance(DiedOption childOption, Double initCount) {
-        return null;
+        return new DiedNodeDouble(childOption, this);
     }
 
     @Override
@@ -45,6 +42,9 @@ public class AgeNodeDouble extends DoubleNode<IntegerRange, DiedOption> implemen
 
     @Override
     public void processPerson(IPersonExtended person, Date currentDate) {
+
+        incCountByOne();
+
         DiedOption option;
 
         if(person.diedInYear(currentDate.getYearDate())) {
@@ -60,8 +60,4 @@ public class AgeNodeDouble extends DoubleNode<IntegerRange, DiedOption> implemen
         }
     }
 
-    @Override
-    public void runTask() {
-        makeChildren();
-    }
 }

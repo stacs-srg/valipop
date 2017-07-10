@@ -669,4 +669,20 @@ public class Person implements IPersonExtended {
         return partnership;
     }
 
+    @Override
+    public Integer numberOfChildrenBirthedBeforeDate(YearDate y) {
+
+        int count = 0;
+
+        for(IPartnershipExtended p : getPartnerships_ex()) {
+            for(IPersonExtended c : p.getChildren()) {
+                if(DateUtils.dateBefore(c.getBirthDate_ex(), y)) {
+                    count ++;
+                }
+            }
+        }
+
+        return count;
+    }
+
 }

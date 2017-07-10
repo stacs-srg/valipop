@@ -23,7 +23,7 @@ public class SexNodeInt extends IntNode<SexOption, IntegerRange> {
 
     @Override
     public Node<IntegerRange, ?, Integer, ?> makeChildInstance(IntegerRange childOption, Integer initCount) {
-        return null;
+        return new AgeNodeInt(childOption, this, initCount);
     }
 
 

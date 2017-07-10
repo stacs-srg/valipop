@@ -45,6 +45,6 @@ public class YOBNodeDouble extends DoubleNode<YearDate, SexOption> {
 
     @Override
     public Node<SexOption, ?, Double, ?> makeChildInstance(SexOption childOption, Double initCount) {
-        return new SexNodeDouble(childOption, getParent(), initCount);
+        return new SexNodeDouble(childOption, this, initCount);
     }
 }

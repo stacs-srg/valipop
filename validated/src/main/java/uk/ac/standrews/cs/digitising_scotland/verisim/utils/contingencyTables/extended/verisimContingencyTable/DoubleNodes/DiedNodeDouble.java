@@ -76,6 +76,8 @@ public class DiedNodeDouble extends DoubleNode<DiedOption, Integer> implements C
     @Override
     public void processPerson(IPersonExtended person, Date currentDate) {
 
+        incCountByOne();
+
         if(Character.toUpperCase(person.getSex()) == 'F') {
             ArrayList<IPartnershipExtended> partnershipsInYear = new ArrayList<>(
                     person.getPartnershipsActiveInYear(currentDate.getYearDate()));
@@ -104,7 +106,6 @@ public class DiedNodeDouble extends DoubleNode<DiedOption, Integer> implements C
 
     @Override
     public Node<Integer, ?, Double, ?> makeChildInstance(Integer childOption, Double initCount) {
-        // TODO construct
-        return null;
+        return new PreviousNumberOfChildrenInPartnershipNodeDouble(childOption, this, initCount);
     }
 }
