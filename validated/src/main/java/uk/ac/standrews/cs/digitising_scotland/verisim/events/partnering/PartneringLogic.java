@@ -32,6 +32,7 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.populat
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.IntegerRangeToIntegerSet;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.LabeledValueSet;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.integerRange.IntegerRange;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.integerRange.InvalidRangeException;
 
 import java.util.*;
 
@@ -52,7 +53,9 @@ public class PartneringLogic {
 
             PartneringStatsKey key = new PartneringStatsKey(age, forNFemales, consideredTimePeriod, currentDate);
 
-            MultipleDeterminedCount determinedCounts = desiredPopulationStatistics.getPartneringRates(currentDate).determineCount(key);
+//            MultipleDeterminedCount determinedCounts = desiredPopulationStatistics.getPartneringRates(currentDate).determineCount(key);
+
+            MultipleDeterminedCount determinedCounts = (MultipleDeterminedCount) desiredPopulationStatistics.getDeterminedCount(key);
 
             LabeledValueSet<IntegerRange, Integer> partnerCounts = determinedCounts.getDeterminedCount();
             LabeledValueSet<IntegerRange, Integer> achievedPartnerCounts = new IntegerRangeToIntegerSet(partnerCounts.getLabels(), 0);
@@ -67,7 +70,7 @@ public class PartneringLogic {
                 AdvancableDate yobOfOlderEndOfIR = getYobOfOlderEndOfIR(iR, currentDate);
                 CompoundTimeUnit iRLength = getIRLength(iR);
 
-                Collection<IPersonExtended> m = population.getLivingPeople().getMales().getAllPersonsInTimePeriod(yobOfOlderEndOfIR, iRLength);
+                Collection<IPersonExtended> m = population.getLivingPeople().getMales().getAllPersonsBornInTimePeriod(yobOfOlderEndOfIR, iRLength);
 
                 allMen.put(iR, new LinkedList<>(m));
                 availableMen.update(iR, m.size());
@@ -208,6 +211,8 @@ public class PartneringLogic {
                 throw new InsufficientNumberOfPeopleException("No man to partner this woman to...");
             }
 
+            LabeledValueSet<IntegerRange, Integer> returnPartnerCounts = determinedCounts.getZeroedCountsTemplate();
+
             Map<Integer, ArrayList<IPersonExtended>> partneredFemalesByChildren = new HashMap<>();
 
             for(ProposedPartnership pp : proposedPartnerships) {
@@ -215,6 +220,10 @@ public class PartneringLogic {
                 IPartnershipExtended partnershipNeedingFather = mother.getLastChild().getParentsPartnership_ex();
 
                 partnershipNeedingFather.setFather(pp.getMale());
+
+                IntegerRange maleAgeRange = resolveAgeToIR(pp.getMale(), returnPartnerCounts.getLabels(), currentDate);
+                returnPartnerCounts.update(maleAgeRange, returnPartnerCounts.getValue(maleAgeRange));
+
                 int numChildrenInPartnership = partnershipNeedingFather.getChildren().size();
 
                 try {
@@ -225,11 +234,24 @@ public class PartneringLogic {
 
             }
 
-
+            determinedCounts.setFufilledCount(returnPartnerCounts);
+            desiredPopulationStatistics.returnAchievedCount(determinedCounts);
 
             SeparationLogic.handle(partneredFemalesByChildren, consideredTimePeriod, currentDate, desiredPopulationStatistics, population);
 
         }
+    }
+
+    private static IntegerRange resolveAgeToIR(IPersonExtended male, Set<IntegerRange> labels, Date currentDate) {
+        int age = male.ageOnDate(currentDate);
+
+        for(IntegerRange iR : labels) {
+            if(iR.contains(age)) {
+                return iR;
+            }
+        }
+
+        throw new InvalidRangeException("Male does not fit in expected ranges...");
     }
 
     private static boolean inPPs(IPersonExtended p, ArrayList<ProposedPartnership> pps) {

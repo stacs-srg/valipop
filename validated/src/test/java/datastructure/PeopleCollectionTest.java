@@ -109,14 +109,14 @@ public class PeopleCollectionTest {
 
         // are people added present in the correct place
         // for males
-        Collection<IPersonExtended> males = living.getMales().getAllPersonsInTimePeriod(start, y);
+        Collection<IPersonExtended> males = living.getMales().getAllPersonsBornInTimePeriod(start, y);
         assertTrue(males.contains(m1));
         assertTrue(males.contains(m2));
         assertTrue(males.contains(m3));
 
         // for females
 
-        Collection<IPersonExtended> females = living.getFemales().getAllPersonsInTimePeriod(start, y);
+        Collection<IPersonExtended> females = living.getFemales().getAllPersonsBornInTimePeriod(start, y);
         assertTrue(females.contains(f1));
         assertTrue(females.contains(f2));
         assertTrue(females.contains(f3));
@@ -297,13 +297,13 @@ public class PeopleCollectionTest {
 //        living.addPerson(m1);
 //        living.addPerson(m2);
 //
-//        Collection<IPersonExtended> males = living.getMales().getAllPersonsInTimePeriod(startY, y);
+//        Collection<IPersonExtended> males = living.getMales().getAllPersonsBornInTimePeriod(startY, y);
 //        assertTrue(males.contains(m1));
 //        assertTrue(males.contains(m2));
 //
 //        // for females
 //
-//        Collection<IPersonExtended> females = living.getFemales().getAllPersonsInTimePeriod(startI, y);
+//        Collection<IPersonExtended> females = living.getFemales().getAllPersonsBornInTimePeriod(startI, y);
 //        assertTrue(females.contains(f1));
 //
 //    }

@@ -71,7 +71,7 @@ public abstract class PersonCollection implements DateBounds {
      * @return the desired cohort
      */
     // Was getByYear()
-    public abstract Collection<IPersonExtended> getAllPersonsInTimePeriod(AdvancableDate firstDate, CompoundTimeUnit timePeriod);
+    public abstract Collection<IPersonExtended> getAllPersonsBornInTimePeriod(AdvancableDate firstDate, CompoundTimeUnit timePeriod);
 
     /**
      * Adds the given person to the PersonCollection.
@@ -203,7 +203,7 @@ public abstract class PersonCollection implements DateBounds {
             return selectedPeople;
         }
 
-        LinkedList<IPersonExtended> cohort = new LinkedList<>(getAllPersonsInTimePeriod(divisionDate, divisionSize));
+        LinkedList<IPersonExtended> cohort = new LinkedList<>(getAllPersonsBornInTimePeriod(divisionDate, divisionSize));
 
         while (selectedPeople.size() < numberToRemove) {
 

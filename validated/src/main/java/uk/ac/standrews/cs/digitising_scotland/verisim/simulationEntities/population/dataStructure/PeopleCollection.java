@@ -125,9 +125,9 @@ public class PeopleCollection extends PersonCollection implements IPopulation {
     }
 
     @Override
-    public Collection<IPersonExtended> getAllPersonsInTimePeriod(AdvancableDate firstDate, CompoundTimeUnit timePeriod) {
-        Collection<IPersonExtended> people =  males.getAllPersonsInTimePeriod(firstDate, timePeriod);
-        people.addAll(females.getAllPersonsInTimePeriod(firstDate, timePeriod));
+    public Collection<IPersonExtended> getAllPersonsBornInTimePeriod(AdvancableDate firstDate, CompoundTimeUnit timePeriod) {
+        Collection<IPersonExtended> people =  males.getAllPersonsBornInTimePeriod(firstDate, timePeriod);
+        people.addAll(females.getAllPersonsBornInTimePeriod(firstDate, timePeriod));
         return people;
     }
 
@@ -244,13 +244,13 @@ public class PeopleCollection extends PersonCollection implements IPopulation {
 
         if(Character.toLowerCase(sex) == 'm') {
             try {
-                people = getMales().getAllPersonsInTimePeriod(firstDate, timePeriod);
+                people = getMales().getAllPersonsBornInTimePeriod(firstDate, timePeriod);
             } catch (MisalignedTimeDivisionError e) {
                 people.addAll(getPeopleBetweenDates(getMales(), firstDate, firstDate.advanceTime(timePeriod)));
             }
         } else if(Character.toLowerCase(sex) == 'f') {
             try {
-                people = getFemales().getAllPersonsInTimePeriod(firstDate, timePeriod);
+                people = getFemales().getAllPersonsBornInTimePeriod(firstDate, timePeriod);
             } catch (MisalignedTimeDivisionError e) {
                 people.addAll(getPeopleBetweenDates(getMales(), firstDate, firstDate.advanceTime(timePeriod)));
             }
@@ -272,7 +272,7 @@ public class PeopleCollection extends PersonCollection implements IPopulation {
 
         while(DateUtils.dateBeforeOrEqual(consideredDate, lastDivOfInterest)) {
 
-            Collection<IPersonExtended> temp = collection.getAllPersonsInTimePeriod(consideredDate, getDivisionSize());
+            Collection<IPersonExtended> temp = collection.getAllPersonsBornInTimePeriod(consideredDate, getDivisionSize());
 
             if(DateUtils.datesEqual(firstDivOfInterest, consideredDate)) {
 

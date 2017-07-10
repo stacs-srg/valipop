@@ -37,6 +37,7 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.utils.CustomLog4j;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.ProcessArgs;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.ProgramTimer;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.ContingencyTableGenerator;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.Table;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.fileUtils.FileUtils;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.fileUtils.InvalidInputFileException;
 
@@ -135,6 +136,9 @@ public class OBDModel {
 
         ContingencyTableGenerator table = new ContingencyTableGenerator(population, sim.desired, config.getT0(), config.getTE());
         table.outputTable(config, table.getFullTable());
+
+        Table t = new Table(population, sim.desired);
+
 
     }
 

@@ -138,6 +138,11 @@ public class PopulationStatistics implements PopulationComposition, EventRateTab
             return getSeparationByChildCountRates(k.getDate()).determineCount(k);
         }
 
+        if(key instanceof PartneringStatsKey) {
+            PartneringStatsKey k = (PartneringStatsKey) key;
+            return getPartneringRates(k.getDate()).determineCount(k);
+        }
+
         throw new Error("Key based access not implemented for key class: " + key.getClass().toGenericString());
     }
 
@@ -164,6 +169,12 @@ public class PopulationStatistics implements PopulationComposition, EventRateTab
         if(achievedCount.getKey() instanceof SeparationStatsKey) {
             SeparationStatsKey k = (SeparationStatsKey) achievedCount.getKey();
             getSeparationByChildCountRates(k.getDate()).returnAchievedCount(achievedCount);
+            return;
+        }
+
+        if(achievedCount.getKey() instanceof PartneringStatsKey) {
+            PartneringStatsKey k = (PartneringStatsKey) achievedCount.getKey();
+            getPartneringRates(k.getDate()).returnAchievedCount(achievedCount);
             return;
         }
 

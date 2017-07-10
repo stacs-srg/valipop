@@ -65,7 +65,7 @@ public class NBirthLogic implements EventLogic {
             Collection<IPersonExtended> needingPartners = new ArrayList<>();
 
             Set<Integer> orders = femalesLiving.getBirthOrdersInDivision(divDate, consideredTimePeriod);
-            int cohortSize = femalesLiving.getAllPersonsInTimePeriod(divDate, consideredTimePeriod).size();
+            int cohortSize = femalesLiving.getAllPersonsBornInTimePeriod(divDate, consideredTimePeriod).size();
 
             Set<IntegerRange> inputOrders = desiredPopulationStatistics.getOrderedBirthRates(currentDate).getColumnLabels();
 

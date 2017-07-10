@@ -25,7 +25,7 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.timeSteps.Compou
 public class BirthStatsKey extends StatsKey {
 
 
-    public BirthStatsKey(Integer age, Integer order, int forNPeople, CompoundTimeUnit consideredTimePeriod, Date currentDate) {
+    public BirthStatsKey(Integer age, Integer order, double forNPeople, CompoundTimeUnit consideredTimePeriod, Date currentDate) {
         super(order, age, forNPeople, consideredTimePeriod, currentDate);
     }
 

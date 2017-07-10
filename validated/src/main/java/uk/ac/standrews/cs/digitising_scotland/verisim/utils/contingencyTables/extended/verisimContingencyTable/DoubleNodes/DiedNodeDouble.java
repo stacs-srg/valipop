@@ -12,6 +12,7 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.Ch
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.ControlSelfNode;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.DoubleNode;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.Node;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.RunnableNode;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.IntNodes.SexNodeInt;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.enumerations.DiedOption;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.enumerations.SexOption;
@@ -22,11 +23,15 @@ import java.util.ArrayList;
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class DiedNodeDouble extends DoubleNode<DiedOption, Integer> implements ControlSelfNode {
+public class DiedNodeDouble extends DoubleNode<DiedOption, Integer> implements ControlSelfNode, RunnableNode {
 
     public DiedNodeDouble(DiedOption option, AgeNodeDouble parentNode) {
         super(option, parentNode);
         calcCount();
+    }
+
+    public DiedNodeDouble() {
+        super();
     }
 
     @Override
@@ -107,5 +112,10 @@ public class DiedNodeDouble extends DoubleNode<DiedOption, Integer> implements C
     @Override
     public Node<Integer, ?, Double, ?> makeChildInstance(Integer childOption, Double initCount) {
         return new PreviousNumberOfChildrenInPartnershipNodeDouble(childOption, this, initCount);
+    }
+
+    @Override
+    public void runTask() {
+        advanceCount();
     }
 }

@@ -22,6 +22,8 @@ public class SeparationNodeInt extends IntNode<SeparationOption, IntegerRange> {
     @Override
     public void processPerson(IPersonExtended person, Date currentDate) {
 
+        // TODO change this to resolve to the correct interger ranges
+
         incCountByOne();
 
         IPartnershipExtended activePartnership = PersonCharacteristicsIdentifier.getActivePartnership(person, currentDate);

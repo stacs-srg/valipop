@@ -29,17 +29,6 @@ public abstract class DoubleNode<Op, cOp> extends Node<Op, cOp, Double, Double> 
         setCount(getCount() + 1);
     }
 
-    @Override
-    public void incChild(cOp childOption, Double byCount) {
-
-        try {
-            getChild(childOption).incCount(byCount);
-        } catch (ChildNotFoundException e) {
-            addChild(childOption, byCount);
-        }
-
-    }
-
     public DoubleNode<?, Op> getParent() {
         return (DoubleNode<?, Op>) super.getParent();
     }
