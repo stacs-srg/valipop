@@ -9,4 +9,6 @@ public interface ContingencyTable {
 
     void executeDelayedTasks();
 
+    void addDelayedTask(RunnableNode node);
+
 }

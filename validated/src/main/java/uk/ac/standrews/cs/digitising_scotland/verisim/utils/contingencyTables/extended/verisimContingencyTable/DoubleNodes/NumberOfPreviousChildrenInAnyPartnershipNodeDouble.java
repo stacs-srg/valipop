@@ -1,25 +1,28 @@
 package uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.DoubleNodes;
 
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.Date;
-import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateImplementations.YearDate;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.partnership.IPartnershipExtended;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPersonExtended;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.ChildNotFoundException;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.ControlChildrenNode;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.DoubleNode;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.Node;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.RunnableNode;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.PersonCharacteristicsIdentifier;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.enumerations.ChildrenInYearOption;
 
-import java.util.ArrayList;
-import java.util.Collection;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class NumberOfPreviousChildrenInAnyPartnershipNodeDouble extends DoubleNode<Integer, ChildrenInYearOption> {
+public class NumberOfPreviousChildrenInAnyPartnershipNodeDouble extends DoubleNode<Integer, ChildrenInYearOption> implements RunnableNode, ControlChildrenNode {
 
     public NumberOfPreviousChildrenInAnyPartnershipNodeDouble(Integer option, PreviousNumberOfChildrenInPartnershipNodeDouble parentNode, Double initCount) {
         super(option, parentNode, initCount);
+    }
+
+    public NumberOfPreviousChildrenInAnyPartnershipNodeDouble() {
+        super();
     }
 
     @Override
@@ -56,4 +59,16 @@ public class NumberOfPreviousChildrenInAnyPartnershipNodeDouble extends DoubleNo
 
     }
 
+    @Override
+    public void runTask() {
+        makeChildren();
+    }
+
+    @Override
+    public void makeChildren() {
+
+        addChild(ChildrenInYearOption.YES);
+        addChild(ChildrenInYearOption.NO);
+
+    }
 }

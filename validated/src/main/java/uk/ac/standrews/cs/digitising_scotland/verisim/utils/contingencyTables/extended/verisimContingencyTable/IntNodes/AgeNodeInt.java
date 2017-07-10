@@ -1,10 +1,13 @@
 package uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.IntNodes;
 
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.Date;
+import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateImplementations.YearDate;
+import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.timeSteps.TimeUnit;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPersonExtended;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.ChildNotFoundException;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.IntNode;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.Node;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.DoubleNodes.YOBNodeDouble;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.enumerations.DiedOption;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.integerRange.IntegerRange;
 
@@ -19,20 +22,27 @@ public class AgeNodeInt extends IntNode<IntegerRange, DiedOption> {
 
     @Override
     public void processPerson(IPersonExtended person, Date currentDate) {
+
+        YearDate yob = ((YOBNodeInt) getAncestor(new YOBNodeInt())).getOption();
+        Integer age = getOption().getValue();
+
+        Date calcCurrentDate = yob.advanceTime(age, TimeUnit.YEAR);
+
+
         incCountByOne();
 
         DiedOption option;
 
-        if(person.diedInYear(currentDate.getYearDate())) {
+        if(person.diedInYear(calcCurrentDate.getYearDate())) {
             option = DiedOption.YES;
         } else {
             option = DiedOption.NO;
         }
 
         try {
-            getChild(option).processPerson(person, currentDate);
+            getChild(option).processPerson(person, calcCurrentDate);
         } catch(ChildNotFoundException e) {
-            addChild(option).processPerson(person, currentDate);
+            addChild(option).processPerson(person, calcCurrentDate);
         }
     }
 

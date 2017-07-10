@@ -402,7 +402,7 @@ public class BirthLogic {
 
     public static IPersonExtended getRandomFather(Population population, AdvancableDate date, CompoundTimeUnit tp) throws InsufficientNumberOfPeopleException {
 
-        Collection<IPersonExtended> males = population.getLivingPeople().getMales().getAllPersonsInTimePeriod(date, tp);
+        Collection<IPersonExtended> males = population.getLivingPeople().getMales().getAllPersonsBornInTimePeriod(date, tp);
 
         if(males.size() == 0) {
             throw new InsufficientNumberOfPeopleException("No males alive in simulation");

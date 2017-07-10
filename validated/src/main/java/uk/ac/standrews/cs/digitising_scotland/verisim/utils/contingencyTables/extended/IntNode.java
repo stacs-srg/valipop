@@ -19,7 +19,7 @@ public abstract class IntNode<Op, cOp> extends Node<Op, cOp, Integer, Integer> {
     }
 
     public IntNode(Op option, Node parentNode) {
-        super(option, parentNode);
+        super(option, parentNode, 0);
     }
 
     @Override
@@ -31,19 +31,6 @@ public abstract class IntNode<Op, cOp> extends Node<Op, cOp, Integer, Integer> {
     public void incCountByOne() {
         setCount(getCount() + 1);
     }
-
-    @Override
-    public void incChild(cOp childOption, Integer byCount) {
-
-        try {
-            getChild(childOption).incCount(byCount);
-        } catch (ChildNotFoundException e) {
-            addChild(childOption, byCount);
-        }
-
-    }
-
-
 
     @SuppressWarnings("Duplicates")
     @Override

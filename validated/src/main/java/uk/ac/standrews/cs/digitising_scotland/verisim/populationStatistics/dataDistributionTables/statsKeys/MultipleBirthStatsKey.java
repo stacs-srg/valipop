@@ -24,7 +24,7 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.timeSteps.Compou
  */
 public class MultipleBirthStatsKey extends StatsKey {
 
-    public MultipleBirthStatsKey(Integer age, int forNumberOfChildren, CompoundTimeUnit consideredTimePeriod, Date currentDate) {
+    public MultipleBirthStatsKey(Integer age, double forNumberOfChildren, CompoundTimeUnit consideredTimePeriod, Date currentDate) {
         super(age, forNumberOfChildren, consideredTimePeriod, currentDate);
     }
 

@@ -24,13 +24,14 @@ public abstract class Node<Op, cOp, count extends Number, childCount extends Num
 
     public Node() {}
 
-    public Node(Op option, Node<?, Op, ?, count> parent) {
-        this.option = option;
-        this.parent = parent;
-    }
+//    public Node(Op option, Node<?, Op, ?, count> parent) {
+//        this.option = option;
+//        this.parent = parent;
+//    }
 
     public Node(Op option, Node<?, Op, ?, count> parent, count initCount) {
-        this(option, parent);
+        this.option = option;
+        this.parent = parent;
         this.count = initCount;
     }
 
@@ -38,7 +39,6 @@ public abstract class Node<Op, cOp, count extends Number, childCount extends Num
     public abstract Node<cOp, ?, childCount, ?> addChild(cOp childOption);
     public abstract void incCount(count byCount);
     public abstract void incCountByOne();
-    public abstract void incChild(cOp childOption, childCount byCount);
     public abstract void processPerson(IPersonExtended person, Date currentDate);
 
     public Node<cOp, ?, childCount, ?> addChild(Node<cOp, ?, childCount, ?> child) {
@@ -81,6 +81,7 @@ public abstract class Node<Op, cOp, count extends Number, childCount extends Num
     }
 
     public Node getAncestor(Node nodeType) {
+
         if(nodeType instanceof SourceNodeDouble) {
             return this;
         } else {

@@ -353,7 +353,7 @@ public class FemaleCollection extends PersonCollection {
     }
 
     @Override
-    public Collection<IPersonExtended> getAllPersonsInTimePeriod(AdvancableDate firstDate, CompoundTimeUnit timePeriod) {
+    public Collection<IPersonExtended> getAllPersonsBornInTimePeriod(AdvancableDate firstDate, CompoundTimeUnit timePeriod) {
 
         Collection<IPersonExtended> people = new ArrayList<>();
 

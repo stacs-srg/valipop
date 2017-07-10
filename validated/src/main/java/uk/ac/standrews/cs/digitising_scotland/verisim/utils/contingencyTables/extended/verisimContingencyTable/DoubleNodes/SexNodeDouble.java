@@ -18,6 +18,10 @@ public class SexNodeDouble extends DoubleNode<SexOption, IntegerRange> {
         super(option, parentNode, initCount);
     }
 
+    public SexNodeDouble() {
+        super();
+    }
+
     @Override
     public Node<IntegerRange, ?, Double, ?> makeChildInstance(IntegerRange childOption, Double initCount) {
         return new AgeNodeDouble(childOption, this, initCount);
@@ -36,7 +40,7 @@ public class SexNodeDouble extends DoubleNode<SexOption, IntegerRange> {
         }
     }
 
-    private Node<IntegerRange, ?, ?, ?> resolveChildNodeForAge(int age) throws ChildNotFoundException {
+    public Node<IntegerRange, ?, ?, ?> resolveChildNodeForAge(int age) throws ChildNotFoundException {
 
         for(Node<IntegerRange, ?, ?, ?> aN : getChildren()) {
             if(aN.getOption().contains(age)) {

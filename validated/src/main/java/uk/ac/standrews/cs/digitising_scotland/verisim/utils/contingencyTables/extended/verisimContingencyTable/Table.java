@@ -1,10 +1,21 @@
 package uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable;
 
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.Date;
+import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateImplementations.ExactDate;
+import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateImplementations.YearDate;
+import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.recording.PopulationStatistics;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPersonExtended;
+import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.dataStructure.PeopleCollection;
+import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.dataStructure.Population;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.ChildNotFoundException;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.ContingencyTable;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.Node;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.RunnableNode;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.DoubleNodes.SourceNodeDouble;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.IntNodes.SourceNodeInt;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.enumerations.SourceType;
+
+import java.util.LinkedList;
 
 
 /**
@@ -12,10 +23,97 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.ex
  */
 public class Table extends Node<String, SourceType, Number, Number> implements ContingencyTable {
 
+    private LinkedList<RunnableNode> delayedTasks = new LinkedList<>();
+
+
+    private PopulationStatistics expected;
+
+    private SourceNodeInt simNode;
+    private SourceNodeDouble statNode;
+
+    public Table(PeopleCollection population, PopulationStatistics expected) {
+        this.expected = expected;
+
+        for(IPersonExtended p : population.getAll()) {
+            processPerson(p, new YearDate(0), SourceType.SIM);
+
+            if(p.aliveOnDate(new ExactDate(31, 12, 1854))) {
+                processPerson(p, new YearDate(0), SourceType.STAT);
+            }
+
+        }
+
+        executeDelayedTasks();
+
+        System.out.println("TREE MADE");
+
+    }
 
     public Table() {
 
     }
+
+    public PopulationStatistics getInputStats() {
+        return expected;
+    }
+
+    public Node addChildA(SourceType childOption) {
+        if(childOption == SourceType.SIM) {
+            simNode = new SourceNodeInt(childOption, this);
+            return simNode;
+        } else {
+            statNode = new SourceNodeDouble(childOption, this);
+            return statNode;
+        }
+
+    }
+
+    public Node getChild(SourceType option) throws ChildNotFoundException {
+        if(option == SourceType.SIM) {
+            if(simNode != null) {
+                return simNode;
+            } else {
+                throw new ChildNotFoundException();
+            }
+
+
+        } else {
+            if (statNode != null) {
+                return statNode;
+            } else {
+                throw new ChildNotFoundException();
+            }
+        }
+    }
+
+
+    @Override
+    public void addDelayedTask(RunnableNode node) {
+        delayedTasks.add(node);
+    }
+
+    @Override
+    public void executeDelayedTasks() {
+
+        while(!delayedTasks.isEmpty()) {
+            RunnableNode n = delayedTasks.removeFirst();
+            n.runTask();
+        }
+
+    }
+
+    public void processPerson(IPersonExtended person, Date currentDate, SourceType source) {
+
+        try {
+            getChild(source).processPerson(person, currentDate);
+        } catch (ChildNotFoundException e) {
+            addChildA(source).processPerson(person, currentDate);
+        }
+
+    }
+
+    @Override
+    public Node<SourceType, ?, Number, ?> addChild(SourceType childOption) { return null; }
 
     @Override
     public Node<SourceType, ?, Number, ?> addChild(SourceType childOption, Number initCount) {
@@ -23,20 +121,13 @@ public class Table extends Node<String, SourceType, Number, Number> implements C
     }
 
     @Override
-    public Node<SourceType, ?, Number, ?> addChild(SourceType childOption) {
-        return null;
-    }
+    public void processPerson(IPersonExtended person, Date currentDate) {
 
-    // TODO write code
+    }
 
     @Override
     public Node getRootNode() {
         return null;
-    }
-
-    @Override
-    public void executeDelayedTasks() {
-
     }
 
     @Override
@@ -46,16 +137,6 @@ public class Table extends Node<String, SourceType, Number, Number> implements C
 
     @Override
     public void incCountByOne() {
-
-    }
-
-    @Override
-    public void incChild(SourceType childOption, Number byCount) {
-
-    }
-
-    @Override
-    public void processPerson(IPersonExtended person, Date currentDate) {
 
     }
 }

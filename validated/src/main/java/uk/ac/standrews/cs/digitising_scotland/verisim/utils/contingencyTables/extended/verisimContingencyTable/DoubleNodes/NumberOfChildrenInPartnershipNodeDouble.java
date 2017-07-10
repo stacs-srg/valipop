@@ -4,6 +4,7 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.Date;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.partnership.IPartnershipExtended;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPersonExtended;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.ChildNotFoundException;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.ControlChildrenNode;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.DoubleNode;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.Node;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.PersonCharacteristicsIdentifier;
@@ -12,10 +13,15 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.ex
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class NumberOfChildrenInPartnershipNodeDouble extends DoubleNode<Integer, SeparationOption> {
+public class NumberOfChildrenInPartnershipNodeDouble extends DoubleNode<Integer, SeparationOption> implements ControlChildrenNode {
 
     public NumberOfChildrenInPartnershipNodeDouble(Integer option, NumberOfChildrenInYearNodeDouble parentNode, Double initCount) {
         super(option, parentNode, initCount);
+        makeChildren();
+    }
+
+    public NumberOfChildrenInPartnershipNodeDouble() {
+        super();
     }
 
     @Override
@@ -45,9 +51,22 @@ public class NumberOfChildrenInPartnershipNodeDouble extends DoubleNode<Integer,
         try {
             getChild(option).processPerson(person, currentDate);
         } catch (ChildNotFoundException e) {
-            addChild(option).processPerson(person, currentDate);
+            SeparationNodeDouble n = (SeparationNodeDouble) addChild(option);
+            n.processPerson(person, currentDate);
+            addDelayedTask(n);
         }
 
     }
 
+    @Override
+    public void makeChildren() {
+
+        if(getOption() == 0) {
+            addChild(SeparationOption.NA, getCount());
+        } else {
+            addChild(SeparationOption.YES);
+            addChild(SeparationOption.NO);
+        }
+
+    }
 }
