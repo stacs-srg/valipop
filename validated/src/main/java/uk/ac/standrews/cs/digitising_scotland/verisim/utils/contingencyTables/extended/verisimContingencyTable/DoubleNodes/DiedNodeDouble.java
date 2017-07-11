@@ -57,7 +57,7 @@ public class DiedNodeDouble extends DoubleNode<DiedOption, Integer> implements C
 
         char sex;
 
-        SexOption sexOption = (SexOption) getAncestor(new SexNodeInt()).getOption();
+        SexOption sexOption = (SexOption) getAncestor(new SexNodeDouble()).getOption();
 
         if(sexOption == SexOption.MALE) {
             sex = 'm';

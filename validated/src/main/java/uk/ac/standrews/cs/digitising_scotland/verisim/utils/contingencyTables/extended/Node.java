@@ -4,13 +4,13 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.Date;
 import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.recording.PopulationStatistics;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPersonExtended;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.ChildNotFoundException;
-import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.DoubleNodes.SourceNodeDouble;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.Table;
 
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
@@ -82,7 +82,9 @@ public abstract class Node<Op, cOp, count extends Number, childCount extends Num
 
     public Node getAncestor(Node nodeType) {
 
-        if(nodeType instanceof SourceNodeDouble) {
+//        nodeType.getClass().isInstance(this);
+
+        if(nodeType.getClass().isInstance(this)) {
             return this;
         } else {
             return getParent().getAncestor(nodeType);

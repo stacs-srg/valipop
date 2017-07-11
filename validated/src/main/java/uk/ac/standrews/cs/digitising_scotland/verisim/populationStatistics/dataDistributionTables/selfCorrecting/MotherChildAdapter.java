@@ -79,15 +79,21 @@ public class MotherChildAdapter implements ProportionalDistributionAdapter {
 
         MultipleDeterminedCount childNumbers = distribution.determineCount(key);
 
-        LabeledValueSet<IntegerRange, Integer> motherNumbers = childNumbers.getDeterminedCount()
-                .divisionOfValuesByLabels()
-                .controlledRoundingMaintainingSumProductOfLabelValues();
-
         LabeledValueSet<IntegerRange, Double> rawCorrectedMotherNumbers = childNumbers.getRawCorrectedCount()
                 .divisionOfValuesByLabels();
 
         LabeledValueSet<IntegerRange, Double> rawUncorrectedMotherNumbers = childNumbers.getRawUncorrectedCount()
                 .divisionOfValuesByLabels();
+
+        LabeledValueSet<IntegerRange, Integer> motherNumbers;
+
+        try {
+            motherNumbers = childNumbers.getDeterminedCount()
+                    .divisionOfValuesByLabels()
+                    .controlledRoundingMaintainingSumProductOfLabelValues();
+        } catch (NullPointerException e) {
+            return new MultipleDeterminedCount(key, null, rawCorrectedMotherNumbers, rawUncorrectedMotherNumbers);
+        }
 
         return new MultipleDeterminedCount(key, motherNumbers, rawCorrectedMotherNumbers, rawUncorrectedMotherNumbers);
     }

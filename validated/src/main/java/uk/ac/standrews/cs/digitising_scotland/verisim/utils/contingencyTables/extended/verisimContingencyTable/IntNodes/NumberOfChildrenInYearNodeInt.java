@@ -17,16 +17,20 @@ public class NumberOfChildrenInYearNodeInt extends IntNode<Integer, Integer> {
         super(option, parentNode, initCount);
     }
 
+    public NumberOfChildrenInYearNodeInt() {
+        super();
+    }
+
 
     @Override
     public void processPerson(IPersonExtended person, Date currentDate) {
         incCountByOne();
 
-        int prevChildren = ((PreviousNumberOfChildrenInPartnershipNodeDouble)
-                getAncestor(new PreviousNumberOfChildrenInPartnershipNodeDouble())).getOption();
+        int prevChildren = ((PreviousNumberOfChildrenInPartnershipNodeInt)
+                getAncestor(new PreviousNumberOfChildrenInPartnershipNodeInt())).getOption();
 
-        int childrenThisYear = ((NumberOfChildrenInYearNodeDouble)
-                getAncestor(new NumberOfChildrenInYearNodeDouble())).getOption();
+        int childrenThisYear = ((NumberOfChildrenInYearNodeInt)
+                getAncestor(new NumberOfChildrenInYearNodeInt())).getOption();
         try {
             getChild(prevChildren + childrenThisYear).processPerson(person, currentDate);
         } catch (ChildNotFoundException e) {

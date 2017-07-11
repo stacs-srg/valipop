@@ -20,7 +20,7 @@ public class PersonCharacteristicsIdentifier {
         ArrayList<IPartnershipExtended> partnershipsInYear = new ArrayList<>(person.getPartnershipsActiveInYear(currentDate.getYearDate()));
 
         if(partnershipsInYear.size() > 1) {
-            throw new UnsupportedOperationException();
+            throw new UnsupportedOperationException("Lots of partners in year - likely for a female to get this error");
         } else if (partnershipsInYear.size() == 0) {
             return null;
         } else {
@@ -48,6 +48,28 @@ public class PersonCharacteristicsIdentifier {
         return c;
 
     }
+
+
+    public static Integer getChildrenBirthedBeforeDate(IPartnershipExtended activePartnership, Date year) {
+
+        if(activePartnership == null) {
+            return 0;
+        }
+
+        Collection<IPersonExtended> children = activePartnership.getChildren();
+
+        int c = 0;
+
+        for(IPersonExtended child : children) {
+            if(child.bornBefore(year)) {
+                c++;
+            }
+        }
+
+        return c;
+
+    }
+
 
     public static Boolean toSeparate(IPartnershipExtended activePartnership, YearDate y) {
 

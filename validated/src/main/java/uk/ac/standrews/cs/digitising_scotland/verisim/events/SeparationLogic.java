@@ -58,8 +58,9 @@ public class SeparationLogic {
                 // else mark partnership for separation
                 p.getLastPartnership().separate(currentDate, consideredTimePeriod);
 
-                p.willSeparate(false);
-                p.getLastChild().getParentsPartnership_ex().getMalePartner().willSeparate(false);
+                // TODO move next two lines of code into above method call?
+                p.willSeparate(true);
+                p.getLastChild().getParentsPartnership_ex().getMalePartner().willSeparate(true);
                 count++;
 
             }

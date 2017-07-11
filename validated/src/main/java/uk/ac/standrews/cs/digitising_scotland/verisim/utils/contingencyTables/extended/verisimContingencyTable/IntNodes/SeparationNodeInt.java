@@ -19,6 +19,7 @@ public class SeparationNodeInt extends IntNode<SeparationOption, IntegerRange> {
         super(option, parentNode, initCount);
     }
 
+    @SuppressWarnings("Duplicates")
     @Override
     public void processPerson(IPersonExtended person, Date currentDate) {
 
@@ -32,6 +33,8 @@ public class SeparationNodeInt extends IntNode<SeparationOption, IntegerRange> {
 
         if(activePartnership != null && PersonCharacteristicsIdentifier.startedInYear(activePartnership, currentDate.getYearDate())) {
             IPersonExtended partner = activePartnership.getPartnerOf(person);
+//            int newPAge =
+
             newPartnerAge = new IntegerRange(partner.ageOnDate(activePartnership.getPartnershipDate()));
         }
 

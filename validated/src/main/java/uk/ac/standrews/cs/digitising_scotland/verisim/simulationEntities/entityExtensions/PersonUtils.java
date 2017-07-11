@@ -98,4 +98,6 @@ public interface PersonUtils {
     IPartnershipExtended getLastPartnership();
 
     Integer numberOfChildrenBirthedBeforeDate(YearDate y);
+
+    boolean bornBefore(Date year);
 }

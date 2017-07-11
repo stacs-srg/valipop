@@ -25,6 +25,7 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.dataD
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.IntegerRangeToDoubleSet;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.IntegerRangeToIntegerSet;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.LabeledValueSet;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.ValuesDoNotSumToWholeNumberException;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.integerRange.IntegerRange;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.integerRange.InvalidRangeException;
 
@@ -79,13 +80,19 @@ public class SelfCorrectingProportionalDistribution implements DataDistribution 
                             .productOfValuesAndN(totalCount)
                             .valuesSubtractValues(achievedCountsForAge);
 
-        LabeledValueSet<IntegerRange, Integer> retValues =
-                    rawCorrectedValues
-                            .controlledRoundingMaintainingSum();
-
         LabeledValueSet<IntegerRange, Double> rawUncorrectedValues =
-                    targetProportions.get(resolveRowValue(age))
-                            .productOfValuesAndN(key.getForNPeople());
+                targetProportions.get(resolveRowValue(age))
+                        .productOfValuesAndN(key.getForNPeople());
+
+
+        LabeledValueSet<IntegerRange, Integer> retValues;
+        try {
+            retValues = rawCorrectedValues
+                    .controlledRoundingMaintainingSum();
+        } catch (ValuesDoNotSumToWholeNumberException e) {
+            return new MultipleDeterminedCount(key, null, rawCorrectedValues, rawUncorrectedValues);
+        }
+
 
         return new MultipleDeterminedCount(key, retValues, rawCorrectedValues, rawUncorrectedValues);
     }

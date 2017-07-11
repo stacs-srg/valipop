@@ -6,6 +6,7 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.ChildNotFoundException;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.Node;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.DoubleNode;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.RunnableNode;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.enumerations.SourceType;
 
 /**
@@ -13,13 +14,31 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.ex
  */
 public class SourceNodeDouble extends DoubleNode<SourceType, YearDate> {
 
+    private Node parent;
+
     public SourceNodeDouble(SourceType option, Node parent) {
          super(option, parent);
+         this.parent = parent;
     }
 
     @Override
     public Node<YearDate, ?, Double, ?> makeChildInstance(YearDate childOption, Double initCount) {
         return new YOBNodeDouble(childOption, this, initCount);
+    }
+
+    public Node getAncestor(Node nodeType) {
+
+        if(nodeType.getClass().isInstance(this)) {
+            return this;
+        } else if(nodeType.getClass().isInstance(parent)) {
+            return parent;
+        } else {
+            throw new UnsupportedOperationException();
+        }
+    }
+
+    public void addDelayedTask(RunnableNode node) {
+        parent.addDelayedTask(node);
     }
 
     public void processPerson(IPersonExtended person, Date currentDate) {

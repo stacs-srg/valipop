@@ -1,8 +1,10 @@
 package uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable;
 
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.Date;
+import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.DateUtils;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateImplementations.ExactDate;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateImplementations.YearDate;
+import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.timeSteps.TimeUnit;
 import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.recording.PopulationStatistics;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPersonExtended;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.dataStructure.PeopleCollection;
@@ -31,17 +33,42 @@ public class Table extends Node<String, SourceType, Number, Number> implements C
     private SourceNodeInt simNode;
     private SourceNodeDouble statNode;
 
-    public Table(PeopleCollection population, PopulationStatistics expected) {
+    public Table(PeopleCollection population, PopulationStatistics expected, Date startDate, Date endDate) {
         this.expected = expected;
 
-        for(IPersonExtended p : population.getAll()) {
-            processPerson(p, new YearDate(0), SourceType.SIM);
+//        for(IPersonExtended p : population.getAll()) {
+//            processPerson(p, new YearDate(0), SourceType.SIM);
+//
+//            if(p.aliveOnDate(new ExactDate(31, 12, 1854))) {
+//                processPerson(p, new YearDate(0), SourceType.STAT);
+//            }
+//
+//        }
 
-            if(p.aliveOnDate(new ExactDate(31, 12, 1854))) {
-                processPerson(p, new YearDate(0), SourceType.STAT);
+        YearDate prevY = new YearDate(startDate.getYear() - 1);
+        for(IPersonExtended person : population.getPeople()) {
+            if(person.aliveInYear(prevY)) {
+                if (prevY.getYear() == startDate.getYear() - 1) {
+                    processPerson(person, prevY, SourceType.STAT);
+                }
             }
 
         }
+
+        for (YearDate y = startDate.getYearDate(); DateUtils.dateBefore(y, endDate);
+             y = y.advanceTime(1, TimeUnit.YEAR).getYearDate()) {
+
+            // for every person in population
+            for(IPersonExtended person : population.getPeople()) {
+
+                // who was alive or died in the year of consideration
+                if(person.aliveInYear(y)) {
+                    processPerson(person, y, SourceType.SIM);
+                }
+            }
+        }
+
+
 
         executeDelayedTasks();
 

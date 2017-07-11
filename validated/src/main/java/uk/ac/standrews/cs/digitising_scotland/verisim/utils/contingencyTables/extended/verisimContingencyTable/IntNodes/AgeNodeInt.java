@@ -23,26 +23,26 @@ public class AgeNodeInt extends IntNode<IntegerRange, DiedOption> {
     @Override
     public void processPerson(IPersonExtended person, Date currentDate) {
 
-        YearDate yob = ((YOBNodeInt) getAncestor(new YOBNodeInt())).getOption();
-        Integer age = getOption().getValue();
-
-        Date calcCurrentDate = yob.advanceTime(age, TimeUnit.YEAR);
+//        YearDate yob = ((YOBNodeInt) getAncestor(new YOBNodeInt())).getOption();
+//        Integer age = getOption().getValue();
+//
+//        Date calcCurrentDate = yob.advanceTime(age, TimeUnit.YEAR);
 
 
         incCountByOne();
 
         DiedOption option;
 
-        if(person.diedInYear(calcCurrentDate.getYearDate())) {
+        if(person.diedInYear(currentDate.getYearDate())) {
             option = DiedOption.YES;
         } else {
             option = DiedOption.NO;
         }
 
         try {
-            getChild(option).processPerson(person, calcCurrentDate);
+            getChild(option).processPerson(person, currentDate);
         } catch(ChildNotFoundException e) {
-            addChild(option).processPerson(person, calcCurrentDate);
+            addChild(option).processPerson(person, currentDate);
         }
     }
 
