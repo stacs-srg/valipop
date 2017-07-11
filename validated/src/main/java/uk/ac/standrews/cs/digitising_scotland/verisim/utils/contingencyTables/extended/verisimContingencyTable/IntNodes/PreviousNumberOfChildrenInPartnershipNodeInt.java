@@ -15,6 +15,10 @@ public class PreviousNumberOfChildrenInPartnershipNodeInt extends IntNode<Intege
         super(option, parentNode, initCount);
     }
 
+    public PreviousNumberOfChildrenInPartnershipNodeInt() {
+        super();
+    }
+
     @Override
     public void processPerson(IPersonExtended person, Date currentDate) {
         incCountByOne();

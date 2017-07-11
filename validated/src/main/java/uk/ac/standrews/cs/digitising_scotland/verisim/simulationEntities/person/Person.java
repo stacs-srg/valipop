@@ -685,4 +685,9 @@ public class Person implements IPersonExtended {
         return count;
     }
 
+    @Override
+    public boolean bornBefore(Date date) {
+        return DateUtils.dateBefore(getBirthDate_ex(), date);
+    }
+
 }
