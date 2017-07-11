@@ -34,6 +34,10 @@ public class ChildrenInYearNodeDouble extends DoubleNode<ChildrenInYearOption, I
         calcCount();
     }
 
+    public ChildrenInYearNodeDouble() {
+        super();
+    }
+
     @Override
     public Node<Integer, ?, Double, ?> makeChildInstance(Integer childOption, Double initCount) {
         return new NumberOfChildrenInYearNodeDouble(childOption, this, initCount);

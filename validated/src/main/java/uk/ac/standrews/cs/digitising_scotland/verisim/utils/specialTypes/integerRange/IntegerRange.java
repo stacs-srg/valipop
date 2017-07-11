@@ -16,6 +16,8 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.integerRange;
 
+import java.util.Objects;
+
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
@@ -25,31 +27,38 @@ public class IntegerRange implements Comparable<IntegerRange> {
     private Integer min = null;
     private Integer max = null;
 
+    String value = "";
+
     public IntegerRange(String label) {
 
-        String[] parts = label.split("-");
-        if (parts.length == 1) {
-            try {
-                min = Integer.parseInt(parts[0]);
-                max = Integer.parseInt(parts[0]);
-                plus = false;
-            } catch (NumberFormatException e) {
-                if (parts[0].toCharArray()[parts[0].length() - 1] == '+') {
-                    plus = true;
-                    min = Integer.parseInt(parts[0].split("\\+")[0]);
-                } else {
-                    throw new NumberFormatException();
-                }
-            }
-        } else if (parts.length == 2) {
-            min = Integer.parseInt(parts[0]);
-            max = Integer.parseInt(parts[1]);
-
-            if (min >= max) {
-                throw new InvalidRangeException("The minimum value of the range is greater than the maximum value");
-            }
+        if(Objects.equals(label, "na")) {
+            value = "na";
         } else {
-            throw new NumberFormatException();
+
+            String[] parts = label.split("-");
+            if (parts.length == 1) {
+                try {
+                    min = Integer.parseInt(parts[0]);
+                    max = Integer.parseInt(parts[0]);
+                    plus = false;
+                } catch (NumberFormatException e) {
+                    if (parts[0].toCharArray()[parts[0].length() - 1] == '+') {
+                        plus = true;
+                        min = Integer.parseInt(parts[0].split("\\+")[0]);
+                    } else {
+                        throw new NumberFormatException();
+                    }
+                }
+            } else if (parts.length == 2) {
+                min = Integer.parseInt(parts[0]);
+                max = Integer.parseInt(parts[1]);
+
+                if (min >= max) {
+                    throw new InvalidRangeException("The minimum value of the range is greater than the maximum value");
+                }
+            } else {
+                throw new NumberFormatException();
+            }
         }
 
     }
@@ -74,13 +83,16 @@ public class IntegerRange implements Comparable<IntegerRange> {
         plus = false;
     }
 
-    public boolean contains(int integer) {
+    public Boolean contains(Integer integer) {
 //        if (plus == null) {
 //            // if standard integerRange
 //            if (integer >= min && integer <= max) {
 //                return true;
 //            }
 //        } else {
+        if(value.equals("na")) {
+            return null;
+        }
 
             if (plus) {
                 // if min value +
@@ -101,7 +113,7 @@ public class IntegerRange implements Comparable<IntegerRange> {
 
     }
 
-    public int getValue() {
+    public Integer getValue() {
         return min;
     }
 
@@ -122,11 +134,15 @@ public class IntegerRange implements Comparable<IntegerRange> {
     }
 
     public String toString() {
-        String s = "";
-        s += min;
-        s += min.equals(max) ? "" : "to" + max;
-        s += plus ? "+" : "";
-        return s;
+        if(value.equals("na")) {
+            return value;
+        } else {
+            String s = "";
+            s += min;
+            s += min.equals(max) ? "" : "to" + max;
+            s += plus ? "+" : "";
+            return s;
+        }
     }
 
     @Override
