@@ -13,6 +13,7 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.ChildNotFoundException;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.*;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.PersonCharacteristicsIdentifier;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.enumerations.ChildrenInYearOption;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.enumerations.DiedOption;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.enumerations.SeparationOption;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.integerRange.IntegerRange;
@@ -148,28 +149,59 @@ public class SeparationNodeDouble extends DoubleNode<SeparationOption, IntegerRa
     @Override
     public void makeChildren() {
 
-        if(getOption() == SeparationOption.YES) {
+        Integer pncip = ((PreviousNumberOfChildrenInPartnershipNodeDouble)
+                getAncestor(new PreviousNumberOfChildrenInPartnershipNodeDouble())).getOption();
 
-            YearDate yob = ((YOBNodeDouble) getAncestor(new YOBNodeDouble())).getOption();
-            Integer age = ((AgeNodeDouble) getAncestor(new AgeNodeDouble())).getOption().getValue();
-
-            Date currentDate = yob.advanceTime(age, TimeUnit.YEAR);
-
-            double numberOfFemales = getCount();
-            CompoundTimeUnit timePeriod = new CompoundTimeUnit(1, TimeUnit.YEAR);
-
-            MultipleDeterminedCount mDC = (MultipleDeterminedCount) getInputStats()
-                            .getDeterminedCount(new PartneringStatsKey(age, numberOfFemales, timePeriod, currentDate));
-
-            Set<IntegerRange> options = mDC.getRawUncorrectedCount().getLabels();
-
-            for(IntegerRange o : options) {
-                addChild(o);
-            }
-
+        if(pncip == 0) {
+            addChild(new IntegerRange("na"));
         } else {
-            addChild(null, getCount());
+            ChildrenInYearOption ciy = ((ChildrenInYearNodeDouble)
+                    getAncestor(new ChildrenInYearNodeDouble())).getOption();
+
+            if(ciy == ChildrenInYearOption.NO) {
+                addChild(new IntegerRange("na"));
+            } else {
+                YearDate yob = ((YOBNodeDouble) getAncestor(new YOBNodeDouble())).getOption();
+                Integer age = ((AgeNodeDouble) getAncestor(new AgeNodeDouble())).getOption().getValue();
+
+                Date currentDate = yob.advanceTime(age, TimeUnit.YEAR);
+
+                double numberOfFemales = getCount();
+                CompoundTimeUnit timePeriod = new CompoundTimeUnit(1, TimeUnit.YEAR);
+
+                MultipleDeterminedCount mDC = (MultipleDeterminedCount) getInputStats()
+                        .getDeterminedCount(new PartneringStatsKey(age, numberOfFemales, timePeriod, currentDate));
+
+                Set<IntegerRange> options = mDC.getRawUncorrectedCount().getLabels();
+
+                for(IntegerRange o : options) {
+                    addChild(o);
+                }
+            }
         }
+
+//        if(getOption() == SeparationOption.YES) {
+//
+//            YearDate yob = ((YOBNodeDouble) getAncestor(new YOBNodeDouble())).getOption();
+//            Integer age = ((AgeNodeDouble) getAncestor(new AgeNodeDouble())).getOption().getValue();
+//
+//            Date currentDate = yob.advanceTime(age, TimeUnit.YEAR);
+//
+//            double numberOfFemales = getCount();
+//            CompoundTimeUnit timePeriod = new CompoundTimeUnit(1, TimeUnit.YEAR);
+//
+//            MultipleDeterminedCount mDC = (MultipleDeterminedCount) getInputStats()
+//                            .getDeterminedCount(new PartneringStatsKey(age, numberOfFemales, timePeriod, currentDate));
+//
+//            Set<IntegerRange> options = mDC.getRawUncorrectedCount().getLabels();
+//
+//            for(IntegerRange o : options) {
+//                addChild(o);
+//            }
+//
+//        } else {
+//            addChild(null, getCount());
+//        }
 
     }
 

@@ -29,7 +29,7 @@ public class SexNodeInt extends IntNode<SexOption, IntegerRange> {
 
     @Override
     public void processPerson(IPersonExtended person, Date currentDate) {
-        incCount(1);
+        incCountByOne();
 
         int age = person.ageOnDate(currentDate);
         try {

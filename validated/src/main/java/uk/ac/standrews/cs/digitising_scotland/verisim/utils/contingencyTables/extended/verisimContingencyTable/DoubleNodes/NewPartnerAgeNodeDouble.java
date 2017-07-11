@@ -39,7 +39,7 @@ public class NewPartnerAgeNodeDouble extends DoubleNode<IntegerRange, String> im
     @Override
     public void calcCount() {
 
-        if(getOption() == null) {
+        if(getOption().getValue() == null) {
             setCount(getParent().getCount());
         } else {
             YearDate yob = ((YOBNodeDouble) getAncestor(new YOBNodeDouble())).getOption();

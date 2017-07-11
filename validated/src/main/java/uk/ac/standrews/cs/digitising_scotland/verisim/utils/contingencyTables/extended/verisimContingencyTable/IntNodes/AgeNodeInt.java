@@ -20,6 +20,10 @@ public class AgeNodeInt extends IntNode<IntegerRange, DiedOption> {
         super(option, parentNode, initCount);
     }
 
+    public AgeNodeInt() {
+        super();
+    }
+
     @Override
     public void processPerson(IPersonExtended person, Date currentDate) {
 
