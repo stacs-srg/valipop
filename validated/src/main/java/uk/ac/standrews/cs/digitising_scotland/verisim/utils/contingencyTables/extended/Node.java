@@ -4,6 +4,8 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.Date;
 import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.recording.PopulationStatistics;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPersonExtended;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.ChildNotFoundException;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.DoubleNodes.AgeNodeDouble;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.DoubleNodes.YOBNodeDouble;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.Table;
 
 
@@ -95,6 +97,19 @@ public abstract class Node<Op, cOp, count extends Number, childCount extends Num
         return getAncestor(new Table()).getInputStats();
     }
 
+    public Date getEndDate() {
+        return getAncestor(new Table()).getEndDate();
+    }
 
+//    public String toString() {
+//        String s = "";
+//
+//        s += getClass().getCanonicalName() + " ";
+//        s += getOption().toString() + " --- ";
+//        s += getAncestor(new YOBNodeDouble()).getOption().toString() + " @ ";
+//        s += getAncestor(new AgeNodeDouble()).getOption().toString() + " ";
+//
+//        return s;
+//    }
 
 }

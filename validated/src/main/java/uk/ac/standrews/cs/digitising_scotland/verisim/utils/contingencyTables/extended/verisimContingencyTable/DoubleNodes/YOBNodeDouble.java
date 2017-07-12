@@ -4,6 +4,7 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.Date;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateImplementations.YearDate;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPersonExtended;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.ChildNotFoundException;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.ControlChildrenNode;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.DoubleNode;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.Node;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.enumerations.SexOption;
@@ -11,11 +12,12 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.ex
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class YOBNodeDouble extends DoubleNode<YearDate, SexOption> {
+public class YOBNodeDouble extends DoubleNode<YearDate, SexOption> implements ControlChildrenNode {
 
 
     public YOBNodeDouble(YearDate childOption, SourceNodeDouble parentNode, Double initCount) {
         super(childOption, parentNode, initCount);
+        makeChildren();
     }
 
     public YOBNodeDouble() {
@@ -46,5 +48,13 @@ public class YOBNodeDouble extends DoubleNode<YearDate, SexOption> {
     @Override
     public Node<SexOption, ?, Double, ?> makeChildInstance(SexOption childOption, Double initCount) {
         return new SexNodeDouble(childOption, this, initCount);
+    }
+
+    @Override
+    public void makeChildren() {
+
+        addChild(SexOption.MALE);
+        addChild(SexOption.FEMALE);
+
     }
 }

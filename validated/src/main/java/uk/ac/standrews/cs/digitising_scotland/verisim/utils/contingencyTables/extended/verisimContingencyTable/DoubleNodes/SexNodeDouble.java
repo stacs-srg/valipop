@@ -1,6 +1,7 @@
 package uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.DoubleNodes;
 
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.Date;
+import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateImplementations.ExactDate;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateImplementations.YearDate;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPersonExtended;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.ChildNotFoundException;
@@ -24,30 +25,37 @@ public class SexNodeDouble extends DoubleNode<SexOption, IntegerRange> {
 
     @Override
     public Node<IntegerRange, ?, Double, ?> makeChildInstance(IntegerRange childOption, Double initCount) {
-        return new AgeNodeDouble(childOption, this, initCount);
+        try {
+            return resolveChildNodeForAge(childOption.getValue());
+        } catch (ChildNotFoundException e) {
+            return new AgeNodeDouble(childOption, this, initCount, false);
+        }
     }
 
     @Override
     public void processPerson(IPersonExtended person, Date currentDate) {
         incCountByOne();
 
-        int age = person.ageOnDate(currentDate);
+        int age = person.ageOnDate(new ExactDate(31, 12, currentDate.getYear() - 1));
         try {
             resolveChildNodeForAge(age).processPerson(person, currentDate);
         } catch (ChildNotFoundException e) {
-            addChild(new IntegerRange(age)).processPerson(person, currentDate);
+            addChild(new AgeNodeDouble(new IntegerRange(age), this, 0, true)).processPerson(person, currentDate);
+
+//            addChild(new IntegerRange(age)).processPerson(person, currentDate);
 
         }
     }
 
-    public Node<IntegerRange, ?, ?, ?> resolveChildNodeForAge(int age) throws ChildNotFoundException {
+    public Node<IntegerRange, ?, Double, ?> resolveChildNodeForAge(Integer age) throws ChildNotFoundException {
 
-        for(Node<IntegerRange, ?, ?, ?> aN : getChildren()) {
-            if(aN.getOption().contains(age)) {
-                return aN;
+        if(age != null) {
+            for (Node<IntegerRange, ?, Double, ?> aN : getChildren()) {
+                if (aN.getOption().contains(age)) {
+                    return aN;
+                }
             }
         }
-
         throw new ChildNotFoundException();
     }
 

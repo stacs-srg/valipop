@@ -25,8 +25,12 @@ import java.util.Set;
  */
 public class SeparationNodeDouble extends DoubleNode<SeparationOption, IntegerRange> implements ControlSelfNode, ControlChildrenNode, RunnableNode {
 
-    public SeparationNodeDouble(SeparationOption option, NumberOfChildrenInPartnershipNodeDouble parentNode, Double initCount) {
+    public SeparationNodeDouble(SeparationOption option, NumberOfChildrenInPartnershipNodeDouble parentNode, Double initCount, boolean init) {
         super(option, parentNode, initCount);
+
+        if(!init) {
+            calcCount();
+        }
 
     }
 
@@ -61,59 +65,64 @@ public class SeparationNodeDouble extends DoubleNode<SeparationOption, IntegerRa
     @Override
     public void advanceCount() {
 
-        // year passover
-        Integer age = ((AgeNodeDouble) getAncestor(new AgeNodeDouble())).getOption().getValue();
+        DiedOption died = ((DiedNodeDouble) getAncestor(new DiedNodeDouble())).getOption();
 
-        SexNodeDouble s = (SexNodeDouble) getAncestor(new SexNodeDouble());
-        s.incCount(getCount());
+        if(died == DiedOption.NO && getCount() > 0.00001) {
 
-        AgeNodeDouble a;
-        try {
-            a = (AgeNodeDouble) s.resolveChildNodeForAge(age + 1);
-        } catch (ChildNotFoundException e) {
-            throw new Error("Age Node should have already been created");
+            // year passover
+            Integer age = ((AgeNodeDouble) getAncestor(new AgeNodeDouble())).getOption().getValue();
+
+            SexNodeDouble s = (SexNodeDouble) getAncestor(new SexNodeDouble());
+            s.incCount(getCount());
+
+            AgeNodeDouble a;
+            try {
+                a = (AgeNodeDouble) s.resolveChildNodeForAge(age + 1);
+            } catch (ChildNotFoundException e) {
+                throw new Error("Age Node should have already been created");
+            }
+
+            a.incCount(getCount());
+
+//            DiedOption died = ((DiedOption) getAncestor(new DiedNodeDouble()).getOption());
+
+            DiedNodeDouble d;
+
+            try {
+                d = (DiedNodeDouble) a.getChild(died);
+            } catch (ChildNotFoundException e) {
+                throw new Error("Died Node should have already been created");
+            }
+
+            d.incCount(getCount());
+
+            int prevNumberOfChidrenInPartnership = ((PreviousNumberOfChildrenInPartnershipNodeDouble) getAncestor(new PreviousNumberOfChildrenInPartnershipNodeDouble())).getOption();
+
+
+            PreviousNumberOfChildrenInPartnershipNodeDouble pncip;
+
+            try {
+                pncip = (PreviousNumberOfChildrenInPartnershipNodeDouble) d.getChild(prevNumberOfChidrenInPartnership);
+            } catch (ChildNotFoundException e) {
+                pncip = (PreviousNumberOfChildrenInPartnershipNodeDouble) d.addChild(prevNumberOfChidrenInPartnership);
+            }
+
+            pncip.incCount(getCount());
+
+            int numberOfChildrenInAnyPartnership = ((NumberOfPreviousChildrenInAnyPartnershipNodeDouble) getAncestor(new NumberOfPreviousChildrenInAnyPartnershipNodeDouble())).getOption();
+
+            NumberOfPreviousChildrenInAnyPartnershipNodeDouble nciap;
+
+            try {
+                nciap = (NumberOfPreviousChildrenInAnyPartnershipNodeDouble) pncip.getChild(numberOfChildrenInAnyPartnership);
+            } catch (ChildNotFoundException e) {
+                nciap = (NumberOfPreviousChildrenInAnyPartnershipNodeDouble) pncip.addChild(numberOfChildrenInAnyPartnership);
+                addDelayedTask(nciap);
+            }
+
+            nciap.incCount(getCount());
+
         }
-
-        a.incCount(getCount());
-
-        DiedOption died = ((DiedOption) getAncestor(new DiedNodeDouble()).getOption());
-
-        DiedNodeDouble d;
-
-        try {
-            d = (DiedNodeDouble) a.getChild(died);
-        } catch (ChildNotFoundException e) {
-            throw new Error("Died Node should have already been created");
-        }
-
-        d.incCount(getCount());
-
-        int prevNumberOfChidrenInPartnership = ((PreviousNumberOfChildrenInPartnershipNodeDouble) getAncestor(new PreviousNumberOfChildrenInPartnershipNodeDouble())).getOption();
-
-
-        PreviousNumberOfChildrenInPartnershipNodeDouble pncip;
-
-        try {
-            pncip = (PreviousNumberOfChildrenInPartnershipNodeDouble) d.getChild(prevNumberOfChidrenInPartnership);
-        } catch (ChildNotFoundException e) {
-            pncip = (PreviousNumberOfChildrenInPartnershipNodeDouble) d.addChild(prevNumberOfChidrenInPartnership);
-        }
-
-        pncip.incCount(getCount());
-
-        int numberOfChildrenInAnyPartnership = ((NumberOfPreviousChildrenInAnyPartnershipNodeDouble) getAncestor(new NumberOfPreviousChildrenInAnyPartnershipNodeDouble())).getOption();
-
-        NumberOfPreviousChildrenInAnyPartnershipNodeDouble nciap;
-
-        try {
-            nciap = (NumberOfPreviousChildrenInAnyPartnershipNodeDouble) pncip.getChild(numberOfChildrenInAnyPartnership);
-        } catch (ChildNotFoundException e) {
-            nciap = (NumberOfPreviousChildrenInAnyPartnershipNodeDouble) pncip.addChild(numberOfChildrenInAnyPartnership);
-            addDelayedTask(nciap);
-        }
-
-        nciap.incCount(getCount());
-
 
     }
 
@@ -122,20 +131,27 @@ public class SeparationNodeDouble extends DoubleNode<SeparationOption, IntegerRa
 
         int numberOfChildren = ((NumberOfChildrenInPartnershipNodeDouble)
                                         getAncestor(new NumberOfChildrenInPartnershipNodeDouble())).getOption();
-        double forNPeople = getParent().getCount();
-        CompoundTimeUnit timePeriod = new CompoundTimeUnit(1, TimeUnit.YEAR);
 
-        YearDate yob = ((YOBNodeDouble) getAncestor(new YOBNodeDouble())).getOption();
-        Integer age = ((AgeNodeDouble) getAncestor(new AgeNodeDouble())).getOption().getValue();
-
-        Date currentDate = yob.advanceTime(age, TimeUnit.YEAR);
-
-        SingleDeterminedCount sDC = (SingleDeterminedCount) getInputStats().getDeterminedCount(new SeparationStatsKey(numberOfChildren, forNPeople, timePeriod, currentDate));
-
-        if(getOption() == SeparationOption.YES) {
-            setCount(sDC.getRawUncorrectedCount());
+        if(numberOfChildren == 0) {
+            setCount(getParent().getCount());
         } else {
-            setCount(forNPeople - sDC.getRawUncorrectedCount());
+
+            double forNPeople = getParent().getCount();
+            CompoundTimeUnit timePeriod = new CompoundTimeUnit(1, TimeUnit.YEAR);
+
+            YearDate yob = ((YOBNodeDouble) getAncestor(new YOBNodeDouble())).getOption();
+            Integer age = ((AgeNodeDouble) getAncestor(new AgeNodeDouble())).getOption().getValue();
+
+            Date currentDate = yob.advanceTime(age, TimeUnit.YEAR);
+
+            SingleDeterminedCount sDC = (SingleDeterminedCount) getInputStats().getDeterminedCount(new SeparationStatsKey(numberOfChildren, forNPeople, timePeriod, currentDate));
+
+            if (getOption() == SeparationOption.YES) {
+                setCount(sDC.getRawUncorrectedCount());
+            } else {
+                setCount(forNPeople - sDC.getRawUncorrectedCount());
+            }
+
         }
 
         advanceCount();
@@ -207,6 +223,7 @@ public class SeparationNodeDouble extends DoubleNode<SeparationOption, IntegerRa
 
     @Override
     public void runTask() {
+        calcCount();
         advanceCount();
     }
 }

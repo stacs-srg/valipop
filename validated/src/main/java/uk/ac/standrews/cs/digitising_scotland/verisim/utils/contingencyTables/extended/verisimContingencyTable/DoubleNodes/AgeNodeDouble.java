@@ -11,15 +11,22 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.ex
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.enumerations.DiedOption;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.integerRange.IntegerRange;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class AgeNodeDouble extends DoubleNode<IntegerRange, DiedOption> implements ControlChildrenNode {
 
+    Collection<IPersonExtended> people = new ArrayList<>();
 
-    public AgeNodeDouble(IntegerRange age, SexNodeDouble parentNode, double initCount) {
+    public AgeNodeDouble(IntegerRange age, SexNodeDouble parentNode, double initCount, boolean init) {
         super(age, parentNode, initCount);
 
+        if(!init) {
+            makeChildren();
+        }
     }
 
     public AgeNodeDouble() {
@@ -28,7 +35,7 @@ public class AgeNodeDouble extends DoubleNode<IntegerRange, DiedOption> implemen
 
     @Override
     public Node<DiedOption, ?, Double, ?> makeChildInstance(DiedOption childOption, Double initCount) {
-        return new DiedNodeDouble(childOption, this);
+        return new DiedNodeDouble(childOption, this, false);
     }
 
     @Override
@@ -43,6 +50,7 @@ public class AgeNodeDouble extends DoubleNode<IntegerRange, DiedOption> implemen
     @Override
     public void processPerson(IPersonExtended person, Date currentDate) {
 
+        people.add(person);
         YearDate yob = ((YOBNodeDouble) getAncestor(new YOBNodeDouble())).getOption();
         Integer age = getOption().getValue();
 
@@ -61,7 +69,9 @@ public class AgeNodeDouble extends DoubleNode<IntegerRange, DiedOption> implemen
         try {
             getChild(option).processPerson(person, calcCurrentDate);
         } catch(ChildNotFoundException e) {
-            DiedNodeDouble n = (DiedNodeDouble) addChild(option);
+//            DiedNodeDouble n = (DiedNodeDouble) addChild(option);
+
+            DiedNodeDouble n = (DiedNodeDouble) addChild(new DiedNodeDouble(option, this, true));
             n.processPerson(person, calcCurrentDate);
             addDelayedTask(n);
         }
