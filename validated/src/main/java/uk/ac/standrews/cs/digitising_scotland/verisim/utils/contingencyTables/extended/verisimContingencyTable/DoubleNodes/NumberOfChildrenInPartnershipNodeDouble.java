@@ -15,9 +15,12 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.ex
  */
 public class NumberOfChildrenInPartnershipNodeDouble extends DoubleNode<Integer, SeparationOption> implements ControlChildrenNode {
 
-    public NumberOfChildrenInPartnershipNodeDouble(Integer option, NumberOfChildrenInYearNodeDouble parentNode, Double initCount) {
+    public NumberOfChildrenInPartnershipNodeDouble(Integer option, NumberOfChildrenInYearNodeDouble parentNode, Double initCount, boolean init) {
         super(option, parentNode, initCount);
-        makeChildren();
+
+        if(!init) {
+            makeChildren();
+        }
     }
 
     public NumberOfChildrenInPartnershipNodeDouble() {
@@ -26,7 +29,7 @@ public class NumberOfChildrenInPartnershipNodeDouble extends DoubleNode<Integer,
 
     @Override
     public Node<SeparationOption, ?, Double, ?> makeChildInstance(SeparationOption childOption, Double initCount) {
-        return new SeparationNodeDouble(childOption, this, initCount);
+        return new SeparationNodeDouble(childOption, this, initCount, false);
     }
 
     @Override
@@ -51,7 +54,9 @@ public class NumberOfChildrenInPartnershipNodeDouble extends DoubleNode<Integer,
         try {
             getChild(option).processPerson(person, currentDate);
         } catch (ChildNotFoundException e) {
-            SeparationNodeDouble n = (SeparationNodeDouble) addChild(option);
+//            SeparationNodeDouble n = (SeparationNodeDouble) addChild(option);
+
+            SeparationNodeDouble n = (SeparationNodeDouble) addChild(new SeparationNodeDouble(option, this, 0.0, true));
             n.processPerson(person, currentDate);
             addDelayedTask(n);
         }

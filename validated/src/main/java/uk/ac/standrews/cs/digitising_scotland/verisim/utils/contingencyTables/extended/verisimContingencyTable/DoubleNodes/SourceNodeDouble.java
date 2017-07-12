@@ -21,6 +21,10 @@ public class SourceNodeDouble extends DoubleNode<SourceType, YearDate> {
          this.parent = parent;
     }
 
+    public SourceNodeDouble() {
+        super();
+    }
+
     @Override
     public Node<YearDate, ?, Double, ?> makeChildInstance(YearDate childOption, Double initCount) {
         return new YOBNodeDouble(childOption, this, initCount);

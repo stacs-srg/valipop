@@ -2,17 +2,17 @@ package uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.e
 
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.Date;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.DateUtils;
-import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateImplementations.ExactDate;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateImplementations.YearDate;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.timeSteps.TimeUnit;
 import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.recording.PopulationStatistics;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPersonExtended;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.dataStructure.PeopleCollection;
-import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.dataStructure.Population;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.ChildNotFoundException;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.ContingencyTable;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.Node;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.RunnableNode;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.DoubleNodes.DiedNodeDouble;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.DoubleNodes.SeparationNodeDouble;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.DoubleNodes.SourceNodeDouble;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.IntNodes.SourceNodeInt;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.enumerations.SourceType;
@@ -25,16 +25,21 @@ import java.util.LinkedList;
  */
 public class Table extends Node<String, SourceType, Number, Number> implements ContingencyTable {
 
-    private LinkedList<RunnableNode> delayedTasks = new LinkedList<>();
+    private LinkedList<RunnableNode> deathTasks = new LinkedList<>();
+    private LinkedList<RunnableNode> otherTasks = new LinkedList<>();
+
 
 
     private PopulationStatistics expected;
+
+    private Date endDate;
 
     private SourceNodeInt simNode;
     private SourceNodeDouble statNode;
 
     public Table(PeopleCollection population, PopulationStatistics expected, Date startDate, Date endDate) {
         this.expected = expected;
+        this.endDate = endDate;
 
 //        for(IPersonExtended p : population.getAll()) {
 //            processPerson(p, new YearDate(0), SourceType.SIM);
@@ -80,6 +85,12 @@ public class Table extends Node<String, SourceType, Number, Number> implements C
 
     }
 
+
+    public Date getEndDate() {
+        return endDate;
+    }
+
+
     public PopulationStatistics getInputStats() {
         return expected;
     }
@@ -116,14 +127,29 @@ public class Table extends Node<String, SourceType, Number, Number> implements C
 
     @Override
     public void addDelayedTask(RunnableNode node) {
-        delayedTasks.add(node);
+//        delayedTasks.add(node);
+
+        if(node instanceof DiedNodeDouble) {
+            deathTasks.add(node);
+        } else {
+            otherTasks.add(node);
+        }
+
     }
 
     @Override
     public void executeDelayedTasks() {
 
-        while(!delayedTasks.isEmpty()) {
-            RunnableNode n = delayedTasks.removeFirst();
+        while(!deathTasks.isEmpty()) {
+            RunnableNode n = deathTasks.removeFirst();
+            System.out.println(n.toString());
+            n.runTask();
+        }
+
+
+        while(!otherTasks.isEmpty()) {
+            RunnableNode n = otherTasks.removeFirst();
+            System.out.println(n.toString());
             n.runTask();
         }
 

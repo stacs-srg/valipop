@@ -12,6 +12,7 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.ex
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.ControlSelfNode;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.DoubleNode;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.Node;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.enumerations.SexOption;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.LabeledValueSet;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.integerRange.IntegerRange;
 
@@ -30,7 +31,7 @@ public class NumberOfChildrenInYearNodeDouble extends DoubleNode<Integer, Intege
 
     @Override
     public Node<Integer, ?, Double, ?> makeChildInstance(Integer childOption, Double initCount) {
-        return new NumberOfChildrenInPartnershipNodeDouble(childOption, this, initCount);
+        return new NumberOfChildrenInPartnershipNodeDouble(childOption, this, initCount, false);
     }
 
     @Override
@@ -46,12 +47,45 @@ public class NumberOfChildrenInYearNodeDouble extends DoubleNode<Integer, Intege
         try {
             getChild(prevChildren + childrenThisYear).processPerson(person, currentDate);
         } catch (ChildNotFoundException e) {
-            addChild(prevChildren + childrenThisYear).processPerson(person, currentDate);
+
+            addChild(new NumberOfChildrenInPartnershipNodeDouble(prevChildren + childrenThisYear, this, 0.0, true))
+                    .processPerson(person, currentDate);
+
+//            addChild(prevChildren + childrenThisYear).processPerson(person, currentDate);
         }
     }
 
     @Override
     public void advanceCount() {
+
+        YearDate yob = ((YOBNodeDouble) getAncestor(new YOBNodeDouble())).getOption();
+        Integer age = ((AgeNodeDouble) getAncestor(new AgeNodeDouble())).getOption().getValue();
+
+        Date currentDate = yob.advanceTime(age, TimeUnit.YEAR);
+
+        SourceNodeDouble sN = (SourceNodeDouble) getAncestor(new SourceNodeDouble());
+
+        YOBNodeDouble yobN;
+        try {
+            yobN = (YOBNodeDouble) sN.getChild(currentDate.getYearDate());
+        } catch (ChildNotFoundException e) {
+            yobN = (YOBNodeDouble) sN.addChild(currentDate.getYearDate());
+        }
+
+        double sexRatio = getInputStats().getMaleProportionOfBirths();
+
+        for(Node<SexOption, ?, Double, ?> n : yobN.getChildren()) {
+
+            SexNodeDouble sexN = (SexNodeDouble) n;
+
+            if(sexN.getOption() == SexOption.MALE) {
+                sexN.addChild(new IntegerRange(0), getCount() * sexRatio);
+            } else { // i.e. if female
+                sexN.addChild(new IntegerRange(0), getCount() * (1 - sexRatio));
+            }
+
+        }
+
         makeChildren();
     }
 

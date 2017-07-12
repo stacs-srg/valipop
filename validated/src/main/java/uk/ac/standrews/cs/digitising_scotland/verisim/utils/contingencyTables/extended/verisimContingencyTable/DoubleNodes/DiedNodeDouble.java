@@ -1,6 +1,7 @@
 package uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.DoubleNodes;
 
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.Date;
+import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.DateUtils;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateImplementations.YearDate;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.timeSteps.CompoundTimeUnit;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.timeSteps.TimeUnit;
@@ -13,7 +14,6 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.ex
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.DoubleNode;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.Node;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.RunnableNode;
-import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.IntNodes.SexNodeInt;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.enumerations.DiedOption;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.enumerations.SexOption;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.integerRange.IntegerRange;
@@ -25,9 +25,12 @@ import java.util.ArrayList;
  */
 public class DiedNodeDouble extends DoubleNode<DiedOption, Integer> implements ControlSelfNode, RunnableNode {
 
-    public DiedNodeDouble(DiedOption option, AgeNodeDouble parentNode) {
+    public DiedNodeDouble(DiedOption option, AgeNodeDouble parentNode, boolean init) {
         super(option, parentNode);
-        calcCount();
+
+        if(!init) {
+            calcCount();
+        }
     }
 
     public DiedNodeDouble() {
@@ -37,9 +40,28 @@ public class DiedNodeDouble extends DoubleNode<DiedOption, Integer> implements C
     @Override
     public void advanceCount() {
 
-        if(getOption() == DiedOption.NO) {
-            AgeNodeDouble aN = (AgeNodeDouble) getAncestor(new AgeNodeDouble());
-            aN.getParent().addChild(new IntegerRange(aN.getOption().getValue() + 1), getCount());
+        YearDate yob = ((YOBNodeDouble) getAncestor(new YOBNodeDouble())).getOption();
+        Integer age = ((AgeNodeDouble) getAncestor(new AgeNodeDouble())).getOption().getValue();
+
+        Date currentDate = yob.advanceTime(age, TimeUnit.YEAR);
+
+        if(getOption() == DiedOption.NO && DateUtils.dateBefore(currentDate, getEndDate()) && getCount() > 0.00001) {
+
+
+            SexNodeDouble sN = (SexNodeDouble) getAncestor(new SexNodeDouble());
+            IntegerRange ageR = new IntegerRange(age + 1);
+
+            try {
+                sN.getChild(ageR).incCount(getCount());
+            } catch (ChildNotFoundException e) {
+                sN.addChild(ageR, getCount());
+            }
+
+//            sN.addChild(new IntegerRange(age + 1), getCount());
+
+
+//            AgeNodeDouble aN = (AgeNodeDouble) getAncestor(new AgeNodeDouble());
+//            aN.getParent().addChild(new IntegerRange(aN.getOption().getValue() + 1), getCount());
         }
 
     }
