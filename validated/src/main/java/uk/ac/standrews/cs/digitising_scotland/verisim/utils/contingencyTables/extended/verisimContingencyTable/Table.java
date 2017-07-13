@@ -28,6 +28,8 @@ public class Table extends Node<String, SourceType, Number, Number> implements C
     private LinkedList<RunnableNode> deathTasks = new LinkedList<>();
     private LinkedList<RunnableNode> otherTasks = new LinkedList<>();
 
+    private LinkedList<RunnableNode> delayedTasks = new LinkedList<>();
+
 
 
     private PopulationStatistics expected;
@@ -127,7 +129,7 @@ public class Table extends Node<String, SourceType, Number, Number> implements C
 
     @Override
     public void addDelayedTask(RunnableNode node) {
-//        delayedTasks.add(node);
+//        delayedTasks.addLast(node);
 
         if(node instanceof DiedNodeDouble) {
             deathTasks.add(node);
@@ -139,6 +141,13 @@ public class Table extends Node<String, SourceType, Number, Number> implements C
 
     @Override
     public void executeDelayedTasks() {
+
+//        while(!delayedTasks.isEmpty()) {
+//            RunnableNode n = delayedTasks.removeFirst();
+//            System.out.println(n.toString());
+//            n.runTask();
+//        }
+
 
         while(!deathTasks.isEmpty()) {
             RunnableNode n = deathTasks.removeFirst();

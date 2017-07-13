@@ -34,7 +34,7 @@ public class SexNodeDouble extends DoubleNode<SexOption, IntegerRange> {
 
     @Override
     public void processPerson(IPersonExtended person, Date currentDate) {
-        incCountByOne();
+//        incCountByOne();
 
         int age = person.ageOnDate(new ExactDate(31, 12, currentDate.getYear() - 1));
         try {
@@ -59,4 +59,10 @@ public class SexNodeDouble extends DoubleNode<SexOption, IntegerRange> {
         throw new ChildNotFoundException();
     }
 
+
+    public Node<IntegerRange, ?, Double, ?> getChild(IntegerRange childOption) throws ChildNotFoundException {
+
+        return resolveChildNodeForAge(childOption.getValue());
+
+    }
 }

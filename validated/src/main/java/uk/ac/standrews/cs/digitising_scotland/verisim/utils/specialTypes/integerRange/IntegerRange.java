@@ -178,4 +178,39 @@ public class IntegerRange implements Comparable<IntegerRange> {
 
         return values;
     }
+
+//    public int hashCode() {
+//
+//        String hc = "";
+//
+//        if(value.equals("na")) {
+//
+//            hc += "0";
+//
+//        } else {
+//            if (plus) {
+//                hc += "2";
+//            } else {
+//                hc += "1";
+//            }
+//
+//
+//            if (min != null) {
+//                hc += min.toString();
+//            } else {
+//                hc += String.valueOf(getValue());
+//            }
+//
+//            hc += "0";
+//
+//            if (max != null) {
+//                hc += max.toString();
+//            } else {
+//                hc += String.valueOf(getValue());
+//            }
+//        }
+//
+//        return new Integer(hc);
+//    }
+
 }

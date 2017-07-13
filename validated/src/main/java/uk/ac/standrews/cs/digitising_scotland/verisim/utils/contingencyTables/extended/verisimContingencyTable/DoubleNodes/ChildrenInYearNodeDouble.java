@@ -18,6 +18,7 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.ex
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.Node;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.PersonCharacteristicsIdentifier;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.enumerations.ChildrenInYearOption;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.LabeledValueSet;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.integerRange.IntegerRange;
 
 import java.util.ArrayList;
@@ -29,9 +30,12 @@ import java.util.Set;
  */
 public class ChildrenInYearNodeDouble extends DoubleNode<ChildrenInYearOption, Integer> implements ControlSelfNode, ControlChildrenNode {
 
-    public ChildrenInYearNodeDouble(ChildrenInYearOption option, NumberOfPreviousChildrenInAnyPartnershipNodeDouble parentNode, Double initCount) {
+    public ChildrenInYearNodeDouble(ChildrenInYearOption option, NumberOfPreviousChildrenInAnyPartnershipNodeDouble parentNode, Double initCount, boolean init) {
         super(option, parentNode, initCount);
-        calcCount();
+
+        if(!init) {
+            calcCount();
+        }
     }
 
     public ChildrenInYearNodeDouble() {
@@ -40,7 +44,7 @@ public class ChildrenInYearNodeDouble extends DoubleNode<ChildrenInYearOption, I
 
     @Override
     public Node<Integer, ?, Double, ?> makeChildInstance(Integer childOption, Double initCount) {
-        return new NumberOfChildrenInYearNodeDouble(childOption, this, initCount);
+        return new NumberOfChildrenInYearNodeDouble(childOption, this, initCount, false);
     }
 
     @Override
@@ -61,7 +65,10 @@ public class ChildrenInYearNodeDouble extends DoubleNode<ChildrenInYearOption, I
         try {
             getChild(option).processPerson(person, currentDate);
         } catch (ChildNotFoundException e) {
-            addChild(option).processPerson(person, currentDate);
+//            addChild(option).processPerson(person, currentDate);
+            NumberOfChildrenInYearNodeDouble n = (NumberOfChildrenInYearNodeDouble) addChild(new NumberOfChildrenInYearNodeDouble(option, this, 0.0, true));
+            n.processPerson(person, currentDate);
+            addDelayedTask(n);
         }
 
     }
@@ -101,7 +108,7 @@ public class ChildrenInYearNodeDouble extends DoubleNode<ChildrenInYearOption, I
     @Override
     public void makeChildren() {
 
-        if(getOption() == ChildrenInYearOption.NO) {
+        if(getOption() == ChildrenInYearOption.NO || getCount().equals(0.0)) {
             addChild(0);
         } else {
 
@@ -113,10 +120,12 @@ public class ChildrenInYearNodeDouble extends DoubleNode<ChildrenInYearOption, I
             MultipleDeterminedCount mDC = (MultipleDeterminedCount) getInputStats()
                     .getDeterminedCount(new MultipleBirthStatsKey(age, getCount(), new CompoundTimeUnit(1, TimeUnit.YEAR), currentDate));
 
-            Set<IntegerRange> options = mDC.getRawUncorrectedCount().getLabels();
+            LabeledValueSet<IntegerRange, Double> stat = mDC.getRawUncorrectedCount();
 
-            for (IntegerRange o : options) {
-                addChild(o.getValue());
+            for (IntegerRange o : stat.getLabels()) {
+                if(!stat.get(o).equals(0.0)) {
+                    addChild(o.getValue());
+                }
             }
         }
 

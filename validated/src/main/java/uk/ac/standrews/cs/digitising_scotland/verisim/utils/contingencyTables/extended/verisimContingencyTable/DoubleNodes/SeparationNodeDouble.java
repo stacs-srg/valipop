@@ -73,7 +73,7 @@ public class SeparationNodeDouble extends DoubleNode<SeparationOption, IntegerRa
             Integer age = ((AgeNodeDouble) getAncestor(new AgeNodeDouble())).getOption().getValue();
 
             SexNodeDouble s = (SexNodeDouble) getAncestor(new SexNodeDouble());
-            s.incCount(getCount());
+//            s.incCount(getCount());
 
             AgeNodeDouble a;
             try {
@@ -82,45 +82,55 @@ public class SeparationNodeDouble extends DoubleNode<SeparationOption, IntegerRa
                 throw new Error("Age Node should have already been created");
             }
 
-            a.incCount(getCount());
+//            a.incCount(getCount());
 
 //            DiedOption died = ((DiedOption) getAncestor(new DiedNodeDouble()).getOption());
 
-            DiedNodeDouble d;
+            // Split count between branches
 
-            try {
-                d = (DiedNodeDouble) a.getChild(died);
-            } catch (ChildNotFoundException e) {
-                throw new Error("Died Node should have already been created");
+            for(Node<DiedOption, ?, Double, ?> n : a.getChildren()) {
+
+                DiedNodeDouble d = (DiedNodeDouble) n;
+
+                double partOfCount = getCount() * d.getCount() / a.getCount();
+
+//                try {
+//                    d = (DiedNodeDouble) a.getChild(died);
+//                } catch (ChildNotFoundException e) {
+//                    throw new Error("Died Node should have already been created");
+//                }
+
+//            d.incCount(getCount());
+
+                int prevNumberOfChidrenInPartnership = ((NumberOfChildrenInPartnershipNodeDouble) getAncestor(new NumberOfChildrenInPartnershipNodeDouble())).getOption();
+
+
+                PreviousNumberOfChildrenInPartnershipNodeDouble pncip;
+
+                try {
+                    pncip = (PreviousNumberOfChildrenInPartnershipNodeDouble) d.getChild(prevNumberOfChidrenInPartnership);
+                } catch (ChildNotFoundException e) {
+                    pncip = (PreviousNumberOfChildrenInPartnershipNodeDouble) d.addChild(prevNumberOfChidrenInPartnership);
+                }
+
+                pncip.incCount(partOfCount);
+
+                int numberOfPrevChildrenInAnyPartnership = ((NumberOfPreviousChildrenInAnyPartnershipNodeDouble) getAncestor(new NumberOfPreviousChildrenInAnyPartnershipNodeDouble())).getOption();
+                int childrenInYear = ((NumberOfChildrenInYearNodeDouble) getAncestor(new NumberOfChildrenInYearNodeDouble())).getOption();
+
+                int numberOfChildrenInAnyPartnership = numberOfPrevChildrenInAnyPartnership + childrenInYear;
+
+                NumberOfPreviousChildrenInAnyPartnershipNodeDouble nciap;
+
+                try {
+                    nciap = (NumberOfPreviousChildrenInAnyPartnershipNodeDouble) pncip.getChild(numberOfChildrenInAnyPartnership);
+                } catch (ChildNotFoundException e) {
+                    nciap = (NumberOfPreviousChildrenInAnyPartnershipNodeDouble) pncip.addChild(numberOfChildrenInAnyPartnership);
+                    addDelayedTask(nciap);
+                }
+
+                nciap.incCount(partOfCount);
             }
-
-            d.incCount(getCount());
-
-            int prevNumberOfChidrenInPartnership = ((PreviousNumberOfChildrenInPartnershipNodeDouble) getAncestor(new PreviousNumberOfChildrenInPartnershipNodeDouble())).getOption();
-
-
-            PreviousNumberOfChildrenInPartnershipNodeDouble pncip;
-
-            try {
-                pncip = (PreviousNumberOfChildrenInPartnershipNodeDouble) d.getChild(prevNumberOfChidrenInPartnership);
-            } catch (ChildNotFoundException e) {
-                pncip = (PreviousNumberOfChildrenInPartnershipNodeDouble) d.addChild(prevNumberOfChidrenInPartnership);
-            }
-
-            pncip.incCount(getCount());
-
-            int numberOfChildrenInAnyPartnership = ((NumberOfPreviousChildrenInAnyPartnershipNodeDouble) getAncestor(new NumberOfPreviousChildrenInAnyPartnershipNodeDouble())).getOption();
-
-            NumberOfPreviousChildrenInAnyPartnershipNodeDouble nciap;
-
-            try {
-                nciap = (NumberOfPreviousChildrenInAnyPartnershipNodeDouble) pncip.getChild(numberOfChildrenInAnyPartnership);
-            } catch (ChildNotFoundException e) {
-                nciap = (NumberOfPreviousChildrenInAnyPartnershipNodeDouble) pncip.addChild(numberOfChildrenInAnyPartnership);
-                addDelayedTask(nciap);
-            }
-
-            nciap.incCount(getCount());
 
         }
 
@@ -224,6 +234,5 @@ public class SeparationNodeDouble extends DoubleNode<SeparationOption, IntegerRa
     @Override
     public void runTask() {
         calcCount();
-        advanceCount();
     }
 }
