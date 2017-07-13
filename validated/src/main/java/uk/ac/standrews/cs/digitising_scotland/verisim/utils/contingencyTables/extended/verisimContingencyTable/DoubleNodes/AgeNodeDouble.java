@@ -8,6 +8,7 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.Ch
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.DoubleNode;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.Node;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.ControlChildrenNode;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.RunnableNode;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.enumerations.DiedOption;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.integerRange.IntegerRange;
 
@@ -17,7 +18,7 @@ import java.util.Collection;
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class AgeNodeDouble extends DoubleNode<IntegerRange, DiedOption> implements ControlChildrenNode {
+public class AgeNodeDouble extends DoubleNode<IntegerRange, DiedOption> implements ControlChildrenNode, RunnableNode {
 
     Collection<IPersonExtended> people = new ArrayList<>();
 
@@ -77,4 +78,8 @@ public class AgeNodeDouble extends DoubleNode<IntegerRange, DiedOption> implemen
         }
     }
 
+    @Override
+    public void runTask() {
+        makeChildren();
+    }
 }

@@ -48,7 +48,7 @@ public class SourceNodeDouble extends DoubleNode<SourceType, YearDate> {
     public void processPerson(IPersonExtended person, Date currentDate) {
 
         // increase own count
-        incCountByOne();
+//        incCountByOne();
 
         // pass person to appropriate child node
         YearDate yob = person.getBirthDate_ex().getYearDate();

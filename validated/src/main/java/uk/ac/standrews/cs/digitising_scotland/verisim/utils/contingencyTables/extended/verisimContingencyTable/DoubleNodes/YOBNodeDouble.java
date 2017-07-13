@@ -27,7 +27,7 @@ public class YOBNodeDouble extends DoubleNode<YearDate, SexOption> implements Co
     @Override
     public void processPerson(IPersonExtended person, Date currentDate) {
 
-        incCountByOne();
+//        incCountByOne();
 
         SexOption sex;
 

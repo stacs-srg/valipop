@@ -27,7 +27,7 @@ public class NumberOfPreviousChildrenInAnyPartnershipNodeDouble extends DoubleNo
 
     @Override
     public Node<ChildrenInYearOption, ?, Double, ?> makeChildInstance(ChildrenInYearOption childOption, Double initCount) {
-        return new ChildrenInYearNodeDouble(childOption, this, initCount);
+        return new ChildrenInYearNodeDouble(childOption, this, initCount, false);
     }
 
     @Override
@@ -54,7 +54,8 @@ public class NumberOfPreviousChildrenInAnyPartnershipNodeDouble extends DoubleNo
         try {
             getChild(option).processPerson(person, currentDate);
         } catch (ChildNotFoundException e) {
-            addChild(option).processPerson(person, currentDate);
+            addChild(new ChildrenInYearNodeDouble(option, this, 0.0, true)).processPerson(person, currentDate);
+//            addChild(option).processPerson(person, currentDate);
         }
 
     }

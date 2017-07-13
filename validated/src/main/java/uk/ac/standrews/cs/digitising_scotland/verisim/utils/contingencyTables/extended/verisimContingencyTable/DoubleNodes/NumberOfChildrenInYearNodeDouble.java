@@ -8,10 +8,7 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.dataD
 import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.dataDistributionTables.statsKeys.MultipleBirthStatsKey;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPersonExtended;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.ChildNotFoundException;
-import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.ControlChildrenNode;
-import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.ControlSelfNode;
-import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.DoubleNode;
-import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.Node;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.*;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.enumerations.SexOption;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.LabeledValueSet;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.integerRange.IntegerRange;
@@ -19,10 +16,14 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.integer
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class NumberOfChildrenInYearNodeDouble extends DoubleNode<Integer, Integer> implements ControlSelfNode, ControlChildrenNode {
+public class NumberOfChildrenInYearNodeDouble extends DoubleNode<Integer, Integer> implements ControlSelfNode, ControlChildrenNode, RunnableNode {
 
-    public NumberOfChildrenInYearNodeDouble(Integer option, ChildrenInYearNodeDouble parentNode, Double initCount) {
+    public NumberOfChildrenInYearNodeDouble(Integer option, ChildrenInYearNodeDouble parentNode, Double initCount, boolean init) {
         super(option, parentNode, initCount);
+
+        if(!init) {
+            calcCount();
+        }
     }
 
     public NumberOfChildrenInYearNodeDouble() {
@@ -58,35 +59,48 @@ public class NumberOfChildrenInYearNodeDouble extends DoubleNode<Integer, Intege
     @Override
     public void advanceCount() {
 
-        YearDate yob = ((YOBNodeDouble) getAncestor(new YOBNodeDouble())).getOption();
-        Integer age = ((AgeNodeDouble) getAncestor(new AgeNodeDouble())).getOption().getValue();
+        if(!getCount().equals(0.0) && getOption() != 0) {
+            YearDate yob = ((YOBNodeDouble) getAncestor(new YOBNodeDouble())).getOption();
+            Integer age = ((AgeNodeDouble) getAncestor(new AgeNodeDouble())).getOption().getValue();
 
-        Date currentDate = yob.advanceTime(age, TimeUnit.YEAR);
+            Date currentDate = yob.advanceTime(age + 1, TimeUnit.YEAR);
 
-        SourceNodeDouble sN = (SourceNodeDouble) getAncestor(new SourceNodeDouble());
+            SourceNodeDouble sN = (SourceNodeDouble) getAncestor(new SourceNodeDouble());
 
-        YOBNodeDouble yobN;
-        try {
-            yobN = (YOBNodeDouble) sN.getChild(currentDate.getYearDate());
-        } catch (ChildNotFoundException e) {
-            yobN = (YOBNodeDouble) sN.addChild(currentDate.getYearDate());
-        }
-
-        double sexRatio = getInputStats().getMaleProportionOfBirths();
-
-        for(Node<SexOption, ?, Double, ?> n : yobN.getChildren()) {
-
-            SexNodeDouble sexN = (SexNodeDouble) n;
-
-            if(sexN.getOption() == SexOption.MALE) {
-                sexN.addChild(new IntegerRange(0), getCount() * sexRatio);
-            } else { // i.e. if female
-                sexN.addChild(new IntegerRange(0), getCount() * (1 - sexRatio));
+            YOBNodeDouble yobN;
+            try {
+                yobN = (YOBNodeDouble) sN.getChild(currentDate.getYearDate());
+            } catch (ChildNotFoundException e) {
+                yobN = (YOBNodeDouble) sN.addChild(currentDate.getYearDate());
             }
 
+            double sexRatio = getInputStats().getMaleProportionOfBirths();
+
+            for (Node<SexOption, ?, Double, ?> n : yobN.getChildren()) {
+
+                SexNodeDouble sexN = (SexNodeDouble) n;
+                double adjCount;
+
+                double childrenFromThisNode = getCount() * getOption();
+
+                if (sexN.getOption() == SexOption.MALE) {
+                    adjCount = childrenFromThisNode * sexRatio;
+                } else { // i.e. if female
+                    adjCount = childrenFromThisNode * (1 - sexRatio);
+                }
+
+                try {
+                    sexN.getChild(new IntegerRange(0)).incCount(adjCount);
+                } catch (ChildNotFoundException e) {
+                    AgeNodeDouble aN = new AgeNodeDouble(new IntegerRange(0), sexN, adjCount, true);
+//                            sexN.addChild(new IntegerRange(0), adjCount);
+                    addDelayedTask(aN);
+                }
+
+            }
         }
 
-        makeChildren();
+
     }
 
     @Override
@@ -102,7 +116,7 @@ public class NumberOfChildrenInYearNodeDouble extends DoubleNode<Integer, Intege
             Date currentDate = yob.advanceTime(age, TimeUnit.YEAR);
 
             MultipleDeterminedCount mDC = (MultipleDeterminedCount) getInputStats()
-                    .getDeterminedCount(new MultipleBirthStatsKey(age, getCount(), new CompoundTimeUnit(1, TimeUnit.YEAR), currentDate));
+                    .getDeterminedCount(new MultipleBirthStatsKey(age, getParent().getCount(), new CompoundTimeUnit(1, TimeUnit.YEAR), currentDate));
 
 
             LabeledValueSet<IntegerRange, Double> stat = mDC.getRawUncorrectedCount();
@@ -116,18 +130,24 @@ public class NumberOfChildrenInYearNodeDouble extends DoubleNode<Integer, Intege
         }
 
         advanceCount();
+        makeChildren();
 
     }
 
     @Override
     public void makeChildren() {
 
-        int numberOfPrevChildInPartnership = ((NumberOfChildrenInPartnershipNodeDouble)
-                                            getAncestor(new NumberOfChildrenInPartnershipNodeDouble())).getOption();
+        int numberOfPrevChildInPartnership = ((PreviousNumberOfChildrenInPartnershipNodeDouble)
+                                            getAncestor(new PreviousNumberOfChildrenInPartnershipNodeDouble())).getOption();
         int childrenInYear = getOption();
 
         int numberOfChildInPartnership = numberOfPrevChildInPartnership + childrenInYear;
 
         addChild(numberOfChildInPartnership, getCount());
+    }
+
+    @Override
+    public void runTask() {
+        advanceCount();
     }
 }
