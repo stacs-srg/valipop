@@ -68,7 +68,9 @@ public class ChildrenInYearNodeDouble extends DoubleNode<ChildrenInYearOption, I
 //            addChild(option).processPerson(person, currentDate);
             NumberOfChildrenInYearNodeDouble n = (NumberOfChildrenInYearNodeDouble) addChild(new NumberOfChildrenInYearNodeDouble(option, this, 0.0, true));
             n.processPerson(person, currentDate);
-            addDelayedTask(n);
+//            if(option != 0) {
+//                addDelayedTask(n);
+//            }
         }
 
     }
@@ -90,6 +92,8 @@ public class ChildrenInYearNodeDouble extends DoubleNode<ChildrenInYearOption, I
         Date currentDate = yob.advanceTime(age, TimeUnit.YEAR);
 
         double forNPeople = getParent().getCount();
+//        double forNPeople = ((AgeNodeDouble) getAncestor(new AgeNodeDouble())).getCount();
+
         CompoundTimeUnit timePeriod = new CompoundTimeUnit(1, TimeUnit.YEAR);
 
         SingleDeterminedCount sDC = (SingleDeterminedCount) getInputStats().getDeterminedCount(
