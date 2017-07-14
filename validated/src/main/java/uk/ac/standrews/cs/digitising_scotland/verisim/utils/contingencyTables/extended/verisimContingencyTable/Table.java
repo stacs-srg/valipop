@@ -2,6 +2,7 @@ package uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.e
 
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.Date;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.DateUtils;
+import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateImplementations.ExactDate;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateImplementations.YearDate;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.timeSteps.TimeUnit;
 import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.recording.PopulationStatistics;
@@ -11,9 +12,7 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.Ch
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.ContingencyTable;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.Node;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.RunnableNode;
-import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.DoubleNodes.DiedNodeDouble;
-import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.DoubleNodes.SeparationNodeDouble;
-import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.DoubleNodes.SourceNodeDouble;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.DoubleNodes.*;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.IntNodes.SourceNodeInt;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.enumerations.SourceType;
 
@@ -26,6 +25,11 @@ import java.util.LinkedList;
 public class Table extends Node<String, SourceType, Number, Number> implements ContingencyTable {
 
     private LinkedList<RunnableNode> deathTasks = new LinkedList<>();
+    private LinkedList<RunnableNode> ageTasks = new LinkedList<>();
+    private LinkedList<RunnableNode> nciyTasks = new LinkedList<>();
+    private LinkedList<RunnableNode> nciapTasks = new LinkedList<>();
+    private LinkedList<RunnableNode> sepTasks = new LinkedList<>();
+
     private LinkedList<RunnableNode> otherTasks = new LinkedList<>();
 
     private LinkedList<RunnableNode> delayedTasks = new LinkedList<>();
@@ -55,11 +59,8 @@ public class Table extends Node<String, SourceType, Number, Number> implements C
         YearDate prevY = new YearDate(startDate.getYear() - 1);
         for(IPersonExtended person : population.getPeople()) {
             if(person.aliveInYear(prevY)) {
-                if (prevY.getYear() == startDate.getYear() - 1) {
-                    processPerson(person, prevY, SourceType.STAT);
-                }
+                processPerson(person, prevY, SourceType.STAT);
             }
-
         }
 
         for (YearDate y = startDate.getYearDate(); DateUtils.dateBefore(y, endDate);
@@ -133,8 +134,14 @@ public class Table extends Node<String, SourceType, Number, Number> implements C
 
         if(node instanceof DiedNodeDouble) {
             deathTasks.add(node);
-        } else {
-            otherTasks.add(node);
+        } else if(node instanceof AgeNodeDouble) {
+            ageTasks.add(node);
+        } else if(node instanceof NumberOfChildrenInYearNodeDouble) {
+            nciyTasks.add(node);
+        } else if(node instanceof NumberOfPreviousChildrenInAnyPartnershipNodeDouble) {
+            nciapTasks.add(node);
+        } else if(node instanceof SeparationNodeDouble) {
+            sepTasks.add(node);
         }
 
     }
@@ -155,12 +162,55 @@ public class Table extends Node<String, SourceType, Number, Number> implements C
             n.runTask();
         }
 
+        while(nciyTasks.size() + sepTasks.size() + nciapTasks.size() + ageTasks.size() != 0) {
 
-        while(!otherTasks.isEmpty()) {
-            RunnableNode n = otherTasks.removeFirst();
-            System.out.println(n.toString());
-            n.runTask();
+            while (nciyTasks.size() + sepTasks.size() + nciapTasks.size() != 0) {
+
+                while (!nciyTasks.isEmpty()) {
+                    RunnableNode n = nciyTasks.removeFirst();
+                    System.out.println(n.toString());
+                    n.runTask();
+                }
+
+                while (!sepTasks.isEmpty()) {
+                    RunnableNode n = sepTasks.removeFirst();
+                    System.out.println(n.toString());
+                    n.runTask();
+                }
+
+                while (!nciapTasks.isEmpty()) {
+                    RunnableNode n = nciapTasks.removeFirst();
+                    System.out.println(n.toString());
+                    n.runTask();
+                }
+
+            }
+
+            while (!ageTasks.isEmpty()) {
+                RunnableNode n = ageTasks.removeFirst();
+                System.out.println(n.toString());
+                n.runTask();
+            }
+
         }
+
+
+
+
+
+
+
+
+
+
+
+
+
+//        while(!otherTasks.isEmpty()) {
+//            RunnableNode n = otherTasks.removeFirst();
+//            System.out.println(n.toString());
+//            n.runTask();
+//        }
 
     }
 

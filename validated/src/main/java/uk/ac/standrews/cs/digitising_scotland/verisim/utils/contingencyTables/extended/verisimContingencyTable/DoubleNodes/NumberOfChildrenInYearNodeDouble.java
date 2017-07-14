@@ -13,10 +13,15 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.ex
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.LabeledValueSet;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.integerRange.IntegerRange;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class NumberOfChildrenInYearNodeDouble extends DoubleNode<Integer, Integer> implements ControlSelfNode, ControlChildrenNode, RunnableNode {
+
+    Collection<IPersonExtended> people = new ArrayList<>();
 
     public NumberOfChildrenInYearNodeDouble(Integer option, ChildrenInYearNodeDouble parentNode, Double initCount, boolean init) {
         super(option, parentNode, initCount);
@@ -37,6 +42,8 @@ public class NumberOfChildrenInYearNodeDouble extends DoubleNode<Integer, Intege
 
     @Override
     public void processPerson(IPersonExtended person, Date currentDate) {
+
+        people.add(person);
 
         incCountByOne();
 
@@ -63,7 +70,7 @@ public class NumberOfChildrenInYearNodeDouble extends DoubleNode<Integer, Intege
             YearDate yob = ((YOBNodeDouble) getAncestor(new YOBNodeDouble())).getOption();
             Integer age = ((AgeNodeDouble) getAncestor(new AgeNodeDouble())).getOption().getValue();
 
-            Date currentDate = yob.advanceTime(age + 1, TimeUnit.YEAR);
+            Date currentDate = yob.advanceTime(age, TimeUnit.YEAR);
 
             SourceNodeDouble sN = (SourceNodeDouble) getAncestor(new SourceNodeDouble());
 
@@ -93,7 +100,7 @@ public class NumberOfChildrenInYearNodeDouble extends DoubleNode<Integer, Intege
                     sexN.getChild(new IntegerRange(0)).incCount(adjCount);
                 } catch (ChildNotFoundException e) {
                     AgeNodeDouble aN = new AgeNodeDouble(new IntegerRange(0), sexN, adjCount, true);
-//                            sexN.addChild(new IntegerRange(0), adjCount);
+                    sexN.addChild(aN);
                     addDelayedTask(aN);
                 }
 

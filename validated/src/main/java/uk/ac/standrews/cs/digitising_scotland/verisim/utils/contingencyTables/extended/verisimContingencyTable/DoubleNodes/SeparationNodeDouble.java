@@ -1,6 +1,7 @@
 package uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.DoubleNodes;
 
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.Date;
+import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.DateUtils;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateImplementations.YearDate;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.timeSteps.CompoundTimeUnit;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.timeSteps.TimeUnit;
@@ -66,11 +67,12 @@ public class SeparationNodeDouble extends DoubleNode<SeparationOption, IntegerRa
     public void advanceCount() {
 
         DiedOption died = ((DiedNodeDouble) getAncestor(new DiedNodeDouble())).getOption();
+        YearDate yob = ((YOBNodeDouble) getAncestor(new YOBNodeDouble())).getOption();
+        Integer age = ((AgeNodeDouble) getAncestor(new AgeNodeDouble())).getOption().getValue();
 
-        if(died == DiedOption.NO && getCount() > 0.00001) {
+        Date currentDate = yob.advanceTime(age, TimeUnit.YEAR);
 
-            // year passover
-            Integer age = ((AgeNodeDouble) getAncestor(new AgeNodeDouble())).getOption().getValue();
+        if(died == DiedOption.NO && DateUtils.dateBefore(currentDate, getEndDate()) && getCount() > 0.00001) {
 
             SexNodeDouble s = (SexNodeDouble) getAncestor(new SexNodeDouble());
 //            s.incCount(getCount());
@@ -102,15 +104,15 @@ public class SeparationNodeDouble extends DoubleNode<SeparationOption, IntegerRa
 
 //            d.incCount(getCount());
 
-                int prevNumberOfChidrenInPartnership = ((NumberOfChildrenInPartnershipNodeDouble) getAncestor(new NumberOfChildrenInPartnershipNodeDouble())).getOption();
+                int prevNumberOfChildrenInPartnership = ((NumberOfChildrenInPartnershipNodeDouble) getAncestor(new NumberOfChildrenInPartnershipNodeDouble())).getOption();
 
 
                 PreviousNumberOfChildrenInPartnershipNodeDouble pncip;
 
                 try {
-                    pncip = (PreviousNumberOfChildrenInPartnershipNodeDouble) d.getChild(prevNumberOfChidrenInPartnership);
+                    pncip = (PreviousNumberOfChildrenInPartnershipNodeDouble) d.getChild(prevNumberOfChildrenInPartnership);
                 } catch (ChildNotFoundException e) {
-                    pncip = (PreviousNumberOfChildrenInPartnershipNodeDouble) d.addChild(prevNumberOfChidrenInPartnership);
+                    pncip = (PreviousNumberOfChildrenInPartnershipNodeDouble) d.addChild(prevNumberOfChildrenInPartnership);
                 }
 
                 pncip.incCount(partOfCount);
@@ -166,7 +168,7 @@ public class SeparationNodeDouble extends DoubleNode<SeparationOption, IntegerRa
 
         advanceCount();
 
-        // Make separation children nodes
+        // Make separation's children nodes
 
         makeChildren();
 
