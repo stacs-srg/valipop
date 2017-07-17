@@ -18,6 +18,7 @@ package uk.ac.standrews.cs.digitising_scotland.verisim.events.partnering;
 
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.Date;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateImplementations.AdvancableDate;
+import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateImplementations.ExactDate;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateImplementations.YearDate;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.timeSteps.CompoundTimeUnit;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.timeSteps.TimeUnit;
@@ -70,9 +71,11 @@ public class PartneringLogic {
                 AdvancableDate yobOfOlderEndOfIR = getYobOfOlderEndOfIR(iR, currentDate);
                 CompoundTimeUnit iRLength = getIRLength(iR);
 
-                Collection<IPersonExtended> m = population.getLivingPeople().getMales().getAllPersonsBornInTimePeriod(yobOfOlderEndOfIR, iRLength);
+                LinkedList<IPersonExtended> m = new LinkedList<>(population.getLivingPeople().getMales().getAllPersonsBornInTimePeriod(yobOfOlderEndOfIR, iRLength));
 
-                allMen.put(iR, new LinkedList<>(m));
+                Collections.shuffle(m);
+
+                allMen.put(iR, m);
                 availableMen.update(iR, m.size());
             }
 
@@ -250,6 +253,16 @@ public class PartneringLogic {
                 return iR;
             }
         }
+
+//        if(currentDate.getDay() == 1 && currentDate.getMonth() == 1) {
+//            age = male.ageOnDate(new ExactDate(31, 12, currentDate.getYear() - 1));
+//
+//            for(IntegerRange iR : labels) {
+//                if(iR.contains(age)) {
+//                    return iR;
+//                }
+//            }
+//        }
 
         throw new InvalidRangeException("Male does not fit in expected ranges...");
     }
@@ -533,7 +546,8 @@ public class PartneringLogic {
 
     private static AdvancableDate getYobOfOlderEndOfIR(IntegerRange iR, Date currentDate) {
 
-        int yob = currentDate.getYear() - iR.getMax();
+        // TODO changed to minus 1
+        int yob = currentDate.getYear() - iR.getMax() - 1;
 
         return new YearDate(yob);
     }

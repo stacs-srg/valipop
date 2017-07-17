@@ -10,10 +10,8 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.dataD
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.partnership.IPartnershipExtended;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPersonExtended;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.ChildNotFoundException;
-import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.ControlSelfNode;
-import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.DoubleNode;
-import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.Node;
-import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.RunnableNode;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.*;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.Table;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.enumerations.DiedOption;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.enumerations.SexOption;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.integerRange.IntegerRange;
@@ -23,13 +21,21 @@ import java.util.ArrayList;
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class DiedNodeDouble extends DoubleNode<DiedOption, Integer> implements ControlSelfNode, RunnableNode {
+public class DiedNodeDouble extends DoubleNode<DiedOption, Integer> implements ControlSelfNode, RunnableNode, ControlChildrenNode {
+
+
 
     public DiedNodeDouble(DiedOption option, AgeNodeDouble parentNode, boolean init) {
         super(option, parentNode);
 
         if(!init) {
             calcCount();
+
+            Integer age = ((AgeNodeDouble) getAncestor(new AgeNodeDouble())).getOption().getValue();
+            if(age == 0) {
+                makeChildren();
+            }
+
         }
     }
 
@@ -45,7 +51,7 @@ public class DiedNodeDouble extends DoubleNode<DiedOption, Integer> implements C
 
         Date currentDate = yob.advanceTime(age, TimeUnit.YEAR);
 
-        if(getOption() == DiedOption.NO && DateUtils.dateBefore(currentDate, getEndDate()) && getCount() > 0.00001) {
+        if(getOption() == DiedOption.NO && DateUtils.dateBefore(currentDate, getEndDate()) && getCount() > Table.NODE_MIN_COUNT) {
 
 
             SexNodeDouble sN = (SexNodeDouble) getAncestor(new SexNodeDouble());
@@ -139,5 +145,19 @@ public class DiedNodeDouble extends DoubleNode<DiedOption, Integer> implements C
     @Override
     public void runTask() {
         advanceCount();
+    }
+
+    @Override
+    public void makeChildren() {
+
+        PreviousNumberOfChildrenInPartnershipNodeDouble pncip = new PreviousNumberOfChildrenInPartnershipNodeDouble(0, this, getCount());
+        addChild(pncip);
+
+
+        NumberOfPreviousChildrenInAnyPartnershipNodeDouble npciap = (NumberOfPreviousChildrenInAnyPartnershipNodeDouble) pncip.makeChildInstance(0, getCount());
+        pncip.addChild(npciap);
+
+        addDelayedTask(npciap);
+
     }
 }

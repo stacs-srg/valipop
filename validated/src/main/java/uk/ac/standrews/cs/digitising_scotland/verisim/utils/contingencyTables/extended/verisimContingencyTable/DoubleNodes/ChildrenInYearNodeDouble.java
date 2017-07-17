@@ -91,18 +91,42 @@ public class ChildrenInYearNodeDouble extends DoubleNode<ChildrenInYearOption, I
 
         Date currentDate = yob.advanceTime(age, TimeUnit.YEAR);
 
-        double forNPeople = getParent().getCount();
-//        double forNPeople = ((AgeNodeDouble) getAncestor(new AgeNodeDouble())).getCount();
+//        double forNPeople = getParent().getCount();
+        double forNPeople = ((AgeNodeDouble) getAncestor(new AgeNodeDouble())).getCount();
 
         CompoundTimeUnit timePeriod = new CompoundTimeUnit(1, TimeUnit.YEAR);
 
         SingleDeterminedCount sDC = (SingleDeterminedCount) getInputStats().getDeterminedCount(
                 new BirthStatsKey(age, order, forNPeople, timePeriod, currentDate));
 
-        if(getOption() == ChildrenInYearOption.YES) {
-            setCount(sDC.getRawUncorrectedCount());
+        DiedNodeDouble dNode = (DiedNodeDouble) getAncestor(new DiedNodeDouble());
+        double dCount = dNode.getCount();
+        double pncipCount = ((PreviousNumberOfChildrenInPartnershipNodeDouble) getAncestor(new PreviousNumberOfChildrenInPartnershipNodeDouble())).getCount();
+        double viablePNCIPcount = 0.0;
+
+        Integer o = ((NumberOfPreviousChildrenInAnyPartnershipNodeDouble) getAncestor(new NumberOfPreviousChildrenInAnyPartnershipNodeDouble())).getOption();
+
+        for(Node n : dNode.getChildren()) {
+
+            PreviousNumberOfChildrenInPartnershipNodeDouble p = (PreviousNumberOfChildrenInPartnershipNodeDouble) n;
+
+            if(p.getOption() <= o) {
+                viablePNCIPcount += p.getCount();
+            }
+
+        }
+
+        double adjustment = 0;
+        if(viablePNCIPcount != 0) {
+            adjustment = (dCount / forNPeople) * (pncipCount / viablePNCIPcount);
         } else {
-            setCount(forNPeople - sDC.getRawUncorrectedCount());
+            System.out.println("Issues in CIY count calc");
+        }
+
+        if(getOption() == ChildrenInYearOption.YES) {
+            setCount(sDC.getRawUncorrectedCount() * adjustment);
+        } else {
+            setCount(forNPeople - sDC.getRawUncorrectedCount() * adjustment);
         }
 
         advanceCount();

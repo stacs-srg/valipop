@@ -65,7 +65,7 @@ public class PopulationStatistics implements PopulationComposition, EventRateTab
     private int maxGestationPeriodDays = 280;
     private int minGestationPeriodDays = 147;
     private int minBirthSpacingDays = 730;
-    private double maxProportionBirthsDueToInfidelity = 0.01;
+    private double maxProportionBirthsDueToInfidelity = 0.1;
     private double maleProportionOfBirths = 0.5; // i.e. if 0.52 then in every 100 births, 52 will be male and 48 female
 
     public PopulationStatistics(Config config,
