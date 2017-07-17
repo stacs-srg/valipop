@@ -175,7 +175,7 @@ public class NBirthLogic implements EventLogic {
             return new MotherSet(havePartners, needPartners);
         }
 
-
+        Collections.shuffle(femalesAL);
 
         for(IPersonExtended female : femalesAL) {
 

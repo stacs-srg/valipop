@@ -34,7 +34,7 @@ public class Table extends Node<String, SourceType, Number, Number> implements C
 
     private LinkedList<RunnableNode> delayedTasks = new LinkedList<>();
 
-
+    public static final double NODE_MIN_COUNT = 0.01;
 
     private PopulationStatistics expected;
 
@@ -166,29 +166,35 @@ public class Table extends Node<String, SourceType, Number, Number> implements C
 
             while (nciyTasks.size() + sepTasks.size() + nciapTasks.size() != 0) {
 
-                while (!nciyTasks.isEmpty()) {
-                    RunnableNode n = nciyTasks.removeFirst();
-                    System.out.println(n.toString());
-                    n.runTask();
-                }
+//                while (!nciyTasks.isEmpty()) {
+//                    RunnableNode n = nciyTasks.removeFirst();
+//                    System.out.println(n.toString());
+//                    n.runTask();
+//                }
 
                 while (!sepTasks.isEmpty()) {
                     RunnableNode n = sepTasks.removeFirst();
-                    System.out.println(n.toString());
+//                    System.out.println(n.toString());
                     n.runTask();
                 }
 
                 while (!nciapTasks.isEmpty()) {
                     RunnableNode n = nciapTasks.removeFirst();
-                    System.out.println(n.toString());
+//                    System.out.println(n.toString());
                     n.runTask();
                 }
 
             }
 
-            while (!ageTasks.isEmpty()) {
+//            while (!ageTasks.isEmpty()) {
+            for(int i = 0; i < 2; i ++) {
+                if(ageTasks.isEmpty()) {
+                    break;
+                }
                 RunnableNode n = ageTasks.removeFirst();
-                System.out.println(n.toString());
+                AgeNodeDouble a = (AgeNodeDouble) n;
+                YOBNodeDouble y = (YOBNodeDouble) a.getAncestor(new YOBNodeDouble());
+                System.out.println("Age --- " + y.getOption().toString() + " --- " + a.getOption().toString());
                 n.runTask();
             }
 

@@ -62,7 +62,7 @@ public class Person implements IPersonExtended {
     private DateSelector deathDateSelector = new DeathDateSelector();
     private DateSelector birthDateSelector = new BirthDateSelector();
 
-    private boolean toSeparate = true;
+    private boolean toSeparate = false;
 
 
     public Person(char sex, Date birthDate) {

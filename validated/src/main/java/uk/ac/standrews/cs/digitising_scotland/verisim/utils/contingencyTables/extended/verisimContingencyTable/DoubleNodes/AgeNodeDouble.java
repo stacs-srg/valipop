@@ -30,6 +30,15 @@ public class AgeNodeDouble extends DoubleNode<IntegerRange, DiedOption> implemen
         }
     }
 
+    @Override
+    public void incCount(Double byCount) {
+        if(getChildren().size() != 0) {
+            System.out.println("Issue with ordering");
+        }
+
+        setCount(getCount() + byCount);
+    }
+
     public AgeNodeDouble() {
         super();
     }

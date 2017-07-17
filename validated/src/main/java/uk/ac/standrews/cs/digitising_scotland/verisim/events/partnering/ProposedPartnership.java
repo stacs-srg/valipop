@@ -33,11 +33,14 @@ public class ProposedPartnership {
         this.male = male;
         this.female = female;
         this.malesRange = malesRange;
+        male.willSeparate(false);
+        female.willSeparate(false);
     }
 
     public void setMale(IPersonExtended newMale, IntegerRange newMalesRange) {
         this.male = newMale;
         this.malesRange = newMalesRange;
+        male.willSeparate(false);
     }
 
     public IntegerRange getMalesRange() {
