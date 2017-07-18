@@ -18,6 +18,7 @@ package uk.ac.standrews.cs.digitising_scotland.verisim.events;
 
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.Date;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.timeSteps.CompoundTimeUnit;
+import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.timeSteps.TimeUnit;
 import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.dataDistributionTables.determinedCounts.SingleDeterminedCount;
 import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.dataDistributionTables.statsKeys.SeparationStatsKey;
 import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.recording.PopulationStatistics;
@@ -56,7 +57,8 @@ public class SeparationLogic {
                 }
 
                 // else mark partnership for separation
-                p.getLastPartnership().separate(currentDate, consideredTimePeriod);
+                // TODO make this a date between now and next partnership - post stage?
+                p.getLastPartnership().separate(p.getLastChild().getBirthDate_ex(), new CompoundTimeUnit(1, TimeUnit.MONTH));
 
                 // TODO move next two lines of code into above method call?
                 p.willSeparate(true);

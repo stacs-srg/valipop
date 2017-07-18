@@ -9,6 +9,8 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.dataD
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPersonExtended;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.ChildNotFoundException;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.*;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.IntNodes.AgeNodeInt;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.IntNodes.YOBNodeInt;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.Table;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.enumerations.SexOption;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.LabeledValueSet;
@@ -20,7 +22,7 @@ import java.util.Collection;
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class NumberOfChildrenInYearNodeDouble extends DoubleNode<Integer, Integer> implements ControlSelfNode, ControlChildrenNode, RunnableNode {
+public class NumberOfChildrenInYearNodeDouble extends DoubleNode<Integer, IntegerRange> implements ControlSelfNode, ControlChildrenNode, RunnableNode {
 
     Collection<IPersonExtended> people = new ArrayList<>();
 
@@ -37,7 +39,7 @@ public class NumberOfChildrenInYearNodeDouble extends DoubleNode<Integer, Intege
     }
 
     @Override
-    public Node<Integer, ?, Double, ?> makeChildInstance(Integer childOption, Double initCount) {
+    public Node<IntegerRange, ?, Double, ?> makeChildInstance(IntegerRange childOption, Double initCount) {
         return new NumberOfChildrenInPartnershipNodeDouble(childOption, this, initCount, false);
     }
 
@@ -49,15 +51,18 @@ public class NumberOfChildrenInYearNodeDouble extends DoubleNode<Integer, Intege
         incCountByOne();
 
         int prevChildren = ((PreviousNumberOfChildrenInPartnershipNodeDouble)
-                                    getAncestor(new PreviousNumberOfChildrenInPartnershipNodeDouble())).getOption();
+                                    getAncestor(new PreviousNumberOfChildrenInPartnershipNodeDouble())).getOption().getValue();
 
         int childrenThisYear = ((NumberOfChildrenInYearNodeDouble)
                                                     getAncestor(new NumberOfChildrenInYearNodeDouble())).getOption();
+        int ncip = prevChildren + childrenThisYear;
+        IntegerRange range = resolveToChildRange(ncip);
+
         try {
-            getChild(prevChildren + childrenThisYear).processPerson(person, currentDate);
+            getChild(range).processPerson(person, currentDate);
         } catch (ChildNotFoundException e) {
 
-            addChild(new NumberOfChildrenInPartnershipNodeDouble(prevChildren + childrenThisYear, this, 0.0, true))
+            addChild(new NumberOfChildrenInPartnershipNodeDouble(range, this, 0.0, true))
                     .processPerson(person, currentDate);
 
 //            addChild(prevChildren + childrenThisYear).processPerson(person, currentDate);
@@ -147,16 +152,47 @@ public class NumberOfChildrenInYearNodeDouble extends DoubleNode<Integer, Intege
     public void makeChildren() {
 
         int numberOfPrevChildInPartnership = ((PreviousNumberOfChildrenInPartnershipNodeDouble)
-                                            getAncestor(new PreviousNumberOfChildrenInPartnershipNodeDouble())).getOption();
+                                            getAncestor(new PreviousNumberOfChildrenInPartnershipNodeDouble())).getOption().getValue();
         int childrenInYear = getOption();
 
         int numberOfChildInPartnership = numberOfPrevChildInPartnership + childrenInYear;
+        IntegerRange range = resolveToChildRange(numberOfChildInPartnership);
 
-        addChild(numberOfChildInPartnership, getCount());
+        addChild(range, getCount());
     }
 
     @Override
     public void runTask() {
         advanceCount();
     }
+
+    @SuppressWarnings("Duplicates")
+    private IntegerRange resolveToChildRange(Integer ncip) {
+
+        for(Node<IntegerRange, ?, ?, ?> aN : getChildren()) {
+            if(aN.getOption().contains(ncip)) {
+                return aN.getOption();
+            }
+        }
+
+        YearDate yob = ((YOBNodeDouble) getAncestor(new YOBNodeDouble())).getOption();
+        Integer age = ((AgeNodeDouble) getAncestor(new AgeNodeDouble())).getOption().getValue();
+
+        Date currentDate = yob.advanceTime(age, TimeUnit.YEAR);
+
+        Collection<IntegerRange> sepRanges = getInputStats().getSeparationByChildCountRates(currentDate).getLabels();
+
+        for(IntegerRange o : sepRanges) {
+            if(o.contains(ncip)) {
+                return o;
+            }
+        }
+
+        if(ncip == 0) {
+            return new IntegerRange(0);
+        }
+
+        throw new Error("Did not resolve any permissable ranges");
+    }
+
 }

@@ -10,14 +10,15 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.ex
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.RunnableNode;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.PersonCharacteristicsIdentifier;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.enumerations.ChildrenInYearOption;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.integerRange.IntegerRange;
 
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class NumberOfPreviousChildrenInAnyPartnershipNodeDouble extends DoubleNode<Integer, ChildrenInYearOption> implements RunnableNode, ControlChildrenNode {
+public class NumberOfPreviousChildrenInAnyPartnershipNodeDouble extends DoubleNode<IntegerRange, ChildrenInYearOption> implements RunnableNode, ControlChildrenNode {
 
-    public NumberOfPreviousChildrenInAnyPartnershipNodeDouble(Integer option, PreviousNumberOfChildrenInPartnershipNodeDouble parentNode, Double initCount) {
+    public NumberOfPreviousChildrenInAnyPartnershipNodeDouble(IntegerRange option, PreviousNumberOfChildrenInPartnershipNodeDouble parentNode, Double initCount) {
         super(option, parentNode, initCount);
     }
 

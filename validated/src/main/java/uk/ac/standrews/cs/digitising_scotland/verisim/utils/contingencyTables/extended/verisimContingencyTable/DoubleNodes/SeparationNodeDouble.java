@@ -98,16 +98,10 @@ public class SeparationNodeDouble extends DoubleNode<SeparationOption, IntegerRa
 
                 double partOfCount = getCount() * d.getCount() / a.getCount();
 
-//                try {
-//                    d = (DiedNodeDouble) a.getChild(died);
-//                } catch (ChildNotFoundException e) {
-//                    throw new Error("Died Node should have already been created");
-//                }
+                IntegerRange prevNumberOfChildrenInPartnership = ((NumberOfChildrenInPartnershipNodeDouble) getAncestor(new NumberOfChildrenInPartnershipNodeDouble())).getOption();
 
-//            d.incCount(getCount());
-
-                int prevNumberOfChildrenInPartnership = ((NumberOfChildrenInPartnershipNodeDouble) getAncestor(new NumberOfChildrenInPartnershipNodeDouble())).getOption();
-
+                // Move over to correct IntegerRange object with the same value at age + 1
+                prevNumberOfChildrenInPartnership = d.resolveToChildRange(prevNumberOfChildrenInPartnership.getValue());
 
                 PreviousNumberOfChildrenInPartnershipNodeDouble pncip;
 
@@ -119,17 +113,21 @@ public class SeparationNodeDouble extends DoubleNode<SeparationOption, IntegerRa
 
                 pncip.incCount(partOfCount);
 
-                int numberOfPrevChildrenInAnyPartnership = ((NumberOfPreviousChildrenInAnyPartnershipNodeDouble) getAncestor(new NumberOfPreviousChildrenInAnyPartnershipNodeDouble())).getOption();
+                IntegerRange numberOfPrevChildrenInAnyPartnership = ((NumberOfPreviousChildrenInAnyPartnershipNodeDouble) getAncestor(new NumberOfPreviousChildrenInAnyPartnershipNodeDouble())).getOption();
+
+
                 int childrenInYear = ((NumberOfChildrenInYearNodeDouble) getAncestor(new NumberOfChildrenInYearNodeDouble())).getOption();
 
-                int numberOfChildrenInAnyPartnership = numberOfPrevChildrenInAnyPartnership + childrenInYear;
+                int numberOfChildrenInAnyPartnership = numberOfPrevChildrenInAnyPartnership.getValue() + childrenInYear;
 
                 NumberOfPreviousChildrenInAnyPartnershipNodeDouble nciap;
 
+                IntegerRange rangeNCIAP = pncip.resolveToChildRange(numberOfChildrenInAnyPartnership);
+
                 try {
-                    nciap = (NumberOfPreviousChildrenInAnyPartnershipNodeDouble) pncip.getChild(numberOfChildrenInAnyPartnership);
+                    nciap = (NumberOfPreviousChildrenInAnyPartnershipNodeDouble) pncip.getChild(rangeNCIAP);
                 } catch (ChildNotFoundException e) {
-                    nciap = (NumberOfPreviousChildrenInAnyPartnershipNodeDouble) pncip.addChild(numberOfChildrenInAnyPartnership);
+                    nciap = (NumberOfPreviousChildrenInAnyPartnershipNodeDouble) pncip.addChild(rangeNCIAP);
                     addDelayedTask(nciap);
                 }
 
@@ -143,10 +141,10 @@ public class SeparationNodeDouble extends DoubleNode<SeparationOption, IntegerRa
     @Override
     public void calcCount() {
 
-        int numberOfChildren = ((NumberOfChildrenInPartnershipNodeDouble)
+        IntegerRange numberOfChildren = ((NumberOfChildrenInPartnershipNodeDouble)
                                         getAncestor(new NumberOfChildrenInPartnershipNodeDouble())).getOption();
 
-        if(numberOfChildren == 0) {
+        if(numberOfChildren.getValue() == 0) {
             setCount(getParent().getCount());
         } else {
 
@@ -158,7 +156,7 @@ public class SeparationNodeDouble extends DoubleNode<SeparationOption, IntegerRa
 
             Date currentDate = yob.advanceTime(age, TimeUnit.YEAR);
 
-            SingleDeterminedCount sDC = (SingleDeterminedCount) getInputStats().getDeterminedCount(new SeparationStatsKey(numberOfChildren, forNPeople, timePeriod, currentDate));
+            SingleDeterminedCount sDC = (SingleDeterminedCount) getInputStats().getDeterminedCount(new SeparationStatsKey(numberOfChildren.getValue(), forNPeople, timePeriod, currentDate));
 
             if (getOption() == SeparationOption.YES) {
                 setCount(sDC.getRawUncorrectedCount());
@@ -179,10 +177,10 @@ public class SeparationNodeDouble extends DoubleNode<SeparationOption, IntegerRa
     @Override
     public void makeChildren() {
 
-        Integer pncip = ((PreviousNumberOfChildrenInPartnershipNodeDouble)
+        IntegerRange pncip = ((PreviousNumberOfChildrenInPartnershipNodeDouble)
                 getAncestor(new PreviousNumberOfChildrenInPartnershipNodeDouble())).getOption();
 
-        if(pncip == 0) {
+        if(pncip.getValue() == 0) {
             addChild(new IntegerRange("na"));
         } else {
             ChildrenInYearOption ciy = ((ChildrenInYearNodeDouble)
