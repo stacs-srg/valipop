@@ -9,13 +9,14 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.ex
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.Node;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.PersonCharacteristicsIdentifier;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.enumerations.SeparationOption;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.integerRange.IntegerRange;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class NumberOfChildrenInPartnershipNodeDouble extends DoubleNode<Integer, SeparationOption> implements ControlChildrenNode {
+public class NumberOfChildrenInPartnershipNodeDouble extends DoubleNode<IntegerRange, SeparationOption> implements ControlChildrenNode {
 
-    public NumberOfChildrenInPartnershipNodeDouble(Integer option, NumberOfChildrenInYearNodeDouble parentNode, Double initCount, boolean init) {
+    public NumberOfChildrenInPartnershipNodeDouble(IntegerRange option, NumberOfChildrenInYearNodeDouble parentNode, Double initCount, boolean init) {
         super(option, parentNode, initCount);
 
         if(!init) {
@@ -66,7 +67,7 @@ public class NumberOfChildrenInPartnershipNodeDouble extends DoubleNode<Integer,
     @Override
     public void makeChildren() {
 
-        if(getOption() == 0) {
+        if(getOption().getValue() == 0) {
             addChild(SeparationOption.NA, getCount());
         } else {
             addChild(SeparationOption.YES);

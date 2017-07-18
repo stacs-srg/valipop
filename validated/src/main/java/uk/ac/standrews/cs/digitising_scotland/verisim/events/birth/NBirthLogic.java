@@ -69,12 +69,7 @@ public class NBirthLogic implements EventLogic {
 
             Set<IntegerRange> inputOrders = desiredPopulationStatistics.getOrderedBirthRates(currentDate).getColumnLabels();
 
-//            int totalFromDiv = 0;
-//
-//            for(Integer order : orders) {
-//                Collection<IPersonExtended> people = femalesLiving.getByDatePeriodAndBirthOrder(divDate, consideredTimePeriod, order);
-//                totalFromDiv = people.size();
-//            }
+
 
             for(IntegerRange order : inputOrders) {
 //            for(Integer order : orders) {

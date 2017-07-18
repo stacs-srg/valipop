@@ -11,17 +11,20 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.partner
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPersonExtended;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.ChildNotFoundException;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.*;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.IntNodes.AgeNodeInt;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.IntNodes.YOBNodeInt;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.Table;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.enumerations.DiedOption;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.enumerations.SexOption;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.integerRange.IntegerRange;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class DiedNodeDouble extends DoubleNode<DiedOption, Integer> implements ControlSelfNode, RunnableNode, ControlChildrenNode {
+public class DiedNodeDouble extends DoubleNode<DiedOption, IntegerRange> implements ControlSelfNode, RunnableNode, ControlChildrenNode {
 
 
 
@@ -116,18 +119,20 @@ public class DiedNodeDouble extends DoubleNode<DiedOption, Integer> implements C
                     person.getPartnershipsActiveInYear(currentDate.getYearDate()));
 
             if(partnershipsInYear.size() == 0) {
+                IntegerRange range = resolveToChildRange(0);
                 try {
-                    getChild(0).processPerson(person, currentDate);
+                    getChild(range).processPerson(person, currentDate);
                 } catch (ChildNotFoundException e) {
-                    addChild(0).processPerson(person, currentDate);
+                    addChild(range).processPerson(person, currentDate);
                 }
             } else if(partnershipsInYear.size() == 1) {
                 IPartnershipExtended partnership = partnershipsInYear.remove(0);
                 int numberOfChildren = partnership.getChildren().size();
+                IntegerRange range = resolveToChildRange(numberOfChildren);
                 try {
-                    getChild(numberOfChildren).processPerson(person, currentDate);
+                    getChild(range).processPerson(person, currentDate);
                 } catch (ChildNotFoundException e) {
-                    addChild(numberOfChildren).processPerson(person, currentDate);
+                    addChild(range).processPerson(person, currentDate);
                 }
             } else {
                 throw new UnsupportedOperationException("Woman in too many partnerships in year");
@@ -138,7 +143,7 @@ public class DiedNodeDouble extends DoubleNode<DiedOption, Integer> implements C
     }
 
     @Override
-    public Node<Integer, ?, Double, ?> makeChildInstance(Integer childOption, Double initCount) {
+    public Node<IntegerRange, ?, Double, ?> makeChildInstance(IntegerRange childOption, Double initCount) {
         return new PreviousNumberOfChildrenInPartnershipNodeDouble(childOption, this, initCount);
     }
 
@@ -150,14 +155,48 @@ public class DiedNodeDouble extends DoubleNode<DiedOption, Integer> implements C
     @Override
     public void makeChildren() {
 
-        PreviousNumberOfChildrenInPartnershipNodeDouble pncip = new PreviousNumberOfChildrenInPartnershipNodeDouble(0, this, getCount());
+        PreviousNumberOfChildrenInPartnershipNodeDouble pncip =
+                new PreviousNumberOfChildrenInPartnershipNodeDouble(new IntegerRange(0), this, getCount());
+
         addChild(pncip);
 
 
-        NumberOfPreviousChildrenInAnyPartnershipNodeDouble npciap = (NumberOfPreviousChildrenInAnyPartnershipNodeDouble) pncip.makeChildInstance(0, getCount());
+        NumberOfPreviousChildrenInAnyPartnershipNodeDouble npciap =
+                (NumberOfPreviousChildrenInAnyPartnershipNodeDouble) pncip.makeChildInstance(new IntegerRange(0), getCount());
+
         pncip.addChild(npciap);
+
 
         addDelayedTask(npciap);
 
+    }
+
+    @SuppressWarnings("Duplicates")
+    public IntegerRange resolveToChildRange(Integer pncip) {
+
+        for(Node<IntegerRange, ?, ?, ?> aN : getChildren()) {
+            if(aN.getOption().contains(pncip)) {
+                return aN.getOption();
+            }
+        }
+
+        YearDate yob = ((YOBNodeDouble) getAncestor(new YOBNodeDouble())).getOption();
+        Integer age = ((AgeNodeDouble) getAncestor(new AgeNodeDouble())).getOption().getValue();
+
+        Date currentDate = yob.advanceTime(age, TimeUnit.YEAR);
+
+        Collection<IntegerRange> sepRanges = getInputStats().getSeparationByChildCountRates(currentDate).getLabels();
+
+        for(IntegerRange o : sepRanges) {
+            if(o.contains(pncip)) {
+                return o;
+            }
+        }
+
+        if(pncip == 0) {
+            return new IntegerRange(0);
+        }
+
+        throw new Error("Did not resolve any permissable ranges");
     }
 }

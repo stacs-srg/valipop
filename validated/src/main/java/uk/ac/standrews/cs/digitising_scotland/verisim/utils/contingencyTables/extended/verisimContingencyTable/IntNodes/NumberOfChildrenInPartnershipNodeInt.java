@@ -8,13 +8,14 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.ex
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.Node;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.PersonCharacteristicsIdentifier;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.enumerations.SeparationOption;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.integerRange.IntegerRange;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class NumberOfChildrenInPartnershipNodeInt extends IntNode<Integer, SeparationOption> {
+public class NumberOfChildrenInPartnershipNodeInt extends IntNode<IntegerRange, SeparationOption> {
 
-    public NumberOfChildrenInPartnershipNodeInt(Integer option, NumberOfChildrenInYearNodeInt parentNode, Integer initCount) {
+    public NumberOfChildrenInPartnershipNodeInt(IntegerRange option, NumberOfChildrenInYearNodeInt parentNode, Integer initCount) {
         super(option, parentNode, initCount);
     }
 

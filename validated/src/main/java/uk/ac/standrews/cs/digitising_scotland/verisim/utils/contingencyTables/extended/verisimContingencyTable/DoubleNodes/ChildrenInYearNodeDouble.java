@@ -87,8 +87,7 @@ public class ChildrenInYearNodeDouble extends DoubleNode<ChildrenInYearOption, I
         Integer age = ((AgeNodeDouble) getAncestor(new AgeNodeDouble())).getOption().getValue();
 
         Integer order = ((PreviousNumberOfChildrenInPartnershipNodeDouble)
-                                    getAncestor(new PreviousNumberOfChildrenInPartnershipNodeDouble())).getOption();
-
+                                    getAncestor(new PreviousNumberOfChildrenInPartnershipNodeDouble())).getOption().getValue();
         Date currentDate = yob.advanceTime(age, TimeUnit.YEAR);
 
 //        double forNPeople = getParent().getCount();
@@ -104,13 +103,13 @@ public class ChildrenInYearNodeDouble extends DoubleNode<ChildrenInYearOption, I
         double pncipCount = ((PreviousNumberOfChildrenInPartnershipNodeDouble) getAncestor(new PreviousNumberOfChildrenInPartnershipNodeDouble())).getCount();
         double viablePNCIPcount = 0.0;
 
-        Integer o = ((NumberOfPreviousChildrenInAnyPartnershipNodeDouble) getAncestor(new NumberOfPreviousChildrenInAnyPartnershipNodeDouble())).getOption();
+        Integer o = ((NumberOfPreviousChildrenInAnyPartnershipNodeDouble) getAncestor(new NumberOfPreviousChildrenInAnyPartnershipNodeDouble())).getOption().getValue();
 
         for(Node n : dNode.getChildren()) {
 
             PreviousNumberOfChildrenInPartnershipNodeDouble p = (PreviousNumberOfChildrenInPartnershipNodeDouble) n;
 
-            if(p.getOption() <= o) {
+            if(p.getOption().getValue() <= o) {
                 viablePNCIPcount += p.getCount();
             }
 
@@ -126,7 +125,7 @@ public class ChildrenInYearNodeDouble extends DoubleNode<ChildrenInYearOption, I
         if(getOption() == ChildrenInYearOption.YES) {
             setCount(sDC.getRawUncorrectedCount() * adjustment);
         } else {
-            setCount(forNPeople - sDC.getRawUncorrectedCount() * adjustment);
+            setCount(getParent().getCount() - sDC.getRawUncorrectedCount() * adjustment);
         }
 
         advanceCount();
