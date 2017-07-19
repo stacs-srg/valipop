@@ -4,15 +4,10 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.Date;
 import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.recording.PopulationStatistics;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPersonExtended;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.ChildNotFoundException;
-import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.DoubleNodes.AgeNodeDouble;
-import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.DoubleNodes.YOBNodeDouble;
-import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.Table;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.CTtree;
 
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
@@ -46,6 +41,29 @@ public abstract class Node<Op, cOp, count extends Number, childCount extends Num
     public Node<cOp, ?, childCount, ?> addChild(Node<cOp, ?, childCount, ?> child) {
         children.put(child.getOption(), child);
         return child;
+    }
+
+    public Collection<Node> getLeafNodes() {
+
+        Collection<Node> childNodes = new ArrayList<>();
+
+        if(getChildren().size() == 0) {
+            return Collections.singleton(this);
+        } else {
+
+            for (Node n : getChildren()) {
+                childNodes.addAll(n.getLeafNodes());
+            }
+        }
+
+        return childNodes;
+
+    }
+
+    public ArrayList<String> toStringAL() {
+        ArrayList<String> s = getParent().toStringAL();
+        s.add(getOption().toString());
+        return s;
     }
 
     public void setCount(count count) {
@@ -94,11 +112,11 @@ public abstract class Node<Op, cOp, count extends Number, childCount extends Num
     }
 
     public PopulationStatistics getInputStats() {
-        return getAncestor(new Table()).getInputStats();
+        return getAncestor(new CTtree()).getInputStats();
     }
 
     public Date getEndDate() {
-        return getAncestor(new Table()).getEndDate();
+        return getAncestor(new CTtree()).getEndDate();
     }
 
 //    public String toString() {

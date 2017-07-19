@@ -20,15 +20,12 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.config.Config;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.DateUtils;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateImplementations.MonthDate;
 import uk.ac.standrews.cs.digitising_scotland.verisim.events.EventLogic;
-import uk.ac.standrews.cs.digitising_scotland.verisim.events.UnsupportedEventType;
 import uk.ac.standrews.cs.digitising_scotland.verisim.events.birth.NBirthLogic;
 import uk.ac.standrews.cs.digitising_scotland.verisim.events.death.NDeathLogic;
 import uk.ac.standrews.cs.digitising_scotland.verisim.events.init.InitLogic;
 import org.apache.logging.log4j.Logger;
 import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.recording.PopulationStatistics;
 import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.recording.inputted.DesiredPopulationStatisticsFactory;
-import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.validation.analytic.AnalyticsRunner;
-import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.validation.comparison.ComparativeAnalysis;
 import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.validation.summaryData.SummaryRow;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.dataStructure.PeopleCollection;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.dataStructure.Population;
@@ -37,7 +34,7 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.utils.CustomLog4j;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.ProcessArgs;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.ProgramTimer;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.ContingencyTableGenerator;
-import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.Table;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.CTtree;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.fileUtils.FileUtils;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.fileUtils.InvalidInputFileException;
 
@@ -137,7 +134,7 @@ public class OBDModel {
         ContingencyTableGenerator table = new ContingencyTableGenerator(population, sim.desired, config.getT0(), config.getTE());
         table.outputTable(config, table.getFullTable());
 
-        Table t = new Table(population, sim.desired, config.getT0(), config.getTE());
+        CTtree t = new CTtree(population, sim.desired, config.getT0(), config.getTE());
 
 
     }

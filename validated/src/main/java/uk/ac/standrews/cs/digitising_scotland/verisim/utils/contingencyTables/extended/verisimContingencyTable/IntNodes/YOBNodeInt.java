@@ -14,10 +14,6 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.ex
  */
 public class YOBNodeInt extends IntNode<YearDate, SexOption> {
 
-    public YOBNodeInt(YearDate option, SourceNodeDouble parentNode, int initCount) {
-        super(option, parentNode, initCount);
-    }
-
     public YOBNodeInt() {
         super();
 

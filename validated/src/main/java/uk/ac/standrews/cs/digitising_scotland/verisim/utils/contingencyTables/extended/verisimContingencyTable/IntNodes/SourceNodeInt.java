@@ -4,12 +4,13 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.Date;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateImplementations.YearDate;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPersonExtended;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.ChildNotFoundException;
-import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.ContingencyTable;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.IntNode;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.Node;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.RunnableNode;
-import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.Table;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.CTtree;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.enumerations.SourceType;
+
+import java.util.ArrayList;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
@@ -18,7 +19,7 @@ public class SourceNodeInt extends IntNode<SourceType, YearDate> {
 
     private Node parent;
 
-    public SourceNodeInt(SourceType option, Table parent) {
+    public SourceNodeInt(SourceType option, CTtree parent) {
         super(option, parent);
         this.parent = parent;
     }
@@ -56,5 +57,11 @@ public class SourceNodeInt extends IntNode<SourceType, YearDate> {
         } catch (ChildNotFoundException e) {
             addChild(yob).processPerson(person, currentDate);
         }
+    }
+
+    public ArrayList<String> toStringAL() {
+        ArrayList<String> s = new ArrayList<>();
+        s.add(getOption().toString());
+        return s;
     }
 }

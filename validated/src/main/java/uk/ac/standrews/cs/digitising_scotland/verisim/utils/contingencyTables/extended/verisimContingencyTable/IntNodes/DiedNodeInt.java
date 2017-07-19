@@ -86,4 +86,11 @@ public class DiedNodeInt extends IntNode<DiedOption, IntegerRange> {
         throw new Error("Did not resolve any permissable ranges");
     }
 
+    public ArrayList<String> toStringAL() {
+        ArrayList<String> s = getParent().toStringAL();
+        s.add(getOption().toString());
+        s.add(getCount().toString());
+        return s;
+    }
+
 }

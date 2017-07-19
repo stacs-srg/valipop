@@ -6,6 +6,8 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.ex
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.Node;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.integerRange.IntegerRange;
 
+import java.util.ArrayList;
+
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
@@ -24,5 +26,12 @@ public class NewPartnerAgeNodeInt extends IntNode<IntegerRange, String> {
     @Override
     public Node<String, ?, Integer, ?> makeChildInstance(String childOption, Integer initCount) {
         return null;
+    }
+
+    public ArrayList<String> toStringAL() {
+        ArrayList<String> s = getParent().toStringAL();
+        s.add(getOption().toString());
+        s.add(getCount().toString());
+        return s;
     }
 }

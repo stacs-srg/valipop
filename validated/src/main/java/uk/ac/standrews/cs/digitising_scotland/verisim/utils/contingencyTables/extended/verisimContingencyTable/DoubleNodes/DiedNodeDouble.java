@@ -11,9 +11,7 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.partner
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPersonExtended;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.ChildNotFoundException;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.*;
-import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.IntNodes.AgeNodeInt;
-import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.IntNodes.YOBNodeInt;
-import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.Table;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.CTtree;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.enumerations.DiedOption;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.enumerations.SexOption;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.integerRange.IntegerRange;
@@ -54,7 +52,7 @@ public class DiedNodeDouble extends DoubleNode<DiedOption, IntegerRange> impleme
 
         Date currentDate = yob.advanceTime(age, TimeUnit.YEAR);
 
-        if(getOption() == DiedOption.NO && DateUtils.dateBefore(currentDate, getEndDate()) && getCount() > Table.NODE_MIN_COUNT) {
+        if(getOption() == DiedOption.NO && DateUtils.dateBefore(currentDate, getEndDate()) && getCount() > CTtree.NODE_MIN_COUNT) {
 
 
             SexNodeDouble sN = (SexNodeDouble) getAncestor(new SexNodeDouble());
@@ -198,5 +196,12 @@ public class DiedNodeDouble extends DoubleNode<DiedOption, IntegerRange> impleme
         }
 
         throw new Error("Did not resolve any permissable ranges");
+    }
+
+    public ArrayList<String> toStringAL() {
+        ArrayList<String> s = getParent().toStringAL();
+        s.add(getOption().toString());
+        s.add(getCount().toString());
+        return s;
     }
 }

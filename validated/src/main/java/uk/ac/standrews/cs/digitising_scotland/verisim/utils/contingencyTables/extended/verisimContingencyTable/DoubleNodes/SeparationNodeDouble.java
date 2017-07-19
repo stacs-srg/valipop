@@ -14,7 +14,7 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.ChildNotFoundException;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.*;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.PersonCharacteristicsIdentifier;
-import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.Table;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.CTtree;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.enumerations.ChildrenInYearOption;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.enumerations.DiedOption;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.enumerations.SeparationOption;
@@ -74,7 +74,7 @@ public class SeparationNodeDouble extends DoubleNode<SeparationOption, IntegerRa
 
         Date currentDate = yob.advanceTime(age, TimeUnit.YEAR);
 
-        if(died == DiedOption.NO && DateUtils.dateBefore(currentDate, getEndDate()) && diedN.getCount() > Table.NODE_MIN_COUNT) {
+        if(died == DiedOption.NO && DateUtils.dateBefore(currentDate, getEndDate()) && diedN.getCount() > CTtree.NODE_MIN_COUNT) {
 
             SexNodeDouble s = (SexNodeDouble) getAncestor(new SexNodeDouble());
 //            s.incCount(getCount());
