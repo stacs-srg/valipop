@@ -9,9 +9,7 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.dataD
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPersonExtended;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.ChildNotFoundException;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.*;
-import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.IntNodes.AgeNodeInt;
-import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.IntNodes.YOBNodeInt;
-import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.Table;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.CTtree;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.enumerations.SexOption;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.LabeledValueSet;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.integerRange.IntegerRange;
@@ -73,7 +71,7 @@ public class NumberOfChildrenInYearNodeDouble extends DoubleNode<Integer, Intege
     public void advanceCount() {
 
         // Should we be restricting this so much?
-        if(getCount() > Table.NODE_MIN_COUNT && getOption() != 0) {
+        if(getCount() > CTtree.NODE_MIN_COUNT && getOption() != 0) {
             YearDate yob = ((YOBNodeDouble) getAncestor(new YOBNodeDouble())).getOption();
             Integer age = ((AgeNodeDouble) getAncestor(new AgeNodeDouble())).getOption().getValue();
 

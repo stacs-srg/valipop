@@ -9,6 +9,8 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.ex
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.RunnableNode;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.enumerations.SourceType;
 
+import java.util.ArrayList;
+
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
@@ -58,5 +60,11 @@ public class SourceNodeDouble extends DoubleNode<SourceType, YearDate> {
         } catch (ChildNotFoundException e) {
             addChild(yob).processPerson(person, currentDate);
         }
+    }
+
+    public ArrayList<String> toStringAL() {
+        ArrayList<String> s = new ArrayList<>();
+        s.add(getOption().toString());
+        return s;
     }
 }

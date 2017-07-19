@@ -11,10 +11,14 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.ex
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.enumerations.DiedOption;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.integerRange.IntegerRange;
 
+import java.util.ArrayList;
+
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class AgeNodeInt extends IntNode<IntegerRange, DiedOption> {
+
+    ArrayList<IPersonExtended> people = new ArrayList<>();
 
     public AgeNodeInt(IntegerRange option, SexNodeInt parentNode, Integer initCount) {
         super(option, parentNode, initCount);
@@ -32,6 +36,12 @@ public class AgeNodeInt extends IntNode<IntegerRange, DiedOption> {
 //
 //        Date calcCurrentDate = yob.advanceTime(age, TimeUnit.YEAR);
 
+        if(people.contains(person)) {
+            int age = person.ageOnDate(currentDate);
+            System.out.println(age);
+        }
+
+        people.add(person);
 
         incCountByOne();
 

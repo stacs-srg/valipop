@@ -2,7 +2,6 @@ package uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.e
 
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.Date;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.DateUtils;
-import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateImplementations.ExactDate;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateImplementations.YearDate;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.timeSteps.TimeUnit;
 import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.recording.PopulationStatistics;
@@ -16,13 +15,15 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.ex
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.IntNodes.SourceNodeInt;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.enumerations.SourceType;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedList;
 
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class Table extends Node<String, SourceType, Number, Number> implements ContingencyTable {
+public class CTtree extends Node<String, SourceType, Number, Number> implements ContingencyTable {
 
     private LinkedList<RunnableNode> deathTasks = new LinkedList<>();
     private LinkedList<RunnableNode> ageTasks = new LinkedList<>();
@@ -43,7 +44,7 @@ public class Table extends Node<String, SourceType, Number, Number> implements C
     private SourceNodeInt simNode;
     private SourceNodeDouble statNode;
 
-    public Table(PeopleCollection population, PopulationStatistics expected, Date startDate, Date endDate) {
+    public CTtree(PeopleCollection population, PopulationStatistics expected, Date startDate, Date endDate) {
         this.expected = expected;
         this.endDate = endDate;
 
@@ -70,7 +71,9 @@ public class Table extends Node<String, SourceType, Number, Number> implements C
             for(IPersonExtended person : population.getPeople()) {
 
                 // who was alive or died in the year of consideration
-                if(person.aliveInYear(y)) {
+                if(person.bornInYear(y) && person.diedInYear(y)
+                        ||
+                        person.aliveInYear(y) && !person.bornInYear(y)) {
                     processPerson(person, y, SourceType.SIM);
                 }
             }
@@ -80,11 +83,37 @@ public class Table extends Node<String, SourceType, Number, Number> implements C
 
         executeDelayedTasks();
 
+        CTtable table = new CTtable(this);
+        CTtable table2 = new CTtable(table);
+
+//        Collection<Node> leafs = getLeafNodes();
+//
+//        ArrayList<ArrayList<String>> table = new ArrayList<>();
+//
+//        for(Node leaf : leafs) {
+//            table.add(leaf.toStringAL());
+//        }
+//
+//        ArrayList<ArrayList<String>> table2 = (ArrayList<ArrayList<String>>) table.clone();
+//
+//        table2.remove(0);
+
         System.out.println("TREE MADE");
 
     }
 
-    public Table() {
+    public CTtree() {
+
+    }
+
+    public Collection<Node> getLeafNodes() {
+
+        Collection<Node> childNodes = new ArrayList<>();
+
+        childNodes.addAll(simNode.getLeafNodes());
+        childNodes.addAll(statNode.getLeafNodes());
+
+        return childNodes;
 
     }
 
