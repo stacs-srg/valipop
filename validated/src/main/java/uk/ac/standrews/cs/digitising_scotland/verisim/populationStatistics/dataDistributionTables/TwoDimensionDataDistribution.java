@@ -23,6 +23,7 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateImplementati
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.integerRange.IntegerRange;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.integerRange.InvalidRangeException;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -98,6 +99,11 @@ public class TwoDimensionDataDistribution implements DataDistribution {
         }
         return max;
 
+    }
+
+    @Override
+    public Collection<IntegerRange> getLabels() {
+        return targetData.keySet();
     }
 
     public OneDimensionDataDistribution getData(Integer rowValue) throws InvalidRangeException {

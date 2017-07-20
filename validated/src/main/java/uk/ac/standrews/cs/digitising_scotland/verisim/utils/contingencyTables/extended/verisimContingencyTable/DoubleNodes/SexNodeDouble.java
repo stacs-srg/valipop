@@ -47,6 +47,11 @@ public class SexNodeDouble extends DoubleNode<SexOption, IntegerRange> {
         }
     }
 
+    @Override
+    public String getVariableName() {
+        return "Sex";
+    }
+
     public Node<IntegerRange, ?, Double, ?> resolveChildNodeForAge(Integer age) throws ChildNotFoundException {
 
         if(age != null) {

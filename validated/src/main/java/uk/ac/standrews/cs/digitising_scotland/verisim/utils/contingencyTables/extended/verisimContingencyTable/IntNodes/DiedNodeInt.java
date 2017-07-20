@@ -8,6 +8,7 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.ChildNotFoundException;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.IntNode;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.Node;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.CTRow;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.PersonCharacteristicsIdentifier;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.enumerations.DiedOption;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.integerRange.IntegerRange;
@@ -92,5 +93,18 @@ public class DiedNodeInt extends IntNode<DiedOption, IntegerRange> {
         s.add(getCount().toString());
         return s;
     }
+
+    public CTRow<Integer> toCTRow() {
+        CTRow r = getParent().toCTRow();
+        r.setVariable(getVariableName(), getOption().toString());
+        r.setCount(getCount());
+        return r;
+    }
+
+    @Override
+    public String getVariableName() {
+        return "Died";
+    }
+
 
 }

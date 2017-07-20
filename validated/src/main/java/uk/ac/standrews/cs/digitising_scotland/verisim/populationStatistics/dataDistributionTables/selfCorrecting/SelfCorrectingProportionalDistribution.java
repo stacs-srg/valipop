@@ -161,6 +161,11 @@ public class SelfCorrectingProportionalDistribution implements DataDistribution 
 
     }
 
+    @Override
+    public Collection<IntegerRange> getLabels() {
+        return targetProportions.keySet();
+    }
+
     private IntegerRange resolveRowValue(Integer rowValue) {
 
         for (IntegerRange iR : targetProportions.keySet()) {

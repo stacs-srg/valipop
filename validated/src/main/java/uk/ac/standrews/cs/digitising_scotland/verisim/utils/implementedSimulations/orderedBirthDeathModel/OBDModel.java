@@ -34,6 +34,8 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.utils.CustomLog4j;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.ProcessArgs;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.ProgramTimer;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.ContingencyTableGenerator;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.CTtable;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.CTtableFactory;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.CTtree;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.fileUtils.FileUtils;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.fileUtils.InvalidInputFileException;
@@ -41,6 +43,7 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.utils.fileUtils.InvalidInp
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 /**
@@ -134,8 +137,21 @@ public class OBDModel {
         ContingencyTableGenerator table = new ContingencyTableGenerator(population, sim.desired, config.getT0(), config.getTE());
         table.outputTable(config, table.getFullTable());
 
-        CTtree t = new CTtree(population, sim.desired, config.getT0(), config.getTE());
+        CTtree fullTree = new CTtree(population, sim.desired, config.getT0(), config.getTE());
 
+        CTtable fullTable = new CTtable(fullTree);
+
+        CTtable obTable = CTtableFactory.produceOrderedBirthContingencyTable(fullTable);
+
+        PrintStream obOutput;
+        try {
+            Path obPath = FileUtils.mkBlankFile(FileUtils.getContingencyTablesPath(), "ob-CT.csv");
+            obOutput = new PrintStream(obPath.toFile());
+        } catch (IOException e) {
+            throw new Error("failed to make CT files");
+        }
+
+        obTable.outputToFile(obOutput);
 
     }
 

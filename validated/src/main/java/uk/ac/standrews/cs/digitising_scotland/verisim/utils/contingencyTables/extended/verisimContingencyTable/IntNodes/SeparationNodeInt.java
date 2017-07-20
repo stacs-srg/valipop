@@ -87,6 +87,11 @@ public class SeparationNodeInt extends IntNode<SeparationOption, IntegerRange> {
     }
 
     @Override
+    public String getVariableName() {
+        return "Separated";
+    }
+
+    @Override
     public Node<IntegerRange, ?, Integer, ?> makeChildInstance(IntegerRange childOption, Integer initCount) {
         return new NewPartnerAgeNodeInt(childOption, this, initCount);
     }

@@ -11,6 +11,7 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.partner
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPersonExtended;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.ChildNotFoundException;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.*;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.CTRow;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.CTtree;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.enumerations.DiedOption;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.enumerations.SexOption;
@@ -203,5 +204,17 @@ public class DiedNodeDouble extends DoubleNode<DiedOption, IntegerRange> impleme
         s.add(getOption().toString());
         s.add(getCount().toString());
         return s;
+    }
+
+    public CTRow<Double> toCTRow() {
+        CTRow r = getParent().toCTRow();
+        r.setVariable(getVariableName(), getOption().toString());
+        r.setCount(getCount());
+        return r;
+    }
+
+    @Override
+    public String getVariableName() {
+        return "Died";
     }
 }

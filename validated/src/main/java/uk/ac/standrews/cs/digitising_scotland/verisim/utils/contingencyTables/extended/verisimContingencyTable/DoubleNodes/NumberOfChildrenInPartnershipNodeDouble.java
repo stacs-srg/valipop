@@ -65,6 +65,11 @@ public class NumberOfChildrenInPartnershipNodeDouble extends DoubleNode<IntegerR
     }
 
     @Override
+    public String getVariableName() {
+        return "NCIP";
+    }
+
+    @Override
     public void makeChildren() {
 
         if(getOption().getValue() == 0) {

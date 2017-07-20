@@ -45,6 +45,11 @@ public class NumberOfChildrenInPartnershipNodeInt extends IntNode<IntegerRange, 
     }
 
     @Override
+    public String getVariableName() {
+        return "NCIP";
+    }
+
+    @Override
     public Node<SeparationOption, ?, Integer, ?> makeChildInstance(SeparationOption childOption, Integer initCount) {
         return new SeparationNodeInt(childOption, this, initCount);
     }

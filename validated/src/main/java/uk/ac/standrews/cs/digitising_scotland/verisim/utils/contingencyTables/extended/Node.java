@@ -4,6 +4,7 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.Date;
 import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.recording.PopulationStatistics;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPersonExtended;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.ChildNotFoundException;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.CTRow;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.CTtree;
 
 
@@ -60,11 +61,27 @@ public abstract class Node<Op, cOp, count extends Number, childCount extends Num
 
     }
 
+
+
+    public ArrayList<String> getVariableNamesAL() {
+        ArrayList<String> s = getParent().getVariableNamesAL();
+        s.add(getClass().getName());
+        return s;
+    }
+
     public ArrayList<String> toStringAL() {
         ArrayList<String> s = getParent().toStringAL();
         s.add(getOption().toString());
         return s;
     }
+
+    public CTRow<count> toCTRow() {
+        CTRow r = getParent().toCTRow();
+        r.setVariable(getVariableName(), getOption().toString());
+        return r;
+    }
+
+    public abstract String getVariableName();
 
     public void setCount(count count) {
         this.count = count;

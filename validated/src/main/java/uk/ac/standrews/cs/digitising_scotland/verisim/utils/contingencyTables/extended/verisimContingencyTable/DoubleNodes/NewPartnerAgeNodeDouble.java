@@ -10,6 +10,7 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.ControlSelfNode;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.DoubleNode;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.Node;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.CTRow;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.integerRange.IntegerRange;
 
 import java.util.ArrayList;
@@ -69,6 +70,23 @@ public class NewPartnerAgeNodeDouble extends DoubleNode<IntegerRange, String> im
         }
         s.add(getCount().toString());
         return s;
+    }
+
+    public CTRow<Double> toCTRow() {
+        CTRow r = getParent().toCTRow();
+
+        if(getOption() == null) {
+            r.setVariable(getVariableName(), "na");
+        } else {
+            r.setVariable(getVariableName(), getOption().toString());
+        }
+
+        return r;
+    }
+
+    @Override
+    public String getVariableName() {
+        return "NPA";
     }
 
 }

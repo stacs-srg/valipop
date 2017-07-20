@@ -23,6 +23,7 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.dataD
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.LabeledValueSet;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.integerRange.IntegerRange;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -38,11 +39,17 @@ public class MotherChildAdapter implements ProportionalDistributionAdapter {
         Map<IntegerRange, LabeledValueSet<IntegerRange, Double>> transformedProportions = new HashMap<>();
 
         for(IntegerRange iR : targetProportions.keySet()) {
-            transformedProportions.put(iR,
-                    targetProportions.get(iR)
-                            .productOfLabelsAndValues()
-                            .reproportion()
-            );
+            LabeledValueSet<IntegerRange, Double> tp = targetProportions.get(iR);
+
+            if(tp.getSumOfValues() != 0) {
+                transformedProportions.put(iR,
+                        tp
+                        .productOfLabelsAndValues()
+                        .reproportion()
+                );
+            } else {
+                transformedProportions.put(iR, tp);
+            }
         }
 
         distribution = new SelfCorrectingProportionalDistribution(year, sourcePopulation, sourceOrganisation, transformedProportions);
@@ -72,6 +79,11 @@ public class MotherChildAdapter implements ProportionalDistributionAdapter {
     @Override
     public IntegerRange getLargestLabel() {
         return distribution.getLargestLabel();
+    }
+
+    @Override
+    public Collection<IntegerRange> getLabels() {
+        return distribution.getLabels();
     }
 
     @Override

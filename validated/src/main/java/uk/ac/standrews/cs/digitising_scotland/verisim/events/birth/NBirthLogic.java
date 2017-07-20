@@ -129,7 +129,7 @@ public class NBirthLogic implements EventLogic {
 
         int childrenMade = 0;
 
-        int numberOfMothers = requiredBirths.getDeterminedCount().productOfLabelsAndValues().getSumOfValues();
+//        int numberOfMothers = requiredBirths.getDeterminedCount().productOfLabelsAndValues().getSumOfValues();
 
         Map<Integer, ArrayList<IPersonExtended>> continuingPartneredFemalesByChildren = new HashMap<>();
 

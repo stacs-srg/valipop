@@ -50,6 +50,11 @@ public class NumberOfPreviousChildrenInAnyPartnershipNodeInt extends IntNode<Int
     }
 
     @Override
+    public String getVariableName() {
+        return "NPCIAP";
+    }
+
+    @Override
     public Node<ChildrenInYearOption, ?, Integer, ?> makeChildInstance(ChildrenInYearOption childOption, Integer initCount) {
         return new ChildrenInYearNodeInt(childOption, this, initCount);
     }

@@ -48,6 +48,10 @@ public class YOBNodeInt extends IntNode<YearDate, SexOption> {
         }
     }
 
+    @Override
+    public String getVariableName() {
+        return "YOB";
+    }
 
 
 }

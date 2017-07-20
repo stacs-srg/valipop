@@ -61,6 +61,11 @@ public class AgeNodeInt extends IntNode<IntegerRange, DiedOption> {
     }
 
     @Override
+    public String getVariableName() {
+        return "Age";
+    }
+
+    @Override
     public Node<DiedOption, ?, Integer, ?> makeChildInstance(DiedOption childOption, Integer initCount) {
         return new DiedNodeInt(childOption, this, initCount);
     }

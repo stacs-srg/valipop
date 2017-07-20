@@ -20,6 +20,8 @@ package uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.data
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateImplementations.YearDate;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.integerRange.IntegerRange;
 
+import java.util.Collection;
+
 
 /**
  * The DataDistribution interface provides the provision of the general information required of all input statistics in
@@ -53,4 +55,6 @@ public interface DataDistribution {
      * @return the largest label value in the distribution
      */
     IntegerRange getLargestLabel();
+
+    Collection<IntegerRange> getLabels();
 }

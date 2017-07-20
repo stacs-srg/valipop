@@ -83,22 +83,22 @@ public class CTtree extends Node<String, SourceType, Number, Number> implements 
 
         executeDelayedTasks();
 
-        CTtable table = new CTtable(this);
-        CTtable table2 = new CTtable(table);
-
-//        Collection<Node> leafs = getLeafNodes();
+//        CTtable table = new CTtable(this);
+//        CTtable table2 = new CTtable(table);
 //
-//        ArrayList<ArrayList<String>> table = new ArrayList<>();
+////        Collection<Node> leafs = getLeafNodes();
+////
+////        ArrayList<ArrayList<String>> table = new ArrayList<>();
+////
+////        for(Node leaf : leafs) {
+////            table.add(leaf.toStringAL());
+////        }
+////
+////        ArrayList<ArrayList<String>> table2 = (ArrayList<ArrayList<String>>) table.clone();
+////
+////        table2.remove(0);
 //
-//        for(Node leaf : leafs) {
-//            table.add(leaf.toStringAL());
-//        }
-//
-//        ArrayList<ArrayList<String>> table2 = (ArrayList<ArrayList<String>>) table.clone();
-//
-//        table2.remove(0);
-
-        System.out.println("TREE MADE");
+//        System.out.println("TREE MADE");
 
     }
 
@@ -115,6 +115,11 @@ public class CTtree extends Node<String, SourceType, Number, Number> implements 
 
         return childNodes;
 
+    }
+
+    @Override
+    public String getVariableName() {
+        return null;
     }
 
 
