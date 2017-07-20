@@ -76,6 +76,11 @@ public class ChildrenInYearNodeDouble extends DoubleNode<ChildrenInYearOption, I
     }
 
     @Override
+    public String getVariableName() {
+        return "CIY";
+    }
+
+    @Override
     public void advanceCount() {
         makeChildren();
     }

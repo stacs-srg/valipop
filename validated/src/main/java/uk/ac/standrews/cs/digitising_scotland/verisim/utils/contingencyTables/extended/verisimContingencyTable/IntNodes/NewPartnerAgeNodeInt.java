@@ -34,4 +34,9 @@ public class NewPartnerAgeNodeInt extends IntNode<IntegerRange, String> {
         s.add(getCount().toString());
         return s;
     }
+
+    @Override
+    public String getVariableName() {
+        return "NPA";
+    }
 }

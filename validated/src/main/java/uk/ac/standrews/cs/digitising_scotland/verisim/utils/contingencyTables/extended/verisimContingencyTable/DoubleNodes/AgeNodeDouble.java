@@ -88,6 +88,11 @@ public class AgeNodeDouble extends DoubleNode<IntegerRange, DiedOption> implemen
     }
 
     @Override
+    public String getVariableName() {
+        return "Age";
+    }
+
+    @Override
     public void runTask() {
         makeChildren();
     }

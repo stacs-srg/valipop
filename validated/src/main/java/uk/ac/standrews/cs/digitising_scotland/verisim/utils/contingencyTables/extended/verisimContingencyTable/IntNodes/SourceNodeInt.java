@@ -7,6 +7,8 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.Ch
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.IntNode;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.Node;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.RunnableNode;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.CTRow;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.CTRowInt;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.CTtree;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.enumerations.SourceType;
 
@@ -62,6 +64,23 @@ public class SourceNodeInt extends IntNode<SourceType, YearDate> {
     public ArrayList<String> toStringAL() {
         ArrayList<String> s = new ArrayList<>();
         s.add(getOption().toString());
+        return s;
+    }
+
+    public CTRow<Integer> toCTRow() {
+        CTRow r = new CTRowInt();
+        r.setVariable(getVariableName(), getOption().toString());
+        return r;
+    }
+
+    @Override
+    public String getVariableName() {
+        return "Source";
+    }
+
+    public ArrayList<String> getVariableNamesAL() {
+        ArrayList<String> s = new ArrayList<>();
+        s.add(getClass().getName());
         return s;
     }
 }

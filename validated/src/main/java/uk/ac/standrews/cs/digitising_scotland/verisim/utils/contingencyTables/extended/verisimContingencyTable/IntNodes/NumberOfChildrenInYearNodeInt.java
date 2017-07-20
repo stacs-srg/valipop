@@ -48,6 +48,11 @@ public class NumberOfChildrenInYearNodeInt extends IntNode<Integer, IntegerRange
     }
 
     @Override
+    public String getVariableName() {
+        return "NCIY";
+    }
+
+    @Override
     public Node<IntegerRange, ?, Integer, ?> makeChildInstance(IntegerRange childOption, Integer initCount) {
         return new NumberOfChildrenInPartnershipNodeInt(childOption, this, initCount);
     }

@@ -62,6 +62,11 @@ public class NumberOfPreviousChildrenInAnyPartnershipNodeDouble extends DoubleNo
     }
 
     @Override
+    public String getVariableName() {
+        return "NPCIAP";
+    }
+
+    @Override
     public void runTask() {
         makeChildren();
     }

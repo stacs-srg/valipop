@@ -65,6 +65,11 @@ public class SeparationNodeDouble extends DoubleNode<SeparationOption, IntegerRa
     }
 
     @Override
+    public String getVariableName() {
+        return "Separated";
+    }
+
+    @Override
     public void advanceCount() {
 
         DiedNodeDouble diedN = (DiedNodeDouble) getAncestor(new DiedNodeDouble());

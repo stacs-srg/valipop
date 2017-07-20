@@ -42,6 +42,11 @@ public class ChildrenInYearNodeInt extends IntNode<ChildrenInYearOption, Integer
     }
 
     @Override
+    public String getVariableName() {
+        return "CIY";
+    }
+
+    @Override
     public Node<Integer, ?, Integer, ?> makeChildInstance(Integer childOption, Integer initCount) {
         return new NumberOfChildrenInYearNodeInt(childOption, this, initCount);
     }

@@ -40,6 +40,11 @@ public class SexNodeInt extends IntNode<SexOption, IntegerRange> {
         }
     }
 
+    @Override
+    public String getVariableName() {
+        return "Sex";
+    }
+
     private Node<IntegerRange, ?, ?, ?> resolveChildNodeForAge(int age) throws ChildNotFoundException {
 
         for(Node<IntegerRange, ?, ?, ?> aN : getChildren()) {

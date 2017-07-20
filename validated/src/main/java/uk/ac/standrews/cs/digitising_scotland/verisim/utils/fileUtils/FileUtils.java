@@ -48,6 +48,7 @@ public class FileUtils {
     private static Path resultsSummaryPath;
     private static Path detailedResultsPath;
     private static Path tracePath;
+    private static Path contingencyTablesPath;
 
     private static void checkLogFile() {
         if(log == null) {
@@ -89,6 +90,10 @@ public class FileUtils {
         mkDirs(run, "dump");
         // make population dir
         mkDirs(run, "population");
+
+        Path tables = Paths.get(run.toString(), "tables");
+        mkDirs(tables);
+        contingencyTablesPath = tables;
 
         Path log = Paths.get(run.toString(), "log");
         mkDirs(log);
@@ -173,7 +178,7 @@ public class FileUtils {
         }
     }
 
-    private static Path mkBlankFile(Path parent, String fileName) throws IOException {
+    public static Path mkBlankFile(Path parent, String fileName) throws IOException {
 
         Path blankFilePath = Paths.get(parent.toString(), fileName);
 
@@ -244,6 +249,10 @@ public class FileUtils {
 
     public static Path getTracePath() {
         return tracePath;
+    }
+
+    public static Path getContingencyTablesPath() {
+        return contingencyTablesPath;
     }
 
     public static Path getResultsSummaryPath() {

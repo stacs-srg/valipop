@@ -68,6 +68,11 @@ public class NumberOfChildrenInYearNodeDouble extends DoubleNode<Integer, Intege
     }
 
     @Override
+    public String getVariableName() {
+        return "NCIY";
+    }
+
+    @Override
     public void advanceCount() {
 
         // Should we be restricting this so much?

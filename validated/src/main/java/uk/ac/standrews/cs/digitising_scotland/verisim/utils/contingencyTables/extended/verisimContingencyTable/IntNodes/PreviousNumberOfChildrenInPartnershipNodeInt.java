@@ -45,6 +45,11 @@ public class PreviousNumberOfChildrenInPartnershipNodeInt extends IntNode<Intege
     }
 
     @Override
+    public String getVariableName() {
+        return "PNCIP";
+    }
+
+    @Override
     public Node<IntegerRange, ?, Integer, ?> makeChildInstance(IntegerRange childOption, Integer initCount) {
         return new NumberOfPreviousChildrenInAnyPartnershipNodeInt(childOption, this, initCount);
     }

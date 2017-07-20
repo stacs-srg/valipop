@@ -46,6 +46,11 @@ public class YOBNodeDouble extends DoubleNode<YearDate, SexOption> implements Co
     }
 
     @Override
+    public String getVariableName() {
+        return "YOB";
+    }
+
+    @Override
     public Node<SexOption, ?, Double, ?> makeChildInstance(SexOption childOption, Double initCount) {
         return new SexNodeDouble(childOption, this, initCount);
     }

@@ -29,6 +29,7 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.integer
 
 import java.io.PrintStream;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
@@ -123,6 +124,11 @@ public class SelfCorrectingTwoDimensionDataDistribution implements DataDistribut
 
     }
 
+    @Override
+    public Collection<IntegerRange> getLabels() {
+        return getRowLabels();
+    }
+
     private IntegerRange resolveRowValue(Integer rowValue) {
 
         for (IntegerRange iR : data.keySet()) {
@@ -199,6 +205,7 @@ public class SelfCorrectingTwoDimensionDataDistribution implements DataDistribut
         resultsOutput.println();
 
     }
+
 
 
     public Set<IntegerRange> getRowLabels() {
