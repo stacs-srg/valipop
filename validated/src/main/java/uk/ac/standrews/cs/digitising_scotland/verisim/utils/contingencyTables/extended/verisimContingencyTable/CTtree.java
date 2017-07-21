@@ -83,8 +83,8 @@ public class CTtree extends Node<String, SourceType, Number, Number> implements 
 
         executeDelayedTasks();
 
-//        CTtable table = new CTtable(this);
-//        CTtable table2 = new CTtable(table);
+//        CTtableOB table = new CTtableOB(this);
+//        CTtableOB table2 = new CTtableOB(table);
 //
 ////        Collection<Node> leafs = getLeafNodes();
 ////

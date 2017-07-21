@@ -34,7 +34,7 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.utils.CustomLog4j;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.ProcessArgs;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.ProgramTimer;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.ContingencyTableGenerator;
-import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.CTtable;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.CTtableOB;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.CTtableFactory;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.CTtree;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.fileUtils.FileUtils;
@@ -139,9 +139,15 @@ public class OBDModel {
 
         CTtree fullTree = new CTtree(population, sim.desired, config.getT0(), config.getTE());
 
-        CTtable fullTable = new CTtable(fullTree);
+        System.out.println("H1");
 
-        CTtable obTable = CTtableFactory.produceOrderedBirthContingencyTable(fullTable);
+        CTtableOB obTable = new CTtableOB(fullTree, sim.desired);
+
+        System.out.println("H2");
+
+//        CTtableOB obTable = CTtableFactory.produceOrderedBirthContingencyTable(fullTable, sim.desired);
+
+        System.out.println("H3");
 
         PrintStream obOutput;
         try {
@@ -151,8 +157,11 @@ public class OBDModel {
             throw new Error("failed to make CT files");
         }
 
+        System.out.println("H4");
+
         obTable.outputToFile(obOutput);
 
+        System.out.println("H5");
     }
 
 

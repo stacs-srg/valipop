@@ -1,13 +1,15 @@
 package uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable;
 
+import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.recording.PopulationStatistics;
+
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class CTtableFactory {
 
-    public static CTtable produceOrderedBirthContingencyTable(CTtable fullTable) {
+    public static CTtableOB produceOrderedBirthContingencyTable(CTtableOB fullTable, PopulationStatistics inputStats) {
 
-        CTtable table = new CTtable(fullTable);
+        CTtableOB table = new CTtableOB(fullTable);
 
         table.addDateColumn();
 
@@ -21,6 +23,8 @@ public class CTtableFactory {
         table.deleteVariable("NCIP");
         table.deleteVariable("Separated");
         table.deleteVariable("NPA");
+
+        table.discritiseVariable("Age", "OB", inputStats);
 
         table.collectLikeRows();
 

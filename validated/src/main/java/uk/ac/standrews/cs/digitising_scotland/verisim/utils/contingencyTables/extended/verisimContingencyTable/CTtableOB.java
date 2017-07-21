@@ -3,31 +3,54 @@ package uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.e
 import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.recording.PopulationStatistics;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.Node;
 
-import java.io.FileNotFoundException;
 import java.io.PrintStream;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Iterator;
 import java.util.Objects;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class CTtable {
+public class CTtableOB {
 
     private ArrayList<CTRow> table = new ArrayList<>();
 
-    public CTtable(CTtable table) {
+    public CTtableOB(CTtableOB table) {
         this.table = (ArrayList<CTRow>) table.getTable().clone();
     }
 
-    public CTtable(CTtree tree) {
+    public CTtableOB(CTtree tree, PopulationStatistics inputStats) {
 
-        Collection<Node> leafs = tree.getLeafNodes();
+        Iterator<Node> leafs = tree.getLeafNodes().iterator();
 
-        for(Node leaf : leafs) {
-            table.add(leaf.toCTRow());
+        while(leafs.hasNext()) {
+            CTRow leaf = leafs.next().toCTRow();
+
+            leaf.addDateVariable();
+
+            try {
+                if(Objects.equals(leaf.getVariable("Sex"), "MALE")) {
+                    leaf.deleteVariable("Sex");
+                }
+            } catch (VariableNotFoundExcepction variableNotFoundExcepction) {
+                variableNotFoundExcepction.printStackTrace();
+            }
+            leaf.deleteVariable("Sex");
+
+            leaf.deleteVariable("YOB");
+            leaf.deleteVariable("Died");
+            leaf.deleteVariable("PNCIP");
+            leaf.deleteVariable("NCIY");
+            leaf.deleteVariable("NCIP");
+            leaf.deleteVariable("Separated");
+            leaf.deleteVariable("NPA");
+
+            leaf.discritiseVariable("Age", "OB", inputStats);
+
+            if(!tryCombineIntoExistingRows(leaf)) {
+                // could not combine with existing row - so add new row to table
+                table.add(leaf);
+            }
         }
     }
 
@@ -67,6 +90,17 @@ public class CTtable {
 
         }
 
+    }
+
+    public boolean tryCombineIntoExistingRows(CTRow newRow) {
+        for(int i = 0; i < table.size(); i++) {
+            CTRow existingRow = table.get(i);
+            if(existingRow.tryAbsorbRow(newRow)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public void collectLikeRows() {

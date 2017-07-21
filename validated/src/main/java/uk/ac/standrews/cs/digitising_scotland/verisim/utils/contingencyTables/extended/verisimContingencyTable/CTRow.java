@@ -69,6 +69,11 @@ public abstract class CTRow<count extends Number> {
 
         try {
             Integer yob = new Integer(getVariable("YOB").getValue());
+
+            if(Objects.equals(getVariable("Age").getValue(), "")) {
+                System.out.println("-A-");
+            }
+
             Integer age = new Integer(getVariable("Age").getValue());
 
             Integer date = yob + age;
@@ -113,7 +118,7 @@ public abstract class CTRow<count extends Number> {
             Collection<IntegerRange> ranges = new ArrayList<>();
 
             if(Objects.equals(forInput, "OB")) {
-                ranges = inputStatistics.getOrderedBirthRates(date).getColumnLabels();
+                ranges = inputStatistics.getOrderedBirthRates(date).getRowLabels();
             } else if(Objects.equals(forInput, "MB")) {
                 ranges = inputStatistics.getMultipleBirthRates(date).getLabels();
             } else if(Objects.equals(forInput, "PART")) {

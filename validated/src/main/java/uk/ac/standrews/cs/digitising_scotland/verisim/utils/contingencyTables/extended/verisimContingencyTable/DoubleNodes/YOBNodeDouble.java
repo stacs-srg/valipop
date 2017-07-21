@@ -7,6 +7,7 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.Ch
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.ControlChildrenNode;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.DoubleNode;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.Node;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.CTRow;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.enumerations.SexOption;
 
 /**
@@ -48,6 +49,12 @@ public class YOBNodeDouble extends DoubleNode<YearDate, SexOption> implements Co
     @Override
     public String getVariableName() {
         return "YOB";
+    }
+
+    public CTRow<Double> toCTRow() {
+        CTRow r = getParent().toCTRow();
+        r.setVariable(getVariableName(), Integer.toString(getOption().getYear()));
+        return r;
     }
 
     @Override
