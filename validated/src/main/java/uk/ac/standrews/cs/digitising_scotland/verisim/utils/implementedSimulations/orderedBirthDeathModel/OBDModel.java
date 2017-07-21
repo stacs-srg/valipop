@@ -33,11 +33,9 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.populat
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.CustomLog4j;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.ProcessArgs;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.ProgramTimer;
-import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.ContingencyTableGenerator;
-import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.CTtableOB;
-import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.CTtableFactory;
-import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.CTtree;
-import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.NoTableRowsException;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.TableStructure.TableInstances.*;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.TreeStructure.CTtree;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.TableStructure.NoTableRowsException;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.fileUtils.FileUtils;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.fileUtils.InvalidInputFileException;
 
@@ -135,24 +133,45 @@ public class OBDModel {
 
         resultsOutput.close();
 
-        ContingencyTableGenerator table = new ContingencyTableGenerator(population, sim.desired, config.getT0(), config.getTE());
-        table.outputTable(config, table.getFullTable());
-
         CTtree fullTree = new CTtree(population, sim.desired, config.getT0(), config.getTE());
 
         CTtableOB obTable = new CTtableOB(fullTree, sim.desired);
+        CTtableMB mbTable = new CTtableMB(fullTree, sim.desired);
+        CTtablePart partTable = new CTtablePart(fullTree, sim.desired);
+        CTtableSep sepTable = new CTtableSep(fullTree, sim.desired);
+        CTtableDeath deathTable = new CTtableDeath(fullTree);
 
         PrintStream obOutput;
+        PrintStream mbOutput;
+        PrintStream partOutput;
+        PrintStream sepOutput;
+        PrintStream deathOutput;
         try {
             Path obPath = FileUtils.mkBlankFile(FileUtils.getContingencyTablesPath(), "ob-CT.csv");
             obOutput = new PrintStream(obPath.toFile());
+
+            Path mbPath = FileUtils.mkBlankFile(FileUtils.getContingencyTablesPath(), "mb-CT.csv");
+            mbOutput = new PrintStream(mbPath.toFile());
+
+            Path partPath = FileUtils.mkBlankFile(FileUtils.getContingencyTablesPath(), "part-CT.csv");
+            partOutput = new PrintStream(partPath.toFile());
+
+            Path sepPath = FileUtils.mkBlankFile(FileUtils.getContingencyTablesPath(), "sep-CT.csv");
+            sepOutput = new PrintStream(sepPath.toFile());
+
+            Path deathPath = FileUtils.mkBlankFile(FileUtils.getContingencyTablesPath(), "death-CT.csv");
+            deathOutput = new PrintStream(deathPath.toFile());
+
         } catch (IOException e) {
             throw new Error("failed to make CT files");
         }
 
-
         try {
             obTable.outputToFile(obOutput);
+            mbTable.outputToFile(mbOutput);
+            partTable.outputToFile(partOutput);
+            sepTable.outputToFile(sepOutput);
+            deathTable.outputToFile(deathOutput);
         } catch (NoTableRowsException e) {
             throw new Error(e);
         }
