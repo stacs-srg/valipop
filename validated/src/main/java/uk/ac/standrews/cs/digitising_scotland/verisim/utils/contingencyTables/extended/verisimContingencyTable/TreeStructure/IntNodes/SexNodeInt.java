@@ -1,0 +1,58 @@
+package uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.TreeStructure.IntNodes;
+
+import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.Date;
+import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPersonExtended;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.TreeStructure.ChildNotFoundException;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.TreeStructure.Interfaces.IntNode;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.TreeStructure.Interfaces.Node;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.TreeStructure.enumerations.SexOption;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.integerRange.IntegerRange;
+
+/**
+ * @author Tom Dalton (tsd4@st-andrews.ac.uk)
+ */
+public class SexNodeInt extends IntNode<SexOption, IntegerRange> {
+
+    public SexNodeInt(SexOption option, YOBNodeInt parentNode, int initCount) {
+        super(option, parentNode, initCount);
+    }
+
+    public SexNodeInt() {
+        super();
+    }
+
+    @Override
+    public Node<IntegerRange, ?, Integer, ?> makeChildInstance(IntegerRange childOption, Integer initCount) {
+        return new AgeNodeInt(childOption, this, initCount);
+    }
+
+
+    @Override
+    public void processPerson(IPersonExtended person, Date currentDate) {
+        incCountByOne();
+
+        int age = person.ageOnDate(currentDate);
+        try {
+            resolveChildNodeForAge(age).processPerson(person, currentDate);
+        } catch (ChildNotFoundException e) {
+            addChild(new IntegerRange(age)).processPerson(person, currentDate);
+
+        }
+    }
+
+    @Override
+    public String getVariableName() {
+        return "Sex";
+    }
+
+    private Node<IntegerRange, ?, ?, ?> resolveChildNodeForAge(int age) throws ChildNotFoundException {
+
+        for(Node<IntegerRange, ?, ?, ?> aN : getChildren()) {
+            if(aN.getOption().contains(age)) {
+                return aN;
+            }
+        }
+
+        throw new ChildNotFoundException();
+    }
+}
