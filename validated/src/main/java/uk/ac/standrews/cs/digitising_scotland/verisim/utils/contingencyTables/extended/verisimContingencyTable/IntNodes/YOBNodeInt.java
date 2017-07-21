@@ -6,6 +6,7 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.ChildNotFoundException;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.IntNode;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.Node;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.CTRow;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.DoubleNodes.SourceNodeDouble;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.enumerations.SexOption;
 
@@ -51,6 +52,12 @@ public class YOBNodeInt extends IntNode<YearDate, SexOption> {
     @Override
     public String getVariableName() {
         return "YOB";
+    }
+
+    public CTRow<Integer> toCTRow() {
+        CTRow r = getParent().toCTRow();
+        r.setVariable(getVariableName(), Integer.toString(getOption().getYear()));
+        return r;
     }
 
 
