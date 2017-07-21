@@ -33,14 +33,18 @@ public abstract class CTRow<count extends Number> {
             new CTCell("Died", ""),
             new CTCell("PNCIP", "0"),
             new CTCell("NPCIAP", "0"),
-            new CTCell("CIY", "No"),
+            new CTCell("CIY", "NO"),
             new CTCell("NCIY", "0"),
             new CTCell("NCIP", "0"),
             new CTCell("Separated", "NA"),
             new CTCell("NPA", "na")
     };
 
-    Collection<CTCell> cells = new ArrayList<>(Arrays.asList(c));
+    private Collection<CTCell> cells = new ArrayList<>(Arrays.asList(c));
+
+    public Collection<CTCell> getCells() {
+        return cells;
+    }
 
     public CTCell getVariable(String variable) throws VariableNotFoundExcepction {
         for(CTCell cell : cells) {
@@ -65,15 +69,10 @@ public abstract class CTRow<count extends Number> {
         cells.add(new CTCell(variable, value));
     }
 
-    CTCell addDateVariable() {
+    CTCell addDateVariable() throws VariableNotFoundExcepction {
 
         try {
             Integer yob = new Integer(getVariable("YOB").getValue());
-
-            if(Objects.equals(getVariable("Age").getValue(), "")) {
-                System.out.println("-A-");
-            }
-
             Integer age = new Integer(getVariable("Age").getValue());
 
             Integer date = yob + age;
@@ -84,6 +83,8 @@ public abstract class CTRow<count extends Number> {
 
         } catch (VariableNotFoundExcepction variableNotFoundExcepction) {
             throw new Error(variableNotFoundExcepction.getMessage(), variableNotFoundExcepction);
+        } catch (NumberFormatException e) {
+            throw new VariableNotFoundExcepction("Unfilled Row");
         }
     }
 
@@ -105,8 +106,13 @@ public abstract class CTRow<count extends Number> {
             try {
                 date = new YearDate(Integer.parseInt(getVariable("Date").getValue()));
             } catch (VariableNotFoundExcepction variableNotFoundExcepction) {
-                CTCell d = addDateVariable();
-                date = new YearDate(Integer.parseInt(d.getValue()));
+                try {
+                    CTCell d = addDateVariable();
+                    date = new YearDate(Integer.parseInt(d.getValue()));
+                } catch (VariableNotFoundExcepction variableNotFoundExcepction1) {
+                    throw new Error();
+                }
+
             }
 
             try {
@@ -181,4 +187,14 @@ public abstract class CTRow<count extends Number> {
 
     }
 
+    public String hash() {
+
+        String s = "";
+
+        for(CTCell cell : cells) {
+            s += cell.getVariable() + cell.getValue();
+        }
+
+        return s;
+    }
 }
