@@ -115,6 +115,10 @@ public class PopulationCounts {
         return currentPartnerships;
     }
 
+    public double getAllTimeSexRatio() {
+        return createdMales / (double) createdFemales;
+    }
+
     public double getLivingSexRatio() {
         return livingMales / (double) livingFemales;
     }

@@ -69,15 +69,10 @@ public class NBirthLogic implements EventLogic {
 
             Set<IntegerRange> inputOrders = desiredPopulationStatistics.getOrderedBirthRates(currentDate).getColumnLabels();
 
-
-
             for(IntegerRange order : inputOrders) {
-//            for(Integer order : orders) {
 
                 Collection<IPersonExtended> people = femalesLiving.getByDatePeriodAndBirthOrder(divDate, consideredTimePeriod, order);
-                int number = people.size();
 
-//                BirthStatsKey key = new BirthStatsKey(age, order, number, consideredTimePeriod, currentDate);
                 BirthStatsKey key = new BirthStatsKey(age, order.getValue(), cohortSize, consideredTimePeriod, currentDate);
                 SingleDeterminedCount determinedCount = (SingleDeterminedCount) desiredPopulationStatistics.getDeterminedCount(key);
 
@@ -99,6 +94,7 @@ public class NBirthLogic implements EventLogic {
                 desiredPopulationStatistics.returnAchievedCount(determinedCount);
 
             }
+
             // Partner females of age who don't have partners
             PartneringLogic.handle(needingPartners, desiredPopulationStatistics, currentDate, consideredTimePeriod, population);
 
@@ -129,8 +125,6 @@ public class NBirthLogic implements EventLogic {
 
         int childrenMade = 0;
 
-//        int numberOfMothers = requiredBirths.getDeterminedCount().productOfLabelsAndValues().getSumOfValues();
-
         Map<Integer, ArrayList<IPersonExtended>> continuingPartneredFemalesByChildren = new HashMap<>();
 
         LabeledValueSet<IntegerRange, Integer> motherCountsByMaternities =
@@ -138,29 +132,6 @@ public class NBirthLogic implements EventLogic {
 
         LabeledValueSet<IntegerRange, Integer> remainingMothersToFind = requiredBirths.getDeterminedCount().clone();
 
-//        for(IPersonExtended f : femalesAL) {
-//
-//            if(childrenMade >= numberOfMothers) {
-//                break;
-//            }
-//
-//            if(eligible(f, config, currentDate)) {
-//                f.giveChildren(1, currentDate, consideredTimePeriod, population);
-//                childrenMade ++;
-//                needPartners.add(f);
-//                try {
-//                    continuingPartnedFemalesByChildren.get(1).add(f);
-//                } catch (NullPointerException e) {
-//                    continuingPartnedFemalesByChildren.put(1, new ArrayList<>(Collections.singleton(f)));
-//                }
-//            }
-//
-//        }
-
-//        motherCountsByMaternities.update(new IntegerRange(1), childrenMade);
-
-
-        // break
 
         IntegerRange highestBirthOption;
 
@@ -180,7 +151,6 @@ public class NBirthLogic implements EventLogic {
 
             if(eligible(female, desiredPopulationStatistics, currentDate)) {
 
-//                female.getLastChild().getParentsPartnership_ex().setFather(BirthLogic.getRandomFather(population, population.getLivingPeople().resolveDateToCorrectDivisionDate(female.getBirthDate_ex()), consideredTimePeriod));
                 childrenMade += highestBirthOption.getValue();
 
                 if(female.needsNewPartner(currentDate)) {

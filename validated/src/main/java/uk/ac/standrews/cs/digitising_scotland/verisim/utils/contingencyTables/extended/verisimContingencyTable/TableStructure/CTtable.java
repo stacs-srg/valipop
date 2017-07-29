@@ -23,7 +23,7 @@ public abstract class CTtable {
 
     }
 
-    private String getVarNames(String sep) throws NoTableRowsException {
+    protected String getVarNames(String sep) throws NoTableRowsException {
 
         ArrayList<String> keys = new ArrayList<>(table.keySet());
         if(keys.size() == 0) {

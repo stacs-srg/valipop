@@ -2,6 +2,7 @@ package uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.e
 
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.Date;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPersonExtended;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.TableStructure.CTRow;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.TreeStructure.Interfaces.IntNode;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.TreeStructure.Interfaces.Node;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.integerRange.IntegerRange;
@@ -33,6 +34,20 @@ public class NewPartnerAgeNodeInt extends IntNode<IntegerRange, String> {
         s.add(getOption().toString());
         s.add(getCount().toString());
         return s;
+    }
+
+    public CTRow<Integer> toCTRow() {
+        CTRow r = getParent().toCTRow();
+
+        if(getOption() == null) {
+            r.setVariable(getVariableName(), "na");
+        } else {
+            r.setVariable(getVariableName(), getOption().toString());
+        }
+
+        r.setCount(getCount());
+
+        return r;
     }
 
     @Override

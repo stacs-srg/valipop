@@ -11,6 +11,8 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.ex
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.TreeStructure.Interfaces.DoubleNode;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.TreeStructure.Interfaces.Node;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.TableStructure.CTRow;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.TreeStructure.Interfaces.RunnableNode;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.TreeStructure.enumerations.SexOption;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.integerRange.IntegerRange;
 
 import java.util.ArrayList;
@@ -20,8 +22,13 @@ import java.util.ArrayList;
  */
 public class NewPartnerAgeNodeDouble extends DoubleNode<IntegerRange, String> implements ControlSelfNode {
 
-    public NewPartnerAgeNodeDouble(IntegerRange option, SeparationNodeDouble parentNode, Double initCount) {
+    public NewPartnerAgeNodeDouble(IntegerRange option, SeparationNodeDouble parentNode, Double initCount, boolean init) {
         super(option, parentNode, initCount);
+
+        if(!init) {
+            calcCount();
+        }
+
     }
 
     @Override
@@ -56,7 +63,11 @@ public class NewPartnerAgeNodeDouble extends DoubleNode<IntegerRange, String> im
             MultipleDeterminedCount mDC = (MultipleDeterminedCount) getInputStats()
                     .getDeterminedCount(new PartneringStatsKey(age, numberOfFemales, timePeriod, currentDate));
 
-            setCount(mDC.getRawUncorrectedCount().get(getOption()));
+            if(getOption().getValue() == null) {
+                setCount(getParent().getCount());
+            } else {
+                setCount(mDC.getRawUncorrectedCount().get(getOption()));
+            }
         }
 
     }
@@ -80,6 +91,12 @@ public class NewPartnerAgeNodeDouble extends DoubleNode<IntegerRange, String> im
         } else {
             r.setVariable(getVariableName(), getOption().toString());
         }
+
+//        if(((SexNodeDouble) getAncestor(new SexNodeDouble())).getOption() == SexOption.FEMALE) {
+//            System.out.print("");
+//        }
+
+        r.setCount(getCount());
 
         return r;
     }

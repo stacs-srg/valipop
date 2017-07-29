@@ -6,11 +6,11 @@ produce_dat_files = true
 death_time_step = 1y
 birth_time_step = 1y
 simulation_time_step = 1y
-input_width = 1000y
+input_width = 10y
 tS = 1/1/1599
 t0 = 1/1/1855
 tE = 1/1/2016
-t0_pop_size = 50000
+t0_pop_size = 25000
 # this is defined by the birth rate and death rates for the years data to be used in the set up period
 set_up_br = 0.0133
 set_up_dr = 0.0122

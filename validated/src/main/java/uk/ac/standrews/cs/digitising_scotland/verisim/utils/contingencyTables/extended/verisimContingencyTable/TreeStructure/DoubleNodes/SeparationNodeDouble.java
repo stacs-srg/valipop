@@ -32,13 +32,14 @@ public class SeparationNodeDouble extends DoubleNode<SeparationOption, IntegerRa
 
         if(!init) {
             calcCount();
+            makeChildren();
         }
 
     }
 
     @Override
     public Node<IntegerRange, ?, Double, ?> makeChildInstance(IntegerRange childOption, Double initCount) {
-        return new NewPartnerAgeNodeDouble(childOption, this, initCount);
+        return new NewPartnerAgeNodeDouble(childOption, this, initCount, false);
     }
 
     @Override
@@ -58,7 +59,14 @@ public class SeparationNodeDouble extends DoubleNode<SeparationOption, IntegerRa
         try {
             getChild(newPartnerAge).processPerson(person, currentDate);
         } catch (ChildNotFoundException e) {
-            addChild(newPartnerAge).processPerson(person, currentDate);
+            addChild(new NewPartnerAgeNodeDouble(newPartnerAge, this, 0.0, true)).processPerson(person, currentDate);
+
+//            try {
+//                addChild(newPartnerAge).processPerson(person, currentDate);
+//            } catch (NullPointerException ec) {
+//                System.out.print("");
+//                addChild(newPartnerAge).processPerson(person, currentDate);
+//            }
         }
 
 
@@ -173,9 +181,6 @@ public class SeparationNodeDouble extends DoubleNode<SeparationOption, IntegerRa
 
         advanceCount();
 
-        // Make separation's children nodes
-
-        makeChildren();
 
     }
 
