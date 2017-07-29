@@ -104,22 +104,30 @@ public abstract class CTRow<count extends Number> {
             Date date;
             int age;
 
+//            try {
+//                date = new YearDate(Integer.parseInt(getVariable("Date").getValue()));
+//            } catch (VariableNotFoundExcepction variableNotFoundExcepction) {
+//                try {
+//                    CTCell d = addDateVariable();
+//                    date = new YearDate(Integer.parseInt(d.getValue()));
+//                } catch (VariableNotFoundExcepction variableNotFoundExcepction1) {
+//                    throw new Error();
+//                }
+//
+//            }
+
             try {
-                date = new YearDate(Integer.parseInt(getVariable("Date").getValue()));
+                Integer yob = new Integer(getVariable("YOB").getValue());
+                age = new Integer(getVariable("Age").getValue());
+                date = new YearDate(yob + age);
             } catch (VariableNotFoundExcepction variableNotFoundExcepction) {
                 try {
-                    CTCell d = addDateVariable();
-                    date = new YearDate(Integer.parseInt(d.getValue()));
+                    age = new Integer(getVariable("Age").getValue());
+                    date = new YearDate(Integer.parseInt(getVariable("Date").getValue()));
                 } catch (VariableNotFoundExcepction variableNotFoundExcepction1) {
                     throw new Error();
                 }
 
-            }
-
-            try {
-                age = new Integer(getVariable("Age").getValue());
-            } catch (VariableNotFoundExcepction variableNotFoundExcepction) {
-                throw new Error();
             }
 
             Collection<IntegerRange> ranges = new ArrayList<>();
@@ -147,30 +155,30 @@ public abstract class CTRow<count extends Number> {
 
     }
 
-    public boolean tryAbsorbRow(CTRow<count> row) {
-
-        boolean identicalRows = true;
-
-        for(CTCell cell : cells) {
-            String givenRowValue = null;
-            try {
-                givenRowValue = row.getVariable(cell.getVariable()).getValue();
-            } catch (VariableNotFoundExcepction variableNotFoundExcepction) {
-                return false;
-            }
-            String thisRowValue = cell.getValue();
-
-            if(!Objects.equals(givenRowValue, thisRowValue)) {
-                identicalRows = false;
-            }
-        }
-
-        if(identicalRows) {
-            setCount(combineCount(getCount(), row.count));
-        }
-
-        return identicalRows;
-    }
+//    public boolean tryAbsorbRow(CTRow<count> row) {
+//
+//        boolean identicalRows = true;
+//
+//        for(CTCell cell : cells) {
+//            String givenRowValue = null;
+//            try {
+//                givenRowValue = row.getVariable(cell.getVariable()).getValue();
+//            } catch (VariableNotFoundExcepction variableNotFoundExcepction) {
+//                return false;
+//            }
+//            String thisRowValue = cell.getValue();
+//
+//            if(!Objects.equals(givenRowValue, thisRowValue)) {
+//                identicalRows = false;
+//            }
+//        }
+//
+//        if(identicalRows) {
+//            setCount(combineCount(getCount(), row.count));
+//        }
+//
+//        return identicalRows;
+//    }
 
     public abstract count combineCount(count a, count b);
 
@@ -198,4 +206,8 @@ public abstract class CTRow<count extends Number> {
 
         return s;
     }
+
+    public abstract boolean countEqualToZero();
+
+    public abstract boolean countGreaterThan(Double v);
 }

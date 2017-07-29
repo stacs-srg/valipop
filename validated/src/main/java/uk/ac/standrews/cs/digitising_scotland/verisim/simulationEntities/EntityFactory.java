@@ -102,7 +102,8 @@ public class EntityFactory {
 
         // TODO move over to a specified m to f ratio
 
-        double sexBalance = pc.getLivingSexRatio();
+//        double sexBalance = pc.getLivingSexRatio();
+        double sexBalance = pc.getAllTimeSexRatio();
 
         if(sexBalance <= 1) {
 

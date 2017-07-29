@@ -4,6 +4,11 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.recor
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.TableStructure.CTRow;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.TableStructure.CTtable;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.TreeStructure.CTtree;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.TreeStructure.DoubleNodes.DiedNodeDouble;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.TreeStructure.DoubleNodes.NewPartnerAgeNodeDouble;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.TreeStructure.DoubleNodes.SexNodeDouble;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.TreeStructure.IntNodes.DiedNodeInt;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.TreeStructure.IntNodes.NewPartnerAgeNodeInt;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.TreeStructure.Interfaces.Node;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.TreeStructure.VariableNotFoundExcepction;
 
@@ -23,29 +28,33 @@ public class CTtableDeath extends CTtable {
             Node n = leafs.next();
             CTRow leaf = n.toCTRow();
 
-            try {
-                leaf.addDateVariable();
+            if(leaf.getCount() != null) {
 
-                leaf.deleteVariable("YOB");
-                leaf.deleteVariable("PNCIP");
-                leaf.deleteVariable("NCIY");
-                leaf.deleteVariable("CIY");
-                leaf.deleteVariable("NPCIAP");
-                leaf.deleteVariable("NCIP");
-                leaf.deleteVariable("Separated");
-                leaf.deleteVariable("NPA");
+                try {
+                    leaf.addDateVariable();
 
-                CTRow h = table.get(leaf.hash());
+                    leaf.deleteVariable("YOB");
+                    leaf.deleteVariable("PNCIP");
+                    leaf.deleteVariable("NCIY");
+                    leaf.deleteVariable("CIY");
+                    leaf.deleteVariable("NPCIAP");
+                    leaf.deleteVariable("NCIP");
+                    leaf.deleteVariable("Separated");
+                    leaf.deleteVariable("NPA");
 
-                if(h == null) {
-                    table.put(leaf.hash(), leaf);
-                } else {
-                    h.setCount(h.combineCount(h.getCount(), leaf.getCount()));
+                    CTRow h = table.get(leaf.hash());
+
+                    if (h == null) {
+                        table.put(leaf.hash(), leaf);
+                    } else {
+                        h.setCount(h.combineCount(h.getCount(), leaf.getCount()));
+                    }
+
+
+                } catch (VariableNotFoundExcepction variableNotFoundExcepction) {
+                    // Unfilled row - thus pass
                 }
 
-
-            } catch (VariableNotFoundExcepction variableNotFoundExcepction) {
-                // Unfilled row - thus pass
             }
 
         }

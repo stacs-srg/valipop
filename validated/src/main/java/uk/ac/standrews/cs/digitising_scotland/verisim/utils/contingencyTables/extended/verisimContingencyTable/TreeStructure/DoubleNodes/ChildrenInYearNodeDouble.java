@@ -83,8 +83,11 @@ public class ChildrenInYearNodeDouble extends DoubleNode<ChildrenInYearOption, I
     @Override
     public void calcCount() {
 
+        // The problem is in here - rewrite it...
+
         YearDate yob = ((YOBNodeDouble) getAncestor(new YOBNodeDouble())).getOption();
-        Integer age = ((AgeNodeDouble) getAncestor(new AgeNodeDouble())).getOption().getValue();
+        AgeNodeDouble aN = ((AgeNodeDouble) getAncestor(new AgeNodeDouble()));
+        Integer age = aN.getOption().getValue();
 
         Integer order = ((PreviousNumberOfChildrenInPartnershipNodeDouble)
                                     getAncestor(new PreviousNumberOfChildrenInPartnershipNodeDouble())).getOption().getValue();
@@ -98,34 +101,32 @@ public class ChildrenInYearNodeDouble extends DoubleNode<ChildrenInYearOption, I
         SingleDeterminedCount sDC = (SingleDeterminedCount) getInputStats().getDeterminedCount(
                 new BirthStatsKey(age, order, forNPeople, timePeriod, currentDate));
 
-        DiedNodeDouble dNode = (DiedNodeDouble) getAncestor(new DiedNodeDouble());
-        double dCount = dNode.getCount();
-        double pncipCount = ((PreviousNumberOfChildrenInPartnershipNodeDouble) getAncestor(new PreviousNumberOfChildrenInPartnershipNodeDouble())).getCount();
-        double viablePNCIPcount = 0.0;
+        double numberOfChildren = sDC.getRawUncorrectedCount();
+//        double numberOfMothers = sDC.getRawUncorrectedCount();
 
-        Integer o = ((NumberOfPreviousChildrenInAnyPartnershipNodeDouble) getAncestor(new NumberOfPreviousChildrenInAnyPartnershipNodeDouble())).getOption().getValue();
+        MultipleDeterminedCount mDc = (MultipleDeterminedCount) getInputStats().getDeterminedCount(
+                new MultipleBirthStatsKey(age, numberOfChildren, timePeriod, currentDate));
 
-        for(Node n : dNode.getChildren()) {
+        double numberOfMothers = mDc.getRawUncorrectedCount().getSumOfValues();
 
-            PreviousNumberOfChildrenInPartnershipNodeDouble p = (PreviousNumberOfChildrenInPartnershipNodeDouble) n;
+        NumberOfPreviousChildrenInAnyPartnershipNodeDouble parent = (NumberOfPreviousChildrenInAnyPartnershipNodeDouble) getParent();
 
-            if(p.getOption().getValue() <= o) {
-                viablePNCIPcount += p.getCount();
-            }
+        double numOfType = aN.sumOfNPCIAPDescendants(parent.getOption());
 
-        }
-
-        double adjustment = 0;
-        if(viablePNCIPcount != 0) {
-            adjustment = (dCount / forNPeople) * (pncipCount / viablePNCIPcount);
-        } else {
-            System.out.println("Issues in CIY count calc");
-        }
+        double adjustment = parent.getCount() / numOfType;
 
         if(getOption() == ChildrenInYearOption.YES) {
-            setCount(sDC.getRawUncorrectedCount() * adjustment);
+            double v = numberOfMothers * adjustment;
+            if(v > getParent().getCount()) {
+                v = getParent().getCount();
+            }
+            setCount(v);
         } else {
-            setCount(getParent().getCount() - sDC.getRawUncorrectedCount() * adjustment);
+            double v = parent.getCount() - (numberOfMothers * adjustment);
+            if(v < 0) {
+                v = 0;
+            }
+            setCount(v);
         }
 
         advanceCount();

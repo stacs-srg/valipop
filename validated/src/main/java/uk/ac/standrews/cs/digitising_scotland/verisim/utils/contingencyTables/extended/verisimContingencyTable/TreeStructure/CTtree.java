@@ -7,16 +7,16 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.timeSteps.TimeUn
 import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.recording.PopulationStatistics;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPersonExtended;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.dataStructure.PeopleCollection;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.DoubleComparer;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.TreeStructure.Interfaces.ContingencyTable;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.TreeStructure.Interfaces.DoubleNode;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.TreeStructure.Interfaces.Node;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.TreeStructure.Interfaces.RunnableNode;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.TreeStructure.DoubleNodes.*;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.TreeStructure.IntNodes.SourceNodeInt;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.TreeStructure.enumerations.SourceType;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedList;
+import java.util.*;
 
 
 /**
@@ -34,7 +34,7 @@ public class CTtree extends Node<String, SourceType, Number, Number> implements 
 
     private LinkedList<RunnableNode> delayedTasks = new LinkedList<>();
 
-    public static final double NODE_MIN_COUNT = 0.01;
+    public static final double NODE_MIN_COUNT = 0.00000000000000000001;
 
     private PopulationStatistics expected;
 
@@ -47,16 +47,10 @@ public class CTtree extends Node<String, SourceType, Number, Number> implements 
         this.expected = expected;
         this.endDate = endDate;
 
-//        for(IPersonExtended p : population.getAll()) {
-//            processPerson(p, new YearDate(0), SourceType.SIM);
-//
-//            if(p.aliveOnDate(new ExactDate(31, 12, 1854))) {
-//                processPerson(p, new YearDate(0), SourceType.STAT);
-//            }
-//
-//        }
+        System.out.println("CTree --- Populating tree");
 
-        YearDate prevY = new YearDate(startDate.getYear() - 1);
+        // removed -1
+        YearDate prevY = new YearDate(startDate.getYear());
         for(IPersonExtended person : population.getPeople()) {
             if(person.aliveInYear(prevY)) {
                 processPerson(person, prevY, SourceType.STAT);
@@ -81,6 +75,22 @@ public class CTtree extends Node<String, SourceType, Number, Number> implements 
 
 
         executeDelayedTasks();
+
+        System.out.println("CTree --- Tree completed");
+
+//        Iterator<Node> nodes = statNode.getLeafNodes().iterator();
+
+//        while (nodes.hasNext()) {
+//            DoubleNode n = (DoubleNode) nodes.next();
+//            Number num = n.getCount();
+//            if(num instanceof Double) {
+//                Double numD = (Double) num;
+//                if (numD > 800) {
+//                    System.out.print("");
+//                }
+//            }
+//
+//        }
 
 
     }
@@ -172,10 +182,13 @@ public class CTtree extends Node<String, SourceType, Number, Number> implements 
 //            n.runTask();
 //        }
 
+        boolean first = true;
+
+        System.out.println("CTree --- Initialising tree - death nodes from seed");
 
         while(!deathTasks.isEmpty()) {
             RunnableNode n = deathTasks.removeFirst();
-            System.out.println(n.toString());
+
             n.runTask();
         }
 
@@ -183,57 +196,36 @@ public class CTtree extends Node<String, SourceType, Number, Number> implements 
 
             while (nciyTasks.size() + sepTasks.size() + nciapTasks.size() != 0) {
 
-//                while (!nciyTasks.isEmpty()) {
-//                    RunnableNode n = nciyTasks.removeFirst();
-//                    System.out.println(n.toString());
-//                    n.runTask();
-//                }
-
                 while (!sepTasks.isEmpty()) {
                     RunnableNode n = sepTasks.removeFirst();
-//                    System.out.println(n.toString());
                     n.runTask();
                 }
 
                 while (!nciapTasks.isEmpty()) {
                     RunnableNode n = nciapTasks.removeFirst();
-//                    System.out.println(n.toString());
                     n.runTask();
                 }
 
             }
 
-//            while (!ageTasks.isEmpty()) {
-            for(int i = 0; i < 2; i ++) {
+            int i = 0;
+//            if(first) {
+//                i = 2;
+//                first = false;
+//            }
+
+            for( ; i < 2; i ++) {
                 if(ageTasks.isEmpty()) {
                     break;
                 }
                 RunnableNode n = ageTasks.removeFirst();
                 AgeNodeDouble a = (AgeNodeDouble) n;
                 YOBNodeDouble y = (YOBNodeDouble) a.getAncestor(new YOBNodeDouble());
-                System.out.println("Age --- " + y.getOption().toString() + " --- " + a.getOption().toString());
+                System.out.println("CTree --- Creating nodes for year: " + y.getOption().toString());
                 n.runTask();
             }
 
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
-//        while(!otherTasks.isEmpty()) {
-//            RunnableNode n = otherTasks.removeFirst();
-//            System.out.println(n.toString());
-//            n.runTask();
-//        }
 
     }
 

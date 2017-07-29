@@ -21,12 +21,26 @@ public abstract class DoubleNode<Op, cOp> extends Node<Op, cOp, Double, Double> 
 
     @Override
     public void incCount(Double byCount) {
-        setCount(getCount() + byCount);
+        if(getCount() == null) {
+            setCount(byCount);
+        } else {
+            setCount(getCount() + byCount);
+        }
     }
 
     @Override
     public void incCountByOne() {
+
         setCount(getCount() + 1);
+    }
+
+    public void setCount(Double count) {
+        super.setCount(count);
+
+        if(getCount() < 0) {
+            System.out.print("");
+        }
+
     }
 
     public DoubleNode<?, Op> getParent() {

@@ -30,7 +30,9 @@ public class CTtableOB extends CTtable {
             try {
                 leaf.addDateVariable();
 
-                if(Objects.equals(leaf.getVariable("Sex").getValue(), "FEMALE")) {
+
+
+                if (Objects.equals(leaf.getVariable("Sex").getValue(), "FEMALE")) {
                     leaf.deleteVariable("Sex");
 
                     leaf.deleteVariable("YOB");
@@ -45,12 +47,13 @@ public class CTtableOB extends CTtable {
 
                     CTRow h = table.get(leaf.hash());
 
-                    if(h == null) {
+                    if (h == null) {
                         table.put(leaf.hash(), leaf);
                     } else {
                         h.setCount(h.combineCount(h.getCount(), leaf.getCount()));
                     }
                 }
+
 
 
             } catch (VariableNotFoundExcepction variableNotFoundExcepction) {

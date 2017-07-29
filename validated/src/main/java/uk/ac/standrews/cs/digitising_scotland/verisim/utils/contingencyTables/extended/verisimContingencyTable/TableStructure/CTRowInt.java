@@ -9,4 +9,14 @@ public class CTRowInt extends CTRow<Integer> {
     public Integer combineCount(Integer a, Integer b) {
         return a + b;
     }
+
+    @Override
+    public boolean countEqualToZero() {
+        return getCount() == 0;
+    }
+
+    @Override
+    public boolean countGreaterThan(Double v) {
+        return true;
+    }
 }

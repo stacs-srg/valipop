@@ -96,4 +96,28 @@ public class AgeNodeDouble extends DoubleNode<IntegerRange, DiedOption> implemen
     public void runTask() {
         makeChildren();
     }
+
+    public double sumOfNPCIAPDescendants(IntegerRange option) {
+
+        double count = 0;
+
+        for(Node c : getChildren()) {
+            // c is of type died
+            DiedNodeDouble cD = (DiedNodeDouble) c;
+            for(Node gc : cD.getChildren()) {
+                // gc is of type pncip
+                PreviousNumberOfChildrenInPartnershipNodeDouble gcP = (PreviousNumberOfChildrenInPartnershipNodeDouble) gc;
+                for(Node ggc : gcP.getChildren()) {
+                    // ggc is of type NPCIAP
+                    NumberOfPreviousChildrenInAnyPartnershipNodeDouble ggcN = (NumberOfPreviousChildrenInAnyPartnershipNodeDouble) ggc;
+
+                    if(ggcN.getOption().hash() == option.hash()) {
+                        count += ggcN.getCount();
+                    }
+
+                }
+            }
+        }
+        return count;
+    }
 }
