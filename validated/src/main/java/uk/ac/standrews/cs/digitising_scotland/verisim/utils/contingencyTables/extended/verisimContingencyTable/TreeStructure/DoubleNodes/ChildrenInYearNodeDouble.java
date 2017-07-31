@@ -60,12 +60,8 @@ public class ChildrenInYearNodeDouble extends DoubleNode<ChildrenInYearOption, I
         try {
             getChild(option).processPerson(person, currentDate);
         } catch (ChildNotFoundException e) {
-//            addChild(option).processPerson(person, currentDate);
             NumberOfChildrenInYearNodeDouble n = (NumberOfChildrenInYearNodeDouble) addChild(new NumberOfChildrenInYearNodeDouble(option, this, 0.0, true));
             n.processPerson(person, currentDate);
-//            if(option != 0) {
-//                addDelayedTask(n);
-//            }
         }
 
     }
@@ -83,8 +79,6 @@ public class ChildrenInYearNodeDouble extends DoubleNode<ChildrenInYearOption, I
     @Override
     public void calcCount() {
 
-        // The problem is in here - rewrite it...
-
         YearDate yob = ((YOBNodeDouble) getAncestor(new YOBNodeDouble())).getOption();
         AgeNodeDouble aN = ((AgeNodeDouble) getAncestor(new AgeNodeDouble()));
         Integer age = aN.getOption().getValue();
@@ -93,7 +87,6 @@ public class ChildrenInYearNodeDouble extends DoubleNode<ChildrenInYearOption, I
                                     getAncestor(new PreviousNumberOfChildrenInPartnershipNodeDouble())).getOption().getValue();
         Date currentDate = yob.advanceTime(age, TimeUnit.YEAR);
 
-//        double forNPeople = getParent().getCount();
         double forNPeople = ((AgeNodeDouble) getAncestor(new AgeNodeDouble())).getCount();
 
         CompoundTimeUnit timePeriod = new CompoundTimeUnit(1, TimeUnit.YEAR);
@@ -101,13 +94,7 @@ public class ChildrenInYearNodeDouble extends DoubleNode<ChildrenInYearOption, I
         SingleDeterminedCount sDC = (SingleDeterminedCount) getInputStats().getDeterminedCount(
                 new BirthStatsKey(age, order, forNPeople, timePeriod, currentDate));
 
-        double numberOfChildren = sDC.getRawUncorrectedCount();
-//        double numberOfMothers = sDC.getRawUncorrectedCount();
-
-        MultipleDeterminedCount mDc = (MultipleDeterminedCount) getInputStats().getDeterminedCount(
-                new MultipleBirthStatsKey(age, numberOfChildren, timePeriod, currentDate));
-
-        double numberOfMothers = mDc.getRawUncorrectedCount().getSumOfValues();
+        double numberOfMothers = sDC.getRawUncorrectedCount();
 
         NumberOfPreviousChildrenInAnyPartnershipNodeDouble parent = (NumberOfPreviousChildrenInAnyPartnershipNodeDouble) getParent();
 

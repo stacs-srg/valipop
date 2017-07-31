@@ -217,6 +217,57 @@ public class IntegerRangeToDoubleSet implements LabeledValueSet<IntegerRange, Do
         return roundingSet;
     }
 
+    @Override
+    public LabeledValueSet<IntegerRange, Integer> controlledRoundingMaintainingSumWithProductOfLabelAndValue() {
+
+        double sum = getSumOfValues();
+        double sumRounded = Math.round(sum);
+
+        if(!DoubleComparer.equal(sum, sumRounded, DELTA)) {
+            throw new ValuesDoNotSumToWholeNumberException("Cannot perform controlled rounding and maintain sum as " +
+                    "values do not sum to a whole number", this);
+        }
+
+        int sumInt = (int) sumRounded;
+
+        LabeledValueSet<IntegerRange, Integer> roundingSet = new IntegerRangeToIntegerSet();
+
+        for(IntegerRange iR : getLabels()) {
+            if(getValue(iR) < 0) {
+                roundingSet.add(iR, 0);
+            } else {
+                roundingSet.add(iR, (int) Math.floor(getValue(iR)));
+            }
+        }
+
+        Set<IntegerRange> usedLabels = new HashSet<>();
+
+        int roundingSetSum;
+        while((roundingSetSum = roundingSet.productOfLabelsAndValues().getSumOfValues()) != sumInt) {
+
+            if(roundingSetSum < sumInt) {
+                // need more in the rounding set therefore
+                IntegerRange labelOfGreatestRemainder = this.getLabelOfValueWithGreatestRemainder(usedLabels);
+                roundingSet.update(labelOfGreatestRemainder, roundingSet.getValue(labelOfGreatestRemainder)+1);
+            }
+
+
+            if(roundingSetSum > sumInt) {
+                IntegerRange largestReducatbleLabel;
+                try {
+                    largestReducatbleLabel =
+                            roundingSet.getLargestLabelOfNoneZeroValueAndLabelLessOrEqualTo(new IntegerRange(roundingSetSum - sumInt));
+                } catch (NoSuchElementException e) {
+                    largestReducatbleLabel = this.smallestLabel();
+                }
+                roundingSet.update(largestReducatbleLabel, roundingSet.getValue(largestReducatbleLabel)-1);
+            }
+
+        }
+
+        return roundingSet;
+    }
+
     @SuppressWarnings("Duplicates")
     @Override
     public LabeledValueSet<IntegerRange, Integer> controlledRoundingMaintainingSumProductOfLabelValues() {
@@ -263,7 +314,7 @@ public class IntegerRangeToDoubleSet implements LabeledValueSet<IntegerRange, Do
                 IntegerRange largestReducatbleLabel;
                 try {
                     largestReducatbleLabel =
-                            roundingSet.getLargestLabelOfNoneZeroValueAndLabelLessOrEqualTo(new IntegerRange(roundingSetSum - sumInt));
+                            roundingSet.getLargestLabelOfNoneZeroValueAndLabelPreferablyLessOrEqualTo(new IntegerRange(roundingSetSum - sumInt));
                 } catch (NoSuchElementException e) {
                     largestReducatbleLabel = this.smallestLabel();
                 }
@@ -398,6 +449,41 @@ public class IntegerRangeToDoubleSet implements LabeledValueSet<IntegerRange, Do
         }
 
         if(largestLabel == null) {
+            throw new NoSuchElementException("No values in set or no values in set less that n - set size: "
+                    + getLabels().size());
+        }
+
+        return largestLabel;
+    }
+
+    @Override
+    public IntegerRange getLargestLabelOfNoneZeroValueAndLabelPreferablyLessOrEqualTo(IntegerRange n) {
+
+        IntegerRange largestLabel = null;
+        IntegerRange smallestLabelLargerThanN = null;
+
+        for(IntegerRange iR : map.keySet()) {
+
+            int currentIRLable = iR.getValue();
+
+            if(currentIRLable <= n.getValue()) {
+                if(largestLabel == null || currentIRLable > largestLabel.getValue()) {
+                    largestLabel = iR;
+                }
+            } else {
+                if(largestLabel == null || currentIRLable < smallestLabelLargerThanN.getValue()) {
+                    smallestLabelLargerThanN = iR;
+                }
+            }
+
+        }
+
+        if(largestLabel == null) {
+
+            if(smallestLabelLargerThanN != null) {
+                return smallestLabelLargerThanN;
+            }
+
             throw new NoSuchElementException("No values in set or no values in set less that n - set size: "
                     + getLabels().size());
         }

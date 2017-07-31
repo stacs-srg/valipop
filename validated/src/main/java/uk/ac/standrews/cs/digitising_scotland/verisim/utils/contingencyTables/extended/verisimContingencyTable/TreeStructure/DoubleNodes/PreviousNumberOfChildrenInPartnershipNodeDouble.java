@@ -42,6 +42,30 @@ public class PreviousNumberOfChildrenInPartnershipNodeDouble extends DoubleNode<
         }
     }
 
+    public Node<IntegerRange, ?, Double, ?> addChild(IntegerRange childOption, Double initCount) {
+
+        Node<IntegerRange, ?, Double, ?> child;
+
+        if(childOption.hash() == 1000) {
+            System.out.print("");
+        }
+
+        try {
+            child = getChild(childOption);
+            child.incCount(initCount);
+        } catch (ChildNotFoundException e)  {
+            child = makeChildInstance(childOption, initCount);
+            super.addChild(child);
+        }
+
+        if(getChildren().size() != 1) {
+            System.out.print("");
+        }
+
+        return child;
+
+    }
+
     @Override
     public String getVariableName() {
         return "PNCIP";
@@ -54,6 +78,10 @@ public class PreviousNumberOfChildrenInPartnershipNodeDouble extends DoubleNode<
 
     @SuppressWarnings("Duplicates")
     public IntegerRange resolveToChildRange(Integer npciap) {
+
+        if(npciap == 0) {
+            System.out.print("");
+        }
 
         for(Node<IntegerRange, ?, ?, ?> aN : getChildren()) {
             if(aN.getOption().contains(npciap)) {
