@@ -50,6 +50,8 @@ public interface LabeledValueSet<L,V> {
 
     LabeledValueSet<L,Integer> controlledRoundingMaintainingSum();
 
+    LabeledValueSet<L, Integer> controlledRoundingMaintainingSumWithProductOfLabelAndValue();
+
     LabeledValueSet<L,Integer> controlledRoundingMaintainingSumProductOfLabelValues();
 
     LabeledValueSet<L,Integer> floorValues();
@@ -67,6 +69,8 @@ public interface LabeledValueSet<L,V> {
     LabeledValueSet<L,Double> divisionOfValuesByLabels();
 
     L getLargestLabelOfNoneZeroValueAndLabelLessOrEqualTo(L n);
+
+    L getLargestLabelOfNoneZeroValueAndLabelPreferablyLessOrEqualTo(L n);
 
     L getLargestLabelOfNoneZeroValue();
 

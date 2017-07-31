@@ -104,18 +104,6 @@ public abstract class CTRow<count extends Number> {
             Date date;
             int age;
 
-//            try {
-//                date = new YearDate(Integer.parseInt(getVariable("Date").getValue()));
-//            } catch (VariableNotFoundExcepction variableNotFoundExcepction) {
-//                try {
-//                    CTCell d = addDateVariable();
-//                    date = new YearDate(Integer.parseInt(d.getValue()));
-//                } catch (VariableNotFoundExcepction variableNotFoundExcepction1) {
-//                    throw new Error();
-//                }
-//
-//            }
-
             try {
                 Integer yob = new Integer(getVariable("YOB").getValue());
                 age = new Integer(getVariable("Age").getValue());

@@ -145,6 +145,11 @@ public class IntegerRangeToIntegerSet implements LabeledValueSet<IntegerRange, I
     }
 
     @Override
+    public LabeledValueSet<IntegerRange, Integer> controlledRoundingMaintainingSumWithProductOfLabelAndValue() {
+        return this.clone();
+    }
+
+    @Override
     public LabeledValueSet<IntegerRange, Integer> controlledRoundingMaintainingSumProductOfLabelValues() {
         return this.clone();
     }
@@ -273,6 +278,44 @@ public class IntegerRangeToIntegerSet implements LabeledValueSet<IntegerRange, I
         }
 
         return largestLabel;
+    }
+
+    @Override
+    public IntegerRange getLargestLabelOfNoneZeroValueAndLabelPreferablyLessOrEqualTo(IntegerRange n) {
+
+        IntegerRange largestLabel = null;
+        IntegerRange smallestLabelLargerThanN = null;
+
+        for(IntegerRange iR : map.keySet()) {
+
+            int currentIRLable = iR.getValue();
+
+            if(getValue(iR) > 0) {
+                if (currentIRLable <= n.getValue()) {
+                    if (largestLabel == null || currentIRLable > largestLabel.getValue()) {
+                        largestLabel = iR;
+                    }
+                } else {
+                    if (smallestLabelLargerThanN == null || currentIRLable < smallestLabelLargerThanN.getValue()) {
+                        smallestLabelLargerThanN = iR;
+                    }
+                }
+            }
+
+        }
+
+        if(largestLabel == null) {
+
+            if(smallestLabelLargerThanN != null) {
+                return smallestLabelLargerThanN;
+            }
+
+            throw new NoSuchElementException("No values in set or no values in set less that n - set size: "
+                    + getLabels().size());
+        }
+
+        return largestLabel;
+
     }
 
     @Override
