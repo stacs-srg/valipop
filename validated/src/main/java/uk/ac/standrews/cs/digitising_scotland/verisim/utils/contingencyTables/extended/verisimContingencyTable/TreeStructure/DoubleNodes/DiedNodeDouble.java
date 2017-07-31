@@ -158,19 +158,28 @@ public class DiedNodeDouble extends DoubleNode<DiedOption, IntegerRange> impleme
 
         if(sex == SexOption.FEMALE) {
 
-            PreviousNumberOfChildrenInPartnershipNodeDouble pncip =
-                    new PreviousNumberOfChildrenInPartnershipNodeDouble(new IntegerRange(0), this, getCount());
+            YearDate yob = ((YOBNodeDouble) getAncestor(new YOBNodeDouble())).getOption();
 
-            addChild(pncip);
+            Collection<IntegerRange> ranges = getInputStats().getOrderedBirthRates(yob).getColumnLabels();
+
+            for(IntegerRange iR : ranges) {
+                if(iR.contains(0)) {
+                    PreviousNumberOfChildrenInPartnershipNodeDouble pncip =
+                            new PreviousNumberOfChildrenInPartnershipNodeDouble(iR, this, getCount());
+
+                    addChild(pncip);
+
+                    NumberOfPreviousChildrenInAnyPartnershipNodeDouble npciap =
+                            (NumberOfPreviousChildrenInAnyPartnershipNodeDouble) pncip.makeChildInstance(new IntegerRange(0), getCount());
+
+                    pncip.addChild(npciap);
 
 
-            NumberOfPreviousChildrenInAnyPartnershipNodeDouble npciap =
-                    (NumberOfPreviousChildrenInAnyPartnershipNodeDouble) pncip.makeChildInstance(new IntegerRange(0), getCount());
+                    addDelayedTask(npciap);
 
-            pncip.addChild(npciap);
-
-
-            addDelayedTask(npciap);
+                    break;
+                }
+            }
 
         }
 

@@ -84,10 +84,6 @@ public class NBirthLogic implements EventLogic {
 
                 needingPartners.addAll(mothers.getNeedPartners());
 
-                if(mothers.getNewlyProducedChildren() != numberOfChildren) {
-                    System.out.print("");
-                }
-
                 int childrenMade = mothers.getNewlyProducedChildren();
 
                 bornAtTS += childrenMade;
@@ -125,19 +121,6 @@ public class NBirthLogic implements EventLogic {
 
         MultipleDeterminedCount requiredBirths = calcNumberOfPreganciesOfMultipleBirth(ageOfMothers, numberOfChildren,
                 desiredPopulationStatistics, currentDate, consideredTimePeriod);
-
-        try {
-            if (requiredBirths.getDeterminedCount().productOfLabelsAndValues().getSumOfValues() != numberOfChildren ||
-                    requiredBirths.getDeterminedCount().countNegativeValues() != 0) {
-                System.out.print("");
-                requiredBirths = calcNumberOfPreganciesOfMultipleBirth(ageOfMothers, numberOfChildren,
-                        desiredPopulationStatistics, currentDate, consideredTimePeriod);
-            }
-        } catch (NullPointerException e) {
-            System.out.print("");
-            requiredBirths = calcNumberOfPreganciesOfMultipleBirth(ageOfMothers, numberOfChildren,
-                    desiredPopulationStatistics, currentDate, consideredTimePeriod);
-        }
 
         int childrenMade = 0;
 
@@ -202,10 +185,6 @@ public class NBirthLogic implements EventLogic {
 
                 }
             }
-        }
-
-        if(childrenMade != numberOfChildren) {
-            System.out.print("");
         }
 
         SeparationLogic.handle(continuingPartneredFemalesByChildren, consideredTimePeriod, currentDate, desiredPopulationStatistics, population);

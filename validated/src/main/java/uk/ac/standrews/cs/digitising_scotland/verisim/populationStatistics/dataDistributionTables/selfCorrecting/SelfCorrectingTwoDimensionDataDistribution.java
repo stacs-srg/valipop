@@ -53,9 +53,13 @@ public class SelfCorrectingTwoDimensionDataDistribution implements DataDistribut
         this.data = tableData;
     }
 
+    private static final double FACTOR = 1.007462401 ;
+
     public SingleDeterminedCount determineCount(StatsKey key) {
         try {
-            return getData(key.getXLabel()).determineCount(key);
+            SingleDeterminedCount sDC = getData(key.getXLabel()).determineCount(key);
+            int adjCount = Integer.parseInt(String.valueOf(Math.round(sDC.getDeterminedCount() * FACTOR)));
+            return new SingleDeterminedCount(sDC.getKey(), adjCount, sDC.getRawCorrectedCount(), sDC. getRawUncorrectedCount());
         } catch (InvalidRangeException e) {
             return new SingleDeterminedCount(key, 0, 0, 0);
         }
@@ -64,6 +68,8 @@ public class SelfCorrectingTwoDimensionDataDistribution implements DataDistribut
 
     public void returnAchievedCount(DeterminedCount<Integer, Double> achievedCount) {
         try {
+            int adjCount = Integer.parseInt(String.valueOf(Math.round(achievedCount.getFufilledCount() / FACTOR)));
+            achievedCount.setFufilledCount(adjCount);
             getData(achievedCount.getKey().getXLabel()).returnAchievedCount(achievedCount);
         } catch (InvalidRangeException e) {
             if(achievedCount.getDeterminedCount() == 0) {

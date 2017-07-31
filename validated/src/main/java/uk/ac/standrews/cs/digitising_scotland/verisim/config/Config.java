@@ -59,13 +59,10 @@ public class Config {
     private Path varMultipleBirthPaths;
     private Path varPartneringPaths;
     private Path varSeparationPaths;
-    private Path savePathPlots;
-    private Path savePathDat;
-    private Path savePathSummary;
+
     private Path resultsSavePath;
-    private Path summaryResultsPath;
-    private boolean produceGraphs;
-    private boolean produceDatFiles;
+
+
 
 
 
@@ -117,23 +114,8 @@ public class Config {
                     varPartneringPaths = Paths.get(path, partneringSubFile);
                     varSeparationPaths = Paths.get(path, separationSubFile);
                     break;
-                case "plots_save_location":
-                    savePathPlots = Paths.get(split[1]);
-                    break;
-                case "dat_save_location":
-                    savePathDat = Paths.get(split[1]);
-                    break;
-                case "summary_save_location":
-                    savePathSummary = Paths.get(split[1]);
-                    break;
                 case "results_save_location":
                     resultsSavePath = Paths.get(split[1]);
-                    break;
-                case "produce_graphs":
-                    produceGraphs = new Boolean(split[1]);
-                    break;
-                case "produce_dat_files":
-                    produceDatFiles = new Boolean(split[1]);
                     break;
                 case "simulation_time_step":
                     try {
@@ -205,14 +187,6 @@ public class Config {
 
         }
 
-    }
-
-    public boolean checkConfigValid() {
-
-        // Things to check
-        // The initial date will line up with the utils.time steps
-
-        return false;
     }
 
     public DirectoryStream<Path> getVarOrderedBirthPaths() throws IOException {
@@ -306,26 +280,6 @@ public class Config {
 
     public double getSetUpDR() {
         return setUpDR;
-    }
-
-    public Path getSavePathPlots() {
-        return savePathPlots;
-    }
-
-    public Path getSavePathDat() {
-        return savePathDat;
-    }
-
-    public Path getSavePathSummary() {
-        return savePathSummary;
-    }
-
-    public boolean produceGraphs() {
-        return produceGraphs;
-    }
-
-    public boolean produceDatFiles() {
-        return produceDatFiles;
     }
 
     public Path getResultsSavePath() {

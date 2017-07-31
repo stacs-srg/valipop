@@ -92,10 +92,6 @@ public class NewPartnerAgeNodeDouble extends DoubleNode<IntegerRange, String> im
             r.setVariable(getVariableName(), getOption().toString());
         }
 
-//        if(((SexNodeDouble) getAncestor(new SexNodeDouble())).getOption() == SexOption.FEMALE) {
-//            System.out.print("");
-//        }
-
         r.setCount(getCount());
 
         return r;

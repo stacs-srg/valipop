@@ -27,21 +27,23 @@ import java.nio.file.Path;
  */
 public class SummaryRow {
 
-    private Path resultsDirectory;
-
     private String startTime;
     private String reason;
+    private String codeVersion;
 
-    private CompoundTimeUnit bTimestep;
-    private CompoundTimeUnit dTimestep;
     private CompoundTimeUnit inputWidth;
+    private CompoundTimeUnit timestep;
 
     private Date startDate;
     private Date endDate;
 
     private int simLength;
 
+    private double factor;
+
     // Post
+
+    private Path resultsDirectory;
 
     private int startPop;
 
@@ -49,18 +51,11 @@ public class SummaryRow {
     private int endPop;
     private int peakPop;
 
-    private double passed;
-    private double completed;
+    private boolean completed;
 
-    private double bPasses;
-    private double mDPasses;
-    private double fDPasses;
-
-    private double pPasses;
-    private double sPasses;
-    private double mBPasses;
-
-    private String runTime;
+    private long simRunTime;
+    private long ctRunTime;
+    private long recordsRunTime;
 
 
     public SummaryRow(Path resultsDirectory,
@@ -76,8 +71,6 @@ public class SummaryRow {
         this.resultsDirectory = resultsDirectory;
         this.startTime = startTime;
         this.reason = reason;
-        this.bTimestep = bTimestep;
-        this.dTimestep = dTimestep;
         this.inputWidth = inputWidth;
         this.startDate = startDate;
         this.endDate = endDate;
@@ -85,101 +78,77 @@ public class SummaryRow {
 
     }
 
+    public SummaryRow(Path resultsDirectory,
+                      String startTime,
+                      String reason,
+                      String codeVersion,
+                      CompoundTimeUnit inputWidth,
+                      Date startDate,
+                      Date endDate,
+                      int simLength,
+                      double factor) {
+
+        this.resultsDirectory = resultsDirectory;
+        this.startTime = startTime;
+        this.codeVersion = codeVersion;
+        this.reason = reason;
+        this.inputWidth = inputWidth;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.simLength = simLength;
+        this.factor = factor;
+
+    }
+
+
+    public void setResultsDirectory(Path directory) {
+        this.resultsDirectory = directory;
+    }
+
     public void setStartPop(int startPop) {
         this.startPop = startPop;
-    }
-
-    public void setPeakPop(int peakPop) {
-        this.peakPop = peakPop;
-    }
-
-    public void setEndPop(int endPop) {
-        this.endPop = endPop;
     }
 
     public void setTotalPop(int totalPop) {
         this.totalPop = totalPop;
     }
 
-    public void setPassed(double passed) {
-        this.passed = passed;
+    public void setEndPop(int endPop) {
+        this.endPop = endPop;
     }
 
-    public void setCompleted(double completed) {
+    public void setPeakPop(int peakPop) {
+        this.peakPop = peakPop;
+    }
+
+    public void setCompleted(boolean completed) {
         this.completed = completed;
     }
 
-    public void setbPasses(double bPasses) {
-        this.bPasses = bPasses;
+    public void setSimRunTime(long simRunTime) {
+        this.simRunTime = simRunTime;
     }
 
-    public void setmDPasses(double mDPasses) {
-        this.mDPasses = mDPasses;
+    public void setCTRunTime(long ctRunTime) {
+        this.ctRunTime = ctRunTime;
     }
 
-    public void setfDPasses(double fDPasses) {
-        this.fDPasses = fDPasses;
+    public void setRecordsRunTime(long recordsRunTime) {
+        this.recordsRunTime = recordsRunTime;
     }
-
-    public void setpPasses(double pPasses) {
-        this.pPasses = pPasses;
-    }
-
-    public void setsPasses(double sPasses) {
-        this.sPasses = sPasses;
-    }
-
-    public void setmBPasses(double mBPasses) {
-        this.mBPasses = mBPasses;
-    }
-
-    public void setRunTime(String runTime) {
-        this.runTime = runTime;
-    }
-
-    //    public SummaryRow(String startTime, String reason, int totalPop, double passed, double completed, double bPasses,
-//                      double mDPasses, double fDPasses, double pPasses, double sPasses, double mBPasses, int simLength,
-//                      CompoundTimeUnit bTimestep, CompoundTimeUnit dTimestep, CompoundTimeUnit inputWidth, int startPop,
-//                      int endPop, int peakPop, Date startDate, Date endDate, int runTime, Path resultsDirectory) {
-//
-//        this.startTime = startTime;
-//        this.reason = reason;
-//        this.totalPop = totalPop;
-//        this.passed = passed;
-//        this.completed = completed;
-//        this.bPasses = bPasses;
-//        this.mDPasses = mDPasses;
-//        this.fDPasses = fDPasses;
-//        this.pPasses = pPasses;
-//        this.sPasses = sPasses;
-//        this.mBPasses = mBPasses;
-//        this.simLength = simLength;
-//        this.bTimestep = bTimestep;
-//        this.dTimestep = dTimestep;
-//        this.inputWidth = inputWidth;
-//        this.startPop = startPop;
-//        this.endPop = endPop;
-//        this.peakPop = peakPop;
-//        this.startDate = startDate;
-//        this.endDate = endDate;
-//        this.runTime = runTime;
-//        this.resultsDirectory = resultsDirectory;
-//
-//    }
 
     public String toSeperatedString(char sep) {
-        return startTime + sep + reason + sep + totalPop + sep + passed + sep + completed + sep + bPasses + sep +
-                mDPasses + sep + fDPasses + sep + pPasses + sep + sPasses + sep + mBPasses + sep + simLength + sep +
-                bTimestep + sep + dTimestep + sep + inputWidth + sep + startPop + sep + endPop + sep + peakPop + sep +
-                startDate + sep + endDate + sep + runTime + sep + resultsDirectory + "\n";
+        return startTime + sep + reason + sep + codeVersion + sep + totalPop + sep + completed + sep
+                + simLength + sep + timestep + sep + inputWidth + sep + startPop + sep
+                + endPop + sep + peakPop + sep + startDate + sep + endDate + sep + simRunTime + sep
+                + ctRunTime + sep + recordsRunTime + sep + resultsDirectory + sep + factor + "\n";
     }
 
     public static String getSeparatedHeadings(char sep) {
-        return "Start Time" + sep + "Reason" + sep + "Total Pop" + sep + "Passed" + sep + "Completed" + sep + "B Passes"
-                + sep + "MD Passes" + sep + "FD Passes" + sep + "P Passes" + sep + "S Passes" + sep + "MB Passes" + sep
-                + "Sim Length" + sep + "B Timestep" + sep + "D Timestep" + sep + "Input Width" + sep + "Start Pop" + sep
-                + "End Pop" + sep + "Peak Pop" + sep + "Start Date" + sep + "End Date" + sep + "Run time" + sep
-                + "Results Directory";
+        return "Start Time" + sep + "Reason" + sep + "Code Version" + sep + "Total Pop" + sep + "Completed" + sep
+                + "Sim Length" + sep + "Timestep" + sep + "Input Width" + sep + "Start Pop" + sep
+                + "End Pop" + sep + "Peak Pop" + sep + "Start Date" + sep + "End Date" + sep + "Sim Run time" + sep
+                + "CT Run time" + sep + "Records Run time" + sep + "Results Directory" + sep + "Factor";
     }
 
 }

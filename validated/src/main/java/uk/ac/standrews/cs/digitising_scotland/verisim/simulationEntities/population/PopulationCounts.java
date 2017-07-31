@@ -129,6 +129,10 @@ public class PopulationCounts {
         }
     }
 
+    public int getPeakPopulationSize() {
+        return maxPopulation;
+    }
+
     public int getCreatedPeople() {
         return createdFemales + createdMales;
     }

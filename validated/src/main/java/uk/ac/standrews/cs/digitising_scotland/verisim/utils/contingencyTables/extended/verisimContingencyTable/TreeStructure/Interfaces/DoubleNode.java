@@ -36,11 +36,6 @@ public abstract class DoubleNode<Op, cOp> extends Node<Op, cOp, Double, Double> 
 
     public void setCount(Double count) {
         super.setCount(count);
-
-        if(getCount() < 0) {
-            System.out.print("");
-        }
-
     }
 
     public DoubleNode<?, Op> getParent() {
