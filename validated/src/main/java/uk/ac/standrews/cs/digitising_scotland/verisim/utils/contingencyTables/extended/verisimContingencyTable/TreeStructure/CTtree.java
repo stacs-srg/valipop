@@ -78,21 +78,6 @@ public class CTtree extends Node<String, SourceType, Number, Number> implements 
 
         System.out.println("CTree --- Tree completed");
 
-//        Iterator<Node> nodes = statNode.getLeafNodes().iterator();
-
-//        while (nodes.hasNext()) {
-//            DoubleNode n = (DoubleNode) nodes.next();
-//            Number num = n.getCount();
-//            if(num instanceof Double) {
-//                Double numD = (Double) num;
-//                if (numD > 800) {
-//                    System.out.print("");
-//                }
-//            }
-//
-//        }
-
-
     }
 
     public CTtree() {

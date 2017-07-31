@@ -114,19 +114,9 @@ public class OBDModel {
                     "model run", e);
         }
 
-//        ComparativeAnalysis comparisonOfDesiredAndGenerated;
-//        try {
-//            comparisonOfDesiredAndGenerated = ComparativeAnalysis.performComparison(config, population, sim.desired);
-//            sim.summary = comparisonOfDesiredAndGenerated.outputResults(resultsOutput, sim.summary);
-//        } catch (UnsupportedEventType | IOException e) {
-//            System.err.println("Comparative analysis failed");
-//            System.err.println(e.getMessage());
-//        }
-//
-//        AnalyticsRunner.runAnalytics(population, resultsOutput);
 
         sim.summary.setTotalPop(population.getNumberOfPeople());
-        sim.summary.setRunTime(timer.getTimeMMSS());
+//        sim.summary.setSimRunTime(timer.getTimeMMSS());
 
         try {
             FileUtils.writeSummaryRowToSummaryFiles(sim.summary);
@@ -219,24 +209,26 @@ public class OBDModel {
         boolean first = true;
         while(DateUtils.dateBeforeOrEqual(currentTime, config.getTE())) {
 
+            if(DateUtils.dateBeforeOrEqual(currentTime, config.getT0())) {
+                summary.setStartPop(population.getAllPeople().getNumberOfPeople());
+            }
+
             System.out.print(currentTime.toString() + "\t");
 
-            if (DateUtils.matchesInterval(currentTime, config.getSimulationTimeStep(), config.getTS())) {
+//            if (DateUtils.matchesInterval(currentTime, config.getSimulationTimeStep(), config.getTS())) {
                 birthLogic.handleEvent(config, currentTime, config.getSimulationTimeStep(), population, desired);
-            }
+//            }
 
             if (InitLogic.inInitPeriod(currentTime) &&
                     DateUtils.matchesInterval(currentTime, InitLogic.getTimeStep(), config.getTS())) {
                 InitLogic.handleInitPeople(config, currentTime, population);
             } else if(!InitLogic.inInitPeriod(currentTime)) {
-//                System.out.println("Init over");
-//                first = false;
                 System.out.print(0 + "\t");
             }
 
-            if (DateUtils.matchesInterval(currentTime, config.getSimulationTimeStep(), config.getTS())) {
+//            if (DateUtils.matchesInterval(currentTime, config.getSimulationTimeStep(), config.getTS())) {
                 deathLogic.handleEvent(config, currentTime, config.getSimulationTimeStep(), population, desired);
-            }
+//            }
 
             if(inSimDates()) {
                 population.getPopulationCounts().updateMaxPopulation(population.getLivingPeople().getNumberOfPeople());
@@ -254,6 +246,10 @@ public class OBDModel {
         System.out.println("TKilled\t" + NDeathLogic.tKilled);
         System.out.println("TBorn\t" + NBirthLogic.tBirths);
         System.out.println("Ratio\t" + NDeathLogic.tKilled / (double) NBirthLogic.tBirths);
+
+        summary.setCompleted(true);
+        summary.setEndPop(population.getLivingPeople().getNumberOfPeople());
+        summary.setPeakPop(population.getPopulationCounts().getPeakPopulationSize());
 
         return population.getAllPeople();
     }

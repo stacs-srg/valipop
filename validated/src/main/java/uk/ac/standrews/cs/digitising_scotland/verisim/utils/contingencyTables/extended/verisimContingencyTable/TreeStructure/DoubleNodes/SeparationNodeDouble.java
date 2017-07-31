@@ -60,13 +60,6 @@ public class SeparationNodeDouble extends DoubleNode<SeparationOption, IntegerRa
             getChild(newPartnerAge).processPerson(person, currentDate);
         } catch (ChildNotFoundException e) {
             addChild(new NewPartnerAgeNodeDouble(newPartnerAge, this, 0.0, true)).processPerson(person, currentDate);
-
-//            try {
-//                addChild(newPartnerAge).processPerson(person, currentDate);
-//            } catch (NullPointerException ec) {
-//                System.out.print("");
-//                addChild(newPartnerAge).processPerson(person, currentDate);
-//            }
         }
 
 

@@ -103,15 +103,6 @@ public class MotherChildAdapter implements ProportionalDistributionAdapter {
             motherNumbers = childNumbers.getDeterminedCount()
                     .divisionOfValuesByLabels()
                     .controlledRoundingMaintainingSumProductOfLabelValues();
-                    // TODO stop this returning negative values ^^
-
-            if(motherNumbers.countNegativeValues() != 0) {
-
-                System.out.print("");
-                motherNumbers = childNumbers.getDeterminedCount()
-                        .divisionOfValuesByLabels()
-                        .controlledRoundingMaintainingSumProductOfLabelValues();
-            }
 
         } catch (NullPointerException e) {
             return new MultipleDeterminedCount(key, null, rawCorrectedMotherNumbers, rawUncorrectedMotherNumbers);

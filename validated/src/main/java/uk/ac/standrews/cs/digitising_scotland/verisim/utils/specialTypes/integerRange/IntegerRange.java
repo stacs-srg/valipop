@@ -134,15 +134,18 @@ public class IntegerRange implements Comparable<IntegerRange> {
     }
 
     public String toString() {
+        String s = "";
+
         if(value.equals("na")) {
             return value;
+        } else if(plus) {
+            s += min;
+            s += "+";
         } else {
-            String s = "";
             s += min;
             s += min.equals(max) ? "" : "to" + max;
-            s += plus ? "+" : "";
-            return s;
         }
+        return s;
     }
 
     @Override
