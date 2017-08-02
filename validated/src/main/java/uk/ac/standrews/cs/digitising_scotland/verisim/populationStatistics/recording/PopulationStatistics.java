@@ -35,7 +35,7 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.dataD
 import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.dataDistributionTables.selfCorrecting.SelfCorrectingOneDimensionDataDistribution;
 import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.dataDistributionTables.selfCorrecting.SelfCorrectingTwoDimensionDataDistribution;
 import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.validation.kaplanMeier.utils.FailureTimeRow;
-import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.IPopulation;
+import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.IPopulationExtended;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.integerRange.InvalidRangeException;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.CollectionUtils;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.integerRange.IntegerRange;
@@ -222,7 +222,7 @@ public class PopulationStatistics implements PopulationComposition, EventRateTab
     }
 
     @Override
-    public OneDimensionDataDistribution getCohortSurvivorTable(AdvancableDate cohortYear, EventType event, Double scalingFactor, int timeLimit, IPopulation generatedPopulation) throws UnsupportedEventType {
+    public OneDimensionDataDistribution getCohortSurvivorTable(AdvancableDate cohortYear, EventType event, Double scalingFactor, int timeLimit, IPopulationExtended generatedPopulation) throws UnsupportedEventType {
 
         Map<IntegerRange, Double> survival = new HashMap<>();
 
@@ -350,7 +350,7 @@ public class PopulationStatistics implements PopulationComposition, EventRateTab
 
     // TODO NEXT Make PopulationStatistics.getFailureAtTimesTable() a util method that takes in a survivor table and restuns the appropriate collection of FailureTimeRows
     @Override
-    public Collection<FailureTimeRow> getFailureAtTimesTable(AdvancableDate year, String denoteGroupAs, Date simulationEndDate, EventType event, Double scalingFactor, int timeLimit, IPopulation generatedPopulation) throws UnsupportedEventType {
+    public Collection<FailureTimeRow> getFailureAtTimesTable(AdvancableDate year, String denoteGroupAs, Date simulationEndDate, EventType event, Double scalingFactor, int timeLimit, IPopulationExtended generatedPopulation) throws UnsupportedEventType {
 
         Collection<FailureTimeRow> rows = new ArrayList<>();
 
@@ -429,7 +429,7 @@ public class PopulationStatistics implements PopulationComposition, EventRateTab
     --------------------- Private Helper Methods ---------------------
      */
 
-    private double calculateOrderedBirthRate(AdvancableDate startYear, Date currentDate, int age, int birthOrder, IPopulation generatedPopulation, double survivors) {
+    private double calculateOrderedBirthRate(AdvancableDate startYear, Date currentDate, int age, int birthOrder, IPopulationExtended generatedPopulation, double survivors) {
         SelfCorrectingTwoDimensionDataDistribution orderedBirthRates = getOrderedBirthRates(currentDate);
 
         OneDimensionDataDistribution aSOBR;

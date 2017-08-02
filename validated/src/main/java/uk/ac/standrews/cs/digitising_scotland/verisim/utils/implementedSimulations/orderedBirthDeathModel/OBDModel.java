@@ -19,6 +19,8 @@ package uk.ac.standrews.cs.digitising_scotland.verisim.utils.implementedSimulati
 import uk.ac.standrews.cs.digitising_scotland.verisim.config.Config;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.DateUtils;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateImplementations.MonthDate;
+import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.timeSteps.CompoundTimeUnit;
+import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.timeSteps.TimeUnit;
 import uk.ac.standrews.cs.digitising_scotland.verisim.events.EventLogic;
 import uk.ac.standrews.cs.digitising_scotland.verisim.events.birth.NBirthLogic;
 import uk.ac.standrews.cs.digitising_scotland.verisim.events.death.NDeathLogic;
@@ -38,6 +40,7 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.ex
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.TableStructure.NoTableRowsException;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.fileUtils.FileUtils;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.fileUtils.InvalidInputFileException;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.source_event_records.SourceRecordGenerator;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -49,6 +52,8 @@ import java.nio.file.Paths;
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class OBDModel {
+
+    public static final String CODE_VERSION = "dev";
 
     public static Logger log;
 
@@ -74,7 +79,7 @@ public class OBDModel {
             System.exit(1);
         }
 
-        ProgramTimer timer = new ProgramTimer();
+        ProgramTimer simTimer = new ProgramTimer();
 
 
         PeopleCollection population = null;
@@ -101,31 +106,24 @@ public class OBDModel {
             } catch (InsufficientNumberOfPeopleException e) {
                 System.err.println("Simulation run incomplete due to insufficient number of people in population to " +
                         "perform requested events");
-                System.err.println(e.getMessage());
+                sim.summary.setSimRunTime(simTimer.getRunTimeSeconds());
+                sim.summary.setCompleted(false);
+
+                try {
+                    FileUtils.writeSummaryRowToSummaryFiles(sim.summary);
+                } catch (IOException e1) {
+                    System.err.println("Summary row could not be printed to summary files. See message: ");
+                    System.err.println(e.getMessage());
+                }
+                simTimer = new ProgramTimer();
             }
 
         }
 
-        PrintStream resultsOutput;
-        try {
-            resultsOutput = new PrintStream(FileUtils.getDetailedResultsPath().toFile());
-        } catch (FileNotFoundException e) {
-            throw new Error("Detailed Results File has been moved since it's creation at the beginning of " +
-                    "model run", e);
-        }
-
-
         sim.summary.setTotalPop(population.getNumberOfPeople());
-//        sim.summary.setSimRunTime(timer.getTimeMMSS());
+        sim.summary.setSimRunTime(simTimer.getRunTimeSeconds());
 
-        try {
-            FileUtils.writeSummaryRowToSummaryFiles(sim.summary);
-        } catch (IOException e) {
-            System.err.println("Summary row could not be printed to summary files. See message: ");
-            System.err.println(e.getMessage());
-        }
-
-        resultsOutput.close();
+        ProgramTimer tableTimer = new ProgramTimer();
 
         CTtree fullTree = new CTtree(population, sim.desired, config.getT0(), config.getTE());
 
@@ -175,6 +173,29 @@ public class OBDModel {
             e.printStackTrace();
         }
 
+        sim.summary.setCTRunTime(tableTimer.getRunTimeSeconds());
+
+        System.out.println("OBDModel --- Outputting BMD records");
+
+        ProgramTimer recordTimer = new ProgramTimer();
+
+        try {
+            new SourceRecordGenerator(population, FileUtils.pathToRecordsDir(config).toString()).generateEventRecords(new String[0]);
+        } catch (Exception e) {
+            System.out.println("Record generation failed");
+            e.printStackTrace();
+            System.out.println(e.getMessage());
+        }
+
+        sim.summary.setRecordsRunTime(recordTimer.getRunTimeSeconds());
+
+        try {
+            FileUtils.writeSummaryRowToSummaryFiles(sim.summary);
+        } catch (IOException e) {
+            System.err.println("Summary row could not be printed to summary files. See message: ");
+            System.err.println(e.getMessage());
+        }
+
         System.out.println("OBDModel --- Output complete");
 
     }
@@ -198,7 +219,7 @@ public class OBDModel {
         InitLogic.setUpInitParameters(config, desired);
 
         summary = new SummaryRow(Paths.get(config.getResultsSavePath().toString(), runPurpose, startTime),
-                startTime, runPurpose, config.getSimulationTimeStep(), config.getSimulationTimeStep(), config.getInputWidth(),
+                startTime, runPurpose, CODE_VERSION, config.getSimulationTimeStep(), config.getInputWidth(),
                 config.getT0(), config.getTE(), DateUtils.differenceInDays(config.getT0(), config.getTE()));
 
     }
@@ -206,18 +227,18 @@ public class OBDModel {
     public PeopleCollection runSimulation() throws InsufficientNumberOfPeopleException {
 
 
-        boolean first = true;
+
         while(DateUtils.dateBeforeOrEqual(currentTime, config.getTE())) {
 
             if(DateUtils.dateBeforeOrEqual(currentTime, config.getT0())) {
-                summary.setStartPop(population.getAllPeople().getNumberOfPeople());
+                summary.setStartPop(population.getLivingPeople().getNumberOfPeople());
             }
 
             System.out.print(currentTime.toString() + "\t");
 
-//            if (DateUtils.matchesInterval(currentTime, config.getSimulationTimeStep(), config.getTS())) {
-                birthLogic.handleEvent(config, currentTime, config.getSimulationTimeStep(), population, desired);
-//            }
+
+            birthLogic.handleEvent(config, currentTime, config.getSimulationTimeStep(), population, desired);
+
 
             if (InitLogic.inInitPeriod(currentTime) &&
                     DateUtils.matchesInterval(currentTime, InitLogic.getTimeStep(), config.getTS())) {
@@ -226,9 +247,7 @@ public class OBDModel {
                 System.out.print(0 + "\t");
             }
 
-//            if (DateUtils.matchesInterval(currentTime, config.getSimulationTimeStep(), config.getTS())) {
-                deathLogic.handleEvent(config, currentTime, config.getSimulationTimeStep(), population, desired);
-//            }
+            deathLogic.handleEvent(config, currentTime, config.getSimulationTimeStep(), population, desired);
 
             if(inSimDates()) {
                 population.getPopulationCounts().updateMaxPopulation(population.getLivingPeople().getNumberOfPeople());
@@ -237,7 +256,6 @@ public class OBDModel {
             currentTime = currentTime.advanceTime(config.getSimulationTimeStep());
 
             log.info("Time step completed " + currentTime.toString() + "    Population " + population.getLivingPeople().getNumberOfPersons());
-//            System.out.println("Time step completed " + currentTime.toString() + "    Population " + population.getLivingPeople().getNumberOfPersons());
             System.out.println(population.getLivingPeople().getNumberOfPeople() + "\t" + population.getDeadPeople().getNumberOfPeople());
 
         }

@@ -39,8 +39,6 @@ public class SummaryRow {
 
     private int simLength;
 
-    private double factor;
-
     // Post
 
     private Path resultsDirectory;
@@ -53,16 +51,36 @@ public class SummaryRow {
 
     private boolean completed;
 
-    private long simRunTime;
-    private long ctRunTime;
-    private long recordsRunTime;
+    private double simRunTime;
+    private double ctRunTime;
+    private double recordsRunTime;
 
+
+//    public SummaryRow(Path resultsDirectory,
+//                      String startTime,
+//                      String reason,
+//                      CompoundTimeUnit bTimestep,
+//                      CompoundTimeUnit dTimestep,
+//                      CompoundTimeUnit inputWidth,
+//                      Date startDate,
+//                      Date endDate,
+//                      int simLength) {
+//
+//        this.resultsDirectory = resultsDirectory;
+//        this.startTime = startTime;
+//        this.reason = reason;
+//        this.inputWidth = inputWidth;
+//        this.startDate = startDate;
+//        this.endDate = endDate;
+//        this.simLength = simLength;
+//
+//    }
 
     public SummaryRow(Path resultsDirectory,
                       String startTime,
                       String reason,
-                      CompoundTimeUnit bTimestep,
-                      CompoundTimeUnit dTimestep,
+                      String codeVersion,
+                      CompoundTimeUnit timestep,
                       CompoundTimeUnit inputWidth,
                       Date startDate,
                       Date endDate,
@@ -70,39 +88,14 @@ public class SummaryRow {
 
         this.resultsDirectory = resultsDirectory;
         this.startTime = startTime;
-        this.reason = reason;
-        this.inputWidth = inputWidth;
-        this.startDate = startDate;
-        this.endDate = endDate;
-        this.simLength = simLength;
-
-    }
-
-    public SummaryRow(Path resultsDirectory,
-                      String startTime,
-                      String reason,
-                      String codeVersion,
-                      CompoundTimeUnit inputWidth,
-                      Date startDate,
-                      Date endDate,
-                      int simLength,
-                      double factor) {
-
-        this.resultsDirectory = resultsDirectory;
-        this.startTime = startTime;
         this.codeVersion = codeVersion;
+        this.timestep = timestep;
         this.reason = reason;
         this.inputWidth = inputWidth;
         this.startDate = startDate;
         this.endDate = endDate;
         this.simLength = simLength;
-        this.factor = factor;
 
-    }
-
-
-    public void setResultsDirectory(Path directory) {
-        this.resultsDirectory = directory;
     }
 
     public void setStartPop(int startPop) {
@@ -125,15 +118,15 @@ public class SummaryRow {
         this.completed = completed;
     }
 
-    public void setSimRunTime(long simRunTime) {
+    public void setSimRunTime(double simRunTime) {
         this.simRunTime = simRunTime;
     }
 
-    public void setCTRunTime(long ctRunTime) {
+    public void setCTRunTime(double ctRunTime) {
         this.ctRunTime = ctRunTime;
     }
 
-    public void setRecordsRunTime(long recordsRunTime) {
+    public void setRecordsRunTime(double recordsRunTime) {
         this.recordsRunTime = recordsRunTime;
     }
 
@@ -141,14 +134,14 @@ public class SummaryRow {
         return startTime + sep + reason + sep + codeVersion + sep + totalPop + sep + completed + sep
                 + simLength + sep + timestep + sep + inputWidth + sep + startPop + sep
                 + endPop + sep + peakPop + sep + startDate + sep + endDate + sep + simRunTime + sep
-                + ctRunTime + sep + recordsRunTime + sep + resultsDirectory + sep + factor + "\n";
+                + ctRunTime + sep + recordsRunTime + sep + resultsDirectory + "\n";
     }
 
     public static String getSeparatedHeadings(char sep) {
         return "Start Time" + sep + "Reason" + sep + "Code Version" + sep + "Total Pop" + sep + "Completed" + sep
                 + "Sim Length" + sep + "Timestep" + sep + "Input Width" + sep + "Start Pop" + sep
                 + "End Pop" + sep + "Peak Pop" + sep + "Start Date" + sep + "End Date" + sep + "Sim Run time" + sep
-                + "CT Run time" + sep + "Records Run time" + sep + "Results Directory" + sep + "Factor";
+                + "CT Run time" + sep + "Records Run time" + sep + "Results Directory";
     }
 
 }

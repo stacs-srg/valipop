@@ -26,7 +26,7 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.dataD
 import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.validation.exceptions.StatisticalManipulationCalculationError;
 import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.validation.kaplanMeier.IKaplanMeierAnalysis;
 import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.validation.summaryData.SummaryRow;
-import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.IPopulation;
+import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.IPopulationExtended;
 
 
 import java.io.IOException;
@@ -57,6 +57,6 @@ public interface IComparativeAnalysis {
 
     SummaryRow outputResults(PrintStream resultOutput, SummaryRow summary) throws UnsupportedDateConversion;
 
-    void runAnalysis(IPopulation generatedPopulation, Config config) throws UnsupportedDateConversion, StatisticalManipulationCalculationError, IOException, UnsupportedEventType;
+    void runAnalysis(IPopulationExtended generatedPopulation, Config config) throws UnsupportedDateConversion, StatisticalManipulationCalculationError, IOException, UnsupportedEventType;
 
 }

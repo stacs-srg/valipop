@@ -16,13 +16,15 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.dataStructure;
 
+import uk.ac.standrews.cs.digitising_scotland.population_model.model.IPartnership;
+import uk.ac.standrews.cs.digitising_scotland.population_model.model.IPerson;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.DateUtils;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.MisalignedTimeDivisionError;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateImplementations.AdvancableDate;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.timeSteps.CompoundTimeUnit;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.partnership.IPartnershipExtended;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPersonExtended;
-import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.IPopulation;
+import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.IPopulationExtended;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.exceptions.UnsupportedDateConversion;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.dataStructure.exceptions.PersonNotFoundException;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.dataStructure.utils.AggregatePersonCollectionFactory;
@@ -31,20 +33,20 @@ import java.util.*;
 
 /**
  * The class PeopleCollection is a concrete instance of the PersonCollection class. It provides the layout to structure
- * and index a population of males and females and provide access to them. The class also implements the IPopulation
+ * and index a population of males and females and provide access to them. The class also implements the IPopulationExtended
  * interface (adapted to us object references rather than integer id references) allowing it to be used with our other
  * population suite tools.
  *
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class PeopleCollection extends PersonCollection implements IPopulation {
+public class PeopleCollection extends PersonCollection implements IPopulationExtended {
 
     private String description = "";
 
     private MaleCollection males;
     private FemaleCollection females;
 
-//    private final Map<Integer, IPersonExtended> peopleIndex = new HashMap<>();
+    private final Map<Integer, IPersonExtended> peopleIndex = new HashMap<>();
     private final Map<Integer, IPartnershipExtended> partnershipIndex = new HashMap<>();
 
     private ArrayList<IPartnershipExtended> partTemp = new ArrayList<>();
@@ -155,6 +157,8 @@ public class PeopleCollection extends PersonCollection implements IPopulation {
         } else {
             females.addPerson(person);
         }
+
+        peopleIndex.put(person.getId(), person);
     }
 
     @Override
@@ -183,25 +187,35 @@ public class PeopleCollection extends PersonCollection implements IPopulation {
     }
 
     /*
-    -------------------- IPopulation interface methods --------------------
+    -------------------- IPopulationExtended interface methods --------------------
      */
 
     @Override
-    public Iterable<IPersonExtended> getPeople() {
+    public Iterable<IPersonExtended> getPeople_ex() {
         return getAll();
     }
 
     @Override
-    public Iterable<IPartnershipExtended> getPartnerships() {
+    public Iterable<IPartnershipExtended> getPartnerships_ex() {
 
         // TODO Is this temp object needed?
         return partTemp;
     }
 
-//    @Override
-//    public IPersonExtended findPerson(int id) {
-//        return peopleIndex.get(id);
-//    }
+    @Override
+    public Iterable<IPerson> getPeople() {
+        return new ArrayList<>(getAll());
+    }
+
+    @Override
+    public Iterable<IPartnership> getPartnerships() {
+        return new ArrayList<>(partTemp);
+    }
+
+    @Override
+    public IPerson findPerson(int i) {
+        return peopleIndex.get(i);
+    }
 
     @Override
     public IPartnershipExtended findPartnership(int id) {

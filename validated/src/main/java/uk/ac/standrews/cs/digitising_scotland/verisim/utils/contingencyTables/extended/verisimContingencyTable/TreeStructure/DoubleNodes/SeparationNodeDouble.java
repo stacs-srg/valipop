@@ -147,10 +147,11 @@ public class SeparationNodeDouble extends DoubleNode<SeparationOption, IntegerRa
     @Override
     public void calcCount() {
 
-        IntegerRange numberOfChildren = ((NumberOfChildrenInPartnershipNodeDouble)
-                                        getAncestor(new NumberOfChildrenInPartnershipNodeDouble())).getOption();
+        IntegerRange numberOfChildrenInPartnership = ((NumberOfChildrenInPartnershipNodeDouble)
+                getAncestor(new NumberOfChildrenInPartnershipNodeDouble())).getOption();
 
-        if(numberOfChildren.getValue() == 0) {
+
+        if(numberOfChildrenInPartnership.getValue() == 0) {
             setCount(getParent().getCount());
         } else {
 
@@ -162,7 +163,7 @@ public class SeparationNodeDouble extends DoubleNode<SeparationOption, IntegerRa
 
             Date currentDate = yob.advanceTime(age, TimeUnit.YEAR);
 
-            SingleDeterminedCount sDC = (SingleDeterminedCount) getInputStats().getDeterminedCount(new SeparationStatsKey(numberOfChildren.getValue(), forNPeople, timePeriod, currentDate));
+            SingleDeterminedCount sDC = (SingleDeterminedCount) getInputStats().getDeterminedCount(new SeparationStatsKey(numberOfChildrenInPartnership.getValue(), forNPeople, timePeriod, currentDate));
 
             if (getOption() == SeparationOption.YES) {
                 setCount(sDC.getRawUncorrectedCount());

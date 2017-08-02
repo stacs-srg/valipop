@@ -89,7 +89,7 @@ public class FileUtils {
         // make dump dir
         mkDirs(run, "dump");
         // make population dir
-        mkDirs(run, "population");
+        mkDirs(run, "records");
 
         Path tables = Paths.get(run.toString(), "tables");
         mkDirs(tables);
@@ -104,6 +104,10 @@ public class FileUtils {
 
 
 
+    public static Path pathToRecordsDir(Config config) {
+
+        return  Paths.get(config.getResultsSavePath().toString(), config.getRunPurpose(), config.getStartTime(), "records");
+    }
 
 
     public static Path pathToLogDir(String runPurpose, String startTime, String resultPath) {

@@ -18,7 +18,7 @@ package uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.vali
 
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.partnership.IPartnershipExtended;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPersonExtended;
-import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.IPopulation;
+import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.IPopulationExtended;
 import uk.ac.standrews.cs.digitising_scotland.util.ArrayManipulation;
 
 import java.io.PrintStream;
@@ -35,7 +35,7 @@ public class MarriageAnalytics {
     private static final int ONE_HUNDRED = 100;
 
     private final int[] count_marriages = new int[MAX_MARRIAGES]; // tracks marriage size
-    private final IPopulation population;
+    private final IPopulationExtended population;
 
     private static PrintStream out;
 
@@ -44,7 +44,7 @@ public class MarriageAnalytics {
      *
      * @param population the population to analyse
      */
-    public MarriageAnalytics(final IPopulation population, PrintStream resultsOutput) {
+    public MarriageAnalytics(final IPopulationExtended population, PrintStream resultsOutput) {
 
         this.population = population;
         out = resultsOutput;
@@ -73,7 +73,7 @@ public class MarriageAnalytics {
      */
     public void analyseMarriages() {
 
-        for (final IPersonExtended person : population.getPeople()) {
+        for (final IPersonExtended person : population.getPeople_ex()) {
 
             if (person.getSex() == IPersonExtended.MALE) { // only look at Males to avoid counting marriages twice.
 

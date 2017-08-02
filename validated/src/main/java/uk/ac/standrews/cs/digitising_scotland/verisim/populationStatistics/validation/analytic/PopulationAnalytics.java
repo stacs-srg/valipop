@@ -21,7 +21,7 @@ package uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.vali
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.Date;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.partnership.IPartnershipExtended;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPersonExtended;
-import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.IPopulation;
+import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.IPopulationExtended;
 
 import java.io.PrintStream;
 import java.util.List;
@@ -35,7 +35,7 @@ import java.util.List;
 public class PopulationAnalytics {
 
     private static final int ONE_HUNDRED = 100;
-    private final IPopulation population;
+    private final IPopulationExtended population;
     private static PrintStream out;
 
     /**
@@ -43,7 +43,7 @@ public class PopulationAnalytics {
      *
      * @param population the population to analyse
      */
-    public PopulationAnalytics(final IPopulation population, PrintStream resultsOutput) {
+    public PopulationAnalytics(final IPopulationExtended population, PrintStream resultsOutput) {
 
         this.population = population;
         out = resultsOutput;
@@ -70,7 +70,12 @@ public class PopulationAnalytics {
      */
     public void printAllAnalytics() {
 
-        final int size = population.getNumberOfPeople();
+        final int size;
+        try {
+            size = population.getNumberOfPeople();
+        } catch (Exception e) {
+            throw new Error(e);
+        }
         final int number_males = countMales();
         final int number_females = countFemales();
 
@@ -86,7 +91,7 @@ public class PopulationAnalytics {
     private int countMales() {
 
         int count = 0;
-        for (final IPersonExtended person : population.getPeople()) {
+        for (final IPersonExtended person : population.getPeople_ex()) {
             if (Character.toUpperCase(person.getSex()) == IPersonExtended.MALE) {
                 count++;
             }
@@ -97,7 +102,7 @@ public class PopulationAnalytics {
     private int countFemales() {
 
         int count = 0;
-        for (final IPersonExtended person : population.getPeople()) {
+        for (final IPersonExtended person : population.getPeople_ex()) {
             if (Character.toUpperCase(person.getSex()) == IPersonExtended.FEMALE) {
                 count++;
             }
@@ -110,7 +115,7 @@ public class PopulationAnalytics {
      */
     public void printAllBirthDates() {
 
-        for (final IPersonExtended person : population.getPeople()) {
+        for (final IPersonExtended person : population.getPeople_ex()) {
             printBirthDate(person);
             out.println();
         }
@@ -121,7 +126,7 @@ public class PopulationAnalytics {
      */
     public void printAllDeathDates() {
 
-        for (final IPersonExtended person : population.getPeople()) {
+        for (final IPersonExtended person : population.getPeople_ex()) {
             printDeathDate(person);
             out.println();
         }
@@ -173,7 +178,7 @@ public class PopulationAnalytics {
      */
     public void printAllDates() {
 
-        for (final IPersonExtended person : population.getPeople()) {
+        for (final IPersonExtended person : population.getPeople_ex()) {
 
             out.print(person.getSex() + " Born: ");
             printBirthDate(person);

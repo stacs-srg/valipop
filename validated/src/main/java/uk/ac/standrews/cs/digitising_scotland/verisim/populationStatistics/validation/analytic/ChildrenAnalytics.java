@@ -18,7 +18,7 @@ package uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.vali
 
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.partnership.IPartnershipExtended;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPersonExtended;
-import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.IPopulation;
+import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.IPopulationExtended;
 import uk.ac.standrews.cs.digitising_scotland.util.ArrayManipulation;
 
 import java.io.PrintStream;
@@ -37,7 +37,7 @@ public class ChildrenAnalytics {
     private static final int ONE_HUNDRED = 100;
 
     private final int[] children_per_marriage = new int[MAX_CHILDREN]; // tracks family size
-    private final IPopulation population;
+    private final IPopulationExtended population;
     private static PrintStream out;
 
     private final Map<Integer, Double> fertilityRateByYear = new TreeMap<>();
@@ -48,7 +48,7 @@ public class ChildrenAnalytics {
      * @param population the population to analyse
      * @throws Exception if the analysis cannot be completed
      */
-    public ChildrenAnalytics(final IPopulation population, PrintStream resultsOutput) {
+    public ChildrenAnalytics(final IPopulationExtended population, PrintStream resultsOutput) {
 
         this.population = population;
         out = resultsOutput;
@@ -87,7 +87,7 @@ public class ChildrenAnalytics {
      */
     public void analyseChildren() {
 
-        for (final IPersonExtended person : population.getPeople()) {
+        for (final IPersonExtended person : population.getPeople_ex()) {
 
             if(Character.toLowerCase(person.getSex()) == 'f') {
                 final List<IPartnershipExtended> partnerships = person.getPartnerships_ex();
@@ -114,7 +114,7 @@ public class ChildrenAnalytics {
         final int MIN_CB_AGE = 15;
         final int MAX_CB_AGE = 50;
 
-        for (final IPersonExtended person : population.getPeople()) {
+        for (final IPersonExtended person : population.getPeople_ex()) {
 
             if(Character.toLowerCase(person.getSex()) == 'f') {
                 final List<IPartnershipExtended> partnerships = person.getPartnerships_ex();

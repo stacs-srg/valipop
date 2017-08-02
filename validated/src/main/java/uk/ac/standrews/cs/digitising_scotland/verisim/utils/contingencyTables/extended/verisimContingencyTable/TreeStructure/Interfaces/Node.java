@@ -78,7 +78,9 @@ public abstract class Node<Op, cOp, count extends Number, childCount extends Num
 
     public CTRow<count> toCTRow() {
         CTRow r = getParent().toCTRow();
-        r.setVariable(getVariableName(), getOption().toString());
+        if (r != null) {
+            r.setVariable(getVariableName(), getOption().toString());
+        }
         return r;
     }
 

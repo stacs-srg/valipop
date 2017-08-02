@@ -66,11 +66,11 @@ public class AggregatePersonCollectionFactory {
         cloneCol1.setStartDate(start);
         cloneCol1.setEndDate(end);
 
-        for(IPersonExtended p : cloneCol2.getPeople()) {
+        for(IPersonExtended p : cloneCol2.getPeople_ex()) {
             cloneCol1.addPerson(p);
         }
 
-        for(IPartnershipExtended p : cloneCol2.getPartnerships()) {
+        for(IPartnershipExtended p : cloneCol2.getPartnerships_ex()) {
             cloneCol1.addPartnershipToIndex(p);
         }
 

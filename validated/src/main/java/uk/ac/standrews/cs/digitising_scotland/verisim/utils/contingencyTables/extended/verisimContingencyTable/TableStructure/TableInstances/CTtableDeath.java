@@ -28,7 +28,7 @@ public class CTtableDeath extends CTtable {
             Node n = leafs.next();
             CTRow leaf = n.toCTRow();
 
-            if(leaf.getCount() != null) {
+            if(leaf != null && leaf.getCount() != null) {
 
                 try {
                     leaf.addDateVariable();

@@ -23,34 +23,38 @@ public class CTtableMB extends CTtable {
             Node n = leafs.next();
             CTRow leaf = n.toCTRow();
 
-            try {
-                leaf.addDateVariable();
+            if(leaf != null) {
 
-                if(Objects.equals(leaf.getVariable("Sex").getValue(), "FEMALE")) {
-                    leaf.deleteVariable("Sex");
+                try {
+                    leaf.addDateVariable();
 
-                    leaf.deleteVariable("YOB");
-                    leaf.deleteVariable("Died");
-                    leaf.deleteVariable("PNCIP");
-                    leaf.deleteVariable("NPCIAP");
-                    leaf.deleteVariable("CIY");
-                    leaf.deleteVariable("NCIP");
-                    leaf.deleteVariable("Separated");
-                    leaf.deleteVariable("NPA");
+                    if (Objects.equals(leaf.getVariable("Sex").getValue(), "FEMALE")) {
+                        leaf.deleteVariable("Sex");
 
-                    leaf.discritiseVariable("Age", "MB", inputStats);
+                        leaf.deleteVariable("YOB");
+                        leaf.deleteVariable("Died");
+                        leaf.deleteVariable("PNCIP");
+                        leaf.deleteVariable("NPCIAP");
+                        leaf.deleteVariable("CIY");
+                        leaf.deleteVariable("NCIP");
+                        leaf.deleteVariable("Separated");
+                        leaf.deleteVariable("NPA");
 
-                    CTRow h = table.get(leaf.hash());
+                        leaf.discritiseVariable("Age", "MB", inputStats);
 
-                    if (h == null) {
-                        table.put(leaf.hash(), leaf);
-                    } else {
-                        h.setCount(h.combineCount(h.getCount(), leaf.getCount()));
+                        CTRow h = table.get(leaf.hash());
+
+                        if (h == null) {
+                            table.put(leaf.hash(), leaf);
+                        } else {
+                            h.setCount(h.combineCount(h.getCount(), leaf.getCount()));
+                        }
                     }
+
+                } catch (VariableNotFoundExcepction variableNotFoundExcepction) {
+                    // Unfilled row - thus pass
                 }
 
-            } catch (VariableNotFoundExcepction variableNotFoundExcepction) {
-                // Unfilled row - thus pass
             }
 
         }

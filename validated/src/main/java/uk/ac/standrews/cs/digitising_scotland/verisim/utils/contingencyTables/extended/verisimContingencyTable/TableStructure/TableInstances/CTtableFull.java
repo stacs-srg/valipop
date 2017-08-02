@@ -25,16 +25,19 @@ public class CTtableFull extends CTtable {
         while(leafs.hasNext()) {
             CTRow leaf = leafs.next().toCTRow();
 
-            if(first) {
-                ps.print(getVarNames(",", leaf));
-                first = false;
+            if(leaf != null) {
+
+                if (first) {
+                    ps.print(getVarNames(",", leaf));
+                    first = false;
+                }
+
+                if (leaf.getCount() != null && leaf.countGreaterThan(0.1)) {
+
+                    ps.print(leaf.toString(","));
+                }
+
             }
-
-            if(leaf.getCount() != null && leaf.countGreaterThan(0.1)) {
-
-                ps.print(leaf.toString(","));
-            }
-
 
         }
 

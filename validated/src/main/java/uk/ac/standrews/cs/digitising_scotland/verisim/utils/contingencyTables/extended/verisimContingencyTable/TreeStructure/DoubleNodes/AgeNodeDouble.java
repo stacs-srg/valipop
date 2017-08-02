@@ -1,9 +1,11 @@
 package uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.TreeStructure.DoubleNodes;
 
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.Date;
+import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.DateUtils;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateImplementations.YearDate;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.timeSteps.TimeUnit;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPersonExtended;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.TableStructure.CTRow;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.TreeStructure.ChildNotFoundException;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.TreeStructure.Interfaces.DoubleNode;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.TreeStructure.Interfaces.Node;
@@ -20,10 +22,21 @@ import java.util.Collection;
  */
 public class AgeNodeDouble extends DoubleNode<IntegerRange, DiedOption> implements ControlChildrenNode, RunnableNode {
 
+    boolean initNode = false;
+
     Collection<IPersonExtended> people = new ArrayList<>();
 
     public AgeNodeDouble(IntegerRange age, SexNodeDouble parentNode, double initCount, boolean init) {
         super(age, parentNode, initCount);
+
+        YearDate yob = ((YOBNodeDouble) getAncestor(new YOBNodeDouble())).getOption();
+        Integer ageI = age.getValue();
+
+        Date currentDate = yob.advanceTime(ageI, TimeUnit.YEAR);
+
+        if(DateUtils.dateBefore(currentDate, getInputStats().getStartDate())) {
+            initNode = true;
+        }
 
         if(!init) {
             makeChildren();
@@ -32,10 +45,6 @@ public class AgeNodeDouble extends DoubleNode<IntegerRange, DiedOption> implemen
 
     @Override
     public void incCount(Double byCount) {
-        if(getChildren().size() != 0) {
-            System.out.println("Issue with ordering");
-        }
-
         setCount(getCount() + byCount);
     }
 
@@ -60,7 +69,9 @@ public class AgeNodeDouble extends DoubleNode<IntegerRange, DiedOption> implemen
     @Override
     public void processPerson(IPersonExtended person, Date currentDate) {
 
+        initNode = true;
         people.add(person);
+
         YearDate yob = ((YOBNodeDouble) getAncestor(new YOBNodeDouble())).getOption();
         Integer age = getOption().getValue();
 
@@ -119,5 +130,22 @@ public class AgeNodeDouble extends DoubleNode<IntegerRange, DiedOption> implemen
             }
         }
         return count;
+    }
+
+    public CTRow<Double> toCTRow() {
+
+        if(initNode) {
+            return null;
+        } else {
+
+            CTRow r = getParent().toCTRow();
+            if (r != null) {
+                r.setVariable(getVariableName(), getOption().toString());
+            }
+            return r;
+
+        }
+
+
     }
 }

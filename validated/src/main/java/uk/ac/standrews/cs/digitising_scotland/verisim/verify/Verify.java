@@ -41,7 +41,7 @@ public class Verify {
 
         String text = "";
 
-        for(IPartnershipExtended partnership : population.getPartnerships()) {
+        for(IPartnershipExtended partnership : population.getPartnerships_ex()) {
             if(partnership.getMalePartner() == null || partnership.getFemalePartner() == null) {
 
                 failureCount++;
