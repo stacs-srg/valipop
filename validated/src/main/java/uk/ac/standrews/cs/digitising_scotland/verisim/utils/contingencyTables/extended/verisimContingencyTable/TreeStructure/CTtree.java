@@ -35,7 +35,7 @@ public class CTtree extends Node<String, SourceType, Number, Number> implements 
     private Date endDate;
 
     private SourceNodeInt simNode;
-    private SourceNodeDouble statNode;
+    private static SourceNodeDouble statNode = null;
 
     public CTtree(PeopleCollection population, PopulationStatistics expected, Date startDate, Date endDate) {
         this.expected = expected;
@@ -43,22 +43,29 @@ public class CTtree extends Node<String, SourceType, Number, Number> implements 
 
         System.out.println("CTree --- Populating tree");
 
-        // removed -1
-        YearDate prevY = new YearDate(startDate.getYear() - 1);
-        for(IPersonExtended person : population.getPeople_ex()) {
-            if(person.aliveInYear(prevY)) {
-                processPerson(person, prevY, SourceType.STAT);
+        if(statNode == null) {
+            // removed -1
+            YearDate prevY = new YearDate(startDate.getYear() - 1);
+            for (IPersonExtended person : population.getPeople_ex()) {
+                if (person.aliveInYear(prevY)) {
+                    processPerson(person, prevY, SourceType.STAT);
+                }
             }
+
+            executeDelayedTasks();
+
+            removeInitPop();
         }
+
 
         for (YearDate y = startDate.getYearDate(); DateUtils.dateBefore(y, endDate);
              y = y.advanceTime(1, TimeUnit.YEAR).getYearDate()) {
 
             // for every person in population
-            for(IPersonExtended person : population.getPeople_ex()) {
+            for (IPersonExtended person : population.getPeople_ex()) {
 
                 // who was alive or died in the year of consideration
-                if(person.bornInYear(y) && person.diedInYear(y)
+                if (person.bornInYear(y) && person.diedInYear(y)
                         ||
                         person.aliveInYear(y) && !person.bornInYear(y)
                         ||
@@ -70,9 +77,6 @@ public class CTtree extends Node<String, SourceType, Number, Number> implements 
 
 
 
-        executeDelayedTasks();
-
-        removeInitPop();
 
         System.out.println("CTree --- Tree completed");
 

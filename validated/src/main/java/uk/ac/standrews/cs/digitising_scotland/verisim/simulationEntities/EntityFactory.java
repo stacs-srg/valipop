@@ -132,8 +132,8 @@ public class EntityFactory {
         Person person = new Person(getSex(population.getPopulationCounts()), birthDate, parentsPartnership);
 
         // OZGUR - this is where your stuff is currently being called from
-        person.setFirstName(firstNameGenerator.getName(person));
-        person.setSurname(surnameGenerator.getName(person));
+//        person.setFirstName(firstNameGenerator.getName(person));
+//        person.setSurname(surnameGenerator.getName(person));
 
 
         population.getLivingPeople().addPerson(person);

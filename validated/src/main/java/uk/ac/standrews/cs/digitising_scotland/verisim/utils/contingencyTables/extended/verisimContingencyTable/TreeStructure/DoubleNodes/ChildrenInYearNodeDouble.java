@@ -94,13 +94,13 @@ public class ChildrenInYearNodeDouble extends DoubleNode<ChildrenInYearOption, I
         SingleDeterminedCount sDC = (SingleDeterminedCount) getInputStats().getDeterminedCount(
                 new BirthStatsKey(age, order, forNPeople, timePeriod, currentDate));
 
-        double numberOfMothers = sDC.getRawUncorrectedCount();
-//        double numberOfChildren = sDC.getRawUncorrectedCount();
-//
-//        MultipleDeterminedCount mDc = (MultipleDeterminedCount) getInputStats().getDeterminedCount(
-//                new MultipleBirthStatsKey(age, numberOfChildren, timePeriod, currentDate));
-//
-//        double numberOfMothers = mDc.getRawUncorrectedCount().getSumOfValues();
+//        double numberOfMothers = sDC.getRawUncorrectedCount();
+        double numberOfChildren = sDC.getRawUncorrectedCount();
+
+        MultipleDeterminedCount mDc = (MultipleDeterminedCount) getInputStats().getDeterminedCount(
+                new MultipleBirthStatsKey(age, numberOfChildren, timePeriod, currentDate));
+
+        double numberOfMothers = mDc.getRawUncorrectedCount().getSumOfValues();
 
         NumberOfPreviousChildrenInAnyPartnershipNodeDouble parent = (NumberOfPreviousChildrenInAnyPartnershipNodeDouble) getParent();
 

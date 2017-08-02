@@ -53,6 +53,7 @@ public class Config {
     private double setUpBR;
     private double setUpDR;
     private CompoundTimeUnit simulationTimeStep;
+    private String varPath;
     private Path varBirthPaths;
     private Path varMaleDeathPaths;
     private Path varFemaleDeathPaths;
@@ -65,6 +66,10 @@ public class Config {
     private boolean binominalSampling = false;
 
     private final String runPurpose;
+
+    public String getVarPath() {
+        return varPath;
+    }
     private final String startTime;
 
     // Filter method to exclude dot files from data file directory streams
@@ -102,6 +107,7 @@ public class Config {
 
             switch (split[0]) {
                 case "var_data_files":
+                    varPath = path;
                     varBirthPaths = Paths.get(path, ordersBirthSubFile);
                     String deathSubPath = Paths.get(path, deathSubFile).toString();
                     varMaleDeathPaths = Paths.get(deathSubPath, maleDeathSubFile);

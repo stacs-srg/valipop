@@ -8,7 +8,7 @@ calcP <- function(x) {
 }
 
 # Read in the data
-file <- "/Users/tsd4/OneDrive/cs/PhD/code/population-model/validated/src/main/resources/results/ExpTesting/20170802-152130:570/tables/death-CT.csv"
+file <- "/Users/tsd4/OneDrive/cs/PhD/code/population-model/validated/src/main/resources/results/ExpTesting/20170802-172702:146/tables/death-CT.csv"
 file <- commandArgs(TRUE)[1]
 
 data = read.csv(file, sep = ',', header = T)

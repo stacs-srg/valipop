@@ -25,7 +25,7 @@ public class ProcessArgs {
 
     public static String[] process(String[] args) {
 
-        String[] processed = new String[3];
+        String[] processed = new String[4];
 
         try {
             processed[0] = args[0];
@@ -42,7 +42,13 @@ public class ProcessArgs {
         try {
             processed[2] = args[2];
         } catch (ArrayIndexOutOfBoundsException e) {
-            processed[2] = "unstated";
+            System.err.println("No run purpose given as 3rd arg");
+        }
+
+        try {
+            processed[3] = args[3];
+        } catch (ArrayIndexOutOfBoundsException e) {
+            System.err.println("No desired number of populations specified as 4th arg");
         }
 
         return processed;
@@ -51,7 +57,8 @@ public class ProcessArgs {
 
     public static boolean check(String[] args) {
 
-        return args.length == 3 && !Objects.equals(args[0], "") && !Objects.equals(args[1], "");
+        return args.length == 4 && !Objects.equals(args[0], "") && !Objects.equals(args[1], "")
+                && !Objects.equals(args[2], "") && !Objects.equals(args[3], "");
 
     }
 
