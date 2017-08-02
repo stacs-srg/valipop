@@ -2,8 +2,8 @@ YEAR	1980
 POPULATION	ENGWALES
 SOURCE	ONS
 VAR	BIRTH
-TYPE	ORDERED
 FORM	RATE
+TYPE	ORDERED
 # USING THIS DATA - get the cohort count by age division (in row labels) = cc
 # multiply cc by the ASFR for a given order to give the number of children to
 # be born from this subset of women.
