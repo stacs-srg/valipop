@@ -42,6 +42,7 @@ public class SummaryRow {
     // Post
 
     private Path resultsDirectory;
+    private String inputsDirectory;
 
     private int startPop;
 
@@ -56,27 +57,8 @@ public class SummaryRow {
     private double recordsRunTime;
 
 
-//    public SummaryRow(Path resultsDirectory,
-//                      String startTime,
-//                      String reason,
-//                      CompoundTimeUnit bTimestep,
-//                      CompoundTimeUnit dTimestep,
-//                      CompoundTimeUnit inputWidth,
-//                      Date startDate,
-//                      Date endDate,
-//                      int simLength) {
-//
-//        this.resultsDirectory = resultsDirectory;
-//        this.startTime = startTime;
-//        this.reason = reason;
-//        this.inputWidth = inputWidth;
-//        this.startDate = startDate;
-//        this.endDate = endDate;
-//        this.simLength = simLength;
-//
-//    }
-
     public SummaryRow(Path resultsDirectory,
+                      String inputsDirectory,
                       String startTime,
                       String reason,
                       String codeVersion,
@@ -87,6 +69,7 @@ public class SummaryRow {
                       int simLength) {
 
         this.resultsDirectory = resultsDirectory;
+        this.inputsDirectory = inputsDirectory;
         this.startTime = startTime;
         this.codeVersion = codeVersion;
         this.timestep = timestep;
@@ -131,14 +114,14 @@ public class SummaryRow {
     }
 
     public String toSeperatedString(char sep) {
-        return startTime + sep + reason + sep + codeVersion + sep + totalPop + sep + completed + sep
+        return startTime + sep + reason + sep + codeVersion + sep + inputsDirectory + sep + totalPop + sep + completed + sep
                 + simLength + sep + timestep + sep + inputWidth + sep + startPop + sep
                 + endPop + sep + peakPop + sep + startDate + sep + endDate + sep + simRunTime + sep
                 + ctRunTime + sep + recordsRunTime + sep + resultsDirectory + "\n";
     }
 
     public static String getSeparatedHeadings(char sep) {
-        return "Start Time" + sep + "Reason" + sep + "Code Version" + sep + "Total Pop" + sep + "Completed" + sep
+        return "Start Time" + sep + "Reason" + sep + "Code Version" + sep + "Inputs Directory" + sep + "Total Pop" + sep + "Completed" + sep
                 + "Sim Length" + sep + "Timestep" + sep + "Input Width" + sep + "Start Pop" + sep
                 + "End Pop" + sep + "Peak Pop" + sep + "Start Date" + sep + "End Date" + sep + "Sim Run time" + sep
                 + "CT Run time" + sep + "Records Run time" + sep + "Results Directory";

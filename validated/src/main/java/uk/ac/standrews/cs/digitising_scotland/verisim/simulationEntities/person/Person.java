@@ -16,6 +16,8 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person;
 
+import uk.ac.standrews.cs.digitising_scotland.population_model.distributions.general.InconsistentWeightException;
+import uk.ac.standrews.cs.digitising_scotland.verisim.annotations.names.FileBasedEnumeratedDistribution;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.Date;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.DateUtils;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateImplementations.AdvancableDate;
@@ -38,10 +40,8 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.populat
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.dataStructure.Population;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.dataStructure.exceptions.PersonNotFoundException;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.io.IOException;
+import java.util.*;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
@@ -49,6 +49,16 @@ import java.util.List;
 public class Person implements IPersonExtended {
 
     private static Logger log = LogManager.getLogger(Person.class);
+    public static Random random = new Random();
+
+    private static FileBasedEnumeratedDistribution maleFirstNamesDistribution = null;
+    private static FileBasedEnumeratedDistribution femaleFirstNamesDistribution = null;
+    private static FileBasedEnumeratedDistribution surnameNamesDistribution = null;
+
+    private static final String maleNames = "proxy-scotland-population-JA/names/female_first_name_probabilities.tsv";
+    private static final String femaleNames = "proxy-scotland-population-JA/names/male_first_name_probabilities.tsv";
+    private static final String surnames = "proxy-scotland-population-JA/names/surname_probabilities.tsv";
+
     private static int nextId = 0;
     private int id;
     private char sex;
@@ -64,18 +74,35 @@ public class Person implements IPersonExtended {
 
     private boolean toSeparate = false;
 
-
-    public Person(char sex, Date birthDate) {
-        id = getNewId();
-        this.sex = Character.toLowerCase(sex);
-        this.birthDate = birthDate.getExactDate();
-    }
-
     public Person(char sex, Date birthDate, IPartnershipExtended parentsPartnership) {
+
+        if(maleFirstNamesDistribution == null) {
+            try {
+                maleFirstNamesDistribution = new FileBasedEnumeratedDistribution(maleNames, random);
+                femaleFirstNamesDistribution = new FileBasedEnumeratedDistribution(femaleNames, random);
+                surnameNamesDistribution = new FileBasedEnumeratedDistribution(surnames, random);
+            } catch (IOException | InconsistentWeightException e) {
+                e.printStackTrace();
+            }
+        }
+
         id = getNewId();
         this.sex = Character.toLowerCase(sex);
         this.birthDate = birthDate.getExactDate();
         this.parentsPartnership = parentsPartnership;
+
+        if (this.sex == 'm') {
+            firstName = maleFirstNamesDistribution.getSample();
+        } else {
+            firstName = femaleFirstNamesDistribution.getSample();
+        }
+
+        if(parentsPartnership == null || parentsPartnership.getMalePartner() == null) {
+            surname = surnameNamesDistribution.getSample();
+        } else {
+            surname = parentsPartnership.getMalePartner().getSurname();
+        }
+
     }
 
     private static int getNewId() {
