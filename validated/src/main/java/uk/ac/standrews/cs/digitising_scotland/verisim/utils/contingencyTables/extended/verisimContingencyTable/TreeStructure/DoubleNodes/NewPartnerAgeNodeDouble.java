@@ -86,13 +86,15 @@ public class NewPartnerAgeNodeDouble extends DoubleNode<IntegerRange, String> im
     public CTRow<Double> toCTRow() {
         CTRow r = getParent().toCTRow();
 
-        if(getOption() == null) {
-            r.setVariable(getVariableName(), "na");
-        } else {
-            r.setVariable(getVariableName(), getOption().toString());
-        }
+        if(r != null) {
+            if (getOption() == null) {
+                r.setVariable(getVariableName(), "na");
+            } else {
+                r.setVariable(getVariableName(), getOption().toString());
+            }
 
-        r.setCount(getCount());
+            r.setCount(getCount());
+        }
 
         return r;
     }

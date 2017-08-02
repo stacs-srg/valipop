@@ -7,9 +7,7 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.timeSteps.TimeUn
 import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.recording.PopulationStatistics;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPersonExtended;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.dataStructure.PeopleCollection;
-import uk.ac.standrews.cs.digitising_scotland.verisim.utils.DoubleComparer;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.TreeStructure.Interfaces.ContingencyTable;
-import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.TreeStructure.Interfaces.DoubleNode;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.TreeStructure.Interfaces.Node;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.TreeStructure.Interfaces.RunnableNode;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.TreeStructure.DoubleNodes.*;
@@ -30,10 +28,6 @@ public class CTtree extends Node<String, SourceType, Number, Number> implements 
     private LinkedList<RunnableNode> nciapTasks = new LinkedList<>();
     private LinkedList<RunnableNode> sepTasks = new LinkedList<>();
 
-    private LinkedList<RunnableNode> otherTasks = new LinkedList<>();
-
-    private LinkedList<RunnableNode> delayedTasks = new LinkedList<>();
-
     public static final double NODE_MIN_COUNT = 0.00000000000000000001;
 
     private PopulationStatistics expected;
@@ -50,8 +44,8 @@ public class CTtree extends Node<String, SourceType, Number, Number> implements 
         System.out.println("CTree --- Populating tree");
 
         // removed -1
-        YearDate prevY = new YearDate(startDate.getYear());
-        for(IPersonExtended person : population.getPeople()) {
+        YearDate prevY = new YearDate(startDate.getYear() - 100);
+        for(IPersonExtended person : population.getPeople_ex()) {
             if(person.aliveInYear(prevY)) {
                 processPerson(person, prevY, SourceType.STAT);
             }
@@ -61,12 +55,14 @@ public class CTtree extends Node<String, SourceType, Number, Number> implements 
              y = y.advanceTime(1, TimeUnit.YEAR).getYearDate()) {
 
             // for every person in population
-            for(IPersonExtended person : population.getPeople()) {
+            for(IPersonExtended person : population.getPeople_ex()) {
 
                 // who was alive or died in the year of consideration
                 if(person.bornInYear(y) && person.diedInYear(y)
                         ||
-                        person.aliveInYear(y) && !person.bornInYear(y)) {
+                        person.aliveInYear(y) && !person.bornInYear(y)
+                        ||
+                        person.bornOnDate(y)) {
                     processPerson(person, y, SourceType.SIM);
                 }
             }
@@ -76,7 +72,15 @@ public class CTtree extends Node<String, SourceType, Number, Number> implements 
 
         executeDelayedTasks();
 
+        removeInitPop();
+
         System.out.println("CTree --- Tree completed");
+
+    }
+
+    private void removeInitPop() {
+
+
 
     }
 

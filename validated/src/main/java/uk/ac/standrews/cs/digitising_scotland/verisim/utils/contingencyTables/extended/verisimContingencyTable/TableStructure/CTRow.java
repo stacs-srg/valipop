@@ -33,7 +33,7 @@ public abstract class CTRow<count extends Number> {
             new CTCell("Age", ""),
             new CTCell("Died", ""),
             new CTCell("PNCIP", "0"),
-            new CTCell("NPCIAP", "0+"),
+            new CTCell("NPCIAP", "0"),
             new CTCell("CIY", "NO"),
             new CTCell("NCIY", "0"),
             new CTCell("NCIP", "0"),

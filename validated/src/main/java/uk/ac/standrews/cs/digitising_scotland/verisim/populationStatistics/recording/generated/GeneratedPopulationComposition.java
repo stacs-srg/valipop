@@ -33,7 +33,7 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.recor
 import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.validation.kaplanMeier.utils.FailureTimeRow;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.partnership.IPartnershipExtended;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPersonExtended;
-import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.IPopulation;
+import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.IPopulationExtended;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.dataStructure.PeopleCollection;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.integerRange.IntegerRange;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.integerRange.InvalidRangeException;
@@ -107,7 +107,7 @@ public class GeneratedPopulationComposition implements PopulationComposition {
     }
 
     @Override
-    public OneDimensionDataDistribution getCohortSurvivorTable(AdvancableDate cohortYear, EventType event, Double scalingFactor, int timeLimit, IPopulation generatedPopulation) throws UnsupportedEventType {
+    public OneDimensionDataDistribution getCohortSurvivorTable(AdvancableDate cohortYear, EventType event, Double scalingFactor, int timeLimit, IPopulationExtended generatedPopulation) throws UnsupportedEventType {
         return getCohortSurvivorTable(cohortYear, event);
     }
 
@@ -218,7 +218,7 @@ public class GeneratedPopulationComposition implements PopulationComposition {
     }
 
     @Override
-    public Collection<FailureTimeRow> getFailureAtTimesTable(AdvancableDate year, String denoteGroupAs, Date simulationEndDate, EventType event, Double scalingFactor, int timeLimit, IPopulation generatedPopulation) {
+    public Collection<FailureTimeRow> getFailureAtTimesTable(AdvancableDate year, String denoteGroupAs, Date simulationEndDate, EventType event, Double scalingFactor, int timeLimit, IPopulationExtended generatedPopulation) {
         return null;
 
     }

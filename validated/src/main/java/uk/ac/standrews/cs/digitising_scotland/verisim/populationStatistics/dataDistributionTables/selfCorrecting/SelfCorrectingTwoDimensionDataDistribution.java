@@ -53,7 +53,8 @@ public class SelfCorrectingTwoDimensionDataDistribution implements DataDistribut
         this.data = tableData;
     }
 
-    private static final double FACTOR = 1.007462401 ;
+//    private static final double FACTOR = 1.007462401 ;
+    private static final double FACTOR = 1;
 
     public SingleDeterminedCount determineCount(StatsKey key) {
         try {

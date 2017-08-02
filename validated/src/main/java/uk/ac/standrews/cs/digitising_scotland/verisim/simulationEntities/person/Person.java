@@ -55,7 +55,7 @@ public class Person implements IPersonExtended {
     private ExactDate birthDate;
     private ExactDate deathDate;
     private List<IPartnershipExtended> partnerships = new ArrayList<>();
-    private IPartnershipExtended parentsPartnership;
+    private IPartnershipExtended parentsPartnership = null;
     private String firstName;
     private String surname;
 
@@ -143,7 +143,11 @@ public class Person implements IPersonExtended {
 
     @Override
     public java.util.Date getDeathDate() {
-        return getDeathDate_ex().getDate();
+        if(getDeathDate_ex() == null) {
+            return null;
+        } else {
+            return getDeathDate_ex().getDate();
+        }
     }
 
     @Override
@@ -177,7 +181,11 @@ public class Person implements IPersonExtended {
 
     @Override
     public int getParentsPartnership() {
-        return getParentsPartnership_ex().getId();
+        if(getParentsPartnership_ex() == null) {
+            return -1;
+        } else {
+            return getParentsPartnership_ex().getId();
+        }
     }
 
     @Override
@@ -688,6 +696,11 @@ public class Person implements IPersonExtended {
     @Override
     public boolean bornBefore(Date date) {
         return DateUtils.dateBefore(getBirthDate_ex(), date);
+    }
+
+    @Override
+    public boolean bornOnDate(Date y) {
+        return DateUtils.datesEqual(y, birthDate);
     }
 
 }

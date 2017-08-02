@@ -51,5 +51,19 @@ public class ProgramTimer {
 
     }
 
+    public double getRunTimeSeconds() {
+
+        long runEndTime;
+
+        if (stopped) {
+            runEndTime = endTime;
+        } else {
+            runEndTime = System.nanoTime();
+        }
+
+        return (runEndTime - startTime) / Math.pow(10, 9);
+
+    }
+
 
 }

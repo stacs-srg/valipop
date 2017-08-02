@@ -79,10 +79,6 @@ public class PreviousNumberOfChildrenInPartnershipNodeDouble extends DoubleNode<
     @SuppressWarnings("Duplicates")
     public IntegerRange resolveToChildRange(Integer npciap) {
 
-        if(npciap == 0) {
-            System.out.print("");
-        }
-
         for(Node<IntegerRange, ?, ?, ?> aN : getChildren()) {
             if(aN.getOption().contains(npciap)) {
                 return aN.getOption();

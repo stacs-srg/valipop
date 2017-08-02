@@ -19,7 +19,7 @@ package uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.vali
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.Date;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.DateUtils;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPersonExtended;
-import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.IPopulation;
+import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.IPopulationExtended;
 import uk.ac.standrews.cs.digitising_scotland.util.ArrayManipulation;
 
 import java.io.PrintStream;
@@ -36,7 +36,7 @@ public class DeathAnalytics {
     private static final int ONE_HUNDRED = 100;
 
     private final int[] age_at_death = new int[MAX_AGE_AT_DEATH]; // tracks age of death over population
-    private final IPopulation population;
+    private final IPopulationExtended population;
 
     private static PrintStream out;
 
@@ -45,7 +45,7 @@ public class DeathAnalytics {
      *
      * @param population the population to analyse
      */
-    public DeathAnalytics(final IPopulation population, PrintStream resultsOutput) {
+    public DeathAnalytics(final IPopulationExtended population, PrintStream resultsOutput) {
 
         this.population = population;
         out = resultsOutput;
@@ -71,7 +71,7 @@ public class DeathAnalytics {
      */
     public void analyseDeaths() {
 
-        for (final IPersonExtended person : population.getPeople()) {
+        for (final IPersonExtended person : population.getPeople_ex()) {
 
             final Date death_date = person.getDeathDate_ex();
 

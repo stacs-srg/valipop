@@ -223,8 +223,12 @@ public class DiedNodeDouble extends DoubleNode<DiedOption, IntegerRange> impleme
 
     public CTRow<Double> toCTRow() {
         CTRow r = getParent().toCTRow();
-        r.setVariable(getVariableName(), getOption().toString());
-        r.setCount(getCount());
+
+        if(r != null) {
+            r.setVariable(getVariableName(), getOption().toString());
+            r.setCount(getCount());
+        }
+
         return r;
     }
 

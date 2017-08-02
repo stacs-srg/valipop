@@ -27,37 +27,38 @@ public class CTtableOB extends CTtable {
             Node n = leafs.next();
             CTRow leaf = n.toCTRow();
 
-            try {
-                leaf.addDateVariable();
+            if(leaf != null && leaf.getCount() != null) {
+
+                try {
+                    leaf.addDateVariable();
 
 
+                    if (Objects.equals(leaf.getVariable("Sex").getValue(), "FEMALE")) {
+                        leaf.deleteVariable("Sex");
 
-                if (Objects.equals(leaf.getVariable("Sex").getValue(), "FEMALE")) {
-                    leaf.deleteVariable("Sex");
+                        leaf.deleteVariable("YOB");
+                        leaf.deleteVariable("Died");
+                        leaf.deleteVariable("PNCIP");
+                        leaf.deleteVariable("NCIY");
+                        leaf.deleteVariable("NCIP");
+                        leaf.deleteVariable("Separated");
+                        leaf.deleteVariable("NPA");
 
-                    leaf.deleteVariable("YOB");
-                    leaf.deleteVariable("Died");
-                    leaf.deleteVariable("PNCIP");
-                    leaf.deleteVariable("NCIY");
-                    leaf.deleteVariable("NCIP");
-                    leaf.deleteVariable("Separated");
-                    leaf.deleteVariable("NPA");
+                        leaf.discritiseVariable("Age", "OB", inputStats);
 
-                    leaf.discritiseVariable("Age", "OB", inputStats);
+                        CTRow h = table.get(leaf.hash());
 
-                    CTRow h = table.get(leaf.hash());
-
-                    if (h == null) {
-                        table.put(leaf.hash(), leaf);
-                    } else {
-                        h.setCount(h.combineCount(h.getCount(), leaf.getCount()));
+                        if (h == null) {
+                            table.put(leaf.hash(), leaf);
+                        } else {
+                            h.setCount(h.combineCount(h.getCount(), leaf.getCount()));
+                        }
                     }
+
+                } catch (VariableNotFoundExcepction variableNotFoundExcepction) {
+                    // Unfilled row - thus pass
                 }
 
-
-
-            } catch (VariableNotFoundExcepction variableNotFoundExcepction) {
-                // Unfilled row - thus pass
             }
 
         }

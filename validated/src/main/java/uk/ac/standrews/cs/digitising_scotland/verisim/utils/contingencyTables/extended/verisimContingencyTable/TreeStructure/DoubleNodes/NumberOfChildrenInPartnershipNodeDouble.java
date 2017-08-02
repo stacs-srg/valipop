@@ -8,6 +8,7 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.ex
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.TreeStructure.Interfaces.DoubleNode;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.TreeStructure.Interfaces.Node;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.TableStructure.PersonCharacteristicsIdentifier;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.TreeStructure.enumerations.ChildrenInYearOption;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.TreeStructure.enumerations.SeparationOption;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.integerRange.IntegerRange;
 
@@ -72,7 +73,10 @@ public class NumberOfChildrenInPartnershipNodeDouble extends DoubleNode<IntegerR
     @Override
     public void makeChildren() {
 
-        if(getOption().getValue() == 0) {
+        ChildrenInYearOption childrenInYear = ((ChildrenInYearNodeDouble)
+                getAncestor(new ChildrenInYearNodeDouble())).getOption();
+
+        if(getOption().getValue() == 0 || childrenInYear == ChildrenInYearOption.NO) {
             addChild(SeparationOption.NA, getCount());
         } else {
             addChild(SeparationOption.YES);

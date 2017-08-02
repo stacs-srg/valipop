@@ -24,7 +24,7 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.events.UnsupportedEventTyp
 import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.dataDistributionTables.OneDimensionDataDistribution;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.Date;
 import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.validation.kaplanMeier.utils.FailureTimeRow;
-import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.IPopulation;
+import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.IPopulationExtended;
 
 import java.util.Collection;
 
@@ -53,7 +53,7 @@ public interface StatisticalTables {
      */
     OneDimensionDataDistribution getCohortSurvivorTable(AdvancableDate cohortYear, EventType event) throws UnsupportedEventType;
 
-    OneDimensionDataDistribution getCohortSurvivorTable(AdvancableDate cohortYear, EventType event, Double scalingFactor, int timeLimit, IPopulation generatedPopulation) throws UnsupportedEventType;
+    OneDimensionDataDistribution getCohortSurvivorTable(AdvancableDate cohortYear, EventType event, Double scalingFactor, int timeLimit, IPopulationExtended generatedPopulation) throws UnsupportedEventType;
 
     OneDimensionDataDistribution getTimePeriodSurvivorTable(AdvancableDate startYear, CompoundTimeUnit timePeriod, EventType event) throws UnsupportedEventType;
 
@@ -61,7 +61,7 @@ public interface StatisticalTables {
 
     Collection<FailureTimeRow> getFailureAtTimesTable(AdvancableDate year, String denoteGroupAs, Date simulationEndDate, EventType event);
 
-    Collection<FailureTimeRow> getFailureAtTimesTable(AdvancableDate year, String denoteGroupAs, Date simulationEndDate, EventType event, Double scalingFactor, int timeLimit, IPopulation generatedPopulation) throws UnsupportedEventType;
+    Collection<FailureTimeRow> getFailureAtTimesTable(AdvancableDate year, String denoteGroupAs, Date simulationEndDate, EventType event, Double scalingFactor, int timeLimit, IPopulationExtended generatedPopulation) throws UnsupportedEventType;
 
     Collection<YearDate> getDataYearsInMap(EventType maleDeath);
 

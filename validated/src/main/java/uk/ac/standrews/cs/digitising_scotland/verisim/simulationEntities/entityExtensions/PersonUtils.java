@@ -100,4 +100,6 @@ public interface PersonUtils {
     Integer numberOfChildrenBirthedBeforeDate(YearDate y);
 
     boolean bornBefore(Date year);
+
+    boolean bornOnDate(Date y);
 }
