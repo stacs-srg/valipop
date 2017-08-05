@@ -8,11 +8,13 @@ calcP <- function(x) {
 }
 
 # Read in the data
-file <- "/Users/tsd4/OneDrive/cs/PhD/code/population-model/validated/src/main/resources/results/ExpTesting/20170802-172702:146/tables/death-CT.csv"
+file <- "/Users/tsd4/OneDrive/cs/PhD/code/population-model/validated/src/main/resources/results/scot/20170805-172512:439/tables/death-CT.csv"
+file <- "/Users/tsd4/Desktop/results/scot-a/20170803-003626:222/tables/death-CT.csv"
 file <- commandArgs(TRUE)[1]
 
 data = read.csv(file, sep = ',', header = T)
 
+head(data)
 # Standardise the data
 data$freq <- round(data$freq)
 data <- data[which(data$freq != 0), ]

@@ -15,6 +15,6 @@ t0_pop_size = 1000
 set_up_br = 0.0133
 set_up_dr = 0.0122
 results_save_location = results
-plots_save_location = results/plots
 dat_save_location = results/dat
+plots_save_location = results/plots
 summary_save_location = results/summary
