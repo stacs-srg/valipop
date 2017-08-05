@@ -1,4 +1,4 @@
-file <- "/Users/tsd4/OneDrive/cs/PhD/code/population-model/validated/src/main/resources/results/ExpTesting/20170802-084303:465/tables/full-CT.csv"
+file <- "/Users/tsd4/OneDrive/cs/PhD/code/population-model/validated/src/main/resources/results/ExpTesting/20170802-150514:677/"
 data = read.csv(file, sep = ',', header = T)
 
 # Standardise the data
@@ -10,6 +10,8 @@ data <- data[which(data$Separated != "NA") , ]
 data <- data[which(data$Separated == "YES") , ]
 data <- data[which(data$CIY == "YES") , ]
 
+
+data[which(data$freq > 10000000000000), ]
 
 par(mfrow=c(1,1))
 

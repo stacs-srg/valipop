@@ -46,20 +46,12 @@ public class PreviousNumberOfChildrenInPartnershipNodeDouble extends DoubleNode<
 
         Node<IntegerRange, ?, Double, ?> child;
 
-        if(childOption.hash() == 1000) {
-            System.out.print("");
-        }
-
         try {
             child = getChild(childOption);
             child.incCount(initCount);
         } catch (ChildNotFoundException e)  {
             child = makeChildInstance(childOption, initCount);
             super.addChild(child);
-        }
-
-        if(getChildren().size() != 1) {
-            System.out.print("");
         }
 
         return child;

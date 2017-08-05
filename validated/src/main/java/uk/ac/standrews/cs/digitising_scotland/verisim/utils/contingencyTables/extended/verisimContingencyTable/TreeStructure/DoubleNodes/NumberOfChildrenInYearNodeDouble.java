@@ -28,7 +28,9 @@ public class NumberOfChildrenInYearNodeDouble extends DoubleNode<Integer, Intege
         super(option, parentNode, initCount);
 
         if(!init) {
-            calcCount();
+//            calcCount();
+            advanceCount();
+            makeChildren();
         }
     }
 

@@ -125,6 +125,9 @@ public class OBDModel {
                         System.err.println("Summary row could not be printed to summary files. See message: ");
                         System.err.println(e.getMessage());
                     }
+                    NDeathLogic.tKilled = 0;
+                    NBirthLogic.tBirths = 0;
+
                     simTimer = new ProgramTimer();
                     failedPopCount ++;
                 }

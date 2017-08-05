@@ -8,7 +8,7 @@ calcP <- function(x) {
 }
 
 # Read in the data
-file <- "/Users/tsd4/OneDrive/cs/PhD/code/population-model/validated/src/main/resources/results/ExpTesting/20170802-084303:465/tables/ob-CT.csv"
+file <- "/Users/tsd4/OneDrive/cs/PhD/code/population-model/validated/src/main/resources/results/scoty/20170805-175414:476/tables/ob-CT.csv"
 file <- commandArgs(TRUE)[1]
 
 data = read.csv(file, sep = ',', header = T)
@@ -34,6 +34,8 @@ if(p > 0.75) {
 model = loglm(freq ~ Age * NPCIAP * CIY * Date, data = data)
 
 p2 <- calcP(model)
+
+model
 
 if(p2 > 0.75) {
   return(p2)

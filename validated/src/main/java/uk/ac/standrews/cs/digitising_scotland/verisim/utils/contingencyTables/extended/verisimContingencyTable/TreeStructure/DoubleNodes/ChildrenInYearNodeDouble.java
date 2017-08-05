@@ -108,21 +108,46 @@ public class ChildrenInYearNodeDouble extends DoubleNode<ChildrenInYearOption, I
 
         double adjustment = parent.getCount() / numOfType;
 
+        if(Double.isNaN(adjustment)) {
+            System.out.print("");
+        }
+
         if(getOption() == ChildrenInYearOption.YES) {
             double v = numberOfMothers * adjustment;
-            if(v > getParent().getCount()) {
+            if(v > getParent().getCount() || Double.isNaN(v)) {
                 v = getParent().getCount();
             }
             setCount(v);
         } else {
             double v = parent.getCount() - (numberOfMothers * adjustment);
-            if(v < 0) {
+            if(v < 0 || Double.isNaN(v)) {
                 v = 0;
             }
             setCount(v);
         }
 
-        advanceCount();
+        if(getOption() == ChildrenInYearOption.NO || getCount().equals(0.0)) {
+            addChild(0, getCount());
+        } else {
+
+//            LabeledValueSet<IntegerRange, Double> stat = mDc.getRawUncorrectedCount();
+//
+//            for (IntegerRange o : stat.getLabels()) {
+//                if(!stat.get(o).equals(0.0)) {
+//                    addChild(o.getValue(), stat.get(o) * (1 - adjustment));
+//                }
+//            }
+
+            LabeledValueSet<IntegerRange, Double> stat = mDc.getRawUncorrectedCount().reproportion();
+
+            for (IntegerRange o : stat.getLabels()) {
+                if(!stat.get(o).equals(0.0)) {
+                    addChild(o.getValue(), stat.get(o) * getCount());
+                }
+            }
+        }
+
+//        advanceCount();
 
     }
 
