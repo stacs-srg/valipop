@@ -235,7 +235,7 @@ public class OBDModel {
         InitLogic.setUpInitParameters(config, desired);
 
         summary = new SummaryRow(Paths.get(config.getResultsSavePath().toString(), runPurpose, startTime),
-                startTime, runPurpose, CODE_VERSION, config.getVarPath(), config.getSimulationTimeStep(), config.getInputWidth(),
+                config.getVarPath(), startTime, runPurpose, CODE_VERSION, config.getSimulationTimeStep(), config.getInputWidth(),
                 config.getT0(), config.getTE(), DateUtils.differenceInDays(config.getT0(), config.getTE()));
 
     }

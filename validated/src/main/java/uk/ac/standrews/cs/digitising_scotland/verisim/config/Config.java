@@ -63,7 +63,7 @@ public class Config {
 
     private Path resultsSavePath;
 
-    private boolean binominalSampling = true;
+    private boolean binominalSampling = false;
 
     private final String runPurpose;
 
