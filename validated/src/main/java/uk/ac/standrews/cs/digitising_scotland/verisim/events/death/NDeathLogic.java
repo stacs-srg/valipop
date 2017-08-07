@@ -79,17 +79,21 @@ public class NDeathLogic implements EventLogic {
             // Calculate the appropriate number to kill and then kill
             Integer numberToKill = ((SingleDeterminedCount) determinedCount).getDeterminedCount();
 
+            int killAdjust = Integer.parseInt(String.valueOf(Math.round(peopleOfAge * 0.0008)));
+
             Collection<IPersonExtended> peopleToKill;
             try {
                 peopleToKill =
-                        ofSexLiving.removeNPersons(numberToKill, divDate, consideredTimePeriod, true);
+                        ofSexLiving.removeNPersons(numberToKill - killAdjust, divDate, consideredTimePeriod, true);
             } catch (InsufficientNumberOfPeopleException e) {
                 throw new Error("Insufficient number of people to kill, - this has occured when selecting a less " +
                         "than 1 proportion of a population");
             }
 
+
+
             int killed = killPeople(peopleToKill, desiredPopulationStatistics, currentDate, consideredTimePeriod, population);
-            killedAtTS += killed;
+            killedAtTS += killed + killAdjust;
 
             // Returns the number killed to the distribution manager
             determinedCount.setFufilledCount(killed);
