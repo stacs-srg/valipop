@@ -116,6 +116,7 @@ public class OBDModel {
                 } catch (InsufficientNumberOfPeopleException e) {
                     System.err.println("Simulation run incomplete due to insufficient number of people in population to " +
                             "perform requested events");
+                    System.err.println(e.getMessage());
                     sim.summary.setSimRunTime(simTimer.getRunTimeSeconds());
                     sim.summary.setCompleted(false);
 

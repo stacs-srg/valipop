@@ -75,7 +75,10 @@ public class NBirthLogic implements EventLogic {
                 BirthStatsKey key = new BirthStatsKey(age, order.getValue(), cohortSize, consideredTimePeriod, currentDate);
                 SingleDeterminedCount determinedCount = (SingleDeterminedCount) desiredPopulationStatistics.getDeterminedCount(key);
 
-                int numberOfChildren = determinedCount.getDeterminedCount();
+                int birthAdjust = Integer.parseInt(String.valueOf(Math.round(new Random().nextInt(cohortSize + 1) * 0.0011)));
+//                System.out.println("BA: " + birthAdjust + "  CS: " + cohortSize);
+
+                int numberOfChildren = determinedCount.getDeterminedCount() + birthAdjust;
 
                 // Make women into mothers
 
@@ -89,7 +92,7 @@ public class NBirthLogic implements EventLogic {
                 bornAtTS += childrenMade;
                 InitLogic.incrementBirthCount(childrenMade);
 
-                determinedCount.setFufilledCount(childrenMade);
+                determinedCount.setFufilledCount(childrenMade - birthAdjust);
                 desiredPopulationStatistics.returnAchievedCount(determinedCount);
 
             }
