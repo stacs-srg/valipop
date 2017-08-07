@@ -45,7 +45,7 @@ public class CTtree extends Node<String, SourceType, Number, Number> implements 
 
         if(statNode == null) {
             // removed -1
-            YearDate prevY = new YearDate(startDate.getYear());
+            YearDate prevY = new YearDate(startDate.getYear() - 100);
             for (IPersonExtended person : population.getPeople_ex()) {
                 if (person.aliveInYear(prevY)) {
                     processPerson(person, prevY, SourceType.STAT);

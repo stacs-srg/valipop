@@ -9,7 +9,7 @@ calcP <- function(x) {
 
 deathAnalysis <- function(file) {
   # Read in the data
-  file <- "/Users/tsd4/OneDrive/cs/PhD/code/population-model/validated/src/main/resources/results/scot-sun-b/20170806-133506:129/tables/death-CT.csv"
+  #file <- "/Users/tsd4/OneDrive/cs/PhD/code/population-model/validated/src/main/resources/results/scot-sun-b/20170806-133506:129/tables/death-CT.csv"
   data = read.csv(file, sep = ',', header = T)
   
   # Standardise the data
