@@ -78,10 +78,6 @@ public class EntityFactory {
                 childrenBirthDate = child.getBirthDate_ex();
             } else {
                 child = makePerson(childrenBirthDate, partnership, population);
-
-                if(!child.getBirthDate_ex().equals(childrenBirthDate)) {
-                    System.out.print("");
-                }
             }
             children.add(child);
         }
