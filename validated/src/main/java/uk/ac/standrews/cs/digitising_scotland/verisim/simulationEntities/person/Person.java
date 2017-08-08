@@ -584,7 +584,11 @@ public class Person implements IPersonExtended {
 
     @Override
     public int ageOnDate(Date currentDate) {
-        return DateUtils.differenceInYears(birthDate, currentDate).getCount();
+        if(birthDate.getDay() == 1 && birthDate.getMonth() == 1) {
+            return DateUtils.differenceInYears(birthDate, currentDate).getCount() - 1;
+        } else {
+            return DateUtils.differenceInYears(birthDate, currentDate).getCount();
+        }
     }
 
     @Override

@@ -124,10 +124,6 @@ public class ChildrenInYearNodeDouble extends DoubleNode<ChildrenInYearOption, I
 
         double adjustment = parent.getCount() / numOfType;
 
-        if(Double.isNaN(adjustment)) {
-            System.out.print("");
-        }
-
         if(getOption() == ChildrenInYearOption.YES) {
             double v = numberOfMothers * adjustment;
             if(v > getParent().getCount() || Double.isNaN(v)) {

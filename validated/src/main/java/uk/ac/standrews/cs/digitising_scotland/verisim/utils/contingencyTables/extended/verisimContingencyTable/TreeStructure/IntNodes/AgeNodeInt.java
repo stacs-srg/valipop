@@ -49,11 +49,6 @@ public class AgeNodeInt extends IntNode<IntegerRange, DiedOption> {
 //
 //        Date calcCurrentDate = yob.advanceTime(age, TimeUnit.YEAR);
 
-        if(people.contains(person)) {
-            int age = person.ageOnDate(currentDate);
-            System.out.println(age);
-        }
-
         people.add(person);
 
         incCountByOne();

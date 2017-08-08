@@ -177,10 +177,10 @@ public class OBDModel {
                 deathOutput = new PrintStream(deathPath.toFile());
                 deathTable.outputToFile(deathOutput);
 
-                System.out.println("OBDModel --- Outputting Full CTable to file");
-                Path fullPath = FileUtils.mkBlankFile(FileUtils.getContingencyTablesPath(), "full-CT.csv");
-                fullOutput = new PrintStream(fullPath.toFile());
-                new CTtableFull(fullTree, fullOutput);
+//                System.out.println("OBDModel --- Outputting Full CTable to file");
+//                Path fullPath = FileUtils.mkBlankFile(FileUtils.getContingencyTablesPath(), "full-CT.csv");
+//                fullOutput = new PrintStream(fullPath.toFile());
+//                new CTtableFull(fullTree, fullOutput);
 
             } catch (IOException e) {
                 throw new Error("failed to make CT files");

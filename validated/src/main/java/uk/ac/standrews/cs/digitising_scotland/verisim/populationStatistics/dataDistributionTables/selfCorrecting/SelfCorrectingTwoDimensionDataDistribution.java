@@ -60,7 +60,7 @@ public class SelfCorrectingTwoDimensionDataDistribution implements DataDistribut
         try {
             SingleDeterminedCount sDC = getData(key.getXLabel()).determineCount(key);
             int adjCount = Integer.parseInt(String.valueOf(Math.round(sDC.getDeterminedCount() * FACTOR)));
-            return new SingleDeterminedCount(sDC.getKey(), adjCount, sDC.getRawCorrectedCount(), sDC. getRawUncorrectedCount());
+            return new SingleDeterminedCount(sDC.getKey(), adjCount, sDC.getRawCorrectedCount(), sDC.getRawUncorrectedCount());
         } catch (InvalidRangeException e) {
             return new SingleDeterminedCount(key, 0, 0, 0);
         }
