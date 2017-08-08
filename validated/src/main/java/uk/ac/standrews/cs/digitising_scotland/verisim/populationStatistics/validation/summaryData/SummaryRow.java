@@ -56,6 +56,8 @@ public class SummaryRow {
     private double ctRunTime;
     private double recordsRunTime;
 
+    private double birthFactor;
+
 
     public SummaryRow(Path resultsDirectory,
                       String inputsDirectory,
@@ -113,18 +115,22 @@ public class SummaryRow {
         this.recordsRunTime = recordsRunTime;
     }
 
+    public void setBirthFactor(double factor) {
+        this.birthFactor = factor;
+    }
+
     public String toSeperatedString(char sep) {
         return startTime + sep + reason + sep + codeVersion + sep + inputsDirectory + sep + totalPop + sep + completed + sep
                 + simLength + sep + timestep + sep + inputWidth + sep + startPop + sep
                 + endPop + sep + peakPop + sep + startDate + sep + endDate + sep + simRunTime + sep
-                + ctRunTime + sep + recordsRunTime + sep + resultsDirectory + "\n";
+                + ctRunTime + sep + recordsRunTime + sep + resultsDirectory + sep + birthFactor + "\n";
     }
 
     public static String getSeparatedHeadings(char sep) {
         return "Start Time" + sep + "Reason" + sep + "Code Version" + sep + "Inputs Directory" + sep + "Total Pop" + sep + "Completed" + sep
                 + "Sim Length" + sep + "Timestep" + sep + "Input Width" + sep + "Start Pop" + sep
                 + "End Pop" + sep + "Peak Pop" + sep + "Start Date" + sep + "End Date" + sep + "Sim Run time" + sep
-                + "CT Run time" + sep + "Records Run time" + sep + "Results Directory";
+                + "CT Run time" + sep + "Records Run time" + sep + "Results Directory" + sep + "Birth Factor";
     }
 
 }

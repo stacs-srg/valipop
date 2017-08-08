@@ -25,7 +25,7 @@ public class ProcessArgs {
 
     public static String[] process(String[] args) {
 
-        String[] processed = new String[4];
+        String[] processed = new String[7];
 
         try {
             processed[0] = args[0];
@@ -51,14 +51,35 @@ public class ProcessArgs {
             System.err.println("No desired number of populations specified as 4th arg");
         }
 
+        try {
+            processed[4] = args[4];
+        } catch (ArrayIndexOutOfBoundsException e) {
+            System.err.println("Birth Factor Error A");
+        }
+
+        try {
+            processed[5] = args[5];
+        } catch (ArrayIndexOutOfBoundsException e) {
+            System.err.println("Birth Factor Error B");
+        }
+
+        try {
+            processed[6] = args[6];
+        } catch (ArrayIndexOutOfBoundsException e) {
+            System.err.println("Birth Factor Error C");
+        }
+
         return processed;
 
     }
 
     public static boolean check(String[] args) {
 
-        return args.length == 4 && !Objects.equals(args[0], "") && !Objects.equals(args[1], "")
-                && !Objects.equals(args[2], "") && !Objects.equals(args[3], "");
+        return args.length == 7
+                && !Objects.equals(args[0], "") && !Objects.equals(args[1], "")
+                && !Objects.equals(args[2], "") && !Objects.equals(args[3], "")
+                && !Objects.equals(args[4], "") && !Objects.equals(args[5], "")
+                && !Objects.equals(args[6], "");
 
     }
 
