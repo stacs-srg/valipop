@@ -35,6 +35,7 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.dataStructure.FemaleCollection;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.dataStructure.Population;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.dataStructure.exceptions.InsufficientNumberOfPeopleException;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.implementedSimulations.orderedBirthDeathModel.OBDModel;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.IntegerRangeToIntegerSet;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.LabeledValueSet;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.integerRange.IntegerRange;
@@ -79,7 +80,7 @@ public class NBirthLogic implements EventLogic {
                 if(determinedCount.getDeterminedCount() == 0) {
                     birthAdjust = 0;
                 } else {
-                    birthAdjust = Integer.parseInt(String.valueOf(Math.round(new Random().nextInt(cohortSize + 1) * 0.0011)));
+                    birthAdjust = Integer.parseInt(String.valueOf(Math.round(new Random().nextInt(cohortSize + 1) * OBDModel.BIRTH_FACTOR)));
                 }
 //                System.out.println("BA: " + birthAdjust + "  CS: " + cohortSize);
 

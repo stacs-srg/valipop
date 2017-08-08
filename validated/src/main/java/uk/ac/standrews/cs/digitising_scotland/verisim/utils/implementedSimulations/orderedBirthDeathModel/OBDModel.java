@@ -69,6 +69,7 @@ public class OBDModel {
     private EventLogic deathLogic = new NDeathLogic();
     private EventLogic birthLogic = new NBirthLogic();
 
+    public static double BIRTH_FACTOR = 0;
 
 
     public static void main(String[] args) {
@@ -84,6 +85,8 @@ public class OBDModel {
         double bfEnd = Double.parseDouble(pArgs[6]);
 
         for(double bf = bfStart; bf <= bfEnd; bf += bfStep) {
+
+            BIRTH_FACTOR = bf;
 
             int validPopCount = 0;
             int failedPopCount = 0;
