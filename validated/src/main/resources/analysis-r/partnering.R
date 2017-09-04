@@ -8,7 +8,6 @@ calcP <- function(x) {
 }
 
 # Read in the data
-file <- "/Users/tsd4/OneDrive/cs/PhD/code/population-model/validated/src/main/resources/results/ExpTesting/20170802-084303:465/tables/part-CT.csv"
 file <- commandArgs(TRUE)[1]
 
 data = read.csv(file, sep = ',', header = T)
@@ -22,13 +21,6 @@ data <- data[which(data$NPA != "na") , ]
 
 # Analysis
 library("MASS")
-#model = loglm(freq ~ Date + Age + Sex + Died + Date:Died + Age:Died + Sex:Died + Date:Age:Died + Date:Sex:Died + Age:Sex:Died, data = data)
-
-p <- calcP(model)
-
-if(p > 0.75) {
-  return(p)
-}
 
 model = loglm(freq ~ Date * NPA * Age, data = data)
 
@@ -47,14 +39,19 @@ if(p3 > 0.75) {
 }
 
 model = loglm(freq ~ Source * Date * NPA * Age, data = data)
-model = step(model, direction = "both")
 
 p4 <- calcP(model)
 
 if(p4 > 0.75) {
-  return(max(p1, p2, p3))
+  return(max(p2, p3))
+}
+
+model = step(model, direction = "both")
+
+p5 <- calcP(model)
+
+if(p5 > 0.75) {
+  return(max(p2, p3))
 } else {
   return(-1)
 }
-
-

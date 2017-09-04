@@ -19,6 +19,9 @@ package uk.ac.standrews.cs.digitising_scotland.verisim.utils.source_event_record
 import uk.ac.standrews.cs.digitising_scotland.population_model.model.IPartnership;
 import uk.ac.standrews.cs.digitising_scotland.population_model.model.IPerson;
 import uk.ac.standrews.cs.digitising_scotland.population_model.model.IPopulation;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.source_event_records.oldDSformat.BirthSourceRecord;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.source_event_records.oldDSformat.DeathSourceRecord;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.source_event_records.oldDSformat.MarriageSourceRecord;
 import uk.ac.standrews.cs.utilities.FilteredIterator;
 import uk.ac.standrews.cs.utilities.MappedIterator;
 import uk.ac.standrews.cs.utilities.Mapper;

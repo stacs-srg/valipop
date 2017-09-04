@@ -1,0 +1,8 @@
+Start Time,Reason,Code Version,Inputs Directory,Total Pop,Completed,Sim Length,Timestep,Input Width,Start Pop,End Pop,Peak Pop,Start Date,End Date,Sim Run time,CT Run time,Records Run time,Results Directory
+20170806-210316:717,scot-sun-d,dev,src/main/resources/scotland_test_population,8405312,true,58804,1y,10y,1436571,1387692,1436252,1/1/1855,1/1/2016,536.018536143,1548.008171137,145.270710532,results/scot-sun-d/20170806-210316:717
+20170806-214026:015,scot-sun-d,dev,src/main/resources/scotland_test_population,0,false,58804,1y,10y,1463177,0,0,1/1/1855,1/1/2016,707.922170356,0.0,0.0,results/scot-sun-d/20170806-214026:015
+20170806-215213:938,scot-sun-d,dev,src/main/resources/scotland_test_population,8385267,true,58804,1y,10y,1436565,1387704,1436256,1/1/1855,1/1/2016,513.642572398,1395.983862757,123.997345439,results/scot-sun-d/20170806-215213:938
+20170806-222607:562,scot-sun-d,dev,src/main/resources/scotland_test_population,0,false,58804,1y,10y,1475077,0,0,1/1/1855,1/1/2016,1283.810357523,0.0,0.0,results/scot-sun-d/20170806-222607:562
+20170806-224731:373,scot-sun-d,dev,src/main/resources/scotland_test_population,8385237,true,58804,1y,10y,1436563,1387691,1436260,1/1/1855,1/1/2016,468.935055828,1405.915750999,118.295198717,results/scot-sun-d/20170806-224731:373
+20170806-232044:520,scot-sun-d,dev,src/main/resources/scotland_test_population,8385197,true,58804,1y,10y,1436561,1387682,1436258,1/1/1855,1/1/2016,483.779511341,1364.371115473,114.906804481,results/scot-sun-d/20170806-232044:520
+20170806-235327:577,scot-sun-d,dev,src/main/resources/scotland_test_population,8385316,true,58804,1y,10y,1436573,1387711,1436271,1/1/1855,1/1/2016,461.15329911,1383.569587188,114.516603057,results/scot-sun-d/20170806-235327:577
