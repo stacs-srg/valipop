@@ -1,38 +1,3 @@
-file <- "/Users/tsd4/OneDrive/cs/PhD/code/population-model/validated/src/main/resources/results/ExpTesting/20170802-134027:003/tables/sep-CT.csv"
-file <- commandArgs(TRUE)[1]
-
-data = read.csv(file, sep = ',', header = T)
-
-summary(data)
-str(data)
-unique(data$Age)
-
-data$freq <- round(data$freq)
-data <- data[which(data$freq != 0), ]
-data <- data[which(data$Date >= 1855) , ]
-data <- data[which(data$Date <= 2015) , ]
-data <- data[which(data$Separated != "NA") , ]
-
-
-#important terms - Source, NPA
-glm.model <- glm(freq ~ Source * Date * NPA * Age, data = data, family = poisson)
-analysis <- anova(glm.model, test = "Chisq")
-analysis
-return(analysis)
-
-model = loglm(freq ~ Date * NCIP * Separated, data = data)
-
-model.step = step(model, direction = "backward")
-summary(model)
-
-if(model$df < 0) {
-  model$df = 0
-}
-
-p <- 1 - pchisq(model$lrt, model$df)
-p
-return(p)
-
 calcP <- function(x) {
   # taken from MASS library - as used to calculate P values in summary(loglm)
   if(x$df > 0L) {
@@ -55,20 +20,15 @@ data <- data[which(data$Date >= 1855) , ]
 data <- data[which(data$Date <= 2015) , ]
 data <- data[which(data$Separated != "NA") , ]
 
-summary(data)
-
-summary(data[which(data$Source == "SIM"),])
-summary(data[which(data$Source == "STAT"),])
-
 # Analysis
 library("MASS")
 #model = loglm(freq ~ Date + Age + Sex + Died + Date:Died + Age:Died + Sex:Died + Date:Age:Died + Date:Sex:Died + Age:Sex:Died, data = data)
 
-p <- calcP(model)
+#p <- calcP(model)
 
-if(p > 0.75) {
-  return(p)
-}
+#if(p > 0.75) {
+#  return(p)
+#}
 
 model = loglm(freq ~ Date * NCIP * Separated, data = data)
 
@@ -87,13 +47,19 @@ if(p3 > 0.75) {
 }
 
 model = loglm(freq ~ Source * Date * NCIP * Separated, data = data)
-model = step(model, direction = "both")
 
 p4 <- calcP(model)
 
 if(p4 > 0.75) {
-  return(max(p1, p2, p3))
+  return(max(p2, p3))
+}
+
+model = step(model, direction = "both")
+
+p5 <- calcP(model)
+
+if(p5 > 0.75) {
+  return(max(p2, p3))
 } else {
   return(-1)
 }
-

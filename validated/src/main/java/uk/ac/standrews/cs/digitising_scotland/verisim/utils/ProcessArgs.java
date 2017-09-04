@@ -25,7 +25,7 @@ public class ProcessArgs {
 
     public static String[] process(String[] args) {
 
-        String[] processed = new String[7];
+        String[] processed = new String[args.length];
 
         try {
             processed[0] = args[0];
@@ -60,20 +60,28 @@ public class ProcessArgs {
         try {
             processed[5] = args[5];
         } catch (ArrayIndexOutOfBoundsException e) {
-            System.err.println("Birth Factor Error B");
+            System.err.println("Birth Factor Error B ");
         }
 
         try {
             processed[6] = args[6];
         } catch (ArrayIndexOutOfBoundsException e) {
-            System.err.println("Birth Factor Error C");
+            System.err.println("Birth Factor Error C ");
         }
 
         return processed;
 
     }
 
-    public static boolean check(String[] args) {
+    public static boolean standardCheck(String[] args) {
+
+        return args.length == 4
+                && !Objects.equals(args[0], "") && !Objects.equals(args[1], "")
+                && !Objects.equals(args[2], "") && !Objects.equals(args[3], "");
+
+    }
+
+    public static boolean bfCheck(String[] args) {
 
         return args.length == 7
                 && !Objects.equals(args[0], "") && !Objects.equals(args[1], "")

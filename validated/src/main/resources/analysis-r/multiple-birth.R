@@ -47,7 +47,7 @@ model = loglm(freq ~ Source * Date * Sex * Age * Died, data = data)
 p4 <- calcP(model)
 
 if(p4 > 0.75) {
-  return(max(p1, p2, p3))
+  return(max(p2, p3))
 }
 
 model = step(model, direction = "both")
@@ -55,7 +55,7 @@ model = step(model, direction = "both")
 p5 <- calcP(model)
 
 if(p5 > 0.75) {
-  return(max(p1, p2, p3))
+  return(max(p2, p3))
 } else {
   return(-1)
 }

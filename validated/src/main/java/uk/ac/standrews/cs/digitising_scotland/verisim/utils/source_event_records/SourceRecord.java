@@ -28,7 +28,7 @@ import java.util.Date;
  */
 public abstract class SourceRecord {
 
-    public static final String SEPARATOR = "|";
+    public static final String SEPARATOR = ",";
 
     protected String uid;
     protected String entry;

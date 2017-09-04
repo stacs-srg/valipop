@@ -19,8 +19,6 @@ package uk.ac.standrews.cs.digitising_scotland.verisim.utils.implementedSimulati
 import uk.ac.standrews.cs.digitising_scotland.verisim.config.Config;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.DateUtils;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateImplementations.MonthDate;
-import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.timeSteps.CompoundTimeUnit;
-import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.timeSteps.TimeUnit;
 import uk.ac.standrews.cs.digitising_scotland.verisim.events.EventLogic;
 import uk.ac.standrews.cs.digitising_scotland.verisim.events.birth.NBirthLogic;
 import uk.ac.standrews.cs.digitising_scotland.verisim.events.death.NDeathLogic;
@@ -40,9 +38,11 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.ex
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.TableStructure.NoTableRowsException;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.fileUtils.FileUtils;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.fileUtils.InvalidInputFileException;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.implementedSimulations.PopulationModel;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.source_event_records.SourceRecordGenerator;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.source_event_records.processingVisuliserFormat.RelationshipsTable;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.source_event_records.processingVisuliserFormat.SimplifiedSourceRecordGenerator;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.file.Path;
@@ -53,6 +53,9 @@ import java.nio.file.Paths;
  */
 public class OBDModel {
 
+    // TODO extract as param
+    private static boolean simplifiedRecords = true;
+
     public static final String CODE_VERSION = "dev-bf";
 
     public static Logger log;
@@ -62,7 +65,7 @@ public class OBDModel {
 
     private PopulationStatistics desired;
 
-    Population population;
+    private Population population;
 
     private MonthDate currentTime;
 
@@ -74,159 +77,247 @@ public class OBDModel {
 
     public static void main(String[] args) {
 
+        runBFSearch(args);
+
+    }
+
+    public static void runPopulationModel(String[] args) {
+
         String[] pArgs = ProcessArgs.process(args);
-        if(!ProcessArgs.check(pArgs)) {
+        if(!ProcessArgs.standardCheck(pArgs)) {
             System.err.println("Incorrect arguments given");
             System.exit(1);
         }
 
+        String pathToConfigFile = pArgs[0];
+        String resultsPath = pArgs[1];
+        String runPurpose = pArgs[2];
+
+        int numberOfRuns = Integer.parseInt(pArgs[3]);
+
+        executeNFullPopulationRuns(pathToConfigFile, resultsPath, runPurpose, numberOfRuns, BIRTH_FACTOR);
+
+    }
+
+    public static void runBFSearch(String[] args) {
+
+        String[] pArgs = ProcessArgs.process(args);
+        if(!ProcessArgs.bfCheck(pArgs)) {
+            System.err.println("Incorrect arguments given");
+            System.exit(1);
+        }
+
+        String pathToConfigFile = pArgs[0];
+        String resultsPath = pArgs[1];
+        String runPurpose = pArgs[2];
+
+        int numberOfRuns = Integer.parseInt(pArgs[3]);
         double bfStart = Double.parseDouble(pArgs[4]);
         double bfStep = Double.parseDouble(pArgs[5]);
         double bfEnd = Double.parseDouble(pArgs[6]);
 
+        executeNFullPopulationRunsAccrossBirthFactor(pathToConfigFile, resultsPath, runPurpose, numberOfRuns, bfStart, bfStep, bfEnd);
+
+    }
+
+    private static void executeNFullPopulationRunsAccrossBirthFactor(String pathToConfigFile, String resultsPath, String runPurpose,
+                                                              int numberOfRuns, double bfStart, double bfStep, double bfEnd) {
+
         for(double bf = bfStart; bf <= bfEnd; bf += bfStep) {
 
             BIRTH_FACTOR = bf;
+            executeNFullPopulationRuns(pathToConfigFile, resultsPath, runPurpose, numberOfRuns, bf);
 
-            int validPopCount = 0;
-            int failedPopCount = 0;
+        }
 
-            while (validPopCount < Integer.parseInt(pArgs[3])) {
+    }
 
-                if (failedPopCount > validPopCount * 100) {
-                    System.out.println("Too many invalid pops - will now exit");
-                    System.exit(1);
-                }
+    private static void executeNFullPopulationRuns(String pathToConfigFile, String resultsPath, String runPurpose,
+                                           int nRuns, double birthFactor) {
 
-                ProgramTimer simTimer = new ProgramTimer();
+        int validPopCount = 0;
+        int failedPopCount = 0;
 
+        while (validPopCount < nRuns) {
 
-                PeopleCollection population = null;
-                OBDModel sim = null;
+            if (failedPopCount > validPopCount * 100) {
+                System.out.println("Too many invalid pops - will now exit");
+                System.exit(1);
+            }
 
-                while (population == null) {
+            ProgramTimer simTimer = new ProgramTimer();
 
-                    try {
-                        sim = new OBDModel(pArgs[0], pArgs[2], FileUtils.getDateTime(), pArgs[1]);
-                    } catch (IOException e) {
-                        System.err.println(e.getMessage());
-                        System.err.println("Model failed due to Input/Output exception, check that this program has " +
-                                "permission to read or write on disk. Also, check supporting input files are present at location " +
-                                "specified in config file");
-                        System.exit(1);
-                    } catch (InvalidInputFileException e) {
-                        System.err.println("Model failed due to an invalid formatting/content of input file, see message: ");
-                        System.err.println(e.getMessage());
-                        System.exit(1);
-                    }
+            OBDModel sim = runSim(pathToConfigFile, resultsPath, runPurpose, simTimer, failedPopCount, birthFactor);
+            PeopleCollection population = sim.population.getAllPeople();
 
-                    try {
-                        population = sim.runSimulation();
-                    } catch (InsufficientNumberOfPeopleException e) {
-                        System.err.println("Simulation run incomplete due to insufficient number of people in population to " +
-                                "perform requested events");
-                        System.err.println(e.getMessage());
-                        sim.summary.setSimRunTime(simTimer.getRunTimeSeconds());
-                        sim.summary.setCompleted(false);
-                        sim.summary.setBirthFactor(bf);
+            generateContigencyTables(population, sim);
 
-                        try {
-                            FileUtils.writeSummaryRowToSummaryFiles(sim.summary);
-                        } catch (IOException e1) {
-                            System.err.println("Summary row could not be printed to summary files. See message: ");
-                            System.err.println(e.getMessage());
-                        }
-                        NDeathLogic.tKilled = 0;
-                        NBirthLogic.tBirths = 0;
+            if(simplifiedRecords) {
+                extractSimplifiedBMDRecords(population, sim);
+            } else {
+                extractBMDRecords(population, sim);
+            }
 
-                        simTimer = new ProgramTimer();
-                        failedPopCount++;
-                    }
+            outputSimulationSummary(sim.summary);
 
-                }
+            System.out.println("OBDModel --- Output complete");
 
-                sim.summary.setTotalPop(population.getNumberOfPeople());
+            validPopCount++;
+        }
+
+    }
+
+    private static OBDModel runSim(String pathToConfigFile, String resultsPath, String runPurpose,
+                                   ProgramTimer simTimer, int failedPopCount, double bf) {
+
+        PeopleCollection population = null;
+
+        OBDModel sim = null;
+
+        while (population == null) {
+
+            sim = initModel(pathToConfigFile, resultsPath, runPurpose);
+
+            try {
+                population = sim.runSimulation();
+            } catch (InsufficientNumberOfPeopleException e) {
+                System.err.println("Simulation run incomplete due to insufficient number of people in population to " +
+                        "perform requested events");
+                System.err.println(e.getMessage());
                 sim.summary.setSimRunTime(simTimer.getRunTimeSeconds());
+                sim.summary.setCompleted(false);
                 sim.summary.setBirthFactor(bf);
 
-                ProgramTimer tableTimer = new ProgramTimer();
+                outputSimulationSummary(sim.summary);
+                NDeathLogic.tKilled = 0;
+                NBirthLogic.tBirths = 0;
 
-                CTtree fullTree = new CTtree(population, sim.desired, config.getT0(), config.getTE());
+                simTimer = new ProgramTimer();
+                failedPopCount++;
+            }
+
+        }
+
+        sim.summary.setTotalPop(population.getNumberOfPeople());
+        sim.summary.setSimRunTime(simTimer.getRunTimeSeconds());
+        sim.summary.setBirthFactor(bf);
+
+        return sim;
+
+    }
+
+    private static OBDModel initModel(String pathToConfigFile, String resultsPath, String runPurpose) {
+        try {
+            return new OBDModel(pathToConfigFile, runPurpose, FileUtils.getDateTime(), resultsPath);
+        } catch (IOException e) {
+            System.err.println(e.getMessage());
+            System.err.println("Model failed due to Input/Output exception, check that this program has " +
+                    "permission to read or write on disk. Also, check supporting input files are present at location " +
+                    "specified in config file");
+            System.exit(1);
+        } catch (InvalidInputFileException e) {
+            System.err.println("Model failed due to an invalid formatting/content of input file, see message: ");
+            System.err.println(e.getMessage());
+            System.exit(1);
+        }
+        return null;
+    }
+
+    private static void outputSimulationSummary(SummaryRow summary) {
+        try {
+            FileUtils.writeSummaryRowToSummaryFiles(summary);
+        } catch (IOException e) {
+            System.err.println("Summary row could not be printed to summary files. See message: ");
+            System.err.println(e.getMessage());
+        }
+    }
+
+    private static void extractSimplifiedBMDRecords(PeopleCollection population, OBDModel sim) {
+        System.out.println("OBDModel --- Outputting BMD records");
+
+        ProgramTimer recordTimer = new ProgramTimer();
+
+        try {
+            new SimplifiedSourceRecordGenerator(population, FileUtils.pathToRecordsDir(config).toString()).generateEventRecords(new String[0]);
+        } catch (Exception e) {
+            System.out.println("Record generation failed");
+            e.printStackTrace();
+            System.out.println(e.getMessage());
+        }
+
+        RelationshipsTable.outputData(config);
+
+        sim.summary.setRecordsRunTime(recordTimer.getRunTimeSeconds());
+    }
+
+    private static void extractBMDRecords(PeopleCollection population, OBDModel sim) {
+        System.out.println("OBDModel --- Outputting BMD records");
+
+        ProgramTimer recordTimer = new ProgramTimer();
+
+        try {
+            new SourceRecordGenerator(population, FileUtils.pathToRecordsDir(config).toString()).generateEventRecords(new String[0]);
+        } catch (Exception e) {
+            System.out.println("Record generation failed");
+            e.printStackTrace();
+            System.out.println(e.getMessage());
+        }
+
+        sim.summary.setRecordsRunTime(recordTimer.getRunTimeSeconds());
+    }
+
+    private static void generateContigencyTables(PeopleCollection population, OBDModel sim) {
+        ProgramTimer tableTimer = new ProgramTimer();
+
+        CTtree fullTree = new CTtree(population, sim.desired, config.getT0(), config.getTE());
 
 
-                PrintStream fullOutput;
+//        PrintStream fullOutput;
 
-                PrintStream obOutput;
-                PrintStream mbOutput;
-                PrintStream partOutput;
-                PrintStream sepOutput;
-                PrintStream deathOutput;
-                try {
-                    System.out.println("OBDModel --- Extracting and Outputting CTables to files");
-                    CTtableOB obTable = new CTtableOB(fullTree, sim.desired);
-                    Path obPath = FileUtils.mkBlankFile(FileUtils.getContingencyTablesPath(), "ob-CT.csv");
-                    obOutput = new PrintStream(obPath.toFile());
-                    obTable.outputToFile(obOutput);
+        PrintStream obOutput;
+        PrintStream mbOutput;
+        PrintStream partOutput;
+        PrintStream sepOutput;
+        PrintStream deathOutput;
+        try {
+            System.out.println("OBDModel --- Extracting and Outputting CTables to files");
+            CTtableOB obTable = new CTtableOB(fullTree, sim.desired);
+            Path obPath = FileUtils.mkBlankFile(FileUtils.getContingencyTablesPath(), "ob-CT.csv");
+            obOutput = new PrintStream(obPath.toFile());
+            obTable.outputToFile(obOutput);
 
-                    CTtableMB mbTable = new CTtableMB(fullTree, sim.desired);
-                    Path mbPath = FileUtils.mkBlankFile(FileUtils.getContingencyTablesPath(), "mb-CT.csv");
-                    mbOutput = new PrintStream(mbPath.toFile());
-                    mbTable.outputToFile(mbOutput);
+            CTtableMB mbTable = new CTtableMB(fullTree, sim.desired);
+            Path mbPath = FileUtils.mkBlankFile(FileUtils.getContingencyTablesPath(), "mb-CT.csv");
+            mbOutput = new PrintStream(mbPath.toFile());
+            mbTable.outputToFile(mbOutput);
 
-                    CTtablePart partTable = new CTtablePart(fullTree, sim.desired);
-                    Path partPath = FileUtils.mkBlankFile(FileUtils.getContingencyTablesPath(), "part-CT.csv");
-                    partOutput = new PrintStream(partPath.toFile());
-                    partTable.outputToFile(partOutput);
+            CTtablePart partTable = new CTtablePart(fullTree, sim.desired);
+            Path partPath = FileUtils.mkBlankFile(FileUtils.getContingencyTablesPath(), "part-CT.csv");
+            partOutput = new PrintStream(partPath.toFile());
+            partTable.outputToFile(partOutput);
 
-                    CTtableSep sepTable = new CTtableSep(fullTree, sim.desired);
-                    Path sepPath = FileUtils.mkBlankFile(FileUtils.getContingencyTablesPath(), "sep-CT.csv");
-                    sepOutput = new PrintStream(sepPath.toFile());
-                    sepTable.outputToFile(sepOutput);
+            CTtableSep sepTable = new CTtableSep(fullTree, sim.desired);
+            Path sepPath = FileUtils.mkBlankFile(FileUtils.getContingencyTablesPath(), "sep-CT.csv");
+            sepOutput = new PrintStream(sepPath.toFile());
+            sepTable.outputToFile(sepOutput);
 
-                    CTtableDeath deathTable = new CTtableDeath(fullTree);
-                    Path deathPath = FileUtils.mkBlankFile(FileUtils.getContingencyTablesPath(), "death-CT.csv");
-                    deathOutput = new PrintStream(deathPath.toFile());
-                    deathTable.outputToFile(deathOutput);
+            CTtableDeath deathTable = new CTtableDeath(fullTree);
+            Path deathPath = FileUtils.mkBlankFile(FileUtils.getContingencyTablesPath(), "death-CT.csv");
+            deathOutput = new PrintStream(deathPath.toFile());
+            deathTable.outputToFile(deathOutput);
 
 //                System.out.println("OBDModel --- Outputting Full CTable to file");
 //                Path fullPath = FileUtils.mkBlankFile(FileUtils.getContingencyTablesPath(), "full-CT.csv");
 //                fullOutput = new PrintStream(fullPath.toFile());
 //                new CTtableFull(fullTree, fullOutput);
 
-                } catch (IOException e) {
-                    throw new Error("failed to make CT files");
-                } catch (NoTableRowsException e) {
-                    e.printStackTrace();
-                }
-
-                sim.summary.setCTRunTime(tableTimer.getRunTimeSeconds());
-
-                System.out.println("OBDModel --- Outputting BMD records");
-
-                ProgramTimer recordTimer = new ProgramTimer();
-
-                try {
-                    new SourceRecordGenerator(population, FileUtils.pathToRecordsDir(config).toString()).generateEventRecords(new String[0]);
-                } catch (Exception e) {
-                    System.out.println("Record generation failed");
-                    e.printStackTrace();
-                    System.out.println(e.getMessage());
-                }
-
-                sim.summary.setRecordsRunTime(recordTimer.getRunTimeSeconds());
-
-                try {
-                    FileUtils.writeSummaryRowToSummaryFiles(sim.summary);
-                } catch (IOException e) {
-                    System.err.println("Summary row could not be printed to summary files. See message: ");
-                    System.err.println(e.getMessage());
-                }
-
-                System.out.println("OBDModel --- Output complete");
-
-                validPopCount++;
-            }
+        } catch (IOException e) {
+            throw new Error("failed to make CT files");
+        } catch (NoTableRowsException e) {
+            e.printStackTrace();
         }
+
+        sim.summary.setCTRunTime(tableTimer.getRunTimeSeconds());
     }
 
 

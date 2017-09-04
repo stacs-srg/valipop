@@ -197,7 +197,7 @@ public class Person implements IPersonExtended {
     @Override
     public List<Integer> getPartnerships() {
 
-        List<Integer> partnerIDs = Collections.emptyList();
+        List<Integer> partnerIDs = new ArrayList<>();
 
         for(IPartnershipExtended partnership : getPartnerships_ex()) {
             partnerIDs.add(partnership.getId());

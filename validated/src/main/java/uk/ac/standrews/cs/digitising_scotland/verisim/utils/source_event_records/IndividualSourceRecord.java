@@ -32,11 +32,13 @@ public abstract class IndividualSourceRecord extends SourceRecord {
 
     protected String sex;
 
+    protected String mothers_id;
     protected String mothers_forename;
     protected String mothers_surname;
     protected String mothers_maiden_surname;
     protected String mothers_maiden_surname_changed;
 
+    protected String fathers_id;
     protected String fathers_forename;
     protected String fathers_surname;
     protected String fathers_occupation;
@@ -47,10 +49,12 @@ public abstract class IndividualSourceRecord extends SourceRecord {
         IPerson mother = population.findPerson(parents_partnership.getFemalePartnerId());
         IPerson father = population.findPerson(parents_partnership.getMalePartnerId());
 
+        setMothersId(String.valueOf(mother.getId()));
         setMothersForename(mother.getFirstName());
         setMothersSurname(getRecordedParentsSurname(mother.getSurname(), person.getSurname()));
         setMothersMaidenSurname(getMaidenSurname(population, mother));
 
+        setFathersId(String.valueOf(father.getId()));
         setFathersForename(father.getFirstName());
         setFathersSurname(getRecordedParentsSurname(father.getSurname(), person.getSurname()));
         setFathersOccupation(father.getOccupation());
@@ -150,5 +154,21 @@ public abstract class IndividualSourceRecord extends SourceRecord {
 
     public void setFathersOccupation(final String fathers_occupation) {
         this.fathers_occupation = fathers_occupation;
+    }
+
+    public void setMothersId(final String id) {
+        this.mothers_id = id;
+    }
+
+    public String getMothersId() {
+        return mothers_id;
+    }
+
+    public void setFathersId(final String id) {
+        this.fathers_id = id;
+    }
+
+    public String getFathersId() {
+        return fathers_id;
     }
 }
