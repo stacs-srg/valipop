@@ -38,7 +38,6 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.ex
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.extended.verisimContingencyTable.TableStructure.NoTableRowsException;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.fileUtils.FileUtils;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.fileUtils.InvalidInputFileException;
-import uk.ac.standrews.cs.digitising_scotland.verisim.utils.implementedSimulations.PopulationModel;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.source_event_records.SourceRecordGenerator;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.source_event_records.processingVisuliserFormat.RelationshipsTable;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.source_event_records.processingVisuliserFormat.SimplifiedSourceRecordGenerator;
@@ -54,7 +53,7 @@ import java.nio.file.Paths;
 public class OBDModel {
 
     // TODO extract as param
-    private static boolean simplifiedRecords = true;
+    private static boolean simplifiedRecords = false;
 
     public static final String CODE_VERSION = "dev-bf";
 
@@ -77,7 +76,7 @@ public class OBDModel {
 
     public static void main(String[] args) {
 
-        runBFSearch(args);
+        runPopulationModel(args);
 
     }
 
