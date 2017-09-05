@@ -75,6 +75,7 @@ public class OBDModel {
 
 
     public static void main(String[] args) {
+        // Expects 4 args: path to config file, results path, run purpose, number of desired populations
 
         runPopulationModel(args);
 
@@ -82,8 +83,8 @@ public class OBDModel {
 
     public static void runPopulationModel(String[] args) {
 
-        String[] pArgs = ProcessArgs.process(args);
-        if(!ProcessArgs.standardCheck(pArgs)) {
+        String[] pArgs = ProcessArgs.process(args, "STANDARD");
+        if(!ProcessArgs.check(pArgs, "STANDARD")) {
             System.err.println("Incorrect arguments given");
             System.exit(1);
         }
@@ -98,41 +99,10 @@ public class OBDModel {
 
     }
 
-    public static void runBFSearch(String[] args) {
-
-        String[] pArgs = ProcessArgs.process(args);
-        if(!ProcessArgs.bfCheck(pArgs)) {
-            System.err.println("Incorrect arguments given");
-            System.exit(1);
-        }
-
-        String pathToConfigFile = pArgs[0];
-        String resultsPath = pArgs[1];
-        String runPurpose = pArgs[2];
-
-        int numberOfRuns = Integer.parseInt(pArgs[3]);
-        double bfStart = Double.parseDouble(pArgs[4]);
-        double bfStep = Double.parseDouble(pArgs[5]);
-        double bfEnd = Double.parseDouble(pArgs[6]);
-
-        executeNFullPopulationRunsAccrossBirthFactor(pathToConfigFile, resultsPath, runPurpose, numberOfRuns, bfStart, bfStep, bfEnd);
-
-    }
-
-    private static void executeNFullPopulationRunsAccrossBirthFactor(String pathToConfigFile, String resultsPath, String runPurpose,
-                                                              int numberOfRuns, double bfStart, double bfStep, double bfEnd) {
-
-        for(double bf = bfStart; bf <= bfEnd; bf += bfStep) {
-
-            BIRTH_FACTOR = bf;
-            executeNFullPopulationRuns(pathToConfigFile, resultsPath, runPurpose, numberOfRuns, bf);
-
-        }
-
-    }
-
-    private static void executeNFullPopulationRuns(String pathToConfigFile, String resultsPath, String runPurpose,
+    public static void executeNFullPopulationRuns(String pathToConfigFile, String resultsPath, String runPurpose,
                                            int nRuns, double birthFactor) {
+
+        BIRTH_FACTOR = birthFactor;
 
         int validPopCount = 0;
         int failedPopCount = 0;

@@ -16,6 +16,7 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.verisim.utils;
 
+import java.security.InvalidParameterException;
 import java.util.Objects;
 
 /**
@@ -23,7 +24,7 @@ import java.util.Objects;
  */
 public class ProcessArgs {
 
-    public static String[] process(String[] args) {
+    public static String[] process(String[] args, String executionType) {
 
         String[] processed = new String[args.length];
 
@@ -51,29 +52,45 @@ public class ProcessArgs {
             System.err.println("No desired number of populations specified as 4th arg");
         }
 
-        try {
-            processed[4] = args[4];
-        } catch (ArrayIndexOutOfBoundsException e) {
-            System.err.println("Birth Factor Error A");
-        }
+        if(executionType.equals("BF_SEARCH")) {
 
-        try {
-            processed[5] = args[5];
-        } catch (ArrayIndexOutOfBoundsException e) {
-            System.err.println("Birth Factor Error B ");
-        }
+            try {
+                processed[4] = args[4];
+            } catch (ArrayIndexOutOfBoundsException e) {
+                System.err.println("Birth Factor Error A");
+            }
 
-        try {
-            processed[6] = args[6];
-        } catch (ArrayIndexOutOfBoundsException e) {
-            System.err.println("Birth Factor Error C ");
+            try {
+                processed[5] = args[5];
+            } catch (ArrayIndexOutOfBoundsException e) {
+                System.err.println("Birth Factor Error B ");
+            }
+
+            try {
+                processed[6] = args[6];
+            } catch (ArrayIndexOutOfBoundsException e) {
+                System.err.println("Birth Factor Error C ");
+            }
         }
 
         return processed;
 
     }
 
-    public static boolean standardCheck(String[] args) {
+    public static boolean check(String[] args, String executionType) {
+
+        switch (executionType) {
+            case "STANDARD" :
+                return standardCheck(args);
+            case "BF_SEARCH" :
+                return bfCheck(args);
+            default:
+                throw new InvalidParameterException();
+        }
+
+    }
+
+    private static boolean standardCheck(String[] args) {
 
         return args.length == 4
                 && !Objects.equals(args[0], "") && !Objects.equals(args[1], "")
@@ -81,7 +98,7 @@ public class ProcessArgs {
 
     }
 
-    public static boolean bfCheck(String[] args) {
+    private static boolean bfCheck(String[] args) {
 
         return args.length == 7
                 && !Objects.equals(args[0], "") && !Objects.equals(args[1], "")
