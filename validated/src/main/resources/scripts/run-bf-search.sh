@@ -23,4 +23,4 @@ then
     echo Setting heap size: $1GB
 fi
 
-mvn exec:java -q -Dexec.cleanupDaemonThreads=false -Dexec.mainClass="uk.ac.standrews.cs.digitising_scotland.verisim.utils.implementedSimulations.orderedBirthDeathModel.OBDModel" -e -Dexec.args="$2 $3 $4 $5 $6 $7 $8"
+mvn exec:java -q -Dexec.cleanupDaemonThreads=false -Dexec.mainClass="uk.ac.standrews.cs.digitising_scotland.verisim.utils.implementedSimulations.orderedBirthDeathModel.BFSearch" -e -Dexec.args="$2 $3 $4 $5 $6 $7 $8"
