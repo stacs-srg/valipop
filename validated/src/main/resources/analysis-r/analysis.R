@@ -24,8 +24,10 @@ deathAnalysis <- function(file) {
   
   p <- calcP(model)
   
+  print(model)
+  
   if(p > 0.75) {
-    return(p)
+    return(c(p, model$lrt, model$df))
     
   }
   
@@ -34,7 +36,7 @@ deathAnalysis <- function(file) {
   p2 <- calcP(model)
   
   if(p2 > 0.75) {
-    return(p2)
+    return(c(p2, model$lrt, model$df))
   }
   
   p3 <- 0
@@ -42,11 +44,11 @@ deathAnalysis <- function(file) {
     {
       model = step(model, direction = "both")
       p3 <- calcP(model)
-  
+      
       if(p3 > 0.75) {
-        return(p3)
+        return(c(p3, model$lrt, model$df))
       }
-  
+      
     } , error = function(err) {
       return(-2)
     }
@@ -57,7 +59,7 @@ deathAnalysis <- function(file) {
   p4 <- calcP(model)
   
   if(p4 > 0.75) {
-    return(max(p, p2, p3))
+    return(c(max(p, p2, p3), model$lrt, model$df))
   }
   
   model = step(model, direction = "both")
@@ -65,7 +67,7 @@ deathAnalysis <- function(file) {
   p5 <- calcP(model)
   
   if(p5 > 0.75) {
-    return(max(p, p2, p3))
+    return(c(max(p, p2, p3), model$lrt, model$df))
   } else {
     return(-1)
   }
@@ -94,7 +96,7 @@ obAnalysis <- function(file, largestBirthLabel) {
   model
   
   if(p2 > 0.75) {
-    return(p2)
+    return(c(p2, model$lrt, model$df))
   }
   
   p3 <- 0
@@ -104,7 +106,7 @@ obAnalysis <- function(file, largestBirthLabel) {
       p3 <- calcP(model)
       
       if(p3 > 0.75) {
-        return(p3)
+        return(c(p3, model$lrt, model$df))
       }
       
     } , error = function(err) {
@@ -117,7 +119,7 @@ obAnalysis <- function(file, largestBirthLabel) {
   p4 <- calcP(model)
   
   if(p4 > 0.75) {
-    return(max(p2, p3))
+    return(c(max(p2, p3), model$lrt, model$df))
   }
   
   model = step(model, direction = "both")
@@ -125,7 +127,7 @@ obAnalysis <- function(file, largestBirthLabel) {
   p5 <- calcP(model)
   
   if(p5 > 0.75) {
-    return(max(p2, p3))
+    return(c(max(p2, p3), model$lrt, model$df))
   } else {
     return(-1)
   }
@@ -153,7 +155,7 @@ mbAnalysis <- function(file, largestBirthLabel) {
   p2 <- calcP(model)
   
   if(p2 > 0.75) {
-    return(p2)
+    return(c(p2, model$lrt, model$df))
   }
   
   p3 <- 0
@@ -163,7 +165,7 @@ mbAnalysis <- function(file, largestBirthLabel) {
       p3 <- calcP(model)
       
       if(p3 > 0.75) {
-        return(p3)
+        return(c(p3, model$lrt, model$df))
       }
       
     } , error = function(err) {
@@ -176,7 +178,7 @@ mbAnalysis <- function(file, largestBirthLabel) {
   p4 <- calcP(model)
   
   if(p4 > 0.75) {
-    return(max(p2, p3))
+    return(c(max(p2, p3), model$lrt, model$df))
   }
   
   model = step(model, direction = "both")
@@ -184,7 +186,7 @@ mbAnalysis <- function(file, largestBirthLabel) {
   p5 <- calcP(model)
   
   if(p5 > 0.75) {
-    return(max(p2, p3))
+    return(c(max(p2, p3), model$lrt, model$df))
   } else {
     return(-1)
   }
@@ -210,7 +212,7 @@ partAnalysis <- function(file) {
   p2 <- calcP(model)
   
   if(p2 > 0.75) {
-    return(p2)
+    return(c(p2, model$lrt, model$df))
   }
   
   p3 <- 0
@@ -220,7 +222,7 @@ partAnalysis <- function(file) {
       p3 <- calcP(model)
       
       if(p3 > 0.75) {
-        return(p3)
+        return(c(p3, model$lrt, model$df))
       }
       
     } , error = function(err) {
@@ -233,7 +235,7 @@ partAnalysis <- function(file) {
   p4 <- calcP(model)
   
   if(p4 > 0.75) {
-    return(max(p2, p3))
+    return(c(max(p2, p3), model$lrt, model$df))
   }
   
   model = step(model, direction = "both")
@@ -241,7 +243,7 @@ partAnalysis <- function(file) {
   p5 <- calcP(model)
   
   if(p5 > 0.75) {
-    return(max(p2, p3))
+    return(c(max(p2, p3), model$lrt, model$df))
   } else {
     return(-1)
   }
@@ -266,15 +268,15 @@ sepAnalysis <- function(file) {
   p <- calcP(model)
   
   if(p > 0.75) {
-    return(p)
+    return(c(p, model$lrt, model$df))
   }
   
   model = loglm(freq ~ Date * NCIP * Separated, data = data)
-
+  
   p2 <- calcP(model)
   
   if(p2 > 0.75) {
-    return(p2)
+    return(c(p2, model$lrt, model$df))
   }
   
   p3 <- 0
@@ -284,7 +286,7 @@ sepAnalysis <- function(file) {
       p3 <- calcP(model)
       
       if(p3 > 0.75) {
-        return(p3)
+        return(c(p3, model$lrt, model$df))
       }
       
     } , error = function(err) {
@@ -297,7 +299,7 @@ sepAnalysis <- function(file) {
   p4 <- calcP(model)
   
   if(p4 > 0.75) {
-    return(max(p2, p3))
+    return(c(max(p, p2, p3), model$lrt, model$df))
   }
   
   model = step(model, direction = "both")
@@ -305,7 +307,7 @@ sepAnalysis <- function(file) {
   p5 <- calcP(model)
   
   if(p5 > 0.75) {
-    return(max(p2, p3))
+    return(c(max(p, p2, p3), model$lrt, model$df))
   } else {
     return(-1)
   }
@@ -318,29 +320,46 @@ analysis <- function(outputFile, resultsDir, runFile, largestBirthLabel) {
   
   subpath <- paste(resultsDir, "/", runFile, "/tables", sep = "")
   
-  deathP <- deathAnalysis(paste(subpath, "/death-CT.csv", sep = ""))
-  obP <- obAnalysis(paste(subpath, "/ob-CT.csv", sep = ""), largestBirthLabel)
-  mbP <- mbAnalysis(paste(subpath, "/mb-CT.csv", sep = ""), largestBirthLabel)
-  pP <- partAnalysis(paste(subpath, "/part-CT.csv", sep = ""))
-  sP <- sepAnalysis(paste(subpath, "/sep-CT.csv", sep = ""))
+  death <- deathAnalysis(paste(subpath, "/death-CT.csv", sep = ""))
+  ob <- obAnalysis(paste(subpath, "/ob-CT.csv", sep = ""), largestBirthLabel)
+  mb <- mbAnalysis(paste(subpath, "/mb-CT.csv", sep = ""), largestBirthLabel)
+  part <- partAnalysis(paste(subpath, "/part-CT.csv", sep = ""))
+  sep <- sepAnalysis(paste(subpath, "/sep-CT.csv", sep = ""))
   
   tt <- proc.time() - t
   
   passed = FALSE
-  if(sum(deathP, obP, mbP, pP, sP) == 5) {
+  if(sum(death[1], ob[1], mb[1], part[1], sep[1]) == 5) {
     passed = TRUE
   }
   
   line = ""
-  line = paste(runFile, deathP, sep = ",")
-  line = paste(line, obP, sep = ",")
-  line = paste(line, mbP, sep = ",")
-  line = paste(line, pP, sep = ",")
-  line = paste(line,sP, sep = ",")
+  line = paste(runFile, death[1], sep = ",")
+  line = paste(line, death[2], sep = ",")
+  line = paste(line, death[3], sep = ",")
+  line = paste(line, ob[1], sep = ",")
+  line = paste(line, ob[2], sep = ",")
+  line = paste(line, ob[3], sep = ",")
+  line = paste(line, mb[1], sep = ",")
+  line = paste(line, mb[2], sep = ",")
+  line = paste(line, mb[3], sep = ",")
+  line = paste(line, part[1], sep = ",")
+  line = paste(line, part[2], sep = ",")
+  line = paste(line, part[3], sep = ",")
+  line = paste(line, sep[1], sep = ",")
+  line = paste(line, sep[2], sep = ",")
+  line = paste(line, sep[3], sep = ",")
   line = paste(line, passed, sep = ",")
   line = paste(line, tt[3], sep = ",")
-  write(line, file=outputFile ,append=TRUE)
-
+  
+  if(!file.exists(outputFile)) {
+    headings = "RunFile,Death-P,Death-Dev,Death-DF,OB-P,OB-Dev,OB-DF,MB-P,MB-Dev,MB-DF,Part-P,Part-Dev,Part-DF,Sep-P,Sep-Dev,Sep-DF,Passed,Time-Taken"
+    
+    write(headings, file=outputFile, append=TRUE)
+  }
+  
+  write(line, file=outputFile, append=TRUE)
+  
 }
 
 outputFile <- commandArgs(TRUE)[1]
