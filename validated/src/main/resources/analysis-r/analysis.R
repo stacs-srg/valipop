@@ -1,4 +1,5 @@
 calcP <- function(x) {
+  
   # taken from MASS library - as used to calculate P values in summary(loglm)
   if(x$df > 0L) {
     return(1 - pchisq(x$lrt, x$df) )
@@ -24,16 +25,17 @@ deathAnalysis <- function(file) {
   
   p <- calcP(model)
   
-  print(model)
   
   if(p > 0.75) {
     return(c(p, model$lrt, model$df))
     
   }
   
-  model = loglm(freq ~ Source + Date * Sex * Age * Died, data = data)
+  model = loglm(freq ~ Date * Sex * Age * Died, data = data)
   
   p2 <- calcP(model)
+  
+
   
   if(p2 > 0.75) {
     return(c(p2, model$lrt, model$df))
