@@ -25,7 +25,7 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.ex
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.integerRange.IntegerRange;
 
 /**
- * @author Tom Dalton (tsd4@st-andrews.ac.uk)
+ * @author Tom Dalton (tsd4@st-andrews.ac.uk)=
  */
 public class SexNodeInt extends IntNode<SexOption, IntegerRange> {
 
@@ -48,6 +48,11 @@ public class SexNodeInt extends IntNode<SexOption, IntegerRange> {
         incCountByOne();
 
         int age = person.ageOnDate(currentDate);
+
+        if(age == -1) {
+            age = 0;
+        }
+
         try {
             resolveChildNodeForAge(age).processPerson(person, currentDate);
         } catch (ChildNotFoundException e) {

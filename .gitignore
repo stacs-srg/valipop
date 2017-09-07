@@ -4,3 +4,4 @@ syntax: glob
 *.iml
 .idea
 target
+.Rproj.user
