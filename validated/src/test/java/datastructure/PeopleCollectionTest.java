@@ -247,7 +247,7 @@ public class PeopleCollectionTest {
 //    @Test
 //    public void personIsCorrectlyRelocatedAfterDeath() throws PersonNotFoundException, UnsupportedDateConversion, IOException {
 //
-//        Simulation temp = new Simulation("./src/test/resources/validation/config.txt", "", "", "results");
+//        Simulation temp = new Simulation("./src/test/resources/validation/config-a.txt", "", "", "results");
 //
 //        MonthDate s = new MonthDate(1, 0);
 //        MonthDate e = new MonthDate(1, 3000);
