@@ -1,0 +1,33 @@
+---
+title: "Approach Check"
+author: "Tom Dalton"
+date: "06/09/2017"
+output: pdf_document
+---
+
+Read in the data
+
+```{r}
+file = "/Users/tsd4/OneDrive/cs/PhD/code/population-model/validated/src/main/resources/results/re-run/20170905-123212:806/tables/death-CT.csv"
+data = read.csv(file, sep = ',', header = T)
+
+```
+
+Chosen formula model
+
+```{r}
+glm.model = glm(freq ~ Date + Age + Sex + Died + Date:Died + Age:Died + Sex:Died + Date:Age:Died + Date:Sex:Died + Age:Sex:Died, data = data, family = poisson)
+
+summary(glm.model)
+anova(glm.model, test = "Chisq")
+```
+
+Add source
+
+```{r}
+glm.model = glm(freq ~ Date + Age + Sex + Died + Date:Died + Age:Died + Sex:Died + Date:Age:Died + Date:Sex:Died + Age:Sex:Died, data = data, family = poisson)
+
+summary(glm.model)
+anova(glm.model, test = "Chisq")
+```
+
