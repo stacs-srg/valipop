@@ -44,6 +44,9 @@ public class SelfCorrectingOneDimensionDataDistribution extends OneDimensionData
     private Map<IntegerRange, Double> appliedRates;
     private Map<IntegerRange, Double> appliedCounts;
 
+    // recovery factor
+    double rf = 1;
+
     public SelfCorrectingOneDimensionDataDistribution(YearDate year, String sourcePopulation, String sourceOrganisation, Map<IntegerRange, Double> tableData, boolean binominalSampling) {
         super(year, sourcePopulation, sourceOrganisation, tableData);
 
@@ -95,7 +98,9 @@ public class SelfCorrectingOneDimensionDataDistribution extends OneDimensionData
             }
 
             // Correction rate
-            double cD = (tD * (aC + tAT) - (aD * aC)) / tAT;
+//            double cD = (tD * (aC + tAT) - (aD * aC)) / tAT;
+
+            double cD = ( Math.ceil( (aC * tD) - (aC * aD) ) * rf + tAT * tD ) / tAT;
 
             // Checks that rate falls in bounds
             if (cD < 0) {
