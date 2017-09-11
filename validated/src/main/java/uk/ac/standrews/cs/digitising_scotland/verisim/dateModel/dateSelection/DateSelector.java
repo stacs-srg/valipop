@@ -17,25 +17,37 @@
 package uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateSelection;
 
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.Date;
+import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.DateUtils;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateImplementations.AdvancableDate;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateImplementations.ExactDate;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.timeSteps.CompoundTimeUnit;
 import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.recording.PopulationStatistics;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPersonExtended;
 
+import java.util.Random;
+
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public interface DateSelector {
+public class DateSelector {
 
-    ExactDate selectDate(Date possibleDate, CompoundTimeUnit consideredTimePeriod);
+    private Random random = new Random();
 
-    ExactDate selectDate(Date possibleDate, CompoundTimeUnit consideredTimePeriod, int imposedLimit);
+    public ExactDate selectDate(Date earliestDate, Date latestDate) {
 
-    ExactDate selectDateLPD(AdvancableDate currentDate, CompoundTimeUnit consideredTimePeriod, Date latestPossibleDate);
+        int daysInWindow = DateUtils.differenceInDays(earliestDate, latestDate);
+        int chosenDay = random.nextInt(Math.abs(daysInWindow));
+        return DateUtils.calculateExactDate(earliestDate, chosenDay);
 
-    ExactDate selectDateEPD(AdvancableDate currentDate, CompoundTimeUnit consideredTimePeriod, Date earliestPossibleDate);
+    }
 
-    ExactDate selectDate(IPersonExtended p, PopulationStatistics desiredPopulationStatistics, AdvancableDate currentDate, CompoundTimeUnit consideredTimePeriod);
+    public ExactDate selectDate(Date earliestDate, CompoundTimeUnit timePeriod) {
+
+        int daysInWindow = DateUtils.getDaysInTimePeriod(earliestDate, timePeriod);
+
+        int chosenDay = random.nextInt(Math.abs(daysInWindow));
+        return DateUtils.calculateExactDate(earliestDate, chosenDay);
+
+    }
 
 }

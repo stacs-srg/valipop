@@ -73,16 +73,6 @@ public class FileUtils {
         // initialise result file
         detailedResultsPath = mkBlankFile(run, "detailed-results-" + startTime + ".txt");
 
-        // make dat dir
-        Path dat = Paths.get(run.toString(), "dat");
-        mkDirs(dat);
-
-        // make sub dirs of dat: birth, female-death, male-death, partnering, separation, multiple-birth
-        EventType[] events = EventType.class.getEnumConstants();
-        for(EventType e : events) {
-            mkDirs(dat, e.toString());
-        }
-
         // make dump dir
         mkDirs(run, "dump");
         // make population dir

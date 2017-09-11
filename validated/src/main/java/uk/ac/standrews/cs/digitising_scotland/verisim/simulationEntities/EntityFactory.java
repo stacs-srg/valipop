@@ -46,7 +46,7 @@ public class EntityFactory {
     private static Random randomNumberGenerator = new Random();
     private static NameGenerator firstNameGenerator = new FirstNameGenerator();
     private static NameGenerator surnameGenerator = new SurnameGenerator();
-    private static DateSelector birthDateSelector = new BirthDateSelector();
+    private static BirthDateSelector birthDateSelector = new BirthDateSelector();
 
     public static IPartnershipExtended formNewChildrenInPartnership(int numberOfChildren, IPersonExtended mother, MonthDate currentDate,
                                                                     CompoundTimeUnit birthTimeStep, Population population) {
@@ -109,8 +109,8 @@ public class EntityFactory {
         Person person = new Person(getSex(population.getPopulationCounts()), birthDate, parentsPartnership);
 
         // OZGUR - this is where your stuff is currently being called from
-//        person.setFirstName(firstNameGenerator.getName(person));
-//        person.setSurname(surnameGenerator.getName(person));
+        person.setFirstName(firstNameGenerator.getName(person));
+        person.setSurname(surnameGenerator.getName(person));
 
 
         population.getLivingPeople().addPerson(person);

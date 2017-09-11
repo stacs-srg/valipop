@@ -43,6 +43,7 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.utils.source_event_records
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.source_event_records.processingVisuliserFormat.RelationshipsTable;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.source_event_records.processingVisuliserFormat.SimplifiedSourceRecordGenerator;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.file.Path;
@@ -128,8 +129,11 @@ public class OBDModel {
                 extractBMDRecords(population, sim);
             }
 
-            AnalyticsRunner.runAnalytics(population,
-                    FileUtils.setupDumpPrintStream(FileUtils.getDetailedResultsPath().toString(), config));
+            try {
+                AnalyticsRunner.runAnalytics(population, new PrintStream(FileUtils.getDetailedResultsPath().toFile()));
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
 
             outputSimulationSummary(sim.summary);
 

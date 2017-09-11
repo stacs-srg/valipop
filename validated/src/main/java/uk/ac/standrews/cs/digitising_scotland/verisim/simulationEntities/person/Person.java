@@ -70,7 +70,7 @@ public class Person implements IPersonExtended {
     private String firstName;
     private String surname;
 
-    private DateSelector deathDateSelector = new DeathDateSelector();
+    private DeathDateSelector deathDateSelector = new DeathDateSelector();
     private DateSelector birthDateSelector = new BirthDateSelector();
 
     private boolean toSeparate = false;
@@ -265,43 +265,6 @@ public class Person implements IPersonExtended {
         deathDate = date.getExactDate();
 
         return true;
-    }
-
-    @Override
-    public void causeEventInTimePeriod(EventType event, Date latestDate, CompoundTimeUnit timePeriod) {
-
-        // TODO what is the use in this method - where are these event timings decided?
-
-        if(isDeathEvent(event)) {
-            int daysInTimePeriod = DateUtils.getDaysInTimePeriod(latestDate, timePeriod.negative());
-
-            if(sex == 'm') {
-                // No events to prevent death in last time period
-                deathDate = deathDateSelector.selectDate(latestDate, timePeriod);
-            } else {
-                // if female
-
-                IPersonExtended lastChild = getLastChild();
-
-                if (lastChild == null) {
-                    deathDate = deathDateSelector.selectDate(latestDate, timePeriod);
-                } else {
-
-                    int daysSinceLastChild = DateUtils.differenceInDays(lastChild.getBirthDate_ex(), latestDate);
-
-                    // if last child was born in time period
-                    if (daysSinceLastChild < daysInTimePeriod) {
-                        // then restrict date selection
-                        deathDate = deathDateSelector.selectDate(latestDate, timePeriod, daysSinceLastChild);
-                    } else {
-                        // else apply death date as usual
-                        deathDate = deathDateSelector.selectDate(latestDate, timePeriod);
-                    }
-                }
-            }
-
-        }
-
     }
 
     private boolean isBirthEvent(EventType event) {
