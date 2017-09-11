@@ -55,6 +55,7 @@ public class Person implements IPersonExtended {
     private static FileBasedEnumeratedDistribution femaleFirstNamesDistribution = null;
     private static FileBasedEnumeratedDistribution surnameNamesDistribution = null;
 
+    // TODO
     private static final String maleNames = "proxy-scotland-population-JA/names/female_first_name_probabilities.tsv";
     private static final String femaleNames = "proxy-scotland-population-JA/names/male_first_name_probabilities.tsv";
     private static final String surnames = "proxy-scotland-population-JA/names/surname_probabilities.tsv";
@@ -268,6 +269,8 @@ public class Person implements IPersonExtended {
 
     @Override
     public void causeEventInTimePeriod(EventType event, Date latestDate, CompoundTimeUnit timePeriod) {
+
+        // TODO what is the use in this method - where are these event timings decided?
 
         if(isDeathEvent(event)) {
             int daysInTimePeriod = DateUtils.getDaysInTimePeriod(latestDate, timePeriod.negative());

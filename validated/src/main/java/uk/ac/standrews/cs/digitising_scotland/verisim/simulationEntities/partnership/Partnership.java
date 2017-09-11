@@ -56,15 +56,6 @@ public class Partnership implements IPartnershipExtended {
 
     }
 
-    public Partnership(IPersonExtended female, Date partnershipDate) {
-
-        this.id = getNewId();
-
-        this.partnershipDate = partnershipDate;
-        this.female = female;
-
-    }
-
     public Partnership(IPersonExtended female) {
 
         this.id = getNewId();

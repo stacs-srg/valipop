@@ -63,20 +63,6 @@ public class IntegerRange implements Comparable<IntegerRange> {
 
     }
 
-    public IntegerRange(int min, int max) {
-        if (min >= max) {
-            throw new InvalidRangeException("The minimum value of the range is greater than the maximum value");
-        }
-
-        this.min = min;
-        this.max = max;
-    }
-
-    public IntegerRange(int value, boolean plus) {
-        this.min = value;
-        this.plus = plus;
-    }
-
     public IntegerRange(int value) {
         this.min = value;
         this.max = value;
@@ -84,30 +70,23 @@ public class IntegerRange implements Comparable<IntegerRange> {
     }
 
     public Boolean contains(Integer integer) {
-//        if (plus == null) {
-//            // if standard integerRange
-//            if (integer >= min && integer <= max) {
-//                return true;
-//            }
-//        } else {
+
         if(value.equals("na")) {
             return null;
         }
 
-            if (plus) {
-                // if min value +
-                if (integer >= min) {
-                    return true;
-                }
-            } else {
-                // if single value
-                if (integer >= min && integer <= max) {
-                    return true;
-                }
+        if (plus) {
+            // if min value +
+            if (integer >= min) {
+                return true;
             }
+        } else {
+            // if single value
+            if (integer >= min && integer <= max) {
+                return true;
+            }
+        }
 
-
-//        }
 
         return false;
 
@@ -151,35 +130,6 @@ public class IntegerRange implements Comparable<IntegerRange> {
     @Override
     public int compareTo(IntegerRange o) {
         return Integer.compare(getValue(), o.getValue());
-    }
-
-    /**
-     * Returns each distinct integer value that is represented in the Integer Range. If a plus is present (e.g. this
-     * range represents the value 4+) then the parameter given sets the highest value the return array can take.
-     *
-     * @param limitForPlus
-     * @return
-     */
-    public int[] getValues(int limitForPlus) {
-
-        int lMin = getMin();
-        int lMax;
-
-        if(plus && limitForPlus >= lMin) {
-            lMax = limitForPlus;
-        } else {
-            lMax = getMax();
-        }
-
-        int numberOfValue = lMax - lMin + 1;
-        int[] values = new int[numberOfValue];
-
-
-        for(int i = 0; i < numberOfValue; i++) {
-            values[i] = lMin + i;
-        }
-
-        return values;
     }
 
     public int hash() {

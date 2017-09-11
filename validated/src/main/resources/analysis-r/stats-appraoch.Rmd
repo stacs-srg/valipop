@@ -9,6 +9,8 @@ This documents details the approach taken to verify the genalogical populations 
 
 For efficency we have produced five contingency tables which are each concerned with one of the input distrbtions efffecting genalogical structure.
 
+This first dataset contains 1,048,194 individuals.
+
 Lets load these in:
 
 ```{r}
@@ -53,5 +55,13 @@ library("MASS")
 model = loglm(freq ~ Date + Sex + Age + Died + Sex:Age + Sex:Died + Age:Died
               + Sex:Age:Died, data = data.death)
 model
+```
+
+Here we see the model created is a good fit for the data and thus that the Source (whether an individual is from the statistics or the simulation) of an indidual has no meaningful effect on the frequency. This is what we want to see.
+
+# Ordered Birth
+
+```{r}
+
 ```
 

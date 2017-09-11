@@ -22,7 +22,7 @@ deathAnalysis <- function(file) {
   library("MASS")
   
   model = loglm(freq ~ Date + Sex + Age + Died + Sex:Age + Sex:Died + Age:Died + Sex:Age:Died, data = data)
-
+  model
   p2 <- calcP(model)
   
   return(c(p2, model$lrt, model$df))
@@ -54,7 +54,7 @@ obAnalysis <- function(file, largestBirthLabel) {
 }
 
 mbAnalysis <- function(file, largestBirthLabel) {
-
+largestBirthLabel= "50+"
   data = read.csv(file, sep = ',', header = T)
   
   summary(data[which(data$Source == "SIM"),])
@@ -71,10 +71,10 @@ mbAnalysis <- function(file, largestBirthLabel) {
   # Analysis
   library("MASS")
   
-  model = loglm(freq ~ Date + NCIY + Age + Date:NCIY + Date:Age + NCIY:Age, data = data)
+  model = loglm(freq ~ Date + NCIY + Age + Date:NCIY + Date:Age, data = data)
   
   p2 <- calcP(model)
-  
+  model
   return(c(p2, model$lrt, model$df))
   
 }

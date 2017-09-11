@@ -231,58 +231,6 @@ public class DateUtils {
                     }
                 }
 
-                // ---------------------------------------------------------
-
-//                for(int i = 0; i < consideredTimePeriod.getCount(); i++) {
-//
-//                    int year = startingDate.getYear();
-//                    int month = startingDate.getMonth() + i;
-//
-//                    if(month > MONTHS_IN_YEAR) {
-//                        int y = (month - 1) / MONTHS_IN_YEAR;
-//                        year += y;
-//                        month -= y * MONTHS_IN_YEAR;
-//                    }
-//
-//
-////                    if(month == FEB) {
-////
-////                        if(isLeapYear(year)) {
-////                            days += DAYS_IN_LEAP_FEB;
-////                        } else {
-////                            days += DAYS_IN_MONTH[FEB - 1];
-////                        }
-////
-////                    } else {
-//                       int tMonth = month;
-//                        if(month == 12) {
-//                            tMonth = 0;
-//                        }
-//                        if(startingDate.getDay() > DAYS_IN_MONTH[tMonth]) {
-//                            if(tMonth == 1) {
-//                                if(isLeapYear(year)) {
-//                                    days += DAYS_IN_LEAP_FEB;
-//                                } else {
-//                                    days += DAYS_IN_MONTH[tMonth];
-//                                }
-//                            } else {
-//                                days += DAYS_IN_MONTH[tMonth];
-//                            }
-//                        } else {
-//                            if(tMonth == 1) {
-//                                if(isLeapYear(year)) {
-//                                    days += DAYS_IN_LEAP_FEB;
-//                                } else {
-//                                    days += DAYS_IN_MONTH[tMonth];
-//                                }
-//                            } else {
-//                                days += DAYS_IN_MONTH[month - 1];
-//                            }
-//                        }
-////                    }
-//
-//                }
-
                 break;
             case YEAR:
 

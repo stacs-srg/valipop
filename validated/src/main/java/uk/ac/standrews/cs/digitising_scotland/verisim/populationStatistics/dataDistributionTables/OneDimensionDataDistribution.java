@@ -89,19 +89,6 @@ public class OneDimensionDataDistribution implements DataDistribution {
         return min;
     }
 
-    public IntegerRange getMinRowLabelValue2() {
-        int min = Integer.MAX_VALUE;
-        IntegerRange label = null;
-        for (IntegerRange iR : targetRates.keySet()) {
-            int v = iR.getMin();
-            if (v < min) {
-                min = v;
-                label = iR;
-            }
-        }
-        return label;
-    }
-
     @Override
     public IntegerRange getLargestLabel() {
         IntegerRange max = null;
@@ -122,16 +109,6 @@ public class OneDimensionDataDistribution implements DataDistribution {
         IntegerRange row = resolveRowValue(rowValue);
 
         return targetRates.get(row);
-    }
-
-    public double getRate(Integer rowValue, CompoundTimeUnit timeStep) {
-
-        double basicRate = getRate(rowValue);
-
-        double stepsInYear = DateUtils.stepsInYear(timeStep);
-        double adjustedRate = 1 - Math.pow(1 - basicRate, 1 / stepsInYear);
-
-        return adjustedRate;
     }
 
     public IntegerRange resolveRowValue(Integer rowValue) {

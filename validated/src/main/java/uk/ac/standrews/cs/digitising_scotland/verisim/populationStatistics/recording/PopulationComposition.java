@@ -17,7 +17,6 @@
 package uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.recording;
 
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.DateBounds;
-import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.validation.comparison.StatisticalTables;
 
 /**
  * The PopulationComposition interface provides the functionality to be able to access the same information about a
@@ -26,6 +25,6 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.valid
  *
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public interface PopulationComposition extends DateBounds, StatisticalTables {
+public interface PopulationComposition extends DateBounds {
 
 }

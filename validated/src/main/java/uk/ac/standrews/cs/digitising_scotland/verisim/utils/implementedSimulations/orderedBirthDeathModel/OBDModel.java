@@ -26,6 +26,7 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.events.init.InitLogic;
 import org.apache.logging.log4j.Logger;
 import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.recording.PopulationStatistics;
 import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.recording.inputted.DesiredPopulationStatisticsFactory;
+import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.validation.analytic.AnalyticsRunner;
 import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.validation.summaryData.SummaryRow;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.dataStructure.PeopleCollection;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.dataStructure.Population;
@@ -126,6 +127,9 @@ public class OBDModel {
             } else {
                 extractBMDRecords(population, sim);
             }
+
+            AnalyticsRunner.runAnalytics(population,
+                    FileUtils.setupDumpPrintStream(FileUtils.getDetailedResultsPath().toString(), config));
 
             outputSimulationSummary(sim.summary);
 

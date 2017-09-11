@@ -27,8 +27,6 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.dataD
 import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.dataDistributionTables.selfCorrecting.SelfCorrectingProportionalDistribution;
 import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.recording.PopulationStatistics;
 import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.dataDistributionTables.DataDistribution;
-import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.dataDistributionTables.OneDimensionDataDistribution;
-import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.dataDistributionTables.TwoDimensionDataDistribution;
 import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.dataDistributionTables.selfCorrecting.SelfCorrectingOneDimensionDataDistribution;
 import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.dataDistributionTables.selfCorrecting.SelfCorrectingTwoDimensionDataDistribution;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.fileUtils.InputFileReader;
@@ -82,18 +80,6 @@ public abstract class DesiredPopulationStatisticsFactory {
 
     }
 
-    private static Map<YearDate, TwoDimensionDataDistribution> readIn2DDataFiles(DirectoryStream<Path> paths, Config config) throws IOException, InvalidInputFileException {
-
-        Map<YearDate, TwoDimensionDataDistribution> data = new HashMap<>();
-
-        for (Path path : paths) {
-            // read in each file
-            TwoDimensionDataDistribution tempData = InputFileReader.readIn2DDataFile(path);
-            data.put(tempData.getYear(), tempData);
-        }
-        return insertDistributionsToMeetInputWidth(config, data);
-    }
-
     private static Map<YearDate, SelfCorrectingTwoDimensionDataDistribution> readInSC2DDataFiles(DirectoryStream<Path> paths, Config config) throws IOException, InvalidInputFileException {
 
         Map<YearDate, SelfCorrectingTwoDimensionDataDistribution> data = new HashMap<>();
@@ -125,18 +111,6 @@ public abstract class DesiredPopulationStatisticsFactory {
         for (Path path : paths) {
             // read in each file
             ProportionalDistributionAdapter tempData = InputFileReader.readInAndAdaptAgeAndProportionalStatsInput(path);
-            data.put(tempData.getYear(), tempData);
-        }
-        return insertDistributionsToMeetInputWidth(config, data);
-    }
-
-    private static Map<YearDate, OneDimensionDataDistribution> readIn1DDataFiles(DirectoryStream<Path> paths, Config config) throws IOException, InvalidInputFileException {
-
-        Map<YearDate, OneDimensionDataDistribution> data = new HashMap<>();
-
-        for (Path path : paths) {
-            // read in each file
-            OneDimensionDataDistribution tempData = InputFileReader.readIn1DDataFile(path);
             data.put(tempData.getYear(), tempData);
         }
         return insertDistributionsToMeetInputWidth(config, data);
