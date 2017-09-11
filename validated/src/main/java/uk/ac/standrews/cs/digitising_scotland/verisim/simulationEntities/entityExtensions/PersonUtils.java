@@ -43,7 +43,7 @@ public interface PersonUtils {
 
     boolean recordDeath(Date date, Population population);
 
-    void causeEventInTimePeriod(EventType event, Date date, CompoundTimeUnit timePeriod);
+
 
     int ageAtDeath() throws NotDeadException;
 

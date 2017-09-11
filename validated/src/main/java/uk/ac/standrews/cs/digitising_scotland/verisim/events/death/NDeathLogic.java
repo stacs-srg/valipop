@@ -42,7 +42,7 @@ import java.util.Iterator;
  */
 public class NDeathLogic implements EventLogic {
 
-    private DateSelector deathDateSelector = new DeathDateSelector();
+    private DeathDateSelector deathDateSelector = new DeathDateSelector();
 
     // Move from year to sim date and time step
     public void handleEvent(Config config,

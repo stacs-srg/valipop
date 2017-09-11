@@ -18,6 +18,7 @@ package uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.reco
 
 import uk.ac.standrews.cs.digitising_scotland.verisim.config.Config;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.Date;
+import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.DateBounds;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.DateUtils;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateImplementations.AdvancableDate;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateImplementations.MonthDate;
@@ -39,7 +40,7 @@ import java.util.*;
  *
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class PopulationStatistics implements PopulationComposition, EventRateTables {
+public class PopulationStatistics implements DateBounds, EventRateTables {
 
     private MonthDate startDate;
     private Date endDate;
@@ -54,7 +55,7 @@ public class PopulationStatistics implements PopulationComposition, EventRateTab
     // Population Constants
     private int maxGestationPeriodDays = 280;
     private int minGestationPeriodDays = 147;
-    private int minBirthSpacingDays = 730;
+    private int minBirthSpacingDays = 252;
     private double maxProportionBirthsDueToInfidelity = 0.2;
     private double maleProportionOfBirths = 0.5; // i.e. if 0.52 then in every 100 births, 52 will be male and 48 female
 
