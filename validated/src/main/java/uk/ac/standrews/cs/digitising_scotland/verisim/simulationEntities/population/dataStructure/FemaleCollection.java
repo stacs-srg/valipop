@@ -181,6 +181,7 @@ public class FemaleCollection extends PersonCollection {
         return people;
     }
 
+    // TODO remove this method? Snarf the javadoc first!
     /**
      * Gets a {@link Collection} size n of females born in the given year with the specified birth order. When returned
      * these individuals have been removed from the population structure and need to be re-added if they are still to
@@ -478,6 +479,7 @@ public class FemaleCollection extends PersonCollection {
     }
 
 
+    // TODO move to verify class? or remove?
     // May be broke with changes - method needs checked
     public boolean verify() {
 

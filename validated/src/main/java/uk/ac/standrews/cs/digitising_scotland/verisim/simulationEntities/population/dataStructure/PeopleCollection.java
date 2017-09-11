@@ -48,7 +48,7 @@ public class PeopleCollection extends PersonCollection implements IPopulationExt
 
     private final Map<Integer, IPersonExtended> peopleIndex = new HashMap<>();
     private final Map<Integer, IPartnershipExtended> partnershipIndex = new HashMap<>();
-
+    // TODO decide on which part approach using either line above or below
     private ArrayList<IPartnershipExtended> partTemp = new ArrayList<>();
 
     public PeopleCollection clone() {

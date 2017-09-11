@@ -1,6 +1,6 @@
 #Properties File - for model v3 - Tom, Graham, Al
 #4.3.16
-var_data_files = validated/src/main/resources/proxy-scotland-population-JA
+var_data_files = validated/src/main/resources/scotland_test_population
 simulation_time_step = 1y
 input_width = 10y
 tS = 1/1/1599

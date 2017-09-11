@@ -22,7 +22,6 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.DateUtils;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateImplementations.MonthDate;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.timeSteps.CompoundTimeUnit;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.timeSteps.TimeUnit;
-import uk.ac.standrews.cs.digitising_scotland.verisim.events.birth.BirthLogic;
 import uk.ac.standrews.cs.digitising_scotland.verisim.events.death.DeathLogic;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -30,12 +29,17 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.recor
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.EntityFactory;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.dataStructure.Population;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.dataStructure.exceptions.InsufficientNumberOfPeopleException;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.selectionApproaches.SharedLogic;
+
+import java.util.Random;
 
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class InitLogic {
+
+    private static Random randomNumberGenerator = new Random();
 
     public static Logger log = LogManager.getLogger(InitLogic.class);
 
@@ -61,13 +65,13 @@ public class InitLogic {
     public static void handleInitPeople(Config config, MonthDate currentTime, Population population) {
 
         // calculate hypothetical number of expected births
-        int hypotheticalBirths = BirthLogic.calculateChildrenToBeBorn(currentHypotheticalPopulationSize, config.getSetUpBR() * initTimeStep.toDecimalRepresentation());
+        int hypotheticalBirths = calculateChildrenToBeBorn(currentHypotheticalPopulationSize, config.getSetUpBR() * initTimeStep.toDecimalRepresentation());
 
         int shortFallInBirths = hypotheticalBirths - numberOfBirthsInThisTimestep;
         numberOfBirthsInThisTimestep = 0;
 
         // calculate hypothetical number of expected deaths
-        int hypotheticalDeaths = DeathLogic.calculateNumberToDie(currentHypotheticalPopulationSize, config.getSetUpDR() * initTimeStep.toDecimalRepresentation());
+        int hypotheticalDeaths = calculateNumberToDie(currentHypotheticalPopulationSize, config.getSetUpDR() * initTimeStep.toDecimalRepresentation());
 
         // update hypothetical population
         currentHypotheticalPopulationSize = currentHypotheticalPopulationSize + hypotheticalBirths - hypotheticalDeaths;
@@ -129,6 +133,57 @@ public class InitLogic {
     private static int calculateStartingPopulationSize(Config config) {
         // Performs compound growth in reverse to work backwards from the target population to the
         return (int) (config.getT0PopulationSize() / Math.pow(config.getSetUpBR() - config.getSetUpDR() + 1, DateUtils.differenceInYears(config.getTS(), config.getT0()).getCount()));
+    }
+
+    public static int calculateChildrenToBeBorn(int sizeOfCohort, Double birthRate) {
+        return SharedLogic.calculateNumberToHaveEvent(sizeOfCohort, birthRate);
+    }
+
+    public static int calculateNumberToDie(int people, Double deathRate) {
+
+
+        double toHaveEvent = people * deathRate;
+        int flooredToHaveEvent = (int) toHaveEvent;
+        toHaveEvent -= flooredToHaveEvent;
+
+//        if (randomNumberGenerator.nextInt(100) < toHaveEvent * 100) {
+//            flooredToHaveEvent++;
+//        }
+
+//        if (randomNumberGenerator.nextDouble() < toHaveEvent) {
+//            flooredToHaveEvent++;
+//        }
+
+        // this is a random dice roll to see if the fraction of a has the event or not
+
+        if(deathRate <= 0.001) {
+
+            if (randomNumberGenerator.nextInt(100) < toHaveEvent * 100) {
+                flooredToHaveEvent++;
+            }
+
+        } else {
+//
+//            if (toHaveEvent > 0.5) {
+//                flooredToHaveEvent++;
+//            }
+            if (randomNumberGenerator.nextDouble() < toHaveEvent) {
+                flooredToHaveEvent++;
+            }
+////        } else {
+////            flooredToHaveEvent++;
+        }
+//
+//        }
+
+        if(deathRate.isNaN()) {
+            System.out.println("NAN: thus toDie: " + flooredToHaveEvent);
+        }
+
+//        flooredToHaveEvent++;
+
+        return flooredToHaveEvent;
+
     }
 
     public static int getCurrentHypotheticalPopulationSize() {

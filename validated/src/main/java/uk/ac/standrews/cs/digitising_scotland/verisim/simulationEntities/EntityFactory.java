@@ -48,19 +48,6 @@ public class EntityFactory {
     private static NameGenerator surnameGenerator = new SurnameGenerator();
     private static DateSelector birthDateSelector = new BirthDateSelector();
 
-    public static IPartnershipExtended formNewChildrenInPartnership(int numberOfChildren, IPersonExtended father, IPersonExtended mother, MonthDate currentDate,
-                                                                    CompoundTimeUnit birthTimeStep, Population population) {
-
-        IPartnershipExtended partnership = new Partnership(father, mother, currentDate);
-        population.getLivingPeople().addPartnershipToIndex(partnership);
-
-        IPersonExtended child = makePerson(currentDate, birthTimeStep, partnership, population);
-
-        partnership.addChildren(Collections.singletonList(child));
-
-        return partnership;
-    }
-
     public static IPartnershipExtended formNewChildrenInPartnership(int numberOfChildren, IPersonExtended mother, MonthDate currentDate,
                                                                     CompoundTimeUnit birthTimeStep, Population population) {
 
@@ -114,12 +101,6 @@ public class EntityFactory {
             pc.newFemale();
             return 'F';
         }
-
-//        if (randomNumberGenerator.nextBoolean()) {
-//            return 'M';
-//        } else {
-//            return 'F';
-//        }
 
     }
 

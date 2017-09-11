@@ -16,6 +16,7 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.dataStructure;
 
+import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.Date;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.DateBounds;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.DateUtils;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.MisalignedTimeDivisionError;
@@ -28,6 +29,7 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.populat
 
 import java.util.*;
 
+
 /**
  * A PersonCollection contains a set of collections of people where the collections are organised by the year of birth
  * of the person.
@@ -37,7 +39,7 @@ import java.util.*;
 public abstract class PersonCollection implements DateBounds {
 
     private AdvancableDate startDate;
-    private uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.Date endDate;
+    private Date endDate;
     private CompoundTimeUnit divisionSize;
 
     /**

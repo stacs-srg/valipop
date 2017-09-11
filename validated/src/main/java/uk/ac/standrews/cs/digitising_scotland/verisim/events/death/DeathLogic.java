@@ -180,51 +180,6 @@ public class DeathLogic implements EventLogic {
 //        return DateUtils.differenceInYears(currentDate, birthDate).getCount();
 //    }
 
-    public static int calculateNumberToDie(int people, Double deathRate) {
 
-
-        double toHaveEvent = people * deathRate;
-        int flooredToHaveEvent = (int) toHaveEvent;
-        toHaveEvent -= flooredToHaveEvent;
-
-//        if (randomNumberGenerator.nextInt(100) < toHaveEvent * 100) {
-//            flooredToHaveEvent++;
-//        }
-
-//        if (randomNumberGenerator.nextDouble() < toHaveEvent) {
-//            flooredToHaveEvent++;
-//        }
-
-        // this is a random dice roll to see if the fraction of a has the event or not
-
-        if(deathRate <= 0.001) {
-
-            if (randomNumberGenerator.nextInt(100) < toHaveEvent * 100) {
-                flooredToHaveEvent++;
-            }
-
-        } else {
-//
-//            if (toHaveEvent > 0.5) {
-//                flooredToHaveEvent++;
-//            }
-            if (randomNumberGenerator.nextDouble() < toHaveEvent) {
-                flooredToHaveEvent++;
-            }
-////        } else {
-////            flooredToHaveEvent++;
-        }
-//
-//        }
-
-        if(deathRate.isNaN()) {
-            System.out.println("NAN: thus toDie: " + flooredToHaveEvent);
-        }
-
-//        flooredToHaveEvent++;
-
-        return flooredToHaveEvent;
-
-    }
 
 }

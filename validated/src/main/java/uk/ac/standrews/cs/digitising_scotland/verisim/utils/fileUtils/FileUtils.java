@@ -20,8 +20,6 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.config.Config;
 import uk.ac.standrews.cs.digitising_scotland.verisim.events.EventType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.dataDistributionTables.LabelValueDataRow;
-import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.validation.kaplanMeier.utils.FailureTimeRow;
 import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.validation.summaryData.SummaryRow;
 
 import java.io.File;
@@ -35,7 +33,6 @@ import java.nio.file.StandardOpenOption;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Collection;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
@@ -156,30 +153,6 @@ public class FileUtils {
         }
 
         return stream;
-    }
-
-    public static void outputFailureTimeRowsToStream(Collection<FailureTimeRow> failureTimeRows, PrintStream stream) {
-
-        stream.println("years event group");
-
-        for(FailureTimeRow r : failureTimeRows) {
-            stream.println(r.rowAsString());
-        }
-
-        stream.close();
-
-    }
-
-    public static void outputDataRowsToStream(String headings, Collection<LabelValueDataRow> dataRows, PrintStream stream) {
-
-        if(headings.length() != 0) {
-            stream.println(headings);
-        }
-
-
-        for(LabelValueDataRow r : dataRows) {
-            stream.println(r.rowAsString());
-        }
     }
 
     public static Path mkBlankFile(Path parent, String fileName) throws IOException {
