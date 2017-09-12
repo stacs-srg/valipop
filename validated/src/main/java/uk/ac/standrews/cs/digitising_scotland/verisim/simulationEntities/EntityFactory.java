@@ -21,6 +21,7 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.annotations.names.FirstNam
 import uk.ac.standrews.cs.digitising_scotland.verisim.annotations.names.NameGenerator;
 import uk.ac.standrews.cs.digitising_scotland.verisim.annotations.names.SurnameGenerator;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.Date;
+import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateImplementations.AdvancableDate;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateImplementations.MonthDate;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateSelection.BirthDateSelector;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateSelection.DateSelector;
@@ -31,6 +32,7 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.Person;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.PopulationCounts;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.dataStructure.Population;
+import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.dataStructure.exceptions.PersonNotFoundException;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -44,14 +46,21 @@ import java.util.Random;
 public class EntityFactory {
 
     private static Random randomNumberGenerator = new Random();
-    private static NameGenerator firstNameGenerator = new FirstNameGenerator();
-    private static NameGenerator surnameGenerator = new SurnameGenerator();
+
     private static BirthDateSelector birthDateSelector = new BirthDateSelector();
 
-    public static IPartnershipExtended formNewChildrenInPartnership(int numberOfChildren, IPersonExtended mother, MonthDate currentDate,
-                                                                    CompoundTimeUnit birthTimeStep, Population population) {
+    public static IPartnershipExtended formNewChildrenInPartnership(int numberOfChildren, IPersonExtended father, IPersonExtended mother, AdvancableDate currentDate,
+                                                                    CompoundTimeUnit birthTimeStep, Population population) throws PersonNotFoundException {
 
-        IPartnershipExtended partnership = new Partnership(mother);
+        try {
+            population.getLivingPeople().removePerson(mother);
+            population.getLivingPeople().removePerson(father);
+        } catch (PersonNotFoundException e) {
+            throw new PersonNotFoundException("Could not remove parents for population positon update when creating " +
+                    "new partnership");
+        }
+
+        IPartnershipExtended partnership = new Partnership(father, mother);
 
         List<IPersonExtended> children = new ArrayList<>(numberOfChildren);
 
@@ -75,6 +84,12 @@ public class EntityFactory {
         population.getPopulationCounts().newPartnership();
 
         population.getLivingPeople().addPartnershipToIndex(partnership);
+
+        mother.recordPartnership(partnership);
+        father.recordPartnership(partnership);
+
+        population.getLivingPeople().addPerson(mother);
+        population.getLivingPeople().addPerson(father);
 
         return partnership;
     }
@@ -107,11 +122,6 @@ public class EntityFactory {
     public static IPersonExtended makePerson(Date birthDate, IPartnershipExtended parentsPartnership, Population population) {
 
         Person person = new Person(getSex(population.getPopulationCounts()), birthDate, parentsPartnership);
-
-        // OZGUR - this is where your stuff is currently being called from
-        person.setFirstName(firstNameGenerator.getName(person));
-        person.setSurname(surnameGenerator.getName(person));
-
 
         population.getLivingPeople().addPerson(person);
 

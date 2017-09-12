@@ -22,6 +22,7 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.timeSteps.Compou
 import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.recording.PopulationStatistics;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.dataStructure.Population;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.dataStructure.exceptions.InsufficientNumberOfPeopleException;
+import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.dataStructure.exceptions.PersonNotFoundException;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
@@ -30,6 +31,6 @@ public interface EventLogic {
 
     void handleEvent(Config config,
                             AdvancableDate currentDate, CompoundTimeUnit consideredTimePeriod,
-                            Population population, PopulationStatistics desiredPopulationStatistics) throws InsufficientNumberOfPeopleException;
+                            Population population, PopulationStatistics desiredPopulationStatistics) throws InsufficientNumberOfPeopleException, PersonNotFoundException;
 
 }

@@ -35,6 +35,7 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.dataStructure.FemaleCollection;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.dataStructure.Population;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.dataStructure.exceptions.InsufficientNumberOfPeopleException;
+import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.dataStructure.exceptions.PersonNotFoundException;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.implementedSimulations.orderedBirthDeathModel.OBDModel;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.IntegerRangeToIntegerSet;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.LabeledValueSet;
@@ -51,7 +52,7 @@ public class NBirthLogic implements EventLogic {
 
     @Override
     public void handleEvent(Config config, AdvancableDate currentDate, CompoundTimeUnit consideredTimePeriod,
-                            Population population, PopulationStatistics desiredPopulationStatistics) throws InsufficientNumberOfPeopleException {
+                            Population population, PopulationStatistics desiredPopulationStatistics) throws InsufficientNumberOfPeopleException, PersonNotFoundException {
 
         int bornAtTS = 0;
 
@@ -63,7 +64,7 @@ public class NBirthLogic implements EventLogic {
         while(divDates.hasNext() && DateUtils.dateBeforeOrEqual(divDate = divDates.next(), currentDate)) {
 
             int age = DateUtils.differenceInYears(divDate.advanceTime(consideredTimePeriod), currentDate).getCount();
-            Collection<IPersonExtended> needingPartners = new ArrayList<>();
+            Collection<NewMother> needingPartners = new ArrayList<>();
 
             int cohortSize = femalesLiving.getAllPersonsBornInTimePeriod(divDate, consideredTimePeriod).size();
 
@@ -123,7 +124,7 @@ public class NBirthLogic implements EventLogic {
                                     PopulationStatistics desiredPopulationStatistics, AdvancableDate currentDate,
                                     CompoundTimeUnit consideredTimePeriod, Population population) throws InsufficientNumberOfPeopleException {
 
-        Collection<IPersonExtended> needPartners = new ArrayList<>();
+        Collection<NewMother> needPartners = new ArrayList<>();
         Collection<IPersonExtended> havePartners = new ArrayList<>();
 
         if(females.size() == 0) {
@@ -168,8 +169,9 @@ public class NBirthLogic implements EventLogic {
                 childrenMade += highestBirthOption.getValue();
 
                 if(female.needsNewPartner(currentDate)) {
-                    female.giveChildren(highestBirthOption.getValue(), currentDate, consideredTimePeriod, population);
-                    needPartners.add(female);
+//                    female.giveChildren(highestBirthOption.getValue(), currentDate, consideredTimePeriod, population);
+
+                    needPartners.add(new NewMother(female, highestBirthOption.getValue()));
                 } else {
 
                     female.giveChildrenWithinLastPartnership(highestBirthOption.getValue(), currentDate, consideredTimePeriod, population);

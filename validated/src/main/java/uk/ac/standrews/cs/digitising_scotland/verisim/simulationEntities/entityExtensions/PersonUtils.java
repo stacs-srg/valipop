@@ -43,8 +43,6 @@ public interface PersonUtils {
 
     boolean recordDeath(Date date, Population population);
 
-
-
     int ageAtDeath() throws NotDeadException;
 
     boolean aliveOnDate(Date date);
@@ -67,7 +65,7 @@ public interface PersonUtils {
 
     IPersonExtended getPartner(Date onDate);
 
-    void giveChildren(int numberOfChildren, AdvancableDate onDate, CompoundTimeUnit birthTimeStep, Population population);
+//    void giveChildren(int numberOfChildren, AdvancableDate onDate, CompoundTimeUnit birthTimeStep, Population population);
 
     void giveChildrenWithinLastPartnership(int numberOfChildren, AdvancableDate onDate, CompoundTimeUnit birthTimeStep, Population population);
 
