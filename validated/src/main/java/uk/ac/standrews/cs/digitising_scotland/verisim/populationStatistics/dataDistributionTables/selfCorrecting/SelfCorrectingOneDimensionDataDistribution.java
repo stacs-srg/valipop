@@ -45,7 +45,7 @@ public class SelfCorrectingOneDimensionDataDistribution extends OneDimensionData
     private Map<IntegerRange, Double> appliedCounts;
 
     // recovery factor
-    double rf = 1;
+    double rf = 0.3;
 
     public SelfCorrectingOneDimensionDataDistribution(YearDate year, String sourcePopulation, String sourceOrganisation, Map<IntegerRange, Double> tableData, boolean binominalSampling) {
         super(year, sourcePopulation, sourceOrganisation, tableData);
