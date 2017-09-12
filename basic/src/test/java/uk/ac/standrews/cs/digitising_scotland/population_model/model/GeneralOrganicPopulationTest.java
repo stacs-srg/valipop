@@ -32,4 +32,5 @@ public class GeneralOrganicPopulationTest extends GeneralPopulationStructureTest
     public GeneralOrganicPopulationTest() throws NegativeWeightException, NegativeDeviationException, InconsistentWeightException, IOException {
     	super(OrganicPopulation.runPopulationModel(500, false, false, true), false);
     }
+
 }

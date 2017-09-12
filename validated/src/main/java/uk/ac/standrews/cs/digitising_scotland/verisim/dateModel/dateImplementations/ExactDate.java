@@ -96,7 +96,7 @@ public final class ExactDate implements Date {
     @Override
     public java.util.Date getDate() {
         Calendar c = Calendar.getInstance();
-        c.set(year, month, day);
+        c.set(year, month, day, 0, 0);
         return c.getTime();
     }
 

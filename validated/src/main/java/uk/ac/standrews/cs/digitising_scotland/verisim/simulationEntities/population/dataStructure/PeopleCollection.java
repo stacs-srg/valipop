@@ -19,13 +19,11 @@ package uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.popula
 import uk.ac.standrews.cs.digitising_scotland.population_model.model.IPartnership;
 import uk.ac.standrews.cs.digitising_scotland.population_model.model.IPerson;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.DateUtils;
-import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.MisalignedTimeDivisionError;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateImplementations.AdvancableDate;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.timeSteps.CompoundTimeUnit;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.partnership.IPartnershipExtended;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPersonExtended;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.IPopulationExtended;
-import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.exceptions.UnsupportedDateConversion;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.dataStructure.exceptions.PersonNotFoundException;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.dataStructure.utils.AggregatePersonCollectionFactory;
 
@@ -79,7 +77,6 @@ public class PeopleCollection extends PersonCollection implements IPopulationExt
      *
      * @param start the start
      * @param end   the end
-     * @throws UnsupportedDateConversion the unsupported date conversion
      */
     public PeopleCollection(AdvancableDate start, uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.Date end, CompoundTimeUnit divisionSize) {
         super(start, end, divisionSize);
@@ -132,22 +129,6 @@ public class PeopleCollection extends PersonCollection implements IPopulationExt
         people.addAll(females.getAllPersonsBornInTimePeriod(firstDate, timePeriod));
         return people;
     }
-
-//    @Override
-//    public Collection<IPersonExtended> getByYear(Date yearOfBirth) {
-//        Collection<IPersonExtended> people = males.getByYear(yearOfBirth);
-//        people.addAll(females.getByYear(yearOfBirth));
-//        return people;
-//    }
-//
-//    @Override
-//    public Collection<IPersonExtended> getByYearAndSex(char sex, Date year) {
-//        if (Character.toLowerCase(sex) == 'm') {
-//            return getMales().getByYear(year);
-//        } else {
-//            return getFemales().getByYear(year);
-//        }
-//    }
 
     @Override
     public void addPerson(IPersonExtended person) {
@@ -241,36 +222,6 @@ public class PeopleCollection extends PersonCollection implements IPopulationExt
     @Override
     public void setConsistentAcrossIterations(boolean consistent_across_iterations) {
 
-    }
-
-    @Override
-    public Collection<IPersonExtended> forceGetAllPersonsByTimePeriod(AdvancableDate firstDate, CompoundTimeUnit timePeriod) {
-        Collection<IPersonExtended> people = new ArrayList<>();
-        people.addAll(forceGetAllPersonsByTimePeriodAndSex(firstDate, timePeriod, 'm'));
-        people.addAll(forceGetAllPersonsByTimePeriodAndSex(firstDate, timePeriod, 'f'));
-
-        return people;
-    }
-
-    @Override
-    public Collection<IPersonExtended> forceGetAllPersonsByTimePeriodAndSex(AdvancableDate firstDate, CompoundTimeUnit timePeriod, char sex) {
-        Collection<IPersonExtended> people = new ArrayList<>();
-
-        if(Character.toLowerCase(sex) == 'm') {
-            try {
-                people = getMales().getAllPersonsBornInTimePeriod(firstDate, timePeriod);
-            } catch (MisalignedTimeDivisionError e) {
-                people.addAll(getPeopleBetweenDates(getMales(), firstDate, firstDate.advanceTime(timePeriod)));
-            }
-        } else if(Character.toLowerCase(sex) == 'f') {
-            try {
-                people = getFemales().getAllPersonsBornInTimePeriod(firstDate, timePeriod);
-            } catch (MisalignedTimeDivisionError e) {
-                people.addAll(getPeopleBetweenDates(getMales(), firstDate, firstDate.advanceTime(timePeriod)));
-            }
-        }
-
-        return people;
     }
 
     private Collection<IPersonExtended> getPeopleBetweenDates(PersonCollection collection,

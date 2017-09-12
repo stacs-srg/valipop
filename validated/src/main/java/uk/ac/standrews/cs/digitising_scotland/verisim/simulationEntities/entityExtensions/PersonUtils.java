@@ -37,6 +37,10 @@ import java.util.Collection;
  */
 public interface PersonUtils {
 
+    boolean isWidow(Date onDate);
+
+    IPersonExtended getPartner(Date onDate);
+
     boolean noRecentChildren(MonthDate currentDate, CompoundTimeUnit timePeriod);
 
     void recordPartnership(IPartnershipExtended partnership);
@@ -47,27 +51,9 @@ public interface PersonUtils {
 
     boolean aliveOnDate(Date date);
 
-    int ageAtFirstChild() throws NoChildrenOfDesiredOrder;
-
     IPersonExtended getLastChild();
 
-    int numberOfChildren();
-
-    void keepFather(PeopleCollection population);
-
-    void setParentsPartnership(IPartnershipExtended newParents);
-
-    int numberOfChildrenFatheredChildren();
-
-    IPartnershipExtended isInstigatorOfSeparationOfMothersPreviousPartnership();
-
-    boolean isWidow(Date onDate);
-
-    IPersonExtended getPartner(Date onDate);
-
-//    void giveChildren(int numberOfChildren, AdvancableDate onDate, CompoundTimeUnit birthTimeStep, Population population);
-
-    void giveChildrenWithinLastPartnership(int numberOfChildren, AdvancableDate onDate, CompoundTimeUnit birthTimeStep, Population population);
+    void addChildrenToCurrentPartnership(int numberOfChildren, AdvancableDate onDate, CompoundTimeUnit birthTimeStep, Population population);
 
     boolean toSeparate();
 

@@ -45,8 +45,6 @@ import java.util.Random;
  */
 public class EntityFactory {
 
-    private static Random randomNumberGenerator = new Random();
-
     private static BirthDateSelector birthDateSelector = new BirthDateSelector();
 
     public static IPartnershipExtended formNewChildrenInPartnership(int numberOfChildren, IPersonExtended father, IPersonExtended mother, AdvancableDate currentDate,
