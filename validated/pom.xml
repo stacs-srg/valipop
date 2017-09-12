@@ -135,13 +135,6 @@
             <groupId>uk.ac.standrews.cs</groupId>
             <artifactId>population_model</artifactId>
             <version>4.0-SNAPSHOT</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>uk.ac.standrews.cs</groupId>
-            <artifactId>population_model</artifactId>
-            <version>4.0-SNAPSHOT</version>
         </dependency>
 
 
