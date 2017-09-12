@@ -79,7 +79,8 @@ public class NDeathLogic implements EventLogic {
             // Calculate the appropriate number to kill and then kill
             Integer numberToKill = ((SingleDeterminedCount) determinedCount).getDeterminedCount();
 
-            int killAdjust = Integer.parseInt(String.valueOf(Math.round(peopleOfAge * 0.0008)));
+//            int killAdjust = Integer.parseInt(String.valueOf(Math.round(peopleOfAge * 0.0008)));
+            int killAdjust = 0;
 
             Collection<IPersonExtended> peopleToKill;
             try {
