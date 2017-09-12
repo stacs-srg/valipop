@@ -21,7 +21,6 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.DateUtils;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.MisalignedTimeDivisionError;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateImplementations.AdvancableDate;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateImplementations.MonthDate;
-import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.exceptions.UnsupportedDateConversion;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.timeSteps.CompoundTimeUnit;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.timeSteps.TimeUnit;
 import org.apache.logging.log4j.LogManager;
@@ -56,7 +55,6 @@ public class FemaleCollection extends PersonCollection {
      *
      * @param start the start
      * @param end   the end
-     * @throws UnsupportedDateConversion the unsupported date conversion
      */
     public FemaleCollection(AdvancableDate start, Date end, CompoundTimeUnit divisionSize) {
         super(start, end, divisionSize);
@@ -478,10 +476,9 @@ public class FemaleCollection extends PersonCollection {
 
     }
 
-
-    // TODO move to verify class? or remove?
+    
     // May be broke with changes - method needs checked
-    public boolean verify() {
+    public boolean verify(FemaleCollection fc) {
 
         boolean passed = true;
 
@@ -495,10 +492,10 @@ public class FemaleCollection extends PersonCollection {
 
                 for(IPersonExtended p : orderedBirthCohort) {
                     if(p.getBirthDate_ex().getYear() != y.getYear()
-                            || p.numberOfChildren() != birthOrder) {
+                            || p.getAllChildren().size() != birthOrder) {
                         passed = false;
                         System.out.println("F: " + p.getId() + " YOB: " + p.getBirthDate_ex().getYear() + " ("
-                                + y.getYear() + ") order: " + p.numberOfChildren() + " (" + birthOrder + ")");
+                                + y.getYear() + ") order: " + p.getAllChildren().size() + " (" + birthOrder + ")");
                     }
                 }
 

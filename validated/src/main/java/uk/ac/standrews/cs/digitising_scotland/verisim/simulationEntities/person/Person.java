@@ -273,15 +273,6 @@ public class Person implements IPersonExtended {
         return true;
     }
 
-    private boolean isBirthEvent(EventType event) {
-        return event == EventType.FIRST_BIRTH || event == EventType.SECOND_BIRTH || event == EventType.THIRD_BIRTH ||
-                event == EventType.FOURTH_BIRTH || event == EventType.FIFTH_BIRTH;
-    }
-
-    private boolean isDeathEvent(EventType event) {
-        return event == EventType.MALE_DEATH || event == EventType.FEMALE_DEATH;
-    }
-
     @Override
     public int ageAtDeath() throws NotDeadException {
         if (deathDate == null) {
@@ -299,27 +290,6 @@ public class Person implements IPersonExtended {
             }
         }
         return false;
-    }
-
-    @Override
-    public int ageAtFirstChild() throws NoChildrenOfDesiredOrder {
-
-        int age = Integer.MAX_VALUE;
-
-        for (IPartnershipExtended p : partnerships) {
-            for (IPersonExtended c : p.getChildren()) {
-                int ageAtBirth = DateUtils.differenceInYears(birthDate, c.getBirthDate_ex()).getCount();
-                if (ageAtBirth < age) {
-                    age = ageAtBirth;
-                }
-            }
-        }
-
-        if (age == Integer.MAX_VALUE) {
-            throw new NoChildrenOfDesiredOrder("Women has no children");
-        }
-
-        return age;
     }
 
     @Override
@@ -341,115 +311,6 @@ public class Person implements IPersonExtended {
 
         return child;
 
-    }
-
-    @Override
-    public int numberOfChildren() {
-        int count = 0;
-
-        for(IPartnershipExtended p : partnerships) {
-            count += p.getChildren().size();
-        }
-
-        return count;
-    }
-
-    @Override
-    public void keepFather(PeopleCollection population) {
-        Date latestChildBirthDate = new YearDate(Integer.MIN_VALUE);
-        IPersonExtended child = null;
-
-
-
-        for (IPartnershipExtended p : partnerships) {
-            for (IPersonExtended c : p.getChildren()) {
-
-                if(p.getMalePartner() != null && DateUtils.dateBeforeOrEqual(latestChildBirthDate, c.getBirthDate_ex())) {
-                    latestChildBirthDate = c.getBirthDate_ex();
-                    child = c;
-                }
-
-            }
-        }
-
-        // This is the partnership with the last father - we're wanting to put any fatherless kids in here
-        IPartnershipExtended motherPrevChild = child.getParentsPartnership_ex();
-
-
-        IPersonExtended newChild = getLastChild();
-        IPartnershipExtended old = newChild.getParentsPartnership_ex();
-
-        Collection<IPersonExtended> newChildren = old.getChildren();
-
-        for(IPersonExtended c : newChildren) {
-            c.setParentsPartnership(motherPrevChild);
-
-        }
-
-        motherPrevChild.addChildren(newChildren);
-        partnerships.remove(old);
-        population.removePartnershipFromIndex(old);
-
-    }
-
-    @Override
-    public void setParentsPartnership(IPartnershipExtended newParents) {
-        parentsPartnership = newParents;
-    }
-
-    @Override
-    public int numberOfChildrenFatheredChildren() {
-        int count = 0;
-
-        for(IPartnershipExtended p : partnerships) {
-            if(p.getMalePartner() != null) {
-                count += p.getChildren().size();
-            }
-        }
-
-        return count;
-    }
-
-    @Override
-    public IPartnershipExtended isInstigatorOfSeparationOfMothersPreviousPartnership() {
-
-        Collection<IPersonExtended> fullSiblings = parentsPartnership.getChildren();
-        fullSiblings.remove(this);
-
-
-        // check to see if eldest sibling
-        boolean eldest = true;
-        for(IPersonExtended sibling : fullSiblings) {
-            if(DateUtils.dateBeforeOrEqual(sibling.getBirthDate_ex(), getBirthDate_ex())) {
-                eldest = false;
-            }
-        }
-
-        IPartnershipExtended prevPartnership = null;
-
-        if(eldest) {
-            // is first child of partnership then look to see if there is a previous partnership for the mother
-            Collection<IPartnershipExtended> mothersPartnerships = parentsPartnership.getFemalePartner().getPartnerships_ex();
-            mothersPartnerships.remove(parentsPartnership);
-
-            for(IPartnershipExtended p : mothersPartnerships) {
-
-                if(DateUtils.dateBeforeOrEqual(p.getPartnershipDate(), parentsPartnership.getPartnershipDate())) {
-                    if(prevPartnership != null) {
-                        if(DateUtils.dateBeforeOrEqual(prevPartnership.getPartnershipDate(), p.getPartnershipDate())) {
-                            prevPartnership = p;
-                        }
-                    } else {
-                        prevPartnership = p;
-                    }
-                }
-
-            }
-
-
-        }
-
-        return prevPartnership;
     }
 
     @Override
@@ -498,25 +359,8 @@ public class Person implements IPersonExtended {
 
     }
 
-//    @Override
-//    public void giveChildren(int numberOfChildren, AdvancableDate onDate, CompoundTimeUnit birthTimeStep, Population population) {
-//
-//        try {
-//            population.getLivingPeople().removePerson(this);
-//        } catch (PersonNotFoundException e) {
-//            e.printStackTrace();
-//        }
-//
-//        partnerships.add(EntityFactory.formNewChildrenInPartnership(numberOfChildren, this, onDate.getMonthDate(), birthTimeStep, population));
-//
-//        population.getLivingPeople().addPerson(this);
-//
-//
-//
-//    }
-
     @Override
-    public void giveChildrenWithinLastPartnership(int numberOfChildren, AdvancableDate onDate, CompoundTimeUnit birthTimeStep, Population population) {
+    public void addChildrenToCurrentPartnership(int numberOfChildren, AdvancableDate onDate, CompoundTimeUnit birthTimeStep, Population population) {
 
         try {
             population.getLivingPeople().removePerson(this);

@@ -95,6 +95,7 @@ public class Config {
 
         Collection<String> configInput = InputFileReader.getAllLines(pathToConfigFile);
 
+        // Iterate over config file
         for (String l : configInput) {
 
             String[] split = l.split("=");
@@ -206,7 +207,7 @@ public class Config {
         try {
             return Files.newDirectoryStream(varMaleDeathPaths, filter);
         } catch (IOException e) {
-            String message = "Error reading in male death files";
+            String message = "Error reading in male death files: " + varMaleDeathPaths;
             log.fatal(message);
             throw new IOException(message, e);
         }
@@ -216,7 +217,7 @@ public class Config {
         try {
             return Files.newDirectoryStream(varFemaleDeathPaths, filter);
         } catch (IOException e) {
-            String message = "Error reading in female death files";
+            String message = "Error reading in female death files: " + varFemaleDeathPaths;
             log.fatal(message);
             throw new IOException(message, e);
         }

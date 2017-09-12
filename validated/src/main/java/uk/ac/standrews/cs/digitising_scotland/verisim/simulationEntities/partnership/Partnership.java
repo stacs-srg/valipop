@@ -109,7 +109,7 @@ public class Partnership implements IPartnershipExtended {
 
     @Override
     public List<Integer> getChildIds() {
-        List<Integer> childrenIDs = Collections.emptyList();
+        List<Integer> childrenIDs = new ArrayList<>();
 
         for(IPersonExtended p : getChildren()) {
             childrenIDs.add(p.getId());
@@ -162,12 +162,6 @@ public class Partnership implements IPartnershipExtended {
     @Override
     public void addChildren(Collection<IPersonExtended> children) {
         this.children.addAll(children);
-    }
-
-    @Override
-    public void setFather(IPersonExtended father) {
-        this.male = father;
-        father.recordPartnership(this);
     }
 
     @Override

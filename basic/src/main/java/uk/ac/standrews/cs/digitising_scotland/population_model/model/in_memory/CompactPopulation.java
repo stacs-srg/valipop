@@ -40,8 +40,6 @@ import java.util.*;
 @NotThreadSafe
 class CompactPopulation {
 
-    // TODO provide a way to configure the parameters dynamically
-
     private static final int DAYS_IN_DECEMBER = 31;
     private static final int DECEMBER_INDEX = 11;
     private static final double PROBABILITY_OF_BEING_INCOMER = 0.125;

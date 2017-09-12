@@ -30,8 +30,6 @@ public interface PartnershipUtils {
 
     void addChildren(Collection<IPersonExtended> children);
 
-    void setFather(IPersonExtended father);
-
     void setPartnershipDate(Date startDate);
 
     void separate(Date currentDate, CompoundTimeUnit consideredTimePeriod);

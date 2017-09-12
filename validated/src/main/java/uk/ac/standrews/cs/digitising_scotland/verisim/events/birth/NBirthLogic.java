@@ -36,7 +36,7 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.populat
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.dataStructure.Population;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.dataStructure.exceptions.InsufficientNumberOfPeopleException;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.dataStructure.exceptions.PersonNotFoundException;
-import uk.ac.standrews.cs.digitising_scotland.verisim.utils.implementedSimulations.orderedBirthDeathModel.OBDModel;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.implementions.OBDModel;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.IntegerRangeToIntegerSet;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.LabeledValueSet;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.integerRange.IntegerRange;
@@ -169,12 +169,10 @@ public class NBirthLogic implements EventLogic {
                 childrenMade += highestBirthOption.getValue();
 
                 if(female.needsNewPartner(currentDate)) {
-//                    female.giveChildren(highestBirthOption.getValue(), currentDate, consideredTimePeriod, population);
-
                     needPartners.add(new NewMother(female, highestBirthOption.getValue()));
                 } else {
 
-                    female.giveChildrenWithinLastPartnership(highestBirthOption.getValue(), currentDate, consideredTimePeriod, population);
+                    female.addChildrenToCurrentPartnership(highestBirthOption.getValue(), currentDate, consideredTimePeriod, population);
                     havePartners.add(female);
 
                     try {

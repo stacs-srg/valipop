@@ -26,7 +26,7 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.
  * @author Victor Andrei (va9@st-andrews.ac.uk)
  * @author Graham Kirby (graham.kirby@st-andrews.ac.uk)
  */
-public interface IPopulationExtended extends IPopulation, PopulationUtils {
+public interface IPopulationExtended extends IPopulation {
 
     /**
      * Allows iteration over the people in the population.

@@ -45,6 +45,7 @@ public class FileUtils {
     private static Path resultsSummaryPath;
     private static Path detailedResultsPath;
     private static Path tracePath;
+    private static Path recordsPath;
     private static Path contingencyTablesPath;
 
     private static void checkLogFile() {
@@ -75,55 +76,19 @@ public class FileUtils {
 
         // make dump dir
         mkDirs(run, "dump");
-        // make population dir
-        mkDirs(run, "records");
 
-        Path tables = Paths.get(run.toString(), "tables");
-        mkDirs(tables);
-        contingencyTablesPath = tables;
+        // make population dir
+        recordsPath = Paths.get(run.toString(), "records");
+        mkDirs(recordsPath);
+
+        contingencyTablesPath = Paths.get(run.toString(), "tables");
+        mkDirs(contingencyTablesPath);
 
         Path log = Paths.get(run.toString(), "log");
         mkDirs(log);
         tracePath = mkBlankFile(log, "trace.txt");
 
     }
-
-
-
-
-    public static Path pathToRecordsDir(Config config) {
-
-        return  Paths.get(config.getResultsSavePath().toString(), config.getRunPurpose(), config.getStartTime(), "records");
-    }
-
-
-    public static Path pathToLogDir(String runPurpose, String startTime, String resultPath) {
-
-        return Paths.get(resultPath, runPurpose, startTime, "log", "trace.txt");
-
-    }
-
-    public static PrintStream setupDatFileAsStream(EventType event, String fileName, Config config) {
-
-        PrintStream stream;
-
-        try {
-
-            File a = Paths.get(config.getResultsSavePath().toString(), config.getRunPurpose(), config.getStartTime(), "dat", event.toString(), fileName + ".dat").toFile();
-
-//            File f = Paths.get("." + File.separator + config.getSavePathDat().toString() + File.separator + fileName + ".dat").toAbsolutePath().normalize().toFile();
-            stream = new PrintStream(a);
-
-        } catch (IOException e) {
-            checkLogFile();
-            log.info("Failed to set up summary results output stream - will output to standard out instead");
-            stream = System.out;
-        }
-
-        return stream;
-    }
-
-
 
     public static PrintStream setupDumpPrintStream(String fileName, Config config) {
 
@@ -132,8 +97,6 @@ public class FileUtils {
         try {
 
             File a = Paths.get(config.getResultsSavePath().toString(), config.getRunPurpose(), config.getStartTime(), "dump", fileName + ".txt").toFile();
-
-//            File f = Paths.get("." + File.separator  + "dump" + File.separator + fileName + ".txt").toAbsolutePath().normalize().toFile();
             stream = new PrintStream(a);
 
         } catch (IOException e) {
@@ -185,11 +148,6 @@ public class FileUtils {
         return summary;
     }
 
-    public static String getDateTime() {
-        DateFormat dF = new SimpleDateFormat("yyyyMMdd-HHmmss:SSS");
-        return dF.format(Calendar.getInstance().getTime());
-    }
-
     private static boolean mkDirs(Path parent, String newDir) {
 
         Path path = Paths.get(parent.toString(), newDir);
@@ -205,7 +163,6 @@ public class FileUtils {
         return true;
     }
 
-
     public static Path getGlobalSummaryPath() {
         return globalSummaryPath;
     }
@@ -218,6 +175,10 @@ public class FileUtils {
         return tracePath;
     }
 
+    public static Path getRecordsDirPath() {
+        return recordsPath;
+    }
+
     public static Path getContingencyTablesPath() {
         return contingencyTablesPath;
     }
@@ -226,9 +187,18 @@ public class FileUtils {
         return resultsSummaryPath;
     }
 
+    public static Path pathToLogDir(String runPurpose, String startTime, String resultPath) {
+        return Paths.get(resultPath, runPurpose, startTime, "log", "trace.txt");
+    }
+
     public static void writeSummaryRowToSummaryFiles(SummaryRow row) throws IOException {
         Files.write(globalSummaryPath, row.toSeperatedString(',').getBytes(), StandardOpenOption.APPEND);
         Files.write(resultsSummaryPath, row.toSeperatedString(',').getBytes(), StandardOpenOption.APPEND);
+    }
+
+    public static String getDateTime() {
+        DateFormat dF = new SimpleDateFormat("yyyyMMdd-HHmmss:SSS");
+        return dF.format(Calendar.getInstance().getTime());
     }
 
 }

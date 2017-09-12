@@ -18,7 +18,6 @@ package datastructure;
 
 
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateImplementations.MonthDate;
-import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.exceptions.UnsupportedDateConversion;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.timeSteps.CompoundTimeUnit;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.timeSteps.TimeUnit;
 import org.apache.logging.log4j.LogManager;
@@ -45,7 +44,7 @@ public class PeopleCollectionTest {
     Logger log = LogManager.getLogger(PeopleCollectionTest.class);
 
     @Test
-    public void peopleInByYearAndBirthsCorrectPlace() throws UnsupportedDateConversion {
+    public void peopleInByYearAndBirthsCorrectPlace() {
 
         MonthDate s = new MonthDate(1, 0);
         MonthDate e = new MonthDate(1, 3000);
@@ -81,7 +80,7 @@ public class PeopleCollectionTest {
     }
 
     @Test
-    public void peopleInByYearCorrectPlace() throws UnsupportedDateConversion  {
+    public void peopleInByYearCorrectPlace()  {
 
         MonthDate s = new MonthDate(1, 0);
         MonthDate e = new MonthDate(1, 3000);
@@ -125,7 +124,7 @@ public class PeopleCollectionTest {
     }
 
     @Test
-    public void peopleInByGetAllCorrectPlace() throws UnsupportedDateConversion  {
+    public void peopleInByGetAllCorrectPlace()  {
 
         MonthDate s = new MonthDate(1, 0);
         MonthDate e = new MonthDate(1, 3000);
@@ -174,7 +173,7 @@ public class PeopleCollectionTest {
 
 
     @Test
-    public void femaleGivesBirthMoveOfBirthCountPosition() throws PersonNotFoundException, UnsupportedDateConversion  {
+    public void femaleGivesBirthMoveOfBirthCountPosition() throws PersonNotFoundException  {
 
         MonthDate s = new MonthDate(1, 0);
         MonthDate e = new MonthDate(1, 3000);
@@ -244,72 +243,8 @@ public class PeopleCollectionTest {
 
     }
 
-//    @Test
-//    public void personIsCorrectlyRelocatedAfterDeath() throws PersonNotFoundException, UnsupportedDateConversion, IOException {
-//
-//        Simulation temp = new Simulation("./src/test/resources/validation/config-a.txt", "", "", "results");
-//
-//        MonthDate s = new MonthDate(1, 0);
-//        MonthDate e = new MonthDate(1, 3000);
-//
-//        PeopleCollection living = new PeopleCollection(s, e);
-//        PeopleCollection dead = new PeopleCollection(s, e);
-//
-//        MonthDate start = new MonthDate(1, 1600);
-//
-//        Person m1 = new Person('m', start, null);
-//
-//        living.addPerson(m1);
-//
-//        // can we kill someone
-//        m1.recordDeath(start.advanceTime(90, TimeUnit.YEAR));
-//        living.removePerson(m1);
-//        dead.addPerson(m1);
-//
-//        // and not in the old place
-//        assertFalse(living.getAll().contains(m1));
-//
-//        // are they in the new place
-//        assertTrue(dead.getAll().contains(m1));
-//
-//    }
-
-//    @Test
-//    public void accessWithVariousDateTypes() throws UnsupportedDateConversion {
-//
-//        MonthDate s = new MonthDate(1, 0);
-//        MonthDate e = new MonthDate(1, 3000);
-//
-//        CompoundTimeUnit y = new CompoundTimeUnit(1, TimeUnit.YEAR);
-//        PeopleCollection living = new PeopleCollection(s, e, y);
-//
-//        MonthDate start = new MonthDate(1, 1600);
-//        ExactDate startI = new ExactDate(7, 1, 1600);
-//        YearDate startY = new YearDate(1600);
-//
-//        Person f1 = new Person('f', start, null);
-//
-//        Person m1 = new Person('m', startI, null);
-//        Person m2 = new Person('m', startY, null);
-//
-//        living.addPerson(f1);
-//
-//        living.addPerson(m1);
-//        living.addPerson(m2);
-//
-//        Collection<IPersonExtended> males = living.getMales().getAllPersonsBornInTimePeriod(startY, y);
-//        assertTrue(males.contains(m1));
-//        assertTrue(males.contains(m2));
-//
-//        // for females
-//
-//        Collection<IPersonExtended> females = living.getFemales().getAllPersonsBornInTimePeriod(startI, y);
-//        assertTrue(females.contains(f1));
-//
-//    }
-
     @Test(expected = PersonNotFoundException.class)
-    public void removeNonExistentFemaleFromEmptyCollection() throws PersonNotFoundException, UnsupportedDateConversion {
+    public void removeNonExistentFemaleFromEmptyCollection() throws PersonNotFoundException {
 
         MonthDate s = new MonthDate(1, 0);
         MonthDate e = new MonthDate(1, 3000);
@@ -326,7 +261,7 @@ public class PeopleCollectionTest {
 
 
     @Test(expected = PersonNotFoundException.class)
-    public void removeNonExistentFemale() throws PersonNotFoundException, UnsupportedDateConversion {
+    public void removeNonExistentFemale() throws PersonNotFoundException {
 
         MonthDate s = new MonthDate(1, 0);
         MonthDate e = new MonthDate(1, 3000);
@@ -347,7 +282,7 @@ public class PeopleCollectionTest {
     }
 
     @Test(expected = PersonNotFoundException.class)
-    public void removeNonExistentMaleFromEmptyCollection() throws PersonNotFoundException, UnsupportedDateConversion {
+    public void removeNonExistentMaleFromEmptyCollection() throws PersonNotFoundException {
 
         MonthDate s = new MonthDate(1, 0);
         MonthDate e = new MonthDate(1, 3000);
@@ -364,7 +299,7 @@ public class PeopleCollectionTest {
 
 
     @Test(expected = PersonNotFoundException.class)
-    public void removeNonExistentMale() throws PersonNotFoundException, UnsupportedDateConversion {
+    public void removeNonExistentMale() throws PersonNotFoundException {
 
         MonthDate s = new MonthDate(1, 0);
         MonthDate e = new MonthDate(1, 3000);
