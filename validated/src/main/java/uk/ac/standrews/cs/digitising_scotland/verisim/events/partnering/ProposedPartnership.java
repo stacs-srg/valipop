@@ -29,10 +29,13 @@ public class ProposedPartnership {
 
     IPersonExtended female;
 
-    public ProposedPartnership(IPersonExtended male, IPersonExtended female, IntegerRange malesRange) {
+    int numberOfChildren;
+
+    public ProposedPartnership(IPersonExtended male, IPersonExtended female, IntegerRange malesRange, int numberOfChildren) {
         this.male = male;
         this.female = female;
         this.malesRange = malesRange;
+        this.numberOfChildren = numberOfChildren;
         male.willSeparate(false);
         female.willSeparate(false);
     }
@@ -53,5 +56,9 @@ public class ProposedPartnership {
 
     public IPersonExtended getMale() {
         return male;
+    }
+
+    public int getNumberOfChildren() {
+        return numberOfChildren;
     }
 }

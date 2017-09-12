@@ -48,18 +48,6 @@ public interface Date extends Comparable<Date> {
 
     YearDate getYearDate();
 
-//    MonthDate getDateClock() throws UnsupportedDateConversion;
-//
-//    /**
-//     * If conversion would result in an UnsupportedDateConversion then day is manipulated to allow conversion. Obviously
-//     * this removes the ability of exact date transforms and gives a many to one results mapping e.g. when converting a
-//     * ExactDate any date in a month will return the first of that month
-//     *
-//     * @param force whether to force the date conversion - if true then exception will never be thrown
-//     * @return The equivalent MonthDate
-//     */
-//    MonthDate getDateClock(boolean force) throws UnsupportedDateConversion;
-
     String toOrderableString();
 
     MonthDate getMonthDate();

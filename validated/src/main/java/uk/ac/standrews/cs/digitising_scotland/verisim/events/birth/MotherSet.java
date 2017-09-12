@@ -26,15 +26,17 @@ import java.util.Collection;
 public class MotherSet {
 
     private Collection<IPersonExtended> havePartners;
-    private Collection<IPersonExtended> needPartners;
+    private Collection<NewMother> needPartners;
+
+    // This includes those added to existing partnerships and those marked for creation in the imminent partnering step
     private int newlyProducedChildren;
 
-    public MotherSet(Collection<IPersonExtended> havePartners, Collection<IPersonExtended> needPartners) {
+    public MotherSet(Collection<IPersonExtended> havePartners, Collection<NewMother> needPartners) {
         this.havePartners = havePartners;
         this.needPartners = needPartners;
     }
 
-    public MotherSet(Collection<IPersonExtended> havePartners, Collection<IPersonExtended> needPartners, int newlyProducedChildren) {
+    public MotherSet(Collection<IPersonExtended> havePartners, Collection<NewMother> needPartners, int newlyProducedChildren) {
         this(havePartners, needPartners);
         this.newlyProducedChildren = newlyProducedChildren;
     }
@@ -43,7 +45,7 @@ public class MotherSet {
         return havePartners;
     }
 
-    public Collection<IPersonExtended> getNeedPartners() {
+    public Collection<NewMother> getNeedPartners() {
         return needPartners;
     }
 

@@ -31,6 +31,7 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.valid
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.dataStructure.PeopleCollection;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.dataStructure.Population;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.dataStructure.exceptions.InsufficientNumberOfPeopleException;
+import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.dataStructure.exceptions.PersonNotFoundException;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.CustomLog4j;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.ProcessArgs;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.ProgramTimer;
@@ -124,9 +125,9 @@ public class OBDModel {
             generateContigencyTables(population, sim);
 
             if(simplifiedRecords) {
-                extractSimplifiedBMDRecords(population, sim);
+                extractSimplifiedBMDRecords(population, sim, resultsPath);
             } else {
-                extractBMDRecords(population, sim);
+                extractBMDRecords(population, sim, resultsPath);
             }
 
             try {
@@ -171,6 +172,8 @@ public class OBDModel {
 
                 simTimer = new ProgramTimer();
                 failedPopCount++;
+            } catch (PersonNotFoundException e2) {
+                throw new Error("Expected person not found in simulation - fatal error", e2);
             }
 
         }
@@ -209,13 +212,13 @@ public class OBDModel {
         }
     }
 
-    private static void extractSimplifiedBMDRecords(PeopleCollection population, OBDModel sim) {
-        System.out.println("OBDModel --- Outputting BMD records");
+    private static void extractSimplifiedBMDRecords(PeopleCollection population, OBDModel sim, String resultsPath) {
+        System.out.println("OBDModel --- Outputting Simplified BMD records");
 
         ProgramTimer recordTimer = new ProgramTimer();
 
         try {
-            new SimplifiedSourceRecordGenerator(population, FileUtils.pathToRecordsDir(config).toString()).generateEventRecords(new String[0]);
+            new SimplifiedSourceRecordGenerator(population, resultsPath).generateEventRecords(new String[0]);
         } catch (Exception e) {
             System.out.println("Record generation failed");
             e.printStackTrace();
@@ -227,13 +230,13 @@ public class OBDModel {
         sim.summary.setRecordsRunTime(recordTimer.getRunTimeSeconds());
     }
 
-    private static void extractBMDRecords(PeopleCollection population, OBDModel sim) {
+    private static void extractBMDRecords(PeopleCollection population, OBDModel sim, String resultsPath) {
         System.out.println("OBDModel --- Outputting BMD records");
 
         ProgramTimer recordTimer = new ProgramTimer();
 
         try {
-            new SourceRecordGenerator(population, FileUtils.pathToRecordsDir(config).toString()).generateEventRecords(new String[0]);
+            new SourceRecordGenerator(population, resultsPath).generateEventRecords(new String[0]);
         } catch (Exception e) {
             System.out.println("Record generation failed");
             e.printStackTrace();
@@ -321,7 +324,7 @@ public class OBDModel {
 
     }
 
-    public PeopleCollection runSimulation() throws InsufficientNumberOfPeopleException {
+    public PeopleCollection runSimulation() throws InsufficientNumberOfPeopleException, PersonNotFoundException {
 
 
 

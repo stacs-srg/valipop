@@ -23,13 +23,16 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateImplementati
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.timeSteps.CompoundTimeUnit;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.timeSteps.TimeUnit;
 import uk.ac.standrews.cs.digitising_scotland.verisim.events.SeparationLogic;
+import uk.ac.standrews.cs.digitising_scotland.verisim.events.birth.NewMother;
 import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.dataDistributionTables.determinedCounts.MultipleDeterminedCount;
 import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.dataDistributionTables.statsKeys.PartneringStatsKey;
 import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.recording.PopulationStatistics;
+import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.EntityFactory;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.partnership.IPartnershipExtended;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPersonExtended;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.dataStructure.Population;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.dataStructure.exceptions.InsufficientNumberOfPeopleException;
+import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.dataStructure.exceptions.PersonNotFoundException;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.IntegerRangeToIntegerSet;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.LabeledValueSet;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.integerRange.IntegerRange;
@@ -42,15 +45,15 @@ import java.util.*;
  */
 public class PartneringLogic {
 
-    public static void handle(Collection<IPersonExtended> needingPartners, PopulationStatistics desiredPopulationStatistics, AdvancableDate currentDate, CompoundTimeUnit consideredTimePeriod, Population population) throws InsufficientNumberOfPeopleException {
+    public static void handle(Collection<NewMother> needingPartners, PopulationStatistics desiredPopulationStatistics, AdvancableDate currentDate, CompoundTimeUnit consideredTimePeriod, Population population) throws InsufficientNumberOfPeopleException, PersonNotFoundException {
 
         int forNFemales = needingPartners.size();
 
         if(forNFemales != 0) {
 
-            LinkedList<IPersonExtended> women = new LinkedList<>(needingPartners);
+            LinkedList<NewMother> women = new LinkedList<>(needingPartners);
 
-            int age = women.getFirst().ageOnDate(currentDate);
+            int age = women.getFirst().getNewMother().ageOnDate(currentDate);
 
             PartneringStatsKey key = new PartneringStatsKey(age, forNFemales, consideredTimePeriod, currentDate);
 
@@ -100,12 +103,12 @@ public class PartneringLogic {
                 LinkedList<IPersonExtended> men = allMen.get(iR);
                 IPersonExtended head = null; // keeps track of first man seen to prevent infinite loop
 
-                Collection<IPersonExtended> unmatchedFemales = new ArrayList<>();
+                Collection<NewMother> unmatchedFemales = new ArrayList<>();
 
                 // Keep going until enough females have been matched for this iR
                 while(determinedCount > 0) {
                     IPersonExtended man = men.pollFirst();
-                    IPersonExtended woman;
+                    NewMother woman;
 
                     if(!women.isEmpty()) {
                         woman = women.pollFirst();
@@ -123,8 +126,8 @@ public class PartneringLogic {
                         }
                     }
 
-                    if(eligible(man, woman, population, desiredPopulationStatistics, currentDate)) {
-                        proposedPartnerships.add(new ProposedPartnership(man, woman, iR));
+                    if(eligible(man, woman.getNewMother(), population, desiredPopulationStatistics, currentDate)) {
+                        proposedPartnerships.add(new ProposedPartnership(man, woman.getNewMother(), iR, woman.getNumberOfChildrenInMaternity()));
                         determinedCount--;
                         head = null;
                     } else {
@@ -158,11 +161,11 @@ public class PartneringLogic {
 
                                 if(eligible(m, f, population, desiredPopulationStatistics, currentDate) && !inPPs(m, proposedPartnerships)) {
 
-                                    for(IPersonExtended uf : women) {
+                                    for(NewMother uf : women) {
 
-                                        if(eligible(pp.getMale(), uf, population, desiredPopulationStatistics, currentDate)) {
+                                        if(eligible(pp.getMale(), uf.getNewMother(), population, desiredPopulationStatistics, currentDate)) {
                                             // husband swap
-                                            proposedPartnerships.add(new ProposedPartnership(pp.getMale(), uf, pp.getMalesRange()));
+                                            proposedPartnerships.add(new ProposedPartnership(pp.getMale(), uf.getNewMother(), pp.getMalesRange(), uf.getNumberOfChildrenInMaternity()));
                                             pp.setMale(m, uR);
                                             women.remove(uf);
                                             achievedPartnerCounts.update(uR, achievedPartnerCounts.getValue(uR) + 1);
@@ -174,13 +177,13 @@ public class PartneringLogic {
 
                                     }
 
-                                    for(IPersonExtended uf : women) {
+                                    for(NewMother uf : women) {
 
                                         for(IPersonExtended m2 : allMen.get(pp.getMalesRange())) {
 
-                                            if(eligible(m2, uf, population, desiredPopulationStatistics, currentDate) && !inPPs(m2, proposedPartnerships)) {
+                                            if(eligible(m2, uf.getNewMother(), population, desiredPopulationStatistics, currentDate) && !inPPs(m2, proposedPartnerships)) {
                                                 // husband swap
-                                                proposedPartnerships.add(new ProposedPartnership(m2, uf, pp.getMalesRange()));
+                                                proposedPartnerships.add(new ProposedPartnership(m2, uf.getNewMother(), pp.getMalesRange(), uf.getNumberOfChildrenInMaternity()));
                                                 pp.setMale(m, uR);
                                                 women.remove(uf);
                                                 achievedPartnerCounts.update(uR, achievedPartnerCounts.getValue(uR) + 1);
@@ -199,11 +202,11 @@ public class PartneringLogic {
             }
 
             if(!women.isEmpty()) {
-                for (IPersonExtended uf : women) {
+                for (NewMother uf : women) {
                     for (IntegerRange iR : partnerCounts.getLabels()) {
                         for (IPersonExtended m : allMen.get(iR)) {
-                            if(eligible(m, uf, population, desiredPopulationStatistics, currentDate) && !inPPs(m, proposedPartnerships)) {
-                                proposedPartnerships.add(new ProposedPartnership(m, uf, iR));
+                            if(eligible(m, uf.getNewMother(), population, desiredPopulationStatistics, currentDate) && !inPPs(m, proposedPartnerships)) {
+                                proposedPartnerships.add(new ProposedPartnership(m, uf.getNewMother(), iR, uf.getNumberOfChildrenInMaternity()));
                             }
                         }
                     }
@@ -220,14 +223,23 @@ public class PartneringLogic {
 
             for(ProposedPartnership pp : proposedPartnerships) {
                 IPersonExtended mother = pp.getFemale();
-                IPartnershipExtended partnershipNeedingFather = mother.getLastChild().getParentsPartnership_ex();
+                IPersonExtended father = pp.getMale();
 
-                partnershipNeedingFather.setFather(pp.getMale());
+                int numChildrenInPartnership = pp.getNumberOfChildren();
+
+                EntityFactory.formNewChildrenInPartnership(numChildrenInPartnership, father, mother, currentDate, consideredTimePeriod, population);
+
+                // TODO - remove once sure new approach works!
+                // These lines gave been removed in liu of the the line above - we now create the children and the new
+                // partnership once we have also chosen the father - rather than adding him in later
+
+//                IPartnershipExtended partnershipNeedingFather = mother.getLastChild().getParentsPartnership_ex();
+//                partnershipNeedingFather.setFather(pp.getMale());
 
                 IntegerRange maleAgeRange = resolveAgeToIR(pp.getMale(), returnPartnerCounts.getLabels(), currentDate);
                 returnPartnerCounts.update(maleAgeRange, returnPartnerCounts.getValue(maleAgeRange));
 
-                int numChildrenInPartnership = partnershipNeedingFather.getChildren().size();
+
 
                 try {
                     partneredFemalesByChildren.get(numChildrenInPartnership).add(mother);
