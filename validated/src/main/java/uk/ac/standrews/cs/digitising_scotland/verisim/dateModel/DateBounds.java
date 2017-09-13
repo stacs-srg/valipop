@@ -43,14 +43,12 @@ public interface DateBounds {
     /**
      * Sets earliest day that this Data Store is required to provide information regarding.
      *
-     * @return the earliest day
      */
     void setStartDate(AdvancableDate start);
 
     /**
      * Sets latest day that this Data Store is required to provide information regarding.
      *
-     * @return the latest day
      */
     void setEndDate(Date end);
 

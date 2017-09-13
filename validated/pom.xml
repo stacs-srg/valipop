@@ -63,20 +63,6 @@
 
     <dependencies>
 
-
-        <dependency>
-            <groupId>net.sf.jsci</groupId>
-            <artifactId>jsci</artifactId>
-            <version>1.2</version>
-        </dependency>
-
-        <dependency>
-            <!-- CSV manipulation utility classes -->
-            <groupId>uk.ac.standrews.cs</groupId>
-            <artifactId>ciesvium</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
-
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-api</artifactId>
@@ -87,6 +73,33 @@
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-core</artifactId>
             <version>2.5</version>
+        </dependency>
+
+        <dependency>
+            <groupId>uk.ac.standrews.cs.digitising_scotland</groupId>
+            <artifactId>util</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>uk.ac.standrews.cs</groupId>
+            <artifactId>population_model</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
+
+<!--
+
+        <dependency>
+            <groupId>net.sf.jsci</groupId>
+            <artifactId>jsci</artifactId>
+            <version>1.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>uk.ac.standrews.cs</groupId>
+            <artifactId>ciesvium</artifactId>
+            <version>1.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
@@ -119,24 +132,7 @@
             <version>1.0.3</version>
         </dependency>
 
-        <dependency>
-            <groupId>uk.ac.standrews.cs.digitising_scotland</groupId>
-            <artifactId>util</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>uk.ac.standrews.cs.digitising_scotland</groupId>
-            <artifactId>population_model</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>uk.ac.standrews.cs</groupId>
-            <artifactId>population_model</artifactId>
-            <version>4.0-SNAPSHOT</version>
-        </dependency>
-
+    -->
 
     </dependencies>
 
