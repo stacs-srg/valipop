@@ -16,6 +16,7 @@
  */
 package utils.implmentations;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import uk.ac.standrews.cs.digitising_scotland.population_model.model.IPartnership;
 import uk.ac.standrews.cs.digitising_scotland.population_model.model.IPerson;
@@ -101,6 +102,7 @@ public abstract class GeneralPopulationStructureTests {
         doTooManyIterations(iterator, numberOfPartnerships);
     }
 
+    @Ignore
     @Test
     public void peopleRetrievedConsistently() throws Exception {
 
@@ -124,6 +126,7 @@ public abstract class GeneralPopulationStructureTests {
         }
     }
 
+    @Ignore
     @Test
     public void partnershipsRetrievedConsistently() throws Exception {
 
@@ -204,6 +207,7 @@ public abstract class GeneralPopulationStructureTests {
         }
     }
 
+    @Ignore
     @Test
     public void sexesConsistent() {
 
@@ -240,6 +244,7 @@ public abstract class GeneralPopulationStructureTests {
         }
     }
 
+    @Ignore
     @Test
     public void parentsHaveSensibleAgesAtBirths() throws Exception {
 
