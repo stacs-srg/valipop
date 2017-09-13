@@ -70,7 +70,7 @@ public class PopulationStatisticsTests {
     @Test
     public void testB() throws IOException, InvalidInputFileException {
 
-        Path p = Paths.get("/Users/tsd4/OneDrive/cs/PhD/code/population-model/validated/src/test/resources/config-ps.txt");
+        Path p = Paths.get("src/test/resources/config-ps.txt");
         Config config = new Config(p,"TEST", "...");
         PopulationStatistics ps = DesiredPopulationStatisticsFactory.initialisePopulationStatistics(config);
 
