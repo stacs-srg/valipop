@@ -52,7 +52,7 @@ public class DeathDateSelector extends DateSelector {
             }
 
         } else {
-            return selectDate(currentDate, consideredTimePeriod);
+            return selectDateRestrictedByEPD(currentDate, consideredTimePeriod, p.getBirthDate_ex());
         }
 
     }

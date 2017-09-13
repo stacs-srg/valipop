@@ -47,6 +47,7 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.utils.sourceEventRecords.p
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.lang.management.ManagementFactory;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -138,6 +139,8 @@ public class OBDModel {
 
             outputSimulationSummary(sim.summary);
 
+            MemoryUsageAnalysis.log();
+
             System.out.println("OBDModel --- Output complete");
 
             validPopCount++;
@@ -177,6 +180,8 @@ public class OBDModel {
             }
 
         }
+
+        MemoryUsageAnalysis.log();
 
         sim.summary.setTotalPop(population.getNumberOfPeople());
         sim.summary.setSimRunTime(simTimer.getRunTimeSeconds());
@@ -251,6 +256,7 @@ public class OBDModel {
 
         CTtree fullTree = new CTtree(population, sim.desired, config.getT0(), config.getTE());
 
+        MemoryUsageAnalysis.log();
 
 //        PrintStream fullOutput;
 
@@ -266,30 +272,42 @@ public class OBDModel {
             obOutput = new PrintStream(obPath.toFile());
             obTable.outputToFile(obOutput);
 
+            MemoryUsageAnalysis.log();
+
             CTtableMB mbTable = new CTtableMB(fullTree, sim.desired);
             Path mbPath = FileUtils.mkBlankFile(FileUtils.getContingencyTablesPath(), "mb-CT.csv");
             mbOutput = new PrintStream(mbPath.toFile());
             mbTable.outputToFile(mbOutput);
+
+            MemoryUsageAnalysis.log();
 
             CTtablePart partTable = new CTtablePart(fullTree, sim.desired);
             Path partPath = FileUtils.mkBlankFile(FileUtils.getContingencyTablesPath(), "part-CT.csv");
             partOutput = new PrintStream(partPath.toFile());
             partTable.outputToFile(partOutput);
 
+            MemoryUsageAnalysis.log();
+
             CTtableSep sepTable = new CTtableSep(fullTree, sim.desired);
             Path sepPath = FileUtils.mkBlankFile(FileUtils.getContingencyTablesPath(), "sep-CT.csv");
             sepOutput = new PrintStream(sepPath.toFile());
             sepTable.outputToFile(sepOutput);
+
+            MemoryUsageAnalysis.log();
 
             CTtableDeath deathTable = new CTtableDeath(fullTree);
             Path deathPath = FileUtils.mkBlankFile(FileUtils.getContingencyTablesPath(), "death-CT.csv");
             deathOutput = new PrintStream(deathPath.toFile());
             deathTable.outputToFile(deathOutput);
 
+            MemoryUsageAnalysis.log();
+
 //                System.out.println("OBDModel --- Outputting Full CTable to file");
 //                Path fullPath = FileUtils.mkBlankFile(FileUtils.getContingencyTablesPath(), "full-CT.csv");
 //                fullOutput = new PrintStream(fullPath.toFile());
 //                new CTtableFull(fullTree, fullOutput);
+
+            MemoryUsageAnalysis.log();
 
         } catch (IOException e) {
             throw new Error("failed to make CT files");
@@ -329,6 +347,8 @@ public class OBDModel {
 
 
         while(DateUtils.dateBeforeOrEqual(currentTime, config.getTE())) {
+
+            MemoryUsageAnalysis.log();
 
             if(DateUtils.dateBeforeOrEqual(currentTime, config.getT0())) {
                 summary.setStartPop(population.getLivingPeople().getNumberOfPeople());
