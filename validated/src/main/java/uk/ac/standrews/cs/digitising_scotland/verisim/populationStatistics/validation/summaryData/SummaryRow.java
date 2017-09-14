@@ -19,6 +19,7 @@ package uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.vali
 
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.Date;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.timeSteps.CompoundTimeUnit;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.sourceEventRecords.RecordFormat;
 
 import java.nio.file.Path;
 
@@ -44,6 +45,8 @@ public class SummaryRow {
     private double recoveryFactor;
     private double maxInfidelityRate;
     private int minBirthSpacing;
+
+    private RecordFormat outputRecordFormat;
 
     // Post
 
@@ -79,7 +82,8 @@ public class SummaryRow {
                       double deathFactor,
                       double recoveryFactor,
                       double maxInfidelityRate,
-                      int minBirthSpacing ) {
+                      int minBirthSpacing,
+                      RecordFormat outputFormat) {
 
         this.resultsDirectory = resultsDirectory;
         this.inputsDirectory = inputsDirectory;
@@ -96,6 +100,7 @@ public class SummaryRow {
         this.recoveryFactor = recoveryFactor;
         this.maxInfidelityRate = maxInfidelityRate;
         this.minBirthSpacing = minBirthSpacing;
+        this.outputRecordFormat = outputFormat;
 
     }
 
@@ -141,7 +146,7 @@ public class SummaryRow {
                 + endPop + sep + peakPop + sep + startDate + sep + endDate + sep + simRunTime + sep
                 + ctRunTime + sep + recordsRunTime + sep + resultsDirectory + sep + birthFactor + sep
                 + deathFactor + sep + recoveryFactor + sep + maxInfidelityRate + sep + minBirthSpacing + sep
-                + (maxMemoryUsage / 1e6)+ "\n";
+                + (maxMemoryUsage / 1e6) + sep + outputRecordFormat.toString() + "\n";
     }
 
     public static String getSeparatedHeadings(char sep) {
@@ -150,7 +155,7 @@ public class SummaryRow {
                 + "End Pop" + sep + "Peak Pop" + sep + "Start Date" + sep + "End Date" + sep + "Sim Run time" + sep
                 + "CT Run time" + sep + "Records Run time" + sep + "Results Directory" + sep + "Birth Factor" + sep
                 + "Death Factor" + sep + "Recovery Factor" + sep + "Max Infidelity Rate" + sep + "Min Birth Spacing"
-                + sep + "Peak Memory Usage (MB)";
+                + sep + "Peak Memory Usage (MB)" + sep + "Output Record Format";
     }
 
 

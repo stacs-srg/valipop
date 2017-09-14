@@ -91,6 +91,9 @@ public class Config {
     };
     private CompoundTimeUnit inputWidth;
 
+
+
+
     /**
      * This constructor reads in the file at the given path and stores the given configuration.
      *
