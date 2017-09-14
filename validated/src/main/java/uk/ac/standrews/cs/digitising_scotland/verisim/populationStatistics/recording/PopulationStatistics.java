@@ -55,7 +55,7 @@ public class PopulationStatistics implements DateBounds, EventRateTables {
     // Population Constants
     private int maxGestationPeriodDays = 280;
     private int minGestationPeriodDays = 147;
-    private int minBirthSpacingDays = 1;
+    private int minBirthSpacingDays = 147;
     private double maxProportionBirthsDueToInfidelity = 0.2;
     private double maleProportionOfBirths = 0.5; // i.e. if 0.52 then in every 100 births, 52 will be male and 48 female
 
