@@ -32,7 +32,7 @@ public class GeneralValiPopPopulationTest extends GeneralPopulationStructureTest
     public GeneralValiPopPopulationTest() throws NegativeWeightException, NegativeDeviationException, InconsistentWeightException, IOException {
         super(OBDModel.runSim("src/test/resources/config-ps.txt",
                 "src/test/resources/results", "general-structure-testing",
-                new ProgramTimer(), 0, 0).getPopulation().getAllPeople(), true);
+                new ProgramTimer(), 0).getPopulation().getAllPeople(), true);
     }
 
 }

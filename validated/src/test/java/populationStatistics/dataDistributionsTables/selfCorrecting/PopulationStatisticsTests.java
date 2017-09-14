@@ -54,13 +54,13 @@ public class PopulationStatisticsTests {
         YearDate currentDate = new YearDate(1900);
 
         BirthStatsKey key = new BirthStatsKey(age, order, cohortSize, consideredTimePeriod, currentDate);
-        SingleDeterminedCount determinedCount = (SingleDeterminedCount) ps.getDeterminedCount(key);
+        SingleDeterminedCount determinedCount = (SingleDeterminedCount) ps.getDeterminedCount(key, null);
 
         int numberOfChildren = determinedCount.getDeterminedCount();
 
 
         MultipleBirthStatsKey keyM = new MultipleBirthStatsKey(age, numberOfChildren, consideredTimePeriod, currentDate);
-        MultipleDeterminedCount mDC = (MultipleDeterminedCount) ps.getDeterminedCount(keyM);
+        MultipleDeterminedCount mDC = (MultipleDeterminedCount) ps.getDeterminedCount(keyM, null);
 
         int numberOfMothers = mDC.getDeterminedCount().getSumOfValues();
 
@@ -81,18 +81,18 @@ public class PopulationStatisticsTests {
         YearDate currentDate = new YearDate(1900);
 
         SingleDeterminedCount sDC = (SingleDeterminedCount) ps.getDeterminedCount(
-                new BirthStatsKey(age, order, cohortSize, consideredTimePeriod, currentDate));
+                new BirthStatsKey(age, order, cohortSize, consideredTimePeriod, currentDate), null);
 
         double numberOfChildren = sDC.getRawUncorrectedCount();
 
         MultipleDeterminedCount mDc = (MultipleDeterminedCount) ps.getDeterminedCount(
-                new MultipleBirthStatsKey(age, numberOfChildren, consideredTimePeriod, currentDate));
+                new MultipleBirthStatsKey(age, numberOfChildren, consideredTimePeriod, currentDate), null);
 
         double numberOfMothers = mDc.getRawUncorrectedCount().getSumOfValues();
 
 
         MultipleDeterminedCount mDC = (MultipleDeterminedCount) ps
-                .getDeterminedCount(new MultipleBirthStatsKey(age, numberOfMothers, new CompoundTimeUnit(1, TimeUnit.YEAR), currentDate));
+                .getDeterminedCount(new MultipleBirthStatsKey(age, numberOfMothers, new CompoundTimeUnit(1, TimeUnit.YEAR), currentDate), null);
 
         double numberOfChildrenB = mDC.getRawUncorrectedCount().productOfLabelsAndValues().getSumOfValues();
 

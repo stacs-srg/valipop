@@ -16,6 +16,7 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.verisim.utils.implementations;
 
+import uk.ac.standrews.cs.digitising_scotland.verisim.config.Config;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.ProcessArgs;
 
 /**
@@ -53,7 +54,9 @@ public class BFSearch {
 
         for(double bf = bfStart; bf <= bfEnd; bf += bfStep) {
 
-            OBDModel.executeNFullPopulationRuns(pathToConfigFile, resultsPath, runPurpose, numberOfRuns, bf);
+//            Config config = new Config(pathToConfigFile, runPurpose, )
+
+//            OBDModel.executeNFullPopulationRuns(pathToConfigFile, resultsPath, runPurpose, numberOfRuns, bf);
 
         }
 

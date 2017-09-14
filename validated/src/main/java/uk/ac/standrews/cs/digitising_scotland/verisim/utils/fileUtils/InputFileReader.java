@@ -20,6 +20,7 @@ package uk.ac.standrews.cs.digitising_scotland.verisim.utils.fileUtils;
 import uk.ac.standrews.cs.digitising_scotland.verisim.config.Config;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateImplementations.MonthDate;
 import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.dataDistributionTables.OneDimensionDataDistribution;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateImplementations.YearDate;
 import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.dataDistributionTables.selfCorrecting.*;
@@ -72,6 +73,51 @@ public class InputFileReader {
         return lines;
     }
 
+    public static Map<YearDate, Double> readInSingleInputFile(Path path, Config config) throws IOException, InvalidInputFileException {
+
+        Map<YearDate, Double> data = new HashMap<>();
+
+        ArrayList<String> lines = new ArrayList<>(getAllLines(path));
+
+        String sourcePopulation = null;
+        String sourceOrganisation = null;
+
+        for (int i = 0; i < lines.size(); i++) {
+
+            String s = lines.get(i);
+            String[] split = s.split(TAB);
+
+            switch (split[0].toLowerCase()) {
+                case "population":
+                    sourcePopulation = split[1];
+                    break;
+                case "source":
+                    sourceOrganisation = split[1];
+                    break;
+                case "data":
+                    i++; // go to next line for data rows
+                    for (; i < lines.size(); i++) {
+                        s = lines.get(i);
+                        split = s.split(TAB);
+
+                        YearDate year = null;
+                        try {
+                            year = new MonthDate("01/01/" + split[0]).getYearDate();
+                        } catch (NumberFormatException e) {
+                            throw new InvalidInputFileException("The year is of an incorrect form on line " + (i + 1) + " in the file: " + path.toString(), e);
+                        }
+
+                        data.put(year, Double.parseDouble(split[1]));
+
+                    }
+                    break;
+            }
+        }
+
+        return data;
+
+    }
+
     public static SelfCorrectingTwoDimensionDataDistribution readInSC2DDataFile(Path path, Config config) throws IOException, InvalidInputFileException {
 
         ArrayList<String> lines = new ArrayList<String>(getAllLines(path));
@@ -80,7 +126,7 @@ public class InputFileReader {
         String sourcePopulation = null;
         String sourceOrganisation = null;
 
-        ArrayList<IntegerRange> columnLabels = new ArrayList<IntegerRange>();
+        ArrayList<IntegerRange> columnLabels = new ArrayList<>();
         Map<IntegerRange, SelfCorrectingOneDimensionDataDistribution> data = new HashMap<>();
 
 
@@ -149,7 +195,7 @@ public class InputFileReader {
 
     public static OneDimensionDataDistribution readIn1DDataFile(Path path) throws IOException, InvalidInputFileException {
 
-        ArrayList<String> lines = new ArrayList<String>(getAllLines(path));
+        ArrayList<String> lines = new ArrayList<>(getAllLines(path));
 
         YearDate year = null;
         String sourcePopulation = null;

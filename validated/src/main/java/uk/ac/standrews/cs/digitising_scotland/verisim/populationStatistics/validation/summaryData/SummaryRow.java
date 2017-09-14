@@ -39,6 +39,12 @@ public class SummaryRow {
 
     private int simLength;
 
+    private double birthFactor;
+    private double deathFactor;
+    private double recoveryFactor;
+    private double maxInfidelityRate;
+    private int minBirthSpacing;
+
     // Post
 
     private Path resultsDirectory;
@@ -56,7 +62,7 @@ public class SummaryRow {
     private double ctRunTime;
     private double recordsRunTime;
 
-    private double birthFactor;
+    private long maxMemoryUsage;
 
 
     public SummaryRow(Path resultsDirectory,
@@ -68,7 +74,12 @@ public class SummaryRow {
                       CompoundTimeUnit inputWidth,
                       Date startDate,
                       Date endDate,
-                      int simLength) {
+                      int simLength,
+                      double birthFactor,
+                      double deathFactor,
+                      double recoveryFactor,
+                      double maxInfidelityRate,
+                      int minBirthSpacing ) {
 
         this.resultsDirectory = resultsDirectory;
         this.inputsDirectory = inputsDirectory;
@@ -80,6 +91,11 @@ public class SummaryRow {
         this.startDate = startDate;
         this.endDate = endDate;
         this.simLength = simLength;
+        this.birthFactor = birthFactor;
+        this.deathFactor = deathFactor;
+        this.recoveryFactor = recoveryFactor;
+        this.maxInfidelityRate = maxInfidelityRate;
+        this.minBirthSpacing = minBirthSpacing;
 
     }
 
@@ -115,22 +131,27 @@ public class SummaryRow {
         this.recordsRunTime = recordsRunTime;
     }
 
-    public void setBirthFactor(double factor) {
-        this.birthFactor = factor;
+    public void setMaxMemoryUsage(long maxUsage) {
+        this.maxMemoryUsage = maxUsage;
     }
 
     public String toSeperatedString(char sep) {
         return startTime + sep + reason + sep + codeVersion + sep + inputsDirectory + sep + totalPop + sep + completed + sep
                 + simLength + sep + timestep + sep + inputWidth + sep + startPop + sep
                 + endPop + sep + peakPop + sep + startDate + sep + endDate + sep + simRunTime + sep
-                + ctRunTime + sep + recordsRunTime + sep + resultsDirectory + sep + birthFactor + "\n";
+                + ctRunTime + sep + recordsRunTime + sep + resultsDirectory + sep + birthFactor + sep
+                + deathFactor + sep + recoveryFactor + sep + maxInfidelityRate + sep + minBirthSpacing + sep
+                + (maxMemoryUsage / 1e6)+ "\n";
     }
 
     public static String getSeparatedHeadings(char sep) {
         return "Start Time" + sep + "Reason" + sep + "Code Version" + sep + "Inputs Directory" + sep + "Total Pop" + sep + "Completed" + sep
                 + "Sim Length" + sep + "Timestep" + sep + "Input Width" + sep + "Start Pop" + sep
                 + "End Pop" + sep + "Peak Pop" + sep + "Start Date" + sep + "End Date" + sep + "Sim Run time" + sep
-                + "CT Run time" + sep + "Records Run time" + sep + "Results Directory" + sep + "Birth Factor";
+                + "CT Run time" + sep + "Records Run time" + sep + "Results Directory" + sep + "Birth Factor" + sep
+                + "Death Factor" + sep + "Recovery Factor" + sep + "Max Infidelity Rate" + sep + "Min Birth Spacing"
+                + sep + "Peak Memory Usage (MB)";
     }
+
 
 }

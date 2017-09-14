@@ -30,6 +30,7 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.dataD
 import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.validation.comparison.EventRateTables;
 import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.dataDistributionTables.selfCorrecting.SelfCorrectingOneDimensionDataDistribution;
 import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.dataDistributionTables.selfCorrecting.SelfCorrectingTwoDimensionDataDistribution;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.sourceEventRecords.RecordFormat;
 
 import java.util.*;
 
@@ -51,13 +52,21 @@ public class PopulationStatistics implements DateBounds, EventRateTables {
     private Map<YearDate, SelfCorrectingTwoDimensionDataDistribution> orderedBirth;
     private Map<YearDate, ProportionalDistributionAdapter> multipleBirth;
     private Map<YearDate, SelfCorrectingOneDimensionDataDistribution> separation;
+    private Map<YearDate, Double> sexRatioBirth;
 
     // Population Constants
     private int maxGestationPeriodDays = 280;
     private int minGestationPeriodDays = 147;
+
     private int minBirthSpacingDays = 147;
     private double maxProportionBirthsDueToInfidelity = 0.2;
-    private double maleProportionOfBirths = 0.5; // i.e. if 0.52 then in every 100 births, 52 will be male and 48 female
+
+    private double birthFactor = 0;
+    private double deathFactor = 0;
+
+    private double recoveryFactor = 0;
+
+    private RecordFormat outputFormat;
 
     public PopulationStatistics(Config config,
                                 Map<YearDate, SelfCorrectingOneDimensionDataDistribution> maleDeath,
@@ -65,7 +74,8 @@ public class PopulationStatistics implements DateBounds, EventRateTables {
                                 Map<YearDate, SelfCorrectingProportionalDistribution> partnering,
                                 Map<YearDate, SelfCorrectingTwoDimensionDataDistribution> orderedBirth,
                                 Map<YearDate, ProportionalDistributionAdapter> multipleBirth,
-                                Map<YearDate, SelfCorrectingOneDimensionDataDistribution> separation) {
+                                Map<YearDate, SelfCorrectingOneDimensionDataDistribution> separation,
+                                Map<YearDate, Double> sexRatioBirths) {
 
         this.maleDeath = maleDeath;
         this.femaleDeath = femaleDeath;
@@ -73,9 +83,18 @@ public class PopulationStatistics implements DateBounds, EventRateTables {
         this.orderedBirth = orderedBirth;
         this.multipleBirth = multipleBirth;
         this.separation = separation;
+        this.sexRatioBirth = sexRatioBirths;
 
         this.startDate = config.getTS();
         this.endDate = config.getTE();
+
+        minBirthSpacingDays = config.getMinBirthSpacing();
+        maxProportionBirthsDueToInfidelity = config.getMaxProportionOBirthsDueToInfidelity();
+        birthFactor = config.getBirthFactor();
+        deathFactor = config.getDeathFactor();
+        recoveryFactor = config.getRecoveryFactor();
+
+        outputFormat = config.getOutputRecordFormat();
 
     }
 
@@ -107,16 +126,16 @@ public class PopulationStatistics implements DateBounds, EventRateTables {
     -------------------- EventRateTables interface methods --------------------
      */
 
-    public DeterminedCount getDeterminedCount(StatsKey key) {
+    public DeterminedCount getDeterminedCount(StatsKey key, Config config) {
 
         if(key instanceof DeathStatsKey) {
             DeathStatsKey k = (DeathStatsKey) key;
-            return getDeathRates(k.getDate(), k.getSex()).determineCount(k);
+            return getDeathRates(k.getDate(), k.getSex()).determineCount(k, config);
         }
 
         if(key instanceof BirthStatsKey) {
             BirthStatsKey k = (BirthStatsKey) key;
-            return getOrderedBirthRates(k.getDate()).determineCount(k);
+            return getOrderedBirthRates(k.getDate()).determineCount(k, config);
         }
 
         if(key instanceof MultipleBirthStatsKey) {
@@ -126,7 +145,7 @@ public class PopulationStatistics implements DateBounds, EventRateTables {
 
         if(key instanceof SeparationStatsKey) {
             SeparationStatsKey k = (SeparationStatsKey) key;
-            return getSeparationByChildCountRates(k.getDate()).determineCount(k);
+            return getSeparationByChildCountRates(k.getDate()).determineCount(k, config);
         }
 
         if(key instanceof PartneringStatsKey) {
@@ -242,8 +261,8 @@ public class PopulationStatistics implements DateBounds, EventRateTables {
         return minGestationPeriodDays;
     }
 
-    public double getMaleProportionOfBirths() {
-        return maleProportionOfBirths;
+    public double getMaleProportionOfBirths(Date onDate) {
+        return sexRatioBirth.get(getNearestYearInMap(onDate, sexRatioBirth));
     }
 
     public double getMaxProportionBirthsDueToInfidelity() {

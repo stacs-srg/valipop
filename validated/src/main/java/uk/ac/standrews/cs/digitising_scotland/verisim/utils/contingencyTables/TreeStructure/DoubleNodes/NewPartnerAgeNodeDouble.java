@@ -75,7 +75,7 @@ public class NewPartnerAgeNodeDouble extends DoubleNode<IntegerRange, String> im
             CompoundTimeUnit timePeriod = new CompoundTimeUnit(1, TimeUnit.YEAR);
 
             MultipleDeterminedCount mDC = (MultipleDeterminedCount) getInputStats()
-                    .getDeterminedCount(new PartneringStatsKey(age, numberOfFemales, timePeriod, currentDate));
+                    .getDeterminedCount(new PartneringStatsKey(age, numberOfFemales, timePeriod, currentDate), null);
 
             if(getOption().getValue() == null) {
                 setCount(getParent().getCount());

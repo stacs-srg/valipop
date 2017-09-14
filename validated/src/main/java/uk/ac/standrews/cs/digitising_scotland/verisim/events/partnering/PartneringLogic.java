@@ -16,9 +16,9 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.verisim.events.partnering;
 
+import uk.ac.standrews.cs.digitising_scotland.verisim.config.Config;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.Date;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateImplementations.AdvancableDate;
-import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateImplementations.ExactDate;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateImplementations.YearDate;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.timeSteps.CompoundTimeUnit;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.timeSteps.TimeUnit;
@@ -45,7 +45,9 @@ import java.util.*;
  */
 public class PartneringLogic {
 
-    public static void handle(Collection<NewMother> needingPartners, PopulationStatistics desiredPopulationStatistics, AdvancableDate currentDate, CompoundTimeUnit consideredTimePeriod, Population population) throws InsufficientNumberOfPeopleException, PersonNotFoundException {
+    public static void handle(Collection<NewMother> needingPartners, PopulationStatistics desiredPopulationStatistics,
+                              AdvancableDate currentDate, CompoundTimeUnit consideredTimePeriod, Population population,
+                              Config config) throws InsufficientNumberOfPeopleException, PersonNotFoundException {
 
         int forNFemales = needingPartners.size();
 
@@ -59,7 +61,7 @@ public class PartneringLogic {
 
 //            MultipleDeterminedCount determinedCounts = desiredPopulationStatistics.getPartneringRates(currentDate).determineCount(key);
 
-            MultipleDeterminedCount determinedCounts = (MultipleDeterminedCount) desiredPopulationStatistics.getDeterminedCount(key);
+            MultipleDeterminedCount determinedCounts = (MultipleDeterminedCount) desiredPopulationStatistics.getDeterminedCount(key, config);
 
             LabeledValueSet<IntegerRange, Integer> partnerCounts = determinedCounts.getDeterminedCount();
             LabeledValueSet<IntegerRange, Integer> achievedPartnerCounts = new IntegerRangeToIntegerSet(partnerCounts.getLabels(), 0);
@@ -252,7 +254,7 @@ public class PartneringLogic {
             determinedCounts.setFufilledCount(returnPartnerCounts);
             desiredPopulationStatistics.returnAchievedCount(determinedCounts);
 
-            SeparationLogic.handle(partneredFemalesByChildren, consideredTimePeriod, currentDate, desiredPopulationStatistics, population);
+            SeparationLogic.handle(partneredFemalesByChildren, consideredTimePeriod, currentDate, desiredPopulationStatistics, population, config);
 
         }
     }

@@ -112,7 +112,7 @@ public class DiedNodeDouble extends DoubleNode<DiedOption, IntegerRange> impleme
         }
 
         SingleDeterminedCount rDC = (SingleDeterminedCount) getInputStats()
-                .getDeterminedCount(new DeathStatsKey(age, forNPeople, timePeriod, currentDate, sex));
+                .getDeterminedCount(new DeathStatsKey(age, forNPeople, timePeriod, currentDate, sex), null);
 
         if(getOption() == DiedOption.YES) {
             setCount(rDC.getRawUncorrectedCount());

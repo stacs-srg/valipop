@@ -179,7 +179,9 @@ public class SeparationNodeDouble extends DoubleNode<SeparationOption, IntegerRa
 
             Date currentDate = yob.advanceTime(age, TimeUnit.YEAR);
 
-            SingleDeterminedCount sDC = (SingleDeterminedCount) getInputStats().getDeterminedCount(new SeparationStatsKey(numberOfChildrenInPartnership.getValue(), forNPeople, timePeriod, currentDate));
+            SingleDeterminedCount sDC = (SingleDeterminedCount) getInputStats().getDeterminedCount(
+                    new SeparationStatsKey(
+                            numberOfChildrenInPartnership.getValue(), forNPeople, timePeriod, currentDate), null);
 
             if (getOption() == SeparationOption.YES) {
                 setCount(sDC.getRawUncorrectedCount());
@@ -218,7 +220,7 @@ public class SeparationNodeDouble extends DoubleNode<SeparationOption, IntegerRa
                 CompoundTimeUnit timePeriod = new CompoundTimeUnit(1, TimeUnit.YEAR);
 
                 MultipleDeterminedCount mDC = (MultipleDeterminedCount) getInputStats()
-                        .getDeterminedCount(new PartneringStatsKey(age, numberOfFemales, timePeriod, currentDate));
+                        .getDeterminedCount(new PartneringStatsKey(age, numberOfFemales, timePeriod, currentDate), null);
 
                 Set<IntegerRange> options = mDC.getRawUncorrectedCount().getLabels();
 

@@ -47,7 +47,6 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.utils.sourceEventRecords.p
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.lang.management.ManagementFactory;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -75,12 +74,11 @@ public class OBDModel {
     private EventLogic deathLogic = new NDeathLogic();
     private EventLogic birthLogic = new NBirthLogic();
 
-    public static double BIRTH_FACTOR = 0;
-
 
     public static void main(String[] args) {
         // Expects 4 args: path to config file, results path, run purpose, number of desired populations
 
+        MemoryUsageAnalysis.setCheckMemory(true);
         runPopulationModel(args);
 
     }
@@ -99,14 +97,13 @@ public class OBDModel {
 
         int numberOfRuns = Integer.parseInt(pArgs[3]);
 
-        executeNFullPopulationRuns(pathToConfigFile, resultsPath, runPurpose, numberOfRuns, BIRTH_FACTOR);
+        executeNFullPopulationRuns(pathToConfigFile, resultsPath, runPurpose, numberOfRuns);
 
     }
 
     public static void executeNFullPopulationRuns(String pathToConfigFile, String resultsPath, String runPurpose,
-                                           int nRuns, double birthFactor) {
+                                           int nRuns) {
 
-        BIRTH_FACTOR = birthFactor;
 
         int validPopCount = 0;
         int failedPopCount = 0;
@@ -120,7 +117,7 @@ public class OBDModel {
 
             ProgramTimer simTimer = new ProgramTimer();
 
-            OBDModel sim = runSim(pathToConfigFile, resultsPath, runPurpose, simTimer, failedPopCount, birthFactor);
+            OBDModel sim = runSim(pathToConfigFile, resultsPath, runPurpose, simTimer, failedPopCount);
             PeopleCollection population = sim.population.getAllPeople();
 
             generateContigencyTables(population, sim);
@@ -137,9 +134,13 @@ public class OBDModel {
                 e.printStackTrace();
             }
 
-            outputSimulationSummary(sim.summary);
-
             MemoryUsageAnalysis.log();
+
+            sim.summary.setMaxMemoryUsage(MemoryUsageAnalysis.getMaxSimUsage());
+            MemoryUsageAnalysis.reset();
+
+
+            outputSimulationSummary(sim.summary);
 
             System.out.println("OBDModel --- Output complete");
 
@@ -149,7 +150,7 @@ public class OBDModel {
     }
 
     public static OBDModel runSim(String pathToConfigFile, String resultsPath, String runPurpose,
-                                   ProgramTimer simTimer, int failedPopCount, double bf) {
+                                   ProgramTimer simTimer, int failedPopCount) {
 
         PeopleCollection population = null;
 
@@ -167,7 +168,6 @@ public class OBDModel {
                 System.err.println(e.getMessage());
                 sim.summary.setSimRunTime(simTimer.getRunTimeSeconds());
                 sim.summary.setCompleted(false);
-                sim.summary.setBirthFactor(bf);
 
                 outputSimulationSummary(sim.summary);
                 NDeathLogic.tKilled = 0;
@@ -185,7 +185,6 @@ public class OBDModel {
 
         sim.summary.setTotalPop(population.getNumberOfPeople());
         sim.summary.setSimRunTime(simTimer.getRunTimeSeconds());
-        sim.summary.setBirthFactor(bf);
 
         return sim;
 
@@ -338,7 +337,9 @@ public class OBDModel {
 
         summary = new SummaryRow(Paths.get(config.getResultsSavePath().toString(), runPurpose, startTime),
                 config.getVarPath(), startTime, runPurpose, CODE_VERSION, config.getSimulationTimeStep(), config.getInputWidth(),
-                config.getT0(), config.getTE(), DateUtils.differenceInDays(config.getT0(), config.getTE()));
+                config.getT0(), config.getTE(), DateUtils.differenceInDays(config.getT0(), config.getTE()),
+                config.getBirthFactor(), config.getDeathFactor(), config.getRecoveryFactor(),
+                config.getMaxProportionOBirthsDueToInfidelity(), config.getMinBirthSpacing());
 
     }
 

@@ -110,7 +110,7 @@ public class NumberOfChildrenInYearNodeDouble extends DoubleNode<Integer, Intege
                 yobN = (YOBNodeDouble) sN.addChild(currentDate.getYearDate());
             }
 
-            double sexRatio = getInputStats().getMaleProportionOfBirths();
+            double sexRatio = getInputStats().getMaleProportionOfBirths(currentDate);
 
             for (Node<SexOption, ?, Double, ?> n : yobN.getChildren()) {
 
@@ -152,7 +152,8 @@ public class NumberOfChildrenInYearNodeDouble extends DoubleNode<Integer, Intege
             Date currentDate = yob.advanceTime(age, TimeUnit.YEAR);
 
             MultipleDeterminedCount mDC = (MultipleDeterminedCount) getInputStats()
-                    .getDeterminedCount(new MultipleBirthStatsKey(age, getParent().getCount(), new CompoundTimeUnit(1, TimeUnit.YEAR), currentDate));
+                    .getDeterminedCount(new MultipleBirthStatsKey(age, getParent().getCount(),
+                            new CompoundTimeUnit(1, TimeUnit.YEAR), currentDate), null);
 
 
             LabeledValueSet<IntegerRange, Double> stat = mDC.getRawUncorrectedCount();

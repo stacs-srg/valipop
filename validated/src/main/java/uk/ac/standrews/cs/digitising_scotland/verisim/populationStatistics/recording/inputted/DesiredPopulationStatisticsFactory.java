@@ -63,8 +63,32 @@ public abstract class DesiredPopulationStatisticsFactory {
         Map<YearDate, SelfCorrectingTwoDimensionDataDistribution> orderedBirth = readInSC2DDataFiles(config.getVarOrderedBirthPaths(), config);
         Map<YearDate, ProportionalDistributionAdapter> multipleBirth = readInAndAdaptAgeAndProportionalStatsInputFiles(config.getVarMultipleBirthPaths(), config);
         Map<YearDate, SelfCorrectingOneDimensionDataDistribution> separation = readInSC1DDataFiles(config.getVarSeparationPaths(), config);
+        Map<YearDate, Double> sexRatioBirth = readInSingleInputDataFile(config.getVarBirthRatioPath(), config);
 
-        return new PopulationStatistics(config, maleDeath, femaleDeath, partnering, orderedBirth, multipleBirth, separation);
+        return new PopulationStatistics(config, maleDeath, femaleDeath, partnering, orderedBirth, multipleBirth, separation, sexRatioBirth);
+    }
+
+    private static Map<YearDate, Double> readInSingleInputDataFile(DirectoryStream<Path> paths, Config config) throws IOException, InvalidInputFileException {
+
+        int c = 0;
+
+        Map<YearDate, Double> data = new HashMap<>();
+
+        for(Path p : paths) {
+            if(c == 1) {
+                throw new Error("Too many sex ratio files - there should only be one - remove any additional files from the ratio_birth directory");
+            }
+
+            data = InputFileReader.readInSingleInputFile(p, config);
+
+            c++;
+        }
+
+        if(data.isEmpty()) {
+            data.put(new YearDate(1600), 0.5);
+        }
+
+        return data;
     }
 
     private static Map<YearDate,SelfCorrectingOneDimensionDataDistribution> readInSC1DDataFiles(DirectoryStream<Path> paths, Config config) throws IOException, InvalidInputFileException {
