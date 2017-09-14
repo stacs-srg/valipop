@@ -49,6 +49,7 @@ public class Config {
     private static final String separationSubFile = "separation";
     private static final String birthRatioSubFile = "ratio_birth";
     public static Logger log = LogManager.getLogger(Config.class);
+
     private MonthDate tS;
     private MonthDate t0;
     private MonthDate tE;
@@ -67,21 +68,20 @@ public class Config {
 
     private Path resultsSavePath;
 
-    private boolean binominalSampling = false;
-
     private final String runPurpose;
     private int minBirthSpacing;
     private double maxProportionOBirthsDueToInfidelity;
     private double birthFactor;
     private double deathFactor;
     private double recoveryFactor;
+    private CompoundTimeUnit inputWidth;
 
     private RecordFormat outputRecordFormat;
 
-    public String getVarPath() {
-        return varPath;
-    }
     private final String startTime;
+
+    private boolean binominalSampling = false;
+
 
     // Filter method to exclude dot files from data file directory streams
     private DirectoryStream.Filter<Path> filter = new DirectoryStream.Filter<Path>() {
@@ -89,8 +89,43 @@ public class Config {
             return !file.getFileName().toString().matches("^\\..+");
         }
     };
-    private CompoundTimeUnit inputWidth;
 
+    public Config(MonthDate tS, MonthDate t0, MonthDate tE, int t0PopulationSize, double setUpBR, double setUpDR,
+                  CompoundTimeUnit simulationTimeStep, String varPath, Path resultsSavePath, final String runPurpose,
+                  int minBirthSpacing, double maxProportionOBirthsDueToInfidelity, double birthFactor,
+                  double deathFactor, double recoveryFactor, CompoundTimeUnit inputWidth,
+                  RecordFormat outputRecordFormat, String startTime) {
+
+        this.varPath = varPath;
+        varBirthPaths = Paths.get(varPath, ordersBirthSubFile);
+        String deathSubPath = Paths.get(varPath, deathSubFile).toString();
+        varMaleDeathPaths = Paths.get(deathSubPath, maleDeathSubFile);
+        varFemaleDeathPaths = Paths.get(deathSubPath, femaleDeathSubFile);
+        varMultipleBirthPaths = Paths.get(varPath, multipleBirthSubFile);
+        varPartneringPaths = Paths.get(varPath, partneringSubFile);
+        varSeparationPaths = Paths.get(varPath, separationSubFile);
+        varBirthRatioPaths = Paths.get(varPath, birthRatioSubFile);
+
+        this.tS = tS;
+        this.t0 = t0;
+        this.tE = tE;
+        this.t0PopulationSize = t0PopulationSize;
+        this.setUpBR = setUpBR;
+        this.setUpDR = setUpDR;
+        this.simulationTimeStep = simulationTimeStep;
+        this.resultsSavePath = resultsSavePath;
+        this.runPurpose = runPurpose;
+        this.minBirthSpacing = minBirthSpacing;
+        this.maxProportionOBirthsDueToInfidelity = maxProportionOBirthsDueToInfidelity;
+        this.birthFactor = birthFactor;
+        this.deathFactor = deathFactor;
+        this.recoveryFactor = recoveryFactor;
+        this.inputWidth = inputWidth;
+        this.outputRecordFormat = outputRecordFormat;
+        this.startTime = startTime;
+
+
+    }
 
 
 
@@ -263,6 +298,11 @@ public class Config {
         }
 
     }
+
+    public String getVarPath() {
+        return varPath;
+    }
+
 
     public DirectoryStream<Path> getVarOrderedBirthPaths() throws IOException {
         try {
