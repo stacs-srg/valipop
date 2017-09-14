@@ -108,13 +108,13 @@ public class ChildrenInYearNodeDouble extends DoubleNode<ChildrenInYearOption, I
         CompoundTimeUnit timePeriod = new CompoundTimeUnit(1, TimeUnit.YEAR);
 
         SingleDeterminedCount sDC = (SingleDeterminedCount) getInputStats().getDeterminedCount(
-                new BirthStatsKey(age, order, forNPeople, timePeriod, currentDate));
+                new BirthStatsKey(age, order, forNPeople, timePeriod, currentDate), null);
 
 //        double numberOfMothers = sDC.getRawUncorrectedCount();
         double numberOfChildren = sDC.getRawUncorrectedCount();
 
         MultipleDeterminedCount mDc = (MultipleDeterminedCount) getInputStats().getDeterminedCount(
-                new MultipleBirthStatsKey(age, numberOfChildren, timePeriod, currentDate));
+                new MultipleBirthStatsKey(age, numberOfChildren, timePeriod, currentDate), null);
 
         double numberOfMothers = mDc.getRawUncorrectedCount().getSumOfValues();
 
@@ -176,7 +176,8 @@ public class ChildrenInYearNodeDouble extends DoubleNode<ChildrenInYearOption, I
             Date currentDate = yob.advanceTime(age, TimeUnit.YEAR);
 
             MultipleDeterminedCount mDC = (MultipleDeterminedCount) getInputStats()
-                    .getDeterminedCount(new MultipleBirthStatsKey(age, getCount(), new CompoundTimeUnit(1, TimeUnit.YEAR), currentDate));
+                    .getDeterminedCount(new MultipleBirthStatsKey(age, getCount(),
+                            new CompoundTimeUnit(1, TimeUnit.YEAR), currentDate), null);
 
             LabeledValueSet<IntegerRange, Double> stat = mDC.getRawUncorrectedCount();
 

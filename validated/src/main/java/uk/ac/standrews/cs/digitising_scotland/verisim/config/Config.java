@@ -22,12 +22,14 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.utils.fileUtils.InputFileR
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.timeSteps.CompoundTimeUnit;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.sourceEventRecords.RecordFormat;
 
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.InvalidParameterException;
 import java.time.DateTimeException;
 import java.util.Collection;
 
@@ -45,6 +47,7 @@ public class Config {
     private static final String multipleBirthSubFile = "multiple_birth";
     private static final String partneringSubFile = "partnering";
     private static final String separationSubFile = "separation";
+    private static final String birthRatioSubFile = "ratio_birth";
     public static Logger log = LogManager.getLogger(Config.class);
     private MonthDate tS;
     private MonthDate t0;
@@ -60,12 +63,20 @@ public class Config {
     private Path varMultipleBirthPaths;
     private Path varPartneringPaths;
     private Path varSeparationPaths;
+    private Path varBirthRatioPaths;
 
     private Path resultsSavePath;
 
     private boolean binominalSampling = false;
 
     private final String runPurpose;
+    private int minBirthSpacing;
+    private double maxProportionOBirthsDueToInfidelity;
+    private double birthFactor;
+    private double deathFactor;
+    private double recoveryFactor;
+
+    private RecordFormat outputRecordFormat;
 
     public String getVarPath() {
         return varPath;
@@ -116,6 +127,7 @@ public class Config {
                     varMultipleBirthPaths = Paths.get(path, multipleBirthSubFile);
                     varPartneringPaths = Paths.get(path, partneringSubFile);
                     varSeparationPaths = Paths.get(path, separationSubFile);
+                    varBirthRatioPaths = Paths.get(path, birthRatioSubFile);
                     break;
                 case "results_save_location":
                     resultsSavePath = Paths.get(split[1]);
@@ -172,7 +184,7 @@ public class Config {
                     try {
                         setUpBR = Double.parseDouble(split[1]);
                     } catch (NumberFormatException e) {
-                        log.fatal("set_up _br " + e.getMessage());
+                        log.fatal("set_up_br " + e.getMessage());
                         throw e;
                     }
                     break;
@@ -180,10 +192,67 @@ public class Config {
                     try {
                         setUpDR = Double.parseDouble(split[1]);
                     } catch (NumberFormatException e) {
-                        log.fatal("set_up _dr " + e.getMessage());
+                        log.fatal("set_up_dr " + e.getMessage());
                         throw e;
                     }
                     break;
+                case "min_birth_spacing":
+                    try {
+                        minBirthSpacing = Integer.parseInt(split[1]);
+                    } catch (NumberFormatException e) {
+                        log.fatal("min_birth_spacing " + e.getMessage());
+                        throw e;
+                    }
+                    break;
+                case "max_births_infidelity":
+                    try {
+                        maxProportionOBirthsDueToInfidelity = Double.parseDouble(split[1]);
+                    } catch (NumberFormatException e) {
+                        log.fatal("max_births_infidelity " + e.getMessage());
+                        throw e;
+                    }
+                    break;
+                case "birth_factor":
+                    try {
+                        birthFactor = Double.parseDouble(split[1]);
+                    } catch (NumberFormatException e) {
+                        log.fatal("birth_factor " + e.getMessage());
+                        throw e;
+                    }
+                    break;
+                case "death_factor":
+                    try {
+                        deathFactor = Double.parseDouble(split[1]);
+                    } catch (NumberFormatException e) {
+                        log.fatal("death_factor " + e.getMessage());
+                        throw e;
+                    }
+                    break;
+                case "recovery_factor":
+                    try {
+                        recoveryFactor = Double.parseDouble(split[1]);
+                    } catch (NumberFormatException e) {
+                        log.fatal("recovery_factor " + e.getMessage());
+                        throw e;
+                    }
+                    break;
+                case "output_record_format":
+                    switch(split[1]) {
+                        case "DS":
+                            outputRecordFormat = RecordFormat.DS;
+                            break;
+                        case "VIS_PROCESSING":
+                            outputRecordFormat = RecordFormat.VIS_PROCESSING;
+                            break;
+                        case "NONE":
+                            outputRecordFormat = RecordFormat.NONE;
+                            break;
+                        default:
+                            String m = "output_record_format - given option not recognised";
+                            log.fatal(m);
+                            throw new InvalidParameterException(m);
+                    }
+
 
 
             }
@@ -256,6 +325,16 @@ public class Config {
         }
     }
 
+    public DirectoryStream<Path> getVarBirthRatioPath() throws IOException {
+        try {
+            return Files.newDirectoryStream(varBirthRatioPaths, filter);
+        } catch (IOException e) {
+            String message = "Error reading in birth ratio file";
+            log.fatal(message);
+            throw new IOException(message, e);
+        }
+    }
+
 
     public MonthDate getTS() {
         return tS;
@@ -303,5 +382,30 @@ public class Config {
 
     public boolean binominalSampling() {
         return binominalSampling;
+    }
+
+
+    public int getMinBirthSpacing() {
+        return minBirthSpacing;
+    }
+
+    public double getMaxProportionOBirthsDueToInfidelity() {
+        return maxProportionOBirthsDueToInfidelity;
+    }
+
+    public double getBirthFactor() {
+        return birthFactor;
+    }
+
+    public double getDeathFactor() {
+        return deathFactor;
+    }
+
+    public double getRecoveryFactor() {
+        return recoveryFactor;
+    }
+
+    public RecordFormat getOutputRecordFormat() {
+        return outputRecordFormat;
     }
 }

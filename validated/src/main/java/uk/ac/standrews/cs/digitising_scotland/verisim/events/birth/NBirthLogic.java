@@ -36,7 +36,6 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.populat
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.dataStructure.Population;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.dataStructure.exceptions.InsufficientNumberOfPeopleException;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.dataStructure.exceptions.PersonNotFoundException;
-import uk.ac.standrews.cs.digitising_scotland.verisim.utils.implementations.OBDModel;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.IntegerRangeToIntegerSet;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.LabeledValueSet;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.integerRange.IntegerRange;
@@ -75,13 +74,14 @@ public class NBirthLogic implements EventLogic {
                 Collection<IPersonExtended> people = femalesLiving.getByDatePeriodAndBirthOrder(divDate, consideredTimePeriod, order);
 
                 BirthStatsKey key = new BirthStatsKey(age, order.getValue(), cohortSize, consideredTimePeriod, currentDate);
-                SingleDeterminedCount determinedCount = (SingleDeterminedCount) desiredPopulationStatistics.getDeterminedCount(key);
+                SingleDeterminedCount determinedCount =
+                        (SingleDeterminedCount) desiredPopulationStatistics.getDeterminedCount(key, config);
 
                 int birthAdjust;
                 if(determinedCount.getDeterminedCount() == 0) {
                     birthAdjust = 0;
                 } else {
-                    birthAdjust = Integer.parseInt(String.valueOf(Math.round(new Random().nextInt(cohortSize + 1) * OBDModel.BIRTH_FACTOR)));
+                    birthAdjust = Integer.parseInt(String.valueOf(Math.round(new Random().nextInt(cohortSize + 1) * config.getBirthFactor())));
                 }
 //                System.out.println("BA: " + birthAdjust + "  CS: " + cohortSize);
 
@@ -111,7 +111,7 @@ public class NBirthLogic implements EventLogic {
             }
 
             // Partner females of age who don't have partners
-            PartneringLogic.handle(needingPartners, desiredPopulationStatistics, currentDate, consideredTimePeriod, population);
+            PartneringLogic.handle(needingPartners, desiredPopulationStatistics, currentDate, consideredTimePeriod, population, config);
 
         }
 
@@ -136,7 +136,7 @@ public class NBirthLogic implements EventLogic {
         int ageOfMothers = femalesAL.get(0).ageOnDate(currentDate);
 
         MultipleDeterminedCount requiredBirths = calcNumberOfPreganciesOfMultipleBirth(ageOfMothers, numberOfChildren,
-                desiredPopulationStatistics, currentDate, consideredTimePeriod);
+                desiredPopulationStatistics, currentDate, consideredTimePeriod, config);
 
         int childrenMade = 0;
 
@@ -202,7 +202,7 @@ public class NBirthLogic implements EventLogic {
             }
         }
 
-        SeparationLogic.handle(continuingPartneredFemalesByChildren, consideredTimePeriod, currentDate, desiredPopulationStatistics, population);
+        SeparationLogic.handle(continuingPartneredFemalesByChildren, consideredTimePeriod, currentDate, desiredPopulationStatistics, population, config);
 
         requiredBirths.setFufilledCount(motherCountsByMaternities);
         desiredPopulationStatistics.returnAchievedCount(requiredBirths);
@@ -212,10 +212,10 @@ public class NBirthLogic implements EventLogic {
     }
 
     private MultipleDeterminedCount calcNumberOfPreganciesOfMultipleBirth(int ageOfMothers, int numberOfChildren, PopulationStatistics desiredPopulationStatistics, AdvancableDate currentDate,
-                                                                          CompoundTimeUnit consideredTimePeriod) {
+                                                                          CompoundTimeUnit consideredTimePeriod, Config config) {
 
         MultipleBirthStatsKey key = new MultipleBirthStatsKey(ageOfMothers, numberOfChildren, consideredTimePeriod, currentDate);
-        return (MultipleDeterminedCount) desiredPopulationStatistics.getDeterminedCount(key);
+        return (MultipleDeterminedCount) desiredPopulationStatistics.getDeterminedCount(key, config);
 
     }
 

@@ -43,8 +43,8 @@ public class DeathDateSelector extends DateSelector {
             Date birthDateOfLastChild = child.getBirthDate_ex().getExactDate();
 
             if (Character.toLowerCase(p.getSex()) == 'm') {
-                // If a male with a child then the man cannot die more than 9 months before the birth date
-                Date ePD = DateUtils.calculateExactDate(birthDateOfLastChild, (-1) * desiredPopulationStatistics.getMaxGestationPeriod());
+                // If a male with a child then the man cannot die more than the minimum gestation period before the birth date
+                Date ePD = DateUtils.calculateExactDate(birthDateOfLastChild, (-1) * desiredPopulationStatistics.getMinGestationPeriod());
                 return selectDateRestrictedByEPD(currentDate, consideredTimePeriod, ePD);
             } else {
                 // If a female with a child then the cannot die before birth of child

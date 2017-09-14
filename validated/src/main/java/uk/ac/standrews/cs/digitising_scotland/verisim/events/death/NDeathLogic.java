@@ -20,7 +20,6 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.config.Config;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.Date;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.DateUtils;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateImplementations.AdvancableDate;
-import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateSelection.DateSelector;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateSelection.DeathDateSelector;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.timeSteps.CompoundTimeUnit;
 import uk.ac.standrews.cs.digitising_scotland.verisim.events.EventLogic;
@@ -74,13 +73,13 @@ public class NDeathLogic implements EventLogic {
 
             // gets death rate for people of age at the current date
             StatsKey key = new DeathStatsKey(age, peopleOfAge, consideredTimePeriod, currentDate, sex);
-            DeterminedCount determinedCount = desiredPopulationStatistics.getDeterminedCount(key);
+            DeterminedCount determinedCount = desiredPopulationStatistics.getDeterminedCount(key, config);
 
             // Calculate the appropriate number to kill and then kill
             Integer numberToKill = ((SingleDeterminedCount) determinedCount).getDeterminedCount();
 
-//            int killAdjust = Integer.parseInt(String.valueOf(Math.round(peopleOfAge * 0.0008)));
-            int killAdjust = 0;
+            int killAdjust = Integer.parseInt(String.valueOf(Math.round(peopleOfAge * config.getDeathFactor())));
+//            int killAdjust = 0;
 
             Collection<IPersonExtended> peopleToKill;
             try {

@@ -17,6 +17,7 @@
 package uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.dataDistributionTables.selfCorrecting;
 
 
+import uk.ac.standrews.cs.digitising_scotland.verisim.config.Config;
 import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.dataDistributionTables.DataDistribution;
 import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.dataDistributionTables.OneDimensionDataDistribution;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateImplementations.YearDate;
@@ -54,13 +55,14 @@ public class SelfCorrectingTwoDimensionDataDistribution implements DataDistribut
     }
 
 //    private static final double FACTOR = 1.007462401 ;
-    private static final double FACTOR = 1;
+//    private static final double FACTOR = 1;
 
-    public SingleDeterminedCount determineCount(StatsKey key) {
+    public SingleDeterminedCount determineCount(StatsKey key, Config config) {
         try {
-            SingleDeterminedCount sDC = getData(key.getXLabel()).determineCount(key);
-            int adjCount = Integer.parseInt(String.valueOf(Math.round(sDC.getDeterminedCount() * FACTOR)));
-            return new SingleDeterminedCount(sDC.getKey(), adjCount, sDC.getRawCorrectedCount(), sDC.getRawUncorrectedCount());
+            return getData(key.getXLabel()).determineCount(key, config);
+//            SingleDeterminedCount sDC = getData(key.getXLabel()).determineCount(key, config);
+//            int adjCount = Integer.parseInt(String.valueOf(Math.round(sDC.getDeterminedCount() * FACTOR)));
+//            return new SingleDeterminedCount(sDC.getKey(), adjCount, sDC.getRawCorrectedCount(), sDC.getRawUncorrectedCount());
         } catch (InvalidRangeException e) {
             return new SingleDeterminedCount(key, 0, 0, 0);
         }
@@ -69,8 +71,8 @@ public class SelfCorrectingTwoDimensionDataDistribution implements DataDistribut
 
     public void returnAchievedCount(DeterminedCount<Integer, Double> achievedCount) {
         try {
-            int adjCount = Integer.parseInt(String.valueOf(Math.round(achievedCount.getFufilledCount() / FACTOR)));
-            achievedCount.setFufilledCount(adjCount);
+//            int adjCount = Integer.parseInt(String.valueOf(Math.round(achievedCount.getFufilledCount() / FACTOR)));
+//            achievedCount.setFufilledCount(adjCount);
             getData(achievedCount.getKey().getXLabel()).returnAchievedCount(achievedCount);
         } catch (InvalidRangeException e) {
             if(achievedCount.getDeterminedCount() == 0) {

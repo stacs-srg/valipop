@@ -16,6 +16,7 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.verisim.events;
 
+import uk.ac.standrews.cs.digitising_scotland.verisim.config.Config;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.Date;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.timeSteps.CompoundTimeUnit;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.timeSteps.TimeUnit;
@@ -34,7 +35,7 @@ import java.util.Map;
 public class SeparationLogic {
 
     public static void handle(Map<Integer, ArrayList<IPersonExtended>> continuingPartnedFemalesByChildren,
-                              CompoundTimeUnit consideredTimePeriod, Date currentDate, PopulationStatistics desiredPopulationStatistics, Population population) {
+                              CompoundTimeUnit consideredTimePeriod, Date currentDate, PopulationStatistics desiredPopulationStatistics, Population population, Config config) {
 
         // Consideration of separation is based on number of children in females current partnerships
         for(Integer numberOfChildren : continuingPartnedFemalesByChildren.keySet()) {
@@ -44,7 +45,7 @@ public class SeparationLogic {
 
             // Get determined count for separations for this group of mothers
             SeparationStatsKey key = new SeparationStatsKey(numberOfChildren, mothers.size(), consideredTimePeriod, currentDate);
-            SingleDeterminedCount dC = (SingleDeterminedCount) desiredPopulationStatistics.getDeterminedCount(key);
+            SingleDeterminedCount dC = (SingleDeterminedCount) desiredPopulationStatistics.getDeterminedCount(key, config);
 
             int count = 0;
 

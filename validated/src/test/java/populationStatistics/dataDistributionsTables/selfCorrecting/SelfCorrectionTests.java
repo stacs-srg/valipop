@@ -69,11 +69,11 @@ public class SelfCorrectionTests {
 
             // Basic first retrieval tests
             StatsKey k1 = new DeathStatsKey(iR.getValue(), 100, y, null, 'm');
-            DeterminedCount r1 = sc1DDD.determineCount(k1);
+            DeterminedCount r1 = sc1DDD.determineCount(k1, null);
             Assert.assertEquals((int)Math.round(check * 100), (int) r1.getDeterminedCount(), DELTA);
 
             StatsKey k2 = new DeathStatsKey(iR.getValue(), 1000, y, null, 'm');
-            DeterminedCount r2 = sc1DDD.determineCount(k2);
+            DeterminedCount r2 = sc1DDD.determineCount(k2, null);
             Assert.assertEquals((int)Math.round(check * 1000), (int) r2.getDeterminedCount(), DELTA);
 
 //            // Secondary retrieval having met first request
@@ -121,7 +121,7 @@ public class SelfCorrectionTests {
 
                 double c1 = sc1DDDCopy.getRate(iR.getValue());
 
-                DeterminedCount r1 = sc1DDD.determineCount(k1);
+                DeterminedCount r1 = sc1DDD.determineCount(k1, null);
                 Assert.assertEquals((int) Math.round(c1 * r1.getKey().getForNPeople()), r1.getDeterminedCount());
 
                 int rr2 = (int) Math.round(1.5 * (int) r1.getDeterminedCount());
@@ -311,12 +311,12 @@ public class SelfCorrectionTests {
 
 
         StatsKey yearK = new DeathStatsKey(age, popSize, y, null, 'm');
-        int expPopSize = popSize - data.determineCount(yearK).getDeterminedCount();
+        int expPopSize = popSize - data.determineCount(yearK, null).getDeterminedCount();
 
         for(int m = 1; m <= 12; m+=2) {
             StatsKey k = new DeathStatsKey(age, popSize, m2, null, 'm');
 
-            int count = data.determineCount(k).getDeterminedCount();
+            int count = data.determineCount(k, null).getDeterminedCount();
 
             popSize -= count;
 

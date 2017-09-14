@@ -16,6 +16,7 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.dataDistributionTables.selfCorrecting;
 
+import uk.ac.standrews.cs.digitising_scotland.verisim.config.Config;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.DateUtils;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.timeSteps.CompoundTimeUnit;
 import org.apache.commons.math3.distribution.BinomialDistribution;
@@ -44,9 +45,6 @@ public class SelfCorrectingOneDimensionDataDistribution extends OneDimensionData
     private Map<IntegerRange, Double> appliedRates;
     private Map<IntegerRange, Double> appliedCounts;
 
-    // recovery factor
-    double rf = 0.3;
-
     public SelfCorrectingOneDimensionDataDistribution(YearDate year, String sourcePopulation, String sourceOrganisation, Map<IntegerRange, Double> tableData, boolean binominalSampling) {
         super(year, sourcePopulation, sourceOrganisation, tableData);
 
@@ -63,7 +61,7 @@ public class SelfCorrectingOneDimensionDataDistribution extends OneDimensionData
 
     }
 
-    public SingleDeterminedCount determineCount(StatsKey key) {
+    public SingleDeterminedCount determineCount(StatsKey key, Config config) {
 
         IntegerRange age = resolveRowValue(key.getYLabel());
 
@@ -99,6 +97,11 @@ public class SelfCorrectingOneDimensionDataDistribution extends OneDimensionData
 
             // Correction rate
 //            double cD = (tD * (aC + tAT) - (aD * aC)) / tAT;
+
+            double rf = 1;
+            if(config != null) {
+                rf = config.getRecoveryFactor();
+            }
 
             double cD = ( Math.ceil( (aC * tD) - (aC * aD) ) * rf + tAT * tD ) / tAT;
 

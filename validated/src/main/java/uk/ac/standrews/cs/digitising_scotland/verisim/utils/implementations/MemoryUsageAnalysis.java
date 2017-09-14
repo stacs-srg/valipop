@@ -25,27 +25,46 @@ public class MemoryUsageAnalysis {
 
     private static boolean checkMemory = false;
 
-    private static long maxUsage = 0L;
+    private static long maxSimUsage = 0L;
+    private static long maxRunUsage = 0L;
 
     public static void main(String[] args) {
 
-        checkMemory= true;
+        checkMemory = true;
         OBDModel.runPopulationModel(args);
 
+        // We do this to force the latest maxSimUsage to be checked against the maxRunUsage and force the value update if nessersary
+        reset();
+
         System.out.println("---------------------------------\n");
-        System.out.println("Max Memory Usage : " + (maxUsage / 1e6) + " MB");
+        System.out.println("Max Memory Usage : " + (maxRunUsage / 1e6) + " MB");
         System.out.println("We recommend to increase by 10% to give adequate headroom\n");
 
+    }
+
+    public static void reset() {
+        if(maxSimUsage > maxRunUsage) {
+            maxRunUsage = maxSimUsage;
+        }
+        maxSimUsage = 0L;
     }
 
     public static void log() {
 
         if(checkMemory) {
             long currentUsage = ManagementFactory.getMemoryMXBean().getHeapMemoryUsage().getUsed();
-            if(currentUsage > maxUsage) {
-                maxUsage = currentUsage;
+            if(currentUsage > maxSimUsage) {
+                maxSimUsage = currentUsage;
             }
         }
 
+    }
+
+    public static void setCheckMemory(boolean b) {
+        checkMemory = b;
+    }
+
+    public static long getMaxSimUsage() {
+        return maxSimUsage;
     }
 }
