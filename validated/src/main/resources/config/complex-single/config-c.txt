@@ -11,3 +11,10 @@ t0_pop_size = 500000
 set_up_br = 0.0133
 set_up_dr = 0.0122
 results_save_location = results
+output_record_format = NONE
+# these are things we'll be wanting to tune to minimise deviance
+min_birth_spacing = 147
+max_births_infidelity = 0.2
+birth_factor = 0.0
+death_factor = 0.0
+recovery_factor = 1.0

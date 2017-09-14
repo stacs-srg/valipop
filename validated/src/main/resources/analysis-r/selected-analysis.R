@@ -21,8 +21,8 @@ deathAnalysis <- function(file) {
   # Analysis
   library("MASS")
   
-  model = loglm(freq ~ Date + Sex + Age + Died + Sex:Age + Sex:Died + Age:Died + Sex:Age:Died, data = data)
-  model
+  model = loglm(freq ~ Date + Age + Sex + Died + Date:Died + Age:Died + Sex:Died + Date:Age:Died + Date:Sex:Died + Age:Sex:Died, data = data)
+  
   p2 <- calcP(model)
   
   return(c(p2, model$lrt, model$df))
@@ -44,9 +44,9 @@ obAnalysis <- function(file, largestBirthLabel) {
   
   # Analysis
   library("MASS")
-  
+
   model = loglm(freq ~ Age + NPCIAP + CIY + Date + Age:NPCIAP + Age:CIY + NPCIAP:CIY + Age:NPCIAP:CIY, data = data)
-  
+
   p2 <- calcP(model)
   
   return(c(p2, model$lrt, model$df))
@@ -54,11 +54,8 @@ obAnalysis <- function(file, largestBirthLabel) {
 }
 
 mbAnalysis <- function(file, largestBirthLabel) {
-largestBirthLabel= "50+"
-  data = read.csv(file, sep = ',', header = T)
   
-  summary(data[which(data$Source == "SIM"),])
-  summary(data[which(data$Source == "STAT"),])
+  data = read.csv(file, sep = ',', header = T)
   
   # Standardise the data
   data$freq <- round(data$freq)
@@ -72,15 +69,15 @@ largestBirthLabel= "50+"
   library("MASS")
   
   model = loglm(freq ~ Date + NCIY + Age + Date:NCIY + Date:Age, data = data)
-  
+    
   p2 <- calcP(model)
-  model
+
   return(c(p2, model$lrt, model$df))
   
 }
 
 partAnalysis <- function(file) {
-  
+    
   data = read.csv(file, sep = ',', header = T)
   
   # Standardise the data
@@ -90,11 +87,13 @@ partAnalysis <- function(file) {
   data <- data[which(data$Date < 2015) , ]
   data <- data[which(data$NPA != "na") , ]
   
+  
+  summary(data)
   # Analysis
   library("MASS")
   
-  #model = loglm(freq ~ Date + NPA + Age + Date:NPA + Date:Age + NPA:Age, data = data)
-  model = loglm(freq ~ Date*NPA*Age, data = data)
+  model = loglm(freq ~ Date + NPA + Age + NPA:Age, data = data)
+  #model = loglm(freq ~ Date*NPA*Age, data = data)
   
   p2 <- calcP(model)
   
@@ -110,12 +109,12 @@ sepAnalysis <- function(file) {
   data$freq <- round(data$freq)
   data <- data[which(data$freq != 0), ]
   data <- data[which(data$Date >= 1855) , ]
-  data <- data[which(data$Date < 2014) , ]
+  data <- data[which(data$Date < 2015) , ]
   data <- data[which(data$Separated != "NA") , ]
   
   # Analysis
   library("MASS")
-  model = loglm(freq ~ Date * NCIP * Separated, data = data)
+  model = loglm(freq ~ Date + NCIP + Separated + NCIP:Separated, data = data)
   
   p <- calcP(model)
   

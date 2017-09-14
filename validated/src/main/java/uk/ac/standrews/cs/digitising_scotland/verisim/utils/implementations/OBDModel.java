@@ -55,9 +55,6 @@ import java.nio.file.Paths;
  */
 public class OBDModel {
 
-    // TODO extract as param
-    private static boolean simplifiedRecords = false;
-
     public static final String CODE_VERSION = "dev-bf";
 
     public static Logger log;
@@ -122,11 +119,7 @@ public class OBDModel {
 
             generateContigencyTables(population, sim);
 
-            if(simplifiedRecords) {
-                extractSimplifiedBMDRecords(population, sim, FileUtils.getRecordsDirPath().toString());
-            } else {
-                extractBMDRecords(population, sim, FileUtils.getRecordsDirPath().toString());
-            }
+            outputRecords(config, population, sim);
 
             try {
                 AnalyticsRunner.runAnalytics(population, new PrintStream(FileUtils.getDetailedResultsPath().toFile()));
@@ -145,6 +138,20 @@ public class OBDModel {
             System.out.println("OBDModel --- Output complete");
 
             validPopCount++;
+        }
+
+    }
+
+    private static void outputRecords(Config config, PeopleCollection population, OBDModel sim) {
+
+        switch(config.getOutputRecordFormat()) {
+
+            case DS:
+                extractBMDRecords(population, sim, FileUtils.getRecordsDirPath().toString());
+            case VIS_PROCESSING:
+                extractSimplifiedBMDRecords(population, sim, FileUtils.getRecordsDirPath().toString());
+            case NONE:
+                break;
         }
 
     }
@@ -335,11 +342,11 @@ public class OBDModel {
 
         InitLogic.setUpInitParameters(config, desired);
 
-        summary = new SummaryRow(Paths.get(config.getResultsSavePath().toString(), runPurpose, startTime),
+        summary = new SummaryRow(Paths.get(resultsPath, runPurpose, startTime),
                 config.getVarPath(), startTime, runPurpose, CODE_VERSION, config.getSimulationTimeStep(), config.getInputWidth(),
                 config.getT0(), config.getTE(), DateUtils.differenceInDays(config.getT0(), config.getTE()),
                 config.getBirthFactor(), config.getDeathFactor(), config.getRecoveryFactor(),
-                config.getMaxProportionOBirthsDueToInfidelity(), config.getMinBirthSpacing());
+                config.getMaxProportionOBirthsDueToInfidelity(), config.getMinBirthSpacing(), config.getOutputRecordFormat());
 
     }
 
