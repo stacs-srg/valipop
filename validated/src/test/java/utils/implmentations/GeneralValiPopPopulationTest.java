@@ -29,12 +29,14 @@ import java.io.IOException;
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class GeneralValiPopPopulationTest extends GeneralPopulationStructureTests {
+public class GeneralValiPopPopulationTest {
 
-    public GeneralValiPopPopulationTest() throws IOException, InvalidInputFileException {
-        super(CL_OBDModel.runOBDModel("src/test/resources/config-ps.txt",
-                "src/test/resources/results", "general-structure-testing")
-                .getPopulation().getAllPeople(), true);
-    }
+// extends GeneralPopulationStructureTests {
+
+//    public GeneralValiPopPopulationTest() throws IOException, InvalidInputFileException {
+//        super(CL_OBDModel.runOBDModel("src/test/resources/config-ps.txt",
+//                "src/test/resources/results", "general-structure-testing")
+//                .getPopulation().getAllPeople(), true);
+//    }
 
 }
