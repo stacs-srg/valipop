@@ -305,7 +305,7 @@ public class FemaleCollection extends PersonCollection {
 
 
             } catch (PersonNotFoundException e) {
-                System.out.println("This really shouldn't be happening");
+                log.error("This really shouldn't be happening");
                 unusablePeople.add(p);
             }
 
@@ -494,7 +494,7 @@ public class FemaleCollection extends PersonCollection {
                     if(p.getBirthDate_ex().getYear() != y.getYear()
                             || p.getAllChildren().size() != birthOrder) {
                         passed = false;
-                        System.out.println("F: " + p.getId() + " YOB: " + p.getBirthDate_ex().getYear() + " ("
+                        log.info("F: " + p.getId() + " YOB: " + p.getBirthDate_ex().getYear() + " ("
                                 + y.getYear() + ") order: " + p.getAllChildren().size() + " (" + birthOrder + ")");
                     }
                 }

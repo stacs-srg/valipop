@@ -23,7 +23,7 @@ import java.lang.management.ManagementFactory;
  */
 public class MemoryUsageAnalysis {
 
-    private static boolean checkMemory = false;
+    private static boolean checkMemory = true;
 
     private static long maxSimUsage = 0L;
     private static long maxRunUsage = 0L;
@@ -31,7 +31,8 @@ public class MemoryUsageAnalysis {
     public static void main(String[] args) {
 
         checkMemory = true;
-        OBDModel.runPopulationModel(args);
+
+        CL_RunNModels.runNModels(args);
 
         // We do this to force the latest maxSimUsage to be checked against the maxRunUsage and force the value update if nessersary
         reset();

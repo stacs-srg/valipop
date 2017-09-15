@@ -27,19 +27,12 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateImplementati
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateImplementations.MonthDate;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateImplementations.ExactDate;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateImplementations.YearDate;
-import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateSelection.BirthDateSelector;
-import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateSelection.DateSelector;
-import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateSelection.DeathDateSelector;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.timeSteps.CompoundTimeUnit;
-import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.timeSteps.TimeUnit;
-import uk.ac.standrews.cs.digitising_scotland.verisim.events.EventType;
-import uk.ac.standrews.cs.digitising_scotland.verisim.events.birth.NoChildrenOfDesiredOrder;
 import uk.ac.standrews.cs.digitising_scotland.verisim.events.death.NotDeadException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.EntityFactory;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.partnership.IPartnershipExtended;
-import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.dataStructure.PeopleCollection;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.dataStructure.Population;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.dataStructure.exceptions.PersonNotFoundException;
 

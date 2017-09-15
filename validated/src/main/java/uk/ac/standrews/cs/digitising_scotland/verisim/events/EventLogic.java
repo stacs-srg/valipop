@@ -29,8 +29,8 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.populat
  */
 public interface EventLogic {
 
-    void handleEvent(Config config,
-                            AdvancableDate currentDate, CompoundTimeUnit consideredTimePeriod,
-                            Population population, PopulationStatistics desiredPopulationStatistics) throws InsufficientNumberOfPeopleException, PersonNotFoundException;
+    int handleEvent(Config config,
+                    AdvancableDate currentDate, CompoundTimeUnit consideredTimePeriod,
+                    Population population, PopulationStatistics desiredPopulationStatistics) throws InsufficientNumberOfPeopleException, PersonNotFoundException;
 
 }

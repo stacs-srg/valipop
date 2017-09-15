@@ -19,7 +19,9 @@ package uk.ac.standrews.cs.digitising_scotland.verisim.utils.sourceEventRecords.
 import uk.ac.standrews.cs.digitising_scotland.verisim.config.Config;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.fileUtils.FileUtils;
 
+import java.io.IOException;
 import java.io.PrintStream;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -32,18 +34,18 @@ public class RelationshipsTable {
     public static ArrayList<String[]> relationshipsMother = new ArrayList<>();
     public static ArrayList<String[]> relationshipsMarriage = new ArrayList<>();
 
-    public static void outputData(Config config) {
+    public static void outputData(String recordsDirPath) throws IOException {
 
-        toFile(config, "clean-relationships.txt");
+        toFile(recordsDirPath, "clean-relationships.txt");
         confuseTheData();
-        System.out.println("---------------------------------------------");
 
-        toFile(config, "messy-relationships.txt");
+        toFile(recordsDirPath, "messy-relationships.txt");
 
     }
 
-    public static void toFile(Config config, String fileName) {
-        PrintStream ps = FileUtils.setupDumpPrintStream(fileName, config);
+    public static void toFile(String recordsDirPath, String fileName) throws IOException {
+
+        PrintStream ps = new PrintStream(FileUtils.mkBlankFile(Paths.get(recordsDirPath), fileName).toFile());
 
         for(String[] line : relationshipsMarriage) {
             ps.println(asString(line));

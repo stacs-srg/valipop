@@ -46,10 +46,14 @@ public class ProcessArgs {
             System.err.println("No run purpose given as 3rd arg");
         }
 
-        try {
-            processed[3] = args[3];
-        } catch (ArrayIndexOutOfBoundsException e) {
-            System.err.println("No desired number of populations specified as 4th arg");
+        if(executionType.equals("BF_SEARCH") || executionType.equals("N-RUNS")) {
+
+            try {
+                processed[3] = args[3];
+            } catch (ArrayIndexOutOfBoundsException e) {
+                System.err.println("No desired number of populations specified as 4th arg");
+            }
+
         }
 
         if(executionType.equals("BF_SEARCH")) {
@@ -84,6 +88,8 @@ public class ProcessArgs {
                 return standardCheck(args);
             case "BF_SEARCH" :
                 return bfCheck(args);
+            case "N-RUNS" :
+                return nRunsCheck(args);
             default:
                 throw new InvalidParameterException();
         }
@@ -91,6 +97,14 @@ public class ProcessArgs {
     }
 
     private static boolean standardCheck(String[] args) {
+
+        return args.length == 3
+                && !Objects.equals(args[0], "") && !Objects.equals(args[1], "")
+                && !Objects.equals(args[2], "");
+
+    }
+
+    private static boolean nRunsCheck(String[] args) {
 
         return args.length == 4
                 && !Objects.equals(args[0], "") && !Objects.equals(args[1], "")

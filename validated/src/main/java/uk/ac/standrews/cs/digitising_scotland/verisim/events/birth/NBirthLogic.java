@@ -50,8 +50,8 @@ public class NBirthLogic implements EventLogic {
     public static int tBirths = 0;
 
     @Override
-    public void handleEvent(Config config, AdvancableDate currentDate, CompoundTimeUnit consideredTimePeriod,
-                            Population population, PopulationStatistics desiredPopulationStatistics) throws InsufficientNumberOfPeopleException, PersonNotFoundException {
+    public int handleEvent(Config config, AdvancableDate currentDate, CompoundTimeUnit consideredTimePeriod,
+                           Population population, PopulationStatistics desiredPopulationStatistics) throws InsufficientNumberOfPeopleException, PersonNotFoundException {
 
         int bornAtTS = 0;
 
@@ -83,7 +83,6 @@ public class NBirthLogic implements EventLogic {
                 } else {
                     birthAdjust = Integer.parseInt(String.valueOf(Math.round(new Random().nextInt(cohortSize + 1) * config.getBirthFactor())));
                 }
-//                System.out.println("BA: " + birthAdjust + "  CS: " + cohortSize);
 
                 int numberOfChildren = determinedCount.getDeterminedCount() + birthAdjust;
 
@@ -116,7 +115,8 @@ public class NBirthLogic implements EventLogic {
         }
 
         tBirths += bornAtTS;
-        System.out.print(bornAtTS + "\t");
+
+        return bornAtTS;
 
     }
 

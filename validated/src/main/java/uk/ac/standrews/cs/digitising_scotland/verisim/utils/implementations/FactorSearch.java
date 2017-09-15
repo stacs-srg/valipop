@@ -16,12 +16,17 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.verisim.utils.implementations;
 
+import org.apache.logging.log4j.Logger;
 import uk.ac.standrews.cs.digitising_scotland.verisim.config.Config;
-import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.Date;
+import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateImplementations.AdvancableDate;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateImplementations.YearDate;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.timeSteps.CompoundTimeUnit;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.timeSteps.TimeUnit;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.fileUtils.FileUtils;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.fileUtils.InvalidInputFileException;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.sourceEventRecords.RecordFormat;
+
+import java.io.IOException;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
@@ -29,10 +34,35 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.utils.sourceEventRecords.R
 public class FactorSearch {
 
     public static void main(String[] args) {
-        MemoryUsageAnalysis.setCheckMemory(true);
-        runBFSearch();
+        try {
+            switch(args[0]) {
+                case "A":
+                    runFactorSearch(1000000, 1);
+                    break;
+                case "B":
+                    runFactorSearch(1000000, 0.2);
+                    break;
+                case "C":
+                    runFactorSearch(1000000, 0.1);
+                    break;
+                case "D":
+                    runFactorSearch(2000000, 1);
+                    break;
+                case "E":
+                    runFactorSearch(2000000, 0.2);
+                    break;
+                case "F":
+                    runFactorSearch(2000000, 0.1);
+                    break;
+            }
+
+        } catch (IOException | InvalidInputFileException e) {
+            e.printStackTrace();
+            OBDModel.log.error(e.getMessage());
+        }
     }
 
+    public static Logger log;
 
     static double[] rfs;
     static double[] maxInfids;
@@ -42,21 +72,21 @@ public class FactorSearch {
     static int[] minBirthSpacings;
     static int[] t0_pop_size;
 
-    String var_data_files = "src/main/resources/scotland_test_population";
-    String results_save_location = "src/main/resources/results/";
-    RecordFormat output_record_format = RecordFormat.NONE;
+    static String var_data_files = "src/main/resources/scotland_test_population";
+    static String results_save_location = "src/main/resources/results/";
+    static RecordFormat output_record_format = RecordFormat.NONE;
 
-    CompoundTimeUnit simulation_time_step = new CompoundTimeUnit(1, TimeUnit.YEAR);
-    Date tS = new YearDate(1599);
-    Date t0 = new YearDate(1855);
-    Date tE = new YearDate(2015);
-    double set_up_br = 0.0133;
-    double set_up_dr = 0.0122;
+    static CompoundTimeUnit simulation_time_step = new CompoundTimeUnit(1, TimeUnit.YEAR);
+    static AdvancableDate tS = new YearDate(1599);
+    static AdvancableDate t0 = new YearDate(1855);
+    static AdvancableDate tE = new YearDate(2015);
+    static double set_up_br = 0.0133;
+    static double set_up_dr = 0.0122;
 
-    int numberOfRunsPerSim = 1;
-    String runPurpose = "factor-exploration";
+    static int numberOfRunsPerSim = 1;
+    static String runPurpose = "factor-exploration";
 
-    public static void runBFSearch() {
+    public static void runFactorSearch(int size, double maxInfid) throws IOException, InvalidInputFileException {
 
         rfs = new double[]{0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1};
         iws = new CompoundTimeUnit[]{
@@ -68,28 +98,52 @@ public class FactorSearch {
                 new CompoundTimeUnit(500, TimeUnit.YEAR),
         };
         minBirthSpacings = new int[]{1, 147, 252, 365, 730};
-        maxInfids = new double[]{0, 0.1, 0.2, 1};
+        maxInfids = new double[]{1, 0.2, 0.1};
         bfs = new double[]{0};
         dfs = new double[]{0};
+        t0_pop_size = new int[]{1000000};
 
+//        for(int size : t0_pop_size) {
+            for (double rf : rfs) {
+                for (CompoundTimeUnit iw : iws) {
+                    for (int minBirthSpacing : minBirthSpacings) {
+//                        for (double maxInfid : maxInfids) {
+                            for (double bf : bfs) {
+                                for (double df : dfs) {
 
+                                    String startTime = FileUtils.getDateTime();
+                                    OBDModel.setUpFileStructureAndLogs(runPurpose, startTime, results_save_location);
 
+                                    Config config = new Config(tS, t0, tE, size, set_up_br, set_up_dr,
+                                            simulation_time_step, var_data_files, results_save_location, runPurpose,
+                                            minBirthSpacing, maxInfid, bf, df, rf, iw, output_record_format, startTime);
 
-//        executeNFullPopulationRunsAccrossBirthFactor(pathToConfigFile, resultsPath, runPurpose, numberOfRuns, bfStart, bfStep, bfEnd);
+                                    try {
 
-    }
+                                        for(int n = 0; n < numberOfRunsPerSim; n++) {
 
-    private static void executeNFullPopulationRunsAccrossBirthFactor(String pathToConfigFile, String resultsPath, String runPurpose,
-                                                                     int numberOfRuns, double bfStart, double bfStep, double bfEnd) {
+                                            OBDModel model = new OBDModel(startTime, config);
+                                            model.runSimulation();
+                                            model.analyseAndOutputPopulation();
 
-        for(double bf = bfStart; bf <= bfEnd; bf += bfStep) {
+                                        }
 
-//            Config config = new Config(pathToConfigFile, runPurpose, )
+                                    } catch (IOException e) {
+                                        String message = "Model failed due to Input/Output exception, check that this program has " +
+                                                "permission to read or write on disk. Also, check supporting input files are present at location " +
+                                                "specified in config setup code : " + e.getMessage();
+                                        throw new IOException(message, e);
+                                    } catch (InvalidInputFileException e) {
+                                        String message = "Model failed due to an invalid formatting/content of input file, see message: " + e.getMessage();
+                                        throw new InvalidInputFileException(message, e);
+                                    }
 
-//            OBDModel.executeNFullPopulationRuns(pathToConfigFile, resultsPath, runPurpose, numberOfRuns, bf);
-
+                                }
+//                            }
+                        }
+                    }
+//                }
+            }
         }
-
     }
-
 }
