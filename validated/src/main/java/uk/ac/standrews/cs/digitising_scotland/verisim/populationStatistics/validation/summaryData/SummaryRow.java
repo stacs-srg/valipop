@@ -19,8 +19,10 @@ package uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.vali
 
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.Date;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.timeSteps.CompoundTimeUnit;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.fileUtils.FileUtils;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.sourceEventRecords.RecordFormat;
 
+import java.io.IOException;
 import java.nio.file.Path;
 
 /**
@@ -158,5 +160,13 @@ public class SummaryRow {
                 + sep + "Peak Memory Usage (MB)" + sep + "Output Record Format";
     }
 
+    public void outputSummaryRowToFile() {
+        try {
+            FileUtils.writeSummaryRowToSummaryFiles(this);
+        } catch (IOException e) {
+            System.err.println("Summary row could not be printed to summary files. See message: ");
+            System.err.println(e.getMessage());
+        }
+    }
 
 }

@@ -16,6 +16,7 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.verisim.config;
 
+import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateImplementations.AdvancableDate;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateImplementations.MonthDate;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.exceptions.InvalidTimeUnit;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.fileUtils.InputFileReader;
@@ -90,8 +91,8 @@ public class Config {
         }
     };
 
-    public Config(MonthDate tS, MonthDate t0, MonthDate tE, int t0PopulationSize, double setUpBR, double setUpDR,
-                  CompoundTimeUnit simulationTimeStep, String varPath, Path resultsSavePath, final String runPurpose,
+    public Config(AdvancableDate tS, AdvancableDate t0, AdvancableDate tE, int t0PopulationSize, double setUpBR, double setUpDR,
+                  CompoundTimeUnit simulationTimeStep, String varPath, String resultsSavePath, final String runPurpose,
                   int minBirthSpacing, double maxProportionOBirthsDueToInfidelity, double birthFactor,
                   double deathFactor, double recoveryFactor, CompoundTimeUnit inputWidth,
                   RecordFormat outputRecordFormat, String startTime) {
@@ -106,14 +107,16 @@ public class Config {
         varSeparationPaths = Paths.get(varPath, separationSubFile);
         varBirthRatioPaths = Paths.get(varPath, birthRatioSubFile);
 
-        this.tS = tS;
-        this.t0 = t0;
-        this.tE = tE;
+        this.resultsSavePath = Paths.get(resultsSavePath);
+
+        this.tS = tS.getMonthDate();
+        this.t0 = t0.getMonthDate();
+        this.tE = tE.getMonthDate();
         this.t0PopulationSize = t0PopulationSize;
         this.setUpBR = setUpBR;
         this.setUpDR = setUpDR;
         this.simulationTimeStep = simulationTimeStep;
-        this.resultsSavePath = resultsSavePath;
+
         this.runPurpose = runPurpose;
         this.minBirthSpacing = minBirthSpacing;
         this.maxProportionOBirthsDueToInfidelity = maxProportionOBirthsDueToInfidelity;

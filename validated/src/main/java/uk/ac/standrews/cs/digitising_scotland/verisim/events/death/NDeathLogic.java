@@ -44,18 +44,22 @@ public class NDeathLogic implements EventLogic {
     private DeathDateSelector deathDateSelector = new DeathDateSelector();
 
     // Move from year to sim date and time step
-    public void handleEvent(Config config,
-                            AdvancableDate currentDate, CompoundTimeUnit consideredTimePeriod,
-                            Population population, PopulationStatistics desiredPopulationStatistics) {
+    public int handleEvent(Config config,
+                           AdvancableDate currentDate, CompoundTimeUnit consideredTimePeriod,
+                           Population population, PopulationStatistics desiredPopulationStatistics) {
 
-        handleDeathsForSex('M', config, currentDate, consideredTimePeriod, population, desiredPopulationStatistics);
-        handleDeathsForSex('F', config, currentDate, consideredTimePeriod, population, desiredPopulationStatistics);
+        int killedAtTS = 0;
+
+        killedAtTS += handleDeathsForSex('M', config, currentDate, consideredTimePeriod, population, desiredPopulationStatistics);
+        killedAtTS += handleDeathsForSex('F', config, currentDate, consideredTimePeriod, population, desiredPopulationStatistics);
+
+        return killedAtTS;
 
     }
 
     public static int tKilled = 0;
 
-    private void handleDeathsForSex(char sex, Config config,
+    private int handleDeathsForSex(char sex, Config config,
                                     AdvancableDate currentDate, CompoundTimeUnit consideredTimePeriod,
                                     Population population, PopulationStatistics desiredPopulationStatistics) {
 
@@ -101,7 +105,8 @@ public class NDeathLogic implements EventLogic {
         }
 
         tKilled += killedAtTS;
-        System.out.print(killedAtTS + "\t");
+
+        return killedAtTS;
     }
 
 

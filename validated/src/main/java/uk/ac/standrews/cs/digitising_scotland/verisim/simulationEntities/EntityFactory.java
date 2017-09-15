@@ -17,14 +17,10 @@
 package uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities;
 
 
-import uk.ac.standrews.cs.digitising_scotland.verisim.annotations.names.FirstNameGenerator;
-import uk.ac.standrews.cs.digitising_scotland.verisim.annotations.names.NameGenerator;
-import uk.ac.standrews.cs.digitising_scotland.verisim.annotations.names.SurnameGenerator;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.Date;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateImplementations.AdvancableDate;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateImplementations.MonthDate;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateSelection.BirthDateSelector;
-import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateSelection.DateSelector;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.timeSteps.CompoundTimeUnit;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.partnership.IPartnershipExtended;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.partnership.Partnership;
@@ -35,9 +31,7 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.populat
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.dataStructure.exceptions.PersonNotFoundException;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 
 
 /**
@@ -94,7 +88,7 @@ public class EntityFactory {
 
 
 
-    public static IPersonExtended formOrphanChild(MonthDate currentDate, CompoundTimeUnit birthTimeStep, Population population) {
+    public static IPersonExtended formOrphanChild(AdvancableDate currentDate, CompoundTimeUnit birthTimeStep, Population population) {
         return makePerson(currentDate, birthTimeStep, null, population);
     }
 

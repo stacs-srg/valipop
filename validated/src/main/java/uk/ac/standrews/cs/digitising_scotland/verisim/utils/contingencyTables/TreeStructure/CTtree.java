@@ -16,19 +16,24 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.TreeStructure;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.Date;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.DateUtils;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateImplementations.YearDate;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.timeSteps.TimeUnit;
+import uk.ac.standrews.cs.digitising_scotland.verisim.events.init.InitLogic;
 import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.recording.PopulationStatistics;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPersonExtended;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.dataStructure.PeopleCollection;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.CustomLog4j;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.TreeStructure.DoubleNodes.*;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.TreeStructure.IntNodes.SourceNodeInt;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.TreeStructure.Interfaces.Node;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.TreeStructure.enumerations.SourceType;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.TreeStructure.Interfaces.ContingencyTable;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.contingencyTables.TreeStructure.Interfaces.RunnableNode;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.fileUtils.FileUtils;
 
 import java.util.*;
 
@@ -37,6 +42,8 @@ import java.util.*;
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class CTtree extends Node<String, SourceType, Number, Number> implements ContingencyTable {
+
+    public static Logger log = LogManager.getLogger(CTtree.class);
 
     private LinkedList<RunnableNode> deathTasks = new LinkedList<>();
     private LinkedList<RunnableNode> ageTasks = new LinkedList<>();
@@ -57,7 +64,7 @@ public class CTtree extends Node<String, SourceType, Number, Number> implements 
         this.expected = expected;
         this.endDate = endDate;
 
-        System.out.println("CTree --- Populating tree");
+        log.info("CTree --- Populating tree");
 
         if(statNode == null) {
             // removed -1
@@ -94,7 +101,7 @@ public class CTtree extends Node<String, SourceType, Number, Number> implements 
 
 
 
-        System.out.println("CTree --- Tree completed");
+        log.info("CTree --- Tree completed");
 
     }
 
@@ -193,7 +200,7 @@ public class CTtree extends Node<String, SourceType, Number, Number> implements 
 
         boolean first = true;
 
-        System.out.println("CTree --- Initialising tree - death nodes from seed");
+        log.info("CTree --- Initialising tree - death nodes from seed");
 
         while(!deathTasks.isEmpty()) {
             RunnableNode n = deathTasks.removeFirst();
@@ -230,7 +237,7 @@ public class CTtree extends Node<String, SourceType, Number, Number> implements 
                 RunnableNode n = ageTasks.removeFirst();
                 AgeNodeDouble a = (AgeNodeDouble) n;
                 YOBNodeDouble y = (YOBNodeDouble) a.getAncestor(new YOBNodeDouble());
-                System.out.println("CTree --- Creating nodes for year: " + y.getOption().toString());
+                log.info("CTree --- Creating nodes for year: " + y.getOption().toString());
                 n.runTask();
             }
 

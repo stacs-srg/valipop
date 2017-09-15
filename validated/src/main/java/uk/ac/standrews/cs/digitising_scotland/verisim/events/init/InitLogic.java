@@ -19,6 +19,7 @@ package uk.ac.standrews.cs.digitising_scotland.verisim.events.init;
 import uk.ac.standrews.cs.digitising_scotland.verisim.config.Config;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.Date;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.DateUtils;
+import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateImplementations.AdvancableDate;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateImplementations.MonthDate;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.timeSteps.CompoundTimeUnit;
 import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.timeSteps.TimeUnit;
@@ -61,7 +62,7 @@ public class InitLogic {
 
     }
 
-    public static void handleInitPeople(Config config, MonthDate currentTime, Population population) {
+    public static int handleInitPeople(Config config, AdvancableDate currentTime, Population population) {
 
         // calculate hypothetical number of expected births
         int hypotheticalBirths = calculateChildrenToBeBorn(currentHypotheticalPopulationSize, config.getSetUpBR() * initTimeStep.toDecimalRepresentation());
@@ -108,12 +109,9 @@ public class InitLogic {
                 throw new Error();
             }
 
-//            shortFallInBirths = shortFallInBirths + removeFemales + removeMales;
         }
 
-        System.out.print(shortFallInBirths  + "\t");
-        log.info("Current Date: " + currentTime.toString() + "   Init Period | Met short fall in births with orphan children: " + shortFallInBirths);
-//        System.out.println("Current Date: " + currentTime.toString() + "   Init Period | Met short fall in births with orphan children: " + shortFallInBirths);
+        return shortFallInBirths;
 
     }
 
@@ -121,7 +119,7 @@ public class InitLogic {
         numberOfBirthsInThisTimestep += n;
     }
 
-    public static boolean inInitPeriod(MonthDate currentTime) {
+    public static boolean inInitPeriod(Date currentTime) {
         return DateUtils.dateBeforeOrEqual(currentTime, endOfInitPeriod);
     }
 
@@ -176,7 +174,7 @@ public class InitLogic {
 //        }
 
         if(deathRate.isNaN()) {
-            System.out.println("NAN: thus toDie: " + flooredToHaveEvent);
+            log.info("NAN: thus toDie: " + flooredToHaveEvent);
         }
 
 //        flooredToHaveEvent++;
