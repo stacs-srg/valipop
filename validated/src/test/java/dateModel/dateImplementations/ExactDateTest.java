@@ -17,7 +17,7 @@
 package dateModel.dateImplementations;
 
 import org.junit.Test;
-import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateImplementations.ExactDate;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.dateModel.dateImplementations.ExactDate;
 
 import java.time.DateTimeException;
 

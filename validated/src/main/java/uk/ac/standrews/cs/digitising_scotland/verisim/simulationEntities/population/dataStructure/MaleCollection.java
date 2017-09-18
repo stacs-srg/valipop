@@ -17,11 +17,11 @@
 package uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.dataStructure;
 
 
-import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.DateUtils;
-import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.MisalignedTimeDivisionError;
-import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateImplementations.AdvancableDate;
-import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateImplementations.MonthDate;
-import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.timeSteps.CompoundTimeUnit;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.dateModel.*;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.dateModel.MisalignedTimeDivisionError;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.dateModel.dateImplementations.AdvancableDate;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.dateModel.dateImplementations.MonthDate;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPersonExtended;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.dataStructure.exceptions.PersonNotFoundException;
 
@@ -45,7 +45,7 @@ public class MaleCollection extends PersonCollection {
      * @param start the start
      * @param end   the end
      */
-    public MaleCollection(AdvancableDate start, uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.Date end, CompoundTimeUnit divisionSize) {
+    public MaleCollection(AdvancableDate start, uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.dateModel.Date end, CompoundTimeUnit divisionSize) {
         super(start, end, divisionSize);
 
         for (AdvancableDate d = start; DateUtils.dateBeforeOrEqual(d, end); d = d.advanceTime(divisionSize)) {

@@ -17,7 +17,7 @@
 package uk.ac.standrews.cs.digitising_scotland.verisim.utils.sourceEventRecords.processingVisuliserFormat;
 
 import uk.ac.standrews.cs.digitising_scotland.population_model.model.IPopulation;
-import uk.ac.standrews.cs.digitising_scotland.verisim.utils.sourceEventRecords.SourceRecord;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.sourceEventRecords.oldDSformat.SourceRecord;
 import uk.ac.standrews.cs.utilities.FileManipulation;
 import uk.ac.standrews.cs.utilities.PercentageProgressIndicator;
 import uk.ac.standrews.cs.utilities.ProgressIndicator;

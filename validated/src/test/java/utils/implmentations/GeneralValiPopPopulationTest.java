@@ -16,16 +16,6 @@
  */
 package utils.implmentations;
 
-import uk.ac.standrews.cs.digitising_scotland.population_model.distributions.general.InconsistentWeightException;
-import uk.ac.standrews.cs.digitising_scotland.population_model.distributions.general.NegativeDeviationException;
-import uk.ac.standrews.cs.digitising_scotland.population_model.distributions.general.NegativeWeightException;
-import uk.ac.standrews.cs.digitising_scotland.verisim.utils.ProgramTimer;
-import uk.ac.standrews.cs.digitising_scotland.verisim.utils.fileUtils.InvalidInputFileException;
-import uk.ac.standrews.cs.digitising_scotland.verisim.utils.implementations.CL_OBDModel;
-import uk.ac.standrews.cs.digitising_scotland.verisim.utils.implementations.OBDModel;
-
-import java.io.IOException;
-
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */

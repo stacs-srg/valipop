@@ -17,8 +17,8 @@
 package uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.entityExtensions;
 
 
-import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.Date;
-import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.timeSteps.CompoundTimeUnit;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.dateModel.Date;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPersonExtended;
 
 import java.util.Collection;

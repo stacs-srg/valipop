@@ -18,9 +18,9 @@ package uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.popula
 
 import uk.ac.standrews.cs.digitising_scotland.population_model.model.IPartnership;
 import uk.ac.standrews.cs.digitising_scotland.population_model.model.IPerson;
-import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.DateUtils;
-import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateImplementations.AdvancableDate;
-import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.timeSteps.CompoundTimeUnit;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.dateModel.*;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.dateModel.dateImplementations.AdvancableDate;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.partnership.IPartnershipExtended;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPersonExtended;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.IPopulationExtended;
@@ -78,7 +78,7 @@ public class PeopleCollection extends PersonCollection implements IPopulationExt
      * @param start the start
      * @param end   the end
      */
-    public PeopleCollection(AdvancableDate start, uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.Date end, CompoundTimeUnit divisionSize) {
+    public PeopleCollection(AdvancableDate start, uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.dateModel.Date end, CompoundTimeUnit divisionSize) {
         super(start, end, divisionSize);
 
         males = new MaleCollection(start, end, divisionSize);

@@ -16,7 +16,7 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.dataStructure;
 
-import uk.ac.standrews.cs.digitising_scotland.verisim.config.Config;
+import uk.ac.standrews.cs.digitising_scotland.verisim.Config;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.PopulationCounts;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.dataStructure.utils.AggregatePersonCollectionFactory;
 

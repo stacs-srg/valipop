@@ -16,16 +16,15 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.verisim.events.init;
 
-import uk.ac.standrews.cs.digitising_scotland.verisim.config.Config;
-import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.Date;
-import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.DateUtils;
-import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateImplementations.AdvancableDate;
-import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateImplementations.MonthDate;
-import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.timeSteps.CompoundTimeUnit;
-import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.timeSteps.TimeUnit;
+import uk.ac.standrews.cs.digitising_scotland.verisim.Config;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.dateModel.Date;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.dateModel.DateUtils;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.dateModel.dateImplementations.AdvancableDate;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.dateModel.timeSteps.TimeUnit;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.recording.PopulationStatistics;
+import uk.ac.standrews.cs.digitising_scotland.verisim.statistics.populationStatistics.PopulationStatistics;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.EntityFactory;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.dataStructure.Population;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.dataStructure.exceptions.InsufficientNumberOfPeopleException;
@@ -137,53 +136,7 @@ public class InitLogic {
     }
 
     public static int calculateNumberToDie(int people, Double deathRate) {
-
-
-        double toHaveEvent = people * deathRate;
-        int flooredToHaveEvent = (int) toHaveEvent;
-        toHaveEvent -= flooredToHaveEvent;
-
-//        if (randomNumberGenerator.nextInt(100) < toHaveEvent * 100) {
-//            flooredToHaveEvent++;
-//        }
-
-//        if (randomNumberGenerator.nextDouble() < toHaveEvent) {
-//            flooredToHaveEvent++;
-//        }
-
-        // this is a random dice roll to see if the fraction of a has the event or not
-
-        if(deathRate <= 0.001) {
-
-            if (randomNumberGenerator.nextInt(100) < toHaveEvent * 100) {
-                flooredToHaveEvent++;
-            }
-
-        } else {
-//
-//            if (toHaveEvent > 0.5) {
-//                flooredToHaveEvent++;
-//            }
-            if (randomNumberGenerator.nextDouble() < toHaveEvent) {
-                flooredToHaveEvent++;
-            }
-////        } else {
-////            flooredToHaveEvent++;
-        }
-//
-//        }
-
-        if(deathRate.isNaN()) {
-            log.info("NAN: thus toDie: " + flooredToHaveEvent);
-        }
-
-//        flooredToHaveEvent++;
-
-        return flooredToHaveEvent;
-
+        return SharedLogic.calculateNumberToHaveEvent(people, deathRate);
     }
 
-    public static int getCurrentHypotheticalPopulationSize() {
-        return currentHypotheticalPopulationSize;
-    }
 }
