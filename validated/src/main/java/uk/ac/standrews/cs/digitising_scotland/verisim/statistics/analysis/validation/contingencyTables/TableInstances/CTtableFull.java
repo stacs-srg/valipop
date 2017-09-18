@@ -62,18 +62,18 @@ public class CTtableFull extends CTtable {
 
     protected String getVarNames(String sep, CTRow row) {
 
-        String s = "";
+        StringBuilder s = new StringBuilder();
 
         for(Object cell : row.getCells()) {
 
-            s += ((CTCell) cell).getVariable() + sep;
+            s.append(((CTCell) cell).getVariable() + sep);
 
         }
 
-        s += "freq\n";
+        s.append("freq\n");
 
 
-        return s;
+        return s.toString();
     }
 
 }

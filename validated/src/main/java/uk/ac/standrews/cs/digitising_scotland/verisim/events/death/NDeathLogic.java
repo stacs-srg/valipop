@@ -57,7 +57,17 @@ public class NDeathLogic implements EventLogic {
 
     }
 
-    public static int tKilled = 0;
+    @Override
+    public int getEventCount() {
+        return tKilled;
+    }
+
+    @Override
+    public void resetEventCount() {
+        tKilled = 0;
+    }
+
+    private int tKilled = 0;
 
     private int handleDeathsForSex(char sex, Config config,
                                     AdvancableDate currentDate, CompoundTimeUnit consideredTimePeriod,

@@ -22,8 +22,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.dateModel.DateUtils;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.dateModel.dateImplementations.YearDate;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.dateModel.dateSelection.BirthDateSelector;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.dateModel.dateSelection.DateSelector;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPersonExtended;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.dateModel.timeSteps.TimeUnit;
 
 
 import java.util.ArrayList;
@@ -44,6 +47,9 @@ public class Partnership implements IPartnershipExtended {
 
     private Date partnershipDate;
     private Date separationDate = null;
+    private Date ealiestPossibleSepatationDate = null;
+
+    private static DateSelector dateSelector = new DateSelector();
 
     public Partnership(IPersonExtended male, IPersonExtended female, Date partnershipDate) {
 
@@ -148,9 +154,52 @@ public class Partnership implements IPartnershipExtended {
 
     @Override
     public Date getSeparationDate() {
-        // TODO separation stuff
 
-        return separationDate;
+        if(ealiestPossibleSepatationDate == null) {
+            return null;
+        } else {
+
+            if(separationDate == null) {
+
+                Date maleMovedOnDate = male.getDateOfNextPostSeparationEvent(ealiestPossibleSepatationDate);
+                Date femaleMovedOnDate = female.getDateOfNextPostSeparationEvent(ealiestPossibleSepatationDate);
+
+                Date earliestMovedOnDate;
+
+                if (maleMovedOnDate != null) {
+                    if (femaleMovedOnDate != null) {
+                        // if female not null and male not null
+                        // pick earliest
+                        if(DateUtils.dateBefore(maleMovedOnDate, femaleMovedOnDate)) {
+                            earliestMovedOnDate = maleMovedOnDate;
+                        } else {
+                            earliestMovedOnDate = femaleMovedOnDate;
+                        }
+
+                    } else {
+                        // if male not null and female null - take male date
+                        earliestMovedOnDate = maleMovedOnDate;
+                    }
+
+
+                } else {
+                    if (femaleMovedOnDate != null) {
+                        // if male null and female not null - take female
+                        earliestMovedOnDate = femaleMovedOnDate;
+                    } else {
+                        // if male null and female null
+                        // pick a date in the next 30 years
+                        earliestMovedOnDate = ealiestPossibleSepatationDate.getYearDate().advanceTime(30, TimeUnit.YEAR);
+
+                    }
+                }
+
+                separationDate = dateSelector.selectDate(ealiestPossibleSepatationDate, earliestMovedOnDate);
+
+            }
+
+            return separationDate;
+        }
     }
 
     @Override
@@ -165,9 +214,11 @@ public class Partnership implements IPartnershipExtended {
 
     @Override
     public void separate(Date currentDate, CompoundTimeUnit consideredTimePeriod) {
-        // TODO move over to selecting a date between the currentDate and the date of next partnership
 
-        separationDate = currentDate;
+        ealiestPossibleSepatationDate = currentDate;
+
+        female.willSeparate(true);
+        male.willSeparate(true);
 
     }
 

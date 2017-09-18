@@ -342,9 +342,11 @@ public class FemaleCollection extends PersonCollection {
 
         Collection<IPersonExtended> people = new ArrayList<>();
 
-        for (MonthDate t : byBirthYearAndNumberOfChildren.keySet()) {
-            for (Integer i : byBirthYearAndNumberOfChildren.get(t).keySet()) {
-                people.addAll(byBirthYearAndNumberOfChildren.get(t).get(i));
+        // By birth Year
+        for (Map.Entry<MonthDate, TreeMap<Integer, Collection<IPersonExtended>>> t : byBirthYearAndNumberOfChildren.entrySet()) {
+            // By number of children
+            for (Map.Entry<Integer, Collection<IPersonExtended>> i : t.getValue().entrySet()) {
+                people.addAll(i.getValue());
             }
         }
 
@@ -476,35 +478,4 @@ public class FemaleCollection extends PersonCollection {
 
     }
 
-    
-    // May be broke with changes - method needs checked
-    public boolean verify(FemaleCollection fc) {
-
-        boolean passed = true;
-
-        for(MonthDate y : byBirthYearAndNumberOfChildren.keySet()) {
-
-            Map<Integer, Collection<IPersonExtended>> birthCohort = byBirthYearAndNumberOfChildren.get(y);
-
-            for(Integer birthOrder : birthCohort.keySet()) {
-
-                Collection<IPersonExtended> orderedBirthCohort = birthCohort.get(birthOrder);
-
-                for(IPersonExtended p : orderedBirthCohort) {
-                    if(p.getBirthDate_ex().getYear() != y.getYear()
-                            || p.getAllChildren().size() != birthOrder) {
-                        passed = false;
-                        log.info("F: " + p.getId() + " YOB: " + p.getBirthDate_ex().getYear() + " ("
-                                + y.getYear() + ") order: " + p.getAllChildren().size() + " (" + birthOrder + ")");
-                    }
-                }
-
-            }
-
-
-        }
-
-
-        return passed;
-    }
 }

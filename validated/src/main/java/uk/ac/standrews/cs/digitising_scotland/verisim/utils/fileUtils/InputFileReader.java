@@ -291,6 +291,8 @@ public class InputFileReader {
                 case "data":
                     data = readIn2DDataTable(i, lines, path, columnLabels);
                     break;
+                default:
+                    break;
             }
 
         }
@@ -333,6 +335,8 @@ public class InputFileReader {
                     break;
                 case "data":
                     data = readIn2DDataTable(i, lines, path, columnLabels);
+                    break;
+                default:
                     break;
             }
 

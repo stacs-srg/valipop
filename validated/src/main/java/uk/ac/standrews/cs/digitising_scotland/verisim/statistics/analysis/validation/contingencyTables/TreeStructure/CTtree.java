@@ -40,7 +40,7 @@ import java.util.*;
  */
 public class CTtree extends Node<String, SourceType, Number, Number> implements ContingencyTable {
 
-    public static Logger log = LogManager.getLogger(CTtree.class);
+    public static final Logger log = LogManager.getLogger(CTtree.class);
 
     private LinkedList<RunnableNode> deathTasks = new LinkedList<>();
     private LinkedList<RunnableNode> ageTasks = new LinkedList<>();
@@ -55,7 +55,7 @@ public class CTtree extends Node<String, SourceType, Number, Number> implements 
     private Date endDate;
 
     private SourceNodeInt simNode;
-    private static SourceNodeDouble statNode = null;
+    private SourceNodeDouble statNode = null;
 
     public CTtree(PeopleCollection population, PopulationStatistics expected, Date startDate, Date endDate) {
         this.expected = expected;

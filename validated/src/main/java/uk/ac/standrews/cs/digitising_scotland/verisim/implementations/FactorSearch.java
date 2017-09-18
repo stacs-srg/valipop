@@ -54,15 +54,15 @@ public class FactorSearch {
                 case "F":
                     runFactorSearch(2000000, 0.1);
                     break;
+                default:
+                    break;
             }
 
         } catch (IOException | InvalidInputFileException e) {
             e.printStackTrace();
-            OBDModel.log.error(e.getMessage());
+            System.err.println(e.getMessage());
         }
     }
-
-    public static Logger log;
 
     static double[] rfs;
     static double[] maxInfids;

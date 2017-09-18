@@ -38,7 +38,7 @@ public class DeathAnalytics {
     private final int[] age_at_death = new int[MAX_AGE_AT_DEATH]; // tracks age of death over population
     private final IPopulationExtended population;
 
-    private static PrintStream out;
+    private PrintStream out;
 
     /**
      * Creates an analytic instance to analyse deaths in a population.

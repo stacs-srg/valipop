@@ -24,7 +24,7 @@ import java.util.*;
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class IntegerRangeToDoubleSet implements LabeledValueSet<IntegerRange, Double> {
+public class IntegerRangeToDoubleSet implements LabeledValueSet<IntegerRange, Double>, Cloneable {
 
     private static double DELTA = 1E-4;
 
@@ -66,8 +66,8 @@ public class IntegerRangeToDoubleSet implements LabeledValueSet<IntegerRange, Do
 
         double sum = 0;
 
-        for(IntegerRange iR : map.keySet()) {
-            sum += map.get(iR);
+        for(Map.Entry<IntegerRange, Double> iR : map.entrySet()) {
+            sum += iR.getValue();
         }
 
         return sum;

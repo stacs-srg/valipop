@@ -62,8 +62,8 @@ public class MaleCollection extends PersonCollection {
 
         Collection<IPersonExtended> people = new ArrayList<>();
 
-        for (MonthDate t : byYear.keySet()) {
-            people.addAll(byYear.get(t));
+        for (Map.Entry<MonthDate, Collection<IPersonExtended>> persons : byYear.entrySet()) {
+            people.addAll(persons.getValue());
         }
 
         return people;

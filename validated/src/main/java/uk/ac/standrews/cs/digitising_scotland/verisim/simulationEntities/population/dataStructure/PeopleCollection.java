@@ -37,7 +37,7 @@ import java.util.*;
  *
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class PeopleCollection extends PersonCollection implements IPopulationExtended {
+public class PeopleCollection extends PersonCollection implements IPopulationExtended, Cloneable {
 
     private String description = "";
 
@@ -60,8 +60,8 @@ public class PeopleCollection extends PersonCollection implements IPopulationExt
             clone.addPerson(f);
         }
 
-        for(Integer k : partnershipIndex.keySet()) {
-            clone.addPartnershipToIndex(partnershipIndex.get(k));
+        for(Map.Entry<Integer, IPartnershipExtended> k : partnershipIndex.entrySet()) {
+            clone.addPartnershipToIndex(k.getValue());
         }
 
         clone.setDescription(description);

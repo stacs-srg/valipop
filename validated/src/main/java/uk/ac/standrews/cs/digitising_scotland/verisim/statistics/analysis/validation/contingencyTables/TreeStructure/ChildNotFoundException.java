@@ -19,5 +19,5 @@ package uk.ac.standrews.cs.digitising_scotland.verisim.statistics.analysis.valid
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class ChildNotFoundException extends Throwable {
+public class ChildNotFoundException extends Exception {
 }

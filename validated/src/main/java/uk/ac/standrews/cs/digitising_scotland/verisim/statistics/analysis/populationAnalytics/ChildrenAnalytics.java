@@ -38,7 +38,7 @@ public class ChildrenAnalytics {
 
     private final int[] children_per_marriage = new int[MAX_CHILDREN]; // tracks family size
     private final IPopulationExtended population;
-    private static PrintStream out;
+    private PrintStream out;
 
     private final Map<Integer, Double> fertilityRateByYear = new TreeMap<>();
 
@@ -71,9 +71,9 @@ public class ChildrenAnalytics {
         }
 
         out.println("Fertility rates by year:");
-        for(Integer year : fertilityRateByYear.keySet()) {
-            if(!fertilityRateByYear.get(year).equals(0.0)) {
-                out.println("\t" + year + " Fertility rate = " + fertilityRateByYear.get(year));
+        for(Map.Entry<Integer, Double> fr : fertilityRateByYear.entrySet()) {
+            if(!fr.getValue().equals(0.0)) {
+                out.println("\t" + fr.getKey() + " Fertility rate = " + fr.getValue());
             }
         }
 

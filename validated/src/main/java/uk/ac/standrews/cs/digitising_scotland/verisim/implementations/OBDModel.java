@@ -41,6 +41,7 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.utils.sourceEventRecords.R
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.io.UnsupportedEncodingException;
 import java.nio.file.Paths;
 
 /**
@@ -50,7 +51,7 @@ public class OBDModel {
 
     public static final String CODE_VERSION = "dev-bf";
 
-    public static Logger log;
+    private static Logger log;
 
     private Config config;
     private SummaryRow summary;
@@ -118,8 +119,8 @@ public class OBDModel {
                 summary.setCompleted(false);
 
                 summary.outputSummaryRowToFile();
-                NDeathLogic.tKilled = 0;
-                NBirthLogic.tBirths = 0;
+                deathLogic.resetEventCount();
+                birthLogic.resetEventCount();
 
                 simTimer = new ProgramTimer();
 
@@ -178,9 +179,9 @@ public class OBDModel {
         }
 
 
-        log.info("TKilled\t" + NDeathLogic.tKilled);
-        log.info("TBorn\t" + NBirthLogic.tBirths);
-        log.info("Ratio\t" + NDeathLogic.tKilled / (double) NBirthLogic.tBirths);
+        log.info("TKilled\t" + deathLogic.getEventCount());
+        log.info("TBorn\t" + birthLogic.getEventCount());
+        log.info("Ratio\t" + deathLogic.getEventCount() / (double) birthLogic.getEventCount());
 
         summary.setCompleted(true);
         summary.setEndPop(population.getLivingPeople().getNumberOfPeople());
@@ -200,8 +201,8 @@ public class OBDModel {
 
 
         try {
-            AnalyticsRunner.runAnalytics(population.getAllPeople(), new PrintStream(FileUtils.getDetailedResultsPath().toFile()));
-        } catch (FileNotFoundException e) {
+            AnalyticsRunner.runAnalytics(population.getAllPeople(), new PrintStream(FileUtils.getDetailedResultsPath().toFile(), "UTF-8"));
+        } catch (FileNotFoundException | UnsupportedEncodingException e) {
             e.printStackTrace();
         }
 

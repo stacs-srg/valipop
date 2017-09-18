@@ -12,17 +12,23 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.utils.sourceEventRecords.p
  */
 public class RecordGenerationFactory {
 
-    public static Logger log = LogManager.getLogger(RecordGenerationFactory.class);
+    public static final Logger log = LogManager.getLogger(RecordGenerationFactory.class);
 
     public static void outputRecords(RecordFormat recordFormat, String recordsOutputDir,  PeopleCollection population) {
 
         switch(recordFormat) {
             case DS:
                 extractBMDRecords(population, recordsOutputDir);
+                break;
             case VIS_PROCESSING:
                 extractSimplifiedBMDRecords(population, recordsOutputDir);
+                break;
             case NONE:
                 break;
+            default:
+                break;
+
+
         }
 
     }

@@ -52,8 +52,8 @@ public class SelfCorrectingProportionalDistribution implements DataDistribution 
 
         this.achievedCounts = new HashMap<>();
 
-        for(IntegerRange iR : targetProportions.keySet()) {
-            achievedCounts.put(iR, new IntegerRangeToIntegerSet(targetProportions.get(iR).getLabels(), 0));
+        for(Map.Entry<IntegerRange, LabeledValueSet<IntegerRange, Double>> iR : targetProportions.entrySet()) {
+            achievedCounts.put(iR.getKey(), new IntegerRangeToIntegerSet(iR.getValue().getLabels(), 0));
         }
     }
 

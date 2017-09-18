@@ -29,7 +29,7 @@ public class CL_OBDModel {
         try {
             runOBDModel(pathToConfigFile, resultsPath, runPurpose);
         } catch (InvalidInputFileException | IOException | Error e) {
-            OBDModel.log.error(e.getMessage());
+            System.err.println(e.getMessage());
         }
 
     }

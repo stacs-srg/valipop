@@ -72,7 +72,7 @@ public class IntegerRange implements Comparable<IntegerRange> {
     public Boolean contains(Integer integer) {
 
         if(value.equals("na")) {
-            return null;
+            throw new InvalidRangeException("Range value na - cannot contain value: " + integer);
         }
 
         if (plus) {
@@ -163,7 +163,7 @@ public class IntegerRange implements Comparable<IntegerRange> {
             }
         }
 
-        return new Integer(hc);
+        return Integer.parseInt(hc);
     }
 
 }

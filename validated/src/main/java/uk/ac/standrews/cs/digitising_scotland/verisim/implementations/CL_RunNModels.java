@@ -44,7 +44,7 @@ public class CL_RunNModels {
             }
 
         } catch (InvalidInputFileException | IOException | Error e) {
-            OBDModel.log.error(e.getMessage());
+            System.err.println(e.getMessage());
         }
 
     }

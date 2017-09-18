@@ -47,7 +47,7 @@ import java.util.*;
  */
 public class NBirthLogic implements EventLogic {
 
-    public static int tBirths = 0;
+    private int tBirths = 0;
 
     @Override
     public int handleEvent(Config config, AdvancableDate currentDate, CompoundTimeUnit consideredTimePeriod,
@@ -118,6 +118,16 @@ public class NBirthLogic implements EventLogic {
 
         return bornAtTS;
 
+    }
+
+    @Override
+    public int getEventCount() {
+        return tBirths;
+    }
+
+    @Override
+    public void resetEventCount() {
+        tBirths = 0;
     }
 
     private MotherSet selectMothers(Config config, Collection<IPersonExtended> females, int numberOfChildren,

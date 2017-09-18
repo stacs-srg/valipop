@@ -31,9 +31,6 @@ import java.util.Random;
  */
 public class DeathDateSelector extends DateSelector {
 
-    private Random random = new Random();
-
-
     public ExactDate selectDate(IPersonExtended p, PopulationStatistics desiredPopulationStatistics, AdvancableDate currentDate, CompoundTimeUnit consideredTimePeriod) {
 
         IPersonExtended child = p.getLastChild();

@@ -36,7 +36,7 @@ public class PopulationAnalytics {
 
     private static final int ONE_HUNDRED = 100;
     private final IPopulationExtended population;
-    private static PrintStream out;
+    private PrintStream out;
 
     /**
      * Creates an analytic instance to analyse the entire population.
@@ -50,12 +50,12 @@ public class PopulationAnalytics {
 
     }
 
-    private static void printBirthDate(final IPersonExtended person) {
+    private void printBirthDate(final IPersonExtended person) {
 
         out.print(person.getBirthDate_ex().toString());
     }
 
-    private static void printDeathDate(final IPersonExtended person) {
+    private void printDeathDate(final IPersonExtended person) {
 
         final Date death_date = person.getDeathDate_ex();
         if (death_date != null) {
