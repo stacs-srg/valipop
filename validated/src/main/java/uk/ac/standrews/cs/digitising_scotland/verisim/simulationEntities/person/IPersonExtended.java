@@ -18,7 +18,7 @@ package uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person
 
 
 import uk.ac.standrews.cs.digitising_scotland.population_model.model.IPerson;
-import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.Date;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.dateModel.Date;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.partnership.IPartnershipExtended;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.entityExtensions.PersonUtils;
 

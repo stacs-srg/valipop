@@ -19,6 +19,7 @@ package uk.ac.standrews.cs.digitising_scotland.verisim.utils.sourceEventRecords;
 import uk.ac.standrews.cs.digitising_scotland.population_model.model.IPartnership;
 import uk.ac.standrews.cs.digitising_scotland.population_model.model.IPerson;
 import uk.ac.standrews.cs.digitising_scotland.population_model.model.IPopulation;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.sourceEventRecords.oldDSformat.SourceRecord;
 
 /**
  * Created by graham on 13/05/2014.

@@ -17,7 +17,7 @@
 package uk.ac.standrews.cs.digitising_scotland.verisim.utils;
 
 
-import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.dataDistributionTables.OneDimensionDataDistribution;
+import uk.ac.standrews.cs.digitising_scotland.verisim.statistics.populationStatistics.statsTables.OneDimensionDataDistribution;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.integerRange.IntegerRange;
 
 import java.util.Collection;

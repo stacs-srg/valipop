@@ -16,13 +16,13 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.dataStructure;
 
-import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.Date;
-import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.DateBounds;
-import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.DateUtils;
-import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.MisalignedTimeDivisionError;
-import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateImplementations.AdvancableDate;
-import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.dateImplementations.MonthDate;
-import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.timeSteps.CompoundTimeUnit;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.dateModel.Date;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.dateModel.DateBounds;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.dateModel.DateUtils;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.dateModel.MisalignedTimeDivisionError;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.dateModel.dateImplementations.AdvancableDate;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.dateModel.dateImplementations.MonthDate;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPersonExtended;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.dataStructure.exceptions.InsufficientNumberOfPeopleException;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.population.dataStructure.exceptions.PersonNotFoundException;
@@ -51,7 +51,7 @@ public abstract class PersonCollection implements DateBounds {
      * @param startDate the start date
      * @param endDate   the end date
      */
-    public PersonCollection(AdvancableDate startDate, uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.Date endDate, CompoundTimeUnit divisionSize) {
+    public PersonCollection(AdvancableDate startDate, Date endDate, CompoundTimeUnit divisionSize) {
         this.startDate = startDate;
         this.endDate = endDate;
         this.divisionSize = divisionSize;
@@ -234,7 +234,7 @@ public abstract class PersonCollection implements DateBounds {
     }
 
     @Override
-    public uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.Date getEndDate() {
+    public Date getEndDate() {
         return endDate;
     }
 
@@ -244,7 +244,7 @@ public abstract class PersonCollection implements DateBounds {
     }
 
     @Override
-    public void setEndDate(uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.Date endDate) {
+    public void setEndDate(Date endDate) {
         this.endDate = endDate;
     }
 
@@ -288,7 +288,7 @@ public abstract class PersonCollection implements DateBounds {
          return DateUtils.matchesInterval(date, divisionSize, startDate);
     }
 
-    public MonthDate resolveDateToCorrectDivisionDate(uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.Date date) {
+    public MonthDate resolveDateToCorrectDivisionDate(Date date) {
 
         int dM = date.getMonth();
         int dY = date.getYear();

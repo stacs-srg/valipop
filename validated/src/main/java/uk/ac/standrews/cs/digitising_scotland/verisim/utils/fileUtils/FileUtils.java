@@ -16,11 +16,10 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.verisim.utils.fileUtils;
 
-import uk.ac.standrews.cs.digitising_scotland.verisim.config.Config;
-import uk.ac.standrews.cs.digitising_scotland.verisim.events.EventType;
+import uk.ac.standrews.cs.digitising_scotland.verisim.Config;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import uk.ac.standrews.cs.digitising_scotland.verisim.populationStatistics.validation.summaryData.SummaryRow;
+import uk.ac.standrews.cs.digitising_scotland.verisim.statistics.analysis.simulationSummaryLogging.SummaryRow;
 
 import java.io.File;
 import java.io.IOException;

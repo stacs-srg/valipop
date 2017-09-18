@@ -37,14 +37,6 @@ public class SharedLogic {
             flooredToHaveEvent++;
         }
 
-//        if (toHaveEvent > 0.5) {
-////            if (randomNumberGenerator.nextDouble() < toHaveEvent) {
-////                flooredToHaveEvent++;
-////            }
-////        } else {
-//            flooredToHaveEvent++;
-//        }
-
         return flooredToHaveEvent;
 
     }

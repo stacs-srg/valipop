@@ -18,7 +18,7 @@ package uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.partne
 
 import uk.ac.standrews.cs.digitising_scotland.population_model.model.IPartnership;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.entityExtensions.PartnershipUtils;
-import uk.ac.standrews.cs.digitising_scotland.verisim.dateModel.Date;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.dateModel.Date;
 import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.IPersonExtended;
 
 import java.util.List;
