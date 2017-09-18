@@ -23,7 +23,7 @@ import java.util.*;
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class IntegerRangeToIntegerSet implements LabeledValueSet<IntegerRange, Integer> {
+public class IntegerRangeToIntegerSet implements LabeledValueSet<IntegerRange, Integer>, Cloneable {
 
     private Map<IntegerRange, Integer> map = new HashMap<>();
 
@@ -60,8 +60,8 @@ public class IntegerRangeToIntegerSet implements LabeledValueSet<IntegerRange, I
 
         Integer sum = 0;
 
-        for(IntegerRange iR : map.keySet()) {
-            sum += map.get(iR);
+        for(Map.Entry<IntegerRange, Integer> iR : map.entrySet()) {
+            sum += iR.getValue();
         }
 
         return sum;
@@ -133,7 +133,7 @@ public class IntegerRangeToIntegerSet implements LabeledValueSet<IntegerRange, I
 
         for(IntegerRange iR : map.keySet()) {
             labels.add(iR);
-            products.add(new Double(getValue(iR)) * n);
+            products.add(getValue(iR) * n);
         }
 
         return new IntegerRangeToDoubleSet(labels, products);

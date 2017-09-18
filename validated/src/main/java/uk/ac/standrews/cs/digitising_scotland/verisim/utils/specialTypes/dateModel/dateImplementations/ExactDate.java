@@ -27,17 +27,13 @@ import java.util.Calendar;
  */
 public final class ExactDate implements Date {
 
-
-
     private final int year;
     private final int month;
     private final int day;
 
     public ExactDate(int day, int month, int year) {
-        if (month <= 0 || month > 12) {
-            throw new DateTimeException("Months should be indexed between 1 and 12 inclusive.");
-        }
-        if (day <= 0 || day > DateUtils.DAYS_IN_MONTH[month - 1]) {
+
+        if (day <= 0 || day > DateUtils.getDaysInMonthNonLeapYear(month)) {
             if (month != DateUtils.FEB || (DateUtils.isLeapYear(year) && day != DateUtils.DAYS_IN_LEAP_FEB) || (!DateUtils.isLeapYear(year) && day >= DateUtils.DAYS_IN_LEAP_FEB)) {
                 throw new DateTimeException("Days should be indexed between 1 and the number of days in the given month inclusive.");
             }
@@ -59,7 +55,7 @@ public final class ExactDate implements Date {
             month = 0;
             throw new DateTimeException("Months should be indexed between 1 and 12 inclusive.");
         }
-        if (day <= 0 || day > DateUtils.DAYS_IN_MONTH[month - 1]) {
+        if (day <= 0 || day > DateUtils.getDaysInMonthNonLeapYear(month)) {
             if (month != DateUtils.FEB || (DateUtils.isLeapYear(year) && day != DateUtils.DAYS_IN_LEAP_FEB || (!DateUtils.isLeapYear(year) && day >= DateUtils.DAYS_IN_LEAP_FEB))) {
                 throw new DateTimeException("Days should be indexed between 1 and the number of days in the given month inclusive.");
             }

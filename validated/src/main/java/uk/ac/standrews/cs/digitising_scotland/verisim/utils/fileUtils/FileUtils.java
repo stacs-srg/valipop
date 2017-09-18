@@ -25,6 +25,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.PrintWriter;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -38,7 +39,7 @@ import java.util.Calendar;
  */
 public class FileUtils {
 
-    public static Logger log = null;
+    private static Logger log = null;
 
     private static Path globalSummaryPath;
     private static Path resultsSummaryPath;
@@ -96,7 +97,7 @@ public class FileUtils {
         try {
 
             File a = Paths.get(config.getResultsSavePath().toString(), config.getRunPurpose(), config.getStartTime(), "dump", fileName + ".txt").toFile();
-            stream = new PrintStream(a);
+            stream = new PrintStream(a, "UTF-8");
 
         } catch (IOException e) {
             checkLogFile();

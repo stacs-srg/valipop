@@ -39,10 +39,12 @@ public class SeparationLogic {
                               PopulationStatistics desiredPopulationStatistics, Population population, Config config) {
 
         // Consideration of separation is based on number of children in females current partnerships
-        for(Integer numberOfChildren : continuingPartnedFemalesByChildren.keySet()) {
+        for(Map.Entry<Integer, ArrayList<IPersonExtended>> entry : continuingPartnedFemalesByChildren.entrySet()) {
+
+            Integer numberOfChildren = entry.getKey();
 
             // Get mothers with given number of children in current partnership
-            ArrayList<IPersonExtended> mothers = continuingPartnedFemalesByChildren.get(numberOfChildren);
+            ArrayList<IPersonExtended> mothers = entry.getValue();
 
             // Get determined count for separations for this group of mothers
             SeparationStatsKey key = new SeparationStatsKey(numberOfChildren, mothers.size(), consideredTimePeriod, currentDate);
@@ -51,7 +53,7 @@ public class SeparationLogic {
             int count = 0;
 
             // For each mother in this group
-            for(IPersonExtended p : continuingPartnedFemalesByChildren.get(numberOfChildren)) {
+            for(IPersonExtended p : mothers) {
 
                 // If enough mothers have been separated then break
                 if(count >= dC.getDeterminedCount()) {
@@ -59,12 +61,8 @@ public class SeparationLogic {
                 }
 
                 // else mark partnership for separation
-                // TODO make this a date between now and next partnership - post stage?
                 p.getLastPartnership().separate(p.getLastChild().getBirthDate_ex(), new CompoundTimeUnit(1, TimeUnit.MONTH));
 
-                // TODO move next two lines of code into above method call?
-                p.willSeparate(true);
-                p.getLastChild().getParentsPartnership_ex().getMalePartner().willSeparate(true);
                 count++;
 
             }

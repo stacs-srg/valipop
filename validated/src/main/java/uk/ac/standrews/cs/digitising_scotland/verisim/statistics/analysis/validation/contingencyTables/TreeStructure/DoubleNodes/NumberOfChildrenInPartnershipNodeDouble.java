@@ -57,17 +57,7 @@ public class NumberOfChildrenInPartnershipNodeDouble extends DoubleNode<IntegerR
 
         IPartnershipExtended activePartnership = PersonCharacteristicsIdentifier.getActivePartnership(person, currentDate);
 
-        Boolean toSeparate = PersonCharacteristicsIdentifier.toSeparate(activePartnership, currentDate.getYearDate());
-
-        SeparationOption option;
-
-        if(toSeparate == null) {
-            option = SeparationOption.NA;
-        } else if(toSeparate) {
-            option = SeparationOption.YES;
-        } else {
-            option = SeparationOption.NO;
-        }
+        SeparationOption option = PersonCharacteristicsIdentifier.toSeparate(activePartnership, currentDate.getYearDate());
 
         try {
             getChild(option).processPerson(person, currentDate);

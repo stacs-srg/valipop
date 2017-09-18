@@ -16,6 +16,7 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.verisim.statistics.analysis.validation.contingencyTables.TableStructure;
 
+import uk.ac.standrews.cs.digitising_scotland.verisim.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.SeparationOption;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.dateModel.Date;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.dateModel.DateUtils;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.dateModel.dateImplementations.YearDate;
@@ -87,20 +88,20 @@ public class PersonCharacteristicsIdentifier {
     }
 
 
-    public static Boolean toSeparate(IPartnershipExtended activePartnership, YearDate y) {
+    public static SeparationOption toSeparate(IPartnershipExtended activePartnership, YearDate y) {
 
         if(activePartnership == null) {
-            return null;
+            return SeparationOption.NA;
         }
 
         IPersonExtended lastChild = activePartnership.getLastChild();
 
         if (!lastChild.bornInYear(y)) {
-            return false;
+            return SeparationOption.NO;
         } else if (activePartnership.getSeparationDate() != null) {
-            return true;
+            return SeparationOption.YES;
         } else {
-            return false;
+            return SeparationOption.NO;
         }
 
     }

@@ -267,7 +267,7 @@ public abstract class GeneralPopulationStructureTests {
 
                 final IPerson child = population.findPerson(child_id);
 
-                if (child.getClass().getName() == OrganicPerson.class.getName()) {
+                if (child.getClass().getName().equals(OrganicPerson.class.getName())) {
                     if (((OrganicPerson) child).isSeedPerson()) {
                         assertEquals(child.getParentsPartnership(), -1);
                     } else {

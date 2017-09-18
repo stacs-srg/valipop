@@ -22,19 +22,31 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.dateMod
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.dateModel.timeSteps.TimeUnit;
 
+import java.time.DateTimeException;
+
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class DateUtils {
 
-    public static final int[] DAYS_IN_MONTH = new int[]{31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+    private static final int[] DAYS_IN_MONTH = new int[]{31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
     public static final int DAYS_IN_LEAP_FEB = 29;
     public static final int FEB = 2;
     public static final int MONTHS_IN_YEAR = 12;
 
-    public static final int DAYS_IN_YEAR = 365;
-    public static final int DAYS_IN_LEAP_YEAR = 366;
+    private static final int DAYS_IN_YEAR = 365;
+    private static final int DAYS_IN_LEAP_YEAR = 366;
 
+    public static int getDaysInMonthNonLeapYear(int month) {
+        // Jan 1 > Dec 12
+
+        if(month < 1 || month > 12) {
+            throw new DateTimeException("Month number invalid");
+        } else {
+            return DAYS_IN_MONTH[month - 1];
+        }
+
+    }
 
 
     public static CompoundTimeUnit differenceInYears(Date a, Date b) {
@@ -128,28 +140,6 @@ public class DateUtils {
         int dM = differenceInMonths(startDate, currentDate).getCount();
 
         return dM % monthsInTimeUnit(interval) == 0;
-
-
-
-//        // If year interval and first month of year
-//        if (interval.getUnit() == TimeUnit.YEAR) {
-//            if (currentDate.getMonth() == 1) {
-//                // Checks year based on remainder from the year 0
-//                if (currentDate.getYear() % interval.getCount() == 0) {
-//                    return true;
-//                }
-//            }
-//        }
-//
-//        // If month interval
-//        if (interval.getUnit() == TimeUnit.MONTH) {
-//            // Offset by one to make month 1, 4, 7, 10 the months for the quarterly interval
-//            if ((currentDate.getMonth() - 1) % interval.getCount() == 0) {
-//                return true;
-//            }
-//        }
-//
-//        return false;
 
     }
 

@@ -33,4 +33,8 @@ public interface EventLogic {
                     AdvancableDate currentDate, CompoundTimeUnit consideredTimePeriod,
                     Population population, PopulationStatistics desiredPopulationStatistics) throws InsufficientNumberOfPeopleException, PersonNotFoundException;
 
+    int getEventCount();
+
+    void resetEventCount();
+
 }

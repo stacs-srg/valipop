@@ -21,7 +21,7 @@ package uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.popula
  *
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class PersonNotFoundException extends Throwable {
+public class PersonNotFoundException extends Exception {
 
     private final String message;
 

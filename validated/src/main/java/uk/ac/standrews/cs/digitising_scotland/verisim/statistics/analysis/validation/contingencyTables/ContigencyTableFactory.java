@@ -22,7 +22,7 @@ import java.nio.file.Path;
  */
 public class ContigencyTableFactory {
 
-    public static Logger log = LogManager.getLogger(ContigencyTableFactory.class);
+    public static final Logger log = LogManager.getLogger(ContigencyTableFactory.class);
 
     public static void generateContigencyTables(PeopleCollection population, PopulationStatistics desired, Config config, SummaryRow summary) {
 
@@ -43,42 +43,42 @@ public class ContigencyTableFactory {
             log.info("OBDModel --- Extracting and Outputting CTables to files");
             CTtableOB obTable = new CTtableOB(fullTree, desired);
             Path obPath = FileUtils.mkBlankFile(FileUtils.getContingencyTablesPath(), "ob-CT.csv");
-            obOutput = new PrintStream(obPath.toFile());
+            obOutput = new PrintStream(obPath.toFile(), "UTF-8");
             obTable.outputToFile(obOutput);
 
             MemoryUsageAnalysis.log();
 
             CTtableMB mbTable = new CTtableMB(fullTree, desired);
             Path mbPath = FileUtils.mkBlankFile(FileUtils.getContingencyTablesPath(), "mb-CT.csv");
-            mbOutput = new PrintStream(mbPath.toFile());
+            mbOutput = new PrintStream(mbPath.toFile(), "UTF-8");
             mbTable.outputToFile(mbOutput);
 
             MemoryUsageAnalysis.log();
 
             CTtablePart partTable = new CTtablePart(fullTree, desired);
             Path partPath = FileUtils.mkBlankFile(FileUtils.getContingencyTablesPath(), "part-CT.csv");
-            partOutput = new PrintStream(partPath.toFile());
+            partOutput = new PrintStream(partPath.toFile(), "UTF-8");
             partTable.outputToFile(partOutput);
 
             MemoryUsageAnalysis.log();
 
             CTtableSep sepTable = new CTtableSep(fullTree, desired);
             Path sepPath = FileUtils.mkBlankFile(FileUtils.getContingencyTablesPath(), "sep-CT.csv");
-            sepOutput = new PrintStream(sepPath.toFile());
+            sepOutput = new PrintStream(sepPath.toFile(), "UTF-8");
             sepTable.outputToFile(sepOutput);
 
             MemoryUsageAnalysis.log();
 
             CTtableDeath deathTable = new CTtableDeath(fullTree);
             Path deathPath = FileUtils.mkBlankFile(FileUtils.getContingencyTablesPath(), "death-CT.csv");
-            deathOutput = new PrintStream(deathPath.toFile());
+            deathOutput = new PrintStream(deathPath.toFile(), "UTF-8");
             deathTable.outputToFile(deathOutput);
 
             MemoryUsageAnalysis.log();
 
 //                System.out.println("OBDModel --- Outputting Full CTable to file");
 //                Path fullPath = FileUtils.mkBlankFile(FileUtils.getContingencyTablesPath(), "full-CT.csv");
-//                fullOutput = new PrintStream(fullPath.toFile());
+//                fullOutput = new PrintStream(fullPath.toFile(), "UTF-8");
 //                new CTtableFull(fullTree, fullOutput);
 
             MemoryUsageAnalysis.log();

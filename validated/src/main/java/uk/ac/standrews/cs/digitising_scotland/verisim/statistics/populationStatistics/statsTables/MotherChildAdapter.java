@@ -38,17 +38,17 @@ public class MotherChildAdapter implements ProportionalDistributionAdapter {
 
         Map<IntegerRange, LabeledValueSet<IntegerRange, Double>> transformedProportions = new HashMap<>();
 
-        for(IntegerRange iR : targetProportions.keySet()) {
-            LabeledValueSet<IntegerRange, Double> tp = targetProportions.get(iR);
+        for(Map.Entry<IntegerRange, LabeledValueSet<IntegerRange, Double>> iR : targetProportions.entrySet()) {
+            LabeledValueSet<IntegerRange, Double> tp = iR.getValue();
 
             if(tp.getSumOfValues() != 0) {
-                transformedProportions.put(iR,
+                transformedProportions.put(iR.getKey(),
                         tp
                         .productOfLabelsAndValues()
                         .reproportion()
                 );
             } else {
-                transformedProportions.put(iR, tp);
+                transformedProportions.put(iR.getKey(), tp);
             }
         }
 

@@ -28,6 +28,7 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.person.
 import uk.ac.standrews.cs.digitising_scotland.verisim.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.Node;
 import uk.ac.standrews.cs.digitising_scotland.verisim.statistics.analysis.validation.contingencyTables.TableStructure.PersonCharacteristicsIdentifier;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.integerRange.IntegerRange;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.integerRange.InvalidRangeException;
 
 import java.util.Set;
 
@@ -60,12 +61,20 @@ public class SeparationNodeInt extends IntNode<SeparationOption, IntegerRange> {
 
         for(Node<IntegerRange, ?, Integer, ?> node : getChildren()) {
 
-            Boolean in = node.getOption().contains(newPartnerAge);
 
+            Boolean in;
+            try {
+                in = node.getOption().contains(newPartnerAge);
+            } catch (InvalidRangeException e) {
+                in = null;
+            }
+
+
+            //TODO why are we spliting things here if both branches do the same
             if(newPartnerAge == null && in == null) {
                 node.processPerson(person, currentDate);
                 return;
-            } else if (in){
+            } else if (in != null && in){
                 node.processPerson(person, currentDate);
                 return;
             }

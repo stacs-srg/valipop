@@ -29,9 +29,9 @@ import java.util.Random;
  */
 public class RelationshipsTable {
 
-    public static ArrayList<String[]> relationshipsFather = new ArrayList<>();
-    public static ArrayList<String[]> relationshipsMother = new ArrayList<>();
-    public static ArrayList<String[]> relationshipsMarriage = new ArrayList<>();
+    final static ArrayList<String[]> relationshipsFather = new ArrayList<>();
+    final static ArrayList<String[]> relationshipsMother = new ArrayList<>();
+    final static ArrayList<String[]> relationshipsMarriage = new ArrayList<>();
 
     public static void outputData(String recordsDirPath) throws IOException {
 
@@ -42,9 +42,9 @@ public class RelationshipsTable {
 
     }
 
-    public static void toFile(String recordsDirPath, String fileName) throws IOException {
+    private static void toFile(String recordsDirPath, String fileName) throws IOException {
 
-        PrintStream ps = new PrintStream(FileUtils.mkBlankFile(Paths.get(recordsDirPath), fileName).toFile());
+        PrintStream ps = new PrintStream(FileUtils.mkBlankFile(Paths.get(recordsDirPath), fileName).toFile(), "UTF-8");
 
         for(String[] line : relationshipsMarriage) {
             ps.println(asString(line));
@@ -57,6 +57,8 @@ public class RelationshipsTable {
         for(String[] line : relationshipsFather) {
             ps.println(asString(line));
         }
+
+        ps.close();
 
 
     }
@@ -126,20 +128,20 @@ public class RelationshipsTable {
     }
 
     private static String asString(String[] line) {
-        String ret = "";
+        StringBuilder ret = new StringBuilder();
 
         boolean first = true;
 
         for(String s : line) {
             if(first) {
-                ret += s;
+                ret.append(s);
                 first = false;
             } else {
-                ret += "," + s;
+                ret.append("," + s);
             }
         }
 
-        return ret;
+        return ret.toString();
     }
 
 

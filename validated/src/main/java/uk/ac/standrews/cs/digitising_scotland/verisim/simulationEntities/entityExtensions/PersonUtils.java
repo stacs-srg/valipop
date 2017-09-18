@@ -82,4 +82,6 @@ public interface PersonUtils {
     boolean bornBefore(Date year);
 
     boolean bornOnDate(Date y);
+
+    Date getDateOfNextPostSeparationEvent(Date separationDate);
 }

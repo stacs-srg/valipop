@@ -50,7 +50,7 @@ public class Config {
     private static final String separationSubFile = "separation";
     private static final String birthRatioSubFile = "ratio_birth";
 
-    public static Logger log = LogManager.getLogger(Config.class);
+    public static final Logger log = LogManager.getLogger(Config.class);
 
     private MonthDate tS;
     private MonthDate t0;
@@ -88,7 +88,11 @@ public class Config {
     // Filter method to exclude dot files from data file directory streams
     private DirectoryStream.Filter<Path> filter = new DirectoryStream.Filter<Path>() {
         public boolean accept(Path file) throws IOException {
-            return !file.getFileName().toString().matches("^\\..+");
+            Path path = file.getFileName();
+            if(path != null) {
+                return !path.toString().matches("^\\..+");
+            }
+            throw new IOException("Failed to get Filename");
         }
     };
 

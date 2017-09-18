@@ -140,6 +140,11 @@ public final class MonthDate implements AdvancableDate {
 
     @Override
     public boolean equals(Object obj) {
+
+        if(obj == null || !(obj instanceof AdvancableDate)) {
+            return false;
+        }
+
         AdvancableDate date = (AdvancableDate) obj;
         return this.year == date.getYear() && this.getMonth() == date.getMonth();
     }

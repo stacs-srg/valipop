@@ -30,7 +30,7 @@ public final class YearDate implements AdvancableDate {
 
     private static final int DAY = 1;
     private final int year;
-    private final int MONTH = 1;
+    private static final int MONTH = 1;
 
     public YearDate(int year) {
         this.year = year;
@@ -84,6 +84,11 @@ public final class YearDate implements AdvancableDate {
 
     @Override
     public boolean equals(Object obj) {
+
+        if(obj == null || !(obj instanceof AdvancableDate)) {
+            return false;
+        }
+
         AdvancableDate date = (AdvancableDate) obj;
         return this.year == date.getYear() && this.getMonth() == date.getMonth();
     }

@@ -48,8 +48,8 @@ public class MapUtils {
 
         int count = 0;
 
-        for (Integer i : map.keySet()) {
-            count += map.get(i).size();
+        for (Map.Entry<Integer, Collection<U>> i : map.entrySet()) {
+            count += i.getValue().size();
         }
 
         return count;
@@ -60,8 +60,8 @@ public class MapUtils {
 
         int sum = 0;
 
-        for (IntegerRange iR : map.keySet()) {
-            double d = map.get(iR);
+        for (Map.Entry<IntegerRange, Double> iR : map.entrySet()) {
+            double d = iR.getValue();
             sum += (int) d;
         }
 
@@ -71,11 +71,11 @@ public class MapUtils {
 
     public static Map<Integer, Integer> floorAllValuesInMap(Map<IntegerRange, Double> map) {
 
-        Map<Integer, Integer> temp = new HashMap<Integer, Integer>();
+        Map<Integer, Integer> temp = new HashMap<>();
 
-        for (IntegerRange iR : map.keySet()) {
+        for (Map.Entry<IntegerRange, Double> iR : map.entrySet()) {
 
-            temp.put(iR.getValue(), map.get(iR).intValue());
+            temp.put(iR.getKey().getValue(), iR.getValue().intValue());
 
         }
 
@@ -103,8 +103,8 @@ public class MapUtils {
 
         Map<IntegerRange, OneDimensionDataDistribution> clone = new HashMap<IntegerRange, OneDimensionDataDistribution>();
 
-        for (IntegerRange iR : tableData.keySet()) {
-            clone.put(iR, tableData.get(iR).clone());
+        for (Map.Entry<IntegerRange, OneDimensionDataDistribution> iR : tableData.entrySet()) {
+            clone.put(iR.getKey(), iR.getValue().clone());
         }
 
         return clone;
@@ -113,10 +113,10 @@ public class MapUtils {
 
     public static Map<IntegerRange, Double> cloneODM(Map<IntegerRange, Double> tableData) {
 
-        Map<IntegerRange, Double> clone = new HashMap<IntegerRange, Double>();
+        Map<IntegerRange, Double> clone = new HashMap<>();
 
-        for(IntegerRange iR : tableData.keySet()) {
-            clone.put(iR, tableData.get(tableData.get(iR)));
+        for(Map.Entry<IntegerRange, Double> iR : tableData.entrySet()) {
+            clone.put(iR.getKey(), iR.getValue());
         }
 
 

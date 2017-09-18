@@ -45,7 +45,7 @@ import java.util.*;
 public class Person implements IPersonExtended {
 
     private static Logger log = LogManager.getLogger(Person.class);
-    public static Random random = new Random();
+    public static final Random random = new Random();
 
     private static NameGenerator firstNameGenerator = new FirstNameGenerator();
     private static NameGenerator surnameGenerator = new SurnameGenerator();
@@ -63,7 +63,7 @@ public class Person implements IPersonExtended {
     private int id;
     private char sex;
     private ExactDate birthDate;
-    private ExactDate deathDate;
+    private ExactDate deathDate = null;
     private List<IPartnershipExtended> partnerships = new ArrayList<>();
     private IPartnershipExtended parentsPartnership = null;
     private String firstName;
@@ -541,6 +541,29 @@ public class Person implements IPersonExtended {
     @Override
     public boolean bornOnDate(Date y) {
         return DateUtils.datesEqual(y, birthDate);
+    }
+
+    @Override
+    public Date getDateOfNextPostSeparationEvent(Date separationDate) {
+
+        Date earliestDate = null;
+
+        for(IPartnershipExtended part : partnerships) {
+            Date date = part.getPartnershipDate();
+            if(DateUtils.dateBefore(separationDate, date)) {
+
+                if(earliestDate == null || DateUtils.dateBefore(date, earliestDate)) {
+                    earliestDate = date;
+                }
+
+            }
+        }
+
+        if(earliestDate == null) {
+            earliestDate = deathDate;
+        }
+
+        return earliestDate;
     }
 
 }

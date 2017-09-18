@@ -230,13 +230,6 @@ public class PartneringLogic {
 
                 EntityFactory.formNewChildrenInPartnership(numChildrenInPartnership, father, mother, currentDate, consideredTimePeriod, population);
 
-                // TODO - remove once sure new approach works!
-                // These lines gave been removed in liu of the the line above - we now create the children and the new
-                // partnership once we have also chosen the father - rather than adding him in later
-
-//                IPartnershipExtended partnershipNeedingFather = mother.getLastChild().getParentsPartnership_ex();
-//                partnershipNeedingFather.setFather(pp.getMale());
-
                 IntegerRange maleAgeRange = resolveAgeToIR(pp.getMale(), returnPartnerCounts.getLabels(), currentDate);
                 returnPartnerCounts.update(maleAgeRange, returnPartnerCounts.getValue(maleAgeRange));
 
@@ -559,7 +552,6 @@ public class PartneringLogic {
 
     private static AdvancableDate getYobOfOlderEndOfIR(IntegerRange iR, Date currentDate) {
 
-        // TODO changed to minus 1
         int yob = currentDate.getYear() - iR.getMax() - 1;
 
         return new YearDate(yob);

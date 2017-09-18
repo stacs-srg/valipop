@@ -89,8 +89,8 @@ public abstract class CTRow<count extends Number> {
     public CTCell addDateVariable() throws VariableNotFoundExcepction {
 
         try {
-            Integer yob = new Integer(getVariable("YOB").getValue());
-            Integer age = new Integer(getVariable("Age").getValue());
+            Integer yob = Integer.valueOf(getVariable("YOB").getValue());
+            Integer age = Integer.valueOf(getVariable("Age").getValue());
 
             Integer date = yob + age;
 
@@ -121,12 +121,12 @@ public abstract class CTRow<count extends Number> {
             int age;
 
             try {
-                Integer yob = new Integer(getVariable("YOB").getValue());
-                age = new Integer(getVariable("Age").getValue());
+                Integer yob = Integer.parseInt(getVariable("YOB").getValue());
+                age = Integer.parseInt(getVariable("Age").getValue());
                 date = new YearDate(yob + age);
             } catch (VariableNotFoundExcepction variableNotFoundExcepction) {
                 try {
-                    age = new Integer(getVariable("Age").getValue());
+                    age = Integer.parseInt(getVariable("Age").getValue());
                     date = new YearDate(Integer.parseInt(getVariable("Date").getValue()));
                 } catch (VariableNotFoundExcepction variableNotFoundExcepction1) {
                     throw new Error();
@@ -188,27 +188,26 @@ public abstract class CTRow<count extends Number> {
 
     public String toString(String sep) {
 
-        String s = "";
+        StringBuilder s = new StringBuilder();
 
         for(CTCell cell : cells) {
-            s += cell.getValue() + sep;
+            s.append(cell.getValue() + sep);
         }
 
-        s += getCount() + "\n";
+        s.append(getCount() + "\n");
 
-        return s;
+        return s.toString();
 
     }
 
     public String hash() {
 
-        String s = "";
-
+        StringBuilder s = new StringBuilder();
         for(CTCell cell : cells) {
-            s += cell.getVariable() + cell.getValue();
+            s.append(cell.getVariable() + cell.getValue());
         }
 
-        return s;
+        return s.toString();
     }
 
     public abstract boolean countEqualToZero();

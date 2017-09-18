@@ -31,7 +31,7 @@ import java.util.Set;
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class OneDimensionDataDistribution implements DataDistribution {
+public class OneDimensionDataDistribution implements DataDistribution, Cloneable {
 
 
     public static Logger log = LogManager.getLogger(OneDimensionDataDistribution.class);
@@ -127,8 +127,8 @@ public class OneDimensionDataDistribution implements DataDistribution {
     public Map<IntegerRange, Double> cloneData() {
         Map<IntegerRange, Double> map = new HashMap<IntegerRange, Double>();
 
-        for (IntegerRange iR : targetRates.keySet()) {
-            map.put(iR, targetRates.get(iR));
+        for (Map.Entry<IntegerRange, Double> iR : targetRates.entrySet()) {
+            map.put(iR.getKey(), iR.getValue());
         }
 
         return map;

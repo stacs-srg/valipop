@@ -37,7 +37,7 @@ public class MarriageAnalytics {
     private final int[] count_marriages = new int[MAX_MARRIAGES]; // tracks marriage size
     private final IPopulationExtended population;
 
-    private static PrintStream out;
+    private PrintStream out;
 
     /**
      * Creates an analytic instance to analyse marriages in a population.

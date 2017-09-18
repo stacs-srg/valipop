@@ -40,7 +40,7 @@ public class InitLogic {
 
     private static Random randomNumberGenerator = new Random();
 
-    public static Logger log = LogManager.getLogger(InitLogic.class);
+    public static final Logger log = LogManager.getLogger(InitLogic.class);
 
     private static int currentHypotheticalPopulationSize;
 
@@ -78,7 +78,6 @@ public class InitLogic {
         if(shortFallInBirths >= 0) {
             // add Orphan Children to the population
             for (int i = 0; i < shortFallInBirths; i++) {
-                // TODO need to vary birth date in time period (i.e. the previous year)
                 EntityFactory.formOrphanChild(currentTime, InitLogic.getTimeStep(), population);
             }
         } else {

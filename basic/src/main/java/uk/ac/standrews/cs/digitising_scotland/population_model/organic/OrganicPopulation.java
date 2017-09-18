@@ -471,7 +471,7 @@ public class OrganicPopulation implements IPopulation, ITemporalPopulationInfo {
             System.out.println("OUTPUT PRINTER INITIALIZED");
 
             try {
-                File f = new File("/Users/tsd4/OneDrive/cs/PhD/new_ds/digitising_scotland/population_model/src/main/resources/output/new_output.txt");
+                File f = new File("src/main/resources/output/new_output.txt");
                 f.createNewFile();
                 writer = new PrintWriter(f, "UTF-8");
             } catch (IOException e) {

@@ -39,9 +39,9 @@ import java.nio.file.Paths;
  */
 public class SimplifiedSourceRecordGenerator {
 
-    public static String BIRTH_RECORDS_PATH = "birth_records.txt";
-    public static String DEATH_RECORDS_PATH = "death_records.txt";
-    public static String MARRIAGE_RECORDS_PATH = "marriage_records.txt";
+    private static String BIRTH_RECORDS_PATH = "birth_records.txt";
+    private static String DEATH_RECORDS_PATH = "death_records.txt";
+    private static String MARRIAGE_RECORDS_PATH = "marriage_records.txt";
 
     // TODO allow output file paths to be configured, add -i option to output to console
 
