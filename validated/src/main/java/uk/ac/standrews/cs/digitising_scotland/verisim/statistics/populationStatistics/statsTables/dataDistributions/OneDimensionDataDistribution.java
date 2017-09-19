@@ -14,10 +14,14 @@
  * You should have received a copy of the GNU General Public License along with population_model. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.digitising_scotland.verisim.statistics.populationStatistics.statsTables;
+package uk.ac.standrews.cs.digitising_scotland.verisim.statistics.populationStatistics.statsTables.dataDistributions;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import uk.ac.standrews.cs.digitising_scotland.verisim.Config;
+import uk.ac.standrews.cs.digitising_scotland.verisim.statistics.populationStatistics.determinedCounts.DeterminedCount;
+import uk.ac.standrews.cs.digitising_scotland.verisim.statistics.populationStatistics.determinedCounts.SingleDeterminedCount;
+import uk.ac.standrews.cs.digitising_scotland.verisim.statistics.populationStatistics.statsKeys.StatsKey;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.dateModel.dateImplementations.YearDate;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.integerRange.InvalidRangeException;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.integerRange.IntegerRange;
@@ -31,7 +35,7 @@ import java.util.Set;
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class OneDimensionDataDistribution implements DataDistribution, Cloneable {
+public class OneDimensionDataDistribution implements DataDistribution<Integer, Double>, Cloneable {
 
 
     public static Logger log = LogManager.getLogger(OneDimensionDataDistribution.class);
@@ -161,5 +165,24 @@ public class OneDimensionDataDistribution implements DataDistribution, Cloneable
 
     public Set<IntegerRange> getLabels() {
         return targetRates.keySet();
+    }
+
+    @Override
+    public DeterminedCount determineCount(StatsKey key, Config config) {
+
+        IntegerRange age = resolveRowValue(key.getYLabel());
+
+        // target rate
+        double tD = targetRates.get(age);
+
+        double rawCount = tD * key.getForNPeople();
+        int count = (int) Math.round(rawCount);
+
+        return new SingleDeterminedCount(key, count, rawCount, rawCount);
+    }
+
+    @Override
+    public void returnAchievedCount(DeterminedCount<Integer, Double> achievedCount) {
+        // Makes no record
     }
 }

@@ -21,9 +21,9 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.dateMod
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.dateModel.timeSteps.TimeUnit;
 import org.junit.Assert;
 import org.junit.Test;
-import uk.ac.standrews.cs.digitising_scotland.verisim.statistics.populationStatistics.statsTables.OneDimensionDataDistribution;
+import uk.ac.standrews.cs.digitising_scotland.verisim.statistics.populationStatistics.statsTables.dataDistributions.OneDimensionDataDistribution;
 import uk.ac.standrews.cs.digitising_scotland.verisim.statistics.populationStatistics.determinedCounts.DeterminedCount;
-import uk.ac.standrews.cs.digitising_scotland.verisim.statistics.populationStatistics.statsTables.SelfCorrectingOneDimensionDataDistribution;
+import uk.ac.standrews.cs.digitising_scotland.verisim.statistics.populationStatistics.statsTables.dataDistributions.selfCorrecting.SelfCorrectingOneDimensionDataDistribution;
 import uk.ac.standrews.cs.digitising_scotland.verisim.statistics.populationStatistics.statsKeys.DeathStatsKey;
 import uk.ac.standrews.cs.digitising_scotland.verisim.statistics.populationStatistics.statsKeys.StatsKey;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.integerRange.IntegerRange;

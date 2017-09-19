@@ -14,8 +14,11 @@
  * You should have received a copy of the GNU General Public License along with population_model. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.digitising_scotland.verisim.statistics.populationStatistics.statsTables;
+package uk.ac.standrews.cs.digitising_scotland.verisim.statistics.populationStatistics.statsTables.dataDistributions.selfCorrecting;
 
+import uk.ac.standrews.cs.digitising_scotland.verisim.Config;
+import uk.ac.standrews.cs.digitising_scotland.verisim.statistics.populationStatistics.statsTables.dataDistributions.ProportionalDistribution;
+import uk.ac.standrews.cs.digitising_scotland.verisim.statistics.populationStatistics.statsTables.dataDistributions.selfCorrecting.SelfCorrectingProportionalDistribution;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.dateModel.dateImplementations.YearDate;
 import uk.ac.standrews.cs.digitising_scotland.verisim.statistics.populationStatistics.determinedCounts.DeterminedCount;
 import uk.ac.standrews.cs.digitising_scotland.verisim.statistics.populationStatistics.determinedCounts.MultipleDeterminedCount;
@@ -30,7 +33,7 @@ import java.util.Map;
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class MotherChildAdapter implements ProportionalDistributionAdapter {
+public class MotherChildAdapter implements ProportionalDistribution {
 
     private SelfCorrectingProportionalDistribution distribution;
 
@@ -87,9 +90,9 @@ public class MotherChildAdapter implements ProportionalDistributionAdapter {
     }
 
     @Override
-    public MultipleDeterminedCount determineCount(StatsKey key) {
+    public MultipleDeterminedCount determineCount(StatsKey key, Config config) {
 
-        MultipleDeterminedCount childNumbers = distribution.determineCount(key);
+        MultipleDeterminedCount childNumbers = distribution.determineCount(key, config);
 
         LabeledValueSet<IntegerRange, Double> rawCorrectedMotherNumbers = childNumbers.getRawCorrectedCount()
                 .divisionOfValuesByLabels();

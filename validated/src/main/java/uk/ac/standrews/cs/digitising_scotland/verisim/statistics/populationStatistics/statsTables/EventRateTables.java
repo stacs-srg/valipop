@@ -16,6 +16,10 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.verisim.statistics.populationStatistics.statsTables;
 
+import uk.ac.standrews.cs.digitising_scotland.verisim.statistics.populationStatistics.statsTables.dataDistributions.OneDimensionDataDistribution;
+import uk.ac.standrews.cs.digitising_scotland.verisim.statistics.populationStatistics.statsTables.dataDistributions.ProportionalDistribution;
+import uk.ac.standrews.cs.digitising_scotland.verisim.statistics.populationStatistics.statsTables.dataDistributions.selfCorrecting.SelfCorrectingProportionalDistribution;
+import uk.ac.standrews.cs.digitising_scotland.verisim.statistics.populationStatistics.statsTables.dataDistributions.selfCorrecting.SelfCorrectingTwoDimensionDataDistribution;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.dateModel.Date;
 
 /**
@@ -95,7 +99,7 @@ public interface EventRateTables {
      * @param year the year
      * @return the birth rates by order
      */
-    ProportionalDistributionAdapter getMultipleBirthRates(Date year);
+    ProportionalDistribution getMultipleBirthRates(Date year);
 
     /**
      * Gets the rate of separation after having a given number of children as a couple. The rate is considered in respect

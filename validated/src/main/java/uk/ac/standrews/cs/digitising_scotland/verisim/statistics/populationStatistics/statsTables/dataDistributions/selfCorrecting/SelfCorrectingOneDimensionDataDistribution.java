@@ -14,9 +14,11 @@
  * You should have received a copy of the GNU General Public License along with population_model. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.digitising_scotland.verisim.statistics.populationStatistics.statsTables;
+package uk.ac.standrews.cs.digitising_scotland.verisim.statistics.populationStatistics.statsTables.dataDistributions.selfCorrecting;
 
 import uk.ac.standrews.cs.digitising_scotland.verisim.Config;
+import uk.ac.standrews.cs.digitising_scotland.verisim.statistics.populationStatistics.statsTables.dataDistributions.DataDistribution;
+import uk.ac.standrews.cs.digitising_scotland.verisim.statistics.populationStatistics.statsTables.dataDistributions.OneDimensionDataDistribution;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.dateModel.DateUtils;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
 import org.apache.commons.math3.distribution.BinomialDistribution;
@@ -36,7 +38,7 @@ import java.util.Map;
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class SelfCorrectingOneDimensionDataDistribution extends OneDimensionDataDistribution {
+public class SelfCorrectingOneDimensionDataDistribution extends OneDimensionDataDistribution implements DataDistribution<Integer, Double> {
 
     private boolean binominalSampling;
     private RandomGenerator rng;
@@ -124,7 +126,7 @@ public class SelfCorrectingOneDimensionDataDistribution extends OneDimensionData
         int count = achievedCount.getFufilledCount();
         double achievedRate = 0;
         if(key.getForNPeople() != 0) {
-            achievedRate = count / (double) key.getForNPeople();
+            achievedRate = count / key.getForNPeople();
         }
 
         // This is age for Death (1DDD) but this is order in the case of birth (2DDD)

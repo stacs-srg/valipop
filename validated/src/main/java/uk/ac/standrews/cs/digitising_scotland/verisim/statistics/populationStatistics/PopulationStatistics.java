@@ -24,12 +24,12 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.dateMod
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.dateModel.dateImplementations.MonthDate;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.dateModel.dateImplementations.YearDate;
 import uk.ac.standrews.cs.digitising_scotland.verisim.statistics.populationStatistics.determinedCounts.DeterminedCount;
-import uk.ac.standrews.cs.digitising_scotland.verisim.statistics.populationStatistics.statsTables.ProportionalDistributionAdapter;
-import uk.ac.standrews.cs.digitising_scotland.verisim.statistics.populationStatistics.statsTables.SelfCorrectingProportionalDistribution;
+import uk.ac.standrews.cs.digitising_scotland.verisim.statistics.populationStatistics.statsTables.dataDistributions.ProportionalDistribution;
+import uk.ac.standrews.cs.digitising_scotland.verisim.statistics.populationStatistics.statsTables.dataDistributions.selfCorrecting.SelfCorrectingProportionalDistribution;
 import uk.ac.standrews.cs.digitising_scotland.verisim.statistics.populationStatistics.statsKeys.*;
 import uk.ac.standrews.cs.digitising_scotland.verisim.statistics.populationStatistics.statsTables.EventRateTables;
-import uk.ac.standrews.cs.digitising_scotland.verisim.statistics.populationStatistics.statsTables.SelfCorrectingOneDimensionDataDistribution;
-import uk.ac.standrews.cs.digitising_scotland.verisim.statistics.populationStatistics.statsTables.SelfCorrectingTwoDimensionDataDistribution;
+import uk.ac.standrews.cs.digitising_scotland.verisim.statistics.populationStatistics.statsTables.dataDistributions.selfCorrecting.SelfCorrectingOneDimensionDataDistribution;
+import uk.ac.standrews.cs.digitising_scotland.verisim.statistics.populationStatistics.statsTables.dataDistributions.selfCorrecting.SelfCorrectingTwoDimensionDataDistribution;
 
 import java.util.*;
 
@@ -49,7 +49,7 @@ public class PopulationStatistics implements DateBounds, EventRateTables {
     private Map<YearDate, SelfCorrectingOneDimensionDataDistribution> femaleDeath;
     private Map<YearDate, SelfCorrectingProportionalDistribution> partnering;
     private Map<YearDate, SelfCorrectingTwoDimensionDataDistribution> orderedBirth;
-    private Map<YearDate, ProportionalDistributionAdapter> multipleBirth;
+    private Map<YearDate, ProportionalDistribution> multipleBirth;
     private Map<YearDate, SelfCorrectingOneDimensionDataDistribution> separation;
     private Map<YearDate, Double> sexRatioBirth;
 
@@ -65,7 +65,7 @@ public class PopulationStatistics implements DateBounds, EventRateTables {
                                 Map<YearDate, SelfCorrectingOneDimensionDataDistribution> femaleDeath,
                                 Map<YearDate, SelfCorrectingProportionalDistribution> partnering,
                                 Map<YearDate, SelfCorrectingTwoDimensionDataDistribution> orderedBirth,
-                                Map<YearDate, ProportionalDistributionAdapter> multipleBirth,
+                                Map<YearDate, ProportionalDistribution> multipleBirth,
                                 Map<YearDate, SelfCorrectingOneDimensionDataDistribution> separation,
                                 Map<YearDate, Double> sexRatioBirths) {
 
@@ -127,7 +127,7 @@ public class PopulationStatistics implements DateBounds, EventRateTables {
 
         if(key instanceof MultipleBirthStatsKey) {
             MultipleBirthStatsKey k = (MultipleBirthStatsKey) key;
-            return getMultipleBirthRates(k.getDate()).determineCount(k);
+            return getMultipleBirthRates(k.getDate()).determineCount(k, config);
         }
 
         if(key instanceof SeparationStatsKey) {
@@ -137,7 +137,7 @@ public class PopulationStatistics implements DateBounds, EventRateTables {
 
         if(key instanceof PartneringStatsKey) {
             PartneringStatsKey k = (PartneringStatsKey) key;
-            return getPartneringRates(k.getDate()).determineCount(k);
+            return getPartneringRates(k.getDate()).determineCount(k, config);
         }
 
         throw new Error("Key based access not implemented for key class: " + key.getClass().toGenericString());
@@ -200,7 +200,7 @@ public class PopulationStatistics implements DateBounds, EventRateTables {
     }
 
     @Override
-    public ProportionalDistributionAdapter getMultipleBirthRates(Date year) {
+    public ProportionalDistribution getMultipleBirthRates(Date year) {
         return multipleBirth.get(getNearestYearInMap(year.getYearDate(), multipleBirth));
     }
 

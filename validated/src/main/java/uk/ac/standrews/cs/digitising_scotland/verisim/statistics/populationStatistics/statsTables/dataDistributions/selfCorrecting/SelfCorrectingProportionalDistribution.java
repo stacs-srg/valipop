@@ -14,9 +14,11 @@
  * You should have received a copy of the GNU General Public License along with population_model. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.digitising_scotland.verisim.statistics.populationStatistics.statsTables;
+package uk.ac.standrews.cs.digitising_scotland.verisim.statistics.populationStatistics.statsTables.dataDistributions.selfCorrecting;
 
 
+import uk.ac.standrews.cs.digitising_scotland.verisim.Config;
+import uk.ac.standrews.cs.digitising_scotland.verisim.statistics.populationStatistics.statsTables.dataDistributions.ProportionalDistribution;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.dateModel.dateImplementations.YearDate;
 import uk.ac.standrews.cs.digitising_scotland.verisim.statistics.populationStatistics.determinedCounts.DeterminedCount;
 import uk.ac.standrews.cs.digitising_scotland.verisim.statistics.populationStatistics.determinedCounts.MultipleDeterminedCount;
@@ -34,7 +36,7 @@ import java.util.*;
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class SelfCorrectingProportionalDistribution implements DataDistribution {
+public class SelfCorrectingProportionalDistribution implements ProportionalDistribution {
 
     // The integer range here represents the row labels (i.e. the age ranges on the ordered birth table)
     private Map<IntegerRange, LabeledValueSet<IntegerRange, Double>> targetProportions;
@@ -57,7 +59,7 @@ public class SelfCorrectingProportionalDistribution implements DataDistribution 
         }
     }
 
-    public MultipleDeterminedCount determineCount(StatsKey key) {
+    public MultipleDeterminedCount determineCount(StatsKey key, Config config) {
 
         int age = key.getYLabel();
 

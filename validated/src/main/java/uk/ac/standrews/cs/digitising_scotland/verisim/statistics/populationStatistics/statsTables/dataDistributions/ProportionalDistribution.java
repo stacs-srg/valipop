@@ -14,18 +14,15 @@
  * You should have received a copy of the GNU General Public License along with population_model. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.digitising_scotland.verisim.statistics.populationStatistics.statsTables;
+package uk.ac.standrews.cs.digitising_scotland.verisim.statistics.populationStatistics.statsTables.dataDistributions;
 
-import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
-import uk.ac.standrews.cs.digitising_scotland.verisim.statistics.populationStatistics.statsKeys.StatsKey;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.labeledValueSets.LabeledValueSet;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.integerRange.IntegerRange;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public interface SelfCorrection1D {
+public interface ProportionalDistribution extends DataDistribution<LabeledValueSet<IntegerRange, Integer>, LabeledValueSet<IntegerRange, Double>> {
 
-    double getCorrectingRate(StatsKey data, CompoundTimeUnit consideredTimePeriod);
-
-    void returnAppliedRate(StatsKey data, double appliedData, CompoundTimeUnit consideredTimePeriod);
 
 }
