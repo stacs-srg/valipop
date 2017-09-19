@@ -14,20 +14,19 @@
  * You should have received a copy of the GNU General Public License along with population_model. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.digitising_scotland.verisim.statistics.populationStatistics.statsTables;
+package uk.ac.standrews.cs.digitising_scotland.verisim.statistics.populationStatistics.statsTables.dataDistributions.selfCorrecting;
 
 import uk.ac.standrews.cs.digitising_scotland.verisim.statistics.populationStatistics.determinedCounts.DeterminedCount;
-import uk.ac.standrews.cs.digitising_scotland.verisim.statistics.populationStatistics.determinedCounts.MultipleDeterminedCount;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
 import uk.ac.standrews.cs.digitising_scotland.verisim.statistics.populationStatistics.statsKeys.StatsKey;
-import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.labeledValueSets.LabeledValueSet;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.integerRange.IntegerRange;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.labeledValueSets.LabeledValueSet;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public interface ProportionalDistributionAdapter extends DataDistribution {
+public interface SelfCorrection<F> {
 
-    MultipleDeterminedCount determineCount(StatsKey key);
-    void returnAchievedCount(DeterminedCount<LabeledValueSet<IntegerRange, Integer>, LabeledValueSet<IntegerRange, Double>> achievedCount);
+
 
 }

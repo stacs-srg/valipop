@@ -14,11 +14,15 @@
  * You should have received a copy of the GNU General Public License along with population_model. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.digitising_scotland.verisim.statistics.populationStatistics.statsTables;
+package uk.ac.standrews.cs.digitising_scotland.verisim.statistics.populationStatistics.statsTables.dataDistributions;
 
 
+import uk.ac.standrews.cs.digitising_scotland.verisim.Config;
+import uk.ac.standrews.cs.digitising_scotland.verisim.statistics.populationStatistics.determinedCounts.DeterminedCount;
+import uk.ac.standrews.cs.digitising_scotland.verisim.statistics.populationStatistics.statsKeys.StatsKey;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.dateModel.dateImplementations.YearDate;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.integerRange.IntegerRange;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.labeledValueSets.LabeledValueSet;
 
 import java.util.Collection;
 
@@ -29,7 +33,7 @@ import java.util.Collection;
  *
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public interface DataDistribution {
+public interface DataDistribution<Type, Raw> {
 
     /**
      * @return the year to which the distribution pertains
@@ -57,4 +61,8 @@ public interface DataDistribution {
     IntegerRange getLargestLabel();
 
     Collection<IntegerRange> getLabels();
+
+    DeterminedCount determineCount(StatsKey key, Config config);
+
+    void returnAchievedCount(DeterminedCount<Type, Raw> achievedCount);
 }

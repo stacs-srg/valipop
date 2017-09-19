@@ -20,10 +20,13 @@ package uk.ac.standrews.cs.digitising_scotland.verisim.utils.fileUtils;
 import uk.ac.standrews.cs.digitising_scotland.verisim.Config;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import uk.ac.standrews.cs.digitising_scotland.verisim.statistics.populationStatistics.statsTables.dataDistributions.*;
+import uk.ac.standrews.cs.digitising_scotland.verisim.statistics.populationStatistics.statsTables.dataDistributions.selfCorrecting.MotherChildAdapter;
+import uk.ac.standrews.cs.digitising_scotland.verisim.statistics.populationStatistics.statsTables.dataDistributions.selfCorrecting.SelfCorrectingOneDimensionDataDistribution;
+import uk.ac.standrews.cs.digitising_scotland.verisim.statistics.populationStatistics.statsTables.dataDistributions.selfCorrecting.SelfCorrectingProportionalDistribution;
+import uk.ac.standrews.cs.digitising_scotland.verisim.statistics.populationStatistics.statsTables.dataDistributions.selfCorrecting.SelfCorrectingTwoDimensionDataDistribution;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.dateModel.dateImplementations.MonthDate;
-import uk.ac.standrews.cs.digitising_scotland.verisim.statistics.populationStatistics.statsTables.OneDimensionDataDistribution;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.dateModel.dateImplementations.YearDate;
-import uk.ac.standrews.cs.digitising_scotland.verisim.statistics.populationStatistics.statsTables.*;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.labeledValueSets.IntegerRangeToDoubleSet;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.labeledValueSets.LabeledValueSet;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.integerRange.IntegerRange;
@@ -201,7 +204,7 @@ public class InputFileReader {
         String sourcePopulation = null;
         String sourceOrganisation = null;
 
-        Map<IntegerRange, Double> data = new HashMap<IntegerRange, Double>();
+        Map<IntegerRange, Double> data = new HashMap<>();
 
 
         for (int i = 0; i < lines.size(); i++) {
@@ -299,7 +302,7 @@ public class InputFileReader {
         return new SelfCorrectingProportionalDistribution(year, sourcePopulation, sourceOrganisation, data);
     }
 
-    public static ProportionalDistributionAdapter readInAndAdaptAgeAndProportionalStatsInput(Path path) throws IOException, InvalidInputFileException {
+    public static ProportionalDistribution readInAndAdaptAgeAndProportionalStatsInput(Path path) throws IOException, InvalidInputFileException {
 
         ArrayList<String> lines = new ArrayList<>(getAllLines(path));
 

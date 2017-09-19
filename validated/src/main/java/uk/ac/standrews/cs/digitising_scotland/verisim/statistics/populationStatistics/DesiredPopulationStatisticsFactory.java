@@ -23,11 +23,11 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.dateMod
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import uk.ac.standrews.cs.digitising_scotland.verisim.statistics.populationStatistics.statsTables.ProportionalDistributionAdapter;
-import uk.ac.standrews.cs.digitising_scotland.verisim.statistics.populationStatistics.statsTables.SelfCorrectingProportionalDistribution;
-import uk.ac.standrews.cs.digitising_scotland.verisim.statistics.populationStatistics.statsTables.DataDistribution;
-import uk.ac.standrews.cs.digitising_scotland.verisim.statistics.populationStatistics.statsTables.SelfCorrectingOneDimensionDataDistribution;
-import uk.ac.standrews.cs.digitising_scotland.verisim.statistics.populationStatistics.statsTables.SelfCorrectingTwoDimensionDataDistribution;
+import uk.ac.standrews.cs.digitising_scotland.verisim.statistics.populationStatistics.statsTables.dataDistributions.ProportionalDistribution;
+import uk.ac.standrews.cs.digitising_scotland.verisim.statistics.populationStatistics.statsTables.dataDistributions.selfCorrecting.SelfCorrectingProportionalDistribution;
+import uk.ac.standrews.cs.digitising_scotland.verisim.statistics.populationStatistics.statsTables.dataDistributions.DataDistribution;
+import uk.ac.standrews.cs.digitising_scotland.verisim.statistics.populationStatistics.statsTables.dataDistributions.selfCorrecting.SelfCorrectingOneDimensionDataDistribution;
+import uk.ac.standrews.cs.digitising_scotland.verisim.statistics.populationStatistics.statsTables.dataDistributions.selfCorrecting.SelfCorrectingTwoDimensionDataDistribution;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.fileUtils.InputFileReader;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.fileUtils.InvalidInputFileException;
 
@@ -60,7 +60,7 @@ public abstract class DesiredPopulationStatisticsFactory {
         Map<YearDate, SelfCorrectingOneDimensionDataDistribution> femaleDeath = readInSC1DDataFiles(config.getVarFemaleDeathPaths(), config);
         Map<YearDate, SelfCorrectingProportionalDistribution> partnering = readInAgeAndProportionalStatsInputFiles(config.getVarPartneringPaths(), config);
         Map<YearDate, SelfCorrectingTwoDimensionDataDistribution> orderedBirth = readInSC2DDataFiles(config.getVarOrderedBirthPaths(), config);
-        Map<YearDate, ProportionalDistributionAdapter> multipleBirth = readInAndAdaptAgeAndProportionalStatsInputFiles(config.getVarMultipleBirthPaths(), config);
+        Map<YearDate, ProportionalDistribution> multipleBirth = readInAndAdaptAgeAndProportionalStatsInputFiles(config.getVarMultipleBirthPaths(), config);
         Map<YearDate, SelfCorrectingOneDimensionDataDistribution> separation = readInSC1DDataFiles(config.getVarSeparationPaths(), config);
         Map<YearDate, Double> sexRatioBirth = readInSingleInputDataFile(config.getVarBirthRatioPath(), config);
 
@@ -127,13 +127,13 @@ public abstract class DesiredPopulationStatisticsFactory {
         return insertDistributionsToMeetInputWidth(config, data);
     }
 
-    private static Map<YearDate, ProportionalDistributionAdapter> readInAndAdaptAgeAndProportionalStatsInputFiles(DirectoryStream<Path> paths, Config config) throws IOException, InvalidInputFileException {
+    private static Map<YearDate, ProportionalDistribution> readInAndAdaptAgeAndProportionalStatsInputFiles(DirectoryStream<Path> paths, Config config) throws IOException, InvalidInputFileException {
 
-        Map<YearDate, ProportionalDistributionAdapter> data = new HashMap<>();
+        Map<YearDate, ProportionalDistribution> data = new HashMap<>();
 
         for (Path path : paths) {
             // read in each file
-            ProportionalDistributionAdapter tempData = InputFileReader.readInAndAdaptAgeAndProportionalStatsInput(path);
+            ProportionalDistribution tempData = InputFileReader.readInAndAdaptAgeAndProportionalStatsInput(path);
             data.put(tempData.getYear(), tempData);
         }
         return insertDistributionsToMeetInputWidth(config, data);
