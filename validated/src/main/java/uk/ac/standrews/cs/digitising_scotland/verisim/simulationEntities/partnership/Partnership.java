@@ -43,7 +43,7 @@ public class Partnership implements IPartnershipExtended {
     private int id;
     private IPersonExtended male;
     private IPersonExtended female;
-    private List<IPersonExtended> children = new ArrayList<IPersonExtended>();
+    private List<IPersonExtended> children = new ArrayList<>();
 
     private Date partnershipDate;
     private Date separationDate = null;

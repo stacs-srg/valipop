@@ -32,7 +32,7 @@ public class ContigencyTableFactory {
 
         MemoryUsageAnalysis.log();
 
-//        PrintStream fullOutput;
+        PrintStream fullOutput;
 
         PrintStream obOutput;
         PrintStream mbOutput;
@@ -76,10 +76,10 @@ public class ContigencyTableFactory {
 
             MemoryUsageAnalysis.log();
 
-//                System.out.println("OBDModel --- Outputting Full CTable to file");
-//                Path fullPath = FileUtils.mkBlankFile(FileUtils.getContingencyTablesPath(), "full-CT.csv");
-//                fullOutput = new PrintStream(fullPath.toFile(), "UTF-8");
-//                new CTtableFull(fullTree, fullOutput);
+            System.out.println("OBDModel --- Outputting Full CTable to file");
+            Path fullPath = FileUtils.mkBlankFile(FileUtils.getContingencyTablesPath(), "full-CT.csv");
+            fullOutput = new PrintStream(fullPath.toFile(), "UTF-8");
+            new CTtableFull(fullTree, fullOutput);
 
             MemoryUsageAnalysis.log();
 

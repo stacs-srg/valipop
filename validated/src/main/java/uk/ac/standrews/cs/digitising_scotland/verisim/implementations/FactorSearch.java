@@ -37,22 +37,16 @@ public class FactorSearch {
         try {
             switch(args[0]) {
                 case "A":
-                    runFactorSearch(1000000, 1);
+                    runFactorSearch(500000);
                     break;
                 case "B":
-                    runFactorSearch(1000000, 0.2);
+                    runFactorSearch(1000000);
                     break;
                 case "C":
-                    runFactorSearch(1000000, 0.1);
+                    runFactorSearch(2000000);
                     break;
                 case "D":
-                    runFactorSearch(2000000, 1);
-                    break;
-                case "E":
-                    runFactorSearch(2000000, 0.2);
-                    break;
-                case "F":
-                    runFactorSearch(2000000, 0.1);
+                    runFactorSearch(4000000);
                     break;
                 default:
                     break;
@@ -84,30 +78,25 @@ public class FactorSearch {
     static double set_up_dr = 0.0122;
 
     static int numberOfRunsPerSim = 1;
-    static String runPurpose = "factor-exploration";
+    static String runPurpose = "full-table-runs";
 
-    public static void runFactorSearch(int size, double maxInfid) throws IOException, InvalidInputFileException {
+    public static void runFactorSearch(int size) throws IOException, InvalidInputFileException {
 
-        rfs = new double[]{0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1};
+        rfs = new double[]{0.3, 0.5, 1};
         iws = new CompoundTimeUnit[]{
-                new CompoundTimeUnit(1, TimeUnit.YEAR),
-                new CompoundTimeUnit(10, TimeUnit.YEAR),
-                new CompoundTimeUnit(20, TimeUnit.YEAR),
-                new CompoundTimeUnit(50, TimeUnit.YEAR),
-                new CompoundTimeUnit(100, TimeUnit.YEAR),
-                new CompoundTimeUnit(500, TimeUnit.YEAR),
+                new CompoundTimeUnit(20, TimeUnit.YEAR)
         };
-        minBirthSpacings = new int[]{1, 147, 252, 365, 730};
-        maxInfids = new double[]{1, 0.2, 0.1};
+        minBirthSpacings = new int[]{147};
+        maxInfids = new double[]{0.2};
         bfs = new double[]{0};
         dfs = new double[]{0};
-        t0_pop_size = new int[]{1000000};
+//        t0_pop_size = new int[]{1000000};
 
 //        for(int size : t0_pop_size) {
             for (double rf : rfs) {
                 for (CompoundTimeUnit iw : iws) {
                     for (int minBirthSpacing : minBirthSpacings) {
-//                        for (double maxInfid : maxInfids) {
+                        for (double maxInfid : maxInfids) {
                             for (double bf : bfs) {
                                 for (double df : dfs) {
 
@@ -139,7 +128,7 @@ public class FactorSearch {
                                     }
 
                                 }
-//                            }
+                            }
                         }
                     }
 //                }
