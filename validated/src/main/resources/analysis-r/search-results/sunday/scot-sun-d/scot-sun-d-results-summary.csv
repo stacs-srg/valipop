@@ -1,3 +1,0 @@
-Start Time,Reason,Code Version,Inputs Directory,Total Pop,Completed,Sim Length,Timestep,Input Width,Start Pop,End Pop,Peak Pop,Start Date,End Date,Sim Run time,CT Run time,Records Run time,Results Directory
-20170806-210316:717,scot-sun-d,dev,src/main/resources/scotland_test_population,8405312,true,58804,1y,10y,1436571,1387692,1436252,1/1/1855,1/1/2016,536.018536143,1548.008171137,145.270710532,results/scot-sun-d/20170806-210316:717
-20170806-214026:015,scot-sun-d,dev,src/main/resources/scotland_test_population,0,false,58804,1y,10y,1463177,0,0,1/1/1855,1/1/2016,707.922170356,0.0,0.0,results/scot-sun-d/20170806-214026:015
