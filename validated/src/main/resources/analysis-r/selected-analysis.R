@@ -16,7 +16,7 @@ deathAnalysis <- function(file) {
   data$freq <- round(data$freq)
   data <- data[which(data$freq != 0), ]
   data <- data[which(data$Date >= 1855) , ]
-  data <- data[which(data$Date < 2015) , ]
+  data <- data[which(data$Date < 2014) , ]
   
   # Analysis
   library("MASS")
@@ -37,7 +37,7 @@ obAnalysis <- function(file, largestBirthLabel) {
   data$freq <- round(data$freq)
   data <- data[which(data$freq != 0), ]
   data <- data[which(data$Date >= 1855) , ]
-  data <- data[which(data$Date < 2015) , ]
+  data <- data[which(data$Date < 2014) , ]
   data <- data[which(data$Age != "0to14"), ]
   data <- data[which(data$Age != largestBirthLabel), ]
   #data <- data[which(data$CIY == "YES"), ]
@@ -61,7 +61,7 @@ mbAnalysis <- function(file, largestBirthLabel) {
   data$freq <- round(data$freq)
   data <- data[which(data$freq != 0), ]
   data <- data[which(data$Date >= 1855) , ]
-  data <- data[which(data$Date < 2015) , ]
+  data <- data[which(data$Date < 2014) , ]
   data <- data[which(data$Age != "0to14"), ]
   data <- data[which(data$Age != largestBirthLabel), ]
   
@@ -84,7 +84,7 @@ partAnalysis <- function(file) {
   data$freq <- round(data$freq)
   data <- data[which(data$freq != 0), ]
   data <- data[which(data$Date >= 1855) , ]
-  data <- data[which(data$Date < 2015) , ]
+  data <- data[which(data$Date < 2014) , ]
   data <- data[which(data$NPA != "na") , ]
   
   
@@ -109,7 +109,7 @@ sepAnalysis <- function(file) {
   data$freq <- round(data$freq)
   data <- data[which(data$freq != 0), ]
   data <- data[which(data$Date >= 1855) , ]
-  data <- data[which(data$Date < 2015) , ]
+  data <- data[which(data$Date < 2014) , ]
   data <- data[which(data$Separated != "NA") , ]
   
   # Analysis
