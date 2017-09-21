@@ -82,7 +82,7 @@ public class FactorSearch {
     static double set_up_dr = 0.0122;
 
     static int numberOfRunsPerSim = 5;
-    static String runPurpose = "ja-rfs-size";
+    static String runPurpose = "scot-rfs-size";
 
     public static void runFactorSearch(int size) throws IOException, InvalidInputFileException {
 
