@@ -57,7 +57,7 @@ public abstract class CTRow<count extends Number> {
             new CTCell("NPA", "na")
     };
 
-    private Collection<CTCell> cells = new ArrayList<>(Arrays.asList(c));
+    protected Collection<CTCell> cells = new ArrayList<>(Arrays.asList(c));
 
     public Collection<CTCell> getCells() {
         return cells;
@@ -194,7 +194,7 @@ public abstract class CTRow<count extends Number> {
             s.append(cell.getValue() + sep);
         }
 
-        s.append(getCount() + "\n");
+        s.append(getIntegerCount() + "\n");
 
         return s.toString();
 
@@ -209,6 +209,8 @@ public abstract class CTRow<count extends Number> {
 
         return s.toString();
     }
+
+    public abstract int getIntegerCount();
 
     public abstract boolean countEqualToZero();
 

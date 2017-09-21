@@ -16,14 +16,27 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.verisim.statistics.analysis.validation.contingencyTables.TableStructure;
 
+import java.util.Collection;
+
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class CTRowInt extends CTRow<Integer> {
 
+    public CTRowInt() {}
+
+    public CTRowInt(Collection<CTCell> cells) {
+        this.cells = cells;
+    }
+
     @Override
     public Integer combineCount(Integer a, Integer b) {
         return a + b;
+    }
+
+    @Override
+    public int getIntegerCount() {
+        return getCount();
     }
 
     @Override

@@ -5,6 +5,7 @@ import org.apache.logging.log4j.Logger;
 import uk.ac.standrews.cs.digitising_scotland.verisim.Config;
 import uk.ac.standrews.cs.digitising_scotland.verisim.statistics.analysis.simulationSummaryLogging.SummaryRow;
 import uk.ac.standrews.cs.digitising_scotland.verisim.statistics.analysis.validation.contingencyTables.TableInstances.*;
+import uk.ac.standrews.cs.digitising_scotland.verisim.statistics.analysis.validation.contingencyTables.TableStructure.CTtable;
 import uk.ac.standrews.cs.digitising_scotland.verisim.statistics.analysis.validation.contingencyTables.TableStructure.NoTableRowsException;
 import uk.ac.standrews.cs.digitising_scotland.verisim.statistics.analysis.validation.contingencyTables.TreeStructure.CTtree;
 import uk.ac.standrews.cs.digitising_scotland.verisim.statistics.populationStatistics.PopulationStatistics;
@@ -24,64 +25,47 @@ public class ContigencyTableFactory {
 
     public static final Logger log = LogManager.getLogger(ContigencyTableFactory.class);
 
-    public static void generateContigencyTables(PeopleCollection population, PopulationStatistics desired, Config config, SummaryRow summary) {
+    public static void generateContigencyTables(PeopleCollection population, PopulationStatistics desired,
+                                                Config config, SummaryRow summary, int zeroAdjustValue,
+                                                int startStepBack) {
 
         ProgramTimer tableTimer = new ProgramTimer();
 
-        CTtree fullTree = new CTtree(population, desired, config.getT0(), config.getTE());
+        CTtree fullTree = new CTtree(population, desired, config.getT0(), config.getTE(), startStepBack);
 
         MemoryUsageAnalysis.log();
 
-        PrintStream fullOutput;
-
-        PrintStream obOutput;
-        PrintStream mbOutput;
-        PrintStream partOutput;
-        PrintStream sepOutput;
-        PrintStream deathOutput;
         try {
             log.info("OBDModel --- Extracting and Outputting CTables to files");
-            CTtableOB obTable = new CTtableOB(fullTree, desired);
-            Path obPath = FileUtils.mkBlankFile(FileUtils.getContingencyTablesPath(), "ob-CT.csv");
-            obOutput = new PrintStream(obPath.toFile(), "UTF-8");
-            obTable.outputToFile(obOutput);
 
-            MemoryUsageAnalysis.log();
+            CTtableOB obTable = new CTtableOB(fullTree, desired);
+//            outputToFile(obTable, 0, "ob-CT-zav-0.csv");
+            outputToFile(obTable, 1, "ob-CT-zav-1.csv");
 
             CTtableMB mbTable = new CTtableMB(fullTree, desired);
-            Path mbPath = FileUtils.mkBlankFile(FileUtils.getContingencyTablesPath(), "mb-CT.csv");
-            mbOutput = new PrintStream(mbPath.toFile(), "UTF-8");
-            mbTable.outputToFile(mbOutput);
-
-            MemoryUsageAnalysis.log();
+//            outputToFile(mbTable, 0, "mb-CT-zav-0.csv");
+            outputToFile(mbTable, 1, "mb-CT-zav-1.csv");
 
             CTtablePart partTable = new CTtablePart(fullTree, desired);
-            Path partPath = FileUtils.mkBlankFile(FileUtils.getContingencyTablesPath(), "part-CT.csv");
-            partOutput = new PrintStream(partPath.toFile(), "UTF-8");
-            partTable.outputToFile(partOutput);
-
-            MemoryUsageAnalysis.log();
+//            outputToFile(partTable, 0, "part-CT-zav-0.csv");
+            outputToFile(partTable, 1, "part-CT-zav-1.csv");
 
             CTtableSep sepTable = new CTtableSep(fullTree, desired);
-            Path sepPath = FileUtils.mkBlankFile(FileUtils.getContingencyTablesPath(), "sep-CT.csv");
-            sepOutput = new PrintStream(sepPath.toFile(), "UTF-8");
-            sepTable.outputToFile(sepOutput);
-
-            MemoryUsageAnalysis.log();
+//            outputToFile(sepTable, 0, "sep-CT-zav-0.csv");
+            outputToFile(sepTable, 1, "sep-CT-zav-1.csv");
 
             CTtableDeath deathTable = new CTtableDeath(fullTree);
-            Path deathPath = FileUtils.mkBlankFile(FileUtils.getContingencyTablesPath(), "death-CT.csv");
-            deathOutput = new PrintStream(deathPath.toFile(), "UTF-8");
-            deathTable.outputToFile(deathOutput);
+//            outputToFile(deathTable, 0, "death-CT-zav-0.csv");
+            outputToFile(deathTable, 1, "death-CT-zav-1.csv");
 
-            MemoryUsageAnalysis.log();
 
-            System.out.println("OBDModel --- Outputting Full CTable to file");
-            Path fullPath = FileUtils.mkBlankFile(FileUtils.getContingencyTablesPath(), "full-CT.csv");
-            fullOutput = new PrintStream(fullPath.toFile(), "UTF-8");
-            new CTtableFull(fullTree, fullOutput);
-
-            MemoryUsageAnalysis.log();
+//            System.out.println("OBDModel --- Outputting Full CTable to file");
+//            zeroAdjustValue = 0;
+//            String fN = "full-CT-zav-" + String.valueOf(zeroAdjustValue)+ ".csv";
+//            Path fullPath = FileUtils.mkBlankFile(FileUtils.getContingencyTablesPath(), fN);
+//            fullOutput = new PrintStream(fullPath.toFile(), "UTF-8");
+//            new CTtableFull(fullTree, fullOutput, zeroAdjustValue);
+//
 
         } catch (IOException e) {
             throw new Error("failed to make CT files");
@@ -90,6 +74,14 @@ public class ContigencyTableFactory {
         }
 
         summary.setCTRunTime(tableTimer.getRunTimeSeconds());
+    }
+
+    private static void outputToFile(CTtable table, int zeroAdjustValue, String fileName) throws IOException, NoTableRowsException {
+        MemoryUsageAnalysis.log();
+        Path path = FileUtils.mkBlankFile(FileUtils.getContingencyTablesPath(), fileName);
+        PrintStream ps = new PrintStream(path.toFile(), "UTF-8");
+        table.outputToFile(ps, zeroAdjustValue);
+        MemoryUsageAnalysis.log();
     }
 
 }

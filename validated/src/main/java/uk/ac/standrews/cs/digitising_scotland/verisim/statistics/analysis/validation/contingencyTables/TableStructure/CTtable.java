@@ -16,9 +16,13 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.verisim.statistics.analysis.validation.contingencyTables.TableStructure;
 
+import uk.ac.standrews.cs.digitising_scotland.verisim.statistics.analysis.validation.contingencyTables.TreeStructure.VariableNotFoundExcepction;
+
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Objects;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
@@ -27,12 +31,40 @@ public abstract class CTtable {
 
     protected HashMap<String, CTRow> table = new HashMap<>();
 
-    public void outputToFile(PrintStream ps) throws NoTableRowsException {
+    public void outputToFile(PrintStream ps, int zeroAdjustValue) throws NoTableRowsException {
 
         ps.print(getVarNames(","));
 
         for(CTRow row : table.values()) {
-            ps.print(row.toString(","));
+
+            if(row.countGreaterThan(0.5)) {
+
+                ps.print(row.toString(","));
+                ps.flush();
+
+                try {
+                    if(Objects.equals(row.getVariable("Source").getValue(), "STAT")) {
+
+                        Collection<CTCell> cells = row.getCells();
+//                        CTCell[] cellArray = (CTCell[]) cells.toArray(new CTCell[cells.size()]);
+
+                        CTRowInt twin = new CTRowInt(cells);
+                        twin.setVariable("Source", "SIM");
+                        twin.setCount(zeroAdjustValue);
+
+                        CTRow t = table.get(twin.hash());
+
+                        if(t == null) {
+                            ps.print(twin.toString(","));
+                        }
+
+
+                    }
+                } catch (VariableNotFoundExcepction variableNotFoundExcepction) {
+                    variableNotFoundExcepction.printStackTrace();
+                }
+
+            }
         }
 
         ps.close();

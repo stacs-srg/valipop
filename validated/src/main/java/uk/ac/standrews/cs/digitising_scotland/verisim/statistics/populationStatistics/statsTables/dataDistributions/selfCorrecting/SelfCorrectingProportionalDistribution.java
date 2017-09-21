@@ -76,15 +76,30 @@ public class SelfCorrectingProportionalDistribution implements ProportionalDistr
         Integer sumOfAC = achievedCountsForAge.getSumOfValues();
         Double totalCount = sumOfAC + key.getForNPeople();
 
-        LabeledValueSet<IntegerRange, Double> rawCorrectedValues =
+        double rf = 1;
+        if(config != null) {
+            rf = config.getRecoveryFactor();
+        }
+
+        LabeledValueSet<IntegerRange, Double> rawFullCorrectionValues =
                     targetProportions.get(resolveRowValue(age))
                             .productOfValuesAndN(totalCount)
                             .valuesSubtractValues(achievedCountsForAge);
 
         LabeledValueSet<IntegerRange, Double> rawUncorrectedValues =
-                targetProportions.get(resolveRowValue(age))
+                    targetProportions.get(resolveRowValue(age))
                         .productOfValuesAndN(key.getForNPeople());
 
+        LabeledValueSet<IntegerRange, Double> fullCorrectionAdjustment =
+                    rawFullCorrectionValues
+                            .valuesSubtractValues(rawUncorrectedValues);
+
+        LabeledValueSet<IntegerRange, Double> correctionAdjustment =
+                    fullCorrectionAdjustment
+                            .productOfValuesAndN(rf);
+
+        LabeledValueSet<IntegerRange, Double> rawCorrectedValues =
+                    rawUncorrectedValues.valuesPlusValues(correctionAdjustment);
 
         LabeledValueSet<IntegerRange, Integer> retValues;
         try {
