@@ -46,7 +46,7 @@ public class IntegerRange implements Comparable<IntegerRange> {
                         plus = true;
                         min = Integer.parseInt(parts[0].split("\\+")[0]);
                     } else {
-                        throw new NumberFormatException();
+                        throw new NumberFormatException(label);
                     }
                 }
             } else if (parts.length == 2) {
@@ -122,7 +122,7 @@ public class IntegerRange implements Comparable<IntegerRange> {
             s += "+";
         } else {
             s += min;
-            s += min.equals(max) ? "" : "to" + max;
+            s += min.equals(max) ? "" : "-" + max;
         }
         return s;
     }

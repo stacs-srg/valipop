@@ -29,6 +29,11 @@ public class CTRowDouble extends CTRow<Double> {
     }
 
     @Override
+    public int getIntegerCount() {
+        return (int) Math.ceil(getCount());
+    }
+
+    @Override
     public boolean countEqualToZero() {
         return DoubleComparer.equal(getCount(), 0, 0.000001);
     }

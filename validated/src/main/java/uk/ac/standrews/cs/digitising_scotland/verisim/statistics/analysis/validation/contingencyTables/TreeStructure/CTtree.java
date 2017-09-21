@@ -57,15 +57,14 @@ public class CTtree extends Node<String, SourceType, Number, Number> implements 
     private SourceNodeInt simNode;
     private SourceNodeDouble statNode = null;
 
-    public CTtree(PeopleCollection population, PopulationStatistics expected, Date startDate, Date endDate) {
+    public CTtree(PeopleCollection population, PopulationStatistics expected, Date startDate, Date endDate, int startStepBack) {
         this.expected = expected;
-        this.endDate = endDate;
+        this.endDate = new YearDate(endDate.getYear() - 2);
 
         log.info("CTree --- Populating tree");
 
         if(statNode == null) {
-            // removed -1
-            YearDate prevY = new YearDate(startDate.getYear() - 100);
+            YearDate prevY = new YearDate(startDate.getYear() - startStepBack);
             for (IPersonExtended person : population.getPeople_ex()) {
                 if (person.aliveInYear(prevY)) {
                     processPerson(person, prevY, SourceType.STAT);

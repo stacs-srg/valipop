@@ -33,29 +33,32 @@ import java.io.IOException;
  */
 public class FactorSearch {
 
-    public static void main(String[] args) {
-        try {
-            switch(args[0]) {
-                case "A":
-                    runFactorSearch(500000);
-                    break;
-                case "B":
-                    runFactorSearch(1000000);
-                    break;
-                case "C":
-                    runFactorSearch(2000000);
-                    break;
-                case "D":
-                    runFactorSearch(4000000);
-                    break;
-                default:
-                    break;
-            }
+    public static void main(String[] args) throws IOException, InvalidInputFileException {
 
-        } catch (IOException | InvalidInputFileException e) {
-            e.printStackTrace();
-            System.err.println(e.getMessage());
-        }
+        runFactorSearch();
+
+        //        try {
+//            switch(args[0]) {
+//                case "A":
+//                    runFactorSearch(500000);
+//                    break;
+//                case "B":
+//                    runFactorSearch(1000000);
+//                    break;
+//                case "C":
+//                    runFactorSearch(2000000);
+//                    break;
+//                case "D":
+//                    runFactorSearch(4000000);
+//                    break;
+//                default:
+//                    break;
+//            }
+//
+//        } catch (IOException | InvalidInputFileException e) {
+//            e.printStackTrace();
+//            System.err.println(e.getMessage());
+//        }
     }
 
     static double[] rfs;
@@ -66,7 +69,8 @@ public class FactorSearch {
     static int[] minBirthSpacings;
     static int[] t0_pop_size;
 
-    static String var_data_files = "src/main/resources/scotland_test_population";
+    // "src/main/resources/scotland_test_population"
+    static String var_data_files = "src/main/resources/proxy-scotland-population-JA";
     static String results_save_location = "src/main/resources/results/";
     static RecordFormat output_record_format = RecordFormat.NONE;
 
@@ -77,12 +81,12 @@ public class FactorSearch {
     static double set_up_br = 0.0133;
     static double set_up_dr = 0.0122;
 
-    static int numberOfRunsPerSim = 1;
-    static String runPurpose = "full-table-runs";
+    static int numberOfRunsPerSim = 5;
+    static String runPurpose = "ja-rfs-size";
 
-    public static void runFactorSearch(int size) throws IOException, InvalidInputFileException {
+    public static void runFactorSearch() throws IOException, InvalidInputFileException {
 
-        rfs = new double[]{0.3, 0.5, 1};
+        rfs = new double[]{0, 0.3, 0.5, 1};
         iws = new CompoundTimeUnit[]{
                 new CompoundTimeUnit(20, TimeUnit.YEAR)
         };
@@ -90,9 +94,10 @@ public class FactorSearch {
         maxInfids = new double[]{0.2};
         bfs = new double[]{0};
         dfs = new double[]{0};
-//        t0_pop_size = new int[]{1000000};
+        t0_pop_size = new int[]{1000000, 500000, 250000};
 
-//        for(int size : t0_pop_size) {
+
+        for(int size : t0_pop_size) {
             for (double rf : rfs) {
                 for (CompoundTimeUnit iw : iws) {
                     for (int minBirthSpacing : minBirthSpacings) {
@@ -131,7 +136,7 @@ public class FactorSearch {
                             }
                         }
                     }
-//                }
+                }
             }
         }
     }

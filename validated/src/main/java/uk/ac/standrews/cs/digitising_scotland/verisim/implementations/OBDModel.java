@@ -192,7 +192,7 @@ public class OBDModel {
 
     public void analyseAndOutputPopulation() {
 
-        ContigencyTableFactory.generateContigencyTables(population.getAllPeople(), desired, config, summary);
+        ContigencyTableFactory.generateContigencyTables(population.getAllPeople(), desired, config, summary, 0, 100);
 
         ProgramTimer recordTimer = new ProgramTimer();
         RecordGenerationFactory.outputRecords(config.getOutputRecordFormat(), FileUtils.getRecordsDirPath().toString(),
