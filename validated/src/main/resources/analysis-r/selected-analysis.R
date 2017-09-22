@@ -9,9 +9,11 @@ calcP <- function(x) {
 }
 
 deathAnalysis <- function(file) {
+  
   # Read in the data
   data = read.csv(file, sep = ',', header = T)
   
+  summary(data)
   # Standardise the data
   data$freq <- round(data$freq)
   data <- data[which(data$freq != 0), ]
@@ -31,8 +33,12 @@ deathAnalysis <- function(file) {
 
 obAnalysis <- function(file, largestBirthLabel) {
 
+  #file = "/Users/tsd4/OneDrive/cs/PhD/code/population-model/validated/src/main/resources/results/stats-ct-adjust-working/20170921-183902:953/tables/ob-CT-zav-1.csv"
+  #largestBirthLabel = "50+"
   data = read.csv(file, sep = ',', header = T)
-
+  #summary(data[which(data$Source == "SIM"),])
+  #summary(data[which(data$Source == "STAT"),])
+  #head(data)
   # Standardise the data
   data$freq <- round(data$freq)
   data <- data[which(data$freq != 0), ]
@@ -41,12 +47,12 @@ obAnalysis <- function(file, largestBirthLabel) {
   data <- data[which(data$Age != "0to14"), ]
   data <- data[which(data$Age != largestBirthLabel), ]
   #data <- data[which(data$CIY == "YES"), ]
-  
+  summary(data)
   # Analysis
   library("MASS")
 
   model = loglm(freq ~ Age + NPCIAP + CIY + Date + Age:NPCIAP + Age:CIY + NPCIAP:CIY + Age:NPCIAP:CIY, data = data)
-
+  model
   p2 <- calcP(model)
   
   return(c(p2, model$lrt, model$df))
@@ -54,9 +60,10 @@ obAnalysis <- function(file, largestBirthLabel) {
 }
 
 mbAnalysis <- function(file, largestBirthLabel) {
-  
+
   data = read.csv(file, sep = ',', header = T)
-  
+
+  #summary(data)
   # Standardise the data
   data$freq <- round(data$freq)
   data <- data[which(data$freq != 0), ]
@@ -64,12 +71,12 @@ mbAnalysis <- function(file, largestBirthLabel) {
   data <- data[which(data$Date < 2014) , ]
   data <- data[which(data$Age != "0to14"), ]
   data <- data[which(data$Age != largestBirthLabel), ]
+  data <- data[which(data$NCIY != "0"), ]
   
   # Analysis
   library("MASS")
-  
   model = loglm(freq ~ Date + NCIY + Age + Date:NCIY + Date:Age, data = data)
-    
+  model
   p2 <- calcP(model)
 
   return(c(p2, model$lrt, model$df))
@@ -77,7 +84,7 @@ mbAnalysis <- function(file, largestBirthLabel) {
 }
 
 partAnalysis <- function(file) {
-    
+  
   data = read.csv(file, sep = ',', header = T)
   
   # Standardise the data
@@ -87,13 +94,10 @@ partAnalysis <- function(file) {
   data <- data[which(data$Date < 2014) , ]
   data <- data[which(data$NPA != "na") , ]
   
-  
-  summary(data)
   # Analysis
   library("MASS")
   
   model = loglm(freq ~ Date + NPA + Age + NPA:Age, data = data)
-  #model = loglm(freq ~ Date*NPA*Age, data = data)
   
   p2 <- calcP(model)
   
