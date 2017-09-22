@@ -30,7 +30,7 @@ public class CTRowDouble extends CTRow<Double> {
 
     @Override
     public int getIntegerCount() {
-        return (int) Math.ceil(getCount());
+        return (int) Math.round(getCount());
     }
 
     @Override
