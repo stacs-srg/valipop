@@ -132,11 +132,11 @@ analysis <- function(outputFile, resultsDir, runFile, largestBirthLabel) {
   
   subpath <- paste(resultsDir, "/", runFile, "/tables", sep = "")
   
-  death <- deathAnalysis(paste(subpath, "/death-CT.csv", sep = ""))
-  ob <- obAnalysis(paste(subpath, "/ob-CT.csv", sep = ""), largestBirthLabel)
-  mb <- mbAnalysis(paste(subpath, "/mb-CT.csv", sep = ""), largestBirthLabel)
-  part <- partAnalysis(paste(subpath, "/part-CT.csv", sep = ""))
-  sep <- sepAnalysis(paste(subpath, "/sep-CT.csv", sep = ""))
+  death <- deathAnalysis(paste(subpath, "/death-CT-zav-1.csv", sep = ""))
+  ob <- obAnalysis(paste(subpath, "/ob-CT-zav-1.csv", sep = ""), largestBirthLabel)
+  mb <- mbAnalysis(paste(subpath, "/mb-CT-zav-1.csv", sep = ""), largestBirthLabel)
+  part <- partAnalysis(paste(subpath, "/part-CT-zav-1.csv", sep = ""))
+  sep <- sepAnalysis(paste(subpath, "/sep-CT-zav-1.csv", sep = ""))
   
   tt <- proc.time() - t
   
