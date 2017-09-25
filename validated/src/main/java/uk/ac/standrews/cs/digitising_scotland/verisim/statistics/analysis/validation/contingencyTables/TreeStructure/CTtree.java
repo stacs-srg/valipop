@@ -89,6 +89,10 @@ public class CTtree extends Node<String, SourceType, Number, Number> implements 
                         person.aliveInYear(y) && !person.bornInYear(y)
                         ||
                         person.bornOnDate(y)) {
+
+                    if(person.ageOnDate(y) > 150) {
+                        System.out.println("How?");
+                    }
                     processPerson(person, y, SourceType.SIM);
                 }
             }

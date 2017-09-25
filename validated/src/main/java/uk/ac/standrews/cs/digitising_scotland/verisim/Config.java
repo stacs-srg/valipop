@@ -79,6 +79,7 @@ public class Config {
     private CompoundTimeUnit inputWidth;
 
     private RecordFormat outputRecordFormat;
+    private boolean outputTables = true;
 
     private final String startTime;
 
@@ -298,14 +299,14 @@ public class Config {
                             log.fatal(m);
                             throw new InvalidParameterException(m);
                     }
-
-
+                case "output_tables":
+                    outputTables = split[1].toLowerCase().equals("true");
+                    break;
 
             }
-
         }
-
     }
+
 
     public String getVarPath() {
         return varPath;
@@ -458,5 +459,9 @@ public class Config {
 
     public RecordFormat getOutputRecordFormat() {
         return outputRecordFormat;
+    }
+
+    public boolean getOutputTables() {
+        return outputTables;
     }
 }

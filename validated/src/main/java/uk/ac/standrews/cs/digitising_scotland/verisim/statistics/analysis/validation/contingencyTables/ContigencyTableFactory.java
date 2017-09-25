@@ -40,23 +40,23 @@ public class ContigencyTableFactory {
 
             CTtableOB obTable = new CTtableOB(fullTree, desired);
 //            outputToFile(obTable, 0, "ob-CT-zav-0.csv");
-            outputToFile(obTable, 1, "ob-CT-zav-1.csv");
+            outputToFile(obTable, "ob-CT.csv");
 
             CTtableMB mbTable = new CTtableMB(fullTree, desired);
 //            outputToFile(mbTable, 0, "mb-CT-zav-0.csv");
-            outputToFile(mbTable, 1, "mb-CT-zav-1.csv");
+            outputToFile(mbTable, "mb-CT.csv");
 
             CTtablePart partTable = new CTtablePart(fullTree, desired);
 //            outputToFile(partTable, 0, "part-CT-zav-0.csv");
-            outputToFile(partTable, 1, "part-CT-zav-1.csv");
+            outputToFile(partTable, "part-CT.csv");
 
             CTtableSep sepTable = new CTtableSep(fullTree, desired);
 //            outputToFile(sepTable, 0, "sep-CT-zav-0.csv");
-            outputToFile(sepTable, 1, "sep-CT-zav-1.csv");
+            outputToFile(sepTable, "sep-CT.csv");
 
             CTtableDeath deathTable = new CTtableDeath(fullTree);
 //            outputToFile(deathTable, 0, "death-CT-zav-0.csv");
-            outputToFile(deathTable, 1, "death-CT-zav-1.csv");
+            outputToFile(deathTable, "death-CT.csv");
 
 
 //            System.out.println("OBDModel --- Outputting Full CTable to file");
@@ -76,11 +76,11 @@ public class ContigencyTableFactory {
         summary.setCTRunTime(tableTimer.getRunTimeSeconds());
     }
 
-    private static void outputToFile(CTtable table, int zeroAdjustValue, String fileName) throws IOException, NoTableRowsException {
+    private static void outputToFile(CTtable table, String fileName) throws IOException, NoTableRowsException {
         MemoryUsageAnalysis.log();
         Path path = FileUtils.mkBlankFile(FileUtils.getContingencyTablesPath(), fileName);
         PrintStream ps = new PrintStream(path.toFile(), "UTF-8");
-        table.outputToFile(ps, zeroAdjustValue);
+        table.outputToFile(ps);
         MemoryUsageAnalysis.log();
     }
 

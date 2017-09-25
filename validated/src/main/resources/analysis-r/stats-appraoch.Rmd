@@ -9,13 +9,13 @@ This documents details the approach taken to verify the genalogical populations 
 
 For efficency we have produced five contingency tables which are each concerned with one of the input distrbtions efffecting genalogical structure.
 
-This first dataset contains 1,048,194 individuals.
+This first dataset contains 9,550,521 individuals.
 
 Lets load these in:
 
 ```{r}
 path = paste("/Users/tsd4/OneDrive/cs/PhD/code/population-model/validated/src/main",
-                "/resources/results/review/20170908-120243:448/tables/", sep = "")
+                "/resources/results/scot-rfs-size/20170922-000418:080/tables/", sep = "")
 
 data.death = read.csv(paste(path, "death-CT.csv", sep = ""), sep = ',', header = T)
 data.obirth = read.csv(paste(path, "ob-CT.csv", sep = ""), sep = ',', header = T)
@@ -23,6 +23,7 @@ data.mbirth = read.csv(paste(path, "mb-CT.csv", sep = ""), sep = ',', header = T
 data.partner = read.csv(paste(path, "part-CT.csv", sep = ""), sep = ',', header = T)
 data.sep = read.csv(paste(path, "sep-CT.csv", sep = ""), sep = ',', header = T)
 ```
+
 
 Column abbriviations:
 
@@ -48,7 +49,9 @@ head(data.sep, 2)
 data.death$freq <- round(data.death$freq)
 data.death <- data.death[which(data.death$freq != 0), ]
 data.death <- data.death[which(data.death$Date >= 1855) , ]
-data.death <- data.death[which(data.death$Date < 2015) , ]
+data.death <- data.death[which(data.death$Date < 2014) , ]
+
+summary(data.death)
 
 # Analysis
 library("MASS")
@@ -62,6 +65,73 @@ Here we see the model created is a good fit for the data and thus that the Sourc
 # Ordered Birth
 
 ```{r}
+largestBirthLabel = "50+"
 
+# Standardise the data
+data.obirth$freq <- round(data.obirth$freq)
+data.obirth <- data.obirth[which(data.obirth$freq != 0), ]
+data.obirth <- data.obirth[which(data.obirth$Date >= 1855) , ]
+data.obirth <- data.obirth[which(data.obirth$Date < 2014) , ]
+data.obirth <- data.obirth[which(data.obirth$Age != "0to14"), ]
+data.obirth <- data.obirth[which(data.obirth$Age != largestBirthLabel), ]
+#data.obirth <- data.obirth[which(data.obirth$CIY == "YES"), ]
+
+
+# Analysis
+library("MASS")
+model = loglm(freq ~ Age + NPCIAP + CIY + Date + Age:NPCIAP + Age:CIY + NPCIAP:CIY + Age:NPCIAP:CIY, data = data.obirth)
+model
 ```
+
+#Multiple Birth
+
+```{r}
+data.mbirth$freq <- round(data.mbirth$freq)
+data.mbirth <- data.mbirth[which(data.mbirth$freq != 0), ]
+data.mbirth <- data.mbirth[which(data.mbirth$Date >= 1855) , ]
+data.mbirth <- data.mbirth[which(data.mbirth$Date < 2014) , ]
+data.mbirth <- data.mbirth[which(data.mbirth$Age != "0to14"), ]
+data.mbirth <- data.mbirth[which(data.mbirth$Age != largestBirthLabel), ]
+data.mbirth <- data.mbirth[which(data.mbirth$NCIY != "0"), ]
+
+# Analysis
+library("MASS")
+model = loglm(freq ~ Date + NCIY + Age + Date:NCIY + Date:Age, data = data.mbirth)
+model
+```
+
+#Partnering
+
+```{r}
+# Standardise the data
+data.partner$freq <- round(data.partner$freq)
+data.partner <- data.partner[which(data.partner$freq != 0), ]
+data.partner <- data.partner[which(data.partner$Date >= 1855) , ]
+data.partner <- data.partner[which(data.partner$Date < 2014) , ]
+data.partner <- data.partner[which(data.partner$NPA != "na") , ]
+
+# Analysis
+library("MASS")
+
+model = loglm(freq ~ Date + NPA + Age + NPA:Age, data = data.partner)
+model
+```
+
+
+#Separation
+
+```{r}
+# Standardise the data
+data.sep$freq <- round(data.sep$freq)
+data.sep <- data.sep[which(data.sep$freq != 0), ]
+data.sep <- data.sep[which(data.sep$Date >= 1855) , ]
+data.sep <- data.sep[which(data.sep$Date < 2014) , ]
+data.sep <- data.sep[which(data.sep$Separated != "NA") , ]
+
+# Analysis
+library("MASS")
+model = loglm(freq ~ Date + NCIP + Separated + NCIP:Separated, data = data.sep)
+model
+```
+
 
