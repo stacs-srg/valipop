@@ -33,12 +33,12 @@ deathAnalysis <- function(file) {
 
 obAnalysis <- function(file, largestBirthLabel) {
 
-  #file = "/Users/tsd4/OneDrive/cs/PhD/code/population-model/validated/src/main/resources/results/stats-ct-adjust-working/20170921-183902:953/tables/ob-CT-zav-1.csv"
-  #largestBirthLabel = "50+"
+  file = "/Users/tsd4/OneDrive/cs/PhD/code/population-model/validated/src/main/resources/results/pre-test/20170922-073944:253/tables/ob-CT-zav-1.csv"
+  largestBirthLabel = "50+"
   data = read.csv(file, sep = ',', header = T)
-  #summary(data[which(data$Source == "SIM"),])
-  #summary(data[which(data$Source == "STAT"),])
-  #head(data)
+  summary(data[which(data$Source == "SIM"),])
+  summary(data[which(data$Source == "STAT"),])
+  head(data)
   # Standardise the data
   data$freq <- round(data$freq)
   data <- data[which(data$freq != 0), ]

@@ -42,7 +42,7 @@ public class CTtableDeath extends CTtable {
                 try {
                     leaf.addDateVariable();
 
-                    leaf.deleteVariable("YOB");
+//                    leaf.deleteVariable("YOB");
                     leaf.deleteVariable("PNCIP");
                     leaf.deleteVariable("NCIY");
                     leaf.deleteVariable("CIY");

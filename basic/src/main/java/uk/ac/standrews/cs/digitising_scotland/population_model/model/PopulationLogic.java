@@ -44,12 +44,12 @@ public class PopulationLogic {
     public static final int END_YEAR = 2013;
 
     private static final int MINIMUM_MOTHER_AGE_AT_CHILDBIRTH = 12;
-    private static final int MAXIMUM_MOTHER_AGE_AT_CHILDBIRTH = 50;
+    private static final int MAXIMUM_MOTHER_AGE_AT_CHILDBIRTH = 55;
     private static final int MAX_GESTATION_IN_DAYS = 300;
     private static final int MINIMUM_FATHER_AGE_AT_CHILDBIRTH = 12;
-    private static final int MAXIMUM_FATHER_AGE_AT_CHILDBIRTH = 70;
+    private static final int MAXIMUM_FATHER_AGE_AT_CHILDBIRTH = 100;
 
-    private static final int INTER_CHILD_INTERVAL = 3;
+    private static final int INTER_CHILD_INTERVAL = 1;
     private static final int TIME_BEFORE_FIRST_CHILD = 1;
 
     private static final int MAXIMUM_AGE_DIFFERENCE_IN_PARTNERSHIP = 100;

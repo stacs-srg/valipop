@@ -207,7 +207,6 @@ public abstract class GeneralPopulationStructureTests {
         }
     }
 
-    @Ignore
     @Test
     public void sexesConsistent() {
 
@@ -244,7 +243,6 @@ public abstract class GeneralPopulationStructureTests {
         }
     }
 
-    @Ignore
     @Test
     public void parentsHaveSensibleAgesAtBirths() throws Exception {
 
@@ -332,8 +330,8 @@ public abstract class GeneralPopulationStructureTests {
 
     private void assertSexesConsistent(final IPartnership partnership) {
 
-        assertEquals(population.findPerson(partnership.getFemalePartnerId()).getSex(), IPerson.FEMALE);
-        assertEquals(population.findPerson(partnership.getMalePartnerId()).getSex(), IPerson.MALE);
+        assertEquals(Character.toLowerCase(IPerson.FEMALE), Character.toLowerCase(population.findPerson(partnership.getFemalePartnerId()).getSex()));
+        assertEquals(Character.toLowerCase(IPerson.MALE), Character.toLowerCase(population.findPerson(partnership.getMalePartnerId()).getSex()));
     }
 
     private void assertNotPartnerOfAny(final int person_id, final Set<Integer> people_ids) throws Exception {

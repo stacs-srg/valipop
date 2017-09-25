@@ -85,6 +85,10 @@ public class NDeathLogic implements EventLogic {
             int age = DateUtils.differenceInYears(divDate, currentDate).getCount();
             int peopleOfAge = ofSexLiving.getNumberOfPersons(divDate, consideredTimePeriod);
 
+            if(age > 150 && peopleOfAge > 0) {
+                System.out.println("What?");
+            }
+
             // gets death rate for people of age at the current date
             StatsKey key = new DeathStatsKey(age, peopleOfAge, consideredTimePeriod, currentDate, sex);
             DeterminedCount determinedCount = desiredPopulationStatistics.getDeterminedCount(key, config);

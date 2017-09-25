@@ -46,7 +46,7 @@ public class CTtablePart extends CTtable {
                     if (Objects.equals(leaf.getVariable("Sex").getValue(), "FEMALE")) {
                         leaf.deleteVariable("Sex");
 
-                        leaf.deleteVariable("YOB");
+//                        leaf.deleteVariable("YOB");
                         leaf.deleteVariable("Died");
                         leaf.deleteVariable("PNCIP");
                         leaf.deleteVariable("NPCIAP");
@@ -55,7 +55,7 @@ public class CTtablePart extends CTtable {
                         leaf.deleteVariable("Separated");
                         leaf.deleteVariable("NCIY");
 
-                        leaf.discritiseVariable("Age", "PART", inputStats);
+//                        leaf.discritiseVariable("Age", "PART", inputStats);
 
                         CTRow h = table.get(leaf.hash());
 

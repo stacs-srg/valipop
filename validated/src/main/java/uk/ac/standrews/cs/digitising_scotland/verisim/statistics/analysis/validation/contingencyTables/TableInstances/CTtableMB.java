@@ -47,7 +47,7 @@ public class CTtableMB extends CTtable {
                     if (Objects.equals(leaf.getVariable("Sex").getValue(), "FEMALE")) {
                         leaf.deleteVariable("Sex");
 
-                        leaf.deleteVariable("YOB");
+//                        leaf.deleteVariable("YOB");
                         leaf.deleteVariable("Died");
                         leaf.deleteVariable("PNCIP");
                         leaf.deleteVariable("NPCIAP");
@@ -56,7 +56,7 @@ public class CTtableMB extends CTtable {
                         leaf.deleteVariable("Separated");
                         leaf.deleteVariable("NPA");
 
-                        leaf.discritiseVariable("Age", "MB", inputStats);
+//                        leaf.discritiseVariable("Age", "MB", inputStats);
 
                         CTRow h = table.get(leaf.hash());
 

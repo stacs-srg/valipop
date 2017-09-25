@@ -16,17 +16,20 @@
  */
 package utils.implmentations;
 
+import uk.ac.standrews.cs.digitising_scotland.verisim.implementations.CL_OBDModel;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.fileUtils.InvalidInputFileException;
+
+import java.io.IOException;
+
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class GeneralValiPopPopulationTest {
+public class GeneralValiPopPopulationTest extends GeneralPopulationStructureTests {
 
-// extends GeneralPopulationStructureTests {
-
-//    public GeneralValiPopPopulationTest() throws IOException, InvalidInputFileException {
-//        super(CL_OBDModel.runOBDModel("src/test/resources/config-ps.txt",
-//                "src/test/resources/results", "general-structure-testing")
-//                .getPopulation().getAllPeople(), true);
-//    }
+    public GeneralValiPopPopulationTest() throws IOException, InvalidInputFileException {
+        super(CL_OBDModel.runOBDModel("src/test/resources/config-ps.txt",
+                "src/test/resources/results", "general-structure-testing")
+                .getPopulation().getAllPeople(), true);
+    }
 
 }

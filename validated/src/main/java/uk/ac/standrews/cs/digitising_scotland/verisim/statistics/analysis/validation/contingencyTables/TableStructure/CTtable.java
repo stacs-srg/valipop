@@ -31,33 +31,38 @@ public abstract class CTtable {
 
     protected HashMap<String, CTRow> table = new HashMap<>();
 
-    public void outputToFile(PrintStream ps, int zeroAdjustValue) throws NoTableRowsException {
+    public void outputToFile(PrintStream ps) throws NoTableRowsException {
 
+        int simZeroFreqs = 0;
+        int statZeroFreqs = 0;
         ps.print(getVarNames(","));
 
         for(CTRow row : table.values()) {
 
-            if(row.countGreaterThan(0.5)) {
+            if(row.countGreaterThan(0.1)) {
 
                 ps.print(row.toString(","));
                 ps.flush();
 
                 try {
+
+                    Collection<CTCell> cells = row.getCells();
+
+                    CTRowInt twin = new CTRowInt(cells);
+
                     if(Objects.equals(row.getVariable("Source").getValue(), "STAT")) {
 
-                        Collection<CTCell> cells = row.getCells();
-//                        CTCell[] cellArray = (CTCell[]) cells.toArray(new CTCell[cells.size()]);
-
-                        CTRowInt twin = new CTRowInt(cells);
                         twin.setVariable("Source", "SIM");
-                        twin.setCount(zeroAdjustValue);
-
                         CTRow t = table.get(twin.hash());
 
-                        if(t == null) {
-                            ps.print(twin.toString(","));
-                        }
+                        if(t == null) { simZeroFreqs++; }
 
+                    } else {
+
+                        twin.setVariable("Source", "STAT");
+                        CTRow t = table.get(twin.hash());
+
+                        if(t == null) { statZeroFreqs++; }
 
                     }
                 } catch (VariableNotFoundExcepction variableNotFoundExcepction) {
