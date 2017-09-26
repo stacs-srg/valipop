@@ -85,7 +85,7 @@ public class NDeathLogic implements EventLogic {
             int age = DateUtils.differenceInYears(divDate, currentDate).getCount();
             int peopleOfAge = ofSexLiving.getNumberOfPersons(divDate, consideredTimePeriod);
 
-            if(age > 150 && peopleOfAge > 0) {
+            if(age > 115 && peopleOfAge > 0) {
                 System.out.println("What?");
             }
 

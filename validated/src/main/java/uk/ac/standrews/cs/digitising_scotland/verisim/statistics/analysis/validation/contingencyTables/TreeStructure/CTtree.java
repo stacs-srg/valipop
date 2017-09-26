@@ -90,7 +90,7 @@ public class CTtree extends Node<String, SourceType, Number, Number> implements 
                         ||
                         person.bornOnDate(y)) {
 
-                    if(person.ageOnDate(y) > 150) {
+                    if(person.ageOnDate(y) > 110) {
                         System.out.println("How?");
                     }
                     processPerson(person, y, SourceType.SIM);
