@@ -124,16 +124,18 @@ public class FactorSearch {
                             for (double bf : bfs) {
                                 for (double df : dfs) {
 
-                                    String startTime = FileUtils.getDateTime();
-                                    OBDModel.setUpFileStructureAndLogs(runPurpose, startTime, results_save_location);
-
-                                    Config config = new Config(tS, t0, tE, size, set_up_br, set_up_dr,
-                                            simulation_time_step, dataFiles, results_save_location, runPurpose,
-                                            minBirthSpacing, maxInfid, bf, df, rf, iw, output_record_format, startTime);
 
                                     try {
 
                                         for(int n = 0; n < numberOfRunsPerSim; n++) {
+
+                                            String startTime = FileUtils.getDateTime();
+                                            OBDModel.setUpFileStructureAndLogs(runPurpose, startTime, results_save_location);
+
+                                            Config config = new Config(tS, t0, tE, size, set_up_br, set_up_dr,
+                                                    simulation_time_step, dataFiles, results_save_location, runPurpose,
+                                                    minBirthSpacing, maxInfid, bf, df, rf, iw, output_record_format, startTime);
+
 
                                             OBDModel model = new OBDModel(startTime, config);
                                             model.runSimulation();
