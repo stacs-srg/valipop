@@ -42,7 +42,6 @@ public abstract class CTtable {
             if(row.countGreaterThan(0.1)) {
 
                 ps.print(row.toString(","));
-                ps.flush();
 
                 try {
 

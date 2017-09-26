@@ -194,7 +194,7 @@ public abstract class CTRow<count extends Number> {
             s.append(cell.getValue() + sep);
         }
 
-        s.append(getIntegerCount() + "\n");
+        s.append(getCount() + "\n");
 
         return s.toString();
 

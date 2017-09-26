@@ -104,7 +104,14 @@ public class SelfCorrectingOneDimensionDataDistribution extends OneDimensionData
                 rf = config.getRecoveryFactor();
             }
 
-            double cD = ( Math.ceil( (aC * tD) - (aC * aD) ) * rf + tAT * tD ) / tAT;
+            double fall = Math.ceil( (aC * tD) - (aC * aD) );
+
+            double cD;
+            if(fall > 0) {
+                cD = ( fall * rf + tAT * tD ) / tAT;
+            } else {
+                cD = 0;
+            }
 
             // Checks that rate falls in bounds
             if (cD < 0) {

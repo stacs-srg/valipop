@@ -53,6 +53,10 @@ public class SexNodeInt extends IntNode<SexOption, IntegerRange> {
             age = 0;
         }
 
+        if(age > 110) {
+            System.out.println("barf");
+        }
+
         try {
             resolveChildNodeForAge(age).processPerson(person, currentDate);
         } catch (ChildNotFoundException e) {

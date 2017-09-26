@@ -42,14 +42,33 @@ public class FactorSearch {
 //                case "A":
 //                    runFactorSearch(500000);
 //                    break;
-                case "B":
-                    runFactorSearch(1000000);
+                case "AB":
+                    runPurpose = "geeglm-scot";
+                    runFactorSearch(1000000, "src/main/resources/scotland_test_population");
                     break;
-                case "C":
-                    runFactorSearch(2000000);
+                case "AC":
+                    runPurpose = "geeglm-scot";
+                    runFactorSearch(2000000, "src/main/resources/scotland_test_population");
                     break;
-                case "D":
-                    runFactorSearch(4000000);
+                case "AD":
+                    runPurpose = "geeglm-scot";
+                    runFactorSearch(4000000, "src/main/resources/scotland_test_population");
+                    break;
+                case "BA":
+                    runPurpose = "geeglm-ja";
+                    runFactorSearch(500000, "src/main/resources/proxy-scotland-population-JA");
+                    break;
+                case "BB":
+                    runPurpose = "geeglm-ja";
+                    runFactorSearch(1000000, "src/main/resources/proxy-scotland-population-JA");
+                    break;
+                case "BC":
+                    runPurpose = "geeglm-ja";
+                    runFactorSearch(2000000, "src/main/resources/proxy-scotland-population-JA");
+                    break;
+                case "BD":
+                    runPurpose = "geeglm-ja";
+                    runFactorSearch(4000000, "src/main/resources/proxy-scotland-population-JA");
                     break;
                 default:
                     break;
@@ -81,10 +100,10 @@ public class FactorSearch {
     static double set_up_br = 0.0133;
     static double set_up_dr = 0.0122;
 
-    static int numberOfRunsPerSim = 5;
-    static String runPurpose = "scot-rfs-size";
+    static int numberOfRunsPerSim = 3;
+    static String runPurpose = "geeglm-scot";
 
-    public static void runFactorSearch(int size) throws IOException, InvalidInputFileException {
+    public static void runFactorSearch(int size, String dataFiles) throws IOException, InvalidInputFileException {
 
         rfs = new double[]{0, 0.3, 0.5, 1};
         iws = new CompoundTimeUnit[]{
@@ -109,7 +128,7 @@ public class FactorSearch {
                                     OBDModel.setUpFileStructureAndLogs(runPurpose, startTime, results_save_location);
 
                                     Config config = new Config(tS, t0, tE, size, set_up_br, set_up_dr,
-                                            simulation_time_step, var_data_files, results_save_location, runPurpose,
+                                            simulation_time_step, dataFiles, results_save_location, runPurpose,
                                             minBirthSpacing, maxInfid, bf, df, rf, iw, output_record_format, startTime);
 
                                     try {
