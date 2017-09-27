@@ -41,11 +41,11 @@ public class FactorSearch {
 
         try {
             switch(args[0]) {
-                case "A":
+                case "B":
                     runPurpose = "geeglm-bf-ja";
                     runFactorSearch(250000, "src/main/resources/proxy-scotland-population-JA");
                     break;
-                case "AB":
+                case "A":
                     runPurpose = "geeglm-bf-scot";
                     runFactorSearch(500000, "src/main/resources/scotland_test_population");
                     break;
