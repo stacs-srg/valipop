@@ -29,7 +29,7 @@ public class GeneralValiPopPopulationTest extends GeneralPopulationStructureTest
     public GeneralValiPopPopulationTest() throws IOException, InvalidInputFileException {
         super(CL_OBDModel.runOBDModel("src/test/resources/config-ps.txt",
                 "src/test/resources/results", "general-structure-testing")
-                .getPopulation().getAllPeople(), true);
+                .getPopulation().getAllPeople(), false);
     }
 
 }

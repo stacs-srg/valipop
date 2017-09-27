@@ -47,6 +47,8 @@ import java.util.*;
  */
 public class NBirthLogic implements EventLogic {
 
+    Random rand = new Random();
+
     private int tBirths = 0;
 
     @Override
@@ -77,11 +79,23 @@ public class NBirthLogic implements EventLogic {
                 SingleDeterminedCount determinedCount =
                         (SingleDeterminedCount) desiredPopulationStatistics.getDeterminedCount(key, config);
 
-                int birthAdjust;
+                int birthAdjust = 0;
                 if(determinedCount.getDeterminedCount() == 0) {
                     birthAdjust = 0;
                 } else {
-                    birthAdjust = Integer.parseInt(String.valueOf(Math.round(new Random().nextInt(cohortSize + 1) * config.getBirthFactor())));
+//                    birthAdjust = Integer.parseInt(String.valueOf(Math.round(new Random().nextInt(cohortSize + 1) * config.getBirthFactor())));
+//                    birthAdjust = -1;
+//                    int bound = Integer.parseInt(String.valueOf(Math.round(1 / config.getBirthFactor())));
+
+                    int bound = 1000;
+                    if(rand.nextInt(bound) < Math.abs(config.getBirthFactor()) * bound) {
+
+                        if(config.getBirthFactor() < 0) {
+                            birthAdjust = 1;
+                        } else {
+                            birthAdjust = -1;
+                        }
+                    }
                 }
 
                 int numberOfChildren = determinedCount.getDeterminedCount() + birthAdjust;
@@ -182,7 +196,7 @@ public class NBirthLogic implements EventLogic {
                     needPartners.add(new NewMother(female, highestBirthOption.getValue()));
                 } else {
 
-                    female.addChildrenToCurrentPartnership(highestBirthOption.getValue(), currentDate, consideredTimePeriod, population);
+                    female.addChildrenToCurrentPartnership(highestBirthOption.getValue(), currentDate, consideredTimePeriod, population, desiredPopulationStatistics);
                     havePartners.add(female);
 
                     try {

@@ -157,7 +157,7 @@ public class OBDModel {
             if (InitLogic.inInitPeriod(currentTime) &&
                     DateUtils.matchesInterval(currentTime, InitLogic.getTimeStep(), config.getTS())) {
 
-                int initAtTS = InitLogic.handleInitPeople(config, currentTime, population);
+                int initAtTS = InitLogic.handleInitPeople(config, currentTime, population, desired);
                 yearLine += initAtTS + "\t";
 
             } else if(!InitLogic.inInitPeriod(currentTime)) {
@@ -193,7 +193,7 @@ public class OBDModel {
     public void analyseAndOutputPopulation() {
 
         if(config.getOutputTables()) {
-            ContigencyTableFactory.generateContigencyTables(population.getAllPeople(), desired, config, summary, 0, 100);
+            ContigencyTableFactory.generateContigencyTables(population.getAllPeople(), desired, config, summary, 0, 150);
         }
 
         ProgramTimer recordTimer = new ProgramTimer();

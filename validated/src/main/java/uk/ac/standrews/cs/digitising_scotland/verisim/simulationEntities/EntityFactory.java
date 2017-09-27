@@ -17,6 +17,7 @@
 package uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities;
 
 
+import uk.ac.standrews.cs.digitising_scotland.verisim.statistics.populationStatistics.PopulationStatistics;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.dateModel.Date;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.dateModel.dateImplementations.AdvancableDate;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.dateModel.dateSelection.BirthDateSelector;
@@ -41,7 +42,7 @@ public class EntityFactory {
     private static BirthDateSelector birthDateSelector = new BirthDateSelector();
 
     public static IPartnershipExtended formNewChildrenInPartnership(int numberOfChildren, IPersonExtended father, IPersonExtended mother, AdvancableDate currentDate,
-                                                                    CompoundTimeUnit birthTimeStep, Population population) throws PersonNotFoundException {
+                                                                    CompoundTimeUnit birthTimeStep, Population population, PopulationStatistics ps) throws PersonNotFoundException {
 
         try {
             population.getLivingPeople().removePerson(mother);
@@ -61,10 +62,10 @@ public class EntityFactory {
         for(int c = 0; c < numberOfChildren; c++) {
             IPersonExtended child;
             if(childrenBirthDate == null) {
-                child = makePerson(currentDate, birthTimeStep, partnership, population);
+                child = makePerson(currentDate, birthTimeStep, partnership, population, ps);
                 childrenBirthDate = child.getBirthDate_ex();
             } else {
-                child = makePerson(childrenBirthDate, partnership, population);
+                child = makePerson(childrenBirthDate, partnership, population, ps);
             }
             children.add(child);
         }
@@ -87,18 +88,18 @@ public class EntityFactory {
 
 
 
-    public static IPersonExtended formOrphanChild(AdvancableDate currentDate, CompoundTimeUnit birthTimeStep, Population population) {
-        return makePerson(currentDate, birthTimeStep, null, population);
+    public static IPersonExtended formOrphanChild(AdvancableDate currentDate, CompoundTimeUnit birthTimeStep, Population population, PopulationStatistics ps) {
+        return makePerson(currentDate, birthTimeStep, null, population, ps);
     }
 
-    private static char getSex(PopulationCounts pc) {
+    private static char getSex(PopulationCounts pc, PopulationStatistics ps, Date currentDate) {
 
         // TODO move over to a specified m to f ratio
 
 //        double sexBalance = pc.getLivingSexRatio();
         double sexBalance = pc.getAllTimeSexRatio();
 
-        if(sexBalance <= 1) {
+        if(sexBalance < ps.getMaleProportionOfBirths(currentDate)) {
 
             pc.newMale();
             return 'M';
@@ -110,9 +111,9 @@ public class EntityFactory {
 
     }
 
-    public static IPersonExtended makePerson(Date birthDate, IPartnershipExtended parentsPartnership, Population population) {
+    public static IPersonExtended makePerson(Date birthDate, IPartnershipExtended parentsPartnership, Population population, PopulationStatistics ps) {
 
-        Person person = new Person(getSex(population.getPopulationCounts()), birthDate, parentsPartnership);
+        Person person = new Person(getSex(population.getPopulationCounts(), ps, birthDate), birthDate, parentsPartnership);
 
         population.getLivingPeople().addPerson(person);
 
@@ -120,9 +121,9 @@ public class EntityFactory {
 
     }
 
-    public static IPersonExtended makePerson(Date currentDate, CompoundTimeUnit birthTimeStep, IPartnershipExtended parentsPartnership, Population population) {
+    public static IPersonExtended makePerson(Date currentDate, CompoundTimeUnit birthTimeStep, IPartnershipExtended parentsPartnership, Population population, PopulationStatistics ps) {
 
-        return makePerson(birthDateSelector.selectDate(currentDate, birthTimeStep), parentsPartnership, population);
+        return makePerson(birthDateSelector.selectDate(currentDate, birthTimeStep), parentsPartnership, population, ps);
 
     }
 }

@@ -61,7 +61,7 @@ public class InitLogic {
 
     }
 
-    public static int handleInitPeople(Config config, AdvancableDate currentTime, Population population) {
+    public static int handleInitPeople(Config config, AdvancableDate currentTime, Population population, PopulationStatistics ps) {
 
         // calculate hypothetical number of expected births
         int hypotheticalBirths = calculateChildrenToBeBorn(currentHypotheticalPopulationSize, config.getSetUpBR() * initTimeStep.toDecimalRepresentation());
@@ -78,7 +78,7 @@ public class InitLogic {
         if(shortFallInBirths >= 0) {
             // add Orphan Children to the population
             for (int i = 0; i < shortFallInBirths; i++) {
-                EntityFactory.formOrphanChild(currentTime, InitLogic.getTimeStep(), population);
+                EntityFactory.formOrphanChild(currentTime, InitLogic.getTimeStep(), population, ps);
             }
         } else {
             double removeN = Math.abs(shortFallInBirths) / 2.0;

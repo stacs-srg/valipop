@@ -102,7 +102,6 @@ public abstract class GeneralPopulationStructureTests {
         doTooManyIterations(iterator, numberOfPartnerships);
     }
 
-    @Ignore
     @Test
     public void peopleRetrievedConsistently() throws Exception {
 
@@ -126,7 +125,6 @@ public abstract class GeneralPopulationStructureTests {
         }
     }
 
-    @Ignore
     @Test
     public void partnershipsRetrievedConsistently() throws Exception {
 
