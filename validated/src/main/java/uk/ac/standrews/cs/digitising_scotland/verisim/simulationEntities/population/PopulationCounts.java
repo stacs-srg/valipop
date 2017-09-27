@@ -116,11 +116,11 @@ public class PopulationCounts {
     }
 
     public double getAllTimeSexRatio() {
-        return createdMales / (double) createdFemales;
+        return createdMales / ((double) (createdFemales + createdMales));
     }
 
     public double getLivingSexRatio() {
-        return livingMales / (double) livingFemales;
+        return livingMales / ((double) (livingFemales + livingMales));
     }
 
     public void updateMaxPopulation(int populationSize) {

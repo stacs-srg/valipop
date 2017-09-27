@@ -21,6 +21,7 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.annotations.names.FileBase
 import uk.ac.standrews.cs.digitising_scotland.verisim.annotations.names.FirstNameGenerator;
 import uk.ac.standrews.cs.digitising_scotland.verisim.annotations.names.NameGenerator;
 import uk.ac.standrews.cs.digitising_scotland.verisim.annotations.names.SurnameGenerator;
+import uk.ac.standrews.cs.digitising_scotland.verisim.statistics.populationStatistics.PopulationStatistics;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.dateModel.Date;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.dateModel.DateUtils;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.dateModel.dateImplementations.AdvancableDate;
@@ -353,7 +354,7 @@ public class Person implements IPersonExtended {
     }
 
     @Override
-    public void addChildrenToCurrentPartnership(int numberOfChildren, AdvancableDate onDate, CompoundTimeUnit birthTimeStep, Population population) {
+    public void addChildrenToCurrentPartnership(int numberOfChildren, AdvancableDate onDate, CompoundTimeUnit birthTimeStep, Population population, PopulationStatistics ps) {
 
         try {
             population.getLivingPeople().removePerson(this);
@@ -367,11 +368,11 @@ public class Person implements IPersonExtended {
 
         for(int c = 0; c < numberOfChildren; c++) {
             if(birthDate == null) {
-                IPersonExtended child = EntityFactory.makePerson(onDate, birthTimeStep, last, population);
+                IPersonExtended child = EntityFactory.makePerson(onDate, birthTimeStep, last, population, ps);
                 last.addChildren(Collections.singleton(child));
                 birthDate = child.getBirthDate_ex();
             } else {
-                IPersonExtended child = EntityFactory.makePerson(onDate, last, population);
+                IPersonExtended child = EntityFactory.makePerson(onDate, last, population, ps);
                 last.addChildren(Collections.singleton(child));
             }
 

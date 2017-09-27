@@ -228,7 +228,7 @@ public class PartneringLogic {
 
                 int numChildrenInPartnership = pp.getNumberOfChildren();
 
-                EntityFactory.formNewChildrenInPartnership(numChildrenInPartnership, father, mother, currentDate, consideredTimePeriod, population);
+                EntityFactory.formNewChildrenInPartnership(numChildrenInPartnership, father, mother, currentDate, consideredTimePeriod, population, desiredPopulationStatistics);
 
                 IntegerRange maleAgeRange = resolveAgeToIR(pp.getMale(), returnPartnerCounts.getLabels(), currentDate);
                 returnPartnerCounts.update(maleAgeRange, returnPartnerCounts.getValue(maleAgeRange));

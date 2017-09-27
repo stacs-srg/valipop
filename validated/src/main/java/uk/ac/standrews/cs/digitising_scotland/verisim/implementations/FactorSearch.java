@@ -37,43 +37,47 @@ public class FactorSearch {
 
 //        runFactorSearch();
 
-                try {
+        runFactorSearch(25000, "src/main/resources/proxy-scotland-population-JA");
+
+        try {
             switch(args[0]) {
-//                case "A":
-//                    runFactorSearch(500000);
-//                    break;
+                case "A":
+                    runPurpose = "geeglm-bf-ja";
+                    runFactorSearch(250000, "src/main/resources/proxy-scotland-population-JA");
+                    break;
                 case "AB":
-                    runPurpose = "geeglm-scot";
-                    runFactorSearch(1000000, "src/main/resources/scotland_test_population");
-                    break;
-                case "AC":
-                    runPurpose = "geeglm-scot";
-                    runFactorSearch(2000000, "src/main/resources/scotland_test_population");
-                    break;
-                case "AD":
-                    runPurpose = "geeglm-scot";
-                    runFactorSearch(4000000, "src/main/resources/scotland_test_population");
-                    break;
-                case "BA":
-                    runPurpose = "geeglm-ja";
-                    runFactorSearch(500000, "src/main/resources/proxy-scotland-population-JA");
-                    break;
-                case "BB":
-                    runPurpose = "geeglm-ja";
-                    runFactorSearch(1000000, "src/main/resources/proxy-scotland-population-JA");
-                    break;
-                case "BC":
-                    runPurpose = "geeglm-ja";
-                    runFactorSearch(2000000, "src/main/resources/proxy-scotland-population-JA");
-                    break;
-                case "BD":
-                    runPurpose = "geeglm-ja";
-                    runFactorSearch(4000000, "src/main/resources/proxy-scotland-population-JA");
-                    break;
-                default:
+                    runPurpose = "geeglm-bf-scot";
+                    runFactorSearch(500000, "src/main/resources/scotland_test_population");
                     break;
             }
-
+//                case "AC":
+//                    runPurpose = "geeglm-scot";
+//                    runFactorSearch(2000000, "src/main/resources/scotland_test_population");
+//                    break;
+//                case "AD":
+//                    runPurpose = "geeglm-scot";
+//                    runFactorSearch(4000000, "src/main/resources/scotland_test_population");
+//                    break;
+//                case "BA":
+//                    runPurpose = "geeglm-ja";
+//                    runFactorSearch(500000, "src/main/resources/proxy-scotland-population-JA");
+//                    break;
+//                case "BB":
+//                    runPurpose = "geeglm-ja";
+//                    runFactorSearch(1000000, "src/main/resources/proxy-scotland-population-JA");
+//                    break;
+//                case "BC":
+//                    runPurpose = "geeglm-ja";
+//                    runFactorSearch(2000000, "src/main/resources/proxy-scotland-population-JA");
+//                    break;
+//                case "BD":
+//                    runPurpose = "geeglm-ja";
+//                    runFactorSearch(4000000, "src/main/resources/proxy-scotland-population-JA");
+//                    break;
+//                default:
+//                    break;
+//            }
+//
         } catch (IOException | InvalidInputFileException e) {
             e.printStackTrace();
             System.err.println(e.getMessage());
@@ -100,18 +104,18 @@ public class FactorSearch {
     static double set_up_br = 0.0133;
     static double set_up_dr = 0.0122;
 
-    static int numberOfRunsPerSim = 3;
-    static String runPurpose = "geeglm-scot";
+    static int numberOfRunsPerSim = 1;
+    static String runPurpose = "geeglm-bfs";
 
     public static void runFactorSearch(int size, String dataFiles) throws IOException, InvalidInputFileException {
 
-        rfs = new double[]{0, 0.3, 0.5, 1};
+        rfs = new double[]{0.1, 0.2, 0.3, 0.4, 1};
         iws = new CompoundTimeUnit[]{
-                new CompoundTimeUnit(20, TimeUnit.YEAR)
+                new CompoundTimeUnit(40, TimeUnit.YEAR)
         };
         minBirthSpacings = new int[]{147};
         maxInfids = new double[]{0.2};
-        bfs = new double[]{0};
+        bfs = new double[]{-0.35, -0.34, -0.33, -0.32, -0.31, -0.3, -0.29, -0.28, -0.27, -0.26, -0.25};
         dfs = new double[]{0};
 //        t0_pop_size = new int[]{1000000, 500000, 250000};
 

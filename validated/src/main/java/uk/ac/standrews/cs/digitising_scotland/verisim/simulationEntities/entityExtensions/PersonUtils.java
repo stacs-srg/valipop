@@ -16,6 +16,7 @@
  */
 package uk.ac.standrews.cs.digitising_scotland.verisim.simulationEntities.entityExtensions;
 
+import uk.ac.standrews.cs.digitising_scotland.verisim.statistics.populationStatistics.PopulationStatistics;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.dateModel.dateImplementations.AdvancableDate;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.dateModel.dateImplementations.YearDate;
 import uk.ac.standrews.cs.digitising_scotland.verisim.events.death.NotDeadException;
@@ -49,7 +50,7 @@ public interface PersonUtils {
 
     IPersonExtended getLastChild();
 
-    void addChildrenToCurrentPartnership(int numberOfChildren, AdvancableDate onDate, CompoundTimeUnit birthTimeStep, Population population);
+    void addChildrenToCurrentPartnership(int numberOfChildren, AdvancableDate onDate, CompoundTimeUnit birthTimeStep, Population population, PopulationStatistics ps);
 
     boolean toSeparate();
 

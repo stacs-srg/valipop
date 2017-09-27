@@ -35,11 +35,14 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.statistics.populationStati
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Random;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class NDeathLogic implements EventLogic {
+
+    Random rand = new Random();
 
     private DeathDateSelector deathDateSelector = new DeathDateSelector();
 
@@ -96,8 +99,21 @@ public class NDeathLogic implements EventLogic {
             // Calculate the appropriate number to kill and then kill
             Integer numberToKill = ((SingleDeterminedCount) determinedCount).getDeterminedCount();
 
-            int killAdjust = Integer.parseInt(String.valueOf(Math.round(peopleOfAge * config.getDeathFactor())));
+//            int killAdjust = Integer.parseInt(String.valueOf(Math.round(peopleOfAge * config.getDeathFactor())));
 //            int killAdjust = 0;
+
+            int killAdjust = 0;
+            if(numberToKill == 0) {
+                killAdjust = 0;
+            } else {
+//                    birthAdjust = Integer.parseInt(String.valueOf(Math.round(new Random().nextInt(cohortSize + 1) * config.getBirthFactor())));
+//                    birthAdjust = -1;
+//                    int bound = Integer.parseInt(String.valueOf(Math.round(1 / config.getBirthFactor())));
+                int bound = 10000;
+                if(rand.nextInt(bound) < config.getDeathFactor() * bound) {
+                    killAdjust = -1;
+                }
+            }
 
             Collection<IPersonExtended> peopleToKill;
             try {
