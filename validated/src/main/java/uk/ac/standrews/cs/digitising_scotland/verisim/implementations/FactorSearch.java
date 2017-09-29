@@ -37,19 +37,19 @@ public class FactorSearch {
 
 //        runFactorSearch();
 
-        runFactorSearch(25000, "src/main/resources/proxy-scotland-population-JA");
+        runFactorSearch(1500000, "src/main/resources/scotland_test_population");
 
-        try {
-            switch(args[0]) {
-                case "B":
-                    runPurpose = "geeglm-bf-ja";
-                    runFactorSearch(250000, "src/main/resources/proxy-scotland-population-JA");
-                    break;
-                case "A":
-                    runPurpose = "geeglm-bf-scot";
-                    runFactorSearch(500000, "src/main/resources/scotland_test_population");
-                    break;
-            }
+//        try {
+//            switch(args[0]) {
+//                case "B":
+//                    runPurpose = "geeglm-bf-ja";
+//                    runFactorSearch(250000, "src/main/resources/proxy-scotland-population-JA");
+//                    break;
+//                case "A":
+//
+//                    runFactorSearch(100000, "src/main/resources/scotland_test_population");
+//                    break;
+//            }
 //                case "AC":
 //                    runPurpose = "geeglm-scot";
 //                    runFactorSearch(2000000, "src/main/resources/scotland_test_population");
@@ -78,10 +78,10 @@ public class FactorSearch {
 //                    break;
 //            }
 //
-        } catch (IOException | InvalidInputFileException e) {
-            e.printStackTrace();
-            System.err.println(e.getMessage());
-        }
+//        } catch (IOException | InvalidInputFileException e) {
+//            e.printStackTrace();
+//            System.err.println(e.getMessage());
+//        }
     }
 
     static double[] rfs;
@@ -105,17 +105,17 @@ public class FactorSearch {
     static double set_up_dr = 0.0122;
 
     static int numberOfRunsPerSim = 1;
-    static String runPurpose = "geeglm-bfs";
+    static String runPurpose = "geeglm-bf-scot-4";
 
     public static void runFactorSearch(int size, String dataFiles) throws IOException, InvalidInputFileException {
 
-        rfs = new double[]{0.1, 0.2, 0.3, 0.4, 1};
+        rfs = new double[]{0.5};
         iws = new CompoundTimeUnit[]{
                 new CompoundTimeUnit(40, TimeUnit.YEAR)
         };
         minBirthSpacings = new int[]{147};
         maxInfids = new double[]{0.2};
-        bfs = new double[]{-0.35, -0.34, -0.33, -0.32, -0.31, -0.3, -0.29, -0.28, -0.27, -0.26, -0.25};
+        bfs = new double[]{0.075};
         dfs = new double[]{0};
 //        t0_pop_size = new int[]{1000000, 500000, 250000};
 
