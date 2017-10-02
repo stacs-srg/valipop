@@ -230,4 +230,8 @@ public class OBDModel {
         return population;
     }
 
+    public PopulationStatistics getDesiredPopulationStatistics() {
+        return desired;
+    }
+
 }
