@@ -1,6 +1,5 @@
 package uk.ac.standrews.cs.digitising_scotland.verisim.implementations;
 
-import org.apache.commons.math3.analysis.function.Min;
 import uk.ac.standrews.cs.digitising_scotland.verisim.Config;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.DoubleComparer;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.fileUtils.FileUtils;
@@ -15,7 +14,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.LinkedList;
-import java.util.PriorityQueue;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
@@ -25,8 +23,22 @@ public class MinimaSearch {
     static double startBF;
     static double step;
 
+    public static void main(String[] args) throws StatsException, IOException, InvalidInputFileException {
+
+        switch(args[0]) {
+
+            case "A":
+                runSearch(5200000, "src/main/resources/scotland_test_population", 0.0, 0.5, "minima-scot");
+                break;
+            case "B":
+                runSearch(1850000, "src/main/resources/proxy-scotland-population-JA", 0.0, 0.5, "minima-ja");
+                break;
+            }
+
+    }
+
     @SuppressWarnings("Duplicates")
-    private static void runSearch(int populationSize, String dataFiles, double startBF, double step) throws IOException, InvalidInputFileException, StatsException {
+    private static void runSearch(int populationSize, String dataFiles, double startBF, double step, String runPurpose) throws IOException, InvalidInputFileException, StatsException {
 
         MinimaSearch.startBF = startBF;
         MinimaSearch.step = step;
@@ -36,7 +48,6 @@ public class MinimaSearch {
         int minBirthSpacing = 147;
         double maxInfid = 0.2;
         double df = 0.0;
-        String runPurpose = "minima-search";
         String results_save_location = "src/main/resources/results/";
 
         CompoundTimeUnit simulation_time_step = new CompoundTimeUnit(1, TimeUnit.YEAR);
@@ -47,7 +58,6 @@ public class MinimaSearch {
         double set_up_dr = 0.0122;
 
         RecordFormat output_record_format = RecordFormat.NONE;
-
 
         try {
 
@@ -64,9 +74,13 @@ public class MinimaSearch {
 
                 OBDModel model = new OBDModel(startTime, config);
                 model.runSimulation();
-                model.analyseAndOutputPopulation();
+                model.analyseAndOutputPopulation(false);
+                double v = getV(FileUtils.getContingencyTablesPath().toString(), model.getDesiredPopulationStatistics().getOrderedBirthRates(new YearDate(0)).getLargestLabel().getValue());
 
-                logBFtoV(bf, getV(FileUtils.getContingencyTablesPath().toString(), model.getDesiredPopulationStatistics().getOrderedBirthRates(new YearDate(0)).getLargestLabel().getValue()));
+                model.getSummaryRow().setV(v);
+                model.getSummaryRow().outputSummaryRowToFile();
+
+                logBFtoV(bf, v);
 
             }
         } catch (IOException e) {
@@ -87,8 +101,10 @@ public class MinimaSearch {
     private static double getNextBFValue() {
 
         if(points.size() == 0) {
+            System.out.println("Next BF : " + startBF);
             return startBF;
         } else if(points.size() == 1) {
+            System.out.println("Next BF : " + (startBF + step));
             return startBF + step;
         } else {
 
@@ -99,10 +115,12 @@ public class MinimaSearch {
 
             double newBF;
 
+            double direction = dyOverdx / Math.abs(dyOverdx);
+
             if(!DoubleComparer.equal(0, dyOverdx, 0.0000001)) {
                 // if sloped
 
-                newBF = lastPoint.x_bf - (step * dyOverdx / Math.abs(dyOverdx));
+                newBF = lastPoint.x_bf - (step * direction);
 
             } else {
                 // if flat line
@@ -115,6 +133,7 @@ public class MinimaSearch {
             BFVPoint match = containsValue(points, newBF);
 
             if(match == null) {
+                System.out.println("Next BF : " + newBF);
                 return newBF;
             } else {
 
@@ -123,15 +142,28 @@ public class MinimaSearch {
                     step = step / 2;
                     newBF = lastPoint.x_bf + step;
                 } else if(match.y_v < lastPoint.y_v) {
+                    // down slope to match point - thus jump
                     points.remove(match);
                     points.addLast(match);
-                    newBF = match.x_bf + step;
+                    newBF = match.x_bf - (step * direction);
+
+                    BFVPoint match2 = containsValue(points, newBF);
+
+                    if(match2 != null) {
+                        // if newBF has already been used, then split in gap
+                        step = step / 2;
+                        newBF = match.x_bf - (step * direction);
+                    }
+
                 } else {
                     // if equal v
                     step = step / 2;
                     newBF = lastPoint.x_bf + step;
                 }
+
             }
+
+            System.out.println("Next BF : " + newBF);
             return newBF;
         }
     }
@@ -158,25 +190,27 @@ public class MinimaSearch {
     }
 
 
-    private static int getV(String pathOfTablesDir, int maxBirthingAge) throws IOException, StatsException {
+    private static double getV(String pathOfTablesDir, int maxBirthingAge) throws StatsException, IOException {
 
-        Runtime rt = Runtime.getRuntime();
-        String[] commands = {"src/main/resources/analysis-r/geeglm/dev-minima-search.R", pathOfTablesDir, String.valueOf(maxBirthingAge)};
-        Process proc = rt.exec(commands);
+        String[] commands = {"RScript", "src/main/resources/analysis-r/geeglm/dev-minima-search.R", pathOfTablesDir, String.valueOf(maxBirthingAge)};
+        ProcessBuilder pb = new ProcessBuilder(commands);
+
+        Process proc;
+
+        int count = 0;
+        String result = null;
+
+        proc = pb.start();
 
         BufferedReader stdInput = new BufferedReader(new
                 InputStreamReader(proc.getInputStream()));
 
-        int count = 0;
-
-        String result = null;
-
         String s = null;
+
         while((s = stdInput.readLine())!=null) {
             result = s;
             count ++;
         }
-
 
         if(count != 1) {
             throw new StatsException();
@@ -184,7 +218,7 @@ public class MinimaSearch {
 
         String[] res = result.split(" ");
 
-        return Integer.parseInt(res[1]);
+        return Double.parseDouble(res[1]);
 
     }
 

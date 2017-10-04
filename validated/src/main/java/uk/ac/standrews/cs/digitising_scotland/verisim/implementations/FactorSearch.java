@@ -37,7 +37,7 @@ public class FactorSearch {
 
 //        runFactorSearch();
 
-        runFactorSearch(1500000, "src/main/resources/scotland_test_population");
+        runFactorSearch(100000, "src/main/resources/proxy-scotland-population-JA");
 
 //        try {
 //            switch(args[0]) {
@@ -92,8 +92,8 @@ public class FactorSearch {
     static int[] minBirthSpacings;
     static int[] t0_pop_size;
 
-    // "src/main/resources/proxy-scotland-population-JA"
-    static String var_data_files = "src/main/resources/scotland_test_population";
+    // "src/main/resources/scotland_test_population"
+    static String var_data_files = "src/main/resources/proxy-scotland-population-JA";
     static String results_save_location = "src/main/resources/results/";
     static RecordFormat output_record_format = RecordFormat.NONE;
 
@@ -105,7 +105,7 @@ public class FactorSearch {
     static double set_up_dr = 0.0122;
 
     static int numberOfRunsPerSim = 1;
-    static String runPurpose = "geeglm-bf-scot-4";
+    static String runPurpose = "ja-year-set";
 
     public static void runFactorSearch(int size, String dataFiles) throws IOException, InvalidInputFileException {
 
@@ -115,7 +115,7 @@ public class FactorSearch {
         };
         minBirthSpacings = new int[]{147};
         maxInfids = new double[]{0.2};
-        bfs = new double[]{0.075};
+        bfs = new double[]{0};
         dfs = new double[]{0};
 //        t0_pop_size = new int[]{1000000, 500000, 250000};
 
@@ -127,7 +127,6 @@ public class FactorSearch {
                         for (double maxInfid : maxInfids) {
                             for (double bf : bfs) {
                                 for (double df : dfs) {
-
 
                                     try {
 

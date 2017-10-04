@@ -68,6 +68,7 @@ public class SummaryRow {
     private double recordsRunTime;
 
     private long maxMemoryUsage;
+    private Double v = Double.NaN;
 
 
     public SummaryRow(Path resultsDirectory,
@@ -148,7 +149,7 @@ public class SummaryRow {
                 + endPop + sep + peakPop + sep + startDate + sep + endDate + sep + simRunTime + sep
                 + ctRunTime + sep + recordsRunTime + sep + resultsDirectory + sep + birthFactor + sep
                 + deathFactor + sep + recoveryFactor + sep + maxInfidelityRate + sep + minBirthSpacing + sep
-                + (maxMemoryUsage / 1e6) + sep + outputRecordFormat.toString() + "\n";
+                + (maxMemoryUsage / 1e6) + sep + outputRecordFormat.toString() + sep + v.toString() + "\n";
     }
 
     public static String getSeparatedHeadings(char sep) {
@@ -157,7 +158,7 @@ public class SummaryRow {
                 + "End Pop" + sep + "Peak Pop" + sep + "Start Date" + sep + "End Date" + sep + "Sim Run time" + sep
                 + "CT Run time" + sep + "Records Run time" + sep + "Results Directory" + sep + "Birth Factor" + sep
                 + "Death Factor" + sep + "Recovery Factor" + sep + "Max Infidelity Rate" + sep + "Min Birth Spacing"
-                + sep + "Peak Memory Usage (MB)" + sep + "Output Record Format";
+                + sep + "Peak Memory Usage (MB)" + sep + "Output Record Format" + sep + "v";
     }
 
     public void outputSummaryRowToFile() {
@@ -167,6 +168,10 @@ public class SummaryRow {
             System.err.println("Summary row could not be printed to summary files. See message: ");
             System.err.println(e.getMessage());
         }
+    }
+
+    public void setV(double v) {
+        this.v = v;
     }
 
 }

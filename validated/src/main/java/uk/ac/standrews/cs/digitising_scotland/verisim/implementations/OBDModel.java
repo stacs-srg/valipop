@@ -139,7 +139,14 @@ public class OBDModel {
 
     private boolean runSimulationTimeLoop() throws InsufficientNumberOfPeopleException, PersonNotFoundException {
 
+        summary.setCompleted(true);
+
         while(DateUtils.dateBeforeOrEqual(currentTime, config.getTE())) {
+
+            if(!InitLogic.inInitPeriod(currentTime) && population.getLivingPeople().getAll().size() < 100) {
+                summary.setCompleted(false);
+                break;
+            }
 
             MemoryUsageAnalysis.log();
 
@@ -183,7 +190,7 @@ public class OBDModel {
         log.info("TBorn\t" + birthLogic.getEventCount());
         log.info("Ratio\t" + deathLogic.getEventCount() / (double) birthLogic.getEventCount());
 
-        summary.setCompleted(true);
+
         summary.setEndPop(population.getLivingPeople().getNumberOfPeople());
         summary.setPeakPop(population.getPopulationCounts().getPeakPopulationSize());
 
@@ -191,6 +198,10 @@ public class OBDModel {
     }
 
     public void analyseAndOutputPopulation() {
+        analyseAndOutputPopulation(true);
+    }
+
+    public void analyseAndOutputPopulation(boolean outputSummaryRow) {
 
         if(config.getOutputTables()) {
             ContigencyTableFactory.generateContigencyTables(population.getAllPeople(), desired, config, summary, 0, 150);
@@ -213,7 +224,9 @@ public class OBDModel {
         summary.setMaxMemoryUsage(MemoryUsageAnalysis.getMaxSimUsage());
         MemoryUsageAnalysis.reset();
 
-        summary.outputSummaryRowToFile();
+        if(outputSummaryRow) {
+            summary.outputSummaryRowToFile();
+        }
 
         log.info("OBDModel --- Output complete");
 
@@ -232,6 +245,10 @@ public class OBDModel {
 
     public PopulationStatistics getDesiredPopulationStatistics() {
         return desired;
+    }
+
+    public SummaryRow getSummaryRow() {
+        return summary;
     }
 
 }

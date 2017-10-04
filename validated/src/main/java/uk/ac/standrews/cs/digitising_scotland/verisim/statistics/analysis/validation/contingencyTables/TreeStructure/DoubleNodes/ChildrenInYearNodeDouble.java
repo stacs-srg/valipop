@@ -101,7 +101,7 @@ public class ChildrenInYearNodeDouble extends DoubleNode<ChildrenInYearOption, I
 
         Integer order = ((PreviousNumberOfChildrenInPartnershipNodeDouble)
                                     getAncestor(new PreviousNumberOfChildrenInPartnershipNodeDouble())).getOption().getValue();
-        Date currentDate = yob.advanceTime(age, TimeUnit.YEAR);
+        Date currentDate = yob.advanceTime(age - 1, TimeUnit.YEAR);
 
         double forNPeople = ((AgeNodeDouble) getAncestor(new AgeNodeDouble())).getCount();
 

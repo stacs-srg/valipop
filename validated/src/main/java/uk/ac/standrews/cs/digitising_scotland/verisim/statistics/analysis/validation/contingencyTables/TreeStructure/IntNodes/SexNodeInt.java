@@ -53,7 +53,7 @@ public class SexNodeInt extends IntNode<SexOption, IntegerRange> {
             age = 0;
         }
 
-        if(age > 110) {
+        if(age > 120) {
             System.out.println("barf");
         }
 
