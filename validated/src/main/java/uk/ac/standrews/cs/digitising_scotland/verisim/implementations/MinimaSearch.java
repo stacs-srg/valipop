@@ -192,7 +192,7 @@ public class MinimaSearch {
 
     private static double getV(String pathOfTablesDir, int maxBirthingAge) throws StatsException, IOException {
 
-        String[] commands = {"RScript", "src/main/resources/analysis-r/geeglm/dev-minima-search.R", pathOfTablesDir, String.valueOf(maxBirthingAge)};
+        String[] commands = {"Rscript", "src/main/resources/analysis-r/geeglm/dev-minima-search.R", pathOfTablesDir, String.valueOf(maxBirthingAge)};
         ProcessBuilder pb = new ProcessBuilder(commands);
 
         Process proc;
