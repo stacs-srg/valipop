@@ -18,6 +18,7 @@ package uk.ac.standrews.cs.digitising_scotland.verisim.implementations;
 
 import org.apache.logging.log4j.Logger;
 import uk.ac.standrews.cs.digitising_scotland.verisim.Config;
+import uk.ac.standrews.cs.digitising_scotland.verisim.statistics.analysis.validation.contingencyTables.TreeStructure.CTtree;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.dateModel.dateImplementations.AdvancableDate;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.dateModel.dateImplementations.YearDate;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
@@ -132,6 +133,10 @@ public class FactorSearch {
 
                                         for(int n = 0; n < numberOfRunsPerSim; n++) {
 
+                                            if(n == 1) {
+                                                CTtree.reuseExpectedValues(true);
+                                            }
+
                                             String startTime = FileUtils.getDateTime();
                                             OBDModel.setUpFileStructureAndLogs(runPurpose, startTime, results_save_location);
 
@@ -145,6 +150,8 @@ public class FactorSearch {
                                             model.analyseAndOutputPopulation();
 
                                         }
+
+                                        CTtree.reuseExpectedValues(false);
 
                                     } catch (IOException e) {
                                         String message = "Model failed due to Input/Output exception, check that this program has " +

@@ -55,7 +55,14 @@ public class CTtree extends Node<String, SourceType, Number, Number> implements 
     private Date endDate;
 
     private SourceNodeInt simNode;
-    private SourceNodeDouble statNode = null;
+    private static SourceNodeDouble statNode = null;
+
+
+    private static boolean reuseExpValues = false;
+
+    public static void reuseExpectedValues(boolean reuse) {
+        reuseExpValues = reuse;
+    }
 
     public CTtree(PeopleCollection population, PopulationStatistics expected, Date startDate, Date endDate, int startStepBack) {
         this.expected = expected;
@@ -63,7 +70,7 @@ public class CTtree extends Node<String, SourceType, Number, Number> implements 
 
         log.info("CTree --- Populating tree");
 
-        if(statNode == null) {
+        if(statNode == null || !reuseExpValues) {
             YearDate prevY = new YearDate(startDate.getYear() - startStepBack);
             for (IPersonExtended person : population.getPeople_ex()) {
                 if (person.aliveInYear(prevY)) {

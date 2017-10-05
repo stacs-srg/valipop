@@ -1,6 +1,7 @@
 package uk.ac.standrews.cs.digitising_scotland.verisim.implementations;
 
 import uk.ac.standrews.cs.digitising_scotland.verisim.Config;
+import uk.ac.standrews.cs.digitising_scotland.verisim.statistics.analysis.validation.contingencyTables.TreeStructure.CTtree;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.DoubleComparer;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.fileUtils.FileUtils;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.fileUtils.InvalidInputFileException;
@@ -23,22 +24,24 @@ public class MinimaSearch {
     static double startBF;
     static double step;
 
+    static double maxAbsBF;
+
     public static void main(String[] args) throws StatsException, IOException, InvalidInputFileException {
 
         switch(args[0]) {
 
             case "A":
-                runSearch(5200000, "src/main/resources/scotland_test_population", 0.0, 0.5, "minima-scot");
+                runSearch(5200000, "src/main/resources/scotland_test_population", 0.0, 0.5, "minima-scot", 3);
                 break;
             case "B":
-                runSearch(1850000, "src/main/resources/proxy-scotland-population-JA", 0.0, 0.5, "minima-ja");
+                runSearch(1850000, "src/main/resources/proxy-scotland-population-JA", 0.0, 0.5, "minima-ja", 3);
                 break;
             }
 
     }
 
     @SuppressWarnings("Duplicates")
-    private static void runSearch(int populationSize, String dataFiles, double startBF, double step, String runPurpose) throws IOException, InvalidInputFileException, StatsException {
+    private static void runSearch(int populationSize, String dataFiles, double startBF, double step, String runPurpose, int repeatRuns) throws IOException, InvalidInputFileException, StatsException {
 
         MinimaSearch.startBF = startBF;
         MinimaSearch.step = step;
@@ -65,22 +68,41 @@ public class MinimaSearch {
 
                 double bf = getNextBFValue();
 
-                String startTime = FileUtils.getDateTime();
-                OBDModel.setUpFileStructureAndLogs(runPurpose, startTime, results_save_location);
+                int n = 0;
+                double totalV = 0.0;
 
-                Config config = new Config(tS, t0, tE, populationSize, set_up_br, set_up_dr,
-                        simulation_time_step, dataFiles, results_save_location, runPurpose,
-                        minBirthSpacing, maxInfid, bf, df, rf, iw, output_record_format, startTime);
+                for( ; n < repeatRuns; n++) {
 
-                OBDModel model = new OBDModel(startTime, config);
-                model.runSimulation();
-                model.analyseAndOutputPopulation(false);
-                double v = getV(FileUtils.getContingencyTablesPath().toString(), model.getDesiredPopulationStatistics().getOrderedBirthRates(new YearDate(0)).getLargestLabel().getValue());
+                    if(n == 1) {
+                        CTtree.reuseExpectedValues(true);
+                    }
 
-                model.getSummaryRow().setV(v);
-                model.getSummaryRow().outputSummaryRowToFile();
+                    String startTime = FileUtils.getDateTime();
+                    OBDModel.setUpFileStructureAndLogs(runPurpose, startTime, results_save_location);
 
-                logBFtoV(bf, v);
+                    Config config = new Config(tS, t0, tE, populationSize, set_up_br, set_up_dr,
+                            simulation_time_step, dataFiles, results_save_location, runPurpose,
+                            minBirthSpacing, maxInfid, bf, df, rf, iw, output_record_format, startTime);
+
+                    OBDModel model = new OBDModel(startTime, config);
+                    model.runSimulation();
+                    model.analyseAndOutputPopulation(false);
+                    double v = getV(FileUtils.getContingencyTablesPath().toString(), model.getDesiredPopulationStatistics().getOrderedBirthRates(new YearDate(0)).getLargestLabel().getValue());
+
+                    v = v / model.getPopulation().getPopulationCounts().getCreatedPeople() * 1E6;
+
+                    model.getSummaryRow().setV(v);
+                    model.getSummaryRow().outputSummaryRowToFile();
+
+                    totalV += v;
+
+                }
+
+                double avgV = totalV / n;
+
+                logBFtoV(bf, avgV);
+
+                CTtree.reuseExpectedValues(false);
 
             }
         } catch (IOException e) {
@@ -97,6 +119,18 @@ public class MinimaSearch {
         }
 
     }
+
+//    private static boolean jumpingPhase = false;
+//
+//    private static double jumpOut() {
+//        // called when minima found
+//        jumpingPhase = true;
+//
+//
+//
+//        return
+//
+//    }
 
     private static double getNextBFValue() {
 
