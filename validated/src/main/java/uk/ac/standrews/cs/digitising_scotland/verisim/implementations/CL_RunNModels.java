@@ -1,5 +1,6 @@
 package uk.ac.standrews.cs.digitising_scotland.verisim.implementations;
 
+import uk.ac.standrews.cs.digitising_scotland.verisim.statistics.analysis.validation.contingencyTables.TreeStructure.CTtree;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.ProcessArgs;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.fileUtils.InvalidInputFileException;
 
@@ -38,6 +39,8 @@ public class CL_RunNModels {
         }
 
         try {
+
+            CTtree.reuseExpectedValues(true);
 
             for(int n = 0 ; n < nRuns; n++) {
                 CL_OBDModel.runOBDModel(pathToConfigFile, resultsPath, runPurpose);

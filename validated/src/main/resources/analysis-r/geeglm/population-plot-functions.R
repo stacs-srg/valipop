@@ -27,3 +27,23 @@ plotCohorts <- function(Death.data, age, title) {
   abline(lm(Death.data.sim.female$freq ~ Death.data.sim.female$Date, data = Death.data.sim.female), col=1)
 }
 
+plotOB <- function(Birth.data, title) {
+  
+  Birth.data <- cleanOBData(readInData("~/OneDrive/cs/PhD/code/population-model/validated/src/main/resources/results/geeglm-ja/20170926-173619:133/tables/ob-CT.csv"), 55)
+  title <- "Test"
+  
+  sourceSummary(Birth.data)
+
+  Birth.data.sim <- Birth.data[which(Birth.data$Source == "SIM" & Birth.data$CIY == "YES"),]
+  Birth.data.stat <- Birth.data[which(Birth.data$Source == "STAT" & Birth.data$CIY == "YES"),]
+  
+  maxY <- max(Birth.data$freq) * 1.05
+  minY <- min(Birth.data$freq) * 0.95
+  
+  plot(Birth.data.stat$Age, Birth.data.stat$freq, col=3, main = title, ylim = c(minY, maxY),  panel.first = grid())
+  points(Birth.data.sim$Age, Birth.data.sim$freq, col=1)
+  
+  plot(Birth.data$Date, Birth.data$freq)
+  
+  
+}

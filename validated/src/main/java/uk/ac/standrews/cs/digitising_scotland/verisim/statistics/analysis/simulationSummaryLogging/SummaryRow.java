@@ -158,7 +158,7 @@ public class SummaryRow {
                 + "End Pop" + sep + "Peak Pop" + sep + "Start Date" + sep + "End Date" + sep + "Sim Run time" + sep
                 + "CT Run time" + sep + "Records Run time" + sep + "Results Directory" + sep + "Birth Factor" + sep
                 + "Death Factor" + sep + "Recovery Factor" + sep + "Max Infidelity Rate" + sep + "Min Birth Spacing"
-                + sep + "Peak Memory Usage (MB)" + sep + "Output Record Format" + sep + "v";
+                + sep + "Peak Memory Usage (MB)" + sep + "Output Record Format" + sep + "v/M";
     }
 
     public void outputSummaryRowToFile() {

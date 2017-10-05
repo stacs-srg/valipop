@@ -36,3 +36,12 @@ sourceSummary(data.ob.sorted)
 
 obirthSatGEEGLM(data.ob.sorted)
 obirthSatGLM(data.ob.sorted)
+
+sc_bf.0.075_rf.0.5_df.0_mf.MB <- cleanMBData(readInData("~/OneDrive/cs/PhD/code/population-model/validated/src/main/resources/results/geeglm-bf-scot-4/20170928-144559:115/tables/mb-CT.csv"), 50)
+sc_bf.0.075_rf.0.5_df.0_mf.part <- cleanPartData(readInData("~/OneDrive/cs/PhD/code/population-model/validated/src/main/resources/results/geeglm-bf-scot-4/20170928-144559:115/tables/part-CT.csv"))
+sc_bf.0.075_rf.0.5_df.0_mf.sep <- cleanSepData(readInData("~/OneDrive/cs/PhD/code/population-model/validated/src/main/resources/results/geeglm-bf-scot-4/20170928-144559:115/tables/sep-CT.csv"))
+
+mbSelLLM(sc_bf.0.075_rf.0.5_df.0_mf.MB)
+partSelLLM(sc_bf.0.075_rf.0.5_df.0_mf.part)
+sepSelLLM(sc_bf.0.075_rf.0.5_df.0_mf.sep)
+
