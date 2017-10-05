@@ -31,10 +31,10 @@ public class MinimaSearch {
         switch(args[0]) {
 
             case "A":
-                runSearch(5200000, "src/main/resources/scotland_test_population", 0.0, 0.5, "minima-scot", 3);
+                runSearch(5200000, "src/main/resources/scotland_test_population", 0.0, 0.5, "minima-scot-b", 3);
                 break;
             case "B":
-                runSearch(1850000, "src/main/resources/proxy-scotland-population-JA", 0.0, 0.5, "minima-ja", 3);
+                runSearch(1850000, "src/main/resources/proxy-scotland-population-JA", 0.0, 0.5, "minima-ja-b", 3);
                 break;
             }
 
