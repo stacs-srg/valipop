@@ -87,7 +87,7 @@ public class NBirthLogic implements EventLogic {
 //                    birthAdjust = -1;
 //                    int bound = Integer.parseInt(String.valueOf(Math.round(1 / config.getBirthFactor())));
 
-                    int adjuster = Integer.parseInt(String.valueOf(Math.ceil(config.getBirthFactor())));
+                    int adjuster = new Double(Math.ceil(config.getBirthFactor())).intValue();
 
                     int bound = 1000000;
                     if(rand.nextInt(bound) < Math.abs(config.getBirthFactor() / adjuster) * bound) {
