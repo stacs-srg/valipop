@@ -14,7 +14,10 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.dateMod
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Random;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
@@ -24,27 +27,45 @@ public class MinimaSearch {
     static double startBF;
     static double step;
 
-    static double maxAbsBF;
+    static double initStep;
+
+    static double maxAbsBF = 4;
+
+    static double maxPosBF = maxAbsBF;
+    static double maxNegBF = -1 * maxAbsBF;
+
+    static int pointInMinima = 3;
+
+    static double minimumMeaningfulStep = 0.004;
+    static double minimaSize = 5;
+    static double intervalBoundV = 0.02;
+
+    static Random rand = new Random();
 
     public static void main(String[] args) throws StatsException, IOException, InvalidInputFileException {
 
-        switch(args[0]) {
-
-            case "A":
-                runSearch(5200000, "src/main/resources/scotland_test_population", 0.0, 0.5, "minima-scot-b", 3);
-                break;
-            case "B":
-                runSearch(1850000, "src/main/resources/proxy-scotland-population-JA", 0.0, 0.5, "minima-ja-b", 3);
-                break;
+        try {
+            switch(args[0]) {
+                case "A":
+                        runSearch(5200000, "src/main/resources/scotland_test_population", 0.0, 0.5, "minima-scot-b", 3);
+                    break;
+                case "B":
+                    runSearch(1600000, "src/main/resources/proxy-scotland-population-JA", 0.0, 0.5, "minima-ja-b", 3);
+                    break;
             }
+
+        } catch (SpaceExploredException e) {
+            System.out.println("Space explored - check the results logs!");
+        }
 
     }
 
     @SuppressWarnings("Duplicates")
-    private static void runSearch(int populationSize, String dataFiles, double startBF, double step, String runPurpose, int repeatRuns) throws IOException, InvalidInputFileException, StatsException {
+    private static void runSearch(int populationSize, String dataFiles, double startBF, double step, String runPurpose, int repeatRuns) throws IOException, InvalidInputFileException, StatsException, SpaceExploredException {
 
         MinimaSearch.startBF = startBF;
         MinimaSearch.step = step;
+        MinimaSearch.initStep = step;
 
         double rf = 0.5;
         CompoundTimeUnit iw = new CompoundTimeUnit(40, TimeUnit.YEAR);
@@ -77,6 +98,8 @@ public class MinimaSearch {
                         CTtree.reuseExpectedValues(true);
                     }
 
+
+
                     String startTime = FileUtils.getDateTime();
                     OBDModel.setUpFileStructureAndLogs(runPurpose, startTime, results_save_location);
 
@@ -85,22 +108,42 @@ public class MinimaSearch {
                             minBirthSpacing, maxInfid, bf, df, rf, iw, output_record_format, startTime);
 
                     OBDModel model = new OBDModel(startTime, config);
-                    model.runSimulation();
-                    model.analyseAndOutputPopulation(false);
-                    double v = getV(FileUtils.getContingencyTablesPath().toString(), model.getDesiredPopulationStatistics().getOrderedBirthRates(new YearDate(0)).getLargestLabel().getValue());
 
-                    v = v / model.getPopulation().getPopulationCounts().getCreatedPeople() * 1E6;
+                    try {
+                        model.runSimulation();
+                        model.analyseAndOutputPopulation(false);
+                        double v = getV(FileUtils.getContingencyTablesPath().toString(), model.getDesiredPopulationStatistics().getOrderedBirthRates(new YearDate(0)).getLargestLabel().getValue());
 
-                    model.getSummaryRow().setV(v);
-                    model.getSummaryRow().outputSummaryRowToFile();
+                        v = v / model.getPopulation().getPopulationCounts().getCreatedPeople() * 1E6;
 
-                    totalV += v;
+                        model.getSummaryRow().setV(v);
+                        model.getSummaryRow().outputSummaryRowToFile();
+
+                        totalV += v;
+                    } catch (OutOfMemoryError e) {
+                        if(bf < 0) {
+                            maxNegBF = bf;
+                        } else {
+                            maxPosBF = bf;
+                        }
+                        jumpingPhase = true;
+                        model.getSummaryRow().setCompleted(false);
+                        MemoryUsageAnalysis.reset();
+                        model.getSummaryRow().setMaxMemoryUsage(MemoryUsageAnalysis.getMaxSimUsage());
+                        model.getSummaryRow().outputSummaryRowToFile();
+                        break;
+                    }
 
                 }
 
                 double avgV = totalV / n;
 
                 logBFtoV(bf, avgV);
+                Double minima = inMinima(bf);
+
+                if (minima != null) {
+                    System.out.println("Minima found at: " + bf);
+                }
 
                 CTtree.reuseExpectedValues(false);
 
@@ -120,19 +163,196 @@ public class MinimaSearch {
 
     }
 
-//    private static boolean jumpingPhase = false;
-//
-//    private static double jumpOut() {
-//        // called when minima found
-//        jumpingPhase = true;
-//
-//
-//
-//        return
-//
-//    }
+    private static boolean jumpingPhase = false;
 
-    private static double getNextBFValue() {
+    private static double jumpOut() throws SpaceExploredException {
+        // called when minima found
+
+        step = initStep;
+
+        int options = new Double(2 * maxAbsBF / (initStep / 2)).intValue();
+
+        double chosenBF;
+
+        int counter = 0;
+
+        do {
+
+            if(counter * 100 > options) {
+                throw new SpaceExploredException();
+            }
+
+            int chosen = rand.nextInt(options);
+
+            chosenBF = chosen * initStep - maxAbsBF;
+
+            counter ++;
+
+        } while ( containsValue(points, chosenBF) != null );
+
+        jumpingPhase = false;
+
+        return chosenBF;
+
+    }
+
+    private static Double inMinima(double currentBF) {
+
+        if(points.size() >= pointInMinima) {
+            // get two nearest neighbours on either side
+            ArrayList<BFVPoint> consideredPoints = getNearestBFNeigbours(pointInMinima - 1, currentBF);
+            ArrayList<BFVPoint> returns = new ArrayList<>();
+
+            for(int i = 0; i < pointInMinima; i++) {
+                List<BFVPoint> l = consideredPoints.subList(i, i + pointInMinima - 1);
+
+                BFVPoint ret = constitutesMinima(consideredPoints);
+
+                if(ret != null) {
+                    returns.add(ret);
+                }
+
+            }
+
+            if(returns.size() == 0) {
+                return null;
+            } else {
+                return orderByV(returns).get(0).x_bf;
+            }
+        }
+
+        return null;
+
+    }
+
+    // returns bf of minima
+    public static BFVPoint constitutesMinima(ArrayList<BFVPoint> potentialMinimaSet) {
+
+        if(potentialMinimaSet.size() != pointInMinima) {
+            return null;
+        }
+
+        double bfWidth = Math.abs(potentialMinimaSet.get(0).x_bf - potentialMinimaSet.get(pointInMinima - 1).x_bf);
+
+        if(bfWidth < minimumMeaningfulStep * minimaSize) {
+
+            ArrayList<BFVPoint> orderedByV = orderByV(potentialMinimaSet);
+
+            double avg = averageV(orderedByV);
+
+            double lowerBound = avg * (1 - intervalBoundV);
+            double upperBound = avg * (1 + intervalBoundV);
+
+            if(lowerBound < orderedByV.get(0).y_v && orderedByV.get(pointInMinima - 1).y_v < upperBound) {
+                jumpingPhase = true;
+                return orderedByV.get(0);
+            }
+
+        }
+
+        return null;
+
+    }
+
+    private static double averageV(List<BFVPoint> in) {
+
+        double sum = 0.0;
+
+        for(BFVPoint p : in) {
+            sum += p.y_v;
+        }
+
+        return sum / in.size();
+
+    }
+
+    private static ArrayList<BFVPoint> orderByBF(List<BFVPoint> in) {
+        ArrayList<BFVPoint> ordering = new ArrayList<>(in.size());
+
+        for(BFVPoint p : in) {
+
+            if(ordering.size() == 0) {
+                ordering.add(p);
+            } else {
+                int i = 0;
+                for(BFVPoint o : ordering) {
+                    if(p.x_bf < o.x_bf) {
+                        ordering.add(i, p);
+                        break;
+                    }
+                    i++;
+                }
+            }
+        }
+        return ordering;
+    }
+
+    private static ArrayList<BFVPoint> orderByV(List<BFVPoint> in) {
+        ArrayList<BFVPoint> ordering = new ArrayList<>(in.size());
+
+        for(BFVPoint p : in) {
+
+            if(ordering.size() == 0) {
+                ordering.add(p);
+            } else {
+                int i = 0;
+                for(BFVPoint o : ordering) {
+                    if(p.y_v < o.y_v) {
+                        ordering.add(i, p);
+                        break;
+                    }
+                    i++;
+                }
+            }
+        }
+        return ordering;
+    }
+
+    private static ArrayList<BFVPoint> getNearestBFNeigbours(int width, double bf) {
+        ArrayList<BFVPoint> selected = new ArrayList<>(width * 2 + 1);
+
+        ArrayList<BFVPoint> ordering = orderByBF(points);
+
+        int c = 0;
+        for(BFVPoint p : ordering) {
+
+            if(p.x_bf == bf) {
+
+                if(c < width) {
+                    for(int i = 0; i < c; i++) {
+                        selected.add(ordering.get(i));
+                    }
+                } else {
+                    for(int i = 0; i < width; i++) {
+                        selected.add(ordering.get(c - width + i));
+                    }
+                }
+
+                selected.add(p);
+
+                if(c > points.size() - width) {
+                    for(int i = 0; i < points.size() - c; i++) {
+                        selected.add(ordering.get(i + c));
+                    }
+                } else {
+                    for(int i = 0; i < width; i++) {
+                        selected.add(ordering.get(c + i + 1));
+                    }
+                }
+
+            }
+            c++;
+        }
+
+
+        return selected;
+    }
+
+    private static double getNextBFValue() throws SpaceExploredException {
+
+        if(jumpingPhase) {
+            return jumpOut();
+        }
 
         if(points.size() == 0) {
             System.out.println("Next BF : " + startBF);
@@ -166,10 +386,7 @@ public class MinimaSearch {
 
             BFVPoint match = containsValue(points, newBF);
 
-            if(match == null) {
-                System.out.println("Next BF : " + newBF);
-                return newBF;
-            } else {
+            if(match != null) {
 
                 if(match.y_v > lastPoint.y_v) {
                     // up slope to match point - thus split
@@ -183,7 +400,7 @@ public class MinimaSearch {
 
                     BFVPoint match2 = containsValue(points, newBF);
 
-                    if(match2 != null) {
+                    while(match2 != null) {
                         // if newBF has already been used, then split in gap
                         step = step / 2;
                         newBF = match.x_bf - (step * direction);
@@ -198,6 +415,30 @@ public class MinimaSearch {
             }
 
             System.out.println("Next BF : " + newBF);
+
+            if(newBF < maxNegBF || newBF > maxPosBF) {
+                // we're out of bounds
+                // the fact we're here means there may be a lower minima out width the specified search area.
+                // if we can extend them and we havn't seen something to suggest we won't overrun the heap then we'll extend the bounds
+
+                // otherwise lets continue the minima search at a random location - but jumping out
+
+
+                if(newBF < 0) {
+                    if(DoubleComparer.equal(maxNegBF, -1 * maxAbsBF, 0.0000001)) {
+                        maxNegBF -= step * 2;
+                    } else {
+                        return jumpOut();
+                    }
+                } else {
+                    if(DoubleComparer.equal(maxPosBF, maxAbsBF, 0.0000001)) {
+                        maxPosBF += step * 2;
+                    } else {
+                        return jumpOut();
+                    }
+                }
+            }
+
             return newBF;
         }
     }
