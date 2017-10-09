@@ -29,7 +29,7 @@ public class MinimaSearch {
 
     static double initStep;
 
-    static double maxAbsBF = 4;
+    static double maxAbsBF = 3;
 
     static double maxPosBF = maxAbsBF;
     static double maxNegBF = -1 * maxAbsBF;
@@ -47,10 +47,10 @@ public class MinimaSearch {
         try {
             switch(args[0]) {
                 case "A":
-                        runSearch(5200000, "src/main/resources/scotland_test_population", 0.0, 0.5, "minima-scot-b", 3);
+                        runSearch(5200000, "src/main/resources/scotland_test_population", 0.0, 0.5, "minima-scot-c", 3);
                     break;
                 case "B":
-                    runSearch(1600000, "src/main/resources/proxy-scotland-population-JA", 0.0, 0.5, "minima-ja-b", 3);
+                    runSearch(1600000, "src/main/resources/proxy-scotland-population-JA", 0.0, 0.5, "minima-ja-c", 3);
                     break;
             }
 
@@ -120,11 +120,11 @@ public class MinimaSearch {
                         model.getSummaryRow().outputSummaryRowToFile();
 
                         totalV += v;
-                    } catch (OutOfMemoryError e) {
+                    } catch (PreEmptiveOutOfMemoryWarning | OutOfMemoryError e) {
                         if(bf < 0) {
-                            maxNegBF = bf;
+                            maxNegBF = bf + 0.1;
                         } else {
-                            maxPosBF = bf;
+                            maxPosBF = bf - 0.1;
                         }
                         jumpingPhase = true;
                         model.getSummaryRow().setCompleted(false);
