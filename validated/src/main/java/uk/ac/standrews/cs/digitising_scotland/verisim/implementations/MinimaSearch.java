@@ -47,7 +47,7 @@ public class MinimaSearch {
         try {
             switch(args[0]) {
                 case "A":
-                        runSearch(5200000, "src/main/resources/scotland_test_population", 0.0, 0.5, "minima-scot-c", 3);
+                    runSearch(5200000, "src/main/resources/scotland_test_population", 0.0, 0.5, "minima-scot-c", 3);
                     break;
                 case "B":
                     runSearch(1600000, "src/main/resources/proxy-scotland-population-JA", 0.0, 0.5, "minima-ja-c", 3);
@@ -56,12 +56,14 @@ public class MinimaSearch {
 
         } catch (SpaceExploredException e) {
             System.out.println("Space explored - check the results logs!");
+        } catch (PreEmptiveOutOfMemoryWarning | OutOfMemoryError e) {
+            System.out.println("Ran out of memory - not enough memory for 0 bf - increase JVM heap size using -Xmx argument");
         }
 
     }
 
     @SuppressWarnings("Duplicates")
-    private static void runSearch(int populationSize, String dataFiles, double startBF, double step, String runPurpose, int repeatRuns) throws IOException, InvalidInputFileException, StatsException, SpaceExploredException {
+    private static void runSearch(int populationSize, String dataFiles, double startBF, double step, String runPurpose, int repeatRuns) throws IOException, InvalidInputFileException, StatsException, SpaceExploredException, PreEmptiveOutOfMemoryWarning {
 
         MinimaSearch.startBF = startBF;
         MinimaSearch.step = step;
@@ -123,8 +125,11 @@ public class MinimaSearch {
                     } catch (PreEmptiveOutOfMemoryWarning | OutOfMemoryError e) {
                         if(bf < 0) {
                             maxNegBF = bf + 0.1;
-                        } else {
+                        } else if(bf > 0) {
                             maxPosBF = bf - 0.1;
+                        } else {
+                            // bf == 0 and failing
+                            throw e;
                         }
                         jumpingPhase = true;
                         model.getSummaryRow().setCompleted(false);
@@ -136,13 +141,15 @@ public class MinimaSearch {
 
                 }
 
-                double avgV = totalV / n;
+                Double avgV = totalV / n;
 
-                logBFtoV(bf, avgV);
-                Double minima = inMinima(bf);
+                if(!avgV.isNaN()) {
+                    logBFtoV(bf, avgV);
+                    Double minima = inMinima(bf);
 
-                if (minima != null) {
-                    System.out.println("Minima found at: " + bf);
+                    if (minima != null) {
+                        System.out.println("Minima found at: " + bf);
+                    }
                 }
 
                 CTtree.reuseExpectedValues(false);
@@ -170,7 +177,7 @@ public class MinimaSearch {
 
         step = initStep;
 
-        int options = new Double(2 * maxAbsBF / (initStep / 2)).intValue();
+        int options = new Double(maxPosBF - maxNegBF / (initStep / 2)).intValue();
 
         double chosenBF;
 
@@ -184,7 +191,7 @@ public class MinimaSearch {
 
             int chosen = rand.nextInt(options);
 
-            chosenBF = chosen * initStep - maxAbsBF;
+            chosenBF = chosen * (initStep / 2) + maxNegBF;
 
             counter ++;
 
