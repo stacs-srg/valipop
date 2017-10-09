@@ -60,7 +60,9 @@ public class MemoryUsageAnalysis {
                 maxSimUsage = currentUsage;
             }
 
-            if(Runtime.getRuntime().totalMemory() * threshold < currentUsage) {
+            long mM = Runtime.getRuntime().maxMemory();
+
+            if(mM * threshold < currentUsage) {
                 throw new PreEmptiveOutOfMemoryWarning();
             }
 
