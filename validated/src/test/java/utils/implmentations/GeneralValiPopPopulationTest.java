@@ -17,6 +17,7 @@
 package utils.implmentations;
 
 import uk.ac.standrews.cs.digitising_scotland.verisim.implementations.CL_OBDModel;
+import uk.ac.standrews.cs.digitising_scotland.verisim.implementations.PreEmptiveOutOfMemoryWarning;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.fileUtils.InvalidInputFileException;
 
 import java.io.IOException;
@@ -26,7 +27,7 @@ import java.io.IOException;
  */
 public class GeneralValiPopPopulationTest extends GeneralPopulationStructureTests {
 
-    public GeneralValiPopPopulationTest() throws IOException, InvalidInputFileException {
+    public GeneralValiPopPopulationTest() throws IOException, InvalidInputFileException, PreEmptiveOutOfMemoryWarning {
         super(CL_OBDModel.runOBDModel("src/test/resources/config-ps.txt",
                 "src/test/resources/results", "general-structure-testing")
                 .getPopulation().getAllPeople(), false);

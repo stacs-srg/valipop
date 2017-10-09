@@ -28,13 +28,13 @@ public class CL_OBDModel {
 
         try {
             runOBDModel(pathToConfigFile, resultsPath, runPurpose);
-        } catch (InvalidInputFileException | IOException | Error e) {
+        } catch (InvalidInputFileException | IOException | Error | PreEmptiveOutOfMemoryWarning e) {
             System.err.println(e.getMessage());
         }
 
     }
 
-    public static OBDModel runOBDModel(String pathToConfigFile, String resultsPath, String runPurpose) throws Error, InvalidInputFileException, IOException {
+    public static OBDModel runOBDModel(String pathToConfigFile, String resultsPath, String runPurpose) throws Error, InvalidInputFileException, IOException, PreEmptiveOutOfMemoryWarning {
         String startTime = FileUtils.getDateTime();
 
         Config config;

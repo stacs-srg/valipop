@@ -34,7 +34,7 @@ import java.io.IOException;
  */
 public class FactorSearch {
 
-    public static void main(String[] args) throws IOException, InvalidInputFileException {
+    public static void main(String[] args) throws IOException, InvalidInputFileException, PreEmptiveOutOfMemoryWarning {
 
 //        runFactorSearch();
 
@@ -108,7 +108,7 @@ public class FactorSearch {
     static int numberOfRunsPerSim = 1;
     static String runPurpose = "ja-year-set";
 
-    public static void runFactorSearch(int size, String dataFiles) throws IOException, InvalidInputFileException {
+    public static void runFactorSearch(int size, String dataFiles) throws IOException, InvalidInputFileException, PreEmptiveOutOfMemoryWarning {
 
         rfs = new double[]{0.5};
         iws = new CompoundTimeUnit[]{

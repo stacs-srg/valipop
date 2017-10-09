@@ -99,7 +99,7 @@ public class OBDModel {
 
     }
 
-    public void runSimulation() {
+    public void runSimulation() throws PreEmptiveOutOfMemoryWarning {
 
         ProgramTimer simTimer = new ProgramTimer();
 
@@ -137,7 +137,7 @@ public class OBDModel {
 
     }
 
-    private boolean runSimulationTimeLoop() throws InsufficientNumberOfPeopleException, PersonNotFoundException {
+    private boolean runSimulationTimeLoop() throws InsufficientNumberOfPeopleException, PersonNotFoundException, PreEmptiveOutOfMemoryWarning {
 
         summary.setCompleted(true);
 
@@ -197,11 +197,11 @@ public class OBDModel {
         return true;
     }
 
-    public void analyseAndOutputPopulation() {
+    public void analyseAndOutputPopulation() throws PreEmptiveOutOfMemoryWarning {
         analyseAndOutputPopulation(true);
     }
 
-    public void analyseAndOutputPopulation(boolean outputSummaryRow) {
+    public void analyseAndOutputPopulation(boolean outputSummaryRow) throws PreEmptiveOutOfMemoryWarning {
 
         if(config.getOutputTables()) {
             ContigencyTableFactory.generateContigencyTables(population.getAllPeople(), desired, config, summary, 0, 150);

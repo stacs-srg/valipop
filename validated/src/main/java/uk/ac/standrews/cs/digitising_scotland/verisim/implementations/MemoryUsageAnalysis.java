@@ -28,6 +28,8 @@ public class MemoryUsageAnalysis {
     private static long maxSimUsage = 0L;
     private static long maxRunUsage = 0L;
 
+    private static double threshold = 0.95;
+
     public static void main(String[] args) {
 
         checkMemory = true;
@@ -50,13 +52,18 @@ public class MemoryUsageAnalysis {
         maxSimUsage = 0L;
     }
 
-    public static void log() {
+    public static void log() throws PreEmptiveOutOfMemoryWarning {
 
         if(checkMemory) {
             long currentUsage = ManagementFactory.getMemoryMXBean().getHeapMemoryUsage().getUsed();
             if(currentUsage > maxSimUsage) {
                 maxSimUsage = currentUsage;
             }
+
+            if(Runtime.getRuntime().totalMemory() * threshold < currentUsage) {
+                throw new PreEmptiveOutOfMemoryWarning();
+            }
+
         }
 
     }

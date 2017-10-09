@@ -3,6 +3,7 @@ package uk.ac.standrews.cs.digitising_scotland.verisim.statistics.analysis.valid
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import uk.ac.standrews.cs.digitising_scotland.verisim.Config;
+import uk.ac.standrews.cs.digitising_scotland.verisim.implementations.PreEmptiveOutOfMemoryWarning;
 import uk.ac.standrews.cs.digitising_scotland.verisim.statistics.analysis.simulationSummaryLogging.SummaryRow;
 import uk.ac.standrews.cs.digitising_scotland.verisim.statistics.analysis.validation.contingencyTables.TableInstances.*;
 import uk.ac.standrews.cs.digitising_scotland.verisim.statistics.analysis.validation.contingencyTables.TableStructure.CTtable;
@@ -27,7 +28,7 @@ public class ContigencyTableFactory {
 
     public static void generateContigencyTables(PeopleCollection population, PopulationStatistics desired,
                                                 Config config, SummaryRow summary, int zeroAdjustValue,
-                                                int startStepBack) {
+                                                int startStepBack) throws PreEmptiveOutOfMemoryWarning {
 
         ProgramTimer tableTimer = new ProgramTimer();
 
@@ -76,7 +77,7 @@ public class ContigencyTableFactory {
         summary.setCTRunTime(tableTimer.getRunTimeSeconds());
     }
 
-    private static void outputToFile(CTtable table, String fileName) throws IOException, NoTableRowsException {
+    private static void outputToFile(CTtable table, String fileName) throws IOException, NoTableRowsException, PreEmptiveOutOfMemoryWarning {
         MemoryUsageAnalysis.log();
         Path path = FileUtils.mkBlankFile(FileUtils.getContingencyTablesPath(), fileName);
         PrintStream ps = new PrintStream(path.toFile(), "UTF-8");
