@@ -14,10 +14,7 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.dateMod
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
@@ -44,16 +41,33 @@ public class MinimaSearch {
 
     public static void main(String[] args) throws StatsException, IOException, InvalidInputFileException {
 
+//        step = 0.5;
+//        initStep = step;
+//
+//        try {
+//
+//            while(true) {
+//                double bf = getNextBFValue();
+//                Scanner scanner = new Scanner(System.in);
+//                String v = scanner.nextLine();
+//                logBFtoV(bf, new Double(v));
+//                inMinima(bf);
+//            }
+//
+//
+//        } catch (SpaceExploredException e) {
+//            System.out.println(e.getMessage());
+//        }
         try {
 
 //            runSearch(50000, "src/main/resources/scotland_test_population", 0.0, 0.5, "minima-test", 1);
 
             switch(args[0]) {
                 case "A":
-                    runSearch(5200000, "src/main/resources/scotland_test_population", 0.0, 0.5, "minima-scot-d", 3);
+                    runSearch(5200000, "src/main/resources/scotland_test_population", 0.0, 0.5, "minima-scot-e", 3);
                     break;
                 case "B":
-                    runSearch(1600000, "src/main/resources/proxy-scotland-population-JA", 0.0, 0.5, "minima-ja-d", 3);
+                    runSearch(1600000, "src/main/resources/proxy-scotland-population-JA", 0.0, 0.5, "minima-ja-e", 3);
                     break;
             }
 
@@ -188,7 +202,7 @@ public class MinimaSearch {
 
         do {
 
-            if(counter * 100 > options) {
+            if(counter > options) {
                 throw new SpaceExploredException();
             }
 
@@ -202,8 +216,28 @@ public class MinimaSearch {
 
         jumpingPhase = false;
 
+        BFVPoint nearestBF = getNearestPoint(chosenBF);
+        points.remove(nearestBF);
+        points.addLast(nearestBF);
+
         return chosenBF;
 
+    }
+
+    private static BFVPoint getNearestPoint(double chosenBF) {
+
+        double minDistance = Double.MAX_VALUE;
+        BFVPoint nearest = null;
+
+        for(BFVPoint p : points) {
+            double distance = Math.abs(p.x_bf - chosenBF);
+            if(distance < minDistance) {
+                minDistance = distance;
+                nearest = p;
+            }
+        }
+
+        return nearest;
     }
 
     private static Double inMinima(double currentBF) {
@@ -217,7 +251,7 @@ public class MinimaSearch {
 
                 List<BFVPoint> l;
                 if(i + pointInMinima - 1 < consideredPoints.size()) {
-                    l = consideredPoints.subList(i, i + pointInMinima - 1);
+                    l = consideredPoints.subList(i, i + pointInMinima);
                 } else {
                     break;
                 }
@@ -319,6 +353,10 @@ public class MinimaSearch {
                     }
                     i++;
                 }
+                if(i == ordering.size()) {
+                    ordering.add(p);
+                }
+
             }
         }
         return ordering;
@@ -346,7 +384,7 @@ public class MinimaSearch {
 
                 selected.add(p);
 
-                if(c > points.size() - width) {
+                if(c >= points.size() - width) {
                     for(int i = 0; i < points.size() - c; i++) {
                         selected.add(ordering.get(i + c));
                     }
@@ -367,7 +405,9 @@ public class MinimaSearch {
     private static double getNextBFValue() throws SpaceExploredException {
 
         if(jumpingPhase) {
-            return jumpOut();
+            double nextBF = jumpOut();
+            System.out.println("Next BF : " + nextBF);
+            return nextBF;
         }
 
         if(points.size() == 0) {
@@ -420,6 +460,7 @@ public class MinimaSearch {
                         // if newBF has already been used, then split in gap
                         step = step / 2;
                         newBF = match.x_bf - (step * direction);
+                        match2 = containsValue(points, newBF);
                     }
 
                 } else {
