@@ -45,12 +45,15 @@ public class MinimaSearch {
     public static void main(String[] args) throws StatsException, IOException, InvalidInputFileException {
 
         try {
+
+//            runSearch(50000, "src/main/resources/scotland_test_population", 0.0, 0.5, "minima-test", 1);
+
             switch(args[0]) {
                 case "A":
-                    runSearch(5200000, "src/main/resources/scotland_test_population", 0.0, 0.5, "minima-scot-c", 3);
+                    runSearch(5200000, "src/main/resources/scotland_test_population", 0.0, 0.5, "minima-scot-d", 3);
                     break;
                 case "B":
-                    runSearch(1600000, "src/main/resources/proxy-scotland-population-JA", 0.0, 0.5, "minima-ja-c", 3);
+                    runSearch(1600000, "src/main/resources/proxy-scotland-population-JA", 0.0, 0.5, "minima-ja-d", 3);
                     break;
             }
 
@@ -211,9 +214,15 @@ public class MinimaSearch {
             ArrayList<BFVPoint> returns = new ArrayList<>();
 
             for(int i = 0; i < pointInMinima; i++) {
-                List<BFVPoint> l = consideredPoints.subList(i, i + pointInMinima - 1);
 
-                BFVPoint ret = constitutesMinima(consideredPoints);
+                List<BFVPoint> l;
+                if(i + pointInMinima - 1 < consideredPoints.size()) {
+                    l = consideredPoints.subList(i, i + pointInMinima - 1);
+                } else {
+                    break;
+                }
+
+                BFVPoint ret = constitutesMinima(l);
 
                 if(ret != null) {
                     returns.add(ret);
@@ -233,7 +242,7 @@ public class MinimaSearch {
     }
 
     // returns bf of minima
-    public static BFVPoint constitutesMinima(ArrayList<BFVPoint> potentialMinimaSet) {
+    public static BFVPoint constitutesMinima(List<BFVPoint> potentialMinimaSet) {
 
         if(potentialMinimaSet.size() != pointInMinima) {
             return null;
