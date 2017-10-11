@@ -28,8 +28,10 @@ public class MinimaSearch {
 
     static double maxAbsBF = 3;
 
-    static double maxPosBF = maxAbsBF;
-    static double maxNegBF = -1 * maxAbsBF;
+    static double topSearchBoundBF = maxAbsBF;
+    static double bottomSearchBoundBF = -1 * maxAbsBF;
+
+    static double hardLimitBottomBoundBF = -1 * Double.MAX_VALUE;
 
     static int pointInMinima = 3;
 
@@ -41,9 +43,10 @@ public class MinimaSearch {
 
     public static void main(String[] args) throws StatsException, IOException, InvalidInputFileException {
 
-//        step = 0.5;
-//        initStep = step;
-//
+        step = 0.5;
+        initStep = step;
+
+
 //        try {
 //
 //            while(true) {
@@ -64,7 +67,7 @@ public class MinimaSearch {
 
             switch(args[0]) {
                 case "A":
-                    runSearch(5200000, "src/main/resources/scotland_test_population", 0.0, 0.5, "minima-scot-e", 3);
+                    runSearch(5200000, "src/main/resources/scotland_test_population", 0.0, 0.5, "minima-scot-f", 3);
                     break;
                 case "B":
                     runSearch(1600000, "src/main/resources/proxy-scotland-population-JA", 0.0, 0.5, "minima-ja-e", 3);
@@ -131,6 +134,7 @@ public class MinimaSearch {
                     try {
                         model.runSimulation();
                         model.analyseAndOutputPopulation(false);
+                        CTtree.clearStatNodeIfNessersary();
                         double v = getV(FileUtils.getContingencyTablesPath().toString(), model.getDesiredPopulationStatistics().getOrderedBirthRates(new YearDate(0)).getLargestLabel().getValue());
 
                         v = v / model.getPopulation().getPopulationCounts().getCreatedPeople() * 1E6;
@@ -140,19 +144,28 @@ public class MinimaSearch {
 
                         totalV += v;
                     } catch (PreEmptiveOutOfMemoryWarning | OutOfMemoryError e) {
-                        if(bf < 0) {
-                            maxNegBF = bf + 0.1;
-                        } else if(bf > 0) {
-                            maxPosBF = bf - 0.1;
-                        } else {
-                            // bf == 0 and failing
-                            throw e;
+
+                        hardLimitBottomBoundBF = bf + 0.1;
+                        bottomSearchBoundBF = hardLimitBottomBoundBF;
+
+                        if(bottomSearchBoundBF > topSearchBoundBF) {
+                            throw new Error("Bottom bound larger then top bound - resulting from adaptions made due to memory limitations - try to increase JVm heap size (-Xmx) or reduce population size");
                         }
+
+//                        if(bf < 0) {
+//                            bottomSearchBoundBF = bf + 0.1;
+//                        } else if(bf > 0) {
+//                            topSearchBoundBF = bf - 0.1;
+//                        } else {
+//                            // bf == 0 and failing
+//                            throw e;
+//                        }
                         jumpingPhase = true;
                         model.getSummaryRow().setCompleted(false);
                         MemoryUsageAnalysis.reset();
                         model.getSummaryRow().setMaxMemoryUsage(MemoryUsageAnalysis.getMaxSimUsage());
                         model.getSummaryRow().outputSummaryRowToFile();
+                        CTtree.clearStatNodeIfNessersary();
                         break;
                     }
 
@@ -162,11 +175,7 @@ public class MinimaSearch {
 
                 if(!avgV.isNaN()) {
                     logBFtoV(bf, avgV);
-                    Double minima = inMinima(bf);
-
-                    if (minima != null) {
-                        System.out.println("Minima found at: " + bf);
-                    }
+                    inMinima(bf);
                 }
 
                 CTtree.reuseExpectedValues(false);
@@ -194,7 +203,7 @@ public class MinimaSearch {
 
         step = initStep;
 
-        int options = new Double(maxPosBF - maxNegBF / (initStep / 2)).intValue();
+        int options = new Double(topSearchBoundBF - bottomSearchBoundBF / (initStep / 2)).intValue();
 
         double chosenBF;
 
@@ -208,7 +217,7 @@ public class MinimaSearch {
 
             int chosen = rand.nextInt(options);
 
-            chosenBF = chosen * (initStep / 2) + maxNegBF;
+            chosenBF = chosen * (initStep / 2) + bottomSearchBoundBF;
 
             counter ++;
 
@@ -267,7 +276,9 @@ public class MinimaSearch {
             if(returns.size() == 0) {
                 return null;
             } else {
-                return orderByV(returns).get(0).x_bf;
+                BFVPoint minima = orderByV(returns).get(0);
+                System.out.println("Minima found at: " + minima.x_bf + " --- v/M: " + minima.y_v);
+                return minima.x_bf;
             }
         }
 
@@ -331,6 +342,9 @@ public class MinimaSearch {
                         break;
                     }
                     i++;
+                }
+                if(i == ordering.size()) {
+                    ordering.add(p);
                 }
             }
         }
@@ -473,7 +487,7 @@ public class MinimaSearch {
 
             System.out.println("Next BF : " + newBF);
 
-            if(newBF < maxNegBF || newBF > maxPosBF) {
+            if(newBF < bottomSearchBoundBF || newBF > topSearchBoundBF) {
                 // we're out of bounds
                 // the fact we're here means there may be a lower minima out width the specified search area.
                 // if we can extend them and we havn't seen something to suggest we won't overrun the heap then we'll extend the bounds
@@ -482,17 +496,17 @@ public class MinimaSearch {
 
 
                 if(newBF < 0) {
-                    if(DoubleComparer.equal(maxNegBF, -1 * maxAbsBF, 0.0000001)) {
-                        maxNegBF -= step * 2;
+                    if(DoubleComparer.equal(bottomSearchBoundBF, hardLimitBottomBoundBF, 0.0000001)) {
+                        bottomSearchBoundBF -= step * 2;
+                        System.out.println("Suspected Minima out of search bounds - extending bottom search bound to : " + bottomSearchBoundBF);
                     } else {
+                        System.out.println("Suspected Minima out of search bounds beyond : " + bottomSearchBoundBF);
+                        System.out.println("Cannot extend search bound due to hard limit placed due to lack of heap space in earlier run - increase heap space to explore this area");
                         return jumpOut();
                     }
                 } else {
-                    if(DoubleComparer.equal(maxPosBF, maxAbsBF, 0.0000001)) {
-                        maxPosBF += step * 2;
-                    } else {
-                        return jumpOut();
-                    }
+                        topSearchBoundBF += step * 2;
+                        System.out.println("Suspected Minima out of search bounds - extending top search bound to : " + topSearchBoundBF);
                 }
             }
 
