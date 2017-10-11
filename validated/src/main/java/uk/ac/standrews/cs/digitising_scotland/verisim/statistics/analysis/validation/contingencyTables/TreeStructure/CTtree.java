@@ -62,6 +62,15 @@ public class CTtree extends Node<String, SourceType, Number, Number> implements 
 
     public static void reuseExpectedValues(boolean reuse) {
         reuseExpValues = reuse;
+
+        clearStatNodeIfNessersary();
+
+    }
+
+    public static void clearStatNodeIfNessersary() {
+        if(!reuseExpValues) {
+            statNode = null;
+        }
     }
 
     public CTtree(PeopleCollection population, PopulationStatistics expected, Date startDate, Date endDate, int startStepBack) {
