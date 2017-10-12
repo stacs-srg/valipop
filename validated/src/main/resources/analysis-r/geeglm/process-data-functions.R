@@ -30,20 +30,25 @@ sourceSummary <- function(data) {
 }
 
 cleanMBData <-function(dirtyData, largestBirthingAge)  {
+
+  clean.data$freq <- ceiling(clean.data$freq)
   clean.data <- cleanOBData(dirtyData, largestBirthingAge)
   clean.data <- clean.data[which(clean.data$NCIY != "0"), ]
+  clean.data$NCIY <- droplevels(clean.data$NCIY)
   return(clean.data)
 }
 
 cleanPartData <- function(dirtyData) {
   clean.data <- cleanData(dirtyData)
   clean.data <- clean.data[which(clean.data$NPA != "na") , ]
+  clean.data$NPA <- droplevels(clean.data$NPA)
   return(clean.data)
 }
 
 cleanSepData <- function(dirtyData) {
   clean.data <- cleanData(dirtyData)
   clean.data <- clean.data[which(clean.data$Separated != "NA") , ]
+  clean.data$Separated <- droplevels(clean.data$Separated)
   return(clean.data)
 }
 
