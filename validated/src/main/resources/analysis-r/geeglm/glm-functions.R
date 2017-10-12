@@ -40,8 +40,8 @@ sepSelGLM <- function(in.data) {
 }
 
 runGLM <- function(formula, in.data) {
-  data.sorted <- in.data[order(in.data$idvar, in.data$Age, in.data$Died),]
-  glm.model = glm(formula, data = data.sorted, family = poisson)
+  
+  glm.model = glm(formula, data = in.data, family = poisson)
   
   
   plot(residuals(glm.model), type = "l")

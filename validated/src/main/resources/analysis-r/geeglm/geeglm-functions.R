@@ -11,7 +11,8 @@ obSatGEEGLM <- function(in.data) {
 }
 
 mbSatGEEGLM <- function(in.data) {
-  return(runGEEGLM(freq ~ Date * NCIY * Age * Source, in.data))
+  # We don't use Age as it reduces the frequency values for the higher NCIY values to virtually 0, and this confounding the poisson based assumptions of the model
+  return(runGEEGLM(freq ~ Date * NCIY * Source, in.data))
 }
 
 partSatGEEGLM <- function(in.data) {

@@ -30,11 +30,10 @@ sourceSummary <- function(data) {
 }
 
 cleanMBData <-function(dirtyData, largestBirthingAge)  {
-
-  clean.data$freq <- ceiling(clean.data$freq)
+  #dirtyData$freq <- ceiling(dirtyData$freq)
   clean.data <- cleanOBData(dirtyData, largestBirthingAge)
   clean.data <- clean.data[which(clean.data$NCIY != "0"), ]
-  clean.data$NCIY <- droplevels(clean.data$NCIY)
+
   return(clean.data)
 }
 
