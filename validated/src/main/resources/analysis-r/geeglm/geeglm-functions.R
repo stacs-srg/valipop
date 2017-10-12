@@ -10,15 +10,15 @@ obSatGEEGLM <- function(in.data) {
   return(runGEEGLM(freq ~ Date * Age * NPCIAP * CIY * Source, in.data))
 }
 
-mbSatGLM <- function(in.data) {
+mbSatGEEGLM <- function(in.data) {
   return(runGEEGLM(freq ~ Date * NCIY * Age * Source, in.data))
 }
 
-partSatGLM <- function(in.data) {
+partSatGEEGLM <- function(in.data) {
   return(runGEEGLM(freq ~ Date * NPA * Age * Source, in.data))
 }
 
-sepSatGLM <- function(in.data) {
+sepSatGEEGLM <- function(in.data) {
   return(runGEEGLM(freq ~ Date * NCIP * Separated * Source, in.data))
 }
 

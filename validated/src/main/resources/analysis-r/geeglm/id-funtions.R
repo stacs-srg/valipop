@@ -21,19 +21,20 @@ addCohortIDs.ob <- function(in.data) {
 addCohortIDs.death <- function(in.data) {
   
   e <- min(in.data$YOB)
-  l <- max(in.data$YOB)
+  maleL <- max(in.data[which(in.data$Sex == "MALE"),]$YOB)
+  femaleL <- max(in.data[which(in.data$Sex == "FEMALE"),]$YOB)
   
   data.id <- in.data
   
   data.id = within(data.id, {
     idvar = ifelse(Source == "SIM", 
                    ifelse(Sex == "MALE", 
-                          (YOB - e) + bin2dec(c(TRUE, TRUE)) * (l - e + 1),
-                          (YOB - e) + bin2dec(c(TRUE, FALSE)) * (l - e + 1)
+                          (YOB - e) + bin2dec(c(TRUE, TRUE)) * (maleL - e + 1),
+                          (YOB - e) + bin2dec(c(TRUE, FALSE)) * (femaleL - e + 1)
                    ),
                    ifelse(Sex == "MALE", 
-                          (YOB - e) + bin2dec(c(FALSE, TRUE)) * (l - e + 1),
-                          (YOB - e) + bin2dec(c(FALSE, FALSE)) * (l - e + 1)
+                          (YOB - e) + bin2dec(c(FALSE, TRUE)) * (maleL - e + 1),
+                          (YOB - e) + bin2dec(c(FALSE, FALSE)) * (femaleL - e + 1)
                    )
     ) 
   })
@@ -52,18 +53,47 @@ addCohortIDs.mb <- function(in.data) {
   
   data.id = within(data.id, {
     idvar = ifelse(Source == "SIM", 
-                   ifelse(Sex == "MALE", 
-                          (YOB - e) + bin2dec(c(TRUE, TRUE)) * (l - e + 1),
-                          (YOB - e) + bin2dec(c(TRUE, FALSE)) * (l - e + 1)
-                   ),
-                   ifelse(Sex == "MALE", 
-                          (YOB - e) + bin2dec(c(FALSE, TRUE)) * (l - e + 1),
-                          (YOB - e) + bin2dec(c(FALSE, FALSE)) * (l - e + 1)
-                   )
-    ) 
+                   (YOB - e) + bin2dec(c(TRUE)) * (l - e + 1),
+                   (YOB - e) + bin2dec(c(FALSE)) * (l - e + 1))
   })
   
-  data.id.sorted <- data.id[order(data.id$idvar, data.id$Age, data.id$Died),]
+  data.id.sorted <- data.id[order(data.id$idvar, data.id$Age, data.id$NCIY),]
+  return(data.id.sorted)  
+  
+}
+
+addCohortIDs.part <- function(in.data) {
+  
+  e <- min(in.data$YOB)
+  l <- max(in.data$YOB)
+  
+  data.id <- in.data
+  
+  data.id = within(data.id, {
+    idvar = ifelse(Source == "SIM", 
+                   (YOB - e) + bin2dec(c(TRUE)) * (l - e + 1),
+                   (YOB - e) + bin2dec(c(FALSE)) * (l - e + 1))
+  })
+  
+  data.id.sorted <- data.id[order(data.id$idvar, data.id$Age, data.id$NPA),]
+  return(data.id.sorted)  
+  
+}
+
+addCohortIDs.sep <- function(in.data) {
+  
+  e <- min(in.data$YOB)
+  l <- max(in.data$YOB)
+  
+  data.id <- in.data
+  
+  data.id = within(data.id, {
+    idvar = ifelse(Source == "SIM", 
+                   (YOB - e) + bin2dec(c(TRUE)) * (l - e + 1),
+                   (YOB - e) + bin2dec(c(FALSE)) * (l - e + 1))
+  })
+  
+  data.id.sorted <- data.id[order(data.id$idvar, data.id$NCIP, data.id$Separated),]
   return(data.id.sorted)  
   
 }

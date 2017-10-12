@@ -46,7 +46,7 @@ public class CTtableSep extends CTtable {
                     if (Objects.equals(leaf.getVariable("Sex").getValue(), "FEMALE")) {
                         leaf.deleteVariable("Sex");
 
-                        leaf.deleteVariable("YOB");
+//                        leaf.deleteVariable("YOB");
                         leaf.deleteVariable("Died");
                         leaf.deleteVariable("PNCIP");
                         leaf.deleteVariable("NPCIAP");
