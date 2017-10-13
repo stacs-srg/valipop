@@ -32,6 +32,8 @@ runGEEGLM <- function(formula, in.data) {
   
   plot(residuals(mod), type = "l")
   acf(residuals(mod), lag.max = 100)
+  acf(residuals(mod), lag.max = 500)
+  acf(residuals(mod), lag.max = 1000)
   
   require(mgcv)
   fit<- gam(residuals(mod) ~ s(in.data$YOB))

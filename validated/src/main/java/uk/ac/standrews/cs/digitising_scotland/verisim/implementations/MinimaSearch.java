@@ -43,7 +43,7 @@ public class MinimaSearch {
 
     public static void main(String[] args) throws StatsException, IOException, InvalidInputFileException {
 
-        step = 0.5;
+        step = 1.5;
         initStep = step;
 
 
@@ -67,10 +67,10 @@ public class MinimaSearch {
 
             switch(args[0]) {
                 case "A":
-                    runSearch(5200000, "src/main/resources/scotland_test_population", 0.0, 0.5, "minima-scot-f", 3);
+                    runSearch(5200000, "src/main/resources/scotland_test_population", 0.0, 0.5, "minima-scot-f", 2);
                     break;
                 case "B":
-                    runSearch(2500000, "src/main/resources/proxy-scotland-population-JA", -1.0, 0.5, "minima-ja-f", 3);
+                    runSearch(2750000, "src/main/resources/proxy-scotland-population-JA", -1.0, 0.5, "minima-ja-f", 2);
                     break;
             }
 

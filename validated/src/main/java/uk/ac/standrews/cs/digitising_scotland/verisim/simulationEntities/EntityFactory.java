@@ -94,9 +94,6 @@ public class EntityFactory {
 
     private static char getSex(PopulationCounts pc, PopulationStatistics ps, Date currentDate) {
 
-        // TODO move over to a specified m to f ratio
-
-//        double sexBalance = pc.getLivingSexRatio();
         double sexBalance = pc.getAllTimeSexRatio();
 
         if(sexBalance < ps.getMaleProportionOfBirths(currentDate)) {
