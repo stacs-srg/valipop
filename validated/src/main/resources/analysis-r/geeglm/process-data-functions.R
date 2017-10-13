@@ -20,7 +20,7 @@ cleanOBData <- function(dirtyData, largestBirthingAge) {
   clean.data <- cleanData(dirtyData)
   clean.data <- clean.data[which(clean.data$Age >= 15), ]
   clean.data <- clean.data[which(clean.data$Age <= largestBirthingAge), ]
-  #data <- data[which(data$CIY == "YES"), ]
+  #clean.data <- clean.data[which(clean.data$CIY == "YES"), ]
   return(clean.data)
 }
 
