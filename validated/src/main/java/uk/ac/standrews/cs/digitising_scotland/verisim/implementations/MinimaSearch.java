@@ -70,7 +70,7 @@ public class MinimaSearch {
                     runSearch(5200000, "src/main/resources/scotland_test_population", 0.0, 0.5, "minima-scot-f", 2);
                     break;
                 case "B":
-                    runSearch(2750000, "src/main/resources/proxy-scotland-population-JA", -1.0, 0.5, "minima-ja-f", 2);
+                    runSearch(2750000, "src/main/resources/proxy-scotland-population-JA", 0.0, 1.5, "minima-ja-g", 2);
                     break;
             }
 
