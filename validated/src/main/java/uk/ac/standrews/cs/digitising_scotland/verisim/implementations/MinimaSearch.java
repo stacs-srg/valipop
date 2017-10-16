@@ -142,6 +142,8 @@ public class MinimaSearch {
                         model.getSummaryRow().setV(v);
                         model.getSummaryRow().outputSummaryRowToFile();
 
+                        generateAnalysisHTML(FileUtils.getRunPath().toString(), model.getDesiredPopulationStatistics().getOrderedBirthRates(new YearDate(0)).getLargestLabel().getValue(), runPurpose + " - bf: " + String.valueOf(bf));
+
                         totalV += v;
                     } catch (PreEmptiveOutOfMemoryWarning | OutOfMemoryError e) {
 
@@ -532,6 +534,15 @@ public class MinimaSearch {
     private static void logBFtoV(double bf, double v) {
 
         points.addLast(new BFVPoint(bf, v));
+
+    }
+
+    private static void generateAnalysisHTML(String pathOfRunDir, int maxBirthingAge, String subTitle) throws IOException {
+
+        String[] commands = {"Rscript", "src/main/resources/analysis-r/geeglm/runPopulationAnalysis.R", pathOfRunDir, String.valueOf(maxBirthingAge), subTitle};
+        ProcessBuilder pb = new ProcessBuilder(commands);
+
+        pb.start();
 
     }
 

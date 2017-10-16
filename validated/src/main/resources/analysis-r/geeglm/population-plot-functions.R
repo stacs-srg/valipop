@@ -31,7 +31,6 @@ plotCohorts <- function(Death.data, age, title) {
 
 plotOB <- function(Birth.data, title) {
   
-  Birth.data <- cleanOBData(readInData("~/OneDrive/cs/PhD/code/population-model/validated/src/main/resources/results/geeglm-ja/20170926-173619:133/tables/ob-CT.csv"), 55)
   title <- "Test"
   
   sourceSummary(Birth.data)
@@ -52,7 +51,7 @@ plotOB <- function(Birth.data, title) {
 
 plotMB <- function(mb.data) {
 
-  par(mfrow = c(3,1))
+  par(mfrow = c(1,3))
   
   aggdata <- aggregate(mb.data$freq, by=list(mb.data$Source, mb.data$Date, mb.data$NCIY), FUN=sum, na.rm=TRUE)
   
@@ -119,7 +118,7 @@ plotMB <- function(mb.data) {
   colour <- colour+1
   
   legend("topright", inset = 0.01, title = "Number of children in Year", c("Sim - 1", "Stat - 1", "Sim - 2", "Stat - 2", "Sim - 3", "Stat - 3", "Sim - 4", "Stat - 4"), 
-         col = c(cols), lty = c(1,1,1,1,1,1,1,1), cex=0.8, y.intersp=c(0.4), box.lty=0)
+         col = c(cols), lty = c(1,1,1,1,1,1,1,1), cex=0.8, y.intersp=c(0.8), box.lty=0)
   
   colour <- 3
   selA <- sel[which(sel$Source == "SIM" & sel$NCIY == 2), ]

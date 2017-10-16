@@ -20,12 +20,13 @@ partSatGEEGLM <- function(in.data) {
 }
 
 sepSatGEEGLM <- function(in.data) {
-  return(runGEEGLM(freq ~ Date * NCIP * Separated * Source, in.data))
+  return(runGEEGLM(freq ~ NCIP * Separated, in.data))
 }
 
 
 runGEEGLM <- function(formula, in.data) {
   
+  par(mfrow = c(1,3))
   library(geepack)  
   mod <- geeglm(formula, id=idvar, data = in.data, corstr="ar1")
   print(summary(mod))
@@ -43,6 +44,8 @@ runGEEGLM <- function(formula, in.data) {
   fit<- gam(residuals(mod) ~ s(in.data$idvar))
   plot(fit)
   summary(fit)
+  
+  par(mfrow = c(1,1))
   
   return(mod)
 }
