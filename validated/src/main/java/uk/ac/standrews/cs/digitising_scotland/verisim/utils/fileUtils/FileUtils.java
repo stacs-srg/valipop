@@ -47,6 +47,7 @@ public class FileUtils {
     private static Path tracePath;
     private static Path recordsPath;
     private static Path contingencyTablesPath;
+    private static Path runPath;
 
     private static void checkLogFile() {
         if(log == null) {
@@ -69,6 +70,7 @@ public class FileUtils {
 
         // make folder named by startTime
         Path run = Paths.get(purpose.toString(), startTime);
+        runPath = run;
         mkDirs(run);
 
         // initialise result file
@@ -189,6 +191,10 @@ public class FileUtils {
 
     public static Path pathToLogDir(String runPurpose, String startTime, String resultPath) {
         return Paths.get(resultPath, runPurpose, startTime, "log", "trace.txt");
+    }
+
+    public static Path getRunPath() {
+        return runPath;
     }
 
     public static void writeSummaryRowToSummaryFiles(SummaryRow row) throws IOException {

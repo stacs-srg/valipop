@@ -1,7 +1,5 @@
 
 
-
-
 addCohortIDs.ob <- function(in.data) {
   
   e <- min(in.data$YOB)

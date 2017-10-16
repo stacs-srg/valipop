@@ -48,6 +48,7 @@ cleanSepData <- function(dirtyData) {
   clean.data <- cleanData(dirtyData)
   clean.data <- clean.data[which(clean.data$Separated != "NA") , ]
   clean.data$Separated <- droplevels(clean.data$Separated)
+  clean.data$NCIP <- droplevels(clean.data$NCIP)
   return(clean.data)
 }
 
