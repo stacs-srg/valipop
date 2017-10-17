@@ -4,6 +4,7 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.Config;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.ProcessArgs;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.fileUtils.FileUtils;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.fileUtils.InvalidInputFileException;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.dateModel.dateImplementations.YearDate;
 
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -50,6 +51,12 @@ public class CL_OBDModel {
             OBDModel model = new OBDModel(startTime, config);
             model.runSimulation();
             model.analyseAndOutputPopulation();
+
+            MinimaSearch.generateAnalysisHTML(
+                    FileUtils.getRunPath().toString(),
+                    model.getDesiredPopulationStatistics().getOrderedBirthRates(new YearDate(0)).getLargestLabel().getValue(),
+                    runPurpose + " - bf: " + String.valueOf(config.getBirthFactor()));
+
             return model;
         } catch (IOException e) {
             String message = "Model failed due to Input/Output exception, check that this program has " +

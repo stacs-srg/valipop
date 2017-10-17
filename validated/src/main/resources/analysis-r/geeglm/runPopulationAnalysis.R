@@ -1,14 +1,15 @@
 runAnalysis <- function(pathToRunDir, maxBirthAge, subTitle) {
-  rmarkdown::render(
+  library(knitr)
+  pathToRunDir <- pathToRunDir
+  maxBirthingAge <- maxBirthAge
+  subTitle <- subTitle
+  
+  knitr::opts_chunk$set(fig.height=12, fig.width=16)
+  knitr::knit2html(
     "src/main/resources/analysis-r/geeglm/analysis.Rhtml", 
-    output_file = pathToRunDir,
-    params = list(
-      pathToRunDir = pathToRunDir,
-      maxBirthingAge = maxBirthingAge,
-      subTitle = subTitle)
-    )
+    output = paste(pathToRunDir, "analysis.html")
+  )
 }
-
 
 pathToRunDir <- commandArgs(TRUE)[1]
 maxBirthAge <- commandArgs(TRUE)[2]

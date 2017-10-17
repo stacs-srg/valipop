@@ -27,3 +27,9 @@ sepSelLLM <- function(in.data) {
   model = loglm(freq ~ Date + NCIP + Separated + NCIP:Separated, data = in.data)
   return(model)
 }
+
+sepSatLLM <- function(in.data) {
+  library(MASS)
+  model = loglm(freq ~ Source * Date * NCIP * Separated, data = in.data)
+  return(model)
+}
