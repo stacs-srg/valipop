@@ -20,7 +20,7 @@ partSatGEEGLM <- function(in.data) {
 }
 
 sepSatGEEGLM <- function(in.data) {
-  return(runGEEGLM(freq ~ NCIP * Separated, in.data))
+  return(runGEEGLM(freq ~ Date * Source * NCIP * Separated, in.data))
 }
 
 

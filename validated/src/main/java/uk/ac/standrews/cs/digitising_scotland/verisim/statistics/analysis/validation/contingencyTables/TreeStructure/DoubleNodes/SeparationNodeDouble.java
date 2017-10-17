@@ -199,10 +199,10 @@ public class SeparationNodeDouble extends DoubleNode<SeparationOption, IntegerRa
     @Override
     public void makeChildren() {
 
-        IntegerRange pncip = ((PreviousNumberOfChildrenInPartnershipNodeDouble)
-                getAncestor(new PreviousNumberOfChildrenInPartnershipNodeDouble())).getOption();
+        IntegerRange ncip = ((NumberOfChildrenInPartnershipNodeDouble)
+                getAncestor(new NumberOfChildrenInPartnershipNodeDouble())).getOption();
 
-        if(pncip.getValue() == 0) {
+        if(ncip.getValue() == 0) {
             addChild(new IntegerRange("na"));
         } else {
             ChildrenInYearOption ciy = ((ChildrenInYearNodeDouble)
@@ -213,6 +213,10 @@ public class SeparationNodeDouble extends DoubleNode<SeparationOption, IntegerRa
             } else {
                 YearDate yob = ((YOBNodeDouble) getAncestor(new YOBNodeDouble())).getOption();
                 Integer age = ((AgeNodeDouble) getAncestor(new AgeNodeDouble())).getOption().getValue();
+
+                if(age == 16) {
+                    System.out.print("");
+                }
 
                 Date currentDate = yob.advanceTime(age, TimeUnit.YEAR);
 

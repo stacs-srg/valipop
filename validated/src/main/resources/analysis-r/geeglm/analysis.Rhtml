@@ -1,9 +1,6 @@
 
 <!--begin.rcode set-options, echo=FALSE, cache=FALSE
-options(width = 150)
-params$pathToRunDir
-params$maxBirthingAge
-params$subTitle
+options(width = 200)
 end.rcode-->
 
 <html>
@@ -16,7 +13,7 @@ end.rcode-->
 
 
 <!--begin.rcode
-source("src/main/resources/analysis-r/geeglm/process-data-functions.R")  
+source("process-data-functions.R")  
 death <- cleanDeathData(readInData(paste(pathToRunDir, "tables/death-CT.csv", sep = "")))
 mbirth <- cleanMBData(readInData(paste(pathToRunDir, "tables/mb-CT.csv", sep = "")), maxBirthingAge)
 obirth <- cleanOBData(readInData(paste(pathToRunDir, "tables/ob-CT.csv", sep = "")), maxBirthingAge)
@@ -25,15 +22,18 @@ sep <- cleanSepData(readInData(paste(pathToRunDir, "tables/sep-CT.csv", sep = ""
 end.rcode-->
 
 <!--begin.rcode 
-source("src/main/resources/analysis-r/geeglm/population-plot-functions.R")
+source("utils.R")
+source("population-plot-functions.R")
 title <- paste(subTitle, " - Age: 0 - ", pathToRunDir)
+title <- wrap_sentence(title, 50)
 plotCohorts(death, 0, title)
 title <- paste(subTitle, " - Age: 50 - ", pathToRunDir)
+title <- wrap_sentence(title, 50)
 plotCohorts(death, 50, title)
 end.rcode-->
 
 <!--begin.rcode
-source("src/main/resources/analysis-r/geeglm/process-data-functions.R")  
+source("process-data-functions.R")  
 
 sourceSummary(death)
 sourceSummary(obirth)
@@ -44,19 +44,19 @@ sourceSummary(sep)
 end.rcode-->
 
 <!--begin.rcode 
-source("src/main/resources/analysis-r/geeglm/population-plot-functions.R")
+source("population-plot-functions.R")
 plotMB(mbirth)
 end.rcode-->
 
 <!--begin.rcode
-source("src/main/resources/analysis-r/geeglm/id-funtions.R")
+source("id-funtions.R")
 death.ids <- addCohortIDs.death(death)
 obirth.ids <- addCohortIDs.ob(obirth)
 mbirth.ids <- addCohortIDs.mb(mbirth)
 part.ids <- addCohortIDs.part(part)
 sep.ids <- addCohortIDs.sep(sep)
 
-source("src/main/resources/analysis-r/geeglm/geeglm-functions.R")
+source("geeglm-functions.R")
 deathSatGEEGLM(death.ids)
 obSatGEEGLM(obirth.ids)
 mbSatGEEGLM(mbirth.ids)

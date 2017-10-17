@@ -51,7 +51,6 @@ plotOB <- function(Birth.data, title) {
 
 plotMB <- function(mb.data) {
 
-  par(mfrow = c(1,3))
   
   aggdata <- aggregate(mb.data$freq, by=list(mb.data$Source, mb.data$Date, mb.data$NCIY), FUN=sum, na.rm=TRUE)
   
@@ -162,5 +161,5 @@ plotMB <- function(mb.data) {
   points(selA$Date, selA$freq, col = cols[colour], type = "l")
   colour <- colour+1
 
-  par(mfrow = c(1,1))
+
 }
