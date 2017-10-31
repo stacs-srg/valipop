@@ -71,7 +71,7 @@ public class MinimaSearch {
                     runSearch(2500000, "src/main/resources/scotland_test_population", 0.0, 0.5, "minima-scot-h", 1);
                     break;
                 case "B":
-                    runSearch(2750000, "src/main/resources/proxy-scotland-population-JA", 0.0, 1.5, "minima-ja-g", 2);
+                    runSearch(2750000, "src/main/resources/proxy-scotland-population-JA", 0.0, 1.5, "minima-ja-h", 2);
                     break;
             }
 
