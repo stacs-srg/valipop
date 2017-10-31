@@ -14,6 +14,7 @@ import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.dateMod
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.file.Paths;
 import java.util.*;
 
 /**
@@ -549,7 +550,7 @@ public class MinimaSearch {
 
     private static double getV(String pathOfTablesDir, int maxBirthingAge) throws StatsException, IOException {
 
-        String[] commands = {"Rscript", "src/main/resources/analysis-r/geeglm/dev-minima-search.R", pathOfTablesDir, String.valueOf(maxBirthingAge)};
+        String[] commands = {"Rscript", "src/main/resources/analysis-r/geeglm/dev-minima-search.R", System.getProperty("user.dir") + "/" + pathOfTablesDir, String.valueOf(maxBirthingAge)};
         ProcessBuilder pb = new ProcessBuilder(commands);
 
         Process proc;
