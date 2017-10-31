@@ -81,6 +81,68 @@ addCohortIDs.part <- function(in.data) {
   
 }
 
+addCohortIDs.part2 <- function(in.data) {
+  
+  e <- min(in.data$Date)
+  l <- max(in.data$Date)
+  
+  data.id <- in.data
+  
+  data.id = within(data.id, {
+    idvar = ifelse(Source == "SIM", 
+                   ifelse(NPA == "15-19", 
+                          (Date - e) + bin2dec(c(TRUE,FALSE,FALSE,FALSE)) * (l - e + 1), #SIM-15-19
+                          ifelse(NPA == "20-24",
+                                 (Date - e) + bin2dec(c(TRUE,FALSE,FALSE,TRUE)) * (l - e + 1), #SIM-20-24
+                                 ifelse(NPA == "25-29",
+                                        (Date - e) + bin2dec(c(TRUE,FALSE,TRUE,FALSE)) * (l - e + 1), #SIM-25-29
+                                        ifelse(NPA == "30-34",
+                                               (Date - e) + bin2dec(c(TRUE,FALSE,TRUE,TRUE)) * (l - e + 1), #SIM-30-34
+                                               ifelse(NPA == "35-39",
+                                                      (Date - e) + bin2dec(c(TRUE,TRUE,FALSE,FALSE)) * (l - e + 1), #SIM-35-39
+                                                      ifelse(NPA == "40-44",
+                                                             (Date - e) + bin2dec(c(TRUE,TRUE,FALSE,TRUE)) * (l - e + 1), #SIM-40-44
+                                                             ifelse(NPA == "45-49",
+                                                                    (Date - e) + bin2dec(c(TRUE,TRUE,TRUE,FALSE)) * (l - e + 1), #SIM-40-49
+                                                                    (Date - e) + bin2dec(c(TRUE,TRUE,TRUE,TRUE)) * (l - e + 1) #SIM-50+
+                                                             )
+                                                      )
+                                               )
+                                        )
+                                 )
+                          )
+                   ),
+                   ifelse(NPA == "15-19", 
+                          (Date - e) + bin2dec(c(FALSE,FALSE,FALSE,FALSE)) * (l - e + 1), #STAT-15-19
+                          ifelse(NPA == "20-24",
+                                 (Date - e) + bin2dec(c(FALSE,FALSE,FALSE,TRUE)) * (l - e + 1), #STAT-20-24
+                                 ifelse(NPA == "25-29",
+                                        (Date - e) + bin2dec(c(FALSE,FALSE,TRUE,FALSE)) * (l - e + 1), #STAT-25-29
+                                        ifelse(NPA == "30-34",
+                                               (Date - e) + bin2dec(c(FALSE,FALSE,TRUE,TRUE)) * (l - e + 1), #STAT-30-34
+                                               ifelse(NPA == "35-39",
+                                                      (Date - e) + bin2dec(c(FALSE,TRUE,FALSE,FALSE)) * (l - e + 1), #STAT-35-39
+                                                      ifelse(NPA == "40-44",
+                                                             (Date - e) + bin2dec(c(FALSE,TRUE,FALSE,TRUE)) * (l - e + 1), #STAT-40-44
+                                                             ifelse(NPA == "45-49",
+                                                                    (Date - e) + bin2dec(c(FALSE,TRUE,TRUE,FALSE)) * (l - e + 1), #STAT-40-49
+                                                                    (Date - e) + bin2dec(c(FALSE,TRUE,TRUE,TRUE)) * (l - e + 1) #STAT-50+
+                                                             )
+                                                      )
+                                               )
+                                        )
+                                 )
+                          )
+                   )
+    )
+  })
+  
+  data.id.sorted <- data.id[order(data.id$idvar, data.id$Age, data.id$YOB),]
+  return(data.id.sorted)  
+  
+  
+}
+
 addCohortIDs.sep <- function(in.data) {
   
   e <- min(in.data$YOB)

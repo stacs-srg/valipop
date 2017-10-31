@@ -56,12 +56,16 @@ mbirth.ids <- addCohortIDs.mb(mbirth)
 part.ids <- addCohortIDs.part(part)
 sep.ids <- addCohortIDs.sep(sep)
 
+par(mfrow = c(1,3))
+
 source("geeglm-functions.R")
 deathSatGEEGLM(death.ids)
 obSatGEEGLM(obirth.ids)
 mbSatGEEGLM(mbirth.ids)
 partSatGEEGLM(part.ids)
 sepSatGEEGLM(sep.ids)
+
+par(mfrow = c(1,1))
 end.rcode-->
 
 </body>

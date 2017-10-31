@@ -95,8 +95,11 @@ public class PartneringLogic {
                 shortfallCounts = partnerCounts.valuesSubtractValues(availableMen);
             }
 
+            // TODO - upto - question: does infids affect NPA?
+
             ArrayList<ProposedPartnership> proposedPartnerships = new ArrayList<>();
 
+            // for each age range of males
             for(IntegerRange iR: partnerCounts.getLabels()) {
 
                 int determinedCount = partnerCounts.get(iR);
@@ -117,9 +120,13 @@ public class PartneringLogic {
                         break;
                     }
 
+                    // if man is head of list - i.e. this is the second time round
                     if(man == head) {
+                        // thus female has not been able to be matched
                         unmatchedFemales.add(woman);
                         head = null;
+
+                        // get next woman to check for partnering
                         if(!women.isEmpty()) {
                             woman = women.pollFirst();
                         } else {
@@ -127,11 +134,14 @@ public class PartneringLogic {
                         }
                     }
 
+                    // check if there is any reason why these people cannot lawfully be partnered...
                     if(eligible(man, woman.getNewMother(), population, desiredPopulationStatistics, currentDate)) {
+                        // if they can - then note as a proposed partnership
                         proposedPartnerships.add(new ProposedPartnership(man, woman.getNewMother(), iR, woman.getNumberOfChildrenInMaternity()));
                         determinedCount--;
                         head = null;
                     } else {
+                        // else we need to loop through more men - so keep track of the first man we looked at
                         if(head == null) {
                             head = man;
                         }
@@ -141,6 +151,8 @@ public class PartneringLogic {
                 }
 
                 women.addAll(unmatchedFemales);
+
+                // note how many females have been partnered at this age range
                 achievedPartnerCounts.add(iR, partnerCounts.get(iR) - determinedCount);
 //                shortfallCounts.add(iR, determinedCount);
 

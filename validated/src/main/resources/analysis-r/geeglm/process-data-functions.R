@@ -5,6 +5,7 @@ readInData <- function(path) {
 }
 
 cleanData <- function(dirtyData) {
+  clean.data <- dirtyData
   clean.data <- dirtyData[which(dirtyData$freq > 0.5),]
   clean.data$freq <- round(clean.data$freq)
   clean.data <- clean.data[which(clean.data$Date < 2014),]
