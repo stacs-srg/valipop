@@ -82,13 +82,6 @@ public class NumberOfChildrenInPartnershipNodeDouble extends DoubleNode<IntegerR
         ChildrenInYearOption childrenInYear = ((ChildrenInYearNodeDouble)
                 getAncestor(new ChildrenInYearNodeDouble())).getOption();
 
-
-        Integer age = ((AgeNodeDouble) getAncestor(new AgeNodeDouble())).getOption().getValue();
-
-        if(age == 15) {
-            System.out.print("");
-        }
-
         if(getOption().getValue() == 0 || childrenInYear == ChildrenInYearOption.NO) {
             addChild(SeparationOption.NA, getCount());
         } else {

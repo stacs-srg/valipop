@@ -59,8 +59,8 @@ public class SeparationNodeInt extends IntNode<SeparationOption, IntegerRange> {
             newPartnerAge = partner.ageOnDate(activePartnership.getPartnershipDate());
         }
 
+        // check if the partner falls into one of the child ranges
         for(Node<IntegerRange, ?, Integer, ?> node : getChildren()) {
-
 
             Boolean in;
             try {
@@ -69,22 +69,29 @@ public class SeparationNodeInt extends IntNode<SeparationOption, IntegerRange> {
                 in = null;
             }
 
-
-            //TODO why are we spliting things here if both branches do the same
-            if(newPartnerAge == null && in == null) {
+            // if partners age is in the considered range then process this person using this NPA range and return
+            if (in != null && in){
                 node.processPerson(person, currentDate);
                 return;
-            } else if (in != null && in){
+            }
+
+            // if in is null due to range being 'na' and there is no new partner (thus NPA == null) then process this person using the current NPA range (na)
+            if(newPartnerAge == null && in == null) {
                 node.processPerson(person, currentDate);
                 return;
             }
 
         }
 
+        // if we get here then the age range we want hasn't been created yet
+
         if(newPartnerAge == null) {
+            // if no NPA then a 'na' range hasn't been created yet - so we create it
             addChild(new IntegerRange("na")).processPerson(person, currentDate);
         } else {
 
+            // this accessing of the statistical code isn't to calculate new values - we just use it to get the age
+            // ranges from the stats tables
             Integer age = ((AgeNodeInt) getAncestor(new AgeNodeInt())).getOption().getValue();
 
             double numberOfFemales = getCount();
@@ -93,8 +100,10 @@ public class SeparationNodeInt extends IntNode<SeparationOption, IntegerRange> {
             MultipleDeterminedCount mDC = (MultipleDeterminedCount) getInputStats()
                     .getDeterminedCount(new PartneringStatsKey(age, numberOfFemales, timePeriod, currentDate), null);
 
+            // getting the age range labels
             Set<IntegerRange> options = mDC.getRawUncorrectedCount().getLabels();
 
+            // finding which the persons partner is in and creating it
             for (IntegerRange o : options) {
                 if (o.contains(newPartnerAge)) {
                     addChild(o).processPerson(person, currentDate);

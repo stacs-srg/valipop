@@ -163,3 +163,64 @@ plotMB <- function(mb.data) {
 
 
 }
+
+plotPart <- function(part.data, title, date = NULL, disc = TRUE, scales = "free_y") {
+  
+  library(ggplot2)
+  #sub <- part.data[which(part.data$Age >= age.min & part.data$Age < age.max & part.data$YOB == yob),]
+  
+  if(!is.null(date)) {
+    sub <- part.data[which(part.data$Date == date),]
+  } else {
+    sub <- part.data
+  }
+  
+  if(disc) {
+  
+  sub = within(sub, {
+    Age.disc =  ifelse(15 <= Age & Age <= 19, 
+                       "15to19",
+                       ifelse(20 <= Age & Age <= 24, 
+                              "20to24",
+                              ifelse(25 <= Age & Age <= 29, 
+                                     "25to29",
+                                     ifelse(30 <= Age & Age <= 34, 
+                                            "30to34",
+                                            ifelse(35 <= Age & Age <= 39, 
+                                                   "35to39",
+                                                   ifelse(40 <= Age & Age <= 44, 
+                                                          "40to44",
+                                                          ifelse(45 <= Age & Age <= 49, 
+                                                                 "45to49",
+                                                                 ifelse(50 <= Age & Age <= 54, 
+                                                                        "50to54",
+                                                                        "55+"
+                                                                 ))))))))
+  })
+  
+  sub$Age.disc <- as.factor(sub$Age.disc)
+  
+  aggdata <- aggregate(sub$freq, by=list(sub$Source, sub$NPA, sub$Age.disc), FUN=sum, na.rm=TRUE)
+  colnames(aggdata)[1:4] <- c("Source", "NPA", "Age.disc", "freq")
+  
+  ggplot(aggdata,aes(x=NPA, y=freq, fill=Source)) + 
+    geom_bar(position="dodge", stat = "identity") +
+    facet_wrap(~as.factor(aggdata$Age.disc), nrow=4, scales = scales) + 
+    theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+    labs(title = title)
+  
+  } else {
+    
+    aggdata <- aggregate(sub$freq, by=list(sub$Source, sub$NPA, sub$Age), FUN=sum, na.rm=TRUE)
+    colnames(aggdata)[1:4] <- c("Source", "NPA", "Age", "freq")
+    
+    ggplot(aggdata,aes(x=NPA, y=freq, fill=Source)) + 
+      geom_bar(position="dodge", stat = "identity") +
+      facet_wrap(~as.factor(aggdata$Age), nrow=6, scales = scales) + 
+      theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+      labs(title = title)
+  }
+  
+}
+
+

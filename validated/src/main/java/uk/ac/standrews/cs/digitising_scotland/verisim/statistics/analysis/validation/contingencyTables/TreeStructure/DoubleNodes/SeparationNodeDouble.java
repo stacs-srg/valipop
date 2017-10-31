@@ -202,34 +202,43 @@ public class SeparationNodeDouble extends DoubleNode<SeparationOption, IntegerRa
         IntegerRange ncip = ((NumberOfChildrenInPartnershipNodeDouble)
                 getAncestor(new NumberOfChildrenInPartnershipNodeDouble())).getOption();
 
-        if(ncip.getValue() == 0) {
+        if(ncip.getValue() == 0) { // i.e. no current partner and no children in year, therefore no NPA as no NP
             addChild(new IntegerRange("na"));
         } else {
             ChildrenInYearOption ciy = ((ChildrenInYearNodeDouble)
                     getAncestor(new ChildrenInYearNodeDouble())).getOption();
 
-            if(ciy == ChildrenInYearOption.NO) {
+            if(ciy == ChildrenInYearOption.NO) { // if no children in year then by definition no new partner can exit - thus no NPA
                 addChild(new IntegerRange("na"));
             } else {
-                YearDate yob = ((YOBNodeDouble) getAncestor(new YOBNodeDouble())).getOption();
-                Integer age = ((AgeNodeDouble) getAncestor(new AgeNodeDouble())).getOption().getValue();
 
-                if(age == 16) {
-                    System.out.print("");
-                }
+                IntegerRange pncip = ((PreviousNumberOfChildrenInPartnershipNodeDouble)
+                        getAncestor(new PreviousNumberOfChildrenInPartnershipNodeDouble())).getOption();
 
-                Date currentDate = yob.advanceTime(age, TimeUnit.YEAR);
+                // at this point we know this partnership has borne children, paired with the knowledge of if there has
+                // been any previous children in this partnership we can decide
 
-                double numberOfFemales = getCount();
-                CompoundTimeUnit timePeriod = new CompoundTimeUnit(1, TimeUnit.YEAR);
+                if(pncip.getValue() != 0) { // if it is an ongoing partnership - then no NP and thus no NPA
+                    addChild(new IntegerRange("na"));
+                } else {
+                    // or is a new partnership - thus record NPA
 
-                MultipleDeterminedCount mDC = (MultipleDeterminedCount) getInputStats()
-                        .getDeterminedCount(new PartneringStatsKey(age, numberOfFemales, timePeriod, currentDate), null);
+                    YearDate yob = ((YOBNodeDouble) getAncestor(new YOBNodeDouble())).getOption();
+                    Integer age = ((AgeNodeDouble) getAncestor(new AgeNodeDouble())).getOption().getValue();
 
-                Set<IntegerRange> options = mDC.getRawUncorrectedCount().getLabels();
+                    Date currentDate = yob.advanceTime(age, TimeUnit.YEAR);
 
-                for(IntegerRange o : options) {
-                    addChild(o);
+                    double numberOfFemales = getCount();
+                    CompoundTimeUnit timePeriod = new CompoundTimeUnit(1, TimeUnit.YEAR);
+
+                    MultipleDeterminedCount mDC = (MultipleDeterminedCount) getInputStats()
+                            .getDeterminedCount(new PartneringStatsKey(age, numberOfFemales, timePeriod, currentDate), null);
+
+                    Set<IntegerRange> options = mDC.getRawUncorrectedCount().getLabels();
+
+                    for (IntegerRange o : options) {
+                        addChild(o);
+                    }
                 }
             }
         }
