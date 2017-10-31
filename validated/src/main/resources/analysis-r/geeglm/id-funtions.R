@@ -1,23 +1,109 @@
 
-
 addCohortIDs.ob <- function(in.data) {
   
   e <- min(in.data$YOB)
   l <- max(in.data$YOB)
   
-  data.id <- in.data
+  id.data <- in.data
   
-  data.id = within(data.id, {
-    idvar = ifelse(Source == "SIM", 
-                   (YOB - e) + bin2dec(c(TRUE)) * (l - e + 1),
-                   (YOB - e) + bin2dec(c(FALSE)) * (l - e + 1))
+  id.data = within(id.data, {
+    
+    # print(NPCIAP)
+    
+    idvar <- 
+      
+      ifelse(CIY == "YES",
+             
+             ifelse(Source == "SIM", 
+                    ifelse(NPCIAP == "0", 
+                           (YOB - e) + bin2dec(c(TRUE,TRUE,FALSE,FALSE,FALSE)) * (l - e + 1), #SIM-0
+                           ifelse(NPCIAP == "1",
+                                  (YOB - e) + bin2dec(c(TRUE,TRUE,FALSE,FALSE,TRUE)) * (l - e + 1), #SIM-1
+                                  ifelse(NPCIAP == "2",
+                                         (YOB - e) + bin2dec(c(TRUE,TRUE,FALSE,TRUE,FALSE)) * (l - e + 1), #SIM-2
+                                         ifelse(NPCIAP == "3",
+                                                (YOB - e) + bin2dec(c(TRUE,TRUE,FALSE,TRUE,TRUE)) * (l - e + 1), #SIM-3
+                                                ifelse(NPCIAP == "4",
+                                                       (YOB - e) + bin2dec(c(TRUE,TRUE,TRUE,FALSE,FALSE)) * (l - e + 1), #SIM-4
+                                                       ifelse(NPCIAP == "5",
+                                                              (YOB - e) + bin2dec(c(TRUE,TRUE,TRUE,FALSE,TRUE)) * (l - e + 1), #SIM-5+
+                                                              (YOB - e) + bin2dec(c(TRUE,TRUE,TRUE,TRUE,FALSE)) * (l - e + 1) #SIM-0+
+                                                       )
+                                                )
+                                         )
+                                  )
+                           )
+                    ),
+                    ifelse(NPCIAP == "0", 
+                           (YOB - e) + bin2dec(c(FALSE,TRUE,FALSE,FALSE,FALSE)) * (l - e + 1), #STAT-0
+                           ifelse(NPCIAP == "1",
+                                  (YOB - e) + bin2dec(c(FALSE,TRUE,FALSE,FALSE,TRUE)) * (l - e + 1), #STAT-1
+                                  ifelse(NPCIAP == "2",
+                                         (YOB - e) + bin2dec(c(FALSE,TRUE,FALSE,TRUE,FALSE)) * (l - e + 1), #STAT-2
+                                         ifelse(NPCIAP == "3",
+                                                (YOB - e) + bin2dec(c(FALSE,TRUE,FALSE,TRUE,TRUE)) * (l - e + 1), #STAT-3
+                                                ifelse(NPCIAP == "4",
+                                                       (YOB - e) + bin2dec(c(FALSE,TRUE,TRUE,FALSE,FALSE)) * (l - e + 1), #STAT-4
+                                                       ifelse(NPCIAP == "5",
+                                                              (YOB - e) + bin2dec(c(FALSE,TRUE,TRUE,FALSE,TRUE)) * (l - e + 1), #STAT-5+
+                                                              (YOB - e) + bin2dec(c(FALSE,TRUE,TRUE,TRUE,FALSE)) * (l - e + 1) #STAT-0+
+                                                       )
+                                                )
+                                         )
+                                  )
+                           )
+                    )
+             ),
+             ifelse(Source == "SIM", 
+                    ifelse(NPCIAP == "0", 
+                           (YOB - e) + bin2dec(c(TRUE,FALSE,FALSE,FALSE,FALSE)) * (l - e + 1), #SIM-0
+                           ifelse(NPCIAP == "1",
+                                  (YOB - e) + bin2dec(c(TRUE,FALSE,FALSE,FALSE,TRUE)) * (l - e + 1), #SIM-1
+                                  ifelse(NPCIAP == "2",
+                                         (YOB - e) + bin2dec(c(TRUE,FALSE,FALSE,TRUE,FALSE)) * (l - e + 1), #SIM-2
+                                         ifelse(NPCIAP == "3",
+                                                (YOB - e) + bin2dec(c(TRUE,FALSE,FALSE,TRUE,TRUE)) * (l - e + 1), #SIM-3
+                                                ifelse(NPCIAP == "4",
+                                                       (YOB - e) + bin2dec(c(TRUE,FALSE,TRUE,FALSE,FALSE)) * (l - e + 1), #SIM-4
+                                                       ifelse(NPCIAP == "5",
+                                                              (YOB - e) + bin2dec(c(TRUE,FALSE,TRUE,FALSE,TRUE)) * (l - e + 1), #SIM-5+
+                                                              (YOB - e) + bin2dec(c(TRUE,FALSE,TRUE,TRUE,FALSE)) * (l - e + 1) #SIM-0+
+                                                       )
+                                                )
+                                         )
+                                  )
+                           )
+                    ),
+                    ifelse(NPCIAP == "0", 
+                           (YOB - e) + bin2dec(c(FALSE,FALSE,FALSE,FALSE,FALSE)) * (l - e + 1), #STAT-0
+                           ifelse(NPCIAP == "1",
+                                  (YOB - e) + bin2dec(c(FALSE,FALSE,FALSE,FALSE,TRUE)) * (l - e + 1), #STAT-1
+                                  ifelse(NPCIAP == "2",
+                                         (YOB - e) + bin2dec(c(FALSE,FALSE,FALSE,TRUE,FALSE)) * (l - e + 1), #STAT-2
+                                         ifelse(NPCIAP == "3",
+                                                (YOB - e) + bin2dec(c(FALSE,FALSE,FALSE,TRUE,TRUE)) * (l - e + 1), #STAT-3
+                                                ifelse(NPCIAP == "4",
+                                                       (YOB - e) + bin2dec(c(FALSE,FALSE,TRUE,FALSE,FALSE)) * (l - e + 1), #STAT-4
+                                                       ifelse(NPCIAP == "5",
+                                                              (YOB - e) + bin2dec(c(FALSE,FALSE,TRUE,FALSE,TRUE)) * (l - e + 1), #STAT-5+
+                                                              (YOB - e) + bin2dec(c(FALSE,FALSE,TRUE,TRUE,FALSE)) * (l - e + 1) #STAT-0+
+                                                       )
+                                                )
+                                         )
+                                  )
+                           )
+                    )
+             )
+      )
+    
+    
   })
   
-  data.id.sorted <- data.id[order(data.id$idvar, data.id$Age, data.id$NPCIAP, data.id$CIY),]
+  
+  data.id.sorted <- id.data[order(id.data$idvar, id.data$Age, id.data$CIY),]
   return(data.id.sorted)  
   
 }
-
 
 addCohortIDs.death <- function(in.data) {
   
@@ -63,7 +149,7 @@ addCohortIDs.mb <- function(in.data) {
   
 }
 
-addCohortIDs.part <- function(in.data) {
+addCohortIDs.part2 <- function(in.data) {
   
   e <- min(in.data$YOB)
   l <- max(in.data$YOB)
@@ -81,7 +167,7 @@ addCohortIDs.part <- function(in.data) {
   
 }
 
-addCohortIDs.part2 <- function(in.data) {
+addCohortIDs.part <- function(in.data) {
   
   e <- min(in.data$Date)
   l <- max(in.data$Date)
@@ -157,6 +243,31 @@ addCohortIDs.sep <- function(in.data) {
   })
   
   data.id.sorted <- data.id[order(data.id$idvar, data.id$NCIP, data.id$Separated),]
+  return(data.id.sorted)  
+  
+}
+
+addCohortIDs.sep2 <- function(in.data) {
+  
+  e <- min(in.data$YOB)
+  l <- max(in.data$YOB)
+  
+  data.id <- in.data
+  
+  data.id = within(data.id, {
+    idvar = ifelse(Source == "SIM",
+                   ifelse(Separated == "YES",
+                          (YOB - e) + bin2dec(c(TRUE,TRUE)) * (l - e + 1),
+                          (YOB - e) + bin2dec(c(TRUE,FALSE)) * (l - e + 1)
+                   ),
+                   ifelse(Separated == "YES",
+                          (YOB - e) + bin2dec(c(FALSE,TRUE)) * (l - e + 1),
+                          (YOB - e) + bin2dec(c(FALSE,FALSE)) * (l - e + 1)
+                   )
+    )
+  })
+  
+  data.id.sorted <- data.id[order(data.id$idvar, data.id$NCIP),]
   return(data.id.sorted)  
   
 }

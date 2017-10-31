@@ -4,17 +4,19 @@ readInData <- function(path) {
   return(data)
 }
 
-cleanData <- function(dirtyData) {
+cleanData <- function(dirtyData, round = TRUE) {
   clean.data <- dirtyData
-  clean.data <- dirtyData[which(dirtyData$freq > 0.5),]
-  clean.data$freq <- round(clean.data$freq)
+  if(round) {
+    clean.data <- dirtyData[which(dirtyData$freq > 0.5),]
+    clean.data$freq <- round(clean.data$freq)
+  }
   clean.data <- clean.data[which(clean.data$Date < 2014),]
   clean.data <- clean.data[which(clean.data$Date > 1854),]
   return(clean.data)
 }
 
-cleanDeathData <- function(dirtyData) {
-  return(cleanData(dirtyData))
+cleanDeathData <- function(dirtyData, round = TRUE) {
+  return(cleanData(dirtyData, round))
 }
 
 cleanOBData <- function(dirtyData, largestBirthingAge) {
@@ -38,15 +40,15 @@ cleanMBData <-function(dirtyData, largestBirthingAge)  {
   return(clean.data)
 }
 
-cleanPartData <- function(dirtyData) {
-  clean.data <- cleanData(dirtyData)
+cleanPartData <- function(dirtyData, round = TRUE) {
+  clean.data <- cleanData(dirtyData, round = round)
   clean.data <- clean.data[which(clean.data$NPA != "na") , ]
   clean.data$NPA <- droplevels(clean.data$NPA)
   return(clean.data)
 }
 
-cleanSepData <- function(dirtyData) {
-  clean.data <- cleanData(dirtyData)
+cleanSepData <- function(dirtyData, round = TRUE) {
+  clean.data <- cleanData(dirtyData, round)
   clean.data <- clean.data[which(clean.data$Separated != "NA") , ]
   clean.data$Separated <- droplevels(clean.data$Separated)
   clean.data$NCIP <- droplevels(clean.data$NCIP)

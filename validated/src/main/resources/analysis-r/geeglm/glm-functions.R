@@ -35,6 +35,10 @@ sepSatGLM <- function(in.data) {
   return(runGLM(freq ~ Date * NCIP * Separated * Source, in.data))
 }
 
+sepSatGLM.2 <- function(in.data) {
+  return(runGLM(freq ~ Date * NCIP * Source, in.data))
+}
+
 sepSelGLM <- function(in.data) {
   return(runGLM(freq ~ Date + NCIP + Separated + NCIP:Separated, in.data))
 }

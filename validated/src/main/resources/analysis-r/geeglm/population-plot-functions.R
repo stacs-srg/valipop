@@ -49,6 +49,31 @@ plotOB <- function(Birth.data, title) {
   
 }
 
+plotOB.2 <- function(Birth.data, title, age = NULL, date = NULL) {
+  
+  sub <- Birth.data
+  
+  if(!is.null(age)) {
+    sub <- sub[which(sub$Age == age),]
+  }
+  
+  if(!is.null(date)) {
+    sub <- sub[which(sub$Date == date),]
+  }
+  
+  #sub <- sub[which(sub$CIY == ciy),]
+  
+  aggdata <- aggregate(sub$freq, by=list(sub$Source, sub$NPCIAP, sub$Age, sub$Date, sub$CIY), FUN=sum, na.rm=TRUE)
+  colnames(aggdata)[1:6] <- c("Source", "NPCIAP", "Age", "Date", "CIY", "freq")
+  
+  ggplot(aggdata,aes(x=NPCIAP, y=freq, fill=Source)) + 
+    geom_bar(position="dodge", stat = "identity") +
+    facet_wrap(~as.factor(aggdata$CIY), ncol=2, scales = "free_y") + 
+    theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+    labs(title = title)
+  
+}
+
 plotMB <- function(mb.data) {
 
   
@@ -205,7 +230,7 @@ plotPart <- function(part.data, title, date = NULL, disc = TRUE, scales = "free_
   
   ggplot(aggdata,aes(x=NPA, y=freq, fill=Source)) + 
     geom_bar(position="dodge", stat = "identity") +
-    facet_wrap(~as.factor(aggdata$Age.disc), nrow=4, scales = scales) + 
+    facet_wrap(~as.factor(aggdata$Age.disc), ncol=2, scales = scales) + 
     theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
     labs(title = title)
   
@@ -216,11 +241,47 @@ plotPart <- function(part.data, title, date = NULL, disc = TRUE, scales = "free_
     
     ggplot(aggdata,aes(x=NPA, y=freq, fill=Source)) + 
       geom_bar(position="dodge", stat = "identity") +
-      facet_wrap(~as.factor(aggdata$Age), nrow=6, scales = scales) + 
+      facet_wrap(~as.factor(aggdata$Age), ncol=5, scales = scales) + 
       theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
       labs(title = title)
   }
   
 }
 
+plotSep <- function(Part.data, title, date = NULL) {
+ 
+  sub <- Part.data
+  
+  if(!is.null(date)) {
+    sub <- sub[which(sub$Date == date),]
+  }
+  
+  aggdata <- aggregate(sub$freq, by=list(sub$Source, sub$NCIP, sub$Date), FUN=sum, na.rm=TRUE)
+  colnames(aggdata)[1:4] <- c("Source", "NCIP", "Date", "freq")
+  
+  ggplot(aggdata,aes(x=NCIP, y=freq, fill=Source)) + 
+    geom_bar(position="dodge", stat = "identity") +
+    facet_wrap(~as.factor(aggdata$Date), ncol=8, scales = "fixed") + 
+    theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+    labs(title = title) 
+  
+}
 
+plotSep.single <- function(Part.data, title, date = NULL) {
+  
+  sub <- Part.data
+  
+  if(!is.null(date)) {
+    sub <- sub[which(sub$Date == date),]
+  }
+  
+  aggdata <- aggregate(sub$freq, by=list(sub$Source, sub$NCIP, sub$Separated), FUN=sum, na.rm=TRUE)
+  colnames(aggdata)[1:4] <- c("Source", "NCIP", "Separated", "freq")
+  
+  ggplot(aggdata,aes(x=NCIP, y=freq, fill=Source)) + 
+    geom_bar(position="dodge", stat = "identity") +
+    facet_wrap(~as.factor(aggdata$Separated), ncol=2, scales = "free_y") + 
+    theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+    labs(title = title) 
+  
+}
