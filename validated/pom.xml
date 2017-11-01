@@ -31,6 +31,14 @@
     <packaging>jar</packaging>
     <name>population_model</name>
 
+    <repositories>
+        <repository>
+            <id>uk.ac.standrews.cs.maven.repository</id>
+            <name>School of Computer Science Maven Repository</name>
+            <url>http://maven.cs.st-andrews.ac.uk/</url>
+        </repository>
+    </repositories>
+
     <properties>
         <repository.type>github</repository.type>
         <repository.location>https://github.com/stacs-srg/population-model</repository.location>
