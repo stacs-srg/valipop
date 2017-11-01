@@ -68,7 +68,7 @@ public class MinimaSearch {
 
             switch(args[0]) {
                 case "A":
-                    runSearch(2500000, "src/main/resources/scotland_test_population", 0.0, 0.5, "minima-scot-h", 1);
+                    runSearch(8000000, "src/main/resources/scotland_test_population", 0.0, 1.0, "minima-scot-i", 1);
                     break;
                 case "B":
                     runSearch(2750000, "src/main/resources/proxy-scotland-population-JA", 0.0, 1.5, "minima-ja-h", 2);
@@ -540,7 +540,7 @@ public class MinimaSearch {
 
     public static void generateAnalysisHTML(String pathOfRunDir, int maxBirthingAge, String subTitle) throws IOException {
 
-        String[] commands = {"Rscript", "src/main/resources/analysis-r/geeglm/runPopulationAnalysis.R", pathOfRunDir, String.valueOf(maxBirthingAge), subTitle};
+        String[] commands = {"Rscript", "src/main/resources/analysis-r/geeglm/runPopulationAnalysis.R", System.getProperty("user.dir") + "/" + pathOfRunDir, String.valueOf(maxBirthingAge), subTitle};
         ProcessBuilder pb = new ProcessBuilder(commands);
 
         pb.start();
@@ -550,7 +550,7 @@ public class MinimaSearch {
 
     private static double getV(String pathOfTablesDir, int maxBirthingAge) throws StatsException, IOException {
 
-        String[] commands = {"Rscript", "src/main/resources/analysis-r/geeglm/dev-minima-search.R", System.getProperty("user.dir") + "/" + pathOfTablesDir, String.valueOf(maxBirthingAge)};
+        String[] commands = {"Rscript", "src/main/resources/analysis-r/geeglm/dev-minima-search.R", pathOfTablesDir, String.valueOf(maxBirthingAge)};
         ProcessBuilder pb = new ProcessBuilder(commands);
 
         Process proc;

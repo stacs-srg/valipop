@@ -51,6 +51,8 @@ plotOB <- function(Birth.data, title) {
 
 plotOB.2 <- function(Birth.data, title, age = NULL, date = NULL) {
   
+  library(ggplot2)
+  
   sub <- Birth.data
   
   if(!is.null(age)) {
@@ -250,6 +252,8 @@ plotPart <- function(part.data, title, date = NULL, disc = TRUE, scales = "free_
 
 plotSep <- function(Part.data, title, date = NULL) {
  
+  library(ggplot2)
+  
   sub <- Part.data
   
   if(!is.null(date)) {
@@ -268,6 +272,8 @@ plotSep <- function(Part.data, title, date = NULL) {
 }
 
 plotSep.single <- function(Part.data, title, date = NULL) {
+  
+  library(ggplot2)
   
   sub <- Part.data
   
