@@ -33,9 +33,6 @@ runGEEGLM <- function(formula, in.data) {
   mod <- geeglm(formula, id=idvar, data = in.data, corstr="ar1")
   print(summary(mod))
   
-  x11()
-  dev.off()
-  
   plot(residuals(mod), type = "l")
   acf(residuals(mod), lag.max = 100)
   acf(residuals(mod), lag.max = 500)
