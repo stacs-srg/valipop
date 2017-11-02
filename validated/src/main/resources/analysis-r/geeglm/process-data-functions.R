@@ -19,8 +19,8 @@ cleanDeathData <- function(dirtyData, round = TRUE) {
   return(cleanData(dirtyData, round))
 }
 
-cleanOBData <- function(dirtyData, largestBirthingAge) {
-  clean.data <- cleanData(dirtyData)
+cleanOBData <- function(dirtyData, largestBirthingAge, round = TRUE) {
+  clean.data <- cleanData(dirtyData, round)
   clean.data <- clean.data[which(clean.data$Age >= 15), ]
   clean.data <- clean.data[which(clean.data$Age <= largestBirthingAge), ]
   #clean.data <- clean.data[which(clean.data$CIY == "YES"), ]
@@ -32,9 +32,9 @@ sourceSummary <- function(data) {
   print(summary(data[which(data$Source == "STAT"),]))
 }
 
-cleanMBData <-function(dirtyData, largestBirthingAge)  {
+cleanMBData <-function(dirtyData, largestBirthingAge, round = TRUE)  {
   #dirtyData$freq <- ceiling(dirtyData$freq)
-  clean.data <- cleanOBData(dirtyData, largestBirthingAge)
+  clean.data <- cleanOBData(dirtyData, largestBirthingAge, round)
   clean.data <- clean.data[which(clean.data$NCIY != "0"), ]
 
   return(clean.data)

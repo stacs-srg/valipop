@@ -46,7 +46,7 @@ public class ProcessArgs {
             System.err.println("No run purpose given as 3rd arg");
         }
 
-        if(executionType.equals("BF_SEARCH") || executionType.equals("N-RUNS")) {
+        if(executionType.equals("MINIMA_SEARCH") || executionType.equals("N-RUNS")) {
 
             try {
                 processed[3] = args[3];
@@ -56,24 +56,30 @@ public class ProcessArgs {
 
         }
 
-        if(executionType.equals("BF_SEARCH")) {
+        if(executionType.equals("MINIMA_SEARCH")) {
 
             try {
                 processed[4] = args[4];
             } catch (ArrayIndexOutOfBoundsException e) {
-                System.err.println("Birth Factor Error A");
+                System.err.println("Minima Error A");
             }
 
             try {
                 processed[5] = args[5];
             } catch (ArrayIndexOutOfBoundsException e) {
-                System.err.println("Birth Factor Error B ");
+                System.err.println("Minima Error B");
             }
 
             try {
                 processed[6] = args[6];
             } catch (ArrayIndexOutOfBoundsException e) {
-                System.err.println("Birth Factor Error C ");
+                System.err.println("Minima Error C");
+            }
+
+            try {
+                processed[7] = args[7];
+            } catch (ArrayIndexOutOfBoundsException e) {
+                System.err.println("Minima Error D");
             }
         }
 
@@ -86,8 +92,8 @@ public class ProcessArgs {
         switch (executionType) {
             case "STANDARD" :
                 return standardCheck(args);
-            case "BF_SEARCH" :
-                return bfCheck(args);
+            case "MINIMA_SEARCH" :
+                return minimaCheck(args);
             case "N-RUNS" :
                 return nRunsCheck(args);
             default:
@@ -112,13 +118,13 @@ public class ProcessArgs {
 
     }
 
-    private static boolean bfCheck(String[] args) {
+    private static boolean minimaCheck(String[] args) {
 
-        return args.length == 7
+        return args.length == 8
                 && !Objects.equals(args[0], "") && !Objects.equals(args[1], "")
                 && !Objects.equals(args[2], "") && !Objects.equals(args[3], "")
                 && !Objects.equals(args[4], "") && !Objects.equals(args[5], "")
-                && !Objects.equals(args[6], "");
+                && !Objects.equals(args[6], "") && !Objects.equals(args[7], "");
 
     }
 

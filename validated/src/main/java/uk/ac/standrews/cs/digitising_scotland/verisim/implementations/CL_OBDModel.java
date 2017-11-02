@@ -1,7 +1,9 @@
 package uk.ac.standrews.cs.digitising_scotland.verisim.implementations;
 
 import uk.ac.standrews.cs.digitising_scotland.verisim.Config;
+import uk.ac.standrews.cs.digitising_scotland.verisim.implementations.minimaSearch.MinimaSearch;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.ProcessArgs;
+import uk.ac.standrews.cs.digitising_scotland.verisim.utils.RCaller;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.fileUtils.FileUtils;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.fileUtils.InvalidInputFileException;
 import uk.ac.standrews.cs.digitising_scotland.verisim.utils.specialTypes.dateModel.dateImplementations.YearDate;
@@ -52,7 +54,7 @@ public class CL_OBDModel {
             model.runSimulation();
             model.analyseAndOutputPopulation();
 
-            MinimaSearch.generateAnalysisHTML(
+            RCaller.generateAnalysisHTML(
                     FileUtils.getRunPath().toString(),
                     model.getDesiredPopulationStatistics().getOrderedBirthRates(new YearDate(0)).getLargestLabel().getValue(),
                     runPurpose + " - bf: " + String.valueOf(config.getBirthFactor()));
