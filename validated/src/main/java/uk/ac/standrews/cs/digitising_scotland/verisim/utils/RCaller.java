@@ -14,12 +14,16 @@ import java.util.List;
  */
 public class RCaller {
 
-    public static void generateAnalysisHTML(String pathOfRunDir, int maxBirthingAge, String subTitle) throws IOException {
+    public static void generateAnalysisHTML(String pathOfRunDir, int maxBirthingAge, String subTitle) throws StatsException {
 
         String pathToScript = "src/main/resources/analysis-r/geeglm/runPopulationAnalysis.R";
         String[] params = {System.getProperty("user.dir") + "/" + pathOfRunDir, String.valueOf(maxBirthingAge), subTitle};
 
-        runRScript(pathToScript, params);
+        try {
+            runRScript(pathToScript, params);
+        } catch (IOException e) {
+            throw new StatsException(e.getMessage());
+        }
 
     }
 
