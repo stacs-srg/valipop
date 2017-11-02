@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License along with population_model. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package utils.implmentations;
+package utils.implementations;
 
 import uk.ac.standrews.cs.digitising_scotland.verisim.implementations.CL_OBDModel;
 import uk.ac.standrews.cs.digitising_scotland.verisim.implementations.PreEmptiveOutOfMemoryWarning;

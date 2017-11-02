@@ -49,8 +49,9 @@ public class CL_OBDModel {
             throw new Error(message);
         }
 
+        OBDModel model = null;
         try {
-            OBDModel model = new OBDModel(startTime, config);
+            model = new OBDModel(startTime, config);
             model.runSimulation();
             model.analyseAndOutputPopulation();
 
@@ -68,6 +69,9 @@ public class CL_OBDModel {
         } catch (InvalidInputFileException e) {
             String message = "Model failed due to an invalid formatting/content of input file, see message: " + e.getMessage();
             throw new InvalidInputFileException(message, e);
+        } catch (StatsException e) {
+            System.err.println("Was unable to generate analysis ourput - check that you have R installed (run RScript at the cmd line)");
+            return model;
         }
     }
 

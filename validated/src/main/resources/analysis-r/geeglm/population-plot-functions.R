@@ -49,7 +49,7 @@ plotOB <- function(Birth.data, title) {
   
 }
 
-plotOB.2 <- function(Birth.data, title, age = NULL, date = NULL, scales = "free_y", ciy = NULL) {
+plotOB.2 <- function(Birth.data, title, age = NULL, date = NULL, yob = NULL, scales = "free_y", ciy = NULL) {
   
   library(ggplot2)
   
@@ -61,6 +61,10 @@ plotOB.2 <- function(Birth.data, title, age = NULL, date = NULL, scales = "free_
   
   if(!is.null(date)) {
     sub <- sub[which(sub$Date == date),]
+  }
+  
+  if(!is.null(yob)) {
+    sub <- sub[which(sub$YOB == yob),]
   }
   
   if(!is.null(ciy)) {
