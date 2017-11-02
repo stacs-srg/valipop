@@ -19,8 +19,8 @@
 
 if [ -n "$1" ];
 then
-    export MAVEN_OPTS="-Xmx"$1"G"
+    export MAVEN_OPTS="-Xmx"$1"G -XX:ParallelGCThreads=1"
     echo Setting heap size: $1GB
 fi
 
-mvn exec:java -q -Dexec.cleanupDaemonThreads=false -Dexec.mainClass="uk.ac.standrews.cs.digitising_scotland.verisim.implementations.MinimaSearch" -e -Dexec.args="$2"
+mvn exec:java -q -Dexec.cleanupDaemonThreads=false -Dexec.mainClass="uk.ac.standrews.cs.digitising_scotland.verisim.implementations.minimaSearch.MinimaSearch" -e -Dexec.args="$2 $3 $4 $5 $6 $7 $8 $9"

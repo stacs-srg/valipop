@@ -11,10 +11,10 @@ calcV <- function(df, lrt) {
 source("src/main/resources/analysis-r/geeglm/process-data-functions.R")
 source("src/main/resources/analysis-r/geeglm/llm-functions.R")
 
-resultsDir <- commandArgs(TRUE)[1]
+tablesDir <- commandArgs(TRUE)[1]
 maxBirthingAge <- commandArgs(TRUE)[2]
 
-subpath <- resultsDir
+subpath <- tablesDir
 
 deathPath <- paste(subpath, "/death-CT.csv", sep = "")
 obPath <- paste(subpath, "/ob-CT.csv", sep = "")
