@@ -201,9 +201,9 @@ public class PopulationLogic {
                 fatherNotTooYoungAtBirth(father_birth_date, child_birth_date) &&
                 fatherNotTooOldAtBirth(father_birth_date, child_birth_date);
 
-        if(!b) {
-            System.out.println("---");
-        }
+//        if(!b) {
+//            System.out.println("---");
+//        }
 
         return b;
     }
