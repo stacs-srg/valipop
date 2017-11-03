@@ -4,7 +4,7 @@ title: ValiPop
 markdown: kramdown
 ---
 
-## Home
+## ValiPop
 
 _ValiPop_ is a micro-simulation model for generating synthetic genealogical populations, 
 taking as input a set of desired summary statistics. _ValiPop_ also verifies that the 
@@ -15,6 +15,8 @@ improve data linkage algorithms.
 
 _ValiPop_'s micro-simulation model is written in Java. The supporting verification analysis 
 and statistical code is written in R.
+
+## Working with _ValiPop_
 
 _ValiPop_ as standard is currently able to create populations in the form of the vital event 
 records for Scotland ([NRS](https://www.nrscotland.gov.uk/research/guides/birth-death-and-marriage-records/statutory-registers-of-births-deaths-and-marriages)). 
@@ -32,7 +34,7 @@ JavaDoc for _ValiPop_ (__TODO__), the [code base](https://github.com/stacs-srg/p
 
 For further information, queries or collaborations please contact Tom Dalton (tsd4@st-andrews.ac.uk)
 
-### Publications
+## Publications
 
 ...
 
