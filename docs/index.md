@@ -4,7 +4,7 @@ title: ValiPop
 markdown: kramdown
 ---
 
-## ValiPop
+## _ValiPop_
 
 _ValiPop_ is a micro-simulation model for generating synthetic genealogical populations, 
 taking as input a set of desired summary statistics. _ValiPop_ also verifies that the 
