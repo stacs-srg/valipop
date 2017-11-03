@@ -55,10 +55,10 @@ public class CL_OBDModel {
             model.runSimulation();
             model.analyseAndOutputPopulation();
 
-            RCaller.generateAnalysisHTML(
-                    FileUtils.getRunPath().toString(),
-                    model.getDesiredPopulationStatistics().getOrderedBirthRates(new YearDate(0)).getLargestLabel().getValue(),
-                    runPurpose + " - bf: " + String.valueOf(config.getBirthFactor()));
+//            RCaller.generateAnalysisHTML(
+//                    FileUtils.getRunPath().toString(),
+//                    model.getDesiredPopulationStatistics().getOrderedBirthRates(new YearDate(0)).getLargestLabel().getValue(),
+//                    runPurpose + " - bf: " + String.valueOf(config.getBirthFactor()));
 
             return model;
         } catch (IOException e) {
@@ -69,9 +69,6 @@ public class CL_OBDModel {
         } catch (InvalidInputFileException e) {
             String message = "Model failed due to an invalid formatting/content of input file, see message: " + e.getMessage();
             throw new InvalidInputFileException(message, e);
-        } catch (StatsException e) {
-            System.err.println("Was unable to generate analysis ourput - check that you have R installed (run RScript at the cmd line)");
-            return model;
         }
     }
 

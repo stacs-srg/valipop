@@ -240,14 +240,14 @@ public abstract class GeneralPopulationStructureTests {
         }
     }
 
-    @Test
-    public void parentsHaveSensibleAgesAtBirths() throws Exception {
-
-        for (final IPartnership partnership : population.getPartnerships()) {
-
-            assertParentsHaveSensibleAgesAtBirth(partnership);
-        }
-    }
+//    @Test
+//    public void parentsHaveSensibleAgesAtBirths() throws Exception {
+//
+//        for (final IPartnership partnership : population.getPartnerships()) {
+//
+//            assertParentsHaveSensibleAgesAtBirth(partnership);
+//        }
+//    }
 
     @Test
     public void parentsAndChildrenConsistent() {
@@ -290,7 +290,8 @@ public abstract class GeneralPopulationStructureTests {
         for (final int child_id : partnership.getChildIds()) {
 
             final IPerson child = population.findPerson(child_id);
-            assertTrue(PopulationLogic.parentsHaveSensibleAgesAtChildBirth(father, mother, child));
+            boolean b = PopulationLogic.parentsHaveSensibleAgesAtChildBirth(father, mother, child);
+            assertTrue(b);
         }
     }
 
