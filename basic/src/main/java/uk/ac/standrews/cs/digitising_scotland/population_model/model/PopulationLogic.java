@@ -202,9 +202,6 @@ public class PopulationLogic {
         boolean fatherNotTooOld = fatherNotTooOldAtBirth(father_birth_date, child_birth_date);
 
         boolean b = motherAlive && motherNotTooYoung && motherNotTooOld && fatherAliveAtConception && fatherNotTooYoung && fatherNotTooOld;
-        if(!b) {
-            System.out.println("---");
-        }
 
         return b;
     }
