@@ -45,7 +45,7 @@ public class RCaller {
 
     public static double getObV(String pathOfTablesDir, int maxBirthingAge) throws StatsException, IOException {
 
-        String pathOfScript = "src/main/resources/analysis-r/geeglm/obV-minima-search.R";
+        String pathOfScript = "src/main/resources/analysis-r/geeglm/ob-minima-search.R";
         String[] params = {pathOfTablesDir, String.valueOf(maxBirthingAge)};
 
         Process proc = runRScript(pathOfScript, params);
