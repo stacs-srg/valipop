@@ -21,4 +21,4 @@ data.ob <- cleanOBData(readInData(obPath), maxBirthingAge)
 ob.analysis <- obSelLLM(data.ob)
 ob.v <- calcV(ob.analysis$df, ob.analysis$lrt)
 
-print(v)
+print(ob.v)
