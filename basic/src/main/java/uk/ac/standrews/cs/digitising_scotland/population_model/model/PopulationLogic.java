@@ -194,16 +194,17 @@ public class PopulationLogic {
 
     private static boolean parentsHaveSensibleAgesAtChildBirth(final Date father_birth_date, final Date father_death_date, final Date mother_birth_date, final Date mother_death_date, final Date child_birth_date) {
 
-        boolean b =  motherAliveAtBirth(mother_death_date, child_birth_date) &&
-                motherNotTooYoungAtBirth(mother_birth_date, child_birth_date) &&
-                motherNotTooOldAtBirth(mother_birth_date, child_birth_date) &&
-                fatherAliveAtConception(father_death_date, child_birth_date) &&
-                fatherNotTooYoungAtBirth(father_birth_date, child_birth_date) &&
-                fatherNotTooOldAtBirth(father_birth_date, child_birth_date);
+        boolean motherAlive = motherAliveAtBirth(mother_death_date, child_birth_date);
+        boolean motherNotTooYoung = motherNotTooYoungAtBirth(mother_birth_date, child_birth_date);
+        boolean motherNotTooOld = motherNotTooOldAtBirth(mother_birth_date, child_birth_date);
+        boolean fatherAliveAtConception = fatherAliveAtConception(father_death_date, child_birth_date);
+        boolean fatherNotTooYoung = fatherNotTooYoungAtBirth(father_birth_date, child_birth_date);
+        boolean fatherNotTooOld = fatherNotTooOldAtBirth(father_birth_date, child_birth_date);
 
-//        if(!b) {
-//            System.out.println("---");
-//        }
+        boolean b = motherAlive && motherNotTooYoung && motherNotTooOld && fatherAliveAtConception && fatherNotTooYoung && fatherNotTooOld;
+        if(!b) {
+            System.out.println("---");
+        }
 
         return b;
     }

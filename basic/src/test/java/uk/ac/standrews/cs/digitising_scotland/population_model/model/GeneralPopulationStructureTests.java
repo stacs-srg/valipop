@@ -286,6 +286,11 @@ public abstract class GeneralPopulationStructureTests {
         for (final int child_id : partnership.getChildIds()) {
 
             final IPerson child = population.findPerson(child_id);
+
+            if(child == null) {
+                System.out.print("");
+            }
+
             assertTrue(PopulationLogic.parentsHaveSensibleAgesAtChildBirth(father, mother, child));
         }
     }
