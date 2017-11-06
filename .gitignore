@@ -1,7 +1,9 @@
 syntax: glob
 
 .DS_Store
-*.iml
 .idea
 target
 .Rproj.user
+.Rhistory
+.RData
+results
