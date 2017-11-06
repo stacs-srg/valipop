@@ -30,7 +30,8 @@ Depending on the desired behaviour of _ValiPop_ some special implementations can
 
 For more advanced requirements it is possible to extend the code base to meet your 
 needs. Helpful resources for working with _ValiPop_ include an [overview](guides/overview.md) of the simulation, 
-JavaDoc for _ValiPop_ (__TODO__), the [code base](https://github.com/stacs-srg/population-model), and the below publications.
+[JavaDoc for _ValiPop_](https://quicksilver.host.cs.st-andrews.ac.uk/apidocs/population-model/), 
+the [code base](https://github.com/stacs-srg/population-model), and the below publications.
 
 For further information, queries or collaborations please contact Tom Dalton (tsd4@st-andrews.ac.uk)
 
