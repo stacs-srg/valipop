@@ -1,0 +1,40 @@
+
+<!--begin.rcode set-options, echo=FALSE, cache=FALSE
+options(width = 200)
+end.rcode-->
+
+
+<html>
+
+<head>
+<title>OB Analysis</title>
+</head>
+
+<body>
+
+<!--begin.rcode
+source("process-data-functions.R")  
+obirth <- cleanOBData(readInData(paste(pathToRunDir, "tables/ob-CT.csv", sep = "")), maxBirthingAge)
+source("population-plot-functions.R")
+sourceSummary(obirth)
+
+
+
+end.rcode-->
+
+<!--begin.rcode
+source("id-funtions.R")
+obirth.ids1 <- addCohortIDs.ob(obirth)
+obirth.ids2 <- addCohortIDs.ob2(obirth)
+
+par(mfrow = c(1,3))
+
+source("geeglm-functions.R")
+obSatGEEGLM(obirth.ids1)
+obSatGEEGLM(obirth.ids2)
+
+par(mfrow = c(1,1))
+end.rcode-->
+
+</body>
+</html>

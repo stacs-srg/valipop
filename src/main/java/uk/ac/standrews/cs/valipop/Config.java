@@ -83,7 +83,7 @@ public class Config {
 
     private final String startTime;
 
-    private boolean binominalSampling = false;
+    private boolean binominalSampling = true;
 
 
     // Filter method to exclude dot files from data file directory streams
