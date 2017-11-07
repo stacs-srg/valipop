@@ -204,7 +204,7 @@ public class OBDModel {
     public void analyseAndOutputPopulation(boolean outputSummaryRow) throws PreEmptiveOutOfMemoryWarning {
 
         if(config.getOutputTables()) {
-            ContigencyTableFactory.generateContigencyTables(population.getAllPeople(), desired, config, summary, 0, 150);
+            ContigencyTableFactory.generateContigencyTables(population.getAllPeople(), desired, config, summary, 0, 110);
         }
 
         ProgramTimer recordTimer = new ProgramTimer();

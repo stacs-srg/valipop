@@ -105,6 +105,24 @@ addCohortIDs.ob <- function(in.data) {
   
 }
 
+addCohortIDs.ob2 <- function(in.data) {
+  
+  e <- min(in.data$YOB)
+  l <- max(in.data$YOB)
+  
+  data.id <- in.data
+  
+  data.id = within(data.id, {
+    idvar = ifelse(Source == "SIM", 
+                   (YOB - e) + bin2dec(c(TRUE)) * (l - e + 1),
+                   (YOB - e) + bin2dec(c(FALSE)) * (l - e + 1))
+  })
+  
+  data.id.sorted <- data.id[order(data.id$idvar, data.id$Age, data.id$NPCIAP, data.id$CIY),]
+  return(data.id.sorted)  
+  
+}
+
 addCohortIDs.death <- function(in.data) {
   
   e <- min(in.data$YOB)
