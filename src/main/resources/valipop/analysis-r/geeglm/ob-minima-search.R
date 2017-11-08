@@ -8,8 +8,8 @@ calcV <- function(df, lrt) {
   return(v)
 }
 
-source("src/main/resources/analysis-r/geeglm/process-data-functions.R")
-source("src/main/resources/analysis-r/geeglm/llm-functions.R")
+source("src/main/resources/valipop/analysis-r/geeglm/process-data-functions.R")
+source("src/main/resources/valipop/analysis-r/geeglm/llm-functions.R")
 
 tablesDir <- commandArgs(TRUE)[1]
 maxBirthingAge <- commandArgs(TRUE)[2]
