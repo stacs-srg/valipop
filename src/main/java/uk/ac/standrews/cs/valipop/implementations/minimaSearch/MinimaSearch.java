@@ -43,7 +43,7 @@ public class MinimaSearch {
 
     static Random rand = new Random();
 
-    static String results_save_location = "src/main/resources/results/";
+    static String results_save_location = "src/main/resources/valipop/results/";
 
     static CompoundTimeUnit simulation_time_step = new CompoundTimeUnit(1, TimeUnit.YEAR);
     static AdvancableDate tS = new YearDate(1599);
