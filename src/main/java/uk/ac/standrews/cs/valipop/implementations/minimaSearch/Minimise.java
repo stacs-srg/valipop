@@ -8,7 +8,8 @@ import java.security.InvalidParameterException;
 public enum Minimise {
 
     ALL,
-    OB;
+    OB,
+    GEEGLM;
 
     public static Minimise resolve(String s) {
 
@@ -20,6 +21,8 @@ public enum Minimise {
                 return ALL;
             case "ob":
                 return OB;
+            case "geeglm":
+                return GEEGLM;
 
         }
 
