@@ -65,31 +65,38 @@ public class RCaller {
         Process p = generateAnalysisHTML(pathOfRunDir, maxBirthingAge, title);
         waitOnReturn(p);
 
-        String pathOfScript = "src/main/resources/valipop/analysis-r/geeglm/geeglm-minima-search.R";
-        String[] params = {pathOfTablesDir, String.valueOf(maxBirthingAge)};
+        String pathOfScript = "src/main/resources/valipop/analysis-r/geeglm/geeglm-minima-search.sh";
+        String[] params = {System.getProperty("user.dir") + "/" + pathOfRunDir + "/analysis.html", String.valueOf(maxBirthingAge)};
 
-        Process proc = runProcess("sh", pathOfScript, params);
+        Process proc = runProcess("/bin/sh", pathOfScript, params);
         String[] res = waitOnReturn(proc).split(" ");
 
         if(res.length != 1) {
             throw new StatsException("Too many values returned from sh for given script");
         }
 
-        return Double.parseDouble(res[1]);
+        return Double.parseDouble(res[0]);
 
     }
 
     public static String waitOnReturn(Process process) throws IOException {
 
-        String result = null;
+        String result = "";
 
         BufferedReader stdInput = new BufferedReader(new
                 InputStreamReader(process.getInputStream()));
 
+        BufferedReader stdError = new BufferedReader(new
+                InputStreamReader(process.getErrorStream()));
+
         String s = null;
 
         while((s = stdInput.readLine())!=null) {
-            result = s;
+              result += s + "\n";
+        }
+
+        while ((s = stdError.readLine()) != null) {
+            System.out.println(s);
         }
 
         return result;
