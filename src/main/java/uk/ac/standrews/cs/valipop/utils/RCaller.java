@@ -2,6 +2,7 @@ package uk.ac.standrews.cs.valipop.utils;
 
 import uk.ac.standrews.cs.valipop.implementations.StatsException;
 
+import javax.sql.rowset.spi.SyncResolver;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -14,13 +15,13 @@ import java.util.List;
  */
 public class RCaller {
 
-    public static void generateAnalysisHTML(String pathOfRunDir, int maxBirthingAge, String subTitle) throws StatsException {
+    public static Process generateAnalysisHTML(String pathOfRunDir, int maxBirthingAge, String subTitle) throws StatsException {
 
         String pathToScript = "src/main/resources/valipop/analysis-r/geeglm/runPopulationAnalysis.R";
         String[] params = {System.getProperty("user.dir") + "/" + pathOfRunDir, String.valueOf(maxBirthingAge), subTitle};
 
         try {
-            runRScript(pathToScript, params);
+            return runRScript(pathToScript, params);
         } catch (IOException e) {
             throw new StatsException(e.getMessage());
         }
@@ -59,7 +60,24 @@ public class RCaller {
 
     }
 
+    public static double getGeeglmV(String title, String pathOfRunDir, String pathOfTablesDir, int maxBirthingAge) throws IOException, StatsException {
 
+        Process p = generateAnalysisHTML(pathOfRunDir, maxBirthingAge, title);
+        waitOnReturn(p);
+
+        String pathOfScript = "src/main/resources/valipop/analysis-r/geeglm/geeglm-minima-search.R";
+        String[] params = {pathOfTablesDir, String.valueOf(maxBirthingAge)};
+
+        Process proc = runProcess("sh", pathOfScript, params);
+        String[] res = waitOnReturn(proc).split(" ");
+
+        if(res.length != 1) {
+            throw new StatsException("Too many values returned from sh for given script");
+        }
+
+        return Double.parseDouble(res[1]);
+
+    }
 
     public static String waitOnReturn(Process process) throws IOException {
 
@@ -78,6 +96,13 @@ public class RCaller {
 
     }
 
+    public static Process runProcess(String processName, String pathOfScript, String[] params) throws IOException {
+        String[] commands = {processName, pathOfScript};
+        commands = joinArrays(commands, params);
+        ProcessBuilder pb = new ProcessBuilder(commands);
+
+        return pb.start();
+    }
 
     public static Process runRScript(String pathOfScript, String[] params) throws IOException {
 
@@ -95,5 +120,6 @@ public class RCaller {
         Collections.addAll(both, second);
         return both.toArray(new String[both.size()]);
     }
+
 
 }

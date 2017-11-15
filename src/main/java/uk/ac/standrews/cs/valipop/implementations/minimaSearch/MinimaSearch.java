@@ -130,7 +130,7 @@ public class MinimaSearch {
                         CTtree.clearStatNodeIfNessersary();
 
                         Integer maxBirthingAge = model.getDesiredPopulationStatistics().getOrderedBirthRates(new YearDate(0)).getLargestLabel().getValue();
-                        double v = getV(minimiseFor, maxBirthingAge);
+                        double v = getV(minimiseFor, maxBirthingAge, runPurpose, controlBy);
 
                         // convert to v per million people (to standardise due to varying population sizes)
                         v = v / model.getPopulation().getPopulationCounts().getCreatedPeople() * 1E6;
@@ -179,7 +179,7 @@ public class MinimaSearch {
 
     }
 
-    private static double getV(Minimise minimiseFor, Integer maxBirthingAge) throws IOException, StatsException {
+    private static double getV(Minimise minimiseFor, Integer maxBirthingAge, String runPurpose, Control controlBy) throws IOException, StatsException {
 
         switch (minimiseFor) {
 
@@ -187,6 +187,10 @@ public class MinimaSearch {
                 return RCaller.getV(FileUtils.getContingencyTablesPath().toString(), maxBirthingAge);
             case OB:
                 return RCaller.getObV(FileUtils.getContingencyTablesPath().toString(), maxBirthingAge);
+            case GEEGLM:
+                String title = runPurpose + " - " + controlBy.toString() + ": " + String.valueOf(getControllingFactor(controlBy));
+                return RCaller.getGeeglmV(title, FileUtils.getRunPath().toString(),
+                        FileUtils.getContingencyTablesPath().toString(), maxBirthingAge);
         }
 
         throw new StatsException(minimiseFor + " - minimisation for this test is not implemented");
