@@ -1,9 +1,11 @@
 package uk.ac.standrews.cs.valipop.implementations;
 
 import uk.ac.standrews.cs.valipop.utils.ProcessArgs;
+import uk.ac.standrews.cs.valipop.utils.RCaller;
 import uk.ac.standrews.cs.valipop.utils.fileUtils.FileUtils;
 import uk.ac.standrews.cs.valipop.utils.fileUtils.InvalidInputFileException;
 import uk.ac.standrews.cs.valipop.Config;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
 
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -13,7 +15,7 @@ import java.nio.file.Paths;
  */
 public class CL_OBDModel {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws StatsException {
         // Expects 3 args: path to config file, results path, run purpose
 
         String[] pArgs = ProcessArgs.process(args, "STANDARD");
@@ -34,7 +36,7 @@ public class CL_OBDModel {
 
     }
 
-    public static OBDModel runOBDModel(String pathToConfigFile, String resultsPath, String runPurpose) throws Error, InvalidInputFileException, IOException, PreEmptiveOutOfMemoryWarning {
+    public static OBDModel runOBDModel(String pathToConfigFile, String resultsPath, String runPurpose) throws Error, InvalidInputFileException, IOException, PreEmptiveOutOfMemoryWarning, StatsException {
         String startTime = FileUtils.getDateTime();
 
         Config config;
@@ -52,10 +54,10 @@ public class CL_OBDModel {
             model.runSimulation();
             model.analyseAndOutputPopulation();
 
-//            RCaller.generateAnalysisHTML(
-//                    FileUtils.getRunPath().toString(),
-//                    model.getDesiredPopulationStatistics().getOrderedBirthRates(new YearDate(0)).getLargestLabel().getValue(),
-//                    runPurpose + " - bf: " + String.valueOf(config.getBirthFactor()));
+            RCaller.generateAnalysisHTML(
+                    FileUtils.getRunPath().toString(),
+                    model.getDesiredPopulationStatistics().getOrderedBirthRates(new YearDate(0)).getLargestLabel().getValue(),
+                    runPurpose + " - bf: " + String.valueOf(config.getBirthFactor()));
 
             return model;
         } catch (IOException e) {

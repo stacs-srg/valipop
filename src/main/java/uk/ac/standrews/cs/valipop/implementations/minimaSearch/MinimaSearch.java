@@ -132,17 +132,23 @@ public class MinimaSearch {
                         Integer maxBirthingAge = model.getDesiredPopulationStatistics().getOrderedBirthRates(new YearDate(0)).getLargestLabel().getValue();
                         double v = getV(minimiseFor, maxBirthingAge, runPurpose, controlBy);
 
+                        if(Double.isNaN(v)) {
+                            v = Double.MAX_VALUE / 1E12;
+                        }
+
                         // convert to v per million people (to standardise due to varying population sizes)
                         v = v / model.getPopulation().getPopulationCounts().getCreatedPeople() * 1E6;
 
                         model.getSummaryRow().setV(v);
                         model.getSummaryRow().outputSummaryRowToFile();
 
-                        RCaller.generateAnalysisHTML(FileUtils.getRunPath().toString(),
-                                model.getDesiredPopulationStatistics().getOrderedBirthRates(
-                                        new YearDate(0)).getLargestLabel().getValue(),
-                                runPurpose + " - " + controlBy.toString() + ": "
-                                        + String.valueOf(getControllingFactor(controlBy)));
+                        if(minimiseFor != Minimise.GEEGLM) {
+                            RCaller.generateAnalysisHTML(FileUtils.getRunPath().toString(),
+                                    model.getDesiredPopulationStatistics().getOrderedBirthRates(
+                                            new YearDate(0)).getLargestLabel().getValue(),
+                                    runPurpose + " - " + controlBy.toString() + ": "
+                                            + String.valueOf(getControllingFactor(controlBy)));
+                        }
 
                         totalV += v;
                     } catch (PreEmptiveOutOfMemoryWarning | OutOfMemoryError e) {

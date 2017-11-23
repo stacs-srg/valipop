@@ -11,13 +11,13 @@ import java.io.IOException;
  */
 public class CL_RunNModels {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws StatsException {
 
         CL_RunNModels.runNModels(args);
 
     }
 
-    public static void runNModels(String[] args) {
+    public static void runNModels(String[] args) throws StatsException {
         // Expects 4 args: path to config file, results path, run purpose
 
         String[] pArgs = ProcessArgs.process(args, "N-RUNS");
