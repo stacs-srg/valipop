@@ -124,10 +124,6 @@ public class NBirthLogic implements EventLogic {
 
             }
 
-            if(age < 40 && age >= 35) {
-                System.out.print("");
-            }
-
             // Partner females of age who don't have partners
             PartneringLogic.handle(needingPartners, desiredPopulationStatistics, currentDate, consideredTimePeriod, population, config);
 

@@ -176,8 +176,10 @@ public class OBDModel {
 
             yearLine += currentTime.toString() + "\t";
 
+
             int bornAtTS = birthLogic.handleEvent(config, currentTime, config.getSimulationTimeStep(), population, desired);
             yearLine += bornAtTS + "\t";
+
 
             if (InitLogic.inInitPeriod(currentTime) &&
                     DateUtils.matchesInterval(currentTime, InitLogic.getTimeStep(), config.getTS())) {
