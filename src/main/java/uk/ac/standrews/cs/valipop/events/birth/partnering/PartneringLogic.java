@@ -46,7 +46,7 @@ public class PartneringLogic {
     public static void handle(Collection<NewMother> needingPartners, PopulationStatistics desiredPopulationStatistics,
                               AdvancableDate currentDate, CompoundTimeUnit consideredTimePeriod, Population population,
                               Config config) throws InsufficientNumberOfPeopleException, PersonNotFoundException {
-
+        int c = 0;
         int forNFemales = needingPartners.size();
 
         if(forNFemales != 0) {
@@ -61,9 +61,18 @@ public class PartneringLogic {
 
             MultipleDeterminedCount determinedCounts = (MultipleDeterminedCount) desiredPopulationStatistics.getDeterminedCount(key, config);
 
-            LabeledValueSet<IntegerRange, Integer> partnerCounts = determinedCounts.getDeterminedCount();
-            LabeledValueSet<IntegerRange, Integer> achievedPartnerCounts = new IntegerRangeToIntegerSet(partnerCounts.getLabels(), 0);
+            LabeledValueSet<IntegerRange, Integer> partnerCounts = null;
+            LabeledValueSet<IntegerRange, Integer> achievedPartnerCounts = null;
+
+            try {
+                partnerCounts = determinedCounts.getDeterminedCount();
+                achievedPartnerCounts = new IntegerRangeToIntegerSet(partnerCounts.getLabels(), 0);
 //            LabeledValueSet<IntegerRange, Integer> shortfallCounts = new IntegerRangeToIntegerSet(partnerCounts.getRowLabels(), 0);
+            } catch (NullPointerException e) {
+                throw new Error("Large population size has lead to acculated errors in processing of Doubles that the " +
+                        "sum of the underlying self correction array no longer approximates to a whole number - " +
+                        "make DELTA bigger? Or use a data type that actually works...");
+            }
 
             LabeledValueSet<IntegerRange, Integer> availableMen = new IntegerRangeToIntegerSet(partnerCounts.getLabels(), 0);
 
@@ -242,8 +251,8 @@ public class PartneringLogic {
                 EntityFactory.formNewChildrenInPartnership(numChildrenInPartnership, father, mother, currentDate, consideredTimePeriod, population, desiredPopulationStatistics);
 
                 IntegerRange maleAgeRange = resolveAgeToIR(pp.getMale(), returnPartnerCounts.getLabels(), currentDate);
-                returnPartnerCounts.update(maleAgeRange, returnPartnerCounts.getValue(maleAgeRange) + 1);
 
+                returnPartnerCounts.update(maleAgeRange, returnPartnerCounts.getValue(maleAgeRange) + 1);
 
 
                 try {

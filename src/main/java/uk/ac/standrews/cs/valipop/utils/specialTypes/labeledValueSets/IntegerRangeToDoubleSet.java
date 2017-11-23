@@ -26,7 +26,7 @@ import java.util.*;
  */
 public class IntegerRangeToDoubleSet implements LabeledValueSet<IntegerRange, Double>, Cloneable {
 
-    private static double DELTA = 1E-4;
+    private static double DELTA = 1E-2;
 
     private Map<IntegerRange, Double> map = new HashMap<>();
 
