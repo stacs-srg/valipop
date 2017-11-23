@@ -30,7 +30,7 @@ public class MemoryUsageAnalysis {
 
     private static double threshold = 0.95;
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws StatsException {
 
         checkMemory = true;
 

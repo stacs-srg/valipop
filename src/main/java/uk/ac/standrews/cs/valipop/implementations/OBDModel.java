@@ -65,6 +65,8 @@ public class OBDModel {
     private EventLogic deathLogic = new NDeathLogic();
     private EventLogic birthLogic = new NBirthLogic();
 
+    private static final int MAX_ATTEMPTS = 10;
+
 
     public static void setUpFileStructureAndLogs(String runPurpose, String startTime, String resultsPath) throws IOException {
         // This has to be ran prior to creating the Config file as the file structure and log file need to be created
@@ -104,8 +106,11 @@ public class OBDModel {
         ProgramTimer simTimer = new ProgramTimer();
 
         boolean runPassed = false;
+        int countAttempts = 0;
 
         while (!runPassed) {
+
+            countAttempts ++;
 
             try {
                 runPassed = runSimulationTimeLoop();
@@ -121,6 +126,10 @@ public class OBDModel {
                 summary.outputSummaryRowToFile();
                 deathLogic.resetEventCount();
                 birthLogic.resetEventCount();
+
+                if(countAttempts > MAX_ATTEMPTS) {
+                    break;
+                }
 
                 simTimer = new ProgramTimer();
 
@@ -145,7 +154,16 @@ public class OBDModel {
 
             if(!InitLogic.inInitPeriod(currentTime) && population.getLivingPeople().getAll().size() < 100) {
                 summary.setCompleted(false);
-                break;
+
+                log.info("TKilled\t" + deathLogic.getEventCount());
+                log.info("TBorn\t" + birthLogic.getEventCount());
+                log.info("Ratio\t" + deathLogic.getEventCount() / (double) birthLogic.getEventCount());
+
+
+                summary.setEndPop(population.getLivingPeople().getNumberOfPeople());
+                summary.setPeakPop(population.getPopulationCounts().getPeakPopulationSize());
+
+                return false;
             }
 
             MemoryUsageAnalysis.log();
