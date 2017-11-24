@@ -27,6 +27,14 @@ sepSatGEEGLM.2 <- function(in.data) {
   return(runGEEGLM(freq ~ Date * Source * NCIP, in.data))
 }
 
+sepSatGEEGLM.3 <- function(in.data) {
+  return(runGEEGLM(freq ~ Date + Source + NCIP + Separated, in.data))
+}
+
+sepSatGEEGLM.4 <- function(in.data) {
+  return(runGEEGLM(freq ~ Date * Source * Separated, in.data))
+}
+
 runGEEGLM <- function(formula, in.data) {
   
   library(geepack)  
