@@ -46,7 +46,7 @@ public class MinimaSearch {
     static String results_save_location = "src/main/resources/valipop/results/";
 
     static CompoundTimeUnit simulation_time_step = new CompoundTimeUnit(1, TimeUnit.YEAR);
-    static AdvancableDate tS = new YearDate(1599);
+    static AdvancableDate tS = new YearDate(1691);
     static AdvancableDate t0 = new YearDate(1855);
     static AdvancableDate tE = new YearDate(2015);
     static double set_up_br = 0.0133;
