@@ -16,9 +16,17 @@
  */
 package uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure;
 
+import uk.ac.standrews.cs.valipop.simulationEntities.person.IPersonExtended;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.PopulationCounts;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.utils.AggregatePersonCollectionFactory;
 import uk.ac.standrews.cs.valipop.Config;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.AdvancableDate;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.TimeUnit;
+
+import java.util.Collection;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
@@ -50,6 +58,27 @@ public class Population {
 
     public PopulationCounts getPopulationCounts() {
         return populationCounts;
+    }
+
+    public PeopleCollection getAllPeople(AdvancableDate first, Date last) {
+
+        CompoundTimeUnit tp = DateUtils.differenceInMonths(first, last);
+
+        Collection<IPersonExtended> l = livingPeople.getAllPersonsBornInTimePeriod(first, tp);
+        Collection<IPersonExtended> d = deadPeople.getAllPersonsBornInTimePeriod(first, tp);
+
+        PeopleCollection pC = new PeopleCollection(first, last, new CompoundTimeUnit(1, TimeUnit.YEAR));
+
+        for(IPersonExtended p : l) {
+            pC.addPerson(p);
+        }
+
+        for(IPersonExtended p : d) {
+            pC.addPerson(p);
+        }
+
+        return pC;
+
     }
 
 }
