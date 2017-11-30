@@ -543,4 +543,28 @@ public class DateUtils {
         return !DateUtils.dateBefore(date, year) && DateUtils.dateBefore(date, year.advanceTime(1, TimeUnit.YEAR));
 
     }
+
+    public static CompoundTimeUnit combineCompoundTimeUnits(CompoundTimeUnit tP1, CompoundTimeUnit tP2) {
+
+        TimeUnit u1 = tP1.getUnit();
+        TimeUnit u2 = tP2.getUnit();
+
+        CompoundTimeUnit ctu1 = tP1;
+        CompoundTimeUnit ctu2 = tP2;
+
+        if(u1 == TimeUnit.MONTH) {
+            if(u2 != TimeUnit.MONTH) {
+                ctu2 = new CompoundTimeUnit(tP2.getCount() * DateUtils.MONTHS_IN_YEAR, TimeUnit.MONTH);
+                ctu1 = tP1;
+            }
+
+        } else if(u2 == TimeUnit.MONTH) {
+            ctu1 = new CompoundTimeUnit(tP1.getCount() * DateUtils.MONTHS_IN_YEAR, TimeUnit.MONTH);
+            ctu2 = tP2;
+        }
+
+        // By this point we know they are both in the same units
+        return new CompoundTimeUnit(ctu1.getCount() + ctu2.getCount(), ctu1.getUnit());
+
+    }
 }

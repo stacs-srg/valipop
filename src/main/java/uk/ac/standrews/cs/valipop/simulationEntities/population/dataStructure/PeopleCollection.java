@@ -133,6 +133,13 @@ public class PeopleCollection extends PersonCollection implements IPopulationExt
     }
 
     @Override
+    public Collection<IPersonExtended> getAllPersonsAliveInTimePeriod(AdvancableDate firstDate, CompoundTimeUnit timePeriod, CompoundTimeUnit maxAge) {
+        Collection<IPersonExtended> people =  males.getAllPersonsAliveInTimePeriod(firstDate, timePeriod, maxAge);
+        people.addAll(females.getAllPersonsAliveInTimePeriod(firstDate, timePeriod, maxAge));
+        return people;
+    }
+
+    @Override
     public void addPerson(IPersonExtended person) {
 //        peopleIndex.put(person.getId(), person);
         if (person.getSex() == 'm') {

@@ -37,6 +37,8 @@ import uk.ac.standrews.cs.valipop.statistics.analysis.simulationSummaryLogging.S
 import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.Population;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.exceptions.PersonNotFoundException;
 import uk.ac.standrews.cs.valipop.utils.ProgramTimer;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.TimeUnit;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -66,6 +68,8 @@ public class OBDModel {
     private EventLogic birthLogic = new NBirthLogic();
 
     private static final int MAX_ATTEMPTS = 10;
+
+    private static final CompoundTimeUnit MAX_AGE = new CompoundTimeUnit(110, TimeUnit.YEAR);
 
 
     public static void setUpFileStructureAndLogs(String runPurpose, String startTime, String resultsPath) throws IOException {
@@ -141,7 +145,7 @@ public class OBDModel {
 
         MemoryUsageAnalysis.log();
 
-        summary.setTotalPop(population.getAllPeople(config.getT0(), config.getTE()).getNumberOfPeople());
+        summary.setTotalPop(population.getAllPeople(config.getT0(), config.getTE(), MAX_AGE).getNumberOfPeople());
         summary.setSimRunTime(simTimer.getRunTimeSeconds());
 
     }
@@ -234,7 +238,7 @@ public class OBDModel {
 
 
         try {
-            AnalyticsRunner.runAnalytics(population.getAllPeople(config.getT0(), config.getTE()),
+            AnalyticsRunner.runAnalytics(population.getAllPeople(config.getT0(), config.getTE(), MAX_AGE),
                     new PrintStream(FileUtils.getDetailedResultsPath().toFile(), "UTF-8"));
         } catch (FileNotFoundException | UnsupportedEncodingException e) {
             e.printStackTrace();

@@ -567,4 +567,12 @@ public class Person implements IPersonExtended {
         return earliestDate;
     }
 
+    @Override
+    public boolean diedAfter(Date date) {
+        if(deathDate == null) {
+            return true;
+        }
+        return DateUtils.dateBefore(date, deathDate);
+    }
+
 }

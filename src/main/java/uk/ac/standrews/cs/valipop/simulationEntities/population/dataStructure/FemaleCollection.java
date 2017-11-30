@@ -385,6 +385,23 @@ public class FemaleCollection extends PersonCollection {
     }
 
     @Override
+    public Collection<IPersonExtended> getAllPersonsAliveInTimePeriod(AdvancableDate firstDate, CompoundTimeUnit timePeriod, CompoundTimeUnit maxAge) {
+        CompoundTimeUnit tP = DateUtils.combineCompoundTimeUnits(timePeriod, maxAge);
+
+        Collection<IPersonExtended> peopleBorn = getAllPersonsBornInTimePeriod(firstDate.advanceTime(maxAge.negative()), tP);
+
+        Collection<IPersonExtended> peopleAlive = new ArrayList<>();
+
+        for(IPersonExtended p : peopleBorn) {
+            if(p.diedAfter(firstDate)) {
+                peopleAlive.add(p);
+            }
+        }
+
+        return peopleAlive;
+    }
+
+    @Override
     public void addPerson(IPersonExtended person) {
         try {
             byBirthYearAndNumberOfChildren.get(

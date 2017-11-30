@@ -110,7 +110,7 @@ public class MinimaSearch {
 
                 boolean repLock = false;
 
-                while(repLock) {
+                do {
                     for (; n < repeatRuns; n++) {
 
                         if (n == 1) {
@@ -167,15 +167,15 @@ public class MinimaSearch {
 
                     if (!avgV.isNaN()) {
                         logFactortoV(getControllingFactor(controlBy), avgV);
-//                    inMinima(getControllingFactor(controlBy));
+                        inMinima(getControllingFactor(controlBy));
 
                         if (avgV < 0.001) {
-                            n = 100;
+                            repeatRuns = 100;
                             repLock = true;
                         }
 
                     }
-                }
+                } while(repLock);
 
                 CTtree.reuseExpectedValues(false);
 
