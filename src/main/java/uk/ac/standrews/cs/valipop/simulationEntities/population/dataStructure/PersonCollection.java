@@ -67,13 +67,21 @@ public abstract class PersonCollection implements DateBounds {
     public abstract Collection<IPersonExtended> getAll();
 
     /**
-     * Gets all the people in the PersonCollection who were born in the given year.
+     * Gets all the people in the PersonCollection who were born in the given years.
      *
      * @param firstDate the year of birth of the desired cohort
      * @return the desired cohort
      */
-    // Was getByYear()
     public abstract Collection<IPersonExtended> getAllPersonsBornInTimePeriod(AdvancableDate firstDate, CompoundTimeUnit timePeriod);
+
+    /**
+     * Gets all the people in the PersonCollection who were alive in the given years.
+     *
+     * @param firstDate the year of birth of the desired cohort
+     * @return the desired cohort
+     */
+    public abstract Collection<IPersonExtended> getAllPersonsAliveInTimePeriod(AdvancableDate firstDate, CompoundTimeUnit timePeriod, CompoundTimeUnit maxAge);
+
 
     /**
      * Adds the given person to the PersonCollection.

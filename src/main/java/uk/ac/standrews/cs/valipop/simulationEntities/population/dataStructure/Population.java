@@ -60,12 +60,12 @@ public class Population {
         return populationCounts;
     }
 
-    public PeopleCollection getAllPeople(AdvancableDate first, Date last) {
+    public PeopleCollection getAllPeople(AdvancableDate first, Date last, CompoundTimeUnit maxAge) {
 
         CompoundTimeUnit tp = DateUtils.differenceInMonths(first, last);
 
-        Collection<IPersonExtended> l = livingPeople.getAllPersonsBornInTimePeriod(first, tp);
-        Collection<IPersonExtended> d = deadPeople.getAllPersonsBornInTimePeriod(first, tp);
+        Collection<IPersonExtended> l = livingPeople.getAllPersonsAliveInTimePeriod(first, tp, maxAge);
+        Collection<IPersonExtended> d = deadPeople.getAllPersonsAliveInTimePeriod(first, tp, maxAge);
 
         PeopleCollection pC = new PeopleCollection(first, last, new CompoundTimeUnit(1, TimeUnit.YEAR));
 

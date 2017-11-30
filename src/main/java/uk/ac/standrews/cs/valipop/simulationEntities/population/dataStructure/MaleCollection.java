@@ -35,6 +35,7 @@ import java.util.*;
  */
 public class MaleCollection extends PersonCollection {
 
+    // this is by year of birth
     private final Map<MonthDate, Collection<IPersonExtended>> byYear = new TreeMap<>();
 
     /**
@@ -97,6 +98,24 @@ public class MaleCollection extends PersonCollection {
 
         return people;
 
+    }
+
+    @Override
+    public Collection<IPersonExtended> getAllPersonsAliveInTimePeriod(AdvancableDate firstDate, CompoundTimeUnit timePeriod, CompoundTimeUnit maxAge) {
+
+        CompoundTimeUnit tP = DateUtils.combineCompoundTimeUnits(timePeriod, maxAge);
+
+        Collection<IPersonExtended> peopleBorn = getAllPersonsBornInTimePeriod(firstDate.advanceTime(maxAge.negative()), tP);
+
+        Collection<IPersonExtended> peopleAlive = new ArrayList<>();
+
+        for(IPersonExtended p : peopleBorn) {
+            if(p.diedAfter(firstDate)) {
+                peopleAlive.add(p);
+            }
+        }
+
+        return peopleAlive;
     }
 
     @Override
