@@ -141,7 +141,7 @@ public class OBDModel {
 
         MemoryUsageAnalysis.log();
 
-        summary.setTotalPop(population.getAllPeople().getNumberOfPeople());
+        summary.setTotalPop(population.getAllPeople(config.getT0(), config.getTE()).getNumberOfPeople());
         summary.setSimRunTime(simTimer.getRunTimeSeconds());
 
     }
@@ -224,7 +224,7 @@ public class OBDModel {
     public void analyseAndOutputPopulation(boolean outputSummaryRow) throws PreEmptiveOutOfMemoryWarning {
 
         if(config.getOutputTables()) {
-            ContigencyTableFactory.generateContigencyTables(population.getAllPeople(), desired, config, summary, 0, 110);
+            ContigencyTableFactory.generateContigencyTables(population.getAllPeople(), desired, config, summary, 0, 1);
         }
 
         ProgramTimer recordTimer = new ProgramTimer();
@@ -234,7 +234,8 @@ public class OBDModel {
 
 
         try {
-            AnalyticsRunner.runAnalytics(population.getAllPeople(), new PrintStream(FileUtils.getDetailedResultsPath().toFile(), "UTF-8"));
+            AnalyticsRunner.runAnalytics(population.getAllPeople(config.getT0(), config.getTE()),
+                    new PrintStream(FileUtils.getDetailedResultsPath().toFile(), "UTF-8"));
         } catch (FileNotFoundException | UnsupportedEncodingException e) {
             e.printStackTrace();
         }

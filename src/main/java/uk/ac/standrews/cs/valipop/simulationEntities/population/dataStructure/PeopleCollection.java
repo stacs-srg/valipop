@@ -23,11 +23,13 @@ import uk.ac.standrews.cs.valipop.simulationEntities.person.IPersonExtended;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.IPopulationExtended;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.utils.AggregatePersonCollectionFactory;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.*;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.AdvancableDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.exceptions.PersonNotFoundException;
 
 import java.util.*;
+
 
 /**
  * The class PeopleCollection is a concrete instance of the PersonCollection class. It provides the layout to structure
@@ -78,7 +80,7 @@ public class PeopleCollection extends PersonCollection implements IPopulationExt
      * @param start the start
      * @param end   the end
      */
-    public PeopleCollection(AdvancableDate start, uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date end, CompoundTimeUnit divisionSize) {
+    public PeopleCollection(AdvancableDate start, Date end, CompoundTimeUnit divisionSize) {
         super(start, end, divisionSize);
 
         males = new MaleCollection(start, end, divisionSize);
