@@ -265,7 +265,7 @@ public class MinimaSearch {
 
         step = initStep;
 
-        int options = new Double(topSearchBoundFactor - bottomSearchBoundFactor / (initStep / 2)).intValue();
+        int options = new Double((topSearchBoundFactor - bottomSearchBoundFactor) / (initStep / 2)).intValue();
 
         double chosenFactor;
 
