@@ -1,5 +1,6 @@
 package uk.ac.standrews.cs.valipop.implementations;
 
+import uk.ac.standrews.cs.basic_model.distributions.general.InconsistentWeightException;
 import uk.ac.standrews.cs.valipop.utils.ProcessArgs;
 import uk.ac.standrews.cs.valipop.utils.RCaller;
 import uk.ac.standrews.cs.valipop.utils.fileUtils.FileUtils;
@@ -65,7 +66,7 @@ public class CL_OBDModel {
                     "permission to read or write on disk. Also, check supporting input files are present at location " +
                     "specified in config file : " + e.getMessage();
             throw new IOException(message, e);
-        } catch (InvalidInputFileException e) {
+        } catch (InvalidInputFileException | InconsistentWeightException e) {
             String message = "Model failed due to an invalid formatting/content of input file, see message: " + e.getMessage();
             throw new InvalidInputFileException(message, e);
         }

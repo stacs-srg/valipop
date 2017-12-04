@@ -16,6 +16,8 @@
  */
 package uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables;
 
+import uk.ac.standrews.cs.basic_model.distributions.general.EnumeratedDistribution;
+import uk.ac.standrews.cs.basic_model.distributions.general.FileBasedEnumeratedDistribution;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.OneDimensionDataDistribution;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.ProportionalDistribution;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.selfCorrecting.SelfCorrectingProportionalDistribution;
@@ -116,5 +118,9 @@ public interface EventRateTables {
      * @return the death rates
      */
     OneDimensionDataDistribution getSeparationByChildCountRates(Date year);
+
+    EnumeratedDistribution getForenameDistribution(Date year, char gender);
+
+    EnumeratedDistribution getSurnameDistribution(Date year);
 
 }

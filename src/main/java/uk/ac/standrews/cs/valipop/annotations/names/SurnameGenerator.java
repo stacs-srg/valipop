@@ -16,15 +16,26 @@
  */
 package uk.ac.standrews.cs.valipop.annotations.names;
 
+import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnershipExtended;
 import uk.ac.standrews.cs.valipop.simulationEntities.person.IPersonExtended;
+import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
 
 public class SurnameGenerator implements NameGenerator {
 
     @Override
-    public String getName(IPersonExtended personToBeNamed) {
+    public String getName(IPersonExtended personToBeNamed, PopulationStatistics ps) {
 
         // OZGUR - surname stuff handled here
 
-        return "Hancock";
+        IPartnershipExtended parentsPartnership = personToBeNamed.getParentsPartnership_ex();
+        String surname;
+
+        if(parentsPartnership == null || parentsPartnership.getMalePartner() == null) {
+            surname = ps.getSurnameDistribution(personToBeNamed.getBirthDate_ex()).getSample();
+        } else {
+            surname = parentsPartnership.getMalePartner().getSurname();
+        }
+
+        return surname;
     }
 }

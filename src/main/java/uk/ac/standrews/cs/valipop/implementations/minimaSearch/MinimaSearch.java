@@ -1,5 +1,6 @@
 package uk.ac.standrews.cs.valipop.implementations.minimaSearch;
 
+import uk.ac.standrews.cs.basic_model.distributions.general.InconsistentWeightException;
 import uk.ac.standrews.cs.valipop.implementations.*;
 import uk.ac.standrews.cs.valipop.utils.DoubleComparer;
 import uk.ac.standrews.cs.valipop.Config;
@@ -60,7 +61,7 @@ public class MinimaSearch {
     static double bf = 0.0;
     static double df = 0.0;
 
-    public static void main(String[] args) throws StatsException, IOException, InvalidInputFileException {
+    public static void main(String[] args) throws StatsException, IOException, InvalidInputFileException, InconsistentWeightException {
 
         String[] pArgs = ProcessArgs.process(args, "MINIMA_SEARCH");
         if(!ProcessArgs.check(pArgs, "MINIMA_SEARCH")) {
@@ -89,7 +90,7 @@ public class MinimaSearch {
 
     }
 
-    private static void runSearch(int populationSize, String dataFiles, double startFactor, double step, String runPurpose, int repeatRuns, Minimise minimiseFor, Control controlBy) throws IOException, InvalidInputFileException, StatsException, SpaceExploredException, PreEmptiveOutOfMemoryWarning {
+    private static void runSearch(int populationSize, String dataFiles, double startFactor, double step, String runPurpose, int repeatRuns, Minimise minimiseFor, Control controlBy) throws IOException, InvalidInputFileException, StatsException, SpaceExploredException, PreEmptiveOutOfMemoryWarning, InconsistentWeightException {
 
         MinimaSearch.startFactor = startFactor;
         MinimaSearch.step = step;

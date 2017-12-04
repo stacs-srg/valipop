@@ -16,6 +16,7 @@
  */
 package uk.ac.standrews.cs.valipop.implementations;
 
+import uk.ac.standrews.cs.basic_model.distributions.general.InconsistentWeightException;
 import uk.ac.standrews.cs.valipop.events.EventLogic;
 import uk.ac.standrews.cs.valipop.events.birth.NBirthLogic;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.exceptions.InsufficientNumberOfPeopleException;
@@ -83,7 +84,7 @@ public class OBDModel {
 
     public OBDModel() {}
 
-    public OBDModel(String startTime, Config config) throws IOException, InvalidInputFileException {
+    public OBDModel(String startTime, Config config) throws IOException, InvalidInputFileException, InconsistentWeightException {
 
         this.config = config;
 

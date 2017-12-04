@@ -16,6 +16,7 @@
  */
 package uk.ac.standrews.cs.valipop.implementations;
 
+import uk.ac.standrews.cs.basic_model.distributions.general.InconsistentWeightException;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.CTtree;
 import uk.ac.standrews.cs.valipop.utils.fileUtils.FileUtils;
 import uk.ac.standrews.cs.valipop.utils.fileUtils.InvalidInputFileException;
@@ -157,7 +158,7 @@ public class FactorSearch {
                                                 "permission to read or write on disk. Also, check supporting input files are present at location " +
                                                 "specified in config setup code : " + e.getMessage();
                                         throw new IOException(message, e);
-                                    } catch (InvalidInputFileException e) {
+                                    } catch (InvalidInputFileException | InconsistentWeightException e) {
                                         String message = "Model failed due to an invalid formatting/content of input file, see message: " + e.getMessage();
                                         throw new InvalidInputFileException(message, e);
                                     }

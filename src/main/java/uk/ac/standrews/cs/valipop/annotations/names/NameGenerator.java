@@ -17,12 +17,13 @@
 package uk.ac.standrews.cs.valipop.annotations.names;
 
 import uk.ac.standrews.cs.valipop.simulationEntities.person.IPersonExtended;
+import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public interface NameGenerator {
 
-    String getName(IPersonExtended personToBeNamed);
+    String getName(IPersonExtended personToBeNamed, PopulationStatistics populationStatistics);
 
 }

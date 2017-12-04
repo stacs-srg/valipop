@@ -110,7 +110,7 @@ public class EntityFactory {
 
     public static IPersonExtended makePerson(Date birthDate, IPartnershipExtended parentsPartnership, Population population, PopulationStatistics ps) {
 
-        Person person = new Person(getSex(population.getPopulationCounts(), ps, birthDate), birthDate, parentsPartnership);
+        Person person = new Person(getSex(population.getPopulationCounts(), ps, birthDate), birthDate, parentsPartnership, ps);
 
         population.getLivingPeople().addPerson(person);
 

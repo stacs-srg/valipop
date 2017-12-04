@@ -186,6 +186,7 @@ public class LoggingControl {
 
             writer.close();
         } catch (FileNotFoundException | UnsupportedEncodingException e) {
+            throw new Error(e);
         }
     }
     
