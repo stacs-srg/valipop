@@ -123,7 +123,7 @@ public class MinimaSearch {
 
                         Config config = new Config(tS, t0, tE, populationSize, set_up_br, set_up_dr,
                                 simulation_time_step, dataFiles, results_save_location, runPurpose,
-                                minBirthSpacing, maxInfid, bf, df, rf, iw, output_record_format, startTime);
+                                minBirthSpacing, minBirthSpacing, maxInfid, bf, df, rf, iw, output_record_format, startTime);
 
                         OBDModel model = new OBDModel(startTime, config);
 

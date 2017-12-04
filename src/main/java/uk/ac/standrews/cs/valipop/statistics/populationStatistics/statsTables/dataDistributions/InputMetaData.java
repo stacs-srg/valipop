@@ -27,12 +27,12 @@ import java.util.Collection;
 
 
 /**
- * The DataDistribution interface provides the provision of the general information required of all input statistics in
+ * The InputMetaData interface provides the provision of the general information required of all input statistics in
  * the program. A distribution contains labels which correspond to a value.
  *
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public interface DataDistribution<Type, Raw> {
+public interface InputMetaData<Label> {
 
     /**
      * @return the year to which the distribution pertains
@@ -52,16 +52,13 @@ public interface DataDistribution<Type, Raw> {
     /**
      * @return the smallest label value in the distribution
      */
-    int getSmallestLabel();
+    Label getSmallestLabel();
 
     /**
      * @return the largest label value in the distribution
      */
-    IntegerRange getLargestLabel();
+    Label getLargestLabel();
 
-    Collection<IntegerRange> getLabels();
+    Collection<Label> getLabels();
 
-    DeterminedCount determineCount(StatsKey key, Config config);
-
-    void returnAchievedCount(DeterminedCount<Type, Raw> achievedCount);
 }

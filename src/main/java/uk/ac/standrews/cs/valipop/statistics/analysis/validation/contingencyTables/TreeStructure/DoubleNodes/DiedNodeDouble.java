@@ -81,12 +81,6 @@ public class DiedNodeDouble extends DoubleNode<DiedOption, IntegerRange> impleme
             } catch (ChildNotFoundException e) {
                 sN.addChild(ageR, getCount());
             }
-
-//            sN.addChild(new IntegerRange(age + 1), getCount());
-
-
-//            AgeNodeDouble aN = (AgeNodeDouble) getAncestor(new AgeNodeDouble());
-//            aN.getParent().addChild(new IntegerRange(aN.getOption().getValue() + 1), getCount());
         }
 
     }

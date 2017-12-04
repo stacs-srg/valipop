@@ -36,7 +36,7 @@ public class EnumeratedDistribution implements Distribution<String> {
     private static final Comparator<? super StringWithCumulativeProbability> ITEM_COMPARATOR = new ItemComparator();
 
     private final Random random;
-    private StringWithCumulativeProbability[] items = null;
+    protected StringWithCumulativeProbability[] items = null;
 
     protected EnumeratedDistribution(final Random random) {
         this.random = random;

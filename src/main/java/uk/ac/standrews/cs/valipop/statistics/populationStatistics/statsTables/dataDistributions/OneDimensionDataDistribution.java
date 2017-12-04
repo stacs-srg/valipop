@@ -18,12 +18,8 @@ package uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.d
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.SingleDeterminedCount;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.integerRange.InvalidRangeException;
-import uk.ac.standrews.cs.valipop.Config;
-import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.DeterminedCount;
-import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.StatsKey;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.integerRange.IntegerRange;
 
 import java.io.PrintStream;
@@ -35,7 +31,7 @@ import java.util.Set;
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class OneDimensionDataDistribution implements DataDistribution<Integer, Double>, Cloneable {
+public class OneDimensionDataDistribution implements InputMetaData, Cloneable {
 
 
     public static Logger log = LogManager.getLogger(OneDimensionDataDistribution.class);
@@ -80,15 +76,17 @@ public class OneDimensionDataDistribution implements DataDistribution<Integer, D
     }
 
     @Override
-    public int getSmallestLabel() {
+    public IntegerRange getSmallestLabel() {
         int min = Integer.MAX_VALUE;
+        IntegerRange minRange = null;
         for (IntegerRange iR : targetRates.keySet()) {
             int v = iR.getMin();
             if (v < min) {
                 min = v;
+                minRange = iR;
             }
         }
-        return min;
+        return minRange;
     }
 
     @Override
@@ -167,22 +165,4 @@ public class OneDimensionDataDistribution implements DataDistribution<Integer, D
         return targetRates.keySet();
     }
 
-    @Override
-    public DeterminedCount determineCount(StatsKey key, Config config) {
-
-        IntegerRange age = resolveRowValue(key.getYLabel());
-
-        // target rate
-        double tD = targetRates.get(age);
-
-        double rawCount = tD * key.getForNPeople();
-        int count = (int) Math.round(rawCount);
-
-        return new SingleDeterminedCount(key, count, rawCount, rawCount);
-    }
-
-    @Override
-    public void returnAchievedCount(DeterminedCount<Integer, Double> achievedCount) {
-        // Makes no record
-    }
 }

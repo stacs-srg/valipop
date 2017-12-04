@@ -177,7 +177,7 @@ public class InputFileReader {
                             throw new InvalidInputFileException("The first column specifies an invalid range on line " + (i + 1) + " in the file: " + path.toString(), e);
                         }
 
-                        Map<IntegerRange, Double> rowMap = new HashMap<IntegerRange, Double>();
+                        Map<IntegerRange, Double> rowMap = new HashMap<>();
 
                         for (int j = 1; j < split.length; j++) {
                             try {
@@ -244,6 +244,7 @@ public class InputFileReader {
                         }
 
                         String rowLabel = split[0];
+
                         data.put(rowLabel, Double.parseDouble(split[1]));
 
                     }

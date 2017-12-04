@@ -16,8 +16,8 @@
  */
 package uk.ac.standrews.cs.valipop.statistics.populationStatistics;
 
-import uk.ac.standrews.cs.basic_model.distributions.general.EnumeratedDistribution;
 import uk.ac.standrews.cs.basic_model.distributions.general.InconsistentWeightException;
+import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.InputMetaData;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.ProportionalDistribution;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.ValiPopEnumeratedDistribution;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.selfCorrecting.SelfCorrectingProportionalDistribution;
@@ -31,7 +31,6 @@ import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.DataDistribution;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.selfCorrecting.SelfCorrectingOneDimensionDataDistribution;
 
 import java.io.IOException;
@@ -70,8 +69,9 @@ public abstract class DesiredPopulationStatisticsFactory {
         Map<YearDate, ValiPopEnumeratedDistribution> femaleForename = readInNamesDataFiles(config.getVarFemaleForenamePath(), config);
         Map<YearDate, ValiPopEnumeratedDistribution> surname = readInNamesDataFiles(config.getVarSurnamePath(), config);
 
-        return new PopulationStatistics(config, maleDeath, femaleDeath, partnering, orderedBirth, multipleBirth,
-                separation, sexRatioBirth, maleForename, femaleForename, surname);
+        return new PopulationStatistics(maleDeath, femaleDeath, partnering, orderedBirth, multipleBirth,
+                separation, sexRatioBirth, maleForename, femaleForename, surname, config.getMinBirthSpacing(),
+                config.getMinGestationPeriodDays(), config.getMaxProportionOBirthsDueToInfidelity());
     }
 
     private static Map<YearDate, Double> readInSingleInputDataFile(DirectoryStream<Path> paths, Config config) throws IOException, InvalidInputFileException {
@@ -159,7 +159,7 @@ public abstract class DesiredPopulationStatisticsFactory {
         return insertDistributionsToMeetInputWidth(config, data);
     }
 
-    private static <T extends DataDistribution> Map<YearDate, T>  insertDistributionsToMeetInputWidth(Config config, Map<YearDate, T> inputs) {
+    private static <T extends InputMetaData> Map<YearDate, T>  insertDistributionsToMeetInputWidth(Config config, Map<YearDate, T> inputs) {
 
         CompoundTimeUnit inputWidth = config.getInputWidth();
 

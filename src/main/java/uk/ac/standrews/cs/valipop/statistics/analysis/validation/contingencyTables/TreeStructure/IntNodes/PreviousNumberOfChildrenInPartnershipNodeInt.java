@@ -84,7 +84,7 @@ public class PreviousNumberOfChildrenInPartnershipNodeInt extends IntNode<Intege
             birthOrders = getInputStats().getOrderedBirthRates(currentDate).getData(age).getLabels();
         } catch (InvalidRangeException e) {
             SelfCorrectingTwoDimensionDataDistribution data = getInputStats().getOrderedBirthRates(currentDate);
-            birthOrders = data.getData(data.getSmallestLabel()).getLabels();
+            birthOrders = data.getData(data.getSmallestLabel().getValue()).getLabels();
         }
 
 

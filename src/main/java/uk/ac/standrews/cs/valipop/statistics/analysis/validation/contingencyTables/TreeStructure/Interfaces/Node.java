@@ -38,11 +38,6 @@ public abstract class Node<Op, cOp, count extends Number, childCount extends Num
 
     public Node() {}
 
-//    public Node(Op option, Node<?, Op, ?, count> parent) {
-//        this.option = option;
-//        this.parent = parent;
-//    }
-
     public Node(Op option, Node<?, Op, ?, count> parent, count initCount) {
         this.option = option;
         this.parent = parent;
@@ -76,8 +71,6 @@ public abstract class Node<Op, cOp, count extends Number, childCount extends Num
         return childNodes;
 
     }
-
-
 
     public ArrayList<String> getVariableNamesAL() {
         ArrayList<String> s = getParent().getVariableNamesAL();
@@ -137,8 +130,6 @@ public abstract class Node<Op, cOp, count extends Number, childCount extends Num
 
     public Node getAncestor(Node nodeType) {
 
-//        nodeType.getClass().isInstance(this);
-
         if(nodeType.getClass().isInstance(this)) {
             return this;
         } else {
@@ -150,19 +141,12 @@ public abstract class Node<Op, cOp, count extends Number, childCount extends Num
         return getAncestor(new CTtree()).getInputStats();
     }
 
+    public Date getStartDate() {
+        return getAncestor(new CTtree()).getStartDate();
+    }
+
     public Date getEndDate() {
         return getAncestor(new CTtree()).getEndDate();
     }
-
-//    public String toString() {
-//        String s = "";
-//
-//        s += getClass().getCanonicalName() + " ";
-//        s += getOption().toString() + " --- ";
-//        s += getAncestor(new YOBNodeDouble()).getOption().toString() + " @ ";
-//        s += getAncestor(new AgeNodeDouble()).getOption().toString() + " ";
-//
-//        return s;
-//    }
 
 }

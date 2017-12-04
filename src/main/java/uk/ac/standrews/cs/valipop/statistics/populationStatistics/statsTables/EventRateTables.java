@@ -123,4 +123,6 @@ public interface EventRateTables {
 
     EnumeratedDistribution getSurnameDistribution(Date year);
 
+    double getMaleProportionOfBirths(Date year);
+
 }

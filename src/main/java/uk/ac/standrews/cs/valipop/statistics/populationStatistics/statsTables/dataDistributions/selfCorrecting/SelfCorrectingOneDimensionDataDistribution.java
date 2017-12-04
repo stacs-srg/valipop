@@ -19,7 +19,6 @@ package uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.d
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.DeterminedCount;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.SingleDeterminedCount;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.StatsKey;
-import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.DataDistribution;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.OneDimensionDataDistribution;
 import uk.ac.standrews.cs.valipop.utils.MapUtils;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
@@ -37,7 +36,7 @@ import java.util.Map;
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class SelfCorrectingOneDimensionDataDistribution extends OneDimensionDataDistribution implements DataDistribution<Integer, Double> {
+public class SelfCorrectingOneDimensionDataDistribution extends OneDimensionDataDistribution implements SelfCorrection<Integer, Double> {
 
     private boolean binominalSampling;
     private RandomGenerator rng;
@@ -68,62 +67,52 @@ public class SelfCorrectingOneDimensionDataDistribution extends OneDimensionData
         // target rate
         double tD = targetRates.get(age);
 
-//        if(binominalSampling) {
-//            int determinedCount = new BinomialDistribution(rng, (int) Math.round(key.getForNPeople()), tD).sample();
-//
-//            return new SingleDeterminedCount(key, determinedCount, tD * key.getForNPeople(), tD * key.getForNPeople());
-//
-//        } else {
+        // applied count
+        double aC = appliedCounts.get(age);
 
-            // applied count
-            double aC = appliedCounts.get(age);
+        // if no correction data - i.e. first call to this method
+        if (aC == 0) {
+            double rateToApply = calcSubRateFromYearRate(tD, key.getConsideredTimePeriod());
+            return resolveRateToCount(key, rateToApply, rateToApply); // Same due to correction rate currently same as target rate
+        }
 
-            // if no correction data - i.e. first call to this method
-            if (aC == 0) {
-                double rateToApply = calcSubRateFromYearRate(tD, key.getConsideredTimePeriod());
-                return resolveRateToCount(key, rateToApply, rateToApply); // Same due to correction rate currently same as target rate
-            }
+        // to apply to
+        Double tAT = key.getForNPeople();
 
-            // to apply to
-            Double tAT = key.getForNPeople();
+        // applied rate
+        double aD = appliedRates.get(age);
 
-            // applied rate
-            double aD = appliedRates.get(age);
+        // if no N value given in StatsKey
+        if (tAT == 0) {
+            double rateToApply = calcSubRateFromYearRate(tD, key.getConsideredTimePeriod());
+            return resolveRateToCount(key, rateToApply, rateToApply);
+        }
 
-            // if no N value given in StatsKey
-            if (tAT == 0) {
-                double rateToApply = calcSubRateFromYearRate(tD, key.getConsideredTimePeriod());
-                return resolveRateToCount(key, rateToApply, rateToApply);
-            }
+        double rf = 1;
+        if(config != null) {
+            rf = config.getRecoveryFactor();
+        }
 
-            // Correction rate
-//            double cD = (tD * (aC + tAT) - (aD * aC)) / tAT;
+        double fall = Math.ceil( (aC * tD) - (aC * aD) );
 
-            double rf = 1;
-            if(config != null) {
-                rf = config.getRecoveryFactor();
-            }
+        double cD;
+        if(fall > 0) {
+            cD = ( fall * rf + tAT * tD ) / tAT;
+        } else {
+            cD = 0;
+        }
 
-            double fall = Math.ceil( (aC * tD) - (aC * aD) );
+        // Checks that rate falls in bounds
+        if (cD < 0) {
+            cD = 0;
+        } else if (cD > 1) {
+            cD = 1;
+        }
 
-            double cD;
-            if(fall > 0) {
-                cD = ( fall * rf + tAT * tD ) / tAT;
-            } else {
-                cD = 0;
-            }
+        double rateToApply = calcSubRateFromYearRate(cD, key.getConsideredTimePeriod());
+        double uncorrectedRate = calcSubRateFromYearRate(tD, key.getConsideredTimePeriod());
+        return resolveRateToCount(key, rateToApply, uncorrectedRate);
 
-            // Checks that rate falls in bounds
-            if (cD < 0) {
-                cD = 0;
-            } else if (cD > 1) {
-                cD = 1;
-            }
-
-            double rateToApply = calcSubRateFromYearRate(cD, key.getConsideredTimePeriod());
-            double uncorrectedRate = calcSubRateFromYearRate(tD, key.getConsideredTimePeriod());
-            return resolveRateToCount(key, rateToApply, uncorrectedRate);
-//        }
     }
 
     public void returnAchievedCount(DeterminedCount<Integer, Double> achievedCount) {
@@ -202,19 +191,15 @@ public class SelfCorrectingOneDimensionDataDistribution extends OneDimensionData
 
     private double calcAppliedYearRateFromSubRate(double subRate, CompoundTimeUnit timePeriod) {
         double stepsInYear = DateUtils.stepsInYear(timePeriod);
-//        return subRate * stepsInYear;
 
         double appliedYearRate = 1 - Math.pow(1 - subRate, stepsInYear);
         return appliedYearRate;
     }
 
     private double calcSubRateFromYearRate(double yearRate, CompoundTimeUnit timePeriod) {
-
         double stepsInYear = DateUtils.stepsInYear(timePeriod);
-//        return yearRate / stepsInYear;
 
         double subRate = 1 - Math.pow(1 - yearRate, 1 / stepsInYear);
-
         return subRate;
     }
 

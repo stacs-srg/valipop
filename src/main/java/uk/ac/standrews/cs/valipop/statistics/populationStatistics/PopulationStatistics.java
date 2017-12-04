@@ -44,10 +44,7 @@ import java.util.*;
  *
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class PopulationStatistics implements DateBounds, EventRateTables {
-
-    private MonthDate startDate;
-    private Date endDate;
+public class PopulationStatistics implements EventRateTables {
 
     private Map<YearDate, SelfCorrectingOneDimensionDataDistribution> maleDeath;
     private Map<YearDate, SelfCorrectingOneDimensionDataDistribution> femaleDeath;
@@ -64,14 +61,11 @@ public class PopulationStatistics implements DateBounds, EventRateTables {
     private Map<YearDate, ValiPopEnumeratedDistribution> surname;
 
     // Population Constants
-    private int maxGestationPeriodDays = 280;
     private int minGestationPeriodDays = 147;
-
     private int minBirthSpacingDays = 147;
     private double maxProportionBirthsDueToInfidelity = 0.2;
 
-    public PopulationStatistics(Config config,
-                                Map<YearDate, SelfCorrectingOneDimensionDataDistribution> maleDeath,
+    public PopulationStatistics(Map<YearDate, SelfCorrectingOneDimensionDataDistribution> maleDeath,
                                 Map<YearDate, SelfCorrectingOneDimensionDataDistribution> femaleDeath,
                                 Map<YearDate, SelfCorrectingProportionalDistribution> partnering,
                                 Map<YearDate, SelfCorrectingTwoDimensionDataDistribution> orderedBirth,
@@ -80,7 +74,10 @@ public class PopulationStatistics implements DateBounds, EventRateTables {
                                 Map<YearDate, Double> sexRatioBirths,
                                 Map<YearDate, ValiPopEnumeratedDistribution> maleForename,
                                 Map<YearDate, ValiPopEnumeratedDistribution> femaleForename,
-                                Map<YearDate, ValiPopEnumeratedDistribution> surname) {
+                                Map<YearDate, ValiPopEnumeratedDistribution> surname,
+                                int minBirthSpacingDays,
+                                int minGestationPeriodDays,
+                                double maxProportionBirthsDueToInfidelity) {
 
         this.maleDeath = maleDeath;
         this.femaleDeath = femaleDeath;
@@ -94,36 +91,10 @@ public class PopulationStatistics implements DateBounds, EventRateTables {
         this.femaleForename = femaleForename;
         this.surname = surname;
 
-        this.startDate = config.getTS();
-        this.endDate = config.getTE();
+        this.minBirthSpacingDays = minBirthSpacingDays;
+        this.minGestationPeriodDays = minGestationPeriodDays;
+        this.maxProportionBirthsDueToInfidelity = maxProportionBirthsDueToInfidelity;
 
-        minBirthSpacingDays = config.getMinBirthSpacing();
-        maxProportionBirthsDueToInfidelity = config.getMaxProportionOBirthsDueToInfidelity();
-
-    }
-
-    /*
-    -------------------- DateBounds interface methods --------------------
-     */
-
-    @Override
-    public MonthDate getStartDate() {
-        return startDate;
-    }
-
-    @Override
-    public Date getEndDate() {
-        return endDate;
-    }
-
-    @Override
-    public void setStartDate(AdvancableDate start) {
-        startDate = start.getMonthDate();
-    }
-
-    @Override
-    public void setEndDate(Date end) {
-        endDate = end;
     }
 
     /*
@@ -240,6 +211,11 @@ public class PopulationStatistics implements DateBounds, EventRateTables {
         return surname.get(getNearestYearInMap(year.getYearDate(), surname));
     }
 
+    @Override
+    public double getMaleProportionOfBirths(Date onDate) {
+        return sexRatioBirth.get(getNearestYearInMap(onDate, sexRatioBirth));
+    }
+
 
     /*
     --------------------- Private Helper Methods ---------------------
@@ -267,20 +243,12 @@ public class PopulationStatistics implements DateBounds, EventRateTables {
 
     }
 
-    public int getMaxGestationPeriod() {
-        return maxGestationPeriodDays;
-    }
-
     public int getMinBirthSpacing() {
         return minBirthSpacingDays;
     }
 
     public int getMinGestationPeriod() {
         return minGestationPeriodDays;
-    }
-
-    public double getMaleProportionOfBirths(Date onDate) {
-        return sexRatioBirth.get(getNearestYearInMap(onDate, sexRatioBirth));
     }
 
     public double getMaxProportionBirthsDueToInfidelity() {
