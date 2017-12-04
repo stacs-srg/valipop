@@ -16,7 +16,10 @@
  */
 package uk.ac.standrews.cs.valipop.statistics.populationStatistics;
 
+import uk.ac.standrews.cs.basic_model.distributions.general.EnumeratedDistribution;
+import uk.ac.standrews.cs.basic_model.distributions.general.InconsistentWeightException;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.ProportionalDistribution;
+import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.ValiPopEnumeratedDistribution;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.selfCorrecting.SelfCorrectingProportionalDistribution;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.selfCorrecting.SelfCorrectingTwoDimensionDataDistribution;
 import uk.ac.standrews.cs.valipop.utils.fileUtils.InputFileReader;
@@ -52,7 +55,7 @@ public abstract class DesiredPopulationStatisticsFactory {
      *
      * @return the quantified event occurrences
      */
-    public static PopulationStatistics initialisePopulationStatistics(Config config) throws IOException, InvalidInputFileException {
+    public static PopulationStatistics initialisePopulationStatistics(Config config) throws IOException, InvalidInputFileException, InconsistentWeightException {
 
         DesiredPopulationStatisticsFactory.log.info("Creating PopulationStatistics instance");
 
@@ -63,8 +66,12 @@ public abstract class DesiredPopulationStatisticsFactory {
         Map<YearDate, ProportionalDistribution> multipleBirth = readInAndAdaptAgeAndProportionalStatsInputFiles(config.getVarMultipleBirthPaths(), config);
         Map<YearDate, SelfCorrectingOneDimensionDataDistribution> separation = readInSC1DDataFiles(config.getVarSeparationPaths(), config);
         Map<YearDate, Double> sexRatioBirth = readInSingleInputDataFile(config.getVarBirthRatioPath(), config);
+        Map<YearDate, ValiPopEnumeratedDistribution> maleForename = readInNamesDataFiles(config.getVarMaleForenamePath(), config);
+        Map<YearDate, ValiPopEnumeratedDistribution> femaleForename = readInNamesDataFiles(config.getVarFemaleForenamePath(), config);
+        Map<YearDate, ValiPopEnumeratedDistribution> surname = readInNamesDataFiles(config.getVarSurnamePath(), config);
 
-        return new PopulationStatistics(config, maleDeath, femaleDeath, partnering, orderedBirth, multipleBirth, separation, sexRatioBirth);
+        return new PopulationStatistics(config, maleDeath, femaleDeath, partnering, orderedBirth, multipleBirth,
+                separation, sexRatioBirth, maleForename, femaleForename, surname);
     }
 
     private static Map<YearDate, Double> readInSingleInputDataFile(DirectoryStream<Path> paths, Config config) throws IOException, InvalidInputFileException {
@@ -97,6 +104,19 @@ public abstract class DesiredPopulationStatisticsFactory {
         for (Path path : paths) {
             // read in each file
             SelfCorrectingOneDimensionDataDistribution tempData = InputFileReader.readInSC1DDataFile(path, config);
+            data.put(tempData.getYear(), tempData);
+        }
+        return insertDistributionsToMeetInputWidth(config, data);
+
+    }
+
+    private static Map<YearDate,ValiPopEnumeratedDistribution> readInNamesDataFiles(DirectoryStream<Path> paths, Config config) throws IOException, InvalidInputFileException, InconsistentWeightException {
+
+        Map<YearDate, ValiPopEnumeratedDistribution> data = new HashMap<>();
+
+        for (Path path : paths) {
+            // read in each file
+            ValiPopEnumeratedDistribution tempData = InputFileReader.readInNameDataFile(path);
             data.put(tempData.getYear(), tempData);
         }
         return insertDistributionsToMeetInputWidth(config, data);

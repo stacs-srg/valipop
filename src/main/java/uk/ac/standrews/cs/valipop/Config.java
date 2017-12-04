@@ -49,6 +49,9 @@ public class Config {
     private static final String partneringSubFile = "partnering";
     private static final String separationSubFile = "separation";
     private static final String birthRatioSubFile = "ratio_birth";
+    private static final String maleForenameSubFile = "male_forename";
+    private static final String femaleForenameSubFile = "female_forename";
+    private static final String surnameSubFile = "surname";
 
     public static final Logger log = LogManager.getLogger(Config.class);
 
@@ -67,6 +70,9 @@ public class Config {
     private Path varPartneringPaths;
     private Path varSeparationPaths;
     private Path varBirthRatioPaths;
+    private Path varMaleForenamePaths;
+    private Path varFemaleForenamePaths;
+    private Path varSurnamePaths;
 
     private Path resultsSavePath;
 
@@ -112,6 +118,9 @@ public class Config {
         varPartneringPaths = Paths.get(varPath, partneringSubFile);
         varSeparationPaths = Paths.get(varPath, separationSubFile);
         varBirthRatioPaths = Paths.get(varPath, birthRatioSubFile);
+        varMaleForenamePaths = Paths.get(varPath, maleForenameSubFile);
+        varFemaleForenamePaths = Paths.get(varPath, femaleForenameSubFile);
+        varSurnamePaths = Paths.get(varPath, surnameSubFile);
 
         this.resultsSavePath = Paths.get(resultsSavePath);
 
@@ -382,6 +391,36 @@ public class Config {
             return Files.newDirectoryStream(varBirthRatioPaths, filter);
         } catch (IOException e) {
             String message = "Error reading in birth ratio file";
+            log.fatal(message);
+            throw new IOException(message, e);
+        }
+    }
+
+    public DirectoryStream<Path> getVarMaleForenamePath() throws IOException {
+        try {
+            return Files.newDirectoryStream(varMaleForenamePaths, filter);
+        } catch (IOException e) {
+            String message = "Error reading in male forename file";
+            log.fatal(message);
+            throw new IOException(message, e);
+        }
+    }
+
+    public DirectoryStream<Path> getVarFemaleForenamePath() throws IOException {
+        try {
+            return Files.newDirectoryStream(varFemaleForenamePaths, filter);
+        } catch (IOException e) {
+            String message = "Error reading in female forename file";
+            log.fatal(message);
+            throw new IOException(message, e);
+        }
+    }
+
+    public DirectoryStream<Path> getVarSurnamePath() throws IOException {
+        try {
+            return Files.newDirectoryStream(varSurnamePaths, filter);
+        } catch (IOException e) {
+            String message = "Error reading in surname file";
             log.fatal(message);
             throw new IOException(message, e);
         }

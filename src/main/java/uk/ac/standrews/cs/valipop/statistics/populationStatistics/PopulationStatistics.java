@@ -16,8 +16,11 @@
  */
 package uk.ac.standrews.cs.valipop.statistics.populationStatistics;
 
+import uk.ac.standrews.cs.basic_model.distributions.general.EnumeratedDistribution;
+import uk.ac.standrews.cs.basic_model.distributions.general.FileBasedEnumeratedDistribution;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.*;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.ProportionalDistribution;
+import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.ValiPopEnumeratedDistribution;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.selfCorrecting.SelfCorrectingProportionalDistribution;
 import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date;
@@ -52,7 +55,13 @@ public class PopulationStatistics implements DateBounds, EventRateTables {
     private Map<YearDate, SelfCorrectingTwoDimensionDataDistribution> orderedBirth;
     private Map<YearDate, ProportionalDistribution> multipleBirth;
     private Map<YearDate, SelfCorrectingOneDimensionDataDistribution> separation;
+
     private Map<YearDate, Double> sexRatioBirth;
+
+    private Map<YearDate, ValiPopEnumeratedDistribution> maleForename;
+    private Map<YearDate, ValiPopEnumeratedDistribution> femaleForename;
+
+    private Map<YearDate, ValiPopEnumeratedDistribution> surname;
 
     // Population Constants
     private int maxGestationPeriodDays = 280;
@@ -68,7 +77,10 @@ public class PopulationStatistics implements DateBounds, EventRateTables {
                                 Map<YearDate, SelfCorrectingTwoDimensionDataDistribution> orderedBirth,
                                 Map<YearDate, ProportionalDistribution> multipleBirth,
                                 Map<YearDate, SelfCorrectingOneDimensionDataDistribution> separation,
-                                Map<YearDate, Double> sexRatioBirths) {
+                                Map<YearDate, Double> sexRatioBirths,
+                                Map<YearDate, ValiPopEnumeratedDistribution> maleForename,
+                                Map<YearDate, ValiPopEnumeratedDistribution> femaleForename,
+                                Map<YearDate, ValiPopEnumeratedDistribution> surname) {
 
         this.maleDeath = maleDeath;
         this.femaleDeath = femaleDeath;
@@ -77,6 +89,10 @@ public class PopulationStatistics implements DateBounds, EventRateTables {
         this.multipleBirth = multipleBirth;
         this.separation = separation;
         this.sexRatioBirth = sexRatioBirths;
+
+        this.maleForename = maleForename;
+        this.femaleForename = femaleForename;
+        this.surname = surname;
 
         this.startDate = config.getTS();
         this.endDate = config.getTE();
@@ -208,6 +224,20 @@ public class PopulationStatistics implements DateBounds, EventRateTables {
     @Override
     public SelfCorrectingOneDimensionDataDistribution getSeparationByChildCountRates(Date year) {
         return separation.get(getNearestYearInMap(year.getYearDate(), separation));
+    }
+
+    @Override
+    public EnumeratedDistribution getForenameDistribution(Date year, char gender) {
+        if (Character.toLowerCase(gender) == 'm') {
+            return maleForename.get(getNearestYearInMap(year.getYearDate(), maleForename));
+        } else {
+            return femaleForename.get(getNearestYearInMap(year.getYearDate(), femaleForename));
+        }
+    }
+
+    @Override
+    public EnumeratedDistribution getSurnameDistribution(Date year) {
+        return surname.get(getNearestYearInMap(year.getYearDate(), surname));
     }
 
 

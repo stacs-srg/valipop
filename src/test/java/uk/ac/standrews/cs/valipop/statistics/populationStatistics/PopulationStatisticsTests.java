@@ -17,6 +17,7 @@
 package uk.ac.standrews.cs.valipop.statistics.populationStatistics;
 
 import org.junit.Test;
+import uk.ac.standrews.cs.basic_model.distributions.general.InconsistentWeightException;
 import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
@@ -42,7 +43,7 @@ import java.nio.file.Paths;
 public class PopulationStatisticsTests {
 
     @Test
-    public void testA() throws IOException, InvalidInputFileException {
+    public void testA() throws IOException, InvalidInputFileException, InconsistentWeightException {
         Path p = Paths.get("src/test/resources/config-ps.txt");
         Config config = new Config(p,"TEST", "...");
         PopulationStatistics ps = DesiredPopulationStatisticsFactory.initialisePopulationStatistics(config);
@@ -68,7 +69,7 @@ public class PopulationStatisticsTests {
     }
 
     @Test
-    public void testB() throws IOException, InvalidInputFileException {
+    public void testB() throws IOException, InvalidInputFileException, InconsistentWeightException {
 
         Path p = Paths.get("src/test/resources/config-ps.txt");
         Config config = new Config(p,"TEST", "...");

@@ -17,8 +17,11 @@
 package uk.ac.standrews.cs.valipop.utils.fileUtils;
 
 
+import uk.ac.standrews.cs.basic_model.distributions.general.EnumeratedDistribution;
+import uk.ac.standrews.cs.basic_model.distributions.general.InconsistentWeightException;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.OneDimensionDataDistribution;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.ProportionalDistribution;
+import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.ValiPopEnumeratedDistribution;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.selfCorrecting.MotherChildAdapter;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.selfCorrecting.SelfCorrectingProportionalDistribution;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.selfCorrecting.SelfCorrectingTwoDimensionDataDistribution;
@@ -38,10 +41,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
@@ -51,6 +51,8 @@ public class InputFileReader {
     private static final String TAB = "\t";
     private static final String COMMENT_INDICATOR = "#";
     public static Logger log = LogManager.getLogger(InputFileReader.class);
+
+    private static Random rand = new Random();
 
     public static Collection<String> getAllLines(Path path) throws IOException {
 
@@ -124,7 +126,7 @@ public class InputFileReader {
 
     public static SelfCorrectingTwoDimensionDataDistribution readInSC2DDataFile(Path path, Config config) throws IOException, InvalidInputFileException {
 
-        ArrayList<String> lines = new ArrayList<String>(getAllLines(path));
+        ArrayList<String> lines = new ArrayList<>(getAllLines(path));
 
         YearDate year = null;
         String sourcePopulation = null;
@@ -195,6 +197,63 @@ public class InputFileReader {
         }
 
         return new SelfCorrectingTwoDimensionDataDistribution(year, sourcePopulation, sourceOrganisation, data);
+    }
+
+    public static ValiPopEnumeratedDistribution readInNameDataFile(Path path) throws IOException, InvalidInputFileException, InconsistentWeightException {
+
+        ArrayList<String> lines = new ArrayList<>(getAllLines(path));
+
+        YearDate year = null;
+        String sourcePopulation = null;
+        String sourceOrganisation = null;
+
+        ArrayList<String> columnLabels = new ArrayList<>();
+        Map<String, Double> data = new HashMap<>();
+
+
+        for (int i = 0; i < lines.size(); i++) {
+
+            String s = lines.get(i);
+            String[] split = s.split(TAB, 2);
+
+            switch (split[0].toLowerCase()) {
+                case "year":
+                    try {
+                        year = new YearDate(Integer.parseInt(split[1]));
+                    } catch (NumberFormatException e) {
+                        throw new InvalidInputFileException("Non integer value given for year in file: " + path.toString(), e);
+                    }
+                    break;
+                case "population":
+                    sourcePopulation = split[1];
+                    break;
+                case "source":
+                    sourceOrganisation = split[1];
+                    break;
+                case "labels":
+                    columnLabels = readInStringLabels(split);
+                    break;
+                case "data":
+                    i++; // go to next line for data rows
+                    for (; i < lines.size(); i++) {
+                        s = lines.get(i);
+                        split = s.split(TAB);
+
+                        if (split.length != columnLabels.size()) {
+                            throw new InvalidInputFileException("One or more data rows do not have the correct number of values in the file: " + path.toString());
+                        }
+
+                        String rowLabel = split[0];
+                        data.put(rowLabel, Double.parseDouble(split[1]));
+
+                    }
+                    break;
+            }
+
+
+        }
+
+        return new ValiPopEnumeratedDistribution(year, sourcePopulation, sourceOrganisation, data, rand);
     }
 
     public static OneDimensionDataDistribution readIn1DDataFile(Path path) throws IOException, InvalidInputFileException {
@@ -362,6 +421,19 @@ public class InputFileReader {
             } catch (InvalidRangeException e) {
                 throw new InvalidInputFileException("A LABEL specifies an invalid range in the file: " + path.toString(), e);
             }
+        }
+
+        return columnLabels;
+    }
+
+    private static ArrayList<String> readInStringLabels(String[] split) {
+
+        ArrayList<String> columnLabels = new ArrayList<>();
+        String s = split[1];
+        split = s.split(TAB);
+
+        for (String l : split) {
+            columnLabels.add(l);
         }
 
         return columnLabels;
