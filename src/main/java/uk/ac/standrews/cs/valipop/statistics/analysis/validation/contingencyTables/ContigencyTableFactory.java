@@ -40,33 +40,19 @@ public class ContigencyTableFactory {
             log.info("OBDModel --- Extracting and Outputting CTables to files");
 
             CTtableOB obTable = new CTtableOB(fullTree, desired);
-//            outputToFile(obTable, 0, "ob-CT-zav-0.csv");
             outputToFile(obTable, "ob-CT.csv");
 
             CTtableMB mbTable = new CTtableMB(fullTree, desired);
-//            outputToFile(mbTable, 0, "mb-CT-zav-0.csv");
             outputToFile(mbTable, "mb-CT.csv");
 
             CTtablePart partTable = new CTtablePart(fullTree, desired);
-//            outputToFile(partTable, 0, "part-CT-zav-0.csv");
             outputToFile(partTable, "part-CT.csv");
 
             CTtableSep sepTable = new CTtableSep(fullTree, desired);
-//            outputToFile(sepTable, 0, "sep-CT-zav-0.csv");
             outputToFile(sepTable, "sep-CT.csv");
 
             CTtableDeath deathTable = new CTtableDeath(fullTree);
-//            outputToFile(deathTable, 0, "death-CT-zav-0.csv");
             outputToFile(deathTable, "death-CT.csv");
-
-
-//            System.out.println("OBDModel --- Outputting Full CTable to file");
-//            zeroAdjustValue = 0;
-//            String fN = "full-CT-zav-" + String.valueOf(zeroAdjustValue)+ ".csv";
-//            Path fullPath = FileUtils.mkBlankFile(FileUtils.getContingencyTablesPath(), fN);
-//            fullOutput = new PrintStream(fullPath.toFile(), "UTF-8");
-//            new CTtableFull(fullTree, fullOutput, zeroAdjustValue);
-//
 
         } catch (IOException e) {
             throw new Error("failed to make CT files");

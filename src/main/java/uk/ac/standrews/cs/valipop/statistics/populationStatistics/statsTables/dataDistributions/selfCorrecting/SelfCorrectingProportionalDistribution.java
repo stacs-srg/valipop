@@ -151,15 +151,17 @@ public class SelfCorrectingProportionalDistribution implements ProportionalDistr
     }
 
     @Override
-    public int getSmallestLabel() {
+    public IntegerRange getSmallestLabel() {
         int min = Integer.MAX_VALUE;
+        IntegerRange minRange = null;
         for (IntegerRange iR : targetProportions.keySet()) {
             int v = iR.getMin();
             if (v < min) {
                 min = v;
+                minRange = iR;
             }
         }
-        return min;
+        return minRange;
     }
 
     @Override

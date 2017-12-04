@@ -16,11 +16,18 @@
  */
 package uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.selfCorrecting;
 
+import uk.ac.standrews.cs.valipop.Config;
+import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.DeterminedCount;
+import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.StatsKey;
+
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public interface SelfCorrection<F> {
+public interface SelfCorrection<Type, Raw> {
 
+    DeterminedCount determineCount(StatsKey key, Config config);
+
+    void returnAchievedCount(DeterminedCount<Type, Raw> achievedCount);
 
 
 }

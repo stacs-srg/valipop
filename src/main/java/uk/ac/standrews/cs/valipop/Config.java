@@ -77,8 +77,11 @@ public class Config {
     private Path resultsSavePath;
 
     private final String runPurpose;
+
     private int minBirthSpacing;
     private double maxProportionOBirthsDueToInfidelity;
+    private int minGestationPeriodDays;
+
     private double birthFactor;
     private double deathFactor;
     private double recoveryFactor;
@@ -93,34 +96,21 @@ public class Config {
 
 
     // Filter method to exclude dot files from data file directory streams
-    private DirectoryStream.Filter<Path> filter = new DirectoryStream.Filter<Path>() {
-        public boolean accept(Path file) throws IOException {
-            Path path = file.getFileName();
-            if(path != null) {
-                return !path.toString().matches("^\\..+");
-            }
-            throw new IOException("Failed to get Filename");
+    private DirectoryStream.Filter<Path> filter = file -> {
+        Path path = file.getFileName();
+        if(path != null) {
+            return !path.toString().matches("^\\..+");
         }
+        throw new IOException("Failed to get Filename");
     };
 
     public Config(AdvancableDate tS, AdvancableDate t0, AdvancableDate tE, int t0PopulationSize, double setUpBR, double setUpDR,
                   CompoundTimeUnit simulationTimeStep, String varPath, String resultsSavePath, final String runPurpose,
-                  int minBirthSpacing, double maxProportionOBirthsDueToInfidelity, double birthFactor,
-                  double deathFactor, double recoveryFactor, CompoundTimeUnit inputWidth,
+                  int minBirthSpacing, int minGestationPeriodDays, double maxProportionOBirthsDueToInfidelity,
+                  double birthFactor, double deathFactor, double recoveryFactor, CompoundTimeUnit inputWidth,
                   RecordFormat outputRecordFormat, String startTime) {
 
-        this.varPath = varPath;
-        varBirthPaths = Paths.get(varPath, ordersBirthSubFile);
-        String deathSubPath = Paths.get(varPath, deathSubFile).toString();
-        varMaleDeathPaths = Paths.get(deathSubPath, maleDeathSubFile);
-        varFemaleDeathPaths = Paths.get(deathSubPath, femaleDeathSubFile);
-        varMultipleBirthPaths = Paths.get(varPath, multipleBirthSubFile);
-        varPartneringPaths = Paths.get(varPath, partneringSubFile);
-        varSeparationPaths = Paths.get(varPath, separationSubFile);
-        varBirthRatioPaths = Paths.get(varPath, birthRatioSubFile);
-        varMaleForenamePaths = Paths.get(varPath, maleForenameSubFile);
-        varFemaleForenamePaths = Paths.get(varPath, femaleForenameSubFile);
-        varSurnamePaths = Paths.get(varPath, surnameSubFile);
+        initialiseVarPaths(varPath);
 
         this.resultsSavePath = Paths.get(resultsSavePath);
 
@@ -134,6 +124,7 @@ public class Config {
 
         this.runPurpose = runPurpose;
         this.minBirthSpacing = minBirthSpacing;
+        this.minGestationPeriodDays = minGestationPeriodDays;
         this.maxProportionOBirthsDueToInfidelity = maxProportionOBirthsDueToInfidelity;
         this.birthFactor = birthFactor;
         this.deathFactor = deathFactor;
@@ -142,10 +133,7 @@ public class Config {
         this.outputRecordFormat = outputRecordFormat;
         this.startTime = startTime;
 
-
     }
-
-
 
     /**
      * This constructor reads in the file at the given path and stores the given configuration.
@@ -175,15 +163,7 @@ public class Config {
 
             switch (split[0]) {
                 case "var_data_files":
-                    varPath = path;
-                    varBirthPaths = Paths.get(path, ordersBirthSubFile);
-                    String deathSubPath = Paths.get(path, deathSubFile).toString();
-                    varMaleDeathPaths = Paths.get(deathSubPath, maleDeathSubFile);
-                    varFemaleDeathPaths = Paths.get(deathSubPath, femaleDeathSubFile);
-                    varMultipleBirthPaths = Paths.get(path, multipleBirthSubFile);
-                    varPartneringPaths = Paths.get(path, partneringSubFile);
-                    varSeparationPaths = Paths.get(path, separationSubFile);
-                    varBirthRatioPaths = Paths.get(path, birthRatioSubFile);
+                    initialiseVarPaths(path);
                     break;
                 case "results_save_location":
                     resultsSavePath = Paths.get(split[1]);
@@ -260,6 +240,14 @@ public class Config {
                         throw e;
                     }
                     break;
+                case "min_gestation_period":
+                    try {
+                        minGestationPeriodDays = Integer.parseInt(split[1]);
+                    } catch (NumberFormatException e) {
+                        log.fatal("min_gestation_period " + e.getMessage());
+                        throw e;
+                    }
+                    break;
                 case "max_births_infidelity":
                     try {
                         maxProportionOBirthsDueToInfidelity = Double.parseDouble(split[1]);
@@ -316,6 +304,23 @@ public class Config {
         }
     }
 
+
+    private void initialiseVarPaths(String path) {
+
+        varPath = path;
+        varBirthPaths = Paths.get(path, ordersBirthSubFile);
+        String deathSubPath = Paths.get(path, deathSubFile).toString();
+        varMaleDeathPaths = Paths.get(deathSubPath, maleDeathSubFile);
+        varFemaleDeathPaths = Paths.get(deathSubPath, femaleDeathSubFile);
+        varMultipleBirthPaths = Paths.get(path, multipleBirthSubFile);
+        varPartneringPaths = Paths.get(path, partneringSubFile);
+        varSeparationPaths = Paths.get(path, separationSubFile);
+        varBirthRatioPaths = Paths.get(path, birthRatioSubFile);
+        varMaleForenamePaths = Paths.get(path, maleForenameSubFile);
+        varFemaleForenamePaths = Paths.get(path, femaleForenameSubFile);
+        varSurnamePaths = Paths.get(path, surnameSubFile);
+
+    }
 
     public String getVarPath() {
         return varPath;
@@ -426,7 +431,6 @@ public class Config {
         }
     }
 
-
     public MonthDate getTS() {
         return tS;
     }
@@ -502,5 +506,9 @@ public class Config {
 
     public boolean getOutputTables() {
         return outputTables;
+    }
+
+    public int getMinGestationPeriodDays() {
+        return minGestationPeriodDays;
     }
 }

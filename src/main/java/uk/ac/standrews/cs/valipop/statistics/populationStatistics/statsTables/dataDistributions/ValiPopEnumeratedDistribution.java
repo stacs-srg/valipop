@@ -1,13 +1,11 @@
 package uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions;
 
+import uk.ac.standrews.cs.basic_model.distributions.StringWithCumulativeProbability;
 import uk.ac.standrews.cs.basic_model.distributions.general.EnumeratedDistribution;
 import uk.ac.standrews.cs.basic_model.distributions.general.InconsistentWeightException;
-import uk.ac.standrews.cs.valipop.Config;
-import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.DeterminedCount;
-import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.StatsKey;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.integerRange.IntegerRange;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Random;
@@ -15,7 +13,7 @@ import java.util.Random;
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class ValiPopEnumeratedDistribution extends EnumeratedDistribution implements DataDistribution<Double, Double> {
+public class ValiPopEnumeratedDistribution extends EnumeratedDistribution implements InputMetaData {
 
     private final YearDate year;
     private final String sourcePopulation;
@@ -47,27 +45,25 @@ public class ValiPopEnumeratedDistribution extends EnumeratedDistribution implem
     }
 
     @Override
-    public int getSmallestLabel() {
-        return 0;
+    public String getSmallestLabel() {
+        return items[0].getItem();
     }
 
     @Override
-    public IntegerRange getLargestLabel() {
-        return null;
+    public String getLargestLabel() {
+        return items[items.length - 1].getItem();
     }
 
     @Override
-    public Collection<IntegerRange> getLabels() {
-        return null;
+    public Collection<String> getLabels() {
+
+        Collection<String> col = new ArrayList<>(items.length);
+
+        for(StringWithCumulativeProbability i : items) {
+            col.add(i.getItem());
+        }
+
+        return col;
     }
 
-    @Override
-    public DeterminedCount determineCount(StatsKey key, Config config) {
-        return null;
-    }
-
-    @Override
-    public void returnAchievedCount(DeterminedCount<Double, Double> achievedCount) {
-
-    }
 }

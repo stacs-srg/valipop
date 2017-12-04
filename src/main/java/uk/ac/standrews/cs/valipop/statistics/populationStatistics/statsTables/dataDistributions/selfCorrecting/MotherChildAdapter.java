@@ -74,7 +74,7 @@ public class MotherChildAdapter implements ProportionalDistribution {
     }
 
     @Override
-    public int getSmallestLabel() {
+    public IntegerRange getSmallestLabel() {
         return distribution.getSmallestLabel();
     }
 

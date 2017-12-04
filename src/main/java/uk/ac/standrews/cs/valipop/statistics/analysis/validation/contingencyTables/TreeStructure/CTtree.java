@@ -32,7 +32,9 @@ import uk.ac.standrews.cs.valipop.simulationEntities.person.IPersonExtended;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.PeopleCollection;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.Node;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedList;
 
 
 /**
@@ -48,11 +50,12 @@ public class CTtree extends Node<String, SourceType, Number, Number> implements 
     private LinkedList<RunnableNode> nciapTasks = new LinkedList<>();
     private LinkedList<RunnableNode> sepTasks = new LinkedList<>();
 
-    public static final double NODE_MIN_COUNT = 0.0000000000000000000000000000000000000000000000000000000000000000001;
+    public static final double NODE_MIN_COUNT = 1E-66;
 
     private PopulationStatistics expected;
 
-    private uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date endDate;
+    private Date endDate;
+    private Date startDate;
 
     private SourceNodeInt simNode;
     private static SourceNodeDouble statNode = null;
@@ -75,6 +78,7 @@ public class CTtree extends Node<String, SourceType, Number, Number> implements 
 
     public CTtree(PeopleCollection population, PopulationStatistics expected, Date startDate, Date endDate, int startStepBack) {
         this.expected = expected;
+        this.startDate = startDate;
         this.endDate = new YearDate(endDate.getYear() - 2);
 
         log.info("CTree --- Populating tree");
@@ -106,9 +110,6 @@ public class CTtree extends Node<String, SourceType, Number, Number> implements 
                         ||
                         person.bornOnDate(y)) {
 
-                    if(person.ageOnDate(y) > 120) {
-                        System.out.println("How?");
-                    }
                     processPerson(person, y, SourceType.SIM);
                 }
             }
@@ -152,6 +153,10 @@ public class CTtree extends Node<String, SourceType, Number, Number> implements 
         return endDate;
     }
 
+    public Date getStartDate() {
+        return startDate;
+    }
+
 
     public PopulationStatistics getInputStats() {
         return expected;
@@ -176,7 +181,6 @@ public class CTtree extends Node<String, SourceType, Number, Number> implements 
                 throw new ChildNotFoundException();
             }
 
-
         } else {
             if (statNode != null) {
                 return statNode;
@@ -189,7 +193,6 @@ public class CTtree extends Node<String, SourceType, Number, Number> implements 
 
     @Override
     public void addDelayedTask(RunnableNode node) {
-//        delayedTasks.addLast(node);
 
         if(node instanceof DiedNodeDouble) {
             deathTasks.add(node);
@@ -207,14 +210,6 @@ public class CTtree extends Node<String, SourceType, Number, Number> implements 
 
     @Override
     public void executeDelayedTasks() {
-
-//        while(!delayedTasks.isEmpty()) {
-//            RunnableNode n = delayedTasks.removeFirst();
-//            System.out.println(n.toString());
-//            n.runTask();
-//        }
-
-        boolean first = true;
 
         log.info("CTree --- Initialising tree - death nodes from seed");
 
@@ -241,10 +236,6 @@ public class CTtree extends Node<String, SourceType, Number, Number> implements 
             }
 
             int i = 0;
-//            if(first) {
-//                i = 2;
-//                first = false;
-//            }
 
             for( ; i < 2; i ++) {
                 if(ageTasks.isEmpty()) {

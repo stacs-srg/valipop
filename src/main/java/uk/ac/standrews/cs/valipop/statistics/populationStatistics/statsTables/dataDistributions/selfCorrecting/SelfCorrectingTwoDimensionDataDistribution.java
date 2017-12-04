@@ -18,18 +18,15 @@ package uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.d
 
 
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.SingleDeterminedCount;
+import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.InputMetaData;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.integerRange.InvalidRangeException;
 import uk.ac.standrews.cs.valipop.Config;
-import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.DataDistribution;
-import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.OneDimensionDataDistribution;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.DeterminedCount;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.StatsKey;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.integerRange.IntegerRange;
 
 
-import java.io.PrintStream;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
@@ -37,7 +34,7 @@ import java.util.Set;
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class SelfCorrectingTwoDimensionDataDistribution implements DataDistribution<Integer, Double> {
+public class SelfCorrectingTwoDimensionDataDistribution implements InputMetaData, SelfCorrection<Integer, Double> {
 
     // The integer range here represents the row labels (i.e. the age ranges on the ordered birth table)
     private Map<IntegerRange, SelfCorrectingOneDimensionDataDistribution> data;
@@ -54,15 +51,9 @@ public class SelfCorrectingTwoDimensionDataDistribution implements DataDistribut
         this.data = tableData;
     }
 
-//    private static final double FACTOR = 1.007462401 ;
-//    private static final double FACTOR = 1;
-
     public SingleDeterminedCount determineCount(StatsKey key, Config config) {
         try {
             return getData(key.getXLabel()).determineCount(key, config);
-//            SingleDeterminedCount sDC = getData(key.getXLabel()).determineCount(key, config);
-//            int adjCount = Integer.parseInt(String.valueOf(Math.round(sDC.getDeterminedCount() * FACTOR)));
-//            return new SingleDeterminedCount(sDC.getKey(), adjCount, sDC.getRawCorrectedCount(), sDC.getRawUncorrectedCount());
         } catch (InvalidRangeException e) {
             return new SingleDeterminedCount(key, 0, 0, 0);
         }
@@ -71,8 +62,6 @@ public class SelfCorrectingTwoDimensionDataDistribution implements DataDistribut
 
     public void returnAchievedCount(DeterminedCount<Integer, Double> achievedCount) {
         try {
-//            int adjCount = Integer.parseInt(String.valueOf(Math.round(achievedCount.getFufilledCount() / FACTOR)));
-//            achievedCount.setFufilledCount(adjCount);
             getData(achievedCount.getKey().getXLabel()).returnAchievedCount(achievedCount);
         } catch (InvalidRangeException e) {
             if(achievedCount.getDeterminedCount() == 0) {
@@ -107,15 +96,17 @@ public class SelfCorrectingTwoDimensionDataDistribution implements DataDistribut
     }
 
     @Override
-    public int getSmallestLabel() {
+    public IntegerRange getSmallestLabel() {
         int min = Integer.MAX_VALUE;
+        IntegerRange minRange = null;
         for (IntegerRange iR : data.keySet()) {
             int v = iR.getMin();
             if (v < min) {
                 min = v;
+                minRange = iR;
             }
         }
-        return min;
+        return minRange;
     }
 
     @Override
@@ -149,79 +140,11 @@ public class SelfCorrectingTwoDimensionDataDistribution implements DataDistribut
         throw new InvalidRangeException("Given value not covered by rows - value " + rowValue);
     }
 
-//    public void outputResults(PrintStream resultsOutput) {
-//        resultsOutput.println("TARGET");
-//        outputMap(targetRates, true, resultsOutput);
-//        resultsOutput.println("APPLIED");
-//        outputMap(appliedData, true, resultsOutput);
-//        resultsOutput.println("DELTAS");
-//        printDeltas(appliedData, targetRates, resultsOutput);
-//        resultsOutput.println("COUNTS");
-//        outputMap(appliedCounts, false, resultsOutput);
-//    }
-
-    private void printDeltas(Map<IntegerRange, OneDimensionDataDistribution> appliedData, Map<IntegerRange, OneDimensionDataDistribution> targetData, PrintStream resultsOutput) {
-
-        IntegerRange[] keys = targetData.keySet().toArray(new IntegerRange[targetData.keySet().size()]);
-        Arrays.sort(keys, IntegerRange::compareTo);
-
-        for (IntegerRange iR : keys) {
-            resultsOutput.print(iR.toString() + " | ");
-
-            Map<IntegerRange, Double> targetRow = targetData.get(iR).getRate();
-            Map<IntegerRange, Double> appliedRow = appliedData.get(iR).getRate();
-
-            IntegerRange[] orderedKeys = targetRow.keySet().toArray(new IntegerRange[targetRow.keySet().size()]);
-            Arrays.sort(orderedKeys, IntegerRange::compareTo);
-
-            for (IntegerRange iR2 : orderedKeys) {
-                resultsOutput.printf("%+.4f | ", appliedRow.get(iR2) - targetRow.get(iR2));
-            }
-
-            resultsOutput.println();
-
-        }
-
-        resultsOutput.println();
-
-    }
-
-    public void outputMap(Map<IntegerRange, OneDimensionDataDistribution> data, boolean decimal, PrintStream resultsOutput) {
-
-        IntegerRange[] keys = data.keySet().toArray(new IntegerRange[data.keySet().size()]);
-        Arrays.sort(keys, IntegerRange::compareTo);
-
-        for (IntegerRange iR : keys) {
-            resultsOutput.print(iR.toString() + " | ");
-
-            Map<IntegerRange, Double> row = data.get(iR).getRate();
-            IntegerRange[] orderedKeys = row.keySet().toArray(new IntegerRange[row.keySet().size()]);
-            Arrays.sort(orderedKeys, IntegerRange::compareTo);
-
-            for (IntegerRange iR2 : orderedKeys) {
-                if (decimal) {
-                    resultsOutput.printf("%.4f | ", row.get(iR2));
-                } else {
-                    resultsOutput.printf("%.0f | ", row.get(iR2));
-                }
-            }
-
-            resultsOutput.println();
-
-        }
-
-
-        resultsOutput.println();
-
-    }
-
-
-
     public Set<IntegerRange> getRowLabels() {
         return data.keySet();
     }
 
-    public Set<IntegerRange> getColumnLabels () {
-        return data.get(resolveRowValue(getSmallestLabel())).getLabels();
+    public Set<IntegerRange> getColumnLabels() {
+        return data.get(resolveRowValue(getSmallestLabel().getValue())).getLabels();
     }
 }

@@ -50,7 +50,7 @@ public class AgeNodeDouble extends DoubleNode<IntegerRange, DiedOption> implemen
 
         Date currentDate = yob.advanceTime(ageI, TimeUnit.YEAR);
 
-        if(DateUtils.dateBefore(currentDate, getInputStats().getStartDate())) {
+        if(DateUtils.dateBefore(currentDate, getStartDate())) {
             initNode = true;
         }
 
