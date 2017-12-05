@@ -23,6 +23,7 @@ import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.DesiredPopulationStatisticsFactory;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
 import uk.ac.standrews.cs.valipop.utils.fileUtils.InvalidInputFileException;
+import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.RecordFormat;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.MonthDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.TimeUnit;
@@ -48,14 +49,18 @@ import java.util.Collections;
 public class PeopleCollectionTest {
 
     Logger log = LogManager.getLogger(PeopleCollectionTest.class);
+    PopulationStatistics ps;
 
     @Before
     public void setUpPopulationStatistics() throws InconsistentWeightException, IOException, InvalidInputFileException {
         // TODO Make a config instance
-        Config config = null;
-
+        Config config = new Config(new MonthDate(1,1), new MonthDate(1,100),
+                new MonthDate(1,200), 0, 0, 0, null,
+                "src/test/resources/valipop/test-pop", "", "",
+                0, 0, 0, 0, 0,
+                0, new CompoundTimeUnit(1, TimeUnit.YEAR), RecordFormat.NONE, null);
         // use config to make make ps
-        DesiredPopulationStatisticsFactory.initialisePopulationStatistics(config);
+        ps = DesiredPopulationStatisticsFactory.initialisePopulationStatistics(config);
     }
 
     @Test
@@ -70,13 +75,13 @@ public class PeopleCollectionTest {
 
         MonthDate start = new MonthDate(1, 1600);
 
-        Person m1 = new Person('m', start, null);
-        Person m2 = new Person('m', start, null);
-        Person m3 = new Person('m', start, null);
+        Person m1 = new Person('m', start, null, ps);
+        Person m2 = new Person('m', start, null, ps);
+        Person m3 = new Person('m', start, null, ps);
 
-        Person f1 = new Person('f', start, null);
-        Person f2 = new Person('f', start, null);
-        Person f3 = new Person('f', start, null);
+        Person f1 = new Person('f', start, null, ps);
+        Person f2 = new Person('f', start, null, ps);
+        Person f3 = new Person('f', start, null, ps);
 
         living.addPerson(m1);
         living.addPerson(m2);
@@ -105,13 +110,13 @@ public class PeopleCollectionTest {
 
         MonthDate start = new MonthDate(1, 1600);
 
-        Person m1 = new Person('m', start, null);
-        Person m2 = new Person('m', start, null);
-        Person m3 = new Person('m', start, null);
+        Person m1 = new Person('m', start, null, ps);
+        Person m2 = new Person('m', start, null, ps);
+        Person m3 = new Person('m', start, null, ps);
 
-        Person f1 = new Person('f', start, null);
-        Person f2 = new Person('f', start, null);
-        Person f3 = new Person('f', start, null);
+        Person f1 = new Person('f', start, null, ps);
+        Person f2 = new Person('f', start, null, ps);
+        Person f3 = new Person('f', start, null, ps);
 
         living.addPerson(m1);
         living.addPerson(m2);
@@ -149,13 +154,13 @@ public class PeopleCollectionTest {
 
         MonthDate start = new MonthDate(1, 1600);
 
-        Person m1 = new Person('m', start, null);
-        Person m2 = new Person('m', start, null);
-        Person m3 = new Person('m', start, null);
+        Person m1 = new Person('m', start, null, ps);
+        Person m2 = new Person('m', start, null, ps);
+        Person m3 = new Person('m', start, null, ps);
 
-        Person f1 = new Person('f', start, null);
-        Person f2 = new Person('f', start, null);
-        Person f3 = new Person('f', start, null);
+        Person f1 = new Person('f', start, null, ps);
+        Person f2 = new Person('f', start, null, ps);
+        Person f3 = new Person('f', start, null, ps);
 
         living.addPerson(m1);
         living.addPerson(m2);
@@ -198,13 +203,13 @@ public class PeopleCollectionTest {
 
         MonthDate start = new MonthDate(1, 1600);
 
-        Person f1 = new Person('f', start, null);
+        Person f1 = new Person('f', start, null, ps);
 
-        Person m1 = new Person('m', start, null);
+        Person m1 = new Person('m', start, null, ps);
 
-        Person c1 = new Person('m', start.advanceTime(19, TimeUnit.YEAR), null);
-        Person c2 = new Person('f', start.advanceTime(25, TimeUnit.YEAR), null);
-        Person c3 = new Person('m', start.advanceTime(32, TimeUnit.YEAR), null);
+        Person c1 = new Person('m', start.advanceTime(19, TimeUnit.YEAR), null, ps);
+        Person c2 = new Person('f', start.advanceTime(25, TimeUnit.YEAR), null, ps);
+        Person c3 = new Person('m', start.advanceTime(32, TimeUnit.YEAR), null, ps);
 
         living.addPerson(f1);
 
@@ -269,7 +274,7 @@ public class PeopleCollectionTest {
 
         MonthDate start = new MonthDate(1, 1600);
 
-        Person f1 = new Person('f', start, null);
+        Person f1 = new Person('f', start, null, ps);
         living.removePerson(f1);
 
     }
@@ -286,8 +291,8 @@ public class PeopleCollectionTest {
 
         MonthDate start = new MonthDate(1, 1600);
 
-        Person f1 = new Person('f', start, null);
-        Person f2 = new Person('f', start, null);
+        Person f1 = new Person('f', start, null, ps);
+        Person f2 = new Person('f', start, null, ps);
 
         living.addPerson(f2);
 
@@ -307,7 +312,7 @@ public class PeopleCollectionTest {
 
         MonthDate start = new MonthDate(1, 1600);
 
-        Person m1 = new Person('m', start, null);
+        Person m1 = new Person('m', start, null, ps);
         living.removePerson(m1);
 
     }
@@ -324,8 +329,8 @@ public class PeopleCollectionTest {
 
         MonthDate start = new MonthDate(1, 1600);
 
-        Person m1 = new Person('m', start, null);
-        Person m2 = new Person('m', start, null);
+        Person m1 = new Person('m', start, null, ps);
+        Person m2 = new Person('m', start, null, ps);
 
         living.addPerson(m2);
 

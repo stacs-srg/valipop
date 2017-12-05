@@ -33,7 +33,15 @@ public class DateSelector {
     public ExactDate selectDate(Date earliestDate, Date latestDate) {
 
         int daysInWindow = DateUtils.differenceInDays(earliestDate, latestDate);
-        int chosenDay = random.nextInt(Math.abs(daysInWindow));
+
+        int chosenDay;
+
+        try {
+            chosenDay = random.nextInt(Math.abs(daysInWindow));
+        } catch (IllegalArgumentException e) {
+            System.out.println("Unpermitted bound in Date Selector - window size = " + daysInWindow);
+            chosenDay = 0;
+        }
         return DateUtils.calculateExactDate(earliestDate, chosenDay);
 
     }

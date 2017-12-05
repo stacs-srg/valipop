@@ -44,7 +44,7 @@ public class PopulationStatisticsTests {
 
     @Test
     public void testA() throws IOException, InvalidInputFileException, InconsistentWeightException {
-        Path p = Paths.get("src/test/resources/config-ps.txt");
+        Path p = Paths.get("src/test/resources/valipop/config-ps.txt");
         Config config = new Config(p,"TEST", "...");
         PopulationStatistics ps = DesiredPopulationStatisticsFactory.initialisePopulationStatistics(config);
 
@@ -71,7 +71,7 @@ public class PopulationStatisticsTests {
     @Test
     public void testB() throws IOException, InvalidInputFileException, InconsistentWeightException {
 
-        Path p = Paths.get("src/test/resources/config-ps.txt");
+        Path p = Paths.get("src/test/resources/valipop/config-ps.txt");
         Config config = new Config(p,"TEST", "...");
         PopulationStatistics ps = DesiredPopulationStatisticsFactory.initialisePopulationStatistics(config);
 
