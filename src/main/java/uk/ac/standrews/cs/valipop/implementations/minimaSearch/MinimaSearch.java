@@ -61,6 +61,8 @@ public class MinimaSearch {
     static double bf = 0.0;
     static double df = 0.0;
 
+    static double nanAsemtote = 1E6;
+
     public static void main(String[] args) throws StatsException, IOException, InvalidInputFileException, InconsistentWeightException {
 
         String[] pArgs = ProcessArgs.process(args, "MINIMA_SEARCH");
@@ -154,7 +156,13 @@ public class MinimaSearch {
                                                 + String.valueOf(getControllingFactor(controlBy)));
                             }
 
-                            totalV += v;
+                            if(!Double.isNaN(v)) {
+                                totalV += v;
+                            } else {
+                                n --;
+                                break;
+                            }
+
                         } catch (PreEmptiveOutOfMemoryWarning | OutOfMemoryError e) {
 
                             handleRecoveryFromOutOfMemory(getControllingFactor(controlBy), model);
@@ -175,7 +183,10 @@ public class MinimaSearch {
                             repLock = true;
                         }
 
+                    } else {
+                        logFactortoV(getControllingFactor(controlBy), nanAsemtote);
                     }
+
                 } while(repLock);
 
                 CTtree.reuseExpectedValues(false);

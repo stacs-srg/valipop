@@ -82,9 +82,6 @@ public class NBirthLogic implements EventLogic {
                 if(determinedCount.getDeterminedCount() == 0) {
                     birthAdjust = 0;
                 } else {
-//                    birthAdjust = Integer.parseInt(String.valueOf(Math.round(new Random().nextInt(cohortSize + 1) * config.getBirthFactor())));
-//                    birthAdjust = -1;
-//                    int bound = Integer.parseInt(String.valueOf(Math.round(1 / config.getBirthFactor())));
 
                     int adjuster = new Double(Math.ceil(config.getBirthFactor())).intValue();
 
