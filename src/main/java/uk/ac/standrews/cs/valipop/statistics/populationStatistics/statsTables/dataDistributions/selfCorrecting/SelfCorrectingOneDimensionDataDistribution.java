@@ -44,7 +44,10 @@ public class SelfCorrectingOneDimensionDataDistribution extends OneDimensionData
     private Map<IntegerRange, Double> appliedRates;
     private Map<IntegerRange, Double> appliedCounts;
 
-    public SelfCorrectingOneDimensionDataDistribution(YearDate year, String sourcePopulation, String sourceOrganisation, Map<IntegerRange, Double> tableData, boolean binominalSampling) {
+    public SelfCorrectingOneDimensionDataDistribution(YearDate year, String sourcePopulation, String sourceOrganisation,
+                                                      Map<IntegerRange, Double> tableData, boolean binominalSampling,
+                                                      RandomGenerator randomGenerator) {
+
         super(year, sourcePopulation, sourceOrganisation, tableData);
 
         this.appliedRates = MapUtils.cloneODM(tableData);
@@ -56,7 +59,7 @@ public class SelfCorrectingOneDimensionDataDistribution extends OneDimensionData
             appliedRates.replace(iR, 0.0);
         }
 
-        rng = new JDKRandomGenerator();
+        rng = randomGenerator;
 
     }
 

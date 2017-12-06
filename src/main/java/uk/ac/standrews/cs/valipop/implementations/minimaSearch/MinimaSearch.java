@@ -258,10 +258,12 @@ public class MinimaSearch {
         hardLimitBottomBoundFactor = factor + 0.1;
         bottomSearchBoundFactor = hardLimitBottomBoundFactor;
 
+        System.out.println("Out of memory - setting jumpingPhase = true - memory usage: " + MemoryUsageAnalysis.getMaxSimUsage());
         jumpingPhase = true;
+
         model.getSummaryRow().setCompleted(false);
-        MemoryUsageAnalysis.reset();
         model.getSummaryRow().setMaxMemoryUsage(MemoryUsageAnalysis.getMaxSimUsage());
+        MemoryUsageAnalysis.reset();
         model.getSummaryRow().outputSummaryRowToFile();
         CTtree.clearStatNodeIfNessersary();
 
@@ -277,7 +279,7 @@ public class MinimaSearch {
 
         step = initStep;
 
-        int options = new Double((topSearchBoundFactor - bottomSearchBoundFactor) / (initStep / 2)).intValue();
+        int options = new Double((topSearchBoundFactor - bottomSearchBoundFactor) / (initStep / 2.0)).intValue();
 
         double chosenFactor;
 
@@ -289,6 +291,11 @@ public class MinimaSearch {
                 throw new SpaceExploredException();
             }
 
+            System.out.println("Selecting new starting point");
+            System.out.println(topSearchBoundFactor);
+            System.out.println(bottomSearchBoundFactor);
+            System.out.println(initStep);
+            System.out.println(options);
             int chosen = rand.nextInt(options);
 
             chosenFactor = chosen * (initStep / 2) + bottomSearchBoundFactor;
@@ -379,6 +386,7 @@ public class MinimaSearch {
             double upperBound = avg * (1 + intervalBoundV);
 
             if(lowerBound < orderedByV.get(0).y_v && orderedByV.get(pointsInMinima - 1).y_v < upperBound) {
+                System.out.println("Minima identified - setting jumpingPhase = true");
                 jumpingPhase = true;
                 return orderedByV.get(0);
             }
@@ -493,6 +501,7 @@ public class MinimaSearch {
     private static double getNextFactorValue() throws SpaceExploredException {
 
         if(jumpingPhase) {
+            System.out.println("Jump Out...");
             double nextFactor = jumpOut();
             System.out.println("Next Factor : " + nextFactor);
             return nextFactor;

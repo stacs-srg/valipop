@@ -16,6 +16,7 @@
  */
 package uk.ac.standrews.cs.basic_model.organic;
 
+import org.apache.commons.math3.random.RandomGenerator;
 import uk.ac.standrews.cs.basic_model.distributions.general.NegativeDeviationException;
 import uk.ac.standrews.cs.basic_model.distributions.general.NegativeWeightException;
 import uk.ac.standrews.cs.basic_model.distributions.temporal.TemporalEnumDistribution;
@@ -44,7 +45,7 @@ public class AffairWaitingQueueMember implements Comparable<AffairWaitingQueueMe
      * @param distributionKey The key corresponding to the file path in the config file.
      * @param random The random number generator to be used.
      */
-    public static void initialiseAffairWithMarrieadOrSingleDistribution(final OrganicPopulation population, final String distributionKey, final Random random) throws NegativeWeightException, IOException, NegativeDeviationException {
+    public static void initialiseAffairWithMarrieadOrSingleDistribution(final OrganicPopulation population, final String distributionKey, final RandomGenerator random) throws NegativeWeightException, IOException, NegativeDeviationException {
         affairWithMarriedOrSingleDistribution = new TemporalEnumDistribution<FamilyType>(population, distributionKey, random, AFFAIR_WITH_MARRIED_OR_SINGLE_FAMILY_TYPE_ARRAY);
     }
 

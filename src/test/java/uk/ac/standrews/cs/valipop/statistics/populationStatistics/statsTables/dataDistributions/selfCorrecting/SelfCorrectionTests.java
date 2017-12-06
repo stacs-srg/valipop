@@ -16,6 +16,7 @@
  */
 package uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.selfCorrecting;
 
+import org.apache.commons.math3.random.JDKRandomGenerator;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.TimeUnit;
@@ -50,7 +51,7 @@ public class SelfCorrectionTests {
 
         SelfCorrectingOneDimensionDataDistribution sc1DDD =
                 new SelfCorrectingOneDimensionDataDistribution(new YearDate(0),"test",
-                                                                "test", data, false);
+                                                                "test", data, false, new JDKRandomGenerator());
 
         return sc1DDD;
     }

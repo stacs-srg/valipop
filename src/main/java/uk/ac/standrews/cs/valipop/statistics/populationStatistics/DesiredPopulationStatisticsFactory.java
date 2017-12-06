@@ -16,6 +16,8 @@
  */
 package uk.ac.standrews.cs.valipop.statistics.populationStatistics;
 
+import org.apache.commons.math3.random.JDKRandomGenerator;
+import org.apache.commons.math3.random.RandomGenerator;
 import uk.ac.standrews.cs.basic_model.distributions.general.InconsistentWeightException;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.InputMetaData;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.ProportionalDistribution;
@@ -49,6 +51,9 @@ public abstract class DesiredPopulationStatisticsFactory {
 
     private static Logger log = LogManager.getLogger(DesiredPopulationStatisticsFactory.class);
 
+    private static final int DETERMINISTIC_SEED = 1111111111;
+    private static RandomGenerator randomGenerator;
+
     /**
      * Creates a PopulationStatistics object.
      *
@@ -57,6 +62,12 @@ public abstract class DesiredPopulationStatisticsFactory {
     public static PopulationStatistics initialisePopulationStatistics(Config config) throws IOException, InvalidInputFileException, InconsistentWeightException {
 
         DesiredPopulationStatisticsFactory.log.info("Creating PopulationStatistics instance");
+
+        randomGenerator = new JDKRandomGenerator();
+
+        if(config.deterministic()) {
+            randomGenerator.setSeed(DETERMINISTIC_SEED);
+        }
 
         Map<YearDate, SelfCorrectingOneDimensionDataDistribution> maleDeath = readInSC1DDataFiles(config.getVarMaleDeathPaths(), config);
         Map<YearDate, SelfCorrectingOneDimensionDataDistribution> femaleDeath = readInSC1DDataFiles(config.getVarFemaleDeathPaths(), config);
@@ -71,7 +82,8 @@ public abstract class DesiredPopulationStatisticsFactory {
 
         return new PopulationStatistics(maleDeath, femaleDeath, partnering, orderedBirth, multipleBirth,
                 separation, sexRatioBirth, maleForename, femaleForename, surname, config.getMinBirthSpacing(),
-                config.getMinGestationPeriodDays(), config.getMaxProportionOBirthsDueToInfidelity());
+                config.getMinGestationPeriodDays(), config.getMaxProportionOBirthsDueToInfidelity(), randomGenerator);
+
     }
 
     private static Map<YearDate, Double> readInSingleInputDataFile(DirectoryStream<Path> paths, Config config) throws IOException, InvalidInputFileException {
@@ -103,7 +115,7 @@ public abstract class DesiredPopulationStatisticsFactory {
 
         for (Path path : paths) {
             // read in each file
-            SelfCorrectingOneDimensionDataDistribution tempData = InputFileReader.readInSC1DDataFile(path, config);
+            SelfCorrectingOneDimensionDataDistribution tempData = InputFileReader.readInSC1DDataFile(path, config, randomGenerator);
             data.put(tempData.getYear(), tempData);
         }
         return insertDistributionsToMeetInputWidth(config, data);
@@ -116,7 +128,7 @@ public abstract class DesiredPopulationStatisticsFactory {
 
         for (Path path : paths) {
             // read in each file
-            ValiPopEnumeratedDistribution tempData = InputFileReader.readInNameDataFile(path);
+            ValiPopEnumeratedDistribution tempData = InputFileReader.readInNameDataFile(path, randomGenerator);
             data.put(tempData.getYear(), tempData);
         }
         return insertDistributionsToMeetInputWidth(config, data);
@@ -129,7 +141,7 @@ public abstract class DesiredPopulationStatisticsFactory {
 
         for (Path path : paths) {
             // read in each file
-            SelfCorrectingTwoDimensionDataDistribution tempData = InputFileReader.readInSC2DDataFile(path, config);
+            SelfCorrectingTwoDimensionDataDistribution tempData = InputFileReader.readInSC2DDataFile(path, config, randomGenerator);
             data.put(tempData.getYear(), tempData);
         }
         return insertDistributionsToMeetInputWidth(config, data);

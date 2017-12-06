@@ -16,6 +16,7 @@
  */
 package uk.ac.standrews.cs.valipop.simulationEntities.partnership;
 
+import org.apache.commons.math3.random.RandomGenerator;
 import uk.ac.standrews.cs.basic_model.model.IPartnership;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date;
 import org.apache.logging.log4j.LogManager;
@@ -152,7 +153,7 @@ public class Partnership implements IPartnershipExtended {
     }
 
     @Override
-    public Date getSeparationDate() {
+    public Date getSeparationDate(RandomGenerator random) {
 
         if(ealiestPossibleSepatationDate == null) {
             return null;
@@ -193,7 +194,7 @@ public class Partnership implements IPartnershipExtended {
                     }
                 }
 
-                separationDate = dateSelector.selectDate(ealiestPossibleSepatationDate, earliestMovedOnDate);
+                separationDate = dateSelector.selectDate(ealiestPossibleSepatationDate, earliestMovedOnDate, random);
 
             }
 

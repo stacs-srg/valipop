@@ -16,6 +16,8 @@
  */
 package uk.ac.standrews.cs.valipop.statistics.populationStatistics;
 
+import org.apache.commons.math3.random.JDKRandomGenerator;
+import org.apache.commons.math3.random.RandomGenerator;
 import uk.ac.standrews.cs.basic_model.distributions.general.EnumeratedDistribution;
 import uk.ac.standrews.cs.basic_model.distributions.general.FileBasedEnumeratedDistribution;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.*;
@@ -64,6 +66,8 @@ public class PopulationStatistics implements EventRateTables {
     private int minGestationPeriodDays = 147;
     private int minBirthSpacingDays = 147;
     private double maxProportionBirthsDueToInfidelity = 0.2;
+    private RandomGenerator randomGenerator;
+
 
     public PopulationStatistics(Map<YearDate, SelfCorrectingOneDimensionDataDistribution> maleDeath,
                                 Map<YearDate, SelfCorrectingOneDimensionDataDistribution> femaleDeath,
@@ -77,7 +81,8 @@ public class PopulationStatistics implements EventRateTables {
                                 Map<YearDate, ValiPopEnumeratedDistribution> surname,
                                 int minBirthSpacingDays,
                                 int minGestationPeriodDays,
-                                double maxProportionBirthsDueToInfidelity) {
+                                double maxProportionBirthsDueToInfidelity,
+                                RandomGenerator randomGenerator) {
 
         this.maleDeath = maleDeath;
         this.femaleDeath = femaleDeath;
@@ -94,6 +99,8 @@ public class PopulationStatistics implements EventRateTables {
         this.minBirthSpacingDays = minBirthSpacingDays;
         this.minGestationPeriodDays = minGestationPeriodDays;
         this.maxProportionBirthsDueToInfidelity = maxProportionBirthsDueToInfidelity;
+
+        this.randomGenerator = randomGenerator;
 
     }
 
@@ -256,4 +263,7 @@ public class PopulationStatistics implements EventRateTables {
     }
 
 
+    public RandomGenerator getRandomGenerator() {
+        return randomGenerator;
+    }
 }

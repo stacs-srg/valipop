@@ -16,6 +16,8 @@
  */
 package uk.ac.standrews.cs.basic_model.distributions.general;
 
+import org.apache.commons.math3.random.RandomGenerator;
+
 import java.util.Random;
 
 /**
@@ -39,7 +41,7 @@ public class WeightedIntegerDistribution extends RestrictedDistribution<Integer>
      * @param random the random number generator to be used.
      * @see WeightedDistribution
      */
-    public WeightedIntegerDistribution(final int minimum, final int maximum, final int[] weights, final Random random) throws NegativeWeightException {
+    public WeightedIntegerDistribution(final int minimum, final int maximum, final int[] weights, final RandomGenerator random) throws NegativeWeightException {
 
         minimumSpecifiedValue = Double.valueOf(minimum);
         maximumSpecifiedValue = Double.valueOf(maximum);
@@ -57,7 +59,7 @@ public class WeightedIntegerDistribution extends RestrictedDistribution<Integer>
      * @param handleNoPermissableValueAsZero If set as true then the distribution will view that when it throws a NoPermissableValueException that it is akin to returning a value of 0 to the balance of the distribution - however a NoPermissableValueException will still be thrown.
      * @throws NegativeWeightException if any of the weights are negative.
      */
-    public WeightedIntegerDistribution(final int minimum, final int maximum, final int[] weights, final Random random, final boolean handleNoPermissableValueAsZero) throws NegativeWeightException {
+    public WeightedIntegerDistribution(final int minimum, final int maximum, final int[] weights, final RandomGenerator random, final boolean handleNoPermissableValueAsZero) throws NegativeWeightException {
 
         minimumSpecifiedValue = Double.valueOf(minimum);
         maximumSpecifiedValue = Double.valueOf(maximum);

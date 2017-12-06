@@ -16,6 +16,7 @@
  */
 package uk.ac.standrews.cs.basic_model.distributions;
 
+import org.apache.commons.math3.random.RandomGenerator;
 import uk.ac.standrews.cs.basic_model.distributions.general.Distribution;
 import uk.ac.standrews.cs.basic_model.distributions.general.NegativeWeightException;
 import uk.ac.standrews.cs.basic_model.distributions.general.WeightedIntegerDistribution;
@@ -70,7 +71,7 @@ public class DeathAgeDistribution implements Distribution<Integer> {
      * Creates an age at death distribution.
      * @param random the random number generator to be used
      */
-    public DeathAgeDistribution(final Random random) {
+    public DeathAgeDistribution(final RandomGenerator random) {
 
         try {
             distribution = new WeightedIntegerDistribution(0, (int) (MAXIMUM_AGE_IN_YEARS * PopulationLogic.DAYS_PER_YEAR) - 1, AGE_DISTRIBUTION_WEIGHTS, random);

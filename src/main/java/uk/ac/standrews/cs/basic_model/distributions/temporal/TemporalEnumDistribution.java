@@ -16,6 +16,7 @@
  */
 package uk.ac.standrews.cs.basic_model.distributions.temporal;
 
+import org.apache.commons.math3.random.RandomGenerator;
 import uk.ac.standrews.cs.basic_model.distributions.general.NegativeWeightException;
 import uk.ac.standrews.cs.basic_model.distributions.general.NegativeDeviationException;
 import uk.ac.standrews.cs.basic_model.organic.OrganicPopulation;
@@ -37,7 +38,7 @@ public class TemporalEnumDistribution<Value> extends TemporalDistribution<Value>
      * @param distributionKey The key specified in the config file as the location of the relevant file.
      * @param random the random number generator to be used.
      */
-    public TemporalEnumDistribution(final OrganicPopulation population, final String distributionKey, final Random random, final Enum[] enums) throws NegativeWeightException, IOException, NegativeDeviationException {
+    public TemporalEnumDistribution(final OrganicPopulation population, final String distributionKey, final RandomGenerator random, final Enum[] enums) throws NegativeWeightException, IOException, NegativeDeviationException {
         super(population, distributionKey, random, false);
         this.enums = enums.clone();
     }

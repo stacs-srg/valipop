@@ -16,6 +16,7 @@
  */
 package uk.ac.standrews.cs.basic_model.distributions.temporal;
 
+import org.apache.commons.math3.random.RandomGenerator;
 import uk.ac.standrews.cs.basic_model.config.PopulationProperties;
 import uk.ac.standrews.cs.basic_model.distributions.general.*;
 import uk.ac.standrews.cs.basic_model.organic.OrganicPopulation;
@@ -57,7 +58,7 @@ public abstract class TemporalDistribution<Value> implements ITemporalDistributi
      * @param random The random to be used.
      * @param handleNoPermissibleValueAsZero Indicates if the distribution is to treat the returning of NoPermissibleValueExceptions as returning a zero value.
      */
-    public TemporalDistribution(final ITemporalPopulationInfo population, final String distributionKey, final Random random, final boolean handleNoPermissibleValueAsZero) throws NegativeDeviationException, NegativeWeightException, IOException {
+    public TemporalDistribution(final ITemporalPopulationInfo population, final String distributionKey, final RandomGenerator random, final boolean handleNoPermissibleValueAsZero) throws NegativeDeviationException, NegativeWeightException, IOException {
 
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(getClass().getClassLoader().getResourceAsStream(PopulationProperties.getProperties().getProperty(distributionKey)), FileManipulation.FILE_CHARSET))) {
 

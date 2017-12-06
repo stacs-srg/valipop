@@ -22,6 +22,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Random;
 
+import org.apache.commons.math3.random.JDKRandomGenerator;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -68,7 +69,7 @@ public class NormalDistributionTest {
 
     public static double[] gatherSamples(final double mean, final double standard_deviation, final int iterations) throws NegativeDeviationException {
 
-        final NormalDistribution distribution = new NormalDistribution(mean, standard_deviation, new Random());
+        final NormalDistribution distribution = new NormalDistribution(mean, standard_deviation, new JDKRandomGenerator());
 
         final double[] samples = new double[iterations];
 

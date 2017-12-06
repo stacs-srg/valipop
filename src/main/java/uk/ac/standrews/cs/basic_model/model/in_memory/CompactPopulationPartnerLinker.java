@@ -17,6 +17,7 @@
 package uk.ac.standrews.cs.basic_model.model.in_memory;
 
 import edu.umd.cs.findbugs.annotations.*;
+import org.apache.commons.math3.random.RandomGenerator;
 import uk.ac.standrews.cs.basic_model.distributions.general.NegativeWeightException;
 import uk.ac.standrews.cs.basic_model.distributions.general.NormalDistribution;
 import uk.ac.standrews.cs.basic_model.distributions.general.NegativeDeviationException;
@@ -64,7 +65,7 @@ class CompactPopulationPartnerLinker {
         this.people = people;
         this.progress_indicator = progress_indicator;
 
-        final Random random = RandomFactory.getRandom();
+        final RandomGenerator random = RandomFactory.getRandomGenerator();
 
         number_of_marriages_distribution = new WeightedIntegerDistribution(0, MAX_MARRIAGES, NUMBER_OF_MARRIAGES_DISTRIBUTION, random);
         age_at_first_marriage_distribution = new NormalDistribution(AGE_AT_FIRST_MARRIAGE_MEAN * DAYS_PER_YEAR, AGE_AT_FIRST_MARRIAGE_STD_DEV * DAYS_PER_YEAR, random);

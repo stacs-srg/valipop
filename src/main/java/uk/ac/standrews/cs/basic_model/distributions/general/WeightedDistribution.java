@@ -16,6 +16,8 @@
  */
 package uk.ac.standrews.cs.basic_model.distributions.general;
 
+import org.apache.commons.math3.random.RandomGenerator;
+
 import java.util.List;
 import java.util.Random;
 
@@ -29,7 +31,7 @@ public class WeightedDistribution extends RestrictedDistribution<Double> {
 
 	private final static double PREEMPTIVE_RANGE = 0.01;
 
-	private final Random random;
+	private final RandomGenerator random;
 	private final double[] cumulative_probabilities;
 	private final double bucket_size;
 	private final int[] weights;
@@ -46,7 +48,7 @@ public class WeightedDistribution extends RestrictedDistribution<Double> {
 	 * @param random the random number generator to be used
 	 * @throws NegativeWeightException if any of the weights are negative
 	 */
-	public WeightedDistribution(final int[] weights, final Random random) throws NegativeWeightException {
+	public WeightedDistribution(final int[] weights, final RandomGenerator random) throws NegativeWeightException {
 		this.random = random;
 		this.weights = weights.clone();
 		bucket_size = 1.0 / weights.length;
@@ -66,7 +68,7 @@ public class WeightedDistribution extends RestrictedDistribution<Double> {
 	 * @param handleNoPermissableValueAsZero If set as true then the distribution will view that when it throws a NoPermissableValueException that it is akin to returning a value of 0 to the balance of the distribution - however a NoPermissableValueException will still be thrown.
 	 * @throws NegativeWeightException if any of the weights are negative
 	 */
-	public WeightedDistribution(final int[] weights, final Random random, final boolean handleNoPermissableValueAsZero) throws NegativeWeightException {
+	public WeightedDistribution(final int[] weights, final RandomGenerator random, final boolean handleNoPermissableValueAsZero) throws NegativeWeightException {
 		this(weights, random);
 		if (handleNoPermissableValueAsZero) {
 			zeroCount = 0;

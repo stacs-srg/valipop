@@ -16,6 +16,7 @@
  */
 package uk.ac.standrews.cs.basic_model.distributions.temporal;
 
+import org.apache.commons.math3.random.RandomGenerator;
 import uk.ac.standrews.cs.basic_model.distributions.general.NegativeWeightException;
 import uk.ac.standrews.cs.basic_model.distributions.general.NegativeDeviationException;
 import uk.ac.standrews.cs.basic_model.distributions.general.NoPermissableValueException;
@@ -41,7 +42,7 @@ public class TemporalIntegerDistribution extends TemporalDistribution<Integer> {
      * @param handleNoPermissableValueAsZero Indicates if the distribution is to treat the returning of NoPermissibleValueExceptions as returning a zero value.
      * @see TemporalDistribution
      */
-    public TemporalIntegerDistribution(final ITemporalPopulationInfo population, final String distributionKey, final Random random, final boolean handleNoPermissableValueAsZero) throws NegativeWeightException, IOException, NegativeDeviationException {
+    public TemporalIntegerDistribution(final ITemporalPopulationInfo population, final String distributionKey, final RandomGenerator random, final boolean handleNoPermissableValueAsZero) throws NegativeWeightException, IOException, NegativeDeviationException {
         super(population, distributionKey, random, handleNoPermissableValueAsZero);
     }
 

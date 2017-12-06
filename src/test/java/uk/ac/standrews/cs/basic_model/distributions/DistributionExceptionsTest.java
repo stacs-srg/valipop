@@ -18,6 +18,7 @@ package uk.ac.standrews.cs.basic_model.distributions;
 
 import java.util.Random;
 
+import org.apache.commons.math3.random.JDKRandomGenerator;
 import org.junit.Test;
 import uk.ac.standrews.cs.basic_model.distributions.general.NegativeDeviationException;
 import uk.ac.standrews.cs.basic_model.distributions.general.NegativeWeightException;
@@ -34,12 +35,12 @@ public class DistributionExceptionsTest {
     @Test(expected = NegativeDeviationException.class)
     public void negativeDeviation() throws NegativeDeviationException {
 
-        new NormalDistribution(0, -1, new Random());
+        new NormalDistribution(0, -1, new JDKRandomGenerator());
     }
 
     @Test(expected = NegativeWeightException.class)
     public void negativeWeight() throws NegativeWeightException {
 
-        new WeightedDistribution(new int[]{1, -1, 1}, new Random());
+        new WeightedDistribution(new int[]{1, -1, 1}, new JDKRandomGenerator());
     }
 }

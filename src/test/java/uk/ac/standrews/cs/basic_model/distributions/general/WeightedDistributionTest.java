@@ -22,6 +22,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Random;
 
+import org.apache.commons.math3.random.JDKRandomGenerator;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -68,7 +69,7 @@ public class WeightedDistributionTest {
 
     public static int[] gatherSamplesIntoBuckets(final int[] weights, final int iterations) throws NegativeWeightException {
 
-        final WeightedDistribution distribution = new WeightedDistribution(weights, new Random());
+        final WeightedDistribution distribution = new WeightedDistribution(weights, new JDKRandomGenerator());
         final int[] buckets = new int[weights.length];
 
         for (int i = 0; i < iterations; i++) {

@@ -16,6 +16,7 @@
  */
 package uk.ac.standrews.cs.basic_model.distributions.general;
 
+import org.apache.commons.math3.random.RandomGenerator;
 import uk.ac.standrews.cs.basic_model.distributions.util.FileDistributionGenerator;
 import uk.ac.standrews.cs.utilities.FileManipulation;
 
@@ -44,7 +45,7 @@ public class FileBasedEnumeratedDistribution extends EnumeratedDistribution {
      * @throws IOException                 Thrown in the event of an IOException.
      * @throws InconsistentWeightException Thrown when the weights in the underlying distribution are found to be inconsistent.
      */
-    public FileBasedEnumeratedDistribution(final String path_string, final Random random) throws IOException, InconsistentWeightException {
+    public FileBasedEnumeratedDistribution(final String path_string, final RandomGenerator random) throws IOException, InconsistentWeightException {
 
         super(random);
 

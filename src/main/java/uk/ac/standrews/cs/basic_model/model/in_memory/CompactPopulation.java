@@ -17,6 +17,7 @@
 package uk.ac.standrews.cs.basic_model.model.in_memory;
 
 import edu.umd.cs.findbugs.annotations.*;
+import org.apache.commons.math3.random.RandomGenerator;
 import uk.ac.standrews.cs.basic_model.distributions.general.Distribution;
 import uk.ac.standrews.cs.basic_model.distributions.DeathAgeDistribution;
 import uk.ac.standrews.cs.basic_model.distributions.IncomersDistribution;
@@ -223,7 +224,7 @@ class CompactPopulation {
 
     private void initialiseDistributions() {
 
-        final Random random = RandomFactory.getRandom();
+        final RandomGenerator random = RandomFactory.getRandomGenerator();
 
         date_of_birth_distribution = new UniformIntegerDistribution(earliest_date, latest_date, random);
         sex_distribution = new UniformSexDistribution(random);

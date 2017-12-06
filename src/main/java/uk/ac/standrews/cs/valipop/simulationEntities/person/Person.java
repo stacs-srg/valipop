@@ -46,7 +46,6 @@ import java.util.*;
 public class Person implements IPersonExtended {
 
     private static Logger log = LogManager.getLogger(Person.class);
-    public static final Random random = new Random();
 
     private static NameGenerator firstNameGenerator = new FirstNameGenerator();
     private static NameGenerator surnameGenerator = new SurnameGenerator();

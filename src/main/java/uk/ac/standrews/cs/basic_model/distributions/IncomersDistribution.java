@@ -18,6 +18,7 @@ package uk.ac.standrews.cs.basic_model.distributions;
 
 import java.util.Random;
 
+import org.apache.commons.math3.random.RandomGenerator;
 import uk.ac.standrews.cs.basic_model.distributions.general.Distribution;
 
 /**
@@ -29,7 +30,7 @@ import uk.ac.standrews.cs.basic_model.distributions.general.Distribution;
 public class IncomersDistribution implements Distribution<Boolean> {
 
     private final double incomer_probability;
-    private final Random random;
+    private final RandomGenerator random;
 
     /**
      * Creates a distribution of booleans.
@@ -37,7 +38,7 @@ public class IncomersDistribution implements Distribution<Boolean> {
      * @param incomer_probability the probability that a person is an incomer
      * @param random the random number generator to be used
      */
-    public IncomersDistribution(final double incomer_probability, final Random random) {
+    public IncomersDistribution(final double incomer_probability, final RandomGenerator random) {
 
         this.incomer_probability = incomer_probability;
         this.random = random;

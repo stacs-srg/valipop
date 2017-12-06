@@ -16,6 +16,7 @@
  */
 package uk.ac.standrews.cs.valipop.simulationEntities.partnership;
 
+import org.apache.commons.math3.random.RandomGenerator;
 import uk.ac.standrews.cs.basic_model.model.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.entityExtensions.PartnershipUtils;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date;
@@ -62,5 +63,5 @@ public interface IPartnershipExtended extends IPartnership, PartnershipUtils {
 
     Date getPartnershipDate();
 
-    Date getSeparationDate();
+    Date getSeparationDate(RandomGenerator randomGenerator);
 }

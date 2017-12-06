@@ -16,6 +16,7 @@
  */
 package uk.ac.standrews.cs.basic_model.distributions;
 
+import org.apache.commons.math3.random.JDKRandomGenerator;
 import uk.ac.standrews.cs.basic_model.distributions.general.EnumeratedDistribution;
 import uk.ac.standrews.cs.basic_model.distributions.general.InconsistentWeightException;
 
@@ -35,7 +36,7 @@ public class EnumeratedDistributionTestManual {
         item_probabilities.put("brown", 0.1);
         item_probabilities.put("fox", 0.8);
 
-        final EnumeratedDistribution distribution = new EnumeratedDistribution(item_probabilities, new Random());
+        final EnumeratedDistribution distribution = new EnumeratedDistribution(item_probabilities, new JDKRandomGenerator());
 
         for (int i = 0; i < 30; i++) {
             System.out.println(distribution.getSample());

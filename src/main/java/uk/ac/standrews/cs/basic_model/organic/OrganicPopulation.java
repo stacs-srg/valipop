@@ -16,6 +16,7 @@
  */
 package uk.ac.standrews.cs.basic_model.organic;
 
+import org.apache.commons.math3.random.RandomGenerator;
 import uk.ac.standrews.cs.basic_model.distributions.general.InconsistentWeightException;
 import uk.ac.standrews.cs.basic_model.distributions.general.NegativeWeightException;
 import uk.ac.standrews.cs.basic_model.distributions.temporal.ITemporalPopulationInfo;
@@ -79,7 +80,7 @@ public class OrganicPopulation implements IPopulation, ITemporalPopulationInfo {
     private static final int START_YEAR = 1780;
     private static final int END_YEAR = 2013;
     private static final int EPOCH_YEAR = 1600;
-    private static Random random = RandomFactory.getRandom();
+    private static RandomGenerator random = RandomFactory.getRandomGenerator();
     private int earliestDate = DateManipulation.dateToDays(getStartYear(), 0, 0);
     private static int currentDay;
     private boolean seedGeneration = true;

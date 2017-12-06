@@ -16,6 +16,7 @@
  */
 package uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateSelection;
 
+import org.apache.commons.math3.random.RandomGenerator;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.ExactDate;
@@ -28,9 +29,7 @@ import java.util.Random;
  */
 public class DateSelector {
 
-    private Random random = new Random();
-
-    public ExactDate selectDate(Date earliestDate, Date latestDate) {
+    public ExactDate selectDate(Date earliestDate, Date latestDate, RandomGenerator random) {
 
         int daysInWindow = DateUtils.differenceInDays(earliestDate, latestDate);
 
@@ -46,7 +45,7 @@ public class DateSelector {
 
     }
 
-    public ExactDate selectDate(Date earliestDate, CompoundTimeUnit timePeriod) {
+    public ExactDate selectDate(Date earliestDate, CompoundTimeUnit timePeriod, RandomGenerator random) {
 
         int daysInWindow = DateUtils.getDaysInTimePeriod(earliestDate, timePeriod);
 

@@ -18,6 +18,7 @@ package uk.ac.standrews.cs.basic_model.distributions;
 
 import java.util.Random;
 
+import org.apache.commons.math3.random.RandomGenerator;
 import uk.ac.standrews.cs.basic_model.distributions.general.Distribution;
 
 /**
@@ -28,13 +29,13 @@ import uk.ac.standrews.cs.basic_model.distributions.general.Distribution;
  */
 public class UniformSexDistribution implements Distribution<Boolean> {
 
-    private final Random random;
+    private final RandomGenerator random;
 
     /**
      * Creates a uniform distribution of booleans.
      * @param random the random number generator to be used
      */
-    public UniformSexDistribution(final Random random) {
+    public UniformSexDistribution(final RandomGenerator random) {
 
         this.random = random;
     }
