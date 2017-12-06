@@ -93,7 +93,7 @@ public class Config {
     private final String startTime;
 
     private boolean binominalSampling = true;
-
+    private boolean deterministic = false;
 
     // Filter method to exclude dot files from data file directory streams
     private DirectoryStream.Filter<Path> filter = file -> {
@@ -298,6 +298,9 @@ public class Config {
                     }
                 case "output_tables":
                     outputTables = split[1].toLowerCase().equals("true");
+                    break;
+                case "deterministic":
+                    deterministic = split[1].toLowerCase().equals("true");
                     break;
 
             }
@@ -510,5 +513,9 @@ public class Config {
 
     public int getMinGestationPeriodDays() {
         return minGestationPeriodDays;
+    }
+
+    public boolean deterministic() {
+        return deterministic;
     }
 }

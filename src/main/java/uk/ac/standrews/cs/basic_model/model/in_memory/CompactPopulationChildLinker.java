@@ -47,7 +47,7 @@ class CompactPopulationChildLinker {
         this.people = people;
         this.progress_indicator = progress_indicator;
 
-        number_of_children_distribution = new WeightedIntegerDistribution(0, MAX_CHILDREN, NUMBER_OF_CHILDREN_DISTRIBUTION, RandomFactory.getRandom());
+        number_of_children_distribution = new WeightedIntegerDistribution(0, MAX_CHILDREN, NUMBER_OF_CHILDREN_DISTRIBUTION, RandomFactory.getRandomGenerator());
     }
 
     protected void linkChildren() {

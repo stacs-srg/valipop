@@ -16,6 +16,7 @@
  */
 package uk.ac.standrews.cs.basic_model.distributions;
 
+import org.apache.commons.math3.random.JDKRandomGenerator;
 import uk.ac.standrews.cs.basic_model.distributions.general.NegativeWeightException;
 import uk.ac.standrews.cs.basic_model.model.PopulationLogic;
 
@@ -36,7 +37,7 @@ public class AgeAtDeathDistributionTestManual {
 
     public static int[] gatherSamplesIntoBuckets(final int iterations) throws NegativeWeightException {
 
-        final DeathAgeDistribution distribution = new DeathAgeDistribution(new Random());
+        final DeathAgeDistribution distribution = new DeathAgeDistribution(new JDKRandomGenerator());
         final int[] buckets = new int[100];
 
         for (int i = 0; i < iterations; i++) {

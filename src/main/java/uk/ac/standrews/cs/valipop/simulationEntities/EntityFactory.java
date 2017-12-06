@@ -120,7 +120,7 @@ public class EntityFactory {
 
     public static IPersonExtended makePerson(Date currentDate, CompoundTimeUnit birthTimeStep, IPartnershipExtended parentsPartnership, Population population, PopulationStatistics ps) {
 
-        return makePerson(birthDateSelector.selectDate(currentDate, birthTimeStep), parentsPartnership, population, ps);
+        return makePerson(birthDateSelector.selectDate(currentDate, birthTimeStep, ps.getRandomGenerator()), parentsPartnership, population, ps);
 
     }
 }

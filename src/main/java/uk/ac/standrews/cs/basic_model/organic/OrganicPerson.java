@@ -16,6 +16,7 @@
  */
 package uk.ac.standrews.cs.basic_model.organic;
 
+import org.apache.commons.math3.random.RandomGenerator;
 import uk.ac.standrews.cs.basic_model.distributions.general.*;
 import uk.ac.standrews.cs.basic_model.distributions.temporal.TemporalEnumDistribution;
 import uk.ac.standrews.cs.basic_model.distributions.temporal.TemporalIntegerDistribution;
@@ -46,7 +47,7 @@ import java.util.Random;
 public class OrganicPerson implements IPerson {
 
     // Universal person variables
-    private static Random random = RandomFactory.getRandom();
+    private static RandomGenerator random = RandomFactory.getRandomGenerator();
     private static final int COMING_OF_AGE_AGE = 15;
 
     // Universal person distributions

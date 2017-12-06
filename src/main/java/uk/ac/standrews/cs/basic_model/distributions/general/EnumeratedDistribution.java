@@ -16,6 +16,7 @@
  */
 package uk.ac.standrews.cs.basic_model.distributions.general;
 
+import org.apache.commons.math3.random.RandomGenerator;
 import uk.ac.standrews.cs.basic_model.distributions.StringWithCumulativeProbability;
 
 import java.io.Serializable;
@@ -35,10 +36,10 @@ public class EnumeratedDistribution implements Distribution<String> {
     private static final double ALLOWABLE_TOTAL_WEIGHT_DISCREPANCY = 0.001;
     private static final Comparator<? super StringWithCumulativeProbability> ITEM_COMPARATOR = new ItemComparator();
 
-    private final Random random;
+    private final RandomGenerator random;
     protected StringWithCumulativeProbability[] items = null;
 
-    protected EnumeratedDistribution(final Random random) {
+    protected EnumeratedDistribution(final RandomGenerator random) {
         this.random = random;
     }
 
@@ -49,7 +50,7 @@ public class EnumeratedDistribution implements Distribution<String> {
      * @param random a Random instance for use in creation of distribution.
      * @throws InconsistentWeightException if the weights in the underlying distribution do not sum to 1.
      */
-    public EnumeratedDistribution(final Map<String, Double> item_probabilities, final Random random) throws InconsistentWeightException {
+    public EnumeratedDistribution(final Map<String, Double> item_probabilities, final RandomGenerator random) throws InconsistentWeightException {
 
         this(random);
         configureProbabilities(item_probabilities);

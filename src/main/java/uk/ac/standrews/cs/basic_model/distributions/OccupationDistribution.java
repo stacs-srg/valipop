@@ -16,6 +16,7 @@
  */
 package uk.ac.standrews.cs.basic_model.distributions;
 
+import org.apache.commons.math3.random.RandomGenerator;
 import uk.ac.standrews.cs.basic_model.config.PopulationProperties;
 import uk.ac.standrews.cs.basic_model.distributions.general.FileBasedEnumeratedDistribution;
 import uk.ac.standrews.cs.basic_model.distributions.general.InconsistentWeightException;
@@ -39,7 +40,7 @@ public class OccupationDistribution extends FileBasedEnumeratedDistribution {
      * @throws IOException Thrown in the event of an IOException.
      * @throws InconsistentWeightException Thrown when the weights in the underlying distribution are found to be inconsistent.
      */
-    public OccupationDistribution(final Random random) throws IOException, InconsistentWeightException {
+    public OccupationDistribution(final RandomGenerator random) throws IOException, InconsistentWeightException {
 
         super(PopulationProperties.getProperties().getProperty(OCCUPATION_DISTRIBUTION_KEY), random);
     }

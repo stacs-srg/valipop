@@ -16,6 +16,7 @@
  */
 package uk.ac.standrews.cs.basic_model.organic;
 
+import org.apache.commons.math3.random.RandomGenerator;
 import uk.ac.standrews.cs.basic_model.distributions.general.*;
 import uk.ac.standrews.cs.basic_model.distributions.AffairSpacingDistribution;
 import uk.ac.standrews.cs.basic_model.distributions.temporal.TemporalEnumDistribution;
@@ -42,7 +43,7 @@ import java.util.Random;
 public final class OrganicPartnership implements IPartnership {
 
     // Universal partnership distributions
-    private static Random random = RandomFactory.getRandom();
+    private static RandomGenerator random = RandomFactory.getRandomGenerator();
 
     /*
      * -------------------------------- Distributions --------------------------------

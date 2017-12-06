@@ -16,6 +16,7 @@
  */
 package uk.ac.standrews.cs.valipop.events.init;
 
+import org.apache.commons.math3.random.RandomGenerator;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.exceptions.InsufficientNumberOfPeopleException;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
 import uk.ac.standrews.cs.valipop.utils.selectionApproaches.SharedLogic;
@@ -38,7 +39,7 @@ import java.util.Random;
  */
 public class InitLogic {
 
-    private static Random randomNumberGenerator = new Random();
+    private static RandomGenerator randomNumberGenerator;
 
     public static final Logger log = LogManager.getLogger(InitLogic.class);
 
@@ -51,10 +52,16 @@ public class InitLogic {
 
     public static void setUpInitParameters(Config config, PopulationStatistics desiredPopulationStatistics) {
 
+        randomNumberGenerator = desiredPopulationStatistics.getRandomGenerator();
+
         currentHypotheticalPopulationSize = calculateStartingPopulationSize(config);
         log.info("Initial hypothetical population size set: " + currentHypotheticalPopulationSize);
 
-        endOfInitPeriod = config.getTS().advanceTime(new CompoundTimeUnit(desiredPopulationStatistics.getOrderedBirthRates(config.getTS().getYearDate()).getLargestLabel().getValue(), TimeUnit.YEAR));
+        endOfInitPeriod = config.getTS().advanceTime(new CompoundTimeUnit(
+                desiredPopulationStatistics.getOrderedBirthRates(config.getTS().getYearDate()).getLargestLabel().getValue(),
+                TimeUnit.YEAR
+        ));
+
         log.info("End of Initialisation Period set: " + endOfInitPeriod.toString());
 
         initTimeStep = config.getSimulationTimeStep();
@@ -131,11 +138,11 @@ public class InitLogic {
     }
 
     public static int calculateChildrenToBeBorn(int sizeOfCohort, Double birthRate) {
-        return SharedLogic.calculateNumberToHaveEvent(sizeOfCohort, birthRate);
+        return SharedLogic.calculateNumberToHaveEvent(sizeOfCohort, birthRate, randomNumberGenerator);
     }
 
     public static int calculateNumberToDie(int people, Double deathRate) {
-        return SharedLogic.calculateNumberToHaveEvent(people, deathRate);
+        return SharedLogic.calculateNumberToHaveEvent(people, deathRate, randomNumberGenerator);
     }
 
 }

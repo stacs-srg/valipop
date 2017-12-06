@@ -16,6 +16,8 @@
  */
 package uk.ac.standrews.cs.basic_model.distributions.general;
 
+import org.apache.commons.math3.random.RandomGenerator;
+
 import java.util.Random;
 
 /**
@@ -28,7 +30,7 @@ public class UniformIntegerDistribution implements Distribution<Integer> {
 
     private final int lowest;
     private final int range;
-    private final Random random;
+    private final RandomGenerator random;
 
     /**
      * Creates a uniform distribution of integers within the specified range.
@@ -37,7 +39,7 @@ public class UniformIntegerDistribution implements Distribution<Integer> {
      * @param highest the highest value in the range
      * @param random the random number generator to be used
      */
-    public UniformIntegerDistribution(final int lowest, final int highest, final Random random) {
+    public UniformIntegerDistribution(final int lowest, final int highest, final RandomGenerator random) {
 
         this.lowest = lowest;
         range = highest - lowest + 1;

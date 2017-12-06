@@ -1,5 +1,6 @@
 package uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions;
 
+import org.apache.commons.math3.random.RandomGenerator;
 import uk.ac.standrews.cs.basic_model.distributions.StringWithCumulativeProbability;
 import uk.ac.standrews.cs.basic_model.distributions.general.EnumeratedDistribution;
 import uk.ac.standrews.cs.basic_model.distributions.general.InconsistentWeightException;
@@ -20,7 +21,7 @@ public class ValiPopEnumeratedDistribution extends EnumeratedDistribution implem
     private final String sourceOrganisation;
 
     public ValiPopEnumeratedDistribution(YearDate year, String sourcePopulation, String sourceOrganisation,
-                                         Map<String, Double> item_probabilities, Random random)
+                                         Map<String, Double> item_probabilities, RandomGenerator random)
                                                 throws InconsistentWeightException {
         super(item_probabilities, random);
         this.year = year;

@@ -16,6 +16,7 @@
  */
 package uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure;
 
+import org.apache.commons.math3.random.JDKRandomGenerator;
 import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnershipExtended;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.SeparationOption;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date;
@@ -98,7 +99,7 @@ public class PersonCharacteristicsIdentifier {
 
         if (!lastChild.bornInYear(y)) {
             return SeparationOption.NO;
-        } else if (activePartnership.getSeparationDate() != null) {
+        } else if (activePartnership.getSeparationDate(new JDKRandomGenerator()) != null) {
             return SeparationOption.YES;
         } else {
             return SeparationOption.NO;

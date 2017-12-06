@@ -16,6 +16,8 @@
  */
 package uk.ac.standrews.cs.basic_model.model.in_memory;
 
+import org.apache.commons.math3.random.JDKRandomGenerator;
+import org.apache.commons.math3.random.RandomGenerator;
 import uk.ac.standrews.cs.basic_model.config.PopulationProperties;
 import uk.ac.standrews.cs.basic_model.distributions.FirstNameForFemalesDistribution;
 import uk.ac.standrews.cs.basic_model.distributions.FirstNameForMalesDistribution;
@@ -60,7 +62,7 @@ class CompactPersonAdapter {
         final String cause_of_death_distribution_file_name = PopulationProperties.getProperties().getProperty(CAUSE_OF_DEATH_DISTRIBUTION_KEY);
         final String address_distribution_file_name = PopulationProperties.getProperties().getProperty(ADDRESS_DISTRIBUTION_KEY);
 
-        final Random random = RandomFactory.getRandom();
+        final RandomGenerator random = RandomFactory.getRandomGenerator();
 
         male_first_name_distribution = new FirstNameForMalesDistribution(random);
         female_first_name_distribution = new FirstNameForFemalesDistribution(random);

@@ -46,8 +46,6 @@ import java.util.*;
  */
 public class NBirthLogic implements EventLogic {
 
-    Random rand = new Random();
-
     private int tBirths = 0;
 
     @Override
@@ -86,7 +84,7 @@ public class NBirthLogic implements EventLogic {
                     int adjuster = new Double(Math.ceil(config.getBirthFactor())).intValue();
 
                     int bound = 1000000;
-                    if(rand.nextInt(bound) < Math.abs(config.getBirthFactor() / adjuster) * bound) {
+                    if(desiredPopulationStatistics.getRandomGenerator().nextInt(bound) < Math.abs(config.getBirthFactor() / adjuster) * bound) {
 
                         if(config.getBirthFactor() < 0) {
                             birthAdjust = adjuster;

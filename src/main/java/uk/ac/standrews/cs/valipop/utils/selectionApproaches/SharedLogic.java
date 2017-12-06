@@ -16,6 +16,8 @@
  */
 package uk.ac.standrews.cs.valipop.utils.selectionApproaches;
 
+import org.apache.commons.math3.random.RandomGenerator;
+
 import java.util.Random;
 
 /**
@@ -23,9 +25,7 @@ import java.util.Random;
  */
 public class SharedLogic {
 
-    private static Random randomNumberGenerator = new Random();
-
-    public static int calculateNumberToHaveEvent(int people, Double eventRate) {
+    public static int calculateNumberToHaveEvent(int people, Double eventRate, RandomGenerator randomNumberGenerator) {
 
         double toHaveEvent = people * eventRate;
         int flooredToHaveEvent = (int) toHaveEvent;

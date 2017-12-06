@@ -46,7 +46,7 @@ class CompactPartnershipAdapter {
 
         final String address_distribution_file_name = PopulationProperties.getProperties().getProperty(ADDRESS_DISTRIBUTION_KEY);
 
-        address_distribution = new FileBasedEnumeratedDistribution(address_distribution_file_name, RandomFactory.getRandom());
+        address_distribution = new FileBasedEnumeratedDistribution(address_distribution_file_name, RandomFactory.getRandomGenerator());
     }
 
     protected IPartnership convertToFullPartnership(final CompactPartnership partnership, final CompactPopulation population) {

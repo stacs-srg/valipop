@@ -16,6 +16,8 @@
  */
 package uk.ac.standrews.cs.basic_model.distributions.general;
 
+import org.apache.commons.math3.random.RandomGenerator;
+
 import java.util.Random;
 
 /**
@@ -28,7 +30,7 @@ public class NormalDistribution extends RestrictedDistribution<Double> {
 
 	private final static double PREEMPTIVE_RANGE = 0.01;
 	
-	private final Random random;
+	private final RandomGenerator random;
 	private final double mean;
 	private final double standard_deviation;
 
@@ -39,7 +41,7 @@ public class NormalDistribution extends RestrictedDistribution<Double> {
 	 * @param random the random number generator to be used
 	 * @throws NegativeDeviationException if the standard deviation is negative
 	 */
-	public NormalDistribution(final double mean, final double standard_deviation, final Random random) throws NegativeDeviationException {
+	public NormalDistribution(final double mean, final double standard_deviation, final RandomGenerator random) throws NegativeDeviationException {
 
 		if (standard_deviation < 0.0) {
 			throw new NegativeDeviationException("negative standard deviation: " + standard_deviation);
@@ -61,7 +63,7 @@ public class NormalDistribution extends RestrictedDistribution<Double> {
 	 * @param maximumReturnValue The largest value that the distribution is able to return
 	 * @throws NegativeDeviationException if the standard deviation is negative
 	 */
-	public NormalDistribution(final double mean, final double standard_deviation, final Random random, final double minimumReturnValue, final double maximumReturnValue) throws NegativeDeviationException {
+	public NormalDistribution(final double mean, final double standard_deviation, final RandomGenerator random, final double minimumReturnValue, final double maximumReturnValue) throws NegativeDeviationException {
 		this(mean, standard_deviation, random);
 		this.minimumSpecifiedValue = minimumReturnValue;
 		this.maximumSpecifiedValue = maximumReturnValue;

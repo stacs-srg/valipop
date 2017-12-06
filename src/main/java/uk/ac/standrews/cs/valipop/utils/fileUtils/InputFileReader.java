@@ -16,8 +16,7 @@
  */
 package uk.ac.standrews.cs.valipop.utils.fileUtils;
 
-
-import uk.ac.standrews.cs.basic_model.distributions.general.EnumeratedDistribution;
+import org.apache.commons.math3.random.RandomGenerator;
 import uk.ac.standrews.cs.basic_model.distributions.general.InconsistentWeightException;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.OneDimensionDataDistribution;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.ProportionalDistribution;
@@ -51,8 +50,6 @@ public class InputFileReader {
     private static final String TAB = "\t";
     private static final String COMMENT_INDICATOR = "#";
     public static Logger log = LogManager.getLogger(InputFileReader.class);
-
-    private static Random rand = new Random();
 
     public static Collection<String> getAllLines(Path path) throws IOException {
 
@@ -124,7 +121,7 @@ public class InputFileReader {
 
     }
 
-    public static SelfCorrectingTwoDimensionDataDistribution readInSC2DDataFile(Path path, Config config) throws IOException, InvalidInputFileException {
+    public static SelfCorrectingTwoDimensionDataDistribution readInSC2DDataFile(Path path, Config config, RandomGenerator randomGenerator) throws IOException, InvalidInputFileException {
 
         ArrayList<String> lines = new ArrayList<>(getAllLines(path));
 
@@ -187,7 +184,12 @@ public class InputFileReader {
                             }
                         }
 
-                        data.put(rowLabel, new SelfCorrectingOneDimensionDataDistribution(year, sourcePopulation, sourceOrganisation, rowMap, config.binominalSampling()));
+                        data.put(rowLabel,
+                                new SelfCorrectingOneDimensionDataDistribution(
+                                        year, sourcePopulation, sourceOrganisation, rowMap, config.binominalSampling(),
+                                        randomGenerator
+                                )
+                        );
 
                     }
                     break;
@@ -199,7 +201,7 @@ public class InputFileReader {
         return new SelfCorrectingTwoDimensionDataDistribution(year, sourcePopulation, sourceOrganisation, data);
     }
 
-    public static ValiPopEnumeratedDistribution readInNameDataFile(Path path) throws IOException, InvalidInputFileException, InconsistentWeightException {
+    public static ValiPopEnumeratedDistribution readInNameDataFile(Path path, RandomGenerator randomGenerator) throws IOException, InvalidInputFileException, InconsistentWeightException {
 
         ArrayList<String> lines = new ArrayList<>(getAllLines(path));
 
@@ -254,7 +256,7 @@ public class InputFileReader {
 
         }
 
-        return new ValiPopEnumeratedDistribution(year, sourcePopulation, sourceOrganisation, data, rand);
+        return new ValiPopEnumeratedDistribution(year, sourcePopulation, sourceOrganisation, data, randomGenerator);
     }
 
     public static OneDimensionDataDistribution readIn1DDataFile(Path path) throws IOException, InvalidInputFileException {
@@ -314,9 +316,10 @@ public class InputFileReader {
         return new OneDimensionDataDistribution(year, sourcePopulation, sourceOrganisation, data);
     }
 
-    public static SelfCorrectingOneDimensionDataDistribution readInSC1DDataFile(Path path, Config config) throws IOException, InvalidInputFileException {
+    public static SelfCorrectingOneDimensionDataDistribution readInSC1DDataFile(Path path, Config config, RandomGenerator randomGenerator) throws IOException, InvalidInputFileException {
         OneDimensionDataDistribution d = readIn1DDataFile(path);
-        return new SelfCorrectingOneDimensionDataDistribution(d.getYear(), d.getSourcePopulation(), d.getSourceOrganisation(), d.cloneData(), config.binominalSampling());
+        return new SelfCorrectingOneDimensionDataDistribution(d.getYear(), d.getSourcePopulation(),
+                d.getSourceOrganisation(), d.cloneData(), config.binominalSampling(), randomGenerator);
     }
 
     public static SelfCorrectingProportionalDistribution readInAgeAndProportionalStatsInput(Path path) throws IOException, InvalidInputFileException {

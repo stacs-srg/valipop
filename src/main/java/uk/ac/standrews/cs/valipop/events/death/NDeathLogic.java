@@ -42,8 +42,6 @@ import java.util.Random;
  */
 public class NDeathLogic implements EventLogic {
 
-    Random rand = new Random();
-
     private DeathDateSelector deathDateSelector = new DeathDateSelector();
 
     // Move from year to sim date and time step
@@ -88,10 +86,6 @@ public class NDeathLogic implements EventLogic {
             int age = DateUtils.differenceInYears(divDate, currentDate).getCount();
             int peopleOfAge = ofSexLiving.getNumberOfPersons(divDate, consideredTimePeriod);
 
-            if(age > 115 && peopleOfAge > 0) {
-                System.out.println("What?");
-            }
-
             // gets death rate for people of age at the current date
             StatsKey key = new DeathStatsKey(age, peopleOfAge, consideredTimePeriod, currentDate, sex);
             DeterminedCount determinedCount = desiredPopulationStatistics.getDeterminedCount(key, config);
@@ -99,18 +93,14 @@ public class NDeathLogic implements EventLogic {
             // Calculate the appropriate number to kill and then kill
             Integer numberToKill = ((SingleDeterminedCount) determinedCount).getDeterminedCount();
 
-//            int killAdjust = Integer.parseInt(String.valueOf(Math.round(peopleOfAge * config.getDeathFactor())));
-//            int killAdjust = 0;
 
             int killAdjust = 0;
             if(numberToKill == 0) {
                 killAdjust = 0;
             } else {
-//                    birthAdjust = Integer.parseInt(String.valueOf(Math.round(new Random().nextInt(cohortSize + 1) * config.getBirthFactor())));
-//                    birthAdjust = -1;
-//                    int bound = Integer.parseInt(String.valueOf(Math.round(1 / config.getBirthFactor())));
+
                 int bound = 10000;
-                if(rand.nextInt(bound) < config.getDeathFactor() * bound) {
+                if(desiredPopulationStatistics.getRandomGenerator().nextInt(bound) < config.getDeathFactor() * bound) {
                     killAdjust = -1;
                 }
             }

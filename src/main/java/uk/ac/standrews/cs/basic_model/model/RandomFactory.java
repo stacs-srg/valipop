@@ -16,6 +16,8 @@
  */
 package uk.ac.standrews.cs.basic_model.model;
 
+import org.apache.commons.math3.random.JDKRandomGenerator;
+import org.apache.commons.math3.random.RandomGenerator;
 import uk.ac.standrews.cs.basic_model.config.PopulationProperties;
 
 import java.io.IOException;
@@ -57,5 +59,22 @@ public class RandomFactory {
         // by previous calls to the Random instance.
 
         return deterministic ? new Random(SEED) : new Random();
+    }
+
+    public static RandomGenerator randomGenerator = null;
+
+    public static RandomGenerator getRandomGenerator() {
+
+        if(randomGenerator == null) {
+
+            randomGenerator = new JDKRandomGenerator();
+
+            if(deterministic) {
+                randomGenerator.setSeed(SEED);
+            }
+
+        }
+
+        return randomGenerator;
     }
 }

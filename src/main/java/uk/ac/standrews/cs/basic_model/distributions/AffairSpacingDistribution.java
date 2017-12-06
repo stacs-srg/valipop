@@ -18,6 +18,7 @@ package uk.ac.standrews.cs.basic_model.distributions;
 
 import java.util.Random;
 
+import org.apache.commons.math3.random.RandomGenerator;
 import uk.ac.standrews.cs.basic_model.distributions.general.NormalDistribution;
 import uk.ac.standrews.cs.basic_model.organic.OrganicPartnership;
 import uk.ac.standrews.cs.basic_model.distributions.general.NegativeDeviationException;
@@ -40,7 +41,7 @@ public final class AffairSpacingDistribution extends NormalDistribution {
      * @param random A random to be used to generate the sample value.
      * @return The constructed instance of AffairSpacingDistribution.
      */
-    public static AffairSpacingDistribution affairDistributionFactory(final OrganicPartnership partnership, final Random random) {
+    public static AffairSpacingDistribution affairDistributionFactory(final OrganicPartnership partnership, final RandomGenerator random) {
         int midPoint = (partnership.getEndDate() - partnership.getParntershipDay()) / 2;
         int mean = partnership.getParntershipDay() + midPoint;
         try {
@@ -51,7 +52,7 @@ public final class AffairSpacingDistribution extends NormalDistribution {
         return null;
     }
 
-    private AffairSpacingDistribution(final double mean, final double standard_deviation, final Random random) throws NegativeDeviationException {
+    private AffairSpacingDistribution(final double mean, final double standard_deviation, final RandomGenerator random) throws NegativeDeviationException {
         super(mean, standard_deviation, random);
     }
 
