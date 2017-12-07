@@ -48,7 +48,7 @@ public class SummaryRow {
     private double maxInfidelityRate;
     private int minBirthSpacing;
 
-    private RecordFormat outputRecordFormat;
+    private RecordFormat outputRecordFormat = RecordFormat.NONE;
 
     // Post
 
@@ -67,7 +67,7 @@ public class SummaryRow {
     private double ctRunTime;
     private double recordsRunTime;
 
-    private long maxMemoryUsage;
+    private long maxMemoryUsage = -1L;
     private Double v = Double.NaN;
 
 

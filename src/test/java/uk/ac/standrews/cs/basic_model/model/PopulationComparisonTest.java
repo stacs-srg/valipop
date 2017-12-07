@@ -33,8 +33,6 @@ import static org.junit.Assert.*;
  */
 public abstract class PopulationComparisonTest extends GeneralPopulationStructureTests {
 
-	protected static final Random RANDOM = RandomFactory.getRandom();
-
 	protected IPopulation original_population;
 	protected IPopulationWriter population_writer;
 
