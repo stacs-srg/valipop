@@ -42,7 +42,7 @@ import static org.junit.Assert.assertTrue;
     @Before
     public void setUpAll() throws SQLException {
 
-        database_name = "population" + Math.abs(RandomFactory.getRandom().nextInt());
+        database_name = "population" + Math.abs(RandomFactory.getRandomGenerator().nextInt());
         PopulationProperties.setDatabaseName(database_name);
         connection = new DBConnector().createConnection();
     }

@@ -16,10 +16,12 @@
  */
 package uk.ac.standrews.cs.valipop.events.birth;
 
+import org.apache.commons.math3.random.RandomGenerator;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.exceptions.InsufficientNumberOfPeopleException;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.SingleDeterminedCount;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.BirthStatsKey;
+import uk.ac.standrews.cs.valipop.utils.CollectionUtils;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.IntegerRangeToIntegerSet;
 import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
@@ -176,7 +178,7 @@ public class NBirthLogic implements EventLogic {
             return new MotherSet(havePartners, needPartners);
         }
 
-        Collections.shuffle(femalesAL);
+        CollectionUtils.shuffle(femalesAL, desiredPopulationStatistics.getRandomGenerator());
 
         for(IPersonExtended female : femalesAL) {
 
@@ -254,4 +256,5 @@ public class NBirthLogic implements EventLogic {
             return true;
         }
     }
+
 }

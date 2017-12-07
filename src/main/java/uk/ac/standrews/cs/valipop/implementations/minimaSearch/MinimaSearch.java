@@ -100,6 +100,8 @@ public class MinimaSearch {
 
         setControllingFactor(controlBy, startFactor);
 
+        nanAsemtote = nanAsemtote * repeatRuns;
+
         RecordFormat output_record_format = RecordFormat.NONE;
 
         try {
@@ -138,8 +140,9 @@ public class MinimaSearch {
                             Integer maxBirthingAge = model.getDesiredPopulationStatistics().getOrderedBirthRates(new YearDate(0)).getLargestLabel().getValue();
                             double v = getV(minimiseFor, maxBirthingAge, runPurpose, controlBy);
 
+                            // Failed population run may get a NaN from the V calc
                             if (Double.isNaN(v)) {
-                                v = Double.MAX_VALUE / 1E12;
+                                v = nanAsemtote;
                             }
 
                             // convert to v per million people (to standardise due to varying population sizes)
@@ -156,12 +159,7 @@ public class MinimaSearch {
                                                 + String.valueOf(getControllingFactor(controlBy)));
                             }
 
-                            if(!Double.isNaN(v)) {
-                                totalV += v;
-                            } else {
-                                n --;
-                                break;
-                            }
+                            totalV += v;
 
                         } catch (PreEmptiveOutOfMemoryWarning | OutOfMemoryError e) {
 
@@ -224,7 +222,7 @@ public class MinimaSearch {
         throw new StatsException(minimiseFor + " - minimisation for this test is not implemented");
     }
 
-    private static double getControllingFactor(Control controlBy) {
+    public static double getControllingFactor(Control controlBy) {
 
         switch(controlBy) {
 
@@ -239,7 +237,7 @@ public class MinimaSearch {
         throw new InvalidParameterException(controlBy.toString() + " did not resolve to a known parameter");
     }
 
-    private static void setControllingFactor(Control controlBy, double startFactor) {
+    public static void setControllingFactor(Control controlBy, double startFactor) {
 
         switch(controlBy) {
 
@@ -254,7 +252,7 @@ public class MinimaSearch {
 
     }
 
-    private static void handleRecoveryFromOutOfMemory(double factor, OBDModel model) {
+    public static void handleRecoveryFromOutOfMemory(double factor, OBDModel model) {
         hardLimitBottomBoundFactor = factor + 0.1;
         bottomSearchBoundFactor = hardLimitBottomBoundFactor;
 
@@ -498,7 +496,7 @@ public class MinimaSearch {
         return selected;
     }
 
-    private static double getNextFactorValue() throws SpaceExploredException {
+    public static double getNextFactorValue() throws SpaceExploredException {
 
         if(jumpingPhase) {
             System.out.println("Jump Out...");
@@ -612,7 +610,7 @@ public class MinimaSearch {
 
     static LinkedList<FVPoint> points = new LinkedList<>();
 
-    private static void logFactortoV(double factor, double v) {
+    public static void logFactortoV(double factor, double v) {
 
         points.addLast(new FVPoint(factor, v));
 

@@ -24,6 +24,7 @@ import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.Po
 import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.exceptions.InsufficientNumberOfPeopleException;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.MultipleDeterminedCount;
+import uk.ac.standrews.cs.valipop.utils.CollectionUtils;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.AdvancableDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.integerRange.IntegerRange;
@@ -46,7 +47,7 @@ public class PartneringLogic {
     public static void handle(Collection<NewMother> needingPartners, PopulationStatistics desiredPopulationStatistics,
                               AdvancableDate currentDate, CompoundTimeUnit consideredTimePeriod, Population population,
                               Config config) throws InsufficientNumberOfPeopleException, PersonNotFoundException {
-        int c = 0;
+
         int forNFemales = needingPartners.size();
 
         if(forNFemales != 0) {
@@ -57,8 +58,6 @@ public class PartneringLogic {
 
             PartneringStatsKey key = new PartneringStatsKey(age, forNFemales, consideredTimePeriod, currentDate);
 
-//            MultipleDeterminedCount determinedCounts = desiredPopulationStatistics.getPartneringRates(currentDate).determineCount(key);
-
             MultipleDeterminedCount determinedCounts = (MultipleDeterminedCount) desiredPopulationStatistics.getDeterminedCount(key, config);
 
             LabeledValueSet<IntegerRange, Integer> partnerCounts = null;
@@ -67,7 +66,6 @@ public class PartneringLogic {
             try {
                 partnerCounts = determinedCounts.getDeterminedCount();
                 achievedPartnerCounts = new IntegerRangeToIntegerSet(partnerCounts.getLabels(), 0);
-//            LabeledValueSet<IntegerRange, Integer> shortfallCounts = new IntegerRangeToIntegerSet(partnerCounts.getRowLabels(), 0);
             } catch (NullPointerException e) {
                 throw new Error("Large population size has lead to acculated errors in processing of Doubles that the " +
                         "sum of the underlying self correction array no longer approximates to a whole number - " +
@@ -85,7 +83,7 @@ public class PartneringLogic {
 
                 LinkedList<IPersonExtended> m = new LinkedList<>(population.getLivingPeople().getMales().getAllPersonsBornInTimePeriod(yobOfOlderEndOfIR, iRLength));
 
-                Collections.shuffle(m);
+                CollectionUtils.shuffle(m, desiredPopulationStatistics.getRandomGenerator());
 
                 allMen.put(iR, m);
                 availableMen.update(iR, m.size());
@@ -550,7 +548,6 @@ public class PartneringLogic {
             }
 
             //  Mother of mother of former wife
-            IPartnershipExtended p2 = part.getFemalePartner().getParentsPartnership_ex();
             if(p1 != null) {
                 IPartnershipExtended p3 = p1.getFemalePartner().getParentsPartnership_ex();
                 if (p3 != null && p3.getFemalePartner() == woman)
