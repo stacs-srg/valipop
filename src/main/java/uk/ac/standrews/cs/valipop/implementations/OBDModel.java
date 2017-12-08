@@ -24,6 +24,7 @@ import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStat
 import uk.ac.standrews.cs.valipop.utils.CustomLog4j;
 import uk.ac.standrews.cs.valipop.utils.fileUtils.FileUtils;
 import uk.ac.standrews.cs.valipop.utils.fileUtils.InvalidInputFileException;
+import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.RecordFormat;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.RecordGenerationFactory;
 import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
@@ -240,8 +241,11 @@ public class OBDModel {
         }
 
         ProgramTimer recordTimer = new ProgramTimer();
-        RecordGenerationFactory.outputRecords(config.getOutputRecordFormat(), FileUtils.getRecordsDirPath().toString(),
-                population.getAllPeople());
+        if(config.getOutputRecordFormat() != RecordFormat.NONE) {
+            RecordGenerationFactory.outputRecords(config.getOutputRecordFormat(), FileUtils.getRecordsDirPath().toString(),
+                    population.getAllPeople());
+
+        }
         summary.setRecordsRunTime(recordTimer.getRunTimeSeconds());
 
 

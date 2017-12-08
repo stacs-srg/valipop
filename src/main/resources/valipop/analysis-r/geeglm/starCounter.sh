@@ -17,5 +17,6 @@ TWO=`expr $TWO - $THREE`
 ONE=`expr $ONE - $THREE \* 3 - $TWO \* 2`
 
 # Calculates optomisation value
-TOTAL=`expr $THREE \* 4 + $TWO \* 3 + $ONE \* 2 + $DOT` 
+# TOTAL=`expr $THREE \* 4 + $TWO \* 3 + $ONE \* 2 + $DOT`
+TOTAL=`expr $THREE \* 3 + $TWO \* 2 + $ONE`
 echo $TOTAL
