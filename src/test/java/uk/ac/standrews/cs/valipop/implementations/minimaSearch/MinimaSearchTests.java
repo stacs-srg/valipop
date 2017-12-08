@@ -7,8 +7,6 @@ import uk.ac.standrews.cs.basic_model.distributions.general.InconsistentWeightEx
 import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.implementations.OBDModel;
 import uk.ac.standrews.cs.valipop.implementations.SpaceExploredException;
-import uk.ac.standrews.cs.valipop.statistics.populationStatistics.DesiredPopulationStatisticsFactory;
-import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
 import uk.ac.standrews.cs.valipop.utils.fileUtils.InvalidInputFileException;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.RecordFormat;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.MonthDate;
