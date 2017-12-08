@@ -1,4 +1,11 @@
-% Generated from source file: resources/original/napp_scottish_female_first_names_1871_cleaned.txt at 14:22 01/05/2014.
+YEAR	1871
+POPULATION	SCOTLAND
+SOURCE	NAPP
+VAR	NAMES
+GENDER	F
+FORM	PROPORTION
+LABELS	name	proportion
+DATA
 9(Mrs	1.0382965291823623E-6
 9(Mrs)	5.191482645911811E-7
 9@@@	1.401700314396189E-5
