@@ -18,9 +18,11 @@ package uk.ac.standrews.cs.valipop.implementations;
 
 import uk.ac.standrews.cs.basic_model.distributions.general.InconsistentWeightException;
 import uk.ac.standrews.cs.valipop.implementations.minimaSearch.Control;
+import uk.ac.standrews.cs.valipop.implementations.minimaSearch.MinimaSearch;
 import uk.ac.standrews.cs.valipop.implementations.minimaSearch.Minimise;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.CTtree;
 import uk.ac.standrews.cs.valipop.utils.ProcessArgs;
+import uk.ac.standrews.cs.valipop.utils.ProgramTimer;
 import uk.ac.standrews.cs.valipop.utils.RCaller;
 import uk.ac.standrews.cs.valipop.utils.fileUtils.FileUtils;
 import uk.ac.standrews.cs.valipop.utils.fileUtils.InvalidInputFileException;
@@ -32,6 +34,8 @@ import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.Compoun
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.TimeUnit;
 
 import java.io.IOException;
+
+import static uk.ac.standrews.cs.valipop.implementations.minimaSearch.Minimise.GEEGLM;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
@@ -114,12 +118,18 @@ public class FactorSearch {
 
                                             OBDModel model = new OBDModel(startTime, config);
                                             model.runSimulation();
-                                            model.analyseAndOutputPopulation();
+                                            model.analyseAndOutputPopulation(false);
 
-                                            RCaller.generateAnalysisHTML(FileUtils.getRunPath().toString(),
-                                                    model.getDesiredPopulationStatistics().getOrderedBirthRates(
-                                                            new YearDate(0)).getLargestLabel().getValue(),
-                                                    runPurpose + " - seed size: " + size + " - rf: " + rf);
+                                            ProgramTimer statsTimer = new ProgramTimer();
+
+                                            Integer maxBirthingAge = model.getDesiredPopulationStatistics()
+                                                    .getOrderedBirthRates(new YearDate(0)).getLargestLabel().getValue();
+                                            double v = MinimaSearch.getV(GEEGLM, maxBirthingAge, runPurpose, Control.BF);
+
+                                            model.getSummaryRow().setV(v);
+                                            model.getSummaryRow().setStatsRunTime(statsTimer.getRunTimeSeconds());
+
+                                            model.getSummaryRow().outputSummaryRowToFile();
 
                                         }
 
