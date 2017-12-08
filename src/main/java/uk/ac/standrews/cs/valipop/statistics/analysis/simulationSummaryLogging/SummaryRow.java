@@ -66,6 +66,7 @@ public class SummaryRow {
     private double simRunTime;
     private double ctRunTime;
     private double recordsRunTime;
+    private double statsRunTime;
 
     private long maxMemoryUsage = -1L;
     private Double v = Double.NaN;
@@ -139,6 +140,10 @@ public class SummaryRow {
         this.recordsRunTime = recordsRunTime;
     }
 
+    public void setStatsRunTime(double statsRunTime) {
+        this.statsRunTime = statsRunTime;
+    }
+
     public void setMaxMemoryUsage(long maxUsage) {
         this.maxMemoryUsage = maxUsage;
     }
@@ -149,7 +154,8 @@ public class SummaryRow {
                 + endPop + sep + peakPop + sep + startDate + sep + endDate + sep + simRunTime + sep
                 + ctRunTime + sep + recordsRunTime + sep + resultsDirectory + sep + birthFactor + sep
                 + deathFactor + sep + recoveryFactor + sep + maxInfidelityRate + sep + minBirthSpacing + sep
-                + (maxMemoryUsage / 1e6) + sep + outputRecordFormat.toString() + sep + v.toString() + "\n";
+                + (maxMemoryUsage / 1e6) + sep + outputRecordFormat.toString() + sep + v.toString() + sep
+                + statsRunTime + "\n";
     }
 
     public static String getSeparatedHeadings(char sep) {
@@ -158,7 +164,7 @@ public class SummaryRow {
                 + "End Pop" + sep + "Peak Pop" + sep + "Start Date" + sep + "End Date" + sep + "Sim Run time" + sep
                 + "CT Run time" + sep + "Records Run time" + sep + "Results Directory" + sep + "Birth Factor" + sep
                 + "Death Factor" + sep + "Recovery Factor" + sep + "Max Infidelity Rate" + sep + "Min Birth Spacing"
-                + sep + "Peak Memory Usage (MB)" + sep + "Output Record Format" + sep + "v/M";
+                + sep + "Peak Memory Usage (MB)" + sep + "Output Record Format" + sep + "v/M" + sep + "Stats Run Time";
     }
 
     public void outputSummaryRowToFile() {
@@ -173,5 +179,4 @@ public class SummaryRow {
     public void setV(double v) {
         this.v = v;
     }
-
 }

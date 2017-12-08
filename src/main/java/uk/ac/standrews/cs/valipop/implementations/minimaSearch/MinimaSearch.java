@@ -205,7 +205,7 @@ public class MinimaSearch {
 
     }
 
-    private static double getV(Minimise minimiseFor, Integer maxBirthingAge, String runPurpose, Control controlBy) throws IOException, StatsException {
+    public static double getV(Minimise minimiseFor, Integer maxBirthingAge, String runPurpose, Control controlBy) throws IOException, StatsException {
 
         switch (minimiseFor) {
 
