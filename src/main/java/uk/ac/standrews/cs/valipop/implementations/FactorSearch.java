@@ -42,7 +42,7 @@ import static uk.ac.standrews.cs.valipop.implementations.minimaSearch.Minimise.G
  */
 public class FactorSearch {
 
-    public static void main(String[] args) throws IOException, InvalidInputFileException, PreEmptiveOutOfMemoryWarning, StatsException {
+    public static void main(String[] args) throws IOException, InvalidInputFileException, StatsException, PreEmptiveOutOfMemoryWarning {
 
         String[] pArgs = ProcessArgs.process(args, "N-RUNS");
         if(!ProcessArgs.check(pArgs, "N-RUNS")) {
@@ -79,7 +79,7 @@ public class FactorSearch {
     static double set_up_br = 0.0133;
     static double set_up_dr = 0.0122;
 
-    public static void runFactorSearch(int size, String dataFiles, int numberOfRunsPerSim, String runPurpose) throws IOException, InvalidInputFileException, PreEmptiveOutOfMemoryWarning, StatsException {
+    public static void runFactorSearch(int size, String dataFiles, int numberOfRunsPerSim, String runPurpose) throws IOException, InvalidInputFileException, StatsException, PreEmptiveOutOfMemoryWarning {
 
         rfs = new double[]{0.5, 1};
         iws = new CompoundTimeUnit[]{
@@ -117,8 +117,13 @@ public class FactorSearch {
 
 
                                             OBDModel model = new OBDModel(startTime, config);
-                                            model.runSimulation();
-                                            model.analyseAndOutputPopulation(false);
+                                            try {
+                                                model.runSimulation();
+                                                model.analyseAndOutputPopulation(false);
+                                            } catch (PreEmptiveOutOfMemoryWarning e) {
+                                                model.getSummaryRow().outputSummaryRowToFile();
+                                                throw e;
+                                            }
 
                                             ProgramTimer statsTimer = new ProgramTimer();
 
