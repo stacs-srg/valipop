@@ -113,79 +113,70 @@ public class MinimaSearch {
                 int n = 0;
                 double totalV = 0.0;
 
-                boolean repLock = false;
 
-                do {
-                    for (; n < repeatRuns; n++) {
+                for (; n < repeatRuns; n++) {
 
-                        if (n == 1) {
-                            CTtree.reuseExpectedValues(true);
-                        }
-
-                        String startTime = FileUtils.getDateTime();
-                        OBDModel.setUpFileStructureAndLogs(runPurpose, startTime, results_save_location);
-
-                        Config config = new Config(tS, t0, tE, populationSize, set_up_br, set_up_dr,
-                                simulation_time_step, dataFiles, results_save_location, runPurpose,
-                                minBirthSpacing, minBirthSpacing, maxInfid, bf, df, rf, iw, output_record_format, startTime);
-
-                        OBDModel model = new OBDModel(startTime, config);
-
-                        try {
-                            model.runSimulation();
-                            model.analyseAndOutputPopulation(false);
-
-                            CTtree.clearStatNodeIfNessersary();
-
-                            Integer maxBirthingAge = model.getDesiredPopulationStatistics().getOrderedBirthRates(new YearDate(0)).getLargestLabel().getValue();
-                            double v = getV(minimiseFor, maxBirthingAge, runPurpose, controlBy);
-
-                            // Failed population run may get a NaN from the V calc
-                            if (Double.isNaN(v)) {
-                                v = nanAsemtote;
-                            }
-
-                            // convert to v per million people (to standardise due to varying population sizes)
-                            v = v / model.getPopulation().getPopulationCounts().getCreatedPeople() * 1E6;
-
-                            model.getSummaryRow().setV(v);
-                            model.getSummaryRow().outputSummaryRowToFile();
-
-                            if (minimiseFor != Minimise.GEEGLM) {
-                                RCaller.generateAnalysisHTML(FileUtils.getRunPath().toString(),
-                                        model.getDesiredPopulationStatistics().getOrderedBirthRates(
-                                                new YearDate(0)).getLargestLabel().getValue(),
-                                        runPurpose + " - " + controlBy.toString() + ": "
-                                                + String.valueOf(getControllingFactor(controlBy)));
-                            }
-
-                            totalV += v;
-
-                        } catch (PreEmptiveOutOfMemoryWarning | OutOfMemoryError e) {
-
-                            handleRecoveryFromOutOfMemory(getControllingFactor(controlBy), model);
-
-                            break;
-                        }
-
+                    if (n == 1) {
+                        CTtree.reuseExpectedValues(true);
                     }
 
-                    Double avgV = totalV / n;
+                    String startTime = FileUtils.getDateTime();
+                    OBDModel.setUpFileStructureAndLogs(runPurpose, startTime, results_save_location);
 
-                    if (!avgV.isNaN()) {
-                        logFactortoV(getControllingFactor(controlBy), avgV);
-                        inMinima(getControllingFactor(controlBy));
+                    Config config = new Config(tS, t0, tE, populationSize, set_up_br, set_up_dr,
+                            simulation_time_step, dataFiles, results_save_location, runPurpose,
+                            minBirthSpacing, minBirthSpacing, maxInfid, bf, df, rf, iw, output_record_format, startTime);
 
-                        if (avgV < 0.001) {
-                            repeatRuns = 100;
-                            repLock = true;
+                    OBDModel model = new OBDModel(startTime, config);
+
+                    try {
+                        model.runSimulation();
+                        model.analyseAndOutputPopulation(false);
+
+                        CTtree.clearStatNodeIfNessersary();
+
+                        Integer maxBirthingAge = model.getDesiredPopulationStatistics().getOrderedBirthRates(new YearDate(0)).getLargestLabel().getValue();
+                        double v = getV(minimiseFor, maxBirthingAge, runPurpose, controlBy);
+
+                        // Failed population run may get a NaN from the V calc
+                        if (Double.isNaN(v)) {
+                            v = nanAsemtote;
                         }
 
-                    } else {
-                        logFactortoV(getControllingFactor(controlBy), nanAsemtote);
+                        // convert to v per million people (to standardise due to varying population sizes)
+                        v = v / model.getPopulation().getPopulationCounts().getCreatedPeople() * 1E6;
+
+                        model.getSummaryRow().setV(v);
+                        model.getSummaryRow().outputSummaryRowToFile();
+
+                        if (minimiseFor != Minimise.GEEGLM) {
+                            RCaller.generateAnalysisHTML(FileUtils.getRunPath().toString(),
+                                    model.getDesiredPopulationStatistics().getOrderedBirthRates(
+                                            new YearDate(0)).getLargestLabel().getValue(),
+                                    runPurpose + " - " + controlBy.toString() + ": "
+                                            + String.valueOf(getControllingFactor(controlBy)));
+                        }
+
+                        totalV += v;
+
+                    } catch (PreEmptiveOutOfMemoryWarning | OutOfMemoryError e) {
+
+                        handleRecoveryFromOutOfMemory(getControllingFactor(controlBy), model);
+
+                        break;
                     }
 
-                } while(repLock);
+                }
+
+                Double avgV = totalV / n;
+
+                if (!avgV.isNaN()) {
+                    logFactortoV(getControllingFactor(controlBy), avgV);
+                    inMinima(getControllingFactor(controlBy));
+
+                } else {
+                    logFactortoV(getControllingFactor(controlBy), nanAsemtote);
+                }
 
                 CTtree.reuseExpectedValues(false);
 
