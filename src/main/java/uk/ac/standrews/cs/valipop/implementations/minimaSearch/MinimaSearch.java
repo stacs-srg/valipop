@@ -276,7 +276,7 @@ public class MinimaSearch {
 
         do {
 
-            if(counter > options) {
+            if(counter >= options) {
                 throw new SpaceExploredException();
             }
 

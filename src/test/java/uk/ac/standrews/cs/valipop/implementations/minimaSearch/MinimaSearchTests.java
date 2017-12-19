@@ -62,13 +62,6 @@ public class MinimaSearchTests {
         bf = MinimaSearch.getControllingFactor(control);
         Assert.assertEquals(startingFator + 0.5, bf, 1E-6);
 
-        MinimaSearch.handleRecoveryFromOutOfMemory(bf, model);
-
-        MinimaSearch.setControllingFactor(control, MinimaSearch.getNextFactorValue());
-        bf = MinimaSearch.getControllingFactor(control);
-        Assert.assertEquals(startingFator - 0.5, bf, 1E-6);
-
-
     }
 
 }
