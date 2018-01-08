@@ -1,5 +1,5 @@
 deathSatGEEGLM <- function(in.data) {
-  return(runGEEGLM(freq ~ Date * Age * Sex * Died * Source, in.data))
+  return(runGEEGLM(freq ~ Date * Age * Sex * Died * Source, in.data, constr = "ar2"))
 }
 
 deathSelGEEGLM <- function(in.data) {
@@ -35,10 +35,10 @@ sepSatGEEGLM.4 <- function(in.data) {
   return(runGEEGLM(freq ~ Date * Source * Separated, in.data))
 }
 
-runGEEGLM <- function(formula, in.data) {
+runGEEGLM <- function(formula, in.data, constr = "ar1") {
   
   library(geepack)  
-  mod <- geeglm(formula, id=idvar, data = in.data, corstr="ar1")
+  mod <- geeglm(formula, id=idvar, data = in.data, corstr=constr)
   print(summary(mod))
   
   plot(residuals(mod), type = "l")
