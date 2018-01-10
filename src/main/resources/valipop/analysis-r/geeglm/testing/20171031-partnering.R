@@ -7,7 +7,7 @@ source("geeglm/glm-functions.R")
 
 par(mfrow=c(2,2))
 
-ja.pathToTablesDir <- "../results/minima-ja-f/20171013-015613:749/tables/"
+ja.pathToTablesDir <- "../results/exp6-ms-jaAA-1m/20180108-124159:727/tables/"
 sc.pathToTablesDir <- "../results/minima-scot-f/20171017-090258:140/tables/"
 
 ja.title <- "ja - bf : 0"
