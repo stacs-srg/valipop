@@ -32,10 +32,9 @@ public class CL_OBDModel {
 
         try {
             runOBDModel(pathToConfigFile, resultsPath, runPurpose);
-        } catch (InvalidInputFileException | IOException | Error | PreEmptiveOutOfMemoryWarning e) {
+        } catch (InvalidInputFileException | IOException | Error | PreEmptiveOutOfMemoryWarning | StatsException e) {
             System.err.println(e.getMessage());
         }
-
     }
 
     public static OBDModel runOBDModel(String pathToConfigFile, String resultsPath, String runPurpose) throws Error, InvalidInputFileException, IOException, PreEmptiveOutOfMemoryWarning, StatsException {
