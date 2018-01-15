@@ -2,6 +2,7 @@ package uk.ac.standrews.cs.valipop.implementations;
 
 import uk.ac.standrews.cs.basic_model.distributions.general.InconsistentWeightException;
 import uk.ac.standrews.cs.valipop.utils.ProcessArgs;
+import uk.ac.standrews.cs.valipop.utils.ProgramTimer;
 import uk.ac.standrews.cs.valipop.utils.RCaller;
 import uk.ac.standrews.cs.valipop.utils.fileUtils.FileUtils;
 import uk.ac.standrews.cs.valipop.utils.fileUtils.InvalidInputFileException;
@@ -37,7 +38,7 @@ public class CL_OBDModel {
 
     }
 
-    public static OBDModel runOBDModel(String pathToConfigFile, String resultsPath, String runPurpose) throws Error, InvalidInputFileException, IOException, PreEmptiveOutOfMemoryWarning {
+    public static OBDModel runOBDModel(String pathToConfigFile, String resultsPath, String runPurpose) throws Error, InvalidInputFileException, IOException, PreEmptiveOutOfMemoryWarning, StatsException {
         String startTime = FileUtils.getDateTime();
 
         Config config;
@@ -53,7 +54,20 @@ public class CL_OBDModel {
         try {
             model = new OBDModel(startTime, config);
             model.runSimulation();
-            model.analyseAndOutputPopulation();
+            model.analyseAndOutputPopulation(false);
+
+            ProgramTimer statsTimer = new ProgramTimer();
+
+            double v = RCaller.getGeeglmV(
+                    FileUtils.getRunPath().toString(),
+                    FileUtils.getRunPath().toString(),
+                    FileUtils.getContingencyTablesPath().toString(),
+                    model.getDesiredPopulationStatistics().getOrderedBirthRates(new YearDate(0)).getLargestLabel().getValue());
+
+            model.getSummaryRow().setStatsRunTime(statsTimer.getRunTimeSeconds());
+            model.getSummaryRow().setV(v);
+            model.getSummaryRow().outputSummaryRowToFile();
+
 
 //            RCaller.generateAnalysisHTML(
 //                    FileUtils.getRunPath().toString(),
