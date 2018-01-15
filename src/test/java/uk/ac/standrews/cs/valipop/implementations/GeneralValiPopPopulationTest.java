@@ -25,7 +25,7 @@ import java.io.IOException;
  */
 public class GeneralValiPopPopulationTest extends GeneralPopulationStructureTests {
 
-    public GeneralValiPopPopulationTest() throws IOException, InvalidInputFileException, PreEmptiveOutOfMemoryWarning {
+    public GeneralValiPopPopulationTest() throws IOException, InvalidInputFileException, PreEmptiveOutOfMemoryWarning, StatsException {
         super(CL_OBDModel.runOBDModel("src/test/resources/valipop/config-ps.txt",
                 "src/test/resources/results", "general-structure-testing")
                 .getPopulation().getAllPeople(), false);
