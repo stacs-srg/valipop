@@ -18,7 +18,7 @@ public class CL_RunNModels {
     }
 
     public static void runNModels(String[] args) {
-        // Expects 4 args: path to config file, results path, run purpose
+        // Expects 4 args: path to config file, results path, run purpose, number of runs
 
         String[] pArgs = ProcessArgs.process(args, "N-RUNS");
         if(!ProcessArgs.check(pArgs, "N-RUNS")) {
