@@ -46,7 +46,7 @@ public class CL_RunNModels {
                 CL_OBDModel.runOBDModel(pathToConfigFile, resultsPath, runPurpose);
             }
 
-        } catch (InvalidInputFileException | IOException | Error | PreEmptiveOutOfMemoryWarning e) {
+        } catch (InvalidInputFileException | IOException | Error | PreEmptiveOutOfMemoryWarning | StatsException e) {
             System.err.println(e.getMessage());
         }
 
