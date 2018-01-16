@@ -199,6 +199,8 @@ public class SeparationNodeDouble extends DoubleNode<SeparationOption, IntegerRa
     @Override
     public void makeChildren() {
 
+        // TODO - WHY DO WE NEVER CONSIDER THE SEPARATION STATUS IN THIS NODE? SURELY IT SHOULD IMPACT ON THE CHILDREN?
+
         IntegerRange ncip = ((NumberOfChildrenInPartnershipNodeDouble)
                 getAncestor(new NumberOfChildrenInPartnershipNodeDouble())).getOption();
 

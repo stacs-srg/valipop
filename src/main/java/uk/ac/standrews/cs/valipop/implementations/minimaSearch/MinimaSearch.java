@@ -29,7 +29,7 @@ public class MinimaSearch {
 
     static double initStep;
 
-    static double maxAbsFactor = 3;
+    static double maxAbsFactor = 4;
 
     static double topSearchBoundFactor = maxAbsFactor;
     static double bottomSearchBoundFactor = -1 * maxAbsFactor;
@@ -53,8 +53,8 @@ public class MinimaSearch {
     static double set_up_br = 0.0133;
     static double set_up_dr = 0.0122;
 
-    static double rf = 1.0;
-    static CompoundTimeUnit iw = new CompoundTimeUnit(1, TimeUnit.YEAR);
+    static double rf = 0.5;
+    static CompoundTimeUnit iw = new CompoundTimeUnit(10, TimeUnit.YEAR);
     static int minBirthSpacing = 147;
     static double maxInfid = 0.2;
 
