@@ -1,0 +1,204 @@
+
+
+
+<html>
+
+<head>
+<style type="text/css">
+.knitr .inline {
+  background-color: #f7f7f7;
+  border:solid 1px #B0B0B0;
+}
+.error {
+	font-weight: bold;
+	color: #FF0000;
+}
+.warning {
+	font-weight: bold;
+}
+.message {
+	font-style: italic;
+}
+.source, .output, .warning, .error, .message {
+	padding: 0 1em;
+  border:solid 1px #F7F7F7;
+}
+.source {
+  background-color: #f5f5f5;
+}
+.rimage .left {
+  text-align: left;
+}
+.rimage .right {
+  text-align: right;
+}
+.rimage .center {
+  text-align: center;
+}
+.hl.num {
+  color: #AF0F91;
+}
+.hl.str {
+  color: #317ECC;
+}
+.hl.com {
+  color: #AD95AF;
+  font-style: italic;
+}
+.hl.opt {
+  color: #000000;
+}
+.hl.std {
+  color: #585858;
+}
+.hl.kwa {
+  color: #295F94;
+  font-weight: bold;
+}
+.hl.kwb {
+  color: #B05A65;
+}
+.hl.kwc {
+  color: #55aa55;
+}
+.hl.kwd {
+  color: #BC5A65;
+  font-weight: bold;
+}
+</style>
+<title>Population Analysis</title>
+</head>
+
+<body>
+
+
+<div class="chunk" id="unnamed-chunk-1"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl kwd">source</span><span class="hl std">(</span><span class="hl str">&quot;process-data-functions.R&quot;</span><span class="hl std">)</span>
+<span class="hl std">death</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">cleanDeathData</span><span class="hl std">(</span><span class="hl kwd">readInData</span><span class="hl std">(</span><span class="hl kwd">paste</span><span class="hl std">(pathToRunDir,</span> <span class="hl str">&quot;tables/death-CT.csv&quot;</span><span class="hl std">,</span> <span class="hl kwc">sep</span> <span class="hl std">=</span> <span class="hl str">&quot;&quot;</span><span class="hl std">)))</span>
+</pre></div>
+<div class="warning"><pre class="knitr r">## Warning in file(file, &quot;rt&quot;): cannot open file '../results/part-experiments/20171030-132810:067//tables/death-CT.csv': No such file or directory
+</pre></div>
+<div class="error"><pre class="knitr r">## Error in file(file, &quot;rt&quot;): cannot open the connection
+</pre></div>
+<div class="source"><pre class="knitr r"><span class="hl std">mbirth</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">cleanMBData</span><span class="hl std">(</span><span class="hl kwd">readInData</span><span class="hl std">(</span><span class="hl kwd">paste</span><span class="hl std">(pathToRunDir,</span> <span class="hl str">&quot;tables/mb-CT.csv&quot;</span><span class="hl std">,</span> <span class="hl kwc">sep</span> <span class="hl std">=</span> <span class="hl str">&quot;&quot;</span><span class="hl std">)), maxBirthingAge)</span>
+</pre></div>
+<div class="warning"><pre class="knitr r">## Warning in file(file, &quot;rt&quot;): cannot open file '../results/part-experiments/20171030-132810:067//tables/mb-CT.csv': No such file or directory
+</pre></div>
+<div class="error"><pre class="knitr r">## Error in file(file, &quot;rt&quot;): cannot open the connection
+</pre></div>
+<div class="source"><pre class="knitr r"><span class="hl std">obirth</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">cleanOBData</span><span class="hl std">(</span><span class="hl kwd">readInData</span><span class="hl std">(</span><span class="hl kwd">paste</span><span class="hl std">(pathToRunDir,</span> <span class="hl str">&quot;tables/ob-CT.csv&quot;</span><span class="hl std">,</span> <span class="hl kwc">sep</span> <span class="hl std">=</span> <span class="hl str">&quot;&quot;</span><span class="hl std">)), maxBirthingAge)</span>
+</pre></div>
+<div class="warning"><pre class="knitr r">## Warning in file(file, &quot;rt&quot;): cannot open file '../results/part-experiments/20171030-132810:067//tables/ob-CT.csv': No such file or directory
+</pre></div>
+<div class="error"><pre class="knitr r">## Error in file(file, &quot;rt&quot;): cannot open the connection
+</pre></div>
+<div class="source"><pre class="knitr r"><span class="hl std">part</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">cleanPartData</span><span class="hl std">(</span><span class="hl kwd">readInData</span><span class="hl std">(</span><span class="hl kwd">paste</span><span class="hl std">(pathToRunDir,</span> <span class="hl str">&quot;tables/part-CT.csv&quot;</span><span class="hl std">,</span> <span class="hl kwc">sep</span> <span class="hl std">=</span> <span class="hl str">&quot;&quot;</span><span class="hl std">)))</span>
+</pre></div>
+<div class="warning"><pre class="knitr r">## Warning in file(file, &quot;rt&quot;): cannot open file '../results/part-experiments/20171030-132810:067//tables/part-CT.csv': No such file or directory
+</pre></div>
+<div class="error"><pre class="knitr r">## Error in file(file, &quot;rt&quot;): cannot open the connection
+</pre></div>
+<div class="source"><pre class="knitr r"><span class="hl std">sep</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">cleanSepData</span><span class="hl std">(</span><span class="hl kwd">readInData</span><span class="hl std">(</span><span class="hl kwd">paste</span><span class="hl std">(pathToRunDir,</span> <span class="hl str">&quot;tables/sep-CT.csv&quot;</span><span class="hl std">,</span> <span class="hl kwc">sep</span> <span class="hl std">=</span> <span class="hl str">&quot;&quot;</span><span class="hl std">)))</span>
+</pre></div>
+<div class="warning"><pre class="knitr r">## Warning in file(file, &quot;rt&quot;): cannot open file '../results/part-experiments/20171030-132810:067//tables/sep-CT.csv': No such file or directory
+</pre></div>
+<div class="error"><pre class="knitr r">## Error in file(file, &quot;rt&quot;): cannot open the connection
+</pre></div>
+</div></div>
+
+<div class="chunk" id="unnamed-chunk-2"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl kwd">source</span><span class="hl std">(</span><span class="hl str">&quot;utils.R&quot;</span><span class="hl std">)</span>
+<span class="hl kwd">source</span><span class="hl std">(</span><span class="hl str">&quot;population-plot-functions.R&quot;</span><span class="hl std">)</span>
+<span class="hl std">title</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">paste</span><span class="hl std">(subTitle,</span> <span class="hl str">&quot; - Age: 0 - &quot;</span><span class="hl std">, pathToRunDir)</span>
+<span class="hl std">title</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">wrap_sentence</span><span class="hl std">(title,</span> <span class="hl num">50</span><span class="hl std">)</span>
+<span class="hl kwd">plotCohorts</span><span class="hl std">(death,</span> <span class="hl num">0</span><span class="hl std">, title)</span>
+</pre></div>
+<div class="error"><pre class="knitr r">## Error in plotCohorts(death, 0, title): object 'death' not found
+</pre></div>
+<div class="source"><pre class="knitr r"><span class="hl std">title</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">paste</span><span class="hl std">(subTitle,</span> <span class="hl str">&quot; - Age: 50 - &quot;</span><span class="hl std">, pathToRunDir)</span>
+<span class="hl std">title</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">wrap_sentence</span><span class="hl std">(title,</span> <span class="hl num">50</span><span class="hl std">)</span>
+<span class="hl kwd">plotCohorts</span><span class="hl std">(death,</span> <span class="hl num">50</span><span class="hl std">, title)</span>
+</pre></div>
+<div class="error"><pre class="knitr r">## Error in plotCohorts(death, 50, title): object 'death' not found
+</pre></div>
+</div></div>
+
+<div class="chunk" id="unnamed-chunk-3"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl kwd">source</span><span class="hl std">(</span><span class="hl str">&quot;process-data-functions.R&quot;</span><span class="hl std">)</span>
+
+<span class="hl kwd">sourceSummary</span><span class="hl std">(death)</span>
+</pre></div>
+<div class="error"><pre class="knitr r">## Error in summary(data[which(data$Source == &quot;SIM&quot;), ]): object 'death' not found
+</pre></div>
+<div class="source"><pre class="knitr r"><span class="hl kwd">sourceSummary</span><span class="hl std">(obirth)</span>
+</pre></div>
+<div class="error"><pre class="knitr r">## Error in summary(data[which(data$Source == &quot;SIM&quot;), ]): object 'obirth' not found
+</pre></div>
+<div class="source"><pre class="knitr r"><span class="hl kwd">sourceSummary</span><span class="hl std">(mbirth)</span>
+</pre></div>
+<div class="error"><pre class="knitr r">## Error in summary(data[which(data$Source == &quot;SIM&quot;), ]): object 'mbirth' not found
+</pre></div>
+<div class="source"><pre class="knitr r"><span class="hl kwd">sourceSummary</span><span class="hl std">(part)</span>
+</pre></div>
+<div class="error"><pre class="knitr r">## Error in summary(data[which(data$Source == &quot;SIM&quot;), ]): object 'part' not found
+</pre></div>
+<div class="source"><pre class="knitr r"><span class="hl kwd">sourceSummary</span><span class="hl std">(sep)</span>
+</pre></div>
+<div class="error"><pre class="knitr r">## Error in summary(data[which(data$Source == &quot;SIM&quot;), ]): object 'sep' not found
+</pre></div>
+</div></div>
+
+<div class="chunk" id="unnamed-chunk-4"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl kwd">source</span><span class="hl std">(</span><span class="hl str">&quot;population-plot-functions.R&quot;</span><span class="hl std">)</span>
+<span class="hl kwd">plotMB</span><span class="hl std">(mbirth)</span>
+</pre></div>
+<div class="error"><pre class="knitr r">## Error in aggregate(mb.data$freq, by = list(mb.data$Source, mb.data$Date, : object 'mbirth' not found
+</pre></div>
+</div></div>
+
+<div class="chunk" id="unnamed-chunk-5"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl kwd">source</span><span class="hl std">(</span><span class="hl str">&quot;id-funtions.R&quot;</span><span class="hl std">)</span>
+<span class="hl std">death.ids</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">addCohortIDs.death</span><span class="hl std">(death)</span>
+</pre></div>
+<div class="error"><pre class="knitr r">## Error in addCohortIDs.death(death): object 'death' not found
+</pre></div>
+<div class="source"><pre class="knitr r"><span class="hl std">obirth.ids</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">addCohortIDs.ob</span><span class="hl std">(obirth)</span>
+</pre></div>
+<div class="error"><pre class="knitr r">## Error in addCohortIDs.ob(obirth): object 'obirth' not found
+</pre></div>
+<div class="source"><pre class="knitr r"><span class="hl std">mbirth.ids</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">addCohortIDs.mb</span><span class="hl std">(mbirth)</span>
+</pre></div>
+<div class="error"><pre class="knitr r">## Error in addCohortIDs.mb(mbirth): object 'mbirth' not found
+</pre></div>
+<div class="source"><pre class="knitr r"><span class="hl std">part.ids</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">addCohortIDs.part</span><span class="hl std">(part)</span>
+</pre></div>
+<div class="error"><pre class="knitr r">## Error in addCohortIDs.part(part): object 'part' not found
+</pre></div>
+<div class="source"><pre class="knitr r"><span class="hl std">sep.ids</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">addCohortIDs.sep</span><span class="hl std">(sep)</span>
+</pre></div>
+<div class="error"><pre class="knitr r">## Error in addCohortIDs.sep(sep): object 'sep' not found
+</pre></div>
+<div class="source"><pre class="knitr r"><span class="hl kwd">par</span><span class="hl std">(</span><span class="hl kwc">mfrow</span> <span class="hl std">=</span> <span class="hl kwd">c</span><span class="hl std">(</span><span class="hl num">1</span><span class="hl std">,</span><span class="hl num">3</span><span class="hl std">))</span>
+
+<span class="hl kwd">source</span><span class="hl std">(</span><span class="hl str">&quot;geeglm-functions.R&quot;</span><span class="hl std">)</span>
+<span class="hl kwd">deathSatGEEGLM</span><span class="hl std">(death.ids)</span>
+</pre></div>
+<div class="error"><pre class="knitr r">## Error in is.data.frame(data): object 'death.ids' not found
+</pre></div>
+<div class="source"><pre class="knitr r"><span class="hl kwd">obSatGEEGLM</span><span class="hl std">(obirth.ids)</span>
+</pre></div>
+<div class="error"><pre class="knitr r">## Error in is.data.frame(data): object 'obirth.ids' not found
+</pre></div>
+<div class="source"><pre class="knitr r"><span class="hl kwd">mbSatGEEGLM</span><span class="hl std">(mbirth.ids)</span>
+</pre></div>
+<div class="error"><pre class="knitr r">## Error in is.data.frame(data): object 'mbirth.ids' not found
+</pre></div>
+<div class="source"><pre class="knitr r"><span class="hl kwd">partSatGEEGLM</span><span class="hl std">(part.ids)</span>
+</pre></div>
+<div class="error"><pre class="knitr r">## Error in is.data.frame(data): object 'part.ids' not found
+</pre></div>
+<div class="source"><pre class="knitr r"><span class="hl kwd">sepSatGEEGLM</span><span class="hl std">(sep.ids)</span>
+</pre></div>
+<div class="error"><pre class="knitr r">## Error in is.data.frame(data): object 'sep.ids' not found
+</pre></div>
+<div class="source"><pre class="knitr r"><span class="hl kwd">par</span><span class="hl std">(</span><span class="hl kwc">mfrow</span> <span class="hl std">=</span> <span class="hl kwd">c</span><span class="hl std">(</span><span class="hl num">1</span><span class="hl std">,</span><span class="hl num">1</span><span class="hl std">))</span>
+</pre></div>
+</div></div>
+
+</body>
+</html>
