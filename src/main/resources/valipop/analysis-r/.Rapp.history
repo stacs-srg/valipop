@@ -1,0 +1,16 @@
+pathToTablesDir <- "../results/minima-ja-f/20171013-015613:749/tables/"
+title <- "ja - bf : 0"
+death <- cleanDeathData(readInData(paste(pathToTablesDir, "death-CT.csv", sep = "")))
+source("geeglm/process-data-functions.R")
+death <- cleanDeathData(readInData(paste(pathToTablesDir, "death-CT.csv", sep = "")))
+source("geeglm/population-plot-functions.R")#
+plotCohorts(death, 0, title)
+part <- cleanPartData(readInData(paste(pathToTablesDir, "part-CT.csv", sep = "")))
+part.ids <- addCohortIDs.part(part)
+source("geeglm/id-funtions.R")
+part.ids <- addCohortIDs.part(part)
+partSatGEEGLM(part.ids)
+source("geeglm/geeglm-functions.R")
+partSatGEEGLM(part.ids)
+sourceSummary(part.ids)
+sourceSummary(part.ids)
