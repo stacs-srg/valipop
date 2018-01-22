@@ -19,5 +19,5 @@ max_births_infidelity = 0.2
 birth_factor = 0.0
 death_factor = 0.0
 recovery_factor = 1.0
-output_tables = true
+output_tables = false
 deterministic = false

@@ -27,19 +27,12 @@ import java.nio.file.Path;
  */
 public class CustomLog4j {
 
-    private static Logger logger;
 
     public static Logger setup(Path logFile, Object logOwner) {
 
         System.setProperty("logFilename", logFile.toString());
 
-        logger = LogManager.getLogger(logOwner.getClass());
-
-//        LoggerContext context = LogManager.getContext();
-//        context.get
-
-
-        return logger;
+        return LogManager.getLogger(logOwner.getClass());
 
     }
 
