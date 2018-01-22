@@ -28,7 +28,7 @@ public class MemoryUsageAnalysis {
     private static long maxSimUsage = 0L;
     private static long maxRunUsage = 0L;
 
-    private static double threshold = 0.95;
+    private static double threshold = 0.975;
 
     public static void main(String[] args) throws StatsException {
 

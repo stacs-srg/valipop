@@ -81,9 +81,11 @@ public class CTtree extends Node<String, SourceType, Number, Number> implements 
         this.startDate = startDate;
         this.endDate = new YearDate(endDate.getYear() - 2);
 
-        log.info("CTree --- Populating tree");
+
+        log.info("CTree --- Check for reuse of expected values : " + reuseExpValues);
 
         if(statNode == null || !reuseExpValues) {
+            log.info("CTree --- Populating expected side of tree with seed");
             YearDate prevY = new YearDate(startDate.getYear() - startStepBack);
             for (IPersonExtended person : population.getPeople_ex()) {
                 if (person.aliveInYear(prevY)) {
@@ -97,6 +99,7 @@ public class CTtree extends Node<String, SourceType, Number, Number> implements 
         }
 
 
+        log.info("CTree --- Populating tree with observed population");
         for (YearDate y = startDate.getYearDate(); DateUtils.dateBefore(y, endDate);
              y = y.advanceTime(1, TimeUnit.YEAR).getYearDate()) {
 

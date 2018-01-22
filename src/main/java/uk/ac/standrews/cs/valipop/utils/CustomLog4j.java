@@ -18,6 +18,7 @@ package uk.ac.standrews.cs.valipop.utils;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.spi.LoggerContext;
 
 import java.nio.file.Path;
 
@@ -26,11 +27,22 @@ import java.nio.file.Path;
  */
 public class CustomLog4j {
 
+    private static Logger logger;
+
     public static Logger setup(Path logFile, Object logOwner) {
 
         System.setProperty("logFilename", logFile.toString());
-        return LogManager.getLogger(logOwner.getClass());
+
+        logger = LogManager.getLogger(logOwner.getClass());
+
+//        LoggerContext context = LogManager.getContext();
+//        context.get
+
+
+        return logger;
 
     }
+
+
 
 }
