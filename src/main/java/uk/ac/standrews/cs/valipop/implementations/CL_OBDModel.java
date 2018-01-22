@@ -55,23 +55,20 @@ public class CL_OBDModel {
             model.runSimulation();
             model.analyseAndOutputPopulation(false);
 
-            ProgramTimer statsTimer = new ProgramTimer();
+            if(config.getOutputTables()) {
+                ProgramTimer statsTimer = new ProgramTimer();
 
-            double v = RCaller.getGeeglmV(
-                    FileUtils.getRunPath().toString(),
-                    FileUtils.getRunPath().toString(),
-                    FileUtils.getContingencyTablesPath().toString(),
-                    model.getDesiredPopulationStatistics().getOrderedBirthRates(new YearDate(0)).getLargestLabel().getValue());
+                double v = RCaller.getGeeglmV(
+                        FileUtils.getRunPath().toString(),
+                        FileUtils.getRunPath().toString(),
+                        FileUtils.getContingencyTablesPath().toString(),
+                        model.getDesiredPopulationStatistics().getOrderedBirthRates(new YearDate(0)).getLargestLabel().getValue());
 
-            model.getSummaryRow().setStatsRunTime(statsTimer.getRunTimeSeconds());
-            model.getSummaryRow().setV(v);
+                model.getSummaryRow().setStatsRunTime(statsTimer.getRunTimeSeconds());
+                model.getSummaryRow().setV(v);
+            }
+
             model.getSummaryRow().outputSummaryRowToFile();
-
-
-//            RCaller.generateAnalysisHTML(
-//                    FileUtils.getRunPath().toString(),
-//                    model.getDesiredPopulationStatistics().getOrderedBirthRates(new YearDate(0)).getLargestLabel().getValue(),
-//                    runPurpose + " - bf: " + String.valueOf(config.getBirthFactor()));
 
             return model;
         } catch (IOException e) {

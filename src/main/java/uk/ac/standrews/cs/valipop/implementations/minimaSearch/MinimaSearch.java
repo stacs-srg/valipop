@@ -6,6 +6,7 @@ import uk.ac.standrews.cs.valipop.utils.DoubleComparer;
 import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.CTtree;
 import uk.ac.standrews.cs.valipop.utils.ProcessArgs;
+import uk.ac.standrews.cs.valipop.utils.ProgramTimer;
 import uk.ac.standrews.cs.valipop.utils.RCaller;
 import uk.ac.standrews.cs.valipop.utils.fileUtils.FileUtils;
 import uk.ac.standrews.cs.valipop.utils.fileUtils.InvalidInputFileException;
@@ -150,11 +151,15 @@ public class MinimaSearch {
                         model.getSummaryRow().outputSummaryRowToFile();
 
                         if (minimiseFor != Minimise.GEEGLM) {
+                            ProgramTimer statsTimer = new ProgramTimer();
+
                             RCaller.generateAnalysisHTML(FileUtils.getRunPath().toString(),
                                     model.getDesiredPopulationStatistics().getOrderedBirthRates(
                                             new YearDate(0)).getLargestLabel().getValue(),
                                     runPurpose + " - " + controlBy.toString() + ": "
                                             + String.valueOf(getControllingFactor(controlBy)));
+
+                            model.getSummaryRow().setStatsRunTime(statsTimer.getRunTimeSeconds());
                         }
 
                         totalV += v;
