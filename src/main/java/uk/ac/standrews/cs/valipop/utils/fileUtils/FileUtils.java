@@ -38,8 +38,6 @@ import java.util.Calendar;
  */
 public class FileUtils {
 
-    private static Logger log = null;
-
     private static Path globalSummaryPath;
     private static Path resultsSummaryPath;
     private static Path detailedResultsPath;
@@ -47,12 +45,6 @@ public class FileUtils {
     private static Path recordsPath;
     private static Path contingencyTablesPath;
     private static Path runPath;
-
-    private static void checkLogFile() {
-        if(log == null) {
-            log = LogManager.getLogger(FileUtils.class);
-        }
-    }
 
     public static void makeDirectoryStructure(String runPurpose, String startTime, String resultPath) throws IOException {
 
@@ -89,24 +81,6 @@ public class FileUtils {
         mkDirs(log);
         tracePath = mkBlankFile(log, "trace.txt");
 
-    }
-
-    public static PrintStream setupDumpPrintStream(String fileName, Config config) {
-
-        PrintStream stream;
-
-        try {
-
-            File a = Paths.get(config.getResultsSavePath().toString(), config.getRunPurpose(), config.getStartTime(), "dump", fileName + ".txt").toFile();
-            stream = new PrintStream(a, "UTF-8");
-
-        } catch (IOException e) {
-            checkLogFile();
-            log.info("Failed to set up summary results output stream - will output to standard out instead");
-            stream = System.out;
-        }
-
-        return stream;
     }
 
     public static Path mkBlankFile(Path parent, String fileName) throws IOException {

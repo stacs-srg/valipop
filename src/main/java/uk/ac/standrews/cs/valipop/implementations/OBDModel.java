@@ -16,6 +16,8 @@
  */
 package uk.ac.standrews.cs.valipop.implementations;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.config.LoggerConfig;
 import uk.ac.standrews.cs.basic_model.distributions.general.InconsistentWeightException;
 import uk.ac.standrews.cs.valipop.events.EventLogic;
 import uk.ac.standrews.cs.valipop.events.birth.NBirthLogic;
@@ -80,6 +82,9 @@ public class OBDModel {
         // And errors in this method are sent to standard error
 
         FileUtils.makeDirectoryStructure(runPurpose, startTime, resultsPath);
+//        if(log != null) {
+//            LoggerConfig
+//        }
         log = CustomLog4j.setup(FileUtils.pathToLogDir(runPurpose, startTime, resultsPath), new OBDModel());
     }
 
