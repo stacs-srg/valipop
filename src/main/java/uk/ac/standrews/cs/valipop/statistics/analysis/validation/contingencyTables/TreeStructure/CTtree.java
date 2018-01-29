@@ -16,11 +16,10 @@
  */
 package uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.DoubleNodes.*;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.enumerations.SourceType;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
+import uk.ac.standrews.cs.valipop.utils.Logger;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
@@ -42,7 +41,7 @@ import java.util.LinkedList;
  */
 public class CTtree extends Node<String, SourceType, Number, Number> implements ContingencyTable {
 
-    public static final Logger log = LogManager.getLogger(CTtree.class);
+    public static final Logger log = new Logger(CTtree.class);
 
     private LinkedList<RunnableNode> deathTasks = new LinkedList<>();
     private LinkedList<RunnableNode> ageTasks = new LinkedList<>();

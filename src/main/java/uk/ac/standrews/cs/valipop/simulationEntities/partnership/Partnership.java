@@ -18,9 +18,8 @@ package uk.ac.standrews.cs.valipop.simulationEntities.partnership;
 
 import org.apache.commons.math3.random.RandomGenerator;
 import uk.ac.standrews.cs.basic_model.model.IPartnership;
+import uk.ac.standrews.cs.valipop.utils.Logger;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateSelection.DateSelector;
@@ -38,7 +37,7 @@ import java.util.List;
  */
 public class Partnership implements IPartnershipExtended {
 
-    private static Logger log = LogManager.getLogger(Partnership.class);
+    private static Logger log = new Logger(Partnership.class);
     private static int nextId = 0;
     private int id;
     private IPersonExtended male;

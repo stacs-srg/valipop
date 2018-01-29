@@ -1,7 +1,6 @@
 package uk.ac.standrews.cs.valipop.utils.sourceEventRecords;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import uk.ac.standrews.cs.valipop.utils.Logger;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.processingVisuliserFormat.RelationshipsTable;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.PeopleCollection;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.oldDSformat.SourceRecordGenerator;
@@ -12,7 +11,7 @@ import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.processingVisuliserFo
  */
 public class RecordGenerationFactory {
 
-    public static final Logger log = LogManager.getLogger(RecordGenerationFactory.class);
+    public static final Logger log = new Logger(RecordGenerationFactory.class);
 
     public static void outputRecords(RecordFormat recordFormat, String recordsOutputDir,  PeopleCollection population) {
 
