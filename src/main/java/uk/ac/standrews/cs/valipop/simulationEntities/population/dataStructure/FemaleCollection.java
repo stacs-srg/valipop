@@ -18,6 +18,7 @@ package uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure;
 
 import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnershipExtended;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.exceptions.InsufficientNumberOfPeopleException;
+import uk.ac.standrews.cs.valipop.utils.Logger;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.MonthDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.integerRange.IntegerRange;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
@@ -25,8 +26,6 @@ import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.MisalignedTimeDiv
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.AdvancableDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.TimeUnit;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import uk.ac.standrews.cs.valipop.simulationEntities.person.IPersonExtended;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.exceptions.PersonNotFoundException;
 import uk.ac.standrews.cs.valipop.utils.MapUtils;
@@ -43,7 +42,7 @@ import java.util.*;
  */
 public class FemaleCollection extends PersonCollection {
 
-    private static final Logger log = LogManager.getLogger(FemaleCollection.class);
+    private static final Logger log = new Logger(FemaleCollection.class);
     private final TreeMap<MonthDate, TreeMap<Integer, Collection<IPersonExtended>>> byBirthYearAndNumberOfChildren = new TreeMap<>();
 
     /**

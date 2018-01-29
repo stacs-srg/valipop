@@ -1,7 +1,5 @@
 package uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import uk.ac.standrews.cs.valipop.implementations.MemoryUsageAnalysis;
 import uk.ac.standrews.cs.valipop.implementations.PreEmptiveOutOfMemoryWarning;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.PeopleCollection;
@@ -11,6 +9,7 @@ import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTabl
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure.NoTableRowsException;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.CTtree;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
+import uk.ac.standrews.cs.valipop.utils.Logger;
 import uk.ac.standrews.cs.valipop.utils.ProgramTimer;
 import uk.ac.standrews.cs.valipop.utils.fileUtils.FileUtils;
 import uk.ac.standrews.cs.valipop.Config;
@@ -24,7 +23,7 @@ import java.nio.file.Path;
  */
 public class ContigencyTableFactory {
 
-    public static final Logger log = LogManager.getLogger(ContigencyTableFactory.class);
+    public static final Logger log = new Logger(ContigencyTableFactory.class);
 
     public static void generateContigencyTables(PeopleCollection population, PopulationStatistics desired,
                                                 Config config, SummaryRow summary, int zeroAdjustValue,

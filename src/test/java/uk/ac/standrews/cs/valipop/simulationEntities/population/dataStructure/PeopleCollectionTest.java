@@ -27,8 +27,6 @@ import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.RecordFormat;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.MonthDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.TimeUnit;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.junit.Test;
 import uk.ac.standrews.cs.valipop.simulationEntities.partnership.Partnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.person.IPersonExtended;
@@ -48,7 +46,6 @@ import java.util.Collections;
  */
 public class PeopleCollectionTest {
 
-    Logger log = LogManager.getLogger(PeopleCollectionTest.class);
     PopulationStatistics ps;
 
     @Before

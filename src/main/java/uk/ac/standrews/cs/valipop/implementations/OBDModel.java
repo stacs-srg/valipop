@@ -16,17 +16,13 @@
  */
 package uk.ac.standrews.cs.valipop.implementations;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.core.LifeCycle;
-import org.apache.logging.log4j.core.appender.FileAppender;
-import org.apache.logging.log4j.core.config.LoggerConfig;
-import org.apache.logging.log4j.core.layout.PatternLayout;
 import uk.ac.standrews.cs.basic_model.distributions.general.InconsistentWeightException;
 import uk.ac.standrews.cs.valipop.events.EventLogic;
 import uk.ac.standrews.cs.valipop.events.birth.NBirthLogic;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.exceptions.InsufficientNumberOfPeopleException;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
 import uk.ac.standrews.cs.valipop.utils.CustomLog4j;
+import uk.ac.standrews.cs.valipop.utils.Logger;
 import uk.ac.standrews.cs.valipop.utils.fileUtils.FileUtils;
 import uk.ac.standrews.cs.valipop.utils.fileUtils.InvalidInputFileException;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.RecordFormat;
@@ -36,7 +32,6 @@ import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.AdvancableDate;
 import uk.ac.standrews.cs.valipop.events.death.NDeathLogic;
 import uk.ac.standrews.cs.valipop.events.init.InitLogic;
-import org.apache.logging.log4j.Logger;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.ContigencyTableFactory;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.DesiredPopulationStatisticsFactory;
 import uk.ac.standrews.cs.valipop.statistics.analysis.populationAnalytics.AnalyticsRunner;
@@ -60,7 +55,7 @@ public class OBDModel {
 
     public static final String CODE_VERSION = "dev-bf";
 
-    private static Logger log;
+    private static Logger log = new Logger(OBDModel.class);
 
     private Config config;
     private SummaryRow summary;
@@ -85,10 +80,7 @@ public class OBDModel {
         // And errors in this method are sent to standard error
 
         FileUtils.makeDirectoryStructure(runPurpose, startTime, resultsPath);
-        if(log != null) {
-
-        }
-        log = CustomLog4j.setup(FileUtils.pathToLogDir(runPurpose, startTime, resultsPath), new OBDModel());
+        Logger.setLogFilePath(FileUtils.pathToLogDir(runPurpose, startTime, resultsPath));
     }
 
     public OBDModel() {

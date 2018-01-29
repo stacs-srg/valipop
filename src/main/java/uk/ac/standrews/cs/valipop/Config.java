@@ -16,14 +16,13 @@
  */
 package uk.ac.standrews.cs.valipop;
 
+import uk.ac.standrews.cs.valipop.utils.Logger;
 import uk.ac.standrews.cs.valipop.utils.fileUtils.InputFileReader;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.RecordFormat;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.AdvancableDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.MonthDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.exceptions.InvalidTimeUnit;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
@@ -53,7 +52,7 @@ public class Config {
     private static final String femaleForenameSubFile = "female_forename";
     private static final String surnameSubFile = "surname";
 
-    public static final Logger log = LogManager.getLogger(Config.class);
+    public static final Logger log = new Logger(Config.class);
 
     private MonthDate tS;
     private MonthDate t0;

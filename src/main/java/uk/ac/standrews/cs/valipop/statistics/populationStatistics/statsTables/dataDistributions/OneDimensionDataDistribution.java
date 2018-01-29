@@ -16,8 +16,7 @@
  */
 package uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import uk.ac.standrews.cs.valipop.utils.Logger;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.integerRange.InvalidRangeException;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.integerRange.IntegerRange;
@@ -34,7 +33,7 @@ import java.util.Set;
 public class OneDimensionDataDistribution implements InputMetaData, Cloneable {
 
 
-    public static Logger log = LogManager.getLogger(OneDimensionDataDistribution.class);
+    public static Logger log = new Logger(OneDimensionDataDistribution.class);
 
     private final YearDate year;
     private final String sourcePopulation;
