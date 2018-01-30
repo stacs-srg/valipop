@@ -107,6 +107,19 @@ public class Config {
                   CompoundTimeUnit simulationTimeStep, String varPath, String resultsSavePath, final String runPurpose,
                   int minBirthSpacing, int minGestationPeriodDays, double maxProportionOBirthsDueToInfidelity,
                   double birthFactor, double deathFactor, double recoveryFactor, CompoundTimeUnit inputWidth,
+                  RecordFormat outputRecordFormat, String startTime, boolean deterministic) {
+
+        this(tS, t0, tE, t0PopulationSize, setUpBR, setUpDR, simulationTimeStep, varPath, resultsSavePath, runPurpose,
+                minBirthSpacing, minGestationPeriodDays, maxProportionOBirthsDueToInfidelity, birthFactor, deathFactor,
+                recoveryFactor, inputWidth, outputRecordFormat, startTime);
+        this.deterministic = deterministic;
+
+    }
+
+    public Config(AdvancableDate tS, AdvancableDate t0, AdvancableDate tE, int t0PopulationSize, double setUpBR, double setUpDR,
+                  CompoundTimeUnit simulationTimeStep, String varPath, String resultsSavePath, final String runPurpose,
+                  int minBirthSpacing, int minGestationPeriodDays, double maxProportionOBirthsDueToInfidelity,
+                  double birthFactor, double deathFactor, double recoveryFactor, CompoundTimeUnit inputWidth,
                   RecordFormat outputRecordFormat, String startTime) {
 
         initialiseVarPaths(varPath);

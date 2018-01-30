@@ -22,8 +22,6 @@ import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.ExactDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
 
-import java.util.Random;
-
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
