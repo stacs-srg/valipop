@@ -176,7 +176,7 @@ public class OBDModel {
                 summary.setEndPop(population.getLivingPeople().getNumberOfPeople());
                 summary.setPeakPop(population.getPopulationCounts().getPeakPopulationSize());
 
-                return false;
+                throw new InsufficientNumberOfPeopleException("Seed size likely too small");
             }
 
             MemoryUsageAnalysis.log();

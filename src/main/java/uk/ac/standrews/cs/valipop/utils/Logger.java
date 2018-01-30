@@ -30,8 +30,8 @@ public class Logger {
 
         try {
             Files.write(logFile, message.getBytes(), StandardOpenOption.APPEND);
-        } catch (IOException e) {
-            System.out.println("Log setup has failed | " + message);
+        } catch (IOException | NullPointerException e) {
+            System.out.print("Log setup has failed | " + message);
         }
 
     }
