@@ -23,8 +23,6 @@ import uk.ac.standrews.cs.basic_model.model.IPopulationWriter;
 import uk.ac.standrews.cs.basic_model.model.PopulationConverter;
 import uk.ac.standrews.cs.basic_model.model.gedcom.GEDCOMPopulationWriter;
 
-import uk.ac.standrews.cs.utilities.FileManipulation;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Files;
