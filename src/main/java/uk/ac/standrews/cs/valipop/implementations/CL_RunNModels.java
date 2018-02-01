@@ -47,6 +47,8 @@ public class CL_RunNModels {
                 }
 
                 CL_OBDModel.runOBDModel(pathToConfigFile, resultsPath, runPurpose);
+
+                System.gc();
             }
 
         } catch (InvalidInputFileException | IOException | Error | PreEmptiveOutOfMemoryWarning | StatsException e) {
