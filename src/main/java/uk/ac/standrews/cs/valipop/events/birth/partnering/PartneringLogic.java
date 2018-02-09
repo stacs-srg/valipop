@@ -17,6 +17,7 @@
 package uk.ac.standrews.cs.valipop.events.birth.partnering;
 
 import uk.ac.standrews.cs.valipop.events.birth.NewMother;
+import uk.ac.standrews.cs.valipop.events.init.InitLogic;
 import uk.ac.standrews.cs.valipop.simulationEntities.EntityFactory;
 import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnershipExtended;
 import uk.ac.standrews.cs.valipop.simulationEntities.person.IPersonExtended;
@@ -25,6 +26,7 @@ import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.ex
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.MultipleDeterminedCount;
 import uk.ac.standrews.cs.valipop.utils.CollectionUtils;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.AdvancableDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.integerRange.IntegerRange;
@@ -60,8 +62,8 @@ public class PartneringLogic {
 
             MultipleDeterminedCount determinedCounts = (MultipleDeterminedCount) desiredPopulationStatistics.getDeterminedCount(key, config);
 
-            LabeledValueSet<IntegerRange, Integer> partnerCounts = null;
-            LabeledValueSet<IntegerRange, Integer> achievedPartnerCounts = null;
+            LabeledValueSet<IntegerRange, Integer> partnerCounts;
+            LabeledValueSet<IntegerRange, Integer> achievedPartnerCounts;
 
             try {
                 partnerCounts = determinedCounts.getDeterminedCount();
@@ -312,6 +314,13 @@ public class PartneringLogic {
                                          PopulationStatistics desiredPopulationStatistics, AdvancableDate currentDate) {
 
         if(man.needsNewPartner(currentDate)) {
+            return true;
+        }
+
+//        if(InitLogic.inInitPeriod(currentDate)) {
+        if(DateUtils.dateBeforeOrEqual(currentDate, new YearDate(1800))) {
+
+//            population.getPopulationCounts().newIllegitimateBirth();
             return true;
         }
 
