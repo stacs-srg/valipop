@@ -96,6 +96,7 @@ public class SelfCorrectingOneDimensionDataDistribution extends OneDimensionData
             rf = config.getRecoveryFactor();
         }
 
+        // shortfall
         double fall = Math.ceil( (aC * tD) - (aC * aD) );
 
         double cD;
