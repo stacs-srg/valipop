@@ -25,6 +25,8 @@ import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.Po
 import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.exceptions.InsufficientNumberOfPeopleException;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.MultipleDeterminedCount;
+import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.SingleDeterminedCount;
+import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.IllegitimateBirthStatsKey;
 import uk.ac.standrews.cs.valipop.utils.CollectionUtils;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.AdvancableDate;
@@ -143,7 +145,7 @@ public class PartneringLogic {
                     }
 
                     // check if there is any reason why these people cannot lawfully be partnered...
-                    if(eligible(man, woman.getNewMother(), population, desiredPopulationStatistics, currentDate)) {
+                    if(eligible(man, woman.getNewMother(), woman.getNumberOfChildrenInMaternity(), population, desiredPopulationStatistics, currentDate, consideredTimePeriod, config)) {
                         // if they can - then note as a proposed partnership
                         proposedPartnerships.add(new ProposedPartnership(man, woman.getNewMother(), iR, woman.getNumberOfChildrenInMaternity()));
                         determinedCount--;
@@ -180,11 +182,11 @@ public class PartneringLogic {
 
                             for(IPersonExtended m : allMen.get(uR)) {
 
-                                if(eligible(m, f, population, desiredPopulationStatistics, currentDate) && !inPPs(m, proposedPartnerships)) {
+                                if(eligible(m, f, pp.getNumberOfChildren(), population, desiredPopulationStatistics, currentDate, consideredTimePeriod, config) && !inPPs(m, proposedPartnerships)) {
 
                                     for(NewMother uf : women) {
 
-                                        if(eligible(pp.getMale(), uf.getNewMother(), population, desiredPopulationStatistics, currentDate)) {
+                                        if(eligible(pp.getMale(), uf.getNewMother(), uf.getNumberOfChildrenInMaternity(), population, desiredPopulationStatistics, currentDate, consideredTimePeriod, config)) {
                                             // husband swap
                                             proposedPartnerships.add(new ProposedPartnership(pp.getMale(), uf.getNewMother(), pp.getMalesRange(), uf.getNumberOfChildrenInMaternity()));
                                             pp.setMale(m, uR);
@@ -202,7 +204,7 @@ public class PartneringLogic {
 
                                         for(IPersonExtended m2 : allMen.get(pp.getMalesRange())) {
 
-                                            if(eligible(m2, uf.getNewMother(), population, desiredPopulationStatistics, currentDate) && !inPPs(m2, proposedPartnerships)) {
+                                            if(eligible(m2, uf.getNewMother(), uf.getNumberOfChildrenInMaternity(), population, desiredPopulationStatistics, currentDate, consideredTimePeriod, config) && !inPPs(m2, proposedPartnerships)) {
                                                 // husband swap
                                                 proposedPartnerships.add(new ProposedPartnership(m2, uf.getNewMother(), pp.getMalesRange(), uf.getNumberOfChildrenInMaternity()));
                                                 pp.setMale(m, uR);
@@ -226,7 +228,7 @@ public class PartneringLogic {
                 for (NewMother uf : women) {
                     for (IntegerRange iR : partnerCounts.getLabels()) {
                         for (IPersonExtended m : allMen.get(iR)) {
-                            if(eligible(m, uf.getNewMother(), population, desiredPopulationStatistics, currentDate) && !inPPs(m, proposedPartnerships)) {
+                            if(eligible(m, uf.getNewMother(), uf.getNumberOfChildrenInMaternity(), population, desiredPopulationStatistics, currentDate, consideredTimePeriod, config) && !inPPs(m, proposedPartnerships)) {
                                 proposedPartnerships.add(new ProposedPartnership(m, uf.getNewMother(), iR, uf.getNumberOfChildrenInMaternity()));
                             }
                         }
@@ -242,18 +244,27 @@ public class PartneringLogic {
 
             Map<Integer, ArrayList<IPersonExtended>> partneredFemalesByChildren = new HashMap<>();
 
+            int children = 0;
+            int illegitimateChildren = 0;
+
             for(ProposedPartnership pp : proposedPartnerships) {
                 IPersonExtended mother = pp.getFemale();
                 IPersonExtended father = pp.getMale();
 
                 int numChildrenInPartnership = pp.getNumberOfChildren();
 
+                children += numChildrenInPartnership;
+
+                if(!father.needsNewPartner(currentDate)) {
+                    // illegitimacy test
+                    illegitimateChildren += numChildrenInPartnership;
+                }
+
                 EntityFactory.formNewChildrenInPartnership(numChildrenInPartnership, father, mother, currentDate, consideredTimePeriod, population, desiredPopulationStatistics);
 
                 IntegerRange maleAgeRange = resolveAgeToIR(pp.getMale(), returnPartnerCounts.getLabels(), currentDate);
 
                 returnPartnerCounts.update(maleAgeRange, returnPartnerCounts.getValue(maleAgeRange) + 1);
-
 
                 try {
                     partneredFemalesByChildren.get(numChildrenInPartnership).add(mother);
@@ -265,6 +276,15 @@ public class PartneringLogic {
 
             determinedCounts.setFufilledCount(returnPartnerCounts);
             desiredPopulationStatistics.returnAchievedCount(determinedCounts);
+
+
+            IllegitimateBirthStatsKey illegitimateKey = new IllegitimateBirthStatsKey(age, children, consideredTimePeriod, currentDate);
+            SingleDeterminedCount illegitimateCounts = (SingleDeterminedCount) desiredPopulationStatistics.getDeterminedCount(illegitimateKey, config);
+            illegitimateCounts.setFufilledCount(illegitimateChildren);
+            desiredPopulationStatistics.returnAchievedCount(illegitimateCounts);
+            // TODO clean up the ilegitimate code
+            System.out.println(currentDate.getYear() + " | " + age + " | " + illegitimateChildren + " / " + children + " = " + (illegitimateChildren / (double) children));
+
 
             SeparationLogic.handle(partneredFemalesByChildren, consideredTimePeriod, currentDate, desiredPopulationStatistics, population, config);
 
@@ -303,30 +323,38 @@ public class PartneringLogic {
         return false;
     }
 
-    private static boolean eligible(IPersonExtended man, IPersonExtended woman, Population population, PopulationStatistics desiredPopulationStatistics, AdvancableDate currentDate) {
+    private static boolean eligible(IPersonExtended man, IPersonExtended woman, int childrenInPregnancy,
+                                    Population population, PopulationStatistics desiredPopulationStatistics,
+                                    AdvancableDate currentDate, CompoundTimeUnit consideredTimePeriod, Config config) {
 
-        return maleAvailable(man, population, desiredPopulationStatistics, currentDate) && legallyEligible(man, woman);
+        return maleAvailable(man, childrenInPregnancy, population, desiredPopulationStatistics, currentDate, consideredTimePeriod, config) && legallyEligible(man, woman);
 
     }
 
 
-    private static boolean maleAvailable(IPersonExtended man, Population population,
-                                         PopulationStatistics desiredPopulationStatistics, AdvancableDate currentDate) {
+    private static boolean maleAvailable(IPersonExtended man, int childrenInPregnancy, Population population,
+                                         PopulationStatistics desiredPopulationStatistics, AdvancableDate currentDate,
+                                         CompoundTimeUnit consideredTimePeriod, Config config) {
 
         if(man.needsNewPartner(currentDate)) {
+
             return true;
         }
 
-//        if(InitLogic.inInitPeriod(currentDate)) {
         if(DateUtils.dateBeforeOrEqual(currentDate, new YearDate(1800))) {
-
-//            population.getPopulationCounts().newIllegitimateBirth();
             return true;
         }
 
-        double permissableIllegitimateBirths = desiredPopulationStatistics.getMaxProportionBirthsDueToInfidelity() * population.getPopulationCounts().getCreatedPeople();
-        if(population.getPopulationCounts().getIllegitimateBirths() < permissableIllegitimateBirths) {
-            population.getPopulationCounts().newIllegitimateBirth();
+        // Get acess to illegitimacy rates
+        IllegitimateBirthStatsKey illegitimateKey = new IllegitimateBirthStatsKey(man.ageOnDate(currentDate), childrenInPregnancy, consideredTimePeriod, currentDate);
+        SingleDeterminedCount illegitimateCounts = (SingleDeterminedCount) desiredPopulationStatistics.getDeterminedCount(illegitimateKey, config);
+        int permitted = (int) Math.round(illegitimateCounts.getDeterminedCount() / (double) childrenInPregnancy);
+
+//        double permissableIllegitimateBirths = desiredPopulationStatistics.getMaxProportionBirthsDueToInfidelity() * population.getPopulationCounts().getCreatedPeople();
+
+//        if(population.getPopulationCounts().getIllegitimateBirths() < permissableIllegitimateBirths) {
+        if(permitted == 1) {
+//            population.getPopulationCounts().newIllegitimateBirth();
             return true;
         } else {
             return false;
