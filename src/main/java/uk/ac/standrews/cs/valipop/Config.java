@@ -45,6 +45,7 @@ public class Config {
     private static final String maleDeathSubFile = "males";
     private static final String femaleDeathSubFile = "females";
     private static final String multipleBirthSubFile = "multiple_birth";
+    private static final String illegitimateBirthSubFile = "illegitimate_birth";
     private static final String partneringSubFile = "partnering";
     private static final String separationSubFile = "separation";
     private static final String birthRatioSubFile = "ratio_birth";
@@ -66,6 +67,7 @@ public class Config {
     private Path varMaleDeathPaths;
     private Path varFemaleDeathPaths;
     private Path varMultipleBirthPaths;
+    private Path varIllegitimateBirthPaths;
     private Path varPartneringPaths;
     private Path varSeparationPaths;
     private Path varBirthRatioPaths;
@@ -334,6 +336,8 @@ public class Config {
         varMaleForenamePaths = Paths.get(path, maleForenameSubFile);
         varFemaleForenamePaths = Paths.get(path, femaleForenameSubFile);
         varSurnamePaths = Paths.get(path, surnameSubFile);
+        varIllegitimateBirthPaths = Paths.get(path, illegitimateBirthSubFile);
+
 
     }
 
@@ -379,6 +383,16 @@ public class Config {
             return Files.newDirectoryStream(varMultipleBirthPaths, filter);
         } catch (IOException e) {
             String message = "Error reading in multiple birth files";
+            log.fatal(message);
+            throw new IOException(message, e);
+        }
+    }
+
+    public DirectoryStream<Path> getVarIllegitimateBirthPaths() throws IOException {
+        try {
+            return Files.newDirectoryStream(varIllegitimateBirthPaths, filter);
+        } catch (IOException e) {
+            String message = "Error reading in illegitimate birth files";
             log.fatal(message);
             throw new IOException(message, e);
         }

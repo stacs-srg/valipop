@@ -86,6 +86,8 @@ public interface EventRateTables {
      */
     SelfCorrectingTwoDimensionDataDistribution getOrderedBirthRates(Date year);
 
+    OneDimensionDataDistribution getIllegitimateBirthRates(Date year);
+
     /**
      * Gets multiple births in a maternity rate for women giving birth in a given year by age of the mother.
      * <p>
