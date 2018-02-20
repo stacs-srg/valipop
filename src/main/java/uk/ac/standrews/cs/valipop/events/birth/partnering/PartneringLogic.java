@@ -16,9 +16,7 @@
  */
 package uk.ac.standrews.cs.valipop.events.birth.partnering;
 
-import com.sun.org.apache.xml.internal.security.Init;
 import uk.ac.standrews.cs.valipop.events.birth.NewMother;
-import uk.ac.standrews.cs.valipop.events.init.InitLogic;
 import uk.ac.standrews.cs.valipop.simulationEntities.EntityFactory;
 import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnershipExtended;
 import uk.ac.standrews.cs.valipop.simulationEntities.person.IPersonExtended;
