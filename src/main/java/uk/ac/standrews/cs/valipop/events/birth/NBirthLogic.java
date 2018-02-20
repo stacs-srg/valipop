@@ -64,7 +64,6 @@ public class NBirthLogic implements EventLogic {
         while(divDates.hasNext() && DateUtils.dateBeforeOrEqual(divDate = divDates.next(), currentDate)) {
 
             int age = DateUtils.differenceInYears(divDate.advanceTime(consideredTimePeriod), currentDate).getCount();
-            Collection<NewMother> needingPartners = new ArrayList<>();
 
             int cohortSize = femalesLiving.getAllPersonsBornInTimePeriod(divDate, consideredTimePeriod).size();
 
@@ -103,9 +102,10 @@ public class NBirthLogic implements EventLogic {
                 MotherSet mothers = selectMothers(config, people, numberOfChildren, desiredPopulationStatistics,
                         currentDate, consideredTimePeriod, population);
 
-                needingPartners.addAll(mothers.getNeedPartners());
+                // Partner females of age who don't have partners
+                int cancelledChildren = PartneringLogic.handle(mothers.getNeedPartners(), desiredPopulationStatistics, currentDate, consideredTimePeriod, population, config);
 
-                int childrenMade = mothers.getNewlyProducedChildren();
+                int childrenMade = mothers.getNewlyProducedChildren() - cancelledChildren;
 
                 bornAtTS += childrenMade;
                 InitLogic.incrementBirthCount(childrenMade);
@@ -120,9 +120,6 @@ public class NBirthLogic implements EventLogic {
                 desiredPopulationStatistics.returnAchievedCount(determinedCount);
 
             }
-
-            // Partner females of age who don't have partners
-            PartneringLogic.handle(needingPartners, desiredPopulationStatistics, currentDate, consideredTimePeriod, population, config);
 
         }
 
