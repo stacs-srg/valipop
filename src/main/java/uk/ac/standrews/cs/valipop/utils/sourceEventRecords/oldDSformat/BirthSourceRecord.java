@@ -29,6 +29,7 @@ import java.util.Date;
  *
  * @author Alan Dearle (alan.dearle@st-andrews.ac.uk)
  * @author Graham Kirby (graham.kirby@st-andrews.ac.uk)
+ * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  *         <p/>
  *         Fields are as follows:
  *         <p/>
@@ -76,16 +77,18 @@ import java.util.Date;
  */
 public class BirthSourceRecord extends IndividualSourceRecord {
 
-	private DateRecord birth_date;
-	private String birth_address;
+	protected DateRecord birth_date;
+	protected String birth_address;
 
-	private DateRecord parents_marriage_date;
-	private String parents_place_of_marriage;
+	protected DateRecord parents_marriage_date;
+	protected String parents_place_of_marriage;
 
-	private String illegitimate_indicator;
-	private String informant;
-	private String informant_did_not_sign;
-	private String adoption;
+	protected String illegitimate_indicator;
+	protected String informant;
+	protected String informant_did_not_sign;
+	protected String adoption;
+
+	protected int parents_partnership_id;
 
 
 	public BirthSourceRecord(final IPerson person, IPopulation population) {
@@ -109,7 +112,7 @@ public class BirthSourceRecord extends IndividualSourceRecord {
 		setBirthMonth(String.valueOf(birth_month));
 		setBirthYear(String.valueOf(birth_year));
 
-		int parents_partnership_id = person.getParentsPartnership();
+		parents_partnership_id = person.getParentsPartnership();
 		if (parents_partnership_id != -1) {
 
 			final IPartnership parents_partnership = population.findPartnership(parents_partnership_id);
@@ -242,10 +245,30 @@ public class BirthSourceRecord extends IndividualSourceRecord {
 
 		final StringBuilder builder = new StringBuilder();
 
-		append(builder, uid, surname, forename, sex, registration_year, registration_district_number, registration_district_suffix, entry, birth_date.getYear(), mothers_maiden_surname, surname_changed,
-				forename_changed, birth_date.getDay(), birth_date.getMonth(), birth_address, fathers_forename, fathers_surname, fathers_occupation, mothers_forename, mothers_surname, mothers_maiden_surname_changed,
-				parents_marriage_date.getDay(), parents_marriage_date.getMonth(), parents_marriage_date.getYear(), parents_place_of_marriage, illegitimate_indicator, informant, informant_did_not_sign, entry_corrected,
+		append(builder, uid, surname, forename, sex, registration_year, registration_district_number,
+				registration_district_suffix, entry, birth_date.getYear(), mothers_maiden_surname, surname_changed,
+				forename_changed, birth_date.getDay(), birth_date.getMonth(), birth_address, fathers_forename,
+				fathers_surname, fathers_occupation, mothers_forename, mothers_surname, mothers_maiden_surname_changed,
+				parents_marriage_date.getDay(), parents_marriage_date.getMonth(), parents_marriage_date.getYear(),
+				parents_place_of_marriage, illegitimate_indicator, informant, informant_did_not_sign, entry_corrected,
 				adoption, image_quality);
+
+		return builder.toString();
+	}
+
+	@Override
+	public String getHeaders() {
+
+		final StringBuilder builder = new StringBuilder();
+
+		append(builder, "Unique Record Identifier", "Surname", "Forename", "Sex", "Year of Registration",
+				"Registration District Number", "Registration District Suffix", "Entry", "BirthFamilyGT Year",
+				"Mother’s Maiden Surname", "Changed Surname", "Changed Forename", "BirthFamilyGT Day",
+				"BirthFamilyGT Month", "BirthFamilyGT Address", "Father’s Forename", "Father’s Surname",
+				"Father’s Occupation", "Mother’s Forename", "Mother’s Surname", "Changed Mothers Maiden Surname",
+				"Parents Day of Marriage", "Parents Month of Marriage", "Parents Year of Marriage",
+				"Parents Place of Marriage", "Illegitimate indicator", "Informant", "Informant did not Sign",
+				"Corrected Entry", "Adoption", "Image Quality");
 
 		return builder.toString();
 	}

@@ -30,50 +30,7 @@ import java.util.Random;
  *
  * @author Alan Dearle (alan.dearle@st-andrews.ac.uk)
  * @author Graham Kirby (graham.kirby@st-andrews.ac.uk)
- *         <p/>
- *         Fields are as follows:
- *         <p/>
- *         Ref Field
- *         1. Unique'Record'Identifier'
- *         2. Surname
- *         3. Forename
- *         4. Sex
- *         5. Year of Registration
- *         6. Registration District Number
- *         7. Registration District Suffix
- *         8. Entry
- *         9. BirthFamilyGT Year
- *         10. Mother’s Maiden Surname
- *         11. Changed Surname
- *         12. Changed Forename
- *         13. BirthFamilyGT Day
- *         14. BirthFamilyGT Month
- *         15. BirthFamilyGT Address
- *         16. Father’s Forename
- *         17. Father’s Surname ('0' if same as Surname)
- *         18. Father’s Occupation
- *         19. Mother’s Forename
- *         20. Mother’s Surname ('0' if same as Surname)
- *         21. Changed Mothers Maiden Surname
- *         22. Parents Day of Marriage
- *         23. Parents Month of Marriage
- *         24. Parents Year of Marriage
- *         25. Parents Place of Marriage
- *         26. Illegitimate indicator ('Y' or empty)
- *         27. Informant ('M', 'F' or empty)
- *         28. Informant did not Sign ('X' or empty)
- *         29. Corrected Entry ('1', '2', '3' or empty)
- *         30. Adoption ('A' or empty)
- *         31. Image Quality ('1', '2' or empty)
- *         <p/>
- *         <p/>
- *         Examples of birth records:
- *         <p/>
- *         1000001|HAY|HERCULES|M|1855|009|00|041||SKLATER|||21|7|SILWICK|WALTER|0|FISHERMAN|INGA|0|||1|1840|SELIVOE||F|||||
- *         1000002|JAMESON|JAMINA|F|1855|009|00|042|||||26|7|HOGANESS|ROBERT|0|FISH_CURER|ANN|0|SKLATER||11|1841|SELIVOE||F|||||
- *         1000003|IRVINE|CATHERINE|F|1855|009|00|043|||||20|7|TULKY|JOHN|0|FISHERMAN_&_CROFTER|MARGARET|0|JOHNSON||12|1841|SELIVOE| |F|||||
- *         1000004|HAWICK|CATHERINE|F|1855|009|00|044|||||25|7|AITH|SCOTT|0|SEAMAN|44|MARY|0|YELL||12|1841|SELIVOE||M|X||||
- *         1000005|GEORGESON|PETER|M|1855|009|00|045||ISBESTER|||17|5|SAND|GEORGE|0|SEAMAN|MARGARET|0|||11|1838|WATNESS||M|X||||
+ * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class SimplifiedBirthSourceRecord extends IndividualSourceRecord {
 
@@ -263,6 +220,16 @@ public class SimplifiedBirthSourceRecord extends IndividualSourceRecord {
 				mothers_id, mothers_forename + " " + mothers_surname,
 				birth_date.getDay() + "." + birth_date.getMonth() + "." + birth_date.getYear(),
 				birth_address, registration_district_suffix);
+
+		return builder.toString();
+	}
+
+	@Override
+	public String getHeaders() {
+		final StringBuilder builder = new StringBuilder();
+
+		append(builder, "uid", "full_name", "sex", "fathers_id", "fathers_name", "mothers_id", "mothers_name",
+				"birth_date", "birth_address", "registration_district_suffix");
 
 		return builder.toString();
 	}

@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License along with population_model. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.valipop.utils.sourceEventRecords.oldDSformat;
+package uk.ac.standrews.cs.valipop.utils.sourceEventRecords;
 
 import uk.ac.standrews.cs.basic_model.model.IPartnership;
 import uk.ac.standrews.cs.basic_model.model.IPerson;
@@ -117,7 +117,7 @@ public abstract class SourceRecord {
     protected void append(final StringBuilder builder, final Object... fields) {
 
         for (Object field : fields) {
-            append(builder, field != null ? field.toString().toUpperCase() : null);
+            append(builder, field != null ? field.toString() : null);
         }
     }
 
@@ -133,6 +133,8 @@ public abstract class SourceRecord {
 
         return d1.before(d2) ? DateManipulation.differenceInYears(d1, d2) : DateManipulation.differenceInYears(d2, d1);
     }
+
+    public abstract String getHeaders();
 
     /**
      * Created by graham on 14/05/2014.

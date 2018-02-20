@@ -185,7 +185,7 @@ public class InputFileReader {
 
                         data.put(rowLabel,
                                 new SelfCorrectingOneDimensionDataDistribution(
-                                        year, sourcePopulation, sourceOrganisation, rowMap, config.binominalSampling(),
+                                        year, sourcePopulation, sourceOrganisation, rowMap, config.getBinominalSampling(),
                                         randomGenerator
                                 )
                         );
@@ -318,7 +318,7 @@ public class InputFileReader {
     public static SelfCorrectingOneDimensionDataDistribution readInSC1DDataFile(Path path, Config config, RandomGenerator randomGenerator) throws IOException, InvalidInputFileException {
         OneDimensionDataDistribution d = readIn1DDataFile(path);
         return new SelfCorrectingOneDimensionDataDistribution(d.getYear(), d.getSourcePopulation(),
-                d.getSourceOrganisation(), d.cloneData(), config.binominalSampling(), randomGenerator);
+                d.getSourceOrganisation(), d.cloneData(), config.getBinominalSampling(), randomGenerator);
     }
 
     public static SelfCorrectingProportionalDistribution readInAgeAndProportionalStatsInput(Path path) throws IOException, InvalidInputFileException {

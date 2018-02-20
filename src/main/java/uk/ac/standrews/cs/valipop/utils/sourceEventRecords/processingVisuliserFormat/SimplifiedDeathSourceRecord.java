@@ -30,53 +30,7 @@ import java.util.*;
  *
  * @author Alan Dearle (alan.dearle@st-andrews.ac.uk)
  * @author Graham Kirby (graham.kirby@st-andrews.ac.uk)
- *         <p/>
- *         Fields are as follows:
- *         <p/>
- *         Ref Field
- *         1. Unique'Record'Identifier 1
- *         2. Surname 1
- *         3. Forename 1
- *         4. Sex 1
- *         5. Year of Registration 1
- *         6. Registration District Number 1
- *         7. Registration District Suffix 1
- *         8. Entry 1
- *         9. Death Year 1
- *         10. Age at Death 1
- *         11. Mother’s Maiden Surname 2
- *         12. Changed Surname 3(10)
- *         13. Changed Forename 3(10)
- *         14. Changed Death Age 3(23) (number followed by 'M', 'W', 'D' or 'H' for months/weeks/dates/hours when Age at Death < 1)
- *         15. Date of BirthFamilyGT (Only for 1966 – 1973, e.g. '17091881' or empty)
- *         16. Occupation
- *         17. Marital Status 3(20) ('B', 'D', 'M', 'S', 'W' or empty)
- *         18. Spouse’s Name(s) 3(22)
- *         19. Spouse’s Occupation(s) 3(22)
- *         20. Death Month
- *         21. Death Day
- *         22. Place of Death
- *         23. Father’s Forename
- *         24. Father’s Surname 3(11) ('0' if same as Surname)
- *         25. Father’s Occupation
- *         26. Father Deceased 3(21) ('Y' or empty)
- *         27. Mother’s Forename
- *         28. Changed Mothers Maiden Surname 3(10)
- *         29. Mother Deceased 3(21) ('Y' or empty)
- *         30. Cause of Death (a)
- *         31. Cause of Death (b) 2
- *         32. Cause of Death (c) 2
- *         33. Certifying Doctor
- *         34. Corrected Entry 3(12) ('1', '2', '3' or empty)
- *         35. Image Quality ('1', '2' or empty)
- *         <p/>
- *         <p/>
- *         Examples of death records:
- *         <p/>
- *         6000002|GARRIOCH|ANN|F|1855|010|1|16|1855|131||||||MIDWIFE|W|ROBERT_SCOTT|STOREMAN|5|18|SCALLOWAY_TINGWALL_ZETLAND|PETER|0|SAILOR|D|GRACE|TULLOCH|D|AGE_&_INFIMITIES||||||
- *         6000003|_ANDERSON|HELEN|F|1855|010|1|17|1855|19||||||DOMESTIC_SERVANT|S||||5|19|BERRY_NEAR_TALLOWAY_TINGWALL_ZETLAND|PETER_ANDERSON|CATTLE_DEALER||PHILIDELPHIA|POTTINGER||PNEUMONIA||||||
- *         6000004|MOUAT|JAMES|M|1855|010|1|18|1855|0||||82D||||||5|25|NORTH_HAMMERSLAND_TINGWALL_ZETLAND|JEREMIAH|0|FARMER||MARY|IRVINE||COSTIVENESS||||||
- *         8000001|WALTERSON|ROBINA|F|1966|010|00|0009|1966|84|||||17091881||W|ROBERT_JAM ES_WALTERSON|CROFTER|9|16|WEST_BURRAFIRTH_BRIDGE_OF_WALLS|JAMES|CH RISTIE|FISHERMAN|Y|AGNES|CHRISTIE|Y|HYPOSTATIC_PNEUMONIA|CORONARY_THR OMBOSIS|SENILITY|J._ROBERTSON_DURHAM|||
+ * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class SimplifiedDeathSourceRecord extends IndividualSourceRecord {
 
@@ -337,5 +291,16 @@ public class SimplifiedDeathSourceRecord extends IndividualSourceRecord {
                 setBirthDate(DateManipulation.formatDate(birth_date, DOB_DATE_FORMAT));
             }
         }
+    }
+
+    @Override
+    public String getHeaders() {
+
+        final StringBuilder builder = new StringBuilder();
+
+        append(builder, "uid", "full_name", "sex", "fathers_id", "fathers_name", "mothers_id", "mothers_name",
+                "spouses_id", "spouses_names", "death_date", "death_place", "registration_district_suffix", "death_cause_a");
+
+        return builder.toString();
     }
 }

@@ -83,7 +83,7 @@ public abstract class DesiredPopulationStatisticsFactory {
 
         return new PopulationStatistics(maleDeath, femaleDeath, partnering, orderedBirth, multipleBirth, illegitimateBirth,
                 separation, sexRatioBirth, maleForename, femaleForename, surname, config.getMinBirthSpacing(),
-                config.getMinGestationPeriodDays(), config.getMaxProportionOBirthsDueToInfidelity(), randomGenerator);
+                config.getMinGestationPeriodDays(), randomGenerator);
 
     }
 

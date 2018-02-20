@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License along with population_model. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.valipop.utils.sourceEventRecords.oldDSformat;
+package uk.ac.standrews.cs.valipop.utils.sourceEventRecords;
 
 import uk.ac.standrews.cs.basic_model.model.IPopulation;
 import uk.ac.standrews.cs.utilities.FileManipulation;
@@ -94,7 +94,15 @@ public class SourceRecordGenerator {
 
         try (final PrintWriter writer = new PrintWriter(Files.newBufferedWriter(records_path, FileManipulation.FILE_CHARSET))) {
 
+            boolean first = true;
+
             for (final SourceRecord record : records) {
+
+                if(first) {
+                    writer.println(record.getHeaders());
+                    first = false;
+                }
+
                 writer.println(record);
                 progress_indicator.progressStep();
             }

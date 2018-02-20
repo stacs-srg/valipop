@@ -91,7 +91,7 @@ public abstract class AbstractExporterTest {
                 new MonthDate(1, 2015), population_size, 0.0133,
                 0.0122, new CompoundTimeUnit(1, TimeUnit.YEAR), "src/test/resources/valipop/test-pop",
                 "results", purpose, 147,
-                147, 0.2, 0.0, 0.0, 1.0,
+                147, true, 0.0, 0.0, 1.0,
                 new CompoundTimeUnit(1, TimeUnit.YEAR), RecordFormat.NONE, startTime, true);
         OBDModel sim = new OBDModel(startTime, config);
         sim.runSimulation();
