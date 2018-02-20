@@ -19,7 +19,7 @@ package uk.ac.standrews.cs.valipop.utils.sourceEventRecords.processingVisuliserF
 import uk.ac.standrews.cs.basic_model.model.IPartnership;
 import uk.ac.standrews.cs.basic_model.model.IPerson;
 import uk.ac.standrews.cs.basic_model.model.IPopulation;
-import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.oldDSformat.SourceRecord;
+import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.SourceRecord;
 import uk.ac.standrews.cs.utilities.DateManipulation;
 
 import java.util.Date;
@@ -30,59 +30,7 @@ import java.util.Random;
  *
  * @author Alan Dearle (alan.dearle@st-andrews.ac.uk)
  * @author Graham Kirby (graham.kirby@st-andrews.ac.uk)
- *         <p/>
- *         Fields are as follows:
- *         Ref Field
- *         1. Unique 'Record' Identifier
- *         2. Groom Surname
- *         3. Groom Forename
- *         4. Bride Surname
- *         5. Bride Forename
- *         6. Year of Registration
- *         7. Registration District Number
- *         8. Registration District Suffix
- *         9. Entry
- *         10. Marriage Year
- *         11. Changed Groom Surname
- *         12. Changed Groom Forename
- *         13. Changed Bride Surname
- *         14. Changed Bride Forename
- *         15. Groom did not Sign ('X' or empty)
- *         16. Bride did not Sign ('X' or empty)
- *         17. Marriage Day
- *         18. Marriage Month
- *         19. Denomination
- *         20. Groom’s Address
- *         21. Groom Age or Date of BirthFamilyGT
- *         22. Groom’s Occupation
- *         23. Groom Marital Status
- *         24. Bride’s Address
- *         25. Bride Age or Date of BirthFamilyGT
- *         26. Bride’s Occupation
- *         27. Bride marital status
- *         28. Groom Father’s Forename
- *         29. Groom Father’s Surname ('0' if same as Groom Surname)
- *         30. Groom Father Deceased ('Y' or empty)
- *         31. Groom Mother’s Forename
- *         32. Groom Mother’s Maiden Surname
- *         33. Groom mother Deceased ('Y' or empty)
- *         34. Groom Father Occupation
- *         35. Bride Father’s Forename
- *         36. Bride Father’s Surname ('0' if same as Bride Surname)
- *         37. Bride Father Deceased ('Y' or empty)
- *         38. Bride Mother’s Forename
- *         39. Bride Mother’s Maiden Surname
- *         40. Bride Mother Deceased ('Y' or empty)
- *         41. Bride Father Occupation
- *         42. Corrected Entry ('1', '2', '3' or empty)
- *         43. Image Quality ('1', '2' or empty)
- *         <p/>
- *         <p/>
- *         <p/>
- *         Examples of marriage records:
- *         <p/>
- *         9000001|MCMILLAN|JOHN|MCDONALD|JANET|1855|107|01|15|1855||||||X|20|11|1|MILLHAVEN_OF_URQUHART_CO_INVERNESS|30|TAILOR_(M ASTER)|B|MILLHAVEN_OF_URQUHART_CO_INVERNESS|23|DOMESTIC_SERVANT|S|WILLIAM|0|Y|HELEN|GRANT||TAILOR|JOHN|0|Y|CATH ERINE|CAMERON||FOX_HUNTER|||
- *         9000002|FRASER|DONALD|FRASER|CHRISTINA|1855|107|01|0006|1855|||||||29|11|1|EASTLOCH_OF_INVERNESS|26|MASON_(JOURNEYMAN)| B|DRUMNADROCHIT_OF_URQUHART|25|DOMESTIC_SERVANT|S|ANDREW|0||ELINA|CUMMING|Y|FARMER|ALEXANDER|0|Y|ELIZABETH|C UMMING||CARPENTER|||
+ * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class SimplifiedMarriageSourceRecord extends SourceRecord {
 
@@ -555,6 +503,17 @@ public class SimplifiedMarriageSourceRecord extends SourceRecord {
                 marriage_date.getDay() + "." + marriage_date.getMonth() + "." + marriage_date.getYear(),
                 "", registration_district_suffix);
 
+
+        return builder.toString();
+    }
+
+    @Override
+    public String getHeaders() {
+        final StringBuilder builder = new StringBuilder();
+
+        append(builder,"groom_id", "groom_name", "groom_fathers_id", "groom_fathers_name", "groom_mothers_id",
+                "groom_mothers_name", "bride_id", "bride_name", "bride_fathers_id", "bride_fathers_name",
+                "bride_mothers_id", "bride_mothers_name", "marriage_date", "", "registration_district_suffix");
 
         return builder.toString();
     }

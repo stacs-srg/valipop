@@ -20,6 +20,7 @@ import uk.ac.standrews.cs.basic_model.model.IPartnership;
 import uk.ac.standrews.cs.basic_model.model.IPerson;
 import uk.ac.standrews.cs.basic_model.model.IPopulation;
 import uk.ac.standrews.cs.utilities.DateManipulation;
+import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.SourceRecord;
 
 import java.util.Date;
 
@@ -28,6 +29,7 @@ import java.util.Date;
  *
  * @author Alan Dearle (alan.dearle@st-andrews.ac.uk)
  * @author Graham Kirby (graham.kirby@st-andrews.ac.uk)
+ * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  *         <p/>
  *         Fields are as follows:
  *         Ref Field
@@ -479,11 +481,37 @@ public class MarriageSourceRecord extends SourceRecord {
 
         final StringBuilder builder = new StringBuilder();
 
-        append(builder, uid, groom_surname, groom_forename, bride_surname, bride_forename, registration_year, registration_district_number, registration_district_suffix, entry, marriage_date.getYear(), groom_surname_changed, groom_forename_changed,
-                bride_surname_changed, bride_forename_changed, groom_did_not_sign, bride_did_not_sign, marriage_date.getDay(), marriage_date.getMonth(), denomination, groom_address, groom_age_or_date_of_birth, groom_occupation,
-                groom_marital_status, bride_address, bride_age_or_date_of_birth, bride_occupation, bride_marital_status, groom_fathers_forename, groom_fathers_surname, groom_father_deceased, groom_mothers_forename,
-                groom_mothers_maiden_surname, groom_mother_deceased, groom_fathers_occupation, bride_fathers_forename, bride_fathers_surname, bride_father_deceased, bride_mothers_forename, bride_mothers_maiden_surname,
-                bride_mother_deceased, bride_father_occupation, entry_corrected, image_quality);
+        append(builder, uid, groom_surname, groom_forename, bride_surname, bride_forename, registration_year,
+                registration_district_number, registration_district_suffix, entry, marriage_date.getYear(),
+                groom_surname_changed, groom_forename_changed, bride_surname_changed, bride_forename_changed,
+                groom_did_not_sign, bride_did_not_sign, marriage_date.getDay(), marriage_date.getMonth(), denomination,
+                groom_address, groom_age_or_date_of_birth, groom_occupation, groom_marital_status, bride_address,
+                bride_age_or_date_of_birth, bride_occupation, bride_marital_status, groom_fathers_forename,
+                groom_fathers_surname, groom_father_deceased, groom_mothers_forename, groom_mothers_maiden_surname,
+                groom_mother_deceased, groom_fathers_occupation, bride_fathers_forename, bride_fathers_surname,
+                bride_father_deceased, bride_mothers_forename, bride_mothers_maiden_surname, bride_mother_deceased,
+                bride_father_occupation, entry_corrected, image_quality);
+
+        return builder.toString();
+    }
+
+    @Override
+    public String getHeaders() {
+
+        final StringBuilder builder = new StringBuilder();
+
+        append(builder, "Unique 'Record' Identifier", "Groom Surname", "Groom Forename", "Bride Surname",
+                "Bride Forename", "Year of Registration", "Registration District Number",
+                "Registration District Suffix", "Entry", "Marriage Year", "Changed Groom Surname",
+                "Changed Groom Forename", "Changed Bride Surname", "Changed Bride Forename", "Groom did not Sign",
+                "Bride did not Sign", "Marriage Day", "Marriage Month", "Denomination", "Groom’s Address",
+                "Groom Age or Date of BirthFamilyGT", "Groom’s Occupation", "Groom Marital Status", "Bride’s Address",
+                "Bride Age or Date of BirthFamilyGT", "Bride’s Occupation", "Bride marital status",
+                "Groom Father’s Forename", "Groom Father’s Surname", "Groom Father Deceased", "Groom Mother’s Forename",
+                "Groom Mother’s Maiden Surname", "Groom mother Deceased", "Groom Father Occupation",
+                "Bride Father’s Forename", "Bride Father’s Surname", "Bride Father Deceased", "Bride Mother’s Forename",
+                "Bride Mother’s Maiden Surname", "Bride Mother Deceased", "Bride Father Occupation", "Corrected Entry",
+                "Image Quality");
 
         return builder.toString();
     }

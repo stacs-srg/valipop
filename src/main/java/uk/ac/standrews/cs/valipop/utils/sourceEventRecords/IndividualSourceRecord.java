@@ -19,7 +19,6 @@ package uk.ac.standrews.cs.valipop.utils.sourceEventRecords;
 import uk.ac.standrews.cs.basic_model.model.IPartnership;
 import uk.ac.standrews.cs.basic_model.model.IPerson;
 import uk.ac.standrews.cs.basic_model.model.IPopulation;
-import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.oldDSformat.SourceRecord;
 
 /**
  * Created by graham on 13/05/2014.

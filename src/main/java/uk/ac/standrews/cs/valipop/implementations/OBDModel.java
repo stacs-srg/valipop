@@ -87,7 +87,7 @@ public class OBDModel {
 
         summary = new SummaryRow(null, null, null, null, null,
                 null, null, null, null, 0, 0, 0,
-                0, 0, 0, null);
+                0, true, 0, null);
 
 
     }
@@ -110,7 +110,7 @@ public class OBDModel {
                 config.getVarPath(), startTime, config.getRunPurpose(), CODE_VERSION, config.getSimulationTimeStep(), config.getInputWidth(),
                 config.getT0(), config.getTE(), DateUtils.differenceInDays(config.getT0(), config.getTE()),
                 config.getBirthFactor(), config.getDeathFactor(), config.getRecoveryFactor(),
-                config.getMaxProportionOBirthsDueToInfidelity(), config.getMinBirthSpacing(), config.getOutputRecordFormat());
+                config.getBinominalSampling(), config.getMinBirthSpacing(), config.getOutputRecordFormat());
 
     }
 

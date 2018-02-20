@@ -3,7 +3,6 @@ package uk.ac.standrews.cs.valipop.utils.sourceEventRecords;
 import uk.ac.standrews.cs.valipop.utils.Logger;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.processingVisuliserFormat.RelationshipsTable;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.PeopleCollection;
-import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.oldDSformat.SourceRecordGenerator;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.processingVisuliserFormat.SimplifiedSourceRecordGenerator;
 
 /**

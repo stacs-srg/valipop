@@ -66,7 +66,6 @@ public class PopulationStatistics implements EventRateTables {
     // Population Constants
     private int minGestationPeriodDays = 147;
     private int minBirthSpacingDays = 147;
-    private double maxProportionBirthsDueToInfidelity = 0.2;
     private RandomGenerator randomGenerator;
 
 
@@ -83,7 +82,6 @@ public class PopulationStatistics implements EventRateTables {
                                 Map<YearDate, ValiPopEnumeratedDistribution> surname,
                                 int minBirthSpacingDays,
                                 int minGestationPeriodDays,
-                                double maxProportionBirthsDueToInfidelity,
                                 RandomGenerator randomGenerator) {
 
         this.maleDeath = maleDeath;
@@ -101,7 +99,6 @@ public class PopulationStatistics implements EventRateTables {
 
         this.minBirthSpacingDays = minBirthSpacingDays;
         this.minGestationPeriodDays = minGestationPeriodDays;
-        this.maxProportionBirthsDueToInfidelity = maxProportionBirthsDueToInfidelity;
 
         this.randomGenerator = randomGenerator;
 
@@ -276,11 +273,6 @@ public class PopulationStatistics implements EventRateTables {
     public int getMinGestationPeriod() {
         return minGestationPeriodDays;
     }
-
-    public double getMaxProportionBirthsDueToInfidelity() {
-        return maxProportionBirthsDueToInfidelity;
-    }
-
 
     public RandomGenerator getRandomGenerator() {
         return randomGenerator;

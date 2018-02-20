@@ -21,6 +21,7 @@ import uk.ac.standrews.cs.basic_model.model.IPerson;
 import uk.ac.standrews.cs.basic_model.model.IPopulation;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.IndividualSourceRecord;
 import uk.ac.standrews.cs.utilities.DateManipulation;
+import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.SourceRecord;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -30,6 +31,7 @@ import java.util.Date;
  *
  * @author Alan Dearle (alan.dearle@st-andrews.ac.uk)
  * @author Graham Kirby (graham.kirby@st-andrews.ac.uk)
+ * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  *         <p/>
  *         Fields are as follows:
  *         <p/>
@@ -271,9 +273,12 @@ public class DeathSourceRecord extends IndividualSourceRecord {
 
         final StringBuilder builder = new StringBuilder();
 
-        append(builder, uid, surname, forename, sex, registration_year, registration_district_number, registration_district_suffix, entry, death_date.getYear(), death_age, mothers_maiden_surname,
-                surname_changed, forename_changed, death_age_changed, birth_date, occupation, marital_status, spouses_names, spouses_occupations, death_date.getMonth(), death_date.getDay(),
-                death_place, fathers_forename, fathers_surname, fathers_occupation, father_deceased, mothers_forename, mothers_surname, mothers_maiden_surname_changed, mother_deceased,
+        append(builder, uid, surname, forename, sex, registration_year, registration_district_number,
+                registration_district_suffix, entry, death_date.getYear(), death_age, mothers_maiden_surname,
+                surname_changed, forename_changed, death_age_changed, birth_date, occupation, marital_status,
+                spouses_names, spouses_occupations, death_date.getMonth(), death_date.getDay(),
+                death_place, fathers_forename, fathers_surname, fathers_occupation, father_deceased, mothers_forename,
+                mothers_surname, mothers_maiden_surname_changed, mother_deceased,
                 death_cause_a, death_cause_b, death_cause_c, certifying_doctor, entry_corrected, image_quality);
 
         return builder.toString();
@@ -292,5 +297,22 @@ public class DeathSourceRecord extends IndividualSourceRecord {
                 setBirthDate(DateManipulation.formatDate(birth_date, DOB_DATE_FORMAT));
             }
         }
+    }
+
+    @Override
+    public String getHeaders() {
+
+        final StringBuilder builder = new StringBuilder();
+
+        append(builder, "Unique Record Identifier", "Surname", "Forename", "Sex", "Year of Registration",
+                "Registration District Number", "Registration District Suffix", "Entry", "Death Year", "Age at Death",
+                "Mother’s Maiden Surname", "Changed Surname", "Changed Forename", "Changed Death Age",
+                "Date of BirthFamilyGT", "Occupation", "Marital Status", "Spouse’s Nam3", "Spouse’s Occupation",
+                "Death Month", "Death Day", "Place of Death", "Father’s Forename", "Father’s Surname",
+                "Father’s Occupation", "Father Deceased", "Mother’s Forename", "Changed Mothers Maiden Surname",
+                "Mother Deceased", "Cause of Death", "Cause of Death", "Cause of Death", "Certifying Doctor",
+                "Corrected Entry", "Image Quality");
+
+        return builder.toString();
     }
 }

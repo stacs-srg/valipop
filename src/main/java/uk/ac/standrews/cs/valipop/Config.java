@@ -80,7 +80,6 @@ public class Config {
     private final String runPurpose;
 
     private int minBirthSpacing;
-    private double maxProportionOBirthsDueToInfidelity;
     private int minGestationPeriodDays;
 
     private double birthFactor;
@@ -107,12 +106,12 @@ public class Config {
 
     public Config(AdvancableDate tS, AdvancableDate t0, AdvancableDate tE, int t0PopulationSize, double setUpBR, double setUpDR,
                   CompoundTimeUnit simulationTimeStep, String varPath, String resultsSavePath, final String runPurpose,
-                  int minBirthSpacing, int minGestationPeriodDays, double maxProportionOBirthsDueToInfidelity,
+                  int minBirthSpacing, int minGestationPeriodDays, boolean binominalSampling,
                   double birthFactor, double deathFactor, double recoveryFactor, CompoundTimeUnit inputWidth,
                   RecordFormat outputRecordFormat, String startTime, boolean deterministic) {
 
         this(tS, t0, tE, t0PopulationSize, setUpBR, setUpDR, simulationTimeStep, varPath, resultsSavePath, runPurpose,
-                minBirthSpacing, minGestationPeriodDays, maxProportionOBirthsDueToInfidelity, birthFactor, deathFactor,
+                minBirthSpacing, minGestationPeriodDays, binominalSampling, birthFactor, deathFactor,
                 recoveryFactor, inputWidth, outputRecordFormat, startTime);
         this.deterministic = deterministic;
 
@@ -120,7 +119,7 @@ public class Config {
 
     public Config(AdvancableDate tS, AdvancableDate t0, AdvancableDate tE, int t0PopulationSize, double setUpBR, double setUpDR,
                   CompoundTimeUnit simulationTimeStep, String varPath, String resultsSavePath, final String runPurpose,
-                  int minBirthSpacing, int minGestationPeriodDays, double maxProportionOBirthsDueToInfidelity,
+                  int minBirthSpacing, int minGestationPeriodDays, boolean binominalSampling,
                   double birthFactor, double deathFactor, double recoveryFactor, CompoundTimeUnit inputWidth,
                   RecordFormat outputRecordFormat, String startTime) {
 
@@ -135,11 +134,10 @@ public class Config {
         this.setUpBR = setUpBR;
         this.setUpDR = setUpDR;
         this.simulationTimeStep = simulationTimeStep;
-
+        this.binominalSampling = binominalSampling;
         this.runPurpose = runPurpose;
         this.minBirthSpacing = minBirthSpacing;
         this.minGestationPeriodDays = minGestationPeriodDays;
-        this.maxProportionOBirthsDueToInfidelity = maxProportionOBirthsDueToInfidelity;
         this.birthFactor = birthFactor;
         this.deathFactor = deathFactor;
         this.recoveryFactor = recoveryFactor;
@@ -262,13 +260,8 @@ public class Config {
                         throw e;
                     }
                     break;
-                case "max_births_infidelity":
-                    try {
-                        maxProportionOBirthsDueToInfidelity = Double.parseDouble(split[1]);
-                    } catch (NumberFormatException e) {
-                        log.fatal("max_births_infidelity " + e.getMessage());
-                        throw e;
-                    }
+                case "binominal_sampling":
+                    binominalSampling = split[1].toLowerCase().equals("true");
                     break;
                 case "birth_factor":
                     try {
@@ -504,17 +497,13 @@ public class Config {
         return inputWidth;
     }
 
-    public boolean binominalSampling() {
+    public boolean getBinominalSampling() {
         return binominalSampling;
     }
 
 
     public int getMinBirthSpacing() {
         return minBirthSpacing;
-    }
-
-    public double getMaxProportionOBirthsDueToInfidelity() {
-        return maxProportionOBirthsDueToInfidelity;
     }
 
     public double getBirthFactor() {

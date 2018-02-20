@@ -57,7 +57,6 @@ public class MinimaSearch {
     static double rf = 0.5;
     static CompoundTimeUnit iw = new CompoundTimeUnit(10, TimeUnit.YEAR);
     static int minBirthSpacing = 147;
-    static double maxInfid = 0.2;
 
     static double bf = 0.0;
     static double df = 0.0;
@@ -126,7 +125,7 @@ public class MinimaSearch {
 
                     Config config = new Config(tS, t0, tE, populationSize, set_up_br, set_up_dr,
                             simulation_time_step, dataFiles, results_save_location, runPurpose,
-                            minBirthSpacing, minBirthSpacing, maxInfid, bf, df, rf, iw, output_record_format, startTime);
+                            minBirthSpacing, minBirthSpacing, true, bf, df, rf, iw, output_record_format, startTime);
 
                     OBDModel model = new OBDModel(startTime, config);
 

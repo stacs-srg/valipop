@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License along with population_model. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.valipop.utils.sourceEventRecords.oldDSformat;
+package uk.ac.standrews.cs.valipop.utils.sourceEventRecords;
 
 import uk.ac.standrews.cs.basic_model.model.IPartnership;
 import uk.ac.standrews.cs.basic_model.model.IPerson;
@@ -22,6 +22,9 @@ import uk.ac.standrews.cs.basic_model.model.IPopulation;
 import uk.ac.standrews.cs.utilities.FilteredIterator;
 import uk.ac.standrews.cs.utilities.MappedIterator;
 import uk.ac.standrews.cs.utilities.Mapper;
+import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.oldDSformat.BirthSourceRecord;
+import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.oldDSformat.DeathSourceRecord;
+import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.oldDSformat.MarriageSourceRecord;
 
 import java.util.ArrayList;
 import java.util.Iterator;
