@@ -39,7 +39,7 @@ public class MinimaSearch {
 
     static int pointsInMinima = 3;
 
-    static double minimumMeaningfulStep = 0.004;
+    static double minimumMeaningfulStep = 0.04;
     static double minimaSize = 5;
     static double intervalBoundV = 0.02;
 
