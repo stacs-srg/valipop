@@ -70,8 +70,8 @@ public class DateUtils {
 
         if(a.getDay() > b.getDay()) {
 
-            int daysInMonthA = getDaysInCurrentMonth(a.getMonth(), a.getYear());
-            int daysInMonthB = getDaysInCurrentMonth(b.getMonth(), b.getYear());
+            int daysInMonthA = getDaysInMonth(a.getMonth(), a.getYear());
+            int daysInMonthB = getDaysInMonth(b.getMonth(), b.getYear());
 
             if(daysInMonthB > daysInMonthA && b.getDay() > daysInMonthA && a.getDay() == daysInMonthA) {
 
@@ -206,7 +206,7 @@ public class DateUtils {
                 for(int i = 0; i < consideredTimePeriod.getCount(); i++) {
 
                     if(day < getDaysInNextMonth(month, year)) {
-                        days += getDaysInCurrentMonth(month, year);
+                        days += getDaysInMonth(month, year);
 
                     } else {
                         int t = getDaysInNextMonth(month, year);
@@ -250,13 +250,13 @@ public class DateUtils {
         return days;
     }
 
-    private static int getDaysInCurrentMonth(int currentMonth, int year) {
+    public static int getDaysInMonth(int month, int year) {
 
-        if (currentMonth == FEB && isLeapYear(year)) {
+        if (month == FEB && isLeapYear(year)) {
             return DAYS_IN_LEAP_FEB;
         } else {
             // We're making a transfer from months denoted from 1-12 to 0-11, hence the -1
-            return DAYS_IN_MONTH[currentMonth - 1];
+            return DAYS_IN_MONTH[month - 1];
         }
 
     }
@@ -481,14 +481,14 @@ public class DateUtils {
         int counts = 0;
 
         if(day != 1) {
-            counts += (getDaysInCurrentMonth(month, year) - day);
+            counts += (getDaysInMonth(month, year) - day);
             month ++;
         }
 
         for(int y = year; y < latestDate.getYear(); y++) {
 
             for(int m = month; m <= MONTHS_IN_YEAR; m++) {
-                counts += getDaysInCurrentMonth(m, y);
+                counts += getDaysInMonth(m, y);
             }
 
             month = 1;
@@ -496,7 +496,7 @@ public class DateUtils {
         }
 
         for(int m = month; m < latestDate.getMonth(); m++) {
-            counts += getDaysInCurrentMonth(m, latestDate.getYear());
+            counts += getDaysInMonth(m, latestDate.getYear());
         }
 
         if(day != latestDate.getDay()) {

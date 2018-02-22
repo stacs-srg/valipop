@@ -16,6 +16,7 @@
  */
 package uk.ac.standrews.cs.valipop.simulationEntities.person;
 
+import uk.ac.standrews.cs.basic_model.model.IPartnership;
 import uk.ac.standrews.cs.valipop.annotations.names.FirstNameGenerator;
 import uk.ac.standrews.cs.valipop.annotations.names.NameGenerator;
 import uk.ac.standrews.cs.valipop.annotations.names.SurnameGenerator;
@@ -54,6 +55,8 @@ public class Person implements IPersonExtended {
     private String firstName;
     private String surname;
 
+    private boolean illegitimate = false;
+
     private boolean toSeparate = false;
 
     public Person(char sex, Date birthDate, IPartnershipExtended parentsPartnership, PopulationStatistics ps) {
@@ -66,6 +69,11 @@ public class Person implements IPersonExtended {
         setFirstName(firstNameGenerator.getName(this, ps));
         setSurname(surnameGenerator.getName(this, ps));
 
+    }
+
+    public Person(char sex, Date birthDate, IPartnershipExtended parentsPartnership, PopulationStatistics ps, boolean illegitimate) {
+        this(sex, birthDate, parentsPartnership, ps);
+        this.illegitimate = illegitimate;
     }
 
     private static int getNewId() {
@@ -105,6 +113,24 @@ public class Person implements IPersonExtended {
     @Override
     public IPartnershipExtended getParentsPartnership_ex() {
         return parentsPartnership;
+    }
+
+    @Override
+    public boolean isIllegitimate() {
+        return illegitimate;
+    }
+
+    @Override
+    public List<IPartnershipExtended> getPartnershipsBeforeDate(Date date) {
+        List<IPartnershipExtended> partnershipsBeforeDate = new ArrayList<>();
+
+        for(IPartnershipExtended partnership : partnerships) {
+            if(DateUtils.dateBefore(partnership.getPartnershipDate(), date)) {
+                partnershipsBeforeDate.add(partnership);
+            }
+        }
+
+        return partnershipsBeforeDate;
     }
 
     @Override

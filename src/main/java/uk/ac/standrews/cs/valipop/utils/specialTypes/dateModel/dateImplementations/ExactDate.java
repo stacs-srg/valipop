@@ -19,6 +19,7 @@ package uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementati
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
 
+import java.security.InvalidParameterException;
 import java.time.DateTimeException;
 import java.util.Calendar;
 
@@ -67,6 +68,36 @@ public final class ExactDate implements Date {
 
     }
 
+    public ExactDate(Date date) {
+        this(date.getDay(), date.getMonth(), date.getYear());
+    }
+
+    public ExactDate advanceTime(int numberOfDays) {
+
+        int day = this.day;
+        int month = this.month;
+        int year = this.year;
+
+        int daysLeftInMonth = DateUtils.getDaysInMonth(month, year) - day;
+
+        while (numberOfDays >= 0) {
+            if (daysLeftInMonth > numberOfDays) {
+                return new ExactDate(day + numberOfDays, month, year);
+            } else {
+                numberOfDays -= daysLeftInMonth;
+                day = 1;
+
+                if (month == 12) {
+                    month = 1;
+                    year += 1;
+                } else {
+                    month += 1;
+                }
+            }
+        }
+
+        throw new IllegalArgumentException("Advancing of time failed - for days - numberOfDays = " + numberOfDays);
+    }
 
 
     @Override

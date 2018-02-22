@@ -16,13 +16,17 @@
  */
 package uk.ac.standrews.cs.valipop.utils.sourceEventRecords.oldDSformat;
 
+import org.apache.commons.math3.random.JDKRandomGenerator;
 import uk.ac.standrews.cs.basic_model.model.IPartnership;
 import uk.ac.standrews.cs.basic_model.model.IPerson;
 import uk.ac.standrews.cs.basic_model.model.IPopulation;
 import uk.ac.standrews.cs.utilities.DateManipulation;
+import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnershipExtended;
+import uk.ac.standrews.cs.valipop.simulationEntities.person.IPersonExtended;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.SourceRecord;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * A representation of a Marriage Record in the form used by the Digitising Scotland Project.
@@ -130,14 +134,14 @@ public class MarriageSourceRecord extends SourceRecord {
     private String bride_mother_deceased;
     private String bride_father_occupation;
 
-    public MarriageSourceRecord(final IPartnership partnership, final IPopulation population) {
+    public MarriageSourceRecord(final IPartnershipExtended partnership, final IPopulation population) {
 
         marriage_date = new DateRecord();
 
         setUid(String.valueOf(partnership.getId()));
 
-        IPerson bride = population.findPerson(partnership.getFemalePartnerId());
-        IPerson groom = population.findPerson(partnership.getMalePartnerId());
+        IPersonExtended bride = partnership.getFemalePartner();
+        IPersonExtended groom = partnership.getMalePartner();
 
         final Date start_date = partnership.getMarriageDate();
 
@@ -185,6 +189,38 @@ public class MarriageSourceRecord extends SourceRecord {
 
             setBrideMothersForename(bride_mother.getFirstName());
             setBrideMothersMaidenSurname(getMaidenSurname(population, bride_mother));
+        }
+    }
+
+    public String identifyMarritalStatus(IPersonExtended spouse, uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date marriageDate) {
+
+        List<IPartnershipExtended> partnerships = spouse.getPartnershipsBeforeDate(marriageDate);
+
+        if(partnerships.size() == 0) {
+            if(Character.toLowerCase(spouse.getSex()) == 'm') {
+                return "B"; // bachelor
+            } else {
+                return "S"; // single/spinster
+            }
+        } else {
+
+            if(spouse.getLastPartnership().getSeparationDate(new JDKRandomGenerator()) == null) {
+                // not separated from last partner
+                if(spouse.getLastPartnership().getPartnerOf(spouse).aliveOnDate(spouse.getDeathDate_ex())) {
+                    // last spouse alive on death date of deceased
+                    if(partnerships.size() > 1) {
+                        return "R"; // remarried
+                    } else {
+                        return "M"; // married
+                    }
+                } else {
+                    // last spouse dead on death date of deceased
+                    return "W"; // widow/er
+                }
+            } else {
+                // separated from last partner
+                return "D"; // divorced
+            }
         }
     }
 

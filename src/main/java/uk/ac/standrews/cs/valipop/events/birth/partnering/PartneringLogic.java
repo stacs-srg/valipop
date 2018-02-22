@@ -176,8 +176,13 @@ public class PartneringLogic {
                     nmLoop:
                     for (IntegerRange iR : partnerCounts.getLabels()) {
                         for (IPersonExtended m : allMen.get(iR)) {
-                            if(eligible(m, uf.getNewMother(), uf.getNumberOfChildrenInMaternity(), population, desiredPopulationStatistics, currentDate, consideredTimePeriod, config) && !inPPs(m, proposedPartnerships)) {
-                                proposedPartnerships.add(new ProposedPartnership(m, uf.getNewMother(), iR, uf.getNumberOfChildrenInMaternity()));
+                            if(eligible(m, uf.getNewMother(), uf.getNumberOfChildrenInMaternity(), population,
+                                    desiredPopulationStatistics, currentDate, consideredTimePeriod, config)
+                                    && !inPPs(m, proposedPartnerships)) {
+
+                                proposedPartnerships.add(new ProposedPartnership(m, uf.getNewMother(), iR,
+                                        uf.getNumberOfChildrenInMaternity()));
+
                                 women.remove(uf);
                                 i--;
                                 break nmLoop;
