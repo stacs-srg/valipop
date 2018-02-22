@@ -44,6 +44,8 @@ public class EntityFactory {
     public static IPartnershipExtended formNewChildrenInPartnership(int numberOfChildren, IPersonExtended father, IPersonExtended mother, AdvancableDate currentDate,
                                                                     CompoundTimeUnit birthTimeStep, Population population, PopulationStatistics ps) throws PersonNotFoundException {
 
+        boolean illegitimate = !father.needsNewPartner(currentDate);
+
         try {
             population.getLivingPeople().removePerson(mother);
             population.getLivingPeople().removePerson(father);
@@ -62,10 +64,10 @@ public class EntityFactory {
         for(int c = 0; c < numberOfChildren; c++) {
             IPersonExtended child;
             if(childrenBirthDate == null) {
-                child = makePerson(currentDate, birthTimeStep, partnership, population, ps);
+                child = makePerson(currentDate, birthTimeStep, partnership, population, ps, illegitimate);
                 childrenBirthDate = child.getBirthDate_ex();
             } else {
-                child = makePerson(childrenBirthDate, partnership, population, ps);
+                child = makePerson(childrenBirthDate, partnership, population, ps, illegitimate);
             }
             children.add(child);
         }
@@ -108,13 +110,17 @@ public class EntityFactory {
 
     }
 
-    public static IPersonExtended makePerson(Date birthDate, IPartnershipExtended parentsPartnership, Population population, PopulationStatistics ps) {
-
-        Person person = new Person(getSex(population.getPopulationCounts(), ps, birthDate), birthDate, parentsPartnership, ps);
+    public static IPersonExtended makePerson(Date birthDate, IPartnershipExtended parentsPartnership, Population population, PopulationStatistics ps, boolean illegitimate) {
+        Person person = new Person(getSex(population.getPopulationCounts(), ps, birthDate), birthDate, parentsPartnership, ps, illegitimate);
 
         population.getLivingPeople().addPerson(person);
 
         return person;
+    }
+
+    public static IPersonExtended makePerson(Date birthDate, IPartnershipExtended parentsPartnership, Population population, PopulationStatistics ps) {
+
+        return makePerson(birthDate, parentsPartnership, population, ps, false);
 
     }
 
@@ -122,5 +128,9 @@ public class EntityFactory {
 
         return makePerson(birthDateSelector.selectDate(currentDate, birthTimeStep, ps.getRandomGenerator()), parentsPartnership, population, ps);
 
+    }
+
+    public static IPersonExtended makePerson(Date currentDate, CompoundTimeUnit birthTimeStep, IPartnershipExtended parentsPartnership, Population population, PopulationStatistics ps, boolean illegitimate) {
+        return makePerson(birthDateSelector.selectDate(currentDate, birthTimeStep, ps.getRandomGenerator()), parentsPartnership, population, ps, illegitimate);
     }
 }

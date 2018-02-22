@@ -108,4 +108,5 @@ public interface IPerson {
 	 * @return the identifier of the person's parents' partnership
 	 */
 	int getParentsPartnership();
+
 }

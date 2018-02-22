@@ -1,11 +1,9 @@
 package uk.ac.standrews.cs.valipop.utils.sourceEventRecords.egSkyeFormat;
 
-import uk.ac.standrews.cs.basic_model.model.IPerson;
 import uk.ac.standrews.cs.basic_model.model.IPopulation;
 import uk.ac.standrews.cs.valipop.simulationEntities.person.IPersonExtended;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.oldDSformat.BirthSourceRecord;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.AdvancableDate;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.ExactDate;
 
 import java.util.Random;
 
@@ -17,23 +15,25 @@ public class EGSkyeBirthSourceRecord extends BirthSourceRecord {
     private static Random rng = new Random();
 
     protected int familyID = -1;
-    protected Date birthDate;
-    protected Date registrationDate;
+    protected ExactDate birthDate;
+    protected ExactDate registrationDate;
     protected String mothersOccupation = "";
+    protected String illegitimate = "";
 
     public EGSkyeBirthSourceRecord(IPersonExtended person, IPopulation population) {
         super(person, population);
 
         familyID = parents_partnership_id;
-        birthDate = person.getBirthDate_ex();
+        birthDate = new ExactDate(person.getBirthDate_ex());
 
         if(parents_partnership_id == -1) {
             mothersOccupation = person.getParentsPartnership_ex().getFemalePartner().getOccupation();
         }
 
-        // TODO need to make ExactDate advancable...
-//        int registrationDay = rng.nextInt(43);
-//        registrationDay = birthDate.
+        int registrationDay = rng.nextInt(43);
+        registrationDate = birthDate.advanceTime(registrationDay);
+
+        illegitimate = person.isIllegitimate() ? "illegitimate" : "";
 
     }
 
@@ -51,8 +51,9 @@ public class EGSkyeBirthSourceRecord extends BirthSourceRecord {
                 mothers_maiden_surname, mothersOccupation, parents_marriage_date.getDay(),
                 parents_marriage_date.getMonth(), parents_marriage_date.getYear(), parents_place_of_marriage,
                 "", "", "",
-                "", "", "", "",
-                "", "" ); // TODO keep going!
+                "", "", "", registrationDate.getDay(),
+                registrationDate.getMonth(), registrationDate.getYear(), illegitimate, "SYNTHETIC DATA PRODUCED USING VALIPOP", "", "", "", "", uid,
+                "", ""); // TODO check the function latepid and the latesch?
 
         return builder.toString();
     }

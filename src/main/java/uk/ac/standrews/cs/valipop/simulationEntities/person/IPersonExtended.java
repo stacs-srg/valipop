@@ -59,5 +59,8 @@ public interface IPersonExtended extends IPerson, Comparable<IPersonExtended>, P
      */
     IPartnershipExtended getParentsPartnership_ex();
 
+    boolean isIllegitimate();
 
+
+    List<IPartnershipExtended> getPartnershipsBeforeDate(Date date);
 }
