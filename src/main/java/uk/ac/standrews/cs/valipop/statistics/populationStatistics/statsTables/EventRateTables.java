@@ -20,6 +20,7 @@ import uk.ac.standrews.cs.basic_model.distributions.general.EnumeratedDistributi
 import uk.ac.standrews.cs.basic_model.distributions.general.FileBasedEnumeratedDistribution;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.OneDimensionDataDistribution;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.ProportionalDistribution;
+import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.selfCorrecting.SelfCorrectingOneDimensionDataDistribution;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.selfCorrecting.SelfCorrectingProportionalDistribution;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.selfCorrecting.SelfCorrectingTwoDimensionDataDistribution;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date;
@@ -86,7 +87,11 @@ public interface EventRateTables {
      */
     SelfCorrectingTwoDimensionDataDistribution getOrderedBirthRates(Date year);
 
-    OneDimensionDataDistribution getIllegitimateBirthRates(Date year);
+    SelfCorrectingOneDimensionDataDistribution getIllegitimateBirthRates(Date year);
+
+    SelfCorrectingOneDimensionDataDistribution getMarriageRates(Date year);
+
+
 
     /**
      * Gets multiple births in a maternity rate for women giving birth in a given year by age of the mother.

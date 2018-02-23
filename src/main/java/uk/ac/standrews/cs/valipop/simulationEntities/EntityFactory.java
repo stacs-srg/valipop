@@ -42,9 +42,8 @@ public class EntityFactory {
     private static BirthDateSelector birthDateSelector = new BirthDateSelector();
 
     public static IPartnershipExtended formNewChildrenInPartnership(int numberOfChildren, IPersonExtended father, IPersonExtended mother, AdvancableDate currentDate,
-                                                                    CompoundTimeUnit birthTimeStep, Population population, PopulationStatistics ps) throws PersonNotFoundException {
+                                                                    CompoundTimeUnit birthTimeStep, Population population, PopulationStatistics ps, boolean illegitimate, boolean marriedAtBirth) throws PersonNotFoundException {
 
-        boolean illegitimate = !father.needsNewPartner(currentDate);
 
         try {
             population.getLivingPeople().removePerson(mother);
@@ -70,6 +69,14 @@ public class EntityFactory {
                 child = makePerson(childrenBirthDate, partnership, population, ps, illegitimate);
             }
             children.add(child);
+        }
+
+        if(marriedAtBirth) {
+
+
+
+        } else {
+            partnership.setMarriageDate(null);
         }
 
         partnership.setPartnershipDate(childrenBirthDate);

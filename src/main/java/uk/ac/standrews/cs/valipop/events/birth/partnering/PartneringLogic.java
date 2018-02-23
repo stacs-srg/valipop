@@ -25,6 +25,7 @@ import uk.ac.standrews.cs.valipop.simulationEntities.person.IPersonExtended;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.Population;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.exceptions.InsufficientNumberOfPeopleException;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.exceptions.PersonNotFoundException;
+import uk.ac.standrews.cs.valipop.statistics.populationStatistics.MarriageStatsKey;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.MultipleDeterminedCount;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.SingleDeterminedCount;
@@ -165,7 +166,6 @@ public class PartneringLogic {
 
                 // note how many females have been partnered at this age range
                 achievedPartnerCounts.add(iR, partnerCounts.get(iR) - determinedCount);
-//                shortfallCounts.add(iR, determinedCount);
 
             }
 
@@ -221,7 +221,31 @@ public class PartneringLogic {
 
                 int numChildrenInPartnership = pp.getNumberOfChildren();
 
-                EntityFactory.formNewChildrenInPartnership(numChildrenInPartnership, father, mother, currentDate, consideredTimePeriod, population, desiredPopulationStatistics);
+                // Decide on marriage
+                MarriageStatsKey marriageKey = new MarriageStatsKey(mother.ageOnDate(currentDate), numChildrenInPartnership, consideredTimePeriod, currentDate);
+                SingleDeterminedCount marriageCounts = (SingleDeterminedCount) desiredPopulationStatistics.getDeterminedCount(marriageKey, config);
+
+                boolean isIllegitimate = !father.needsNewPartner(currentDate);
+                boolean toBeMarriedBirth;
+
+                if(!isIllegitimate) {
+
+                    toBeMarriedBirth = (int) Math.round(marriageCounts.getDeterminedCount() / (double) numChildrenInPartnership) == 1;
+
+                    if (toBeMarriedBirth) {
+                        marriageCounts.setFufilledCount(numChildrenInPartnership);
+                    } else {
+                        marriageCounts.setFufilledCount(0);
+                    }
+
+                } else {
+                    toBeMarriedBirth = false;
+                    marriageCounts.setFufilledCount(0);
+                }
+
+                desiredPopulationStatistics.returnAchievedCount(marriageCounts);
+
+                EntityFactory.formNewChildrenInPartnership(numChildrenInPartnership, father, mother, currentDate, consideredTimePeriod, population, desiredPopulationStatistics, isIllegitimate, toBeMarriedBirth);
 
                 IntegerRange maleAgeRange = resolveAgeToIR(pp.getMale(), returnPartnerCounts.getLabels(), currentDate);
 

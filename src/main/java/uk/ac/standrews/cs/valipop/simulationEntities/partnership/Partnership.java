@@ -45,6 +45,7 @@ public class Partnership implements IPartnershipExtended {
     private List<IPersonExtended> children = new ArrayList<>();
 
     private Date partnershipDate;
+    private Date marriageDate = null;
     private Date separationDate = null;
     private Date ealiestPossibleSepatationDate = null;
 
@@ -103,7 +104,20 @@ public class Partnership implements IPartnershipExtended {
 
     @Override
     public java.util.Date getMarriageDate() {
-        return getPartnershipDate().getDate();
+        if(marriageDate == null) {
+            return null;
+        } else {
+            return marriageDate.getDate();
+        }
+    }
+
+    public void setMarriageDate(Date marriageDate) {
+        this.marriageDate = marriageDate;
+    }
+
+    @Override
+    public Date getMarriageDate_ex() {
+        return marriageDate;
     }
 
     @Override

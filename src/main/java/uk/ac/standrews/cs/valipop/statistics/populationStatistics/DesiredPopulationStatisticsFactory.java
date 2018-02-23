@@ -75,6 +75,7 @@ public abstract class DesiredPopulationStatisticsFactory {
         Map<YearDate, SelfCorrectingTwoDimensionDataDistribution> orderedBirth = readInSC2DDataFiles(config.getVarOrderedBirthPaths(), config);
         Map<YearDate, ProportionalDistribution> multipleBirth = readInAndAdaptAgeAndProportionalStatsInputFiles(config.getVarMultipleBirthPaths(), config);
         Map<YearDate, SelfCorrectingOneDimensionDataDistribution> illegitimateBirth = readInSC1DDataFiles(config.getVarIllegitimateBirthPaths(), config);
+        Map<YearDate, SelfCorrectingOneDimensionDataDistribution> marriage = readInSC1DDataFiles(config.getVarMarriagePaths(), config);
         Map<YearDate, SelfCorrectingOneDimensionDataDistribution> separation = readInSC1DDataFiles(config.getVarSeparationPaths(), config);
         Map<YearDate, Double> sexRatioBirth = readInSingleInputDataFile(config.getVarBirthRatioPath(), config);
         Map<YearDate, ValiPopEnumeratedDistribution> maleForename = readInNamesDataFiles(config.getVarMaleForenamePath(), config);
@@ -82,7 +83,7 @@ public abstract class DesiredPopulationStatisticsFactory {
         Map<YearDate, ValiPopEnumeratedDistribution> surname = readInNamesDataFiles(config.getVarSurnamePath(), config);
 
         return new PopulationStatistics(maleDeath, femaleDeath, partnering, orderedBirth, multipleBirth, illegitimateBirth,
-                separation, sexRatioBirth, maleForename, femaleForename, surname, config.getMinBirthSpacing(),
+                marriage, separation, sexRatioBirth, maleForename, femaleForename, surname, config.getMinBirthSpacing(),
                 config.getMinGestationPeriodDays(), randomGenerator);
 
     }
