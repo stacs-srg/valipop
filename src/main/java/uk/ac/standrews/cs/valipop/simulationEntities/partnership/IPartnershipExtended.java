@@ -64,4 +64,8 @@ public interface IPartnershipExtended extends IPartnership, PartnershipUtils {
     Date getPartnershipDate();
 
     Date getSeparationDate(RandomGenerator randomGenerator);
+
+    void setMarriageDate(Date marriageDate);
+
+    Date getMarriageDate_ex();
 }

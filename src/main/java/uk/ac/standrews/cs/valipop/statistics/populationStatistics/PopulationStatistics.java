@@ -54,6 +54,7 @@ public class PopulationStatistics implements EventRateTables {
     private Map<YearDate, SelfCorrectingTwoDimensionDataDistribution> orderedBirth;
     private Map<YearDate, ProportionalDistribution> multipleBirth;
     private Map<YearDate, SelfCorrectingOneDimensionDataDistribution> illegitimateBirth;
+    private Map<YearDate, SelfCorrectingOneDimensionDataDistribution> marriage;
     private Map<YearDate, SelfCorrectingOneDimensionDataDistribution> separation;
 
     private Map<YearDate, Double> sexRatioBirth;
@@ -75,6 +76,7 @@ public class PopulationStatistics implements EventRateTables {
                                 Map<YearDate, SelfCorrectingTwoDimensionDataDistribution> orderedBirth,
                                 Map<YearDate, ProportionalDistribution> multipleBirth,
                                 Map<YearDate, SelfCorrectingOneDimensionDataDistribution> illegitimateBirth,
+                                Map<YearDate, SelfCorrectingOneDimensionDataDistribution> marriage,
                                 Map<YearDate, SelfCorrectingOneDimensionDataDistribution> separation,
                                 Map<YearDate, Double> sexRatioBirths,
                                 Map<YearDate, ValiPopEnumeratedDistribution> maleForename,
@@ -90,6 +92,7 @@ public class PopulationStatistics implements EventRateTables {
         this.orderedBirth = orderedBirth;
         this.multipleBirth = multipleBirth;
         this.illegitimateBirth = illegitimateBirth;
+        this.marriage = marriage;
         this.separation = separation;
         this.sexRatioBirth = sexRatioBirths;
 
@@ -128,6 +131,11 @@ public class PopulationStatistics implements EventRateTables {
         if(key instanceof IllegitimateBirthStatsKey) {
             IllegitimateBirthStatsKey k = (IllegitimateBirthStatsKey) key;
             return getIllegitimateBirthRates(k.getDate()).determineCount(k, config);
+        }
+
+        if(key instanceof MarriageStatsKey) {
+            MarriageStatsKey k = (MarriageStatsKey) key;
+            return getMarriageRates(k.getDate()).determineCount(k, config);
         }
 
         if(key instanceof SeparationStatsKey) {
@@ -169,6 +177,12 @@ public class PopulationStatistics implements EventRateTables {
             return;
         }
 
+        if(achievedCount.getKey() instanceof MarriageStatsKey) {
+            MarriageStatsKey k = (MarriageStatsKey) achievedCount.getKey();
+            getMarriageRates(k.getDate()).returnAchievedCount(achievedCount);
+            return;
+        }
+
         if(achievedCount.getKey() instanceof SeparationStatsKey) {
             SeparationStatsKey k = (SeparationStatsKey) achievedCount.getKey();
             getSeparationByChildCountRates(k.getDate()).returnAchievedCount(achievedCount);
@@ -203,6 +217,11 @@ public class PopulationStatistics implements EventRateTables {
     @Override
     public SelfCorrectingOneDimensionDataDistribution getIllegitimateBirthRates(Date year) {
         return illegitimateBirth.get(getNearestYearInMap(year.getYearDate(), illegitimateBirth));
+    }
+
+    @Override
+    public SelfCorrectingOneDimensionDataDistribution getMarriageRates(Date year) {
+        return marriage.get(getNearestYearInMap(year.getYearDate(), marriage));
     }
 
     @Override

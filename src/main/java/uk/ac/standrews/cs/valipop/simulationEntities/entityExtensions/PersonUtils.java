@@ -86,5 +86,7 @@ public interface PersonUtils {
 
     Date getDateOfNextPostSeparationEvent(Date separationDate);
 
+    Date getDateOfPreviousPreMarriageEvent(Date latestPossibleMarriageDate);
+
     boolean diedAfter(Date date);
 }

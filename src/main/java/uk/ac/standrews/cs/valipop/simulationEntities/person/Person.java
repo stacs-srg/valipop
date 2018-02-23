@@ -16,10 +16,12 @@
  */
 package uk.ac.standrews.cs.valipop.simulationEntities.person;
 
+import org.apache.commons.math3.random.JDKRandomGenerator;
 import uk.ac.standrews.cs.basic_model.model.IPartnership;
 import uk.ac.standrews.cs.valipop.annotations.names.FirstNameGenerator;
 import uk.ac.standrews.cs.valipop.annotations.names.NameGenerator;
 import uk.ac.standrews.cs.valipop.annotations.names.SurnameGenerator;
+import uk.ac.standrews.cs.valipop.simulationEntities.population.IPopulationExtended;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
 import uk.ac.standrews.cs.valipop.utils.Logger;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date;
@@ -34,6 +36,7 @@ import uk.ac.standrews.cs.valipop.simulationEntities.EntityFactory;
 import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnershipExtended;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.Population;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.exceptions.PersonNotFoundException;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.TimeUnit;
 
 import java.util.*;
 
@@ -546,6 +549,18 @@ public class Person implements IPersonExtended {
                 }
 
             }
+
+            date = part.getMarriageDate_ex();
+
+            if(date != null) {
+                if (DateUtils.dateBefore(separationDate, date)) {
+
+                    if (earliestDate == null || DateUtils.dateBefore(date, earliestDate)) {
+                        earliestDate = date;
+                    }
+
+                }
+            }
         }
 
         if(earliestDate == null) {
@@ -553,6 +568,58 @@ public class Person implements IPersonExtended {
         }
 
         return earliestDate;
+    }
+
+    @Override
+    public Date getDateOfPreviousPreMarriageEvent(Date latestPossibleMarriageDate) {
+
+        ExactDate earliestPossibleMarriageDate =
+                new ExactDate(birthDate.getMonthDate().advanceTime(16, TimeUnit.YEAR)).advanceTime(birthDate.getDay());
+
+        if(partnerships.size() == 0) {
+            return earliestPossibleMarriageDate;
+        } else {
+
+            Date latestEventDate = earliestPossibleMarriageDate;
+
+            for(IPartnershipExtended p : partnerships) {
+
+                if(p.getChildren().get(0).isIllegitimate()) {
+                    // dont care
+                } else {
+
+                    Date sepDate = p.getSeparationDate(new JDKRandomGenerator());
+                    Date spouseDeathDate = p.getPartnerOf(this).getDeathDate_ex();
+
+                    // TODO prevent selection of dates after latestPossibleMarriageDate
+
+                    if(sepDate != null) {
+                        if(DateUtils.dateBefore(latestEventDate, sepDate)) {
+                            latestEventDate = sepDate;
+                        }
+                    }
+
+                    if(spouseDeathDate != null) {
+                        if(DateUtils.dateBefore(latestEventDate, spouseDeathDate)) {
+                            latestEventDate = spouseDeathDate;
+                        }
+                    }
+
+                }
+
+            }
+
+            return latestEventDate;
+
+
+        }
+
+        // we want to find the last event before the latestPossibleMarriageDate
+        // the events we are looking for are:
+            // - previous child with current partner
+            // - date of separation from previous partner
+            // - NOT interested in events where the partner produced illegitimate children
+
     }
 
     @Override

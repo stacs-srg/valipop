@@ -52,6 +52,8 @@ public class Config {
     private static final String maleForenameSubFile = "male_forename";
     private static final String femaleForenameSubFile = "female_forename";
     private static final String surnameSubFile = "surname";
+    private static final String marriageSubFile = "marriage";
+
 
     public static final Logger log = new Logger(Config.class);
 
@@ -74,6 +76,7 @@ public class Config {
     private Path varMaleForenamePaths;
     private Path varFemaleForenamePaths;
     private Path varSurnamePaths;
+    private Path varMarriagePaths;
 
     private Path resultsSavePath;
 
@@ -103,6 +106,7 @@ public class Config {
         }
         throw new IOException("Failed to get Filename");
     };
+
 
     public Config(AdvancableDate tS, AdvancableDate t0, AdvancableDate tE, int t0PopulationSize, double setUpBR, double setUpDR,
                   CompoundTimeUnit simulationTimeStep, String varPath, String resultsSavePath, final String runPurpose,
@@ -333,6 +337,7 @@ public class Config {
         varFemaleForenamePaths = Paths.get(path, femaleForenameSubFile);
         varSurnamePaths = Paths.get(path, surnameSubFile);
         varIllegitimateBirthPaths = Paths.get(path, illegitimateBirthSubFile);
+        varMarriagePaths = Paths.get(path, marriageSubFile);
 
 
     }
@@ -389,6 +394,16 @@ public class Config {
             return Files.newDirectoryStream(varIllegitimateBirthPaths, filter);
         } catch (IOException e) {
             String message = "Error reading in illegitimate birth files";
+            log.fatal(message);
+            throw new IOException(message, e);
+        }
+    }
+
+    public DirectoryStream<Path> getVarMarriagePaths() throws IOException {
+        try {
+            return Files.newDirectoryStream(varMarriagePaths, filter);
+        } catch (IOException e) {
+            String message = "Error reading in marriage files";
             log.fatal(message);
             throw new IOException(message, e);
         }
@@ -536,4 +551,5 @@ public class Config {
     public boolean deterministic() {
         return deterministic;
     }
+
 }
