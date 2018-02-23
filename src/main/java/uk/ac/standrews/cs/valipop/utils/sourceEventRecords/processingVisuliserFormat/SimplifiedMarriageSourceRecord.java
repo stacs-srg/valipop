@@ -19,7 +19,7 @@ package uk.ac.standrews.cs.valipop.utils.sourceEventRecords.processingVisuliserF
 import uk.ac.standrews.cs.basic_model.model.IPartnership;
 import uk.ac.standrews.cs.basic_model.model.IPerson;
 import uk.ac.standrews.cs.basic_model.model.IPopulation;
-import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.SourceRecord;
+import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.oldDSformat.SourceRecord;
 import uk.ac.standrews.cs.utilities.DateManipulation;
 
 import java.util.Date;

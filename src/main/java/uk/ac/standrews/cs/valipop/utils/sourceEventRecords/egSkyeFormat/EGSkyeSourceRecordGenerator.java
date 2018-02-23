@@ -14,16 +14,17 @@
  * You should have received a copy of the GNU General Public License along with population_model. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.valipop.utils.sourceEventRecords.processingVisuliserFormat;
+package uk.ac.standrews.cs.valipop.utils.sourceEventRecords.egSkyeFormat;
 
 import uk.ac.standrews.cs.basic_model.model.IPopulation;
-import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.oldDSformat.SourceRecord;
 import uk.ac.standrews.cs.utilities.FileManipulation;
 import uk.ac.standrews.cs.utilities.PercentageProgressIndicator;
 import uk.ac.standrews.cs.utilities.ProgressIndicator;
 import uk.ac.standrews.cs.utilities.TimeManipulation;
 import uk.ac.standrews.cs.utilities.archive.CommandLineArgs;
 import uk.ac.standrews.cs.utilities.archive.Diagnostic;
+import uk.ac.standrews.cs.valipop.simulationEntities.population.IPopulationExtended;
+import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.oldDSformat.SourceRecord;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -37,25 +38,25 @@ import java.nio.file.Paths;
  * @author Graham Kirby (graham.kirby@st-andrews.ac.uk)
  * @author Alan Dearle (al@st-andrews.ac.uk)
  */
-public class SimplifiedSourceRecordGenerator {
+public class EGSkyeSourceRecordGenerator {
 
-    private static String BIRTH_RECORDS_PATH = "birth_records.txt";
-    private static String DEATH_RECORDS_PATH = "death_records.txt";
-    private static String MARRIAGE_RECORDS_PATH = "marriage_records.txt";
+    public String BIRTH_RECORDS_PATH = "birth_records.txt";
+    public String DEATH_RECORDS_PATH = "death_records.txt";
+    public String MARRIAGE_RECORDS_PATH = "marriage_records.txt";
 
     // TODO allow output file paths to be configured, add -i option to output to console
 
     public static final int DEFAULT_NUMBER_OF_PROGRESS_UPDATES = 10;
     private static final String NUMBER_OF_PROGRESS_UPDATES_FLAG = "-u";
 
-    private IPopulation population;
+    private IPopulationExtended population;
 
-    public SimplifiedSourceRecordGenerator(IPopulation population) {
+    public EGSkyeSourceRecordGenerator(IPopulationExtended population) {
 
-        this(population, "basic/output");
+        this(population, "valipop/output");
     }
 
-    public SimplifiedSourceRecordGenerator(IPopulation population, String outputDir) {
+    public EGSkyeSourceRecordGenerator(IPopulationExtended population, String outputDir) {
 
         this.population = population;
 
@@ -72,18 +73,17 @@ public class SimplifiedSourceRecordGenerator {
         final int number_of_progress_updates = CommandLineArgs.extractIntFromCommandLineArgs(args, NUMBER_OF_PROGRESS_UPDATES_FLAG, DEFAULT_NUMBER_OF_PROGRESS_UPDATES);
 
         Diagnostic.traceNoSource("Generating birth records");
-        exportRecords(SimplifiedSourceRecordIterator.getBirthRecordIterator(population), BIRTH_RECORDS_PATH, population.getNumberOfPeople(), number_of_progress_updates);
+        exportRecords(EGSkyeSourceRecordIterator.getBirthRecordIterator(population), BIRTH_RECORDS_PATH, population.getNumberOfPeople(), number_of_progress_updates);
         TimeManipulation.reportElapsedTime(start_time);
 
         Diagnostic.traceNoSource("Generating death records");
         // The population size is an overestimate of the number of death records, but it doesn't really matter.
-        exportRecords(SimplifiedSourceRecordIterator.getDeathRecordIterator(population), DEATH_RECORDS_PATH, population.getNumberOfPeople(), number_of_progress_updates);
+        exportRecords(EGSkyeSourceRecordIterator.getDeathRecordIterator(population), DEATH_RECORDS_PATH, population.getNumberOfPeople(), number_of_progress_updates);
         TimeManipulation.reportElapsedTime(start_time);
 
         Diagnostic.traceNoSource("Generating marriage records");
-        exportRecords(SimplifiedSourceRecordIterator.getMarriageRecordIterator(population), MARRIAGE_RECORDS_PATH, population.getNumberOfPartnerships(), number_of_progress_updates);
+        exportRecords(EGSkyeSourceRecordIterator.getMarriageRecordIterator(population), MARRIAGE_RECORDS_PATH, population.getNumberOfPartnerships(), number_of_progress_updates);
         TimeManipulation.reportElapsedTime(start_time);
-
     }
 
     private static void exportRecords(final Iterable<? extends SourceRecord> records, final String records_path_string, int number_of_records, final int number_of_progress_updates) throws IOException {
@@ -96,7 +96,15 @@ public class SimplifiedSourceRecordGenerator {
 
         try (final PrintWriter writer = new PrintWriter(Files.newBufferedWriter(records_path, FileManipulation.FILE_CHARSET))) {
 
+            boolean first = true;
+
             for (final SourceRecord record : records) {
+
+                if(first) {
+                    writer.println(record.getHeaders());
+                    first = false;
+                }
+
                 writer.println(record);
                 progress_indicator.progressStep();
             }

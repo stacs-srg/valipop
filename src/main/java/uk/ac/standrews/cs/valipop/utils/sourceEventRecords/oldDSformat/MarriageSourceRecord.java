@@ -23,7 +23,6 @@ import uk.ac.standrews.cs.basic_model.model.IPopulation;
 import uk.ac.standrews.cs.utilities.DateManipulation;
 import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnershipExtended;
 import uk.ac.standrews.cs.valipop.simulationEntities.person.IPersonExtended;
-import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.SourceRecord;
 
 import java.util.Date;
 import java.util.List;
@@ -134,14 +133,14 @@ public class MarriageSourceRecord extends SourceRecord {
     private String bride_mother_deceased;
     private String bride_father_occupation;
 
-    public MarriageSourceRecord(final IPartnershipExtended partnership, final IPopulation population) {
+    public MarriageSourceRecord(final IPartnership partnership, final IPopulation population) {
 
         marriage_date = new DateRecord();
 
         setUid(String.valueOf(partnership.getId()));
 
-        IPersonExtended bride = partnership.getFemalePartner();
-        IPersonExtended groom = partnership.getMalePartner();
+        IPerson bride = population.findPerson(partnership.getFemalePartnerId());
+        IPerson groom = population.findPerson(partnership.getMalePartnerId());;
 
         final Date start_date = partnership.getMarriageDate();
 
@@ -190,6 +189,7 @@ public class MarriageSourceRecord extends SourceRecord {
             setBrideMothersForename(bride_mother.getFirstName());
             setBrideMothersMaidenSurname(getMaidenSurname(population, bride_mother));
         }
+
     }
 
     public String identifyMarritalStatus(IPersonExtended spouse, uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date marriageDate) {
@@ -204,15 +204,13 @@ public class MarriageSourceRecord extends SourceRecord {
             }
         } else {
 
-            if(spouse.getLastPartnership().getSeparationDate(new JDKRandomGenerator()) == null) {
+            IPartnershipExtended lastPartnership = partnerships.get(partnerships.size() - 1);
+
+            if(lastPartnership.getSeparationDate(new JDKRandomGenerator()) == null) {
                 // not separated from last partner
-                if(spouse.getLastPartnership().getPartnerOf(spouse).aliveOnDate(spouse.getDeathDate_ex())) {
+                if(lastPartnership.getPartnerOf(spouse).aliveOnDate(marriageDate)) {
                     // last spouse alive on death date of deceased
-                    if(partnerships.size() > 1) {
-                        return "R"; // remarried
-                    } else {
-                        return "M"; // married
-                    }
+                    return "M-ERROR?";
                 } else {
                     // last spouse dead on death date of deceased
                     return "W"; // widow/er

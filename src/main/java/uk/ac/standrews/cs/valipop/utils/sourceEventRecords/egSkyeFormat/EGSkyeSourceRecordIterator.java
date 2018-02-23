@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License along with population_model. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package uk.ac.standrews.cs.valipop.utils.sourceEventRecords;
+package uk.ac.standrews.cs.valipop.utils.sourceEventRecords.egSkyeFormat;
 
 import uk.ac.standrews.cs.basic_model.model.IPartnership;
 import uk.ac.standrews.cs.basic_model.model.IPerson;
@@ -22,6 +22,9 @@ import uk.ac.standrews.cs.basic_model.model.IPopulation;
 import uk.ac.standrews.cs.utilities.FilteredIterator;
 import uk.ac.standrews.cs.utilities.MappedIterator;
 import uk.ac.standrews.cs.utilities.Mapper;
+import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnershipExtended;
+import uk.ac.standrews.cs.valipop.simulationEntities.person.IPersonExtended;
+import uk.ac.standrews.cs.valipop.simulationEntities.population.IPopulationExtended;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.oldDSformat.BirthSourceRecord;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.oldDSformat.DeathSourceRecord;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.oldDSformat.MarriageSourceRecord;
@@ -34,53 +37,53 @@ import java.util.function.Predicate;
 /**
  * Created by graham on 10/07/2014.
  */
-public class SourceRecordIterator {
+public class EGSkyeSourceRecordIterator {
 
-    public static Iterable<BirthSourceRecord> getBirthRecordIterator(final IPopulation population) {
+    public static Iterable<EGSkyeBirthSourceRecord> getBirthRecordIterator(final IPopulationExtended population) {
 
         return () -> {
 
-            Iterator<IPerson> person_iterator = population.getPeople().iterator();
+            Iterator<IPersonExtended> person_iterator = population.getPeople_ex().iterator();
 
-            Mapper<IPerson, BirthSourceRecord> person_to_birth_record_mapper = person -> new BirthSourceRecord(person, population);
+            Mapper<IPersonExtended, EGSkyeBirthSourceRecord> person_to_birth_record_mapper = person -> new EGSkyeBirthSourceRecord(person, population);
 
             return new MappedIterator<>(person_iterator, person_to_birth_record_mapper);
         };
     }
 
-    public static Iterable<DeathSourceRecord> getDeathRecordIterator(final IPopulation population) {
+    public static Iterable<EGSkyeDeathSourceRecord> getDeathRecordIterator(final IPopulationExtended population) {
 
         return () -> {
 
-            Predicate<IPerson> check_dead = person -> person.getDeathDate() != null;
+            Predicate<IPersonExtended> check_dead = person -> person.getDeathDate() != null;
 
-            Iterator<IPerson> dead_person_iterator = new FilteredIterator<>(population.getPeople().iterator(), check_dead);
+            Iterator<IPersonExtended> dead_person_iterator = new FilteredIterator<>(population.getPeople_ex().iterator(), check_dead);
 
-            Mapper<IPerson, DeathSourceRecord> person_to_death_record_mapper = person -> new DeathSourceRecord(person, population);
+            Mapper<IPersonExtended, EGSkyeDeathSourceRecord> person_to_death_record_mapper = person -> new EGSkyeDeathSourceRecord(person, population);
 
             return new MappedIterator<>(dead_person_iterator, person_to_death_record_mapper);
         };
     }
 
-    public static Iterable<MarriageSourceRecord> getMarriageRecordIterator(final IPopulation population) {
+    public static Iterable<EGSkyeMarriageSourceRecord> getMarriageRecordIterator(final IPopulationExtended population) {
 
         return () -> {
 
-            Iterator<IPartnership> partnership_iterator = population.getPartnerships().iterator();
+            Iterator<IPartnershipExtended> partnership_iterator = population.getPartnerships_ex().iterator();
 
-            List<IPartnership> l = new ArrayList<>();
+            List<IPartnershipExtended> l = new ArrayList<>();
 
             while(partnership_iterator.hasNext()) {
-                IPartnership p = partnership_iterator.next();
+                IPartnershipExtended p = partnership_iterator.next();
                 if(p.getMarriageDate() != null)
                     l.add(p);
             }
 
 
-            Mapper<IPartnership, MarriageSourceRecord> person_to_marriage_record_mapper = new Mapper<IPartnership, MarriageSourceRecord>() {
+            Mapper<IPartnershipExtended, EGSkyeMarriageSourceRecord> person_to_marriage_record_mapper = new Mapper<IPartnershipExtended, EGSkyeMarriageSourceRecord>() {
                 @Override
-                public MarriageSourceRecord map(IPartnership partnership) {
-                    return new MarriageSourceRecord(partnership, population);
+                public EGSkyeMarriageSourceRecord map(IPartnershipExtended partnership) {
+                    return new EGSkyeMarriageSourceRecord(partnership, population);
                 }
             };
 

@@ -11,7 +11,7 @@ t0_pop_size = 100000
 set_up_br = 0.0233
 set_up_dr = 0.0322
 results_save_location = src/main/resources/valipop/results
-output_record_format = DS
+output_record_format = EG_SKYE
 # these are things we'll be wanting to tune to minimise deviance
 min_birth_spacing = 147
 min_gestation_period = 147
