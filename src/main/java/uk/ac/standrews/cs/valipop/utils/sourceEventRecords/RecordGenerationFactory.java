@@ -1,6 +1,8 @@
 package uk.ac.standrews.cs.valipop.utils.sourceEventRecords;
 
 import uk.ac.standrews.cs.valipop.utils.Logger;
+import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.egSkyeFormat.EGSkyeSourceRecordGenerator;
+import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.oldDSformat.SourceRecordGenerator;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.processingVisuliserFormat.RelationshipsTable;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.PeopleCollection;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.processingVisuliserFormat.SimplifiedSourceRecordGenerator;
@@ -17,6 +19,9 @@ public class RecordGenerationFactory {
         switch(recordFormat) {
             case DS:
                 extractBMDRecords(population, recordsOutputDir);
+                break;
+            case EG_SKYE:
+                extractEGSkyeRecords(population, recordsOutputDir);
                 break;
             case VIS_PROCESSING:
                 extractSimplifiedBMDRecords(population, recordsOutputDir);
@@ -50,6 +55,18 @@ public class RecordGenerationFactory {
 
         try {
             new SourceRecordGenerator(population, recordsDirPath).generateEventRecords(new String[0]);
+        } catch (Exception e) {
+            log.info("Record generation failed");
+            e.printStackTrace();
+            log.info(e.getMessage());
+        }
+    }
+
+    private static void extractEGSkyeRecords(PeopleCollection population, String recordsDirPath) {
+        log.info("OBDModel --- Outputting EG_SKYE records");
+
+        try {
+            new EGSkyeSourceRecordGenerator(population, recordsDirPath).generateEventRecords(new String[0]);
         } catch (Exception e) {
             log.info("Record generation failed");
             e.printStackTrace();

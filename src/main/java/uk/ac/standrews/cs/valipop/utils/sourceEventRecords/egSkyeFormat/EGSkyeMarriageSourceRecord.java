@@ -15,12 +15,16 @@ import java.util.List;
  */
 public class EGSkyeMarriageSourceRecord extends MarriageSourceRecord {
 
-    ExactDate marriageDate;
+    protected ExactDate marriageDate;
+    protected int groomID;
+    protected int brideID;
 
     public EGSkyeMarriageSourceRecord(IPartnershipExtended partnership, IPopulation population) {
         super(partnership, population);
 
         marriageDate = new ExactDate(partnership.getPartnershipDate());
+        groomID = partnership.getMalePartnerId();
+        brideID = partnership.getFemalePartnerId();
 
     }
 
@@ -34,16 +38,16 @@ public class EGSkyeMarriageSourceRecord extends MarriageSourceRecord {
                 "", "", "", marriageDate.toString(), getGroomAgeOrDateOfBirth(), getBrideAgeOrDateOfBirth(), "",
                 "", "", "", "", "", "", "", marriageDate.toString(), marriageDate.getDay(), marriageDate.getMonth(), marriageDate.getYear(),
                 "", "", "", getGroomForename(), getGroomSurname(),
-                getGroomOccupation(), "marital status of groom", "age of groom", "address of groom 1",
-                "address of groom 2", "forename of bride", "surname of bride", "occupation of bride",
-                "marital status of bride", "age of bride", "address of bride 1", "address of bride 2",
-                "groom's father's forename", "groom's father's surname", "groom's father's occupation",
-                "if groom's father deceased", "groom's mother's forename", "groom's mother's maiden surname",
-                "if groom's mother deceased", "bride's father's forename", "bride's father's surname",
-                "bride's father's occupation", "if bride's father deceased", "bride's mother's forename",
-                "bride's mother's maiden surname", "if bride's mother deceased", "did groom sign?", "did bride sign?",
-                "notes1", "notes2", "notes3", "repeats", "gearlypid", "gearlysch", "bearlypid", "bearlysch", "glatepid",
-                "glatesch", "blatepid", "blatesch", "gdeath", "bdeath");
+                getGroomOccupation(), getGroomMaritalStatus(), getGroomAgeOrDateOfBirth(), getGroomAddress(),
+                "", getBrideForename(), getBrideSurname(), getBrideOccupation(),
+                getBrideMaritalStatus(), getBrideAgeOrDateOfBirth(), getBrideAddress(), "",
+                getGroomFathersForename(), getGroomFathersSurname(), getGroomFathersOccupation(),
+                getGroomFatherDeceased(), getGroomMothersForename(), getGroomMothersMaidenSurname(),
+                getGroomMotherDeceased(), getBrideFathersForename(), getBrideFathersSurname(),
+                getBrideFatherOccupation(), getBrideFatherDeceased(), getBrideMothersForename(),
+                getBrideMothersMaidenSurname(), getBrideMotherDeceased(), "", "",
+                "", "", "", "", "", "", "", "", "",
+                "", "", "", groomID, brideID);
 
         return builder.toString();
     }

@@ -7,6 +7,7 @@ public enum RecordFormat {
 
     DS,
     VIS_PROCESSING,
+    EG_SKYE,
     NONE
 
 }

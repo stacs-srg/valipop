@@ -19,7 +19,7 @@ package uk.ac.standrews.cs.valipop.implementations;
 
 import uk.ac.standrews.cs.basic_model.model.IPopulation;
 import uk.ac.standrews.cs.basic_model.model.database.DBPopulationAdapter;
-import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.SourceRecordGenerator;
+import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.oldDSformat.SourceRecordGenerator;
 
 
 /**

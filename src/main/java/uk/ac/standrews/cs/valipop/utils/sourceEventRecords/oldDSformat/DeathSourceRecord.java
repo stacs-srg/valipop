@@ -24,7 +24,6 @@ import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnershipExt
 import uk.ac.standrews.cs.valipop.simulationEntities.person.IPersonExtended;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.IndividualSourceRecord;
 import uk.ac.standrews.cs.utilities.DateManipulation;
-import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.SourceRecord;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -110,7 +109,7 @@ public class DeathSourceRecord extends IndividualSourceRecord {
     private String spouses_names;
     private String spouses_occupations;
 
-    public DeathSourceRecord(final IPersonExtended person, IPopulation population) {
+    public DeathSourceRecord(final IPerson person, IPopulation population) {
 
         death_date = new SourceRecord.DateRecord();
 
@@ -121,21 +120,6 @@ public class DeathSourceRecord extends IndividualSourceRecord {
         setSurname(person.getSurname());
         setOccupation(person.getOccupation());
         setDeathCauseA(person.getDeathCause());
-
-        setMaritalStatus(identifyMarritalStatus(person));
-        String[] spousesInfo = identifyNameAndOccupationOfSpouses(person);
-        setSpousesNames(spousesInfo[0]);
-        setSpousesOccupations(spousesInfo[1]);
-
-        if(!person.getParentsPartnership_ex().getMalePartner().aliveOnDate(person.getDeathDate_ex())) {
-            // father is dead
-            setFatherDeceased("D"); // deceased
-        }
-
-        if(!person.getParentsPartnership_ex().getFemalePartner().aliveOnDate(person.getDeathDate_ex())) {
-            // mother is dead
-            setMotherDeceased("D"); // deceased
-        }
 
         Date birth_date = person.getBirthDate();
         Date death_date = person.getDeathDate();
@@ -150,65 +134,7 @@ public class DeathSourceRecord extends IndividualSourceRecord {
         }
     }
 
-    public String identifyMarritalStatus(IPersonExtended deceased) {
 
-        List<IPartnershipExtended> partnerships = deceased.getPartnerships_ex();
-
-        if(partnerships.size() == 0) {
-            if(Character.toLowerCase(deceased.getSex()) == 'm') {
-                return "B"; // bachelor
-            } else {
-                return "S"; // single/spinster
-            }
-        } else {
-            if(deceased.getLastPartnership().getSeparationDate(new JDKRandomGenerator()) == null) {
-                // not separated from last partner
-                if(deceased.getLastPartnership().getPartnerOf(deceased).aliveOnDate(deceased.getDeathDate_ex())) {
-                    // last spouse alive on death date of deceased
-                    if(partnerships.size() > 1) {
-                        return "R"; // remarried
-                    } else {
-                        return "M"; // married
-                    }
-                } else {
-                    // last spouse dead on death date of deceased
-                    return "W"; // widow/er
-                }
-            } else {
-                // separated from last partner
-                return "D"; // divorced
-            }
-        }
-    }
-
-    public String[] identifyNameAndOccupationOfSpouses(IPersonExtended deceased) {
-        String[] ret = new String[2];
-
-        StringBuilder names = new StringBuilder();
-        StringBuilder occupations = new StringBuilder();
-
-        for(IPartnershipExtended partnership : deceased.getPartnerships_ex()) {
-
-            IPersonExtended spouse = partnership.getPartnerOf(deceased);
-
-            String spousesName = spouse.getFirstName() + " " + spouse.getSurname();
-            String spousesOccupation = spouse.getOccupation();
-
-            if(names.length() == 0) {
-                names.append(spousesName);
-                occupations.append(spousesOccupation);
-            } else {
-                names.append("+" + spousesName);
-                occupations.append("+" + spousesOccupation);
-            }
-
-        }
-
-        ret[0] = names.toString();
-        ret[1] = occupations.toString();
-
-        return ret;
-    }
 
     public String getDeathDay() {
         return death_date.getDay();

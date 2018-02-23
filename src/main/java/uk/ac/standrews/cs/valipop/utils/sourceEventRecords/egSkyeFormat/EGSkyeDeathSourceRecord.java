@@ -5,7 +5,6 @@ import uk.ac.standrews.cs.basic_model.model.IPopulation;
 import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnershipExtended;
 import uk.ac.standrews.cs.valipop.simulationEntities.person.IPersonExtended;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.oldDSformat.DeathSourceRecord;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.ExactDate;
 
 import java.util.List;
@@ -26,13 +25,92 @@ public class EGSkyeDeathSourceRecord extends DeathSourceRecord {
         super(person, population);
 
         deathDate = new ExactDate(person.getDeathDate_ex());
-        mothersOccupation = person.getParentsPartnership_ex().getFemalePartner().getOccupation();
+
+        if(person.getParentsPartnership() != -1) {
+            mothersOccupation = person.getParentsPartnership_ex().getFemalePartner().getOccupation();
+
+            if(!person.getParentsPartnership_ex().getMalePartner().aliveOnDate(person.getDeathDate_ex())) {
+                // father is dead
+                setFatherDeceased("D"); // deceased
+            }
+
+            if(!person.getParentsPartnership_ex().getFemalePartner().aliveOnDate(person.getDeathDate_ex())) {
+                // mother is dead
+                setMotherDeceased("D"); // deceased
+            }
+        }
 
         int registrationDay = rng.nextInt(9);
         registrationDate = deathDate.advanceTime(registrationDay);
 
+        setMaritalStatus(identifyMarritalStatus(person));
+        String[] spousesInfo = identifyNameAndOccupationOfSpouses(person);
+        setSpousesNames(spousesInfo[0]);
+        setSpousesOccupations(spousesInfo[1]);
+
+
+
     }
 
+    public String identifyMarritalStatus(IPersonExtended deceased) {
+
+        List<IPartnershipExtended> partnerships = deceased.getPartnerships_ex();
+
+        if(partnerships.size() == 0) {
+            if(Character.toLowerCase(deceased.getSex()) == 'm') {
+                return "B"; // bachelor
+            } else {
+                return "S"; // single/spinster
+            }
+        } else {
+            if(deceased.getLastPartnership().getSeparationDate(new JDKRandomGenerator()) == null) {
+                // not separated from last partner
+                if(deceased.getLastPartnership().getPartnerOf(deceased).aliveOnDate(deceased.getDeathDate_ex())) {
+                    // last spouse alive on death date of deceased
+                    if(partnerships.size() > 1) {
+                        return "R"; // remarried
+                    } else {
+                        return "M"; // married
+                    }
+                } else {
+                    // last spouse dead on death date of deceased
+                    return "W"; // widow/er
+                }
+            } else {
+                // separated from last partner
+                return "D"; // divorced
+            }
+        }
+    }
+
+    public String[] identifyNameAndOccupationOfSpouses(IPersonExtended deceased) {
+        String[] ret = new String[2];
+
+        StringBuilder names = new StringBuilder();
+        StringBuilder occupations = new StringBuilder();
+
+        for(IPartnershipExtended partnership : deceased.getPartnerships_ex()) {
+
+            IPersonExtended spouse = partnership.getPartnerOf(deceased);
+
+            String spousesName = spouse.getFirstName() + " " + spouse.getSurname();
+            String spousesOccupation = spouse.getOccupation();
+
+            if(names.length() == 0) {
+                names.append(spousesName);
+                occupations.append(spousesOccupation);
+            } else {
+                names.append("+" + spousesName);
+                occupations.append("+" + spousesOccupation);
+            }
+
+        }
+
+        ret[0] = names.toString();
+        ret[1] = occupations.toString();
+
+        return ret;
+    }
 
 
     @Override

@@ -295,6 +295,9 @@ public class Config {
                         case "VIS_PROCESSING":
                             outputRecordFormat = RecordFormat.VIS_PROCESSING;
                             break;
+                        case "EG_SKYE":
+                            outputRecordFormat = RecordFormat.EG_SKYE;
+                            break;
                         case "NONE":
                             outputRecordFormat = RecordFormat.NONE;
                             break;

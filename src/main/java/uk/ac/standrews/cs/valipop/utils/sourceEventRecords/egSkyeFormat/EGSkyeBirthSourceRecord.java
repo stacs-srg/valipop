@@ -26,7 +26,7 @@ public class EGSkyeBirthSourceRecord extends BirthSourceRecord {
         familyID = parents_partnership_id;
         birthDate = new ExactDate(person.getBirthDate_ex());
 
-        if(parents_partnership_id == -1) {
+        if(parents_partnership_id != -1) {
             mothersOccupation = person.getParentsPartnership_ex().getFemalePartner().getOccupation();
         }
 
