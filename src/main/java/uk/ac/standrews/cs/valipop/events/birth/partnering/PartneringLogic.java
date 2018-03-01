@@ -229,23 +229,21 @@ public class PartneringLogic {
                 boolean toBeMarriedBirth;
 
                 if(!isIllegitimate) {
-
                     toBeMarriedBirth = (int) Math.round(marriageCounts.getDeterminedCount() / (double) numChildrenInPartnership) == 1;
-
-                    if (toBeMarriedBirth) {
-                        marriageCounts.setFufilledCount(numChildrenInPartnership);
-                    } else {
-                        marriageCounts.setFufilledCount(0);
-                    }
-
                 } else {
                     toBeMarriedBirth = false;
+                }
+
+                IPartnershipExtended marriage = EntityFactory.formNewChildrenInPartnership(numChildrenInPartnership, father, mother, currentDate, consideredTimePeriod, population, desiredPopulationStatistics, isIllegitimate, toBeMarriedBirth);
+
+                // checks if marriage was possible
+                if (marriage.getMarriageDate_ex() != null) {
+                    marriageCounts.setFufilledCount(numChildrenInPartnership);
+                } else {
                     marriageCounts.setFufilledCount(0);
                 }
 
                 desiredPopulationStatistics.returnAchievedCount(marriageCounts);
-
-                EntityFactory.formNewChildrenInPartnership(numChildrenInPartnership, father, mother, currentDate, consideredTimePeriod, population, desiredPopulationStatistics, isIllegitimate, toBeMarriedBirth);
 
                 IntegerRange maleAgeRange = resolveAgeToIR(pp.getMale(), returnPartnerCounts.getLabels(), currentDate);
 

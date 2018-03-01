@@ -21,6 +21,7 @@ import uk.ac.standrews.cs.basic_model.model.IPartnership;
 import uk.ac.standrews.cs.valipop.simulationEntities.entityExtensions.PartnershipUtils;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date;
 import uk.ac.standrews.cs.valipop.simulationEntities.person.IPersonExtended;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.ExactDate;
 
 import java.util.List;
 
@@ -61,11 +62,13 @@ public interface IPartnershipExtended extends IPartnership, PartnershipUtils {
      */
     List<IPersonExtended> getChildren();
 
-    Date getPartnershipDate();
+    ExactDate getPartnershipDate();
 
-    Date getSeparationDate(RandomGenerator randomGenerator);
+    ExactDate getSeparationDate(RandomGenerator randomGenerator);
 
-    void setMarriageDate(Date marriageDate);
+    ExactDate getEarliestPossibleSeparationDate();
 
-    Date getMarriageDate_ex();
+    void setMarriageDate(ExactDate marriageDate);
+
+    ExactDate getMarriageDate_ex();
 }

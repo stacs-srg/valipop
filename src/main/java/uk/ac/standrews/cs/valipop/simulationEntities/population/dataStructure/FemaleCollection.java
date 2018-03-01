@@ -370,7 +370,7 @@ public class FemaleCollection extends PersonCollection {
             try {
                 Map<Integer, Collection<IPersonExtended>> mapForDiv;
                 // for each birth order
-                for (Integer j : (mapForDiv = getAllPeopleFromDivision(firstDate)).keySet()) {
+                for (Integer j : (mapForDiv = getAllPeopleFromDivision(divisionDate)).keySet()) {
                     people.addAll(mapForDiv.get(j));
                 }
             } catch (NullPointerException e) {

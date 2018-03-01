@@ -139,8 +139,9 @@ public class BirthSourceRecord extends IndividualSourceRecord {
 				// TODO this will need to change to reflect however we choose to model current location in geographical model
 				setBirthAddress(parents_partnership.getMarriagePlace());
 
-				setParentAttributes(person, population, parents_partnership);
 			}
+
+			setParentAttributes(person, population, parents_partnership);
 		}
 	}
 

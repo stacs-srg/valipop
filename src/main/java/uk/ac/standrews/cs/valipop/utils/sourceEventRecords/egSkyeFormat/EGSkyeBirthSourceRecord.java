@@ -19,6 +19,8 @@ public class EGSkyeBirthSourceRecord extends BirthSourceRecord {
     protected ExactDate registrationDate;
     protected String mothersOccupation = "";
     protected String illegitimate = "";
+    protected String marriageBaby = "";
+    protected String deathID = "";
 
     public EGSkyeBirthSourceRecord(IPersonExtended person, IPopulation population) {
         super(person, population);
@@ -34,6 +36,12 @@ public class EGSkyeBirthSourceRecord extends BirthSourceRecord {
         registrationDate = birthDate.advanceTime(registrationDay);
 
         illegitimate = person.isIllegitimate() ? "illegitimate" : "";
+
+        marriageBaby = person.getMarriageBaby() ? "true" : "false";
+
+        if(person.getDeathDate_ex() != null) {
+            deathID = String.valueOf(uid);
+        }
 
     }
 
@@ -52,8 +60,8 @@ public class EGSkyeBirthSourceRecord extends BirthSourceRecord {
                 parents_marriage_date.getMonth(), parents_marriage_date.getYear(), parents_place_of_marriage,
                 "", "", "",
                 "", "", "", registrationDate.getDay(),
-                registrationDate.getMonth(), registrationDate.getYear(), illegitimate, "SYNTHETIC DATA PRODUCED USING VALIPOP", "", "", "", "", uid,
-                "", ""); // TODO check the function latepid and the latesch?
+                registrationDate.getMonth(), registrationDate.getYear(), illegitimate, "SYNTHETIC DATA PRODUCED USING VALIPOP", "", "", "", "", deathID,
+                "", "", marriageBaby);
 
         return builder.toString();
     }
@@ -73,7 +81,7 @@ public class EGSkyeBirthSourceRecord extends BirthSourceRecord {
                 "place of parent's marriage 2", "forename of informant", "surname of informant",
                 "relationship of informant to child", "did inform sign?", "was inform present?", "day of reg",
                 "month of reg", "year of reg", "illegit", "notes1", "notes2", "notes3", "repeats", "edits", "Death",
-                "latepid", "latesch");
+                "latepid", "latesch", "marriageBaby");
 
         return builder.toString();
     }

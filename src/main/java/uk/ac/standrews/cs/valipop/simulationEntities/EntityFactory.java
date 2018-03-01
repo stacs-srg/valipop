@@ -24,8 +24,11 @@ import uk.ac.standrews.cs.valipop.simulationEntities.population.PopulationCounts
 import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.Population;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.AdvancableDate;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.ExactDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateSelection.BirthDateSelector;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateSelection.MarriageDateSelector;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
 import uk.ac.standrews.cs.valipop.simulationEntities.person.IPersonExtended;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.exceptions.PersonNotFoundException;
@@ -38,6 +41,8 @@ import java.util.List;
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
 public class EntityFactory {
+
+    public static MarriageDateSelector marriageDateSelector = new MarriageDateSelector();
 
     private static BirthDateSelector birthDateSelector = new BirthDateSelector();
 
@@ -58,21 +63,46 @@ public class EntityFactory {
         List<IPersonExtended> children = new ArrayList<>(numberOfChildren);
 
         // This ensures twins are born on the same day
-        Date childrenBirthDate = null;
+        ExactDate childrenBirthDate = null;
+        IPersonExtended aChild = null;
 
         for(int c = 0; c < numberOfChildren; c++) {
             IPersonExtended child;
             if(childrenBirthDate == null) {
                 child = makePerson(currentDate, birthTimeStep, partnership, population, ps, illegitimate);
-                childrenBirthDate = child.getBirthDate_ex();
             } else {
                 child = makePerson(childrenBirthDate, partnership, population, ps, illegitimate);
             }
+            childrenBirthDate = child.getBirthDate_ex();
             children.add(child);
+
+            aChild = child;
         }
 
         if(marriedAtBirth) {
 
+            ExactDate latestPossibleMarriageDate = childrenBirthDate;
+            Date earliestPossibleMarriageDate;
+
+            // nth child - then previous child birth date - NOT possible here, this is a method for new partnerships
+
+            // first child - then death or divorce of previous spouses or coming of age
+
+            // for mother
+            Date motherLastPrevPartneringEvent = mother.getDateOfLastLegitimatePartnershipEventBeforeDate(childrenBirthDate);
+
+            // for father
+            Date fatherLastPrevPartneringEvent = father.getDateOfLastLegitimatePartnershipEventBeforeDate(childrenBirthDate);
+
+            earliestPossibleMarriageDate = DateUtils.getLatestDate(motherLastPrevPartneringEvent, fatherLastPrevPartneringEvent);
+
+            if(DateUtils.dateBefore(earliestPossibleMarriageDate, latestPossibleMarriageDate)) {
+                // if there is a tenable marriage date then select it
+                partnership.setMarriageDate(marriageDateSelector.selectDate(earliestPossibleMarriageDate, latestPossibleMarriageDate, ps.getRandomGenerator()));
+                aChild.setMarriageBaby(true);
+            } else {
+                partnership.setMarriageDate(null);
+            }
 
 
         } else {

@@ -16,6 +16,7 @@
  */
 package uk.ac.standrews.cs.valipop.simulationEntities.entityExtensions;
 
+import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnershipExtended;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.MonthDate;
@@ -50,7 +51,7 @@ public interface PersonUtils {
 
     IPersonExtended getLastChild();
 
-    void addChildrenToCurrentPartnership(int numberOfChildren, AdvancableDate onDate, CompoundTimeUnit birthTimeStep, Population population, PopulationStatistics ps);
+    void addChildrenToCurrentPartnership(int numberOfChildren, AdvancableDate onDate, CompoundTimeUnit birthTimeStep, Population population, PopulationStatistics ps, Config config);
 
     boolean toSeparate();
 
@@ -89,4 +90,8 @@ public interface PersonUtils {
     Date getDateOfPreviousPreMarriageEvent(Date latestPossibleMarriageDate);
 
     boolean diedAfter(Date date);
+
+    void setMarriageBaby(boolean b);
+
+    boolean getMarriageBaby();
 }

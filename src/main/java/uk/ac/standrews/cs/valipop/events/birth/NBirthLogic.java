@@ -191,7 +191,7 @@ public class NBirthLogic implements EventLogic {
                     needPartners.add(new NewMother(female, highestBirthOption.getValue()));
                 } else {
 
-                    female.addChildrenToCurrentPartnership(highestBirthOption.getValue(), currentDate, consideredTimePeriod, population, desiredPopulationStatistics);
+                    female.addChildrenToCurrentPartnership(highestBirthOption.getValue(), currentDate, consideredTimePeriod, population, desiredPopulationStatistics, config);
                     havePartners.add(female);
 
                     try {

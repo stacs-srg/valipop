@@ -28,6 +28,8 @@ import uk.ac.standrews.cs.valipop.simulationEntities.population.IPopulationExten
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.oldDSformat.BirthSourceRecord;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.oldDSformat.DeathSourceRecord;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.oldDSformat.MarriageSourceRecord;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -39,11 +41,13 @@ import java.util.function.Predicate;
  */
 public class EGSkyeSourceRecordIterator {
 
-    public static Iterable<EGSkyeBirthSourceRecord> getBirthRecordIterator(final IPopulationExtended population) {
+    public static Iterable<EGSkyeBirthSourceRecord> getBirthRecordIterator(final IPopulationExtended population, Date startDate) {
 
         return () -> {
 
-            Iterator<IPersonExtended> person_iterator = population.getPeople_ex().iterator();
+            Predicate<IPersonExtended> check_in_sim_dates = person -> DateUtils.dateBefore(startDate, person.getBirthDate_ex());
+
+            Iterator<IPersonExtended> person_iterator = new FilteredIterator<>(population.getPeople_ex().iterator(), check_in_sim_dates);
 
             Mapper<IPersonExtended, EGSkyeBirthSourceRecord> person_to_birth_record_mapper = person -> new EGSkyeBirthSourceRecord(person, population);
 
@@ -51,13 +55,13 @@ public class EGSkyeSourceRecordIterator {
         };
     }
 
-    public static Iterable<EGSkyeDeathSourceRecord> getDeathRecordIterator(final IPopulationExtended population) {
+    public static Iterable<EGSkyeDeathSourceRecord> getDeathRecordIterator(final IPopulationExtended population, Date startDate) {
 
         return () -> {
 
-            Predicate<IPersonExtended> check_dead = person -> person.getDeathDate() != null;
+            Predicate<IPersonExtended> check_dead_and_in_sim_dates = person -> person.getDeathDate() != null && DateUtils.dateBefore(startDate, person.getDeathDate_ex());
 
-            Iterator<IPersonExtended> dead_person_iterator = new FilteredIterator<>(population.getPeople_ex().iterator(), check_dead);
+            Iterator<IPersonExtended> dead_person_iterator = new FilteredIterator<>(population.getPeople_ex().iterator(), check_dead_and_in_sim_dates);
 
             Mapper<IPersonExtended, EGSkyeDeathSourceRecord> person_to_death_record_mapper = person -> new EGSkyeDeathSourceRecord(person, population);
 
@@ -65,7 +69,7 @@ public class EGSkyeSourceRecordIterator {
         };
     }
 
-    public static Iterable<EGSkyeMarriageSourceRecord> getMarriageRecordIterator(final IPopulationExtended population) {
+    public static Iterable<EGSkyeMarriageSourceRecord> getMarriageRecordIterator(final IPopulationExtended population, Date startDate) {
 
         return () -> {
 
@@ -75,7 +79,7 @@ public class EGSkyeSourceRecordIterator {
 
             while(partnership_iterator.hasNext()) {
                 IPartnershipExtended p = partnership_iterator.next();
-                if(p.getMarriageDate() != null)
+                if(p.getMarriageDate() != null && DateUtils.dateBefore(startDate, p.getMarriageDate_ex()))
                     l.add(p);
             }
 
