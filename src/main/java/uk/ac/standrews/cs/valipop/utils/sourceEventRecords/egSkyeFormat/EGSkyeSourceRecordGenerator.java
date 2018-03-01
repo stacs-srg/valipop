@@ -25,6 +25,7 @@ import uk.ac.standrews.cs.utilities.archive.CommandLineArgs;
 import uk.ac.standrews.cs.utilities.archive.Diagnostic;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.IPopulationExtended;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.oldDSformat.SourceRecord;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -40,9 +41,9 @@ import java.nio.file.Paths;
  */
 public class EGSkyeSourceRecordGenerator {
 
-    public String BIRTH_RECORDS_PATH = "birth_records.txt";
-    public String DEATH_RECORDS_PATH = "death_records.txt";
-    public String MARRIAGE_RECORDS_PATH = "marriage_records.txt";
+    public String BIRTH_RECORDS_PATH = "birth_records.csv";
+    public String DEATH_RECORDS_PATH = "death_records.csv";
+    public String MARRIAGE_RECORDS_PATH = "marriage_records.csv";
 
     // TODO allow output file paths to be configured, add -i option to output to console
 
@@ -66,23 +67,23 @@ public class EGSkyeSourceRecordGenerator {
 
     }
 
-    public void generateEventRecords(final String[] args) throws Exception {
+    public void generateEventRecords(Date startDate) throws Exception {
 
         final long start_time = System.currentTimeMillis();
 
-        final int number_of_progress_updates = CommandLineArgs.extractIntFromCommandLineArgs(args, NUMBER_OF_PROGRESS_UPDATES_FLAG, DEFAULT_NUMBER_OF_PROGRESS_UPDATES);
+        final int number_of_progress_updates = CommandLineArgs.extractIntFromCommandLineArgs(new String[0], NUMBER_OF_PROGRESS_UPDATES_FLAG, DEFAULT_NUMBER_OF_PROGRESS_UPDATES);
 
         Diagnostic.traceNoSource("Generating birth records");
-        exportRecords(EGSkyeSourceRecordIterator.getBirthRecordIterator(population), BIRTH_RECORDS_PATH, population.getNumberOfPeople(), number_of_progress_updates);
+        exportRecords(EGSkyeSourceRecordIterator.getBirthRecordIterator(population, startDate), BIRTH_RECORDS_PATH, population.getNumberOfPeople(), number_of_progress_updates);
         TimeManipulation.reportElapsedTime(start_time);
 
         Diagnostic.traceNoSource("Generating death records");
         // The population size is an overestimate of the number of death records, but it doesn't really matter.
-        exportRecords(EGSkyeSourceRecordIterator.getDeathRecordIterator(population), DEATH_RECORDS_PATH, population.getNumberOfPeople(), number_of_progress_updates);
+        exportRecords(EGSkyeSourceRecordIterator.getDeathRecordIterator(population, startDate), DEATH_RECORDS_PATH, population.getNumberOfPeople(), number_of_progress_updates);
         TimeManipulation.reportElapsedTime(start_time);
 
         Diagnostic.traceNoSource("Generating marriage records");
-        exportRecords(EGSkyeSourceRecordIterator.getMarriageRecordIterator(population), MARRIAGE_RECORDS_PATH, population.getNumberOfPartnerships(), number_of_progress_updates);
+        exportRecords(EGSkyeSourceRecordIterator.getMarriageRecordIterator(population, startDate), MARRIAGE_RECORDS_PATH, population.getNumberOfPartnerships(), number_of_progress_updates);
         TimeManipulation.reportElapsedTime(start_time);
     }
 

@@ -21,6 +21,7 @@ import uk.ac.standrews.cs.basic_model.model.IPartnership;
 import uk.ac.standrews.cs.valipop.utils.Logger;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.ExactDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateSelection.DateSelector;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
@@ -44,14 +45,14 @@ public class Partnership implements IPartnershipExtended {
     private IPersonExtended female;
     private List<IPersonExtended> children = new ArrayList<>();
 
-    private Date partnershipDate;
-    private Date marriageDate = null;
-    private Date separationDate = null;
-    private Date ealiestPossibleSepatationDate = null;
+    private ExactDate partnershipDate;
+    private ExactDate marriageDate = null;
+    private ExactDate separationDate = null;
+    private ExactDate earliestPossibleSepatationDate = null;
 
     private static DateSelector dateSelector = new DateSelector();
 
-    public Partnership(IPersonExtended male, IPersonExtended female, Date partnershipDate) {
+    public Partnership(IPersonExtended male, IPersonExtended female, ExactDate partnershipDate) {
 
         this.id = getNewId();
 
@@ -70,7 +71,7 @@ public class Partnership implements IPartnershipExtended {
 
     }
 
-    public void setPartnershipDate(Date startDate) {
+    public void setPartnershipDate(ExactDate startDate) {
         partnershipDate = startDate;
     }
 
@@ -111,12 +112,12 @@ public class Partnership implements IPartnershipExtended {
         }
     }
 
-    public void setMarriageDate(Date marriageDate) {
+    public void setMarriageDate(ExactDate marriageDate) {
         this.marriageDate = marriageDate;
     }
 
     @Override
-    public Date getMarriageDate_ex() {
+    public ExactDate getMarriageDate_ex() {
         return marriageDate;
     }
 
@@ -161,21 +162,21 @@ public class Partnership implements IPartnershipExtended {
     }
 
     @Override
-    public Date getPartnershipDate() {
+    public ExactDate getPartnershipDate() {
         return partnershipDate;
     }
 
     @Override
-    public Date getSeparationDate(RandomGenerator random) {
+    public ExactDate getSeparationDate(RandomGenerator random) {
 
-        if(ealiestPossibleSepatationDate == null) {
+        if(earliestPossibleSepatationDate == null) {
             return null;
         } else {
 
             if(separationDate == null) {
 
-                Date maleMovedOnDate = male.getDateOfNextPostSeparationEvent(ealiestPossibleSepatationDate);
-                Date femaleMovedOnDate = female.getDateOfNextPostSeparationEvent(ealiestPossibleSepatationDate);
+                Date maleMovedOnDate = male.getDateOfNextPostSeparationEvent(earliestPossibleSepatationDate);
+                Date femaleMovedOnDate = female.getDateOfNextPostSeparationEvent(earliestPossibleSepatationDate);
 
                 Date earliestMovedOnDate;
 
@@ -202,17 +203,22 @@ public class Partnership implements IPartnershipExtended {
                     } else {
                         // if male null and female null
                         // pick a date in the next 30 years
-                        earliestMovedOnDate = ealiestPossibleSepatationDate.getYearDate().advanceTime(30, TimeUnit.YEAR);
+                        earliestMovedOnDate = earliestPossibleSepatationDate.getYearDate().advanceTime(30, TimeUnit.YEAR);
 
                     }
                 }
 
-                separationDate = dateSelector.selectDate(ealiestPossibleSepatationDate, earliestMovedOnDate, random);
+                separationDate = dateSelector.selectDate(earliestPossibleSepatationDate, earliestMovedOnDate, random);
 
             }
 
             return separationDate;
         }
+    }
+
+    @Override
+    public ExactDate getEarliestPossibleSeparationDate() {
+        return earliestPossibleSepatationDate;
     }
 
     @Override
@@ -226,9 +232,9 @@ public class Partnership implements IPartnershipExtended {
     }
 
     @Override
-    public void separate(Date currentDate, CompoundTimeUnit consideredTimePeriod) {
+    public void separate(ExactDate currentDate, CompoundTimeUnit consideredTimePeriod) {
 
-        ealiestPossibleSepatationDate = currentDate;
+        earliestPossibleSepatationDate = currentDate;
 
         female.willSeparate(true);
         male.willSeparate(true);

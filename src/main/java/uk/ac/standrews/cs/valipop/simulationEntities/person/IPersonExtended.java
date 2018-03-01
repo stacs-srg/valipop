@@ -21,6 +21,7 @@ import uk.ac.standrews.cs.basic_model.model.IPerson;
 import uk.ac.standrews.cs.valipop.simulationEntities.entityExtensions.PersonUtils;
 import uk.ac.standrews.cs.valipop.simulationEntities.partnership.IPartnershipExtended;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.ExactDate;
 
 import java.util.List;
 
@@ -36,14 +37,14 @@ public interface IPersonExtended extends IPerson, Comparable<IPersonExtended>, P
      *
      * @return the person's date of birth
      */
-    Date getBirthDate_ex();
+    ExactDate getBirthDate_ex();
 
     /**
      * Gets the person's date of death, or null if they are living.
      *
      * @return the person's date of death
      */
-    Date getDeathDate_ex();
+    ExactDate getDeathDate_ex();
 
     /**
      * Gets the identifiers of the person's partnerships, or null if none are recorded.
@@ -63,4 +64,6 @@ public interface IPersonExtended extends IPerson, Comparable<IPersonExtended>, P
 
 
     List<IPartnershipExtended> getPartnershipsBeforeDate(Date date);
+
+    ExactDate getDateOfLastLegitimatePartnershipEventBeforeDate(ExactDate date);
 }

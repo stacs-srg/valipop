@@ -243,7 +243,7 @@ public class OBDModel {
         ProgramTimer recordTimer = new ProgramTimer();
         if(config.getOutputRecordFormat() != RecordFormat.NONE) {
             RecordGenerationFactory.outputRecords(config.getOutputRecordFormat(), FileUtils.getRecordsDirPath().toString(),
-                    population.getAllPeople());
+                    population.getAllPeople(), config.getT0());
 
         }
         summary.setRecordsRunTime(recordTimer.getRunTimeSeconds());

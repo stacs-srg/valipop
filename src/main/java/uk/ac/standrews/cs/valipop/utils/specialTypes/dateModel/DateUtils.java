@@ -468,10 +468,13 @@ public class DateUtils {
 
     public static int differenceInDays(Date birthDate, Date latestDate) {
 
+        int modifier = 1;
+
         if(dateBeforeOrEqual(latestDate, birthDate)) {
             Date temp = latestDate;
             latestDate = birthDate;
             birthDate = temp;
+            modifier = -1;
         }
 
         int day = birthDate.getDay();
@@ -504,7 +507,7 @@ public class DateUtils {
         }
 
 
-        return counts;
+        return counts * modifier;
     }
 
     public static double stepsInYear(CompoundTimeUnit timeStep) {

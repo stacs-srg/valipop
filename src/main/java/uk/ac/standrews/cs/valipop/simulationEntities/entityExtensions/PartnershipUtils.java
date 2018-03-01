@@ -18,6 +18,7 @@ package uk.ac.standrews.cs.valipop.simulationEntities.entityExtensions;
 
 
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.ExactDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
 import uk.ac.standrews.cs.valipop.simulationEntities.person.IPersonExtended;
 
@@ -30,9 +31,9 @@ public interface PartnershipUtils {
 
     void addChildren(Collection<IPersonExtended> children);
 
-    void setPartnershipDate(Date startDate);
+    void setPartnershipDate(ExactDate startDate);
 
-    void separate(Date currentDate, CompoundTimeUnit consideredTimePeriod);
+    void separate(ExactDate currentDate, CompoundTimeUnit consideredTimePeriod);
 
     IPersonExtended getLastChild();
 }

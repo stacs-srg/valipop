@@ -96,15 +96,15 @@ public abstract class SourceRecord {
         this.image_quality = image_quality;
     }
 
-    protected String getMaidenSurname(IPopulation population, IPerson person) {
+    protected String getMaidenSurname(IPopulation population, IPerson female) {
 
-        int parents_partnership_id = person.getParentsPartnership();
+        int parents_partnership_id = female.getParentsPartnership();
 
         if (parents_partnership_id != -1) {
 
             IPartnership parents_partnership = population.findPartnership(parents_partnership_id);
-            IPerson father = population.findPerson(parents_partnership.getMalePartnerId());
-            return father.getSurname();
+            IPerson femalesFather = population.findPerson(parents_partnership.getMalePartnerId());
+            return femalesFather.getSurname();
 
         } else return null;
     }

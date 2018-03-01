@@ -17,12 +17,17 @@
 package uk.ac.standrews.cs.valipop.simulationEntities.person;
 
 import org.apache.commons.math3.random.JDKRandomGenerator;
+import org.apache.commons.math3.random.RandomGenerator;
 import uk.ac.standrews.cs.basic_model.model.IPartnership;
+import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.annotations.names.FirstNameGenerator;
 import uk.ac.standrews.cs.valipop.annotations.names.NameGenerator;
 import uk.ac.standrews.cs.valipop.annotations.names.SurnameGenerator;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.IPopulationExtended;
+import uk.ac.standrews.cs.valipop.statistics.populationStatistics.MarriageStatsKey;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
+import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.SingleDeterminedCount;
+import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.IllegitimateBirthStatsKey;
 import uk.ac.standrews.cs.valipop.utils.Logger;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
@@ -45,6 +50,7 @@ import java.util.*;
  */
 public class Person implements IPersonExtended {
 
+    private static RandomGenerator random = null;
     private static NameGenerator firstNameGenerator = new FirstNameGenerator();
     private static NameGenerator surnameGenerator = new SurnameGenerator();
 
@@ -62,7 +68,16 @@ public class Person implements IPersonExtended {
 
     private boolean toSeparate = false;
 
+    public boolean marriageBaby = false;
+
+    // TODO extract as variable
+    private static int earliestAgeOfMarriage = 16;
+
     public Person(char sex, Date birthDate, IPartnershipExtended parentsPartnership, PopulationStatistics ps) {
+
+        if(random == null) {
+            random = ps.getRandomGenerator();
+        }
 
         id = getNewId();
         this.sex = Character.toLowerCase(sex);
@@ -99,12 +114,12 @@ public class Person implements IPersonExtended {
     }
 
     @Override
-    public Date getBirthDate_ex() {
+    public ExactDate getBirthDate_ex() {
         return birthDate;
     }
 
     @Override
-    public Date getDeathDate_ex() {
+    public ExactDate getDeathDate_ex() {
         return deathDate;
     }
 
@@ -134,6 +149,49 @@ public class Person implements IPersonExtended {
         }
 
         return partnershipsBeforeDate;
+    }
+
+    @Override
+    public ExactDate getDateOfLastLegitimatePartnershipEventBeforeDate(ExactDate date) {
+
+        ExactDate latestDate;
+
+        // Handle the leap year baby... TODO clean up date code in general - this really should be in the Date implementation
+        Date temp = birthDate.getMonthDate().advanceTime(earliestAgeOfMarriage, TimeUnit.YEAR);
+        if(temp.getMonth() == DateUtils.FEB && !DateUtils.isLeapYear(temp.getYear()) && birthDate.getDay() == DateUtils.DAYS_IN_LEAP_FEB) {
+            latestDate = new ExactDate(birthDate.getDay() - 1, temp.getMonth(), temp.getYear());
+        } else {
+            latestDate = new ExactDate(birthDate.getDay(), temp.getMonth(), temp.getYear());
+        }
+
+        for(IPartnershipExtended partnership : partnerships) {
+            if(DateUtils.dateBefore(partnership.getPartnershipDate(), date)) {
+                List<IPersonExtended> children = partnership.getChildren();
+                if(!children.isEmpty()) {
+                    if(!children.get(0).isIllegitimate()) {
+                        // this partnership has legitimate children
+
+                        // thus check separation date
+                        ExactDate sepDate = partnership.getEarliestPossibleSeparationDate();
+                        if(sepDate != null && DateUtils.dateBefore(latestDate, sepDate)) {
+                            latestDate = sepDate;
+                        }
+
+                        // partner death date
+                        ExactDate partnerDeath = partnership.getPartnerOf(this).getDeathDate_ex();
+                        if(partnerDeath != null && DateUtils.dateBefore(latestDate, partnerDeath)) {
+                            latestDate = partnerDeath;
+                        }
+
+                    }
+                } else {
+                    System.err.println("Do we now have childless marriages? - If so write this code!");
+                }
+
+            }
+        }
+
+        return latestDate;
     }
 
     @Override
@@ -235,6 +293,7 @@ public class Person implements IPersonExtended {
     @Override
     public boolean recordDeath(Date date, Population population) {
 
+        // TODO - REMOVAL?
         if (partnerships.size() != 0) {
             IPersonExtended lastSpouse = getLastChild().getParentsPartnership_ex().getPartnerOf(this);
             if(lastSpouse == null) {
@@ -345,7 +404,7 @@ public class Person implements IPersonExtended {
     }
 
     @Override
-    public void addChildrenToCurrentPartnership(int numberOfChildren, AdvancableDate onDate, CompoundTimeUnit birthTimeStep, Population population, PopulationStatistics ps) {
+    public void addChildrenToCurrentPartnership(int numberOfChildren, AdvancableDate onDate, CompoundTimeUnit birthTimeStep, Population population, PopulationStatistics ps, Config config) {
 
         try {
             population.getLivingPeople().removePerson(this);
@@ -353,21 +412,52 @@ public class Person implements IPersonExtended {
             e.printStackTrace();
         }
 
-        IPartnershipExtended last = getLastChild().getParentsPartnership_ex();
+        IPersonExtended lastChild = getLastChild();
+        IPartnershipExtended last = lastChild.getParentsPartnership_ex();
+        IPersonExtended child = null;
 
         Date birthDate = null;
 
+        IPersonExtended man = last.getMalePartner();
+
         for(int c = 0; c < numberOfChildren; c++) {
             if(birthDate == null) {
-                IPersonExtended child = EntityFactory.makePerson(onDate, birthTimeStep, last, population, ps);
+                child = EntityFactory.makePerson(onDate, birthTimeStep, last, population, ps);
                 last.addChildren(Collections.singleton(child));
                 birthDate = child.getBirthDate_ex();
             } else {
-                IPersonExtended child = EntityFactory.makePerson(onDate, last, population, ps);
+                child = EntityFactory.makePerson(onDate, last, population, ps);
                 last.addChildren(Collections.singleton(child));
             }
 
         }
+
+        // record that child is legitimate
+        IllegitimateBirthStatsKey illegitimateKey = new IllegitimateBirthStatsKey(man.ageOnDate(birthDate), numberOfChildren, birthTimeStep, birthDate);
+        SingleDeterminedCount illegitimateCounts = (SingleDeterminedCount) ps.getDeterminedCount(illegitimateKey, config);
+        illegitimateCounts.setFufilledCount(0);
+        ps.returnAchievedCount(illegitimateCounts);
+
+        // decide if to cause marriage
+        // Decide on marriage
+        MarriageStatsKey marriageKey = new MarriageStatsKey(this.ageOnDate(birthDate), numberOfChildren, birthTimeStep, birthDate);
+        SingleDeterminedCount marriageCounts = (SingleDeterminedCount) ps.getDeterminedCount(marriageKey, config);
+
+        if(last.getMarriageDate_ex() != null) {
+            // is already married - so return as married
+            marriageCounts.setFufilledCount(numberOfChildren);
+        } else {
+            boolean toBeMarriedBirth = (int) Math.round(marriageCounts.getDeterminedCount() / (double) numberOfChildren) == 1;
+
+            if (toBeMarriedBirth) {
+                marriageCounts.setFufilledCount(numberOfChildren);
+                last.setMarriageDate(EntityFactory.marriageDateSelector.selectDate(lastChild.getBirthDate_ex(), birthDate, ps.getRandomGenerator()));
+                child.setMarriageBaby(true);
+            } else {
+                marriageCounts.setFufilledCount(0);
+            }
+        }
+        ps.returnAchievedCount(marriageCounts);
 
         population.getLivingPeople().addPerson(this);
 
@@ -588,19 +678,19 @@ public class Person implements IPersonExtended {
                     // dont care
                 } else {
 
-                    Date sepDate = p.getSeparationDate(new JDKRandomGenerator());
+                    ExactDate sepDate = p.getEarliestPossibleSeparationDate();
                     Date spouseDeathDate = p.getPartnerOf(this).getDeathDate_ex();
 
                     // TODO prevent selection of dates after latestPossibleMarriageDate
 
                     if(sepDate != null) {
-                        if(DateUtils.dateBefore(latestEventDate, sepDate)) {
+                        if(DateUtils.dateBefore(latestEventDate, sepDate) && DateUtils.dateBefore(sepDate, latestPossibleMarriageDate)) {
                             latestEventDate = sepDate;
                         }
                     }
 
                     if(spouseDeathDate != null) {
-                        if(DateUtils.dateBefore(latestEventDate, spouseDeathDate)) {
+                        if(DateUtils.dateBefore(latestEventDate, spouseDeathDate) && DateUtils.dateBefore(spouseDeathDate, latestPossibleMarriageDate)) {
                             latestEventDate = spouseDeathDate;
                         }
                     }
@@ -628,6 +718,16 @@ public class Person implements IPersonExtended {
             return true;
         }
         return DateUtils.dateBefore(date, deathDate);
+    }
+
+    @Override
+    public void setMarriageBaby(boolean b) {
+        marriageBaby = b;
+    }
+
+    @Override
+    public boolean getMarriageBaby() {
+        return marriageBaby;
     }
 
 }

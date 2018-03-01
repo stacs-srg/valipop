@@ -78,9 +78,10 @@ public final class ExactDate implements Date {
         int month = this.month;
         int year = this.year;
 
-        int daysLeftInMonth = DateUtils.getDaysInMonth(month, year) - day;
-
         while (numberOfDays >= 0) {
+
+            int daysLeftInMonth = DateUtils.getDaysInMonth(month, year) - day;
+
             if (daysLeftInMonth > numberOfDays) {
                 return new ExactDate(day + numberOfDays, month, year);
             } else {
