@@ -18,6 +18,6 @@ min_gestation_period = 147
 birth_factor = 0.0
 death_factor = 0.0
 recovery_factor = 1.0
-output_tables = false
+output_tables = true
 deterministic = false
 binominal_sampling = true

@@ -150,6 +150,7 @@ public class NBirthLogic implements EventLogic {
             return new MotherSet(havePartners, needPartners);
         }
 
+        // TODO adjust this to also permit age variations
         ArrayList<IPersonExtended> femalesAL = new ArrayList<>(females);
 
         int ageOfMothers = femalesAL.get(0).ageOnDate(currentDate);

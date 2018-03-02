@@ -88,7 +88,7 @@ public class DiedNodeInt extends IntNode<DiedOption, IntegerRange> {
 
         Date currentDate = yob.advanceTime(age, TimeUnit.YEAR);
 
-        Collection<IntegerRange> sepRanges = getInputStats().getSeparationByChildCountRates(currentDate).getLabels();
+        Collection<IntegerRange> sepRanges = getInputStats().getSeparationByChildCountRates(currentDate).getColumnLabels();
 
         for(IntegerRange o : sepRanges) {
             if(o.contains(pncip)) {

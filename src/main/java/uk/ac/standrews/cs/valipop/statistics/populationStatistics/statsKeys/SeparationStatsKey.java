@@ -24,8 +24,8 @@ import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.Compoun
  */
 public class SeparationStatsKey extends StatsKey {
 
-    public SeparationStatsKey(Integer numberOfChildren, double forNPeople, CompoundTimeUnit consideredTimePeriod, Date currentDate) {
-        super(numberOfChildren, forNPeople, consideredTimePeriod, currentDate);
+    public SeparationStatsKey(Integer numberOfChildren, Integer mothersAge, double forNPeople, CompoundTimeUnit consideredTimePeriod, Date currentDate) {
+        super(numberOfChildren, mothersAge, forNPeople, consideredTimePeriod, currentDate);
     }
 
     public Integer getNumberOfChildren() {

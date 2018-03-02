@@ -181,7 +181,7 @@ public class SeparationNodeDouble extends DoubleNode<SeparationOption, IntegerRa
 
             SingleDeterminedCount sDC = (SingleDeterminedCount) getInputStats().getDeterminedCount(
                     new SeparationStatsKey(
-                            numberOfChildrenInPartnership.getValue(), forNPeople, timePeriod, currentDate), null);
+                            numberOfChildrenInPartnership.getValue(), age, forNPeople, timePeriod, currentDate), null);
 
             if (getOption() == SeparationOption.YES) {
                 setCount(sDC.getRawUncorrectedCount());
