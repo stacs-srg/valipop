@@ -76,7 +76,7 @@ public abstract class DesiredPopulationStatisticsFactory {
         Map<YearDate, ProportionalDistribution> multipleBirth = readInAndAdaptAgeAndProportionalStatsInputFiles(config.getVarMultipleBirthPaths(), config);
         Map<YearDate, SelfCorrectingOneDimensionDataDistribution> illegitimateBirth = readInSC1DDataFiles(config.getVarIllegitimateBirthPaths(), config);
         Map<YearDate, SelfCorrectingOneDimensionDataDistribution> marriage = readInSC1DDataFiles(config.getVarMarriagePaths(), config);
-        Map<YearDate, SelfCorrectingOneDimensionDataDistribution> separation = readInSC1DDataFiles(config.getVarSeparationPaths(), config);
+        Map<YearDate, SelfCorrectingTwoDimensionDataDistribution> separation = readInSC2DDataFiles(config.getVarSeparationPaths(), config);
         Map<YearDate, Double> sexRatioBirth = readInSingleInputDataFile(config.getVarBirthRatioPath(), config);
         Map<YearDate, ValiPopEnumeratedDistribution> maleForename = readInNamesDataFiles(config.getVarMaleForenamePath(), config);
         Map<YearDate, ValiPopEnumeratedDistribution> femaleForename = readInNamesDataFiles(config.getVarFemaleForenamePath(), config);

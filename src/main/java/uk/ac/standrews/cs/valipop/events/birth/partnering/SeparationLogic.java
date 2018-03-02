@@ -42,12 +42,17 @@ public class SeparationLogic {
         for(Map.Entry<Integer, ArrayList<IPersonExtended>> entry : continuingPartnedFemalesByChildren.entrySet()) {
 
             Integer numberOfChildren = entry.getKey();
+            Integer ageOfMothers = 0;
 
             // Get mothers with given number of children in current partnership
             ArrayList<IPersonExtended> mothers = entry.getValue();
 
+            if(mothers.size() != 0) {
+                ageOfMothers = mothers.get(0).ageOnDate(currentDate);
+            }
+
             // Get determined count for separations for this group of mothers
-            SeparationStatsKey key = new SeparationStatsKey(numberOfChildren, mothers.size(), consideredTimePeriod, currentDate);
+            SeparationStatsKey key = new SeparationStatsKey(numberOfChildren, ageOfMothers, mothers.size(), consideredTimePeriod, currentDate);
             SingleDeterminedCount dC = (SingleDeterminedCount) desiredPopulationStatistics.getDeterminedCount(key, config);
 
             int count = 0;

@@ -55,7 +55,7 @@ public class PopulationStatistics implements EventRateTables {
     private Map<YearDate, ProportionalDistribution> multipleBirth;
     private Map<YearDate, SelfCorrectingOneDimensionDataDistribution> illegitimateBirth;
     private Map<YearDate, SelfCorrectingOneDimensionDataDistribution> marriage;
-    private Map<YearDate, SelfCorrectingOneDimensionDataDistribution> separation;
+    private Map<YearDate, SelfCorrectingTwoDimensionDataDistribution> separation;
 
     private Map<YearDate, Double> sexRatioBirth;
 
@@ -77,7 +77,7 @@ public class PopulationStatistics implements EventRateTables {
                                 Map<YearDate, ProportionalDistribution> multipleBirth,
                                 Map<YearDate, SelfCorrectingOneDimensionDataDistribution> illegitimateBirth,
                                 Map<YearDate, SelfCorrectingOneDimensionDataDistribution> marriage,
-                                Map<YearDate, SelfCorrectingOneDimensionDataDistribution> separation,
+                                Map<YearDate, SelfCorrectingTwoDimensionDataDistribution> separation,
                                 Map<YearDate, Double> sexRatioBirths,
                                 Map<YearDate, ValiPopEnumeratedDistribution> maleForename,
                                 Map<YearDate, ValiPopEnumeratedDistribution> femaleForename,
@@ -235,7 +235,7 @@ public class PopulationStatistics implements EventRateTables {
     }
 
     @Override
-    public SelfCorrectingOneDimensionDataDistribution getSeparationByChildCountRates(Date year) {
+    public SelfCorrectingTwoDimensionDataDistribution getSeparationByChildCountRates(Date year) {
         return separation.get(getNearestYearInMap(year.getYearDate(), separation));
     }
 

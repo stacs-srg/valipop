@@ -124,7 +124,7 @@ public interface EventRateTables {
      * @param year the year
      * @return the death rates
      */
-    OneDimensionDataDistribution getSeparationByChildCountRates(Date year);
+    SelfCorrectingTwoDimensionDataDistribution getSeparationByChildCountRates(Date year);
 
     EnumeratedDistribution getForenameDistribution(Date year, char gender);
 
