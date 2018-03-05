@@ -99,7 +99,7 @@ public class PersonCharacteristicsIdentifier {
 
         if (!lastChild.bornInYear(y)) {
             return SeparationOption.NO;
-        } else if (activePartnership.getSeparationDate(new JDKRandomGenerator()) != null) {
+        } else if (activePartnership.getSeparationDate(new JDKRandomGenerator()) != null) { // TODO Would this be better to use earliest possible sep date?
             return SeparationOption.YES;
         } else {
             return SeparationOption.NO;

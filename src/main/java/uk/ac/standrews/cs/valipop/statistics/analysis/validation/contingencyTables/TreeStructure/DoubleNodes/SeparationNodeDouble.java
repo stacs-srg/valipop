@@ -199,7 +199,15 @@ public class SeparationNodeDouble extends DoubleNode<SeparationOption, IntegerRa
     @Override
     public void makeChildren() {
 
-        // TODO - WHY DO WE NEVER CONSIDER THE SEPARATION STATUS IN THIS NODE? SURELY IT SHOULD IMPACT ON THE CHILDREN?
+        // WHY DO WE NEVER CONSIDER THE SEPARATION STATUS IN THIS NODE? SURELY IT SHOULD IMPACT ON THE CHILDREN?
+            // Answer: No, you need to remember that the New Partner Age is to do with the person who children have been
+            // had with in the current year (NOT the next partner who will be moved onto). The fact this node comes
+            // beneath the 'Separation' node in the tree is a misnoma, this age does not pertain to the partner who will
+            // be moved onto post separation.
+            // Also it is possible for there to partner ages below both the YES and NO separation nodes as you may
+            // get a female who had no children entering the year (PNCIP = 0) who then has children (CIY = YES) who thus
+            // has a new partner (thus NPA will be set) but who also separates from the partner in the same year
+            // (Separation = YES).
 
         IntegerRange ncip = ((NumberOfChildrenInPartnershipNodeDouble)
                 getAncestor(new NumberOfChildrenInPartnershipNodeDouble())).getOption();
@@ -244,30 +252,6 @@ public class SeparationNodeDouble extends DoubleNode<SeparationOption, IntegerRa
                 }
             }
         }
-
-//        if(getOption() == SeparationOption.YES) {
-//
-//            YearDate yob = ((YOBNodeDouble) getAncestor(new YOBNodeDouble())).getOption();
-//            Integer age = ((AgeNodeDouble) getAncestor(new AgeNodeDouble())).getOption().getValue();
-//
-//            Date currentDate = yob.advanceTime(age, TimeUnit.YEAR);
-//
-//            double numberOfFemales = getCount();
-//            CompoundTimeUnit timePeriod = new CompoundTimeUnit(1, TimeUnit.YEAR);
-//
-//            MultipleDeterminedCount mDC = (MultipleDeterminedCount) getInputStats()
-//                            .getDeterminedCount(new PartneringStatsKey(age, numberOfFemales, timePeriod, currentDate));
-//
-//            Set<IntegerRange> options = mDC.getRawUncorrectedCount().getLabels();
-//
-//            for(IntegerRange o : options) {
-//                addChild(o);
-//            }
-//
-//        } else {
-//            addChild(null, getCount());
-//        }
-
     }
 
     @Override
