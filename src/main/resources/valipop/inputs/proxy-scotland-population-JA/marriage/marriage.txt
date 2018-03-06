@@ -1,0 +1,8 @@
+YEAR	1855
+POPULATION	SCOTLAND
+SOURCE	GUESS
+VAR	MARRIAGE
+FORM	RATE
+# Female Age | Proportion of children born within marriages
+DATA
+0+	0.80

@@ -15,7 +15,6 @@ output_record_format = NONE
 # these are things we'll be wanting to tune to minimise deviance
 min_birth_spacing = 147
 min_gestation_period = 147
-max_births_infidelity = 0.04
 birth_factor = 2.0
 death_factor = 0.0
 recovery_factor = 0.5
