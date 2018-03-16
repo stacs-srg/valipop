@@ -2,16 +2,11 @@ deathSatGEEGLM <- function(in.data) {
   return(runGEEGLM(freq ~ Date * Age * Sex * Died * Source, in.data, constr = "ar2"))
 }
 
-deathSelGEEGLM <- function(in.data) {
-  return(runGEEGLM(freq ~ Date + Age + Sex + Died + Date:Died + Age:Died + Sex:Died + Date:Age:Died + Date:Sex:Died + Age:Sex:Died, in.data))
-}
-
 obSatGEEGLM <- function(in.data) {
   return(runGEEGLM(freq ~ Date * Age * NPCIAP * CIY * Source, in.data))
 }
 
 mbSatGEEGLM <- function(in.data) {
-  # We don't use Age as it reduces the frequency values for the higher NCIY values to virtually 0, and this confounding the poisson based assumptions of the model
   return(runGEEGLM(freq ~ Date * Age * NCIY * Source, in.data))
 }
 
@@ -19,8 +14,8 @@ partSatGEEGLM <- function(in.data) {
   return(runGEEGLM(freq ~ Date * NPA * Age * Source, in.data))
 }
 
-sepSatGEEGLM <- function(in.data) {
-  return(runGEEGLM(freq ~ Date * Source * NCIP * Separated, in.data))
+sepSatGEEGLM <- function(in.data, constr = "ar1") {
+  return(runGEEGLM(freq ~ Date * Source * NCIP * Separated, in.data, constr = constr))
 }
 
 sepSatGEEGLM.2 <- function(in.data) {
@@ -31,8 +26,8 @@ sepSatGEEGLM.3 <- function(in.data) {
   return(runGEEGLM(freq ~ Date + Source + NCIP + Separated, in.data))
 }
 
-sepSatGEEGLM.4 <- function(in.data) {
-  return(runGEEGLM(freq ~ Date * Source * Separated, in.data))
+sepSatGEEGLM.4 <- function(in.data, constr = "ar1") {
+  return(runGEEGLM(freq ~ Date * Source * Separated, in.data, constr = constr))
 }
 
 runGEEGLM <- function(formula, in.data, constr = "ar1") {

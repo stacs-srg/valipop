@@ -305,12 +305,12 @@ public class Person implements IPersonExtended {
                 if (lastSpouse.getLastChild().getParentsPartnership_ex().getPartnerOf(lastSpouse).getId() == id) {
                     // and if the lastSpouses last partner is this person
                     // then this is the end of a partnership - caused by death
-                    population.getPopulationCounts().partnershipEnd();
+//                    population.getPopulationCounts().partnershipEnd();
                 }
             }
         }
 
-        population.getPopulationCounts().death(this);
+//        population.getPopulationCounts().death(this);
 
         deathDate = date.getExactDate();
 

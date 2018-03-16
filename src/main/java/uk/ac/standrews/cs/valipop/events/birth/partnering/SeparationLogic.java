@@ -73,7 +73,7 @@ public class SeparationLogic {
             }
 
             // Return achieved statistics to the statistics handler
-            population.getPopulationCounts().partnershipEnd(count);
+//            population.getPopulationCounts().partnershipEnd(count);
             dC.setFufilledCount(count);
             desiredPopulationStatistics.returnAchievedCount(dC);
 
