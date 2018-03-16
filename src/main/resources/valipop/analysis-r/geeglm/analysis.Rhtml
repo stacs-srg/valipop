@@ -18,8 +18,7 @@ death <- cleanDeathData(readInData(paste(pathToRunDir, "tables/death-CT.csv", se
 mbirth <- cleanMBData(readInData(paste(pathToRunDir, "tables/mb-CT.csv", sep = "")), maxBirthingAge, round = FALSE)
 obirth <- cleanOBData(readInData(paste(pathToRunDir, "tables/ob-CT.csv", sep = "")), maxBirthingAge)
 part <- cleanPartData(readInData(paste(pathToRunDir, "tables/part-CT.csv", sep = "")), round = FALSE)
-sep <- cleanSepData(readInData(paste(pathToRunDir, "tables/sep-CT.csv", sep = "")), round = FALSE)
-end.rcode-->
+sep <- cleanSepData(readInData(paste(pathToRunDir, "tables/sep-CT.csv", sep = "")), roundend.rcode-->
 
 <!--begin.rcode 
 source("utils.R")

@@ -112,7 +112,7 @@ public class EntityFactory {
         partnership.setPartnershipDate(childrenBirthDate);
         partnership.addChildren(children);
 
-        population.getPopulationCounts().newPartnership();
+//        population.getPopulationCounts().newPartnership();
 
         population.getLivingPeople().addPartnershipToIndex(partnership);
 
