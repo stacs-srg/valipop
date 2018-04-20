@@ -74,34 +74,10 @@
 
 <div class="chunk" id="unnamed-chunk-1"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl kwd">source</span><span class="hl std">(</span><span class="hl str">&quot;process-data-functions.R&quot;</span><span class="hl std">)</span>
 <span class="hl std">death</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">cleanDeathData</span><span class="hl std">(</span><span class="hl kwd">readInData</span><span class="hl std">(</span><span class="hl kwd">paste</span><span class="hl std">(pathToRunDir,</span> <span class="hl str">&quot;tables/death-CT.csv&quot;</span><span class="hl std">,</span> <span class="hl kwc">sep</span> <span class="hl std">=</span> <span class="hl str">&quot;&quot;</span><span class="hl std">)))</span>
-</pre></div>
-<div class="warning"><pre class="knitr r">## Warning in file(file, &quot;rt&quot;): cannot open file '../results/part-experiments/20171030-132810:067//tables/death-CT.csv': No such file or directory
-</pre></div>
-<div class="error"><pre class="knitr r">## Error in file(file, &quot;rt&quot;): cannot open the connection
-</pre></div>
-<div class="source"><pre class="knitr r"><span class="hl std">mbirth</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">cleanMBData</span><span class="hl std">(</span><span class="hl kwd">readInData</span><span class="hl std">(</span><span class="hl kwd">paste</span><span class="hl std">(pathToRunDir,</span> <span class="hl str">&quot;tables/mb-CT.csv&quot;</span><span class="hl std">,</span> <span class="hl kwc">sep</span> <span class="hl std">=</span> <span class="hl str">&quot;&quot;</span><span class="hl std">)), maxBirthingAge)</span>
-</pre></div>
-<div class="warning"><pre class="knitr r">## Warning in file(file, &quot;rt&quot;): cannot open file '../results/part-experiments/20171030-132810:067//tables/mb-CT.csv': No such file or directory
-</pre></div>
-<div class="error"><pre class="knitr r">## Error in file(file, &quot;rt&quot;): cannot open the connection
-</pre></div>
-<div class="source"><pre class="knitr r"><span class="hl std">obirth</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">cleanOBData</span><span class="hl std">(</span><span class="hl kwd">readInData</span><span class="hl std">(</span><span class="hl kwd">paste</span><span class="hl std">(pathToRunDir,</span> <span class="hl str">&quot;tables/ob-CT.csv&quot;</span><span class="hl std">,</span> <span class="hl kwc">sep</span> <span class="hl std">=</span> <span class="hl str">&quot;&quot;</span><span class="hl std">)), maxBirthingAge)</span>
-</pre></div>
-<div class="warning"><pre class="knitr r">## Warning in file(file, &quot;rt&quot;): cannot open file '../results/part-experiments/20171030-132810:067//tables/ob-CT.csv': No such file or directory
-</pre></div>
-<div class="error"><pre class="knitr r">## Error in file(file, &quot;rt&quot;): cannot open the connection
-</pre></div>
-<div class="source"><pre class="knitr r"><span class="hl std">part</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">cleanPartData</span><span class="hl std">(</span><span class="hl kwd">readInData</span><span class="hl std">(</span><span class="hl kwd">paste</span><span class="hl std">(pathToRunDir,</span> <span class="hl str">&quot;tables/part-CT.csv&quot;</span><span class="hl std">,</span> <span class="hl kwc">sep</span> <span class="hl std">=</span> <span class="hl str">&quot;&quot;</span><span class="hl std">)))</span>
-</pre></div>
-<div class="warning"><pre class="knitr r">## Warning in file(file, &quot;rt&quot;): cannot open file '../results/part-experiments/20171030-132810:067//tables/part-CT.csv': No such file or directory
-</pre></div>
-<div class="error"><pre class="knitr r">## Error in file(file, &quot;rt&quot;): cannot open the connection
-</pre></div>
-<div class="source"><pre class="knitr r"><span class="hl std">sep</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">cleanSepData</span><span class="hl std">(</span><span class="hl kwd">readInData</span><span class="hl std">(</span><span class="hl kwd">paste</span><span class="hl std">(pathToRunDir,</span> <span class="hl str">&quot;tables/sep-CT.csv&quot;</span><span class="hl std">,</span> <span class="hl kwc">sep</span> <span class="hl std">=</span> <span class="hl str">&quot;&quot;</span><span class="hl std">)))</span>
-</pre></div>
-<div class="warning"><pre class="knitr r">## Warning in file(file, &quot;rt&quot;): cannot open file '../results/part-experiments/20171030-132810:067//tables/sep-CT.csv': No such file or directory
-</pre></div>
-<div class="error"><pre class="knitr r">## Error in file(file, &quot;rt&quot;): cannot open the connection
+<span class="hl std">mbirth</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">cleanMBData</span><span class="hl std">(</span><span class="hl kwd">readInData</span><span class="hl std">(</span><span class="hl kwd">paste</span><span class="hl std">(pathToRunDir,</span> <span class="hl str">&quot;tables/mb-CT.csv&quot;</span><span class="hl std">,</span> <span class="hl kwc">sep</span> <span class="hl std">=</span> <span class="hl str">&quot;&quot;</span><span class="hl std">)), maxBirthingAge,</span> <span class="hl kwc">round</span> <span class="hl std">= T)</span>
+<span class="hl std">obirth</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">cleanOBData</span><span class="hl std">(</span><span class="hl kwd">readInData</span><span class="hl std">(</span><span class="hl kwd">paste</span><span class="hl std">(pathToRunDir,</span> <span class="hl str">&quot;tables/ob-CT.csv&quot;</span><span class="hl std">,</span> <span class="hl kwc">sep</span> <span class="hl std">=</span> <span class="hl str">&quot;&quot;</span><span class="hl std">)), maxBirthingAge)</span>
+<span class="hl std">part</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">cleanPartData</span><span class="hl std">(</span><span class="hl kwd">readInData</span><span class="hl std">(</span><span class="hl kwd">paste</span><span class="hl std">(pathToRunDir,</span> <span class="hl str">&quot;tables/part-CT.csv&quot;</span><span class="hl std">,</span> <span class="hl kwc">sep</span> <span class="hl std">=</span> <span class="hl str">&quot;&quot;</span><span class="hl std">)),</span> <span class="hl kwc">round</span> <span class="hl std">= T)</span>
+<span class="hl std">sep</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">cleanSepData</span><span class="hl std">(</span><span class="hl kwd">readInData</span><span class="hl std">(</span><span class="hl kwd">paste</span><span class="hl std">(pathToRunDir,</span> <span class="hl str">&quot;tables/sep-CT.csv&quot;</span><span class="hl std">,</span> <span class="hl kwc">sep</span> <span class="hl std">=</span> <span class="hl str">&quot;&quot;</span><span class="hl std">)),</span> <span class="hl kwc">round</span> <span class="hl std">= T)</span>
 </pre></div>
 </div></div>
 
@@ -111,92 +87,450 @@
 <span class="hl std">title</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">wrap_sentence</span><span class="hl std">(title,</span> <span class="hl num">50</span><span class="hl std">)</span>
 <span class="hl kwd">plotCohorts</span><span class="hl std">(death,</span> <span class="hl num">0</span><span class="hl std">, title)</span>
 </pre></div>
-<div class="error"><pre class="knitr r">## Error in plotCohorts(death, 0, title): object 'death' not found
-</pre></div>
+</div><div class="rimage default"><img src="figure/unnamed-chunk-2-1.png" title="plot of chunk unnamed-chunk-2" alt="plot of chunk unnamed-chunk-2" class="plot" /></div><div class="rcode">
 <div class="source"><pre class="knitr r"><span class="hl std">title</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">paste</span><span class="hl std">(subTitle,</span> <span class="hl str">&quot; - Age: 50 - &quot;</span><span class="hl std">, pathToRunDir)</span>
 <span class="hl std">title</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">wrap_sentence</span><span class="hl std">(title,</span> <span class="hl num">50</span><span class="hl std">)</span>
 <span class="hl kwd">plotCohorts</span><span class="hl std">(death,</span> <span class="hl num">50</span><span class="hl std">, title)</span>
 </pre></div>
-<div class="error"><pre class="knitr r">## Error in plotCohorts(death, 50, title): object 'death' not found
-</pre></div>
-</div></div>
+</div><div class="rimage default"><img src="figure/unnamed-chunk-2-2.png" title="plot of chunk unnamed-chunk-2" alt="plot of chunk unnamed-chunk-2" class="plot" /></div></div>
 
 <div class="chunk" id="unnamed-chunk-3"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl kwd">source</span><span class="hl std">(</span><span class="hl str">&quot;process-data-functions.R&quot;</span><span class="hl std">)</span>
 
 <span class="hl kwd">sourceSummary</span><span class="hl std">(death)</span>
 </pre></div>
-<div class="error"><pre class="knitr r">## Error in summary(data[which(data$Source == &quot;SIM&quot;), ]): object 'death' not found
+<div class="output"><pre class="knitr r">##   Source           YOB           Sex             Age         Died            Date           freq      
+##  SIM :53606   Min.   :1750   FEMALE:27501   Min.   :  0.0   NO :30046   Min.   :1855   Min.   :    1  
+##  STAT:    0   1st Qu.:1845   MALE  :26105   1st Qu.: 25.0   YES:23560   1st Qu.:1894   1st Qu.:  191  
+##               Median :1885                  Median : 49.0               Median :1934   Median : 6771  
+##               Mean   :1885                  Mean   : 48.4               Mean   :1934   Mean   :17530  
+##               3rd Qu.:1925                  3rd Qu.: 72.0               3rd Qu.:1973   3rd Qu.:34879  
+##               Max.   :2013                  Max.   :110.0               Max.   :2013   Max.   :60246  
+##   Source           YOB           Sex             Age         Died            Date           freq      
+##  SIM :    0   Min.   :1742   FEMALE:35084   Min.   :  0.0   NO :33671   Min.   :1855   Min.   :    1  
+##  STAT:67361   1st Qu.:1841   MALE  :32277   1st Qu.: 26.0   YES:33690   1st Qu.:1894   1st Qu.:   62  
+##               Median :1881                  Median : 52.0               Median :1934   Median : 1069  
+##               Mean   :1881                  Mean   : 52.6               Mean   :1934   Mean   :12265  
+##               3rd Qu.:1922                  3rd Qu.: 79.0               3rd Qu.:1974   3rd Qu.:27252  
+##               Max.   :2013                  Max.   :113.0               Max.   :2013   Max.   :52195
 </pre></div>
 <div class="source"><pre class="knitr r"><span class="hl kwd">sourceSummary</span><span class="hl std">(obirth)</span>
 </pre></div>
-<div class="error"><pre class="knitr r">## Error in summary(data[which(data$Source == &quot;SIM&quot;), ]): object 'obirth' not found
+<div class="output"><pre class="knitr r">##   Source           YOB            Age       NPCIAP     CIY             Date           freq      
+##  SIM :45288   Min.   :1805   Min.   :15.0   0 :8609   NO :25040   Min.   :1855   Min.   :    1  
+##  STAT:    0   1st Qu.:1861   1st Qu.:24.0   1 :9728   YES:20248   1st Qu.:1894   1st Qu.:   82  
+##               Median :1901   Median :32.0   2 :9203               Median :1933   Median :  866  
+##               Mean   :1901   Mean   :32.7   3 :9110               Mean   :1933   Mean   : 4987  
+##               3rd Qu.:1940   3rd Qu.:41.0   4+:8638               3rd Qu.:1973   3rd Qu.: 6468  
+##               Max.   :1998   Max.   :50.0                         Max.   :2013   Max.   :47442  
+##   Source           YOB            Age       NPCIAP      CIY             Date           freq      
+##  SIM :    0   Min.   :1805   Min.   :15.0   0 :11289   NO :23870   Min.   :1855   Min.   :    1  
+##  STAT:49787   1st Qu.:1861   1st Qu.:25.0   1 :10971   YES:25917   1st Qu.:1894   1st Qu.:   92  
+##               Median :1901   Median :33.0   2 : 7632               Median :1934   Median :  662  
+##               Mean   :1901   Mean   :33.1   3 :10176               Mean   :1934   Mean   : 3910  
+##               3rd Qu.:1941   3rd Qu.:42.0   4+: 9719               3rd Qu.:1974   3rd Qu.: 5151  
+##               Max.   :1998   Max.   :50.0                          Max.   :2013   Max.   :41534
 </pre></div>
 <div class="source"><pre class="knitr r"><span class="hl kwd">sourceSummary</span><span class="hl std">(mbirth)</span>
 </pre></div>
-<div class="error"><pre class="knitr r">## Error in summary(data[which(data$Source == &quot;SIM&quot;), ]): object 'mbirth' not found
+<div class="output"><pre class="knitr r">##   Source           YOB            Age            NCIY           Date           freq      
+##  SIM :11530   Min.   :1805   Min.   :15.0   Min.   :1.00   Min.   :1855   Min.   :    1  
+##  STAT:    0   1st Qu.:1862   1st Qu.:23.0   1st Qu.:1.00   1st Qu.:1894   1st Qu.:    7  
+##               Median :1902   Median :30.0   Median :2.00   Median :1933   Median :   56  
+##               Mean   :1902   Mean   :31.5   Mean   :1.68   Mean   :1933   Mean   :  981  
+##               3rd Qu.:1941   3rd Qu.:40.0   3rd Qu.:2.00   3rd Qu.:1973   3rd Qu.: 1008  
+##               Max.   :1998   Max.   :50.0   Max.   :4.00   Max.   :2013   Max.   :11270  
+##   Source           YOB            Age            NCIY           Date           freq     
+##  SIM :    0   Min.   :1806   Min.   :15.0   Min.   :1.00   Min.   :1855   Min.   :   1  
+##  STAT:12304   1st Qu.:1861   1st Qu.:24.0   1st Qu.:1.00   1st Qu.:1893   1st Qu.:   9  
+##               Median :1900   Median :31.0   Median :2.00   Median :1932   Median :  42  
+##               Mean   :1901   Mean   :31.7   Mean   :1.64   Mean   :1933   Mean   : 793  
+##               3rd Qu.:1941   3rd Qu.:40.0   3rd Qu.:2.00   3rd Qu.:1973   3rd Qu.:1302  
+##               Max.   :1998   Max.   :49.0   Max.   :3.00   Max.   :2013   Max.   :5907
 </pre></div>
 <div class="source"><pre class="knitr r"><span class="hl kwd">sourceSummary</span><span class="hl std">(part)</span>
 </pre></div>
-<div class="error"><pre class="knitr r">## Error in summary(data[which(data$Source == &quot;SIM&quot;), ]): object 'part' not found
+<div class="output"><pre class="knitr r">##   Source           YOB            Age            NPA            Date           freq     
+##  SIM :24317   Min.   :1806   Min.   :15.0   30-34  :4084   Min.   :1855   Min.   :   1  
+##  STAT:    0   1st Qu.:1862   1st Qu.:23.0   25-29  :4029   1st Qu.:1893   1st Qu.:   3  
+##               Median :1902   Median :30.0   35-39  :3851   Median :1933   Median :  21  
+##               Mean   :1903   Mean   :30.4   20-24  :3277   Mean   :1933   Mean   : 221  
+##               3rd Qu.:1943   3rd Qu.:37.0   40-44  :3212   3rd Qu.:1973   3rd Qu.: 210  
+##               Max.   :1998   Max.   :50.0   45-49  :2909   Max.   :2013   Max.   :3178  
+##                                             (Other):2955                                
+##   Source           YOB            Age            NPA            Date           freq     
+##  SIM :    0   Min.   :1806   Min.   :15.0   30-34  :5565   Min.   :1855   Min.   :   1  
+##  STAT:40145   1st Qu.:1863   1st Qu.:22.0   35-39  :5565   1st Qu.:1894   1st Qu.:   3  
+##               Median :1902   Median :30.0   40-44  :5565   Median :1933   Median :  13  
+##               Mean   :1903   Mean   :30.8   45-49  :5565   Mean   :1934   Mean   : 116  
+##               3rd Qu.:1943   3rd Qu.:39.0   50-100 :5565   3rd Qu.:1973   3rd Qu.:  89  
+##               Max.   :1998   Max.   :49.0   25-29  :5165   Max.   :2013   Max.   :1423  
+##                                             (Other):7155
 </pre></div>
 <div class="source"><pre class="knitr r"><span class="hl kwd">sourceSummary</span><span class="hl std">(sep)</span>
 </pre></div>
-<div class="error"><pre class="knitr r">## Error in summary(data[which(data$Source == &quot;SIM&quot;), ]): object 'sep' not found
+<div class="output"><pre class="knitr r">##   Source           YOB       NCIP      Separated        Date           freq     
+##  SIM :28174   Min.   :1805   1 :6462   NO :22662   Min.   :1855   Min.   :   1  
+##  STAT:    0   1st Qu.:1862   2 :6852   YES: 5512   1st Qu.:1893   1st Qu.:   5  
+##               Median :1902   3 :5851               Median :1932   Median :  31  
+##               Mean   :1902   4 :4984               Mean   :1933   Mean   : 401  
+##               3rd Qu.:1942   5+:4025               3rd Qu.:1973   3rd Qu.: 397  
+##               Max.   :1998                         Max.   :2013   Max.   :7775  
+##   Source           YOB       NCIP      Separated        Date           freq     
+##  SIM :    0   Min.   :1806   1 :8745   NO :26076   Min.   :1855   Min.   :   1  
+##  STAT:34016   1st Qu.:1863   2 :8623   YES: 7940   1st Qu.:1894   1st Qu.:   8  
+##               Median :1903   3 :7108               Median :1934   Median :  45  
+##               Mean   :1903   4 :4770               Mean   :1934   Mean   : 287  
+##               3rd Qu.:1942   5+:4770               3rd Qu.:1973   3rd Qu.: 340  
+##               Max.   :1998                         Max.   :2013   Max.   :3189
 </pre></div>
 </div></div>
 
 <div class="chunk" id="unnamed-chunk-4"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl kwd">source</span><span class="hl std">(</span><span class="hl str">&quot;population-plot-functions.R&quot;</span><span class="hl std">)</span>
 <span class="hl kwd">plotMB</span><span class="hl std">(mbirth)</span>
 </pre></div>
-<div class="error"><pre class="knitr r">## Error in aggregate(mb.data$freq, by = list(mb.data$Source, mb.data$Date, : object 'mbirth' not found
+</div><div class="rimage default"><img src="figure/unnamed-chunk-4-1.png" title="plot of chunk unnamed-chunk-4" alt="plot of chunk unnamed-chunk-4" class="plot" /></div><div class="rimage default"><img src="figure/unnamed-chunk-4-2.png" title="plot of chunk unnamed-chunk-4" alt="plot of chunk unnamed-chunk-4" class="plot" /></div><div class="rimage default"><img src="figure/unnamed-chunk-4-3.png" title="plot of chunk unnamed-chunk-4" alt="plot of chunk unnamed-chunk-4" class="plot" /></div><div class="rcode">
+<div class="source"><pre class="knitr r"><span class="hl kwd">plotPart</span><span class="hl std">(part, subTitle,</span> <span class="hl kwc">date</span> <span class="hl std">=</span> <span class="hl kwa">NULL</span><span class="hl std">,</span> <span class="hl kwc">disc</span> <span class="hl std">=</span> <span class="hl num">TRUE</span><span class="hl std">,</span> <span class="hl kwc">scales</span> <span class="hl std">=</span> <span class="hl str">&quot;free_y&quot;</span><span class="hl std">)</span>
+</pre></div>
+</div><div class="rimage default"><img src="figure/unnamed-chunk-4-4.png" title="plot of chunk unnamed-chunk-4" alt="plot of chunk unnamed-chunk-4" class="plot" /></div><div class="rcode">
+<div class="source"><pre class="knitr r"><span class="hl kwd">plotPart</span><span class="hl std">(part, subTitle,</span> <span class="hl kwc">date</span> <span class="hl std">=</span> <span class="hl kwa">NULL</span><span class="hl std">,</span> <span class="hl kwc">disc</span> <span class="hl std">=</span> <span class="hl num">TRUE</span><span class="hl std">,</span> <span class="hl kwc">scales</span> <span class="hl std">=</span> <span class="hl str">&quot;fixed&quot;</span><span class="hl std">)</span>
+</pre></div>
+</div><div class="rimage default"><img src="figure/unnamed-chunk-4-5.png" title="plot of chunk unnamed-chunk-4" alt="plot of chunk unnamed-chunk-4" class="plot" /></div><div class="rcode">
+<div class="source"><pre class="knitr r"><span class="hl kwd">plotSep.single</span><span class="hl std">(sep)</span>
+</pre></div>
+<div class="error"><pre class="knitr r">## Error in labs(title = title): argument &quot;title&quot; is missing, with no default
 </pre></div>
 </div></div>
 
 <div class="chunk" id="unnamed-chunk-5"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl kwd">source</span><span class="hl std">(</span><span class="hl str">&quot;id-funtions.R&quot;</span><span class="hl std">)</span>
 <span class="hl std">death.ids</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">addCohortIDs.death</span><span class="hl std">(death)</span>
-</pre></div>
-<div class="error"><pre class="knitr r">## Error in addCohortIDs.death(death): object 'death' not found
-</pre></div>
-<div class="source"><pre class="knitr r"><span class="hl std">obirth.ids</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">addCohortIDs.ob</span><span class="hl std">(obirth)</span>
-</pre></div>
-<div class="error"><pre class="knitr r">## Error in addCohortIDs.ob(obirth): object 'obirth' not found
-</pre></div>
-<div class="source"><pre class="knitr r"><span class="hl std">mbirth.ids</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">addCohortIDs.mb</span><span class="hl std">(mbirth)</span>
-</pre></div>
-<div class="error"><pre class="knitr r">## Error in addCohortIDs.mb(mbirth): object 'mbirth' not found
-</pre></div>
-<div class="source"><pre class="knitr r"><span class="hl std">part.ids</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">addCohortIDs.part</span><span class="hl std">(part)</span>
-</pre></div>
-<div class="error"><pre class="knitr r">## Error in addCohortIDs.part(part): object 'part' not found
-</pre></div>
-<div class="source"><pre class="knitr r"><span class="hl std">sep.ids</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">addCohortIDs.sep</span><span class="hl std">(sep)</span>
-</pre></div>
-<div class="error"><pre class="knitr r">## Error in addCohortIDs.sep(sep): object 'sep' not found
-</pre></div>
-<div class="source"><pre class="knitr r"><span class="hl kwd">par</span><span class="hl std">(</span><span class="hl kwc">mfrow</span> <span class="hl std">=</span> <span class="hl kwd">c</span><span class="hl std">(</span><span class="hl num">1</span><span class="hl std">,</span><span class="hl num">3</span><span class="hl std">))</span>
-
+<span class="hl std">obirth.ids</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">addCohortIDs.ob</span><span class="hl std">(obirth)</span>
+<span class="hl std">mbirth.ids</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">addCohortIDs.mb2</span><span class="hl std">(mbirth)</span>
+<span class="hl std">part.ids</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">addCohortIDs.part3</span><span class="hl std">(part)</span>
+<span class="hl std">sep.ids</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">addCohortIDs.sep2</span><span class="hl std">(sep)</span>
 <span class="hl kwd">source</span><span class="hl std">(</span><span class="hl str">&quot;geeglm-functions.R&quot;</span><span class="hl std">)</span>
-<span class="hl kwd">deathSatGEEGLM</span><span class="hl std">(death.ids)</span>
 </pre></div>
-<div class="error"><pre class="knitr r">## Error in is.data.frame(data): object 'death.ids' not found
+</div></div>
+
+<div class="chunk" id="unnamed-chunk-6"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl std">death.GEEGLM</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">deathSatGEEGLM</span><span class="hl std">(death.ids)</span>
 </pre></div>
-<div class="source"><pre class="knitr r"><span class="hl kwd">obSatGEEGLM</span><span class="hl std">(obirth.ids)</span>
+<div class="warning"><pre class="knitr r">## Warning in if (corstrv == -1) stop(&quot;invalid corstr.&quot;): the condition has length &gt; 1 and only the first element will be used
 </pre></div>
-<div class="error"><pre class="knitr r">## Error in is.data.frame(data): object 'obirth.ids' not found
+<div class="warning"><pre class="knitr r">## Warning in if (corstrv == 5) stop(&quot;need zcor matrix for userdefined corstr.&quot;) else zcor &lt;- genZcor(clusz, : the condition has length &gt; 1 and only the first element will be used
 </pre></div>
-<div class="source"><pre class="knitr r"><span class="hl kwd">mbSatGEEGLM</span><span class="hl std">(mbirth.ids)</span>
+<div class="warning"><pre class="knitr r">## Warning in if (corstrv == 1) return(matrix(0, 0, 0)): the condition has length &gt; 1 and only the first element will be used
 </pre></div>
-<div class="error"><pre class="knitr r">## Error in is.data.frame(data): object 'mbirth.ids' not found
+<div class="warning"><pre class="knitr r">## Warning in if (corstrv == 6) alpha &lt;- 1 else alpha &lt;- rep(0, q): the condition has length &gt; 1 and only the first element will be used
 </pre></div>
-<div class="source"><pre class="knitr r"><span class="hl kwd">partSatGEEGLM</span><span class="hl std">(part.ids)</span>
+</div><div class="rimage default"><img src="figure/unnamed-chunk-6-1.png" title="plot of chunk unnamed-chunk-6" alt="plot of chunk unnamed-chunk-6" class="plot" /></div><div class="rimage default"><img src="figure/unnamed-chunk-6-2.png" title="plot of chunk unnamed-chunk-6" alt="plot of chunk unnamed-chunk-6" class="plot" /></div><div class="rimage default"><img src="figure/unnamed-chunk-6-3.png" title="plot of chunk unnamed-chunk-6" alt="plot of chunk unnamed-chunk-6" class="plot" /></div></div>
+
+<div class="chunk" id="unnamed-chunk-7"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl kwd">print</span><span class="hl std">(</span><span class="hl kwd">summary</span><span class="hl std">(death.GEEGLM))</span>
 </pre></div>
-<div class="error"><pre class="knitr r">## Error in is.data.frame(data): object 'part.ids' not found
+<div class="output"><pre class="knitr r">## 
+## Call:
+## geeglm(formula = formula, data = in.data, id = idvar, corstr = constr)
+## 
+##  Coefficients:
+##                                      Estimate   Std.err   Wald Pr(&gt;|W|)    
+## (Intercept)                          2.79e+05  2.82e+04  98.41  &lt; 2e-16 ***
+## Date                                -1.21e+02  1.45e+01  69.26  &lt; 2e-16 ***
+## Age                                 -1.05e+03  5.43e+02   3.74    0.053 .  
+## SexMALE                              1.53e+03  3.85e+04   0.00    0.968    
+## DiedYES                             -3.85e+05  2.32e+04 273.77  &lt; 2e-16 ***
+## SourceSTAT                           9.94e+03  3.82e+04   0.07    0.795    
+## Date:Age                             3.71e-01  2.80e-01   1.75    0.186    
+## Date:SexMALE                        -9.11e-01  1.98e+01   0.00    0.963    
+## Age:SexMALE                         -1.35e+02  7.57e+02   0.03    0.859    
+## Date:DiedYES                         1.74e+02  1.19e+01 213.25  &lt; 2e-16 ***
+## Age:DiedYES                          3.03e+03  4.70e+02  41.53  1.2e-10 ***
+## SexMALE:DiedYES                      1.83e+04  3.17e+04   0.34    0.562    
+## Date:SourceSTAT                     -7.39e+00  1.96e+01   0.14    0.707    
+## Age:SourceSTAT                      -5.31e+02  6.73e+02   0.62    0.430    
+## SexMALE:SourceSTAT                   8.83e+03  5.32e+04   0.03    0.868    
+## DiedYES:SourceSTAT                  -3.16e+03  3.03e+04   0.01    0.917    
+## Date:Age:SexMALE                     4.94e-02  3.90e-01   0.02    0.899    
+## Date:Age:DiedYES                    -1.39e+00  2.42e-01  32.87  9.9e-09 ***
+## Date:SexMALE:DiedYES                -9.24e+00  1.63e+01   0.32    0.570    
+## Age:SexMALE:DiedYES                 -1.45e+02  6.48e+02   0.05    0.824    
+## Date:Age:SourceSTAT                  2.65e-01  3.47e-01   0.58    0.446    
+## Date:SexMALE:SourceSTAT             -4.58e+00  2.73e+01   0.03    0.867    
+## Age:SexMALE:SourceSTAT              -7.66e+01  9.68e+02   0.01    0.937    
+## Date:DiedYES:SourceSTAT              4.07e+00  1.55e+01   0.07    0.793    
+## Age:DiedYES:SourceSTAT               2.17e+02  5.66e+02   0.15    0.701    
+## SexMALE:DiedYES:SourceSTAT          -1.40e+04  4.21e+04   0.11    0.739    
+## Date:Age:SexMALE:DiedYES             9.48e-02  3.33e-01   0.08    0.776    
+## Date:Age:SexMALE:SourceSTAT          5.49e-02  4.99e-01   0.01    0.912    
+## Date:Age:DiedYES:SourceSTAT         -1.08e-01  2.91e-01   0.14    0.709    
+## Date:SexMALE:DiedYES:SourceSTAT      7.19e+00  2.16e+01   0.11    0.739    
+## Age:SexMALE:DiedYES:SourceSTAT       2.26e+02  8.07e+02   0.08    0.780    
+## Date:Age:SexMALE:DiedYES:SourceSTAT -1.31e-01  4.15e-01   0.10    0.753    
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Estimated Scale Parameters:
+##             Estimate Std.err
+## (Intercept) 35652721  585882
+## 
+## Correlation: Structure = exchangeable ar1 unstructured userdefined fixed
 </pre></div>
-<div class="source"><pre class="knitr r"><span class="hl kwd">sepSatGEEGLM</span><span class="hl std">(sep.ids)</span>
+<div class="warning"><pre class="knitr r">## Warning in if (pmatch(x$corstr, &quot;independence&quot;, 0) == 0) {: the condition has length &gt; 1 and only the first element will be used
 </pre></div>
-<div class="error"><pre class="knitr r">## Error in is.data.frame(data): object 'sep.ids' not found
+<div class="output"><pre class="knitr r">##   Link = identity 
+## 
+## Estimated Correlation Parameters:
+##       Estimate Std.err
+## alpha    0.124  0.0107
+## Number of clusters:   1037   Maximum cluster size: 221
+</pre></div>
+</div></div>
+
+<div class="chunk" id="unnamed-chunk-8"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl std">ob.GEEGLM</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">obSatGEEGLM</span><span class="hl std">(obirth.ids)</span>
+</pre></div>
+</div><div class="rimage default"><img src="figure/unnamed-chunk-8-1.png" title="plot of chunk unnamed-chunk-8" alt="plot of chunk unnamed-chunk-8" class="plot" /></div><div class="rimage default"><img src="figure/unnamed-chunk-8-2.png" title="plot of chunk unnamed-chunk-8" alt="plot of chunk unnamed-chunk-8" class="plot" /></div><div class="rimage default"><img src="figure/unnamed-chunk-8-3.png" title="plot of chunk unnamed-chunk-8" alt="plot of chunk unnamed-chunk-8" class="plot" /></div></div>
+
+<div class="chunk" id="unnamed-chunk-9"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl kwd">print</span><span class="hl std">(</span><span class="hl kwd">summary</span><span class="hl std">(ob.GEEGLM))</span>
+</pre></div>
+<div class="output"><pre class="knitr r">## 
+## Call:
+## geeglm(formula = formula, data = in.data, id = idvar, corstr = constr)
+## 
+##  Coefficients:
+##                                      Estimate   Std.err   Wald Pr(&gt;|W|)    
+## (Intercept)                          3.90e+05  2.76e+04 200.17  &lt; 2e-16 ***
+## Date                                -1.79e+02  1.42e+01 159.59  &lt; 2e-16 ***
+## Age                                 -8.61e+03  1.08e+03  62.99  2.1e-15 ***
+## NPCIAP1                             -4.36e+05  3.34e+04 170.60  &lt; 2e-16 ***
+## NPCIAP2                             -3.91e+05  2.76e+04 200.23  &lt; 2e-16 ***
+## NPCIAP3                             -4.14e+05  2.84e+04 212.64  &lt; 2e-16 ***
+## NPCIAP4+                            -4.31e+05  2.80e+04 236.40  &lt; 2e-16 ***
+## CIYYES                              -3.75e+05  2.81e+04 178.65  &lt; 2e-16 ***
+## SourceSTAT                          -1.88e+04  3.40e+04   0.30     0.58    
+## Date:Age                             3.99e+00  5.59e-01  50.92  9.6e-13 ***
+## Date:NPCIAP1                         2.02e+02  1.72e+01 138.44  &lt; 2e-16 ***
+## Date:NPCIAP2                         1.80e+02  1.42e+01 159.97  &lt; 2e-16 ***
+## Date:NPCIAP3                         1.91e+02  1.46e+01 170.04  &lt; 2e-16 ***
+## Date:NPCIAP4+                        1.98e+02  1.44e+01 187.78  &lt; 2e-16 ***
+## Age:NPCIAP1                          1.39e+04  1.28e+03 116.61  &lt; 2e-16 ***
+## Age:NPCIAP2                          8.64e+03  1.08e+03  63.51  1.6e-15 ***
+## Age:NPCIAP3                          1.01e+04  1.13e+03  80.14  &lt; 2e-16 ***
+## Age:NPCIAP4+                         1.10e+04  1.11e+03  98.17  &lt; 2e-16 ***
+## Date:CIYYES                          1.73e+02  1.45e+01 143.57  &lt; 2e-16 ***
+## Age:CIYYES                           8.30e+03  1.10e+03  57.42  3.5e-14 ***
+## NPCIAP1:CIYYES                       4.20e+05  3.39e+04 153.62  &lt; 2e-16 ***
+## NPCIAP2:CIYYES                       3.76e+05  2.82e+04 178.05  &lt; 2e-16 ***
+## NPCIAP3:CIYYES                       3.97e+05  2.89e+04 188.43  &lt; 2e-16 ***
+## NPCIAP4+:CIYYES                      4.15e+05  2.85e+04 211.47  &lt; 2e-16 ***
+## Date:SourceSTAT                      6.23e+00  1.75e+01   0.13     0.72    
+## Age:SourceSTAT                       6.27e+02  1.23e+03   0.26     0.61    
+## NPCIAP1:SourceSTAT                   2.66e+04  4.16e+04   0.41     0.52    
+## NPCIAP2:SourceSTAT                   2.95e+04  3.41e+04   0.75     0.39    
+## NPCIAP3:SourceSTAT                   2.05e+04  3.49e+04   0.34     0.56    
+## NPCIAP4+:SourceSTAT                  2.19e+04  3.45e+04   0.40     0.53    
+## CIYYES:SourceSTAT                    2.86e+04  3.45e+04   0.69     0.41    
+## Date:Age:NPCIAP1                    -6.42e+00  6.61e-01  94.50  &lt; 2e-16 ***
+## Date:Age:NPCIAP2                    -4.01e+00  5.59e-01  51.45  7.4e-13 ***
+## Date:Age:NPCIAP3                    -4.69e+00  5.83e-01  64.68  8.9e-16 ***
+## Date:Age:NPCIAP4+                   -5.06e+00  5.71e-01  78.52  &lt; 2e-16 ***
+## Date:Age:CIYYES                     -3.85e+00  5.64e-01  46.67  8.4e-12 ***
+## Date:NPCIAP1:CIYYES                 -1.95e+02  1.74e+01 125.11  &lt; 2e-16 ***
+## Date:NPCIAP2:CIYYES                 -1.73e+02  1.45e+01 143.03  &lt; 2e-16 ***
+## Date:NPCIAP3:CIYYES                 -1.83e+02  1.49e+01 151.41  &lt; 2e-16 ***
+## Date:NPCIAP4+:CIYYES                -1.91e+02  1.47e+01 168.98  &lt; 2e-16 ***
+## Age:NPCIAP1:CIYYES                  -1.35e+04  1.29e+03 108.35  &lt; 2e-16 ***
+## Age:NPCIAP2:CIYYES                  -8.28e+03  1.10e+03  57.03  4.3e-14 ***
+## Age:NPCIAP3:CIYYES                  -9.74e+03  1.14e+03  72.59  &lt; 2e-16 ***
+## Age:NPCIAP4+:CIYYES                 -1.06e+04  1.12e+03  90.16  &lt; 2e-16 ***
+## Date:Age:SourceSTAT                 -2.38e-01  6.31e-01   0.14     0.71    
+## Date:NPCIAP1:SourceSTAT             -9.95e+00  2.14e+01   0.22     0.64    
+## Date:NPCIAP2:SourceSTAT             -1.15e+01  1.75e+01   0.43     0.51    
+## Date:NPCIAP3:SourceSTAT             -6.95e+00  1.79e+01   0.15     0.70    
+## Date:NPCIAP4+:SourceSTAT            -7.28e+00  1.78e+01   0.17     0.68    
+## Age:NPCIAP1:SourceSTAT              -1.14e+03  1.46e+03   0.60     0.44    
+## Age:NPCIAP2:SourceSTAT              -8.94e+02  1.23e+03   0.53     0.47    
+## Age:NPCIAP3:SourceSTAT              -6.34e+02  1.27e+03   0.25     0.62    
+## Age:NPCIAP4+:SourceSTAT             -8.16e+02  1.25e+03   0.43     0.51    
+## Date:CIYYES:SourceSTAT              -1.14e+01  1.77e+01   0.41     0.52    
+## Age:CIYYES:SourceSTAT               -8.70e+02  1.24e+03   0.50     0.48    
+## NPCIAP1:CIYYES:SourceSTAT           -3.04e+04  4.20e+04   0.52     0.47    
+## NPCIAP2:CIYYES:SourceSTAT           -3.76e+04  3.46e+04   1.19     0.28    
+## NPCIAP3:CIYYES:SourceSTAT           -2.53e+04  3.53e+04   0.51     0.47    
+## NPCIAP4+:CIYYES:SourceSTAT          -3.03e+04  3.49e+04   0.75     0.39    
+## Date:Age:NPCIAP1:CIYYES              6.25e+00  6.66e-01  87.89  &lt; 2e-16 ***
+## Date:Age:NPCIAP2:CIYYES              3.85e+00  5.65e-01  46.33  1.0e-11 ***
+## Date:Age:NPCIAP3:CIYYES              4.51e+00  5.89e-01  58.72  1.8e-14 ***
+## Date:Age:NPCIAP4+:CIYYES             4.90e+00  5.76e-01  72.34  &lt; 2e-16 ***
+## Date:Age:NPCIAP1:SourceSTAT          4.47e-01  7.53e-01   0.35     0.55    
+## Date:Age:NPCIAP2:SourceSTAT          3.68e-01  6.32e-01   0.34     0.56    
+## Date:Age:NPCIAP3:SourceSTAT          2.32e-01  6.55e-01   0.13     0.72    
+## Date:Age:NPCIAP4+:SourceSTAT         3.04e-01  6.43e-01   0.22     0.64    
+## Date:Age:CIYYES:SourceSTAT           3.60e-01  6.37e-01   0.32     0.57    
+## Date:NPCIAP1:CIYYES:SourceSTAT       1.20e+01  2.16e+01   0.31     0.58    
+## Date:NPCIAP2:CIYYES:SourceSTAT       1.58e+01  1.78e+01   0.79     0.37    
+## Date:NPCIAP3:CIYYES:SourceSTAT       9.60e+00  1.82e+01   0.28     0.60    
+## Date:NPCIAP4+:CIYYES:SourceSTAT      1.17e+01  1.80e+01   0.42     0.51    
+## Age:NPCIAP1:CIYYES:SourceSTAT        1.23e+03  1.47e+03   0.69     0.41    
+## Age:NPCIAP2:CIYYES:SourceSTAT        1.08e+03  1.24e+03   0.77     0.38    
+## Age:NPCIAP3:CIYYES:SourceSTAT        7.51e+02  1.28e+03   0.34     0.56    
+## Age:NPCIAP4+:CIYYES:SourceSTAT       1.02e+03  1.26e+03   0.66     0.42    
+## Date:Age:NPCIAP1:CIYYES:SourceSTAT  -4.93e-01  7.57e-01   0.42     0.52    
+## Date:Age:NPCIAP2:CIYYES:SourceSTAT  -4.63e-01  6.38e-01   0.53     0.47    
+## Date:Age:NPCIAP3:CIYYES:SourceSTAT  -2.92e-01  6.60e-01   0.20     0.66    
+## Date:Age:NPCIAP4+:CIYYES:SourceSTAT -4.07e-01  6.49e-01   0.39     0.53    
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Estimated Scale Parameters:
+##             Estimate Std.err
+## (Intercept)  7992241  319442
+## 
+## Correlation: Structure = ar1  Link = identity 
+## 
+## Estimated Correlation Parameters:
+##       Estimate Std.err
+## alpha    0.893 0.00531
+## Number of clusters:   3811   Maximum cluster size: 36
+</pre></div>
+</div></div>
+
+<div class="chunk" id="unnamed-chunk-10"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl std">mb.GEEGLM</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">mbSatGEEGLM</span><span class="hl std">(mbirth.ids)</span>
+</pre></div>
+</div><div class="rimage default"><img src="figure/unnamed-chunk-10-1.png" title="plot of chunk unnamed-chunk-10" alt="plot of chunk unnamed-chunk-10" class="plot" /></div><div class="rimage default"><img src="figure/unnamed-chunk-10-2.png" title="plot of chunk unnamed-chunk-10" alt="plot of chunk unnamed-chunk-10" class="plot" /></div><div class="rimage default"><img src="figure/unnamed-chunk-10-3.png" title="plot of chunk unnamed-chunk-10" alt="plot of chunk unnamed-chunk-10" class="plot" /></div></div>
+
+<div class="chunk" id="unnamed-chunk-11"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl kwd">print</span><span class="hl std">(</span><span class="hl kwd">summary</span><span class="hl std">(mb.GEEGLM))</span>
+</pre></div>
+<div class="output"><pre class="knitr r">## 
+## Call:
+## geeglm(formula = formula, data = in.data, id = idvar, corstr = constr)
+## 
+##  Coefficients:
+##                           Estimate   Std.err  Wald Pr(&gt;|W|)    
+## (Intercept)               4.02e+04  4.57e+03 77.38  &lt; 2e-16 ***
+## Date                     -1.78e+01  2.36e+00 56.80  4.8e-14 ***
+## Age                      -9.57e+02  1.08e+02 79.00  &lt; 2e-16 ***
+## NCIY                     -1.46e+04  2.03e+03 51.31  7.9e-13 ***
+## SourceSTAT                3.62e+03  5.49e+03  0.43    0.510    
+## Date:Age                  4.48e-01  5.55e-02 65.11  6.7e-16 ***
+## Date:NCIY                 6.49e+00  1.05e+00 37.95  7.2e-10 ***
+## Age:NCIY                  4.00e+02  4.77e+01 70.36  &lt; 2e-16 ***
+## Date:SourceSTAT          -2.32e+00  2.84e+00  0.67    0.414    
+## Age:SourceSTAT           -1.22e+02  1.32e+02  0.86    0.355    
+## NCIY:SourceSTAT          -4.10e+03  2.61e+03  2.48    0.116    
+## Date:Age:NCIY            -1.92e-01  2.46e-02 60.91  6.0e-15 ***
+## Date:Age:SourceSTAT       7.19e-02  6.84e-02  1.11    0.293    
+## Date:NCIY:SourceSTAT      2.25e+00  1.36e+00  2.75    0.097 .  
+## Age:NCIY:SourceSTAT       1.44e+02  6.39e+01  5.05    0.025 *  
+## Date:Age:NCIY:SourceSTAT -7.77e-02  3.32e-02  5.49    0.019 *  
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Estimated Scale Parameters:
+##             Estimate Std.err
+## (Intercept)  1345437   43650
+## 
+## Correlation: Structure = ar1  Link = identity 
+## 
+## Estimated Correlation Parameters:
+##       Estimate Std.err
+## alpha    0.798 0.00359
+## Number of clusters:   387   Maximum cluster size: 89
+</pre></div>
+</div></div>
+
+<div class="chunk" id="unnamed-chunk-12"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl std">part.GEEGLM</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">partSatGEEGLM</span><span class="hl std">(part.ids)</span>
+</pre></div>
+</div><div class="rimage default"><img src="figure/unnamed-chunk-12-1.png" title="plot of chunk unnamed-chunk-12" alt="plot of chunk unnamed-chunk-12" class="plot" /></div><div class="rimage default"><img src="figure/unnamed-chunk-12-2.png" title="plot of chunk unnamed-chunk-12" alt="plot of chunk unnamed-chunk-12" class="plot" /></div><div class="rimage default"><img src="figure/unnamed-chunk-12-3.png" title="plot of chunk unnamed-chunk-12" alt="plot of chunk unnamed-chunk-12" class="plot" /></div></div>
+
+<div class="chunk" id="unnamed-chunk-13"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl kwd">print</span><span class="hl std">(</span><span class="hl kwd">summary</span><span class="hl std">(part.GEEGLM))</span>
+</pre></div>
+<div class="output"><pre class="knitr r">## 
+## Call:
+## geeglm(formula = formula, data = in.data, id = idvar, corstr = constr)
+## 
+##  Coefficients:
+##                                Estimate   Std.err Wald Pr(&gt;|W|)  
+## (Intercept)                    8.56e+03  4.97e+03 2.96    0.085 .
+## Date                          -3.97e+00  2.54e+00 2.44    0.118  
+## NPA20-24                       7.15e+03  4.72e+03 2.29    0.130  
+## NPA25-29                      -3.07e+02  4.92e+03 0.00    0.950  
+## NPA30-34                      -4.17e+03  5.00e+03 0.70    0.404  
+## NPA35-39                      -7.17e+03  5.00e+03 2.05    0.152  
+## NPA40-44                      -5.31e+03  4.99e+03 1.13    0.287  
+## NPA45-49                      -9.44e+03  4.98e+03 3.60    0.058 .
+## NPA50-100                     -8.35e+03  4.97e+03 2.82    0.093 .
+## Age                           -3.68e+02  2.79e+02 1.74    0.187  
+## SourceSTAT                    -3.64e+03  4.98e+03 0.53    0.465  
+## Date:NPA20-24                 -2.99e+00  2.41e+00 1.54    0.215  
+## Date:NPA25-29                  3.54e-01  2.51e+00 0.02    0.888  
+## Date:NPA30-34                  1.99e+00  2.56e+00 0.61    0.435  
+## Date:NPA35-39                  3.35e+00  2.56e+00 1.72    0.190  
+## Date:NPA40-44                  2.40e+00  2.55e+00 0.88    0.348  
+## Date:NPA45-49                  4.45e+00  2.54e+00 3.07    0.080 .
+## Date:NPA50-100                 3.87e+00  2.54e+00 2.33    0.127  
+## Date:Age                       1.73e-01  1.42e-01 1.49    0.223  
+## NPA20-24:Age                  -7.57e+01  2.67e+02 0.08    0.776  
+## NPA25-29:Age                   1.78e+02  2.76e+02 0.41    0.520  
+## NPA30-34:Age                   2.69e+02  2.79e+02 0.93    0.335  
+## NPA35-39:Age                   3.43e+02  2.80e+02 1.51    0.220  
+## NPA40-44:Age                   2.91e+02  2.80e+02 1.08    0.298  
+## NPA45-49:Age                   3.91e+02  2.79e+02 1.96    0.161  
+## NPA50-100:Age                  3.63e+02  2.79e+02 1.70    0.193  
+## Date:SourceSTAT                1.70e+00  2.54e+00 0.45    0.505  
+## NPA20-24:SourceSTAT            4.68e+03  4.73e+03 0.98    0.323  
+## NPA25-29:SourceSTAT            2.61e+03  4.95e+03 0.28    0.599  
+## NPA30-34:SourceSTAT            2.26e+03  5.02e+03 0.20    0.652  
+## NPA35-39:SourceSTAT            3.40e+03  5.01e+03 0.46    0.497  
+## NPA40-44:SourceSTAT            7.93e+02  5.00e+03 0.03    0.874  
+## NPA45-49:SourceSTAT            4.66e+03  4.98e+03 0.88    0.350  
+## NPA50-100:SourceSTAT           3.51e+03  4.97e+03 0.50    0.481  
+## Age:SourceSTAT                 2.02e+02  2.79e+02 0.52    0.470  
+## Date:NPA20-24:Age              2.32e-02  1.36e-01 0.03    0.865  
+## Date:NPA25-29:Age             -9.01e-02  1.41e-01 0.41    0.523  
+## Date:NPA30-34:Age             -1.28e-01  1.42e-01 0.81    0.368  
+## Date:NPA35-39:Age             -1.63e-01  1.43e-01 1.30    0.255  
+## Date:NPA40-44:Age             -1.36e-01  1.43e-01 0.91    0.340  
+## Date:NPA45-49:Age             -1.86e-01  1.42e-01 1.71    0.191  
+## Date:NPA50-100:Age            -1.71e-01  1.42e-01 1.45    0.229  
+## Date:NPA20-24:SourceSTAT      -2.45e+00  2.42e+00 1.03    0.311  
+## Date:NPA25-29:SourceSTAT      -1.34e+00  2.53e+00 0.28    0.597  
+## Date:NPA30-34:SourceSTAT      -1.10e+00  2.56e+00 0.18    0.668  
+## Date:NPA35-39:SourceSTAT      -1.61e+00  2.56e+00 0.39    0.530  
+## Date:NPA40-44:SourceSTAT      -3.10e-01  2.55e+00 0.01    0.903  
+## Date:NPA45-49:SourceSTAT      -2.24e+00  2.54e+00 0.78    0.378  
+## Date:NPA50-100:SourceSTAT     -1.63e+00  2.54e+00 0.41    0.520  
+## Date:Age:SourceSTAT           -9.65e-02  1.42e-01 0.46    0.498  
+## NPA20-24:Age:SourceSTAT       -2.41e+02  2.67e+02 0.81    0.367  
+## NPA25-29:Age:SourceSTAT       -1.64e+02  2.77e+02 0.35    0.554  
+## NPA30-34:Age:SourceSTAT       -1.65e+02  2.80e+02 0.35    0.554  
+## NPA35-39:Age:SourceSTAT       -1.99e+02  2.80e+02 0.51    0.477  
+## NPA40-44:Age:SourceSTAT       -1.32e+02  2.80e+02 0.22    0.638  
+## NPA45-49:Age:SourceSTAT       -2.27e+02  2.79e+02 0.66    0.416  
+## NPA50-100:Age:SourceSTAT      -1.98e+02  2.79e+02 0.50    0.478  
+## Date:NPA20-24:Age:SourceSTAT   1.23e-01  1.36e-01 0.81    0.367  
+## Date:NPA25-29:Age:SourceSTAT   8.11e-02  1.41e-01 0.33    0.566  
+## Date:NPA30-34:Age:SourceSTAT   8.02e-02  1.43e-01 0.32    0.574  
+## Date:NPA35-39:Age:SourceSTAT   9.57e-02  1.43e-01 0.45    0.503  
+## Date:NPA40-44:Age:SourceSTAT   6.23e-02  1.43e-01 0.19    0.662  
+## Date:NPA45-49:Age:SourceSTAT   1.10e-01  1.42e-01 0.60    0.440  
+## Date:NPA50-100:Age:SourceSTAT  9.48e-02  1.42e-01 0.44    0.506  
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Estimated Scale Parameters:
+##             Estimate Std.err
+## (Intercept)    50499    2846
+## 
+## Correlation: Structure = ar1  Link = identity 
+## 
+## Estimated Correlation Parameters:
+##       Estimate Std.err
+## alpha    0.317  0.0161
+## Number of clusters:   385   Maximum cluster size: 255
 </pre></div>
 <div class="source"><pre class="knitr r"><span class="hl kwd">par</span><span class="hl std">(</span><span class="hl kwc">mfrow</span> <span class="hl std">=</span> <span class="hl kwd">c</span><span class="hl std">(</span><span class="hl num">1</span><span class="hl std">,</span><span class="hl num">1</span><span class="hl std">))</span>
+
+<span class="hl kwd">proc.time</span><span class="hl std">()[</span><span class="hl num">3</span><span class="hl std">]</span>
+</pre></div>
+<div class="output"><pre class="knitr r">## elapsed 
+##    1778
 </pre></div>
 </div></div>
 

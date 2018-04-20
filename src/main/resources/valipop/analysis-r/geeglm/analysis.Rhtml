@@ -15,10 +15,11 @@ end.rcode-->
 <!--begin.rcode
 source("process-data-functions.R")  
 death <- cleanDeathData(readInData(paste(pathToRunDir, "tables/death-CT.csv", sep = "")))
-mbirth <- cleanMBData(readInData(paste(pathToRunDir, "tables/mb-CT.csv", sep = "")), maxBirthingAge, round = FALSE)
+mbirth <- cleanMBData(readInData(paste(pathToRunDir, "tables/mb-CT.csv", sep = "")), maxBirthingAge, round = T)
 obirth <- cleanOBData(readInData(paste(pathToRunDir, "tables/ob-CT.csv", sep = "")), maxBirthingAge)
-part <- cleanPartData(readInData(paste(pathToRunDir, "tables/part-CT.csv", sep = "")), round = FALSE)
-sep <- cleanSepData(readInData(paste(pathToRunDir, "tables/sep-CT.csv", sep = "")), roundend.rcode-->
+part <- cleanPartData(readInData(paste(pathToRunDir, "tables/part-CT.csv", sep = "")), round = T)
+sep <- cleanSepData(readInData(paste(pathToRunDir, "tables/sep-CT.csv", sep = "")), round = T)
+end.rcode-->
 
 <!--begin.rcode 
 source("utils.R")
@@ -57,14 +58,39 @@ obirth.ids <- addCohortIDs.ob(obirth)
 mbirth.ids <- addCohortIDs.mb2(mbirth)
 part.ids <- addCohortIDs.part3(part)
 sep.ids <- addCohortIDs.sep2(sep)
-
-par(mfrow = c(1,3))
-
 source("geeglm-functions.R")
-deathSatGEEGLM(death.ids)
-obSatGEEGLM(obirth.ids)
-mbSatGEEGLM(mbirth.ids)
-partSatGEEGLM(part.ids)
+end.rcode-->
+
+<!--begin.rcode results='hide'
+death.GEEGLM <- deathSatGEEGLM(death.ids)
+end.rcode-->
+
+<!--begin.rcode 
+print(summary(death.GEEGLM))
+end.rcode-->
+
+<!--begin.rcode results='hide'
+ob.GEEGLM <- obSatGEEGLM(obirth.ids)
+end.rcode-->
+
+<!--begin.rcode 
+print(summary(ob.GEEGLM))
+end.rcode-->
+
+<!--begin.rcode results='hide'
+mb.GEEGLM <- mbSatGEEGLM(mbirth.ids)
+end.rcode-->
+
+<!--begin.rcode 
+print(summary(mb.GEEGLM))
+end.rcode-->
+
+<!--begin.rcode results='hide'
+part.GEEGLM <- partSatGEEGLM(part.ids)
+end.rcode-->
+
+<!--begin.rcode 
+print(summary(part.GEEGLM))
 
 par(mfrow = c(1,1))
 
