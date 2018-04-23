@@ -17,6 +17,7 @@
 package uk.ac.standrews.cs.basic_model.model.graphviz;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -45,6 +46,7 @@ public class PopulationToGraphvizTest extends AbstractExporterTest {
         super(population, file_name);
     }
 
+    @Ignore
     @Test
     public void test() throws Exception {
 
