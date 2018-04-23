@@ -17,6 +17,7 @@
 package uk.ac.standrews.cs.basic_model.model.gedcom;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import uk.ac.standrews.cs.basic_model.model.IPopulation;
 import uk.ac.standrews.cs.basic_model.model.IPopulationWriter;
@@ -42,6 +43,7 @@ public class PopulationToGEDCOMTest extends AbstractExporterTest {
         super(population, file_name);
     }
 
+    @Ignore
     @Test
     public void test() throws Exception {
 
