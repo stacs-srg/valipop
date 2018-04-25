@@ -40,19 +40,32 @@ import java.util.Collection;
  */
 public class Config {
 
-    private static final String ordersBirthSubFile = "ordered_birth";
+    private static final String birthSubFile = "birth";
+    private static final String orderedBirthSubFile = "ordered_birth";
+    private static final String multipleBirthSubFile = "multiple_birth";
+    private static final String illegitimateBirthSubFile = "illegitimate_birth";
+    private static final String birthRatioSubFile = "ratio_birth";
+
+    private static final String relationshipsSubFile = "relationships";
+    private static final String partneringSubFile = "partnering";
+    private static final String separationSubFile = "separation";
+    private static final String marriageSubFile = "marriage";
+
     private static final String deathSubFile = "death";
     private static final String maleDeathSubFile = "males";
     private static final String femaleDeathSubFile = "females";
-    private static final String multipleBirthSubFile = "multiple_birth";
-    private static final String illegitimateBirthSubFile = "illegitimate_birth";
-    private static final String partneringSubFile = "partnering";
-    private static final String separationSubFile = "separation";
-    private static final String birthRatioSubFile = "ratio_birth";
+    private static final String lifetableSubFile = "lifetable";
+    private static final String deathCauseSubFile = "cause";
+
+    private static final String annotationsSubFile = "annotations";
     private static final String maleForenameSubFile = "male_forename";
     private static final String femaleForenameSubFile = "female_forename";
     private static final String surnameSubFile = "surname";
-    private static final String marriageSubFile = "marriage";
+    private static final String occupationSubFile = "occupation";
+    private static final String geographySubFile = "geography";
+    private static final String locationsSubFile = "locations";
+    private static final String migrationSubFile = "migration";
+
 
 
     public static final Logger log = new Logger(Config.class);
@@ -64,10 +77,11 @@ public class Config {
     private double setUpBR;
     private double setUpDR;
     private CompoundTimeUnit simulationTimeStep;
+
     private String varPath;
-    private Path varBirthPaths;
-    private Path varMaleDeathPaths;
-    private Path varFemaleDeathPaths;
+    private Path varOrderedBirthPaths;
+    private Path varMaleLifetablePaths;
+    private Path varFemaleLifetablePaths;
     private Path varMultipleBirthPaths;
     private Path varIllegitimateBirthPaths;
     private Path varPartneringPaths;
@@ -325,19 +339,24 @@ public class Config {
     private void initialiseVarPaths(String path) {
 
         varPath = path;
-        varBirthPaths = Paths.get(path, ordersBirthSubFile);
+        varOrderedBirthPaths = Paths.get(path, birthSubFile, orderedBirthSubFile);
+        varMultipleBirthPaths = Paths.get(path, birthSubFile, multipleBirthSubFile);
+        varIllegitimateBirthPaths = Paths.get(path, birthSubFile, illegitimateBirthSubFile);
+        varBirthRatioPaths = Paths.get(path, birthSubFile, birthRatioSubFile);
+
         String deathSubPath = Paths.get(path, deathSubFile).toString();
-        varMaleDeathPaths = Paths.get(deathSubPath, maleDeathSubFile);
-        varFemaleDeathPaths = Paths.get(deathSubPath, femaleDeathSubFile);
-        varMultipleBirthPaths = Paths.get(path, multipleBirthSubFile);
-        varPartneringPaths = Paths.get(path, partneringSubFile);
-        varSeparationPaths = Paths.get(path, separationSubFile);
-        varBirthRatioPaths = Paths.get(path, birthRatioSubFile);
-        varMaleForenamePaths = Paths.get(path, maleForenameSubFile);
-        varFemaleForenamePaths = Paths.get(path, femaleForenameSubFile);
-        varSurnamePaths = Paths.get(path, surnameSubFile);
-        varIllegitimateBirthPaths = Paths.get(path, illegitimateBirthSubFile);
-        varMarriagePaths = Paths.get(path, marriageSubFile);
+        varMaleLifetablePaths = Paths.get(deathSubPath, maleDeathSubFile, lifetableSubFile);
+        varFemaleLifetablePaths = Paths.get(deathSubPath, femaleDeathSubFile, lifetableSubFile);
+
+        String relationshipSubPath = Paths.get(path, relationshipsSubFile).toString();
+        varPartneringPaths = Paths.get(relationshipSubPath, partneringSubFile);
+        varSeparationPaths = Paths.get(relationshipSubPath, separationSubFile);
+        varMarriagePaths = Paths.get(relationshipSubPath, marriageSubFile);
+
+        String annotationsSubPath = Paths.get(path, annotationsSubFile).toString();
+        varMaleForenamePaths = Paths.get(annotationsSubPath, maleForenameSubFile);
+        varFemaleForenamePaths = Paths.get(annotationsSubPath, femaleForenameSubFile);
+        varSurnamePaths = Paths.get(annotationsSubPath, surnameSubFile);
 
 
     }
@@ -349,7 +368,7 @@ public class Config {
 
     public DirectoryStream<Path> getVarOrderedBirthPaths() throws IOException {
         try {
-            return Files.newDirectoryStream(varBirthPaths, filter);
+            return Files.newDirectoryStream(varOrderedBirthPaths, filter);
         } catch (IOException e) {
             String message = "Error reading in birth files";
             log.fatal(message);
@@ -358,21 +377,21 @@ public class Config {
     }
 
 
-    public DirectoryStream<Path> getVarMaleDeathPaths() throws IOException {
+    public DirectoryStream<Path> getVarMaleLifetablePaths() throws IOException {
         try {
-            return Files.newDirectoryStream(varMaleDeathPaths, filter);
+            return Files.newDirectoryStream(varMaleLifetablePaths, filter);
         } catch (IOException e) {
-            String message = "Error reading in male death files: " + varMaleDeathPaths;
+            String message = "Error reading in male death files: " + varMaleLifetablePaths;
             log.fatal(message);
             throw new IOException(message, e);
         }
     }
 
-    public DirectoryStream<Path> getVarFemaleDeathPaths() throws IOException {
+    public DirectoryStream<Path> getVarFemaleLifetablePaths() throws IOException {
         try {
-            return Files.newDirectoryStream(varFemaleDeathPaths, filter);
+            return Files.newDirectoryStream(varFemaleLifetablePaths, filter);
         } catch (IOException e) {
-            String message = "Error reading in female death files: " + varFemaleDeathPaths;
+            String message = "Error reading in female death files: " + varFemaleLifetablePaths;
             log.fatal(message);
             throw new IOException(message, e);
         }
