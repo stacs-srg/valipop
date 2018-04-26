@@ -8,7 +8,7 @@ runAnalysis <- function(pathToRunDir, maxBirthAge, subTitle) {
   knitr::knit2html(
     "src/main/resources/valipop/analysis-r/geeglm/analysis.Rhtml", 
     #"geeglm/analysis.Rhtml", 
-    output = paste(pathToRunDir, "/analysis_nR.html", sep = "")
+    output = paste(pathToRunDir, "/analysis.html", sep = "")
   )
 }
 
