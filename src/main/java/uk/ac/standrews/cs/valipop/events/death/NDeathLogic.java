@@ -35,7 +35,6 @@ import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.Po
 
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.Random;
 
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
@@ -116,7 +115,7 @@ public class NDeathLogic implements EventLogic {
 
 
 
-            int killed = killPeople(peopleToKill, desiredPopulationStatistics, currentDate, consideredTimePeriod, population);
+            int killed = killPeople(peopleToKill, desiredPopulationStatistics, currentDate, consideredTimePeriod, population, config);
             killedAtTS += killed + killAdjust;
 
             // Returns the number killed to the distribution manager
@@ -132,7 +131,7 @@ public class NDeathLogic implements EventLogic {
 
     private int killPeople(Collection<IPersonExtended> people,
                             PopulationStatistics desiredPopulationStatistics, AdvancableDate currentDate, CompoundTimeUnit consideredTimePeriod,
-                            Population population) {
+                            Population population, Config config) {
 
         int killed = 0;
 
@@ -142,9 +141,18 @@ public class NDeathLogic implements EventLogic {
             Date deathDate = deathDateSelector.selectDate(person, desiredPopulationStatistics, currentDate, consideredTimePeriod);
 
             // execute death
-            if(person.recordDeath(deathDate, population)) {
+            if(person.recordDeath(deathDate, population, desiredPopulationStatistics)) {
                 killed++;
             }
+
+//            try {
+//                DeathCauseStatsKey dck = new DeathCauseStatsKey(person.ageAtDeath(), 1, consideredTimePeriod, currentDate, person.getSex());
+//
+//                MultipleDeterminedCount mdc = (MultipleDeterminedCount) desiredPopulationStatistics.getDeterminedCount(dck, config);
+//
+//            } catch (NotDeadException e) {
+//                throw new Error("Living dead person...");
+//            }
 
             // move person to correct place in data structure
             population.getDeadPeople().addPerson(person);

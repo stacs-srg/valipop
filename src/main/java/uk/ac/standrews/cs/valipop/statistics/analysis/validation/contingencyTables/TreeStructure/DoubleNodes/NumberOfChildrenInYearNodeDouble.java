@@ -28,7 +28,7 @@ import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementatio
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.TimeUnit;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.integerRange.IntegerRange;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.LabeledValueSet;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.LabelledValueSet;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -155,7 +155,7 @@ public class NumberOfChildrenInYearNodeDouble extends DoubleNode<Integer, Intege
                             new CompoundTimeUnit(1, TimeUnit.YEAR), currentDate), null);
 
 
-            LabeledValueSet<IntegerRange, Double> stat = mDC.getRawUncorrectedCount();
+            LabelledValueSet<IntegerRange, Double> stat = mDC.getRawUncorrectedCount();
 
             for(IntegerRange iR : stat.getLabels()) {
                 if(iR.contains(getOption())) {

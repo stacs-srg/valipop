@@ -19,6 +19,7 @@ package uk.ac.standrews.cs.valipop.statistics.populationStatistics;
 import org.apache.commons.math3.random.JDKRandomGenerator;
 import org.apache.commons.math3.random.RandomGenerator;
 import uk.ac.standrews.cs.basic_model.distributions.general.InconsistentWeightException;
+import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.AgeDependantEnumeratedDistribution;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.InputMetaData;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.ProportionalDistribution;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.ValiPopEnumeratedDistribution;
@@ -33,6 +34,7 @@ import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementatio
 import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.selfCorrecting.SelfCorrectingOneDimensionDataDistribution;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.integerRange.IntegerRange;
 
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
@@ -69,7 +71,9 @@ public abstract class DesiredPopulationStatisticsFactory {
         }
 
         Map<YearDate, SelfCorrectingOneDimensionDataDistribution> maleDeath = readInSC1DDataFiles(config.getVarMaleLifetablePaths(), config);
+        Map<YearDate, AgeDependantEnumeratedDistribution> maleDeathCauses = readInDeathCauseDataFiles(config.getVarMaleDeathCausesPaths(), config);
         Map<YearDate, SelfCorrectingOneDimensionDataDistribution> femaleDeath = readInSC1DDataFiles(config.getVarFemaleLifetablePaths(), config);
+        Map<YearDate, AgeDependantEnumeratedDistribution> femaleDeathCauses = readInDeathCauseDataFiles(config.getVarFemaleDeathCausesPaths(), config);
         Map<YearDate, SelfCorrectingProportionalDistribution> partnering = readInAgeAndProportionalStatsInputFiles(config.getVarPartneringPaths(), config);
         Map<YearDate, SelfCorrectingTwoDimensionDataDistribution> orderedBirth = readInSC2DDataFiles(config.getVarOrderedBirthPaths(), config);
         Map<YearDate, ProportionalDistribution> multipleBirth = readInAndAdaptAgeAndProportionalStatsInputFiles(config.getVarMultipleBirthPaths(), config);
@@ -81,7 +85,7 @@ public abstract class DesiredPopulationStatisticsFactory {
         Map<YearDate, ValiPopEnumeratedDistribution> femaleForename = readInNamesDataFiles(config.getVarFemaleForenamePath(), config);
         Map<YearDate, ValiPopEnumeratedDistribution> surname = readInNamesDataFiles(config.getVarSurnamePath(), config);
 
-        return new PopulationStatistics(maleDeath, femaleDeath, partnering, orderedBirth, multipleBirth, illegitimateBirth,
+        return new PopulationStatistics(maleDeath, maleDeathCauses, femaleDeath, femaleDeathCauses, partnering, orderedBirth, multipleBirth, illegitimateBirth,
                 marriage, separation, sexRatioBirth, maleForename, femaleForename, surname, config.getMinBirthSpacing(),
                 config.getMinGestationPeriodDays(), randomGenerator);
 
@@ -134,6 +138,18 @@ public abstract class DesiredPopulationStatisticsFactory {
         }
         return insertDistributionsToMeetInputWidth(config, data);
 
+    }
+
+    private static Map<YearDate, AgeDependantEnumeratedDistribution> readInDeathCauseDataFiles(DirectoryStream<Path> paths, Config config) throws IOException, InvalidInputFileException, InconsistentWeightException {
+
+        Map<YearDate, AgeDependantEnumeratedDistribution> data = new HashMap<>();
+
+        for (Path path : paths) {
+            // read in each file
+            AgeDependantEnumeratedDistribution tempData = InputFileReader.readInDeathCauseDataFile(path, randomGenerator);
+            data.put(tempData.getYear(), tempData);
+        }
+        return insertDistributionsToMeetInputWidth(config, data);
     }
 
     private static Map<YearDate, SelfCorrectingTwoDimensionDataDistribution> readInSC2DDataFiles(DirectoryStream<Path> paths, Config config) throws IOException, InvalidInputFileException {

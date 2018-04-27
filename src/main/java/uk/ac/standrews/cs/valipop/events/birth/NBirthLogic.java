@@ -16,7 +16,6 @@
  */
 package uk.ac.standrews.cs.valipop.events.birth;
 
-import org.apache.commons.math3.random.RandomGenerator;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.exceptions.InsufficientNumberOfPeopleException;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.SingleDeterminedCount;
@@ -38,8 +37,9 @@ import uk.ac.standrews.cs.valipop.simulationEntities.person.IPersonExtended;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.FemaleCollection;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.Population;
 import uk.ac.standrews.cs.valipop.simulationEntities.population.dataStructure.exceptions.PersonNotFoundException;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.LabeledValueSet;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.LabelledValueSet;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.integerRange.IntegerRange;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.OperableLabelledValueSet;
 
 import java.util.*;
 
@@ -162,10 +162,11 @@ public class NBirthLogic implements EventLogic {
 
         Map<Integer, ArrayList<IPersonExtended>> continuingPartneredFemalesByChildren = new HashMap<>();
 
-        LabeledValueSet<IntegerRange, Integer> motherCountsByMaternities =
+        LabelledValueSet<IntegerRange, Integer> motherCountsByMaternities =
                 new IntegerRangeToIntegerSet(requiredBirths.getDeterminedCount().getLabels(), 0);
 
-        LabeledValueSet<IntegerRange, Integer> remainingMothersToFind = requiredBirths.getDeterminedCount().clone();
+        OperableLabelledValueSet<IntegerRange, Integer> remainingMothersToFind =
+                                    new IntegerRangeToIntegerSet(requiredBirths.getDeterminedCount().clone());
 
 
         IntegerRange highestBirthOption;

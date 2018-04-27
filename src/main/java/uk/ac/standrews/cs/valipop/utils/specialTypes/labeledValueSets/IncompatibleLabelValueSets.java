@@ -22,10 +22,10 @@ package uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets;
 public class IncompatibleLabelValueSets extends RuntimeException {
 
     private String message;
-    private LabeledValueSet setA;
-    private LabeledValueSet setB;
+    private LabelledValueSet setA;
+    private LabelledValueSet setB;
 
-    public IncompatibleLabelValueSets(String message, LabeledValueSet setA, LabeledValueSet setB) {
+    public IncompatibleLabelValueSets(String message, LabelledValueSet setA, LabelledValueSet setB) {
         this.message = message;
         this.setA = setA;
         this.setB = setB;
@@ -36,11 +36,11 @@ public class IncompatibleLabelValueSets extends RuntimeException {
         return message;
     }
 
-    public LabeledValueSet getSetA() {
+    public LabelledValueSet getSetA() {
         return setA;
     }
 
-    public LabeledValueSet getSetB() {
+    public LabelledValueSet getSetB() {
         return setB;
     }
 }

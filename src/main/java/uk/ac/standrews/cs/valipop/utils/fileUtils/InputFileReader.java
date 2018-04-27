@@ -18,6 +18,7 @@ package uk.ac.standrews.cs.valipop.utils.fileUtils;
 
 import org.apache.commons.math3.random.RandomGenerator;
 import uk.ac.standrews.cs.basic_model.distributions.general.InconsistentWeightException;
+import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.AgeDependantEnumeratedDistribution;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.OneDimensionDataDistribution;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.ProportionalDistribution;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.ValiPopEnumeratedDistribution;
@@ -29,8 +30,7 @@ import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementatio
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.integerRange.IntegerRange;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.integerRange.InvalidRangeException;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.IntegerRangeToDoubleSet;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.LabeledValueSet;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.*;
 import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.selfCorrecting.SelfCorrectingOneDimensionDataDistribution;
 
@@ -258,6 +258,51 @@ public class InputFileReader {
         return new ValiPopEnumeratedDistribution(year, sourcePopulation, sourceOrganisation, data, randomGenerator);
     }
 
+    public static AgeDependantEnumeratedDistribution readInDeathCauseDataFile(Path path, RandomGenerator randomGenerator) throws IOException, InvalidInputFileException, InconsistentWeightException {
+
+        ArrayList<String> lines = new ArrayList<>(getAllLines(path));
+
+        YearDate year = null;
+        String sourcePopulation = null;
+        String sourceOrganisation = null;
+
+        ArrayList<String> columnLabels = new ArrayList<>();
+        Map<IntegerRange, LabelledValueSet<String, Double>> data = new HashMap<>();
+
+
+        for (int i = 0; i < lines.size(); i++) {
+
+            String s = lines.get(i);
+            String[] split = s.split(TAB, 2);
+
+            switch (split[0].toLowerCase()) {
+                case "year":
+                    try {
+                        year = new YearDate(Integer.parseInt(split[1]));
+                    } catch (NumberFormatException e) {
+                        throw new InvalidInputFileException("Non integer value given for year in file: " + path.toString(), e);
+                    }
+                    break;
+                case "population":
+                    sourcePopulation = split[1];
+                    break;
+                case "source":
+                    sourceOrganisation = split[1];
+                    break;
+                case "labels":
+                    columnLabels = readInStringLabels(split);
+                    break;
+                case "data":
+                    data = readIn2DDataTable(i, lines, path, columnLabels, StringToDoubleSet.class);
+                    break;
+            }
+
+
+        }
+
+        return new AgeDependantEnumeratedDistribution(year, sourcePopulation, sourceOrganisation, data, randomGenerator);
+    }
+
     public static OneDimensionDataDistribution readIn1DDataFile(Path path) throws IOException, InvalidInputFileException {
 
         ArrayList<String> lines = new ArrayList<>(getAllLines(path));
@@ -329,7 +374,7 @@ public class InputFileReader {
         String sourceOrganisation = null;
 
         ArrayList<IntegerRange> columnLabels = new ArrayList<>();
-        Map<IntegerRange, LabeledValueSet<IntegerRange, Double>> data = new HashMap<>();
+        Map<IntegerRange, LabelledValueSet<IntegerRange, Double>> data = new HashMap<>();
 
 
         for (int i = 0; i < lines.size(); i++) {
@@ -355,7 +400,7 @@ public class InputFileReader {
                     columnLabels = readInLabels(split, path);
                     break;
                 case "data":
-                    data = readIn2DDataTable(i, lines, path, columnLabels);
+                    data = readIn2DDataTable(i, lines, path, columnLabels, IntegerRangeToDoubleSet.class);
                     break;
                 default:
                     break;
@@ -374,7 +419,7 @@ public class InputFileReader {
         String sourceOrganisation = null;
 
         ArrayList<IntegerRange> columnLabels = new ArrayList<>();
-        Map<IntegerRange, LabeledValueSet<IntegerRange, Double>> data = new HashMap<>();
+        Map<IntegerRange, LabelledValueSet<IntegerRange, Double>> data = new HashMap<>();
 
 
         for (int i = 0; i < lines.size(); i++) {
@@ -400,7 +445,7 @@ public class InputFileReader {
                     columnLabels = readInLabels(split, path);
                     break;
                 case "data":
-                    data = readIn2DDataTable(i, lines, path, columnLabels);
+                    data = readIn2DDataTable(i, lines, path, columnLabels, IntegerRangeToDoubleSet.class);
                     break;
                 default:
                     break;
@@ -409,6 +454,51 @@ public class InputFileReader {
         }
         return new MotherChildAdapter(year, sourcePopulation, sourceOrganisation, data);
     }
+
+//    public static ProportionalDistribution readInAgeAndProportionalStatsInput(Path path) throws IOException, InvalidInputFileException {
+//
+//        ArrayList<String> lines = new ArrayList<>(getAllLines(path));
+//
+//        YearDate year = null;
+//        String sourcePopulation = null;
+//        String sourceOrganisation = null;
+//
+//        ArrayList<IntegerRange> columnLabels = new ArrayList<>();
+//        Map<IntegerRange, LabelledValueSet<IntegerRange, Double>> data = new HashMap<>();
+//
+//
+//        for (int i = 0; i < lines.size(); i++) {
+//
+//            String s = lines.get(i);
+//            String[] split = s.split(TAB, 2);
+//
+//            switch (split[0].toLowerCase()) {
+//                case "year":
+//                    try {
+//                        year = new YearDate(Integer.parseInt(split[1]));
+//                    } catch (NumberFormatException e) {
+//                        throw new InvalidInputFileException("Non integer value given for year in file: " + path.toString(), e);
+//                    }
+//                    break;
+//                case "population":
+//                    sourcePopulation = split[1];
+//                    break;
+//                case "source":
+//                    sourceOrganisation = split[1];
+//                    break;
+//                case "labels":
+//                    columnLabels = readInLabels(split, path);
+//                    break;
+//                case "data":
+//                    data = readIn2DDataTable(i, lines, path, columnLabels);
+//                    break;
+//                default:
+//                    break;
+//            }
+//
+//        }
+//        return new MotherChildAdapter(year, sourcePopulation, sourceOrganisation, data);
+//    }
 
     private static ArrayList<IntegerRange> readInLabels(String[] split, Path path) throws InvalidInputFileException {
 
@@ -442,9 +532,14 @@ public class InputFileReader {
         return columnLabels;
     }
 
-    private static Map<IntegerRange, LabeledValueSet<IntegerRange, Double>> readIn2DDataTable(int i, ArrayList<String> lines, Path path, ArrayList<IntegerRange> columnLabels) throws InvalidInputFileException {
+    private static <L> Map<IntegerRange, LabelledValueSet<L, Double>> readIn2DDataTable(
+                                            int i, ArrayList<String> lines, Path path, ArrayList<L> columnLabels,
+                                                Class<? extends AbstractLabelToAbstractValueSet<L, Double>> setType)
+                                                                                    throws  InvalidInputFileException{
 
-        Map<IntegerRange, LabeledValueSet<IntegerRange, Double>> data = new HashMap<>();
+
+
+        Map<IntegerRange, LabelledValueSet<L, Double>> data = new HashMap<>();
 
         i++; // go to next line for data rows
         for (; i < lines.size(); i++) {
@@ -464,7 +559,7 @@ public class InputFileReader {
                 throw new InvalidInputFileException("The first column specifies an invalid range on line " + (i + 1) + " in the file: " + path.toString(), e);
             }
 
-            Map<IntegerRange, Double> rowMap = new HashMap<>();
+            Map<L, Double> rowMap = new HashMap<>();
 
             for (int j = 1; j < split.length; j++) {
                 try {
@@ -474,7 +569,13 @@ public class InputFileReader {
                 }
             }
 
-            data.put(rowLabel, new IntegerRangeToDoubleSet(rowMap));
+            try {
+                data.put(rowLabel, setType.newInstance().init(rowMap));
+            } catch (InstantiationException | IllegalAccessException e) {
+                e.printStackTrace();
+                System.out.println("Something has gone wrong with the fancy generics/reflection bit");
+                throw new Error();
+            }
 
         }
         return data;

@@ -64,6 +64,8 @@ public class Person implements IPersonExtended {
     private String firstName;
     private String surname;
 
+    private String deathCause = "";
+
     private boolean illegitimate = false;
 
     private boolean toSeparate = false;
@@ -291,7 +293,7 @@ public class Person implements IPersonExtended {
     }
 
     @Override
-    public boolean recordDeath(Date date, Population population) {
+    public boolean recordDeath(Date date, Population population, PopulationStatistics desiredPopulationStatistics) {
 
         // TODO - REMOVAL?
         if (partnerships.size() != 0) {
@@ -313,6 +315,13 @@ public class Person implements IPersonExtended {
 //        population.getPopulationCounts().death(this);
 
         deathDate = date.getExactDate();
+
+        try {
+            deathCause = desiredPopulationStatistics.getDeathCauseRates(deathDate, getSex(), ageAtDeath()).getSample();
+            System.out.println(deathCause);
+        } catch (NotDeadException e) {
+            throw new Error("Living dead person...");
+        }
 
         return true;
     }

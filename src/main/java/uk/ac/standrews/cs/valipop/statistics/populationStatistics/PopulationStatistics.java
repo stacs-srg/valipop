@@ -21,6 +21,7 @@ import org.apache.commons.math3.random.RandomGenerator;
 import uk.ac.standrews.cs.basic_model.distributions.general.EnumeratedDistribution;
 import uk.ac.standrews.cs.basic_model.distributions.general.FileBasedEnumeratedDistribution;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.*;
+import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.AgeDependantEnumeratedDistribution;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.ProportionalDistribution;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.ValiPopEnumeratedDistribution;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.selfCorrecting.SelfCorrectingProportionalDistribution;
@@ -64,6 +65,9 @@ public class PopulationStatistics implements EventRateTables {
 
     private Map<YearDate, ValiPopEnumeratedDistribution> surname;
 
+    private Map<YearDate, AgeDependantEnumeratedDistribution> maleDeathCauses;
+    private Map<YearDate, AgeDependantEnumeratedDistribution> femaleDeathCauses;
+
     // Population Constants
     private int minGestationPeriodDays = 147;
     private int minBirthSpacingDays = 147;
@@ -71,7 +75,9 @@ public class PopulationStatistics implements EventRateTables {
 
 
     public PopulationStatistics(Map<YearDate, SelfCorrectingOneDimensionDataDistribution> maleDeath,
+                                Map<YearDate, AgeDependantEnumeratedDistribution> maleDeathCauses,
                                 Map<YearDate, SelfCorrectingOneDimensionDataDistribution> femaleDeath,
+                                Map<YearDate, AgeDependantEnumeratedDistribution> femaleDeathCauses,
                                 Map<YearDate, SelfCorrectingProportionalDistribution> partnering,
                                 Map<YearDate, SelfCorrectingTwoDimensionDataDistribution> orderedBirth,
                                 Map<YearDate, ProportionalDistribution> multipleBirth,
@@ -87,7 +93,9 @@ public class PopulationStatistics implements EventRateTables {
                                 RandomGenerator randomGenerator) {
 
         this.maleDeath = maleDeath;
+        this.maleDeathCauses = maleDeathCauses;
         this.femaleDeath = femaleDeath;
+        this.femaleDeathCauses = femaleDeathCauses;
         this.partnering = partnering;
         this.orderedBirth = orderedBirth;
         this.multipleBirth = multipleBirth;
@@ -206,6 +214,15 @@ public class PopulationStatistics implements EventRateTables {
             return maleDeath.get(getNearestYearInMap(year.getYearDate(), maleDeath));
         } else {
             return femaleDeath.get(getNearestYearInMap(year.getYearDate(), femaleDeath));
+        }
+    }
+
+    @Override
+    public EnumeratedDistribution getDeathCauseRates(Date year, char gender, int age) {
+        if (Character.toLowerCase(gender) == 'm') {
+            return maleDeathCauses.get(getNearestYearInMap(year.getYearDate(), maleDeathCauses)).getDistributionForAge(age);
+        } else {
+            return femaleDeathCauses.get(getNearestYearInMap(year.getYearDate(), femaleDeathCauses)).getDistributionForAge(age);
         }
     }
 

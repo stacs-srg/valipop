@@ -43,7 +43,7 @@ public interface PersonUtils {
 
     void recordPartnership(IPartnershipExtended partnership);
 
-    boolean recordDeath(Date date, Population population);
+    boolean recordDeath(Date date, Population population, PopulationStatistics desiredPopulationStatistics);
 
     int ageAtDeath() throws NotDeadException;
 

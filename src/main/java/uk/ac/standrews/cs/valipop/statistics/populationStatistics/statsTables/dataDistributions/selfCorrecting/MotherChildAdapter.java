@@ -23,7 +23,10 @@ import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.DeterminedCount;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.MultipleDeterminedCount;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.StatsKey;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.LabeledValueSet;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.IntegerRangeToIntegerSet;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.LabelledValueSet;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.IntegerRangeToDoubleSet;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.OperableLabelledValueSet;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -36,18 +39,18 @@ public class MotherChildAdapter implements ProportionalDistribution {
 
     private SelfCorrectingProportionalDistribution distribution;
 
-    public MotherChildAdapter(YearDate year, String sourcePopulation, String sourceOrganisation, Map<IntegerRange, LabeledValueSet<IntegerRange, Double>> targetProportions) {
+    public MotherChildAdapter(YearDate year, String sourcePopulation, String sourceOrganisation, Map<IntegerRange, LabelledValueSet<IntegerRange, Double>> targetProportions) {
 
-        Map<IntegerRange, LabeledValueSet<IntegerRange, Double>> transformedProportions = new HashMap<>();
+        Map<IntegerRange, LabelledValueSet<IntegerRange, Double>> transformedProportions = new HashMap<>();
 
-        for(Map.Entry<IntegerRange, LabeledValueSet<IntegerRange, Double>> iR : targetProportions.entrySet()) {
-            LabeledValueSet<IntegerRange, Double> tp = iR.getValue();
+        for(Map.Entry<IntegerRange, LabelledValueSet<IntegerRange, Double>> iR : targetProportions.entrySet()) {
+            LabelledValueSet<IntegerRange, Double> tp = iR.getValue();
 
             if(tp.getSumOfValues() != 0) {
                 transformedProportions.put(iR.getKey(),
-                        tp
-                        .productOfLabelsAndValues()
-                        .reproportion()
+                        new IntegerRangeToDoubleSet(tp)
+                            .productOfLabelsAndValues()
+                            .reproportion()
                 );
             } else {
                 transformedProportions.put(iR.getKey(), tp);
@@ -93,18 +96,19 @@ public class MotherChildAdapter implements ProportionalDistribution {
 
         MultipleDeterminedCount childNumbers = distribution.determineCount(key, config);
 
-        LabeledValueSet<IntegerRange, Double> rawCorrectedMotherNumbers = childNumbers.getRawCorrectedCount()
-                .divisionOfValuesByLabels();
+        LabelledValueSet<IntegerRange, Double> rawCorrectedMotherNumbers =
+                new IntegerRangeToDoubleSet(childNumbers.getRawCorrectedCount())
+                    .divisionOfValuesByLabels();
 
-        LabeledValueSet<IntegerRange, Double> rawUncorrectedMotherNumbers = childNumbers.getRawUncorrectedCount()
-                .divisionOfValuesByLabels();
+        LabelledValueSet<IntegerRange, Double> rawUncorrectedMotherNumbers =
+                new IntegerRangeToDoubleSet(childNumbers.getRawUncorrectedCount())
+                    .divisionOfValuesByLabels();
 
-        LabeledValueSet<IntegerRange, Integer> motherNumbers;
+        LabelledValueSet<IntegerRange, Integer> motherNumbers;
 
         try {
-            motherNumbers = childNumbers.getDeterminedCount()
-                    .divisionOfValuesByLabels()
-                    .controlledRoundingMaintainingSumProductOfLabelValues();
+            motherNumbers = new IntegerRangeToIntegerSet(childNumbers.getDeterminedCount())
+                    .divisionOfValuesByLabels().controlledRoundingMaintainingSumProductOfLabelValues();
 
         } catch (NullPointerException e) {
             return new MultipleDeterminedCount(key, null, rawCorrectedMotherNumbers, rawUncorrectedMotherNumbers);
@@ -114,10 +118,11 @@ public class MotherChildAdapter implements ProportionalDistribution {
     }
 
     @Override
-    public void returnAchievedCount(DeterminedCount<LabeledValueSet<IntegerRange, Integer>, LabeledValueSet<IntegerRange, Double>> achievedCount) {
+    public void returnAchievedCount(DeterminedCount<LabelledValueSet<IntegerRange, Integer>, LabelledValueSet<IntegerRange, Double>> achievedCount) {
 
         // Transforms counts to be of children born rather than mothers giving birth
-        achievedCount.setFufilledCount(achievedCount.getFufilledCount().productOfLabelsAndValues());
+        achievedCount.setFufilledCount(new IntegerRangeToIntegerSet(achievedCount.getFufilledCount())
+                                                                                        .productOfLabelsAndValues());
         distribution.returnAchievedCount(achievedCount);
 
     }

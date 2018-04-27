@@ -33,7 +33,7 @@ import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTabl
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.ControlSelfNode;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.DoubleNode;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure.PersonCharacteristicsIdentifier;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.LabeledValueSet;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.LabelledValueSet;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.integerRange.IntegerRange;
 
 /**
@@ -142,7 +142,7 @@ public class ChildrenInYearNodeDouble extends DoubleNode<ChildrenInYearOption, I
             addChild(0, getCount());
         } else {
 
-//            LabeledValueSet<IntegerRange, Double> stat = mDc.getRawUncorrectedCount();
+//            LabelledValueSet<IntegerRange, Double> stat = mDc.getRawUncorrectedCount();
 //
 //            for (IntegerRange o : stat.getLabels()) {
 //                if(!stat.get(o).equals(0.0)) {
@@ -150,7 +150,7 @@ public class ChildrenInYearNodeDouble extends DoubleNode<ChildrenInYearOption, I
 //                }
 //            }
 
-            LabeledValueSet<IntegerRange, Double> stat = mDc.getRawUncorrectedCount().reproportion();
+            LabelledValueSet<IntegerRange, Double> stat = mDc.getRawUncorrectedCount().reproportion();
 
             for (IntegerRange o : stat.getLabels()) {
                 if(!stat.get(o).equals(0.0)) {
@@ -179,7 +179,7 @@ public class ChildrenInYearNodeDouble extends DoubleNode<ChildrenInYearOption, I
                     .getDeterminedCount(new MultipleBirthStatsKey(age, getCount(),
                             new CompoundTimeUnit(1, TimeUnit.YEAR), currentDate), null);
 
-            LabeledValueSet<IntegerRange, Double> stat = mDC.getRawUncorrectedCount();
+            LabelledValueSet<IntegerRange, Double> stat = mDC.getRawUncorrectedCount();
 
             for (IntegerRange o : stat.getLabels()) {
                 if(!stat.get(o).equals(0.0)) {

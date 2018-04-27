@@ -23,63 +23,239 @@ import java.util.*;
 /**
  * @author Tom Dalton (tsd4@st-andrews.ac.uk)
  */
-public class IntegerRangeToIntegerSet implements LabeledValueSet<IntegerRange, Integer>, Cloneable {
+public class IntegerRangeToIntegerSet extends AbstractLabelToAbstractValueSet<IntegerRange, Integer>
+        implements OperableLabelledValueSet<IntegerRange, Integer>, Cloneable {
 
     private Map<IntegerRange, Integer> map = new HashMap<>();
 
     public IntegerRangeToIntegerSet(List<IntegerRange> labels, List<Integer> values) {
-
-        if(labels.size() != values.size()) {
-            throw new LabeledValueSetInitException("Labels and values lists of differing sizes", labels, values);
-        }
-
-        int c = 0;
-        for(IntegerRange iR : labels) {
-            map.put(iR, values.get(c));
-            c++;
-        }
+        super(labels, values);
     }
 
-    public IntegerRangeToIntegerSet(Set<IntegerRange> labels, Integer integerInitValue) {
-
-        for(IntegerRange iR : labels) {
-            map.put(iR, 0);
-        }
-
+    public IntegerRangeToIntegerSet(Set<IntegerRange> labels, Integer initValue) {
+        super(labels, initValue);
     }
 
-    public IntegerRangeToIntegerSet() {}
+    public IntegerRangeToIntegerSet(Map<IntegerRange, Integer> map) {
+        super(map);
+    }
+
+    public IntegerRangeToIntegerSet(LabelledValueSet<IntegerRange, Integer> lvs) {
+        super(lvs.getMap());
+    }
+
+    public IntegerRangeToIntegerSet() {
+        super();
+    }
+
 
     @Override
-    public Map<IntegerRange, Integer> getMap() {
-        return map;
+    public LabelledValueSet<IntegerRange, Integer> constructSelf(List<IntegerRange> labels, List<Integer> values) {
+        return new IntegerRangeToIntegerSet(labels, values);
     }
 
     @Override
-    public Integer getSumOfValues() {
-
-        Integer sum = 0;
-
-        for(Map.Entry<IntegerRange, Integer> iR : map.entrySet()) {
-            sum += iR.getValue();
-        }
-
-        return sum;
-
+    public LabelledValueSet<IntegerRange, Integer> constructIntegerEquiverlent(List<IntegerRange> labels, List<Integer> values) {
+        return constructSelf(labels, values);
     }
 
     @Override
-    public Integer getValue(IntegerRange label) {
-        return map.get(label);
+    public LabelledValueSet<IntegerRange, Double> constructDoubleEquiverlent(List<IntegerRange> labels, List<Double> values) {
+        return new IntegerRangeToDoubleSet(labels, values);
     }
 
     @Override
-    public Set<IntegerRange> getLabels() {
-        return map.keySet();
+    public Integer zero() {
+        return 0;
     }
 
     @Override
-    public LabeledValueSet<IntegerRange, Integer> productOfLabelsAndValues() {
+    public Integer sum(Integer a, Integer b) {
+        return a + b;
+    }
+
+    @Override
+    public Integer multiply(Integer a, int n) {
+        return a * n;
+    }
+
+
+//    @Override
+//    public Map<IntegerRange, Integer> getMap() {
+//        return map;
+//    }
+//
+//    @Override
+//    public Integer getSumOfValues() {
+//
+//        Integer sum = 0;
+//
+//        for(Map.Entry<IntegerRange, Integer> entry : map.entrySet()) {
+//            sum += entry.getValue();
+//        }
+//
+//        return sum;
+//
+//    }
+//
+//    @Override
+//    public Integer getValue(IntegerRange label) {
+//        return map.get(label);
+//    }
+//
+//    @Override
+//    public Set<IntegerRange> getLabels() {
+//        return map.keySet();
+//    }
+//
+//    @Override
+//    public void add(IntegerRange label, Integer value) {
+//        map.put(label, value);
+//    }
+//
+//    @Override
+//    public Integer get(IntegerRange label) {
+//        return map.get(label);
+//    }
+//
+//    @Override
+//    public void update(IntegerRange label, Integer value) {
+//        map.replace(label, value);
+//    }
+//
+//    @Override
+//    public Integer remove(IntegerRange label) {
+//        return map.remove(label);
+//    }
+//
+//    @Override
+//    public LabelledValueSet<IntegerRange, Integer> productOfValuesAndN(Integer n) {
+//        List<IntegerRange> labels = new ArrayList<>();
+//        List<Integer> products = new ArrayList<>();
+//
+//        for(IntegerRange iR : map.keySet()) {
+//            labels.add(iR);
+//            products.add(getValue(iR) * n);
+//        }
+//
+//        return new IntegerRangeToIntegerSet(labels, products);
+//    }
+//
+//    @Override
+//    public LabelledValueSet<IntegerRange, Double> productOfValuesAndN(Double n) {
+//        List<IntegerRange> labels = new ArrayList<>();
+//        List<Double> products = new ArrayList<>();
+//
+//        for(IntegerRange iR : map.keySet()) {
+//            labels.add(iR);
+//            products.add(getValue(iR) * n);
+//        }
+//
+//        return new IntegerRangeToDoubleSet(labels, products);
+//    }
+
+    @Override
+    public OperableLabelledValueSet<IntegerRange, Integer> controlledRoundingMaintainingSum() {
+        return new IntegerRangeToIntegerSet(this.clone());
+    }
+
+    @Override
+    public OperableLabelledValueSet<IntegerRange, Integer> controlledRoundingMaintainingSumWithProductOfLabelAndValue() {
+        return new IntegerRangeToIntegerSet(this.clone());
+    }
+
+    @Override
+    public OperableLabelledValueSet<IntegerRange, Integer> controlledRoundingMaintainingSumProductOfLabelValues() {
+        return new IntegerRangeToIntegerSet(this.clone());
+    }
+
+//    @Override
+//    public LabelledValueSet<IntegerRange, Integer> floorValues() {
+//        return clone();
+//    }
+//
+//    @Override
+//    public LabelledValueSet<IntegerRange, Integer> clone() {
+//
+//        List<IntegerRange> labels = new ArrayList<>();
+//        List<Integer> values = new ArrayList<>();
+//
+//        for(IntegerRange iR : map.keySet()) {
+//            labels.add(iR);
+//            values.add(getValue(iR));
+//        }
+//
+//        return new IntegerRangeToIntegerSet(labels, values);
+//    }
+//
+//    @Override
+//    public IntegerRange getLabelOfValueWithGreatestRemainder(Set<IntegerRange> usedLabels) {
+//        throw new NoSuchElementException("Integer cannot have remainders when divided by one, therefore the largest " +
+//                "remainder is by definition an undefinable concept");
+//    }
+//
+//    @SuppressWarnings("Duplicates")
+//    @Override
+//    public LabelledValueSet<IntegerRange, Double> valuesPlusValues(LabelledValueSet<IntegerRange, ? extends Number> n) {
+//        List<IntegerRange> labels = new ArrayList<>();
+//        List<Double> results = new ArrayList<>();
+//
+//        for(IntegerRange iR : map.keySet()) {
+//            labels.add(iR);
+//
+//            Number sub = n.getValue(iR);
+//            if(sub == null) {
+//                throw new IncompatibleLabelValueSets("Sets do not contain same labels - " +
+//                        "mathematical operations not possible", this, n);
+//            }
+//
+//            results.add(getValue(iR) + sub.doubleValue());
+//        }
+//
+//        return new IntegerRangeToDoubleSet(labels, results);
+//    }
+//
+//    @Override
+//    public LabelledValueSet<IntegerRange, Double> reproportion() {
+//        throw new UnsupportedOperationException("Cannot re-proportion integer values");
+//    }
+//
+//    @Override
+//    public LabelledValueSet<IntegerRange, Double> divisionOfValuesByN(Integer n) {
+//        List<IntegerRange> labels = new ArrayList<>();
+//        List<Double> products = new ArrayList<>();
+//
+//        for(IntegerRange iR : map.keySet()) {
+//            labels.add(iR);
+//            products.add(getValue(iR) / n);
+//        }
+//
+//        return new IntegerRangeToDoubleSet(labels, products);
+//    }
+//
+//    @SuppressWarnings("Duplicates")
+//    @Override
+//    public LabelledValueSet<IntegerRange, Double> valuesSubtractValues(LabelledValueSet<IntegerRange, ? extends Number> n) {
+//        List<IntegerRange> labels = new ArrayList<>();
+//        List<Double> results = new ArrayList<>();
+//
+//        for(IntegerRange iR : map.keySet()) {
+//            labels.add(iR);
+//
+//            Number sub = n.getValue(iR);
+//            if(sub == null) {
+//                throw new IncompatibleLabelValueSets("Sets do not contain same labels - " +
+//                        "mathematical operations not possible", this, n);
+//            }
+//
+//            results.add(getValue(iR) - sub.doubleValue());
+//        }
+//
+//        return new IntegerRangeToDoubleSet(labels, results);
+//    }
+
+    @Override
+    public OperableLabelledValueSet<IntegerRange, Integer> productOfLabelsAndValues() {
 
         List<IntegerRange> labels = new ArrayList<>();
         List<Integer> products = new ArrayList<>();
@@ -94,153 +270,7 @@ public class IntegerRangeToIntegerSet implements LabeledValueSet<IntegerRange, I
     }
 
     @Override
-    public void add(IntegerRange label, Integer value) {
-        map.put(label, value);
-    }
-
-    @Override
-    public Integer get(IntegerRange label) {
-        return map.get(label);
-    }
-
-    @Override
-    public void update(IntegerRange label, Integer value) {
-        map.replace(label, value);
-    }
-
-    @Override
-    public Integer remove(IntegerRange label) {
-        return map.remove(label);
-    }
-
-    @Override
-    public LabeledValueSet<IntegerRange, Integer> productOfValuesAndN(Integer n) {
-        List<IntegerRange> labels = new ArrayList<>();
-        List<Integer> products = new ArrayList<>();
-
-        for(IntegerRange iR : map.keySet()) {
-            labels.add(iR);
-            products.add(getValue(iR) * n);
-        }
-
-        return new IntegerRangeToIntegerSet(labels, products);
-    }
-
-    @Override
-    public LabeledValueSet<IntegerRange, Double> productOfValuesAndN(Double n) {
-        List<IntegerRange> labels = new ArrayList<>();
-        List<Double> products = new ArrayList<>();
-
-        for(IntegerRange iR : map.keySet()) {
-            labels.add(iR);
-            products.add(getValue(iR) * n);
-        }
-
-        return new IntegerRangeToDoubleSet(labels, products);
-    }
-
-    @Override
-    public LabeledValueSet<IntegerRange, Integer> controlledRoundingMaintainingSum() {
-        return this.clone();
-    }
-
-    @Override
-    public LabeledValueSet<IntegerRange, Integer> controlledRoundingMaintainingSumWithProductOfLabelAndValue() {
-        return this.clone();
-    }
-
-    @Override
-    public LabeledValueSet<IntegerRange, Integer> controlledRoundingMaintainingSumProductOfLabelValues() {
-        return this.clone();
-    }
-
-    @Override
-    public LabeledValueSet<IntegerRange, Integer> floorValues() {
-        return clone();
-    }
-
-    @Override
-    public LabeledValueSet<IntegerRange, Integer> clone() {
-
-        List<IntegerRange> labels = new ArrayList<>();
-        List<Integer> values = new ArrayList<>();
-
-        for(IntegerRange iR : map.keySet()) {
-            labels.add(iR);
-            values.add(getValue(iR));
-        }
-
-        return new IntegerRangeToIntegerSet(labels, values);
-    }
-
-    @Override
-    public IntegerRange getLabelOfValueWithGreatestRemainder(Set<IntegerRange> usedLabels) {
-        throw new NoSuchElementException("Integer cannot have remainders when divided by one, therefore the largest " +
-                "remainder is by definition an undefinable concept");
-    }
-
-    @SuppressWarnings("Duplicates")
-    @Override
-    public LabeledValueSet<IntegerRange, Double> valuesPlusValues(LabeledValueSet<IntegerRange, ? extends Number> n) {
-        List<IntegerRange> labels = new ArrayList<>();
-        List<Double> results = new ArrayList<>();
-
-        for(IntegerRange iR : map.keySet()) {
-            labels.add(iR);
-
-            Number sub = n.getValue(iR);
-            if(sub == null) {
-                throw new IncompatibleLabelValueSets("Sets do not contain same labels - " +
-                        "mathematical operations not possible", this, n);
-            }
-
-            results.add(getValue(iR) + sub.doubleValue());
-        }
-
-        return new IntegerRangeToDoubleSet(labels, results);
-    }
-
-    @Override
-    public LabeledValueSet<IntegerRange, Double> reproportion() {
-        throw new UnsupportedOperationException("Cannot re-proportion integer values");
-    }
-
-    @Override
-    public LabeledValueSet<IntegerRange, Double> divisionOfValuesByN(double n) {
-        List<IntegerRange> labels = new ArrayList<>();
-        List<Double> products = new ArrayList<>();
-
-        for(IntegerRange iR : map.keySet()) {
-            labels.add(iR);
-            products.add(getValue(iR) / n);
-        }
-
-        return new IntegerRangeToDoubleSet(labels, products);
-    }
-
-    @SuppressWarnings("Duplicates")
-    @Override
-    public LabeledValueSet<IntegerRange, Double> valuesSubtractValues(LabeledValueSet<IntegerRange, ? extends Number> n) {
-        List<IntegerRange> labels = new ArrayList<>();
-        List<Double> results = new ArrayList<>();
-
-        for(IntegerRange iR : map.keySet()) {
-            labels.add(iR);
-
-            Number sub = n.getValue(iR);
-            if(sub == null) {
-                throw new IncompatibleLabelValueSets("Sets do not contain same labels - " +
-                        "mathematical operations not possible", this, n);
-            }
-
-            results.add(getValue(iR) - sub.doubleValue());
-        }
-
-        return new IntegerRangeToDoubleSet(labels, results);
-    }
-
-    @Override
-    public LabeledValueSet<IntegerRange, Double> divisionOfValuesByLabels() {
+    public OperableLabelledValueSet<IntegerRange, Double> divisionOfValuesByLabels() {
         List<IntegerRange> labels = new ArrayList<>();
         List<Double> products = new ArrayList<>();
 
@@ -251,7 +281,6 @@ public class IntegerRangeToIntegerSet implements LabeledValueSet<IntegerRange, I
 
         return new IntegerRangeToDoubleSet(labels, products);
     }
-
 
     @Override
     public IntegerRange getLargestLabelOfNoneZeroValueAndLabelLessOrEqualTo(IntegerRange n) {
@@ -360,7 +389,7 @@ public class IntegerRangeToIntegerSet implements LabeledValueSet<IntegerRange, I
     }
 
     @Override
-    public LabeledValueSet<IntegerRange, Double> valuesAddNWhereCorrespondingLabelNegativeInLVS(double n, LabeledValueSet<IntegerRange, ? extends Number> lvs) {
+    public OperableLabelledValueSet<IntegerRange, Double> valuesAddNWhereCorrespondingLabelNegativeInLVS(double n, OperableLabelledValueSet<IntegerRange, ? extends Number> lvs) {
         ArrayList<IntegerRange> labels = new ArrayList<>(getLabels());
         ArrayList<Double> newValues = new ArrayList<>();
 
@@ -377,46 +406,47 @@ public class IntegerRangeToIntegerSet implements LabeledValueSet<IntegerRange, I
         return new IntegerRangeToDoubleSet(labels, newValues);
     }
 
-    @Override
-    public int countNegativeValues() {
-        int count = 0;
+//    @Override
+//    public int countNegativeValues() {
+//        int count = 0;
+//
+//        for(IntegerRange label : getLabels()) {
+//            if(getValue(label) < 0) {
+//                count++;
+//            }
+//        }
+//
+//        return count;
+//    }
+//
+//    @Override
+//    public LabelledValueSet<IntegerRange, Integer> zeroNegativeValues() {
+//        ArrayList<IntegerRange> labels = new ArrayList<>(getLabels());
+//        ArrayList<Integer> newValues = new ArrayList<>();
+//
+//
+//        for(IntegerRange label : labels) {
+//            if(getValue(label) < 0) {
+//                newValues.add(0);
+//            } else {
+//                newValues.add(getValue(label));
+//            }
+//        }
+//
+//        return new IntegerRangeToIntegerSet(labels, newValues);
+//    }
+//
+//    @Override
+//    public int countPositiveValues() {
+//        int count = 0;
+//
+//        for(IntegerRange label : getLabels()) {
+//            if(getValue(label) > 0) {
+//                count++;
+//            }
+//        }
+//
+//        return count;
+//    }
 
-        for(IntegerRange label : getLabels()) {
-            if(getValue(label) < 0) {
-                count++;
-            }
-        }
-
-        return count;
-    }
-
-    @Override
-    public LabeledValueSet<IntegerRange, Integer> zeroNegativeValues() {
-        ArrayList<IntegerRange> labels = new ArrayList<>(getLabels());
-        ArrayList<Integer> newValues = new ArrayList<>();
-
-
-        for(IntegerRange label : labels) {
-            if(getValue(label) < 0) {
-                newValues.add(0);
-            } else {
-                newValues.add(getValue(label));
-            }
-        }
-
-        return new IntegerRangeToIntegerSet(labels, newValues);
-    }
-
-    @Override
-    public int countPositiveValues() {
-        int count = 0;
-
-        for(IntegerRange label : getLabels()) {
-            if(getValue(label) > 0) {
-                count++;
-            }
-        }
-
-        return count;
-    }
 }

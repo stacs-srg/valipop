@@ -40,7 +40,9 @@ import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.TimeUni
 import uk.ac.standrews.cs.valipop.utils.specialTypes.integerRange.IntegerRange;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.integerRange.InvalidRangeException;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.IntegerRangeToIntegerSet;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.LabeledValueSet;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.LabelledValueSet;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.IntegerRangeToDoubleSet;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.OperableLabelledValueSet;
 
 import java.util.*;
 
@@ -65,11 +67,11 @@ public class PartneringLogic {
 
             MultipleDeterminedCount determinedCounts = (MultipleDeterminedCount) desiredPopulationStatistics.getDeterminedCount(key, config);
 
-            LabeledValueSet<IntegerRange, Integer> partnerCounts;
-            LabeledValueSet<IntegerRange, Integer> achievedPartnerCounts;
+            OperableLabelledValueSet<IntegerRange, Integer> partnerCounts;
+            LabelledValueSet<IntegerRange, Integer> achievedPartnerCounts;
 
             try {
-                partnerCounts = determinedCounts.getDeterminedCount();
+                partnerCounts = new IntegerRangeToIntegerSet(determinedCounts.getDeterminedCount());
                 achievedPartnerCounts = new IntegerRangeToIntegerSet(partnerCounts.getLabels(), 0);
             } catch (NullPointerException e) {
                 throw new Error("Large population size has lead to accumalated errors in processing of Doubles that the " +
@@ -77,7 +79,7 @@ public class PartneringLogic {
                         "make DELTA bigger? Or use a data type that actually works...");
             }
 
-            LabeledValueSet<IntegerRange, Integer> availableMen = new IntegerRangeToIntegerSet(partnerCounts.getLabels(), 0);
+            LabelledValueSet<IntegerRange, Integer> availableMen = new IntegerRangeToIntegerSet(partnerCounts.getLabels(), 0);
 
             // this section gets all the men in the age ranges we may need to look at
             Map<IntegerRange, LinkedList<IPersonExtended>> allMen = new HashMap<>();
@@ -94,16 +96,18 @@ public class PartneringLogic {
                 availableMen.update(iR, m.size());
             }
 
-            LabeledValueSet<IntegerRange, Double> shortfallCounts = partnerCounts.valuesSubtractValues(availableMen);
+            OperableLabelledValueSet<IntegerRange, Double> shortfallCounts =
+                    new IntegerRangeToDoubleSet(partnerCounts.valuesSubtractValues(availableMen));
 
             // this section redistributes the determined partner counts based on the number of available men in each age range
             while(shortfallCounts.countPositiveValues() != 0) {
-                LabeledValueSet<IntegerRange, Double> zeroedNegShortfalls = shortfallCounts.zeroNegativeValues();
+                LabelledValueSet<IntegerRange, Double> zeroedNegShortfalls = shortfallCounts.zeroNegativeValues();
                 int numberOfRangesWithSpareMen = shortfallCounts.countNegativeValues();
                 double totalShortfall = zeroedNegShortfalls.getSumOfValues();
                 double shortfallToShare = totalShortfall / (double) numberOfRangesWithSpareMen;
-                partnerCounts = partnerCounts.valuesAddNWhereCorrespondingLabelNegativeInLVS(shortfallToShare, shortfallCounts).valuesSubtractValues(zeroedNegShortfalls).controlledRoundingMaintainingSum();
-                shortfallCounts = partnerCounts.valuesSubtractValues(availableMen);
+                partnerCounts = new IntegerRangeToDoubleSet(partnerCounts.valuesAddNWhereCorrespondingLabelNegativeInLVS(shortfallToShare, shortfallCounts)
+                        .valuesSubtractValues(zeroedNegShortfalls)).controlledRoundingMaintainingSum();
+                shortfallCounts = new IntegerRangeToDoubleSet(partnerCounts.valuesSubtractValues(availableMen));
             }
 
             // TODO - upto - question: does infids affect NPA?
@@ -211,7 +215,7 @@ public class PartneringLogic {
                 System.out.println("CC: " + cancelledChildren);
             }
 
-            LabeledValueSet<IntegerRange, Integer> returnPartnerCounts = determinedCounts.getZeroedCountsTemplate();
+            LabelledValueSet<IntegerRange, Integer> returnPartnerCounts = determinedCounts.getZeroedCountsTemplate();
 
             Map<Integer, ArrayList<IPersonExtended>> partneredFemalesByChildren = new HashMap<>();
 
