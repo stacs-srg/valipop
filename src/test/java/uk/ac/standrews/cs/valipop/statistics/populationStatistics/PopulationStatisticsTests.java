@@ -26,10 +26,9 @@ import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCoun
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.SingleDeterminedCount;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.BirthStatsKey;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.MultipleBirthStatsKey;
-import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
-import uk.ac.standrews.cs.valipop.statistics.populationStatistics.DesiredPopulationStatisticsFactory;
 import uk.ac.standrews.cs.valipop.utils.fileUtils.InvalidInputFileException;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.LabeledValueSet;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.IntegerRangeToDoubleSet;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.LabelledValueSet;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.integerRange.IntegerRange;
 
 import java.io.IOException;
@@ -95,8 +94,9 @@ public class PopulationStatisticsTests {
         MultipleDeterminedCount mDC = (MultipleDeterminedCount) ps
                 .getDeterminedCount(new MultipleBirthStatsKey(age, numberOfMothers, new CompoundTimeUnit(1, TimeUnit.YEAR), currentDate), null);
 
-        double numberOfChildrenB = mDC.getRawUncorrectedCount().productOfLabelsAndValues().getSumOfValues();
+        double numberOfChildrenB = new IntegerRangeToDoubleSet(mDC.getRawUncorrectedCount())
+                                            .productOfLabelsAndValues().getSumOfValues();
 
-        LabeledValueSet<IntegerRange, Double> stat = mDC.getRawUncorrectedCount();
+        LabelledValueSet<IntegerRange, Double> stat = mDC.getRawUncorrectedCount();
     }
 }

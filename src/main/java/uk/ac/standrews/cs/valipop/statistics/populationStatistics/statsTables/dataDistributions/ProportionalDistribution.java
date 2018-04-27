@@ -17,7 +17,7 @@
 package uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions;
 
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.selfCorrecting.SelfCorrection;
-import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.LabeledValueSet;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.LabelledValueSet;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.integerRange.IntegerRange;
 
 /**
@@ -25,6 +25,6 @@ import uk.ac.standrews.cs.valipop.utils.specialTypes.integerRange.IntegerRange;
  */
 public interface ProportionalDistribution extends
                         InputMetaData,
-                        SelfCorrection<LabeledValueSet<IntegerRange, Integer>, LabeledValueSet<IntegerRange, Double>> {
+                        SelfCorrection<LabelledValueSet<IntegerRange, Integer>, LabelledValueSet<IntegerRange, Double>> {
 
 }

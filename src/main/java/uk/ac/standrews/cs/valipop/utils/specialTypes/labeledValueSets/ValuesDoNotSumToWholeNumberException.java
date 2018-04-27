@@ -22,11 +22,11 @@ package uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets;
 public class ValuesDoNotSumToWholeNumberException extends RuntimeException {
 
     private String message;
-    private LabeledValueSet labeledValueSet;
+    private LabelledValueSet labelledValueSet;
 
-    public ValuesDoNotSumToWholeNumberException(String message, LabeledValueSet labeledValueSet) {
+    public ValuesDoNotSumToWholeNumberException(String message, LabelledValueSet labelledValueSet) {
         this.message = message;
-        this.labeledValueSet = labeledValueSet;
+        this.labelledValueSet = labelledValueSet;
     }
 
     @Override
@@ -34,8 +34,8 @@ public class ValuesDoNotSumToWholeNumberException extends RuntimeException {
         return message;
     }
 
-    public LabeledValueSet getLabeledValueSet() {
-        return labeledValueSet;
+    public LabelledValueSet getLabelledValueSet() {
+        return labelledValueSet;
     }
 
 }

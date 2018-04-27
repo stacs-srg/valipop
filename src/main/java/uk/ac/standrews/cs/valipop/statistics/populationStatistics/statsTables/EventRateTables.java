@@ -18,6 +18,7 @@ package uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables;
 
 import uk.ac.standrews.cs.basic_model.distributions.general.EnumeratedDistribution;
 import uk.ac.standrews.cs.basic_model.distributions.general.FileBasedEnumeratedDistribution;
+import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.AgeDependantEnumeratedDistribution;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.OneDimensionDataDistribution;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.ProportionalDistribution;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.selfCorrecting.SelfCorrectingOneDimensionDataDistribution;
@@ -50,6 +51,8 @@ public interface EventRateTables {
      * @return the death rates
      */
     OneDimensionDataDistribution getDeathRates(Date year, char gender);
+
+    EnumeratedDistribution getDeathCauseRates(Date year, char gender, int age);
 
     /**
      * Gets marriage rates for those married in the given year. The return table is two dimensional as it shows the rate

@@ -33,11 +33,11 @@ import java.util.Random;
  */
 public class EnumeratedDistribution implements Distribution<String> {
 
-    private static final double ALLOWABLE_TOTAL_WEIGHT_DISCREPANCY = 0.001;
+    private static final double ALLOWABLE_TOTAL_WEIGHT_DISCREPANCY = 0.05;
     private static final Comparator<? super StringWithCumulativeProbability> ITEM_COMPARATOR = new ItemComparator();
 
     private final RandomGenerator random;
-    protected StringWithCumulativeProbability[] items = null;
+    public StringWithCumulativeProbability[] items = null;
 
     protected EnumeratedDistribution(final RandomGenerator random) {
         this.random = random;

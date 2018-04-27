@@ -81,7 +81,9 @@ public class Config {
     private String varPath;
     private Path varOrderedBirthPaths;
     private Path varMaleLifetablePaths;
+    private Path varMaleDeathCausesPaths;
     private Path varFemaleLifetablePaths;
+    private Path varFemaleDeathCausesPaths;
     private Path varMultipleBirthPaths;
     private Path varIllegitimateBirthPaths;
     private Path varPartneringPaths;
@@ -346,7 +348,9 @@ public class Config {
 
         String deathSubPath = Paths.get(path, deathSubFile).toString();
         varMaleLifetablePaths = Paths.get(deathSubPath, maleDeathSubFile, lifetableSubFile);
+        varMaleDeathCausesPaths = Paths.get(deathSubPath, maleDeathSubFile, deathCauseSubFile);
         varFemaleLifetablePaths = Paths.get(deathSubPath, femaleDeathSubFile, lifetableSubFile);
+        varFemaleDeathCausesPaths = Paths.get(deathSubPath, femaleDeathSubFile, deathCauseSubFile);
 
         String relationshipSubPath = Paths.get(path, relationshipsSubFile).toString();
         varPartneringPaths = Paths.get(relationshipSubPath, partneringSubFile);
@@ -387,6 +391,16 @@ public class Config {
         }
     }
 
+    public DirectoryStream<Path> getVarMaleDeathCausesPaths() throws IOException {
+        try {
+            return Files.newDirectoryStream(varMaleDeathCausesPaths, filter);
+        } catch (IOException e) {
+            String message = "Error reading in male death files: " + varMaleDeathCausesPaths;
+            log.fatal(message);
+            throw new IOException(message, e);
+        }
+    }
+
     public DirectoryStream<Path> getVarFemaleLifetablePaths() throws IOException {
         try {
             return Files.newDirectoryStream(varFemaleLifetablePaths, filter);
@@ -397,6 +411,15 @@ public class Config {
         }
     }
 
+    public DirectoryStream<Path> getVarFemaleDeathCausesPaths() throws IOException {
+        try {
+            return Files.newDirectoryStream(varFemaleDeathCausesPaths, filter);
+        } catch (IOException e) {
+            String message = "Error reading in male death files: " + varFemaleDeathCausesPaths;
+            log.fatal(message);
+            throw new IOException(message, e);
+        }
+    }
 
     public DirectoryStream<Path> getVarMultipleBirthPaths() throws IOException {
         try {
