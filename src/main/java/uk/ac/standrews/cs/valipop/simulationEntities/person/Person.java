@@ -318,7 +318,6 @@ public class Person implements IPersonExtended {
 
         try {
             deathCause = desiredPopulationStatistics.getDeathCauseRates(deathDate, getSex(), ageAtDeath()).getSample();
-            System.out.println(deathCause);
         } catch (NotDeadException e) {
             throw new Error("Living dead person...");
         }
