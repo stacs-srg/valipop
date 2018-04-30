@@ -64,8 +64,10 @@ public class EnumeratedDistribution implements Distribution<String> {
 
         for (final Map.Entry<String, Double> entry : item_probabilities.entrySet()) {
 
-            cumulative_probability += entry.getValue();
-            items[i++] = new StringWithCumulativeProbability(entry.getKey(), cumulative_probability);
+            if(entry.getValue() != 0.0) {
+                cumulative_probability += entry.getValue();
+                items[i++] = new StringWithCumulativeProbability(entry.getKey(), cumulative_probability);
+            }
         }
 
         if (Math.abs(cumulative_probability - 1) > ALLOWABLE_TOTAL_WEIGHT_DISCREPANCY) {
