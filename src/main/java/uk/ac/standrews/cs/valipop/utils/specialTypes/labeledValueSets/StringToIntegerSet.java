@@ -25,6 +25,16 @@ public class StringToIntegerSet extends AbstractLabelToAbstractValueSet<String, 
     public StringToIntegerSet() { super();}
 
     @Override
+    public Class getLabelClass() {
+        return String.class;
+    }
+
+    @Override
+    public Class getValueClass() {
+        return Integer.class;
+    }
+
+    @Override
     public LabelledValueSet<String, Integer> constructSelf(List<String> labels, List<Integer> values) {
         return new StringToIntegerSet(labels, values);
     }

@@ -16,6 +16,8 @@
  */
 package uk.ac.standrews.cs.basic_model.distributions;
 
+import java.math.BigDecimal;
+
 /**
  * Provides the functionality of a sting with associated cumulative probability.
  *
@@ -23,7 +25,7 @@ package uk.ac.standrews.cs.basic_model.distributions;
 public class StringWithCumulativeProbability {
 
     private final String item;
-    private final Double cumulative_probability;
+    private final BigDecimal cumulative_probability;
 
     /**
      * Creates a cumulative probability string.
@@ -31,7 +33,7 @@ public class StringWithCumulativeProbability {
      * @param item The associated string.
      * @param cumulative_probability The strings associated cumulative probability.
      */
-    public StringWithCumulativeProbability(final String item, final double cumulative_probability) {
+    public StringWithCumulativeProbability(final String item, final BigDecimal cumulative_probability) {
 
         this.item = item;
         this.cumulative_probability = cumulative_probability;
@@ -51,7 +53,7 @@ public class StringWithCumulativeProbability {
      * 
      * @return Returns the associated cumulative probability.
      */
-    public Double getCumulativeProbability() {
+    public BigDecimal getCumulativeProbability() {
         return cumulative_probability;
     }
 }

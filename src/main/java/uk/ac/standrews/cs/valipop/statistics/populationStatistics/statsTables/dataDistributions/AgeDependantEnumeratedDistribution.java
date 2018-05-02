@@ -8,6 +8,7 @@ import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementatio
 import uk.ac.standrews.cs.valipop.utils.specialTypes.integerRange.IntegerRange;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.LabelledValueSet;
 
+import java.math.BigDecimal;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -26,7 +27,7 @@ public class AgeDependantEnumeratedDistribution implements InputMetaData {
     private final Map<IntegerRange, EnumeratedDistribution> distributionsByAge = new HashMap<>();
 
     public AgeDependantEnumeratedDistribution(YearDate year, String sourcePopulation, String sourceOrganisation,
-                                              Map<IntegerRange, LabelledValueSet<String, Double>> item_probabilities, RandomGenerator random) throws InconsistentWeightException {
+                                              Map<IntegerRange, LabelledValueSet<String, BigDecimal>> item_probabilities, RandomGenerator random) throws InconsistentWeightException {
         this.year = year;
         this.sourceOrganisation = sourceOrganisation;
         this.sourcePopulation = sourcePopulation;

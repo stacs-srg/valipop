@@ -48,6 +48,15 @@ public class IntegerRangeToIntegerSet extends AbstractLabelToAbstractValueSet<In
         super();
     }
 
+    @Override
+    public Class getLabelClass() {
+        return IntegerRange.class;
+    }
+
+    @Override
+    public Class getValueClass() {
+        return Integer.class;
+    }
 
     @Override
     public LabelledValueSet<IntegerRange, Integer> constructSelf(List<IntegerRange> labels, List<Integer> values) {

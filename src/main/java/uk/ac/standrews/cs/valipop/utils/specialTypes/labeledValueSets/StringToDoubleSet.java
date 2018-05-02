@@ -26,6 +26,16 @@ public class StringToDoubleSet extends AbstractLabelToAbstractValueSet<String, D
     }
 
     @Override
+    public Class getLabelClass() {
+        return String.class;
+    }
+
+    @Override
+    public Class getValueClass() {
+        return Double.class;
+    }
+
+    @Override
     public LabelledValueSet<String, Double> constructSelf(List<String> labels, List<Double> values) {
         return new StringToDoubleSet(labels, values);
     }

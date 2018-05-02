@@ -53,6 +53,9 @@ public abstract class AbstractLabelToAbstractValueSet<AL, AV extends Number> imp
 
     public AbstractLabelToAbstractValueSet() {}
 
+    public abstract Class getLabelClass();
+    public abstract Class getValueClass();
+
     public AbstractLabelToAbstractValueSet init(Map<AL, AV> map) {
         this.map = map;
         return this;

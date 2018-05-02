@@ -28,6 +28,16 @@ public class IntegerRangeToDoubleSet extends AbstractLabelToAbstractValueSet<Int
     public IntegerRangeToDoubleSet() {super();}
 
     @Override
+    public Class getLabelClass() {
+        return IntegerRange.class;
+    }
+
+    @Override
+    public Class getValueClass() {
+        return Double.class;
+    }
+
+    @Override
     public LabelledValueSet<IntegerRange, Double> constructSelf(List<IntegerRange> labels, List<Double> values) {
         return new IntegerRangeToDoubleSet(labels, values);
     }
