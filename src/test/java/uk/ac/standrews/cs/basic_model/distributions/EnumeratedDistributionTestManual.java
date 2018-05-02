@@ -31,11 +31,11 @@ public class EnumeratedDistributionTestManual {
 
     public static void main(final String[] args) throws IOException, InconsistentWeightException {
 
-        Map<String, BigDecimal> item_probabilities = new HashMap<>();
+        Map<String, Double> item_probabilities = new HashMap<>();
 
-        item_probabilities.put("quick", new BigDecimal(0.1));
-        item_probabilities.put("brown", new BigDecimal(0.1));
-        item_probabilities.put("fox", new BigDecimal(0.8));
+        item_probabilities.put("quick", new Double(0.1));
+        item_probabilities.put("brown", new Double(0.1));
+        item_probabilities.put("fox", new Double(0.8));
 
         final EnumeratedDistribution distribution = new EnumeratedDistribution(item_probabilities, new JDKRandomGenerator());
 

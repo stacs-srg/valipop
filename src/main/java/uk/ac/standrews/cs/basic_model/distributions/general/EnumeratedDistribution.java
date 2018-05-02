@@ -31,7 +31,7 @@ import java.util.*;
  */
 public class EnumeratedDistribution implements Distribution<String> {
 
-    private static final BigDecimal ALLOWABLE_TOTAL_WEIGHT_DISCREPANCY = new BigDecimal(0.000001);
+    private static final Double ALLOWABLE_TOTAL_WEIGHT_DISCREPANCY = 0.000001;
     private static final Comparator<? super StringWithCumulativeProbability> ITEM_COMPARATOR = new ItemComparator();
 
     private final RandomGenerator random;
@@ -48,30 +48,29 @@ public class EnumeratedDistribution implements Distribution<String> {
      * @param random a Random instance for use in creation of distribution.
      * @throws InconsistentWeightException if the weights in the underlying distribution do not sum to 1.
      */
-    public EnumeratedDistribution(final Map<String, BigDecimal> item_probabilities, final RandomGenerator random) throws InconsistentWeightException {
+    public EnumeratedDistribution(final Map<String, Double> item_probabilities, final RandomGenerator random) throws InconsistentWeightException {
 
         this(random);
         configureProbabilities(item_probabilities);
     }
 
-    protected void configureProbabilities(final Map<String, BigDecimal> item_probabilities) throws InconsistentWeightException {
+    protected void configureProbabilities(final Map<String, Double> item_probabilities) throws InconsistentWeightException {
 
         List<StringWithCumulativeProbability> items_temp = new ArrayList<>();
-        BigDecimal cumulative_probability = BigDecimal.ZERO;
+        Double cumulative_probability = 0.0;
         int i = 0;
 
-        for (final Map.Entry<String, BigDecimal> entry : item_probabilities.entrySet()) {
+        for (final Map.Entry<String, Double> entry : item_probabilities.entrySet()) {
 
-            if(entry.getValue().compareTo(BigDecimal.ZERO) != 0) {
-                cumulative_probability = cumulative_probability.add(entry.getValue());
+            if(entry.getValue() != 0) {
+                cumulative_probability += entry.getValue();
 //                cumulative_probability += entry.getValue();
                 items_temp.add(new StringWithCumulativeProbability(entry.getKey(), cumulative_probability));
             }
         }
 
-        cumulative_probability = cumulative_probability.add(new BigDecimal(-1));
-        cumulative_probability = cumulative_probability.abs();
-        if (cumulative_probability.compareTo(ALLOWABLE_TOTAL_WEIGHT_DISCREPANCY) > 0) {
+        cumulative_probability = Math.abs(cumulative_probability - 1);
+        if (cumulative_probability > ALLOWABLE_TOTAL_WEIGHT_DISCREPANCY) {
             throw new InconsistentWeightException();
         }
 
@@ -82,17 +81,9 @@ public class EnumeratedDistribution implements Distribution<String> {
     @Override
     public String getSample() {
 
-        final BigDecimal dice_throw = new BigDecimal(random.nextDouble());
+        final Double dice_throw = random.nextDouble();
 
-        int sample_index;
-        try {
-            sample_index = Arrays.binarySearch(items, new StringWithCumulativeProbability("", dice_throw), ITEM_COMPARATOR);
-        } catch (NullPointerException e) {
-            System.out.println(items.length);
-            System.out.println(dice_throw);
-            System.out.println(ITEM_COMPARATOR);
-            throw e;
-        }
+        int sample_index = Arrays.binarySearch(items, new StringWithCumulativeProbability("", dice_throw), ITEM_COMPARATOR);
 
         // If the exact cumulative probability isn't matched - and it's very unlikely to be - the result of binarySearch() is (-(insertion point) - 1).
         if (sample_index < 0) {
@@ -109,8 +100,6 @@ public class EnumeratedDistribution implements Distribution<String> {
 
         @Override
         public int compare(final StringWithCumulativeProbability o1, final StringWithCumulativeProbability o2) {
-            System.out.println("o1: " + o1.getItem() + " - " + o1.getCumulativeProbability());
-            System.out.println("o2: " + o2.getItem() + " - " + o2.getCumulativeProbability());
             return o1.getCumulativeProbability().compareTo(o2.getCumulativeProbability());
         }
     }

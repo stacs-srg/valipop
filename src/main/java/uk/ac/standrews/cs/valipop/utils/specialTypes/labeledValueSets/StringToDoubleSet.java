@@ -42,7 +42,7 @@ public class StringToDoubleSet extends AbstractLabelToAbstractValueSet<String, D
 
     @Override
     public LabelledValueSet<String, Integer> constructIntegerEquiverlent(List<String> labels, List<Integer> values) {
-        return null;
+        return new StringToIntegerSet(labels, values);
     }
 
     @Override

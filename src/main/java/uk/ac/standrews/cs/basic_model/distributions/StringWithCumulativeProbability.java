@@ -25,7 +25,7 @@ import java.math.BigDecimal;
 public class StringWithCumulativeProbability {
 
     private final String item;
-    private final BigDecimal cumulative_probability;
+    private final Double cumulative_probability;
 
     /**
      * Creates a cumulative probability string.
@@ -33,7 +33,7 @@ public class StringWithCumulativeProbability {
      * @param item The associated string.
      * @param cumulative_probability The strings associated cumulative probability.
      */
-    public StringWithCumulativeProbability(final String item, final BigDecimal cumulative_probability) {
+    public StringWithCumulativeProbability(final String item, final Double cumulative_probability) {
 
         this.item = item;
         this.cumulative_probability = cumulative_probability;
@@ -53,7 +53,7 @@ public class StringWithCumulativeProbability {
      * 
      * @return Returns the associated cumulative probability.
      */
-    public BigDecimal getCumulativeProbability() {
+    public Double getCumulativeProbability() {
         return cumulative_probability;
     }
 }

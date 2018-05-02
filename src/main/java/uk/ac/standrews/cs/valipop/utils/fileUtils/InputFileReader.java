@@ -211,7 +211,7 @@ public class InputFileReader {
         String sourceOrganisation = null;
 
         ArrayList<String> columnLabels = new ArrayList<>();
-        Map<String, BigDecimal> data = new HashMap<>();
+        Map<String, Double> data = new HashMap<>();
 
 
         for (int i = 0; i < lines.size(); i++) {
@@ -248,7 +248,7 @@ public class InputFileReader {
 
                         String rowLabel = split[0];
 
-                        data.put(rowLabel, new BigDecimal(split[1]));
+                        data.put(rowLabel, new Double(split[1]));
 
                     }
                     break;
@@ -269,7 +269,7 @@ public class InputFileReader {
         String sourceOrganisation = null;
 
         ArrayList<String> columnLabels = new ArrayList<>();
-        Map<IntegerRange, LabelledValueSet<String, BigDecimal>> data = new HashMap<>();
+        Map<IntegerRange, LabelledValueSet<String, Double>> data = new HashMap<>();
 
 
         for (int i = 0; i < lines.size(); i++) {
@@ -295,7 +295,7 @@ public class InputFileReader {
                     columnLabels = readInStringLabels(split);
                     break;
                 case "data":
-                    data = readIn2DDataTable(i, lines, path, columnLabels, StringToBigDecimalSet.class);
+                    data = readIn2DDataTable(i, lines, path, columnLabels, StringToDoubleSet.class);
                     break;
             }
 

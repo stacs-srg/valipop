@@ -26,8 +26,6 @@ import java.util.*;
 public class IntegerRangeToIntegerSet extends AbstractLabelToAbstractValueSet<IntegerRange, Integer>
         implements OperableLabelledValueSet<IntegerRange, Integer>, Cloneable {
 
-    private Map<IntegerRange, Integer> map = new HashMap<>();
-
     public IntegerRangeToIntegerSet(List<IntegerRange> labels, List<Integer> values) {
         super(labels, values);
     }

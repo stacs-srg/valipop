@@ -22,7 +22,7 @@ public class ValiPopEnumeratedDistribution extends EnumeratedDistribution implem
     private final String sourceOrganisation;
 
     public ValiPopEnumeratedDistribution(YearDate year, String sourcePopulation, String sourceOrganisation,
-                                         Map<String, BigDecimal> item_probabilities, RandomGenerator random)
+                                         Map<String, Double> item_probabilities, RandomGenerator random)
                                                 throws InconsistentWeightException {
         super(item_probabilities, random);
         this.year = year;
