@@ -6,6 +6,7 @@ import uk.ac.standrews.cs.basic_model.distributions.general.EnumeratedDistributi
 import uk.ac.standrews.cs.basic_model.distributions.general.InconsistentWeightException;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
@@ -21,7 +22,7 @@ public class ValiPopEnumeratedDistribution extends EnumeratedDistribution implem
     private final String sourceOrganisation;
 
     public ValiPopEnumeratedDistribution(YearDate year, String sourcePopulation, String sourceOrganisation,
-                                         Map<String, Double> item_probabilities, RandomGenerator random)
+                                         Map<String, BigDecimal> item_probabilities, RandomGenerator random)
                                                 throws InconsistentWeightException {
         super(item_probabilities, random);
         this.year = year;

@@ -20,10 +20,8 @@ import org.apache.commons.math3.random.RandomGenerator;
 import uk.ac.standrews.cs.basic_model.distributions.StringWithCumulativeProbability;
 
 import java.io.Serializable;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Map;
-import java.util.Random;
+import java.math.BigDecimal;
+import java.util.*;
 
 /**
  * A distribution of strings controlled by specified probabilities.
@@ -33,7 +31,7 @@ import java.util.Random;
  */
 public class EnumeratedDistribution implements Distribution<String> {
 
-    private static final double ALLOWABLE_TOTAL_WEIGHT_DISCREPANCY = 0.05;
+    private static final BigDecimal ALLOWABLE_TOTAL_WEIGHT_DISCREPANCY = new BigDecimal(0.000001);
     private static final Comparator<? super StringWithCumulativeProbability> ITEM_COMPARATOR = new ItemComparator();
 
     private final RandomGenerator random;
@@ -50,37 +48,51 @@ public class EnumeratedDistribution implements Distribution<String> {
      * @param random a Random instance for use in creation of distribution.
      * @throws InconsistentWeightException if the weights in the underlying distribution do not sum to 1.
      */
-    public EnumeratedDistribution(final Map<String, Double> item_probabilities, final RandomGenerator random) throws InconsistentWeightException {
+    public EnumeratedDistribution(final Map<String, BigDecimal> item_probabilities, final RandomGenerator random) throws InconsistentWeightException {
 
         this(random);
         configureProbabilities(item_probabilities);
     }
 
-    protected void configureProbabilities(final Map<String, Double> item_probabilities) throws InconsistentWeightException {
+    protected void configureProbabilities(final Map<String, BigDecimal> item_probabilities) throws InconsistentWeightException {
 
-        items = new StringWithCumulativeProbability[item_probabilities.size()];
-        double cumulative_probability = 0.0;
+        List<StringWithCumulativeProbability> items_temp = new ArrayList<>();
+        BigDecimal cumulative_probability = BigDecimal.ZERO;
         int i = 0;
 
-        for (final Map.Entry<String, Double> entry : item_probabilities.entrySet()) {
+        for (final Map.Entry<String, BigDecimal> entry : item_probabilities.entrySet()) {
 
-            if(entry.getValue() != 0.0) {
-                cumulative_probability += entry.getValue();
-                items[i++] = new StringWithCumulativeProbability(entry.getKey(), cumulative_probability);
+            if(entry.getValue().compareTo(BigDecimal.ZERO) != 0) {
+                cumulative_probability = cumulative_probability.add(entry.getValue());
+//                cumulative_probability += entry.getValue();
+                items_temp.add(new StringWithCumulativeProbability(entry.getKey(), cumulative_probability));
             }
         }
 
-        if (Math.abs(cumulative_probability - 1) > ALLOWABLE_TOTAL_WEIGHT_DISCREPANCY) {
+        cumulative_probability = cumulative_probability.add(new BigDecimal(-1));
+        cumulative_probability = cumulative_probability.abs();
+        if (cumulative_probability.compareTo(ALLOWABLE_TOTAL_WEIGHT_DISCREPANCY) > 0) {
             throw new InconsistentWeightException();
         }
+
+        items = items_temp.toArray(new StringWithCumulativeProbability[items_temp.size()]);
+
     }
 
     @Override
     public String getSample() {
 
-        final double dice_throw = random.nextDouble();
+        final BigDecimal dice_throw = new BigDecimal(random.nextDouble());
 
-        int sample_index = Arrays.binarySearch(items, new StringWithCumulativeProbability("", dice_throw), ITEM_COMPARATOR);
+        int sample_index;
+        try {
+            sample_index = Arrays.binarySearch(items, new StringWithCumulativeProbability("", dice_throw), ITEM_COMPARATOR);
+        } catch (NullPointerException e) {
+            System.out.println(items.length);
+            System.out.println(dice_throw);
+            System.out.println(ITEM_COMPARATOR);
+            throw e;
+        }
 
         // If the exact cumulative probability isn't matched - and it's very unlikely to be - the result of binarySearch() is (-(insertion point) - 1).
         if (sample_index < 0) {
@@ -97,6 +109,8 @@ public class EnumeratedDistribution implements Distribution<String> {
 
         @Override
         public int compare(final StringWithCumulativeProbability o1, final StringWithCumulativeProbability o2) {
+            System.out.println("o1: " + o1.getItem() + " - " + o1.getCumulativeProbability());
+            System.out.println("o2: " + o2.getItem() + " - " + o2.getCumulativeProbability());
             return o1.getCumulativeProbability().compareTo(o2.getCumulativeProbability());
         }
     }

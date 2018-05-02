@@ -23,6 +23,7 @@ import uk.ac.standrews.cs.utilities.FileManipulation;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -49,7 +50,7 @@ public class FileBasedEnumeratedDistribution extends EnumeratedDistribution {
 
         super(random);
 
-        final Map<String, Double> item_probabilities = new HashMap<>();
+        final Map<String, BigDecimal> item_probabilities = new HashMap<>();
 
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(getClass().getClassLoader().getResourceAsStream(path_string), FileManipulation.FILE_CHARSET))) {
 
@@ -62,7 +63,7 @@ public class FileBasedEnumeratedDistribution extends EnumeratedDistribution {
 
                 final String[] strings = line.split(TAB);
 
-                double probability = Double.parseDouble(strings[1]);
+                BigDecimal probability = new BigDecimal(strings[1]);
                 item_probabilities.put(strings[0], probability);
                 line = reader.readLine();
             }

@@ -21,6 +21,7 @@ import uk.ac.standrews.cs.basic_model.distributions.general.EnumeratedDistributi
 import uk.ac.standrews.cs.basic_model.distributions.general.InconsistentWeightException;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -30,11 +31,11 @@ public class EnumeratedDistributionTestManual {
 
     public static void main(final String[] args) throws IOException, InconsistentWeightException {
 
-        Map<String, Double> item_probabilities = new HashMap<>();
+        Map<String, BigDecimal> item_probabilities = new HashMap<>();
 
-        item_probabilities.put("quick", 0.1);
-        item_probabilities.put("brown", 0.1);
-        item_probabilities.put("fox", 0.8);
+        item_probabilities.put("quick", new BigDecimal(0.1));
+        item_probabilities.put("brown", new BigDecimal(0.1));
+        item_probabilities.put("fox", new BigDecimal(0.8));
 
         final EnumeratedDistribution distribution = new EnumeratedDistribution(item_probabilities, new JDKRandomGenerator());
 

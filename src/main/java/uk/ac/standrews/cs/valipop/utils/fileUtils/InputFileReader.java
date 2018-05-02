@@ -37,6 +37,8 @@ import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.da
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
@@ -209,7 +211,7 @@ public class InputFileReader {
         String sourceOrganisation = null;
 
         ArrayList<String> columnLabels = new ArrayList<>();
-        Map<String, Double> data = new HashMap<>();
+        Map<String, BigDecimal> data = new HashMap<>();
 
 
         for (int i = 0; i < lines.size(); i++) {
@@ -246,7 +248,7 @@ public class InputFileReader {
 
                         String rowLabel = split[0];
 
-                        data.put(rowLabel, Double.parseDouble(split[1]));
+                        data.put(rowLabel, new BigDecimal(split[1]));
 
                     }
                     break;
@@ -267,7 +269,7 @@ public class InputFileReader {
         String sourceOrganisation = null;
 
         ArrayList<String> columnLabels = new ArrayList<>();
-        Map<IntegerRange, LabelledValueSet<String, Double>> data = new HashMap<>();
+        Map<IntegerRange, LabelledValueSet<String, BigDecimal>> data = new HashMap<>();
 
 
         for (int i = 0; i < lines.size(); i++) {
@@ -293,7 +295,7 @@ public class InputFileReader {
                     columnLabels = readInStringLabels(split);
                     break;
                 case "data":
-                    data = readIn2DDataTable(i, lines, path, columnLabels, StringToDoubleSet.class);
+                    data = readIn2DDataTable(i, lines, path, columnLabels, StringToBigDecimalSet.class);
                     break;
             }
 
@@ -532,14 +534,14 @@ public class InputFileReader {
         return columnLabels;
     }
 
-    private static <L> Map<IntegerRange, LabelledValueSet<L, Double>> readIn2DDataTable(
+    private static <L, V extends Number> Map<IntegerRange, LabelledValueSet<L, V>> readIn2DDataTable(
                                             int i, ArrayList<String> lines, Path path, ArrayList<L> columnLabels,
-                                                Class<? extends AbstractLabelToAbstractValueSet<L, Double>> setType)
+                                                Class<? extends AbstractLabelToAbstractValueSet<L, V>> setType)
                                                                                     throws  InvalidInputFileException{
 
 
 
-        Map<IntegerRange, LabelledValueSet<L, Double>> data = new HashMap<>();
+        Map<IntegerRange, LabelledValueSet<L, V>> data = new HashMap<>();
 
         i++; // go to next line for data rows
         for (; i < lines.size(); i++) {
@@ -559,11 +561,30 @@ public class InputFileReader {
                 throw new InvalidInputFileException("The first column specifies an invalid range on line " + (i + 1) + " in the file: " + path.toString(), e);
             }
 
-            Map<L, Double> rowMap = new HashMap<>();
+            Map<L, V> rowMap = new HashMap<>();
+
+            Class<V> clazz = null;
+            try {
+                clazz = setType.newInstance().getValueClass();
+            } catch (InstantiationException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
 
             for (int j = 1; j < split.length; j++) {
                 try {
-                    rowMap.put(columnLabels.get(j - 1), Double.parseDouble(split[j]));
+                    try {
+                        rowMap.put(columnLabels.get(j - 1), clazz.getConstructor(String.class).newInstance(split[j]));
+                    } catch (InstantiationException e) {
+                        e.printStackTrace();
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                    } catch (InvocationTargetException e) {
+                        e.printStackTrace();
+                    } catch (NoSuchMethodException e) {
+                        e.printStackTrace();
+                    }
                 } catch (NumberFormatException e) {
                     throw new InvalidInputFileException("The value in column " + j + " should be a Double on line " + (i + 1) + "in the file: " + path.toString(), e);
                 }
