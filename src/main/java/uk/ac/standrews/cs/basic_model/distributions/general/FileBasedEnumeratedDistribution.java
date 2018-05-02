@@ -50,7 +50,7 @@ public class FileBasedEnumeratedDistribution extends EnumeratedDistribution {
 
         super(random);
 
-        final Map<String, BigDecimal> item_probabilities = new HashMap<>();
+        final Map<String, Double> item_probabilities = new HashMap<>();
 
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(getClass().getClassLoader().getResourceAsStream(path_string), FileManipulation.FILE_CHARSET))) {
 
@@ -63,7 +63,7 @@ public class FileBasedEnumeratedDistribution extends EnumeratedDistribution {
 
                 final String[] strings = line.split(TAB);
 
-                BigDecimal probability = new BigDecimal(strings[1]);
+                Double probability = new Double(strings[1]);
                 item_probabilities.put(strings[0], probability);
                 line = reader.readLine();
             }
