@@ -45,7 +45,7 @@ public class FactorSearch {
     public static void main(String[] args) throws IOException, InvalidInputFileException, StatsException, PreEmptiveOutOfMemoryWarning {
 
         String[] pArgs = ProcessArgs.process(args, "N-RUNS");
-        if(!ProcessArgs.check(pArgs, "N-RUNS")) {
+        if (!ProcessArgs.check(pArgs, "N-RUNS")) {
             System.err.println("Incorrect arguments given");
             throw new Error("Incorrect arguments given");
         }
@@ -79,20 +79,19 @@ public class FactorSearch {
     static double set_up_br = 0.0133;
     static double set_up_dr = 0.0122;
 
-    public static void runFactorSearch(int size, String dataFiles, int numberOfRunsPerSim, String runPurpose) throws IOException, InvalidInputFileException, StatsException, PreEmptiveOutOfMemoryWarning {
+    public static void runFactorSearch(int size0, String dataFiles, int numberOfRunsPerSim, String runPurpose) throws IOException, InvalidInputFileException, StatsException, PreEmptiveOutOfMemoryWarning {
 
-        rfs = new double[]{0.5, 1};
+        rfs = new double[]{1, 0.5, 0.3};
         iws = new CompoundTimeUnit[]{
-                new CompoundTimeUnit(40, TimeUnit.YEAR)
+                new CompoundTimeUnit(10, TimeUnit.YEAR)
         };
         minBirthSpacings = new int[]{147};
-        maxInfids = new double[]{0.2};
         bfs = new double[]{0};
         dfs = new double[]{0};
-//        t0_pop_size = new int[]{1000000, 500000, 250000};
+        t0_pop_size = new int[]{1000000, 2500000, 5000000};
 
 
-//        for(int size : t0_pop_size) {
+        for (int size : t0_pop_size) {
             for (double rf : rfs) {
                 for (CompoundTimeUnit iw : iws) {
                     for (int minBirthSpacing : minBirthSpacings) {
@@ -102,10 +101,10 @@ public class FactorSearch {
 
                                 try {
 
-                                    for(int n = 0; n < numberOfRunsPerSim; n++) {
+                                    for (int n = 0; n < numberOfRunsPerSim; n++) {
 
-                                        if(n == 1) {
-                                            CTtree.reuseExpectedValues(true);
+                                        if (n == 1) {
+                                            CTtree.reuseExpectedValues(false);
                                         }
 
                                         String startTime = FileUtils.getDateTime();
@@ -155,7 +154,8 @@ public class FactorSearch {
 
                     }
                 }
-//            }
+            }
+
         }
     }
 }
