@@ -76,8 +76,8 @@ public class FactorSearch {
     static AdvancableDate tS = new YearDate(1599);
     static AdvancableDate t0 = new YearDate(1855);
     static AdvancableDate tE = new YearDate(2015);
-    static double set_up_br = 0.0133;
-    static double set_up_dr = 0.0122;
+    static double set_up_br = 0.0233;
+    static double set_up_dr = 0.0322;
 
     public static void runFactorSearch(int size0, String dataFiles, int numberOfRunsPerSim, String runPurpose) throws IOException, InvalidInputFileException, StatsException, PreEmptiveOutOfMemoryWarning {
 
