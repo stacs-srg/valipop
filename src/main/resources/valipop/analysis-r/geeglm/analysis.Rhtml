@@ -17,7 +17,7 @@ source("process-data-functions.R")
 death <- cleanDeathData(readInData(paste(pathToRunDir, "tables/death-CT.csv", sep = "")))
 mbirth <- cleanMBData(readInData(paste(pathToRunDir, "tables/mb-CT.csv", sep = "")), maxBirthingAge, round = F)
 obirth <- cleanOBData(readInData(paste(pathToRunDir, "tables/ob-CT.csv", sep = "")), maxBirthingAge)
-part <- cleanPartData(readInData(paste(pathToRunDir, "tables/part-CT.csv", sep = "")), round = T)
+part <- cleanPartData(readInData(paste(pathToRunDir, "tables/part-CT.csv", sep = "")), round = F)
 sep <- cleanSepData(readInData(paste(pathToRunDir, "tables/sep-CT.csv", sep = "")), round = F)
 end.rcode-->
 
