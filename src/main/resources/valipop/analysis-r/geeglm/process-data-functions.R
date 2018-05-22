@@ -15,8 +15,8 @@ cleanData <- function(dirtyData, round = TRUE, start = 1854, end = 2014) {
   return(clean.data)
 }
 
-cleanDeathData <- function(dirtyData, round = TRUE) {
-  return(cleanData(dirtyData, round))
+cleanDeathData <- function(dirtyData, round = TRUE, start = 1854, end = 2014) {
+  return(cleanData(dirtyData, round, start = start, end = end))
 }
 
 cleanOBData <- function(dirtyData, largestBirthingAge, round = TRUE) {

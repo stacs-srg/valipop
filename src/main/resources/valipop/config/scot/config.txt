@@ -8,8 +8,8 @@ t0 = 1/1/1855
 tE = 1/1/2015
 t0_pop_size = 250000
 # this is defined by the birth rate and death rates for the years data to be used in the set up period
-set_up_br = 0.0322
-set_up_dr = 0.03
+set_up_br = 0.0233
+set_up_dr = 0.0322
 results_save_location = src/main/resources/valipop/results
 output_record_format = NONE
 # these are things we'll be wanting to tune to minimise deviance
