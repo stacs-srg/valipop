@@ -87,9 +87,19 @@ public class CTtree extends Node<String, SourceType, Number, Number> implements 
             log.info("CTree --- Populating expected side of tree with seed");
             YearDate prevY = new YearDate(startDate.getYear() - startStepBack);
             for (IPersonExtended person : population.getPeople_ex()) {
-                if (person.aliveInYear(prevY)) {
+//                if (person.aliveInYear(prevY)) {
+//                    processPerson(person, prevY, SourceType.STAT);
+//                }
+
+                if (person.bornInYear(prevY) && person.diedInYear(prevY)
+                        ||
+                        person.aliveInYear(prevY) && !person.bornInYear(prevY)
+                        ||
+                        person.bornOnDate(prevY)) {
+
                     processPerson(person, prevY, SourceType.STAT);
                 }
+
             }
 
             executeDelayedTasks();
@@ -100,7 +110,7 @@ public class CTtree extends Node<String, SourceType, Number, Number> implements 
 
         log.info("CTree --- Populating tree with observed population");
         for (YearDate y = startDate.getYearDate(); DateUtils.dateBefore(y, endDate);
-             y = y.advanceTime(1, TimeUnit.YEAR).getYearDate()) {
+                                            y = y.advanceTime(1, TimeUnit.YEAR).getYearDate()) {
 
             // for every person in population
             for (IPersonExtended person : population.getPeople_ex()) {
