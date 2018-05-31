@@ -22,6 +22,7 @@ import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStat
 import uk.ac.standrews.cs.valipop.utils.Logger;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.ExactDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.TimeUnit;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.IntNodes.SourceNodeInt;
@@ -57,73 +58,82 @@ public class CTtree extends Node<String, SourceType, Number, Number> implements 
     private Date startDate;
 
     private SourceNodeInt simNode;
-    private static SourceNodeDouble statNode = null;
+    private SourceNodeDouble statNode = null;
 
-
-    private static boolean reuseExpValues = false;
-
-    public static void reuseExpectedValues(boolean reuse) {
-        reuseExpValues = reuse;
-
-        clearStatNodeIfNessersary();
-
-    }
-
-    public static void clearStatNodeIfNessersary() {
-        if(!reuseExpValues) {
-            statNode = null;
-        }
-    }
 
     public CTtree(PeopleCollection population, PopulationStatistics expected, Date startDate, Date endDate, int startStepBack) {
         this.expected = expected;
         this.startDate = startDate;
         this.endDate = new YearDate(endDate.getYear() - 2);
 
+//        log.info("CTree --- Populating expected side of tree with seed");
+//        YearDate prevY = startDate.getYearDate();
+//        for (IPersonExtended person : population.getPeople_ex()) {
+//
+//            if (person.bornInYear(prevY) && person.diedInYear(prevY)
+//                    ||
+//                    person.aliveInYear(prevY) && !person.bornInYear(prevY)
+//                    ||
+//                    person.bornOnDate(prevY)) {
+//
+//
+//                processPerson(person, prevY, SourceType.STAT);
+//            }
+//
+//        }
+//
+//        executeDelayedTasks();
 
-        log.info("CTree --- Check for reuse of expected values : " + reuseExpValues);
-
-        if(statNode == null || !reuseExpValues) {
-            log.info("CTree --- Populating expected side of tree with seed");
-            YearDate prevY = new YearDate(startDate.getYear() - startStepBack);
-            for (IPersonExtended person : population.getPeople_ex()) {
-//                if (person.aliveInYear(prevY)) {
-//                    processPerson(person, prevY, SourceType.STAT);
-//                }
-
-                if (person.bornInYear(prevY) && person.diedInYear(prevY)
-                        ||
-                        person.aliveInYear(prevY) && !person.bornInYear(prevY)
-                        ||
-                        person.bornOnDate(prevY)) {
-
-                    processPerson(person, prevY, SourceType.STAT);
-                }
-
-            }
-
-            executeDelayedTasks();
-
-            removeInitPop();
-        }
-
-
+        YearDate prevY = startDate.getYearDate();
         log.info("CTree --- Populating tree with observed population");
+
         for (YearDate y = startDate.getYearDate(); DateUtils.dateBefore(y, endDate);
-                                            y = y.advanceTime(1, TimeUnit.YEAR).getYearDate()) {
+             y = y.advanceTime(1, TimeUnit.YEAR).getYearDate()) {
+
+            ExactDate prevDay = new ExactDate(31, 12, y.getYear() - 1);
 
             // for every person in population
             for (IPersonExtended person : population.getPeople_ex()) {
 
-                // who was alive or died in the year of consideration
-                if (person.bornInYear(y) && person.diedInYear(y)
-                        ||
-                        person.aliveInYear(y) && !person.bornInYear(y)
-                        ||
-                        person.bornOnDate(y)) {
+                if(prevY.getYear() == y.getYear() && person.aliveOnDate(prevDay)) {
+                    //if(prevY.getYear() == y.getYear() && person.aliveInYear(y) && !person.bornInYear(y)) {
 
+                    processPerson(person, y, SourceType.STAT);
                     processPerson(person, y, SourceType.SIM);
                 }
+
+            }
+        }
+
+        executeDelayedTasks();
+
+        for (YearDate y = startDate.getYearDate(); DateUtils.dateBefore(y, endDate);
+                                            y = y.advanceTime(1, TimeUnit.YEAR).getYearDate()) {
+
+            ExactDate prevDay = new ExactDate(31, 12, y.getYear() - 1);
+
+            // for every person in population
+            for (IPersonExtended person : population.getPeople_ex()) {
+
+
+                // who was alive or died in the year of consideration
+                if ( prevY.getYear() < y.getYear() && person.aliveOnDate(prevDay) ) {
+                        /*person.bornInYear(y) && person.diedInYear(y)
+                        ||
+                        person.aliveInYear(y) && !person.bornInYear(y)
+                        /*||
+                        person.bornOnDate(y)) {
+
+//                    if(person.bornOnDate(y) == true && (person.bornInYear(y) && person.diedInYear(y)) == false && (person.aliveInYear(y) && !person.bornInYear(y)) == false) {
+//                        System.out.println("NEEDED");
+//                    }*/
+
+                    processPerson(person, y, SourceType.SIM);
+
+                }
+
+
+
             }
         }
 
@@ -131,12 +141,6 @@ public class CTtree extends Node<String, SourceType, Number, Number> implements 
 
 
         log.info("CTree --- Tree completed");
-
-    }
-
-    private void removeInitPop() {
-
-
 
     }
 
@@ -247,12 +251,12 @@ public class CTtree extends Node<String, SourceType, Number, Number> implements 
 
             }
 
-            int i = 0;
 
-            for( ; i < 2; i ++) {
+            for(int i = 0; i < 2; i ++) {
                 if(ageTasks.isEmpty()) {
                     break;
                 }
+
                 RunnableNode n = ageTasks.removeFirst();
                 AgeNodeDouble a = (AgeNodeDouble) n;
                 YOBNodeDouble y = (YOBNodeDouble) a.getAncestor(new YOBNodeDouble());

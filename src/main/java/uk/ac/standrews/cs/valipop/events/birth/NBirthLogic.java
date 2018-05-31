@@ -21,6 +21,7 @@ import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStat
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.determinedCounts.SingleDeterminedCount;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsKeys.BirthStatsKey;
 import uk.ac.standrews.cs.valipop.utils.CollectionUtils;
+import uk.ac.standrews.cs.valipop.utils.fileUtils.FileUtils;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.IntegerRangeToIntegerSet;
 import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
@@ -41,6 +42,7 @@ import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.LabelledVa
 import uk.ac.standrews.cs.valipop.utils.specialTypes.integerRange.IntegerRange;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.labeledValueSets.OperableLabelledValueSet;
 
+import java.io.PrintWriter;
 import java.util.*;
 
 /**
@@ -49,6 +51,8 @@ import java.util.*;
 public class NBirthLogic implements EventLogic {
 
     private int tBirths = 0;
+    public static PrintWriter orders = FileUtils.mkDumpFile("order.csv");
+
 
     @Override
     public int handleEvent(Config config, AdvancableDate currentDate, CompoundTimeUnit consideredTimePeriod,
@@ -117,6 +121,12 @@ public class NBirthLogic implements EventLogic {
                 }
 
                 determinedCount.setFufilledCount(childrenMade);
+
+//                if(childrenMade < numberOfChildren) {
+//                    System.out.println("Year: " + currentDate.getYear() + " | Age: " + age + " | Order: " + order + " | " + childrenMade + "/" + numberOfChildren);
+                orders.println(currentDate.getYear() + "," + age + "," + order + "," + childrenMade + "," + numberOfChildren);
+//                }
+
                 desiredPopulationStatistics.returnAchievedCount(determinedCount);
 
             }

@@ -49,14 +49,6 @@ public class SexNodeInt extends IntNode<SexOption, IntegerRange> {
 
         int age = person.ageOnDate(currentDate);
 
-        if(age == -1) {
-            age = 0;
-        }
-
-        if(age > 120) {
-            System.out.println("barf");
-        }
-
         try {
             resolveChildNodeForAge(age).processPerson(person, currentDate);
         } catch (ChildNotFoundException e) {

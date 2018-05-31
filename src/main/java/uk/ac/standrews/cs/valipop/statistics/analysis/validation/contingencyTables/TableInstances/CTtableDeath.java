@@ -16,6 +16,7 @@
  */
 package uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableInstances;
 
+import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure.CTCell;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure.CTRow;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TableStructure.CTtable;
 import uk.ac.standrews.cs.valipop.statistics.analysis.validation.contingencyTables.TreeStructure.Interfaces.Node;
@@ -40,7 +41,7 @@ public class CTtableDeath extends CTtable {
             if(leaf != null && leaf.getCount() != null) {
 
                 try {
-                    leaf.addDateVariable();
+                    CTCell date = leaf.addDateVariable();
 
 //                    leaf.deleteVariable("YOB");
                     leaf.deleteVariable("PNCIP");

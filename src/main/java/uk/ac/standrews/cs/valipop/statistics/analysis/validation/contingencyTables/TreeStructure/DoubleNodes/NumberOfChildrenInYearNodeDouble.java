@@ -98,7 +98,8 @@ public class NumberOfChildrenInYearNodeDouble extends DoubleNode<Integer, Intege
             YearDate yob = ((YOBNodeDouble) getAncestor(new YOBNodeDouble())).getOption();
             Integer age = ((AgeNodeDouble) getAncestor(new AgeNodeDouble())).getOption().getValue();
 
-            Date currentDate = yob.advanceTime(age + 1, TimeUnit.YEAR);
+            Date currentDate = yob.advanceTime(age, TimeUnit.YEAR);
+            //Date currentDate = yob.advanceTime(age + 1, TimeUnit.YEAR);
 
             SourceNodeDouble sN = (SourceNodeDouble) getAncestor(new SourceNodeDouble());
 

@@ -22,6 +22,7 @@ import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementatio
 import org.junit.Assert;
 import org.junit.Test;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.ExactDate;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.TimeUnit;
 
@@ -384,7 +385,7 @@ public class DateUtilsTest {
     }
 
     @Test
-    public void checkBeforeDateMethod() {
+    public void checkBeforeDateOfEqualMethod() {
 
         MonthDate a3 = new MonthDate(12, 2014);
         MonthDate a = new MonthDate(3, 2015);
@@ -404,6 +405,50 @@ public class DateUtilsTest {
         assertFalse(DateUtils.dateBeforeOrEqual(a, a3));
         assertFalse(DateUtils.dateBeforeOrEqual(a2, a));
         assertFalse(DateUtils.dateBeforeOrEqual(a2, a3));
+
+        YearDate y = new YearDate(1900);
+
+        ExactDate e1 = new ExactDate(31,12,1899);
+        ExactDate e2 = new ExactDate(1,1,1900);
+        ExactDate e3 = new ExactDate(2,1,1900);
+
+        assertTrue(DateUtils.dateBeforeOrEqual(e1, y));
+        assertTrue(DateUtils.dateBeforeOrEqual(e2, y));
+        assertFalse(DateUtils.dateBeforeOrEqual(e3, y));
+
+    }
+
+    @Test
+    public void checkBeforeDateMethod() {
+
+        MonthDate a3 = new MonthDate(12, 2014);
+        MonthDate a = new MonthDate(3, 2015);
+        MonthDate a2 = new MonthDate(6, 2015);
+
+        ExactDate b = new ExactDate(15, 3, 2015);
+
+        assertTrue(DateUtils.dateBefore(a, b));
+        assertFalse(DateUtils.dateBefore(b, a));
+
+        assertFalse(DateUtils.dateBefore(b, b));
+
+        assertTrue(DateUtils.dateBefore(a3, a));
+        assertTrue(DateUtils.dateBefore(a, a2));
+        assertTrue(DateUtils.dateBefore(a3, a2));
+
+        assertFalse(DateUtils.dateBefore(a, a3));
+        assertFalse(DateUtils.dateBefore(a2, a));
+        assertFalse(DateUtils.dateBefore(a2, a3));
+
+        YearDate y = new YearDate(1900);
+
+        ExactDate e1 = new ExactDate(31,12,1899);
+        ExactDate e2 = new ExactDate(1,1,1900);
+        ExactDate e3 = new ExactDate(2,1,1900);
+
+        assertTrue(DateUtils.dateBefore(e1, y));
+        assertFalse(DateUtils.dateBefore(e2, y));
+        assertFalse(DateUtils.dateBefore(e3, y));
 
     }
 
@@ -459,6 +504,51 @@ public class DateUtilsTest {
         Assert.assertEquals(1, DateUtils.calcSubTimeUnitsInTimeUnit(annually, annually));
         Assert.assertEquals(-1, DateUtils.calcSubTimeUnitsInTimeUnit(biannually, annually));
 
+
+    }
+
+    @Test
+    public void dateInYearTests() {
+
+        YearDate y1 = new YearDate(2000);
+        YearDate y2 = new YearDate(2001);
+        YearDate y3 = new YearDate(2002);
+
+        MonthDate m1 = new MonthDate(6, 2000);
+        MonthDate m2 = new MonthDate(12, 2000);
+        MonthDate m3 = new MonthDate(1, 2001);
+        MonthDate m4 = new MonthDate(6, 2001);
+        MonthDate m5 = new MonthDate(12, 2001);
+        MonthDate m6 = new MonthDate(1, 2002);
+        MonthDate m7 = new MonthDate(6, 2002);
+
+        ExactDate e1 = new ExactDate(1,1,2001);
+        ExactDate e2 = new ExactDate(2,1,2001);
+        ExactDate e3 = new ExactDate(5,7,2001);
+        ExactDate e4 = new ExactDate(30,12,2001);
+        ExactDate e5 = new ExactDate(31,12,2001);
+
+        Assert.assertTrue(DateUtils.dateInYear(e1, y2));
+        Assert.assertTrue(DateUtils.dateInYear(e2, y2));
+        Assert.assertTrue(DateUtils.dateInYear(e3, y2));
+        Assert.assertTrue(DateUtils.dateInYear(e4, y2));
+        Assert.assertTrue(DateUtils.dateInYear(e5, y2));
+
+        Assert.assertFalse(DateUtils.dateInYear(e1, y1));
+        Assert.assertFalse(DateUtils.dateInYear(e2, y1));
+
+        Assert.assertFalse(DateUtils.dateInYear(e4, y3));
+        Assert.assertFalse(DateUtils.dateInYear(e5, y3));
+
+        Assert.assertTrue(DateUtils.dateInYear(m3, y2));
+        Assert.assertTrue(DateUtils.dateInYear(m4, y2));
+        Assert.assertTrue(DateUtils.dateInYear(m5, y2));
+
+        Assert.assertFalse(DateUtils.dateInYear(m1, y2));
+        Assert.assertFalse(DateUtils.dateInYear(m2, y2));
+
+        Assert.assertFalse(DateUtils.dateInYear(m6, y2));
+        Assert.assertFalse(DateUtils.dateInYear(m7, y2));
 
     }
 

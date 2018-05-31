@@ -73,6 +73,9 @@ public class PopulationStatistics implements EventRateTables {
     private int minBirthSpacingDays = 147;
     private RandomGenerator randomGenerator;
 
+    public PopulationStatistics(RandomGenerator randomGenerator) {
+        this.randomGenerator = randomGenerator;
+    }
 
     public PopulationStatistics(Map<YearDate, SelfCorrectingOneDimensionDataDistribution> maleDeath,
                                 Map<YearDate, AgeDependantEnumeratedDistribution> maleDeathCauses,

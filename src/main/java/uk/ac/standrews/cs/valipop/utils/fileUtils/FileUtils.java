@@ -79,6 +79,15 @@ public class FileUtils {
 
     }
 
+    public static PrintWriter mkDumpFile(String name) {
+        try {
+            Path path = mkBlankFile(Paths.get(runPath.toString(), "dump"), name);
+            return new PrintWriter(path.toFile());
+        } catch (IOException e) {
+            throw new Error();
+        }
+    }
+
     public static Path mkBlankFile(Path parent, String fileName) throws IOException {
 
         Path blankFilePath = Paths.get(parent.toString(), fileName);

@@ -51,7 +51,9 @@ public class SexNodeDouble extends DoubleNode<SexOption, IntegerRange> {
     public void processPerson(IPersonExtended person, Date currentDate) {
 //        incCountByOne();
 
-        int age = person.ageOnDate(new ExactDate(31, 12, currentDate.getYear() - 1));
+//        int age = person.ageOnDate(new ExactDate(31, 12, currentDate.getYear() - 1));
+        int age = person.ageOnDate(currentDate);
+
         try {
             resolveChildNodeForAge(age).processPerson(person, currentDate);
         } catch (ChildNotFoundException e) {

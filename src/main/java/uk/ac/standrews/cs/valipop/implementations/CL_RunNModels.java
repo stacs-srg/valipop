@@ -42,10 +42,6 @@ public class CL_RunNModels {
 
             for(int n = 0 ; n < nRuns; n++) {
 
-                if (n == 1) {
-                    CTtree.reuseExpectedValues(false);
-                }
-
                 CL_OBDModel.runOBDModel(pathToConfigFile, resultsPath, runPurpose);
 
                 System.gc();
