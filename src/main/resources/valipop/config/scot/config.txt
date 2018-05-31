@@ -2,11 +2,11 @@
 #4.3.16
 var_data_files = src/main/resources/valipop/inputs/scotland_test_population
 simulation_time_step = 1y
-input_width = 1y
-tS = 1/1/1691
+input_width = 10y
+tS = 1/1/1687
 t0 = 1/1/1855
 tE = 1/1/2015
-t0_pop_size = 250000
+t0_pop_size = 50000
 # this is defined by the birth rate and death rates for the years data to be used in the set up period
 set_up_br = 0.0233
 set_up_dr = 0.0322
@@ -17,7 +17,7 @@ min_birth_spacing = 147
 min_gestation_period = 147
 birth_factor = 0.0
 death_factor = 0.0
-recovery_factor = 1.0
-output_tables = false
+recovery_factor = 0.0
+output_tables = true
 deterministic = false
 binominal_sampling = true

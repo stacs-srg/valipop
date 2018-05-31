@@ -103,10 +103,6 @@ public class FactorSearch {
 
                                     for (int n = 0; n < numberOfRunsPerSim; n++) {
 
-                                        if (n == 1) {
-                                            CTtree.reuseExpectedValues(false);
-                                        }
-
                                         String startTime = FileUtils.getDateTime();
                                         OBDModel.setUpFileStructureAndLogs(runPurpose, startTime, results_save_location);
 
@@ -136,8 +132,6 @@ public class FactorSearch {
                                         model.getSummaryRow().outputSummaryRowToFile();
 
                                     }
-
-                                    CTtree.reuseExpectedValues(false);
 
                                 } catch (IOException e) {
                                     String message = "Model failed due to Input/Output exception, check that this program has " +

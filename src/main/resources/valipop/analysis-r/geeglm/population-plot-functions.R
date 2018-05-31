@@ -1,5 +1,5 @@
 
-plotCohorts <- function(Death.data, age, title) {
+plotCohorts <- function(Death.data, age, title, xlim = c(1855, 2010)) {
   death <- "NO"
 
   #label <- "iw:100y - with MB - FACTOR 0.007462401"
@@ -17,10 +17,10 @@ plotCohorts <- function(Death.data, age, title) {
   maxY <- max(Death.data[which(Death.data$Age == age & Death.data$Died == death) , ]$freq) * 1.05
   minY <- min(Death.data[which(Death.data$Age == age & Death.data$Died == death) , ]$freq) * 0.95
   
-  plot(Death.data.stat.male$Date, Death.data.stat.male$freq, col=2, main = label, ylim = c(minY, maxY),  panel.first = grid(), type = "l")
-  points(Death.data.stat.female$Date, Death.data.stat.female$freq, col=3, type = "l")
-  points(Death.data.sim.male$Date, Death.data.sim.male$freq, col=6, type = "l")
-  points(Death.data.sim.female$Date, Death.data.sim.female$freq, col=1, type = "l")
+  plot(Death.data.stat.male$Date, Death.data.stat.male$freq, col=2, main = label, ylim = c(minY, maxY),  panel.first = grid(), type = "b", xlim = xlim)
+  points(Death.data.stat.female$Date, Death.data.stat.female$freq, col=3, type = "b")
+  points(Death.data.sim.male$Date, Death.data.sim.male$freq, col=6, type = "b")
+  points(Death.data.sim.female$Date, Death.data.sim.female$freq, col=1, type = "b")
   
   #abline(lm(Death.data.stat.male$freq ~ Death.data.stat.male$Date, data = Death.data.stat.male), col=2)
   #abline(lm(Death.data.stat.female$freq ~ Death.data.stat.female$Date, data = Death.data.stat.female), col=3)

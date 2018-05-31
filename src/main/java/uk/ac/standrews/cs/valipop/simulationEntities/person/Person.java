@@ -337,7 +337,7 @@ public class Person implements IPersonExtended {
     public boolean aliveOnDate(Date date) {
 
         if (DateUtils.dateBeforeOrEqual(birthDate, date)) {
-            if (deathDate == null || DateUtils.dateBeforeOrEqual(date, deathDate)) {
+            if (deathDate == null || DateUtils.dateBefore(date, deathDate)) {
                 return true;
             }
         }
@@ -484,10 +484,12 @@ public class Person implements IPersonExtended {
     @Override
     public int ageOnDate(Date currentDate) {
         if(birthDate.getDay() == 1 && birthDate.getMonth() == 1) {
-            return DateUtils.differenceInYears(birthDate, currentDate).getCount() - 1;
+            int age = DateUtils.differenceInYears(birthDate, currentDate).getCount() - 1;
+            return age == -1 ? 0 : age ;
         } else {
             return DateUtils.differenceInYears(birthDate, currentDate).getCount();
         }
+//        return DateUtils.differenceInYears(birthDate, currentDate).getCount();
     }
 
     @Override

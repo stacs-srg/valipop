@@ -86,30 +86,29 @@ public class AgeNodeDouble extends DoubleNode<IntegerRange, DiedOption> implemen
     public void processPerson(IPersonExtended person, Date currentDate) {
 
         initNode = true;
+
         people.add(person);
-
-        YearDate yob = ((YOBNodeDouble) getAncestor(new YOBNodeDouble())).getOption();
-        Integer age = getOption().getValue();
-
-        Date calcCurrentDate = yob.advanceTime(age, TimeUnit.YEAR);
 
         incCountByOne();
 
+//        YearDate yob = ((YOBNodeDouble) getAncestor(new YOBNodeDouble())).getOption();
+//        Integer age = getOption().getValue();
+//
+//        Date calcCurrentDate = yob.advanceTime(age, TimeUnit.YEAR);
+
         DiedOption option;
 
-        if(person.diedInYear(calcCurrentDate.getYearDate())) {
+        if(person.diedInYear(currentDate.getYearDate())) {
             option = DiedOption.YES;
         } else {
             option = DiedOption.NO;
         }
 
         try {
-            getChild(option).processPerson(person, calcCurrentDate);
+            getChild(option).processPerson(person, currentDate);
         } catch(ChildNotFoundException e) {
-//            DiedNodeDouble n = (DiedNodeDouble) addChild(option);
-
             DiedNodeDouble n = (DiedNodeDouble) addChild(new DiedNodeDouble(option, this, true));
-            n.processPerson(person, calcCurrentDate);
+            n.processPerson(person, currentDate);
             addDelayedTask(n);
         }
     }

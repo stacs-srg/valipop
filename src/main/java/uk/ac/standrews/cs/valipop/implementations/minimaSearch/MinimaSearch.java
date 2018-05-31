@@ -116,10 +116,6 @@ public class MinimaSearch {
 
                 for (; n < repeatRuns; n++) {
 
-                    if (n == 1) {
-                        CTtree.reuseExpectedValues(true);
-                    }
-
                     String startTime = FileUtils.getDateTime();
                     OBDModel.setUpFileStructureAndLogs(runPurpose, startTime, results_save_location);
 
@@ -132,8 +128,6 @@ public class MinimaSearch {
                     try {
                         model.runSimulation();
                         model.analyseAndOutputPopulation(false);
-
-                        CTtree.clearStatNodeIfNessersary();
 
                         Integer maxBirthingAge = model.getDesiredPopulationStatistics().getOrderedBirthRates(new YearDate(0)).getLargestLabel().getValue();
                         double v = getV(minimiseFor, maxBirthingAge, runPurpose, controlBy);
@@ -181,8 +175,6 @@ public class MinimaSearch {
                 } else {
                     logFactortoV(getControllingFactor(controlBy), nanAsemtote);
                 }
-
-                CTtree.reuseExpectedValues(false);
 
             }
         } catch (IOException e) {
@@ -258,7 +250,6 @@ public class MinimaSearch {
         model.getSummaryRow().setMaxMemoryUsage(MemoryUsageAnalysis.getMaxSimUsage());
         MemoryUsageAnalysis.reset();
         model.getSummaryRow().outputSummaryRowToFile();
-        CTtree.clearStatNodeIfNessersary();
 
         if(bottomSearchBoundFactor > topSearchBoundFactor) {
             throw new Error("Bottom bound larger then top bound - resulting from adaptions made due to memory limitations - try to increase JVm heap size (-Xmx) or reduce population size");

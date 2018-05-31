@@ -55,7 +55,6 @@ public class SeparationNodeInt extends IntNode<SeparationOption, IntegerRange> {
 
         if(activePartnership != null && PersonCharacteristicsIdentifier.startedInYear(activePartnership, currentDate.getYearDate())) {
             IPersonExtended partner = activePartnership.getPartnerOf(person);
-
             newPartnerAge = partner.ageOnDate(activePartnership.getPartnershipDate());
         }
 

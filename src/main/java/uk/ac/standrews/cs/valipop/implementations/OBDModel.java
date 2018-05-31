@@ -223,6 +223,7 @@ public class OBDModel {
         log.info("TBorn\t" + birthLogic.getEventCount());
         log.info("Ratio\t" + deathLogic.getEventCount() / (double) birthLogic.getEventCount());
 
+        NBirthLogic.orders.close();
 
         summary.setEndPop(population.getLivingPeople().getNumberOfPeople());
         summary.setPeakPop(population.getPopulationCounts().getPeakPopulationSize());

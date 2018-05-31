@@ -34,6 +34,7 @@ import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementatio
 import uk.ac.standrews.cs.valipop.Config;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.statsTables.dataDistributions.selfCorrecting.SelfCorrectingOneDimensionDataDistribution;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.TimeUnit;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.integerRange.IntegerRange;
 
 import java.io.IOException;
@@ -193,6 +194,10 @@ public abstract class DesiredPopulationStatisticsFactory {
         CompoundTimeUnit inputWidth = config.getInputWidth();
 
         YearDate prevInputDate = config.getTS().getYearDate();
+
+        int stepBack = (int) (inputWidth.getCount() * Math.ceil((config.getT0().getYear() - config.getTS().getYear()) / (double) inputWidth.getCount()));
+
+        prevInputDate = config.getT0().advanceTime(new CompoundTimeUnit(stepBack, TimeUnit.YEAR).negative()).getYearDate();
 
         int c = 1;
         Date curDate;
