@@ -83,6 +83,9 @@ public class SeparationNodeDouble extends DoubleNode<SeparationOption, IntegerRa
                 in = node.getOption().contains(newPartnerAge);
             } catch (InvalidRangeException e) {
                 in = null;
+            } catch (NullPointerException e) {
+                System.out.println("NULL");
+                in = null;
             }
 
             // if partners age is in the considered range then process this person using this NPA range and return

@@ -6,7 +6,7 @@ input_width = 10y
 tS = 1/1/1687
 t0 = 1/1/1855
 tE = 1/1/2015
-t0_pop_size = 50000
+t0_pop_size = 500000
 # this is defined by the birth rate and death rates for the years data to be used in the set up period
 set_up_br = 0.0233
 set_up_dr = 0.0322
