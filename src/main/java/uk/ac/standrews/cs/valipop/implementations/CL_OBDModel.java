@@ -47,7 +47,7 @@ public class CL_OBDModel {
         } catch (IOException e) {
             String message = "Error in pre-initilisation phase - see logs";
             System.out.println(e.getMessage());
-            System.out.println(e.getStackTrace());
+            e.printStackTrace();
             throw new Error(message);
         }
 
