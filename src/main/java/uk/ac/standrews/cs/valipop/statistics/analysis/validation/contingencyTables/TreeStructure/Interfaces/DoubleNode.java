@@ -54,9 +54,13 @@ public abstract class DoubleNode<Op, cOp> extends Node<Op, cOp, Double, Double> 
         super.setCount(count);
     }
 
-    public DoubleNode<?, Op> getParent() {
-        return (DoubleNode<?, Op>) super.getParent();
+    public Node<?, Op, Double, Double> getParent() {
+        return (Node<?, Op, Double, Double>) super.getParent();
     }
+
+//    public DoubleNode<?, Op> getParent() {
+//        return (DoubleNode<?, Op>) super.getParent();
+//    }
 
     @SuppressWarnings("Duplicates")
     @Override

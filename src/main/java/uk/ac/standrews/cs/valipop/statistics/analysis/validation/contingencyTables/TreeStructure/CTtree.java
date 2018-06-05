@@ -102,21 +102,6 @@ public class CTtree extends Node<String, SourceType, Number, Number> implements 
                     processPerson(person, y, SourceType.SIM);
                 }
 
-            }
-        }
-
-        executeDelayedTasks();
-
-        for (YearDate y = startDate.getYearDate(); DateUtils.dateBefore(y, endDate);
-                                            y = y.advanceTime(1, TimeUnit.YEAR).getYearDate()) {
-
-            ExactDate prevDay = new ExactDate(31, 12, y.getYear() - 1);
-
-            // for every person in population
-            for (IPersonExtended person : population.getPeople_ex()) {
-
-
-                // who was alive or died in the year of consideration
                 if ( prevY.getYear() < y.getYear() && person.aliveOnDate(prevDay) ) {
                         /*person.bornInYear(y) && person.diedInYear(y)
                         ||
@@ -132,10 +117,40 @@ public class CTtree extends Node<String, SourceType, Number, Number> implements 
 
                 }
 
-
-
             }
         }
+
+        executeDelayedTasks();
+
+//        for (YearDate y = startDate.getYearDate(); DateUtils.dateBefore(y, endDate);
+//                                            y = y.advanceTime(1, TimeUnit.YEAR).getYearDate()) {
+//
+//
+//
+//            // for every person in population
+//            for (IPersonExtended person : population.getPeople_ex()) {
+//
+//
+//                // who was alive or died in the year of consideration
+//                if ( prevY.getYear() < y.getYear() && person.aliveOnDate(prevDay) ) {
+//                        /*person.bornInYear(y) && person.diedInYear(y)
+//                        ||
+//                        person.aliveInYear(y) && !person.bornInYear(y)
+//                        /*||
+//                        person.bornOnDate(y)) {
+//
+////                    if(person.bornOnDate(y) == true && (person.bornInYear(y) && person.diedInYear(y)) == false && (person.aliveInYear(y) && !person.bornInYear(y)) == false) {
+////                        System.out.println("NEEDED");
+////                    }*/
+//
+//                    processPerson(person, y, SourceType.SIM);
+//
+//                }
+//
+//
+//
+//            }
+//        }
 
 
 

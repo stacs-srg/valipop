@@ -149,4 +149,37 @@ public abstract class Node<Op, cOp, count extends Number, childCount extends Num
         return getAncestor(new CTtree()).getEndDate();
     }
 
+    public int printDesent() {
+
+        int depth = 0;
+
+        Node p = getParent();
+        if(p != null) {
+            depth = p.printDesent() + 1;
+        }
+
+        for(int i = 0; i < depth; i++) {
+            System.out.print(" ");
+        }
+
+        System.out.print(this.getClass().getSimpleName());
+
+        if(option == null) {
+            System.out.print(" | Op: null");
+        } else {
+            System.out.print(" | Op: " + option.toString());
+        }
+
+        if(count == null) {
+            System.out.print(" | Count: null");
+        } else {
+            System.out.print(" | Count: " + count);
+        }
+
+        System.out.println();
+
+        return depth;
+
+    }
+
 }
