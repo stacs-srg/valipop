@@ -96,6 +96,29 @@ public class Person implements IPersonExtended {
         this.illegitimate = illegitimate;
     }
 
+    public String toString() {
+        String s = "";
+
+        s += "--Person:" + id + "--/n";
+        s += id + " | ";
+        s += firstName + " ";
+        s += surname + " | ";
+        s += sex + " | ";
+        s += birthDate.toString() + " | ";
+        s += deathDate != null ? deathDate.toString() + "/n" : "no DOD/n";
+        s += "----Parent's Partnership----/n";
+        s += parentsPartnership.toString();
+
+        s += "----Partnerships----/n";
+        for(IPartnership p : partnerships) {
+            s += p.toString();
+        }
+
+        s += "--End Person:" + id + "--";
+
+        return s;
+    }
+
     private static int getNewId() {
         return nextId++;
     }
@@ -294,25 +317,6 @@ public class Person implements IPersonExtended {
 
     @Override
     public boolean recordDeath(Date date, Population population, PopulationStatistics desiredPopulationStatistics) {
-
-        // TODO - REMOVAL?
-        if (partnerships.size() != 0) {
-            IPersonExtended lastSpouse = getLastChild().getParentsPartnership_ex().getPartnerOf(this);
-            if(lastSpouse == null) {
-                // TODO remove this once new partnering has been implemented
-//                System.out.println("A");
-            } else
-            if (lastSpouse.aliveOnDate(date)) {
-                // if the partner is alive on date of death
-                if (lastSpouse.getLastChild().getParentsPartnership_ex().getPartnerOf(lastSpouse).getId() == id) {
-                    // and if the lastSpouses last partner is this person
-                    // then this is the end of a partnership - caused by death
-//                    population.getPopulationCounts().partnershipEnd();
-                }
-            }
-        }
-
-//        population.getPopulationCounts().death(this);
 
         deathDate = date.getExactDate();
 
