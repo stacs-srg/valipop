@@ -18,6 +18,8 @@ package uk.ac.standrews.cs.valipop.simulationEntities.partnership;
 
 import org.apache.commons.math3.random.RandomGenerator;
 import uk.ac.standrews.cs.basic_model.model.IPartnership;
+import uk.ac.standrews.cs.basic_model.model.IPerson;
+import uk.ac.standrews.cs.valipop.simulationEntities.person.Person;
 import uk.ac.standrews.cs.valipop.utils.Logger;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.Date;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.DateUtils;
@@ -69,6 +71,43 @@ public class Partnership implements IPartnershipExtended {
         this.male = male;
         this.female = female;
 
+    }
+
+    public String toString() {
+        String s = "";
+
+        s += "--Partnership: " + id + "--/n";
+
+        s += male.getId()+ " | ";
+        s += male.getFirstName() + " ";
+        s += male.getSurname() + " | ";
+        s += male.getSex() + " | ";
+        s += male.getBirthDate().toString() + " | ";
+        s += male.getDeathDate() != null ? male.getDeathDate().toString() + "/n" : "no DOD/n";
+
+        s += female.getId()+ " | ";
+        s += female.getFirstName() + " ";
+        s += female.getSurname() + " | ";
+        s += female.getSex() + " | ";
+        s += female.getBirthDate().toString() + " | ";
+        s += female.getDeathDate() != null ? female.getDeathDate().toString() + "/n" : "no DOD/n";
+
+        s += "----Children----/n";
+
+        for(IPerson c : children) {
+            s += c.getId()+ " | ";
+            s += c.getFirstName() + " ";
+            s += c.getSurname() + " | ";
+            s += c.getSex() + " | ";
+            s += c.getBirthDate().toString() + " | ";
+            s += c.getDeathDate() != null ? c.getDeathDate().toString() + "/n" : "no DOD/n";
+        }
+
+        s += "--End Partnership: " + id + "--/n";
+
+
+
+        return s;
     }
 
     public void setPartnershipDate(ExactDate startDate) {

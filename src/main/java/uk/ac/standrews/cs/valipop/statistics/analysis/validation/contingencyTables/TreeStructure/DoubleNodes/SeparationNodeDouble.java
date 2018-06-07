@@ -85,6 +85,7 @@ public class SeparationNodeDouble extends DoubleNode<SeparationOption, IntegerRa
                 in = null;
             } catch (NullPointerException e) {
                 System.out.println("---- NULL ----");
+                System.out.println(person.toString());
                 printDesent();
                 System.out.println("---- END  ----");
                 in = null;
