@@ -16,6 +16,8 @@
  */
 package uk.ac.standrews.cs.valipop.utils.sourceEventRecords.egSkyeFormat;
 
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
 import uk.ac.standrews.cs.basic_model.model.IPopulation;
 import uk.ac.standrews.cs.utilities.FileManipulation;
 import uk.ac.standrews.cs.utilities.PercentageProgressIndicator;
@@ -96,6 +98,8 @@ public class EGSkyeSourceRecordGenerator {
         progress_indicator.setTotalSteps(number_of_records);
 
         try (final PrintWriter writer = new PrintWriter(Files.newBufferedWriter(records_path, FileManipulation.FILE_CHARSET))) {
+
+//            CSVPrinter csv = new CSVPrinter(writer, CSVFormat.RFC4180);
 
             boolean first = true;
 

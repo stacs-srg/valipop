@@ -99,17 +99,17 @@ public class Person implements IPersonExtended {
     public String toString() {
         String s = "";
 
-        s += "--Person:" + id + "--/n";
+        s += "--Person:" + id + "--\n";
         s += id + " | ";
         s += firstName + " ";
         s += surname + " | ";
         s += sex + " | ";
         s += birthDate.toString() + " | ";
-        s += deathDate != null ? deathDate.toString() + "/n" : "no DOD/n";
-        s += "----Parent's Partnership----/n";
+        s += deathDate != null ? deathDate.toString() + "\n" : "no DOD\n";
+        s += "----Parent's Partnership----\n";
         s += parentsPartnership.toString();
 
-        s += "----Partnerships----/n";
+        s += "----Partnerships----\n";
         for(IPartnership p : partnerships) {
             s += p.toString();
         }
