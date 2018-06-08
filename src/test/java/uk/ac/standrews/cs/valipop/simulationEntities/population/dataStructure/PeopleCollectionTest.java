@@ -24,7 +24,9 @@ import uk.ac.standrews.cs.valipop.statistics.populationStatistics.DesiredPopulat
 import uk.ac.standrews.cs.valipop.statistics.populationStatistics.PopulationStatistics;
 import uk.ac.standrews.cs.valipop.utils.fileUtils.InvalidInputFileException;
 import uk.ac.standrews.cs.valipop.utils.sourceEventRecords.RecordFormat;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.ExactDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.MonthDate;
+import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.dateImplementations.YearDate;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.CompoundTimeUnit;
 import uk.ac.standrews.cs.valipop.utils.specialTypes.dateModel.timeSteps.TimeUnit;
 import org.junit.Test;
@@ -50,7 +52,6 @@ public class PeopleCollectionTest {
 
     @Before
     public void setUpPopulationStatistics() throws InconsistentWeightException, IOException, InvalidInputFileException {
-        // TODO Make a config instance
         Config config = new Config(new MonthDate(1,1), new MonthDate(1,100),
                 new MonthDate(1,200), 0, 0, 0, null,
                 "src/test/resources/valipop/test-pop", "", "",
@@ -58,6 +59,56 @@ public class PeopleCollectionTest {
                 0, new CompoundTimeUnit(1, TimeUnit.YEAR), RecordFormat.NONE, null);
         // use config to make make ps
         ps = DesiredPopulationStatisticsFactory.initialisePopulationStatistics(config);
+    }
+
+    @Test
+    public void peopleInCorrectYearCornerCases() {
+
+        MonthDate s = new MonthDate(1, 0);
+        MonthDate e = new MonthDate(1, 3000);
+
+        CompoundTimeUnit y = new CompoundTimeUnit(1, TimeUnit.YEAR);
+
+        PeopleCollection living = new PeopleCollection(s, e, y);
+
+        ExactDate b1 = new ExactDate(1,1,1900);
+        ExactDate b2 = new ExactDate(2,1,1900);
+        ExactDate b3 = new ExactDate(31,12,1900);
+        ExactDate b4 = new ExactDate(1,1,1901);
+
+        Person m1 = new Person('m', b1, null, ps);
+        Person m2 = new Person('m', b2, null, ps);
+        Person m3 = new Person('m', b3, null, ps);
+        Person m4 = new Person('m', b4, null, ps);
+
+        Person f1 = new Person('f', b1, null, ps);
+        Person f2 = new Person('f', b2, null, ps);
+        Person f3 = new Person('f', b3, null, ps);
+        Person f4 = new Person('f', b4, null, ps);
+
+        living.addPerson(m1);
+        living.addPerson(m2);
+        living.addPerson(m3);
+        living.addPerson(m4);
+        living.addPerson(f1);
+        living.addPerson(f2);
+        living.addPerson(f3);
+        living.addPerson(f4);
+
+        // are people added present in the correct place
+        // for females
+        Collection<IPersonExtended> females = living.getFemales().getByDatePeriodAndBirthOrder(new YearDate(1900), y, 0);
+        assertTrue(females.contains(f1));
+        assertTrue(females.contains(f2));
+        assertTrue(females.contains(f3));
+        assertFalse(females.contains(f4));
+
+        Collection<IPersonExtended> males = living.getMales().getAllPersonsBornInTimePeriod(new YearDate(1900), y);
+        assertTrue(males.contains(m1));
+        assertTrue(males.contains(m2));
+        assertTrue(males.contains(m3));
+        assertFalse(males.contains(m4));
+
     }
 
     @Test
