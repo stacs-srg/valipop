@@ -99,8 +99,6 @@ public class EGSkyeSourceRecordGenerator {
 
         try (final PrintWriter writer = new PrintWriter(Files.newBufferedWriter(records_path, FileManipulation.FILE_CHARSET))) {
 
-//            CSVPrinter csv = new CSVPrinter(writer, CSVFormat.RFC4180);
-
             boolean first = true;
 
             for (final SourceRecord record : records) {
