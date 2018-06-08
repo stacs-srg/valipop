@@ -119,6 +119,7 @@ public abstract class SourceRecord {
         for (Object field : fields) {
             append(builder, field != null ? field.toString() : null);
         }
+        builder.deleteCharAt(builder.length() - 1);
     }
 
     protected void append(final StringBuilder builder, final String field) {

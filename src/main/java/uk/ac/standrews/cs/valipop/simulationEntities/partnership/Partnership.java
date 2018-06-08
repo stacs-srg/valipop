@@ -76,23 +76,23 @@ public class Partnership implements IPartnershipExtended {
     public String toString() {
         String s = "";
 
-        s += "--Partnership: " + id + "--/n";
+        s += "--Partnership: " + id + "--\n";
 
         s += male.getId()+ " | ";
         s += male.getFirstName() + " ";
         s += male.getSurname() + " | ";
         s += male.getSex() + " | ";
         s += male.getBirthDate().toString() + " | ";
-        s += male.getDeathDate() != null ? male.getDeathDate().toString() + "/n" : "no DOD/n";
+        s += male.getDeathDate() != null ? male.getDeathDate().toString() + "\n" : "no DOD\n";
 
         s += female.getId()+ " | ";
         s += female.getFirstName() + " ";
         s += female.getSurname() + " | ";
         s += female.getSex() + " | ";
         s += female.getBirthDate().toString() + " | ";
-        s += female.getDeathDate() != null ? female.getDeathDate().toString() + "/n" : "no DOD/n";
+        s += female.getDeathDate() != null ? female.getDeathDate().toString() + "\n" : "no DOD\n";
 
-        s += "----Children----/n";
+        s += "----Children----\n";
 
         for(IPerson c : children) {
             s += c.getId()+ " | ";
@@ -100,12 +100,10 @@ public class Partnership implements IPartnershipExtended {
             s += c.getSurname() + " | ";
             s += c.getSex() + " | ";
             s += c.getBirthDate().toString() + " | ";
-            s += c.getDeathDate() != null ? c.getDeathDate().toString() + "/n" : "no DOD/n";
+            s += c.getDeathDate() != null ? c.getDeathDate().toString() + "\n" : "no DOD\n";
         }
 
-        s += "--End Partnership: " + id + "--/n";
-
-
+        s += "--End Partnership: " + id + "--\n";
 
         return s;
     }
