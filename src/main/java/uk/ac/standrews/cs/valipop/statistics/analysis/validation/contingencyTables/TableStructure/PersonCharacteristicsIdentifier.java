@@ -111,7 +111,9 @@ public class PersonCharacteristicsIdentifier {
 
         Date startDate = activePartnership.getPartnershipDate();
 
-        return !DateUtils.dateBefore(startDate, y) && DateUtils.dateBefore(startDate, y.advanceTime(1, TimeUnit.YEAR));
+        return startDate.getYear() == y.getYear();
+
+//        return !DateUtils.dateBefore(startDate, y) && DateUtils.dateBefore(startDate, y.advanceTime(1, TimeUnit.YEAR));
     }
 
 }
