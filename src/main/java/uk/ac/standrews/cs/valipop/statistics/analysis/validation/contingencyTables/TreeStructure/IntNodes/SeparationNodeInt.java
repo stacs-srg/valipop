@@ -97,7 +97,11 @@ public class SeparationNodeInt extends IntNode<SeparationOption, IntegerRange> {
                 System.out.println("Overage woman producing kids...");
                 System.out.println("BD: " + person.getBirthDate_ex().toString());
                 System.out.println("PD: " + activePartnership.getPartnershipDate().toString());
-                System.out.println("MD: " + activePartnership.getMarriageDate_ex().toString());
+                if(activePartnership.getMarriageDate_ex() == null) {
+                    System.out.println("MD: null");
+                } else {
+                    System.out.println("MD: " + activePartnership.getMarriageDate_ex().toString());
+                }
                 System.out.println("CD: " + currentDate.toString());
                 System.out.println("END --- Overage woman producing kids...");
 

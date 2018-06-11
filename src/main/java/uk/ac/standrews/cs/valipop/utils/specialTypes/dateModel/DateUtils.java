@@ -402,16 +402,20 @@ public class DateUtils {
                 daysLeft = DAYS_IN_MONTH[month-1] - day;
             }
 
-            if(chosenDay < daysLeft) {
+            if(chosenDay <= daysLeft) {
                 day += chosenDay;
                 chosenDay = 0;
             } else {
                 chosenDay -= daysLeft;
-                day = 1;
+
                 if(chosenDay != 0) {
+                    day = 1;
                     chosenDay--;
+                    month++;
+                } else {
+                    day = daysLeft;
                 }
-                month++;
+
                 if(month > 12) {
                     month = 1;
                     year++;

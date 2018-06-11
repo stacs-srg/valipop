@@ -63,7 +63,7 @@ public class DateUtilsTest {
 
         calcExactDateHelper(febDateLeapYear, oneYear);
 
-        calcExactDateHelper(febDateLeapYear, 28, 1, 3, febDateLeapYear.getYear());
+        calcExactDateHelper(febDateLeapYear, 28, 29, 2, febDateLeapYear.getYear());
 
         calcExactDateHelper(febDateLeapYear, 0, febDateLeapYear.getDay(), febDateLeapYear.getMonth(), febDateLeapYear.getYear());
 
@@ -86,6 +86,9 @@ public class DateUtilsTest {
 
         calcExactDateHelper(febDateLeapYear, minusOneYear);
 
+        calcExactDateHelper(janDate, 0, 1,1,2015);
+        calcExactDateHelper(janDate, 364, 31,12,2015);
+        calcExactDateHelper(janDate, 365, 1,1,2016);
 
         calcExactDateHelper(febDate, -31, 1, 1, febDate.getYear());
         calcExactDateHelper(janDate, -12154, 22, 9, 1981);
