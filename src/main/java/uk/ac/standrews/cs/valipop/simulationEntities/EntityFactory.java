@@ -66,11 +66,14 @@ public class EntityFactory {
         ExactDate childrenBirthDate = null;
         IPersonExtended aChild = null;
 
+        // the loop here allows for the multiple children in pregnancies
         for(int c = 0; c < numberOfChildren; c++) {
             IPersonExtended child;
             if(childrenBirthDate == null) {
+                // Make first child
                 child = makePerson(currentDate, birthTimeStep, partnership, population, ps, illegitimate);
             } else {
+                // Make subsequent children
                 child = makePerson(childrenBirthDate, partnership, population, ps, illegitimate);
             }
             childrenBirthDate = child.getBirthDate_ex();
@@ -112,13 +115,12 @@ public class EntityFactory {
         partnership.setPartnershipDate(childrenBirthDate);
         partnership.addChildren(children);
 
-//        population.getPopulationCounts().newPartnership();
-
         population.getLivingPeople().addPartnershipToIndex(partnership);
 
         mother.recordPartnership(partnership);
         father.recordPartnership(partnership);
 
+        // re-insert parents into population, this allows there position in the data structure to be updated
         population.getLivingPeople().addPerson(mother);
         population.getLivingPeople().addPerson(father);
 
