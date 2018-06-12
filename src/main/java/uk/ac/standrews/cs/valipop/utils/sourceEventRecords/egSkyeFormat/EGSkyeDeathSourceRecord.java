@@ -20,6 +20,7 @@ public class EGSkyeDeathSourceRecord extends DeathSourceRecord {
     protected ExactDate deathDate;
     protected ExactDate registrationDate;
     protected String mothersOccupation;
+    protected String marriageIDs;
 
     public EGSkyeDeathSourceRecord(IPersonExtended person, IPopulation population) {
         super(person, population);
@@ -34,6 +35,8 @@ public class EGSkyeDeathSourceRecord extends DeathSourceRecord {
                 setFatherDeceased("D"); // deceased
             }
 
+            fathers_surname = person.getParentsPartnership_ex().getMalePartner().getSurname();
+
             if(!person.getParentsPartnership_ex().getFemalePartner().aliveOnDate(person.getDeathDate_ex())) {
                 // mother is dead
                 setMotherDeceased("D"); // deceased
@@ -47,6 +50,9 @@ public class EGSkyeDeathSourceRecord extends DeathSourceRecord {
         String[] spousesInfo = identifyNameAndOccupationOfSpouses(person);
         setSpousesNames(spousesInfo[0]);
         setSpousesOccupations(spousesInfo[1]);
+        marriageIDs = spousesInfo[2];
+
+
 
 
 
@@ -84,10 +90,11 @@ public class EGSkyeDeathSourceRecord extends DeathSourceRecord {
     }
 
     public String[] identifyNameAndOccupationOfSpouses(IPersonExtended deceased) {
-        String[] ret = new String[2];
+        String[] ret = new String[3];
 
         StringBuilder names = new StringBuilder();
         StringBuilder occupations = new StringBuilder();
+        StringBuilder marIDs = new StringBuilder();
 
         for(IPartnershipExtended partnership : deceased.getPartnerships_ex()) {
 
@@ -99,15 +106,18 @@ public class EGSkyeDeathSourceRecord extends DeathSourceRecord {
             if(names.length() == 0) {
                 names.append(spousesName);
                 occupations.append(spousesOccupation);
+                marIDs.append(partnership.getId());
             } else {
                 names.append("+" + spousesName);
                 occupations.append("+" + spousesOccupation);
+                marIDs.append("+" + partnership.getId());
             }
 
         }
 
         ret[0] = names.toString();
         ret[1] = occupations.toString();
+        ret[2] = marIDs.toString();
 
         return ret;
     }
@@ -123,13 +133,14 @@ public class EGSkyeDeathSourceRecord extends DeathSourceRecord {
                 "", "", "", "", "", "", "", "",
                 "", "", "", forename, surname, getOccupation(),
                 getMaritalStatus(), sex, getSpousesNames(), getSpousesOccupations(), deathDate.toString(),
-                getDeathDay(), getDeathMonth(), getDeathYear(), "", "", getDeathAge(), getDeathAge(), fathers_forename,
+                deathDate.getDay(), deathDate.getMonth(), deathDate.getYear(),
+                "", "", getDeathAge(), getDeathAge(), fathers_forename,
                 fathers_surname, fathers_occupation, getFatherDeceased(), mothers_forename,
                 mothers_maiden_surname, mothersOccupation, getMotherDeceased(), getDeathCauseA(),
                 "", "", "", "",
                 "", "", "", "",
-                registrationDate.getDay(), registrationDate.getMonth(), registrationDate.getYear(), "", "", "", "", "", uid,
-                "", "", "");
+                registrationDate.getDay(), registrationDate.getMonth(), registrationDate.getYear(), "SYNTHETIC DATA PRODUCED USING VALIPOP", "", "", "", "", uid,
+                "", "", marriageIDs);
 
         return builder.toString();
     }
