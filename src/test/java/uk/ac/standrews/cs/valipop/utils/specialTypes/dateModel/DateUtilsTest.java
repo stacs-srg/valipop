@@ -132,7 +132,6 @@ public class DateUtilsTest {
         Assert.assertEquals(1, DateUtils.differenceInDays(a, b));
         Assert.assertEquals(-1, DateUtils.differenceInDays(b, a));
 
-
         Date c = new ExactDate(1, 2, 2000);
 
         Assert.assertEquals(31, DateUtils.differenceInDays(a, c));
@@ -150,6 +149,17 @@ public class DateUtilsTest {
         Date g = new ExactDate(24, 1, 2034);
 
         Assert.assertEquals(6598, DateUtils.differenceInDays(d, g));
+
+        Date i = new ExactDate(31, 12, 2000);
+        Date j = new ExactDate(2, 1, 2001);
+
+
+        Assert.assertEquals(1, DateUtils.differenceInDays(e, f));
+
+        Assert.assertEquals(2, DateUtils.differenceInDays(i, j));
+
+        Assert.assertEquals(-1, DateUtils.differenceInDays(h, i));
+        Assert.assertEquals(1, DateUtils.differenceInDays(i, h));
 
     }
 

@@ -488,7 +488,7 @@ public class DateUtils {
         int counts = 0;
 
         if(day != 1) {
-            counts += (getDaysInMonth(month, year) - day);
+            counts += (getDaysInMonth(month, year) - day) + 1;
             month ++;
         }
 

@@ -266,7 +266,7 @@ public class Person implements IPersonExtended {
     // TODO Implement death causes - does occupation, date, gender, location, etc. influence this?
     @Override
     public String getDeathCause() {
-        return null;
+        return deathCause;
     }
 
     @Override

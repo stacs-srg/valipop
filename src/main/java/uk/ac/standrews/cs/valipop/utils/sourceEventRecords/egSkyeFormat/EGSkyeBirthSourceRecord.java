@@ -30,6 +30,7 @@ public class EGSkyeBirthSourceRecord extends BirthSourceRecord {
 
         if(parents_partnership_id != -1) {
             mothersOccupation = person.getParentsPartnership_ex().getFemalePartner().getOccupation();
+            fathers_surname = person.getParentsPartnership_ex().getMalePartner().getSurname();
         }
 
         int registrationDay = rng.nextInt(43);
